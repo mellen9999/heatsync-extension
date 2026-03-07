@@ -1,0 +1,156 @@
+/* OP Message Injection Styles */
+
+/* Base injected message styles */
+.heatsync-injected-message {
+  position: relative !important;
+  animation: heatsync-slide-in 0.3s ease-out !important;
+}
+
+/* Slide-in animation for new OP messages */
+@keyframes heatsync-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hover effect */
+.heatsync-injected-message:hover {
+  background: rgba(255, 0, 0, 0.2) !important;
+}
+
+/* OP Badge - UNIFIED with site style (bulletproof) */
+.heatsync-op-badge {
+  background: #ff0000 !important;
+  color: #ffffff !important;
+  width: 18px !important;
+  height: 18px !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  margin-right: 4px !important;
+  text-transform: uppercase !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  border: none !important;
+  text-shadow: 0 0 1px #fff, 0 0 1px #fff !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+}
+
+/* Platform-specific styles */
+
+/* Twitch */
+.heatsync-twitch-message .chat-line__no-background {
+  border-left: 4px solid #ff0000 !important;
+  background: rgba(255, 0, 0, 0.1) !important;
+  padding: 8px !important;
+  margin: 2px 0 !important;
+}
+
+.heatsync-twitch-message:hover .chat-line__no-background {
+  background: rgba(255, 0, 0, 0.15) !important;
+}
+
+/* Kick */
+.heatsync-kick-message .chat-entry {
+  border-left: 4px solid #ff0000 !important;
+  background: rgba(255, 0, 0, 0.1) !important;
+  padding: 8px !important;
+  margin: 4px 0 !important;
+  border-radius: 0 !important;
+}
+
+.heatsync-kick-message:hover .chat-entry {
+  background: rgba(255, 0, 0, 0.15) !important;
+}
+
+/* Click cursor */
+.heatsync-injected-message {
+  cursor: pointer !important;
+}
+
+/* Pulse effect for new messages */
+@keyframes heatsync-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 0, 0, 0);
+  }
+}
+
+.heatsync-injected-message.heatsync-new {
+  animation: heatsync-pulse 1.5s ease-out !important;
+}
+
+/* Emote support in injected messages */
+.heatsync-injected-message img.heatsync-emote {
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+}
+
+/* ============================================
+   PLAYER SIZE FIX — prevent double-penalty from .right-column width override.
+   Twitch sets an explicit width on the player to leave room for chat, but our
+   inline width on .right-column already shrinks the parent container. The player
+   ends up half-sized. Override to 100% so it fills its (correctly sized) parent.
+   ============================================ */
+.channel-root__player--with-chat {
+  width: 100% !important;
+}
+
+/* ============================================
+   MINIMAL CHAT MODE - Toggle-controlled via body class
+   Enable with: document.body.classList.add('heatsync-minimal')
+   ============================================ */
+
+/* Hide top nav bar (68px header) - ALWAYS ON for popout/embed chat */
+body.heatsync-minimal .eOHCrm,
+body.heatsync-minimal nav[aria-label="Primary"],
+body.heatsync-minimal .top-nav,
+body.heatsync-minimal [data-a-target="top-nav-container"] {
+  display: none !important;
+}
+
+/* Hide side panels */
+body.heatsync-minimal .side-nav,
+body.heatsync-minimal [data-a-target="side-nav-bar"] {
+  display: none !important;
+}
+
+/* Hide video player (chat-only mode) */
+body.heatsync-minimal .video-player,
+body.heatsync-minimal .persistent-player,
+body.heatsync-minimal [data-a-target="video-player"] {
+  display: none !important;
+}
+
+/* Make chat fullscreen when minimal mode enabled */
+body.heatsync-minimal .chat-shell,
+body.heatsync-minimal .stream-chat,
+body.heatsync-minimal [data-test-selector="stream-chat"] {
+  width: 100% !important;
+  height: 100vh !important;
+  max-width: 100% !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Hide Twitch footer */
+body.heatsync-minimal .tw-root__footer,
+body.heatsync-minimal footer {
+  display: none !important;
+}
+

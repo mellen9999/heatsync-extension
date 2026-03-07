@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>welcome to heatsync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0e0e10 0%, #18181b 100%);
+      color: #efeff1;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      color: #ff6b35;
+    }
+    .tagline {
+      font-size: 16px;
+      color: #adadb8;
+      margin-bottom: 32px;
+    }
+    .steps {
+      background: #26262c;
+      border-radius: 0;
+      padding: 24px;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step:last-child {
+      margin-bottom: 0;
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      background: #ff6b35;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .step-text strong {
+      color: #fff;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: #ff6b35;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 0;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .cta-btn:hover {
+      background: #ff8555;
+    }
+    .note {
+      margin-top: 24px;
+      font-size: 13px;
+      color: #808080;
+    }
+    .note a {
+      color: #9147ff;
+      text-decoration: none;
+    }
+    .note a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="icon-128.png" alt="heatsync" class="logo">
+    <h1>welcome to heatsync</h1>
+    <p class="tagline">your emotes, everywhere you chat</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-text">
+          <strong>log in at heatsync.org</strong><br>
+          sign in with twitch or kick to create your account
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-text">
+          <strong>upload your emotes</strong><br>
+          add any images - no slot limits, all formats supported
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-text">
+          <strong>use them in chat</strong><br>
+          click the heatsync button in twitch/kick chat to access your emotes
+        </div>
+      </div>
+    </div>
+
+    <a href="https://heatsync.org" target="_blank" class="cta-btn">get started →</a>
+
+    <p class="note">
+      need help? <a href="https://heatsync.org/privacy.html#extension" target="_blank">privacy policy</a> ·
+      <a href="https://github.com/mellen9999/heatsync" target="_blank">github</a>
+    </p>
+  </div>
+</body>
+</html>

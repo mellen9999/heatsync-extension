@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>heatsync settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Liberation Mono', 'Courier New', monospace;
+      font-size: 13px;
+      padding: 24px;
+      max-width: 420px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #808080;
+      margin-bottom: 20px;
+    }
+    .header img { width: 28px; height: 28px; }
+    .header-title { font-size: 15px; font-weight: 600; }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-label {
+      color: #ff8700;
+      font-size: 11px;
+      text-transform: lowercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+    .option-row + .option-row {
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .option-label {
+      font-size: 13px;
+    }
+    .option-desc {
+      color: #808080;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    /* radio group */
+    .radio-group {
+      display: flex;
+      gap: 0;
+    }
+    .radio-group label {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-size: 12px;
+      color: #808080;
+      border: 1px solid transparent;
+      transition: background 0.1s;
+    }
+    .radio-group label:first-child {
+      border-radius: 2px 0 0 2px;
+    }
+    .radio-group label:last-child {
+      border-radius: 0 2px 2px 0;
+    }
+    .radio-group label:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .radio-group input { display: none; }
+    .radio-group input:checked + span {
+      color: #fff;
+    }
+    .radio-group label:has(input:checked) {
+      background: rgba(255,135,0,0.2);
+      border-color: #ff8700;
+    }
+
+    /* toggle */
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle input { display: none; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #808080;
+      border-radius: 50%;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .toggle input:checked + .toggle-track {
+      background: rgba(255,135,0,0.3);
+    }
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(16px);
+      background: #ff8700;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(40px);
+      background: #1a1a1a;
+      color: #00cc66;
+      border: 1px solid #808080;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: inherit;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #808080;
+      font-size: 11px;
+      color: #808080;
+    }
+    .footer a {
+      color: #ff8700;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icon-48.png" alt="">
+    <span class="header-title">heatsync settings</span>
+  </div>
+
+  <div class="section">
+    <div class="section-label">emote size</div>
+    <div class="radio-group" id="emote-size">
+      <label><input type="radio" name="emote_size" value="small"><span>small</span></label>
+      <label><input type="radio" name="emote_size" value="medium"><span>medium</span></label>
+      <label><input type="radio" name="emote_size" value="large"><span>large</span></label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">multichat layout</div>
+    <div class="radio-group" id="multichat-layout">
+      <label><input type="radio" name="multichat_layout" value="tabs"><span>tabs</span></label>
+      <label><input type="radio" name="multichat_layout" value="stacked"><span>stacked</span></label>
+      <label><input type="radio" name="multichat_layout" value="side-by-side"><span>side-by-side</span></label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">features</div>
+
+    <div class="option-row">
+      <div>
+        <div class="option-label">show heat badges</div>
+        <div class="option-desc">heat score badges on chat messages</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="heat-badges">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+
+    <div class="option-row">
+      <div>
+        <div class="option-label">show cross-platform indicator</div>
+        <div class="option-desc">show which platform a message is from</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="cross-platform">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+
+    <div class="option-row">
+      <div>
+        <div class="option-label">enable notifications</div>
+        <div class="option-desc">browser notifications when you're mentioned</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="notifications">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+
+    <div class="option-row">
+      <div>
+        <div class="option-label">auto-connect to heatsync</div>
+        <div class="option-desc">automatically connect to heatsync.org websocket</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="auto-connect">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://heatsync.org" target="_blank">heatsync.org</a>
+  </div>
+
+  <div class="toast" id="toast">settings saved</div>
+
+  <script src="options.js"></script>
+</body>
+</html>

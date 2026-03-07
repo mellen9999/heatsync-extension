@@ -1,0 +1,96 @@
+{
+  "manifest_version": 3,
+  "name": "heatsync",
+  "version": "1.2.1",
+  "description": "Use your heatsync emotes in Twitch and Kick chat. Unlimited slots, syncs across devices.",
+  "author": "heatsync.org",
+  "homepage_url": "https://heatsync.org",
+
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://static-cdn.jtvnw.net/*",
+    "https://heatsync.org/*",
+    "https://*.heatsync.org/*",
+    "https://*.twitch.tv/*",
+    "https://*.kick.com/*",
+    "https://*.youtube.com/*",
+    "https://api.betterttv.net/*",
+    "https://api.frankerfacez.com/*",
+    "https://7tv.io/*",
+    "https://cdn.betterttv.net/*",
+    "https://cdn.7tv.app/*",
+    "https://recent-messages.robotty.de/*",
+    "https://decapi.me/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.twitch.tv/*"],
+      "js": ["early-inject-main.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://*.twitch.tv/*"],
+      "js": ["autocomplete-hook.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.twitch.tv/*",
+        "https://*.kick.com/*",
+        "https://heatsync.org/*",
+        "https://*.heatsync.org/*"
+      ],
+      "js": ["shared-utils.js", "platform-detector.js", "chat-injector.js", "content.js"],
+      "css": ["injected-message.css"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://*.twitch.tv/*", "https://*.kick.com/*"],
+      "js": ["heatsync-button.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.twitch.tv/*", "https://*.kick.com/*"],
+      "js": ["shared-utils.js", "multichat.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.youtube.com/live_chat*"],
+      "js": ["youtube-content.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png"
+    },
+    "default_title": "heatsync"
+  },
+
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "96": "icon-96.png",
+    "128": "icon-128.png"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["autocomplete-hook.js", "icon-16.png", "icon-48.png", "COGGERS-1x.webp"],
+      "matches": ["https://*.twitch.tv/*", "https://*.kick.com/*", "https://heatsync.org/*", "https://*.heatsync.org/*"]
+    }
+  ]
+}

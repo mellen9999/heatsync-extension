@@ -1,0 +1,12 @@
+{
+  "name": "heatsync-extension",
+  "version": "1.2.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run build.js",
+    "build:chrome": "bun run build.js chrome",
+    "build:firefox": "bun run build.js firefox",
+    "package": "bun run build.js --package"
+  }
+}

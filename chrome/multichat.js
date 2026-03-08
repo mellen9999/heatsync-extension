@@ -37,6 +37,24 @@
   const mentionsBuffer = [];
   const postsBuffer = [];
   const MAX_BUFFER = 500;
+
+  // Scoped emote wrapper query (avoids full-document scan)
+  function queryEmoteWrappers(emoteName) {
+    const scope = document.getElementById('hs-mc-overlay') || document
+    return scope.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`)
+  }
+
+  // Batch-remove excess children using a Range (single reflow instead of N)
+  function trimChildren(el, limit) {
+    const excess = el.children.length - limit
+    if (excess > 0) {
+      const range = document.createRange()
+      range.setStartBefore(el.firstChild)
+      range.setEndBefore(el.children[excess])
+      range.deleteContents()
+    }
+  }
+
   let mentionsSeenCount = 0; // Track how many mentions user has seen
   let postsSeenCount = 0;
 
@@ -1068,12 +1086,54 @@
 
   function renderEmoteSections(sections, emptyMsg = 'no emotes loaded') {
     if (!sections.length) return `<div class="hs-mc-picker-empty">${escapeHtml(emptyMsg)}</div>`
-    return sections.map(s => `
-      <div class="hs-mc-picker-section">
+    // Only render section headers + first CHUNK_SIZE emotes per section for instant open
+    // Rest gets appended via chunkedRenderRemaining()
+    return sections.map(s => {
+      const initial = s.emotes.slice(0, EMOTE_CHUNK_SIZE)
+      return `
+      <div class="hs-mc-picker-section" data-section-key="${escapeHtml(s.key)}">
         <div class="hs-mc-picker-section-header">${escapeHtml(s.label)} <span class="hs-mc-picker-section-count">${s.emotes.length}</span></div>
-        <div class="hs-mc-picker-section-grid">${s.emotes.map(([name, emote]) => `<img src="${escapeHtml(emote.url)}" alt="${escapeHtml(name)}" title="${escapeHtml(name)} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${escapeHtml(name)}" data-source="${escapeHtml(emote.source)}" loading="lazy">`).join('')}</div>
-      </div>
-    `).join('')
+        <div class="hs-mc-picker-section-grid">${initial.map(emoteImgHtml).join('')}</div>
+      </div>`
+    }).join('')
+  }
+
+  const EMOTE_CHUNK_SIZE = 80
+  let _chunkedRafId = null
+
+  function emoteImgHtml([name, emote]) {
+    return `<img src="${escapeHtml(emote.url)}" alt="${escapeHtml(name)}" title="${escapeHtml(name)} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${escapeHtml(name)}" data-source="${escapeHtml(emote.source)}" loading="lazy">`
+  }
+
+  /** Append remaining emotes in rAF chunks so the picker opens instantly */
+  function chunkedRenderRemaining(sections, container) {
+    if (_chunkedRafId) cancelAnimationFrame(_chunkedRafId)
+    // Build queue of {gridEl, emotes} for sections with remaining emotes
+    const queue = []
+    for (const s of sections) {
+      if (s.emotes.length <= EMOTE_CHUNK_SIZE) continue
+      const gridEl = container.querySelector(`[data-section-key="${CSS.escape(s.key)}"] .hs-mc-picker-section-grid`)
+      if (!gridEl) continue
+      queue.push({ gridEl, emotes: s.emotes.slice(EMOTE_CHUNK_SIZE), offset: 0 })
+    }
+    function renderNext() {
+      const item = queue[0]
+      if (!item) return
+      const chunk = item.emotes.slice(item.offset, item.offset + EMOTE_CHUNK_SIZE)
+      if (!chunk.length) { queue.shift(); renderNext(); return }
+      // Use DocumentFragment for minimal reflows
+      const frag = document.createDocumentFragment()
+      for (const entry of chunk) {
+        const tmp = document.createElement('template')
+        tmp.innerHTML = emoteImgHtml(entry)
+        frag.appendChild(tmp.content)
+      }
+      item.gridEl.appendChild(frag)
+      item.offset += EMOTE_CHUNK_SIZE
+      if (item.offset >= item.emotes.length) queue.shift()
+      if (queue.length) _chunkedRafId = requestAnimationFrame(renderNext)
+    }
+    _chunkedRafId = requestAnimationFrame(renderNext)
   }
 
   /**
@@ -1092,6 +1152,7 @@
     } else if (picker.classList.contains('visible')) {
       picker.classList.remove('visible');
       adjustOverlayForPicker(false);
+      if (_chunkedRafId) { cancelAnimationFrame(_chunkedRafId); _chunkedRafId = null; }
       return;
     }
 
@@ -1106,7 +1167,7 @@
       <div class="hs-mc-tab-content" id="hs-mc-tab-emotes" style="display: ${pickerTab === 'emotes' ? 'flex' : 'none'}; flex-direction: column;">
         <div class="hs-mc-picker-header">
           <div class="hs-mc-search-wrap">
-            <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#808080" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
+            <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
             <input type="text" id="hs-mc-emote-search" placeholder="search emotes..." autocomplete="off">
           </div>
         </div>
@@ -1151,25 +1212,32 @@
       </div>
     `;
 
-    // Search functionality
+    // Chunked render remaining emotes after initial paint
+    const grid = document.getElementById('hs-mc-emote-grid');
+    if (grid) chunkedRenderRemaining(sections, grid);
+
+    // Search functionality (debounced)
+    let _searchTimer = null;
     const searchInput = document.getElementById('hs-mc-emote-search');
     searchInput?.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
-      const grid = document.getElementById('hs-mc-emote-grid');
-      if (!grid) return;
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(() => {
+        const query = e.target.value.toLowerCase();
+        const grid = document.getElementById('hs-mc-emote-grid');
+        if (!grid) return;
 
-      const searchEmotes = new Map();
-      const searchChCache = channelEmoteCaches[currentTab] || channelEmoteCaches[getCurrentChannel()];
-      if (searchChCache) for (const [k, v] of searchChCache) searchEmotes.set(k, v);
-      for (const [k, v] of emoteCache) if (!searchEmotes.has(k)) searchEmotes.set(k, v);
-      const filtered = new Map();
-      for (const [name, emote] of searchEmotes) {
-        if (name.toLowerCase().includes(query)) filtered.set(name, emote);
-      }
-      // Emote names/urls are pre-sanitized via escapeHtml in renderEmoteSections
-      grid.innerHTML = renderEmoteSections(groupEmotes(filtered), 'no matches');
-
-      attachEmotePickerHandlers();
+        const searchEmotes = new Map();
+        const searchChCache = channelEmoteCaches[currentTab] || channelEmoteCaches[getCurrentChannel()];
+        if (searchChCache) for (const [k, v] of searchChCache) searchEmotes.set(k, v);
+        for (const [k, v] of emoteCache) if (!searchEmotes.has(k)) searchEmotes.set(k, v);
+        const filtered = new Map();
+        for (const [name, emote] of searchEmotes) {
+          if (name.toLowerCase().includes(query)) filtered.set(name, emote);
+        }
+        const filteredSections = groupEmotes(filtered);
+        grid.innerHTML = renderEmoteSections(filteredSections, 'no matches');
+        chunkedRenderRemaining(filteredSections, grid);
+      }, 150);
     });
 
     // Emote size controls
@@ -1216,7 +1284,54 @@
       });
     });
 
-    attachEmotePickerHandlers();
+    // Event delegation for emote clicks (single handler, works for chunked rendering)
+    if (!picker._hsDelegated) {
+      picker._hsDelegated = true;
+      picker.addEventListener('click', (e) => {
+        const img = e.target.closest('.hs-mc-picker-emote');
+        if (!img) return;
+        const name = img.dataset.name;
+        const input = document.getElementById('hs-mc-input');
+        if (!input || !name) return;
+        if (wysiwygEnabled || !('value' in input)) {
+          const sel = window.getSelection();
+          const text = input.textContent || '';
+          let insertPos = text.length;
+          if (sel.rangeCount && input.contains(sel.anchorNode)) {
+            const range = sel.getRangeAt(0);
+            const preRange = document.createRange();
+            preRange.selectNodeContents(input);
+            preRange.setEnd(range.startContainer, range.startOffset);
+            insertPos = preRange.toString().length;
+          }
+          const before = text.slice(0, insertPos);
+          const after = text.slice(insertPos);
+          const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
+          const inserted = space + name + ' ';
+          input.textContent = before + inserted + after;
+          pendingMessage = input.textContent;
+          const newPos = insertPos + inserted.length;
+          const newRange = document.createRange();
+          const textNode = input.firstChild;
+          if (textNode) {
+            newRange.setStart(textNode, Math.min(newPos, textNode.length));
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          }
+        } else {
+          const pos = input.selectionStart || input.value.length;
+          const before = input.value.slice(0, pos);
+          const after = input.value.slice(pos);
+          const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
+          input.value = before + space + name + ' ' + after;
+          pendingMessage = input.value;
+        }
+        input.focus();
+        picker.classList.remove('visible');
+        adjustOverlayForPicker(false);
+      });
+    }
 
     picker.classList.add('visible');
     adjustOverlayForPicker(true);
@@ -1251,58 +1366,6 @@
     overlay.style.bottom = open ? (baseBottom + pickerHeight) + 'px' : baseBottom + 'px';
   }
 
-  function attachEmotePickerHandlers() {
-    const picker = document.getElementById('hs-mc-emote-picker');
-    if (!picker) return;
-    picker.querySelectorAll('.hs-mc-picker-emote').forEach(img => {
-      img.addEventListener('click', () => {
-        const name = img.dataset.name;
-        const input = document.getElementById('hs-mc-input');
-        if (input && name) {
-          if (wysiwygEnabled || !('value' in input)) {
-            // WYSIWYG contenteditable — insert at cursor position
-            const sel = window.getSelection();
-            const text = input.textContent || '';
-            let insertPos = text.length;
-            if (sel.rangeCount && input.contains(sel.anchorNode)) {
-              // Get cursor offset within the contenteditable
-              const range = sel.getRangeAt(0);
-              const preRange = document.createRange();
-              preRange.selectNodeContents(input);
-              preRange.setEnd(range.startContainer, range.startOffset);
-              insertPos = preRange.toString().length;
-            }
-            const before = text.slice(0, insertPos);
-            const after = text.slice(insertPos);
-            const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
-            const inserted = space + name + ' ';
-            input.textContent = before + inserted + after;
-            pendingMessage = input.textContent;
-            // Move cursor to after inserted emote
-            const newPos = insertPos + inserted.length;
-            const newRange = document.createRange();
-            const textNode = input.firstChild;
-            if (textNode) {
-              newRange.setStart(textNode, Math.min(newPos, textNode.length));
-              newRange.collapse(true);
-              sel.removeAllRanges();
-              sel.addRange(newRange);
-            }
-          } else {
-            const pos = input.selectionStart || input.value.length;
-            const before = input.value.slice(0, pos);
-            const after = input.value.slice(pos);
-            const space = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
-            input.value = before + space + name + ' ' + after;
-            pendingMessage = input.value;
-          }
-          input.focus();
-        }
-        document.getElementById('hs-mc-emote-picker')?.classList.remove('visible');
-        adjustOverlayForPicker(false);
-      });
-    });
-  }
 
   // ═══ Predictions & Betting ═══
 
@@ -4611,7 +4674,7 @@
           if (!channelYtMessages.has(targetChannelId)) channelYtMessages.set(targetChannelId, [])
           const buf = channelYtMessages.get(targetChannelId)
           buf.push(ytMsg)
-          if (buf.length > MAX_BUFFER) buf.shift()
+          if (buf.length > MAX_BUFFER + 50) buf.splice(0, buf.length - MAX_BUFFER)
           if (currentTab === targetChannelId) {
             appendMessage(ytMsg, targetChannelId) || renderMessages(currentTab)
           } else {
@@ -4638,14 +4701,14 @@
               el.className = 'hs-mc-empty'
               el.textContent = 'youtube connected: ' + (link.channelName || msg.videoId) + ' — waiting for messages...'
               msgsEl.appendChild(el)
-              while (msgsEl.children.length > 150) msgsEl.removeChild(msgsEl.firstChild)
+              trimChildren(msgsEl, 150)
             } else if (msgsEl && (msg.status === 'ended' || msg.status === 'error')) {
               const el = document.createElement('div')
               el.className = 'hs-mc-empty'
               el.textContent = msg.status === 'ended' ? 'youtube stream ended' : (msg.error || 'youtube connection error')
               el.style.color = '#ff4444'
               msgsEl.appendChild(el)
-              while (msgsEl.children.length > 150) msgsEl.removeChild(msgsEl.firstChild)
+              trimChildren(msgsEl, 150)
             }
           }
         }
@@ -4661,19 +4724,21 @@
     });
   }
 
-  // Update notif tab badge
+  // Update notif tab badge (reuse existing element to avoid DOM churn)
   function updateNotifBadge() {
-    if (!tabBarElement) return;
-    const tab = tabBarElement.querySelector('[data-tab="notifs"]');
-    if (!tab) return;
-    // Remove existing badge
-    const existing = tab.querySelector('.hs-badge');
-    if (existing) existing.remove();
+    if (!tabBarElement) return
+    const tab = tabBarElement.querySelector('[data-tab="notifs"]')
+    if (!tab) return
+    let badge = tab.querySelector('.hs-badge')
     if (unreadNotifCount > 0) {
-      const badge = document.createElement('span');
-      badge.className = 'hs-badge';
-      badge.textContent = unreadNotifCount > 99 ? '99+' : unreadNotifCount;
-      tab.appendChild(badge);
+      if (!badge) {
+        badge = document.createElement('span')
+        badge.className = 'hs-badge'
+        tab.appendChild(badge)
+      }
+      badge.textContent = unreadNotifCount > 99 ? '99+' : unreadNotifCount
+    } else if (badge) {
+      badge.remove()
     }
   }
 
@@ -5255,7 +5320,7 @@
     msgsEl.appendChild(div);
 
     // Trim oldest messages beyond 150
-    while (msgsEl.children.length > 150) msgsEl.removeChild(msgsEl.firstChild);
+    trimChildren(msgsEl, 150);
 
     // Apply mute to just this message
     const username = div.querySelector('.hs-mc-user')?.textContent?.trim()?.toLowerCase();
@@ -5578,8 +5643,7 @@
 
   // Flash all wrappers for a given emote name
   function flashAllEmotes(emoteName, flashClass) {
-    const escaped = CSS.escape(emoteName)
-    const wrappers = document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${escaped}"]`)
+    const wrappers = queryEmoteWrappers(emoteName)
     if (wrappers.length === 0) return
     // Batch read/write to avoid per-element reflow
     for (const w of wrappers) {
@@ -5668,7 +5732,7 @@
     }
     // Update all wrappers in DOM
     const newState = cachedEmote?.state || 'unadded';
-    document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+    queryEmoteWrappers(emoteName).forEach(w => {
       w.classList.remove('hs-state-global', 'hs-state-channel', 'hs-state-owned', 'hs-state-blocked', 'hs-state-unadded');
       w.classList.add(`hs-state-${newState}`);
       w.dataset.state = newState;
@@ -5707,7 +5771,7 @@
     syncBlockToAPI(emoteName, true);
 
     // Instant DOM update - CSS visibility:hidden hides the img, no src swap needed
-    document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+    queryEmoteWrappers(emoteName).forEach(w => {
       w.classList.remove('hs-state-global', 'hs-state-channel', 'hs-state-owned', 'hs-state-unadded');
       w.classList.add('hs-state-blocked');
       w.dataset.state = 'blocked';
@@ -5739,7 +5803,7 @@
     const emote = lookupEmote(emoteName);
     const realUrl = emote?.url || '';
     const newState = emote ? getEmoteState(emoteName, emote.source) : 'global';
-    document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+    queryEmoteWrappers(emoteName).forEach(w => {
       w.classList.remove('hs-state-global', 'hs-state-channel', 'hs-state-owned', 'hs-state-blocked', 'hs-state-unadded');
       w.classList.add(`hs-state-${newState}`);
       w.dataset.state = newState;
@@ -5788,7 +5852,7 @@
         }
 
         // Update all wrappers in DOM (no full re-render)
-        document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+        queryEmoteWrappers(emoteName).forEach(w => {
           w.classList.remove('hs-state-global', 'hs-state-unadded', 'hs-state-blocked');
           w.classList.add('hs-state-owned');
           w.dataset.state = 'owned';
@@ -5987,7 +6051,7 @@
       showEmoteTooltip(e, emoteName, emoteUrl, state, source, img);
 
       // Cross-highlight: add highlight to all wrappers with same emote name
-      document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+      queryEmoteWrappers(emoteName).forEach(w => {
         w.classList.add('hs-emote-highlight');
       });
     }, 'mc-emote-tooltip-mouseover');
@@ -6005,7 +6069,7 @@
       // Remove cross-highlight from all wrappers
       const emoteName = wrapper?.dataset.emoteName || img?.alt || img?.dataset.emoteName;
       if (emoteName) {
-        document.querySelectorAll(`.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`).forEach(w => {
+        queryEmoteWrappers(emoteName).forEach(w => {
           w.classList.remove('hs-emote-highlight');
         });
       }
@@ -6800,7 +6864,7 @@
           color: '#f23c3c',
           time: Date.now()
         });
-        if (postsBuffer.length > MAX_BUFFER) postsBuffer.shift();
+        if (postsBuffer.length > MAX_BUFFER + 50) postsBuffer.splice(0, postsBuffer.length - MAX_BUFFER);
 
         if (currentTab === 'posts') {
           renderMessages('posts');
@@ -7108,7 +7172,7 @@
     irc.on('message', (msg) => {
       if (isMention(msg)) {
         mentionsBuffer.push(msg);
-        if (mentionsBuffer.length > MAX_BUFFER) mentionsBuffer.shift();
+        if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER);
 
         if (currentTab === 'mentions') {
           if (!appendMessage(msg, 'mentions')) renderMessages('mentions');
@@ -7136,7 +7200,7 @@
     kickChat.on('message', (msg) => {
       if (isMention(msg)) {
         mentionsBuffer.push(msg);
-        if (mentionsBuffer.length > MAX_BUFFER) mentionsBuffer.shift();
+        if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER);
 
         if (currentTab === 'mentions') {
           if (!appendMessage(msg, 'mentions')) renderMessages('mentions');

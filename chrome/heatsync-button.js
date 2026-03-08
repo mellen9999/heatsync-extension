@@ -50,6 +50,14 @@
   let channelEmotesCache = [];
   let cachedAuthToken = null;
   let inventoryEmotesCache = [];
+  let _inventoryNames = new Set()
+  let _inventoryHashes = new Set()
+  let _inventoryIds = new Set()
+  function rebuildInventoryIndex() {
+    _inventoryNames = new Set(inventoryEmotesCache.map(e => e.name))
+    _inventoryHashes = new Set(inventoryEmotesCache.filter(e => e.hash).map(e => e.hash))
+    _inventoryIds = new Set(inventoryEmotesCache.filter(e => e.id).map(e => e.id))
+  }
   let globalEmotesCache = [];
   let currentTab = 'channel';
   let searchQuery = '';
@@ -1690,11 +1698,13 @@
       });
     });
 
-    // Search handler
+    // Search handler (debounced 150ms)
+    let _searchDebounce = null
     const searchInput = panel.querySelector('#heatsync-search');
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value.toLowerCase();
-      renderEmoteGrid();
+      clearTimeout(_searchDebounce)
+      _searchDebounce = setTimeout(() => renderEmoteGrid(), 150)
     });
 
     // Close on click outside
@@ -1787,12 +1797,10 @@
 
   // Check if emote is in user's inventory
   function isInInventory(emote) {
-    if (!inventoryEmotesCache || inventoryEmotesCache.length === 0) return false;
-    return inventoryEmotesCache.some(inv =>
-      inv.name === emote.name ||
-      (inv.hash && emote.hash && inv.hash === emote.hash) ||
-      (inv.id && emote.id && inv.id === emote.id)
-    );
+    if (!inventoryEmotesCache || inventoryEmotesCache.length === 0) return false
+    return _inventoryNames.has(emote.name) ||
+      (emote.hash && _inventoryHashes.has(emote.hash)) ||
+      (emote.id && _inventoryIds.has(emote.id))
   }
 
   // Get provider class name
@@ -2162,6 +2170,7 @@
           showPickerToast('removed');
           if (tab === 'mine') {
             inventoryEmotesCache = inventoryEmotesCache.filter(e => e.name !== emote.name);
+            rebuildInventoryIndex()
             updateTabCounts();
             renderEmoteGrid();
           }
@@ -2253,6 +2262,7 @@
       const token = await getAuthToken();
       if (!token) {
         inventoryEmotesCache = [];
+        rebuildInventoryIndex()
         loadErrors.inventory = null; // Not an error, just not logged in
         updateTabCounts();
         return;
@@ -2260,11 +2270,13 @@
 
       const data = await HS.apiFetch('/api/user/emotes', { auth: true });
       inventoryEmotesCache = data.emotes || [];
+      rebuildInventoryIndex()
       loadErrors.inventory = null;
       updateTabCounts();
 
     } catch (err) {
       inventoryEmotesCache = [];
+      rebuildInventoryIndex()
       loadErrors.inventory = 'failed to load your emotes';
       updateTabCounts();
     } finally {

@@ -86,7 +86,7 @@
 
   // Track insertion state to prevent autocomplete pollution (7TV-style approach)
   // After inserting an emote, Twitch re-reads input and may trigger autocomplete with emote name
-  const recentlyInserted = new Set();  // Track recently inserted emote names
+  const recentlyInserted = new Set();  // Track recently inserted emote names (capped at 100)
   let lastInsertedEmote = null;  // Name of last inserted emote
   let insertionCount = 0;  // Incrementing counter to track unique insertions
   let lastUserInput = '';  // Track actual user typing to detect real input vs pollution
@@ -1290,10 +1290,7 @@
     insertionCount++;
 
     // Limit set size to prevent memory leaks (keep last 10)
-    if (recentlyInserted.size > 10) {
-      const first = recentlyInserted.values().next().value;
-      recentlyInserted.delete(first);
-    }
+    if (recentlyInserted.size > 100) recentlyInserted.clear()
 
     log(' ✅ Slate emote inserted:', matchedEmote.name, 'insertion #', insertionCount);
     return true;
@@ -1484,10 +1481,7 @@
             cycleState.lastCycledEmote = nextEmote.name;
             // Add to recently inserted
             recentlyInserted.add(nextEmote.name);
-            if (recentlyInserted.size > 10) {
-              const first = recentlyInserted.values().next().value;
-              recentlyInserted.delete(first);
-            }
+            if (recentlyInserted.size > 100) recentlyInserted.clear()
             // CRITICAL: Refocus input to ensure next Tab is captured
             const inputEl = getInputElement();
             if (inputEl) {
@@ -1558,10 +1552,7 @@
           if (insertEmoteViaSlate(prevEmote, inst, true)) {
             cycleState.lastCycledEmote = prevEmote.name;
             recentlyInserted.add(prevEmote.name);
-            if (recentlyInserted.size > 10) {
-              const first = recentlyInserted.values().next().value;
-              recentlyInserted.delete(first);
-            }
+            if (recentlyInserted.size > 100) recentlyInserted.clear()
             const inputEl = getInputElement();
             if (inputEl) inputEl.focus();
             log(' ✅ Backwards cycle complete');
@@ -1818,8 +1809,17 @@
   function installImageObserver() {
     if (imageObserver) return;
 
+    const chatInputContainer = document.querySelector('[data-a-target="chat-input"]')?.closest('.chat-input') ||
+                               document.querySelector('.chat-input') ||
+                               document.querySelector('[class*="chat-input"]')
+
     imageObserver = cleanup.trackObserver(new MutationObserver(mutations => {
       for (const mut of mutations) {
+        // Skip mutations outside chat input area and autocomplete dropdowns
+        const target = mut.target
+        if (chatInputContainer && !chatInputContainer.contains(target) &&
+            !target.closest?.('[class*="autocomplete"]') &&
+            !target.closest?.('[data-a-target*="emote"]')) continue
         // Check added nodes
         for (const node of mut.addedNodes) {
           if (node instanceof Element) {
@@ -1899,14 +1899,21 @@
 
     // Safety-net polling for emote image fixes the MutationObserver might miss
     // (pre-existing images, CSS background-images on autocomplete items)
+    let _lastEmoteCount = 0
+    let _cachedEmoteByHash = new Map()
     cleanup.setInterval(() => {
       const emotes = getHeatsyncEmotes();
       if (!emotes.length) return;
 
-      const emoteByHash = new Map();
-      for (const e of emotes) {
-        if (e.hash) emoteByHash.set(e.hash, e);
+      // Only rebuild map when emote list changes
+      if (emotes.length !== _lastEmoteCount) {
+        _lastEmoteCount = emotes.length
+        _cachedEmoteByHash = new Map()
+        for (const e of emotes) {
+          if (e.hash) _cachedEmoteByHash.set(e.hash, e)
+        }
       }
+      const emoteByHash = _cachedEmoteByHash
 
       for (const img of document.querySelectorAll('img')) {
         const src = img.src || '';

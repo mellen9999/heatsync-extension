@@ -771,6 +771,7 @@ let activeOverlay = null;
 
 function isEmoteImage(el) {
   if (el.tagName !== 'IMG') return false;
+  if (el.classList.contains('pfp') || el.classList.contains('cluster-pfp-img')) return false;
   const src = el.src || '';
   return src.includes('cdn.7tv.app') ||
          src.includes('cdn.betterttv.net') ||
@@ -1742,6 +1743,13 @@ const HEAT_CACHE_MAX = 1000
 const HEAT_CACHE_TTL = 120000 // 2 min
 const HEAT_BATCH_INTERVAL = 2000 // 2s debounce for subsequent batches
 const heatCache = new Map() // username -> { heat, op, re, fetchedAt }
+// Periodic cleanup — prune stale entries every 5 min
+setInterval(() => {
+  const now = Date.now()
+  for (const [k, v] of heatCache) {
+    if (now - v.fetchedAt > HEAT_CACHE_TTL) heatCache.delete(k)
+  }
+}, 300000)
 const heatPending = new Set() // usernames awaiting batch fetch
 let heatBatchTimer = null
 let heatFirstBatch = true // first batch fires immediately
@@ -2304,8 +2312,8 @@ function processMessage(messageElement) {
       knownChatters.set(lowerUser, color)
       // LRU eviction — keep map bounded for long sessions
       if (knownChatters.size > 500) {
-        const iter = knownChatters.keys()
-        for (let i = 0; i < 100; i++) knownChatters.delete(iter.next().value)
+        const keys = [...knownChatters.keys()].slice(0, 200)
+        for (const k of keys) knownChatters.delete(k)
       }
     }
   }

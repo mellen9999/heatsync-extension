@@ -14,6 +14,16 @@
   const STORAGE_KEY = 'heatsync_multichat';
   const LOG_PREFIX = '[heatsync-mc]';
 
+  // Safe chrome.runtime.sendMessage wrapper (context invalidation guard)
+  function safeSendMessage(message) {
+    try {
+      return chrome.runtime.sendMessage(message);
+    } catch (e) {
+      log('sendMessage failed:', e.message);
+      return Promise.resolve({ ok: false, error: 'context invalidated' });
+    }
+  }
+
   // State
   let config = { channels: [], enabled: true };
   let currentTab = 'live';

@@ -568,6 +568,7 @@
         width: auto;
         cursor: pointer;
         border-radius: 0;
+        display: block;
       }
 
       /* Emote size variants */

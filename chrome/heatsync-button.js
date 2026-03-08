@@ -834,8 +834,6 @@
       }
 
       .heatsync-emote-preview img:hover {
-        transform: scale(1.2);
-        background: #fff;
       }
 
       /* Status messages */

@@ -3062,24 +3062,176 @@
         z-index: 5000;
         pointer-events: none;
         background: #000;
-        border: 2px solid #808080;
+        border: 1px solid #808080;
         border-radius: 0;
-        padding: 12px;
+        padding: 10px 6px 6px 6px;
         display: none;
-        min-width: 200px;
+        min-width: 240px;
+        max-width: 400px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       }
       #hs-user-tooltip.visible {
-        display: block;
+        display: flex;
       }
-      #hs-user-tooltip .tooltip-username {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 4px;
+      #hs-user-tooltip .hs-pc-avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        border: 1px solid #000;
+        object-fit: cover;
+        flex-shrink: 0;
+        align-self: flex-start;
       }
-      #hs-user-tooltip .tooltip-link {
-        color: #808080;
+      #hs-user-tooltip .hs-pc-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        margin-left: 6px;
+      }
+      #hs-user-tooltip .hs-pc-header {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        line-height: 1.2;
+      }
+      #hs-user-tooltip .hs-pc-platform {
+        font-size: 10px;
+        padding: 1px 2px;
+        font-weight: 900;
+        border: 1px solid #000;
+        white-space: nowrap;
+        letter-spacing: 0.2px;
+      }
+      #hs-user-tooltip .hs-pc-platform.twitch {
+        background: #9146ff;
+        color: #fff;
+      }
+      #hs-user-tooltip .hs-pc-platform.kick {
+        background: #53fc18;
+        color: #000;
+      }
+      #hs-user-tooltip .hs-pc-name {
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        background: #fff;
+        border: 1px solid #000;
+        padding: 2px 3px;
+        color: #000;
+      }
+      #hs-user-tooltip .hs-pc-role {
+        padding: 2px 3px;
+        font-size: 10px;
+        font-weight: 900;
+        white-space: nowrap;
+        border: 1px solid #000;
+        letter-spacing: 0.3px;
+      }
+      #hs-user-tooltip .hs-pc-role.admin { background: #ff0000; color: #fff; }
+      #hs-user-tooltip .hs-pc-role.staff { background: #ff8800; color: #000; }
+      #hs-user-tooltip .hs-pc-role.partner { background: #ffaa00; color: #000; }
+      #hs-user-tooltip .hs-pc-role.affiliate { background: #808080; color: #fff; }
+      #hs-user-tooltip .hs-pc-age {
+        padding: 2px 3px;
+        font-size: 10px;
+        font-weight: 900;
+        border: 1px solid #000;
+        background: #cc5500;
+        color: #000;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+      }
+      #hs-user-tooltip .hs-pc-bio {
         font-size: 12px;
+        color: #fff;
+        line-height: 1.3;
+        margin: 2px 0;
+        word-break: break-word;
+      }
+      #hs-user-tooltip .hs-pc-stats {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        font-size: 10px;
+        color: #fff;
+        line-height: 1.2;
+      }
+      #hs-user-tooltip .hs-pc-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 6px;
+        font-size: 11px;
+        font-weight: 500;
+        border: 1px solid #fff;
+        background: transparent;
+        color: #fff;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+      }
+      #hs-user-tooltip .hs-pc-stat.heat {
+        background: #000;
+        border: 1px solid #fff;
+        padding: 2px 8px;
+        font-size: 12px;
+      }
+      #hs-user-tooltip .hs-pc-stat.heat .hs-pc-num {
+        font-weight: 900;
+        font-size: 13px;
+      }
+      #hs-user-tooltip .hs-pc-stat.op,
+      #hs-user-tooltip .hs-pc-stat.re {
+        background: #fff;
+        color: #000;
+        border: 1px solid #000;
+      }
+      #hs-user-tooltip .hs-pc-stat.op .hs-pc-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        font-size: 9px;
+        background: #fff;
+        color: #f00;
+        font-weight: 700;
+        border: 1px solid #f00;
+      }
+      #hs-user-tooltip .hs-pc-stat.re .hs-pc-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        font-size: 9px;
+        background: #88ccff;
+        color: #000;
+        font-weight: 700;
+      }
+      #hs-user-tooltip .hs-pc-rel {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        font-size: 10px;
+        line-height: 1.2;
+      }
+      #hs-user-tooltip .hs-pc-rel-badge {
+        padding: 2px 3px;
+        font-size: 10px;
+        font-weight: 900;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+      }
+      #hs-user-tooltip .hs-pc-rel-badge.mutual { background: #00ffff; color: #8800ff; }
+      #hs-user-tooltip .hs-pc-rel-badge.supporter { background: #ff0000; color: #ffff00; }
+      #hs-user-tooltip .hs-pc-loading {
+        color: #808080;
+        font-size: 11px;
       }
       .hs-mc-channel {
         color: #808080;
@@ -6122,38 +6274,187 @@
 
   // User hover tooltip (profile preview)
   let userTooltip = null;
+  const _profileCache = new Map(); // username -> { profile, ts }
+  const PROFILE_CACHE_TTL = 60000; // 60s
+  let _profileGen = 0; // generation counter to prevent stale renders
 
   function ensureUserTooltip() {
     if (!userTooltip || !document.contains(userTooltip)) {
       userTooltip = document.createElement('div');
       userTooltip.id = 'hs-user-tooltip';
-      userTooltip.innerHTML = `
-        <div class="tooltip-username"></div>
-        <div class="tooltip-link"></div>
-      `;
       document.body.appendChild(userTooltip);
     }
     return userTooltip;
   }
 
-  function showUserTooltip(e, username, color) {
+  function formatCompact(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return String(n);
+  }
+
+  function getAccountAge(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    const now = new Date();
+    const y = now.getFullYear() - d.getFullYear();
+    const m = now.getMonth() - d.getMonth();
+    const days = now.getDate() - d.getDate();
+    if (y > 0) return y + 'y';
+    if (m > 0) return m + 'm';
+    return Math.max(0, days) + 'd';
+  }
+
+  function getCompactRelTime(dateStr) {
+    if (!dateStr) return '';
+    const ms = Date.now() - new Date(dateStr).getTime();
+    const d = Math.floor(ms / 86400000);
+    if (d > 365) return Math.floor(d / 365) + 'y ago';
+    if (d > 30) return Math.floor(d / 30) + 'mo ago';
+    if (d > 0) return d + 'd ago';
+    const h = Math.floor(ms / 3600000);
+    if (h > 0) return h + 'h ago';
+    return 'just now';
+  }
+
+  function renderProfileCard(p) {
+    const pfp = p.twitch_profile_pic || p.kick_profile_pic || p.profile_image_url || '';
+    const displayName = p.display_name || p.username || 'unknown';
+
+    // Platform badges
+    let platforms = '';
+    if (p.twitch_username) {
+      let ttv = `<span class="hs-pc-platform twitch">ttv:${escapeHtml(p.twitch_username)}</span>`;
+      if (p.twitch_verified) ttv += ' ✓';
+      if (p.twitch_is_live) {
+        const vc = p.twitch_viewer_count || 0;
+        ttv += ` <span style="color:#f00">🔴${vc > 0 ? ' ' + formatCompact(vc) : ''}</span>`;
+      }
+      platforms += ttv;
+    }
+    if (p.kick_username) {
+      let kk = `<span class="hs-pc-platform kick">kick:${escapeHtml(p.kick_username)}</span>`;
+      if (p.kick_verified) kk += ' ✓';
+      if (p.kick_is_live) {
+        const vc = p.kick_viewer_count || 0;
+        kk += ` <span style="color:#f00">🔴${vc > 0 ? ' ' + formatCompact(vc) : ''}</span>`;
+      }
+      platforms += kk;
+    }
+    if (!platforms) {
+      platforms = `<span class="hs-pc-name">${escapeHtml(displayName)}</span>`;
+    }
+
+    // Role badge
+    let role = '';
+    const bt = p.twitch_broadcaster_type;
+    if (bt === 'partner') role = '<span class="hs-pc-role partner">partner</span>';
+    else if (bt === 'affiliate') role = '<span class="hs-pc-role affiliate">affiliate</span>';
+    else if (p.role === 'admin') role = '<span class="hs-pc-role admin">admin</span>';
+    else if (p.role === 'staff') role = '<span class="hs-pc-role staff">staff</span>';
+
+    // Account age
+    const dates = [p.twitch_created_at, p.kick_created_at].filter(Boolean);
+    const oldest = dates.length ? dates.reduce((a, b) => new Date(b) < new Date(a) ? b : a) : null;
+    const age = getAccountAge(oldest);
+    const ageHtml = age ? `<span class="hs-pc-age">${age}</span>` : '';
+
+    // Bio
+    const bio = p.bio ? `<div class="hs-pc-bio">${escapeHtml(p.bio)}</div>` : '';
+
+    // Stats
+    const stats = p.stats || {};
+    const heat = stats.total_heat || 0;
+    const op = stats.op_count || 0;
+    const re = stats.re_count || 0;
+    const followers = Math.max(stats.followers || 0, p.twitch_followers || 0, p.kick_followers || 0);
+    const following = Math.max(stats.following || 0, p.twitch_following_count || 0, p.kick_following_count || 0);
+
+    const statBadges = [];
+    statBadges.push(`<span class="hs-pc-stat heat"><span class="hs-pc-num">${formatCompact(heat)}</span>°</span>`);
+    if (op > 0) statBadges.push(`<span class="hs-pc-stat op"><span class="hs-pc-num">${formatCompact(op)}</span> <span class="hs-pc-badge">OP</span></span>`);
+    if (re > 0) statBadges.push(`<span class="hs-pc-stat re"><span class="hs-pc-num">${formatCompact(re)}</span> <span class="hs-pc-badge">RE</span></span>`);
+    if (followers > 0) statBadges.push(`<span class="hs-pc-stat"><span class="hs-pc-num">${formatCompact(followers)}</span> followers</span>`);
+    if (following > 0) statBadges.push(`<span class="hs-pc-stat">following <span class="hs-pc-num">${formatCompact(following)}</span></span>`);
+
+    // Relationship
+    const rel = p.relationship || {};
+    const relBadges = [];
+    const followsYou = rel.profileFollowsViewerOnTwitch || rel.profileFollowsViewerOnKick || rel.followsYou;
+    if (followsYou) {
+      const since = rel.profileFollowsViewerOnTwitchSince || rel.followsYouSince;
+      relBadges.push(`<span class="hs-pc-rel-badge mutual">follows you${since ? ' ' + getCompactRelTime(since) : ''}</span>`);
+    }
+    if (rel.profileSubbedToViewerOnTwitch || rel.subscribesToYou) {
+      const since = rel.profileTwitchSubSince || rel.subscribesToYouSince;
+      relBadges.push(`<span class="hs-pc-rel-badge supporter">subs to you${since ? ' ' + getCompactRelTime(since) : ''}</span>`);
+    }
+
+    return `
+      ${pfp ? `<img class="hs-pc-avatar" src="${escapeHtml(pfp)}" alt="${escapeHtml(displayName)}">` : ''}
+      <div class="hs-pc-info">
+        <div class="hs-pc-header">${platforms} ${role} ${ageHtml}</div>
+        ${bio}
+        ${statBadges.length ? `<div class="hs-pc-stats">${statBadges.join('')}</div>` : ''}
+        ${relBadges.length ? `<div class="hs-pc-rel">${relBadges.join(' ')}</div>` : ''}
+      </div>`;
+  }
+
+  async function showUserTooltip(e, username, color) {
     const tooltip = ensureUserTooltip();
-    const nameEl = tooltip.querySelector('.tooltip-username');
-    const linkEl = tooltip.querySelector('.tooltip-link');
+    const gen = ++_profileGen;
 
-    nameEl.textContent = username;
-    nameEl.style.color = color || '#fff';
-    linkEl.textContent = `heatsync.org/u/${username}`;
+    // Show loading state immediately
+    tooltip.innerHTML = `<div class="hs-pc-loading" style="color:${color || '#fff'}">${escapeHtml(username)}...</div>`;
 
-    const x = Math.min(e.clientX + 15, window.innerWidth - 220);
-    const y = Math.max(e.clientY - 60, 10);
+    const x = Math.min(e.clientX + 15, window.innerWidth - 280);
+    const y = Math.max(e.clientY - 80, 10);
     tooltip.style.left = x + 'px';
     tooltip.style.top = y + 'px';
-
     tooltip.classList.add('visible');
+
+    // Check cache
+    const cached = _profileCache.get(username.toLowerCase());
+    if (cached && Date.now() - cached.ts < PROFILE_CACHE_TTL) {
+      if (gen !== _profileGen) return;
+      tooltip.innerHTML = renderProfileCard(cached.profile);
+      repositionTooltip(tooltip, e);
+      return;
+    }
+
+    // Fetch profile
+    const resp = await apiFetch(`/api/profile/${encodeURIComponent(username)}`);
+    if (gen !== _profileGen) return; // user moved away
+
+    if (resp?.ok && resp.data?.profile) {
+      const profile = resp.data.profile;
+      _profileCache.set(username.toLowerCase(), { profile, ts: Date.now() });
+      // Prune cache
+      if (_profileCache.size > 100) {
+        const oldest = [..._profileCache.entries()].sort((a, b) => a[1].ts - b[1].ts).slice(0, 50);
+        for (const [k] of oldest) _profileCache.delete(k);
+      }
+      tooltip.innerHTML = renderProfileCard(profile);
+      repositionTooltip(tooltip, e);
+    } else {
+      // Fallback — show basic info
+      tooltip.innerHTML = `<div class="hs-pc-info"><div class="hs-pc-header"><span class="hs-pc-name">${escapeHtml(username)}</span></div></div>`;
+    }
+  }
+
+  function repositionTooltip(tooltip, e) {
+    // Re-position after content changes size
+    const rect = tooltip.getBoundingClientRect();
+    const x = Math.min(e.clientX + 15, window.innerWidth - rect.width - 10);
+    const y = e.clientY - rect.height - 10 > 0
+      ? e.clientY - rect.height - 10
+      : e.clientY + 20;
+    tooltip.style.left = Math.max(5, x) + 'px';
+    tooltip.style.top = Math.max(5, y) + 'px';
   }
 
   function hideUserTooltip() {
+    _profileGen++;
     if (userTooltip) {
       userTooltip.classList.remove('visible');
     }

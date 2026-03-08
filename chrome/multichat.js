@@ -338,6 +338,9 @@
           return;
         }
 
+        // Fetch channel badges before parsing so badge images are ready for render
+        await fetchChannelBadges(ch)
+
         let parsed = 0;
         // Parse IRC format messages
         for (const line of data.messages) {
@@ -364,7 +367,6 @@
 
             usernameCache.add(username);
             knownColors.set(username.toLowerCase(), msg.color);
-            fetchChannelBadges(m[3].toLowerCase())
             buffer.push(msg);
             parsed++;
             continue;
@@ -391,7 +393,6 @@
             };
             usernameCache.add(displayName);
             knownColors.set(displayName.toLowerCase(), msg.color);
-            fetchChannelBadges(un[2].toLowerCase());
             buffer.push(msg);
             parsed++;
           }

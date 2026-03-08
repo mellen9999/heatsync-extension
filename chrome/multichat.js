@@ -3763,7 +3763,6 @@
         visibility: visible !important;
       }
       .hs-mc-picker-emote:hover {
-        background: #fff;
         transform: scale(1.15);
       }
       .hs-mc-picker-empty {

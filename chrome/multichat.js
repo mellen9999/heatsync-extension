@@ -1031,7 +1031,6 @@
       : `<input type="text" id="hs-mc-input" placeholder="send a message..." autocomplete="off" spellcheck="false">`;
 
     bar.innerHTML = `
-      <div id="hs-mc-emote-picker"></div>
       ${inputHtml}
       <button id="hs-mc-emote-btn" title="heatsync emotes & settings"><img src="${iconUrl}" alt="hs" style="width:24px;height:24px;vertical-align:middle;"></button>
     `;
@@ -1092,6 +1091,7 @@
       pickerTab = tab;
     } else if (picker.classList.contains('visible')) {
       picker.classList.remove('visible');
+      adjustOverlayForPicker(false);
       return;
     }
 
@@ -1219,6 +1219,7 @@
     attachEmotePickerHandlers();
 
     picker.classList.add('visible');
+    adjustOverlayForPicker(true);
 
     if (pickerTab === 'twitch') renderTwitchTab();
 
@@ -1229,6 +1230,7 @@
         if (mcSignal?.aborted) { document.removeEventListener('click', _pickerCloseHandler); _pickerCloseHandler = null; return; }
         if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) {
           picker.classList.remove('visible');
+          adjustOverlayForPicker(false);
           stopPredictionPoll();
           document.removeEventListener('click', _pickerCloseHandler);
           _pickerCloseHandler = null;
@@ -1236,6 +1238,17 @@
       };
       document.addEventListener('click', _pickerCloseHandler);
     }, 0);
+  }
+
+  /** Adjust overlay bottom to make room for picker panel */
+  function adjustOverlayForPicker(open) {
+    const overlay = document.getElementById('hs-mc-overlay');
+    if (!overlay) return;
+    const container = document.getElementById('hs-mc-container');
+    const hasBottomTabs = container?.classList.contains('hs-tabs-bottom');
+    const baseBottom = hasBottomTabs ? 90 : 52;
+    const pickerHeight = 400;
+    overlay.style.bottom = open ? (baseBottom + pickerHeight) + 'px' : baseBottom + 'px';
   }
 
   function attachEmotePickerHandlers() {
@@ -1286,6 +1299,7 @@
           input.focus();
         }
         document.getElementById('hs-mc-emote-picker')?.classList.remove('visible');
+        adjustOverlayForPicker(false);
       });
     });
   }
@@ -1698,6 +1712,7 @@
         const picker = document.getElementById('hs-mc-emote-picker');
         if (picker?.classList.contains('visible')) {
           picker.classList.remove('visible');
+          adjustOverlayForPicker(false);
           if (_pickerCloseHandler) {
             document.removeEventListener('click', _pickerCloseHandler);
             _pickerCloseHandler = null;
@@ -3294,17 +3309,16 @@
         background: rgba(255,255,255,0.06);
       }
 
-      /* Combined picker popup */
+      /* Emote picker panel — full-width section above inputbar */
       #hs-mc-emote-picker {
         display: none;
         position: absolute;
-        bottom: 100%;
-        left: -8px;
-        right: -8px;
+        left: 0;
+        right: 0;
+        bottom: 52px;
         height: 400px;
         background: #18181b;
         border-top: 1px solid #333;
-        border-radius: 0;
         z-index: 1003;
         overflow: hidden;
         flex-direction: column;
@@ -3451,7 +3465,7 @@
       }
       .hs-mc-picker-section-grid {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(44px, 44px));
         gap: 2px;
         padding: 6px;
       }
@@ -3967,9 +3981,8 @@
         z-index: 1002;
       }
       .hs-tabs-right #hs-mc-emote-picker {
-        width: calc(100% - 90px);
         left: 0;
-        right: auto;
+        right: 90px;
       }
 
       /* BOTTOM TABS LAYOUT */
@@ -3986,6 +3999,9 @@
       }
       .hs-tabs-bottom #hs-mc-overlay {
         top: 0;
+        bottom: 90px; /* tab bar + input bar */
+      }
+      .hs-tabs-bottom #hs-mc-emote-picker {
         bottom: 90px; /* tab bar + input bar */
       }
 
@@ -4032,6 +4048,10 @@
         right: 0;
         z-index: 1002;
       }
+      .hs-tabs-left #hs-mc-emote-picker {
+        left: 90px;
+        right: 0;
+      }
 
       /* Popout mode - full width (respects tab bar position) */
       .hs-popout #hs-mc-overlay {
@@ -4047,6 +4067,10 @@
       .hs-popout #hs-mc-resize-handle {
         display: none !important;
       }
+      .hs-popout #hs-mc-emote-picker {
+        left: 0 !important;
+        right: 0 !important;
+      }
       /* Popout with tabs on right - adjust for tab bar */
       .hs-popout.hs-tabs-right #hs-mc-overlay {
         right: 90px !important;
@@ -4054,11 +4078,17 @@
       .hs-popout.hs-tabs-right #hs-mc-inputbar {
         right: 90px !important;
       }
+      .hs-popout.hs-tabs-right #hs-mc-emote-picker {
+        right: 90px !important;
+      }
       /* Popout with tabs on left */
       .hs-popout.hs-tabs-left #hs-mc-overlay {
         left: 90px !important;
       }
       .hs-popout.hs-tabs-left #hs-mc-inputbar {
+        left: 90px !important;
+      }
+      .hs-popout.hs-tabs-left #hs-mc-emote-picker {
         left: 90px !important;
       }
 
@@ -4398,6 +4428,16 @@
     if (!container.contains(overlayElement)) {
       container.appendChild(overlayElement);
       log('Injected overlay into container');
+    }
+
+    // Ensure emote picker panel exists (between overlay and inputbar)
+    let pickerEl = document.getElementById('hs-mc-emote-picker');
+    if (!pickerEl) {
+      pickerEl = document.createElement('div');
+      pickerEl.id = 'hs-mc-emote-picker';
+    }
+    if (!container.contains(pickerEl)) {
+      container.appendChild(pickerEl);
     }
 
     // Ensure input bar exists

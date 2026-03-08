@@ -444,7 +444,7 @@ style.textContent = `
     text-decoration: none !important;
     font-family: monospace !important;
   }
-  .hs-pc-actions a:hover { color: #fff !important; }
+  .hs-pc-actions a:hover { background: #fff !important; color: #000 !important; }
 
   .hs-pc-actions button {
     background: #808080 !important;
@@ -457,7 +457,7 @@ style.textContent = `
     cursor: pointer !important;
     transition: none !important;
   }
-  .hs-pc-actions button:hover { background: #808080 !important; }
+  .hs-pc-actions button:hover { background: #fff !important; color: #000 !important; }
 
   .hs-pc-loading {
     color: #ccc !important;
@@ -731,7 +731,8 @@ style.textContent = `
     pointer-events: auto !important;
   }
   .heatsync-emote-stack.expanded .heatsync-stack-collapse:hover {
-    background: rgba(255,255,255,0.20) !important;
+    background: #fff !important;
+    color: #000 !important;
   }
 
   /* Block all button (⊘) - hidden by default */
@@ -756,7 +757,8 @@ style.textContent = `
     pointer-events: auto !important;
   }
   .heatsync-emote-stack.expanded .heatsync-stack-block-all:hover {
-    background: #aa0000 !important;
+    background: #fff !important;
+    color: #000 !important;
   }
 `;
 document.head.appendChild(style);

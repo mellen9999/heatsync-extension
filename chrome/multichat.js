@@ -2745,8 +2745,8 @@
       }
       /* Idle hover — subtle brighten */
       .hs-mc-tab:not(.active):not(.has-new):hover {
-        color: #808080 !important;
-        background: #000 !important;
+        background: #fff !important;
+        color: #000 !important;
       }
       /* New messages — activity indicator */
       .hs-mc-tab.has-new {
@@ -2756,7 +2756,8 @@
       }
       /* Has-new hover */
       .hs-mc-tab.has-new:not(.active):hover {
-        background: #000 !important;
+        background: #fff !important;
+        color: #000 !important;
       }
       /* Active — focused tab */
       .hs-mc-tab.active {
@@ -2859,7 +2860,8 @@
         transition: background 0.15s;
       }
       #hs-mc-new-msgs:hover {
-        background: rgba(230, 230, 0, 0.95);
+        background: #fff;
+        color: #000;
       }
 
       /* UNIFIED INPUT BAR - always visible at bottom */
@@ -3348,10 +3350,12 @@
         display: inline-block;
       }
       .hs-mc-stack-collapse:hover {
-        filter: invert(1);
+        background: #fff;
+        color: #000;
       }
       .hs-mc-stack-block-all:hover {
-        color: #ff0000;
+        background: #fff;
+        color: #000;
       }
 
       /* STATE-BASED EMOTE COLORS (website parity) */
@@ -3504,7 +3508,8 @@
         transition: all 0.15s;
       }
       .hs-mc-toggle-btn:hover {
-        background: rgba(255,255,255,0.06);
+        background: #fff;
+        color: #000;
       }
       .hs-mc-toggle-btn.active {
         background: #9147ff;
@@ -3523,7 +3528,8 @@
         font-size: 14px;
       }
       #hs-mc-send:hover {
-        background: #772ce8;
+        background: #fff;
+        color: #000;
       }
 
       /* Heatsync button */
@@ -3541,7 +3547,11 @@
         flex-shrink: 0;
       }
       #hs-mc-emote-btn:hover {
-        background: rgba(255,255,255,0.06);
+        background: #fff;
+        color: #000;
+      }
+      #hs-mc-emote-btn:hover svg {
+        fill: #000;
       }
 
       /* Emote picker panel — full-width section above inputbar */
@@ -3601,11 +3611,12 @@
         transition: opacity 0.15s;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab:hover {
-        color: #808080 !important;
-        background: rgba(255,255,255,0.04) !important;
+        background: #fff !important;
+        color: #000 !important;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab:hover svg {
-        opacity: 0.8;
+        opacity: 1;
+        fill: #000;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab.active {
         color: #ff6b35 !important;
@@ -3639,8 +3650,8 @@
         justify-content: center;
       }
       .hs-mc-tab:hover {
-        color: #fff;
-        background: #000;
+        background: #fff;
+        color: #000;
       }
       .hs-mc-tab.active {
         color: #fff;
@@ -3752,7 +3763,7 @@
         visibility: visible !important;
       }
       .hs-mc-picker-emote:hover {
-        background: rgba(255,107,53,0.15);
+        background: #fff;
         transform: scale(1.15);
       }
       .hs-mc-picker-empty {
@@ -3787,11 +3798,11 @@
         margin: 0 6px;
       }
       .hs-mc-menu-item:hover {
-        background: rgba(255,255,255,0.06) !important;
-        border-left-color: var(--menu-accent, #ff6b35);
+        background: #fff !important;
+        border-left-color: #000;
       }
       .hs-mc-menu-item:active {
-        background: rgba(255,255,255,0.1) !important;
+        background: #fff !important;
       }
       .hs-mc-menu-icon {
         width: 36px;
@@ -3807,8 +3818,8 @@
         transition: background 0.15s, transform 0.15s;
       }
       .hs-mc-menu-item:hover .hs-mc-menu-icon {
-        background: rgba(255,107,53,0.22);
-        background: color-mix(in srgb, var(--menu-accent, #ff6b35) 22%, transparent);
+        background: #000;
+        color: #fff;
         transform: scale(1.08);
       }
       .hs-mc-menu-text {
@@ -3827,8 +3838,11 @@
         line-height: 1.3;
         margin-top: 1px;
       }
+      .hs-mc-menu-item:hover .hs-mc-menu-title {
+        color: #000;
+      }
       .hs-mc-menu-item:hover .hs-mc-menu-desc {
-        color: #808080;
+        color: #000;
       }
       .hs-mc-menu-arrow {
         color: #808080;
@@ -3836,7 +3850,7 @@
         transition: color 0.15s, transform 0.15s;
       }
       .hs-mc-menu-item:hover .hs-mc-menu-arrow {
-        color: var(--menu-accent, #ff6b35);
+        color: #000;
         transform: translateX(2px);
       }
       .hs-mc-menu-divider {
@@ -3965,8 +3979,8 @@
         transition: background 0.15s, color 0.15s;
       }
       .hs-mc-pred-bet-btn:hover {
-        background: color-mix(in srgb, var(--oc, #387aff) 30%, transparent);
-        color: #fff;
+        background: #fff;
+        color: #000;
       }
       .hs-mc-pred-bet-btn:disabled {
         opacity: 0.5;
@@ -4002,7 +4016,8 @@
         transition: opacity 0.15s;
       }
       .hs-mc-pred-bet-go:hover {
-        opacity: 0.85;
+        background: #fff;
+        color: #000;
       }
       .hs-mc-pred-bet-go:disabled {
         opacity: 0.5;
@@ -4068,8 +4083,8 @@
         transition: all 0.15s;
       }
       .hs-mc-size-btn:hover {
-        background: rgba(255,255,255,0.08) !important;
-        color: #fff !important;
+        background: #fff !important;
+        color: #000 !important;
       }
       .hs-mc-size-btn.active {
         background: #ff6b35 !important;
@@ -4169,7 +4184,8 @@
         font-weight: bold;
       }
       .hs-mc-rotate:hover {
-        background: #9147ff !important;
+        background: #fff !important;
+        color: #000 !important;
       }
 
       /* RIGHT SIDE TABS LAYOUT - absolute position at right edge */
@@ -4334,7 +4350,13 @@
         transition: background 0.1s;
       }
       .hs-feed-msg:hover {
-        background: rgba(255,255,255,0.04);
+        background: #fff;
+        color: #000;
+      }
+      .hs-feed-msg:hover .hs-feed-user,
+      .hs-feed-msg:hover .hs-feed-time,
+      .hs-feed-msg:hover .hs-feed-text {
+        color: #000;
       }
       .hs-feed-header {
         display: flex;
@@ -4355,7 +4377,9 @@
         text-decoration: none;
       }
       .hs-feed-user:hover {
-        text-decoration: underline;
+        background: #fff;
+        color: #000;
+        text-decoration: none;
       }
       .hs-feed-time {
         font-size: 11px;
@@ -4397,7 +4421,8 @@
         transition: background 0.1s;
       }
       .hs-notif:hover {
-        background: rgba(255,255,255,0.04);
+        background: #fff;
+        color: #000;
       }
       .hs-notif-header {
         padding: 8px 12px;

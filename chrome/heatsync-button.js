@@ -304,8 +304,8 @@
       }
 
       .heatsync-chat-btn:hover {
-        background-color: var(--color-background-button-text-hover, rgba(128, 128, 128, 0.48));
-        color: var(--color-fill-button-icon-hover, #fff);
+        background-color: #fff;
+        color: #000;
       }
 
       .heatsync-chat-btn:active {
@@ -372,8 +372,8 @@
       }
 
       .heatsync-panel-close:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
+        background: #fff;
+        color: #000;
       }
 
       .heatsync-header-controls {
@@ -394,9 +394,9 @@
       }
 
       .heatsync-header-btn:hover {
-        background: rgba(255, 107, 53, 0.15);
-        border-color: #ff6b35;
-        color: #ff6b35;
+        background: #fff;
+        border-color: #fff;
+        color: #000;
       }
 
       .heatsync-header-btn.active {
@@ -441,9 +441,9 @@
 
       .heatsync-settings-cog:hover,
       .heatsync-settings-cog.active {
-        background: rgba(255, 107, 53, 0.15);
-        border-color: #ff6b35;
-        color: #ff6b35;
+        background: #fff;
+        border-color: #fff;
+        color: #000;
       }
 
       .heatsync-size-buttons {
@@ -464,8 +464,9 @@
       }
 
       .heatsync-size-btn:hover {
-        border-color: #808080;
-        color: #fff;
+        background: #fff;
+        border-color: #fff;
+        color: #000;
       }
 
       .heatsync-size-btn.active {
@@ -526,8 +527,8 @@
       }
 
       .heatsync-tab:hover {
-        color: #fff;
-        background: rgba(255,255,255,0.05);
+        background: #fff;
+        color: #000;
       }
 
       .heatsync-tab.active {
@@ -675,9 +676,9 @@
       }
 
       .heatsync-add-all-btn:hover {
-        border-color: #00cc66;
-        color: #00cc66;
-        background: rgba(0, 204, 102, 0.1);
+        background: #fff;
+        border-color: #fff;
+        color: #000;
       }
 
       .heatsync-add-all-btn.added {
@@ -704,7 +705,9 @@
       }
 
       .heatsync-login-msg a:hover {
-        text-decoration: underline;
+        background: #fff;
+        color: #000;
+        text-decoration: none;
       }
 
       /* Provider emotes container */
@@ -727,8 +730,9 @@
 
       .heatsync-size-toggle:hover,
       .heatsync-refresh-btn:hover {
-        border-color: #9147ff;
-        color: #fff;
+        background: #fff;
+        border-color: #fff;
+        color: #000;
       }
 
       .heatsync-refresh-btn {
@@ -787,7 +791,8 @@
       }
 
       .heatsync-import-btn:hover {
-        opacity: 0.9;
+        background: #fff !important;
+        color: #000 !important;
       }
 
       .heatsync-import-btn:disabled {
@@ -829,7 +834,7 @@
 
       .heatsync-emote-preview img:hover {
         transform: scale(1.2);
-        background: rgba(255, 255, 255, 0.1);
+        background: #fff;
       }
 
       /* Status messages */
@@ -880,8 +885,8 @@
       }
 
       .heatsync-link:hover {
-        background: rgba(255,255,255,0.14);
-        color: #fff;
+        background: #fff;
+        color: #000;
       }
 
       /* Emote count badge */
@@ -1040,7 +1045,9 @@
       }
 
       .heatsync-auth-banner a:hover {
-        text-decoration: underline;
+        background: #fff;
+        color: #000;
+        text-decoration: none;
       }
 
       /* Error state */
@@ -1077,7 +1084,8 @@
       }
 
       .heatsync-retry-btn:hover {
-        background: rgba(255,255,255,0.20);
+        background: #fff;
+        color: #000;
       }
 
       /* Cached data indicator */
@@ -1144,8 +1152,8 @@
         white-space: nowrap;
       }
       .hs-emote-ctx-item:hover {
-        background: #2a2a4a;
-        color: #fff;
+        background: #fff;
+        color: #000;
       }
       .hs-emote-ctx-sep {
         height: 1px;

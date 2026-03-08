@@ -1830,14 +1830,14 @@
         };
       }
       // Fallback: direct IMG (Twitch/7TV/BTTV native emotes, picker emotes)
-      if (target.tagName === 'IMG' && (
+      if (target.tagName === 'IMG' && !target.classList.contains('hs-mc-badge-img') && (
         target.classList.contains('hs-mc-emote') ||
         target.classList.contains('hs-mc-picker-emote') ||
         target.classList.contains('chat-line__message--emote') ||
         target.classList.contains('chat-image') ||
         target.src?.includes('7tv.app') ||
         target.src?.includes('betterttv.net') ||
-        target.src?.includes('frankerfacez') ||
+        (target.src?.includes('frankerfacez') && !target.src?.includes('room-badge/')) ||
         target.src?.includes('static-cdn.jtvnw.net/emoticons')
       )) {
         return {

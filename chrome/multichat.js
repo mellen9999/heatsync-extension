@@ -3040,6 +3040,13 @@
         text-decoration: none;
         cursor: pointer;
       }
+      .hs-mc-user.hs-user-highlight {
+        background: #fff !important;
+        color: #000 !important;
+        -webkit-text-fill-color: #000 !important;
+        border-radius: 2px;
+        box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      }
       .hs-mc-platform-badge {
         font-size: var(--hs-badge-font, 10px);
         margin-right: 3px;
@@ -5395,7 +5402,7 @@
     const platformBadge = plat !== hostPlatform ? `<span style="font-size:10px;margin-right:3px;font-weight:700;vertical-align:middle;color:${platColors[plat]}">${platLabel}</span>` : ''
     const safeScColor = sanitizeColor(m.scColor || '#ffd600')
     const scBadge = isSuperChat && m.amount ? `<span class="hs-mc-sc-badge" style="background:${safeScColor};color:#000;padding:0 4px;border-radius:0;font-size:10px;font-weight:700;margin-right:3px;">${escapeHtml(m.amount)}</span>` : ''
-    const userLink = `<a href="https://heatsync.org/u/${encodeURIComponent(m.user)}" target="_blank" class="hs-mc-user" style="color:${sanitizeColor(m.color || '#fff')}">${escapeHtml(m.user)}</a>`;
+    const userLink = `<a href="https://heatsync.org/u/${encodeURIComponent(m.user)}" target="_blank" class="hs-mc-user" data-username="${escapeHtml(m.user.toLowerCase())}" style="color:${sanitizeColor(m.color || '#fff')}">${escapeHtml(m.user)}</a>`;
 
     // Process text: replace YouTube emoji with inline images
     let processedText = processEmotes(m.text, m.channel)
@@ -6518,6 +6525,17 @@
         const username = target.textContent;
         const color = target.style.color;
         showUserTooltip(e, username, color);
+
+        // Highlight all matching usernames
+        const name = target.dataset.username;
+        if (name) {
+          const overlay = document.getElementById('hs-mc-overlay');
+          if (overlay) {
+            overlay.querySelectorAll(`.hs-mc-user[data-username="${CSS.escape(name)}"]`).forEach(el => {
+              el.classList.add('hs-user-highlight');
+            });
+          }
+        }
       }
     }, 'mc-user-tooltip-mouseover');
 
@@ -6525,6 +6543,14 @@
       const target = e.target.closest('.hs-mc-user');
       if (target) {
         hideUserTooltip();
+
+        // Remove all username highlights
+        const overlay = document.getElementById('hs-mc-overlay');
+        if (overlay) {
+          overlay.querySelectorAll('.hs-user-highlight').forEach(el => {
+            el.classList.remove('hs-user-highlight');
+          });
+        }
       }
     }, 'mc-user-tooltip-mouseout');
   }

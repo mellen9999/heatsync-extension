@@ -6365,6 +6365,24 @@
     return userTooltip;
   }
 
+  const HEAT_GRADIENT = [
+    '#808080', '#aa5555', '#cc5544', '#aa0000', '#dd0000',
+    '#ff0000', '#ff6600', '#ff9900', '#ffcc00', '#ffffff'
+  ];
+  function getHeatColor(heat) {
+    let tier = 0;
+    if (heat >= 5000) tier = 9;
+    else if (heat >= 1000) tier = 8;
+    else if (heat >= 500) tier = 7;
+    else if (heat >= 200) tier = 6;
+    else if (heat >= 100) tier = 5;
+    else if (heat >= 50) tier = 4;
+    else if (heat >= 20) tier = 3;
+    else if (heat >= 5) tier = 2;
+    else if (heat >= 1) tier = 1;
+    return HEAT_GRADIENT[tier];
+  }
+
   function formatCompact(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
@@ -6443,14 +6461,17 @@
     // Stats
     const stats = p.stats || {};
     const heat = stats.total_heat || 0;
-    const op = stats.op_count || 0;
-    const re = stats.re_count || 0;
+    const op = stats.op_count || p.opCount || 0;
+    const mop = stats.mop_count || p.mopCount || 0;
+    const re = stats.re_count || p.reCount || 0;
     const followers = Math.max(stats.followers || 0, p.twitch_followers || 0, p.kick_followers || 0);
     const following = Math.max(stats.following || 0, p.twitch_following_count || 0, p.kick_following_count || 0);
 
+    const heatColor = getHeatColor(heat);
     const statBadges = [];
-    statBadges.push(`<span class="hs-pc-stat heat"><span class="hs-pc-num">${formatCompact(heat)}</span>°</span>`);
+    statBadges.push(`<span class="hs-pc-stat heat"><span class="hs-pc-num" style="color:${heatColor}">${formatCompact(heat)}</span>°</span>`);
     if (op > 0) statBadges.push(`<span class="hs-pc-stat op"><span class="hs-pc-num">${formatCompact(op)}</span> <span class="hs-pc-badge">OP</span></span>`);
+    if (mop > 0) statBadges.push(`<span class="hs-pc-stat mop"><span class="hs-pc-num">${formatCompact(mop)}</span> <span class="hs-pc-badge" style="background:#ff00ff;color:#fff">OP</span></span>`);
     if (re > 0) statBadges.push(`<span class="hs-pc-stat re"><span class="hs-pc-num">${formatCompact(re)}</span> <span class="hs-pc-badge">RE</span></span>`);
     if (followers > 0) statBadges.push(`<span class="hs-pc-stat"><span class="hs-pc-num">${formatCompact(followers)}</span> followers</span>`);
     if (following > 0) statBadges.push(`<span class="hs-pc-stat">following <span class="hs-pc-num">${formatCompact(following)}</span></span>`);

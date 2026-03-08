@@ -772,7 +772,10 @@ let activeOverlay = null;
 function isEmoteImage(el) {
   if (el.tagName !== 'IMG') return false;
   if (el.classList.contains('pfp') || el.classList.contains('cluster-pfp-img')) return false;
+  if (el.classList.contains('hs-mc-badge-img')) return false;
   const src = el.src || '';
+  // Exclude FFZ badge images (room mod/vip badges use cdn.frankerfacez.com/room-badge/)
+  if (src.includes('cdn.frankerfacez.com/room-badge/')) return false;
   return src.includes('cdn.7tv.app') ||
          src.includes('cdn.betterttv.net') ||
          src.includes('cdn.frankerfacez.com') ||

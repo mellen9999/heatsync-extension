@@ -3059,12 +3059,14 @@
         vertical-align: middle;
         line-height: var(--hs-stat-badge-line, 16px);
         letter-spacing: 0.3px;
+        cursor: default;
       }
       .hs-mc-badge-img {
         width: var(--hs-badge-img, 18px);
         height: var(--hs-badge-img, 18px);
         vertical-align: middle;
         margin-right: 2px;
+        cursor: default;
       }
 
       /* Username hover tooltip - profile preview */

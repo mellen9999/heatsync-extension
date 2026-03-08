@@ -5610,6 +5610,7 @@
 
   // Twitch badge image URLs: "setID/version" → image_url
   const twitchBadgeUrls = new Map()
+  const ffzBadgeKeys = new Set() // tracks which channel:badgeName entries are FFZ (need bg color)
   const badgesFetchedChannels = new Set()
   let globalBadgesFetched = false
   const TWITCH_GQL = 'https://gql.twitch.tv/gql'
@@ -5771,12 +5772,14 @@
           if (modUrl) {
             const src = modUrl.startsWith('//') ? 'https:' + modUrl : modUrl
             twitchBadgeUrls.set(`${channelLogin}:moderator/1`, src)
+            ffzBadgeKeys.add(`${channelLogin}:moderator`)
           }
           // Custom VIP badge
           const vipUrl = room.vip_badge?.['2'] || room.vip_badge?.['1']
           if (vipUrl) {
             const src = vipUrl.startsWith('//') ? 'https:' + vipUrl : vipUrl
             twitchBadgeUrls.set(`${channelLogin}:vip/1`, src)
+            ffzBadgeKeys.add(`${channelLogin}:vip`)
           }
         }
       }
@@ -5797,7 +5800,11 @@
         || twitchBadgeUrls.get(`${name}/${version}`)
         || twitchBadgeUrls.get(`${name}/1`)
       if (url) {
-        return `<img class="hs-mc-badge-img" src="${url}" alt="${name}" title="${name}" style="width:18px;height:18px;">`
+        // FFZ custom badges are white icons on transparent bg — add badge-type background
+        const ffzKey = channel && `${channel}:${name}/`
+        const isFFZ = ffzKey && ffzBadgeKeys.has(`${channel}:${name}`)
+        const bgStyle = isFFZ && BADGE_STYLES[name] ? `background:${BADGE_STYLES[name].bg};padding:1px;border-radius:2px;` : ''
+        return `<img class="hs-mc-badge-img" src="${url}" alt="${name}" title="${name}" style="width:18px;height:18px;${bgStyle}">`
       }
       // Text fallback
       const style = BADGE_STYLES[name]

@@ -5740,19 +5740,47 @@
       }
     }
     try {
-      const resp = await fetch(TWITCH_GQL, {
-        method: 'POST',
-        headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `{ user(login: "${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version } } }` })
-      })
-      if (!resp.ok) return
-      const data = await resp.json()
-      const badges = data?.data?.user?.broadcastBadges
-      if (!badges) return
-      for (const b of badges) {
-        // Prefix with channel to avoid cross-channel collisions
-        twitchBadgeUrls.set(`${channelLogin}:${b.setID}/${b.version}`, b.imageURL)
+      // Fetch Twitch GQL + FFZ badges in parallel
+      const [twitchResp, ffzResp] = await Promise.allSettled([
+        fetch(TWITCH_GQL, {
+          method: 'POST',
+          headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: `{ user(login: "${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version } } }` })
+        }),
+        fetch(`https://api.frankerfacez.com/v1/room/${safe}`)
+      ])
+
+      // Twitch channel badges
+      if (twitchResp.status === 'fulfilled' && twitchResp.value.ok) {
+        const data = await twitchResp.value.json()
+        const badges = data?.data?.user?.broadcastBadges
+        if (badges) {
+          for (const b of badges) {
+            twitchBadgeUrls.set(`${channelLogin}:${b.setID}/${b.version}`, b.imageURL)
+          }
+        }
       }
+
+      // FFZ custom mod/VIP badges — override Twitch versions
+      if (ffzResp.status === 'fulfilled' && ffzResp.value.ok) {
+        const ffz = await ffzResp.value.json()
+        const room = ffz?.room
+        if (room) {
+          // Custom mod badge
+          const modUrl = room.mod_urls?.['2'] || room.mod_urls?.['1'] || room.moderator_badge
+          if (modUrl) {
+            const src = modUrl.startsWith('//') ? 'https:' + modUrl : modUrl
+            twitchBadgeUrls.set(`${channelLogin}:moderator/1`, src)
+          }
+          // Custom VIP badge
+          const vipUrl = room.vip_badge?.['2'] || room.vip_badge?.['1']
+          if (vipUrl) {
+            const src = vipUrl.startsWith('//') ? 'https:' + vipUrl : vipUrl
+            twitchBadgeUrls.set(`${channelLogin}:vip/1`, src)
+          }
+        }
+      }
+
       log('Loaded channel badges for', channelLogin)
     } catch (e) {
       badgesFetchedChannels.delete(channelLogin)

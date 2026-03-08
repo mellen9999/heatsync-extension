@@ -286,7 +286,7 @@
         background: var(--color-background-button-text-default, transparent);
         border: none;
         border-radius: var(--border-radius-rounded, 9000px);
-        color: var(--color-fill-button-icon, #efeff1);
+        color: var(--color-fill-button-icon, #fff);
         cursor: pointer;
         user-select: none;
         vertical-align: middle;
@@ -296,12 +296,12 @@
       }
 
       .heatsync-chat-btn:hover {
-        background-color: var(--color-background-button-text-hover, rgba(83, 83, 95, 0.48));
-        color: var(--color-fill-button-icon-hover, #efeff1);
+        background-color: var(--color-background-button-text-hover, rgba(128, 128, 128, 0.48));
+        color: var(--color-fill-button-icon-hover, #fff);
       }
 
       .heatsync-chat-btn:active {
-        background-color: var(--color-background-button-text-active, rgba(83, 83, 95, 0.55));
+        background-color: var(--color-background-button-text-active, rgba(128, 128, 128, 0.55));
       }
 
       .heatsync-chat-btn img {
@@ -319,7 +319,7 @@
         max-height: 500px;
         height: auto;
         margin-bottom: 8px;
-        background: #18181b;
+        background: #000;
         border: 1px solid rgba(255,255,255,0.12);
         border-radius: 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -335,14 +335,14 @@
         align-items: center;
         justify-content: space-between;
         padding: 12px 16px;
-        background: #0e0e10;
+        background: #000;
         border-bottom: 1px solid rgba(255,255,255,0.12);
       }
 
       .heatsync-panel-title {
         font-size: 14px;
         font-weight: 600;
-        color: #efeff1;
+        color: #fff;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -357,7 +357,7 @@
       .heatsync-panel-close {
         background: none;
         border: none;
-        color: #adadb8;
+        color: #808080;
         cursor: pointer;
         padding: 4px;
         border-radius: 0;
@@ -365,7 +365,7 @@
 
       .heatsync-panel-close:hover {
         background: rgba(255, 255, 255, 0.1);
-        color: #efeff1;
+        color: #fff;
       }
 
       .heatsync-header-controls {
@@ -377,7 +377,7 @@
       .heatsync-header-btn {
         background: none;
         border: 1px solid rgba(255,255,255,0.12);
-        color: #adadb8;
+        color: #808080;
         cursor: pointer;
         padding: 4px 8px;
         border-radius: 0;
@@ -400,7 +400,7 @@
       /* Bottom section with search + footer */
       .heatsync-panel-bottom {
         flex-shrink: 0;
-        background: #0e0e10;
+        background: #000;
         border-top: 1px solid rgba(255,255,255,0.12);
       }
 
@@ -421,7 +421,7 @@
       .heatsync-settings-cog {
         background: none;
         border: 1px solid rgba(255,255,255,0.12);
-        color: #adadb8;
+        color: #808080;
         cursor: pointer;
         padding: 6px;
         border-radius: 0;
@@ -446,7 +446,7 @@
       .heatsync-size-btn {
         background: none;
         border: 1px solid rgba(255,255,255,0.12);
-        color: #adadb8;
+        color: #808080;
         cursor: pointer;
         padding: 6px 10px;
         border-radius: 0;
@@ -457,7 +457,7 @@
 
       .heatsync-size-btn:hover {
         border-color: #808080;
-        color: #efeff1;
+        color: #fff;
       }
 
       .heatsync-size-btn.active {
@@ -482,10 +482,10 @@
       .heatsync-search input {
         width: 100%;
         padding: 8px 12px;
-        background: #0e0e10;
+        background: #000;
         border: 1px solid rgba(255,255,255,0.12);
         border-radius: 0;
-        color: #efeff1;
+        color: #fff;
         font-size: 13px;
         outline: none;
       }
@@ -502,7 +502,7 @@
       .heatsync-tabs {
         display: flex;
         border-bottom: 1px solid rgba(255,255,255,0.12);
-        background: #0e0e10;
+        background: #000;
       }
 
       .heatsync-tab {
@@ -510,7 +510,7 @@
         padding: 10px 8px;
         background: none;
         border: none;
-        color: #adadb8;
+        color: #808080;
         font-size: 12px;
         cursor: pointer;
         border-bottom: 2px solid transparent;
@@ -518,12 +518,12 @@
       }
 
       .heatsync-tab:hover {
-        color: #efeff1;
+        color: #fff;
         background: rgba(255,255,255,0.05);
       }
 
       .heatsync-tab.active {
-        color: #efeff1;
+        color: #fff;
         border-bottom-color: #ff6b35;
       }
 
@@ -630,7 +630,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 6px 8px;
-        background: #0e0e10;
+        background: #000;
         border-radius: 0;
         margin-bottom: 6px;
       }
@@ -710,7 +710,7 @@
         background: none;
         border: 1px solid #808080;
         border-radius: 0;
-        color: #aaa;
+        color: #808080;
         font-size: 11px;
         padding: 2px 6px;
         cursor: pointer;
@@ -727,7 +727,7 @@
         background: none;
         border: 1px solid #808080;
         border-radius: 0;
-        color: #aaa;
+        color: #808080;
         font-size: 11px;
         padding: 2px 6px;
         cursor: pointer;
@@ -804,7 +804,7 @@
         gap: 4px;
         margin-top: 12px;
         padding: 8px;
-        background: #0e0e10;
+        background: #000;
         border-radius: 0;
         max-height: 150px;
         overflow-y: auto;
@@ -828,7 +828,7 @@
       .heatsync-status {
         text-align: center;
         padding: 16px;
-        color: #adadb8;
+        color: #808080;
         font-size: 13px;
       }
 
@@ -838,7 +838,7 @@
         width: 12px;
         height: 12px;
         margin-left: 8px;
-        border: 2px solid #adadb8;
+        border: 2px solid #808080;
         border-top-color: transparent;
         border-radius: 50%;
         animation: heatsync-spin 0.8s linear infinite;
@@ -863,7 +863,7 @@
         background: rgba(255,255,255,0.08);
         border: none;
         border-radius: 0;
-        color: #adadb8;
+        color: #808080;
         font-size: 12px;
         cursor: pointer;
         text-align: center;
@@ -873,7 +873,7 @@
 
       .heatsync-link:hover {
         background: rgba(255,255,255,0.14);
-        color: #efeff1;
+        color: #fff;
       }
 
       /* Emote count badge */
@@ -883,7 +883,7 @@
         background: rgba(255,255,255,0.08);
         border-radius: 0;
         font-size: 12px;
-        color: #adadb8;
+        color: #808080;
         margin-left: 8px;
       }
 
@@ -905,7 +905,7 @@
       .heatsync-section-title {
         font-size: 11px;
         font-weight: 600;
-        color: #adadb8;
+        color: #808080;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
@@ -936,7 +936,7 @@
       }
 
       .heatsync-setting-label {
-        color: #efeff1;
+        color: #fff;
         font-size: 13px;
       }
 
@@ -976,7 +976,7 @@
         position: fixed;
         z-index: 5000;
         pointer-events: none;
-        background: #18181b;
+        background: #000;
         border: 2px solid #ff6b35;
         border-radius: 0;
         padding: 8px;
@@ -995,7 +995,7 @@
       .heatsync-emote-hover-preview-name {
         text-align: center;
         font-size: 11px;
-        color: #efeff1;
+        color: #fff;
         margin-top: 4px;
         font-weight: 600;
       }
@@ -1043,7 +1043,7 @@
         justify-content: center;
         padding: 40px 20px;
         text-align: center;
-        color: #adadb8;
+        color: #808080;
       }
 
       .heatsync-error-icon {
@@ -1062,7 +1062,7 @@
         background: rgba(255,255,255,0.06);
         border: none;
         border-radius: 0;
-        color: #efeff1;
+        color: #fff;
         font-size: 13px;
         cursor: pointer;
         transition: none;
@@ -1129,7 +1129,7 @@
         padding: 6px 12px;
         background: none;
         border: none;
-        color: #ddd;
+        color: #fff;
         text-align: left;
         cursor: pointer;
         font-size: 13px;

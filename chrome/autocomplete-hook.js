@@ -1008,8 +1008,8 @@
       cycleTooltip.id = 'heatsync-cycle-tooltip';
       cycleTooltip.style.cssText = `
         position: fixed;
-        background: rgba(24, 24, 27, 0.95);
-        color: #efeff1;
+        background: rgba(0, 0, 0, 0.95);
+        color: #fff;
         padding: 4px 8px;
         border-radius: 0;
         font-size: 13px;

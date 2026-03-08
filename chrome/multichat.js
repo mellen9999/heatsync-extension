@@ -635,7 +635,7 @@
       const ch = config.channels.find(c => (typeof c === 'string' ? c : c.id) === tabId);
       const menu = document.createElement('div');
       menu.id = 'hs-mc-ctx-menu';
-      menu.style.cssText = 'position:fixed;z-index:99999;background:#1a1a1a;border:1px solid #444;border-radius:0;padding:4px 0;min-width:150px;font-size:12px;font-family:inherit;';
+      menu.style.cssText = 'position:fixed;z-index:99999;background:#000;border:1px solid #444;border-radius:0;padding:4px 0;min-width:150px;font-size:12px;font-family:inherit;';
 
       const mkItem = (label, color, fn) => {
         const item = document.createElement('div');
@@ -2671,7 +2671,7 @@
       }
       /* Idle hover — subtle brighten */
       .hs-mc-tab:not(.active):not(.has-new):hover {
-        color: #999 !important;
+        color: #808080 !important;
         background: #000 !important;
       }
       /* New messages — activity indicator */
@@ -2682,7 +2682,7 @@
       }
       /* Has-new hover */
       .hs-mc-tab.has-new:not(.active):hover {
-        background: #252525 !important;
+        background: #000 !important;
       }
       /* Active — focused tab */
       .hs-mc-tab.active {
@@ -2952,7 +2952,7 @@
         text-overflow: ellipsis;
       }
       .hs-mc-reply-user {
-        color: #aaa;
+        color: #808080;
         font-weight: 600;
       }
       .hs-mc-msg.mention {
@@ -3024,7 +3024,7 @@
         margin-left: 4px;
       }
       .hs-mc-time {
-        color: #666;
+        color: #808080;
         font-size: var(--hs-time-font, 10px);
         margin-right: 4px;
       }
@@ -3295,7 +3295,7 @@
       #hs-mc-emote-btn {
         padding: 6px 8px;
         background: #000;
-        color: #efeff1;
+        color: #fff;
         border: none;
         border-radius: 0;
         cursor: pointer;
@@ -3317,8 +3317,8 @@
         right: 0;
         bottom: 52px;
         height: 400px;
-        background: #18181b;
-        border-top: 1px solid #333;
+        background: #000;
+        border-top: 1px solid #808080;
         z-index: 1003;
         overflow: hidden;
         flex-direction: column;
@@ -3337,7 +3337,7 @@
         min-height: 40px !important;
         visibility: visible !important;
         opacity: 1 !important;
-        background: #0e0e10 !important;
+        background: #000 !important;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab {
         flex: 1 !important;
@@ -3366,7 +3366,7 @@
         transition: opacity 0.15s;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab:hover {
-        color: #aaa !important;
+        color: #808080 !important;
         background: rgba(255,255,255,0.04) !important;
       }
       #hs-mc-emote-picker .hs-mc-picker-tab:hover svg {
@@ -3404,7 +3404,7 @@
         justify-content: center;
       }
       .hs-mc-tab:hover {
-        color: #efeff1;
+        color: #fff;
         background: #000;
       }
       .hs-mc-tab.active {
@@ -3474,7 +3474,7 @@
         border-bottom: 1px solid rgba(255,255,255,0.08) !important;
         display: block !important;
         visibility: visible !important;
-        background: #0e0e10 !important;
+        background: #000 !important;
       }
       .hs-mc-search-wrap {
         position: relative;
@@ -3503,7 +3503,7 @@
         border-color: #ff6b35;
       }
       #hs-mc-emote-search::placeholder {
-        color: #999;
+        color: #808080;
       }
       .hs-mc-picker-emote {
         width: 36px !important;
@@ -3545,7 +3545,7 @@
         gap: 12px !important;
         padding: 10px 14px !important;
         cursor: pointer !important;
-        color: #efeff1 !important;
+        color: #fff !important;
         transition: background 0.15s, border-color 0.15s;
         visibility: visible !important;
         border-left: 3px solid transparent;
@@ -3583,7 +3583,7 @@
       .hs-mc-menu-title {
         font-size: 13px;
         font-weight: 500;
-        color: #efeff1;
+        color: #fff;
         line-height: 1.3;
       }
       .hs-mc-menu-desc {
@@ -3638,7 +3638,7 @@
       .hs-mc-pred-title {
         font-size: 13px;
         font-weight: 600;
-        color: #efeff1;
+        color: #fff;
         line-height: 1.3;
         flex: 1;
       }
@@ -3647,7 +3647,7 @@
         padding: 2px 6px;
         border-radius: 0;
         background: rgba(255,255,255,0.1);
-        color: #aaa;
+        color: #808080;
         white-space: nowrap;
         flex-shrink: 0;
       }
@@ -3661,7 +3661,7 @@
       }
       .hs-mc-pred-balance {
         font-size: 12px;
-        color: #aaa;
+        color: #808080;
         margin-bottom: 8px;
         display: flex;
         align-items: center;
@@ -3686,7 +3686,7 @@
       }
       .hs-mc-pred-outcome-title {
         font-size: 12px;
-        color: #efeff1;
+        color: #fff;
         font-weight: 500;
       }
       .hs-mc-pred-outcome-pct {
@@ -3722,7 +3722,7 @@
       .hs-mc-pred-bet-btn {
         background: rgba(255,255,255,0.08);
         border: none;
-        color: #ccc;
+        color: #808080;
         font-size: 11px;
         padding: 3px 8px;
         border-radius: 0;
@@ -3741,7 +3741,7 @@
         width: 52px;
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.1);
-        color: #ccc;
+        color: #808080;
         font-size: 11px;
         padding: 2px 6px;
         border-radius: 0;
@@ -3807,17 +3807,17 @@
         justify-content: space-between !important;
         padding: 8px 14px !important;
         font-size: 12px !important;
-        color: #efeff1 !important;
+        color: #fff !important;
         visibility: visible !important;
       }
       .hs-mc-setting-label {
-        color: #ccc !important;
+        color: #808080 !important;
         font-size: 13px !important;
       }
       .hs-mc-size-btns {
         display: flex;
         gap: 2px;
-        background: #0e0e10;
+        background: #000;
         padding: 2px;
       }
       .hs-mc-size-btn {
@@ -3834,7 +3834,7 @@
       }
       .hs-mc-size-btn:hover {
         background: rgba(255,255,255,0.08) !important;
-        color: #efeff1 !important;
+        color: #fff !important;
       }
       .hs-mc-size-btn.active {
         background: #ff6b35 !important;
@@ -4116,7 +4116,7 @@
       .hs-feed-user {
         font-weight: 600;
         font-size: 13px;
-        color: #efeff1;
+        color: #fff;
         text-decoration: none;
       }
       .hs-feed-user:hover {
@@ -4129,7 +4129,7 @@
       }
       .hs-feed-body {
         font-size: 13px;
-        color: #ddd;
+        color: #fff;
         line-height: 1.4;
         word-wrap: break-word;
         word-break: break-word;
@@ -4199,10 +4199,10 @@
 
       /* Prevent channel accent color bleed on offline/home pages */
       .channel-root--home {
-        background-color: #0e0e10 !important;
+        background-color: #000 !important;
       }
       .root-scrollable__content {
-        background: #0e0e10;
+        background: #000;
       }
       /* Collapsed chat rules moved to injectStyles() so they're always active */
     `;
@@ -4788,7 +4788,7 @@
     div.innerHTML = `
       <div class="hs-feed-header">
         <img class="hs-feed-avatar" src="${avatarUrl}" alt="" loading="lazy" onerror="this.style.display='none'">
-        <a href="https://heatsync.org/u/${encodeURIComponent(m.username)}" target="_blank" class="hs-feed-user" style="color:${sanitizeColor(m.user_color || '#efeff1')}">${escapeHtml(m.username || 'anon')}</a>
+        <a href="https://heatsync.org/u/${encodeURIComponent(m.username)}" target="_blank" class="hs-feed-user" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>
         <span class="hs-feed-time">${escapeHtml(time)}</span>
       </div>
       <div class="hs-feed-body">${content}</div>
@@ -4985,7 +4985,7 @@
 
     div.innerHTML = `
       <div class="hs-feed-header">
-        <a href="https://heatsync.org/u/${encodeURIComponent(m.username)}" target="_blank" class="hs-feed-user" style="color:${sanitizeColor(m.user_color || '#efeff1')}">${escapeHtml(m.username || 'anon')}</a>
+        <a href="https://heatsync.org/u/${encodeURIComponent(m.username)}" target="_blank" class="hs-feed-user" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>
         <span class="hs-feed-time">${escapeHtml(time)}</span>
       </div>
       <div class="hs-feed-body">${content}</div>
@@ -6393,11 +6393,11 @@
       row.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;max-width:320px;'
       const lbl = document.createElement('span')
       lbl.textContent = label
-      lbl.style.cssText = 'font-size:11px;font-weight:700;min-width:56px;color:#aaa;'
+      lbl.style.cssText = 'font-size:11px;font-weight:700;min-width:56px;color:#808080;'
       const input = document.createElement('input')
       input.type = 'text'
       input.placeholder = placeholder
-      input.style.cssText = 'flex:1;background:#fff;color:#000;border:1px solid #333;padding:5px 8px;border-radius:0;font-size:12px;outline:none;font-family:inherit;'
+      input.style.cssText = 'flex:1;background:#fff;color:#000;border:1px solid #808080;padding:5px 8px;border-radius:0;font-size:12px;outline:none;font-family:inherit;'
       row.appendChild(lbl)
       row.appendChild(input)
       return { row, input }
@@ -6426,7 +6426,7 @@
 
     const cancelBtn = document.createElement('button')
     cancelBtn.textContent = 'cancel'
-    cancelBtn.style.cssText = 'background:#333;color:#fff;border:none;padding:7px 20px;border-radius:0;cursor:pointer;font-size:12px;font-family:inherit;min-width:80px;'
+    cancelBtn.style.cssText = 'background:#808080;color:#fff;border:none;padding:7px 20px;border-radius:0;cursor:pointer;font-size:12px;font-family:inherit;min-width:80px;'
 
     btnRow.appendChild(addBtn)
     btnRow.appendChild(cancelBtn)
@@ -6553,12 +6553,12 @@
     row.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;max-width:320px;';
     const lbl = document.createElement('span');
     lbl.textContent = 'youtube';
-    lbl.style.cssText = 'font-size:11px;font-weight:700;min-width:56px;color:#aaa;';
+    lbl.style.cssText = 'font-size:11px;font-weight:700;min-width:56px;color:#808080;';
     const input = document.createElement('input');
     input.type = 'text';
     input.value = ch.youtube || '';
     input.placeholder = 'username or url (leave empty to remove)';
-    input.style.cssText = 'flex:1;background:#fff;color:#000;border:1px solid #333;padding:5px 8px;border-radius:0;font-size:12px;outline:none;font-family:inherit;';
+    input.style.cssText = 'flex:1;background:#fff;color:#000;border:1px solid #808080;padding:5px 8px;border-radius:0;font-size:12px;outline:none;font-family:inherit;';
     row.appendChild(lbl);
     row.appendChild(input);
     wrapper.appendChild(row);
@@ -6570,7 +6570,7 @@
     saveBtn.style.cssText = 'background:#fff;color:#000;border:none;padding:7px 20px;border-radius:0;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit;min-width:80px;';
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'cancel';
-    cancelBtn.style.cssText = 'background:#333;color:#fff;border:none;padding:7px 20px;border-radius:0;cursor:pointer;font-size:12px;font-family:inherit;min-width:80px;';
+    cancelBtn.style.cssText = 'background:#808080;color:#fff;border:none;padding:7px 20px;border-radius:0;cursor:pointer;font-size:12px;font-family:inherit;min-width:80px;';
     btnRow.appendChild(saveBtn);
     btnRow.appendChild(cancelBtn);
     wrapper.appendChild(btnRow);

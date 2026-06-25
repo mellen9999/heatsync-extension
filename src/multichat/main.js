@@ -3622,7 +3622,7 @@
             searchSpinner.classList.remove('visible')
           }
         }, 250)
-      })
+      }, { signal: mcSignal })
 
       // Clear search state when input is cleared via keyboard
       searchInput.addEventListener('keydown', (e) => {
@@ -3634,7 +3634,7 @@
           renderMessages(currentTab)
           searchInput.blur()
         }
-      })
+      }, { signal: mcSignal })
     }
 
     return overlay;
@@ -3759,7 +3759,7 @@
       overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:ew-resize'
       document.body.appendChild(overlay)
       e.preventDefault()
-    })
+    }, { signal: mcSignal })
 
     handle.addEventListener('pointermove', (e) => {
       if (!isResizing || e.pointerId !== activePointerId) return
@@ -3767,7 +3767,7 @@
       const max = Math.min(MAX_CHAT_WIDTH, getTwitchMaxChatWidth())
       pendingWidth = Math.min(max, Math.max(MIN_CHAT_WIDTH, startWidth + delta))
       if (!rafId) rafId = requestAnimationFrame(applyResize)
-    })
+    }, { signal: mcSignal })
 
     function endDrag(e) {
       if (!isResizing || (e && e.pointerId !== activePointerId)) return
@@ -3792,8 +3792,8 @@
       if (m) try { scrollMsgsToBottom(m) } catch (_) {}
       saveChatWidth()
     }
-    handle.addEventListener('pointerup', endDrag)
-    handle.addEventListener('pointercancel', endDrag)
+    handle.addEventListener('pointerup', endDrag, { signal: mcSignal })
+    handle.addEventListener('pointercancel', endDrag, { signal: mcSignal })
 
     loadChatWidth()
     loadChatHeight()
@@ -4024,7 +4024,7 @@
       }
       document.body.appendChild(ghost);
       e.preventDefault();
-    });
+    }, { signal: mcSignal });
     handle.addEventListener('pointermove', (e) => {
       if (!_isResizingC || e.pointerId !== activePid) return;
       // Full pixel-freedom drag — bounded only by viewport-10 so the
@@ -4060,7 +4060,7 @@
           }
         });
       }
-    });
+    }, { signal: mcSignal });
     const endDrag = (e) => {
       if (!_isResizingC || (e && e.pointerId !== activePid)) return;
       _isResizingC = false;
@@ -4093,8 +4093,8 @@
       saveChatWidth();
       saveChatHeight();
     };
-    handle.addEventListener('pointerup', endDrag);
-    handle.addEventListener('pointercancel', endDrag);
+    handle.addEventListener('pointerup', endDrag, { signal: mcSignal });
+    handle.addEventListener('pointercancel', endDrag, { signal: mcSignal });
     return handle;
   }
   function positionChatResizeHandle() {
@@ -4293,14 +4293,14 @@
       overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:col-resize'
       document.body.appendChild(overlay)
       e.preventDefault()
-    })
+    }, { signal: mcSignal })
 
     handle.addEventListener('pointermove', (e) => {
       if (!isResizing || e.pointerId !== activePointerId) return
       const delta = startX - e.clientX
       pendingWidth = Math.min(MAX_CHAT_WIDTH, Math.max(MIN_CHAT_WIDTH, startWidth + delta))
       if (!rafId) rafId = requestAnimationFrame(applyResize)
-    })
+    }, { signal: mcSignal })
 
     function endDrag(e) {
       if (!isResizing || (e && e.pointerId !== activePointerId)) return
@@ -4318,8 +4318,8 @@
       try { window.dispatchEvent(new Event('resize')) } catch (_) {}
       saveChatWidth()
     }
-    handle.addEventListener('pointerup', endDrag)
-    handle.addEventListener('pointercancel', endDrag)
+    handle.addEventListener('pointerup', endDrag, { signal: mcSignal })
+    handle.addEventListener('pointercancel', endDrag, { signal: mcSignal })
 
     loadChatWidth().then(() => { applyKickChatWidth() })
     loadChatHeight()
@@ -4695,7 +4695,7 @@
       overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:ew-resize'
       document.body.appendChild(overlay)
       e.preventDefault()
-    })
+    }, { signal: mcSignal })
 
     handle.addEventListener('pointermove', (e) => {
       if (!isResizing || e.pointerId !== activePointerId) return
@@ -4705,7 +4705,7 @@
       const ytMax = getYtMaxChatWidth()
       pendingWidth = Math.min(ytMax, Math.max(MIN_CHAT_WIDTH, startWidth + delta))
       if (!rafId) rafId = requestAnimationFrame(applyResize)
-    })
+    }, { signal: mcSignal })
 
     function endDrag(e) {
       if (!isResizing || (e && e.pointerId !== activePointerId)) return
@@ -4723,8 +4723,8 @@
       try { window.dispatchEvent(new Event('resize')) } catch (_) {}
       saveChatWidth()
     }
-    handle.addEventListener('pointerup', endDrag)
-    handle.addEventListener('pointercancel', endDrag)
+    handle.addEventListener('pointerup', endDrag, { signal: mcSignal })
+    handle.addEventListener('pointercancel', endDrag, { signal: mcSignal })
 
     loadChatWidth().then(() => { applyYouTubeChatWidth() })
     loadChatHeight()
@@ -5084,7 +5084,10 @@
       if (buffer) buffer.push(msg)
       // Also inject into YouTube channel buffers
       const ytBuf = chId && channelYtMessages.get(chId)
-      if (ytBuf) ytBuf.push(msg)
+      if (ytBuf) {
+        ytBuf.push(msg)
+        if (ytBuf.length > PERSIST_MAX_YT) ytBuf.splice(0, ytBuf.length - PERSIST_MAX_YT)
+      }
     }
 
     // Live-append to current tab if it's a chat tab

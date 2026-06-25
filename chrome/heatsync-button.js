@@ -4491,6 +4491,7 @@
 
   // Sync blocked hash set from content.js
   window.addEventListener('message', (event) => {
+    if (event.source !== window) return
     if (event.origin !== location.origin) return;
     if (event.data?.type === 'heatsync-blocked-sync' && Array.isArray(event.data.hashes)) {
       _blockedHashSet = new Set(event.data.hashes);
@@ -4947,6 +4948,7 @@
       cleanup.setTimeout(injectButton, 500);
     }
     window.addEventListener('message', (event) => {
+      if (event.source !== window) return
       if (event.origin !== location.origin) return
       if (event.data?.type === 'heatsync-nav') handleButtonNav()
     }, { signal: btnSignal })
@@ -4955,6 +4957,7 @@
     // Listen for inventory updates from content script - refresh panel if open (debounced)
     let inventoryRefreshTimeout = null;
     window.addEventListener('message', (event) => {
+      if (event.source !== window) return
       if (event.origin !== location.origin) return;
       if (event.data?.type === 'heatsync-inventory-update' && panelOpen) {
         // Debounce: only refresh once per 2 seconds

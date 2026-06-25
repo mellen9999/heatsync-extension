@@ -4123,7 +4123,6 @@
         return;
       }
     }
-    handle.style.display = 'block';
     // Anchor the bar to the panel container's ACTUAL rendered edges via
     // getBoundingClientRect. The handle is position:fixed on body, but
     // the panel container's own position:fixed can be shifted by a
@@ -4133,6 +4132,11 @@
     // offsets — otherwise the bar overlays tabbar/inputbar content.
     const cont = document.getElementById('hs-mc-container');
     const r = cont ? cont.getBoundingClientRect() : null;
+    // No chat panel (e.g. logged out → the platform's login modal): a null
+    // rect would strand the bar at the viewport fallback (a full-height
+    // orange line with no chat). Hide it until a real chat panel exists.
+    if (!r || r.width < 2 || r.height < 2) { handle.style.display = 'none'; return; }
+    handle.style.display = 'block';
     const cTop = r ? r.top : 0;
     const cLeft = r ? r.left : 0;
     const cRight = r ? r.right : window.innerWidth;

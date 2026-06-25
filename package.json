@@ -1,6 +1,6 @@
 {
   "name": "heatsync-extension",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "Custom emotes for Twitch, Kick, and YouTube live chat — 5000 slots, real-time sync, multichat overlay",
   "private": true,
   "license": "MIT",

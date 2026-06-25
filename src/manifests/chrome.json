@@ -4,7 +4,7 @@
   "default_locale": "en",
   "name": "__MSG_manifest_name__",
   "short_name": "heatsync",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "__MSG_manifest_description__",
   "author": "heatsync.org",
   "homepage_url": "https://heatsync.org",

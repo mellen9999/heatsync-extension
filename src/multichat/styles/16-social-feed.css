@@ -504,10 +504,11 @@
     .hs-native-hidden#channel-chatroom ~ #hs-mc-container {
       position: fixed !important;
       right: 0 !important;
-      top: 0 !important;
+      /* clear Kick's fixed 60px top nav so the panel doesn't bury search + login/profile */
+      top: var(--hs-kick-topnav-h, 60px) !important;
       bottom: 0 !important;
       width: var(--hs-kick-chat-width, 340px) !important;
-      height: 100vh !important;
+      height: auto !important;
       z-index: 9999 !important;
       display: flex !important;
       background: #000 !important;

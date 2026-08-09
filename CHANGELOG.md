@@ -1,5 +1,37 @@
 # changelog
 
+## [1.7.48] — 2026-08-09
+
+### fixed
+- **firefox direct installs update themselves now** — the `.xpi` you download from github had no update channel wired up, so it stayed on whatever version you installed forever. it now checks for and installs new versions on its own, like the store build does. (installs made before this one still have to be updated by hand once.)
+- **pasting an image into the composer** — it failed every time with "upload failed: network error" on twitch, kick and youtube. the upload took a route the browser blocks from a stream page; it goes through the extension proper now. the percentage is gone in exchange — it says "uploading…" instead.
+- **hover preview is actually 4x** — wide emotes previewed at well under 4x on twitch's own chat because the preview was capped at 128px. it now scales off the emote's real size, matching the panel.
+- **common words stopped turning into mention links** — one person typing "@you" made every plain "you" in every channel a bold coloured link for the rest of the session.
+
+## [1.7.47] — 2026-08-08
+
+### fixed
+- **signed in but invisible** — your identity could be fetched and then dropped, leaving you logged in with nothing that knows who you are: no red mentions, no "replied to you", no mention pings, and no message saying why. it sticks now, and an expired session logs you out cleanly instead of parking you in that state.
+- **"replying to" bar on twitch** — a reply to you lost its reply bar (and its red) whenever the same message arrived from the page before it arrived from chat.
+- **kick reply threads** — the reply id was read under a name kick never sends, which killed reply-thread hover on kick and lost the link in the archive.
+- **blank player on a channel page** — the guard that keeps the stream from collapsing was switched off on exactly the page that has a player, whenever twitch's right column overflowed.
+
+## [1.7.46] — 2026-08-07
+
+### fixed
+- **hiding twitch's native chat could break the stream** — with native chat hidden, twitch demoted the video into a white rectangle at the bottom of the page. two of our own features breaking the stream between them; almost certainly the "extension breaks the stream / white screen" report.
+
+## [1.7.45] — 2026-08-07
+
+### fixed
+- **the extension can no longer leave you with a blank stream** — our player positioning races the platform's own layout code (ad breaks, theatre flips, page nav, resize), and when it lost, the player collapsed to nothing — a white rectangle on a light theme. instead of fighting that race with more css, it now watches the result and, if the player stays broken, drops our geometry and lets the platform lay itself out. worst case chat docks somewhere less pretty; never a blank player.
+- **a native reply to you counts as a mention** — on every platform, not just some.
+- **@mention hover shows the right platform's profile** — it was looking the person up on the sender's platform.
+- **`Tab` applies modifiers again** — typing `w!` or `ffzLeave` onto the previous emote had stopped working.
+- **animated emote modifiers follow your animation setting**, and the picker fills the chat box again.
+- **resub celebrations stopped drawing twice.**
+- youtube links without a host get a playable card instead of plain text; the "N new" jump button is yellow rather than brand orange; non-playable chat cards take the white plate on hover; hovering an emote no longer re-parents the preview on every mouse move.
+
 ## [1.7.44] — 2026-08-06
 
 ### fixed

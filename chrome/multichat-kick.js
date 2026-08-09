@@ -19898,6 +19898,17 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
 // the page already declares a scheme (heatsync.org does).
 function declareDarkColorScheme() {
   try {
+    // Chromium only. This is a workaround for a chromium-family force-dark
+    // behaviour; gecko has no equivalent, so on firefox the meta buys nothing
+    // and is pure blast radius — it is a PAGE-LEVEL declaration, so it retimes
+    // the host's own canvas, controls, scrollbars and same-origin frames, not
+    // just our overlay. It landed in 1.7.43 and is the one change a firefox
+    // reporter could bisect the white player to; 1.7.42 (without it) is clean
+    // for them. cfbb08b scoped the per-element color-scheme RULES and left this
+    // page-level stamp untouched, which is why the report survived 1.7.45-47.
+    // navigator.userAgentData is chromium-only (gecko/webkit don't ship it) —
+    // a structural signal rather than a UA-string sniff.
+    if (!navigator.userAgentData) return
     if (document.head.querySelector('meta[name="color-scheme"]')) return
     const channels = (el) => {
       const c = getComputedStyle(el).backgroundColor.match(/\d+(\.\d+)?/g)

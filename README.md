@@ -23,7 +23,7 @@ twitch, kick and youtube live chat in one panel — read every stream you follow
 
 **[install from firefox add-ons](https://addons.mozilla.org/firefox/addon/heatsync-chat/)** — one click, auto-updates.
 
-alternative: download the AMO-signed **[heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi)** and open it with firefox — installs permanently.
+alternative: download the AMO-signed **[heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi)** and open it with firefox — installs permanently, and auto-updates from the same link.
 
 ## build from source
 

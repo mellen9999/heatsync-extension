@@ -49,6 +49,8 @@ jobs:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
           AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
           VERSION: ${{ steps.ver.outputs.version }}
+          UPDATES_URL: https://github.com/mellen9999/heatsync-extension/releases/latest/download/updates.json
+          XPI_URL: https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi
         run: |
           # Upload dist/firefox to AMO, wait for automated unlisted signing, then
           # publish the signed .xpi as the versionless alias. Fails loud if signing
@@ -60,9 +62,19 @@ jobs:
           # can never collide and release order stops mattering. (1.7.24/1.7.25
           # burned the clean number unlisted and 409-blocked the store channel;
           # the suffix only shows in about:addons for direct-xpi installs.)
+          # update_url lives ONLY in this self-dist build: AMO rejects it on the
+          # listed channel, and without it a direct-xpi install never updates
+          # itself — 1.7.44.1 installs sat frozen while the store moved on.
+          # The alias URLs always resolve to the newest release's assets.
           SIGN_VERSION="${VERSION}.1"
-          jq --arg v "$SIGN_VERSION" '.version = $v' dist/firefox/manifest.json > /tmp/fxman.json
+          jq --arg v "$SIGN_VERSION" --arg u "$UPDATES_URL" \
+            '.version = $v | .browser_specific_settings.gecko.update_url = $u' \
+            dist/firefox/manifest.json > /tmp/fxman.json
           mv /tmp/fxman.json dist/firefox/manifest.json
+          jq -n --arg v "$SIGN_VERSION" --arg link "$XPI_URL" '
+            {addons: {"heatsync@heatsync.org": {updates: [
+              {version: $v, update_link: $link, browser_specific_settings: {gecko: {strict_min_version: "128.0"}}}
+            ]}}}' > dist/updates.json
           # web-ext can 409 against its OWN submission ("version already exists")
           # when validation polling races the upload — the version record is live
           # on AMO and signs server-side regardless. Fall back to downloading the
@@ -111,4 +123,5 @@ jobs:
             "dist/heatsync-source-${VERSION}.zip" \
             dist/heatsync-chrome.zip \
             dist/heatsync-firefox.xpi \
+            dist/updates.json \
             dist/checksums.txt

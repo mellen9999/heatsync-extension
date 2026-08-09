@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.49] — 2026-08-09
+
+### fixed
+- **the white-rectangle stream on firefox** — a fix meant purely for chrome's own dark-mode override was running on firefox too, where it doesn't apply and only hurt: it stamped the whole host page as dark, which could collapse the player into a blank white block. firefox never gets that stamp now. chrome is unaffected.
+
 ## [1.7.48] — 2026-08-09
 
 ### fixed

@@ -21839,8 +21839,13 @@ function parseIrcLine(raw, channel) {
     const tags = parseTags(tagsMatch[1])
 
     // PRIVMSG: @tags :user!user@user.tmi.twitch.tv PRIVMSG #channel :message
-    const privmsg = raw.match(/PRIVMSG #([^ ]+) :(.+)$/)
+    // The trailing colon is OPTIONAL in IRC when the message is a single word —
+    // robotty's recent-messages replay serializes one-word lines without it
+    // (`PRIVMSG #ch Gladge`), and requiring the colon silently dropped every
+    // emote-only/one-word message from history (2026-08-10, same fix as site).
+    const privmsg = raw.match(/PRIVMSG #([^ ]+) (?::(.*)|([^\s:][^ ]*))$/)
     if (privmsg) {
+      privmsg[2] = privmsg[2] ?? privmsg[3]
       const displayName = tags['display-name'] || 'anonymous'
       // /me sends as \x01ACTION text\x01
       let text = flatStr(privmsg[2])

@@ -508,3 +508,20 @@ test('CircularBuffer: default capacity is 1500', () => {
 test('CircularBuffer: getAll on empty buffer returns []', () => {
   expect(new CircularBuffer(10).getAll()).toEqual([])
 })
+
+test('parseIrcLine: colon-less single-word PRIVMSG (robotty history form) parses', () => {
+  const msg = parseIrcLine(
+    '@display-name=Dongblob;user-id=371;id=abc;tmi-sent-ts=1786370000000 :dongblob!dongblob@dongblob.tmi.twitch.tv PRIVMSG #nl_kripp ELKEKO',
+    'nl_kripp',
+  )
+  expect(msg?.text).toBe('ELKEKO')
+  expect(msg?.login).toBe('dongblob')
+})
+
+test('parseIrcLine: colon form with spaces still parses intact', () => {
+  const msg = parseIrcLine(
+    '@display-name=Alice;id=d1 :alice!alice@alice.tmi.twitch.tv PRIVMSG #ch :two words here',
+    'ch',
+  )
+  expect(msg?.text).toBe('two words here')
+})

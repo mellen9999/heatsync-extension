@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.50] — 2026-08-11
+
+### added
+- **feedback / bug report from the popup** — a `feedback` link in the popup footer opens a small form; reports land on heatsync with your extension version and platform attached, so "it's broke" comes with enough context to fix. works signed out too.
+
+### fixed
+- **missing single-word messages in twitch history** — history lines whose whole message is one word arrive in a colon-less form the parser treated as malformed and dropped. they parse now, so short messages ("W", "LULW") stop vanishing from backfilled history.
+
 ## [1.7.49] — 2026-08-09
 
 ### fixed

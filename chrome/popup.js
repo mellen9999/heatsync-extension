@@ -293,6 +293,72 @@
   })
   updateAuthUI()
 
+  // Feedback / bug report — footer link toggles the pane, background posts it
+  // (bg owns the auth token; anonymous send still works).
+  const linkFeedback = document.getElementById('link-feedback')
+  const fbPane = document.getElementById('fb-pane')
+  const fbText = document.getElementById('fb-text')
+  const fbSend = document.getElementById('fb-send')
+  const fbStatus = document.getElementById('fb-status')
+  let fbKind = 'feedback'
+  for (const el of document.querySelectorAll('#fb-kind .plat')) {
+    el.addEventListener('click', () => {
+      fbKind = el.dataset.kind
+      for (const b of document.querySelectorAll('#fb-kind .plat')) b.setAttribute('aria-selected', String(b === el))
+      fbText.placeholder = fbKind === 'bug' ? 'what broke? what did you expect?' : 'what should heatsync do better?'
+      fbText.focus()
+    })
+  }
+  linkFeedback.addEventListener('click', (e) => {
+    e.preventDefault()
+    fbPane.hidden = !fbPane.hidden
+    if (!fbPane.hidden) fbText.focus()
+  })
+  fbSend.addEventListener('click', async () => {
+    const body = fbText.value.trim()
+    if (body.length < 3) {
+      fbStatus.textContent = 'say a little more'
+      return
+    }
+    fbSend.disabled = true
+    fbSend.textContent = 'sending...'
+    fbStatus.textContent = ''
+    let url = ''
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      url = (tab?.url || '').slice(0, 2000)
+    } catch {}
+    const platform = /twitch\.tv/.test(url)
+      ? 'twitch'
+      : /kick\.com/.test(url)
+        ? 'kick'
+        : /youtube\.com/.test(url)
+          ? 'youtube'
+          : ''
+    const context = {
+      version: chrome.runtime.getManifest().version,
+      ua: navigator.userAgent.slice(0, 500),
+    }
+    if (url) context.url = url
+    if (platform) context.platform = platform
+    let res = null
+    try {
+      res = await chrome.runtime.sendMessage({ type: 'bg_submit_feedback', kind: fbKind, body, context })
+    } catch {}
+    fbSend.textContent = 'send'
+    fbSend.disabled = false
+    if (res?.ok) {
+      fbStatus.textContent = 'sent — thank you'
+      fbText.value = ''
+      setTimeout(() => {
+        fbPane.hidden = true
+        fbStatus.textContent = ''
+      }, 1200)
+    } else {
+      fbStatus.textContent = 'failed to send. try again.'
+    }
+  })
+
   // Lite mode removed — the overlay always boots now.
 
   // Inventory slot count — personal emotes only (filter out subscription:true).

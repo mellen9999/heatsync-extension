@@ -12066,6 +12066,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ channels: [...BG_IRC.channelTabs.keys()] })
     return true
   }
+  if (message.type === 'bg_submit_feedback') {
+    // Popup feedback form. Server re-validates everything; the slices here
+    // just keep an oversized payload from 422ing on schema caps.
+    const kind = message.kind === 'bug' ? 'bug' : 'feedback'
+    const body = typeof message.body === 'string' ? message.body.trim().slice(0, 4000) : ''
+    if (body.length < 3) {
+      sendResponse({ ok: false, error: 'too short' })
+      return true
+    }
+    const rawCtx = message.context && typeof message.context === 'object' ? message.context : {}
+    const context = {}
+    for (const [key, max] of [
+      ['url', 2000],
+      ['ua', 500],
+      ['version', 50],
+      ['platform', 50],
+      ['viewport', 50],
+    ]) {
+      if (typeof rawCtx[key] === 'string' && rawCtx[key]) context[key] = rawCtx[key].slice(0, max)
+    }
+    ;(async () => {
+      try {
+        const token = await retrieveToken()
+        const headers = { 'Content-Type': 'application/json' }
+        if (token) headers.Authorization = `Bearer ${token}`
+        const r = await fetchWithTimeout(
+          `${API_URL}/api/feedback`,
+          { method: 'POST', headers, body: JSON.stringify({ kind, body, source: 'ext', context }) },
+          10000,
+        )
+        sendResponse({ ok: r.ok })
+      } catch (e) {
+        sendResponse({ ok: false, error: String(e?.message || e) })
+      }
+    })()
+    return true
+  }
   if (message.type === 'bg_irc_join') {
     const ch = bgIrcSafeChannel(message.channel)
     if (!ch) {

@@ -119,6 +119,16 @@
     }
 
 
+    .fb-pane {
+      padding: 12px 16px;
+      border-top: 1px solid #1c1c1c;
+    }
+    .fb-text {
+      resize: vertical;
+      min-height: 64px;
+      display: block;
+    }
+
     .footer {
       display: flex;
       border-top: 1px solid #1c1c1c;
@@ -169,10 +179,21 @@
   </div>
 
 
+  <div class="fb-pane" id="fb-pane" hidden>
+    <div class="plat-pick" id="fb-kind" role="tablist">
+      <button type="button" class="plat" data-kind="feedback" role="tab" aria-selected="true">feedback</button>
+      <button type="button" class="plat" data-kind="bug" role="tab" aria-selected="false">bug</button>
+    </div>
+    <textarea class="input fb-text" id="fb-text" rows="4" maxlength="4000" placeholder="what should heatsync do better?" spellcheck="true"></textarea>
+    <button class="btn" id="fb-send">send</button>
+    <div class="detected" id="fb-status"></div>
+  </div>
+
   <div class="footer">
     <a id="link-site" href="https://heatsync.org" target="_blank" rel="noopener noreferrer">heatsync.org</a>
     <a id="link-privacy" href="https://heatsync.org/legal/privacy" target="_blank" rel="noopener noreferrer" data-i18n="popup_privacy_link">no third-party tracking</a>
     <a id="link-errors" href="#" title="left-click: copy last 50 errors / right-click: clear" data-i18n-title="popup_errors_title">errors (0)</a>
+    <a id="link-feedback" href="#" title="feedback / bug report">feedback</a>
   </div>
 
   <script src="popup.js"></script>

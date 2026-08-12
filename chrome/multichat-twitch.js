@@ -16878,6 +16878,10 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       overflow: hidden;
       cursor: pointer;
     }
+    .hs-feed-embed-yt-thumb.hs-yt-portrait {
+      aspect-ratio: 9 / 16;
+      max-width: 320px;
+    }
     .hs-feed-embed-yt-thumb img {
       width: 100%;
       height: 100%;
@@ -29141,10 +29145,11 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   // Show state with source for globals. 2-state model: 'unadded' is no
   // longer a user-facing tier (click pastes, doesn't add — auto-add fires
   // at send time silently), so fall it through to the source-label branch.
-  // data-inv marks emotes that render via a heatsync inventory (the sender's
-  // or the viewer's own — stamped by processEmotes' _lookup); those get the
-  // inventory label instead of the asset's original provider, so the same
-  // emote never reads "inventory" on your rows but "7TV" on the sender's.
+  // data-inv marks emotes that render via a heatsync inventory (stamped by
+  // processEmotes' _lookup). The label is VIEWER-relative: "inventory" only
+  // when it's in YOUR set (state 'owned'); a sender's inventory emote you
+  // don't own reads "Heatsync" — it's a heatsync-vouched emote you could
+  // add, and the label flips to "inventory" the moment you do.
   const wrapper = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-wrapper')
   const fromInv = wrapper?.dataset.inv === '1' || hoveredImg?.dataset?.inv === '1'
   let label
@@ -29153,7 +29158,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   } else if (state === 'blocked') {
     label = t('mc_emote_blocked')
   } else if (fromInv) {
-    label = t('mc_emote_in_set')
+    label = 'Heatsync'
   } else {
     // Global / channel / sub - show source with appropriate scope
     const sourceLabels = {
@@ -35348,11 +35353,18 @@ function chatEmbedForUrl(rawUrl) {
   else if ((ym = cleanUrl.match(/youtube\.com\/shorts\/([\w-]{11})/))) ytId = ym[1]
   if (ytId) {
     const id = sanitizeEmbedId(ytId)
-    if (id)
-      return `<a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" class="hs-mc-media hs-mc-playable hs-feed-embed-yt-thumb">
-      <img src="${hsProxyImg(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`)}" alt="" loading="lazy" decoding="async" data-fb="hide">
+    // Shorts are 9:16 — the card (and the in-place player that overlays its
+    // rect) renders portrait like the tiktok card, instead of letterboxing
+    // the video into a strip inside a 16:9 box. oar2.jpg is the portrait
+    // thumb yt serves for shorts; data-fb hides it if a short lacks one.
+    const isShort = /\/shorts\//i.test(cleanUrl)
+    if (id) {
+      const thumb = isShort ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : `https://i.ytimg.com/vi/${id}/mqdefault.jpg`
+      return `<a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" class="hs-mc-media hs-mc-playable hs-feed-embed-yt-thumb${isShort ? ' hs-yt-portrait' : ''}">
+      <img src="${hsProxyImg(thumb)}" alt="" loading="lazy" decoding="async" data-fb="hide">
       <span class="hs-feed-embed-yt-play">▶</span>
     </a>`
+    }
   }
   // Providers the server resolver handles (oEmbed) → lightweight pending card.
   // Server returns image/video/audio/rich; unsupported → graceful link card.

@@ -4812,33 +4812,35 @@ function scanAndApplyModifiersInInput(input) {
         pos = end
       }
     }
-    const remaining = []
+    // Indices to delete. Consuming a token used to be followed by collapsing
+    // EVERY whitespace run in the node, which silently rewrote spacing the user
+    // typed further along the line ("w!  two   spaces" → " two spaces"). Remove
+    // the token and ONE separator beside it; leave the rest byte-for-byte.
+    const drop = new Set()
     let consumedHere = false
     for (let i = 0; i < tokens.length; i++) {
       const tok = tokens[i]
-      if (!tok || /^\s*$/.test(tok)) {
-        remaining.push(tok)
-        continue
-      }
+      if (!tok || /^\s*$/.test(tok)) continue
       const cls = hsModClassify(tok, { allowPrefix: i === caretTokIdx })
       if (cls.kind !== 'modifier') {
         // Real text between the emote and the token breaks the anchor — a
         // modifier attaches to the IMMEDIATELY preceding emote.
         prevEmote = null
-        remaining.push(tok)
         continue
       }
       const targetImg = hsModAnchorEl(prevEmote)
-      if (!targetImg) {
-        remaining.push(tok)
-        continue
-      }
+      if (!targetImg) continue
       hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)
+      drop.add(i)
+      // Take the separator in FRONT of the token, so the gap the user typed
+      // after it reaches the next word intact.
+      if (i > 0 && /^\s+$/.test(tokens[i - 1]) && !drop.has(i - 1)) drop.add(i - 1)
+      else if (/^\s+$/.test(tokens[i + 1] || '')) drop.add(i + 1)
       appliedAny = true
       consumedHere = true
     }
     if (consumedHere) {
-      child.textContent = remaining.join('').replace(/\s+/g, ' ') || ' '
+      child.textContent = tokens.filter((_, i) => !drop.has(i)).join('') || ' '
     }
   }
   if (appliedAny && typeof pendingMessage !== 'undefined') pendingMessage = getInputText()

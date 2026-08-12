@@ -89,6 +89,13 @@
       text-overflow: ellipsis;
       max-width: calc(100% - 24px);
     }
+    /* An empty composer shows its placeholder, not a caret — a bar blinking
+       next to "send a message" reads as a second cursor. Same two states the
+       placeholder paints, so caret and placeholder are never both visible. */
+    #hs-mc-input[contenteditable]:empty,
+    #hs-mc-input[contenteditable]:has(br:only-child) {
+      caret-color: transparent;
+    }
     /* WYSIWYG emote images in input — height clamped, width auto so wide
        emotes (catKISS, peepoArrive, etc.) render at natural aspect.
        max-width caps absurdly wide ones so a single emote can't blow out the

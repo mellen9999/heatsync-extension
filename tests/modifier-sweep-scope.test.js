@@ -233,3 +233,24 @@ describe('Tab gate — unambiguous modifiers run the sweep at any length', () =>
     expect(INPUT_SRC).toContain('if (!acState.active && (_tabWord.length < 2 || _tabWordIsMod)) {')
   })
 })
+
+describe('modifier sweep — typed spacing survives', () => {
+  test('only the token and one separator go, not every whitespace run', () => {
+    // The composer preserves typed runs; collapsing them rewrote the line
+    // somewhere the user was not even looking.
+    const node = text(' w!  two   spaces  here')
+    const input = makeInput([chip(), node])
+    const { sweep, applied } = makeSweep({})
+    expect(sweep(input)).toBe(true)
+    expect(applied).toEqual(['w!'])
+    expect(node.textContent).toBe('  two   spaces  here')
+  })
+
+  test('a token with nothing before it takes the separator after it', () => {
+    const node = text('w!  rest')
+    const input = makeInput([chip(), node])
+    const { sweep } = makeSweep({})
+    expect(sweep(input)).toBe(true)
+    expect(node.textContent).toBe('rest')
+  })
+})

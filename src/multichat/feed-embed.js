@@ -434,11 +434,18 @@ function chatEmbedForUrl(rawUrl) {
   else if ((ym = cleanUrl.match(/youtube\.com\/shorts\/([\w-]{11})/))) ytId = ym[1]
   if (ytId) {
     const id = sanitizeEmbedId(ytId)
-    if (id)
-      return `<a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" class="hs-mc-media hs-mc-playable hs-feed-embed-yt-thumb">
-      <img src="${hsProxyImg(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`)}" alt="" loading="lazy" decoding="async" data-fb="hide">
+    // Shorts are 9:16 — the card (and the in-place player that overlays its
+    // rect) renders portrait like the tiktok card, instead of letterboxing
+    // the video into a strip inside a 16:9 box. oar2.jpg is the portrait
+    // thumb yt serves for shorts; data-fb hides it if a short lacks one.
+    const isShort = /\/shorts\//i.test(cleanUrl)
+    if (id) {
+      const thumb = isShort ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : `https://i.ytimg.com/vi/${id}/mqdefault.jpg`
+      return `<a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" class="hs-mc-media hs-mc-playable hs-feed-embed-yt-thumb${isShort ? ' hs-yt-portrait' : ''}">
+      <img src="${hsProxyImg(thumb)}" alt="" loading="lazy" decoding="async" data-fb="hide">
       <span class="hs-feed-embed-yt-play">▶</span>
     </a>`
+    }
   }
   // Providers the server resolver handles (oEmbed) → lightweight pending card.
   // Server returns image/video/audio/rich; unsupported → graceful link card.

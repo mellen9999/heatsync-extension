@@ -422,10 +422,11 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   // Show state with source for globals. 2-state model: 'unadded' is no
   // longer a user-facing tier (click pastes, doesn't add — auto-add fires
   // at send time silently), so fall it through to the source-label branch.
-  // data-inv marks emotes that render via a heatsync inventory (the sender's
-  // or the viewer's own — stamped by processEmotes' _lookup); those get the
-  // inventory label instead of the asset's original provider, so the same
-  // emote never reads "inventory" on your rows but "7TV" on the sender's.
+  // data-inv marks emotes that render via a heatsync inventory (stamped by
+  // processEmotes' _lookup). The label is VIEWER-relative: "inventory" only
+  // when it's in YOUR set (state 'owned'); a sender's inventory emote you
+  // don't own reads "Heatsync" — it's a heatsync-vouched emote you could
+  // add, and the label flips to "inventory" the moment you do.
   const wrapper = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-wrapper')
   const fromInv = wrapper?.dataset.inv === '1' || hoveredImg?.dataset?.inv === '1'
   let label
@@ -434,7 +435,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   } else if (state === 'blocked') {
     label = t('mc_emote_blocked')
   } else if (fromInv) {
-    label = t('mc_emote_in_set')
+    label = 'Heatsync'
   } else {
     // Global / channel / sub - show source with appropriate scope
     const sourceLabels = {

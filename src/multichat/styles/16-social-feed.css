@@ -240,6 +240,10 @@
       overflow: hidden;
       cursor: pointer;
     }
+    .hs-feed-embed-yt-thumb.hs-yt-portrait {
+      aspect-ratio: 9 / 16;
+      max-width: 320px;
+    }
     .hs-feed-embed-yt-thumb img {
       width: 100%;
       height: 100%;

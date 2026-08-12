@@ -867,17 +867,96 @@ function firstPartialYtUrl(text) {
 // CROSS-PLATFORM MESSAGE ORDERING
 // ============================================
 // Every per-platform chat buffer (twitch, kick, youtube) is kept sorted
-// non-decreasing by ORD — a display-order value that's usually just the
-// message's real `time`, but diverges for paced-live YouTube (see
-// commitPacedYtMsg in social.js: it stamps `ord` with the paced-commit
-// value so live YT still lands at the visual "now", while `time` stays
-// YouTube's true send timestamp). `ord` is absent on twitch/kick messages
-// and on old persisted buffers written before this field existed — ordOf's
-// fallback to `time` makes both cases equivalent to "ord === time".
+// non-decreasing by ORD — a DISPLAY-order value, not a clock reading. For a
+// message that was live when it arrived, ord is just its real `time`, so the
+// platforms interleave truthfully. For one that arrived too stale to still be
+// part of the conversation, ord is the visual "now" instead (liveOrd below),
+// so it lands at the bottom rather than materializing in the middle of
+// scrollback the reader has already passed. `time` is NEVER rewritten — it
+// stays the platform's true send timestamp for dedup, relay and display.
+//
+// `ord` is absent on history/backfill/replay rows (deliberately: history is
+// chronological, it belongs at its real place) and on persisted buffers
+// written before this field existed — ordOf's fallback to `time` makes both
+// cases equivalent to "ord === time".
 
 /** The value every sort/merge/insert in the multichat overlay orders by. */
 function ordOf(m) {
   return m?.ord ?? m?.time ?? 0
+}
+
+// How far behind the visual tail a live message may be and still weave into
+// chronological place. Sized for transport skew between platforms, not for
+// lag: twitch IRC lands in ~0ms, the kick relay in ~120ms, so a kick reply
+// must be free to render ABOVE the twitch line it answers. Anything staler
+// than this window was not part of the live conversation when it showed up.
+// Same rule and same constant as the site (LIVE_WEAVE_SKEW_MS in
+// client/managers/channel-buffer-manager.js) — the two surfaces must not
+// disagree about where a late message goes.
+const LIVE_WEAVE_SKEW_MS = 2000
+
+// The newest ord handed out so far — the overlay's idea of "now", and
+// deliberately NOT Date.now(): twitch and kick stamp `time` from their own
+// servers, so measuring staleness against the local clock would mis-clamp
+// every message on a machine whose clock is off by more than the window.
+// Comparing message time against message time is skew-proof. Monotonic, so a
+// clamped row can never land above one already committed.
+let _visualNow = 0
+
+/**
+ * Display ord for a LIVE message, assigned ONCE at insert and never
+ * recomputed — that is the whole guarantee: a row's position is decided when
+ * it enters the buffer, so no later render can move it.
+ *
+ * Fresh enough to still be part of the conversation → its own `time`, and it
+ * weaves chronologically with the other platforms. Staler than the window →
+ * the visual now, i.e. the bottom.
+ *
+ * History, backfill and replay rows must NOT come through here. They are
+ * history, and history is chronological.
+ *
+ * @param {number} time real send timestamp from the platform
+ * @returns {number} the ord to stamp
+ */
+function liveOrd(time) {
+  if (Number.isFinite(time) && time > 0 && !(_visualNow && _visualNow - time > LIVE_WEAVE_SKEW_MS)) {
+    if (time > _visualNow) _visualNow = time
+    return time
+  }
+  return visualNowOrd()
+}
+
+/**
+ * The visual now, advanced by one tick — the ord for a source that is stale
+ * BY CONSTRUCTION rather than by accident, so there is nothing to test. The
+ * YouTube pacer is the case: it drains 5-second poll batches, so every row it
+ * commits shares a send time several seconds behind the live platforms and
+ * must display at the moment it is emitted instead.
+ *
+ * One tick, never a re-read of the wall clock. Re-anchoring to Date.now()
+ * looks harmless and isn't: on a machine whose clock runs ahead, the first
+ * stale row would drag the visual now past every real server timestamp, so
+ * every later message would read as stale, clamp, and the cross-platform
+ * interleave would be dead for that user for the whole session. Incrementing
+ * keeps the clock in the platforms' own time base. It also can't run away —
+ * a tick is 1ms and only a stale arrival spends one, while every fresh
+ * message pulls the clock back onto real time.
+ *
+ * The +1 keeps every ord distinct, so two rows committed in the same
+ * millisecond hold arrival order instead of tying and being re-sorted by id.
+ */
+function visualNowOrd() {
+  // Cold start has no message time to anchor to yet — a YouTube-only channel
+  // can commit before any platform has spoken. The wall clock is the only
+  // reference available, and it is what the YT pacer always used.
+  if (!_visualNow) _visualNow = Date.now()
+  else _visualNow++
+  return _visualNow
+}
+
+/** Test seam — the visual clock is module state and each case needs it cold. */
+function _resetVisualNow(v = 0) {
+  _visualNow = v
 }
 
 // Index of the first element whose ordOf is > `ord` — i.e. where `ord`
@@ -977,6 +1056,9 @@ const utils = {
 
   // Cross-platform message ordering
   ordOf,
+  liveOrd,
+  visualNowOrd,
+  LIVE_WEAVE_SKEW_MS,
   findOrdInsertIndex,
   sortedInsert,
 
@@ -996,6 +1078,7 @@ if (typeof window !== 'undefined') {
 }
 
 export {
+  _resetVisualNow,
   boostReadability,
   classifyYtMembership,
   classifyYtRendererType,
@@ -1015,6 +1098,8 @@ export {
   isLargeKeySyncEligible,
   isValidTwitchLogin,
   LARGE_KEY_SYNC_MAX,
+  LIVE_WEAVE_SKEW_MS,
+  liveOrd,
   log,
   OVERFLOW_MIRROR_KEYS,
   ordOf,
@@ -1033,6 +1118,7 @@ export {
   truncateSafe,
   UI_SYNC_BLOCKLIST,
   unescapeHtml,
+  visualNowOrd,
   warn,
   ytHasModItems,
   ytItemModEndpoint,

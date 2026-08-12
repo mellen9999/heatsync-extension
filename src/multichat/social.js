@@ -621,25 +621,25 @@ function dispatchYtStreamEvent(targetChannelId, msg) {
 }
 
 // Buffer-insert + visible render for ONE paced (live) YT message. Critical:
-// stamp ytMsg.ord = Date.now() AT THE MOMENT OF EMIT (not at WS arrival) —
-// WITHOUT touching ytMsg.time, which stays YouTube's true send timestamp for
-// the whole life of the object (set once from the wire payload). Without a
-// fresh ord, every msg in a 5-sec poll batch would share the same real
-// timestamp and the chrono sort would lump them adjacent, then the next
-// twitch msg slots in below — visible as a YT clump at the bottom of chat.
+// stamp ytMsg.ord AT THE MOMENT OF EMIT (not at WS arrival) — WITHOUT
+// touching ytMsg.time, which stays YouTube's true send timestamp for the
+// whole life of the object (set once from the wire payload). Without a fresh
+// ord, every msg in a 5-sec poll batch would share the same real timestamp
+// and the chrono sort would lump them adjacent, then the next twitch msg
+// slots in below — visible as a YT clump at the bottom of chat.
 // With per-emit ord, each YT msg's DISPLAY position naturally interleaves
 // with the live twitch arrivals that happen between pacer drains, while
 // `time` stays available for anything that needs the real send time
 // (dedup, analytics, a future "show real timestamps" toggle).
 function commitPacedYtMsg(targetChannelId, ytMsg) {
-  // Monotonic per-channel commit clock — two msgs draining in the same ms
-  // would otherwise share (user, ord, text-prefix) and produce identical
-  // stableMsgIds, which the render-diff treats as one key and the dup-set
-  // dedup throws away the second display. +1 each collision keeps the key
-  // unique while still slotting close to real-time in the chrono sort.
-  const lastEmit = _ytPaceLastEmit.get(targetChannelId)
-  const now = Date.now()
-  ytMsg.ord = lastEmit?.time && now <= lastEmit.time ? lastEmit.time + 1 : now
+  // The shared visual clock (visualNowOrd, src/lib/utils.js) — the same one
+  // twitch and kick stamp through, so all three platforms now hand out ords
+  // from ONE monotonic space instead of YT keeping a private per-channel
+  // clock beside them. It carries over what the private clock guaranteed:
+  // anchored to Date.now(), and +1 on collision so two msgs draining in the
+  // same ms can't share (user, ord, text-prefix), produce identical
+  // stableMsgIds, and have the render-diff throw the second display away.
+  ytMsg.ord = visualNowOrd()
   if (!channelYtMessages.has(targetChannelId)) channelYtMessages.set(targetChannelId, [])
   const buf = channelYtMessages.get(targetChannelId)
   // Ordered insert on `ord` (the paced-commit clock above), not `time` — see

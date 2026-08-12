@@ -25,7 +25,15 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { findOrdInsertIndex, ordOf, sortedInsert } from '../src/lib/utils.js'
+import {
+  _resetVisualNow,
+  findOrdInsertIndex,
+  LIVE_WEAVE_SKEW_MS,
+  liveOrd,
+  ordOf,
+  sortedInsert,
+  visualNowOrd,
+} from '../src/lib/utils.js'
 import { CircularBuffer } from '../src/multichat/irc.js'
 
 const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
@@ -398,6 +406,7 @@ function loadYtBuffer() {
     'renderMessages',
     'appendMessage',
     'sortedInsert',
+    'visualNowOrd',
     `
     ${ytSliceSrc}
     return { ingestReplayYtMsg, commitPacedYtMsg }
@@ -415,6 +424,7 @@ function loadYtBuffer() {
     (id) => rendered.push(id),
     () => false,
     sortedInsert,
+    visualNowOrd,
   )
   return { ...api, channelYtMessages, persisted, rendered }
 }
@@ -430,43 +440,34 @@ describe('YouTube ord/time split (src/multichat/social.js, real source)', () => 
     expect(channelYtMessages.get('ch1')[0]).toBe(ytMsg)
   })
 
-  test('commitPacedYtMsg: two msgs draining in the same ms get distinct, increasing ord (collision +1)', () => {
-    // The +1-on-collision logic lives in commitPacedYtMsg, but the monotonic
-    // clock it reads (_ytPaceLastEmit) is written by the CALLER after each
-    // commit (see drainYtPaceQueue/enqueueYtForPacing in social.js) — mirror
-    // that exact calling convention here rather than calling commitPacedYtMsg
-    // in a bare loop, which would never engage the collision path.
-    const shared = new Map()
-    const build = new Function(
-      'channelYtMessages',
-      '_ytPaceLastEmit',
-      'MAX_BUFFER',
-      'addUsername',
-      'persistYt',
-      'currentTab',
-      'updateTabIndicator',
-      'renderMessages',
-      'appendMessage',
-      'sortedInsert',
-      `${ytSliceSrc}\nreturn { commitPacedYtMsg }`,
-    )
-    const { commitPacedYtMsg: commit } = build(
-      new Map(),
-      shared,
-      500,
-      () => {},
-      () => {},
-      '__none__',
-      () => {},
-      () => {},
-      () => false,
-      sortedInsert,
-    )
-    const a = { id: 'a', user: 'u', text: 't1', time: 1000 }
-    const b = { id: 'b', user: 'u', text: 't2', time: 1000 }
-    commit('ch1', a)
-    shared.set('ch1', { time: Date.now(), msgTime: a.time }) // caller's post-commit bookkeeping
-    commit('ch1', b)
+  test('commitPacedYtMsg: msgs draining in the same ms get distinct, increasing ord', () => {
+    // Two YT rows committed inside one millisecond must not collide: identical
+    // ord + same user + same text-prefix produces one stableMsgId, and the
+    // render diff treats that as a single key and drops the second display.
+    // The guard is now unconditional in visualNowOrd (a global monotonic
+    // clock) rather than something the caller has to maintain per channel via
+    // _ytPaceLastEmit, so a bare loop engages it — that is the point.
+    _resetVisualNow()
+    const { commitPacedYtMsg } = loadYtBuffer()
+    const rows = []
+    for (let i = 0; i < 50; i++) {
+      const m = { id: `m${i}`, user: 'u', text: 't', time: 1000 }
+      commitPacedYtMsg('ch1', m)
+      rows.push(m)
+    }
+    for (let i = 1; i < rows.length; i++) expect(rows[i].ord).toBeGreaterThan(rows[i - 1].ord)
+  })
+
+  test('commitPacedYtMsg: the clock is shared across channels, so two tabs cannot collide', () => {
+    // YT used to keep a private per-channel commit clock; every platform now
+    // draws from one monotonic space. Two channels draining in the same ms
+    // previously could hand out the same ord.
+    _resetVisualNow()
+    const { commitPacedYtMsg } = loadYtBuffer()
+    const a = { id: 'a', user: 'u', text: 't', time: 1000 }
+    const b = { id: 'b', user: 'u', text: 't', time: 1000 }
+    commitPacedYtMsg('ch1', a)
+    commitPacedYtMsg('ch2', b)
     expect(b.ord).toBeGreaterThan(a.ord)
   })
 
@@ -512,5 +513,179 @@ describe('YouTube ord/time split (src/multichat/social.js, real source)', () => 
     }
     const buf = channelYtMessages.get('chX')
     for (let i = 1; i < buf.length; i++) expect(ordOf(buf[i])).toBeGreaterThanOrEqual(ordOf(buf[i - 1]))
+  })
+})
+
+// ── liveOrd: where a late message goes (src/lib/utils.js, real import) ──────
+/**
+ * The parity rule, shared with the site (LIVE_WEAVE_SKEW_MS in
+ * client/managers/channel-buffer-manager.js): a live message's display
+ * position is decided ONCE, at insert. Fresh enough to still be part of the
+ * conversation → its own send time, so the platforms interleave truthfully.
+ * Staler than the window → the visual now, so it lands at the bottom instead
+ * of materializing in the middle of scrollback the reader already passed.
+ *
+ * Before this, the overlay ordered purely on send time, so a kick relay
+ * running a minute behind spliced its backlog in a minute back — off-screen
+ * for a reader sitting at the bottom, i.e. indistinguishable from dropped.
+ */
+describe('liveOrd (src/lib/utils.js, real import)', () => {
+  beforeEach(() => _resetVisualNow())
+
+  test('a fresh message keeps its real send time, so platforms interleave truthfully', () => {
+    const t0 = 1_700_000_000_000
+    // twitch IRC lands in ~0ms, the kick relay in ~120ms — the kick line was
+    // SENT first and must render above the twitch line it preceded.
+    const tw = liveOrd(t0)
+    const kick = liveOrd(t0 - 120)
+    expect(tw).toBe(t0)
+    expect(kick).toBe(t0 - 120)
+    expect(kick).toBeLessThan(tw)
+  })
+
+  test('the whole skew window weaves; one millisecond past it does not', () => {
+    const t0 = 1_700_000_000_000
+    liveOrd(t0)
+    expect(liveOrd(t0 - LIVE_WEAVE_SKEW_MS)).toBe(t0 - LIVE_WEAVE_SKEW_MS)
+    expect(liveOrd(t0 - LIVE_WEAVE_SKEW_MS - 1)).toBeGreaterThanOrEqual(t0)
+  })
+
+  test('a message that arrives long after it was sent takes the tail, not its timestamp', () => {
+    const t0 = Date.now()
+    liveOrd(t0 - 2000)
+    liveOrd(t0 - 1000)
+    liveOrd(t0) // visual now is here
+    const late = liveOrd(t0 - 60_000) // kick relay a minute behind
+    expect(late).toBeGreaterThanOrEqual(t0)
+    expect(late).not.toBe(t0 - 60_000)
+  })
+
+  test('a backlog of stale rows keeps arrival order — no two share an ord', () => {
+    const t0 = Date.now()
+    liveOrd(t0)
+    // A throttled relay dumps its backlog: sent oldest-first, every row well
+    // past the window, so every one of them takes the tail.
+    const ords = []
+    for (let i = 30; i >= 3; i--) ords.push(liveOrd(t0 - i * 1000))
+    expect(new Set(ords).size).toBe(ords.length)
+    for (let i = 1; i < ords.length; i++) expect(ords[i]).toBeGreaterThan(ords[i - 1])
+  })
+
+  test('no ord ever lands more than the skew window below the newest one', () => {
+    // The bound that makes an insert-above safe: weaving is allowed (that is
+    // how a kick reply reaches the line it answers) but it can only ever reach
+    // back one window, never into old scrollback. Deliberately hostile
+    // arrival — fresh, far stale, fresh again, garbage.
+    const t0 = Date.now()
+    let newest = -Infinity
+    for (const t of [t0, t0 - 90_000, t0 + 5, t0 - 1000, Number.NaN, t0 + 10, undefined, 0, t0 - 3000]) {
+      const o = liveOrd(/** @type {number} */ (t))
+      expect(newest - o).toBeLessThanOrEqual(LIVE_WEAVE_SKEW_MS)
+      if (o > newest) newest = o
+    }
+  })
+
+  test('a clock running an hour fast cannot kill the interleave for that user', () => {
+    // visualNowOrd must never re-read the wall clock: one stale row would drag
+    // the visual now past every real server timestamp, so every later message
+    // would read as stale and clamp — the platforms would stop interleaving
+    // entirely, for the whole session, on that machine only.
+    const serverNow = Date.now() - 3_600_000 // local clock is an hour ahead of the platforms
+    liveOrd(serverNow)
+    liveOrd(serverNow - 60_000) // a stale row: takes the tail
+    // The next genuinely fresh pair must still weave on their own send times.
+    const tw = liveOrd(serverNow + 1000)
+    const kick = liveOrd(serverNow + 880)
+    expect(tw).toBe(serverNow + 1000)
+    expect(kick).toBe(serverNow + 880)
+    expect(kick).toBeLessThan(tw)
+  })
+
+  test('staleness is measured against message time, not the local clock', () => {
+    // The whole reason liveOrd tracks a visual now instead of reading
+    // Date.now(): twitch and kick stamp `time` from THEIR servers. On a
+    // machine an hour behind, every live message would look an hour early
+    // and — if we compared against the local clock — clamp, destroying the
+    // interleave for that user. Simulate by feeding times far from now.
+    const skewed = Date.now() + 3_600_000
+    expect(liveOrd(skewed)).toBe(skewed)
+    expect(liveOrd(skewed - 500)).toBe(skewed - 500) // still weaves
+    expect(liveOrd(skewed - 60_000)).toBeGreaterThanOrEqual(skewed) // still clamps
+  })
+})
+
+describe('late arrival, end to end through the render merge', () => {
+  beforeEach(() => _resetVisualNow())
+
+  test('a minute-late kick row renders at the bottom, where ordering by send time buried it', () => {
+    const { mergeSortedRuns } = loadMerge()
+    const t0 = Date.now()
+    const twitch = [t0 - 2000, t0 - 1000, t0].map((time, i) =>
+      msg({ id: `tw${i}`, platform: 'twitch', time, ord: liveOrd(time) }),
+    )
+    const lateTime = t0 - 60_000
+    const kick = [msg({ id: 'kick-late', platform: 'kick', time: lateTime, ord: liveOrd(lateTime) })]
+
+    const merged = mergeSortedRuns([twitch, kick])
+    expect(merged[merged.length - 1].id).toBe('kick-late')
+
+    // The bug this replaces: ordering on send time put that row THIRD FROM
+    // THE TOP — a minute back in scrollback, unseen by a reader at the bottom.
+    const bySendTime = mergeSortedRuns([
+      twitch.map((m) => ({ ...m, ord: undefined })),
+      kick.map((m) => ({ ...m, ord: undefined })),
+    ])
+    expect(bySendTime[0].id).toBe('kick-late')
+  })
+
+  test('a kick row inside the skew window still renders above the twitch line it preceded', () => {
+    const { mergeSortedRuns } = loadMerge()
+    const t0 = Date.now()
+    // Arrival order is twitch-then-kick; send order is the reverse.
+    const twOrd = liveOrd(t0)
+    const kickOrd = liveOrd(t0 - 120)
+    const merged = mergeSortedRuns([
+      [msg({ id: 'tw', platform: 'twitch', time: t0, ord: twOrd })],
+      [msg({ id: 'kick', platform: 'kick', time: t0 - 120, ord: kickOrd })],
+    ])
+    expect(merged.map((m) => m.id)).toEqual(['kick', 'tw'])
+  })
+
+  test('history is left chronological — a backfill row is not dragged to the bottom', () => {
+    const { mergeSortedRuns } = loadMerge()
+    const t0 = Date.now()
+    const live = [msg({ id: 'live', platform: 'twitch', time: t0, ord: liveOrd(t0) })]
+    // A history row carries no ord ON PURPOSE (irc.js hydrates history with
+    // push(), never through the live stamp), so ordOf falls back to `time`.
+    const history = [msg({ id: 'hist', platform: 'twitch', time: t0 - 600_000 })]
+    const merged = mergeSortedRuns([history, live])
+    expect(merged.map((m) => m.id)).toEqual(['hist', 'live'])
+  })
+})
+
+// ── the live call sites actually stamp (source assertion) ───────────────────
+/**
+ * IRC/KickChat are stateful and chrome.runtime-driven — irc-parser.test.js
+ * documents why there is no harness for them. The stamp is two lines, and the
+ * failure mode if either is dropped is silent (ordering quietly reverts to
+ * send time), so assert on the real source rather than leave it unguarded.
+ */
+describe('live insert sites stamp an ord (src/multichat/irc.js, real source)', () => {
+  const IRC_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'irc.js'), 'utf8')
+
+  test('twitch stamps live PRIVMSGs only — not notices, history or synthetics', () => {
+    expect(IRC_SRC).toContain('if (!msg.type && !msg.isHistory && !msg.isSynthetic) msg.ord = liveOrd(msg.time)')
+  })
+
+  test('kick stamps every live transport (relay, pusher tap, native tap)', () => {
+    const ingest = sliceBetween(IRC_SRC, 'ingestChatPayload(d, opts', '\n  ingestModeration(')
+    expect(ingest).toContain('msg.ord = liveOrd(msg.time)')
+  })
+
+  test('history hydration never stamps — it stays chronological', () => {
+    // Every isHistory path uses push(), which cannot reach a liveOrd call.
+    const historyBlocks = IRC_SRC.split('\n').filter((l) => l.includes('isHistory = true'))
+    expect(historyBlocks.length).toBeGreaterThan(0)
+    expect(IRC_SRC).not.toMatch(/isHistory\s*=\s*true[\s\S]{0,400}?liveOrd\(/)
   })
 })

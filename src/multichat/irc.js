@@ -682,6 +682,16 @@ class IRC extends ChatClient {
           this._deleteNoticeIndex.delete(this._deleteNoticeIndex.keys().next().value)
         this._deleteNoticeIndex.set(idxKey, msg)
       }
+      // Stamp the display position ONCE, here, for a genuinely live chat line.
+      // Normally that is just tmi-sent-ts and twitch interleaves truthfully
+      // with kick/yt; a line that reached us long after it was sent takes the
+      // visual now instead, so it lands at the bottom rather than appearing in
+      // the middle of scrollback the reader has already scrolled past. Same
+      // predicate as the archive relay below — a notice, a history replay and a
+      // local synthetic are all excluded: history is chronological, and a
+      // synthetic carries client Date.now(), which must never be allowed to
+      // drag the visual clock away from server time.
+      if (!msg.type && !msg.isHistory && !msg.isSynthetic) msg.ord = liveOrd(msg.time)
       // Ordered insert, not blind push — a BG history merge or native-tap
       // copy can race a live PRIVMSG and land here with an OLDER tmi-sent-ts,
       // which would otherwise silently break the buffer's sortedness that
@@ -1137,6 +1147,14 @@ class KickChat extends ChatClient {
     // emote-enrich.ts.
     if (d.hsEmotes && typeof d.hsEmotes === 'object') msg.hsEmotes = d.hsEmotes
     if (fromNativeTap) msg.fromNativeTap = true
+    // Display position, decided once (see liveOrd in src/lib/utils.js). Every
+    // caller of this method is a LIVE transport — the webhook relay, the BG
+    // Pusher tap and the native tap; kick history takes the push() paths in
+    // loadHistory/hydrate instead and is deliberately left chronological. The
+    // relay leg is the one that can run seconds-to-minutes behind when kick
+    // throttles us, and without this its backlog would splice in above rows
+    // already on screen instead of arriving at the bottom.
+    msg.ord = liveOrd(msg.time)
     // Ordered insert — the server webhook relay, the BG Pusher tap, and the
     // native tap can each deliver the same window's messages with a
     // slightly different arrival order; insertOrdered keeps the buffer

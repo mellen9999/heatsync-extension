@@ -4170,15 +4170,17 @@ function handleInputChange(_e) {
             // Live-replace modifier path — delegate to shared lib + apply.
             const cls = hsModClassify(word, { allowPrefix: false })
             if (cls.kind === 'modifier') {
+              const wordStart = cursor - match[0].length
               let prev = node.previousSibling
               while (prev && prev.nodeType === Node.TEXT_NODE && prev.textContent.trim() === '') {
                 prev = prev.previousSibling
               }
-              const targetImg = hsModAnchorEl(prev)
+              // Only whitespace may sit between the anchor chip and the
+              // modifier — "Kappa lol w!" is three words, not a wide Kappa.
+              const targetImg = /^[\s ]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
               if (targetImg) {
                 {
                   hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)
-                  const wordStart = cursor - match[0].length
                   node.textContent = text.slice(0, wordStart) + (text.slice(cursor) || ' ')
                   const nr = document.createRange()
                   nr.setStart(node, wordStart)
@@ -4820,6 +4822,9 @@ function scanAndApplyModifiersInInput(input) {
       }
       const cls = hsModClassify(tok, { allowPrefix: i === caretTokIdx })
       if (cls.kind !== 'modifier') {
+        // Real text between the emote and the token breaks the anchor — a
+        // modifier attaches to the IMMEDIATELY preceding emote.
+        prevEmote = null
         remaining.push(tok)
         continue
       }

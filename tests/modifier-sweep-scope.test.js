@@ -118,12 +118,33 @@ describe('modifier sweep — bare letters only consume at the caret', () => {
   })
 
   test('no selection at all → only unambiguous forms consume', () => {
-    const node = text(' w z! ')
+    // z! sits directly against the chip (it consumes); the bare "w" after it is
+    // content with no caret to license the prefix form, so it survives as text.
+    const node = text(' z! w ')
     const input = makeInput([chip(), node])
     const { sweep, applied } = makeSweep({})
     expect(sweep(input)).toBe(true)
     expect(applied).toEqual(['z!'])
     expect(node.textContent).toContain('w')
+  })
+})
+
+describe('modifier sweep — a modifier attaches to the emote it touches', () => {
+  test('a plain word between the emote and the token breaks the anchor', () => {
+    const node = text(' lol w! ')
+    const input = makeInput([chip(), node])
+    const { sweep, applied } = makeSweep({})
+    expect(sweep(input)).toBe(false)
+    expect(applied).toEqual([])
+    expect(node.textContent).toBe(' lol w! ')
+  })
+
+  test('tokens that directly follow the emote still chain', () => {
+    const node = text(' w! h! ')
+    const input = makeInput([chip(), node])
+    const { sweep, applied } = makeSweep({})
+    expect(sweep(input)).toBe(true)
+    expect(applied).toEqual(['w!', 'h!'])
   })
 })
 

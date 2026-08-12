@@ -12184,6 +12184,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // We tee them into per-channel buffers so content tabs hydrate instantly on
 // reload — same architecture as the Twitch IRC reader above.
 
+// The archive route serves up to 800 rows (server recent-archive.ts MAX_LIMIT)
+// and clamps anything larger. Callers ask for min(that, their own buffer cap):
+// requesting more than the circular buffer keeps just pays for rows it drops on
+// arrival, and the old flat 200 left the other 600 the archive would gladly
+// have handed over unseen, with no "load more" anywhere to reach them.
+const BG_ARCHIVE_FETCH_MAX = 800
 const BG_KICK_PERSIST_MAX = 3000
 const BG_YT_PERSIST_MAX = 500
 const BG_KICK = {
@@ -12582,7 +12588,9 @@ function mergeRecentArchiveRows(existing, rows, platform) {
 // Fetch + parse the /api/recent/{platform}/{channel} response. Isolated from
 // state mutation so fail-soft behavior (404/5xx/timeout/malformed JSON → empty
 // rows, never throws) is directly testable via an injected fetch impl.
-async function fetchRecentArchiveRows(platform, channel, limit = 200) {
+// Default and clamp stay literals: the unit harness compiles this function on
+// its own via new Function, so a free variable here is a ReferenceError there.
+async function fetchRecentArchiveRows(platform, channel, limit = 800) {
   try {
     const url = `${API_URL}/api/recent/${platform}/${encodeURIComponent(channel)}?limit=${Math.min(800, Math.max(1, limit))}`
     const resp = await fetchWithTimeout(url, { credentials: 'omit' }, 8000)
@@ -12600,7 +12608,7 @@ async function fetchRecentArchiveRows(platform, channel, limit = 200) {
 async function bgKickFetchRecentArchive(slug) {
   slug = (slug || '').toLowerCase()
   if (!slug) return
-  const rows = await fetchRecentArchiveRows('kick', slug, 200)
+  const rows = await fetchRecentArchiveRows('kick', slug, Math.min(BG_ARCHIVE_FETCH_MAX, BG_KICK_PERSIST_MAX))
   if (!rows.length) return
   if (!BG_KICK.channels.has(slug)) BG_KICK.channels.set(slug, new BGCircularBuffer(BG_KICK_PERSIST_MAX))
   const buf = BG_KICK.channels.get(slug)
@@ -12629,7 +12637,11 @@ async function bgYtFetchRecentArchive(channelId, hintUrl) {
   if (_ytRecentFetched.size > 500) _ytRecentFetched.delete(_ytRecentFetched.values().next().value)
   const ucid = await resolveYtChannelId(channelId, hintUrl)
   if (!ucid) return
-  const rows = await fetchRecentArchiveRows('youtube', ucid.toLowerCase(), 200)
+  const rows = await fetchRecentArchiveRows(
+    'youtube',
+    ucid.toLowerCase(),
+    Math.min(BG_ARCHIVE_FETCH_MAX, BG_YT_PERSIST_MAX),
+  )
   if (!rows.length) return
   if (!BG_YT.channels.has(channelId)) BG_YT.channels.set(channelId, new BGCircularBuffer(BG_YT_PERSIST_MAX))
   const buf = BG_YT.channels.get(channelId)

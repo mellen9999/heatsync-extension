@@ -625,12 +625,23 @@
       font-style: normal;
       font-weight: 600;
     }
+    /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
+       arrow and the name, with the reply continuing on the SAME line. It used
+       to be a block bar reading "Replying to @user: quoted text…", which cost a
+       whole row of vertical space per reply — in a fast chat that is most of
+       the pane. The quoted message is sitting right above anyway, the full
+       quote is still on hover via title, and clicking still opens the thread
+       stack. Width is bounded so a long name can't push the message off-row. */
     .hs-mc-reply-ctx {
+      display: inline-block;
+      vertical-align: bottom;
+      max-width: 38%;
       font-size: 13px;
       color: #aaa;
-      padding: 1px 0 1px 8px;
-      border-left: 2px solid #808080;
-      margin-bottom: 1px;
+      line-height: inherit;
+      padding: 0 4px 0 0;
+      margin: 0;
+      border-left: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

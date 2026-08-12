@@ -7866,9 +7866,9 @@
     // with no name, no text, no profile link.
     const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform)
     const replyBar = replyBlocked
-      ? `<div class="hs-mc-reply-ctx">&#8618; Replying to [blocked]</div>`
+      ? `<span class="hs-mc-reply-ctx">&#8618;[blocked]</span> `
       : m.replyTo?.user
-        ? `<div class="hs-mc-reply-ctx" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618; Replying to <a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `: ${escapeHtml(m.replyTo.text.length > 80 ? `${m.replyTo.text.slice(0, 80)}...` : m.replyTo.text)}` : ''}</div>`
+        ? `<span class="hs-mc-reply-ctx" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}</span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''

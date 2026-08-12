@@ -11668,12 +11668,23 @@ function injectStyles() {
       font-style: normal;
       font-weight: 600;
     }
+    /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
+       arrow and the name, with the reply continuing on the SAME line. It used
+       to be a block bar reading "Replying to @user: quoted text…", which cost a
+       whole row of vertical space per reply — in a fast chat that is most of
+       the pane. The quoted message is sitting right above anyway, the full
+       quote is still on hover via title, and clicking still opens the thread
+       stack. Width is bounded so a long name can't push the message off-row. */
     .hs-mc-reply-ctx {
+      display: inline-block;
+      vertical-align: bottom;
+      max-width: 38%;
       font-size: 13px;
       color: #aaa;
-      padding: 1px 0 1px 8px;
-      border-left: 2px solid #808080;
-      margin-bottom: 1px;
+      line-height: inherit;
+      padding: 0 4px 0 0;
+      margin: 0;
+      border-left: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -66906,9 +66917,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     // with no name, no text, no profile link.
     const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform)
     const replyBar = replyBlocked
-      ? `<div class="hs-mc-reply-ctx">&#8618; Replying to [blocked]</div>`
+      ? `<span class="hs-mc-reply-ctx">&#8618;[blocked]</span> `
       : m.replyTo?.user
-        ? `<div class="hs-mc-reply-ctx" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618; Replying to <a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `: ${escapeHtml(m.replyTo.text.length > 80 ? `${m.replyTo.text.slice(0, 80)}...` : m.replyTo.text)}` : ''}</div>`
+        ? `<span class="hs-mc-reply-ctx" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}</span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''

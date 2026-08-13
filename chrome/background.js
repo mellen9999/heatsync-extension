@@ -1444,6 +1444,18 @@ try {
 } catch {}
 
 // Normalize relative emote URLs to absolute (API returns /uploads/... paths)
+// Hosts whose images we link to and never copy — emote CDNs serving creator
+// artwork we have no licence to host. Keep in sync with the direct-render list
+// in src/multichat/feed-embed.js (HS_IMG_DIRECT_HOSTS), which is why a bare link
+// to one of these still renders.
+const HOTLINK_ONLY_HOSTS = new Set([
+  'cdn.7tv.app',
+  'cdn.betterttv.net',
+  'cdn.frankerfacez.com',
+  'static-cdn.jtvnw.net',
+  'files.kick.com',
+])
+
 function absUrl(url) {
   if (!url) return url
   return url.startsWith('/') ? API_URL + url : url
@@ -9405,6 +9417,16 @@ async function handleMessage(message, sender, sendResponse) {
           return
         }
         if (parsed.hostname === 'heatsync.org' || parsed.hostname.endsWith('.heatsync.org')) {
+          sendResponse({ ok: true, url: src })
+          return
+        }
+        // Emote CDNs are hotlinked, never mirrored. Storing a copy would put
+        // someone else's emote artwork in our bucket, and the standing posture
+        // is that the risk on unlicensed creator art stays with the host that
+        // chose to serve it. These hosts also render directly (they're in
+        // HS_IMG_DIRECT_HOSTS), so the link works untouched — and it's already
+        // animated, which was the entire point of resolving a source url.
+        if (HOTLINK_ONLY_HOSTS.has(parsed.hostname)) {
           sendResponse({ ok: true, url: src })
           return
         }

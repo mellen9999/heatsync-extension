@@ -152,6 +152,18 @@ describe('api_store_remote resolves a remote image to our stored copy', () => {
     expect(body).toMatch(/hostname === 'heatsync\.org'/)
   })
 
+  test('emote CDNs are linked, never copied into our bucket', () => {
+    // Standing posture: risk on unlicensed creator artwork stays with the host
+    // that chose to serve it. These render directly, so the link works as-is.
+    expect(body).toMatch(/HOTLINK_ONLY_HOSTS\.has\(parsed\.hostname\)/)
+    for (const host of ['cdn.7tv.app', 'cdn.betterttv.net', 'cdn.frankerfacez.com', 'static-cdn.jtvnw.net']) {
+      expect(BG_SRC).toContain(`'${host}'`)
+      // ...and each is a host the renderer draws directly, or the folded link
+      // would point at an image the ext refuses to load.
+      expect(EMBED_SRC).toContain(`'${host}'`)
+    }
+  })
+
   test('reads the redirect target, not the body', () => {
     // The stored path is the 302 target; the body is the full image, to 10MB.
     expect(body).toMatch(/res\.body\?\.cancel\(\)/)

@@ -6029,6 +6029,28 @@
         let steps = 0
         const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
         const channelKeys = ['channelID', 'channelId']
+
+        // Twitch does NOT put the token in a top-level prop. The callout is
+        // rendered from an `event` payload nested inside the context-menu prop:
+        //
+        //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
+        //
+        // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
+        // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
+        // is a different, opaque 32-char value — NOT the tokenID; using it fails
+        // the mutation, which silently posts the text as ordinary chat and leaves
+        // the callout to reappear on the next refresh.)
+        //
+        // Scanning only top-level keys is why every scan came back empty and the
+        // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
+        // the Share button, well inside the budget below — it was never a depth
+        // problem, only a nesting one.
+        const eventFrom = (p) =>
+          p?.contextMenu?.props?.children?.props?.event ||
+          p?.contextMenu?._owner?.stateNode?.props?.event ||
+          p?.event ||
+          null
+
         while (queue.length && steps < 60 && !(out.token && out.channelId)) {
           const f = queue.shift()
           if (!f || seen.has(f)) continue
@@ -6036,6 +6058,14 @@
           steps++
           const p = f.memoizedProps
           if (p && typeof p === 'object') {
+            if (!out.token) {
+              const ev = eventFrom(p)
+              if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
+                out.token = ev.id
+                out.months = Number(ev.cumulativeTenureMonths) || 0
+                out.eventType = ev.type || null
+              }
+            }
             if (!out.token) {
               for (const k of tokenKeys) {
                 const v = p[k]
@@ -6057,6 +6087,10 @@
           }
           if (f.return) queue.push(f.return)
           if (f.child) queue.push(f.child)
+          // Siblings matter: the callout body and its context-menu prop mount as
+          // siblings of the Share button's subtree, so a return+child-only walk
+          // never reaches the event payload at all.
+          if (f.sibling) queue.push(f.sibling)
         }
         return out
       }

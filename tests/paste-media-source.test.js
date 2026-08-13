@@ -115,6 +115,15 @@ describe('paste prefers the source url, then falls back', () => {
     expect(INPUT_SRC).not.toMatch(/handleMediaUpload\(file\)/)
   })
 
+  test('a source url is spent only on animation, never on a still', () => {
+    // Resolving it hands our server a url the user never meant to share — they
+    // meant to share the picture. For a still there is nothing to buy: the
+    // clipboard bitmap is lossless PNG, so the upload is already an exact copy.
+    const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
+    expect(fn).toMatch(/const maybeAnimated = \/\\\.\(gif\|webp\|avif\)/)
+    expect(fn).toMatch(/maybeAnimated \? await storeRemoteMedia\(sourceUrl\) : ''/)
+  })
+
   test('the bitmap is still uploaded when the source url does not resolve', () => {
     // The fallback is the whole safety story: a hotlink-blocked or expiring
     // source must cost you animation, never the paste.

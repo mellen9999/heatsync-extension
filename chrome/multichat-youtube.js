@@ -49783,9 +49783,15 @@ async function storeRemoteMedia(srcUrl) {
 }
 
 async function handleMediaUpload(file, sourceUrl) {
-  // Source URL first — it's the only copy with the animation still in it.
-  let url = sourceUrl ? await storeRemoteMedia(sourceUrl) : ''
-  const lostAnimation = !url && /\.(gif|webp|avif)(\?|#|$)/i.test(sourceUrl || '')
+  // The source url is used ONLY when it looks animated, never for stills.
+  // Resolving it means handing our server a url the user never meant to share —
+  // they meant to share the picture — and for a still there is nothing to gain:
+  // Chromium's clipboard bitmap is lossless PNG, so the upload is already an
+  // exact copy. Animation is the one thing the clipboard destroys, so animation
+  // is the only thing worth spending a url on.
+  const maybeAnimated = /\.(gif|webp|avif)(\?|#|$)/i.test(sourceUrl || '')
+  let url = maybeAnimated ? await storeRemoteMedia(sourceUrl) : ''
+  const lostAnimation = maybeAnimated && !url
   if (!url) url = await uploadMediaFile(file)
   if (!url) return
   // Say it out loud. The fallback posts a picture either way, so the failure is

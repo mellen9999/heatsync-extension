@@ -8130,9 +8130,44 @@
         div.appendChild(holder)
         if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(holder)
         if (typeof attachFeedFallbacks === 'function') attachFeedFallbacks(holder)
+        foldEmbeddedMediaUrl(div, holder)
       }
     }
     return div
+  }
+
+  // A pasted image posts as its URL — that IS the wire payload, chat has no
+  // attachments. Showing the url AND the picture it renders is noise, so fold
+  // the url away once its own media is on screen. Direct media only: the
+  // embed builder marks those with data-hs-src-url, and a link CARD is
+  // deliberately left alone, because there you're being asked to click through
+  // and you should get to see where to.
+  //
+  // The url goes only when the picture has actually PAINTED — on load, never on
+  // insert. Hiding it up front and restoring it on error reads as equivalent and
+  // isn't: chat images are loading="lazy", so one rendered out of view never
+  // fetches, never errors, and never fires anything at all. That row would have
+  // sat there as a blank line, url hidden behind an image that was never coming,
+  // until you happened to scroll it into view. Waiting for the load event has no
+  // such hole — nothing is hidden until its replacement is on screen.
+  function foldEmbeddedMediaUrl(row, holder) {
+    const media = holder.querySelector('[data-hs-src-url]')
+    const src = media?.dataset.hsSrcUrl
+    if (!src) return
+    // Match on href, not on the visible text: chat truncates long urls for
+    // display, and linkifyPartialLinks synthesizes an href for a url that was
+    // never fully typed. The href is the only field that means the same thing
+    // in both cases.
+    const link = Array.from(row.querySelectorAll('a.hs-mc-link')).find(
+      (a) => a.getAttribute('href') === src || a.href === src,
+    )
+    if (!link) return
+    const img = media.querySelector('img')
+    if (!img) return
+    const fold = () => link.classList.add('hs-mc-url-folded')
+    // Already decoded — a re-render of a row whose image is in cache.
+    if (img.complete && img.naturalWidth > 0) fold()
+    else img.addEventListener('load', fold, { once: true })
   }
 
   // LRU cache for processYtEmotes' combined regex. Pattern key is the joined

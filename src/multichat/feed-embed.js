@@ -419,10 +419,23 @@ function chatEmbedForUrl(rawUrl) {
   const safe = safeUrl(cleanUrl)
   if (!safe) return ''
   // Direct image / gif → inline, lazy, error-guarded (data-fb hides on 404/blocked).
+  // data-hs-src-url lets the row fold the raw URL out of the message text: the
+  // image IS the content, so the link adds nothing but noise. Only direct media
+  // carries it — a link CARD keeps its URL visible, because there you're being
+  // asked to click through to somewhere and you get to see where.
+  // The anchor exists for the right-click menu. hsProxyImg() rewrites unknown
+  // hosts to /api/img, so "copy image address" off the <img> would hand back
+  // OUR proxy url; "copy link address" off the anchor gives the real one.
   if (/\.(jpg|jpeg|png|gif|webp|avif)(\?.*)?$/i.test(cleanUrl)) {
-    return `<div class="hs-mc-media"><img src="${attr(hsProxyImg(safe))}" alt="" loading="lazy" decoding="async" data-fb="hide"></div>`
+    return `<div class="hs-mc-media" data-hs-src-url="${attr(safe)}"><a class="hs-mc-media-link" href="${attr(safe)}" target="_blank" rel="noopener noreferrer"><img src="${attr(hsProxyImg(safe))}" alt="" loading="lazy" decoding="async" data-fb="hide"></a></div>`
   }
   // Direct video → inline, preload=none (no bytes until play — critical at chat volume).
+  // No anchor: it would swallow the transport controls, and video src is never
+  // proxied, so the native "copy video address" already yields the real url.
+  // No data-hs-src-url either — a video keeps its url on screen. preload="none"
+  // means nothing is fetched until you press play, so there is never a moment
+  // where the file has proved it exists, and until then the url is the only
+  // thing in the message that says what you'd be pressing play on.
   if (/\.(mp4|webm|mov)(\?.*)?$/i.test(cleanUrl)) {
     return `<div class="hs-mc-media"><video controls muted preload="none" playsinline src="${attr(safe)}" data-fb="hide"></video></div>`
   }

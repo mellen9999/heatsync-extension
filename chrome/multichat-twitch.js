@@ -12018,6 +12018,19 @@ function injectStyles() {
       max-width: 100%;
       border-radius: 0;
     }
+    /* Right-click handle around inline images (see feed-embed.js). Shrink-wrap
+       so the anchor is exactly the image and not a full-width click target. */
+    .hs-mc-media > .hs-mc-media-link {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+    }
+    /* A url folded away because its own image renders right below it. Never
+       removed from the DOM — if the media 404s the row unfolds it again, so a
+       url-only message can't render as an empty line. */
+    .hs-mc-url-folded {
+      display: none;
+    }
     .hs-mc-media img,
     .hs-mc-media video {
       display: block;
@@ -35569,10 +35582,23 @@ function chatEmbedForUrl(rawUrl) {
   const safe = safeUrl(cleanUrl)
   if (!safe) return ''
   // Direct image / gif → inline, lazy, error-guarded (data-fb hides on 404/blocked).
+  // data-hs-src-url lets the row fold the raw URL out of the message text: the
+  // image IS the content, so the link adds nothing but noise. Only direct media
+  // carries it — a link CARD keeps its URL visible, because there you're being
+  // asked to click through to somewhere and you get to see where.
+  // The anchor exists for the right-click menu. hsProxyImg() rewrites unknown
+  // hosts to /api/img, so "copy image address" off the <img> would hand back
+  // OUR proxy url; "copy link address" off the anchor gives the real one.
   if (/\.(jpg|jpeg|png|gif|webp|avif)(\?.*)?$/i.test(cleanUrl)) {
-    return `<div class="hs-mc-media"><img src="${attr(hsProxyImg(safe))}" alt="" loading="lazy" decoding="async" data-fb="hide"></div>`
+    return `<div class="hs-mc-media" data-hs-src-url="${attr(safe)}"><a class="hs-mc-media-link" href="${attr(safe)}" target="_blank" rel="noopener noreferrer"><img src="${attr(hsProxyImg(safe))}" alt="" loading="lazy" decoding="async" data-fb="hide"></a></div>`
   }
   // Direct video → inline, preload=none (no bytes until play — critical at chat volume).
+  // No anchor: it would swallow the transport controls, and video src is never
+  // proxied, so the native "copy video address" already yields the real url.
+  // No data-hs-src-url either — a video keeps its url on screen. preload="none"
+  // means nothing is fetched until you press play, so there is never a moment
+  // where the file has proved it exists, and until then the url is the only
+  // thing in the message that says what you'd be pressing play on.
   if (/\.(mp4|webm|mov)(\?.*)?$/i.test(cleanUrl)) {
     return `<div class="hs-mc-media"><video controls muted preload="none" playsinline src="${attr(safe)}" data-fb="hide"></video></div>`
   }
@@ -42743,7 +42769,7 @@ function initInput() {
         const file = item.getAsFile()
         if (file) {
           e.preventDefault()
-          handleMediaUpload(file)
+          handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
           return
         }
       }
@@ -42799,7 +42825,10 @@ function initInput() {
       const file = fileInput.files?.[0]
       // Reset first so picking the SAME file twice re-fires change.
       fileInput.value = ''
-      if (file) handleMediaUpload(file)
+      // No source url, stated rather than omitted: a file picked off disk has
+      // no clipboard behind it, so there is nothing to recover the original from
+      // — and the picked file already IS the original.
+      if (file) handleMediaUpload(file, '')
     })
   }
 
@@ -42998,7 +43027,7 @@ function initInput() {
               const file = item.getAsFile()
               if (file) {
                 e.preventDefault()
-                handleMediaUpload(file)
+                handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
                 return
               }
             }
@@ -50012,7 +50041,18 @@ const MC_UPLOAD_MAX_IMG = 5 * 1024 * 1024 // 5MB
 const MC_UPLOAD_MAX_VID = 50 * 1024 * 1024 // 50MB
 let _mcUploading = false
 
-function showUploadStatus(msg, isError) {
+// One status line, one timer. The auto-clear lives here rather than at each
+// call site because the upload path chains messages — "upload done" can be
+// replaced by a warning about what the upload cost you — and two call sites each
+// holding their own setTimeout meant the FIRST one's timer wiped the SECOND
+// one's message a moment after it appeared.
+let _mcStatusTimer = null
+function showUploadStatus(msg, isError, clearAfterMs) {
+  if (_mcStatusTimer) {
+    clearTimeout(_mcStatusTimer)
+    _mcStatusTimer = null
+  }
+  if (clearAfterMs) _mcStatusTimer = setTimeout(() => showUploadStatus(null), clearAfterMs)
   const bar = document.getElementById('hs-mc-upload-status')
   if (msg) {
     if (bar) {
@@ -50042,14 +50082,12 @@ async function uploadMediaFile(file) {
   const isImage = file.type.startsWith('image/')
   const isVideo = file.type.startsWith('video/')
   if (!isImage && !isVideo) {
-    showUploadStatus('only images/videos allowed', true)
-    setTimeout(() => showUploadStatus(null), 2500)
+    showUploadStatus('only images/videos allowed', true, 2500)
     return null
   }
   const maxSize = isImage ? MC_UPLOAD_MAX_IMG : MC_UPLOAD_MAX_VID
   if (file.size > maxSize) {
-    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true)
-    setTimeout(() => showUploadStatus(null), 2500)
+    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true, 2500)
     return null
   }
   _mcUploading = true
@@ -50087,21 +50125,72 @@ async function uploadMediaFile(file) {
     })
     if (!resp?.ok || !resp.url) throw new Error(resp?.error || 'upload failed')
     const url = resp.url
-    showUploadStatus('upload done')
-    setTimeout(() => showUploadStatus(null), 1500)
+    showUploadStatus('upload done', false, 1500)
     return url
   } catch (e) {
-    showUploadStatus(`upload failed: ${e.message}`, true)
-    setTimeout(() => showUploadStatus(null), 3500)
+    showUploadStatus(`upload failed: ${e.message}`, true, 3500)
     return null
   } finally {
     _mcUploading = false
   }
 }
 
-async function handleMediaUpload(file) {
-  const url = await uploadMediaFile(file)
+// The original source URL behind a pasted/dropped image, when the clipboard
+// carries one. Chromium's "copy image" writes TWO flavors: a bitmap — which for
+// an animated gif is a single flattened frame, the animation already gone — and
+// a text/html fragment holding the original <img src>, which still points at the
+// live animated file. Reading that flavor is how gmail/docs paste a gif and keep
+// it moving; without it there is no path back to the frames.
+//
+// Exactly one <img> or nothing: a copy of page CONTENT (a paragraph with images
+// in it) also produces html, and guessing which of several images was meant is
+// how you post the wrong picture. One image means the copy WAS that image.
+function clipboardImageSourceUrl(dt) {
+  try {
+    const html = dt?.getData?.('text/html')
+    if (!html) return ''
+    const imgs = new DOMParser().parseFromString(html, 'text/html').querySelectorAll('img[src]')
+    if (imgs.length !== 1) return ''
+    // Resolved against a sentinel base so a relative src — unusable, we have no
+    // idea what page it came from — lands on the sentinel host and is dropped.
+    const u = new URL(imgs[0].getAttribute('src') || '', 'https://relative.invalid')
+    if (u.protocol !== 'https:' || u.hostname === 'relative.invalid') return ''
+    return u.toString()
+  } catch {
+    return ''
+  }
+}
+
+// Ask the server for its own stored copy of a remote image. Returns '' on any
+// failure — the caller falls back to uploading the clipboard bitmap, so the
+// worst case is the old behaviour, never a lost paste.
+async function storeRemoteMedia(srcUrl) {
+  if (_mcUploading) return ''
+  _mcUploading = true
+  showUploadStatus('uploading...')
+  try {
+    const resp = await safeSendMessage({ type: 'api_store_remote', url: srcUrl })
+    if (!resp?.ok || !resp.url) return ''
+    showUploadStatus('upload done', false, 1500)
+    return resp.url
+  } catch {
+    return ''
+  } finally {
+    _mcUploading = false
+  }
+}
+
+async function handleMediaUpload(file, sourceUrl) {
+  // Source URL first — it's the only copy with the animation still in it.
+  let url = sourceUrl ? await storeRemoteMedia(sourceUrl) : ''
+  const lostAnimation = !url && /\.(gif|webp|avif)(\?|#|$)/i.test(sourceUrl || '')
+  if (!url) url = await uploadMediaFile(file)
   if (!url) return
+  // Say it out loud. The fallback posts a picture either way, so the failure is
+  // invisible — you'd just be left wondering why your gif came out frozen.
+  if (lostAnimation) {
+    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
+  }
   const input = document.getElementById('hs-mc-input')
   if (!input) return
   showInputBar()
@@ -50175,7 +50264,9 @@ function setupMediaDropHandlers() {
       e.preventDefault()
       hideDropZone()
       const file = e.dataTransfer.files[0]
-      handleMediaUpload(file)
+      // A drag out of a web page carries the same html flavor as a copy, so a
+      // dragged gif gets the same route back to its frames.
+      handleMediaUpload(file, clipboardImageSourceUrl(e.dataTransfer))
     },
     { signal: mcSignal },
   )
@@ -65958,6 +66049,28 @@ const STORAGE_KEY = 'heatsync_multichat'
         let steps = 0
         const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
         const channelKeys = ['channelID', 'channelId']
+
+        // Twitch does NOT put the token in a top-level prop. The callout is
+        // rendered from an `event` payload nested inside the context-menu prop:
+        //
+        //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
+        //
+        // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
+        // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
+        // is a different, opaque 32-char value — NOT the tokenID; using it fails
+        // the mutation, which silently posts the text as ordinary chat and leaves
+        // the callout to reappear on the next refresh.)
+        //
+        // Scanning only top-level keys is why every scan came back empty and the
+        // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
+        // the Share button, well inside the budget below — it was never a depth
+        // problem, only a nesting one.
+        const eventFrom = (p) =>
+          p?.contextMenu?.props?.children?.props?.event ||
+          p?.contextMenu?._owner?.stateNode?.props?.event ||
+          p?.event ||
+          null
+
         while (queue.length && steps < 60 && !(out.token && out.channelId)) {
           const f = queue.shift()
           if (!f || seen.has(f)) continue
@@ -65965,6 +66078,14 @@ const STORAGE_KEY = 'heatsync_multichat'
           steps++
           const p = f.memoizedProps
           if (p && typeof p === 'object') {
+            if (!out.token) {
+              const ev = eventFrom(p)
+              if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
+                out.token = ev.id
+                out.months = Number(ev.cumulativeTenureMonths) || 0
+                out.eventType = ev.type || null
+              }
+            }
             if (!out.token) {
               for (const k of tokenKeys) {
                 const v = p[k]
@@ -65986,6 +66107,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
           if (f.return) queue.push(f.return)
           if (f.child) queue.push(f.child)
+          // Siblings matter: the callout body and its context-menu prop mount as
+          // siblings of the Share button's subtree, so a return+child-only walk
+          // never reaches the event payload at all.
+          if (f.sibling) queue.push(f.sibling)
         }
         return out
       }
@@ -68025,9 +68150,44 @@ const STORAGE_KEY = 'heatsync_multichat'
         div.appendChild(holder)
         if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(holder)
         if (typeof attachFeedFallbacks === 'function') attachFeedFallbacks(holder)
+        foldEmbeddedMediaUrl(div, holder)
       }
     }
     return div
+  }
+
+  // A pasted image posts as its URL — that IS the wire payload, chat has no
+  // attachments. Showing the url AND the picture it renders is noise, so fold
+  // the url away once its own media is on screen. Direct media only: the
+  // embed builder marks those with data-hs-src-url, and a link CARD is
+  // deliberately left alone, because there you're being asked to click through
+  // and you should get to see where to.
+  //
+  // The url goes only when the picture has actually PAINTED — on load, never on
+  // insert. Hiding it up front and restoring it on error reads as equivalent and
+  // isn't: chat images are loading="lazy", so one rendered out of view never
+  // fetches, never errors, and never fires anything at all. That row would have
+  // sat there as a blank line, url hidden behind an image that was never coming,
+  // until you happened to scroll it into view. Waiting for the load event has no
+  // such hole — nothing is hidden until its replacement is on screen.
+  function foldEmbeddedMediaUrl(row, holder) {
+    const media = holder.querySelector('[data-hs-src-url]')
+    const src = media?.dataset.hsSrcUrl
+    if (!src) return
+    // Match on href, not on the visible text: chat truncates long urls for
+    // display, and linkifyPartialLinks synthesizes an href for a url that was
+    // never fully typed. The href is the only field that means the same thing
+    // in both cases.
+    const link = Array.from(row.querySelectorAll('a.hs-mc-link')).find(
+      (a) => a.getAttribute('href') === src || a.href === src,
+    )
+    if (!link) return
+    const img = media.querySelector('img')
+    if (!img) return
+    const fold = () => link.classList.add('hs-mc-url-folded')
+    // Already decoded — a re-render of a row whose image is in cache.
+    if (img.complete && img.naturalWidth > 0) fold()
+    else img.addEventListener('load', fold, { once: true })
   }
 
   // LRU cache for processYtEmotes' combined regex. Pattern key is the joined

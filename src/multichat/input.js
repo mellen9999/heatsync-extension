@@ -1494,7 +1494,7 @@ function initInput() {
         const file = item.getAsFile()
         if (file) {
           e.preventDefault()
-          handleMediaUpload(file)
+          handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
           return
         }
       }
@@ -1550,7 +1550,10 @@ function initInput() {
       const file = fileInput.files?.[0]
       // Reset first so picking the SAME file twice re-fires change.
       fileInput.value = ''
-      if (file) handleMediaUpload(file)
+      // No source url, stated rather than omitted: a file picked off disk has
+      // no clipboard behind it, so there is nothing to recover the original from
+      // — and the picked file already IS the original.
+      if (file) handleMediaUpload(file, '')
     })
   }
 
@@ -1749,7 +1752,7 @@ function initInput() {
               const file = item.getAsFile()
               if (file) {
                 e.preventDefault()
-                handleMediaUpload(file)
+                handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
                 return
               }
             }
@@ -8763,7 +8766,18 @@ const MC_UPLOAD_MAX_IMG = 5 * 1024 * 1024 // 5MB
 const MC_UPLOAD_MAX_VID = 50 * 1024 * 1024 // 50MB
 let _mcUploading = false
 
-function showUploadStatus(msg, isError) {
+// One status line, one timer. The auto-clear lives here rather than at each
+// call site because the upload path chains messages — "upload done" can be
+// replaced by a warning about what the upload cost you — and two call sites each
+// holding their own setTimeout meant the FIRST one's timer wiped the SECOND
+// one's message a moment after it appeared.
+let _mcStatusTimer = null
+function showUploadStatus(msg, isError, clearAfterMs) {
+  if (_mcStatusTimer) {
+    clearTimeout(_mcStatusTimer)
+    _mcStatusTimer = null
+  }
+  if (clearAfterMs) _mcStatusTimer = setTimeout(() => showUploadStatus(null), clearAfterMs)
   const bar = document.getElementById('hs-mc-upload-status')
   if (msg) {
     if (bar) {
@@ -8793,14 +8807,12 @@ async function uploadMediaFile(file) {
   const isImage = file.type.startsWith('image/')
   const isVideo = file.type.startsWith('video/')
   if (!isImage && !isVideo) {
-    showUploadStatus('only images/videos allowed', true)
-    setTimeout(() => showUploadStatus(null), 2500)
+    showUploadStatus('only images/videos allowed', true, 2500)
     return null
   }
   const maxSize = isImage ? MC_UPLOAD_MAX_IMG : MC_UPLOAD_MAX_VID
   if (file.size > maxSize) {
-    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true)
-    setTimeout(() => showUploadStatus(null), 2500)
+    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true, 2500)
     return null
   }
   _mcUploading = true
@@ -8838,21 +8850,72 @@ async function uploadMediaFile(file) {
     })
     if (!resp?.ok || !resp.url) throw new Error(resp?.error || 'upload failed')
     const url = resp.url
-    showUploadStatus('upload done')
-    setTimeout(() => showUploadStatus(null), 1500)
+    showUploadStatus('upload done', false, 1500)
     return url
   } catch (e) {
-    showUploadStatus(`upload failed: ${e.message}`, true)
-    setTimeout(() => showUploadStatus(null), 3500)
+    showUploadStatus(`upload failed: ${e.message}`, true, 3500)
     return null
   } finally {
     _mcUploading = false
   }
 }
 
-async function handleMediaUpload(file) {
-  const url = await uploadMediaFile(file)
+// The original source URL behind a pasted/dropped image, when the clipboard
+// carries one. Chromium's "copy image" writes TWO flavors: a bitmap — which for
+// an animated gif is a single flattened frame, the animation already gone — and
+// a text/html fragment holding the original <img src>, which still points at the
+// live animated file. Reading that flavor is how gmail/docs paste a gif and keep
+// it moving; without it there is no path back to the frames.
+//
+// Exactly one <img> or nothing: a copy of page CONTENT (a paragraph with images
+// in it) also produces html, and guessing which of several images was meant is
+// how you post the wrong picture. One image means the copy WAS that image.
+function clipboardImageSourceUrl(dt) {
+  try {
+    const html = dt?.getData?.('text/html')
+    if (!html) return ''
+    const imgs = new DOMParser().parseFromString(html, 'text/html').querySelectorAll('img[src]')
+    if (imgs.length !== 1) return ''
+    // Resolved against a sentinel base so a relative src — unusable, we have no
+    // idea what page it came from — lands on the sentinel host and is dropped.
+    const u = new URL(imgs[0].getAttribute('src') || '', 'https://relative.invalid')
+    if (u.protocol !== 'https:' || u.hostname === 'relative.invalid') return ''
+    return u.toString()
+  } catch {
+    return ''
+  }
+}
+
+// Ask the server for its own stored copy of a remote image. Returns '' on any
+// failure — the caller falls back to uploading the clipboard bitmap, so the
+// worst case is the old behaviour, never a lost paste.
+async function storeRemoteMedia(srcUrl) {
+  if (_mcUploading) return ''
+  _mcUploading = true
+  showUploadStatus('uploading...')
+  try {
+    const resp = await safeSendMessage({ type: 'api_store_remote', url: srcUrl })
+    if (!resp?.ok || !resp.url) return ''
+    showUploadStatus('upload done', false, 1500)
+    return resp.url
+  } catch {
+    return ''
+  } finally {
+    _mcUploading = false
+  }
+}
+
+async function handleMediaUpload(file, sourceUrl) {
+  // Source URL first — it's the only copy with the animation still in it.
+  let url = sourceUrl ? await storeRemoteMedia(sourceUrl) : ''
+  const lostAnimation = !url && /\.(gif|webp|avif)(\?|#|$)/i.test(sourceUrl || '')
+  if (!url) url = await uploadMediaFile(file)
   if (!url) return
+  // Say it out loud. The fallback posts a picture either way, so the failure is
+  // invisible — you'd just be left wondering why your gif came out frozen.
+  if (lostAnimation) {
+    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
+  }
   const input = document.getElementById('hs-mc-input')
   if (!input) return
   showInputBar()
@@ -8926,7 +8989,9 @@ function setupMediaDropHandlers() {
       e.preventDefault()
       hideDropZone()
       const file = e.dataTransfer.files[0]
-      handleMediaUpload(file)
+      // A drag out of a web page carries the same html flavor as a copy, so a
+      // dragged gif gets the same route back to its frames.
+      handleMediaUpload(file, clipboardImageSourceUrl(e.dataTransfer))
     },
     { signal: mcSignal },
   )

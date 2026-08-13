@@ -9373,6 +9373,67 @@ async function handleMessage(message, sender, sendResponse) {
       }
     })()
     return true
+  } else if (message.type === 'api_store_remote') {
+    // Store a remote image by URL and answer with OUR copy of it.
+    //
+    // Why this exists: Chromium's "copy image" rasterizes an animated gif to a
+    // single frame before the bytes ever reach the clipboard, so the paste
+    // handler uploads a still and the gif arrives dead. The same copy also
+    // offers a text/html flavor holding the original <img src> — that url still
+    // points at the real animated file, and fetching it server-side is the only
+    // way back to the frames.
+    //
+    // /api/img is that fetch, already built and already hardened: SSRF-pinned
+    // per redirect hop, byte-capped, moderated, and stored through the same
+    // handleUpload pipeline as a direct upload — then it answers 302 to
+    // /uploads/<hash>.webp with animation intact. So this is a URL resolve, not
+    // a second upload path, and it needs no permission the ext doesn't have.
+    ;(async () => {
+      try {
+        const src = String(message.url || '')
+        let parsed
+        try {
+          parsed = new URL(src)
+        } catch {
+          sendResponse({ ok: false, error: 'bad url' })
+          return
+        }
+        // /api/img is https-only and refuses its own origin. Answer both here
+        // rather than spending a round trip to be told.
+        if (parsed.protocol !== 'https:') {
+          sendResponse({ ok: false, error: 'https only' })
+          return
+        }
+        if (parsed.hostname === 'heatsync.org' || parsed.hostname.endsWith('.heatsync.org')) {
+          sendResponse({ ok: true, url: src })
+          return
+        }
+        // noBackoff: a cached, read-only GET. Under the shared heatsync backoff
+        // an unrelated 429 somewhere else would fake-429 this one, and the only
+        // symptom would be gifs quietly going still for the next minute.
+        // 30s: a cold url is a real fetch + moderation pass on our side.
+        const res = await fetchWithTimeout(
+          `${API_URL}/api/img?url=${encodeURIComponent(src)}`,
+          { noBackoff: true },
+          30000,
+        )
+        // The stored path is the redirect TARGET, not the body — and the body is
+        // the full image, up to 10MB. Take the identity and drop the bytes.
+        const finalUrl = res.url || ''
+        try {
+          await res.body?.cancel()
+        } catch {}
+        const stored = finalUrl.match(/\/uploads\/[\w.-]+$/)
+        if (!res.ok || !stored) {
+          sendResponse({ ok: false, error: `http ${res.status}` })
+          return
+        }
+        sendResponse({ ok: true, url: absUrl(stored[0]) })
+      } catch (err) {
+        sendResponse({ ok: false, error: err.message })
+      }
+    })()
+    return true
   } else if (message.type === 'register_self_twitch_id') {
     // Content script discovered the user's own twitch ID. Subscribe to 7TV
     // EventAPI so badge/paint changes push in real-time (no polling needed).

@@ -851,6 +851,19 @@
       max-width: 100%;
       border-radius: 0;
     }
+    /* Right-click handle around inline images (see feed-embed.js). Shrink-wrap
+       so the anchor is exactly the image and not a full-width click target. */
+    .hs-mc-media > .hs-mc-media-link {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+    }
+    /* A url folded away because its own image renders right below it. Never
+       removed from the DOM — if the media 404s the row unfolds it again, so a
+       url-only message can't render as an empty line. */
+    .hs-mc-url-folded {
+      display: none;
+    }
     .hs-mc-media img,
     .hs-mc-media video {
       display: block;

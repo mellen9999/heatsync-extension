@@ -4635,6 +4635,14 @@
     for (const el of targets) el.style.setProperty('--hs-emoji-scale', String(emojiSize))
   }
 
+  // Start typing while reading our chat and the keystroke lands in the
+  // composer. Gated on attention (pointer over the panel, or a popout where
+  // the panel IS the window) rather than firing globally — on twitch.tv the
+  // host owns single-key player shortcuts (space/k pause, m mute, f fullscreen,
+  // t theatre, digits seek) and swallowing those would be a worse bug than the
+  // one this fixes. See src/multichat/type-to-focus.js.
+  initTypeToFocus(mcSignal)
+
   // '/' focuses the live-tab chat filter (vim-style) — only when not already
   // typing, no modifier held, and the filter bar is actually showing.
   document.addEventListener(

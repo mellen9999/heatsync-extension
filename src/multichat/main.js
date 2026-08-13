@@ -3938,6 +3938,13 @@
       let _stackThreadId = ''
       const dismissStack = () => {
         _stackStyleCache = null
+        // Flip the pill's state back — aria-expanded is what tells a screen
+        // reader (and the caret rule) whether the thread is open, so it has to
+        // track dismissal from every path: outside click, Escape, re-click.
+        try {
+          const prevPill = _stackActiveRow?.querySelector('.hs-mc-reply-ctx[aria-expanded="true"]')
+          if (prevPill) prevPill.setAttribute('aria-expanded', 'false')
+        } catch (_) {}
         const overlay = document.getElementById('hs-mc-reply-stack')
         if (overlay) {
           overlay.style.display = 'none'
@@ -4259,6 +4266,21 @@
           if (_stackActiveRow) dismissStack()
           setPaused(true)
           showStack(msg)
+          pill.setAttribute('aria-expanded', 'true')
+        },
+        { signal: mcSignal },
+      )
+      // Keyboard: the pill is a button now, so Enter/Space must open it like
+      // any other. Without this it was reachable by Tab and then inert, which
+      // is worse than not being focusable at all.
+      msgsEl.addEventListener(
+        'keydown',
+        (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return
+          const pill = e.target.closest?.('.hs-mc-reply-ctx')
+          if (!pill) return
+          e.preventDefault()
+          pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
         },
         { signal: mcSignal },
       )
@@ -7922,7 +7944,13 @@
     const replyBar = replyBlocked
       ? `<span class="hs-mc-reply-ctx">&#8618;[blocked]</span> `
       : m.replyTo?.user
-        ? `<span class="hs-mc-reply-ctx" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}</span> `
+        ? // role/tabindex/aria make the pill the control it always was. Clicking
+          // it has opened the thread stack for a long time, but nothing SAID so:
+          // it read as static text, so the feature was invisible unless you
+          // already knew. The trailing caret is the affordance, aria-expanded is
+          // the state, and both the universal hover invert and keyboard
+          // activation come free once it is a button.
+          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}<span class="hs-mc-reply-caret" aria-hidden="true"></span></span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''

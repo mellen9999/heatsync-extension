@@ -1142,3 +1142,30 @@
     }
     #hs-mc-idwarn button:hover,
     #hs-mc-idwarn button:active { color: #000; background: #fff; border-color: #fff; }
+
+    /* Reply pill is a control — look like one. The caret is the only thing
+       that says "this expands", and it flips while the thread stack is open so
+       the row reports its own state. Literal glyphs, never CSS unicode
+       escapes: these styles are inlined into the JS bundle, so a backslash is
+       a JS string escape first and the bundle stops parsing. (This comment
+       originally spelled the escape out and broke the build by itself.)
+       No transition — a caret swap is information, not decoration. */
+    .hs-mc-reply-ctx {
+      cursor: pointer;
+    }
+    .hs-mc-reply-caret {
+      font-size: 10px;
+      opacity: 0.55;
+      margin-left: 2px;
+    }
+    .hs-mc-reply-caret::before {
+      content: '▾';
+    }
+    .hs-mc-reply-ctx[aria-expanded='true'] .hs-mc-reply-caret::before {
+      content: '▴';
+    }
+    .hs-mc-reply-ctx:hover .hs-mc-reply-caret,
+    .hs-mc-reply-ctx:focus-visible .hs-mc-reply-caret,
+    .hs-mc-reply-ctx[aria-expanded='true'] .hs-mc-reply-caret {
+      opacity: 1;
+    }

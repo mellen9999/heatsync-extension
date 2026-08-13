@@ -629,11 +629,6 @@
       font-style: normal;
       font-weight: 600;
     }
-    .hs-mc-firstseen-label {
-      color: var(--hs-thread, #ff5fff);
-      font-size: 13px;
-      font-style: normal;
-    }
     .hs-mc-highlight-label {
       color: var(--hs-gold);
       font-size: 13px;

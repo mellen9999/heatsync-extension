@@ -11796,11 +11796,6 @@ function injectStyles() {
       font-style: normal;
       font-weight: 600;
     }
-    .hs-mc-firstseen-label {
-      color: var(--hs-thread, #ff5fff);
-      font-size: 13px;
-      font-style: normal;
-    }
     .hs-mc-highlight-label {
       color: var(--hs-gold);
       font-size: 13px;
@@ -67157,11 +67152,14 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Its own variable, not another branch of the chain above: a first message
     // can also be a redeem or a highlight, and those are different facts about
     // the same row. Appending keeps both instead of picking a winner.
+    // ONLY twitch's real first-message-ever gets a label. The session-first
+    // glow is our own bookkeeping ("first time YOU have seen them since the tab
+    // opened") and mellen does not want it announced — it is not a fact about
+    // the chatter, it is a fact about your tab, and labelling it competed with
+    // the one that matters.
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
       firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 first message in this channel</span>`
-    } else if (div.classList.contains('hs-first-msg')) {
-      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-firstseen-label">\u25C7 first message this session</span>`
     }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =

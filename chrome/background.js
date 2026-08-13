@@ -9360,7 +9360,14 @@ async function handleMessage(message, sender, sendResponse) {
           })
           return
         }
-        sendResponse({ ok: true, url: data.url })
+        // Absolutize before it leaves the relay. The server answers with an
+        // origin-relative '/uploads/<file>', and the only consumer drops that
+        // string straight into the chat composer — where a leading '/' makes
+        // Twitch read the whole message as a slash command and answer
+        // "Unrecognized command: /uploads/...". The message never reaches chat.
+        // The render chokepoint already absolutizes for feed/thread, but a chat
+        // send has no chokepoint: the raw text is the wire payload.
+        sendResponse({ ok: true, url: absUrl(data.url) })
       } catch (err) {
         sendResponse({ ok: false, error: err.message })
       }

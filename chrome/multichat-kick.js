@@ -11755,6 +11755,35 @@ function injectStyles() {
     .hs-mc-msg[data-msg-id]:hover .hs-mc-reply-btn {
       display: block;
     }
+    /* Thread button — its own complete chip to the left of reply, with the same
+       4px gutter the mod toolbar already sits on. Deliberately NOT a merged
+       border-right:0 join: chip widths follow the font (Cozette vs fallback
+       measured 16px and 15px here), so a join that assumes an exact width
+       renders as a chip missing one edge the moment the font differs. Both
+       chips are built together in the data-msg-id block, so the mod toolbar
+       offset below can count on both being present. */
+    .hs-mc-thread-btn {
+      display: none;
+      position: absolute;
+      top: 1px;
+      right: 22px;
+      background: #000;
+      border: 1px solid #808080;
+      color: #fff;
+      font-size: 13px;
+      padding: 0 4px;
+      cursor: pointer;
+      line-height: 18px;
+      z-index: 10;
+    }
+    .hs-mc-thread-btn:hover,
+    .hs-mc-thread-btn:active {
+      color: #000;
+      background: #fff;
+    }
+    .hs-mc-msg[data-msg-id]:hover .hs-mc-thread-btn {
+      display: block;
+    }
     /* whisper rows have no data-msg-id, so the rule above never matches —
        mirror it for the whisper-row marker class instead */
     .hs-whisper-msg {
@@ -11774,7 +11803,8 @@ function injectStyles() {
     .hs-mod-toolbar {
       position: absolute;
       top: 1px;
-      right: 22px;
+      /* clears the reply chip (20px) + the thread chip (20px) to its left */
+      right: 42px;
       z-index: 11;
       display: inline-flex;
       align-items: stretch;
@@ -43389,6 +43419,47 @@ function initInput() {
     )
   }
 
+  // Thread button click → seed the composer with the /op command and the quote.
+  // A native twitch/kick message has no heatsync id, so it can never be a
+  // reply_to target — quoting it into a NEW top-level thread is the only honest
+  // on-ramp. Seeding (not sending) keeps the user in control of what gets
+  // published under their name, and shows them the command exists.
+  if (!_onceGuardsInput.threadHandler) {
+    _onceGuardsInput.threadHandler = true
+    document.addEventListener(
+      'click',
+      (e) => {
+        const btn = e.target.closest('.hs-mc-thread-btn')
+        if (!btn) return
+        const msg = btn.closest('.hs-mc-msg')
+        if (!msg) return
+        const quoted = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim()
+        if (!quoted) return
+        showInputBar()
+        const input = document.getElementById('hs-mc-input')
+        if (!input) return
+        const seed = `/op "${quoted}" — ${msg.dataset.msgUser || ''} `
+        input.focus()
+        // Append at the caret-end rather than overwriting: a half-typed message
+        // in the composer is the user's, and silently eating it to make room
+        // for a quote would be worse than the missing button ever was.
+        if (input.isContentEditable) {
+          const sel = window.getSelection()
+          const range = document.createRange()
+          range.selectNodeContents(input)
+          range.collapse(false)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          document.execCommand('insertText', false, seed)
+        } else {
+          input.value += seed
+          input.selectionStart = input.selectionEnd = input.value.length
+        }
+      },
+      { signal: mcSignal },
+    )
+  }
+
   // Universal right-click → user/post action menu. Fires on ANY username
   // (.hs-mc-user), chat message (.hs-mc-msg), or feed post (.hs-feed-msg)
   // anywhere in the panel. follow=1, block=2 are always the top two items.
@@ -67795,6 +67866,18 @@ const STORAGE_KEY = 'heatsync_multichat'
       replyBtn.textContent = '↩'
       replyBtn.title = 'Reply'
       div.appendChild(replyBtn)
+      // Thread button — the discoverable way to mint a heatsync thread. The
+      // capability already existed as `/op`, a slash command with no UI: 56
+      // posts from 2 authors in 41 days, because nobody finds a command they
+      // were never shown. `»` mirrors the `>>id` quote syntax the feed already
+      // uses. It SEEDS the composer rather than posting — one click publishing
+      // someone else's words under your name is a trap, and the user's own take
+      // is what makes the thread worth reading.
+      const threadBtn = document.createElement('button')
+      threadBtn.className = 'hs-mc-thread-btn'
+      threadBtn.textContent = '»'
+      threadBtn.title = t('mc_msg_start_thread') || 'start a thread from this message'
+      div.appendChild(threadBtn)
     }
     // Reply-thread linkage for hover highlight
     if (m.replyTo) {

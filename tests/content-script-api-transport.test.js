@@ -59,5 +59,14 @@ describe('multichat modules reach the API only through the background worker', (
     const handler = bg.slice(bg.indexOf("message.type === 'api_upload'"))
     const body = handler.slice(0, handler.indexOf('register_self_twitch_id'))
     expect(body).not.toMatch(/['"]Content-Type['"]\s*\]?\s*[:=]\s*['"]multipart/i)
+
+    // The upload URL must leave the relay absolute. The server answers with
+    // '/uploads/<file>' and the only consumer appends it to the chat composer,
+    // so a relative URL sends a message that STARTS WITH A SLASH — Twitch reads
+    // it as a slash command and replies "Unrecognized command: /uploads/...".
+    // The image never reaches chat. Feed/thread are saved by the render
+    // chokepoint absolutizing; a chat send has no chokepoint, the text IS the
+    // wire payload.
+    expect(body, 'api_upload relays the raw server url').toMatch(/sendResponse\(\{\s*ok:\s*true,\s*url:\s*absUrl\(/)
   })
 })

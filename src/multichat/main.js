@@ -7880,9 +7880,27 @@
     } else if (m.isHighlighted) {
       redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 highlighted message</span>`
     }
+    // First-message rows said what they were with COLOUR ALONE — a magenta bar
+    // for a channel-first, a faint inset glow for a session-first. Nobody can
+    // read a colour they were never given a key to, and the glow was barely
+    // above the background besides. Redeems and highlights next to them have
+    // carried a text label all along; these get the same treatment, using the
+    // same primitive rather than a new one.
+    //
+    // Its own variable, not another branch of the chain above: a first message
+    // can also be a redeem or a highlight, and those are different facts about
+    // the same row. Appending keeps both instead of picking a winner.
+    let firstMsgLabel = ''
+    if (m.isFirstMsg) {
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 first message in this channel</span>`
+    } else if (div.classList.contains('hs-first-msg')) {
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-firstseen-label">\u25C7 first message this session</span>`
+    }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
-      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') + redeemLabel
+      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') +
+      redeemLabel +
+      firstMsgLabel
     // Skip the date-format work entirely when the timestamp won't render —
     // formatTimeFromTs builds a Date per call, and at 100msg/s that's free CPU
     // we can give back when timestamps are off.

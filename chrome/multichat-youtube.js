@@ -8841,6 +8841,30 @@ const HsNotifs = (() => {
   // Used by twitch-resub-share, twitch-watchstreak-share, sub-anniversary,
   // viewer-milestone callouts. Stacks vertically (newer on top) so multiple
   // celebration opportunities can coexist — user picks which to share first.
+  /**
+   * Clamp a docked layer's horizontal box into the viewport.
+   *
+   * A docked layer mirrors whatever it docks to (the chat overlay). That rect is
+   * not guaranteed to be on screen: at narrow widths the chat column can sit
+   * fully past the right edge, and the layer faithfully followed it — measured
+   * live at `left: 1053px; right: -11px` in a 1048px viewport, i.e. a **6px
+   * sliver**. The notification was present, correct and completely unreadable,
+   * which reads to a user as the feature simply not working.
+   *
+   * A notification is the one thing that must never be silently invisible, so the
+   * dock is a preference, not a contract: follow the target when it is usable,
+   * clamp on screen when it is not.
+   */
+  function clampDockedBox(left, width, minWidth = 180) {
+    const vw = window.innerWidth
+    let w = Math.min(width, vw)
+    if (w < minWidth) w = Math.min(minWidth, vw)
+    let l = left
+    if (l + w > vw) l = vw - w
+    if (l < 0) l = 0
+    return { left: l, right: Math.max(0, vw - (l + w)) }
+  }
+
   registerLayer('chat-docked-bottom', {
     stack: 'queue',
     maxVisible: 3,
@@ -8858,10 +8882,11 @@ const HsNotifs = (() => {
       }
       const horRect = ovRect && ovRect.width > 0 ? ovRect : ibRect
       if (!horRect || bottomY === null) return null
+      const box = clampDockedBox(horRect.left, horRect.width)
       return {
         bottom: window.innerHeight - bottomY,
-        left: horRect.left,
-        right: window.innerWidth - (horRect.left + horRect.width),
+        left: box.left,
+        right: box.right,
       }
     },
   })
@@ -8877,10 +8902,11 @@ const HsNotifs = (() => {
       const tbVisible = tabBarElement && !tabBarElement.classList.contains('hs-hidden')
       const tbRect = tbVisible ? tabBarElement.getBoundingClientRect() : null
       const topY = tabPosition === 'top' && tbRect && tbRect.height > 0 ? tbRect.bottom : ovRect.top
+      const box = clampDockedBox(ovRect.left, ovRect.width)
       return {
         top: topY,
-        left: ovRect.left,
-        right: window.innerWidth - (ovRect.left + ovRect.width),
+        left: box.left,
+        right: box.right,
       }
     },
   })
@@ -11744,6 +11770,21 @@ function injectStyles() {
       font-style: normal;
       font-weight: 600;
     }
+    /* First-message labels — same primitive as the redeem/highlight labels
+       above. Each one is the SAME colour as its row accent, so the bar and the
+       words are one signal instead of two: the colour stays for scanning a fast
+       chat, the words are there the first time you meet it. */
+    .hs-mc-first-label {
+      color: #bd5fff;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .hs-mc-firstseen-label {
+      color: var(--hs-thread, #ff5fff);
+      font-size: 13px;
+      font-style: normal;
+    }
     .hs-mc-highlight-label {
       color: var(--hs-gold);
       font-size: 13px;
@@ -11814,9 +11855,13 @@ function injectStyles() {
       -webkit-text-fill-color: #999 !important;
     }
     .hs-mc-msg.hs-first-msg {
-      /* first-message glow — thread/event magenta bar + a subtle inset glow
-         (the setting is called "glow", so it actually glows). */
-      box-shadow: inset 2px 0 0 var(--hs-thread), inset 0 0 10px -2px rgba(255, 0, 255, 0.30);
+      /* first-message glow — thread/event magenta bar + an inset glow (the
+         setting is called "glow", so it actually glows).
+         The glow was rgba(...,0.30) at -2px spread, which against this
+         background was very nearly nothing — reported as "too unvisible". The
+         row now also carries a text label, so the glow is reinforcement rather
+         than the whole message, but reinforcement still has to be legible. */
+      box-shadow: inset 2px 0 0 var(--hs-thread), inset 0 0 14px -1px rgba(255, 0, 255, 0.5);
     }
     .hs-mc-msg.hs-kw-match {
       background: rgba(255, 255, 0, 0.14);
@@ -67040,9 +67085,27 @@ const STORAGE_KEY = 'heatsync_multichat'
     } else if (m.isHighlighted) {
       redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 highlighted message</span>`
     }
+    // First-message rows said what they were with COLOUR ALONE — a magenta bar
+    // for a channel-first, a faint inset glow for a session-first. Nobody can
+    // read a colour they were never given a key to, and the glow was barely
+    // above the background besides. Redeems and highlights next to them have
+    // carried a text label all along; these get the same treatment, using the
+    // same primitive rather than a new one.
+    //
+    // Its own variable, not another branch of the chain above: a first message
+    // can also be a redeem or a highlight, and those are different facts about
+    // the same row. Appending keeps both instead of picking a winner.
+    let firstMsgLabel = ''
+    if (m.isFirstMsg) {
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 first message in this channel</span>`
+    } else if (div.classList.contains('hs-first-msg')) {
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-firstseen-label">\u25C7 first message this session</span>`
+    }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
-      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') + redeemLabel
+      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') +
+      redeemLabel +
+      firstMsgLabel
     // Skip the date-format work entirely when the timestamp won't render —
     // formatTimeFromTs builds a Date per call, and at 100msg/s that's free CPU
     // we can give back when timestamps are off.

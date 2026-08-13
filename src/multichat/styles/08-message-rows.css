@@ -619,6 +619,21 @@
       font-style: normal;
       font-weight: 600;
     }
+    /* First-message labels — same primitive as the redeem/highlight labels
+       above. Each one is the SAME colour as its row accent, so the bar and the
+       words are one signal instead of two: the colour stays for scanning a fast
+       chat, the words are there the first time you meet it. */
+    .hs-mc-first-label {
+      color: #bd5fff;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .hs-mc-firstseen-label {
+      color: var(--hs-thread, #ff5fff);
+      font-size: 13px;
+      font-style: normal;
+    }
     .hs-mc-highlight-label {
       color: var(--hs-gold);
       font-size: 13px;
@@ -689,9 +704,13 @@
       -webkit-text-fill-color: #999 !important;
     }
     .hs-mc-msg.hs-first-msg {
-      /* first-message glow — thread/event magenta bar + a subtle inset glow
-         (the setting is called "glow", so it actually glows). */
-      box-shadow: inset 2px 0 0 var(--hs-thread), inset 0 0 10px -2px rgba(255, 0, 255, 0.30);
+      /* first-message glow — thread/event magenta bar + an inset glow (the
+         setting is called "glow", so it actually glows).
+         The glow was rgba(...,0.30) at -2px spread, which against this
+         background was very nearly nothing — reported as "too unvisible". The
+         row now also carries a text label, so the glow is reinforcement rather
+         than the whole message, but reinforcement still has to be legible. */
+      box-shadow: inset 2px 0 0 var(--hs-thread), inset 0 0 14px -1px rgba(255, 0, 255, 0.5);
     }
     .hs-mc-msg.hs-kw-match {
       background: rgba(255, 255, 0, 0.14);

@@ -17,19 +17,35 @@ import { readFileSync } from 'node:fs'
 
 const SRC = readFileSync(new URL('../src/multichat/notifs.js', import.meta.url), 'utf8')
 
-/** Lift the pure helper out of the module (which registers layers on import). */
-const clampDockedBox = (() => {
+/**
+ * Lift the pure helper out of the module (which registers layers on import).
+ * Brace-matched rather than sliced to the next `\n}` — the function lives
+ * inside an enclosing block, so its closing brace is indented and a
+ * formatter re-indenting the file silently broke a column-0 search.
+ */
+function extractClamp() {
   const start = SRC.indexOf('function clampDockedBox')
   expect(start, 'clampDockedBox missing').toBeGreaterThan(-1)
-  const body = SRC.slice(start, SRC.indexOf('\n}', start) + 2)
-  return new Function('window', `${body}; return clampDockedBox`)({ innerWidth: 0 })
-})()
+  let depth = 0
+  let end = -1
+  for (let i = SRC.indexOf('{', start); i < SRC.length; i++) {
+    if (SRC[i] === '{') depth++
+    else if (SRC[i] === '}') {
+      depth--
+      if (depth === 0) {
+        end = i + 1
+        break
+      }
+    }
+  }
+  expect(end, 'could not brace-match clampDockedBox').toBeGreaterThan(-1)
+  return SRC.slice(start, end)
+}
+const CLAMP_SRC = extractClamp()
 
 /** Re-bind against a given viewport width. */
 function withViewport(vw) {
-  const start = SRC.indexOf('function clampDockedBox')
-  const body = SRC.slice(start, SRC.indexOf('\n}', start) + 2)
-  return new Function('window', `${body}; return clampDockedBox`)({ innerWidth: vw })
+  return new Function('window', `${CLAMP_SRC}; return clampDockedBox`)({ innerWidth: vw })
 }
 
 describe('clampDockedBox', () => {

@@ -8057,6 +8057,18 @@
       replyBtn.textContent = '↩'
       replyBtn.title = 'Reply'
       div.appendChild(replyBtn)
+      // Thread button — the discoverable way to mint a heatsync thread. The
+      // capability already existed as `/op`, a slash command with no UI: 56
+      // posts from 2 authors in 41 days, because nobody finds a command they
+      // were never shown. `»` mirrors the `>>id` quote syntax the feed already
+      // uses. It SEEDS the composer rather than posting — one click publishing
+      // someone else's words under your name is a trap, and the user's own take
+      // is what makes the thread worth reading.
+      const threadBtn = document.createElement('button')
+      threadBtn.className = 'hs-mc-thread-btn'
+      threadBtn.textContent = '»'
+      threadBtn.title = t('mc_msg_start_thread') || 'start a thread from this message'
+      div.appendChild(threadBtn)
     }
     // Reply-thread linkage for hover highlight
     if (m.replyTo) {

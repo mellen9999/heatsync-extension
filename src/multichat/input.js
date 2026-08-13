@@ -2223,6 +2223,47 @@ function initInput() {
     )
   }
 
+  // Thread button click → seed the composer with the /op command and the quote.
+  // A native twitch/kick message has no heatsync id, so it can never be a
+  // reply_to target — quoting it into a NEW top-level thread is the only honest
+  // on-ramp. Seeding (not sending) keeps the user in control of what gets
+  // published under their name, and shows them the command exists.
+  if (!_onceGuardsInput.threadHandler) {
+    _onceGuardsInput.threadHandler = true
+    document.addEventListener(
+      'click',
+      (e) => {
+        const btn = e.target.closest('.hs-mc-thread-btn')
+        if (!btn) return
+        const msg = btn.closest('.hs-mc-msg')
+        if (!msg) return
+        const quoted = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim()
+        if (!quoted) return
+        showInputBar()
+        const input = document.getElementById('hs-mc-input')
+        if (!input) return
+        const seed = `/op "${quoted}" — ${msg.dataset.msgUser || ''} `
+        input.focus()
+        // Append at the caret-end rather than overwriting: a half-typed message
+        // in the composer is the user's, and silently eating it to make room
+        // for a quote would be worse than the missing button ever was.
+        if (input.isContentEditable) {
+          const sel = window.getSelection()
+          const range = document.createRange()
+          range.selectNodeContents(input)
+          range.collapse(false)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          document.execCommand('insertText', false, seed)
+        } else {
+          input.value += seed
+          input.selectionStart = input.selectionEnd = input.value.length
+        }
+      },
+      { signal: mcSignal },
+    )
+  }
+
   // Universal right-click → user/post action menu. Fires on ANY username
   // (.hs-mc-user), chat message (.hs-mc-msg), or feed post (.hs-feed-msg)
   // anywhere in the panel. follow=1, block=2 are always the top two items.

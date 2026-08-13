@@ -2854,5 +2854,9 @@
         "content": "$1"
       }
     }
+  },
+  "mc_msg_start_thread": {
+    "message": "start a thread from this message",
+    "description": "Tooltip on the per-message button that seeds a new heatsync thread with a quote of that chat message"
   }
 }

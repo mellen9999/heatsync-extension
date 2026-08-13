@@ -5741,6 +5741,31 @@
     // Internal: surface()'s native-button hook reads this to know whether to
     // block the click (user-initiated) or pass through (programmatic from us).
     _allowNativeShare: () => _allowNativeShare,
+    /**
+     * Fire twitch's own share button, with our interceptor standing down for
+     * the duration. Used when we have no genuine resub token: twitch's flow is
+     * then the only one that can actually consume it, so ours gets out of the
+     * way rather than half-completing. Mirrors tryDomClick's sequence — a bare
+     * .click() alone does not always satisfy their handler.
+     */
+    clickNative: (btn) => {
+      if (!btn) return false
+      try {
+        _allowNativeShare = true
+        try {
+          const opts = { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }
+          btn.dispatchEvent(new MouseEvent('mousedown', opts))
+          btn.dispatchEvent(new MouseEvent('mouseup', opts))
+          btn.dispatchEvent(new MouseEvent('click', opts))
+          btn.click()
+        } finally {
+          _allowNativeShare = false
+        }
+        return true
+      } catch (_) {
+        return false
+      }
+    },
   }
 
   // ── Watch-streak share: mirror of resub-share for Twitch's daily ───────
@@ -6085,8 +6110,26 @@
 
       if (!months) return
       calloutEl.dataset.hsSurfaced = '1'
+      // Whether Twitch actually handed us a token, as opposed to us guessing
+      // one. This decides if we may take the click at all.
+      //
+      // The reconstruction below (base64 "<uid>:<cid>:<months>:cumulative") was
+      // inferred from a token seen on an older build; twitch's current build
+      // exposes no token prop anywhere near the callout — walked 400 fibers off
+      // the share button live and found none. So the fallback was ALWAYS in
+      // play, the mutation always failed, and the failure path posts the typed
+      // text as a normal chat message: it looks like it worked, while twitch
+      // never consumes the token, so the callout returns on the next refresh.
+      // Exactly the report — "appears like it works but it keeps coming back
+      // like every refresh".
+      //
+      // So: only intercept the button when we can genuinely finish the job.
+      // Without a real token, twitch's own button works perfectly — let it run.
+      // Never take over a flow we cannot complete; a silent half-success is
+      // worse than not intervening.
+      const hasRealToken = !!resubToken
       if (!resubToken) resubToken = fallbackToken(months)
-      if (shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
+      if (hasRealToken && shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
         shareBtn.dataset.hsShareHooked = '1'
         shareBtn.addEventListener(
           'click',
@@ -6124,7 +6167,10 @@
           channel: ch,
           _nativeShareBtn: shareBtn,
           _nativeCallout: calloutEl,
-          _resubToken: resubToken,
+          // Only pass a token we were actually given. A reconstructed one makes
+          // the share mode fail in a way that reads as success; downstream uses
+          // its absence to route through twitch's own button instead.
+          _resubToken: hasRealToken ? resubToken : null,
         })
       } catch (_) {}
       try {

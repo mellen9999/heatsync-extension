@@ -611,10 +611,26 @@ const HsNotifs = (() => {
           // sends a default "<user> is celebrating Nmo as a subscriber!"
           // message to chat, robbing the user of the custom-message window.
           // Call _enterResubShareMode directly via the exposed API instead.
+          //
+          // ONLY when we hold a real token, though. Our share mode finishes by
+          // calling Chat_ShareResub_UseResubToken, and with a guessed token
+          // that mutation fails and falls back to posting the text as ordinary
+          // chat — which looks like it worked while twitch never marks the
+          // resub shared, so the callout returns on every refresh. With no
+          // token, hand the click to twitch's own button: it is the only thing
+          // that can actually consume the resub.
           try {
-            window.__hsResubShare?.enter?.(data.months, data.user, data.channel, data._resubToken)
+            if (data._resubToken) {
+              window.__hsResubShare?.enter?.(data.months, data.user, data.channel, data._resubToken)
+              return false // resub-share mode controls dismissal
+            }
+            const btn = data._nativeShareBtn
+            if (btn) {
+              window.__hsResubShare?.clickNative?.(btn)
+              return true // twitch owns the flow now — close our prompt
+            }
           } catch (_) {}
-          return false // resub-share mode controls dismissal
+          return false
         },
       },
       dismiss: { label: '✕' },

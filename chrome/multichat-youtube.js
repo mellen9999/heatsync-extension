@@ -73261,21 +73261,43 @@ const STORAGE_KEY = 'heatsync_multichat'
     // you counts as a mention, the red with it).
     irc.on('reply-ctx', (msg) => {
       try {
-        const buf = irc.getMessages?.(msg.channel)
-        if (!buf) return
-        const iter = Array.isArray(buf) ? buf : typeof buf.values === 'function' ? buf.values() : null
-        if (!iter) return
-        for (const m of iter) {
-          if (m?.id !== msg.id) continue
-          if (m.replyTo?.user) return // the winner already had it — nothing to do
+        // Patch the message wherever it lives, which is not always one place.
+        // A drawn row can outlive — or simply not be — the object currently in
+        // the buffer (see repaintForIdentityChange: "Drawn rows outlive their
+        // buffer after an SPA nav — reach them through the _hsMsg back-ref or
+        // they stay frozen forever"). Patching only the buffer left the row on
+        // screen still holding the tap's context-free copy: no "replying to"
+        // bar and, since a reply to you is a mention, no red — the exact
+        // symptom this repair exists to prevent.
+        const apply = (m) => {
+          if (!m || m.id !== msg.id) return false
+          if (m.replyTo?.user) return false // already had it — nothing to do
           m.replyTo = msg.replyTo
-          // The renderer recomputes isMention(m) every render, so clearing the
-          // cached html restores the reply bar AND the red in one step — no
-          // separate mention flag to set (there is none to set).
+          // isMention(m) is recomputed per render and reads replyTo, so the
+          // reply bar and the red both come back from this one assignment;
+          // clearing the text cache lets the row rebuild.
           m._renderedHtml = null
-          scheduleRenderMessages()
-          return
+          return true
         }
+
+        let patched = false
+        const buf = irc.getMessages?.(msg.channel)
+        const iter = Array.isArray(buf) ? buf : typeof buf?.values === 'function' ? buf.values() : null
+        if (iter) {
+          for (const m of iter) {
+            if (apply(m)) {
+              patched = true
+              break
+            }
+          }
+        }
+        const msgsEl = document.getElementById('hs-mc-messages')
+        if (msgsEl) {
+          for (const div of msgsEl.querySelectorAll('.hs-mc-msg')) {
+            if (apply(div._hsMsg)) patched = true
+          }
+        }
+        if (patched) scheduleRenderMessages()
       } catch (_) {}
     })
 

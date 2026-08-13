@@ -57,6 +57,20 @@ describe('the repair actually repaints', () => {
     expect(handler).toMatch(/if \(m\.replyTo\?\.user\) return/)
   })
 
+  // The gap that shipped: the repair patched only the buffer copy, so when the
+  // row already on screen was a different object it kept the tap's
+  // context-free version forever — no reply bar, no red. main.js states the
+  // rule for this in repaintForIdentityChange: drawn rows must be reached
+  // through the _hsMsg back-ref or "they stay frozen forever".
+  test('reaches drawn rows through the _hsMsg back-ref, not just the buffer', () => {
+    expect(handler).toMatch(/hs-mc-messages/)
+    expect(handler).toMatch(/_hsMsg/)
+  })
+
+  test('only repaints when something was actually patched', () => {
+    expect(handler).toMatch(/if \(patched\)\s*scheduleRenderMessages\(\)/)
+  })
+
   test('every function the handler calls actually exists in main.js', () => {
     // The near-miss this pins: the handler first called `scheduleRender()`,
     // which does not exist — the real name is scheduleRenderMessages. Guarded
@@ -65,11 +79,15 @@ describe('the repair actually repaints', () => {
     // Strip comments first — prose mentioning a function name is not a call,
     // and the fix's own comment names isMention() deliberately.
     const code = handler.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '')
-    const called = [...code.matchAll(/\b([a-zA-Z_$][\w$]*)\s*\(/g)]
-      .map((m) => m[1])
+    // Skip anything preceded by a dot — `x.foo()` is a member call and says
+    // nothing about main.js's own declarations. This used to be a hardcoded
+    // allowlist of member names, which meant every new member call the handler
+    // made failed the guard until someone extended the list; the dot is the
+    // actual signal.
+    const called = [...code.matchAll(/(^|[^.\w$])([a-zA-Z_$][\w$]*)\s*\(/g)]
+      .map((m) => m[2])
       .filter((n) => !['if', 'for', 'return', 'catch', 'try', 'typeof', 'Array'].includes(n))
     const missing = called.filter((n) => {
-      if (/^(isArray|values|getMessages)$/.test(n)) return false // member calls
       const declared = new RegExp(String.raw`(function\s+${n}\b|const\s+${n}\s*=|let\s+${n}\s*=)`)
       return !declared.test(MAIN_SRC)
     })

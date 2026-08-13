@@ -55306,7 +55306,16 @@ function handleAutomodActionClick(rowEl, action) {
         return
       }
       row.status = 'error'
-      row.errorText = res?.error === 'relink_required' ? t('mc_automod_relink_toast') : t('mc_automod_error')
+      // Three distinct failures, three distinct sentences. `relink_required`
+      // is the twitch grant; `auth_required` is our own expired session, and
+      // telling someone to relink twitch for that sends them round a loop
+      // relinking can never close.
+      row.errorText =
+        res?.error === 'relink_required'
+          ? t('mc_automod_relink_toast')
+          : res?.error === 'auth_required'
+            ? t('mc_automod_signin')
+            : t('mc_automod_error')
       patchAutomodRowDom(row)
     })
     .catch(() => {

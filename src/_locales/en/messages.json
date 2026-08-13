@@ -1606,6 +1606,9 @@
   "mc_automod_relink_toast": {
     "message": "automod queue needs a twitch relink"
   },
+  "mc_automod_signin": {
+    "message": "sign in to heatsync again"
+  },
   "mc_automod_relink_action": {
     "message": "relink"
   },

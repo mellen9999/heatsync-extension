@@ -7407,9 +7407,20 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           return
         }
         if (res.status === 401) {
+          // Two very different 401s arrive here and only one is about twitch.
+          // `relink_required` means the twitch grant is missing the automod
+          // scope. A BARE 401 is authRequired rejecting OUR bearer token — an
+          // expired heatsync session. Reporting both as 'relink_required' sent
+          // people to relink twitch over and over for a problem relinking
+          // twitch cannot fix; the toast was already gated correctly, this
+          // response was not.
           const data = await res.json().catch(() => null)
-          if (data?.error === 'relink_required') notifyAutomodRelinkOnce()
-          sendResponse({ ok: false, error: 'relink_required' })
+          if (data?.error === 'relink_required') {
+            notifyAutomodRelinkOnce()
+            sendResponse({ ok: false, error: 'relink_required' })
+          } else {
+            sendResponse({ ok: false, error: 'auth_required' })
+          }
           return
         }
         log(' automod_watch failed:', res.status)
@@ -7451,9 +7462,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (res.status === 404) {
           sendResponse({ ok: false, error: 'gone' })
         } else if (res.status === 401) {
+          // Same split as automod_watch: only a server-declared
+          // `relink_required` is about the twitch grant. A bare 401 is our own
+          // expired session.
           const data = await res.json().catch(() => null)
-          if (data?.error === 'relink_required') notifyAutomodRelinkOnce()
-          sendResponse({ ok: false, error: 'relink_required' })
+          if (data?.error === 'relink_required') {
+            notifyAutomodRelinkOnce()
+            sendResponse({ ok: false, error: 'relink_required' })
+          } else {
+            sendResponse({ ok: false, error: 'auth_required' })
+          }
         } else if (res.status === 403) {
           sendResponse({ ok: false, error: 'not_moderator' })
         } else {

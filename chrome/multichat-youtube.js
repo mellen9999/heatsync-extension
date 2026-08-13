@@ -21969,6 +21969,13 @@ function scanExistingMentions() {
 const _raidWindows = new Map()
 const RAID_WINDOW_MS = 90 * 1000
 
+// Archive-demand throttle: channel(lowercase) → ms of the last signal sent.
+// Mirrors the server's own one-per-socket-per-channel-per-5min window, so we
+// stop paying to send frames it discards at the door. Bounded by the number of
+// channels this tab actually joins.
+const ARCHIVE_DEMAND_INTERVAL_MS = 5 * 60 * 1000
+const archiveDemandSentAt = new Map()
+
 // Kick sub/gift/KICKs celebrations reach us on TWO independent transports —
 // the server's official webhook relay and BG's Pusher tap — and a channel can
 // have both. Neither payload carries a stable event id to dedup on, so the key
@@ -22659,28 +22666,27 @@ class IRC extends ChatClient {
       // which would otherwise silently break the buffer's sortedness that
       // fairMerge/mergeSortedRuns (main.js) depend on.
       buf.insertOrdered(msg)
-      // Relay PRIVMSGs to server archive (ON CONFLICT DO NOTHING dedupes across
-      // multiple viewers). Skip replays from BG history merge.
+      // Tell the server this channel has a live viewer, so it archives it.
+      //
+      // This used to send a FULL message payload per PRIVMSG, and the comment
+      // here still claimed it fed the archive directly. It does not: the
+      // server side is `ws:archive-demand:<socket>:<channel>` at ONE token per
+      // 5 minutes, so every frame after the first was discarded at the door.
+      // On a busy channel that is hundreds of frames/sec for one signal — and
+      // the per-connection 30/s WS limiter is type-agnostic, so the flood
+      // silently ate this user's OWN sends, acks and presence as collateral.
+      // Mirror the server's window here and send one bare signal per channel.
       if (!msg.type && !msg.isHistory && !msg.isSynthetic && msg.user && msg.text && msg.id) {
-        try {
-          chrome.runtime
-            .sendMessage({
-              type: 'ws_send',
-              data: {
-                type: 'twitch:chat:relay',
-                channel: ch,
-                username: msg.login || String(msg.user).toLowerCase(),
-                display_name: msg.user,
-                message: msg.text,
-                message_id: msg.id,
-                timestamp: msg.time || Date.now(),
-                emote_refs: msg.twitchEmotes ? { twitch: msg.twitchEmotes } : null,
-                reply_to_id: msg.replyTo?.id || null,
-              },
-            })
-            .catch((e) => log('archive relay failed:', e?.message || e))
-        } catch (e) {
-          log('archive relay failed:', e?.message || e)
+        const lastAt = archiveDemandSentAt.get(ch) || 0
+        if (Date.now() - lastAt >= ARCHIVE_DEMAND_INTERVAL_MS) {
+          archiveDemandSentAt.set(ch, Date.now())
+          try {
+            chrome.runtime
+              .sendMessage({ type: 'ws_send', data: { type: 'twitch:chat:relay', channel: ch } })
+              .catch((e) => log('archive demand failed:', e?.message || e))
+          } catch (e) {
+            log('archive demand failed:', e?.message || e)
+          }
         }
       }
       if (msg.type === 'notice') {

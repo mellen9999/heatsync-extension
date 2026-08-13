@@ -392,6 +392,30 @@ const HsNotifs = (() => {
   // Used by twitch-resub-share, twitch-watchstreak-share, sub-anniversary,
   // viewer-milestone callouts. Stacks vertically (newer on top) so multiple
   // celebration opportunities can coexist — user picks which to share first.
+/**
+ * Clamp a docked layer's horizontal box into the viewport.
+ *
+ * A docked layer mirrors whatever it docks to (the chat overlay). That rect is
+ * not guaranteed to be on screen: at narrow widths the chat column can sit
+ * fully past the right edge, and the layer faithfully followed it — measured
+ * live at `left: 1053px; right: -11px` in a 1048px viewport, i.e. a **6px
+ * sliver**. The notification was present, correct and completely unreadable,
+ * which reads to a user as the feature simply not working.
+ *
+ * A notification is the one thing that must never be silently invisible, so the
+ * dock is a preference, not a contract: follow the target when it is usable,
+ * clamp on screen when it is not.
+ */
+function clampDockedBox(left, width, minWidth = 180) {
+  const vw = window.innerWidth
+  let w = Math.min(width, vw)
+  if (w < minWidth) w = Math.min(minWidth, vw)
+  let l = left
+  if (l + w > vw) l = vw - w
+  if (l < 0) l = 0
+  return { left: l, right: Math.max(0, vw - (l + w)) }
+}
+
   registerLayer('chat-docked-bottom', {
     stack: 'queue',
     maxVisible: 3,
@@ -409,10 +433,11 @@ const HsNotifs = (() => {
       }
       const horRect = ovRect && ovRect.width > 0 ? ovRect : ibRect
       if (!horRect || bottomY === null) return null
+      const box = clampDockedBox(horRect.left, horRect.width)
       return {
         bottom: window.innerHeight - bottomY,
-        left: horRect.left,
-        right: window.innerWidth - (horRect.left + horRect.width),
+        left: box.left,
+        right: box.right,
       }
     },
   })
@@ -428,10 +453,11 @@ const HsNotifs = (() => {
       const tbVisible = tabBarElement && !tabBarElement.classList.contains('hs-hidden')
       const tbRect = tbVisible ? tabBarElement.getBoundingClientRect() : null
       const topY = tabPosition === 'top' && tbRect && tbRect.height > 0 ? tbRect.bottom : ovRect.top
+      const box = clampDockedBox(ovRect.left, ovRect.width)
       return {
         top: topY,
-        left: ovRect.left,
-        right: window.innerWidth - (ovRect.left + ovRect.width),
+        left: box.left,
+        right: box.right,
       }
     },
   })

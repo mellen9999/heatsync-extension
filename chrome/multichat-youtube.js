@@ -2101,8 +2101,87 @@ if (typeof window !== 'undefined') {
 
 
 
+// --- font-grid.js ---
+/**
+ * font-grid.js — which sizes a font actually has.
+ *
+ * MIRROR of client/utils/font-grid.js in the heatsync site repo. Separate repos
+ * cannot share a module, so this file is duplicated on purpose; keep the table
+ * and the snap semantics identical in both, or the same account gets different
+ * sizes in the extension and on the site.
+ *
+ * A bitmap face is a grid of cells. Rendered at a size it does not have it is
+ * not a smaller font — it is a resampled one, and it smears. CozetteVector is a
+ * 6x13 cell: unitsPerEm 2048, advance of `A` = 945 units (→ exactly 6.0px at
+ * 13px), ascender 1575 + descender 473 = 2048 (→ exactly 13px). So its only
+ * crisp sizes are the integer multiples of 13.
+ *
+ *   A font declares the sizes it has. The size control offers those and
+ *   nothing else. Vector faces declare "any".
+ *
+ * Before this the extension's size control was a continuous range 10–26, which
+ * for CozetteVector is one legal size and fifteen smears.
+ */
+
+/** family → native sizes, ascending. Absent = vector face, any size is fine. */
+const FONT_GRID = {
+  CozetteVector: [13, 26, 39],
+}
+
+/** Sizes unique to vector faces — the in-between sizes no bitmap cell can hit. */
+const VECTOR_ONLY = [10, 11, 12, 14, 16, 18, 20, 22]
+
+/**
+ * Sizes offered for a face with no grid of its own. DERIVED as the union with
+ * every bitmap size, never hand-listed: a vector face renders anything and must
+ * not offer FEWER sizes than a bitmap one, or switching family destroys a size
+ * choice the new family could have held.
+ */
+const VECTOR_SIZES = [...new Set([...VECTOR_ONLY, ...Object.values(FONT_GRID).flat()])].sort((a, b) => a - b)
+
+/** Every size any family may legally hold — the static union, for validation. */
+const ALL_SIZES = [...new Set([...VECTOR_SIZES, ...Object.values(FONT_GRID).flat()])].sort((a, b) => a - b)
+
+/** True when the family renders from a fixed cell and therefore has a grid. */
+function isBitmapFamily(family) {
+  return Object.hasOwn(FONT_GRID, family)
+}
+
+/**
+ * The sizes this family may legally be set to. Never empty.
+ * An empty/unknown family is treated as CozetteVector, matching resolveFontStack's
+ * fall-through — otherwise the default install would get the vector list.
+ */
+function sizesFor(family) {
+  if (!family) return FONT_GRID.CozetteVector
+  return FONT_GRID[family] || VECTOR_SIZES
+}
+
+/**
+ * Nearest legal size for a family. Ties resolve DOWN — a user who lands between
+ * 13 and 26 is far likelier to have wanted "small and readable" than to have
+ * their chat double in size without asking.
+ */
+function snapSize(family, px) {
+  const sizes = sizesFor(family)
+  const n = parseInt(px, 10)
+  if (!Number.isFinite(n)) return sizes[0]
+  if (sizes.includes(n)) return n
+  return sizes.reduce((best, s) => (Math.abs(s - n) < Math.abs(best - n) ? s : best), sizes[0])
+}
+
+/** The size a family should start at when it is freshly selected. */
+function nativeSize(family) {
+  return sizesFor(family)[0]
+}
+
+
 // --- settings-schema.js ---
 // @ts-check
+// Relative import, same pattern as paint-spec.js: the build's stripExports
+// removes this line and relies on font-grid.js being concatenated before this
+// file (see readLib in build.js), while `bun test` imports it for real.
+
 // settings registry — every multichat setting as one declarative entry.
 // pure data + pure validators only: no DOM, no chrome.*, no i18n calls.
 // bundled at IIFE scope (build.js lib list) so main.js, every multichat
@@ -2184,6 +2263,10 @@ if (typeof window !== 'undefined') {
  * @property {string} [tipKey] i18n key for tip
  * @property {'pill'|'select'|'sizebtns'|'range'|'text'|'textarea'|'custom'} [control]
  * @property {SettingOption[]|{min:number,max:number,step:number}} [options]
+ * @property {(get: (key: string) => any) => SettingOption[]} [optionsFor]
+ *   Render-time narrowing of `options` for the CURRENT settings state — used by
+ *   fontSize so a bitmap family only offers the sizes it has. `options` stays
+ *   the static union because validate/coerce/lint read it with no state in hand.
  * @property {boolean} [basic] show in the default (basic) settings view
  * @property {string} [alias] extra search keywords
  * @property {{key:string,equals?:*}} [dependsOn]
@@ -2254,18 +2337,25 @@ const SETTINGS = [
   {
     key: 'fontSize',
     basic: true, // day-one row — shows in the default (basic) settings view
-    type: 'range',
+    // enum, not range: a bitmap face has SIZES, not a continuum. The old
+    // continuous 10-26 slider offered CozetteVector one legal size and fifteen
+    // smears. `options` is the static UNION of every size any family may hold —
+    // validateSettingValue/coerceSettingValue/lint read it directly and have no
+    // access to the current family — and `optionsFor` narrows it to the
+    // selected family at render time. See src/lib/font-grid.js.
+    type: 'enum',
     default: 13,
     scope: 'sync',
     category: 'display',
     section: 'font',
     labelKey: 'mc_settings_font_size',
     tipKey: 'mc_settings_font_size_desc',
-    control: 'range',
     alias: 'fontsize',
     apply: 'fonts',
     applyOnLoad: true,
-    options: { min: 10, max: 22, step: 1 },
+    control: 'sizebtns',
+    options: ALL_SIZES.map((px) => ({ value: px, label: `${px}px` })),
+    optionsFor: (get) => sizesFor(get('fontFamily')).map((px) => ({ value: px, label: `${px}px` })),
   },
 
   // ── display / display ─────────────────────────────────────────────────
@@ -56455,11 +56545,19 @@ function _rowsForDef(def) {
       def.key +
       '"><span class="hs-mc-toggle-knob"></span></button>' +
       _setLabelSpan(def)
-  } else if (def.type === 'enum' && (def.control === 'sizebtns' || def.options.length <= 3)) {
+  } else if (
+    def.type === 'enum' &&
+    (def.control === 'sizebtns' || (def.optionsFor ? def.optionsFor(getSetting) : def.options).length <= 3)
+  ) {
+    // optionsFor narrows the list to the current state — the font size row uses
+    // it so a bitmap face only ever offers the sizes it actually has. Static
+    // `options` stays the union, because validate/coerce/lint read it with no
+    // access to other settings.
+    var sizeOpts = def.optionsFor ? def.optionsFor(getSetting) : def.options
     inner =
       _setLabelSpan(def) +
       '<div class="hs-mc-size-btns">' +
-      def.options
+      sizeOpts
         .map(
           (o) =>
             '<button class="hs-mc-size-btn' +
@@ -58057,8 +58155,12 @@ function renderSettingsTab() {
         // size to the font's design size. silent: the fontFamily write
         // below runs the (shared) fonts applier once with both values.
         var fam = regSel.value
-        var nativeSize = fam === 'CozetteVector' || fam === 'twitch' ? 13 : null
-        if (nativeSize) setSetting('fontSize', nativeSize, { silent: true })
+        // Keep the size when the new family HAS it, snap when it does not.
+        // This used to force 13 for CozetteVector *and* for 'twitch' — Inter,
+        // a vector face with no grid at all — while never snapping to 26, so a
+        // 2x user lost it on any family toggle. One rule, from font-grid.js.
+        var snapped = snapSize(fam, getSetting('fontSize'))
+        if (snapped !== getSetting('fontSize')) setSetting('fontSize', snapped, { silent: true })
         setSetting('fontFamily', fam) // fonts applier + settings re-render
         return
       }
@@ -64436,7 +64538,21 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Toggle on body+root FIRST (always available) — reply-stack/notif
     // overlays mount to <body> outside the container, so body is the
     // authoritative carrier. Container toggle below is belt-and-braces.
-    const isBitmap = fontFamily === 'CozetteVector' || !fontFamily
+    // A bitmap face is crisp on its own pixel grid and nowhere else.
+    // CozetteVector renders whole only at 13px and its 2x, 26px — every other
+    // size resamples the glyphs and smears them, which is why "cozette looks
+    // bad sometimes" was never about cozette. The size control accepted 10-22,
+    // i.e. eleven sizes that cannot render and one that can.
+    //
+    // So the grid is part of choosing the font, the way it is for any pixel
+    // face: pick cozette and the size snaps to the nearest size cozette HAS.
+    // Snapping rather than switching typeface behind the user's back — family
+    // is the deliberate aesthetic choice, size is comfort, so we honour the
+    // choice and correct the thing that cannot be honoured. A user who wants a
+    // size off the grid picks a vector font and gets exactly that size.
+    // One policy, shared with the settings UI and the site: font-grid.js.
+    fontSize = snapSize(fontFamily, fontSize)
+    const isBitmap = isBitmapFamily(fontFamily) || !fontFamily
     document.body.classList.toggle('hs-font-bitmap', isBitmap)
     document.documentElement.classList.toggle('hs-font-bitmap', isBitmap)
     // Set the vars on :root FIRST, unconditionally — the panel often mounts
@@ -64448,7 +64564,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     const root = document.documentElement
     root.style.setProperty('--hs-mc-font', stack)
     const sizeNum = parseInt(fontSize, 10)
-    if (sizeNum >= 10 && sizeNum <= 22) {
+    if (sizeNum >= 10 && sizeNum <= 26) {
       // One synced size drives both the panel chrome and the message area —
       // the old per-device override (F+/F-) folded into this setting.
       root.style.setProperty('--hs-mc-base-size', `${sizeNum}px`)
@@ -64458,7 +64574,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!container) return
     container.style.setProperty('--hs-mc-font', stack)
     container.classList.toggle('hs-font-bitmap', isBitmap)
-    if (sizeNum >= 10 && sizeNum <= 22) {
+    if (sizeNum >= 10 && sizeNum <= 26) {
       container.style.setProperty('--hs-mc-base-size', `${sizeNum}px`)
       container.style.setProperty('--hs-chat-font', `${sizeNum}px`)
       const msgsEl = document.getElementById('hs-mc-messages')

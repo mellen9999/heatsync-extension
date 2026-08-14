@@ -4905,7 +4905,21 @@
     // Toggle on body+root FIRST (always available) — reply-stack/notif
     // overlays mount to <body> outside the container, so body is the
     // authoritative carrier. Container toggle below is belt-and-braces.
-    const isBitmap = fontFamily === 'CozetteVector' || !fontFamily
+    // A bitmap face is crisp on its own pixel grid and nowhere else.
+    // CozetteVector renders whole only at 13px and its 2x, 26px — every other
+    // size resamples the glyphs and smears them, which is why "cozette looks
+    // bad sometimes" was never about cozette. The size control accepted 10-22,
+    // i.e. eleven sizes that cannot render and one that can.
+    //
+    // So the grid is part of choosing the font, the way it is for any pixel
+    // face: pick cozette and the size snaps to the nearest size cozette HAS.
+    // Snapping rather than switching typeface behind the user's back — family
+    // is the deliberate aesthetic choice, size is comfort, so we honour the
+    // choice and correct the thing that cannot be honoured. A user who wants a
+    // size off the grid picks a vector font and gets exactly that size.
+    // One policy, shared with the settings UI and the site: font-grid.js.
+    fontSize = snapSize(fontFamily, fontSize)
+    const isBitmap = isBitmapFamily(fontFamily) || !fontFamily
     document.body.classList.toggle('hs-font-bitmap', isBitmap)
     document.documentElement.classList.toggle('hs-font-bitmap', isBitmap)
     // Set the vars on :root FIRST, unconditionally — the panel often mounts
@@ -4917,7 +4931,7 @@
     const root = document.documentElement
     root.style.setProperty('--hs-mc-font', stack)
     const sizeNum = parseInt(fontSize, 10)
-    if (sizeNum >= 10 && sizeNum <= 22) {
+    if (sizeNum >= 10 && sizeNum <= 26) {
       // One synced size drives both the panel chrome and the message area —
       // the old per-device override (F+/F-) folded into this setting.
       root.style.setProperty('--hs-mc-base-size', `${sizeNum}px`)
@@ -4927,7 +4941,7 @@
     if (!container) return
     container.style.setProperty('--hs-mc-font', stack)
     container.classList.toggle('hs-font-bitmap', isBitmap)
-    if (sizeNum >= 10 && sizeNum <= 22) {
+    if (sizeNum >= 10 && sizeNum <= 26) {
       container.style.setProperty('--hs-mc-base-size', `${sizeNum}px`)
       container.style.setProperty('--hs-chat-font', `${sizeNum}px`)
       const msgsEl = document.getElementById('hs-mc-messages')

@@ -292,11 +292,19 @@ function _rowsForDef(def) {
       def.key +
       '"><span class="hs-mc-toggle-knob"></span></button>' +
       _setLabelSpan(def)
-  } else if (def.type === 'enum' && (def.control === 'sizebtns' || def.options.length <= 3)) {
+  } else if (
+    def.type === 'enum' &&
+    (def.control === 'sizebtns' || (def.optionsFor ? def.optionsFor(getSetting) : def.options).length <= 3)
+  ) {
+    // optionsFor narrows the list to the current state — the font size row uses
+    // it so a bitmap face only ever offers the sizes it actually has. Static
+    // `options` stays the union, because validate/coerce/lint read it with no
+    // access to other settings.
+    var sizeOpts = def.optionsFor ? def.optionsFor(getSetting) : def.options
     inner =
       _setLabelSpan(def) +
       '<div class="hs-mc-size-btns">' +
-      def.options
+      sizeOpts
         .map(
           (o) =>
             '<button class="hs-mc-size-btn' +
@@ -1894,8 +1902,12 @@ function renderSettingsTab() {
         // size to the font's design size. silent: the fontFamily write
         // below runs the (shared) fonts applier once with both values.
         var fam = regSel.value
-        var nativeSize = fam === 'CozetteVector' || fam === 'twitch' ? 13 : null
-        if (nativeSize) setSetting('fontSize', nativeSize, { silent: true })
+        // Keep the size when the new family HAS it, snap when it does not.
+        // This used to force 13 for CozetteVector *and* for 'twitch' — Inter,
+        // a vector face with no grid at all — while never snapping to 26, so a
+        // 2x user lost it on any family toggle. One rule, from font-grid.js.
+        var snapped = snapSize(fam, getSetting('fontSize'))
+        if (snapped !== getSetting('fontSize')) setSetting('fontSize', snapped, { silent: true })
         setSetting('fontFamily', fam) // fonts applier + settings re-render
         return
       }

@@ -1,4 +1,9 @@
 // @ts-check
+// Relative import, same pattern as paint-spec.js: the build's stripExports
+// removes this line and relies on font-grid.js being concatenated before this
+// file (see readLib in build.js), while `bun test` imports it for real.
+import { ALL_SIZES, sizesFor } from './font-grid.js'
+
 // settings registry — every multichat setting as one declarative entry.
 // pure data + pure validators only: no DOM, no chrome.*, no i18n calls.
 // bundled at IIFE scope (build.js lib list) so main.js, every multichat
@@ -80,6 +85,10 @@
  * @property {string} [tipKey] i18n key for tip
  * @property {'pill'|'select'|'sizebtns'|'range'|'text'|'textarea'|'custom'} [control]
  * @property {SettingOption[]|{min:number,max:number,step:number}} [options]
+ * @property {(get: (key: string) => any) => SettingOption[]} [optionsFor]
+ *   Render-time narrowing of `options` for the CURRENT settings state — used by
+ *   fontSize so a bitmap family only offers the sizes it has. `options` stays
+ *   the static union because validate/coerce/lint read it with no state in hand.
  * @property {boolean} [basic] show in the default (basic) settings view
  * @property {string} [alias] extra search keywords
  * @property {{key:string,equals?:*}} [dependsOn]
@@ -150,18 +159,25 @@ const SETTINGS = [
   {
     key: 'fontSize',
     basic: true, // day-one row — shows in the default (basic) settings view
-    type: 'range',
+    // enum, not range: a bitmap face has SIZES, not a continuum. The old
+    // continuous 10-26 slider offered CozetteVector one legal size and fifteen
+    // smears. `options` is the static UNION of every size any family may hold —
+    // validateSettingValue/coerceSettingValue/lint read it directly and have no
+    // access to the current family — and `optionsFor` narrows it to the
+    // selected family at render time. See src/lib/font-grid.js.
+    type: 'enum',
     default: 13,
     scope: 'sync',
     category: 'display',
     section: 'font',
     labelKey: 'mc_settings_font_size',
     tipKey: 'mc_settings_font_size_desc',
-    control: 'range',
     alias: 'fontsize',
     apply: 'fonts',
     applyOnLoad: true,
-    options: { min: 10, max: 22, step: 1 },
+    control: 'sizebtns',
+    options: ALL_SIZES.map((px) => ({ value: px, label: `${px}px` })),
+    optionsFor: (get) => sizesFor(get('fontFamily')).map((px) => ({ value: px, label: `${px}px` })),
   },
 
   // ── display / display ─────────────────────────────────────────────────

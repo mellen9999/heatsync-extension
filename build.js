@@ -215,6 +215,7 @@ function checkScopeCollisions() {
     'cleanup.js',
     'user-key.js',
     'utils.js',
+    'font-grid.js',
     'settings-schema.js',
     'browser-api.js',
     'modifiers.js',
@@ -602,6 +603,9 @@ function readLib() {
     'cleanup.js',
     'user-key.js',
     'utils.js',
+    // font-grid before settings-schema: the schema's fontSize entry builds its
+    // options from FONT_GRID, and these are concatenated into one scope in order.
+    'font-grid.js',
     'settings-schema.js',
     'browser-api.js',
     'modifiers.js',

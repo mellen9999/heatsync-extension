@@ -11842,7 +11842,12 @@ function injectStyles() {
     .hs-mc-reply-ctx {
       display: inline-block;
       vertical-align: bottom;
-      max-width: 38%;
+      /* ch, not %. A percentage cap lands the inline-block on a fractional
+         pixel, which puts every glyph inside it on a sub-pixel x offset — the
+         exact smear a bitmap face cannot survive. 1ch is an integer advance in
+         a monospace bitmap, so a ch cap always resolves to whole pixels, and
+         "38 characters of name" is the real intent anyway. */
+      max-width: 38ch;
       font-size: 13px;
       color: #aaa;
       line-height: inherit;
@@ -11864,7 +11869,10 @@ function injectStyles() {
     }
     .hs-mc-reply-user {
       color: #aaa;
-      font-weight: 600;
+      /* 400: CozetteVector has a single 400 master. 600 renders identically
+         when font-synthesis:none applies and faux-bolds (blurs) the instant it
+         does not — so it only ever buys risk. */
+      font-weight: 400;
     }
     /* xterm 88 — saturated enough to read as "you got mentioned" but dark
        enough to let full-color Twitch usernames render on top without the bg

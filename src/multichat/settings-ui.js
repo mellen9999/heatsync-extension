@@ -292,15 +292,12 @@ function _rowsForDef(def) {
       def.key +
       '"><span class="hs-mc-toggle-knob"></span></button>' +
       _setLabelSpan(def)
-  } else if (
-    def.type === 'enum' &&
-    (def.control === 'sizebtns' || (def.optionsFor ? def.optionsFor(getSetting) : def.options).length <= 3)
-  ) {
+  } else if (def.type === 'enum' && (def.control === 'sizebtns' || resolveOptions(def, getSetting).length <= 3)) {
     // optionsFor narrows the list to the current state — the font size row uses
     // it so a bitmap face only ever offers the sizes it actually has. Static
     // `options` stays the union, because validate/coerce/lint read it with no
     // access to other settings.
-    var sizeOpts = def.optionsFor ? def.optionsFor(getSetting) : def.options
+    var sizeOpts = resolveOptions(def, getSetting)
     inner =
       _setLabelSpan(def) +
       '<div class="hs-mc-size-btns">' +

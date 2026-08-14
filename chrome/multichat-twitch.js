@@ -4088,6 +4088,35 @@ const SETTINGS_PRESETS = [
  * @param {*} v
  * @returns {boolean}
  */
+/**
+ * The option list to RENDER for a def, given the current settings.
+ *
+ * `def.options` is the static union — validateSettingValue/coerceSettingValue/
+ * lintSettings read it directly and have no other settings in hand, so it must
+ * stay the full set of legally storable values. `def.optionsFor` narrows that
+ * to the current state for display: fontSize uses it so a bitmap family only
+ * ever offers the sizes it has.
+ *
+ * Lives here rather than inline in the renderer so it is testable without a
+ * browser — the extension's settings UI only exists inside the multichat
+ * overlay on twitch/kick/youtube, which is not something a test should need.
+ *
+ * @param {SettingDef} def
+ * @param {(key: string) => any} get
+ * @returns {SettingOption[]}
+ */
+function resolveOptions(def, get) {
+  if (def && typeof def.optionsFor === 'function') {
+    try {
+      const narrowed = def.optionsFor(get)
+      if (Array.isArray(narrowed) && narrowed.length) return narrowed
+    } catch (_) {
+      // A throwing narrower must not blank the control — fall back to the union.
+    }
+  }
+  return /** @type {SettingOption[]} */ (def && def.options) || []
+}
+
 function validateSettingValue(def, v) {
   if (!def) return false
   switch (def.type) {
@@ -56943,15 +56972,12 @@ function _rowsForDef(def) {
       def.key +
       '"><span class="hs-mc-toggle-knob"></span></button>' +
       _setLabelSpan(def)
-  } else if (
-    def.type === 'enum' &&
-    (def.control === 'sizebtns' || (def.optionsFor ? def.optionsFor(getSetting) : def.options).length <= 3)
-  ) {
+  } else if (def.type === 'enum' && (def.control === 'sizebtns' || resolveOptions(def, getSetting).length <= 3)) {
     // optionsFor narrows the list to the current state — the font size row uses
     // it so a bitmap face only ever offers the sizes it actually has. Static
     // `options` stays the union, because validate/coerce/lint read it with no
     // access to other settings.
-    var sizeOpts = def.optionsFor ? def.optionsFor(getSetting) : def.options
+    var sizeOpts = resolveOptions(def, getSetting)
     inner =
       _setLabelSpan(def) +
       '<div class="hs-mc-size-btns">' +

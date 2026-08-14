@@ -8,7 +8,7 @@ import {
   snapSize,
   VECTOR_SIZES,
 } from '../src/lib/font-grid.js'
-import { SETTINGS } from '../src/lib/settings-schema.js'
+import { resolveOptions, SETTINGS } from '../src/lib/settings-schema.js'
 
 /**
  * A bitmap face off its cell size is resampled, not smaller. These tests exist
@@ -108,5 +108,41 @@ describe('fontSize schema entry agrees with the grid', () => {
         expect(ALL_SIZES, `${family} ${o.value}`).toContain(o.value)
       }
     }
+  })
+})
+
+describe('resolveOptions — what the settings row actually renders', () => {
+  const def = SETTINGS.find((d) => d.key === 'fontSize')
+  const withFamily = (fam) => (key) => (key === 'fontFamily' ? fam : undefined)
+
+  it('renders exactly the bitmap grid for a bitmap family', () => {
+    expect(resolveOptions(def, withFamily('CozetteVector')).map((o) => o.value)).toEqual([13, 26, 39])
+  })
+
+  it('renders the wider list for a vector family', () => {
+    const vals = resolveOptions(def, withFamily('monospace')).map((o) => o.value)
+    expect(vals).toEqual(VECTOR_SIZES)
+    expect(vals).toContain(16)
+  })
+
+  it('treats an unset family as CozetteVector, matching the applier', () => {
+    expect(resolveOptions(def, withFamily(undefined)).map((o) => o.value)).toEqual([13, 26, 39])
+  })
+
+  it('falls back to the union rather than blanking the control if a narrower throws', () => {
+    // A control with zero options is worse than one showing too many: the user
+    // would have no way to set the value at all.
+    const broken = {
+      options: def.options,
+      optionsFor: () => {
+        throw new Error('boom')
+      },
+    }
+    expect(resolveOptions(broken, withFamily('CozetteVector'))).toEqual(def.options)
+  })
+
+  it('leaves a def without a narrower completely alone', () => {
+    const plain = SETTINGS.find((d) => d.type === 'enum' && !d.optionsFor)
+    expect(resolveOptions(plain, () => undefined)).toEqual(plain.options)
   })
 })

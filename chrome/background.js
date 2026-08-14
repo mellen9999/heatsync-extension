@@ -788,9 +788,43 @@ const HEALTH_DEFAULT = Object.freeze({
   disabled: [],
   msg: null,
 })
+// A DAILY-ROTATING id, sent with the health poll so the server can count how
+// many installs are actually out there and how fast a release rolls out. Before
+// this the answer was genuinely unknown — the endpoint was stateless and no
+// other surface identified a client.
+//
+// Rotating is the whole point. The server drops the value into a HyperLogLog and
+// stores nothing, and because the id changes at every UTC midnight it cannot be
+// joined across days to follow anyone. It is not sent anywhere else, and the
+// server tolerates its absence, so an older install just goes uncounted.
+async function getInstallId() {
+  const today = new Date().toISOString().slice(0, 10)
+  try {
+    const { hs_install_id, hs_install_id_day } = await browser.storage.local.get(['hs_install_id', 'hs_install_id_day'])
+    if (hs_install_id && hs_install_id_day === today) return hs_install_id
+    const fresh = crypto.randomUUID()
+    await browser.storage.local.set({ hs_install_id: fresh, hs_install_id_day: today })
+    return fresh
+  } catch {
+    return null
+  }
+}
+
 async function fetchHealth() {
   try {
-    const resp = await fetchWithTimeout(HEALTH_URL, { cache: 'no-store' }, 8000)
+    // Identity is best-effort: a storage failure must never cost us the
+    // kill-switch, so the poll goes out plain rather than not at all.
+    let url = HEALTH_URL
+    try {
+      const id = await getInstallId()
+      const version = browser.runtime.getManifest()?.version
+      if (id) {
+        const q = new URLSearchParams({ id })
+        if (version) q.set('v', version)
+        url = `${HEALTH_URL}?${q}`
+      }
+    } catch {}
+    const resp = await fetchWithTimeout(url, { cache: 'no-store' }, 8000)
     if (!resp?.ok) return
     const j = await resp.json().catch(() => null)
     if (!j || typeof j !== 'object' || j.v !== 1) return

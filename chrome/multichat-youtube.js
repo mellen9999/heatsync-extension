@@ -6926,8 +6926,29 @@ const LETTER_SPLIT_IDS = new Set(
     .map(([id]) => id),
 )
 
-/** Stable short hash of a spec — same spec (same key order irrelevant,
- * we JSON.stringify a normalized/sorted form) → same hash. */
+/**
+ * Stable short hash of a spec — same spec (key order irrelevant, we
+ * JSON.stringify a normalized/sorted form) → same hash.
+ *
+ * ── the contract, precisely ──
+ * It hashes the SPEC. It does NOT hash the compiler. So `.hsp-<hash>` is
+ * stable across deploys that change what that class RENDERS: the scene
+ * compiler was rewritten from two planes to seven on 2026-08-16 and every
+ * class name stayed byte-identical.
+ *
+ * That is safe only because of a property of today's CALLERS, not of the hash:
+ * compiled CSS is either built client-side per page load, or inlined into an
+ * SSR response that carries max-age 60-300 and gets its prefix purged by
+ * deploy.sh. Nothing stores it durably.
+ *
+ * Anything that starts to — a redis key, localStorage, a long Cache-Control on
+ * a route that ships compiled paint CSS — MUST carry its own version, because
+ * this hash will not move to invalidate it. That is not hypothetical: the same
+ * shape shipped stale payloads to prod from an un-bumped CACHE_VER on the
+ * channel-stats route the same day. tests/client/paint-spec.test.js pins the
+ * compiler's output so that whoever changes it is told this, at the moment
+ * they change it, rather than finding out from a page.
+ */
 function hashPaintSpec(spec) {
   return fnv1a(JSON.stringify(normalizeForHash(spec)))
 }
@@ -66539,88 +66560,88 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Exposed for input.js sendMessage: consume typed text as resub-share body.
   // .enter() is called directly by the HsNotifs Share button — bypasses the
   // native Twitch click which would insta-send a default celebration message.
-// Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
-// click path re-runs it when the token it was emitted with is missing. The
-// callout is emitted the moment it is detected, and the event payload lives in
-// contextMenu.props.children.props.event — a subtree React may not have mounted
-// yet. Measured on a live 107mo callout: the payload was absent from the notif
-// but sitting at BFS step 46 minutes later, so the extension fell through to
-// twitch's own button every time, which posts twitch's default celebration and
-// drops the custom message. Re-scanning at click time is correct whether the
-// cause was that race or a root that never reached the payload.
-function fiberTokenScan(rootEl) {
-  if (typeof getFiber !== 'function' || !rootEl) return null
-  const out = { token: null, channelId: null }
-  const queue = [getFiber(rootEl)]
-  const seen = new WeakSet()
-  let steps = 0
-  const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
-  const channelKeys = ['channelID', 'channelId']
+  // Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
+  // click path re-runs it when the token it was emitted with is missing. The
+  // callout is emitted the moment it is detected, and the event payload lives in
+  // contextMenu.props.children.props.event — a subtree React may not have mounted
+  // yet. Measured on a live 107mo callout: the payload was absent from the notif
+  // but sitting at BFS step 46 minutes later, so the extension fell through to
+  // twitch's own button every time, which posts twitch's default celebration and
+  // drops the custom message. Re-scanning at click time is correct whether the
+  // cause was that race or a root that never reached the payload.
+  function fiberTokenScan(rootEl) {
+    if (typeof getFiber !== 'function' || !rootEl) return null
+    const out = { token: null, channelId: null }
+    const queue = [getFiber(rootEl)]
+    const seen = new WeakSet()
+    let steps = 0
+    const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
+    const channelKeys = ['channelID', 'channelId']
 
-  // Twitch does NOT put the token in a top-level prop. The callout is
-  // rendered from an `event` payload nested inside the context-menu prop:
-  //
-  //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
-  //
-  // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
-  // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
-  // is a different, opaque 32-char value — NOT the tokenID; using it fails
-  // the mutation, which silently posts the text as ordinary chat and leaves
-  // the callout to reappear on the next refresh.)
-  //
-  // Scanning only top-level keys is why every scan came back empty and the
-  // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
-  // the Share button, well inside the budget below — it was never a depth
-  // problem, only a nesting one.
-  const eventFrom = (p) =>
-    p?.contextMenu?.props?.children?.props?.event ||
-    p?.contextMenu?._owner?.stateNode?.props?.event ||
-    p?.event ||
-    null
+    // Twitch does NOT put the token in a top-level prop. The callout is
+    // rendered from an `event` payload nested inside the context-menu prop:
+    //
+    //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
+    //
+    // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
+    // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
+    // is a different, opaque 32-char value — NOT the tokenID; using it fails
+    // the mutation, which silently posts the text as ordinary chat and leaves
+    // the callout to reappear on the next refresh.)
+    //
+    // Scanning only top-level keys is why every scan came back empty and the
+    // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
+    // the Share button, well inside the budget below — it was never a depth
+    // problem, only a nesting one.
+    const eventFrom = (p) =>
+      p?.contextMenu?.props?.children?.props?.event ||
+      p?.contextMenu?._owner?.stateNode?.props?.event ||
+      p?.event ||
+      null
 
-  while (queue.length && steps < 60 && !(out.token && out.channelId)) {
-    const f = queue.shift()
-    if (!f || seen.has(f)) continue
-    seen.add(f)
-    steps++
-    const p = f.memoizedProps
-    if (p && typeof p === 'object') {
-      if (!out.token) {
-        const ev = eventFrom(p)
-        if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
-          out.token = ev.id
-          out.months = Number(ev.cumulativeTenureMonths) || 0
-          out.eventType = ev.type || null
+    while (queue.length && steps < 60 && !(out.token && out.channelId)) {
+      const f = queue.shift()
+      if (!f || seen.has(f)) continue
+      seen.add(f)
+      steps++
+      const p = f.memoizedProps
+      if (p && typeof p === 'object') {
+        if (!out.token) {
+          const ev = eventFrom(p)
+          if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
+            out.token = ev.id
+            out.months = Number(ev.cumulativeTenureMonths) || 0
+            out.eventType = ev.type || null
+          }
         }
-      }
-      if (!out.token) {
-        for (const k of tokenKeys) {
-          const v = p[k]
-          if (typeof v === 'string' && v.length > 12) {
-            out.token = v
-            break
+        if (!out.token) {
+          for (const k of tokenKeys) {
+            const v = p[k]
+            if (typeof v === 'string' && v.length > 12) {
+              out.token = v
+              break
+            }
+          }
+        }
+        if (!out.channelId) {
+          for (const k of channelKeys) {
+            const v = p[k]
+            if (typeof v === 'string' && /^\d+$/.test(v)) {
+              out.channelId = v
+              break
+            }
           }
         }
       }
-      if (!out.channelId) {
-        for (const k of channelKeys) {
-          const v = p[k]
-          if (typeof v === 'string' && /^\d+$/.test(v)) {
-            out.channelId = v
-            break
-          }
-        }
-      }
+      if (f.return) queue.push(f.return)
+      if (f.child) queue.push(f.child)
+      // Siblings matter: the callout body and its context-menu prop mount as
+      // siblings of the Share button's subtree, so a return+child-only walk
+      // never reaches the event payload at all.
+      if (f.sibling) queue.push(f.sibling)
     }
-    if (f.return) queue.push(f.return)
-    if (f.child) queue.push(f.child)
-    // Siblings matter: the callout body and its context-menu prop mount as
-    // siblings of the Share button's subtree, so a return+child-only walk
-    // never reaches the event payload at all.
-    if (f.sibling) queue.push(f.sibling)
+    return out
   }
-  return out
-}
 
   window.__hsResubShare = {
     active: () => !!_resubShareCtx,
@@ -67715,8 +67736,23 @@ function fiberTokenScan(rootEl) {
   // throwing — see the waitForMount/tryHookReact call sites. A throw resets
   // it to false so both mechanisms fail open to native chat being visible.
   let _hsOverlayRenderOk = false
+  // Set only by the dead-man watchdog below, cleared the moment a mount pass
+  // proves the overlay healthy again. Distinguishes "we forced native chat
+  // back" from "the user asked for it" — only the former may be re-armed.
+  let _watchdogForcedNative = false
   function _markOverlayRenderOk(ok) {
     _hsOverlayRenderOk = !!ok
+    // A confirmed mount pass after the watchdog fired means the overlay came
+    // good. Re-hide native chat ONCE so a transient boot stall doesn't cost the
+    // takeover until reload. If the overlay is genuinely broken this never runs
+    // (the pass has to complete without throwing), and if it stalls again the
+    // watchdog simply fires again 15s later — the pair self-corrects.
+    if (ok && _watchdogForcedNative) {
+      _watchdogForcedNative = false
+      try {
+        setNativeChatHidden(true)
+      } catch (_) {}
+    }
     try {
       if (typeof setOverlayRenderOk === 'function') setOverlayRenderOk(!!ok)
     } catch (_) {}
@@ -67770,9 +67806,22 @@ function fiberTokenScan(rootEl) {
       const beat = parseInt(ds.hsSuppressBeat, 10)
       const stale = !Number.isFinite(beat) || Date.now() - beat > 45000
       if (!stale && _hsOverlayRenderOk) return
+      // Say WHICH condition tripped and by how much. The old line named both
+      // and committed to neither, so a correct fire (slow cold boot, tap not
+      // started yet — working as designed) was indistinguishable from a
+      // spurious one on a healthy overlay. One occurrence should be enough to
+      // tell them apart, because this is not reproducible on demand.
+      const age = Number.isFinite(beat) ? `${Math.round((Date.now() - beat) / 1000)}s` : 'never-written'
+      const rows = document.getElementById('hs-mc-messages')?.childElementCount ?? -1
       console.warn(
-        '[heatsync-ext] native-hidden watchdog: suppression stale or overlay render not confirmed — restoring native chat',
+        `[heatsync-ext] native-hidden watchdog: restoring native chat — beat=${age} stale=${stale} renderOk=${_hsOverlayRenderOk} overlayRows=${rows}`,
       )
+      // Remember that WE revealed native chat, not the user. Without this the
+      // reveal latches forever: _updateNativeSuppress (native-tap.js) only
+      // suppresses while native chat is invisible, so our own remedy trips the
+      // "user revealed native chat" guard and suppression can never resume —
+      // one 45s timing blip cost the takeover for the rest of the page load.
+      _watchdogForcedNative = true
       setNativeChatHidden(false)
       ds.hsSuppressNative = '0'
       try {

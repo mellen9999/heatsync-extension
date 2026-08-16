@@ -6847,8 +6847,23 @@
   // throwing — see the waitForMount/tryHookReact call sites. A throw resets
   // it to false so both mechanisms fail open to native chat being visible.
   let _hsOverlayRenderOk = false
+  // Set only by the dead-man watchdog below, cleared the moment a mount pass
+  // proves the overlay healthy again. Distinguishes "we forced native chat
+  // back" from "the user asked for it" — only the former may be re-armed.
+  let _watchdogForcedNative = false
   function _markOverlayRenderOk(ok) {
     _hsOverlayRenderOk = !!ok
+    // A confirmed mount pass after the watchdog fired means the overlay came
+    // good. Re-hide native chat ONCE so a transient boot stall doesn't cost the
+    // takeover until reload. If the overlay is genuinely broken this never runs
+    // (the pass has to complete without throwing), and if it stalls again the
+    // watchdog simply fires again 15s later — the pair self-corrects.
+    if (ok && _watchdogForcedNative) {
+      _watchdogForcedNative = false
+      try {
+        setNativeChatHidden(true)
+      } catch (_) {}
+    }
     try {
       if (typeof setOverlayRenderOk === 'function') setOverlayRenderOk(!!ok)
     } catch (_) {}
@@ -6902,9 +6917,22 @@
       const beat = parseInt(ds.hsSuppressBeat, 10)
       const stale = !Number.isFinite(beat) || Date.now() - beat > 45000
       if (!stale && _hsOverlayRenderOk) return
+      // Say WHICH condition tripped and by how much. The old line named both
+      // and committed to neither, so a correct fire (slow cold boot, tap not
+      // started yet — working as designed) was indistinguishable from a
+      // spurious one on a healthy overlay. One occurrence should be enough to
+      // tell them apart, because this is not reproducible on demand.
+      const age = Number.isFinite(beat) ? `${Math.round((Date.now() - beat) / 1000)}s` : 'never-written'
+      const rows = document.getElementById('hs-mc-messages')?.childElementCount ?? -1
       console.warn(
-        '[heatsync-ext] native-hidden watchdog: suppression stale or overlay render not confirmed — restoring native chat',
+        `[heatsync-ext] native-hidden watchdog: restoring native chat — beat=${age} stale=${stale} renderOk=${_hsOverlayRenderOk} overlayRows=${rows}`,
       )
+      // Remember that WE revealed native chat, not the user. Without this the
+      // reveal latches forever: _updateNativeSuppress (native-tap.js) only
+      // suppresses while native chat is invisible, so our own remedy trips the
+      // "user revealed native chat" guard and suppression can never resume —
+      // one 45s timing blip cost the takeover for the rest of the page load.
+      _watchdogForcedNative = true
       setNativeChatHidden(false)
       ds.hsSuppressNative = '0'
       try {

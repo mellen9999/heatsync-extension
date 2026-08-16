@@ -32827,7 +32827,9 @@ function updateChatBanners(predResult, pollData) {
   // thing that should open it.
   const openPredictions = (_e) => {
     if (typeof openPredView === 'function') {
-      openPredView(_predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null))
+      openPredView(
+        _predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null),
+      )
       return
     }
     const twitchTab = document.querySelector('[data-tab="live"]')
@@ -53391,10 +53393,7 @@ function refreshPredViewIfOpen() {
 async function refreshPredViewData() {
   if (!activePredView) return
   const ch = activePredView.channel
-  const [pred, poll] = await Promise.all([
-    fetchPrediction(ch).catch(() => null),
-    fetchPoll(ch).catch(() => null),
-  ])
+  const [pred, poll] = await Promise.all([fetchPrediction(ch).catch(() => null), fetchPoll(ch).catch(() => null)])
   // The view may have been closed during the await — don't write into a
   // surface the user already left (same isConnected/state guard pattern the
   // async renderers use elsewhere).
@@ -53438,9 +53437,7 @@ function renderPredView() {
   predSlot.dataset.predSlot = '1'
   const pr = _lastPredResult
   if (pr?.prediction) {
-    predSlot.appendChild(
-      renderPrediction(pr.prediction, pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName),
-    )
+    predSlot.appendChild(renderPrediction(pr.prediction, pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName))
   } else if (pr) {
     predSlot.appendChild(renderNoPrediction(pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName))
   } else {
@@ -53742,7 +53739,18 @@ function ensureHsPaintSheet() {
       // negative-z pseudo, so pausing alone would leave the plate covering
       // the white. text-shadow:none above also drops the scene rim (black
       // smears on white). Same trigger set as the flatten rule.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after,.hs-mc-row-selected [class*="hsp-"]::before,.hs-mc-row-selected [class*="hsp-"]::after{content:none !important;}'
+      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after,.hs-mc-row-selected [class*="hsp-"]::before,.hs-mc-row-selected [class*="hsp-"]::after{content:none !important;}' +
+      // Off-screen paints stop animating. Measured on the site with the same
+      // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
+      // how MANY names animate at once — a full pane of STATIC scene holds
+      // 60fps, 250 animating ones is ~20. Multichat is the densest surface
+      // there is, two or three panes of 100 rows side by side, so it needs the
+      // gate more than the site does.
+      //
+      // `hs-mc-idle`, deliberately outside the `hsp-` namespace: getHsPaintClass
+      // identifies a paint by that prefix, so a marker inside it would make an
+      // unpainted name read as painted.
+      '.hs-mc-idle,.hs-mc-idle *,.hs-mc-idle::before,.hs-mc-idle::after{animation-play-state:paused !important;}'
     const tracked =
       typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(hsPaintSheetEl) : hsPaintSheetEl
     document.head.appendChild(tracked)
@@ -54106,6 +54114,74 @@ function applyHsPaintToElement(el, userId) {
   if (el.style) {
     el.style.setProperty('--hsp-t', existingPhase || paintPhaseNow())
   }
+  // Freshly painted, so gate it now instead of waiting for the next scroll.
+  scheduleHsPaintSweep()
+}
+
+// ── viewport gate ───────────────────────────────────────────────────────────
+
+/** Targets handed to the observer, so a sweep can skip them and drop the
+ * detached ones — an IntersectionObserver holds its targets strongly and a
+ * multichat pane trims to 100 rows continuously. */
+const hsObservedNames = new Set()
+let hsVisibilityObserver = null
+let hsSweepScheduled = false
+
+function ensureHsVisibilityObserver() {
+  if (hsVisibilityObserver || typeof IntersectionObserver !== 'function') return hsVisibilityObserver
+  // No root: the gate should hold for whichever pane is scrolling without this
+  // module knowing which container a name lives in. The margin keeps a screen
+  // of rows warm either side so a scroll never uncovers a frozen name.
+  hsVisibilityObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) entry.target.classList.toggle('hs-mc-idle', !entry.isIntersecting)
+    },
+    { rootMargin: '150% 0px' },
+  )
+  return hsVisibilityObserver
+}
+
+/**
+ * Put every painted name currently in the overlay under the viewport gate.
+ *
+ * A sweep rather than a hook on each render path: rows are built as HTML
+ * strings with the paint class already in them (hsPaintRender), so a hook
+ * would have to be added at every construction site and would still miss the
+ * next one. An element the sweep has not reached simply animates — the
+ * behaviour that shipped before this — so missing one degrades to the status
+ * quo and can never break a paint.
+ */
+function sweepHsPaintedNames() {
+  const io = ensureHsVisibilityObserver()
+  if (!io) return
+  for (const el of hsObservedNames) {
+    if (!el.isConnected) {
+      io.unobserve(el)
+      hsObservedNames.delete(el)
+    }
+  }
+  for (const el of document.querySelectorAll('[class*="hsp-"]')) {
+    if (hsObservedNames.has(el)) continue
+    hsObservedNames.add(el)
+    io.observe(el)
+  }
+}
+
+/** One sweep per frame — scrolling fires continuously and the observer does
+ * the real visibility work asynchronously anyway. */
+function scheduleHsPaintSweep() {
+  if (hsSweepScheduled || typeof requestAnimationFrame !== 'function') return
+  hsSweepScheduled = true
+  requestAnimationFrame(() => {
+    hsSweepScheduled = false
+    sweepHsPaintedNames()
+  })
+}
+
+// Scroll is when visibility changes, and also when a pane autoscrolls a new
+// message in. Capture so it hears every pane, passive so it never delays one.
+if (typeof document !== 'undefined' && document.addEventListener) {
+  document.addEventListener('scroll', scheduleHsPaintSweep, { capture: true, passive: true })
 }
 
 

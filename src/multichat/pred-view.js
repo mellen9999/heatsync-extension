@@ -56,10 +56,7 @@ function refreshPredViewIfOpen() {
 async function refreshPredViewData() {
   if (!activePredView) return
   const ch = activePredView.channel
-  const [pred, poll] = await Promise.all([
-    fetchPrediction(ch).catch(() => null),
-    fetchPoll(ch).catch(() => null),
-  ])
+  const [pred, poll] = await Promise.all([fetchPrediction(ch).catch(() => null), fetchPoll(ch).catch(() => null)])
   // The view may have been closed during the await — don't write into a
   // surface the user already left (same isConnected/state guard pattern the
   // async renderers use elsewhere).
@@ -103,9 +100,7 @@ function renderPredView() {
   predSlot.dataset.predSlot = '1'
   const pr = _lastPredResult
   if (pr?.prediction) {
-    predSlot.appendChild(
-      renderPrediction(pr.prediction, pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName),
-    )
+    predSlot.appendChild(renderPrediction(pr.prediction, pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName))
   } else if (pr) {
     predSlot.appendChild(renderNoPrediction(pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName))
   } else {

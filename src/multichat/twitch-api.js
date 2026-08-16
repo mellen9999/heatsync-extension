@@ -1515,7 +1515,9 @@ function updateChatBanners(predResult, pollData) {
   // thing that should open it.
   const openPredictions = (_e) => {
     if (typeof openPredView === 'function') {
-      openPredView(_predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null))
+      openPredView(
+        _predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null),
+      )
       return
     }
     const twitchTab = document.querySelector('[data-tab="live"]')

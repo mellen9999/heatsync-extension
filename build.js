@@ -655,6 +655,7 @@ const MULTICHAT_MODULES = [
   'input.js',
   'profile-card.js',
   'chat-logs.js',
+  'pred-view.js',
   'paints.js',
   'cosmetics.js',
   'mod-toolbar.js',

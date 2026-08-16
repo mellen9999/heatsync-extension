@@ -1488,3 +1488,63 @@
     .hs-mc-confirm-reason.sel { border-color: #fff; color: #fff; }
     .hs-mc-confirm-reason.sel:hover { background: #fff; color: #000; }
 
+
+    /* ═══ Predictions & polls, as the whole chat area ═══
+       Same takeover pattern as the chat-logs and profile-card views: this owns
+       #hs-mc-messages while open. The prediction and poll bodies inside are
+       rendered by renderPrediction/renderPoll — the SAME functions the emote
+       picker's twitch tab mounts — so the two surfaces cannot drift into two
+       different prediction UIs. Only the frame lives here. */
+    .hs-pv-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      background: #000;
+    }
+    .hs-pv-hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      padding: 4px 6px;
+      border-bottom: 1px solid #808080;
+      background: #0a0a0a;
+    }
+    .hs-pv-title {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-pv-sub { color: #808080; font-weight: 400; }
+    .hs-pv-close {
+      flex: 0 0 auto;
+      /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      line-height: 18px;
+      padding: 0 6px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #808080;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-pv-close:hover { background: #fff; color: #000; }
+    /* The body scrolls; the header stays. A prediction with ten outcomes is
+       taller than a narrow panel, which is the case the popup handled worst. */
+    .hs-pv-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 6px;
+    }

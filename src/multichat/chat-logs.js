@@ -647,9 +647,17 @@ function appendChatLogBody(host, r) {
 document.addEventListener(
   'keydown',
   (e) => {
-    if (e.key === 'Escape' && activeChatLogs) {
+    if (e.key !== 'Escape') return
+    if (activeChatLogs) {
       e.preventDefault()
       closeChatLogsView()
+      return
+    }
+    // Predictions/polls view — same convention, same file so the two takeover
+    // surfaces can't disagree about what Escape does.
+    if (typeof predViewOpen === 'function' && predViewOpen()) {
+      e.preventDefault()
+      closePredView()
     }
   },
   { signal: mcSignal, capture: true },
@@ -670,7 +678,7 @@ document.addEventListener(
   'pointerdown',
   (e) => {
     if (e.button !== 0) return
-    const x = e.target?.closest?.('.hs-cl-close, .hs-pcard-close')
+    const x = e.target?.closest?.('.hs-cl-close, .hs-pcard-close, .hs-pv-close')
     if (!x) return
     e.preventDefault()
     e.stopPropagation()
@@ -681,6 +689,7 @@ document.addEventListener(
     document.addEventListener('click', swallow, { capture: true, once: true, signal: mcSignal })
     cleanup.setTimeout(() => document.removeEventListener('click', swallow, { capture: true }), 350)
     if (x.classList.contains('hs-cl-close')) closeChatLogsView()
+    else if (x.classList.contains('hs-pv-close')) closePredView()
     else if (typeof closeProfileCard === 'function') closeProfileCard()
   },
   { signal: mcSignal, capture: true },

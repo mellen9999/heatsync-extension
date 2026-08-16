@@ -8723,6 +8723,8 @@
     if (msg?.hidden) return true
     // Skip live append while profile card is open — buffer keeps the msg, restored on close
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
+    // Same for the predictions/polls view — it owns the chat area while open.
+    if (typeof predViewOpen === 'function' && predViewOpen()) return true
     if (isScrolledUp || currentTab !== tabId) return false
 
     // Platform filter: skip messages for muted platforms (single-platform tab path)
@@ -9347,6 +9349,12 @@
     // Profile card overrides normal tab content while open
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
       renderProfileCardView()
+      return
+    }
+    // Predictions/polls take the chat area the same way. Without this guard the
+    // next incoming message repaints chat straight over the open view.
+    if (typeof predViewOpen === 'function' && predViewOpen()) {
+      renderPredView()
       return
     }
     // Social tabs have their own renderers — banner doesn't apply there

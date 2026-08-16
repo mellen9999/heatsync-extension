@@ -11210,14 +11210,42 @@ function injectStyles() {
       gap: 2px;
       padding: 0;
     }
+    /* The banner is a CONTROL, not a notice — clicking it opens the full
+       predictions/polls view. It read as neither: a flat strip with no edge,
+       painting over the top chat rows, with a hover plate as the only hint it
+       did anything. A left accent bar (the same device mention/reply rows use
+       to mean "this row is not ordinary chat") plus a bottom rule give it an
+       edge against the messages it covers, and the ▸ marks it as an opener. */
     .hs-mc-chat-banner-item {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 10px;
+      padding: 5px 10px 5px 8px;
       font-size: 13px;
       font-weight: 600;
       transition: none;
+      cursor: pointer;
+      border-left: 3px solid var(--hs-brand);
+      border-bottom: 1px solid #808080;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+    }
+    .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
+    .hs-mc-chat-banner-poll { border-left-color: var(--hs-reply); }
+    /* Opener affordance, pinned right after the timer/badge. */
+    .hs-mc-chat-banner-item::after {
+      content: '▸';
+      margin-left: auto;
+      padding-left: 6px;
+      opacity: 0.75;
+    }
+    .hs-mc-chat-banner-item:hover::after { opacity: 1; }
+    /* The title is the part that must survive a narrow panel — it ellipsises
+       while the timer, badge and ▸ keep their space. */
+    .hs-mc-chat-banner-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
     .hs-mc-chat-banner-item:hover {
       background: #fff;
@@ -17571,6 +17599,66 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-confirm-reason.sel { border-color: #fff; color: #fff; }
     .hs-mc-confirm-reason.sel:hover { background: #fff; color: #000; }
 
+
+    /* ═══ Predictions & polls, as the whole chat area ═══
+       Same takeover pattern as the chat-logs and profile-card views: this owns
+       #hs-mc-messages while open. The prediction and poll bodies inside are
+       rendered by renderPrediction/renderPoll — the SAME functions the emote
+       picker's twitch tab mounts — so the two surfaces cannot drift into two
+       different prediction UIs. Only the frame lives here. */
+    .hs-pv-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      background: #000;
+    }
+    .hs-pv-hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      padding: 4px 6px;
+      border-bottom: 1px solid #808080;
+      background: #0a0a0a;
+    }
+    .hs-pv-title {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-pv-sub { color: #808080; font-weight: 400; }
+    .hs-pv-close {
+      flex: 0 0 auto;
+      /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      line-height: 18px;
+      padding: 0 6px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #808080;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-pv-close:hover { background: #fff; color: #000; }
+    /* The body scrolls; the header stays. A prediction with ten outcomes is
+       taller than a narrow panel, which is the case the popup handled worst. */
+    .hs-pv-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 6px;
+    }
     /* Ensure parent has relative positioning for overlay */
     .chat-scrollable-area__message-container {
       position: relative !important;
@@ -33034,6 +33122,10 @@ function _startBannerTimer(el, endsAt) {
 }
 
 function updateChatBanners(predResult, pollData) {
+  // One hook keeps the full-area view current: this already runs on every
+  // prediction/poll fetch and every pubsub update, so the view needs no second
+  // polling loop of its own.
+  if (typeof refreshPredViewIfOpen === 'function') refreshPredViewIfOpen()
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   // The banner is an absolute overlay hosted OUTSIDE the scroller (a sibling
@@ -33073,7 +33165,16 @@ function updateChatBanners(predResult, pollData) {
   banner.className = 'hs-mc-chat-banner'
   banner.innerHTML = ''
 
-  const goToTwitch = (_e) => {
+  // Clicking the banner opens the predictions/polls surface over the chat area.
+  // It used to click the `live` TAB, which just switched channels and left the
+  // actual prediction UI where it was — three clicks deep inside the emote
+  // picker's twitch sub-tab. The banner is the thing you can see, so it is the
+  // thing that should open it.
+  const openPredictions = (_e) => {
+    if (typeof openPredView === 'function') {
+      openPredView(_predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null))
+      return
+    }
     const twitchTab = document.querySelector('[data-tab="live"]')
     if (twitchTab) twitchTab.click()
   }
@@ -33083,7 +33184,7 @@ function updateChatBanners(predResult, pollData) {
     const row = document.createElement('div')
     row.className = 'hs-mc-chat-banner-item hs-mc-chat-banner-pred'
     row.style.cursor = 'pointer'
-    row.addEventListener('click', goToTwitch)
+    row.addEventListener('click', openPredictions)
 
     // Build: 🔮 title · outcome1 45% vs outcome2 55% · [your bet: 100] · 2:30
     row.innerHTML = '<span class="hs-mc-chat-banner-icon">\u{1F52E}</span>'
@@ -33125,7 +33226,7 @@ function updateChatBanners(predResult, pollData) {
     const row = document.createElement('div')
     row.className = 'hs-mc-chat-banner-item hs-mc-chat-banner-poll'
     row.style.cursor = 'pointer'
-    row.addEventListener('click', goToTwitch)
+    row.addEventListener('click', openPredictions)
 
     row.innerHTML = '<span class="hs-mc-chat-banner-icon">\u{1F4CA}</span>'
 
@@ -53527,9 +53628,17 @@ function appendChatLogBody(host, r) {
 document.addEventListener(
   'keydown',
   (e) => {
-    if (e.key === 'Escape' && activeChatLogs) {
+    if (e.key !== 'Escape') return
+    if (activeChatLogs) {
       e.preventDefault()
       closeChatLogsView()
+      return
+    }
+    // Predictions/polls view — same convention, same file so the two takeover
+    // surfaces can't disagree about what Escape does.
+    if (typeof predViewOpen === 'function' && predViewOpen()) {
+      e.preventDefault()
+      closePredView()
     }
   },
   { signal: mcSignal, capture: true },
@@ -53550,7 +53659,7 @@ document.addEventListener(
   'pointerdown',
   (e) => {
     if (e.button !== 0) return
-    const x = e.target?.closest?.('.hs-cl-close, .hs-pcard-close')
+    const x = e.target?.closest?.('.hs-cl-close, .hs-pcard-close, .hs-pv-close')
     if (!x) return
     e.preventDefault()
     e.stopPropagation()
@@ -53561,10 +53670,151 @@ document.addEventListener(
     document.addEventListener('click', swallow, { capture: true, once: true, signal: mcSignal })
     cleanup.setTimeout(() => document.removeEventListener('click', swallow, { capture: true }), 350)
     if (x.classList.contains('hs-cl-close')) closeChatLogsView()
+    else if (x.classList.contains('hs-pv-close')) closePredView()
     else if (typeof closeProfileCard === 'function') closeProfileCard()
   },
   { signal: mcSignal, capture: true },
 )
+
+
+// --- multichat/pred-view.js ---
+// pred-view.js — predictions & polls as a full chat-area surface.
+//
+// The prediction UI used to live ONLY inside the emote picker, under a "twitch"
+// sub-tab: a popup, three clicks deep, sized for emote grids. A prediction is a
+// thing you watch and bet on while it runs, so it belongs where you are looking.
+// This takes over #hs-mc-messages the same way profile-card.js and chat-logs.js
+// do, and the chat banner is what opens it.
+//
+// It renders NOTHING of its own. renderPrediction/renderPoll (twitch-api.js) are
+// the same functions the picker mounts, so the two surfaces can never drift into
+// two different prediction UIs — that was the whole point of putting it here
+// rather than writing a second one.
+
+let activePredView = null // { channel }
+
+// Paint from the caches the picker/banner already fill (_lastPredResult,
+// _lastPollData) so opening is instant, then refresh in the background. Opening
+// to a spinner when the banner in front of you is already showing live odds
+// would be a downgrade from the popup this replaces.
+async function openPredView(channel) {
+  const ch = channel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null)
+  if (!ch) {
+    showToast(t('mc_input_pp_needs_twitch') || 'this needs a twitch channel tab', 'error')
+    return
+  }
+  // Hide the composer — this view is not a place you type. The flag must move
+  // with the class or showInputBar() early-returns forever (see chat-logs.js).
+  const inputBar = document.getElementById('hs-mc-inputbar')
+  if (inputBar) inputBar.classList.add('hs-hidden')
+  inputBarVisible = false
+
+  activePredView = { channel: String(ch).toLowerCase() }
+  renderPredView()
+  await refreshPredViewData()
+}
+
+function closePredView() {
+  if (!activePredView) return
+  activePredView = null
+  showInputBar()
+  if (typeof renderMessages === 'function') renderMessages(currentTab)
+}
+
+function predViewOpen() {
+  return !!activePredView
+}
+
+// Re-render in place when new prediction/poll data lands. Called from
+// updateChatBanners (twitch-api.js), which already runs on every fetch and
+// every pubsub update — one hook rather than a second polling loop.
+function refreshPredViewIfOpen() {
+  if (!activePredView) return
+  renderPredView()
+}
+
+async function refreshPredViewData() {
+  if (!activePredView) return
+  const ch = activePredView.channel
+  const [pred, poll] = await Promise.all([
+    fetchPrediction(ch).catch(() => null),
+    fetchPoll(ch).catch(() => null),
+  ])
+  // The view may have been closed during the await — don't write into a
+  // surface the user already left (same isConnected/state guard pattern the
+  // async renderers use elsewhere).
+  if (!activePredView || activePredView.channel !== ch) return
+  if (pred) _lastPredResult = pred
+  if (poll) _lastPollData = poll?.poll || poll
+  renderPredView()
+}
+
+function renderPredView() {
+  const msgsEl = document.getElementById('hs-mc-messages')
+  if (!msgsEl || !activePredView) return
+  msgsEl.textContent = ''
+
+  const wrap = document.createElement('div')
+  wrap.className = 'hs-pv-wrap'
+
+  const hdr = document.createElement('div')
+  hdr.className = 'hs-pv-hdr'
+  const title = document.createElement('div')
+  title.className = 'hs-pv-title'
+  title.textContent = t('mc_predview_title') || 'predictions & polls'
+  const sub = document.createElement('span')
+  sub.className = 'hs-pv-sub'
+  sub.textContent = `#${activePredView.channel}`
+  title.appendChild(sub)
+  const close = document.createElement('button')
+  close.className = 'hs-pv-close'
+  close.textContent = '✕'
+  close.title = t('common_close') || 'close'
+  close.addEventListener('click', closePredView)
+  hdr.appendChild(title)
+  hdr.appendChild(close)
+  wrap.appendChild(hdr)
+
+  const body = document.createElement('div')
+  body.className = 'hs-pv-body'
+
+  // ── prediction ──────────────────────────────────────────────────────────
+  const predSlot = document.createElement('div')
+  predSlot.dataset.predSlot = '1'
+  const pr = _lastPredResult
+  if (pr?.prediction) {
+    predSlot.appendChild(
+      renderPrediction(pr.prediction, pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName),
+    )
+  } else if (pr) {
+    predSlot.appendChild(renderNoPrediction(pr.balance, pr.channelId, pr.isMod, pr.cpImage, pr.cpName))
+  } else {
+    const loading = document.createElement('div')
+    loading.className = 'hs-mc-pred-loading'
+    loading.textContent = t('common_loading') || 'loading...'
+    predSlot.appendChild(loading)
+  }
+  body.appendChild(predSlot)
+
+  // ── poll ────────────────────────────────────────────────────────────────
+  const pollSlot = document.createElement('div')
+  pollSlot.dataset.pollSlot = '1'
+  const pd = _lastPollData
+  if (pd?.id) {
+    pollSlot.appendChild(renderPoll(pd, pr?.channelId || null, pr?.isMod || _twitchIsMod))
+  } else if (pr?.channelId) {
+    pollSlot.appendChild(renderNoPoll(pr.channelId, pr.isMod || _twitchIsMod))
+  }
+  body.appendChild(pollSlot)
+
+  wrap.appendChild(body)
+  msgsEl.appendChild(wrap)
+
+  // Same handler attachment the picker does — the buttons inside the rendered
+  // prediction/poll are wired by these, not by the renderers themselves.
+  attachPredictionHandlers()
+  attachPollHandlers()
+}
 
 
 // --- multichat/paints.js ---
@@ -69627,6 +69877,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (msg?.hidden) return true
     // Skip live append while profile card is open — buffer keeps the msg, restored on close
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
+    // Same for the predictions/polls view — it owns the chat area while open.
+    if (typeof predViewOpen === 'function' && predViewOpen()) return true
     if (isScrolledUp || currentTab !== tabId) return false
 
     // Platform filter: skip messages for muted platforms (single-platform tab path)
@@ -70251,6 +70503,12 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Profile card overrides normal tab content while open
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
       renderProfileCardView()
+      return
+    }
+    // Predictions/polls take the chat area the same way. Without this guard the
+    // next incoming message repaints chat straight over the open view.
+    if (typeof predViewOpen === 'function' && predViewOpen()) {
+      renderPredView()
       return
     }
     // Social tabs have their own renderers — banner doesn't apply there

@@ -148,14 +148,42 @@
       gap: 2px;
       padding: 0;
     }
+    /* The banner is a CONTROL, not a notice — clicking it opens the full
+       predictions/polls view. It read as neither: a flat strip with no edge,
+       painting over the top chat rows, with a hover plate as the only hint it
+       did anything. A left accent bar (the same device mention/reply rows use
+       to mean "this row is not ordinary chat") plus a bottom rule give it an
+       edge against the messages it covers, and the ▸ marks it as an opener. */
     .hs-mc-chat-banner-item {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 10px;
+      padding: 5px 10px 5px 8px;
       font-size: 13px;
       font-weight: 600;
       transition: none;
+      cursor: pointer;
+      border-left: 3px solid var(--hs-brand);
+      border-bottom: 1px solid #808080;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+    }
+    .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
+    .hs-mc-chat-banner-poll { border-left-color: var(--hs-reply); }
+    /* Opener affordance, pinned right after the timer/badge. */
+    .hs-mc-chat-banner-item::after {
+      content: '▸';
+      margin-left: auto;
+      padding-left: 6px;
+      opacity: 0.75;
+    }
+    .hs-mc-chat-banner-item:hover::after { opacity: 1; }
+    /* The title is the part that must survive a narrow panel — it ellipsises
+       while the timer, badge and ▸ keep their space. */
+    .hs-mc-chat-banner-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
     .hs-mc-chat-banner-item:hover {
       background: #fff;

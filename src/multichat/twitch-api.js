@@ -1465,6 +1465,10 @@ function _startBannerTimer(el, endsAt) {
 }
 
 function updateChatBanners(predResult, pollData) {
+  // One hook keeps the full-area view current: this already runs on every
+  // prediction/poll fetch and every pubsub update, so the view needs no second
+  // polling loop of its own.
+  if (typeof refreshPredViewIfOpen === 'function') refreshPredViewIfOpen()
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   // The banner is an absolute overlay hosted OUTSIDE the scroller (a sibling
@@ -1504,7 +1508,16 @@ function updateChatBanners(predResult, pollData) {
   banner.className = 'hs-mc-chat-banner'
   banner.innerHTML = ''
 
-  const goToTwitch = (_e) => {
+  // Clicking the banner opens the predictions/polls surface over the chat area.
+  // It used to click the `live` TAB, which just switched channels and left the
+  // actual prediction UI where it was — three clicks deep inside the emote
+  // picker's twitch sub-tab. The banner is the thing you can see, so it is the
+  // thing that should open it.
+  const openPredictions = (_e) => {
+    if (typeof openPredView === 'function') {
+      openPredView(_predictionChannel || (typeof getActiveTwitchChannel === 'function' ? getActiveTwitchChannel() : null))
+      return
+    }
     const twitchTab = document.querySelector('[data-tab="live"]')
     if (twitchTab) twitchTab.click()
   }
@@ -1514,7 +1527,7 @@ function updateChatBanners(predResult, pollData) {
     const row = document.createElement('div')
     row.className = 'hs-mc-chat-banner-item hs-mc-chat-banner-pred'
     row.style.cursor = 'pointer'
-    row.addEventListener('click', goToTwitch)
+    row.addEventListener('click', openPredictions)
 
     // Build: 🔮 title · outcome1 45% vs outcome2 55% · [your bet: 100] · 2:30
     row.innerHTML = '<span class="hs-mc-chat-banner-icon">\u{1F52E}</span>'
@@ -1556,7 +1569,7 @@ function updateChatBanners(predResult, pollData) {
     const row = document.createElement('div')
     row.className = 'hs-mc-chat-banner-item hs-mc-chat-banner-poll'
     row.style.cursor = 'pointer'
-    row.addEventListener('click', goToTwitch)
+    row.addEventListener('click', openPredictions)
 
     row.innerHTML = '<span class="hs-mc-chat-banner-icon">\u{1F4CA}</span>'
 

@@ -1183,6 +1183,9 @@
   "mc_settings_animate_paints_desc": {
     "message": "always plays the motion in name paints — yours and everyone else's. never freezes them flat. this follows the setting, not your browser's reduced-motion flag."
   },
+  "mc_predview_title": {
+    "message": "predictions & polls"
+  },
   "mc_settings_chatterino_badges": {
     "message": "chatterino badges"
   },

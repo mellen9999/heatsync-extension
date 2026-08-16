@@ -255,8 +255,29 @@ const LETTER_SPLIT_IDS = new Set(
     .map(([id]) => id),
 )
 
-/** Stable short hash of a spec — same spec (same key order irrelevant,
- * we JSON.stringify a normalized/sorted form) → same hash. */
+/**
+ * Stable short hash of a spec — same spec (key order irrelevant, we
+ * JSON.stringify a normalized/sorted form) → same hash.
+ *
+ * ── the contract, precisely ──
+ * It hashes the SPEC. It does NOT hash the compiler. So `.hsp-<hash>` is
+ * stable across deploys that change what that class RENDERS: the scene
+ * compiler was rewritten from two planes to seven on 2026-08-16 and every
+ * class name stayed byte-identical.
+ *
+ * That is safe only because of a property of today's CALLERS, not of the hash:
+ * compiled CSS is either built client-side per page load, or inlined into an
+ * SSR response that carries max-age 60-300 and gets its prefix purged by
+ * deploy.sh. Nothing stores it durably.
+ *
+ * Anything that starts to — a redis key, localStorage, a long Cache-Control on
+ * a route that ships compiled paint CSS — MUST carry its own version, because
+ * this hash will not move to invalidate it. That is not hypothetical: the same
+ * shape shipped stale payloads to prod from an un-bumped CACHE_VER on the
+ * channel-stats route the same day. tests/client/paint-spec.test.js pins the
+ * compiler's output so that whoever changes it is told this, at the moment
+ * they change it, rather than finding out from a page.
+ */
 export function hashPaintSpec(spec) {
   return fnv1a(JSON.stringify(normalizeForHash(spec)))
 }

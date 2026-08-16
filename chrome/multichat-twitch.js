@@ -49533,7 +49533,17 @@ async function handleSlashCommand(text, input) {
         )
         clearInput(input)
       } else {
-        showToast(`${isPoll ? 'poll' : 'prediction'} failed: ${r?.error || 'unknown'} (broadcaster only)`, 'error')
+        // Don't append "(broadcaster only)" unconditionally — it turned an
+        // extension-side block ("mutation not allowed", the op missing from the
+        // MAIN-world allowlist) into what read as a permissions problem, and
+        // sent the user looking at their own twitch role instead of the bug.
+        // Only say it when twitch actually refused on authorization.
+        const _ppErr = String(r?.error || 'unknown')
+        const _ppDenied = /forbidden|unauthorized|permission|not.?allowed.*channel|broadcaster/i.test(_ppErr)
+        showToast(
+          `${isPoll ? 'poll' : 'prediction'} failed: ${_ppErr}${_ppDenied ? ' (broadcaster only)' : ''}`,
+          'error',
+        )
       }
       return true
     }

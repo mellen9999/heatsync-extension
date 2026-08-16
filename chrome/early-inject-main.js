@@ -804,6 +804,19 @@
         // Prediction terms-of-service accept (first-ever prediction per account)
         // — also missed; without it the predictions tab wedged on the ToS step.
         'AcceptPredictionTerms',
+        // The broadcaster's four prediction verbs (/prediction, /lockpred,
+        // /resolvepred, /cancelpred). MakePrediction above is the VIEWER's bet,
+        // so betting worked while running a prediction was impossible — the
+        // asymmetry is what made it look like a permissions problem. Both paths
+        // were blocked: apolloMutate returned "mutation not allowed", and the
+        // rawQuery fallback is dead for mutations anyway (see gqlPersistedMutation).
+        // Same risk class as CreatePoll/VotePoll already here — twitch gates the
+        // real effect on the caller's own broadcaster status, and _mutateRate
+        // caps spoofed-nonce replay.
+        'CreatePredictionEvent',
+        'LockPredictionEvent',
+        'ResolvePredictionEvent',
+        'CancelPredictionEvent',
         // /announce — same missed-allowlist-entry bug as the mod actions above
         // (2026-07-20: silently broke every announce send, always burning the
         // full apolloMutate timeout before falling to a raw fetch that then

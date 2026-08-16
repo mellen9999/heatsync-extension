@@ -59,7 +59,9 @@ describe('host page color-scheme', () => {
   test('nothing creates a color-scheme meta', () => {
     const offenders = []
     for (const file of sourceFiles()) {
-      const src = readFileSync(file, 'utf8').replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '')
+      const src = readFileSync(file, 'utf8')
+        .replace(/\/\/[^\n]*/g, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
       // The stamp needs the name and the value; either alone is not it.
       if (/['"]color-scheme['"]/.test(src) && /meta/i.test(src)) {
         offenders.push(file.slice(ROOT.length + 1))

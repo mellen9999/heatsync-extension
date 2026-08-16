@@ -131,7 +131,11 @@ describe('logPermalinkParts', () => {
  * input.js); this one did not, so `»` fell back to a retyped quote on all but
  * the handful of rows peekSentHost had retagged.
  */
-const rowBuilder = sliceBetween(SRC('chat-logs.js'), 'function buildRowPermalink(', '\nasync function copyChatLogPermalink')
+const rowBuilder = sliceBetween(
+  SRC('chat-logs.js'),
+  'function buildRowPermalink(',
+  '\nasync function copyChatLogPermalink',
+)
 
 const { buildRowPermalink } = new Function(
   `${origin}\n${parts}\n${builder}\n${rowBuilder}\nreturn { buildRowPermalink }`,

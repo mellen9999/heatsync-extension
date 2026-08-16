@@ -5821,15 +5821,90 @@ function glyphTile(c, density) {
   }
 }
 
+// ── foreground silhouettes (the NEAR plane — painted in front of the name) ──
+//
+// Short and sparse on purpose. These occlude the bottom few pixels of the
+// glyphs, which is what sells "the name is standing IN the scene" instead of
+// "the name is pasted ON a picture" — but a 13px name has about 9px of cap
+// height, so anything taller than a descender stops being depth and starts
+// being damage. Nothing here rises past ~5px of a 22px plate.
+
+const FG = {
+  dunes: (c) => svgUrl(svg(64, 8, `<path fill='${c}' d='M0 8V6h6V4h10v2h8v2h8V6h10V4h8v2h6v2z'/>`)),
+  graveyard: (c) =>
+    svgUrl(
+      svg(
+        72,
+        8,
+        `<path fill='${c}' d='M0 8V7h72v1z` +
+          // near headstone
+          ` M8 7V3h2V1h5v2h2v4z` +
+          // near cross
+          ` M30 7V2h-2V0h2v-1h2v1h2v2h-2v5z` +
+          // near picket run
+          ` M50 7V3h2v4z M56 7V3h2v4z M62 7V3h2v4z M48 4h18v1H48z'/>`,
+      ),
+    ),
+  reef: (c) => svgUrl(svg(56, 6, `<path fill='${c}' d='M0 6V4h5V2h6v2h7v2h9V3h6v3h8V4h7v2h8z'/>`)),
+  pines: (c) =>
+    svgUrl(
+      svg(
+        60,
+        9,
+        `<path fill='${c}' d='M0 9V8h60v1z` +
+          ` M9 8V5H7V3h2V1h2v2h2v2h-2v3z` +
+          ` M33 8V6h-2V4h2V2h2v2h2v2h-2v2z` +
+          ` M50 8V5h-2V3h2V2h2v1h2v2h-2v3z'/>`,
+      ),
+    ),
+}
+
+// ── layer model ─────────────────────────────────────────────────────────────
+//
+// A scene pseudo is a `background:` shorthand plus keyframes that animate
+// `background-position`, and CSS matches those two lists POSITIONALLY. Building
+// both as strings meant every catalog entry hand-wrote a comma list that had to
+// agree with its own layer count, silently rendering wrong if it did not — and
+// it made it impossible to COMPOSE, because nothing could add a layer to
+// someone else's plate without editing their string.
+//
+// So a layer is data now:
+//   img     the CSS <image>
+//   repeat  background-repeat for this layer
+//   size    background-size for this layer
+//   from    resting position — also the hero frame a static paint renders
+//   to      position at 100% of the loop (defaults to `from`: a still layer)
+//   mid     optional 50% key, for the weathers that sway rather than fall
+// and the compiler assembles both lists from the same array, so they cannot
+// disagree.
+
+const L = (img, repeat, size, from, to, mid) => ({ img, repeat, size, from, to, mid })
+
+const layerCss = (l) => `${l.img} ${l.repeat} ${l.from}/${l.size}`
+const positionsAt = (layers, key) => layers.map((l) => l[key] ?? l.from).join(',')
+
+function positionalKeyframes(name, layers) {
+  const from = positionsAt(layers, 'from')
+  const to = positionsAt(layers, 'to')
+  if (layers.some((l) => l.mid)) {
+    return (
+      `@keyframes ${name}{0%{background-position:${from};}` +
+      `50%{background-position:${positionsAt(layers, 'mid')};}` +
+      `100%{background-position:${to};}}`
+    )
+  }
+  return `@keyframes ${name}{from{background-position:${from};}to{background-position:${to};}}`
+}
+
 // ── backdrop catalog ────────────────────────────────────────────────────────
 //
-// Each build() returns { decls, keyframes } for the ::before pseudo.
-// `decls` carries background layers + sizes + the RESTING positions (the
-// hero frame); keyframes animate background-position lists only, so
-// opts.static = simply omitting the animation. Backgrounds never escape the
-// pseudo's box — no clipping needed, no overflow, no layout impact.
-// Every plate is deliberately mid-to-dark so the shared dark text rim
-// (see buildSceneCss) guarantees legibility on all of them.
+// build() returns { layers, alternate?, props?, keyframesBody?, fg? }.
+// `layers` is back-to-front LAST-to-FIRST, exactly like the CSS shorthand:
+// the first entry paints on top. `fg` is a single NEAR layer, painted in the
+// front pseudo over the name. Backgrounds never escape the pseudo's box — no
+// clipping, no overflow, no layout impact. Every plate is deliberately
+// mid-to-dark so the shared text rim (see paint-spec.js) guarantees legibility
+// on all of them.
 
 const BACKDROPS = {
   dawn: {
@@ -5843,6 +5918,7 @@ const BACKDROPS = {
         haze: '#ffd7af',
         bloom: '#ffaf5f',
         sil: '#140a02',
+        fg: '#0a0501',
       },
       {
         name: 'rose',
@@ -5850,6 +5926,7 @@ const BACKDROPS = {
         haze: '#ffc7d7',
         bloom: '#ff87af',
         sil: '#170812',
+        fg: '#0c0409',
       },
       {
         name: 'gold',
@@ -5857,25 +5934,37 @@ const BACKDROPS = {
         haze: '#fff3b0',
         bloom: '#ffe75f',
         sil: '#141002',
+        fg: '#0a0801',
       },
     ],
-    build(v, animName) {
-      const layers =
-        `${SIL.dunes(v.sil)} repeat-x 0 100%/auto 42%,` +
-        `linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%) no-repeat 50% 78%/220% 58%,` +
-        `radial-gradient(90% 90% at 50% 108%,${v.bloom}66 0%,${v.bloom}22 40%,transparent 70%) no-repeat 0 0/100% 100%,` +
-        `${v.sky} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 100%,200% 78%,0 0,0 0;}to{background-position:0 100%,-100% 78%,0 0,0 0;}}`
-      return { decls: `background:${layers};`, keyframes: kf }
+    build(v) {
+      return {
+        layers: [
+          L(SIL.dunes(v.sil), 'repeat-x', 'auto 42%', '0 100%', '0 100%'),
+          L(
+            `linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
+            'no-repeat',
+            '220% 58%',
+            '200% 78%',
+            '-100% 78%',
+          ),
+          L(
+            `radial-gradient(90% 90% at 50% 108%,${v.bloom}66 0%,${v.bloom}22 40%,transparent 70%)`,
+            'no-repeat',
+            '100% 100%',
+            '0 0',
+          ),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.dunes(v.fg), 'repeat-x', 'auto 26%', '0 100%'),
+      }
     },
   },
 
   graveyard: {
     // Overcast by construction: the sky is brightest at the horizon (the glow
     // the clouds are lit from) and darkest at the top, where two blocky cloud
-    // decks hang down over it. The decks are what makes it read as weather
-    // rather than a gradient — the two soft radial washes this used to carry
-    // were under 5% alpha and invisible at name size.
+    // decks hang down over it.
     label: 'graveyard',
     luminance: false,
     basePeriod: 22,
@@ -5883,7 +5972,6 @@ const BACKDROPS = {
       // Sky runs bright at the horizon (0% is the BOTTOM at 0deg) to near-black
       // at the top; the decks are LIGHTER than that top, because an overcast
       // lid lit from below by the same glow is what you actually see at night.
-      // Dark-on-dark clouds are just a black bar.
       {
         name: 'ash',
         sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)',
@@ -5891,6 +5979,7 @@ const BACKDROPS = {
         far: '#292933',
         moon: '#c6c6d2',
         sil: '#08080a',
+        fg: '#000000',
       },
       {
         name: 'blood',
@@ -5899,6 +5988,7 @@ const BACKDROPS = {
         far: '#33191e',
         moon: '#e0a0a0',
         sil: '#0a0608',
+        fg: '#000000',
       },
       {
         name: 'moonlit',
@@ -5907,23 +5997,24 @@ const BACKDROPS = {
         far: '#232e44',
         moon: '#dce8ff',
         sil: '#060810',
+        fg: '#000105',
       },
     ],
-    build(v, animName) {
+    build(v) {
       const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
       const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
-      const layers =
-        `${SIL.graveyard(v.sil)} repeat-x 0 100%/auto 52%,` +
-        `${near.url} repeat-x 0 0/${near.w}px 58%,` +
-        `${far.url} repeat-x 0 0/${far.w}px 44%,` +
-        `radial-gradient(45% 75% at 62% 6%,${v.moon}2e 0%,transparent 68%) no-repeat 0 0/100% 100%,` +
-        `${v.sky} no-repeat 0 0/100% 100%`
-      // Each deck advances exactly one own-tile width per loop — seamless by
-      // construction, and the different widths ARE the parallax.
-      const kf =
-        `@keyframes ${animName}{from{background-position:0 100%,0 0,0 0,0 0,0 0;}` +
-        `to{background-position:0 100%,-${near.w}px 0,-${far.w}px 0,0 0,0 0;}}`
-      return { decls: `background:${layers};`, keyframes: kf }
+      return {
+        layers: [
+          L(SIL.graveyard(v.sil), 'repeat-x', 'auto 52%', '0 100%', '0 100%'),
+          // Each deck advances exactly one own-tile width per loop — seamless
+          // by construction, and the different widths ARE the parallax.
+          L(near.url, 'repeat-x', `${near.w}px 58%`, '0 0', `-${near.w}px 0`),
+          L(far.url, 'repeat-x', `${far.w}px 44%`, '0 0', `-${far.w}px 0`),
+          L(`radial-gradient(45% 75% at 62% 6%,${v.moon}2e 0%,transparent 68%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.graveyard(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+      }
     },
   },
 
@@ -5937,28 +6028,39 @@ const BACKDROPS = {
         sky: 'linear-gradient(180deg,#00344e 0%,#001d2e 45%,#000a12 100%)',
         ray: '#00d7ff',
         sil: '#010508',
+        fg: '#000103',
       },
       {
         name: 'teal',
         sky: 'linear-gradient(180deg,#00443b 0%,#00251f 45%,#000d0a 100%)',
         ray: '#00ffd7',
         sil: '#010806',
+        fg: '#000302',
       },
       {
         name: 'void',
         sky: 'linear-gradient(180deg,#1e0f38 0%,#100822 45%,#05030e 100%)',
         ray: '#875fff',
         sil: '#040208',
+        fg: '#020004',
       },
     ],
-    build(v, animName) {
-      const layers =
-        `${SIL.reef(v.sil)} repeat-x 0 100%/auto 26%,` +
-        `linear-gradient(104deg,transparent 30%,${v.ray}14 42%,transparent 50%,${v.ray}0e 62%,transparent 72%) no-repeat 50% 0/260% 100%,` +
-        `radial-gradient(80% 60% at 50% -10%,${v.ray}20 0%,transparent 60%) no-repeat 0 0/100% 100%,` +
-        `${v.sky} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 100%,-90% 0,0 0,0 0;}to{background-position:0 100%,190% 0,0 0,0 0;}}`
-      return { decls: `background:${layers};`, keyframes: kf }
+    build(v) {
+      return {
+        layers: [
+          L(SIL.reef(v.sil), 'repeat-x', 'auto 26%', '0 100%', '0 100%'),
+          L(
+            `linear-gradient(104deg,transparent 30%,${v.ray}14 42%,transparent 50%,${v.ray}0e 62%,transparent 72%)`,
+            'no-repeat',
+            '260% 100%',
+            '-90% 0',
+            '190% 0',
+          ),
+          L(`radial-gradient(80% 60% at 50% -10%,${v.ray}20 0%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.reef(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+      }
     },
   },
 
@@ -5973,6 +6075,7 @@ const BACKDROPS = {
         a1: '#00ff87',
         a2: '#00d7ff',
         sil: '#04040a',
+        fg: '#000004',
       },
       {
         name: 'magenta',
@@ -5980,6 +6083,7 @@ const BACKDROPS = {
         a1: '#ff40af',
         a2: '#875fff',
         sil: '#08040a',
+        fg: '#030004',
       },
       {
         name: 'ice',
@@ -5987,21 +6091,31 @@ const BACKDROPS = {
         a1: '#87d7ff',
         a2: '#d7ffff',
         sil: '#04060c',
+        fg: '#000206',
       },
     ],
-    build(v, animName) {
-      const layers =
-        `${SIL.pines(v.sil)} repeat-x 0 100%/auto 46%,` +
-        `linear-gradient(100deg,transparent 15%,${v.a1}30 35%,${v.a2}2e 50%,${v.a1}24 62%,transparent 82%) no-repeat 50% 0/240% 90%,` +
-        `radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px) 0 0/17px 13px,` +
-        `radial-gradient(circle,#ffffff66 0 .5px,transparent 1px) 5px 7px/23px 19px,` +
-        `${v.sky} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 100%,-90% 0,0 0,5px 7px,0 0;}to{background-position:0 100%,190% 0,0 0,5px 7px,0 0;}}`
-      return { decls: `background:${layers};`, keyframes: kf }
+    build(v) {
+      return {
+        layers: [
+          L(SIL.pines(v.sil), 'repeat-x', 'auto 46%', '0 100%', '0 100%'),
+          L(
+            `linear-gradient(100deg,transparent 15%,${v.a1}30 35%,${v.a2}2e 50%,${v.a1}24 62%,transparent 82%)`,
+            'no-repeat',
+            '240% 90%',
+            '-90% 0',
+            '190% 0',
+          ),
+          L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0'),
+          L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.pines(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+      }
     },
   },
 
   terminal: {
+    // No foreground: a CRT has no landscape to stand in front of.
     label: 'terminal',
     luminance: false,
     basePeriod: 9,
@@ -6010,13 +6124,20 @@ const BACKDROPS = {
       { name: 'amber', ph: '#ffb000', plate: 'linear-gradient(#0e0a04,#070502)' },
       { name: 'paper', ph: '#c0c0c0', plate: 'linear-gradient(#101010,#0a0a0a)' },
     ],
-    build(v, animName) {
-      const layers =
-        `linear-gradient(0deg,transparent 38%,${v.ph}16 50%,transparent 62%) no-repeat 0 0/100% 300%,` +
-        `repeating-linear-gradient(0deg,${v.ph}0d 0 1px,transparent 1px 3px) 0 0/100% auto,` +
-        `${v.plate} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 0,0 0,0 0;}to{background-position:0 100%,0 0,0 0;}}`
-      return { decls: `background:${layers};`, keyframes: kf }
+    build(v) {
+      return {
+        layers: [
+          L(
+            `linear-gradient(0deg,transparent 38%,${v.ph}16 50%,transparent 62%)`,
+            'no-repeat',
+            '100% 300%',
+            '0 0',
+            '0 100%',
+          ),
+          L(`repeating-linear-gradient(0deg,${v.ph}0d 0 1px,transparent 1px 3px)`, 'repeat', '100% auto', '0 0'),
+          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+        ],
+      }
     },
   },
 
@@ -6029,29 +6150,40 @@ const BACKDROPS = {
       { name: 'ion', glow: '#00afff', plate: 'linear-gradient(0deg,#001030 0%,#020818 55%,#040404 100%)' },
       { name: 'hex', glow: '#af5fff', plate: 'linear-gradient(0deg,#14001c 0%,#0a0212 55%,#050505 100%)' },
     ],
-    build(v, animName, hash) {
+    build(v, hash) {
       // Registered <color> custom prop so the underglow's alpha itself
-      // interpolates (background-position can't express a breathe). The var
-      // is hash-namespaced like conic's angle prop — no cross-user collision.
+      // interpolates (background-position can't express a breathe). The var is
+      // hash-namespaced like conic's angle prop — no cross-user collision.
+      // This is the one backdrop whose loop ALTERNATES, which is also why it
+      // never hosts a far-weather plane: rain running backwards is not rain.
       const cv = `--hsb-${hash}`
-      const layers =
-        `radial-gradient(120% 90% at 50% 115%,var(${cv}) 0%,transparent 65%) no-repeat 0 0/100% 100%,` +
-        `${v.plate} no-repeat 0 0/100% 100%`
-      const kf =
-        `@property ${cv}{syntax:"<color>";initial-value:${v.glow}66;inherits:false;}` +
-        `@keyframes ${animName}{from{${cv}:${v.glow}55;}to{${cv}:${v.glow}a8;}}`
-      return { decls: `background:${layers};`, keyframes: kf, alternate: true }
+      return {
+        layers: [
+          L(`radial-gradient(120% 90% at 50% 115%,var(${cv}) 0%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        alternate: true,
+        props: `@property ${cv}{syntax:"<color>";initial-value:${v.glow}66;inherits:false;}`,
+        keyframesBody: `{from{${cv}:${v.glow}55;}to{${cv}:${v.glow}a8;}}`,
+      }
     },
   },
 }
 
 // ── weather catalog ─────────────────────────────────────────────────────────
 //
-// Each build() returns { decls, keyframes, extraAnim? } for the ::after
-// pseudo. Falling/rising weathers are two copies of one pixel tile at 1x and
-// 1.4x, advancing exactly one own-tile-height per loop — different distances
-// in the same duration = parallax, seamless by construction. Sway returns to
-// x=0 at 100% so the loop never jumps.
+// near(): layers for the FRONT pseudo, painted over the name. Falling and
+// rising weathers are two copies of one pixel tile at 1x and 1.4x, advancing
+// exactly one own-tile-height per loop — different distances in the same
+// duration = parallax, seamless by construction.
+//
+// far(): ONE tile for the BACK pseudo, painted over the plate but under the
+// name, so the same weather passes behind the letters as well as in front of
+// them. It rides the BACKDROP's clock (a pseudo gets one background-position
+// animation and the plate already owns it), so the compiler gives it a whole
+// number of tile-heights per backdrop loop — seamless at any ratio. That is
+// the entire depth trick: no extra element, no extra animation, and the name
+// ends up inside the weather instead of under it.
 
 const WEATHERS = {
   rain: {
@@ -6063,11 +6195,26 @@ const WEATHERS = {
       { name: 'blood', c: '#d70000' },
       { name: 'acid', c: '#87ff00' },
     ],
-    build(v, density, animName) {
+    near(v, density) {
       const t = rainTile(v.c, density)
-      const decls = `background:${t.url} 0 0/${t.w}px ${t.h}px,${t.url} 0 0/${Math.round(t.w * 1.4)}px ${Math.round(t.h * 1.4)}px;`
-      const kf = `@keyframes ${animName}{from{background-position:0 0,0 0;}to{background-position:0 ${t.h}px,0 ${Math.round(t.h * 1.4)}px;}}`
-      return { decls, keyframes: kf }
+      const w2 = Math.round(t.w * 1.4),
+        h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      // Smaller and dimmer than the near plane — that is what distance is.
+      const t = rainTile(v.c, Math.min(3, density + 1))
+      return {
+        img: t.url,
+        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
+        tile: Math.round(t.h * 0.7),
+        opacity: '.5',
+      }
     },
   },
 
@@ -6080,41 +6227,67 @@ const WEATHERS = {
       { name: 'ash', c: '#9e9e9e' },
       { name: 'gold', c: '#ffd75f' },
     ],
-    build(v, density, animName) {
+    near(v, density) {
       const t = snowTile(v.c, density)
-      const h2 = Math.round(t.h * 1.4)
-      const decls = `background:${t.url} 0 0/${t.w}px ${t.h}px,${t.url} 0 0/${Math.round(t.w * 1.4)}px ${h2}px;`
-      const kf = `@keyframes ${animName}{0%{background-position:0 0,0 0;}50%{background-position:2px ${Math.round(t.h / 2)}px,-3px ${Math.round(h2 / 2)}px;}100%{background-position:0 ${t.h}px,0 ${h2}px;}}`
-      return { decls, keyframes: kf }
+      const w2 = Math.round(t.w * 1.4),
+        h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `2px ${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-3px ${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = snowTile(v.c, Math.min(3, density + 1))
+      return {
+        img: t.url,
+        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
+        tile: Math.round(t.h * 0.7),
+        opacity: '.55',
+      }
     },
   },
 
   fog: {
-    // behindText: fog is an ambient volume, not particles — in front it
-    // washes the name out on bright plates (dawn). Painted between the
-    // plate and the text instead: ::after with z-index:-1 still paints
-    // above ::before (tree order breaks the tie inside the negative band).
+    // behindText, and the ONE weather with no far plane and no foreground:
+    // fog IS the depth cue. It is an ambient volume, not particles — in front
+    // it washes the name out on bright plates — so it takes the space between
+    // the plate and the name, which is exactly where a foreground silhouette
+    // would also want to be.
     label: 'fog (behind the name)',
     luminance: false,
     basePeriod: 16,
     behindText: true,
     variants: [
       // sunglow used to be #ffd7af — the exact hex of the desert-dawn plate's
-      // own haze band, so the single most obvious pairing in the catalog
-      // (dawn + sunglow) rendered a fog bank that was invisible by
-      // construction. Warmer and denser now, and the alphas below are roughly
-      // double: fog paints BEHIND the name, so it can afford to be seen.
+      // own haze band, so the most obvious pairing in the catalog rendered a
+      // fog bank that was invisible by construction.
       { name: 'sunglow', c: '#ffaf87' },
       { name: 'mist', c: '#c0c8d0' },
       { name: 'miasma', c: '#87ff5f' },
     ],
-    build(v, density, animName) {
+    near(v, density) {
       const a = density >= 3 ? ['80', '4d'] : density === 2 ? ['66', '38'] : ['40', '26']
-      const decls =
-        `background:radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%) no-repeat 30% 40%/160% 100%,` +
-        `radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%) no-repeat 70% 70%/200% 100%;`
-      const kf = `@keyframes ${animName}{from{background-position:-60% 40%,160% 70%;}to{background-position:160% 40%,-60% 70%;}}`
-      return { decls, keyframes: kf, alternate: true }
+      return {
+        layers: [
+          L(
+            `radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%)`,
+            'no-repeat',
+            '160% 100%',
+            '-60% 40%',
+            '160% 40%',
+          ),
+          L(
+            `radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%)`,
+            'no-repeat',
+            '200% 100%',
+            '160% 70%',
+            '-60% 70%',
+          ),
+        ],
+        alternate: true,
+      }
     },
   },
 
@@ -6127,12 +6300,25 @@ const WEATHERS = {
       { name: 'ion', c1: '#00d7ff', c2: '#87ffff' },
       { name: 'rose', c1: '#ff40af', c2: '#ff87d7' },
     ],
-    build(v, density, animName) {
+    near(v, density) {
       const t = emberTile(v.c1, v.c2, density)
-      const h2 = Math.round(t.h * 1.4)
-      const decls = `background:${t.url} 0 0/${t.w}px ${t.h}px,${t.url} 0 0/${Math.round(t.w * 1.4)}px ${h2}px;`
-      const kf = `@keyframes ${animName}{0%{background-position:0 0,0 0;}50%{background-position:2px -${Math.round(t.h / 2)}px,-2px -${Math.round(h2 / 2)}px;}100%{background-position:0 -${t.h}px,0 -${h2}px;}}`
-      return { decls, keyframes: kf }
+      const w2 = Math.round(t.w * 1.4),
+        h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `2px -${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-2px -${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = emberTile(v.c1, v.c2, Math.min(3, density + 1))
+      return {
+        img: t.url,
+        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
+        tile: -Math.round(t.h * 0.7),
+        opacity: '.6',
+      }
     },
   },
 
@@ -6145,12 +6331,25 @@ const WEATHERS = {
       { name: 'amber', c: '#ffb000' },
       { name: 'cyan', c: '#00e5ff' },
     ],
-    build(v, density, animName) {
+    near(v, density) {
       const t = glyphTile(v.c, density)
-      const h2 = Math.round(t.h * 1.5)
-      const decls = `background:${t.url} 0 0/${t.w}px ${t.h}px,${t.url} 7px 0/${Math.round(t.w * 1.5)}px ${h2}px;`
-      const kf = `@keyframes ${animName}{from{background-position:0 0,7px 0;}to{background-position:0 ${t.h}px,7px ${h2}px;}}`
-      return { decls, keyframes: kf }
+      const w2 = Math.round(t.w * 1.5),
+        h2 = Math.round(t.h * 1.5)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '7px 0', `7px ${h2}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = glyphTile(v.c, Math.min(3, density + 1))
+      return {
+        img: t.url,
+        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
+        tile: Math.round(t.h * 0.7),
+        opacity: '.5',
+      }
     },
   },
 
@@ -6163,25 +6362,38 @@ const WEATHERS = {
       { name: 'blood', c: '#d70000' },
       { name: 'acid', c: '#87ff00' },
     ],
-    build(v, density, animName, hash, speed) {
+    near(v, density, hash, speed) {
       // Rain layers + a lightning wash carried by a registered <color> var —
-      // a separate animation on a separate property, so it comma-lists next
-      // to the rain's background-position loop without clobbering it. Two
-      // pops inside a ~120ms window every cycle: far under the 3-flash/s
-      // WCAG line even at max speed (period floor is basePeriod/MAX_SPEED,
-      // luminance-clamped in buildSceneCss).
+      // a separate animation on a separate property, so it comma-lists next to
+      // the rain's background-position loop without clobbering it. Two pops
+      // inside a ~120ms window every cycle: far under the 3-flash/s WCAG line
+      // even at max speed (the period floor is luminance-clamped below).
       const t = rainTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4),
+        h2 = Math.round(t.h * 1.4)
       const cv = `--hsw-${hash}`
-      const rainPeriod = periodSeconds(WEATHERS.rain.basePeriod, speed, false)
-      const rainName = `${animName}r`
-      const decls =
-        `background:linear-gradient(var(${cv}),var(${cv})) no-repeat 0 0/100% 100%,` +
-        `${t.url} 0 0/${t.w}px ${t.h}px,${t.url} 0 0/${Math.round(t.w * 1.4)}px ${Math.round(t.h * 1.4)}px;`
-      const kf =
-        `@property ${cv}{syntax:"<color>";initial-value:#e8f4ff00;inherits:false;}` +
-        `@keyframes ${animName}{0%,82%,100%{${cv}:#e8f4ff00;}84%{${cv}:#e8f4ff4d;}86%{${cv}:#e8f4ff10;}88.5%{${cv}:#e8f4ff38;}91%{${cv}:#e8f4ff00;}}` +
-        `@keyframes ${rainName}{from{background-position:0 0,0 0,0 0;}to{background-position:0 0,0 ${t.h}px,0 ${Math.round(t.h * 1.4)}px;}}`
-      return { decls, keyframes: kf, extraAnim: { name: rainName, period: rainPeriod, timing: 'linear' } }
+      return {
+        layers: [
+          L(`linear-gradient(var(${cv}),var(${cv}))`, 'no-repeat', '100% 100%', '0 0'),
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`),
+        ],
+        props: `@property ${cv}{syntax:"<color>";initial-value:#e8f4ff00;inherits:false;}`,
+        keyframesBody: `{0%,82%,100%{${cv}:#e8f4ff00;}84%{${cv}:#e8f4ff4d;}86%{${cv}:#e8f4ff10;}88.5%{${cv}:#e8f4ff38;}91%{${cv}:#e8f4ff00;}}`,
+        // The positional loop runs on the RAIN's clock, not the storm's, and
+        // the compiler owns its keyframes — so prepending a foreground layer
+        // extends both lists together.
+        positionalAnim: { period: periodSeconds(WEATHERS.rain.basePeriod, speed, false), timing: 'linear' },
+      }
+    },
+    far(v, density) {
+      const t = rainTile(v.c, Math.min(3, density + 1))
+      return {
+        img: t.url,
+        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
+        tile: Math.round(t.h * 0.7),
+        opacity: '.5',
+      }
     },
   },
 }
@@ -6256,12 +6468,60 @@ function normalizeSceneForHash(scene) {
 
 // ── compiler ────────────────────────────────────────────────────────────────
 
+/** Resolve a catalog entry's variant, clamped. */
+function pickVariant(meta, index) {
+  const i = isIntInRange(index ?? 0, 0, meta.variants.length - 1) ? (index ?? 0) : 0
+  return meta.variants[i]
+}
+
 /**
- * Compile a scene block to CSS scoped under `selector`. Same defense-in-depth
- * contract as compilePaintCss: assumes validation passed, but unknown ids are
- * silently skipped and every number re-clamped — an unvalidated spec cannot
- * inject anything (no user string ever reaches the output; colors/tiles come
- * exclusively from the catalog).
+ * Emit one pseudo-element rule from a layer list.
+ *
+ * `anims` is a list of { name, period, timing, alternate, body } — `body` null
+ * means "positional", and those keyframes are generated HERE from the same
+ * layer array the shorthand came from, which is what makes the two lists
+ * impossible to disagree about.
+ */
+function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
+  let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
+  let keyframes = ''
+  if (!isStatic && anims.length) {
+    const names = [],
+      delays = []
+    for (const a of anims) {
+      const dir = a.alternate ? ' alternate' : ''
+      names.push(`${a.name} ${a.period}s ${a.alternate ? 'ease-in-out' : a.timing || 'linear'} infinite${dir}`)
+      delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
+      keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
+    }
+    css += `animation:${names.join(',')};animation-delay:${delays.join(',')};`
+  }
+  return css + '}' + keyframes
+}
+
+/**
+ * Compile a scene block to CSS scoped under `selector`.
+ *
+ * The stack it builds, back to front, is the whole point:
+ *
+ *   ::before   sky → clouds/rays → far silhouette → FAR WEATHER
+ *   (text)     the name
+ *   ::after    NEAR WEATHER → foreground silhouette
+ *
+ * so the same rain falls behind the letters as well as across them, and a
+ * near gravestone stands in front of their descenders. Seven planes around a
+ * 13px name, out of two pseudo-elements and no extra DOM, because both planes
+ * are just background-layer lists and a pseudo can carry as many as it likes.
+ *
+ * The far plane rides the BACKDROP's clock (one background-position animation
+ * per element, and the plate already owns it), so it is given a whole number
+ * of tile-heights per backdrop loop — seamless at any ratio, and it lands at
+ * roughly the weather's own apparent speed.
+ *
+ * Same defense-in-depth contract as compilePaintCss: assumes validation
+ * passed, but unknown ids are silently skipped and every number re-clamped —
+ * an unvalidated spec cannot inject anything (no user string ever reaches the
+ * output; colors and tiles come exclusively from the catalog).
  * @param {object} scene
  * @param {string} selector
  * @param {string} hash - hashPaintSpec(spec) of the OWNING spec
@@ -6274,51 +6534,87 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
   const backdrop = isPlainObject(scene.backdrop) && BACKDROP_IDS.has(scene.backdrop.id) ? scene.backdrop : null
   const weather = isPlainObject(scene.weather) && WEATHER_IDS.has(scene.weather.id) ? scene.weather : null
   if (!backdrop && !weather) return ''
+  const isStatic = !!opts.static
 
-  // The plate needs the element to anchor absolutely-positioned pseudos and
-  // to fence ::before's z-index:-1 inside its own stacking context (so the
+  // The plate needs the element to anchor absolutely-positioned pseudos and to
+  // fence ::before's z-index:-1 inside its own stacking context (so the
   // backdrop can sit behind the text but never behind the chat row).
   let css = `${selector}{position:relative;isolation:isolate;}`
 
-  if (backdrop) {
-    const meta = BACKDROPS[backdrop.id]
-    const variant =
-      meta.variants[isIntInRange(backdrop.variant ?? 0, 0, meta.variants.length - 1) ? (backdrop.variant ?? 0) : 0]
-    const animName = `hss_${hash}_b`
-    const built = meta.build(variant, animName, hash)
-    css += `${selector}::before{${PSEUDO_BASE}z-index:-1;${built.decls}`
-    if (!opts.static) {
-      const period = periodSeconds(meta.basePeriod, backdrop.speed ?? 1, meta.luminance)
-      const dir = built.alternate ? ' alternate' : ''
-      css += `animation:${animName} ${period}s ${built.alternate ? 'ease-in-out' : 'linear'} infinite${dir};`
-      css += `animation-delay:${syncDelayCalc(built.alternate ? period * 2 : period)};`
+  const bMeta = backdrop ? BACKDROPS[backdrop.id] : null
+  const bBuilt = bMeta ? bMeta.build(pickVariant(bMeta, backdrop.variant), hash) : null
+  const bPeriod = bMeta ? periodSeconds(bMeta.basePeriod, backdrop.speed ?? 1, bMeta.luminance) : 0
+
+  const wMeta = weather ? WEATHERS[weather.id] : null
+  const wDensity = weather && DENSITIES.has(weather.density) ? weather.density : 2
+  const wSpeed = weather ? safeSpeed(weather.speed ?? 1) : 1
+  const wVariant = wMeta ? pickVariant(wMeta, weather.variant) : null
+  const wBuilt = wMeta ? wMeta.near(wVariant, wDensity, hash, wSpeed) : null
+  const wPeriod = wMeta ? periodSeconds(wMeta.basePeriod, wSpeed, wMeta.luminance) : 0
+
+  // ── back pseudo: the plate, plus the far weather plane on top of it ──
+  if (bBuilt) {
+    const layers = [...bBuilt.layers]
+    if (wMeta?.far && !wMeta.behindText) {
+      const far = wMeta.far(wVariant, wDensity)
+      // The far plane rides the plate's own loop, so it is given a whole
+      // number of tile-heights per backdrop period: seamless at any ratio,
+      // and it lands at roughly the weather's apparent speed.
+      //
+      // Held STILL on a plate whose loop alternates (furnace, whose underglow
+      // breathes) — rain running backwards is not rain. A still far plane is
+      // still depth, which is why this drops the motion rather than the layer.
+      // Static mode keeps it for the same reason: the resting frame is the
+      // composition, and a composition missing a plane is a different picture.
+      const cycles = Math.max(1, Math.round(bPeriod / Math.max(0.2, wPeriod)))
+      const travel = bBuilt.alternate || isStatic ? '0 0' : `0 ${far.tile * cycles}px`
+      layers.unshift(L(far.img, 'repeat', far.size, '0 0', travel))
     }
-    css += '}'
-    if (!opts.static) css += built.keyframes
+    const anims = []
+    if (!isStatic) {
+      anims.push({
+        name: `hss_${hash}_b`,
+        period: bPeriod,
+        timing: 'linear',
+        alternate: !!bBuilt.alternate,
+        body: bBuilt.keyframesBody || null,
+      })
+    }
+    css += bBuilt.props && !isStatic ? bBuilt.props : ''
+    css += pseudoRule(selector, 'before', -1, layers, anims, isStatic)
   }
 
-  if (weather) {
-    const meta = WEATHERS[weather.id]
-    const variant =
-      meta.variants[isIntInRange(weather.variant ?? 0, 0, meta.variants.length - 1) ? (weather.variant ?? 0) : 0]
-    const density = DENSITIES.has(weather.density) ? weather.density : 2
-    const speed = safeSpeed(weather.speed ?? 1)
-    const animName = `hss_${hash}_w`
-    const built = meta.build(variant, density, animName, hash, speed)
-    css += `${selector}::after{${PSEUDO_BASE}z-index:${meta.behindText ? -1 : 1};${built.decls}`
-    if (!opts.static) {
-      const period = periodSeconds(meta.basePeriod, speed, meta.luminance)
-      const dir = built.alternate ? ' alternate' : ''
-      const anims = [`${animName} ${period}s ${built.alternate ? 'ease-in-out' : 'linear'} infinite${dir}`]
-      const delays = [syncDelayCalc(built.alternate ? period * 2 : period)]
-      if (built.extraAnim) {
-        anims.push(`${built.extraAnim.name} ${built.extraAnim.period}s ${built.extraAnim.timing} infinite`)
-        delays.push(syncDelayCalc(built.extraAnim.period))
+  // ── front pseudo: near weather, and the foreground silhouette over it ──
+  // fog is the exception on both counts: it is an ambient volume that belongs
+  // BEHIND the name, which is the same slot a foreground would want.
+  const frontLayers = []
+  const frontAnims = []
+  const fgLayer = bBuilt && !wMeta?.behindText ? bBuilt.fg : null
+  if (fgLayer) frontLayers.push(fgLayer)
+  if (wBuilt) {
+    frontLayers.push(...wBuilt.layers)
+    if (!isStatic) {
+      frontAnims.push({
+        name: `hss_${hash}_w`,
+        period: wPeriod,
+        timing: 'linear',
+        alternate: !!wBuilt.alternate,
+        body: wBuilt.keyframesBody || null,
+      })
+      if (wBuilt.positionalAnim) {
+        frontAnims.push({
+          name: `hss_${hash}_wr`,
+          period: wBuilt.positionalAnim.period,
+          timing: wBuilt.positionalAnim.timing,
+          alternate: false,
+          body: null,
+        })
       }
-      css += `animation:${anims.join(',')};animation-delay:${delays.join(',')};`
     }
-    css += '}'
-    if (!opts.static) css += built.keyframes
+  }
+  if (frontLayers.length) {
+    css += wBuilt?.props && !isStatic ? wBuilt.props : ''
+    css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, frontLayers, frontAnims, isStatic)
   }
 
   return css
@@ -53114,14 +53410,27 @@ function ensureHsPaintSheet() {
   if (!hsPaintSheetEl) {
     hsPaintSheetEl = document.createElement('style')
     hsPaintSheetEl.id = 'hs-mc-paints'
-    // Single kill-switch: every hsp_* animation pauses under reduced motion,
-    // regardless of how many per-hash rules get appended after this.
-    // animation-delay:0s too: paints are paused-not-removed under reduced
-    // motion, and the phase-lock delay (--hsp-t fold, see lib/paint-spec.js
-    // syncDelayCalc) would otherwise freeze each copy at a different
-    // mid-cycle pose — zeroing it pins every paused paint at frame 0.
+    // Single kill-switch: every hsp_* animation pauses when the user turns
+    // paint motion off, regardless of how many per-hash rules get appended.
+    //
+    // Gated on the animatePaints SETTING, not prefers-reduced-motion — the same
+    // call already made for emote modifiers (see 10-emotes.css). A paint is
+    // content its owner chose and paid for, and the media query is a browser
+    // flag, not a per-site preference: a chromium run with
+    // --force-prefers-reduced-motion made this rule permanently true, so EVERY
+    // paint on the page froze at frame 0 forever with no setting that could
+    // turn it back on. Measured on a live channel: 50 animated layers, all 50
+    // paused. That also parked each paint's top scene layer (::after,
+    // z-index:1) as a static sprite sitting ON the glyphs, which is what read
+    // as "the username is blurry / not bitmap" — the layer is meant to sweep
+    // past, not sit there.
+    //
+    // animation-delay:0s too: paints are paused-not-removed, and the phase-lock
+    // delay (--hsp-t fold, see lib/paint-spec.js syncDelayCalc) would otherwise
+    // freeze each copy at a different mid-cycle pose — zeroing it pins every
+    // paused paint at frame 0.
     hsPaintSheetEl.textContent =
-      '@media (prefers-reduced-motion: reduce){[class*="hsp-"],[class*="hsp-"] *,[class*="hsp-"]::before,[class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}}' +
+      'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *,html[data-hs-paint-anim="never"] [class*="hsp-"]::before,html[data-hs-paint-anim="never"] [class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}' +
       // Hover freeze: pause the paint animation and swap to a plain white/black
       // chip so the name stays fully readable while the pointer is over it.
       // background-clip goes back to border-box (was `text`, see compilePaintCss)

@@ -120,3 +120,52 @@ describe('logPermalinkParts', () => {
     expect(logPermalinkParts('not a url')).toBeNull()
   })
 })
+
+/**
+ * Row → permalink. buildRowPermalink reads the dataset a live chat row carries.
+ *
+ * The bug this pins was found by driving a real twitch page: 481 of 494 rows
+ * had an EMPTY data-msg-platform, because a twitch IRC message never sets
+ * m.platform — only kick and youtube stamp themselves. Every other row reader
+ * in the codebase already knew that (`|| 'twitch'` in mod-toolbar.js and
+ * input.js); this one did not, so `»` fell back to a retyped quote on all but
+ * the handful of rows peekSentHost had retagged.
+ */
+const rowBuilder = sliceBetween(SRC('chat-logs.js'), 'function buildRowPermalink(', '\nasync function copyChatLogPermalink')
+
+const { buildRowPermalink } = new Function(
+  `${origin}\n${parts}\n${builder}\n${rowBuilder}\nreturn { buildRowPermalink }`,
+)()
+
+const row = (dataset) => ({ dataset })
+
+describe('buildRowPermalink', () => {
+  test('an empty platform is twitch — that is what a twitch row actually looks like', () => {
+    const url = buildRowPermalink(
+      row({ msgPlatform: '', msgChannel: 'nl_kripp', msgId: MSG.messageId, msgTime: '1786906443358' }),
+    )
+    expect(url).toBe(`https://heatsync.org/logs/twitch/nl_kripp/2026-08-16?m=${MSG.messageId}`)
+  })
+
+  test('a kick row is never mistaken for twitch', () => {
+    const url = buildRowPermalink(
+      row({ msgPlatform: 'kick', msgChannel: 'nl_kripp', msgId: 'k1', msgTime: '1786906443358' }),
+    )
+    expect(url).toContain('/logs/kick/nl_kripp/')
+  })
+
+  test('a youtube row keeps its own platform too', () => {
+    const url = buildRowPermalink(
+      row({ msgPlatform: 'youtube', msgChannel: 'somechan', msgId: 'y1', msgTime: '1786906443358' }),
+    )
+    expect(url).toContain('/logs/youtube/somechan/')
+  })
+
+  test('a row with no send time yields nothing rather than a wrong day', () => {
+    expect(buildRowPermalink(row({ msgPlatform: '', msgChannel: 'nl_kripp', msgId: 'x' }))).toBeNull()
+  })
+
+  test('no row at all is not a crash', () => {
+    expect(buildRowPermalink(null)).toBeNull()
+  })
+})

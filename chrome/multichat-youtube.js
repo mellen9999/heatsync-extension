@@ -52266,10 +52266,18 @@ function buildChatLogPermalink(r) {
 
 // Live chat row → permalink. Reads the identity the row already carries; the
 // row stamps data-msg-time for exactly this (see main.js).
+//
+// `|| 'twitch'` matches every other row reader (mod-toolbar.js, input.js): a
+// twitch IRC message never sets m.platform — only kick and youtube stamp
+// themselves — so an empty attribute means twitch by construction. Measured on
+// a live channel, 481 of 494 rows were empty, so without this the permalink
+// fell back to a retyped quote on all but the handful of rows peekSentHost had
+// retagged. The fallback is safe in the direction that matters: a kick or
+// youtube row always carries its own value and can never land here.
 function buildRowPermalink(row) {
   if (!row) return null
   return buildLogPermalink({
-    platform: row.dataset.msgPlatform,
+    platform: row.dataset.msgPlatform || 'twitch',
     channel: row.dataset.msgChannel,
     messageId: row.dataset.msgId,
     time: Number(row.dataset.msgTime) || 0,

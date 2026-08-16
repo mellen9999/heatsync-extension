@@ -170,6 +170,10 @@ let feedPage = 1
 let feedHasMore = true
 let feedLastFetch = 0 // Timestamp of last feed fetch
 let feedFromHotFallback = false // true when /following was empty + we showed /hot instead
+// /hot itself had nothing carrying heat and served newest-first instead (server sets
+// `fallback`). The banner must not call those posts hot — that is the one thing the
+// fallback exists to avoid.
+let feedFallbackIsCold = false
 const FEED_STALE_MS = 120000 // 2 minutes
 
 // Feed scroll state — handler ref for teardown only, infinite-scroll trigger
@@ -1404,6 +1408,7 @@ async function fetchFeed(append = false) {
   }
   let msgs = (resp.data?.messages || []).filter((m) => m.username !== 'Anonymous' && isOpMsg(m))
   let usedHotFallback = false
+  let hotWasCold = false
 
   // Following empty → fallback to /api/messages/hot (heat-sorted, last 30d) so
   // the tab shows SOMETHING discoverable instead of an empty wall. Only on the
@@ -1417,6 +1422,7 @@ async function fetchFeed(append = false) {
         if (hotMsgs.length > 0) {
           msgs = hotMsgs.map((m) => Object.assign({}, m, { _fromHotFallback: true }))
           usedHotFallback = true
+          hotWasCold = hotResp.data?.fallback === true
         }
       }
     } catch (_) {}
@@ -1437,6 +1443,7 @@ async function fetchFeed(append = false) {
     }
     feedPage = 1
     feedFromHotFallback = usedHotFallback
+    feedFallbackIsCold = hotWasCold
   }
   // Clamp after bulk load — push-path uses .pop() cap but server can return >150 in one fetch.
   if (feedMessages.length > 150) feedMessages.length = 150
@@ -1633,7 +1640,9 @@ function renderFeed() {
     head.textContent = 'no posts from your follows'
     const sub = document.createElement('div')
     sub.style.cssText = 'color:#bbb'
-    sub.textContent = 'showing what is hot from the past 30 days — follow people to fill this with their posts'
+    sub.textContent = feedFallbackIsCold
+      ? 'showing the newest posts — follow people to fill this with their posts'
+      : 'showing what is hot from the past 30 days — follow people to fill this with their posts'
     banner.appendChild(head)
     banner.appendChild(sub)
     frag.appendChild(banner)

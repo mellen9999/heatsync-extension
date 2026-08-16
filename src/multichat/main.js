@@ -5671,6 +5671,89 @@
   // Exposed for input.js sendMessage: consume typed text as resub-share body.
   // .enter() is called directly by the HsNotifs Share button — bypasses the
   // native Twitch click which would insta-send a default celebration message.
+// Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
+// click path re-runs it when the token it was emitted with is missing. The
+// callout is emitted the moment it is detected, and the event payload lives in
+// contextMenu.props.children.props.event — a subtree React may not have mounted
+// yet. Measured on a live 107mo callout: the payload was absent from the notif
+// but sitting at BFS step 46 minutes later, so the extension fell through to
+// twitch's own button every time, which posts twitch's default celebration and
+// drops the custom message. Re-scanning at click time is correct whether the
+// cause was that race or a root that never reached the payload.
+function fiberTokenScan(rootEl) {
+  if (typeof getFiber !== 'function' || !rootEl) return null
+  const out = { token: null, channelId: null }
+  const queue = [getFiber(rootEl)]
+  const seen = new WeakSet()
+  let steps = 0
+  const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
+  const channelKeys = ['channelID', 'channelId']
+
+  // Twitch does NOT put the token in a top-level prop. The callout is
+  // rendered from an `event` payload nested inside the context-menu prop:
+  //
+  //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
+  //
+  // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
+  // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
+  // is a different, opaque 32-char value — NOT the tokenID; using it fails
+  // the mutation, which silently posts the text as ordinary chat and leaves
+  // the callout to reappear on the next refresh.)
+  //
+  // Scanning only top-level keys is why every scan came back empty and the
+  // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
+  // the Share button, well inside the budget below — it was never a depth
+  // problem, only a nesting one.
+  const eventFrom = (p) =>
+    p?.contextMenu?.props?.children?.props?.event ||
+    p?.contextMenu?._owner?.stateNode?.props?.event ||
+    p?.event ||
+    null
+
+  while (queue.length && steps < 60 && !(out.token && out.channelId)) {
+    const f = queue.shift()
+    if (!f || seen.has(f)) continue
+    seen.add(f)
+    steps++
+    const p = f.memoizedProps
+    if (p && typeof p === 'object') {
+      if (!out.token) {
+        const ev = eventFrom(p)
+        if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
+          out.token = ev.id
+          out.months = Number(ev.cumulativeTenureMonths) || 0
+          out.eventType = ev.type || null
+        }
+      }
+      if (!out.token) {
+        for (const k of tokenKeys) {
+          const v = p[k]
+          if (typeof v === 'string' && v.length > 12) {
+            out.token = v
+            break
+          }
+        }
+      }
+      if (!out.channelId) {
+        for (const k of channelKeys) {
+          const v = p[k]
+          if (typeof v === 'string' && /^\d+$/.test(v)) {
+            out.channelId = v
+            break
+          }
+        }
+      }
+    }
+    if (f.return) queue.push(f.return)
+    if (f.child) queue.push(f.child)
+    // Siblings matter: the callout body and its context-menu prop mount as
+    // siblings of the Share button's subtree, so a return+child-only walk
+    // never reaches the event payload at all.
+    if (f.sibling) queue.push(f.sibling)
+  }
+  return out
+}
+
   window.__hsResubShare = {
     active: () => !!_resubShareCtx,
     // Returns false so input.js sendMessage CONTINUES into the regular IRC
@@ -5789,6 +5872,25 @@
         _pendingShareClaim = claim
         _enterResubShareMode(claim, user, months)
       } catch (_) {}
+    },
+    /**
+     * Re-scan for the resub token at CLICK time. The notif carries whatever the
+     * scan found when the callout was first detected, and that can be nothing —
+     * the payload lives in a React subtree that may not be mounted yet. By the
+     * time a human clicks share, it always is. Returns the base64 tokenID
+     * (<userId>:<channelId>:<months>:cumulative) or null.
+     */
+    rescanToken: (rootEl) => {
+      try {
+        const el = rootEl || _lastSurfacedShareBtn
+        const scan = el ? fiberTokenScan(el) : null
+        const tok = scan?.token || null
+        // Length guard mirrors the scan's own: a real tokenID is a 44-char
+        // base64 of four colon-joined parts, never a short opaque handle.
+        return typeof tok === 'string' && tok.length > 12 ? tok : null
+      } catch (_) {
+        return null
+      }
     },
     // Internal: surface()'s native-button hook reads this to know whether to
     // block the click (user-initiated) or pass through (programmatic from us).
@@ -6043,79 +6145,6 @@
       // in different ancestor components across surfaces (chat, popout, embed).
       // Whichever prop name Twitch uses, we accept; also record channelId for
       // fallback reconstruction if no direct token prop is found.
-      const fiberTokenScan = (rootEl) => {
-        if (typeof getFiber !== 'function' || !rootEl) return null
-        const out = { token: null, channelId: null }
-        const queue = [getFiber(rootEl)]
-        const seen = new WeakSet()
-        let steps = 0
-        const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
-        const channelKeys = ['channelID', 'channelId']
-
-        // Twitch does NOT put the token in a top-level prop. The callout is
-        // rendered from an `event` payload nested inside the context-menu prop:
-        //
-        //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
-        //
-        // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
-        // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
-        // is a different, opaque 32-char value — NOT the tokenID; using it fails
-        // the mutation, which silently posts the text as ordinary chat and leaves
-        // the callout to reappear on the next refresh.)
-        //
-        // Scanning only top-level keys is why every scan came back empty and the
-        // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
-        // the Share button, well inside the budget below — it was never a depth
-        // problem, only a nesting one.
-        const eventFrom = (p) =>
-          p?.contextMenu?.props?.children?.props?.event ||
-          p?.contextMenu?._owner?.stateNode?.props?.event ||
-          p?.event ||
-          null
-
-        while (queue.length && steps < 60 && !(out.token && out.channelId)) {
-          const f = queue.shift()
-          if (!f || seen.has(f)) continue
-          seen.add(f)
-          steps++
-          const p = f.memoizedProps
-          if (p && typeof p === 'object') {
-            if (!out.token) {
-              const ev = eventFrom(p)
-              if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
-                out.token = ev.id
-                out.months = Number(ev.cumulativeTenureMonths) || 0
-                out.eventType = ev.type || null
-              }
-            }
-            if (!out.token) {
-              for (const k of tokenKeys) {
-                const v = p[k]
-                if (typeof v === 'string' && v.length > 12) {
-                  out.token = v
-                  break
-                }
-              }
-            }
-            if (!out.channelId) {
-              for (const k of channelKeys) {
-                const v = p[k]
-                if (typeof v === 'string' && /^\d+$/.test(v)) {
-                  out.channelId = v
-                  break
-                }
-              }
-            }
-          }
-          if (f.return) queue.push(f.return)
-          if (f.child) queue.push(f.child)
-          // Siblings matter: the callout body and its context-menu prop mount as
-          // siblings of the Share button's subtree, so a return+child-only walk
-          // never reaches the event payload at all.
-          if (f.sibling) queue.push(f.sibling)
-        }
-        return out
-      }
       const scan = fiberTokenScan(shareBtn || calloutEl) || {}
       let resubToken = scan.token || null
       // ChannelId for token reconstruction. Twitch's React tree often doesn't

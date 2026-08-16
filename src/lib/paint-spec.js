@@ -21,8 +21,10 @@
  * server-side settings validation.
  *
  * Effect catalog ported from docs/paint-lab.html (34-effect reference lab).
- * Phase 1 ships 20 of those — see EFFECTS below for the exact source line
- * each was ported from.
+ * Phase 1 ships 20 of those. That file is FROZEN provenance and has since
+ * diverged from what renders here — matrix, chrome, fire and heli were all
+ * changed after the port. docs/scene-lab.html is the live view; it compiles
+ * through this module.
  *
  * ── layering model ──────────────────────────────────────────────────────
  * Every paint is at most 3 layers:
@@ -111,8 +113,9 @@ export const PLUS_MAX_EFFECTS = MAX_EFFECTS
 export const PAINT_BG = '#0a0a0a'
 export const PAINT_MIN_CONTRAST = 3
 
-/** WCAG 2.x relative luminance of an #rrggbb string. */
-export function relativeLuminance(hex) {
+/** WCAG 2.x relative luminance of an #rrggbb string. Internal — contrastRatio
+ * is the one everything else wants. */
+function relativeLuminance(hex) {
   const n = parseInt(hex.slice(1), 16)
   const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
     .map((v) => v / 255)
@@ -194,14 +197,7 @@ const EFFECTS = {
     label: 'coin spin',
     sig: 'self:transform',
   },
-  heli: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 2.2,
-    letterSplit: false,
-    label: 'helicopter',
-    sig: 'self:transform',
-  },
+  heli: { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin', sig: 'self:transform' },
   float: {
     slot: 'motion',
     luminance: false,
@@ -609,8 +605,9 @@ function effectDuration(effectId, speed) {
 /** Inline stamp for `--hsp-t`: the element's mount wall-time in seconds.
  * Renderers put it in the username element's style so syncDelayCalc can
  * phase-lock every instance of a paint to the shared wall clock. */
-/** Class prefix of a compiled heatsync paint — `hsp-<hash>`, see chat/paint-cosmetics.js. */
-export const PAINT_CLASS_PREFIX = 'hsp-'
+/** Class prefix of a compiled heatsync paint — `hsp-<hash>`, see chat/paint-cosmetics.js.
+ * Internal — hasHeatsyncPaint is the question callers actually have. */
+const PAINT_CLASS_PREFIX = 'hsp-'
 
 /**
  * Is this element already wearing a heatsync paint?
@@ -872,8 +869,18 @@ function buildMotionEffectCss(effectId, speed, selector, hash, glow) {
       return rule + kf
     }
     case 'heli': {
-      const rule = `${selector}{animation:${animName} ${duration}s linear infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{to{transform:rotate(360deg);}}`
+      // A spin that RESTS, not a name that never stops turning.
+      //
+      // This used to be `to{rotate(360deg)}` on a linear loop: no rest frame at
+      // any point in the cycle, so the name was mid-rotation ~always and
+      // essentially unreadable at 13px. Every other motion effect either stays
+      // within a few pixels/degrees or holds an identity frame for most of its
+      // cycle (coin rests 55%, tumble 60%) — heli was the one exception, and
+      // the honest evidence for that is that it had to be excluded from the
+      // shuffle pool for being unrollable. Fixing it beat documenting it: the
+      // rule is now universal, so the exception list is gone.
+      const rule = `${selector}{animation:${animName} ${duration}s cubic-bezier(.5,0,.5,1) infinite;animation-delay:${syncDelayCalc(duration)};}`
+      const kf = `@keyframes ${animName}{0%,72%{transform:rotate(0);}100%{transform:rotate(360deg);}}`
       return rule + kf
     }
     case 'float': {

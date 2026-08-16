@@ -6712,8 +6712,10 @@ const SCENE_WEATHERS_META = Object.fromEntries(
  * server-side settings validation.
  *
  * Effect catalog ported from docs/paint-lab.html (34-effect reference lab).
- * Phase 1 ships 20 of those — see EFFECTS below for the exact source line
- * each was ported from.
+ * Phase 1 ships 20 of those. That file is FROZEN provenance and has since
+ * diverged from what renders here — matrix, chrome, fire and heli were all
+ * changed after the port. docs/scene-lab.html is the live view; it compiles
+ * through this module.
  *
  * ── layering model ──────────────────────────────────────────────────────
  * Every paint is at most 3 layers:
@@ -6782,7 +6784,8 @@ const PLUS_MAX_EFFECTS = MAX_EFFECTS
 const PAINT_BG = '#0a0a0a'
 const PAINT_MIN_CONTRAST = 3
 
-/** WCAG 2.x relative luminance of an #rrggbb string. */
+/** WCAG 2.x relative luminance of an #rrggbb string. Internal — contrastRatio
+ * is the one everything else wants. */
 function relativeLuminance(hex) {
   const n = parseInt(hex.slice(1), 16)
   const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
@@ -6865,14 +6868,7 @@ const EFFECTS = {
     label: 'coin spin',
     sig: 'self:transform',
   },
-  heli: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 2.2,
-    letterSplit: false,
-    label: 'helicopter',
-    sig: 'self:transform',
-  },
+  heli: { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin', sig: 'self:transform' },
   float: {
     slot: 'motion',
     luminance: false,
@@ -7280,7 +7276,8 @@ function effectDuration(effectId, speed) {
 /** Inline stamp for `--hsp-t`: the element's mount wall-time in seconds.
  * Renderers put it in the username element's style so syncDelayCalc can
  * phase-lock every instance of a paint to the shared wall clock. */
-/** Class prefix of a compiled heatsync paint — `hsp-<hash>`, see chat/paint-cosmetics.js. */
+/** Class prefix of a compiled heatsync paint — `hsp-<hash>`, see chat/paint-cosmetics.js.
+ * Internal — hasHeatsyncPaint is the question callers actually have. */
 const PAINT_CLASS_PREFIX = 'hsp-'
 
 /**
@@ -7543,8 +7540,18 @@ function buildMotionEffectCss(effectId, speed, selector, hash, glow) {
       return rule + kf
     }
     case 'heli': {
-      const rule = `${selector}{animation:${animName} ${duration}s linear infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{to{transform:rotate(360deg);}}`
+      // A spin that RESTS, not a name that never stops turning.
+      //
+      // This used to be `to{rotate(360deg)}` on a linear loop: no rest frame at
+      // any point in the cycle, so the name was mid-rotation ~always and
+      // essentially unreadable at 13px. Every other motion effect either stays
+      // within a few pixels/degrees or holds an identity frame for most of its
+      // cycle (coin rests 55%, tumble 60%) — heli was the one exception, and
+      // the honest evidence for that is that it had to be excluded from the
+      // shuffle pool for being unrollable. Fixing it beat documenting it: the
+      // rule is now universal, so the exception list is gone.
+      const rule = `${selector}{animation:${animName} ${duration}s cubic-bezier(.5,0,.5,1) infinite;animation-delay:${syncDelayCalc(duration)};}`
+      const kf = `@keyframes ${animName}{0%,72%{transform:rotate(0);}100%{transform:rotate(360deg);}}`
       return rule + kf
     }
     case 'float': {
@@ -9749,8 +9756,19 @@ const HsNotifs = (() => {
           // token, hand the click to twitch's own button: it is the only thing
           // that can actually consume the resub.
           try {
-            if (data._resubToken) {
-              window.__hsResubShare?.enter?.(data.months, data.user, data.channel, data._resubToken)
+            // Re-scan before giving up. The notif is emitted the instant the
+            // callout is detected, and the token lives in a React subtree that
+            // is not always mounted by then — measured on a live callout, the
+            // notif had no token while the payload sat in the tree the whole
+            // time. Every one of those clicks fell through to twitch's button,
+            // which posts twitch's DEFAULT celebration and drops the message
+            // the user was about to write. By click time the tree is built.
+            const token =
+              data._resubToken ||
+              window.__hsResubShare?.rescanToken?.(data._nativeShareBtn || data._nativeCallout) ||
+              null
+            if (token) {
+              window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
             const btn = data._nativeShareBtn
@@ -37059,6 +37077,10 @@ let feedPage = 1
 let feedHasMore = true
 let feedLastFetch = 0 // Timestamp of last feed fetch
 let feedFromHotFallback = false // true when /following was empty + we showed /hot instead
+// /hot itself had nothing carrying heat and served newest-first instead (server sets
+// `fallback`). The banner must not call those posts hot — that is the one thing the
+// fallback exists to avoid.
+let feedFallbackIsCold = false
 const FEED_STALE_MS = 120000 // 2 minutes
 
 // Feed scroll state — handler ref for teardown only, infinite-scroll trigger
@@ -38293,6 +38315,7 @@ async function fetchFeed(append = false) {
   }
   let msgs = (resp.data?.messages || []).filter((m) => m.username !== 'Anonymous' && isOpMsg(m))
   let usedHotFallback = false
+  let hotWasCold = false
 
   // Following empty → fallback to /api/messages/hot (heat-sorted, last 30d) so
   // the tab shows SOMETHING discoverable instead of an empty wall. Only on the
@@ -38306,6 +38329,7 @@ async function fetchFeed(append = false) {
         if (hotMsgs.length > 0) {
           msgs = hotMsgs.map((m) => Object.assign({}, m, { _fromHotFallback: true }))
           usedHotFallback = true
+          hotWasCold = hotResp.data?.fallback === true
         }
       }
     } catch (_) {}
@@ -38326,6 +38350,7 @@ async function fetchFeed(append = false) {
     }
     feedPage = 1
     feedFromHotFallback = usedHotFallback
+    feedFallbackIsCold = hotWasCold
   }
   // Clamp after bulk load — push-path uses .pop() cap but server can return >150 in one fetch.
   if (feedMessages.length > 150) feedMessages.length = 150
@@ -38522,7 +38547,9 @@ function renderFeed() {
     head.textContent = 'no posts from your follows'
     const sub = document.createElement('div')
     sub.style.cssText = 'color:#bbb'
-    sub.textContent = 'showing what is hot from the past 30 days — follow people to fill this with their posts'
+    sub.textContent = feedFallbackIsCold
+      ? 'showing the newest posts — follow people to fill this with their posts'
+      : 'showing what is hot from the past 30 days — follow people to fill this with their posts'
     banner.appendChild(head)
     banner.appendChild(sub)
     frag.appendChild(banner)
@@ -66512,6 +66539,89 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Exposed for input.js sendMessage: consume typed text as resub-share body.
   // .enter() is called directly by the HsNotifs Share button — bypasses the
   // native Twitch click which would insta-send a default celebration message.
+// Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
+// click path re-runs it when the token it was emitted with is missing. The
+// callout is emitted the moment it is detected, and the event payload lives in
+// contextMenu.props.children.props.event — a subtree React may not have mounted
+// yet. Measured on a live 107mo callout: the payload was absent from the notif
+// but sitting at BFS step 46 minutes later, so the extension fell through to
+// twitch's own button every time, which posts twitch's default celebration and
+// drops the custom message. Re-scanning at click time is correct whether the
+// cause was that race or a root that never reached the payload.
+function fiberTokenScan(rootEl) {
+  if (typeof getFiber !== 'function' || !rootEl) return null
+  const out = { token: null, channelId: null }
+  const queue = [getFiber(rootEl)]
+  const seen = new WeakSet()
+  let steps = 0
+  const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
+  const channelKeys = ['channelID', 'channelId']
+
+  // Twitch does NOT put the token in a top-level prop. The callout is
+  // rendered from an `event` payload nested inside the context-menu prop:
+  //
+  //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
+  //
+  // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
+  // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
+  // is a different, opaque 32-char value — NOT the tokenID; using it fails
+  // the mutation, which silently posts the text as ordinary chat and leaves
+  // the callout to reappear on the next refresh.)
+  //
+  // Scanning only top-level keys is why every scan came back empty and the
+  // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
+  // the Share button, well inside the budget below — it was never a depth
+  // problem, only a nesting one.
+  const eventFrom = (p) =>
+    p?.contextMenu?.props?.children?.props?.event ||
+    p?.contextMenu?._owner?.stateNode?.props?.event ||
+    p?.event ||
+    null
+
+  while (queue.length && steps < 60 && !(out.token && out.channelId)) {
+    const f = queue.shift()
+    if (!f || seen.has(f)) continue
+    seen.add(f)
+    steps++
+    const p = f.memoizedProps
+    if (p && typeof p === 'object') {
+      if (!out.token) {
+        const ev = eventFrom(p)
+        if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
+          out.token = ev.id
+          out.months = Number(ev.cumulativeTenureMonths) || 0
+          out.eventType = ev.type || null
+        }
+      }
+      if (!out.token) {
+        for (const k of tokenKeys) {
+          const v = p[k]
+          if (typeof v === 'string' && v.length > 12) {
+            out.token = v
+            break
+          }
+        }
+      }
+      if (!out.channelId) {
+        for (const k of channelKeys) {
+          const v = p[k]
+          if (typeof v === 'string' && /^\d+$/.test(v)) {
+            out.channelId = v
+            break
+          }
+        }
+      }
+    }
+    if (f.return) queue.push(f.return)
+    if (f.child) queue.push(f.child)
+    // Siblings matter: the callout body and its context-menu prop mount as
+    // siblings of the Share button's subtree, so a return+child-only walk
+    // never reaches the event payload at all.
+    if (f.sibling) queue.push(f.sibling)
+  }
+  return out
+}
+
   window.__hsResubShare = {
     active: () => !!_resubShareCtx,
     // Returns false so input.js sendMessage CONTINUES into the regular IRC
@@ -66630,6 +66740,25 @@ const STORAGE_KEY = 'heatsync_multichat'
         _pendingShareClaim = claim
         _enterResubShareMode(claim, user, months)
       } catch (_) {}
+    },
+    /**
+     * Re-scan for the resub token at CLICK time. The notif carries whatever the
+     * scan found when the callout was first detected, and that can be nothing —
+     * the payload lives in a React subtree that may not be mounted yet. By the
+     * time a human clicks share, it always is. Returns the base64 tokenID
+     * (<userId>:<channelId>:<months>:cumulative) or null.
+     */
+    rescanToken: (rootEl) => {
+      try {
+        const el = rootEl || _lastSurfacedShareBtn
+        const scan = el ? fiberTokenScan(el) : null
+        const tok = scan?.token || null
+        // Length guard mirrors the scan's own: a real tokenID is a 44-char
+        // base64 of four colon-joined parts, never a short opaque handle.
+        return typeof tok === 'string' && tok.length > 12 ? tok : null
+      } catch (_) {
+        return null
+      }
     },
     // Internal: surface()'s native-button hook reads this to know whether to
     // block the click (user-initiated) or pass through (programmatic from us).
@@ -66884,79 +67013,6 @@ const STORAGE_KEY = 'heatsync_multichat'
       // in different ancestor components across surfaces (chat, popout, embed).
       // Whichever prop name Twitch uses, we accept; also record channelId for
       // fallback reconstruction if no direct token prop is found.
-      const fiberTokenScan = (rootEl) => {
-        if (typeof getFiber !== 'function' || !rootEl) return null
-        const out = { token: null, channelId: null }
-        const queue = [getFiber(rootEl)]
-        const seen = new WeakSet()
-        let steps = 0
-        const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
-        const channelKeys = ['channelID', 'channelId']
-
-        // Twitch does NOT put the token in a top-level prop. The callout is
-        // rendered from an `event` payload nested inside the context-menu prop:
-        //
-        //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
-        //
-        // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
-        // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
-        // is a different, opaque 32-char value — NOT the tokenID; using it fails
-        // the mutation, which silently posts the text as ordinary chat and leaves
-        // the callout to reappear on the next refresh.)
-        //
-        // Scanning only top-level keys is why every scan came back empty and the
-        // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
-        // the Share button, well inside the budget below — it was never a depth
-        // problem, only a nesting one.
-        const eventFrom = (p) =>
-          p?.contextMenu?.props?.children?.props?.event ||
-          p?.contextMenu?._owner?.stateNode?.props?.event ||
-          p?.event ||
-          null
-
-        while (queue.length && steps < 60 && !(out.token && out.channelId)) {
-          const f = queue.shift()
-          if (!f || seen.has(f)) continue
-          seen.add(f)
-          steps++
-          const p = f.memoizedProps
-          if (p && typeof p === 'object') {
-            if (!out.token) {
-              const ev = eventFrom(p)
-              if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
-                out.token = ev.id
-                out.months = Number(ev.cumulativeTenureMonths) || 0
-                out.eventType = ev.type || null
-              }
-            }
-            if (!out.token) {
-              for (const k of tokenKeys) {
-                const v = p[k]
-                if (typeof v === 'string' && v.length > 12) {
-                  out.token = v
-                  break
-                }
-              }
-            }
-            if (!out.channelId) {
-              for (const k of channelKeys) {
-                const v = p[k]
-                if (typeof v === 'string' && /^\d+$/.test(v)) {
-                  out.channelId = v
-                  break
-                }
-              }
-            }
-          }
-          if (f.return) queue.push(f.return)
-          if (f.child) queue.push(f.child)
-          // Siblings matter: the callout body and its context-menu prop mount as
-          // siblings of the Share button's subtree, so a return+child-only walk
-          // never reaches the event payload at all.
-          if (f.sibling) queue.push(f.sibling)
-        }
-        return out
-      }
       const scan = fiberTokenScan(shareBtn || calloutEl) || {}
       let resubToken = scan.token || null
       // ChannelId for token reconstruction. Twitch's React tree often doesn't

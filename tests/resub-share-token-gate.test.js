@@ -55,7 +55,24 @@ describe('without a token the prompt defers to twitch', () => {
   })()
 
   test('enters our share mode only when a token is present', () => {
-    expect(handler).toMatch(/if \(data\._resubToken\)/)
+    // Shape changed 2026-08-16: the click now RE-SCANS before giving up, so the
+    // gate reads `if (token)` where token is the emitted one or a fresh scan.
+    // The invariant is unchanged — share mode is entered only with a real
+    // token — and the rescan can only return what the fiber scan found.
+    expect(handler).toMatch(/const token =\s*\n?\s*data\._resubToken \|\|/)
+    expect(handler).toMatch(/rescanToken/)
+    expect(handler).toMatch(/if \(token\) \{/)
+  })
+
+  test('the click-time rescan can never return a RECONSTRUCTED token', () => {
+    // fallbackToken() builds a base64 guess from selfId:channelId:months. That
+    // guess is what made the mutation fail while looking like it worked. The
+    // rescan must read the fiber scan and nothing else.
+    const i = MAIN_SRC.indexOf('rescanToken: (rootEl) =>')
+    expect(i).toBeGreaterThan(-1)
+    const block = MAIN_SRC.slice(i, MAIN_SRC.indexOf('_allowNativeShare', i))
+    expect(block).toContain('fiberTokenScan')
+    expect(block).not.toContain('fallbackToken')
   })
 
   test('otherwise clicks twitch own button', () => {

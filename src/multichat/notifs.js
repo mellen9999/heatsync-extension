@@ -620,8 +620,19 @@ const HsNotifs = (() => {
           // token, hand the click to twitch's own button: it is the only thing
           // that can actually consume the resub.
           try {
-            if (data._resubToken) {
-              window.__hsResubShare?.enter?.(data.months, data.user, data.channel, data._resubToken)
+            // Re-scan before giving up. The notif is emitted the instant the
+            // callout is detected, and the token lives in a React subtree that
+            // is not always mounted by then — measured on a live callout, the
+            // notif had no token while the payload sat in the tree the whole
+            // time. Every one of those clicks fell through to twitch's button,
+            // which posts twitch's DEFAULT celebration and drops the message
+            // the user was about to write. By click time the tree is built.
+            const token =
+              data._resubToken ||
+              window.__hsResubShare?.rescanToken?.(data._nativeShareBtn || data._nativeCallout) ||
+              null
+            if (token) {
+              window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
             const btn = data._nativeShareBtn

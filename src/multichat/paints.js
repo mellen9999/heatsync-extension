@@ -3,7 +3,7 @@
 // Mirrors the site's client/chat/paint-cosmetics.js pipeline, adapted for the
 // multichat overlay's IIFE/global-scope bundling (no ES module imports at
 // runtime — see build.js's readMultichatModules, which embeds lib/paint-spec.js
-// right before this file so compilePaintCss/hashPaintSpec/paintNeedsLetterSplit
+// right before this file so compilePaintCss/hashPaintSpec/paintNeedsSpans
 // are already free variables in this scope by the time these functions run).
 //
 // ID-SPACE SAFETY (read before touching call sites): paints are keyed by
@@ -192,6 +192,23 @@ function splitHsLettersHtml(rawText) {
   return letters.map(({ ch, i }) => `<span style="--i:${i};--mid:${mid}">${escapeHtml(ch)}</span>`).join('')
 }
 
+/**
+ * Local mirror of lib/paint-spec.js's paintNameHtml — the ext bundle
+ * concatenates modules and escapes through its own escapeHtml, so the markup
+ * DECISION is shared (paintMarkupMode) while the string building stays local.
+ *
+ * Three shapes: one span per glyph for per-letter motion, ONE span around the
+ * whole name for a scene (the fill has to paint above the plate pseudo, and
+ * that is all it needs — reusing the per-letter split for this gave every
+ * letter a private copy of the gradient), and plain escaped text otherwise.
+ */
+function hsPaintNameHtml(rawText, spec) {
+  const mode = paintMarkupMode(spec)
+  if (mode === 'letters') return splitHsLettersHtml(rawText)
+  if (mode === 'wrap') return `<span>${escapeHtml(rawText)}</span>`
+  return escapeHtml(rawText)
+}
+
 // ── settings gate (guarded — this module is imported standalone in tests) ───
 
 function hsPaintsEnabled() {
@@ -364,7 +381,7 @@ function getHsPaintClass(userId) {
   return `hsp-${entry.hash}`
 }
 
-/** @returns {object|null} the raw validated spec (for paintNeedsLetterSplit checks). */
+/** @returns {object|null} the raw validated spec (for paintNeedsSpans checks). */
 function getHsPaintSpec(userId) {
   if (!hsPaintsEnabled()) return null
   return hsPaintCache.get(userId)?.spec ?? null
@@ -539,7 +556,7 @@ async function flushHsPaintBatch() {
  * cached for `userId` — the caller falls back to its existing 7TV/plain-color
  * rendering unchanged. Returns `{ cls, html, splitAttr }` when one is active:
  * `cls` goes on the element's class list, `html` replaces the escaped-name
- * text (already letter-split + escaped when the spec needs it), `splitAttr`
+ * text (already in whatever span shape the spec needs, escaped), `splitAttr`
  * is a ready-to-splice ` data-hs-paint-split="1"` marker so a later in-place
  * repaint (updateHsPaintsInPlace) doesn't re-split already-split text.
  */
@@ -548,11 +565,10 @@ function hsPaintRender(userId, rawText) {
   const cls = getHsPaintClass(userId)
   if (!cls) return null
   const spec = getHsPaintSpec(userId)
-  const needsSplit = paintNeedsLetterSplit(spec)
   return {
     cls,
-    html: needsSplit ? splitHsLettersHtml(rawText) : escapeHtml(rawText),
-    splitAttr: needsSplit ? ' data-hs-paint-split="1"' : '',
+    html: hsPaintNameHtml(rawText, spec),
+    splitAttr: paintNeedsSpans(spec) ? ' data-hs-paint-split="1"' : '',
   }
 }
 
@@ -573,6 +589,10 @@ function applyHsPaintToElement(el, userId) {
       if (c.startsWith('hsp-')) el.classList.remove(c)
     }
     el.classList.add(cls)
+    // A different spec can want a different markup SHAPE. The split marker
+    // records "already shaped", so keeping it across a spec change froze the
+    // name in the previous spec's markup.
+    delete el.dataset.hsPaintSplit
   }
   // Preserve any already-stamped mount time across the style-attribute clear
   // below — a second resolution of the same uid on an already-painted element
@@ -586,8 +606,8 @@ function applyHsPaintToElement(el, userId) {
   // anchor DOM-correction, a mid-flight rebuild): splitting '' is a silent
   // no-op that would still mark the node as "split" and leave it permanently
   // blank. Never touch innerHTML when there's no text to split.
-  if (paintNeedsLetterSplit(spec) && !el.dataset.hsPaintSplit && el.textContent) {
-    el.innerHTML = splitHsLettersHtml(el.textContent)
+  if (paintNeedsSpans(spec) && !el.dataset.hsPaintSplit && el.textContent) {
+    el.innerHTML = hsPaintNameHtml(el.textContent, spec)
     el.dataset.hsPaintSplit = '1'
   }
   // Mount stamp for phase-locking — restore the preserved value, or stamp a

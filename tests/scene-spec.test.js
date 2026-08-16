@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { compilePaintCss, paintNeedsLetterSplit, validatePaintSpec } from '../src/lib/paint-spec.js'
+import { compilePaintCss, paintNeedsSpans, validatePaintSpec } from '../src/lib/paint-spec.js'
 
 // Smoke-test coverage for the ext's synced copy of scene paints v2 (scene-spec.js
 // + paint-core.js) — the full suite lives in the monorepo; this proves the ext
@@ -38,9 +38,9 @@ describe('scene paints v2 — ext synced copy', () => {
   })
 
   test('scene + clip-text fill forces letter-split (paint-order rule)', () => {
-    expect(paintNeedsLetterSplit(v2Spec(DAWN_FOG))).toBe(false)
+    expect(paintNeedsSpans(v2Spec(DAWN_FOG))).toBe(false)
     expect(
-      paintNeedsLetterSplit(
+      paintNeedsSpans(
         v2Spec(DAWN_FOG, {
           base: {
             type: 'linear',

@@ -54,9 +54,62 @@ function svgUrl(svg) {
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }
 
-function svg(viewW, viewH, body) {
-  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${viewW} ${viewH}'>${body}</svg>`
+function svg(viewW, viewH, body, stretch = false) {
+  // `stretch` drops the default xMidYMid meet fit so a tile can be sized
+  // `<fixed>px <percent>` — a horizontal band whose width tiles in whole
+  // pixels (so a scroll can advance exactly one tile) while its height
+  // tracks the plate. Everything else keeps its aspect ratio.
+  const par = stretch ? " preserveAspectRatio='none'" : ''
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${viewW} ${viewH}'${par}>${body}</svg>`
 }
+
+/**
+ * Horizontally-tileable "hanging deck" path: solid from the top edge down to a
+ * blocky bottom edge. `steps` is [[width, depth], …] read left to right; the
+ * first and last depth must match or the tile shows a vertical seam where it
+ * repeats (guarded by test).
+ */
+function deckPath(steps) {
+  let d = `M0 ${steps[0][1]}`
+  for (const [w, h] of steps) d += `V${h}h${w}`
+  return `${d}V0H0Z`
+}
+
+/** Cloud deck tile — `steps` sums to `w`. Rendered stretched (see svg()). */
+function cloudDeck(steps, w, color, opacity) {
+  return {
+    w,
+    url: svgUrl(svg(w, 24, `<path fill='${color}' opacity='${opacity}' d='${deckPath(steps)}'/>`, true)),
+  }
+}
+
+// Two overcast decks. FAR is shallower and narrower (so it advances less per
+// loop = slower), NEAR hangs lower and wider — parallax by construction, same
+// trick the weather tiles use. Widths are the sum of their own steps, and both
+// are deliberately narrower than a typical name plate (~56px for a six-glyph
+// name at 13px) so a whole deck of lumps is visible at once; wider tiles put
+// two enormous rectangles across the name instead of a cloud line.
+const CLOUD_FAR_STEPS = [
+  [5, 7],
+  [6, 10],
+  [4, 6],
+  [7, 11],
+  [5, 8],
+  [6, 12],
+  [7, 7],
+]
+const CLOUD_NEAR_STEPS = [
+  [7, 6],
+  [6, 10],
+  [8, 5],
+  [7, 12],
+  [9, 8],
+  [6, 13],
+  [6, 7],
+  [7, 6],
+]
+const CLOUD_FAR_W = 40
+const CLOUD_NEAR_W = 56
 
 // ── pixel silhouettes (blocky on purpose — crisp at 13px Cozette scale) ────
 
@@ -103,50 +156,39 @@ const SIL = {
 
 // ── weather tiles (pixel SVG, tiled + scrolled; drops stay inside bounds) ──
 
+/**
+ * One drop: a 2px-wide streak with a solid 3px head at the leading (lower)
+ * end, slanted 12°.
+ *
+ * These were 1px hairlines at 55-60% opacity. A name plate is roughly 50x22
+ * CSS px, so a 1px column of translucent colour is a smudge, not rain — the
+ * whole weather layer read as texture noise and people asked where their
+ * weather had gone. Two pixels wide with an opaque head is the smallest thing
+ * that still reads as a falling drop at name size. Every drop stays inside the
+ * tile box (the tile repeats, so anything crossing an edge is cut in half).
+ */
+function rainDrop(c, x, y, h) {
+  return (
+    `<g transform='rotate(12 ${x + 1} ${y + h / 2})'>` +
+    `<rect x='${x}' y='${y}' width='2' height='${h}' fill='${c}' opacity='.5'/>` +
+    `<rect x='${x}' y='${y + h - 3}' width='2' height='3' fill='${c}' opacity='.95'/></g>`
+  )
+}
+
+// Tiles are much larger than the old 1px-drizzle ones for the same reason the
+// drops are wider: two pixels of opaque colour carries far more ink than one
+// translucent pixel, and every tile is ALSO painted a second time at 1.4x for
+// parallax, so keeping the old tile sizes would have put ~25 fat drops across
+// a six-glyph name and buried it.
 function rainTile(c, density) {
   if (density >= 3)
     return {
-      w: 14,
-      h: 20,
-      url: svgUrl(
-        svg(
-          14,
-          20,
-          `<g fill='${c}' opacity='.6'>` +
-            `<rect x='2' y='1' width='1' height='5' transform='rotate(12 2.5 3.5)'/>` +
-            `<rect x='8' y='7' width='1' height='4' transform='rotate(12 8.5 9)'/>` +
-            `<rect x='5' y='13' width='1' height='5' transform='rotate(12 5.5 15.5)'/>` +
-            `<rect x='11' y='3' width='1' height='4' transform='rotate(12 11.5 5)'/></g>`,
-        ),
-      ),
-    }
-  if (density === 2)
-    return {
-      w: 16,
+      w: 20,
       h: 24,
-      url: svgUrl(
-        svg(
-          16,
-          24,
-          `<g fill='${c}' opacity='.6'>` +
-            `<rect x='3' y='2' width='1' height='6' transform='rotate(12 3.5 5)'/>` +
-            `<rect x='10' y='12' width='1' height='5' transform='rotate(12 10.5 14.5)'/></g>`,
-        ),
-      ),
+      url: svgUrl(svg(20, 24, rainDrop(c, 2, 2, 9) + rainDrop(c, 10, 8, 9) + rainDrop(c, 15, 1, 8))),
     }
-  return {
-    w: 20,
-    h: 28,
-    url: svgUrl(
-      svg(
-        20,
-        28,
-        `<g fill='${c}' opacity='.55'>` +
-          `<rect x='4' y='3' width='1' height='6' transform='rotate(12 4.5 6)'/>` +
-          `<rect x='13' y='16' width='1' height='4' transform='rotate(12 13.5 18)'/></g>`,
-      ),
-    ),
-  }
+  if (density === 2) return { w: 28, h: 28, url: svgUrl(svg(28, 28, rainDrop(c, 4, 3, 10) + rainDrop(c, 18, 13, 10))) }
+  return { w: 40, h: 32, url: svgUrl(svg(40, 32, rainDrop(c, 7, 4, 11) + rainDrop(c, 27, 16, 10))) }
 }
 
 function snowTile(c, density) {
@@ -368,21 +410,58 @@ const BACKDROPS = {
   },
 
   graveyard: {
+    // Overcast by construction: the sky is brightest at the horizon (the glow
+    // the clouds are lit from) and darkest at the top, where two blocky cloud
+    // decks hang down over it. The decks are what makes it read as weather
+    // rather than a gradient — the two soft radial washes this used to carry
+    // were under 5% alpha and invisible at name size.
     label: 'graveyard',
     luminance: false,
     basePeriod: 22,
     variants: [
-      { name: 'ash', sky: 'linear-gradient(0deg,#26262a 0%,#3a3a42 45%,#2e2e36 75%,#222228 100%)', sil: '#08080a' },
-      { name: 'blood', sky: 'linear-gradient(0deg,#2a1f22 0%,#4a2f33 45%,#38262c 75%,#241d20 100%)', sil: '#0a0608' },
-      { name: 'moonlit', sky: 'linear-gradient(0deg,#1c2230 0%,#2e3a52 45%,#26304a 75%,#1a2030 100%)', sil: '#060810' },
+      // Sky runs bright at the horizon (0% is the BOTTOM at 0deg) to near-black
+      // at the top; the decks are LIGHTER than that top, because an overcast
+      // lid lit from below by the same glow is what you actually see at night.
+      // Dark-on-dark clouds are just a black bar.
+      {
+        name: 'ash',
+        sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)',
+        near: '#33333d',
+        far: '#292933',
+        moon: '#c6c6d2',
+        sil: '#08080a',
+      },
+      {
+        name: 'blood',
+        sky: 'linear-gradient(0deg,#4a2428 0%,#301a1e 40%,#1c1114 75%,#120b0d 100%)',
+        near: '#3d2126',
+        far: '#33191e',
+        moon: '#e0a0a0',
+        sil: '#0a0608',
+      },
+      {
+        name: 'moonlit',
+        sky: 'linear-gradient(0deg,#33435f 0%,#222d44 40%,#141c2b 75%,#0d1220 100%)',
+        near: '#2b3750',
+        far: '#232e44',
+        moon: '#dce8ff',
+        sil: '#060810',
+      },
     ],
     build(v, animName) {
+      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
+      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
       const layers =
         `${SIL.graveyard(v.sil)} repeat-x 0 100%/auto 52%,` +
-        `radial-gradient(50% 80% at 30% 20%,#ffffff0a 0%,transparent 60%) no-repeat 20% 0/180% 100%,` +
-        `radial-gradient(60% 90% at 70% 15%,#00000038 0%,transparent 65%) no-repeat 80% 0/200% 100%,` +
+        `${near.url} repeat-x 0 0/${near.w}px 58%,` +
+        `${far.url} repeat-x 0 0/${far.w}px 44%,` +
+        `radial-gradient(45% 75% at 62% 6%,${v.moon}2e 0%,transparent 68%) no-repeat 0 0/100% 100%,` +
         `${v.sky} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 100%,-80% 0,180% 0,0 0;}to{background-position:0 100%,180% 0,-100% 0,0 0;}}`
+      // Each deck advances exactly one own-tile width per loop — seamless by
+      // construction, and the different widths ARE the parallax.
+      const kf =
+        `@keyframes ${animName}{from{background-position:0 100%,0 0,0 0,0 0,0 0;}` +
+        `to{background-position:0 100%,-${near.w}px 0,-${far.w}px 0,0 0,0 0;}}`
       return { decls: `background:${layers};`, keyframes: kf }
     },
   },
@@ -554,17 +633,22 @@ const WEATHERS = {
     // washes the name out on bright plates (dawn). Painted between the
     // plate and the text instead: ::after with z-index:-1 still paints
     // above ::before (tree order breaks the tie inside the negative band).
-    label: 'fog',
+    label: 'fog (behind the name)',
     luminance: false,
     basePeriod: 16,
     behindText: true,
     variants: [
-      { name: 'sunglow', c: '#ffd7af' },
+      // sunglow used to be #ffd7af — the exact hex of the desert-dawn plate's
+      // own haze band, so the single most obvious pairing in the catalog
+      // (dawn + sunglow) rendered a fog bank that was invisible by
+      // construction. Warmer and denser now, and the alphas below are roughly
+      // double: fog paints BEHIND the name, so it can afford to be seen.
+      { name: 'sunglow', c: '#ffaf87' },
       { name: 'mist', c: '#c0c8d0' },
       { name: 'miasma', c: '#87ff5f' },
     ],
     build(v, density, animName) {
-      const a = density >= 3 ? ['4d', '30'] : density === 2 ? ['38', '24'] : ['26', '18']
+      const a = density >= 3 ? ['80', '4d'] : density === 2 ? ['66', '38'] : ['40', '26']
       const decls =
         `background:radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%) no-repeat 30% 40%/160% 100%,` +
         `radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%) no-repeat 70% 70%/200% 100%;`

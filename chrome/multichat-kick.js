@@ -5515,9 +5515,62 @@ function svgUrl(svg) {
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }
 
-function svg(viewW, viewH, body) {
-  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${viewW} ${viewH}'>${body}</svg>`
+function svg(viewW, viewH, body, stretch = false) {
+  // `stretch` drops the default xMidYMid meet fit so a tile can be sized
+  // `<fixed>px <percent>` — a horizontal band whose width tiles in whole
+  // pixels (so a scroll can advance exactly one tile) while its height
+  // tracks the plate. Everything else keeps its aspect ratio.
+  const par = stretch ? " preserveAspectRatio='none'" : ''
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${viewW} ${viewH}'${par}>${body}</svg>`
 }
+
+/**
+ * Horizontally-tileable "hanging deck" path: solid from the top edge down to a
+ * blocky bottom edge. `steps` is [[width, depth], …] read left to right; the
+ * first and last depth must match or the tile shows a vertical seam where it
+ * repeats (guarded by test).
+ */
+function deckPath(steps) {
+  let d = `M0 ${steps[0][1]}`
+  for (const [w, h] of steps) d += `V${h}h${w}`
+  return `${d}V0H0Z`
+}
+
+/** Cloud deck tile — `steps` sums to `w`. Rendered stretched (see svg()). */
+function cloudDeck(steps, w, color, opacity) {
+  return {
+    w,
+    url: svgUrl(svg(w, 24, `<path fill='${color}' opacity='${opacity}' d='${deckPath(steps)}'/>`, true)),
+  }
+}
+
+// Two overcast decks. FAR is shallower and narrower (so it advances less per
+// loop = slower), NEAR hangs lower and wider — parallax by construction, same
+// trick the weather tiles use. Widths are the sum of their own steps, and both
+// are deliberately narrower than a typical name plate (~56px for a six-glyph
+// name at 13px) so a whole deck of lumps is visible at once; wider tiles put
+// two enormous rectangles across the name instead of a cloud line.
+const CLOUD_FAR_STEPS = [
+  [5, 7],
+  [6, 10],
+  [4, 6],
+  [7, 11],
+  [5, 8],
+  [6, 12],
+  [7, 7],
+]
+const CLOUD_NEAR_STEPS = [
+  [7, 6],
+  [6, 10],
+  [8, 5],
+  [7, 12],
+  [9, 8],
+  [6, 13],
+  [6, 7],
+  [7, 6],
+]
+const CLOUD_FAR_W = 40
+const CLOUD_NEAR_W = 56
 
 // ── pixel silhouettes (blocky on purpose — crisp at 13px Cozette scale) ────
 
@@ -5564,50 +5617,39 @@ const SIL = {
 
 // ── weather tiles (pixel SVG, tiled + scrolled; drops stay inside bounds) ──
 
+/**
+ * One drop: a 2px-wide streak with a solid 3px head at the leading (lower)
+ * end, slanted 12°.
+ *
+ * These were 1px hairlines at 55-60% opacity. A name plate is roughly 50x22
+ * CSS px, so a 1px column of translucent colour is a smudge, not rain — the
+ * whole weather layer read as texture noise and people asked where their
+ * weather had gone. Two pixels wide with an opaque head is the smallest thing
+ * that still reads as a falling drop at name size. Every drop stays inside the
+ * tile box (the tile repeats, so anything crossing an edge is cut in half).
+ */
+function rainDrop(c, x, y, h) {
+  return (
+    `<g transform='rotate(12 ${x + 1} ${y + h / 2})'>` +
+    `<rect x='${x}' y='${y}' width='2' height='${h}' fill='${c}' opacity='.5'/>` +
+    `<rect x='${x}' y='${y + h - 3}' width='2' height='3' fill='${c}' opacity='.95'/></g>`
+  )
+}
+
+// Tiles are much larger than the old 1px-drizzle ones for the same reason the
+// drops are wider: two pixels of opaque colour carries far more ink than one
+// translucent pixel, and every tile is ALSO painted a second time at 1.4x for
+// parallax, so keeping the old tile sizes would have put ~25 fat drops across
+// a six-glyph name and buried it.
 function rainTile(c, density) {
   if (density >= 3)
     return {
-      w: 14,
-      h: 20,
-      url: svgUrl(
-        svg(
-          14,
-          20,
-          `<g fill='${c}' opacity='.6'>` +
-            `<rect x='2' y='1' width='1' height='5' transform='rotate(12 2.5 3.5)'/>` +
-            `<rect x='8' y='7' width='1' height='4' transform='rotate(12 8.5 9)'/>` +
-            `<rect x='5' y='13' width='1' height='5' transform='rotate(12 5.5 15.5)'/>` +
-            `<rect x='11' y='3' width='1' height='4' transform='rotate(12 11.5 5)'/></g>`,
-        ),
-      ),
-    }
-  if (density === 2)
-    return {
-      w: 16,
+      w: 20,
       h: 24,
-      url: svgUrl(
-        svg(
-          16,
-          24,
-          `<g fill='${c}' opacity='.6'>` +
-            `<rect x='3' y='2' width='1' height='6' transform='rotate(12 3.5 5)'/>` +
-            `<rect x='10' y='12' width='1' height='5' transform='rotate(12 10.5 14.5)'/></g>`,
-        ),
-      ),
+      url: svgUrl(svg(20, 24, rainDrop(c, 2, 2, 9) + rainDrop(c, 10, 8, 9) + rainDrop(c, 15, 1, 8))),
     }
-  return {
-    w: 20,
-    h: 28,
-    url: svgUrl(
-      svg(
-        20,
-        28,
-        `<g fill='${c}' opacity='.55'>` +
-          `<rect x='4' y='3' width='1' height='6' transform='rotate(12 4.5 6)'/>` +
-          `<rect x='13' y='16' width='1' height='4' transform='rotate(12 13.5 18)'/></g>`,
-      ),
-    ),
-  }
+  if (density === 2) return { w: 28, h: 28, url: svgUrl(svg(28, 28, rainDrop(c, 4, 3, 10) + rainDrop(c, 18, 13, 10))) }
+  return { w: 40, h: 32, url: svgUrl(svg(40, 32, rainDrop(c, 7, 4, 11) + rainDrop(c, 27, 16, 10))) }
 }
 
 function snowTile(c, density) {
@@ -5829,21 +5871,58 @@ const BACKDROPS = {
   },
 
   graveyard: {
+    // Overcast by construction: the sky is brightest at the horizon (the glow
+    // the clouds are lit from) and darkest at the top, where two blocky cloud
+    // decks hang down over it. The decks are what makes it read as weather
+    // rather than a gradient — the two soft radial washes this used to carry
+    // were under 5% alpha and invisible at name size.
     label: 'graveyard',
     luminance: false,
     basePeriod: 22,
     variants: [
-      { name: 'ash', sky: 'linear-gradient(0deg,#26262a 0%,#3a3a42 45%,#2e2e36 75%,#222228 100%)', sil: '#08080a' },
-      { name: 'blood', sky: 'linear-gradient(0deg,#2a1f22 0%,#4a2f33 45%,#38262c 75%,#241d20 100%)', sil: '#0a0608' },
-      { name: 'moonlit', sky: 'linear-gradient(0deg,#1c2230 0%,#2e3a52 45%,#26304a 75%,#1a2030 100%)', sil: '#060810' },
+      // Sky runs bright at the horizon (0% is the BOTTOM at 0deg) to near-black
+      // at the top; the decks are LIGHTER than that top, because an overcast
+      // lid lit from below by the same glow is what you actually see at night.
+      // Dark-on-dark clouds are just a black bar.
+      {
+        name: 'ash',
+        sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)',
+        near: '#33333d',
+        far: '#292933',
+        moon: '#c6c6d2',
+        sil: '#08080a',
+      },
+      {
+        name: 'blood',
+        sky: 'linear-gradient(0deg,#4a2428 0%,#301a1e 40%,#1c1114 75%,#120b0d 100%)',
+        near: '#3d2126',
+        far: '#33191e',
+        moon: '#e0a0a0',
+        sil: '#0a0608',
+      },
+      {
+        name: 'moonlit',
+        sky: 'linear-gradient(0deg,#33435f 0%,#222d44 40%,#141c2b 75%,#0d1220 100%)',
+        near: '#2b3750',
+        far: '#232e44',
+        moon: '#dce8ff',
+        sil: '#060810',
+      },
     ],
     build(v, animName) {
+      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
+      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
       const layers =
         `${SIL.graveyard(v.sil)} repeat-x 0 100%/auto 52%,` +
-        `radial-gradient(50% 80% at 30% 20%,#ffffff0a 0%,transparent 60%) no-repeat 20% 0/180% 100%,` +
-        `radial-gradient(60% 90% at 70% 15%,#00000038 0%,transparent 65%) no-repeat 80% 0/200% 100%,` +
+        `${near.url} repeat-x 0 0/${near.w}px 58%,` +
+        `${far.url} repeat-x 0 0/${far.w}px 44%,` +
+        `radial-gradient(45% 75% at 62% 6%,${v.moon}2e 0%,transparent 68%) no-repeat 0 0/100% 100%,` +
         `${v.sky} no-repeat 0 0/100% 100%`
-      const kf = `@keyframes ${animName}{from{background-position:0 100%,-80% 0,180% 0,0 0;}to{background-position:0 100%,180% 0,-100% 0,0 0;}}`
+      // Each deck advances exactly one own-tile width per loop — seamless by
+      // construction, and the different widths ARE the parallax.
+      const kf =
+        `@keyframes ${animName}{from{background-position:0 100%,0 0,0 0,0 0,0 0;}` +
+        `to{background-position:0 100%,-${near.w}px 0,-${far.w}px 0,0 0,0 0;}}`
       return { decls: `background:${layers};`, keyframes: kf }
     },
   },
@@ -6015,17 +6094,22 @@ const WEATHERS = {
     // washes the name out on bright plates (dawn). Painted between the
     // plate and the text instead: ::after with z-index:-1 still paints
     // above ::before (tree order breaks the tie inside the negative band).
-    label: 'fog',
+    label: 'fog (behind the name)',
     luminance: false,
     basePeriod: 16,
     behindText: true,
     variants: [
-      { name: 'sunglow', c: '#ffd7af' },
+      // sunglow used to be #ffd7af — the exact hex of the desert-dawn plate's
+      // own haze band, so the single most obvious pairing in the catalog
+      // (dawn + sunglow) rendered a fog bank that was invisible by
+      // construction. Warmer and denser now, and the alphas below are roughly
+      // double: fog paints BEHIND the name, so it can afford to be seen.
+      { name: 'sunglow', c: '#ffaf87' },
       { name: 'mist', c: '#c0c8d0' },
       { name: 'miasma', c: '#87ff5f' },
     ],
     build(v, density, animName) {
-      const a = density >= 3 ? ['4d', '30'] : density === 2 ? ['38', '24'] : ['26', '18']
+      const a = density >= 3 ? ['80', '4d'] : density === 2 ? ['66', '38'] : ['40', '26']
       const decls =
         `background:radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%) no-repeat 30% 40%/160% 100%,` +
         `radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%) no-repeat 70% 70%/200% 100%;`
@@ -6341,7 +6425,59 @@ const MAX_STOPS = 8
 // anywhere — these caps only apply to SAVING.
 const FREE_MAX_EFFECTS = 0
 const PLUS_MAX_EFFECTS = MAX_EFFECTS
-// (WCAG luminance-period guard lives in paint-core.js — MIN_LUMINANCE_PERIOD_S.)
+// (WCAG luminance-period guard lives in paint-core.js — MIN_LUMINANCE_PERIOD_S.
+//  That one bounds how fast a paint may CHANGE luminance, for photosensitivity.
+//  The floor below is the other axis: whether it can be READ while static.)
+
+// ── legibility floor ──────────────────────────────────────────────────────
+// A paint is read at 13px, on near-black, beside twenty other names, in a feed
+// that is moving. The binding constraint was never how much colour freedom to
+// hand out — it is that an unreadable name degrades the room for EVERYONE, not
+// just its owner, and a name nobody can read is not self-expression.
+//
+// So this is a save-time rule, not a hint: the builder dims sub-floor swatches
+// and the server refuses a sub-floor spec. Rendering is never gated (same
+// posture as the tier caps above), so paints saved before this existed keep
+// working — the floor applies the next time someone saves one.
+//
+// 3.0 rather than WCAG's 4.5 for body copy: names render bold, and this is a
+// nickname, not prose. It is still a floor, not a suggestion.
+const PAINT_BG = '#0a0a0a'
+const PAINT_MIN_CONTRAST = 3
+
+/** WCAG 2.x relative luminance of an #rrggbb string. */
+function relativeLuminance(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+    .map((v) => v / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+/** WCAG contrast ratio between two #rrggbb strings. Order-independent. */
+function contrastRatio(hexA, hexB) {
+  const a = relativeLuminance(hexA)
+  const b = relativeLuminance(hexB)
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+}
+
+/** True when a single colour clears the floor against the chat background. */
+function isLegiblePaintColor(hex, bg = PAINT_BG) {
+  return HEX_RE.test(hex) && contrastRatio(hex, bg) >= PAINT_MIN_CONTRAST
+}
+
+/**
+ * A gradient is only as readable as its DIMMEST stop, so the paint is scored by
+ * the weakest one — averaging would let a bright stop launder a black one.
+ * Returns null when there is nothing valid to score.
+ */
+function paintContrast(stops, bg = PAINT_BG) {
+  if (!Array.isArray(stops)) return null
+  const ratios = stops
+    .filter((s) => isPlainObject(s) && typeof s.color === 'string' && HEX_RE.test(s.color))
+    .map((s) => contrastRatio(s.color, bg))
+  return ratios.length ? Math.min(...ratios) : null
+}
 
 /**
  * Effect metadata table — the single source of truth for slot assignment,
@@ -6534,6 +6670,16 @@ function validatePaintSpec(spec, opts = {}) {
       if (type === 'solid' && stops.length !== 1) {
         errors.push('base.type solid requires exactly 1 stop')
       }
+      // Legibility floor — scored on the DIMMEST stop, because that is the
+      // part of the name that disappears. Only runs once the stops are
+      // structurally sound, so a malformed spec reports its real problem
+      // instead of also being called unreadable.
+      const weakest = paintContrast(stops)
+      if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
+        errors.push(
+          `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`,
+        )
+      }
     }
   }
 
@@ -6613,16 +6759,25 @@ function validatePaintSpec(spec, opts = {}) {
   return { ok: errors.length === 0, errors }
 }
 
-/** True if the spec needs per-letter span markup: any per-letter effect
- * (wave/ripple/tumble), OR a scene under a clip-text fill. The latter is a
+/**
+ * True if the spec animates individual glyphs — wave/ripple/tumble, the only
+ * effects whose keyframes read `--i`/`--mid`. These are the ONLY specs that
+ * may be chopped into one span per letter.
+ */
+function paintNeedsPerLetter(spec) {
+  return !!spec && Array.isArray(spec.effects) && spec.effects.some((e) => LETTER_SPLIT_IDS.has(e?.id))
+}
+
+/** True if the painted name must carry `<span>` children at all — either
+ * per-letter (above), or a scene under a clip-text fill. The latter is a
  * paint-order constraint, not a style choice: the plate pseudos carry
  * z-index:-1, and negative-z children paint ABOVE the element's own
  * background — which with background-clip:text IS the text fill. Spans
- * paint in the inline-content phase, above the pseudos, so splitting is
+ * paint in the inline-content phase, above the pseudos, so wrapping is
  * what keeps a gradient/effect fill visible over its own scene. */
-function paintNeedsLetterSplit(spec) {
+function paintNeedsSpans(spec) {
   if (!spec) return false
-  if (Array.isArray(spec.effects) && spec.effects.some((e) => LETTER_SPLIT_IDS.has(e?.id))) return true
+  if (paintNeedsPerLetter(spec)) return true
   if (spec.v === 2 && isPlainObject(spec.scene)) {
     const hasPaintEffect = Array.isArray(spec.effects) && spec.effects.some((e) => EFFECTS[e?.id]?.slot === 'paint')
     return hasPaintEffect || spec.base?.type !== 'solid'
@@ -6633,7 +6788,7 @@ function paintNeedsLetterSplit(spec) {
 // ── letter-split helpers (pure — shared by client renderer + server SSR) ───
 //
 // Lives here (not chat/paint-cosmetics.js) specifically so server routes can
-// import it for free alongside compilePaintCss/paintNeedsLetterSplit — this
+// import it for free alongside compilePaintCss/paintNeedsSpans — this
 // module is already server-shippable (see paint.ts's import), paint-cosmetics.js
 // is not (DOM/settingsManager/fetch). paint-cosmetics.js re-exports both names
 // so the existing client import path keeps working unchanged.
@@ -6673,6 +6828,53 @@ function computeLetterSpans(text) {
 function splitLettersHtml(rawText) {
   const { mid, letters } = computeLetterSpans(rawText)
   return letters.map(({ ch, i }) => `<span style="--i:${i};--mid:${mid}">${escapeTextHtml(ch)}</span>`).join('')
+}
+
+/**
+ * THE inner HTML of a painted username element. Every renderer — live chat's
+ * two paths, the message-element baker, the builder preview and all four SSR
+ * surfaces — goes through this one function, because the markup and the
+ * compiled CSS have to agree about what `${selector} span` will match and
+ * nine copies of the same ternary is nine chances to disagree.
+ *
+ * Three shapes, in order:
+ *   per-letter  one span per glyph carrying --i/--mid (wave/ripple/tumble).
+ *   wrapped     ONE span around the whole name. A scene needs the fill to
+ *               paint above the plate pseudo, and that is all it needs — it
+ *               used to reuse the per-letter split for this, which handed
+ *               every letter its own private copy of the gradient. A name
+ *               with a horizontal gradient (or pan/glint/chrome/gold/reveal,
+ *               which sweep along that axis) then showed six 7px-wide
+ *               gradients firing in unison instead of one moving across the
+ *               name — the single most-visible paint bug in the catalog, and
+ *               it fired on the most obvious combination there is: put on a
+ *               scene, keep your gradient.
+ *   plain       escaped text, no spans.
+ *
+ * Takes RAW text and escapes it here — never hand it pre-escaped text.
+ * @param {string} rawText
+ * @param {object|null|undefined} spec
+ */
+function paintNameHtml(rawText, spec) {
+  return paintNameHtmlFor(rawText, paintMarkupMode(spec))
+}
+
+/** The markup shape a spec calls for: 'letters' | 'wrap' | 'none'. Renderers
+ * that cache a resolved paint (message-element bakes className + shape onto
+ * the message so an LRU eviction can't unpaint it) hold on to this string
+ * instead of the spec object. */
+function paintMarkupMode(spec) {
+  if (paintNeedsPerLetter(spec)) return 'letters'
+  if (paintNeedsSpans(spec)) return 'wrap'
+  return 'none'
+}
+
+/** paintNameHtml with the shape already decided. Unknown modes fall through
+ * to plain escaped text — a stale baked mode can never emit raw HTML. */
+function paintNameHtmlFor(rawText, mode) {
+  if (mode === 'letters') return splitLettersHtml(rawText)
+  if (mode === 'wrap') return `<span>${escapeTextHtml(rawText)}</span>`
+  return escapeTextHtml(rawText)
 }
 
 // ── id-space safety (paint lookup key guard) ────────────────────────────────
@@ -7072,7 +7274,7 @@ function compilePaintCss(spec, selector, opts = {}) {
       : []
   const paintEffect = effects.find((e) => EFFECTS[e.id].slot === 'paint')
   const motionEffects = effects.filter((e) => EFFECTS[e.id].slot === 'motion')
-  const needsLetterSplit = paintNeedsLetterSplit(spec)
+  const needsLetterSplit = paintNeedsSpans(spec)
 
   // Chrome cannot paint a parent's background-clip:text into TRANSFORMED
   // descendant layers — per-letter motion (wave/ripple/tumble) composites
@@ -20323,45 +20525,30 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
   // the brief AA-on flash).
   document.body.classList.add('hs-font-bitmap')
   document.documentElement.classList.add('hs-font-bitmap')
-  declareDarkColorScheme()
 }
 
-// UA auto-dark (chromium WebContentsForceDark / android "darken websites")
-// double-inverts hosts that render dark but never declare it — twitch's dark
-// theme has no color-scheme meta, so the whole page (overlay included) paints
-// inverted to light. Declaring `dark` makes the UA skip the page. Gated on the
-// host actually rendering dark so the declaration is never a lie; no-op when
-// the page already declares a scheme (heatsync.org does).
-function declareDarkColorScheme() {
-  try {
-    // Chromium only. This is a workaround for a chromium-family force-dark
-    // behaviour; gecko has no equivalent, so on firefox the meta buys nothing
-    // and is pure blast radius — it is a PAGE-LEVEL declaration, so it retimes
-    // the host's own canvas, controls, scrollbars and same-origin frames, not
-    // just our overlay. It landed in 1.7.43 and is the one change a firefox
-    // reporter could bisect the white player to; 1.7.42 (without it) is clean
-    // for them. cfbb08b scoped the per-element color-scheme RULES and left this
-    // page-level stamp untouched, which is why the report survived 1.7.45-47.
-    // navigator.userAgentData is chromium-only (gecko/webkit don't ship it) —
-    // a structural signal rather than a UA-string sniff.
-    if (!navigator.userAgentData) return
-    if (document.head.querySelector('meta[name="color-scheme"]')) return
-    const channels = (el) => {
-      const c = getComputedStyle(el).backgroundColor.match(/\d+(\.\d+)?/g)
-      if (!c || c.length < 3) return null
-      if (c.length > 3 && Number(c[3]) === 0) return null // transparent
-      return c.slice(0, 3).map(Number)
-    }
-    const rgb = channels(document.body) || channels(document.documentElement)
-    if (!rgb) return
-    const luminance = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
-    if (luminance > 60) return // host is light-themed — not ours to declare
-    const meta = document.createElement('meta')
-    meta.name = 'color-scheme'
-    meta.content = 'dark'
-    document.head.appendChild(cleanup.trackNode(meta))
-  } catch (_) {}
-}
+// The page-level `<meta name="color-scheme" content="dark">` this file used to
+// stamp on the host is GONE. It was never a declaration about our overlay — it
+// was a declaration about someone else's page, and it reached everything on it.
+//
+// What it bought: chromium force-dark skips a page that declares itself dark,
+// so twitch (dark, but declaring nothing) stopped being double-inverted to
+// light. The per-element `color-scheme: dark` rules in styles/00-palette.css
+// took that job over and do it better — they shield every hs- root regardless
+// of host theme or meta timing, which is exactly why they were added.
+//
+// What it cost: a white video player. Suppressing force-dark for the PAGE
+// suppresses it for the frames on it too, and a twitch overlay extension is a
+// frame stacked on the player — one whose light surface force-dark had been
+// darkening. Declare the page dark and that surface renders as-is: a white
+// rectangle over the whole video, appearing and disappearing exactly as the
+// extension is toggled. The same symptom was reported on firefox and bisected
+// to the commit that added this (1.7.43); gating it to chromium in 7c2f77e
+// fixed that reporter and left every chromium user with it.
+//
+// The shield we need is per-element and already applied. Do not reintroduce a
+// page-level stamp — force-dark on the host page is the user's setting, and
+// overriding it for a page we do not own is not a thing this extension does.
 
 
 // --- multichat/seen-state.js ---
@@ -52963,7 +53150,7 @@ document.addEventListener(
 // Mirrors the site's client/chat/paint-cosmetics.js pipeline, adapted for the
 // multichat overlay's IIFE/global-scope bundling (no ES module imports at
 // runtime — see build.js's readMultichatModules, which embeds lib/paint-spec.js
-// right before this file so compilePaintCss/hashPaintSpec/paintNeedsLetterSplit
+// right before this file so compilePaintCss/hashPaintSpec/paintNeedsSpans
 // are already free variables in this scope by the time these functions run).
 //
 // ID-SPACE SAFETY (read before touching call sites): paints are keyed by
@@ -53152,6 +53339,23 @@ function splitHsLettersHtml(rawText) {
   return letters.map(({ ch, i }) => `<span style="--i:${i};--mid:${mid}">${escapeHtml(ch)}</span>`).join('')
 }
 
+/**
+ * Local mirror of lib/paint-spec.js's paintNameHtml — the ext bundle
+ * concatenates modules and escapes through its own escapeHtml, so the markup
+ * DECISION is shared (paintMarkupMode) while the string building stays local.
+ *
+ * Three shapes: one span per glyph for per-letter motion, ONE span around the
+ * whole name for a scene (the fill has to paint above the plate pseudo, and
+ * that is all it needs — reusing the per-letter split for this gave every
+ * letter a private copy of the gradient), and plain escaped text otherwise.
+ */
+function hsPaintNameHtml(rawText, spec) {
+  const mode = paintMarkupMode(spec)
+  if (mode === 'letters') return splitHsLettersHtml(rawText)
+  if (mode === 'wrap') return `<span>${escapeHtml(rawText)}</span>`
+  return escapeHtml(rawText)
+}
+
 // ── settings gate (guarded — this module is imported standalone in tests) ───
 
 function hsPaintsEnabled() {
@@ -53324,7 +53528,7 @@ function getHsPaintClass(userId) {
   return `hsp-${entry.hash}`
 }
 
-/** @returns {object|null} the raw validated spec (for paintNeedsLetterSplit checks). */
+/** @returns {object|null} the raw validated spec (for paintNeedsSpans checks). */
 function getHsPaintSpec(userId) {
   if (!hsPaintsEnabled()) return null
   return hsPaintCache.get(userId)?.spec ?? null
@@ -53499,7 +53703,7 @@ async function flushHsPaintBatch() {
  * cached for `userId` — the caller falls back to its existing 7TV/plain-color
  * rendering unchanged. Returns `{ cls, html, splitAttr }` when one is active:
  * `cls` goes on the element's class list, `html` replaces the escaped-name
- * text (already letter-split + escaped when the spec needs it), `splitAttr`
+ * text (already in whatever span shape the spec needs, escaped), `splitAttr`
  * is a ready-to-splice ` data-hs-paint-split="1"` marker so a later in-place
  * repaint (updateHsPaintsInPlace) doesn't re-split already-split text.
  */
@@ -53508,11 +53712,10 @@ function hsPaintRender(userId, rawText) {
   const cls = getHsPaintClass(userId)
   if (!cls) return null
   const spec = getHsPaintSpec(userId)
-  const needsSplit = paintNeedsLetterSplit(spec)
   return {
     cls,
-    html: needsSplit ? splitHsLettersHtml(rawText) : escapeHtml(rawText),
-    splitAttr: needsSplit ? ' data-hs-paint-split="1"' : '',
+    html: hsPaintNameHtml(rawText, spec),
+    splitAttr: paintNeedsSpans(spec) ? ' data-hs-paint-split="1"' : '',
   }
 }
 
@@ -53533,6 +53736,10 @@ function applyHsPaintToElement(el, userId) {
       if (c.startsWith('hsp-')) el.classList.remove(c)
     }
     el.classList.add(cls)
+    // A different spec can want a different markup SHAPE. The split marker
+    // records "already shaped", so keeping it across a spec change froze the
+    // name in the previous spec's markup.
+    delete el.dataset.hsPaintSplit
   }
   // Preserve any already-stamped mount time across the style-attribute clear
   // below — a second resolution of the same uid on an already-painted element
@@ -53546,8 +53753,8 @@ function applyHsPaintToElement(el, userId) {
   // anchor DOM-correction, a mid-flight rebuild): splitting '' is a silent
   // no-op that would still mark the node as "split" and leave it permanently
   // blank. Never touch innerHTML when there's no text to split.
-  if (paintNeedsLetterSplit(spec) && !el.dataset.hsPaintSplit && el.textContent) {
-    el.innerHTML = splitHsLettersHtml(el.textContent)
+  if (paintNeedsSpans(spec) && !el.dataset.hsPaintSplit && el.textContent) {
+    el.innerHTML = hsPaintNameHtml(el.textContent, spec)
     el.dataset.hsPaintSplit = '1'
   }
   // Mount stamp for phase-locking — restore the preserved value, or stamp a

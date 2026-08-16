@@ -95,7 +95,59 @@ const MAX_STOPS = 8
 // anywhere — these caps only apply to SAVING.
 export const FREE_MAX_EFFECTS = 0
 export const PLUS_MAX_EFFECTS = MAX_EFFECTS
-// (WCAG luminance-period guard lives in paint-core.js — MIN_LUMINANCE_PERIOD_S.)
+// (WCAG luminance-period guard lives in paint-core.js — MIN_LUMINANCE_PERIOD_S.
+//  That one bounds how fast a paint may CHANGE luminance, for photosensitivity.
+//  The floor below is the other axis: whether it can be READ while static.)
+
+// ── legibility floor ──────────────────────────────────────────────────────
+// A paint is read at 13px, on near-black, beside twenty other names, in a feed
+// that is moving. The binding constraint was never how much colour freedom to
+// hand out — it is that an unreadable name degrades the room for EVERYONE, not
+// just its owner, and a name nobody can read is not self-expression.
+//
+// So this is a save-time rule, not a hint: the builder dims sub-floor swatches
+// and the server refuses a sub-floor spec. Rendering is never gated (same
+// posture as the tier caps above), so paints saved before this existed keep
+// working — the floor applies the next time someone saves one.
+//
+// 3.0 rather than WCAG's 4.5 for body copy: names render bold, and this is a
+// nickname, not prose. It is still a floor, not a suggestion.
+export const PAINT_BG = '#0a0a0a'
+export const PAINT_MIN_CONTRAST = 3
+
+/** WCAG 2.x relative luminance of an #rrggbb string. */
+export function relativeLuminance(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+    .map((v) => v / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+/** WCAG contrast ratio between two #rrggbb strings. Order-independent. */
+export function contrastRatio(hexA, hexB) {
+  const a = relativeLuminance(hexA)
+  const b = relativeLuminance(hexB)
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+}
+
+/** True when a single colour clears the floor against the chat background. */
+export function isLegiblePaintColor(hex, bg = PAINT_BG) {
+  return HEX_RE.test(hex) && contrastRatio(hex, bg) >= PAINT_MIN_CONTRAST
+}
+
+/**
+ * A gradient is only as readable as its DIMMEST stop, so the paint is scored by
+ * the weakest one — averaging would let a bright stop launder a black one.
+ * Returns null when there is nothing valid to score.
+ */
+export function paintContrast(stops, bg = PAINT_BG) {
+  if (!Array.isArray(stops)) return null
+  const ratios = stops
+    .filter((s) => isPlainObject(s) && typeof s.color === 'string' && HEX_RE.test(s.color))
+    .map((s) => contrastRatio(s.color, bg))
+  return ratios.length ? Math.min(...ratios) : null
+}
 
 /**
  * Effect metadata table — the single source of truth for slot assignment,
@@ -288,6 +340,16 @@ export function validatePaintSpec(spec, opts = {}) {
       if (type === 'solid' && stops.length !== 1) {
         errors.push('base.type solid requires exactly 1 stop')
       }
+      // Legibility floor — scored on the DIMMEST stop, because that is the
+      // part of the name that disappears. Only runs once the stops are
+      // structurally sound, so a malformed spec reports its real problem
+      // instead of also being called unreadable.
+      const weakest = paintContrast(stops)
+      if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
+        errors.push(
+          `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`,
+        )
+      }
     }
   }
 
@@ -367,16 +429,25 @@ export function validatePaintSpec(spec, opts = {}) {
   return { ok: errors.length === 0, errors }
 }
 
-/** True if the spec needs per-letter span markup: any per-letter effect
- * (wave/ripple/tumble), OR a scene under a clip-text fill. The latter is a
+/**
+ * True if the spec animates individual glyphs — wave/ripple/tumble, the only
+ * effects whose keyframes read `--i`/`--mid`. These are the ONLY specs that
+ * may be chopped into one span per letter.
+ */
+export function paintNeedsPerLetter(spec) {
+  return !!spec && Array.isArray(spec.effects) && spec.effects.some((e) => LETTER_SPLIT_IDS.has(e?.id))
+}
+
+/** True if the painted name must carry `<span>` children at all — either
+ * per-letter (above), or a scene under a clip-text fill. The latter is a
  * paint-order constraint, not a style choice: the plate pseudos carry
  * z-index:-1, and negative-z children paint ABOVE the element's own
  * background — which with background-clip:text IS the text fill. Spans
- * paint in the inline-content phase, above the pseudos, so splitting is
+ * paint in the inline-content phase, above the pseudos, so wrapping is
  * what keeps a gradient/effect fill visible over its own scene. */
-export function paintNeedsLetterSplit(spec) {
+export function paintNeedsSpans(spec) {
   if (!spec) return false
-  if (Array.isArray(spec.effects) && spec.effects.some((e) => LETTER_SPLIT_IDS.has(e?.id))) return true
+  if (paintNeedsPerLetter(spec)) return true
   if (spec.v === 2 && isPlainObject(spec.scene)) {
     const hasPaintEffect = Array.isArray(spec.effects) && spec.effects.some((e) => EFFECTS[e?.id]?.slot === 'paint')
     return hasPaintEffect || spec.base?.type !== 'solid'
@@ -387,7 +458,7 @@ export function paintNeedsLetterSplit(spec) {
 // ── letter-split helpers (pure — shared by client renderer + server SSR) ───
 //
 // Lives here (not chat/paint-cosmetics.js) specifically so server routes can
-// import it for free alongside compilePaintCss/paintNeedsLetterSplit — this
+// import it for free alongside compilePaintCss/paintNeedsSpans — this
 // module is already server-shippable (see paint.ts's import), paint-cosmetics.js
 // is not (DOM/settingsManager/fetch). paint-cosmetics.js re-exports both names
 // so the existing client import path keeps working unchanged.
@@ -427,6 +498,53 @@ export function computeLetterSpans(text) {
 export function splitLettersHtml(rawText) {
   const { mid, letters } = computeLetterSpans(rawText)
   return letters.map(({ ch, i }) => `<span style="--i:${i};--mid:${mid}">${escapeTextHtml(ch)}</span>`).join('')
+}
+
+/**
+ * THE inner HTML of a painted username element. Every renderer — live chat's
+ * two paths, the message-element baker, the builder preview and all four SSR
+ * surfaces — goes through this one function, because the markup and the
+ * compiled CSS have to agree about what `${selector} span` will match and
+ * nine copies of the same ternary is nine chances to disagree.
+ *
+ * Three shapes, in order:
+ *   per-letter  one span per glyph carrying --i/--mid (wave/ripple/tumble).
+ *   wrapped     ONE span around the whole name. A scene needs the fill to
+ *               paint above the plate pseudo, and that is all it needs — it
+ *               used to reuse the per-letter split for this, which handed
+ *               every letter its own private copy of the gradient. A name
+ *               with a horizontal gradient (or pan/glint/chrome/gold/reveal,
+ *               which sweep along that axis) then showed six 7px-wide
+ *               gradients firing in unison instead of one moving across the
+ *               name — the single most-visible paint bug in the catalog, and
+ *               it fired on the most obvious combination there is: put on a
+ *               scene, keep your gradient.
+ *   plain       escaped text, no spans.
+ *
+ * Takes RAW text and escapes it here — never hand it pre-escaped text.
+ * @param {string} rawText
+ * @param {object|null|undefined} spec
+ */
+export function paintNameHtml(rawText, spec) {
+  return paintNameHtmlFor(rawText, paintMarkupMode(spec))
+}
+
+/** The markup shape a spec calls for: 'letters' | 'wrap' | 'none'. Renderers
+ * that cache a resolved paint (message-element bakes className + shape onto
+ * the message so an LRU eviction can't unpaint it) hold on to this string
+ * instead of the spec object. */
+export function paintMarkupMode(spec) {
+  if (paintNeedsPerLetter(spec)) return 'letters'
+  if (paintNeedsSpans(spec)) return 'wrap'
+  return 'none'
+}
+
+/** paintNameHtml with the shape already decided. Unknown modes fall through
+ * to plain escaped text — a stale baked mode can never emit raw HTML. */
+export function paintNameHtmlFor(rawText, mode) {
+  if (mode === 'letters') return splitLettersHtml(rawText)
+  if (mode === 'wrap') return `<span>${escapeTextHtml(rawText)}</span>`
+  return escapeTextHtml(rawText)
 }
 
 // ── id-space safety (paint lookup key guard) ────────────────────────────────
@@ -826,7 +944,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
       : []
   const paintEffect = effects.find((e) => EFFECTS[e.id].slot === 'paint')
   const motionEffects = effects.filter((e) => EFFECTS[e.id].slot === 'motion')
-  const needsLetterSplit = paintNeedsLetterSplit(spec)
+  const needsLetterSplit = paintNeedsSpans(spec)
 
   // Chrome cannot paint a parent's background-clip:text into TRANSFORMED
   // descendant layers — per-letter motion (wave/ripple/tumble) composites

@@ -3,7 +3,7 @@ import {
   compilePaintCss,
   EFFECTS,
   hashPaintSpec,
-  paintNeedsLetterSplit,
+  paintNeedsSpans,
   paintPhaseNow,
   validatePaintSpec,
 } from '../src/lib/paint-spec.js'
@@ -49,9 +49,12 @@ describe('validatePaintSpec — schema clamps', () => {
   })
 
   test('clamps base.angle to integer 0-360', () => {
+    // #5fafff, not #000fff: the synced compiler carries the legibility floor
+    // (a paint's DIMMEST stop must clear 3:1 against the chat background), and
+    // this fixture predated it — the ext copy had drifted behind the site.
     const stops = [
       { color: '#fff000', pos: 0 },
-      { color: '#000fff', pos: 100 },
+      { color: '#5fafff', pos: 100 },
     ]
     expect(validatePaintSpec(baseSpec({ base: { type: 'linear', angle: -1, stops } })).ok).toBe(false)
     expect(validatePaintSpec(baseSpec({ base: { type: 'linear', angle: 361, stops } })).ok).toBe(false)
@@ -212,19 +215,19 @@ describe('validatePaintSpec — luminance min-period enforcement (via compiler)'
   })
 })
 
-describe('paintNeedsLetterSplit', () => {
+describe('paintNeedsSpans', () => {
   test('true for wave/ripple/tumble', () => {
     for (const id of ['wave', 'ripple', 'tumble']) {
-      expect(paintNeedsLetterSplit(baseSpec({ effects: [{ id, speed: 1 }] }))).toBe(true)
+      expect(paintNeedsSpans(baseSpec({ effects: [{ id, speed: 1 }] }))).toBe(true)
     }
   })
   test('false for other effects and no effects', () => {
-    expect(paintNeedsLetterSplit(baseSpec())).toBe(false)
-    expect(paintNeedsLetterSplit(baseSpec({ effects: [{ id: 'heli', speed: 1 }] }))).toBe(false)
+    expect(paintNeedsSpans(baseSpec())).toBe(false)
+    expect(paintNeedsSpans(baseSpec({ effects: [{ id: 'heli', speed: 1 }] }))).toBe(false)
   })
   test('false for null/undefined spec', () => {
-    expect(paintNeedsLetterSplit(null)).toBe(false)
-    expect(paintNeedsLetterSplit(undefined)).toBe(false)
+    expect(paintNeedsSpans(null)).toBe(false)
+    expect(paintNeedsSpans(undefined)).toBe(false)
   })
 })
 

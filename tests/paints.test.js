@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { compilePaintCss, hashPaintSpec, paintNeedsLetterSplit, paintPhaseNow } from '../src/lib/paint-spec.js'
+import {
+  compilePaintCss,
+  hashPaintSpec,
+  paintMarkupMode,
+  paintNeedsSpans,
+  paintPhaseNow,
+} from '../src/lib/paint-spec.js'
 import { escapeHtml } from '../src/lib/utils.js'
 import {
   applyHsPaintToElement,
@@ -61,7 +67,7 @@ function refUsernameColor(username) {
 // applyHsPaintToElement/setHsPaintEntry ARE exercised below (the "in-place
 // application" describe block) — they need a `document` for the injected
 // paint stylesheet, so a minimal fake stands in (a style-tag look-alike +
-// a no-op head), and compilePaintCss/hashPaintSpec/paintNeedsLetterSplit
+// a no-op head), and compilePaintCss/hashPaintSpec/paintNeedsSpans
 // (normally bundle-globals from lib/paint-spec.js, per build.js's
 // readMultichatModules) are the REAL implementations. The DOM elements
 // applyHsPaintToElement itself operates on are duck-typed fakes (a real
@@ -72,7 +78,8 @@ beforeEach(() => {
   globalThis.escapeHtml = escapeHtml
   globalThis.compilePaintCss = compilePaintCss
   globalThis.hashPaintSpec = hashPaintSpec
-  globalThis.paintNeedsLetterSplit = paintNeedsLetterSplit
+  globalThis.paintNeedsSpans = paintNeedsSpans
+  globalThis.paintMarkupMode = paintMarkupMode
   globalThis.paintPhaseNow = paintPhaseNow
   globalThis.document = {
     getElementById: () => null,
@@ -84,7 +91,8 @@ afterEach(() => {
   globalThis.escapeHtml = undefined
   globalThis.compilePaintCss = undefined
   globalThis.hashPaintSpec = undefined
-  globalThis.paintNeedsLetterSplit = undefined
+  globalThis.paintNeedsSpans = undefined
+  globalThis.paintMarkupMode = undefined
   globalThis.paintPhaseNow = undefined
   globalThis.document = undefined
 })

@@ -8,11 +8,6 @@
  * behavior fork — the ext must compile the exact same CSS the site does for
  * the exact same spec, or a paint would render differently across surfaces.
  *
- * Bundled into the multichat overlay only (twitch/kick/youtube bundles) via
- * build.js's readMultichatModules — see the emoji-data.js-style embed there.
- * Not part of the universal src/lib readLib() bundle since no other content
- * script needs a CSS compiler.
- *
  * Replaces the old free-text `username_css` column (migration 078, removed).
  * A paint is authored as data (base gradient + up to 3 effect layers + glow),
  * never as a raw CSS string, so it is injection-impossible by construction:
@@ -74,6 +69,7 @@ import {
   buildSceneCss,
   normalizeSceneForHash,
   SCENE_RIM_CSS,
+  SCENE_RIM_FILTER_CSS,
   sceneHasBackdrop,
   validateSceneSpec,
 } from './scene-spec.js'
@@ -659,10 +655,21 @@ function buildBaseCss(base, stops) {
 
 // ── themed paint presets (fixed palettes, faithful port of paint-lab.html) ──
 
+// Every colour here clears PAINT_MIN_CONTRAST against PAINT_BG, and a test
+// holds them to it. They did not: chrome bottomed out at 1.92:1, fire at
+// 1.91:1 and matrix at 1.39:1 — while the validator refused to let a USER
+// save a stop that dim. matrix was the worst of it: 60% of its pattern was
+// #003300, so at name size the glyphs were near-black most of the time and
+// the effect read as a row of faint dashes. Its bands are inverted now —
+// bright phosphor with a thin dark scanline, instead of the reverse — which
+// is also what a name-sized matrix should have looked like all along (the
+// falling-glyph fantasy is the `glyphs` weather's job, not a six-glyph name).
+// A curated set that ships an unreadable paint is worse than a free picker,
+// because we chose it.
 const THEMED_PAINT = {
   chrome: {
     gradient:
-      'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #4b5563 38%, #f3f4f6 52%, #374151 70%, #d1d5db 88%, #6b7280)',
+      'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #5a6678 38%, #f3f4f6 52%, #556173 70%, #d1d5db 88%, #6b7280)',
     size: '220% 100%',
     timing: 'ease-in-out',
     direction: 'alternate',
@@ -678,7 +685,7 @@ const THEMED_PAINT = {
     keyframes: (name) => `@keyframes ${name}{to{background-position:0 0, 100% 0;}}`,
   },
   fire: {
-    gradient: 'linear-gradient(0deg, #870000, #d70000 35%, #ff8700 65%, #ffd700 90%)',
+    gradient: 'linear-gradient(0deg, #c00000, #d70000 35%, #ff8700 65%, #ffd700 90%)',
     size: '100% 300%',
     timing: 'ease-in-out',
     direction: 'alternate',
@@ -686,7 +693,7 @@ const THEMED_PAINT = {
       `@keyframes ${name}{from{background-position:0 100%;transform:skewX(0);}to{background-position:0 40%;transform:skewX(-1.5deg);}}`,
   },
   matrix: {
-    gradient: 'repeating-linear-gradient(0deg, #003300 0 6px, #00d700 6px 9px, #00ff87 9px 10px)',
+    gradient: 'repeating-linear-gradient(0deg, #00ff87 0 5px, #00d700 5px 8px, #1a7a38 8px 10px)',
     size: '100% 340%',
     timing: 'linear',
     direction: 'normal',
@@ -1020,18 +1027,29 @@ export function compilePaintCss(spec, selector, opts = {}) {
 
   // ── scene (v2 diorama — backdrop ::before / weather ::after) ──
   // Rides the exact same class/style-tag/--hsp-t pipeline as effects; static
-  // mode renders each scene's designed hero frame. When a plate is present,
-  // a uniform dark text rim keeps the name readable on every plate — but
-  // ONLY for solid-color fills: with background-clip:text the fill IS the
-  // element's background, and text-shadow paints in FRONT of it (real CSS
-  // paint order), so a rim would smother any gradient/effect-filled name.
-  // Gradient names get their separation from the plates themselves (all
-  // designed mid-to-dark) — and glow/neon carry their own halo either way.
+  // mode renders each scene's designed hero frame.
+  //
+  // Every name over a plate gets a dark rim, and that rim is the whole
+  // legibility contract: a fill that clears the 3:1 floor against the chat
+  // background clears it against its own edge too, so the plate underneath can
+  // be anything and the catalog never has to police which colour may sit on
+  // which sky. It used to reach solid fills only — a text-shadow paints in
+  // FRONT of a background-clip:text fill and would smother it — which left
+  // exactly the showy paints (gradients, pan, chrome, gold) bare on the
+  // brightest plates. drop-shadow() is built from rendered alpha, so it traces
+  // a clipped glyph and paints behind it.
+  //
+  // Skipped for glow and neon, which carry their own halo, and for the two
+  // effects a filter would break: ripple ANIMATES `filter`, so a static one
+  // would be clobbered every frame, and tumble needs `transform-style:
+  // preserve-3d`, which a filter flattens.
   if (spec.v === 2 && isPlainObject(spec.scene)) {
     css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static })
     const clipTextFill = !!paintEffect || base.type !== 'solid'
-    if (sceneHasBackdrop(spec.scene) && !clipTextFill && !spec.glow && !hasNeon) {
-      css += `${selector}{${SCENE_RIM_CSS}}`
+    const filterHostile = motionEffects.some((e) => e.id === 'ripple' || e.id === 'tumble')
+    if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
+      if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
+      else if (!filterHostile) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
     }
   }
 

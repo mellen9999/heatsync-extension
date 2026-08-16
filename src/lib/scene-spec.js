@@ -1,9 +1,9 @@
 /**
+ * Scene spec — the diorama layer of a username paint (spec v2).
+ *
  * SYNCED COPY of the heatsync monorepo's client/utils/scene-spec.js — keep
  * byte-close to the source of truth; mirror changes in both repos. Only
  * bundling adaptations belong here, never a behavior fork.
- *
- * Scene spec — the diorama layer of a username paint (spec v2).
  *
  * A scene turns the name into a three-deep composition, all inside the ONE
  * element the renderer already paints (zero DOM changes, zero new classes):
@@ -872,6 +872,23 @@ export function sceneHasBackdrop(scene) {
 /** Dark text rim — uniform across all plates (every backdrop is designed
  * mid-to-dark specifically so ONE rim rule guarantees legibility). */
 export const SCENE_RIM_CSS = 'text-shadow:0 1px 1px #000d,0 0 2px #000a;'
+
+/**
+ * The same rim for a fill that text-shadow cannot reach.
+ *
+ * With `background-clip:text` the glyph colour IS the element's background and
+ * the text itself is transparent, so a text-shadow paints in FRONT of the fill
+ * and smothers it — which is why gradient and effect-filled names used to get
+ * no rim at all, and were left to fend for themselves on whatever plate they
+ * sat on. A `drop-shadow()` filter is built from the element's rendered ALPHA,
+ * so on a clip-text fill it traces the glyph outline and paints behind it.
+ *
+ * This is what lets the plates stay free: a name that clears the 3:1 floor
+ * against the chat background clears it against its own dark edge too, on any
+ * backdrop, without the catalog having to police which colour may sit on which
+ * sky.
+ */
+export const SCENE_RIM_FILTER_CSS = 'filter:drop-shadow(0 1px 1px #000d) drop-shadow(0 0 2px #000a);'
 
 // ── builder-UI metadata (labels + variant names only — no CSS leaks out) ───
 

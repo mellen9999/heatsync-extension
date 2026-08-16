@@ -365,7 +365,7 @@ describe('compilePaintCss — structural checks', () => {
       /animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\), calc\(var\(--i\)[^;]*mod\(var\(--hsp-t, 0s\)[^;]*\);/,
     )
     // Paint decls (background/clip) must still be present — not clobbered.
-    expect(rule).toContain('background:linear-gradient(0deg, #870000')
+    expect(rule).toContain('background:linear-gradient(0deg, #c00000')
     expect(rule).toContain('background-clip:text')
   })
 

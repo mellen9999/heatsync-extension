@@ -952,6 +952,8 @@
       padding: 4px 14px;
     }
     .hs-mc-mode-btn {
+      /* see .hs-mc-size-btn — a <button> needs this stated */
+      font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
       background: rgba(255,255,255,0.06);
@@ -1092,6 +1094,10 @@
       padding: 2px;
     }
     .hs-mc-size-btn {
+      /* buttons do not inherit font-family — without this the size labels
+         render in the UA's Arial inside an otherwise all-Cozette panel, on
+         fractional advances. Same defect as .hs-mc-reply-btn. */
+      font-family: inherit;
       white-space: nowrap !important;
       padding: 4px 10px !important;
       background: transparent !important;

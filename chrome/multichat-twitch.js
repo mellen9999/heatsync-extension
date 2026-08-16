@@ -11508,6 +11508,15 @@ function injectStyles() {
     .hs-mc-msg[data-msg-id] {
       position: relative;
     }
+    /* font-family is LOAD-BEARING: a <button> does not inherit it, so without
+       this the chip renders its glyph in the UA's Arial. That is not just the
+       wrong face — Arial's advance for ↩ is 10.9063px, so the chip's width was
+       fractional, and a right-anchored box of fractional width starts on a
+       fractional X. Every glyph inside it then smears, which is what a bitmap
+       face cannot survive. Cozette carries both ↩ (U+21A9) and » at a 6px
+       advance, so following the single font setting makes the chip exactly
+       16px and lands the glyph on the pixel grid. The right: offsets below
+       were always written for that 16px chip. */
     .hs-mc-reply-btn {
       display: none;
       position: absolute;
@@ -11516,6 +11525,7 @@ function injectStyles() {
       background: #000;
       border: 1px solid #808080;
       color: #fff;
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -11544,6 +11554,8 @@ function injectStyles() {
       background: #000;
       border: 1px solid #808080;
       color: #fff;
+      /* same reason as .hs-mc-reply-btn — see the note there */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -11586,7 +11598,9 @@ function injectStyles() {
       color: #fff;
       border: 1px solid #808080;
       border-right: 0;
-      font: 13px/18px 'CozetteVector', monospace;
+      /* follows the single font setting like every other chip in a row, rather
+         than pinning Cozette behind the user's back */
+      font: 13px/18px var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       user-select: none;
       height: 20px;
     }
@@ -11594,7 +11608,14 @@ function injectStyles() {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 22px;
+      /* content-box, and an EVEN runway. Centring only lands on the pixel grid
+         when (runway - text width) is even, and a monospace cell is always
+         even (6px in Cozette) whatever the label length. The old border-box
+         22px subtracted 10px of padding and the 1px divider, leaving an 11px
+         runway — so every button but the last (which has no divider) centred
+         its glyph on a half pixel and smeared it. */
+      box-sizing: content-box;
+      min-width: 12px;
       padding: 0 5px;
       background: #000;
       color: #fff;
@@ -11602,7 +11623,10 @@ function injectStyles() {
       border-right: 1px solid #808080;
       font: inherit;
       cursor: pointer;
-      line-height: 1;
+      /* no line-height:1 — the same even-runway rule as the width, on the other
+         axis. A 13px line box centred in the toolbar's 18px content height
+         leaves 5px to split, so the glyph sat on a half pixel. Inheriting the
+         toolbar's 18px line-height fills the box exactly instead. */
     }
     .hs-mod-btn:last-child { border-right: 0; }
     .hs-mod-btn:hover { background: #fff; color: #000; }
@@ -12465,6 +12489,8 @@ function injectStyles() {
     #hs-mc-idwarn a { color: var(--hs-danger); text-decoration: underline; }
     #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 600; }
     #hs-mc-idwarn button {
+      /* see .hs-mc-reply-btn — a <button> needs font-family stated */
+      font-family: inherit;
       flex: none;
       width: 18px;
       height: 18px;
@@ -16103,6 +16129,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 4px 14px;
     }
     .hs-mc-mode-btn {
+      /* see .hs-mc-size-btn — a <button> needs this stated */
+      font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
       background: rgba(255,255,255,0.06);
@@ -16243,6 +16271,10 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 2px;
     }
     .hs-mc-size-btn {
+      /* buttons do not inherit font-family — without this the size labels
+         render in the UA's Arial inside an otherwise all-Cozette panel, on
+         fractional advances. Same defect as .hs-mc-reply-btn. */
+      font-family: inherit;
       white-space: nowrap !important;
       padding: 4px 10px !important;
       background: transparent !important;
@@ -67490,7 +67522,16 @@ const STORAGE_KEY = 'heatsync_multichat'
       // universal white-bg/black-text hover, same as the inline DM rows.
       // YT events are skipped: a display name gives no reliable channel URL, so
       // a guessed twitch.tv link would be worse than not being clickable.
-      if (!isYtEvent && ch) {
+      //
+      // Only rows whose subject IS the channel get it. `ch` above prefers
+      // m.actor, which is set on exactly the rows where the name is NOT a
+      // channel — a channel-point redeem carries the redeemer, a 7TV banner the
+      // editor. Those rows were opening twitch.tv/<some viewer> and, worse,
+      // wearing the white hover plate the whole time they sat there, which
+      // advertises a destination on a line that is a notice, not a link. A row
+      // announcing that someone redeemed something is not a shortcut to
+      // anywhere; the redeemer's own name is still a link for whoever wants it.
+      if (!isYtEvent && ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
         div.title = `open ${ch} on twitch`

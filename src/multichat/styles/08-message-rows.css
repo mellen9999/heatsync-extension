@@ -222,6 +222,15 @@
     .hs-mc-msg[data-msg-id] {
       position: relative;
     }
+    /* font-family is LOAD-BEARING: a <button> does not inherit it, so without
+       this the chip renders its glyph in the UA's Arial. That is not just the
+       wrong face — Arial's advance for ↩ is 10.9063px, so the chip's width was
+       fractional, and a right-anchored box of fractional width starts on a
+       fractional X. Every glyph inside it then smears, which is what a bitmap
+       face cannot survive. Cozette carries both ↩ (U+21A9) and » at a 6px
+       advance, so following the single font setting makes the chip exactly
+       16px and lands the glyph on the pixel grid. The right: offsets below
+       were always written for that 16px chip. */
     .hs-mc-reply-btn {
       display: none;
       position: absolute;
@@ -230,6 +239,7 @@
       background: #000;
       border: 1px solid #808080;
       color: #fff;
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -258,6 +268,8 @@
       background: #000;
       border: 1px solid #808080;
       color: #fff;
+      /* same reason as .hs-mc-reply-btn — see the note there */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -300,7 +312,9 @@
       color: #fff;
       border: 1px solid #808080;
       border-right: 0;
-      font: 13px/18px 'CozetteVector', monospace;
+      /* follows the single font setting like every other chip in a row, rather
+         than pinning Cozette behind the user's back */
+      font: 13px/18px var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       user-select: none;
       height: 20px;
     }
@@ -308,7 +322,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 22px;
+      /* content-box, and an EVEN runway. Centring only lands on the pixel grid
+         when (runway - text width) is even, and a monospace cell is always
+         even (6px in Cozette) whatever the label length. The old border-box
+         22px subtracted 10px of padding and the 1px divider, leaving an 11px
+         runway — so every button but the last (which has no divider) centred
+         its glyph on a half pixel and smeared it. */
+      box-sizing: content-box;
+      min-width: 12px;
       padding: 0 5px;
       background: #000;
       color: #fff;
@@ -316,7 +337,10 @@
       border-right: 1px solid #808080;
       font: inherit;
       cursor: pointer;
-      line-height: 1;
+      /* no line-height:1 — the same even-runway rule as the width, on the other
+         axis. A 13px line box centred in the toolbar's 18px content height
+         leaves 5px to split, so the glyph sat on a half pixel. Inheriting the
+         toolbar's 18px line-height fills the box exactly instead. */
     }
     .hs-mod-btn:last-child { border-right: 0; }
     .hs-mod-btn:hover { background: #fff; color: #000; }
@@ -1179,6 +1203,8 @@
     #hs-mc-idwarn a { color: var(--hs-danger); text-decoration: underline; }
     #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 600; }
     #hs-mc-idwarn button {
+      /* see .hs-mc-reply-btn — a <button> needs font-family stated */
+      font-family: inherit;
       flex: none;
       width: 18px;
       height: 18px;

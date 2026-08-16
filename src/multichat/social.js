@@ -1037,7 +1037,13 @@ function listenForSocialEvents() {
       // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
       {
         const sentHost = peekSentHost(ytMsg.text)
-        if (sentHost) ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+        if (sentHost) {
+          ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+          // YouTube has no reply threading, so the bar can ONLY come from what
+          // we remembered at send time — the @mention prepend is all that ships
+          // on the wire. Same ownership proof as twitch/kick.
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(ytMsg)
+        }
       }
 
       // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats

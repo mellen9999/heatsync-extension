@@ -14475,10 +14475,7 @@
           // Restore the reply bar on our own echo when the winning transport
           // dropped the reply-parent tags (see rememberOwnReply). sentHost hit
           // already proves this is our ext send, so no stranger can be stamped.
-          if (!msg.replyTo) {
-            const _ownReply = typeof peekOwnReply === 'function' ? peekOwnReply(msg.text) : null
-            if (_ownReply?.user) msg.replyTo = _ownReply
-          }
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
       // Automod + filter rules: drop messages matching filter. Own msgs exempt.
@@ -14576,6 +14573,9 @@
           // Kick origin — badges look up in kickBadgeUrls.
           msg.badgePlatform = 'kick'
           msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+          // Kick's echo of our own send carries no reply payload, so the bar
+          // only exists if we put it back. Same ownership proof as twitch.
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
       const _frOwnKi = msg.user?.toLowerCase() === currentUsername?.toLowerCase()

@@ -37464,7 +37464,13 @@ function listenForSocialEvents() {
       // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
       {
         const sentHost = peekSentHost(ytMsg.text)
-        if (sentHost) ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+        if (sentHost) {
+          ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+          // YouTube has no reply threading, so the bar can ONLY come from what
+          // we remembered at send time — the @mention prepend is all that ships
+          // on the wire. Same ownership proof as twitch/kick.
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(ytMsg)
+        }
       }
 
       // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats
@@ -41714,6 +41720,21 @@ function peekOwnReply(echoText) {
     if (_echoTextMatches({ text: e.text, reply: true }, echoText)) return e.replyTo
   }
   return null
+}
+
+// Stamp the reply bar back onto our own echo, for every read transport on every
+// platform. Twitch's tagged copy only sometimes wins the race; kick's echo of
+// our own send carries no reply payload; youtube has no reply threading at all.
+// One helper so the three message handlers cannot drift — they did, and the two
+// that never had it were why a reply sent on kick or youtube rendered bare.
+//
+// The CALLER must already have proved this echo is ours (a peekSentHost hit —
+// text alone is not ownership, or a stranger repeating your line gets your
+// reply bar). Never overwrites a replyTo the transport did carry.
+function restoreOwnReplyBar(msg) {
+  if (!msg || msg.replyTo) return
+  const own = peekOwnReply(msg.text)
+  if (own?.user) msg.replyTo = own
 }
 
 // ============================================
@@ -49839,18 +49860,35 @@ async function sendMessage() {
   // real replyParentId and never see this text.
   const replyAuthor = replyState?.user || null
   // Stash the parent context for the own-echo reply bar (see peekOwnReply).
-  // Resolve parent text/userId from the twitch buffer best-effort — a miss
-  // still yields a correct bar from the author name alone. Must run BEFORE
-  // clearReplyState() wipes replyState.
-  if (replyParentId && sendToTwitch) {
+  // Resolve parent text/userId from whichever buffer holds the parent —
+  // best-effort, a miss still yields a correct bar from the author name alone.
+  // Must run BEFORE clearReplyState() wipes replyState.
+  //
+  // NOT gated on the twitch leg. It used to be, and that was the whole reason a
+  // reply sent on kick or youtube came back with no bar on your own message:
+  // kick's echo of our own send carries no reply payload and youtube has no
+  // reply threading at all, so those legs have NOTHING to render the bar from
+  // except what we remember here. Whether we replied is a fact about the send,
+  // not about which chat it went to.
+  //
+  // Keyed on restText, not twitchText: `/me` wraps twitchText in CTCP ACTION,
+  // which no echo ever carries back (irc.js unwraps it, kick/youtube never had
+  // it) — so a /me reply missed its own bar on every leg including twitch.
+  if (replyParentId) {
     let _parent = null
     try {
-      _parent = irc?.channels
-        ?.get((twitchName || '').toLowerCase())
-        ?.getAll?.()
-        .find((m) => m?.id === replyParentId)
+      _parent =
+        irc?.channels
+          ?.get((twitchName || '').toLowerCase())
+          ?.getAll?.()
+          .find((m) => m?.id === replyParentId) ||
+        kickChat?.channels
+          ?.get(kickSlug || targetChannel)
+          ?.getAll?.()
+          .find((m) => m?.id === replyParentId) ||
+        null
     } catch (_) {}
-    rememberOwnReply(twitchText, {
+    rememberOwnReply(restText, {
       user: replyAuthor || _parent?.user || '',
       text: _parent?.text || '',
       id: replyParentId,
@@ -74554,10 +74592,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           // Restore the reply bar on our own echo when the winning transport
           // dropped the reply-parent tags (see rememberOwnReply). sentHost hit
           // already proves this is our ext send, so no stranger can be stamped.
-          if (!msg.replyTo) {
-            const _ownReply = typeof peekOwnReply === 'function' ? peekOwnReply(msg.text) : null
-            if (_ownReply?.user) msg.replyTo = _ownReply
-          }
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
       // Automod + filter rules: drop messages matching filter. Own msgs exempt.
@@ -74655,6 +74690,9 @@ const STORAGE_KEY = 'heatsync_multichat'
           // Kick origin — badges look up in kickBadgeUrls.
           msg.badgePlatform = 'kick'
           msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+          // Kick's echo of our own send carries no reply payload, so the bar
+          // only exists if we put it back. Same ownership proof as twitch.
+          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
       const _frOwnKi = msg.user?.toLowerCase() === currentUsername?.toLowerCase()

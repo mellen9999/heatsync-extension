@@ -358,6 +358,21 @@ function peekOwnReply(echoText) {
   return null
 }
 
+// Stamp the reply bar back onto our own echo, for every read transport on every
+// platform. Twitch's tagged copy only sometimes wins the race; kick's echo of
+// our own send carries no reply payload; youtube has no reply threading at all.
+// One helper so the three message handlers cannot drift — they did, and the two
+// that never had it were why a reply sent on kick or youtube rendered bare.
+//
+// The CALLER must already have proved this echo is ours (a peekSentHost hit —
+// text alone is not ownership, or a stranger repeating your line gets your
+// reply bar). Never overwrites a replyTo the transport did carry.
+function restoreOwnReplyBar(msg) {
+  if (!msg || msg.replyTo) return
+  const own = peekOwnReply(msg.text)
+  if (own?.user) msg.replyTo = own
+}
+
 // ============================================
 // PENDING-SEND TRACKER — round-trip confirmation
 // ============================================
@@ -8481,18 +8496,35 @@ async function sendMessage() {
   // real replyParentId and never see this text.
   const replyAuthor = replyState?.user || null
   // Stash the parent context for the own-echo reply bar (see peekOwnReply).
-  // Resolve parent text/userId from the twitch buffer best-effort — a miss
-  // still yields a correct bar from the author name alone. Must run BEFORE
-  // clearReplyState() wipes replyState.
-  if (replyParentId && sendToTwitch) {
+  // Resolve parent text/userId from whichever buffer holds the parent —
+  // best-effort, a miss still yields a correct bar from the author name alone.
+  // Must run BEFORE clearReplyState() wipes replyState.
+  //
+  // NOT gated on the twitch leg. It used to be, and that was the whole reason a
+  // reply sent on kick or youtube came back with no bar on your own message:
+  // kick's echo of our own send carries no reply payload and youtube has no
+  // reply threading at all, so those legs have NOTHING to render the bar from
+  // except what we remember here. Whether we replied is a fact about the send,
+  // not about which chat it went to.
+  //
+  // Keyed on restText, not twitchText: `/me` wraps twitchText in CTCP ACTION,
+  // which no echo ever carries back (irc.js unwraps it, kick/youtube never had
+  // it) — so a /me reply missed its own bar on every leg including twitch.
+  if (replyParentId) {
     let _parent = null
     try {
-      _parent = irc?.channels
-        ?.get((twitchName || '').toLowerCase())
-        ?.getAll?.()
-        .find((m) => m?.id === replyParentId)
+      _parent =
+        irc?.channels
+          ?.get((twitchName || '').toLowerCase())
+          ?.getAll?.()
+          .find((m) => m?.id === replyParentId) ||
+        kickChat?.channels
+          ?.get(kickSlug || targetChannel)
+          ?.getAll?.()
+          .find((m) => m?.id === replyParentId) ||
+        null
     } catch (_) {}
-    rememberOwnReply(twitchText, {
+    rememberOwnReply(restText, {
       user: replyAuthor || _parent?.user || '',
       text: _parent?.text || '',
       id: replyParentId,

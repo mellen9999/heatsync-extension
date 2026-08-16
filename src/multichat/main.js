@@ -7322,7 +7322,16 @@
       // universal white-bg/black-text hover, same as the inline DM rows.
       // YT events are skipped: a display name gives no reliable channel URL, so
       // a guessed twitch.tv link would be worse than not being clickable.
-      if (!isYtEvent && ch) {
+      //
+      // Only rows whose subject IS the channel get it. `ch` above prefers
+      // m.actor, which is set on exactly the rows where the name is NOT a
+      // channel — a channel-point redeem carries the redeemer, a 7TV banner the
+      // editor. Those rows were opening twitch.tv/<some viewer> and, worse,
+      // wearing the white hover plate the whole time they sat there, which
+      // advertises a destination on a line that is a notice, not a link. A row
+      // announcing that someone redeemed something is not a shortcut to
+      // anywhere; the redeemer's own name is still a link for whoever wants it.
+      if (!isYtEvent && ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
         div.title = `open ${ch} on twitch`

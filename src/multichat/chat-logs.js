@@ -21,21 +21,59 @@ let _clLoadMoreObs = null
 const HS_CL_PAGE = 100
 const HS_CL_PUBLIC_ORIGIN = 'https://heatsync.org'
 
-// Build a public /logs/ permalink for a row. Returns null when fields missing.
+// HS_LOG_PLATFORMS (the platforms the archive stores) lives in feed-embed.js —
+// that file is concatenated BEFORE this one, and a const referenced from an
+// earlier file would still be in its temporal dead zone.
+
+// Build a public /logs/ permalink out of the four things that identify one
+// archived line. THE canonical builder — the archive viewer, the live-row
+// permalink and the thread composer all mint their URLs here.
+//
 // URL shape mirrors server/routes/chat-log-permalinks.ts:
 //   /logs/<platform>/<channel>/<yyyy-mm-dd>?m=<message_id>
-// Anchoring is best-effort; channel-day URL still resolves when message_id absent.
-function buildChatLogPermalink(r) {
-  if (!activeChatLogs) return null
-  const platform = activeChatLogs.platform
-  const channel = r.channel || activeChatLogs.channel
-  if (!platform || !channel || !r.timestamp) return null
-  const d = new Date(r.timestamp)
+//
+// The date is the UTC day (the archive partitions on it), taken from the
+// message's own timestamp — never from "now", which is a different day for
+// anyone reading chat across UTC midnight. It only picks the PAGE: the
+// resolver keys off (platform, channel, message_id) and ignores the date
+// entirely, so a message whose archived timestamp lands a few hundred ms the
+// other side of midnight still quotes correctly, it just anchors on the
+// neighbouring day. `m` is best-effort — the channel-day URL is a real page
+// on its own when the id is missing.
+function buildLogPermalink({ platform, channel, messageId, time }) {
+  const p = (platform || '').toLowerCase()
+  const c = (channel || '').toLowerCase().replace(/^#/, '')
+  if (!HS_LOG_PLATFORMS.has(p) || !c || !time) return null
+  const d = new Date(time)
   if (Number.isNaN(d.getTime())) return null
   const ymd = d.toISOString().slice(0, 10)
-  let url = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(platform)}/${encodeURIComponent(channel)}/${ymd}`
-  if (r.message_id) url += `?m=${encodeURIComponent(r.message_id)}`
+  let url = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
+  if (messageId) url += `?m=${encodeURIComponent(messageId)}`
   return url
+}
+
+// Archive-viewer row → permalink. Channel falls back to the view's channel
+// (the all-channels view carries it per-row instead).
+function buildChatLogPermalink(r) {
+  if (!activeChatLogs) return null
+  return buildLogPermalink({
+    platform: activeChatLogs.platform,
+    channel: r.channel || activeChatLogs.channel,
+    messageId: r.message_id,
+    time: r.timestamp,
+  })
+}
+
+// Live chat row → permalink. Reads the identity the row already carries; the
+// row stamps data-msg-time for exactly this (see main.js).
+function buildRowPermalink(row) {
+  if (!row) return null
+  return buildLogPermalink({
+    platform: row.dataset.msgPlatform,
+    channel: row.dataset.msgChannel,
+    messageId: row.dataset.msgId,
+    time: Number(row.dataset.msgTime) || 0,
+  })
 }
 
 async function copyChatLogPermalink(btn, r) {

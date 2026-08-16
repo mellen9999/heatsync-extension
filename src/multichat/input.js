@@ -2226,11 +2226,24 @@ function initInput() {
     )
   }
 
-  // Thread button click → seed the composer with the /op command and the quote.
-  // A native twitch/kick message has no heatsync id, so it can never be a
-  // reply_to target — quoting it into a NEW top-level thread is the only honest
-  // on-ramp. Seeding (not sending) keeps the user in control of what gets
-  // published under their name, and shows them the command exists.
+  // Thread button click → seed the composer with the /op command and a citation
+  // of the message. A native twitch/kick message has no heatsync id, so it can
+  // never be a reply_to target — quoting it into a NEW top-level thread is the
+  // only honest on-ramp. Seeding (not sending) keeps the user in control of what
+  // gets published under their name, and shows them the command exists.
+  //
+  // The citation is the /logs permalink, not the text. heatsync archives the
+  // line, so the post can point AT the original instead of carrying a retyped
+  // copy: both heatsync.org and the panel resolve the link back into the real
+  // chat line — the author, the time, the emotes, the channel — and a reader
+  // can click through to the surrounding log. A pasted copy is a claim about
+  // what someone said; the permalink is the receipt. That is the whole point of
+  // quoting someone else's words, and a copy sitting next to the receipt would
+  // only give the two a way to disagree.
+  //
+  // Falls back to the quoted text when the line cannot be cited — a row with no
+  // archived platform, channel or send time. Better a soft quote than a link to
+  // a page that was never going to hold the message.
   if (!_onceGuardsInput.threadHandler) {
     _onceGuardsInput.threadHandler = true
     document.addEventListener(
@@ -2240,12 +2253,13 @@ function initInput() {
         if (!btn) return
         const msg = btn.closest('.hs-mc-msg')
         if (!msg) return
+        const permalink = buildRowPermalink(msg)
         const quoted = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim()
-        if (!quoted) return
+        if (!permalink && !quoted) return
         showInputBar()
         const input = document.getElementById('hs-mc-input')
         if (!input) return
-        const seed = `/op "${quoted}" — ${msg.dataset.msgUser || ''} `
+        const seed = permalink ? `/op ${permalink} ` : `/op "${quoted}" — ${msg.dataset.msgUser || ''} `
         input.focus()
         // Append at the caret-end rather than overwriting: a half-typed message
         // in the composer is the user's, and silently eating it to make room

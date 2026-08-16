@@ -229,9 +229,50 @@ function instagramEmbed(url) {
 }
 
 // Convert a single URL → embed HTML, or '' if not embeddable
+// Platforms the archive stores — everything else has no /logs surface at all,
+// so a permalink for one would point at a page that can never hold it. Declared
+// here rather than next to buildLogPermalink in chat-logs.js because that file
+// is concatenated LATER: a const read from an earlier file is still in its
+// temporal dead zone, and `typeof` does not save you from that one.
+const HS_LOG_PLATFORMS = new Set(['twitch', 'kick', 'youtube'])
+
+// A heatsync chat-log permalink, split into the three things that identify the
+// line. Mirrors the site's logResolveEndpoint (client/embed/embed-resolver.js).
+// The date segment is deliberately ignored: the archive resolves on
+// (platform, channel, message_id), so the day in the URL only picks which log
+// PAGE a click-through lands on — see buildLogPermalink in chat-logs.js.
+function logPermalinkParts(url) {
+  try {
+    const u = new URL(url)
+    if (!/(^|\.)heatsync\.org$/.test(u.hostname)) return null
+    const seg = u.pathname.split('/') // ['', 'logs', platform, channel, date]
+    if (seg[1] !== 'logs' || seg.length < 5) return null
+    const platform = (seg[2] || '').toLowerCase()
+    const channel = (seg[3] || '').toLowerCase()
+    const messageId = u.searchParams.get('m')
+    if (!messageId || !channel || !HS_LOG_PLATFORMS.has(platform)) return null
+    return { platform, channel, messageId }
+  } catch (_) {
+    return null
+  }
+}
+
+// First-party quoted chat line. Resolves through the archive API, NOT the
+// third-party embed resolver — see _fetchFeedResolve.
+function logEmbed(url) {
+  const safe = safeUrl(url)
+  if (!safe) return ''
+  return `<div class="hs-feed-embed-pending hs-feed-embed-log" data-resolve-url="${attr(safe)}" data-resolve-platform="log">
+    <span class="hs-feed-embed-pending-label">loading chat line…</span>
+  </div>`
+}
+
 function parseFeedEmbed(url) {
   if (!url || typeof url !== 'string') return ''
   const cleanUrl = url.replace(/[.,;!?]+$/, '')
+
+  // heatsync chat-log permalink → the actual quoted chat line (post↔log bridge)
+  if (logPermalinkParts(cleanUrl)) return logEmbed(cleanUrl)
 
   // YouTube
   if (cleanUrl.includes('youtube.com/watch?v=') || cleanUrl.includes('youtu.be/')) {
@@ -349,8 +390,10 @@ function parseFeedEmbed(url) {
 // Extract first embeddable URL from message content (OP only, mirrors website)
 function extractFeedEmbed(content) {
   if (!content || typeof content !== 'string') return ''
-  // Same priority order as website _extractEmbed
+  // Same priority order as website _extractEmbed, with the first-party chat-log
+  // permalink ahead of everything: it is the one embed that IS the post's point.
   const priorityPatterns = [
+    /https?:\/\/(?:[\w-]+\.)?heatsync\.org\/logs\/\w+\/[\w-]+\/[\d-]+\?m=[^\s]+/,
     /https?:\/\/(?:www\.)?streamable\.com\/\w+/,
     /https?:\/\/(?:www\.)?youtu(?:\.be\/|be\.com\/watch\?v=)[\w-]+/,
     /https?:\/\/clips\.twitch\.tv\/[\w-]+/,
@@ -418,6 +461,10 @@ function chatEmbedForUrl(rawUrl) {
   }
   const safe = safeUrl(cleanUrl)
   if (!safe) return ''
+  // heatsync chat-log permalink → the quoted line, in chat too. First-party and
+  // text-weight: no iframe, no third-party fetch, so the chat-volume rule above
+  // is not in play.
+  if (logPermalinkParts(cleanUrl)) return logEmbed(cleanUrl)
   // Direct image / gif → inline, lazy, error-guarded (data-fb hides on 404/blocked).
   // data-hs-src-url lets the row fold the raw URL out of the message text: the
   // image IS the content, so the link adds nothing but noise. Only direct media
@@ -557,6 +604,17 @@ function _fetchFeedResolve(url) {
   // page-origin CORS, but the SW has full host_permissions and bypasses it.
   const promise = (async () => {
     try {
+      // First-party chat-log permalink → the archive, not the third-party embed
+      // resolver. A miss (cold-stored, soft-deleted, never archived, or an
+      // opted-out channel/chatter) resolves to null, and the placeholder falls
+      // back to a plain link — the same degradation heatsync.org chose.
+      const parts = logPermalinkParts(url)
+      if (parts) {
+        const path = `/api/archive/message/${encodeURIComponent(parts.platform)}/${encodeURIComponent(parts.channel)}?id=${encodeURIComponent(parts.messageId)}`
+        const resp = await apiFetch(path)
+        const row = resp?.ok ? resp.data?.message : null
+        return row ? { type: 'chatlog', ...row } : null
+      }
       const data = await safeSendMessage({ type: 'fetch_embed_resolve', url })
       if (!data || data.error || data.ok === false) return null
       return data
@@ -586,6 +644,23 @@ function _buildFeedResolvedHtml(ph, data) {
   const safeMedia = attr(safeUrl(data.mediaUrl || ''))
   const safeMediaImg = attr(hsProxyImg(safeUrl(data.mediaUrl || '')))
   const safePlat = attr(platform)
+
+  // Quoted chat line. The body is left EMPTY on purpose: the message text is
+  // rendered as DOM by appendChatLogBody (the archive viewer's renderer) right
+  // after the swap, so the archive's emotes, the blocked-emote gate and the
+  // hashtag handling all behave exactly as they do everywhere else — and the
+  // server's message_html never has to be trusted as markup inside a content
+  // script running on twitch.tv.
+  if (data.type === 'chatlog') {
+    const who = attr(data.display_name || data.username || '')
+    const when = data.timestamp ? new Date(data.timestamp) : null
+    const stamp = when && !Number.isNaN(when.getTime()) ? formatTimeFromTs(when.getTime()) : ''
+    const where = attr(`${data.platform || ''}/${data.channel || ''}`)
+    return `<a class="hs-log-embed" href="${safeUrlStr}" target="_blank" rel="noopener">
+      <span class="hs-log-embed-meta"><span class="hs-log-embed-where">${where}</span><span class="hs-log-embed-when">${attr(stamp)}</span></span>
+      <span class="hs-log-embed-line"><span class="hs-log-embed-user">${who}</span><span class="hs-log-embed-body"></span></span>
+    </a>`
+  }
 
   if (data.type === 'image' && data.mediaUrl) {
     return `<a href="${safeUrlStr}" target="_blank" rel="noopener" class="hs-feed-embed-rich-imglink">
@@ -683,8 +758,15 @@ function resolvePendingFeedEmbeds(root) {
       if (!ph.isConnected) return
       if (data && !data.error) {
         const html = _buildFeedResolvedHtml(ph, data)
-        if (html) _swapPlaceholder(ph, html, 'hs-feed-embed-resolved')
-        else _swapPlaceholder(ph, _buildFeedResolveFailedHtml(ph), 'hs-feed-embed-resolve-failed')
+        if (html) {
+          _swapPlaceholder(ph, html, 'hs-feed-embed-resolved')
+          // Quoted chat line: fill the body with the archive viewer's own
+          // renderer rather than server markup (see the chatlog branch).
+          if (data.type === 'chatlog') {
+            const body = ph.querySelector('.hs-log-embed-body')
+            if (body) appendChatLogBody(body, data)
+          }
+        } else _swapPlaceholder(ph, _buildFeedResolveFailedHtml(ph), 'hs-feed-embed-resolve-failed')
       } else {
         _swapPlaceholder(ph, _buildFeedResolveFailedHtml(ph), 'hs-feed-embed-resolve-failed')
       }

@@ -1198,3 +1198,50 @@
     .hs-modlog-unban .hs-modlog-body,
     .hs-modlog-untimeout .hs-modlog-body { color: var(--hs-ok); }
     .hs-modlog-delete .hs-modlog-body { color: #9e9e9e; }
+
+    /* Quoted chat line (the post↔log bridge). A post that cites a chat message
+       resolves the /logs permalink back into the real line: who said it, when,
+       in which channel, with the emotes they actually used. Cyan is the quote
+       accent from the palette — the same one reply context and whispers use.
+       The whole card is the anchor, so the click-through to the surrounding log
+       is the obvious action; hover is the universal white plate. */
+    .hs-log-embed {
+      display: block;
+      margin: 4px 0 0;
+      padding: 3px 6px;
+      border-left: 2px solid var(--hs-reply-dim);
+      background: rgba(0, 255, 255, 0.05);
+      color: #ddd;
+      font-size: 13px;
+      line-height: 18px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-log-embed:hover {
+      background: #fff;
+      color: #000;
+      border-left-color: #000;
+    }
+    .hs-log-embed-meta {
+      display: flex;
+      gap: 6px;
+      color: #808080;
+      font-size: 13px;
+    }
+    .hs-log-embed:hover .hs-log-embed-meta { color: #000; }
+    .hs-log-embed-when { font-variant-numeric: tabular-nums; }
+    .hs-log-embed-line { display: block; word-break: break-word; }
+    .hs-log-embed-user {
+      color: var(--hs-reply);
+      margin-right: 4px;
+    }
+    .hs-log-embed-user::after { content: ':'; }
+    .hs-log-embed:hover .hs-log-embed-user { color: #000; }
+    /* Archive emotes ride the same rail as every other inline emote — bitmap
+       rows keep their integer baseline (see the vertical-align note in
+       10-emotes.css). */
+    .hs-log-embed .hs-cl-emote {
+      height: 18px;
+      width: auto;
+      vertical-align: text-bottom;
+    }

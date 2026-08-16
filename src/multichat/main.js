@@ -8102,6 +8102,10 @@
       div.dataset.msgLogin = m.login || m.user || ''
       div.dataset.msgChannel = m.channel || ''
       div.dataset.msgPlatform = m.platform || ''
+      // Send time (tmi-sent-ts / the platform's own stamp), not receive time —
+      // it picks the UTC day in a /logs permalink, and the archive stores the
+      // same value. Without it a row can be identified but not cited.
+      if (m.time) div.dataset.msgTime = String(m.time)
       // Mark self-messages so the mod hover toolbar can skip them without
       // re-deriving currentUsername (which may be null pre-auth). Inlined
       // compare — the `isOwn` const above is scoped to the !_renderedHtml

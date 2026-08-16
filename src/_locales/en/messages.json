@@ -1177,6 +1177,12 @@
   "mc_settings_animate_emotes_desc": {
     "message": "always plays animated emotes. hover shows static frames until the pointer is on a message — big cpu/ram saver on busy channels. never is fully static. multichat messages; picker stays animated."
   },
+  "mc_settings_animate_paints": {
+    "message": "animate paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always plays the motion in name paints — yours and everyone else's. never freezes them flat. this follows the setting, not your browser's reduced-motion flag."
+  },
   "mc_settings_chatterino_badges": {
     "message": "chatterino badges"
   },

@@ -224,14 +224,27 @@ function ensureHsPaintSheet() {
   if (!hsPaintSheetEl) {
     hsPaintSheetEl = document.createElement('style')
     hsPaintSheetEl.id = 'hs-mc-paints'
-    // Single kill-switch: every hsp_* animation pauses under reduced motion,
-    // regardless of how many per-hash rules get appended after this.
-    // animation-delay:0s too: paints are paused-not-removed under reduced
-    // motion, and the phase-lock delay (--hsp-t fold, see lib/paint-spec.js
-    // syncDelayCalc) would otherwise freeze each copy at a different
-    // mid-cycle pose — zeroing it pins every paused paint at frame 0.
+    // Single kill-switch: every hsp_* animation pauses when the user turns
+    // paint motion off, regardless of how many per-hash rules get appended.
+    //
+    // Gated on the animatePaints SETTING, not prefers-reduced-motion — the same
+    // call already made for emote modifiers (see 10-emotes.css). A paint is
+    // content its owner chose and paid for, and the media query is a browser
+    // flag, not a per-site preference: a chromium run with
+    // --force-prefers-reduced-motion made this rule permanently true, so EVERY
+    // paint on the page froze at frame 0 forever with no setting that could
+    // turn it back on. Measured on a live channel: 50 animated layers, all 50
+    // paused. That also parked each paint's top scene layer (::after,
+    // z-index:1) as a static sprite sitting ON the glyphs, which is what read
+    // as "the username is blurry / not bitmap" — the layer is meant to sweep
+    // past, not sit there.
+    //
+    // animation-delay:0s too: paints are paused-not-removed, and the phase-lock
+    // delay (--hsp-t fold, see lib/paint-spec.js syncDelayCalc) would otherwise
+    // freeze each copy at a different mid-cycle pose — zeroing it pins every
+    // paused paint at frame 0.
     hsPaintSheetEl.textContent =
-      '@media (prefers-reduced-motion: reduce){[class*="hsp-"],[class*="hsp-"] *,[class*="hsp-"]::before,[class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}}' +
+      'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *,html[data-hs-paint-anim="never"] [class*="hsp-"]::before,html[data-hs-paint-anim="never"] [class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}' +
       // Hover freeze: pause the paint animation and swap to a plain white/black
       // chip so the name stays fully readable while the pointer is over it.
       // background-clip goes back to border-box (was `text`, see compilePaintCss)

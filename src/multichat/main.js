@@ -2328,6 +2328,14 @@
       clearRenderedHtmlCache()
       renderMessages(currentTab)
     },
+    paintAnimation: (v, _def, onLoad) => {
+      // Drives the paint kill-switch in paints.js / youtube-content.js. Set on
+      // load too, before the early return — see applyOnLoad in the schema.
+      // No re-render: the paints sheet is CSS-only, so the attribute flip is
+      // the whole effect and every painted name on screen follows it live.
+      document.documentElement.dataset.hsPaintAnim = v || 'always'
+      if (onLoad) return
+    },
     locale: (v) => {
       setI18nLocale(v).catch(() => {})
     },

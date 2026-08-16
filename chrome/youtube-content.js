@@ -586,10 +586,13 @@
       ytHsPaintSheet = document.createElement('style')
       ytHsPaintSheet.id = 'hs-yt-paints'
       // Same base rules as the overlay sheet (paints.js ensureHsPaintSheet):
-      // one reduced-motion kill-switch + the hover freeze (plain white/black
+      // one animatePaints kill-switch + the hover freeze (plain white/black
       // chip, transform:none so rotation effects don't freeze edge-on).
+      // Gated on the setting, NOT prefers-reduced-motion — see the long note in
+      // paints.js: the media query is a browser flag, and a chromium run with
+      // --force-prefers-reduced-motion froze every paint on the page forever.
       ytHsPaintSheet.textContent =
-        '@media (prefers-reduced-motion: reduce){[class*="hsp-"],[class*="hsp-"] *{animation-play-state:paused !important;}}' +
+        'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *{animation-play-state:paused !important;}' +
         '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
       document.head.appendChild(cleanup.trackNode ? cleanup.trackNode(ytHsPaintSheet) : ytHsPaintSheet)
     }

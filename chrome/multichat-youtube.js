@@ -2723,6 +2723,35 @@ const SETTINGS = [
     ],
   },
   {
+    // Paint motion. Deliberately NOT gated on prefers-reduced-motion — that is
+    // a browser flag rather than a per-site preference, and a chromium run with
+    // --force-prefers-reduced-motion froze every paint on every page at frame 0
+    // with nothing that could turn them back on. Same call already made for
+    // emote modifiers above; this is the control that replaces the media query.
+    // Two states, not the emote trio: 'hover' is already taken for paints and
+    // means the opposite — hovering a painted name FREEZES it and flattens it
+    // to a readable white chip (see ensureHsPaintSheet).
+    key: 'animatePaints',
+    type: 'enum',
+    default: 'always',
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    labelKey: 'mc_settings_animate_paints',
+    tipKey: 'mc_settings_animate_paints_desc',
+    control: 'sizebtns',
+    apply: 'paintAnimation',
+    // The applier stamps data-hs-paint-anim on <html>, which is what the paint
+    // sheet gates on. Without the boot pass the attribute would only appear
+    // after the user touched the setting, so 'never' would silently behave like
+    // 'always' on every fresh load — the same trap animateEmotes hit.
+    applyOnLoad: true,
+    options: [
+      { value: 'always', label: 'always' },
+      { value: 'never', label: 'never' },
+    ],
+  },
+  {
     key: 'chatterinoBadges',
     type: 'bool',
     default: true,
@@ -62803,6 +62832,14 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (onLoad) return
       clearRenderedHtmlCache()
       renderMessages(currentTab)
+    },
+    paintAnimation: (v, _def, onLoad) => {
+      // Drives the paint kill-switch in paints.js / youtube-content.js. Set on
+      // load too, before the early return — see applyOnLoad in the schema.
+      // No re-render: the paints sheet is CSS-only, so the attribute flip is
+      // the whole effect and every painted name on screen follows it live.
+      document.documentElement.dataset.hsPaintAnim = v || 'always'
+      if (onLoad) return
     },
     locale: (v) => {
       setI18nLocale(v).catch(() => {})

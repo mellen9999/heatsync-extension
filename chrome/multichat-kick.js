@@ -37818,13 +37818,21 @@ function listenForSocialEvents() {
         }
       }
 
-      // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats
-      if (
-        ytMsg.user?.toLowerCase() !== currentUsername?.toLowerCase() &&
-        (shouldAutomod(ytMsg.text) ||
-          evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null).hide)
-      )
-        return
+      // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats.
+      // The rule VERDICT is kept, not just its .hide: a highlight rule can carry
+      // a sound, and folding the call into the if-condition threw that away —
+      // so a keyword alert fired on twitch and kick and was silently mute on
+      // youtube. Lazy in the same order as the other two handlers (automod is
+      // cheap, so it short-circuits before the rule eval).
+      const _frOwnYt = ytMsg.user?.toLowerCase() === currentUsername?.toLowerCase()
+      let _frYt = null
+      if (!_frOwnYt) {
+        if (shouldAutomod(ytMsg.text)) return
+        _frYt = evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null)
+        if (_frYt.hide) return
+      }
+      // Highlight-rule audio cue — once, on live youtube arrival.
+      if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt.sound)
       const isMent = isMention(ytMsg)
       bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, isMent)
       if (isMent) {

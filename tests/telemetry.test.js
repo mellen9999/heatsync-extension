@@ -2,11 +2,18 @@ import { expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-// Lock HeatSync's #1 differentiator: ZERO third-party telemetry/analytics in the
-// shipped extension. If anyone ever imports Sentry/PostHog/GA/etc. or hits a
-// known tracker endpoint, this fails loud. Privacy is the wedge — every rival
-// phones home (bttv ships Sentry on-by-default, ffz self-hosted Sentry, 7tv
-// presence-tracks every channel switch). We are the only one that doesn't.
+// ZERO third-party telemetry/analytics in the shipped extension. If anyone ever
+// imports Sentry/PostHog/GA/etc. or hits a known tracker endpoint, this fails
+// loud. The extension reads chat in every channel you visit, so the only honest
+// posture is that none of it leaves for anyone but us — and a promise nobody can
+// check is worth nothing, which is why this is a test and the repo is public.
+//
+// This states OUR standard and names no one else's. An earlier version of this
+// comment listed, by name, which rival extensions ship which tracker. Two things
+// wrong with that: it is a claim about someone else's code that silently goes
+// stale the moment they change it, and it picks a fight with the ecosystem we
+// depend on and have explicitly decided to coexist with (see the heatsync repo's
+// docs/ecosystem-posture.md). Our privacy posture stands on its own evidence.
 
 // Precise third-party tracker signatures — specific enough not to match
 // incidental words (e.g. 'amplitude.com' not bare 'amplitude', 'heap.io' not

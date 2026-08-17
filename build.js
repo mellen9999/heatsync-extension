@@ -992,7 +992,6 @@ function buildSourceZip() {
     'LICENSE',
     'SECURITY.md',
     'TESTER-GUIDE.md',
-    'BACKEND-ASKS.md',
   ].filter((p) => existsSync(join(__dirname, p)))
 
   const excludes = [

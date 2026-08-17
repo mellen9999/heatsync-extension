@@ -151,9 +151,10 @@ order matters: fix pipes → make findable → then shout.
 2. ~~plus nav link~~ shipped. remaining: archive SEO play #3 (per-channel
    best-of/leaderboard pages — programmatic, plays #1/#2 shipped).
    landing+/compare de-cringed 07-18: competitor table killed — done.
-3. **reddit/launch post** — gate: 48h green from tonight. drafts ready
-   (docs/reddit-launch-posts.md, r/kick dry-run first). SEO play #3 is
-   nice-to-have, not a gate.
+3. **reddit/launch post** — gate: 48h green from tonight. drafts ready (kept in
+   the private server repo, not here — launch sequencing is not something to
+   publish next to the thing being launched). SEO play #3 is nice-to-have, not
+   a gate.
 4. play store 12×14d on approval → production listing.
 5. moments loop content cold-start needs real users — post drives this.
 

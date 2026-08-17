@@ -133,7 +133,7 @@ justlog archives · decapi.me (id fallback).
 3. **god-file splits** — main.js 13.7k, content.js 10.4k, bg 8.6k, styles.js 8.3k.
    clean seams exist (content.js emote cluster ~5196–6152 is the lowest-risk
    extraction). pure refactor, medium risk, deferred.
-4. **server-blocked (heatsync-ash, see BACKEND-ASKS.md)** — hs block endpoint,
+4. **server-blocked** (spec lives in the private server repo) — hs block endpoint,
    twitch follow import, twitch block proxy, ws live-status push (still 60s poll).
    client code mostly already written; blocked on server.
 5. **styles.js hardcoded colors** — #fff×279, #000×233, #ff8700×91, #808080×96.

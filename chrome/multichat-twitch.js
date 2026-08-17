@@ -38738,9 +38738,26 @@ async function fetchFeed(append = false) {
 
   // Following empty → fallback to /api/messages/hot (heat-sorted, last 30d) so
   // the tab shows SOMETHING discoverable instead of an empty wall. Only on the
-  // initial page (append=false) — paginating shouldn't trigger fallback. Auth
-  // gate stays the same since the empty-card has the login CTA.
-  if (!append && msgs.length === 0 && hsAuthToken) {
+  // initial page (append=false) — paginating shouldn't trigger fallback.
+  //
+  // NO auth gate. There used to be one (`&& hsAuthToken`), on the reasoning that
+  // a logged-out user gets the empty card's login CTA instead. That was sound
+  // while it lasted: /api/messages/hot itself returned [] for weeks, so the gate
+  // was choosing between a login card and a blank wall, and the card won. It now
+  // serves 30 real rows anonymously (fixed 2026-08-16, server-side), so the
+  // choice is between a login card and actual content, and the card loses.
+  //
+  // A logged-out session is EVERY brand-new install — someone who just did the
+  // hard part and installed a browser extension. Demanding OAuth before showing
+  // them a single post is the highest-friction possible first screen, and it is
+  // the opposite of what every other heatsync surface promises ("no account
+  // needed" — see server/lib/ssr-theme.ts archiveCta). The ask isn't lost: the
+  // fallback banner below carries the login nudge for logged-out sessions, so
+  // they get the proof AND the CTA instead of the CTA alone.
+  //
+  // Anon rows are safe to show here — the server scrubs them (lib/scrub-identity,
+  // verified by ~/scripts/hs-anon-probe.py).
+  if (!append && msgs.length === 0) {
     try {
       const hotResp = await apiFetch('/api/messages/hot?limit=30&hours=720', { auth: true })
       if (hotResp.ok) {
@@ -38968,12 +38985,18 @@ function renderFeed() {
       'padding:8px 10px;background:#1a1408;border-left:2px solid #808080;color:#e6e6e6;font-size:13px;margin-bottom:4px;line-height:18px'
     const head = document.createElement('div')
     head.style.cssText = 'color:#fff;margin-bottom:2px'
-    head.textContent = 'no posts from your follows'
+    // Logged out, "no posts from your follows" is nonsense — there is no account
+    // to have follows on. This banner is also where the login ask lives for that
+    // session now that the fallback runs without auth and the empty card (which
+    // used to carry the CTA) no longer renders once there are rows.
+    head.textContent = hsAuthToken ? 'no posts from your follows' : 'what is hot on heatsync'
     const sub = document.createElement('div')
     sub.style.cssText = 'color:#bbb'
-    sub.textContent = feedFallbackIsCold
-      ? 'showing the newest posts — follow people to fill this with their posts'
-      : 'showing what is hot from the past 30 days — follow people to fill this with their posts'
+    sub.textContent = !hsAuthToken
+      ? 'log in at heatsync.org to follow people and fill this with their posts'
+      : feedFallbackIsCold
+        ? 'showing the newest posts — follow people to fill this with their posts'
+        : 'showing what is hot from the past 30 days — follow people to fill this with their posts'
     banner.appendChild(head)
     banner.appendChild(sub)
     frag.appendChild(banner)

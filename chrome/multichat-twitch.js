@@ -38744,7 +38744,12 @@ async function fetchFeed(append = false) {
     try {
       const hotResp = await apiFetch('/api/messages/hot?limit=30&hours=720', { auth: true })
       if (hotResp.ok) {
-        const hotMsgs = (hotResp.data?.messages || []).filter((m) => m.username !== 'Anonymous' && isOpMsg(m))
+        // No anon filter here, deliberately: this path runs only when the follows feed
+        // came back empty, i.e. on every new install, and its whole job is to avoid a
+        // blank wall. Dropping anon posts threw away ~a sixth of everything available.
+        // The server serves anon rows fully scrubbed (lib/scrub-identity) — verified by
+        // ~/scripts/hs-anon-probe.py — so there is nothing to hide from here.
+        const hotMsgs = (hotResp.data?.messages || []).filter((m) => isOpMsg(m))
         if (hotMsgs.length > 0) {
           msgs = hotMsgs.map((m) => Object.assign({}, m, { _fromHotFallback: true }))
           usedHotFallback = true
@@ -39839,12 +39844,16 @@ async function fetchDiscover() {
     discoverTags = Array.isArray(tagsData) ? tagsData : tagsData.tags || []
     discoverProfiles = Array.isArray(profilesData) ? profilesData : profilesData.profiles || []
 
-    // Posts: pull recent feed, client-sort by heat, take top by heat>0
+    // Posts: rank by heat, but never render the section empty while real posts exist.
+    // Heat only accrues from a logged-in, non-self actor and halves every 12h, so at
+    // current traffic it is 0 on every row — this gate emptied Discover completely
+    // while 40 real posts sat in the response. Same rule as the server's
+    // lib/cold-start.ts: rank first, fall back to newest rather than show nothing.
+    // rawPosts arrives newest-first (sort=time), so the fallback keeps recency order.
     const rawPosts = postsResp?.ok ? postsResp.data?.messages || [] : []
-    discoverPosts = rawPosts
-      .filter((m) => m?.username && m.username !== 'Anonymous' && (m.heat || 0) > 0)
-      .sort((a, b) => (b.heat || 0) - (a.heat || 0))
-      .slice(0, 8)
+    const eligiblePosts = rawPosts.filter((m) => m?.username && m.username !== 'Anonymous')
+    const hotPosts = eligiblePosts.filter((m) => (m.heat || 0) > 0).sort((a, b) => (b.heat || 0) - (a.heat || 0))
+    discoverPosts = (hotPosts.length ? hotPosts : eligiblePosts).slice(0, 8)
 
     // Latch ONLY when a fetch actually succeeded. Setting this on failure made
     // an outage indistinguishable from a genuinely empty Discover AND blocked

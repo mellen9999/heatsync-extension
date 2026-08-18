@@ -18,6 +18,8 @@ import {
   clearHsPaintFromElement,
   getHsPaintSpec,
   invalidateHsCosmetics,
+  isHsCosmeticFreshForTests,
+  markAllHsCosmeticsStale,
   setHsColorEntry,
   setHsPaintEntry,
 } from '../src/multichat/paints.js'
@@ -107,8 +109,10 @@ describe('invalidateHsCosmetics', () => {
   test('re-resolves a uid this pane has already displayed', () => {
     setHsPaintEntry('live-1', SPEC)
     expect(invalidateHsCosmetics(['live-1'])).toEqual(['live-1'])
-    // The cached entry is gone, so the next batch asks the server again.
-    expect(getHsPaintSpec('live-1')).toBeNull()
+    // The old value is deliberately KEPT until the new answer lands: dropping
+    // it would flash the name unpainted for a batch interval, and the flush
+    // needs the previous hash to tell whether anything actually changed.
+    expect(getHsPaintSpec('live-1')).toEqual(SPEC)
   })
 
   test('ignores uids this pane has never seen', () => {
@@ -134,5 +138,29 @@ describe('invalidateHsCosmetics', () => {
     expect(invalidateHsCosmetics([])).toEqual([])
     expect(invalidateHsCosmetics(null)).toEqual([])
     expect(invalidateHsCosmetics([null, ''])).toEqual([])
+  })
+})
+
+// The case with no write to announce: a paint renders only while its owner is
+// Plus, and nothing is written when a subscription simply expires. The pane
+// cache used to be permanent, so the overlay kept painting a lapsed member —
+// on their new messages too — for the life of the tab.
+describe('cached cosmetics expire', () => {
+  test('a freshly resolved uid is trusted, a stale one is not', () => {
+    setHsPaintEntry('ttl-1', SPEC)
+    markAllHsCosmeticsStale()
+    // Nothing resolved it since, so it must not be trusted.
+    expect(isHsCosmeticFreshForTests('ttl-1')).toBe(false)
+  })
+
+  test('an unknown uid is never fresh', () => {
+    expect(isHsCosmeticFreshForTests('never-seen')).toBe(false)
+  })
+
+  test('markAllHsCosmeticsStale keeps the values, only the trust', () => {
+    setHsPaintEntry('ttl-2', SPEC)
+    markAllHsCosmeticsStale()
+    // Values survive so names do not flash unpainted while re-resolving.
+    expect(getHsPaintSpec('ttl-2')).toEqual(SPEC)
   })
 })

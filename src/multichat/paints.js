@@ -67,11 +67,51 @@ const HS_PAINT_PENDING_MAX = 3000
 const HS_PAINT_BACKLOG_DELAY = 120
 
 const hsPaintCache = new Map() // uid -> { spec: object|null, hash: string|null }
-// Uids invalidated by a live `cosmetic:changed` push. A first-time resolution
-// to "no paint" must NOT repaint (nothing was painted, and every plain chatter
-// resolves that way); a CLEARED paint must, or it stays on screen until the
-// row scrolls off. This set is the only thing that tells those two apart.
-const hsForcedRepaint = new Set()
+// ── WHY THESE CACHES EXPIRE ──────────────────────────────────────────────
+// They used to be permanent: once a uid resolved, this pane never asked again.
+// background.js's own paint cache has a 60s TTL, but that never helped —
+// the pane short-circuits before it ever reaches the service worker.
+//
+// `cosmetic:changed` covers a user EDITING a paint. Two cases have no write to
+// announce:
+//
+//   1. ENTITLEMENT LAPSE. A paint (and the Plus tenure token) renders only
+//      while its owner is Plus — GET /api/paints re-checks that on every read.
+//      Nobody writes anything when a subscription simply expires, so the
+//      server stopped serving it while the overlay kept painting it, on that
+//      user's NEW messages too. A permanent cache turns a paid, time-limited
+//      perk into a permanent one for anyone who leaves a tab open.
+//   2. A MISSED PUSH. A pane whose service worker socket dropped never sees
+//      the broadcasts it was away for.
+const HS_COSMETIC_TTL = 5 * 60 * 1000
+const hsResolvedAt = new Map() // uid -> ms at last successful resolve
+
+/** Has this uid been resolved recently enough to trust without asking again? */
+function isHsCosmeticFresh(uid) {
+  const at = hsResolvedAt.get(uid)
+  return at !== undefined && Date.now() - at < HS_COSMETIC_TTL
+}
+
+/**
+ * Mark uids for re-resolution on their next render, WITHOUT dropping what we
+ * have — the name keeps its current paint until the new answer lands instead
+ * of flashing unpainted, and the flush can still see the previous hash to
+ * decide whether anything actually changed.
+ */
+function markHsCosmeticsStale(uids) {
+  for (const id of uids) hsResolvedAt.delete(id)
+}
+
+/** Test seam: the freshness predicate is internal, but its behaviour is the
+ *  whole point of the TTL and deserves to be asserted directly. */
+function isHsCosmeticFreshForTests(uid) {
+  return isHsCosmeticFresh(uid)
+}
+
+/** Everything cached is suspect — used when the socket reconnects. */
+function markAllHsCosmeticsStale() {
+  hsResolvedAt.clear()
+}
 const hsPaintInjectedHashes = new Set()
 const hsPaintPending = new Set()
 // Priority lane — the viewer's OWN identities (primeSelfHsCosmetics). Drained
@@ -424,6 +464,9 @@ function hasResolvedHsPaint(userId) {
 }
 
 function setHsPaintEntry(userId, spec) {
+  // hsResolvedAt shadows hsPaintCache, so it is pruned on the same beat —
+  // otherwise it outgrows the LRU it describes over a long session.
+  if (hsResolvedAt.size > HS_PAINT_CACHE_MAX) evictOldestPaintEntry(hsResolvedAt, HS_PAINT_CACHE_MAX)
   if (!spec) {
     if (!hsPaintCache.has(userId)) evictOldestPaintEntry(hsPaintCache, HS_PAINT_CACHE_MAX)
     hsPaintCache.set(userId, { spec: null, hash: null })
@@ -442,7 +485,7 @@ function setHsPaintEntry(userId, spec) {
  */
 function queuePaintLookup(userId) {
   if (!userId) return
-  if (hsPaintCache.has(userId)) return
+  if (hsPaintCache.has(userId) && isHsCosmeticFresh(userId)) return
   if (!hsPaintsEnabled()) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(userId)
@@ -457,7 +500,7 @@ function queuePaintLookup(userId) {
  */
 function queueNameColorLookup(uid) {
   if (!uid) return
-  if (hsColorCache.has(uid)) return
+  if (hsColorCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
   if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
@@ -471,7 +514,7 @@ function queueNameColorLookup(uid) {
  */
 function queuePlusTenureLookup(uid) {
   if (!uid) return
-  if (hsPlusCache.has(uid)) return
+  if (hsPlusCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
   if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
@@ -530,10 +573,11 @@ async function flushHsPaintBatch() {
   if (colors) {
     const colorChanged = []
     for (const id of batch) {
-      if (!hsColorCache.has(id)) {
-        setHsColorEntry(id, colors[id] || null)
-        if (colors[id]) colorChanged.push(id)
-      }
+      // Was `if (!hsColorCache.has(id))` — a refresh could never update a
+      // colour that had already resolved once.
+      const prev = hsColorCache.get(id) ?? null
+      setHsColorEntry(id, colors[id] || null)
+      if ((hsColorCache.get(id) ?? null) !== prev) colorChanged.push(id)
     }
     if (colorChanged.length && typeof updateHsColorsInPlace === 'function') updateHsColorsInPlace(colorChanged)
   }
@@ -544,10 +588,11 @@ async function flushHsPaintBatch() {
   if (plus) {
     const plusChanged = []
     for (const id of batch) {
-      if (!hsPlusCache.has(id)) {
-        setHsPlusEntry(id, plus[id] || null)
-        if (plus[id]) plusChanged.push(id)
-      }
+      const prev = hsPlusCache.get(id) ?? null
+      setHsPlusEntry(id, plus[id] || null)
+      // Reports a tenure that went AWAY as well as one that arrived — a lapsed
+      // membership has to take its token back off.
+      if ((hsPlusCache.get(id) ?? null) !== prev) plusChanged.push(id)
     }
     if (plusChanged.length && typeof applyHsPlusTenureToVisible === 'function') applyHsPlusTenureToVisible(plusChanged)
   }
@@ -561,11 +606,14 @@ async function flushHsPaintBatch() {
     const changed = []
     for (const id of batch) {
       if (Object.hasOwn(paints, id)) {
+        // Compare against what we had: truthiness alone cannot see a paint
+        // that went AWAY (cleared, or its Plus lapsed), which is exactly the
+        // case that left a dead paint on screen. A first-time "no paint" still
+        // reports no change — every plain chatter resolves that way.
+        const prevHash = hsPaintCache.get(id)?.hash ?? null
         setHsPaintEntry(id, paints[id])
-        // delete() both tests and consumes membership, so a cleared paint
-        // repaints exactly once.
-        const wasInvalidated = hsForcedRepaint.delete(id)
-        if (paints[id] || wasInvalidated) changed.push(id)
+        hsResolvedAt.set(id, Date.now())
+        if ((hsPaintCache.get(id)?.hash ?? null) !== prevHash) changed.push(id)
       } else {
         hsPaintPending.add(id)
       }
@@ -740,15 +788,7 @@ function invalidateHsCosmetics(ids) {
   }
   if (!known.length) return []
 
-  for (const id of known) {
-    const hadPaint = hsPaintCache.has(id)
-    hsPaintCache.delete(id)
-    hsColorCache.delete(id)
-    hsPlusCache.delete(id)
-    // Only a uid that WAS painted needs the forced repaint; marking a
-    // never-painted one would make every plain chatter repaint for nothing.
-    if (hadPaint) hsForcedRepaint.add(id)
-  }
+  markHsCosmeticsStale(known)
   for (const id of known) {
     queuePaintLookup(id)
     queueNameColorLookup(id)
@@ -804,6 +844,8 @@ export {
   hsPaintRender,
   hsUsernameColor,
   invalidateHsCosmetics,
+  isHsCosmeticFreshForTests,
+  markAllHsCosmeticsStale,
   partitionPaintBatch,
   primeSelfHsCosmetics,
   queueNameColorLookup,

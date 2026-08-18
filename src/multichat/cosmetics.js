@@ -583,6 +583,17 @@ function _placeHsPlusTenureToken(el, since) {
   if (token) el.insertAdjacentElement('afterend', token)
 }
 
+/**
+ * Take the tenure token back off. Tenure is public only while entitled (the
+ * server re-checks on every read), so "no tenure" for a uid that HAD a token
+ * means the membership lapsed — leaving it would keep advertising a paid
+ * membership that ended.
+ */
+function _removeHsPlusTenureToken(el) {
+  const stale = el?.nextElementSibling
+  if (stale?.classList?.contains('hs-plus-tenure')) stale.remove()
+}
+
 // Apply a resolved PLUS TENURE token beside visible rows in place — the
 // counterpart to updateHsPaintsInPlace above, fired from its own independent
 // batch (queuePlusTenureLookup/flushHsPaintBatch in paints.js) once tenure
@@ -595,7 +606,6 @@ function applyHsPlusTenureToVisible(userIds) {
   if (!container) return
   for (const uid of userIds) {
     const since = getHsPlusTenureSince(uid)
-    if (!since) continue
     const mentionSet = _mentionIndex.get(uid)
     if (mentionSet) {
       // The "+" tenure token is a sender-identity mark, not part of a name
@@ -603,7 +613,9 @@ function applyHsPlusTenureToVisible(userIds) {
       // header), but NOT on inline @mentions inside message content — a name
       // typed in someone's message shouldn't sprout a "+".
       for (const el of mentionSet) {
-        if (el.classList.contains('hs-mc-reply-user')) _placeHsPlusTenureToken(el, since)
+        if (!el.classList.contains('hs-mc-reply-user')) continue
+        if (since) _placeHsPlusTenureToken(el, since)
+        else _removeHsPlusTenureToken(el)
       }
     }
     const isNamespacedUid = uid.startsWith('kick_') || uid.startsWith('yt_')
@@ -613,7 +625,8 @@ function applyHsPlusTenureToVisible(userIds) {
     if (!divs) continue
     for (const div of divs) {
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
-      _placeHsPlusTenureToken(userLink, since)
+      if (since) _placeHsPlusTenureToken(userLink, since)
+      else _removeHsPlusTenureToken(userLink)
     }
   }
 }

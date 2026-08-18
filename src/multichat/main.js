@@ -1259,6 +1259,12 @@
     _onceGuardsMain.cosmeticChangedListener = true
     try {
       cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+        if (msg?.type === 'cosmetics_stale_all') {
+          // Socket was down long enough to have missed pushes — everything
+          // cached here is suspect. Costs nothing until a name renders again.
+          markAllHsCosmeticsStale()
+          return
+        }
         if (msg?.type !== 'cosmetic_changed') return
         invalidateHsCosmetics(msg.ids)
       })

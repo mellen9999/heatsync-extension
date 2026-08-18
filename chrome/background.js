@@ -5633,6 +5633,12 @@ async function connectWebSocket() {
         if (lastWsDataReceived && Date.now() - lastWsDataReceived > 60000) {
           if (globalThis.__senderEmoteCache) globalThis.__senderEmoteCache.clear()
           broadcastToTabs({ type: 'emote_added_broadcast', username: '' })
+          // Same convergence for paints: any cosmetic:changed push that fired
+          // while this socket was down is gone for good. Drop our own cache and
+          // tell the panes theirs is suspect — nothing is refetched until a
+          // name renders again, so this costs nothing on a quiet tab.
+          _paintsCache.clear()
+          broadcastToTabs({ type: 'cosmetics_stale_all' })
         }
         // Reset zombie-detection timestamp; otherwise a stale lastWsDataReceived
         // from before the disconnect makes the first heartbeat (90s later) trip

@@ -14988,9 +14988,16 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       font-size: 13px;
       color: #fff;
     }
-    .hs-mc-emoji-row:hover,
-    .hs-mc-emoji-row.selected {
+    .hs-mc-emoji-row:hover {
       background: #fff;
+      color: #000;
+    }
+    /* .selected is the ARROW-KEY cursor, :hover above is the pointer. They
+       were both white, so the cursor was invisible under the mouse and you
+       could not tell which row Enter would pick. Orange is where the keyboard
+       is — same split as heatsync.org (--sel-bg). */
+    .hs-mc-emoji-row.selected {
+      background: #ff8700;
       color: #000;
     }
     .hs-mc-emoji-preview {
@@ -15044,9 +15051,13 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       font-size: 13px;
       color: #fff;
     }
-    .hs-mc-slash-row:hover,
-    .hs-mc-slash-row.selected {
+    .hs-mc-slash-row:hover {
       background: #fff;
+      color: #000;
+    }
+    /* arrow-key cursor — orange, see .hs-mc-emoji-row.selected above */
+    .hs-mc-slash-row.selected {
+      background: #ff8700;
       color: #000;
     }
     .hs-mc-slash-name { color: #fff; font-weight: 700; }

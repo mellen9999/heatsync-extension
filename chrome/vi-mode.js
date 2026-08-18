@@ -624,7 +624,12 @@
     if (styleInjected) return
     styleInjected = true
     const s = document.createElement('style')
-    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { outline: 2px solid rgba(255,255,0,0.9); background: rgba(255,255,0,0.25); border-radius: 2px; }`
+    // .hs-vi-normal keeps the red border — the site matches it, and that parity
+    // is the point. The block cursor does not: it was translucent yellow with a
+    // 2px radius, which is three house rules at once (yellow is warn, the
+    // palette has no translucency, everything is square). It is a cursor, so it
+    // takes the cursor invert, solid — same as heatsync.org.
+    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { background: #ff8700; color: #000; border-radius: 0; }`
     document.head.appendChild(s)
   }
 

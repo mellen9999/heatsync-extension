@@ -5979,6 +5979,19 @@ function handleWSMessage(msg) {
         scheduleInventoryRefresh()
         break
 
+      case 'cosmetic:changed': {
+        // A user changed (or cleared) a HeatSync paint. The server sends only
+        // the affected paint-space ids — never the spec, since GET /api/paints
+        // withholds specs from unentitled users and re-fetching keeps that gate
+        // intact. Drop our cached copies so the next lookup is authoritative,
+        // then let content scripts repaint the rows already on screen.
+        const changedIds = Array.isArray(msg.ids) ? msg.ids.filter((i) => typeof i === 'string') : []
+        if (!changedIds.length) break
+        for (const id of changedIds) _paintsCache.delete(id)
+        broadcastToTabs({ type: 'cosmetic_changed', ids: changedIds })
+        break
+      }
+
       case 'profile:color':
         // A user changed their heatsync name color — forward to content
         // scripts so the overlay recolors that user's visible rows live.

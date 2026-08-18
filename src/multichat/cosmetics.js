@@ -510,9 +510,16 @@ function updateHsPaintsInPlace(userIds) {
   const container = document.getElementById('hs-mc-messages')
   if (!container) return
   for (const uid of userIds) {
+    // A uid reaching here with no paint was CLEARED by its owner (a live
+    // cosmetic push is the only way an unpainted uid gets into this list —
+    // see hsForcedRepaint in paints.js). Strip ours instead of applying.
+    const wasCleared = !getHsPaintClass(uid) || !getHsPaintSpec(uid)
     const mentionSet = _mentionIndex.get(uid)
     if (mentionSet) {
-      for (const el of mentionSet) applyHsPaintToElement(el, uid)
+      for (const el of mentionSet) {
+        if (wasCleared) clearHsPaintFromElement(el)
+        else applyHsPaintToElement(el, uid)
+      }
     }
     // kick_ AND yt_ paint uids are namespaced — never in data-uid/_uidIndex
     // (that stays twitch-id-space only, ID-SPACE SAFETY in paints.js). Find
@@ -534,7 +541,9 @@ function updateHsPaintsInPlace(userIds) {
       // rows of every painted user stayed on the static fallback color.)
       if (isNamespacedUid && hasResolvedHsPaint(div._hsMsg?.userId)) continue
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
-      if (userLink) applyHsPaintToElement(userLink, uid)
+      if (!userLink) continue
+      if (wasCleared) clearHsPaintFromElement(userLink)
+      else applyHsPaintToElement(userLink, uid)
     }
   }
 }

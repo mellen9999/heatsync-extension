@@ -1249,6 +1249,22 @@
     } catch {}
   }
 
+  // A HeatSync paint was changed or cleared by its owner. background.js
+  // forwards the server's `cosmetic:changed` push (ids only — the spec is
+  // withheld from unentitled viewers by GET /api/paints, and re-fetching keeps
+  // that gate intact) as `cosmetic_changed`. invalidateHsCosmetics drops what
+  // this pane cached and re-queues only uids it has already resolved, so a
+  // broadcast to every open chat does not turn into a fetch per open chat.
+  if (!_onceGuardsMain.cosmeticChangedListener) {
+    _onceGuardsMain.cosmeticChangedListener = true
+    try {
+      cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+        if (msg?.type !== 'cosmetic_changed') return
+        invalidateHsCosmetics(msg.ids)
+      })
+    } catch {}
+  }
+
   // ═══ Sender-perma emote queue ═══
   // Lazy-fetch each unseen sender's 7TV/BTTV personal set ONCE, cache write-once-per-(sender, name) forever.
   /**

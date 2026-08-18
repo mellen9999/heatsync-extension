@@ -53630,6 +53630,11 @@ const HS_PAINT_PENDING_MAX = 3000
 const HS_PAINT_BACKLOG_DELAY = 120
 
 const hsPaintCache = new Map() // uid -> { spec: object|null, hash: string|null }
+// Uids invalidated by a live `cosmetic:changed` push. A first-time resolution
+// to "no paint" must NOT repaint (nothing was painted, and every plain chatter
+// resolves that way); a CLEARED paint must, or it stays on screen until the
+// row scrolls off. This set is the only thing that tells those two apart.
+const hsForcedRepaint = new Set()
 const hsPaintInjectedHashes = new Set()
 const hsPaintPending = new Set()
 // Priority lane — the viewer's OWN identities (primeSelfHsCosmetics). Drained
@@ -54120,7 +54125,10 @@ async function flushHsPaintBatch() {
     for (const id of batch) {
       if (Object.hasOwn(paints, id)) {
         setHsPaintEntry(id, paints[id])
-        if (paints[id]) changed.push(id)
+        // delete() both tests and consumes membership, so a cleared paint
+        // repaints exactly once.
+        const wasInvalidated = hsForcedRepaint.delete(id)
+        if (paints[id] || wasInvalidated) changed.push(id)
       } else {
         hsPaintPending.add(id)
       }
@@ -54242,6 +54250,76 @@ function ensureHsVisibilityObserver() {
  * behaviour that shipped before this — so missing one degrades to the status
  * quo and can never break a paint.
  */
+/**
+ * Strip OUR paint off an element, restoring the plain name.
+ *
+ * Deliberately NOT folded into applyHsPaintToElement: that one is also called
+ * from the render path and from the kick/yt fallback lane, where "no spec for
+ * this uid" is the normal case and must stay a no-op — clearing there would
+ * let a namespaced uid wipe a paint the row's primary uid had already applied.
+ * Only updateHsPaintsInPlace, which knows a uid was actually cleared, calls it.
+ *
+ * The hsp- class is the marker of ownership, so a name we never painted (or a
+ * 7TV paint, which owns its own inline style) is left untouched.
+ */
+function clearHsPaintFromElement(el) {
+  if (!el?.classList) return
+  const ours = [...el.classList].filter((c) => c.startsWith('hsp-'))
+  if (!ours.length) return
+  for (const c of ours) el.classList.remove(c)
+  if (el.dataset.hsPaintSplit) {
+    // Assigning the plain text back collapses the per-letter spans in one
+    // step, leaving the name exactly as it started. Via a local so it reads as
+    // "replace the children with this text" rather than a self-assignment.
+    const plain = el.textContent
+    el.textContent = plain
+    delete el.dataset.hsPaintSplit
+  }
+  if (el.style) el.style.removeProperty('--hsp-t')
+}
+
+/**
+ * A live cosmetic change arrived for these uids (background.js forwards the
+ * server's `cosmetic:changed` push as `cosmetic_changed`). Drop what we cached
+ * and re-resolve, so an open chat updates without a reload.
+ *
+ * Only uids THIS PANE HAS ALREADY RESOLVED are re-queued. The push is a
+ * broadcast to every connected client, so re-fetching blindly would have every
+ * open chat pull cosmetics for someone it has never displayed. A cached
+ * NEGATIVE counts as resolved — that is what makes a user's FIRST paint appear
+ * live.
+ *
+ * @param {string[]} ids paint-space uids that changed
+ * @returns {string[]} the uids actually re-queued
+ */
+function invalidateHsCosmetics(ids) {
+  const list = Array.isArray(ids) ? ids : [ids]
+  const known = []
+  for (const raw of list) {
+    if (!raw) continue
+    const id = String(raw)
+    if (!hsPaintCache.has(id) && !hsColorCache.has(id) && !hsPlusCache.has(id)) continue
+    known.push(id)
+  }
+  if (!known.length) return []
+
+  for (const id of known) {
+    const hadPaint = hsPaintCache.has(id)
+    hsPaintCache.delete(id)
+    hsColorCache.delete(id)
+    hsPlusCache.delete(id)
+    // Only a uid that WAS painted needs the forced repaint; marking a
+    // never-painted one would make every plain chatter repaint for nothing.
+    if (hadPaint) hsForcedRepaint.add(id)
+  }
+  for (const id of known) {
+    queuePaintLookup(id)
+    queueNameColorLookup(id)
+    queuePlusTenureLookup(id)
+  }
+  return known
+}
+
 function sweepHsPaintedNames() {
   const io = ensureHsVisibilityObserver()
   if (!io) return
@@ -54790,9 +54868,16 @@ function updateHsPaintsInPlace(userIds) {
   const container = document.getElementById('hs-mc-messages')
   if (!container) return
   for (const uid of userIds) {
+    // A uid reaching here with no paint was CLEARED by its owner (a live
+    // cosmetic push is the only way an unpainted uid gets into this list —
+    // see hsForcedRepaint in paints.js). Strip ours instead of applying.
+    const wasCleared = !getHsPaintClass(uid) || !getHsPaintSpec(uid)
     const mentionSet = _mentionIndex.get(uid)
     if (mentionSet) {
-      for (const el of mentionSet) applyHsPaintToElement(el, uid)
+      for (const el of mentionSet) {
+        if (wasCleared) clearHsPaintFromElement(el)
+        else applyHsPaintToElement(el, uid)
+      }
     }
     // kick_ AND yt_ paint uids are namespaced — never in data-uid/_uidIndex
     // (that stays twitch-id-space only, ID-SPACE SAFETY in paints.js). Find
@@ -54814,7 +54899,9 @@ function updateHsPaintsInPlace(userIds) {
       // rows of every painted user stayed on the static fallback color.)
       if (isNamespacedUid && hasResolvedHsPaint(div._hsMsg?.userId)) continue
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
-      if (userLink) applyHsPaintToElement(userLink, uid)
+      if (!userLink) continue
+      if (wasCleared) clearHsPaintFromElement(userLink)
+      else applyHsPaintToElement(userLink, uid)
     }
   }
 }
@@ -62177,6 +62264,22 @@ const STORAGE_KEY = 'heatsync_multichat'
       cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
         if (msg?.type !== 'profile_color') return
         applyLiveProfileColor(msg.usernames, msg.color)
+      })
+    } catch {}
+  }
+
+  // A HeatSync paint was changed or cleared by its owner. background.js
+  // forwards the server's `cosmetic:changed` push (ids only — the spec is
+  // withheld from unentitled viewers by GET /api/paints, and re-fetching keeps
+  // that gate intact) as `cosmetic_changed`. invalidateHsCosmetics drops what
+  // this pane cached and re-queues only uids it has already resolved, so a
+  // broadcast to every open chat does not turn into a fetch per open chat.
+  if (!_onceGuardsMain.cosmeticChangedListener) {
+    _onceGuardsMain.cosmeticChangedListener = true
+    try {
+      cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+        if (msg?.type !== 'cosmetic_changed') return
+        invalidateHsCosmetics(msg.ids)
       })
     } catch {}
   }

@@ -1,5 +1,52 @@
 # changelog
 
+## [1.7.60] — 2026-08-16
+
+### added
+- **quote a message** — quoting now drops a citation of the original into your composer instead of pasting its text back in, so your reply stays yours and the line you're answering stays attached to it.
+- **predictions and polls get the whole chat area** — a running prediction or poll used a cramped strip; it now takes the full width, so the options and the totals are actually readable while they move.
+
+### fixed
+- **name paints match the site again** — the paint compiler had drifted out of sync with heatsync's: names were being chopped up letter by letter, the animation had stopped, gradients washed the glyphs out, and the rim never reached gradient fills. paints render the way they were designed to again, on all seven planes.
+- **paints stop burning battery off-screen** — a name that has scrolled out of view kept animating. it doesn't now, which matters most on a laptop with several chats open.
+- **the broadcaster can start a prediction** — starting one from the extension failed for the person who owns the channel, which is the only person who can start one.
+- **native chat comes back by itself** — the safety switch that hands control back to the site's own chat could trip and never release, leaving you without either. it recovers on its own now.
+- **discovery stops looking empty** — two filters were both applied on the way in, so the feed could show nothing while there was plenty to show.
+- **citing a twitch message** — the cite action did nothing on twitch rows specifically.
+- **your own reply keeps its reply bar on kick and youtube** — the bar showing what you replied to vanished from your own message right after you sent it.
+- **highlight sounds fire on youtube** — a highlight rule with a sound played on twitch and kick but stayed silent on youtube.
+- **sharing a resub** — the share token moved; it is found again when you click share rather than only when the prompt first appears.
+- **the reply and thread chips stop smearing cozette** — the bitmap font was being drawn off its pixel grid on those two chips, so the text looked blurred next to everything around it.
+- **the overlay stops declaring a colour scheme on pages it doesn't own** — that declaration could push a host page's own theme around.
+
+## [1.7.52 – 1.7.59] — 2026-08-12 → 2026-08-13
+
+a run of same-day builds; grouped here because they shipped as one body of work.
+
+### added
+- **a button for starting a thread** — thread creation was a slash command you had to already know about. it's a control in the composer now.
+- **typing while reading chat lands in the composer** — you no longer have to click into the box first; start typing anywhere in chat and the keystrokes go where you meant them.
+- **the reply pill looks like the button it always was** — it was already clickable and didn't look it.
+
+### fixed
+- **pasting an image url no longer turns into a slash command** — a relative url pasted into the composer was read as a command by the platform. the relay keeps it absolute.
+- **"first message" only means twitch's real first-message-ever** — the label was appearing on messages that weren't one.
+- **the resub prompt stops hijacking share when it can't finish the job** — if we couldn't actually complete the share, we now leave twitch's own flow alone instead of taking it over and failing.
+- **highlights say what they mean** — a highlighted message was only a colour, with nothing telling you which of your rules matched.
+- **a docked notification can't collapse off-screen** — it could end up somewhere you had no way to reach or dismiss.
+- **a reply to you keeps its arrow and its red** — tapping fast enough could win a race against the render and strip both.
+- **automod stops telling you to relink twitch** — an expired session was being reported as a broken link, so people relinked an account that was fine. it just refreshes now.
+- **a late message lands at the bottom** — a message that arrived out of order was inserted mid-scrollback, where you'd never see it.
+- **inline reply context in multichat** — replies show what they're replying to, the way the site does.
+
+## [1.7.51] — 2026-08-12
+
+### fixed
+- **an empty composer shows no caret, and modifiers stop rewriting your spacing** — the cursor sat in a box with nothing in it, and applying a modifier quietly reflowed the spaces you'd typed.
+- **a modifier attaches to the emote it actually touches** — it could bind to a neighbouring emote instead of the one you put it on.
+- **history fetches the depth the server actually serves** — the extension asked for more backfill than the archive would return, so it read the short answer as the end of history.
+- **viewer-relative emote labels, and portrait cards for shorts** — emote labels now read from your side rather than the sender's, and vertical streams get a card shaped like the video instead of a letterboxed one.
+
 ## [1.7.50] — 2026-08-11
 
 ### added

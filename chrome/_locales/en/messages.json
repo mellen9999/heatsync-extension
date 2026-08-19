@@ -682,7 +682,7 @@
     "message": "first-message glow"
   },
   "mc_settings_first_chatter_desc": {
-    "message": "orange edge on first message per session"
+    "message": "yellow edge on someone's first message this session"
   },
   "mc_settings_keyword_highlights": {
     "message": "keyword highlights"

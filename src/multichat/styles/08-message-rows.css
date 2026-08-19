@@ -761,13 +761,15 @@
       -webkit-text-fill-color: #999 !important;
     }
     .hs-mc-msg.hs-first-msg {
-      /* first-message glow — thread/event magenta bar + an inset glow (the
-         setting is called "glow", so it actually glows).
-         The glow was rgba(...,0.30) at -2px spread, which against this
-         background was very nearly nothing — reported as "too unvisible". The
-         row now also carries a text label, so the glow is reinforcement rather
-         than the whole message, but reinforcement still has to be legible. */
-      box-shadow: inset 2px 0 0 var(--hs-thread), inset 0 0 14px -1px rgba(255, 0, 255, 0.5);
+      /* Session-first glow — "first time YOU have seen them since this tab
+         opened". YELLOW, per the palette above: yellow(11)=first-seen,
+         magenta(13)=first-msg-EVER. It was magenta, which made every regular's
+         first line of the session look identical to twitch's real first-message
+         announcement — so the one row that means something was buried under
+         dozens that didn't. Magenta is now exclusively .hs-mc-first-msg.
+         Bar + inset glow (the setting is called "glow", so it glows); an
+         earlier 0.30 alpha at -2px spread read as nothing on this background. */
+      box-shadow: inset 2px 0 0 var(--hs-mention), inset 0 0 14px -1px rgba(255, 255, 0, 0.42);
     }
     .hs-mc-msg.hs-kw-match {
       background: rgba(255, 255, 0, 0.14);

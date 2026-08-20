@@ -109,6 +109,17 @@ describe('browser-api: platform', () => {
 // ── null-API graceful fallbacks ───────────────────────────────────────────────
 
 describe('browser-api: null-API graceful handling (Bun env = no chrome/browser)', () => {
+  // Fail LOUD if another test file left a chrome global behind. browser-api
+  // binds rawApi at import time, so a leaked stub silently rewires every test
+  // below — and if that stub returns promises instead of calling chrome's
+  // callback, they don't fail, they HANG (bun then never exits, and the
+  // release workflow burns its 6h cap producing nothing). One assertion turns
+  // that into an instant, readable failure.
+  test('no test file has leaked a chrome/browser global into this one', () => {
+    expect(typeof globalThis.chrome).toBe('undefined')
+    expect(typeof globalThis.browser).toBe('undefined')
+  })
+
   test('isContextValid returns false', () => {
     // rawApi is null → runtime.id is undefined → false
     expect(isContextValid()).toBe(false)

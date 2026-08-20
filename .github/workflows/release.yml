@@ -15,6 +15,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # A hung step must not sit on github's 6h default. v1.7.59 and v1.7.60 both
+    # did exactly that — the pre-build test gate wedged, the job burned six
+    # hours, and NEITHER tag ever produced release assets, so the self-dist xpi
+    # and the README download links silently kept serving an older build. Fail
+    # in minutes and loudly instead.
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4

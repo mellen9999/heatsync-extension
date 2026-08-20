@@ -22,8 +22,17 @@ import { join } from 'node:path'
  * see geometry.
  *
  * This is a source-contract tripwire, not a behavioural test — it stops the
- * one-time guard from coming back. The real proof is the geometry assertion in
- * the browser harness; until that lands, this is the guard that exists.
+ * one-time guard from coming back.
+ *
+ * It is also, measured rather than assumed, the ONLY guard for this specific
+ * shape. `scripts/render-extension.ts` now asserts real rendered geometry in a
+ * browser, and it does NOT cover this: reproducing the latch needs a stale
+ * ResizeObserver to survive a rebuild, and removing overlay nodes instead trips
+ * main.js's own reinject path, which nulls resizeObserver first and self-heals.
+ * Instrumenting the ResizeObserver constructor showed the pre-fix build
+ * constructing a fresh observer on re-entry exactly like the fixed one. So the
+ * fix is defensive and correct, the original failure was not reproducible in a
+ * fixture, and this file is what holds the line.
  */
 
 const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')

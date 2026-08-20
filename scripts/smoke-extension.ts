@@ -19,66 +19,22 @@
  * why that narrowing lives in settings-schema.js rather than inline in the
  * renderer.
  */
-import { existsSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-/**
- * playwright-core is NOT a dependency of this repo — a browser driver is a lot
- * of weight for one opt-in script. It is resolved from the sibling heatsync
- * repo, which already has it. Override with PLAYWRIGHT_CORE if your checkout
- * lives elsewhere.
- *
- * The sibling lookup has to survive being run from a worktree: inside
- * `.worktrees/<name>/`, `../..` is the worktrees dir, not the projects dir, so
- * the plain sibling path misses and the script reports "not found" on a machine
- * that has playwright installed. Both roots are tried.
- */
-async function loadChromium() {
-  const here = import.meta.dir
-  const siblingFrom = (root: string) => join(root, '..', 'heatsync', 'node_modules', 'playwright-core', 'index.js')
-  const candidates = [
-    'playwright-core',
-    process.env.PLAYWRIGHT_CORE,
-    // normal checkout: <projects>/heatsync-extension/scripts → <projects>/heatsync
-    siblingFrom(join(here, '..')),
-    // worktree: <projects>/heatsync-extension/.worktrees/<name>/scripts
-    siblingFrom(join(here, '..', '..', '..')),
-  ].filter(Boolean) as string[]
-  for (const spec of candidates) {
-    try {
-      return (await import(spec)).chromium
-    } catch (_) {
-      /* try the next one */
-    }
-  }
-  throw new Error(`playwright-core not found. Tried:\n  ${candidates.join('\n  ')}\nSet PLAYWRIGHT_CORE to its index.js.`)
-}
+import { assertBuilt, EXT_DIR, launchWithExtension } from './lib/chromium'
 
-/**
- * The BUILT artifact, not the source tree. `chrome/` is loadable — it has a
- * manifest and the three committed multichat bundles — but its content.js is
- * the pre-bundle source with no lib concatenated onto it, so loading it proved
- * a browser accepts something that is not what ships. dist/chrome is what goes
- * in the zip.
- */
-const EXT = join(import.meta.dir, '..', 'dist', 'chrome')
-const CHROME = process.env.CHROMIUM_BIN || '/home/mellen/.local/bin/chromium'
+const EXT = EXT_DIR
+
 const profile = mkdtempSync(join(tmpdir(), 'hs-ext-smoke-'))
 
 const errors: string[] = []
 let ctx: any = null
 
 try {
-  if (!existsSync(join(EXT, 'manifest.json'))) {
-    throw new Error(`no built extension at ${EXT} — run \`bun run build.js chrome\` first`)
-  }
-  const chromium = await loadChromium()
-  ctx = await chromium.launchPersistentContext(profile, {
-    executablePath: CHROME,
-    headless: false, // --headless=new below; MV3 workers need the new mode
-    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, '--headless=new', '--no-sandbox'],
-  })
+  assertBuilt()
+  ctx = await launchWithExtension(profile)
   ctx.on('page', (p: any) => p.on('pageerror', (e: unknown) => errors.push(`page: ${String(e).slice(0, 300)}`)))
   ctx.on('serviceworker', (w: any) =>
     w.on('console', (m: any) => {

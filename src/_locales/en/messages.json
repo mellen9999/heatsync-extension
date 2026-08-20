@@ -2870,17 +2870,5 @@
   "mc_msg_start_thread": {
     "message": "start a thread from this message",
     "description": "Tooltip on the per-message button that seeds a new heatsync thread with a quote of that chat message"
-  },
-  "mc_share_copied": {
-    "message": "link copied — anyone can open it, no install"
-  },
-  "mc_share_failed": {
-    "message": "couldn't copy the link"
-  },
-  "mc_share_nothing": {
-    "message": "add a channel first"
-  },
-  "mc_btn_share": {
-    "message": "copy a link to this multichat — opens for anyone, no install"
   }
 }

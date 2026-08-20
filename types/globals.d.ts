@@ -32,6 +32,8 @@ interface Window {
   }
   /** when true, swallow() writes named catch-sites into the error ring buffer */
   __hsDiagVerbose?: boolean
+  /** install guard for the host-page securitypolicyviolation listener */
+  __hsCspWatch?: boolean
   /** dedup flag for ctx-death page reload */
   __heatsyncReloadScheduled?: boolean
   /** debug flag (set via localStorage heatsync_debug=true) */

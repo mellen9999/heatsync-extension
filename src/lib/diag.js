@@ -202,6 +202,91 @@ function swallow(err, tag) {
   } catch (_) {}
 }
 
+// ── host-page CSP ───────────────────────────────────────────────────────────
+//
+// We inject images, styles and elements into twitch, kick and youtube — three
+// documents whose Content-Security-Policy we do not control and cannot see
+// coming. If any of them tightens img-src, whatever we injected that trips it
+// simply stops rendering. No error, no exception, no console line we own.
+//
+// Reading the policy is not enough to predict this: a header can look
+// permissive and still kill inline handlers, because a nonce or 'strict-dynamic'
+// makes the browser ignore an 'unsafe-inline' that is right there in the policy.
+// The securitypolicyviolation event is the only thing that reports what the
+// browser ACTUALLY refused.
+//
+// This project has already lost a day to a CSP that silently froze the data
+// layer — see the manifest rule in heatsync_csp_default_src_blocks_everything.
+// That was our own policy. This is the half we don't own.
+
+// Host pages generate their own violations constantly (youtube especially), so
+// only violations traceable to something WE put on the page are reported.
+const CSP_OURS_RE = /(heatsync\.org|7tv\.app|betterttv\.net|frankerfacez\.com|jtvnw\.net|files\.kick\.com)/i
+// Hard ceiling on top of per-key dedupe: one broken CDN across a busy page can
+// trip the same directive from many elements, and the ring buffer only holds 50.
+const CSP_MAX_REPORTS = 8
+const _cspSeen = new Set()
+
+/**
+ * Is this violation caused by something we injected, rather than the host
+ * page's own business? Pure, so the classification is testable.
+ * @param {{blockedURI?: string, sourceFile?: string}} ev
+ * @returns {boolean}
+ */
+function isOurCspViolation(ev) {
+  if (!ev) return false
+  const src = typeof ev.sourceFile === 'string' ? ev.sourceFile : ''
+  if (src.includes('chrome-extension://') || src.includes('moz-extension://')) return true
+  const blocked = typeof ev.blockedURI === 'string' ? ev.blockedURI : ''
+  // 'inline' / 'eval' / 'data' carry no host — without an extension sourceFile
+  // there is nothing tying them to us, and claiming them would drown the buffer
+  // in the host page's own violations.
+  if (!blocked?.includes('://')) return false
+  return CSP_OURS_RE.test(blocked)
+}
+
+/** Stable dedupe key: one report per directive per blocked origin. */
+function _cspKey(ev) {
+  const directive = ev?.effectiveDirective || ev?.violatedDirective || '?'
+  let origin = ''
+  try {
+    origin = new URL(ev.blockedURI).origin
+  } catch (_) {
+    origin = String(ev?.blockedURI || '?')
+  }
+  return `${directive}|${origin}`
+}
+
+function _onCspViolation(ev) {
+  try {
+    if (!isOurCspViolation(ev)) return
+    if (_cspSeen.size >= CSP_MAX_REPORTS) return
+    const key = _cspKey(ev)
+    if (_cspSeen.has(key)) return
+    _cspSeen.add(key)
+    _report(
+      `[heatsync] host page CSP blocked one of ours: ${key} (${String(ev.blockedURI).slice(0, 200)})`,
+      `csp:${key}`,
+    )
+  } catch (_) {}
+}
+
+// Installed only where a report can actually be written — the MAIN-world copy of
+// this bundle sees the same violations but has no chrome.storage, so letting it
+// listen would double-count into a sink it cannot reach.
+try {
+  if (
+    typeof document !== 'undefined' &&
+    typeof window !== 'undefined' &&
+    !window.__hsCspWatch &&
+    typeof chrome !== 'undefined' &&
+    typeof chrome?.storage?.local?.set === 'function'
+  ) {
+    window.__hsCspWatch = true
+    document.addEventListener('securitypolicyviolation', _onCspViolation)
+  }
+} catch (_) {}
+
 /** Snapshot for the debug probe / console. Read-only. */
 function diagSnapshot() {
   /** @type {Record<string, unknown>} */
@@ -220,7 +305,7 @@ function diagSnapshot() {
   /** @type {Record<string, number>} */
   const swallowed = {}
   for (const [tag, n] of _swallowed) swallowed[tag] = n
-  return { selectors, swallowed }
+  return { selectors, swallowed, csp: [..._cspSeen] }
 }
 
 // Console handle: __hsDiag.snapshot() to read counters, __hsDiag.verbose(true)
@@ -237,4 +322,4 @@ try {
   }
 } catch (_) {}
 
-export { diagSnapshot, hsQuery, hsQueryAll, MISS_MS, MISS_STREAK, swallow }
+export { CSP_MAX_REPORTS, diagSnapshot, hsQuery, hsQueryAll, isOurCspViolation, MISS_MS, MISS_STREAK, swallow }

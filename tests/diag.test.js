@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { diagSnapshot, hsQuery, hsQueryAll, MISS_MS, MISS_STREAK, swallow } from '../src/lib/diag.js'
+import {
+  CSP_MAX_REPORTS,
+  diagSnapshot,
+  hsQuery,
+  hsQueryAll,
+  isOurCspViolation,
+  MISS_MS,
+  MISS_STREAK,
+  swallow,
+} from '../src/lib/diag.js'
 
 // Behaviour test, not a source-text contract: it drives the real module against
 // a fake DOM and a fake clock. The whole point of diag.js is that it must never
@@ -214,5 +223,55 @@ describe('swallow', () => {
     }
     expect(() => swallow(hostile, 'unit:hostile')).not.toThrow()
     expect(diagSnapshot().swallowed['unit:hostile']).toBe(1)
+  })
+})
+
+describe('host-page CSP violations', () => {
+  // We inject into three documents whose CSP we do not control. Those pages
+  // generate a constant stream of their OWN violations (youtube especially), so
+  // the classifier is the whole feature: claim too much and the 50-entry ring
+  // buffer fills with someone else's problems, claim too little and a tightened
+  // img-src kills emote rendering silently.
+
+  test('claims a blocked emote CDN', () => {
+    for (const uri of [
+      'https://cdn.7tv.app/emote/1234/2x.webp',
+      'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0',
+      'https://cdn.betterttv.net/emote/abc/2x',
+      'https://cdn.frankerfacez.com/emote/1/2',
+      'https://files.kick.com/emotes/9/fullsize',
+      'https://cdn.heatsync.org/e/abc.webp',
+    ]) {
+      expect(isOurCspViolation({ blockedURI: uri }), uri).toBe(true)
+    }
+  })
+
+  test('claims anything sourced from the extension itself', () => {
+    expect(isOurCspViolation({ blockedURI: 'inline', sourceFile: 'chrome-extension://abc/content.js' })).toBe(true)
+    expect(isOurCspViolation({ blockedURI: 'eval', sourceFile: 'moz-extension://abc/content.js' })).toBe(true)
+  })
+
+  test("does NOT claim the host page's own violations", () => {
+    expect(isOurCspViolation({ blockedURI: 'https://www.google-analytics.com/x.js' })).toBe(false)
+    expect(isOurCspViolation({ blockedURI: 'https://i.ytimg.com/vi/x/hq.jpg' })).toBe(false)
+    expect(isOurCspViolation({ blockedURI: 'https://assets.twitch.tv/x.js' })).toBe(false)
+  })
+
+  test('does not claim host-page inline/eval it cannot trace to us', () => {
+    // With no extension sourceFile there is nothing tying these to us, and
+    // youtube trips them constantly.
+    expect(isOurCspViolation({ blockedURI: 'inline', sourceFile: 'https://www.youtube.com/' })).toBe(false)
+    expect(isOurCspViolation({ blockedURI: 'eval' })).toBe(false)
+    expect(isOurCspViolation({ blockedURI: 'data' })).toBe(false)
+  })
+
+  test('survives junk input', () => {
+    expect(isOurCspViolation(null)).toBe(false)
+    expect(isOurCspViolation({})).toBe(false)
+    expect(isOurCspViolation({ blockedURI: 42, sourceFile: {} })).toBe(false)
+  })
+
+  test('the report ceiling is small enough not to swamp a 50-entry buffer', () => {
+    expect(CSP_MAX_REPORTS).toBeLessThanOrEqual(10)
   })
 })

@@ -17924,11 +17924,20 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-tabbar {
       bottom: 0;
     }
+    /* Pre-JS fallback only — NOT !important.
+       The tab bar wraps, so its height is measured, not known: _updateMcLayout
+       writes the real inset inline from getBoundingClientRect. These rules used
+       31px !important, which beat that inline style and pinned the overlay
+       31px off the bottom while the bar actually occupied 19 — a 12px strip of
+       container that nothing covered, in every bottom-docked session with the
+       composer hidden. Found by scripts/render-extension.ts.
+       :has() already outspecifies the generic .hs-tabs-bottom rule below, so
+       dropping !important keeps the fallback and lets the measurement win. */
     .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay {
-      bottom: 31px !important; /* tab bar only — override generic rule */
+      bottom: 31px;
     }
     .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker {
-      bottom: 31px !important;
+      bottom: 31px;
     }
 
     /* LEFT SIDE TABS LAYOUT - absolute position at left edge (matches right) */

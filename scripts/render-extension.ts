@@ -67,6 +67,12 @@ async function geometry(p: any) {
       return {
         h: Math.round(r.height),
         w: Math.round(r.width),
+        // Content box. #hs-mc-container carries a 4px border under
+        // box-sizing:border-box, so its border-box width is NOT the space its
+        // children get — comparing against it makes a correct layout look 4px
+        // short in the side docks.
+        cw: el.clientWidth,
+        ch: el.clientHeight,
         top: el.style.top || '',
         bottom: el.style.bottom || '',
       }
@@ -115,14 +121,14 @@ try {
   // The overlay must fill the container minus the two bars. This is what the
   // boot-latch bug broke: 510px of chat inside an 828px space, with 318px of
   // nothing beneath it, because the overlay kept a stale inset.
-  const expected = g.container.h - g.tabbar.h - g.inputbar.h
+  const expected = g.container.ch - g.tabbar.h - g.inputbar.h
   const drift = Math.abs(g.overlay.h - expected)
   if (drift > 2) {
     fail(
-      `overlay height ${g.overlay.h}px but container(${g.container.h}) - tabbar(${g.tabbar.h}) - input(${g.inputbar.h}) = ${expected}px — ${drift}px of dead space`,
+      `overlay height ${g.overlay.h}px but container(${g.container.ch}) - tabbar(${g.tabbar.h}) - input(${g.inputbar.h}) = ${expected}px — ${drift}px of dead space`,
     )
   }
-  ok(`no dead band: overlay ${g.overlay.h}px fills container ${g.container.h}px minus bars`)
+  ok(`no dead band: overlay ${g.overlay.h}px fills container ${g.container.ch}px minus bars`)
 
   // ── the invariant survives a platform re-render ─────────────────────────
   // What this proves: the extension rebuilds its bars when the host page tears
@@ -159,14 +165,96 @@ try {
   for (const [name, v] of Object.entries(g2)) {
     if (v === null) fail(`#hs-mc-${name} is missing after the rebuild`)
   }
-  const expected2 = g2.container.h - g2.tabbar.h - g2.inputbar.h
+  const expected2 = g2.container.ch - g2.tabbar.h - g2.inputbar.h
   const drift2 = Math.abs(g2.overlay.h - expected2)
   if (drift2 > 2) {
     fail(
-      `after a rebuild the overlay is ${g2.overlay.h}px but container(${g2.container.h}) - tabbar(${g2.tabbar.h}) - input(${g2.inputbar.h}) = ${expected2}px — ${drift2}px of dead space`,
+      `after a rebuild the overlay is ${g2.overlay.h}px but container(${g2.container.ch}) - tabbar(${g2.tabbar.h}) - input(${g2.inputbar.h}) = ${expected2}px — ${drift2}px of dead space`,
     )
   }
-  ok(`no dead band after a rebuild: overlay ${g2.overlay.h}px in container ${g2.container.h}px`)
+  ok(`no dead band after a rebuild: overlay ${g2.overlay.h}px in container ${g2.container.ch}px`)
+
+  // ── every docking position ───────────────────────────────────────────────
+  // _updateMcLayout has four branches — top/right/bottom/left each write a
+  // different set of insets — and only the default one was covered above.
+  // Layout is this project's most expensive bug class, so all four get measured.
+  //
+  // Driven through the extension's own supported rotate message (main.js listens
+  // for 'heatsync-rotate-tabs' from the page's own origin), not by poking
+  // internals, so the test exercises the real path a user takes.
+  const rotate = async () => {
+    await p.evaluate(() => window.postMessage({ type: 'heatsync-rotate-tabs' }, location.origin))
+    await p.waitForTimeout(600)
+    return p.evaluate(() => {
+      const c = [...document.body.classList].find((x) => x.startsWith('hs-tabs-'))
+      return c ? c.replace('hs-tabs-', '') : '?'
+    })
+  }
+
+  /**
+   * Position-agnostic dead-space check.
+   *
+   * Naming each child in a formula is too brittle — the emote picker takes 12px
+   * in the bottom dock and 0 in the top, and the next element added would break
+   * the test rather than the layout. What actually matters is the property the
+   * boot-latch bug violated: the container's content box must be fully covered
+   * by its visible children, with nothing spilling outside it.
+   */
+  const coverage = () =>
+    p.evaluate(() => {
+      const c = document.getElementById('hs-mc-container')
+      if (!c) return null
+      const cr = c.getBoundingClientRect()
+      const cs = getComputedStyle(c)
+      const top = cr.top + Number.parseFloat(cs.borderTopWidth || '0')
+      const bottom = cr.bottom - Number.parseFloat(cs.borderBottomWidth || '0')
+      const left = cr.left + Number.parseFloat(cs.borderLeftWidth || '0')
+      const right = cr.right - Number.parseFloat(cs.borderRightWidth || '0')
+
+      const spans: Array<[number, number]> = []
+      let overflow: string | null = null
+      let overlayH = 0
+      for (const el of Array.from(c.children) as HTMLElement[]) {
+        const r = el.getBoundingClientRect()
+        if (r.height <= 0 || r.width <= 0) continue
+        if (el.id === 'hs-mc-overlay') overlayH = r.height
+        if (r.top < top - 2 || r.bottom > bottom + 2 || r.left < left - 2 || r.right > right + 2) {
+          overflow = `${el.id || el.className} spills outside the container`
+        }
+        spans.push([r.top, r.bottom])
+      }
+      // Merge the vertical spans and measure what the container is NOT covered by.
+      spans.sort((a, b) => a[0] - b[0])
+      let gap = 0
+      let cursor = top
+      for (const [a, b] of spans) {
+        if (a > cursor) gap += a - cursor
+        cursor = Math.max(cursor, b)
+      }
+      if (cursor < bottom) gap += bottom - cursor
+      return { gap: Math.round(gap), overflow, contentH: Math.round(bottom - top), overlayH: Math.round(overlayH) }
+    })
+
+  const seen = new Set<string>()
+  for (let i = 0; i < 4; i++) {
+    const pos = await rotate()
+    if (pos === '?') fail('no hs-tabs-* class on body — cannot tell which docking position is active')
+    seen.add(pos)
+    const cov = await coverage()
+    if (!cov) fail(`the container vanished in the "${pos}" position`)
+    if (cov.overflow) fail(`"${pos}" dock: ${cov.overflow}`)
+    if (cov.gap > 2) {
+      fail(`"${pos}" dock leaves ${cov.gap}px of the container's ${cov.contentH}px uncovered — dead space`)
+    }
+    // A container fully covered by a collapsed overlay plus something else would
+    // still be wrong: chat is the point.
+    if (cov.overlayH < cov.contentH * 0.5) {
+      fail(`"${pos}" dock: overlay is only ${cov.overlayH}px of ${cov.contentH}px — chat has been squeezed out`)
+    }
+    ok(`"${pos}" dock: no dead space, overlay ${cov.overlayH}/${cov.contentH}px`)
+  }
+  if (seen.size !== 4) fail(`rotate did not visit all four positions — saw ${[...seen].join(', ')}`)
+  ok('rotate cycles through all four docking positions')
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

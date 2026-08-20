@@ -3,18 +3,19 @@
  * job.
  *
  * The resub flow ends in the Chat_ShareResub_UseResubToken mutation, which
- * needs a token twitch issued. surface() scans react fibers for one and, when
- * that finds nothing, RECONSTRUCTS a guess (base64
- * "<uid>:<cid>:<months>:cumulative") inferred from an older build. Twitch's
- * current build exposes no token prop anywhere near the callout — verified live
- * by walking 400 fibers off the share button — so the guess was always what got
- * sent, the mutation always failed, and the failure path posts the typed text as
- * an ordinary chat message.
+ * needs a token twitch issued. That token is not a prop under any name: twitch
+ * carries it as the react KEY of the element it renders the callout from, two
+ * fibers under the queue container (measured live on a 107-month callout). The
+ * scan used to read props only, always came back empty, and the flow fell
+ * through to twitch's own button — which hands the celebration to twitch's
+ * composer, the one heatsync replaces, so nothing was ever sent and the callout
+ * returned on the next reload.
  *
- * That is the worst possible shape: it looks like it worked, while twitch never
- * marks the resub shared, so the callout comes back on the next refresh.
- * Reported as "appears like it works but it keeps coming back like every
- * refresh".
+ * The token is base64 of "<userId>:<channelId>:<count>:<kind>", so decoding it
+ * IS the validation — nothing else on the page decodes to that shape. Guessing
+ * one is never allowed: a wrong token fails the mutation, and the failure path
+ * posts the typed text as an ordinary chat message, which looks like success
+ * while twitch never marks the resub shared.
  *
  * Source-text invariants (house pattern — main.js has top-level side effects
  * and cannot be imported).
@@ -26,13 +27,20 @@ const MAIN_SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.ur
 const NOTIFS_SRC = readFileSync(new URL('../src/multichat/notifs.js', import.meta.url), 'utf8')
 
 describe('the resub click is only intercepted with a real token', () => {
-  test('hasRealToken is captured BEFORE the fallback overwrites it', () => {
-    const i = MAIN_SRC.indexOf('const hasRealToken')
-    const j = MAIN_SRC.indexOf('resubToken = fallbackToken(months)')
-    expect(i, 'hasRealToken missing').toBeGreaterThan(-1)
-    expect(j, 'fallback missing').toBeGreaterThan(-1)
-    // Order is the whole point: read the genuine value first, then guess.
-    expect(i).toBeLessThan(j)
+  test('no reconstructed token exists anywhere in the flow', () => {
+    // The strongest form of the old ordering guarantee: there is nothing to
+    // order, because nothing builds a token out of ids and a month count.
+    expect(MAIN_SRC).not.toContain('fallbackToken')
+    expect(MAIN_SRC).not.toMatch(/btoa\(`\$\{[^`]*\}:\$\{[^`]*\}:/)
+  })
+
+  test('the token must belong to THIS callout', () => {
+    const i = MAIN_SRC.indexOf('const resubToken =')
+    expect(i).toBeGreaterThan(-1)
+    const block = MAIN_SRC.slice(i, i + 200)
+    // A sub-anniversary token, for the month count the callout announces.
+    expect(block).toContain("scan.kind === 'cumulative'")
+    expect(block).toContain('scan.months === months')
   })
 
   test('the share button hook is gated on it', () => {
@@ -43,7 +51,7 @@ describe('the resub click is only intercepted with a real token', () => {
     const i = MAIN_SRC.indexOf("HsNotifs.emit('twitch-resub-share'")
     expect(i).toBeGreaterThan(-1)
     const block = MAIN_SRC.slice(i, i + 700)
-    expect(block).toMatch(/_resubToken: hasRealToken \? resubToken : null/)
+    expect(block).toMatch(/_resubToken: resubToken,/)
   })
 })
 
@@ -64,15 +72,16 @@ describe('without a token the prompt defers to twitch', () => {
     expect(handler).toMatch(/if \(token\) \{/)
   })
 
-  test('the click-time rescan can never return a RECONSTRUCTED token', () => {
-    // fallbackToken() builds a base64 guess from selfId:channelId:months. That
-    // guess is what made the mutation fail while looking like it worked. The
-    // rescan must read the fiber scan and nothing else.
+  test('the click-time rescan reads the fiber scan and nothing else', () => {
     const i = MAIN_SRC.indexOf('rescanToken: (rootEl) =>')
     expect(i).toBeGreaterThan(-1)
     const block = MAIN_SRC.slice(i, MAIN_SRC.indexOf('_allowNativeShare', i))
     expect(block).toContain('fiberTokenScan')
-    expect(block).not.toContain('fallbackToken')
+    expect(block).not.toContain('btoa')
+    // The live container first — twitch re-renders the queue, so the element
+    // captured at detection time can already be detached, and a detached fiber
+    // still hands back the stale key.
+    expect(block).toContain('document.querySelector(CALLOUT_QUEUE_SEL)')
   })
 
   test('otherwise clicks twitch own button', () => {

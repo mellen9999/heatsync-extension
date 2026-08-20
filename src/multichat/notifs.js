@@ -629,7 +629,7 @@ const HsNotifs = (() => {
             // the user was about to write. By click time the tree is built.
             const token =
               data._resubToken ||
-              window.__hsResubShare?.rescanToken?.(data._nativeShareBtn || data._nativeCallout) ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn) ||
               null
             if (token) {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)

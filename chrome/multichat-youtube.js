@@ -9786,7 +9786,7 @@ const HsNotifs = (() => {
             // the user was about to write. By click time the tree is built.
             const token =
               data._resubToken ||
-              window.__hsResubShare?.rescanToken?.(data._nativeShareBtn || data._nativeCallout) ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn) ||
               null
             if (token) {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
@@ -66675,6 +66675,28 @@ const STORAGE_KEY = 'heatsync_multichat'
   let _watchstreakShareModeTimer = null
   let _watchstreakShareCtx = null
   let _lastSurfacedShareBtn = null
+  let _lastSurfacedCallout = null
+  const CALLOUT_QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
+
+  // Twitch's callout tokens are base64 of "<userId>:<channelId>:<count>:<kind>"
+  // (kind = "cumulative" for a sub anniversary). Decoding is the validation:
+  // nothing else on the page base64-decodes to that exact shape, so a match is
+  // the token by construction — no prop name to guess and nothing to re-learn
+  // when twitch renames its components.
+  const CALLOUT_TOKEN_SHAPE = /^(\d+):(\d+):(\d+):([a-z_]+)$/i
+  function decodeCalloutToken(raw) {
+    if (typeof raw !== 'string' || raw.length < 16 || raw.length > 200) return null
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(raw)) return null
+    let plain
+    try {
+      plain = atob(raw)
+    } catch {
+      return null
+    }
+    const m = CALLOUT_TOKEN_SHAPE.exec(plain)
+    if (!m) return null
+    return { raw, userId: m[1], channelId: m[2], count: Number(m[3]), kind: m[4].toLowerCase() }
+  }
 
   // Once-per-day rate-limit on the watch-streak share UI. Twitch sometimes
   // re-shows the callout if you reload the tab mid-stream; cap our surfacing
@@ -66824,73 +66846,37 @@ const STORAGE_KEY = 'heatsync_multichat'
   // cause was that race or a root that never reached the payload.
   function fiberTokenScan(rootEl) {
     if (typeof getFiber !== 'function' || !rootEl) return null
-    const out = { token: null, channelId: null }
-    const queue = [getFiber(rootEl)]
+    const out = { token: null, channelId: null, months: 0, kind: null }
+    const root = getFiber(rootEl)
+    if (!root) return out
+    // Breadth-first over the callout's own subtree. Twitch carries the token as
+    // the React *key* of the element it renders the callout from — measured
+    // live on a 107-month callout, two fibers below the queue container. It is
+    // not a prop under any name, which is why every earlier scan came back
+    // empty and the whole share flow fell through to twitch's own button. That
+    // button hands the celebration to twitch's composer, which heatsync has
+    // replaced, so the share never completed and the callout came back on the
+    // next reload.
+    // Children + siblings only: from the container there is nothing above worth
+    // walking, and climbing turns a two-step lookup into a walk of the whole
+    // chat tree.
+    const queue = [root]
     const seen = new WeakSet()
     let steps = 0
-    const tokenKeys = ['tokenID', 'tokenId', 'resubToken', 'token', 'calloutID', 'calloutId', 'shareToken']
-    const channelKeys = ['channelID', 'channelId']
-
-    // Twitch does NOT put the token in a top-level prop. The callout is
-    // rendered from an `event` payload nested inside the context-menu prop:
-    //
-    //   { type: 'share-resub', id, cumulativeTenureMonths, token, ... }
-    //
-    // and `event.id` is the base64("<userId>:<channelId>:<months>:cumulative")
-    // that Chat_ShareResub_UseResubToken wants as input.tokenID. (`event.token`
-    // is a different, opaque 32-char value — NOT the tokenID; using it fails
-    // the mutation, which silently posts the text as ordinary chat and leaves
-    // the callout to reappear on the next refresh.)
-    //
-    // Scanning only top-level keys is why every scan came back empty and the
-    // whole share-mode flow was skipped. The payload sits ~46 fiber steps from
-    // the Share button, well inside the budget below — it was never a depth
-    // problem, only a nesting one.
-    const eventFrom = (p) =>
-      p?.contextMenu?.props?.children?.props?.event ||
-      p?.contextMenu?._owner?.stateNode?.props?.event ||
-      p?.event ||
-      null
-
-    while (queue.length && steps < 60 && !(out.token && out.channelId)) {
+    while (queue.length && steps < 400 && !out.token) {
       const f = queue.shift()
       if (!f || seen.has(f)) continue
       seen.add(f)
       steps++
-      const p = f.memoizedProps
-      if (p && typeof p === 'object') {
-        if (!out.token) {
-          const ev = eventFrom(p)
-          if (ev && typeof ev.id === 'string' && ev.id.length > 12) {
-            out.token = ev.id
-            out.months = Number(ev.cumulativeTenureMonths) || 0
-            out.eventType = ev.type || null
-          }
-        }
-        if (!out.token) {
-          for (const k of tokenKeys) {
-            const v = p[k]
-            if (typeof v === 'string' && v.length > 12) {
-              out.token = v
-              break
-            }
-          }
-        }
-        if (!out.channelId) {
-          for (const k of channelKeys) {
-            const v = p[k]
-            if (typeof v === 'string' && /^\d+$/.test(v)) {
-              out.channelId = v
-              break
-            }
-          }
-        }
+      const tok = decodeCalloutToken(f.key)
+      if (tok) {
+        out.token = tok.raw
+        out.channelId = tok.channelId
+        out.months = tok.count
+        out.kind = tok.kind
+        break
       }
-      if (f.return) queue.push(f.return)
       if (f.child) queue.push(f.child)
-      // Siblings matter: the callout body and its context-menu prop mount as
-      // siblings of the Share button's subtree, so a return+child-only walk
-      // never reaches the event payload at all.
       if (f.sibling) queue.push(f.sibling)
     }
     return out
@@ -66921,8 +66907,9 @@ const STORAGE_KEY = 'heatsync_multichat'
         // No token — last-resort: programmatic-click the hidden native button.
         // Fires Twitch's default empty-body celebration; the typed text still
         // goes out as a plain follow-up message via the IRC send path below.
-        const QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
-        const liveBtn = document.querySelector(`${QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`)
+        const liveBtn = document.querySelector(
+          `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
+        )
         const btn = liveBtn || claim._nativeShareBtn
         if (!btn || typeof getFiber !== 'function') return false
         try {
@@ -66980,7 +66967,13 @@ const STORAGE_KEY = 'heatsync_multichat'
               tokenID: claim.resubToken,
             },
           })
-          const errs = data?.errors || data?.data?.shareResub?.error
+          // The mutation resolves the field `useChatNotificationToken`; a
+          // rejected token comes back HTTP 200 with an errors[] entry and a
+          // null field, so a bare `!data.errors` check would call that a
+          // success and swallow the message the user typed.
+          const errs =
+            (Array.isArray(data?.errors) && data.errors.length ? data.errors : null) ||
+            (data?.data && data.data.useChatNotificationToken === null ? [{ message: 'token rejected' }] : null)
           if (!errs) {
             log('resub-share: GQL fired ok')
             return
@@ -67024,12 +67017,11 @@ const STORAGE_KEY = 'heatsync_multichat'
      */
     rescanToken: (rootEl) => {
       try {
-        const el = rootEl || _lastSurfacedShareBtn
-        const scan = el ? fiberTokenScan(el) : null
-        const tok = scan?.token || null
-        // Length guard mirrors the scan's own: a real tokenID is a 44-char
-        // base64 of four colon-joined parts, never a short opaque handle.
-        return typeof tok === 'string' && tok.length > 12 ? tok : null
+        // The live container first: twitch re-renders the queue as callouts
+        // come and go, so the element captured at detection time can already be
+        // detached, and a detached fiber still carries the old key.
+        const el = document.querySelector(CALLOUT_QUEUE_SEL) || rootEl || _lastSurfacedCallout || _lastSurfacedShareBtn
+        return fiberTokenScan(el)?.token || null
       } catch (_) {
         return null
       }
@@ -67173,8 +67165,9 @@ const STORAGE_KEY = 'heatsync_multichat'
         _injectWatchstreakSynthetic(claim, user, streakCount, text || '')
       } catch (_) {}
       const broadcastShare = () => {
-        const QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
-        const liveBtn = document.querySelector(`${QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`)
+        const liveBtn = document.querySelector(
+          `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
+        )
         const candidates = [liveBtn, claim._nativeShareBtn].filter(Boolean)
         const seen = new Set()
         const tryFiberOnClick = (btn) => {
@@ -67280,29 +67273,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (!ch || !user) return
       const shareBtn = calloutEl.querySelector('[data-a-target="chat-private-callout__primary-button"]')
 
-      // Capture Twitch's resub token from React props on the callout subtree.
-      // Token is what Chat_ShareResub_UseResubToken GQL expects as input.tokenID.
-      // Format observed: base64("<userId>:<channelId>:<months>:cumulative").
-      // We walk up from both the button and container — Twitch wraps the token
-      // in different ancestor components across surfaces (chat, popout, embed).
-      // Whichever prop name Twitch uses, we accept; also record channelId for
-      // fallback reconstruction if no direct token prop is found.
-      const scan = fiberTokenScan(shareBtn || calloutEl) || {}
-      let resubToken = scan.token || null
-      // ChannelId for token reconstruction. Twitch's React tree often doesn't
-      // expose channelID near the callout (private callouts mount above the
-      // chat-root), so prefer the documentElement attribute that early-inject
-      // stamps from the page channel resolver. Fiber scan is fallback.
-      const channelIdForToken = document.documentElement?.dataset?.hsTwitchChannelId || scan.channelId || null
-      const fallbackToken = (months) => {
-        const selfId = document.documentElement?.dataset?.hsSelfTwitchId
-        if (!selfId || !channelIdForToken || !months) return null
-        try {
-          return btoa(`${selfId}:${channelIdForToken}:${months}:cumulative`)
-        } catch {
-          return null
-        }
-      }
+      // Capture twitch's callout token from the callout subtree. It is what
+      // Chat_ShareResub_UseResubToken takes as input.tokenID, and it decodes to
+      // "<userId>:<channelId>:<count>:<kind>". Scan the container, never the
+      // button: the token sits two fibers under the container, while from the
+      // button the same breadth-first walk fans out across the chat tree
+      // without ever reaching it.
+      const scan = fiberTokenScan(calloutEl) || {}
 
       // Watch-streak first (text mentions "watch streak"); resub fallback (only
       // "N month" — without "watch streak"). Order matters: a watch-streak
@@ -67350,6 +67327,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           )
         }
         _lastSurfacedShareBtn = shareBtn || null
+        _lastSurfacedCallout = calloutEl
         try {
           HsNotifs.emit('twitch-watchstreak-share', {
             streakCount,
@@ -67367,25 +67345,15 @@ const STORAGE_KEY = 'heatsync_multichat'
 
       if (!months) return
       calloutEl.dataset.hsSurfaced = '1'
-      // Whether Twitch actually handed us a token, as opposed to us guessing
-      // one. This decides if we may take the click at all.
-      //
-      // The reconstruction below (base64 "<uid>:<cid>:<months>:cumulative") was
-      // inferred from a token seen on an older build; twitch's current build
-      // exposes no token prop anywhere near the callout — walked 400 fibers off
-      // the share button live and found none. So the fallback was ALWAYS in
-      // play, the mutation always failed, and the failure path posts the typed
-      // text as a normal chat message: it looks like it worked, while twitch
-      // never consumes the token, so the callout returns on the next refresh.
-      // Exactly the report — "appears like it works but it keeps coming back
-      // like every refresh".
-      //
-      // So: only intercept the button when we can genuinely finish the job.
-      // Without a real token, twitch's own button works perfectly — let it run.
-      // Never take over a flow we cannot complete; a silent half-success is
-      // worse than not intervening.
+      // Only take the click when the token we hold is genuinely this callout's:
+      // the months it encodes must match the months the callout announces. A
+      // token is never guessed or reconstructed — a wrong one fails the
+      // mutation, and the failure path posts the typed text as ordinary chat,
+      // which reads as success while twitch never marks the resub shared, so
+      // the callout returns on every reload. Without a token we do not
+      // intervene at all; a silent half-success is worse than not helping.
+      const resubToken = scan.kind === 'cumulative' && scan.months === months ? scan.token : null
       const hasRealToken = !!resubToken
-      if (!resubToken) resubToken = fallbackToken(months)
       if (hasRealToken && shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
         shareBtn.dataset.hsShareHooked = '1'
         shareBtn.addEventListener(
@@ -67417,6 +67385,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         )
       }
       _lastSurfacedShareBtn = shareBtn || null
+      _lastSurfacedCallout = calloutEl
       try {
         HsNotifs.emit('twitch-resub-share', {
           months,
@@ -67424,10 +67393,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           channel: ch,
           _nativeShareBtn: shareBtn,
           _nativeCallout: calloutEl,
-          // Only pass a token we were actually given. A reconstructed one makes
-          // the share mode fail in a way that reads as success; downstream uses
-          // its absence to route through twitch's own button instead.
-          _resubToken: hasRealToken ? resubToken : null,
+          // Only ever a token twitch handed us. Downstream reads its absence
+          // as "we cannot finish this" and routes the click to twitch's own
+          // button instead of half-completing.
+          _resubToken: resubToken,
         })
       } catch (_) {}
       try {
@@ -67441,8 +67410,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // watch-streak) can fire as siblings inside the queue parent — we must
     // observe each on first touch and the parent of any we see so subsequent
     // siblings are caught.
-    const QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
-    document.querySelectorAll(QUEUE_SEL).forEach((c) => {
+    document.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
       if (c.querySelector('*')) surface(c)
     })
     let _narrowedTo = null
@@ -67460,17 +67428,17 @@ const STORAGE_KEY = 'heatsync_multichat'
     _hsCalloutCloseObs = new MutationObserver((muts) => {
       // Surface ALL currently-present callouts on any mutation — the
       // dataset.hsSurfaced guard makes this idempotent.
-      for (const c of document.querySelectorAll(QUEUE_SEL)) {
+      for (const c of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {
         if (c.querySelector('*')) surface(c)
       }
       for (const m of muts) {
         for (const node of m.addedNodes) {
           if (node.nodeType !== 1) continue
-          if (node.matches?.(QUEUE_SEL)) {
+          if (node.matches?.(CALLOUT_QUEUE_SEL)) {
             if (node.querySelector('*')) surface(node)
             _narrowIfPossible(node)
           } else if (node.querySelector) {
-            node.querySelectorAll(QUEUE_SEL).forEach((c) => {
+            node.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
               if (c.querySelector('*')) surface(c)
               _narrowIfPossible(c)
             })
@@ -67478,7 +67446,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         }
       }
     })
-    const initialCallouts = document.querySelectorAll(QUEUE_SEL)
+    const initialCallouts = document.querySelectorAll(CALLOUT_QUEUE_SEL)
     if (initialCallouts.length > 0) {
       _narrowIfPossible(initialCallouts[0])
     } else {

@@ -14172,3 +14172,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Boot restore
 bgKickRestoreFromStorage()
 bgYtRestoreFromStorage()
+
+// Evaluation-complete marker. A service worker that throws partway through
+// still REGISTERS, so "a worker exists" proves nothing — scripts/smoke-extension.ts
+// asserts this flag instead, which is only reachable if the whole file ran.
+// Must stay the last statement in this file.
+self.__hsBootOk = true

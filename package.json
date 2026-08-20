@@ -11,6 +11,8 @@
   },
   "bugs": "https://github.com/mellen9999/heatsync-extension/issues",
   "scripts": {
+    "test": "bun test",
+    "test:smoke": "bun run build.js chrome && bun scripts/smoke-extension.ts",
     "build": "bun run build.js",
     "build:chrome": "bun run build.js chrome",
     "build:firefox": "bun run build.js firefox",

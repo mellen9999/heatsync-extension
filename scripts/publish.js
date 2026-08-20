@@ -23,6 +23,7 @@ import { homedir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
+import { amoFetchWithRetry, amoHealthy } from './lib/amo-retry.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = dirname(__dirname)
@@ -466,12 +467,21 @@ function amoJwt(issuer, secret) {
   return `${head}.${payload}.${sig}`
 }
 
+// Retries 5xx and network errors; 4xx still fails fast. A fresh JWT is minted
+// per attempt because AMO caps them at five minutes and the backoff can outlast
+// that. Every caller below throws on !res.ok, so without this one 503 from a
+// wobbling AMO ends the whole submission — which is exactly what happened on
+// 2026-08-20.
 async function amoRequest(method, url, creds, { body, headers } = {}) {
-  return fetch(url, {
-    method,
-    headers: { Authorization: `JWT ${amoJwt(creds.AMO_JWT_ISSUER, creds.AMO_JWT_SECRET)}`, ...headers },
-    body,
-  })
+  return amoFetchWithRetry(
+    () =>
+      fetch(url, {
+        method,
+        headers: { Authorization: `JWT ${amoJwt(creds.AMO_JWT_ISSUER, creds.AMO_JWT_SECRET)}`, ...headers },
+        body,
+      }),
+    { label: 'firefox', log: console.log },
+  )
 }
 
 async function amoUploadZip(creds, zipPath) {
@@ -545,6 +555,16 @@ async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
         `create a version on "${AMO_SLUG}", attach ${basename(sourceZipPath)} as source`,
     )
     return { status: 'dry-run' }
+  }
+
+  // Ask AMO whether it is up before pushing a 10MB zip at it. Their heartbeat
+  // is the only probe that tracked the 2026-08-20 outage — the addon read API
+  // and the upload endpoint both came back while validation was still down.
+  if (!(await amoHealthy())) {
+    throw new Error(
+      'amo is not healthy (https://addons.mozilla.org/__heartbeat__ is not 200) — ' +
+        'mozilla is having an outage, not us. re-run when it answers 200.',
+    )
   }
 
   console.log(`  firefox: uploading ${basename(zipPath)} to amo (channel=listed)…`)

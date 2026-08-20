@@ -19,8 +19,9 @@ jobs:
     # did exactly that — the pre-build test gate wedged, the job burned six
     # hours, and NEITHER tag ever produced release assets, so the self-dist xpi
     # and the README download links silently kept serving an older build. Fail
-    # in minutes and loudly instead.
-    timeout-minutes: 25
+    # in minutes and loudly instead. 40 rather than 25 to fit the signing
+    # retries below; the point of the cap is that it is minutes, not hours.
+    timeout-minutes: 40
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +50,48 @@ jobs:
           VERSION: ${{ steps.ver.outputs.version }}
         run: |
           cp "dist/heatsync-chrome-${VERSION}.zip" dist/heatsync-chrome.zip
+
+      # Everything above here is ours; everything below depends on Mozilla. The
+      # release is created FIRST, as a prerelease, so an AMO outage can only
+      # delay the firefox half instead of throwing the whole release away.
+      # v1.7.62 lost its chrome zip, source zip and checksums to a mozilla
+      # 503 because `gh release create` ran last and never got there.
+      - name: create prerelease + attach the assets AMO cannot touch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.ver.outputs.version }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          notes=$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; print; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md)
+          if [ -z "$notes" ]; then
+            notes="release $TAG"
+          fi
+          # sha256 checksums so anyone can self-verify the published artifacts
+          ( cd dist && sha256sum \
+              "heatsync-chrome-${VERSION}.zip" \
+              "heatsync-firefox-${VERSION}.zip" \
+              "heatsync-source-${VERSION}.zip" > checksums.txt )
+          notes="$(printf '%s\n\n### sha256\n```\n%s\n```\n' "$notes" "$(cat dist/checksums.txt)")"
+          assets=(
+            "dist/heatsync-chrome-${VERSION}.zip"
+            "dist/heatsync-firefox-${VERSION}.zip"
+            "dist/heatsync-source-${VERSION}.zip"
+            dist/heatsync-chrome.zip
+            dist/checksums.txt
+          )
+          # Idempotent: re-running this workflow for a tag whose release already
+          # exists (the finisher does exactly that) must top the assets up, not
+          # explode on "release already exists".
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "release $TAG already exists — refreshing assets"
+            gh release upload "$TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$TAG" --title "$TAG" --notes "$notes" --prerelease "${assets[@]}"
+          fi
 
       - name: sign firefox xpi (AMO self-distribution)
         env:
@@ -81,53 +124,72 @@ jobs:
             {addons: {"heatsync@heatsync.org": {updates: [
               {version: $v, update_link: $link, browser_specific_settings: {gecko: {strict_min_version: "128.0"}}}
             ]}}}' > dist/updates.json
+          # AMO's own heartbeat is the ONLY probe that tracked the 2026-08-20
+          # outage. /addons/addon/<guid>/ came back 200 while signing was still
+          # dead, and /addons/upload/ answered 401 while VALIDATION was still
+          # dead; each of those false "it's back" readings cost a rerun. Don't
+          # invent a new probe — ask them.
+          mkdir -p dist/signed
+          wait_for_amo() {
+            for _ in $(seq 1 20); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 \
+                https://addons.mozilla.org/__heartbeat__ || true)
+              [ "$code" = "200" ] && return 0
+              echo "amo heartbeat: ${code:-000} — waiting 30s"
+              sleep 30
+            done
+            return 1
+          }
           # web-ext can 409 against its OWN submission ("version already exists")
           # when validation polling races the upload — the version record is live
           # on AMO and signs server-side regardless. Fall back to downloading the
           # signed file for this exact version instead of failing the release.
-          if ! bunx web-ext@10.4.0 sign \
-            --source-dir dist/firefox \
-            --channel unlisted \
-            --api-key "$AMO_JWT_ISSUER" \
-            --api-secret "$AMO_JWT_SECRET" \
-            --artifacts-dir dist/signed \
-            --timeout 900000 \
-            --no-input; then
+          # Same fallback covers a retry whose earlier attempt did land.
+          for attempt in 1 2 3; do
+            if ! wait_for_amo; then
+              echo "::warning::amo unhealthy for 10min (attempt ${attempt}/3)"
+              continue
+            fi
+            if bunx web-ext@10.4.0 sign \
+              --source-dir dist/firefox \
+              --channel unlisted \
+              --api-key "$AMO_JWT_ISSUER" \
+              --api-secret "$AMO_JWT_SECRET" \
+              --artifacts-dir dist/signed \
+              --timeout 900000 \
+              --no-input; then
+              break
+            fi
             echo "web-ext sign failed — trying to fetch already-signed ${SIGN_VERSION} from AMO"
-            mkdir -p dist/signed
-            bun scripts/amo-fetch-signed.js "$SIGN_VERSION" "dist/signed/heatsync-${SIGN_VERSION}.xpi"
-          fi
+            if bun scripts/amo-fetch-signed.js "$SIGN_VERSION" "dist/signed/heatsync-${SIGN_VERSION}.xpi"; then
+              break
+            fi
+            [ "$attempt" -lt 3 ] && { echo "retrying sign in 60s (attempt ${attempt}/3)"; sleep 60; }
+          done
           signed=$(ls dist/signed/*.xpi 2>/dev/null | head -1)
-          if [ -z "$signed" ]; then echo "::error::no signed xpi produced"; exit 1; fi
+          if [ -z "$signed" ]; then
+            echo "::error::no signed xpi produced — the prerelease stands, re-run this workflow when AMO is healthy"
+            exit 1
+          fi
           cp "$signed" dist/heatsync-firefox.xpi
 
-      - name: create release + attach assets
+      # Only now is the release complete, so only now may it become Latest.
+      #
+      # Every self-dist firefox install polls
+      # releases/latest/download/updates.json, and that alias resolves to the
+      # newest NON-prerelease release. Which makes two failure modes possible,
+      # and both are silent:
+      #   • Latest without updates.json  → every install 404s and stops seeing
+      #     updates at all until the next good release.
+      #   • Latest with updates.json but no xpi → every install is pointed at a
+      #     download that 404s, over and over.
+      # So the pair is uploaded in ONE command and the promotion happens after
+      # it. Anything that fails before this point leaves a prerelease, which
+      # `latest` ignores — the previous release keeps serving updates untouched.
+      - name: attach firefox assets + promote to latest
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.ver.outputs.version }}
           TAG: ${{ steps.ver.outputs.tag }}
         run: |
-          notes=$(awk -v ver="$VERSION" '
-            $0 ~ "^## \\[" ver "\\]" { found=1; print; next }
-            found && /^## \[/ { exit }
-            found { print }
-          ' CHANGELOG.md)
-          if [ -z "$notes" ]; then
-            notes="release $TAG"
-          fi
-          # sha256 checksums so anyone can self-verify the published artifacts
-          ( cd dist && sha256sum \
-              "heatsync-chrome-${VERSION}.zip" \
-              "heatsync-firefox-${VERSION}.zip" \
-              "heatsync-source-${VERSION}.zip" > checksums.txt )
-          notes="$(printf '%s\n\n### sha256\n```\n%s\n```\n' "$notes" "$(cat dist/checksums.txt)")"
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --notes "$notes" \
-            "dist/heatsync-chrome-${VERSION}.zip" \
-            "dist/heatsync-firefox-${VERSION}.zip" \
-            "dist/heatsync-source-${VERSION}.zip" \
-            dist/heatsync-chrome.zip \
-            dist/heatsync-firefox.xpi \
-            dist/updates.json \
-            dist/checksums.txt
+          gh release upload "$TAG" dist/heatsync-firefox.xpi dist/updates.json --clobber
+          gh release edit "$TAG" --prerelease=false --latest

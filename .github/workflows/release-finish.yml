@@ -1,0 +1,69 @@
+name: release-finish
+
+# Complete any release that got stranded as a prerelease because Mozilla was
+# down when it was cut.
+#
+# release.yml creates the release first and signs second, so an AMO outage
+# leaves a prerelease holding the chrome/source assets and nothing else. That is
+# safe — `latest` ignores prereleases, so self-dist firefox keeps updating off
+# the previous release — but it is not finished. This notices, waits for AMO's
+# heartbeat, and re-dispatches release.yml, whose every step is idempotent.
+#
+# In Actions rather than a systemd user timer (the pattern
+# scripts/cws-retry-publish.sh uses) for two reasons: the AMO credentials are
+# already repo secrets, and a release must not depend on a desktop being
+# powered on. The chrome web store leg stays local — its credentials are.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: complete stranded releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Only recent ones. An ancient prerelease is somebody's deliberate
+          # choice or long-dead history, not a stuck release to resurrect.
+          cutoff=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          # gh's --jq takes an expression and nothing else, so the filter runs
+          # in a real jq where --arg works. --paginate emits one array per page;
+          # `.[]` over the stream handles that.
+          stranded=$(gh api repos/${{ github.repository }}/releases --paginate \
+            | jq -r --arg cutoff "$cutoff" '
+              .[] | select(.prerelease) | select(.created_at > $cutoff)
+                  | select([.assets[].name] | index("heatsync-firefox.xpi") | not)
+                  | .tag_name' || true)
+
+          if [ -z "$stranded" ]; then
+            echo "nothing stranded"
+            exit 0
+          fi
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 \
+            https://addons.mozilla.org/__heartbeat__ || true)
+          if [ "$code" != "200" ]; then
+            # Named, not silently passed over: this line is the record that a
+            # release is waiting on Mozilla rather than on us.
+            echo "amo heartbeat ${code:-000} — leaving stranded for now:"
+            echo "$stranded" | sed 's/^/  /'
+            exit 0
+          fi
+
+          echo "$stranded" | while read -r tag; do
+            [ -z "$tag" ] && continue
+            echo "amo healthy — re-dispatching release.yml for $tag"
+            gh workflow run release.yml -f tag="$tag"
+          done

@@ -699,6 +699,49 @@ function paceDelayFor(channelId, nextMsg) {
   return Math.max(YT_PACE_MIN_MS, Math.min(YT_PACE_MAX_MS, realDelta))
 }
 
+/**
+ * A youtube moderation removal: specific message ids, and/or every message by
+ * an author who was banned (youtube removes their backlog too).
+ *
+ * Marks `cleared` rather than deleting, matching twitch and kick — the row goes
+ * grey and stays readable, which is what a mod needs to see. Three places have
+ * to agree or the message comes back:
+ *   - the channel buffer, so re-renders and tab switches keep it cleared
+ *   - the pace queue, because a message deleted before it drains would
+ *     otherwise arrive on screen a moment later looking untouched
+ *   - the rows already rendered, patched in place like _applyModNoticeDim does
+ */
+function applyYtDeletion(d) {
+  const ids = new Set(d.messageIds || [])
+  const authors = new Set(d.authorChannelIds || [])
+  if (!ids.size && !authors.size) return
+  // authorChannelId is not stored bare on a buffered message — it survives as
+  // the namespaced paint uid (`yt_UC…`, social.js builds it), so read it back.
+  const authorOf = (m) => (m.hsPaintUid ? String(m.hsPaintUid).replace(/^yt_/, '') : '')
+  const hit = (m) => (m.id && ids.has(m.id)) || (authors.size > 0 && authors.has(authorOf(m)))
+
+  const users = new Set()
+  const clear = (m) => {
+    if (m.cleared || !hit(m)) return
+    m.cleared = true
+    m.clearedReason = 'deleted'
+    if (m.user) users.add(String(m.user).toLowerCase())
+  }
+  for (const buf of channelYtMessages.values()) for (const m of buf) clear(m)
+  for (const q of _ytPaceQueue.values()) for (const m of q) clear(m)
+
+  const msgsEl = document.getElementById('hs-mc-messages')
+  if (!msgsEl) return
+  for (const row of msgsEl.querySelectorAll('.hs-mc-msg')) {
+    if (row.dataset.msgPlatform && row.dataset.msgPlatform !== 'youtube') continue
+    const byId = row.dataset.msgId && ids.has(row.dataset.msgId)
+    const byUser = users.size > 0 && users.has((row.dataset.msgUser || '').toLowerCase())
+    if (!byId && !byUser) continue
+    row.classList.add('hs-mc-msg-cleared')
+    row.title = 'deleted'
+  }
+}
+
 // Drain ONE message from the pace queue, schedule next based on the real
 // timestamp delta to the message after that.
 function drainYtPaceQueue(targetChannelId) {
@@ -892,6 +935,9 @@ function listenForSocialEvents() {
         }
       }
       if (currentTab === 'feed') renderFeed()
+    }
+    if (msg.type === 'youtube_delete' && msg.data) {
+      applyYtDeletion(msg.data)
     }
     if (msg.type === 'youtube_chat_message') {
       let targetChannelId = msg.channelId

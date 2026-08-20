@@ -114,15 +114,6 @@ const NOT_FOR_EXTENSION = new Map([
   ['stream:sub', 'twitch eventsub internal shape; reaches the ext as stream:sub-gift'],
   ['chat:send_kick_result', 'send-ack for the kick relay; the ext does not await it'],
   ['chat:send_youtube_result', 'send-ack for the yt relay; the ext does not await it'],
-
-  // ─── KNOWN GAP, not a decision ───────────────────────────────────────────
-  // The server sends this to every socket subscribed to a video's chat, with
-  // the comment "Live removal — clients match by innertube id or (for bans)
-  // authorChannelId". The extension has no case for it, so a message a mod
-  // DELETED, and every message from a BANNED user, stays visible in the
-  // overlay. The ids needed to match are already carried (ytMsg.id, and
-  // authorChannelId via hsPaintUid), so the data is there — the handler is not.
-  ['youtube:delete', 'KNOWN GAP: deleted/banned youtube messages stay on screen'],
 ])
 
 describe('websocket contract', () => {

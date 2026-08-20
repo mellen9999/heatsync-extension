@@ -6178,6 +6178,14 @@ function handleWSMessage(msg) {
         handleYoutubeChatBatch(msg)
         break
 
+      // A mod deleted messages, or banned an author and youtube retroactively
+      // removed everything they said. The server sends this to every socket
+      // subscribed to the video; before this the extension had no case for it,
+      // so removed messages stayed on screen in the overlay indefinitely.
+      case 'youtube:delete':
+        broadcastToTabs({ type: 'youtube_delete', data: msg })
+        break
+
       case 'youtube:status': {
         // Resolve channelId BEFORE potentially deleting the videoId mapping —
         // otherwise an `ended` event broadcasts with channelId='global' and the

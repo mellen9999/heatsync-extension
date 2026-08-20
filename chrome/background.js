@@ -2944,6 +2944,40 @@ const kickUsernameToIdCache = new Map()
 // bump is the real keepalive signal, not the HTTP call cadence).
 const AUTOMOD_WATCH_THROTTLE_MS = 30 * 60 * 1000
 const _automodWatchThrottle = new Map() // broadcasterId -> last-sent ts
+// One shape for a held message, whichever door it came through: the live
+// websocket push, or the pending backfill the watch call hands back. Two
+// copies of this coercion would drift the way every duplicated message
+// pipeline in this codebase has (see tests/handler-parity.test.js), and the
+// backfill would be the copy nobody notices is wrong.
+function normalizeAutomodHold(msg) {
+  // heldAt arrives as an ISO 8601 string from the server (Helix timestamp
+  // shape) — Number() on that NaNs, which silently always fell back to
+  // Date.now(). Date.parse handles the string case; Number still covers a
+  // server that ever sends an epoch ms number. It matters more for a backfill
+  // than for a live push: a hold from 40 minutes ago must not read as now.
+  const heldAtRaw = typeof msg.heldAt === 'string' ? Date.parse(msg.heldAt) : Number(msg.heldAt)
+  const heldAt = Number.isFinite(heldAtRaw) && heldAtRaw > 0 ? heldAtRaw : Date.now()
+  return {
+    type: 'automod_hold',
+    broadcasterId: String(msg.broadcasterId || ''),
+    broadcasterLogin: String(msg.broadcasterLogin || '').toLowerCase(),
+    msgId: String(msg.msgId || ''),
+    senderId: String(msg.senderId || ''),
+    senderLogin: String(msg.senderLogin || '').toLowerCase(),
+    senderName: String(msg.senderName || msg.senderLogin || '').slice(0, 100),
+    text: String(msg.text || '').slice(0, 2000),
+    heldAt,
+    reason: msg.reason === 'blocked_term' ? 'blocked_term' : 'automod',
+    category: msg.category ? String(msg.category).slice(0, 100) : null,
+    level: Number(msg.level) || 0,
+    terms: Array.isArray(msg.terms)
+      ? msg.terms
+          .map((t) => String(t).slice(0, 100))
+          .filter(Boolean)
+          .slice(0, 10)
+      : null,
+  }
+}
 let _automodRelinkNotified = false // one 'automod_relink' broadcast per SW lifetime
 function notifyAutomodRelinkOnce() {
   if (_automodRelinkNotified) return
@@ -6739,32 +6773,7 @@ function handleWSMessage(msg) {
       // user moderates (EventSub AutoMod + Helix, server-side). Trim/coerce
       // every field — never trust the wire — same discipline as eventsub:event.
       case 'automod:hold': {
-        // heldAt arrives as an ISO 8601 string from the server (Helix
-        // timestamp shape) — Number() on that NaNs, which silently always
-        // fell back to Date.now(). Date.parse handles the string case;
-        // Number still covers a server that ever sends an epoch ms number.
-        const heldAtRaw = typeof msg.heldAt === 'string' ? Date.parse(msg.heldAt) : Number(msg.heldAt)
-        const heldAt = Number.isFinite(heldAtRaw) && heldAtRaw > 0 ? heldAtRaw : Date.now()
-        broadcastToTabs({
-          type: 'automod_hold',
-          broadcasterId: String(msg.broadcasterId || ''),
-          broadcasterLogin: String(msg.broadcasterLogin || '').toLowerCase(),
-          msgId: String(msg.msgId || ''),
-          senderId: String(msg.senderId || ''),
-          senderLogin: String(msg.senderLogin || '').toLowerCase(),
-          senderName: String(msg.senderName || msg.senderLogin || '').slice(0, 100),
-          text: String(msg.text || '').slice(0, 2000),
-          heldAt,
-          reason: msg.reason === 'blocked_term' ? 'blocked_term' : 'automod',
-          category: msg.category ? String(msg.category).slice(0, 100) : null,
-          level: Number(msg.level) || 0,
-          terms: Array.isArray(msg.terms)
-            ? msg.terms
-                .map((t) => String(t).slice(0, 100))
-                .filter(Boolean)
-                .slice(0, 10)
-            : null,
-        })
+        broadcastToTabs(normalizeAutomodHold(msg))
         break
       }
 
@@ -7450,7 +7459,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         const now = Date.now()
         const last = _automodWatchThrottle.get(broadcasterId) || 0
-        if (now - last < AUTOMOD_WATCH_THROTTLE_MS) {
+        // wantPending = a page that has just opened its queue and has nothing
+        // in it. The throttle is there to keep the keepalive cheap, and it
+        // does its job for the sweep — but a reload inside the window would
+        // otherwise be handed no backfill at all, which is the exact case the
+        // backfill exists for. One extra call per channel per page load.
+        if (!message.wantPending && now - last < AUTOMOD_WATCH_THROTTLE_MS) {
           sendResponse({ ok: true, throttled: true })
           return
         }
@@ -7468,7 +7482,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           body: JSON.stringify({ broadcaster_id: broadcasterId }),
         })
         if (res.ok) {
-          sendResponse({ ok: true })
+          // The watch response carries whatever is STILL held on this channel.
+          // Before this, a hold existed only in the websocket frame that
+          // announced it: reload the page and the queue was empty while twitch
+          // was still holding the messages. Normalized through the same
+          // function as the live push so the two can't drift.
+          const data = await res.json().catch(() => null)
+          const pending = Array.isArray(data?.pending)
+            ? data.pending.slice(0, 100).map(normalizeAutomodHold).filter((h) => h.msgId && h.broadcasterLogin)
+            : []
+          sendResponse({ ok: true, pending })
           return
         }
         if (res.status === 401) {

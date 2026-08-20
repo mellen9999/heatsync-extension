@@ -231,3 +231,85 @@ describe('shouldProcessAutomodHold — dedupe TTL', () => {
     expect(shouldProcessAutomodHold(new Map(), '', 1000)).toBe(false)
   })
 })
+
+// ── backfill: the queue survives a reload ───────────────────────────────────
+// A hold used to exist only in the websocket frame that announced it, so a
+// refresh emptied the pane while twitch was still holding the messages. The
+// watch call now hands back what is still pending; these cover the rules that
+// keep that from double-rendering or resurrecting dead rows.
+
+describe('injectPendingAutomodHolds', () => {
+  // The extracted function closes over three module globals; supply them.
+  const run = (pending, { onScreen = [], seen = new Map() } = {}) => {
+    const inserted = []
+    const fn = new Function(
+      'findAutomodRow', 'insertAutomodHoldRow', '_automodSeenHolds',
+      `${extractConst(SRC, 'AUTOMOD_HOLD_DEDUPE_TTL_MS')}
+${extractConst(SRC, 'AUTOMOD_EXPIRE_MS')}
+${extractFn(SRC, 'automodHoldToRowModel')}
+${extractFn(SRC, 'shouldProcessAutomodHold')}
+${extractFn(SRC, 'injectPendingAutomodHolds')}
+return injectPendingAutomodHolds`,
+    )(
+      (login, msgId) => (onScreen.includes(msgId) ? { msgId } : null),
+      (row) => inserted.push(row),
+      seen,
+    )
+    return { added: fn(pending), inserted }
+  }
+
+  const hold = (over = {}) => ({
+    msgId: 'm1', broadcasterLogin: 'chan', broadcasterId: '1',
+    senderLogin: 'sender', senderName: 'Sender', text: 'held words',
+    heldAt: Date.now(), reason: 'automod', ...over,
+  })
+
+  test('inserts a hold the tab never saw', () => {
+    const { added, inserted } = run([hold()])
+    expect(added).toBe(1)
+    expect(inserted[0].msgId).toBe('m1')
+    expect(inserted[0].status).toBe('pending')
+  })
+
+  test('never double-renders a hold already on screen', () => {
+    // The seen-map TTL is shorter than a hold's life, so the buffer — not the
+    // map — is what proves a row is already there.
+    const { added, inserted } = run([hold()], { onScreen: ['m1'] })
+    expect(added).toBe(0)
+    expect(inserted).toEqual([])
+  })
+
+  test('drops a hold twitch has already auto-denied', () => {
+    const { added } = run([hold({ heldAt: Date.now() - 61 * 60 * 1000 })])
+    expect(added).toBe(0)
+  })
+
+  test('keeps a hold that is old but still actionable', () => {
+    const { added } = run([hold({ heldAt: Date.now() - 40 * 60 * 1000 })])
+    expect(added).toBe(1)
+  })
+
+  test('survives junk in the payload without dropping the good rows', () => {
+    const { added, inserted } = run([null, { msgId: '' }, hold({ msgId: 'm2' })])
+    expect(added).toBe(1)
+    expect(inserted[0].msgId).toBe('m2')
+  })
+
+  test('does nothing when there is nothing pending', () => {
+    expect(run([]).added).toBe(0)
+    expect(run(undefined).added).toBe(0)
+  })
+})
+
+describe('hold expiry clock', () => {
+  test('matches twitch: a held message is actionable for 60 minutes', () => {
+    // The server's pending window and this constant have to be the same fact.
+    expect(extractConst(SRC, 'AUTOMOD_EXPIRE_MS')).toContain('60 * 60 * 1000')
+  })
+
+  test('expiry is measured from held_at, not from when the tab heard about it', () => {
+    const fn = extractFn(SRC, 'scheduleAutomodExpiry')
+    expect(fn).toContain('row.heldAt')
+    expect(fn).toContain('AUTOMOD_EXPIRE_MS - age')
+  })
+})

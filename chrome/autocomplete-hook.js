@@ -3085,21 +3085,16 @@
     }
   }
   cleanup.setTimeout(tryInit, 1000, 'autocomplete-initial')
-
-  // Listen for emote updates - re-inject fake emotes and re-append native emotes
-  const bridge = document.getElementById('heatsync-emote-bridge')
-  if (bridge) {
-    bridge.addEventListener(
-      'heatsync-emotes-updated',
-      () => {
-        if (chatInputInstance) {
-          injectFakeEmotes(chatInputInstance)
-        }
-        log(' Emotes updated (tab state preserved)')
-      },
-      { signal: acSignal },
-    )
-  }
+  document.addEventListener(
+    'heatsync-emotes-updated',
+    () => {
+      if (chatInputInstance) {
+        injectFakeEmotes(chatInputInstance)
+      }
+      log(' Emotes updated (tab state preserved)')
+    },
+    { signal: acSignal },
+  )
 
   log(' 🎯 FFZ-style inline tab completion initialized')
 })()

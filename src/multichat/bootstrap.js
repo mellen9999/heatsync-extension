@@ -1002,8 +1002,17 @@ const cleanup = {
     const i = _timers.timeouts.indexOf(id)
     if (i !== -1) _timers.timeouts.splice(i, 1)
   },
-  addEventListener(target, event, handler) {
-    target.addEventListener(event, _hsPerfWrap(handler, 0, `event:${event}`), { signal: mcSignal })
+  // `opts` is merged, with signal always forced to mcSignal so teardown can
+  // never be opted out of. It used to be absent from the signature while
+  // callers passed one anyway (paints.js hover passes { passive: true }), so
+  // production silently dropped it — while the non-cleanup fallback branch in
+  // those callers forwarded it to the real addEventListener. That split meant a
+  // future { once: true } or { capture: true } would behave correctly under a
+  // test harness and be ignored in the browser. Non-object args (emotes.js
+  // passes a debug label) are ignored, as they always were.
+  addEventListener(target, event, handler, opts) {
+    const o = opts && typeof opts === 'object' ? { ...opts, signal: mcSignal } : { signal: mcSignal }
+    target.addEventListener(event, _hsPerfWrap(handler, 0, `event:${event}`), o)
   },
   // For chrome.runtime.onMessage / chrome.storage.onChanged etc — APIs that
   // expose addListener/removeListener but ignore AbortSignal.

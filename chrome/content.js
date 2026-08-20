@@ -11273,7 +11273,14 @@
     log(' Updating emote bridge:', allEmotes.length, 'total emotes')
     bridge.dataset.emotes = JSON.stringify(allEmotes)
     bridge.dataset.version = String(++_bridgeVersion)
-    bridge.dispatchEvent(new Event('heatsync-emotes-updated'))
+    // Dispatched on `document`, NOT on the bridge element. autocomplete-hook.js
+    // listens for this from the MAIN world, and it is registered in an EARLIER
+    // content_scripts group than content.js — so at the moment it attaches its
+    // listener the bridge div does not exist yet, and a listener on the element
+    // could never fire. `document` is shared across worlds and present from
+    // document_start, so the ordering stops mattering. Locked by
+    // tests/emote-bridge-event-target.test.js.
+    document.dispatchEvent(new Event('heatsync-emotes-updated'))
 
     // Populate window.__heatsyncEmoteUrls for early-inject interceptor via postMessage
     const urlMap = {}

@@ -11,6 +11,7 @@ import {
 import { escapeHtml } from '../src/lib/utils.js'
 import {
   applyHsPaintToElement,
+  clearHsPaintSheet,
   computeHsLetterSpans,
   evictOldestPaintEntry,
   getHsPaintClass,
@@ -18,6 +19,7 @@ import {
   hsUsernameColor,
   partitionPaintBatch,
   primeSelfHsCosmetics,
+  reinjectHsPaintSheet,
   setHsColorEntry,
   setHsPaintEntry,
   splitHsLettersHtml,
@@ -74,6 +76,7 @@ function refUsernameColor(username) {
 // jsdom/happy-dom isn't a repo dependency) — just enough surface
 // (classList/dataset/hasAttribute/removeAttribute/innerHTML/textContent)
 // to prove the hardening behavior, no visual rendering involved.
+let fakeHead = []
 beforeEach(() => {
   globalThis.escapeHtml = escapeHtml
   globalThis.compilePaintCss = compilePaintCss
@@ -81,10 +84,34 @@ beforeEach(() => {
   globalThis.paintNeedsSpans = paintNeedsSpans
   globalThis.paintMarkupMode = paintMarkupMode
   globalThis.paintPhaseNow = paintPhaseNow
+  // Records appended nodes so the per-paint rule lifecycle (one <style> per
+  // hash, removed when the LRU drops its last user) is observable.
+  fakeHead = []
   globalThis.document = {
     getElementById: () => null,
-    createElement: () => ({ id: '', textContent: '' }),
-    head: { appendChild: () => {} },
+    createElement: () => ({
+      id: '',
+      textContent: '',
+      dataset: {},
+      parentNode: null,
+      removeChild(child) {
+        const i = fakeHead.indexOf(child)
+        if (i !== -1) fakeHead.splice(i, 1)
+        child.parentNode = null
+      },
+    }),
+    head: {
+      appendChild(node) {
+        node.parentNode = this
+        fakeHead.push(node)
+        return node
+      },
+      removeChild(node) {
+        const i = fakeHead.indexOf(node)
+        if (i !== -1) fakeHead.splice(i, 1)
+        node.parentNode = null
+      },
+    },
   }
 })
 afterEach(() => {
@@ -456,5 +483,95 @@ describe('primeSelfHsCosmetics — own identity seeds instantly', () => {
   test('no identity ids — no throw, no seed', () => {
     expect(() => primeSelfHsCosmetics({})).not.toThrow()
     expect(() => primeSelfHsCosmetics(null)).not.toThrow()
+  })
+})
+
+// ── paint rule lifecycle ────────────────────────────────────────────────────
+//
+// The CSS for a paint used to be appended to one shared <style> with
+// `textContent +=` — a full re-serialize and reparse of every paint seen so
+// far, on each new one — and it was never removed, so the stylesheet outgrew
+// the LRU cache that described it. Now each paint owns a <style> node that is
+// dropped when the cache drops its last user.
+//
+// paints.js module state (the injected-hash set, the node map, the paint cache)
+// is shared across every test in this file, so each test starts by clearing the
+// sheet and uses uids of its own.
+describe('paint rule lifecycle', () => {
+  const mkSpec = (color) => ({
+    base: { type: 'solid', angle: 0, stops: [{ color, pos: 0 }] },
+    effects: [],
+  })
+
+  /** Rule nodes only — ensureHsPaintSheet appends the base sheet here too. */
+  const ruleNodes = () => fakeHead.filter((n) => n.dataset?.hsPaint)
+  const hashesInHead = () => new Set(ruleNodes().map((n) => n.dataset.hsPaint))
+
+  beforeEach(() => {
+    clearHsPaintSheet()
+    fakeHead.length = 0
+  })
+
+  test('one style node per distinct paint, not one growing sheet', () => {
+    setHsPaintEntry('lc-a', mkSpec('#ff0000'))
+    setHsPaintEntry('lc-b', mkSpec('#00ff00'))
+    const nodes = ruleNodes()
+    expect(nodes).toHaveLength(2)
+    // Each node carries only its own rule — that is what makes an insert cost
+    // its own CSS instead of re-serializing the whole sheet.
+    expect(nodes[0].textContent.length).toBeGreaterThan(0)
+    expect(nodes[1].textContent.length).toBeGreaterThan(0)
+    expect(nodes[0].textContent).not.toBe(nodes[1].textContent)
+  })
+
+  test('the same paint on two users injects one rule', () => {
+    setHsPaintEntry('lc-same1', mkSpec('#0000ff'))
+    const after1 = hashesInHead().size
+    setHsPaintEntry('lc-same2', mkSpec('#0000ff'))
+    expect(hashesInHead().size).toBe(after1)
+    expect(after1).toBe(1)
+  })
+
+  test('clearHsPaintSheet removes every rule node', () => {
+    setHsPaintEntry('lc-c', mkSpec('#111111'))
+    setHsPaintEntry('lc-d', mkSpec('#222222'))
+    expect(ruleNodes().length).toBeGreaterThan(0)
+    clearHsPaintSheet()
+    expect(ruleNodes()).toHaveLength(0)
+  })
+
+  test('evicting one wearer of a shared paint keeps the rule for the others', () => {
+    // Two users wearing the same paint share one rule. The LRU evicts uids, not
+    // paints, so dropping the older wearer must not un-style the younger one —
+    // that would leave a row carrying an hsp- class with no CSS behind it.
+    setHsPaintEntry('lc-shared-old', mkSpec('#0f0f0f'))
+    setHsPaintEntry('lc-shared-new', mkSpec('#0f0f0f'))
+    const shared = [...hashesInHead()][0]
+    expect(shared).toBeTruthy()
+
+    // Push past HS_PAINT_CACHE_MAX (500) so the two shared uids age out one at
+    // a time, oldest first.
+    for (let i = 0; i < 499; i++)
+      setHsPaintEntry(`lc-filler-${i}`, mkSpec(`#${(i + 4096).toString(16).padStart(6, '0')}`))
+    // lc-shared-old is gone by now, lc-shared-new is not — the rule must stand.
+    expect(getHsPaintClass('lc-shared-old')).toBe('')
+    expect(getHsPaintClass('lc-shared-new')).toBe(`hsp-${shared}`)
+    expect(hashesInHead().has(shared)).toBe(true)
+
+    // Age out the last wearer too — now the rule may go.
+    for (let i = 0; i < 60; i++)
+      setHsPaintEntry(`lc-filler2-${i}`, mkSpec(`#${(i + 8192).toString(16).padStart(6, '0')}`))
+    expect(getHsPaintClass('lc-shared-new')).toBe('')
+    expect(hashesInHead().has(shared)).toBe(false)
+  })
+
+  test('reinject restores the rule for a cached paint', () => {
+    setHsPaintEntry('lc-e', mkSpec('#abcdef'))
+    const hash = [...hashesInHead()][0]
+    expect(hash).toBeTruthy()
+    clearHsPaintSheet()
+    fakeHead.length = 0
+    reinjectHsPaintSheet()
+    expect(hashesInHead().has(hash)).toBe(true)
   })
 })

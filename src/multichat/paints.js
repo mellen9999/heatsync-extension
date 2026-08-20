@@ -113,6 +113,8 @@ function markAllHsCosmeticsStale() {
   hsResolvedAt.clear()
 }
 const hsPaintInjectedHashes = new Set()
+/** hash -> its <style> node, so a rule can be dropped without touching others. */
+const hsPaintRuleNodes = new Map()
 const hsPaintPending = new Set()
 // Priority lane — the viewer's OWN identities (primeSelfHsCosmetics). Drained
 // before hsPaintPending and exempt from HS_PAINT_PENDING_MAX: plain FIFO left
@@ -411,14 +413,56 @@ function installHsPaintHoverSync() {
   )
 }
 
-/** Compile + append the CSS for `hash` if not already present. Idempotent. */
+/**
+ * Compile + append the CSS for `hash` if not already present. Idempotent.
+ *
+ * One <style> node per paint, not one shared sheet appended to with
+ * `textContent +=`. That append read the whole sheet into a JS string,
+ * concatenated, and wrote it back — a full re-serialize and CSS reparse of
+ * every paint seen so far, on each new one, so the cost grew with the square of
+ * the number of distinct paints in a channel. It also had no way back out: the
+ * sheet only ever grew, while hsPaintCache LRU-evicts at HS_PAINT_CACHE_MAX, so
+ * the CSS outlived the cache that described it.
+ *
+ * Per-hash nodes make an insert cost only its own rule and make eviction a node
+ * removal. They are appended after the base sheet, so a per-paint rule still
+ * wins an !important tie against the hover/pause rules exactly as before.
+ */
 function ensureHsPaintRule(spec, hash) {
   if (hsPaintInjectedHashes.has(hash)) return
-  const sheet = ensureHsPaintSheet()
+  ensureHsPaintSheet()
   const css = compilePaintCss(spec, `.hsp-${hash}`, { hash })
   if (!css) return
-  sheet.textContent += css
+  const node = document.createElement('style')
+  node.dataset.hsPaint = hash
+  node.textContent = css
+  document.head.appendChild(typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(node) : node)
+  hsPaintRuleNodes.set(hash, node)
   hsPaintInjectedHashes.add(hash)
+}
+
+/** Drop the rule for `hash` — but only once no cached uid still wants it.
+ * Several uids share a hash whenever they wear the same paint, so evicting one
+ * of them must not un-style the others. The scan is bounded by the cache cap
+ * and only runs on eviction. */
+function dropHsPaintRule(hash) {
+  if (!hash || !hsPaintInjectedHashes.has(hash)) return
+  for (const e of hsPaintCache.values()) if (e?.hash === hash) return
+  const node = hsPaintRuleNodes.get(hash)
+  if (node?.parentNode) node.parentNode.removeChild(node)
+  hsPaintRuleNodes.delete(hash)
+  hsPaintInjectedHashes.delete(hash)
+}
+
+/** Evict the oldest paint cache entry AND the CSS it was the last user of.
+ * Wraps the generic evictOldestPaintEntry because only this cache owns rules. */
+function evictOldestHsPaintEntry() {
+  if (hsPaintCache.size < HS_PAINT_CACHE_MAX) return
+  const oldest = hsPaintCache.keys().next().value
+  if (oldest === undefined) return
+  const hash = hsPaintCache.get(oldest)?.hash
+  hsPaintCache.delete(oldest)
+  dropHsPaintRule(hash)
 }
 
 /** Toggle-off hygiene: drop the injected sheet + hash tracking so a later
@@ -427,6 +471,10 @@ function ensureHsPaintRule(spec, hash) {
 function clearHsPaintSheet() {
   if (hsPaintSheetEl?.parentNode) hsPaintSheetEl.parentNode.removeChild(hsPaintSheetEl)
   hsPaintSheetEl = null
+  for (const node of hsPaintRuleNodes.values()) {
+    if (node?.parentNode) node.parentNode.removeChild(node)
+  }
+  hsPaintRuleNodes.clear()
   hsPaintInjectedHashes.clear()
 }
 
@@ -468,13 +516,13 @@ function setHsPaintEntry(userId, spec) {
   // otherwise it outgrows the LRU it describes over a long session.
   if (hsResolvedAt.size > HS_PAINT_CACHE_MAX) evictOldestPaintEntry(hsResolvedAt, HS_PAINT_CACHE_MAX)
   if (!spec) {
-    if (!hsPaintCache.has(userId)) evictOldestPaintEntry(hsPaintCache, HS_PAINT_CACHE_MAX)
+    if (!hsPaintCache.has(userId)) evictOldestHsPaintEntry()
     hsPaintCache.set(userId, { spec: null, hash: null })
     return
   }
   const hash = hashPaintSpec(spec)
   ensureHsPaintRule(spec, hash)
-  if (!hsPaintCache.has(userId)) evictOldestPaintEntry(hsPaintCache, HS_PAINT_CACHE_MAX)
+  if (!hsPaintCache.has(userId)) evictOldestHsPaintEntry()
   hsPaintCache.set(userId, { spec, hash })
 }
 
@@ -699,7 +747,7 @@ function applyHsPaintToElement(el, userId) {
     el.style.setProperty('--hsp-t', existingPhase || paintPhaseNow())
   }
   // Freshly painted, so gate it now instead of waiting for the next scroll.
-  scheduleHsPaintSweep()
+  scheduleHsPaintSweep(true)
 }
 
 // ── viewport gate ───────────────────────────────────────────────────────────
@@ -797,15 +845,38 @@ function invalidateHsCosmetics(ids) {
   return known
 }
 
-function sweepHsPaintedNames() {
-  const io = ensureHsVisibilityObserver()
-  if (!io) return
+// Minimum gap between DISCOVERY passes driven by scrolling. Discovery is a
+// `[class*=]` query, the one selector form no browser index can serve — it is a
+// full document tree walk. Running it per animation frame for the whole
+// duration of every scroll (on someone else's React page, with our own listener
+// in the capture phase so it hears every pane) made it the most expensive
+// recurring work in the extension.
+//
+// A 250ms bound is invisible: the observer's rootMargin already keeps a screen
+// of rows warm either side, so a name cannot scroll into view inside the gap
+// and find itself ungated. Freshly painted elements bypass the bound entirely.
+const HSP_DISCOVER_MIN_MS = 250
+let hsLastDiscoverAt = 0
+let hsSweepForced = false
+
+/** Drop targets that left the DOM. An IntersectionObserver holds its targets
+ * strongly and a pane trims rows continuously, so this is what stops the set
+ * from pinning detached nodes. Bounded by the observed count — no DOM query. */
+function reapHsObservedNames(io) {
   for (const el of hsObservedNames) {
     if (!el.isConnected) {
       io.unobserve(el)
       hsObservedNames.delete(el)
     }
   }
+}
+
+/** Find painted names we aren't watching yet. Rows built as HTML strings carry
+ * their hsp- class inline (hsPaintRender) and never pass through
+ * applyHsPaintToElement, so there is no element handle to observe at creation
+ * time — they can only be discovered by query. */
+function discoverHsPaintedNames(io) {
+  hsLastDiscoverAt = Date.now()
   for (const el of document.querySelectorAll('[class*="hsp-"]')) {
     if (hsObservedNames.has(el)) continue
     hsObservedNames.add(el)
@@ -813,21 +884,33 @@ function sweepHsPaintedNames() {
   }
 }
 
+function sweepHsPaintedNames(force) {
+  const io = ensureHsVisibilityObserver()
+  if (!io) return
+  reapHsObservedNames(io)
+  if (force || Date.now() - hsLastDiscoverAt >= HSP_DISCOVER_MIN_MS) discoverHsPaintedNames(io)
+}
+
 /** One sweep per frame — scrolling fires continuously and the observer does
- * the real visibility work asynchronously anyway. */
-function scheduleHsPaintSweep() {
+ * the real visibility work asynchronously anyway. `force` skips the discovery
+ * bound for a caller that knows a new painted element exists right now. */
+function scheduleHsPaintSweep(force) {
+  if (force) hsSweepForced = true
   if (hsSweepScheduled || typeof requestAnimationFrame !== 'function') return
   hsSweepScheduled = true
   requestAnimationFrame(() => {
     hsSweepScheduled = false
-    sweepHsPaintedNames()
+    const f = hsSweepForced
+    hsSweepForced = false
+    sweepHsPaintedNames(f)
   })
 }
 
 // Scroll is when visibility changes, and also when a pane autoscrolls a new
 // message in. Capture so it hears every pane, passive so it never delays one.
+// Reaps every frame (cheap, no query); discovery is bounded above.
 if (typeof document !== 'undefined' && document.addEventListener) {
-  document.addEventListener('scroll', scheduleHsPaintSweep, { capture: true, passive: true })
+  document.addEventListener('scroll', () => scheduleHsPaintSweep(false), { capture: true, passive: true })
 }
 
 export {

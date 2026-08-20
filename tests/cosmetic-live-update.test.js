@@ -67,8 +67,25 @@ beforeEach(() => {
   globalThis.document = {
     getElementById: () => null,
     querySelectorAll: () => [],
-    createElement: () => ({ setAttribute() {}, appendChild() {}, sheet: null, textContent: '' }),
-    head: { appendChild() {} },
+    // `dataset` and `parentNode` are load-bearing: each paint owns a <style>
+    // node tagged with its hash so the LRU can drop exactly that one rule.
+    createElement: () => ({
+      setAttribute() {},
+      appendChild() {},
+      sheet: null,
+      textContent: '',
+      dataset: {},
+      parentNode: null,
+    }),
+    head: {
+      appendChild(node) {
+        node.parentNode = this
+        return node
+      },
+      removeChild(node) {
+        node.parentNode = null
+      },
+    },
   }
 })
 afterEach(() => {

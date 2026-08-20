@@ -9786,7 +9786,10 @@ const HsNotifs = (() => {
             // the user was about to write. By click time the tree is built.
             const token =
               data._resubToken ||
-              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn) ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn, {
+                kind: 'cumulative',
+                count: data.months,
+              }) ||
               null
             if (token) {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
@@ -9853,7 +9856,12 @@ const HsNotifs = (() => {
             // Same click-time rescan as the resub prompt: the notif is emitted
             // the instant the callout is detected, and the token lives in a
             // subtree that is not always mounted by then.
-            const token = data._streakToken || window.__hsResubShare?.rescanToken?.(data._nativeCallout) || null
+            // `expect` is what stops a sub-anniversary token being handed to
+            // the watch-streak share when both callouts are queued at once.
+            const token =
+              data._streakToken ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout, { count: data.streakCount }) ||
+              null
             window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
           } catch (_) {}
           return false
@@ -67365,9 +67373,25 @@ const STORAGE_KEY = 'heatsync_multichat'
   // twitch's own button every time, which posts twitch's default celebration and
   // drops the custom message. Re-scanning at click time is correct whether the
   // cause was that race or a root that never reached the payload.
+  /**
+   * Does this scan hold the token for the callout we think it does?
+   *
+   * The count is months for a sub anniversary and streams for a watch streak,
+   * which is why the scan reports a generic `count` — an `out.months` read as
+   * `scan.count` is undefined, silently false, and disables the whole path.
+   * That shipped once. Every gate goes through here now.
+   */
+  function calloutTokenMatches(scan, expect) {
+    if (!scan?.token) return false
+    if (!expect) return true
+    if (expect.kind !== undefined && scan.kind !== expect.kind) return false
+    if (expect.count !== undefined && scan.count !== expect.count) return false
+    return true
+  }
+
   function fiberTokenScan(rootEl) {
     if (typeof getFiber !== 'function' || !rootEl) return null
-    const out = { token: null, channelId: null, months: 0, kind: null }
+    const out = { token: null, channelId: null, count: 0, kind: null }
     const root = getFiber(rootEl)
     if (!root) return out
     // Breadth-first over the callout's own subtree. Twitch carries the token as
@@ -67398,7 +67422,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (tok) {
         out.token = tok.raw
         out.channelId = tok.channelId
-        out.months = tok.count
+        out.count = tok.count
         out.kind = tok.kind
         break
       }
@@ -67544,13 +67568,26 @@ const STORAGE_KEY = 'heatsync_multichat'
      * time a human clicks share, it always is. Returns the base64 tokenID
      * (<userId>:<channelId>:<months>:cumulative) or null.
      */
-    rescanToken: (rootEl) => {
+    rescanToken: (rootEl, expect) => {
       try {
-        // The live container first: twitch re-renders the queue as callouts
-        // come and go, so the element captured at detection time can already be
-        // detached, and a detached fiber still carries the old key.
-        const el = document.querySelector(CALLOUT_QUEUE_SEL) || rootEl || _lastSurfacedCallout || _lastSurfacedShareBtn
-        return fiberTokenScan(el)?.token || null
+        // Scan the callout we were HANDED. Reaching for
+        // querySelector(CALLOUT_QUEUE_SEL) takes the first container in the
+        // DOM, which is a different callout whenever a sub anniversary and a
+        // watch streak are queued together — the same cross-callout mixup the
+        // scan itself refuses to make by not following the root's siblings.
+        if (rootEl?.isConnected) {
+          const scan = fiberTokenScan(rootEl)
+          if (calloutTokenMatches(scan, expect)) return scan.token
+          return null
+        }
+        // Detached: twitch re-rendered the queue under us and a detached fiber
+        // still hands back its stale key. Re-find the live callout by asking
+        // each one whether it is ours — that is what `expect` is for.
+        for (const el of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {
+          const scan = fiberTokenScan(el)
+          if (calloutTokenMatches(scan, expect)) return scan.token
+        }
+        return null
       } catch (_) {
         return null
       }
@@ -67763,11 +67800,14 @@ const STORAGE_KEY = 'heatsync_multichat'
       // twitch's button and letting the typed text go out as ordinary chat,
       // which is all this flow could ever do before.
       if (claim.streakToken) {
-        _markWatchstreakSharedToday(claim.channel)
         _exitWatchstreakShareMode(claim, false)
         ;(async () => {
           try {
             await _consumeCalloutToken(claim.channel, claim.streakToken, text)
+            // Marked only once it landed. A failed share leaves the day
+            // unspent so a reload can offer it again — twitch never consumed
+            // the token, so the callout is still there to offer.
+            _markWatchstreakSharedToday(claim.channel)
             log('watchstreak-share: GQL fired ok')
           } catch (e) {
             console.warn('[heatsync-ext] watchstreak-share GQL failed:', e?.message || e)
@@ -67851,7 +67891,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         // months; the kind string differs and we never assume it. If the count
         // does not match the callout, we hold no token and the flow stays on
         // twitch's own button exactly as before.
-        const streakToken = scan.count === streakCount ? scan.token : null
+        const streakToken = calloutTokenMatches(scan, { count: streakCount }) ? scan.token : null
         if (shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
           shareBtn.dataset.hsShareHooked = '1'
           shareBtn.addEventListener(
@@ -67909,7 +67949,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // which reads as success while twitch never marks the resub shared, so
       // the callout returns on every reload. Without a token we do not
       // intervene at all; a silent half-success is worse than not helping.
-      const resubToken = scan.kind === 'cumulative' && scan.months === months ? scan.token : null
+      const resubToken = calloutTokenMatches(scan, { kind: 'cumulative', count: months }) ? scan.token : null
       const hasRealToken = !!resubToken
       if (hasRealToken && shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
         shareBtn.dataset.hsShareHooked = '1'

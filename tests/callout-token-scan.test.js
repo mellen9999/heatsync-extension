@@ -23,11 +23,18 @@ function lift() {
   const scanEnd = MAIN_SRC.indexOf('\n  }', MAIN_SRC.indexOf('return out', declEnd)) + 4
   expect(from).toBeGreaterThan(-1)
   expect(declEnd).toBeGreaterThan(from)
-  const src = MAIN_SRC.slice(from, MAIN_SRC.indexOf('\n  }', from) + 4) + MAIN_SRC.slice(declEnd, scanEnd)
+  const matchFrom = MAIN_SRC.indexOf('function calloutTokenMatches')
+  expect(matchFrom).toBeGreaterThan(-1)
+  const src =
+    MAIN_SRC.slice(from, MAIN_SRC.indexOf('\n  }', from) + 4) +
+    MAIN_SRC.slice(matchFrom, MAIN_SRC.indexOf('\n  }', matchFrom) + 4) +
+    MAIN_SRC.slice(declEnd, scanEnd)
   // getFiber is main.js's shared util; the tree here is already fibers.
-  return new Function('getFiber', `${src}\nreturn { decodeCalloutToken, fiberTokenScan }`)((n) => n?.__fiber || null)
+  return new Function('getFiber', `${src}\nreturn { decodeCalloutToken, fiberTokenScan, calloutTokenMatches }`)(
+    (n) => n?.__fiber || null,
+  )
 }
-const { decodeCalloutToken, fiberTokenScan } = lift()
+const { decodeCalloutToken, fiberTokenScan, calloutTokenMatches } = lift()
 
 const tok = (u, c, n, k) => btoa(`${u}:${c}:${n}:${k}`)
 
@@ -78,11 +85,11 @@ describe('fiberTokenScan', () => {
 
   test('finds the token twitch hides in a react key', () => {
     const t = tok('73266147', '29795919', 107, 'cumulative')
-    expect(fiberTokenScan(tree(t))).toEqual({ token: t, channelId: '29795919', months: 107, kind: 'cumulative' })
+    expect(fiberTokenScan(tree(t))).toEqual({ token: t, channelId: '29795919', count: 107, kind: 'cumulative' })
   })
 
   test('reports nothing rather than guessing when the tree has no token', () => {
-    expect(fiberTokenScan(tree('chat-line-1'))).toEqual({ token: null, channelId: null, months: 0, kind: null })
+    expect(fiberTokenScan(tree('chat-line-1'))).toEqual({ token: null, channelId: null, count: 0, kind: null })
   })
 
   test('walks siblings — the queue renders callouts side by side', () => {
@@ -119,5 +126,48 @@ describe('fiberTokenScan', () => {
   test('survives an element react never mounted', () => {
     expect(fiberTokenScan({}).token).toBeNull()
     expect(fiberTokenScan(null)).toBeNull()
+  })
+})
+
+describe('calloutTokenMatches', () => {
+  // Behavioural, deliberately. The bug this replaces was a gate reading
+  // `scan.count` off a scan that only ever set `scan.months`: always undefined,
+  // always false, the whole watch-streak path dead — while the source-text test
+  // asserting the gate "contains scan.count === streakCount" passed, because it
+  // pinned the shape of the bug rather than its behaviour.
+  const resub = { token: 'tok', kind: 'cumulative', count: 107 }
+  const streak = { token: 'tok', kind: 'streak', count: 9 }
+
+  test('a sub-anniversary token passes its own gate', () => {
+    expect(calloutTokenMatches(resub, { kind: 'cumulative', count: 107 })).toBe(true)
+  })
+
+  test('a watch-streak token passes a count-only gate', () => {
+    // The kind string a watch streak uses is not something we have observed, so
+    // that gate asks about the count and nothing else.
+    expect(calloutTokenMatches(streak, { count: 9 })).toBe(true)
+  })
+
+  test('the two never satisfy each other', () => {
+    expect(calloutTokenMatches(streak, { kind: 'cumulative', count: 107 })).toBe(false)
+    expect(calloutTokenMatches(resub, { count: 9 })).toBe(false)
+  })
+
+  test('a mismatched count is refused even with the right kind', () => {
+    expect(calloutTokenMatches(resub, { kind: 'cumulative', count: 106 })).toBe(false)
+  })
+
+  test('no token is never a match, however loose the expectation', () => {
+    expect(calloutTokenMatches({ token: null, count: 107 }, undefined)).toBe(false)
+    expect(calloutTokenMatches(null, undefined)).toBe(false)
+  })
+
+  test('a real scan result satisfies the real gate end to end', () => {
+    // The join the rename exists to protect: whatever fiberTokenScan names its
+    // fields, the gate has to read the same ones.
+    const t = tok('73266147', '29795919', 107, 'cumulative')
+    const leaf = { key: t, child: null, sibling: null }
+    const scan = fiberTokenScan({ __fiber: { key: null, child: leaf, sibling: null } })
+    expect(calloutTokenMatches(scan, { kind: 'cumulative', count: 107 })).toBe(true)
   })
 })

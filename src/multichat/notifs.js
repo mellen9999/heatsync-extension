@@ -629,7 +629,10 @@ const HsNotifs = (() => {
             // the user was about to write. By click time the tree is built.
             const token =
               data._resubToken ||
-              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn) ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout || data._nativeShareBtn, {
+                kind: 'cumulative',
+                count: data.months,
+              }) ||
               null
             if (token) {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
@@ -696,7 +699,12 @@ const HsNotifs = (() => {
             // Same click-time rescan as the resub prompt: the notif is emitted
             // the instant the callout is detected, and the token lives in a
             // subtree that is not always mounted by then.
-            const token = data._streakToken || window.__hsResubShare?.rescanToken?.(data._nativeCallout) || null
+            // `expect` is what stops a sub-anniversary token being handed to
+            // the watch-streak share when both callouts are queued at once.
+            const token =
+              data._streakToken ||
+              window.__hsResubShare?.rescanToken?.(data._nativeCallout, { count: data.streakCount }) ||
+              null
             window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
           } catch (_) {}
           return false

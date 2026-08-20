@@ -38,9 +38,13 @@ describe('the resub click is only intercepted with a real token', () => {
     const i = MAIN_SRC.indexOf('const resubToken =')
     expect(i).toBeGreaterThan(-1)
     const block = MAIN_SRC.slice(i, i + 200)
-    // A sub-anniversary token, for the month count the callout announces.
-    expect(block).toContain("scan.kind === 'cumulative'")
-    expect(block).toContain('scan.months === months')
+    // A sub-anniversary token, for the month count the callout announces —
+    // asked through the one predicate, never by hand. Hand-rolled gates are how
+    // `scan.count` came to be read off a scan that only set `scan.months`.
+    // Behaviour is covered for real in tests/callout-token-scan.
+    expect(block).toContain('calloutTokenMatches(scan, ')
+    expect(block).toContain("kind: 'cumulative'")
+    expect(block).toContain('count: months')
   })
 
   test('the share button hook is gated on it', () => {
@@ -73,15 +77,38 @@ describe('without a token the prompt defers to twitch', () => {
   })
 
   test('the click-time rescan reads the fiber scan and nothing else', () => {
-    const i = MAIN_SRC.indexOf('rescanToken: (rootEl) =>')
+    const i = MAIN_SRC.indexOf('rescanToken: (rootEl, expect)')
     expect(i).toBeGreaterThan(-1)
     const block = MAIN_SRC.slice(i, MAIN_SRC.indexOf('_allowNativeShare', i))
     expect(block).toContain('fiberTokenScan')
     expect(block).not.toContain('btoa')
-    // The live container first — twitch re-renders the queue, so the element
-    // captured at detection time can already be detached, and a detached fiber
-    // still hands back the stale key.
-    expect(block).toContain('document.querySelector(CALLOUT_QUEUE_SEL)')
+  })
+
+  test('the rescan scans the callout it was handed, not the first one on screen', () => {
+    // querySelector(CALLOUT_QUEUE_SEL) returns whichever callout is first in
+    // the DOM, which is the WRONG one whenever a sub anniversary and a watch
+    // streak are queued together — the same cross-callout mixup fiberTokenScan
+    // refuses to make by not following the root's siblings.
+    const i = MAIN_SRC.indexOf('rescanToken: (rootEl, expect)')
+    const block = MAIN_SRC.slice(i, MAIN_SRC.indexOf('_allowNativeShare', i))
+    expect(block).toContain('rootEl?.isConnected')
+    // The all-callouts sweep is the DETACHED fallback only, and every candidate
+    // has to satisfy `expect` before it is returned.
+    expect(block).toContain('querySelectorAll(CALLOUT_QUEUE_SEL)')
+    expect(block).toMatch(
+      /for \(const el of document\.querySelectorAll[\s\S]{0,200}calloutTokenMatches\(scan, expect\)/,
+    )
+  })
+
+  test('both prompts tell the rescan which callout is theirs', () => {
+    const resub = NOTIFS_SRC.slice(NOTIFS_SRC.indexOf("registerType('twitch-resub-share'"))
+    expect(resub.slice(0, resub.indexOf('registerType(', 10))).toMatch(
+      /rescanToken\?\.\([\s\S]{0,120}count: data\.months/,
+    )
+    const ws = NOTIFS_SRC.slice(NOTIFS_SRC.indexOf("registerType('twitch-watchstreak-share'"))
+    expect(ws.slice(0, ws.indexOf('registerType(', 10))).toMatch(
+      /rescanToken\?\.\([\s\S]{0,120}count: data\.streakCount/,
+    )
   })
 
   test('otherwise clicks twitch own button', () => {
@@ -171,6 +198,6 @@ describe('the watch-streak callout shares the same way', () => {
   test('the token must match the streak the callout announces', () => {
     const i = MAIN_SRC.indexOf('const streakToken =')
     expect(i).toBeGreaterThan(-1)
-    expect(MAIN_SRC.slice(i, i + 120)).toContain('scan.count === streakCount')
+    expect(MAIN_SRC.slice(i, i + 160)).toContain('calloutTokenMatches(scan, { count: streakCount })')
   })
 })

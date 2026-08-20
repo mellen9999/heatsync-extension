@@ -13222,6 +13222,10 @@ function injectStyles() {
     .hs-mc-msg.hs-mc-msg-cleared { opacity: 0.45; }
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote,
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-wrapper > img,
+    /* emoji too — the row dims and the text strikes through, but without this
+       an emoji kept full colour while every emote beside it went grey, so a
+       deleted message still had something vivid in it. */
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emoji,
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-stack img { filter: grayscale(1) brightness(0.7); }
     /* Strikethrough only the message body, not the user/badges/timestamp */
     .hs-mc-msg.hs-mc-msg-cleared > *:not(.hs-mc-ts):not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-badge):not(.hs-mc-channel):not(.hs-mc-platform-badge):not(.hs-mc-reply-btn):not(.hs-mc-reply-ctx) { text-decoration: line-through; }
@@ -15935,7 +15939,6 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     .hs-pcard-sheet .hs-heat-num { font-family: inherit; }
     .hs-pcard-sheet .hs-heat-n { font-family: inherit; }
     .hs-pcard-sheet .hs-heat-deg { font-family: ui-monospace, SFMono-Regular, monospace; }
-    .hs-pcard-sheet .val-rel { color: #fff; }
     /* Counter-counter: re-apply bitmap render block to the sheet so cozette
        renders crisp inside the .hs-pcard system-sans bubble. */
     body.hs-font-bitmap .hs-pcard .hs-pcard-sheet,

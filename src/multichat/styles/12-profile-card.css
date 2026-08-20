@@ -185,7 +185,6 @@
     .hs-pcard-sheet .hs-heat-num { font-family: inherit; }
     .hs-pcard-sheet .hs-heat-n { font-family: inherit; }
     .hs-pcard-sheet .hs-heat-deg { font-family: ui-monospace, SFMono-Regular, monospace; }
-    .hs-pcard-sheet .val-rel { color: #fff; }
     /* Counter-counter: re-apply bitmap render block to the sheet so cozette
        renders crisp inside the .hs-pcard system-sans bubble. */
     body.hs-font-bitmap .hs-pcard .hs-pcard-sheet,

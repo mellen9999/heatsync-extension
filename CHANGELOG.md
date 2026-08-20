@@ -1,5 +1,19 @@
 # changelog
 
+## [1.7.61] — 2026-08-20
+
+### added
+- **the automod queue is there when you open it** — held messages only existed in the moment they arrived: open the pane afterwards, or just refresh, and it was empty while twitch was still holding them. the queue now loads whatever is still held, so it's something you can come back to.
+- **paints update while you watch** — a name kept whatever paint it had when its message rendered, so a new one didn't appear and a cleared one never came off. they change in place now.
+- **the keyboard cursor has its own colour** — in the emoji, mention and slash menus the row your arrow keys were on looked exactly like the row under your mouse, so with the pointer near the list you couldn't tell what enter would pick. the keyboard's row is orange now, the mouse's stays white.
+
+### fixed
+- **held messages stay actionable for the full hour** — the queue greyed them out after six minutes, while twitch keeps accepting allow and deny for sixty.
+- **"needs a twitch relink" stops appearing when your twitch link is fine** — a signed-out heatsync session, a mod role you no longer have, and a permission twitch was only missing all reported themselves as a twitch relink, which relinking could never fix. each one says what it actually is.
+- **a first-time chatter is purple again — and only them** — someone's first message of the session used the same colour as twitch's real first-message-ever announcement, so every regular's opening line looked like a newcomer and the one row that mattered was buried. that highlight is yellow now.
+- **a lapsed plus stops rendering cosmetics** — paints and tenure kept showing on a subscription that had already ended.
+- **a fresh install sees real posts** — a brand-new, logged-out install landed on "log in to see your home" with nothing behind it, instead of the feed it's there to show.
+
 ## [1.7.60] — 2026-08-16
 
 ### added

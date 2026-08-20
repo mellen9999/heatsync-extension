@@ -29,20 +29,45 @@ import { join } from 'node:path'
 import { assertBuilt, launchWithExtension } from './lib/chromium'
 
 /**
- * Deliberately shaped:
- *  - NO `.channel-root`, so main.js takes its body-mount path and no React tree
- *    has to be faked.
- *  - WITH `.right-column.right-column--beside`, because ensureUIElements starts
- *    a MutationObserver on that element (attributes: class/style) whose callback
- *    calls ensureUIElements AGAIN. That re-entry — not the container-missing
- *    reinject — is the path the boot-latch bug lives on, and it is the only one
- *    that re-runs ensureUIElements without first nulling resizeObserver.
+ * Fixtures, one per platform.
+ *
+ * Each URL is chosen so main.js takes a BODY-MOUNT path and no React tree has
+ * to be faked:
+ *  - twitch: a non-channel url (no `.channel-root`).
+ *  - kick:   a RESERVED path (`/browse`), which main.js treats as non-channel.
+ *  - youtube: any url — the yt panel body-mounts on every page by design.
+ *
+ * The twitch fixture also carries `.right-column.right-column--beside`, because
+ * ensureUIElements starts a MutationObserver on that element whose callback
+ * re-enters ensureUIElements. That re-entry is the only path that re-runs it
+ * without first nulling resizeObserver.
  */
-const FIXTURE = `<!doctype html><html><head><title>fixture</title></head>
-<body style="margin:0">
-  <div id="host-content" style="height:100vh">host page</div>
-  <div class="right-column right-column--beside" id="rcol"></div>
-</body></html>`
+const PLATFORMS = [
+  {
+    name: 'twitch',
+    url: 'https://www.twitch.tv/directory',
+    glob: 'https://www.twitch.tv/**',
+    body: '<div id="host-content" style="height:100vh">host page</div><div class="right-column right-column--beside" id="rcol"></div>',
+    rerender: true,
+  },
+  {
+    name: 'kick',
+    url: 'https://kick.com/browse',
+    glob: 'https://kick.com/**',
+    body: '<div id="host-content" style="height:100vh">host page</div>',
+    rerender: false,
+  },
+  {
+    name: 'youtube',
+    url: 'https://www.youtube.com/feed/subscriptions',
+    glob: 'https://www.youtube.com/**',
+    body: '<div id="host-content" style="height:100vh">host page</div>',
+    rerender: false,
+  },
+]
+
+const fixtureHtml = (body: string) =>
+  `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
 const profile = mkdtempSync(join(tmpdir(), 'hs-ext-render-'))
 const errors: string[] = []
@@ -95,27 +120,31 @@ try {
 
   // Never touch production from a test.
   await ctx.route('https://heatsync.org/**', (r: any) => r.abort())
-  await ctx.route('https://www.twitch.tv/**', (r: any) =>
-    r.fulfill({ status: 200, contentType: 'text/html', body: FIXTURE }),
-  )
+  for (const plat of PLATFORMS) {
+    await ctx.route(plat.glob, (r: any) =>
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) }),
+    )
+  }
 
-  const p = await ctx.newPage()
-  p.on('pageerror', (e: unknown) => errors.push(`page: ${String(e).slice(0, 300)}`))
-  await p.goto('https://www.twitch.tv/directory', { waitUntil: 'domcontentloaded' })
+  for (const plat of PLATFORMS) {
+    console.log(`\n── ${plat.name} ──`)
+    const p = await ctx.newPage()
+    p.on('pageerror', (e: unknown) => errors.push(`${plat.name}: ${String(e).slice(0, 300)}`))
+    await p.goto(plat.url, { waitUntil: 'domcontentloaded' })
 
-  await p.waitForSelector('#hs-mc-overlay', { timeout: 20_000 }).catch(() => {
-    fail('the overlay never mounted on a twitch page — nothing below can be trusted')
-  })
-  ok('overlay mounts on a twitch page')
+    await p.waitForSelector('#hs-mc-overlay', { timeout: 25_000 }).catch(() => {
+      fail(`the overlay never mounted on ${plat.name} — nothing below can be trusted`)
+    })
+    ok(`${plat.name}: overlay mounts`)
 
   const g = await geometry(p)
   for (const [name, v] of Object.entries(g)) {
     if (v === null) fail(`#hs-mc-${name} is missing after mount`)
   }
-  ok('tab bar, overlay, input bar and message list all present')
+  ok(`${plat.name}: tab bar, overlay, input bar and message list all present`)
 
   if (!g.hostContent) fail('the host page content was destroyed by the overlay')
-  ok("the host page's own content survives")
+  ok(`${plat.name}: the host page's own content survives`)
 
   // ── the invariant: no dead band ──────────────────────────────────────────
   // The overlay must fill the container minus the two bars. This is what the
@@ -128,51 +157,53 @@ try {
       `overlay height ${g.overlay.h}px but container(${g.container.ch}) - tabbar(${g.tabbar.h}) - input(${g.inputbar.h}) = ${expected}px — ${drift}px of dead space`,
     )
   }
-  ok(`no dead band: overlay ${g.overlay.h}px fills container ${g.container.ch}px minus bars`)
+  ok(`${plat.name}: no dead band — overlay ${g.overlay.h}px fills container ${g.container.ch}px minus bars`)
 
-  // ── the invariant survives a platform re-render ─────────────────────────
-  // What this proves: the extension rebuilds its bars when the host page tears
-  // them out, and the no-dead-band invariant above still holds afterwards.
-  //
-  // What it does NOT prove, stated plainly so nobody reads more into it: this
-  // is not a regression test for the boot-latch bug. That bug needs a stale
-  // ResizeObserver to survive across a rebuild, and it could not be reproduced
-  // here — removing overlay nodes trips main.js's own reinject path, which
-  // nulls resizeObserver before rebuilding and therefore self-heals. Measured,
-  // not assumed: instrumenting the ResizeObserver constructor showed both the
-  // fixed and the pre-fix build constructing a fresh observer on re-entry.
-  // The `!resizeObserver` shape is still guarded, by
-  // tests/overlay-layout-observer.test.js as a source contract.
-  await p.evaluate(() => {
-    document.getElementById('hs-mc-tabbar')?.remove()
-    document.getElementById('hs-mc-inputbar')?.remove()
-  })
-  await p.evaluate(() => {
-    const rc = document.getElementById('rcol')
-    if (!rc) throw new Error('fixture lost its .right-column')
-    rc.classList.add('right-column--nudge')
-    rc.style.opacity = '0.99'
-  })
+  if (plat.rerender) {
+    // ── the invariant survives a platform re-render ─────────────────────────
+    // What this proves: the extension rebuilds its bars when the host page tears
+    // them out, and the no-dead-band invariant above still holds afterwards.
+    //
+    // What it does NOT prove, stated plainly so nobody reads more into it: this
+    // is not a regression test for the boot-latch bug. That bug needs a stale
+    // ResizeObserver to survive across a rebuild, and it could not be reproduced
+    // here — removing overlay nodes trips main.js's own reinject path, which
+    // nulls resizeObserver before rebuilding and therefore self-heals. Measured,
+    // not assumed: instrumenting the ResizeObserver constructor showed both the
+    // fixed and the pre-fix build constructing a fresh observer on re-entry.
+    // The `!resizeObserver` shape is still guarded, by
+    // tests/overlay-layout-observer.test.js as a source contract.
+    await p.evaluate(() => {
+      document.getElementById('hs-mc-tabbar')?.remove()
+      document.getElementById('hs-mc-inputbar')?.remove()
+    })
+    await p.evaluate(() => {
+      const rc = document.getElementById('rcol')
+      if (!rc) throw new Error('fixture lost its .right-column')
+      rc.classList.add('right-column--nudge')
+      rc.style.opacity = '0.99'
+    })
 
-  await p
-    .waitForFunction(() => !!document.getElementById('hs-mc-tabbar'), null, { timeout: 15_000 })
-    .catch(() => fail('the tab bar was never rebuilt after the host page removed it'))
-  ok('bars are rebuilt after the host page tears them out')
+    await p
+      .waitForFunction(() => !!document.getElementById('hs-mc-tabbar'), null, { timeout: 15_000 })
+      .catch(() => fail('the tab bar was never rebuilt after the host page removed it'))
+    ok(`${plat.name}: bars are rebuilt after the host page tears them out`)
 
-  // Let the rebuild settle, then re-run the same measurement that bites.
-  await p.waitForTimeout(1000)
-  const g2 = await geometry(p)
-  for (const [name, v] of Object.entries(g2)) {
-    if (v === null) fail(`#hs-mc-${name} is missing after the rebuild`)
+    // Let the rebuild settle, then re-run the same measurement that bites.
+    await p.waitForTimeout(1000)
+    const g2 = await geometry(p)
+    for (const [name, v] of Object.entries(g2)) {
+      if (v === null) fail(`#hs-mc-${name} is missing after the rebuild`)
+    }
+    const expected2 = g2.container.ch - g2.tabbar.h - g2.inputbar.h
+    const drift2 = Math.abs(g2.overlay.h - expected2)
+    if (drift2 > 2) {
+      fail(
+        `after a rebuild the overlay is ${g2.overlay.h}px but container(${g2.container.ch}) - tabbar(${g2.tabbar.h}) - input(${g2.inputbar.h}) = ${expected2}px — ${drift2}px of dead space`,
+      )
+    }
+    ok(`${plat.name}: no dead band after a rebuild — overlay ${g2.overlay.h}px in container ${g2.container.ch}px`)
   }
-  const expected2 = g2.container.ch - g2.tabbar.h - g2.inputbar.h
-  const drift2 = Math.abs(g2.overlay.h - expected2)
-  if (drift2 > 2) {
-    fail(
-      `after a rebuild the overlay is ${g2.overlay.h}px but container(${g2.container.ch}) - tabbar(${g2.tabbar.h}) - input(${g2.inputbar.h}) = ${expected2}px — ${drift2}px of dead space`,
-    )
-  }
-  ok(`no dead band after a rebuild: overlay ${g2.overlay.h}px in container ${g2.container.ch}px`)
 
   // ── every docking position ───────────────────────────────────────────────
   // _updateMcLayout has four branches — top/right/bottom/left each write a
@@ -242,19 +273,19 @@ try {
     seen.add(pos)
     const cov = await coverage()
     if (!cov) fail(`the container vanished in the "${pos}" position`)
-    if (cov.overflow) fail(`"${pos}" dock: ${cov.overflow}`)
+    if (cov.overflow) fail(`${plat.name} "${pos}" dock: ${cov.overflow}`)
     if (cov.gap > 2) {
-      fail(`"${pos}" dock leaves ${cov.gap}px of the container's ${cov.contentH}px uncovered — dead space`)
+      fail(`${plat.name} "${pos}" dock leaves ${cov.gap}px of the container's ${cov.contentH}px uncovered — dead space`)
     }
     // A container fully covered by a collapsed overlay plus something else would
     // still be wrong: chat is the point.
     if (cov.overlayH < cov.contentH * 0.5) {
-      fail(`"${pos}" dock: overlay is only ${cov.overlayH}px of ${cov.contentH}px — chat has been squeezed out`)
+      fail(`${plat.name} "${pos}" dock: overlay is only ${cov.overlayH}px of ${cov.contentH}px — chat has been squeezed out`)
     }
-    ok(`"${pos}" dock: no dead space, overlay ${cov.overlayH}/${cov.contentH}px`)
+    ok(`${plat.name}: "${pos}" dock has no dead space (overlay ${cov.overlayH}/${cov.contentH}px)`)
   }
   if (seen.size !== 4) fail(`rotate did not visit all four positions — saw ${[...seen].join(', ')}`)
-  ok('rotate cycles through all four docking positions')
+  ok(`${plat.name}: rotate cycles through all four docking positions`)
 
   // ── bitmap crispness: the reply context must not smear the message ───────
   // CozetteVector is a 6x13 bitmap cell. It is crisp only when a glyph starts
@@ -324,7 +355,52 @@ try {
   if (smear.caretWidth % 1 !== 0) {
     fail(`the reply caret has a fractional advance (${smear.caretWidth}px at ${smear.caretPx}) — it will smear whatever follows it`)
   }
-  ok(`reply context keeps the message on the pixel grid (pill ${smear.pillWidth}px, caret ${smear.caretWidth}px)`)
+  ok(`${plat.name}: reply context keeps the message on the pixel grid (pill ${smear.pillWidth}px, caret ${smear.caretWidth}px)`)
+
+    await p.close()
+  }
+
+  // ── the instrumentation must not cry wolf ────────────────────────────────
+  // diag.js reports selector rot and host-CSP blocks into the error ring
+  // buffer, which the popup surfaces as "copy errors". That buffer holds 50
+  // entries. If either reporter fires during ORDINARY operation, it evicts the
+  // real errors it exists to preserve and trains the user to ignore it — a
+  // false positive here is worse than no instrumentation at all.
+  //
+  // Read from the extension's own page, because chrome.storage is unreachable
+  // from the host page's world.
+  const worker = ctx.serviceWorkers()[0]
+  const extId = worker?.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+  if (!extId) fail('could not resolve the extension id to read its error buffer')
+
+  const ep = await ctx.newPage()
+  await ep.goto(`chrome-extension://${extId}/popup.html`, { waitUntil: 'load' })
+  const buffered: Array<{ type?: string, msg?: string }> = await ep.evaluate(
+    () =>
+      new Promise((res) => {
+        try {
+          // @ts-ignore — extension page
+          chrome.storage.local.get('hs_errors', (v: any) => res(v?.hs_errors || []))
+        } catch (_) {
+          res([])
+        }
+      }),
+  )
+  await ep.close()
+
+  const rot = buffered.filter((e) => (e.msg || '').includes('selector stopped matching'))
+  const csp = buffered.filter((e) => (e.msg || '').includes('host page CSP blocked'))
+  if (rot.length) {
+    fail(`selector-rot reporter fired during normal operation — false positives:\n  ${rot.map((e) => e.msg).join('\n  ')}`)
+  }
+  if (csp.length) {
+    fail(`CSP reporter fired during normal operation — false positives:\n  ${csp.map((e) => e.msg).join('\n  ')}`)
+  }
+  ok(`instrumentation stayed quiet (${buffered.length} buffered entries, none from diag)`)
+  if (buffered.length) {
+    console.log(`  note: ${buffered.length} non-diag entries in the buffer:`)
+    for (const e of buffered.slice(0, 6)) console.log(`    [${e.type}] ${(e.msg || '').slice(0, 150)}`)
+  }
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

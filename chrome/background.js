@@ -7511,7 +7511,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         const authToken = await getAuthCookie()
         if (!authToken) {
-          sendResponse({ ok: false, error: 'relink_required' })
+          // No heatsync session — OUR cookie, not the twitch grant. Answering
+          // 'relink_required' here put "automod queue needs a twitch relink"
+          // in front of someone whose twitch link was perfectly fine, and no
+          // amount of relinking could clear it. Same split the 401 branches
+          // below already make.
+          sendResponse({ ok: false, error: 'auth_required' })
           return
         }
         const res = await fetchWithTimeout(`${API_URL}/api/mod/automod-action`, {

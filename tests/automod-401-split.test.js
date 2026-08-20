@@ -62,3 +62,34 @@ test('the relink toast only fires on a server-declared relink_required', () => {
     expect(beforeToast).toMatch(/data\?\.error === 'relink_required'/)
   }
 })
+
+/**
+ * The 401 branches were only half the story: both automod handlers also
+ * pre-flight the heatsync cookie BEFORE they ever call the server, and the
+ * action handler answered that missing cookie with 'relink_required' — the
+ * same wrong sentence, from a path no `status === 401` scan could see. A
+ * signed-out mod clicking allow was told to re-link twitch, forever.
+ */
+function cookieGuardBlocks() {
+  const lines = SRC.split('\n')
+  const blocks = []
+  lines.forEach((line, i) => {
+    if (!/const authToken = await getAuthCookie\(\)/.test(line)) return
+    const text = lines.slice(i, i + 8).join('\n')
+    // Only the automod handlers — other features have their own conventions.
+    const context = lines.slice(Math.max(0, i - 40), i).join('\n')
+    if (!/automod_watch|automod_action/.test(context)) return
+    blocks.push({ line: i + 1, text })
+  })
+  return blocks
+}
+
+test('both automod handlers still pre-flight the heatsync cookie', () => {
+  expect(cookieGuardBlocks().length).toBe(2)
+})
+
+test('a missing heatsync cookie never answers relink_required', () => {
+  for (const b of cookieGuardBlocks()) {
+    expect(b.text).not.toMatch(/error: 'relink_required'/)
+  }
+})

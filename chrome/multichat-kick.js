@@ -12004,18 +12004,6 @@ function injectStyles() {
     }
 
     /* Animations — opacity-only appear, fade out on dismiss. */
-    @keyframes hs-notif-slide-in-right {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes hs-notif-slide-in-up {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes hs-notif-slide-in-down {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
     @keyframes hs-notif-fade-out {
       from { opacity: 1; }
       to   { opacity: 0; }
@@ -12042,7 +12030,7 @@ function injectStyles() {
       border: 1px solid #2a2a2e;
       border-left: 3px solid var(--hs-notif-accent, #555);
       box-shadow: 0 6px 16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
-      animation: hs-notif-slide-in-right 120ms ease both;
+      animation: hs-notif-fade-in 120ms ease both;
     }
     @keyframes hs-notif-fade-in {
       from { opacity: 0; }

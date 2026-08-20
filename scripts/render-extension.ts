@@ -287,6 +287,78 @@ try {
   if (seen.size !== 4) fail(`rotate did not visit all four positions — saw ${[...seen].join(', ')}`)
   ok(`${plat.name}: rotate cycles through all four docking positions`)
 
+  // ── geometry tracks a WRAPPING tab bar ───────────────────────────────────
+  // The single most common real layout change: the user adds channels, the tab
+  // bar wraps to more rows, and the overlay must give back exactly that much
+  // height. This is the scenario the boot-latch bug lived in — the bar measured
+  // ~307px mid-boot and settled to 55px, and the overlay kept the first number.
+  //
+  // Scope, measured not assumed: this asserts the INVARIANT the user feels (a
+  // wrapped bar never leaves dead space), not the ResizeObserver specifically.
+  // Removing the tab bar from the observer still passes — something else also
+  // recomputes on child insertion — so do not read this as a guard on the
+  // observer wiring. tests/overlay-layout-observer.test.js holds that line.
+  // Only run where the fixture reaches the re-render path.
+  if (plat.rerender) {
+    for (const n of [6, 16]) {
+      const wrapped = await p.evaluate(
+        (count: number) =>
+          new Promise((done) => {
+            const tb = document.getElementById('hs-mc-tabbar')
+            const scroll = tb?.querySelector('.hs-mc-tabs-scroll')
+            if (!tb || !scroll) return done(null)
+            scroll.querySelectorAll('.hs-probe').forEach((e) => e.remove())
+            const addBtn = scroll.querySelector('[data-tab="add"]')
+            for (let i = 0; i < count; i++) {
+              const b = document.createElement('button')
+              b.className = 'hs-mc-tab hs-probe'
+              b.textContent = `chan${i}`
+              scroll.insertBefore(b, addBtn)
+            }
+            // Let the ResizeObserver fire and the layout settle.
+            setTimeout(
+              () =>
+                requestAnimationFrame(() =>
+                  requestAnimationFrame(() => {
+                    const c = document.getElementById('hs-mc-container')
+                    const cs = getComputedStyle(c)
+                    const cr = c.getBoundingClientRect()
+                    const top = cr.top + Number.parseFloat(cs.borderTopWidth || '0')
+                    const bottom = cr.bottom - Number.parseFloat(cs.borderBottomWidth || '0')
+                    const spans: Array<[number, number]> = []
+                    for (const el of Array.from(c.children) as HTMLElement[]) {
+                      const r = el.getBoundingClientRect()
+                      if (r.height > 0 && r.width > 0) spans.push([r.top, r.bottom])
+                    }
+                    spans.sort((a, b) => a[0] - b[0])
+                    let gap = 0
+                    let cur = top
+                    for (const [a, b] of spans) {
+                      if (a > cur) gap += a - cur
+                      cur = Math.max(cur, b)
+                    }
+                    if (cur < bottom) gap += bottom - cur
+                    done({ tabbarH: Math.round(tb.getBoundingClientRect().height), gap: Math.round(gap) })
+                  }),
+                ),
+              350,
+            )
+          }),
+        n,
+      )
+      if (!wrapped) fail('could not reach the tab bar to test wrapping')
+      const w = wrapped as { tabbarH: number, gap: number }
+      if (w.gap > 2) {
+        fail(
+          `${plat.name}: with ${n} extra tabs the tab bar is ${w.tabbarH}px and ${w.gap}px of the container is uncovered — ` +
+            'the overlay did not give back the height the tab bar took.',
+        )
+      }
+      ok(`${plat.name}: geometry tracks a ${w.tabbarH}px wrapped tab bar (+${n} tabs, no dead space)`)
+    }
+    await p.evaluate(() => document.querySelectorAll('.hs-probe').forEach((e) => e.remove()))
+  }
+
   // ── bitmap crispness: the reply context must not smear the message ───────
   // CozetteVector is a 6x13 bitmap cell. It is crisp only when a glyph starts
   // on a whole pixel, so anything inline BEFORE the message text leaks its

@@ -3045,6 +3045,42 @@
   // UI CREATION (React-compatible elements)
   // ============================================
 
+  /**
+   * Copy the current layout's link. Uses the same clipboard-then-fallback path as
+   * the chat-log permalink (chat-logs.js) so there is one copy behaviour in the
+   * overlay, not two.
+   *
+   * Lives here rather than in share-link.js because it needs `config`,
+   * `youtubeLinks`, `mcCopyFallback`, `showToast` and `t` from this scope —
+   * which keeps that module pure, type-checked, and importable in a test.
+   * @returns {Promise<boolean>}
+   */
+  async function copyMultichatShareLink() {
+    let url = ''
+    try {
+      url = buildMultichatShareUrl(config?.channels || [], (id) => youtubeLinks?.get(id)?.channelName || '')
+    } catch (_) {
+      url = ''
+    }
+    if (!url) {
+      try {
+        showToast(t('mc_share_nothing'), 'error')
+      } catch (_) {}
+      return false
+    }
+    let ok = false
+    try {
+      await navigator.clipboard.writeText(url)
+      ok = true
+    } catch (_) {
+      ok = typeof mcCopyFallback === 'function' && mcCopyFallback(url)
+    }
+    try {
+      showToast(ok ? t('mc_share_copied') : t('mc_share_failed'), ok ? 'success' : 'error')
+    } catch (_) {}
+    return ok
+  }
+
   /** Mark a tab active. Keeps aria-selected in lockstep with the `active`
    * class — three separate call sites used to toggle the class by hand, and a
    * screen reader reads aria-selected, not a css class. Only real tabs carry
@@ -3075,6 +3111,7 @@
       <div class="hs-mc-right-cluster">
         <div class="hs-mc-util-row">
           <button class="hs-mc-tab hs-mc-util-btn" data-tab="settings" title="${t('mc_btn_settings')}">\u2699</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-share-btn" data-tab="share" title="${t('mc_btn_share')}" aria-label="${t('mc_btn_share')}">\u00b6</button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="hide chat (\\)" aria-label="hide chat"></button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="pop out chat to standalone window" style="display:none">\u26f6</button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="subscribe \u2014 support this channel" style="display:none">$</button>
@@ -3107,6 +3144,8 @@
         openSubForCurrentTab(tab)
       } else if (tabId === 'live') {
         showLiveChannelPicker(tab)
+      } else if (tabId === 'share') {
+        copyMultichatShareLink()
       } else if (tabId === 'collapse') {
         toggleChatHidden()
       } else if (tabId === 'native') {
@@ -5192,7 +5231,7 @@
     // them updateTabBar (runs on every channel load) silently removes the ⇄ / ⚡
     // buttons right after they render. That was "BUG 1: ⇄ missing on kick".
     const existingChannelTabs = tabBarElement.querySelectorAll(
-      '.hs-mc-tab[data-tab]:not([data-tab="live"]):not([data-tab="feed"]):not([data-tab="mentions"]):not([data-tab="whispers"]):not([data-tab="discover"]):not([data-tab="pinned"]):not([data-tab="modlog"]):not([data-tab="add"]):not([data-tab="settings"]):not([data-tab="popout"]):not([data-tab="collapse"]):not([data-tab="native"]):not([data-tab="actions"]):not([data-tab="subscribe"])',
+      '.hs-mc-tab[data-tab]:not([data-tab="live"]):not([data-tab="feed"]):not([data-tab="mentions"]):not([data-tab="whispers"]):not([data-tab="discover"]):not([data-tab="pinned"]):not([data-tab="modlog"]):not([data-tab="add"]):not([data-tab="settings"]):not([data-tab="popout"]):not([data-tab="collapse"]):not([data-tab="native"]):not([data-tab="actions"]):not([data-tab="subscribe"]):not([data-tab="share"])',
     )
     existingChannelTabs.forEach((t) => {
       t.remove()

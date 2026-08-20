@@ -15138,9 +15138,17 @@ img.hs-fx-zero, .hs-mc-emoji.hs-fx-zero { margin-left: -4px; }
    never → off entirely; hover → chat rows animate only under the pointer,
    mirroring the gif hover-swap in main.js. Composer/picker chips are outside
    .hs-mc-msg so they keep animating in hover mode (they're what you're editing). */
-html[data-hs-emote-anim="never"] img[class*="hs-fx-"] { animation: none !important; }
-html[data-hs-emote-anim="hover"] .hs-mc-msg img[class*="hs-fx-"] { animation-play-state: paused !important; }
-html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animation-play-state: running !important; }
+/* Scoped to BOTH an emote img and an emoji span. These were img-only, which
+   meant the setting could not switch off an effect running on an emoji — the
+   effect itself reaches emoji (see the hs-fx rules above), so a control that
+   does not is worse than no control: the user turns animation off and something
+   keeps moving. */
+html[data-hs-emote-anim="never"] img[class*="hs-fx-"],
+html[data-hs-emote-anim="never"] .hs-mc-emoji[class*="hs-fx-"] { animation: none !important; }
+html[data-hs-emote-anim="hover"] .hs-mc-msg img[class*="hs-fx-"],
+html[data-hs-emote-anim="hover"] .hs-mc-msg .hs-mc-emoji[class*="hs-fx-"] { animation-play-state: paused !important; }
+html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"],
+html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] { animation-play-state: running !important; }
 
     /* Composition tooltip — base + overlays + ordered effects. Colours are set
        inline per piece (provider brand / c!#hex tint); these rules only carry

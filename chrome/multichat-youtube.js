@@ -26302,14 +26302,24 @@ const CHUNK_SIZE = 96
 // picker.addEventListener block) — unique every content-script context.
 const _HS_PICKER_CLICK_CTX = `ctx_${Math.random().toString(36).slice(2)}`
 const _chunkStore = new Map()
-let _chunkObserver = null
+/**
+ * One observer PER scroll root, not one globally.
+ *
+ * An IntersectionObserver bakes its `root` in at construction, and a target that
+ * is not a descendant of that root is never reported as intersecting. The cache
+ * used to be a single observer returned for any root, so whichever scope called
+ * first won: attachChunkObserver runs with the search `grid` at two sites and
+ * with the whole `picker` at a third, and if the grid got there first every
+ * picker-level chunk was handed an observer rooted inside the grid and could
+ * never fire. Nothing threw — the chunks simply stopped lazy-filling on scroll,
+ * masked by renderVisibleChunks eagerly filling the first 16.
+ */
+const _chunkObservers = new Map()
 
 function clearChunkStore() {
   _chunkStore.clear()
-  if (_chunkObserver) {
-    _chunkObserver.disconnect()
-    _chunkObserver = null
-  }
+  for (const obs of _chunkObservers.values()) obs.disconnect()
+  _chunkObservers.clear()
 }
 
 // Fill one chunk placeholder from its stored emote data. Returns true if filled.
@@ -26325,19 +26335,23 @@ function _fillChunk(el) {
 }
 
 function ensureChunkObserver(scrollRoot) {
-  if (_chunkObserver) return _chunkObserver
-  _chunkObserver = new IntersectionObserver(
-    (entries) => {
+  const cached = _chunkObservers.get(scrollRoot)
+  if (cached) return cached
+  const obs = new IntersectionObserver(
+    // Second callback arg, not the outer binding: an observer should unobserve
+    // through ITSELF, so this cannot drift if the cache shape changes again.
+    (entries, self) => {
       for (const e of entries) {
         if (!e.isIntersecting) continue
         _fillChunk(e.target)
-        _chunkObserver.unobserve(e.target)
+        self.unobserve(e.target)
       }
     },
     { root: scrollRoot, rootMargin: '300px 0px', threshold: 0 },
   )
-  cleanup.trackObserver(_chunkObserver)
-  return _chunkObserver
+  _chunkObservers.set(scrollRoot, obs)
+  cleanup.trackObserver(obs)
+  return obs
 }
 
 // The IntersectionObserver never fires while the tab is hidden/occluded (a
@@ -26355,7 +26369,7 @@ function renderVisibleChunks(scope) {
   for (const el of scope.querySelectorAll('.hs-mc-picker-chunk:not(.hs-mc-chunk-ready)')) {
     if (el.offsetTop > cutoff) continue
     if (_fillChunk(el)) {
-      _chunkObserver?.unobserve(el)
+      _chunkObservers.get(scrollRoot)?.unobserve(el)
       if (++filled >= 16) break
     }
   }

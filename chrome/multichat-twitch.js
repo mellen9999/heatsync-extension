@@ -12983,8 +12983,16 @@ function injectStyles() {
          pixel, which puts every glyph inside it on a sub-pixel x offset — the
          exact smear a bitmap face cannot survive. 1ch is an integer advance in
          a monospace bitmap, so a ch cap always resolves to whole pixels, and
-         "38 characters of name" is the real intent anyway. */
-      max-width: 38ch;
+         "N characters of name" is the real intent anyway.
+
+         16, not 38. 38ch is 228px — wider than most of the panel, so it never
+         actually bit, and a long name pushed the row to a THIRD line at narrow
+         widths. Measured at a 292px panel with a 17-char name: 3 lines at 38ch
+         and at 24ch, 2 lines at 16ch — the same height a plain message already
+         costs there. Above 16ch the cap is decorative; below it, nothing more
+         is gained. Names longer than 16 characters ellipsise, which is the
+         cheaper loss: the row height is the density budget. */
+      max-width: 16ch;
       font-size: 13px;
       color: #aaa;
       line-height: inherit;

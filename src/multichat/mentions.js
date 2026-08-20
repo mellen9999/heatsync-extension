@@ -139,6 +139,14 @@ async function resolveNotifIcon(name, platform, knownAvatar) {
 // load). Two-tone 880→1175 Hz ping with quick decay envelope. Volume gated by
 // ui_settings.mentionSoundVolume (0..1, default 0.3). 0 = silent.
 let _mentionAudioCtx = null
+let _mentionAudioIdleTimer = null
+// Grace before parking the context after the last tone. A running AudioContext
+// holds the audio render thread and the output device open for as long as it is
+// resumed — so a single mention used to leave a wakeup source running for the
+// rest of the session. The grace keeps a burst of pings from thrashing
+// resume/suspend, and it is generous because suspending is only worth doing
+// once the room has actually gone quiet.
+const MENTION_AUDIO_IDLE_MS = 2000
 function _getMentionAudioCtx() {
   if (_mentionAudioCtx) return _mentionAudioCtx
   try {
@@ -150,16 +158,32 @@ function _getMentionAudioCtx() {
     return null
   }
 }
+
+/** Resume the context to play, and schedule it back to suspended once the tail
+ * of the sound has finished. `tailSec` is the end of the last scheduled tone,
+ * relative to now. Called again before the timer fires, it just re-arms. */
+function _armMentionAudio(ctx, tailSec) {
+  try {
+    if (ctx.state === 'suspended') ctx.resume()
+  } catch {}
+  if (_mentionAudioIdleTimer) {
+    cleanup.clearTimeout(_mentionAudioIdleTimer)
+    _mentionAudioIdleTimer = null
+  }
+  const waitMs = Math.max(0, tailSec * 1000) + MENTION_AUDIO_IDLE_MS
+  _mentionAudioIdleTimer = cleanup.setTimeout(() => {
+    _mentionAudioIdleTimer = null
+    try {
+      if (_mentionAudioCtx?.state === 'running') _mentionAudioCtx.suspend()
+    } catch {}
+  }, waitMs)
+}
 function playMentionPing(volume) {
   if (!(volume > 0)) return
   const ctx = _getMentionAudioCtx()
   if (!ctx) return
   try {
-    if (ctx.state === 'suspended') {
-      try {
-        ctx.resume()
-      } catch {}
-    }
+    _armMentionAudio(ctx, 0.32)
     const now = ctx.currentTime
     const gain = ctx.createGain()
     gain.gain.setValueAtTime(0, now)
@@ -213,11 +237,7 @@ function playFilterRuleSound(name) {
   const ctx = _getMentionAudioCtx()
   if (!ctx) return
   try {
-    if (ctx.state === 'suspended') {
-      try {
-        ctx.resume()
-      } catch {}
-    }
+    _armMentionAudio(ctx, Math.max(...preset.map((tone) => tone.t0 + tone.d)) + 0.02)
     const t = ctx.currentTime
     for (const tone of preset) {
       const gain = ctx.createGain()

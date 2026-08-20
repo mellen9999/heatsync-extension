@@ -663,7 +663,21 @@
   // reconciled against the buffer on restore.
   // ============================================
   const _tabCache = new Map() // tabId → { frag, msgKeyIndex, uidIndex, mentionIndex }
-  const _TAB_CACHE_MAX = 4 // LRU cap — each entry can hold up to 1500 detached rows
+  // LRU cap. Each entry holds up to DOM_RENDER_CAP detached rows plus cloned
+  // index Maps, and every row keeps its emote <img> bitmaps decoded — at the
+  // default cap that is up to 6000 detached rows resident purely so a tab
+  // switch does not flash. On a 4GB box that is the single largest allocation
+  // the extension makes, and unlike the render cap there was no way to reach
+  // it. Scale it to the machine: navigator.deviceMemory is a coarse GB figure
+  // (Chrome clamps it to 0.25–8; Firefox does not implement it, hence the
+  // default). Two cached tabs still cover the common there-and-back switch.
+  const _TAB_CACHE_MAX = (() => {
+    try {
+      const gb = navigator.deviceMemory
+      if (typeof gb === 'number' && gb > 0 && gb <= 4) return 2
+    } catch (_) {}
+    return 4
+  })()
   try {
     document.documentElement.dataset.hsTabCacheV1 = '1'
   } catch {}
@@ -3031,6 +3045,16 @@
   // UI CREATION (React-compatible elements)
   // ============================================
 
+  /** Mark a tab active. Keeps aria-selected in lockstep with the `active`
+   * class — three separate call sites used to toggle the class by hand, and a
+   * screen reader reads aria-selected, not a css class. Only real tabs carry
+   * role="tab"; the utility buttons share the class and must not claim it. */
+  function setTabActive(el, on) {
+    if (!el) return
+    el.classList.toggle('active', on)
+    if (el.getAttribute('role') === 'tab') el.setAttribute('aria-selected', String(on))
+  }
+
   function createTabBar() {
     const container = document.createElement('div')
     container.id = 'hs-mc-tabbar'
@@ -3039,13 +3063,13 @@
     // Two sections: scrollable channel tabs + fixed utility buttons (always visible)
     // Static hardcoded buttons — all in one wrapping flow, no user input
     container.innerHTML = `
-      <div class="hs-mc-tabs-scroll">
-        <button class="hs-mc-tab" data-tab="feed">${t('mc_tab_feed')}</button>
-        <button class="hs-mc-tab" data-tab="whispers">${t('mc_tab_whispers')}</button>
-        <button class="hs-mc-tab" data-tab="mentions">${t('mc_tab_mentions')}</button>
-        <button class="hs-mc-tab" data-tab="pinned">${t('mc_tab_pinned')}</button>
-        <button class="hs-mc-tab" data-tab="modlog">${t('mc_tab_modlog')}</button>
-        <button class="hs-mc-tab active" data-tab="live">${t('mc_tab_live')}</button>
+      <div class="hs-mc-tabs-scroll" role="tablist" aria-label="chat tabs">
+        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="feed">${t('mc_tab_feed')}</button>
+        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="whispers">${t('mc_tab_whispers')}</button>
+        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="mentions">${t('mc_tab_mentions')}</button>
+        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="pinned">${t('mc_tab_pinned')}</button>
+        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="modlog">${t('mc_tab_modlog')}</button>
+        <button class="hs-mc-tab active" role="tab" aria-selected="true" data-tab="live">${t('mc_tab_live')}</button>
         <button class="hs-mc-tab" data-tab="add">+</button>
       </div>
       <div class="hs-mc-right-cluster">
@@ -3601,7 +3625,7 @@
         <div id="hs-notif-layer-statusbar" class="hs-notif-layer hs-notif-layer-statusbar"></div>
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
-      <div id="hs-mc-messages">
+      <div id="hs-mc-messages" role="log" aria-label="chat messages">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
              owns the swap: it prints "no messages yet" only once _tabJoining
@@ -5180,6 +5204,8 @@
     config.channels.forEach((ch) => {
       const tab = document.createElement('button')
       tab.className = ch?.ephemeral ? 'hs-mc-tab hs-mc-tab-auto' : 'hs-mc-tab'
+      tab.setAttribute('role', 'tab')
+      tab.setAttribute('aria-selected', 'false')
       if (ch?.ephemeral) tab.title = 'open in another window — tab disappears when that window closes'
       const id = ch.id
       tab.dataset.tab = id
@@ -5242,7 +5268,7 @@
 
     // Update active state
     tabBarElement.querySelectorAll('.hs-mc-tab').forEach((t) => {
-      t.classList.toggle('active', t.dataset.tab === currentTab)
+      setTabActive(t, t.dataset.tab === currentTab)
     })
 
     applyHiddenTabs()
@@ -6664,7 +6690,7 @@
         currentTab = 'live'
         if (tabBarElement) {
           tabBarElement.querySelectorAll('.hs-mc-tab').forEach((t) => {
-            t.classList.toggle('active', t.dataset.tab === 'live')
+            setTabActive(t, t.dataset.tab === 'live')
           })
         }
       }
@@ -6821,7 +6847,7 @@
     if (tabBarElement) {
       const liveCh = getLiveChannel()?.toLowerCase()
       tabBarElement.querySelectorAll('.hs-mc-tab').forEach((t) => {
-        t.classList.toggle('active', t.dataset.tab === id)
+        setTabActive(t, t.dataset.tab === id)
         if (t.dataset.tab === id) {
           t.classList.remove('has-new')
           t.classList.remove('has-stream-event')

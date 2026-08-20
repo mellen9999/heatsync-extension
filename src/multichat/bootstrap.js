@@ -738,6 +738,11 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
 // focuses them. Avoids the N-tab thundering React mount herd that crashes
 // Chrome. content.js sets __heatsyncReloadScheduled — dedupe across scripts.
 const _hsMcCtxDeathTimer = setInterval(() => {
+  // Nothing to do while the tab is hidden: the reload is deferred to
+  // visibilitychange anyway, so probing 30 times a minute in a background tab
+  // buys nothing and just wakes it. The port detector below still fires
+  // synchronously on invalidation regardless of visibility.
+  if (document.hidden) return
   // chrome.runtime?.id access can throw "Extension context invalidated" on
   // orphaned content scripts — without try/catch the detector silently dies
   // each tick and reload never arms.

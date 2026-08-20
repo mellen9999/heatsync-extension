@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.62] — 2026-08-20
+
+### fixed
+- **the sub-anniversary share button actually shares** — clicking share on your "it's your N months" callout looked like it worked, but nothing ever reached chat and the callout came back on the next reload. it now completes the share itself, with whatever you type as the message.
+- **the watch-streak callout shares the same way** — your words became a separate plain message next to twitch's stock celebration instead of being the celebration.
+- **a share that can't go through says so** — it used to close the prompt and go quiet.
+
 ## [1.7.61] — 2026-08-20
 
 ### added

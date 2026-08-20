@@ -3299,11 +3299,22 @@ function _hsMcApplyMods(html, mods, hue) {
   // ride on hs-fx-* classes (keyframes in the emote CSS) so they compose with
   // the static transform/filter above. Merge into the img's existing class.
   const animClasses = hsModComposeAnimClasses(mods)
-  if (animClasses.length && hasImg) {
+  if (animClasses.length) {
     const cls = animClasses.join(' ')
-    out = /<img\b[^>]*\sclass="/.test(out)
-      ? out.replace(/(<img\b[^>]*\sclass=")/, `$1${cls} `)
-      : out.replace(/<img\b/, `<img class="${cls}"`)
+    if (hasImg) {
+      out = /<img\b[^>]*\sclass="/.test(out)
+        ? out.replace(/(<img\b[^>]*\sclass=")/, `$1${cls} `)
+        : out.replace(/<img\b/, `<img class="${cls}"`)
+    } else {
+      // No <img> means an emoji base: the glyph IS the wrapper span, so the
+      // effect class has to land there instead. Without this the class was
+      // simply never emitted for emoji — the static half of a modifier applied
+      // (it rides the style attr, folded in above) and the animated half
+      // silently did nothing, so `p!` on an emoji read as a frozen tint.
+      out = /^<span\b[^>]*\sclass="/.test(out)
+        ? out.replace(/^(<span\b[^>]*\sclass=")/, `$1${cls} `)
+        : out.replace(/^<span\b/, `<span class="${cls}"`)
+    }
   }
   // Stamp the scale factors so the load-time snap can reserve horizontal/vertical
   // space sized to the emote's REAL width (hsModBuildStyleAttr's static margins

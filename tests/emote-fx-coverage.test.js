@@ -88,8 +88,18 @@ describe('animated effects have CSS', () => {
     test(`hs-fx-${a} has a keyframes block`, () => {
       expect(CSS).toContain(`@keyframes hs-fx-${a}`)
     })
-    test(`hs-fx-${a} has an img rule wired to that keyframes`, () => {
-      expect(new RegExp(`img\\.hs-fx-${a}\\s*\\{[^}]*animation:\\s*hs-fx-${a}\\b`).test(CSS)).toBe(true)
+    test(`hs-fx-${a} is wired for BOTH an emote img and an emoji span`, () => {
+      // An emoji is a <span class="hs-mc-emoji">, not an <img>. These rules were
+      // tag-scoped to img, so an emoji could carry the effect class and never
+      // match anything: the static half of a modifier applied and the animated
+      // half silently did nothing. Both selectors are required, and the img one
+      // keeps its specificity rather than being widened away.
+      const rule = new RegExp(`([^{}]*)\\bhs-fx-${a}\\s*\\{[^}]*animation:\\s*hs-fx-${a}\\b`)
+      const m = CSS.match(rule)
+      expect(m, `no rule wires hs-fx-${a} to its keyframes`).toBeTruthy()
+      const selector = m[0].split('{')[0]
+      expect(selector, 'emote imgs must still match').toContain(`img.hs-fx-${a}`)
+      expect(selector, 'a modified emoji span must match too').toContain(`.hs-mc-emoji.hs-fx-${a}`)
     })
   }
 })

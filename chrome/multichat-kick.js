@@ -15071,37 +15071,37 @@ function injectStyles() {
    hue-rotate(var(--hs-fx-hue)) so an animated hue STACKS with a static filter
    (cursed) instead of the keyframe replacing the filter. */
 @property --hs-fx-hue { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-img.hs-fx-rainbow { animation: hs-fx-rainbow 2s linear infinite; }
+img.hs-fx-rainbow, .hs-mc-emoji.hs-fx-rainbow { animation: hs-fx-rainbow 2s linear infinite; }
 @keyframes hs-fx-rainbow { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
 
-img.hs-fx-party { animation: hs-fx-party 1.5s linear infinite; }
+img.hs-fx-party, .hs-mc-emoji.hs-fx-party { animation: hs-fx-party 1.5s linear infinite; }
 @keyframes hs-fx-party { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
 
-img.hs-fx-spin { animation: hs-fx-spin 1.5s linear infinite; }
+img.hs-fx-spin, .hs-mc-emoji.hs-fx-spin { animation: hs-fx-spin 1.5s linear infinite; }
 @keyframes hs-fx-spin { from { rotate: 0deg; } to { rotate: 360deg; } }
 
-img.hs-fx-shake { animation: hs-fx-shake 500ms step-start infinite; }
+img.hs-fx-shake, .hs-mc-emoji.hs-fx-shake { animation: hs-fx-shake 500ms step-start infinite; }
 @keyframes hs-fx-shake {
   0%{translate:0 1px}10%{translate:2px 0}20%{translate:1px -2px}30%{translate:-2px 1px}
   40%{translate:0 -1px}50%{translate:2px 2px}60%{translate:-1px -1px}70%{translate:-2px 2px}
   80%{translate:2px 1px}90%{translate:-1px -2px}100%{translate:1px 0}
 }
 
-img.hs-fx-hyper { animation: hs-fx-hyper 0.1s linear infinite; }
+img.hs-fx-hyper, .hs-mc-emoji.hs-fx-hyper { animation: hs-fx-hyper 0.1s linear infinite; }
 @keyframes hs-fx-hyper {
   0%{translate:1px 1px}10%{translate:-1px -2px}20%{translate:-3px 0}30%{translate:3px 2px}
   40%{translate:1px -1px}50%{translate:-1px 2px}60%{translate:-3px 1px}70%{translate:3px 1px}
   80%{translate:-1px -1px}90%{translate:1px 2px}100%{translate:1px -2px}
 }
 
-img.hs-fx-bounce { transform-origin: bottom center; animation: hs-fx-bounce 0.5s linear infinite; }
+img.hs-fx-bounce, .hs-mc-emoji.hs-fx-bounce { transform-origin: bottom center; animation: hs-fx-bounce 0.5s linear infinite; }
 @keyframes hs-fx-bounce {
   0%{scale:.8 1}10%{scale:.9 .8}20%{scale:1 .4}25%{scale:1.2 .3}30%{scale:1 .4}
   40%{scale:.9 .8}50%{scale:.8 1}60%{scale:.9 .8}70%{scale:1 .4}75%{scale:1.2 .3}
   80%{scale:1 .4}90%{scale:.9 .8}100%{scale:.8 1}
 }
 
-img.hs-fx-jam { animation: hs-fx-jam 0.6s linear infinite; }
+img.hs-fx-jam, .hs-mc-emoji.hs-fx-jam { animation: hs-fx-jam 0.6s linear infinite; }
 @keyframes hs-fx-jam {
   0%{translate:-2px -2px;rotate:-6deg}10%{translate:-1.5px -2px;rotate:-8deg}
   20%{translate:1px -1.5px;rotate:-8deg}30%{translate:3px 2.5px;rotate:-6deg}
@@ -15111,22 +15111,22 @@ img.hs-fx-jam { animation: hs-fx-jam 0.6s linear infinite; }
   100%{translate:-2px -2px;rotate:-5deg}
 }
 
-img.hs-fx-slide { animation: hs-fx-slide 1.5s linear infinite; }
+img.hs-fx-slide, .hs-mc-emoji.hs-fx-slide { animation: hs-fx-slide 1.5s linear infinite; }
 @keyframes hs-fx-slide { from{translate:-50% 0} to{translate:50% 0} }
 
-img.hs-fx-arrive { animation: hs-fx-arrive 3s linear infinite; }
+img.hs-fx-arrive, .hs-mc-emoji.hs-fx-arrive { animation: hs-fx-arrive 3s linear infinite; }
 @keyframes hs-fx-arrive {
   0%{translate:-18px 0;scale:.1}20%{translate:-18px 0;scale:.1}
   45%{translate:0 0;scale:1}100%{translate:0 0;scale:1}
 }
 
-img.hs-fx-leave { animation: hs-fx-leave 3s linear infinite; }
+img.hs-fx-leave, .hs-mc-emoji.hs-fx-leave { animation: hs-fx-leave 3s linear infinite; }
 @keyframes hs-fx-leave {
   0%{translate:0 0;scale:1}55%{translate:0 0;scale:1}
   80%{translate:18px 0;scale:.1}100%{translate:18px 0;scale:.1}
 }
 
-img.hs-fx-zero { margin-left: -4px; }
+img.hs-fx-zero, .hs-mc-emoji.hs-fx-zero { margin-left: -4px; }
 
 /* Emote effects follow the animateEmotes setting, NOT prefers-reduced-motion.
    A modifier is CONTENT the sender chose — same class of motion as an animated
@@ -29258,11 +29258,22 @@ function _hsMcApplyMods(html, mods, hue) {
   // ride on hs-fx-* classes (keyframes in the emote CSS) so they compose with
   // the static transform/filter above. Merge into the img's existing class.
   const animClasses = hsModComposeAnimClasses(mods)
-  if (animClasses.length && hasImg) {
+  if (animClasses.length) {
     const cls = animClasses.join(' ')
-    out = /<img\b[^>]*\sclass="/.test(out)
-      ? out.replace(/(<img\b[^>]*\sclass=")/, `$1${cls} `)
-      : out.replace(/<img\b/, `<img class="${cls}"`)
+    if (hasImg) {
+      out = /<img\b[^>]*\sclass="/.test(out)
+        ? out.replace(/(<img\b[^>]*\sclass=")/, `$1${cls} `)
+        : out.replace(/<img\b/, `<img class="${cls}"`)
+    } else {
+      // No <img> means an emoji base: the glyph IS the wrapper span, so the
+      // effect class has to land there instead. Without this the class was
+      // simply never emitted for emoji — the static half of a modifier applied
+      // (it rides the style attr, folded in above) and the animated half
+      // silently did nothing, so `p!` on an emoji read as a frozen tint.
+      out = /^<span\b[^>]*\sclass="/.test(out)
+        ? out.replace(/^(<span\b[^>]*\sclass=")/, `$1${cls} `)
+        : out.replace(/^<span\b/, `<span class="${cls}"`)
+    }
   }
   // Stamp the scale factors so the load-time snap can reserve horizontal/vertical
   // space sized to the emote's REAL width (hsModBuildStyleAttr's static margins

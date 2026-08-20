@@ -1137,7 +1137,11 @@ function chatEmbedToggle(url, card) {
       try {
         ro.observe(parent)
         if (card) ro.observe(card)
-      } catch (_) {}
+      } catch (e) {
+        // A throw here means the docked player never repositions again — it
+        // sits wherever it happened to mount and drifts away from the card.
+        swallow(e, 'feed-player-observe')
+      }
       _hsAudio.ro = ro
       cleanup.trackObserver(ro)
     }

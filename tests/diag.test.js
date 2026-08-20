@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import {
   CSP_MAX_REPORTS,
   diagSnapshot,
@@ -273,5 +275,43 @@ describe('host-page CSP violations', () => {
 
   test('the report ceiling is small enough not to swamp a 50-entry buffer', () => {
     expect(CSP_MAX_REPORTS).toBeLessThanOrEqual(10)
+  })
+})
+
+describe('diag is actually wired, not just shipped', () => {
+  // swallow() and hsQuery() are bundled into every content script. Shipping an
+  // instrumentation helper that nothing calls is worse than not having it: it
+  // reads as covered.
+  const SRC = (rel) => readFileSync(join(import.meta.dir, '..', rel), 'utf8')
+
+  test('swallow() has real call sites', () => {
+    const files = [
+      'chrome/content.js',
+      'src/multichat/bootstrap.js',
+      'src/multichat/kick-host.js',
+      'src/multichat/feed-embed.js',
+    ]
+    const tags = new Set()
+    for (const f of files) {
+      for (const m of SRC(f).matchAll(/swallow\(\w+, '([a-z0-9-]+)'\)/g)) tags.add(m[1])
+    }
+    // Each tag names one failure whose only symptom would otherwise be a
+    // feature quietly not working.
+    expect(tags.size).toBeGreaterThanOrEqual(4)
+    expect(tags).toContain('kick-native-rehide')
+    expect(tags).toContain('feed-player-observe')
+  })
+
+  test('hsQuery() is wired into every platform host adapter', () => {
+    for (const f of ['twitch-host.js', 'kick-host.js', 'youtube-host.js', 'native-tap.js']) {
+      expect(SRC(`src/multichat/${f}`), f).toContain('hsQuery(')
+    }
+  })
+
+  test('the two busy-listener copies stay instrumented together', () => {
+    // content.js and bootstrap.js carry the same block; this repo's recorded
+    // bug shape is one copy of a duplicated thing drifting.
+    expect(SRC('chrome/content.js')).toContain("swallow(e, 'busy-listener-content')")
+    expect(SRC('src/multichat/bootstrap.js')).toContain("swallow(e, 'busy-listener-multichat')")
   })
 })

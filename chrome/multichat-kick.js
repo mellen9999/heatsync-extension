@@ -9065,7 +9065,12 @@ const hsSched = (() => {
   for (const ev of ['scroll', 'wheel', 'touchmove', 'pointerdown']) {
     try {
       window.addEventListener(ev, markBusy, { passive: true, capture: true, signal: mcSignal })
-    } catch {}
+    } catch (e) {
+      // Parallel copy of the content.js busy-listener block — see
+      // 'busy-listener-content'. Same failure, same consequence: the busy-yield
+      // never engages and emote work stops backing off during scroll.
+      swallow(e, 'busy-listener-multichat')
+    }
   }
   const _yield = () => {
     if (typeof scheduler !== 'undefined' && typeof scheduler.yield === 'function') {
@@ -37541,7 +37546,11 @@ function chatEmbedToggle(url, card) {
       try {
         ro.observe(parent)
         if (card) ro.observe(card)
-      } catch (_) {}
+      } catch (e) {
+        // A throw here means the docked player never repositions again — it
+        // sits wherever it happened to mount and drifts away from the card.
+        swallow(e, 'feed-player-observe')
+      }
       _hsAudio.ro = ro
       cleanup.trackObserver(ro)
     }
@@ -62053,7 +62062,12 @@ function softKickNav(prevLiveCh) {
       if (!nativeVisible)
         try {
           setNativeChatHidden(true)
-        } catch (_) {}
+        } catch (e) {
+          // Kick re-mounts its chatroom; this is what re-hides it. A throw
+          // leaves the user looking at BOTH chats stacked. Fires per mutation,
+          // so the count is the useful part, not any one occurrence.
+          swallow(e, 'kick-native-rehide')
+        }
     })
     const target = document.getElementById('channel-chatroom')
     if (target) {

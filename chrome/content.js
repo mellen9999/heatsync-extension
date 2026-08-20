@@ -410,7 +410,11 @@
     for (const ev of ['scroll', 'wheel', 'touchmove', 'pointerdown']) {
       try {
         window.addEventListener(ev, markBusy, { passive: true, capture: true, signal })
-      } catch {}
+      } catch (e) {
+        // Lose these and the busy-yield never engages: emote processing stops
+        // backing off during scroll, which reads as jank, not as an error.
+        swallow(e, 'busy-listener-content')
+      }
     }
     const _yield = () => {
       // scheduler.yield() (Chrome 129+) returns priority back to caller after

@@ -315,7 +315,12 @@ function softKickNav(prevLiveCh) {
       if (!nativeVisible)
         try {
           setNativeChatHidden(true)
-        } catch (_) {}
+        } catch (e) {
+          // Kick re-mounts its chatroom; this is what re-hides it. A throw
+          // leaves the user looking at BOTH chats stacked. Fires per mutation,
+          // so the count is the useful part, not any one occurrence.
+          swallow(e, 'kick-native-rehide')
+        }
     })
     const target = document.getElementById('channel-chatroom')
     if (target) {

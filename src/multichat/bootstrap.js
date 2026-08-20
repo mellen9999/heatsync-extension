@@ -890,7 +890,12 @@ const hsSched = (() => {
   for (const ev of ['scroll', 'wheel', 'touchmove', 'pointerdown']) {
     try {
       window.addEventListener(ev, markBusy, { passive: true, capture: true, signal: mcSignal })
-    } catch {}
+    } catch (e) {
+      // Parallel copy of the content.js busy-listener block — see
+      // 'busy-listener-content'. Same failure, same consequence: the busy-yield
+      // never engages and emote work stops backing off during scroll.
+      swallow(e, 'busy-listener-multichat')
+    }
   }
   const _yield = () => {
     if (typeof scheduler !== 'undefined' && typeof scheduler.yield === 'function') {

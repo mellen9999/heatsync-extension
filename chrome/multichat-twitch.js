@@ -9065,7 +9065,12 @@ const hsSched = (() => {
   for (const ev of ['scroll', 'wheel', 'touchmove', 'pointerdown']) {
     try {
       window.addEventListener(ev, markBusy, { passive: true, capture: true, signal: mcSignal })
-    } catch {}
+    } catch (e) {
+      // Parallel copy of the content.js busy-listener block — see
+      // 'busy-listener-content'. Same failure, same consequence: the busy-yield
+      // never engages and emote work stops backing off during scroll.
+      swallow(e, 'busy-listener-multichat')
+    }
   }
   const _yield = () => {
     if (typeof scheduler !== 'undefined' && typeof scheduler.yield === 'function') {
@@ -37594,7 +37599,11 @@ function chatEmbedToggle(url, card) {
       try {
         ro.observe(parent)
         if (card) ro.observe(card)
-      } catch (_) {}
+      } catch (e) {
+        // A throw here means the docked player never repositions again — it
+        // sits wherever it happened to mount and drifts away from the card.
+        swallow(e, 'feed-player-observe')
+      }
       _hsAudio.ro = ro
       cleanup.trackObserver(ro)
     }

@@ -12,6 +12,14 @@ on:
 permissions:
   contents: write
 
+# Two runs for the same tag would both `gh release upload --clobber` the same
+# assets. The finisher re-dispatches during an outage, so this is reachable:
+# queue the second one behind the first instead of racing it. Never
+# cancel-in-progress — the run being cancelled might be mid-upload.
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest

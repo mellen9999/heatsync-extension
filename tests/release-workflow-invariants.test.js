@@ -99,6 +99,20 @@ describe('waiting on AMO', () => {
   })
 })
 
+describe('two runs for one tag never race', () => {
+  test('release.yml serialises per tag and never cancels a run mid-upload', () => {
+    expect(YML).toMatch(/concurrency:\s*\n\s*group: release-/)
+    expect(YML).toContain('cancel-in-progress: false')
+  })
+
+  test('the finisher waits instead of stacking dispatches', () => {
+    // A run can sit ~30min waiting out AMO, which is longer than the cron
+    // period — without this every tick queues another.
+    expect(FINISH).toContain('--status in_progress')
+    expect(FINISH).toMatch(/already in flight/)
+  })
+})
+
 describe('the finisher', () => {
   test('only ever picks up prereleases that are missing the xpi', () => {
     expect(FINISH).toContain('select(.prerelease)')

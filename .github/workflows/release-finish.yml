@@ -62,6 +62,17 @@ jobs:
             exit 0
           fi
 
+          # A release run can sit for half an hour waiting out AMO, which is
+          # longer than this cron's period — without this check every tick
+          # would queue another run behind the one already working.
+          busy=$(gh run list --workflow=release.yml --status in_progress --status queued \
+            --json databaseId --jq 'length')
+          if [ "${busy:-0}" != "0" ]; then
+            echo "a release run is already in flight — leaving stranded for now:"
+            echo "$stranded" | sed 's/^/  /'
+            exit 0
+          fi
+
           echo "$stranded" | while read -r tag; do
             [ -z "$tag" ] && continue
             echo "amo healthy — re-dispatching release.yml for $tag"

@@ -92,6 +92,15 @@ describe('fiberTokenScan', () => {
     expect(fiberTokenScan(el).token).toBe(t)
   })
 
+  test('never crosses into the callout sitting next to it', () => {
+    // A sub anniversary and a watch streak mount as sibling containers, each
+    // with its own token. Following the root's sibling would hand back the
+    // neighbour's — indistinguishable from our own to the caller.
+    const el = tree('nope')
+    el.__fiber.sibling = { key: tok('1', '2', 3, 'cumulative'), child: null, sibling: null }
+    expect(fiberTokenScan(el).token).toBeNull()
+  })
+
   test('never climbs out of the callout', () => {
     // A parent holding a token must NOT be reachable: climbing turns a two-step
     // lookup into a walk of the whole chat tree, and can pick up a token that

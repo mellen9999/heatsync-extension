@@ -635,9 +635,17 @@ const HsNotifs = (() => {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
+            // No token: we cannot finish the share, and neither can twitch's
+            // own button on its own — clicking it only puts TWITCH's composer
+            // into share-mode, and heatsync has replaced that composer, so the
+            // user would be left with a closed prompt and nothing sent. Fire it
+            // anyway (it is the only thing that can consume the resub, and it
+            // does work when twitch's native chat is visible) but say so out
+            // loud. Failing silently here is what hid this bug for months.
             const btn = data._nativeShareBtn
             if (btn) {
               window.__hsResubShare?.clickNative?.(btn)
+              emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
               return true // twitch owns the flow now — close our prompt
             }
           } catch (_) {}
@@ -685,7 +693,11 @@ const HsNotifs = (() => {
         label: 'share',
         onClick: (data) => {
           try {
-            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel)
+            // Same click-time rescan as the resub prompt: the notif is emitted
+            // the instant the callout is detected, and the token lives in a
+            // subtree that is not always mounted by then.
+            const token = data._streakToken || window.__hsResubShare?.rescanToken?.(data._nativeCallout) || null
+            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
           } catch (_) {}
           return false
         },

@@ -2524,6 +2524,9 @@
   "mc_main_share_unavailable": {
     "message": "share unavailable — sending your message to chat"
   },
+  "mc_notifs_share_token_missing": {
+    "message": "share token missing — use twitch's own chat to share"
+  },
   "mc_mod_label_banned": {
     "message": "banned"
   },

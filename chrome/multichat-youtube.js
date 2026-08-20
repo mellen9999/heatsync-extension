@@ -9792,9 +9792,17 @@ const HsNotifs = (() => {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
+            // No token: we cannot finish the share, and neither can twitch's
+            // own button on its own — clicking it only puts TWITCH's composer
+            // into share-mode, and heatsync has replaced that composer, so the
+            // user would be left with a closed prompt and nothing sent. Fire it
+            // anyway (it is the only thing that can consume the resub, and it
+            // does work when twitch's native chat is visible) but say so out
+            // loud. Failing silently here is what hid this bug for months.
             const btn = data._nativeShareBtn
             if (btn) {
               window.__hsResubShare?.clickNative?.(btn)
+              emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
               return true // twitch owns the flow now — close our prompt
             }
           } catch (_) {}
@@ -9842,7 +9850,11 @@ const HsNotifs = (() => {
         label: 'share',
         onClick: (data) => {
           try {
-            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel)
+            // Same click-time rescan as the resub prompt: the notif is emitted
+            // the instant the callout is detected, and the token lives in a
+            // subtree that is not always mounted by then.
+            const token = data._streakToken || window.__hsResubShare?.rescanToken?.(data._nativeCallout) || null
+            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
           } catch (_) {}
           return false
         },
@@ -66860,6 +66872,11 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Children + siblings only: from the container there is nothing above worth
     // walking, and climbing turns a two-step lookup into a walk of the whole
     // chat tree.
+    //
+    // The ROOT's siblings are the exception — they are the other callouts in
+    // the queue (a sub anniversary and a watch streak mount side by side), each
+    // carrying its own token. Following them would hand back a neighbour's
+    // token, which the caller cannot tell apart from its own.
     const queue = [root]
     const seen = new WeakSet()
     let steps = 0
@@ -66877,9 +66894,31 @@ const STORAGE_KEY = 'heatsync_multichat'
         break
       }
       if (f.child) queue.push(f.child)
-      if (f.sibling) queue.push(f.sibling)
+      if (f !== root && f.sibling) queue.push(f.sibling)
     }
     return out
+  }
+
+  /**
+   * Hand a callout token back to twitch with the user's own words as the
+   * celebration body. This is the whole point of taking the click: twitch's own
+   * Share button only puts twitch's composer into share-mode, and heatsync has
+   * replaced that composer, so the native path can never finish the job.
+   *
+   * One mutation serves every callout kind — the resolver is
+   * `useChatNotificationToken`, and the token says which callout is being
+   * consumed. Throws on rejection so both callers can rescue the typed text
+   * into plain chat; a rejected token comes back HTTP 200 with an errors[]
+   * entry and a null field, so "no exception" is not "it worked".
+   */
+  async function _consumeCalloutToken(channel, token, text) {
+    const data = await gqlProxy('Chat_ShareResub_UseResubToken', {
+      input: { message: text || '', channelLogin: channel, includeStreak: false, tokenID: token },
+    })
+    const errs =
+      (Array.isArray(data?.errors) && data.errors.length ? data.errors : null) ||
+      (data?.data && data.data.useChatNotificationToken === null ? [{ message: 'token rejected' }] : null)
+    if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
   }
 
   window.__hsResubShare = {
@@ -66959,29 +66998,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       _exitResubShareMode(claim, false)
       ;(async () => {
         try {
-          const data = await gqlProxy('Chat_ShareResub_UseResubToken', {
-            input: {
-              message: text || '',
-              channelLogin: claim.channel,
-              includeStreak: false,
-              tokenID: claim.resubToken,
-            },
-          })
-          // The mutation resolves the field `useChatNotificationToken`; a
-          // rejected token comes back HTTP 200 with an errors[] entry and a
-          // null field, so a bare `!data.errors` check would call that a
-          // success and swallow the message the user typed.
-          const errs =
-            (Array.isArray(data?.errors) && data.errors.length ? data.errors : null) ||
-            (data?.data && data.data.useChatNotificationToken === null ? [{ message: 'token rejected' }] : null)
-          if (!errs) {
-            log('resub-share: GQL fired ok')
-            return
-          }
-          console.warn('[heatsync-ext] resub-share GQL error:', JSON.stringify(errs).slice(0, 200))
-          await _resubShareTextRescue(claim.channel, text)
+          await _consumeCalloutToken(claim.channel, claim.resubToken, text)
+          log('resub-share: GQL fired ok')
         } catch (e) {
-          console.warn('[heatsync-ext] resub-share GQL threw:', e?.message || e)
+          console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
           await _resubShareTextRescue(claim.channel, text)
         }
       })()
@@ -67229,6 +67249,26 @@ const STORAGE_KEY = 'heatsync_multichat'
         console.warn('[heatsync-ext] watchstreak-share: NO broadcast — native callout btn missing')
         return false
       }
+      // With a token we can finish the share ourselves, body and all — same
+      // path the sub anniversary takes. Without one, fall back to clicking
+      // twitch's button and letting the typed text go out as ordinary chat,
+      // which is all this flow could ever do before.
+      if (claim.streakToken) {
+        _markWatchstreakSharedToday(claim.channel)
+        _exitWatchstreakShareMode(claim, false)
+        ;(async () => {
+          try {
+            await _consumeCalloutToken(claim.channel, claim.streakToken, text)
+            log('watchstreak-share: GQL fired ok')
+          } catch (e) {
+            console.warn('[heatsync-ext] watchstreak-share GQL failed:', e?.message || e)
+            await _resubShareTextRescue(claim.channel, text)
+          }
+        })()
+        // true = the typed text IS the celebration body, so sendMessage stops
+        // here rather than posting it a second time as a plain message.
+        return true
+      }
       try {
         broadcastShare()
       } catch (e) {
@@ -67238,7 +67278,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       _exitWatchstreakShareMode(claim, false)
       return false
     },
-    enter: (streakCount, user, channel) => {
+    enter: (streakCount, user, channel, streakToken) => {
       try {
         if (_pendingShareClaim) {
           cleanup.clearTimeout(_pendingShareClaim.postTimer)
@@ -67252,6 +67292,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           postTimer: null,
           customText: '',
           _nativeShareBtn: _lastSurfacedShareBtn,
+          streakToken: streakToken || null,
         }
         _pendingShareClaim = claim
         _enterWatchstreakShareMode(claim, user, streakCount)
@@ -67297,6 +67338,11 @@ const STORAGE_KEY = 'heatsync_multichat'
           return
         }
         calloutEl.dataset.hsSurfaced = '1'
+        // A watch-streak token counts streams where a resub token counts
+        // months; the kind string differs and we never assume it. If the count
+        // does not match the callout, we hold no token and the flow stays on
+        // twitch's own button exactly as before.
+        const streakToken = scan.count === streakCount ? scan.token : null
         if (shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
           shareBtn.dataset.hsShareHooked = '1'
           shareBtn.addEventListener(
@@ -67318,6 +67364,7 @@ const STORAGE_KEY = 'heatsync_multichat'
                   postTimer: null,
                   customText: '',
                   _nativeShareBtn: shareBtn,
+                  streakToken,
                 }
                 _pendingShareClaim = claim
                 _enterWatchstreakShareMode(claim, user, streakCount)
@@ -67335,6 +67382,7 @@ const STORAGE_KEY = 'heatsync_multichat'
             channel: ch,
             _nativeShareBtn: shareBtn,
             _nativeCallout: calloutEl,
+            _streakToken: streakToken,
           })
         } catch (_) {}
         try {

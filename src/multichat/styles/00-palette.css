@@ -19,9 +19,12 @@
          (twitch/yt/kick) uses a red live dot; a green one reads as "online"
          or "healthy", not "broadcasting right now". Semantically separate
          from --hs-danger so the two can diverge later. */
-      --hs-live: #ff0000;
-      --hs-live-dim: #800000;
-      --hs-live-tint: rgba(255, 0, 0, 0.10);
+      --hs-live: #00ff00;      /* 46  — live/online. GREEN, not red: red already
+                            means danger/ban/error, and one colour cannot mean
+                            both "this stream is on" and "something is wrong".
+                            Settled 2026-07-20, applied 2026-08-20. */
+      --hs-live-dim: #008000;
+      --hs-live-tint: rgba(0, 255, 0, 0.10);
       --hs-danger: #ff0000;   /* 196 — error, ban, delete, destructive */
       --hs-reply: #00ffff;    /* 51  — reply borders, quotes, whispers, mode */
       --hs-thread: #ff00ff;   /* 201 — OP/thread accents, raid/hype events */

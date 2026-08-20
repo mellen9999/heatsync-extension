@@ -28,7 +28,7 @@ test('the live push goes through it', () => {
 })
 
 test('the backfill goes through it too', () => {
-  const watch = BG.slice(BG.indexOf("api/mod/automod-watch"))
+  const watch = BG.slice(BG.indexOf('api/mod/automod-watch'))
   const body = watch.slice(0, watch.indexOf('automod_action'))
   expect(body).toContain('data?.pending')
   expect(body).toContain('.map(normalizeAutomodHold)')

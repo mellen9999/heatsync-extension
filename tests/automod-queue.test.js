@@ -243,7 +243,9 @@ describe('injectPendingAutomodHolds', () => {
   const run = (pending, { onScreen = [], seen = new Map() } = {}) => {
     const inserted = []
     const fn = new Function(
-      'findAutomodRow', 'insertAutomodHoldRow', '_automodSeenHolds',
+      'findAutomodRow',
+      'insertAutomodHoldRow',
+      '_automodSeenHolds',
       `${extractConst(SRC, 'AUTOMOD_HOLD_DEDUPE_TTL_MS')}
 ${extractConst(SRC, 'AUTOMOD_EXPIRE_MS')}
 ${extractFn(SRC, 'automodHoldToRowModel')}
@@ -259,9 +261,15 @@ return injectPendingAutomodHolds`,
   }
 
   const hold = (over = {}) => ({
-    msgId: 'm1', broadcasterLogin: 'chan', broadcasterId: '1',
-    senderLogin: 'sender', senderName: 'Sender', text: 'held words',
-    heldAt: Date.now(), reason: 'automod', ...over,
+    msgId: 'm1',
+    broadcasterLogin: 'chan',
+    broadcasterId: '1',
+    senderLogin: 'sender',
+    senderName: 'Sender',
+    text: 'held words',
+    heldAt: Date.now(),
+    reason: 'automod',
+    ...over,
   })
 
   test('inserts a hold the tab never saw', () => {

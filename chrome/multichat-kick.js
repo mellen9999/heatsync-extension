@@ -57001,13 +57001,16 @@ function scheduleAutomodExpiry(row) {
   // about it. A backfilled hold arrives already part-aged; timing it from now
   // would leave a dead row looking actionable for another full hour.
   const age = Math.max(0, Date.now() - (Number(row.heldAt) || Date.now()))
-  const id = cleanup.setTimeout(() => {
-    _automodExpireTimers.delete(row.msgId)
-    if (row.status !== 'pending' && row.status !== 'error' && row.status !== 'resolving') return
-    row.status = 'expired'
-    row.resolvedBy = null
-    patchAutomodRowDom(row)
-  }, Math.max(0, AUTOMOD_EXPIRE_MS - age))
+  const id = cleanup.setTimeout(
+    () => {
+      _automodExpireTimers.delete(row.msgId)
+      if (row.status !== 'pending' && row.status !== 'error' && row.status !== 'resolving') return
+      row.status = 'expired'
+      row.resolvedBy = null
+      patchAutomodRowDom(row)
+    },
+    Math.max(0, AUTOMOD_EXPIRE_MS - age),
+  )
   _automodExpireTimers.set(row.msgId, id)
 }
 

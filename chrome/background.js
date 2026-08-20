@@ -7489,7 +7489,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           // function as the live push so the two can't drift.
           const data = await res.json().catch(() => null)
           const pending = Array.isArray(data?.pending)
-            ? data.pending.slice(0, 100).map(normalizeAutomodHold).filter((h) => h.msgId && h.broadcasterLogin)
+            ? data.pending
+                .slice(0, 100)
+                .map(normalizeAutomodHold)
+                .filter((h) => h.msgId && h.broadcasterLogin)
             : []
           sendResponse({ ok: true, pending })
           return

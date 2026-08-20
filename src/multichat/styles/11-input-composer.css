@@ -15,7 +15,7 @@
       padding: 5px 12px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       font-family: inherit;
@@ -34,7 +34,7 @@
       border-color: #fff;
     }
     #hs-mc-input::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
@@ -76,7 +76,7 @@
     #hs-mc-input[contenteditable]:empty::before,
     #hs-mc-input[contenteditable]:has(br:only-child)::before {
       content: attr(data-placeholder);
-      color: #aaa;
+      color: var(--hs-muted);
       pointer-events: none;
       position: absolute;
       left: 12px;
@@ -171,7 +171,7 @@
        hints clickability (chrome content.js hover-overlay paints the red
        rect over the dashed box on hover, matching chat-wrapper behaviour). */
     #hs-mc-input .hs-input-emote.hs-state-blocked {
-      outline: 2px dashed #808080;
+      outline: 2px dashed var(--hs-border);
       outline-offset: -2px;
       width: var(--hs-emote-size, 32px);
       min-width: var(--hs-emote-size, 32px);
@@ -190,7 +190,7 @@
       left: 8px;
       right: 8px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       z-index: 1004;
       max-height: 280px;
       overflow-y: auto;
@@ -214,7 +214,7 @@
        could not tell which row Enter would pick. Orange is where the keyboard
        is — same split as heatsync.org (--sel-bg). */
     .hs-mc-emoji-row.selected {
-      background: #ff8700;
+      background: var(--hs-brand);
       color: #000;
     }
     .hs-mc-emoji-preview {
@@ -232,7 +232,7 @@
       flex-shrink: 0;
     }
     .hs-mc-emoji-name {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     /* !important: mention rows set a per-user inline color (sync-cached
@@ -253,7 +253,7 @@
       left: 8px;
       right: 8px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       z-index: 1004;
       max-height: 280px;
       overflow-y: auto;
@@ -274,12 +274,12 @@
     }
     /* arrow-key cursor — orange, see .hs-mc-emoji-row.selected above */
     .hs-mc-slash-row.selected {
-      background: #ff8700;
+      background: var(--hs-brand);
       color: #000;
     }
     .hs-mc-slash-name { color: #fff; font-weight: 700; }
-    .hs-mc-slash-args { color: #aaa; flex-shrink: 0; }
-    .hs-mc-slash-desc { color: #aaa; font-size: 13px; margin-left: auto; }
+    .hs-mc-slash-args { color: var(--hs-muted); flex-shrink: 0; }
+    .hs-mc-slash-desc { color: var(--hs-muted); font-size: 13px; margin-left: auto; }
     .hs-mc-slash-row:hover .hs-mc-slash-args,
     .hs-mc-slash-row.selected .hs-mc-slash-args,
     .hs-mc-slash-row:hover .hs-mc-slash-desc,

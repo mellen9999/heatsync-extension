@@ -10,7 +10,7 @@
     }
 
     .hs-mc-ts {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       margin-right: 4px;
       font-variant-numeric: tabular-nums;
@@ -66,7 +66,7 @@
        row, which triggers chat auto-scroll-to-bottom adjustment AFTER showStack has
        already anchored the overlay → 8-15px visible gap. Pure visual change only. */
     .hs-mc-msg.hs-mc-reply-stack-active {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
     }
     /* Dark olive bg lets full-color inline usernames through. Row base color is
        white for non-colored text (timestamps, plain message body) — inline
@@ -81,7 +81,7 @@
     #hs-mc-reply-stack {
       box-sizing: border-box;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-bottom: none;
       z-index: 2147483647;
       pointer-events: auto;
@@ -99,7 +99,7 @@
     #hs-mc-reply-stack-down {
       box-sizing: border-box;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-top: none;
       z-index: 2147483647;
       pointer-events: auto;
@@ -114,7 +114,7 @@
        broken copy of the active row sitting above/below it. */
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row,
     #hs-mc-reply-stack .hs-mc-reply-stack-row {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
       box-shadow: none !important;
       margin: 0 !important;
       /* The olive overlays sit above the active row in fixed position. Letting
@@ -158,7 +158,7 @@
       font-weight: 700;
       color: #fff;
       background: #000;
-      border-bottom: 1px solid #808000;
+      border-bottom: 1px solid var(--hs-warn-dim);
       cursor: pointer;
       text-align: center;
       user-select: none;
@@ -172,7 +172,7 @@
       position: fixed;
       z-index: 2147483647;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-bottom: none;
       box-sizing: border-box;
       max-width: 600px;
@@ -184,7 +184,7 @@
       font-size: var(--hs-mc-base-size, 13px);
     }
     .hs-feed-postlink-preview-row {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
       box-shadow: none !important;
       margin: 0 !important;
       border-bottom: 1px solid #555500;
@@ -210,7 +210,7 @@
       animation: hs-mc-thread-flash 1.2s ease-out;
     }
     @keyframes hs-mc-thread-flash {
-      0% { background: #2e2e08; }
+      0% { background: var(--hs-warn-bg); }
       100% { background: transparent; }
     }
     .hs-mc-feed-inline, .hs-mc-stream-event {
@@ -237,7 +237,7 @@
       top: 1px;
       right: 2px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
@@ -266,7 +266,7 @@
       top: 1px;
       right: 22px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       /* same reason as .hs-mc-reply-btn — see the note there */
       font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
@@ -310,7 +310,7 @@
       align-items: stretch;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-right: 0;
       /* follows the single font setting like every other chip in a row, rather
          than pinning Cozette behind the user's back */
@@ -334,7 +334,7 @@
       background: #000;
       color: #fff;
       border: 0;
-      border-right: 1px solid #808080;
+      border-right: 1px solid var(--hs-border);
       font: inherit;
       cursor: pointer;
       /* no line-height:1 — the same even-runway rule as the width, on the other
@@ -440,7 +440,7 @@
     #hs-mc-reply-cancel {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       padding: 0 2px;
@@ -454,10 +454,10 @@
       user-select: none;
     }
     .hs-mc-muted .hs-mc-user {
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       animation: none !important;
       background: none !important;
-      -webkit-text-fill-color: #aaa !important;
+      -webkit-text-fill-color: var(--hs-muted) !important;
     }
     .hs-mc-muted > :not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-timestamp) {
       display: none !important;
@@ -490,11 +490,11 @@
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
     .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
     .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: #008000 !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
     .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00cc44; }
     .hs-mc-msg.hs-mc-notice-unban     { border-left-color: var(--hs-ok) !important; background: var(--hs-ok-tint) !important; }
     .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: #008000 !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
     .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00cc44; }
     /* Role grants (blue mod / pink VIP) */
     .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: rgba(64, 128, 255, 0.12) !important; }
@@ -512,7 +512,7 @@
     .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
     .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Sub events (Twitch convention = purple, gifts = brighter magenta variant) */
-    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: #9146ff !important; background: rgba(145, 70, 255, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: var(--hs-plat-twitch) !important; background: rgba(145, 70, 255, 0.12) !important; }
     .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #b87aff; font-weight: 600; }
     .hs-mc-msg.hs-mc-notice-gift      { border-left-color: #cc44ff !important; background: rgba(204, 68, 255, 0.16) !important; }
     .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #cc44ff; font-weight: 600; }
@@ -714,7 +714,7 @@
          cheaper loss: the row height is the density budget. */
       max-width: 16ch;
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       line-height: inherit;
       padding: 0 4px 0 0;
       margin: 0;
@@ -733,7 +733,7 @@
       color: #000;
     }
     .hs-mc-reply-user {
-      color: #aaa;
+      color: var(--hs-muted);
       /* 400: CozetteVector has a single 400 master. 600 renders identically
          when font-synthesis:none applies and faux-bolds (blurs) the instant it
          does not — so it only ever buys risk. */
@@ -798,7 +798,7 @@
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
        Monochrome by intent: a low-key gray bar (familiar, seen before). */
     .hs-mc-msg.is-returning {
-      box-shadow: inset 2px 0 0 #808080;
+      box-shadow: inset 2px 0 0 var(--hs-border);
     }
     /* Raider — first message arriving in the window after a raid into this channel.
        Brighter mono accent + faint wash so the incoming wave reads at a glance,
@@ -938,7 +938,7 @@
       max-width: 100%;
       padding: 3px 6px;
       font-size: 13px;
-      color: #808080;
+      color: var(--hs-border);
     }
 
     /* ---- click-to-play chat players (feed-embed.js chat click-to-play) ---- */
@@ -993,7 +993,7 @@
       position: absolute;
       z-index: 3;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-mc-embed-player iframe {
       display: block;
@@ -1016,7 +1016,7 @@
       right: 0;
       bottom: 0;
       left: 0;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
     }
     .hs-mc-media.hs-mc-playable > .hs-mc-transport {
       margin-top: 2px;
@@ -1032,9 +1032,9 @@
       line-height: 14px;
       letter-spacing: -1px;
       text-align: center;
-      color: #ff8700;
+      color: var(--hs-brand);
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -1053,7 +1053,7 @@
       appearance: none;
       -webkit-appearance: none;
       background: #303030;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -1062,14 +1062,14 @@
       -webkit-appearance: none;
       width: 6px;
       height: 8px;
-      background: #ff8700;
+      background: var(--hs-brand);
       border: 0;
       border-radius: 0;
     }
     .hs-mc-transport-vol::-moz-range-thumb {
       width: 6px;
       height: 8px;
-      background: #ff8700;
+      background: var(--hs-brand);
       border: 0;
       border-radius: 0;
     }
@@ -1128,7 +1128,7 @@
       flex: none;
       width: 100%;
       background: #000;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
     }
     #hs-mc-player-dock .hs-mc-player-dock-bar {
       display: flex;
@@ -1143,7 +1143,7 @@
       min-width: 0;
       font-size: 13px;
       line-height: 18px;
-      color: #808080;
+      color: var(--hs-border);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1186,7 +1186,7 @@
       text-align: center;
       color: #fff;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }

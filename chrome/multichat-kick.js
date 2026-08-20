@@ -10805,7 +10805,7 @@ function injectStyles() {
       /* structural */
       --hs-fg: #fff;
       --hs-bg: #000;
-      --hs-muted: #aaa;
+      --hs-muted: #a8a8a8; /* 248 — was #aaa, a css habit 3.5 units off the grid */
       --hs-border: #808080;
     }
     /* Chromium auto-dark (WebContentsForceDark / android "darken websites")
@@ -10931,7 +10931,7 @@ function injectStyles() {
       gap: 0;
       padding: 0;
       background: #000;
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       flex-shrink: 0;
       order: -1;
       z-index: 10;
@@ -10958,8 +10958,8 @@ function injectStyles() {
       padding: 2px 10px !important;
       margin: 0 -1px -1px 0 !important;
       background: #000 !important;
-      color: #aaa !important;
-      border: 1px solid #808080 !important;
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
       border-radius: 0 !important;
       cursor: pointer !important;
       font-family: inherit;
@@ -10993,7 +10993,7 @@ function injectStyles() {
     .hs-mc-tab.has-new {
       background: #000 !important;
       color: #fff !important;
-      border-color: #808080 !important;
+      border-color: var(--hs-border) !important;
     }
     /* Has-new hover */
     .hs-mc-tab.has-new:not(.active):hover {
@@ -11027,7 +11027,7 @@ function injectStyles() {
        browser not to fake-bold — but requesting 600 against a single-weight
        bitmap font still nudges Chrome's text path off the crisp bitmap
        route in practice. White-on-black background already conveys focus. */
-    .hs-mc-tab-auto { color: #aaa; }
+    .hs-mc-tab-auto { color: var(--hs-muted); }
 .hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
 .hs-mc-tab.active {
       background: #fff !important;
@@ -11047,7 +11047,7 @@ function injectStyles() {
     .hs-mc-tab.has-stream-event {
       background: #000 !important;
       color: var(--hs-warn) !important;
-      border-color: #808080 !important;
+      border-color: var(--hs-border) !important;
     }
     .hs-mc-tab.has-stream-event:not(.active):hover {
       background: #fff !important;
@@ -11066,8 +11066,8 @@ function injectStyles() {
        Hover matches every other tab/button: white bg, black text. */
     #hs-mc-tabbar .hs-mc-tab[data-tab="live"] {
       background: #000 !important;
-      color: #aaa !important;
-      border-color: #808080 !important;
+      color: var(--hs-muted) !important;
+      border-color: var(--hs-border) !important;
       font-weight: 400 !important;
     }
     #hs-mc-tabbar .hs-mc-tab[data-tab="live"]:hover,
@@ -11216,8 +11216,8 @@ function injectStyles() {
       margin-right: 0 !important;
     }
     .hs-mc-util-btn {
-      color: #aaa !important;
-      border: 1px solid #808080 !important;
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
       font-weight: 400 !important;
       background: transparent !important;
     }
@@ -11418,7 +11418,7 @@ function injectStyles() {
       color: var(--hs-mention); text-decoration: none; font-size: 13px; margin-right: 4px;
     }
     .hs-mc-feed-inline .hs-feed-thread-link:hover { text-decoration: underline; }
-    .hs-mc-moment-perma { color: #808080; margin-left: 4px; text-decoration: none; }
+    .hs-mc-moment-perma { color: var(--hs-border); margin-left: 4px; text-decoration: none; }
     .hs-mc-moment-perma:hover { background: #fff; color: #000; }
     .hs-mc-dm-inline {
       border-left-color: var(--hs-mention);
@@ -11631,7 +11631,7 @@ function injectStyles() {
       transition: none;
       cursor: pointer;
       border-left: 3px solid var(--hs-brand);
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
     }
     .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
@@ -11760,7 +11760,7 @@ function injectStyles() {
          Row height is set by the tallest child (input ~29px), NOT this pad. */
       padding: 3px;
       background: #000;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
       z-index: 1002;
       box-sizing: border-box;
     }
@@ -12234,8 +12234,8 @@ function injectStyles() {
        inputbar below. */
     .hs-notif-layer-chat-docked-bottom > .hs-notif {
       border: none;
-      border-top: 1px solid #808080;
-      border-bottom: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
+      border-bottom: 1px solid var(--hs-border);
       box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
       background: #0a0a0d;
     }
@@ -12341,8 +12341,8 @@ function injectStyles() {
       pointer-events: auto !important;
       background: #18181b !important;
       border: none !important;
-      border-top: 1px solid #808080 !important;
-      border-bottom: 1px solid #808080 !important;
+      border-top: 1px solid var(--hs-border) !important;
+      border-bottom: 1px solid var(--hs-border) !important;
       border-radius: 0 !important;
       box-shadow: 0 -2px 8px rgba(0,0,0,0.5) !important;
       box-sizing: border-box !important;
@@ -12623,7 +12623,7 @@ function injectStyles() {
     }
 
     .hs-mc-ts {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       margin-right: 4px;
       font-variant-numeric: tabular-nums;
@@ -12679,7 +12679,7 @@ function injectStyles() {
        row, which triggers chat auto-scroll-to-bottom adjustment AFTER showStack has
        already anchored the overlay → 8-15px visible gap. Pure visual change only. */
     .hs-mc-msg.hs-mc-reply-stack-active {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
     }
     /* Dark olive bg lets full-color inline usernames through. Row base color is
        white for non-colored text (timestamps, plain message body) — inline
@@ -12694,7 +12694,7 @@ function injectStyles() {
     #hs-mc-reply-stack {
       box-sizing: border-box;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-bottom: none;
       z-index: 2147483647;
       pointer-events: auto;
@@ -12712,7 +12712,7 @@ function injectStyles() {
     #hs-mc-reply-stack-down {
       box-sizing: border-box;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-top: none;
       z-index: 2147483647;
       pointer-events: auto;
@@ -12727,7 +12727,7 @@ function injectStyles() {
        broken copy of the active row sitting above/below it. */
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row,
     #hs-mc-reply-stack .hs-mc-reply-stack-row {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
       box-shadow: none !important;
       margin: 0 !important;
       /* The olive overlays sit above the active row in fixed position. Letting
@@ -12771,7 +12771,7 @@ function injectStyles() {
       font-weight: 700;
       color: #fff;
       background: #000;
-      border-bottom: 1px solid #808000;
+      border-bottom: 1px solid var(--hs-warn-dim);
       cursor: pointer;
       text-align: center;
       user-select: none;
@@ -12785,7 +12785,7 @@ function injectStyles() {
       position: fixed;
       z-index: 2147483647;
       background: #000;
-      border: 1px solid #808000;
+      border: 1px solid var(--hs-warn-dim);
       border-bottom: none;
       box-sizing: border-box;
       max-width: 600px;
@@ -12797,7 +12797,7 @@ function injectStyles() {
       font-size: var(--hs-mc-base-size, 13px);
     }
     .hs-feed-postlink-preview-row {
-      background: #2e2e08 !important;
+      background: var(--hs-warn-bg) !important;
       box-shadow: none !important;
       margin: 0 !important;
       border-bottom: 1px solid #555500;
@@ -12823,7 +12823,7 @@ function injectStyles() {
       animation: hs-mc-thread-flash 1.2s ease-out;
     }
     @keyframes hs-mc-thread-flash {
-      0% { background: #2e2e08; }
+      0% { background: var(--hs-warn-bg); }
       100% { background: transparent; }
     }
     .hs-mc-feed-inline, .hs-mc-stream-event {
@@ -12850,7 +12850,7 @@ function injectStyles() {
       top: 1px;
       right: 2px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: 13px;
@@ -12879,7 +12879,7 @@ function injectStyles() {
       top: 1px;
       right: 22px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       /* same reason as .hs-mc-reply-btn — see the note there */
       font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
@@ -12923,7 +12923,7 @@ function injectStyles() {
       align-items: stretch;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-right: 0;
       /* follows the single font setting like every other chip in a row, rather
          than pinning Cozette behind the user's back */
@@ -12947,7 +12947,7 @@ function injectStyles() {
       background: #000;
       color: #fff;
       border: 0;
-      border-right: 1px solid #808080;
+      border-right: 1px solid var(--hs-border);
       font: inherit;
       cursor: pointer;
       /* no line-height:1 — the same even-runway rule as the width, on the other
@@ -13053,7 +13053,7 @@ function injectStyles() {
     #hs-mc-reply-cancel {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       padding: 0 2px;
@@ -13067,10 +13067,10 @@ function injectStyles() {
       user-select: none;
     }
     .hs-mc-muted .hs-mc-user {
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       animation: none !important;
       background: none !important;
-      -webkit-text-fill-color: #aaa !important;
+      -webkit-text-fill-color: var(--hs-muted) !important;
     }
     .hs-mc-muted > :not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-timestamp) {
       display: none !important;
@@ -13103,11 +13103,11 @@ function injectStyles() {
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
     .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
     .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: #008000 !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
     .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00cc44; }
     .hs-mc-msg.hs-mc-notice-unban     { border-left-color: var(--hs-ok) !important; background: var(--hs-ok-tint) !important; }
     .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: #008000 !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
     .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00cc44; }
     /* Role grants (blue mod / pink VIP) */
     .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: rgba(64, 128, 255, 0.12) !important; }
@@ -13125,7 +13125,7 @@ function injectStyles() {
     .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
     .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Sub events (Twitch convention = purple, gifts = brighter magenta variant) */
-    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: #9146ff !important; background: rgba(145, 70, 255, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: var(--hs-plat-twitch) !important; background: rgba(145, 70, 255, 0.12) !important; }
     .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #b87aff; font-weight: 600; }
     .hs-mc-msg.hs-mc-notice-gift      { border-left-color: #cc44ff !important; background: rgba(204, 68, 255, 0.16) !important; }
     .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #cc44ff; font-weight: 600; }
@@ -13327,7 +13327,7 @@ function injectStyles() {
          cheaper loss: the row height is the density budget. */
       max-width: 16ch;
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       line-height: inherit;
       padding: 0 4px 0 0;
       margin: 0;
@@ -13346,7 +13346,7 @@ function injectStyles() {
       color: #000;
     }
     .hs-mc-reply-user {
-      color: #aaa;
+      color: var(--hs-muted);
       /* 400: CozetteVector has a single 400 master. 600 renders identically
          when font-synthesis:none applies and faux-bolds (blurs) the instant it
          does not — so it only ever buys risk. */
@@ -13411,7 +13411,7 @@ function injectStyles() {
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
        Monochrome by intent: a low-key gray bar (familiar, seen before). */
     .hs-mc-msg.is-returning {
-      box-shadow: inset 2px 0 0 #808080;
+      box-shadow: inset 2px 0 0 var(--hs-border);
     }
     /* Raider — first message arriving in the window after a raid into this channel.
        Brighter mono accent + faint wash so the incoming wave reads at a glance,
@@ -13551,7 +13551,7 @@ function injectStyles() {
       max-width: 100%;
       padding: 3px 6px;
       font-size: 13px;
-      color: #808080;
+      color: var(--hs-border);
     }
 
     /* ---- click-to-play chat players (feed-embed.js chat click-to-play) ---- */
@@ -13606,7 +13606,7 @@ function injectStyles() {
       position: absolute;
       z-index: 3;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-mc-embed-player iframe {
       display: block;
@@ -13629,7 +13629,7 @@ function injectStyles() {
       right: 0;
       bottom: 0;
       left: 0;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
     }
     .hs-mc-media.hs-mc-playable > .hs-mc-transport {
       margin-top: 2px;
@@ -13645,9 +13645,9 @@ function injectStyles() {
       line-height: 14px;
       letter-spacing: -1px;
       text-align: center;
-      color: #ff8700;
+      color: var(--hs-brand);
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -13666,7 +13666,7 @@ function injectStyles() {
       appearance: none;
       -webkit-appearance: none;
       background: #303030;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -13675,14 +13675,14 @@ function injectStyles() {
       -webkit-appearance: none;
       width: 6px;
       height: 8px;
-      background: #ff8700;
+      background: var(--hs-brand);
       border: 0;
       border-radius: 0;
     }
     .hs-mc-transport-vol::-moz-range-thumb {
       width: 6px;
       height: 8px;
-      background: #ff8700;
+      background: var(--hs-brand);
       border: 0;
       border-radius: 0;
     }
@@ -13741,7 +13741,7 @@ function injectStyles() {
       flex: none;
       width: 100%;
       background: #000;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
     }
     #hs-mc-player-dock .hs-mc-player-dock-bar {
       display: flex;
@@ -13756,7 +13756,7 @@ function injectStyles() {
       min-width: 0;
       font-size: 13px;
       line-height: 18px;
-      color: #808080;
+      color: var(--hs-border);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -13799,7 +13799,7 @@ function injectStyles() {
       text-align: center;
       color: #fff;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -13933,7 +13933,7 @@ function injectStyles() {
       user-select: none;
     }
     .hs-note-editor-head {
-      padding: 4px 10px; font-size: 13px; color: #aaa;
+      padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase; letter-spacing: 0.5px;
       background: #050505; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
@@ -13943,20 +13943,20 @@ function injectStyles() {
       padding: 8px 10px; margin: 0; resize: vertical; min-height: 72px;
       font-family: inherit; font-size: 13px; line-height: 1.4; outline: none;
     }
-    .hs-note-editor-ta::placeholder { color: #aaa; }
+    .hs-note-editor-ta::placeholder { color: var(--hs-muted); }
     .hs-note-editor-ta:focus { box-shadow: inset 0 0 0 1px var(--hs-gold); }
     .hs-note-editor-foot {
       display: flex; align-items: center; justify-content: space-between;
       padding: 4px 10px; background: #050505; border-top: 1px solid #1a1a1a;
     }
-    .hs-note-editor-status { font-size: 13px; color: #808080; text-transform: uppercase; letter-spacing: 0.5px; }
+    .hs-note-editor-status { font-size: 13px; color: var(--hs-border); text-transform: uppercase; letter-spacing: 0.5px; }
     .hs-note-editor-del {
-      background: transparent; color: #808080; border: 1px solid #333;
+      background: transparent; color: var(--hs-border); border: 1px solid #333;
       padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 13px;
     }
     .hs-note-editor-del:hover { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
     .hs-mc-ctx .hs-mc-em-header {
-      padding: 4px 10px; font-size: 13px; color: #aaa;
+      padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
       background: #050505;
     }
     .hs-mc-ctx .hs-mc-em-item {
@@ -14138,7 +14138,7 @@ function injectStyles() {
       font-size: 13px;
       font-weight: 900;
       border: 1px solid #000;
-      background: #ffff00;
+      background: var(--hs-mention);
       color: #000;
       white-space: nowrap;
       letter-spacing: 0.3px;
@@ -14182,9 +14182,9 @@ function injectStyles() {
     #hs-user-tooltip .hs-pc-sep { display: none; }
     #hs-user-tooltip .hs-pc-stat.op { border-color: #ff0000; color: #ff0000; }
     #hs-user-tooltip .hs-pc-stat.op .hs-pc-num { color: #fff; }
-    #hs-user-tooltip .hs-pc-stat.mop { border-color: #ff00ff; color: #ff00ff; }
+    #hs-user-tooltip .hs-pc-stat.mop { border-color: var(--hs-thread); color: var(--hs-thread); }
     #hs-user-tooltip .hs-pc-stat.mop .hs-pc-num { color: #fff; }
-    #hs-user-tooltip .hs-pc-stat.re { border-color: #00ffff; color: #00ffff; }
+    #hs-user-tooltip .hs-pc-stat.re { border-color: var(--hs-reply); color: var(--hs-reply); }
     #hs-user-tooltip .hs-pc-stat.re .hs-pc-num { color: #fff; }
     #hs-user-tooltip .hs-pc-stat-heat { border-color: #fff; }
     #hs-user-tooltip .hs-pc-stat-heat .hs-heat-num { font-size: 13px; font-weight: 700; }
@@ -14285,17 +14285,17 @@ function injectStyles() {
       font-size: 13px;
     }
     .hs-mc-channel {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       margin-left: 4px;
     }
     .hs-mc-time {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: var(--hs-time-font, 13px);
       margin-right: 4px;
     }
     .hs-mc-empty {
-      color: #aaa;
+      color: var(--hs-muted);
       padding: 20px;
       text-align: center;
     }
@@ -14360,7 +14360,7 @@ function injectStyles() {
     }
     .hs-mc-empty-note {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-top: 12px;
       line-height: 18px;
     }
@@ -14472,7 +14472,7 @@ function injectStyles() {
     .hs-mc-picker-emote-wrap.blocked::before {
       opacity: 1;
       background: none;
-      border: 2px dashed #808080;
+      border: 2px dashed var(--hs-border);
     }
     .hs-mc-picker-emote-wrap.blocked img {
       visibility: hidden !important;
@@ -14593,7 +14593,7 @@ function injectStyles() {
       content: '';
       position: absolute;
       inset: -2px -6px;
-      background: #808080;
+      background: var(--hs-border);
       z-index: -1;
       pointer-events: none;
     }
@@ -14749,13 +14749,13 @@ function injectStyles() {
        chat-side .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw] and web
        .hs-pe-wrap > img.hs-state-nsfw[data-cw]. */
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="sexual"] > img,
-    img.hs-input-emote.hs-state-nsfw[data-cw="sexual"] { border-color: #ff00ff !important; }
+    img.hs-input-emote.hs-state-nsfw[data-cw="sexual"] { border-color: var(--hs-thread) !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="gore"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="gore"]   { border-color: #ff0000 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="drugs"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="drugs"]  { border-color: #00d700 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="hate"] > img,
-    img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: #808080 !important; }
+    img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: var(--hs-border) !important; }
 
     /* Stale ghost: emote was in the channel set when the message posted but
        has since been removed. Dim + desaturate the cached IMG; muted-orange
@@ -14783,7 +14783,7 @@ function injectStyles() {
     .hs-mc-emote-wrapper.hs-state-blocked::before {
       opacity: 1;
       background: none;
-      border: 2px dashed #808080;
+      border: 2px dashed var(--hs-border);
       inset: 0;
       box-sizing: border-box;
     }
@@ -14807,9 +14807,9 @@ function injectStyles() {
       height: var(--hs-emote-size, 32px);
       min-width: var(--hs-emote-size, 32px);
       padding: 0 6px;
-      border: 2px dashed #00ffff;
+      border: 2px dashed var(--hs-reply);
       box-sizing: border-box;
-      color: #00ffff;
+      color: var(--hs-reply);
       font-size: 13px;
       line-height: normal;
       cursor: default;
@@ -14818,10 +14818,10 @@ function injectStyles() {
     /* Per-category color coding — border+text together. Cyan above stays the
        fallback for unknown categories. ansi: 201/196/40/244. Mirror of web
        .hs-emote-cw[data-cw]. */
-    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: #ff00ff; color: #ff00ff; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: var(--hs-thread); color: var(--hs-thread); }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="gore"]   { border-color: #ff0000; color: #ff0000; }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="drugs"]  { border-color: #00d700; color: #00d700; }
-    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: #808080; color: #808080; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: var(--hs-border); color: var(--hs-border); }
     /* Sized stub — when a prior sighting of this URL cached its rendered box
        width (_hsEmoteBoxW, same cache the normal wrapper's wAttr reads), the
        stub takes that exact footprint so toggling the filter pref shifts
@@ -14906,7 +14906,7 @@ function injectStyles() {
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-badge-tooltip.visible {
       display: flex;
@@ -14929,7 +14929,7 @@ function injectStyles() {
       color: #fff;
       width: calc(100% + 16px);
       text-align: center;
-      background: #808080;
+      background: var(--hs-border);
     }
 
     /* Emote hover tooltip - 4x preview */
@@ -14946,7 +14946,7 @@ function injectStyles() {
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-emote-tooltip.visible {
       display: flex;
@@ -14989,7 +14989,7 @@ function injectStyles() {
     #hs-emote-tooltip .tooltip-source.unadded,
     #hs-emote-tooltip .tooltip-source.global,
     #hs-emote-tooltip .tooltip-source.channel { background: #fff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.sub { background: #9146ff; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #fff; }
     #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #fff; }
     /* Per-provider source label colors (override .global/.channel) */
     #hs-emote-tooltip .tooltip-source.src-7tv { background: #29d8f6; color: #000; }
@@ -15012,7 +15012,7 @@ function injectStyles() {
       flex-direction: row;
       gap: 8px;
       max-width: 350px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-link-tooltip.visible { display: flex; }
     #hs-link-tooltip img {
@@ -15053,7 +15053,7 @@ function injectStyles() {
       font-size: 13px;
     }
     #hs-link-tooltip .link-loading {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
 
@@ -15174,7 +15174,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 5px 12px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       font-family: inherit;
@@ -15193,7 +15193,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       border-color: #fff;
     }
     #hs-mc-input::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
@@ -15235,7 +15235,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     #hs-mc-input[contenteditable]:empty::before,
     #hs-mc-input[contenteditable]:has(br:only-child)::before {
       content: attr(data-placeholder);
-      color: #aaa;
+      color: var(--hs-muted);
       pointer-events: none;
       position: absolute;
       left: 12px;
@@ -15330,7 +15330,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
        hints clickability (chrome content.js hover-overlay paints the red
        rect over the dashed box on hover, matching chat-wrapper behaviour). */
     #hs-mc-input .hs-input-emote.hs-state-blocked {
-      outline: 2px dashed #808080;
+      outline: 2px dashed var(--hs-border);
       outline-offset: -2px;
       width: var(--hs-emote-size, 32px);
       min-width: var(--hs-emote-size, 32px);
@@ -15349,7 +15349,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       left: 8px;
       right: 8px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       z-index: 1004;
       max-height: 280px;
       overflow-y: auto;
@@ -15373,7 +15373,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
        could not tell which row Enter would pick. Orange is where the keyboard
        is — same split as heatsync.org (--sel-bg). */
     .hs-mc-emoji-row.selected {
-      background: #ff8700;
+      background: var(--hs-brand);
       color: #000;
     }
     .hs-mc-emoji-preview {
@@ -15391,7 +15391,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       flex-shrink: 0;
     }
     .hs-mc-emoji-name {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     /* !important: mention rows set a per-user inline color (sync-cached
@@ -15412,7 +15412,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       left: 8px;
       right: 8px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       z-index: 1004;
       max-height: 280px;
       overflow-y: auto;
@@ -15433,12 +15433,12 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     /* arrow-key cursor — orange, see .hs-mc-emoji-row.selected above */
     .hs-mc-slash-row.selected {
-      background: #ff8700;
+      background: var(--hs-brand);
       color: #000;
     }
     .hs-mc-slash-name { color: #fff; font-weight: 700; }
-    .hs-mc-slash-args { color: #aaa; flex-shrink: 0; }
-    .hs-mc-slash-desc { color: #aaa; font-size: 13px; margin-left: auto; }
+    .hs-mc-slash-args { color: var(--hs-muted); flex-shrink: 0; }
+    .hs-mc-slash-desc { color: var(--hs-muted); font-size: 13px; margin-left: auto; }
     .hs-mc-slash-row:hover .hs-mc-slash-args,
     .hs-mc-slash-row.selected .hs-mc-slash-args,
     .hs-mc-slash-row:hover .hs-mc-slash-desc,
@@ -15867,7 +15867,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-pcard-pill-kick { background: var(--hs-plat-kick); color: #000; }
     .hs-pcard-pill-youtube { background: var(--hs-plat-youtube); color: #fff; }
     .hs-pcard-bio {
-      color: #aaa; font-size: 13px; line-height: 18px;
+      color: var(--hs-muted); font-size: 13px; line-height: 18px;
       white-space: pre-wrap; word-break: break-word;
       border-left: 2px solid #1a1a1a; padding: 0 0 0 8px;
     }
@@ -15906,7 +15906,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-pcard-sheet .val-ttv { color: var(--hs-plat-twitch); }        /* twitch brand */
     .hs-pcard-sheet .val-kick { color: var(--hs-plat-kick); }       /* kick brand */
     .hs-pcard-sheet .val-yt { color: var(--hs-plat-youtube); }         /* xterm 196 — yt brand */
-    .hs-pcard-sheet .val-hs { color: #ff8700; }         /* xterm 208 — heatsync brand */
+    .hs-pcard-sheet .val-hs { color: var(--hs-brand); }         /* xterm 208 — heatsync brand */
     .hs-pcard-sheet .val-admin { color: #ff0000; }      /* xterm 196 — power */
     .hs-pcard-sheet .val-staff { color: #fff; }      /* xterm 208 — hs orange */
     .hs-pcard-sheet .val-heat { color: #ff0000; }       /* xterm 196 — fire */
@@ -15958,7 +15958,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       display: flex; gap: 6px; padding: 2px 0;
       font-size: 13px; align-items: baseline;
     }
-    .hs-pcard-msg-ts { color: #aaa; flex-shrink: 0; font-size: 13px; min-width: 38px; }
+    .hs-pcard-msg-ts { color: var(--hs-muted); flex-shrink: 0; font-size: 13px; min-width: 38px; }
     .hs-pcard-msg-plat {
       flex-shrink: 0; font-size: 13px; padding: 0 3px;
       font-weight: 600; line-height: 19px; color: #888;
@@ -15990,7 +15990,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       color: #fff; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
       max-height: 96px; overflow-y: auto; font-size: 13px; line-height: 1.4;
     }
-    .hs-pcard-note-body.hs-pcard-note-empty { color: #aaa; font-style: italic; }
+    .hs-pcard-note-body.hs-pcard-note-empty { color: var(--hs-muted); font-style: italic; }
     .hs-pcard-note-edit {
       align-self: flex-start; background: transparent; color: #fff; border: 1px solid #333;
       padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
@@ -16126,8 +16126,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
        color entirely. */
     .hs-mc-pf-btn.off {
       background: transparent !important;
-      color: #808080 !important;
-      border-color: #808080 !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
     }
     .hs-mc-pf-btn:hover,
     .hs-mc-pf-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
@@ -16189,8 +16189,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-st-btn.hs-mc-st-youtube { border-color: var(--hs-plat-youtube) !important; background: transparent !important; color: var(--hs-plat-youtube) !important; }
     .hs-mc-st-btn.off {
       background: transparent !important;
-      color: #808080 !important;
-      border-color: #808080 !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
     }
     /* The send cluster's "where it goes" marker. Not a button — a one-glyph
        label, dim so it never competes with the letters.
@@ -16204,7 +16204,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
        whisper arrow). Flex handles the vertical centring here, so no
        vertical-align hack is needed. */
     .hs-mc-st-arrow {
-      color: #aaa;
+      color: var(--hs-muted);
       font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
       font-size: 19px;
       font-weight: 700;
@@ -16246,7 +16246,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
          land outside picker.contains(target), firing the dismiss handler. */
       min-width: 210px;
       background: #000;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
       z-index: 1003;
       overflow: hidden;
       flex-direction: column;
@@ -16260,7 +16260,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     /* Picker tabs — pinned to bottom */
     #hs-mc-emote-picker .hs-mc-picker-tabs {
       display: flex !important;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
       flex-shrink: 0 !important;
       min-height: 0 !important;
       margin-top: auto !important;
@@ -16276,7 +16276,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       gap: 5px !important;
       padding: 6px 4px !important;
       background: transparent !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       border: none !important;
       cursor: pointer;
       font-size: 13px !important;
@@ -16349,7 +16349,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       gap: 5px;
       padding: 4px 6px 3px;
       font-size: 13px;
-      color: #808080;
+      color: var(--hs-border);
       background: #000;
       border-top: 1px solid rgba(255,255,255,0.08);
     }
@@ -16357,7 +16357,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       border-top: none;
     }
     .hs-mc-picker-section-count {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       background: rgba(255,255,255,0.06);
       padding: 1px 5px;
@@ -16392,7 +16392,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       left: 10px;
       pointer-events: none;
       opacity: 0.5;
-      color: #aaa;
+      color: var(--hs-muted);
       z-index: 2;
     }
     #hs-mc-emote-search {
@@ -16402,7 +16402,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 4px 8px 4px 28px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       outline: none;
@@ -16486,7 +16486,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-load-more:hover { background: #fff; color: #000; border-color: #fff; }
     #hs-mc-emote-search::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-picker-emote {
       width: auto !important;
@@ -16510,7 +16510,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-picker-empty {
       padding: 32px !important;
       text-align: center !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       font-size: 13px !important;
       visibility: visible !important;
     }
@@ -16522,7 +16522,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       gap: 10px;
     }
     .hs-mc-cold-start-title { color: #fff; font-size: 14px; font-weight: 700; }
-    .hs-mc-cold-start-sub { color: #aaa; font-size: 13px; max-width: 260px; line-height: 1.4; }
+    .hs-mc-cold-start-sub { color: var(--hs-muted); font-size: 13px; max-width: 260px; line-height: 1.4; }
     .hs-mc-cold-start .hs-mc-load-more { width: auto; margin: 0; padding: 7px 14px; text-transform: none; letter-spacing: 0; }
     .hs-mc-picker-divider {
       height: 1px;
@@ -16585,7 +16585,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       color: #000;
     }
     .hs-mc-menu-arrow {
-      color: #aaa;
+      color: var(--hs-muted);
       flex-shrink: 0;
       transition: none;
     }
@@ -16602,7 +16602,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-pred-loading {
       padding: 20px;
       text-align: center;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-pred-empty {
@@ -16610,7 +16610,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       text-align: center;
     }
     .hs-mc-pred-empty-text {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-prediction {
@@ -16641,7 +16641,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 2px 6px;
       border-radius: 0;
       background: rgba(255,255,255,0.1);
-      color: #aaa;
+      color: var(--hs-muted);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -16655,7 +16655,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-pred-balance {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 8px;
       display: flex;
       align-items: center;
@@ -16703,7 +16703,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-pred-outcome-stats {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 6px;
     }
     .hs-mc-pred-bet-row {
@@ -16736,20 +16736,20 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-pred-bet-custom {
       width: 52px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       font-size: 13px;
       padding: 2px 6px;
       outline: none;
       font-family: inherit;
     }
-    .hs-mc-pred-bet-custom::placeholder { color: #aaa; }
+    .hs-mc-pred-bet-custom::placeholder { color: var(--hs-muted); }
     .hs-mc-pred-bet-custom:focus {
       border-color: #fff;
     }
     .hs-mc-pred-bet-custom:disabled {
       background: rgba(255,255,255,0.04);
-      color: #aaa;
+      color: var(--hs-muted);
       opacity: 0.3;
     }
     .hs-mc-pred-bet-custom::-webkit-inner-spin-button,
@@ -16804,7 +16804,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-pred-status-canceled {
       background: rgba(255,255,255,0.08);
-      color: #aaa;
+      color: var(--hs-muted);
     }
 
     /* Result banners */
@@ -16958,12 +16958,12 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 2px 8px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-family: inherit;
       outline: none;
     }
-    .hs-mc-pred-create-input::placeholder { color: #aaa; }
+    .hs-mc-pred-create-input::placeholder { color: var(--hs-muted); }
     .hs-mc-pred-create-input:focus {
       border-color: #fff;
       outline: none;
@@ -16976,14 +16976,14 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-pred-create-dur-label {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-right: 2px;
     }
     .hs-mc-pred-create-dur {
       font-size: 13px;
       padding: 2px 6px;
       background: rgba(0,0,0,0.7);
-      color: #aaa;
+      color: var(--hs-muted);
       border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       font-family: inherit;
@@ -17039,7 +17039,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-poll-status-ended {
       background: rgba(255,255,255,0.08);
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-poll-timer {
       font-size: 13px;
@@ -17051,7 +17051,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-poll-meta {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 8px;
     }
     .hs-mc-poll-choices {
@@ -17182,12 +17182,12 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 2px 8px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-family: inherit;
       outline: none;
     }
-    .hs-mc-poll-create-input::placeholder { color: #aaa; }
+    .hs-mc-poll-create-input::placeholder { color: var(--hs-muted); }
     .hs-mc-poll-create-input:focus {
       border-color: #fff;
       outline: none;
@@ -17200,14 +17200,14 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-poll-create-dur-label {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-right: 2px;
     }
     .hs-mc-poll-create-dur {
       font-size: 13px;
       padding: 2px 6px;
       background: rgba(0,0,0,0.7);
-      color: #aaa;
+      color: var(--hs-muted);
       border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       font-family: inherit;
@@ -17250,7 +17250,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-pred-links .hs-mc-quicklink-section {
       padding: 10px 14px 4px;
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -17281,7 +17281,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-status-meta { font-size: 13px; color: #999; margin-top: 2px; }
     .hs-mc-status-section {
       margin-top: 10px; padding-bottom: 4px;
-      font-size: 13px; color: #aaa;
+      font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase;
       border-bottom: 1px solid #222;
     }
@@ -17289,8 +17289,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-status-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
     .hs-mc-status-key { color: #ccc; }
     .hs-mc-status-val.on  { color: var(--hs-ok); }
-    .hs-mc-status-val.off { color: #aaa; }
-    .hs-mc-status-note { font-size: 13px; color: #aaa; margin-top: 4px; }
+    .hs-mc-status-val.off { color: var(--hs-muted); }
+    .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {
@@ -17307,17 +17307,17 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-rewards-label {
       font-size: 13px;
       font-weight: 600;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .hs-mc-rewards-balance {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-rewards-empty {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       padding: 8px 14px;
     }
     .hs-mc-rewards-grid {
@@ -17368,7 +17368,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-reward-cost {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-reward-reason {
       font-size: 13px;
@@ -17494,7 +17494,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       font-size: 13px;
       padding: 3px 8px;
       background: rgba(255,255,255,0.06);
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       border: 1px solid rgba(255,255,255,0.08);
       font-weight: 600;
@@ -17522,7 +17522,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-settings-group-title {
       font-size: 13px;
       font-weight: 600;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       padding: 10px 14px 4px;
@@ -17565,14 +17565,14 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       color: #fff !important;
       font-size: 13px !important;
       cursor: help;
-      border-bottom: 1px dotted #808080;
+      border-bottom: 1px dotted var(--hs-border);
     }
     #hs-settings-tip {
       position: fixed;
       z-index: 99999;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 6px 8px;
       font-size: 13px;
       line-height: 18px;
@@ -17590,7 +17590,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-setting-textarea {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 4px 6px;
@@ -17606,7 +17606,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-locale-select {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -17638,7 +17638,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       white-space: nowrap !important;
       padding: 4px 10px !important;
       background: transparent !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       border: none !important;
       border-radius: 0 !important;
       font-size: 13px !important;
@@ -17694,7 +17694,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       flex: 1;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -17705,7 +17705,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       border-color: #fff;
     }
     .hs-mc-set-search-count {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       flex-shrink: 0;
     }
@@ -17713,7 +17713,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-set-presets-btn {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
@@ -17741,7 +17741,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
        vanishing into the strip. */
     .hs-mc-setting-row:hover .hs-mc-size-btn,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn {
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
     }
     .hs-mc-setting-row:hover .hs-mc-size-btn.active,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,
@@ -17753,7 +17753,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding-left: 28px !important;
     }
     .hs-mc-set-child-glyph {
-      color: #aaa;
+      color: var(--hs-muted);
       flex-shrink: 0;
     }
     .hs-mc-settings-group-title {
@@ -17770,7 +17770,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       box-shadow: inset 3px 0 0 #fff;
     }
     .hs-mc-set-cnt {
-      color: #aaa;
+      color: var(--hs-muted);
       font-weight: 400;
     }
     .hs-mc-set-modcnt {
@@ -17785,7 +17785,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-set-reload {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 0 6px;
@@ -17800,7 +17800,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     /* search result group headers — click jumps to that pane + section */
     .hs-mc-set-search-hdr {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -17829,7 +17829,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-set-help-btn {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
@@ -17847,7 +17847,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       right: 8px;
       z-index: 3;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 8px 10px;
       font-size: 13px;
       cursor: pointer;
@@ -17861,14 +17861,14 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       color: #fff;
     }
     .hs-mc-set-help-title {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       padding: 6px 0 2px;
     }
     .hs-mc-set-keyhint {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       padding: 6px 14px 10px;
     }
@@ -17892,7 +17892,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       cursor: pointer;
     }
     .hs-mc-set-range-val {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       min-width: 28px;
       text-align: right;
@@ -17948,7 +17948,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-set-text-input {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -17976,7 +17976,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     /* Channel-management modal text inputs (add/edit channel dialogs in main.js).
        Sizing/layout comes from inline cssText; this class provides the parts that
        can't be set inline: focus border swap and placeholder color. */
-    .hs-mc-ch-input::placeholder { color: #aaa; }
+    .hs-mc-ch-input::placeholder { color: var(--hs-muted); }
     .hs-mc-ch-input:focus { border-color: #fff; }
 
     /* Confirm modal (hsConfirm) — square, terminal, hover-inverts; ban = danger red */
@@ -17991,7 +17991,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-mc-confirm-box {
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 14px 16px;
       max-width: 300px;
       color: #fff;
@@ -18002,7 +18002,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-confirm-btns button {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 3px 12px;
       font-size: 13px;
       font-family: inherit;
@@ -18045,7 +18045,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       gap: 8px;
       flex: 0 0 auto;
       padding: 4px 6px;
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       background: #0a0a0a;
     }
     .hs-pv-title {
@@ -18061,7 +18061,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .hs-pv-sub { color: #808080; font-weight: 400; }
+    .hs-pv-sub { color: var(--hs-border); font-weight: 400; }
     .hs-pv-close {
       flex: 0 0 auto;
       /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
@@ -18071,7 +18071,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 0 6px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
@@ -18478,7 +18478,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-feed-time {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin: 0 3px;
     }
     .hs-feed-body {
@@ -18551,7 +18551,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-feed-reply-cancel {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       padding: 0 4px;
@@ -18590,7 +18590,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       outline-offset: -2px;
     }
     .hs-thread-op {
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       padding-bottom: 4px;
       margin-bottom: 4px;
     }
@@ -18744,7 +18744,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       flex-shrink: 0;
     }
     .hs-feed-link-card-url {
-      color: #aaa;
+      color: var(--hs-muted);
       word-break: break-all;
     }
     /* white plate on hover AND active, same as every other hs surface. The
@@ -18862,7 +18862,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-feed-embed-rich-author {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
@@ -18888,7 +18888,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
 
     /* ---- TEXT FORMATTING ---- */
     .hs-spoiler {
-      background: #808080;
+      background: var(--hs-border);
       color: transparent;
       cursor: pointer;
       border-radius: 0;
@@ -19151,7 +19151,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 5px 10px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       font-family: inherit;
@@ -19161,13 +19161,13 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       border-color: #fff;
     }
     #hs-mc-search-input::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     #hs-mc-search-count {
       display: none;
       font-size: 13px;
       font-family: inherit;
-      color: #aaa;
+      color: var(--hs-muted);
       background: #111;
       border: 1px solid #333;
       padding: 1px 5px;
@@ -19208,7 +19208,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-search-user {
@@ -19222,7 +19222,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-mc-search-empty {
       padding: 16px;
       text-align: center;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     /* btop-style discover: bordered widgets, distinct accents per section */
@@ -19277,11 +19277,11 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-discover-section-empty {
       padding: 8px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-discover-meta {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-weight: 600;
       text-transform: none;
@@ -19325,7 +19325,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-discover-profile-row:hover * { color: #000 !important; }
     .hs-discover-profile-row.hs-discover-row-live { border-left-color: var(--hs-live); }
     .hs-discover-rank {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       width: 18px;
@@ -19333,7 +19333,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       flex-shrink: 0;
       font-family: ui-monospace, SFMono-Regular, monospace;
     }
-    .hs-discover-row-live .hs-discover-rank { color: #aaa; }
+    .hs-discover-row-live .hs-discover-rank { color: var(--hs-muted); }
     .hs-discover-live-dot {
       width: 7px; height: 7px;
       border-radius: 50%;
@@ -19428,7 +19428,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       font-family: ui-monospace, SFMono-Regular, monospace;
     }
     .hs-discover-chips-label {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-weight: 700;
       margin-right: -2px;
@@ -19437,7 +19437,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       padding: 2px 8px;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.12);
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       font-family: ui-monospace, SFMono-Regular, monospace;
@@ -19553,7 +19553,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-discover-post-spacer { flex: 1; }
     .hs-discover-post-time {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       font-family: ui-monospace, SFMono-Regular, monospace;
@@ -19588,7 +19588,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-discover-post-replies {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-variant-numeric: tabular-nums;
       font-family: ui-monospace, SFMono-Regular, monospace;
       flex-shrink: 0;
@@ -19621,7 +19621,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     }
     .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
     .hs-pinned-user { font-size: 13px; color: #bbb; }
-    .hs-pinned-time { font-size: 13px; color: #aaa; margin-left: auto; }
+    .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-left: auto; }
     .hs-pinned-body {
       font-size: 13px;
       color: #ddd;
@@ -19642,7 +19642,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       font-size: 13px;
     }
     .hs-modlog-row:hover { background: rgba(255,135,0,0.07); }
-    .hs-modlog-time { color: #808080; font-variant-numeric: tabular-nums; }
+    .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
     .hs-modlog-channel { color: #fff; font-weight: 600; }
     .hs-modlog-body { color: #ddd; word-break: break-word; }
     .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }
@@ -19677,7 +19677,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-log-embed-meta {
       display: flex;
       gap: 6px;
-      color: #808080;
+      color: var(--hs-border);
       font-size: 13px;
     }
     .hs-log-embed:hover .hs-log-embed-meta { color: #000; }
@@ -21330,7 +21330,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       text-decoration: line-through;
     }
     .hs-cl-ts {
-      color: #aaa;
+      color: var(--hs-muted);
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
       white-space: nowrap;
@@ -21347,10 +21347,10 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
       display: inline-block;
     }
     .hs-cl-empty {
-      color: #aaa; text-align: center; padding: 40px 8px;
+      color: var(--hs-muted); text-align: center; padding: 40px 8px;
     }
     .hs-cl-loader {
-      color: #aaa; text-align: center; padding: 12px 8px;
+      color: var(--hs-muted); text-align: center; padding: 12px 8px;
     }
     .hs-cl-public-archive {
       color: #fff; text-decoration: none;
@@ -21363,7 +21363,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"] { animati
     .hs-cl-public-archive:hover { background: #fff; color: #000; border-color: #fff; }
     .hs-cl-permalink {
       margin-left: auto;
-      background: transparent; color: #aaa;
+      background: transparent; color: var(--hs-muted);
       border: none; padding: 0 4px; cursor: pointer;
       font-family: inherit; font-size: 13px; line-height: 1;
       opacity: 0; transition: opacity 0.08s;

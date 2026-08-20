@@ -48,7 +48,7 @@
       color: #000;
     }
     .hs-mc-menu-arrow {
-      color: #aaa;
+      color: var(--hs-muted);
       flex-shrink: 0;
       transition: none;
     }
@@ -65,7 +65,7 @@
     .hs-mc-pred-loading {
       padding: 20px;
       text-align: center;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-pred-empty {
@@ -73,7 +73,7 @@
       text-align: center;
     }
     .hs-mc-pred-empty-text {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-prediction {
@@ -104,7 +104,7 @@
       padding: 2px 6px;
       border-radius: 0;
       background: rgba(255,255,255,0.1);
-      color: #aaa;
+      color: var(--hs-muted);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -118,7 +118,7 @@
     }
     .hs-mc-pred-balance {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 8px;
       display: flex;
       align-items: center;
@@ -166,7 +166,7 @@
     }
     .hs-mc-pred-outcome-stats {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 6px;
     }
     .hs-mc-pred-bet-row {
@@ -199,20 +199,20 @@
     .hs-mc-pred-bet-custom {
       width: 52px;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       color: #fff;
       font-size: 13px;
       padding: 2px 6px;
       outline: none;
       font-family: inherit;
     }
-    .hs-mc-pred-bet-custom::placeholder { color: #aaa; }
+    .hs-mc-pred-bet-custom::placeholder { color: var(--hs-muted); }
     .hs-mc-pred-bet-custom:focus {
       border-color: #fff;
     }
     .hs-mc-pred-bet-custom:disabled {
       background: rgba(255,255,255,0.04);
-      color: #aaa;
+      color: var(--hs-muted);
       opacity: 0.3;
     }
     .hs-mc-pred-bet-custom::-webkit-inner-spin-button,
@@ -267,7 +267,7 @@
     }
     .hs-mc-pred-status-canceled {
       background: rgba(255,255,255,0.08);
-      color: #aaa;
+      color: var(--hs-muted);
     }
 
     /* Result banners */
@@ -421,12 +421,12 @@
       padding: 2px 8px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-family: inherit;
       outline: none;
     }
-    .hs-mc-pred-create-input::placeholder { color: #aaa; }
+    .hs-mc-pred-create-input::placeholder { color: var(--hs-muted); }
     .hs-mc-pred-create-input:focus {
       border-color: #fff;
       outline: none;
@@ -439,14 +439,14 @@
     }
     .hs-mc-pred-create-dur-label {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-right: 2px;
     }
     .hs-mc-pred-create-dur {
       font-size: 13px;
       padding: 2px 6px;
       background: rgba(0,0,0,0.7);
-      color: #aaa;
+      color: var(--hs-muted);
       border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       font-family: inherit;
@@ -502,7 +502,7 @@
     }
     .hs-mc-poll-status-ended {
       background: rgba(255,255,255,0.08);
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-poll-timer {
       font-size: 13px;
@@ -514,7 +514,7 @@
     }
     .hs-mc-poll-meta {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-bottom: 8px;
     }
     .hs-mc-poll-choices {
@@ -645,12 +645,12 @@
       padding: 2px 8px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-family: inherit;
       outline: none;
     }
-    .hs-mc-poll-create-input::placeholder { color: #aaa; }
+    .hs-mc-poll-create-input::placeholder { color: var(--hs-muted); }
     .hs-mc-poll-create-input:focus {
       border-color: #fff;
       outline: none;
@@ -663,14 +663,14 @@
     }
     .hs-mc-poll-create-dur-label {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-right: 2px;
     }
     .hs-mc-poll-create-dur {
       font-size: 13px;
       padding: 2px 6px;
       background: rgba(0,0,0,0.7);
-      color: #aaa;
+      color: var(--hs-muted);
       border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       font-family: inherit;
@@ -713,7 +713,7 @@
     .hs-mc-pred-links .hs-mc-quicklink-section {
       padding: 10px 14px 4px;
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -744,7 +744,7 @@
     .hs-mc-status-meta { font-size: 13px; color: #999; margin-top: 2px; }
     .hs-mc-status-section {
       margin-top: 10px; padding-bottom: 4px;
-      font-size: 13px; color: #aaa;
+      font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase;
       border-bottom: 1px solid #222;
     }
@@ -752,8 +752,8 @@
     .hs-mc-status-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
     .hs-mc-status-key { color: #ccc; }
     .hs-mc-status-val.on  { color: var(--hs-ok); }
-    .hs-mc-status-val.off { color: #aaa; }
-    .hs-mc-status-note { font-size: 13px; color: #aaa; margin-top: 4px; }
+    .hs-mc-status-val.off { color: var(--hs-muted); }
+    .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {
@@ -770,17 +770,17 @@
     .hs-mc-rewards-label {
       font-size: 13px;
       font-weight: 600;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .hs-mc-rewards-balance {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-rewards-empty {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       padding: 8px 14px;
     }
     .hs-mc-rewards-grid {
@@ -831,7 +831,7 @@
     }
     .hs-mc-reward-cost {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-reward-reason {
       font-size: 13px;
@@ -957,7 +957,7 @@
       font-size: 13px;
       padding: 3px 8px;
       background: rgba(255,255,255,0.06);
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       border: 1px solid rgba(255,255,255,0.08);
       font-weight: 600;
@@ -985,7 +985,7 @@
     .hs-mc-settings-group-title {
       font-size: 13px;
       font-weight: 600;
-      color: #aaa;
+      color: var(--hs-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       padding: 10px 14px 4px;
@@ -1028,14 +1028,14 @@
       color: #fff !important;
       font-size: 13px !important;
       cursor: help;
-      border-bottom: 1px dotted #808080;
+      border-bottom: 1px dotted var(--hs-border);
     }
     #hs-settings-tip {
       position: fixed;
       z-index: 99999;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 6px 8px;
       font-size: 13px;
       line-height: 18px;
@@ -1053,7 +1053,7 @@
     .hs-mc-setting-textarea {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 4px 6px;
@@ -1069,7 +1069,7 @@
     .hs-mc-locale-select {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -1101,7 +1101,7 @@
       white-space: nowrap !important;
       padding: 4px 10px !important;
       background: transparent !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       border: none !important;
       border-radius: 0 !important;
       font-size: 13px !important;
@@ -1157,7 +1157,7 @@
       flex: 1;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -1168,7 +1168,7 @@
       border-color: #fff;
     }
     .hs-mc-set-search-count {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       flex-shrink: 0;
     }
@@ -1176,7 +1176,7 @@
     .hs-mc-set-presets-btn {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
@@ -1204,7 +1204,7 @@
        vanishing into the strip. */
     .hs-mc-setting-row:hover .hs-mc-size-btn,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn {
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
     }
     .hs-mc-setting-row:hover .hs-mc-size-btn.active,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,
@@ -1216,7 +1216,7 @@
       padding-left: 28px !important;
     }
     .hs-mc-set-child-glyph {
-      color: #aaa;
+      color: var(--hs-muted);
       flex-shrink: 0;
     }
     .hs-mc-settings-group-title {
@@ -1233,7 +1233,7 @@
       box-shadow: inset 3px 0 0 #fff;
     }
     .hs-mc-set-cnt {
-      color: #aaa;
+      color: var(--hs-muted);
       font-weight: 400;
     }
     .hs-mc-set-modcnt {
@@ -1248,7 +1248,7 @@
     .hs-mc-set-reload {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 0 6px;
@@ -1263,7 +1263,7 @@
     }
     /* search result group headers — click jumps to that pane + section */
     .hs-mc-set-search-hdr {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -1292,7 +1292,7 @@
     .hs-mc-set-help-btn {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
@@ -1310,7 +1310,7 @@
       right: 8px;
       z-index: 3;
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 8px 10px;
       font-size: 13px;
       cursor: pointer;
@@ -1324,14 +1324,14 @@
       color: #fff;
     }
     .hs-mc-set-help-title {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       padding: 6px 0 2px;
     }
     .hs-mc-set-keyhint {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       padding: 6px 14px 10px;
     }
@@ -1355,7 +1355,7 @@
       cursor: pointer;
     }
     .hs-mc-set-range-val {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       min-width: 28px;
       text-align: right;
@@ -1411,7 +1411,7 @@
     .hs-mc-set-text-input {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       font-family: inherit;
       font-size: 13px;
       padding: 3px 6px;
@@ -1439,7 +1439,7 @@
     /* Channel-management modal text inputs (add/edit channel dialogs in main.js).
        Sizing/layout comes from inline cssText; this class provides the parts that
        can't be set inline: focus border swap and placeholder color. */
-    .hs-mc-ch-input::placeholder { color: #aaa; }
+    .hs-mc-ch-input::placeholder { color: var(--hs-muted); }
     .hs-mc-ch-input:focus { border-color: #fff; }
 
     /* Confirm modal (hsConfirm) — square, terminal, hover-inverts; ban = danger red */
@@ -1454,7 +1454,7 @@
     }
     .hs-mc-confirm-box {
       background: #000;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 14px 16px;
       max-width: 300px;
       color: #fff;
@@ -1465,7 +1465,7 @@
     .hs-mc-confirm-btns button {
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       padding: 3px 12px;
       font-size: 13px;
       font-family: inherit;
@@ -1508,7 +1508,7 @@
       gap: 8px;
       flex: 0 0 auto;
       padding: 4px 6px;
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       background: #0a0a0a;
     }
     .hs-pv-title {
@@ -1524,7 +1524,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .hs-pv-sub { color: #808080; font-weight: 400; }
+    .hs-pv-sub { color: var(--hs-border); font-weight: 400; }
     .hs-pv-close {
       flex: 0 0 auto;
       /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
@@ -1534,7 +1534,7 @@
       padding: 0 6px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }

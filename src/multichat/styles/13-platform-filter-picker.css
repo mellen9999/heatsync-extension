@@ -95,8 +95,8 @@
        color entirely. */
     .hs-mc-pf-btn.off {
       background: transparent !important;
-      color: #808080 !important;
-      border-color: #808080 !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
     }
     .hs-mc-pf-btn:hover,
     .hs-mc-pf-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
@@ -158,8 +158,8 @@
     .hs-mc-st-btn.hs-mc-st-youtube { border-color: var(--hs-plat-youtube) !important; background: transparent !important; color: var(--hs-plat-youtube) !important; }
     .hs-mc-st-btn.off {
       background: transparent !important;
-      color: #808080 !important;
-      border-color: #808080 !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
     }
     /* The send cluster's "where it goes" marker. Not a button — a one-glyph
        label, dim so it never competes with the letters.
@@ -173,7 +173,7 @@
        whisper arrow). Flex handles the vertical centring here, so no
        vertical-align hack is needed. */
     .hs-mc-st-arrow {
-      color: #aaa;
+      color: var(--hs-muted);
       font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
       font-size: 19px;
       font-weight: 700;
@@ -215,7 +215,7 @@
          land outside picker.contains(target), firing the dismiss handler. */
       min-width: 210px;
       background: #000;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
       z-index: 1003;
       overflow: hidden;
       flex-direction: column;
@@ -229,7 +229,7 @@
     /* Picker tabs — pinned to bottom */
     #hs-mc-emote-picker .hs-mc-picker-tabs {
       display: flex !important;
-      border-top: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
       flex-shrink: 0 !important;
       min-height: 0 !important;
       margin-top: auto !important;
@@ -245,7 +245,7 @@
       gap: 5px !important;
       padding: 6px 4px !important;
       background: transparent !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       border: none !important;
       cursor: pointer;
       font-size: 13px !important;
@@ -318,7 +318,7 @@
       gap: 5px;
       padding: 4px 6px 3px;
       font-size: 13px;
-      color: #808080;
+      color: var(--hs-border);
       background: #000;
       border-top: 1px solid rgba(255,255,255,0.08);
     }
@@ -326,7 +326,7 @@
       border-top: none;
     }
     .hs-mc-picker-section-count {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       background: rgba(255,255,255,0.06);
       padding: 1px 5px;
@@ -361,7 +361,7 @@
       left: 10px;
       pointer-events: none;
       opacity: 0.5;
-      color: #aaa;
+      color: var(--hs-muted);
       z-index: 2;
     }
     #hs-mc-emote-search {
@@ -371,7 +371,7 @@
       padding: 4px 8px 4px 28px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       outline: none;
@@ -455,7 +455,7 @@
     }
     .hs-mc-load-more:hover { background: #fff; color: #000; border-color: #fff; }
     #hs-mc-emote-search::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     .hs-mc-picker-emote {
       width: auto !important;
@@ -479,7 +479,7 @@
     .hs-mc-picker-empty {
       padding: 32px !important;
       text-align: center !important;
-      color: #aaa !important;
+      color: var(--hs-muted) !important;
       font-size: 13px !important;
       visibility: visible !important;
     }
@@ -491,7 +491,7 @@
       gap: 10px;
     }
     .hs-mc-cold-start-title { color: #fff; font-size: 14px; font-weight: 700; }
-    .hs-mc-cold-start-sub { color: #aaa; font-size: 13px; max-width: 260px; line-height: 1.4; }
+    .hs-mc-cold-start-sub { color: var(--hs-muted); font-size: 13px; max-width: 260px; line-height: 1.4; }
     .hs-mc-cold-start .hs-mc-load-more { width: auto; margin: 0; padding: 7px 14px; text-transform: none; letter-spacing: 0; }
     .hs-mc-picker-divider {
       height: 1px;

@@ -26,7 +26,7 @@
     }
     .hs-feed-time {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin: 0 3px;
     }
     .hs-feed-body {
@@ -99,7 +99,7 @@
     .hs-mc-feed-reply-cancel {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       padding: 0 4px;
@@ -138,7 +138,7 @@
       outline-offset: -2px;
     }
     .hs-thread-op {
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       padding-bottom: 4px;
       margin-bottom: 4px;
     }
@@ -292,7 +292,7 @@
       flex-shrink: 0;
     }
     .hs-feed-link-card-url {
-      color: #aaa;
+      color: var(--hs-muted);
       word-break: break-all;
     }
     /* white plate on hover AND active, same as every other hs surface. The
@@ -410,7 +410,7 @@
     }
     .hs-feed-embed-rich-author {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
@@ -436,7 +436,7 @@
 
     /* ---- TEXT FORMATTING ---- */
     .hs-spoiler {
-      background: #808080;
+      background: var(--hs-border);
       color: transparent;
       cursor: pointer;
       border-radius: 0;
@@ -699,7 +699,7 @@
       padding: 5px 10px;
       background: #000;
       color: #fff;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
       border-radius: 0;
       font-size: 13px;
       font-family: inherit;
@@ -709,13 +709,13 @@
       border-color: #fff;
     }
     #hs-mc-search-input::placeholder {
-      color: #aaa;
+      color: var(--hs-muted);
     }
     #hs-mc-search-count {
       display: none;
       font-size: 13px;
       font-family: inherit;
-      color: #aaa;
+      color: var(--hs-muted);
       background: #111;
       border: 1px solid #333;
       padding: 1px 5px;
@@ -756,7 +756,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-mc-search-user {
@@ -770,7 +770,7 @@
     .hs-mc-search-empty {
       padding: 16px;
       text-align: center;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     /* btop-style discover: bordered widgets, distinct accents per section */
@@ -825,11 +825,11 @@
     }
     .hs-discover-section-empty {
       padding: 8px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
     .hs-discover-meta {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-weight: 600;
       text-transform: none;
@@ -873,7 +873,7 @@
     .hs-discover-profile-row:hover * { color: #000 !important; }
     .hs-discover-profile-row.hs-discover-row-live { border-left-color: var(--hs-live); }
     .hs-discover-rank {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       width: 18px;
@@ -881,7 +881,7 @@
       flex-shrink: 0;
       font-family: ui-monospace, SFMono-Regular, monospace;
     }
-    .hs-discover-row-live .hs-discover-rank { color: #aaa; }
+    .hs-discover-row-live .hs-discover-rank { color: var(--hs-muted); }
     .hs-discover-live-dot {
       width: 7px; height: 7px;
       border-radius: 50%;
@@ -976,7 +976,7 @@
       font-family: ui-monospace, SFMono-Regular, monospace;
     }
     .hs-discover-chips-label {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-weight: 700;
       margin-right: -2px;
@@ -985,7 +985,7 @@
       padding: 2px 8px;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.12);
-      color: #aaa;
+      color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
       font-family: ui-monospace, SFMono-Regular, monospace;
@@ -1101,7 +1101,7 @@
     }
     .hs-discover-post-spacer { flex: 1; }
     .hs-discover-post-time {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       font-family: ui-monospace, SFMono-Regular, monospace;
@@ -1136,7 +1136,7 @@
     }
     .hs-discover-post-replies {
       font-size: 13px;
-      color: #aaa;
+      color: var(--hs-muted);
       font-variant-numeric: tabular-nums;
       font-family: ui-monospace, SFMono-Regular, monospace;
       flex-shrink: 0;
@@ -1169,7 +1169,7 @@
     }
     .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
     .hs-pinned-user { font-size: 13px; color: #bbb; }
-    .hs-pinned-time { font-size: 13px; color: #aaa; margin-left: auto; }
+    .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-left: auto; }
     .hs-pinned-body {
       font-size: 13px;
       color: #ddd;
@@ -1190,7 +1190,7 @@
       font-size: 13px;
     }
     .hs-modlog-row:hover { background: rgba(255,135,0,0.07); }
-    .hs-modlog-time { color: #808080; font-variant-numeric: tabular-nums; }
+    .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
     .hs-modlog-channel { color: #fff; font-weight: 600; }
     .hs-modlog-body { color: #ddd; word-break: break-word; }
     .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }
@@ -1225,7 +1225,7 @@
     .hs-log-embed-meta {
       display: flex;
       gap: 6px;
-      color: #808080;
+      color: var(--hs-border);
       font-size: 13px;
     }
     .hs-log-embed:hover .hs-log-embed-meta { color: #000; }

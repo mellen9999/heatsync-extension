@@ -10,7 +10,7 @@
       gap: 0;
       padding: 0;
       background: #000;
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       flex-shrink: 0;
       order: -1;
       z-index: 10;
@@ -37,8 +37,8 @@
       padding: 2px 10px !important;
       margin: 0 -1px -1px 0 !important;
       background: #000 !important;
-      color: #aaa !important;
-      border: 1px solid #808080 !important;
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
       border-radius: 0 !important;
       cursor: pointer !important;
       font-family: inherit;
@@ -72,7 +72,7 @@
     .hs-mc-tab.has-new {
       background: #000 !important;
       color: #fff !important;
-      border-color: #808080 !important;
+      border-color: var(--hs-border) !important;
     }
     /* Has-new hover */
     .hs-mc-tab.has-new:not(.active):hover {
@@ -106,7 +106,7 @@
        browser not to fake-bold — but requesting 600 against a single-weight
        bitmap font still nudges Chrome's text path off the crisp bitmap
        route in practice. White-on-black background already conveys focus. */
-    .hs-mc-tab-auto { color: #aaa; }
+    .hs-mc-tab-auto { color: var(--hs-muted); }
 .hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
 .hs-mc-tab.active {
       background: #fff !important;
@@ -126,7 +126,7 @@
     .hs-mc-tab.has-stream-event {
       background: #000 !important;
       color: var(--hs-warn) !important;
-      border-color: #808080 !important;
+      border-color: var(--hs-border) !important;
     }
     .hs-mc-tab.has-stream-event:not(.active):hover {
       background: #fff !important;
@@ -145,8 +145,8 @@
        Hover matches every other tab/button: white bg, black text. */
     #hs-mc-tabbar .hs-mc-tab[data-tab="live"] {
       background: #000 !important;
-      color: #aaa !important;
-      border-color: #808080 !important;
+      color: var(--hs-muted) !important;
+      border-color: var(--hs-border) !important;
       font-weight: 400 !important;
     }
     #hs-mc-tabbar .hs-mc-tab[data-tab="live"]:hover,
@@ -295,8 +295,8 @@
       margin-right: 0 !important;
     }
     .hs-mc-util-btn {
-      color: #aaa !important;
-      border: 1px solid #808080 !important;
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
       font-weight: 400 !important;
       background: transparent !important;
     }
@@ -497,7 +497,7 @@
       color: var(--hs-mention); text-decoration: none; font-size: 13px; margin-right: 4px;
     }
     .hs-mc-feed-inline .hs-feed-thread-link:hover { text-decoration: underline; }
-    .hs-mc-moment-perma { color: #808080; margin-left: 4px; text-decoration: none; }
+    .hs-mc-moment-perma { color: var(--hs-border); margin-left: 4px; text-decoration: none; }
     .hs-mc-moment-perma:hover { background: #fff; color: #000; }
     .hs-mc-dm-inline {
       border-left-color: var(--hs-mention);

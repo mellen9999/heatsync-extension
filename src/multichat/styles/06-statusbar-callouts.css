@@ -95,8 +95,8 @@
        inputbar below. */
     .hs-notif-layer-chat-docked-bottom > .hs-notif {
       border: none;
-      border-top: 1px solid #808080;
-      border-bottom: 1px solid #808080;
+      border-top: 1px solid var(--hs-border);
+      border-bottom: 1px solid var(--hs-border);
       box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
       background: #0a0a0d;
     }
@@ -202,8 +202,8 @@
       pointer-events: auto !important;
       background: #18181b !important;
       border: none !important;
-      border-top: 1px solid #808080 !important;
-      border-bottom: 1px solid #808080 !important;
+      border-top: 1px solid var(--hs-border) !important;
+      border-bottom: 1px solid var(--hs-border) !important;
       border-radius: 0 !important;
       box-shadow: 0 -2px 8px rgba(0,0,0,0.5) !important;
       box-sizing: border-box !important;

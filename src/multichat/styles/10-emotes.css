@@ -106,7 +106,7 @@
     .hs-mc-picker-emote-wrap.blocked::before {
       opacity: 1;
       background: none;
-      border: 2px dashed #808080;
+      border: 2px dashed var(--hs-border);
     }
     .hs-mc-picker-emote-wrap.blocked img {
       visibility: hidden !important;
@@ -227,7 +227,7 @@
       content: '';
       position: absolute;
       inset: -2px -6px;
-      background: #808080;
+      background: var(--hs-border);
       z-index: -1;
       pointer-events: none;
     }
@@ -383,13 +383,13 @@
        chat-side .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw] and web
        .hs-pe-wrap > img.hs-state-nsfw[data-cw]. */
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="sexual"] > img,
-    img.hs-input-emote.hs-state-nsfw[data-cw="sexual"] { border-color: #ff00ff !important; }
+    img.hs-input-emote.hs-state-nsfw[data-cw="sexual"] { border-color: var(--hs-thread) !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="gore"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="gore"]   { border-color: #ff0000 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="drugs"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="drugs"]  { border-color: #00d700 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="hate"] > img,
-    img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: #808080 !important; }
+    img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: var(--hs-border) !important; }
 
     /* Stale ghost: emote was in the channel set when the message posted but
        has since been removed. Dim + desaturate the cached IMG; muted-orange
@@ -417,7 +417,7 @@
     .hs-mc-emote-wrapper.hs-state-blocked::before {
       opacity: 1;
       background: none;
-      border: 2px dashed #808080;
+      border: 2px dashed var(--hs-border);
       inset: 0;
       box-sizing: border-box;
     }
@@ -441,9 +441,9 @@
       height: var(--hs-emote-size, 32px);
       min-width: var(--hs-emote-size, 32px);
       padding: 0 6px;
-      border: 2px dashed #00ffff;
+      border: 2px dashed var(--hs-reply);
       box-sizing: border-box;
-      color: #00ffff;
+      color: var(--hs-reply);
       font-size: 13px;
       line-height: normal;
       cursor: default;
@@ -452,10 +452,10 @@
     /* Per-category color coding — border+text together. Cyan above stays the
        fallback for unknown categories. ansi: 201/196/40/244. Mirror of web
        .hs-emote-cw[data-cw]. */
-    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: #ff00ff; color: #ff00ff; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: var(--hs-thread); color: var(--hs-thread); }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="gore"]   { border-color: #ff0000; color: #ff0000; }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="drugs"]  { border-color: #00d700; color: #00d700; }
-    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: #808080; color: #808080; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: var(--hs-border); color: var(--hs-border); }
     /* Sized stub — when a prior sighting of this URL cached its rendered box
        width (_hsEmoteBoxW, same cache the normal wrapper's wAttr reads), the
        stub takes that exact footprint so toggling the filter pref shifts
@@ -540,7 +540,7 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-badge-tooltip.visible {
       display: flex;
@@ -563,7 +563,7 @@
       color: #fff;
       width: calc(100% + 16px);
       text-align: center;
-      background: #808080;
+      background: var(--hs-border);
     }
 
     /* Emote hover tooltip - 4x preview */
@@ -580,7 +580,7 @@
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-emote-tooltip.visible {
       display: flex;
@@ -623,7 +623,7 @@
     #hs-emote-tooltip .tooltip-source.unadded,
     #hs-emote-tooltip .tooltip-source.global,
     #hs-emote-tooltip .tooltip-source.channel { background: #fff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.sub { background: #9146ff; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #fff; }
     #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #fff; }
     /* Per-provider source label colors (override .global/.channel) */
     #hs-emote-tooltip .tooltip-source.src-7tv { background: #29d8f6; color: #000; }
@@ -646,7 +646,7 @@
       flex-direction: row;
       gap: 8px;
       max-width: 350px;
-      border: 1px solid #808080;
+      border: 1px solid var(--hs-border);
     }
     #hs-link-tooltip.visible { display: flex; }
     #hs-link-tooltip img {
@@ -687,7 +687,7 @@
       font-size: 13px;
     }
     #hs-link-tooltip .link-loading {
-      color: #aaa;
+      color: var(--hs-muted);
       font-size: 13px;
     }
 

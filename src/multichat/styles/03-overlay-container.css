@@ -164,7 +164,7 @@
       transition: none;
       cursor: pointer;
       border-left: 3px solid var(--hs-brand);
-      border-bottom: 1px solid #808080;
+      border-bottom: 1px solid var(--hs-border);
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
     }
     .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }

@@ -52,7 +52,7 @@
       /* structural */
       --hs-fg: #fff;
       --hs-bg: #000;
-      --hs-muted: #aaa;
+      --hs-muted: #a8a8a8; /* 248 — was #aaa, a css habit 3.5 units off the grid */
       --hs-border: #808080;
     }
     /* Chromium auto-dark (WebContentsForceDark / android "darken websites")

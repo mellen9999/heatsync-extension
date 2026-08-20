@@ -73,7 +73,7 @@
       text-decoration: line-through;
     }
     .hs-cl-ts {
-      color: #aaa;
+      color: var(--hs-muted);
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
       white-space: nowrap;
@@ -90,10 +90,10 @@
       display: inline-block;
     }
     .hs-cl-empty {
-      color: #aaa; text-align: center; padding: 40px 8px;
+      color: var(--hs-muted); text-align: center; padding: 40px 8px;
     }
     .hs-cl-loader {
-      color: #aaa; text-align: center; padding: 12px 8px;
+      color: var(--hs-muted); text-align: center; padding: 12px 8px;
     }
     .hs-cl-public-archive {
       color: #fff; text-decoration: none;
@@ -106,7 +106,7 @@
     .hs-cl-public-archive:hover { background: #fff; color: #000; border-color: #fff; }
     .hs-cl-permalink {
       margin-left: auto;
-      background: transparent; color: #aaa;
+      background: transparent; color: var(--hs-muted);
       border: none; padding: 0 4px; cursor: pointer;
       font-family: inherit; font-size: 13px; line-height: 1;
       opacity: 0; transition: opacity 0.08s;

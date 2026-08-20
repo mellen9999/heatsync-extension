@@ -128,7 +128,7 @@
     .hs-pcard-pill-kick { background: var(--hs-plat-kick); color: #000; }
     .hs-pcard-pill-youtube { background: var(--hs-plat-youtube); color: #fff; }
     .hs-pcard-bio {
-      color: #aaa; font-size: 13px; line-height: 18px;
+      color: var(--hs-muted); font-size: 13px; line-height: 18px;
       white-space: pre-wrap; word-break: break-word;
       border-left: 2px solid #1a1a1a; padding: 0 0 0 8px;
     }
@@ -167,7 +167,7 @@
     .hs-pcard-sheet .val-ttv { color: var(--hs-plat-twitch); }        /* twitch brand */
     .hs-pcard-sheet .val-kick { color: var(--hs-plat-kick); }       /* kick brand */
     .hs-pcard-sheet .val-yt { color: var(--hs-plat-youtube); }         /* xterm 196 — yt brand */
-    .hs-pcard-sheet .val-hs { color: #ff8700; }         /* xterm 208 — heatsync brand */
+    .hs-pcard-sheet .val-hs { color: var(--hs-brand); }         /* xterm 208 — heatsync brand */
     .hs-pcard-sheet .val-admin { color: #ff0000; }      /* xterm 196 — power */
     .hs-pcard-sheet .val-staff { color: #fff; }      /* xterm 208 — hs orange */
     .hs-pcard-sheet .val-heat { color: #ff0000; }       /* xterm 196 — fire */
@@ -219,7 +219,7 @@
       display: flex; gap: 6px; padding: 2px 0;
       font-size: 13px; align-items: baseline;
     }
-    .hs-pcard-msg-ts { color: #aaa; flex-shrink: 0; font-size: 13px; min-width: 38px; }
+    .hs-pcard-msg-ts { color: var(--hs-muted); flex-shrink: 0; font-size: 13px; min-width: 38px; }
     .hs-pcard-msg-plat {
       flex-shrink: 0; font-size: 13px; padding: 0 3px;
       font-weight: 600; line-height: 19px; color: #888;
@@ -251,7 +251,7 @@
       color: #fff; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
       max-height: 96px; overflow-y: auto; font-size: 13px; line-height: 1.4;
     }
-    .hs-pcard-note-body.hs-pcard-note-empty { color: #aaa; font-style: italic; }
+    .hs-pcard-note-body.hs-pcard-note-empty { color: var(--hs-muted); font-style: italic; }
     .hs-pcard-note-edit {
       align-self: flex-start; background: transparent; color: #fff; border: 1px solid #333;
       padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 13px;

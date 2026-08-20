@@ -215,6 +215,7 @@ function checkScopeCollisions() {
     'cleanup.js',
     'user-key.js',
     'utils.js',
+    'diag.js',
     'font-grid.js',
     'settings-schema.js',
     'browser-api.js',
@@ -603,6 +604,9 @@ function readLib() {
     'cleanup.js',
     'user-key.js',
     'utils.js',
+    // diag after utils: hsQuery/hsQueryAll mirror qsArray/qsaArray's contract
+    // and report into error-reporter's ring buffer, so both must precede it.
+    'diag.js',
     // font-grid before settings-schema: the schema's fontSize entry builds its
     // options from FONT_GRID, and these are concatenated into one scope in order.
     'font-grid.js',

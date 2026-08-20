@@ -8,7 +8,7 @@
  * sidebar is present, and without overlapping the video when it isn't.
  */
 function getKickSidebarWidth() {
-  const el = document.querySelector('[class*="sidebar-collapsed-width"]')
+  const el = hsQuery('kick:sidebar-collapsed-width', '[class*="sidebar-collapsed-width"]')
   if (!el) return 0
   const w = el.offsetWidth
   return w > 0 ? w : 0
@@ -169,12 +169,12 @@ function watchKickViewportClamp() {
   }
   window.addEventListener('resize', onResize, { signal: mcSignal })
 
-  if (document.querySelector('#injected-channel-player')) {
+  if (hsQuery('kick:injected-channel-player', '#injected-channel-player')) {
     // Player already mounted — apply now (early init call missed it).
     applyPlatformPositionOverrides()
   } else if (!_kickPlayerMountObs) {
     _kickPlayerMountObs = new MutationObserver(() => {
-      if (document.querySelector('#injected-channel-player')) {
+      if (hsQuery('kick:injected-channel-player', '#injected-channel-player')) {
         _kickPlayerMountObs.disconnect()
         _kickPlayerMountObs = null
         applyPlatformPositionOverrides()
@@ -195,7 +195,7 @@ let _kickTopNavH = 60 // matches --hs-kick-topnav-h CSS fallback
 // codebase for kick nav height measurement.
 function updateKickTopNavHeight() {
   if (!isKick) return
-  const nav = document.querySelector('nav, [class*="navbar"]')
+  const nav = hsQuery('kick:navbar', 'nav, [class*="navbar"]')
   let h = 60 // CSS fallback default
   if (nav) {
     const r = nav.getBoundingClientRect()
@@ -215,7 +215,7 @@ function setupKickTopNavObserver() {
     } catch (_) {}
     _kickTopNavObs = null
   }
-  const nav = document.querySelector('nav, [class*="navbar"]')
+  const nav = hsQuery('kick:navbar', 'nav, [class*="navbar"]')
   if (nav && typeof ResizeObserver !== 'undefined') {
     _kickTopNavObs = new ResizeObserver(() => updateKickTopNavHeight())
     _kickTopNavObs.observe(nav)

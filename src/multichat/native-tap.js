@@ -23,10 +23,10 @@ let _tapPollTimer = null // permanent remount watcher
 const _tapStats = { mined: 0, fiberMiss: 0 }
 
 function _tapFindContainer() {
-  return (
-    document.querySelector('.chat-scrollable-area__message-container') ||
-    document.querySelector('[data-test-selector="chat-scrollable-area__message-container"]')
-  )
+  return hsQuery('twitch:chat-message-container', [
+    CONFIG.SELECTORS.TWITCH_CHAT_CONTAINER,
+    '[data-test-selector="chat-scrollable-area__message-container"]',
+  ])
 }
 
 // Walk the row's fiber tree for memoizedProps.message (twitch's chat-line

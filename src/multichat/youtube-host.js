@@ -6,7 +6,7 @@
 // YT_MIN_PRIMARY_WIDTH gutter for the player.
 function getYtMaxChatWidth() {
   if (hostPlatform !== 'yt') return MAX_CHAT_WIDTH
-  const flexy = document.querySelector('ytd-watch-flexy:not([hidden])')
+  const flexy = hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')
   const flexyW = flexy?.getBoundingClientRect?.().width || 0
   const vw = window.innerWidth || document.documentElement.clientWidth || 1280
   const available = flexyW > 0 ? Math.min(flexyW, vw) : vw
@@ -17,7 +17,7 @@ function getYtMaxChatWidth() {
 // restore our width overrides at the right moment.
 function watchYtLayoutAttrs() {
   if (hostPlatform !== 'yt') return
-  const flexy = document.querySelector('ytd-watch-flexy:not([hidden])')
+  const flexy = hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')
   if (!flexy) return
   const obs = new MutationObserver(() => applyYouTubeChatWidth())
   obs.observe(flexy, { attributes: true, attributeFilter: ['theater', 'fullscreen', 'is-two-columns_'] })
@@ -38,9 +38,9 @@ function watchYtFlexyMount() {
   // observer was already torn down.
   if (hostPlatform !== 'yt') return
   if (_ytFlexyMountObs) return
-  if (document.querySelector('ytd-watch-flexy:not([hidden])')) return // already there
+  if (hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return // already there
   _ytFlexyMountObs = new MutationObserver(() => {
-    if (!document.querySelector('ytd-watch-flexy:not([hidden])')) return
+    if (!hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return
     cleanup.untrackObserver(_ytFlexyMountObs)
     _ytFlexyMountObs = null
     try {
@@ -96,7 +96,7 @@ function watchYtViewportClamp() {
  * Setup resize handle for YouTube — left edge of #secondary sidebar
  */
 function setupYouTubeResizeHandle() {
-  const secondary = document.querySelector('#secondary, ytd-watch-flexy #secondary')
+  const secondary = hsQuery('yt:secondary', '#secondary, ytd-watch-flexy #secondary')
   const mcContainer = document.getElementById('hs-mc-container')
   if (!secondary || !mcContainer || document.getElementById('hs-yt-resize-handle')) return
 
@@ -237,13 +237,13 @@ function _hsSetYtBelowTop() {
     _hsClearYtFullBleed()
     return
   }
-  const flexy = document.querySelector('ytd-watch-flexy')
+  const flexy = hsQuery('yt:watch-flexy-any', 'ytd-watch-flexy')
   if (flexy?.hasAttribute('fullscreen')) {
     document.documentElement.style.removeProperty('--hs-yt-below-top')
     _hsClearYtFullBleed()
     return
   }
-  const mp = document.querySelector('#movie_player') || document.querySelector('.html5-video-player')
+  const mp = hsQuery('yt:movie-player', ['#movie_player', '.html5-video-player'])
   const b = mp?.getBoundingClientRect()
   if (!b || b.height <= 0) return
   // THEATRE + side chat: YT keeps #full-bleed-container at the full-WIDTH 16:9
@@ -281,7 +281,7 @@ function _hsCheckYtPlayerMoved() {
     _hsLastMpRect = null // panel hidden — nothing to reposition
     return
   }
-  const mp = document.querySelector('#movie_player') || document.querySelector('.html5-video-player')
+  const mp = hsQuery('yt:movie-player', ['#movie_player', '.html5-video-player'])
   const b = mp?.getBoundingClientRect()
   if (!b || b.height === 0) return
   const last = _hsLastMpRect
@@ -299,7 +299,7 @@ function _hsCheckYtPlayerMoved() {
   }
 }
 function _hsEnsureYtBelowObserver(_tries) {
-  const mp = document.querySelector('#movie_player')
+  const mp = hsQuery('yt:movie-player', '#movie_player')
   // On fresh load applyPlatformPositionOverrides often runs before #movie_player
   // exists; self-retry so the observer attaches once the player mounts (instead
   // of depending on the function happening to re-run after). ~12s ceiling.

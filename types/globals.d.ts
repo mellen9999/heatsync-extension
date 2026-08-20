@@ -19,7 +19,19 @@ interface Window {
   /** ring-buffer of slow callback records (capped at 200) */
   __hsPerfLog?: Array<{ kind: string; ms: number; dur: number; at: number; src: string }>
   /** error reporter singleton guard */
-  __hsErrorReporter?: unknown
+  __hsErrorReporter?: {
+    capture?: (rec: Record<string, unknown>) => void
+    flush?: () => void
+    ver?: string
+    plat?: string
+  }
+  /** runtime diagnostics console handle (src/lib/diag.js) */
+  __hsDiag?: {
+    snapshot: () => { selectors: Record<string, unknown>; swallowed: Record<string, number> }
+    verbose: (on: boolean) => boolean
+  }
+  /** when true, swallow() writes named catch-sites into the error ring buffer */
+  __hsDiagVerbose?: boolean
   /** dedup flag for ctx-death page reload */
   __heatsyncReloadScheduled?: boolean
   /** debug flag (set via localStorage heatsync_debug=true) */

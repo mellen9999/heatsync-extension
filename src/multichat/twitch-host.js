@@ -13,7 +13,7 @@ let _ttvPpStyleObserver = null
 let _ttvPpLastSeen = null
 function pinTwitchPersistentPlayer() {
   if (hostPlatform !== 'twitch' || isKick) return
-  const pp = document.querySelector('.persistent-player')
+  const pp = hsQuery('twitch:persistent-player', '.persistent-player')
   if (!pp) return
   // For non-right chatPosition, the player must inset around the chat
   // strip. applyChatPosition's first call fires before .persistent-player
@@ -38,7 +38,7 @@ function pinTwitchPersistentPlayer() {
   // (~185×104) on the channel-home page. Pinning it top:0/left:0 makes it
   // float awkwardly in the corner instead of where Twitch positioned it.
   // Skip pinning when .channel-root--home is present.
-  if (document.querySelector('.channel-root--home')) {
+  if (hsQuery('twitch:channel-root-home', '.channel-root--home')) {
     // Also clear any prior pin we may have applied before going offline.
     if (pp.style.top === '0px' || pp.style.left === '0px') {
       pp.style.removeProperty('top')
@@ -50,7 +50,7 @@ function pinTwitchPersistentPlayer() {
   // .persistent-player into Twitch's floating mini-player mode — no
   // .channel-root is present. Pinning top:0/left:0 breaks the mini-player
   // corner position; clear any stale overrides and let Twitch own it.
-  if (!document.querySelector('.channel-root, [class*="channel-root"]')) {
+  if (!hsQuery('twitch:channel-root', '.channel-root, [class*="channel-root"]')) {
     if (pp.style.top === '0px') pp.style.removeProperty('top')
     if (pp.style.left === '0px') pp.style.removeProperty('left')
     return
@@ -74,13 +74,13 @@ function pinTwitchPersistentPlayer() {
       if (chatPosition !== 'right' || theatreMode) return
       // Same offline guard inside the style observer — Twitch's React may
       // re-render mid-session (live → offline) and we'd otherwise re-pin.
-      if (document.querySelector('.channel-root--home')) return
+      if (hsQuery('twitch:channel-root-home', '.channel-root--home')) return
       // Same mini-player guard as the mount path: browsing away from a live
       // stream floats the player bottom-right with Twitch's own top offset
       // (> 200px by design). Re-pinning it here shoved the mini-player above
       // the viewport, putting its close button out of reach. Clear any pin
       // we already applied so the float lands where Twitch wants it.
-      if (!document.querySelector('.channel-root, [class*="channel-root"]')) {
+      if (!hsQuery('twitch:channel-root', '.channel-root, [class*="channel-root"]')) {
         if (pp.style.top === '0px') pp.style.removeProperty('top')
         if (pp.style.left === '0px') pp.style.removeProperty('left')
         return
@@ -174,7 +174,7 @@ function watchTwitchPersistentPlayer() {
 // (persistent-player inset, channel-root padding) updates too.
 function updateTwitchSideNavWidth() {
   if (hostPlatform !== 'twitch') return
-  const nav = document.querySelector('.side-nav')
+  const nav = hsQuery('twitch:side-nav', '.side-nav')
   const w = nav?.getBoundingClientRect?.().width
   const next = w && w > 0 ? Math.round(w) : TWITCH_SIDE_NAV_WIDTH
   if (next === _twitchSideNavW) return
@@ -197,7 +197,7 @@ let _twitchTopNavObs = null
 // so the offset auto-collapses and chat reclaims the full viewport.
 function updateTwitchTopNavHeight() {
   if (hostPlatform !== 'twitch') return
-  const nav = document.querySelector('.top-nav')
+  const nav = hsQuery('twitch:top-nav', '.top-nav')
   let h = 0
   if (nav) {
     const r = nav.getBoundingClientRect()
@@ -223,7 +223,7 @@ function setupTwitchTopNavObserver() {
     } catch (_) {}
     _twitchTopNavObs = null
   }
-  const nav = document.querySelector('.top-nav')
+  const nav = hsQuery('twitch:top-nav', '.top-nav')
   if (nav && typeof ResizeObserver !== 'undefined') {
     _twitchTopNavObs = new ResizeObserver(() => updateTwitchTopNavHeight())
     _twitchTopNavObs.observe(nav)
@@ -364,7 +364,7 @@ function softTwitchNav(prevLiveCh) {
           setNativeChatHidden(true)
         } catch (_) {}
     })
-    const target = document.querySelector(`.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
+    const target = hsQuery('twitch:chat-shell', `.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
     if (target) {
       reHide.observe(target, { childList: true })
       cleanup.trackObserver(reHide)
@@ -400,7 +400,7 @@ function softTwitchNav(prevLiveCh) {
   }
   const tryReparent = () => {
     if (done) return true
-    const chatShell = document.querySelector('.chat-shell, [class*="chat-shell"]')
+    const chatShell = hsQuery('twitch:chat-shell', `.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
     const c = document.getElementById('hs-mc-container')
     if (chatShell && c && !chatShell.contains(c)) {
       chatShell.appendChild(c)

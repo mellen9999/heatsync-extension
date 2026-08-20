@@ -77,6 +77,22 @@ function sizeDeclarations() {
  *
  * This list may only ever SHRINK. Adding to it means shipping smeared text.
  */
+/**
+ * ⚠ "it is only a glyph" is NOT sufficient justification on its own.
+ *
+ * hs-mc-reply-caret sat here as "↳ glyph" and was still a real bug: it lives
+ * inside .hs-mc-reply-ctx, an inline-block, so its 4.625px scaled advance made
+ * the whole pill 70.625px wide and started every glyph of the MESSAGE after it
+ * on a sub-pixel x. Measured 0.625 with a reply context, 0 without. A glyph is
+ * only safely off-grid when nothing downstream inherits its advance — i.e. it
+ * is absolutely positioned, a flex/grid item, or last in its line.
+ *
+ * Entries below that are inline and precede text should be re-measured with
+ * that criterion, not grandfathered. hs-whisper-arrow (02-tab-bar.css) and
+ * hs-mc-st-arrow (13-platform-filter-picker.css) are the reference pattern for
+ * doing it right: off-grid size, but pulled out of the Cozette stack and pinned
+ * to an integer width/height so the advance cannot leak downstream.
+ */
 const KNOWN_OFF_GRID = new Set([
   'hs-whisper-arrow', // ▸ glyph
   'hs-mc-multi-dismiss', // ✕ glyph
@@ -86,7 +102,6 @@ const KNOWN_OFF_GRID = new Set([
   'pinned-callout__icon', // twitch's own icon element, restyled
   'hs-feed-embed-yt-play', // ▶ glyph
   'hs-mc-playable', // ▶/⏸ ::before glyph
-  'hs-mc-reply-caret', // ↳ glyph
   'hs-pc-name', // profile-card chrome (vector stack)
   'hs-mc-empty-title', // empty-state heading
   'hs-mc-stack-block-all', // control label
@@ -124,7 +139,7 @@ describe('bitmap font grid guard (extension)', () => {
   it('the known-off-grid list has not grown', () => {
     // A ratchet: this number may go DOWN as entries get fixed or moved into
     // the AA counter-rule, never up.
-    expect(KNOWN_OFF_GRID.size).toBeLessThanOrEqual(19)
+    expect(KNOWN_OFF_GRID.size).toBeLessThanOrEqual(18)
   })
 
   it('every KNOWN_OFF_GRID entry still corresponds to a real declaration', () => {

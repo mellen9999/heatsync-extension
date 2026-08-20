@@ -1233,7 +1233,19 @@
       cursor: pointer;
     }
     .hs-mc-reply-caret {
-      font-size: 10px;
+      /* font-size, NOT 10px. Cozette is a bitmap face: its cell advance is 6px
+         at 13px, and 10px scales that to 4.625 — a fractional advance. The
+         caret sits inside .hs-mc-reply-ctx, which is an inline-block, so a
+         fractional child made the whole pill 70.625px wide and started every
+         glyph of the message AFTER it on a sub-pixel x. Measured: message text
+         with a reply context sat at x-fraction 0.625, the same text without one
+         at 0. That is the whole "the reply ui makes the text blurry" report.
+         Inheriting 13px also renders the caret from Cozette's native cell
+         instead of a downscaled bitmap, so the glyph itself stops being fuzzy —
+         pinning an integer width would have fixed the tail and left the caret
+         soft. Subtlety comes from opacity, which costs no geometry.
+         Guarded by the smear assertion in scripts/render-extension.ts. */
+      font-size: inherit;
       opacity: 0.55;
       margin-left: 2px;
     }

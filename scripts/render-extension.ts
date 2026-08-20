@@ -256,6 +256,76 @@ try {
   if (seen.size !== 4) fail(`rotate did not visit all four positions — saw ${[...seen].join(', ')}`)
   ok('rotate cycles through all four docking positions')
 
+  // ── bitmap crispness: the reply context must not smear the message ───────
+  // CozetteVector is a 6x13 bitmap cell. It is crisp only when a glyph starts
+  // on a whole pixel, so anything inline BEFORE the message text leaks its
+  // advance into every glyph after it. The reply pill is an inline-block, so a
+  // fractional child made the pill fractional and put the entire message on a
+  // sub-pixel x — measured 0.625 with a reply, 0 without. That is invisible to
+  // every other kind of test in this repo: the DOM is correct, the CSS is
+  // correct, and the only symptom is that the letters look soft.
+  //
+  // The markup is copied verbatim from the reply-bar builder in main.js, and
+  // the assertion below pins that it has not drifted from the renderer.
+  const smear = await p.evaluate(() => {
+    const msgs = document.getElementById('hs-mc-messages')
+    if (!msgs) return null
+    const keep = msgs.innerHTML
+    const TAIL = 'florida is building charging stations for flying car launch pads'
+    const pill =
+      '<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="dongblob: hi">&#8618;' +
+      '<a href="https://heatsync.org/user/dongblob" class="hs-mc-user hs-mc-reply-user" data-username="dongblob">@dongblob</a>' +
+      '<span class="hs-mc-reply-caret" aria-hidden="true"></span></span> '
+    const mk = (html: string) => {
+      const d = document.createElement('div')
+      d.className = 'hs-mc-msg'
+      d.innerHTML = `<span class="hs-mc-user">mellen</span>: ${html}`
+      msgs.appendChild(d)
+      return d
+    }
+    const withReply = mk(pill + TAIL)
+    const plain = mk(TAIL)
+    const tailFrac = (el: HTMLElement) => {
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      let n: Node | null
+      let last: Node | null = null
+      while ((n = w.nextNode())) if ((n.textContent || '').trim().length > 3) last = n
+      if (!last) return null
+      const r = document.createRange()
+      r.setStart(last, 0)
+      r.setEnd(last, 1)
+      return +(r.getBoundingClientRect().x % 1).toFixed(3)
+    }
+    const caret = withReply.querySelector('.hs-mc-reply-caret') as HTMLElement
+    const pillEl = withReply.querySelector('.hs-mc-reply-ctx') as HTMLElement
+    const out = {
+      withReply: tailFrac(withReply),
+      plain: tailFrac(plain),
+      pillWidth: +pillEl.getBoundingClientRect().width.toFixed(3),
+      caretWidth: +caret.getBoundingClientRect().width.toFixed(3),
+      caretPx: getComputedStyle(caret).fontSize,
+      pillPx: getComputedStyle(pillEl).fontSize,
+    }
+    msgs.innerHTML = keep
+    return out
+  })
+
+  if (!smear) fail('could not reach #hs-mc-messages to measure bitmap crispness')
+  if (smear.plain !== 0) {
+    fail(`plain message text is already off the pixel grid (x-fraction ${smear.plain}) — the baseline is broken`)
+  }
+  if (smear.withReply !== 0) {
+    fail(
+      `a reply context smears the message: text starts at x-fraction ${smear.withReply} (plain text is ${smear.plain}). ` +
+        `Reply pill is ${smear.pillWidth}px, caret ${smear.caretWidth}px at ${smear.caretPx}. ` +
+        'CozetteVector is a bitmap face — a fractional advance before the text makes every glyph after it soft.',
+    )
+  }
+  if (smear.caretWidth % 1 !== 0) {
+    fail(`the reply caret has a fractional advance (${smear.caretWidth}px at ${smear.caretPx}) — it will smear whatever follows it`)
+  }
+  ok(`reply context keeps the message on the pixel grid (pill ${smear.pillWidth}px, caret ${smear.caretWidth}px)`)
+
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)
 } catch (e) {

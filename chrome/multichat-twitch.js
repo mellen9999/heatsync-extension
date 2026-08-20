@@ -62114,6 +62114,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   let pendingMessage = '' // Persists across tab switches
   let tabPosition = 'top' // 'top', 'right', 'bottom', 'left'
   let resizeObserver = null // Tracks overlay top sync observer
+  // Exact nodes resizeObserver is currently watching. ensureUIElements can
+  // replace tabBarElement/inputBarElement on any platform re-render, and an
+  // observer created once would keep watching the detached originals — so the
+  // targets are reconciled against this list on every pass.
+  let _roWatched = []
   let _updateMcLayout = () => {} // Set by ensureUIElements; callable from rotateTabPosition
   let _mcStorageListener = null
 
@@ -68512,11 +68517,27 @@ const STORAGE_KEY = 'heatsync_multichat'
       syncPickerBox()
     }
 
-    if (tabBarElement && overlayElement && !resizeObserver) {
-      resizeObserver = new ResizeObserver(_updateMcLayout)
-      resizeObserver.observe(tabBarElement)
-      if (inputBarElement) resizeObserver.observe(inputBarElement)
-      cleanup.trackObserver(resizeObserver)
+    // Re-observe on every pass, not just the first. The bug this fixes: the tab
+    // bar is `flex-wrap: wrap` with a max-height, so during boot it measures
+    // ~307px while still wrapped to five rows, then settles to 55px a moment
+    // later. The ResizeObserver that should catch that shrink was created once
+    // behind a `!resizeObserver` guard — so after any rebuild it was pointed at
+    // a DETACHED tab bar, the shrink never fired _updateMcLayout, and the
+    // overlay kept the boot-time inset for the rest of the session: ~510px of
+    // chat instead of ~828px, with 318px of dead space under it.
+    if (tabBarElement && overlayElement) {
+      const watch = inputBarElement ? [tabBarElement, inputBarElement] : [tabBarElement]
+      const stale = !resizeObserver || watch.length !== _roWatched.length || watch.some((el, i) => el !== _roWatched[i])
+      if (stale) {
+        if (resizeObserver) cleanup.untrackObserver(resizeObserver)
+        resizeObserver = new ResizeObserver(_updateMcLayout)
+        for (const el of watch) resizeObserver.observe(el)
+        cleanup.trackObserver(resizeObserver)
+        _roWatched = watch
+      }
+      // Always recompute: a rebuild gives _updateMcLayout a fresh closure with
+      // an empty _lastMcLayoutSig, and the fresh tab/input nodes carry none of
+      // the inline insets the old ones had.
       _updateMcLayout()
     }
 
@@ -77519,6 +77540,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       overlayElement = null
       inputBarElement = null
       resizeObserver = null
+      _roWatched = []
       ensureUIElements()
       updateTabBar()
       renderMessages(currentTab)

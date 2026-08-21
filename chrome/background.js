@@ -6091,7 +6091,10 @@ function handleWSMessage(msg) {
             log(' 🎛️  ui-state sync received (overflow):', overflowKeys.length, 'keys')
             browser.storage.local.set(overflow).catch(() => {})
           }
-          broadcastToTabs({ type: 'ui_state_update', state: cleanState })
+          // No broadcast. uiSettingsRmw above writes chrome.storage.sync
+          // .ui_settings, and the overlay's storage.onChanged listener in
+          // main.js is what actually re-applies a setting live. This message
+          // has never had a listener in any content script.
         }
         break
       }
@@ -6168,10 +6171,11 @@ function handleWSMessage(msg) {
         unreadNotifCount++
         browser.storage.session?.set({ unread_notif_count: unreadNotifCount }).catch(() => {})
         updateExtensionBadge()
-        broadcastToTabs({
-          type: 'notification:new',
-          data: msg.data,
-        })
+        // No broadcast. The toolbar badge is the surface for heatsync
+        // notifications; the overlay's HsNotifs has no registered type for
+        // them, so this message has never had a listener. If in-overlay
+        // notification toasts are wanted, that is a type to register — not a
+        // message to keep sending into nothing.
         break
 
       case 'youtube:chat':
@@ -6694,9 +6698,10 @@ function handleWSMessage(msg) {
             log(' settings:patch received (overflow):', overflowKeys)
             browser.storage.local.set(overflow).catch(() => {})
           }
-          if (patchKeys.length > 0 || overflowKeys.length > 0) {
-            broadcastToTabs({ type: 'ui_state_update', state: cleanPatch })
-          }
+          // No broadcast here either: same as the ui-state:update path above,
+          // the storage write is what the overlay reacts to. The `if
+          // (patchKeys.length || overflowKeys.length)` that used to wrap it
+          // guarded nothing else, so it went with it.
         }
         break
       }
@@ -7121,15 +7126,14 @@ async function removeFromInventory(emoteHash, emoteName) {
   return p
 }
 
+// No emote_remove_failed broadcasts in here. Every one was a strict duplicate
+// of the { success:false, error } this function already returns, and the picker
+// — its only caller — reads that return and toasts from it. No content script
+// has ever listened for the message.
 async function _removeFromInventoryImpl(emoteHash, emoteName) {
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
-      broadcastToTabs({
-        type: 'emote_remove_failed',
-        emoteName,
-        error: 'Not logged in',
-      })
       return { success: false, error: 'Not logged in' }
     }
 
@@ -7153,11 +7157,6 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
       emote = emoteInventory.find((e) => e.hash === emoteHash || e.name === emoteName)
       if (!emote) {
         broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-        broadcastToTabs({
-          type: 'emote_remove_failed',
-          emoteName,
-          error: 'Emote not found in your set',
-        })
         return { success: false, error: 'Emote not found in your set' }
       }
     }
@@ -7169,11 +7168,6 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
       const refreshedEmote = emoteInventory.find((e) => e.hash === emoteHash || e.name === emoteName)
       if (refreshedEmote?.slot == null) {
         broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-        broadcastToTabs({
-          type: 'emote_remove_failed',
-          emoteName,
-          error: 'Could not determine emote slot',
-        })
         return { success: false, error: 'Could not determine emote slot' }
       }
       emote.slot = refreshedEmote.slot
@@ -7243,11 +7237,6 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
         return { success: true, slot: emote.slot, reconciled: true }
       }
       broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-      broadcastToTabs({
-        type: 'emote_remove_failed',
-        emoteName,
-        error: data.error || `Server error (${response.status})`,
-      })
       return { success: false, error: data.error || `HTTP ${response.status}` }
     }
 
@@ -7287,11 +7276,6 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
     return { success: true, slot: emote.slot }
   } catch (error) {
     broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-    broadcastToTabs({
-      type: 'emote_remove_failed',
-      emoteName,
-      error: error.message || 'Network error',
-    })
     return { success: false, error: error.message || 'Network error' }
   }
 }

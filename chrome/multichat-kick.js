@@ -76289,7 +76289,15 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Kick page-level chat tap — third transport line for the current page
       // channel, inert while the BG Pusher tap / server relay are delivering.
       // typeof-guarded: the module is bundled for the kick host only.
-      if (hostPlatform === 'kick' && typeof initKickNativeTap === 'function') {
+      //
+      // gKick, matching the twitch tap two blocks up. The module gates itself on
+      // its OWN toggle (kick-native-tap) but never checked whether kick chat is
+      // enabled at all, so switching the chat-kick subsystem off skipped
+      // kickChat.connect() and left this running — and because this tap is
+      // designed to be inert only WHILE the relay delivers, turning kick off did
+      // not merely leak, it woke the fallback up. A control that does not cover
+      // what it claims to is worse than no control.
+      if (gKick && hostPlatform === 'kick' && typeof initKickNativeTap === 'function') {
         try {
           initKickNativeTap()
         } catch (_) {}

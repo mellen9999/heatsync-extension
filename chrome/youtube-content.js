@@ -1559,6 +1559,19 @@
     input.dispatchEvent(new InputEvent('input', { bubbles: true, data: `${emoteName} `, inputType: 'insertText' }))
   }
 
+  // Direct handle for heatsync-button.js. Both scripts are ISOLATED content
+  // scripts on youtube.com (manifest groups 15 and 16), so they share one
+  // window — the same way content.js exposes heatsyncGetRecentChatters to the
+  // kick autocomplete hook.
+  //
+  // It used to go chrome.runtime.sendMessage → this file's onMessage listener,
+  // which does not work: runtime.sendMessage delivers to the background and
+  // extension pages, NOT to content scripts. Verified in a real chromium with
+  // tabs.sendMessage as the control — same payload, same listener, only the
+  // tabs call arrived. The message branch below stays for the background,
+  // which can reach it via tabs.sendMessage.
+  window.__hsYtInsertEmote = handleInsertEmote
+
   // ─── Send Relay ───────────────────────────────────────────────────────────────
 
   /**

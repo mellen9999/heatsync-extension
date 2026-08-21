@@ -4974,9 +4974,17 @@
         return
       }
 
-      if (platform === 'youtube') {
-        // YouTube: delegate to youtube-content.js via message (execCommand deprecated)
-        chrome.runtime.sendMessage({ type: 'youtube_insert_emote', emoteName })
+      if (platform === 'youtube' && typeof window.__hsYtInsertEmote === 'function') {
+        // YouTube needs a range insert + a synthetic InputEvent for its Polymer
+        // input; execCommand does not drive it. youtube-content.js owns that
+        // routine and shares this isolated world, so call it directly.
+        //
+        // This was a chrome.runtime.sendMessage to that file's onMessage
+        // listener, which never arrived: runtime.sendMessage does not deliver
+        // to content scripts. Clicking an emote in the picker on youtube did
+        // nothing at all — the one place in the codebase that messaged
+        // content-script-to-content-script.
+        window.__hsYtInsertEmote(emoteName)
       } else {
         // Twitch/Kick: contenteditable. Slate keeps phantom <p><br></p> blocks
         // when visually empty — textContent is "" but cursor sits in a later

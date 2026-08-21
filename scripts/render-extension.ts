@@ -292,6 +292,76 @@ async function ytInsertCheck() {
   }
 }
 
+/**
+ * The picker, end to end, with no message driven by hand: mount the button on a
+ * /live_chat page, click it, click an emote tile, read the chat input.
+ *
+ * Uses the emoji tab deliberately — channel/global/mine all fetch heatsync.org,
+ * which this harness blocks, so they render an error state instead of a grid.
+ * The emoji tab renders from the bundled EMOJI_DATA with no network and shares
+ * the same delegated click handler and the same insertEmoteIntoChat call.
+ */
+async function ytPickerClickCheck() {
+  console.log('\n── youtube picker, clicked for real ──')
+  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-ytpick-'))
+  const c = await launchWithExtension(prof, ['--window-size=1280,900'])
+  try {
+    await c.route('https://heatsync.org/**', (r: any) => r.abort())
+    const chatBody =
+      '<yt-live-chat-text-input-field-renderer><div id="buttons"></div>' +
+      '<div id="input" contenteditable="true"></div></yt-live-chat-text-input-field-renderer>'
+    await c.route('https://www.youtube.com/**', (r: any) =>
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(chatBody) }),
+    )
+
+    const p = await c.newPage()
+    p.on('pageerror', (e: unknown) => errors.push(`yt-picker: ${String(e).slice(0, 300)}`))
+    await p.goto('https://www.youtube.com/live_chat?v=PICKERCHECK', { waitUntil: 'domcontentloaded' })
+
+    await p
+      .waitForSelector('#heatsync-chat-button', { timeout: 20_000 })
+      .catch(() => fail('the heatsync button never mounted on /live_chat — nothing below can be clicked'))
+
+    const readInput = () =>
+      p.evaluate(
+        () => document.querySelector('yt-live-chat-text-input-field-renderer div#input')?.textContent || '',
+      )
+    if ((await readInput()) !== '') fail('the fixture chat input did not start empty')
+
+    // The multichat overlay mounts full-bleed over a fixture that has no layout
+    // of its own and would swallow the clicks. It is not part of this path.
+    await p.evaluate(() => {
+      const el = document.getElementById('hs-mc-container')
+      if (el) (el as HTMLElement).style.display = 'none'
+    })
+
+    await p.click('#heatsync-chat-button')
+    await p.waitForSelector('#heatsync-panel', { timeout: 10_000 }).catch(() => fail('the picker panel never opened'))
+    await p.waitForTimeout(1000)
+
+    await p.click('#heatsync-panel .heatsync-tab[data-tab="emoji"]')
+    await p.waitForTimeout(1000)
+
+    const tiles = await p.$$('#heatsync-panel .heatsync-emote-wrap')
+    if (!tiles.length) fail('the emoji tab rendered no tiles — the picker grid itself is broken')
+    await tiles[0].click()
+    await p.waitForTimeout(1200)
+
+    const after = await readInput()
+    if (!after.trim()) {
+      fail(
+        'clicking an emote in the picker put nothing in the youtube chat input. ' +
+          'that is the bug this check exists for: heatsync-button.js used ' +
+          'chrome.runtime.sendMessage to reach youtube-content.js, which never arrives.',
+      )
+    }
+    ok(`picker click inserts into the youtube chat input (${JSON.stringify(after.trim())})`)
+  } finally {
+    await c.close().catch(() => {})
+    rmSync(prof, { recursive: true, force: true })
+  }
+}
+
 async function gateCheck() {
   console.log('\n── subsystem kill-switches ──')
 
@@ -890,6 +960,12 @@ try {
   // message sent both ways in one run. runtime.sendMessage — what the picker
   // used — never arrives at a content script, and nothing reports that.
   await ytInsertCheck()
+
+  // ── and the same thing through the actual UI ─────────────────────────────
+  // The check above drives the message by hand. This one clicks the button,
+  // opens the panel and clicks a tile — the path a person takes. Reverting the
+  // fix and re-running it leaves the input empty, which is what the bug was.
+  await ytPickerClickCheck()
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

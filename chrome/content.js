@@ -8120,7 +8120,9 @@
         }
       },
       'emote-hover-mouseover',
-      true,
+      // Capture on purpose — see the delegation note above; these have to
+      // fire before Twitch's own hover handlers.
+      { capture: true },
     )
 
     cleanup.addEventListener(
@@ -8136,7 +8138,9 @@
         }
       },
       'emote-hover-mouseout',
-      true,
+      // Capture on purpose — see the delegation note above; these have to
+      // fire before Twitch's own hover handlers.
+      { capture: true },
     )
 
     // mousemove preview killswitch — dispatched by the combined listener above

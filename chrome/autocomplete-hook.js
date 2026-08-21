@@ -48,7 +48,12 @@
       } catch (_) {}
       this._observers.delete(obs)
     },
-    addEventListener(target, event, handler, opts) {
+    // Same (label, options) in-either-order reading as src/lib/cleanup.js —
+    // this MAIN-world file keeps its own lifecycle object, and a call written
+    // for the shared one must not quietly lose its capture flag here.
+    addEventListener(target, event, handler, a, b) {
+      const aIsLabel = typeof a === 'string'
+      const opts = aIsLabel ? (typeof b === 'string' ? undefined : b) : a
       target.addEventListener(event, handler, opts)
       this._listeners.push({ target, event, handler, opts })
     },
@@ -2639,11 +2644,10 @@
           }
         }
       },
-      { capture: true },
       // `error` does not bubble — capture is the only way a delegated
       // document-level listener sees an <img> failure at all.
+      { capture: true },
       'image-error-handler',
-      true,
     )
 
     // Safety-net polling for emote image fixes the MutationObserver might miss

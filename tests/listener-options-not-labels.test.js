@@ -76,23 +76,40 @@ describe('cleanup.addEventListener', () => {
     const src = readFileSync('src/lib/cleanup.js', 'utf8')
     // The implementation has to make the distinction explicitly; there is no
     // way to observe capture from outside, so the source IS the assertion.
-    expect(src).toContain("typeof optionsOrLabel === 'string'")
+    expect(src).toContain("const aIsLabel = typeof a === 'string'")
     // And the runtime semantics this rule rests on:
     expect(Boolean('mc-picker-close')).toBe(true)
   })
 
-  test('every capture listener says capture out loud', () => {
+  test('every capture listener says capture out loud, in either slot', () => {
     const implicit = []
     for (const f of FILES) {
       for (const { line, parts } of calls(readFileSync(f, 'utf8'))) {
-        const opts = parts[3]
-        if (!opts) continue
-        // A string is a label — fine, and the point of the fix. A boolean
-        // literal `true` is capture without saying so; require the object form.
-        if (opts === 'true') implicit.push(`${f}:${line} — bare \`true\`; write { capture: true }`)
+        // BOTH trailing slots, not just the fourth. Two calls in content.js
+        // read `(document, 'mouseover', fn, 'emote-hover-mouseover', true)` —
+        // label first, capture second — and a check that only looked at the
+        // fourth argument could not see the `true` at all. Those two are
+        // delegates that must beat Twitch's own hover handlers, so losing
+        // capture there is a real behaviour change with no visible symptom.
+        for (const slot of [parts[3], parts[4]]) {
+          if (slot === 'true' || slot === 'false') {
+            implicit.push(`${f}:${line} — bare \`${slot}\`; write { capture: ${slot} }`)
+          }
+        }
       }
     }
     expect(implicit, 'capture has to be legible at the call site').toEqual([])
+  })
+
+  test('a label and options survive together, in either order', () => {
+    // The signature has to sort them by type. Reading position alone drops one
+    // of them, and which one it drops depends on the call site.
+    const src = readFileSync('src/lib/cleanup.js', 'utf8')
+    expect(src).toContain("typeof b === 'string'")
+    // The MAIN-world copy in autocomplete-hook.js keeps its own lifecycle
+    // object and needs the same reading, or a call written for the shared one
+    // silently loses its capture flag there.
+    expect(readFileSync('chrome/autocomplete-hook.js', 'utf8')).toContain("const aIsLabel = typeof a === 'string'")
   })
 
   test('the five listeners that need capture still have it', () => {

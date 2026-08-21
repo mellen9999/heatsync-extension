@@ -864,9 +864,10 @@ if (typeof window !== 'undefined') {
    * @param {EventTarget} target
    * @param {string} event
    * @param {EventListenerOrEventListenerObject} handler
-   * @param {AddEventListenerOptions|boolean|string} [optionsOrLabel] options, or a
-   *   diagnostic label (see below)
-   * @param {string} [label] diagnostic label when options are also passed
+   * @param {AddEventListenerOptions|boolean|string} [a] options, or a diagnostic
+   *   label (see below) — the two are sorted by type, not by position
+   * @param {AddEventListenerOptions|boolean|string} [b] whichever of the two `a`
+   *   was not
    *
    * A STRING here is a label, not options. Twenty-two call sites passed one —
    * 'mc-picker-close', 'emote-click', 'input-modifier-backspace' — copying the
@@ -879,13 +880,19 @@ if (typeof window !== 'undefined') {
    * and the `error` listener, since error does not bubble at all — now say so
    * with an explicit { capture: true }.
    */
-  function _trackListener(target, event, handler, optionsOrLabel, label) {
+  function _trackListener(target, event, handler, a, b) {
     if (!target || !event || !handler) return
-    const isLabel = typeof optionsOrLabel === 'string'
-    const options = isLabel ? undefined : optionsOrLabel
-    const name = isLabel ? optionsOrLabel : label
+    // The label and the options may arrive in either order, because call sites
+    // wrote both: `(t, e, h, 'label')`, `(t, e, h, 'label', true)` and
+    // `(t, e, h, { capture: true }, 'label')` all exist. Sorting them by type
+    // is the only reading that does not silently drop one of them — dropping
+    // the options is how two capture-phase delegates in content.js became
+    // bubble-phase without a single line changing at their call sites.
+    const aIsLabel = typeof a === 'string'
+    const options = aIsLabel ? (typeof b === 'string' ? undefined : b) : a
+    const label = aIsLabel ? a : typeof b === 'string' ? b : undefined
     target.addEventListener(event, handler, options)
-    _listeners.push({ target, event, handler, options, label: name })
+    _listeners.push({ target, event, handler, options, label })
   }
 
   function _untrackListener(target, event, handler) {

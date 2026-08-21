@@ -101,6 +101,25 @@
         window.history.replaceState({}, document.title, window.location.pathname)
       }
     } catch {}
+
+    // The site clears the toolbar badge through here. heatsync.org posts
+    // `heatsync-notifs-viewed` the moment its unread total hits zero
+    // (client/managers/notification-manager.js), and background.js has always
+    // had a `notifs_viewed` handler waiting — but nothing joined the two, so
+    // the message went nowhere and the handler never ran once. The badge's
+    // only correction was hydrateUnreadNotifCount() on the next websocket
+    // auth, which on a long-lived socket can be hours after the user actually
+    // read them.
+    window.addEventListener('message', (event) => {
+      // Same-window, same-origin only: this runs on heatsync.org, and the
+      // sender is the page's own main-world script.
+      if (event.source !== window) return
+      if (event.origin !== window.location.origin) return
+      if (event.data?.type !== 'heatsync-notifs-viewed') return
+      try {
+        chrome.runtime.sendMessage({ type: 'notifs_viewed' })
+      } catch {}
+    })
     return
   }
 

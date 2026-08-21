@@ -8544,8 +8544,6 @@ async function handleMessage(message, sender, sendResponse) {
     broadcastToTabs({ type: 'user_unblocked', username: message.username })
     log(' Unblocked user:', message.username)
     sendResponse({ ok: true })
-  } else if (message.type === 'get_blocked_users') {
-    sendResponse({ users: Array.from(blockedUsers) })
   } else if (message.type === 'get_twitch_auth_token') {
     // Cross-domain Twitch cookie access (for sending from Kick/YouTube pages)
     // The stored identity, not `userInfo` — that is a local const inside

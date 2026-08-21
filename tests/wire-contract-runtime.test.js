@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import ts from 'typescript'
 
 /**
  * chrome.runtime.sendMessage does NOT reach content scripts.
@@ -60,6 +61,40 @@ function handledByBackground() {
 // real send. Named here so the exemption is visible rather than pattern-hidden.
 const NOT_A_REAL_SEND = new Set(['foo'])
 
+/**
+ * The MIRROR direction: a handler nothing sends to.
+ *
+ * This file only ever asked "is every message we send handled?" — and every
+ * defect of this shape lives in the other direction. A handler with no sender
+ * is quieter than a send with no handler: the dead code is the HANDLER, so you
+ * can read it, breakpoint it, and it is simply never called. `notifs_viewed`
+ * sat here for months clearing the toolbar badge, while heatsync.org posted
+ * `heatsync-notifs-viewed` into a window nothing was listening to. Both ends
+ * were built; nobody joined them, and the badge only ever corrected itself on
+ * the next websocket reconnect.
+ *
+ * Scoped to handleMessage, parsed with the TypeScript compiler API. Doing this
+ * by grepping background.js for `case '…'` sweeps in the WEBSOCKET dispatcher
+ * too, whose types come from the server in another repo — 49 false positives,
+ * every one of them working code.
+ */
+function dispatchedByRouter() {
+  const file = join(ROOT, 'chrome', 'background.js')
+  const src = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
+  let fn = null
+  const walk = (n) => {
+    if (ts.isFunctionDeclaration(n) && n.name?.text === 'handleMessage') fn = n
+    ts.forEachChild(n, walk)
+  }
+  walk(src)
+  if (!fn) return null
+  const body = fn.getText(src)
+  const types = new Set()
+  for (const m of body.matchAll(/(?:message|msg|m)\.type === '([a-z0-9_:.-]+)'/gi)) types.add(m[1])
+  for (const m of body.matchAll(/case '([a-z0-9_:.-]+)':/gi)) types.add(m[1])
+  return types
+}
+
 describe('runtime.sendMessage wire contract', () => {
   const handled = handledByBackground()
 
@@ -83,6 +118,25 @@ describe('runtime.sendMessage wire contract', () => {
       [...new Set(orphans)],
       'sent with runtime.sendMessage but no background handler — if the intended reader is a ' +
         'content script it will never arrive, silently',
+    ).toEqual([])
+  })
+
+  test('the router extraction found handleMessage', () => {
+    const t = dispatchedByRouter()
+    expect(t, 'handleMessage is gone or renamed — the mirror check below would pass over nothing').not.toBeNull()
+    expect(t.size).toBeGreaterThan(40)
+    expect(t.has('set_auth_token')).toBe(true)
+  })
+
+  test('nothing in the router waits for a message no one sends', () => {
+    const senders = new Set()
+    for (const [, src] of sources()) {
+      for (const m of src.matchAll(/type:\s*'([a-z0-9_:.-]+)'/gi)) senders.add(m[1])
+    }
+    const orphans = [...dispatchedByRouter()].filter((t) => !senders.has(t)).sort()
+    expect(
+      orphans,
+      'handled by background but sent by nobody — the feature behind each is off and looks wired',
     ).toEqual([])
   })
 

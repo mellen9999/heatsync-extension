@@ -208,9 +208,43 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
     const hit = (needle: string) => texts.some((t) => t.includes(needle))
     return { wire, twitch: hit('GATEPROBE_TWITCH'), kick: hit('GATEPROBE_KICK'), yt: hit('GATEPROBE_YT') }
   } finally {
-    await c.close().catch(() => {})
+    await closeContext(c, 'check', prof)
     rmSync(prof, { recursive: true, force: true })
   }
+}
+
+/**
+ * Closing a persistent context that still holds a websocket to a local mock can
+ * hang forever, and a harness that hangs is worse than one that fails: there is
+ * nothing to read. Bounded, and it says so when it gives up.
+ */
+async function closeContext(c: any, label: string, profile?: string) {
+  const closed = await Promise.race([
+    c
+      .close()
+      .then(() => true)
+      .catch(() => true),
+    new Promise((r) => setTimeout(() => r(false), 20_000)),
+  ])
+  if (closed) return
+  // A chromium that will not close is not a cosmetic problem here: this script
+  // launches nine of them in sequence, and every leaked one competes for the
+  // machine with the checks that follow. That is what made the later checks
+  // fail — a different platform each run, always the one that ran last — until
+  // the leak itself was the thing fixed. Kill it by its profile directory,
+  // which is unique per launch and cannot match anything else.
+  if (profile) {
+    try {
+      execFileSync('pkill', ['-f', `user-data-dir=${profile}`], { stdio: 'ignore' })
+      console.log(`  ! ${label}: the browser did not close in 20s — killed it by profile`)
+      return
+    } catch (_) {
+      /* pkill exits non-zero when nothing matched, which is the good case */
+      console.log(`  ! ${label}: the browser did not close in 20s — nothing left to kill`)
+      return
+    }
+  }
+  console.log(`  ! ${label}: the browser did not close in 20s — leaving it to the process exit`)
 }
 
 /**
@@ -288,7 +322,7 @@ async function ytInsertCheck() {
     }
     ok('runtime.sendMessage still does not reach a content script — the direct call is required')
   } finally {
-    await c.close().catch(() => {})
+    await closeContext(c, 'check', prof)
     rmSync(prof, { recursive: true, force: true })
   }
 }
@@ -338,6 +372,11 @@ const PICKER_SURFACES = [
 
 async function pickerClickCheck() {
   console.log('\n── the picker, clicked for real ──')
+  // One browser PER platform, deliberately. Sharing a context to save launches
+  // was tried and reverted: chrome.storage is shared across it, so state the
+  // extension persisted on twitch and kick changed what the youtube run saw and
+  // its emoji tab stopped being clickable. Three launches is the honest cost of
+  // three independent surfaces.
   for (const plat of PICKER_SURFACES) {
     const prof = mkdtempSync(join(tmpdir(), `hs-ext-pick-${plat.name}-`))
     const c = await launchWithExtension(prof, ['--window-size=1280,900'])
@@ -367,19 +406,51 @@ async function pickerClickCheck() {
         if (el) (el as HTMLElement).style.display = 'none'
       })
 
-      await p.click('#heatsync-chat-button')
+      const opened = await p
+        .$eval('#heatsync-chat-button', (el: any) => {
+          el.click()
+          return true
+        })
+        .catch(() => false)
+      if (!opened) fail(`${plat.name}: the heatsync button vanished before it could be clicked`)
       await p
         .waitForSelector('#heatsync-panel', { timeout: 10_000 })
         .catch(() => fail(`${plat.name}: the picker panel never opened`))
       await p.waitForTimeout(1000)
 
-      await p.click('#heatsync-panel .heatsync-tab[data-tab="emoji"]')
-      await p.waitForTimeout(1000)
+      // A DOM click, not a mouse click, for the tab switch only. heatsync.org is
+      // blocked here so the channel/global/mine tabs keep failing and re-rendering
+      // the panel underneath, and playwright's actionability check never sees a
+      // stable element — the run failed on a different platform each time. The
+      // tile click below stays a real mouse click; that is the interaction under
+      // test, the tab switch is just navigation to it.
+      const switched = await p
+        .$eval('#heatsync-panel .heatsync-tab[data-tab="emoji"]', (el: any) => {
+          el.click()
+          return true
+        })
+        .catch(() => false)
+      if (!switched) fail(`${plat.name}: the picker has no emoji tab to switch to`)
+      await p.waitForTimeout(1500)
 
-      const tiles = await p.$$('#heatsync-panel .heatsync-emote-wrap')
-      if (!tiles.length) fail(`${plat.name}: the emoji tab rendered no tiles — the picker grid itself is broken`)
-      await tiles[0].click()
-      await p.waitForTimeout(1200)
+      // Dispatched, not hit-tested. heatsync.org is blocked here, so the
+      // channel/global/mine tabs sit in an error state whose retry re-renders
+      // the grid on a timer; playwright's actionability check needs the element
+      // to hold still and it never does, which made this fail on a different
+      // platform every run. el.click() still raises a real bubbling MouseEvent
+      // into the delegated handler that reads dataset.index — same handler,
+      // same code path, same insertEmoteIntoChat call. What this line does NOT
+      // cover is whether the tile is visually reachable.
+      const tileCount = await p.$$eval('#heatsync-panel .heatsync-emote-wrap', (els: any[]) => els.length)
+      if (!tileCount) fail(`${plat.name}: the emoji tab rendered no tiles — the picker grid itself is broken`)
+      const clicked = await p
+        .$eval('#heatsync-panel .heatsync-emote-wrap', (el: any) => {
+          el.click()
+          return true
+        })
+        .catch(() => false)
+      if (!clicked) fail(`${plat.name}: the first emote tile vanished before it could be clicked`)
+      await p.waitForTimeout(1500)
 
       const after = await readInput()
       if (!after.trim()) {
@@ -391,7 +462,7 @@ async function pickerClickCheck() {
       }
       ok(`${plat.name}: picker click inserts into the chat input (${JSON.stringify(after.trim())})`)
     } finally {
-      await c.close().catch(() => {})
+      await closeContext(c, `picker ${plat.name}`, prof)
       rmSync(prof, { recursive: true, force: true })
     }
   }
@@ -411,8 +482,8 @@ async function pickerClickCheck() {
  * Requires openssl for a throwaway cert. Nothing is committed: the key lives in
  * a temp dir for the length of the run.
  */
-async function twitchSendRoundTripCheck() {
-  console.log('\n── send a message, for real ──')
+async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
+  console.log(`\n── the twitch chat loop, over a socket (dim timeouts: ${dim ? 'on' : 'off'}) ──`)
   const certDir = mkdtempSync(join(tmpdir(), 'hs-ext-irc-cert-'))
   try {
     execFileSync(
@@ -497,13 +568,14 @@ async function twitchSendRoundTripCheck() {
 
     const seed = await c.newPage()
     await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
-    await seed.evaluate(async () => {
+    await seed.evaluate(async (d: boolean) => {
       // @ts-ignore — extension page
       await chrome.storage.local.set({
         heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
         user_info: { username: 'probeuser' },
+        hs_dim_timeouts: d,
       })
-    })
+    }, dim)
     await seed.close()
 
     const p = await c.newPage()
@@ -512,13 +584,21 @@ async function twitchSendRoundTripCheck() {
     await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
     await p.waitForTimeout(5000)
 
+    const push = (raw: string) => {
+      for (const c of sockets) {
+        try {
+          c.send(raw)
+        } catch (_) {}
+      }
+    }
+
     if (!frames.some((f) => f.startsWith('PASS oauth:'))) {
       fail(
         `the authenticated irc connection never handshook (frames: ${JSON.stringify(frames.slice(0, 8))}) — ` +
           'without it nothing below can send',
       )
     }
-    ok('the authenticated irc connection handshakes and joins')
+    if (full) ok('the authenticated irc connection handshakes and joins')
 
     await p.click('#hs-mc-input')
     await p.keyboard.type('hello from the harness')
@@ -535,7 +615,7 @@ async function twitchSendRoundTripCheck() {
     if (privmsg[0] !== 'PRIVMSG #probechan :hello from the harness') {
       fail(`the wrong line went out: ${JSON.stringify(privmsg[0])}`)
     }
-    ok(`Enter sends the right line: ${JSON.stringify(privmsg[0])}`)
+    if (full) ok(`Enter sends the right line: ${JSON.stringify(privmsg[0])}`)
 
     await p.waitForTimeout(2500)
     const rows: string[] = await p.evaluate(() =>
@@ -547,11 +627,72 @@ async function twitchSendRoundTripCheck() {
           'twitch echoes your own PRIVMSG back and that echo is what puts it on screen',
       )
     }
-    ok('the echo comes back through the parser and renders — compose, wire, back, screen')
+    if (full) ok('the echo comes back through the parser and renders — compose, wire, back, screen')
+
+    // ── moderation, from a raw CLEARCHAT off the wire ──────────────────────
+    // The dim/hide decision is the one behaviour changed today, and until now
+    // it was only covered by a source pin and a hand-written double.
+    push(
+      '@display-name=victim;color=#FF0000;user-id=42;id=m1 ' +
+        ':victim!v@v.tmi.twitch.tv PRIVMSG #probechan :please dont ban me\r\n',
+    )
+    push(
+      '@display-name=bystander;color=#00FF00;user-id=43;id=m2 ' +
+        ':bystander!b@b.tmi.twitch.tv PRIVMSG #probechan :unrelated chatter\r\n',
+    )
+    await p.waitForTimeout(2500)
+    const seen: string[] = await p.evaluate(() =>
+      [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
+    )
+    if (!seen.some((r) => r.includes('please dont ban me')) || !seen.some((r) => r.includes('unrelated chatter'))) {
+      fail(`the two victim/bystander messages did not both render: ${JSON.stringify(seen)}`)
+    }
+
+    push('@ban-duration=600;target-user-id=42 :tmi.twitch.tv CLEARCHAT #probechan :victim\r\n')
+    await p.waitForTimeout(1500)
+    // A live channel re-renders constantly; one more message stands in for that.
+    push(
+      '@display-name=third;color=#00FFFF;user-id=44;id=m3 ' +
+        ':third!t@t.tmi.twitch.tv PRIVMSG #probechan :after the ban\r\n',
+    )
+    await p.waitForTimeout(2500)
+
+    const modRows: Array<{ text: string, cleared: boolean }> = await p.evaluate(() =>
+      [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => ({
+        text: (r.textContent || '').trim(),
+        cleared: r.classList.contains('hs-mc-msg-cleared'),
+      })),
+    )
+    const victim = modRows.find((r) => r.text.includes('please dont ban me'))
+    const bystander = modRows.find((r) => r.text.includes('unrelated chatter'))
+
+    if (!bystander || bystander.cleared) {
+      fail(`a CLEARCHAT for one user touched an unrelated message: ${JSON.stringify(modRows.map((r) => r.text))}`)
+    }
+    if (!modRows.some((r) => /timed out/i.test(r.text))) {
+      fail('the timeout produced no system notice — the mod action happened invisibly')
+    }
+
+    if (dim) {
+      if (!victim) fail('with dim ON the banned message should stay on screen, dimmed — it is gone')
+      if (!victim.cleared) {
+        fail('with dim ON the banned message rendered as if nothing happened — no hs-mc-msg-cleared')
+      }
+      ok('CLEARCHAT dims the banned user and leaves everyone else alone')
+    } else {
+      if (victim) {
+        fail(
+          'with dim OFF the banned message is still on screen. that is the bug fixed today: ' +
+            '"50% opacity instead of hiding" offered two treatments and only the dim existed.',
+        )
+      }
+      ok('CLEARCHAT with dim off removes the banned message instead of leaving it readable')
+    }
   } finally {
-    await c.close().catch(() => {})
-    rmSync(prof, { recursive: true, force: true })
+    // Sockets first: the browser has nothing left to wait on when it closes.
     server.stop(true)
+    await closeContext(c, `twitch irc (dim ${dim ? 'on' : 'off'})`, prof)
+    rmSync(prof, { recursive: true, force: true })
     rmSync(certDir, { recursive: true, force: true })
   }
 }
@@ -1166,7 +1307,10 @@ try {
   // Compose a message, press Enter, watch it leave on the IRC wire, echo it
   // back the way twitch does, and see it render. Against a LOCAL mock server —
   // twitch is never contacted.
-  await twitchSendRoundTripCheck()
+  // Twice, because `dim timed-out messages` picks between two treatments and
+  // the OFF one — hide — did not exist in the overlay until today.
+  await twitchIrcCheck({ dim: true, full: true })
+  await twitchIrcCheck({ dim: false, full: false })
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

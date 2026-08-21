@@ -575,7 +575,11 @@
     return (
       typeof compilePaintCss === 'function' &&
       typeof hashPaintSpec === 'function' &&
-      typeof paintNeedsLetterSplit === 'function'
+      // paintNeedsSpans is the compiler's name for this. It was renamed on
+      // 2026-08-16 ("resync the compiler with the site") and this file never
+      // followed, so the guard was false from that day on and HeatSync paints
+      // stopped rendering on native youtube chat entirely.
+      typeof paintNeedsSpans === 'function'
     )
   }
 
@@ -695,7 +699,7 @@
     // Inline style (yt's own color, or a 7TV paint applied earlier) has higher
     // specificity than any class rule — clear it or the paint silently loses.
     if (nameEl.hasAttribute('style')) nameEl.removeAttribute('style')
-    if (paintNeedsLetterSplit(entry.spec) && !nameEl.dataset.hsPaintSplit && nameEl.textContent) {
+    if (paintNeedsSpans(entry.spec) && !nameEl.dataset.hsPaintSplit && nameEl.textContent) {
       // DOM-built per-glyph spans (--i/--mid drive the effect delays) — same
       // output shape as the overlay's splitHsLettersHtml, no innerHTML.
       const chars = [...nameEl.textContent]

@@ -2073,7 +2073,10 @@
                 if (!cycleState.remoteFetched && !cycleState.remotePending) {
                   fetch7tvCycleMatches(cycleState.searchTerm)
                 }
-                cycleState.lastTime = now
+                // Date.now() — `now` has no binding in this scope (the three
+                // `const now` in this file are locals of other functions), so
+                // this line threw ReferenceError and aborted the Tab handler.
+                cycleState.lastTime = Date.now()
                 showCycleTooltip(cycleState.index + 1, cycleState.matches.length, cycleState.matches[cycleState.index])
                 return
               }
@@ -2082,7 +2085,7 @@
               cycleState.index = 0 // First Tab - start at first match
             }
             const nextEmote = cycleState.matches[cycleState.index]
-            cycleState.lastTime = now
+            cycleState.lastTime = Date.now()
 
             log(
               ' ⌨️ Manual Tab cycling:',
@@ -2636,6 +2639,9 @@
           }
         }
       },
+      { capture: true },
+      // `error` does not bubble — capture is the only way a delegated
+      // document-level listener sees an <img> failure at all.
       'image-error-handler',
       true,
     )

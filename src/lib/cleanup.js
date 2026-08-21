@@ -131,10 +131,32 @@
 
   // --- listeners ---
 
-  function _trackListener(target, event, handler, options) {
+  /**
+   * @param {EventTarget} target
+   * @param {string} event
+   * @param {EventListenerOrEventListenerObject} handler
+   * @param {AddEventListenerOptions|boolean|string} [optionsOrLabel] options, or a
+   *   diagnostic label (see below)
+   * @param {string} [label] diagnostic label when options are also passed
+   *
+   * A STRING here is a label, not options. Twenty-two call sites passed one —
+   * 'mc-picker-close', 'emote-click', 'input-modifier-backspace' — copying the
+   * habit from cleanup.setTimeout, which really does take a label. Web IDL
+   * resolves a string against `boolean | AddEventListenerOptions`: not an
+   * object, so it converts to boolean, and a non-empty string is true. Every
+   * one of those listeners silently ran in the CAPTURE phase, ahead of the
+   * page's own handlers, which nobody who wrote them intended. The five that
+   * genuinely need capture — the four that stopPropagation to preempt Twitch,
+   * and the `error` listener, since error does not bubble at all — now say so
+   * with an explicit { capture: true }.
+   */
+  function _trackListener(target, event, handler, optionsOrLabel, label) {
     if (!target || !event || !handler) return
+    const isLabel = typeof optionsOrLabel === 'string'
+    const options = isLabel ? undefined : optionsOrLabel
+    const name = isLabel ? optionsOrLabel : label
     target.addEventListener(event, handler, options)
-    _listeners.push({ target, event, handler, options })
+    _listeners.push({ target, event, handler, options, label: name })
   }
 
   function _untrackListener(target, event, handler) {

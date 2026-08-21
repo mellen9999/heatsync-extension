@@ -22,7 +22,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check src/ chrome/ tests/ build.js",
     "lint:fix": "biome check --write src/ chrome/ tests/ build.js",
-    "format": "biome format --write src/ chrome/ tests/ build.js"
+    "format": "biome format --write src/ chrome/ tests/ build.js",
+    "typecheck:signal": "bun run build.js chrome && node scripts/type-signal.mjs"
   },
   "type": "module",
   "devDependencies": {

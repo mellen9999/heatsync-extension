@@ -883,6 +883,15 @@ async function fetchRemoteEmoteMatches(search) {
       !ex.ffz && typeof mcSearchFfzApi === 'function'
         ? mcSearchFfzApi(search, ac.signal, { page })
         : Promise.resolve(null),
+      // mcSearchBttvApi does not exist, deliberately: BTTV closed its shared-
+      // emote search (api.betterttv.net/3/emotes/shared/search answers 403
+      // {"message":"unauthorized"} without credentials we do not have). The
+      // typeof guard resolves null, drain() sees a non-array and flips
+      // ex.bttv on the first page, so the cycle still terminates. Do NOT just
+      // delete this arm — ex.bttv would then stay false forever and the
+      // "everything exhausted" check below would never fire, so Tab-cycling
+      // would never wrap back to 1. BTTV emotes themselves are unaffected;
+      // only catalog SEARCH is unavailable.
       !ex.bttv && typeof mcSearchBttvApi === 'function'
         ? mcSearchBttvApi(search, ac.signal, { page })
         : Promise.resolve(null),

@@ -8548,16 +8548,22 @@ async function handleMessage(message, sender, sendResponse) {
     sendResponse({ users: Array.from(blockedUsers) })
   } else if (message.type === 'get_twitch_auth_token') {
     // Cross-domain Twitch cookie access (for sending from Kick/YouTube pages)
+    // The stored identity, not `userInfo` — that is a local const inside
+    // fetchUserInfo(), so the fallback threw ReferenceError here (optional
+    // chaining does not save an UNDECLARED name). The throw rejected the
+    // chain, the catch below fired, and a viewer with no twitch `name` cookie
+    // was told they had no token either — indistinguishable from signed out.
     Promise.all([
       browser.cookies.get({ url: 'https://www.twitch.tv', name: 'auth-token' }),
       browser.cookies.get({ url: 'https://www.twitch.tv', name: 'name' }),
+      browser.storage.local.get('user_info'),
     ])
-      .then(([tokenCookie, nameCookie]) => {
+      .then(([tokenCookie, nameCookie, stored]) => {
         sendResponse({
           token: tokenCookie?.value || null,
           username: nameCookie?.value
             ? decodeURIComponent(nameCookie.value).toLowerCase()
-            : userInfo?.twitch_username || null,
+            : stored?.user_info?.twitch_username || null,
         })
       })
       .catch(() => sendResponse({ token: null, username: null }))

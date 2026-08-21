@@ -875,13 +875,23 @@ function build(browser) {
     // youtube-content renders HeatSync spec paints on the NATIVE yt surface,
     // so it gets the paint-spec compiler appended to its lib — same embed the
     // multichat bundles use (readMultichatModules). Other content scripts
-    // don't pay for it; youtube-content typeof-guards the compiler so a
-    // missing embed degrades to no paints, never a ReferenceError.
+    // don't pay for it.
+    //
+    // ALL THREE, in dependency order. This used to append paint-spec.js alone
+    // while claiming to match the multichat embed. stripExports removes the
+    // `import { … } from './paint-core.js'` lines, so what landed in the
+    // bundle was a compiler whose every helper — fnv1a, HEX_RE, isPlainObject,
+    // syncDelayCalc, buildSceneCss, validateSceneSpec — was undefined: 56
+    // ReferenceErrors waiting in one file. The typeof guard the old comment
+    // relied on only covers the entry points, and an entry point that EXISTS
+    // and throws is exactly what a typeof guard cannot see.
     let libFor = lib
     if (file === 'youtube-content.js') {
-      const paintSpecPath = join(SRC_DIR, 'lib', 'paint-spec.js')
-      if (existsSync(paintSpecPath)) {
-        libFor = `${lib}\n// --- lib/paint-spec.js ---\n${stripExports(readFileSync(paintSpecPath, 'utf8'))}\n`
+      for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js']) {
+        const p = join(SRC_DIR, 'lib', mod)
+        if (existsSync(p)) {
+          libFor = `${libFor}\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`
+        }
       }
     }
     const bundled = bundleContentScript(srcPath, libFor, null)

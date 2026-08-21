@@ -79,9 +79,11 @@
     // Announce presence so the site's install nudge can detect the ext.
     // ISOLATED world shares the DOM — page main-world JS reads dataset.hsExt.
     document.documentElement.dataset.hsExt = '1'
-    // Kick-send-via-relay capability beacon — this content.js version wires
-    // chat:send_kick / kick:relay_send / kick:relay_ack in background.js, so
-    // any install running this code supports it. Same dataset-on-shared-DOM
+    // Kick-send-via-relay capability beacon — this version wires
+    // kick:relay_send / kick:relay_ack in background.js, so any install
+    // running this code supports it. (The comment used to name a third
+    // message, chat:send_kick, which appears nowhere but the comment; the
+    // relay itself is real and is what the beacon promises.) Same dataset-on-shared-DOM
     // mechanism as hsExt above (a page-injected window global isn't visible
     // across the isolated/main world boundary). heatsync.org's chips UI
     // feature-detects via document.documentElement.dataset.hsKickRelay === '1'.
@@ -1283,6 +1285,9 @@
         editor.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'deleteContentBackward' }))
       } catch {}
     },
+    { capture: true },
+    // Capture on purpose: this stops propagation to keep Twitch's own
+    // backspace handling from running, which only works ahead of it.
     'input-modifier-backspace',
   )
   cleanup.addEventListener(
@@ -7549,6 +7554,9 @@
           log(' 💬 Sent insert request for:', emoteName)
         }
       },
+      { capture: true },
+      // Capture on purpose — stops propagation so the page's click handler
+      // never sees an emote click.
       'emote-click',
     )
 
@@ -7591,6 +7599,8 @@
           chrome.storage.local.set({ local_blocked_emote_names: Array.from(localBlockedEmoteNames) })
         } catch {}
       },
+      { capture: true },
+      // Capture on purpose — preempts the page's own context menu.
       'native-twitch-block-contextmenu',
     )
 
@@ -7690,6 +7700,8 @@
           }
         }
       },
+      { capture: true },
+      // Capture on purpose — preempts the page's own context menu.
       'emote-contextmenu',
     )
 

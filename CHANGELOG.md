@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.63] — 2026-08-20
+
+### fixed
+- **your paints show up on youtube chat again** — heatsync paints stopped rendering on native youtube chat on august 16 and every name has been plain since.
+- **removing, renaming and moving an emote stop saying they failed** — the change went through and the panel reported an error anyway. importing a set left the button stuck on "imported N" instead of resetting.
+- **tab-completing an emote outside the dropdown works** — cycling with tab when twitch's own list wasn't showing inserted nothing at all.
+- **the extension stops looking signed out** — if twitch's name cookie was missing, the extension reported no login at all rather than falling back to the account you're actually signed in as.
+- **"retry" on a failed emote load does something** — the button in the picker's error state was inert, so the only way out was closing the panel and reopening it.
+- **the toolbar badge clears when you read your notifications** — heatsync.org already told the extension you'd read them; the extension wasn't listening, so the count sat there until the next reconnect.
+
 ## [1.7.62] — 2026-08-20
 
 ### fixed

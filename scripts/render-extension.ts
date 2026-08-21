@@ -23,7 +23,8 @@
  * Opt-in, like smoke-extension.ts: it needs a real browser binary, which the
  * unit suite deliberately does not depend on.
  */
-import { mkdtempSync, rmSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { assertBuilt, launchWithExtension } from './lib/chromium'
@@ -294,71 +295,264 @@ async function ytInsertCheck() {
 
 /**
  * The picker, end to end, with no message driven by hand: mount the button on a
- * /live_chat page, click it, click an emote tile, read the chat input.
+ * real chat page, click it, click an emote tile, read that platform's chat input.
  *
  * Uses the emoji tab deliberately — channel/global/mine all fetch heatsync.org,
  * which this harness blocks, so they render an error state instead of a grid.
  * The emoji tab renders from the bundled EMOJI_DATA with no network and shares
  * the same delegated click handler and the same insertEmoteIntoChat call.
+ *
+ * All three platforms, because the one that broke did so by being the only one
+ * that took a different route to the input: twitch and kick insert inline,
+ * youtube delegated over a message transport that does not reach content
+ * scripts, and nothing anywhere reported it.
  */
-async function ytPickerClickCheck() {
-  console.log('\n── youtube picker, clicked for real ──')
-  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-ytpick-'))
-  const c = await launchWithExtension(prof, ['--window-size=1280,900'])
+const PICKER_SURFACES = [
+  {
+    name: 'twitch',
+    url: 'https://www.twitch.tv/somechannel',
+    glob: 'https://www.twitch.tv/**',
+    body:
+      '<div class="right-column right-column--beside" id="rcol"><div id="chatwrap">' +
+      '<button data-a-target="emote-picker-button">emote</button>' +
+      '<div data-a-target="chat-input" contenteditable="true"></div></div></div>',
+    input: '[data-a-target="chat-input"]',
+  },
+  {
+    name: 'kick',
+    url: 'https://kick.com/somechannel',
+    glob: 'https://kick.com/**',
+    body: '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div>',
+    input: 'div.editor-input',
+  },
+  {
+    name: 'youtube',
+    url: 'https://www.youtube.com/live_chat?v=PICKERCHECK',
+    glob: 'https://www.youtube.com/**',
+    body:
+      '<yt-live-chat-text-input-field-renderer><div id="buttons"></div>' +
+      '<div id="input" contenteditable="true"></div></yt-live-chat-text-input-field-renderer>',
+    input: 'yt-live-chat-text-input-field-renderer div#input',
+  },
+]
+
+async function pickerClickCheck() {
+  console.log('\n── the picker, clicked for real ──')
+  for (const plat of PICKER_SURFACES) {
+    const prof = mkdtempSync(join(tmpdir(), `hs-ext-pick-${plat.name}-`))
+    const c = await launchWithExtension(prof, ['--window-size=1280,900'])
+    try {
+      await c.route('https://heatsync.org/**', (r: any) => r.abort())
+      await c.route(plat.glob, (r: any) =>
+        r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) }),
+      )
+
+      const p = await c.newPage()
+      p.on('pageerror', (e: unknown) => errors.push(`picker-${plat.name}: ${String(e).slice(0, 300)}`))
+      await p.goto(plat.url, { waitUntil: 'domcontentloaded' })
+
+      await p
+        .waitForSelector('#heatsync-chat-button', { timeout: 20_000 })
+        .catch(() =>
+          fail(`${plat.name}: the heatsync button never mounted — its anchor lookup no longer matches this page`),
+        )
+
+      const readInput = () => p.evaluate((sel: string) => document.querySelector(sel)?.textContent || '', plat.input)
+      if ((await readInput()) !== '') fail(`${plat.name}: the fixture chat input did not start empty`)
+
+      // The multichat overlay mounts full-bleed over a fixture that has no
+      // layout of its own and would swallow the clicks. Not part of this path.
+      await p.evaluate(() => {
+        const el = document.getElementById('hs-mc-container')
+        if (el) (el as HTMLElement).style.display = 'none'
+      })
+
+      await p.click('#heatsync-chat-button')
+      await p
+        .waitForSelector('#heatsync-panel', { timeout: 10_000 })
+        .catch(() => fail(`${plat.name}: the picker panel never opened`))
+      await p.waitForTimeout(1000)
+
+      await p.click('#heatsync-panel .heatsync-tab[data-tab="emoji"]')
+      await p.waitForTimeout(1000)
+
+      const tiles = await p.$$('#heatsync-panel .heatsync-emote-wrap')
+      if (!tiles.length) fail(`${plat.name}: the emoji tab rendered no tiles — the picker grid itself is broken`)
+      await tiles[0].click()
+      await p.waitForTimeout(1200)
+
+      const after = await readInput()
+      if (!after.trim()) {
+        fail(
+          `${plat.name}: clicking an emote in the picker put nothing in the chat input. ` +
+            'that is the bug this check exists for — on youtube it was a ' +
+            'chrome.runtime.sendMessage to another content script, which never arrives.',
+        )
+      }
+      ok(`${plat.name}: picker click inserts into the chat input (${JSON.stringify(after.trim())})`)
+    } finally {
+      await c.close().catch(() => {})
+      rmSync(prof, { recursive: true, force: true })
+    }
+  }
+}
+
+/**
+ * Send a message for real: type in the overlay composer, press Enter, assert the
+ * exact PRIVMSG leaves on the wire, echo it back as twitch would, and assert the
+ * row renders. Compose -> wire -> back -> screen, the product's core loop.
+ *
+ * irc-ws.chat.twitch.tv is redirected to a local wss server with
+ * --host-resolver-rules, so twitch is never contacted and the check works with
+ * no network at all. Chrome's private-network blocking has to be off for a
+ * public-origin page to reach 127.0.0.1, and the cert is self-signed, so both
+ * of those flags are set for THIS context only.
+ *
+ * Requires openssl for a throwaway cert. Nothing is committed: the key lives in
+ * a temp dir for the length of the run.
+ */
+async function twitchSendRoundTripCheck() {
+  console.log('\n── send a message, for real ──')
+  const certDir = mkdtempSync(join(tmpdir(), 'hs-ext-irc-cert-'))
+  try {
+    execFileSync(
+      'openssl',
+      ['req', '-x509', '-newkey', 'rsa:2048', '-keyout', join(certDir, 'key.pem'), '-out', join(certDir, 'cert.pem'),
+       '-days', '1', '-nodes', '-subj', '/CN=irc-ws.chat.twitch.tv'],
+      { stdio: 'ignore' },
+    )
+  } catch (_) {
+    rmSync(certDir, { recursive: true, force: true })
+    console.log('  ! SKIPPED — openssl not available, so the mock irc server has no cert.')
+    console.log('    the send path is the core loop and is going UNVERIFIED in this run.')
+    return
+  }
+
+  const frames: string[] = []
+  const sockets = new Set<any>()
+  const server = Bun.serve({
+    port: 0,
+    tls: { key: readFileSync(join(certDir, 'key.pem')), cert: readFileSync(join(certDir, 'cert.pem')) },
+    fetch(req: Request, srv: any) {
+      if (srv.upgrade(req)) return undefined as any
+      return new Response('no', { status: 400 })
+    },
+    websocket: {
+      open(ws: any) {
+        sockets.add(ws)
+      },
+      close(ws: any) {
+        sockets.delete(ws)
+      },
+      message(ws: any, msg: any) {
+        for (const line of String(msg).split('\r\n')) {
+          if (!line) continue
+          frames.push(line)
+          if (line.startsWith('NICK')) {
+            ws.send(`:tmi.twitch.tv 001 ${line.slice(5).trim() || 'probeuser'} :Welcome, GLOBALUSERSTATE\r\n`)
+          } else if (line.startsWith('JOIN')) {
+            ws.send(`:probeuser!p@p.tmi.twitch.tv JOIN ${line.slice(5).trim()}\r\n`)
+          } else if (line.startsWith('PRIVMSG')) {
+            // Twitch echoes your own PRIVMSG back; that echo is what renders it.
+            const m = line.match(/^PRIVMSG (#\S+) :(.*)$/)
+            if (m) {
+              const echo =
+                `@display-name=probeuser;color=#FF8700;user-id=1;id=echo-1 ` +
+                `:probeuser!p@p.tmi.twitch.tv PRIVMSG ${m[1]} :${m[2]}\r\n`
+              for (const c of sockets) {
+                try {
+                  c.send(echo)
+                } catch (_) {}
+              }
+            }
+          }
+        }
+      },
+    },
+  })
+
+  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-send-'))
+  const c = await launchWithExtension(prof, [
+    '--window-size=1500,900',
+    `--host-resolver-rules=MAP irc-ws.chat.twitch.tv 127.0.0.1:${server.port}`,
+    '--ignore-certificate-errors',
+    '--disable-features=LocalNetworkAccessChecks,BlockInsecurePrivateNetworkRequests',
+  ])
   try {
     await c.route('https://heatsync.org/**', (r: any) => r.abort())
-    const chatBody =
-      '<yt-live-chat-text-input-field-renderer><div id="buttons"></div>' +
-      '<div id="input" contenteditable="true"></div></yt-live-chat-text-input-field-renderer>'
-    await c.route('https://www.youtube.com/**', (r: any) =>
-      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(chatBody) }),
+    await c.route(PLATFORMS[0].glob, (r: any) =>
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(PLATFORMS[0].body) }),
     )
+    // getTwitchAuthToken() reads document.cookie; the value is nonsense and only
+    // ever reaches the local mock.
+    await c.addCookies([
+      { name: 'auth-token', value: 'harnesstoken0000', domain: '.twitch.tv', path: '/', secure: true },
+      { name: 'login', value: 'probeuser', domain: '.twitch.tv', path: '/', secure: true },
+    ])
+
+    let sw = c.serviceWorkers()[0]
+    if (!sw) sw = await c.waitForEvent('serviceworker', { timeout: 20_000 })
+    const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+    if (!id) fail('could not resolve the extension id for the send check')
+
+    const seed = await c.newPage()
+    await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    await seed.evaluate(async () => {
+      // @ts-ignore — extension page
+      await chrome.storage.local.set({
+        heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
+        user_info: { username: 'probeuser' },
+      })
+    })
+    await seed.close()
 
     const p = await c.newPage()
-    p.on('pageerror', (e: unknown) => errors.push(`yt-picker: ${String(e).slice(0, 300)}`))
-    await p.goto('https://www.youtube.com/live_chat?v=PICKERCHECK', { waitUntil: 'domcontentloaded' })
+    p.on('pageerror', (e: unknown) => errors.push(`send: ${String(e).slice(0, 300)}`))
+    await p.goto('https://www.twitch.tv/probechan', { waitUntil: 'domcontentloaded' })
+    await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
+    await p.waitForTimeout(5000)
 
-    await p
-      .waitForSelector('#heatsync-chat-button', { timeout: 20_000 })
-      .catch(() => fail('the heatsync button never mounted on /live_chat — nothing below can be clicked'))
-
-    const readInput = () =>
-      p.evaluate(
-        () => document.querySelector('yt-live-chat-text-input-field-renderer div#input')?.textContent || '',
-      )
-    if ((await readInput()) !== '') fail('the fixture chat input did not start empty')
-
-    // The multichat overlay mounts full-bleed over a fixture that has no layout
-    // of its own and would swallow the clicks. It is not part of this path.
-    await p.evaluate(() => {
-      const el = document.getElementById('hs-mc-container')
-      if (el) (el as HTMLElement).style.display = 'none'
-    })
-
-    await p.click('#heatsync-chat-button')
-    await p.waitForSelector('#heatsync-panel', { timeout: 10_000 }).catch(() => fail('the picker panel never opened'))
-    await p.waitForTimeout(1000)
-
-    await p.click('#heatsync-panel .heatsync-tab[data-tab="emoji"]')
-    await p.waitForTimeout(1000)
-
-    const tiles = await p.$$('#heatsync-panel .heatsync-emote-wrap')
-    if (!tiles.length) fail('the emoji tab rendered no tiles — the picker grid itself is broken')
-    await tiles[0].click()
-    await p.waitForTimeout(1200)
-
-    const after = await readInput()
-    if (!after.trim()) {
+    if (!frames.some((f) => f.startsWith('PASS oauth:'))) {
       fail(
-        'clicking an emote in the picker put nothing in the youtube chat input. ' +
-          'that is the bug this check exists for: heatsync-button.js used ' +
-          'chrome.runtime.sendMessage to reach youtube-content.js, which never arrives.',
+        `the authenticated irc connection never handshook (frames: ${JSON.stringify(frames.slice(0, 8))}) — ` +
+          'without it nothing below can send',
       )
     }
-    ok(`picker click inserts into the youtube chat input (${JSON.stringify(after.trim())})`)
+    ok('the authenticated irc connection handshakes and joins')
+
+    await p.click('#hs-mc-input')
+    await p.keyboard.type('hello from the harness')
+    await p.keyboard.press('Enter')
+    await p.waitForTimeout(3500)
+
+    const privmsg = frames.filter((f) => f.startsWith('PRIVMSG'))
+    if (!privmsg.length) {
+      fail(
+        'pressing Enter in the composer put NOTHING on the irc wire — the input cleared and the ' +
+          `message went nowhere (frames: ${JSON.stringify(frames.slice(-6))})`,
+      )
+    }
+    if (privmsg[0] !== 'PRIVMSG #probechan :hello from the harness') {
+      fail(`the wrong line went out: ${JSON.stringify(privmsg[0])}`)
+    }
+    ok(`Enter sends the right line: ${JSON.stringify(privmsg[0])}`)
+
+    await p.waitForTimeout(2500)
+    const rows: string[] = await p.evaluate(() =>
+      [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
+    )
+    if (!rows.some((r) => r.includes('hello from the harness'))) {
+      fail(
+        `the echoed message never rendered (rows: ${JSON.stringify(rows.slice(0, 4))}) — ` +
+          'twitch echoes your own PRIVMSG back and that echo is what puts it on screen',
+      )
+    }
+    ok('the echo comes back through the parser and renders — compose, wire, back, screen')
   } finally {
     await c.close().catch(() => {})
     rmSync(prof, { recursive: true, force: true })
+    server.stop(true)
+    rmSync(certDir, { recursive: true, force: true })
   }
 }
 
@@ -961,11 +1155,18 @@ try {
   // used — never arrives at a content script, and nothing reports that.
   await ytInsertCheck()
 
-  // ── and the same thing through the actual UI ─────────────────────────────
+  // ── and the same thing through the actual UI, on every platform ──────────
   // The check above drives the message by hand. This one clicks the button,
   // opens the panel and clicks a tile — the path a person takes. Reverting the
-  // fix and re-running it leaves the input empty, which is what the bug was.
-  await ytPickerClickCheck()
+  // youtube fix and re-running it leaves that input empty, which is what the
+  // bug was; twitch and kick are here because nothing had ever driven them.
+  await pickerClickCheck()
+
+  // ── the whole point of the product, end to end ───────────────────────────
+  // Compose a message, press Enter, watch it leave on the IRC wire, echo it
+  // back the way twitch does, and see it render. Against a LOCAL mock server —
+  // twitch is never contacted.
+  await twitchSendRoundTripCheck()
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

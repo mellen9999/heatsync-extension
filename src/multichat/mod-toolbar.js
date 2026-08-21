@@ -693,7 +693,7 @@ async function runModAction(id) {
     msgId,
   }).catch((e) => ({ anyOk: false, tResp: { error: e?.message || 'error' } }))
   if (row) row.style.opacity = wasOp || ''
-  if (r?.anyOk && def.action === 'delete' && row && dimTimeouts) row.classList.add('hs-mc-msg-cleared')
+  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, 'deleted')
   const label =
     def.action === 'timeout'
       ? t('mc_mod_label_timed_out', [String(def.durationSec)])

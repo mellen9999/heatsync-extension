@@ -747,8 +747,7 @@ function applyYtDeletion(d) {
     const byId = row.dataset.msgId && ids.has(row.dataset.msgId)
     const byUser = users.size > 0 && users.has((row.dataset.msgUser || '').toLowerCase())
     if (!byId && !byUser) continue
-    row.classList.add('hs-mc-msg-cleared')
-    row.title = 'deleted'
+    markClearedRow(row, 'deleted')
   }
 }
 
@@ -1211,7 +1210,7 @@ function listenForSocialEvents() {
                 '.hs-mc-msg .hs-mc-user:not(.hs-mc-mention)[data-platform="yt"], .hs-mc-msg .hs-mc-user:not(.hs-mc-mention)[data-platform="youtube"]',
               )
               .forEach((a) => {
-                if (a.dataset.username === u) a.closest('.hs-mc-msg')?.classList.add('hs-mc-msg-cleared')
+                if (a.dataset.username === u) markClearedRow(a.closest('.hs-mc-msg'), 'deleted')
               })
           })
           .catch(() => {})

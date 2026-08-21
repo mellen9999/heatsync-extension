@@ -38502,8 +38502,7 @@ function applyYtDeletion(d) {
     const byId = row.dataset.msgId && ids.has(row.dataset.msgId)
     const byUser = users.size > 0 && users.has((row.dataset.msgUser || '').toLowerCase())
     if (!byId && !byUser) continue
-    row.classList.add('hs-mc-msg-cleared')
-    row.title = 'deleted'
+    markClearedRow(row, 'deleted')
   }
 }
 
@@ -38966,7 +38965,7 @@ function listenForSocialEvents() {
                 '.hs-mc-msg .hs-mc-user:not(.hs-mc-mention)[data-platform="yt"], .hs-mc-msg .hs-mc-user:not(.hs-mc-mention)[data-platform="youtube"]',
               )
               .forEach((a) => {
-                if (a.dataset.username === u) a.closest('.hs-mc-msg')?.classList.add('hs-mc-msg-cleared')
+                if (a.dataset.username === u) markClearedRow(a.closest('.hs-mc-msg'), 'deleted')
               })
           })
           .catch(() => {})
@@ -57069,7 +57068,7 @@ async function runModAction(id) {
     msgId,
   }).catch((e) => ({ anyOk: false, tResp: { error: e?.message || 'error' } }))
   if (row) row.style.opacity = wasOp || ''
-  if (r?.anyOk && def.action === 'delete' && row && dimTimeouts) row.classList.add('hs-mc-msg-cleared')
+  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, 'deleted')
   const label =
     def.action === 'timeout'
       ? t('mc_mod_label_timed_out', [String(def.durationSec)])
@@ -70980,13 +70979,36 @@ const STORAGE_KEY = 'heatsync_multichat'
       bots: getSetting('hideBots'),
       cmds: getSetting('hideCommands'),
       dups: getSetting('hideDuplicates'),
+      dim: dimTimeouts,
     }
+  }
+  // The live-DOM half of the same decision, for rows already on screen when a
+  // mod acts. The render filter above is the durable answer; this makes it
+  // immediate instead of "next time anyone says anything".
+  function markClearedRow(row, title) {
+    if (!row) return
+    if (!dimTimeouts) {
+      // Exactly what the next render pass would do — isMsgFiltered drops it.
+      row.remove()
+      return
+    }
+    row.classList.add('hs-mc-msg-cleared')
+    if (title) row.title = title
   }
   function isMsgFiltered(m, f) {
     if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
     const u = m.user ? m.user.toLowerCase() : ''
     if (u && u === currentUsername) return false // never hide own messages
     if (u && f.bots && _BOT_NAMES.has(u)) return true
+    // `dim timed-out messages` offers two treatments and only one of them was
+    // implemented in the overlay: with it OFF, a moderated message was neither
+    // dimmed NOR hidden — it stayed fully readable, the opposite of what
+    // "50% opacity instead of hiding" promises. Hiding belongs here, at the
+    // render filter, because this is the one platform-blind place every
+    // buffer's messages pass through — the dim path is patched into the live
+    // DOM from six separate call sites and youtube's, added later, never
+    // checked the setting at all.
+    if (m.cleared && !f.dim) return true
     if (typeof m.text !== 'string') return false
     if (f.cmds && m.text.charCodeAt(0) === 33) return true
     if (_muteKeywordsRegex?.test(m.text)) return true
@@ -76634,15 +76656,13 @@ const STORAGE_KEY = 'heatsync_multichat'
         const targetLc = msg.targetUser.toLowerCase()
         for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
           if ((row.dataset.msgUser || '').toLowerCase() !== targetLc || !samePlat(row)) continue
-          if (dimTimeouts) row.classList.add('hs-mc-msg-cleared')
-          row.title = msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned'
+          markClearedRow(row, msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned')
         }
       } else if (msg.noticeType === 'delete_message_success' && msg.targetMsgId) {
         const safe = CSS.escape ? CSS.escape(msg.targetMsgId) : msg.targetMsgId.replace(/"/g, '\\"')
         const row = msgsEl.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)
         if (row) {
-          if (dimTimeouts) row.classList.add('hs-mc-msg-cleared')
-          row.title = 'deleted'
+          markClearedRow(row, 'deleted')
         }
       } else if (msg.noticeType === 'unban_success' && msg.targetUser) {
         // Lift a prior ban/timeout dim (not a delete) when the user is unbanned.

@@ -33,7 +33,7 @@ function lift(name) {
   throw new Error('unbalanced')
 }
 
-function build({ buffers, queues, rows }) {
+function build({ buffers, queues, rows, dim = true }) {
   const made = rows.map((r) => ({
     dataset: { msgId: r.id || '', msgUser: r.user || '', msgPlatform: r.platform || 'youtube' },
     classList: {
@@ -46,16 +46,33 @@ function build({ buffers, queues, rows }) {
       },
     },
     title: '',
+    removed: false,
+    remove() {
+      this.removed = true
+    },
   }))
   const doc = { getElementById: () => ({ querySelectorAll: () => made }) }
   const channelYtMessages = new Map(Object.entries(buffers))
   const _ytPaceQueue = new Map(Object.entries(queues))
+  // Stands in for main.js's markClearedRow — same two branches. Youtube used
+  // to patch the class directly and so ignored `hs_dim_timeouts` entirely;
+  // routing it through the shared helper is what this double models.
+  const markClearedRow = (row, title) => {
+    if (!row) return
+    if (!dim) {
+      row.remove()
+      return
+    }
+    row.classList.add('hs-mc-msg-cleared')
+    if (title) row.title = title
+  }
   const fn = new Function(
     'channelYtMessages',
     '_ytPaceQueue',
     'document',
+    'markClearedRow',
     `${lift('applyYtDeletion')}; return applyYtDeletion`,
-  )(channelYtMessages, _ytPaceQueue, doc)
+  )(channelYtMessages, _ytPaceQueue, doc, markClearedRow)
   return { fn, made, channelYtMessages, _ytPaceQueue }
 }
 
@@ -118,5 +135,33 @@ describe('youtube deletion', () => {
     t.fn({})
     expect(t.channelYtMessages.get('c1')[0].cleared).toBeUndefined()
     expect(t.made[0].classList.contains('hs-mc-msg-cleared')).toBe(false)
+  })
+})
+
+describe('youtube deletion honours dim-timeouts', () => {
+  // youtube's deletion path was added after the setting and patched the dim
+  // class straight onto the row, so `dim timed-out messages: off` did nothing
+  // on youtube while twitch and kick both respected it. Both polarities, since
+  // "off" is the half that was never implemented anywhere in the overlay.
+  const rows = [
+    { id: 'A', user: 'someone' },
+    { id: 'B', user: 'other' },
+  ]
+
+  test('dim ON: the target is dimmed and left on screen', () => {
+    const { fn, made } = build({ buffers: {}, queues: {}, rows, dim: true })
+    fn({ messageIds: ['A'] })
+    expect(made[0].classList.contains('hs-mc-msg-cleared')).toBe(true)
+    expect(made[0].removed).toBe(false)
+    expect(made[1].classList.contains('hs-mc-msg-cleared')).toBe(false)
+    expect(made[1].removed).toBe(false)
+  })
+
+  test('dim OFF: the target is removed, not left fully readable', () => {
+    const { fn, made } = build({ buffers: {}, queues: {}, rows, dim: false })
+    fn({ messageIds: ['A'] })
+    expect(made[0].removed).toBe(true)
+    expect(made[0].classList.contains('hs-mc-msg-cleared')).toBe(false)
+    expect(made[1].removed).toBe(false)
   })
 })

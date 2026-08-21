@@ -213,6 +213,16 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
   }
 }
 
+/** Poll a predicate instead of sleeping. Returns false if it never held. */
+async function until(p: any, check: () => boolean | Promise<boolean>, ms = 20_000) {
+  const step = 400
+  for (let waited = 0; waited < ms; waited += step) {
+    if (await check()) return true
+    await p.waitForTimeout(step)
+  }
+  return false
+}
+
 /**
  * Closing a persistent context that still holds a websocket to a local mock can
  * hang forever, and a harness that hangs is worse than one that fails: there is
@@ -582,7 +592,13 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
     p.on('pageerror', (e: unknown) => errors.push(`send: ${String(e).slice(0, 300)}`))
     await p.goto('https://www.twitch.tv/probechan', { waitUntil: 'domcontentloaded' })
     await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
-    await p.waitForTimeout(5000)
+
+    // Poll rather than sleep. The authed connection needs a username, which
+    // arrives from storage asynchronously in a fixture with no twitch DOM to
+    // read one from, so a fixed wait sometimes checked before it landed and
+    // failed on the handshake for reasons that had nothing to do with the code
+    // under test.
+    const handshook = await until(p, () => frames.some((f) => f.startsWith('PASS oauth:')))
 
     const push = (raw: string) => {
       for (const c of sockets) {
@@ -592,7 +608,7 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
       }
     }
 
-    if (!frames.some((f) => f.startsWith('PASS oauth:'))) {
+    if (!handshook) {
       fail(
         `the authenticated irc connection never handshook (frames: ${JSON.stringify(frames.slice(0, 8))}) — ` +
           'without it nothing below can send',
@@ -603,7 +619,7 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
     await p.click('#hs-mc-input')
     await p.keyboard.type('hello from the harness')
     await p.keyboard.press('Enter')
-    await p.waitForTimeout(3500)
+    await until(p, () => frames.some((f) => f.startsWith('PRIVMSG')))
 
     const privmsg = frames.filter((f) => f.startsWith('PRIVMSG'))
     if (!privmsg.length) {
@@ -617,7 +633,11 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
     }
     if (full) ok(`Enter sends the right line: ${JSON.stringify(privmsg[0])}`)
 
-    await p.waitForTimeout(2500)
+    await until(p, async () =>
+      (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes(
+        'hello from the harness',
+      ),
+    )
     const rows: string[] = await p.evaluate(() =>
       [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
     )
@@ -640,7 +660,11 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
       '@display-name=bystander;color=#00FF00;user-id=43;id=m2 ' +
         ':bystander!b@b.tmi.twitch.tv PRIVMSG #probechan :unrelated chatter\r\n',
     )
-    await p.waitForTimeout(2500)
+    await until(p, async () =>
+      (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes(
+        'unrelated chatter',
+      ),
+    )
     const seen: string[] = await p.evaluate(() =>
       [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
     )
@@ -655,7 +679,9 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
       '@display-name=third;color=#00FFFF;user-id=44;id=m3 ' +
         ':third!t@t.tmi.twitch.tv PRIVMSG #probechan :after the ban\r\n',
     )
-    await p.waitForTimeout(2500)
+    await until(p, async () =>
+      (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes('after the ban'),
+    )
 
     const modRows: Array<{ text: string, cleared: boolean }> = await p.evaluate(() =>
       [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => ({
@@ -694,6 +720,203 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
     await closeContext(c, `twitch irc (dim ${dim ? 'on' : 'off'})`, prof)
     rmSync(prof, { recursive: true, force: true })
     rmSync(certDir, { recursive: true, force: true })
+  }
+}
+
+/**
+ * Kick send: overlay composer -> background -> a kick.com tab -> POST.
+ *
+ * The channel lookup deliberately answers with DIFFERENT ids for the channel
+ * (111) and its chatroom (222), because which one ends up in the URL is a
+ * silent-failure trap the source comments record from a live incident: a send
+ * to the CHANNEL id returns 200 and broadcasts to nobody. A test that used the
+ * same number for both would pass either way.
+ *
+ * Every kick.com request is fulfilled locally, so the real kick is never
+ * contacted — including the background's own fetch, which playwright does
+ * intercept (routes are matched last-registered-first, hence the ordering).
+ */
+async function kickSendCheck() {
+  console.log('\n── send on kick, for real ──')
+  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-ksend-'))
+  const c = await launchWithExtension(prof, ['--window-size=1400,900'])
+  const posts: Array<{ url: string, body: string, headers: Record<string, string> }> = []
+  try {
+    const body =
+      '<div id="host-content" style="height:100vh">kick</div>' +
+      '<div id="channel-chatroom"><div id="chatroom-messages"><div class="no-scrollbar"></div></div>' +
+      '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div></div>'
+
+    await c.route('https://heatsync.org/**', (r: any) => r.abort())
+    await c.route('https://kick.com/**', (r: any) => {
+      const u = r.request().url()
+      if (u.includes('/api/')) return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(body) })
+    })
+    await c.route('https://kick.com/api/v2/channels/**', (r: any) =>
+      r.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ id: 111, chatroom: { id: 222 } }),
+      }),
+    )
+    await c.route('https://kick.com/api/v2/messages/send/**', (r: any) => {
+      const req = r.request()
+      posts.push({ url: req.url(), body: req.postData() || '', headers: req.headers() })
+      r.fulfill({ status: 200, contentType: 'application/json', body: '{"status":{"code":200}}' })
+    })
+    // The background reads these through the cookies API before it will relay.
+    await c.addCookies([
+      { name: 'XSRF-TOKEN', value: 'harness-xsrf', domain: '.kick.com', path: '/', secure: true },
+      { name: 'session_token', value: 'harness-session', domain: '.kick.com', path: '/', secure: true },
+    ])
+
+    let sw = c.serviceWorkers()[0]
+    if (!sw) sw = await c.waitForEvent('serviceworker', { timeout: 20_000 })
+    const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+    if (!id) fail('could not resolve the extension id for the kick send check')
+    const seed = await c.newPage()
+    await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    await seed.evaluate(async () => {
+      // @ts-ignore — extension page
+      await chrome.storage.local.set({
+        heatsync_multichat: { channels: [{ id: 'kchan', twitch: '', kick: 'kchan', youtube: '' }] },
+        user_info: { username: 'probeuser' },
+      })
+    })
+    await seed.close()
+
+    const p = await c.newPage()
+    p.on('pageerror', (e: unknown) => errors.push(`kick-send: ${String(e).slice(0, 300)}`))
+    await p.goto('https://kick.com/kchan', { waitUntil: 'domcontentloaded' })
+    await p
+      .waitForSelector('#hs-mc-input', { timeout: 25_000 })
+      .catch(() => fail('the overlay composer never appeared on a kick channel page'))
+    await p.waitForTimeout(5000)
+
+    await p.click('#hs-mc-input')
+    await p.keyboard.type('hello from the harness')
+    await p.keyboard.press('Enter')
+    await until(p, () => posts.length > 0)
+
+    if (!posts.length) {
+      fail(
+        'pressing Enter on kick sent no POST at all — the chain is composer -> background ' +
+          '-> cookies -> kick.com tab -> fetch, and one of those links is broken',
+      )
+    }
+    const post = posts[0]
+    if (!post.url.endsWith('/messages/send/222')) {
+      fail(
+        `the kick send went to ${post.url}. it must carry the CHATROOM id (222), not the ` +
+          'channel id (111): a channel-id send answers 200 and broadcasts to nobody, so this ' +
+          'fails silently in production and looks fine from the client.',
+      )
+    }
+    ok('kick sends to the chatroom id, not the channel id')
+
+    const parsed = JSON.parse(post.body || '{}')
+    if (parsed.content !== 'hello from the harness' || parsed.type !== 'message') {
+      fail(`the kick send body is wrong: ${post.body}`)
+    }
+    ok(`kick send body is what was typed (${post.body})`)
+
+    if (post.headers['x-xsrf-token'] !== 'harness-xsrf') fail('the kick send lost its X-XSRF-TOKEN header')
+    if (post.headers.authorization !== 'Bearer harness-session') {
+      fail(
+        `the kick send lost its bearer token (got ${JSON.stringify(post.headers.authorization)}) — ` +
+          'kick 403s "User is not authenticated" without it',
+      )
+    }
+    ok('kick send carries both the xsrf token and the session bearer')
+  } finally {
+    await closeContext(c, 'kick send', prof)
+    rmSync(prof, { recursive: true, force: true })
+  }
+}
+
+/**
+ * Youtube send: overlay composer -> background -> a /live_chat tab, which types
+ * into youtube's OWN input and clicks youtube's OWN send button. There is no
+ * heatsync API call to watch, so the fixture stands in for youtube: a real
+ * contenteditable, a real button, and a list that gains a row on click — which
+ * is the echo the relay waits for before it reports success.
+ */
+async function youtubeSendCheck() {
+  console.log('\n── send on youtube, for real ──')
+  const VID = 'YTSENDVIDEO'
+  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-ytsend-'))
+  const c = await launchWithExtension(prof, ['--window-size=1400,900'])
+  try {
+    const body =
+      '<yt-live-chat-item-list-renderer><div id="items"></div></yt-live-chat-item-list-renderer>' +
+      '<yt-live-chat-text-input-field-renderer><div id="input" contenteditable="true"></div>' +
+      '<div id="send-button"><button aria-label="send">send</button></div>' +
+      '</yt-live-chat-text-input-field-renderer>' +
+      '<script>window.__ytClicks=0;' +
+      "document.querySelector('#send-button button').addEventListener('click',()=>{" +
+      'window.__ytClicks++;' +
+      "const i=document.querySelector('yt-live-chat-text-input-field-renderer div#input');" +
+      "const t=(i.textContent||'').trim(); if(!t) return;" +
+      "const row=document.createElement('yt-live-chat-text-message-renderer');" +
+      "row.innerHTML='<span id=\"message\">'+t+'</span>';" +
+      "document.querySelector('#items').appendChild(row); i.textContent='';});<\/script>"
+
+    await c.route('https://heatsync.org/**', (r: any) => r.abort())
+    await c.route('https://www.youtube.com/**', (r: any) =>
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(body) }),
+    )
+
+    let sw = c.serviceWorkers()[0]
+    if (!sw) sw = await c.waitForEvent('serviceworker', { timeout: 20_000 })
+    const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+    if (!id) fail('could not resolve the extension id for the youtube send check')
+    const seed = await c.newPage()
+    await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    await seed.evaluate(async (vid: string) => {
+      // @ts-ignore — extension page
+      await chrome.storage.local.set({
+        heatsync_multichat: {
+          channels: [{ id: 'ytchan', twitch: '', kick: '', youtube: `https://www.youtube.com/watch?v=${vid}` }],
+        },
+        user_info: { username: 'probeuser' },
+      })
+    }, VID)
+    await seed.close()
+
+    const p = await c.newPage()
+    p.on('pageerror', (e: unknown) => errors.push(`yt-send: ${String(e).slice(0, 300)}`))
+    await p.goto(`https://www.youtube.com/live_chat?v=${VID}`, { waitUntil: 'domcontentloaded' })
+    await p
+      .waitForSelector('#hs-mc-input', { timeout: 25_000 })
+      .catch(() => fail('the overlay composer never appeared on a youtube live_chat page'))
+    await p.waitForTimeout(4000)
+
+    await p.click('#hs-mc-input')
+    await p.keyboard.type('hello from the harness')
+    await p.keyboard.press('Enter')
+    await until(p, async () => (await p.evaluate(() => (window as any).__ytClicks || 0)) > 0)
+    // A beat past the first click, so a SECOND one would be caught too.
+    await p.waitForTimeout(1500)
+
+    const state: { clicks: number, items: string[] } = await p.evaluate(() => ({
+      clicks: (window as any).__ytClicks || 0,
+      items: [...document.querySelectorAll('#items #message')].map((e) => e.textContent || ''),
+    }))
+    if (!state.clicks) {
+      fail(
+        "pressing Enter never clicked youtube's send button — the relay types into youtube's own " +
+          'composer and clicks it, so a selector change here breaks sending with no error anywhere',
+      )
+    }
+    if (!state.items.some((t) => t.includes('hello from the harness'))) {
+      fail(`the message never reached youtube's chat list (items: ${JSON.stringify(state.items)})`)
+    }
+    if (state.clicks > 1) fail(`youtube's send button was clicked ${state.clicks} times — a double post`)
+    ok("youtube send types into youtube's composer and clicks send exactly once")
+  } finally {
+    await closeContext(c, 'youtube send', prof)
+    rmSync(prof, { recursive: true, force: true })
   }
 }
 
@@ -1311,6 +1534,13 @@ try {
   // the OFF one — hide — did not exist in the overlay until today.
   await twitchIrcCheck({ dim: true, full: true })
   await twitchIrcCheck({ dim: false, full: false })
+
+  // ── the other two send paths ─────────────────────────────────────────────
+  // Three platforms, three completely different transports. Twitch is a socket
+  // (above), kick is an authenticated POST relayed through a kick.com tab, and
+  // youtube drives youtube's own composer. Only the first was covered.
+  await kickSendCheck()
+  await youtubeSendCheck()
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

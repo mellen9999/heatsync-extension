@@ -38553,8 +38553,11 @@ function listenForSocialEvents() {
     }
     if (msg.type === 'youtube_msg_deleted') {
       // Mark all rendered messages from this user (for the matching channel)
-      // as cleared so they get the dim+strikethrough treatment that Twitch/Kick
-      // moderator deletions already get.
+      // as cleared so they get the same grey-but-readable treatment twitch and
+      // kick moderator deletions get. DOM-tap sourced and keyed off USER only —
+      // the server path (youtube_delete) is the precise one, matching specific
+      // message ids and a banned author's channel id. Both exist because either
+      // source can be the only one live.
       const u = (msg.user || '').toLowerCase()
       if (!u) return
       const msgsEl = document.getElementById('hs-mc-messages')
@@ -75773,8 +75776,16 @@ const STORAGE_KEY = 'heatsync_multichat'
       })
     } catch {}
 
-    // Listen for social tab events from background
-    if (gateAtBoot('feed')) listenForSocialEvents()
+    // Listen for social tab events from background.
+    //
+    // Gated on youtube TOO, not just feed. One listener carries both the site's
+    // feed pushes AND every youtube message type — youtube_chat_message,
+    // youtube_status, and both deletion paths — so gating it on `feed` alone
+    // meant switching the feed subsystem off silently killed YOUTUBE CHAT. The
+    // kill panel says feed disables the feed; it should not take a platform
+    // with it. Registering with feed off is harmless: those handlers update
+    // buffers nothing renders.
+    if (gateAtBoot('feed') || gateAtBoot('chat-youtube')) listenForSocialEvents()
 
     // Load whisper conversations from storage
     if (gateAtBoot('whispers')) loadWhispers()

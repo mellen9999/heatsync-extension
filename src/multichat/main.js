@@ -14075,8 +14075,16 @@
       })
     } catch {}
 
-    // Listen for social tab events from background
-    if (gateAtBoot('feed')) listenForSocialEvents()
+    // Listen for social tab events from background.
+    //
+    // Gated on youtube TOO, not just feed. One listener carries both the site's
+    // feed pushes AND every youtube message type — youtube_chat_message,
+    // youtube_status, and both deletion paths — so gating it on `feed` alone
+    // meant switching the feed subsystem off silently killed YOUTUBE CHAT. The
+    // kill panel says feed disables the feed; it should not take a platform
+    // with it. Registering with feed off is harmless: those handlers update
+    // buffers nothing renders.
+    if (gateAtBoot('feed') || gateAtBoot('chat-youtube')) listenForSocialEvents()
 
     // Load whisper conversations from storage
     if (gateAtBoot('whispers')) loadWhispers()

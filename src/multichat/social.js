@@ -1163,8 +1163,11 @@ function listenForSocialEvents() {
     }
     if (msg.type === 'youtube_msg_deleted') {
       // Mark all rendered messages from this user (for the matching channel)
-      // as cleared so they get the dim+strikethrough treatment that Twitch/Kick
-      // moderator deletions already get.
+      // as cleared so they get the same grey-but-readable treatment twitch and
+      // kick moderator deletions get. DOM-tap sourced and keyed off USER only —
+      // the server path (youtube_delete) is the precise one, matching specific
+      // message ids and a banned author's channel id. Both exist because either
+      // source can be the only one live.
       const u = (msg.user || '').toLowerCase()
       if (!u) return
       const msgsEl = document.getElementById('hs-mc-messages')

@@ -2610,19 +2610,28 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   }
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.
-  if (msg) {
+  if (msg && gateAtBoot('feed') !== false) {
     items.push({ label: 'op to feed', fn: () => _quickOpToFeed(username, msg) })
   }
+  // Subsystem-owned rows are omitted when their switch is off — a disabled
+  // feature must not keep a menu entry that turns it straight back on. That is
+  // how `profile-cards: false` still opened a profile card and `whispers:
+  // false` still opened a whisper composer. `dm` and `mention` are named by no
+  // switch, so they always show.
+  if (gateAtBoot('whispers') !== false) {
+    items.push({ label: 'whisper', fn: () => _openWhisperFor(username, platform) })
+  }
   items.push(
-    { label: 'whisper', fn: () => _openWhisperFor(username, platform) },
     { label: 'dm', fn: () => _openDmFor(username, platform) },
     { label: 'mention', fn: () => _mentionInMcInput(username) },
-    { label: 'view profile', fn: () => openProfileCard(username, platform) },
-    {
-      label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
-      fn: () => hsNoteOpenEditor(username, platform, x, y),
-    },
   )
+  if (gateAtBoot('profile-cards') !== false) {
+    items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
+  }
+  items.push({
+    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    fn: () => hsNoteOpenEditor(username, platform, x, y),
+  })
   // Twitch-native actions we don't reimplement (report, gift sub) — the
   // official viewer-card popout carries both. Twitch rows with a known
   // channel only; window.open keeps twitch's own auth/session context.

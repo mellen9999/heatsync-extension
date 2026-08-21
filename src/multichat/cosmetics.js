@@ -241,6 +241,11 @@ async function flushYtNameLookups() {
       if (!channelId) return
       const ytUid = `yt_${channelId}`
       if (mcUserCosmetics.has(ytUid)) return
+      // Third-party only. The name→twitch-id resolution ABOVE stays ungated:
+      // it also feeds heatsync's own paints (it sets m.userId), and the switch
+      // is named "third-party cosmetics". This 7TV google-id fetch is the only
+      // part of this path the switch actually owns.
+      if (gateAtBoot('cosmetics') === false) return
       let googleResp = null
       try {
         googleResp = await safeSendMessage({ type: 'get_youtube_user_cosmetics', channelIds: [channelId] })
@@ -436,6 +441,14 @@ function queueMcCosmeticsLookup(userId) {
   // dedup (hsPaintCache), so this is unconditional even when the 7TV lookup
   // below short-circuits on an already-cached (possibly negative) entry.
   queuePaintLookup(userId)
+  // …and heatsync paints stay OUTSIDE the gate below on purpose: the switch is
+  // named "third-party cosmetics" and must not take our own paints with it.
+  //
+  // The 7TV half is what `cosmetics` actually switches off. Only the boot pull
+  // (loadBulkBadges) was gated, so this — the per-message chokepoint every
+  // rendered row goes through — kept running and the switch never delivered
+  // the ram it promises on a busy channel.
+  if (gateAtBoot('cosmetics') === false) return
   if (mcUserCosmetics.has(userId)) return
   if (mcCosmeticsPending.size >= MC_COSMETICS_PENDING_MAX) return
   mcCosmeticsPending.add(userId)

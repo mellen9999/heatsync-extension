@@ -3,25 +3,29 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 /**
- * A subsystem kill-switch must disable its OWN subsystem and nothing else.
+ * A subsystem kill-switch must disable its OWN subsystem, all of it, and
+ * nothing else. Both halves of that have been broken here in turn.
  *
- * listenForSocialEvents() registers one chrome.runtime.onMessage listener that
- * carries both the site's feed pushes and EVERY youtube message type —
- * youtube_chat_message, youtube_status, and both deletion paths. It was called
- * behind `gateAtBoot('feed')` alone, so a user who switched the feed subsystem
- * off silently lost YouTube chat. The panel says feed disables the feed; it
- * should not take a platform with it.
+ * listenForSocialEvents() registers ONE chrome.runtime.onMessage listener that
+ * carries the site's feed pushes, every youtube message type, DMs, seen-state
+ * and send-origin tagging — four subsystems' worth. Any gate on the
+ * REGISTRATION is wrong for three of them:
  *
- * The listener is shared by design (one registration, many types), so the fix
- * is the gate, not a split. This pins that the gate covers every subsystem the
- * listener actually serves.
+ *   `gateAtBoot('feed')`                → feed off silently killed YOUTUBE CHAT
+ *   `feed || chat-youtube`              → chat-youtube off no longer turned
+ *                                         youtube chat OFF (measured live: a
+ *                                         broadcast still rendered a row)
+ *
+ * The listener is shared by design, so the gate belongs in the dispatcher,
+ * per message family. This pins that shape: registration unconditional, and
+ * each family checking the switch that names it.
  */
 
 const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
 const SOCIAL = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
 
-/** Message types handled inside listenForSocialEvents. */
-function typesInListener() {
+/** Body of listenForSocialEvents, brace-matched from its declaration. */
+function listenerBody() {
   const at = SOCIAL.indexOf('function listenForSocialEvents()')
   expect(at).toBeGreaterThan(-1)
   let depth = 0
@@ -36,16 +40,12 @@ function typesInListener() {
       }
     }
   }
-  const body = SOCIAL.slice(at, end)
-  return [...body.matchAll(/msg\.type === '([^']+)'/g)].map((m) => m[1])
+  return SOCIAL.slice(at, end)
 }
 
-/** The gate expression guarding the call. */
-function gateExpr() {
-  // greedy to the LAST paren before the call — `[^)]*` stops inside gateAtBoot('feed')
-  const m = MAIN.match(/if \((.*)\) listenForSocialEvents\(\)/)
-  expect(m, 'listenForSocialEvents call site not found').toBeTruthy()
-  return m[1]
+/** Message types handled inside listenForSocialEvents. */
+function typesInListener() {
+  return [...listenerBody().matchAll(/msg\.type === '([^']+)'/g)].map((m) => m[1])
 }
 
 describe('subsystem gate scope', () => {
@@ -55,18 +55,52 @@ describe('subsystem gate scope', () => {
     expect(types.length).toBeGreaterThan(5)
   })
 
-  test('turning off the feed does not take youtube chat with it', () => {
-    expect(gateExpr()).toContain("gateAtBoot('chat-youtube')")
+  test('registration is unconditional — no gate can be right for all four', () => {
+    expect(MAIN).toContain('\n    listenForSocialEvents()')
+    expect(MAIN).not.toMatch(/if \([^\n]*\) listenForSocialEvents\(\)/)
   })
 
-  test('the feed still gates itself', () => {
-    expect(gateExpr()).toContain("gateAtBoot('feed')")
+  test('youtube traffic is gated on chat-youtube, in the dispatcher', () => {
+    const body = listenerBody()
+    expect(body).toMatch(/startsWith\('youtube_'\)[\s\S]{0,80}gateAtBoot\('chat-youtube'\)/)
+    // …and that check must come BEFORE the first youtube handler, or it is
+    // decoration rather than a gate.
+    expect(body).toContain("msg.type === 'youtube_")
+    expect(body.indexOf("gateAtBoot('chat-youtube')")).toBeLessThan(body.indexOf("msg.type === 'youtube_"))
+  })
+
+  test('every youtube handler is actually covered by that prefix check', () => {
+    // The gate is written as a `youtube_` prefix test so a NEW youtube handler
+    // is covered the day it is added. That only holds while every youtube type
+    // really carries the prefix.
+    for (const t of typesInListener().filter((x) => x.toLowerCase().includes('youtube'))) {
+      expect(t.startsWith('youtube_')).toBe(true)
+    }
+  })
+
+  test('feed traffic is gated on feed, and the set is explicit', () => {
+    const body = listenerBody()
+    expect(body).toContain("_FEED_EVENTS.has(msg?.type) && gateAtBoot('feed') === false")
+    expect(body).toContain("msg.type === 'new-message'")
+    expect(body.indexOf('_FEED_EVENTS.has')).toBeLessThan(body.indexOf("msg.type === 'new-message'"))
+    for (const t of ['new-message', 'message-edited', 'message-deleted', 'message-updated']) {
+      expect(SOCIAL).toMatch(new RegExp(`_FEED_EVENTS = new Set\\(\\[[^\\]]*'${t}'`))
+    }
+  })
+
+  test('the cross-cutting handlers stay ungated, deliberately', () => {
+    // These are not owned by any subsystem — [H] send-origin tagging, seen
+    // state and DMs. The old feed-gated registration killed all three as a side
+    // effect of a switch labelled "feed". If one ever gains a real subsystem,
+    // this test is the place that says so.
+    const body = listenerBody()
+    for (const t of ['chat_origin_broadcast', 'seen_update', 'dm_new']) {
+      expect(body).toContain(`msg.type === '${t}'`)
+      expect(body).not.toMatch(new RegExp(`'${t}'[\\s\\S]{0,120}gateAtBoot\\(`))
+    }
   })
 
   test('both youtube deletion paths are reachable through that listener', () => {
-    // server-sourced (by message id + banned author) and DOM-tap sourced (by
-    // user). Either can be the only live source, so losing the listener loses
-    // both at once.
     const types = typesInListener()
     expect(types).toContain('youtube_delete')
     expect(types).toContain('youtube_msg_deleted')

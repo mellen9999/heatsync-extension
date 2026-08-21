@@ -23813,15 +23813,24 @@ class IRC extends ChatClient {
     // Capped at 500 entries (FIFO eviction) so they can't grow unbounded.
     this._modNoticeIndex = new Map()
     this._deleteNoticeIndex = new Map()
-    this._listener = (message) => {
-      if (this._destroyed || !message || typeof message !== 'object') return
-      if (message.type === 'bg_irc_msg') {
-        this._handleMsg(message.msg)
-      } else if (message.type === 'bg_irc_history_merged') {
-        this._refreshFromBg(message.channel)
+    // The irc-twitch subsystem switch lives HERE, not at the call site.
+    // main.js gates `irc.connect()` on it — but connect() is a no-op (the BG
+    // owns the socket), so that gate turned nothing off: this listener is the
+    // twitch feed as far as the overlay is concerned. Measured, not assumed —
+    // with irc-twitch off, a bg_irc_msg broadcast still rendered a chat row.
+    // KickChat registers its own listener inside connect(), which is why the
+    // kick switch always worked; this restores the same shape.
+    if (gateAtBoot('irc-twitch')) {
+      this._listener = (message) => {
+        if (this._destroyed || !message || typeof message !== 'object') return
+        if (message.type === 'bg_irc_msg') {
+          this._handleMsg(message.msg)
+        } else if (message.type === 'bg_irc_history_merged') {
+          this._refreshFromBg(message.channel)
+        }
       }
+      cleanup.addListener(chrome.runtime?.onMessage, this._listener)
     }
-    cleanup.addListener(chrome.runtime?.onMessage, this._listener)
     // Global twitch badges (mod sword, vip diamond, subscriber/0 star, etc.)
     // were previously fetched in irc.ws.onopen — removed when WebSocket moved
     // to BG. Without this, mod/sub fall back to TEXT badges instead of images.
@@ -24129,6 +24138,12 @@ class IRC extends ChatClient {
   }
 
   async join(ch) {
+    // 13 of the 17 join call sites carry no subsystem gate — a switch that
+    // depends on every caller remembering it is not a switch. It lives at the
+    // chokepoint instead: without this, irc-twitch off still sent bg_irc_join,
+    // the BG joined, and the history pull below filled the buffer that
+    // renderMessages reads.
+    if (!gateAtBoot('irc-twitch')) return
     ch = ch.toLowerCase()
     if (this.channels.has(ch)) return
     this.channels.set(ch, new CircularBuffer(3000))
@@ -24917,6 +24932,11 @@ class KickChat extends ChatClient {
   }
 
   async join(kickUsername) {
+    // Same chokepoint as IRC.join above. Kick's RENDER side was already gated
+    // (its listener registers in connect()), but the joins were not: with
+    // chat-kick off the overlay still asked the BG for this channel's history
+    // and badges.
+    if (!gateAtBoot('chat-kick')) return
     kickUsername = kickUsername.toLowerCase()
     if (this.channels.has(kickUsername)) return
     this.channels.set(kickUsername, new CircularBuffer(3000))
@@ -37397,6 +37417,31 @@ const _onceGuardsSocial = {}
 
 let _autoYtVideoId = null // videoId for this tab's __live_yt_auto__ subscription (cross-tab filter)
 
+// The heatsync-feed half of listenForSocialEvents' dispatch — the events the
+// `feed` subsystem actually owns. Kept as a set so the gate is one lookup and
+// a new feed event has one obvious place to be declared.
+const _FEED_EVENTS = new Set(['new-message', 'message-edited', 'message-deleted', 'message-updated'])
+
+// The one place a youtube stream gets subscribed. Eight call sites across four
+// modules sent this message raw and only three of them checked the switch, so
+// turning youtube chat off still opened a relay subscription for every saved
+// channel and pulled its emote set — proven live, not read from the source.
+// A gate that every caller has to remember is not a gate; this is the
+// chokepoint, so no future caller can forget it.
+//
+// `emoteChannel` is the bucket the channel's 7TV/BTTV youtube emotes load
+// under. Omit it where the caller never fetched them.
+function ytSubscribe(channelId, url, emoteChannel) {
+  if (gateAtBoot('chat-youtube') === false) return false
+  try {
+    chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url, channelId }).catch(() => {})
+  } catch (_) {}
+  if (emoteChannel) {
+    safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
+  }
+  return true
+}
+
 // Re-arm the __live_yt_auto__ binding for the current URL channel: drop the
 // previous channel's subscription/buffer/watchdog state, then re-subscribe
 // from getLivePlatformNames(). Shared by twitch/kick soft SPA nav — the yt
@@ -37426,25 +37471,10 @@ function rearmLiveYtAuto() {
   if (!names.youtube) return
   ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
   ytChanLastSeen.set('__live_yt_auto__', Date.now())
-  chrome.runtime
-    .sendMessage({
-      type: 'youtube_ws_subscribe',
-      url: names.youtube,
-      channelId: '__live_yt_auto__',
-    })
-    .catch(() => {})
-  // Fetch the new channel's yt emote set too, keyed by the bare url-channel
-  // name so a linked channel's emotes merge into one bucket (mirrors init's
-  // sibling send after its own youtube_ws_subscribe).
+  // Emote bucket is the bare url-channel name, so a linked channel's emotes
+  // merge into one bucket (mirrors init's sibling send).
   const urlCh = getCurrentChannel()?.toLowerCase()
-  if (urlCh) {
-    safeSendMessage({
-      type: 'join_channel',
-      platform: 'youtube',
-      channel: urlCh,
-      channelId: names.youtube || null,
-    })
-  }
+  ytSubscribe('__live_yt_auto__', names.youtube, urlCh || '')
 }
 
 // YT POLL SMOOTHING: server polls YouTube every ~5s and dispatches the whole
@@ -38197,6 +38227,22 @@ function listenForSocialEvents() {
   _onceGuardsSocial.socialListener = true
 
   cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+    // One listener, three subsystems — so each family checks its OWN switch
+    // here instead of the whole registration hanging off one gate. Gating the
+    // registration was wrong in both directions: `feed` off killed youtube
+    // chat, and widening that to `feed || chat-youtube` then meant
+    // `chat-youtube` off no longer turned youtube chat off. Proven live, not
+    // read: with the chat subsystems off the overlay still rendered a
+    // broadcast message.
+    //
+    // chat_origin_broadcast / seen_update / dm_new stay ungated on purpose —
+    // no subsystem names them ([H] send-origin tagging, cross-client seen
+    // state, DMs), and the old feed-gated registration killed all three as a
+    // side effect of a switch that says "feed".
+    if (_FEED_EVENTS.has(msg?.type) && gateAtBoot('feed') === false) return
+    if (typeof msg?.type === 'string' && msg.type.startsWith('youtube_') && gateAtBoot('chat-youtube') === false) {
+      return
+    }
     if (msg.type === 'chat_origin_broadcast' && msg.text) {
       // Heatsync.org chat-tile sent a chat — record the origin so the
       // upcoming platform echo gets tagged [H] via peekSentHost. Same
@@ -41230,6 +41276,13 @@ function loadWhispers() {
 }
 
 function handleIncomingWhisper(msg) {
+  // The `whispers` switch lives here, at the chokepoint, because THREE
+  // transports reach this function and only one of them was gated:
+  // eventsub-whispers.js (gated at startEventSubWhispers), auth-irc.js's
+  // WHISPER line (gated on irc-twitch, not on whispers), and the server's
+  // dm_new push (ungated). Two of the three delivered whispers to a user who
+  // had switched whispers off.
+  if (gateAtBoot('whispers') === false) return
   // Blocked users can't reach you via Twitch whisper — no timeline entry, no
   // red-dot/badge, no popup. (These arrive straight from Twitch EventSub/IRC,
   // so there's no server-side gate like HeatSync DMs have.) Checked BEFORE the
@@ -45035,19 +45088,28 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   }
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.
-  if (msg) {
+  if (msg && gateAtBoot('feed') !== false) {
     items.push({ label: 'op to feed', fn: () => _quickOpToFeed(username, msg) })
   }
+  // Subsystem-owned rows are omitted when their switch is off — a disabled
+  // feature must not keep a menu entry that turns it straight back on. That is
+  // how `profile-cards: false` still opened a profile card and `whispers:
+  // false` still opened a whisper composer. `dm` and `mention` are named by no
+  // switch, so they always show.
+  if (gateAtBoot('whispers') !== false) {
+    items.push({ label: 'whisper', fn: () => _openWhisperFor(username, platform) })
+  }
   items.push(
-    { label: 'whisper', fn: () => _openWhisperFor(username, platform) },
     { label: 'dm', fn: () => _openDmFor(username, platform) },
     { label: 'mention', fn: () => _mentionInMcInput(username) },
-    { label: 'view profile', fn: () => openProfileCard(username, platform) },
-    {
-      label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
-      fn: () => hsNoteOpenEditor(username, platform, x, y),
-    },
   )
+  if (gateAtBoot('profile-cards') !== false) {
+    items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
+  }
+  items.push({
+    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    fn: () => hsNoteOpenEditor(username, platform, x, y),
+  })
   // Twitch-native actions we don't reimplement (report, gift sub) — the
   // official viewer-card popout carries both. Twitch rows with a known
   // channel only; window.open keeps twitch's own auth/session context.
@@ -51630,6 +51692,10 @@ async function fetchBannerChain(chain) {
 // migrated into it on first load — see _hsnLoad.
 
 async function openProfileCard(username, platform) {
+  // Chokepoint for the profile-cards switch. Gating only the click handlers
+  // (setupProfileCardHandlers) left every other opener live — the unified
+  // context menu's "view profile" row called straight in here.
+  if (gateAtBoot('profile-cards') === false) return
   if (!username) return
   username = String(username).toLowerCase()
 
@@ -53217,9 +53283,7 @@ async function pcAddAsChannel(username) {
     // added without them is never re-subscribed when the stream goes silent.
     ytSubscribedUrls.set(channel.id, channel.youtube)
     ytChanLastSeen.set(channel.id, Date.now())
-    try {
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: channel.youtube, channelId: channel.id })
-    } catch {}
+    ytSubscribe(channel.id, channel.youtube)
   }
   closeProfileCard()
   switchTab(channel.id)
@@ -55222,6 +55286,11 @@ async function flushYtNameLookups() {
       if (!channelId) return
       const ytUid = `yt_${channelId}`
       if (mcUserCosmetics.has(ytUid)) return
+      // Third-party only. The name→twitch-id resolution ABOVE stays ungated:
+      // it also feeds heatsync's own paints (it sets m.userId), and the switch
+      // is named "third-party cosmetics". This 7TV google-id fetch is the only
+      // part of this path the switch actually owns.
+      if (gateAtBoot('cosmetics') === false) return
       let googleResp = null
       try {
         googleResp = await safeSendMessage({ type: 'get_youtube_user_cosmetics', channelIds: [channelId] })
@@ -55417,6 +55486,14 @@ function queueMcCosmeticsLookup(userId) {
   // dedup (hsPaintCache), so this is unconditional even when the 7TV lookup
   // below short-circuits on an already-cached (possibly negative) entry.
   queuePaintLookup(userId)
+  // …and heatsync paints stay OUTSIDE the gate below on purpose: the switch is
+  // named "third-party cosmetics" and must not take our own paints with it.
+  //
+  // The 7TV half is what `cosmetics` actually switches off. Only the boot pull
+  // (loadBulkBadges) was gated, so this — the per-message chokepoint every
+  // rendered row goes through — kept running and the switch never delivered
+  // the ram it promises on a busy channel.
+  if (gateAtBoot('cosmetics') === false) return
   if (mcUserCosmetics.has(userId)) return
   if (mcCosmeticsPending.size >= MC_COSMETICS_PENDING_MAX) return
   mcCosmeticsPending.add(userId)
@@ -60464,10 +60541,9 @@ function renderAddChannelForm(msgsEl) {
       youtubeLinks.set(id, { url: ytVal, videoId: '', channelName: '' })
       ytSubscribedUrls.set(id, ytVal)
       ytChanLastSeen.set(id, Date.now())
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: id }).catch(() => {})
-      // 7TV/BTTV YouTube channel emotes — channelId is a hint (the typed
-      // url/handle), background.js resolves the real UC... id itself.
-      safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: id, channelId: ytVal })
+      // 7TV/BTTV YouTube channel emotes ride along — the emote channelId is a
+      // hint (the typed url/handle); background.js resolves the real UC... id.
+      ytSubscribe(id, ytVal, id)
     }
 
     updateTabBar()
@@ -60615,13 +60691,7 @@ function applyLivePlatformOverrides() {
   if (names.youtube) {
     ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
-    chrome.runtime
-      .sendMessage({
-        type: 'youtube_ws_subscribe',
-        url: names.youtube,
-        channelId: '__live_yt_auto__',
-      })
-      .catch(() => {})
+    ytSubscribe('__live_yt_auto__', names.youtube)
   }
   renderMessages(currentTab)
 }
@@ -60921,7 +60991,7 @@ function showEditChannelForm(tabId) {
         // Pacer state is keyed by channelId — the old key is orphaned by the
         // id migration, so its queued drip would never flush.
         clearYtPace(tabId)
-        chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: newId }).catch(() => {})
+        ytSubscribe(newId, ytVal)
       }
       if (platformFilters?.[tabId]) {
         platformFilters[newId] = platformFilters[tabId]
@@ -60943,8 +61013,7 @@ function showEditChannelForm(tabId) {
       youtubeLinks.set(newId, { url: ytVal, videoId: '', channelName: '' })
       ytSubscribedUrls.set(newId, ytVal)
       ytChanLastSeen.set(newId, Date.now())
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: newId }).catch(() => {})
-      safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: newId, channelId: ytVal })
+      ytSubscribe(newId, ytVal, newId)
     }
 
     updateTabBar()
@@ -64317,14 +64386,30 @@ const STORAGE_KEY = 'heatsync_multichat'
     } catch (_) {}
     return getSetting('subsystems')[id] !== false
   }
-  function snapshotGates() {
-    _gatesAtBoot = Object.assign({}, getSetting('subsystems'))
+  // Taken BEFORE the first consumer, which is loadConfig() — it subscribes a
+  // youtube stream for every saved channel, and an unsnapshotted gateAtBoot
+  // silently answered "enabled", so `chat-youtube: false` still opened them.
+  // A gate that defaults to ON when asked too early is not a gate.
+  //
+  // Reads the already-in-flight ui_settings prime directly rather than
+  // getSetting(): the settings registry is not hydrated this early and would
+  // hand back the all-true schema default — the same silent yes by another
+  // route. Merged OVER that default so an unknown/absent key still resolves.
+  async function snapshotGates() {
+    let stored = null
+    try {
+      stored = (await cachedUiSettings())?.ui_settings?.subsystems || null
+    } catch (_) {}
+    _gatesAtBoot = Object.assign({}, _SETTINGS_BY_KEY.get('subsystems')?.default, stored)
   }
   function gateAtBoot(id) {
     try {
       if (window.__hsHealth?.disabled?.includes(id)) return false
     } catch (_) {}
-    return _gatesAtBoot?.[id] !== false
+    // Snapshot missing means someone moved a consumer above snapshotGates().
+    // Defer to the live read rather than inventing a yes.
+    if (_gatesAtBoot == null) return isEnabled(id)
+    return _gatesAtBoot[id] !== false
   }
 
   // One hydration pass over the whole registry — replaces the per-setting
@@ -72372,16 +72457,8 @@ const STORAGE_KEY = 'heatsync_multichat'
           ytChanLastSeen.set(entry.id, Date.now())
         } catch {}
         try {
-          chrome.runtime
-            .sendMessage({ type: 'youtube_ws_subscribe', url: entry.youtube, channelId: entry.id })
-            .catch(() => {})
+          ytSubscribe(entry.id, entry.youtube, entry.id)
         } catch {}
-        safeSendMessage({
-          type: 'join_channel',
-          platform: 'youtube',
-          channel: entry.id,
-          channelId: entry.youtube,
-        })
       }
 
       try {
@@ -72414,9 +72491,8 @@ const STORAGE_KEY = 'heatsync_multichat'
           ytChanLastSeen.set(entry.id, Date.now())
         } catch {}
         try {
-          chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytUrl, channelId: entry.id }).catch(() => {})
+          ytSubscribe(entry.id, ytUrl, entry.id)
         } catch {}
-        safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: entry.id, channelId: ytUrl })
       }
       if (mutated) {
         try {
@@ -72678,17 +72754,9 @@ const STORAGE_KEY = 'heatsync_multichat'
           youtubeLinks.set(ch.id, { url: ch.youtube, videoId: '', channelName: '' })
           ytSubscribedUrls.set(ch.id, ch.youtube)
           ytChanLastSeen.set(ch.id, Date.now())
-          chrome.runtime
-            .sendMessage({ type: 'youtube_ws_subscribe', url: ch.youtube, channelId: ch.id })
-            .catch(() => {})
-          // 7TV/BTTV YouTube channel emotes for this tab — channelId is a hint
+          // 7TV/BTTV YouTube channel emotes ride along — channelId is a hint
           // (the stored youtube URL/handle); background resolves the real UC id.
-          safeSendMessage({
-            type: 'join_channel',
-            platform: 'youtube',
-            channel: ch.id,
-            channelId: ch.youtube,
-          })
+          ytSubscribe(ch.id, ch.youtube, ch.id)
         }
       }
     } catch (_) {}
@@ -74204,6 +74272,12 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
         } catch (_) {}
       }
+      // The `cosmetics` switch gated only the PULL (loadBulkBadges). This is
+      // the PUSH — background re-broadcasts the bttv/ffz/chatterino maps on
+      // every refresh — so with cosmetics off the maps were repopulated and
+      // re-injected into live rows anyway. Gate the pull, miss the push: the
+      // same shape that made irc-twitch a switch that turned nothing off.
+      if (msg.type === 'cosmetics_update' && gateAtBoot('cosmetics') === false) return
       if (msg.type === 'cosmetics_update') {
         const bttv = Object.entries(msg.bttvBadges || {})
         const ffz = Object.entries(msg.ffzBadges || {})
@@ -74231,7 +74305,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       }
       // 7TV EventAPI pushed user.update / entitlement.* — drop our local
       // cosmetic cache and re-queue lookup so badges/paint show up fresh.
-      if (msg.type === 'cosmetics_invalidated' && msg.twitchId) {
+      if (msg.type === 'cosmetics_invalidated' && msg.twitchId && gateAtBoot('cosmetics') !== false) {
         mcUserCosmetics.delete(String(msg.twitchId))
         // Re-queue lookup; updateCosmeticsInPlace fires on response and adds
         // the badge to all existing messages with this uid.
@@ -75017,15 +75091,7 @@ const STORAGE_KEY = 'heatsync_multichat'
                 // so a sub added without them is never re-subscribed on silence.
                 ytSubscribedUrls.set(id, ch.youtube)
                 ytChanLastSeen.set(id, Date.now())
-                chrome.runtime
-                  .sendMessage({ type: 'youtube_ws_subscribe', url: ch.youtube, channelId: id })
-                  .catch(() => {})
-                safeSendMessage({
-                  type: 'join_channel',
-                  platform: 'youtube',
-                  channel: id,
-                  channelId: ch.youtube,
-                })
+                ytSubscribe(id, ch.youtube, id)
               }
             }
           }
@@ -75404,10 +75470,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // the init-time sibling: the poller's 'connected' echo is missed on
     // already-polled popular streams).
     _autoYtVideoId = vid
-    chrome.runtime
-      .sendMessage({ type: 'youtube_ws_subscribe', url: autoYtUrl, channelId: '__live_yt_auto__' })
-      .catch(() => {})
-    safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: vid, channelId: null })
+    ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
   // The tab to activate on mount. When we're on an actual stream/channel watch
@@ -75593,6 +75656,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     pruneChatHistoryOnce()
     const _uiPrime = cachedUiSettings()
     const _localPrime = chrome.storage.local.get([STORAGE_KEY, 'user_info', 'muted_users'])
+    // Before loadConfig — it is the first thing that consults a subsystem gate.
+    await snapshotGates()
     await loadConfig()
     if (!config.enabled) return
     // Lite / emotes-only mode is fully removed — overlay always boots.
@@ -75696,7 +75761,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage
     // write can't half-apply a subsystem. Live reads still use isEnabled().
-    snapshotGates()
 
     setupEmoteTooltipHandlers()
     setupUserTooltipHandlers()
@@ -75778,14 +75842,14 @@ const STORAGE_KEY = 'heatsync_multichat'
 
     // Listen for social tab events from background.
     //
-    // Gated on youtube TOO, not just feed. One listener carries both the site's
-    // feed pushes AND every youtube message type — youtube_chat_message,
-    // youtube_status, and both deletion paths — so gating it on `feed` alone
-    // meant switching the feed subsystem off silently killed YOUTUBE CHAT. The
-    // kill panel says feed disables the feed; it should not take a platform
-    // with it. Registering with feed off is harmless: those handlers update
-    // buffers nothing renders.
-    if (gateAtBoot('feed') || gateAtBoot('chat-youtube')) listenForSocialEvents()
+    // Unconditional, and that is the point. This one listener carries the
+    // site's feed pushes, every youtube message type, DMs, seen-state and
+    // send-origin tagging — four different subsystems' worth. Any gate here
+    // is wrong for three of them: `feed` alone killed youtube chat, and
+    // `feed || chat-youtube` then stopped `chat-youtube` from turning youtube
+    // chat off. Each family now checks its own switch inside the dispatcher
+    // (social.js), which is the only place that can be right for all of them.
+    listenForSocialEvents()
 
     // Load whisper conversations from storage
     if (gateAtBoot('whispers')) loadWhispers()
@@ -75865,6 +75929,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       const gTwitch = gateAtBoot('irc-twitch')
       const gKick = gateAtBoot('chat-kick')
       const gYt = gateAtBoot('chat-youtube')
+      // irc.connect() is a documented no-op — the BG owns the twitch socket —
+      // so this gate decides nothing. The real irc-twitch gate is in the IRC
+      // class (listener registration + join), which is where it has to be:
+      // gating a no-op is what made this switch turn nothing off.
       if (gTwitch) irc.connect()
       if (gKick) kickChat.connect()
 
@@ -75956,9 +76024,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const _popUrl = `https://youtube.com/watch?v=${_popVid}`
           ytSubscribedUrls.set('__live_yt_auto__', _popUrl)
           ytChanLastSeen.set('__live_yt_auto__', Date.now())
-          chrome.runtime
-            .sendMessage({ type: 'youtube_ws_subscribe', url: _popUrl, channelId: '__live_yt_auto__' })
-            .catch(() => {})
+          ytSubscribe('__live_yt_auto__', _popUrl)
         }
       }
 
@@ -76050,13 +76116,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           // the channel-mirror case (autoYtUrl = ytUrl, no id yet) still defers to
           // the status echo. spa-nav resets it to null on navigation.
           if (onYtVideoPage && currentChannel) _autoYtVideoId = currentChannel
-          chrome.runtime
-            .sendMessage({
-              type: 'youtube_ws_subscribe',
-              url: autoYtUrl,
-              channelId: '__live_yt_auto__',
-            })
-            .catch(() => {})
+          ytSubscribe('__live_yt_auto__', autoYtUrl)
+          // Emote join stays separate here (the block is already gated on gYt):
+          // its channelId hint is the CHANNEL url, not the video url we just
+          // subscribed with, so it can't ride ytSubscribe's third argument.
           // Fetch this channel's 7TV/BTTV YouTube emote set. `channel` is the
           // same bare identifier used for the Twitch/Kick joins above so a
           // linked multi-platform channel's emotes merge into one bucket
@@ -77072,11 +77135,11 @@ const STORAGE_KEY = 'heatsync_multichat'
         const silenceS = Math.round((now - last) / 1000)
         if (attempts === 0) {
           log('YT', channelId, 'silent', silenceS, 's — re-subscribing')
-          chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url, channelId }).catch(() => {})
+          ytSubscribe(channelId, url)
         } else if (attempts === 1) {
           log('YT', channelId, 'still silent', silenceS, 's — unsubscribe + subscribe')
           chrome.runtime.sendMessage({ type: 'youtube_ws_unsubscribe', channelId }).catch(() => {})
-          chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url, channelId }).catch(() => {})
+          ytSubscribe(channelId, url)
         } else {
           log('YT', channelId, 'unresponsive', silenceS, 's after', attempts, '— BG WS force-reconnect')
           chrome.runtime

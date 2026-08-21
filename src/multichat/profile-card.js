@@ -142,6 +142,10 @@ async function fetchBannerChain(chain) {
 // migrated into it on first load — see _hsnLoad.
 
 async function openProfileCard(username, platform) {
+  // Chokepoint for the profile-cards switch. Gating only the click handlers
+  // (setupProfileCardHandlers) left every other opener live — the unified
+  // context menu's "view profile" row called straight in here.
+  if (gateAtBoot('profile-cards') === false) return
   if (!username) return
   username = String(username).toLowerCase()
 
@@ -1729,9 +1733,7 @@ async function pcAddAsChannel(username) {
     // added without them is never re-subscribed when the stream goes silent.
     ytSubscribedUrls.set(channel.id, channel.youtube)
     ytChanLastSeen.set(channel.id, Date.now())
-    try {
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: channel.youtube, channelId: channel.id })
-    } catch {}
+    ytSubscribe(channel.id, channel.youtube)
   }
   closeProfileCard()
   switchTab(channel.id)

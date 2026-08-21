@@ -207,6 +207,13 @@ function loadWhispers() {
 }
 
 function handleIncomingWhisper(msg) {
+  // The `whispers` switch lives here, at the chokepoint, because THREE
+  // transports reach this function and only one of them was gated:
+  // eventsub-whispers.js (gated at startEventSubWhispers), auth-irc.js's
+  // WHISPER line (gated on irc-twitch, not on whispers), and the server's
+  // dm_new push (ungated). Two of the three delivered whispers to a user who
+  // had switched whispers off.
+  if (gateAtBoot('whispers') === false) return
   // Blocked users can't reach you via Twitch whisper — no timeline entry, no
   // red-dot/badge, no popup. (These arrive straight from Twitch EventSub/IRC,
   // so there's no server-side gate like HeatSync DMs have.) Checked BEFORE the

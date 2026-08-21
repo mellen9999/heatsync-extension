@@ -68,4 +68,27 @@ describe('subsystem switches', () => {
     const dead = keys.filter((k) => !corpus.includes(`'${k}'`) && !corpus.includes(`"${k}"`))
     expect(dead, 'declared in the kill panel and enforced nowhere — the toggle lies to the user').toEqual([])
   })
+
+  // The other direction, which matters just as much: a gate whose id is not a
+  // declared switch can never be turned off, so the branch behind it is dead
+  // and its "subsystem gate" comment is false. `right-click-block` is the one
+  // known case — content.js gates on it, nothing declares it, and the real
+  // control is heatsync-button.js's `rightClickBlockMode` setting.
+  const KNOWN_UNDECLARED = ['right-click-block']
+
+  test('no gate names a switch that does not exist', () => {
+    const used = [
+      ...new Set([...corpus.matchAll(/(?:gateAtBoot|isEnabled|hsGateOn)\('([a-z][a-z-]+)'\)/g)].map((m) => m[1])),
+    ]
+    expect(used.length, 'no gate calls found — the extraction broke, not the code').toBeGreaterThan(8)
+    const phantom = used.filter((k) => !keys.includes(k) && !KNOWN_UNDECLARED.includes(k))
+    expect(phantom, 'gated on a subsystem the settings panel never declares — the branch is unreachable').toEqual([])
+  })
+
+  test('the known-undeclared list stays honest', () => {
+    // If one of these is ever promoted to a real switch, drop it from the list
+    // rather than leaving a permanent exemption behind.
+    const stillUndeclared = KNOWN_UNDECLARED.filter((k) => !keys.includes(k))
+    expect(stillUndeclared).toEqual(KNOWN_UNDECLARED)
+  })
 })

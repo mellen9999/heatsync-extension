@@ -7,6 +7,31 @@ const _onceGuardsSocial = {}
 
 let _autoYtVideoId = null // videoId for this tab's __live_yt_auto__ subscription (cross-tab filter)
 
+// The heatsync-feed half of listenForSocialEvents' dispatch — the events the
+// `feed` subsystem actually owns. Kept as a set so the gate is one lookup and
+// a new feed event has one obvious place to be declared.
+const _FEED_EVENTS = new Set(['new-message', 'message-edited', 'message-deleted', 'message-updated'])
+
+// The one place a youtube stream gets subscribed. Eight call sites across four
+// modules sent this message raw and only three of them checked the switch, so
+// turning youtube chat off still opened a relay subscription for every saved
+// channel and pulled its emote set — proven live, not read from the source.
+// A gate that every caller has to remember is not a gate; this is the
+// chokepoint, so no future caller can forget it.
+//
+// `emoteChannel` is the bucket the channel's 7TV/BTTV youtube emotes load
+// under. Omit it where the caller never fetched them.
+function ytSubscribe(channelId, url, emoteChannel) {
+  if (gateAtBoot('chat-youtube') === false) return false
+  try {
+    chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url, channelId }).catch(() => {})
+  } catch (_) {}
+  if (emoteChannel) {
+    safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
+  }
+  return true
+}
+
 // Re-arm the __live_yt_auto__ binding for the current URL channel: drop the
 // previous channel's subscription/buffer/watchdog state, then re-subscribe
 // from getLivePlatformNames(). Shared by twitch/kick soft SPA nav — the yt
@@ -36,25 +61,10 @@ function rearmLiveYtAuto() {
   if (!names.youtube) return
   ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
   ytChanLastSeen.set('__live_yt_auto__', Date.now())
-  chrome.runtime
-    .sendMessage({
-      type: 'youtube_ws_subscribe',
-      url: names.youtube,
-      channelId: '__live_yt_auto__',
-    })
-    .catch(() => {})
-  // Fetch the new channel's yt emote set too, keyed by the bare url-channel
-  // name so a linked channel's emotes merge into one bucket (mirrors init's
-  // sibling send after its own youtube_ws_subscribe).
+  // Emote bucket is the bare url-channel name, so a linked channel's emotes
+  // merge into one bucket (mirrors init's sibling send).
   const urlCh = getCurrentChannel()?.toLowerCase()
-  if (urlCh) {
-    safeSendMessage({
-      type: 'join_channel',
-      platform: 'youtube',
-      channel: urlCh,
-      channelId: names.youtube || null,
-    })
-  }
+  ytSubscribe('__live_yt_auto__', names.youtube, urlCh || '')
 }
 
 // YT POLL SMOOTHING: server polls YouTube every ~5s and dispatches the whole
@@ -807,6 +817,22 @@ function listenForSocialEvents() {
   _onceGuardsSocial.socialListener = true
 
   cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+    // One listener, three subsystems — so each family checks its OWN switch
+    // here instead of the whole registration hanging off one gate. Gating the
+    // registration was wrong in both directions: `feed` off killed youtube
+    // chat, and widening that to `feed || chat-youtube` then meant
+    // `chat-youtube` off no longer turned youtube chat off. Proven live, not
+    // read: with the chat subsystems off the overlay still rendered a
+    // broadcast message.
+    //
+    // chat_origin_broadcast / seen_update / dm_new stay ungated on purpose —
+    // no subsystem names them ([H] send-origin tagging, cross-client seen
+    // state, DMs), and the old feed-gated registration killed all three as a
+    // side effect of a switch that says "feed".
+    if (_FEED_EVENTS.has(msg?.type) && gateAtBoot('feed') === false) return
+    if (typeof msg?.type === 'string' && msg.type.startsWith('youtube_') && gateAtBoot('chat-youtube') === false) {
+      return
+    }
     if (msg.type === 'chat_origin_broadcast' && msg.text) {
       // Heatsync.org chat-tile sent a chat — record the origin so the
       // upcoming platform echo gets tagged [H] via peekSentHost. Same

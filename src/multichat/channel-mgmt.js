@@ -182,10 +182,9 @@ function renderAddChannelForm(msgsEl) {
       youtubeLinks.set(id, { url: ytVal, videoId: '', channelName: '' })
       ytSubscribedUrls.set(id, ytVal)
       ytChanLastSeen.set(id, Date.now())
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: id }).catch(() => {})
-      // 7TV/BTTV YouTube channel emotes — channelId is a hint (the typed
-      // url/handle), background.js resolves the real UC... id itself.
-      safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: id, channelId: ytVal })
+      // 7TV/BTTV YouTube channel emotes ride along — the emote channelId is a
+      // hint (the typed url/handle); background.js resolves the real UC... id.
+      ytSubscribe(id, ytVal, id)
     }
 
     updateTabBar()
@@ -333,13 +332,7 @@ function applyLivePlatformOverrides() {
   if (names.youtube) {
     ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
-    chrome.runtime
-      .sendMessage({
-        type: 'youtube_ws_subscribe',
-        url: names.youtube,
-        channelId: '__live_yt_auto__',
-      })
-      .catch(() => {})
+    ytSubscribe('__live_yt_auto__', names.youtube)
   }
   renderMessages(currentTab)
 }
@@ -639,7 +632,7 @@ function showEditChannelForm(tabId) {
         // Pacer state is keyed by channelId — the old key is orphaned by the
         // id migration, so its queued drip would never flush.
         clearYtPace(tabId)
-        chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: newId }).catch(() => {})
+        ytSubscribe(newId, ytVal)
       }
       if (platformFilters?.[tabId]) {
         platformFilters[newId] = platformFilters[tabId]
@@ -661,8 +654,7 @@ function showEditChannelForm(tabId) {
       youtubeLinks.set(newId, { url: ytVal, videoId: '', channelName: '' })
       ytSubscribedUrls.set(newId, ytVal)
       ytChanLastSeen.set(newId, Date.now())
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: ytVal, channelId: newId }).catch(() => {})
-      safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: newId, channelId: ytVal })
+      ytSubscribe(newId, ytVal, newId)
     }
 
     updateTabBar()

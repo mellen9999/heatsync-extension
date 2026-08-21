@@ -539,15 +539,24 @@ class IRC extends ChatClient {
     // Capped at 500 entries (FIFO eviction) so they can't grow unbounded.
     this._modNoticeIndex = new Map()
     this._deleteNoticeIndex = new Map()
-    this._listener = (message) => {
-      if (this._destroyed || !message || typeof message !== 'object') return
-      if (message.type === 'bg_irc_msg') {
-        this._handleMsg(message.msg)
-      } else if (message.type === 'bg_irc_history_merged') {
-        this._refreshFromBg(message.channel)
+    // The irc-twitch subsystem switch lives HERE, not at the call site.
+    // main.js gates `irc.connect()` on it — but connect() is a no-op (the BG
+    // owns the socket), so that gate turned nothing off: this listener is the
+    // twitch feed as far as the overlay is concerned. Measured, not assumed —
+    // with irc-twitch off, a bg_irc_msg broadcast still rendered a chat row.
+    // KickChat registers its own listener inside connect(), which is why the
+    // kick switch always worked; this restores the same shape.
+    if (gateAtBoot('irc-twitch')) {
+      this._listener = (message) => {
+        if (this._destroyed || !message || typeof message !== 'object') return
+        if (message.type === 'bg_irc_msg') {
+          this._handleMsg(message.msg)
+        } else if (message.type === 'bg_irc_history_merged') {
+          this._refreshFromBg(message.channel)
+        }
       }
+      cleanup.addListener(chrome.runtime?.onMessage, this._listener)
     }
-    cleanup.addListener(chrome.runtime?.onMessage, this._listener)
     // Global twitch badges (mod sword, vip diamond, subscriber/0 star, etc.)
     // were previously fetched in irc.ws.onopen — removed when WebSocket moved
     // to BG. Without this, mod/sub fall back to TEXT badges instead of images.
@@ -855,6 +864,12 @@ class IRC extends ChatClient {
   }
 
   async join(ch) {
+    // 13 of the 17 join call sites carry no subsystem gate — a switch that
+    // depends on every caller remembering it is not a switch. It lives at the
+    // chokepoint instead: without this, irc-twitch off still sent bg_irc_join,
+    // the BG joined, and the history pull below filled the buffer that
+    // renderMessages reads.
+    if (!gateAtBoot('irc-twitch')) return
     ch = ch.toLowerCase()
     if (this.channels.has(ch)) return
     this.channels.set(ch, new CircularBuffer(3000))
@@ -1643,6 +1658,11 @@ class KickChat extends ChatClient {
   }
 
   async join(kickUsername) {
+    // Same chokepoint as IRC.join above. Kick's RENDER side was already gated
+    // (its listener registers in connect()), but the joins were not: with
+    // chat-kick off the overlay still asked the BG for this channel's history
+    // and badges.
+    if (!gateAtBoot('chat-kick')) return
     kickUsername = kickUsername.toLowerCase()
     if (this.channels.has(kickUsername)) return
     this.channels.set(kickUsername, new CircularBuffer(3000))

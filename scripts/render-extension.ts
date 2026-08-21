@@ -113,6 +113,139 @@ async function geometry(p: any) {
   })
 }
 
+/**
+ * Seed a subsystem map, boot a twitch page, and report what the overlay asked
+ * the background for and what it rendered. One fresh context per polarity so
+ * neither can inherit the other's storage.
+ */
+async function gatePolarity(subsystems: Record<string, boolean>) {
+  const prof = mkdtempSync(join(tmpdir(), 'hs-ext-gate-'))
+  const c = await launchWithExtension(prof, ['--window-size=1600,900'])
+  try {
+    await c.route('https://heatsync.org/**', (r: any) => r.abort())
+    for (const plat of PLATFORMS) {
+      await c.route(plat.glob, (r: any) =>
+        r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) }),
+      )
+    }
+    let sw = c.serviceWorkers()[0]
+    if (!sw) sw = await c.waitForEvent('serviceworker', { timeout: 20_000 })
+    const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+    if (!id) throw new Error('could not resolve the extension id for the gate check')
+
+    const seed = await c.newPage()
+    await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    await seed.evaluate(async (subs: any) => {
+      // @ts-ignore — extension page
+      await chrome.storage.sync.set({ ui_settings: { subsystems: subs } })
+      // @ts-ignore
+      await chrome.storage.local.set({
+        heatsync_multichat: {
+          channels: [
+            { id: 'gatechan', twitch: 'gatechan', kick: 'gatechan', youtube: 'https://www.youtube.com/watch?v=GATEVIDEOXX' },
+          ],
+        },
+      })
+    }, subsystems)
+    await seed.close()
+
+    // Observe what the content script asks the background to do.
+    await sw.evaluate(() => {
+      ;(globalThis as any).__gateSeen = []
+      // @ts-ignore — service worker
+      chrome.runtime.onMessage.addListener((m: any) => {
+        if (m?.type) (globalThis as any).__gateSeen.push(m.type)
+      })
+    })
+
+    const p = await c.newPage()
+    p.on('pageerror', (e: unknown) => errors.push(`gate: ${String(e).slice(0, 300)}`))
+    await p.goto('https://www.twitch.tv/gatechan', { waitUntil: 'domcontentloaded' })
+    await p.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
+    await p.waitForTimeout(4500)
+
+    const seen: string[] = await sw.evaluate(() => (globalThis as any).__gateSeen)
+    const wire = [...new Set(seen.filter((t) => /^(bg_irc_join|bg_kick_history|youtube_ws_subscribe)$/.test(t)))].sort()
+
+    // Drive one live message per platform through the real background→tab wire.
+    const drv = await c.newPage()
+    await drv.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    const delivered = await drv.evaluate(
+      () =>
+        new Promise((res) => {
+          try {
+            // @ts-ignore — extension page
+            chrome.tabs.query({}, (tabs: any[]) => {
+              const t = tabs.find((x) => (x.url || '').includes('twitch.tv'))
+              if (!t) return res('no twitch tab')
+              // @ts-ignore
+              const send = (m: any) => chrome.tabs.sendMessage(t.id, m)
+              send({
+                type: 'bg_irc_msg',
+                msg: { id: 'G_TW', user: 'tw', text: 'GATEPROBE_TWITCH', channel: 'gatechan', color: '#ff8700', badges: '', time: Date.now() },
+              })
+              send({
+                type: 'kick_chat_message',
+                data: { id: 'G_KI', channel: 'gatechan', username: 'ki', content: 'GATEPROBE_KICK', color: '#53fc18', timestamp: Date.now() },
+              })
+              send({ type: 'youtube_chat_message', channelId: 'gatechan', id: 'G_YT', user: 'yt', text: 'GATEPROBE_YT', time: Date.now() })
+              res('sent')
+            })
+          } catch (e) {
+            res(`threw: ${String(e)}`)
+          }
+        }),
+    )
+    await drv.close()
+    if (delivered !== 'sent') throw new Error(`could not drive the gate check: ${delivered}`)
+    // Youtube rows drip through a pace queue; give it room.
+    await p.waitForTimeout(9000)
+
+    const texts: string[] = await p.evaluate(() =>
+      [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
+    )
+    const hit = (needle: string) => texts.some((t) => t.includes(needle))
+    return { wire, twitch: hit('GATEPROBE_TWITCH'), kick: hit('GATEPROBE_KICK'), yt: hit('GATEPROBE_YT') }
+  } finally {
+    await c.close().catch(() => {})
+    rmSync(prof, { recursive: true, force: true })
+  }
+}
+
+async function gateCheck() {
+  console.log('\n── subsystem kill-switches ──')
+
+  // ON first: if this fails the OFF result below means nothing.
+  const on = await gatePolarity({ 'irc-twitch': true, 'chat-kick': true, 'chat-youtube': true })
+  for (const [k, label] of [['twitch', 'twitch'], ['kick', 'kick'], ['yt', 'youtube']] as const) {
+    if (!(on as any)[k]) {
+      fail(
+        `with every chat subsystem ON, a ${label} message never rendered — this check cannot ` +
+          'distinguish a working kill-switch from broken chat, so it is reporting the latter',
+      )
+    }
+  }
+  ok(`switches ON: twitch, kick and youtube all render (wire: ${on.wire.join(', ') || 'none'})`)
+
+  const off = await gatePolarity({ 'irc-twitch': false, 'chat-kick': false, 'chat-youtube': false })
+  if (off.wire.length) {
+    fail(
+      `with every chat subsystem OFF the overlay still asked the background for: ${off.wire.join(', ')} — ` +
+        'the switch stops the render but not the work',
+    )
+  }
+  ok('switches OFF: the overlay asks the background for nothing')
+
+  const leaked = (['twitch', 'kick', 'yt'] as const).filter((k) => (off as any)[k])
+  if (leaked.length) {
+    fail(
+      `with every chat subsystem OFF these still rendered: ${leaked.join(', ')} — ` +
+        'a kill-switch that does not kill is worse than no switch',
+    )
+  }
+  ok('switches OFF: nothing renders on any of the three platforms')
+}
+
 try {
   assertBuilt()
   ctx = await launchWithExtension(profile, ['--window-size=1600,900'])
@@ -659,6 +792,18 @@ try {
     console.log(`  note: ${buffered.length} non-diag entries in the buffer:`)
     for (const e of buffered.slice(0, 6)) console.log(`    [${e.type}] ${(e.msg || '').slice(0, 150)}`)
   }
+
+  // ── the chat kill-switches, in both directions ───────────────────────────
+  // Every source test around subsystem gates is a grep. This is the only check
+  // that answers the question the user actually asks: "I turned twitch chat
+  // off — is it off?" It was NOT, and no grep could have told us: the switch
+  // gated `irc.connect()`, which is a no-op because the background owns the
+  // socket, so the listener that renders twitch rows was registered anyway.
+  //
+  // Both polarities, because a gate fix that only proves the OFF half is
+  // indistinguishable from having broken chat. Runs in its own contexts —
+  // the subsystem map has to be seeded before the content script boots.
+  await gateCheck()
 
   if (errors.length) fail(`runtime errors:\n  ${errors.join('\n  ')}`)
   console.log(`\n✓ render checks passed — ${checks.length} assertions`)

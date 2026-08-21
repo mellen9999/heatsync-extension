@@ -11880,8 +11880,15 @@
 
   // Emote-layer subsystem gates — ui_settings.subsystems (set in multichat
   // settings → system → subsystems; default ON). A gated-off subsystem never
-  // registers its observers/handlers. right-click-block is the only live one;
-  // the rest apply on reload.
+  // registers its observers/handlers. emote-render and tab-complete apply on
+  // reload and are hydrated once below, before bootEmoteLayer.
+  //
+  // right-click-block has NO registry entry, so nothing can ever set it false
+  // and its gate is permanently on. The user-facing control for that behaviour
+  // is `rightClickBlockMode` (instant/menu/off) in heatsync-button.js — a
+  // separate setting. Kept as the live-update shape in case it is ever
+  // promoted; tests/subsystem-switches-enforced.js records it as the one
+  // known gate id with no switch behind it.
   const HS_GATES = { 'emote-render': true, 'tab-complete': true, 'right-click-block': true }
   function hsGateOn(id) {
     return HS_GATES[id] !== false

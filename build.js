@@ -737,7 +737,22 @@ function readMultichatModules(platform) {
         .filter((f) => f.endsWith('.css'))
         .sort()
       if (!cssFrags.length) throw new Error('build: src/multichat/styles/ has no .css fragments')
-      const cssBody = cssFrags.map((f) => readFileSync(join(stylesDir, f), 'utf8')).join('')
+      let cssBody = cssFrags.map((f) => readFileSync(join(stylesDir, f), 'utf8')).join('')
+      // Packaged builds: minify the CSS here, at embed time — minifyDist's JS
+      // pass can't touch string contents, so without this the shipped bundle
+      // carries the full commented stylesheet (~437KB raw → ~215KB minified).
+      // Dev builds stay unminified so greps against dist css keep working.
+      // The __HS_FONT_COZETTE__ url() placeholder survives (quotes may drop —
+      // styles.js replaces the bare token, so that's fine).
+      if (shouldMinify) {
+        // charset utf8: keep glyphs literal — the default ascii mode rewrites
+        // them as \NN css escapes, which are illegal octal escapes inside the
+        // JS template literal this css gets embedded into.
+        cssBody = transformSync(cssBody, { loader: 'css', minify: true, charset: 'utf8' }).code
+        if (!cssBody.includes('__HS_FONT_COZETTE__')) {
+          throw new Error('build: css minify lost the __HS_FONT_COZETTE__ placeholder — font would silently die')
+        }
+      }
       if (cssBody.includes('`') || cssBody.includes('${')) {
         throw new Error(
           'build: a styles/*.css fragment contains a backtick or ${ — unsafe to embed in the css template literal',

@@ -5410,6 +5410,11 @@ function pruneExpiredMutes() {
 
 // Prune expired mutes — driven by chrome.alarms 'prune-expired-mutes' (MV3 SW survives across wakeups)
 
+// Live-video resolution cache for yt_resolve_live_video (see the message
+// handler) — short TTL: "who is live right now" goes stale in seconds.
+const _ytLiveResolveCache = new Map() // url -> { v, ts }
+const YT_LIVE_RESOLVE_TTL = 60_000
+
 // Cached tab list to avoid repeated browser.tabs.query IPC on burst broadcasts
 let _cachedTabs = null
 let _cachedTabsAt = 0
@@ -7619,6 +7624,47 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'ping') {
     sendResponse({ ok: true })
+    return true
+  }
+  if (message.type === 'yt_resolve_live_video') {
+    // Resolve a channel-shaped youtube URL (/channel/UC…/live, /@handle/live)
+    // to its CURRENT live videoId from THIS browser. YouTube serves
+    // datacenter IPs a stale non-live page (observed 2026-08-23: prod fetched
+    // …/live and got an old video with no isLiveNow), so the server's own
+    // resolver dead-ends — a residential fetch is the only reliable answer.
+    // Canonical link first (authoritative), bare videoId regex as fallback;
+    // isLive gates on the live-now marker so an offline channel's latest VOD
+    // never gets subscribed as if it were chat.
+    ;(async () => {
+      try {
+        const url = String(message.url || '')
+        if (!/^https:\/\/(www\.)?youtube\.com\//i.test(url)) {
+          sendResponse({ ok: false })
+          return
+        }
+        const cached = _ytLiveResolveCache.get(url)
+        if (cached && Date.now() - cached.ts < YT_LIVE_RESOLVE_TTL) {
+          sendResponse(cached.v)
+          return
+        }
+        const resp = await fetchWithTimeout(url, { credentials: 'omit' }, 10000)
+        if (!resp.ok) {
+          sendResponse({ ok: false })
+          return
+        }
+        const html = await resp.text()
+        const isLive = html.includes('"isLiveNow":true')
+        const canon = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})"/)
+        const bare = html.match(/"videoId":"([A-Za-z0-9_-]{11})"/)
+        const videoId = isLive ? (canon?.[1] || bare?.[1] || null) : null
+        const v = { ok: true, isLive, videoId }
+        _ytLiveResolveCache.set(url, { v, ts: Date.now() })
+        if (_ytLiveResolveCache.size > 50) _ytLiveResolveCache.delete(_ytLiveResolveCache.keys().next().value)
+        sendResponse(v)
+      } catch (_) {
+        sendResponse({ ok: false })
+      }
+    })()
     return true
   }
   if (message.type === 'dbg_kick_tap') {

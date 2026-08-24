@@ -23,11 +23,42 @@ const _FEED_EVENTS = new Set(['new-message', 'message-edited', 'message-deleted'
 // under. Omit it where the caller never fetched them.
 function ytSubscribe(channelId, url, emoteChannel) {
   if (gateAtBoot('chat-youtube') === false) return false
-  try {
-    chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url, channelId }).catch(() => {})
-  } catch (_) {}
+  const emit = (u) => {
+    try {
+      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: u, channelId }).catch(() => {})
+    } catch (_) {}
+  }
+  emit(url)
   if (emoteChannel) {
     safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
+  }
+  // Channel-shaped URLs (/channel/UC…/live, /@handle/live) need a live
+  // videoId lookup the SERVER can no longer do: youtube serves datacenter
+  // IPs a stale non-live page (observed 2026-08-23), so its resolver
+  // dead-ends and the subscribe above silently no-ops. The BG fetches the
+  // page from this browser's residential IP — when it finds a live video,
+  // re-emit with the concrete watch URL (the server keys pollers by
+  // videoId, so the unresolvable first emit is harmless). Every subscribe
+  // path — boot, soft-nav rearm, silence-watchdog rejoin, override apply —
+  // funnels through this chokepoint, and the watchdog's periodic
+  // re-subscribe makes it self-healing: a streamer who goes live
+  // mid-session is picked up on the next rejoin pass.
+  if (/\/(channel\/|@|c\/|user\/)[^/]+\/live\/?$/i.test(url || '')) {
+    try {
+      chrome.runtime
+        .sendMessage({ type: 'yt_resolve_live_video', url })
+        .then((r) => {
+          if (!r?.ok || !r.isLive || !r.videoId) return
+          // Open the __live_yt_auto__ videoId gate NOW — the youtube:status
+          // 'connected' echo is missed whenever the server poller already
+          // exists for a busy stream (fires per-poller-start), which left
+          // the gate shut and every [Y] message rejected. We resolved this
+          // id ourselves; it is exactly as authoritative as the echo.
+          if (channelId === '__live_yt_auto__' && !_autoYtVideoId) _autoYtVideoId = r.videoId
+          emit(`https://www.youtube.com/watch?v=${r.videoId}`)
+        })
+        .catch(() => {})
+    } catch (_) {}
   }
   return true
 }

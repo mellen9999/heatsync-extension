@@ -72,38 +72,17 @@
   "welcome_title": {
     "message": "heatsync"
   },
-  "welcome_tagline": {
-    "message": "twitch, kick + youtube chat in one panel. plus any 7tv, bttv or ffz emote in every chat — 5,000 slots, free."
-  },
   "welcome_cta": {
-    "message": "open a stream → try it"
+    "message": "open twitch →"
   },
   "welcome_cta_fallback": {
-    "message": "open any twitch stream"
-  },
-  "welcome_next_label": {
-    "message": "what happens when you click"
-  },
-  "welcome_next_1": {
-    "message": "emotes light up instantly — 7tv, bttv, ffz — no sign-in"
-  },
-  "welcome_next_2": {
-    "message": "sign in whenever to claim your own 5,000-slot inventory"
+    "message": "open twitch →"
   },
   "welcome_cta_kick": {
-    "message": "sign in → save your emote inventory"
+    "message": "sign in →"
   },
   "welcome_done_title": {
     "message": "you're in"
-  },
-  "welcome_done_1": {
-    "message": "open a stream and click the heatsync button → import all channel emotes"
-  },
-  "welcome_done_2": {
-    "message": "import a channel you watch → its emotes render in every chat you open"
-  },
-  "welcome_trust": {
-    "message": "open source · no trackers · your emotes stay yours"
   },
   "welcome_privacy": {
     "message": "privacy"

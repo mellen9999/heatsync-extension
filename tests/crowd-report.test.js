@@ -70,6 +70,13 @@ describe('crowd report wiring', () => {
     expect(fn).not.toMatch(/url.*includes\(['"]youtube/)
   })
 
+  test('a live-titled youtube link beats the first-listed main channel', () => {
+    // kaicenat publishes "youtube" (VOD channel) before "Youtube Live" (the
+    // live channel) — position must not win over the live-titled link
+    expect(fn).toContain('/\\blive\\b/i.test(')
+    expect(fn).toContain('|| ytLinks[0]')
+  })
+
   test('report rides the BG api_fetch relay (CF walls content-script fetches)', () => {
     expect(fn).toContain("apiFetch('/api/identity/crowd-report'")
     expect(fn).toContain("method: 'POST'")

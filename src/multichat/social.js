@@ -192,7 +192,7 @@ async function maybeCrowdReportSocials(urlCh) {
       return // transient (bridge asleep, network) — retry on a later visit
     }
     if (!Array.isArray(socials)) return
-    const yt = socials.find((s) => {
+    const ytLinks = socials.filter((s) => {
       const raw = String(s?.url || '')
       if (!raw) return false
       try {
@@ -205,6 +205,11 @@ async function maybeCrowdReportSocials(urlCh) {
         return false
       }
     })
+    // simulcasters often publish a main channel AND a dedicated live channel
+    // (kaicenat: "youtube" + "Youtube Live") — the live one is the chat we
+    // want, so a live-titled link beats position
+    const yt =
+      ytLinks.find((s) => /\blive\b/i.test(`${s?.title || ''} ${s?.name || ''}`)) || ytLinks[0]
     // definitive answer either way — stamp the throttle before the report so
     // a flaky POST can't turn one channel into a per-nav GQL hammer
     map[safe] = Date.now()

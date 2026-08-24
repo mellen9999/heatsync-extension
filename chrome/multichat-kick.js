@@ -8929,7 +8929,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '62e4892-202608241909' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd7a944a+-202608241949' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -37916,7 +37916,13 @@ async function autoResolveLiveYt() {
   if (!url) {
     // only a definitive answer (profile with no link, or a 404) gets
     // negative-cached — transient failures stay retryable
-    if (p || ri?.notFound) _autoYtNegative.set(urlCh, Date.now())
+    if (p || ri?.notFound) {
+      _autoYtNegative.set(urlCh, Date.now())
+      // heatsync has no youtube link for this channel — the browser can read
+      // the streamer's published socials (twitch integrity-walls that query
+      // for the server's DC IP), so report what the channel itself publishes
+      if (hostPlatform === 'twitch') maybeCrowdReportSocials(urlCh)
+    }
     return
   }
   // Async-hop guards: still the same channel, still no explicit override,
@@ -37930,6 +37936,71 @@ async function autoResolveLiveYt() {
   try {
     renderMessages(currentTab)
   } catch (_) {}
+}
+
+// Crowd identity capture. When heatsync has no youtube link for the current
+// twitch channel, read the channel's OWN published socials via GQL (browser
+// IPs pass twitch's integrity check; the server's DC IP does not) and report
+// any youtube link to the server, which verifies the youtube side (about-page
+// backlink to twitch.tv/<login>) plus a multi-user quorum before it ever
+// persists — a single report is a vote, never a fact. Requires a heatsync
+// session (anonymous votes would make the quorum meaningless), and stamps a
+// per-channel throttle even on "no link found" so soft-navs don't re-run the
+// GQL query every visit.
+const CROWD_REPORT_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const CROWD_REPORT_MAP_MAX = 200
+async function maybeCrowdReportSocials(urlCh) {
+  try {
+    if (!hsAuthToken) return
+    if (typeof twitchGql !== 'function') return
+    const store = await api.storage.local.get('hs_crowd_reported')
+    const map = store?.hs_crowd_reported || {}
+    const last = map[urlCh]
+    if (last && Date.now() - last < CROWD_REPORT_TTL_MS) return
+    const safe = String(urlCh).toLowerCase()
+    if (!/^[a-z0-9_]{2,25}$/.test(safe)) return
+    let socials = null
+    try {
+      const data = await twitchGql(
+        `{ user(login: "${safe}") { channel { socialMedias { name title url } } } }`
+      )
+      socials = data?.data?.user?.channel?.socialMedias
+    } catch (_) {
+      return // transient (bridge asleep, network) — retry on a later visit
+    }
+    if (!Array.isArray(socials)) return
+    const yt = socials.find((s) => {
+      const raw = String(s?.url || '')
+      if (!raw) return false
+      try {
+        const h = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname.replace(
+          /^(www|m)\./,
+          ''
+        )
+        return h === 'youtube.com' || h === 'youtu.be'
+      } catch (_) {
+        return false
+      }
+    })
+    // definitive answer either way — stamp the throttle before the report so
+    // a flaky POST can't turn one channel into a per-nav GQL hammer
+    map[safe] = Date.now()
+    const keys = Object.keys(map)
+    if (keys.length > CROWD_REPORT_MAP_MAX) {
+      keys
+        .sort((a, b) => map[a] - map[b])
+        .slice(0, keys.length - CROWD_REPORT_MAP_MAX)
+        .forEach((k) => delete map[k])
+    }
+    await api.storage.local.set({ hs_crowd_reported: map })
+    if (!yt) return
+    apiFetch('/api/identity/crowd-report', {
+      method: 'POST',
+      body: { twitch: safe, youtube: String(yt.url).slice(0, 200) },
+    })
+  } catch (_) {
+    // best-effort background capture — never let it surface
+  }
 }
 
 // YT POLL SMOOTHING: server polls YouTube every ~5s and dispatches the whole

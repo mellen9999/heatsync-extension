@@ -617,26 +617,48 @@ function stripExports(content) {
   )
 }
 
-// Read lib files
-function readLib() {
+// Lib concatenation order — dependency-sensitive:
+// - diag after utils + error-reporter: hsQuery/hsQueryAll mirror qsArray/
+//   qsaArray's contract and report into error-reporter's ring buffer.
+// - font-grid before settings-schema: the schema's fontSize entry builds its
+//   options from FONT_GRID, and these are concatenated into one scope in order.
+const LIB_ORDER = [
+  'error-reporter.js',
+  'config.js',
+  'cleanup.js',
+  'user-key.js',
+  'utils.js',
+  'diag.js',
+  'font-grid.js',
+  'settings-schema.js',
+  'browser-api.js',
+  'modifiers.js',
+  'undo-manager.js',
+]
+
+// Every content script gets the core: error-reporter/diag stay universal on
+// purpose (crash observability is the whole reason they exist), utils/cleanup/
+// browser-api are referenced everywhere. The rest is dead parse weight in the
+// thin scripts (settings-schema alone is ~70KB), so it's opt-in per entry —
+// verifyLibSlim() below fails the build if an entry starts referencing a lib
+// file it doesn't embed.
+const LIB_CORE = new Set(['error-reporter.js', 'cleanup.js', 'utils.js', 'diag.js', 'browser-api.js'])
+
+// Opt-in lib files per non-multichat content script (multichat bundles embed
+// the full lib). Derived from actual symbol use — keep in sync via the guard.
+const LIB_EXTRAS = {
+  'content.js': ['config.js', 'user-key.js', 'modifiers.js'],
+  'youtube-content.js': ['config.js'],
+  'autocomplete-hook.js': ['modifiers.js'],
+  'heatsync-button.js': [],
+  'chat-injector.js': [],
+}
+
+// Read lib files — full set by default, or core + the named extras.
+function readLib(extras = null) {
   const libDir = join(SRC_DIR, 'lib')
-  const files = [
-    'error-reporter.js',
-    'config.js',
-    'cleanup.js',
-    'user-key.js',
-    'utils.js',
-    // diag after utils: hsQuery/hsQueryAll mirror qsArray/qsaArray's contract
-    // and report into error-reporter's ring buffer, so both must precede it.
-    'diag.js',
-    // font-grid before settings-schema: the schema's fontSize entry builds its
-    // options from FONT_GRID, and these are concatenated into one scope in order.
-    'font-grid.js',
-    'settings-schema.js',
-    'browser-api.js',
-    'modifiers.js',
-    'undo-manager.js',
-  ]
+  const files =
+    extras === null ? LIB_ORDER : LIB_ORDER.filter((f) => LIB_CORE.has(f) || extras.includes(f))
   let combined = '// === HEATSYNC LIB (auto-bundled) ===\n'
 
   for (const file of files) {
@@ -646,6 +668,28 @@ function readLib() {
 
   combined += '// === END HEATSYNC LIB ===\n\n'
   return combined
+}
+
+// Guard for the slim lib: if an entry's source references any top-level
+// declaration from a lib file it does NOT embed, fail loudly at build time
+// instead of shipping a runtime ReferenceError. Comment mentions count as
+// references — conservative on purpose.
+function verifyLibSlim(entryName, entrySrc, extras) {
+  const libDir = join(SRC_DIR, 'lib')
+  const KIND_RE = /^(?:export\s+)?(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z0-9_$]+)/
+  const dropped = LIB_ORDER.filter((f) => !LIB_CORE.has(f) && !extras.includes(f))
+  const offenders = []
+  for (const file of dropped) {
+    for (const line of readFileSync(join(libDir, file), 'utf8').split('\n')) {
+      const m = KIND_RE.exec(line)
+      if (m && new RegExp(`\\b${m[1]}\\b`).test(entrySrc)) offenders.push(`${m[1]} (${file})`)
+    }
+  }
+  if (offenders.length) {
+    throw new Error(
+      `build: ${entryName} references lib symbols it no longer embeds — add the file(s) to LIB_EXTRAS['${entryName}']:\n  ${offenders.join('\n  ')}`,
+    )
+  }
 }
 
 // Read multichat module files (only bundled into multichat-<platform>.js)
@@ -919,16 +963,20 @@ function build(browser) {
       console.log(`  Skip ${file} (not found)`)
       continue
     }
+    // Slim lib per entry: core + only the lib files this script references
+    // (LIB_EXTRAS). verifyLibSlim fails the build if the source drifts.
+    const extras = LIB_EXTRAS[file] ?? []
+    verifyLibSlim(file, readFileSync(srcPath, 'utf8'), extras)
     // youtube-content renders HeatSync spec paints on the NATIVE yt surface,
     // so it gets the paint-spec compiler appended to its lib — same embed the
     // multichat bundles use (readMultichatModules). Other content scripts
     // don't pay for it; youtube-content typeof-guards the compiler so a
     // missing embed degrades to no paints, never a ReferenceError.
-    let libFor = lib
+    let libFor = readLib(extras)
     if (file === 'youtube-content.js') {
       const paintSpecPath = join(SRC_DIR, 'lib', 'paint-spec.js')
       if (existsSync(paintSpecPath)) {
-        libFor = `${lib}\n// --- lib/paint-spec.js ---\n${stripExports(readFileSync(paintSpecPath, 'utf8'))}\n`
+        libFor = `${libFor}\n// --- lib/paint-spec.js ---\n${stripExports(readFileSync(paintSpecPath, 'utf8'))}\n`
       }
     }
     const bundled = bundleContentScript(srcPath, libFor, null)

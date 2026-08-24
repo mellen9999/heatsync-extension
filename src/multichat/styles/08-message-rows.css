@@ -697,33 +697,20 @@
       font-weight: 600;
     }
     /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
-       arrow and the name, with the reply continuing on the SAME line. It used
-       to be a block bar reading "Replying to @user: quoted text…", which cost a
-       whole row of vertical space per reply — in a fast chat that is most of
-       the pane. The quoted message is sitting right above anyway, the full
-       quote is still on hover via title, and clicking still opens the thread
-       stack. Width is bounded so a long name can't push the message off-row. */
+       arrow, the name, and a snippet of the quoted message, on its OWN line
+       above the message content. The line is hard-capped at exactly one line:
+       nowrap + hidden overflow + ellipsis, so a long quote clips instead of
+       ever wrapping the row taller. display:block starts every glyph at
+       integer x from the row's left edge — no inline-block width to land on a
+       fractional pixel, so the bitmap face stays crisp (the old inline pill
+       needed a ch-based cap for exactly that reason). */
     .hs-mc-reply-ctx {
-      display: inline-block;
-      vertical-align: bottom;
-      /* ch, not %. A percentage cap lands the inline-block on a fractional
-         pixel, which puts every glyph inside it on a sub-pixel x offset — the
-         exact smear a bitmap face cannot survive. 1ch is an integer advance in
-         a monospace bitmap, so a ch cap always resolves to whole pixels, and
-         "N characters of name" is the real intent anyway.
-
-         16, not 38. 38ch is 228px — wider than most of the panel, so it never
-         actually bit, and a long name pushed the row to a THIRD line at narrow
-         widths. Measured at a 292px panel with a 17-char name: 3 lines at 38ch
-         and at 24ch, 2 lines at 16ch — the same height a plain message already
-         costs there. Above 16ch the cap is decorative; below it, nothing more
-         is gained. Names longer than 16 characters ellipsise, which is the
-         cheaper loss: the row height is the density budget. */
-      max-width: 16ch;
+      display: block;
+      max-width: 100%;
       font-size: 13px;
       color: var(--hs-muted);
       line-height: inherit;
-      padding: 0 4px 0 0;
+      padding: 0;
       margin: 0;
       border-left: 0;
       white-space: nowrap;

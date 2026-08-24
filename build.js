@@ -16,7 +16,7 @@
  */
 
 import { execFileSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
@@ -862,9 +862,16 @@ function bundleContentScript(srcPath, lib, mcModules) {
   )
 }
 
-// Build for a specific browser
+// Build for a specific browser — into a STAGING dir, never the live one.
+// dist/chrome is what a running Chromium has loaded as the unpacked ext; the
+// old clean-then-repopulate flow left that dir torn (missing/half-written
+// files) for the several seconds a build takes, and an MV3 service-worker
+// restart landing inside that window reads a broken extension (see the
+// 08-23/24 freeze incidents). Callers minify + syntax-check the staging dir,
+// then swapDist() renames it into place — the live path is never torn.
 function build(browser) {
-  const outDir = browser === 'chrome' ? CHROME_OUT : FIREFOX_OUT
+  const finalDir = browser === 'chrome' ? CHROME_OUT : FIREFOX_OUT
+  const outDir = `${finalDir}.staging`
   const manifestSrc = join(SRC_DIR, 'manifests', `${browser}.json`)
 
   // Clean and create output dir
@@ -984,6 +991,18 @@ function build(browser) {
   }
 
   console.log(`✓ Built ${browser} → ${outDir}`)
+  return outDir
+}
+
+// Atomically promote a finished staging dir to the live path. Two renames —
+// the live dir is missing only for the microseconds between them, instead of
+// the seconds a full rebuild takes. Any crash-leftover .old is reaped first.
+function swapDist(stageDir, liveDir) {
+  const old = `${liveDir}.old`
+  if (existsSync(old)) rmSync(old, { recursive: true })
+  if (existsSync(liveDir)) renameSync(liveDir, old)
+  renameSync(stageDir, liveDir)
+  rmSync(old, { recursive: true, force: true })
 }
 
 // Read version from chrome manifest (single source of truth)
@@ -1255,16 +1274,18 @@ console.log()
 
 if (!target || target === 'chrome') {
   console.log('Chrome:')
-  build('chrome')
-  if (shouldMinify) minifyDist(CHROME_OUT)
-  syntaxCheck(CHROME_OUT, 'chrome')
+  const stage = build('chrome')
+  if (shouldMinify) minifyDist(stage)
+  syntaxCheck(stage, 'chrome')
+  swapDist(stage, CHROME_OUT)
 }
 
 if (!target || target === 'firefox') {
   console.log('\nFirefox:')
-  build('firefox')
-  if (shouldMinify) minifyDist(FIREFOX_OUT)
-  syntaxCheck(FIREFOX_OUT, 'firefox')
+  const stage = build('firefox')
+  if (shouldMinify) minifyDist(stage)
+  syntaxCheck(stage, 'firefox')
+  swapDist(stage, FIREFOX_OUT)
 }
 
 if (shouldPackage) {

@@ -89,7 +89,6 @@ describe('config: TIMING', () => {
     'MC_CONNECT_TIMEOUT',
     'MC_FETCH_TIMEOUT',
     'MUTE_PRUNE_INTERVAL',
-    'MSG_CACHE_SAVE_DEBOUNCE',
   ]
 
   for (const key of positiveTimingKeys) {
@@ -120,7 +119,6 @@ describe('config: LIMITS', () => {
   const positiveLimitKeys = [
     'MAX_EMOTE_NAME_LEN',
     'MAX_EMOTES_PER_SOURCE',
-    'MSG_CACHE_MAX',
     'MAX_SEND_QUEUE',
     'MC_CHANNEL_MSG_BUFFER',
     'MIN_CHAT_WIDTH',
@@ -144,10 +142,6 @@ describe('config: LIMITS', () => {
 
   test('MIN_CHAT_WIDTH < MAX_CHAT_WIDTH', () => {
     expect(CONFIG.LIMITS.MIN_CHAT_WIDTH).toBeLessThan(CONFIG.LIMITS.MAX_CHAT_WIDTH)
-  })
-
-  test('MC_CHANNEL_MSG_BUFFER <= MSG_CACHE_MAX (buffer fits within global cache)', () => {
-    expect(CONFIG.LIMITS.MC_CHANNEL_MSG_BUFFER).toBeLessThanOrEqual(CONFIG.LIMITS.MSG_CACHE_MAX)
   })
 })
 

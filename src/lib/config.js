@@ -63,8 +63,6 @@ const CONFIG = {
     HEAT_BATCH_INTERVAL: 2000, // debounce for heat batch fetches
     HEAT_CACHE_PRUNE_INTERVAL: 300000, // 5 min
     COSMETICS_TTL: 30 * 60 * 1000, // 30 min
-    MSG_CACHE_TTL: 24 * 60 * 60 * 1000, // 24 hr
-    MSG_CACHE_SAVE_DEBOUNCE: 5000,
     BROADCAST_TTL: 30000, // drop duplicate broadcasts after 30s
     BROADCAST_PRUNE_INTERVAL: 30000,
     REPROCESS_DEBOUNCE: 200,
@@ -107,13 +105,6 @@ const CONFIG = {
     TWITCH_ID_CACHE_MAX: 200,
     MAX_YT_VIDEO_ENTRIES: 100, // LRU cap for ytVideoToChannel map
     SEVENTV_MAX_RECONNECT_ATTEMPTS: 5,
-
-    // Content script caches (content.js)
-    MSG_CACHE_MAX: 2000, // matches website behavior
-    HEAT_CACHE_MAX: 1000,
-    COSMETICS_MAX: 500,
-    PROFILE_CACHE_MAX: 50,
-    MAX_USERNAME_ATTEMPTS: 30, // prevent console spam on slow page loads
 
     // Multichat (multichat.js)
     MAX_SEND_QUEUE: 50, // IRC send queue cap

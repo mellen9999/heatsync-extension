@@ -732,11 +732,47 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
   )
 }
 
+// Shared death handler for the detectors below (interval probe, port
+// onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
+// reload until a signal proves the user can see the tab again — active tab
+// reloads in 1–5s, background tabs wait. Avoids the N-tab thundering React
+// mount herd that crashes Chrome. visibilitychange ALONE is not a safe wait:
+// popout windows can miss the hidden→visible flip (wayland/occlusion
+// tracking), which left a torn-down popout frozen until a manual refresh —
+// window focus and pageshow are the escape hatches, and the wake accepts
+// document.hasFocus() as proof-of-visible in case the visibility state
+// itself is stuck at 'hidden'.
+function _hsMcOnCtxDeath() {
+  try {
+    lifecycle.abort()
+  } catch (_) {}
+  if (window.__heatsyncReloadScheduled) return
+  window.__heatsyncReloadScheduled = true
+  const doReload = () => {
+    if (_hsMcTakenOver) return
+    try {
+      location.reload()
+    } catch (_) {}
+  }
+  if (document.visibilityState === 'visible') {
+    setTimeout(doReload, 1000 + Math.random() * 4000)
+    return
+  }
+  const wake = () => {
+    if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+    document.removeEventListener('visibilitychange', wake)
+    window.removeEventListener('focus', wake)
+    window.removeEventListener('pageshow', wake)
+    setTimeout(doReload, 500 + Math.random() * 2000)
+  }
+  document.addEventListener('visibilitychange', wake)
+  window.addEventListener('focus', wake)
+  window.addEventListener('pageshow', wake)
+}
+
 // Fast context-death detector. chrome.runtime.id becomes undefined sync on
-// extension reload. Tear down lifecycle immediately, then defer reload to
-// visibility — active tab reloads in 1–5s, background tabs wait until user
-// focuses them. Avoids the N-tab thundering React mount herd that crashes
-// Chrome. content.js sets __heatsyncReloadScheduled — dedupe across scripts.
+// extension reload. content.js sets __heatsyncReloadScheduled — dedupe across
+// scripts.
 const _hsMcCtxDeathTimer = setInterval(() => {
   // Nothing to do while the tab is hidden: the reload is deferred to
   // visibilitychange anyway, so probing 30 times a minute in a background tab
@@ -754,26 +790,7 @@ const _hsMcCtxDeathTimer = setInterval(() => {
   }
   if (alive) return
   clearInterval(_hsMcCtxDeathTimer)
-  try {
-    lifecycle.abort()
-  } catch (_) {}
-  if (window.__heatsyncReloadScheduled) return
-  window.__heatsyncReloadScheduled = true
-  const doReload = () => {
-    if (_hsMcTakenOver) return
-    try {
-      location.reload()
-    } catch (_) {}
-  }
-  if (document.visibilityState === 'visible') {
-    setTimeout(doReload, 1000 + Math.random() * 4000)
-  } else {
-    document.addEventListener('visibilitychange', function once() {
-      if (document.visibilityState !== 'visible') return
-      document.removeEventListener('visibilitychange', once)
-      setTimeout(doReload, 500 + Math.random() * 2000)
-    })
-  }
+  _hsMcOnCtxDeath()
 }, 2000)
 _timers.intervals.push(_hsMcCtxDeathTimer)
 // Registered once at module load, NOT inside init() — must outlive SPA reinit.
@@ -785,12 +802,18 @@ _timers.persistent.add(_hsMcCtxDeathTimer)
 // can suspend the orphaned setInterval. Catches the cases the 2s interval
 // misses. Distinguishes "ext gone" from "SW idle-suspended" via the post-
 // disconnect chrome.runtime?.id probe.
-function _hsMcOpenCtxDeathPort() {
+function _hsMcOpenCtxDeathPort(isReconnect) {
   let port
   try {
     if (!chrome?.runtime?.connect) return
     port = chrome.runtime.connect({ name: 'heatsync-ctx-death' })
   } catch (_) {
+    // connect() throwing on a RECONNECT means the context died between
+    // onDisconnect's alive-probe and now (runtime.id can read stale-alive for
+    // a beat after invalidation) — without this the detector gave up silently
+    // and a hidden tab never armed its reload. At module load a throw with a
+    // live context is not a death signal, so only the reconnect path escalates.
+    if (isReconnect) _hsMcOnCtxDeath()
     return
   }
   port.onDisconnect.addListener(() => {
@@ -801,32 +824,13 @@ function _hsMcOpenCtxDeathPort() {
       alive = false
     }
     if (alive) {
-      setTimeout(_hsMcOpenCtxDeathPort, 500)
+      setTimeout(() => _hsMcOpenCtxDeathPort(true), 500)
       return
     }
-    try {
-      lifecycle.abort()
-    } catch (_) {}
-    if (window.__heatsyncReloadScheduled) return
-    window.__heatsyncReloadScheduled = true
-    const doReload = () => {
-      if (_hsMcTakenOver) return
-      try {
-        location.reload()
-      } catch (_) {}
-    }
-    if (document.visibilityState === 'visible') {
-      setTimeout(doReload, 1000 + Math.random() * 4000)
-    } else {
-      document.addEventListener('visibilitychange', function once() {
-        if (document.visibilityState !== 'visible') return
-        document.removeEventListener('visibilitychange', once)
-        setTimeout(doReload, 500 + Math.random() * 2000)
-      })
-    }
+    _hsMcOnCtxDeath()
   })
 }
-_hsMcOpenCtxDeathPort()
+_hsMcOpenCtxDeathPort(false)
 
 // Optional perf tracer. window.__hsPerfTrace = true at runtime to log
 // callbacks exceeding 50ms into window.__hsPerfLog. Source captured at

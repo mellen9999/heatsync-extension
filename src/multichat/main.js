@@ -322,6 +322,17 @@
       } catch (_) {}
     }
   })
+  // Escape hatch for the catch-up above: popout windows can miss the
+  // hidden→visible visibilitychange (wayland/occlusion tracking), leaving the
+  // pane frozen on stale rows even though messages keep buffering. A window
+  // focus is proof the user is looking — rebuild if anything was skipped.
+  cleanup.addEventListener(window, 'focus', () => {
+    if (!_hiddenSkippedAppend) return
+    _hiddenSkippedAppend = false
+    try {
+      renderMessages(currentTab)
+    } catch (_) {}
+  })
 
   // Shared fail-loud path for user-intent storage writes — an added channel,
   // a mute, a block. A swallowed failure here means the action LOOKS saved
@@ -8958,7 +8969,10 @@
     // Hidden tab: skip ALL DOM work (build/append/trim/pin) — buffers keep the
     // message and the visibilitychange handler rebuilds once on return. The
     // multi-platform path above pauses for free (rAF never fires while hidden).
-    if (document.hidden) {
+    // hasFocus() overrides a stuck 'hidden': if the visibility flip got lost
+    // (popout/wayland occlusion) but the window is focused, the user IS
+    // looking — keep appending instead of freezing the pane.
+    if (document.hidden && !document.hasFocus()) {
       _hiddenSkippedAppend = true
       return true
     }
@@ -15422,11 +15436,21 @@
         if (document.visibilityState === 'visible') {
           setTimeout(doReload, 1000 + Math.random() * 4000)
         } else {
-          document.addEventListener('visibilitychange', function once() {
-            if (document.visibilityState !== 'visible') return
-            document.removeEventListener('visibilitychange', once)
+          // Not visibilitychange alone — popout windows can miss the
+          // hidden→visible flip (wayland/occlusion tracking) and then a
+          // torn-down tab stays frozen forever. focus/pageshow are the escape
+          // hatches; hasFocus() counts as proof-of-visible in case the
+          // visibility state itself is stuck at 'hidden'.
+          const wake = () => {
+            if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+            document.removeEventListener('visibilitychange', wake)
+            window.removeEventListener('focus', wake)
+            window.removeEventListener('pageshow', wake)
             setTimeout(doReload, 500 + Math.random() * 2000)
-          })
+          }
+          document.addEventListener('visibilitychange', wake)
+          window.addEventListener('focus', wake)
+          window.addEventListener('pageshow', wake)
         }
       }
       try {

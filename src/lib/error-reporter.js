@@ -275,11 +275,18 @@
       if (document.visibilityState === 'visible') {
         setTimeout(doReload, 1000 + Math.random() * 4000)
       } else {
-        document.addEventListener('visibilitychange', function once() {
-          if (document.visibilityState !== 'visible') return
-          document.removeEventListener('visibilitychange', once)
+        // focus/pageshow escape hatches — popout windows can miss the
+        // hidden→visible visibilitychange (see bootstrap.js ctx-death)
+        const wake = () => {
+          if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+          document.removeEventListener('visibilitychange', wake)
+          window.removeEventListener('focus', wake)
+          window.removeEventListener('pageshow', wake)
           setTimeout(doReload, 500 + Math.random() * 2000)
-        })
+        }
+        document.addEventListener('visibilitychange', wake)
+        window.addEventListener('focus', wake)
+        window.addEventListener('pageshow', wake)
       }
     } catch (_) {}
   }

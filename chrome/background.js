@@ -7654,9 +7654,11 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         const html = await resp.text()
         const isLive = html.includes('"isLiveNow":true')
-        const canon = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})"/)
+        const canon = html.match(
+          /<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})"/,
+        )
         const bare = html.match(/"videoId":"([A-Za-z0-9_-]{11})"/)
-        const videoId = isLive ? (canon?.[1] || bare?.[1] || null) : null
+        const videoId = isLive ? canon?.[1] || bare?.[1] || null : null
         const v = { ok: true, isLive, videoId }
         _ytLiveResolveCache.set(url, { v, ts: Date.now() })
         if (_ytLiveResolveCache.size > 50) _ytLiveResolveCache.delete(_ytLiveResolveCache.keys().next().value)

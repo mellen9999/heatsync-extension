@@ -79,9 +79,11 @@
     // Announce presence so the site's install nudge can detect the ext.
     // ISOLATED world shares the DOM — page main-world JS reads dataset.hsExt.
     document.documentElement.dataset.hsExt = '1'
-    // Kick-send-via-relay capability beacon — this content.js version wires
-    // chat:send_kick / kick:relay_send / kick:relay_ack in background.js, so
-    // any install running this code supports it. Same dataset-on-shared-DOM
+    // Kick-send-via-relay capability beacon — this version wires
+    // kick:relay_send / kick:relay_ack in background.js, so any install
+    // running this code supports it. (The comment used to name a third
+    // message, chat:send_kick, which appears nowhere but the comment; the
+    // relay itself is real and is what the beacon promises.) Same dataset-on-shared-DOM
     // mechanism as hsExt above (a page-injected window global isn't visible
     // across the isolated/main world boundary). heatsync.org's chips UI
     // feature-detects via document.documentElement.dataset.hsKickRelay === '1'.
@@ -99,6 +101,25 @@
         window.history.replaceState({}, document.title, window.location.pathname)
       }
     } catch {}
+
+    // The site clears the toolbar badge through here. heatsync.org posts
+    // `heatsync-notifs-viewed` the moment its unread total hits zero
+    // (client/managers/notification-manager.js), and background.js has always
+    // had a `notifs_viewed` handler waiting — but nothing joined the two, so
+    // the message went nowhere and the handler never ran once. The badge's
+    // only correction was hydrateUnreadNotifCount() on the next websocket
+    // auth, which on a long-lived socket can be hours after the user actually
+    // read them.
+    window.addEventListener('message', (event) => {
+      // Same-window, same-origin only: this runs on heatsync.org, and the
+      // sender is the page's own main-world script.
+      if (event.source !== window) return
+      if (event.origin !== window.location.origin) return
+      if (event.data?.type !== 'heatsync-notifs-viewed') return
+      try {
+        chrome.runtime.sendMessage({ type: 'notifs_viewed' })
+      } catch {}
+    })
     return
   }
 
@@ -1283,6 +1304,9 @@
         editor.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'deleteContentBackward' }))
       } catch {}
     },
+    { capture: true },
+    // Capture on purpose: this stops propagation to keep Twitch's own
+    // backspace handling from running, which only works ahead of it.
     'input-modifier-backspace',
   )
   cleanup.addEventListener(
@@ -7549,6 +7573,9 @@
           log(' 💬 Sent insert request for:', emoteName)
         }
       },
+      { capture: true },
+      // Capture on purpose — stops propagation so the page's click handler
+      // never sees an emote click.
       'emote-click',
     )
 
@@ -7591,6 +7618,8 @@
           chrome.storage.local.set({ local_blocked_emote_names: Array.from(localBlockedEmoteNames) })
         } catch {}
       },
+      { capture: true },
+      // Capture on purpose — preempts the page's own context menu.
       'native-twitch-block-contextmenu',
     )
 
@@ -7690,6 +7719,8 @@
           }
         }
       },
+      { capture: true },
+      // Capture on purpose — preempts the page's own context menu.
       'emote-contextmenu',
     )
 
@@ -8108,7 +8139,9 @@
         }
       },
       'emote-hover-mouseover',
-      true,
+      // Capture on purpose — see the delegation note above; these have to
+      // fire before Twitch's own hover handlers.
+      { capture: true },
     )
 
     cleanup.addEventListener(
@@ -8124,7 +8157,9 @@
         }
       },
       'emote-hover-mouseout',
-      true,
+      // Capture on purpose — see the delegation note above; these have to
+      // fire before Twitch's own hover handlers.
+      { capture: true },
     )
 
     // mousemove preview killswitch — dispatched by the combined listener above

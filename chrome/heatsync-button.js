@@ -2151,6 +2151,30 @@
       panel.style.maxHeight = sized
     }
 
+    // Outer scope, and it looks the buttons up from the document rather than
+    // closing over openPanel's locals. It used to live inside openPanel, but
+    // six callers do not: import (x2), restore, remove, rename and move all
+    // call it after their own success, and every one of them threw
+    // ReferenceError instead. The import button never reset, and remove /
+    // rename / move landed their change and then reported failure, because the
+    // throw dropped into the caller's catch.
+    async function fetchHistoryStatus() {
+      try {
+        const resp = await chrome.runtime.sendMessage({
+          type: 'api_fetch',
+          path: '/api/user/emotes/history-status',
+          method: 'GET',
+          auth: true,
+        })
+        if (!resp || resp.ok === false) return
+        const data = resp.data || resp
+        const undo = document.getElementById('heatsync-undo-btn')
+        const redo = document.getElementById('heatsync-redo-btn')
+        if (undo) undo.disabled = !data.canUndo
+        if (redo) redo.disabled = !data.canRedo
+      } catch (_) {}
+    }
+
     async function openPanel() {
       const btn = document.getElementById(BUTTON_ID)
       if (!btn) return
@@ -2368,21 +2392,6 @@
       // Undo/redo buttons
       const undoBtn = panel.querySelector('#heatsync-undo-btn')
       const redoBtn = panel.querySelector('#heatsync-redo-btn')
-
-      async function fetchHistoryStatus() {
-        try {
-          const resp = await chrome.runtime.sendMessage({
-            type: 'api_fetch',
-            path: '/api/user/emotes/history-status',
-            method: 'GET',
-            auth: true,
-          })
-          if (!resp || resp.ok === false) return
-          const data = resp.data || resp
-          if (undoBtn) undoBtn.disabled = !data.canUndo
-          if (redoBtn) redoBtn.disabled = !data.canRedo
-        } catch (_) {}
-      }
 
       function flashErr(btn) {
         btn.classList.add('hs-flash-err')
@@ -2737,11 +2746,21 @@
         <div class="heatsync-error-state">
           <div class="heatsync-error-icon">⚠️</div>
           <div class="heatsync-error-msg">${escapeHtml(currentError)}</div>
-          <button class="heatsync-retry-btn" onclick="window.dispatchEvent(new CustomEvent('heatsync-retry', {detail: '${escapeHtml(currentTab)}'}))">
+          <button class="heatsync-retry-btn" type="button">
             ${t('common_retry')}
           </button>
         </div>
       `
+        // A real listener, not an inline onclick. This button shipped with
+        // `onclick="…"`, and every host page it is injected into — twitch,
+        // kick, youtube — sets a script-src without 'unsafe-inline', so the
+        // attribute never ran. The only way out of a failed emote load was to
+        // close the panel and reopen it. The 'heatsync-retry' handler this
+        // dispatches to has been wired the whole time.
+        const retryTab = currentTab
+        grid.querySelector('.heatsync-retry-btn')?.addEventListener('click', () => {
+          window.dispatchEvent(new CustomEvent('heatsync-retry', { detail: retryTab }))
+        })
         return
       }
 

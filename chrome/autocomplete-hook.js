@@ -48,7 +48,12 @@
       } catch (_) {}
       this._observers.delete(obs)
     },
-    addEventListener(target, event, handler, opts) {
+    // Same (label, options) in-either-order reading as src/lib/cleanup.js —
+    // this MAIN-world file keeps its own lifecycle object, and a call written
+    // for the shared one must not quietly lose its capture flag here.
+    addEventListener(target, event, handler, a, b) {
+      const aIsLabel = typeof a === 'string'
+      const opts = aIsLabel ? (typeof b === 'string' ? undefined : b) : a
       target.addEventListener(event, handler, opts)
       this._listeners.push({ target, event, handler, opts })
     },
@@ -2073,7 +2078,10 @@
                 if (!cycleState.remoteFetched && !cycleState.remotePending) {
                   fetch7tvCycleMatches(cycleState.searchTerm)
                 }
-                cycleState.lastTime = now
+                // Date.now() — `now` has no binding in this scope (the three
+                // `const now` in this file are locals of other functions), so
+                // this line threw ReferenceError and aborted the Tab handler.
+                cycleState.lastTime = Date.now()
                 showCycleTooltip(cycleState.index + 1, cycleState.matches.length, cycleState.matches[cycleState.index])
                 return
               }
@@ -2082,7 +2090,7 @@
               cycleState.index = 0 // First Tab - start at first match
             }
             const nextEmote = cycleState.matches[cycleState.index]
-            cycleState.lastTime = now
+            cycleState.lastTime = Date.now()
 
             log(
               ' ⌨️ Manual Tab cycling:',
@@ -2636,8 +2644,10 @@
           }
         }
       },
+      // `error` does not bubble — capture is the only way a delegated
+      // document-level listener sees an <img> failure at all.
+      { capture: true },
       'image-error-handler',
-      true,
     )
 
     // Safety-net polling for emote image fixes the MutationObserver might miss

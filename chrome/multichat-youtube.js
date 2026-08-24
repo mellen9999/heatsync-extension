@@ -858,10 +858,39 @@ if (typeof window !== 'undefined') {
 
   // --- listeners ---
 
-  function _trackListener(target, event, handler, options) {
+  /**
+   * @param {EventTarget} target
+   * @param {string} event
+   * @param {EventListenerOrEventListenerObject} handler
+   * @param {AddEventListenerOptions|boolean|string} [a] options, or a diagnostic
+   *   label (see below) — the two are sorted by type, not by position
+   * @param {AddEventListenerOptions|boolean|string} [b] whichever of the two `a`
+   *   was not
+   *
+   * A STRING here is a label, not options. Twenty-two call sites passed one —
+   * 'mc-picker-close', 'emote-click', 'input-modifier-backspace' — copying the
+   * habit from cleanup.setTimeout, which really does take a label. Web IDL
+   * resolves a string against `boolean | AddEventListenerOptions`: not an
+   * object, so it converts to boolean, and a non-empty string is true. Every
+   * one of those listeners silently ran in the CAPTURE phase, ahead of the
+   * page's own handlers, which nobody who wrote them intended. The five that
+   * genuinely need capture — the four that stopPropagation to preempt Twitch,
+   * and the `error` listener, since error does not bubble at all — now say so
+   * with an explicit { capture: true }.
+   */
+  function _trackListener(target, event, handler, a, b) {
     if (!target || !event || !handler) return
+    // The label and the options may arrive in either order, because call sites
+    // wrote both: `(t, e, h, 'label')`, `(t, e, h, 'label', true)` and
+    // `(t, e, h, { capture: true }, 'label')` all exist. Sorting them by type
+    // is the only reading that does not silently drop one of them — dropping
+    // the options is how two capture-phase delegates in content.js became
+    // bubble-phase without a single line changing at their call sites.
+    const aIsLabel = typeof a === 'string'
+    const options = aIsLabel ? (typeof b === 'string' ? undefined : b) : a
+    const label = aIsLabel ? a : typeof b === 'string' ? b : undefined
     target.addEventListener(event, handler, options)
-    _listeners.push({ target, event, handler, options })
+    _listeners.push({ target, event, handler, options, label })
   }
 
   function _untrackListener(target, event, handler) {
@@ -43560,6 +43589,15 @@ async function fetchRemoteEmoteMatches(search) {
       !ex.ffz && typeof mcSearchFfzApi === 'function'
         ? mcSearchFfzApi(search, ac.signal, { page })
         : Promise.resolve(null),
+      // mcSearchBttvApi does not exist, deliberately: BTTV closed its shared-
+      // emote search (api.betterttv.net/3/emotes/shared/search answers 403
+      // {"message":"unauthorized"} without credentials we do not have). The
+      // typeof guard resolves null, drain() sees a non-array and flips
+      // ex.bttv on the first page, so the cycle still terminates. Do NOT just
+      // delete this arm — ex.bttv would then stay false forever and the
+      // "everything exhausted" check below would never fire, so Tab-cycling
+      // would never wrap back to 1. BTTV emotes themselves are unaffected;
+      // only catalog SEARCH is unavailable.
       !ex.bttv && typeof mcSearchBttvApi === 'function'
         ? mcSearchBttvApi(search, ac.signal, { page })
         : Promise.resolve(null),
@@ -65741,7 +65779,7 @@ const STORAGE_KEY = 'heatsync_multichat'
             img.src = target
           }, delay)
         },
-        true,
+        { capture: true },
       )
 
       const isStaticTab = () =>

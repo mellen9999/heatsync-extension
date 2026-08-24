@@ -3731,7 +3731,7 @@
             img.src = target
           }, delay)
         },
-        true,
+        { capture: true },
       )
 
       const isStaticTab = () =>

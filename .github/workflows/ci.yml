@@ -36,5 +36,13 @@ jobs:
       - name: typecheck
         run: bun run typecheck
 
+      # The root typecheck has checkJs:false and excludes chrome/ and
+      # src/multichat/ — about 95% of the product. This one checks the BUILT
+      # output (the concatenation is what actually has to resolve) and holds
+      # the crash-class errors at zero. `build` above already produced
+      # dist/chrome, so this only runs tsc.
+      - name: Built-extension crash-class typecheck
+        run: node scripts/type-signal.mjs
+
       - name: check version sync
         run: bun tests/check-versions.js

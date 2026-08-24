@@ -131,10 +131,39 @@
 
   // --- listeners ---
 
-  function _trackListener(target, event, handler, options) {
+  /**
+   * @param {EventTarget} target
+   * @param {string} event
+   * @param {EventListenerOrEventListenerObject} handler
+   * @param {AddEventListenerOptions|boolean|string} [a] options, or a diagnostic
+   *   label (see below) — the two are sorted by type, not by position
+   * @param {AddEventListenerOptions|boolean|string} [b] whichever of the two `a`
+   *   was not
+   *
+   * A STRING here is a label, not options. Twenty-two call sites passed one —
+   * 'mc-picker-close', 'emote-click', 'input-modifier-backspace' — copying the
+   * habit from cleanup.setTimeout, which really does take a label. Web IDL
+   * resolves a string against `boolean | AddEventListenerOptions`: not an
+   * object, so it converts to boolean, and a non-empty string is true. Every
+   * one of those listeners silently ran in the CAPTURE phase, ahead of the
+   * page's own handlers, which nobody who wrote them intended. The five that
+   * genuinely need capture — the four that stopPropagation to preempt Twitch,
+   * and the `error` listener, since error does not bubble at all — now say so
+   * with an explicit { capture: true }.
+   */
+  function _trackListener(target, event, handler, a, b) {
     if (!target || !event || !handler) return
+    // The label and the options may arrive in either order, because call sites
+    // wrote both: `(t, e, h, 'label')`, `(t, e, h, 'label', true)` and
+    // `(t, e, h, { capture: true }, 'label')` all exist. Sorting them by type
+    // is the only reading that does not silently drop one of them — dropping
+    // the options is how two capture-phase delegates in content.js became
+    // bubble-phase without a single line changing at their call sites.
+    const aIsLabel = typeof a === 'string'
+    const options = aIsLabel ? (typeof b === 'string' ? undefined : b) : a
+    const label = aIsLabel ? a : typeof b === 'string' ? b : undefined
     target.addEventListener(event, handler, options)
-    _listeners.push({ target, event, handler, options })
+    _listeners.push({ target, event, handler, options, label })
   }
 
   function _untrackListener(target, event, handler) {

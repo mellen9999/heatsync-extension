@@ -280,7 +280,18 @@
   // hidden (buffers stay the source of truth); this flag marks that at least
   // one message was skipped so the visible transition rebuilds once.
   let _hiddenSkippedAppend = false
+  // Wedge flag: true when the BG oracle proved this tab is on screen while
+  // document.hidden still reads true (lost occlusion flip — popout windows).
+  // A real visibilitychange event proves the tracking is live again.
+  let _visWedged = false
+  const hsDiagLog = (e, x) => {
+    try {
+      window.__hsDiag?.(e, x)
+    } catch (_) {}
+  }
   cleanup.addEventListener(document, 'visibilitychange', () => {
+    _visWedged = false
+    hsDiagLog('vis', { hidden: document.hidden, focus: document.hasFocus() })
     if (document.hidden) _hsAbortAllResizes()
     // Pause our infinite breathe/livedot CSS animations while the tab is
     // hidden — no paint happens, so running them is pure wasted style recalc on
@@ -322,16 +333,38 @@
       } catch (_) {}
     }
   })
-  // Escape hatch for the catch-up above: popout windows can miss the
+  // Escape hatches for the catch-up above: popout windows can miss the
   // hidden→visible visibilitychange (wayland/occlusion tracking), leaving the
   // pane frozen on stale rows even though messages keep buffering. A window
   // focus is proof the user is looking — rebuild if anything was skipped.
   cleanup.addEventListener(window, 'focus', () => {
     if (!_hiddenSkippedAppend) return
     _hiddenSkippedAppend = false
+    hsDiagLog('catchup', { src: 'focus' })
     try {
       renderMessages(currentTab)
     } catch (_) {}
+  })
+  // BG visibility oracle nudge: fired when this tab's window gained OS focus
+  // or the tab was activated — airtight proof it's on screen. If we still
+  // believe hidden, the visibility tracking is wedged: mark it, drop the
+  // animation-pause class, and catch up. appendMessage honors _visWedged so
+  // rendering stays live until a real visibilitychange arrives.
+  cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+    if (msg?.type !== 'hs_vis_nudge') return
+    if (!document.hidden) return // tracking agrees — nothing wedged
+    if (!_visWedged) hsDiagLog('wedge_detected', { skipped: _hiddenSkippedAppend })
+    _visWedged = true
+    try {
+      document.body.classList.remove('hs-ext-hidden')
+    } catch (_) {}
+    if (_hiddenSkippedAppend) {
+      _hiddenSkippedAppend = false
+      hsDiagLog('catchup', { src: 'nudge' })
+      try {
+        renderMessages(currentTab)
+      } catch (_) {}
+    }
   })
 
   // Shared fail-loud path for user-intent storage writes — an added channel,
@@ -808,7 +841,7 @@
       newMessageCount = 0
       if (newBtn) newBtn.style.display = 'none'
       // Defer scroll to after layout flush so scrollHeight reflects appended frag
-      cleanup.raf(() => {
+      rafOrTimeout(() => {
         try {
           msgsEl.scrollTop = msgsEl.scrollHeight + 10000
         } catch {}
@@ -828,7 +861,7 @@
           newBtn.style.display = 'none'
         }
       }
-      cleanup.raf(() => {
+      rafOrTimeout(() => {
         try {
           msgsEl.scrollTop = cache.scrollTop
         } catch {}
@@ -8735,10 +8768,30 @@
     // duplicated by delegation, and leaked listeners on rapid bursts).
     isProgrammaticScroll = true
     msgsEl.scrollTop = msgsEl.scrollHeight + 10000
-    cleanup.raf(() => {
-      if (!isScrolledUp) msgsEl.scrollTop = msgsEl.scrollHeight + 10000
+    if (document.hidden) {
+      // No frames coming (believed-hidden, any flavor): settle synchronously
+      // instead of leaving the programmatic flag up for a throttled timer's
+      // lifetime — a raised flag eats the user's own scroll events.
       isProgrammaticScroll = false
-    })
+    } else {
+      cleanup.raf(() => {
+        if (!isScrolledUp) msgsEl.scrollTop = msgsEl.scrollHeight + 10000
+        isProgrammaticScroll = false
+      })
+    }
+  }
+
+  // rAF that still fires when chrome believes the tab hidden AND a user
+  // signal (window focus / BG-oracle wedge) says someone is looking. rAF is
+  // frozen in believed-hidden, so every render/scroll callback riding a bare
+  // rAF silently never fires there and rows pile up below a stuck viewport.
+  // The timeout fallback engages ONLY in that user-looking state: a genuinely
+  // hidden background tab must keep the free rAF pause (a timer fallback
+  // there would burn 1Hz renders in every backgrounded tab — measured).
+  function rafOrTimeout(fn) {
+    if (!document.hidden || !(document.hasFocus() || _visWedged)) return cleanup.raf(fn)
+    cleanup.setTimeout(fn, 16)
+    return true
   }
 
   // Coalesced scroll-pin for the single-message append path. Calling
@@ -8747,8 +8800,28 @@
   // on a busy solo tab. Batching to one rAF pins once per frame (before paint,
   // so no visible lag) and reads layout once instead of per message.
   let _scrollPinRaf = null
+  let _lastSyncPin = 0
   function scheduleScrollPin(msgsEl) {
     if (_scrollPinRaf) return
+    if (document.hidden && (document.hasFocus() || _visWedged)) {
+      // Believed-hidden but still appending (focus/wedge override): rAF is
+      // dead and timers clamp to ~1s, which reads as "chat stuck at the
+      // bottom". Pin synchronously at ≥100ms spacing — bounded reflow cost,
+      // fluid enough to read — with a clamped trailing timer as backstop.
+      const now = Date.now()
+      if (now - _lastSyncPin >= 100) {
+        _lastSyncPin = now
+        scrollMsgsToBottom(msgsEl)
+        return
+      }
+      _scrollPinRaf = true
+      cleanup.setTimeout(() => {
+        _scrollPinRaf = null
+        _lastSyncPin = Date.now()
+        scrollMsgsToBottom(msgsEl)
+      }, 120)
+      return
+    }
     _scrollPinRaf = cleanup.raf(() => {
       _scrollPinRaf = null
       scrollMsgsToBottom(msgsEl)
@@ -8958,7 +9031,7 @@
     // which has fair per-platform capping.
     if (isMultiPlatformTab(tabId)) {
       if (!_multiPlatformRenderTimer) {
-        _multiPlatformRenderTimer = cleanup.raf(() => {
+        _multiPlatformRenderTimer = rafOrTimeout(() => {
           _multiPlatformRenderTimer = null
           renderMessages(currentTab)
         })
@@ -8969,10 +9042,11 @@
     // Hidden tab: skip ALL DOM work (build/append/trim/pin) — buffers keep the
     // message and the visibilitychange handler rebuilds once on return. The
     // multi-platform path above pauses for free (rAF never fires while hidden).
-    // hasFocus() overrides a stuck 'hidden': if the visibility flip got lost
-    // (popout/wayland occlusion) but the window is focused, the user IS
-    // looking — keep appending instead of freezing the pane.
-    if (document.hidden && !document.hasFocus()) {
+    // hasFocus() and the BG-oracle wedge flag override a stuck 'hidden': if
+    // the visibility flip got lost (popout/wayland occlusion) but the window
+    // is focused or the BG proved it on-screen, the user IS looking — keep
+    // appending instead of freezing the pane.
+    if (document.hidden && !document.hasFocus() && !_visWedged) {
       _hiddenSkippedAppend = true
       return true
     }

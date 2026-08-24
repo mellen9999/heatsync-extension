@@ -732,6 +732,22 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
   )
 }
 
+// Diagnostic ring — localStorage, so ANY same-origin tab (another window,
+// devtools, an automation tab) can read what a wedged or dying tab saw
+// after the fact. The ext has no other eyes into a frozen popout. No
+// message content, no PII: event names, timestamps, visibility bits.
+const _hsDiagTag = `${location.pathname.startsWith('/popout/') ? 'popout' : 'page'}-${Math.random().toString(36).slice(2, 6)}`
+function hsDiag(event, extra) {
+  try {
+    const arr = JSON.parse(localStorage.getItem('hs_diag_ring') || '[]')
+    arr.push({ t: Date.now(), tab: _hsDiagTag, e: event, ...(extra || {}) })
+    while (arr.length > 300) arr.shift()
+    localStorage.setItem('hs_diag_ring', JSON.stringify(arr))
+  } catch (_) {}
+}
+window.__hsDiag = hsDiag
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus() })
+
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
 // reload until a signal proves the user can see the tab again — active tab
@@ -748,6 +764,7 @@ function _hsMcOnCtxDeath() {
   } catch (_) {}
   if (window.__heatsyncReloadScheduled) return
   window.__heatsyncReloadScheduled = true
+  hsDiag('ctx_death', { hidden: document.hidden, focus: document.hasFocus() })
   const doReload = () => {
     if (_hsMcTakenOver) return
     try {
@@ -758,11 +775,13 @@ function _hsMcOnCtxDeath() {
     setTimeout(doReload, 1000 + Math.random() * 4000)
     return
   }
+  hsDiag('reload_deferred')
   const wake = () => {
     if (document.visibilityState !== 'visible' && !document.hasFocus()) return
     document.removeEventListener('visibilitychange', wake)
     window.removeEventListener('focus', wake)
     window.removeEventListener('pageshow', wake)
+    hsDiag('reload_wake')
     setTimeout(doReload, 500 + Math.random() * 2000)
   }
   document.addEventListener('visibilitychange', wake)

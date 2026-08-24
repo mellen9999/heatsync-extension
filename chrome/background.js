@@ -5425,6 +5425,30 @@ async function getMatchingTabs() {
   return _cachedTabs
 }
 
+// ── visibility oracle ───────────────────────────────────────────────────────
+// A renderer's document.hidden can stick at 'hidden' in a popout window whose
+// occlusion/visibility flip got lost — the page then freezes its own chat
+// while the user is looking right at it. The BG sees the real user signals
+// (a window gaining OS focus, a tab being activated); both are airtight
+// proof the tab is on screen, so nudge it and let the content script decide
+// whether its visibility state is wedged. Event-driven at human cadence —
+// no polling, errors swallowed (tab may have no content script).
+function nudgeTabVisible(tabId) {
+  browser.tabs.sendMessage(tabId, { type: 'hs_vis_nudge' }).catch(() => {})
+}
+try {
+  browser.windows.onFocusChanged.addListener(async (windowId) => {
+    if (windowId === browser.windows.WINDOW_ID_NONE) return
+    try {
+      const tabs = await browser.tabs.query({ active: true, windowId })
+      for (const t of tabs) nudgeTabVisible(t.id)
+    } catch (_) {}
+  })
+  browser.tabs.onActivated.addListener((info) => {
+    nudgeTabVisible(info.tabId)
+  })
+} catch (_) {}
+
 // Coalesce per-key persistence so high-frequency broadcasts don't write storage 1-2x/sec.
 // Latest payload wins; flush after a short idle window.
 const _broadcastStorageQueue = new Map() // key -> latest value

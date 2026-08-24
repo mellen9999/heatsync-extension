@@ -8,15 +8,12 @@
  * turning a report into a fact.
  */
 
+import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { describe, expect, test } from 'bun:test'
 
 const src = readFileSync(join(import.meta.dir, '../src/multichat/social.js'), 'utf8')
-const fn = src.slice(
-  src.indexOf('async function maybeCrowdReportSocials'),
-  src.indexOf('// YT POLL SMOOTHING:')
-)
+const fn = src.slice(src.indexOf('async function maybeCrowdReportSocials'), src.indexOf('// YT POLL SMOOTHING:'))
 
 describe('crowd report wiring', () => {
   test('hook fires only from the definitive no-link branch, twitch host only', () => {

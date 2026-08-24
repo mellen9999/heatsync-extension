@@ -184,9 +184,7 @@ async function maybeCrowdReportSocials(urlCh) {
     if (!/^[a-z0-9_]{2,25}$/.test(safe)) return
     let socials = null
     try {
-      const data = await twitchGql(
-        `{ user(login: "${safe}") { channel { socialMedias { name title url } } } }`
-      )
+      const data = await twitchGql(`{ user(login: "${safe}") { channel { socialMedias { name title url } } } }`)
       socials = data?.data?.user?.channel?.socialMedias
     } catch (_) {
       return // transient (bridge asleep, network) — retry on a later visit
@@ -196,10 +194,7 @@ async function maybeCrowdReportSocials(urlCh) {
       const raw = String(s?.url || '')
       if (!raw) return false
       try {
-        const h = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname.replace(
-          /^(www|m)\./,
-          ''
-        )
+        const h = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname.replace(/^(www|m)\./, '')
         return h === 'youtube.com' || h === 'youtu.be'
       } catch (_) {
         return false
@@ -208,8 +203,7 @@ async function maybeCrowdReportSocials(urlCh) {
     // simulcasters often publish a main channel AND a dedicated live channel
     // (kaicenat: "youtube" + "Youtube Live") — the live one is the chat we
     // want, so a live-titled link beats position
-    const yt =
-      ytLinks.find((s) => /\blive\b/i.test(`${s?.title || ''} ${s?.name || ''}`)) || ytLinks[0]
+    const yt = ytLinks.find((s) => /\blive\b/i.test(`${s?.title || ''} ${s?.name || ''}`)) || ytLinks[0]
     // definitive answer either way — stamp the throttle before the report so
     // a flaky POST can't turn one channel into a per-nav GQL hammer
     map[safe] = Date.now()
@@ -218,7 +212,9 @@ async function maybeCrowdReportSocials(urlCh) {
       keys
         .sort((a, b) => map[a] - map[b])
         .slice(0, keys.length - CROWD_REPORT_MAP_MAX)
-        .forEach((k) => delete map[k])
+        .forEach((k) => {
+          delete map[k]
+        })
     }
     await api.storage.local.set({ hs_crowd_reported: map })
     if (!yt) return

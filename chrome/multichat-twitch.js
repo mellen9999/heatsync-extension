@@ -8921,6 +8921,22 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
   )
 }
 
+// Diagnostic ring — localStorage, so ANY same-origin tab (another window,
+// devtools, an automation tab) can read what a wedged or dying tab saw
+// after the fact. The ext has no other eyes into a frozen popout. No
+// message content, no PII: event names, timestamps, visibility bits.
+const _hsDiagTag = `${location.pathname.startsWith('/popout/') ? 'popout' : 'page'}-${Math.random().toString(36).slice(2, 6)}`
+function hsDiag(event, extra) {
+  try {
+    const arr = JSON.parse(localStorage.getItem('hs_diag_ring') || '[]')
+    arr.push({ t: Date.now(), tab: _hsDiagTag, e: event, ...(extra || {}) })
+    while (arr.length > 300) arr.shift()
+    localStorage.setItem('hs_diag_ring', JSON.stringify(arr))
+  } catch (_) {}
+}
+window.__hsDiag = hsDiag
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus() })
+
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
 // reload until a signal proves the user can see the tab again — active tab
@@ -8937,6 +8953,7 @@ function _hsMcOnCtxDeath() {
   } catch (_) {}
   if (window.__heatsyncReloadScheduled) return
   window.__heatsyncReloadScheduled = true
+  hsDiag('ctx_death', { hidden: document.hidden, focus: document.hasFocus() })
   const doReload = () => {
     if (_hsMcTakenOver) return
     try {
@@ -8947,11 +8964,13 @@ function _hsMcOnCtxDeath() {
     setTimeout(doReload, 1000 + Math.random() * 4000)
     return
   }
+  hsDiag('reload_deferred')
   const wake = () => {
     if (document.visibilityState !== 'visible' && !document.hasFocus()) return
     document.removeEventListener('visibilitychange', wake)
     window.removeEventListener('focus', wake)
     window.removeEventListener('pageshow', wake)
+    hsDiag('reload_wake')
     setTimeout(doReload, 500 + Math.random() * 2000)
   }
   document.addEventListener('visibilitychange', wake)
@@ -57756,6 +57775,7 @@ function injectPendingAutomodHolds(pending) {
     const row = automodHoldToRowModel(payload)
     if (!row) continue
     if (findAutomodRow(row.broadcasterLogin, row.msgId)) continue // already on screen
+    if (isAutomodResolved(row.msgId)) continue // server backfill missed the resolution — don't resurrect
     if (!shouldProcessAutomodHold(_automodSeenHolds, row.msgId, Date.now())) continue
     // Nothing to act on any more — don't resurrect it as a live row.
     if (Date.now() - row.heldAt >= AUTOMOD_EXPIRE_MS) continue
@@ -57765,7 +57785,34 @@ function injectPendingAutomodHolds(pending) {
   return added
 }
 
+// Holds the server has already resolved but still returns in automod_watch
+// backfill — its pending list can miss a resolution the same way tabs can
+// miss the automod:update broadcast. Persisted per-origin so a refresh
+// doesn't resurrect a hold the mod already actioned: twitch rejects the
+// re-action and the row read "action failed" on every reload. TTL sits
+// comfortably past the 60-min hold lifetime; the map self-prunes on write.
+const AUTOMOD_RESOLVED_KEY = 'hs_automod_resolved_v1'
+const AUTOMOD_RESOLVED_TTL_MS = 2 * 60 * 60 * 1000
+function markAutomodResolved(msgId) {
+  try {
+    const now = Date.now()
+    const m = JSON.parse(localStorage.getItem(AUTOMOD_RESOLVED_KEY) || '{}')
+    m[msgId] = now
+    for (const k of Object.keys(m)) if (now - m[k] > AUTOMOD_RESOLVED_TTL_MS) delete m[k]
+    localStorage.setItem(AUTOMOD_RESOLVED_KEY, JSON.stringify(m))
+  } catch (_) {}
+}
+function isAutomodResolved(msgId) {
+  try {
+    const m = JSON.parse(localStorage.getItem(AUTOMOD_RESOLVED_KEY) || '{}')
+    return m[msgId] !== undefined && Date.now() - m[msgId] <= AUTOMOD_RESOLVED_TTL_MS
+  } catch (_) {
+    return false
+  }
+}
+
 function resolveAutomodRow(broadcasterLogin, msgId, status, modLogin) {
+  markAutomodResolved(msgId)
   const row = findAutomodRow(broadcasterLogin, msgId)
   if (!row) return // resolved a hold we never rendered (different mod tab, expired buffer) — ignore
   row.status = status === 'approved' || status === 'denied' ? status : 'expired'
@@ -57809,6 +57856,7 @@ function handleAutomodActionClick(rowEl, action) {
         return
       }
       if (res?.error === 'gone') {
+        markAutomodResolved(msgId)
         row.status = 'expired'
         row.resolvedBy = null
         clearAutomodExpiry(msgId)
@@ -62573,7 +62621,18 @@ const STORAGE_KEY = 'heatsync_multichat'
   // hidden (buffers stay the source of truth); this flag marks that at least
   // one message was skipped so the visible transition rebuilds once.
   let _hiddenSkippedAppend = false
+  // Wedge flag: true when the BG oracle proved this tab is on screen while
+  // document.hidden still reads true (lost occlusion flip — popout windows).
+  // A real visibilitychange event proves the tracking is live again.
+  let _visWedged = false
+  const hsDiagLog = (e, x) => {
+    try {
+      window.__hsDiag?.(e, x)
+    } catch (_) {}
+  }
   cleanup.addEventListener(document, 'visibilitychange', () => {
+    _visWedged = false
+    hsDiagLog('vis', { hidden: document.hidden, focus: document.hasFocus() })
     if (document.hidden) _hsAbortAllResizes()
     // Pause our infinite breathe/livedot CSS animations while the tab is
     // hidden — no paint happens, so running them is pure wasted style recalc on
@@ -62615,16 +62674,38 @@ const STORAGE_KEY = 'heatsync_multichat'
       } catch (_) {}
     }
   })
-  // Escape hatch for the catch-up above: popout windows can miss the
+  // Escape hatches for the catch-up above: popout windows can miss the
   // hidden→visible visibilitychange (wayland/occlusion tracking), leaving the
   // pane frozen on stale rows even though messages keep buffering. A window
   // focus is proof the user is looking — rebuild if anything was skipped.
   cleanup.addEventListener(window, 'focus', () => {
     if (!_hiddenSkippedAppend) return
     _hiddenSkippedAppend = false
+    hsDiagLog('catchup', { src: 'focus' })
     try {
       renderMessages(currentTab)
     } catch (_) {}
+  })
+  // BG visibility oracle nudge: fired when this tab's window gained OS focus
+  // or the tab was activated — airtight proof it's on screen. If we still
+  // believe hidden, the visibility tracking is wedged: mark it, drop the
+  // animation-pause class, and catch up. appendMessage honors _visWedged so
+  // rendering stays live until a real visibilitychange arrives.
+  cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+    if (msg?.type !== 'hs_vis_nudge') return
+    if (!document.hidden) return // tracking agrees — nothing wedged
+    if (!_visWedged) hsDiagLog('wedge_detected', { skipped: _hiddenSkippedAppend })
+    _visWedged = true
+    try {
+      document.body.classList.remove('hs-ext-hidden')
+    } catch (_) {}
+    if (_hiddenSkippedAppend) {
+      _hiddenSkippedAppend = false
+      hsDiagLog('catchup', { src: 'nudge' })
+      try {
+        renderMessages(currentTab)
+      } catch (_) {}
+    }
   })
 
   // Shared fail-loud path for user-intent storage writes — an added channel,
@@ -63101,7 +63182,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       newMessageCount = 0
       if (newBtn) newBtn.style.display = 'none'
       // Defer scroll to after layout flush so scrollHeight reflects appended frag
-      cleanup.raf(() => {
+      rafOrTimeout(() => {
         try {
           msgsEl.scrollTop = msgsEl.scrollHeight + 10000
         } catch {}
@@ -63121,7 +63202,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           newBtn.style.display = 'none'
         }
       }
-      cleanup.raf(() => {
+      rafOrTimeout(() => {
         try {
           msgsEl.scrollTop = cache.scrollTop
         } catch {}
@@ -71028,10 +71109,30 @@ const STORAGE_KEY = 'heatsync_multichat'
     // duplicated by delegation, and leaked listeners on rapid bursts).
     isProgrammaticScroll = true
     msgsEl.scrollTop = msgsEl.scrollHeight + 10000
-    cleanup.raf(() => {
-      if (!isScrolledUp) msgsEl.scrollTop = msgsEl.scrollHeight + 10000
+    if (document.hidden) {
+      // No frames coming (believed-hidden, any flavor): settle synchronously
+      // instead of leaving the programmatic flag up for a throttled timer's
+      // lifetime — a raised flag eats the user's own scroll events.
       isProgrammaticScroll = false
-    })
+    } else {
+      cleanup.raf(() => {
+        if (!isScrolledUp) msgsEl.scrollTop = msgsEl.scrollHeight + 10000
+        isProgrammaticScroll = false
+      })
+    }
+  }
+
+  // rAF that still fires when chrome believes the tab hidden AND a user
+  // signal (window focus / BG-oracle wedge) says someone is looking. rAF is
+  // frozen in believed-hidden, so every render/scroll callback riding a bare
+  // rAF silently never fires there and rows pile up below a stuck viewport.
+  // The timeout fallback engages ONLY in that user-looking state: a genuinely
+  // hidden background tab must keep the free rAF pause (a timer fallback
+  // there would burn 1Hz renders in every backgrounded tab — measured).
+  function rafOrTimeout(fn) {
+    if (!document.hidden || !(document.hasFocus() || _visWedged)) return cleanup.raf(fn)
+    cleanup.setTimeout(fn, 16)
+    return true
   }
 
   // Coalesced scroll-pin for the single-message append path. Calling
@@ -71040,8 +71141,28 @@ const STORAGE_KEY = 'heatsync_multichat'
   // on a busy solo tab. Batching to one rAF pins once per frame (before paint,
   // so no visible lag) and reads layout once instead of per message.
   let _scrollPinRaf = null
+  let _lastSyncPin = 0
   function scheduleScrollPin(msgsEl) {
     if (_scrollPinRaf) return
+    if (document.hidden && (document.hasFocus() || _visWedged)) {
+      // Believed-hidden but still appending (focus/wedge override): rAF is
+      // dead and timers clamp to ~1s, which reads as "chat stuck at the
+      // bottom". Pin synchronously at ≥100ms spacing — bounded reflow cost,
+      // fluid enough to read — with a clamped trailing timer as backstop.
+      const now = Date.now()
+      if (now - _lastSyncPin >= 100) {
+        _lastSyncPin = now
+        scrollMsgsToBottom(msgsEl)
+        return
+      }
+      _scrollPinRaf = true
+      cleanup.setTimeout(() => {
+        _scrollPinRaf = null
+        _lastSyncPin = Date.now()
+        scrollMsgsToBottom(msgsEl)
+      }, 120)
+      return
+    }
     _scrollPinRaf = cleanup.raf(() => {
       _scrollPinRaf = null
       scrollMsgsToBottom(msgsEl)
@@ -71251,7 +71372,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // which has fair per-platform capping.
     if (isMultiPlatformTab(tabId)) {
       if (!_multiPlatformRenderTimer) {
-        _multiPlatformRenderTimer = cleanup.raf(() => {
+        _multiPlatformRenderTimer = rafOrTimeout(() => {
           _multiPlatformRenderTimer = null
           renderMessages(currentTab)
         })
@@ -71262,10 +71383,11 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Hidden tab: skip ALL DOM work (build/append/trim/pin) — buffers keep the
     // message and the visibilitychange handler rebuilds once on return. The
     // multi-platform path above pauses for free (rAF never fires while hidden).
-    // hasFocus() overrides a stuck 'hidden': if the visibility flip got lost
-    // (popout/wayland occlusion) but the window is focused, the user IS
-    // looking — keep appending instead of freezing the pane.
-    if (document.hidden && !document.hasFocus()) {
+    // hasFocus() and the BG-oracle wedge flag override a stuck 'hidden': if
+    // the visibility flip got lost (popout/wayland occlusion) but the window
+    // is focused or the BG proved it on-screen, the user IS looking — keep
+    // appending instead of freezing the pane.
+    if (document.hidden && !document.hasFocus() && !_visWedged) {
       _hiddenSkippedAppend = true
       return true
     }

@@ -302,7 +302,17 @@ function handleAutomodActionClick(rowEl, action) {
   patchAutomodRowDom(row)
   safeSendMessage({ type: 'automod_action', msgId, action })
     .then((res) => {
-      if (res?.ok) return // stays 'resolving' until the automod:update broadcast confirms
+      if (res?.ok) {
+        // The POST succeeding IS the confirmation — the action landed on
+        // twitch. Resolve locally instead of waiting on the automod:update
+        // broadcast: that WS frame has no backfill path (holds do, resolves
+        // don't), so a SW restart or WS reconnect at the wrong moment left
+        // rows stuck on "resolving…" forever. The broadcast still serves
+        // other tabs/mods, and when it does arrive it re-patches this row
+        // with the resolver's name.
+        resolveAutomodRow(broadcasterLogin, msgId, action === 'allow' ? 'approved' : 'denied', null)
+        return
+      }
       if (res?.error === 'gone') {
         row.status = 'expired'
         row.resolvedBy = null

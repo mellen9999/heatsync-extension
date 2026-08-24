@@ -282,11 +282,18 @@ if (typeof window !== 'undefined' && typeof window.name === 'string' && window.n
       if (document.visibilityState === 'visible') {
         setTimeout(doReload, 1000 + Math.random() * 4000)
       } else {
-        document.addEventListener('visibilitychange', function once() {
-          if (document.visibilityState !== 'visible') return
-          document.removeEventListener('visibilitychange', once)
+        // focus/pageshow escape hatches — popout windows can miss the
+        // hidden→visible visibilitychange (see bootstrap.js ctx-death)
+        const wake = () => {
+          if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+          document.removeEventListener('visibilitychange', wake)
+          window.removeEventListener('focus', wake)
+          window.removeEventListener('pageshow', wake)
           setTimeout(doReload, 500 + Math.random() * 2000)
-        })
+        }
+        document.addEventListener('visibilitychange', wake)
+        window.addEventListener('focus', wake)
+        window.addEventListener('pageshow', wake)
       }
     } catch (_) {}
   }
@@ -4859,11 +4866,18 @@ const runtime = {
               if (document.visibilityState === 'visible') {
                 setTimeout(doReload, 1000 + Math.random() * 4000)
               } else {
-                document.addEventListener('visibilitychange', function once() {
-                  if (document.visibilityState !== 'visible') return
-                  document.removeEventListener('visibilitychange', once)
+                // focus/pageshow escape hatches — popout windows can miss the
+                // hidden→visible visibilitychange (see bootstrap.js ctx-death)
+                const wake = () => {
+                  if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+                  document.removeEventListener('visibilitychange', wake)
+                  window.removeEventListener('focus', wake)
+                  window.removeEventListener('pageshow', wake)
                   setTimeout(doReload, 500 + Math.random() * 2000)
-                })
+                }
+                document.addEventListener('visibilitychange', wake)
+                window.addEventListener('focus', wake)
+                window.addEventListener('pageshow', wake)
               }
             }
           } catch (_) {}
@@ -8907,11 +8921,47 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
   )
 }
 
+// Shared death handler for the detectors below (interval probe, port
+// onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
+// reload until a signal proves the user can see the tab again — active tab
+// reloads in 1–5s, background tabs wait. Avoids the N-tab thundering React
+// mount herd that crashes Chrome. visibilitychange ALONE is not a safe wait:
+// popout windows can miss the hidden→visible flip (wayland/occlusion
+// tracking), which left a torn-down popout frozen until a manual refresh —
+// window focus and pageshow are the escape hatches, and the wake accepts
+// document.hasFocus() as proof-of-visible in case the visibility state
+// itself is stuck at 'hidden'.
+function _hsMcOnCtxDeath() {
+  try {
+    lifecycle.abort()
+  } catch (_) {}
+  if (window.__heatsyncReloadScheduled) return
+  window.__heatsyncReloadScheduled = true
+  const doReload = () => {
+    if (_hsMcTakenOver) return
+    try {
+      location.reload()
+    } catch (_) {}
+  }
+  if (document.visibilityState === 'visible') {
+    setTimeout(doReload, 1000 + Math.random() * 4000)
+    return
+  }
+  const wake = () => {
+    if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+    document.removeEventListener('visibilitychange', wake)
+    window.removeEventListener('focus', wake)
+    window.removeEventListener('pageshow', wake)
+    setTimeout(doReload, 500 + Math.random() * 2000)
+  }
+  document.addEventListener('visibilitychange', wake)
+  window.addEventListener('focus', wake)
+  window.addEventListener('pageshow', wake)
+}
+
 // Fast context-death detector. chrome.runtime.id becomes undefined sync on
-// extension reload. Tear down lifecycle immediately, then defer reload to
-// visibility — active tab reloads in 1–5s, background tabs wait until user
-// focuses them. Avoids the N-tab thundering React mount herd that crashes
-// Chrome. content.js sets __heatsyncReloadScheduled — dedupe across scripts.
+// extension reload. content.js sets __heatsyncReloadScheduled — dedupe across
+// scripts.
 const _hsMcCtxDeathTimer = setInterval(() => {
   // Nothing to do while the tab is hidden: the reload is deferred to
   // visibilitychange anyway, so probing 30 times a minute in a background tab
@@ -8929,26 +8979,7 @@ const _hsMcCtxDeathTimer = setInterval(() => {
   }
   if (alive) return
   clearInterval(_hsMcCtxDeathTimer)
-  try {
-    lifecycle.abort()
-  } catch (_) {}
-  if (window.__heatsyncReloadScheduled) return
-  window.__heatsyncReloadScheduled = true
-  const doReload = () => {
-    if (_hsMcTakenOver) return
-    try {
-      location.reload()
-    } catch (_) {}
-  }
-  if (document.visibilityState === 'visible') {
-    setTimeout(doReload, 1000 + Math.random() * 4000)
-  } else {
-    document.addEventListener('visibilitychange', function once() {
-      if (document.visibilityState !== 'visible') return
-      document.removeEventListener('visibilitychange', once)
-      setTimeout(doReload, 500 + Math.random() * 2000)
-    })
-  }
+  _hsMcOnCtxDeath()
 }, 2000)
 _timers.intervals.push(_hsMcCtxDeathTimer)
 // Registered once at module load, NOT inside init() — must outlive SPA reinit.
@@ -8960,12 +8991,18 @@ _timers.persistent.add(_hsMcCtxDeathTimer)
 // can suspend the orphaned setInterval. Catches the cases the 2s interval
 // misses. Distinguishes "ext gone" from "SW idle-suspended" via the post-
 // disconnect chrome.runtime?.id probe.
-function _hsMcOpenCtxDeathPort() {
+function _hsMcOpenCtxDeathPort(isReconnect) {
   let port
   try {
     if (!chrome?.runtime?.connect) return
     port = chrome.runtime.connect({ name: 'heatsync-ctx-death' })
   } catch (_) {
+    // connect() throwing on a RECONNECT means the context died between
+    // onDisconnect's alive-probe and now (runtime.id can read stale-alive for
+    // a beat after invalidation) — without this the detector gave up silently
+    // and a hidden tab never armed its reload. At module load a throw with a
+    // live context is not a death signal, so only the reconnect path escalates.
+    if (isReconnect) _hsMcOnCtxDeath()
     return
   }
   port.onDisconnect.addListener(() => {
@@ -8976,32 +9013,13 @@ function _hsMcOpenCtxDeathPort() {
       alive = false
     }
     if (alive) {
-      setTimeout(_hsMcOpenCtxDeathPort, 500)
+      setTimeout(() => _hsMcOpenCtxDeathPort(true), 500)
       return
     }
-    try {
-      lifecycle.abort()
-    } catch (_) {}
-    if (window.__heatsyncReloadScheduled) return
-    window.__heatsyncReloadScheduled = true
-    const doReload = () => {
-      if (_hsMcTakenOver) return
-      try {
-        location.reload()
-      } catch (_) {}
-    }
-    if (document.visibilityState === 'visible') {
-      setTimeout(doReload, 1000 + Math.random() * 4000)
-    } else {
-      document.addEventListener('visibilitychange', function once() {
-        if (document.visibilityState !== 'visible') return
-        document.removeEventListener('visibilitychange', once)
-        setTimeout(doReload, 500 + Math.random() * 2000)
-      })
-    }
+    _hsMcOnCtxDeath()
   })
 }
-_hsMcOpenCtxDeathPort()
+_hsMcOpenCtxDeathPort(false)
 
 // Optional perf tracer. window.__hsPerfTrace = true at runtime to log
 // callbacks exceeding 50ms into window.__hsPerfLog. Source captured at
@@ -13313,33 +13331,20 @@ function injectStyles() {
       font-weight: 600;
     }
     /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
-       arrow and the name, with the reply continuing on the SAME line. It used
-       to be a block bar reading "Replying to @user: quoted text…", which cost a
-       whole row of vertical space per reply — in a fast chat that is most of
-       the pane. The quoted message is sitting right above anyway, the full
-       quote is still on hover via title, and clicking still opens the thread
-       stack. Width is bounded so a long name can't push the message off-row. */
+       arrow, the name, and a snippet of the quoted message, on its OWN line
+       above the message content. The line is hard-capped at exactly one line:
+       nowrap + hidden overflow + ellipsis, so a long quote clips instead of
+       ever wrapping the row taller. display:block starts every glyph at
+       integer x from the row's left edge — no inline-block width to land on a
+       fractional pixel, so the bitmap face stays crisp (the old inline pill
+       needed a ch-based cap for exactly that reason). */
     .hs-mc-reply-ctx {
-      display: inline-block;
-      vertical-align: bottom;
-      /* ch, not %. A percentage cap lands the inline-block on a fractional
-         pixel, which puts every glyph inside it on a sub-pixel x offset — the
-         exact smear a bitmap face cannot survive. 1ch is an integer advance in
-         a monospace bitmap, so a ch cap always resolves to whole pixels, and
-         "N characters of name" is the real intent anyway.
-
-         16, not 38. 38ch is 228px — wider than most of the panel, so it never
-         actually bit, and a long name pushed the row to a THIRD line at narrow
-         widths. Measured at a 292px panel with a 17-char name: 3 lines at 38ch
-         and at 24ch, 2 lines at 16ch — the same height a plain message already
-         costs there. Above 16ch the cap is decorative; below it, nothing more
-         is gained. Names longer than 16 characters ellipsise, which is the
-         cheaper loss: the row height is the density budget. */
-      max-width: 16ch;
+      display: block;
+      max-width: 100%;
       font-size: 13px;
       color: var(--hs-muted);
       line-height: inherit;
-      padding: 0 4px 0 0;
+      padding: 0;
       margin: 0;
       border-left: 0;
       white-space: nowrap;
@@ -57739,7 +57744,17 @@ function handleAutomodActionClick(rowEl, action) {
   patchAutomodRowDom(row)
   safeSendMessage({ type: 'automod_action', msgId, action })
     .then((res) => {
-      if (res?.ok) return // stays 'resolving' until the automod:update broadcast confirms
+      if (res?.ok) {
+        // The POST succeeding IS the confirmation — the action landed on
+        // twitch. Resolve locally instead of waiting on the automod:update
+        // broadcast: that WS frame has no backfill path (holds do, resolves
+        // don't), so a SW restart or WS reconnect at the wrong moment left
+        // rows stuck on "resolving…" forever. The broadcast still serves
+        // other tabs/mods, and when it does arrive it re-patches this row
+        // with the resolver's name.
+        resolveAutomodRow(broadcasterLogin, msgId, action === 'allow' ? 'approved' : 'denied', null)
+        return
+      }
       if (res?.error === 'gone') {
         row.status = 'expired'
         row.resolvedBy = null
@@ -62484,6 +62499,17 @@ const STORAGE_KEY = 'heatsync_multichat'
         renderMessages(currentTab)
       } catch (_) {}
     }
+  })
+  // Escape hatch for the catch-up above: popout windows can miss the
+  // hidden→visible visibilitychange (wayland/occlusion tracking), leaving the
+  // pane frozen on stale rows even though messages keep buffering. A window
+  // focus is proof the user is looking — rebuild if anything was skipped.
+  cleanup.addEventListener(window, 'focus', () => {
+    if (!_hiddenSkippedAppend) return
+    _hiddenSkippedAppend = false
+    try {
+      renderMessages(currentTab)
+    } catch (_) {}
   })
 
   // Shared fail-loud path for user-intent storage writes — an added channel,
@@ -70356,7 +70382,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           // already knew. The trailing caret is the affordance, aria-expanded is
           // the state, and both the universal hover invert and keyboard
           // activation come free once it is a button.
-          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}<span class="hs-mc-reply-caret" aria-hidden="true"></span></span> `
+          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}<span class="hs-mc-reply-caret" aria-hidden="true"></span>${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''
@@ -71121,7 +71147,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Hidden tab: skip ALL DOM work (build/append/trim/pin) — buffers keep the
     // message and the visibilitychange handler rebuilds once on return. The
     // multi-platform path above pauses for free (rAF never fires while hidden).
-    if (document.hidden) {
+    // hasFocus() overrides a stuck 'hidden': if the visibility flip got lost
+    // (popout/wayland occlusion) but the window is focused, the user IS
+    // looking — keep appending instead of freezing the pane.
+    if (document.hidden && !document.hasFocus()) {
       _hiddenSkippedAppend = true
       return true
     }
@@ -77585,11 +77614,21 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (document.visibilityState === 'visible') {
           setTimeout(doReload, 1000 + Math.random() * 4000)
         } else {
-          document.addEventListener('visibilitychange', function once() {
-            if (document.visibilityState !== 'visible') return
-            document.removeEventListener('visibilitychange', once)
+          // Not visibilitychange alone — popout windows can miss the
+          // hidden→visible flip (wayland/occlusion tracking) and then a
+          // torn-down tab stays frozen forever. focus/pageshow are the escape
+          // hatches; hasFocus() counts as proof-of-visible in case the
+          // visibility state itself is stuck at 'hidden'.
+          const wake = () => {
+            if (document.visibilityState !== 'visible' && !document.hasFocus()) return
+            document.removeEventListener('visibilitychange', wake)
+            window.removeEventListener('focus', wake)
+            window.removeEventListener('pageshow', wake)
             setTimeout(doReload, 500 + Math.random() * 2000)
-          })
+          }
+          document.addEventListener('visibilitychange', wake)
+          window.addEventListener('focus', wake)
+          window.addEventListener('pageshow', wake)
         }
       }
       try {

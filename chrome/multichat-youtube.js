@@ -35757,7 +35757,11 @@ async function lookupFollowage(username, channelLogin) {
             `/api/twitch/followage?user=${encodeURIComponent(username)}&channel=${encodeURIComponent(channelLogin)}`,
           )
         : null
-    if (resp?.ok && resp.data) {
+    // degraded=true means twitch integrity-gated the follow field for the
+    // server's IP — its nulls are "couldn't see", not "not following". Fall
+    // through to the in-browser GQL proxy, which rides the user's own
+    // session integrity and still resolves.
+    if (resp?.ok && resp.data && !resp.data.degraded) {
       const d = resp.data
       const result = {
         followedAt: d.followedAt || null,
@@ -37492,13 +37496,70 @@ function rearmLiveYtAuto() {
   _autoYtVideoId = null
   if (gateAtBoot('chat-youtube') === false) return
   const names = getLivePlatformNames()
-  if (!names.youtube) return
+  if (!names.youtube) {
+    autoResolveLiveYt()
+    return
+  }
   ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
   ytChanLastSeen.set('__live_yt_auto__', Date.now())
   // Emote bucket is the bare url-channel name, so a linked channel's emotes
   // merge into one bucket (mirrors init's sibling send).
   const urlCh = getCurrentChannel()?.toLowerCase()
   ytSubscribe('__live_yt_auto__', names.youtube, urlCh || '')
+}
+
+// Zero-config [Y]. Twitch/kick merge by same-name, but youtube has no safe
+// name guess (a fabricated @handle resolves to whoever owns it — see the
+// yt-handle-bleed rule in getLivePlatformNames), so the link has to come
+// from heatsync's identity record. When no explicit override exists,
+// resolve the channel's linked youtube automatically: a fresh install
+// landing in a simulcaster's chat gets [Y] flowing with zero setup, same
+// as [T]/[K]. Explicit overrides always win — this only runs when
+// getLivePlatformNames().youtube is empty and re-checks after the async
+// hop. resolveIdentity brings its own cache + inflight dedupe; the
+// negative cache here stops re-asking for channels with no link on every
+// soft nav.
+const _autoYtNegative = new Map() // urlCh -> ts of last definitive "no link"
+const AUTO_YT_NEGATIVE_TTL_MS = 10 * 60 * 1000
+async function autoResolveLiveYt() {
+  if (gateAtBoot('chat-youtube') === false) return
+  if (typeof hostPlatform !== 'undefined' && hostPlatform === 'yt') return // already on youtube
+  const urlCh = getCurrentChannel()?.toLowerCase()
+  if (!urlCh || typeof resolveIdentity !== 'function') return
+  const neg = _autoYtNegative.get(urlCh)
+  if (neg && Date.now() - neg < AUTO_YT_NEGATIVE_TTL_MS) return
+  let ri = null
+  try {
+    ri = await resolveIdentity(urlCh, { platform: hostPlatform === 'kick' ? 'kick' : 'twitch' })
+  } catch (_) {
+    return
+  }
+  const p = ri?.ok ? ri.profile : null
+  const handle = p?.youtube_username ? String(p.youtube_username).replace(/^@/, '') : ''
+  // channel id first — immutable, and the /channel/<UC…>/live form can't be
+  // squatted the way a handle can
+  const url = p?.youtube_channel_id
+    ? `https://www.youtube.com/channel/${encodeURIComponent(p.youtube_channel_id)}/live`
+    : handle
+      ? `https://www.youtube.com/@${encodeURIComponent(handle)}/live`
+      : ''
+  if (!url) {
+    // only a definitive answer (profile with no link, or a 404) gets
+    // negative-cached — transient failures stay retryable
+    if (p || ri?.notFound) _autoYtNegative.set(urlCh, Date.now())
+    return
+  }
+  // Async-hop guards: still the same channel, still no explicit override,
+  // and nothing else armed the slot meanwhile.
+  if (getCurrentChannel()?.toLowerCase() !== urlCh) return
+  if (getLivePlatformNames().youtube) return
+  if (ytSubscribedUrls.get('__live_yt_auto__')) return
+  ytSubscribedUrls.set('__live_yt_auto__', url)
+  ytChanLastSeen.set('__live_yt_auto__', Date.now())
+  ytSubscribe('__live_yt_auto__', url, urlCh)
+  try {
+    renderMessages(currentTab)
+  } catch (_) {}
 }
 
 // YT POLL SMOOTHING: server polls YouTube every ~5s and dispatches the whole
@@ -60754,6 +60815,8 @@ function applyLivePlatformOverrides() {
     ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     ytSubscribe('__live_yt_auto__', names.youtube)
+  } else {
+    autoResolveLiveYt() // zero-config [Y] via heatsync identity (social.js)
   }
   renderMessages(currentTab)
 }
@@ -76305,6 +76368,10 @@ const STORAGE_KEY = 'heatsync_multichat'
             channel: currentChannel,
             channelId: ytUrl || null,
           })
+        } else if (gYt && hostPlatform !== 'yt') {
+          // No stored/explicit yt link — zero-config path: resolve the
+          // channel's linked youtube from its heatsync identity (social.js).
+          autoResolveLiveYt()
         }
         log('Auto-joined current channel:', currentChannel, 'platforms:', twitchCh, kickCh, ytUrl || '(no yt link)')
       }

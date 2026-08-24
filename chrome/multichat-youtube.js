@@ -65520,8 +65520,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     inputBarVisible = true
     const bar = document.getElementById('hs-mc-inputbar')
     if (bar) bar.classList.remove('hs-hidden')
-    const overlay = document.getElementById('hs-mc-overlay')
-    if (overlay) overlay.style.bottom = ''
+    // Overlay bottom inset is owned by _updateMcLayout (measured inputbar
+    // height) — writing it here from CSS assumptions left a dead band when the
+    // real composer height differed from the stylesheet fallback.
     // ResizeObserver doesn't fire on display:none → :flex; recompute anchors
     // so the docked Twitch callout follows the inputbar. (Also re-mirrors an
     // open picker onto the message list's new box — see syncPickerBox.)
@@ -65586,8 +65587,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     try {
       window.__hsViDetachNow?.(document.getElementById('hs-mc-input'))
     } catch (_) {}
-    const overlay = document.getElementById('hs-mc-overlay')
-    if (overlay) overlay.style.bottom = '0'
+    // Overlay bottom follows via _updateMcLayout (hs-hidden → inputbar
+    // measures 0) — a hardcoded '0' here was wrong for bottom-tabs, where the
+    // inset must stay tabbar-height.
     _updateMcLayout?.()
   }
 
@@ -68901,10 +68903,12 @@ const STORAGE_KEY = 'heatsync_multichat'
 
     if (overlayElement) {
       overlayElement.classList.add('visible')
-      // Sync overlay bottom with input bar visibility — clear inline style when
-      // input is back so the CSS bottom-padding-for-input-bar reapplies
-      if (inputBarVisible) overlayElement.style.bottom = ''
-      else overlayElement.style.bottom = '0'
+      // Overlay bottom inset is NOT written here. _updateMcLayout (called at
+      // the end of switchTab) owns it, measured from the real inputbar box.
+      // Clearing it here dropped the overlay to the stylesheet's 52px
+      // fallback, and the layout recompute then skipped the repair (its
+      // signature — tab/input sizes — is unchanged by a tab switch), leaving
+      // a dead band between the last message and the composer.
       // Restore cached fragment for the incoming tab if we have one. The
       // existing renderMessages diff then operates against pre-painted DOM —
       // it re-adds whatever arrived while the tab was inactive.

@@ -51,14 +51,6 @@
       font-size: 18px;
       font-weight: 400;
     }
-    .tagline {
-      color: #999;
-      font-size: 13px;
-    }
-    .label {
-      color: #fff;
-      font-size: 13px;
-    }
     .cta {
       width: 100%;
       max-width: 340px;
@@ -77,16 +69,6 @@
       border-color: #fff;
       outline: none;
     }
-    .next {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      align-items: center;
-      text-align: center;
-      margin-top: -10px;
-    }
-    .next .arrow { color: #fff; }
-    .next p { color: #bbb; }
     .cta-kick {
       color: #fff;
       text-decoration: none;
@@ -100,12 +82,6 @@
       color: #000;
       outline: none;
     }
-    .trust {
-      color: #999;
-      font-size: 13px;
-      text-align: center;
-    }
-    .trust .dot { color: #888; }
     .done {
       display: flex;
       flex-direction: column;
@@ -149,29 +125,18 @@
     <header>
       <img src="icon-48.png" alt="">
       <h1 data-i18n="welcome_title">heatsync</h1>
-      <p class="tagline" data-i18n="welcome_tagline">twitch, kick + youtube chat in one panel. plus any 7tv, bttv or ffz emote in every chat — 5,000 slots, free.</p>
     </header>
 
     <a class="cta" data-when="out" href="https://www.twitch.tv/"
-       target="_blank" rel="noopener" data-i18n="welcome_cta">open a stream → try multichat</a>
-
-    <section class="next" data-when="out">
-      <span class="label" data-i18n="welcome_next_label">what happens when you click</span>
-      <p><span class="arrow">→</span> <span data-i18n="welcome_next_1">emotes light up instantly — 7tv, bttv, ffz — no sign-in</span></p>
-      <p><span class="arrow">→</span> <span data-i18n="welcome_next_2">sign in whenever to claim your own 5,000-slot inventory</span></p>
-    </section>
+       target="_blank" rel="noopener" data-i18n="welcome_cta">open twitch →</a>
 
     <a class="cta-kick" data-when="out" href="https://heatsync.org/api/auth/login?return_to=%2F"
-       target="_blank" rel="noopener" data-i18n="welcome_cta_kick">optional — sign in to save your own emotes</a>
+       target="_blank" rel="noopener" data-i18n="welcome_cta_kick">sign in →</a>
 
     <section class="done" data-when="in" hidden>
       <p class="ok"><span class="check">✓</span> <span data-i18n="welcome_done_title">you're in</span></p>
-      <p><span data-i18n="welcome_done_1">open any twitch, kick, or youtube stream — your emotes render right in chat</span></p>
-      <p><span data-i18n="welcome_done_2">import a channel you watch → its emotes render in every chat you open</span></p>
       <a href="https://www.twitch.tv/" target="_blank" rel="noopener">open twitch →</a>
     </section>
-
-    <p class="trust" data-i18n="welcome_trust">open source · no trackers · your emotes stay yours</p>
 
     <footer>
       <a href="https://heatsync.org/legal/privacy" target="_blank" rel="noopener" data-i18n="welcome_privacy">privacy</a>

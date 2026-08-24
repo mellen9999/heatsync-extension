@@ -935,7 +935,41 @@ async function youtubeSendCheck() {
       .catch(() => fail('the overlay composer never appeared on a youtube live_chat page'))
     await p.waitForTimeout(4000)
 
-    await p.click('#hs-mc-input')
+    // A real click, not $eval — a composer playwright can't hit is the product
+    // bug (something covering it, zero-size, hidden). The one recorded flake
+    // here timed out with no geometry to reason from, so on failure dump the
+    // boxes that decide clickability before failing.
+    await p.click('#hs-mc-input', { timeout: 15_000 }).catch(async (e: Error) => {
+      const geo = await p
+        .evaluate(() => {
+          const rect = (sel: string) => {
+            const el = document.querySelector(sel)
+            if (!el) return null
+            const r = el.getBoundingClientRect()
+            const s = getComputedStyle(el)
+            return {
+              x: r.x, y: r.y, w: r.width, h: r.height,
+              display: s.display, vis: s.visibility,
+              cls: (el as HTMLElement).className,
+            }
+          }
+          const bar = document.getElementById('hs-mc-inputbar')
+          const input = document.getElementById('hs-mc-input')
+          const br = input?.getBoundingClientRect()
+          const cover = br
+            ? document.elementFromPoint(br.x + br.width / 2, br.y + br.height / 2)
+            : null
+          return {
+            overlay: rect('#hs-mc-overlay'),
+            inputbar: rect('#hs-mc-inputbar'),
+            input: rect('#hs-mc-input'),
+            barHidden: bar?.classList.contains('hs-hidden') ?? null,
+            coveredBy: cover ? `${cover.tagName}#${cover.id}.${(cover as HTMLElement).className}`.slice(0, 120) : null,
+          }
+        })
+        .catch(() => 'geometry probe itself failed')
+      fail(`composer not clickable: ${e.message.split('\n')[0]}\n  geometry: ${JSON.stringify(geo)}`)
+    })
     await p.keyboard.type('hello from the harness')
     await p.keyboard.press('Enter')
     await until(p, async () => (await p.evaluate(() => (window as any).__ytClicks || 0)) > 0)

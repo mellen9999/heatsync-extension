@@ -62604,6 +62604,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   // document.hidden still reads true (lost occlusion flip — popout windows).
   // A real visibilitychange event proves the tracking is live again.
   let _visWedged = false
+  // Inverse-wedge flag: rAF starved while document.hidden reads false
+  // (occluded window whose visibility flip never arrived). Set/cleared by
+  // rafOrTimeout's watchdog + recovery probe.
+  let _rafStarved = false
+  let _rafProbePending = false
   const hsDiagLog = (e, x) => {
     try {
       window.__hsDiag?.(e, x)
@@ -69713,9 +69718,11 @@ const STORAGE_KEY = 'heatsync_multichat'
         return
       const end = Math.min(offset + CHUNK, rows.length)
       for (let i = offset; i < end; i++) _processRow(rows[i])
-      // Schedule next chunk via cleanup.raf — tracked in _rafs, cancelled by
-      // destroyAll() on teardown so the loop never outlives the panel.
-      if (end < rows.length) cleanup.raf(() => processChunk(end))
+      // Schedule next chunk via rafOrTimeout — tracked timers/rafs, cancelled
+      // by destroyAll() on teardown so the loop never outlives the panel, and
+      // starvation-proof: a bare rAF here would stall a rebuild mid-chunks in
+      // an occluded window whose visibility flip never arrived.
+      if (end < rows.length) rafOrTimeout(() => processChunk(end))
     }
 
     // First chunk runs synchronously on the current frame; subsequent chunks
@@ -71088,13 +71095,17 @@ const STORAGE_KEY = 'heatsync_multichat'
     // duplicated by delegation, and leaked listeners on rapid bursts).
     isProgrammaticScroll = true
     msgsEl.scrollTop = msgsEl.scrollHeight + 10000
-    if (document.hidden) {
-      // No frames coming (believed-hidden, any flavor): settle synchronously
-      // instead of leaving the programmatic flag up for a throttled timer's
-      // lifetime — a raised flag eats the user's own scroll events.
+    if (document.hidden || _rafStarved) {
+      // No frames coming (believed-hidden or starved-rAF, any flavor): settle
+      // synchronously instead of leaving the programmatic flag up for a
+      // throttled timer's lifetime — a raised flag eats the user's own
+      // scroll events.
       isProgrammaticScroll = false
     } else {
-      cleanup.raf(() => {
+      // rafOrTimeout, not bare rAF: if starvation begins right here, the
+      // watchdog still lowers the programmatic flag instead of leaving it
+      // eating user scrolls until the next real frame.
+      rafOrTimeout(() => {
         if (!isScrolledUp) msgsEl.scrollTop = msgsEl.scrollHeight + 10000
         isProgrammaticScroll = false
       })
@@ -71108,10 +71119,62 @@ const STORAGE_KEY = 'heatsync_multichat'
   // The timeout fallback engages ONLY in that user-looking state: a genuinely
   // hidden background tab must keep the free rAF pause (a timer fallback
   // there would burn 1Hz renders in every backgrounded tab — measured).
+  //
+  // Inverse wedge: document.hidden reads FALSE but rAF is frozen — chrome
+  // occlusion-throttles a covered window without ever delivering the
+  // visibilitychange (wayland/tiling WMs lose the flip; this failure ships
+  // zero 'vis' events to the diag ring). A bare rAF then swallows the
+  // coalesced render forever while the user stares at a frozen pane, and the
+  // BG-oracle nudge can't help (it only acts when document.hidden is true).
+  // So every believed-visible rAF races a watchdog timer: rAF wins → timer
+  // cleared, zero cost. Timer wins → rAF is starved regardless of what the
+  // visibility API claims; render on a timer cadence — fast when focused,
+  // 1Hz when not — and keep a probe rAF out so the first real frame ends
+  // the episode.
   function rafOrTimeout(fn) {
-    if (!document.hidden || !(document.hasFocus() || _visWedged)) return cleanup.raf(fn)
-    cleanup.setTimeout(fn, 16)
+    if (document.hidden) {
+      if (document.hasFocus() || _visWedged) {
+        cleanup.setTimeout(fn, 16)
+        return true
+      }
+      return cleanup.raf(fn) // genuinely hidden — keep the free rAF pause
+    }
+    if (_rafStarved) {
+      cleanup.setTimeout(fn, document.hasFocus() ? 150 : 1000)
+      _probeRafRecovery()
+      return true
+    }
+    let settled = false
+    const rafId = cleanup.raf(() => {
+      if (settled) return
+      settled = true
+      cleanup.clearTimeout(watchdog)
+      fn()
+    })
+    const watchdog = cleanup.setTimeout(() => {
+      if (settled) return
+      settled = true
+      cleanup.cancelRaf(rafId)
+      _rafStarved = true
+      hsDiagLog('raf_starved', { focus: document.hasFocus() })
+      _probeRafRecovery()
+      fn()
+    }, 300)
     return true
+  }
+  // One outstanding bare rAF while starved — it firing is proof frames are
+  // back (window uncovered / occlusion lifted), so the next render returns to
+  // the free rAF path.
+  function _probeRafRecovery() {
+    if (_rafProbePending) return
+    _rafProbePending = true
+    cleanup.raf(() => {
+      _rafProbePending = false
+      if (_rafStarved) {
+        _rafStarved = false
+        hsDiagLog('raf_recovered')
+      }
+    })
   }
 
   // Coalesced scroll-pin for the single-message append path. Calling
@@ -71123,7 +71186,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   let _lastSyncPin = 0
   function scheduleScrollPin(msgsEl) {
     if (_scrollPinRaf) return
-    if (document.hidden && (document.hasFocus() || _visWedged)) {
+    if (_rafStarved || (document.hidden && (document.hasFocus() || _visWedged))) {
       // Believed-hidden but still appending (focus/wedge override): rAF is
       // dead and timers clamp to ~1s, which reads as "chat stuck at the
       // bottom". Pin synchronously at ≥100ms spacing — bounded reflow cost,
@@ -71142,7 +71205,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       }, 120)
       return
     }
-    _scrollPinRaf = cleanup.raf(() => {
+    // rafOrTimeout, not bare rAF: starvation beginning while this pin is
+    // outstanding would otherwise leave _scrollPinRaf truthy forever and
+    // every future pin skipped.
+    _scrollPinRaf = rafOrTimeout(() => {
       _scrollPinRaf = null
       scrollMsgsToBottom(msgsEl)
     })
@@ -73332,12 +73398,18 @@ const STORAGE_KEY = 'heatsync_multichat'
       }
     } catch (_) {}
 
-    // Method 3: Twitch 'name' cookie (works in popout chat)
+    // Method 3: Twitch 'name'/'login' cookies (work in popout chat, and exist
+    // for every logged-in twitch user regardless of heatsync login). 'login'
+    // matters: it is the canonical lowercase login twitch pairs with the
+    // auth-token cookie — the exact NICK the authed IRC upgrade must send.
+    // Relying on heatsync's user_info alone left every heatsync-logged-out
+    // user on an anonymous reader, which twitch starves (live messages
+    // trickle — reads as "chat is slow").
     try {
       const cookies = document.cookie.split(';')
       for (const cookie of cookies) {
         const [key, value] = cookie.trim().split('=')
-        if (key === 'name' && value) {
+        if ((key === 'login' || key === 'name') && value) {
           const name = decodeURIComponent(value).toLowerCase()
           if (name.length > 0 && name.length < 30) {
             log('Found username from cookie:', name)
@@ -76600,7 +76672,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Connect auth IRC eagerly so first send is instant (whispers no longer arrive over IRC)
       if (gTwitch && hostPlatform === 'twitch') {
         const token = getTwitchAuthToken()
-        const nick = currentUsername || getCurrentUsername()
+        // Twitch-derived identity first (twilight localStorage / login cookie):
+        // NICK must match the account behind the auth-token cookie. The
+        // heatsync username is a fallback — for a kick-primary account it can
+        // be a different name entirely, and a NICK/PASS mismatch fails login.
+        const nick = getCurrentUsername() || currentUsername
         if (token && nick) {
           connectAuthIrc(token, nick).then((ok) => {
             if (ok === true) log('Auth IRC ready')

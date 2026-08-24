@@ -389,7 +389,12 @@ function _nsStart() {
   }
   if (!_nsBeatTimer) {
     _updateNativeSuppress()
-    _nsBeatTimer = cleanup.setInterval(_updateNativeSuppress, 15000)
+    // Purely cosmetic recompute — skip ticks while hidden, catch up the
+    // moment the tab is visible again (twitch can remount chat while hidden).
+    _nsBeatTimer = cleanup.setIntervalIfVisible(_updateNativeSuppress, 15000)
+    cleanup.addEventListener(document, 'visibilitychange', () => {
+      if (!document.hidden) _updateNativeSuppress()
+    })
   }
 }
 

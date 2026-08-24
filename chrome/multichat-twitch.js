@@ -1841,23 +1841,34 @@ const YT_FRAGMENT_PATH = {
   'embed/': (id, qs) => `embed/${id}${qs}`,
 }
 
+// Gate each pass with a plain regex test before paying for outsideTags'
+// split/replace/join — almost every chat message has no link fragment, and a
+// no-match test never allocates. Testing the WHOLE html (tags included) is a
+// safe superset: a tag-only match wastes one pass, never changes output.
+function outsideTagsIf(html, re, fn) {
+  re.lastIndex = 0
+  if (!re.test(html)) return html
+  re.lastIndex = 0
+  return outsideTags(html, re, fn)
+}
+
 function linkifyPartialLinks(html) {
-  let out = outsideTags(html, PARTIAL_YT_RE, (m0, kind, id, qs) =>
+  let out = outsideTagsIf(html, PARTIAL_YT_RE, (m0, kind, id, qs) =>
     anchor(`https://www.youtube.com/${YT_FRAGMENT_PATH[kind.toLowerCase()](id, qs || '')}`, m0),
   )
-  out = outsideTags(out, PARTIAL_YT_LIST_RE, (m0, kind, id) =>
+  out = outsideTagsIf(out, PARTIAL_YT_LIST_RE, (m0, kind, id) =>
     anchor(`https://www.youtube.com/${kind.startsWith('playlist') ? `playlist?list=${id}` : `channel/UC${id}`}`, m0),
   )
-  out = outsideTags(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
+  out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
     anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
   )
-  out = outsideTags(out, DEFANG_RE, (m0, scheme, core, path) => {
+  out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
     const host = defangedToHost(core)
     if (!host) return m0
     const proto = scheme ? scheme.toLowerCase().replace(/^hxx/, 'htt') : 'https://'
     return anchor(`${proto}${host}${path || ''}`, m0)
   })
-  return outsideTags(out, BARE_HOST_RE, (m0) => anchor(`https://${m0.toLowerCase()}`, m0))
+  return outsideTagsIf(out, BARE_HOST_RE, (m0) => anchor(`https://${m0.toLowerCase()}`, m0))
 }
 
 /** First bare youtube fragment in RAW message text as a canonical watch URL.
@@ -8929,7 +8940,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8b48475-202608242155' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2c38bcc+-202608242209' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -21652,6 +21663,7 @@ function _frEvalNode(node, m) {
 // when channelKey matches. Compiled once → evaluated with no allocation per call.
 let _frAllRules = [] // compiled rules with scope 'all'
 let _frByChannel = new Map() // compiled rules keyed by channel tab id
+let _frMergedByChannel = new Map() // all-rules + channel bucket, precomputed at compile
 
 // ── compile helpers ───────────────────────────────────────────────────────────
 function _frCompileOne(rule) {
@@ -21746,6 +21758,12 @@ function compileFilterRules(rules) {
       bucket.push(c)
     }
   }
+  // Merge once here so the per-message path never concatenates — global rules
+  // evaluate first, matching the pre-merge ordering.
+  _frMergedByChannel = new Map()
+  for (const [key, bucket] of _frByChannel) {
+    _frMergedByChannel.set(key, _frAllRules.concat(bucket))
+  }
 }
 
 /**
@@ -21759,7 +21777,7 @@ function evaluateFilterRules(m, channelKey) {
   const hasChannel = channelKey && _frByChannel.has(channelKey)
   if (!_frAllRules.length && !hasChannel) return { hide: false, highlight: null, sound: null }
 
-  const rules = hasChannel ? _frAllRules.concat(_frByChannel.get(channelKey)) : _frAllRules
+  const rules = hasChannel ? _frMergedByChannel.get(channelKey) : _frAllRules
 
   let highlight = null
   let sound = null
@@ -25432,7 +25450,12 @@ function _nsStart() {
   }
   if (!_nsBeatTimer) {
     _updateNativeSuppress()
-    _nsBeatTimer = cleanup.setInterval(_updateNativeSuppress, 15000)
+    // Purely cosmetic recompute — skip ticks while hidden, catch up the
+    // moment the tab is visible again (twitch can remount chat while hidden).
+    _nsBeatTimer = cleanup.setIntervalIfVisible(_updateNativeSuppress, 15000)
+    cleanup.addEventListener(document, 'visibilitychange', () => {
+      if (!document.hidden) _updateNativeSuppress()
+    })
   }
 }
 
@@ -68973,6 +68996,20 @@ const STORAGE_KEY = 'heatsync_multichat'
       _hsCalloutCloseObs.observe(parent, { childList: true, subtree: true })
     }
     _hsCalloutCloseObs = new MutationObserver((muts) => {
+      // While un-narrowed this observes document.body — our own overlay appends
+      // (every chat row) land here too. Callouts are twitch DOM and can never
+      // appear inside the overlay, so batches entirely within it are noise.
+      const _ov = document.getElementById('hs-mc-overlay')
+      if (_ov) {
+        let outside = false
+        for (const m of muts) {
+          if (!_ov.contains(m.target)) {
+            outside = true
+            break
+          }
+        }
+        if (!outside) return
+      }
       // Surface ALL currently-present callouts on any mutation — the
       // dataset.hsSurfaced guard makes this idempotent.
       for (const c of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {

@@ -6472,6 +6472,20 @@
       _hsCalloutCloseObs.observe(parent, { childList: true, subtree: true })
     }
     _hsCalloutCloseObs = new MutationObserver((muts) => {
+      // While un-narrowed this observes document.body — our own overlay appends
+      // (every chat row) land here too. Callouts are twitch DOM and can never
+      // appear inside the overlay, so batches entirely within it are noise.
+      const _ov = document.getElementById('hs-mc-overlay')
+      if (_ov) {
+        let outside = false
+        for (const m of muts) {
+          if (!_ov.contains(m.target)) {
+            outside = true
+            break
+          }
+        }
+        if (!outside) return
+      }
       // Surface ALL currently-present callouts on any mutation — the
       // dataset.hsSurfaced guard makes this idempotent.
       for (const c of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {

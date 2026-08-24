@@ -295,6 +295,7 @@ function _frEvalNode(node, m) {
 // when channelKey matches. Compiled once → evaluated with no allocation per call.
 let _frAllRules = [] // compiled rules with scope 'all'
 let _frByChannel = new Map() // compiled rules keyed by channel tab id
+let _frMergedByChannel = new Map() // all-rules + channel bucket, precomputed at compile
 
 // ── compile helpers ───────────────────────────────────────────────────────────
 function _frCompileOne(rule) {
@@ -389,6 +390,12 @@ function compileFilterRules(rules) {
       bucket.push(c)
     }
   }
+  // Merge once here so the per-message path never concatenates — global rules
+  // evaluate first, matching the pre-merge ordering.
+  _frMergedByChannel = new Map()
+  for (const [key, bucket] of _frByChannel) {
+    _frMergedByChannel.set(key, _frAllRules.concat(bucket))
+  }
 }
 
 /**
@@ -402,7 +409,7 @@ function evaluateFilterRules(m, channelKey) {
   const hasChannel = channelKey && _frByChannel.has(channelKey)
   if (!_frAllRules.length && !hasChannel) return { hide: false, highlight: null, sound: null }
 
-  const rules = hasChannel ? _frAllRules.concat(_frByChannel.get(channelKey)) : _frAllRules
+  const rules = hasChannel ? _frMergedByChannel.get(channelKey) : _frAllRules
 
   let highlight = null
   let sound = null

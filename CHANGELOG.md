@@ -1,5 +1,17 @@
 # changelog
 
+## [1.7.63] — 2026-08-23
+
+### added
+- **a simulcaster's youtube chat merges by itself** — open a channel that also streams on youtube and [Y] messages flow with zero setup; the link resolves from the channel's verified identity instead of waiting for you to paste a url in edit-live-platforms.
+- **replies show what they're replying to** — the reply line sits on its own row above the message with a snippet of the quoted text, clipped to one line so it never makes the row taller than that.
+
+### fixed
+- **popout chat stops freezing until you refresh** — everything that recovered a frozen tab waited on one browser signal that popout windows can miss; focusing the window now wakes it too, and the extension's background page nudges tabs it can prove are on screen.
+- **an automod action that already happened stops reading "action failed"** — approving a message another mod (or an earlier click) already handled now settles the row as expired, and it can't come back on refresh.
+- **"resolving…" resolves** — approving or denying a held message flipped the row only when a confirmation broadcast arrived, and a missed broadcast left it stuck forever. the action succeeding is the confirmation now.
+- **profile hovers stop claiming nobody follows the channel** — twitch cut off the server's view of follow relationships; followage now resolves from your own browser, which twitch still answers.
+
 ## [1.7.62] — 2026-08-20
 
 ### fixed

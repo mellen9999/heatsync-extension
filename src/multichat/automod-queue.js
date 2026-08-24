@@ -261,6 +261,7 @@ function injectPendingAutomodHolds(pending) {
     const row = automodHoldToRowModel(payload)
     if (!row) continue
     if (findAutomodRow(row.broadcasterLogin, row.msgId)) continue // already on screen
+    if (isAutomodResolved(row.msgId)) continue // server backfill missed the resolution — don't resurrect
     if (!shouldProcessAutomodHold(_automodSeenHolds, row.msgId, Date.now())) continue
     // Nothing to act on any more — don't resurrect it as a live row.
     if (Date.now() - row.heldAt >= AUTOMOD_EXPIRE_MS) continue
@@ -270,7 +271,34 @@ function injectPendingAutomodHolds(pending) {
   return added
 }
 
+// Holds the server has already resolved but still returns in automod_watch
+// backfill — its pending list can miss a resolution the same way tabs can
+// miss the automod:update broadcast. Persisted per-origin so a refresh
+// doesn't resurrect a hold the mod already actioned: twitch rejects the
+// re-action and the row read "action failed" on every reload. TTL sits
+// comfortably past the 60-min hold lifetime; the map self-prunes on write.
+const AUTOMOD_RESOLVED_KEY = 'hs_automod_resolved_v1'
+const AUTOMOD_RESOLVED_TTL_MS = 2 * 60 * 60 * 1000
+function markAutomodResolved(msgId) {
+  try {
+    const now = Date.now()
+    const m = JSON.parse(localStorage.getItem(AUTOMOD_RESOLVED_KEY) || '{}')
+    m[msgId] = now
+    for (const k of Object.keys(m)) if (now - m[k] > AUTOMOD_RESOLVED_TTL_MS) delete m[k]
+    localStorage.setItem(AUTOMOD_RESOLVED_KEY, JSON.stringify(m))
+  } catch (_) {}
+}
+function isAutomodResolved(msgId) {
+  try {
+    const m = JSON.parse(localStorage.getItem(AUTOMOD_RESOLVED_KEY) || '{}')
+    return m[msgId] !== undefined && Date.now() - m[msgId] <= AUTOMOD_RESOLVED_TTL_MS
+  } catch (_) {
+    return false
+  }
+}
+
 function resolveAutomodRow(broadcasterLogin, msgId, status, modLogin) {
+  markAutomodResolved(msgId)
   const row = findAutomodRow(broadcasterLogin, msgId)
   if (!row) return // resolved a hold we never rendered (different mod tab, expired buffer) — ignore
   row.status = status === 'approved' || status === 'denied' ? status : 'expired'
@@ -314,6 +342,7 @@ function handleAutomodActionClick(rowEl, action) {
         return
       }
       if (res?.error === 'gone') {
+        markAutomodResolved(msgId)
         row.status = 'expired'
         row.resolvedBy = null
         clearAutomodExpiry(msgId)

@@ -7587,7 +7587,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ ok: true })
           return
         }
-        if (res.status === 404) {
+        if (res.status === 404 || res.status === 400) {
+          // 400 too: msgId+action are validated before the request goes out,
+          // so a 400 back is twitch rejecting the msg_id — a hold that was
+          // already actioned (by this mod pre-refresh, another mod, or
+          // expiry). Reporting it as a generic failure produced a red
+          // "action failed" on a message that was in fact already handled.
           sendResponse({ ok: false, error: 'gone' })
         } else if (res.status === 401) {
           // Same split as automod_watch: only a server-declared

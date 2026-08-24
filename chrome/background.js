@@ -12333,7 +12333,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const anonOrStale = changed || !BG_IRC.ws || BG_IRC.ws.readyState !== WebSocket.OPEN
       if (anonOrStale && !BG_IRC.authFailed) {
         log('BG IRC: upgrading reader to authed connection')
-        bgIrcConnect()
+        // Force, not plain connect: a plain bgIrcConnect() early-returns while
+        // the anon socket is still CONNECTING, silently dropping the upgrade —
+        // the reader then stays anonymous until something else reconnects it.
+        bgIrcForceReconnect()
       }
     }
     sendResponse({ ok: true })

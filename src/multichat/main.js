@@ -14473,6 +14473,10 @@
             channel: currentChannel,
             channelId: ytUrl || null,
           })
+        } else if (gYt && hostPlatform !== 'yt') {
+          // No stored/explicit yt link — zero-config path: resolve the
+          // channel's linked youtube from its heatsync identity (social.js).
+          autoResolveLiveYt()
         }
         log('Auto-joined current channel:', currentChannel, 'platforms:', twitchCh, kickCh, ytUrl || '(no yt link)')
       }

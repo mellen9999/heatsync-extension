@@ -3904,7 +3904,11 @@ async function lookupFollowage(username, channelLogin) {
             `/api/twitch/followage?user=${encodeURIComponent(username)}&channel=${encodeURIComponent(channelLogin)}`,
           )
         : null
-    if (resp?.ok && resp.data) {
+    // degraded=true means twitch integrity-gated the follow field for the
+    // server's IP — its nulls are "couldn't see", not "not following". Fall
+    // through to the in-browser GQL proxy, which rides the user's own
+    // session integrity and still resolves.
+    if (resp?.ok && resp.data && !resp.data.degraded) {
       const d = resp.data
       const result = {
         followedAt: d.followedAt || null,

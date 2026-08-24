@@ -154,35 +154,15 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*"
-      ],
-      "js": [
-        "emoji-data.iso.js",
-        "shared-utils.js",
-        "multichat-twitch.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
+        "https://*.twitch.tv/*",
         "https://kick.com/*",
-        "https://*.kick.com/*"
-      ],
-      "js": [
-        "emoji-data.iso.js",
-        "shared-utils.js",
-        "multichat-kick.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
+        "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
       "js": [
         "emoji-data.iso.js",
         "shared-utils.js",
-        "multichat-youtube.js"
+        "multichat-core.js"
       ],
       "run_at": "document_end"
     },

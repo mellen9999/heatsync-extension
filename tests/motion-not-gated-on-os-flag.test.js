@@ -55,8 +55,8 @@ function sourceFiles() {
         continue
       }
       if (!/\.(js|css)$/.test(name)) continue
-      // chrome/multichat-*.js are build OUTPUT of src/multichat.
-      if (/^multichat-(twitch|kick|youtube)\.js$/.test(name)) continue
+      // chrome/multichat*.js are build OUTPUT of src/multichat.
+      if (/^multichat(-\w+)?\.js$/.test(name)) continue
       out.push(p.slice(ROOT.length + 1))
     }
   }

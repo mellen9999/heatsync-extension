@@ -8969,7 +8969,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '29aaa83-202608242213' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c346427+-202608242303' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -25428,6 +25428,409 @@ class KickChat extends ChatClient {
   }
 
   // getMessages/getCount/on/emit inherited from ChatClient
+}
+
+
+
+// --- multichat/native-tap.js ---
+// Native-chat tap — mirror messages Twitch's own page receives into the
+// multichat buffer for the CURRENT channel.
+//
+// Why: Twitch starves third-party IRC reads on flagged IPs (vpn exits,
+// datacenters) — the socket connects and JOINs fine but PRIVMSG delivery
+// trickles to ~1 msg/20s, while history (robotty) loads normally, so chat
+// looks frozen-after-history. The page's own delivery (Hermes/EventSub) is
+// never throttled: the rows Twitch renders in native chat are the most
+// reliable live source there is. We mine each new row's React fiber for the
+// full message object (id, login, color, badges, emotes) and feed it through
+// irc._handleMsg exactly like a PRIVMSG — same render path, same server
+// archive relay (which also heals the site feed for watched channels) —
+// deduped by message id against whatever IRC still delivers.
+//
+// Scope: the page's current channel only (background channels have no native
+// DOM to tap — they need the server EventSub migration).
+
+let _tapObserver = null
+let _tapContainer = null
+let _tapChannel = ''
+let _tapRetryTimer = null // bind-retry while container missing
+let _tapPollTimer = null // permanent remount watcher
+const _tapStats = { mined: 0, fiberMiss: 0 }
+
+function _tapFindContainer() {
+  return hsQuery('twitch:chat-message-container', [
+    CONFIG.SELECTORS.TWITCH_CHAT_CONTAINER,
+    '[data-test-selector="chat-scrollable-area__message-container"]',
+  ])
+}
+
+// Walk the row's fiber tree for memoizedProps.message (twitch's chat-line
+// component). Shapes drift between twitch builds — every read is defensive.
+function _tapMineMessage(rowEl) {
+  if (typeof getFiber !== 'function') return null
+  let f = null
+  try {
+    f = getFiber(rowEl)
+  } catch (_) {
+    return null
+  }
+  for (let i = 0; f && i < 30; i++, f = f.return) {
+    const m = f.memoizedProps?.message
+    if (m?.id && (m.user || m.message)) return m
+  }
+  return null
+}
+
+function _tapToMsg(m, channel) {
+  const u = m.user || {}
+  const display = u.userDisplayName || u.displayName || ''
+  if (!display) return null
+  // text + native twitch emotes from the typed fragment list
+  let text = ''
+  const emotes = {}
+  const parts = m.messageParts || m.message?.messageParts || null
+  if (Array.isArray(parts)) {
+    for (const p of parts) {
+      const c = p?.content
+      if (typeof c === 'string') {
+        text += c
+        continue
+      }
+      if (c && typeof c === 'object') {
+        const alt = c.alt || c.emoteName || ''
+        if (alt) {
+          text += alt
+          const eid = c.emoteID || c.emoteId
+          if (eid && !emotes[alt]) {
+            emotes[alt] = `https://static-cdn.jtvnw.net/emoticons/v2/${eid}/default/dark/2.0`
+          }
+          continue
+        }
+        if (typeof c.text === 'string') {
+          text += c.text
+          continue
+        }
+        if (typeof c.url === 'string') {
+          text += c.url
+          continue
+        }
+        if (typeof c.displayName === 'string') {
+          text += `@${c.displayName}`
+          continue
+        }
+        if (typeof c.recipient === 'string') {
+          text += `@${c.recipient}`
+          continue
+        }
+        if (typeof p.text === 'string') {
+          text += p.text
+        }
+      }
+    }
+  }
+  if (!text && typeof m.messageBody === 'string') text = m.messageBody
+  if (!text) return null
+
+  const badges = m.badges || u.badges || null
+  let badgeStr = ''
+  if (Array.isArray(badges)) {
+    badgeStr = badges
+      .map((b) => (b?.setID ? `${b.setID}/${b.version || '1'}` : ''))
+      .filter(Boolean)
+      .join(',')
+  } else if (badges && typeof badges === 'object') {
+    badgeStr = Object.entries(badges)
+      .map((kv) => `${kv[0]}/${kv[1]}`)
+      .join(',')
+  }
+
+  // Reply context: twitch's message model carries a `reply` object (mirrors the
+  // IRC reply-parent-* tags in irc.js). Without this, native-tapped replies —
+  // the dominant source in popout / on throttled IPs — render with no "Replying
+  // to" bar. Shapes drift across twitch builds, so every field is read
+  // defensively with the known aliases.
+  let replyTo = null
+  const rp = m.reply || m.replyParent || null
+  if (rp && (rp.parentDisplayName || rp.parentUserLogin || rp.parentMsgId)) {
+    replyTo = {
+      user: rp.parentDisplayName || rp.parentUserLogin || '',
+      text: rp.parentMessageBody || rp.parentMsgBody || '',
+      id: rp.parentMsgId || '',
+      userId: String(rp.parentUid || rp.parentUserID || rp.parentUserId || ''),
+      threadId: rp.threadParentMsgId || rp.parentMsgId || '',
+    }
+  }
+
+  const msg = {
+    user: display,
+    login: (u.userLogin || u.login || display).toLowerCase(),
+    userId: String(u.userID || u.userId || ''),
+    text,
+    color: u.color || '#fff',
+    badges: badgeStr,
+    channel,
+    time: typeof m.timestamp === 'number' && m.timestamp > 1e12 ? m.timestamp : Date.now(),
+    id: m.id,
+    replyTo,
+    fromNativeTap: true,
+  }
+  if (Object.keys(emotes).length) msg.twitchEmotes = emotes
+  if (m.messageType === 1 || m.isAction) msg.isAction = true
+  // shared-chat provenance (fiber + intercept relay both carry room ids;
+  // names drift across twitch builds — check both casings)
+  const roomID = m.roomID ?? m.roomId
+  const srcRoomID = m.sourceRoomID ?? m.sourceRoomId
+  if (roomID != null && srcRoomID != null && String(roomID) !== String(srcRoomID)) msg.sharedChat = true
+  const subMatch = badgeStr.match(/subscriber\/(\d+)/)
+  if (subMatch) msg.subMonths = parseInt(subMatch[1], 10)
+  return msg
+}
+
+// Announcements (and some usernotices) mount as a WRAPPER node whose
+// descendant is the chat-line__message — the strict class check on the added
+// node itself silently dropped them from the tap (starved-IRC viewers never
+// saw announcements at all). Detection is defensive against twitch build
+// drift: wrapper class/test-selector, or a fiber-level marker.
+function _tapIsAnnouncement(rowEl, mined) {
+  try {
+    const hint = String(mined?.msgId || mined?.messageType || '')
+    if (/announce/i.test(hint)) return true
+    if (rowEl.closest('[class*="announcement" i], [data-test-selector*="announcement" i]')) return true
+  } catch (_) {}
+  return false
+}
+
+function _tapHandleRow(rowEl) {
+  if (rowEl?.nodeType !== 1) return
+  if (!rowEl.classList?.contains('chat-line__message')) {
+    // wrapper node (announcement container etc.) — recurse into the real row
+    const inner = rowEl.querySelector?.('.chat-line__message')
+    if (inner) _tapHandleRow(inner)
+    return
+  }
+  // channel resolved at MINE time — twitch SPA navs change the page channel
+  // without re-running init; a stale _tapChannel would file (and archive!)
+  // messages under the previous channel
+  let ch = _tapChannel
+  try {
+    ch = (getCurrentChannel() || _tapChannel || '').toLowerCase()
+  } catch (_) {}
+  if (!ch) return
+  if (ch !== _tapChannel) _tapChannel = ch
+  // richness guard: when IRC flow is HEALTHY for this channel (3+ msgs in
+  // the last 10s) its copies are richer (replies/bits/highlights) — defer.
+  // a starved trickle (1 msg/20s) must NOT suppress the tap.
+  try {
+    const ts = irc?._lastLiveAt?.get?.(ch)
+    if (Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000) return
+  } catch (_) {}
+  const mined = _tapMineMessage(rowEl)
+  if (!mined) {
+    _tapStats.fiberMiss++
+    return
+  }
+  const msg = _tapToMsg(mined, ch)
+  if (!msg) return
+  if (_tapIsAnnouncement(rowEl, mined)) {
+    // tag so main.js classifies hs-mc-notice-announce — same shape irc.js
+    // emits for USERNOTICE msg-id=announcement (systemMsg empty renders
+    // "user: text" inside the announce-styled row)
+    msg.type = 'usernotice'
+    msg.msgId = 'announcement'
+  }
+  _tapStats.mined++
+  try {
+    irc?._handleMsg?.(msg)
+  } catch (_) {}
+}
+
+function _tapBind() {
+  const container = _tapFindContainer()
+  if (!container) {
+    if (!_tapRetryTimer)
+      _tapRetryTimer = cleanup.setInterval(() => {
+        const c = _tapFindContainer()
+        if (c) {
+          cleanup.clearInterval(_tapRetryTimer)
+          _tapRetryTimer = null
+          _tapBind()
+        }
+      }, 3000)
+    return
+  }
+  if (_tapRetryTimer) {
+    cleanup.clearInterval(_tapRetryTimer)
+    _tapRetryTimer = null
+  }
+  if (container === _tapContainer && _tapObserver) return
+  if (_tapObserver) {
+    cleanup.untrackObserver(_tapObserver)
+    _tapObserver = null
+  }
+  _tapContainer = container
+  _tapObserver = new MutationObserver((muts) => {
+    for (const mu of muts) {
+      for (const node of mu.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue
+        _tapHandleRow(node)
+      }
+    }
+  })
+  _tapObserver.observe(container, { childList: true })
+  cleanup.trackObserver(_tapObserver)
+  log('native-tap: bound to', _tapChannel)
+}
+
+// Public: start tapping the page's current channel. Re-call on SPA nav.
+function startNativeTap(channel) {
+  _tapChannel = (channel || '').toLowerCase()
+  if (!_tapChannel) return
+  _tapBind()
+  // container re-mounts on theatre toggles / SPA settles — own timer slot so
+  // the bind-retry can't shadow it (shared slot = poll never installed when
+  // the container is missing at startup → tap dies on first remount)
+  if (!_tapPollTimer)
+    _tapPollTimer = cleanup.setInterval(() => {
+      const c = _tapFindContainer()
+      if (c && c !== _tapContainer) _tapBind()
+    }, 5000)
+  _nsStart()
+}
+
+// ── native chat takeover ─────────────────────────────────────────────────
+// Partner of twitch-chat-intercept.js (MAIN world). While the overlay covers
+// twitch chat, the MAIN-world hook swallows plain chat messages before
+// Twitch's React renders them (the hidden column otherwise piles up untrimmed
+// rows — measured +118MB on a busy channel) and relays each one here via
+// postMessage. This side (a) feeds relayed messages through the same
+// irc._handleMsg path as the DOM tap, and (b) owns the takeover signal: a
+// body-dataset flag plus a heartbeat the MAIN world treats as a dead-man
+// switch — beat goes stale for 45s → Twitch resumes rendering natively.
+// The beat interval deliberately uses cleanup.setInterval, NOT the
+// visibility-gated variant: a hidden tab must KEEP suppressing (that's the
+// biggest RAM case), and overlay teardown clears the interval anyway, which
+// stales the beat and fails open.
+let _nsBeatTimer = null
+let _nsRxBound = false
+
+// Render-success gate: `#hs-mc-overlay` existing in the DOM is NOT proof it
+// painted anything — a thrown ensureUIElements/switchTab/startLayoutWatcher
+// pass (see main.js's tryHookReact/waitForMount) can leave a dead, empty
+// husk that still passes `getElementById`. main.js flips this via
+// setOverlayRenderOk() only after a render pass completes without throwing.
+// Starts false so a not-yet-rendered or failed overlay never suppresses
+// native chat — fail-open is the point.
+let _nsOverlayRenderOk = false
+function setOverlayRenderOk(ok) {
+  _nsOverlayRenderOk = !!ok
+}
+
+function _nsTakeoverEnabled() {
+  try {
+    return getSetting('subsystems')?.['native-takeover'] !== false
+  } catch (_) {
+    return true
+  }
+}
+
+function _nsNativeChatVisible() {
+  const c = _tapFindContainer()
+  if (!c) return false
+  try {
+    if (typeof c.checkVisibility === 'function')
+      return c.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+  } catch (_) {}
+  return c.getClientRects().length > 0
+}
+
+function _updateNativeSuppress() {
+  const ds = document.body?.dataset
+  if (!ds) return
+  let on = false
+  try {
+    // Suppress only while the overlay exists AND actually rendered (not just
+    // present-but-empty) AND twitch's own chat is actually invisible — the
+    // moment the user reveals native chat (overlay hidden, position modes
+    // that show it, teardown) rendering hands back.
+    on =
+      _nsTakeoverEnabled() &&
+      !!document.getElementById('hs-mc-overlay') &&
+      _nsOverlayRenderOk &&
+      !_nsNativeChatVisible()
+  } catch (_) {}
+  if (on) {
+    ds.hsSuppressNative = '1'
+    ds.hsSuppressBeat = String(Date.now())
+  } else if (ds.hsSuppressNative) {
+    ds.hsSuppressNative = '0'
+  }
+  // Mirror the decision for early-layout.js's next-load pre-arm (twitch
+  // renders its history backlog before the overlay boots; the mirror lets
+  // document_start suppress it on pages that took over last time).
+  try {
+    localStorage.setItem('hs_layout_nativeTakeover', on ? '1' : '0')
+  } catch (_) {}
+}
+
+// Stage counters, window-exposed (isolated world only — invisible to the
+// page) so field debugging can read them over CDP/devtools without a rebuild.
+const _nsStats = { rx: 0, dropOrigin: 0, dropShape: 0, dropNoCh: 0, dropRich: 0, nullMsg: 0, fed: 0, feedErr: 0 }
+try {
+  window.__hsNsStats = _nsStats
+} catch (_) {}
+
+function _nsStart() {
+  if (!_nsRxBound) {
+    _nsRxBound = true
+    cleanup.addEventListener(window, 'message', (e) => {
+      const d = e.data
+      if (d?.__hsNativeMsg !== 1 || !d.m) return
+      _nsStats.rx++
+      if (e.source !== window || e.origin !== location.origin) {
+        _nsStats.dropOrigin++
+        return
+      }
+      // channel resolved at receive time — same SPA-nav rationale as the tap
+      let ch = ''
+      try {
+        ch = (getCurrentChannel() || _tapChannel || '').toLowerCase()
+      } catch (_) {}
+      if (!ch) {
+        _nsStats.dropNoCh++
+        return
+      }
+      // richness guard, same as the DOM tap: healthy IRC delivers richer
+      // copies (replies/bits/highlights) — let its copy win the id-dedup.
+      try {
+        const ts = irc?._lastLiveAt?.get?.(ch)
+        if (Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000) {
+          _nsStats.dropRich++
+          return
+        }
+      } catch (_) {}
+      const msg = _tapToMsg(d.m, ch)
+      if (!msg) {
+        _nsStats.nullMsg++
+        return
+      }
+      _tapStats.mined++
+      try {
+        irc?._handleMsg?.(msg)
+        _nsStats.fed++
+      } catch (_) {
+        _nsStats.feedErr++
+      }
+    })
+  }
+  if (!_nsBeatTimer) {
+    _updateNativeSuppress()
+    // Purely cosmetic recompute — skip ticks while hidden, catch up the
+    // moment the tab is visible again (twitch can remount chat while hidden).
+    _nsBeatTimer = cleanup.setIntervalIfVisible(_updateNativeSuppress, 15000)
+    cleanup.addEventListener(document, 'visibilitychange', () => {
+      if (!document.hidden) _updateNativeSuppress()
+    })
+  }
 }
 
 
@@ -62072,6 +62475,445 @@ function initTypeToFocus(signal) {
 }
 
 
+// --- multichat/twitch-host.js ---
+// Twitch host UI/nav — extracted from main.js (bundled into twitch bundle only)
+
+// Twitch: .persistent-player mounts asynchronously after our initial
+// applyChatPosition runs. Without this, our top:0 fix never applies on
+// first load. Also: on certain SPA flows (channel→home→channel) Twitch's
+// React resets persistent-player's inline top to "", letting it fall to
+// its natural-flow position at the bottom of root-scrollable__wrapper
+// (y > 2000px), which pushes the video off-screen below the about
+// section. Watch for the mount + style resets and re-pin top:0 left:0
+// when we're in chat-right normal mode.
+let _ttvPpObserver = null
+let _ttvPpStyleObserver = null
+let _ttvPpLastSeen = null
+function pinTwitchPersistentPlayer() {
+  if (hostPlatform !== 'twitch' || isKick) return
+  const pp = hsQuery('twitch:persistent-player', '.persistent-player')
+  if (!pp) return
+  // For non-right chatPosition, the player must inset around the chat
+  // strip. applyChatPosition's first call fires before .persistent-player
+  // mounts on SPA nav (channel→channel), so our inline top/bottom/left/
+  // right are never applied. Re-apply ONCE on mount. We deliberately do
+  // NOT observe style mutations on pp here — applyPlatformPositionOverrides
+  // itself writes inline styles, which would self-trigger the observer
+  // and loop the page to a freeze. Twitch rarely resets our !important
+  // inline overrides; the rotateChatPosition path re-applies if needed.
+  if (chatPosition !== 'right' && !theatreMode) {
+    const tag = `${chatPosition}:${chatWidth}:${chatHeight}:${pp === _ttvPpLastSeen}`
+    if (pp._hsTwPosTag === tag) return
+    pp._hsTwPosTag = tag
+    _ttvPpLastSeen = pp
+    try {
+      applyPlatformPositionOverrides()
+    } catch (_) {}
+    return
+  }
+  if (theatreMode) return
+  // Offline channel: Twitch shows a small recommended-VOD PiP mini-player
+  // (~185×104) on the channel-home page. Pinning it top:0/left:0 makes it
+  // float awkwardly in the corner instead of where Twitch positioned it.
+  // Skip pinning when .channel-root--home is present.
+  if (hsQuery('twitch:channel-root-home', '.channel-root--home')) {
+    // Also clear any prior pin we may have applied before going offline.
+    if (pp.style.top === '0px' || pp.style.left === '0px') {
+      pp.style.removeProperty('top')
+      pp.style.removeProperty('left')
+    }
+    return
+  }
+  // Browsing away from a live stream (e.g. clicking Browse/Following) puts
+  // .persistent-player into Twitch's floating mini-player mode — no
+  // .channel-root is present. Pinning top:0/left:0 breaks the mini-player
+  // corner position; clear any stale overrides and let Twitch own it.
+  if (!hsQuery('twitch:channel-root', '.channel-root, [class*="channel-root"]')) {
+    if (pp.style.top === '0px') pp.style.removeProperty('top')
+    if (pp.style.left === '0px') pp.style.removeProperty('left')
+    return
+  }
+  // chatPosition === 'right' default path — pin top:0 when Twitch's React
+  // forgets to set it (player falls to natural-flow position y > 2000px).
+  const cur = pp.style.top
+  const resolved = parseFloat(getComputedStyle(pp).top) || 0
+  if (cur === '0px' && resolved < 100) return // already pinned
+  pp.style.setProperty('top', '0', 'important')
+  pp.style.setProperty('left', '0', 'important')
+  if (_ttvPpLastSeen !== pp) {
+    _ttvPpLastSeen = pp
+    if (_ttvPpStyleObserver) {
+      try {
+        cleanup.untrackObserver(_ttvPpStyleObserver)
+      } catch (_) {}
+      _ttvPpStyleObserver = null
+    }
+    _ttvPpStyleObserver = new MutationObserver(() => {
+      if (chatPosition !== 'right' || theatreMode) return
+      // Same offline guard inside the style observer — Twitch's React may
+      // re-render mid-session (live → offline) and we'd otherwise re-pin.
+      if (hsQuery('twitch:channel-root-home', '.channel-root--home')) return
+      // Same mini-player guard as the mount path: browsing away from a live
+      // stream floats the player bottom-right with Twitch's own top offset
+      // (> 200px by design). Re-pinning it here shoved the mini-player above
+      // the viewport, putting its close button out of reach. Clear any pin
+      // we already applied so the float lands where Twitch wants it.
+      if (!hsQuery('twitch:channel-root', '.channel-root, [class*="channel-root"]')) {
+        if (pp.style.top === '0px') pp.style.removeProperty('top')
+        if (pp.style.left === '0px') pp.style.removeProperty('left')
+        return
+      }
+      const r = parseFloat(getComputedStyle(pp).top) || 0
+      if (r > 200) {
+        pp.style.setProperty('top', '0', 'important')
+        pp.style.setProperty('left', '0', 'important')
+      }
+    })
+    _ttvPpStyleObserver.observe(pp, { attributes: true, attributeFilter: ['style'] })
+    cleanup.trackObserver(_ttvPpStyleObserver)
+  }
+}
+function watchTwitchPersistentPlayer() {
+  if (hostPlatform !== 'twitch' || isKick) return
+  pinTwitchPersistentPlayer() // immediate, in case it's already mounted
+  if (_ttvPpObserver) return
+  let _ttvPpRaf = 0
+  let _ttvPpDetachObs = null
+  // Two-phase observer to avoid permanent body-subtree dispatch on Twitch:
+  //   1. Body watch — fires until the persistent player mounts and we pin it,
+  //      then disconnects. Walking body subtree is only paid during SPA nav.
+  //   2. Detach watch — observes the pinned player's PARENT (childList only,
+  //      no subtree) so we re-arm phase 1 the moment Twitch unmounts the
+  //      player on channel→channel nav. Effectively zero per-frame overhead
+  //      while the player is stable, which is 99% of session time.
+  const armDetachWatch = () => {
+    if (_ttvPpDetachObs) {
+      try {
+        cleanup.untrackObserver(_ttvPpDetachObs)
+      } catch (_) {}
+      _ttvPpDetachObs = null
+    }
+    const pp = _ttvPpLastSeen
+    const parent = pp?.parentElement
+    if (!parent) {
+      armBodyWatch()
+      return
+    }
+    _ttvPpDetachObs = new MutationObserver(() => {
+      if (pp?.isConnected) return
+      try {
+        cleanup.untrackObserver(_ttvPpDetachObs)
+      } catch (_) {}
+      _ttvPpDetachObs = null
+      _ttvPpLastSeen = null
+      armBodyWatch()
+    })
+    _ttvPpDetachObs.observe(parent, { childList: true })
+    cleanup.trackObserver(_ttvPpDetachObs)
+  }
+  function armBodyWatch() {
+    if (_ttvPpObserver) {
+      try {
+        cleanup.untrackObserver(_ttvPpObserver)
+      } catch (_) {}
+    }
+    _ttvPpObserver = new MutationObserver(() => {
+      if (_ttvPpLastSeen?.isConnected) {
+        try {
+          cleanup.untrackObserver(_ttvPpObserver)
+        } catch (_) {}
+        armDetachWatch()
+        return
+      }
+      if (_ttvPpRaf) return
+      _ttvPpRaf = requestAnimationFrame(() => {
+        _ttvPpRaf = 0
+        pinTwitchPersistentPlayer()
+        if (_ttvPpLastSeen?.isConnected) {
+          try {
+            cleanup.untrackObserver(_ttvPpObserver)
+          } catch (_) {}
+          armDetachWatch()
+        }
+      })
+    })
+    _ttvPpObserver.observe(document.body, { childList: true, subtree: true })
+    cleanup.trackObserver(_ttvPpObserver)
+  }
+  if (_ttvPpLastSeen?.isConnected) armDetachWatch()
+  else armBodyWatch()
+}
+
+// It auto-expands on wide viewports (>~1200px), and the user can also
+// toggle it. chat-left layout subtracts this width from chatWidth to land
+// the player flush with the HS panel — so the live value must be tracked,
+// not assumed. Pushes --hs-twitch-sidenav-w for the CSS rules to consume,
+// and re-runs applyPlatformPositionOverrides so JS-side arithmetic
+// (persistent-player inset, channel-root padding) updates too.
+function updateTwitchSideNavWidth() {
+  if (hostPlatform !== 'twitch') return
+  const nav = hsQuery('twitch:side-nav', '.side-nav')
+  const w = nav?.getBoundingClientRect?.().width
+  const next = w && w > 0 ? Math.round(w) : TWITCH_SIDE_NAV_WIDTH
+  if (next === _twitchSideNavW) return
+  _twitchSideNavW = next
+  document.documentElement.style.setProperty('--hs-twitch-sidenav-w', `${next}px`)
+  if (chatPosition === 'left') {
+    try {
+      applyPlatformPositionOverrides()
+    } catch (_) {}
+  }
+}
+
+let _twitchTopNavObs = null
+// Twitch's top nav (.top-nav) is 50px tall and lives in a sibling DOM tree
+// that paints above HS's chat container — even though HS has z-index 9999,
+// the chat container is trapped inside .channel-root__right-column's z=1
+// stacking context. Fight: don't compete on z-index, just offset chat down
+// by the nav height when chat docks left/top so the rotate buttons aren't
+// hidden under Following/Browse. Theatre mode hides .top-nav (height = 0),
+// so the offset auto-collapses and chat reclaims the full viewport.
+function updateTwitchTopNavHeight() {
+  if (hostPlatform !== 'twitch') return
+  const nav = hsQuery('twitch:top-nav', '.top-nav')
+  let h = 0
+  if (nav) {
+    const r = nav.getBoundingClientRect()
+    // height>0 AND visible — theatre mode collapses to 0 via display:none
+    h = r.height > 0 && getComputedStyle(nav).display !== 'none' ? Math.round(r.height) : 0
+  }
+  if (h === _twitchTopNavH) return
+  _twitchTopNavH = h
+  document.documentElement.style.setProperty('--hs-twitch-topnav-h', `${h}px`)
+  if (chatPosition === 'left' || chatPosition === 'top') {
+    try {
+      applyPlatformPositionOverrides()
+    } catch (_) {}
+  }
+}
+
+function setupTwitchTopNavObserver() {
+  if (hostPlatform !== 'twitch') return
+  document.documentElement.style.setProperty('--hs-twitch-topnav-h', `${_twitchTopNavH}px`)
+  if (_twitchTopNavObs) {
+    try {
+      _twitchTopNavObs.disconnect()
+    } catch (_) {}
+    _twitchTopNavObs = null
+  }
+  const nav = hsQuery('twitch:top-nav', '.top-nav')
+  if (nav && typeof ResizeObserver !== 'undefined') {
+    _twitchTopNavObs = new ResizeObserver(() => updateTwitchTopNavHeight())
+    _twitchTopNavObs.observe(nav)
+    cleanup.trackObserver(_twitchTopNavObs)
+  }
+  updateTwitchTopNavHeight()
+}
+
+// Twitch SPA nav: zero-flicker soft refresh. Pre-emptively migrate the
+// panel to <body> so twitch's chat-shell teardown doesn't take it down,
+// refresh the body class for the new URL, and (if the new page is a
+// channel page) reparent into the freshly-mounted chat-shell once it
+// appears. IRC, kickChat, observers, feed state — none of it gets
+// destroyed, so the visible panel keeps showing live messages without
+// a single empty frame.
+function softTwitchNav(prevLiveCh) {
+  let container = document.getElementById('hs-mc-container')
+  // Twitch commits the chat-shell unmount BEFORE pushState on channel →
+  // /directory style transitions — by the time the nav event fires the panel
+  // is already detached and getElementById can't see it. The module reference
+  // still holds the live node (feed state, IRC, scroll pos intact): re-adopt
+  // it onto body so this nav behaves like the normal pre-emptive migrate.
+  if (!container && typeof _hsMcContainerNode !== 'undefined' && _hsMcContainerNode) {
+    container = _hsMcContainerNode
+    document.body.appendChild(container)
+  }
+  if (!container) {
+    // No panel and no reference (never mounted on this page) — rebuild from
+    // scratch, mirroring softKickNav's null-container fallback.
+    try {
+      fullSpaReinit()
+    } catch (_) {}
+    return
+  }
+  // SPA nav changes the URL channel — only the LIVE tab cache becomes
+  // stale (it follows getLiveChannel()). Per-channel tab caches stay
+  // valid since their data is keyed by channel buffer, not URL.
+  try {
+    _dropTabCache('live')
+  } catch {}
+  try {
+    rearmLiveYtAuto()
+  } catch (_) {}
+  // Mark body for the entire transition window so the CSS guard hides any
+  // native chat-shell children that paint during Twitch's teardown/remount.
+  document.body.classList.add('hs-mc-navigating')
+  // A player-geometry bail-out is scoped to the page it happened on: the new
+  // channel gets a fresh player and deserves our layout back.
+  try {
+    resetPlayerGuard()
+  } catch (_) {}
+  // Step 1 — detach from doomed chat-shell ahead of twitch's teardown.
+  if (container?.parentElement && container.parentElement !== document.body) {
+    document.body.appendChild(container)
+  }
+  // Step 2 — flip CSS state to match the new URL's mount surface.
+  try {
+    updateTwitchNoChannelClass()
+  } catch (_) {}
+
+  // Step 3 — if the new page is a channel page, wait for its chat-shell to
+  // mount, then reparent the panel back so theatre/persistent-player layout
+  // continues to work. Single-shot observer; gives up after 4s on slow tabs.
+  let done = false
+  const finish = () => {
+    // Re-apply hs-native-hidden to the new chat-shell + chat-room + stream-
+    // chat. Without this the body.hs-mc-navigating guard would be the only
+    // thing hiding native chat — once we drop that class native chat blooms.
+    // Gated: skip re-hide when the user has chosen nativeVisible so they
+    // keep native chat visible across SPA navigations.
+    if (!nativeVisible)
+      try {
+        setNativeChatHidden(true)
+      } catch (_) {}
+    // Resume sticky-bottom on every channel switch — the panel persists
+    // across SPA nav, so without this reset the new channel inherits the
+    // previous channel's mid-scroll position and live messages stack
+    // behind a "N new" pause indicator the user never asked for.
+    isScrolledUp = false
+    newMessageCount = 0
+    _scrollbackWindow = 0 // new channel starts at the live tail
+    // SPA nav changed the URL channel — re-join + repaint the live tab so the
+    // new channel actually connects and renders. Without this the panel froze
+    // on the previous channel until an unrelated render fired — a deadlock on
+    // a quiet/offline target, the classic "broken or just needs a refresh?"
+    // symptom. renderMessages('live') performs the lazy join itself.
+    if (currentTab === 'live') {
+      try {
+        renderMessages('live')
+      } catch (_) {}
+    }
+    const newBtn = document.getElementById('hs-mc-new-msgs')
+    if (newBtn) newBtn.style.display = 'none'
+    const msgsEl = document.getElementById('hs-mc-messages')
+    if (msgsEl)
+      try {
+        scrollMsgsToBottom(msgsEl)
+      } catch (_) {}
+    // Join the new live channel so IRC delivers messages for it.
+    // Without this the live tab shows nothing (and deadlocks on quiet
+    // channels) because irc never subscribes to the new channel name.
+    // Part the previous live channel first (Bug #3) so we don't accumulate
+    // a 3000-msg CircularBuffer per visited channel over a long session.
+    // Only part if it is not also a config-managed channel tab.
+    try {
+      const newCh = getCurrentChannel()?.toLowerCase()
+      if (prevLiveCh && prevLiveCh !== newCh) {
+        const isConfigCh = config.channels.some(
+          (ch) => ch.twitch?.toLowerCase() === prevLiveCh || ch.kick?.toLowerCase() === prevLiveCh,
+        )
+        if (!isConfigCh) {
+          irc?.part(prevLiveCh)
+          kickChat?.part(prevLiveCh)
+        }
+      }
+      if (newCh && irc && !irc.channels.has(newCh)) irc.join(newCh)
+      if (newCh && kickChat && !kickChat.channels.has(newCh)) kickChat.join(newCh)
+      // Re-arm the native-chat tap on the new channel. Twitch tears down and
+      // remounts the message container across SPA nav; without an eager
+      // re-bind the tap stays dark until the 5s remount poll fires, leaving a
+      // hole in live coverage on every channel switch (worst on starved IPs
+      // where the tap IS the live source). startNativeTap is idempotent.
+      if (newCh && hostPlatform === 'twitch')
+        try {
+          startNativeTap(newCh)
+        } catch (_) {}
+      renderMessages('live')
+    } catch (_) {}
+    // Hold the nav guard for ~300ms so Twitch's render cycle + width
+    // transitions on chat-shell ancestors complete entirely behind it.
+    // Two rAFs (~32ms) was too short — the grey theme wrappers re-bled in
+    // mid-transition. 300ms covers Twitch's full reflow on every machine
+    // tested. Plus a chat-shell mutation observer continuously re-applies
+    // hs-native-hidden in case React swaps the chat-room__content node.
+    const reHide = new MutationObserver(() => {
+      if (!nativeVisible)
+        try {
+          setNativeChatHidden(true)
+        } catch (_) {}
+    })
+    const target = hsQuery('twitch:chat-shell', `.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
+    if (target) {
+      reHide.observe(target, { childList: true })
+      cleanup.trackObserver(reHide)
+    }
+    cleanup.setTimeout(
+      () => {
+        cleanup.untrackObserver(reHide)
+        document.body.classList.remove('hs-mc-navigating')
+        // Bar tracks container.getBoundingClientRect — re-anchor now that the
+        // container has moved out of its nav-guard fixed slot into chat-shell.
+        try {
+          positionChatResizeHandle()
+        } catch (_) {}
+      },
+      300,
+      'twitch-soft-nav-release',
+    )
+    // Twitch's right-column slide-in animation is 500ms. Re-check after it
+    // settles so the clipped-chat detection in updateTwitchNoChannelClass
+    // catches miniplayer→fullscreen layout breakage post-animation.
+    cleanup.setTimeout(
+      () => {
+        try {
+          updateTwitchNoChannelClass()
+        } catch (_) {}
+        try {
+          positionChatResizeHandle()
+        } catch (_) {}
+      },
+      700,
+      'twitch-soft-nav-clipped-check',
+    )
+  }
+  const tryReparent = () => {
+    if (done) return true
+    const chatShell = hsQuery('twitch:chat-shell', `.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
+    const c = document.getElementById('hs-mc-container')
+    if (chatShell && c && !chatShell.contains(c)) {
+      chatShell.appendChild(c)
+      try {
+        updateTwitchNoChannelClass()
+      } catch (_) {}
+      done = true
+      finish()
+      return true
+    }
+    return false
+  }
+  if (tryReparent()) return
+  const obs = new MutationObserver(() => {
+    if (tryReparent()) cleanup.untrackObserver(obs)
+  })
+  obs.observe(document.documentElement, { childList: true, subtree: true })
+  cleanup.trackObserver(obs)
+  cleanup.setTimeout(
+    () => {
+      if (!done) {
+        done = true
+        cleanup.untrackObserver(obs)
+        try {
+          updateTwitchNoChannelClass()
+        } catch (_) {}
+        finish()
+      }
+    },
+    4000,
+    'twitch-soft-nav-finalize',
+  )
+}
+
+
 // --- multichat/kick-host.js ---
 // Kick host UI/nav — extracted from main.js (bundled into kick bundle only)
 
@@ -62446,6 +63288,334 @@ function softKickNav(prevLiveCh) {
     4000,
     'kick-soft-nav-finalize',
   )
+}
+
+
+// --- multichat/youtube-host.js ---
+// YouTube host UI/nav — extracted from main.js (bundled into youtube bundle only)
+
+// Compute the largest chat width that won't squash YouTube's video column.
+// Bases on the watch-flexy container width (the actual flex-row that holds
+// primary + secondary) when available, falling back to viewport. Keeps a
+// YT_MIN_PRIMARY_WIDTH gutter for the player.
+function getYtMaxChatWidth() {
+  if (hostPlatform !== 'yt') return MAX_CHAT_WIDTH
+  const flexy = hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')
+  const flexyW = flexy?.getBoundingClientRect?.().width || 0
+  const vw = window.innerWidth || document.documentElement.clientWidth || 1280
+  const available = flexyW > 0 ? Math.min(flexyW, vw) : vw
+  return Math.max(MIN_CHAT_WIDTH, Math.min(MAX_CHAT_WIDTH, available - YT_MIN_PRIMARY_WIDTH))
+}
+
+// Re-apply layout whenever YT toggles theater/fullscreen so we release or
+// restore our width overrides at the right moment.
+function watchYtLayoutAttrs() {
+  if (hostPlatform !== 'yt') return
+  const flexy = hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')
+  if (!flexy) return
+  const obs = new MutationObserver(() => applyYouTubeChatWidth())
+  obs.observe(flexy, { attributes: true, attributeFilter: ['theater', 'fullscreen', 'is-two-columns_'] })
+  cleanup.trackObserver(obs)
+}
+
+// Re-run applyChatPosition when ytd-watch-flexy mounts on an SPA nav from
+// a non-watch page (home/search/channel) → a watch page. Without this,
+// the first applyChatPosition call ran with isYtNonWatch=true and never
+// re-added hs-chat-right to <body>, so the position:fixed CSS for
+// #hs-mc-container stayed inactive even after flexy mounted.
+let _ytFlexyMountObs = null
+function watchYtFlexyMount() {
+  // Idempotent: callable from init AND from applyChatPosition when it
+  // detects isYtNonWatch on a watch URL (cold-load before flexy mounts).
+  // Without re-arming on every nav, the body class hs-chat-* stays stripped
+  // when flexy unmounts during /watch → /watch SPA transitions and the
+  // observer was already torn down.
+  if (hostPlatform !== 'yt') return
+  if (_ytFlexyMountObs) return
+  if (hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return // already there
+  _ytFlexyMountObs = new MutationObserver(() => {
+    if (!hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return
+    cleanup.untrackObserver(_ytFlexyMountObs)
+    _ytFlexyMountObs = null
+    try {
+      applyChatPosition()
+    } catch {}
+    try {
+      applyYouTubeChatWidth()
+    } catch {}
+  })
+  _ytFlexyMountObs.observe(document.body, { childList: true, subtree: true })
+  cleanup.trackObserver(_ytFlexyMountObs)
+}
+
+// Re-clamp chat width when viewport shrinks (window resize / devtools open).
+// Without this, a chat width persisted at a wider viewport pushes the video
+// off-screen on a smaller window and the resize handle's max can't catch up.
+let _ytViewportClampTimer = null
+function watchYtViewportClamp() {
+  if (hostPlatform !== 'yt') return
+  const onResize = () => {
+    if (_ytViewportClampTimer) cleanup.clearTimeout(_ytViewportClampTimer)
+    _ytViewportClampTimer = cleanup.setTimeout(() => {
+      _ytViewportClampTimer = null
+      applyYouTubeChatWidth()
+      // Recompute the player's inline size for the new viewport. Without this
+      // the player keeps the px size computed at the LAST chat-position change
+      // — resize the window and the video overshoots its column (huge, clips
+      // off both edges) while the metadata column is crushed into a sliver.
+      // applyYouTubeChatWidth (above) re-clamps chatWidth first, so the player
+      // sizes off the corrected width. Mirrors the Kick resize handler.
+      try {
+        applyPlatformPositionOverrides()
+      } catch {}
+      // Re-run full layout reflow — viewport change (WM fullscreen, devtools
+      // toggle, browser zoom) needs every position-dependent piece updated.
+      // The orange resize bar uses inline px from container.getBoundingClientRect
+      // and goes stale; the tab/input bars follow via _updateMcLayout's
+      // ResizeObserver but only when the bars themselves resize, which doesn't
+      // fire on pure viewport changes. Cheap calls — all early-bail when nothing
+      // to reposition.
+      try {
+        positionChatResizeHandle()
+      } catch {}
+      try {
+        _updateMcLayout()
+      } catch {}
+    }, 80)
+  }
+  window.addEventListener('resize', onResize, { signal: mcSignal })
+}
+
+/**
+ * Setup resize handle for YouTube — left edge of #secondary sidebar
+ */
+function setupYouTubeResizeHandle() {
+  const secondary = hsQuery('yt:secondary', '#secondary, ytd-watch-flexy #secondary')
+  const mcContainer = document.getElementById('hs-mc-container')
+  if (!secondary || !mcContainer || document.getElementById('hs-yt-resize-handle')) return
+
+  const handle = document.createElement('div')
+  handle.id = 'hs-yt-resize-handle'
+  handle.style.touchAction = 'none'
+  // YT now uses the unified #hs-c-resize-handle for ALL chat positions
+  // (because chat-right is position:fixed, not in YT's flex tree). Hide
+  // this platform handle on creation so we don't render two orange bars.
+  handle.dataset._hsCHidden = '1'
+  handle.style.setProperty('display', 'none', 'important')
+  secondary.style.position = 'relative'
+  secondary.insertBefore(handle, secondary.firstChild)
+
+  let isResizing = false
+  let startX = 0
+  let startWidth = 0
+  let rafId = 0
+  let pendingWidth = 0
+  let lastGhostWidth = 0
+  let activePointerId = -1
+  let overlay = null
+  let ghost = null
+
+  function applyResize() {
+    rafId = 0
+    if (pendingWidth === lastGhostWidth) return
+    lastGhostWidth = pendingWidth
+    chatWidth = pendingWidth
+    if (ghost) ghost.style.width = `${pendingWidth}px`
+  }
+
+  handle.addEventListener(
+    'pointerdown',
+    (e) => {
+      if (e.button !== 0) return
+      isResizing = true
+      activePointerId = e.pointerId
+      try {
+        handle.setPointerCapture(e.pointerId)
+      } catch (_) {}
+      startX = e.clientX
+      startWidth = chatWidth
+      const rect = secondary.getBoundingClientRect()
+      const w0 = Math.round(rect.width)
+      pendingWidth = chatWidth
+      lastGhostWidth = w0
+      document.body.style.cursor = 'ew-resize'
+      document.body.style.userSelect = 'none'
+
+      ghost = document.createElement('div')
+      ghost.id = 'hs-resize-ghost'
+      ghost.style.cssText = buildGhostCss(rect, w0)
+      document.body.appendChild(ghost)
+
+      overlay = document.createElement('div')
+      overlay.id = 'hs-resize-overlay'
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:ew-resize'
+      document.body.appendChild(overlay)
+      e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+
+  handle.addEventListener(
+    'pointermove',
+    (e) => {
+      if (!isResizing || e.pointerId !== activePointerId) return
+      const delta = startX - e.clientX
+      // Use the viewport-aware cap so a small window can't be dragged past the
+      // point where the video column gets crushed.
+      const ytMax = getYtMaxChatWidth()
+      pendingWidth = Math.min(ytMax, Math.max(MIN_CHAT_WIDTH, startWidth + delta))
+      if (!rafId) rafId = requestAnimationFrame(applyResize)
+    },
+    { signal: mcSignal },
+  )
+
+  function endDrag(e) {
+    if (!isResizing || (e && e.pointerId !== activePointerId)) return
+    isResizing = false
+    activePointerId = -1
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+      rafId = 0
+    }
+    chatWidth = pendingWidth || chatWidth
+    if (ghost) {
+      ghost.remove()
+      ghost = null
+    }
+    applyYouTubeChatWidth()
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+    if (overlay) {
+      overlay.remove()
+      overlay = null
+    }
+    // Force YT's IMA SDK + html5 player to re-measure so a mid-ad resize
+    // doesn't leave the ad video at its pre-drag dimensions.
+    try {
+      window.dispatchEvent(new Event('resize'))
+    } catch (_) {}
+    saveChatWidth()
+  }
+  handle.addEventListener('pointerup', endDrag, { signal: mcSignal })
+  handle.addEventListener('pointercancel', endDrag, { signal: mcSignal })
+
+  loadChatWidth().then(() => {
+    applyYouTubeChatWidth()
+  })
+  loadChatHeight()
+  watchYtViewportClamp()
+  watchYtLayoutAttrs()
+  watchYtFlexyMount()
+}
+
+// YT reflow: a ResizeObserver on #movie_player keeps --hs-yt-below-top in sync
+// with the real video bottom. The rAF-based set in applyPlatformPositionOverrides
+// is racy on fresh load (the player gets its size after our last run), leaving
+// #below pinned at the fallback top over the video. The observer fires whenever
+// the player sizes/resizes, so the var is always correct. Re-observes on SPA nav.
+let _hsYtBelowRO = null,
+  _hsYtBelowEl = null,
+  _hsYtBelowPoll = null
+// Clear any inline height we forced onto the full-bleed containers so YT's own
+// layout takes back over (leaving theatre, hiding the panel, fullscreen).
+function _hsClearYtFullBleed() {
+  for (const sel of ['#full-bleed-container', '#player-full-bleed-container']) {
+    const el = document.querySelector(sel)
+    if (el?.style.height) el.style.removeProperty('height')
+  }
+}
+function _hsSetYtBelowTop() {
+  // Panel hidden (non-live, no opt-in) or non-side chat → hand layout back to YT.
+  if (document.body.classList.contains('hs-offline') || (chatPosition !== 'left' && chatPosition !== 'right')) {
+    document.documentElement.style.removeProperty('--hs-yt-below-top')
+    _hsClearYtFullBleed()
+    return
+  }
+  const flexy = hsQuery('yt:watch-flexy-any', 'ytd-watch-flexy')
+  if (flexy?.hasAttribute('fullscreen')) {
+    document.documentElement.style.removeProperty('--hs-yt-below-top')
+    _hsClearYtFullBleed()
+    return
+  }
+  const mp = hsQuery('yt:movie-player', ['#movie_player', '.html5-video-player'])
+  const b = mp?.getBoundingClientRect()
+  if (!b || b.height <= 0) return
+  // THEATRE + side chat: YT keeps #full-bleed-container at the full-WIDTH 16:9
+  // height while the real player is height-capped smaller, and the #below reflow
+  // rule is :not([theater]) — so #below (static) drops below the reserved band,
+  // a fat black gap under the video (only chat-left/top/bottom had a theatre fix,
+  // never chat-right). Collapse the container to the real player height so the
+  // metadata flows right under the video. The ResizeObserver + move-poll re-run
+  // this whenever the player resizes, so it stays in sync.
+  if (flexy?.hasAttribute('theater')) {
+    document.documentElement.style.removeProperty('--hs-yt-below-top')
+    const h = `${Math.round(b.height)}px`
+    for (const sel of ['#full-bleed-container', '#player-full-bleed-container']) {
+      const el = document.querySelector(sel)
+      if (el && el.style.height !== h) el.style.height = h
+    }
+    return
+  }
+  // Non-theatre: CSS pins #below position:fixed at this var; no container surgery.
+  _hsClearYtFullBleed()
+  document.documentElement.style.setProperty('--hs-yt-below-top', `${Math.round(b.bottom)}px`)
+}
+// YT shifts the player's POSITION without changing its SIZE — theater masthead
+// hide-on-scroll, description/comments panel expand-collapse, native miniplayer
+// dock, and the multi-pass load reflow all move #movie_player's top/left while
+// the ResizeObserver (size-only) stays silent, leaving the overlay stranded
+// (the "must disable/enable chat to fix" report). Poll the rect and, on a real
+// MOVE, run the SAME full recompute the manual chat hide/show ('\') runs — the
+// known-good path that already fixes a drifted overlay. Cheap: one rect read +
+// a two-number compare per tick, DOM work only on a >1px delta.
+let _hsLastMpRect = null
+let _hsSettlingUntil = 0
+function _hsCheckYtPlayerMoved() {
+  if (document.body.classList.contains('hs-offline')) {
+    _hsLastMpRect = null // panel hidden — nothing to reposition
+    return
+  }
+  const mp = hsQuery('yt:movie-player', ['#movie_player', '.html5-video-player'])
+  const b = mp?.getBoundingClientRect()
+  if (!b || b.height === 0) return
+  const last = _hsLastMpRect
+  _hsLastMpRect = { top: b.top, left: b.left } // always track, even while settling
+  if (!last) return
+  // applyChatPosition() dispatches delayed resize nudges (+0/100/500/1500ms) that
+  // move the player themselves — during that settle window keep tracking the rect
+  // but don't re-trigger, so our own relayout isn't re-detected as fresh drift.
+  if (performance.now() < _hsSettlingUntil) return
+  if (Math.abs(b.top - last.top) > 1 || Math.abs(b.left - last.left) > 1) {
+    try {
+      applyChatPosition()
+    } catch (_) {}
+    _hsSettlingUntil = performance.now() + 1700 // cover the +1500ms nudge tail
+  }
+}
+function _hsEnsureYtBelowObserver(_tries) {
+  const mp = hsQuery('yt:movie-player', '#movie_player')
+  // On fresh load applyPlatformPositionOverrides often runs before #movie_player
+  // exists; self-retry so the observer attaches once the player mounts (instead
+  // of depending on the function happening to re-run after). ~12s ceiling.
+  if (!mp) {
+    if ((_tries || 0) < 30) cleanup.setTimeout(() => _hsEnsureYtBelowObserver((_tries || 0) + 1), 400)
+    return
+  }
+  if (_hsYtBelowEl !== mp) {
+    if (_hsYtBelowRO) cleanup.untrackObserver(_hsYtBelowRO)
+    _hsYtBelowEl = mp
+    _hsYtBelowRO = new ResizeObserver(_hsSetYtBelowTop)
+    _hsYtBelowRO.observe(mp)
+    cleanup.trackObserver(_hsYtBelowRO)
+  }
+  // ResizeObserver only fires on SIZE changes — but YT shifts the player's
+  // POSITION without resizing it. The poll catches those pure moves and re-runs
+  // the full layout recompute (which also republishes --hs-yt-below-top).
+  // setIntervalIfVisible: a hidden tab has nothing painted to reposition —
+  // twice-a-second querySelector + getBoundingClientRect forever in the
+  // background is pure wasted work on low-end hardware.
+  if (!_hsYtBelowPoll) _hsYtBelowPoll = cleanup.setIntervalIfVisible(_hsCheckYtPlayerMoved, 500)
+  _hsSetYtBelowTop()
 }
 
 // === END MULTICHAT MODULES ===
@@ -62990,20 +64160,15 @@ const STORAGE_KEY = 'heatsync_multichat'
   // channels — same rule as the query itself).
   let _liveSearchCurrentKey = null
 
-  const isKick = typeof __HS_HOST__ !== 'undefined' ? __HS_HOST__ === 'kick' : location.hostname.includes('kick.com')
-  const hostPlatform =
-    typeof __HS_HOST__ !== 'undefined'
-      ? __HS_HOST__ === 'youtube'
-        ? 'yt'
-        : __HS_HOST__
-      : isKick
-        ? 'kick'
-        : location.hostname.includes('youtube.com')
-          ? 'yt'
-          : 'twitch'
+  // Platform from location.hostname — the manifest's match patterns gate
+  // which hostnames the shared multichat-core.js bundle is injected into, so
+  // hostname IS the platform declaration (the retired per-platform bundles
+  // used an esbuild __HS_HOST__ define; a shared core can't constant-fold).
+  const isKick = location.hostname.includes('kick.com')
+  const hostPlatform = isKick ? 'kick' : location.hostname.includes('youtube.com') ? 'yt' : 'twitch'
 
   // A standalone youtube.com/live_chat TOP window = a HeatSync pop-out chat
-  // window. multichat-youtube.js only runs in the top frame, so /live_chat here
+  // window. The youtube multichat entry only runs in the top frame, so /live_chat here
   // can only be a popout (never the watch-page's embedded chat iframe, which is
   // a child frame the bundle never touches). Treat it like the twitch/kick
   // popout: fill the window, single stream, native chat hidden, boot to 'live'.

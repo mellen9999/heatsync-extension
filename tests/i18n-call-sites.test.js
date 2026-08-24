@@ -18,7 +18,7 @@ function walk(dir, out = []) {
     // chrome/multichat-*.js are build output — concatenations of src/multichat.
     if (st.isDirectory()) {
       if (f !== 'node_modules' && f !== '_locales') walk(p, out)
-    } else if (f.endsWith('.js') && !/^multichat-(kick|twitch|youtube)\.js$/.test(f)) {
+    } else if (f.endsWith('.js') && !/^multichat(-\w+)?\.js$/.test(f)) {
       out.push(p)
     }
   }

@@ -30,8 +30,7 @@
  * Exit: 0 clean · 1 crash-class errors found · 2 the check did not really run.
  */
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readdirSync } from 'node:fs'
 
 const CRASH_CODES = {
   TS2304: "cannot find name — a typo'd or moved identifier throws ReferenceError when reached",
@@ -40,20 +39,6 @@ const CRASH_CODES = {
   TS2307: 'cannot find module — the import fails to resolve',
   TS2552: 'cannot find name, close match — almost always a typo',
   TS2724: 'no exported member, close match — a renamed export the caller never followed',
-}
-
-// Each bundle carries the shared modules plus ONE platform's host module, so
-// multichat-kick.js contains calls to twitch-host.js functions it does not
-// have. Every such call is behind a `hostPlatform === …` / `isKick` branch that
-// cannot be true in that bundle — verified by hand across all 52 sites on
-// 2026-08-20. Excused per (name, bundle) rather than globally, so a real
-// missing name in the platform that OWNS the function still fails.
-const PLATFORM_ONLY = {
-  'twitch-host.js': 'twitch',
-  'kick-host.js': 'kick',
-  'youtube-host.js': 'youtube',
-  'native-tap.js': 'twitch',
-  'kick-native-tap.js': 'kick',
 }
 
 // Names that are deliberately absent. Each needs a reason, not just an entry.
@@ -109,17 +94,6 @@ if (diagnostics.length < 100) {
   process.exit(2)
 }
 
-/** Top-level declarations of each platform-only module, so a cross-platform
- *  call can be recognised without hardcoding 20 function names here. */
-const platformDecls = new Map() // name -> owning platform
-for (const [file, platform] of Object.entries(PLATFORM_ONLY)) {
-  const p = join('src', 'multichat', file)
-  if (!existsSync(p)) continue
-  for (const m of readFileSync(p, 'utf8').matchAll(/^(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z0-9_$]+)/gm)) {
-    platformDecls.set(m[1], platform)
-  }
-}
-
 const offences = []
 for (const line of diagnostics) {
   const m = /^(.+?)\((\d+),\d+\): error (TS\d+): (.+)$/.exec(line)
@@ -128,8 +102,6 @@ for (const line of diagnostics) {
   if (!CRASH_CODES[code]) continue
   const name = /'([^']+)'/.exec(msg)?.[1] ?? ''
   if (KNOWN_ABSENT[name]) continue
-  const owner = platformDecls.get(name)
-  if (owner && !file.includes(`multichat-${owner}.js`)) continue
   offences.push(`${file}:${ln} — ${name || msg} (${code}: ${CRASH_CODES[code]})`)
 }
 

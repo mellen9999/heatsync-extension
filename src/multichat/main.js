@@ -548,20 +548,15 @@
   // channels — same rule as the query itself).
   let _liveSearchCurrentKey = null
 
-  const isKick = typeof __HS_HOST__ !== 'undefined' ? __HS_HOST__ === 'kick' : location.hostname.includes('kick.com')
-  const hostPlatform =
-    typeof __HS_HOST__ !== 'undefined'
-      ? __HS_HOST__ === 'youtube'
-        ? 'yt'
-        : __HS_HOST__
-      : isKick
-        ? 'kick'
-        : location.hostname.includes('youtube.com')
-          ? 'yt'
-          : 'twitch'
+  // Platform from location.hostname — the manifest's match patterns gate
+  // which hostnames the shared multichat-core.js bundle is injected into, so
+  // hostname IS the platform declaration (the retired per-platform bundles
+  // used an esbuild __HS_HOST__ define; a shared core can't constant-fold).
+  const isKick = location.hostname.includes('kick.com')
+  const hostPlatform = isKick ? 'kick' : location.hostname.includes('youtube.com') ? 'yt' : 'twitch'
 
   // A standalone youtube.com/live_chat TOP window = a HeatSync pop-out chat
-  // window. multichat-youtube.js only runs in the top frame, so /live_chat here
+  // window. The youtube multichat entry only runs in the top frame, so /live_chat here
   // can only be a popout (never the watch-page's embedded chat iframe, which is
   // a child frame the bundle never touches). Treat it like the twitch/kick
   // popout: fill the window, single stream, native chat hidden, boot to 'live'.

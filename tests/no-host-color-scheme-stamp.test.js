@@ -42,7 +42,7 @@ function sourceFiles() {
         // chrome/multichat-*.js are build OUTPUT of src/multichat — checking
         // them would just report the same source twice, and a stale bundle
         // would fail a test about source intent.
-        if (/^multichat-(twitch|kick|youtube)\.js$/.test(name)) continue
+        if (/^multichat(-\w+)?\.js$/.test(name)) continue
         out.push(p)
       }
     }

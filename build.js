@@ -567,9 +567,7 @@ const FIREFOX_OUT = join(__dirname, 'dist', 'firefox')
 // Files that need lib bundled in (content scripts)
 const CONTENT_SCRIPTS = [
   'content.js',
-  'multichat-twitch.js',
-  'multichat-kick.js',
-  'multichat-youtube.js',
+  'multichat-core.js',
   'heatsync-button.js',
   'autocomplete-hook.js',
   'chat-injector.js',
@@ -657,8 +655,7 @@ const LIB_EXTRAS = {
 // Read lib files — full set by default, or core + the named extras.
 function readLib(extras = null) {
   const libDir = join(SRC_DIR, 'lib')
-  const files =
-    extras === null ? LIB_ORDER : LIB_ORDER.filter((f) => LIB_CORE.has(f) || extras.includes(f))
+  const files = extras === null ? LIB_ORDER : LIB_ORDER.filter((f) => LIB_CORE.has(f) || extras.includes(f))
   let combined = '// === HEATSYNC LIB (auto-bundled) ===\n'
 
   for (const file of files) {
@@ -737,22 +734,20 @@ const MULTICHAT_MODULES = [
   'type-to-focus.js',
 ]
 
-// native-tap.js reads Twitch's React fiber tree — twitch-only, exclude on kick/youtube
-// kick-native-tap.js pairs with chrome/kick-chat-intercept.js — kick-only
-// kick-host.js / youtube-host.js / twitch-host.js: per-platform host DOM modules
-const PLATFORM_MODULES = {
-  twitch: [...MULTICHAT_MODULES.filter((f) => f !== 'kick-native-tap.js'), 'twitch-host.js'],
-  kick: [...MULTICHAT_MODULES.filter((f) => f !== 'native-tap.js'), 'kick-host.js'],
-  youtube: [...MULTICHAT_MODULES.filter((f) => f !== 'native-tap.js' && f !== 'kick-native-tap.js'), 'youtube-host.js'],
-}
+// ONE shared multichat-core.js serves all three platforms (the per-platform
+// bundles were ~99.5% identical — 3×3.3MB of duplicate bytes in every zip and
+// dev load, and three copies for fixes to drift across). All platform modules
+// ride along: the 5 files below have zero top-level name collisions (verified
+// 2026-08-24), declare only (native-tap's window.__hsNsStats counter object is
+// the lone, harmless, top-level side effect), and every cross-platform call
+// site in shared code is behind a hostPlatform/isKick branch — so twitch's
+// fiber tap simply never runs on kick. Platform selection is main.js's
+// location.hostname detection, the same path every dev build has always used;
+// the manifest's match patterns gate injection to exactly those hostnames.
+const CORE_MODULES = [...MULTICHAT_MODULES, 'twitch-host.js', 'kick-host.js', 'youtube-host.js']
 
-function readMultichatModules(platform) {
+function readMultichatModules() {
   const mcDir = join(SRC_DIR, 'multichat')
-  // Note: __HS_HOST__ is intentionally NOT declared here as a const.
-  // It is a free (global-scope) reference so esbuild's define option can
-  // substitute it at minification time and constant-fold platform branches.
-  // At dev/unminified runtime, typeof __HS_HOST__ !== 'undefined' → false,
-  // so main.js falls back to location.hostname detection — correct for dev.
   let combined = '// === MULTICHAT MODULES (auto-bundled) ===\n'
 
   // emoji-data.js is NOT embedded: the isolated-world copy injected by the
@@ -788,7 +783,7 @@ function readMultichatModules(platform) {
     combined += `\n// --- lib/plus-tenure.js ---\n${stripExports(readFileSync(plusTenurePath, 'utf8'))}\n`
   }
 
-  const modules = PLATFORM_MODULES[platform] ?? MULTICHAT_MODULES
+  const modules = CORE_MODULES
   for (const file of modules) {
     const filePath = join(mcDir, file)
     if (!existsSync(filePath)) continue
@@ -931,28 +926,28 @@ function build(browser) {
   const lib = readLib()
   const mcSrcPath = join(SRC_DIR, 'multichat', 'main.js')
 
-  // Self-heal: chrome/multichat.js is the retired single-bundle name (pre
-  // per-platform split) — unreferenced by any manifest, gitignored, excluded
-  // from zips. A stale copy still bloats unpacked dev loads (~2.2MB), so
-  // remove it whenever we build.
-  const staleMc = join(chromeDir, 'multichat.js')
-  if (existsSync(staleMc)) {
-    rmSync(staleMc)
-    console.log('  Removed stale chrome/multichat.js')
+  // Self-heal: retired bundle names — multichat.js (pre per-platform split)
+  // and multichat-{twitch,kick,youtube}.js (pre shared-core split). None are
+  // referenced by any manifest anymore, but a stale copy bloats unpacked dev
+  // loads by megabytes, so remove them whenever we build.
+  for (const stale of ['multichat.js', 'multichat-twitch.js', 'multichat-kick.js', 'multichat-youtube.js']) {
+    const p = join(chromeDir, stale)
+    if (existsSync(p)) {
+      rmSync(p)
+      console.log(`  Removed stale chrome/${stale}`)
+    }
   }
 
-  // Emit per-platform multichat bundles
-  const PLATFORMS = ['twitch', 'kick', 'youtube']
-  for (const platform of PLATFORMS) {
-    const outFile = `multichat-${platform}.js`
-    const mcModules = readMultichatModules(platform)
-    const bundled = bundleContentScript(mcSrcPath, lib, mcModules)
+  // Emit the shared multichat core — one bundle, all platforms
+  {
+    const outFile = 'multichat-core.js'
+    const bundled = bundleContentScript(mcSrcPath, lib, readMultichatModules())
     writeFileSync(join(outDir, outFile), bundled)
     // Write to chrome/ so unpacked extension loads the bundled version
     if (browser === 'chrome') {
       writeFileSync(join(chromeDir, outFile), bundled)
     }
-    console.log(`  Bundled multichat-${platform}.js`)
+    console.log(`  Bundled ${outFile}`)
   }
 
   // Bundle remaining content scripts (non-multichat)
@@ -1115,15 +1110,7 @@ function buildSourceZip() {
     'TESTER-GUIDE.md',
   ].filter((p) => existsSync(join(__dirname, p)))
 
-  const excludes = [
-    'chrome/multichat-twitch.js',
-    'chrome/multichat-kick.js',
-    'chrome/multichat-youtube.js',
-    'dist/*',
-    'node_modules/*',
-    '.git/*',
-    '*/.DS_Store',
-  ]
+  const excludes = ['chrome/multichat-core.js', 'dist/*', 'node_modules/*', '.git/*', '*/.DS_Store']
   const args = ['-rq', zipPath, ...include]
   for (const ex of excludes) args.push('-x', ex)
   execFileSync('zip', args, { cwd: __dirname, stdio: 'inherit' })
@@ -1171,8 +1158,6 @@ function deploy() {
 
 // Minify a content script in place inside its dist dir.
 // Preserves the IIFE wrapper; safe-mode flags so we don't break runtime semantics.
-// extraDefines: passed for per-platform multichat bundles so esbuild can constant-fold
-// __HS_HOST__ and dead-code-eliminate cross-platform branches at minification time.
 function minifyDistFile(outDir, file, extraDefines) {
   const path = join(outDir, file)
   if (!existsSync(path)) return
@@ -1192,13 +1177,6 @@ function minifyDistFile(outDir, file, extraDefines) {
   }
 }
 
-// Map multichat-<platform>.js filenames to their platform string for define injection
-const MULTICHAT_PLATFORM_DEFINE = {
-  'multichat-twitch.js': 'twitch',
-  'multichat-kick.js': 'kick',
-  'multichat-youtube.js': 'youtube',
-}
-
 function minifyDist(outDir) {
   const targets = [...CONTENT_SCRIPTS, ...COPY_FILES.filter((f) => f.endsWith('.js'))]
   let bytesBefore = 0,
@@ -1207,15 +1185,15 @@ function minifyDist(outDir) {
     const p = join(outDir, f)
     if (!existsSync(p)) continue
     bytesBefore += readFileSync(p).length
-    const platform = MULTICHAT_PLATFORM_DEFINE[f]
     // __HS_DEV_BUILD__ → false in every minified (packaged/released/store) bundle,
     // so the nonce-less dev reload relaxation in content.js is dead-code-eliminated
     // for real users. Dev builds skip minify → the identifier stays undefined →
     // content.js's `typeof` guard treats it as dev-mode-on. Fail-closed: only the
     // packaged build path (which minifies) flips it off, and that's exactly the
     // store artifact.
-    const extraDefines = { __HS_DEV_BUILD__: 'false', ...(platform ? { __HS_HOST__: JSON.stringify(platform) } : {}) }
-    minifyDistFile(outDir, f, extraDefines)
+    // (No __HS_HOST__ define anymore: multichat-core.js is one bundle for all
+    // three platforms, so platform branches must survive to runtime.)
+    minifyDistFile(outDir, f, { __HS_DEV_BUILD__: 'false' })
     bytesAfter += readFileSync(p).length
   }
   // Fail-closed: the nonce-less dev-reload relaxation MUST be compiled out of
@@ -1233,7 +1211,7 @@ function minifyDist(outDir) {
   // chat send via hs-dbg-test-send + private-state dumps) MUST be dead-code-
   // eliminated from every packaged multichat bundle. If the __HS_DEV_BUILD__ fold
   // failed, the sentinel string survives — refuse to ship rather than expose it.
-  for (const f of Object.keys(MULTICHAT_PLATFORM_DEFINE)) {
+  for (const f of ['multichat-core.js']) {
     const p = join(outDir, f)
     if (existsSync(p) && readFileSync(p, 'utf8').includes('hs-dbg-test-send')) {
       throw new Error(

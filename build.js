@@ -21,6 +21,28 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
 
+// Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
+// every hs_diag_ring boot event names the code it ran. Needed because a tab
+// can run a build hours older than dist: a popout froze on code whose fix had
+// landed 3h earlier but was never reloaded, and the ring couldn't show that.
+const BUILD_STAMP = (() => {
+  try {
+    const sha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: dirname(fileURLToPath(import.meta.url)) })
+      .toString()
+      .trim()
+    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'src'], {
+      cwd: dirname(fileURLToPath(import.meta.url)),
+    })
+      .toString()
+      .trim()
+      ? '+'
+      : ''
+    return `${sha}${dirty}-${new Date().toISOString().slice(0, 16).replace(/[-T:]/g, '')}`
+  } catch (_) {
+    return `nogit-${Date.now()}`
+  }
+})()
+
 // ── Pre-build guards ──────────────────────────────────────────────────────────
 // All four checks run before any bundling and fail the build loudly on violation.
 
@@ -834,7 +856,10 @@ function bundleContentScript(srcPath, lib, mcModules) {
   // covering anything. Cheermote echoes still arrive in the MAIN tab's
   // multichat through the IRC stream, so renderer still fires there.
   const cheerPopupGuard = `if (typeof window !== 'undefined' && typeof window.name === 'string' && window.name.indexOf('hs-cheer-') === 0) return;`
-  return `(function() {\n'use strict';\n${cheerPopupGuard}\n\n${lib}\n{\n${modules}${body}\n}\n})();`
+  return `(function() {\n'use strict';\n${cheerPopupGuard}\n\n${lib}\n{\n${modules}${body}\n}\n})();`.replaceAll(
+    '__HS_BUILD_STAMP__',
+    BUILD_STAMP,
+  )
 }
 
 // Build for a specific browser

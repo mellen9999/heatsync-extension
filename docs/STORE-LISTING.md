@@ -68,10 +68,29 @@ chat, streaming, twitch, kick, youtube, emotes, 7tv
   description above are LIVE on the public page (verified). Tags = `chat, social media,
   streaming, twitch, youtube` — AMO tags are a fixed vocabulary; `kick`/`emotes`/`7tv`
   don't exist, this is the best available set. Non-en AMO summaries still carry the older
-  framing (only en-US updated). Listed version still 1.6.8. **GOTCHA:** release.yml signs
-  every tag on the *unlisted* channel, and AMO version numbers are unique across channels —
-  1.7.22 (signed unlisted) can never become the listed version. To refresh the listing,
-  submit the NEXT version as *listed* via devhub BEFORE tagging it, or rework release.yml.
+  framing (only en-US updated).
+
+  **RESOLVED 2026-08-25 — the two paragraphs that used to sit here were both stale
+  and one of them cost an audit a false finding. Do not reinstate them.**
+
+  This said "listed version still 1.6.8". It is not. The live AMO API reports the
+  listed add-on `heatsync-chat` on **1.7.64**, matching the shipped manifest:
+
+  ```
+  curl -s "https://addons.mozilla.org/api/v5/addons/search/?q=heatsync&app=firefox"
+  # heatsync-chat | ver 1.7.64 | users 2 | ratings 0
+  ```
+
+  It also carried a **GOTCHA** claiming release.yml burns the clean version number
+  on the unlisted channel so it "can never become the listed version". release.yml
+  has since been reworked to prevent exactly that — it signs the self-distributed
+  build as `X.Y.Z.1` specifically to reserve `X.Y.Z` for the listed channel
+  (see its own comment block). Nothing is blocking a listed submission.
+
+  **What is actually true:** the listing is current, and it is not the problem —
+  2 average daily users and 0 ratings against a correct, up-to-date store page is a
+  reach problem, not a listing one. That is what Act III exists to fix; see
+  `heatsync/docs/shelf-submissions.md`.
 - **Repositioned multichat-first (2026-07-25):** all 34 locales' `manifest_name` +
   `manifest_description` rewritten to lead with multichat (was emote-first). Each verified
   ≤132 chars (name ≤75), valid JSON, brand tokens present (Twitch/Kick/YouTube/5000).

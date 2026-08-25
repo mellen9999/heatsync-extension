@@ -1,8 +1,17 @@
 # changelog
 
-## [unreleased]
+## [1.7.64] — 2026-08-24
+
+### added
+- **a simulcast link you set spreads to everyone else** — when heatsync can't resolve a channel's youtube by itself and you fill it in, your copy reports the channel's own published youtube link so other viewers get the merge with zero setup. nothing is sent unless the channel lists that link publicly, and the pick prefers the account that's actually live.
+
+### changed
+- **the download is a third the size** — the three chat scripts shared almost all their code but each shipped their own copy; they load one shared core now (3.75mb → 1.0mb).
+- **the welcome page says almost nothing** — and that's the point.
 
 ### fixed
+- **popout chat freeze, again, at the root this time** — every recovery path waited on a browser signal that popout and background windows can miss entirely; rendering no longer depends on it. the same root cause made chat crawl when signed-in reads raced the anonymous reader — both races closed.
+- **no more dead band above the composer** — switching tabs could leave a gap between the last message and the input that never healed.
 - **your paints show up on youtube chat again** — heatsync paints stopped rendering on native youtube chat on august 16 and every name has been plain since.
 - **removing, renaming and moving an emote stop saying they failed** — the change went through and the panel reported an error anyway. importing a set left the button stuck on "imported N" instead of resetting.
 - **tab-completing an emote outside the dropdown works** — cycling with tab when twitch's own list wasn't showing inserted nothing at all.

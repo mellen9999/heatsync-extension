@@ -5002,7 +5002,9 @@ function connectBTTVSocket() {
         const baseDelay = Math.min(1000 * 2 ** bttvReconnectAttempts, 30000)
         const delay = baseDelay + Math.random() * baseDelay
         bttvReconnectAttempts++
-        log(` BTTV Live: Reconnecting in ${Math.round(delay)}ms (attempt ${bttvReconnectAttempts}/${BTTV_MAX_RECONNECT_ATTEMPTS})`)
+        log(
+          ` BTTV Live: Reconnecting in ${Math.round(delay)}ms (attempt ${bttvReconnectAttempts}/${BTTV_MAX_RECONNECT_ATTEMPTS})`,
+        )
         clearTimeout(bttvReconnectTimer)
         bttvReconnectTimer = setTimeout(() => {
           bttvReconnectTimer = null

@@ -3983,6 +3983,9 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       // Persist so all channels survive service worker restart
       browser.storage.local.set({ seventv_emote_set_ids: Object.fromEntries(seventvEmoteSetIds) }).catch(() => {})
     }
+    // BTTV/FFZ have no (or an unreliable) push channel — the poll is their
+    // live-update guarantee. Unconditional: runs even for channels with no 7TV.
+    startThirdPartyPolling()
   } catch (error) {
     log(' ❌ Channel emotes fetch failed:', error.message || error)
     broadcastToTabs({ type: 'loading_status', done: true })
@@ -5094,6 +5097,148 @@ function handleBTTVSocketEvent(name, data) {
       .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
       .catch(() => {})
     log(' BTTV Live:', name, 'applied for', channelName, '(now', chEmotes.length, 'total)')
+  }
+}
+
+// ========== BTTV/FFZ Polling ==========
+// FFZ has no live socket we speak, and the BTTV socket can drop — this poll is
+// the delivery guarantee for both, mirroring the 7TV poll fallback. BTTV skips
+// channels whose room is joined on a healthy socket (pushes supersede polling);
+// FFZ always polls (it's the primary live path). Runs only while platform tabs
+// exist, 60s base + jitter, and reuses the fetchers (their sanitizers, 404
+// negcaches and id lookups) so the poll can't drift from the join-time fetch.
+let thirdPartyPollTimer = null
+const THIRD_PARTY_POLL_INTERVAL = 60000
+const thirdPartyPolledChannels = new Set() // first tick per channel = baseline, no toasts
+
+function startThirdPartyPolling() {
+  if (thirdPartyPollTimer) return
+  const jittered = THIRD_PARTY_POLL_INTERVAL + Math.random() * THIRD_PARTY_POLL_INTERVAL
+  thirdPartyPollTimer = trackInterval(setInterval(pollThirdPartyEmotes, jittered))
+  log(' BTTV/FFZ Poll: Started (interval', Math.round(jittered / 1000), 's)')
+}
+
+function isBttvSocketHealthy() {
+  return bttvWebSocket && bttvWebSocket.readyState === WebSocket.OPEN
+}
+
+function applyThirdPartyDiff(key, source, fetched) {
+  // fetched = sanitized emote list for ONE source; diff it against that
+  // source's slice of the channel cache and apply through the same broadcast
+  // pipeline every other emote mutation uses.
+  const chEmotes = Array.isArray(channelEmotesMap[key]) ? channelEmotesMap[key] : null
+  if (!chEmotes) return
+  const { platform, channel: channelName } = splitChKey(key)
+  const fetchedByHash = new Map()
+  for (const e of fetched) if (e?.hash) fetchedByHash.set(e.hash, e)
+  const added = []
+  const removed = []
+  for (const [hash, emote] of fetchedByHash) {
+    if (!chEmotes.some((e) => e.source === source && e.hash === hash)) added.push(emote)
+  }
+  for (const e of chEmotes) {
+    if (e.source === source && !fetchedByHash.has(e.hash)) removed.push(e)
+  }
+  if (!added.length && !removed.length) return
+
+  const updatedEmotes = chEmotes.filter((e) => e.source !== source || fetchedByHash.has(e.hash))
+  updatedEmotes.push(...added)
+  channelEmotesMap[key] = updatedEmotes
+
+  const label = source === 'bttv' ? 'BTTV' : 'FFZ'
+  const baselined = thirdPartyPolledChannels.has(`${key}|${source}`)
+  if (baselined) {
+    const isBulk = added.length > 3 || removed.length > 3
+    if (isBulk) {
+      log(` ${label} Poll: Bulk change for`, channelName, '—', added.length, 'added,', removed.length, 'removed')
+      if (added.length) {
+        broadcastToTabs({
+          type: 'channel_emote_added',
+          emote: null,
+          channel: channelName,
+          platform,
+          message: `${added.length} ${label} emotes added to channel (set changed)`,
+        })
+      }
+      if (removed.length) {
+        broadcastToTabs({
+          type: 'channel_emote_removed',
+          emoteName: null,
+          emoteHash: null,
+          channel: channelName,
+          platform,
+          message: `${removed.length} ${label} emotes removed from channel (set changed)`,
+        })
+      }
+    } else {
+      for (const emote of added) {
+        log(` ${label} Poll: Added emote:`, emote.name, 'to', channelName)
+        broadcastToTabs({
+          type: 'channel_emote_added',
+          emote,
+          channel: channelName,
+          platform,
+          message: `${emote.name} added to channel (${label})`,
+        })
+      }
+      for (const emote of removed) {
+        log(` ${label} Poll: Removed emote:`, emote.name, 'from', channelName)
+        broadcastToTabs({
+          type: 'channel_emote_removed',
+          emoteName: emote.name,
+          emoteHash: emote.hash,
+          channel: channelName,
+          platform,
+          message: `${emote.name} removed from channel (${label})`,
+        })
+      }
+    }
+  }
+
+  broadcastToTabs({ type: 'channel_emotes_update', emotes: updatedEmotes, channelOwner: channelName, platform })
+  browser.storage.local
+    .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
+    .catch(() => {})
+}
+
+async function pollThirdPartyEmotes() {
+  const keys = Object.keys(channelEmotesMap).filter((k) => Array.isArray(channelEmotesMap[k]))
+  if (!keys.length) return
+  // Same tab gate as the 7TV idle close — no platform tabs, no polling
+  try {
+    const tabs = await browser.tabs.query({ url: SEVENTV_PLATFORM_URLS })
+    if (tabs.length === 0) return
+  } catch {} // can't tell — fail open, poll anyway
+
+  for (const key of keys) {
+    const { platform, channel: channelName } = splitChKey(key)
+
+    // FFZ: twitch rooms only (the fetcher rejects non-login shapes itself)
+    if (platform === 'twitch') {
+      try {
+        const ffz = await fetchFFZChannelEmotes(channelName)
+        if (Array.isArray(ffz)) {
+          applyThirdPartyDiff(key, 'ffz', ffz)
+          thirdPartyPolledChannels.add(`${key}|ffz`)
+        }
+      } catch {}
+    }
+
+    // BTTV: only when the live socket can't be trusted for this room
+    if (platform === 'twitch' || platform === 'youtube') {
+      const room = bttvRoomIds.get(key)
+      if (isBttvSocketHealthy() && room && bttvJoinedRooms.has(room)) continue
+      // youtube needs the UC id the join-time fetch resolved; never resolve here
+      const ucid = platform === 'youtube' ? ytChannelIdCache.get(channelName) : null
+      if (platform === 'youtube' && !ucid) continue
+      try {
+        const bttv = await fetchBTTVChannelEmotes(channelName, ucid, platform)
+        if (Array.isArray(bttv)) {
+          applyThirdPartyDiff(key, 'bttv', bttv)
+          thirdPartyPolledChannels.add(`${key}|bttv`)
+        }
+      } catch {}
+    }
   }
 }
 
@@ -10724,6 +10869,9 @@ async function initialize() {
         log(' ✓ Restored bttvRoomIds for', bttvRoomIds.size, 'channels')
         connectBTTVSocket()
       }
+    }
+    if (Object.keys(channelEmotesMap).some((k) => Array.isArray(channelEmotesMap[k]))) {
+      startThirdPartyPolling()
     }
     if (stored.muted_users && Array.isArray(stored.muted_users)) {
       mutedUsers = new Map()

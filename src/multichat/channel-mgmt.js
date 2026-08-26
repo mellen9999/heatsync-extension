@@ -4,6 +4,28 @@
 // and getLivePlatformNames/save+loadLivePlatformMap (read by the render engine
 // and init, not just this UI) stay in main.js.
 
+// Shared dialog button (add/edit/live-platform forms). White border = primary
+// action, gray = secondary; hover snaps to white bg + black text, no motion.
+function makeMcBtn(text, primary) {
+  const btn = document.createElement('button')
+  btn.textContent = text
+  const base = primary
+    ? 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
+    : 'background:transparent;color:#808080;border:1px solid #808080;'
+  btn.style.cssText =
+    base +
+    'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;'
+  btn.addEventListener('mouseenter', () => {
+    btn.style.background = '#ffffff'
+    btn.style.color = '#000000'
+  })
+  btn.addEventListener('mouseleave', () => {
+    btn.style.background = 'transparent'
+    btn.style.color = primary ? '#ffffff' : '#808080'
+  })
+  return btn
+}
+
 function renderAddChannelForm(msgsEl) {
   _clearMessageIndices()
   msgsEl.textContent = ''
@@ -59,26 +81,6 @@ function renderAddChannelForm(msgsEl) {
 
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
-
-  const makeMcBtn = (text, primary) => {
-    const btn = document.createElement('button')
-    btn.textContent = text
-    const base = primary
-      ? 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
-      : 'background:transparent;color:#808080;border:1px solid #808080;'
-    btn.style.cssText =
-      base +
-      'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;transition:all .15s;'
-    btn.addEventListener('mouseenter', () => {
-      btn.style.background = '#ffffff'
-      btn.style.color = '#000000'
-    })
-    btn.addEventListener('mouseleave', () => {
-      btn.style.background = 'transparent'
-      btn.style.color = primary ? '#ffffff' : '#808080'
-    })
-    return btn
-  }
 
   const addBtn = makeMcBtn('add', true)
   const cancelBtn = makeMcBtn('cancel', false)
@@ -417,26 +419,6 @@ function showEditLivePlatforms() {
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
 
-  const makeMcBtn = (text, primary) => {
-    const btn = document.createElement('button')
-    btn.textContent = text
-    const base = primary
-      ? 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
-      : 'background:transparent;color:#808080;border:1px solid #808080;'
-    btn.style.cssText =
-      base +
-      'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;transition:all .15s;'
-    btn.addEventListener('mouseenter', () => {
-      btn.style.background = '#ffffff'
-      btn.style.color = '#000000'
-    })
-    btn.addEventListener('mouseleave', () => {
-      btn.style.background = 'transparent'
-      btn.style.color = primary ? '#ffffff' : '#808080'
-    })
-    return btn
-  }
-
   const saveBtn = makeMcBtn('save', true)
   const cancelBtn = makeMcBtn('cancel', false)
   const resetBtn = makeMcBtn('reset', false)
@@ -544,26 +526,6 @@ function showEditChannelForm(tabId) {
 
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
-
-  const makeMcBtn = (text, primary) => {
-    const btn = document.createElement('button')
-    btn.textContent = text
-    const base = primary
-      ? 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
-      : 'background:transparent;color:#808080;border:1px solid #808080;'
-    btn.style.cssText =
-      base +
-      'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;transition:all .15s;'
-    btn.addEventListener('mouseenter', () => {
-      btn.style.background = '#ffffff'
-      btn.style.color = '#000000'
-    })
-    btn.addEventListener('mouseleave', () => {
-      btn.style.background = 'transparent'
-      btn.style.color = primary ? '#ffffff' : '#808080'
-    })
-    return btn
-  }
 
   const saveBtn = makeMcBtn('save', true)
   const cancelBtn = makeMcBtn('cancel', false)

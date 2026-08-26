@@ -1691,7 +1691,9 @@ async function fetchFeed(append = false) {
     } catch (_) {}
   }
 
+  let appendStart = 0
   if (append) {
+    appendStart = feedMessages.length
     feedMessages.push(...msgs)
     feedPage = page
   } else {
@@ -1711,8 +1713,11 @@ async function fetchFeed(append = false) {
   // Clamp after bulk load — push-path uses .pop() cap but server can return >150 in one fetch.
   if (feedMessages.length > 150) feedMessages.length = 150
   // Hot fallback returns sorted-by-heat from past 30d — never paginate that;
-  // would conflict with the heat ranking on subsequent pages.
-  feedHasMore = usedHotFallback ? false : (resp.data?.pagination?.hasMore ?? msgs.length >= 30)
+  // would conflict with the heat ranking on subsequent pages. At the 150 cap
+  // the clamp above discards everything further fetches return, so hasMore
+  // must go false with it or the scroll sentinel fetches-and-drops forever.
+  feedHasMore =
+    usedHotFallback || feedMessages.length >= 150 ? false : (resp.data?.pagination?.hasMore ?? msgs.length >= 30)
   feedLoaded = true
   feedLastFetch = Date.now()
   // Seed latestAt.live from the newest post we just got. Without this, the
@@ -1727,7 +1732,10 @@ async function fetchFeed(append = false) {
     }, 0)
     if (newestTs > 0) noteSeenEvent('live', newestTs)
   }
-  if (currentTab === 'feed') renderFeed()
+  if (currentTab === 'feed') {
+    if (append) renderFeedAppend(appendStart)
+    else renderFeed()
+  }
 }
 
 // Onboarding card shown when feed has no posts. Replaces the bare
@@ -1953,6 +1961,36 @@ function renderFeed() {
     }, 200)
   }
   msgsEl.addEventListener('scroll', _feedVirtualScrollHandler, { signal: mcSignal, passive: true })
+}
+
+// Append-only render for infinite scroll. A full renderFeed() here rebuilt all
+// 150 rows (tearing down and re-fetching every embed iframe) and reset
+// scrollTop to 0 — yanking the reader to the top on every "load more". Only
+// the newly-fetched rows get built; scroll position is never touched.
+function renderFeedAppend(startIndex) {
+  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if (activeThread) return
+  const msgsEl = document.getElementById('hs-mc-messages')
+  if (!msgsEl) return
+  const newItems = feedMessages.slice(startIndex)
+  msgsEl.querySelector('.hs-feed-loader')?.remove()
+  if (newItems.length > 0) {
+    const frag = document.createDocumentFragment()
+    for (let i = 0; i < newItems.length; i++) {
+      const div = buildFeedMessageDiv(newItems[i])
+      // Continue the full render's 1-based zebra parity from startIndex.
+      if (zebraEnabled && (startIndex + i + 1) % 2 === 0) div.classList.add('hs-mc-zebra')
+      frag.appendChild(div)
+    }
+    msgsEl.appendChild(frag)
+  }
+  if (feedHasMore) {
+    const loader = document.createElement('div')
+    loader.className = 'hs-mc-empty hs-feed-loader'
+    loader.textContent = t('mc_social_scroll_more')
+    msgsEl.appendChild(loader)
+  }
+  if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(msgsEl)
 }
 
 function buildFeedMessageDiv(m, opUsername) {
@@ -2923,6 +2961,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
     img.src = avatarUrl
     img.alt = ''
     img.loading = 'lazy'
+    img.decoding = 'async'
     img.onerror = function () {
       this.style.visibility = 'hidden'
     }

@@ -1093,7 +1093,16 @@
       }
 
       try {
-        const all = await chrome.storage.local.get(null)
+        // Key enumeration only — getKeys (Chrome 130+/FF 134+) avoids
+        // materializing every stored value (cosmetics caches, error rings,
+        // seen-state — MBs) on the mount-blocking path just to find hs_yt_*
+        // buffers. get(null) survives solely as the legacy-browser fallback.
+        const allKeys =
+          typeof chrome.storage.local.getKeys === 'function'
+            ? await chrome.storage.local.getKeys()
+            : Object.keys(await chrome.storage.local.get(null))
+        const ytKeys = allKeys.filter((k) => k.startsWith('hs_yt_') && !k.startsWith('hs_yt_sync_'))
+        const all = ytKeys.length ? await chrome.storage.local.get(ytKeys) : {}
         // Self-heal: only YT-linked channels keep persisted YT history. Buffers
         // left behind by the old @<name>/live bleed (see
         // [[heatsync_yt_handle_guess_bleed]]) live under channels that carry NO
@@ -6543,10 +6552,16 @@
         }
         if (!outside) return
       }
-      // Surface ALL currently-present callouts on any mutation — the
-      // dataset.hsSurfaced guard makes this idempotent.
-      for (const c of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {
-        if (c.querySelector('*')) surface(c)
+      // Callouts touched by this batch: a container inserted empty gets its
+      // children as later mutations whose target IS the container (or a
+      // descendant) — closest() catches those without the document-wide
+      // querySelectorAll this used to run on every twitch react tick.
+      // New containers arriving are covered by the addedNodes walk below,
+      // pre-existing ones by the initial scan; surface() self-gates via
+      // dataset.hsSurfaced so overlap is idempotent.
+      for (const m of muts) {
+        const c = m.target instanceof Element ? m.target.closest(CALLOUT_QUEUE_SEL) : null
+        if (c && c.querySelector('*')) surface(c)
       }
       for (const m of muts) {
         for (const node of m.addedNodes) {
@@ -14089,6 +14104,14 @@
     if (mcInitialized) return
     mcInitialized = true
 
+    // Inject CSS before ANYTHING that awaits. injectStyles has zero settings
+    // deps, and a <style> tag is inert until our DOM mounts — but the health
+    // round-trip below pays a full cold-SW wake (whole background.js eval)
+    // when the worker is asleep, and the stylesheet has no reason to queue
+    // behind that. Styles being present also means the kill-switch banner
+    // itself paints styled instead of unstyled-then-styled.
+    injectStyles()
+
     // ── PHASE -1: server kill-switch ──────────────────────────────────────
     // One round-trip to background for cached health. If the server flagged
     // a broken release, bail before painting anything. Default is fail-open
@@ -14143,10 +14166,7 @@
     }
 
     // ── PHASE 0: synchronous prep (no awaits) ─────────────────────────────
-    // Inject CSS NOW so the panel paints with correct styles the moment it
-    // mounts. injectStyles has zero settings deps — moving it before any
-    // await shaves ~10-15ms off the cold visual path.
-    injectStyles()
+    // (CSS already injected above, ahead of the health round-trip.)
     // YouTube: pre-set hs-offline so the destructive layout overrides
     // (#secondary collapse, #primary fixed, recommendeds hidden) don't fire
     // on first paint for VOD viewers. checkYtLive() removes the class once

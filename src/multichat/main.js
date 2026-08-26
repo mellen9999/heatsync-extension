@@ -2058,6 +2058,13 @@
   // keeps both views of a value identical during the migration.
   const _SETTINGS_BY_KEY = new Map(SETTINGS.map((d) => [d.key, d]))
   const _settingsCache = {}
+  // True only once loadAllSettings() has actually finished writing the cache.
+  // Boot wraps that load in Promise.race(..., 5s), so a slow chrome.storage.sync
+  // lets init continue with an EMPTY cache — and getSetting() then silently
+  // returns registry defaults that look exactly like real user settings. Any
+  // one-shot migration that reads a setting must check this first, or it
+  // "migrates" against a default and burns its guard for good.
+  let _settingsHydrated = false
   // locale option labels live in browser-api.js (single source of locale
   // display names) — hydrate the schema's value-only options once
   for (const _locOpt of _SETTINGS_BY_KEY.get('hs_ui_locale').options) {
@@ -2815,6 +2822,8 @@
         }
       }
     }
+
+    _settingsHydrated = true
   }
 
   // Registry-derived reset — every entry returns to its default through the
@@ -3440,6 +3449,10 @@
     try {
       const { hs_fresh_install_hidden_tabs } = await chrome.storage.local.get('hs_fresh_install_hidden_tabs')
       if (!hs_fresh_install_hidden_tabs) return
+      // Settings lost the 5s boot race: hiddenTabs would read as its default and
+      // this would stamp against a value the user never had. Leave the flag so
+      // the next boot does it for real.
+      if (!_settingsHydrated) return
       chrome.storage.local.remove('hs_fresh_install_hidden_tabs').catch(() => {})
       const cur = getSetting('hiddenTabs')
       if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') {
@@ -3481,6 +3494,13 @@
     try {
       const { hs_feed_unhidden } = await chrome.storage.local.get('hs_feed_unhidden')
       if (hs_feed_unhidden) return
+      // THE fifth layer of the cold-start bug. Without this guard: a slow
+      // chrome.storage.sync loses the 5s boot race, _settingsCache is empty,
+      // getSetting('hiddenTabs') returns the ['pinned'] default instead of the
+      // legacy set, isLegacy is false, no feed tab is restored — and the
+      // one-shot flag has already been burned, so this install can NEVER get
+      // its feed tab back. Retry next boot instead of failing permanently.
+      if (!_settingsHydrated) return
       chrome.storage.local.set({ hs_feed_unhidden: true }).catch(() => {})
       const cur = getSetting('hiddenTabs')
       const isLegacy =

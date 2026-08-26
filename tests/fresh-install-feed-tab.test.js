@@ -32,7 +32,7 @@ function sliceBetween(marker, endMarker) {
 
 const TABS_SRC = sliceBetween('  const HIDABLE_TABS = ', '  // Timestamps on messages')
 
-function makeHarness({ hiddenTabs, local = {}, sync = {} } = {}) {
+function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}) {
   const settings = { hiddenTabs }
   const localStore = { ...local }
   const chrome = {
@@ -62,6 +62,7 @@ function makeHarness({ hiddenTabs, local = {}, sync = {} } = {}) {
     'getSetting',
     'setSetting',
     'saveUiSetting',
+    '_settingsHydrated',
     `${TABS_SRC}\nreturn { DEFAULT_HIDDEN_TABS, LEGACY_FRESH_HIDDEN_TABS, applyFreshInstallHiddenTabs, revealFreshInstallTabsOnce, unhideFeedOnce }`,
   )(
     chrome,
@@ -72,6 +73,7 @@ function makeHarness({ hiddenTabs, local = {}, sync = {} } = {}) {
     (k, v) => {
       settings[k] = v
     },
+    hydrated,
   )
   return { ...api, settings, localStore }
 }
@@ -162,5 +164,41 @@ describe('revealFreshInstallTabsOnce', () => {
     })
     await h.revealFreshInstallTabsOnce()
     expect(h.settings.hiddenTabs).toEqual(['modlog'])
+  })
+})
+
+// The fifth layer. Boot wraps loadAllSettings() in Promise.race(..., 5s); a slow
+// chrome.storage.sync loses that race and init continues with an EMPTY settings
+// cache, so getSetting('hiddenTabs') returns the ['pinned'] registry default
+// rather than whatever the install actually has. Both one-shots used to consume
+// their guard BEFORE reading, so an install that hit the slow path was left
+// with no feed tab and no way to ever get one — permanently stranded by the very
+// migration written to rescue it. These pin the retry.
+describe('one-shots vs an unhydrated settings cache', () => {
+  test('unhideFeedOnce does not burn its guard when settings never loaded', async () => {
+    const h = makeHarness({ hiddenTabs: ['pinned'], hydrated: false })
+    await h.unhideFeedOnce()
+    expect(h.localStore.hs_feed_unhidden).toBeUndefined()
+  })
+
+  test('the retry actually restores feed on the next boot', async () => {
+    const stranded = makeHarness({ hiddenTabs: ['pinned'], hydrated: false })
+    await stranded.unhideFeedOnce()
+    // next boot, settings hydrate and the real legacy set is visible
+    const h = makeHarness({ hiddenTabs: [...LEGACY], local: stranded.localStore })
+    await h.unhideFeedOnce()
+    expect(h.settings.hiddenTabs).not.toContain('feed')
+    expect(h.localStore.hs_feed_unhidden).toBe(true)
+  })
+
+  test('applyFreshInstallHiddenTabs keeps its flag when settings never loaded', async () => {
+    const h = makeHarness({
+      hiddenTabs: ['pinned'],
+      local: { hs_fresh_install_hidden_tabs: true },
+      hydrated: false,
+    })
+    await h.applyFreshInstallHiddenTabs()
+    expect(h.localStore.hs_fresh_install_hidden_tabs).toBe(true)
+    expect(h.settings.hiddenTabs).toEqual(['pinned'])
   })
 })

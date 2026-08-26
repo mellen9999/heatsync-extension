@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.66] — 2026-08-25
+
+### added
+- **bttv and ffz emote changes land mid-session** — a streamer adding, renaming or removing a bttv emote reaches your chat within moments over bttv's live socket; ffz has no socket, so it's checked about once a minute. before, both waited until you rejoined the channel. 7tv already worked this way — now all three do.
+
+### fixed
+- **loading more feed posts no longer throws you back to the top** — the feed rebuilt every row and reset your scroll position each time it fetched a page; it now appends only the new rows, and stops asking for more once it hits the end instead of fetching forever.
+- **a zero-width 7tv emote added mid-stream renders as one** — it used to sit inline like a normal emote until the next full refresh.
+- **the emote picker drops bttv search** — the search api behind it only answers signed-in bttv requests, so the option could never return anything but an error.
+
+### changed
+- **menus snap** — the context menu and volume flash lost their fade-in delays, images hint the browser to decode off the main thread, and boot sheds three stalls that queued the ui behind background work.
+
 ## [1.7.65] — 2026-08-25
 
 ### fixed

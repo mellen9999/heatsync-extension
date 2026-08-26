@@ -27,17 +27,11 @@ function sliceBetween(marker, endMarker) {
   return MAIN_SRC.slice(start, end)
 }
 
-const REPORT_SRC = sliceBetween(
-  '  const _UNCOUNTED_TABS = new Set(',
-  '\n  function switchTab(id) {',
-)
+const REPORT_SRC = sliceBetween('  const _UNCOUNTED_TABS = new Set(', '\n  function switchTab(id) {')
 
 function makeReporter() {
   const sent = []
-  const factory = new Function(
-    'safeSendMessage',
-    `${REPORT_SRC}\nreturn _reportSurfaceOpen`,
-  )
+  const factory = new Function('safeSendMessage', `${REPORT_SRC}\nreturn _reportSurfaceOpen`)
   return { report: factory((m) => sent.push(m)), sent }
 }
 

@@ -6878,10 +6878,14 @@
   const _UNCOUNTED_TABS = new Set(['discover', 'pinned', 'modlog', 'add', 'settings'])
   function _reportSurfaceOpen(id) {
     const surface =
-      id === 'feed' ? 'feed'
-        : id === 'whispers' ? 'dm'
-          : id === 'mentions' ? 'mentions'
-            : _UNCOUNTED_TABS.has(id) ? null
+      id === 'feed'
+        ? 'feed'
+        : id === 'whispers'
+          ? 'dm'
+          : id === 'mentions'
+            ? 'mentions'
+            : _UNCOUNTED_TABS.has(id)
+              ? null
               : 'multichat'
     if (!surface) return
     // Never awaited and never retried past safeSendMessage's own backoff: a

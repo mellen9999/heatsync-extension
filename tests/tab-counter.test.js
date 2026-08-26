@@ -6,7 +6,7 @@
  * `new Function` with its call-time dependencies injected. `Date` is injected
  * too, so the heat window can be tested without sleeping through it.
  */
-import { describe, expect, test, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -42,7 +42,9 @@ function load({ mode = 'unread', currentTab = 'other', now = 1_000_000 } = {}) {
 
 describe('unread', () => {
   let t
-  beforeEach(() => { t = load() })
+  beforeEach(() => {
+    t = load()
+  })
 
   test('counts messages for a backgrounded tab', () => {
     for (let i = 0; i < 3; i++) t.bumpTabActivity('a', false)
@@ -75,7 +77,9 @@ describe('unread', () => {
 
 describe('heat', () => {
   let t
-  beforeEach(() => { t = load({ mode: 'heat' }) })
+  beforeEach(() => {
+    t = load({ mode: 'heat' })
+  })
 
   test('counts the tab you are looking at — that is the whole point', () => {
     for (let i = 0; i < 4; i++) t.bumpTabActivity('a', true)
@@ -153,10 +157,7 @@ describe('rendered text', () => {
   })
 
   test('mode defaults to unread when the setting is unset', () => {
-    const build = new Function(
-      'getSetting', 'tabBarElement', 'currentTab', 'cleanup',
-      `${SRC}\nreturn tabCounterMode`,
-    )
+    const build = new Function('getSetting', 'tabBarElement', 'currentTab', 'cleanup', `${SRC}\nreturn tabCounterMode`)
     expect(build(() => undefined, null, 'x', {})()).toBe('unread')
   })
 })
@@ -187,8 +188,9 @@ describe('wiring', () => {
   })
 
   test('every has-new removal also clears the unread count', () => {
-    const removals = MAIN.split('\n').filter((l) => l.includes("remove('has-new")
-      || l.includes("remove('has-mentions', 'has-new"))
+    const removals = MAIN.split('\n').filter(
+      (l) => l.includes("remove('has-new") || l.includes("remove('has-mentions', 'has-new"),
+    )
     expect(removals.length).toBeGreaterThan(0)
     const clears = (MAIN.match(/clearTabUnread\(|markTabRead\(/g) || []).length
     expect(clears).toBeGreaterThanOrEqual(removals.length)

@@ -82,10 +82,29 @@ describe('the short-label table', () => {
   test('parses, and covers the twitch/kick/youtube globals', () => {
     const map = Object.fromEntries(short)
     expect(short.length).toBeGreaterThan(20)
-    for (const n of ['broadcaster', 'moderator', 'vip', 'subscriber', 'founder',
-      'staff', 'admin', 'partner', 'verified', 'member', 'turbo', 'og',
-      'premium', 'bits', 'sub-gifter', 'sub_gifter', 'predictions',
-      'hype-train', 'no_audio', 'no_video', 'first-msg']) {
+    for (const n of [
+      'broadcaster',
+      'moderator',
+      'vip',
+      'subscriber',
+      'founder',
+      'staff',
+      'admin',
+      'partner',
+      'verified',
+      'member',
+      'turbo',
+      'og',
+      'premium',
+      'bits',
+      'sub-gifter',
+      'sub_gifter',
+      'predictions',
+      'hype-train',
+      'no_audio',
+      'no_video',
+      'first-msg',
+    ]) {
       expect(map[n], n).toBeTruthy()
     }
   })
@@ -111,6 +130,10 @@ describe('the short-label table', () => {
   test('the chip text is escaped on the way into the DOM', () => {
     const start = API.indexOf('function renderBadges(')
     const body = API.slice(start, API.indexOf('\nfunction renderThirdPartyBadges', start))
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: this IS the literal
+    // source substring being asserted — renderBadges builds its HTML with a
+    // template literal, and the point of the test is that `text` goes through
+    // escapeHtml on the way in.
     expect(body).toContain('${escapeHtml(text)}</span>')
   })
 })

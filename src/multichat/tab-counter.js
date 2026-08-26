@@ -116,8 +116,7 @@ function tabCounterMode() {
 }
 
 function _tabCountText(tabId, mode, isActive) {
-  const n =
-    mode === 'heat' ? tabHeatCount(tabId) : mode === 'off' ? 0 : isActive ? 0 : tabUnreadCount(tabId)
+  const n = mode === 'heat' ? tabHeatCount(tabId) : mode === 'off' ? 0 : isActive ? 0 : tabUnreadCount(tabId)
   if (n <= 0) return ''
   return n > TAB_COUNT_MAX ? `${TAB_COUNT_MAX}+` : String(n)
 }

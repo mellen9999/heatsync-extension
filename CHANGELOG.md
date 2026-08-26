@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.65] — 2026-08-25
+
+### fixed
+- **the feed tab is there when you install** — new installs hid it until you logged in, from back when a logged-out feed really was blank. it hasn't been blank since august 16, so the tab was hiding 31 posts behind a login nobody had a reason to do yet. if you installed in the last month it comes back on its own; if you hid it yourself, it stays hidden.
+
+### changed
+- **the extension says which of its tabs you opened** — a name like "feed", nothing else, sent with the update check that already runs every few minutes. no ids that survive the day, no timing, no content, nothing stored. it exists because there was no way to tell whether anyone ever reached the social side, and guessing was making bad calls.
+
 ## [1.7.64] — 2026-08-24
 
 ### added

@@ -12,6 +12,11 @@
 - **vi mode: `space` is a leader** — in normal mode `space` then `/` `n` `N` `1`-`9` `]` `[` `t` `\` runs search, match cycling, tab switching, the tab picker and the chat toggle without leaving the composer. the outline turns orange while it's armed, and `?` lists them.
 - **alt+1-9 and alt+]/[ switch tabs from anywhere** — they used to be ignored while you were typing, for no reason: alt+digit isn't text.
 
+## [1.7.67] — 2026-08-26
+
+### fixed
+- **the feed tab comes back if it went missing** — the update that was meant to hand the feed tab back could quietly fail on a slow start and then never try again, leaving the tab hidden for good. it now waits until your settings have actually loaded before deciding, retries if they haven't, and gives the tab back to anyone the earlier version missed.
+
 ## [1.7.66] — 2026-08-25
 
 ### added

@@ -166,11 +166,11 @@
     // (7TV GQL, BTTV REST, FFZ REST). Results are normalized to a uniform shape
     // and sorted by each provider's native popularity metric. AbortController
     // cancels stale in-flight requests when the query changes.
-    const PROVIDER_NAMES = ['7tv', 'bttv', 'ffz']
-    const providerResults = { '7tv': [], bttv: [], ffz: [] }
-    const providerLastQuery = { '7tv': '', bttv: '', ffz: '' }
-    const providerInFlight = { '7tv': false, bttv: false, ffz: false }
-    const providerErrors = { '7tv': null, bttv: null, ffz: null }
+    const PROVIDER_NAMES = ['7tv', 'ffz']
+    const providerResults = { '7tv': [], ffz: [] }
+    const providerLastQuery = { '7tv': '', ffz: '' }
+    const providerInFlight = { '7tv': false, ffz: false }
+    const providerErrors = { '7tv': null, ffz: null }
     const _providerAborts = { '7tv': null, bttv: null, ffz: null }
 
     // Heatsync indexed search — supplements provider APIs with SQL substring
@@ -192,12 +192,13 @@
         if (raw) {
           const arr = JSON.parse(raw)
           if (Array.isArray(arr) && arr.length) {
-            // Migrate old 'here' entries — local matches are now implicit.
-            return new Set(arr.filter((s) => s !== 'here'))
+            // Migrate old 'here' entries (local matches are now implicit) and
+            // 'bttv' (its anonymous search API is gone — chip removed).
+            return new Set(arr.filter((s) => s !== 'here' && s !== 'bttv'))
           }
         }
       } catch (_) {}
-      return new Set(['7tv', 'bttv', 'ffz'])
+      return new Set(['7tv', 'ffz'])
     })()
     function saveSources() {
       try {
@@ -205,7 +206,7 @@
       } catch (_) {}
     }
     function hasExternalSource() {
-      return pickerSources.has('7tv') || pickerSources.has('bttv') || pickerSources.has('ffz')
+      return pickerSources.has('7tv') || pickerSources.has('ffz')
     }
 
     // IndexedDB cache for emote metadata
@@ -2262,7 +2263,6 @@
         <input type="text" id="heatsync-search" placeholder="search emotes…" autocomplete="off">
         <div class="hs-src-chips" id="hs-src-chips" title="toggle which providers to search">
           <button class="hs-src-chip ${pickerSources.has('7tv') ? 'active' : ''}" data-src="7tv" title="include 7TV results">7tv</button>
-          <button class="hs-src-chip ${pickerSources.has('bttv') ? 'active' : ''}" data-src="bttv" title="include BetterTTV results">bttv</button>
           <button class="hs-src-chip ${pickerSources.has('ffz') ? 'active' : ''}" data-src="ffz" title="include FrankerFaceZ results">ffz</button>
         </div>
       </div>
@@ -3929,21 +3929,11 @@
       }))
     }
 
-    // BTTV: REST search sorted by popularity (server-side default).
-    async function searchBttvApi(q, signal) {
-      const url = `https://api.betterttv.net/3/emotes/shared/search?query=${encodeURIComponent(q)}&offset=0&limit=200`
-      const resp = await fetch(url, { signal })
-      if (!resp.ok) throw new Error(`bttv ${resp.status}`)
-      const items = await resp.json()
-      if (!Array.isArray(items)) return []
-      return items.map((e) => ({
-        name: e.code,
-        url: `https://cdn.betterttv.net/emote/${e.id}/3x.${e.imageType || 'webp'}`,
-        provider: 'bttv',
-        id: e.id,
-        animated: !!e.animated,
-      }))
-    }
+    // No BTTV search: api.betterttv.net/3/emotes/shared/search answers 403 for
+    // anonymous callers (auth-only now). The overlay picker dropped its BTTV
+    // catalog for the same reason — see src/multichat/input.js. BTTV emotes
+    // still arrive via channel sets, globals, and inventories; only the
+    // cross-catalog SEARCH is gone.
 
     // FFZ: REST search sorted by usage count descending.
     async function searchFfzApi(q, signal) {
@@ -4045,7 +4035,7 @@
         _providerAborts[p] = ac
         providerInFlight[p] = true
         providerErrors[p] = null
-        const fn = p === '7tv' ? search7tvApi : p === 'bttv' ? searchBttvApi : searchFfzApi
+        const fn = p === '7tv' ? search7tvApi : searchFfzApi
         fn(q, ac.signal)
           .then((items) => {
             if (ac.signal.aborted) return

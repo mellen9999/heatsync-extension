@@ -4821,6 +4821,10 @@ function handle7TVEmoteSetUpdate(updateData) {
         source: '7tv',
         hash: emote.id,
         animated: !!emote.data?.animated,
+        // Same flag decode as every other 7TV ingest — without it a zero-width
+        // emote pushed live rendered inline until the next full refetch
+        flags: emote.flags || emote.data?.flags || 0,
+        zeroWidth: !!(emote.flags & 257 || emote.data?.flags & 257),
       }
 
       const chEmotes = Array.isArray(channelEmotesMap[key]) ? channelEmotesMap[key] : []

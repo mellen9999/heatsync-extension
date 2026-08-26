@@ -9001,7 +9001,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b7de4e8+-202608260059' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '77a3989+-202608260059' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -67655,10 +67655,25 @@ const STORAGE_KEY = 'heatsync_multichat'
   const HIDABLE_TABS = ['feed', 'whispers', 'mentions', 'pinned', 'modlog']
   // Real steady-state default stays 'pinned' only (see hiddenTabs registry entry
   // in settings-schema.js) — this wider set is the fresh-install-only target:
-  // feed/whispers/mentions/modlog are empty or login-walled for a signed-out
+  // whispers/mentions/modlog are genuinely login-walled for a signed-out
   // first-run user, so applyFreshInstallHiddenTabs() pushes new installs here
   // once, and revealFreshInstallTabsOnce() un-hides them on first login.
-  const DEFAULT_HIDDEN_TABS = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
+  //
+  // `feed` was on this list until 2026-08-25 and must never go back on it. It
+  // was correct when written (2026-07-27): the feed really was an empty wall
+  // for a signed-out user. The 2026-08-16 cold-start fix ended that — /hot
+  // serves 30 real rows anonymously and social.js dropped its auth gate on the
+  // explicit reasoning that "a logged-out session is EVERY brand-new install"
+  // — but this list was not revisited, so the tab showing that feed stayed off
+  // the bar until first login. Every new install therefore had no feed tab at
+  // all, which is why prod measured ~5 live installs a day and ZERO requests to
+  // the feed endpoint over three days. Same bug as the other three layers, one
+  // repo up: each looked fixed from the layer above.
+  const DEFAULT_HIDDEN_TABS = ['pinned', 'whispers', 'mentions', 'modlog']
+  // The set stamped on installs from 2026-07-27 to 2026-08-25. Still recognised
+  // so those installs are treated as "never customised" rather than stranded
+  // with a hidden feed forever.
+  const LEGACY_FRESH_HIDDEN_TABS = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
   let hiddenTabs = new Set(['pinned'])
 
   // One-time fresh-install tab hiding: background.js stamps hs_fresh_install_hidden_tabs
@@ -67689,11 +67704,35 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (!ui_settings?.hiddenTabsRevealPending) return
       saveUiSetting('hiddenTabsRevealPending', false)
       const cur = getSetting('hiddenTabs')
-      const stillDefault =
+      const matches = (set) => Array.isArray(cur) && cur.length === set.length && set.every((id) => cur.includes(id))
+      // Either shape counts as untouched: an install stamped before feed came
+      // off the list still carries the legacy set, and comparing only against
+      // the current one would leave it hidden-forever instead of revealed.
+      if (matches(DEFAULT_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS)) setSetting('hiddenTabs', ['pinned'])
+    } catch (_) {}
+  }
+
+  // One-shot: give the feed tab back to installs stamped while `feed` was on the
+  // fresh-install hidden list (2026-07-27 → 2026-08-25).
+  //
+  // Without this, the fix above only helps installs made after the next release:
+  // everyone already carrying the legacy set keeps a hidden feed until they log
+  // in, which is the exact wall being removed — and they are the only users
+  // there are. Acts solely on an EXACT match of the legacy set, which no manual
+  // edit can leave behind, so a deliberate choice to hide the feed is never
+  // overridden. Removes only `feed`; whispers/mentions/modlog stay hidden until
+  // login, because those really are login-walled.
+  async function unhideFeedOnce() {
+    try {
+      const { hs_feed_unhidden } = await chrome.storage.local.get('hs_feed_unhidden')
+      if (hs_feed_unhidden) return
+      chrome.storage.local.set({ hs_feed_unhidden: true }).catch(() => {})
+      const cur = getSetting('hiddenTabs')
+      const isLegacy =
         Array.isArray(cur) &&
-        cur.length === DEFAULT_HIDDEN_TABS.length &&
-        DEFAULT_HIDDEN_TABS.every((id) => cur.includes(id))
-      if (stillDefault) setSetting('hiddenTabs', ['pinned'])
+        cur.length === LEGACY_FRESH_HIDDEN_TABS.length &&
+        LEGACY_FRESH_HIDDEN_TABS.every((id) => cur.includes(id))
+      if (isLegacy) setSetting('hiddenTabs', DEFAULT_HIDDEN_TABS)
     } catch (_) {}
   }
 
@@ -78492,6 +78531,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     // (see applyFreshInstallHiddenTabs above). Must land before the tab bar's
     // first real paint, so it runs right after settings hydration.
     await applyFreshInstallHiddenTabs()
+    // Then hand the feed tab back to installs stamped while it was on that
+    // list — must also land before the tab bar's first paint.
+    await unhideFeedOnce()
     // Init done — drop the cache so subsequent reads see fresh data.
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage

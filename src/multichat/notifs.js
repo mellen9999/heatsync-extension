@@ -563,6 +563,30 @@ const HsNotifs = (() => {
     },
   })
 
+  // Tab mode — the rover cursor's status line, mirroring the site's vim
+  // mode-line. Persistent (no timeout): tab mode is a MODE, so the line has to
+  // stay up for exactly as long as the mode is on, and exitTabMode dismisses it
+  // by key. A floating corner element like the site's would sit on top of the
+  // host page's own UI, which is why this rides the overlay's own statusbar.
+  registerType('tab-mode', {
+    layer: 'statusbar',
+    dedupeKey: () => 'tab-mode',
+    dedupePolicy: 'replace',
+    render: ({ data }) => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-mc-tabmode-line'
+      const tag = document.createElement('span')
+      tag.className = 'hs-mc-tabmode-tag'
+      tag.textContent = '-- TABS --'
+      el.appendChild(tag)
+      const rest = document.createElement('span')
+      rest.className = 'hs-mc-tabmode-hint'
+      rest.textContent = typeof data?.text === 'string' ? data.text : ''
+      el.appendChild(rest)
+      return el
+    },
+  })
+
   // Twitch resub-share — user's own resub callout. Surfaces above input,
   // shows month count + Share button (clicks the native Twitch share so the
   // existing _enterResubShareMode flow runs) and X to dismiss. Native DOM is

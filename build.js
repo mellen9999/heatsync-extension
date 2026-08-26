@@ -700,6 +700,7 @@ const MULTICHAT_MODULES = [
   'styles.js',
   'seen-state.js',
   'tab-counter.js',
+  'tab-mode.js',
   'filter-rules.js',
   'user-notes.js',
   'mod-log.js',

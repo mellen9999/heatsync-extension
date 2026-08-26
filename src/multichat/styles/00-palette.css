@@ -47,6 +47,17 @@
       --hs-reply-tint: rgba(0, 255, 255, 0.10);
       --hs-gold-tint: rgba(255, 215, 0, 0.10);
       --hs-warn-bg: #2e2e08;  /* solid — avoids alpha-stacking artifacts */
+      /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
+         white bg = the POINTER is on a control (:hover/:active).
+         --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the
+         tab-mode rover). They used to both be white, so the cursor vanished
+         under the mouse. Cyan and not the brand orange: #ff8700 is xterm-256
+         and this chrome is base-ANSI; of the sixteen, red/green/yellow are
+         already error/live/warn — a cursor must never read as a status — and
+         magenta is the nsfw hue. --hs-reply is the same cyan but that lives on
+         message borders, a different surface, so nothing collides on screen. */
+      --hs-sel: #00ffff;      /* 14 — keyboard cursor, everywhere */
+      --hs-sel-fg: #000;
       /* platform — values frozen; scope: adjacent to a platform glyph only */
       --hs-plat-twitch: #9146ff;
       --hs-plat-kick: #53fc18;

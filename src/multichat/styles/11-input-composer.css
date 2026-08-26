@@ -211,11 +211,11 @@
     }
     /* .selected is the ARROW-KEY cursor, :hover above is the pointer. They
        were both white, so the cursor was invisible under the mouse and you
-       could not tell which row Enter would pick. Orange is where the keyboard
-       is — same split as heatsync.org (--sel-bg). */
+       could not tell which row Enter would pick. --hs-sel is where the
+       keyboard is — same split as heatsync.org (--sel-bg). */
     .hs-mc-emoji-row.selected {
-      background: var(--hs-brand);
-      color: #000;
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
     }
     .hs-mc-emoji-preview {
       font-size: 18px;
@@ -272,10 +272,10 @@
       background: #fff;
       color: #000;
     }
-    /* arrow-key cursor — orange, see .hs-mc-emoji-row.selected above */
+    /* arrow-key cursor — see .hs-mc-emoji-row.selected above */
     .hs-mc-slash-row.selected {
-      background: var(--hs-brand);
-      color: #000;
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
     }
     .hs-mc-slash-name { color: #fff; font-weight: 700; }
     .hs-mc-slash-args { color: var(--hs-muted); flex-shrink: 0; }

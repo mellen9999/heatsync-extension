@@ -1698,6 +1698,46 @@ function initInput() {
     )
   }
 
+  // Tab mode — `t` opens a rover cursor over the tab strip (tab-mode.js).
+  //
+  // Registered BEFORE the type-reveal handler below and in the capture phase,
+  // because that one focuses the composer on any printable key — a bare `t`
+  // would land in the input instead of opening the mode.
+  //
+  // Gated on vi mode, which is off by default: this runs inside twitch.tv's
+  // page, so a bare letter is theirs until the user has explicitly asked for vi
+  // keys. Once the mode IS open it is modal and owns every key, which is what
+  // a mode means.
+  if (!_onceGuardsInput.tabModeHandler) {
+    _onceGuardsInput.tabModeHandler = true
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.ctrlKey || e.altKey || e.metaKey) return
+        const active = document.activeElement
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
+        try {
+          if (tabModeActive()) {
+            if (handleTabModeKey(e)) {
+              e.preventDefault()
+              e.stopImmediatePropagation()
+            }
+            return
+          }
+          if (e.key !== 't' || !viModeEnabled) return
+          // enterTabMode returns false when there is no visible strip — let the
+          // key through to the host page rather than swallowing it for nothing.
+          if (!enterTabMode()) return
+          e.preventDefault()
+          e.stopImmediatePropagation()
+        } catch (err) {
+          log('tab-mode keydown:', err)
+        }
+      },
+      { capture: true, signal: mcSignal },
+    )
+  }
+
   // Auto-reveal input bar when user starts typing anywhere
   if (!_onceGuardsInput.typeRevealHandler) {
     _onceGuardsInput.typeRevealHandler = true

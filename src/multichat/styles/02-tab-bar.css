@@ -75,6 +75,27 @@
       flex-shrink: 0;
     }
 
+    /* Tab-mode rover cursor — the keyboard invert (--hs-sel), deliberately not
+       the white one: white is the pointer, so a hovered tab and the tab under
+       the cursor stay tellable apart. !important because several tab-state
+       rules below are !important and would otherwise swallow it. */
+    .hs-mc-tab.hs-mc-tab-cursor {
+      background: var(--hs-sel) !important;
+      color: var(--hs-sel-fg) !important;
+      border-color: var(--hs-sel) !important;
+      border-radius: 0 !important;
+    }
+    /* The status line tab mode puts in the statusbar. Tag reads like a vim
+       mode-line; the hint after it is dim so the position/label leads. */
+    .hs-mc-tabmode-tag {
+      color: var(--hs-sel);
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-tabmode-hint {
+      color: var(--hs-muted);
+      margin-left: 8px;
+    }
+
     /* Idle hover — subtle brighten */
     .hs-mc-tab:not(.active):not(.has-new):hover {
       background: #fff !important;

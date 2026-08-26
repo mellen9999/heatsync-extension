@@ -276,6 +276,32 @@ function renderAddChannelForm(msgsEl) {
   cleanup.raf(() => twitch.input.focus())
 }
 
+/**
+ * Move a channel one slot up or down in the strip. Tab mode's J/K is the only
+ * caller — there has never been a reorder path here, drag or otherwise, so the
+ * order you added channels in was the order you were stuck with.
+ *
+ * Refuses at the ends rather than wrapping: the strip also holds the fixed
+ * surfaces (feed/mentions/live), so wrapping would look like a channel jumping
+ * across them.
+ *
+ * @param {string} tabId
+ * @param {number} delta -1 up, 1 down
+ * @returns {boolean} whether it actually moved
+ */
+function moveChannelOrder(tabId, delta) {
+  const list = config?.channels
+  if (!Array.isArray(list)) return false
+  const from = list.findIndex((c) => c.id === tabId)
+  const to = from + delta
+  if (from < 0 || to < 0 || to >= list.length) return false
+  const [moved] = list.splice(from, 1)
+  list.splice(to, 0, moved)
+  saveConfig()
+  updateTabBar()
+  return true
+}
+
 function removeChannel(tabId) {
   const ch = getChannelById(tabId)
   config.channels = config.channels.filter((c) => c.id !== tabId)

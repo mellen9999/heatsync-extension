@@ -9001,7 +9001,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4558a7a+-202608260021' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4233fe2+-202608260033' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -10514,6 +10514,30 @@ const HsNotifs = (() => {
     },
   })
 
+  // Tab mode — the rover cursor's status line, mirroring the site's vim
+  // mode-line. Persistent (no timeout): tab mode is a MODE, so the line has to
+  // stay up for exactly as long as the mode is on, and exitTabMode dismisses it
+  // by key. A floating corner element like the site's would sit on top of the
+  // host page's own UI, which is why this rides the overlay's own statusbar.
+  registerType('tab-mode', {
+    layer: 'statusbar',
+    dedupeKey: () => 'tab-mode',
+    dedupePolicy: 'replace',
+    render: ({ data }) => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-mc-tabmode-line'
+      const tag = document.createElement('span')
+      tag.className = 'hs-mc-tabmode-tag'
+      tag.textContent = '-- TABS --'
+      el.appendChild(tag)
+      const rest = document.createElement('span')
+      rest.className = 'hs-mc-tabmode-hint'
+      rest.textContent = typeof data?.text === 'string' ? data.text : ''
+      el.appendChild(rest)
+      return el
+    },
+  })
+
   // Twitch resub-share — user's own resub callout. Surfaces above input,
   // shows month count + Share button (clicks the native Twitch share so the
   // existing _enterResubShareMode flow runs) and X to dismiss. Native DOM is
@@ -10903,6 +10927,17 @@ function injectStyles() {
       --hs-reply-tint: rgba(0, 255, 255, 0.10);
       --hs-gold-tint: rgba(255, 215, 0, 0.10);
       --hs-warn-bg: #2e2e08;  /* solid — avoids alpha-stacking artifacts */
+      /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
+         white bg = the POINTER is on a control (:hover/:active).
+         --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the
+         tab-mode rover). They used to both be white, so the cursor vanished
+         under the mouse. Cyan and not the brand orange: #ff8700 is xterm-256
+         and this chrome is base-ANSI; of the sixteen, red/green/yellow are
+         already error/live/warn — a cursor must never read as a status — and
+         magenta is the nsfw hue. --hs-reply is the same cyan but that lives on
+         message borders, a different surface, so nothing collides on screen. */
+      --hs-sel: #00ffff;      /* 14 — keyboard cursor, everywhere */
+      --hs-sel-fg: #000;
       /* platform — values frozen; scope: adjacent to a platform glyph only */
       --hs-plat-twitch: #9146ff;
       --hs-plat-kick: #53fc18;
@@ -11100,6 +11135,27 @@ function injectStyles() {
       opacity: 0.6;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
+    }
+
+    /* Tab-mode rover cursor — the keyboard invert (--hs-sel), deliberately not
+       the white one: white is the pointer, so a hovered tab and the tab under
+       the cursor stay tellable apart. !important because several tab-state
+       rules below are !important and would otherwise swallow it. */
+    .hs-mc-tab.hs-mc-tab-cursor {
+      background: var(--hs-sel) !important;
+      color: var(--hs-sel-fg) !important;
+      border-color: var(--hs-sel) !important;
+      border-radius: 0 !important;
+    }
+    /* The status line tab mode puts in the statusbar. Tag reads like a vim
+       mode-line; the hint after it is dim so the position/label leads. */
+    .hs-mc-tabmode-tag {
+      color: var(--hs-sel);
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-tabmode-hint {
+      color: var(--hs-muted);
+      margin-left: 8px;
     }
 
     /* Idle hover — subtle brighten */
@@ -15490,11 +15546,11 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     }
     /* .selected is the ARROW-KEY cursor, :hover above is the pointer. They
        were both white, so the cursor was invisible under the mouse and you
-       could not tell which row Enter would pick. Orange is where the keyboard
-       is — same split as heatsync.org (--sel-bg). */
+       could not tell which row Enter would pick. --hs-sel is where the
+       keyboard is — same split as heatsync.org (--sel-bg). */
     .hs-mc-emoji-row.selected {
-      background: var(--hs-brand);
-      color: #000;
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
     }
     .hs-mc-emoji-preview {
       font-size: 18px;
@@ -15551,10 +15607,10 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       background: #fff;
       color: #000;
     }
-    /* arrow-key cursor — orange, see .hs-mc-emoji-row.selected above */
+    /* arrow-key cursor — see .hs-mc-emoji-row.selected above */
     .hs-mc-slash-row.selected {
-      background: var(--hs-brand);
-      color: #000;
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
     }
     .hs-mc-slash-name { color: #fff; font-weight: 700; }
     .hs-mc-slash-args { color: var(--hs-muted); flex-shrink: 0; }
@@ -21974,6 +22030,218 @@ function _syncTabCounterTicker(mode) {
     cleanup.clearInterval(_tabCounterTimer)
     _tabCounterTimer = null
   }
+}
+
+
+// --- multichat/tab-mode.js ---
+// Tab mode — a rover cursor over the chat tab strip. The extension half of the
+// site's client/vim/tab-mode.js; same keys, same rules, so muscle memory
+// carries between heatsync.org, this overlay and the terminal client.
+//
+//   j/k        move the cursor (counts work: 3j)
+//   g/G        first / last
+//   enter, l   open the tab under the cursor, then leave
+//   J/K        move the tab itself down / up
+//   d, x       close the tab under the cursor
+//   a, o       add a channel
+//   esc, q, t  leave without switching
+//
+// Motion and commit are separate — j/k never switch a tab. That separation is
+// the only reason `d` (close) is safe to put on a single key at all.
+//
+// Two things differ from the site, both because this runs inside somebody
+// else's page:
+//
+//   1. `t` is gated on vi mode (default off). The site owns its keyboard; here
+//      a bare letter would be taken out of twitch.tv's hands, so nothing is
+//      bound until the user has explicitly asked for vi keys. Once the mode is
+//      ON it is modal and does own the keyboard — that part is expected.
+//   2. The status line rides the overlay's own statusbar rather than a floating
+//      corner element, which would sit on top of the host page's UI.
+
+const TAB_CURSOR_CLASS = 'hs-mc-tab-cursor'
+
+const _tabMode = { active: false, cursor: 0, count: '' }
+
+/**
+ * Tabs the rover walks, in strip order: the surfaces plus every channel.
+ * Excludes `+` (that's what `a` is for) and the util cluster (settings,
+ * collapse, popout, subscribe — actions, not places), and anything
+ * applyHiddenTabs has display:none'd.
+ * @returns {HTMLElement[]}
+ */
+function tabModeTabs() {
+  if (!tabBarElement) return []
+  // Chat hidden (the `\` toggle) → no visible strip to put a cursor on, so the
+  // mode refuses to open and `t` falls through to the host page untouched.
+  if (!tabBarElement.offsetParent && getComputedStyle(tabBarElement).position !== 'fixed') return []
+  const scroll = tabBarElement.querySelector('.hs-mc-tabs-scroll')
+  if (!scroll) return []
+  return Array.from(scroll.querySelectorAll('.hs-mc-tab[data-tab]')).filter(
+    (t) => t.dataset.tab !== 'add' && t.style.display !== 'none',
+  )
+}
+
+/** Only real channels can be reordered or closed; surfaces are fixtures. */
+function isChannelTab(tabId) {
+  return !!tabId && typeof getChannelById === 'function' && !!getChannelById(tabId)
+}
+
+function _tabModeStatus(text) {
+  try {
+    HsNotifs.emit('tab-mode', { text })
+  } catch (_) {}
+}
+
+function _tabModeClearStatus() {
+  try {
+    HsNotifs.dismissByKey('tab-mode', 'tab-mode')
+  } catch (_) {}
+}
+
+function _tabModeTakeCount() {
+  const n = _tabMode.count ? Number.parseInt(_tabMode.count, 10) : 1
+  _tabMode.count = ''
+  return Math.max(1, Math.min(n, 999))
+}
+
+function _tabModeRender() {
+  const tabs = tabModeTabs()
+  for (const t of tabs) t.classList.remove(TAB_CURSOR_CLASS)
+  if (!tabs.length) {
+    exitTabMode()
+    return
+  }
+  // The strip can shrink under the cursor (a tab closed, a rebuild) — clamp
+  // here rather than in every key path, so none of them can land on undefined
+  // and silently drop out of the mode.
+  _tabMode.cursor = Math.max(0, Math.min(_tabMode.cursor, tabs.length - 1))
+  const cur = tabs[_tabMode.cursor]
+  cur.classList.add(TAB_CURSOR_CLASS)
+  cur.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
+  const label = (cur.textContent || '').trim()
+  _tabModeStatus(
+    `${_tabMode.cursor + 1}/${tabs.length} ${label} · jk move · enter open · JK reorder · d close · a add · esc`,
+  )
+}
+
+/** @returns {boolean} whether the mode actually opened */
+function enterTabMode() {
+  const tabs = tabModeTabs()
+  if (!tabs.length) return false
+  _tabMode.active = true
+  _tabMode.count = ''
+  // Start on the open tab, not the top of the strip — the thing you're looking
+  // at is the thing you most likely want to act on.
+  const activeIdx = tabs.findIndex((t) => t.dataset.tab === currentTab)
+  _tabMode.cursor = activeIdx >= 0 ? activeIdx : 0
+  _tabModeRender()
+  return true
+}
+
+function exitTabMode() {
+  if (!_tabMode.active) return
+  _tabMode.active = false
+  _tabMode.count = ''
+  for (const t of tabModeTabs()) t.classList.remove(TAB_CURSOR_CLASS)
+  _tabModeClearStatus()
+}
+
+function tabModeActive() {
+  return _tabMode.active
+}
+
+/**
+ * @param {KeyboardEvent} e
+ * @returns {boolean} consumed — the caller preventDefaults on true
+ */
+function handleTabModeKey(e) {
+  if (!_tabMode.active) return false
+  const k = e.key
+  const tabs = tabModeTabs()
+  if (!tabs.length) {
+    exitTabMode()
+    return true
+  }
+  const last = tabs.length - 1
+  _tabMode.cursor = Math.max(0, Math.min(_tabMode.cursor, last))
+
+  if (k === 'Escape' || k === 'q' || k === 't') {
+    exitTabMode()
+    return true
+  }
+
+  if ((k >= '1' && k <= '9') || (k === '0' && _tabMode.count)) {
+    _tabMode.count += k
+    return true
+  }
+
+  if (k === 'j' || k === 'ArrowDown') {
+    _tabMode.cursor = Math.min(last, _tabMode.cursor + _tabModeTakeCount())
+    _tabModeRender()
+    return true
+  }
+  if (k === 'k' || k === 'ArrowUp') {
+    _tabMode.cursor = Math.max(0, _tabMode.cursor - _tabModeTakeCount())
+    _tabModeRender()
+    return true
+  }
+  if (k === 'g' || k === 'Home') {
+    _tabMode.cursor = 0
+    _tabMode.count = ''
+    _tabModeRender()
+    return true
+  }
+  if (k === 'G' || k === 'End') {
+    _tabMode.cursor = last
+    _tabMode.count = ''
+    _tabModeRender()
+    return true
+  }
+
+  if (k === 'Enter' || k === 'l' || k === 'ArrowRight') {
+    const id = tabs[_tabMode.cursor]?.dataset.tab
+    exitTabMode()
+    if (id) switchTab(id)
+    return true
+  }
+
+  if (k === 'J' || k === 'K') {
+    const id = tabs[_tabMode.cursor]?.dataset.tab
+    if (!isChannelTab(id)) {
+      _tabModeStatus('that tab is fixed')
+      return true
+    }
+    const delta = k === 'J' ? 1 : -1
+    if (moveChannelOrder(id, delta)) {
+      // Follow the tab, not the slot — the point of J/K is carrying one channel
+      // through the list.
+      _tabMode.cursor = Math.max(0, Math.min(last, _tabMode.cursor + delta))
+    }
+    _tabModeRender()
+    return true
+  }
+
+  if (k === 'd' || k === 'x') {
+    const id = tabs[_tabMode.cursor]?.dataset.tab
+    if (!isChannelTab(id)) {
+      _tabModeStatus("that tab can't be closed")
+      return true
+    }
+    removeChannel(id)
+    // One fewer tab: land the cursor on whatever slid into the gap.
+    _tabMode.cursor = Math.max(0, Math.min(_tabMode.cursor, last - 1))
+    _tabModeRender()
+    return true
+  }
+
+  if (k === 'a' || k === 'o') {
+    exitTabMode()
+    switchTab('add')
+    return true
+  }
+
+  return true // swallow stray keys; stay in tab mode
 }
 
 
@@ -45454,6 +45722,46 @@ function initInput() {
     )
   }
 
+  // Tab mode — `t` opens a rover cursor over the tab strip (tab-mode.js).
+  //
+  // Registered BEFORE the type-reveal handler below and in the capture phase,
+  // because that one focuses the composer on any printable key — a bare `t`
+  // would land in the input instead of opening the mode.
+  //
+  // Gated on vi mode, which is off by default: this runs inside twitch.tv's
+  // page, so a bare letter is theirs until the user has explicitly asked for vi
+  // keys. Once the mode IS open it is modal and owns every key, which is what
+  // a mode means.
+  if (!_onceGuardsInput.tabModeHandler) {
+    _onceGuardsInput.tabModeHandler = true
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.ctrlKey || e.altKey || e.metaKey) return
+        const active = document.activeElement
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
+        try {
+          if (tabModeActive()) {
+            if (handleTabModeKey(e)) {
+              e.preventDefault()
+              e.stopImmediatePropagation()
+            }
+            return
+          }
+          if (e.key !== 't' || !viModeEnabled) return
+          // enterTabMode returns false when there is no visible strip — let the
+          // key through to the host page rather than swallowing it for nothing.
+          if (!enterTabMode()) return
+          e.preventDefault()
+          e.stopImmediatePropagation()
+        } catch (err) {
+          log('tab-mode keydown:', err)
+        }
+      },
+      { capture: true, signal: mcSignal },
+    )
+  }
+
   // Auto-reveal input bar when user starts typing anywhere
   if (!_onceGuardsInput.typeRevealHandler) {
     _onceGuardsInput.typeRevealHandler = true
@@ -61962,6 +62270,32 @@ function renderAddChannelForm(msgsEl) {
 
   // Auto-focus twitch input
   cleanup.raf(() => twitch.input.focus())
+}
+
+/**
+ * Move a channel one slot up or down in the strip. Tab mode's J/K is the only
+ * caller — there has never been a reorder path here, drag or otherwise, so the
+ * order you added channels in was the order you were stuck with.
+ *
+ * Refuses at the ends rather than wrapping: the strip also holds the fixed
+ * surfaces (feed/mentions/live), so wrapping would look like a channel jumping
+ * across them.
+ *
+ * @param {string} tabId
+ * @param {number} delta -1 up, 1 down
+ * @returns {boolean} whether it actually moved
+ */
+function moveChannelOrder(tabId, delta) {
+  const list = config?.channels
+  if (!Array.isArray(list)) return false
+  const from = list.findIndex((c) => c.id === tabId)
+  const to = from + delta
+  if (from < 0 || to < 0 || to >= list.length) return false
+  const [moved] = list.splice(from, 1)
+  list.splice(to, 0, moved)
+  saveConfig()
+  updateTabBar()
+  return true
 }
 
 function removeChannel(tabId) {

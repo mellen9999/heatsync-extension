@@ -403,6 +403,8 @@ function loadYtBuffer() {
     'persistYt',
     'currentTab',
     'updateTabIndicator',
+    'bumpTabActivity',
+    'refreshTabCounter',
     'renderMessages',
     'appendMessage',
     'sortedInsert',
@@ -420,7 +422,9 @@ function loadYtBuffer() {
     () => {},
     (id) => persisted.push(id),
     '__none__', // currentTab — not the tab under test, so append/render paths no-op
-    () => {},
+    () => {}, // updateTabIndicator
+    () => {}, // bumpTabActivity — tab-counter.js, out of scope for ordering
+    () => {}, // refreshTabCounter
     (id) => rendered.push(id),
     () => false,
     sortedInsert,

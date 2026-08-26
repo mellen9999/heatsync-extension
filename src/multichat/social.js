@@ -687,6 +687,10 @@ function ingestReplayYtMsg(targetChannelId, ytMsg) {
   }
   persistYt(targetChannelId)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
+  // Count before the branch — heat is about the channel, so the tab you're
+  // looking at counts too, and updateTabIndicator never fires for it.
+  bumpTabActivity(tabId, currentTab === tabId)
+  refreshTabCounter(tabId)
   if (currentTab !== tabId) {
     updateTabIndicator(tabId)
     return
@@ -849,6 +853,9 @@ function commitPacedYtMsg(targetChannelId, ytMsg) {
   }
   persistYt(targetChannelId)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
+  // Count before the branch — see ingestReplayYtMsg above.
+  bumpTabActivity(tabId, currentTab === tabId)
+  refreshTabCounter(tabId)
   if (currentTab === tabId) {
     if (!appendMessage(ytMsg, tabId)) renderMessages(tabId)
   } else {

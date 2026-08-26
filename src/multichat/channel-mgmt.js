@@ -281,6 +281,9 @@ function removeChannel(tabId) {
   config.channels = config.channels.filter((c) => c.id !== tabId)
   saveConfig()
   _dropTabCache(tabId)
+  // Drop the tab's unread/heat state too — otherwise re-adding the same
+  // channel later inherits a stale count from before it was removed.
+  dropTabActivity(tabId)
 
   const twitchName = ch?.twitch
   if (twitchName) irc?.part(twitchName)

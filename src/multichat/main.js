@@ -2276,6 +2276,10 @@
     rebuildInput: () => {
       rebuildInput()
     },
+    // Repaint every tab and start/stop the heat ticker to match the new mode.
+    tabCounter: () => {
+      refreshTabCounters()
+    },
     namePaints: (v) => {
       // Toggle off: drop the injected <style id="hs-mc-paints"> sheet (rather
       // than leaving stale/orphaned rules behind — hygiene, no correctness
@@ -3162,6 +3166,7 @@
       // paths that don't run switchTab (live picker), and survives any new
       // mention that lands in the same frame between click and render.
       tab.classList.remove('has-mentions', 'has-new', 'has-stream-event')
+      markTabRead(tabId)
       if (tabId === 'mentions') bumpSeen('mentions')
       else if (tabId === 'whispers') bumpSeen('whispers')
       else if (tabId === 'feed') bumpSeen('live')
@@ -3198,6 +3203,7 @@
       ) {
         e.preventDefault()
         tab.classList.remove('has-mentions', 'has-new', 'has-stream-event', 'has-whispers')
+        markTabRead(tabId)
         // Sync server-backed seen state so the dot doesn't reappear and
         // every other client clears via WS broadcast.
         if (tabId === 'mentions') bumpSeen('mentions')
@@ -5347,6 +5353,10 @@
     })
 
     applyHiddenTabs()
+    // The tabs above were rebuilt from scratch and their labels written with
+    // textContent, which drops the counter chip — repaint it, or the number
+    // vanishes on every live-status poll and channel edit.
+    refreshTabCounters()
   }
 
   // ============================================
@@ -6941,6 +6951,7 @@
           t.classList.remove('has-new')
           t.classList.remove('has-stream-event')
           t.classList.remove('has-mentions')
+          clearTabUnread(t.dataset.tab)
         }
         // Switching to live also clears the matching channel tab's indicators
         if (id === 'live' && liveCh && t.dataset.tab !== 'live') {
@@ -6950,6 +6961,7 @@
             const ki = ch.kick?.toLowerCase()
             if (tw === liveCh || ki === liveCh) {
               t.classList.remove('has-new', 'has-stream-event', 'has-mentions')
+              clearTabUnread(t.dataset.tab)
             }
           }
         }
@@ -6961,10 +6973,14 @@
             const ki = ch.kick?.toLowerCase()
             if (tw === liveCh || ki === liveCh) {
               t.classList.remove('has-new', 'has-stream-event', 'has-mentions')
+              clearTabUnread(t.dataset.tab)
             }
           }
         }
       })
+      // One repaint after the sweep — the loop above may have cleared several
+      // tabs, and the newly-active tab's own count has to drop to nothing.
+      refreshTabCounters()
     }
 
     // Update live tab label when switching to it
@@ -14914,6 +14930,13 @@
       // Channel tab routing
       const chTabId = getChannelLookup().twitch.get(msg.channel)
       const tabId = chTabId?.id
+      // Count before the branch: heat is about the channel, so it has to count
+      // the tab you're looking at too — updateTabIndicator below never fires
+      // for the active tab.
+      if (tabId) {
+        bumpTabActivity(tabId, currentTab === tabId)
+        refreshTabCounter(tabId)
+      }
       if (tabId && currentTab === tabId) {
         if (!appendMessage(msg, tabId)) renderMessages(tabId)
       } else if (tabId) {
@@ -15010,6 +15033,11 @@
       // Channel tab routing — find config entry where ch.kick matches
       const chConfig = getChannelLookup().kick.get(msg.channel)
       const tabId = chConfig?.id
+      // Count before the branch — see the twitch handler above.
+      if (tabId) {
+        bumpTabActivity(tabId, currentTab === tabId)
+        refreshTabCounter(tabId)
+      }
       if (tabId && currentTab === tabId) {
         if (!appendMessage(msg, tabId)) renderMessages(tabId)
       } else if (tabId) {

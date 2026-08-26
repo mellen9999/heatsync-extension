@@ -1090,6 +1090,12 @@
   "mc_settings_text_badges_desc": {
     "message": "render mod/vip/sub badges as terse text chips instead of images"
   },
+  "mc_settings_tab_counter": {
+    "message": "tab number"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "number on the right of each chat tab. unread = messages you have not seen. heat = messages in the last minute, so a busy channel reads as busy even while you are in it"
+  },
   "mc_settings_tab_position": {
     "message": "tab bar position"
   },

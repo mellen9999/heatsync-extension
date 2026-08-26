@@ -353,6 +353,24 @@ const SETTINGS = [
     runtimeVar: 'textBadgesEnabled',
     rerender: true,
   },
+  {
+    key: 'tabCounter',
+    type: 'enum',
+    default: 'unread',
+    scope: 'sync',
+    category: 'display',
+    section: 'chat messages',
+    labelKey: 'mc_settings_tab_counter',
+    tipKey: 'mc_settings_tab_counter_desc',
+    control: 'sizebtns',
+    alias: 'tabcounter unread heat',
+    options: [
+      { value: 'off', label: 'off' },
+      { value: 'unread', label: 'unread' },
+      { value: 'heat', label: 'heat' },
+    ],
+    apply: 'tabCounter',
+  },
 
   // ── display / layout ──────────────────────────────────────────────────
   // Written by the rotate buttons too — registry + buttons share one

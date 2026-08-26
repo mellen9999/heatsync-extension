@@ -2896,6 +2896,24 @@ const SETTINGS = [
     runtimeVar: 'textBadgesEnabled',
     rerender: true,
   },
+  {
+    key: 'tabCounter',
+    type: 'enum',
+    default: 'unread',
+    scope: 'sync',
+    category: 'display',
+    section: 'chat messages',
+    labelKey: 'mc_settings_tab_counter',
+    tipKey: 'mc_settings_tab_counter_desc',
+    control: 'sizebtns',
+    alias: 'tabcounter unread heat',
+    options: [
+      { value: 'off', label: 'off' },
+      { value: 'unread', label: 'unread' },
+      { value: 'heat', label: 'heat' },
+    ],
+    apply: 'tabCounter',
+  },
 
   // ── display / layout ──────────────────────────────────────────────────
   // Written by the rotate buttons too — registry + buttons share one
@@ -8983,7 +9001,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7611cfe+-202608260013' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5becebd+-202608260019' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -11072,6 +11090,18 @@ function injectStyles() {
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* Unread / heat count (settings: tab number). Colour is inherited and
+       dimmed by opacity only, so it composes with every tab state — idle grey,
+       has-new white, has-mentions, active, hover invert — without a rule per
+       combination. flex-shrink:0 so a long channel name ellipsises before the
+       number does; the number is the part you can't guess. */
+    .hs-mc-tab-count {
+      margin-left: 5px;
+      opacity: 0.6;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
     /* Idle hover — subtle brighten */
     .hs-mc-tab:not(.active):not(.has-new):hover {
       background: #fff !important;
@@ -21749,6 +21779,201 @@ function refreshSeenBadges() {
       continue
     }
     tab.classList.toggle(cls, hasUnseen(surface))
+  }
+}
+
+
+// --- multichat/tab-counter.js ---
+// Per-tab message counter for the tab bar — the number on the right of a
+// channel name.
+//
+// Two numbers, one setting (`tabCounter`):
+//   unread — messages since you last had the tab open. Zero on the tab you are
+//            reading, by definition.
+//   heat   — messages in the last 60 seconds. Says how busy a channel IS, so it
+//            still means something on the tab in front of you.
+//
+// Neither existed here before: the tab bar only ever carried the boolean
+// `has-new` highlight.
+//
+// Heat is a 90-slot ring of per-second counts, advanced by ELAPSED TIME rather
+// than by tick count. A ticker that rolls the ring one slot per fire is only
+// correct while it actually fires — and this one runs via setIntervalIfVisible,
+// so a backgrounded tab would come back showing a minute-old number and take a
+// further minute to drain. Advancing on read means a missed tick costs nothing
+// and the ticker's only job is repainting.
+//
+// Counting happens at the four message-arrival sites (twitch + kick in main.js,
+// the two youtube paths in social.js) rather than inside updateTabIndicator,
+// which by construction never fires for the tab you're looking at.
+
+const TAB_HEAT_BUCKETS = 90
+const TAB_HEAT_WINDOW = 60
+/** Cap the rendered number so a busy channel can't keep widening its tab. */
+const TAB_COUNT_MAX = 999
+
+/** tabId → {unread, buckets, sec} */
+const _tabActivity = new Map()
+let _tabCounterTimer = null
+
+function _nowSec() {
+  return Math.floor(Date.now() / 1000)
+}
+
+function _tabEntry(tabId) {
+  let e = _tabActivity.get(tabId)
+  if (!e) {
+    e = { unread: 0, buckets: new Array(TAB_HEAT_BUCKETS).fill(0), sec: _nowSec() }
+    _tabActivity.set(tabId, e)
+  }
+  return e
+}
+
+/** Bring a ring up to now. A gap longer than the ring just clears it. */
+function _advance(e) {
+  const now = _nowSec()
+  let delta = now - e.sec
+  if (delta <= 0) return
+  e.sec = now
+  if (delta >= TAB_HEAT_BUCKETS) {
+    e.buckets.fill(0)
+    return
+  }
+  for (; delta > 0; delta--) {
+    e.buckets.shift()
+    e.buckets.push(0)
+  }
+}
+
+/**
+ * One message arrived for a tab. Call this at the arrival site, before the
+ * active/background branch — heat has to count the tab you're reading too.
+ * @param {string} tabId
+ * @param {boolean} isActive whether this tab is the one on screen
+ */
+function bumpTabActivity(tabId, isActive) {
+  if (!tabId) return
+  const e = _tabEntry(tabId)
+  _advance(e)
+  e.buckets[e.buckets.length - 1]++
+  if (!isActive) e.unread++
+}
+
+/** Tab was read — drop its unread. Heat is untouched: it isn't about you. */
+function clearTabUnread(tabId) {
+  const e = _tabActivity.get(tabId)
+  if (e) e.unread = 0
+}
+
+/**
+ * A tab was acknowledged as read. Paired with each `has-new` removal rather
+ * than folded into one helper: those sites differ in which classes they drop
+ * and why, and rewriting them to share a signature would be a bigger change
+ * than the counter warrants.
+ * @param {string} tabId
+ */
+function markTabRead(tabId) {
+  clearTabUnread(tabId)
+  refreshTabCounter(tabId)
+}
+
+/** Forget a tab entirely (channel removed). */
+function dropTabActivity(tabId) {
+  _tabActivity.delete(tabId)
+}
+
+function tabUnreadCount(tabId) {
+  return _tabActivity.get(tabId)?.unread || 0
+}
+
+function tabHeatCount(tabId) {
+  const e = _tabActivity.get(tabId)
+  if (!e) return 0
+  _advance(e)
+  const b = e.buckets
+  let n = 0
+  for (let i = Math.max(0, b.length - TAB_HEAT_WINDOW); i < b.length; i++) n += b[i] || 0
+  return n
+}
+
+/** The active `tabCounter` mode, defaulting the way the schema does. */
+function tabCounterMode() {
+  return (typeof getSetting === 'function' && getSetting('tabCounter')) || 'unread'
+}
+
+function _tabCountText(tabId, mode, isActive) {
+  const n =
+    mode === 'heat' ? tabHeatCount(tabId) : mode === 'off' ? 0 : isActive ? 0 : tabUnreadCount(tabId)
+  if (n <= 0) return ''
+  return n > TAB_COUNT_MAX ? `${TAB_COUNT_MAX}+` : String(n)
+}
+
+/**
+ * Write the counter chip onto one tab. Mutates in place and only touches the
+ * DOM when the text actually changes, so the heat ticker doesn't force a layout
+ * pass a second for every tab.
+ */
+function paintTabCounter(tabEl, mode, isActive) {
+  const tabId = tabEl?.dataset?.tab
+  if (!tabId) return
+  const want = _tabCountText(tabId, mode, isActive)
+  let el = tabEl.querySelector(':scope > .hs-mc-tab-count')
+  if (!want) {
+    el?.remove()
+    return
+  }
+  if (!el) {
+    el = document.createElement('span')
+    el.className = 'hs-mc-tab-count'
+    tabEl.appendChild(el)
+  }
+  if (el.textContent !== want) el.textContent = want
+}
+
+/** Repaint one tab — the per-message path, so it stays a single lookup. */
+function refreshTabCounter(tabId) {
+  if (typeof tabBarElement === 'undefined' || !tabBarElement || !tabId) return
+  const tabEl = tabBarElement.querySelector(`.hs-mc-tab[data-tab="${CSS.escape(tabId)}"]`)
+  if (tabEl) paintTabCounter(tabEl, tabCounterMode(), tabId === currentTab)
+}
+
+/**
+ * Repaint every tab. Called after the tab bar is rebuilt (updateTabBar sets
+ * textContent, which drops the chip), on tab switch, and once a second while
+ * heat mode is on.
+ */
+function refreshTabCounters() {
+  if (typeof tabBarElement === 'undefined' || !tabBarElement) return
+  const mode = tabCounterMode()
+  for (const tabEl of tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')) {
+    paintTabCounter(tabEl, mode, tabEl.dataset.tab === currentTab)
+  }
+  _syncTabCounterTicker(mode)
+}
+
+/**
+ * Heat decays on a clock, so it needs a repaint ticker; unread doesn't move on
+ * its own, so it gets none. Started and stopped by mode rather than left
+ * running — an idle interval is not something to spend on a machine already
+ * running a chat client.
+ */
+function _syncTabCounterTicker(mode) {
+  const want = mode === 'heat'
+  if (want && !_tabCounterTimer) {
+    _tabCounterTimer = cleanup.setIntervalIfVisible(() => {
+      const m = tabCounterMode()
+      if (m !== 'heat') {
+        _syncTabCounterTicker(m)
+        return
+      }
+      if (typeof tabBarElement === 'undefined' || !tabBarElement) return
+      for (const tabEl of tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')) {
+        paintTabCounter(tabEl, 'heat', tabEl.dataset.tab === currentTab)
+      }
+    }, 1000)
+  } else if (!want && _tabCounterTimer) {
+    cleanup.clearInterval(_tabCounterTimer)
+    _tabCounterTimer = null
   }
 }
 
@@ -38985,6 +39210,10 @@ function ingestReplayYtMsg(targetChannelId, ytMsg) {
   }
   persistYt(targetChannelId)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
+  // Count before the branch — heat is about the channel, so the tab you're
+  // looking at counts too, and updateTabIndicator never fires for it.
+  bumpTabActivity(tabId, currentTab === tabId)
+  refreshTabCounter(tabId)
   if (currentTab !== tabId) {
     updateTabIndicator(tabId)
     return
@@ -39147,6 +39376,9 @@ function commitPacedYtMsg(targetChannelId, ytMsg) {
   }
   persistYt(targetChannelId)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
+  // Count before the branch — see ingestReplayYtMsg above.
+  bumpTabActivity(tabId, currentTab === tabId)
+  refreshTabCounter(tabId)
   if (currentTab === tabId) {
     if (!appendMessage(ytMsg, tabId)) renderMessages(tabId)
   } else {
@@ -61738,6 +61970,9 @@ function removeChannel(tabId) {
   config.channels = config.channels.filter((c) => c.id !== tabId)
   saveConfig()
   _dropTabCache(tabId)
+  // Drop the tab's unread/heat state too — otherwise re-adding the same
+  // channel later inherits a stale count from before it was removed.
+  dropTabActivity(tabId)
 
   const twitchName = ch?.twitch
   if (twitchName) irc?.part(twitchName)
@@ -65962,6 +66197,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     rebuildInput: () => {
       rebuildInput()
     },
+    // Repaint every tab and start/stop the heat ticker to match the new mode.
+    tabCounter: () => {
+      refreshTabCounters()
+    },
     namePaints: (v) => {
       // Toggle off: drop the injected <style id="hs-mc-paints"> sheet (rather
       // than leaving stale/orphaned rules behind — hygiene, no correctness
@@ -66848,6 +67087,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // paths that don't run switchTab (live picker), and survives any new
       // mention that lands in the same frame between click and render.
       tab.classList.remove('has-mentions', 'has-new', 'has-stream-event')
+      markTabRead(tabId)
       if (tabId === 'mentions') bumpSeen('mentions')
       else if (tabId === 'whispers') bumpSeen('whispers')
       else if (tabId === 'feed') bumpSeen('live')
@@ -66884,6 +67124,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       ) {
         e.preventDefault()
         tab.classList.remove('has-mentions', 'has-new', 'has-stream-event', 'has-whispers')
+        markTabRead(tabId)
         // Sync server-backed seen state so the dot doesn't reappear and
         // every other client clears via WS broadcast.
         if (tabId === 'mentions') bumpSeen('mentions')
@@ -69033,6 +69274,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     })
 
     applyHiddenTabs()
+    // The tabs above were rebuilt from scratch and their labels written with
+    // textContent, which drops the counter chip — repaint it, or the number
+    // vanishes on every live-status poll and channel edit.
+    refreshTabCounters()
   }
 
   // ============================================
@@ -70627,6 +70872,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           t.classList.remove('has-new')
           t.classList.remove('has-stream-event')
           t.classList.remove('has-mentions')
+          clearTabUnread(t.dataset.tab)
         }
         // Switching to live also clears the matching channel tab's indicators
         if (id === 'live' && liveCh && t.dataset.tab !== 'live') {
@@ -70636,6 +70882,7 @@ const STORAGE_KEY = 'heatsync_multichat'
             const ki = ch.kick?.toLowerCase()
             if (tw === liveCh || ki === liveCh) {
               t.classList.remove('has-new', 'has-stream-event', 'has-mentions')
+              clearTabUnread(t.dataset.tab)
             }
           }
         }
@@ -70647,10 +70894,14 @@ const STORAGE_KEY = 'heatsync_multichat'
             const ki = ch.kick?.toLowerCase()
             if (tw === liveCh || ki === liveCh) {
               t.classList.remove('has-new', 'has-stream-event', 'has-mentions')
+              clearTabUnread(t.dataset.tab)
             }
           }
         }
       })
+      // One repaint after the sweep — the loop above may have cleared several
+      // tabs, and the newly-active tab's own count has to drop to nothing.
+      refreshTabCounters()
     }
 
     // Update live tab label when switching to it
@@ -78600,6 +78851,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Channel tab routing
       const chTabId = getChannelLookup().twitch.get(msg.channel)
       const tabId = chTabId?.id
+      // Count before the branch: heat is about the channel, so it has to count
+      // the tab you're looking at too — updateTabIndicator below never fires
+      // for the active tab.
+      if (tabId) {
+        bumpTabActivity(tabId, currentTab === tabId)
+        refreshTabCounter(tabId)
+      }
       if (tabId && currentTab === tabId) {
         if (!appendMessage(msg, tabId)) renderMessages(tabId)
       } else if (tabId) {
@@ -78696,6 +78954,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Channel tab routing — find config entry where ch.kick matches
       const chConfig = getChannelLookup().kick.get(msg.channel)
       const tabId = chConfig?.id
+      // Count before the branch — see the twitch handler above.
+      if (tabId) {
+        bumpTabActivity(tabId, currentTab === tabId)
+        refreshTabCounter(tabId)
+      }
       if (tabId && currentTab === tabId) {
         if (!appendMessage(msg, tabId)) renderMessages(tabId)
       } else if (tabId) {

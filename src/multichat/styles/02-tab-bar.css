@@ -63,6 +63,18 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* Unread / heat count (settings: tab number). Colour is inherited and
+       dimmed by opacity only, so it composes with every tab state — idle grey,
+       has-new white, has-mentions, active, hover invert — without a rule per
+       combination. flex-shrink:0 so a long channel name ellipsises before the
+       number does; the number is the part you can't guess. */
+    .hs-mc-tab-count {
+      margin-left: 5px;
+      opacity: 0.6;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
     /* Idle hover — subtle brighten */
     .hs-mc-tab:not(.active):not(.has-new):hover {
       background: #fff !important;

@@ -3492,16 +3492,26 @@
   // login, because those really are login-walled.
   async function unhideFeedOnce() {
     try {
-      const { hs_feed_unhidden } = await chrome.storage.local.get('hs_feed_unhidden')
-      if (hs_feed_unhidden) return
-      // THE fifth layer of the cold-start bug. Without this guard: a slow
-      // chrome.storage.sync loses the 5s boot race, _settingsCache is empty,
-      // getSetting('hiddenTabs') returns the ['pinned'] default instead of the
-      // legacy set, isLegacy is false, no feed tab is restored — and the
-      // one-shot flag has already been burned, so this install can NEVER get
-      // its feed tab back. Retry next boot instead of failing permanently.
+      // v2 deliberately ignores the v1 key. 1.7.65/66 shipped this migration
+      // with its guard written BEFORE the read: boot races loadAllSettings()
+      // against a 5s timeout, and on a slow chrome.storage.sync the cache is
+      // still empty, so getSetting('hiddenTabs') returned the ['pinned']
+      // registry default rather than the install's real value. isLegacy read
+      // false, no feed tab came back — and hs_feed_unhidden was already set, so
+      // that install was stranded permanently by the very code meant to rescue
+      // it. Gating on _settingsHydrated (below) stops NEW strandings but cannot
+      // help anyone already burned, and every existing install has run v1 by
+      // now. A fresh key gives each of them exactly one more correctly-gated
+      // attempt. It is a safe no-op for installs v1 migrated properly: their
+      // hiddenTabs no longer matches the legacy set, so nothing fires. The only
+      // cost is that someone who deliberately re-hid exactly the legacy five
+      // sees feed once more, one time — worth it against users stranded for good.
+      const { hs_feed_unhidden_v2 } = await chrome.storage.local.get('hs_feed_unhidden_v2')
+      if (hs_feed_unhidden_v2) return
+      // Never spend the guard against a cache that never loaded — that is the
+      // exact bug above. Leaving it unset means the next boot tries for real.
       if (!_settingsHydrated) return
-      chrome.storage.local.set({ hs_feed_unhidden: true }).catch(() => {})
+      chrome.storage.local.set({ hs_feed_unhidden_v2: true }).catch(() => {})
       const cur = getSetting('hiddenTabs')
       const isLegacy =
         Array.isArray(cur) &&

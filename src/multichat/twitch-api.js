@@ -390,6 +390,7 @@ function makePointIcon(size, cpImage) {
   if (cpImage) {
     const img = document.createElement('img')
     img.src = cpImage
+    img.decoding = 'async'
     img.width = size
     img.height = size
     img.style.verticalAlign = '-2px'
@@ -2022,7 +2023,7 @@ function renderCheermotesInText(html, totalBits) {
       const t = hsCheerTier(amount)
       const url = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${t.tier}/2.gif`
       return (
-        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${amount} bits" loading="lazy">` +
+        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${amount} bits" loading="lazy" decoding="async">` +
         `<span class="hs-mc-cheer-amt" style="color:${t.color}">${amount}</span>`
       )
     })

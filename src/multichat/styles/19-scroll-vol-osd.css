@@ -12,7 +12,6 @@
       border: 1px solid #fff;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.15s linear;
       white-space: nowrap;
     }
     #hs-vol-osd.visible {

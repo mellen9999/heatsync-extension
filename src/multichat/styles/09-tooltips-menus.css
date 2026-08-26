@@ -24,12 +24,7 @@
       border: 1px solid #fff;
       padding: 0; min-width: 220px; max-width: 280px;
       box-shadow: 0 6px 32px rgba(0,0,0,0.75);
-      animation: hs-mc-em-in 80ms ease-out;
       user-select: none;
-    }
-    @keyframes hs-mc-em-in {
-      from { opacity: 0; }
-      to   { opacity: 1; }
     }
     .hs-mc-ctx.hs-mc-em-flip-x { transform-origin: top right; }
     .hs-mc-ctx.hs-mc-em-flip-y { transform-origin: bottom left; }

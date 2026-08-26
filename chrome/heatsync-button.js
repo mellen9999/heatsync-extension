@@ -5134,7 +5134,12 @@
 
     // Inject preconnect hints for CDN domains
     function injectPreconnectHints() {
-      const domains = ['https://cdn.7tv.app', 'https://cdn.betterttv.net', 'https://cdn.frankerfacez.com']
+      const domains = [
+        'https://cdn.heatsync.org',
+        'https://cdn.7tv.app',
+        'https://cdn.betterttv.net',
+        'https://cdn.frankerfacez.com',
+      ]
       domains.forEach((href) => {
         if (!document.querySelector(`link[rel="preconnect"][href="${href}"]`)) {
           const link = document.createElement('link')

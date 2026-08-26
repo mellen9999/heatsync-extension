@@ -2753,6 +2753,7 @@ async function fetchBTTVChannelEmotes(channelName, channelId = null, platform = 
         log(' BTTV: No resolvable YouTube channel ID for', channelName, '- skipping')
         return []
       }
+      subscribeBTTVChannel(chKey('youtube', channelName), `youtube:${channelId}`)
       const ytResponse = await fetchWithTimeout(`https://api.betterttv.net/3/cached/users/youtube/${channelId}`)
       if (ytResponse.status === 404) {
         ytResponse.body?.cancel()
@@ -2783,6 +2784,7 @@ async function fetchBTTVChannelEmotes(channelName, channelId = null, platform = 
         return null // transient: ID lookup failed, retry next time
       }
     }
+    subscribeBTTVChannel(chKey('twitch', channelName), `twitch:${twitchId}`)
     const userResponse = await fetchWithTimeout(`https://api.betterttv.net/3/cached/users/twitch/${twitchId}`)
     if (userResponse.status === 404) {
       userResponse.body?.cancel()
@@ -3935,6 +3937,12 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
           seventvEmoteSetIds.delete(old)
           release7TVEmoteSet(evictedSetId)
           seventvPolledChannels.delete(old)
+          const evictedRoom = bttvRoomIds.get(old)
+          if (evictedRoom) {
+            bttvRoomIds.delete(old)
+            partBTTVRoom(evictedRoom)
+            browser.storage.local.set({ bttv_room_ids: Object.fromEntries(bttvRoomIds) }).catch(() => {})
+          }
         }
       }
     }
@@ -4898,6 +4906,188 @@ function handle7TVEmoteSetUpdate(updateData) {
       .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
       .catch(() => {})
     log(' 7TV: Channel emotes updated for', channelName, '(now', updatedEmotes.length, 'total)')
+  }
+}
+
+// ========== BTTV Live Socket ==========
+// BTTV's socket broadcasts channel emote add/remove/rename the way 7TV's
+// EventAPI does. Without it a BTTV emote added mid-session only appears after
+// the channel TTL refetch. Rooms are keyed 'twitch:<id>' / 'youtube:<UCid>',
+// registered by fetchBTTVChannelEmotes once the provider id is known, and
+// persisted so SW restarts rejoin (mirrors seventv_emote_set_ids). Unknown or
+// malformed events no-op — the TTL refetch remains the correctness floor.
+let bttvWebSocket = null
+let bttvReconnectAttempts = 0
+let bttvReconnectTimer = null
+const BTTV_MAX_RECONNECT_ATTEMPTS = 5
+const bttvRoomIds = new Map() // chKey → 'twitch:<id>' | 'youtube:<UCid>'
+const bttvJoinedRooms = new Set()
+
+function subscribeBTTVChannel(key, room) {
+  if (!key || !room) return
+  const known = bttvRoomIds.get(key)
+  bttvRoomIds.set(key, room)
+  if (known !== room) {
+    browser.storage.local.set({ bttv_room_ids: Object.fromEntries(bttvRoomIds) }).catch(() => {})
+  }
+  if (bttvWebSocket && bttvWebSocket.readyState === WebSocket.OPEN) {
+    if (!bttvJoinedRooms.has(room)) {
+      try {
+        bttvWebSocket.send(JSON.stringify({ name: 'join_channel', data: { name: room } }))
+        bttvJoinedRooms.add(room)
+      } catch {}
+    }
+  } else {
+    connectBTTVSocket() // onopen replays every room in bttvRoomIds
+  }
+}
+
+function partBTTVRoom(room) {
+  if (!room) return
+  // Another channel key may still map to the same room (rare, but cheap to guard)
+  for (const r of bttvRoomIds.values()) if (r === room) return
+  if (!bttvJoinedRooms.delete(room)) return
+  if (bttvWebSocket && bttvWebSocket.readyState === WebSocket.OPEN) {
+    try {
+      bttvWebSocket.send(JSON.stringify({ name: 'part_channel', data: { name: room } }))
+    } catch {}
+  }
+}
+
+function connectBTTVSocket() {
+  if (
+    bttvWebSocket &&
+    (bttvWebSocket.readyState === WebSocket.OPEN || bttvWebSocket.readyState === WebSocket.CONNECTING)
+  )
+    return
+  if (bttvRoomIds.size === 0) return
+  log(' BTTV Live: Connecting...')
+  try {
+    bttvWebSocket = new WebSocket('wss://sockets.betterttv.net/ws')
+
+    bttvWebSocket.onopen = () => {
+      log(' BTTV Live: Connected')
+      bttvReconnectAttempts = 0
+      bttvJoinedRooms.clear()
+      for (const room of new Set(bttvRoomIds.values())) {
+        try {
+          bttvWebSocket.send(JSON.stringify({ name: 'join_channel', data: { name: room } }))
+          bttvJoinedRooms.add(room)
+        } catch {}
+      }
+    }
+
+    bttvWebSocket.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data)
+        if (msg && typeof msg.name === 'string' && msg.data) handleBTTVSocketEvent(msg.name, msg.data)
+      } catch (err) {
+        console.error('[heatsync] BTTV Live: Parse error:', err)
+      }
+    }
+
+    bttvWebSocket.onerror = () => {
+      log(' BTTV Live: WebSocket error (will reconnect)')
+    }
+
+    bttvWebSocket.onclose = () => {
+      bttvWebSocket = null
+      bttvJoinedRooms.clear()
+      if (bttvReconnectAttempts < BTTV_MAX_RECONNECT_ATTEMPTS && bttvRoomIds.size > 0) {
+        // Jitter scales with the base delay — same herd-spread rationale as 7TV
+        const baseDelay = Math.min(1000 * 2 ** bttvReconnectAttempts, 30000)
+        const delay = baseDelay + Math.random() * baseDelay
+        bttvReconnectAttempts++
+        log(` BTTV Live: Reconnecting in ${Math.round(delay)}ms (attempt ${bttvReconnectAttempts}/${BTTV_MAX_RECONNECT_ATTEMPTS})`)
+        clearTimeout(bttvReconnectTimer)
+        bttvReconnectTimer = setTimeout(() => {
+          bttvReconnectTimer = null
+          connectBTTVSocket()
+        }, delay)
+      } else if (bttvReconnectAttempts >= BTTV_MAX_RECONNECT_ATTEMPTS) {
+        log(' BTTV Live: Max reconnects reached — channel TTL refetch remains the fallback')
+        bttvReconnectAttempts = 0
+      }
+    }
+  } catch (err) {
+    console.error('[heatsync] BTTV Live: Connect failed:', err)
+    bttvWebSocket = null
+  }
+}
+
+function bttvRoomToKey(room) {
+  for (const [k, r] of bttvRoomIds) if (r === room) return k
+  return null
+}
+
+function handleBTTVSocketEvent(name, data) {
+  // lookup_user (BTTV Pro personal emotes/badges) deliberately unhandled —
+  // personal-emote rendering is a separate cross-user pipeline.
+  if (name !== 'emote_create' && name !== 'emote_delete' && name !== 'emote_update') return
+  const key = bttvRoomToKey(String(data.channel || ''))
+  if (!key) return
+  const chEmotes = Array.isArray(channelEmotesMap[key]) ? channelEmotesMap[key] : null
+  if (!chEmotes) return
+  const { platform, channel: channelName } = splitChKey(key)
+  let updated = false
+
+  if (name === 'emote_create') {
+    const e = data.emote
+    if (!e || typeof e.id !== 'string' || !/^[a-f0-9]{24}$/i.test(e.id) || !e.code) return
+    if (!chEmotes.some((x) => x.hash === e.id)) {
+      const newEmote = {
+        name: String(e.code).slice(0, 100),
+        url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+        source: 'bttv',
+        hash: e.id,
+        os: bttvOversize(e),
+      }
+      chEmotes.push(newEmote)
+      updated = true
+      log(' BTTV Live: Added emote:', newEmote.name, 'to', channelName)
+      broadcastToTabs({
+        type: 'channel_emote_added',
+        emote: newEmote,
+        channel: channelName,
+        platform,
+        actor: null,
+        message: `${newEmote.name} added to channel`,
+      })
+    }
+  } else if (name === 'emote_delete') {
+    const id = String(data.emoteId || '')
+    const index = chEmotes.findIndex((x) => x.source === 'bttv' && x.hash === id)
+    if (index !== -1) {
+      const [gone] = chEmotes.splice(index, 1)
+      updated = true
+      log(' BTTV Live: Removed emote:', gone.name, 'from', channelName)
+      broadcastToTabs({
+        type: 'channel_emote_removed',
+        emoteName: gone.name,
+        emoteHash: gone.hash,
+        channel: channelName,
+        platform,
+        actor: null,
+        message: `${gone.name} removed from channel`,
+      })
+    }
+  } else if (name === 'emote_update') {
+    const e = data.emote
+    if (!e || typeof e.id !== 'string' || typeof e.code !== 'string' || !e.code) return
+    const hit = chEmotes.find((x) => x.source === 'bttv' && x.hash === e.id)
+    if (hit && hit.name !== e.code) {
+      hit.name = String(e.code).slice(0, 100)
+      updated = true
+    }
+  }
+
+  if (updated) {
+    channelEmotesMap[key] = chEmotes
+    broadcastToTabs({ type: 'channel_emotes_update', emotes: chEmotes, channelOwner: channelName, platform })
+    browser.storage.local
+      .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
+      .catch(() => {})
+    log(' BTTV Live:', name, 'applied for', channelName, '(now', chEmotes.length, 'total)')
   }
 }
 
@@ -10518,6 +10708,15 @@ async function initialize() {
         log(' ✓ Restored seventvEmoteSetIds for', seventvEmoteSetIds.size, 'channels')
         start7TVPolling()
         for (const setId of seventvEmoteSetIds.values()) subscribe7TVEmoteSet(setId)
+      }
+    }
+    if (stored.bttv_room_ids && typeof stored.bttv_room_ids === 'object') {
+      for (const [ch, room] of Object.entries(stored.bttv_room_ids)) {
+        if (typeof room === 'string' && /^(twitch|youtube):[\w-]{1,40}$/.test(room)) bttvRoomIds.set(ch, room)
+      }
+      if (bttvRoomIds.size > 0) {
+        log(' ✓ Restored bttvRoomIds for', bttvRoomIds.size, 'channels')
+        connectBTTVSocket()
       }
     }
     if (stored.muted_users && Array.isArray(stored.muted_users)) {

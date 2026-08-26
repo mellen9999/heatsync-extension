@@ -6827,8 +6827,34 @@
   // TAB/CHANNEL MANAGEMENT
   // ============================================
 
+  // Tab id → the surface name the server counts (site-stats.ts EXT_SURFACES),
+  // reported from switchTab because that is the one choke point every surface
+  // change goes through.
+  //
+  // Only the social surfaces and "is using chat at all" are named. The tabs
+  // below are deliberately uncounted — they say nothing about whether anyone
+  // reaches the social layer, which is the only question this measures. Any id
+  // that is neither is a channel tab (the SPECIAL set in renderTabs is the
+  // other half of this list) and means multichat is in use.
+  const _UNCOUNTED_TABS = new Set(['discover', 'pinned', 'modlog', 'add', 'settings'])
+  function _reportSurfaceOpen(id) {
+    const surface =
+      id === 'feed' ? 'feed'
+        : id === 'whispers' ? 'dm'
+          : id === 'mentions' ? 'mentions'
+            : _UNCOUNTED_TABS.has(id) ? null
+              : 'multichat'
+    if (!surface) return
+    // Never awaited and never retried past safeSendMessage's own backoff: a
+    // counter must not be able to delay or break a tab switch.
+    try {
+      safeSendMessage({ type: 'hs_surface_open', surface })
+    } catch (_) {}
+  }
+
   function switchTab(id) {
     log('switchTab called:', id)
+    _reportSurfaceOpen(id)
     // Leaving an edit form: drop the outgoing tab's cache and clear msgsEl so
     // the upcoming snapshotTabState doesn't capture the form (which would then
     // be restored when switching back to the same channel id and look like

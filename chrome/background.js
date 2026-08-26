@@ -810,22 +810,77 @@ async function getInstallId() {
   }
 }
 
+// Which surfaces this install opened since the last successful check-in.
+//
+// The install-id counter above answers "how many people run this"; it cannot
+// answer "and do they ever open the social surface", and on 2026-08-25 that gap
+// was the whole picture: ~5 installs alive every day, 0 requests to the feed
+// endpoint, 0 posts. This rides the poll that already runs — no extra request,
+// no timing, no ordering, no content. Just names from the closed list below,
+// which the server checks again before any of them reaches a key.
+//
+// Stored rather than held in memory because an MV3 service worker is evicted
+// freely, and losing these would undercount exactly the surface being measured.
+const SURFACE_NAMES = new Set(['multichat', 'feed', 'dm', 'mentions'])
+const SURFACE_KEY = 'hs_surfaces_pending'
+
+async function noteSurfaceOpen(surface) {
+  if (!SURFACE_NAMES.has(surface)) return
+  try {
+    const { [SURFACE_KEY]: pending } = await browser.storage.local.get([SURFACE_KEY])
+    const set = new Set(Array.isArray(pending) ? pending : [])
+    if (set.has(surface)) return
+    set.add(surface)
+    await browser.storage.local.set({ [SURFACE_KEY]: [...set] })
+  } catch {}
+}
+
+async function takePendingSurfaces() {
+  try {
+    const { [SURFACE_KEY]: pending } = await browser.storage.local.get([SURFACE_KEY])
+    const names = (Array.isArray(pending) ? pending : []).filter((s) => SURFACE_NAMES.has(s))
+    return names.slice(0, SURFACE_NAMES.size)
+  } catch {
+    return []
+  }
+}
+
+async function clearPendingSurfaces(sent) {
+  try {
+    const { [SURFACE_KEY]: pending } = await browser.storage.local.get([SURFACE_KEY])
+    const rest = (Array.isArray(pending) ? pending : []).filter((s) => !sent.includes(s))
+    if (rest.length) await browser.storage.local.set({ [SURFACE_KEY]: rest })
+    else await browser.storage.local.remove(SURFACE_KEY)
+  } catch {}
+}
+
 async function fetchHealth() {
   try {
     // Identity is best-effort: a storage failure must never cost us the
     // kill-switch, so the poll goes out plain rather than not at all.
     let url = HEALTH_URL
+    let sent = []
     try {
       const id = await getInstallId()
       const version = browser.runtime.getManifest()?.version
       if (id) {
         const q = new URLSearchParams({ id })
         if (version) q.set('v', version)
+        // Only ever sent alongside an id — on its own it would be a report
+        // about nobody, and the server drops it anyway.
+        sent = await takePendingSurfaces()
+        if (sent.length) q.set('s', sent.join(','))
         url = `${HEALTH_URL}?${q}`
       }
     } catch {}
     const resp = await fetchWithTimeout(url, { cache: 'no-store' }, 8000)
     if (!resp?.ok) return
+    // Counted the moment the request reached the origin, whatever the body
+    // turns out to be — so clear here, before the shape checks below can
+    // return early and make us send the same names forever. Only the names
+    // actually sent are removed: a surface opened while this request was in
+    // flight is still pending, not silently dropped.
+    if (sent.length) await clearPendingSurfaces(sent)
     const j = await resp.json().catch(() => null)
     if (!j || typeof j !== 'object' || j.v !== 1) return
     const sane = {
@@ -7430,6 +7485,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (!isValidSender) {
     sendResponse({ ok: false, error: 'unauthorized sender' })
+    return true
+  }
+
+  // A surface the user opened, buffered for the next health check-in. Named
+  // surfaces only, no ids and no timing — see noteSurfaceOpen.
+  if (message.type === 'hs_surface_open') {
+    noteSurfaceOpen(String(message.surface || ''))
+    try {
+      sendResponse({ ok: true })
+    } catch {}
     return true
   }
 

@@ -1089,3 +1089,94 @@ describe('getCachedHealth — stale kill-switch fails open', () => {
     expect(await h.getCachedHealth()).toEqual(stored.hs_health)
   })
 })
+
+// ── Surface check-in buffer ─────────────────────────────────────────────────
+//
+// The names that ride the health poll so the server can tell whether a live
+// install ever opens the social surface. These live in storage rather than
+// memory because an MV3 service worker is evicted freely, and undercounting
+// here would understate exactly the surface being measured — so the buffer's
+// round-trip is pinned rather than assumed.
+
+const surfaceSrcs = [
+  extractConstLine('SURFACE_NAMES'),
+  extractConstLine('SURFACE_KEY'),
+  `async ${extractFn('noteSurfaceOpen')}`,
+  `async ${extractFn('takePendingSurfaces')}`,
+  `async ${extractFn('clearPendingSurfaces')}`,
+].join('\n')
+
+function makeSurfaceHarness(initial = {}) {
+  const store = { ...initial }
+  const browser = {
+    storage: {
+      local: {
+        get: async (keys) => {
+          const out = {}
+          for (const k of keys) if (k in store) out[k] = store[k]
+          return out
+        },
+        set: async (obj) => Object.assign(store, obj),
+        remove: async (k) => {
+          delete store[k]
+        },
+      },
+    },
+  }
+  const api = new Function(
+    'browser',
+    `${surfaceSrcs}\nreturn { noteSurfaceOpen, takePendingSurfaces, clearPendingSurfaces, SURFACE_KEY }`,
+  )(browser)
+  return { ...api, store }
+}
+
+describe('surface check-in buffer', () => {
+  test('a noted surface survives to the next poll', async () => {
+    const h = makeSurfaceHarness()
+    await h.noteSurfaceOpen('feed')
+    expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  test('the same surface twice is stored once', async () => {
+    const h = makeSurfaceHarness()
+    await h.noteSurfaceOpen('feed')
+    await h.noteSurfaceOpen('feed')
+    expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  test('a name off the allowlist is never stored', async () => {
+    const h = makeSurfaceHarness()
+    await h.noteSurfaceOpen('evil')
+    await h.noteSurfaceOpen('')
+    expect(await h.takePendingSurfaces()).toEqual([])
+    expect(h.store[h.SURFACE_KEY]).toBeUndefined()
+  })
+
+  test('clearing removes only what was sent', async () => {
+    const h = makeSurfaceHarness()
+    await h.noteSurfaceOpen('feed')
+    const sent = await h.takePendingSurfaces()
+    // opened while the request was in flight
+    await h.noteSurfaceOpen('dm')
+    await h.clearPendingSurfaces(sent)
+    expect(await h.takePendingSurfaces()).toEqual(['dm'])
+  })
+
+  test('clearing the last name drops the key entirely', async () => {
+    const h = makeSurfaceHarness()
+    await h.noteSurfaceOpen('feed')
+    await h.clearPendingSurfaces(['feed'])
+    expect(h.store[h.SURFACE_KEY]).toBeUndefined()
+    expect(await h.takePendingSurfaces()).toEqual([])
+  })
+
+  test('junk already in storage is filtered on the way out', async () => {
+    const h = makeSurfaceHarness({ hs_surfaces_pending: ['feed', 'evil', 42] })
+    expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  test('a corrupted value reads as empty instead of throwing', async () => {
+    const h = makeSurfaceHarness({ hs_surfaces_pending: 'not-an-array' })
+    expect(await h.takePendingSurfaces()).toEqual([])
+  })
+})

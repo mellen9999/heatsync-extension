@@ -1,5 +1,17 @@
 # changelog
 
+## unreleased
+
+### fixed
+- **a stray keystroke can no longer moderate anyone** — with the composer unfocused and the mouse resting anywhere on a chat row, `x`, `t` and `b` deleted, timed out and banned whoever wrote it. that was the normal reading position, so the first letter of a message was enough. mod actions now take a deliberate click: the hover toolbar, right-click, or the profile card.
+- **`s` no longer drops chat into a white bulk-select mode** — the multi-select ban/timeout surface it opened is removed entirely, hotkey, right-click entry and all.
+- **`/` and `n` stop firing twice** — with the chat filter open they both typed the character into the composer *and* ran the search command.
+- **a bare `t` no longer opens the tab picker mid-message** — with vi mode on and the composer unfocused, typing anything starting with `t` opened the rover instead. it's `space t` from normal mode now.
+
+### changed
+- **vi mode: `space` is a leader** — in normal mode `space` then `/` `n` `N` `1`-`9` `]` `[` `t` `\` runs search, match cycling, tab switching, the tab picker and the chat toggle without leaving the composer. the outline turns orange while it's armed, and `?` lists them.
+- **alt+1-9 and alt+]/[ switch tabs from anywhere** — they used to be ignored while you were typing, for no reason: alt+digit isn't text.
+
 ## [1.7.66] — 2026-08-25
 
 ### added

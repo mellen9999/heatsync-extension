@@ -9001,7 +9001,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '46b71e1+-202608260401' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '354df55+-202608261952' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -10878,7 +10878,10616 @@ function injectStyles() {
 
   const style = document.createElement('style')
   style.id = 'hs-mc-styles'
-  const css = `:root{--hs-brand: #ff8700;--hs-heat: #ff8700;--hs-mention: #ffff00;--hs-warn: #ffff00;--hs-ok: #00ff00;--hs-live: #00ff00;--hs-live-dim: #008000;--hs-live-tint: rgba(0, 255, 0, .1);--hs-danger: #ff0000;--hs-reply: #00ffff;--hs-thread: #ff00ff;--hs-link: #5f87ff;--hs-info: #5f87ff;--hs-gold: #ffd700;--hs-danger-dim: #800000;--hs-ok-dim: #008000;--hs-warn-dim: #808000;--hs-info-dim: #000080;--hs-thread-dim: #800080;--hs-reply-dim: #008080;--hs-danger-tint: rgba(255, 0, 0, .1);--hs-ok-tint: rgba(0, 255, 0, .1);--hs-warn-tint: rgba(255, 255, 0, .1);--hs-info-tint: rgba(95, 135, 255, .12);--hs-thread-tint: rgba(255, 0, 255, .12);--hs-reply-tint: rgba(0, 255, 255, .1);--hs-gold-tint: rgba(255, 215, 0, .1);--hs-warn-bg: #2e2e08;--hs-sel: #00ffff;--hs-sel-fg: #000;--hs-plat-twitch: #9146ff;--hs-plat-kick: #53fc18;--hs-plat-youtube: #ff0000;--hs-plat-hs: #ff8700;--hs-fg: #fff;--hs-bg: #000;--hs-muted: #a8a8a8;--hs-border: #808080}[id^=hs-]:not(html):not(body):not(.hs-native-hidden),[class^=hs-]:not(html):not(body):not(.hs-native-hidden),[class*=" hs-"]:not(html):not(body):not(.hs-native-hidden){color-scheme:dark}:root{--hs-resize-thickness: 4px;--hs-resize-grab: 4px}@font-face{font-family:CozetteVector;src:url(__HS_FONT_COZETTE__) format("woff2");font-weight:400;font-style:normal;font-display:block}body.hs-font-bitmap,body.hs-font-bitmap *,body.hs-font-bitmap *:before,body.hs-font-bitmap *:after{-webkit-font-smoothing:none!important;-moz-osx-font-smoothing:unset!important;font-smooth:never!important;text-rendering:optimizeSpeed!important;font-synthesis:none!important;font-optical-sizing:none!important;font-kerning:none!important;font-variant-ligatures:none!important;font-variant-position:normal!important;font-feature-settings:"kern" 0,"liga" 0,"clig" 0,"calt" 0!important;letter-spacing:0!important}body.hs-font-bitmap .hs-pcard,body.hs-font-bitmap .hs-pcard *,body.hs-font-bitmap .hs-notif,body.hs-font-bitmap .hs-notif *,body.hs-font-bitmap .hs-mc-pred-result-amount,body.hs-font-bitmap .hs-heat-num{-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;font-smooth:auto!important;font-synthesis:weight style!important;text-rendering:auto!important;font-optical-sizing:auto!important;font-kerning:auto!important;font-variant-ligatures:normal!important;font-feature-settings:normal!important;letter-spacing:normal!important}body.hs-font-bitmap .hs-pcard .hs-mc-badge,body.hs-font-bitmap .hs-notif .hs-mc-badge{-webkit-font-smoothing:none!important;-moz-osx-font-smoothing:unset!important;font-smooth:never!important;text-rendering:optimizeSpeed!important;font-synthesis:none!important;font-optical-sizing:none!important;font-kerning:none!important;font-variant-ligatures:none!important;font-feature-settings:"kern" 0,"liga" 0,"clig" 0,"calt" 0!important;letter-spacing:0!important}#hs-mc-tabbar{display:flex;flex-wrap:nowrap;gap:0;padding:0;background:#000;border-bottom:1px solid var(--hs-border);flex-shrink:0;order:-1;z-index:10;align-items:flex-start;box-sizing:border-box;scrollbar-width:none}#hs-mc-tabbar::-webkit-scrollbar,.hs-mc-tabs-scroll::-webkit-scrollbar{width:0;height:0;display:none}.hs-mc-tabs-scroll{scrollbar-width:none}.hs-mc-tab{padding:2px 10px!important;margin:0 -1px -1px 0!important;background:#000!important;color:var(--hs-muted)!important;border:1px solid var(--hs-border)!important;border-radius:0!important;cursor:pointer!important;font-family:inherit;font-size:13px!important;line-height:1!important;font-weight:400!important;white-space:nowrap!important;transition:none;text-align:left;display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto!important;min-width:0;max-width:200px;overflow:hidden;text-overflow:ellipsis}.hs-mc-tab-count{margin-left:5px;opacity:.6;font-variant-numeric:tabular-nums;flex-shrink:0}.hs-mc-tab.hs-mc-tab-cursor{background:var(--hs-sel)!important;color:var(--hs-sel-fg)!important;border-color:var(--hs-sel)!important;border-radius:0!important}.hs-mc-tabmode-tag{color:var(--hs-sel);letter-spacing:.5px}.hs-mc-tabmode-hint{color:var(--hs-muted);margin-left:8px}.hs-mc-tab:not(.active):not(.has-new):hover{background:#fff!important;color:#000!important}.hs-mc-tab.has-new{background:#000!important;color:#fff!important;border-color:var(--hs-border)!important}.hs-mc-tab.has-new:not(.active):hover{background:#fff!important;color:#000!important}.hs-mc-tab.has-mentions{color:var(--hs-danger)!important}.hs-mc-tab.has-mentions:not(.active):hover{background:#fff!important;color:var(--hs-danger)!important}.hs-mc-tab.has-whispers{color:var(--hs-reply)!important}.hs-mc-tab.has-whispers:not(.active):hover{background:#fff!important;color:#0aa!important}.hs-mc-tab-auto{color:var(--hs-muted)}.hs-mc-tab-auto:before{content:"·";color:#fff;margin-right:3px}.hs-mc-tab.active{background:#fff!important;color:#000!important;border-color:#fff!important;font-weight:400!important}.hs-mc-tab.active:hover{background:#fff!important;color:#000!important}.hs-mc-tab.has-new.active{color:#000!important}.hs-mc-tab.has-stream-event{background:#000!important;color:var(--hs-warn)!important;border-color:var(--hs-border)!important}.hs-mc-tab.has-stream-event:not(.active):hover{background:#fff!important;color:#000!important}.hs-mc-tab.has-stream-event.active{background:#fff!important;color:#000!important}#hs-mc-tabbar .hs-mc-tab[data-tab=live]{background:#000!important;color:var(--hs-muted)!important;border-color:var(--hs-border)!important;font-weight:400!important}#hs-mc-tabbar .hs-mc-tab[data-tab=live]:hover,#hs-mc-tabbar .hs-mc-tab[data-tab=live].active{background:#fff!important;color:#000!important;border-color:#fff!important}.hs-mc-tabs-scroll{display:flex;flex-wrap:wrap;flex:0 1 auto;min-width:0;gap:0;align-content:flex-start;align-items:stretch}.hs-mc-util-row{display:flex;flex:0 0 auto;gap:0;align-items:stretch}.hs-mc-right-cluster{display:flex;flex-direction:column;flex:0 0 auto;align-items:stretch;margin-left:-1px}body.hs-tabs-top #hs-mc-tabbar,body.hs-tabs-bottom #hs-mc-tabbar{flex-wrap:wrap;max-height:33vh;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}body.hs-tabs-top #hs-mc-tabbar::-webkit-scrollbar,body.hs-tabs-bottom #hs-mc-tabbar::-webkit-scrollbar{display:none}body.hs-tabs-top .hs-mc-tabs-scroll,body.hs-tabs-bottom .hs-mc-tabs-scroll,body.hs-tabs-top .hs-mc-right-cluster,body.hs-tabs-bottom .hs-mc-right-cluster,body.hs-tabs-top .hs-mc-util-row,body.hs-tabs-bottom .hs-mc-util-row,body.hs-tabs-top #hs-mc-platfilter,body.hs-tabs-bottom #hs-mc-platfilter{display:contents}body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn{flex:0 0 18px!important;width:18px!important;max-width:18px!important}.hs-tabs-left .hs-mc-util-row,.hs-tabs-right .hs-mc-util-row{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:1px!important;width:100%!important;box-sizing:border-box!important;justify-content:center!important;flex:0 0 auto!important}.hs-mc-util-btn,.hs-mc-pf-btn{width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;max-height:18px!important;padding:0!important;margin:0 -1px 0 0!important;flex:0 0 18px!important;box-sizing:border-box!important;font-size:13px!important;line-height:18px!important;letter-spacing:0!important;display:inline-block!important;text-align:center!important;vertical-align:top!important;border-width:1px!important;font-family:inherit!important;-webkit-font-smoothing:none!important;font-smooth:never!important;text-rendering:optimizeSpeed!important;font-kerning:normal!important;font-feature-settings:"kern" 1,"liga" 1,"calt" 1!important}.hs-mc-util-btn:last-child,.hs-mc-pf-btn:last-child{margin-right:0!important}.hs-mc-util-btn{color:var(--hs-muted)!important;border:1px solid var(--hs-border)!important;font-weight:400!important;background:transparent!important}.hs-mc-util-btn:hover{background:#fff!important;color:#000!important;border-color:#fff!important}.hs-whisper-msg.hs-whisper-out{border-left:3px solid var(--hs-brand)}.hs-whisper-msg.hs-whisper-in{border-left:3px solid var(--hs-reply)}.hs-whisper-arrow{font-family:ui-monospace,DejaVu Sans Mono,Liberation Mono,monospace;font-size:19px;font-weight:700;display:inline-block;height:18px;line-height:18px;width:12px;text-align:center;overflow:visible;vertical-align:-4px;margin:0 5px}.hs-whisper-you{color:#bbb;font-weight:700}.hs-whisper-pending{opacity:.45}.hs-whisper-pending .hs-whisper-status{color:var(--hs-gold)}.hs-whisper-failed{background:var(--hs-danger-tint)}.hs-whisper-failed .hs-whisper-status{color:var(--hs-danger);font-weight:700}.hs-whisper-retry{cursor:pointer;text-decoration:underline}.hs-whisper-retry:hover{color:#fff}.hs-whisper-relogin{display:inline-block;padding:1px 6px;margin-left:4px;background:#fff;color:#000!important;border-radius:0;font-weight:700;text-decoration:none;cursor:pointer}.hs-whisper-relogin:hover{background:#fff;color:#000!important}.hs-mc-bits-badge{display:inline-block;padding:0 4px;margin-right:3px;background:var(--hs-plat-twitch);color:#fff;font-size:13px;font-weight:700;vertical-align:middle}#hs-mc-multistream-banner{display:flex;align-items:center;gap:6px;padding:4px 8px;background:#1a1a1a;border-bottom:1px solid #fff;font-size:13px;color:#fff}#hs-mc-multistream-banner[hidden]{display:none}.hs-mc-multi-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-mc-multi-link{background:#fff;color:#000;border:0;padding:2px 8px;font-weight:700;font-size:13px;cursor:pointer}.hs-mc-multi-link:hover{background:#fff;color:#000}.hs-mc-multi-dismiss{background:transparent;color:#888;border:0;padding:0 4px;font-size:16px;cursor:pointer}.hs-mc-multi-dismiss:hover{color:#fff}.hs-mc-stream-event{--evt: var(--hs-warn);padding:2px 4px 2px 8px;font-size:13px;line-height:18px;font-style:italic;border-left:3px solid var(--evt);border-bottom:1px solid #000;color:var(--evt)}.hs-mc-stream-event .hs-mc-user{text-decoration:none;font-weight:700}.hs-mc-stream-event .hs-mc-user:hover{text-decoration:underline}.hs-mc-stream-event .hs-evt-game{color:#fff;font-style:normal}.hs-mc-stream-event.event-update{--evt: var(--hs-warn)}.hs-mc-stream-event.event-online{--evt: var(--hs-live)}.hs-mc-stream-event.event-online .hs-evt-game{color:#fff}.hs-mc-stream-event.event-offline{--evt: #888888}.hs-mc-stream-event.event-raid{--evt: var(--hs-plat-twitch)}.hs-mc-stream-event.event-hype{--evt: var(--hs-reply)}.hs-mc-stream-event.event-sub{--evt: var(--hs-ok)}.hs-mc-stream-event.event-redeem{--evt: #00bfff}.hs-mc-stream-event.event-emote{--evt: #29d391}.hs-mc-stream-event.event-pred{--evt: var(--hs-gold)}.hs-mc-stream-event.event-poll{--evt: var(--hs-info)}.hs-mc-stream-event.event-follow{opacity:.8}.hs-mc-stream-event.event-yt-superchat{--evt: var(--hs-gold)}.hs-mc-stream-event.event-yt-supersticker{--evt: #ff8a65}.hs-mc-stream-event.event-yt-membership{--evt: #2ba640}.hs-mc-stream-event.event-yt-milestone{--evt: #00e5ff}.hs-mc-stream-event.event-yt-gift{--evt: #ff4081}.hs-mc-feed-inline{padding:2px 8px;font-size:13px;border-left:3px solid var(--hs-danger);border-bottom:1px solid #000;color:#fff}.hs-mc-feed-inline .hs-mc-ts{margin-right:4px}.hs-mc-feed-inline .hs-feed-body{color:#fff}.hs-mc-feed-inline .hs-feed-thread-link{color:var(--hs-mention);text-decoration:none;font-size:13px;margin-right:4px}.hs-mc-feed-inline .hs-feed-thread-link:hover{text-decoration:underline}.hs-mc-moment-perma{color:var(--hs-border);margin-left:4px;text-decoration:none}.hs-mc-moment-perma:hover{background:#fff;color:#000}.hs-mc-dm-inline{border-left-color:var(--hs-mention)}.hs-mc-tab{position:relative!important}.hs-mc-tab[data-live=true]:after{content:"";position:absolute;top:3px;right:4px;width:8px;height:8px;background:var(--hs-live);border-radius:50%;pointer-events:none;z-index:1}.hs-mc-tab.active[data-live=true]:after{background:var(--hs-live-dim)}body.hs-platform-yt:has(ytd-live-chat-frame#chat[data-hs-hidden]) #teaser-carousel{display:none!important}body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-overlay,body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-overlay,body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-overlay,body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-inputbar,body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-inputbar,body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-inputbar,body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-emote-picker,body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-emote-picker,body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-emote-picker{right:90px!important}#hs-mc-overlay{position:absolute;inset:38px 0 52px;background:#000;z-index:1000;display:none;flex-direction:column;overflow:hidden}#hs-mc-overlay.visible{display:flex}#hs-mc-resize-handle,#hs-yt-resize-handle,#hs-kick-resize-handle,#hs-c-resize-handle{background:#fff;opacity:.9;transition:opacity .12s}#hs-mc-resize-handle:before,#hs-yt-resize-handle:before,#hs-kick-resize-handle:before,#hs-c-resize-handle:before{content:"";position:absolute;inset:calc(-1 * var(--hs-resize-grab))}#hs-mc-resize-handle:hover,#hs-mc-resize-handle:active,#hs-yt-resize-handle:hover,#hs-yt-resize-handle:active,#hs-kick-resize-handle:hover,#hs-kick-resize-handle:active,body:has(#hs-resize-overlay) #hs-kick-resize-handle{opacity:1}#hs-mc-resize-handle,#hs-yt-resize-handle{position:absolute;top:0;left:0;width:var(--hs-resize-thickness);height:100%;cursor:ew-resize;z-index:999}#hs-mc-messages{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;padding:6px;font-size:var(--hs-chat-font, 13px)!important;line-height:18px!important;word-wrap:break-word;word-break:break-word;max-width:100%;box-sizing:border-box;contain:layout style;overflow-anchor:none;will-change:transform}#hs-mc-messages>.hs-mc-msg{contain:layout style}.hs-mc-chat-banner{position:absolute;top:var(--hs-layer-statusbar-top, 0px);left:0;right:0;z-index:24;display:flex;flex-direction:column;gap:2px;padding:0}.hs-mc-chat-banner-item{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 8px;font-size:13px;font-weight:600;transition:none;cursor:pointer;border-left:3px solid var(--hs-brand);border-bottom:1px solid var(--hs-border);box-shadow:0 2px #0000008c}.hs-mc-chat-banner-pred{border-left-color:var(--hs-brand)}.hs-mc-chat-banner-poll{border-left-color:var(--hs-reply)}.hs-mc-chat-banner-item:after{content:"▸";margin-left:auto;padding-left:6px;opacity:.75}.hs-mc-chat-banner-item:hover:after{opacity:1}.hs-mc-chat-banner-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.hs-mc-chat-banner-item:hover{background:#fff;color:#000}.hs-mc-chat-banner-item:hover *{color:#000!important}.hs-mc-chat-banner-pred{background:#0e0e10;border-bottom:1px solid rgba(56,122,255,.3);color:#a8c8ff}.hs-mc-chat-banner-poll{background:#0e0e10;border-bottom:1px solid rgba(0,200,100,.25);color:#80e0a0}.hs-mc-chat-banner-pin{background:#0e0e10;border-bottom:1px solid rgba(191,148,255,.2);color:#d4bfff}.hs-mc-chat-banner-hype{background:#0e0e10;border-bottom:1px solid rgba(255,135,0,.3);color:#ffb060}.hs-mc-chat-banner-icon{font-size:14px;flex-shrink:0}.hs-mc-chat-banner-title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}.hs-mc-chat-banner-timer{font-family:SF Mono,Consolas,monospace;font-size:13px;font-weight:700;color:#fff;background:#0006;padding:1px 5px;border-radius:0;flex-shrink:0}.hs-mc-chat-banner-badge{font-size:13px;font-weight:700;color:var(--hs-danger);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}#hs-mc-new-msgs{position:absolute;bottom:12px;left:50%;transform:translate(-50%);display:none;align-items:center;gap:4px;background:var(--hs-mention);color:#000;border:none;border-radius:0;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;z-index:1005;transition:none}#hs-mc-new-msgs:hover{background:#fff;color:#000}.hs-arrow-down{font-size:13px;line-height:0;position:relative;top:-1px}#hs-mc-inputbar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;gap:5px;padding:3px;background:#000;border-top:1px solid var(--hs-border);z-index:1002;box-sizing:border-box}.hs-native-hidden [class*=chat-scrollable-area__message-container],.hs-native-hidden [class*=chat-list--default],.hs-native-hidden [class*=chat-list--other],.hs-native-hidden [data-a-target=chat-scroller]{display:none!important}.hs-native-hidden [class*=chat-input-container]:not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)),.hs-native-hidden [data-a-target=chat-input]:not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)){display:none!important}.hs-native-hidden [class*=chat-room__content]>*:not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)){display:none!important}[class*=chat-room__content].hs-native-hidden:not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)){display:none!important}[class*=chat-room__content].hs-native-hidden:has([data-test-selector=chat-private-callout-queue__callout-container] *){display:block!important;position:absolute!important;width:0!important;height:0!important;overflow:visible!important;pointer-events:none!important}#hs-mc-container{position:relative;display:flex;flex-direction:column;flex:1;width:100%;min-height:0;max-height:100vh;overflow:hidden;background:#000;font-family:var(--hs-mc-font, "CozetteVector"),"Courier New",monospace,"Noto Color Emoji";font-size:var(--hs-mc-base-size, 13px);line-height:17px;opacity:0;transition:opacity .2s ease-out}#hs-mc-container.hs-mc-shown{opacity:1}body.hs-chat-hidden #hs-mc-container,body.hs-chat-hidden #hs-c-resize-handle,body.hs-chat-hidden #hs-mc-resize-handle,body.hs-chat-hidden #hs-kick-resize-handle,body.hs-chat-hidden #hs-yt-resize-handle,body.hs-native-visible #hs-c-resize-handle,body.hs-native-visible #hs-mc-resize-handle,body.hs-native-visible #hs-kick-resize-handle,body.hs-native-visible #hs-yt-resize-handle,body.hs-chat-hidden .chat-shell.hs-native-hidden,body.hs-chat-hidden [class*=chat-shell].hs-native-hidden{display:none!important}#hs-chat-restore-pill{position:fixed!important;background:#fff!important;z-index:2147483647!important;cursor:pointer!important;transition:opacity .12s ease-out!important;opacity:.85!important;box-shadow:0 0 4px #ff870080!important}#hs-chat-restore-pill:hover{opacity:1!important}#hs-chat-restore-pill[data-edge=right]{top:25%!important;right:0!important;width:6px!important;height:50%!important}#hs-chat-restore-pill[data-edge=left]{top:25%!important;left:0!important;width:6px!important;height:50%!important}#hs-chat-restore-pill[data-edge=top]{top:0!important;left:25%!important;height:6px!important;width:50%!important}#hs-chat-restore-pill[data-edge=bottom]{bottom:0!important;left:25%!important;height:6px!important;width:50%!important}.hs-tabs-left #hs-mc-container,.hs-tabs-right #hs-mc-container{flex-direction:row}.chat-shell.hs-native-hidden,[class*=chat-shell].hs-native-hidden{display:flex!important;flex-direction:column!important;height:100%!important;min-width:0!important;background:#000!important}.chat-shell.hs-native-hidden>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)),[class*=chat-shell].hs-native-hidden>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)){display:none!important}.chat-shell.hs-native-hidden>*:has([data-test-selector=chat-private-callout-queue__callout-container] *):not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),[class*=chat-shell].hs-native-hidden>*:has([data-test-selector=chat-private-callout-queue__callout-container] *):not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card){display:block!important;position:absolute!important;width:0!important;height:0!important;overflow:visible!important;pointer-events:none!important}[class*=stream-chat].hs-native-hidden{display:flex!important;flex-direction:column!important;height:100%!important}.hs-native-hidden{background:#000!important}body.hs-native-visible.hs-native-visible.hs-native-visible.hs-native-visible #hs-mc-container{position:fixed!important;top:var(--hs-twitch-topnav-h, 50px)!important;right:0!important;left:auto!important;bottom:auto!important;width:auto!important;max-width:360px!important;height:auto!important;z-index:10000!important}body.hs-native-visible #hs-mc-container>*:not(#hs-mc-tabbar){display:none!important}body.hs-native-visible #channel-chatroom.hs-native-hidden,body.hs-native-visible .chat-shell.hs-native-hidden{display:flex!important}body.hs-native-visible.hs-platform-kick #channel-chatroom{padding-top:48px!important;box-sizing:border-box!important}#hs-mc-native-btn.active{background:#fff!important;color:#000!important;border-color:#fff!important}.hs-notif-layer{position:fixed;z-index:100000;pointer-events:none;display:flex;flex-direction:column;gap:6px;overflow:visible;min-width:0}.hs-notif-layer:empty{display:none}.hs-notif-layer>.hs-notif{pointer-events:auto;box-sizing:border-box;max-width:100%;min-width:0}.hs-notif-layer-toast-stack{top:var(--hs-layer-toast-stack-top, 12px);right:var(--hs-layer-toast-stack-right, 20px);bottom:auto;align-items:flex-end;max-width:min(380px,calc(100vw - 40px))}.hs-notif-layer-chat-docked-bottom{bottom:var(--hs-layer-chat-docked-bottom-bottom, 0px);left:var(--hs-layer-chat-docked-bottom-left, 0px);right:var(--hs-layer-chat-docked-bottom-right, 0px)}.hs-notif-layer-chat-docked-top{top:var(--hs-layer-chat-docked-top-top, 0px);left:var(--hs-layer-chat-docked-top-left, 0px);right:var(--hs-layer-chat-docked-top-right, 0px)}@keyframes hs-notif-fade-out{0%{opacity:1}to{opacity:0}}.hs-notif{display:flex;flex-direction:row;align-items:stretch;gap:0;padding:0;background:#0a0a0d;color:#efeff1;font:12px/1.35 ui-monospace,JetBrains Mono,Cascadia Mono,SF Mono,Menlo,Consolas,Courier New,monospace;border:1px solid #2a2a2e;border-left:3px solid var(--hs-notif-accent, #555);box-shadow:0 6px 16px #0000008c,0 0 0 1px #ffffff08 inset;animation:hs-notif-fade-in .12s ease both}@keyframes hs-notif-fade-in{0%{opacity:0}to{opacity:1}}.hs-notif-exiting{animation:hs-notif-fade-out .16s ease-in forwards!important;pointer-events:none}@media(prefers-reduced-motion:reduce){.hs-notif,.hs-notif-exiting{animation:none!important}}.hs-notif-body{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:8px;padding:6px 10px;word-break:break-word}.hs-notif-body-fallback{opacity:.55;font-style:italic}.hs-notif-actions{display:inline-flex;gap:0;flex:0 0 auto;align-items:stretch;margin-left:auto}.hs-notif-action{background:transparent;color:#efeff1;border:none;border-left:1px solid #2a2a2e;padding:0 12px;font:600 11px/1 inherit;cursor:pointer;border-radius:0;white-space:nowrap;transition:background 80ms linear,color 80ms linear}.hs-notif-action:hover{background:#fff;color:#000}.hs-notif-action:focus-visible{outline:1px solid #fff;outline-offset:-2px}.hs-notif-action-primary{color:#fff;font-weight:700;border:1px solid #efeff1;align-self:center;padding:4px 10px;margin:0 8px}.hs-notif-action-primary:hover,.hs-notif-action-primary:active{background:#fff;color:#000;border-color:#fff}.hs-notif-action-dismiss{padding:0 10px;font-size:14px;color:#848494}.hs-notif-action-dismiss:hover{background:var(--hs-danger);color:#000}.hs-notif-layer-toast-stack>.hs-notif{min-width:180px;max-width:100%;cursor:pointer}.hs-notif-toast-text{color:#efeff1;display:inline}.hs-notif-toast-text:before{content:var(--hs-notif-icon, "·");color:var(--hs-notif-accent, #888);display:inline-block;width:14px;margin-right:8px;font-weight:700;text-align:center;flex:0 0 auto}.hs-notif-toast-text.hs-notif-toast-success{--hs-notif-icon: "✓";--hs-notif-accent: var(--hs-ok);color:#efeff1}.hs-notif-toast-text.hs-notif-toast-error{--hs-notif-icon: "✕";--hs-notif-accent: var(--hs-danger);color:#efeff1}.hs-notif-toast-text.hs-notif-toast-warn{--hs-notif-icon: "!";--hs-notif-accent: var(--hs-warn);color:#efeff1}.hs-notif-toast-text.hs-notif-toast-info{--hs-notif-icon: "i";--hs-notif-accent: var(--hs-info);color:#efeff1}.hs-notif-toast-text.hs-notif-toast-mention{--hs-notif-icon: "@";--hs-notif-accent: var(--hs-mention);color:#efeff1}.hs-notif:has(.hs-notif-toast-success){--hs-notif-accent: var(--hs-ok)}.hs-notif:has(.hs-notif-toast-error){--hs-notif-accent: var(--hs-danger)}.hs-notif:has(.hs-notif-toast-warn){--hs-notif-accent: var(--hs-warn)}.hs-notif:has(.hs-notif-toast-info){--hs-notif-accent: var(--hs-info)}.hs-notif:has(.hs-notif-toast-mention){--hs-notif-accent: var(--hs-mention)}.hs-notif-layer-toast-stack>.hs-notif:hover{background:#fff}.hs-notif-layer-toast-stack>.hs-notif:hover .hs-notif-toast-text,.hs-notif-layer-toast-stack>.hs-notif:hover .hs-notif-toast-text:before{color:#000!important}.hs-notif-layer-toast-stack>.hs-notif:hover .hs-notif-action{color:#000;border-color:#000}.hs-notif-layer-toast-stack>.hs-notif:hover .hs-notif-action:hover{background:#000;color:#fff}.hs-notif-layer-toast-stack>.hs-notif:hover .hs-notif-action-dismiss:hover{background:var(--hs-danger);color:#000}#hs-mc-statusbar{position:absolute;top:var(--hs-layer-statusbar-top, 0px);left:0;right:0;z-index:25;display:flex;align-items:stretch;min-height:0;background:#0a0a0d;border-bottom:1px solid #2a2a2e;overflow:hidden}#hs-mc-statusbar:not(:has(.hs-notif)){display:none}#hs-mc-collapse-btn:before{content:">"}body.hs-chat-left #hs-mc-collapse-btn:before{content:"<"}body.hs-chat-top #hs-mc-collapse-btn:before{content:"\\2303"}body.hs-chat-bottom #hs-mc-collapse-btn:before{content:"\\2304"}body.hs-popout #hs-mc-collapse-btn{display:none}.hs-notif-layer-statusbar{position:static;z-index:auto;flex:1 1 0;min-width:0;flex-direction:row;align-items:center;gap:0;overflow:hidden;pointer-events:auto}.hs-notif-layer-statusbar:empty{display:none}.hs-notif-layer-statusbar>.hs-notif{flex:1 1 0;min-width:0;background:transparent;border:none;box-shadow:none;animation:hs-notif-fade-in .14s ease both;transform-origin:center;cursor:pointer;container-type:inline-size}.hs-notif-layer-statusbar .hs-notif-body{display:block;padding:0 8px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-notif-layer-statusbar .hs-notif-toast-text{display:inline;white-space:nowrap}.hs-notif-layer-statusbar>.hs-notif:hover .hs-notif-toast-text,.hs-notif-layer-statusbar>.hs-notif:hover .hs-notif-toast-text:before{color:#fff}.hs-notif-layer-statusbar .hs-notif-exiting{animation:hs-notif-fade-out .12s ease-in forwards!important}#hs-mc-statusbar:has(.hs-notif-toast-error){animation:hs-statusbar-flash-err .7s ease-out}#hs-mc-statusbar:has(.hs-notif-toast-warn){animation:hs-statusbar-flash-warn .7s ease-out}@keyframes hs-statusbar-flash-err{0%{background:#3a0f0f}to{background:#0a0a0d}}@keyframes hs-statusbar-flash-warn{0%{background:#38330d}to{background:#0a0a0d}}@media(prefers-reduced-motion:reduce){#hs-mc-statusbar{animation:none!important}}.hs-notif.hs-notif-out-of-scope{display:none!important}.hs-notif-layer-chat-docked-bottom>.hs-notif{border:none;border-top:1px solid var(--hs-border);border-bottom:1px solid var(--hs-border);box-shadow:0 -2px 8px #00000080;background:#0a0a0d}.hs-notif-resub-body{display:flex;align-items:center;gap:6px;flex:1 1 0;min-width:0;overflow:hidden}.hs-notif-resub-icon{flex:0 0 auto;font-size:14px;color:#fff}.hs-notif-resub-text{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-rt-mo{display:none}@container (max-width: 280px){.hs-notif-resub-body{font-size:13px}.hs-notif-action{padding:2px 6px;font-size:13px}.hs-rt-prefix{display:none}}@container (max-width: 220px){.hs-rt-suffix{display:none}}@container (max-width: 180px){.hs-notif-resub-icon{display:none}}@container (max-width: 140px){.hs-rt-months{display:none}.hs-rt-mo{display:inline}}.hs-notif-watchstreak-body{display:flex;align-items:center;gap:6px;flex:1 1 0;min-width:0;overflow:hidden}.hs-notif-watchstreak-icon{flex:0 0 auto;font-size:14px}.hs-notif-watchstreak-text{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--hs-brand);font-weight:600}@container (max-width: 240px){.hs-wt-prefix{display:none}}@container (max-width: 180px){.hs-wt-suffix{display:none}}@container (max-width: 140px){.hs-wt-stream,.hs-notif-watchstreak-icon{display:none}}[data-test-selector=chat-private-callout-queue__callout-container]{display:none!important}[data-test-selector=chat-private-callout-queue__callout-container]:has(*){position:fixed!important;top:auto!important;bottom:var(--hs-layer-chat-docked-bottom-bottom, 0px)!important;left:var(--hs-layer-chat-docked-bottom-left, 0px)!important;right:var(--hs-layer-chat-docked-bottom-right, 0px)!important;width:auto!important;max-width:100vw!important;overflow:hidden!important;z-index:100000!important;pointer-events:auto!important;background:#18181b!important;border:none!important;border-top:1px solid var(--hs-border)!important;border-bottom:1px solid var(--hs-border)!important;border-radius:0!important;box-shadow:0 -2px 8px #00000080!important;box-sizing:border-box!important}[data-test-selector=chat-private-callout-queue__callout-container] button[aria-label=pinned]{display:none!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;padding:4px 8px!important;min-height:0!important;line-height:15px!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;container-type:inline-size!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout>*{margin:0!important;min-width:0!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout :is(div,span,p):not(:has(button)){display:inline!important;font-size:13px!important;line-height:15px!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout>div:has(div,span,p){display:block!important;flex:1 1 0!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout__icon{flex:0 0 auto!important;width:16px!important;height:16px!important;display:flex!important;align-items:center!important;justify-content:center!important}[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout__icon *{width:16px!important;height:16px!important;font-size:14px!important}[data-test-selector=chat-private-callout-queue__callout-container] [data-a-target=chat-private-callout__primary-button]{padding:2px 10px!important;font-size:13px!important;min-height:0!important;height:auto!important;line-height:18px!important;flex:0 1 auto!important;min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}@container (max-width: 280px){[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout :is(div,span,p):not(:has(button)){font-size:13px!important}[data-test-selector=chat-private-callout-queue__callout-container] [data-a-target=chat-private-callout__primary-button]{padding:2px 6px!important;font-size:13px!important}}@container (max-width: 220px){[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout__icon{display:none!important}}@container (max-width: 160px){[data-test-selector=chat-private-callout-queue__callout-container] .pinned-callout>div:has(div,span,p){display:none!important}}.channel-root__right-column,.channel-root__right-column--expanded,aside#live-page-chat,.right-column .chat-shell,.right-column [class*=chat-shell],.right-column [class*=stream-chat]{background:#000!important}.right-column .chat-shell,.right-column [class*=chat-shell],.right-column [class*=stream-chat],.channel-root__right-column,.channel-root__right-column>*,aside#live-page-chat,aside#live-page-chat>*{transition:none!important}body.hs-mc-navigating .chat-shell,body.hs-mc-navigating [class*=chat-shell],body.hs-mc-navigating [class*=stream-chat],body.hs-mc-navigating #channel-chatroom,body.hs-mc-navigating .channel-root__right-column,body.hs-mc-navigating aside#live-page-chat{background:#000!important}body.hs-mc-navigating .chat-shell>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),body.hs-mc-navigating [class*=chat-shell]>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),body.hs-mc-navigating [class*=stream-chat]>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),body.hs-mc-navigating #channel-chatroom>*:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card){visibility:hidden!important}body.hs-mc-navigating.hs-platform-kick.hs-chat-right>#hs-mc-container{position:fixed!important;inset:0 0 0 auto!important;width:var(--hs-kick-chat-width, 340px)!important;height:100vh!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-kick.hs-chat-left>#hs-mc-container{position:fixed!important;inset:0 auto 0 0!important;width:var(--hs-kick-chat-width, 340px)!important;height:100vh!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-kick.hs-chat-top>#hs-mc-container{position:fixed!important;inset:0 0 auto!important;width:100vw!important;height:var(--hs-kick-chat-height, 35vh)!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-kick.hs-chat-bottom>#hs-mc-container{position:fixed!important;inset:auto 0 0!important;width:100vw!important;height:var(--hs-kick-chat-height, 35vh)!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-twitch.hs-chat-right>#hs-mc-container{position:fixed!important;top:var(--hs-twitch-topnav-h, 50px)!important;bottom:0!important;right:0!important;left:auto!important;width:var(--hs-chat-w, 340px)!important;height:auto!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-twitch.hs-chat-left>#hs-mc-container{position:fixed!important;top:var(--hs-twitch-topnav-h, 50px)!important;bottom:0!important;left:0!important;right:auto!important;width:var(--hs-chat-w, 340px)!important;height:auto!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-twitch.hs-chat-top>#hs-mc-container{position:fixed!important;top:var(--hs-twitch-topnav-h, 50px)!important;left:0!important;right:0!important;bottom:auto!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important;z-index:9999!important;margin:0!important}body.hs-mc-navigating.hs-platform-twitch.hs-chat-bottom>#hs-mc-container{position:fixed!important;inset:auto 0 0!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important;z-index:9999!important;margin:0!important}body.hs-platform-twitch .right-column__toggle-visibility,.right-column--collapsed #hs-mc-container{display:none!important}.right-column--collapsed,.right-column--collapsed>*,div:has(>.right-column--collapsed){width:0px!important;min-width:0px!important;overflow:hidden!important}#hs-mc-tabbar,#hs-mc-inputbar{display:flex!important}#hs-mc-inputbar.hs-hidden{display:none!important}.hs-mc-ts{color:var(--hs-muted);font-size:13px;margin-right:4px;font-variant-numeric:tabular-nums}.hs-mc-avatar{width:18px;height:18px;border-radius:0;vertical-align:middle;margin-right:3px;object-fit:cover}span.hs-mc-avatar.hs-mc-avatar-fallback{display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;line-height:1;user-select:none}.hs-mc-msg{padding:var(--hs-mc-row-pad, 2px 4px);border-radius:0;font-size:var(--hs-chat-font, 13px)!important;line-height:var(--hs-mc-row-lh, 18px)!important;word-wrap:break-word;word-break:break-word;overflow-wrap:anywhere;overflow:hidden;max-width:100%;box-sizing:border-box;color:#fff;unicode-bidi:plaintext}.hs-feed-msg,.hs-mc-search-content,.hs-mc-post-body{unicode-bidi:plaintext}.hs-mc-msg.hs-mc-zebra,.hs-feed-msg.hs-mc-zebra{background:#303030}.hs-mc-msg.hs-mc-reply-stack-active{background:var(--hs-warn-bg)!important}.hs-mc-msg.hs-mc-reply-stack-active,#hs-mc-reply-stack .hs-mc-reply-stack-row,#hs-mc-reply-stack-down .hs-mc-reply-stack-row{color:#fff}#hs-mc-reply-stack{box-sizing:border-box;background:#000;border:1px solid var(--hs-warn-dim);border-bottom:none;z-index:2147483647;pointer-events:auto;overflow:hidden;display:flex;flex-direction:column;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:var(--hs-mc-base-size, 13px)}#hs-mc-reply-stack-down{box-sizing:border-box;background:#000;border:1px solid var(--hs-warn-dim);border-top:none;z-index:2147483647;pointer-events:auto;overflow:hidden;display:flex;flex-direction:column;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:var(--hs-mc-base-size, 13px)}#hs-mc-reply-stack-down .hs-mc-reply-stack-row,#hs-mc-reply-stack .hs-mc-reply-stack-row{background:var(--hs-warn-bg)!important;box-shadow:none!important;margin:0!important;user-select:none;-webkit-user-select:none;cursor:default}#hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-btn,#hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-btn{display:none!important}#hs-mc-reply-stack .hs-mc-reply-stack-row:nth-last-child(odd),#hs-mc-reply-stack-down .hs-mc-reply-stack-row:nth-child(odd){background:#1a1a04!important}.hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx,.hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx *,#hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx,#hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx *,#hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx,#hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx *{color:#999!important;-webkit-text-fill-color:#999!important;border-left-color:#999!important}.hs-mc-reply-stack-chip{flex:0 0 auto;padding:2px 6px;font-size:13px;font-weight:700;color:#fff;background:#000;border-bottom:1px solid var(--hs-warn-dim);cursor:pointer;text-align:center;user-select:none}.hs-mc-reply-stack-chip:hover{color:#000;background:#fff}#hs-feed-postlink-preview{position:fixed;z-index:2147483647;background:#000;border:1px solid var(--hs-warn-dim);border-bottom:none;box-sizing:border-box;max-width:600px;min-width:280px;overflow:hidden;display:none;pointer-events:auto;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:var(--hs-mc-base-size, 13px)}.hs-feed-postlink-preview-row{background:var(--hs-warn-bg)!important;box-shadow:none!important;margin:0!important;border-bottom:1px solid #555500;color:#fff}.hs-feed-postlink-preview-row:last-child{border-bottom:none}.hs-feed-postlink-preview-row:nth-child(2n){background:#1a1a04!important}.hs-feed-postlink-preview-row.hs-feed-postlink-preview-linked{background:#550!important;border-left:2px solid var(--hs-mention)!important}.hs-mc-msg.hs-mc-thread-flash{animation:hs-mc-thread-flash 1.2s ease-out}@keyframes hs-mc-thread-flash{0%{background:var(--hs-warn-bg)}to{background:transparent}}.hs-mc-feed-inline,.hs-mc-stream-event{contain:layout style}.hs-mc-reply-btn{display:none;position:absolute;top:1px;right:2px;background:#000;border:1px solid var(--hs-border);color:#fff;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:13px;padding:0 4px;cursor:pointer;line-height:18px;z-index:10}.hs-mc-reply-btn:hover{color:#000;background:#fff}.hs-mc-msg[data-msg-id]:hover .hs-mc-reply-btn{display:block}.hs-mc-thread-btn{display:none;position:absolute;top:1px;right:22px;background:#000;border:1px solid var(--hs-border);color:#fff;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:13px;padding:0 4px;cursor:pointer;line-height:18px;z-index:10}.hs-mc-thread-btn:hover,.hs-mc-thread-btn:active{color:#000;background:#fff}.hs-mc-msg[data-msg-id]:hover .hs-mc-thread-btn{display:block}.hs-whisper-msg{position:relative}.hs-whisper-msg:hover .hs-mc-reply-btn{display:block}.hs-mc-msg[data-msg-id]{position:relative}.hs-mod-toolbar{position:absolute;top:1px;right:42px;z-index:11;display:inline-flex;align-items:stretch;background:#000;color:#fff;border:1px solid var(--hs-border);border-right:0;font:13px/18px var(--hs-mc-font, "CozetteVector", "Courier New", monospace);user-select:none;height:20px}.hs-mod-btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:content-box;min-width:12px;padding:0 5px;background:#000;color:#fff;border:0;border-right:1px solid var(--hs-border);font:inherit;cursor:pointer}.hs-mod-btn:last-child{border-right:0}.hs-mod-btn:hover{background:#fff;color:#000}.hs-mc-msg.hs-mc-row-selected{background:#fff!important;color:#000!important;box-shadow:inset 2px 0 0 var(--hs-reply-dim)}.hs-mc-msg.hs-mc-row-selected .hs-mc-user,.hs-mc-msg.hs-mc-row-selected .hs-mc-system-text,.hs-mc-msg.hs-mc-row-selected .hs-mc-channel,.hs-mc-msg.hs-mc-row-selected .hs-mc-ts,.hs-mc-msg.hs-mc-row-selected .hs-mc-reply-user{color:#000!important;-webkit-text-fill-color:#000!important}body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id]{cursor:pointer}body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id] .hs-mc-reply-btn,body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id] .hs-mod-toolbar{cursor:default}#hs-mc-bulk-bar{position:absolute;left:0;right:0;bottom:0;z-index:1006;display:flex;align-items:center;gap:6px;padding:6px 8px;background:#fff;color:#000;font:13px/18px CozetteVector,monospace;border-top:1px solid #000;box-sizing:border-box}#hs-mc-bulk-count{font-weight:700;margin-right:auto}#hs-mc-bulk-bar button{background:#000;color:#fff;border:1px solid #000;border-radius:0;padding:3px 10px;font:inherit;cursor:pointer}#hs-mc-bulk-bar button:hover{background:#fff;color:#000}#hs-mc-bulk-bar button[data-bulk=ban]{border-color:var(--hs-danger);color:#ff5f5f}#hs-mc-bulk-bar button[data-bulk=ban]:hover{background:#ff5f5f;color:#000}#hs-mc-bulk-bar button[disabled]{opacity:.5;cursor:default;pointer-events:none}#hs-mc-reply-indicator{flex:1 0 100%;order:-1;display:flex;align-items:center;justify-content:space-between;background:#000;padding:2px 6px;font-size:13px;color:#fff;box-sizing:border-box}#hs-mc-reply-indicator span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#hs-mc-reply-cancel{background:none;border:none;color:var(--hs-muted);cursor:pointer;font-size:13px;padding:0 2px;line-height:1}#hs-mc-reply-cancel:hover{color:#000;background:#fff}.hs-mc-muted{user-select:none}.hs-mc-muted .hs-mc-user{color:var(--hs-muted)!important;animation:none!important;background:none!important;-webkit-text-fill-color:var(--hs-muted)!important}.hs-mc-muted>:not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-timestamp){display:none!important}.hs-mc-msg.hs-mc-system{border-left:3px solid var(--hs-plat-twitch);padding-left:8px;background:#9147ff14}.hs-mc-msg.hs-mc-kicks{border-left:3px solid #ffd600;padding-left:8px;background:#ffd6001a}.hs-mc-kicks .hs-mc-system-text{color:#ffd600;font-weight:700}.hs-mc-system-text{color:#b0b0b0;font-size:13px;font-style:italic;display:block}.hs-mc-msg.hs-mc-notice-ban{border-left-color:var(--hs-danger)!important;background:var(--hs-danger-tint)!important}.hs-mc-msg.hs-mc-notice-ban .hs-mc-system-text{color:var(--hs-danger);font-weight:600}.hs-mc-msg.hs-mc-notice-timeout{border-left-color:var(--hs-ok-dim)!important;background:#0080001a!important}.hs-mc-msg.hs-mc-notice-timeout .hs-mc-system-text{color:#0c4}.hs-mc-msg.hs-mc-notice-unban{border-left-color:var(--hs-ok)!important;background:var(--hs-ok-tint)!important}.hs-mc-msg.hs-mc-notice-unban .hs-mc-system-text{color:var(--hs-ok);font-weight:600}.hs-mc-msg.hs-mc-notice-untimeout{border-left-color:var(--hs-ok-dim)!important;background:#0080001a!important}.hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text{color:#0c4}.hs-mc-msg.hs-mc-notice-mod-add{border-left-color:var(--hs-info)!important;background:#4080ff1f!important}.hs-mc-msg.hs-mc-notice-mod-add .hs-mc-system-text{color:var(--hs-info);font-weight:600}.hs-mc-msg.hs-mc-notice-mod-remove{border-left-color:silver!important;background:#c0c0c00f!important}.hs-mc-msg.hs-mc-notice-mod-remove .hs-mc-system-text{color:silver}.hs-mc-msg.hs-mc-notice-vip-add{border-left-color:var(--hs-thread)!important;background:var(--hs-thread-tint)!important}.hs-mc-msg.hs-mc-notice-vip-add .hs-mc-system-text{color:var(--hs-thread);font-weight:600}.hs-mc-msg.hs-mc-notice-vip-remove{border-left-color:silver!important;background:#c0c0c00f!important}.hs-mc-msg.hs-mc-notice-vip-remove .hs-mc-system-text{color:silver}.hs-mc-msg.hs-mc-notice-delete{border-left-color:var(--hs-danger-dim)!important;background:#8000001a!important}.hs-mc-msg.hs-mc-notice-delete .hs-mc-system-text{color:#ff8080}.hs-mc-msg.hs-mc-notice-mode{border-left-color:var(--hs-reply)!important;background:var(--hs-reply-tint)!important}.hs-mc-msg.hs-mc-notice-mode .hs-mc-system-text{color:var(--hs-reply);font-weight:600}.hs-mc-msg.hs-mc-notice-sub{border-left-color:var(--hs-plat-twitch)!important;background:#9146ff1f!important}.hs-mc-msg.hs-mc-notice-sub .hs-mc-system-text{color:#b87aff;font-weight:600}.hs-mc-msg.hs-mc-notice-gift{border-left-color:#c4f!important;background:#cc44ff29!important}.hs-mc-msg.hs-mc-notice-gift .hs-mc-system-text{color:#c4f;font-weight:600}.hs-mc-msg.hs-mc-notice-raid{border-left-color:var(--hs-thread)!important;background:var(--hs-thread-tint)!important}.hs-mc-msg.hs-mc-notice-raid .hs-mc-system-text{color:var(--hs-thread);font-weight:700}.hs-mc-msg.hs-mc-notice-announce{border:1px solid var(--hs-warn)!important;border-left-width:3px!important;background:var(--hs-warn-bg)!important}.hs-mc-msg.hs-mc-notice-announce:before{content:"announce";color:#000;background:var(--hs-warn);font-weight:700;padding:0 4px;margin-right:6px}.hs-mc-msg.hs-mc-notice-announce .hs-mc-system-text{color:var(--hs-warn);font-weight:700}.hs-mc-msg.hs-mc-notice-bits{border-left-color:var(--hs-gold)!important;background:#ffaa001a!important}.hs-mc-msg.hs-mc-notice-bits .hs-mc-system-text{color:var(--hs-gold);font-weight:600}.hs-mc-msg.hs-mc-notice-milestone{border-left-color:var(--hs-reply-dim)!important;background:#0080801f!important}.hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text{color:var(--hs-reply);font-weight:600}.hs-mc-msg.hs-mc-notice-watchstreak{border-left-color:var(--hs-brand)!important;background:#ff7f001f!important}.hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text{color:var(--hs-brand);font-weight:600}.hs-mc-msg.hs-mc-notice-charity{border-left-color:var(--hs-gold)!important;background:var(--hs-gold-tint)!important}.hs-mc-msg.hs-mc-notice-charity .hs-mc-system-text{color:var(--hs-gold);font-weight:600}.hs-mc-msg.hs-mc-notice-pin{border-left-color:var(--hs-gold)!important;background:var(--hs-gold-tint)!important}.hs-mc-msg.hs-mc-notice-pin .hs-mc-system-text{color:var(--hs-gold);font-weight:700}.hs-mc-msg.hs-mc-user-intro{border-left:3px solid var(--hs-thread)!important;background:var(--hs-thread-tint)}.hs-mc-msg.hs-mc-user-intro:before{content:"new here";color:#000;background:var(--hs-thread);font-weight:700;padding:0 4px;margin-right:6px}.hs-mc-msg.hs-mc-gigantified .hs-mc-text .hs-mc-emote-wrapper:last-of-type img{height:56px!important;max-height:56px!important;width:auto!important}.hs-mc-msg.hs-mc-animated{border-left:3px solid var(--hs-thread-dim)!important}.hs-mc-msg.hs-mc-animated:before{content:"fx:" attr(data-hs-anim);color:var(--hs-thread);border:1px solid var(--hs-thread-dim);padding:0 4px;margin-right:6px}.hs-mc-msg.hs-mc-shared:before{content:"shared";color:var(--hs-reply);border:1px solid var(--hs-reply-dim);padding:0 4px;margin-right:6px}.hs-mc-msg.hs-mc-notice-mod-anniversary{border-left-color:var(--hs-gold)!important;background:var(--hs-gold-tint)!important}.hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text{color:var(--hs-gold);font-weight:700}.hs-mc-msg.hs-mc-notice-error{border-left-color:var(--hs-danger-dim)!important;background:#8000000f!important}.hs-mc-msg.hs-mc-notice-error .hs-mc-system-text{color:#ff8080}.hs-mc-msg.hs-mc-first-msg{border-left:3px solid #bd5fff;padding-left:8px;background:#bd5fff1f}.hs-mc-msg.hs-mc-search-current{border-left:2px solid var(--hs-mention)!important;background:var(--hs-warn-tint)!important}.hs-mc-msg.hs-mc-msg-cleared{opacity:.5}.hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote,.hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-wrapper>img,.hs-mc-msg.hs-mc-msg-cleared .hs-mc-emoji,.hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-stack img{filter:grayscale(1) brightness(.7)}.hs-mc-msg.hs-mc-automod{display:block;border-left:3px solid var(--hs-gold);background:var(--hs-gold-tint);padding:4px 8px}.hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved{opacity:.6}.hs-mc-automod-badge{display:inline-block;background:var(--hs-gold);color:#000;font-weight:700;font-size:13px;padding:0 4px;margin-right:6px;text-transform:lowercase}.hs-mc-automod-chip{display:inline-block;color:var(--hs-gold);font-size:13px;border:1px solid var(--hs-gold);padding:0 4px}.hs-mc-automod-body{margin-top:3px;font-size:13px;word-break:break-word}.hs-mc-automod-sender{font-weight:700;color:#fff}.hs-mc-automod-text{color:#e0e0e0}.hs-mc-automod-actions{margin-top:4px;display:flex;align-items:center;gap:6px}.hs-mc-automod-btn{background:#000;color:#fff;border:1px solid var(--hs-gold);font:13px/18px CozetteVector,monospace;padding:1px 8px;cursor:pointer;user-select:none}.hs-mc-automod-btn:hover,.hs-mc-automod-btn:active{background:#fff;color:#000}.hs-mc-automod-status{font-size:13px;color:var(--hs-gold)}.hs-mc-automod-status.hs-mc-automod-err{color:var(--hs-danger)}.hs-mc-msg.hs-mc-redeemed{background:#9147ff26;border-left:3px solid var(--hs-plat-twitch);padding-left:8px}.hs-mc-msg.hs-mc-highlighted{background:var(--hs-gold-tint);border-left:3px solid var(--hs-gold);padding-left:8px}.hs-mc-redeem-label{color:var(--hs-plat-twitch);font-size:13px;font-style:normal;font-weight:600}.hs-mc-first-label{color:#bd5fff;font-size:13px;font-style:normal;font-weight:600}.hs-mc-highlight-label{color:var(--hs-gold);font-size:13px;font-style:normal;font-weight:600}.hs-mc-reply-ctx{display:block;max-width:100%;font-size:13px;color:var(--hs-muted);line-height:inherit;padding:0;margin:0;border-left:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;user-select:none}.hs-mc-msg:not(.hs-mc-reply-stack-active) .hs-mc-reply-ctx:hover{background:#fff;color:#000}.hs-mc-msg:not(.hs-mc-reply-stack-active) .hs-mc-reply-ctx:hover .hs-mc-reply-user{color:#000}.hs-mc-reply-user{color:var(--hs-muted);font-weight:400}.hs-mc-msg.mention,.hs-feed-msg.mention{background:#870000}.hs-mc-msg.mention.hs-mc-zebra,.hs-feed-msg.mention.hs-mc-zebra{background:#5f0000}.hs-mc-msg.mention{color:#fff}.hs-mc-msg.mention .hs-mc-channel,.hs-mc-msg.mention .hs-mc-channel *{color:#999!important;-webkit-text-fill-color:#999!important}.hs-mc-msg.hs-first-msg{box-shadow:inset 2px 0 0 var(--hs-mention),inset 0 0 14px -1px #ffff006b}.hs-mc-msg.hs-kw-match{background:#ffff0024;box-shadow:inset 0 0 0 1px var(--hs-mention)}.hs-mc-msg.mention.hs-kw-match,.hs-feed-msg.mention.hs-kw-match{background:#5c1212;box-shadow:none}.hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,.hs-feed-msg.mention.hs-kw-match.hs-mc-zebra{background:#380b0b}.hs-mc-msg.is-returning{box-shadow:inset 2px 0 0 var(--hs-border)}.hs-mc-msg.is-raider{box-shadow:inset 2px 0 #fff;background:#ffffff0f}.hs-mc-msg.hs-mc-rule-highlight{border-left:3px solid var(--hs-rule-hl, #fff);padding-left:4px;background:color-mix(in srgb,var(--hs-rule-hl, #fff) 12%,transparent)}.hs-mc-msg.tweet{background:#d449494d}.hs-mc-user{font-weight:600;text-decoration:none;cursor:pointer}.hs-plus-tenure{display:inline-block;margin:0 2px 0 4px;font-weight:700;vertical-align:middle;white-space:nowrap}.hs-mc-link{color:var(--hs-link);text-decoration:none;word-break:break-all;position:relative}.hs-mc-link:hover{text-decoration:underline}.hs-mc-user.hs-user-highlight{background:#fff!important;color:#000!important;-webkit-text-fill-color:#000!important;border-radius:0}.hs-mc-platform-badge{font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle}.hs-mc-platform-badge.hs-mc-pb-twitch{color:var(--hs-plat-twitch)}.hs-mc-platform-badge.hs-mc-pb-kick{color:var(--hs-plat-kick)}.hs-mc-platform-badge.hs-mc-pb-yt{color:var(--hs-plat-youtube)}.hs-mc-badge{display:inline-block;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:13px;padding:0 3px;border-radius:0;margin-right:2px;font-weight:700;vertical-align:middle;line-height:var(--hs-stat-badge-line, 16px);letter-spacing:.3px;cursor:default}.hs-mc-badge-img{display:inline!important;width:var(--hs-badge-img, 18px);height:var(--hs-badge-img, 18px);vertical-align:middle;margin-right:2px;cursor:default}.hs-mc-media-wrap{margin:2px 0 1px}.hs-mc-media{display:block;max-width:100%;border-radius:0}.hs-mc-media>.hs-mc-media-link{display:block;width:max-content;max-width:100%}.hs-mc-url-folded{display:none}.hs-mc-media img,.hs-mc-media video{display:block;max-width:100%;max-height:220px;width:auto;height:auto;border-radius:0;background:#000}.hs-mc-media.hs-feed-embed-yt-thumb{position:relative;width:max-content;max-width:100%;cursor:pointer}.hs-mc-media.hs-feed-embed-yt-thumb .hs-feed-embed-yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:22px;text-shadow:0 0 4px #000;pointer-events:none}.hs-mc-media.hs-feed-embed-pending{min-height:0;max-width:100%;padding:3px 6px;font-size:13px;color:var(--hs-border)}.hs-mc-media.hs-mc-playable{position:relative;cursor:pointer}.hs-mc-media.hs-mc-playable:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending):before{content:"▶";position:absolute;left:22px;top:50%;transform:translate(-50%,-50%);font-size:15px;line-height:15px;color:#fff;text-shadow:0 0 4px #000;pointer-events:none}.hs-mc-media.hs-mc-playable.hs-playing:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending):before{content:"❚❚";font-size:11px;letter-spacing:-1px}.hs-mc-media.hs-mc-playable:hover,.hs-mc-media.hs-mc-playable:active{background:#fff;color:#000}.hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-platform,.hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-title,.hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-author,.hs-mc-media.hs-mc-playable:hover .hs-feed-embed-pending-label{color:#000}#hs-mc-embed-player{position:absolute;z-index:3;background:#000;border:1px solid var(--hs-border)}#hs-mc-embed-player iframe{display:block;width:100%;height:100%;border:0}.hs-mc-transport{display:flex;align-items:center;gap:4px;height:18px;padding:0 4px;background:#000}#hs-mc-embed-player .hs-mc-transport{position:absolute;right:0;bottom:0;left:0;border-top:1px solid var(--hs-border)}.hs-mc-media.hs-mc-playable>.hs-mc-transport{margin-top:2px}.hs-mc-transport-toggle{flex:none;width:18px;height:16px;margin:0;padding:0;font:inherit;font-size:13px;line-height:14px;letter-spacing:-1px;text-align:center;color:var(--hs-brand);background:#000;border:1px solid var(--hs-border);border-radius:0;cursor:pointer}.hs-mc-transport-toggle:hover,.hs-mc-transport-toggle:active{color:#000;background:#fff}.hs-mc-transport-vol{flex:1;min-width:40px;max-width:120px;height:10px;margin:0;appearance:none;-webkit-appearance:none;background:#303030;border:1px solid var(--hs-border);border-radius:0;cursor:pointer}.hs-mc-transport-vol::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:6px;height:8px;background:var(--hs-brand);border:0;border-radius:0}.hs-mc-transport-vol::-moz-range-thumb{width:6px;height:8px;background:var(--hs-brand);border:0;border-radius:0}#hs-mc-audio-host{position:absolute;width:0;height:0;overflow:hidden;border:0}#hs-mc-audio-host iframe{width:320px;height:80px;border:0}.hs-mc-media .hs-feed-embed-rich-card{display:flex;align-items:center;gap:6px;padding:2px 4px;max-width:100%;min-height:0}.hs-mc-media .hs-feed-embed-rich-thumb,.hs-mc-media .hs-feed-embed-rich-thumb-placeholder{width:36px;height:36px;max-height:36px;object-fit:cover;flex:none;cursor:pointer}.hs-mc-media .hs-feed-embed-rich-meta{min-width:0;overflow:hidden}.hs-mc-media .hs-feed-embed-rich-title,.hs-mc-media .hs-feed-embed-rich-platform,.hs-mc-media .hs-feed-embed-rich-author{font-size:13px;line-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-mc-media.hs-feed-embed-yt-thumb img{max-height:72px;width:auto}#hs-mc-player-dock{flex:none;width:100%;background:#000;border-top:1px solid var(--hs-border)}#hs-mc-player-dock .hs-mc-player-dock-bar{display:flex;align-items:center;gap:4px;padding:0 2px 0 6px;height:18px;background:#000}#hs-mc-player-dock .hs-mc-player-dock-title{flex:1;min-width:0;font-size:13px;line-height:18px;color:var(--hs-border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hs-mc-player-dock .hs-mc-player-dock-out{flex:none;width:18px;font-size:13px;line-height:18px;text-align:center;color:#fff;text-decoration:none}#hs-mc-player-dock .hs-mc-player-dock-out:hover,#hs-mc-player-dock .hs-mc-player-dock-out:active{color:#000;background:#fff}#hs-mc-player-dock .hs-feed-embed-container{max-width:100%}#hs-mc-player-dock .hs-feed-embed-spotify,#hs-mc-player-dock .hs-feed-embed-spotify iframe{height:80px}#hs-mc-player-dock .hs-feed-embed-soundcloud,#hs-mc-player-dock .hs-feed-embed-soundcloud iframe{height:120px}.hs-mc-player-close{flex:none;width:18px;height:18px;margin:0;padding:0;font:inherit;font-size:13px;line-height:16px;text-align:center;color:#fff;background:#000;border:1px solid var(--hs-border);border-radius:0;cursor:pointer}.hs-mc-player-close:hover,.hs-mc-player-close:active{color:#000;background:#fff}#hs-mc-idwarn{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 8px;font-size:13px;color:var(--hs-danger);background:#000;border:1px solid var(--hs-danger);border-radius:0}#hs-mc-idwarn a{color:var(--hs-danger);text-decoration:underline}#hs-mc-idwarn b{color:var(--hs-danger);font-weight:600}#hs-mc-idwarn button{font-family:inherit;flex:none;width:18px;height:18px;padding:0;font-size:13px;line-height:1;color:var(--hs-danger);background:#000;border:1px solid var(--hs-danger);border-radius:0;cursor:pointer}#hs-mc-idwarn button:hover,#hs-mc-idwarn button:active{color:#000;background:#fff;border-color:#fff}.hs-mc-reply-ctx{cursor:pointer}.hs-mc-reply-caret{font-size:inherit;opacity:.55;margin-left:2px}.hs-mc-reply-caret:before{content:"▾"}.hs-mc-reply-ctx[aria-expanded=true] .hs-mc-reply-caret:before{content:"▴"}.hs-mc-reply-ctx:hover .hs-mc-reply-caret,.hs-mc-reply-ctx:focus-visible .hs-mc-reply-caret,.hs-mc-reply-ctx[aria-expanded=true] .hs-mc-reply-caret{opacity:1}#hs-user-tooltip,#hs-badge-tooltip,#hs-emote-tooltip,#hs-link-tooltip,#hs-mc-msg-ctx,.hs-mc-ctx{font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:var(--hs-mc-base-size, 13px)}.hs-mc-ctx{position:fixed;z-index:2147483647!important;background:#000;color:#fff;border:1px solid #fff;padding:0;min-width:220px;max-width:280px;box-shadow:0 6px 32px #000000bf;user-select:none}.hs-mc-ctx.hs-mc-em-flip-x{transform-origin:top right}.hs-mc-ctx.hs-mc-em-flip-y{transform-origin:bottom left}.hs-mc-ctx.hs-mc-em-flip-x.hs-mc-em-flip-y{transform-origin:bottom right}.hs-note-editor{position:fixed;z-index:2147483647!important;background:#000;color:#fff;border:1px solid var(--hs-gold);padding:0;width:300px;box-shadow:0 6px 32px #000000bf;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:var(--hs-mc-base-size, 13px);user-select:none}.hs-note-editor-head{padding:4px 10px;font-size:13px;color:var(--hs-muted);text-transform:uppercase;letter-spacing:.5px;background:#050505;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-note-editor-ta{display:block;width:100%;box-sizing:border-box;background:#000;color:#fff;border:none;border-top:1px solid #1a1a1a;padding:8px 10px;margin:0;resize:vertical;min-height:72px;font-family:inherit;font-size:13px;line-height:1.4;outline:none}.hs-note-editor-ta::placeholder{color:var(--hs-muted)}.hs-note-editor-ta:focus{box-shadow:inset 0 0 0 1px var(--hs-gold)}.hs-note-editor-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;background:#050505;border-top:1px solid #1a1a1a}.hs-note-editor-status{font-size:13px;color:var(--hs-border);text-transform:uppercase;letter-spacing:.5px}.hs-note-editor-del{background:transparent;color:var(--hs-border);border:1px solid #333;padding:2px 8px;cursor:pointer;font-family:inherit;font-size:13px}.hs-note-editor-del:hover{background:var(--hs-danger);color:#000;border-color:var(--hs-danger)}.hs-mc-ctx .hs-mc-em-header{padding:4px 10px;font-size:13px;color:var(--hs-muted);background:#050505}.hs-mc-ctx .hs-mc-em-item{padding:6px 10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}.hs-mc-ctx .hs-mc-em-item:hover{background:#fff;color:#000}.hs-mc-ctx .hs-mc-em-item:hover .hs-mc-em-kbd{background:#000;color:#fff;border-color:#000}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger{color:var(--hs-danger)}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover{background:var(--hs-danger);color:#fff}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-good{color:var(--hs-ok)}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover{background:#fff;color:#000}.hs-mc-ctx .hs-mc-em-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-mc-ctx .hs-mc-em-kbd{display:inline-block;min-width:14px;padding:0 4px;border:1px solid #333;background:#0a0a0a;color:#888;font-size:13px;line-height:14px;text-align:center}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled{opacity:.4;cursor:not-allowed}.hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover{background:none;color:inherit}.hs-mc-ctx .hs-mc-em-sep{height:1px;background:#1a1a1a;margin:2px 0}#hs-user-tooltip{position:fixed;z-index:2147483647!important;pointer-events:none;background:#000;border:1px solid #2a2a2a;border-radius:0;padding:0;display:none;min-width:210px;max-width:360px;overflow:hidden;isolation:isolate;--hs-pc-accent: #fff}#hs-user-tooltip.visible{display:block}#hs-user-tooltip .hs-pc-hero{position:absolute;inset:0;z-index:0;background:#0a0a0a;overflow:hidden}#hs-user-tooltip .hs-pc-hero-img{position:absolute;inset:-8px;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transition:opacity .15s ease-out;filter:saturate(1.15) blur(3px)}#hs-user-tooltip .hs-pc-hero.hs-pc-hero-loaded .hs-pc-hero-img{opacity:.55}#hs-user-tooltip .hs-pc-hero-scrim{position:absolute;inset:0;background:#00000080;pointer-events:none}#hs-user-tooltip .hs-pc-body{position:relative;z-index:1;display:flex;padding:8px}#hs-user-tooltip .hs-pc-avatar{width:32px;height:32px;min-width:32px;border:2px solid var(--hs-pc-accent, #2a2a2a);object-fit:cover;flex-shrink:0;align-self:flex-start;margin-top:0;margin-right:10px;box-shadow:0 0 0 1px #000,0 0 12px #0009,0 0 18px color-mix(in srgb,var(--hs-pc-accent, transparent) 25%,transparent);background:#000;position:relative;z-index:1}#hs-user-tooltip .hs-pc-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}#hs-user-tooltip .hs-pc-header{display:flex;align-items:center;column-gap:4px;row-gap:6px;flex-wrap:wrap;line-height:15px}#hs-user-tooltip [class*=hs-pc-]{font-size:13px!important;padding:1px 2px!important;line-height:16px!important;letter-spacing:0!important}#hs-user-tooltip .hs-pc-platform{font-size:13px!important;padding:1px 2px!important;font-weight:900!important;border:1px solid #000!important;white-space:nowrap!important;letter-spacing:.2px!important;line-height:16px!important}#hs-user-tooltip .hs-pc-platform.twitch{background:var(--hs-plat-twitch);color:#fff}#hs-user-tooltip .hs-pc-platform.kick{background:var(--hs-plat-kick);color:#000}#hs-user-tooltip .hs-pc-name{font-size:15px;font-weight:700;white-space:nowrap;color:#fff}#hs-user-tooltip .hs-pc-pronoun{border:1px solid #333!important;background:#111;color:#5fd7d7;font-weight:700!important;white-space:nowrap}#hs-user-tooltip .hs-pc-role{padding:2px 3px;font-size:13px;font-weight:900;white-space:nowrap;border:1px solid #000;letter-spacing:.3px}#hs-user-tooltip .hs-pc-role.admin{background:red;color:#fff}#hs-user-tooltip .hs-pc-role.staff{background:#f80;color:#000}#hs-user-tooltip .hs-pc-role.partner{background:var(--hs-gold);color:#000}#hs-user-tooltip .hs-pc-role.affiliate{background:transparent;color:#fff}#hs-user-tooltip .hs-pc-age{padding:2px 4px;font-size:13px;font-weight:900;border:1px solid #000;background:var(--hs-mention);color:#000;white-space:nowrap;letter-spacing:.3px}#hs-user-tooltip .hs-pc-bio{font-size:13px;color:#fff;line-height:17px;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}#hs-user-tooltip .hs-pc-bio-mention{color:#fff;cursor:pointer}#hs-user-tooltip .hs-pc-bio-mention:hover{text-decoration:underline}#hs-user-tooltip .hs-pc-bio-tag{color:var(--hs-thread);text-decoration:none}#hs-user-tooltip .hs-pc-bio-tag:hover{text-decoration:underline}#hs-user-tooltip .hs-pc-stats{display:flex;gap:6px;flex-wrap:wrap;font-size:13px;color:#fff;line-height:17px}#hs-user-tooltip .hs-pc-stat{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;font-size:13px;font-weight:500;color:#fff;border:1px solid #fff;background:transparent;white-space:nowrap;box-sizing:border-box}#hs-user-tooltip .hs-pc-sep{display:none}#hs-user-tooltip .hs-pc-stat.op{border-color:red;color:red}#hs-user-tooltip .hs-pc-stat.op .hs-pc-num{color:#fff}#hs-user-tooltip .hs-pc-stat.mop{border-color:var(--hs-thread);color:var(--hs-thread)}#hs-user-tooltip .hs-pc-stat.mop .hs-pc-num{color:#fff}#hs-user-tooltip .hs-pc-stat.re{border-color:var(--hs-reply);color:var(--hs-reply)}#hs-user-tooltip .hs-pc-stat.re .hs-pc-num{color:#fff}#hs-user-tooltip .hs-pc-stat-heat{border-color:#fff}#hs-user-tooltip .hs-pc-stat-heat .hs-heat-num{font-size:13px;font-weight:700}#hs-user-tooltip .hs-pc-rel{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:13px;line-height:15px}#hs-user-tooltip .hs-pc-rel-badge{padding:2px 3px;font-size:13px;font-weight:900;white-space:nowrap;letter-spacing:.3px}#hs-user-tooltip .hs-pc-rel-badge.mutual{background:#0aa;color:#fff}#hs-user-tooltip .hs-pc-rel-badge.supporter{background:#fff;color:#000}#hs-user-tooltip .hs-pc-rel-badge.following{background:#09f;color:#fff}#hs-user-tooltip .hs-pc-rel-badge.subbed{background:var(--hs-plat-twitch);color:#fff}#hs-user-tooltip .hs-pc-rel-badge.mutual-follow{background:#000;color:#fff;border:1px solid #00aaaa}#hs-user-tooltip .hs-pc-rel-badge.mutual-sub{background:#000;color:#fff;border:1px solid #fff}#hs-user-tooltip .hs-pc-sheet{display:grid;grid-template-columns:max-content 1fr;column-gap:12px;row-gap:0;font-size:13px;line-height:18px;margin:4px 0 0}#hs-user-tooltip .hs-pc-sheet dt,#hs-user-tooltip .hs-pc-sheet dd{padding:1px 6px;margin:0}#hs-user-tooltip .hs-pc-sheet dt{color:#888;font-weight:400}#hs-user-tooltip .hs-pc-sheet dd{color:#fff;font-weight:700}#hs-user-tooltip .hs-pc-sheet dt:nth-of-type(2n),#hs-user-tooltip .hs-pc-sheet dd:nth-of-type(2n){background:#303030}#hs-user-tooltip .hs-pc-sheet .val-age{color:var(--hs-warn)}#hs-user-tooltip .hs-pc-sheet .val-partner{color:var(--hs-gold)}#hs-user-tooltip .hs-pc-sheet .val-affiliate{color:#bcbcbc}#hs-user-tooltip .hs-pc-sheet .val-ttv{color:var(--hs-plat-twitch)}#hs-user-tooltip .hs-pc-sheet .val-kick{color:var(--hs-plat-kick)}#hs-user-tooltip .hs-pc-sheet .val-yt{color:var(--hs-plat-youtube)}#hs-user-tooltip .hs-pc-sheet .val-admin{color:red}#hs-user-tooltip .hs-pc-sheet .val-staff{color:#fff}#hs-user-tooltip .hs-pc-sheet .val-heat{color:red}#hs-user-tooltip .hs-pc-sheet .val-followers{color:#0087ff}#hs-user-tooltip .hs-pc-sheet .val-you-follow{color:var(--hs-reply)}#hs-user-tooltip .hs-pc-sheet .val-you-sub{color:#875fff}#hs-user-tooltip .hs-pc-sheet .val-they-follow{color:var(--hs-thread)}#hs-user-tooltip .hs-pc-sheet .val-they-sub{color:#ff5fff}#hs-user-tooltip .hs-pc-sheet .val-mutual{color:var(--hs-ok)}#hs-user-tooltip .hs-pc-sheet .val-mutual-sub{color:var(--hs-gold)}#hs-user-tooltip .hs-pc-sheet .val-ch{color:#fff}#hs-user-tooltip .hs-pc-sheet .hs-pc-live{color:var(--hs-live);font-weight:700}#hs-user-tooltip .hs-pc-sheet .hs-heat-n{font-family:inherit}#hs-user-tooltip .hs-pc-sheet .hs-heat-deg{font-family:ui-monospace,SFMono-Regular,monospace}#hs-user-tooltip .hs-pc-followage{padding:2px 3px;font-size:13px;font-weight:900;white-space:nowrap;letter-spacing:.3px;background:#0a0;color:#fff}#hs-user-tooltip .hs-pc-channel-follows{padding:2px 3px;font-size:13px;font-weight:900;white-space:nowrap;letter-spacing:.3px;background:#daa520;color:#000}#hs-user-tooltip .hs-pc-sub-tenure{padding:2px 3px;font-size:13px;font-weight:900;white-space:nowrap;letter-spacing:.3px;background:#e91e8c;color:#fff}#hs-user-tooltip .hs-pc-loading{color:#fff;font-size:13px}.hs-mc-channel{color:var(--hs-muted);font-size:13px;margin-left:4px}.hs-mc-time{color:var(--hs-muted);font-size:var(--hs-time-font, 13px);margin-right:4px}.hs-mc-empty{color:var(--hs-muted);padding:20px;text-align:center}.hs-mc-empty-card{padding:24px 16px;max-width:360px;margin:16px auto;text-align:center;color:#ddd;border:1px solid #1a1a1a;background:#000}.hs-mc-empty-title{font-size:14px;color:#fff;margin-bottom:6px;text-transform:lowercase}.hs-mc-empty-sub{font-size:13px;color:#999;margin-bottom:14px;line-height:18px}.hs-mc-empty-actions{display:flex;flex-direction:column;gap:6px;align-items:stretch}.hs-mc-empty-btn{display:block;padding:7px 10px;background:#ffffff0f;border:1px solid rgba(255,255,255,.12);color:#ddd;font-family:inherit;font-size:13px;cursor:pointer;text-decoration:none;text-align:center;box-sizing:border-box}.hs-mc-empty-btn:hover,.hs-mc-empty-btn.primary,.hs-mc-empty-btn.primary:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-empty-btn:disabled{opacity:.6;cursor:default}.hs-mc-empty-note{font-size:13px;color:var(--hs-muted);margin-top:12px;line-height:18px}.hs-mc-emote{width:auto;height:auto;max-height:calc(var(--hs-emote-size, 32px) * var(--hs-os, 1));max-width:none;vertical-align:middle;margin:0;padding:2px;border-radius:0;transition:none;cursor:pointer;box-sizing:content-box}.hs-feed-body .hs-mc-emote{vertical-align:bottom}.hs-mc-emote-wrapper+.hs-mc-emote-wrapper,.hs-mc-emote-wrapper+.hs-mc-emote-stack,.hs-mc-emote-stack+.hs-mc-emote-wrapper,.hs-mc-emote-stack+.hs-mc-emote-stack{margin-left:-4px}.hs-mc-picker-emote{height:auto;max-height:32px;max-width:96px;width:auto;vertical-align:middle;margin:0;padding:4px;border-radius:0;transition:none;cursor:pointer;box-sizing:content-box;object-fit:contain}.hs-mc-picker-emote-wrap{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}.hs-mc-picker-emote-wrap:before{content:"";position:absolute;inset:4px;box-sizing:border-box;opacity:0;pointer-events:none;z-index:0;background:#fff}.hs-mc-picker-emote-wrap:not(.blocked):hover:before{opacity:1}.hs-mc-picker-emote-wrap>img{position:relative;z-index:1}.hs-mc-picker-emote-wrap:not(.blocked):hover>img{filter:brightness(.2)}.hs-mc-picker-emote-wrap.blocked:before{opacity:1;background:none;border:2px dashed var(--hs-border)}.hs-mc-picker-emote-wrap.blocked img{visibility:hidden!important}.hs-mc-emoji{font-size:calc(1em * var(--hs-emoji-scale, 2));line-height:var(--hs-emote-size, 32px);vertical-align:text-bottom;display:inline-block}.hs-mc-emote-stack{display:inline-flex;align-items:center;position:relative;vertical-align:text-bottom;height:36px;box-sizing:border-box}.hs-mc-emote-stack-emotes{display:inline-grid;place-items:center;position:relative}.hs-mc-emote-stack-emotes>.hs-mc-emote-wrapper,.hs-mc-emote-stack-emotes>.hs-mc-emoji{grid-area:1 / 1}.hs-mc-emote-stack-emotes>:first-child{z-index:1}.hs-mc-emote-stack-emotes>:not(:first-child){z-index:2;pointer-events:auto}.hs-mc-overlay-emote{width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;object-fit:none!important;margin:0!important;pointer-events:auto}.hs-mc-stack-collapse,.hs-mc-stack-block-all{display:none;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;user-select:none}.hs-mc-emote-stack.expanded{display:inline-flex;align-items:center;gap:4px;height:auto}.hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes{border-radius:0;display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}.hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes>.hs-mc-emote-wrapper,.hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes>.hs-mc-emoji{flex:0 0 auto}.hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes:after{content:"";position:absolute;inset:-2px -6px;background:var(--hs-border);z-index:-1;pointer-events:none}.hs-mc-emote-stack.expanded>.hs-mc-emote-stack-emotes>.hs-mc-emote-wrapper{grid-area:auto}.hs-mc-emote-stack.expanded .hs-mc-stack-collapse,.hs-mc-emote-stack.expanded .hs-mc-stack-block-all{display:inline-block}.hs-mc-stack-collapse:hover,.hs-mc-stack-block-all:hover{background:#fff;color:#000}.hs-mc-emote-wrapper{display:inline-block;position:relative;vertical-align:middle;cursor:pointer;line-height:0;font-size:0}.hs-mc-msg .hs-mc-emote-wrapper{vertical-align:text-bottom;display:inline-flex;align-items:center;justify-content:center;min-height:calc(var(--hs-emote-size, 32px) + 4px)}.hs-mc-emote-stack-emotes>.hs-mc-emote-wrapper:not(:first-child){min-height:0;margin-left:0}.hs-mc-msg .hs-mc-platform-badge,.hs-mc-msg .hs-mc-badge,.hs-mc-msg .hs-mc-bits-badge,.hs-mc-msg .hs-mc-badge-img,.hs-mc-msg .hs-mc-avatar{vertical-align:text-bottom}.hs-mc-emote-wrapper>img{display:block}.hs-mc-emote-wrapper:before{content:"";position:absolute;inset:4px;border-radius:0;opacity:0;transition:none;z-index:0;pointer-events:none}.hs-mc-emote-wrapper>img{position:relative;z-index:1}.hs-mc-emote-wrapper.hs-emote-highlight:before{opacity:1;background:var(--hs-highlight-color, #fff)!important;transition:none}.hs-mc-emote-wrapper.hs-emote-highlight:not(.hs-state-blocked):not(.hs-state-stale)>img{filter:brightness(.2)}body.hs-tab-cycling .hs-mc-emote-wrapper.hs-emote-highlight:before{opacity:0!important}body.hs-tab-cycling .hs-mc-emote-wrapper.hs-emote-highlight:not(.hs-state-blocked)>img{visibility:visible!important;filter:none!important}body.hs-tab-cycling .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight):before{opacity:0!important}.hs-mc-picker-emote-wrap.hs-state-nsfw>img,img.hs-input-emote.hs-state-nsfw{border:2px dashed #008080!important;box-sizing:border-box!important}.hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw=sexual]>img,img.hs-input-emote.hs-state-nsfw[data-cw=sexual]{border-color:var(--hs-thread)!important}.hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw=gore]>img,img.hs-input-emote.hs-state-nsfw[data-cw=gore]{border-color:red!important}.hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw=drugs]>img,img.hs-input-emote.hs-state-nsfw[data-cw=drugs]{border-color:#00d700!important}.hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw=hate]>img,img.hs-input-emote.hs-state-nsfw[data-cw=hate]{border-color:var(--hs-border)!important}.hs-mc-emote-wrapper.hs-state-stale>img{opacity:.55;filter:saturate(.45);transition:none}.hs-mc-emote-wrapper.hs-state-stale:hover>img{opacity:1;filter:none}.hs-mc-emote-wrapper.hs-state-stale:before{background:#7a4400}.hs-mc-emote-wrapper.hs-state-blocked>img{visibility:hidden}.hs-mc-emote-wrapper.hs-state-blocked:before{opacity:1;background:none;border:2px dashed var(--hs-border);inset:0;box-sizing:border-box}.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked:before{border-color:#fff}.hs-mc-emote-wrapper.hs-state-blocked.hs-emote-highlight:before{background:var(--hs-danger);border:none}.hs-mc-emote-wrapper.hs-mc-emote-cw{display:inline-flex;align-items:center;justify-content:center;height:var(--hs-emote-size, 32px);min-width:var(--hs-emote-size, 32px);padding:0 6px;border:2px dashed var(--hs-reply);box-sizing:border-box;color:var(--hs-reply);font-size:13px;line-height:normal;cursor:default;user-select:none}.hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw=sexual]{border-color:var(--hs-thread);color:var(--hs-thread)}.hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw=gore]{border-color:red;color:red}.hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw=drugs]{border-color:#00d700;color:#00d700}.hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw=hate]{border-color:var(--hs-border);color:var(--hs-border)}.hs-mc-emote-wrapper.hs-mc-emote-cw--sized{height:var(--hs-emote-size, 32px);min-width:16px;padding:0;overflow:hidden}.hs-mc-emote-wrapper.hs-mc-emote-cw:before{display:none}.hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight) .hs-mc-emote-wrapper:before{display:none!important}.hs-mc-emote-stack:not(.expanded):before{content:"";position:absolute;inset:4px;opacity:0;pointer-events:none;z-index:0}.hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight):before{opacity:1;background:var(--hs-highlight-color, #fff);border:none}.hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight)>.hs-mc-emote-stack-emotes>.hs-mc-emote-wrapper:not(.hs-state-blocked)>img{filter:brightness(.2)}@keyframes hs-flash-paste{0%{box-shadow:0 0 12px 4px #fff}to{box-shadow:none}}@keyframes hs-flash-add{0%{box-shadow:0 0 12px 4px var(--hs-ok)}to{box-shadow:none}}@keyframes hs-flash-block{0%{box-shadow:0 0 12px 4px var(--hs-danger)}to{box-shadow:none}}@keyframes hs-flash-unblock{0%{box-shadow:0 0 12px 4px var(--hs-ok)}to{box-shadow:none}}@keyframes hs-flash-remove{0%{box-shadow:0 0 12px 4px #fff}to{box-shadow:none}}.hs-flash-paste{animation:hs-flash-paste .4s ease-out}.hs-flash-add{animation:hs-flash-add .4s ease-out}.hs-flash-block{animation:hs-flash-block .4s ease-out}.hs-flash-unblock{animation:hs-flash-unblock .4s ease-out}.hs-flash-remove{animation:hs-flash-remove .4s ease-out}.hs-mc-emote,.hs-mc-picker-emote{position:relative}#hs-badge-tooltip{position:fixed;z-index:2147483647;pointer-events:none;background:#000;border-radius:0;padding:8px;display:none;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--hs-border)}#hs-badge-tooltip.visible{display:flex}#hs-badge-tooltip img{object-fit:contain;image-rendering:pixelated;image-rendering:-moz-crisp-edges}#hs-badge-tooltip .tooltip-name{color:#fff;font-size:13px;font-weight:600}#hs-badge-tooltip .tooltip-source{font-size:13px;padding:2px 6px;margin:2px -8px -8px;border-radius:0;color:#fff;width:calc(100% + 16px);text-align:center;background:var(--hs-border)}#hs-emote-tooltip{position:fixed;z-index:2147483647;pointer-events:none;background:#000;border-radius:0;padding:8px;display:none;flex-direction:column;align-items:center;gap:6px;border:1px solid var(--hs-border)}#hs-emote-tooltip.visible{display:flex}#hs-emote-tooltip img{object-fit:contain;image-rendering:pixelated}#hs-emote-tooltip .tooltip-stack{display:none;position:relative;overflow:visible}#hs-emote-tooltip .tooltip-stack .hs-mc-emote-stack-emotes:before{content:none!important}#hs-emote-tooltip .tooltip-name{color:#fff;font-size:13px;font-weight:600;max-width:480px;text-align:center;overflow-wrap:anywhere}#hs-emote-tooltip .tooltip-source{font-size:13px;padding:2px 6px;margin:2px -8px -8px;border-radius:0;color:#fff;width:calc(100% + 16px);text-align:center}#hs-emote-tooltip .tooltip-source.owned,#hs-emote-tooltip .tooltip-source.unadded,#hs-emote-tooltip .tooltip-source.global,#hs-emote-tooltip .tooltip-source.channel{background:#fff;color:#000}#hs-emote-tooltip .tooltip-source.sub{background:var(--hs-plat-twitch);color:#fff}#hs-emote-tooltip .tooltip-source.blocked{background:var(--hs-danger);color:#fff}#hs-emote-tooltip .tooltip-source.src-7tv{background:#29d8f6;color:#000}#hs-emote-tooltip .tooltip-source.src-bttv{background:#d50014;color:#fff}#hs-emote-tooltip .tooltip-source.src-ffz{background:#0086c8;color:#fff}#hs-emote-tooltip .tooltip-source.src-twitch{background:var(--hs-plat-twitch);color:#fff}#hs-emote-tooltip .tooltip-source.src-kick{background:var(--hs-plat-kick);color:#000}#hs-emote-tooltip .tooltip-source.src-heatsync,#hs-emote-tooltip .tooltip-source.src-hs{background:var(--hs-plat-hs);color:#000}#hs-link-tooltip{position:fixed;z-index:2147483647;pointer-events:none;background:#000;border-radius:0;padding:8px;display:none;flex-direction:row;gap:8px;max-width:350px;border:1px solid var(--hs-border)}#hs-link-tooltip.visible{display:flex}#hs-link-tooltip img{width:80px;height:80px;object-fit:cover;border-radius:0;flex-shrink:0}#hs-link-tooltip .link-text{display:flex;flex-direction:column;gap:3px;min-width:0;justify-content:center}#hs-link-tooltip .link-title{color:#fff;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}#hs-link-tooltip .link-desc{color:#fff;font-size:13px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}#hs-link-tooltip .link-domain{color:var(--hs-link);font-size:13px}#hs-link-tooltip .link-loading{color:var(--hs-muted);font-size:13px}@property --hs-fx-hue{syntax: "<angle>"; inherits: false; initial-value: 0deg;}img.hs-fx-rainbow,.hs-mc-emoji.hs-fx-rainbow{animation:hs-fx-rainbow 2s linear infinite}@keyframes hs-fx-rainbow{0%{--hs-fx-hue: 0deg}to{--hs-fx-hue: 360deg}}img.hs-fx-party,.hs-mc-emoji.hs-fx-party{animation:hs-fx-party 1.5s linear infinite}@keyframes hs-fx-party{0%{--hs-fx-hue: 0deg}to{--hs-fx-hue: 360deg}}img.hs-fx-spin,.hs-mc-emoji.hs-fx-spin{animation:hs-fx-spin 1.5s linear infinite}@keyframes hs-fx-spin{0%{rotate:0deg}to{rotate:360deg}}img.hs-fx-shake,.hs-mc-emoji.hs-fx-shake{animation:hs-fx-shake .5s step-start infinite}@keyframes hs-fx-shake{0%{translate:0 1px}10%{translate:2px 0}20%{translate:1px -2px}30%{translate:-2px 1px}40%{translate:0 -1px}50%{translate:2px 2px}60%{translate:-1px -1px}70%{translate:-2px 2px}80%{translate:2px 1px}90%{translate:-1px -2px}to{translate:1px 0}}img.hs-fx-hyper,.hs-mc-emoji.hs-fx-hyper{animation:hs-fx-hyper .1s linear infinite}@keyframes hs-fx-hyper{0%{translate:1px 1px}10%{translate:-1px -2px}20%{translate:-3px 0}30%{translate:3px 2px}40%{translate:1px -1px}50%{translate:-1px 2px}60%{translate:-3px 1px}70%{translate:3px 1px}80%{translate:-1px -1px}90%{translate:1px 2px}to{translate:1px -2px}}img.hs-fx-bounce,.hs-mc-emoji.hs-fx-bounce{transform-origin:bottom center;animation:hs-fx-bounce .5s linear infinite}@keyframes hs-fx-bounce{0%{scale:.8 1}10%{scale:.9 .8}20%{scale:1 .4}25%{scale:1.2 .3}30%{scale:1 .4}40%{scale:.9 .8}50%{scale:.8 1}60%{scale:.9 .8}70%{scale:1 .4}75%{scale:1.2 .3}80%{scale:1 .4}90%{scale:.9 .8}to{scale:.8 1}}img.hs-fx-jam,.hs-mc-emoji.hs-fx-jam{animation:hs-fx-jam .6s linear infinite}@keyframes hs-fx-jam{0%{translate:-2px -2px;rotate:-6deg}10%{translate:-1.5px -2px;rotate:-8deg}20%{translate:1px -1.5px;rotate:-8deg}30%{translate:3px 2.5px;rotate:-6deg}40%{translate:3px 4px;rotate:-2deg}50%{translate:2px 4px;rotate:3deg}60%{translate:1px 4px;rotate:3deg}70%{translate:-.5px 3px;rotate:2deg}80%{translate:-1.25px 1px;rotate:0deg}90%{translate:-1.75px -.5px;rotate:-2deg}to{translate:-2px -2px;rotate:-5deg}}img.hs-fx-slide,.hs-mc-emoji.hs-fx-slide{animation:hs-fx-slide 1.5s linear infinite}@keyframes hs-fx-slide{0%{translate:-50% 0}to{translate:50% 0}}img.hs-fx-arrive,.hs-mc-emoji.hs-fx-arrive{animation:hs-fx-arrive 3s linear infinite}@keyframes hs-fx-arrive{0%{translate:-18px 0;scale:.1}20%{translate:-18px 0;scale:.1}45%{translate:0 0;scale:1}to{translate:0 0;scale:1}}img.hs-fx-leave,.hs-mc-emoji.hs-fx-leave{animation:hs-fx-leave 3s linear infinite}@keyframes hs-fx-leave{0%{translate:0 0;scale:1}55%{translate:0 0;scale:1}80%{translate:18px 0;scale:.1}to{translate:18px 0;scale:.1}}img.hs-fx-zero,.hs-mc-emoji.hs-fx-zero{margin-left:-4px}html[data-hs-emote-anim=never] img[class*=hs-fx-],html[data-hs-emote-anim=never] .hs-mc-emoji[class*=hs-fx-]{animation:none!important}html[data-hs-emote-anim=hover] .hs-mc-msg img[class*=hs-fx-],html[data-hs-emote-anim=hover] .hs-mc-msg .hs-mc-emoji[class*=hs-fx-]{animation-play-state:paused!important}html[data-hs-emote-anim=hover] .hs-mc-msg:hover img[class*=hs-fx-],html[data-hs-emote-anim=hover] .hs-mc-msg:hover .hs-mc-emoji[class*=hs-fx-]{animation-play-state:running!important}#hs-emote-tooltip .tooltip-piece{white-space:nowrap}#hs-emote-tooltip .tooltip-base{font-weight:700}#hs-emote-tooltip .tooltip-join{color:#6a6a6a}#hs-emote-tooltip .tooltip-mod{font-weight:700;letter-spacing:.02em}#hs-mc-input{flex:1;box-sizing:border-box;min-height:28px;padding:5px 12px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;font-size:13px;font-family:inherit;outline:none;position:relative;white-space:break-spaces;overflow-wrap:anywhere}#hs-mc-input:focus{border-color:#fff}#hs-mc-input::placeholder{color:var(--hs-muted)}#hs-mc-inputbar.hs-mc-resub-share{box-shadow:0 0 0 2px var(--hs-plat-twitch) inset,0 0 8px #9147ff66;background:#9147ff14}#hs-mc-input.hs-mc-resub-share,#hs-mc-input.hs-mc-resub-share:focus{border-color:var(--hs-plat-twitch)!important;background:#140d22!important}#hs-mc-input.hs-mc-resub-share::placeholder,#hs-mc-input.hs-mc-resub-share[contenteditable]:empty:before,#hs-mc-input.hs-mc-resub-share[contenteditable]:has(br:only-child):before{color:var(--hs-plat-twitch)!important;font-weight:600!important}#hs-mc-inputbar.hs-mc-watchstreak-share{box-shadow:0 0 0 2px var(--hs-brand) inset,0 0 8px #ff7f0066;background:#ff7f0014}#hs-mc-input.hs-mc-watchstreak-share,#hs-mc-input.hs-mc-watchstreak-share:focus{border-color:var(--hs-brand)!important;background:#1a1206!important}#hs-mc-input.hs-mc-watchstreak-share::placeholder,#hs-mc-input.hs-mc-watchstreak-share[contenteditable]:empty:before,#hs-mc-input.hs-mc-watchstreak-share[contenteditable]:has(br:only-child):before{color:var(--hs-brand)!important;font-weight:600!important}#hs-mc-input[contenteditable]:empty:before,#hs-mc-input[contenteditable]:has(br:only-child):before{content:attr(data-placeholder);color:var(--hs-muted);pointer-events:none;position:absolute;left:12px;top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 24px)}#hs-mc-input[contenteditable]:empty,#hs-mc-input[contenteditable]:has(br:only-child){caret-color:transparent}#hs-mc-input .hs-input-emote{display:inline-block;height:var(--hs-emote-size, 32px);width:auto;max-width:192px;vertical-align:text-bottom;margin:0 2px;object-fit:contain;cursor:pointer}#hs-mc-input .hs-input-stack{display:inline-grid;place-items:center;vertical-align:middle;margin:0 2px;height:var(--hs-emote-size, 32px);box-sizing:border-box;position:relative;overflow:visible}#hs-mc-input .hs-input-stack>img{grid-area:1 / 1;margin:0;max-width:192px}#hs-mc-input .hs-input-stack>.hs-input-overlay{height:auto!important;max-height:none;margin:0!important}#hs-mc-input .hs-input-stack>img:first-child{z-index:1}#hs-mc-input .hs-input-stack>img:not(:first-child){z-index:2}#hs-mc-input .hs-input-stack>.hs-mc-emoji{grid-area:1 / 1;margin:0;z-index:1}#hs-mc-input .hs-input-stack>.hs-mc-emoji:not(:first-child){z-index:2}#hs-mc-input .hs-input-emote.hs-state-blocked{outline:2px dashed var(--hs-border);outline-offset:-2px;width:var(--hs-emote-size, 32px);min-width:var(--hs-emote-size, 32px);cursor:pointer}.hs-mc-emoji{font-variant-emoji:emoji}#hs-mc-emoji-dropdown,#hs-mc-mention-dropdown{display:none;position:absolute;bottom:100%;left:8px;right:8px;background:#000;border:1px solid var(--hs-border);z-index:1004;max-height:280px;overflow-y:auto;margin-bottom:2px}.hs-mc-emoji-row{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;font-size:13px;color:#fff}.hs-mc-emoji-row:hover{background:#fff;color:#000}.hs-mc-emoji-row.selected{background:var(--hs-sel);color:var(--hs-sel-fg)}.hs-mc-emoji-preview{font-size:18px;width:24px;text-align:center;font-variant-emoji:emoji}.hs-mc-emote-preview{width:24px;height:20px;object-fit:contain;flex-shrink:0}.hs-mc-emoji-name{color:var(--hs-muted);font-size:13px}.hs-mc-emoji-row.selected .hs-mc-emoji-name,.hs-mc-emoji-row:hover .hs-mc-emoji-name{color:#000!important}#hs-mc-slash-dropdown{display:none;position:absolute;bottom:100%;left:8px;right:8px;background:#000;border:1px solid var(--hs-border);z-index:1004;max-height:280px;overflow-y:auto;margin-bottom:2px}.hs-mc-slash-row{display:flex;align-items:baseline;gap:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:#fff}.hs-mc-slash-row:hover{background:#fff;color:#000}.hs-mc-slash-row.selected{background:var(--hs-sel);color:var(--hs-sel-fg)}.hs-mc-slash-name{color:#fff;font-weight:700}.hs-mc-slash-args{color:var(--hs-muted);flex-shrink:0}.hs-mc-slash-desc{color:var(--hs-muted);font-size:13px;margin-left:auto}.hs-mc-slash-row:hover .hs-mc-slash-args,.hs-mc-slash-row.selected .hs-mc-slash-args,.hs-mc-slash-row:hover .hs-mc-slash-desc,.hs-mc-slash-row.selected .hs-mc-slash-desc,.hs-mc-slash-row:hover .hs-mc-slash-name,.hs-mc-slash-row.selected .hs-mc-slash-name{color:#000}#hs-mc-input-wrap{position:relative;flex:1;display:flex}#hs-mc-input-wrap #hs-mc-input{flex:1}#hs-mc-input-highlight{position:absolute;inset:0;padding:5px 12px;font-size:13px;font-family:inherit;white-space:break-spaces;overflow:hidden;pointer-events:none;border:1px solid transparent}#hs-mc-input-highlight .hl-safe{color:#fff}#hs-mc-input-highlight .hl-over{color:var(--hs-danger)}#hs-mc-send{padding:8px 12px;background:var(--hs-plat-twitch);color:#fff;border:none;border-radius:0;cursor:pointer;font-size:14px}#hs-mc-send:hover{background:#fff;color:#000}#hs-mc-emote-btn{padding:2px;background:#000;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:none}#hs-mc-emote-btn img{width:24px;height:24px;display:block}#hs-mc-emote-btn:hover{background:#fff}#hs-mc-attach-btn{padding:2px;width:28px;height:28px;background:#000;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:none}#hs-mc-attach-btn svg{width:20px;height:20px;display:block}#hs-mc-attach-btn:hover{background:#fff;color:#000}.hs-mc-tw-subtabs{display:flex;gap:4px;padding:6px 8px 4px;border-bottom:1px solid rgba(255,255,255,.2);flex-shrink:0}.hs-mc-tw-subtab{width:36px;height:36px;padding:0;background:#000;color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:none}.hs-mc-tw-subtab:hover,.hs-mc-tw-subtab:focus-visible{background:#fff;color:#000;border-color:#fff;outline:none}.hs-mc-tw-subtab.active{background:#fff;color:#000;border-color:#fff}.hs-mc-tw-subtab svg{display:block}.hs-mc-tw-content{flex:1;overflow-y:auto;padding:4px 0}.hs-mc-cheer-inline{margin:6px 8px}.hs-mc-cheer-panel{background:#000;color:#fff;border:1px solid #fff;padding:10px;margin:6px 8px 10px;font:inherit;font-size:13px;line-height:1.3;box-sizing:border-box;display:flex;flex-direction:column;gap:8px}.hs-mc-cheer-panel .hs-mc-cheer-header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.25)}.hs-mc-cheer-panel .hs-mc-cheer-title{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-mc-cheer-panel .hs-mc-cheer-balance{font-variant-numeric:tabular-nums;opacity:.85;flex-shrink:0}.hs-mc-cheer-panel .hs-mc-cheer-preview{display:flex;align-items:center;gap:6px;min-height:28px;padding:4px 8px;background:#ffffff0a;border:1px solid rgba(255,255,255,.18)}.hs-mc-cheer-panel .hs-mc-cheer-preview-img{width:28px;height:28px;object-fit:contain}.hs-mc-cheer-panel .hs-mc-cheer-preview-label{font-variant-numeric:tabular-nums;flex:1}.hs-mc-cheer-panel .hs-mc-cheer-amounts{display:flex;flex-wrap:wrap;gap:4px}.hs-mc-cheer-panel .hs-mc-cheer-amt{flex:1 0 auto;min-width:48px;padding:6px 10px;background:#000;color:#fff;border:1px solid #fff;cursor:pointer;font:inherit;font-variant-numeric:tabular-nums;transition:none}.hs-mc-cheer-panel .hs-mc-cheer-amt:hover,.hs-mc-cheer-panel .hs-mc-cheer-amt:focus-visible{background:#fff;color:#000;outline:none}.hs-mc-cheer-panel .hs-mc-cheer-amt.active{background:#fff;color:#000}.hs-mc-cheer-panel .hs-mc-cheer-custom{flex:1 0 80px;min-width:80px;padding:6px 10px;background:#000;color:#fff;border:1px solid #fff;font:inherit;font-variant-numeric:tabular-nums;-moz-appearance:textfield}.hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-outer-spin-button,.hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.hs-mc-cheer-panel .hs-mc-cheer-msg{padding:6px 10px;background:#000;color:#fff;border:1px solid #fff;font:inherit;width:100%;box-sizing:border-box}.hs-mc-cheer-panel .hs-mc-cheer-msg::placeholder,.hs-mc-cheer-panel .hs-mc-cheer-custom::placeholder{color:#ffffff73}.hs-mc-cheer-panel .hs-mc-cheer-actions{display:flex;gap:6px;justify-content:flex-end}.hs-mc-cheer-panel .hs-mc-cheer-cancel,.hs-mc-cheer-panel .hs-mc-cheer-send{padding:6px 14px;background:#000;color:#fff;border:1px solid #fff;cursor:pointer;font:inherit}.hs-mc-cheer-panel .hs-mc-cheer-cancel:hover,.hs-mc-cheer-panel .hs-mc-cheer-send:hover:not(:disabled){background:#fff;color:#000}.hs-mc-cheer-panel .hs-mc-cheer-send:disabled{opacity:.4;cursor:not-allowed}.hs-mc-cheer-panel .hs-mc-cheer-launch{width:100%;padding:12px;font-size:1.05em;font-weight:700}.hs-mc-cheermote{height:24px;width:auto;vertical-align:middle;display:inline-block;margin:-2px 2px 0 0}.hs-mc-cheer-amt{font-weight:700;margin-right:2px;font-variant-numeric:tabular-nums;font-size:1.05em}.hs-pcard{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,Helvetica Neue,Arial,sans-serif;padding:10px;color:#fff;background:#000;font-size:13px;line-height:18px;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;height:100%;overflow-y:auto;position:relative;--hs-pcard-accent: #fff}.hs-pcard-hero{position:relative;height:76px;margin:-10px -10px 0;background:#0a0a0a;overflow:hidden;border-bottom:1px solid var(--hs-pcard-accent, #2a2a2a)}.hs-pcard-hero-img{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transition:opacity .15s ease-out;filter:saturate(1.1) contrast(1.04)}.hs-pcard-hero.hs-pcard-hero-loaded .hs-pcard-hero-img{opacity:.9}.hs-pcard-hero-scrim{position:absolute;inset:0;background:#0000008c;pointer-events:none}.hs-pcard-id .hs-pcard-id-row{position:relative;z-index:1;margin-top:4px}.hs-pcard-close{position:absolute;top:8px;right:8px;margin:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;font-weight:400;background:#0000008c;color:#fff;border:1px solid rgba(255,255,255,.25);cursor:pointer;padding:0;z-index:10;transition:none}.hs-pcard-close:hover{background:#fff;color:#000;border-color:#fff}.hs-pcard-close:focus-visible{outline:1px solid #fff;outline-offset:1px}.hs-pcard-section{border:0;padding:0;margin:0;position:static;background:transparent}.hs-pcard-section-title{display:none}.hs-pcard-section+.hs-pcard-section{border-top:1px solid color-mix(in srgb,var(--hs-pcard-accent, #1a1a1a) 18%,#0a0a0a);padding-top:7px}.hs-pcard-id-row{display:flex;gap:10px;align-items:flex-start}.hs-pcard-avatar{width:56px;height:56px;border-radius:0;object-fit:cover;flex-shrink:0;border:2px solid var(--hs-pcard-accent, #fff);background:#000;margin-top:-32px;position:relative;z-index:2;box-shadow:0 0 0 2px #000,0 6px 16px #000000b3,0 0 18px color-mix(in srgb,var(--hs-pcard-accent, transparent) 35%,transparent)}.hs-pcard-id-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hs-pcard-id-chips{display:flex;flex-wrap:wrap;gap:3px;align-items:center;font-size:13px;line-height:18px}.hs-pcard-id-chips img.hs-mc-badge-img{width:18px;height:18px}.hs-pcard-pronoun{display:inline-flex;align-items:center;padding:1px 4px;border:1px solid #333;background:#111;color:#5fd7d7;font-size:13px;font-weight:700;line-height:16px;white-space:nowrap}.hs-pcard-name{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px;line-height:18px}.hs-pcard-livedot{color:var(--hs-live);font-size:9px}.hs-pcard-pill-twitch{background:var(--hs-plat-twitch);color:#fff}.hs-pcard-pill-kick{background:var(--hs-plat-kick);color:#000}.hs-pcard-pill-youtube{background:var(--hs-plat-youtube);color:#fff}.hs-pcard-bio{color:var(--hs-muted);font-size:13px;line-height:18px;white-space:pre-wrap;word-break:break-word;border-left:2px solid #1a1a1a;padding:0 0 0 8px}.hs-pcard-bio-mention{color:#fff;cursor:pointer}.hs-pcard-bio-mention:hover{text-decoration:underline}.hs-pcard-bio-tag{color:var(--hs-thread);text-decoration:none}.hs-pcard-bio-tag:hover{text-decoration:underline}.hs-pcard-sheet{display:grid;grid-template-columns:max-content 1fr;column-gap:12px;row-gap:0;font-family:CozetteVector,Courier New,monospace;font-size:13px;line-height:18px;margin:0}.hs-pcard-sheet dt,.hs-pcard-sheet dd{padding:1px 6px;margin:0}.hs-pcard-sheet dt{color:#888;font-weight:400}.hs-pcard-sheet dd{color:#fff;font-weight:700}.hs-pcard-sheet dt:nth-of-type(2n),.hs-pcard-sheet dd:nth-of-type(2n){background:#303030}.hs-pcard-sheet .val-age{color:var(--hs-warn)}.hs-pcard-sheet .val-partner{color:var(--hs-gold)}.hs-pcard-sheet .val-affiliate{color:#bcbcbc}.hs-pcard-sheet .val-ttv{color:var(--hs-plat-twitch)}.hs-pcard-sheet .val-kick{color:var(--hs-plat-kick)}.hs-pcard-sheet .val-yt{color:var(--hs-plat-youtube)}.hs-pcard-sheet .val-hs{color:var(--hs-brand)}.hs-pcard-sheet .val-admin{color:red}.hs-pcard-sheet .val-staff{color:#fff}.hs-pcard-sheet .val-heat{color:red}.hs-pcard-sheet .val-followers{color:#0087ff}.hs-pcard-sheet .val-you-follow{color:var(--hs-reply)}.hs-pcard-sheet .val-you-sub{color:#875fff}.hs-pcard-sheet .val-they-follow{color:var(--hs-thread)}.hs-pcard-sheet .val-they-sub{color:#ff5fff}.hs-pcard-sheet .val-mutual{color:var(--hs-ok)}.hs-pcard-sheet .val-mutual-sub{color:var(--hs-gold)}.hs-pcard-sheet .val-ch{color:#fff}.hs-pcard-sheet .hs-pc-live{color:var(--hs-live);font-weight:700}.hs-pcard-sheet .hs-heat-num,.hs-pcard-sheet .hs-heat-n{font-family:inherit}.hs-pcard-sheet .hs-heat-deg{font-family:ui-monospace,SFMono-Regular,monospace}body.hs-font-bitmap .hs-pcard .hs-pcard-sheet,body.hs-font-bitmap .hs-pcard .hs-pcard-sheet *{-webkit-font-smoothing:none!important;-moz-osx-font-smoothing:unset!important;font-smooth:never!important;text-rendering:optimizeSpeed!important;font-synthesis:none!important;font-optical-sizing:none!important;font-kerning:none!important;font-variant-ligatures:none!important;font-feature-settings:"kern" 0,"liga" 0,"clig" 0,"calt" 0!important;letter-spacing:0!important}body.hs-font-bitmap .hs-pcard .hs-pcard-sheet .hs-heat-deg{-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;font-smooth:auto!important;text-rendering:auto!important;font-kerning:auto!important;font-feature-settings:normal!important;letter-spacing:normal!important}.hs-pcard-link{color:#fff;text-decoration:none;font-weight:600}.hs-pcard-link:hover{text-decoration:underline}.hs-pcard-msg{display:flex;gap:6px;padding:2px 0;font-size:13px;align-items:baseline}.hs-pcard-msg-ts{color:var(--hs-muted);flex-shrink:0;font-size:13px;min-width:38px}.hs-pcard-msg-plat{flex-shrink:0;font-size:13px;padding:0 3px;font-weight:600;line-height:19px;color:#888}.hs-pcard-msg-plat.hs-pcard-pill-twitch{background:transparent;color:var(--hs-plat-twitch);border:none}.hs-pcard-msg-plat.hs-pcard-pill-kick{background:transparent;color:var(--hs-plat-kick);border:none}.hs-pcard-msg-plat.hs-pcard-pill-youtube{background:transparent;color:var(--hs-plat-youtube);border:none}.hs-pcard-msg-text{color:#fff;word-break:break-word;overflow-wrap:anywhere;flex:1}.hs-pcard-action-grid{display:flex;flex-wrap:wrap;gap:3px}.hs-pcard-action{background:transparent;color:#fff;border:1px solid #333;padding:4px 10px;cursor:pointer;font-family:inherit;font-size:13px;text-align:center;box-sizing:border-box;line-height:18px}.hs-pcard-action:hover:not(:disabled){background:#fff;color:#000;border-color:#fff}.hs-pcard-action:disabled{opacity:.4;cursor:not-allowed}.hs-pcard-notes{display:flex;flex-direction:column;gap:4px}.hs-pcard-note-body{color:#fff;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;max-height:96px;overflow-y:auto;font-size:13px;line-height:1.4}.hs-pcard-note-body.hs-pcard-note-empty{color:var(--hs-muted);font-style:italic}.hs-pcard-note-edit{align-self:flex-start;background:transparent;color:#fff;border:1px solid #333;padding:3px 10px;cursor:pointer;font-family:inherit;font-size:13px}.hs-pcard-note-edit:hover{background:#fff;color:#000;border-color:#fff}.hs-pcard-mod{background:#ffffff14;border-left:2px solid var(--hs-pcard-accent, #fff);padding:5px 8px;margin:-2px 0}.hs-pcard-mod-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;line-height:18px}.hs-pcard-mod-row+.hs-pcard-mod-row{margin-top:4px}.hs-pcard-mod-ch{color:var(--hs-pcard-accent, #fff);font-weight:700;font-size:13px;min-width:0;flex-shrink:0;margin-right:2px}.hs-pcard-mod-btn{background:transparent;color:#fff;border:1px solid #555;border-right-width:0;padding:2px 7px;cursor:pointer;font-family:inherit;font-size:13px;line-height:16px;box-sizing:border-box}.hs-pcard-mod-btn:last-child{border-right-width:1px}.hs-pcard-mod-btn:hover:not(:disabled){background:#fff;color:#000;border-color:#fff}.hs-pcard-mod-btn:disabled{opacity:.35;cursor:not-allowed}.hs-pcard-mod-btn-danger{color:var(--hs-danger);border-color:#5a1414}.hs-pcard-mod-btn-danger:hover:not(:disabled){background:var(--hs-danger);color:#000;border-color:var(--hs-danger)}#hs-mc-platfilter{display:flex;flex:0 0 auto;gap:2px;align-items:center;margin-left:0}#hs-mc-platfilter:empty{display:none;margin:0}#hs-mc-platfilter .hs-mc-pf-btn{flex:0 0 18px!important;width:18px!important;min-width:18px!important;max-width:18px!important}body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn{margin:0 2px 0 0!important}.hs-tabs-right #hs-mc-platfilter,.hs-tabs-left #hs-mc-platfilter{display:flex;flex-direction:row;flex-wrap:nowrap;gap:2px;width:100%;box-sizing:border-box;margin-left:0;flex:0 0 auto}.hs-tabs-right #hs-mc-platfilter .hs-mc-pf-btn,.hs-tabs-left #hs-mc-platfilter .hs-mc-pf-btn{flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:none!important;height:18px!important;font-size:13px!important}.hs-mc-pf-btn{background:transparent;border:1px solid;color:#fff;font-size:13px;font-weight:700;height:18px;padding:0 4px;cursor:pointer;font-family:inherit;line-height:1;box-sizing:border-box;min-width:0;text-align:center;display:flex;align-items:center;justify-content:center}.hs-mc-pf-btn.hs-mc-pf-twitch{border-color:var(--hs-plat-twitch)!important;background:transparent!important;color:var(--hs-plat-twitch)!important}.hs-mc-pf-btn.hs-mc-pf-kick{border-color:var(--hs-plat-kick)!important;background:transparent!important;color:var(--hs-plat-kick)!important}.hs-mc-pf-btn.hs-mc-pf-youtube{border-color:var(--hs-plat-youtube)!important;background:transparent!important;color:var(--hs-plat-youtube)!important}.hs-mc-pf-btn.off{background:transparent!important;color:var(--hs-border)!important;border-color:var(--hs-border)!important}.hs-mc-pf-btn:hover,.hs-mc-pf-btn:active,.hs-mc-pf-btn.off:hover,.hs-mc-pf-btn.off:active{background:#fff!important;color:#000!important;border-color:#fff!important}#hs-mc-sendtargets{display:flex;flex:0 0 auto;align-items:center;gap:2px;margin:0 4px 0 auto}#hs-mc-sendtargets:empty{display:none;margin:0}.hs-mc-st-btn{background:transparent;border:1px solid;font-size:13px;font-weight:700;width:18px;height:18px;padding:0;cursor:pointer;font-family:inherit;line-height:1;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center}.hs-mc-st-btn.hs-mc-st-twitch{border-color:var(--hs-plat-twitch)!important;background:transparent!important;color:var(--hs-plat-twitch)!important}.hs-mc-st-btn.hs-mc-st-kick{border-color:var(--hs-plat-kick)!important;background:transparent!important;color:var(--hs-plat-kick)!important}.hs-mc-st-btn.hs-mc-st-youtube{border-color:var(--hs-plat-youtube)!important;background:transparent!important;color:var(--hs-plat-youtube)!important}.hs-mc-st-btn.off{background:transparent!important;color:var(--hs-border)!important;border-color:var(--hs-border)!important}.hs-mc-st-arrow{color:var(--hs-muted);font-family:ui-monospace,DejaVu Sans Mono,Liberation Mono,monospace;font-size:19px;font-weight:700;display:inline-block;height:18px;line-height:18px;width:12px;text-align:center;overflow:visible;align-self:center;user-select:none}.hs-mc-st-btn:hover,.hs-mc-st-btn:active,.hs-mc-st-btn.off:hover,.hs-mc-st-btn.off:active{background:#fff!important;color:#000!important;border-color:#fff!important}#hs-mc-emote-picker{display:none;position:absolute;inset:0;min-width:210px;background:#000;border-top:1px solid var(--hs-border);z-index:1003;overflow:hidden;flex-direction:column;font-family:inherit;box-sizing:border-box}#hs-mc-emote-picker.visible{display:flex}#hs-mc-emote-picker .hs-mc-picker-tabs{display:flex!important;border-top:1px solid var(--hs-border);flex-shrink:0!important;min-height:0!important;margin-top:auto!important;visibility:visible!important;opacity:1!important;background:#000!important}#hs-mc-emote-picker .hs-mc-picker-tab{flex:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:6px 4px!important;background:transparent!important;color:var(--hs-muted)!important;border:none!important;cursor:pointer;font-size:13px!important;font-weight:600!important;line-height:1!important;text-align:center;visibility:visible!important;opacity:1!important;height:auto!important;width:auto!important;overflow:visible!important;position:relative!important;transition:none}#hs-mc-emote-picker .hs-mc-picker-tab:hover,#hs-mc-emote-picker .hs-mc-picker-tab.active,#hs-mc-emote-picker .hs-mc-picker-tab.active:hover{background:#fff!important;color:#000!important}.hs-mc-tab-content{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important}.hs-mc-tab-content,.hs-mc-picker-scroll{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.12) transparent}.hs-mc-tab-content::-webkit-scrollbar,.hs-mc-picker-scroll::-webkit-scrollbar{width:4px}.hs-mc-tab-content::-webkit-scrollbar-track,.hs-mc-picker-scroll::-webkit-scrollbar-track{background:transparent}.hs-mc-tab-content::-webkit-scrollbar-thumb,.hs-mc-picker-scroll::-webkit-scrollbar-thumb{background:#ffffff1f;border-radius:0}.hs-mc-tab-content::-webkit-scrollbar-thumb:hover,.hs-mc-picker-scroll::-webkit-scrollbar-thumb:hover{background:#fff3}.hs-mc-picker-scroll{flex:1;overflow-y:auto;min-height:0}.hs-mc-picker-section-header{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:5px;padding:4px 6px 3px;font-size:13px;color:var(--hs-border);background:#000;border-top:1px solid rgba(255,255,255,.08)}.hs-mc-picker-section:first-child .hs-mc-picker-section-header{border-top:none}.hs-mc-picker-section-count{color:var(--hs-muted);font-size:13px;background:#ffffff0f;padding:1px 5px;border-radius:0}.hs-mc-picker-section-grid{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:6px}.hs-mc-picker-header{padding:8px!important;border-bottom:1px solid rgba(255,255,255,.08)!important;display:block!important;visibility:visible!important;background:#000!important}.hs-mc-search-wrap{position:relative;display:flex;align-items:center;gap:6px}.hs-mc-search-icon{position:absolute;left:10px;pointer-events:none;opacity:.5;color:var(--hs-muted);z-index:2}#hs-mc-emote-search{flex:1;min-width:0;width:auto;padding:4px 8px 4px 28px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;font-size:13px;outline:none;box-sizing:border-box;transition:none}#hs-mc-emote-search:focus{border-color:#fff}.hs-mc-src-chips{display:flex;align-items:center;gap:3px;flex-shrink:0}.hs-mc-src-chip{background:transparent;border:1px solid;font-size:13px;font-weight:700;padding:3px 7px;cursor:pointer;font-family:inherit;border-radius:0;line-height:15px;text-transform:uppercase;letter-spacing:1px;transition:none}.hs-mc-src-chip[data-src="7tv"]{color:#29d8f6;border-color:#29d8f680}.hs-mc-src-chip[data-src=bttv]{color:#d50014;border-color:#d5001480}.hs-mc-src-chip[data-src=ffz]{color:#0086c8;border-color:#0086c880}.hs-mc-src-chip[data-src=hs]{color:var(--hs-plat-hs);border-color:#ff870080}.hs-mc-src-chip.active[data-src="7tv"]{background:#29d8f6;color:#000;border-color:#29d8f6}.hs-mc-src-chip.active[data-src=bttv]{background:#d50014;color:#fff;border-color:#d50014}.hs-mc-src-chip.active[data-src=ffz]{background:#0086c8;color:#fff;border-color:#0086c8}.hs-mc-src-chip.active[data-src=hs]{background:var(--hs-plat-hs);color:#000;border-color:var(--hs-plat-hs)}.hs-mc-src-chip:hover{background:#fff!important;color:#000!important;border-color:#fff!important}.hs-mc-exact-chip{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;font-size:13px;font-weight:700;padding:3px 7px;cursor:pointer;font-family:inherit;border-radius:0;line-height:15px;text-transform:uppercase;letter-spacing:1px;transition:none}.hs-mc-exact-chip.active{background:#fff;color:#000;border-color:#fff}.hs-mc-exact-chip:hover{background:#fff!important;color:#000!important;border-color:#fff!important}.hs-mc-load-more{display:block;width:calc(100% - 12px);margin:4px 6px 8px;padding:7px;background:#000;color:#fff;border:1px solid #fff;border-radius:0;font-family:inherit;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:none}.hs-mc-load-more:hover{background:#fff;color:#000;border-color:#fff}#hs-mc-emote-search::placeholder{color:var(--hs-muted)}.hs-mc-picker-emote{width:auto!important;height:auto!important;min-width:28px!important;min-height:28px!important;max-width:96px!important;max-height:32px!important;object-fit:contain!important;cursor:pointer!important;border-radius:0!important;padding:4px!important;transition:none;display:inline-block!important;visibility:visible!important}.hs-mc-picker-empty{padding:32px!important;text-align:center!important;color:var(--hs-muted)!important;font-size:13px!important;visibility:visible!important}.hs-mc-cold-start{display:flex;flex-direction:column;align-items:center;gap:10px}.hs-mc-cold-start-title{color:#fff;font-size:14px;font-weight:700}.hs-mc-cold-start-sub{color:var(--hs-muted);font-size:13px;max-width:260px;line-height:1.4}.hs-mc-cold-start .hs-mc-load-more{width:auto;margin:0;padding:7px 14px;text-transform:none;letter-spacing:0}.hs-mc-picker-divider{height:1px;background:#ffffff0f;margin:4px 0}:root{--hs-emote-size: 32px}.hs-mc-menu-item{display:flex!important;align-items:center!important;gap:12px!important;padding:10px 14px!important;cursor:pointer!important;color:#fff!important;transition:none;visibility:visible!important;border-left:3px solid transparent;margin:0 6px}.hs-mc-menu-item:hover{background:#fff!important;border-left-color:#000}.hs-mc-menu-item:active{background:#fff!important}.hs-mc-menu-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#ffffff1f;background:color-mix(in srgb,var(--menu-accent, #fff) 12%,transparent);color:var(--menu-accent, #fff);flex-shrink:0;transition:none}.hs-mc-menu-item:hover .hs-mc-menu-icon{background:#000;color:#fff}.hs-mc-menu-text{flex:1;min-width:0}.hs-mc-menu-title{font-size:13px;font-weight:500;color:#fff;line-height:17px}.hs-mc-menu-item:hover .hs-mc-menu-title{color:#000}.hs-mc-menu-arrow{color:var(--hs-muted);flex-shrink:0;transition:none}.hs-mc-menu-item:hover .hs-mc-menu-arrow{color:#000}.hs-mc-menu-divider{height:1px;background:#ffffff0f;margin:4px 20px}.hs-mc-pred-loading{padding:20px;text-align:center;color:var(--hs-muted);font-size:13px}.hs-mc-pred-empty{padding:20px;text-align:center}.hs-mc-pred-empty-text{color:var(--hs-muted);font-size:13px}.hs-mc-prediction{padding:10px 12px}.hs-mc-pred-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}.hs-mc-pred-title{font-size:13px;font-weight:600;color:#fff;line-height:17px;flex:1}.hs-mc-pred-title img,.hs-mc-pred-outcome-title img{height:1.2em;vertical-align:-.2em;margin:0 1px}.hs-mc-pred-locked{font-size:13px;padding:2px 6px;border-radius:0;background:#ffffff1a;color:var(--hs-muted);white-space:nowrap;flex-shrink:0}.hs-mc-pred-timer{font-size:13px;color:#fff;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}.hs-mc-pred-balance{font-size:13px;color:var(--hs-muted);margin-bottom:8px;display:flex;align-items:center;gap:4px}.hs-mc-pred-outcomes{display:flex;flex-direction:column;gap:8px}.hs-mc-pred-outcome{background:#ffffff0a;border-radius:0;padding:8px 10px;border-left:3px solid var(--oc, var(--hs-info))}.hs-mc-pred-outcome-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.hs-mc-pred-outcome-title{font-size:13px;color:#fff;font-weight:500}.hs-mc-pred-outcome-pct{font-size:13px;font-weight:700;color:var(--oc, var(--hs-info));font-variant-numeric:tabular-nums}.hs-mc-pred-bar-track{height:4px;background:#ffffff14;border-radius:0;overflow:hidden;margin-bottom:4px}.hs-mc-pred-bar-fill{height:100%;background:var(--oc, var(--hs-info));border-radius:0}.hs-mc-pred-outcome-stats{font-size:13px;color:var(--hs-muted);margin-bottom:6px}.hs-mc-pred-bet-row{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.hs-mc-pred-bet-btn{background:#000000b3;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;padding:3px 8px;cursor:pointer;font-family:inherit}.hs-mc-pred-bet-btn:hover{background:#fff;color:#000}.hs-mc-pred-bet-btn:disabled{opacity:.3;cursor:default}.hs-mc-pred-bet-btn:disabled:hover{background:#000000b3;color:#fff}.hs-mc-pred-bet-custom{width:52px;background:#000;border:1px solid var(--hs-border);color:#fff;font-size:13px;padding:2px 6px;outline:none;font-family:inherit}.hs-mc-pred-bet-custom::placeholder{color:var(--hs-muted)}.hs-mc-pred-bet-custom:focus{border-color:#fff}.hs-mc-pred-bet-custom:disabled{background:#ffffff0a;color:var(--hs-muted);opacity:.3}.hs-mc-pred-bet-custom::-webkit-inner-spin-button,.hs-mc-pred-bet-custom::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.hs-mc-pred-bet-go{background:#000000b3;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:600;padding:3px 10px;cursor:pointer;font-family:inherit}.hs-mc-pred-bet-go:hover{background:#fff;color:#000}.hs-mc-pred-bet-go:disabled{opacity:.3;cursor:default}.hs-mc-pred-bet-go:disabled:hover{background:#000000b3;color:#fff}.hs-mc-pred-bet-max{font-weight:600;color:#fff}.hs-mc-pred-bet-max:hover{background:#fff;color:#000}.hs-mc-pred-status{font-size:13px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600;text-transform:uppercase;letter-spacing:.5px}.hs-mc-pred-status-resolved{background:#00c86426;color:var(--hs-ok)}.hs-mc-pred-status-canceled{background:#ffffff14;color:var(--hs-muted)}.hs-mc-pred-result{display:flex;align-items:center;justify-content:center;gap:2px;padding:8px 12px;margin-bottom:8px;border-radius:0;text-align:center}.hs-mc-pred-result-amount{font-size:18px;font-weight:900;font-family:Inter,Segoe UI,system-ui,sans-serif;letter-spacing:-.5px}.hs-mc-pred-result-label{font-size:13px;font-weight:600;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-left:4px}.hs-mc-pred-result-won{background:#00c8641f;color:var(--hs-ok);border:1px solid rgba(0,200,100,.3)}.hs-mc-pred-result-lost{background:#ff3c3c14;color:var(--hs-danger);border:1px solid rgba(255,60,60,.2)}.hs-mc-pred-result-refund{background:#ffffff1a;color:#fff;border:1px solid rgba(255,255,255,.25)}.hs-mc-pred-result-neutral{font-size:13px;font-weight:600;color:#ffffff80;background:#ffffff0a;border:1px solid rgba(255,255,255,.08)}.hs-mc-pred-outcome-won{border-left-color:var(--hs-ok);background:#00c86414}.hs-mc-pred-outcome-lost{opacity:.45}.hs-mc-pred-outcome-yours{box-shadow:inset 0 0 0 1px #ff87004d}.hs-mc-pred-winner-badge{font-size:13px;padding:1px 5px;background:var(--hs-ok);color:#000;font-weight:700;text-transform:uppercase;letter-spacing:.5px;vertical-align:middle;margin-left:4px}.hs-mc-pred-mod-notice{font-size:13px;color:#fff;background:#ffffff14;border:1px solid rgba(255,255,255,.2);border-radius:0;padding:5px 8px;margin-top:6px;text-align:center}.hs-mc-pred-resolve-yours{border-color:#fff!important;color:#fff!important}.hs-mc-pred-resolve-yours:hover{background:#fff!important;color:#000!important}.hs-mc-pred-mod-row{display:flex;gap:6px;margin-top:8px}.hs-mc-pred-mod-btn{font-size:13px;padding:4px 10px;background:#000000b3;color:#fff;border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:inherit}.hs-mc-pred-mod-btn:hover{background:#fff;color:#000}.hs-mc-pred-mod-btn:disabled{opacity:.3;cursor:default}.hs-mc-pred-mod-btn:disabled:hover{background:#000000b3;color:#fff}.hs-mc-pred-lock-btn:hover,.hs-mc-pred-cancel-btn:hover{background:#fff;color:#000}.hs-mc-pred-resolve-btn{margin-top:6px;width:100%;color:var(--oc);border-color:var(--oc)}.hs-mc-pred-resolve-btn:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-pred-create{margin-top:10px}.hs-mc-pred-create-toggle{width:100%;text-align:center}.hs-mc-pred-create-form{flex-direction:column;gap:6px;margin-top:8px}.hs-mc-pred-create-input{font-size:13px;padding:2px 8px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;font-family:inherit;outline:none}.hs-mc-pred-create-input::placeholder{color:var(--hs-muted)}.hs-mc-pred-create-input:focus{border-color:#fff;outline:none}.hs-mc-pred-create-dur-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.hs-mc-pred-create-dur-label{font-size:13px;color:var(--hs-muted);margin-right:2px}.hs-mc-pred-create-dur{font-size:13px;padding:2px 6px;background:#000000b3;color:var(--hs-muted);border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:inherit}.hs-mc-pred-create-dur:hover{background:#fff;color:#000}.hs-mc-pred-create-dur-active{background:#fff;color:#000;border-color:#fff}.hs-mc-pred-create-submit{background:#000000b3;color:#fff;border-color:#fff;font-weight:600}.hs-mc-pred-create-submit:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-poll{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06)}.hs-mc-poll-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}.hs-mc-poll-title{font-size:13px;font-weight:600;color:#fff;line-height:17px;flex:1}.hs-mc-poll-status{font-size:13px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600;text-transform:uppercase;letter-spacing:.5px}.hs-mc-poll-status-ended{background:#ffffff14;color:var(--hs-muted)}.hs-mc-poll-timer{font-size:13px;color:#fff;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}.hs-mc-poll-meta{font-size:13px;color:var(--hs-muted);margin-bottom:8px}.hs-mc-poll-choices{display:flex;flex-direction:column;gap:4px}.hs-mc-poll-choice{display:flex;gap:6px;align-items:center}.hs-mc-poll-choice-track{flex:1;height:28px;background:#ffffff0f;position:relative;overflow:hidden}.hs-mc-poll-choice-fill{position:absolute;top:0;left:0;height:100%;background:#9147ff59}.hs-mc-poll-choice-top .hs-mc-poll-choice-fill{background:#9147ff99}.hs-mc-poll-choice-voted .hs-mc-poll-choice-track{box-shadow:inset 0 0 0 1px #ff87004d}.hs-mc-poll-choice-label{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:0 8px;height:28px}.hs-mc-poll-choice-name{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-mc-poll-choice-pct{font-size:13px;font-weight:700;color:var(--hs-plat-twitch);font-variant-numeric:tabular-nums;flex-shrink:0;margin-left:8px}.hs-mc-poll-choice-top .hs-mc-poll-choice-pct{color:#bf8fff}.hs-mc-poll-voted-check{color:#fff;font-weight:700}.hs-mc-poll-vote-btn{background:#9147ff4d;border:none;color:#bf8fff;font-size:13px;font-weight:600;padding:4px 10px;cursor:pointer;white-space:nowrap;font-family:inherit}.hs-mc-poll-vote-btn:hover{background:#fff;color:#000}.hs-mc-poll-vote-btn:disabled{opacity:.3;cursor:default}.hs-mc-poll-mod-row{display:flex;gap:6px;margin-top:6px}.hs-mc-poll-mod-btn{font-size:13px;padding:4px 10px;background:#000000b3;color:#fff;border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:inherit}.hs-mc-poll-mod-btn:hover{background:#fff;color:#000}.hs-mc-poll-mod-btn:disabled{opacity:.3;cursor:default}.hs-mc-poll-mod-btn:disabled:hover{background:#000000b3;color:#fff}.hs-mc-poll-empty{padding:0 12px}.hs-mc-poll-create{border-top:1px solid rgba(255,255,255,.06);padding-top:8px;margin-top:4px}.hs-mc-poll-create-toggle{width:100%;text-align:center}.hs-mc-poll-create-form{flex-direction:column;gap:6px;margin-top:8px}.hs-mc-poll-create-input{font-size:13px;padding:2px 8px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;font-family:inherit;outline:none}.hs-mc-poll-create-input::placeholder{color:var(--hs-muted)}.hs-mc-poll-create-input:focus{border-color:#fff;outline:none}.hs-mc-poll-create-dur-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.hs-mc-poll-create-dur-label{font-size:13px;color:var(--hs-muted);margin-right:2px}.hs-mc-poll-create-dur{font-size:13px;padding:2px 6px;background:#000000b3;color:var(--hs-muted);border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:inherit}.hs-mc-poll-create-dur:hover{background:#fff;color:#000}.hs-mc-poll-create-dur-active{background:#fff;color:#000;border-color:#fff}.hs-mc-poll-create-submit{width:100%;text-align:center;background:#000000b3;color:#fff;border-color:#fff;font-weight:600}.hs-mc-poll-create-submit:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-pred-links{border-top:1px solid rgba(255,255,255,.06);margin-top:8px;padding-top:4px}.hs-mc-pred-links .hs-mc-menu-item{padding:6px 14px!important}.hs-mc-pred-links .hs-mc-menu-icon{width:28px;height:28px}.hs-mc-pred-links .hs-mc-quicklink-section{padding:10px 14px 4px;font-size:13px;color:var(--hs-muted);text-transform:uppercase;letter-spacing:.5px}.hs-mc-pred-links .hs-mc-quicklink-section:first-child{padding-top:4px}.hs-mc-status-overlay{position:fixed;bottom:60px;right:20px;z-index:99999;background:#000;border:2px solid #fff;padding:12px 16px;min-width:280px;max-width:420px;font:13px/1.4 CozetteVector,Courier New,monospace;color:#fff;box-shadow:0 0 12px #ffffff4d;cursor:pointer}.hs-mc-status-loading{font-size:13px;color:#999}.hs-mc-status-title{font-size:13px;font-weight:600;color:#fff}.hs-mc-status-sub{font-size:13px;margin-top:2px}.hs-mc-status-sub.live{color:var(--hs-live)}.hs-mc-status-sub.off{color:#999}.hs-mc-status-streamtitle{font-size:13px;color:#fff;margin-top:6px}.hs-mc-status-meta{font-size:13px;color:#999;margin-top:2px}.hs-mc-status-section{margin-top:10px;padding-bottom:4px;font-size:13px;color:var(--hs-muted);text-transform:uppercase;border-bottom:1px solid #222}.hs-mc-status-modes{margin-top:4px}.hs-mc-status-row{display:flex;justify-content:space-between;padding:2px 0;font-size:13px}.hs-mc-status-key{color:#ccc}.hs-mc-status-val.on{color:var(--hs-ok)}.hs-mc-status-val.off{color:var(--hs-muted)}.hs-mc-status-note{font-size:13px;color:var(--hs-muted);margin-top:4px}.hs-mc-rewards{border-top:1px solid rgba(255,255,255,.06);margin-top:8px;padding-top:8px}.hs-mc-rewards-header{display:flex;justify-content:space-between;align-items:center;padding:0 14px 6px}.hs-mc-rewards-label{font-size:13px;font-weight:600;color:var(--hs-muted);text-transform:uppercase;letter-spacing:.5px}.hs-mc-rewards-balance{font-size:13px;color:var(--hs-muted)}.hs-mc-rewards-empty{font-size:13px;color:var(--hs-muted);padding:8px 14px}.hs-mc-rewards-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 14px}.hs-mc-reward-card{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#ffffff0a;border-left:2px solid var(--rc, var(--hs-plat-twitch));cursor:pointer;transition:none}.hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover{background:#fff}.hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-title,.hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-cost,.hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-reason{color:#000}.hs-mc-reward-unavailable{opacity:.4;cursor:default}.hs-mc-reward-unavailable:hover{background:#ffffff0a}.hs-mc-reward-img{flex-shrink:0;object-fit:contain}.hs-mc-reward-info{min-width:0;overflow:hidden}.hs-mc-reward-title{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-mc-reward-cost{font-size:13px;color:var(--hs-muted)}.hs-mc-reward-reason{font-size:13px;color:#f5009b;margin-top:1px}.hs-mc-reward-input-row{grid-column:1 / -1;display:flex;gap:4px;padding:4px 0}.hs-mc-reward-input{flex:1;background:#ffffff14;border:1px solid rgba(255,255,255,.1);color:#fff;font-size:13px;padding:4px 6px;border-radius:0;outline:none}.hs-mc-reward-input:focus{border-color:var(--hs-plat-twitch)}.hs-mc-reward-submit{background:var(--hs-plat-twitch);border:none;color:#fff;font-size:13px;font-weight:600;padding:4px 10px;border-radius:0;cursor:pointer;transition:none}.hs-mc-reward-submit:hover{background:#fff;color:#000}.hs-mc-reward-submit:disabled{opacity:.5;cursor:default}.hs-mc-color-picker{margin-top:4px}.hs-mc-color-current{display:inline-block;width:14px;height:14px;border-radius:0;vertical-align:-2px;margin-left:6px;border:1px solid rgba(255,255,255,.2)}.hs-mc-color-grid{display:flex;flex-wrap:wrap;gap:3px;padding:4px 14px}.hs-mc-color-swatch{width:20px;height:20px;border-radius:0;cursor:pointer;border:1px solid transparent;transition:none}.hs-mc-color-swatch:hover{outline:2px solid #fff;outline-offset:1px}.hs-mc-color-custom{display:flex;gap:4px;padding:4px 14px}.hs-mc-color-hex{flex:1;background:#ffffff14;border:1px solid rgba(255,255,255,.1);color:#fff;font-size:13px;padding:3px 6px;font-family:inherit;border-radius:0}.hs-mc-color-hex:focus{border-color:var(--hs-plat-twitch);outline:none}.hs-mc-color-apply{background:var(--hs-plat-twitch);border:none;color:#fff;font-size:13px;font-weight:600;padding:3px 10px;cursor:pointer}.hs-mc-color-apply:hover{background:#fff;color:#000}.hs-mc-chat-modes{margin-top:4px}.hs-mc-modes-grid{display:flex;flex-wrap:wrap;gap:4px;padding:4px 14px}.hs-mc-mode-btn{font-family:inherit;font-size:13px;padding:3px 8px;background:#ffffff0f;color:var(--hs-muted);cursor:pointer;border:1px solid rgba(255,255,255,.08);font-weight:600;text-transform:uppercase;letter-spacing:.3px}.hs-mc-mode-btn:hover,.hs-mc-mode-btn.active{background:#fff;color:#000;border-color:#fff}.hs-mc-settings-group{padding:4px 0}.hs-mc-settings-group+.hs-mc-settings-group{border-top:1px solid rgba(255,255,255,.06)}.hs-mc-settings-group-title{font-size:13px;font-weight:600;color:var(--hs-muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px 4px}.hs-mc-setting-row{display:flex!important;align-items:center!important;gap:8px!important;padding:6px 14px!important;font-size:13px!important;color:#fff!important;visibility:visible!important}.hs-mc-setting-row.hs-mc-setting-row-split{justify-content:space-between!important;flex-wrap:wrap}.hs-mc-setting-row:nth-child(2n){background:#303030}.hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover{background:#fff;color:#000}.hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover *{color:#000!important}.hs-mc-setting-row.hs-mc-fr-addform:hover,.hs-mc-setting-row[data-fr-row]:hover{background:#222}.hs-mc-setting-label{color:#fff!important;font-size:13px!important;cursor:help;border-bottom:1px dotted var(--hs-border)}#hs-settings-tip{position:fixed;z-index:99999;background:#000;color:#fff;border:1px solid var(--hs-border);padding:6px 8px;font-size:13px;line-height:18px;max-width:260px;pointer-events:none;display:none;font-family:inherit}#hs-settings-tip.visible{display:block}.hs-mc-setting-row.hs-mc-setting-row-block{flex-direction:column;align-items:stretch;gap:4px}.hs-mc-setting-textarea{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:4px 6px;resize:vertical;min-height:48px;width:100%;box-sizing:border-box}.hs-mc-setting-textarea:focus{outline:none;border-color:#fff}.hs-mc-locale-select{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:3px 6px;cursor:pointer;flex-shrink:0;max-width:60%}.hs-mc-locale-select:hover,.hs-mc-locale-select:focus{background:#fff;color:#000;outline:none;border-color:#fff}.hs-mc-setting-row .hs-mc-toggle-pill,.hs-mc-setting-row .hs-mc-size-btns{flex-shrink:0}.hs-mc-size-btns{display:flex;gap:2px;background:#000;padding:2px}.hs-mc-size-btn{font-family:inherit;white-space:nowrap!important;padding:4px 10px!important;background:transparent!important;color:var(--hs-muted)!important;border:none!important;border-radius:0!important;font-size:13px!important;cursor:pointer!important;display:inline-block!important;visibility:visible!important;transition:none}.hs-mc-size-btn:hover,.hs-mc-size-btn.active,.hs-mc-size-btn.active:hover{background:#fff!important;color:#000!important}.hs-mc-toggle-pill{width:16px;height:16px;background:var(--hs-danger-dim);border:none;border-radius:0;cursor:pointer;padding:0;transition:none;flex-shrink:0}.hs-mc-toggle-pill.active{background:var(--hs-ok)}.hs-mc-toggle-knob{display:none}.hs-mc-set-searchbar{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.2);position:sticky;top:46px;background:#000;z-index:5;flex-shrink:0}.hs-mc-set-search{flex:1;background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:3px 6px;min-width:0}.hs-mc-set-search:focus{outline:none;border-color:#fff}.hs-mc-set-search-count{color:var(--hs-muted);font-size:13px;flex-shrink:0}.hs-mc-set-scope-btn,.hs-mc-set-presets-btn{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:3px 8px;cursor:pointer;flex-shrink:0}.hs-mc-set-scope-btn:hover,.hs-mc-set-presets-btn:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-setting-row.hs-mc-set-row-focus{background:#fff!important}.hs-mc-setting-row.hs-mc-set-row-focus *{color:#000!important}.hs-mc-setting-row:hover .hs-mc-size-btn,.hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn{color:var(--hs-muted)!important}.hs-mc-setting-row:hover .hs-mc-size-btn.active,.hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,.hs-mc-setting-row:hover .hs-mc-size-btn:hover,.hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn:hover{color:#000!important}.hs-mc-set-child{padding-left:28px!important}.hs-mc-set-child-glyph{color:var(--hs-muted);flex-shrink:0}.hs-mc-settings-group-title{cursor:pointer;user-select:none}.hs-mc-settings-group-title:hover{background:#fff;color:#000}.hs-mc-setting-row.hs-mc-set-mod{box-shadow:inset 3px 0 #fff}.hs-mc-set-cnt{color:var(--hs-muted);font-weight:400}.hs-mc-set-modcnt{color:#fff;font-weight:400}.hs-mc-settings-group-title:hover .hs-mc-set-cnt,.hs-mc-settings-group-title:hover .hs-mc-set-modcnt{color:#000}.hs-mc-set-reload{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:0 6px;cursor:pointer;margin-left:auto;flex-shrink:0}.hs-mc-set-reload:hover{background:#fff;color:#000;border-color:#000}.hs-mc-set-search-hdr{color:var(--hs-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px;padding:8px 14px 2px;cursor:pointer;user-select:none}.hs-mc-set-search-hdr:hover{background:#fff;color:#000}.hs-mc-settings-panel{position:absolute;inset:0;display:flex;flex-direction:column;background:#000}.hs-mc-set-help-btn{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:3px 8px;cursor:pointer;flex-shrink:0}.hs-mc-set-help-btn:hover{background:#fff;color:#000;border-color:#fff}.hs-mc-set-help{position:absolute;top:84px;right:8px;z-index:3;background:#000;border:1px solid var(--hs-border);padding:8px 10px;font-size:13px;cursor:pointer}.hs-mc-set-help-grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:2px 10px}.hs-mc-set-help-key{color:#fff}.hs-mc-set-help-title{color:var(--hs-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px;padding:6px 0 2px}.hs-mc-set-keyhint{color:var(--hs-muted);font-size:13px;padding:6px 14px 10px}.hs-mc-set-range{-webkit-appearance:none;appearance:none;width:120px;height:4px;background:#333;outline:none;flex-shrink:0}.hs-mc-set-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:10px;height:14px;background:#fff;border:none;border-radius:0;cursor:pointer}.hs-mc-set-range-val{color:var(--hs-muted);font-size:13px;min-width:28px;text-align:right;flex-shrink:0}.hs-mc-set-subtabs{display:flex;gap:4px;padding:6px 8px 4px;border-bottom:1px solid rgba(255,255,255,.2);flex-shrink:0;overflow-x:auto;position:sticky;top:0;background:#000;z-index:5}.hs-mc-set-subtab{width:34px;height:34px;padding:0;background:#000;color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:none}.hs-mc-set-subtab:hover{background:#fff;color:#000;border-color:#fff;outline:none}.hs-mc-set-subtab.active{background:#fff;color:#000;border-color:#fff}.hs-mc-set-subtab svg{display:block}.hs-mc-set-subtab-body{flex:1;min-height:0;overflow-y:auto;background:#000}.hs-mc-set-text-input{background:#000;color:#fff;border:1px solid var(--hs-border);font-family:inherit;font-size:13px;padding:3px 6px;flex-shrink:0}.hs-mc-set-text-input:focus{outline:none;border-color:#fff}.hs-mc-set-crash-pre{background:#0a0a0a;color:silver;border:1px solid #333;padding:6px 8px;font-size:13px;max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:0;font-family:inherit}.hs-mc-ch-input::placeholder{color:var(--hs-muted)}.hs-mc-ch-input:focus{border-color:#fff}.hs-mc-confirm-overlay{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:#0009}.hs-mc-confirm-box{background:#000;border:1px solid var(--hs-border);padding:14px 16px;max-width:300px;color:#fff;font-size:13px}.hs-mc-confirm-msg{margin-bottom:12px;line-height:1.4;word-break:break-word}.hs-mc-confirm-btns{display:flex;gap:8px;justify-content:flex-end}.hs-mc-confirm-btns button{background:#000;color:#fff;border:1px solid var(--hs-border);padding:3px 12px;font-size:13px;font-family:inherit;cursor:pointer}.hs-mc-confirm-cancel:hover{background:#fff;color:#000}.hs-mc-confirm-ok{border-color:#ff5f5f;color:#ff5f5f}.hs-mc-confirm-ok:hover{background:#ff5f5f;color:#000}.hs-mc-confirm-reasons{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.hs-mc-confirm-reason{background:#000;color:#bbb;border:1px solid #555;padding:2px 8px;font-size:13px;font-family:inherit;cursor:pointer}.hs-mc-confirm-reason:hover{background:#fff;color:#000}.hs-mc-confirm-reason.sel{border-color:#fff;color:#fff}.hs-mc-confirm-reason.sel:hover{background:#fff;color:#000}.hs-pv-wrap{display:flex;flex-direction:column;height:100%;min-height:0;background:#000}.hs-pv-hdr{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding:4px 6px;border-bottom:1px solid var(--hs-border);background:#0a0a0a}.hs-pv-title{display:flex;align-items:baseline;gap:6px;flex:1 1 auto;min-width:0;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-pv-sub{color:var(--hs-border);font-weight:400}.hs-pv-close{flex:0 0 auto;font-family:var(--hs-mc-font, "CozetteVector", "Courier New", monospace);font-size:13px;line-height:18px;padding:0 6px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;cursor:pointer}.hs-pv-close:hover{background:#fff;color:#000}.hs-pv-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:6px}.chat-scrollable-area__message-container,[class*=chat-room] [class*=scrollable-area]{position:relative!important}#hs-mc-tabbar~[class*=tabs-buttons],[class*=chat-header__tabs-buttons],[class*=tabs__scroll-button],.chat-room__content [class*=scroll-button]{display:none!important}[aria-label="Previous leaderboard set"],[aria-label="Next leaderboard set"],.channel-leaderboard-header-rotating__users~button,[class*=channel-leaderboard] button[aria-label*=leaderboard]{display:none!important}.hs-tabs-top:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay,.hs-tabs-right:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay,.hs-tabs-left:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay{bottom:0!important}.hs-tabs-top:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker,.hs-tabs-right:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker,.hs-tabs-left:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker{bottom:0!important}.hs-tabs-right #hs-mc-tabbar{position:absolute!important;inset:0 0 0 auto!important;width:90px;flex-direction:column;flex-shrink:0;padding:0;gap:0;border-bottom:none;border-left:1px solid #fff;border-radius:0;background:#000;overflow-y:auto;overflow-x:visible;scrollbar-width:none;z-index:1001}.hs-tabs-right #hs-mc-tabbar::-webkit-scrollbar{display:none}.hs-tabs-right .hs-mc-tab,.hs-tabs-left .hs-mc-tab{padding:4px 14px 4px 6px!important;font-size:13px!important;min-width:0!important;max-width:none!important;width:100%!important;text-align:left!important;box-sizing:border-box!important;flex:0 0 auto!important;margin:0 0 -1px!important}.hs-tabs-right .hs-mc-util-btn,.hs-tabs-right .hs-mc-pf-btn,.hs-tabs-left .hs-mc-util-btn,.hs-tabs-left .hs-mc-pf-btn{text-align:center!important}.hs-tabs-right .hs-mc-util-btn,.hs-tabs-left .hs-mc-util-btn{width:14px!important;min-width:14px!important;max-width:14px!important;padding:0!important;flex:0 0 14px!important;margin:0 -1px 0 0!important}.hs-tabs-right .hs-mc-right-cluster,.hs-tabs-left .hs-mc-right-cluster{width:100%!important;align-self:stretch!important}.hs-tabs-right .hs-mc-pf-btn,.hs-tabs-left .hs-mc-pf-btn{flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:none!important;padding:0!important;margin:0 -1px 0 0!important}.hs-tabs-right #hs-mc-platfilter,.hs-tabs-left #hs-mc-platfilter{display:flex!important;flex-direction:row!important;width:100%!important;flex:0 0 auto!important}.hs-tabs-right .hs-mc-tabs-scroll{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;min-width:0;max-width:100%;width:100%;box-sizing:border-box;scrollbar-width:none}.hs-tabs-right .hs-mc-tabs-scroll::-webkit-scrollbar{display:none}.hs-tabs-right #hs-mc-overlay{inset:0 90px 52px 0}.hs-tabs-right #hs-mc-inputbar{left:0;right:90px;z-index:1002}.hs-tabs-right #hs-mc-emote-picker{left:0;right:90px}.hs-tabs-bottom #hs-mc-tabbar{position:absolute;inset:auto 0 44px;padding:0;border-top:1px solid #fff;border-bottom:none;z-index:1001}.hs-tabs-bottom #hs-mc-inputbar{padding:4px 8px}.hs-tabs-bottom #hs-mc-overlay{top:0;bottom:75px}.hs-tabs-bottom #hs-mc-emote-picker{bottom:75px}.hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-tabbar{bottom:0}.hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay{bottom:31px}.hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker{bottom:31px}.hs-tabs-left #hs-mc-tabbar{position:absolute!important;inset:0 auto 0 0!important;width:90px;flex-direction:column;flex-shrink:0;padding:0;gap:0;border-bottom:none;border-right:1px solid #fff;border-radius:0;background:#000;overflow-y:auto;overflow-x:visible;scrollbar-width:none;z-index:1001}.hs-tabs-left #hs-mc-tabbar::-webkit-scrollbar{display:none}.hs-tabs-left .hs-mc-tabs-scroll{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;scrollbar-width:none}.hs-tabs-left .hs-mc-tabs-scroll::-webkit-scrollbar{display:none}.hs-tabs-left #hs-mc-overlay{inset:0 0 52px 90px}.hs-tabs-left #hs-mc-inputbar{left:90px;right:0;z-index:1002}.hs-tabs-left #hs-mc-emote-picker{left:90px;right:0}.hs-popout #hs-mc-overlay,.hs-popout #hs-mc-inputbar{left:0!important;right:0!important;width:auto!important}.hs-popout #hs-mc-resize-handle,.hs-popout #hs-c-resize-handle,.hs-popout #hs-yt-resize-handle,.hs-popout #hs-kick-resize-handle{display:none!important}.hs-tabs-right .hs-mc-util-row .hs-mc-util-btn,.hs-tabs-left .hs-mc-util-row .hs-mc-util-btn{flex:1 1 0!important;width:auto!important;max-width:none!important;min-width:0!important}.hs-popout #hs-mc-emote-picker{left:0!important;right:0!important}.hs-popout.hs-tabs-right #hs-mc-overlay,.hs-popout.hs-tabs-right #hs-mc-inputbar,.hs-popout.hs-tabs-right #hs-mc-emote-picker{right:90px!important}.hs-popout.hs-tabs-left #hs-mc-overlay,.hs-popout.hs-tabs-left #hs-mc-inputbar,.hs-popout.hs-tabs-left #hs-mc-emote-picker{left:90px!important}body.hs-popout #hs-mc-container{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;z-index:9999!important;background:#000!important}body.hs-popout.hs-popout.hs-platform-yt:not(.hs-offline) #hs-mc-container{position:fixed!important;inset:0!important;width:auto!important;max-width:none!important;height:auto!important;z-index:9999!important;background:#000!important}body.hs-popout.hs-platform-yt:not(.hs-offline):has(#hs-mc-container) yt-live-chat-app{display:none!important}.hs-feed-msg{position:relative;padding:1px 6px;line-height:18px;font-size:13px;word-wrap:break-word;word-break:break-word}.hs-feed-avatar{width:16px;height:16px;vertical-align:middle;margin-right:3px}.hs-feed-user{font-weight:600;font-size:13px;color:#fff;text-decoration:none}.hs-feed-user:hover{background:#fff;color:#000!important;text-decoration:none}.hs-feed-time{font-size:13px;color:var(--hs-muted);margin:0 3px}.hs-feed-body{color:#fff}.hs-feed-stat{font-size:13px;margin:0 2px;cursor:default}.hs-feed-replies{cursor:pointer!important}.hs-feed-thread-link{color:var(--hs-mention);font-size:13px;font-weight:700;margin-right:3px;text-decoration:none}.hs-feed-thread-link:hover{background:#fff;color:#000;text-decoration:none}.hs-feed-replies:hover{background:#fff;color:#000!important}.hs-feed-tag{font-size:13px;font-weight:700;margin-right:3px;vertical-align:middle}.hs-feed-tag-op{color:red}.hs-feed-tag-mop{color:var(--hs-thread)}.hs-feed-tag-re{color:var(--hs-reply)}.hs-mc-feed-reply-chip{position:absolute;left:0;right:0;bottom:100%;display:flex;align-items:center;gap:4px;padding:3px 8px;background:#000;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;font-size:13px;line-height:18px;box-sizing:border-box;z-index:1002}.hs-mc-feed-reply-ref{color:#a0a0a0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hs-mc-feed-reply-cancel{background:none;border:none;color:var(--hs-muted);cursor:pointer;font-size:13px;padding:0 4px;font-family:inherit;flex-shrink:0}.hs-mc-feed-reply-cancel:hover{background:#fff;color:#000}.hs-heat-num{font-variant-numeric:tabular-nums;font-weight:900;line-height:1}.hs-heat-n,.hs-heat-deg{font-family:ui-monospace,SFMono-Regular,monospace}.hs-post-link{color:var(--hs-mention);font-weight:700;cursor:pointer}.hs-post-link:hover{text-decoration:underline}.hs-post-highlight{outline:2px solid var(--hs-brand);outline-offset:-2px}.hs-thread-op{border-bottom:1px solid var(--hs-border);padding-bottom:4px;margin-bottom:4px}.hs-thread-container{margin-left:12px;border-left:2px solid #fff;padding-left:8px;margin-bottom:4px}.hs-thread-reply{padding:1px 4px;line-height:17px;font-size:13px}.hs-thread-reply.is-thread-op{border-left:2px solid var(--hs-thread);margin-left:-2px;padding-left:10px}.hs-feed-loader{cursor:default;font-size:13px}.hs-feed-media{margin:4px 0 2px;max-width:100%}.hs-feed-media img,.hs-feed-media video,.hs-feed-media-direct img,.hs-feed-media-direct video{max-width:100%;max-height:320px;display:block;border-radius:0;cursor:pointer;background:#000}.hs-feed-media-multi{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:3px}.hs-feed-media-multi .hs-feed-media-item{max-height:180px;width:100%;object-fit:cover;border-radius:0;background:#000}.hs-feed-embed-container{position:relative;width:100%;max-width:480px;aspect-ratio:16 / 9;background:#000;border-radius:0;overflow:hidden}.hs-feed-embed-container iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.hs-feed-embed-spotify{aspect-ratio:auto;height:152px}.hs-feed-embed-soundcloud{aspect-ratio:auto;height:166px}.hs-feed-embed-twitter{aspect-ratio:auto;height:380px;max-width:480px;background:transparent}.hs-feed-embed-imgur{aspect-ratio:auto;max-width:480px;background:transparent}.hs-feed-embed-tiktok{aspect-ratio:9 / 16;max-width:320px}.hs-feed-embed-yt-thumb{position:relative;display:block;width:100%;max-width:480px;aspect-ratio:16 / 9;background:#000;overflow:hidden;cursor:pointer}.hs-feed-embed-yt-thumb.hs-yt-portrait{aspect-ratio:9 / 16;max-width:320px}.hs-feed-embed-yt-thumb img{width:100%;height:100%;object-fit:cover;display:block}.hs-feed-embed-yt-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;text-shadow:0 0 6px rgba(0,0,0,.8);background:#00000040;transition:background .15s}.hs-feed-embed-yt-thumb:hover .hs-feed-embed-yt-play{background:#fff;color:#000;text-shadow:none}.hs-feed-link-card{margin:4px 0 2px;padding:4px 6px;background:#ffffff0a;border:1px solid #333;border-radius:0;max-width:480px}.hs-feed-link-card-link{display:flex;align-items:center;gap:6px;color:#fff;text-decoration:none;font-size:13px}.hs-feed-link-card-link:hover{text-decoration:underline}.hs-feed-link-card-icon{color:#888;font-size:13px;flex-shrink:0}.hs-feed-link-card-url{color:var(--hs-muted);word-break:break-all}.hs-feed-link-card:is(:hover,:active){background:#fff;border-color:#fff}.hs-feed-link-card:is(:hover,:active) :is(.hs-feed-link-card-link,.hs-feed-link-card-icon,.hs-feed-link-card-url){color:#000}.hs-feed-media-deleted{padding:6px 8px;background:#1a1a1a;border:1px solid #444;color:#888;font-size:13px;border-radius:0;max-width:480px}.hs-feed-embed-pending{display:flex;align-items:center;justify-content:center;min-height:60px;padding:8px;background:#ffffff0a;border:1px solid #333;max-width:480px;margin:4px 0 2px}.hs-feed-embed-pending-label{color:#888;font-size:13px;opacity:.7}.hs-feed-embed-rich-card{display:flex;align-items:center;gap:10px;padding:8px;background:#ffffff0a;border:1px solid #333;max-width:480px;margin:4px 0 2px;text-decoration:none;color:#ddd;white-space:normal}.hs-feed-embed-rich-card *{white-space:normal}.hs-feed-embed-rich-card:is(:hover,:active){background:#fff;color:#000;border-color:#fff}.hs-feed-embed-rich-card:is(:hover,:active) :is(.hs-feed-embed-rich-platform,.hs-feed-embed-rich-title,.hs-feed-embed-rich-author){color:#000}.hs-feed-embed-rich-card:is(:hover,:active) .hs-feed-embed-rich-thumb-placeholder{background:#00000014;color:#000}.hs-feed-embed-rich-thumb,.hs-feed-embed-rich-thumb-placeholder{width:64px;height:64px;flex-shrink:0;object-fit:cover;background:#ffffff0d;display:flex;align-items:center;justify-content:center;color:#888;font-size:13px}.hs-feed-embed-rich-meta{flex:1;min-width:0;overflow:hidden}.hs-feed-embed-rich-platform{font-size:13px;text-transform:uppercase;color:#888;letter-spacing:.5px}.hs-feed-embed-rich-title{font-size:13px;font-weight:600;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.hs-feed-embed-rich-author{font-size:13px;color:var(--hs-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-feed-embed-rich-image{max-width:480px;max-height:480px;width:auto;height:auto;display:block;margin:4px 0 2px}.hs-feed-embed-rich-video{max-width:480px;width:100%;height:auto;display:block;margin:4px 0 2px;background:#000}.hs-feed-embed-rich-imglink{display:block;line-height:0}.hs-spoiler{background:var(--hs-border);color:transparent;cursor:pointer;border-radius:0;padding:0 2px;transition:none}.hs-spoiler.revealed{background:transparent;color:inherit}.hs-greentext{color:#789922}.hs-inline-code{background:#000;padding:1px 4px;border-radius:0;font-family:monospace;font-size:13px}.hs-mention{color:var(--hs-link);text-decoration:none;cursor:pointer}.hs-mention:hover{text-decoration:underline}.hs-mention.self{background:maroon;color:#fff;padding:0 2px;border-radius:0}.hs-hashtag{color:var(--hs-thread);text-decoration:none;cursor:pointer}.hs-hashtag:hover{box-shadow:inset 0 0 0 100px #fff;color:#000}.hs-tripcode{color:#117743;font-weight:400;margin-left:4px;font-size:13px}.hs-mc-tab .hs-badge{background:#fff;color:#000;border-radius:0;font-size:13px;min-width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;padding:0 3px}.hs-native-hidden #chatroom-messages,.hs-native-hidden [class*=chatroom-footer],.hs-native-hidden [class*=chat-input]:not(:has([data-test-selector=chat-private-callout-queue__callout-container] *)),.hs-native-hidden div.editor-input{display:none!important}.hs-native-hidden#channel-chatroom>*{display:none!important}.hs-native-hidden#channel-chatroom{display:none!important}body:not(.hs-popout) .hs-native-hidden#channel-chatroom~#hs-mc-container{position:fixed!important;right:0!important;top:var(--hs-kick-topnav-h, 60px)!important;bottom:0!important;width:var(--hs-kick-chat-width, 340px)!important;height:auto!important;z-index:9999!important;display:flex!important;background:#000!important;transition:none!important}body.hs-chat-hidden .hs-native-hidden#channel-chatroom~#hs-mc-container{display:none!important}body:has(.hs-native-hidden#channel-chatroom):not(.hs-popout):not(.hs-chat-left):not(.hs-chat-top):not(.hs-chat-bottom):not(.hs-chat-hidden) main{margin-right:var(--hs-kick-chat-width, 340px)!important;transition:none!important}#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-overlay,#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-emote-picker,#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>.hs-mc-inputbar{display:none!important}#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{position:fixed!important;top:var(--hs-kick-topnav-h, 60px)!important;z-index:10000!important;background:transparent!important;pointer-events:none;overflow:visible!important}#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-tabbar{pointer-events:auto;background:var(--hs-bg, #000)!important;position:relative!important}#channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-kick-resize-handle{pointer-events:auto}.hs-tabs-top #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{top:var(--hs-kick-topnav-h, 60px)!important;right:0!important;width:var(--hs-kick-chat-width, 340px)!important;height:auto!important;flex-direction:column!important}.hs-tabs-top #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-tabbar{flex-direction:row!important;flex-wrap:nowrap!important;width:100%!important}.hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{bottom:0!important;right:0!important;width:var(--hs-kick-chat-width, 340px)!important;height:auto!important;flex-direction:column-reverse!important}.hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-tabbar{flex-direction:row!important;flex-wrap:nowrap!important;width:100%!important}.hs-tabs-right #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{top:var(--hs-kick-topnav-h, 60px)!important;right:0!important;bottom:0!important;width:auto!important;height:100%!important;flex-direction:row!important}.hs-tabs-right #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-tabbar{flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;width:90px!important;height:100%!important;max-height:none!important;border-left:1px solid #fff}.hs-tabs-left #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{top:var(--hs-kick-topnav-h, 60px)!important;right:auto!important;bottom:0!important;left:calc(100vw - var(--hs-kick-chat-width, 340px))!important;width:auto!important;height:100%!important;flex-direction:row-reverse!important}.hs-tabs-left #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container>#hs-mc-tabbar{flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;width:90px!important;height:100%!important;max-height:none!important;border-right:1px solid #fff}body.hs-popout #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{top:0!important}body.hs-popout.hs-tabs-top #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container,body.hs-popout.hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{left:0!important;width:auto!important}body.hs-popout.hs-tabs-left #channel-chatroom:not(.hs-native-hidden)~#hs-mc-container{left:0!important}#hs-kick-resize-handle{position:absolute;top:0;left:0;width:var(--hs-resize-thickness);height:100%;cursor:col-resize;z-index:10000;pointer-events:auto}.z-popover,.z-tooltip,.z-modal,.z-dropdown,[data-radix-popper-content-wrapper]{z-index:100000!important}.channel-root--home{background-color:#000!important}.root-scrollable__content{background:#000}#hs-mc-search-bar{display:none;flex-shrink:0;padding:4px 6px;border-bottom:1px solid #333;background:#000}#hs-mc-search-bar.visible{display:flex;align-items:center;gap:6px}#hs-mc-search-input{flex:1;padding:5px 10px;background:#000;color:#fff;border:1px solid var(--hs-border);border-radius:0;font-size:13px;font-family:inherit;outline:none}#hs-mc-search-input:focus{border-color:#fff}#hs-mc-search-input::placeholder{color:var(--hs-muted)}#hs-mc-search-count{display:none;font-size:13px;font-family:inherit;color:var(--hs-muted);background:#111;border:1px solid #333;padding:1px 5px;flex-shrink:0;white-space:nowrap;min-width:0}#hs-mc-search-count.visible{display:block}#hs-mc-search-spinner{display:none;width:8px;height:8px;background:#fff;flex-shrink:0}#hs-mc-search-spinner.visible{display:block}.hs-mc-search-result{display:flex;flex-direction:column;gap:2px;padding:5px 8px;border-bottom:1px solid #1a1a1a;cursor:pointer;font-size:13px}.hs-mc-search-result:hover{background:#fff;color:#000}.hs-mc-search-result:last-child{border-bottom:none}.hs-mc-search-meta{display:flex;align-items:center;gap:6px;color:var(--hs-muted);font-size:13px}.hs-mc-search-user{font-weight:700;color:#fff}.hs-mc-search-content{color:#ccc;word-break:break-word}.hs-mc-search-empty{padding:16px;text-align:center;color:var(--hs-muted);font-size:13px}.hs-discover-root{container-type:inline-size;display:flex;flex-direction:column;gap:6px;margin:-8px;padding:6px}.hs-discover-row1{display:grid;grid-template-columns:1fr;gap:6px}@container (min-width: 460px){.hs-discover-row1{grid-template-columns:1fr 1fr}}.hs-discover-section{padding:0;border:1px solid rgba(255,255,255,.08);background:#0000002e;overflow:hidden;display:flex;flex-direction:column}.hs-discover-section+.hs-discover-section{margin-top:0}.hs-discover-heading{font-size:13px;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin:0;padding:4px 8px;background:#ffffff14;border-bottom:1px solid rgba(255,255,255,.2);line-height:17px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}.hs-discover-heading-title{flex-shrink:0}.hs-discover-section-body{padding:1px 0}.hs-discover-section-empty{padding:8px;color:var(--hs-muted);font-size:13px}.hs-discover-meta{color:var(--hs-muted);font-size:13px;font-weight:600;text-transform:none;letter-spacing:0;font-variant-numeric:tabular-nums;flex-shrink:0}.hs-discover-chips{display:flex;flex-wrap:wrap;gap:3px;padding:3px 8px;margin:0}.hs-discover-chip{display:inline-block;padding:1px 7px;background:transparent;border:1px solid var(--hs-thread);color:var(--hs-thread);font-size:13px;text-decoration:none;cursor:pointer;border-radius:0;line-height:19px;white-space:nowrap}.hs-discover-chip:hover{background:#fff;color:#000;border-color:#fff}.hs-discover-profile-row{display:flex;align-items:center;gap:6px;padding:2px 8px;text-decoration:none;cursor:pointer;line-height:17px;font-size:13px;border-left:2px solid transparent}.hs-discover-profile-row:hover{background:#fff;color:#000}.hs-discover-profile-row:hover *{color:#000!important}.hs-discover-profile-row.hs-discover-row-live{border-left-color:var(--hs-live)}.hs-discover-rank{color:var(--hs-muted);font-size:13px;font-variant-numeric:tabular-nums;width:18px;text-align:right;flex-shrink:0;font-family:ui-monospace,SFMono-Regular,monospace}.hs-discover-row-live .hs-discover-rank{color:var(--hs-muted)}.hs-discover-live-dot{width:7px;height:7px;border-radius:50%;background:var(--hs-live);flex-shrink:0}.hs-discover-live-spacer{width:7px;flex-shrink:0}.hs-discover-avatar{width:18px;height:18px;flex-shrink:0;border-radius:0;object-fit:cover;background:#1a1a1a}.hs-discover-avatar-empty{display:inline-block}.hs-discover-profile-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;flex-shrink:1}.hs-discover-platforms{display:inline-flex;gap:2px;flex-shrink:0}.hs-discover-platforms .hs-plat{font-family:ui-monospace,SFMono-Regular,monospace;font-size:13px;font-weight:700;padding:0 3px;line-height:15px;text-decoration:none}.hs-discover-platforms .hs-plat:hover{background:#fff!important;color:#000!important}.hs-discover-platforms .hs-plat-live{font-weight:900}.hs-discover-platforms .hs-plat-t{color:var(--hs-plat-twitch)}.hs-discover-platforms .hs-plat-k{color:var(--hs-plat-kick)}.hs-discover-platforms .hs-plat-yt{color:var(--hs-plat-youtube)}.hs-discover-platforms .hs-plat-h{color:#fff}.hs-discover-post-plat.hs-plat-t{color:var(--hs-plat-twitch)}.hs-discover-post-plat.hs-plat-k{color:var(--hs-plat-kick)}.hs-discover-post-plat.hs-plat-yt{color:var(--hs-plat-youtube)}.hs-discover-post-plat.hs-plat-h{color:#fff}.hs-discover-bar{flex:1;min-width:28px;max-width:90px;height:5px;background:#ffffff0f;overflow:hidden}.hs-discover-bar>i{display:block;height:100%;background:#fff}.hs-discover-row-live .hs-discover-bar>i{background:var(--hs-live)}.hs-discover-heat{display:inline-block;font-size:13px;font-variant-numeric:tabular-nums;flex-shrink:0;font-family:ui-monospace,SFMono-Regular,monospace;line-height:1}.hs-discover-viewers{font-size:13px;color:var(--hs-danger);font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,monospace;flex-shrink:0}.hs-discover-chips-bar{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 8px;background:#00000040;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;font-family:ui-monospace,SFMono-Regular,monospace}.hs-discover-chips-label{color:var(--hs-muted);font-size:13px;font-weight:700;margin-right:-2px}.hs-discover-chip-btn{padding:2px 8px;background:transparent;border:1px solid rgba(255,255,255,.12);color:var(--hs-muted);cursor:pointer;font-size:13px;font-family:ui-monospace,SFMono-Regular,monospace;font-weight:600;border-radius:0;line-height:18px}.hs-discover-chip-btn.hs-active{background:#fff;border-color:#fff;color:#000}.hs-discover-chip-btn.hs-chip-plat-t.hs-active{background:var(--hs-plat-twitch);border-color:var(--hs-plat-twitch);color:#fff}.hs-discover-chip-btn.hs-chip-plat-k.hs-active{background:var(--hs-plat-kick);border-color:var(--hs-plat-kick);color:#000}.hs-discover-chip-btn.hs-chip-plat-yt.hs-active{background:var(--hs-plat-youtube);border-color:var(--hs-plat-youtube);color:#fff}.hs-discover-chip-btn:hover,.hs-discover-chip-btn.hs-active:hover,.hs-discover-chip-btn.hs-chip-plat-t.hs-active:hover,.hs-discover-chip-btn.hs-chip-plat-k.hs-active:hover,.hs-discover-chip-btn.hs-chip-plat-yt.hs-active:hover{background:#fff;color:#000;border-color:#fff}.hs-discover-section-live{border-color:#ff000059}.hs-discover-section-live>.hs-discover-heading{background:var(--hs-live-tint);border-bottom-color:#ff000059;color:var(--hs-live)}.hs-discover-section-posts{border-color:#ffffff4d}.hs-discover-section-posts>.hs-discover-heading{background:#ffffff1a;color:#fff}.hs-discover-section-trending{border-color:#ffffff26}.hs-discover-section-trending>.hs-discover-heading{background:#ffffff0a;color:#fff;border-bottom-color:#ffffff26}.hs-discover-section-tags{border-color:#ff00ff59}.hs-discover-section-tags>.hs-discover-heading{background:#ff00ff14;color:var(--hs-thread);border-bottom-color:#ff00ff59}.hs-discover-leaderboard-body .hs-discover-profile-row{break-inside:avoid;page-break-inside:avoid}@container (min-width: 520px){.hs-discover-leaderboard-body{columns:2;column-gap:0;column-rule:1px solid rgba(255,255,255,.05)}}@container (min-width: 800px){.hs-discover-leaderboard-body{columns:3}}.hs-discover-post-row{display:flex;flex-direction:column;gap:2px;padding:5px 8px;text-decoration:none;cursor:pointer;line-height:17px;border-left:2px solid transparent;border-bottom:1px solid rgba(255,255,255,.04)}.hs-discover-post-row:last-child{border-bottom:none}.hs-discover-post-row:hover{background:#fff;color:#000;border-left-color:#fff}.hs-discover-post-row:hover *{color:#000!important}.hs-discover-post-meta{display:flex;align-items:baseline;gap:5px;font-size:13px}.hs-discover-post-spacer{flex:1}.hs-discover-post-time{color:var(--hs-muted);font-size:13px;font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,monospace;flex-shrink:0}.hs-discover-post-plat{flex-shrink:0}.hs-discover-post-user{font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:1;max-width:140px;overflow:hidden;text-overflow:ellipsis}.hs-discover-post-text{color:#c8c8c8;font-size:13px;line-height:18px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-wrap:break-word;word-break:break-word}.hs-discover-post-row:hover .hs-discover-post-text{color:#fff}.hs-discover-post-heat{flex-shrink:0}.hs-discover-post-replies{font-size:13px;color:var(--hs-muted);font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,monospace;flex-shrink:0}.hs-discover-chip-count{margin-left:5px;color:#f0f9;font-variant-numeric:tabular-nums;font-size:13px}.hs-discover-chip:hover .hs-discover-chip-count{color:#000}.hs-pinned-row{display:block;padding:2px 8px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;cursor:pointer;line-height:18px}.hs-pinned-row:hover{background:#fff}.hs-pinned-row:hover *{color:#000!important}.hs-pinned-meta{display:flex;align-items:center;gap:5px;margin:0}.hs-pinned-channel{font-size:13px;color:#fff;font-weight:600}.hs-pinned-user{font-size:13px;color:#bbb}.hs-pinned-time{font-size:13px;color:var(--hs-muted);margin-left:auto}.hs-pinned-body{font-size:13px;color:#ddd;word-break:break-word;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-modlog-row{display:flex;align-items:baseline;gap:6px;padding:2px 8px;border-bottom:1px solid rgba(255,255,255,.04);line-height:18px;font-size:13px}.hs-modlog-row:hover{background:#ff870012}.hs-modlog-time{color:var(--hs-border);font-variant-numeric:tabular-nums}.hs-modlog-channel{color:#fff;font-weight:600}.hs-modlog-body{color:#ddd;word-break:break-word}.hs-modlog-ban .hs-modlog-body{color:var(--hs-danger)}.hs-modlog-timeout .hs-modlog-body{color:var(--hs-gold)}.hs-modlog-unban .hs-modlog-body,.hs-modlog-untimeout .hs-modlog-body{color:var(--hs-ok)}.hs-modlog-delete .hs-modlog-body{color:#9e9e9e}.hs-log-embed{display:block;margin:4px 0 0;padding:3px 6px;border-left:2px solid var(--hs-reply-dim);background:#00ffff0d;color:#ddd;font-size:13px;line-height:18px;text-decoration:none;cursor:pointer}.hs-log-embed:hover{background:#fff;color:#000;border-left-color:#000}.hs-log-embed-meta{display:flex;gap:6px;color:var(--hs-border);font-size:13px}.hs-log-embed:hover .hs-log-embed-meta{color:#000}.hs-log-embed-when{font-variant-numeric:tabular-nums}.hs-log-embed-line{display:block;word-break:break-word}.hs-log-embed-user{color:var(--hs-reply);margin-right:4px}.hs-log-embed-user:after{content:":"}.hs-log-embed:hover .hs-log-embed-user{color:#000}.hs-log-embed .hs-cl-emote{height:18px;width:auto;vertical-align:text-bottom}body:has(#hs-mc-container) ytd-live-chat-frame#chat,body:has(#hs-mc-container) ytd-live-chat-frame,body:has(#hs-mc-container) ytd-watch-flexy #chat-container{display:none!important}#hs-mc-container :where(button,[role=button],[role=tab],[role=menuitem],[role=option],[onclick],[data-hs-clickable]):not(:disabled):not([aria-disabled=true]):hover,#hs-mc-container :where(button,[role=button],[role=tab],[role=menuitem],[role=option],[onclick],[data-hs-clickable]):not(:disabled):not([aria-disabled=true]):focus-visible{background:#fff!important;color:#000!important}#hs-mc-container :where(button,[role=button],[role=tab],[role=menuitem],[role=option],[onclick],[data-hs-clickable]):not(:disabled):not([aria-disabled=true]):hover *,#hs-mc-container :where(button,[role=button],[role=tab],[role=menuitem],[role=option],[onclick],[data-hs-clickable]):not(:disabled):not([aria-disabled=true]):focus-visible *{color:#000!important;fill:#000!important;stroke:#000!important;border-color:#000!important}body.hs-platform-yt.hs-offline #hs-mc-container,body.hs-platform-yt.hs-offline #hs-yt-resize-handle{display:none!important}body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-mc-container,body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-yt-resize-handle,body.hs-platform-yt:has(:fullscreen) #hs-mc-container,body.hs-platform-yt:has(:fullscreen) #hs-yt-resize-handle{display:none!important}body.hs-platform-yt.hs-yt-shorts #hs-mc-container,body.hs-platform-yt.hs-yt-shorts #hs-yt-resize-handle{display:none!important}body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container,body.hs-chat-left #hs-mc-container,body.hs-chat-top #hs-mc-container,body.hs-chat-bottom #hs-mc-container{position:fixed!important;z-index:9999!important;background:#000!important;box-sizing:border-box!important;margin:0!important}body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container{inset:0 0 0 auto!important;width:var(--hs-chat-w, 340px)!important;height:100vh!important}body.hs-chat-left #hs-mc-container{inset:0 auto 0 0!important;width:var(--hs-chat-w, 340px)!important;height:100vh!important}body.hs-chat-top #hs-mc-container{inset:0 0 auto!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important}body.hs-chat-bottom #hs-mc-container{inset:auto 0 0!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right #hs-mc-container{position:fixed!important;z-index:1500!important;background:#000!important;box-sizing:border-box!important;margin:0!important;top:var(--hs-twitch-topnav-h, 50px)!important;bottom:0!important;right:0!important;left:auto!important;width:var(--hs-chat-w, 340px)!important;height:auto!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left #hs-mc-container,body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom #hs-mc-container{z-index:1500!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top #hs-mc-container{z-index:1500!important;top:var(--hs-twitch-topnav-h, 50px)!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right{width:calc(100vw - var(--hs-chat-w, 340px))!important;overflow-x:hidden!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left{width:calc(100vw - var(--hs-chat-w, 340px))!important;margin-left:var(--hs-chat-w, 340px)!important;overflow-x:hidden!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right [data-a-target=top-nav-container],body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left [data-a-target=top-nav-container],body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top [data-a-target=top-nav-container]{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;max-width:100vw!important;z-index:9998!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right:has([data-a-target=top-nav-container]),body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left:has([data-a-target=top-nav-container]){padding-top:var(--hs-twitch-topnav-h, 50px)!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top{margin-top:calc(var(--hs-twitch-topnav-h, 50px) + var(--hs-chat-h, 35vh))!important;height:calc(100vh - var(--hs-twitch-topnav-h, 50px) - var(--hs-chat-h, 35vh))!important;overflow-y:hidden!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom{height:calc(100vh - var(--hs-chat-h, 35vh))!important;overflow-y:hidden!important}body.hs-platform-twitch.hs-twitch-no-channel .sunlight-root,body.hs-platform-twitch.hs-twitch-no-channel .sunlight-root>div{width:100%!important;max-width:100%!important}body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top .sunlight-root,body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom .sunlight-root,body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top .sunlight-root>div,body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom .sunlight-root>div{height:100%!important;max-height:100%!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right #hs-mc-container,body.hs-platform-kick.hs-kick-no-channel.hs-chat-left #hs-mc-container,body.hs-platform-kick.hs-kick-no-channel.hs-chat-top #hs-mc-container,body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom #hs-mc-container{position:fixed!important;z-index:9999!important;background:#000!important;box-sizing:border-box!important;margin:0!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right #hs-mc-container{top:var(--hs-kick-topnav-h, 60px)!important;bottom:0!important;right:0!important;left:auto!important;width:var(--hs-chat-w, 340px)!important;height:auto!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left #hs-mc-container{top:var(--hs-kick-topnav-h, 60px)!important;bottom:0!important;left:0!important;right:auto!important;width:var(--hs-chat-w, 340px)!important;height:auto!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-top #hs-mc-container{inset:0 0 auto!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom #hs-mc-container{inset:auto 0 0!important;width:100vw!important;height:var(--hs-chat-h, 35vh)!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right{width:calc(100vw - var(--hs-chat-w, 340px))!important;overflow-x:hidden!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left{width:calc(100vw - var(--hs-chat-w, 340px))!important;margin-left:var(--hs-chat-w, 340px)!important;overflow-x:hidden!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-top{margin-top:var(--hs-chat-h, 35vh)!important;height:calc(100vh - var(--hs-chat-h, 35vh))!important;overflow-y:hidden!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom{height:calc(100vh - var(--hs-chat-h, 35vh))!important;overflow-y:hidden!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-right main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-top main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom main{padding-left:0!important;padding-right:0!important;padding-bottom:0!important;overflow-x:hidden!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left .group\/main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-right .group\/main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-top .group\/main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom .group\/main{max-width:100%!important;overflow-x:hidden!important}body.hs-platform-kick.hs-kick-no-channel main section[class*=grid-cols],body.hs-platform-kick.hs-kick-no-channel main div[class*=grid-cols]{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(170px,100%),1fr))!important;grid-auto-flow:row!important}body.hs-platform-kick.hs-kick-no-channel main section[class*=grid-cols]>*,body.hs-platform-kick.hs-kick-no-channel main div[class*=grid-cols]>*{min-width:0!important;max-width:100%!important;flex-shrink:1!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-left main,body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom main{padding-top:var(--hs-kick-topnav-h, 60px)!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-top main{padding-top:0!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right .z-dialog[data-state=open]{right:var(--hs-chat-w, 340px)!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left .z-dialog[data-state=open]{left:var(--hs-chat-w, 340px)!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-right [role=dialog][data-state=open]{width:calc(100vw - var(--hs-chat-w, 340px))!important;max-width:calc(100vw - var(--hs-chat-w, 340px))!important;left:calc(50% - var(--hs-chat-w, 340px) / 2)!important;right:auto!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-left [role=dialog][data-state=open]{width:calc(100vw - var(--hs-chat-w, 340px))!important;max-width:calc(100vw - var(--hs-chat-w, 340px))!important;left:calc(50% + var(--hs-chat-w, 340px) / 2)!important;right:auto!important}body.hs-platform-kick.hs-kick-no-channel [class*=w-xvw],body.hs-platform-kick.hs-kick-no-channel main,body.hs-platform-kick.hs-kick-no-channel #main-container{width:100%!important;max-width:100%!important}body.hs-platform-kick.hs-kick-no-channel.hs-chat-top [class*=h-xvh],body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom [class*=h-xvh]{height:100%!important;max-height:100%!important}#hs-mc-container:has(>.hs-mc-auth-banner),#hs-mc-container:has(>.hs-mc-api-banner),#hs-mc-container:has(>[class*=hs-mc-api-banner-]){border-top:28px solid transparent!important}.hs-mc-auth-banner,.hs-mc-api-banner,[class*=hs-mc-api-banner-]{position:absolute!important;top:-28px!important;left:0!important;right:0!important;height:28px!important;width:auto!important;z-index:50!important;box-sizing:border-box!important}body.hs-chat-right #hs-mc-container{border-left:var(--hs-resize-thickness) solid transparent!important}body.hs-chat-left #hs-mc-container{border-right:var(--hs-resize-thickness) solid transparent!important}body.hs-chat-top #hs-mc-container{border-bottom:var(--hs-resize-thickness) solid transparent!important}body.hs-chat-bottom #hs-mc-container{border-top:var(--hs-resize-thickness) solid transparent!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{max-width:calc(100% - var(--hs-chat-w, 340px))!important;width:calc(100% - var(--hs-chat-w, 340px))!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{max-width:calc(100% - var(--hs-chat-w, 340px))!important;width:calc(100% - var(--hs-chat-w, 340px))!important;margin-left:var(--hs-chat-w, 340px)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{margin-top:var(--hs-chat-h, 35vh)!important;max-height:calc(100vh - var(--hs-chat-h, 35vh))!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{max-height:calc(100vh - var(--hs-chat-h, 35vh))!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right #masthead-container,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead{left:0!important;right:calc(var(--hs-chat-w, 340px) + 5px)!important;width:auto!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left #masthead-container,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead{left:calc(var(--hs-chat-w, 340px) + 5px)!important;right:0!important;width:auto!important}body.hs-platform-yt.hs-chat-top #masthead-container,body.hs-platform-yt.hs-chat-top ytd-masthead{top:calc(var(--hs-chat-h, 35vh) + 5px)!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #voice-search-button,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #ai-companion-button,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #voice-search-button,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #ai-companion-button{display:none!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #center,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #center{flex:1 1 auto!important;min-width:0!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead ytd-searchbox,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead yt-searchbox,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead ytd-searchbox,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead yt-searchbox{width:100%!important;min-width:0!important;flex:1 1 auto!important;margin-left:0!important;box-sizing:border-box!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #search-form,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #search-form{min-width:0!important;flex:1 1 auto!important}body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #start,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #end,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #start,body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #end{flex:0 0 auto!important}body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-app{width:calc(100% - var(--hs-chat-w, 340px))!important;max-width:calc(100% - var(--hs-chat-w, 340px))!important;padding-right:var(--hs-resize-thickness)!important;box-sizing:border-box!important;overflow-x:hidden!important}body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-app{width:calc(100% - var(--hs-chat-w, 340px))!important;max-width:calc(100% - var(--hs-chat-w, 340px))!important;margin-left:var(--hs-chat-w, 340px)!important;padding-left:5px!important;box-sizing:border-box!important;overflow-x:hidden!important}body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-top ytd-app{height:calc(100vh - var(--hs-chat-h, 35vh))!important;max-height:calc(100vh - var(--hs-chat-h, 35vh))!important;margin-top:var(--hs-chat-h, 35vh)!important;padding-top:5px!important;box-sizing:border-box!important;overflow-y:auto!important}body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-bottom ytd-app{height:calc(100vh - var(--hs-chat-h, 35vh))!important;max-height:calc(100vh - var(--hs-chat-h, 35vh))!important;padding-bottom:5px!important;box-sizing:border-box!important;overflow-y:auto!important}body.hs-platform-yt #page-manager ytd-two-column-browse-results-renderer>#primary,body.hs-platform-yt #page-manager ytd-two-column-browse-results-renderer>ytd-rich-grid-renderer,body.hs-platform-yt #page-manager ytd-rich-grid-renderer,body.hs-platform-yt #page-manager ytd-rich-grid-renderer>#contents{width:100%!important;max-width:100%!important;box-sizing:border-box!important}body.hs-platform-yt #page-manager ytd-rich-grid-renderer>#contents,body.hs-platform-yt #page-manager ytd-rich-grid-row>#contents{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))!important;gap:16px!important}body.hs-platform-yt #page-manager ytd-rich-grid-row{display:contents!important}body.hs-platform-yt #page-manager ytd-rich-item-renderer,body.hs-platform-yt #page-manager ytd-rich-item-renderer>#content,body.hs-platform-yt #page-manager ytd-rich-grid-media,body.hs-platform-yt #page-manager ytd-rich-grid-media>#thumbnail,body.hs-platform-yt #page-manager ytd-rich-grid-media a#thumbnail,body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image,body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image img,body.hs-platform-yt #page-manager ytd-rich-item-renderer ytd-thumbnail{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin-left:0!important;margin-right:0!important}body.hs-platform-yt ytd-grid-renderer>#items{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))!important;gap:16px!important}body.hs-platform-yt ytd-grid-video-renderer{width:100%!important;max-width:100%!important;margin:0!important}body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has([is-shorts]),body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has(grid-shelf-view-model),body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-shelf-renderer[is-shorts],body.hs-platform-yt.hs-yt-nonlive-chat ytd-reel-shelf-renderer,body.hs-platform-yt.hs-yt-nonlive-chat grid-shelf-view-model,body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-item-renderer:has(ytd-shorts),body.hs-platform-yt.hs-yt-nonlive-chat ytd-mini-guide-entry-renderer[aria-label=Shorts],body.hs-platform-yt.hs-yt-nonlive-chat ytd-guide-entry-renderer:has(a[title=Shorts]),body.hs-platform-yt.hs-yt-nonlive-chat ytd-pivot-bar-item-renderer:has(a[title=Shorts]),body.hs-platform-yt.hs-yt-nonlive-chat a[href="/shorts"],body.hs-platform-yt.hs-yt-nonlive-chat a[href^="/shorts/"][role=tab]{display:none!important}body.hs-platform-twitch.hs-chat-left .right-column,body.hs-platform-twitch.hs-chat-top .right-column,body.hs-platform-twitch.hs-chat-bottom .right-column{width:0!important;min-width:0!important;max-width:0!important;flex:0 0 0!important;overflow:visible!important}body.hs-platform-twitch.hs-chat-left .chat-shell,body.hs-platform-twitch.hs-chat-top .chat-shell,body.hs-platform-twitch.hs-chat-bottom .chat-shell,body.hs-platform-twitch.hs-chat-left [class*=chat-shell],body.hs-platform-twitch.hs-chat-top [class*=chat-shell],body.hs-platform-twitch.hs-chat-bottom [class*=chat-shell]{overflow:visible!important}body.hs-platform-twitch.hs-chat-left .channel-root{padding-left:calc(var(--hs-chat-w, 340px) - var(--hs-twitch-sidenav-w, 50px))!important}body.hs-platform-twitch.hs-chat-top .channel-root{padding-top:var(--hs-chat-h, 35vh)!important}body.hs-platform-twitch.hs-chat-bottom .channel-root{padding-bottom:var(--hs-chat-h, 35vh)!important}body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-left .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-left .video-player--theatre{left:var(--hs-chat-w, 340px)!important}body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-top .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-top .video-player--theatre{top:var(--hs-chat-h, 35vh)!important}body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-bottom .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-bottom .video-player--theatre{bottom:var(--hs-chat-h, 35vh)!important}body.hs-platform-twitch.hs-chat-right .root-scrollable{overflow-x:hidden!important}body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-right .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-right .video-player--theatre{right:var(--hs-panel-w, var(--hs-chat-w, 340px))!important;inset-inline-end:var(--hs-panel-w, var(--hs-chat-w, 340px))!important;left:0!important;inset-inline-start:0!important;width:auto!important;max-width:none!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:not(.hs-twitch-no-channel) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:not(.hs-twitch-no-channel) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:not(.hs-twitch-no-channel) .persistent-player{width:auto!important;height:auto!important;max-width:none!important;max-height:none!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player{width:100%!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player{top:var(--hs-chat-h, 35vh)!important;bottom:0!important;left:0!important;right:0!important;inset-inline-start:0!important;inset-inline-end:0!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player{top:0!important;bottom:var(--hs-chat-h, 35vh)!important;left:0!important;right:0!important;inset-inline-start:0!important;inset-inline-end:0!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:not(.hs-twitch-no-channel) .persistent-player{left:calc(var(--hs-panel-w, 340px) - var(--hs-twitch-sidenav-w, 50px))!important;inset-inline-start:calc(var(--hs-panel-w, 340px) - var(--hs-twitch-sidenav-w, 50px))!important;right:0!important;inset-inline-end:0!important;top:0!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .video-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .video-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .video-player--theatre,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .video-player--theatre{inset:0!important;inset-inline-start:0!important;inset-inline-end:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player .tw-aspect,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player .tw-aspect{height:100%!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player .tw-aspect>div:first-child,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player .tw-aspect>div:first-child{padding-bottom:0!important;height:100%!important}body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player video,body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player video{object-fit:contain!important}body.hs-platform-twitch.hs-chat-left .channel-root__info--with-chat{margin-top:calc((100vw - var(--hs-chat-w, 340px)) * .5625)!important}body.hs-platform-kick.hs-chat-left #channel-chatroom,body.hs-platform-kick.hs-chat-top #channel-chatroom,body.hs-platform-kick.hs-chat-bottom #channel-chatroom{display:none!important}body.hs-platform-kick.hs-chat-left main{padding-left:calc(var(--hs-chat-w, 340px) - var(--hs-kick-sidebar-w, 0px))!important}body.hs-platform-kick.hs-chat-top main{padding-top:var(--hs-chat-h, 35vh)!important}body.hs-platform-kick.hs-chat-bottom main{padding-bottom:var(--hs-chat-h, 35vh)!important}body.hs-platform-kick.hs-chat-bottom main>div:has(#injected-channel-player){align-self:center!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-top main{margin-top:var(--hs-chat-h, 35vh)!important;padding-top:0!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-bottom main{margin-bottom:var(--hs-chat-h, 35vh)!important;padding-bottom:0!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-left main{margin-left:var(--hs-chat-w, 340px)!important;padding-left:0!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-right main{margin-right:var(--hs-chat-w, 340px)!important;padding-right:0!important}body.hs-platform-kick.hs-mode-theatre .z-controls.w-full{width:auto!important;left:0!important;right:0!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-right .z-controls.w-full{right:var(--hs-chat-w, 340px)!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-left .z-controls.w-full{left:var(--hs-chat-w, 340px)!important}body.hs-platform-kick.hs-mode-theatre.hs-chat-bottom .z-controls.w-full{bottom:var(--hs-chat-h, 35vh)!important}body.hs-platform-kick.hs-chat-right:has(:fullscreen) main,body.hs-platform-kick.hs-chat-left:has(:fullscreen) main,body.hs-platform-kick.hs-chat-top:has(:fullscreen) main,body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) main{margin:0!important;padding:0!important}body.hs-platform-kick.hs-chat-right:has(:fullscreen) .z-controls.w-full,body.hs-platform-kick.hs-chat-left:has(:fullscreen) .z-controls.w-full,body.hs-platform-kick.hs-chat-top:has(:fullscreen) .z-controls.w-full,body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) .z-controls.w-full{left:0!important;right:0!important;bottom:0!important}body.hs-platform-kick:has(:fullscreen) #hs-mc-container{display:none!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary{width:0!important;min-width:0!important;max-width:0!important;flex:0 0 0!important;overflow:hidden!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner>*,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner>*,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner>*,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner>*{display:none!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{margin:0!important;flex:0 0 0!important;width:0!important;overflow:visible!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{position:fixed!important;top:0!important;left:0!important;right:var(--hs-chat-w, 340px)!important;width:auto!important;height:100vh!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]){--ytd-watch-flexy-side-menu-margin: 0 !important;--ytd-watch-flexy-non-player-width: var(--hs-chat-w, 340px) !important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-inner,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-inner,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player{width:100%!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]){--ytd-watch-flexy-side-menu-margin: 0 !important;--ytd-watch-flexy-non-player-width: var(--hs-chat-w, 340px) !important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{margin:0!important;flex:0 0 0!important;width:0!important;overflow:visible!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{position:fixed!important;top:0!important;left:var(--hs-chat-w, 340px)!important;right:0!important;width:auto!important;height:100vh!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary{padding:0!important;margin:0!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{margin-top:var(--hs-chat-h, 35vh)!important;padding-top:0!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{margin-bottom:var(--hs-chat-h, 35vh)!important;padding-top:0!important}body.hs-platform-yt:not(.hs-yt-watch).hs-chat-top #page-manager,body.hs-platform-yt:not(.hs-yt-watch).hs-chat-bottom #page-manager,body.hs-platform-yt:not(.hs-yt-watch).hs-chat-left #page-manager,body.hs-platform-yt:not(.hs-yt-watch).hs-chat-right #page-manager{margin-top:0!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{height:100vh!important;max-height:100vh!important;overflow:hidden!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{height:100vh!important;max-height:100vh!important;overflow-y:auto!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner{height:100vh!important;max-height:100vh!important}body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container{height:100vh!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner>#player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner>#below,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner>#player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner>#below{flex-shrink:0!important;flex-basis:auto!important}#hs-mc-inputbar{display:flex!important;align-items:center!important;box-sizing:border-box!important}#hs-mc-input-wrap{flex:1 1 0!important;min-width:120px!important;overflow:hidden!important}#hs-mc-input{min-width:0!important;width:100%!important}#hs-mc-inputbar>#hs-mc-input{min-width:120px!important}#hs-mc-emote-btn{flex:0 0 auto!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]),body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]){--ytd-watch-flexy-non-player-height: calc(56px + 12px + 92px + var(--hs-chat-h, 35vh)) !important;--ytd-watch-flexy-min-player-height: 200px !important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([fullscreen]),body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([fullscreen]){--ytd-watch-flexy-min-player-height: 0px !important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer{max-height:calc(100vh - var(--hs-chat-h, 35vh) - 60px)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments{display:none!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #below,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #below,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below{width:100%!important;max-width:100%!important;overflow-x:hidden!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary{height:100vh!important;max-height:100vh!important;overflow:hidden!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{height:100vh!important;max-height:100vh!important;overflow-y:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player{margin-left:auto!important;margin-right:auto!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below{position:fixed!important;top:var(--hs-yt-below-top, 56px)!important;left:0!important;right:var(--hs-chat-w, 340px)!important;bottom:0!important;width:auto!important;max-width:none!important;margin:0!important;padding:10px 18px!important;overflow-y:auto!important;box-sizing:border-box!important;background:#0a0a0a!important;z-index:1!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below{position:fixed!important;top:var(--hs-yt-below-top, 56px)!important;left:var(--hs-chat-w, 340px)!important;right:0!important;bottom:0!important;width:auto!important;max-width:none!important;margin:0!important;padding:10px 18px!important;overflow-y:auto!important;box-sizing:border-box!important;background:#0a0a0a!important;z-index:1!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title,body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1,body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1 *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title,body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1,body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1 *{color:#fff!important;-webkit-text-fill-color:#ffffff!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description,body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name,body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info,body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description,body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name,body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name *,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info,body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info *{color:#e6e6e6!important;-webkit-text-fill-color:#e6e6e6!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below a,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description a,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below a,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description a{color:#fff!important;-webkit-text-fill-color:#fff!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below{right:calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px))!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below{right:var(--hs-yt-sugg-w, 300px)!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{right:calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px))!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner{left:calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px))!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary{position:fixed!important;top:var(--hs-yt-below-top, 56px)!important;bottom:0!important;width:var(--hs-yt-sugg-w, 300px)!important;min-width:var(--hs-yt-sugg-w, 300px)!important;max-width:var(--hs-yt-sugg-w, 300px)!important;flex:0 0 auto!important;overflow-y:auto!important;overflow-x:hidden!important;background:#0a0a0a!important;padding:8px!important;box-sizing:border-box!important;z-index:1!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary{right:var(--hs-chat-w, 340px)!important;left:auto!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary{right:0!important;left:auto!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #related,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer{display:block!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner{width:100%!important;max-width:100%!important;height:auto!important;max-height:none!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary *{color:#e6e6e6!important}body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary a{color:#fff!important}body:not(.hs-player-safe).hs-platform-yt:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #primary-inner{position:static!important;top:auto!important;left:auto!important;right:auto!important;width:auto!important;height:auto!important;max-height:none!important}body:not(.hs-player-safe).hs-platform-yt:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #primary{width:auto!important;max-width:none!important;flex:1 1 auto!important;margin:0!important;height:auto!important;max-height:none!important;overflow:visible!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #full-bleed-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #player-full-bleed-container{margin-left:var(--hs-chat-w, 340px)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #full-bleed-container,body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #player-full-bleed-container{margin-top:var(--hs-chat-h, 35vh)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom:has(#hs-mc-container) ytd-watch-flexy[is-single-column]{padding-bottom:var(--hs-chat-h, 35vh)!important;box-sizing:border-box!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom:not(.hs-mode-theatre) ytd-watch-flexy:not([theater]):not([fullscreen]):not([is-miniplayer]) #player-container{left:50%!important;transform:translate(-50%)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-miniplayer{right:calc(var(--hs-chat-w, 340px) + 12px)!important}body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-miniplayer{bottom:calc(var(--hs-chat-h, 35vh) + 12px)!important}body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-left ytd-watch-flexy[theater] #full-bleed-container,body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-left ytd-watch-flexy[theater] #player-full-bleed-container{padding-left:var(--hs-chat-w, 340px)!important}body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-top ytd-watch-flexy[theater] #full-bleed-container,body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-top ytd-watch-flexy[theater] #player-full-bleed-container{padding-top:var(--hs-chat-h, 35vh)!important}body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-bottom ytd-watch-flexy[theater] #full-bleed-container,body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-bottom ytd-watch-flexy[theater] #player-full-bleed-container{padding-bottom:var(--hs-chat-h, 35vh)!important}.hs-cl-wrap{display:flex;flex-direction:column;height:100%;width:100%;background:#000;color:#fff;font-family:var(--hs-mc-font);font-size:13px;line-height:17px;box-sizing:border-box}.hs-cl-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;background:#0a0a0a;border-bottom:1px solid #222;flex-shrink:0;gap:6px}.hs-cl-title{display:flex;align-items:baseline;gap:6px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.hs-cl-title-name{font-weight:700;color:#fff}.hs-cl-title-sub{color:#999;overflow:hidden;text-overflow:ellipsis}.hs-cl-close{width:22px;height:22px;padding:0;background:transparent;color:#999;border:1px solid #333;cursor:pointer;font-family:inherit;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0}.hs-cl-close:hover{background:#fff;color:#000;border-color:#fff}.hs-cl-ctrls{display:flex;flex-wrap:wrap;gap:4px;padding:4px 6px;background:#0a0a0a;border-bottom:1px solid #222;flex-shrink:0;align-items:center}.hs-cl-search{flex:1 1 100px;min-width:80px;background:#000;color:#fff;border:1px solid #333;padding:2px 6px;font-family:inherit;font-size:13px;line-height:17px;outline:none;height:22px;box-sizing:border-box}.hs-cl-search:focus{border-color:#fff}.hs-cl-scope,.hs-cl-export{background:#111;color:#ccc;border:1px solid #333;padding:1px 6px;cursor:pointer;font-family:inherit;font-size:13px;height:22px;line-height:18px;box-sizing:border-box;flex-shrink:0}.hs-cl-scope:hover,.hs-cl-export:hover{background:#fff;color:#000;border-color:#fff}.hs-cl-list{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 8px}.hs-cl-row{padding:1px 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;border-bottom:1px solid #0a0a0a}.hs-cl-row.hs-cl-deleted{opacity:.5;text-decoration:line-through}.hs-cl-ts{color:var(--hs-muted);font-variant-numeric:tabular-nums;flex-shrink:0;white-space:nowrap}.hs-cl-ch{color:#fff;flex-shrink:0}.hs-cl-user{color:#fff;font-weight:700;flex-shrink:0}.hs-cl-body{color:#ddd;min-width:0;word-break:break-word}.hs-cl-emote{height:18px;width:auto;vertical-align:middle;display:inline-block}.hs-cl-empty{color:var(--hs-muted);text-align:center;padding:40px 8px}.hs-cl-loader{color:var(--hs-muted);text-align:center;padding:12px 8px}.hs-cl-public-archive{color:#fff;text-decoration:none;font-size:13px;padding:1px 6px;border:1px solid #333;height:22px;line-height:18px;display:inline-flex;align-items:center;flex-shrink:0}.hs-cl-public-archive:hover{background:#fff;color:#000;border-color:#fff}.hs-cl-permalink{margin-left:auto;background:transparent;color:var(--hs-muted);border:none;padding:0 4px;cursor:pointer;font-family:inherit;font-size:13px;line-height:1;opacity:0;transition:opacity .08s;flex-shrink:0}.hs-cl-row:hover .hs-cl-permalink{opacity:1}.hs-cl-permalink:hover{color:#fff}.hs-cl-permalink.hs-cl-permalink-copied{opacity:1;color:#fff}#hs-vol-osd{position:fixed;z-index:2147483647;transform:translate(-50%);background:#000;color:#fff;font-family:var(--hs-mc-font, "CozetteVector"),"Courier New",monospace;font-size:13px;line-height:1;padding:5px 8px;border:1px solid #fff;pointer-events:none;opacity:0;white-space:nowrap}#hs-vol-osd.visible{opacity:1}
+  const css = `
+    /* Color doctrine — one source of truth for every semantic color.
+       Bright ANSI = accents (text/icons/borders/≤3px strips); dim ANSI +
+       low-alpha tints = fills; hover/active = reverse-video (#fff bg /
+       #000 text); orange is scarce and means "HeatSync itself".
+       Vocabulary mirrors heatsync.org css/core/variables.css (bare names
+       there, --hs- prefix here for host-page namespace safety):
+       brand · heat · mention · warn · ok · danger · reply · thread ·
+       link · info · gold · plat-*. Platform hexes appear ONLY next to a
+       platform glyph/label — never as free-standing semantic color. */
+    :root {
+      /* bright */
+      --hs-brand: #ff8700;    /* 208 — logo, heat, focus, admin, hs chip */
+      --hs-heat: #ff8700;
+      --hs-mention: #ffff00;  /* 226 — @-mentions, unseen-mention, search hit */
+      --hs-warn: #ffff00;     /*       warn toasts, announce, NSFW */
+      --hs-ok: #00ff00;       /* 46  — success, online, toggle-on, unban */
+      /* LIVE IS RED — deliberate doctrine exception. Every streaming platform
+         (twitch/yt/kick) uses a red live dot; a green one reads as "online"
+         or "healthy", not "broadcasting right now". Semantically separate
+         from --hs-danger so the two can diverge later. */
+      --hs-live: #00ff00;      /* 46  — live/online. GREEN, not red: red already
+                            means danger/ban/error, and one colour cannot mean
+                            both "this stream is on" and "something is wrong".
+                            Settled 2026-07-20, applied 2026-08-20. */
+      --hs-live-dim: #008000;
+      --hs-live-tint: rgba(0, 255, 0, 0.10);
+      --hs-danger: #ff0000;   /* 196 — error, ban, delete, destructive */
+      --hs-reply: #00ffff;    /* 51  — reply borders, quotes, whispers, mode */
+      --hs-thread: #ff00ff;   /* 201 — OP/thread accents, raid/hype events */
+      --hs-link: #5f87ff;     /* 69  — hyperlinks */
+      --hs-info: #5f87ff;     /*       info toasts, polls, mod-grant */
+      --hs-gold: #ffd700;     /* 220 — mod/VIP, automod, bits, pinned, premium */
+      /* dim — fills, muted borders, low-urgency strips */
+      --hs-danger-dim: #800000;
+      --hs-ok-dim: #008000;
+      --hs-warn-dim: #808000;
+      --hs-info-dim: #000080;
+      --hs-thread-dim: #800080;
+      --hs-reply-dim: #008080;
+      /* tints — row backgrounds; never a bright hue as a large solid bg */
+      --hs-danger-tint: rgba(255, 0, 0, 0.10);
+      --hs-ok-tint: rgba(0, 255, 0, 0.10);
+      --hs-warn-tint: rgba(255, 255, 0, 0.10);
+      --hs-info-tint: rgba(95, 135, 255, 0.12);
+      --hs-thread-tint: rgba(255, 0, 255, 0.12);
+      --hs-reply-tint: rgba(0, 255, 255, 0.10);
+      --hs-gold-tint: rgba(255, 215, 0, 0.10);
+      --hs-warn-bg: #2e2e08;  /* solid — avoids alpha-stacking artifacts */
+      /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
+         white bg = the POINTER is on a control (:hover/:active).
+         --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the
+         tab-mode rover). They used to both be white, so the cursor vanished
+         under the mouse. Cyan and not the brand orange: #ff8700 is xterm-256
+         and this chrome is base-ANSI; of the sixteen, red/green/yellow are
+         already error/live/warn — a cursor must never read as a status — and
+         magenta is the nsfw hue. --hs-reply is the same cyan but that lives on
+         message borders, a different surface, so nothing collides on screen. */
+      --hs-sel: #00ffff;      /* 14 — keyboard cursor, everywhere */
+      --hs-sel-fg: #000;
+      /* platform — values frozen; scope: adjacent to a platform glyph only */
+      --hs-plat-twitch: #9146ff;
+      --hs-plat-kick: #53fc18;
+      --hs-plat-youtube: #ff0000;
+      --hs-plat-hs: #ff8700;
+      /* structural */
+      --hs-fg: #fff;
+      --hs-bg: #000;
+      --hs-muted: #a8a8a8; /* 248 — was #aaa, a css habit 3.5 units off the grid */
+      --hs-border: #808080;
+    }
+    /* Chromium auto-dark (WebContentsForceDark / android "darken websites")
+       classifies per ELEMENT — the page-level color-scheme meta injected at
+       boot doesn't reliably opt out nodes (late meta → overlay strips painted
+       inverted-to-light and small dark transparent emote imgs inverted to
+       white). Blink skips force-dark for any element whose computed
+       color-scheme is dark, and the property inherits — so stamping every
+       hs- root (tooltips, menus, pickers, banners all mount at body level)
+       shields the whole overlay regardless of host theme or meta timing.
+       Verified live: inverted strips + white emotes reverted instantly when
+       this rule was applied. */
+    /* html/body excluded — they carry hs- state classes (hs-font-bitmap,
+       hs-platform-*, hs-tabs-*) and matching them would force the entire
+       HOST page out of auto-darkening.
+       .hs-native-hidden excluded for the same reason one level down: it is a
+       class we put on the HOST's own nodes (twitch chat-shell +
+       chat-room__content, kick #channel-chatroom) to hide native chat, not on
+       anything we own. Stamping those opted a host subtree out of force-dark
+       while the rest of the page stayed inverted — on a light-themed host that
+       paints the subtree white. Verified live on twitch: chat-shell was
+       resolving color-scheme:dark purely because of hs-native-hidden. Only
+       stamp what we actually render. */
+    [id^="hs-"]:not(html):not(body):not(.hs-native-hidden),
+    [class^="hs-"]:not(html):not(body):not(.hs-native-hidden),
+    [class*=" hs-"]:not(html):not(body):not(.hs-native-hidden) {
+      color-scheme: dark;
+    }
+
+    /* Resize-bar tokens — one source of truth for every orange drag-bar.
+       4px visible line; ::before extends the grab zone by --hs-resize-grab
+       per side. Mirrors heatsync.org's --resize-thickness / --resize-grab. */
+    :root {
+      --hs-resize-thickness: 4px;
+      --hs-resize-grab: 4px;
+    }
+    /* Bundled bitmap fonts — URLs replaced via chrome.runtime.getURL after
+       template evaluation (woff2 lives in chrome/fonts/, exposed via
+       web_accessible_resources). font-display:block prevents FOUT flash.
+       Explicit weight/style + font-synthesis:none (in .hs-font-bitmap rule
+       below) prevent the browser from faux-bolding when CSS asks for 600+. */
+    @font-face {
+      font-family: 'CozetteVector';
+      src: url('__HS_FONT_COZETTE__') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    /* Bitmap-font mode — mirrors heatsync.org's base.css crisp-pixel block.
+       Toggled by applyFontSettings when CozetteVector is active.
+       The hidden killer was font-kerning + OpenType feature settings:
+       kern/liga/clig/calt subpixel-position glyphs by fractional amounts
+       based on adjacent character pairs, smearing bitmap text even when
+       smoothing is off. font-optical-sizing handles variable-font axes
+       that warp glyph metrics. Every property below MUST be set together —
+       missing any one re-introduces blur on a subset of glyph pairs. */
+    body.hs-font-bitmap,
+    body.hs-font-bitmap *,
+    body.hs-font-bitmap *::before,
+    body.hs-font-bitmap *::after {
+      -webkit-font-smoothing: none !important;
+      -moz-osx-font-smoothing: unset !important;
+      font-smooth: never !important;
+      text-rendering: optimizeSpeed !important;
+      font-synthesis: none !important;
+      font-optical-sizing: none !important;
+      font-kerning: none !important;
+      font-variant-ligatures: none !important;
+      font-variant-position: normal !important;
+      font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0 !important;
+      /* Fractional tracking (eg letter-spacing:0.3px) pushes bitmap glyphs off
+         the integer pixel grid -- the same smear as kerning. Zero it globally;
+         the AA counter-rule below restores normal tracking for vector surfaces. */
+      letter-spacing: 0 !important;
+    }
+    /* Counter-rule: a handful of surfaces explicitly use NON-bitmap fonts
+       (system sans, Inter, ui-monospace) where the user expects AA + kern.
+       Order matters — these rules must come after the bitmap rule. */
+    body.hs-font-bitmap .hs-pcard,
+    body.hs-font-bitmap .hs-pcard *,
+    body.hs-font-bitmap .hs-notif,
+    body.hs-font-bitmap .hs-notif *,
+    body.hs-font-bitmap .hs-mc-pred-result-amount,
+    body.hs-font-bitmap .hs-heat-num {
+      -webkit-font-smoothing: subpixel-antialiased !important;
+      -moz-osx-font-smoothing: auto !important;
+      font-smooth: auto !important;
+      font-synthesis: weight style !important;
+      text-rendering: auto !important;
+      font-optical-sizing: auto !important;
+      font-kerning: auto !important;
+      font-variant-ligatures: normal !important;
+      font-feature-settings: normal !important;
+      letter-spacing: normal !important;
+    }
+    /* Counter-counter: badges inside the system-sans surfaces (pcard, notifs)
+       must still render bitmap. .hs-mc-badge is fixed at 13px CozetteVector
+       (single font setting — see badge font spec); without this, AA + kern
+       from the surface rule above smears the bitmap glyphs. */
+    body.hs-font-bitmap .hs-pcard .hs-mc-badge,
+    body.hs-font-bitmap .hs-notif .hs-mc-badge {
+      -webkit-font-smoothing: none !important;
+      -moz-osx-font-smoothing: unset !important;
+      font-smooth: never !important;
+      text-rendering: optimizeSpeed !important;
+      font-synthesis: none !important;
+      font-optical-sizing: none !important;
+      font-kerning: none !important;
+      font-variant-ligatures: none !important;
+      font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0 !important;
+      letter-spacing: 0 !important;
+    }
+    /* Tab bar - positioned at top of chat via render injection.
+       Three flex sections (no-wrap outer): channel tabs fill left, platfilter
+       sits center, util buttons pinned right. Channel-tabs section wraps
+       INTERNALLY when overflowing — no orphan util-only row, no right-side
+       gap. align-items:flex-start so right cluster sticks to first tab row
+       when channels wrap to multiple rows. */
+    #hs-mc-tabbar {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0;
+      padding: 0;
+      background: #000;
+      border-bottom: 1px solid var(--hs-border);
+      flex-shrink: 0;
+      order: -1;
+      z-index: 10;
+      align-items: flex-start;
+      box-sizing: border-box;
+      /* Mode-agnostic scrollbar hide: any tab state that ends up scrollable
+         (top/bottom 33vh cap, vertical column, or an unclassed popout) keeps
+         wheel-scroll but never paints chrome. Per-mode rules below are now a
+         redundant backstop. Covers Firefox (scrollbar-width) + Chrome (webkit). */
+      scrollbar-width: none;
+    }
+    #hs-mc-tabbar::-webkit-scrollbar,
+    .hs-mc-tabs-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    .hs-mc-tabs-scroll { scrollbar-width: none; }
+
+    /* Chatterino-style composable tab states: idle → has-new → active.
+       Channel tabs default to fluid (flex:1 1 auto) — adjacent tabs share
+       row width so wrap-rows have no useless trailing gap. min-width keeps
+       the channel label readable, max-width caps absurd growth. Util / pf
+       buttons override below to flex:0 0 (fixed 18×18). margin pulls
+       adjacent tabs into a shared 1px border (visual grid). padding-right
+       reserves space for the live dot so it never overlaps text. */
+    .hs-mc-tab {
+      padding: 2px 10px !important;
+      margin: 0 -1px -1px 0 !important;
+      background: #000 !important;
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
+      border-radius: 0 !important;
+      cursor: pointer !important;
+      font-family: inherit;
+      font-size: 13px !important;
+      line-height: 1 !important;
+      font-weight: 400 !important;
+      white-space: nowrap !important;
+      transition: none;
+      /* flex-start, not center: centering a variable-width text run inside
+         a fixed-width container produces a fractional X origin half the
+         time, and Chrome with -webkit-font-smoothing:none does NOT snap the
+         text run to integer pixels — so every glyph renders at a sub-pixel
+         X and the bitmap font smears. Util buttons override this back to
+         center (their single-glyph squares have integer math). */
+      text-align: left;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex: 0 0 auto !important; /* content-sized — username width + padding, no grow */
+      min-width: 0;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* Unread / heat count (settings: tab number). Colour is inherited and
+       dimmed by opacity only, so it composes with every tab state — idle grey,
+       has-new white, has-mentions, active, hover invert — without a rule per
+       combination. flex-shrink:0 so a long channel name ellipsises before the
+       number does; the number is the part you can't guess. */
+    .hs-mc-tab-count {
+      margin-left: 5px;
+      opacity: 0.6;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    /* Tab-mode rover cursor — the keyboard invert (--hs-sel), deliberately not
+       the white one: white is the pointer, so a hovered tab and the tab under
+       the cursor stay tellable apart. !important because several tab-state
+       rules below are !important and would otherwise swallow it. */
+    .hs-mc-tab.hs-mc-tab-cursor {
+      background: var(--hs-sel) !important;
+      color: var(--hs-sel-fg) !important;
+      border-color: var(--hs-sel) !important;
+      border-radius: 0 !important;
+    }
+    /* The status line tab mode puts in the statusbar. Tag reads like a vim
+       mode-line; the hint after it is dim so the position/label leads. */
+    .hs-mc-tabmode-tag {
+      color: var(--hs-sel);
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-tabmode-hint {
+      color: var(--hs-muted);
+      margin-left: 8px;
+    }
+
+    /* Idle hover — subtle brighten */
+    .hs-mc-tab:not(.active):not(.has-new):hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    /* New messages — activity indicator */
+    .hs-mc-tab.has-new {
+      background: #000 !important;
+      color: #fff !important;
+      border-color: var(--hs-border) !important;
+    }
+    /* Has-new hover */
+    .hs-mc-tab.has-new:not(.active):hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    /* Mentions — RED (danger). A mention pings YOU personally, so on the tab it
+       must outrank and read apart from the yellow stream-event / warn state
+       (game-switch is also --hs-warn yellow — a mention was indistinguishable
+       from a channel just changing games). The inline chat-tile mention stays
+       mention-yellow; a tab highlight is an attention signal, not body text, so
+       red is the right register here. */
+    .hs-mc-tab.has-mentions {
+      color: var(--hs-danger) !important;
+    }
+    .hs-mc-tab.has-mentions:not(.active):hover {
+      background: #fff !important;
+      color: var(--hs-danger) !important;
+    }
+    /* Whispers — cyan when unseen. A DM is personal: the generic has-new
+       white state was easy to miss ("whispers should be more obvious"). */
+    .hs-mc-tab.has-whispers {
+      color: var(--hs-reply) !important;
+    }
+    .hs-mc-tab.has-whispers:not(.active):hover {
+      background: #fff !important;
+      color: #00aaaa !important;
+    }
+    /* Active — focused tab. Weight stays at 400: Cozette ships only the
+       regular face, and font-synthesis:none in the bitmap block tells the
+       browser not to fake-bold — but requesting 600 against a single-weight
+       bitmap font still nudges Chrome's text path off the crisp bitmap
+       route in practice. White-on-black background already conveys focus. */
+    .hs-mc-tab-auto { color: var(--hs-muted); }
+.hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
+.hs-mc-tab.active {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+      font-weight: 400 !important;
+    }
+    /* Active ignores hover */
+    .hs-mc-tab.active:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-tab.has-new.active {
+      color: #000 !important;
+    }
+    /* Stream event — yellow tab text (game switch) */
+    .hs-mc-tab.has-stream-event {
+      background: #000 !important;
+      color: var(--hs-warn) !important;
+      border-color: var(--hs-border) !important;
+    }
+    .hs-mc-tab.has-stream-event:not(.active):hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-tab.has-stream-event.active {
+      /* explicit bg: .has-stream-event's #000 bg is declared LATER than
+         .active's #fff at equal specificity, so without this the combo
+         painted black-on-black */
+      background: #fff !important;
+      color: #000 !important;
+    }
+    /* "live" tab idles muted grey, but SELECTED means the white active
+       highlight — everywhere, in-page and popout alike (the old in-page
+       grey-through-.active doctrine left the current tab reading unselected).
+       Hover matches every other tab/button: white bg, black text. */
+    #hs-mc-tabbar .hs-mc-tab[data-tab="live"] {
+      background: #000 !important;
+      color: var(--hs-muted) !important;
+      border-color: var(--hs-border) !important;
+      font-weight: 400 !important;
+    }
+    #hs-mc-tabbar .hs-mc-tab[data-tab="live"]:hover,
+    #hs-mc-tabbar .hs-mc-tab[data-tab="live"].active {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+    /* Horizontal mode: 3 real flex sections at the top level of #hs-mc-tabbar.
+       Section sizes to its content (flex 0 1 auto) so pf+util pack tight to
+       the last channel tab — no gap when few tabs. Section can shrink + tabs
+       wrap when channels overflow available width. Vertical mode (.hs-tabs-
+       left/right) overrides below to a column. */
+    .hs-mc-tabs-scroll {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 0 1 auto;
+      min-width: 0;
+      gap: 0;
+      align-content: flex-start;
+      align-items: stretch;
+    }
+    .hs-mc-util-row {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 0;
+      align-items: stretch;
+    }
+    /* Right-side cluster — wraps util-row + platfilter into a column.
+       Horizontal mode: util on top, pf below (under util). Pinned to right
+       of channel tabs. Vertical mode (left/right) override below. */
+    .hs-mc-right-cluster {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      align-items: stretch;
+      margin-left: -1px; /* collapse double border with adjacent tabs section */
+    }
+    /* Horizontal tabs (top/bottom): dissolve the section/cluster wrappers
+       so all 14+ buttons (channel tabs + util + pf) flow as one wrapping
+       stream and pack into the minimum number of rows. With the outer
+       tabbar set to flex-wrap:wrap and the four wrappers (.hs-mc-tabs-
+       scroll, .hs-mc-right-cluster, .hs-mc-util-row, #hs-mc-platfilter)
+       on display:contents, every button becomes a direct flex child of
+       #hs-mc-tabbar in DOM order. No more orphan empty space next to
+       channel-tab rows that wrapped past the right cluster's height —
+       util/pf squares slot into trailing space of the last channel-tab
+       row before wrapping. Vertical mode (left/right) keeps its column
+       structure (overrides further down). */
+    body.hs-tabs-top #hs-mc-tabbar,
+    body.hs-tabs-bottom #hs-mc-tabbar {
+      flex-wrap: wrap;
+      /* Bulletproof floor for chat + input: a narrow column makes every tab
+         wrap to its own row, so 11 tabs can stack to ~235px and starve the
+         message area down to a few px while crushing the input bar at the
+         panel's bottom edge (the reported "input disappears on small window").
+         Cap the wrapped stack at a third of the viewport and scroll the
+         overflow — _updateMcLayout reads this clamped height for overlay.top,
+         so messages + input always keep the remaining two-thirds. */
+      max-height: 33vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      /* Wrapped flex + border-box + the 1px bottom border round to a 1px
+         content overflow even when the stack sits well under 33vh, surfacing
+         a phantom scrollbar. Hide the scrollbar chrome (wheel still scrolls
+         the genuine 33vh-overflow case) — mirrors the left/right layouts. */
+      scrollbar-width: none;
+    }
+    body.hs-tabs-top #hs-mc-tabbar::-webkit-scrollbar,
+    body.hs-tabs-bottom #hs-mc-tabbar::-webkit-scrollbar { display: none; }
+    body.hs-tabs-top .hs-mc-tabs-scroll,
+    body.hs-tabs-bottom .hs-mc-tabs-scroll,
+    body.hs-tabs-top .hs-mc-right-cluster,
+    body.hs-tabs-bottom .hs-mc-right-cluster,
+    body.hs-tabs-top .hs-mc-util-row,
+    body.hs-tabs-bottom .hs-mc-util-row,
+    body.hs-tabs-top #hs-mc-platfilter,
+    body.hs-tabs-bottom #hs-mc-platfilter {
+      display: contents;
+    }
+    /* Once dissolved, pf buttons are inline siblings of channel tabs +
+       util buttons. Default flex:1 1 0 (sized within the pf cluster)
+       would let them grow absurdly here, so pin to fixed 18px squares
+       like every other util button. */
+    body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,
+    body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn {
+      flex: 0 0 18px !important;
+      width: 18px !important;
+      max-width: 18px !important;
+    }
+    /* Vertical mode: util-row becomes a real wrapping row of squares pinned
+       to the bottom of the column, just below the platfilter — no vertical
+       stacking, takes only the height it needs. */
+    .hs-tabs-left .hs-mc-util-row,
+    .hs-tabs-right .hs-mc-util-row {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      gap: 1px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      justify-content: center !important;
+      flex: 0 0 auto !important;
+    }
+    /* Util buttons (C, T, F-, F+, ⚙) AND platfilter buttons (T, K, Y) —
+       btop-style packed squares: 18×18, tight border, share borders with the
+       -1px right margin so the strip reads as a single segmented control. */
+    .hs-mc-util-btn,
+    .hs-mc-pf-btn {
+      width: 18px !important;
+      height: 18px !important;
+      min-width: 18px !important;
+      min-height: 18px !important;
+      max-width: 18px !important;
+      max-height: 18px !important;
+      padding: 0 !important;
+      margin: 0 -1px 0 0 !important;
+      flex: 0 0 18px !important;
+      box-sizing: border-box !important;
+      font-size: 13px !important;
+      /* line-height = box height keeps the glyph baseline on an integer
+         pixel inside the 18px box. flex align-items:center placed the
+         13px glyph at (18-13)/2 = 2.5px → half-pixel offset → Cozette
+         bitmap glyphs rendered blurry. */
+      line-height: 18px !important;
+      letter-spacing: 0 !important;
+      /* inline-block (not inline-flex) so the line-height anchors text
+         baseline-aligned, not flex-centered. */
+      display: inline-block !important;
+      text-align: center !important;
+      vertical-align: top !important;
+      border-width: 1px !important;
+      font-family: inherit !important;
+      /* Cozette bitmap font needs the full crisp render block — without
+         these, the browser anti-aliases the glyph and the buttons read
+         as blurry-soft. mirrors heatsync.org base.css text rules. */
+      -webkit-font-smoothing: none !important;
+      font-smooth: never !important;
+      text-rendering: optimizeSpeed !important;
+      font-kerning: normal !important;
+      font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
+    }
+    /* Last button in each cluster keeps its own right border (no overlap target) */
+    .hs-mc-util-btn:last-child,
+    .hs-mc-pf-btn:last-child {
+      margin-right: 0 !important;
+    }
+    .hs-mc-util-btn {
+      color: var(--hs-muted) !important;
+      border: 1px solid var(--hs-border) !important;
+      font-weight: 400 !important;
+      background: transparent !important;
+    }
+    .hs-mc-util-btn:hover {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+    /* Direction color-coding — an in/out whisper must be unmistakable. cyan
+       (--hs-reply, whisper accent) = came IN to you; orange (--hs-brand, self)
+       = went OUT from you. Left border scans down the column; the arrow + label
+       repeat it inline. (Self rows used to dim to 0.7 opacity, which made your
+       OWN sends the hardest to read — removed; direction is the signal now.) */
+    .hs-whisper-msg.hs-whisper-out { border-left: 3px solid var(--hs-brand); }
+    .hs-whisper-msg.hs-whisper-in { border-left: 3px solid var(--hs-reply); }
+    /* The arrow is a SYMBOL, not text — pull it out of the bitmap font stack so
+       it can scale crisply. Cozette only renders sharp at its native grid, so
+       sizing this up while inheriting the panel font would just smear it (see
+       the bitmap-smear trap). A scalable mono face + line-height:1 keeps the row
+       height pinned at 18px, so it reads bigger without costing any density. */
+    .hs-whisper-arrow {
+      font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
+      font-size: 19px;
+      font-weight: 700;
+      /* Pin the box to the row's own line-height. A 19px glyph in an auto-height
+         inline box grew the line box by 1px, so whisper rows sat a pixel taller
+         than every other row — uniform row height is the whole point of the
+         density grid. Fixed height + middle alignment lets the glyph render at
+         full size (overflow is visible) without touching layout. */
+      display: inline-block;
+      height: 18px;
+      line-height: 18px;
+      /* INTEGER width is mandatory, not cosmetic. This glyph comes from a
+         scalable font, so its natural advance is fractional (measured 11.4531px)
+         — which put every glyph AFTER the arrow on a half-pixel X and smeared it
+         (the "you" in "mellen9 → you"). Bitmap text can't survive subpixel
+         positioning. Ceil to a whole pixel and centre the glyph inside it; with
+         integer margins the whole run stays on the pixel grid. */
+      width: 12px;
+      text-align: center;
+      overflow: visible;
+      /* An INTEGER px offset — never 'middle' (anchors at baseline + xHeight/2,
+         and Cozette's 13px x-height halves to 3.546875px = fractional baseline)
+         and not 'text-bottom' here either: text-bottom is right for tall emote
+         boxes, but against this 18px row it grew every whisper row to 25px.
+         A whole-pixel offset keeps the baseline on the grid AND leaves row
+         height untouched. Measured: row 22px (same as a plain row), frac(x)=0,
+         frac(y)=0 on the adjacent text node. */
+      vertical-align: -4px;
+      margin: 0 5px;
+    }
+    .hs-whisper-you {
+      color: #bbb;
+      font-weight: 700;
+    }
+    .hs-whisper-pending {
+      opacity: 0.45;
+    }
+    .hs-whisper-pending .hs-whisper-status {
+      color: var(--hs-gold);
+    }
+    .hs-whisper-failed {
+      background: var(--hs-danger-tint);
+    }
+    .hs-whisper-failed .hs-whisper-status {
+      color: var(--hs-danger);
+      font-weight: 700;
+    }
+    .hs-whisper-retry {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .hs-whisper-retry:hover {
+      color: #fff;
+    }
+    .hs-whisper-relogin {
+      display: inline-block;
+      padding: 1px 6px;
+      margin-left: 4px;
+      background: #fff;
+      color: #000 !important;
+      border-radius: 0;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-whisper-relogin:hover {
+      background: #fff;
+      color: #000 !important;
+    }
+    .hs-mc-bits-badge {
+      display: inline-block;
+      padding: 0 4px;
+      margin-right: 3px;
+      background: var(--hs-plat-twitch);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    #hs-mc-multistream-banner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #fff;
+      font-size: 13px;
+      color: #fff;
+    }
+    #hs-mc-multistream-banner[hidden] {
+      display: none;
+    }
+    .hs-mc-multi-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hs-mc-multi-link {
+      background: #fff;
+      color: #000;
+      border: 0;
+      padding: 2px 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .hs-mc-multi-link:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-multi-dismiss {
+      background: transparent;
+      color: #888;
+      border: 0;
+      padding: 0 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .hs-mc-multi-dismiss:hover {
+      color: #fff;
+    }
+    /* Inline stream event notifications. Single --evt custom prop per type drives
+       left-stripe color, tinted-near-black bg, and text color. Replaces the old
+       global rgba(128,128,0,0.25) olive wash which (a) composited muddy against
+       zebra-striped chat rows and (b) clashed with per-type text colors (purple
+       raid on yellow bg, green sub on yellow bg, etc.). 7% color-mix keeps bg
+       visually "near-black with a hue suggestion" so saturated event text reads
+       at full contrast while the 3px stripe carries type identification. */
+    .hs-mc-stream-event {
+      --evt: var(--hs-warn);
+      padding: 2px 4px 2px 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-style: italic;
+      border-left: 3px solid var(--evt);
+      border-bottom: 1px solid #000;
+      /* No tinted background. Any near-black wash reads as a muddy grey block
+         where it abuts a true-black row; the 3px stripe plus saturated text
+         already carry type identity at full contrast. */
+      color: var(--evt);
+    }
+    .hs-mc-stream-event .hs-mc-user { text-decoration: none; font-weight: bold; }
+    .hs-mc-stream-event .hs-mc-user:hover { text-decoration: underline; }
+    .hs-mc-stream-event .hs-evt-game { color: #fff; font-style: normal; }
+    .hs-mc-stream-event.event-update  { --evt: var(--hs-warn); }
+    .hs-mc-stream-event.event-online  { --evt: var(--hs-live); }
+    .hs-mc-stream-event.event-online .hs-evt-game { color: #fff; }
+    .hs-mc-stream-event.event-offline { --evt: #888888; }
+    .hs-mc-stream-event.event-raid    { --evt: var(--hs-plat-twitch); }
+    .hs-mc-stream-event.event-hype    { --evt: var(--hs-reply); }
+    .hs-mc-stream-event.event-sub     { --evt: var(--hs-ok); }
+    .hs-mc-stream-event.event-redeem  { --evt: #00bfff; }
+    .hs-mc-stream-event.event-emote   { --evt: #29d391; }
+    .hs-mc-stream-event.event-pred    { --evt: var(--hs-gold); }
+    .hs-mc-stream-event.event-poll    { --evt: var(--hs-info); }
+    .hs-mc-stream-event.event-follow  { opacity: 0.8; }
+    /* YouTube event banners — superchat/sticker default to the amount-tier gold;
+       m.scColor (inline style, set in main.js) overrides with the real per-message
+       tier color from YouTube's own renderer when present. */
+    .hs-mc-stream-event.event-yt-superchat    { --evt: var(--hs-gold); }
+    .hs-mc-stream-event.event-yt-supersticker { --evt: #ff8a65; }
+    .hs-mc-stream-event.event-yt-membership   { --evt: #2ba640; }
+    .hs-mc-stream-event.event-yt-milestone    { --evt: #00e5ff; }
+    .hs-mc-stream-event.event-yt-gift         { --evt: #ff4081; }
+    /* Inline feed posts in chat timeline */
+    .hs-mc-feed-inline {
+      padding: 2px 8px;
+      font-size: 13px;
+      border-left: 3px solid var(--hs-danger);
+      border-bottom: 1px solid #000;
+      color: #fff;
+    }
+    .hs-mc-feed-inline .hs-mc-ts { margin-right: 4px; }
+    .hs-mc-feed-inline .hs-feed-body { color: #fff; }
+    .hs-mc-feed-inline .hs-feed-thread-link {
+      color: var(--hs-mention); text-decoration: none; font-size: 13px; margin-right: 4px;
+    }
+    .hs-mc-feed-inline .hs-feed-thread-link:hover { text-decoration: underline; }
+    .hs-mc-moment-perma { color: var(--hs-border); margin-left: 4px; text-decoration: none; }
+    .hs-mc-moment-perma:hover { background: #fff; color: #000; }
+    .hs-mc-dm-inline {
+      border-left-color: var(--hs-mention);
+    }
+    /* Live dot — red indicator, composes with any state. Inset 3px from edge
+       so it never lands on or past the border during bold-active layout
+       shifts. No box-shadow so overflow:hidden ancestors can't clip it. */
+    .hs-mc-tab {
+      position: relative !important;
+    }
+    .hs-mc-tab[data-live="true"]::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: var(--hs-live);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hs-mc-tab.active[data-live="true"]::after {
+      background: var(--hs-live-dim);
+    }
+    /* YT: position:fixed children already stop at clientWidth (left edge of
+       the body scrollbar), so no extra gutter is needed — keep tabs flush to
+       the scrollbar edge to match Twitch/Kick. */
+    /* When we've hidden the native yt chat frame (data-hs-hidden marker),
+       also hide yt's "Live chat — open panel" teaser card: clicking it
+       re-expands the frame underneath the overlay and fights us. */
+    body.hs-platform-yt:has(ytd-live-chat-frame#chat[data-hs-hidden]) #teaser-carousel {
+      display: none !important;
+    }
+    body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-overlay,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-overlay,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-overlay,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-inputbar,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-inputbar,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-inputbar,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-right #hs-mc-emote-picker,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-top #hs-mc-emote-picker,
+    body.hs-platform-yt.hs-tabs-right.hs-chat-bottom #hs-mc-emote-picker {
+      right: 90px !important;
+    }
+
+    /* Overlay - fills chat container (below tab bar, above input bar) */
+    #hs-mc-overlay {
+      position: absolute;
+      top: 38px; /* Default; dynamically adjusted by ResizeObserver */
+      left: 0;
+      right: 0;
+      bottom: 52px; /* Leave room for input bar */
+      background: #000;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #hs-mc-overlay.visible {
+      display: flex;
+    }
+
+    /* Unified resize-bar styling — visible #fff line + invisible
+       ::before grab-zone (--hs-resize-grab per side). Mirrors heatsync.org's
+       .hs-resizer. Each id below sets only position/size/cursor/z-index.
+       Idle 0.9 not 0.55 — white at 0.55 on twitch's dark theme read as
+       missing entirely; hover/active still snaps to 1 for the affordance. */
+    #hs-mc-resize-handle,
+    #hs-yt-resize-handle,
+    #hs-kick-resize-handle,
+    #hs-c-resize-handle {
+      background: #fff;
+      opacity: 0.9;
+      transition: opacity 0.12s;
+    }
+    #hs-mc-resize-handle::before,
+    #hs-yt-resize-handle::before,
+    #hs-kick-resize-handle::before,
+    #hs-c-resize-handle::before {
+      content: '';
+      position: absolute;
+      inset: calc(-1 * var(--hs-resize-grab));
+    }
+    #hs-mc-resize-handle:hover, #hs-mc-resize-handle:active,
+    #hs-yt-resize-handle:hover, #hs-yt-resize-handle:active,
+    #hs-kick-resize-handle:hover, #hs-kick-resize-handle:active,
+    body:has(#hs-resize-overlay) #hs-kick-resize-handle {
+      opacity: 1;
+    }
+    #hs-mc-resize-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--hs-resize-thickness);
+      height: 100%;
+      cursor: ew-resize;
+      z-index: 999; /* below twitch chrome (toasts/modals), above chat internals */
+    }
+    /* YouTube resize handle — left edge of #secondary sidebar */
+    #hs-yt-resize-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--hs-resize-thickness);
+      height: 100%;
+      cursor: ew-resize;
+      z-index: 999; /* below twitch chrome (toasts/modals), above chat internals */
+    }
+
+    #hs-mc-messages {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      /* containing block for the in-place embed player, which is a child of
+         this scroller (never of a row — rows are rebuilt on every batch) and
+         is positioned in content coordinates so it scrolls along for free. */
+      position: relative;
+      /* Bottom keeps a little extra so the last message clears the inputbar's
+         top border and descenders aren't clipped against it. Sides/top tight
+         for density. (The pred/poll/hype banner is now an absolute overlay
+         sibling, not an in-flow child, so no margin mirroring is needed here.) */
+      padding: 6px 6px 6px 6px;
+      font-size: var(--hs-chat-font, 13px) !important;
+      line-height: 18px !important;
+      word-wrap: break-word;
+      word-break: break-word;
+      max-width: 100%;
+      box-sizing: border-box;
+      /* Isolate layout/style from the host Twitch column. Without this,
+         every panel mutation forced a style recalc walk up through the
+         2500-node React layout tree — STYLE containment is what killed that
+         walk; layout blocks the host from re-flowing through us. Paint
+         containment was dropped 2026-07-17: an overflow:auto box already
+         clips descendant paint, so it bought nothing — while formal paint
+         isolation on a composited scroller full of ANIMATED emote images is
+         the known Chromium stale-invalidation shape behind "rows/emotes
+         drawn at the wrong spots until a hover forces a repaint" (the same
+         artifact class that killed content-visibility and per-row paint
+         containment before it; worst in the yt popout). */
+      contain: layout style;
+      /* WE own bottom-pinning (scheduleScrollPin). The browser's native
+         scroll anchoring picks its own anchor node and adjusts scrollTop
+         whenever content above it changes height (image decode, row trim,
+         retro emote upgrades) — a second writer racing ours, visible as
+         rows jumping/overlapping "like virtual scrolling bugging out". */
+      overflow-anchor: none;
+      /* Promote the WHOLE scroller to one owned GPU layer. Root cause of the
+         multi-day stale-paint smear: Chromium runs animated-emote (GIF/WebP)
+         frame raster and scroll offset as two independent compositor state
+         machines — a tile mid-re-raster for the next emote frame gets
+         scroll-repositioned before raster completes, so an old frame paints at
+         a stale spot (heals on hover because any repaint forces a synchronous
+         full re-raster). Promoting the scroller (NOT per-row — that reproduced
+         the smear) makes scroll a single layer-transform over one stable
+         backing, removing the per-tile "which frame vs where" race for the whole
+         region at once.
+         NB: MUST be will-change:transform, NOT the old translateZ(0) hack —
+         modern Chromium optimizes translateZ(0) away (it computes to flat 2D
+         identity and promotes NO layer; verified live 07-17). will-change is the
+         reliable, documented promotion. Distinct from the dropped contain:paint
+         (isolation/clip, harmful); this is layer promotion. Reversible. */
+      will-change: transform;
+    }
+    /* Per-message rows: layout+style containment only — NO paint. content-
+       visibility:auto was dropped 2026-07-14 for stale-paint smear (rows drawn
+       over each other on scroll), but per-row paint containment reproduced the
+       same defect: it makes each row its own paint unit, so a resize/scroll
+       (e.g. the composer growing while typing, then scroll-to-bottom) moves the
+       box without re-rasterizing, so stale rows overlap until a hover-forced
+       repaint — worst in the yt popout. layout containment alone still stops an
+       append from reflowing neighbors (the only isolation we need here); the
+       scroll box's own paint containment (above) already clips repaints to it. */
+    #hs-mc-messages > .hs-mc-msg {
+      contain: layout style;
+    }
+
+    /* Chat overlay banners (predictions + polls + hype at top of messages).
+       ABSOLUTE overlay, out of flow — a sibling of #hs-mc-messages under
+       #hs-mc-overlay, NOT a scroller child. An appearing/vanishing banner must
+       never resize the messages column (chat rows never move — core invariant);
+       it paints OVER the oldest visible rows instead, exactly like
+       #hs-mc-statusbar. top mirrors the statusbar's search-bar-aware offset.
+       z-index 24 sits just under the statusbar (25) so a transient toast wins
+       the shared strip for its ~2s; above chat internals otherwise. */
+    .hs-mc-chat-banner {
+      position: absolute;
+      top: var(--hs-layer-statusbar-top, 0px);
+      left: 0;
+      right: 0;
+      z-index: 24;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0;
+    }
+    /* The banner is a CONTROL, not a notice — clicking it opens the full
+       predictions/polls view. It read as neither: a flat strip with no edge,
+       painting over the top chat rows, with a hover plate as the only hint it
+       did anything. A left accent bar (the same device mention/reply rows use
+       to mean "this row is not ordinary chat") plus a bottom rule give it an
+       edge against the messages it covers, and the ▸ marks it as an opener. */
+    .hs-mc-chat-banner-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px 5px 8px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: none;
+      cursor: pointer;
+      border-left: 3px solid var(--hs-brand);
+      border-bottom: 1px solid var(--hs-border);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+    }
+    .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
+    .hs-mc-chat-banner-poll { border-left-color: var(--hs-reply); }
+    /* Opener affordance, pinned right after the timer/badge. */
+    .hs-mc-chat-banner-item::after {
+      content: '▸';
+      margin-left: auto;
+      padding-left: 6px;
+      opacity: 0.75;
+    }
+    .hs-mc-chat-banner-item:hover::after { opacity: 1; }
+    /* The title is the part that must survive a narrow panel — it ellipsises
+       while the timer, badge and ▸ keep their space. */
+    .hs-mc-chat-banner-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .hs-mc-chat-banner-item:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-chat-banner-item:hover * {
+      color: #000 !important;
+    }
+    .hs-mc-chat-banner-pred {
+      background: #0e0e10;
+      border-bottom: 1px solid rgba(56,122,255,0.3);
+      color: #a8c8ff;
+    }
+    .hs-mc-chat-banner-poll {
+      background: #0e0e10;
+      border-bottom: 1px solid rgba(0,200,100,0.25);
+      color: #80e0a0;
+    }
+    .hs-mc-chat-banner-pin {
+      background: #0e0e10;
+      border-bottom: 1px solid rgba(191,148,255,0.2);
+      color: #d4bfff;
+    }
+    .hs-mc-chat-banner-hype {
+      background: #0e0e10;
+      border-bottom: 1px solid rgba(255,135,0,0.3);
+      color: #ffb060;
+    }
+    .hs-mc-chat-banner-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .hs-mc-chat-banner-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .hs-mc-chat-banner-timer {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(0,0,0,0.4);
+      padding: 1px 5px;
+      border-radius: 0;
+      flex-shrink: 0;
+    }
+    .hs-mc-chat-banner-badge {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hs-danger);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* New messages button - floats above messages.
+       Yellow, not brand orange: the doctrine reserves #ff8700 for brand
+       (logo/heat/focus/admin/cta) and gives #ffff00 the mention / search-hit /
+       jump-target role. "▼ N new" is a jump target — unseen content asking to
+       be jumped to — so it takes the mention token rather than a fourth
+       identical yellow of its own. */
+    #hs-mc-new-msgs {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: var(--hs-mention);
+      color: #000;
+      border: none;
+      border-radius: 0;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1005;
+      transition: none;
+    }
+    #hs-mc-new-msgs:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-arrow-down {
+      font-size: 13px;
+      line-height: 0;
+      position: relative;
+      top: -1px;
+    }
+
+    /* UNIFIED INPUT BAR - always visible at bottom */
+    #hs-mc-inputbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      /* 3px black gutter framing the input — the input's own 1px border +
+         this bar's 1px top border already separate it from chat + panel
+         edges, so the gutter only needs to read as intentional, not breathe.
+         Row height is set by the tallest child (input ~29px), NOT this pad. */
+      padding: 3px;
+      background: #000;
+      border-top: 1px solid var(--hs-border);
+      z-index: 1002;
+      box-sizing: border-box;
+    }
+
+    /* NUKE native Twitch chat when our overlay is active (FFZ-style class toggle) */
+    /* Hide native chat messages container */
+    .hs-native-hidden [class*="chat-scrollable-area__message-container"],
+    .hs-native-hidden [class*="chat-list--default"],
+    .hs-native-hidden [class*="chat-list--other"],
+    .hs-native-hidden [data-a-target="chat-scroller"] {
+      display: none !important;
+    }
+    /* Hide native chat input area.
+       Exception: keep the .chat-input wrapper visible when it contains the
+       resub-share / sub-anniversary callout queue, so our floating-banner CSS
+       below can surface it. */
+    .hs-native-hidden [class*="chat-input-container"]:not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)),
+    .hs-native-hidden [data-a-target="chat-input"]:not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)) {
+      display: none !important;
+    }
+    /* Hide native chat header/room content — our elements are in #hs-mc-container (sibling) */
+    .hs-native-hidden [class*="chat-room__content"] > *:not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)) {
+      display: none !important;
+    }
+    /* Collapse the native chat container itself so #hs-mc-container gets flex space.
+       Exception: when the resub-share callout queue is present, keep this
+       container in flow (zero box) so the fixed-positioned callout can render
+       — position:fixed descendants still don't render under display:none. */
+    [class*="chat-room__content"].hs-native-hidden:not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)) {
+      display: none !important;
+    }
+    [class*="chat-room__content"].hs-native-hidden:has([data-test-selector="chat-private-callout-queue__callout-container"] *) {
+      display: block !important;
+      position: absolute !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: visible !important;
+      pointer-events: none !important;
+    }
+    /* HeatSync container — sibling of React's chat-room__content, outside React's tree.
+       font-family + size driven by ui_settings.fontFamily / ui_settings.fontSize
+       via CSS vars set on the container element in applyFontSettings() (main.js).
+       Defaults: CozetteVector @ 13px to match heatsync.org's bitmap aesthetic. */
+    #hs-mc-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      /* Guard against edge-case layout collapse at very narrow/short viewports
+         where opening the picker caused height to expand to scroll-height and
+         position to revert to static, pushing the panel off-screen. */
+      max-height: 100vh;
+      overflow: hidden;
+      background: #000;
+      /* 'Noto Color Emoji' belongs in the body stack so color-emoji codepoints
+         resolve to a known font with stable metrics — matching heatsync.org's
+         --font-family-mono. Without it the browser picks an unpredictable
+         system emoji font and the per-glyph advance can be fractional. */
+      font-family: var(--hs-mc-font, 'CozetteVector'), 'Courier New', monospace, 'Noto Color Emoji';
+      font-size: var(--hs-mc-base-size, 13px);
+      /* Integer line-height (mirrors heatsync.org body 17px). Unitless lh
+         multiplied by 13px = 18.2px = fractional baseline = bitmap blur on
+         every line. Anything that inherits this stays on the pixel grid. */
+      line-height: 17px;
+      /* Cross-fade with the document_start prepaint pseudo-element. Container
+         starts invisible; main.js sets opacity:1 after the overlay mounts +
+         renders, so prepaint (fading out) and container (fading in) overlap
+         and the user never sees a black gap or a tab-bar pop. */
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+    }
+    #hs-mc-container.hs-mc-shown {
+      opacity: 1;
+    }
+
+    /* CHAT HIDDEN STATE — chatPosition='hidden' collapses overlay; edge-pill restores */
+    body.hs-chat-hidden #hs-mc-container { display: none !important; }
+    body.hs-chat-hidden #hs-c-resize-handle,
+    body.hs-chat-hidden #hs-mc-resize-handle,
+    body.hs-chat-hidden #hs-kick-resize-handle,
+    body.hs-chat-hidden #hs-yt-resize-handle { display: none !important; }
+    /* Native chat shown: the HS resize bar floats (position:fixed, max z-index)
+       over native chat + its emote picker — hide it. You're using native chat,
+       not resizing the HS panel. */
+    body.hs-native-visible #hs-c-resize-handle,
+    body.hs-native-visible #hs-mc-resize-handle,
+    body.hs-native-visible #hs-kick-resize-handle,
+    body.hs-native-visible #hs-yt-resize-handle { display: none !important; }
+    body.hs-chat-hidden .chat-shell.hs-native-hidden,
+    body.hs-chat-hidden [class*="chat-shell"].hs-native-hidden { display: none !important; }
+    #hs-chat-restore-pill {
+      position: fixed !important;
+      background: #fff !important;
+      z-index: 2147483647 !important;
+      cursor: pointer !important;
+      transition: opacity 120ms ease-out !important;
+      opacity: 0.85 !important;
+      box-shadow: 0 0 4px rgba(255,135,0,0.5) !important;
+    }
+    #hs-chat-restore-pill:hover { opacity: 1 !important; }
+    #hs-chat-restore-pill[data-edge="right"] { top: 25% !important; right: 0 !important; width: 6px !important; height: 50% !important; }
+    #hs-chat-restore-pill[data-edge="left"] { top: 25% !important; left: 0 !important; width: 6px !important; height: 50% !important; }
+    #hs-chat-restore-pill[data-edge="top"] { top: 0 !important; left: 25% !important; height: 6px !important; width: 50% !important; }
+    #hs-chat-restore-pill[data-edge="bottom"] { bottom: 0 !important; left: 25% !important; height: 6px !important; width: 50% !important; }
+
+    /* Vertical tabs: container gets row direction */
+    .hs-tabs-left #hs-mc-container,
+    .hs-tabs-right #hs-mc-container {
+      flex-direction: row;
+    }
+    /* Keep chat-shell visible (our #hs-mc-container lives inside it) but hide native children */
+    .chat-shell.hs-native-hidden,
+    [class*="chat-shell"].hs-native-hidden {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      min-width: 0 !important;
+      background: #000 !important;
+    }
+    .chat-shell.hs-native-hidden > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)),
+    [class*="chat-shell"].hs-native-hidden > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card):not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)) {
+      display: none !important;
+    }
+    /* When the callout queue is present, the wrapper holding it (a Twitch
+       Layout-sc-* div between chat-shell and chat-room__content) is excluded
+       from the hide rule above and naturally expands to fill all flex space —
+       starving #hs-mc-container down to h:0 so the overlay disappears. Collapse
+       the wrapper to absolute 0×0; the callout is position:fixed so it still
+       renders, and hs-mc-container reclaims its flex:1 height. */
+    .chat-shell.hs-native-hidden > *:has([data-test-selector="chat-private-callout-queue__callout-container"] *):not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),
+    [class*="chat-shell"].hs-native-hidden > *:has([data-test-selector="chat-private-callout-queue__callout-container"] *):not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card) {
+      display: block !important;
+      position: absolute !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: visible !important;
+      pointer-events: none !important;
+    }
+    /* Ensure stream-chat ancestor also stays sized */
+    [class*="stream-chat"].hs-native-hidden {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+    }
+    .hs-native-hidden {
+      background: #000 !important;
+    }
+
+    /* ── NATIVE VISIBLE MODE (escape-hatch) ──────────────────────────────────
+       The chat sidebar is narrow (~302px on kick) and #hs-mc-container is a
+       fixed overlay, so showing native chat *beside* heatsync doesn't fit
+       (verified on a live kick stream: a 340px panel squeezes native to 0).
+       Instead we SWAP: native chat fills the sidebar, and the HS panel
+       collapses to just its tab-bar strip — which keeps the toggle reachable
+       so the user can swap back. setNativeChatHidden(false) removes
+       .hs-native-hidden so native renders normally; the rules below lay out
+       the swapped state.
+       VERIFIED (live-DOM sim, kick): native renders fully + panel collapses to
+       the tab-bar. TODO(reload-tweak): the strip's exact vertical offset vs the
+       kick top-nav and native's first message row needs an eyes-on reload pass
+       — adjust the padding-top below (and add a top: pin if the strip drifts
+       over the nav). */
+
+    /* Collapse the HS panel to a small top-right tab-bar strip in native mode —
+       regardless of chat position (right/left/top/BOTTOM) and on first boot.
+       The quadrupled class beats the no-channel position rules (specificity 1,3,1)
+       that otherwise pin the panel full-width/full-height (covering native chat +
+       leaving a bottom gap). Pure CSS so it applies on boot, no JS timing. */
+    body.hs-native-visible.hs-native-visible.hs-native-visible.hs-native-visible #hs-mc-container {
+      position: fixed !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+      right: 0 !important;
+      left: auto !important;
+      bottom: auto !important;
+      width: auto !important;
+      max-width: 360px !important;
+      height: auto !important;
+      z-index: 10000 !important;
+    }
+    body.hs-native-visible #hs-mc-container > *:not(#hs-mc-tabbar) {
+      display: none !important;
+    }
+    /* belt: if a re-hide re-adds the class before the !nativeVisible gate catches it */
+    body.hs-native-visible #channel-chatroom.hs-native-hidden,
+    body.hs-native-visible .chat-shell.hs-native-hidden {
+      display: flex !important;
+    }
+    /* push native chat content clear of the collapsed tab-bar strip (kick) */
+    body.hs-native-visible.hs-platform-kick #channel-chatroom {
+      padding-top: 48px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* highlight the native-btn when active */
+    #hs-mc-native-btn.active {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+
+    /* === NOTIF LAYERS (HsNotifs) ===
+       Layer containers are positioned via CSS vars set by HsNotifs.updateLayout.
+       Adding a new layer = registerLayer(name, ...) + matching CSS rule below.
+       Empty layers collapse to 0×0 (overflow:hidden + no children) so they
+       never leave a stray rectangle on the page. */
+    .hs-notif-layer {
+      position: fixed;
+      z-index: 100000;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: visible;
+      min-width: 0;
+    }
+    .hs-notif-layer:empty { display: none; }
+    .hs-notif-layer > .hs-notif {
+      pointer-events: auto;
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .hs-notif-layer-toast-stack {
+      top: var(--hs-layer-toast-stack-top, 12px);
+      right: var(--hs-layer-toast-stack-right, 20px);
+      bottom: auto;
+      align-items: flex-end;
+      max-width: min(380px, calc(100vw - 40px));
+    }
+    .hs-notif-layer-chat-docked-bottom {
+      bottom: var(--hs-layer-chat-docked-bottom-bottom, 0px);
+      left: var(--hs-layer-chat-docked-bottom-left, 0px);
+      right: var(--hs-layer-chat-docked-bottom-right, 0px);
+    }
+    .hs-notif-layer-chat-docked-top {
+      top: var(--hs-layer-chat-docked-top-top, 0px);
+      left: var(--hs-layer-chat-docked-top-left, 0px);
+      right: var(--hs-layer-chat-docked-top-right, 0px);
+    }
+
+    /* Animations — opacity-only appear, fade out on dismiss. */
+    @keyframes hs-notif-fade-out {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+    /* Base notif — flex row, accent strip on the left edge (set per level
+       via --hs-notif-accent), tight padding, mono font for info-per-pixel
+       density. container-type makes the notif queryable so internal types
+       (resub-share, raid) can progressively collapse based on their own
+       rendered width rather than the viewport. */
+    .hs-notif {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      background: #0a0a0d;
+      color: #efeff1;
+      font: 12px/1.35 ui-monospace, 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+      /* container-type lives on the statusbar layer's notifs only (06-…css).
+         On a shrink-to-fit layer (toast-stack) inline-size containment zeroes
+         the content's width contribution — every toast collapsed to the 180px
+         min-width and char-wrapped into a tower. */
+      border: 1px solid #2a2a2e;
+      border-left: 3px solid var(--hs-notif-accent, #555);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      animation: hs-notif-fade-in 120ms ease both;
+    }
+    @keyframes hs-notif-fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .hs-notif-exiting { animation: hs-notif-fade-out 160ms ease-in forwards !important; pointer-events: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .hs-notif, .hs-notif-exiting { animation: none !important; }
+    }
+
+    /* Body — sole shrinkable child. flex-basis:0 lets actions render at
+       their natural width first; body absorbs the rest, wrapping if long
+       (not ellipsifying — chat status messages are short, error reasons
+       can be long, both benefit from full readability). */
+    .hs-notif-body {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      word-break: break-word;
+    }
+    .hs-notif-body-fallback { opacity: 0.55; font-style: italic; }
+    .hs-notif-actions {
+      display: inline-flex;
+      gap: 0;
+      flex: 0 0 auto;
+      align-items: stretch;
+      margin-left: auto;
+    }
+    .hs-notif-action {
+      background: transparent;
+      color: #efeff1;
+      border: none;
+      border-left: 1px solid #2a2a2e;
+      padding: 0 12px;
+      font: 600 11px/1 inherit;
+      cursor: pointer;
+      border-radius: 0;
+      white-space: nowrap;
+      transition: background 80ms linear, color 80ms linear;
+    }
+    .hs-notif-action:hover { background: #fff; color: #000; }
+    .hs-notif-action:focus-visible { outline: 1px solid #fff; outline-offset: -2px; }
+    /* Primary reads as an actual button — bordered square chip inset from
+       the segment strip, so it can't be mistaken for label text. */
+    .hs-notif-action-primary {
+      color: #fff;
+      font-weight: 700;
+      border: 1px solid #efeff1;
+      align-self: center;
+      padding: 4px 10px;
+      margin: 0 8px;
+    }
+    .hs-notif-action-primary:hover,
+    .hs-notif-action-primary:active { background: #fff; color: #000; border-color: #fff; }
+    .hs-notif-action-dismiss { padding: 0 10px; font-size: 14px; color: #848494; }
+    .hs-notif-action-dismiss:hover { background: var(--hs-danger); color: #000; }
+
+    /* Toast-stack — every notif on this layer gets the toast aesthetic:
+       icon prefix, level accent, click-to-dismiss cursor. Applies to the
+       'toast' type AND any other type that opts in to the layer (e.g.
+       server-mention-rule). */
+    .hs-notif-layer-toast-stack > .hs-notif {
+      min-width: 180px;
+      max-width: 100%;
+      cursor: pointer;
+    }
+    .hs-notif-toast-text { color: #efeff1; display: inline; }
+    .hs-notif-toast-text::before {
+      content: var(--hs-notif-icon, '·');
+      color: var(--hs-notif-accent, #888);
+      display: inline-block;
+      width: 14px;
+      margin-right: 8px;
+      font-weight: 700;
+      text-align: center;
+      flex: 0 0 auto;
+    }
+    .hs-notif-toast-text.hs-notif-toast-success { --hs-notif-icon: '✓'; --hs-notif-accent: var(--hs-ok); color: #efeff1; }
+    .hs-notif-toast-text.hs-notif-toast-error   { --hs-notif-icon: '✕'; --hs-notif-accent: var(--hs-danger); color: #efeff1; }
+    .hs-notif-toast-text.hs-notif-toast-warn    { --hs-notif-icon: '!'; --hs-notif-accent: var(--hs-warn); color: #efeff1; }
+    .hs-notif-toast-text.hs-notif-toast-info    { --hs-notif-icon: 'i'; --hs-notif-accent: var(--hs-info); color: #efeff1; }
+    .hs-notif-toast-text.hs-notif-toast-mention { --hs-notif-icon: '@'; --hs-notif-accent: var(--hs-mention); color: #efeff1; }
+    /* Wrapper accent strip mirrors the text level (CSS custom property
+       cascades from the inner span up via :has). */
+    .hs-notif:has(.hs-notif-toast-success) { --hs-notif-accent: var(--hs-ok); }
+    .hs-notif:has(.hs-notif-toast-error)   { --hs-notif-accent: var(--hs-danger); }
+    .hs-notif:has(.hs-notif-toast-warn)    { --hs-notif-accent: var(--hs-warn); }
+    .hs-notif:has(.hs-notif-toast-info)    { --hs-notif-accent: var(--hs-info); }
+    .hs-notif:has(.hs-notif-toast-mention) { --hs-notif-accent: var(--hs-mention); }
+    .hs-notif-layer-toast-stack > .hs-notif:hover { background: #fff; }
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-toast-text,
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-toast-text::before {
+      color: #000 !important;
+    }
+    /* Keep action buttons readable on the inverted row (white text/border on
+       white bg otherwise disappears). Their own :hover still wins after. */
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action {
+      color: #000;
+      border-color: #000;
+    }
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action:hover { background: #000; color: #fff; }
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action-dismiss:hover { background: var(--hs-danger); color: #000; }
+
+    /* === Statusbar — a status/toast line just under the search/filter bar.
+       ABSOLUTE overlay strip, never in flow: an appearing/vanishing toast must
+       not resize the messages column (chat rows never move — core invariant).
+       It paints OVER the oldest visible rows for the toast's ~2s instead.
+       --hs-layer-statusbar-top (HsNotifs geometry, overlay-relative) offsets
+       it below the search bar when that's open; 0 otherwise. */
+    #hs-mc-statusbar {
+      position: absolute;
+      top: var(--hs-layer-statusbar-top, 0px);
+      left: 0;
+      right: 0;
+      z-index: 25;
+      display: flex;
+      align-items: stretch;
+      min-height: 0;
+      background: #0a0a0d;
+      border-bottom: 1px solid #2a2a2e;
+      overflow: hidden;
+    }
+    /* No toast → no bar at all. Reclaims the row; never a reserved gap. */
+    #hs-mc-statusbar:not(:has(.hs-notif)) { display: none; }
+
+    /* The collapse '>' now lives in the tab bar's util cluster (flush square,
+       styled by .hs-mc-util-btn). Here we only set its position-aware glyph
+       (points toward the dock edge it collapses to) + hide it in popout, where
+       the window IS the chat so there's nothing to collapse. */
+    #hs-mc-collapse-btn::before { content: '>'; }
+    body.hs-chat-left   #hs-mc-collapse-btn::before { content: '<'; }
+    body.hs-chat-top    #hs-mc-collapse-btn::before { content: '\\2303'; }
+    body.hs-chat-bottom #hs-mc-collapse-btn::before { content: '\\2304'; }
+    body.hs-popout #hs-mc-collapse-btn { display: none; }
+
+    /* Toast slot — single-line status text; gone when empty. */
+    .hs-notif-layer-statusbar {
+      position: static;
+      z-index: auto;
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+    .hs-notif-layer-statusbar:empty { display: none; } /* no reserved row when idle */
+    .hs-notif-layer-statusbar > .hs-notif {
+      flex: 1 1 0;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      animation: hs-notif-fade-in 140ms ease both;
+      transform-origin: center;
+      cursor: pointer;
+      /* Progressive-collapse @container queries below key off this. Safe here:
+         the statusbar row gives the notif a definite width, so containment
+         can't collapse it (unlike the shrink-to-fit toast-stack layer). */
+      container-type: inline-size;
+    }
+    .hs-notif-layer-statusbar .hs-notif-body {
+      display: block;
+      padding: 0 8px;
+      line-height: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-notif-layer-statusbar .hs-notif-toast-text { display: inline; white-space: nowrap; }
+    .hs-notif-layer-statusbar > .hs-notif:hover .hs-notif-toast-text,
+    .hs-notif-layer-statusbar > .hs-notif:hover .hs-notif-toast-text::before { color: #fff; }
+    .hs-notif-layer-statusbar .hs-notif-exiting {
+      animation: hs-notif-fade-out 120ms ease-in forwards !important;
+    }
+    /* Error/warn briefly flash the whole bar so a status-line error still
+       grabs the eye despite being inline. */
+    #hs-mc-statusbar:has(.hs-notif-toast-error) { animation: hs-statusbar-flash-err 700ms ease-out; }
+    #hs-mc-statusbar:has(.hs-notif-toast-warn)  { animation: hs-statusbar-flash-warn 700ms ease-out; }
+    @keyframes hs-statusbar-flash-err  { 0% { background: #3a0f0f; } 100% { background: #0a0a0d; } }
+    @keyframes hs-statusbar-flash-warn { 0% { background: #38330d; } 100% { background: #0a0a0d; } }
+    @media (prefers-reduced-motion: reduce) {
+      #hs-mc-statusbar { animation: none !important; }
+    }
+    /* Channel-scope filter — HsNotifs flags any per-channel notif (e.g.
+       twitch-resub-share, twitch-watchstreak-share) with this class when the
+       active multichat tab doesn't match the notif's data.channel. Toggled
+       on/off without remounting so re-entry to the matching tab restores
+       the same notif instance with its timer + dismiss handlers intact. */
+    .hs-notif.hs-notif-out-of-scope {
+      display: none !important;
+    }
+
+    /* Chat-docked-bottom callouts (resub-share, sub-anniversary, raid alert)
+       use a full-width band — reset the toast accent strip and edge borders
+       in favor of an orange top edge that visually anchors the bar to the
+       inputbar below. */
+    .hs-notif-layer-chat-docked-bottom > .hs-notif {
+      border: none;
+      border-top: 1px solid var(--hs-border);
+      border-bottom: 1px solid var(--hs-border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+      background: #0a0a0d;
+    }
+    .hs-notif-resub-body {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hs-notif-resub-icon {
+      flex: 0 0 auto;
+      font-size: 14px;
+      color: #fff;
+    }
+    .hs-notif-resub-text {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    /* Progressive shortening — fires off .hs-notif's own width. The Share +
+       ✕ buttons are ALWAYS visible; the message gives up parts of itself
+       (prefix → suffix → " months" abbreviation → icon) to make room.
+       Worst case: just "104mo" + buttons. Never just buttons-only.   */
+    .hs-rt-mo { display: none; }
+    @container (max-width: 280px) {
+      .hs-notif-resub-body { font-size: 13px; }
+      .hs-notif-action { padding: 2px 6px; font-size: 13px; }
+      .hs-rt-prefix { display: none; }
+    }
+    @container (max-width: 220px) {
+      .hs-rt-suffix { display: none; }
+    }
+    @container (max-width: 180px) {
+      .hs-notif-resub-icon { display: none; }
+    }
+    @container (max-width: 140px) {
+      .hs-rt-months { display: none; }
+      .hs-rt-mo { display: inline; }
+    }
+    /* Watch-streak notif — same skeleton as resub, orange-themed, shorter text. */
+    .hs-notif-watchstreak-body {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hs-notif-watchstreak-icon {
+      flex: 0 0 auto;
+      font-size: 14px;
+    }
+    .hs-notif-watchstreak-text {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--hs-brand);
+      font-weight: 600;
+    }
+    @container (max-width: 240px) {
+      .hs-wt-prefix { display: none; }
+    }
+    @container (max-width: 180px) {
+      .hs-wt-suffix { display: none; }
+    }
+    @container (max-width: 140px) {
+      .hs-wt-stream { display: none; }
+      .hs-notif-watchstreak-icon { display: none; }
+    }
+    /* Hide native Twitch resub-share callout queue — HsNotifs renders our own
+       version in the chat-docked-bottom layer with controlled actions. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] {
+      display: none !important;
+    }
+
+    /* Twitch private-callout queue (resub-share / sub-anniversary "Share" +
+       "Pin to chat" prompt) lives inside .chat-input, which our overlay nukes.
+       The :not(:has(...)) exclusions on the hide rules above keep the callout
+       path visible. Dock the queue as a full-width bar locked directly above
+       #hs-mc-inputbar — when the reply-indicator is added inside the inputbar
+       it grows in height, the ResizeObserver in main.js fires _updateMcLayout,
+       and the callout naturally floats above BOTH the reply-chip and input. */
+    [data-test-selector="chat-private-callout-queue__callout-container"]:has(*) {
+      /* Native callout stays hidden — our HsNotifs version (twitch-resub-share)
+         renders the controlled UI from extracted data. The position-fixed bits
+         below are inert as long as display:none from the base rule stands; kept
+         as a safety net in case the base rule is overridden upstream. */
+      position: fixed !important;
+      top: auto !important;
+      bottom: var(--hs-layer-chat-docked-bottom-bottom, 0px) !important;
+      left: var(--hs-layer-chat-docked-bottom-left, 0px) !important;
+      right: var(--hs-layer-chat-docked-bottom-right, 0px) !important;
+      width: auto !important;
+      max-width: 100vw !important;
+      overflow: hidden !important;
+      z-index: 100000 !important;
+      pointer-events: auto !important;
+      background: #18181b !important;
+      border: none !important;
+      border-top: 1px solid var(--hs-border) !important;
+      border-bottom: 1px solid var(--hs-border) !important;
+      border-radius: 0 !important;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.5) !important;
+      box-sizing: border-box !important;
+    }
+    /* Hide Twitch's native Pin toggle on the callout — it pins the resub to
+       the hidden native chat, which looks like the callout just disappeared. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] button[aria-label="pinned"] {
+      display: none !important;
+    }
+    /* Flatten the callout to a single tight row — minimal vertical footprint.
+       container-type makes .pinned-callout queryable so we can drop the icon /
+       hide text entirely when chat gets too thin to fit the celebration line. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 4px 8px !important;
+      min-height: 0 !important;
+      line-height: 15px !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      container-type: inline-size !important;
+    }
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout > * {
+      margin: 0 !important;
+      min-width: 0 !important;
+    }
+    /* Inline so multiple text spans concatenate; the wrapper handles ellipsis. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout :is(div, span, p):not(:has(button)) {
+      display: inline !important;
+      font-size: 13px !important;
+      line-height: 15px !important;
+    }
+    /* Text wrapper — single block that ellipsifies when chat narrows.
+       flex: 1 1 0 + min-width: 0 lets it shrink past content width, which is
+       required for text-overflow:ellipsis inside a flex parent. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout > div:has(div, span, p) {
+      display: block !important;
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+    /* Icon — fixed small size, drop when chat is too thin. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout__icon {
+      flex: 0 0 auto !important;
+      width: 16px !important;
+      height: 16px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout__icon * {
+      width: 16px !important;
+      height: 16px !important;
+      font-size: 14px !important;
+    }
+    /* Share button — shrinkable, with internal ellipsis. flex:0 1 auto +
+       min-width:0 lets it compress instead of overflowing when chat narrows. */
+    [data-test-selector="chat-private-callout-queue__callout-container"] [data-a-target="chat-private-callout__primary-button"] {
+      padding: 2px 10px !important;
+      font-size: 13px !important;
+      min-height: 0 !important;
+      height: auto !important;
+      line-height: 18px !important;
+      flex: 0 1 auto !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+    /* Progressive shrink as the chat panel narrows. Container queries fire
+       against .pinned-callout's own width — independent of viewport, so it
+       degrades correctly for narrow chat in any tab-position layout. */
+    @container (max-width: 280px) {
+      [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout :is(div, span, p):not(:has(button)) {
+        font-size: 13px !important;
+      }
+      [data-test-selector="chat-private-callout-queue__callout-container"] [data-a-target="chat-private-callout__primary-button"] {
+        padding: 2px 6px !important;
+        font-size: 13px !important;
+      }
+    }
+    @container (max-width: 220px) {
+      [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout__icon {
+        display: none !important;
+      }
+    }
+    @container (max-width: 160px) {
+      [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout > div:has(div, span, p) {
+        display: none !important;
+      }
+    }
+    /* Permanent black backdrop on every Twitch/Kick chat-region ancestor.
+       Twitch's right-column wrappers paint rgb(14,14,16) and rgb(24,24,27)
+       (their dark-grey theme) — when chat-shell dimensions blip during SPA
+       nav reflow, the grey bleeds through as a visible flash. Painting all
+       ancestors solid black makes every blip imperceptible: black-on-black
+       reveals nothing. Always-on, not gated to nav, since the user already
+       sees pure-black chat in steady state. */
+    .channel-root__right-column,
+    .channel-root__right-column--expanded,
+    aside#live-page-chat,
+    .right-column .chat-shell,
+    .right-column [class*="chat-shell"],
+    .right-column [class*="stream-chat"] {
+      background: #000 !important;
+    }
+    /* Twitch sets transition:all on chat-shell + its Layout-sc wrappers.
+       During SPA nav these animate width/height changes, dragging the dark-
+       grey theme through frames as the new chat-shell snaps in. Killing the
+       transition removes the motion blur entirely — content swaps instantly
+       behind our overlay instead of crossfading the grey through. Scoped to
+       chat-region only so we don't disrupt Twitch's other animations. */
+    .right-column .chat-shell,
+    .right-column [class*="chat-shell"],
+    .right-column [class*="stream-chat"],
+    .channel-root__right-column,
+    .channel-root__right-column > *,
+    aside#live-page-chat,
+    aside#live-page-chat > * {
+      transition: none !important;
+    }
+
+    /* SPA-nav transition guard. While body.hs-mc-navigating is set we paint
+       black on every chat-shell variant and force-hide all of its children
+       except our overlay + profile card. Held from soft-nav entry until the
+       new chat-shell is settled (≈300ms after reparent — enough to absorb
+       Twitch's full render cycle, not so long that user notices a stall). */
+    body.hs-mc-navigating .chat-shell,
+    body.hs-mc-navigating [class*="chat-shell"],
+    body.hs-mc-navigating [class*="stream-chat"],
+    body.hs-mc-navigating #channel-chatroom,
+    body.hs-mc-navigating .channel-root__right-column,
+    body.hs-mc-navigating aside#live-page-chat {
+      background: #000 !important;
+    }
+    body.hs-mc-navigating .chat-shell > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),
+    body.hs-mc-navigating [class*="chat-shell"] > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),
+    body.hs-mc-navigating [class*="stream-chat"] > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card),
+    body.hs-mc-navigating #channel-chatroom > *:not(#hs-mc-container):not(.hs-pc-panel):not(.hs-profile-card) {
+      visibility: hidden !important;
+    }
+
+    /* During SPA nav on Kick, the panel pre-migrates to <body> so React's
+       teardown of chat-layout doesn't take it down. Pin it in the eventual
+       chat-layout slot via fixed positioning so it doesn't reflow into a
+       weird body-default position mid-transition (visible quick flash).
+       The post-reparent CSS in chat-layout swaps back to flex-relative. */
+    body.hs-mc-navigating.hs-platform-kick.hs-chat-right > #hs-mc-container {
+      position: fixed !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      left: auto !important;
+      width: var(--hs-kick-chat-width, 340px) !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-kick.hs-chat-left > #hs-mc-container {
+      position: fixed !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: auto !important;
+      width: var(--hs-kick-chat-width, 340px) !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-kick.hs-chat-top > #hs-mc-container {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      width: 100vw !important;
+      height: var(--hs-kick-chat-height, 35vh) !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-kick.hs-chat-bottom > #hs-mc-container {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+      width: 100vw !important;
+      height: var(--hs-kick-chat-height, 35vh) !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+
+    /* Twitch mirror: panel pinned fixed-overlay across the entire SPA-nav
+       window. Covers the gap between .channel-root mounting (which strips
+       hs-twitch-no-channel) and .chat-shell mounting (which gives the panel
+       its real flex slot). Without this, mid-transition the body-mounted
+       container has no positioning rules and collapses to default block flow
+       — orange bar stays anchored, chat disappears until reparent finishes
+       (the miniplayer→fullscreen bug). */
+    body.hs-mc-navigating.hs-platform-twitch.hs-chat-right > #hs-mc-container {
+      position: fixed !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      left: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-twitch.hs-chat-left > #hs-mc-container {
+      position: fixed !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-twitch.hs-chat-top > #hs-mc-container {
+      position: fixed !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+    body.hs-mc-navigating.hs-platform-twitch.hs-chat-bottom > #hs-mc-container {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+      z-index: 9999 !important;
+      margin: 0 !important;
+    }
+
+    /* We provide our own collapse control (the '>' button in #hs-mc-statusbar),
+       so Twitch's native collapse/expand arrow is redundant — hide it bulletproof.
+       Pure CSS survives React re-renders (a one-shot JS removal wouldn't), and
+       display:none !important beats Twitch's inline non-important display. Restore
+       when hidden is handled by our orange #hs-chat-restore-pill + the \ key. */
+    body.hs-platform-twitch .right-column__toggle-visibility { display: none !important; }
+    /* If the right column still ends up collapsed (Twitch auto-collapses on
+       narrow viewports), keep our container hidden and zero the column width.
+       Arrow no longer needs to overflow out, so clip cleanly. */
+    .right-column--collapsed #hs-mc-container { display: none !important; }
+    .right-column--collapsed,
+    .right-column--collapsed > *,
+    div:has(> .right-column--collapsed) {
+      width: 0px !important;
+      min-width: 0px !important;
+      overflow: hidden !important;
+    }
+
+    /* Ensure our elements are visible */
+    #hs-mc-tabbar {
+      display: flex !important;
+    }
+    #hs-mc-inputbar {
+      display: flex !important;
+    }
+    #hs-mc-inputbar.hs-hidden {
+      display: none !important;
+    }
+
+    .hs-mc-ts {
+      color: var(--hs-muted);
+      font-size: 13px;
+      margin-right: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .hs-mc-avatar {
+      width: 18px;
+      height: 18px;
+      border-radius: 0;
+      vertical-align: middle;
+      margin-right: 3px;
+      object-fit: cover;
+    }
+    span.hs-mc-avatar.hs-mc-avatar-fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      user-select: none;
+    }
+    .hs-mc-msg {
+      /* density vars set by the registry density applier; defaults keep the
+         classic compact look */
+      padding: var(--hs-mc-row-pad, 2px 4px);
+      border-radius: 0;
+      font-size: var(--hs-chat-font, 13px) !important;
+      /* 18px integer (mirrors heatsync.org main.css:629) — keep baseline on
+         the pixel grid. 1.4 × 13px = 18.2px fractional half-leading makes
+         every bitmap glyph render off-grid. */
+      line-height: var(--hs-mc-row-lh, 18px) !important;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      overflow: hidden;
+      max-width: 100%;
+      box-sizing: border-box;
+      color: #ffffff;
+      /* content-visibility:auto dropped 2026-07-14 — stale-paint smears
+         (see 03-overlay-container.css row rule) */
+      unicode-bidi: plaintext;
+    }
+    .hs-feed-msg, .hs-mc-search-content, .hs-mc-post-body {
+      unicode-bidi: plaintext;
+    }
+    .hs-mc-msg.hs-mc-zebra, .hs-feed-msg.hs-mc-zebra {
+      background: #303030;
+    }
+    /* Hovered-row tint while the reply stack is shown — same dark olive as stack rows.
+       Critical: ONLY change the background. Changing padding/line-height shrinks the
+       row, which triggers chat auto-scroll-to-bottom adjustment AFTER showStack has
+       already anchored the overlay → 8-15px visible gap. Pure visual change only. */
+    .hs-mc-msg.hs-mc-reply-stack-active {
+      background: var(--hs-warn-bg) !important;
+    }
+    /* Dark olive bg lets full-color inline usernames through. Row base color is
+       white for non-colored text (timestamps, plain message body) — inline
+       user colors override naturally. No star-cascade so colored names breathe. */
+    .hs-mc-msg.hs-mc-reply-stack-active,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row,
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row {
+      color: #fff;
+    }
+    /* Reply-chain stack overlay — viewport-bounded vertical stack of parent messages.
+       Bottom edge butts directly against the hovered row (no border, no shadow below). */
+    #hs-mc-reply-stack {
+      box-sizing: border-box;
+      background: #000;
+      border: 1px solid var(--hs-warn-dim);
+      border-bottom: none;
+      z-index: 2147483647;
+      pointer-events: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      /* Overlay lives on <body>, outside #hs-mc-container — pull font from
+         :root vars so rows render in Cozette at the panel size, not the
+         host page's font (Inter/Roobert on Twitch). */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: var(--hs-mc-base-size, 13px);
+    }
+    /* Down overlay — descendants stacked BELOW the hovered row. No top border so
+       it butts snug against the row (top edge meets row's content bottom). */
+    #hs-mc-reply-stack-down {
+      box-sizing: border-box;
+      background: #000;
+      border: 1px solid var(--hs-warn-dim);
+      border-top: none;
+      z-index: 2147483647;
+      pointer-events: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: var(--hs-mc-base-size, 13px);
+    }
+    /* Overlay rows must match native .hs-mc-msg height EXACTLY — same padding,
+       same line-height. Mismatched heights make the olive stack look like a
+       broken copy of the active row sitting above/below it. */
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row {
+      background: var(--hs-warn-bg) !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      /* The olive overlays sit above the active row in fixed position. Letting
+         text selection span overlay→chat created a two-plane multi-range
+         clipboard mess ("copies both planes"). Right-click → copy thread is
+         the canonical path now; selection on overlay rows is disabled so a
+         chat-row drag-select stays clean even when the cursor crosses the
+         overlay region. */
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: default;
+    }
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-btn,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-btn {
+      display: none !important;
+    }
+    /* Zebra striping across the entire reply chain. Anchored to the active row
+       (always #2e2e08): up-stack rows count from BOTTOM, down-stack rows count
+       from TOP. Banded muted rows amplify the timeout/cleared opacity effect
+       — visually rich rather than a wall of olive. */
+    #hs-mc-reply-stack .hs-mc-reply-stack-row:nth-last-child(odd),
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row:nth-child(odd) {
+      background: #1a1a04 !important;
+    }
+    /* Reply-context chip on dark olive rows — dim gray reads as skip-me
+       metadata against the dark bg (was black against bright olive). */
+    .hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx,
+    .hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx *,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx *,
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx,
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx * {
+      color: #999 !important;
+      -webkit-text-fill-color: #999 !important;
+      border-left-color: #999 !important;
+    }
+    .hs-mc-reply-stack-chip {
+      flex: 0 0 auto;
+      padding: 2px 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: #000;
+      border-bottom: 1px solid var(--hs-warn-dim);
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+    .hs-mc-reply-stack-chip:hover {
+      color: #000;
+      background: #fff;
+    }
+    /* Feed post-link hover preview stack */
+    #hs-feed-postlink-preview {
+      position: fixed;
+      z-index: 2147483647;
+      background: #000;
+      border: 1px solid var(--hs-warn-dim);
+      border-bottom: none;
+      box-sizing: border-box;
+      max-width: 600px;
+      min-width: 280px;
+      overflow: hidden;
+      display: none;
+      pointer-events: auto;
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: var(--hs-mc-base-size, 13px);
+    }
+    .hs-feed-postlink-preview-row {
+      background: var(--hs-warn-bg) !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      border-bottom: 1px solid #555500;
+      color: #fff;
+    }
+    .hs-feed-postlink-preview-row:last-child {
+      border-bottom: none;
+    }
+    .hs-feed-postlink-preview-row:nth-child(even) {
+      background: #1a1a04 !important;
+    }
+    /* Two classes (row + linked) to out-specify the :nth-child(even) zebra rule
+       so the referenced post keeps its brighter highlight instead of blending
+       into a zebra band. */
+    .hs-feed-postlink-preview-row.hs-feed-postlink-preview-linked {
+      /* linked target = attention/yellow family; #555500 is one olive step
+         brighter than the #2e2e08 stack rows so the row still pops */
+      background: #555500 !important;
+      border-left: 2px solid var(--hs-mention) !important;
+    }
+    /* Brief flash on the message that the overflow chip scrolled to */
+    .hs-mc-msg.hs-mc-thread-flash {
+      animation: hs-mc-thread-flash 1.2s ease-out;
+    }
+    @keyframes hs-mc-thread-flash {
+      0% { background: var(--hs-warn-bg); }
+      100% { background: transparent; }
+    }
+    .hs-mc-feed-inline, .hs-mc-stream-event {
+      /* interleave in the same chat list as .hs-mc-msg — match its containment
+         (layout style, NO paint) so they can't stale-paint over each other on
+         scroll. See 03-overlay-container.css for the full why. */
+      contain: layout style;
+    }
+    .hs-mc-msg[data-msg-id] {
+      position: relative;
+    }
+    /* font-family is LOAD-BEARING: a <button> does not inherit it, so without
+       this the chip renders its glyph in the UA's Arial. That is not just the
+       wrong face — Arial's advance for ↩ is 10.9063px, so the chip's width was
+       fractional, and a right-anchored box of fractional width starts on a
+       fractional X. Every glyph inside it then smears, which is what a bitmap
+       face cannot survive. Cozette carries both ↩ (U+21A9) and » at a 6px
+       advance, so following the single font setting makes the chip exactly
+       16px and lands the glyph on the pixel grid. The right: offsets below
+       were always written for that 16px chip. */
+    .hs-mc-reply-btn {
+      display: none;
+      position: absolute;
+      top: 1px;
+      right: 2px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      color: #fff;
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      padding: 0 4px;
+      cursor: pointer;
+      line-height: 18px;
+      z-index: 10;
+    }
+    .hs-mc-reply-btn:hover {
+      color: #000;
+      background: #fff;
+    }
+    .hs-mc-msg[data-msg-id]:hover .hs-mc-reply-btn {
+      display: block;
+    }
+    /* Thread button — its own complete chip to the left of reply, with the same
+       4px gutter the mod toolbar already sits on. Deliberately NOT a merged
+       border-right:0 join: chip widths follow the font (Cozette vs fallback
+       measured 16px and 15px here), so a join that assumes an exact width
+       renders as a chip missing one edge the moment the font differs. Both
+       chips are built together in the data-msg-id block, so the mod toolbar
+       offset below can count on both being present. */
+    .hs-mc-thread-btn {
+      display: none;
+      position: absolute;
+      top: 1px;
+      right: 22px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      color: #fff;
+      /* same reason as .hs-mc-reply-btn — see the note there */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      padding: 0 4px;
+      cursor: pointer;
+      line-height: 18px;
+      z-index: 10;
+    }
+    .hs-mc-thread-btn:hover,
+    .hs-mc-thread-btn:active {
+      color: #000;
+      background: #fff;
+    }
+    .hs-mc-msg[data-msg-id]:hover .hs-mc-thread-btn {
+      display: block;
+    }
+    /* whisper rows have no data-msg-id, so the rule above never matches —
+       mirror it for the whisper-row marker class instead */
+    .hs-whisper-msg {
+      position: relative;
+    }
+    .hs-whisper-msg:hover .hs-mc-reply-btn {
+      display: block;
+    }
+    /* Mod toolbar — singleton bar inserted into the hovered row as a sibling
+       of .hs-mc-reply-btn. Pure CSS positioning: absolute, flush against the
+       left edge of the reply button. Shared 1px #808080 dividers between
+       buttons; last button's right border drops out to merge with the reply
+       button's left border. Matches heatsync.org spec exactly. */
+    .hs-mc-msg[data-msg-id] {
+      position: relative;
+    }
+    .hs-mod-toolbar {
+      position: absolute;
+      top: 1px;
+      /* clears the reply chip (20px) + the thread chip (20px) to its left */
+      right: 42px;
+      z-index: 11;
+      display: inline-flex;
+      align-items: stretch;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-right: 0;
+      /* follows the single font setting like every other chip in a row, rather
+         than pinning Cozette behind the user's back */
+      font: 13px/18px var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      user-select: none;
+      height: 20px;
+    }
+    .hs-mod-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      /* content-box, and an EVEN runway. Centring only lands on the pixel grid
+         when (runway - text width) is even, and a monospace cell is always
+         even (6px in Cozette) whatever the label length. The old border-box
+         22px subtracted 10px of padding and the 1px divider, leaving an 11px
+         runway — so every button but the last (which has no divider) centred
+         its glyph on a half pixel and smeared it. */
+      box-sizing: content-box;
+      min-width: 12px;
+      padding: 0 5px;
+      background: #000;
+      color: #fff;
+      border: 0;
+      border-right: 1px solid var(--hs-border);
+      font: inherit;
+      cursor: pointer;
+      /* no line-height:1 — the same even-runway rule as the width, on the other
+         axis. A 13px line box centred in the toolbar's 18px content height
+         leaves 5px to split, so the glyph sat on a half pixel. Inheriting the
+         toolbar's 18px line-height fills the box exactly instead. */
+    }
+    .hs-mod-btn:last-child { border-right: 0; }
+    .hs-mod-btn:hover { background: #fff; color: #000; }
+    #hs-mc-reply-indicator {
+      flex: 1 0 100%;
+      order: -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #000;
+      padding: 2px 6px;
+      font-size: 13px;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    #hs-mc-reply-indicator span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #hs-mc-reply-cancel {
+      background: none;
+      border: none;
+      color: var(--hs-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    #hs-mc-reply-cancel:hover {
+      color: #000;
+      background: #fff;
+    }
+    .hs-mc-muted {
+      user-select: none;
+    }
+    .hs-mc-muted .hs-mc-user {
+      color: var(--hs-muted) !important;
+      animation: none !important;
+      background: none !important;
+      -webkit-text-fill-color: var(--hs-muted) !important;
+    }
+    .hs-mc-muted > :not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-timestamp) {
+      display: none !important;
+    }
+    .hs-mc-msg.hs-mc-system {
+      border-left: 3px solid var(--hs-plat-twitch);
+      padding-left: 8px;
+      background: rgba(145, 71, 255, 0.08);
+    }
+    .hs-mc-msg.hs-mc-kicks {
+      border-left: 3px solid #ffd600;
+      padding-left: 8px;
+      background: rgba(255, 214, 0, 0.1);
+    }
+    .hs-mc-kicks .hs-mc-system-text {
+      color: #ffd600;
+      font-weight: 700;
+    }
+    .hs-mc-system-text {
+      color: #b0b0b0;
+      font-size: 13px;
+      font-style: italic;
+      display: block;
+    }
+    /* ANSI 0-15 semantic palette:
+       red(9)=ban/blocked/error, green(10)=owned/untimeout/safe,
+       yellow(11)=first-seen/announcement/bits/DM/kw-match/warn (attention),
+       magenta(13)=raid/gift/mention/first-msg-ever (special event),
+       cyan(14)=stream-hype/milestone (action-needed).
+       #fff reserved for brand chrome only (buttons, frames, drag bars). */
+    .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00cc44; }
+    .hs-mc-msg.hs-mc-notice-unban     { border-left-color: var(--hs-ok) !important; background: var(--hs-ok-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00cc44; }
+    /* Role grants (blue mod / pink VIP) */
+    .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: rgba(64, 128, 255, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-mod-add     .hs-mc-system-text { color: var(--hs-info); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-mod-remove  { border-left-color: #c0c0c0 !important; background: rgba(192, 192, 192, 0.06) !important; }
+    .hs-mc-msg.hs-mc-notice-mod-remove  .hs-mc-system-text { color: #c0c0c0; }
+    .hs-mc-msg.hs-mc-notice-vip-add     { border-left-color: var(--hs-thread) !important; background: var(--hs-thread-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-vip-add     .hs-mc-system-text { color: var(--hs-thread); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-vip-remove  { border-left-color: #c0c0c0 !important; background: rgba(192, 192, 192, 0.06) !important; }
+    .hs-mc-msg.hs-mc-notice-vip-remove  .hs-mc-system-text { color: #c0c0c0; }
+    /* Single message delete = dark red (less severe than ban) */
+    .hs-mc-msg.hs-mc-notice-delete    { border-left-color: var(--hs-danger-dim) !important; background: rgba(128, 0, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-delete    .hs-mc-system-text { color: #ff8080; }
+    /* Room mode change = aqua */
+    .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
+    /* Sub events (Twitch convention = purple, gifts = brighter magenta variant) */
+    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: var(--hs-plat-twitch) !important; background: rgba(145, 70, 255, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #b87aff; font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-gift      { border-left-color: #cc44ff !important; background: rgba(204, 68, 255, 0.16) !important; }
+    .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #cc44ff; font-weight: 600; }
+    /* Raid = magenta (ANSI 13) — special event family */
+    .hs-mc-msg.hs-mc-notice-raid      { border-left-color: var(--hs-thread) !important; background: var(--hs-thread-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-raid      .hs-mc-system-text { color: var(--hs-thread); font-weight: 700; }
+    /* Announcement = pure yellow (broadcaster speaking) */
+    /* Announce = the loudest notice: full yellow frame + solid olive bg +
+       "announce" chip. Every other notice keeps tint + left-border only. */
+    .hs-mc-msg.hs-mc-notice-announce  {
+      border: 1px solid var(--hs-warn) !important;
+      border-left-width: 3px !important;
+      background: var(--hs-warn-bg) !important;
+    }
+    .hs-mc-msg.hs-mc-notice-announce::before {
+      content: 'announce';
+      color: #000;
+      background: var(--hs-warn);
+      font-weight: 700;
+      padding: 0 4px;
+      margin-right: 6px;
+    }
+    .hs-mc-msg.hs-mc-notice-announce  .hs-mc-system-text { color: var(--hs-warn); font-weight: 700; }
+    /* Bits = gold/amber (distinct from raid orange and announce yellow) */
+    .hs-mc-msg.hs-mc-notice-bits      { border-left-color: var(--hs-gold) !important; background: rgba(255, 170, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-bits      .hs-mc-system-text { color: var(--hs-gold); font-weight: 600; }
+    /* viewermilestone (sub anniversary, etc.) = teal */
+    .hs-mc-msg.hs-mc-notice-milestone { border-left-color: var(--hs-reply-dim) !important; background: rgba(0, 128, 128, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
+    /* Watch-streak = brand orange — engagement heat, distinct from raid magenta */
+    .hs-mc-msg.hs-mc-notice-watchstreak { border-left-color: var(--hs-brand) !important; background: rgba(255, 127, 0, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text { color: var(--hs-brand); font-weight: 600; }
+    /* Charity donation = gold (generosity family, same as bits/gifts) */
+    .hs-mc-msg.hs-mc-notice-charity { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-charity .hs-mc-system-text { color: var(--hs-gold); font-weight: 600; }
+    /* Pinned-message notice = gold (pin is a mod act, matches pinned-row gold) */
+    .hs-mc-msg.hs-mc-notice-pin { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-pin .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
+    /* "new to chat" intro (msg-id=user-intro, + legacy ritual usernotice) =
+       thread/event magenta with a chip — a person arriving is a community moment */
+    .hs-mc-msg.hs-mc-user-intro { border-left: 3px solid var(--hs-thread) !important; background: var(--hs-thread-tint); }
+    .hs-mc-msg.hs-mc-user-intro::before {
+      content: 'new here';
+      color: #000;
+      background: var(--hs-thread);
+      font-weight: 700;
+      padding: 0 4px;
+      margin-right: 6px;
+    }
+    /* Power-up: gigantified emote — the last emote renders big (mirrors twitch).
+       max-height too: 10-emotes.css caps img height via --hs-emote-size. */
+    .hs-mc-msg.hs-mc-gigantified .hs-mc-text .hs-mc-emote-wrapper:last-of-type img {
+      height: 56px !important;
+      max-height: 56px !important;
+      width: auto !important;
+    }
+    /* Power-up: message effect — static fx chip naming the effect. Zero motion
+       by design: the paid effect is represented, never animated. */
+    .hs-mc-msg.hs-mc-animated { border-left: 3px solid var(--hs-thread-dim) !important; }
+    .hs-mc-msg.hs-mc-animated::before {
+      content: 'fx:' attr(data-hs-anim);
+      color: var(--hs-thread);
+      border: 1px solid var(--hs-thread-dim);
+      padding: 0 4px;
+      margin-right: 6px;
+    }
+    /* Shared-chat session: partner-channel origin chip */
+    .hs-mc-msg.hs-mc-shared::before {
+      content: 'shared';
+      color: var(--hs-reply);
+      border: 1px solid var(--hs-reply-dim);
+      padding: 0 4px;
+      margin-right: 6px;
+    }
+    /* Mod-anniversary = gold (authority family — a celebration of mod status,
+       distinct from the routine info-blue grant-mod notice) */
+    .hs-mc-msg.hs-mc-notice-mod-anniversary { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
+    .hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
+    /* Errors / rejections = dim maroon */
+    .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: rgba(128, 0, 0, 0.06) !important; }
+    .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff8080; }
+    /* First-time chatter (Twitch first-msg=1) = Twitch magenta-purple */
+    .hs-mc-msg.hs-mc-first-msg { border-left: 3px solid #bd5fff; padding-left: 8px; background: rgba(189, 95, 255, 0.12); }
+    /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
+       no animation, wins over notice-type coloring (same specificity, later
+       in source order) so the current match is always identifiable. */
+    .hs-mc-msg.hs-mc-search-current { border-left: 2px solid var(--hs-mention) !important; background: var(--hs-warn-tint) !important; }
+    /* Cleared (timed out / banned / msg deleted) — grey but READABLE, no
+       strikethrough. That is the third-party convention (ffz/bttv/7tv): a mod
+       needs to see what was actually said, and a line through it fights the
+       one job the row still has. Username and badges stay at full weight so it
+       is clear who got hit.
+
+       0.5, not 0.45: white text at half opacity over the panel's black lands
+       on exactly #808080 — the ansi grey — instead of #737373, which is off
+       the palette for no reason. Measured, not assumed. */
+    .hs-mc-msg.hs-mc-msg-cleared { opacity: 0.5; }
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote,
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-wrapper > img,
+    /* emoji too — without this an emoji kept full colour while every emote
+       beside it went grey, so a deleted message still had something vivid. */
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emoji,
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-stack img { filter: grayscale(1) brightness(0.7); }
+        /* AutoMod hold-queue — yellow/warn accent (ANSI 11 family), square, terminal.
+       Own block (not part of the notice/noticeKind system above) since it
+       carries a mutable status + button pair instead of static system text. */
+    .hs-mc-msg.hs-mc-automod {
+      display: block;
+      border-left: 3px solid var(--hs-gold);
+      background: var(--hs-gold-tint);
+      padding: 4px 8px;
+    }
+    .hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved { opacity: 0.6; }
+    .hs-mc-automod-badge {
+      display: inline-block;
+      background: var(--hs-gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 0 4px;
+      margin-right: 6px;
+      text-transform: lowercase;
+    }
+    .hs-mc-automod-chip {
+      display: inline-block;
+      color: var(--hs-gold);
+      font-size: 13px;
+      border: 1px solid var(--hs-gold);
+      padding: 0 4px;
+    }
+    .hs-mc-automod-body {
+      margin-top: 3px;
+      font-size: 13px;
+      word-break: break-word;
+    }
+    .hs-mc-automod-sender { font-weight: 700; color: #fff; }
+    .hs-mc-automod-text { color: #e0e0e0; }
+    .hs-mc-automod-actions { margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+    .hs-mc-automod-btn {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-gold);
+      font: 13px/18px 'CozetteVector', monospace;
+      padding: 1px 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .hs-mc-automod-btn:hover,
+    .hs-mc-automod-btn:active { background: #fff; color: #000; }
+    .hs-mc-automod-status { font-size: 13px; color: var(--hs-gold); }
+    .hs-mc-automod-status.hs-mc-automod-err { color: var(--hs-danger); }
+    .hs-mc-msg.hs-mc-redeemed {
+      background: rgba(145, 71, 255, 0.15);
+      border-left: 3px solid var(--hs-plat-twitch);
+      padding-left: 8px;
+    }
+    .hs-mc-msg.hs-mc-highlighted {
+      background: var(--hs-gold-tint);
+      border-left: 3px solid var(--hs-gold);
+      padding-left: 8px;
+    }
+    .hs-mc-redeem-label {
+      color: var(--hs-plat-twitch);
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+    /* First-message labels — same primitive as the redeem/highlight labels
+       above. Each one is the SAME colour as its row accent, so the bar and the
+       words are one signal instead of two: the colour stays for scanning a fast
+       chat, the words are there the first time you meet it. */
+    .hs-mc-first-label {
+      color: #bd5fff;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .hs-mc-highlight-label {
+      color: var(--hs-gold);
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+    /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
+       arrow, the name, and a snippet of the quoted message, on its OWN line
+       above the message content. The line is hard-capped at exactly one line:
+       nowrap + hidden overflow + ellipsis, so a long quote clips instead of
+       ever wrapping the row taller. display:block starts every glyph at
+       integer x from the row's left edge — no inline-block width to land on a
+       fractional pixel, so the bitmap face stays crisp (the old inline pill
+       needed a ch-based cap for exactly that reason). */
+    .hs-mc-reply-ctx {
+      display: block;
+      max-width: 100%;
+      font-size: 13px;
+      color: var(--hs-muted);
+      line-height: inherit;
+      padding: 0;
+      margin: 0;
+      border-left: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      user-select: none;
+    }
+    .hs-mc-msg:not(.hs-mc-reply-stack-active) .hs-mc-reply-ctx:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-msg:not(.hs-mc-reply-stack-active) .hs-mc-reply-ctx:hover .hs-mc-reply-user {
+      color: #000;
+    }
+    .hs-mc-reply-user {
+      color: var(--hs-muted);
+      /* 400: CozetteVector has a single 400 master. 600 renders identically
+         when font-synthesis:none applies and faux-bolds (blurs) the instant it
+         does not — so it only ever buys risk. */
+      font-weight: 400;
+    }
+    /* xterm 88 — saturated enough to read as "you got mentioned" but dark
+       enough to let full-color Twitch usernames render on top without the bg
+       drowning them. This is the same pair as heatsync.org's --mention-bg /
+       --mention-bg-alt; the comment used to claim that while the hexes on both
+       sides were three different reds. */
+    .hs-mc-msg.mention,
+    .hs-feed-msg.mention {
+      background: #870000;
+    }
+    /* Zebra striping for consecutive mentions — leverages the existing
+       neighbor-flip .hs-mc-zebra cadence so adjacent mention rows alternate
+       without looking like a wall of identical red. Darker red maintains
+       the mention semantic while distinguishing rows. */
+    .hs-mc-msg.mention.hs-mc-zebra,
+    .hs-feed-msg.mention.hs-mc-zebra {
+      background: #5f0000;
+    }
+    /* Row base color white for non-colored text (gray timestamps, plain
+       message body) — inline user colors override naturally. No star-cascade
+       so colored names breathe. */
+    .hs-mc-msg.mention {
+      color: #fff;
+    }
+    /* Channel tag — dim gray reads as skip-me metadata against the dark bg. */
+    .hs-mc-msg.mention .hs-mc-channel,
+    .hs-mc-msg.mention .hs-mc-channel * {
+      color: #999 !important;
+      -webkit-text-fill-color: #999 !important;
+    }
+    .hs-mc-msg.hs-first-msg {
+      /* Session-first glow — "first time YOU have seen them since this tab
+         opened". YELLOW, per the palette above: yellow(11)=first-seen,
+         magenta(13)=first-msg-EVER. It was magenta, which made every regular's
+         first line of the session look identical to twitch's real first-message
+         announcement — so the one row that means something was buried under
+         dozens that didn't. Magenta is now exclusively .hs-mc-first-msg.
+         Bar + inset glow (the setting is called "glow", so it glows); an
+         earlier 0.30 alpha at -2px spread read as nothing on this background. */
+      box-shadow: inset 2px 0 0 var(--hs-mention), inset 0 0 14px -1px rgba(255, 255, 0, 0.42);
+    }
+    .hs-mc-msg.hs-kw-match {
+      background: rgba(255, 255, 0, 0.14);
+      box-shadow: inset 0 0 0 1px var(--hs-mention);
+    }
+    /* Mention red wins over keyword-yellow when a row is both — "you got pinged"
+       is the stronger signal. Later + higher specificity guarantees the override
+       regardless of source order; drops the keyword's yellow inset border too. */
+    .hs-mc-msg.mention.hs-kw-match,
+    .hs-feed-msg.mention.hs-kw-match {
+      background: #5c1212;
+      box-shadow: none;
+    }
+    .hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,
+    .hs-feed-msg.mention.hs-kw-match.hs-mc-zebra {
+      background: #380b0b;
+    }
+    /* Returning chatter — back after a long absence (twitch returning-chatter tag).
+       Monochrome by intent: a low-key gray bar (familiar, seen before). */
+    .hs-mc-msg.is-returning {
+      box-shadow: inset 2px 0 0 var(--hs-border);
+    }
+    /* Raider — first message arriving in the window after a raid into this channel.
+       Brighter mono accent + faint wash so the incoming wave reads at a glance,
+       without a color. */
+    .hs-mc-msg.is-raider {
+      box-shadow: inset 2px 0 0 #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    /* Filter-rule highlight — color driven by per-rule CSS custom property */
+    .hs-mc-msg.hs-mc-rule-highlight {
+      border-left: 3px solid var(--hs-rule-hl, #fff);
+      padding-left: 4px;
+      background: color-mix(in srgb, var(--hs-rule-hl, #fff) 12%, transparent);
+    }
+    .hs-mc-msg.tweet {
+      background: rgba(212, 73, 73, 0.3);
+    }
+    .hs-mc-user {
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    /* plus tenure token — "+5mo"/"+3y" beside a Plus member's name (the "+" is
+       the plus brand mark). Mirrors the site's .hs-plus-tenure (public/css/core/
+       base.css): square, no border-radius, bare color-graded text sitting
+       inline after the name. Colour is set inline per-tenure (warm ramp). */
+    .hs-plus-tenure {
+      display: inline-block;
+      margin: 0 2px 0 4px;
+      font-weight: 700;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .hs-mc-link {
+      color: var(--hs-link);
+      text-decoration: none;
+      word-break: break-all;
+      position: relative;
+    }
+    .hs-mc-link:hover {
+      text-decoration: underline;
+    }
+    .hs-mc-user.hs-user-highlight {
+      background: #fff !important;
+      color: #000 !important;
+      -webkit-text-fill-color: #000 !important;
+      border-radius: 0;
+    }
+    .hs-mc-platform-badge {
+      /* Text badges follow the single font setting (family + size), not the
+         emote-size scale — one appearance control drives every badge glyph.
+         Crispness on Cozette comes from the .hs-font-bitmap block. */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      margin-right: 3px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .hs-mc-platform-badge.hs-mc-pb-twitch { color: var(--hs-plat-twitch); }
+    .hs-mc-platform-badge.hs-mc-pb-kick { color: var(--hs-plat-kick); }
+    .hs-mc-platform-badge.hs-mc-pb-yt { color: var(--hs-plat-youtube); }
+    .hs-mc-badge {
+      display: inline-block;
+      /* Single font setting drives family + size (see .hs-mc-platform-badge). */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      padding: 0 3px;
+      border-radius: 0;
+      margin-right: 2px;
+      font-weight: 700;
+      vertical-align: middle;
+      line-height: var(--hs-stat-badge-line, 16px);
+      letter-spacing: 0.3px;
+      cursor: default;
+    }
+    .hs-mc-badge-img {
+      display: inline !important;
+      width: var(--hs-badge-img, 18px);
+      height: var(--hs-badge-img, 18px);
+      vertical-align: middle;
+      margin-right: 2px;
+      cursor: default;
+    }
+
+    /* ---- inline chat media (images / video / yt thumb / rich link cards) ---- */
+    /* square, capped, no autoplaying iframes — built in feed-embed.js          */
+    .hs-mc-media-wrap {
+      margin: 2px 0 1px;
+    }
+    .hs-mc-media {
+      display: block;
+      max-width: 100%;
+      border-radius: 0;
+    }
+    /* Right-click handle around inline images (see feed-embed.js). Shrink-wrap
+       so the anchor is exactly the image and not a full-width click target. */
+    .hs-mc-media > .hs-mc-media-link {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+    }
+    /* A url folded away because its own image renders right below it. Never
+       removed from the DOM — if the media 404s the row unfolds it again, so a
+       url-only message can't render as an empty line. */
+    .hs-mc-url-folded {
+      display: none;
+    }
+    .hs-mc-media img,
+    .hs-mc-media video {
+      display: block;
+      max-width: 100%;
+      max-height: 220px;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: #000;
+    }
+    .hs-mc-media.hs-feed-embed-yt-thumb {
+      position: relative;
+      width: max-content;
+      max-width: 100%;
+      cursor: pointer;
+    }
+    .hs-mc-media.hs-feed-embed-yt-thumb .hs-feed-embed-yt-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 22px;
+      text-shadow: 0 0 4px #000;
+      pointer-events: none;
+    }
+    /* pending/resolved rich cards reuse feed-embed styling; just cap + de-gap here */
+    .hs-mc-media.hs-feed-embed-pending {
+      min-height: 0;
+      max-width: 100%;
+      padding: 3px 6px;
+      font-size: 13px;
+      color: var(--hs-border);
+    }
+
+    /* ---- click-to-play chat players (feed-embed.js chat click-to-play) ---- */
+    /* chat column is tall + narrow — everything embed stays SMALL and dense.  */
+    .hs-mc-media.hs-mc-playable {
+      position: relative;
+      cursor: pointer;
+    }
+    /* The play mark sits ON the artwork, like the youtube thumbnail card two
+       rules down — one language for both, and no glyph loose in a gutter where
+       the white hover plate leaves it stranded. Still a pseudo-element, so it
+       survives every repaint without the row builders knowing about it.
+       Excluded: the yt-thumb card (already has its own centred mark) and the
+       pending card (no artwork yet to sit on). */
+    .hs-mc-media.hs-mc-playable:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending)::before {
+      content: '▶';
+      position: absolute;
+      /* centre of the 36px thumb: 4px card padding + half of 36. */
+      left: 22px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 15px;
+      line-height: 15px;
+      color: #fff;
+      text-shadow: 0 0 4px #000;
+      pointer-events: none;
+    }
+    .hs-mc-media.hs-mc-playable.hs-playing:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending)::before {
+      content: '❚❚';
+      font-size: 11px;
+      letter-spacing: -1px;
+    }
+    /* The yt card needs no play/pause flip: when it plays, the video mounts
+       over the card and hides the mark anyway. */
+    /* white plate on hover AND active, same as every other hs surface. Only
+       our own chrome can follow — an iframe's interior is cross-origin. The
+       play mark is over artwork, not the plate, so it keeps its own contrast. */
+    .hs-mc-media.hs-mc-playable:hover,
+    .hs-mc-media.hs-mc-playable:active {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-platform,
+    .hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-title,
+    .hs-mc-media.hs-mc-playable:hover .hs-feed-embed-rich-author,
+    .hs-mc-media.hs-mc-playable:hover .hs-feed-embed-pending-label {
+      color: #000;
+    }
+    /* in-place video: sits over its own card, inside the scroller but never
+       inside a row, so it survives every repaint and scrolls natively. */
+    #hs-mc-embed-player {
+      position: absolute;
+      z-index: 3;
+      background: #000;
+      border: 1px solid var(--hs-border);
+    }
+    #hs-mc-embed-player iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    /* transport: pause + volume. On the player for video, on the card for
+       audio. 18px like every other hs control strip. */
+    .hs-mc-transport {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 18px;
+      padding: 0 4px;
+      background: #000;
+    }
+    #hs-mc-embed-player .hs-mc-transport {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-top: 1px solid var(--hs-border);
+    }
+    .hs-mc-media.hs-mc-playable > .hs-mc-transport {
+      margin-top: 2px;
+    }
+    .hs-mc-transport-toggle {
+      flex: none;
+      width: 18px;
+      height: 16px;
+      margin: 0;
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      line-height: 14px;
+      letter-spacing: -1px;
+      text-align: center;
+      color: var(--hs-brand);
+      background: #000;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-mc-transport-toggle:hover,
+    .hs-mc-transport-toggle:active {
+      color: #000;
+      background: #fff;
+    }
+    /* square slider, no thumb rounding anywhere — terminal, not material */
+    .hs-mc-transport-vol {
+      flex: 1;
+      min-width: 40px;
+      max-width: 120px;
+      height: 10px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: #303030;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-mc-transport-vol::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 6px;
+      height: 8px;
+      background: var(--hs-brand);
+      border: 0;
+      border-radius: 0;
+    }
+    .hs-mc-transport-vol::-moz-range-thumb {
+      width: 6px;
+      height: 8px;
+      background: var(--hs-brand);
+      border: 0;
+      border-radius: 0;
+    }
+    /* 0×0 host for in-place audio — outside #hs-mc-messages so a chat repaint
+       can't kill the track, invisible because there is nothing to look at. */
+    #hs-mc-audio-host {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      border: 0;
+    }
+    #hs-mc-audio-host iframe {
+      width: 320px;
+      height: 80px;
+      border: 0;
+    }
+    /* rich/audio cards: slim horizontal strip — 36px art, one-line meta */
+    .hs-mc-media .hs-feed-embed-rich-card {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 4px;
+      max-width: 100%;
+      min-height: 0;
+    }
+    .hs-mc-media .hs-feed-embed-rich-thumb,
+    .hs-mc-media .hs-feed-embed-rich-thumb-placeholder {
+      width: 36px;
+      height: 36px;
+      max-height: 36px;
+      object-fit: cover;
+      flex: none;
+      cursor: pointer;
+    }
+    .hs-mc-media .hs-feed-embed-rich-meta {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hs-mc-media .hs-feed-embed-rich-title,
+    .hs-mc-media .hs-feed-embed-rich-platform,
+    .hs-mc-media .hs-feed-embed-rich-author {
+      font-size: 13px;
+      line-height: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* yt thumbnail card: short wide strip, not a 190px slab */
+    .hs-mc-media.hs-feed-embed-yt-thumb img {
+      max-height: 72px;
+      width: auto;
+    }
+    /* docked mini-player — pinned to overlay bottom, outside the repaint zone */
+    #hs-mc-player-dock {
+      flex: none;
+      width: 100%;
+      background: #000;
+      border-top: 1px solid var(--hs-border);
+    }
+    #hs-mc-player-dock .hs-mc-player-dock-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 2px 0 6px;
+      height: 18px;
+      background: #000;
+    }
+    #hs-mc-player-dock .hs-mc-player-dock-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--hs-border);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #hs-mc-player-dock .hs-mc-player-dock-out {
+      flex: none;
+      width: 18px;
+      font-size: 13px;
+      line-height: 18px;
+      text-align: center;
+      color: #fff;
+      text-decoration: none;
+    }
+    #hs-mc-player-dock .hs-mc-player-dock-out:hover,
+    #hs-mc-player-dock .hs-mc-player-dock-out:active {
+      color: #000;
+      background: #fff;
+    }
+    #hs-mc-player-dock .hs-feed-embed-container {
+      max-width: 100%;
+    }
+    /* spotify/soundcloud players adapt to iframe size — force compact */
+    #hs-mc-player-dock .hs-feed-embed-spotify,
+    #hs-mc-player-dock .hs-feed-embed-spotify iframe {
+      height: 80px;
+    }
+    #hs-mc-player-dock .hs-feed-embed-soundcloud,
+    #hs-mc-player-dock .hs-feed-embed-soundcloud iframe {
+      height: 120px;
+    }
+    .hs-mc-player-close {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      line-height: 16px;
+      text-align: center;
+      color: #fff;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-mc-player-close:hover,
+    .hs-mc-player-close:active {
+      color: #000;
+      background: #fff;
+    }
+
+    /* identity-mismatch warning — emotes won't render for others (see
+       warnIdentityMismatch in main.js). terse inline red, square, no motion. */
+    #hs-mc-idwarn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 8px;
+      font-size: 13px;
+      color: var(--hs-danger);
+      background: #000;
+      border: 1px solid var(--hs-danger);
+      border-radius: 0;
+    }
+    #hs-mc-idwarn a { color: var(--hs-danger); text-decoration: underline; }
+    #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 600; }
+    #hs-mc-idwarn button {
+      /* see .hs-mc-reply-btn — a <button> needs font-family stated */
+      font-family: inherit;
+      flex: none;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1;
+      color: var(--hs-danger);
+      background: #000;
+      border: 1px solid var(--hs-danger);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    #hs-mc-idwarn button:hover,
+    #hs-mc-idwarn button:active { color: #000; background: #fff; border-color: #fff; }
+
+    /* Reply pill is a control — look like one. The caret is the only thing
+       that says "this expands", and it flips while the thread stack is open so
+       the row reports its own state. Literal glyphs, never CSS unicode
+       escapes: these styles are inlined into the JS bundle, so a backslash is
+       a JS string escape first and the bundle stops parsing. (This comment
+       originally spelled the escape out and broke the build by itself.)
+       No transition — a caret swap is information, not decoration. */
+    .hs-mc-reply-ctx {
+      cursor: pointer;
+    }
+    .hs-mc-reply-caret {
+      /* font-size, NOT 10px. Cozette is a bitmap face: its cell advance is 6px
+         at 13px, and 10px scales that to 4.625 — a fractional advance. The
+         caret sits inside .hs-mc-reply-ctx, which is an inline-block, so a
+         fractional child made the whole pill 70.625px wide and started every
+         glyph of the message AFTER it on a sub-pixel x. Measured: message text
+         with a reply context sat at x-fraction 0.625, the same text without one
+         at 0. That is the whole "the reply ui makes the text blurry" report.
+         Inheriting 13px also renders the caret from Cozette's native cell
+         instead of a downscaled bitmap, so the glyph itself stops being fuzzy —
+         pinning an integer width would have fixed the tail and left the caret
+         soft. Subtlety comes from opacity, which costs no geometry.
+         Guarded by the smear assertion in scripts/render-extension.ts. */
+      font-size: inherit;
+      opacity: 0.55;
+      margin-left: 2px;
+    }
+    .hs-mc-reply-caret::before {
+      content: '▾';
+    }
+    .hs-mc-reply-ctx[aria-expanded='true'] .hs-mc-reply-caret::before {
+      content: '▴';
+    }
+    .hs-mc-reply-ctx:hover .hs-mc-reply-caret,
+    .hs-mc-reply-ctx:focus-visible .hs-mc-reply-caret,
+    .hs-mc-reply-ctx[aria-expanded='true'] .hs-mc-reply-caret {
+      opacity: 1;
+    }
+    /* Username hover tooltip - profile preview */
+    /* Body-appended popovers — pull font from :root vars so they render in
+       Cozette/user-chosen face instead of inheriting Twitch's Inter. .hs-pcard
+       and .hs-notif set their own font-family intentionally (system sans /
+       ui-monospace) — leave those alone. */
+    #hs-user-tooltip,
+    #hs-badge-tooltip,
+    #hs-emote-tooltip,
+    #hs-link-tooltip,
+    #hs-mc-msg-ctx,
+    .hs-mc-ctx {
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: var(--hs-mc-base-size, 13px);
+    }
+
+    /* Right-click emote action menu (multichat panel) */
+    .hs-mc-ctx {
+      position: fixed;
+      /* Match max-int + !important so the menu sits above the orange resize
+         bar (#hs-c-resize-handle, also max-int). Menu is created on right-
+         click after the bar exists, so later DOM order tie-breaks above. */
+      z-index: 2147483647 !important;
+      background: #000; color: #fff;
+      border: 1px solid #fff;
+      padding: 0; min-width: 220px; max-width: 280px;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.75);
+      user-select: none;
+    }
+    .hs-mc-ctx.hs-mc-em-flip-x { transform-origin: top right; }
+    .hs-mc-ctx.hs-mc-em-flip-y { transform-origin: bottom left; }
+    .hs-mc-ctx.hs-mc-em-flip-x.hs-mc-em-flip-y { transform-origin: bottom right; }
+
+    /* Note editor popover — private cross-platform note on a chatter. Floats at
+       body level like the ctx menu; same max-int z so it sits above the panel
+       and resize bar. Square, terminal palette, no motion. */
+    .hs-note-editor {
+      position: fixed;
+      z-index: 2147483647 !important;
+      background: #000; color: #fff;
+      border: 1px solid var(--hs-gold);
+      padding: 0; width: 300px;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.75);
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: var(--hs-mc-base-size, 13px);
+      user-select: none;
+    }
+    .hs-note-editor-head {
+      padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      background: #050505; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .hs-note-editor-ta {
+      display: block; width: 100%; box-sizing: border-box;
+      background: #000; color: #fff; border: none; border-top: 1px solid #1a1a1a;
+      padding: 8px 10px; margin: 0; resize: vertical; min-height: 72px;
+      font-family: inherit; font-size: 13px; line-height: 1.4; outline: none;
+    }
+    .hs-note-editor-ta::placeholder { color: var(--hs-muted); }
+    .hs-note-editor-ta:focus { box-shadow: inset 0 0 0 1px var(--hs-gold); }
+    .hs-note-editor-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 10px; background: #050505; border-top: 1px solid #1a1a1a;
+    }
+    .hs-note-editor-status { font-size: 13px; color: var(--hs-border); text-transform: uppercase; letter-spacing: 0.5px; }
+    .hs-note-editor-del {
+      background: transparent; color: var(--hs-border); border: 1px solid #333;
+      padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 13px;
+    }
+    .hs-note-editor-del:hover { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
+    .hs-mc-ctx .hs-mc-em-header {
+      padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
+      background: #050505;
+    }
+    .hs-mc-ctx .hs-mc-em-item {
+      padding: 6px 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px;
+    }
+    .hs-mc-ctx .hs-mc-em-item:hover { background: #fff; color: #000; }
+    .hs-mc-ctx .hs-mc-em-item:hover .hs-mc-em-kbd { background: #000; color: #fff; border-color: #000; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger { color: var(--hs-danger); }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover { background: var(--hs-danger); color: #fff; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good { color: var(--hs-ok); }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover { background: #fff; color: #000; }
+    .hs-mc-ctx .hs-mc-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hs-mc-ctx .hs-mc-em-kbd {
+      display: inline-block; min-width: 14px; padding: 0 4px;
+      border: 1px solid #333; background: #0a0a0a; color: #888;
+      font-size: 13px; line-height: 14px; text-align: center;
+    }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { opacity: 0.4; cursor: not-allowed; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
+    .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #1a1a1a; margin: 2px 0; }
+    #hs-user-tooltip {
+      position: fixed;
+      /* Must beat the unified resize bar (#hs-c-resize-handle uses max int).
+         Equal z-index with later DOM order wins — tooltip is appended on
+         first hover, after the resize handle is created at init. */
+      z-index: 2147483647 !important;
+      pointer-events: none;
+      background: #000;
+      border: 1px solid #2a2a2a;
+      border-radius: 0;
+      padding: 0;
+      display: none;
+      min-width: 210px;
+      max-width: 360px;
+      overflow: hidden;
+      isolation: isolate;
+      --hs-pc-accent: #fff;
+    }
+    #hs-user-tooltip.visible {
+      display: block;
+    }
+    /* Hero band — channel banner fills the WHOLE card as an ambient background;
+       content layers on top over a scrim. Accent-tinted gradient placeholder
+       until the GQL response lands. Image is decoded off-DOM (Image() probe)
+       and committed in one go so there's no flash. */
+    #hs-user-tooltip .hs-pc-hero {
+      position: absolute; inset: 0;
+      z-index: 0;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+    #hs-user-tooltip .hs-pc-hero-img {
+      position: absolute; inset: -8px; /* over-bleed so blur doesn't feather edges */
+      background-position: center; background-size: cover; background-repeat: no-repeat;
+      opacity: 0; transition: opacity 0.15s ease-out;
+      /* Blurred + dimmed so the banner whispers as ambient texture behind the
+         identity row — mirrors the site's .profile-card-pro hero treatment. */
+      filter: saturate(1.15) blur(3px);
+    }
+    #hs-user-tooltip .hs-pc-hero.hs-pc-hero-loaded .hs-pc-hero-img {
+      opacity: 0.55;
+    }
+    /* Scrim — covers the whole card so the banner reads as ambient texture
+       while name/badges/sheet stay crisp over any banner color. */
+    #hs-user-tooltip .hs-pc-hero-scrim {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.50);
+      pointer-events: none;
+    }
+    /* Body layers on top of the full-card banner background. */
+    #hs-user-tooltip .hs-pc-body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      padding: 8px;
+    }
+    #hs-user-tooltip .hs-pc-avatar {
+      /* content.js's bare .hs-pc-avatar {!important} (native chat-tile card)
+         pins this to 32px; keep these in sync so the rule isn't misleading. */
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border: 2px solid var(--hs-pc-accent, #2a2a2a);
+      object-fit: cover;
+      flex-shrink: 0;
+      align-self: flex-start;
+      /* Sits inline in the body over the banner — no overlap lift needed now
+         that the banner is the full-card background. */
+      margin-top: 0;
+      margin-right: 10px;
+      box-shadow:
+        0 0 0 1px #000,
+        0 0 12px rgba(0, 0, 0, 0.6),
+        0 0 18px color-mix(in srgb, var(--hs-pc-accent, transparent) 25%, transparent);
+      background: #000;
+      position: relative;
+      z-index: 1;
+    }
+    #hs-user-tooltip .hs-pc-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    #hs-user-tooltip .hs-pc-header {
+      display: flex;
+      align-items: center;
+      column-gap: 4px;
+      row-gap: 6px;
+      flex-wrap: wrap;
+      line-height: 15px;
+    }
+    /* Broad reset — content.js injects ~12 bare-class .hs-pc-* rules with
+       font-size: 10px !important + padding: 2px 4px !important + letter-
+       spacing: 0.3px !important for the native chat-tile profile card. At
+       the !important tier those bare-class rules beat tooltip-scoped rules
+       on specificity tie. This one selector normalizes every .hs-pc-* badge
+       inside the tooltip to consistent 13px / padding / line-height so
+       badges share an identical baseline (mismatched heights produced
+       fractional vertical centers in the flex row → bitmap glyphs smeared
+       on the off-baseline rows, which read as "blurry"). */
+    #hs-user-tooltip [class*="hs-pc-"] {
+      font-size: 13px !important;
+      padding: 1px 2px !important;
+      line-height: 16px !important;
+      letter-spacing: 0 !important;
+    }
+    #hs-user-tooltip .hs-pc-platform {
+      font-size: 13px !important;
+      padding: 1px 2px !important;
+      font-weight: 900 !important;
+      border: 1px solid #000 !important;
+      white-space: nowrap !important;
+      letter-spacing: 0.2px !important;
+      line-height: 16px !important;
+    }
+    #hs-user-tooltip .hs-pc-platform.twitch {
+      background: var(--hs-plat-twitch);
+      color: #fff;
+    }
+    #hs-user-tooltip .hs-pc-platform.kick {
+      background: var(--hs-plat-kick);
+      color: #000;
+    }
+    #hs-user-tooltip .hs-pc-name {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #fff;
+    }
+    /* Pronoun chip (pronoundb.org) — square, neutral ANSI cyan, no
+       hover/active state (static info, matches .hs-pcard-pronoun). Sizing
+       (font-size/padding/line-height) comes from the [class*="hs-pc-"] reset
+       above; only color/border/background need setting here. */
+    #hs-user-tooltip .hs-pc-pronoun {
+      border: 1px solid #333 !important;
+      background: #111;
+      color: #5fd7d7;
+      font-weight: 700 !important;
+      white-space: nowrap;
+    }
+    #hs-user-tooltip .hs-pc-role {
+      padding: 2px 3px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      border: 1px solid #000;
+      letter-spacing: 0.3px;
+    }
+    #hs-user-tooltip .hs-pc-role.admin { background: #ff0000; color: #fff; }
+    #hs-user-tooltip .hs-pc-role.staff { background: #ff8800; color: #000; }
+    #hs-user-tooltip .hs-pc-role.partner { background: var(--hs-gold); color: #000; }
+    #hs-user-tooltip .hs-pc-role.affiliate { background: transparent; color: #fff; }
+    #hs-user-tooltip .hs-pc-age {
+      padding: 2px 4px;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid #000;
+      background: var(--hs-mention);
+      color: #000;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    #hs-user-tooltip .hs-pc-bio {
+      font-size: 13px;
+      color: #fff;
+      line-height: 17px;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #hs-user-tooltip .hs-pc-bio-mention { color: #fff; cursor: pointer; }
+    #hs-user-tooltip .hs-pc-bio-mention:hover { text-decoration: underline; }
+    #hs-user-tooltip .hs-pc-bio-tag { color: var(--hs-thread); text-decoration: none; }
+    #hs-user-tooltip .hs-pc-bio-tag:hover { text-decoration: underline; }
+    #hs-user-tooltip .hs-pc-stats {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #fff;
+      line-height: 17px;
+    }
+    #hs-user-tooltip .hs-pc-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 20px;
+      padding: 0 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      border: 1px solid #fff;
+      background: transparent;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+    #hs-user-tooltip .hs-pc-sep { display: none; }
+    #hs-user-tooltip .hs-pc-stat.op { border-color: #ff0000; color: #ff0000; }
+    #hs-user-tooltip .hs-pc-stat.op .hs-pc-num { color: #fff; }
+    #hs-user-tooltip .hs-pc-stat.mop { border-color: var(--hs-thread); color: var(--hs-thread); }
+    #hs-user-tooltip .hs-pc-stat.mop .hs-pc-num { color: #fff; }
+    #hs-user-tooltip .hs-pc-stat.re { border-color: var(--hs-reply); color: var(--hs-reply); }
+    #hs-user-tooltip .hs-pc-stat.re .hs-pc-num { color: #fff; }
+    #hs-user-tooltip .hs-pc-stat-heat { border-color: #fff; }
+    #hs-user-tooltip .hs-pc-stat-heat .hs-heat-num { font-size: 13px; font-weight: 700; }
+    #hs-user-tooltip .hs-pc-rel {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      line-height: 15px;
+    }
+    #hs-user-tooltip .hs-pc-rel-badge {
+      padding: 2px 3px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    #hs-user-tooltip .hs-pc-rel-badge.mutual { background: #00aaaa; color: #fff; }
+    #hs-user-tooltip .hs-pc-rel-badge.supporter { background: #fff; color: #000; }
+    #hs-user-tooltip .hs-pc-rel-badge.following { background: #0099ff; color: #fff; }
+    #hs-user-tooltip .hs-pc-rel-badge.subbed { background: var(--hs-plat-twitch); color: #fff; }
+    #hs-user-tooltip .hs-pc-rel-badge.mutual-follow { background: #000; color: #fff; border: 1px solid #00aaaa; }
+    #hs-user-tooltip .hs-pc-rel-badge.mutual-sub { background: #000; color: #fff; border: 1px solid #fff; }
+    /* Property sheet — mirrors .hs-pcard-sheet. Tooltip already inherits
+       CozetteVector bitmap rendering from body.hs-font-bitmap, so no
+       counter-counter block needed here (unlike the pcard sheet which
+       sits inside a system-sans counter-rule). */
+    #hs-user-tooltip .hs-pc-sheet {
+      display: grid; grid-template-columns: max-content 1fr;
+      column-gap: 12px; row-gap: 0;
+      font-size: 13px; line-height: 18px;
+      margin: 4px 0 0 0;
+    }
+    #hs-user-tooltip .hs-pc-sheet dt,
+    #hs-user-tooltip .hs-pc-sheet dd {
+      padding: 1px 6px; margin: 0;
+    }
+    #hs-user-tooltip .hs-pc-sheet dt { color: #888; font-weight: 400; }
+    #hs-user-tooltip .hs-pc-sheet dd { color: #fff; font-weight: 700; }
+    #hs-user-tooltip .hs-pc-sheet dt:nth-of-type(even),
+    #hs-user-tooltip .hs-pc-sheet dd:nth-of-type(even) { background: #303030; }
+    /* Mirror of .hs-pcard-sheet ANSI semantic palette — see comment in
+       the pcard sheet block for the full reasoning. */
+    #hs-user-tooltip .hs-pc-sheet .val-age { color: var(--hs-warn); }
+    #hs-user-tooltip .hs-pc-sheet .val-partner { color: var(--hs-gold); }
+    #hs-user-tooltip .hs-pc-sheet .val-affiliate { color: #bcbcbc; }
+    #hs-user-tooltip .hs-pc-sheet .val-ttv { color: var(--hs-plat-twitch); }
+    #hs-user-tooltip .hs-pc-sheet .val-kick { color: var(--hs-plat-kick); }
+    #hs-user-tooltip .hs-pc-sheet .val-yt { color: var(--hs-plat-youtube); }
+    #hs-user-tooltip .hs-pc-sheet .val-admin { color: #ff0000; }
+    #hs-user-tooltip .hs-pc-sheet .val-staff { color: #fff; }
+    #hs-user-tooltip .hs-pc-sheet .val-heat { color: #ff0000; }
+    #hs-user-tooltip .hs-pc-sheet .val-followers { color: #0087ff; }
+    #hs-user-tooltip .hs-pc-sheet .val-you-follow { color: var(--hs-reply); }
+    #hs-user-tooltip .hs-pc-sheet .val-you-sub { color: #875fff; }
+    #hs-user-tooltip .hs-pc-sheet .val-they-follow { color: var(--hs-thread); }
+    #hs-user-tooltip .hs-pc-sheet .val-they-sub { color: #ff5fff; }
+    #hs-user-tooltip .hs-pc-sheet .val-mutual { color: var(--hs-ok); }
+    #hs-user-tooltip .hs-pc-sheet .val-mutual-sub { color: var(--hs-gold); }
+    #hs-user-tooltip .hs-pc-sheet .val-ch { color: #fff; }
+    #hs-user-tooltip .hs-pc-sheet .hs-pc-live { color: var(--hs-live); font-weight: 700; }
+    /* Heat number inside the sheet: digits inherit Cozette (already crisp
+       on this tooltip surface), ° gets vector fallback for a clean glyph. */
+    #hs-user-tooltip .hs-pc-sheet .hs-heat-n { font-family: inherit; }
+    #hs-user-tooltip .hs-pc-sheet .hs-heat-deg {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    #hs-user-tooltip .hs-pc-followage {
+      padding: 2px 3px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      background: #00aa00;
+      color: #fff;
+    }
+    #hs-user-tooltip .hs-pc-channel-follows {
+      padding: 2px 3px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      background: #daa520;
+      color: #000;
+    }
+    #hs-user-tooltip .hs-pc-sub-tenure {
+      padding: 2px 3px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      background: #e91e8c;
+      color: #fff;
+    }
+    #hs-user-tooltip .hs-pc-loading {
+      color: #fff;
+      font-size: 13px;
+    }
+    .hs-mc-channel {
+      color: var(--hs-muted);
+      font-size: 13px;
+      margin-left: 4px;
+    }
+    .hs-mc-time {
+      color: var(--hs-muted);
+      font-size: var(--hs-time-font, 13px);
+      margin-right: 4px;
+    }
+    .hs-mc-empty {
+      color: var(--hs-muted);
+      padding: 20px;
+      text-align: center;
+    }
+    .hs-mc-empty-card {
+      padding: 24px 16px;
+      max-width: 360px;
+      margin: 16px auto;
+      text-align: center;
+      color: #ddd;
+      border: 1px solid #1a1a1a;
+      background: #000;
+    }
+    .hs-mc-empty-title {
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 6px;
+      text-transform: lowercase;
+    }
+    .hs-mc-empty-sub {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 14px;
+      line-height: 18px;
+    }
+    .hs-mc-empty-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
+    }
+    .hs-mc-empty-btn {
+      display: block;
+      padding: 7px 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #ddd;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .hs-mc-empty-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-empty-btn.primary {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-empty-btn.primary:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-empty-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .hs-mc-empty-note {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-top: 12px;
+      line-height: 18px;
+    }
+    .hs-mc-emote {
+      width: auto;
+      height: auto;
+      /* --hs-os = oversize ratio for BTTV emotes whose declared 1x height
+         exceeds the 28px baseline (NaM = 40/28). Raising the CLAMP (not
+         forcing a height) lets the asset draw at its true pixel size at
+         every size tier — 1x/2x/3x assets are exact multiples of the
+         baseline, so no resampling blur. Default 1 = unchanged. */
+      max-height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1));
+      /* The host page (Twitch/Kick) sets a global img{max-width:100%}. When the
+         wrapper carries a pinned width (wAttr from the box-width cache), that 100%
+         resolves against the pinned width and a WIDE emote gets scaled down to fit
+         it — the reported "chillWide renders squished". Clear it so a wide emote
+         always draws at its true width, exactly like .hs-mc-overlay-emote already
+         does. Harmless for normal emotes (never wider than their clamped height). */
+      max-width: none;
+      vertical-align: middle;
+      margin: 0;
+      padding: 2px;
+      border-radius: 0;
+      transition: none;
+      cursor: pointer;
+      box-sizing: content-box;
+    }
+    /* Feed content is rendered in CozetteVector (a pixel font). A bare inline
+       emote with vertical-align:middle recenters the line box and lands adjacent
+       text on a half-pixel Y, blurring the glyphs. bottom keeps text on an
+       integer baseline. Chat uses .hs-mc-emote-wrapper, so this is feed-only. */
+    .hs-feed-body .hs-mc-emote { vertical-align: bottom; }
+    /* Tighten gap between consecutive emotes so "eel1 eel2 eel3"
+       reads as one continuous run instead of three spaced-out images.
+       Negative margin pulls the second wrapper over the whitespace
+       text node that separates them in the DOM. */
+    .hs-mc-emote-wrapper + .hs-mc-emote-wrapper,
+    .hs-mc-emote-wrapper + .hs-mc-emote-stack,
+    .hs-mc-emote-stack + .hs-mc-emote-wrapper,
+    .hs-mc-emote-stack + .hs-mc-emote-stack {
+      margin-left: -4px;
+    }
+    .hs-mc-picker-emote {
+      height: auto;
+      max-height: 32px;
+      max-width: 96px;
+      width: auto;
+      vertical-align: middle;
+      margin: 0;
+      padding: 4px;
+      border-radius: 0;
+      transition: none;
+      cursor: pointer;
+      box-sizing: content-box;
+      object-fit: contain;
+    }
+    /* Picker emote wrap — 2 states:
+       - normal → white ::before rect on hover (emote stays visible on top
+         via z-index, matching project hover convention).
+       - .blocked → persistent 2px dashed grey rectangle, img hidden.
+       Rectangle paints via ::before so the slot's layout stays intact. */
+    .hs-mc-picker-emote-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .hs-mc-picker-emote-wrap::before {
+      content: '';
+      position: absolute;
+      /* Match img content-box, not its padding-box. .hs-mc-picker-emote
+         carries padding:4px, so the wrap is 8px wider/taller than the
+         visible emote — inset:0 here would paint the highlight 4px past
+         the emote on every side. Inset by the picker-emote padding so
+         the rect tracks the visible image instead. box-sizing keeps the
+         dashed border (blocked state) from inflating the rect. z-index 0
+         puts the rect BEHIND the img so the emote stays visible against
+         the white hover bg — matches the project hover convention
+         (#fff bg + emote on top) instead of the old green-rect-image-
+         hidden pattern from the 3-state ladder era. */
+      inset: 4px;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      /* White hover plate, matching the site's clickable convention (white bg +
+         dark content = "selected"). The emote on top is darkened to brightness
+         0.2 (see hover rule below) so it reads as a dark shape on white without
+         a fully-inverted silhouette; full-color identity is carried by the 4x
+         hover preview that fires alongside. Uniform across every emote surface. */
+      background: #fff;
+    }
+    .hs-mc-picker-emote-wrap:not(.blocked):hover::before {
+      opacity: 1;
+    }
+    .hs-mc-picker-emote-wrap > img {
+      position: relative;
+      z-index: 1;
+    }
+    /* Darken the emote on the white hover plate — not brightness(0)/silhouette,
+       0.2 keeps a hint of form. Tune this one value to taste. */
+    .hs-mc-picker-emote-wrap:not(.blocked):hover > img {
+      filter: brightness(0.2);
+    }
+    /* Blocked: persistent dashed rect via ::before (not outline on the
+       wrap) so it tracks emote content size like the green/orange hover
+       does, instead of sitting 4px outside on the wrap's padding-box. */
+    .hs-mc-picker-emote-wrap.blocked::before {
+      opacity: 1;
+      background: none;
+      border: 2px dashed var(--hs-border);
+    }
+    .hs-mc-picker-emote-wrap.blocked img {
+      visibility: hidden !important;
+    }
+
+    /* Emojis — scale driven by --hs-emoji-scale (1|2|4). Default 2x.
+       line-height MUST match the parent message's integer line-height
+       (18px) so a tall color-emoji glyph does NOT grow the inline line-box.
+       If the line-box grows from emoji metrics, half-leading for 13px text
+       becomes fractional and every character that follows the emoji on
+       the same row renders at a sub-integer baseline (= bitmap smear).
+       Emoji visual overflows the 18px box vertically — intentional. */
+    .hs-mc-emoji {
+      font-size: calc(1em * var(--hs-emoji-scale, 2));
+      /* line-height matches --hs-emote-size so the inline-block reports the
+         same height as emote imgs. line-height: 1 (= font-size = ~26px) left
+         the glyph filling the box edge-to-edge; some emoji glyphs (Noto)
+         bleed 1-2px past their em-box → clipped by .hs-mc-msg's
+         overflow:hidden. Pinning to emote size gives ~3px headroom above
+         and below the glyph, matches emote-row visual height, keeps mixed
+         emoji+text rows visually consistent with emote+text rows. */
+      line-height: var(--hs-emote-size, 32px);
+      /* text-bottom, NOT middle/bottom: middle anchors the box at baseline +
+         xHeight/2, and Cozette's 13px x-height is fractional (3.546875px
+         half) — the grown line-box lands every adjacent glyph on a half-pixel
+         baseline (= bitmap smear). Plain bottom anchors to the LINE-BOX
+         bottom, which middle-aligned badge imgs also place fractionally.
+         text-bottom anchors to the parent font's strut — integer growth,
+         immune to sibling boxes. */
+      vertical-align: text-bottom;
+      display: inline-block;
+    }
+    /* 7TV ZERO-WIDTH OVERLAY EMOTE STACKING */
+    .hs-mc-emote-stack {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      /* text-bottom for integer line-box growth — same bitmap-smear rationale
+         as .hs-mc-emoji above. middle shifted every mixed emote+text row's
+         glyphs onto a .546875px baseline. */
+      vertical-align: text-bottom;
+      /* Lock height so collapsed↔expanded toggle doesn't shift line height
+         (expanded adds 2px vertical padding via pseudo-element). */
+      height: 36px;
+      box-sizing: border-box;
+    }
+    .hs-mc-emote-stack-emotes {
+      display: inline-grid;
+      place-items: center;
+      position: relative;
+    }
+    .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper,
+    .hs-mc-emote-stack-emotes > .hs-mc-emoji {
+      grid-area: 1 / 1;
+    }
+    .hs-mc-emote-stack-emotes > :first-child {
+      z-index: 1;
+    }
+    .hs-mc-emote-stack-emotes > :not(:first-child) {
+      z-index: 2;
+      pointer-events: auto;
+    }
+    /* Overlay emote at native size, not constrained to base. max-height:none
+       is REQUIRED — without it the overlay inherits .hs-mc-emote's
+       max-height:var(--hs-emote-size) and a wide/tall overlay (e.g. rave0)
+       renders clamped + downscaled ("small/squished") instead of native.
+       Mirrors the input bar's .hs-input-overlay, which already does this.
+       The stack's fixed 36px height keeps line layout stable while a larger
+       native overlay bleeds above/below — the 7TV overlay look. */
+    .hs-mc-overlay-emote {
+      width: auto !important;
+      height: auto !important;
+      /* BOTH caps must be cleared. max-height:none alone lets the host site's
+         global img{max-width:100%} (Twitch sets this) become the binding
+         constraint, collapsing a wide overlay to its container width (renders
+         ~12px, looks off-center). Mirror native chat's content.js overlay rule
+         (width/height auto + max-width/height none + object-fit none) so the
+         overlay draws at true intrinsic size on every host. */
+      max-width: none !important;
+      max-height: none !important;
+      object-fit: none !important;
+      margin: 0 !important;
+      pointer-events: auto;
+    }
+    /* EMOTE STACK EXPAND/COLLAPSE */
+    .hs-mc-stack-collapse,
+    .hs-mc-stack-block-all {
+      display: none;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0 2px;
+      user-select: none;
+    }
+    .hs-mc-emote-stack.expanded {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      /* Drop the collapsed 36px lock so a multi-row wrap can grow vertically. */
+      height: auto;
+    }
+    /* Expanded inner: gray bg via pseudo-element bleeding outward so the box
+       layout doesn't grow vs collapsed (no line-height shift, no off-center).
+       wrap + non-shrinking children so a 50-emote nest reflows onto multiple
+       rows at native size instead of squishing to a 4px-wide single line. */
+    .hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes {
+      border-radius: 0;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+    .hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper,
+    .hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes > .hs-mc-emoji {
+      flex: 0 0 auto;
+    }
+    .hs-mc-emote-stack.expanded .hs-mc-emote-stack-emotes::after {
+      content: '';
+      position: absolute;
+      inset: -2px -6px;
+      background: var(--hs-border);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .hs-mc-emote-stack.expanded > .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper {
+      grid-area: auto;
+    }
+    .hs-mc-emote-stack.expanded .hs-mc-stack-collapse,
+    .hs-mc-emote-stack.expanded .hs-mc-stack-block-all {
+      display: inline-block;
+    }
+    .hs-mc-stack-collapse:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-stack-block-all:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* STATE-BASED EMOTE COLORS (website parity) */
+    /* Wrapper spans for solid color hover rectangles */
+    .hs-mc-emote-wrapper {
+      display: inline-block;
+      position: relative;
+      vertical-align: middle;
+      cursor: pointer;
+      line-height: 0;
+      font-size: 0;
+    }
+    /* In message rows, single emotes render as BARE wrappers (renderEmoteStack
+       only wraps real overlay groups) — middle re-introduces the half-pixel
+       baseline smear on adjacent text (same math as .hs-mc-emote-stack above).
+       Scoped to .hs-mc-msg so picker/tooltip layouts keep middle. */
+    .hs-mc-msg .hs-mc-emote-wrapper {
+      vertical-align: text-bottom;
+      /* Center the img inside the reserved min-height box. A small native emote
+         (e.g. twitch ':)' at ~28px) is display:block and was top-anchored in
+         the taller reserved box, so it hugged the top of the line while
+         normal-sized emotes filled it. inline-flex centers it vertically
+         without changing the wrapper's own text-bottom baseline vs adjacent
+         text (so the crisp-text fix stays intact). */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      /* Reserve the emote's full box height from first paint so a lazy-loading
+         emote can't grow its row on arrival and shove every row below it down
+         (the measured layout-shift jank). A bare wrapper holds a 0-height img
+         until load, collapsing the line to text height (~19px) then snapping to
+         ~36px — a per-row vertical jolt on scroll / slow load / cache miss.
+         min-height (not a fixed img height) keeps aspect intact and never
+         upscales a small emote, so bitmap crispness is untouched. +4px covers
+         the img's 2px content-box padding (matches .hs-mc-emote-stack's 36px
+         lock). Width stays auto — width-pop is within-row and negligible.
+         Excluded from stacked overlays: overlay wrappers live inside the
+         stack's fixed-height grid, so the reservation is redundant and the
+         min-height inflates the grid row to 36px, stretching the overlay img
+         beyond its natural size and pushing it off-center over the base. */
+      min-height: calc(var(--hs-emote-size, 32px) + 4px);
+    }
+    .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(:first-child) {
+      min-height: 0;
+      /* Cancel the adjacent-emote gap-pull (the -4px margin-left on
+         .hs-mc-emote-wrapper + .hs-mc-emote-wrapper above): overlay wrappers are
+         siblings of the base INSIDE the stack, so that rule matched them and
+         shifted every overlay ~2px left of the widest emote's centre. Here they
+         overlap via the grid's place-items:center, so any margin just decentres
+         them — pin it to 0 so the overlay centres exactly on the widest emote. */
+      margin-left: 0;
+    }
+    /* same bitmap-smear math for the badge family — any middle-aligned
+       inline box taller than the strut grows the row's line box by a
+       fractional amount and lands every glyph (the reported blurry
+       "mellen") on a half-pixel baseline. row-scoped: cards/pickers
+       keep middle. */
+    .hs-mc-msg .hs-mc-platform-badge,
+    .hs-mc-msg .hs-mc-badge,
+    .hs-mc-msg .hs-mc-bits-badge,
+    .hs-mc-msg .hs-mc-badge-img,
+    .hs-mc-msg .hs-mc-avatar {
+      vertical-align: text-bottom;
+    }
+    .hs-mc-emote-wrapper > img {
+      display: block;
+    }
+    .hs-mc-emote-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 0;
+      opacity: 0;
+      /* Instant, no fade — the block/state tint must appear the moment you
+         hover, not ease in over 0.25s. z-index 0 + img positioned above (rule
+         below) means the rect sits BEHIND the emote — white hover bg with the
+         emote on top, matching project hover convention. */
+      transition: none;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hs-mc-emote-wrapper > img {
+      position: relative;
+      z-index: 1;
+    }
+    /* Cross-highlight: white rect lights up behind every instance of the same
+       emote when one is hovered. Color from --hs-highlight-color so blocked
+       instances can still tint red (set per-emote by tooltips.js). */
+    /* White highlight plate (clickable convention); the emote on top darkens to
+       brightness 0.2 so it reads on white — see picker ::before note. The 4x
+       preview carries full-color identity. --hs-highlight-color stays the hook
+       for the red blocked tint (set per-emote by tooltips.js). */
+    .hs-mc-emote-wrapper.hs-emote-highlight::before {
+      opacity: 1;
+      background: var(--hs-highlight-color, #fff) !important;
+      transition: none;
+    }
+    .hs-mc-emote-wrapper.hs-emote-highlight:not(.hs-state-blocked):not(.hs-state-stale) > img {
+      filter: brightness(0.2);
+    }
+    /* Tab cycling: suppress emote hover highlight while user is cycling Tab
+       matches in chat input. Mouse stuck over an emote keeps the green rect
+       lit otherwise. Cleared on the next mousemove. */
+    body.hs-tab-cycling .hs-mc-emote-wrapper.hs-emote-highlight::before {
+      opacity: 0 !important;
+    }
+    body.hs-tab-cycling .hs-mc-emote-wrapper.hs-emote-highlight:not(.hs-state-blocked) > img {
+      visibility: visible !important;
+      filter: none !important;
+    }
+    body.hs-tab-cycling .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight)::before {
+      opacity: 0 !important;
+    }
+
+    /* State colors via ::before — 2-state model: all pasteable states
+       (global/owned/channel/unadded) inherit the default white hover bg.
+       Blocked + stale have their own override rules below — no per-state
+       fill needed here. */
+
+    /* v1.6 NSFW — 2px dashed teal (#008080, xterm-256 #30) border on
+       flagged emotes in DECISION surfaces (picker, input chip). Chat
+       rows do NOT paint a border — when a viewer opts in to see flagged
+       content, the cyan-on-every-flagged-emote was visual noise. The
+       wrapper still carries hs-state-nsfw class for tooltip hooks
+       ("·NSFW" suffix still works on hover) — just no painted border
+       on the chat side. */
+    .hs-mc-picker-emote-wrap.hs-state-nsfw > img,
+    img.hs-input-emote.hs-state-nsfw {
+      border: 2px dashed #008080 !important;
+      box-sizing: border-box !important;
+    }
+    /* Per-category color coding on decision surfaces — teal above stays the
+       fallback when only the nsfw bool is known (no cwCats, e.g. global-pool
+       entries). data-cw rides the same element as hs-state-nsfw: the wrap
+       span for the picker, the img itself for the input chip. Mirror of
+       chat-side .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw] and web
+       .hs-pe-wrap > img.hs-state-nsfw[data-cw]. */
+    .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="sexual"] > img,
+    img.hs-input-emote.hs-state-nsfw[data-cw="sexual"] { border-color: var(--hs-thread) !important; }
+    .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="gore"] > img,
+    img.hs-input-emote.hs-state-nsfw[data-cw="gore"]   { border-color: #ff0000 !important; }
+    .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="drugs"] > img,
+    img.hs-input-emote.hs-state-nsfw[data-cw="drugs"]  { border-color: #00d700 !important; }
+    .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="hate"] > img,
+    img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: var(--hs-border) !important; }
+
+    /* Stale ghost: emote was in the channel set when the message posted but
+       has since been removed. Dim + desaturate the cached IMG; muted-orange
+       marker on the wrap ::before signals "stale, channel removed it". */
+    .hs-mc-emote-wrapper.hs-state-stale > img {
+      opacity: 0.55;
+      filter: saturate(0.45);
+      transition: none;
+    }
+    .hs-mc-emote-wrapper.hs-state-stale:hover > img {
+      opacity: 1;
+      filter: none;
+    }
+    .hs-mc-emote-wrapper.hs-state-stale::before {
+      background: #7a4400;
+    }
+
+    /* Blocked emotes: hide img (keeps natural dimensions), dashed line via ::before.
+       inset:0 + border-box = the dashed rect is EXACTLY the emote's box with
+       the 2px drawn inside — nothing around it moves. (The base ::before
+       inset:4px is the hover plate's geometry, not this state's.) */
+    .hs-mc-emote-wrapper.hs-state-blocked > img {
+      visibility: hidden;
+    }
+    .hs-mc-emote-wrapper.hs-state-blocked::before {
+      opacity: 1;
+      background: none;
+      border: 2px dashed var(--hs-border);
+      inset: 0;
+      box-sizing: border-box;
+    }
+    .hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before {
+      border-color: #fff;
+    }
+    .hs-mc-emote-wrapper.hs-state-blocked.hs-emote-highlight::before {
+      background: var(--hs-danger);
+      border: none;
+    }
+
+    /* CW-filtered emotes: the viewer's content filter hid this emote
+       server-side, so there is no img at all — the server sent a stub with
+       just the category. Paint a dashed cyan box with the category name
+       centered so the message reads "emote hidden here by your filter"
+       instead of silently degrading to raw text. #00ffff = ansi 51. */
+    .hs-mc-emote-wrapper.hs-mc-emote-cw {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--hs-emote-size, 32px);
+      min-width: var(--hs-emote-size, 32px);
+      padding: 0 6px;
+      border: 2px dashed var(--hs-reply);
+      box-sizing: border-box;
+      color: var(--hs-reply);
+      font-size: 13px;
+      line-height: normal;
+      cursor: default;
+      user-select: none;
+    }
+    /* Per-category color coding — border+text together. Cyan above stays the
+       fallback for unknown categories. ansi: 201/196/40/244. Mirror of web
+       .hs-emote-cw[data-cw]. */
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: var(--hs-thread); color: var(--hs-thread); }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="gore"]   { border-color: #ff0000; color: #ff0000; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="drugs"]  { border-color: #00d700; color: #00d700; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: var(--hs-border); color: var(--hs-border); }
+    /* Sized stub — when a prior sighting of this URL cached its rendered box
+       width (_hsEmoteBoxW, same cache the normal wrapper's wAttr reads), the
+       stub takes that exact footprint so toggling the filter pref shifts
+       zero layout. JS sets width inline; height mirrors the emote's own
+       max-height and min-width is a 16px floor so a 1-char category name
+       never collapses to nothing. Unknown width → plain box above, sized
+       by content like it always was. Mirror of web .hs-emote-cw--sized. */
+    .hs-mc-emote-wrapper.hs-mc-emote-cw--sized {
+      height: var(--hs-emote-size, 32px);
+      min-width: 16px;
+      padding: 0;
+      overflow: hidden;
+    }
+    /* No hover plate / state fill — the box is informational, not clickable. */
+    .hs-mc-emote-wrapper.hs-mc-emote-cw::before {
+      display: none;
+    }
+
+    /* Collapsed stack: unified hover ::before on the stack itself.
+       Per-wrapper hover (cross-highlight) is suppressed — stack-level ::before
+       paints one solid rectangle. Persistent blocked-dash per emote is kept
+       as-is so users can see which specific emotes in the nest are blocked. */
+    /* When the stack is hovered, hide ALL per-wrapper ::before indicators
+       (incl. persistent blocked-dash on emotes that aren't the cross-highlight
+       target) so only the unified stack rect shows. */
+    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight) .hs-mc-emote-wrapper::before {
+      display: none !important;
+    }
+    .hs-mc-emote-stack:not(.expanded)::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      opacity: 0;
+      pointer-events: none;
+      /* Behind the stacked emotes (children sit at z-index 1/2) so the composite
+         reads as a dark shape on the white plate — same as a single emote — not
+         a flat filled rectangle covering the art. */
+      z-index: 0;
+    }
+    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight)::before {
+      opacity: 1;
+      /* White plate (clickable convention), matching the single-emote default;
+         --hs-highlight-color stays the hook for the red blocked tint. */
+      background: var(--hs-highlight-color, #fff);
+      border: none;
+    }
+    /* Darken the whole stacked composite to brightness 0.2 (base + overlays)
+       instead of hiding it — dark-on-white, mirroring the single-emote hover.
+       Full-color identity is carried by the 4x preview that fires alongside. */
+    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight) > .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(.hs-state-blocked) > img {
+      filter: brightness(0.2);
+    }
+
+    /* Flash animations */
+    @keyframes hs-flash-paste { 0% { box-shadow: 0 0 12px 4px #fff; } 100% { box-shadow: none; } }
+    @keyframes hs-flash-add { 0% { box-shadow: 0 0 12px 4px var(--hs-ok); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-block { 0% { box-shadow: 0 0 12px 4px var(--hs-danger); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-unblock { 0% { box-shadow: 0 0 12px 4px var(--hs-ok); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-remove { 0% { box-shadow: 0 0 12px 4px #fff; } 100% { box-shadow: none; } }
+    .hs-flash-paste { animation: hs-flash-paste 0.4s ease-out; }
+    .hs-flash-add { animation: hs-flash-add 0.4s ease-out; }
+    .hs-flash-block { animation: hs-flash-block 0.4s ease-out; }
+    .hs-flash-unblock { animation: hs-flash-unblock 0.4s ease-out; }
+    .hs-flash-remove { animation: hs-flash-remove 0.4s ease-out; }
+
+    /* Legacy img classes (for picker, tooltips) */
+    .hs-mc-emote, .hs-mc-picker-emote {
+      position: relative;
+    }
+
+    /* Badge hover tooltip - 4x preview */
+    /* Max z-index so it beats the reply-stack overlay (also at max int);
+       showBadgeTooltip re-appends to body so DOM order tiebreaks in our favor. */
+    #hs-badge-tooltip {
+      position: fixed;
+      z-index: 2147483647;
+      pointer-events: none;
+      background: #000;
+      border-radius: 0;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--hs-border);
+    }
+    #hs-badge-tooltip.visible {
+      display: flex;
+    }
+    #hs-badge-tooltip img {
+      object-fit: contain;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+    }
+    #hs-badge-tooltip .tooltip-name {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    #hs-badge-tooltip .tooltip-source {
+      font-size: 13px;
+      padding: 2px 6px;
+      margin: 2px -8px -8px;
+      border-radius: 0;
+      color: #fff;
+      width: calc(100% + 16px);
+      text-align: center;
+      background: var(--hs-border);
+    }
+
+    /* Emote hover tooltip - 4x preview */
+    /* Max z-index so it beats the reply-stack overlay (also at max int);
+       showEmoteTooltip re-appends to body so DOM order tiebreaks in our favor. */
+    #hs-emote-tooltip {
+      position: fixed;
+      z-index: 2147483647;
+      pointer-events: none;
+      background: #000;
+      border-radius: 0;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--hs-border);
+    }
+    #hs-emote-tooltip.visible {
+      display: flex;
+    }
+    #hs-emote-tooltip img {
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    /* Emote-nest composite preview: sized box, scaled stack pinned top-left */
+    #hs-emote-tooltip .tooltip-stack {
+      display: none;
+      position: relative;
+      overflow: visible;
+    }
+    #hs-emote-tooltip .tooltip-stack .hs-mc-emote-stack-emotes::before { content: none !important; }
+    #hs-emote-tooltip .tooltip-name {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      /* Cap + wrap so a deep-nest name list never forces the tooltip wider than
+         the viewport (the preview image carries the full composite anyway). */
+      max-width: 480px;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    #hs-emote-tooltip .tooltip-source {
+      font-size: 13px;
+      padding: 2px 6px;
+      margin: 2px -8px -8px;
+      border-radius: 0;
+      color: #fff;
+      width: calc(100% + 16px);
+      text-align: center;
+    }
+    /* 2-state tooltip source chip: pasteable states use the project's
+       hover convention (white bg + black text). Per-provider chips below
+       (src-7tv, src-bttv, etc.) still carry their brand colors as the
+       primary visual since users identify emotes by source platform. */
+    #hs-emote-tooltip .tooltip-source.owned,
+    #hs-emote-tooltip .tooltip-source.unadded,
+    #hs-emote-tooltip .tooltip-source.global,
+    #hs-emote-tooltip .tooltip-source.channel { background: #fff; color: #000; }
+    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #fff; }
+    #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #fff; }
+    /* Per-provider source label colors (override .global/.channel) */
+    #hs-emote-tooltip .tooltip-source.src-7tv { background: #29d8f6; color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-bttv { background: #d50014; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-ffz { background: #0086c8; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-twitch { background: var(--hs-plat-twitch); color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-kick { background: var(--hs-plat-kick); color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-heatsync,
+    #hs-emote-tooltip .tooltip-source.src-hs { background: var(--hs-plat-hs); color: #000; }
+
+    /* Max z-index + showLinkTooltip re-appends to body — beats reply-stack overlay. */
+    #hs-link-tooltip {
+      position: fixed;
+      z-index: 2147483647;
+      pointer-events: none;
+      background: #000;
+      border-radius: 0;
+      padding: 8px;
+      display: none;
+      flex-direction: row;
+      gap: 8px;
+      max-width: 350px;
+      border: 1px solid var(--hs-border);
+    }
+    #hs-link-tooltip.visible { display: flex; }
+    #hs-link-tooltip img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 0;
+      flex-shrink: 0;
+    }
+    #hs-link-tooltip .link-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      justify-content: center;
+    }
+    #hs-link-tooltip .link-title {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    #hs-link-tooltip .link-desc {
+      color: #fff;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    #hs-link-tooltip .link-domain {
+      color: var(--hs-link);
+      font-size: 13px;
+    }
+    #hs-link-tooltip .link-loading {
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+
+
+/* ── BTTV/FFZ emote modifier EFFECTS ─────────────────────────────────────
+   Animated modifiers applied via hs-fx-* classes by src/lib/modifiers.js
+   (hsModApplyToImg / _hsMcApplyMods). Canonical night/betterttv + FFZ values.
+   Animations drive the INDIVIDUAL translate/rotate/scale/filter props so they
+   compose with the inline transform (w! ffzSpin = wide AND spinning). Kept in
+   sync with the site (public/css/modules/emotes.css). */
+/* Registered so it interpolates; the composed filter references it as
+   hue-rotate(var(--hs-fx-hue)) so an animated hue STACKS with a static filter
+   (cursed) instead of the keyframe replacing the filter. */
+@property --hs-fx-hue { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+img.hs-fx-rainbow, .hs-mc-emoji.hs-fx-rainbow { animation: hs-fx-rainbow 2s linear infinite; }
+@keyframes hs-fx-rainbow { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
+
+img.hs-fx-party, .hs-mc-emoji.hs-fx-party { animation: hs-fx-party 1.5s linear infinite; }
+@keyframes hs-fx-party { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
+
+img.hs-fx-spin, .hs-mc-emoji.hs-fx-spin { animation: hs-fx-spin 1.5s linear infinite; }
+@keyframes hs-fx-spin { from { rotate: 0deg; } to { rotate: 360deg; } }
+
+img.hs-fx-shake, .hs-mc-emoji.hs-fx-shake { animation: hs-fx-shake 500ms step-start infinite; }
+@keyframes hs-fx-shake {
+  0%{translate:0 1px}10%{translate:2px 0}20%{translate:1px -2px}30%{translate:-2px 1px}
+  40%{translate:0 -1px}50%{translate:2px 2px}60%{translate:-1px -1px}70%{translate:-2px 2px}
+  80%{translate:2px 1px}90%{translate:-1px -2px}100%{translate:1px 0}
+}
+
+img.hs-fx-hyper, .hs-mc-emoji.hs-fx-hyper { animation: hs-fx-hyper 0.1s linear infinite; }
+@keyframes hs-fx-hyper {
+  0%{translate:1px 1px}10%{translate:-1px -2px}20%{translate:-3px 0}30%{translate:3px 2px}
+  40%{translate:1px -1px}50%{translate:-1px 2px}60%{translate:-3px 1px}70%{translate:3px 1px}
+  80%{translate:-1px -1px}90%{translate:1px 2px}100%{translate:1px -2px}
+}
+
+img.hs-fx-bounce, .hs-mc-emoji.hs-fx-bounce { transform-origin: bottom center; animation: hs-fx-bounce 0.5s linear infinite; }
+@keyframes hs-fx-bounce {
+  0%{scale:.8 1}10%{scale:.9 .8}20%{scale:1 .4}25%{scale:1.2 .3}30%{scale:1 .4}
+  40%{scale:.9 .8}50%{scale:.8 1}60%{scale:.9 .8}70%{scale:1 .4}75%{scale:1.2 .3}
+  80%{scale:1 .4}90%{scale:.9 .8}100%{scale:.8 1}
+}
+
+img.hs-fx-jam, .hs-mc-emoji.hs-fx-jam { animation: hs-fx-jam 0.6s linear infinite; }
+@keyframes hs-fx-jam {
+  0%{translate:-2px -2px;rotate:-6deg}10%{translate:-1.5px -2px;rotate:-8deg}
+  20%{translate:1px -1.5px;rotate:-8deg}30%{translate:3px 2.5px;rotate:-6deg}
+  40%{translate:3px 4px;rotate:-2deg}50%{translate:2px 4px;rotate:3deg}
+  60%{translate:1px 4px;rotate:3deg}70%{translate:-.5px 3px;rotate:2deg}
+  80%{translate:-1.25px 1px;rotate:0deg}90%{translate:-1.75px -.5px;rotate:-2deg}
+  100%{translate:-2px -2px;rotate:-5deg}
+}
+
+img.hs-fx-slide, .hs-mc-emoji.hs-fx-slide { animation: hs-fx-slide 1.5s linear infinite; }
+@keyframes hs-fx-slide { from{translate:-50% 0} to{translate:50% 0} }
+
+img.hs-fx-arrive, .hs-mc-emoji.hs-fx-arrive { animation: hs-fx-arrive 3s linear infinite; }
+@keyframes hs-fx-arrive {
+  0%{translate:-18px 0;scale:.1}20%{translate:-18px 0;scale:.1}
+  45%{translate:0 0;scale:1}100%{translate:0 0;scale:1}
+}
+
+img.hs-fx-leave, .hs-mc-emoji.hs-fx-leave { animation: hs-fx-leave 3s linear infinite; }
+@keyframes hs-fx-leave {
+  0%{translate:0 0;scale:1}55%{translate:0 0;scale:1}
+  80%{translate:18px 0;scale:.1}100%{translate:18px 0;scale:.1}
+}
+
+img.hs-fx-zero, .hs-mc-emoji.hs-fx-zero { margin-left: -4px; }
+
+/* Emote effects follow the animateEmotes setting, NOT prefers-reduced-motion.
+   A modifier is CONTENT the sender chose — same class of motion as an animated
+   gif emote, which heatsync has never gated on the OS flag — and there is
+   already a first-party control for emote motion. Gating on the media query
+   meant a browser run with --force-prefers-reduced-motion silently killed every
+   animated modifier (ffzLeave/ffzSpin/ffzJam/p!/s!… "did nothing") while the
+   static ones kept working, with no setting that could turn them back on.
+   never → off entirely; hover → chat rows animate only under the pointer,
+   mirroring the gif hover-swap in main.js. Composer/picker chips are outside
+   .hs-mc-msg so they keep animating in hover mode (they're what you're editing). */
+/* Scoped to BOTH an emote img and an emoji span. These were img-only, which
+   meant the setting could not switch off an effect running on an emoji — the
+   effect itself reaches emoji (see the hs-fx rules above), so a control that
+   does not is worse than no control: the user turns animation off and something
+   keeps moving. */
+html[data-hs-emote-anim="never"] img[class*="hs-fx-"],
+html[data-hs-emote-anim="never"] .hs-mc-emoji[class*="hs-fx-"] { animation: none !important; }
+html[data-hs-emote-anim="hover"] .hs-mc-msg img[class*="hs-fx-"],
+html[data-hs-emote-anim="hover"] .hs-mc-msg .hs-mc-emoji[class*="hs-fx-"] { animation-play-state: paused !important; }
+html[data-hs-emote-anim="hover"] .hs-mc-msg:hover img[class*="hs-fx-"],
+html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] { animation-play-state: running !important; }
+
+    /* Composition tooltip — base + overlays + ordered effects. Colours are set
+       inline per piece (provider brand / c!#hex tint); these rules only carry
+       weight and spacing so the pieces stay legible at 13px bitmap. */
+    #hs-emote-tooltip .tooltip-piece {
+      white-space: nowrap;
+    }
+    #hs-emote-tooltip .tooltip-base {
+      font-weight: 700;
+    }
+    #hs-emote-tooltip .tooltip-join {
+      color: #6a6a6a;
+    }
+    /* Effects read as a distinct class of thing from emote names — slightly
+       dimmer weight so the composition scans base-first. */
+    #hs-emote-tooltip .tooltip-mod {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    /* Input styles (used in #hs-mc-inputbar) */
+    #hs-mc-input {
+      flex: 1;
+      /* Explicit floor + box model: without these the empty contenteditable
+         collapses on hosts that lack a universal box-sizing reset (YouTube),
+         dropping the box to padding+border height so the absolutely-placed
+         placeholder spilled below the white area. Kick/Twitch only looked
+         right because Tailwind's *{box-sizing:border-box} happened to bleed
+         in. Pin both so all platforms render one full line. */
+      box-sizing: border-box;
+      /* floor is the empty/text-only height — emote chips grow the box past
+         this, so it only needs to clear one 13px line, not an emote. 28px =
+         17px line + 5px*2 pad + 1px*2 border, tight but never clips a line. */
+      min-height: 28px;
+      padding: 5px 12px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      position: relative;
+      /* break-spaces (not pre-wrap): pre-wrap lets a trailing space HANG
+         invisibly at end-of-content in chromium contenteditable, so the
+         auto-space after Tab completion looked like it may or may not exist.
+         break-spaces gives every preserved space real width — visible caret
+         position after it, one predictable backspace — and still wraps long
+         lines so text doesn't escape the inputbar into the tab area. */
+      white-space: break-spaces;
+      overflow-wrap: anywhere;
+    }
+    #hs-mc-input:focus {
+      border-color: #fff;
+    }
+    #hs-mc-input::placeholder {
+      color: var(--hs-muted);
+    }
+    /* Resub-share mode — purple border on the whole inputbar so the user
+       knows their next message becomes the resub celebration body. */
+    #hs-mc-inputbar.hs-mc-resub-share {
+      box-shadow: 0 0 0 2px var(--hs-plat-twitch) inset, 0 0 8px rgba(145,71,255,0.4);
+      background: rgba(145,71,255,0.08);
+    }
+    #hs-mc-input.hs-mc-resub-share,
+    #hs-mc-input.hs-mc-resub-share:focus {
+      border-color: var(--hs-plat-twitch) !important;
+      background: #140d22 !important;
+    }
+    #hs-mc-input.hs-mc-resub-share::placeholder,
+    #hs-mc-input.hs-mc-resub-share[contenteditable]:empty::before,
+    #hs-mc-input.hs-mc-resub-share[contenteditable]:has(br:only-child)::before {
+      color: var(--hs-plat-twitch) !important;
+      font-weight: 600 !important;
+    }
+    /* Watch-streak share mode — orange glow signals heat/streak, distinct
+       from resub purple. Same input mechanism, different brand color. */
+    #hs-mc-inputbar.hs-mc-watchstreak-share {
+      box-shadow: 0 0 0 2px var(--hs-brand) inset, 0 0 8px rgba(255,127,0,0.4);
+      background: rgba(255,127,0,0.08);
+    }
+    #hs-mc-input.hs-mc-watchstreak-share,
+    #hs-mc-input.hs-mc-watchstreak-share:focus {
+      border-color: var(--hs-brand) !important;
+      background: #1a1206 !important;
+    }
+    #hs-mc-input.hs-mc-watchstreak-share::placeholder,
+    #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:empty::before,
+    #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:has(br:only-child)::before {
+      color: var(--hs-brand) !important;
+      font-weight: 600 !important;
+    }
+    /* Contenteditable placeholder. Browsers leave a stray BR after focus/blur
+       cycles which breaks :empty — match BR-only-child too so the placeholder
+       still paints in that state. */
+    #hs-mc-input[contenteditable]:empty::before,
+    #hs-mc-input[contenteditable]:has(br:only-child)::before {
+      content: attr(data-placeholder);
+      color: var(--hs-muted);
+      pointer-events: none;
+      position: absolute;
+      left: 12px;
+      top: 8px;
+      /* Single line — long placeholders (resub-share mode) were wrapping
+         below the input box because absolute placement leaves the text
+         unconstrained. Clip with ellipsis if it overflows. */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 24px);
+    }
+    /* An empty composer shows its placeholder, not a caret — a bar blinking
+       next to "send a message" reads as a second cursor. Same two states the
+       placeholder paints, so caret and placeholder are never both visible. */
+    #hs-mc-input[contenteditable]:empty,
+    #hs-mc-input[contenteditable]:has(br:only-child) {
+      caret-color: transparent;
+    }
+    /* WYSIWYG emote images in input — height clamped, width auto so wide
+       emotes (catKISS, peepoArrive, etc.) render at natural aspect.
+       max-width caps absurdly wide ones so a single emote can't blow out the
+       inputbar layout. cursor:pointer overrides the contenteditable's text
+       caret so every state reads as interactive (right-click blocks, blocked
+       left-click unblocks). The chrome content.js hover-overlay paints the
+       state-coloured rect over the IMG on hover. */
+    #hs-mc-input .hs-input-emote {
+      /* Kick's Tailwind preflight sets img{display:block} globally — without an
+         explicit inline-block the bare chip breaks onto its own line and the
+         input balloons. Twitch has no such reset, so this was Kick-only. */
+      display: inline-block;
+      height: var(--hs-emote-size, 32px);
+      width: auto;
+      max-width: 192px;
+      /* NOT middle: middle anchors at baseline + xHeight/2, and Cozette's 13px
+         x-height is fractional (half = 3.546875px), which puts every adjacent
+         glyph on a half-pixel baseline and smears the bitmap font. text-bottom
+         anchors to the font strut, immune to sibling heights — the same fix the
+         chat rows already carry for .hs-mc-emote-wrapper. */
+      vertical-align: text-bottom;
+      margin: 0 2px;
+      object-fit: contain;
+      cursor: pointer;
+      /* The input bg is #000 (matches chat row bg), so emotes render exactly as
+         they do in chat messages — no contrast halo needed. Dark emotes are as
+         visible here as in any chat row, and the old white-bg drop-shadow halo
+         would be invisible on black. */
+    }
+    /* WYSIWYG zero-width / overlay emote stacking in input.
+       Fixed height keeps line layout stable when overlays render larger than
+       the base; overflow:visible lets tall overlays bleed above/below the
+       baseline (same effect as .hs-mc-emote-stack in chat messages). */
+    #hs-mc-input .hs-input-stack {
+      display: inline-grid;
+      place-items: center;
+      vertical-align: middle;
+      margin: 0 2px;
+      height: var(--hs-emote-size, 32px);
+      box-sizing: border-box;
+      position: relative;
+      overflow: visible;
+    }
+    #hs-mc-input .hs-input-stack > img {
+      grid-area: 1 / 1;
+      margin: 0;
+      max-width: 192px;
+    }
+    /* Overlay child renders at native size for chat parity (chat uses the
+       same trick via .hs-mc-overlay-emote). The base img keeps its clamped
+       height so the stack stays anchored to the line. */
+    #hs-mc-input .hs-input-stack > .hs-input-overlay {
+      height: auto !important;
+      max-height: none;
+      margin: 0 !important;
+    }
+    #hs-mc-input .hs-input-stack > img:first-child { z-index: 1; }
+    #hs-mc-input .hs-input-stack > img:not(:first-child) { z-index: 2; }
+    /* Emoji base of an input stack (overlay emote stacked onto an emoji) —
+       co-locate at the grid cell so the overlay img lands on top of it. */
+    #hs-mc-input .hs-input-stack > .hs-mc-emoji {
+      grid-area: 1 / 1;
+      margin: 0;
+      z-index: 1;
+    }
+    /* Emoji acting as the OVERLAY (stacked on top of the left base) sits above. */
+    #hs-mc-input .hs-input-stack > .hs-mc-emoji:not(:first-child) { z-index: 2; }
+    /* Blocked emote in input — parity with chat/picker: dashed gray border,
+       image hidden. Image content is masked to a 1×1 transparent placeholder
+       (src swap in applyInputEmoteBlockState) so outline still renders (a
+       visibility:hidden / opacity:0 approach also hides the outline). Width
+       collapses to a fixed square so dashed box is always visible. Cursor
+       hints clickability (chrome content.js hover-overlay paints the red
+       rect over the dashed box on hover, matching chat-wrapper behaviour). */
+    #hs-mc-input .hs-input-emote.hs-state-blocked {
+      outline: 2px dashed var(--hs-border);
+      outline-offset: -2px;
+      width: var(--hs-emote-size, 32px);
+      min-width: var(--hs-emote-size, 32px);
+      cursor: pointer;
+    }
+    .hs-mc-emoji {
+      font-variant-emoji: emoji;
+    }
+    /* Colon (emote + emoji) and @-mention autocomplete dropdowns — same
+       chrome, reused for both so a new trigger never needs new CSS. */
+    #hs-mc-emoji-dropdown,
+    #hs-mc-mention-dropdown {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 8px;
+      right: 8px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      z-index: 1004;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 2px;
+    }
+    .hs-mc-emoji-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #fff;
+    }
+    .hs-mc-emoji-row:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* .selected is the ARROW-KEY cursor, :hover above is the pointer. They
+       were both white, so the cursor was invisible under the mouse and you
+       could not tell which row Enter would pick. --hs-sel is where the
+       keyboard is — same split as heatsync.org (--sel-bg). */
+    .hs-mc-emoji-row.selected {
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
+    }
+    .hs-mc-emoji-preview {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+      font-variant-emoji: emoji;
+    }
+    /* Emote row preview image — same 24px slot the emoji preview reserves so
+       columns line up whether a row renders a unicode emoji or an emote. */
+    .hs-mc-emote-preview {
+      width: 24px;
+      height: 20px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .hs-mc-emoji-name {
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    /* !important: mention rows set a per-user inline color (sync-cached
+       username color) directly on this span — inline style beats any plain
+       class rule, so without !important a bright/dark user color would ride
+       straight through hover and land white-on-white or unreadable against
+       the white hover background. This is the one place that's allowed to
+       fight an inline style, since "white bg, black text on hover" is a
+       universal, no-exceptions rule. */
+    .hs-mc-emoji-row.selected .hs-mc-emoji-name,
+    .hs-mc-emoji-row:hover .hs-mc-emoji-name {
+      color: #000 !important;
+    }
+    #hs-mc-slash-dropdown {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 8px;
+      right: 8px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      z-index: 1004;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 2px;
+    }
+    .hs-mc-slash-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #fff;
+    }
+    .hs-mc-slash-row:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* arrow-key cursor — see .hs-mc-emoji-row.selected above */
+    .hs-mc-slash-row.selected {
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
+    }
+    .hs-mc-slash-name { color: #fff; font-weight: 700; }
+    .hs-mc-slash-args { color: var(--hs-muted); flex-shrink: 0; }
+    .hs-mc-slash-desc { color: var(--hs-muted); font-size: 13px; margin-left: auto; }
+    .hs-mc-slash-row:hover .hs-mc-slash-args,
+    .hs-mc-slash-row.selected .hs-mc-slash-args,
+    .hs-mc-slash-row:hover .hs-mc-slash-desc,
+    .hs-mc-slash-row.selected .hs-mc-slash-desc { color: #000; }
+    .hs-mc-slash-row:hover .hs-mc-slash-name,
+    .hs-mc-slash-row.selected .hs-mc-slash-name { color: #000; }
+    #hs-mc-input.over-limit {
+      /* text color handled by highlight overlay */
+    }
+    /* Wrapper to position overlay over the input */
+    #hs-mc-input-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+    }
+    #hs-mc-input-wrap #hs-mc-input { flex: 1; }
+    /* Overlay that mirrors input text with overflow highlighting */
+    #hs-mc-input-highlight {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      /* MUST match #hs-mc-input padding exactly — this overlay mirrors the
+         typed text glyph-for-glyph for over-limit red coloring; any mismatch
+         offsets the red text from what's actually typed. */
+      padding: 5px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      /* Same value as #hs-mc-input — the glyph-for-glyph mirror only holds
+         if both wrap identically (was 'pre': no wrapping = red overlay
+         drifted off the typed text on any wrapped line). */
+      white-space: break-spaces;
+      overflow: hidden;
+      pointer-events: none;
+      border: 1px solid transparent;
+    }
+    #hs-mc-input-highlight .hl-safe { color: #fff; }
+    #hs-mc-input-highlight .hl-over { color: var(--hs-danger); }
+    #hs-mc-send {
+      padding: 8px 12px;
+      background: var(--hs-plat-twitch);
+      color: #fff;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #hs-mc-send:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Heatsync button — 2px pad keeps the 24px icon crisp while holding the
+       button to 28px so it never outgrows the input and inflates the bar
+       (align-items:center means the tallest child sets bar height). */
+    #hs-mc-emote-btn {
+      padding: 2px;
+      background: #000;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: none;
+    }
+    #hs-mc-emote-btn img {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+    #hs-mc-emote-btn:hover {
+      background: #fff;
+    }
+
+    /* Attach button — same 28px square as the heatsync button; monochrome image
+       glyph via currentColor so hover inverts to black-on-white like everything else. */
+    #hs-mc-attach-btn {
+      padding: 2px;
+      width: 28px;
+      height: 28px;
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: none;
+    }
+    #hs-mc-attach-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+    #hs-mc-attach-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* ── Twitch tab sub-tabs (square icon row at top) ─────────────────────── */
+    .hs-mc-tw-subtabs {
+      display: flex;
+      gap: 4px;
+      padding: 6px 8px 4px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .hs-mc-tw-subtab {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: none;
+    }
+    .hs-mc-tw-subtab:hover,
+    .hs-mc-tw-subtab:focus-visible {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      outline: none;
+    }
+    .hs-mc-tw-subtab.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-tw-subtab svg { display: block; }
+    .hs-mc-tw-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+    .hs-mc-cheer-inline {
+      margin: 6px 8px;
+    }
+
+    /* ── Cheer panel — inline bits purchase in the picker's twitch tab ────── */
+    .hs-mc-cheer-panel {
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      padding: 10px;
+      margin: 6px 8px 10px 8px;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.3;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-title {
+      font-weight: 600;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-balance {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-preview {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-preview-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-preview-label {
+      font-variant-numeric: tabular-nums;
+      flex: 1;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-amounts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-amt {
+      flex: 1 0 auto;
+      min-width: 48px;
+      padding: 6px 10px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      cursor: pointer;
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      transition: none;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-amt:hover,
+    .hs-mc-cheer-panel .hs-mc-cheer-amt:focus-visible {
+      background: #fff;
+      color: #000;
+      outline: none;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-amt.active {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-custom {
+      flex: 1 0 80px;
+      min-width: 80px;
+      padding: 6px 10px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      -moz-appearance: textfield;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-outer-spin-button,
+    .hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-msg {
+      padding: 6px 10px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      font: inherit;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-msg::placeholder,
+    .hs-mc-cheer-panel .hs-mc-cheer-custom::placeholder {
+      color: rgba(255,255,255,0.45);
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-cancel,
+    .hs-mc-cheer-panel .hs-mc-cheer-send {
+      padding: 6px 14px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      cursor: pointer;
+      font: inherit;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-cancel:hover,
+    .hs-mc-cheer-panel .hs-mc-cheer-send:hover:not(:disabled) {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-send:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .hs-mc-cheer-panel .hs-mc-cheer-launch {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.05em;
+      font-weight: 700;
+    }
+
+    /* Cheermote rendering inside chat messages — universal Cheer tier image
+       (animated) + colored amount. Triggered by msg.bits > 0 in the renderer. */
+    .hs-mc-cheermote {
+      height: 24px;
+      width: auto;
+      vertical-align: middle;
+      display: inline-block;
+      margin: -2px 2px 0 0;
+    }
+    .hs-mc-cheer-amt {
+      font-weight: 700;
+      margin-right: 2px;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.05em;
+    }
+
+    /* === Profile card — system sans, no chrome, badges-first === */
+    .hs-pcard {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+      padding: 10px;
+      color: #fff;
+      background: #000;
+      font-size: 13px;
+      line-height: 18px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+      /* Accent CSS var — defaults to heatsync orange, overridden per-streamer
+         when the GQL response carries a primaryColorHex. Drives the hero
+         border, avatar ring, and accent-tinted divider glow below. */
+      --hs-pcard-accent: #fff;
+    }
+    /* Hero banner — compact strip, image lives behind the avatar/name. Shorter
+       than the original 140px so identity + actions fit in the first viewport. */
+    .hs-pcard-hero {
+      position: relative;
+      height: 76px;
+      margin: -10px -10px 0 -10px;
+      background: #0a0a0a;
+      overflow: hidden;
+      border-bottom: 1px solid var(--hs-pcard-accent, #2a2a2a);
+    }
+    .hs-pcard-hero-img {
+      position: absolute; inset: 0;
+      background-position: center; background-size: cover; background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.15s ease-out;
+      filter: saturate(1.1) contrast(1.04);
+    }
+    .hs-pcard-hero.hs-pcard-hero-loaded .hs-pcard-hero-img {
+      opacity: 0.9;
+    }
+    .hs-pcard-hero-scrim {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      pointer-events: none;
+    }
+    /* Identity row sits flush below the hero; only the avatar lifts upward
+       to overlap the seam. Discord/Twitter idiom — banner + half-overlapping
+       pfp + name below, with the rest of the column flowing normally. */
+    .hs-pcard-id .hs-pcard-id-row {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+    }
+    /* Sticky close — pinned to card top-right, stays visible while scrolling.
+       Negative bottom margin lets it overlay the id-row without taking column
+       space; id-row gets right padding so display name never slides under it. */
+    .hs-pcard-close {
+      position: absolute; top: 8px; right: 8px;
+      margin: 0;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; line-height: 1; font-weight: 400;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer; padding: 0;
+      z-index: 10;
+      transition: none;
+    }
+    .hs-pcard-close:hover { background: #fff; color: #000; border-color: #fff; }
+    .hs-pcard-close:active { }
+    .hs-pcard-close:focus-visible { outline: 1px solid #fff; outline-offset: 1px; }
+    /* Close button overlays the hero — no need to reserve right space on the id row.
+       Kept rule absent so the row sits flush; the absolute-positioned close has its own footprint. */
+    /* Sections are pure spacing — drop chrome borders + label-on-top */
+    .hs-pcard-section {
+      border: 0; padding: 0; margin: 0; position: static; background: transparent;
+    }
+    .hs-pcard-section-title { display: none; }
+    /* Section dividers — accent-tinted at low opacity so each card adopts
+       the streamer's identity color, without the divider screaming for
+       attention. Falls back to #1a1a1a when accent is unset. */
+    .hs-pcard-section + .hs-pcard-section {
+      border-top: 1px solid color-mix(in srgb, var(--hs-pcard-accent, #1a1a1a) 18%, #0a0a0a);
+      padding-top: 7px;
+    }
+
+    .hs-pcard-id-row { display: flex; gap: 10px; align-items: flex-start; }
+    .hs-pcard-avatar {
+      width: 56px; height: 56px; border-radius: 0; object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid var(--hs-pcard-accent, #fff);
+      background: #000;
+      /* Lifts avatar so it half-overlaps the shorter (76px) hero strip. */
+      margin-top: -32px;
+      position: relative;
+      z-index: 2;
+      box-shadow:
+        0 0 0 2px #000,
+        0 6px 16px rgba(0, 0, 0, 0.7),
+        0 0 18px color-mix(in srgb, var(--hs-pcard-accent, transparent) 35%, transparent);
+    }
+    .hs-pcard-id-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    /* Identity chip row — pills + native badges + age/role/verified all flow
+       as flex-wrap siblings; no forced line breaks between groups. */
+    .hs-pcard-id-chips {
+      display: flex; flex-wrap: wrap; gap: 3px; align-items: center;
+      font-size: 13px; line-height: 18px;
+    }
+    .hs-pcard-id-chips img.hs-mc-badge-img { width: 18px; height: 18px; }
+    /* Pronoun chip (pronoundb.org) — square, terminal-styled, neutral ANSI
+       cyan so it never competes with the platform brand colors on the pills
+       below it. No hover/active state — static info, not interactive. */
+    .hs-pcard-pronoun {
+      display: inline-flex; align-items: center;
+      padding: 1px 4px; border: 1px solid #333; background: #111;
+      color: #5fd7d7; font-size: 13px; font-weight: 700;
+      line-height: 16px; white-space: nowrap;
+    }
+    .hs-pcard-name {
+      font-size: 16px; font-weight: 700; color: #fff;
+      display: flex; align-items: center; gap: 6px; line-height: 18px;
+    }
+    .hs-pcard-livedot { color: var(--hs-live); font-size: 9px; }
+    /* Filled-style platform pills — mirror #hs-user-tooltip .hs-pc-platform
+       so the click-card identity row looks identical to the hover tooltip. */
+    .hs-pcard-pill-twitch { background: var(--hs-plat-twitch); color: #fff; }
+    .hs-pcard-pill-kick { background: var(--hs-plat-kick); color: #000; }
+    .hs-pcard-pill-youtube { background: var(--hs-plat-youtube); color: #fff; }
+    .hs-pcard-bio {
+      color: var(--hs-muted); font-size: 13px; line-height: 18px;
+      white-space: pre-wrap; word-break: break-word;
+      border-left: 2px solid #1a1a1a; padding: 0 0 0 8px;
+    }
+    .hs-pcard-bio-mention { color: #fff; cursor: pointer; }
+    .hs-pcard-bio-mention:hover { text-decoration: underline; }
+    .hs-pcard-bio-tag { color: var(--hs-thread); text-decoration: none; }
+    .hs-pcard-bio-tag:hover { text-decoration: underline; }
+    /* Property sheet — 2-col zebra list. The pcard surface uses system-sans
+       by default (see body.hs-font-bitmap .hs-pcard counter-rule near top
+       of styles.js), so the sheet must opt back into 13px CozetteVector +
+       bitmap render block for crispness. dt/dd cells must NEVER have
+       fractional metrics (no kerning, ligatures, letter-spacing) or the
+       bitmap glyphs smear — same root cause as the tooltip badge fix. */
+    .hs-pcard-sheet {
+      display: grid; grid-template-columns: max-content 1fr;
+      column-gap: 12px; row-gap: 0;
+      font-family: 'CozetteVector', 'Courier New', monospace;
+      font-size: 13px; line-height: 18px;
+      margin: 0;
+    }
+    .hs-pcard-sheet dt, .hs-pcard-sheet dd {
+      padding: 1px 6px; margin: 0;
+    }
+    .hs-pcard-sheet dt { color: #888; font-weight: 400; }
+    .hs-pcard-sheet dd { color: #fff; font-weight: 700; }
+    /* Zebra cadence — alt rows use the same #1f1f1f as chat zebra. */
+    .hs-pcard-sheet dt:nth-of-type(even),
+    .hs-pcard-sheet dd:nth-of-type(even) { background: #303030; }
+    /* Semantic color on values — only fields with state earn a color. */
+    /* ANSI 256-mapped semantic colors. Each row's value carries meaning via hue:
+       identity = brand, time = yellow, tier = amber/silver, power = red,
+       relationship direction = cool (outflow) / warm (inflow) / saturated (mutual). */
+    .hs-pcard-sheet .val-age { color: var(--hs-warn); }       /* xterm 226 — time */
+    .hs-pcard-sheet .val-partner { color: var(--hs-gold); }    /* xterm 214 — premium */
+    .hs-pcard-sheet .val-affiliate { color: #bcbcbc; }  /* xterm 250 — entry */
+    .hs-pcard-sheet .val-ttv { color: var(--hs-plat-twitch); }        /* twitch brand */
+    .hs-pcard-sheet .val-kick { color: var(--hs-plat-kick); }       /* kick brand */
+    .hs-pcard-sheet .val-yt { color: var(--hs-plat-youtube); }         /* xterm 196 — yt brand */
+    .hs-pcard-sheet .val-hs { color: var(--hs-brand); }         /* xterm 208 — heatsync brand */
+    .hs-pcard-sheet .val-admin { color: #ff0000; }      /* xterm 196 — power */
+    .hs-pcard-sheet .val-staff { color: #fff; }      /* xterm 208 — hs orange */
+    .hs-pcard-sheet .val-heat { color: #ff0000; }       /* xterm 196 — fire */
+    .hs-pcard-sheet .val-followers { color: #0087ff; }  /* xterm 33 — popularity */
+    .hs-pcard-sheet .val-you-follow { color: var(--hs-reply); } /* xterm 51 — outflow */
+    .hs-pcard-sheet .val-you-sub { color: #875fff; }    /* xterm 99 — paid outflow */
+    .hs-pcard-sheet .val-they-follow { color: var(--hs-thread); }/* xterm 201 — inflow */
+    .hs-pcard-sheet .val-they-sub { color: #ff5fff; }   /* xterm 207 — paid inflow */
+    .hs-pcard-sheet .val-mutual { color: var(--hs-ok); }     /* xterm 46 — handshake */
+    .hs-pcard-sheet .val-mutual-sub { color: var(--hs-gold); } /* xterm 220 — premium handshake */
+    .hs-pcard-sheet .val-ch { color: #fff; }         /* xterm 208 — channel context */
+    .hs-pcard-sheet .hs-pc-live { color: var(--hs-live); font-weight: 700; }
+    /* Inside the sheet: digits inherit cozette from the sheet (bitmap-crisp),
+       degree symbol falls back to ui-monospace (vector AA, has clean °). */
+    .hs-pcard-sheet .hs-heat-num { font-family: inherit; }
+    .hs-pcard-sheet .hs-heat-n { font-family: inherit; }
+    .hs-pcard-sheet .hs-heat-deg { font-family: ui-monospace, SFMono-Regular, monospace; }
+    /* Counter-counter: re-apply bitmap render block to the sheet so cozette
+       renders crisp inside the .hs-pcard system-sans bubble. */
+    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet,
+    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet * {
+      -webkit-font-smoothing: none !important;
+      -moz-osx-font-smoothing: unset !important;
+      font-smooth: never !important;
+      text-rendering: optimizeSpeed !important;
+      font-synthesis: none !important;
+      font-optical-sizing: none !important;
+      font-kerning: none !important;
+      font-variant-ligatures: none !important;
+      font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0 !important;
+      letter-spacing: 0 !important;
+    }
+    /* Counter-counter-counter: the ° span inside the sheet wants AA back —
+       cozette's degree glyph (if it exists) renders thin/uneven, vector AA °
+       looks cleaner. Listed AFTER the sheet bitmap block so it wins. */
+    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet .hs-heat-deg {
+      -webkit-font-smoothing: subpixel-antialiased !important;
+      -moz-osx-font-smoothing: auto !important;
+      font-smooth: auto !important;
+      text-rendering: auto !important;
+      font-kerning: auto !important;
+      font-feature-settings: normal !important;
+      letter-spacing: normal !important;
+    }
+    .hs-pcard-link { color: #fff; text-decoration: none; font-weight: 600; }
+    .hs-pcard-link:hover { text-decoration: underline; }
+    .hs-pcard-msg {
+      display: flex; gap: 6px; padding: 2px 0;
+      font-size: 13px; align-items: baseline;
+    }
+    .hs-pcard-msg-ts { color: var(--hs-muted); flex-shrink: 0; font-size: 13px; min-width: 38px; }
+    .hs-pcard-msg-plat {
+      flex-shrink: 0; font-size: 13px; padding: 0 3px;
+      font-weight: 600; line-height: 19px; color: #888;
+    }
+    /* Recent-message platform letter — text-only override, no bg. The
+       identity-row pills above share .hs-pcard-pill-* classes for color but
+       want the filled tooltip look; the inline message-history badge stays
+       plain so 12 stacked rows don't read as a wall of purple. */
+    .hs-pcard-msg-plat.hs-pcard-pill-twitch { background: transparent; color: var(--hs-plat-twitch); border: none; }
+    .hs-pcard-msg-plat.hs-pcard-pill-kick { background: transparent; color: var(--hs-plat-kick); border: none; }
+    .hs-pcard-msg-plat.hs-pcard-pill-youtube { background: transparent; color: var(--hs-plat-youtube); border: none; }
+    .hs-pcard-msg-text {
+      color: #fff; word-break: break-word; overflow-wrap: anywhere; flex: 1;
+    }
+    .hs-pcard-action-grid {
+      display: flex; flex-wrap: wrap; gap: 3px;
+    }
+    .hs-pcard-action {
+      background: transparent; color: #fff; border: 1px solid #333;
+      padding: 4px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
+      text-align: center; box-sizing: border-box; line-height: 18px;
+    }
+    .hs-pcard-action:hover:not(:disabled) { background: #fff; color: #000; border-color: #fff; }
+    .hs-pcard-action:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Notes section — private cross-platform note preview + edit trigger. */
+    .hs-pcard-notes { display: flex; flex-direction: column; gap: 4px; }
+    .hs-pcard-note-body {
+      color: #fff; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
+      max-height: 96px; overflow-y: auto; font-size: 13px; line-height: 1.4;
+    }
+    .hs-pcard-note-body.hs-pcard-note-empty { color: var(--hs-muted); font-style: italic; }
+    .hs-pcard-note-edit {
+      align-self: flex-start; background: transparent; color: #fff; border: 1px solid #333;
+      padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
+    }
+    .hs-pcard-note-edit:hover { background: #fff; color: #000; border-color: #fff; }
+
+    /* Mod actions row — compact toolbar at the top of the card when you mod
+       a channel this user has chatted in. Channel label + del/timeout/ban
+       buttons sit on a single line per channel. Buttons share borders so the
+       group reads as one unit, mirroring the inline hover toolbar style. */
+    .hs-pcard-mod {
+      background: rgba(255,255,255,0.08);
+      border-left: 2px solid var(--hs-pcard-accent, #fff);
+      padding: 5px 8px;
+      margin: -2px 0;
+    }
+    .hs-pcard-mod-row {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      font-size: 13px; line-height: 18px;
+    }
+    .hs-pcard-mod-row + .hs-pcard-mod-row { margin-top: 4px; }
+    .hs-pcard-mod-ch {
+      color: var(--hs-pcard-accent, #fff);
+      font-weight: 700; font-size: 13px;
+      min-width: 0; flex-shrink: 0; margin-right: 2px;
+    }
+    .hs-pcard-mod-btn {
+      background: transparent; color: #fff;
+      border: 1px solid #555; border-right-width: 0;
+      padding: 2px 7px; cursor: pointer; font-family: inherit;
+      font-size: 13px; line-height: 16px; box-sizing: border-box;
+    }
+    .hs-pcard-mod-btn:last-child { border-right-width: 1px; }
+    .hs-pcard-mod-btn:hover:not(:disabled) { background: #fff; color: #000; border-color: #fff; }
+    .hs-pcard-mod-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .hs-pcard-mod-btn-danger { color: var(--hs-danger); border-color: #5a1414; }
+    .hs-pcard-mod-btn-danger:hover:not(:disabled) { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
+
+    /* Per-tab platform filter toggles (T/K/Y). Sits AFTER the util cluster
+       (DOM order). Horizontal mode: tight content-sized strip on far right.
+       Vertical mode: full column width row below util. */
+    #hs-mc-platfilter {
+      display: flex;
+      flex: 0 0 auto;
+      /* Each button owns a COMPLETE box, same as the composer send chips.
+         This used to be a segmented control (gap:0, margin-left:-1px,
+         align-items:stretch) so neighbours shared one border line — which
+         reads as T and K missing their right edge, and stretch merged the
+         top edge into the row above. Two clusters of the same control now
+         look the same in both places. */
+      gap: 2px;
+      align-items: center;
+      margin-left: 0;
+    }
+    #hs-mc-platfilter:empty { display: none; margin: 0; }
+    /* Inside platfilter (horizontal strip): fixed 18x18, same box as the
+       composer send chips. These used to divide the cluster width with
+       flex:1 1 0, which lands the buttons on fractional x (measured .66/.33)
+       — and bitmap text on a sub-pixel x is exactly what smears. Vertical
+       (side-tab) mode below still fills the column on purpose. */
+    #hs-mc-platfilter .hs-mc-pf-btn {
+      flex: 0 0 18px !important;
+      width: 18px !important;
+      min-width: 18px !important;
+      max-width: 18px !important;
+    }
+    /* Keep every T/K/Y a COMPLETE colored box in the dissolved horizontal layout.
+       In top/bottom tabs #hs-mc-platfilter becomes display:contents (02-tab-bar),
+       which drops this container's gap and re-exposes the util cluster's
+       margin:-1px — that collapses adjacent platform-colored borders into one
+       shared line, so T/K read as missing their right edge (grey util buttons
+       hide it; colored ones can't). Pin a real right-gap on the button itself so
+       the separation survives the dropped container gap. */
+    body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,
+    body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn {
+      margin: 0 2px 0 0 !important;
+    }
+    /* Vertical mode: platfilter spans full column width, buttons share row */
+    .hs-tabs-right #hs-mc-platfilter,
+    .hs-tabs-left #hs-mc-platfilter {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 2px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-left: 0;
+      flex: 0 0 auto;
+    }
+    .hs-tabs-right #hs-mc-platfilter .hs-mc-pf-btn,
+    .hs-tabs-left #hs-mc-platfilter .hs-mc-pf-btn {
+      flex: 1 1 0 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 18px !important;
+      font-size: 13px !important;
+    }
+    .hs-mc-pf-btn {
+      background: transparent;
+      border: 1px solid;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      /* Explicit height: with align-items:center the button no longer takes
+         its height from the row, so it needs its own. 18px matches the
+         whisper-row grid and the vertical-mode override below. */
+      height: 18px;
+      padding: 0 4px;
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1;
+      box-sizing: border-box;
+      min-width: 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* ON state — OUTLINE: platform-colored border + letter on transparent.
+       Deliberately distinct from the composer's FILLED send chips — outline
+       = what you SEE, fill = where you SEND. This styling split (plus
+       location) is what disambiguates the twin T K Y clusters now that the
+       'show:'/'send:' text labels are gone. */
+    .hs-mc-pf-btn.hs-mc-pf-twitch { border-color: var(--hs-plat-twitch) !important; background: transparent !important; color: var(--hs-plat-twitch) !important; }
+    .hs-mc-pf-btn.hs-mc-pf-kick { border-color: var(--hs-plat-kick) !important; background: transparent !important; color: var(--hs-plat-kick) !important; }
+    .hs-mc-pf-btn.hs-mc-pf-youtube {
+      border-color: var(--hs-plat-youtube) !important;
+      background: transparent !important;
+      color: var(--hs-plat-youtube) !important;
+    }
+    /* OFF state — dim border + dim letter; the cue is losing the platform
+       color entirely. */
+    .hs-mc-pf-btn.off {
+      background: transparent !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
+    }
+    .hs-mc-pf-btn:hover,
+    .hs-mc-pf-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+    .hs-mc-pf-btn.off:hover,
+    .hs-mc-pf-btn.off:active {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+
+    /* Composer send-target chips — one small pill per linked platform,
+       shown only when the active channel tab has >1 linked platform (see
+       renderSendTargetChips, input.js). Sits between the input and the
+       emote button. FILLED when on — deliberately distinct from the
+       OUTLINE view-filter buttons in the tab strip (fill = where you
+       SEND, outline = what you SEE). */
+    #hs-mc-sendtargets {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 2px;
+      /* margin-left auto: no-op inline (input flex:1 absorbs slack), but
+         right-aligns the chips+emote cluster if the bar ever wraps. */
+      margin: 0 4px 0 auto;
+    }
+    #hs-mc-sendtargets:empty { display: none; margin: 0; }
+    .hs-mc-st-btn {
+      background: transparent;
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 700;
+      /* INTEGER 18x18, identical to the tab-strip filter buttons. Padding-sized
+         boxes measured 17.81px wide and landed the glyphs on fractional x —
+         which is exactly what makes a bitmap font smear (same trap as the
+         whisper arrow's integer-width note). Fixed box, centred glyph, whole
+         pixels. */
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    /* ON state — OUTLINE, identical to the tab-strip filter buttons. These
+       two T K Y clusters used to be styled differently on purpose (fill =
+       send, outline = see), but two visual languages for one control shape
+       reads as inconsistency, not as meaning. A solid platform block is also
+       the loudest thing in a dense terminal UI, and a filled red youtube
+       chip reads as an error state rather than a platform. Colored glyph on
+       black is the house treatment; the clusters are told apart by WHERE
+       they sit plus the → marker on the send cluster. */
+    .hs-mc-st-btn.hs-mc-st-twitch { border-color: var(--hs-plat-twitch) !important; background: transparent !important; color: var(--hs-plat-twitch) !important; }
+    .hs-mc-st-btn.hs-mc-st-kick { border-color: var(--hs-plat-kick) !important; background: transparent !important; color: var(--hs-plat-kick) !important; }
+    .hs-mc-st-btn.hs-mc-st-youtube { border-color: var(--hs-plat-youtube) !important; background: transparent !important; color: var(--hs-plat-youtube) !important; }
+    .hs-mc-st-btn.off {
+      background: transparent !important;
+      color: var(--hs-border) !important;
+      border-color: var(--hs-border) !important;
+    }
+    /* The send cluster's "where it goes" marker. Not a button — a one-glyph
+       label, dim so it never competes with the letters.
+
+       Sized and boxed exactly like .hs-whisper-arrow (02-tab-bar.css): pulled
+       OUT of the Cozette stack into a scalable mono face, because Cozette is
+       a bitmap font and only renders sharp at its native grid — scaling it up
+       just smears. The box is pinned to an integer height/width so a
+       fractional glyph advance can't push the chips next to it onto a
+       half-pixel and smear THEM (the same trap that hit "you" after the
+       whisper arrow). Flex handles the vertical centring here, so no
+       vertical-align hack is needed. */
+    .hs-mc-st-arrow {
+      color: var(--hs-muted);
+      font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
+      font-size: 19px;
+      font-weight: 700;
+      display: inline-block;
+      height: 18px;
+      line-height: 18px;
+      width: 12px;
+      text-align: center;
+      overflow: visible;
+      align-self: center;
+      user-select: none;
+    }
+    .hs-mc-st-btn:hover,
+    .hs-mc-st-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+    .hs-mc-st-btn.off:hover,
+    .hs-mc-st-btn.off:active {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+
+    /* Emote picker panel — covers the whole chat body (tab bar + composer stay
+       visible). top/height are measured onto it by syncPickerBox() so it lands
+       on exactly the message list's box in every tab position, popout and
+       platform; these values are only the pre-measure fallback. It used to be a
+       fixed min(400px,60vh) panel that the message list shrank to make room for,
+       which left a useless sliver of chat above a picker that still scrolled. */
+    #hs-mc-emote-picker {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      /* Minimum width to fit all three provider chips (7tv/bttv/ffz) side by
+         side without overflow. ~34+40+34px chips + 2×3px gap + 16px padding
+         + some search input = 210px floor. Without this the chips at ~115px
+         container width extend past picker.getBoundingClientRect().right and
+         land outside picker.contains(target), firing the dismiss handler. */
+      min-width: 210px;
+      background: #000;
+      border-top: 1px solid var(--hs-border);
+      z-index: 1003;
+      overflow: hidden;
+      flex-direction: column;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    #hs-mc-emote-picker.visible {
+      display: flex;
+    }
+
+    /* Picker tabs — pinned to bottom */
+    #hs-mc-emote-picker .hs-mc-picker-tabs {
+      display: flex !important;
+      border-top: 1px solid var(--hs-border);
+      flex-shrink: 0 !important;
+      min-height: 0 !important;
+      margin-top: auto !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      background: #000 !important;
+    }
+    #hs-mc-emote-picker .hs-mc-picker-tab {
+      flex: 1 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      padding: 6px 4px !important;
+      background: transparent !important;
+      color: var(--hs-muted) !important;
+      border: none !important;
+      cursor: pointer;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      text-align: center;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      width: auto !important;
+      overflow: visible !important;
+      position: relative !important;
+      transition: none;
+    }
+    #hs-mc-emote-picker .hs-mc-picker-tab:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    #hs-mc-emote-picker .hs-mc-picker-tab.active {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    #hs-mc-emote-picker .hs-mc-picker-tab.active:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-tab-content {
+      flex: 1 1 0 !important;
+      min-height: 0 !important;
+      overflow-y: auto !important;
+    }
+    /* Custom scrollbar — Chrome + Firefox */
+    .hs-mc-tab-content,
+    .hs-mc-picker-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.12) transparent;
+    }
+    .hs-mc-tab-content::-webkit-scrollbar,
+    .hs-mc-picker-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .hs-mc-tab-content::-webkit-scrollbar-track,
+    .hs-mc-picker-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .hs-mc-tab-content::-webkit-scrollbar-thumb,
+    .hs-mc-picker-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 0;
+    }
+    .hs-mc-tab-content::-webkit-scrollbar-thumb:hover,
+    .hs-mc-picker-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .hs-mc-picker-scroll {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    /* Section headers surface the superset — Set / 7TV / BTTV / FFZ / channel —
+       so a user sees at a glance that HeatSync renders every network's emotes
+       (the thing a 7TV-only user can't). Sticky within the scroll so the label
+       stays put while paging a long section. Square, dim, 13px, terminal palette. */
+    .hs-mc-picker-section-header {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 6px 3px;
+      font-size: 13px;
+      color: var(--hs-border);
+      background: #000;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .hs-mc-picker-section:first-child .hs-mc-picker-section-header {
+      border-top: none;
+    }
+    .hs-mc-picker-section-count {
+      color: var(--hs-muted);
+      font-size: 13px;
+      background: rgba(255,255,255,0.06);
+      padding: 1px 5px;
+      border-radius: 0;
+    }
+    .hs-mc-picker-section-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2px;
+      padding: 6px;
+    }
+    .hs-mc-picker-header {
+      padding: 8px !important;
+      border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+      display: block !important;
+      visibility: visible !important;
+      background: #000 !important;
+    }
+    /* Search-wrap hosts BOTH the input (flex:1) and the chip bar (right
+       edge), so providers chips visibly anchor to the search input — not
+       to the emote grid below. Z-index 2 on the icon keeps it above the
+       input's white bg without intercepting clicks. */
+    .hs-mc-search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hs-mc-search-icon {
+      position: absolute;
+      left: 10px;
+      pointer-events: none;
+      opacity: 0.5;
+      color: var(--hs-muted);
+      z-index: 2;
+    }
+    #hs-mc-emote-search {
+      flex: 1;
+      min-width: 0;
+      width: auto;
+      padding: 4px 8px 4px 28px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+      transition: none;
+    }
+    #hs-mc-emote-search:focus {
+      border-color: #fff;
+    }
+    .hs-mc-src-chips {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    /* Provider chips wear each network's brand color (7TV cyan, BTTV red,
+       FFZ blue) — matches src-* tooltip colors and keeps orange reserved
+       for HeatSync brand chrome. Inactive = ghost (brand text, half-strength
+       border, no fill); active = full brand fill with contrasting text;
+       hover = white (snappy override across both states). */
+    .hs-mc-src-chip {
+      background: transparent;
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 7px;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 0;
+      line-height: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: none;
+    }
+    .hs-mc-src-chip[data-src="7tv"]  { color: #29d8f6; border-color: rgba(41,216,246,0.5); }
+    .hs-mc-src-chip[data-src="bttv"] { color: #d50014; border-color: rgba(213,0,20,0.5); }
+    .hs-mc-src-chip[data-src="ffz"]  { color: #0086c8; border-color: rgba(0,134,200,0.5); }
+    .hs-mc-src-chip[data-src="hs"]   { color: var(--hs-plat-hs); border-color: rgba(255,135,0,0.5); }
+    .hs-mc-src-chip.active[data-src="7tv"]  { background: #29d8f6; color: #000; border-color: #29d8f6; }
+    .hs-mc-src-chip.active[data-src="bttv"] { background: #d50014; color: #fff; border-color: #d50014; }
+    .hs-mc-src-chip.active[data-src="ffz"]  { background: #0086c8; color: #fff; border-color: #0086c8; }
+    .hs-mc-src-chip.active[data-src="hs"]   { background: var(--hs-plat-hs); color: #000; border-color: var(--hs-plat-hs); }
+    .hs-mc-src-chip:hover { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+    /* Exact-match filter chip — orange (HeatSync) accent, distinct from the
+       brand-colored provider chips. Same square metrics. */
+    .hs-mc-exact-chip {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.5);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 7px;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 0;
+      line-height: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: none;
+    }
+    .hs-mc-exact-chip.active { background: #fff; color: #000; border-color: #fff; }
+    .hs-mc-exact-chip:hover { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+    /* Load-more tile — full-width square action at the tail of search results
+       to fetch the next page from each provider. */
+    .hs-mc-load-more {
+      display: block;
+      width: calc(100% - 12px);
+      margin: 4px 6px 8px;
+      padding: 7px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      border-radius: 0;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: none;
+    }
+    .hs-mc-load-more:hover { background: #fff; color: #000; border-color: #fff; }
+    #hs-mc-emote-search::placeholder {
+      color: var(--hs-muted);
+    }
+    .hs-mc-picker-emote {
+      width: auto !important;
+      height: auto !important;
+      min-width: 28px !important;
+      min-height: 28px !important;
+      max-width: 96px !important;
+      max-height: 32px !important;
+      object-fit: contain !important;
+      cursor: pointer !important;
+      border-radius: 0 !important;
+      padding: 4px !important;
+      transition: none;
+      display: inline-block !important;
+      visibility: visible !important;
+    }
+    /* Hover state lives on the wrap (.hs-mc-picker-emote-wrap ::before) —
+       white rect (default) or dashed-grey (blocked). Img-level fills were
+       removed when the 3-state ladder was collapsed; wrap ::before is the
+       single source of hover styling now. */
+    .hs-mc-picker-empty {
+      padding: 32px !important;
+      text-align: center !important;
+      color: var(--hs-muted) !important;
+      font-size: 13px !important;
+      visibility: visible !important;
+    }
+    /* Empty-inventory cold-start CTA — import button reuses .hs-mc-load-more */
+    .hs-mc-cold-start {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .hs-mc-cold-start-title { color: #fff; font-size: 14px; font-weight: 700; }
+    .hs-mc-cold-start-sub { color: var(--hs-muted); font-size: 13px; max-width: 260px; line-height: 1.4; }
+    .hs-mc-cold-start .hs-mc-load-more { width: auto; margin: 0; padding: 7px 14px; text-transform: none; letter-spacing: 0; }
+    .hs-mc-picker-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 4px 0;
+    }
+
+    /* Emote sizing default */
+    :root {
+      --hs-emote-size: 32px;
+    }
+
+    /* ═══ Twitch menu ═══ */
+    .hs-mc-menu-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      padding: 10px 14px !important;
+      cursor: pointer !important;
+      color: #fff !important;
+      transition: none;
+      visibility: visible !important;
+      border-left: 3px solid transparent;
+      margin: 0 6px;
+    }
+    .hs-mc-menu-item:hover {
+      background: #fff !important;
+      border-left-color: #000;
+    }
+    .hs-mc-menu-item:active {
+      background: #fff !important;
+    }
+    .hs-mc-menu-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.12);
+      background: color-mix(in srgb, var(--menu-accent, #fff) 12%, transparent);
+      color: var(--menu-accent, #fff);
+      flex-shrink: 0;
+      transition: none;
+    }
+    .hs-mc-menu-item:hover .hs-mc-menu-icon {
+      background: #000;
+      color: #fff;
+    }
+    .hs-mc-menu-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .hs-mc-menu-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      line-height: 17px;
+    }
+    .hs-mc-menu-item:hover .hs-mc-menu-title {
+      color: #000;
+    }
+    .hs-mc-menu-arrow {
+      color: var(--hs-muted);
+      flex-shrink: 0;
+      transition: none;
+    }
+    .hs-mc-menu-item:hover .hs-mc-menu-arrow {
+      color: #000;
+    }
+    .hs-mc-menu-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 4px 20px;
+    }
+
+    /* ═══ Predictions ═══ */
+    .hs-mc-pred-loading {
+      padding: 20px;
+      text-align: center;
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    .hs-mc-pred-empty {
+      padding: 20px;
+      text-align: center;
+    }
+    .hs-mc-pred-empty-text {
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    .hs-mc-prediction {
+      padding: 10px 12px;
+    }
+    .hs-mc-pred-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .hs-mc-pred-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 17px;
+      flex: 1;
+    }
+    .hs-mc-pred-title img,
+    .hs-mc-pred-outcome-title img {
+      height: 1.2em;
+      vertical-align: -0.2em;
+      margin: 0 1px;
+    }
+    .hs-mc-pred-locked {
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: 0;
+      background: rgba(255,255,255,0.1);
+      color: var(--hs-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .hs-mc-pred-timer {
+      font-size: 13px;
+      color: #fff;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .hs-mc-pred-balance {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hs-mc-pred-outcomes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hs-mc-pred-outcome {
+      background: rgba(255,255,255,0.04);
+      border-radius: 0;
+      padding: 8px 10px;
+      border-left: 3px solid var(--oc, var(--hs-info));
+    }
+    .hs-mc-pred-outcome-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .hs-mc-pred-outcome-title {
+      font-size: 13px;
+      color: #fff;
+      font-weight: 500;
+    }
+    .hs-mc-pred-outcome-pct {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--oc, var(--hs-info));
+      font-variant-numeric: tabular-nums;
+    }
+    .hs-mc-pred-bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 0;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .hs-mc-pred-bar-fill {
+      height: 100%;
+      background: var(--oc, var(--hs-info));
+      border-radius: 0;
+    }
+    .hs-mc-pred-outcome-stats {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-bottom: 6px;
+    }
+    .hs-mc-pred-bet-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hs-mc-pred-bet-btn {
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 13px;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-pred-bet-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-pred-bet-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .hs-mc-pred-bet-btn:disabled:hover {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+    }
+    .hs-mc-pred-bet-custom {
+      width: 52px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      color: #fff;
+      font-size: 13px;
+      padding: 2px 6px;
+      outline: none;
+      font-family: inherit;
+    }
+    .hs-mc-pred-bet-custom::placeholder { color: var(--hs-muted); }
+    .hs-mc-pred-bet-custom:focus {
+      border-color: #fff;
+    }
+    .hs-mc-pred-bet-custom:disabled {
+      background: rgba(255,255,255,0.04);
+      color: var(--hs-muted);
+      opacity: 0.3;
+    }
+    .hs-mc-pred-bet-custom::-webkit-inner-spin-button,
+    .hs-mc-pred-bet-custom::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .hs-mc-pred-bet-go {
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-pred-bet-go:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-pred-bet-go:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .hs-mc-pred-bet-go:disabled:hover {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+    }
+    .hs-mc-pred-bet-max {
+      font-weight: 600;
+      color: #fff;
+    }
+    .hs-mc-pred-bet-max:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Prediction states */
+    .hs-mc-pred-status {
+      font-size: 13px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-pred-status-resolved {
+      background: rgba(0,200,100,0.15);
+      color: var(--hs-ok);
+    }
+    .hs-mc-pred-status-canceled {
+      background: rgba(255,255,255,0.08);
+      color: var(--hs-muted);
+    }
+
+    /* Result banners */
+    .hs-mc-pred-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 0;
+      text-align: center;
+    }
+    .hs-mc-pred-result-amount {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      letter-spacing: -0.5px;
+    }
+    .hs-mc-pred-result-label {
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 4px;
+    }
+    .hs-mc-pred-result-won {
+      background: rgba(0,200,100,0.12);
+      color: var(--hs-ok);
+      border: 1px solid rgba(0,200,100,0.3);
+    }
+    .hs-mc-pred-result-lost {
+      background: rgba(255,60,60,0.08);
+      color: var(--hs-danger);
+      border: 1px solid rgba(255,60,60,0.2);
+    }
+    .hs-mc-pred-result-refund {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .hs-mc-pred-result-neutral {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Outcome states */
+    .hs-mc-pred-outcome-won {
+      border-left-color: var(--hs-ok);
+      background: rgba(0,200,100,0.08);
+    }
+    .hs-mc-pred-outcome-lost {
+      opacity: 0.45;
+    }
+    .hs-mc-pred-outcome-yours {
+      box-shadow: inset 0 0 0 1px rgba(255,135,0,0.3);
+    }
+    .hs-mc-pred-winner-badge {
+      font-size: 13px;
+      padding: 1px 5px;
+      background: var(--hs-ok);
+      color: #000;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    /* ═══ Mod controls ═══ */
+    .hs-mc-pred-mod-notice {
+      font-size: 13px;
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 0;
+      padding: 5px 8px;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .hs-mc-pred-resolve-yours {
+      border-color: #fff !important;
+      color: #fff !important;
+    }
+    .hs-mc-pred-resolve-yours:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-pred-mod-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .hs-mc-pred-mod-btn {
+      font-size: 13px;
+      padding: 4px 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-pred-mod-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-pred-mod-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .hs-mc-pred-mod-btn:disabled:hover {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+    }
+    .hs-mc-pred-lock-btn:hover,
+    .hs-mc-pred-cancel-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-pred-resolve-btn {
+      margin-top: 6px;
+      width: 100%;
+      color: var(--oc);
+      border-color: var(--oc);
+    }
+    .hs-mc-pred-resolve-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    /* ═══ Create prediction form ═══ */
+    .hs-mc-pred-create {
+      margin-top: 10px;
+    }
+    .hs-mc-pred-create-toggle {
+      width: 100%;
+      text-align: center;
+    }
+    .hs-mc-pred-create-form {
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .hs-mc-pred-create-input {
+      font-size: 13px;
+      padding: 2px 8px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font-family: inherit;
+      outline: none;
+    }
+    .hs-mc-pred-create-input::placeholder { color: var(--hs-muted); }
+    .hs-mc-pred-create-input:focus {
+      border-color: #fff;
+      outline: none;
+    }
+    .hs-mc-pred-create-dur-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .hs-mc-pred-create-dur-label {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-right: 2px;
+    }
+    .hs-mc-pred-create-dur {
+      font-size: 13px;
+      padding: 2px 6px;
+      background: rgba(0,0,0,0.7);
+      color: var(--hs-muted);
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-pred-create-dur:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-pred-create-dur-active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-pred-create-submit {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border-color: #fff;
+      font-weight: 600;
+    }
+    .hs-mc-pred-create-submit:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    /* ═══ Polls ═══ */
+    .hs-mc-poll {
+      padding: 10px 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .hs-mc-poll-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .hs-mc-poll-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 17px;
+      flex: 1;
+    }
+    .hs-mc-poll-status {
+      font-size: 13px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-poll-status-ended {
+      background: rgba(255,255,255,0.08);
+      color: var(--hs-muted);
+    }
+    .hs-mc-poll-timer {
+      font-size: 13px;
+      color: #fff;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .hs-mc-poll-meta {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-bottom: 8px;
+    }
+    .hs-mc-poll-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hs-mc-poll-choice {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .hs-mc-poll-choice-track {
+      flex: 1;
+      height: 28px;
+      background: rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .hs-mc-poll-choice-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: rgba(145,71,255,0.35);
+    }
+    .hs-mc-poll-choice-top .hs-mc-poll-choice-fill {
+      background: rgba(145,71,255,0.6);
+    }
+    .hs-mc-poll-choice-voted .hs-mc-poll-choice-track {
+      box-shadow: inset 0 0 0 1px rgba(255,135,0,0.3);
+    }
+    .hs-mc-poll-choice-label {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+      height: 28px;
+    }
+    .hs-mc-poll-choice-name {
+      font-size: 13px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-mc-poll-choice-pct {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hs-plat-twitch);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .hs-mc-poll-choice-top .hs-mc-poll-choice-pct {
+      color: #bf8fff;
+    }
+    .hs-mc-poll-voted-check {
+      color: #fff;
+      font-weight: 700;
+    }
+    .hs-mc-poll-vote-btn {
+      background: rgba(145,71,255,0.3);
+      border: none;
+      color: #bf8fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .hs-mc-poll-vote-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-poll-vote-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .hs-mc-poll-mod-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .hs-mc-poll-mod-btn {
+      font-size: 13px;
+      padding: 4px 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-poll-mod-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-poll-mod-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .hs-mc-poll-mod-btn:disabled:hover {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+    }
+    .hs-mc-poll-empty {
+      padding: 0 12px;
+    }
+    .hs-mc-poll-create {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+    .hs-mc-poll-create-toggle {
+      width: 100%;
+      text-align: center;
+    }
+    .hs-mc-poll-create-form {
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .hs-mc-poll-create-input {
+      font-size: 13px;
+      padding: 2px 8px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font-family: inherit;
+      outline: none;
+    }
+    .hs-mc-poll-create-input::placeholder { color: var(--hs-muted); }
+    .hs-mc-poll-create-input:focus {
+      border-color: #fff;
+      outline: none;
+    }
+    .hs-mc-poll-create-dur-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .hs-mc-poll-create-dur-label {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-right: 2px;
+    }
+    .hs-mc-poll-create-dur {
+      font-size: 13px;
+      padding: 2px 6px;
+      background: rgba(0,0,0,0.7);
+      color: var(--hs-muted);
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hs-mc-poll-create-dur:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-poll-create-dur-active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-poll-create-submit {
+      width: 100%;
+      text-align: center;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border-color: #fff;
+      font-weight: 600;
+    }
+    .hs-mc-poll-create-submit:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .hs-mc-pred-links {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 8px;
+      padding-top: 4px;
+    }
+    .hs-mc-pred-links .hs-mc-menu-item {
+      padding: 6px 14px !important;
+    }
+    .hs-mc-pred-links .hs-mc-menu-icon {
+      width: 28px;
+      height: 28px;
+    }
+    .hs-mc-pred-links .hs-mc-quicklink-section {
+      padding: 10px 14px 4px;
+      font-size: 13px;
+      color: var(--hs-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-pred-links .hs-mc-quicklink-section:first-child {
+      padding-top: 4px;
+    }
+
+    /* ═══ /status panel ═══
+       All text 13px CozetteVector — anything else looks jank in Chrome's
+       renderer (see memory: feedback_browser_text_cozette_13). The crisp
+       block on body.hs-font-bitmap covers descendants so we don't repeat
+       it here; just lock the family + size. */
+    .hs-mc-status-overlay {
+      position: fixed; bottom: 60px; right: 20px; z-index: 99999;
+      background: #000; border: 2px solid #fff;
+      padding: 12px 16px; min-width: 280px; max-width: 420px;
+      font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+    .hs-mc-status-loading { font-size: 13px; color: #999; }
+    .hs-mc-status-title { font-size: 13px; font-weight: 600; color: #fff; }
+    .hs-mc-status-sub { font-size: 13px; margin-top: 2px; }
+    .hs-mc-status-sub.live { color: var(--hs-live); }
+    .hs-mc-status-sub.off  { color: #999; }
+    .hs-mc-status-streamtitle { font-size: 13px; color: #fff; margin-top: 6px; }
+    .hs-mc-status-meta { font-size: 13px; color: #999; margin-top: 2px; }
+    .hs-mc-status-section {
+      margin-top: 10px; padding-bottom: 4px;
+      font-size: 13px; color: var(--hs-muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid #222;
+    }
+    .hs-mc-status-modes { margin-top: 4px; }
+    .hs-mc-status-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
+    .hs-mc-status-key { color: #ccc; }
+    .hs-mc-status-val.on  { color: var(--hs-ok); }
+    .hs-mc-status-val.off { color: var(--hs-muted); }
+    .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
+
+    /* ═══ Rewards ═══ */
+    .hs-mc-rewards {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+    .hs-mc-rewards-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 14px 6px;
+    }
+    .hs-mc-rewards-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hs-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-rewards-balance {
+      font-size: 13px;
+      color: var(--hs-muted);
+    }
+    .hs-mc-rewards-empty {
+      font-size: 13px;
+      color: var(--hs-muted);
+      padding: 8px 14px;
+    }
+    .hs-mc-rewards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 0 14px;
+    }
+    .hs-mc-reward-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.04);
+      border-left: 2px solid var(--rc, var(--hs-plat-twitch));
+      cursor: pointer;
+      transition: none;
+    }
+    .hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover {
+      background: #fff;
+    }
+    .hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-title,
+    .hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-cost,
+    .hs-mc-reward-card:not(.hs-mc-reward-unavailable):hover .hs-mc-reward-reason {
+      color: #000;
+    }
+    .hs-mc-reward-unavailable {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .hs-mc-reward-unavailable:hover {
+      background: rgba(255,255,255,0.04);
+    }
+    .hs-mc-reward-img {
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    .hs-mc-reward-info {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hs-mc-reward-title {
+      font-size: 13px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-mc-reward-cost {
+      font-size: 13px;
+      color: var(--hs-muted);
+    }
+    .hs-mc-reward-reason {
+      font-size: 13px;
+      color: #f5009b;
+      margin-top: 1px;
+    }
+    .hs-mc-reward-input-row {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 4px;
+      padding: 4px 0;
+    }
+    .hs-mc-reward-input {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 6px;
+      border-radius: 0;
+      outline: none;
+    }
+    .hs-mc-reward-input:focus {
+      border-color: var(--hs-plat-twitch);
+    }
+    .hs-mc-reward-submit {
+      background: var(--hs-plat-twitch);
+      border: none;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 0;
+      cursor: pointer;
+      transition: none;
+    }
+    .hs-mc-reward-submit:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-reward-submit:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    /* ═══ Chat Color Picker ═══ */
+    .hs-mc-color-picker {
+      margin-top: 4px;
+    }
+    .hs-mc-color-current {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 0;
+      vertical-align: -2px;
+      margin-left: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .hs-mc-color-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 4px 14px;
+    }
+    .hs-mc-color-swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 0;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: none;
+    }
+    .hs-mc-color-swatch:hover {
+      outline: 2px solid #fff;
+      outline-offset: 1px;
+    }
+    .hs-mc-color-custom {
+      display: flex;
+      gap: 4px;
+      padding: 4px 14px;
+    }
+    .hs-mc-color-hex {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 13px;
+      padding: 3px 6px;
+      font-family: inherit;
+      border-radius: 0;
+    }
+    .hs-mc-color-hex:focus {
+      border-color: var(--hs-plat-twitch);
+      outline: none;
+    }
+    .hs-mc-color-apply {
+      background: var(--hs-plat-twitch);
+      border: none;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+    }
+    .hs-mc-color-apply:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* ═══ Chat Modes ═══ */
+    .hs-mc-chat-modes {
+      margin-top: 4px;
+    }
+    .hs-mc-modes-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 4px 14px;
+    }
+    .hs-mc-mode-btn {
+      /* see .hs-mc-size-btn — a <button> needs this stated */
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.06);
+      color: var(--hs-muted);
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .hs-mc-mode-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-mode-btn.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    /* ═══ Settings tab ═══ */
+    .hs-mc-settings-group {
+      padding: 4px 0;
+    }
+    .hs-mc-settings-group + .hs-mc-settings-group {
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .hs-mc-settings-group-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hs-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px 4px;
+    }
+    .hs-mc-setting-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 6px 14px !important;
+      font-size: 13px !important;
+      color: #fff !important;
+      visibility: visible !important;
+    }
+    .hs-mc-setting-row.hs-mc-setting-row-split {
+      justify-content: space-between !important;
+      /* thin panels: control drops to its own full-width line instead of
+         letter-stacking inside a squeezed flex item */
+      flex-wrap: wrap;
+    }
+    .hs-mc-setting-row:nth-child(even) {
+      background: #303030;
+    }
+    /* White-bg/black-text hover is for CLICKABLE toggle rows. Exclude the
+       filter-rules editor (the add-form + each rule row): those are a multi-field
+       form + info, not a single clickable row, so the white bg turned their
+       black-bg inputs and light help text unreadable. */
+    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover * {
+      color: #000 !important;
+    }
+    /* Filter-rules rows keep their own colours; just a subtle dark row-hint. */
+    .hs-mc-setting-row.hs-mc-fr-addform:hover,
+    .hs-mc-setting-row[data-fr-row]:hover {
+      background: #222;
+    }
+    .hs-mc-setting-label {
+      color: #fff !important;
+      font-size: 13px !important;
+      cursor: help;
+      border-bottom: 1px dotted var(--hs-border);
+    }
+    #hs-settings-tip {
+      position: fixed;
+      z-index: 99999;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      padding: 6px 8px;
+      font-size: 13px;
+      line-height: 18px;
+      max-width: 260px;
+      pointer-events: none;
+      display: none;
+      font-family: inherit;
+    }
+    #hs-settings-tip.visible { display: block; }
+    .hs-mc-setting-row.hs-mc-setting-row-block {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+    .hs-mc-setting-textarea {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 4px 6px;
+      resize: vertical;
+      min-height: 48px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .hs-mc-setting-textarea:focus {
+      outline: none;
+      border-color: #fff;
+    }
+    .hs-mc-locale-select {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+      max-width: 60%;
+    }
+    .hs-mc-locale-select:hover, .hs-mc-locale-select:focus {
+      background: #fff;
+      color: #000;
+      outline: none;
+      border-color: #fff;
+    }
+    .hs-mc-setting-row .hs-mc-toggle-pill,
+    .hs-mc-setting-row .hs-mc-size-btns {
+      flex-shrink: 0;
+    }
+    .hs-mc-size-btns {
+      display: flex;
+      gap: 2px;
+      background: #000;
+      padding: 2px;
+    }
+    .hs-mc-size-btn {
+      /* buttons do not inherit font-family — without this the size labels
+         render in the UA's Arial inside an otherwise all-Cozette panel, on
+         fractional advances. Same defect as .hs-mc-reply-btn. */
+      font-family: inherit;
+      white-space: nowrap !important;
+      padding: 4px 10px !important;
+      background: transparent !important;
+      color: var(--hs-muted) !important;
+      border: none !important;
+      border-radius: 0 !important;
+      font-size: 13px !important;
+      cursor: pointer !important;
+      display: inline-block !important;
+      visibility: visible !important;
+      transition: none;
+    }
+    .hs-mc-size-btn:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-size-btn.active {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-size-btn.active:hover {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .hs-mc-toggle-pill {
+      width: 16px;
+      height: 16px;
+      background: var(--hs-danger-dim);
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      padding: 0;
+      transition: none;
+      flex-shrink: 0;
+    }
+    .hs-mc-toggle-pill.active {
+      background: var(--hs-ok);
+    }
+    .hs-mc-toggle-knob {
+      display: none;
+    }
+
+    /* == Settings registry UI — search bar, focus row, sections ============ */
+    .hs-mc-set-searchbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      position: sticky;
+      top: 46px; /* below the subtab rail */
+      background: #000;
+      z-index: 5;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-search {
+      flex: 1;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 6px;
+      min-width: 0;
+    }
+    .hs-mc-set-search:focus {
+      outline: none;
+      border-color: #fff;
+    }
+    .hs-mc-set-search-count {
+      color: var(--hs-muted);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-scope-btn,
+    .hs-mc-set-presets-btn {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-scope-btn:hover,
+    .hs-mc-set-presets-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    /* Keyboard focus inverts the row like hover — white bg, black text —
+       but children keep their own backgrounds (pills stay green/red, the
+       size-btn group stays a black chip strip, range thumb stays orange). */
+    .hs-mc-setting-row.hs-mc-set-row-focus {
+      background: #fff !important;
+    }
+    .hs-mc-setting-row.hs-mc-set-row-focus * {
+      color: #000 !important;
+    }
+    /* Size buttons sit on their own black strip — when the row inverts
+       (hover OR focus), keep inactive labels gray-on-black and the active
+       chip white-with-black-text, instead of the row's forced black text
+       vanishing into the strip. */
+    .hs-mc-setting-row:hover .hs-mc-size-btn,
+    .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn {
+      color: var(--hs-muted) !important;
+    }
+    .hs-mc-setting-row:hover .hs-mc-size-btn.active,
+    .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,
+    .hs-mc-setting-row:hover .hs-mc-size-btn:hover,
+    .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn:hover {
+      color: #000 !important;
+    }
+    .hs-mc-set-child {
+      padding-left: 28px !important;
+    }
+    .hs-mc-set-child-glyph {
+      color: var(--hs-muted);
+      flex-shrink: 0;
+    }
+    .hs-mc-settings-group-title {
+      cursor: pointer;
+      user-select: none;
+    }
+    .hs-mc-settings-group-title:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* Modified-from-default — 3px orange inset edge, zero layout shift,
+       survives zebra/hover/focus backgrounds */
+    .hs-mc-setting-row.hs-mc-set-mod {
+      box-shadow: inset 3px 0 0 #fff;
+    }
+    .hs-mc-set-cnt {
+      color: var(--hs-muted);
+      font-weight: 400;
+    }
+    .hs-mc-set-modcnt {
+      color: #fff;
+      font-weight: 400;
+    }
+    .hs-mc-settings-group-title:hover .hs-mc-set-cnt,
+    .hs-mc-settings-group-title:hover .hs-mc-set-modcnt {
+      color: #000;
+    }
+    /* [reload] chip — setting applied only after a page reload */
+    .hs-mc-set-reload {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 0 6px;
+      cursor: pointer;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-reload:hover {
+      background: #fff;
+      color: #000;
+      border-color: #000;
+    }
+    /* search result group headers — click jumps to that pane + section */
+    .hs-mc-set-search-hdr {
+      color: var(--hs-muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 14px 2px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .hs-mc-set-search-hdr:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* '?' keybinding overlay */
+    .hs-mc-settings-panel {
+      /* Fill the #hs-mc-messages scroll box and own the scrolling internally:
+         a flex column where ONLY the body scrolls, so the category bar +
+         search bar are real headers above the scroll area and rows can never
+         bleed behind them. #hs-mc-messages has contain:layout (paint dropped
+         2026-07-17 — see 03-overlay-container.css), and layout containment
+         alone makes it the containing block, so inset:0 sizes us reliably. */
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+    .hs-mc-set-help-btn {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-help-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-set-help {
+      position: absolute;
+      top: 84px;
+      right: 8px;
+      z-index: 3;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .hs-mc-set-help-grid {
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr;
+      gap: 2px 10px;
+    }
+    .hs-mc-set-help-key {
+      color: #fff;
+    }
+    .hs-mc-set-help-title {
+      color: var(--hs-muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 0 2px;
+    }
+    .hs-mc-set-keyhint {
+      color: var(--hs-muted);
+      font-size: 13px;
+      padding: 6px 14px 10px;
+    }
+    .hs-mc-set-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 120px;
+      height: 4px;
+      background: #333;
+      outline: none;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 14px;
+      background: #fff;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-mc-set-range-val {
+      color: var(--hs-muted);
+      font-size: 13px;
+      min-width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* == Settings sub-tab bar =============================================== */
+    .hs-mc-set-subtabs {
+      display: flex;
+      gap: 4px;
+      padding: 6px 8px 4px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      background: #000;
+      z-index: 5;
+    }
+    .hs-mc-set-subtab {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: none;
+    }
+    .hs-mc-set-subtab:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      outline: none;
+    }
+    .hs-mc-set-subtab.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-mc-set-subtab svg { display: block; }
+    .hs-mc-set-subtab-body {
+      flex: 1;
+      min-height: 0; /* let the flex item shrink so overflow-y actually scrolls */
+      overflow-y: auto;
+      background: #000;
+    }
+    /* Settings text inputs (custom font name, etc.) */
+    .hs-mc-set-text-input {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 3px 6px;
+      flex-shrink: 0;
+    }
+    .hs-mc-set-text-input:focus {
+      outline: none;
+      border-color: #fff;
+    }
+    /* Crash log pre block */
+    .hs-mc-set-crash-pre {
+      background: #0a0a0a;
+      color: #c0c0c0;
+      border: 1px solid #333;
+      padding: 6px 8px;
+      font-size: 13px;
+      max-height: 180px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0;
+      font-family: inherit;
+    }
+
+    /* Channel-management modal text inputs (add/edit channel dialogs in main.js).
+       Sizing/layout comes from inline cssText; this class provides the parts that
+       can't be set inline: focus border swap and placeholder color. */
+    .hs-mc-ch-input::placeholder { color: var(--hs-muted); }
+    .hs-mc-ch-input:focus { border-color: #fff; }
+
+    /* Confirm modal (hsConfirm) — square, terminal, hover-inverts; ban = danger red */
+    .hs-mc-confirm-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.6);
+    }
+    .hs-mc-confirm-box {
+      background: #000;
+      border: 1px solid var(--hs-border);
+      padding: 14px 16px;
+      max-width: 300px;
+      color: #fff;
+      font-size: 13px;
+    }
+    .hs-mc-confirm-msg { margin-bottom: 12px; line-height: 1.4; word-break: break-word; }
+    .hs-mc-confirm-btns { display: flex; gap: 8px; justify-content: flex-end; }
+    .hs-mc-confirm-btns button {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      padding: 3px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .hs-mc-confirm-cancel:hover { background: #fff; color: #000; }
+    .hs-mc-confirm-ok { border-color: #ff5f5f; color: #ff5f5f; }
+    .hs-mc-confirm-ok:hover { background: #ff5f5f; color: #000; }
+    .hs-mc-confirm-reasons { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .hs-mc-confirm-reason {
+      background: #000;
+      color: #bbb;
+      border: 1px solid #555;
+      padding: 2px 8px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .hs-mc-confirm-reason:hover { background: #fff; color: #000; }
+    .hs-mc-confirm-reason.sel { border-color: #fff; color: #fff; }
+    .hs-mc-confirm-reason.sel:hover { background: #fff; color: #000; }
+
+
+    /* ═══ Predictions & polls, as the whole chat area ═══
+       Same takeover pattern as the chat-logs and profile-card views: this owns
+       #hs-mc-messages while open. The prediction and poll bodies inside are
+       rendered by renderPrediction/renderPoll — the SAME functions the emote
+       picker's twitch tab mounts — so the two surfaces cannot drift into two
+       different prediction UIs. Only the frame lives here. */
+    .hs-pv-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      background: #000;
+    }
+    .hs-pv-hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--hs-border);
+      background: #0a0a0a;
+    }
+    .hs-pv-title {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-pv-sub { color: var(--hs-border); font-weight: 400; }
+    .hs-pv-close {
+      flex: 0 0 auto;
+      /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
+      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-size: 13px;
+      line-height: 18px;
+      padding: 0 6px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .hs-pv-close:hover { background: #fff; color: #000; }
+    /* The body scrolls; the header stays. A prediction with ten outcomes is
+       taller than a narrow panel, which is the case the popup handled worst. */
+    .hs-pv-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 6px;
+    }
+    /* Ensure parent has relative positioning for overlay */
+    .chat-scrollable-area__message-container {
+      position: relative !important;
+    }
+
+    /* Parent of scrollable area needs proper sizing for absolute overlay */
+    [class*="chat-room"] [class*="scrollable-area"] {
+      position: relative !important;
+    }
+
+    /* Hide Twitch's native tab arrows when our tabs are present */
+    #hs-mc-tabbar ~ [class*="tabs-buttons"],
+    [class*="chat-header__tabs-buttons"],
+    [class*="tabs__scroll-button"],
+    .chat-room__content [class*="scroll-button"] {
+      display: none !important;
+    }
+
+    /* Hide leaderboard carousel arrows */
+    [aria-label="Previous leaderboard set"],
+    [aria-label="Next leaderboard set"],
+    .channel-leaderboard-header-rotating__users ~ button,
+    [class*="channel-leaderboard"] button[aria-label*="leaderboard"] {
+      display: none !important;
+    }
+
+    /* When input bar is hidden, overlay fills the gap */
+    .hs-tabs-top:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay,
+    .hs-tabs-right:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay,
+    .hs-tabs-left:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay {
+      bottom: 0 !important;
+    }
+    .hs-tabs-top:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker,
+    .hs-tabs-right:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker,
+    .hs-tabs-left:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker {
+      bottom: 0 !important;
+    }
+
+    /* RIGHT SIDE TABS LAYOUT - absolute position at right edge */
+    .hs-tabs-right #hs-mc-tabbar {
+      position: absolute !important;
+      left: auto !important;
+      right: 0 !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      width: 90px;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 0;
+      gap: 0;
+      border-bottom: none;
+      border-left: 1px solid #fff;
+      border-radius: 0;
+      background: #000;
+      overflow-y: auto;
+      overflow-x: visible;
+      scrollbar-width: none;
+      z-index: 1001;
+    }
+    .hs-tabs-right #hs-mc-tabbar::-webkit-scrollbar { display: none; }
+    .hs-tabs-right .hs-mc-tab,
+    .hs-tabs-left .hs-mc-tab {
+      padding: 4px 14px 4px 6px !important;
+      font-size: 13px !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      width: 100% !important;
+      /* Left-align (not center) — see .hs-mc-tab base for the bitmap-snap
+         reasoning. Util buttons override this back to center below. */
+      text-align: left !important;
+      box-sizing: border-box !important;
+      flex: 0 0 auto !important;
+      margin: 0 0 -1px 0 !important;
+    }
+    /* Util buttons (C/T/F-/F+/⚙) — single-glyph 18×18 squares — keep
+       centered. Their text origin math always lands on an integer pixel
+       because both inner width and glyph width are even. */
+    .hs-tabs-right .hs-mc-util-btn,
+    .hs-tabs-right .hs-mc-pf-btn,
+    .hs-tabs-left .hs-mc-util-btn,
+    .hs-tabs-left .hs-mc-pf-btn {
+      text-align: center !important;
+    }
+    /* Vertical-tabs override for util buttons (C/T/F-/F+/⚙): the .hs-tabs-
+       right/.hs-tabs-left .hs-mc-tab rule above forces width:100% on every
+       tab, stretching util-btns to 90px and stacking them. Grow each button
+       to fill its share of the 90px tabbar row so the strip reaches the far
+       right edge (no 18px gap from fixed-size squares + left-aligned row). */
+    .hs-tabs-right .hs-mc-util-btn,
+    .hs-tabs-left .hs-mc-util-btn {
+      /* Fixed 14px (12px content after 1px borders) -- even content width
+         integer-centers CozetteVector's 6px glyph advance for both 1-glyph
+         (C/T) and 2-glyph (F-/F+) labels. Growing to fill (flex:1) produced
+         odd 15px widths, landing glyphs on a half-pixel and smearing the
+         bitmap. 6x14=84 fits the 90px column without wrapping. */
+      width: 14px !important;
+      min-width: 14px !important;
+      max-width: 14px !important;
+      padding: 0 !important;
+      flex: 0 0 14px !important;
+      margin: 0 -1px 0 0 !important;
+    }
+    /* Right-cluster (util-row + platfilter) wraps both rows. In vertical mode
+       the tabbar's align-items:flex-start collapses it to content width, so
+       force full tabbar width so the rows themselves can stretch to the edge. */
+    .hs-tabs-right .hs-mc-right-cluster,
+    .hs-tabs-left .hs-mc-right-cluster {
+      width: 100% !important;
+      align-self: stretch !important;
+    }
+    /* Platfilter (T/K/Y) in vertical mode: stretch each button to fill its
+       row (3 buttons share the 90px column width). */
+    .hs-tabs-right .hs-mc-pf-btn,
+    .hs-tabs-left .hs-mc-pf-btn {
+      flex: 1 1 0 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      padding: 0 !important;
+      margin: 0 -1px 0 0 !important;
+    }
+    .hs-tabs-right #hs-mc-platfilter,
+    .hs-tabs-left #hs-mc-platfilter {
+      display: flex !important;
+      flex-direction: row !important;
+      width: 100% !important;
+      flex: 0 0 auto !important;
+    }
+    .hs-tabs-right .hs-mc-tabs-scroll {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      min-height: 0;
+      /* min-width: 0 + max-width: 100% + box-sizing: border-box keep this
+         column constrained to the tabbar's 82px content area. without these,
+         a long tab name (e.g. "asmongold247") forces flex's stretch to
+         max(parent, min-content) which overflows the tabbar by ~15px,
+         pushing live-dot ::after past the viewport edge on twitch's
+         right-pinned column. */
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      scrollbar-width: none;
+    }
+    .hs-tabs-right .hs-mc-tabs-scroll::-webkit-scrollbar { display: none; }
+    .hs-tabs-right #hs-mc-overlay {
+      top: 0;
+      left: 0;
+      right: 90px;
+      bottom: 52px;
+    }
+    .hs-tabs-right #hs-mc-inputbar {
+      left: 0;
+      right: 90px;
+      z-index: 1002;
+    }
+    .hs-tabs-right #hs-mc-emote-picker {
+      left: 0;
+      right: 90px;
+    }
+
+    /* BOTTOM TABS LAYOUT */
+    .hs-tabs-bottom #hs-mc-tabbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 44px;
+      top: auto;
+      padding: 0;
+      border-top: 1px solid #fff;
+      border-bottom: none;
+      z-index: 1001;
+    }
+    .hs-tabs-bottom #hs-mc-inputbar {
+      padding: 4px 8px;
+    }
+    .hs-tabs-bottom #hs-mc-overlay {
+      top: 0;
+      bottom: 75px; /* tab bar + input bar */
+    }
+    .hs-tabs-bottom #hs-mc-emote-picker {
+      bottom: 75px; /* tab bar + input bar */
+    }
+    /* When inputbar is hidden, tabs flush to bottom */
+    .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-tabbar {
+      bottom: 0;
+    }
+    /* Pre-JS fallback only — NOT !important.
+       The tab bar wraps, so its height is measured, not known: _updateMcLayout
+       writes the real inset inline from getBoundingClientRect. These rules used
+       31px !important, which beat that inline style and pinned the overlay
+       31px off the bottom while the bar actually occupied 19 — a 12px strip of
+       container that nothing covered, in every bottom-docked session with the
+       composer hidden. Found by scripts/render-extension.ts.
+       :has() already outspecifies the generic .hs-tabs-bottom rule below, so
+       dropping !important keeps the fallback and lets the measurement win. */
+    .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-overlay {
+      bottom: 31px;
+    }
+    .hs-tabs-bottom:has(#hs-mc-inputbar.hs-hidden) #hs-mc-emote-picker {
+      bottom: 31px;
+    }
+
+    /* LEFT SIDE TABS LAYOUT - absolute position at left edge (matches right) */
+    .hs-tabs-left #hs-mc-tabbar {
+      position: absolute !important;
+      left: 0 !important;
+      right: auto !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      width: 90px;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 0;
+      gap: 0;
+      border-bottom: none;
+      border-right: 1px solid #fff;
+      border-radius: 0;
+      background: #000;
+      overflow-y: auto;
+      overflow-x: visible;
+      scrollbar-width: none;
+      z-index: 1001;
+    }
+    .hs-tabs-left #hs-mc-tabbar::-webkit-scrollbar { display: none; }
+    .hs-tabs-left .hs-mc-tabs-scroll {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      min-height: 0;
+      scrollbar-width: none;
+    }
+    .hs-tabs-left .hs-mc-tabs-scroll::-webkit-scrollbar { display: none; }
+    .hs-tabs-left #hs-mc-overlay {
+      top: 0;
+      left: 90px;
+      right: 0;
+      bottom: 52px;
+    }
+    .hs-tabs-left #hs-mc-inputbar {
+      left: 90px;
+      right: 0;
+      z-index: 1002;
+    }
+    .hs-tabs-left #hs-mc-emote-picker {
+      left: 90px;
+      right: 0;
+    }
+
+    /* Popout mode - full width (respects tab bar position) */
+    .hs-popout #hs-mc-overlay {
+      left: 0 !important;
+      right: 0 !important;
+      width: auto !important;
+    }
+    .hs-popout #hs-mc-inputbar {
+      left: 0 !important;
+      right: 0 !important;
+      width: auto !important;
+    }
+    .hs-popout #hs-mc-resize-handle {
+      display: none !important;
+    }
+    /* Popout chat fills the window — there's no host video next to it to
+       reclaim space from. The orange resize handles just shrink the chat
+       and leave dead space. Hide them; the user resizes via OS window
+       edges. (#hs-c-resize-handle is the chat-container handle that
+       actually renders in popout; the others belong to in-page layouts.) */
+    .hs-popout #hs-mc-resize-handle,
+    .hs-popout #hs-c-resize-handle,
+    .hs-popout #hs-yt-resize-handle,
+    .hs-popout #hs-kick-resize-handle {
+      display: none !important;
+    }
+    /* Vertical tab modes (left/right) — stretch util buttons (C T F- F+ ⚙ ⛶)
+       to fill the column width as a unified segmented control matching the
+       channel-tab strip above. Without this, 5-6 buttons × 18px in a wider
+       column leaves a visible gap on the right; popout mode (where C is
+       hidden) showed this most clearly. Same rule covers in-page overlay
+       and popout window. */
+    .hs-tabs-right .hs-mc-util-row .hs-mc-util-btn,
+    .hs-tabs-left .hs-mc-util-row .hs-mc-util-btn {
+      flex: 1 1 0 !important;
+      width: auto !important;
+      max-width: none !important;
+      min-width: 0 !important;
+    }
+    .hs-popout #hs-mc-emote-picker {
+      left: 0 !important;
+      right: 0 !important;
+    }
+    /* Popout with tabs on right - adjust for tab bar */
+    .hs-popout.hs-tabs-right #hs-mc-overlay {
+      right: 90px !important;
+    }
+    .hs-popout.hs-tabs-right #hs-mc-inputbar {
+      right: 90px !important;
+    }
+    .hs-popout.hs-tabs-right #hs-mc-emote-picker {
+      right: 90px !important;
+    }
+    /* Popout with tabs on left */
+    .hs-popout.hs-tabs-left #hs-mc-overlay {
+      left: 90px !important;
+    }
+    .hs-popout.hs-tabs-left #hs-mc-inputbar {
+      left: 90px !important;
+    }
+    .hs-popout.hs-tabs-left #hs-mc-emote-picker {
+      left: 90px !important;
+    }
+    /* Popout chat has no .chat-shell — container body-mounts and collapses to
+       0 height because its only child is position:absolute. Pin it to fill
+       the popout window so the overlay/input bar have real dimensions. */
+    body.hs-popout #hs-mc-container {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      background: #000 !important;
+    }
+    /* YouTube /live_chat pop-out: the YT right-dock rule in 17-platform-position
+       (body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container) is
+       (1,3,1) — it TIES a plain hs-popout+platform-yt fill and wins by load
+       order (17 after 15), docking the overlay to a ~336px strip. Double the
+       .hs-popout class (house idiom, cf. the ×4 .hs-native-visible bump) to
+       reach (1,4,1) and win outright, so the overlay fills the whole pop-out
+       window edge-to-edge regardless of chat-position class or load order. */
+    body.hs-popout.hs-popout.hs-platform-yt:not(.hs-offline) #hs-mc-container {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      background: #000 !important;
+    }
+    /* Kill the native YouTube chat in the /live_chat pop-out — our overlay
+       REPLACES it (reading the server relay, not this window's DOM), so native
+       yt-live-chat-app is a redundant duplicate that shows through any gap = two
+       chats stacked. Gate it on our overlay actually being present AND shown
+       (:has(#hs-mc-container) + :not(.hs-offline)): if the overlay ever fails to
+       mount or gets hidden, native falls back into view instead of leaving a
+       white void. Safe: the pop-out never reads native chat, only the WS
+       __live_yt_auto__ feed, so hiding it costs nothing. */
+    body.hs-popout.hs-platform-yt:not(.hs-offline):has(#hs-mc-container) yt-live-chat-app {
+      display: none !important;
+    }
+
+    /* ---- FEED MESSAGE CARDS ---- */
+    .hs-feed-msg {
+      position: relative;
+      padding: 1px 6px;
+      line-height: 18px;
+      font-size: 13px;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    .hs-feed-avatar {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-right: 3px;
+    }
+    .hs-feed-user {
+      font-weight: 600;
+      font-size: 13px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .hs-feed-user:hover {
+      background: #fff;
+      color: #000 !important;
+      text-decoration: none;
+    }
+    .hs-feed-time {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin: 0 3px;
+    }
+    .hs-feed-body {
+      color: #fff;
+    }
+    .hs-feed-stat {
+      font-size: 13px;
+      margin: 0 2px;
+      cursor: default;
+    }
+    .hs-feed-replies {
+      cursor: pointer !important;
+    }
+    .hs-feed-thread-link {
+      color: var(--hs-mention);
+      font-size: 13px;
+      font-weight: 700;
+      margin-right: 3px;
+      text-decoration: none;
+    }
+    .hs-feed-thread-link:hover {
+      background: #fff;
+      color: #000;
+      text-decoration: none;
+    }
+    .hs-feed-replies:hover {
+      background: #fff;
+      color: #000 !important;
+    }
+    .hs-feed-tag {
+      font-size: 13px;
+      font-weight: 700;
+      margin-right: 3px;
+      vertical-align: middle;
+    }
+    .hs-feed-tag-op {
+      color: #ff0000;
+    }
+    .hs-feed-tag-mop {
+      color: var(--hs-thread);
+    }
+    .hs-feed-tag-re {
+      color: var(--hs-reply);
+    }
+    .hs-mc-feed-reply-chip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 100%;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: #000;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+      font-size: 13px;
+      line-height: 18px;
+      box-sizing: border-box;
+      z-index: 1002;
+    }
+    .hs-mc-feed-reply-ref {
+      color: #a0a0a0;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hs-mc-feed-reply-cancel {
+      background: none;
+      border: none;
+      color: var(--hs-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 4px;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .hs-mc-feed-reply-cancel:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* Canonical heat number — used everywhere via heatSpanHtml/heatSpanEl. Tier color/glow is set inline.
+       Structure: <span.hs-heat-num><span.hs-heat-n>{digits}</span><span.hs-heat-deg>°</span></span>
+       The two sub-spans let surfaces using a bitmap font keep the digits crisp
+       while the degree symbol falls back to a vector font that has a clean glyph. */
+    .hs-heat-num {
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .hs-heat-n {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .hs-heat-deg {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .hs-post-link {
+      color: var(--hs-mention);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .hs-post-link:hover {
+      text-decoration: underline;
+    }
+    .hs-post-highlight {
+      outline: 2px solid var(--hs-brand);
+      outline-offset: -2px;
+    }
+    .hs-thread-op {
+      border-bottom: 1px solid var(--hs-border);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+    }
+    .hs-thread-container {
+      margin-left: 12px;
+      border-left: 2px solid #fff;
+      padding-left: 8px;
+      margin-bottom: 4px;
+    }
+    .hs-thread-reply {
+      padding: 1px 4px;
+      line-height: 17px;
+      font-size: 13px;
+    }
+    .hs-thread-reply.is-thread-op {
+      border-left: 2px solid var(--hs-thread);
+      margin-left: -2px;
+      padding-left: 10px;
+    }
+    .hs-feed-loader {
+      cursor: default;
+      font-size: 13px;
+    }
+
+    /* ---- MEDIA / EMBEDS ---- */
+    .hs-feed-media {
+      margin: 4px 0 2px;
+      max-width: 100%;
+    }
+    .hs-feed-media img,
+    .hs-feed-media video,
+    .hs-feed-media-direct img,
+    .hs-feed-media-direct video {
+      max-width: 100%;
+      max-height: 320px;
+      display: block;
+      border-radius: 0;
+      cursor: pointer;
+      background: #000;
+    }
+    .hs-feed-media-multi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 3px;
+    }
+    .hs-feed-media-multi .hs-feed-media-item {
+      max-height: 180px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 0;
+      background: #000;
+    }
+    .hs-feed-embed-container {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 0;
+      overflow: hidden;
+    }
+    .hs-feed-embed-container iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .hs-feed-embed-spotify {
+      aspect-ratio: auto;
+      height: 152px;
+    }
+    .hs-feed-embed-soundcloud {
+      aspect-ratio: auto;
+      height: 166px;
+    }
+    .hs-feed-embed-twitter {
+      aspect-ratio: auto;
+      height: 380px;
+      max-width: 480px;
+      background: transparent;
+    }
+    .hs-feed-embed-imgur {
+      aspect-ratio: auto;
+      max-width: 480px;
+      background: transparent;
+    }
+    .hs-feed-embed-tiktok {
+      aspect-ratio: 9 / 16;
+      max-width: 320px;
+    }
+    .hs-feed-embed-yt-thumb {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .hs-feed-embed-yt-thumb.hs-yt-portrait {
+      aspect-ratio: 9 / 16;
+      max-width: 320px;
+    }
+    .hs-feed-embed-yt-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hs-feed-embed-yt-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 28px;
+      text-shadow: 0 0 6px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.25);
+      transition: background 0.15s;
+    }
+    .hs-feed-embed-yt-thumb:hover .hs-feed-embed-yt-play {
+      background: #fff;
+      color: #000;
+      text-shadow: none;
+    }
+    .hs-feed-link-card {
+      margin: 4px 0 2px;
+      padding: 4px 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #333;
+      border-radius: 0;
+      max-width: 480px;
+    }
+    .hs-feed-link-card-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .hs-feed-link-card-link:hover {
+      text-decoration: underline;
+    }
+    .hs-feed-link-card-icon {
+      color: #888;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .hs-feed-link-card-url {
+      color: var(--hs-muted);
+      word-break: break-all;
+    }
+    /* white plate on hover AND active, same as every other hs surface. The
+       PLAYABLE cards already take it (08-message-rows.css .hs-mc-playable);
+       this is the link fallback, which is just as clickable and was the one
+       card left reading as inert. Every child carries its own colour, so each
+       one has to be inverted explicitly or it stays grey-on-white. */
+    .hs-feed-link-card:is(:hover, :active) {
+      background: #fff;
+      border-color: #fff;
+    }
+    .hs-feed-link-card:is(:hover, :active) :is(
+      .hs-feed-link-card-link,
+      .hs-feed-link-card-icon,
+      .hs-feed-link-card-url
+    ) {
+      color: #000;
+    }
+    .hs-feed-media-deleted {
+      padding: 6px 8px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      color: #888;
+      font-size: 13px;
+      border-radius: 0;
+      max-width: 480px;
+    }
+    /* ---- SERVER-RESOLVED EMBEDS (reddit, etc) ---- */
+    .hs-feed-embed-pending {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60px;
+      padding: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #333;
+      max-width: 480px;
+      margin: 4px 0 2px;
+    }
+    .hs-feed-embed-pending-label {
+      color: #888;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+    .hs-feed-embed-rich-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #333;
+      max-width: 480px;
+      margin: 4px 0 2px;
+      text-decoration: none;
+      color: #ddd;
+      white-space: normal;
+    }
+    .hs-feed-embed-rich-card * { white-space: normal; }
+    /* Was a grey border nudge, which is not the doctrine and read as inert next
+       to a playable card sitting right above it in the same chat. A resolved
+       card with no transport is still a link you click, so it takes the plate
+       too. Playable ones are handled by .hs-mc-playable on the PARENT
+       (08-message-rows.css) — that wins on hover anyway, and both land on the
+       same #fff/#000, so the two rules can't disagree. */
+    .hs-feed-embed-rich-card:is(:hover, :active) {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .hs-feed-embed-rich-card:is(:hover, :active) :is(
+      .hs-feed-embed-rich-platform,
+      .hs-feed-embed-rich-title,
+      .hs-feed-embed-rich-author
+    ) {
+      color: #000;
+    }
+    /* The placeholder's fill is white-on-black; on the plate that's white-on-
+       white and the tile vanishes. Flip it to a black wash. */
+    .hs-feed-embed-rich-card:is(:hover, :active) .hs-feed-embed-rich-thumb-placeholder {
+      background: rgba(0,0,0,0.08);
+      color: #000;
+    }
+    .hs-feed-embed-rich-thumb,
+    .hs-feed-embed-rich-thumb-placeholder {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      object-fit: cover;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 13px;
+    }
+    .hs-feed-embed-rich-meta {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hs-feed-embed-rich-platform {
+      font-size: 13px;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 0.5px;
+    }
+    .hs-feed-embed-rich-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ddd;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .hs-feed-embed-rich-author {
+      font-size: 13px;
+      color: var(--hs-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-feed-embed-rich-image {
+      max-width: 480px;
+      max-height: 480px;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 4px 0 2px;
+    }
+    .hs-feed-embed-rich-video {
+      max-width: 480px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 4px 0 2px;
+      background: #000;
+    }
+    .hs-feed-embed-rich-imglink { display: block; line-height: 0; }
+
+    /* ---- TEXT FORMATTING ---- */
+    .hs-spoiler {
+      background: var(--hs-border);
+      color: transparent;
+      cursor: pointer;
+      border-radius: 0;
+      padding: 0 2px;
+      transition: none;
+    }
+    .hs-spoiler.revealed {
+      background: transparent;
+      color: inherit;
+    }
+    .hs-greentext {
+      color: #789922;
+    }
+    .hs-inline-code {
+      background: #000;
+      padding: 1px 4px;
+      border-radius: 0;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .hs-mention {
+      color: var(--hs-link);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-mention:hover {
+      text-decoration: underline;
+    }
+    .hs-mention.self {
+      background: #800000;
+      color: #fff;
+      padding: 0 2px;
+      border-radius: 0;
+    }
+    .hs-hashtag {
+      color: var(--hs-thread);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-hashtag:hover {
+      box-shadow: inset 0 0 0 100px #fff;
+      color: #000;
+    }
+    .hs-tripcode {
+      color: #117743;
+      font-weight: normal;
+      margin-left: 4px;
+      font-size: 13px;
+    }
+
+    /* ---- TAB BADGE ---- */
+    .hs-mc-tab .hs-badge {
+      background: #fff;
+      color: #000;
+      border-radius: 0;
+      font-size: 13px;
+      min-width: 14px;
+      height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+      padding: 0 3px;
+    }
+
+    /* ---- KICK NATIVE CHAT HIDING ---- */
+    /* Twitch's .chat-input wrapper also matches [class*="chat-input"]. Exclude
+       it when it carries the resub-share callout queue so the banner surfaces. */
+    .hs-native-hidden #chatroom-messages,
+    .hs-native-hidden [class*="chatroom-footer"],
+    .hs-native-hidden [class*="chat-input"]:not(:has([data-test-selector="chat-private-callout-queue__callout-container"] *)),
+    .hs-native-hidden div.editor-input {
+      display: none !important;
+    }
+    .hs-native-hidden#channel-chatroom > * {
+      display: none !important;
+    }
+    /* Force Kick chatroom hidden — container (sibling) becomes the panel */
+    .hs-native-hidden#channel-chatroom {
+      display: none !important;
+    }
+    /* Container becomes the fixed side panel when native is hidden.
+       :not(.hs-popout) — this selector is (2,1,0) and outranks the popout
+       fill-window rule at (1,1,1), so in a kick pop-out window it pinned the
+       panel to the docked 340px column and left kick's 60px top-nav gap above
+       it, in a window that has no top nav. A pop-out has no side panel: chat is
+       the whole window. Same specificity trap the collapse rule below documents. */
+    body:not(.hs-popout) .hs-native-hidden#channel-chatroom ~ #hs-mc-container {
+      position: fixed !important;
+      right: 0 !important;
+      /* clear Kick's fixed 60px top nav so the panel doesn't bury search + login/profile */
+      top: var(--hs-kick-topnav-h, 60px) !important;
+      bottom: 0 !important;
+      width: var(--hs-kick-chat-width, 340px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      display: flex !important;
+      background: #000 !important;
+      transition: none !important;
+    }
+    /* Collapsed (\\ / > button): the kick side-panel rule above is (2,1,0) and
+       outranks the generic body.hs-chat-hidden hide at (1,1,1). Re-hide the
+       container with a higher-specificity rule so collapse works on Kick too. */
+    body.hs-chat-hidden .hs-native-hidden#channel-chatroom ~ #hs-mc-container {
+      display: none !important;
+    }
+    /* Shrink Kick's main content to make room for HeatSync panel.
+       Gate to chat-right (or default — no hs-chat-* class). For
+       hs-chat-left/top/bottom, the position-specific padding rules
+       elsewhere in this file handle the offset; applying margin-right
+       here too would carve 340px off the wrong side and shrink main
+       (e.g., chat-left → empty right gutter, video clipped). */
+    body:has(.hs-native-hidden#channel-chatroom):not(.hs-popout):not(.hs-chat-left):not(.hs-chat-top):not(.hs-chat-bottom):not(.hs-chat-hidden) main {
+      margin-right: var(--hs-kick-chat-width, 340px) !important;
+      transition: none !important;
+    }
+    /* On live tab (native chat showing), hide overlay + input but keep tabs visible */
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-overlay,
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-emote-picker,
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > .hs-mc-inputbar {
+      display: none !important;
+    }
+    /* Keep tabbar visible over native chat — fixed panel, respects tab position */
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      position: fixed !important;
+      /* clear Kick's fixed 60px top nav — same as the native-hidden panel above.
+         without this the fixed container defaults to top:0 and the collapsed HS
+         tab-strip lands over Kick's search + login/profile bar. */
+      top: var(--hs-kick-topnav-h, 60px) !important;
+      z-index: 10000 !important;
+      background: transparent !important;
+      pointer-events: none;
+      overflow: visible !important;
+    }
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+      pointer-events: auto;
+      background: var(--hs-bg, #000) !important;
+      position: relative !important;
+    }
+    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-kick-resize-handle {
+      pointer-events: auto;
+    }
+    /* Top tabs (default) — horizontal bar at top of chat */
+    .hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      top: var(--hs-kick-topnav-h, 60px) !important; right: 0 !important;
+      width: var(--hs-kick-chat-width, 340px) !important;
+      height: auto !important;
+      flex-direction: column !important;
+    }
+    .hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      width: 100% !important;
+    }
+    /* Bottom tabs — horizontal bar at bottom of chat */
+    .hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      bottom: 0 !important; right: 0 !important;
+      width: var(--hs-kick-chat-width, 340px) !important;
+      height: auto !important;
+      flex-direction: column-reverse !important;
+    }
+    .hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      width: 100% !important;
+    }
+    /* Right tabs — vertical bar on right edge */
+    .hs-tabs-right #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      top: var(--hs-kick-topnav-h, 60px) !important; right: 0 !important; bottom: 0 !important;
+      width: auto !important;
+      height: 100% !important;
+      flex-direction: row !important;
+    }
+    .hs-tabs-right #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+      flex-direction: column !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      width: 90px !important;
+      height: 100% !important;
+      max-height: none !important;
+      border-left: 1px solid #fff;
+    }
+    /* Left tabs — vertical bar on left edge of chat area */
+    .hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      top: var(--hs-kick-topnav-h, 60px) !important; right: auto !important; bottom: 0 !important;
+      left: calc(100vw - var(--hs-kick-chat-width, 340px)) !important;
+      width: auto !important;
+      height: 100% !important;
+      flex-direction: row-reverse !important;
+    }
+    .hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+      flex-direction: column !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      width: 90px !important;
+      height: 100% !important;
+      max-height: none !important;
+      border-right: 1px solid #fff;
+    }
+
+    /* Pop-out window: no kick top nav and no docked 340px column — the
+       native-visible strip rules above assume both (top offset + right-pinned
+       width). Chat IS the window there; pin the strip to the window edges.
+       Same specificity trap as the fill-window rule: these are (0,2,2)+,
+       placed after every variant so source order settles the ties. */
+    body.hs-popout #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      top: 0 !important;
+    }
+    body.hs-popout.hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container,
+    body.hs-popout.hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      left: 0 !important;
+      width: auto !important;
+    }
+    body.hs-popout.hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+      left: 0 !important;
+    }
+
+    /* Kick resize handle — always visible. Visual/hover/grab shared above. */
+    #hs-kick-resize-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--hs-resize-thickness);
+      height: 100%;
+      cursor: col-resize;
+      z-index: 10000;
+      pointer-events: auto;
+    }
+
+    /* Boost Kick's popover/tooltip z-index above our panels */
+    .z-popover, .z-tooltip, .z-modal, .z-dropdown,
+    [data-radix-popper-content-wrapper] {
+      z-index: 100000 !important;
+    }
+
+    /* Prevent channel accent color bleed on offline/home pages */
+    .channel-root--home {
+      background-color: #000 !important;
+    }
+    .root-scrollable__content {
+      background: #000;
+    }
+    /* Collapsed chat rules moved to injectStyles() so they're always active */
+
+    /* Mentions search bar */
+    #hs-mc-search-bar {
+      display: none;
+      flex-shrink: 0;
+      padding: 4px 6px;
+      border-bottom: 1px solid #333;
+      background: #000;
+    }
+    #hs-mc-search-bar.visible {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #hs-mc-search-input {
+      flex: 1;
+      padding: 5px 10px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+    #hs-mc-search-input:focus {
+      border-color: #fff;
+    }
+    #hs-mc-search-input::placeholder {
+      color: var(--hs-muted);
+    }
+    #hs-mc-search-count {
+      display: none;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--hs-muted);
+      background: #111;
+      border: 1px solid #333;
+      padding: 1px 5px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    #hs-mc-search-count.visible {
+      display: block;
+    }
+    #hs-mc-search-spinner {
+      display: none;
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    #hs-mc-search-spinner.visible {
+      display: block;
+    }
+    .hs-mc-search-result {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 5px 8px;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .hs-mc-search-result:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-mc-search-result:last-child {
+      border-bottom: none;
+    }
+    .hs-mc-search-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    .hs-mc-search-user {
+      font-weight: bold;
+      color: #fff;
+    }
+    .hs-mc-search-content {
+      color: #ccc;
+      word-break: break-word;
+    }
+    .hs-mc-search-empty {
+      padding: 16px;
+      text-align: center;
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    /* btop-style discover: bordered widgets, distinct accents per section */
+    .hs-discover-root {
+      container-type: inline-size;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: -8px;
+      padding: 6px;
+    }
+    .hs-discover-row1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    @container (min-width: 460px) {
+      .hs-discover-row1 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .hs-discover-section {
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .hs-discover-section + .hs-discover-section { margin-top: 0; }
+    .hs-discover-heading {
+      font-size: 13px;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 0;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      line-height: 17px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .hs-discover-heading-title {
+      flex-shrink: 0;
+    }
+    .hs-discover-section-body {
+      padding: 1px 0;
+    }
+    .hs-discover-section-empty {
+      padding: 8px;
+      color: var(--hs-muted);
+      font-size: 13px;
+    }
+    .hs-discover-meta {
+      color: var(--hs-muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .hs-discover-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 3px 8px;
+      margin: 0;
+    }
+    .hs-discover-chip {
+      display: inline-block;
+      padding: 1px 7px;
+      background: transparent;
+      border: 1px solid var(--hs-thread);
+      color: var(--hs-thread);
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      border-radius: 0;
+      line-height: 19px;
+      white-space: nowrap;
+    }
+    .hs-discover-chip:hover { background: #fff; color: #000; border-color: #fff; }
+    .hs-discover-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      text-decoration: none;
+      cursor: pointer;
+      line-height: 17px;
+      font-size: 13px;
+      border-left: 2px solid transparent;
+    }
+    .hs-discover-profile-row:hover { background: #fff; color: #000; }
+    .hs-discover-profile-row:hover * { color: #000 !important; }
+    .hs-discover-profile-row.hs-discover-row-live { border-left-color: var(--hs-live); }
+    .hs-discover-rank {
+      color: var(--hs-muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      width: 18px;
+      text-align: right;
+      flex-shrink: 0;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .hs-discover-row-live .hs-discover-rank { color: var(--hs-muted); }
+    .hs-discover-live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--hs-live);
+      flex-shrink: 0;
+    }
+    .hs-discover-live-spacer { width: 7px; flex-shrink: 0; }
+    .hs-discover-avatar {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      border-radius: 0;
+      object-fit: cover;
+      background: #1a1a1a;
+    }
+    .hs-discover-avatar-empty { display: inline-block; }
+    .hs-discover-profile-name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+      flex-shrink: 1;
+    }
+    .hs-discover-platforms {
+      display: inline-flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .hs-discover-platforms .hs-plat {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0 3px;
+      line-height: 15px;
+      text-decoration: none;
+    }
+    .hs-discover-platforms .hs-plat:hover { background: #fff !important; color: #000 !important; }
+    .hs-discover-platforms .hs-plat-live { font-weight: 900; }
+    .hs-discover-platforms .hs-plat-t { color: var(--hs-plat-twitch); }
+    .hs-discover-platforms .hs-plat-k { color: var(--hs-plat-kick); }
+    .hs-discover-platforms .hs-plat-yt { color: var(--hs-plat-youtube); }
+    .hs-discover-platforms .hs-plat-h { color: #fff; }
+    /* Post platform letters use same colors */
+    .hs-discover-post-plat.hs-plat-t { color: var(--hs-plat-twitch); }
+    .hs-discover-post-plat.hs-plat-k { color: var(--hs-plat-kick); }
+    .hs-discover-post-plat.hs-plat-yt { color: var(--hs-plat-youtube); }
+    .hs-discover-post-plat.hs-plat-h { color: #fff; }
+    .hs-discover-bar {
+      flex: 1;
+      min-width: 28px;
+      max-width: 90px;
+      height: 5px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .hs-discover-bar > i {
+      display: block;
+      height: 100%;
+      background: #fff;
+    }
+    .hs-discover-row-live .hs-discover-bar > i {
+      background: var(--hs-live);
+    }
+    /* Heat number — color/glow comes from inline style via discoverHeatStyle (canonical tiers) */
+    .hs-discover-heat {
+      display: inline-block;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      line-height: 1;
+    }
+    .hs-discover-viewers {
+      font-size: 13px;
+      color: var(--hs-danger);
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      flex-shrink: 0;
+    }
+
+    /* Filter chips bar */
+    .hs-discover-chips-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 8px;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .hs-discover-chips-label {
+      color: var(--hs-muted);
+      font-size: 13px;
+      font-weight: 700;
+      margin-right: -2px;
+    }
+    .hs-discover-chip-btn {
+      padding: 2px 8px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--hs-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-weight: 600;
+      border-radius: 0;
+      line-height: 18px;
+    }
+    .hs-discover-chip-btn.hs-active {
+      background: #fff;
+      border-color: #fff;
+      color: #000;
+    }
+    .hs-discover-chip-btn.hs-chip-plat-t.hs-active {
+      background: var(--hs-plat-twitch);
+      border-color: var(--hs-plat-twitch);
+      color: #fff;
+    }
+    .hs-discover-chip-btn.hs-chip-plat-k.hs-active {
+      background: var(--hs-plat-kick);
+      border-color: var(--hs-plat-kick);
+      color: #000;
+    }
+    .hs-discover-chip-btn.hs-chip-plat-yt.hs-active {
+      background: var(--hs-plat-youtube);
+      border-color: var(--hs-plat-youtube);
+      color: #fff;
+    }
+    .hs-discover-chip-btn:hover,
+    .hs-discover-chip-btn.hs-active:hover,
+    .hs-discover-chip-btn.hs-chip-plat-t.hs-active:hover,
+    .hs-discover-chip-btn.hs-chip-plat-k.hs-active:hover,
+    .hs-discover-chip-btn.hs-chip-plat-yt.hs-active:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    /* Section colour variants — distinct accent borders + headers per widget */
+    .hs-discover-section-live {
+      border-color: rgba(255,0,0,0.35);
+    }
+    .hs-discover-section-live > .hs-discover-heading {
+      background: var(--hs-live-tint);
+      border-bottom-color: rgba(255,0,0,0.35);
+      color: var(--hs-live);
+    }
+    .hs-discover-section-posts {
+      border-color: rgba(255,255,255,0.3);
+    }
+    .hs-discover-section-posts > .hs-discover-heading {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+    }
+    .hs-discover-section-trending {
+      border-color: rgba(255,255,255,0.15);
+    }
+    .hs-discover-section-trending > .hs-discover-heading {
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border-bottom-color: rgba(255,255,255,0.15);
+    }
+    .hs-discover-section-tags {
+      border-color: rgba(255,0,255,0.35);
+    }
+    .hs-discover-section-tags > .hs-discover-heading {
+      background: rgba(255,0,255,0.08);
+      color: var(--hs-thread);
+      border-bottom-color: rgba(255,0,255,0.35);
+    }
+
+    /* Leaderboard multi-column when wide — fewer scrolls */
+    .hs-discover-leaderboard-body .hs-discover-profile-row {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    @container (min-width: 520px) {
+      .hs-discover-leaderboard-body {
+        columns: 2;
+        column-gap: 0;
+        column-rule: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    @container (min-width: 800px) {
+      .hs-discover-leaderboard-body {
+        columns: 3;
+      }
+    }
+
+    /* Post rows — 2-line: meta line + content snippet */
+    .hs-discover-post-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 5px 8px;
+      text-decoration: none;
+      cursor: pointer;
+      line-height: 17px;
+      border-left: 2px solid transparent;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .hs-discover-post-row:last-child { border-bottom: none; }
+    .hs-discover-post-row:hover {
+      background: #fff;
+      color: #000;
+      border-left-color: #fff;
+    }
+    .hs-discover-post-row:hover * { color: #000 !important; }
+    .hs-discover-post-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      font-size: 13px;
+    }
+    .hs-discover-post-spacer { flex: 1; }
+    .hs-discover-post-time {
+      color: var(--hs-muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      flex-shrink: 0;
+    }
+    .hs-discover-post-plat {
+      flex-shrink: 0;
+    }
+    .hs-discover-post-user {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 1;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-discover-post-text {
+      color: #c8c8c8;
+      font-size: 13px;
+      line-height: 18px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    .hs-discover-post-row:hover .hs-discover-post-text { color: #fff; }
+    .hs-discover-post-heat {
+      flex-shrink: 0;
+    }
+    .hs-discover-post-replies {
+      font-size: 13px;
+      color: var(--hs-muted);
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      flex-shrink: 0;
+    }
+
+    /* Tag chips with optional inline count */
+    .hs-discover-chip-count {
+      margin-left: 5px;
+      color: rgba(255,0,255,0.6);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+    }
+    .hs-discover-chip:hover .hs-discover-chip-count { color: #000; }
+
+    .hs-pinned-row {
+      display: block;
+      padding: 2px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      text-decoration: none;
+      cursor: pointer;
+      line-height: 18px;
+    }
+    .hs-pinned-row:hover { background: #fff; }
+    .hs-pinned-row:hover * { color: #000 !important; }
+    .hs-pinned-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin: 0;
+    }
+    .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
+    .hs-pinned-user { font-size: 13px; color: #bbb; }
+    .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-left: auto; }
+    .hs-pinned-body {
+      font-size: 13px;
+      color: #ddd;
+      word-break: break-word;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* mod-action log (streamer/mod popout view) — per-action ANSI accents */
+    .hs-modlog-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 2px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 18px;
+      font-size: 13px;
+    }
+    .hs-modlog-row:hover { background: rgba(255,135,0,0.07); }
+    .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
+    .hs-modlog-channel { color: #fff; font-weight: 600; }
+    .hs-modlog-body { color: #ddd; word-break: break-word; }
+    .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }
+    .hs-modlog-timeout .hs-modlog-body { color: var(--hs-gold); }
+    .hs-modlog-unban .hs-modlog-body,
+    .hs-modlog-untimeout .hs-modlog-body { color: var(--hs-ok); }
+    .hs-modlog-delete .hs-modlog-body { color: #9e9e9e; }
+
+    /* Quoted chat line (the post↔log bridge). A post that cites a chat message
+       resolves the /logs permalink back into the real line: who said it, when,
+       in which channel, with the emotes they actually used. Cyan is the quote
+       accent from the palette — the same one reply context and whispers use.
+       The whole card is the anchor, so the click-through to the surrounding log
+       is the obvious action; hover is the universal white plate. */
+    .hs-log-embed {
+      display: block;
+      margin: 4px 0 0;
+      padding: 3px 6px;
+      border-left: 2px solid var(--hs-reply-dim);
+      background: rgba(0, 255, 255, 0.05);
+      color: #ddd;
+      font-size: 13px;
+      line-height: 18px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-log-embed:hover {
+      background: #fff;
+      color: #000;
+      border-left-color: #000;
+    }
+    .hs-log-embed-meta {
+      display: flex;
+      gap: 6px;
+      color: var(--hs-border);
+      font-size: 13px;
+    }
+    .hs-log-embed:hover .hs-log-embed-meta { color: #000; }
+    .hs-log-embed-when { font-variant-numeric: tabular-nums; }
+    .hs-log-embed-line { display: block; word-break: break-word; }
+    .hs-log-embed-user {
+      color: var(--hs-reply);
+      margin-right: 4px;
+    }
+    .hs-log-embed-user::after { content: ':'; }
+    .hs-log-embed:hover .hs-log-embed-user { color: #000; }
+    /* Archive emotes ride the same rail as every other inline emote — bitmap
+       rows keep their integer baseline (see the vertical-align note in
+       10-emotes.css). */
+    .hs-log-embed .hs-cl-emote {
+      height: 18px;
+      width: auto;
+      vertical-align: text-bottom;
+    }
+
+    /* ---- YOUTUBE NATIVE CHAT HIDING ----
+       Inline display:none on the iframe gets blown away when YT recreates
+       <ytd-live-chat-frame> during ad transitions. CSS rule keyed off our
+       container survives the swap.
+
+       #chat-container is killed too: on narrow / single-column viewports
+       (player column < YT's ~1016px two-column breakpoint — which our 340px
+       panel trips at almost every window size) YT relocates the live/replay
+       chat OUT of #secondary and into #primary > #below as a top-pinned
+       #chat-container, which lies ON TOP of the player and eats every hover
+       so the scrubber/volume/pause controls never appear. We body-mount our
+       own panel (never inside #chat-container), so nuking native chat
+       wherever YT parks it is always safe. */
+    body:has(#hs-mc-container) ytd-live-chat-frame#chat,
+    body:has(#hs-mc-container) ytd-live-chat-frame,
+    body:has(#hs-mc-container) ytd-watch-flexy #chat-container {
+      display: none !important;
+    }
+
+    /* ============================================
+       UNIVERSAL HOVER — every interactive element inside the extension
+       inverts to white-bg/black-text on hover and keyboard focus.
+       Single rule, no per-class allowlist, descendants inherit.
+       [data-hs-clickable] covers rows that ARE clickable but can't take
+       role="button" — an inline DM/whisper row wires its own click handler and
+       contains anchors (@mentions, permalinks), so role="button" would nest
+       interactive-in-interactive. The attribute keeps this ONE rule rather than
+       growing a per-class allowlist.
+       Same primitive as heatsync.org, scoped to the panel so the host site's
+       own buttons aren't touched.
+       NOTE: this was written as '.hs-mc-container' (a CLASS) but the panel only
+       ever has the ID — nothing in the ext adds that class, so this entire rule
+       matched ZERO elements and the "universal" hover never actually ran. The
+       controls that do invert (tabs, util buttons) each carry their own explicit
+       hover rule, which is exactly the per-class allowlist this was meant to
+       replace, and is why it went unnoticed. Targets #hs-mc-container now.
+       ============================================ */
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):hover,
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):hover *,
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible * {
+      color: #000 !important;
+      fill: #000 !important;
+      stroke: #000 !important;
+      border-color: #000 !important;
+    }
+
+    /* ============================================
+       C BUTTON — chat panel position around the player.
+       Default 'right' = no override (existing native layout).
+       For left/top/bottom: fixed-position #hs-mc-container at the chosen
+       viewport edge, collapse the native chat sidebar's layout claim so
+       the player can fill the freed space, and push the platform's content
+       root with element-level padding (NOT body — body padding breaks
+       sticky nav / fullscreen / scroll on every platform).
+
+       Single source of truth: body classes drive everything.
+         hs-platform-{twitch,kick,yt}
+         hs-mode-{normal,theatre}
+         hs-chat-{right,left,top,bottom}
+       JS sets --hs-chat-w / --hs-chat-h CSS vars from settings.
+       ============================================ */
+
+    /* YouTube default: only show the multichat panel on pages with live chat.
+       hs-offline is set (checkYtLive) when THIS page has no live_chat frame and
+       the user hasn't opted into chat on non-live pages (ytChatOnNonLive). Hide
+       the panel + its resize handle; every hs-chat-* layout override above gates
+       on :not(.hs-offline), so the page reverts to normal YT (related videos
+       restored, masthead full, player full size) when the panel is hidden. */
+    body.hs-platform-yt.hs-offline #hs-mc-container,
+    body.hs-platform-yt.hs-offline #hs-yt-resize-handle {
+      display: none !important;
+    }
+
+    /* YOUTUBE FULLSCREEN — hide the panel outright.
+       On twitch, fullscreen promotes #root to the top layer, so a body-mounted
+       panel is simply never painted and no rule is needed. YouTube instead
+       expands the player in-page and marks ytd-watch-flexy[fullscreen] while the
+       document keeps rendering normal body content — so our position:fixed panel
+       sat on top of the fullscreen video. Key off YT's own attribute rather than
+       :fullscreen: when YT fullscreens the document element, that element is an
+       ANCESTOR of body, so body:has(:fullscreen) would never match it. Hiding the
+       container covers the tab bar, overlay, inputbar and emote picker (all its
+       children); the resize handle is a sibling, so it's listed too. */
+    body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-mc-container,
+    body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-yt-resize-handle,
+    body.hs-platform-yt:has(:fullscreen) #hs-mc-container,
+    body.hs-platform-yt:has(:fullscreen) #hs-yt-resize-handle {
+      display: none !important;
+    }
+
+    /* SHORTS — no panel, no squeeze. ytd-shorts pages never set hs-yt-watch
+       (they don't render ytd-watch-flexy), so the generic non-watch squeeze
+       rules used to fire there and shrank the shorts UI with nothing
+       compensating; the fixed panel also overlapped shorts' right-rail
+       action buttons. Shorts is a vertical clip feed — chat has no home
+       there. The squeeze rules carry :not(.hs-yt-shorts) gates; this hides
+       the panel itself. */
+    body.hs-platform-yt.hs-yt-shorts #hs-mc-container,
+    body.hs-platform-yt.hs-yt-shorts #hs-yt-resize-handle {
+      display: none !important;
+    }
+
+    /* --- chat container: fixed-position at chosen edge.
+       chat-right also uses position:fixed (instead of YT's natural flex
+       layout) so small-viewport responsive breakpoints don't push chat
+       below the player. Chat is always at the viewport edge. --- */
+    body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container,
+    body.hs-chat-left #hs-mc-container,
+    body.hs-chat-top #hs-mc-container,
+    body.hs-chat-bottom #hs-mc-container {
+      position: fixed !important;
+      z-index: 9999 !important;
+      background: #000 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+    }
+    body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container {
+      top: 0 !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      left: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: 100vh !important;
+    }
+    body.hs-chat-left #hs-mc-container {
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: 100vh !important;
+    }
+    body.hs-chat-top #hs-mc-container {
+      top: 0 !important;
+      bottom: auto !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+    }
+    body.hs-chat-bottom #hs-mc-container {
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+    }
+
+    /* --- TWITCH non-channel pages (/directory, /settings, /videos, …):
+       no .chat-shell to mount in, so we body-mount as a position:fixed
+       overlay and squeeze twitch's content with a body width/height
+       constraint. --hs-twitch-topnav-h tracks the live nav height so the
+       panel slots beneath it (and reclaims the space in theatre / immersive
+       modes that hide the nav). --- */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right #hs-mc-container {
+      position: fixed !important;
+      /* Below Twitch's popup layers (balloon 2000 / overlay 3000 / modal 5000)
+         so nav-anchored dropdowns — user menu, notifications, bits, whispers —
+         render ABOVE the panel instead of being buried under it. Safe to sit
+         this low: the body squeeze below gutters ALL twitch content out of the
+         panel's x-band, so nothing but transient popups ever overlaps it. */
+      z-index: 1500 !important;
+      background: #000 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      left: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: auto !important;
+    }
+    /* Left/top/bottom no-channel reuse the generic container rules (z 9999).
+       On fresh load they're stylesheet-owned (the JS inline override only
+       re-applies on rotate), so the lowered z + nav-clearing top MUST live in
+       CSS here or a freshly-loaded left/top/bottom dock buries popups (and top
+       overlaps the lifted nav). Same popup-layer rationale as right above. */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left #hs-mc-container,
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom #hs-mc-container {
+      z-index: 1500 !important;
+    }
+    /* Top: drop the z AND push the strip below the now-fixed nav (generic rule
+       pins it to top:0, which would tuck under the nav). Body's margin-top
+       (navH + chatH) already reserves the row, so content still clears it. */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top #hs-mc-container {
+      z-index: 1500 !important;
+      top: var(--hs-twitch-topnav-h, 50px) !important;
+    }
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      overflow-x: hidden !important;
+    }
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      margin-left: var(--hs-chat-w, 340px) !important;
+      overflow-x: hidden !important;
+    }
+    /* The body shrink above squeezes the top-nav too, leaving a blank gap in
+       the corner above the right/left chat panel (the panel sits BELOW the nav
+       at y=navH, so that strip is free). Lift the nav out of the squeezed body
+       to span the full viewport — fixed escapes both the width clamp and the
+       overflow-x clip. Stable selector — Twitch tags its top nav with
+       data-a-target on every page. Right/left shrink width so the nav was cut;
+       top shoves the nav down with body's margin-top — both need the lift.
+       Bottom leaves the nav at y0 untouched, so it's excluded. nav stays above
+       the panel so its in-DOM dropdowns (search) clear the chat; portaled popups
+       clear it via the lowered panel z above. */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right [data-a-target="top-nav-container"],
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left [data-a-target="top-nav-container"],
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top [data-a-target="top-nav-container"] {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      z-index: 9998 !important;
+    }
+    /* Backfill the row the now-fixed nav vacated so content still starts at
+       y=navH — but ONLY when the standard nav is actually present (and thus
+       lifted). Pages with a non-standard header (e.g. creator dashboard) have
+       no top-nav-container; without this :has() gate they'd get an orphan
+       navH-tall gap at the top. */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-right:has([data-a-target="top-nav-container"]),
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-left:has([data-a-target="top-nav-container"]) {
+      padding-top: var(--hs-twitch-topnav-h, 50px) !important;
+    }
+    /* chat-top: panel slots under top-nav at y=navH and extends chatH down.
+       Body must clear (navH + chatH) AND shrink to fit the remaining viewport,
+       otherwise twitch content overflows into the area covered by the panel. */
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top {
+      margin-top: calc(var(--hs-twitch-topnav-h, 50px) + var(--hs-chat-h, 35vh)) !important;
+      height: calc(100vh - var(--hs-twitch-topnav-h, 50px) - var(--hs-chat-h, 35vh)) !important;
+      overflow-y: hidden !important;
+    }
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom {
+      height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      overflow-y: hidden !important;
+    }
+    /* Twitch creator dashboard (dashboard.twitch.tv) renders into
+       .sunlight-root, pinned to 100vw x 100vh — it ignores the body shrink
+       above, so dashboard content (and its right-edge buttons) renders under
+       the fixed panel. Force the root + its content child back to 100% so it
+       reflows inside the squeezed body. Mirror of the kick w-xvw rule below. */
+    body.hs-platform-twitch.hs-twitch-no-channel .sunlight-root,
+    body.hs-platform-twitch.hs-twitch-no-channel .sunlight-root > div {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top .sunlight-root,
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom .sunlight-root,
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-top .sunlight-root > div,
+    body.hs-platform-twitch.hs-twitch-no-channel.hs-chat-bottom .sunlight-root > div {
+      height: 100% !important;
+      max-height: 100% !important;
+    }
+
+    /* --- KICK non-channel pages (/browse, /categories, /following,
+       /search, /settings, …): #channel-chatroom doesn't exist, so we
+       body-mount as a position:fixed overlay and squeeze kick's <main>
+       so its content doesn't underlap the panel. Mirror of the twitch
+       no-channel rules above. --- */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right #hs-mc-container,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left #hs-mc-container,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top #hs-mc-container,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom #hs-mc-container {
+      position: fixed !important;
+      z-index: 9999 !important;
+      background: #000 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+    }
+    /* Kick's nav is position:fixed 60px tall full viewport width. With chat-right/
+       left docked to top:0 the panel covers the right ~340px of the nav including
+       the login/search/profile icons. Offset down by nav height so those stay
+       reachable; mirrors --hs-twitch-topnav-h pattern. */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right #hs-mc-container {
+      top: var(--hs-kick-topnav-h, 60px) !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      left: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: auto !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left #hs-mc-container {
+      top: var(--hs-kick-topnav-h, 60px) !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: auto !important;
+      width: var(--hs-chat-w, 340px) !important;
+      height: auto !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top #hs-mc-container {
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom #hs-mc-container {
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+      width: 100vw !important;
+      height: var(--hs-chat-h, 35vh) !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      overflow-x: hidden !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      margin-left: var(--hs-chat-w, 340px) !important;
+      overflow-x: hidden !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top {
+      margin-top: var(--hs-chat-h, 35vh) !important;
+      height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      overflow-y: hidden !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom {
+      height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      overflow-y: hidden !important;
+    }
+    /* On no-channel pages, the existing kick.hs-chat-left main padding rule
+       (padding-left: var(--hs-chat-w)) is wrong — there's no #channel-
+       chatroom to anchor against and we already shifted body via
+       margin-left. Cancel the horizontal padding so main flows naturally
+       inside the shrunken body. */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom main {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      padding-bottom: 0 !important;
+      overflow-x: hidden !important;
+    }
+    /* Kick's homepage grids use shrink-0 cards which overflow the parent
+       at our shrunken viewport width — cards push past body width and end
+       up under the chat panel. Clip the overflow at the app-shell wrapper
+       and the group/main wrapper too. Vertical scroll preserved. */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left .group\/main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right .group\/main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top .group\/main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom .group\/main {
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    /* Kick's stream-card / category grids have grid-cols-N classes but at
+       narrow viewports the parent flips them to display:flex with shrink-0
+       cards — so they overflow horizontally past body width and underlap
+       the chat panel. Force display:grid + auto-fill so cards wrap into
+       rows that fill the available body width regardless of viewport
+       breakpoint. min-width:0 + width:auto on items lets the grid actually
+       shrink the cards into slots (otherwise the w-full + shrink-0 combo
+       keeps them at their intrinsic 268px). */
+    body.hs-platform-kick.hs-kick-no-channel main section[class*="grid-cols"],
+    body.hs-platform-kick.hs-kick-no-channel main div[class*="grid-cols"] {
+      display: grid !important;
+      /* min(170px, 100%) — when body is narrower than 170 (very small window
+         with wide chat), slots collapse to 1 column at body width instead of
+         overflowing. Above 170 it stays at the readable 170 floor. */
+      grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr)) !important;
+      grid-auto-flow: row !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel main section[class*="grid-cols"] > *,
+    body.hs-platform-kick.hs-kick-no-channel main div[class*="grid-cols"] > * {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      flex-shrink: 1 !important;
+    }
+    /* Push content below Kick's fixed 60px nav so the first row of video
+       thumbnails isn't half-hidden under it. chat-top covers the nav (own
+       body margin-top handles it); chat-right/left/bottom all leave the
+       nav visible and need this offset. */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left main,
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom main {
+      padding-top: var(--hs-kick-topnav-h, 60px) !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top main {
+      padding-top: 0 !important;
+    }
+    /* Kick fullscreen modals (login, 2FA, captcha) render a fixed full-viewport-
+       width dialog centered via transform translate(-50%, -50%) — with our
+       squeezed body the right ~340px of the modal content (incl. the 2FA code
+       input) ends up under the chat panel.
+       Shrink the dialog to body width and shift the centering anchor so it
+       lives inside the visible body area; also shrink the dimming backdrop so
+       the chat panel stays interactive alongside. role=dialog + data-state are
+       Kick-specific (HeatSync never uses either), so this can't self-trigger. */
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right .z-dialog[data-state="open"] {
+      right: var(--hs-chat-w, 340px) !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left .z-dialog[data-state="open"] {
+      left: var(--hs-chat-w, 340px) !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-right [role="dialog"][data-state="open"] {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      max-width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      left: calc(50% - var(--hs-chat-w, 340px) / 2) !important;
+      right: auto !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-left [role="dialog"][data-state="open"] {
+      width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      max-width: calc(100vw - var(--hs-chat-w, 340px)) !important;
+      left: calc(50% + var(--hs-chat-w, 340px) / 2) !important;
+      right: auto !important;
+    }
+    /* Kick wraps content in a flex container with w-xvw (= 100vw)
+       which ignores the body width shrink — main ends up overflowing
+       behind our panel. Force every viewport-sized wrapper inside the
+       shrunken body back down to 100% so the grid reflows live as the
+       resize handle drags. h-xvh is the vertical equivalent for chat-top/
+       chat-bottom. */
+    body.hs-platform-kick.hs-kick-no-channel [class*="w-xvw"],
+    body.hs-platform-kick.hs-kick-no-channel main,
+    body.hs-platform-kick.hs-kick-no-channel #main-container {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-top [class*="h-xvh"],
+    body.hs-platform-kick.hs-kick-no-channel.hs-chat-bottom [class*="h-xvh"] {
+      height: 100% !important;
+      max-height: 100% !important;
+    }
+
+    /* Auth/API status banner — pinned to top edge of the chat panel as a
+       thin horizontal strip, regardless of the container's flex direction
+       (column for chat-right, row for tabs-left/right). Without this the
+       banner stretches to the cross-axis full size in flex-row layouts and
+       fills the panel as a giant orange column. Container reserves 28px
+       border-top so abs-positioned children (tabbar/messages/inputbar) shift
+       down and don't sit under the banner. The banner itself uses top:-28px
+       to land in the border zone (= container's outer top edge). */
+    #hs-mc-container:has(> .hs-mc-auth-banner),
+    #hs-mc-container:has(> .hs-mc-api-banner),
+    #hs-mc-container:has(> [class*="hs-mc-api-banner-"]) {
+      border-top: 28px solid transparent !important;
+    }
+    .hs-mc-auth-banner,
+    .hs-mc-api-banner,
+    [class*="hs-mc-api-banner-"] {
+      position: absolute !important;
+      top: -28px !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 28px !important;
+      width: auto !important;
+      z-index: 50 !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Resize bar reservation (dwl tile rule) — chat content reserves border
+       on the player-facing edge so the orange resize bar never overlays the
+       tabbar, input bar, T/K/Y filter buttons, or any other panel content.
+       Border (not padding) shrinks the padding box, which is the containing
+       block for abs-positioned children — without this the inputbar/tabbar/
+       overlay (all position:absolute; bottom:Npx) snap to the outer edge
+       and sit under the bar. With box-sizing: border-box the container's
+       outer dim is unchanged. Every bar is --hs-resize-thickness, so the
+       reservation tracks the same token. */
+    body.hs-chat-right #hs-mc-container { border-left: var(--hs-resize-thickness) solid transparent !important; }
+    body.hs-chat-left #hs-mc-container { border-right: var(--hs-resize-thickness) solid transparent !important; }
+    body.hs-chat-top #hs-mc-container { border-bottom: var(--hs-resize-thickness) solid transparent !important; }
+    body.hs-chat-bottom #hs-mc-container { border-top: var(--hs-resize-thickness) solid transparent !important; }
+
+    /* --- YT narrow viewport rescue ---
+       At narrow viewports YT collapses ytd-watch-flexy into a single-column
+       layout: #primary spans the full viewport, #secondary stacks below.
+       Constraining the player's wrapper width isn't enough — the player
+       sits centered inside the still-full-width #primary, so its right
+       edge slides under our chat overlay.
+       Cap #primary itself with max-width so YT's responsive flex respects
+       the chat strip in BOTH single-column and two-column modes. The
+       wrapper inline-sizing in applyPlatformPositionOverrides is a
+       complementary belt-and-suspenders. */
+    /* :not([theater]):not([fullscreen]) — theatre/fullscreen rearrange the
+       watch layout to a full-width player row; applyYouTubeChatWidth already
+       clears its INLINE overrides there, but these !important caps kept
+       fighting the reflow: the video stayed narrow with a dead strip where
+       the normal-mode chat column would be. Same source of truth as the JS
+       theatre branch (the flexy attributes). */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      max-width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      width: calc(100% - var(--hs-chat-w, 340px)) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      max-width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      margin-left: var(--hs-chat-w, 340px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      margin-top: var(--hs-chat-h, 35vh) !important;
+      max-height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      max-height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+    }
+    /* YT's masthead is position:fixed with width:100% (viewport-anchored).
+       Setting right alone without overriding width:100% makes the
+       browser compute left = -chatW — pushing burger + YT logo off the
+       LEFT edge of the screen. Anchor BOTH sides (left + right) and let
+       width auto-fit, so the masthead shrinks INTO the visible strip.
+       Applies to every YT page: home, search, channel, VOD, live —
+       the multichat panel is always there, masthead must always make room. */
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right #masthead-container,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead {
+      left: 0 !important;
+      right: calc(var(--hs-chat-w, 340px) + 5px) !important;
+      width: auto !important;
+    }
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left #masthead-container,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead {
+      left: calc(var(--hs-chat-w, 340px) + 5px) !important;
+      right: 0 !important;
+      width: auto !important;
+    }
+    /* Top layout only: push-down is NOT gated on :not(.hs-offline) like the
+       left/right variants above. hs-offline flips async (checkYtLive /
+       detectOfflineState resolve after the initial paint, and can re-settle
+       independently across a YT soft-nav), while #hs-mc-container's own
+       fixed/full-width/z-index:9999 top positioning (17-platform-position.css
+       ~line 98) is NOT gated on hs-offline either. During that window the
+       panel can sit pinned over the masthead's search/account/notification
+       controls with nothing pushing them down — eating clicks (had to
+       popout to escape). Keying this rule off the same unconditional
+       .hs-chat-top state the container itself uses closes that gap: the
+       masthead is never occluded, full stop. Cost: a dead strip under the
+       masthead while genuinely offline+top-configured — acceptable, the
+       panel is hidden then anyway so nothing is fighting for that space. */
+    body.hs-platform-yt.hs-chat-top #masthead-container,
+    body.hs-platform-yt.hs-chat-top ytd-masthead {
+      top: calc(var(--hs-chat-h, 35vh) + 5px) !important;
+    }
+    /* YT's responsive @media rules use viewport width, but our masthead
+       is narrower (chat panel eats real estate). At our reduced widths
+       YT doesn't auto-collapse, so we drive it: hide the voice-search
+       and ai-companion buttons (non-essential, eat 40px each), then let
+       #center flex-shrink so the search input keeps a usable width. The
+       burger + logo (#start) and sign-in icons (#end) stay full-size. */
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #voice-search-button,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #ai-companion-button,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #voice-search-button,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #ai-companion-button {
+      display: none !important;
+    }
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #center,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #center {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+    }
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead ytd-searchbox,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead yt-searchbox,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead ytd-searchbox,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead yt-searchbox {
+      width: 100% !important;
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+      margin-left: 0 !important;
+      box-sizing: border-box !important;
+    }
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #search-form,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #search-form {
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+    }
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #start,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-masthead #end,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #start,
+    body.hs-platform-yt:not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-masthead #end {
+      flex: 0 0 auto !important;
+    }
+
+    /* Reflow ALL YT content (every page type) into the viewport area NOT
+       covered by the multichat panel. ytd-app is the React root; capping
+       its viewport-width forces YT's responsive layout to honor the chat
+       strip. Single-column pages (home grid, search results, channel)
+       reflow naturally; watch pages let YT's own breakpoints handle the
+       primary/secondary column collapse when space gets tight. */
+    /* :not(.hs-offline) — the panel is HIDDEN on pages with no live chat
+       (home, search, channel, non-live watch). Reserving the chat strip
+       there left a dead gap on the right and forced YT's grid to wrap at
+       half width (2 tiles instead of 4-5). No panel, no reserve. */
+    /* Cap ytd-app ONLY (not page-manager too — page-manager nests inside
+       ytd-app, so its 100% resolves against ytd-app's already-capped
+       width and would subtract the chat strip a second time, leaving the
+       grid renderered at half-width with a giant empty gutter).
+       100% (not 100vw) — vw includes the page scrollbar (~15px); the
+       chat panel is position:fixed and respects the inner viewport that
+       excludes the scrollbar, so 100vw caps were 15px too wide.
+       The chat-side padding is the orange resize bar's gutter. */
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-right ytd-app {
+      width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      max-width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      padding-right: var(--hs-resize-thickness) !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-left ytd-app {
+      width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      max-width: calc(100% - var(--hs-chat-w, 340px)) !important;
+      margin-left: var(--hs-chat-w, 340px) !important;
+      padding-left: 5px !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-top ytd-app {
+      height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      max-height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      margin-top: var(--hs-chat-h, 35vh) !important;
+      padding-top: 5px !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+    }
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline):not(.hs-yt-shorts).hs-chat-bottom ytd-app {
+      height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      max-height: calc(100vh - var(--hs-chat-h, 35vh)) !important;
+      padding-bottom: 5px !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+    }
+    /* Lift YT's own width clamps on the grid chain — without these,
+       div#primary inside ytd-two-column-browse-results-renderer stays
+       stuck at the previous page's --ytd-rich-grid-width value after
+       SPA nav, and ytd-rich-grid-renderer/#contents inherit that. Force
+       every level to 100% of parent so our auto-fill grid uses the full
+       page-manager width. */
+    body.hs-platform-yt #page-manager ytd-two-column-browse-results-renderer > #primary,
+    body.hs-platform-yt #page-manager ytd-two-column-browse-results-renderer > ytd-rich-grid-renderer,
+    body.hs-platform-yt #page-manager ytd-rich-grid-renderer,
+    body.hs-platform-yt #page-manager ytd-rich-grid-renderer > #contents {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    /* YT computes ytd-rich-grid-renderer items-per-row off VIEWPORT width
+       (not container) and bakes it into [items-per-row="N"] attribute
+       selectors — overriding the CSS var alone doesn't change the grid.
+       Bypass the whole system: replace #contents with an auto-fill grid
+       so it wraps fluidly at any width. ytd-rich-grid-row (when present
+       in older YT structures) gets display:contents so its children
+       participate in the parent grid as direct cells. Result: tiles
+       always fit whole, density adapts to chat-panel width. */
+    body.hs-platform-yt #page-manager ytd-rich-grid-renderer > #contents,
+    body.hs-platform-yt #page-manager ytd-rich-grid-row > #contents {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
+      gap: 16px !important;
+    }
+    body.hs-platform-yt #page-manager ytd-rich-grid-row {
+      display: contents !important;
+    }
+    /* Defense-in-depth: every level inside the grid cell must respect
+       parent width. YT inline-styles widths on ytd-rich-grid-media (and
+       sometimes on the thumbnail anchor) using its own items-per-row
+       math that ignores our chat strip — without forcing each level to
+       100%, the rightmost tile overflows the cell and gets clipped by
+       overflow-x:clip on ytd-app, which is what shows up as a half-cut
+       thumbnail. #page-manager ID prefix bumps specificity above YT's
+       attribute-keyed width rules on ytd-rich-grid-media which would
+       otherwise win on attribute-selector count. */
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer > #content,
+    body.hs-platform-yt #page-manager ytd-rich-grid-media,
+    body.hs-platform-yt #page-manager ytd-rich-grid-media > #thumbnail,
+    body.hs-platform-yt #page-manager ytd-rich-grid-media a#thumbnail,
+    body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image,
+    body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image img,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer ytd-thumbnail {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    /* Older grid (subscriptions/library still use it on some accounts). */
+    body.hs-platform-yt ytd-grid-renderer > #items {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+      gap: 16px !important;
+    }
+    body.hs-platform-yt ytd-grid-video-renderer {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+
+    /* Shorts shelf: hidden only while the HeatSync takeover UI is active
+       (hs-yt-nonlive-chat). Aspect ratio breaks grid uniformity and the
+       vertical-only feed doesn't fit the streamer-centric HeatSync UX —
+       but users who opted OUT of non-live chat keep their youtube intact. */
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has([is-shorts]),
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-section-renderer:has(grid-shelf-view-model),
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-shelf-renderer[is-shorts],
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-reel-shelf-renderer,
+    body.hs-platform-yt.hs-yt-nonlive-chat grid-shelf-view-model,
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-rich-item-renderer:has(ytd-shorts),
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-guide-entry-renderer:has(a[title="Shorts"]),
+    body.hs-platform-yt.hs-yt-nonlive-chat ytd-pivot-bar-item-renderer:has(a[title="Shorts"]),
+    body.hs-platform-yt.hs-yt-nonlive-chat a[href="/shorts"],
+    body.hs-platform-yt.hs-yt-nonlive-chat a[href^="/shorts/"][role="tab"] {
+      display: none !important;
+    }
+
+    /* --- TWITCH: collapse .right-column to give the player back its space.
+       width:0 + overflow:visible (not display:none) so #hs-mc-container
+       inside chat-shell stays render-tree visible while the parent's
+       layout box claims zero width. --- */
+    body.hs-platform-twitch.hs-chat-left .right-column,
+    body.hs-platform-twitch.hs-chat-top .right-column,
+    body.hs-platform-twitch.hs-chat-bottom .right-column {
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      flex: 0 0 0 !important;
+      overflow: visible !important;
+    }
+    body.hs-platform-twitch.hs-chat-left .chat-shell,
+    body.hs-platform-twitch.hs-chat-top .chat-shell,
+    body.hs-platform-twitch.hs-chat-bottom .chat-shell,
+    body.hs-platform-twitch.hs-chat-left [class*="chat-shell"],
+    body.hs-platform-twitch.hs-chat-top [class*="chat-shell"],
+    body.hs-platform-twitch.hs-chat-bottom [class*="chat-shell"] {
+      overflow: visible !important;
+    }
+    body.hs-platform-twitch.hs-chat-left .channel-root {
+      /* .channel-root sits at viewport-x = side-nav (50px collapsed, ~240px
+         expanded on wide viewports — Twitch flips it at ~1200px). Subtract
+         the live nav width so content lands flush with the HS panel's right
+         edge instead of leaving a gap. JS keeps --hs-twitch-sidenav-w in
+         sync via ResizeObserver on .side-nav. */
+      padding-left: calc(var(--hs-chat-w, 340px) - var(--hs-twitch-sidenav-w, 50px)) !important;
+    }
+    body.hs-platform-twitch.hs-chat-top .channel-root {
+      padding-top: var(--hs-chat-h, 35vh) !important;
+    }
+    body.hs-platform-twitch.hs-chat-bottom .channel-root {
+      padding-bottom: var(--hs-chat-h, 35vh) !important;
+    }
+    /* Twitch theatre: persistent-player fills viewport via position:fixed —
+       padding on .channel-root won't reach it. Inset the player itself. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-left .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-left .video-player--theatre {
+      left: var(--hs-chat-w, 340px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-top .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-top .video-player--theatre {
+      top: var(--hs-chat-h, 35vh) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-bottom .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-bottom .video-player--theatre {
+      bottom: var(--hs-chat-h, 35vh) !important;
+    }
+    /* The root scroller must never h-scroll while we reserve right-side
+       space — transient overflow during theatre/width transitions otherwise
+       sticks as a 200px+ leftward page shift. Twitch never h-scrolls this
+       element by design. */
+    body.hs-platform-twitch.hs-chat-right .root-scrollable {
+      overflow-x: hidden !important;
+    }
+    /* chat-right (default dock) was missing here — theatre player filled the
+       full viewport and ran UNDER the panel. Twitch writes explicit pixel
+       width inline; with both insets set that over-constrains and the spec
+       drops 'right' in LTR, so width must be auto for the inset to bite. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-right .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-mode-theatre.hs-chat-right .video-player--theatre {
+      /* --hs-panel-w = measured container width (chat + side tab strip),
+         published from JS on theatre flips and resize commits — --hs-chat-w
+         alone is 35px short when the tab strip docks beside the chat. */
+      right: var(--hs-panel-w, var(--hs-chat-w, 340px)) !important;
+      inset-inline-end: var(--hs-panel-w, var(--hs-chat-w, 340px)) !important;
+      left: 0 !important;
+      inset-inline-start: 0 !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+
+    /* Twitch sizes .persistent-player by writing explicit pixel width/height
+       inline via React. With position:absolute and our inline insets set
+       !important, an explicit width/height over-constrains the layout —
+       the spec drops the opposing inset, so chat-bottom's bottom: H becomes
+       a no-op and chat just overlays the player instead of pushing it.
+       Worst during mid-roll ads, when Twitch re-locks the player's pixel
+       size for the ad video and drag-end resize stops moving it.
+       Inline setProperty(...,important) gets wiped by Twitch's later
+       el.style.height = X write (that strips priority). A stylesheet rule
+       with !important sits in a separate cascade origin and beats those
+       non-important inline writes. */
+    /* hs-twitch-no-channel = browsing away while stream continues as mini-player.
+       All persistent-player geometry rules must be gated off that class so the
+       floating mini-player keeps Twitch's own sizing and corner position. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:not(.hs-twitch-no-channel) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:not(.hs-twitch-no-channel) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:not(.hs-twitch-no-channel) .persistent-player {
+      width: auto !important;
+      height: auto !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+    /* chat-right (default dock), windowed: the isRight branch in
+       applyPlatformPositionOverrides removes the player's inline width and
+       relies on Twitch's React effect to re-write width:Npx. On a cold load,
+       SPA channel-nav or extension reload it sometimes never does (same race
+       the comment above describes), so the absolutely-positioned player —
+       left:0 with no width — shrink-wraps to ~half width and the rest of the
+       16:9 slot shows Twitch's offline placeholder behind the video. Twitch's
+       own ".channel-root + .persistent-player { width:100% }" is the right
+       target; assert it with !important so it survives the missing/stale
+       inline write. Theatre and mini-player (no-channel) have their own rules. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+      width: 100% !important;
+    }
+    /* chat-top / chat-bottom, windowed: the chat-top/bottom branch in
+       applyPlatformPositionOverrides writes all four insets inline with
+       !important, but Twitch's React effect later does el.style.top = X
+       (stripping priority) and re-asserts its own right/bottom — leaving the
+       player with a bogus right inset and width:auto, so it collapses to 0×0
+       and the video vanishes behind the chat strip. width:auto/height:auto
+       above only sizes once the insets are correct; assert the insets here in
+       the stylesheet cascade so they survive React's writes. Mirrors the
+       theatre top/bottom rules above (same --hs-chat-h, 35vh) so the player
+       edge always tracks the chat strip height. Theatre has its own rules. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+      top: var(--hs-chat-h, 35vh) !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      inset-inline-start: 0 !important;
+      inset-inline-end: 0 !important;
+    }
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+      top: 0 !important;
+      bottom: var(--hs-chat-h, 35vh) !important;
+      left: 0 !important;
+      right: 0 !important;
+      inset-inline-start: 0 !important;
+      inset-inline-end: 0 !important;
+    }
+    /* For chat-left, Twitch's React writes el.style.left = X based on its
+       own internal width tracking — that wipes any inline !important we
+       set in applyChatPosition. CSS rule with !important survives those
+       inline writes. Subtract the live side-nav width (50 collapsed,
+       ~240 expanded); .persistent-player's containing block starts after
+       the nav, so left: chatWidth would double-count it and leave a gap
+       between HS panel and video. JS pushes --hs-twitch-sidenav-w via
+       a ResizeObserver on .side-nav. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:not(.hs-twitch-no-channel) .persistent-player {
+      /* Clear --hs-panel-w (chat content + tab strip), NOT --hs-chat-w: the
+         strip adds ~60px and a chat-content-width inset leaves the video's
+         left edge tucked under the strip. publishPanelWidth keeps it live. */
+      left: calc(var(--hs-panel-w, 340px) - var(--hs-twitch-sidenav-w, 50px)) !important;
+      inset-inline-start: calc(var(--hs-panel-w, 340px) - var(--hs-twitch-sidenav-w, 50px)) !important;
+      /* width:auto !important (above) needs both insets to size; Twitch only
+         sets right:0 inline on some states, so the player collapses to 0
+         when its React effect skips the write. Assert right:0 so the
+         player always fills the area between HS panel and viewport edge. */
+      right: 0 !important;
+      inset-inline-end: 0 !important;
+      /* Pin to top: the JS branch no longer writes any inline geometry for
+         chat-left, so on the cold-load race where React never sets top the
+         player would otherwise fall to its natural-flow position at the
+         bottom of the wrapper (the same fall the chat-right top:0 guards). */
+      top: 0 !important;
+    }
+    /* True browser fullscreen. Twitch promotes #root to the top layer so it
+       fills the screen, but the theatre/dock rules above keep .persistent-player
+       inset by the chat-panel width (--hs-panel-w) — so the video stops short
+       of the right edge and Twitch's dark fallback fills the gap. In fullscreen
+       chat is hidden, so the player must fill the whole viewport. :has(:fullscreen)
+       matches whenever any descendant is the fullscreen element. Every selector
+       carries a dock class so specificity equals the theatre rules above (0,4,1)
+       and source-order seals the win — a dock-less selector would fall to 0,3,1
+       and lose to the theatre rule it must override. video-player--theatre /
+       persistent-player--theatre are Twitch's own fullscreen-layout classes —
+       clear them too. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .video-player--theatre {
+      inset: 0 !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      inset-inline-start: 0 !important;
+      inset-inline-end: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+    /* The 16:9 aspect-ratio wrapper inside .persistent-player uses the
+       padding-bottom hack: child .ScAspectSpacer sets padding-bottom to
+       56.25% of width (e.g. 561px for a 998px-wide player). When chat is
+       on top/bottom and the player is shorter than 16:9-of-its-width, the
+       aspect wrapper is taller than the player, so .persistent-player's
+       overflow:hidden clips the video bottom — making it look like chat
+       is overlaying the video. Force the wrapper to fill the player's
+       actual height; the inner <video> uses object-fit so it letterboxes
+       to whatever aspect we end up at. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player .tw-aspect,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player .tw-aspect {
+      height: 100% !important;
+    }
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player .tw-aspect > div:first-child,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player .tw-aspect > div:first-child {
+      padding-bottom: 0 !important;
+      height: 100% !important;
+    }
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top .persistent-player video,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom .persistent-player video {
+      object-fit: contain !important;
+    }
+
+    /* Twitch reserves ~618px of margin-top on .channel-root__info--with-chat
+       to clear its absolutely-positioned .persistent-player. That number is
+       sized for the default chat-right player width — when chat docks LEFT
+       the player gets narrower (16:9 → shorter), so the reserved space is
+       way bigger than the player needs. Channel info (pfp, name, desc, sub
+       buttons) hangs ~232px below the video bottom on a 1148px viewport.
+       Recompute margin-top from the actual player width — sideNav is
+       visually hidden behind the HS panel, so player width is exactly
+       100vw - chatWidth, projected through 16:9 for the height. */
+    body.hs-platform-twitch.hs-chat-left .channel-root__info--with-chat {
+      margin-top: calc((100vw - var(--hs-chat-w, 340px)) * 0.5625) !important;
+    }
+
+    /* --- KICK: #channel-chatroom IS the native chat shell (sibling of
+       our #hs-mc-container). When chat moves, hide the shell entirely
+       so it gives up its 320px sidebar width back to <main>. --- */
+    body.hs-platform-kick.hs-chat-left #channel-chatroom,
+    body.hs-platform-kick.hs-chat-top #channel-chatroom,
+    body.hs-platform-kick.hs-chat-bottom #channel-chatroom {
+      display: none !important;
+    }
+    body.hs-platform-kick.hs-chat-left main {
+      /* main itself starts after Kick's collapsed left sidebar (when present),
+         but our HS panel is fixed at viewport-x=0 and covers that sidebar.
+         Padding-left needs to be (chat width - effective-sidebar) so the
+         video starts exactly where the HS panel ends. JS sets
+         --hs-kick-sidebar-w to 56px when the sidebar is in the DOM and 0px
+         when Kick collapses it at narrow viewports — without that, the panel
+         overlaps the video by 56px on narrow widths where Kick has already
+         dropped the sidebar. */
+      padding-left: calc(var(--hs-chat-w, 340px) - var(--hs-kick-sidebar-w, 0px)) !important;
+    }
+    body.hs-platform-kick.hs-chat-top main {
+      padding-top: var(--hs-chat-h, 35vh) !important;
+    }
+    body.hs-platform-kick.hs-chat-bottom main {
+      padding-bottom: var(--hs-chat-h, 35vh) !important;
+    }
+    /* Kick wraps the player in a fixed-width div (w-xvw) inside <main>'s
+       flex-col. With chat hidden it leaves blank space on the right; center
+       the wrapper horizontally. */
+    body.hs-platform-kick.hs-chat-bottom main > div:has(#injected-channel-player) {
+      align-self: center !important;
+    }
+    /* Kick theatre: main has data-theatre="true"; player fills viewport.
+       Inset main directly so the chat strip doesn't overlay the video. */
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-top main {
+      margin-top: var(--hs-chat-h, 35vh) !important;
+      padding-top: 0 !important;
+    }
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-bottom main {
+      margin-bottom: var(--hs-chat-h, 35vh) !important;
+      padding-bottom: 0 !important;
+    }
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-left main {
+      margin-left: var(--hs-chat-w, 340px) !important;
+      padding-left: 0 !important;
+    }
+    /* chat-right was MISSING here — and it's the default position. Without it,
+       theatre let the player fill the whole viewport while the panel stayed
+       pinned to the right edge ON TOP of it, burying the player controls
+       (including the exit-theatre button), so theatre became a trap you
+       couldn't leave. Same omission the YT theatre rules had: written for
+       left/top/bottom, never for right. */
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-right main {
+      margin-right: var(--hs-chat-w, 340px) !important;
+      padding-right: 0 !important;
+    }
+
+    /* In theatre Kick re-parents the controls bar to position:fixed with
+       left:0; right:340px — 340 being THEIR chat width, hard-coded. Fixed
+       resolves against the viewport, so every inset we put on <main> leaves
+       the bar spanning past the player and burying the rightmost buttons
+       (settings/theatre/fullscreen — the ones you need to get back out).
+       Re-point it at our panel edge instead. width:auto is load-bearing:
+       the bar also carries w-full (width:100%), and left+width over-constrain
+       the box so right is ignored until the width is released. */
+    body.hs-platform-kick.hs-mode-theatre .z-controls.w-full {
+      width: auto !important;
+      left: 0 !important;
+      right: 0 !important;
+    }
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-right .z-controls.w-full {
+      right: var(--hs-chat-w, 340px) !important;
+    }
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-left .z-controls.w-full {
+      left: var(--hs-chat-w, 340px) !important;
+    }
+    body.hs-platform-kick.hs-mode-theatre.hs-chat-bottom .z-controls.w-full {
+      bottom: var(--hs-chat-h, 35vh) !important;
+    }
+
+    /* KICK FULLSCREEN — previously unhandled (twitch and youtube each needed
+       their own fix for this same browser quirk). Our margin/padding insets on
+       <main> carry !important, which outranks the UA's fullscreen margin reset —
+       so a fullscreened <main> (or ancestor) stayed inset by the chat width
+       with a dead gap at the edge. Zero every inset while anything is
+       fullscreen, and hide the body-mounted panel for the ancestor-fullscreen
+       case (element-level fullscreen never paints it anyway). Dock classes
+       keep specificity level with the theatre rules above; source order wins. */
+    body.hs-platform-kick.hs-chat-right:has(:fullscreen) main,
+    body.hs-platform-kick.hs-chat-left:has(:fullscreen) main,
+    body.hs-platform-kick.hs-chat-top:has(:fullscreen) main,
+    body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) main {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    body.hs-platform-kick.hs-chat-right:has(:fullscreen) .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-left:has(:fullscreen) .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-top:has(:fullscreen) .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) .z-controls.w-full {
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+    body.hs-platform-kick:has(:fullscreen) #hs-mc-container {
+      display: none !important;
+    }
+
+    /* --- YOUTUBE: collapse #secondary; pad #primary ---
+       Gated on  — on VODs (non-live), keep YT's native
+       sidebar so recommended/related videos remain visible to the viewer. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary {
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      flex: 0 0 0 !important;
+      overflow: hidden !important;
+    }
+    /* Nuke the entire suggested-videos sidebar tree on LIVE only.
+       overflow:hidden on #secondary doesn't clip because YT renders these
+       via children that escape the secondary box (rendered at x>=1017
+       absolutely). display:none kills them outright. #chat-container is
+       hidden separately by the native-chat-hiding block above (it's body-
+       mounted now, not nested in #chat-container), so it's swept up here
+       too. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner > *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner > *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner > *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner > * {
+      display: none !important;
+    }
+    /* Default 'right' position — give up on YT's flex layout entirely
+       and pin primary-inner to viewport-left with explicit width. Sibling
+       battles with #secondary flex were giving primary negative x.
+       Live-only — VODs keep YT's native two-column flex. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      margin: 0 !important;
+      flex: 0 0 0 !important;
+      width: 0 !important;
+      overflow: visible !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: var(--hs-chat-w, 340px) !important;
+      width: auto !important;
+      height: 100vh !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) {
+      --ytd-watch-flexy-side-menu-margin: 0 !important;
+      --ytd-watch-flexy-non-player-width: var(--hs-chat-w, 340px) !important;
+    }
+    /* Force the player containers to fill #primary's inner width — kills
+       the YT-side-menu-margin gap (right) AND the YT-non-player-width gap
+       (left). For top/bottom the JS-driven inline width owns sizing. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-inner,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-inner,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player {
+      width: 100% !important;
+    }
+    /* chat-left: same gutter-kill as chat-right so YT computes the player
+       width as primary's full width (708px) instead of vw - 450 (= 598). */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) {
+      --ytd-watch-flexy-side-menu-margin: 0 !important;
+      --ytd-watch-flexy-non-player-width: var(--hs-chat-w, 340px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      margin: 0 !important;
+      flex: 0 0 0 !important;
+      width: 0 !important;
+      overflow: visible !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      position: fixed !important;
+      top: 0 !important;
+      left: var(--hs-chat-w, 340px) !important;
+      right: 0 !important;
+      width: auto !important;
+      height: 100vh !important;
+    }
+    /* Kill the secondary's residual 16px (its own padding/margin still
+       takes layout space even with width:0). Live-only. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      margin-top: var(--hs-chat-h, 35vh) !important;
+      padding-top: 0 !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      margin-bottom: var(--hs-chat-h, 35vh) !important;
+      padding-top: 0 !important;
+    }
+    /* Kill the masthead reservation — chat clutter is hidden, no need to
+       reserve top-bar space below it. Applies to ALL chat positions on YT
+       so the player floats flush in every layout. Live-only. */
+    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-top #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-bottom #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-left #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-right #page-manager {
+      margin-top: 0 !important;
+    }
+    /* primary clips to viewport height; primary-inner scrolls so video info
+       below the player is reachable. Live-only. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow-y: auto !important;
+    }
+    /* Chat panel fills viewport height when on right — overrides the
+       mount-time inline height cached from the original live-chat-frame
+       (~500-600px). #secondary-inner extends so the freed sidebar slot
+       doesn't cap height. (#chat-container is display:none now.) */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner {
+      height: 100vh !important;
+      max-height: 100vh !important;
+    }
+    body.hs-platform-yt:not(.hs-offline).hs-chat-right #hs-mc-container {
+      height: 100vh !important;
+    }
+    /* primary-inner is YT-default flex-column align-items:center. Both
+       children (#player and #below) inherit flex-shrink:1, so a tall
+       player + non-shrinkable metadata min-height fight: #below has its
+       own min-content (pfp + title + subscribe + viewer count) that
+       won't shrink past, so it pins itself onscreen and visually overlaps
+       the player. Disable flex-shrink on both children so the player
+       keeps its full 16:9 height and the metadata block sits BELOW it,
+       scrolling out of view via primary-inner's overflow-y:auto when the
+       total exceeds 100vh. Live-only (chat-right + chat-left). */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner > #player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner > #below,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner > #player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner > #below {
+      flex-shrink: 0 !important;
+      flex-basis: auto !important;
+    }
+
+    /* Inputbar layout — input-wrap shrinks (flex:1), emote-picker button
+       stays fixed-size on the right (flex:0). #hs-mc-input-wrap is the
+       direct flex child (input itself is buried inside). */
+    #hs-mc-inputbar {
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+    }
+    /* 120px floor: without it min-width:0 let the fixed-width send chips +
+       emote button crush the input to nothing in side-tab layouts (bar loses
+       90px to the tab column). Below the floor the bar wraps (flex-wrap)
+       instead of shrinking the input further. */
+    #hs-mc-input-wrap {
+      flex: 1 1 0 !important;
+      min-width: 120px !important;
+      overflow: hidden !important;
+    }
+    #hs-mc-input {
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+    #hs-mc-inputbar > #hs-mc-input {
+      min-width: 120px !important;
+    }
+    #hs-mc-emote-btn {
+      flex: 0 0 auto !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+    }
+    /* Tell YT how much vertical space is NOT available for the player so
+       its own layout JS shrinks the player to fit. YT computes player
+       height = viewport - --ytd-watch-flexy-non-player-height. Bumping
+       that var by chat-strip height makes YT shrink the player itself,
+       which keeps the 16:9 aspect ratio (no distortion, no clipping).
+       Live-only — VOD viewers expect full-height YT layout. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]),
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) {
+      --ytd-watch-flexy-non-player-height: calc(56px + 12px + 92px + var(--hs-chat-h, 35vh)) !important;
+      --ytd-watch-flexy-min-player-height: 200px !important;
+    }
+    /* chat-left/right: the user drives the video size by dragging the chat width,
+       so honor that ALL THE WAY DOWN — drop YT's ~360px min-player-height floor so
+       the video can shrink toward nothing and the metadata (collapsed under it via
+       _hsSetYtBelowTop) rides all the way to the top. Applies in theatre too (no
+       :not([theater])) since that's the dominant side-chat layout. max-player-height
+       still caps the top end, and the default (wide) layout never hits the floor,
+       so this only unlocks the extreme-shrink range the user asked for. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([fullscreen]),
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([fullscreen]) {
+      --ytd-watch-flexy-min-player-height: 0px !important;
+    }
+    /* Belt-and-braces: cap player container too, in case YT's JS doesn't
+       re-read the var on every chat-height change. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer {
+      max-height: calc(100vh - var(--hs-chat-h, 35vh) - 60px) !important;
+    }
+    /* Show video info below player (title, channel, description) like Twitch/Kick.
+       Hide only comments — noisy, not the focus. #below gets width:100% so it
+       fills primary-inner even when align-items:center is in effect.
+       Live-only — VOD viewers want comments and native description sizing. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-comments {
+      display: none !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #below,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #below,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    /* Top/bottom: player is sized inline to fill availH, just need
+       horizontal centering. Don't add min-height — primary has margin-top
+       for chat-top, so 100vh would push content off the bottom. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow-y: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top ytd-watch-flexy:not([theater]):not([fullscreen]) #player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-watch-flexy:not([theater]):not([fullscreen]) #player,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #player {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    /* ============================================
+       LEFT/RIGHT REFLOW — kill the black gap under the video
+       YT (esp. live/single-column) pins the player in #full-bleed-container and
+       reserves MORE vertical flow than the shrunk 16:9 video occupies, leaving a
+       black band between the video and the metadata. CSS can't know the real
+       video bottom (it depends on the chosen player width), so applyPlatform-
+       PositionOverrides publishes it as --hs-yt-below-top. Pin #below directly
+       under the video and let it fill the column. Force high-contrast text so the
+       metadata stays readable regardless of YT's light/dark theme (light theme
+       = dark text on our dark column = unreadable otherwise).
+       ============================================ */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
+      position: fixed !important;
+      top: var(--hs-yt-below-top, 56px) !important;
+      left: 0 !important;
+      right: var(--hs-chat-w, 340px) !important;
+      bottom: 0 !important;
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 10px 18px !important;
+      overflow-y: auto !important;
+      box-sizing: border-box !important;
+      background: #0a0a0a !important;
+      z-index: 1 !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
+      position: fixed !important;
+      top: var(--hs-yt-below-top, 56px) !important;
+      left: var(--hs-chat-w, 340px) !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 10px 18px !important;
+      overflow-y: auto !important;
+      box-sizing: border-box !important;
+      background: #0a0a0a !important;
+      z-index: 1 !important;
+    }
+    /* high-contrast metadata text (theme-independent). Target the TEXT containers
+       only — never #below or a wildcard. the color property inherits, so a broad rule tints
+       YT's action-bar icons (like/share/subscribe) grey via currentColor; scoping
+       to title/channel/description/info leaves the icon subtree untouched. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title, body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1, body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1 *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #title *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below h1 * {
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description, body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name, body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info, body.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info * {
+      color: #e6e6e6 !important;
+      -webkit-text-fill-color: #e6e6e6 !important;
+    }
+    /* links stay heatsync-orange — out-specify the #description * rule above */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below a,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description a,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below a,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description a {
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
+    }
+
+    /* ============================================
+       SUGGESTIONS STRIP — opt-in (ytShowSuggestions → body.hs-yt-suggestions)
+       Un-collapse #secondary into a vertical strip beside the title column so
+       users who miss "up next" can keep it. Left/right dock, non-theater/
+       fullscreen. DEFAULT OFF (chat reclaims this space) — these rules only
+       fire when the toggle is on. Pinned at --hs-yt-below-top (under the video)
+       like #below; #below shrinks to leave the strip room. The extra
+       .hs-yt-suggestions class out-specifies the collapse/hide rules above.
+       ============================================ */
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
+      right: calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px)) !important;
+    }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
+      right: var(--hs-yt-sugg-w, 300px) !important;
+    }
+    /* Inset #primary-inner (the player's column) by the strip too. The JS sizes
+       the player to clientW-chatW-suggW, but #primary-inner is align-items:center
+       and only inset by chatW — so the narrowed player centers in the too-wide
+       column and drifts right UNDER the strip. Insetting the column by +suggW
+       (mirroring #below above) makes the centered player sit flush against it.
+       (1,6,1) out-specifies the base #primary-inner rule (1,3,1). */
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      right: calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px)) !important;
+    }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+      left: calc(var(--hs-chat-w, 340px) + var(--hs-yt-sugg-w, 300px)) !important;
+    }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary {
+      position: fixed !important;
+      top: var(--hs-yt-below-top, 56px) !important;
+      bottom: 0 !important;
+      width: var(--hs-yt-sugg-w, 300px) !important;
+      min-width: var(--hs-yt-sugg-w, 300px) !important;
+      max-width: var(--hs-yt-sugg-w, 300px) !important;
+      flex: 0 0 auto !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      background: #0a0a0a !important;
+      padding: 8px !important;
+      box-sizing: border-box !important;
+      z-index: 1 !important;
+    }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary { right: var(--hs-chat-w, 340px) !important; left: auto !important; }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary { right: 0 !important; left: auto !important; }
+    /* reveal the related list the base "nuke suggestions sidebar" rule above
+       sets display:none. that hide uses the full dock-class chain
+       (body.hs-platform-yt:not(.hs-offline).hs-chat-{right,left} … #related and
+       … #secondary-inner > *, specificity (1,3,1)); a bare
+       .hs-yt-suggestions.hs-platform-yt prefix (1,2,1) LOSES to it even with
+       !important, so the strip box shows but stays blank. Mirror the full chain
+       and add .hs-yt-suggestions → (1,4,1) wins. #related ONLY — never
+       #secondary-inner > * (that would un-hide the native chat frame, playlist
+       and donation shelf back into the strip). */
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #related,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) ytd-watch-next-secondary-results-renderer {
+      display: block !important;
+    }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary-inner {
+      width: 100% !important; max-width: 100% !important; height: auto !important; max-height: none !important;
+    }
+    /* high-contrast text in the strip */
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary * { color: #e6e6e6 !important; }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary a { color: #ffffff !important; }
+
+    /* ============================================
+       SINGLE-COLUMN RESCUE
+       Below YT's ~1016px two-column breakpoint (which our 340px panel trips
+       at almost every window size) ytd-watch-flexy flips to is-single-column:
+       it pulls the player OUT of #primary-inner into #full-bleed-container (a
+       direct child of ytd-watch-flexy, anchored at 0,0) and leaves #primary-
+       inner holding only an empty 0×0 #player slot plus the #below metadata.
+       Our two-column rules pin #primary-inner position:fixed top:0 left:0 —
+       which then lies ON TOP of the full-bleed player and drops #below over
+       it, killing every hover (no scrubber/volume/pause). The [is-single-
+       column] attribute out-specifies the two-column rules above.
+
+       Fix: let #primary-inner fall back to normal document flow so #columns/
+       #primary stacks BELOW #full-bleed-container (its previous sibling), and
+       inset the full-bleed player away from the panel edge per position. The
+       player wrapper is already aspect-sized to innerWidth-chatWidth by
+       applyPlatformPositionOverrides, so right needs no inset at all. */
+    body:not(.hs-player-safe).hs-platform-yt:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #primary-inner {
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      width: auto !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #primary {
+      width: auto !important;
+      max-width: none !important;
+      flex: 1 1 auto !important;
+      margin: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    /* Inset the full-bleed player away from the panel edge. Margin on the
+       full-bleed wrappers (not padding on flexy) so the masthead reservation
+       isn't double-counted, mirroring the player-sizing JS which already
+       shrinks the wrapper to innerWidth-chatWidth / innerHeight-chatHeight.
+       Right needs no inset (panel is on the right, player anchored at 0,0). */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #full-bleed-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #player-full-bleed-container {
+      margin-left: var(--hs-chat-w, 340px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #full-bleed-container,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-top:has(#hs-mc-container) ytd-watch-flexy[is-single-column] #player-full-bleed-container {
+      margin-top: var(--hs-chat-h, 35vh) !important;
+    }
+    /* bottom: player stays anchored at the top; reserve bottom space so the
+       metadata stacked below it never scrolls under the panel. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom:has(#hs-mc-container) ytd-watch-flexy[is-single-column] {
+      padding-bottom: var(--hs-chat-h, 35vh) !important;
+      box-sizing: border-box !important;
+    }
+    /* Live streams render via #full-bleed-container > #player-container
+       (position:absolute, left:0). Centering #primary-inner doesn't reach
+       this path, so explicitly center the player-container inside its
+       full-bleed parent when chat is at the bottom.
+       Skip theatre/fullscreen/miniplayer — YT animates transform on
+       #player-container during those transitions, and our !important
+       transform overrides their animation, causing visual offset/flicker. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom:not(.hs-mode-theatre) ytd-watch-flexy:not([theater]):not([fullscreen]):not([is-miniplayer]) #player-container {
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+    }
+    /* YT miniplayer: fixed bottom-right at inline right/bottom:16px, z~2030 —
+       fully buried under a right/bottom-docked panel (z 9999), unwatchable
+       and unclickable. Clear the dock: shift left of a right dock, above a
+       bottom dock. Bare element selector (no [active]/visible-class gate —
+       those churned in the 2026 refresh); shifting a hidden miniplayer is
+       free. !important beats the inline style. */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-miniplayer {
+      right: calc(var(--hs-chat-w, 340px) + 12px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-bottom ytd-miniplayer {
+      bottom: calc(var(--hs-chat-h, 35vh) + 12px) !important;
+    }
+    /* YouTube theatre: ytd-watch-flexy[theater] makes the player full-row.
+       The #full-bleed-container is what owns the player. Inset it.
+       Live-only — VOD theatre keeps native YT layout. */
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-left ytd-watch-flexy[theater] #full-bleed-container,
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-left ytd-watch-flexy[theater] #player-full-bleed-container {
+      padding-left: var(--hs-chat-w, 340px) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-top ytd-watch-flexy[theater] #full-bleed-container,
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-top ytd-watch-flexy[theater] #player-full-bleed-container {
+      padding-top: var(--hs-chat-h, 35vh) !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-bottom ytd-watch-flexy[theater] #full-bleed-container,
+    body:not(.hs-player-safe).hs-platform-yt.hs-mode-theatre.hs-chat-bottom ytd-watch-flexy[theater] #player-full-bleed-container {
+      padding-bottom: var(--hs-chat-h, 35vh) !important;
+    }
+
+    /* === Chat-log viewer (chat-logs.js) === */
+    /* All children inherit 13px var(--hs-mc-font) to match the rest of the
+       overlay — Cozette is a bitmap font keyed to 13px; smaller sizes look
+       blurry. Explicit overrides only where information density demands a
+       lighter weight (timestamp on its own line vs inline). */
+    .hs-cl-wrap {
+      display: flex; flex-direction: column;
+      height: 100%; width: 100%;
+      background: #000; color: #fff;
+      font-family: var(--hs-mc-font);
+      font-size: 13px; line-height: 17px;
+      box-sizing: border-box;
+    }
+    .hs-cl-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 6px;
+      background: #0a0a0a;
+      border-bottom: 1px solid #222;
+      flex-shrink: 0;
+      gap: 6px;
+    }
+    .hs-cl-title { display: flex; align-items: baseline; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .hs-cl-title-name { font-weight: 700; color: #fff; }
+    .hs-cl-title-sub { color: #999; overflow: hidden; text-overflow: ellipsis; }
+    .hs-cl-close {
+      width: 22px; height: 22px; padding: 0;
+      background: transparent; color: #999;
+      border: 1px solid #333; cursor: pointer;
+      font-family: inherit; font-size: 13px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .hs-cl-close:hover { background: #fff; color: #000; border-color: #fff; }
+    .hs-cl-ctrls {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 6px;
+      background: #0a0a0a;
+      border-bottom: 1px solid #222;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .hs-cl-search {
+      flex: 1 1 100px; min-width: 80px;
+      background: #000; color: #fff;
+      border: 1px solid #333; padding: 2px 6px;
+      font-family: inherit; font-size: 13px; line-height: 17px;
+      outline: none; height: 22px;
+      box-sizing: border-box;
+    }
+    .hs-cl-search:focus { border-color: #fff; }
+    .hs-cl-scope, .hs-cl-export {
+      background: #111; color: #ccc;
+      border: 1px solid #333; padding: 1px 6px;
+      cursor: pointer; font-family: inherit; font-size: 13px;
+      height: 22px; line-height: 18px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .hs-cl-scope:hover, .hs-cl-export:hover {
+      background: #fff; color: #000; border-color: #fff;
+    }
+    .hs-cl-list {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 4px 8px;
+    }
+    .hs-cl-row {
+      padding: 1px 0;
+      display: flex; flex-wrap: wrap; align-items: baseline;
+      gap: 6px;
+      border-bottom: 1px solid #0a0a0a;
+    }
+    .hs-cl-row.hs-cl-deleted {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+    .hs-cl-ts {
+      color: var(--hs-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .hs-cl-ch {
+      color: #fff; flex-shrink: 0;
+    }
+    .hs-cl-user {
+      color: #fff; font-weight: 700; flex-shrink: 0;
+    }
+    .hs-cl-body { color: #ddd; min-width: 0; word-break: break-word; }
+    .hs-cl-emote {
+      height: 18px; width: auto; vertical-align: middle;
+      display: inline-block;
+    }
+    .hs-cl-empty {
+      color: var(--hs-muted); text-align: center; padding: 40px 8px;
+    }
+    .hs-cl-loader {
+      color: var(--hs-muted); text-align: center; padding: 12px 8px;
+    }
+    .hs-cl-public-archive {
+      color: #fff; text-decoration: none;
+      font-size: 13px; padding: 1px 6px;
+      border: 1px solid #333;
+      height: 22px; line-height: 18px;
+      display: inline-flex; align-items: center;
+      flex-shrink: 0;
+    }
+    .hs-cl-public-archive:hover { background: #fff; color: #000; border-color: #fff; }
+    .hs-cl-permalink {
+      margin-left: auto;
+      background: transparent; color: var(--hs-muted);
+      border: none; padding: 0 4px; cursor: pointer;
+      font-family: inherit; font-size: 13px; line-height: 1;
+      opacity: 0; transition: opacity 0.08s;
+      flex-shrink: 0;
+    }
+    .hs-cl-row:hover .hs-cl-permalink { opacity: 1; }
+    .hs-cl-permalink:hover { color: #fff; }
+    .hs-cl-permalink.hs-cl-permalink-copied {
+      opacity: 1; color: #fff;
+    }
+
+      /* ═══ Scroll-wheel volume OSD ═══ */
+    #hs-vol-osd {
+      position: fixed;
+      z-index: 2147483647;
+      transform: translate(-50%, 0);
+      background: #000;
+      color: #fff;
+      font-family: var(--hs-mc-font, 'CozetteVector'), 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1;
+      padding: 5px 8px;
+      border: 1px solid #fff;
+      pointer-events: none;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    #hs-vol-osd.visible {
+      opacity: 1;
+    }
 `
   const cozetteUrl =
     typeof chrome !== 'undefined' && chrome.runtime?.getURL ? chrome.runtime.getURL('fonts/CozetteVector.woff2') : ''
@@ -11361,10 +21970,11 @@ function _syncTabCounterTicker(mode) {
 // Two things differ from the site, both because this runs inside somebody
 // else's page:
 //
-//   1. `t` is gated on vi mode (default off). The site owns its keyboard; here
-//      a bare letter would be taken out of twitch.tv's hands, so nothing is
-//      bound until the user has explicitly asked for vi keys. Once the mode is
-//      ON it is modal and does own the keyboard — that part is expected.
+//   1. It opens on `<Space>t` from vi normal mode (see overlay-keys.js), not on
+//      a bare `t`. The site owns its keyboard; here a bare letter belongs to
+//      twitch.tv — and, more to the point, to whatever message the user is in
+//      the middle of typing. Once the mode is ON it is modal and does own the
+//      keyboard, which is what a mode means.
 //   2. The status line rides the overlay's own statusbar rather than a floating
 //      corner element, which would sit on top of the host page's UI.
 
@@ -11551,6 +22161,70 @@ function handleTabModeKey(e) {
   }
 
   return true // swallow stray keys; stay in tab mode
+}
+
+
+// --- multichat/overlay-keys.js ---
+/**
+ * overlay-keys — the overlay's bare-key commands, in ONE table.
+ *
+ * WHY THIS EXISTS
+ *
+ * Every one of these commands used to be its own document-level keydown
+ * listener that fired only while the composer was NOT focused. That made the
+ * blurred state a second, invisible keyboard mode: the same letter meant
+ * "type this" with the composer focused and "run this" without, and the only
+ * way to reach a command was to click off the input onto the background.
+ * Worse, a hovered chat row turned x/t/b into delete/timeout/ban, so the first
+ * letter of a message could moderate someone (that pair is now gone entirely —
+ * see mod-toolbar.js).
+ *
+ * The replacement is a leader key. In vi normal mode, <Space> arms the leader
+ * and the next key runs the command below — the composer keeps focus the whole
+ * time, and there is exactly one place that says what a bare key does.
+ * <Space> is free in normal mode (vim's own space is a redundant `l`) and is
+ * what every vim user already reaches for, so nothing conflicts and nothing
+ * has to be relearned.
+ *
+ * The old blurred-composer listeners stay for the non-destructive commands
+ * (vi mode is off by default; without it there'd be no keyboard surface at
+ * all), but they are now thin wrappers over the same functions registered
+ * here — one implementation, two entry points.
+ */
+
+// key (single char, case-sensitive — 'n' and 'N' differ) -> () => boolean.
+// A command returns false when it decided not to act (wrong tab, nothing to
+// search), so the leader can stay silent instead of claiming the key.
+const _overlayKeyBinds = new Map()
+
+function registerOverlayKey(key, fn) {
+  _overlayKeyBinds.set(key, fn)
+}
+
+function runOverlayKey(key) {
+  const fn = _overlayKeyBinds.get(key)
+  if (!fn) return false
+  try {
+    return fn() !== false
+  } catch (_) {
+    return false
+  }
+}
+
+// vi-mode.js is a separate content script in the same ISOLATED world, so it
+// reaches us through window — the same channel as __hsViChanging/__hsEscOwned.
+function initOverlayKeys(signal) {
+  const hook = (key) => runOverlayKey(key)
+  window.__hsOverlayCommand = hook
+  try {
+    signal?.addEventListener(
+      'abort',
+      () => {
+        if (window.__hsOverlayCommand === hook) window.__hsOverlayCommand = undefined
+      },
+      { once: true },
+    )
+  } catch (_) {}
 }
 
 
@@ -35049,9 +45723,14 @@ function initInput() {
   }
 
   // Global `\` toggle → hide/show chat. Mirrors heatsync.org keyboard shortcut.
-  // Skip when input is focused so users can type `\` into chat normally.
+  // Skip when input is focused so users can type `\` into chat normally —
+  // vi normal mode reaches it as <Space>\ instead (see overlay-keys.js).
   if (!_onceGuardsInput.chatToggleHandler) {
     _onceGuardsInput.chatToggleHandler = true
+    registerOverlayKey('\\', () => {
+      toggleChatHidden()
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -35071,18 +45750,31 @@ function initInput() {
     )
   }
 
-  // Tab mode — `t` opens a rover cursor over the tab strip (tab-mode.js).
+  // Tab mode — a rover cursor over the tab strip (tab-mode.js), opened with
+  // <Space>t from vi normal mode.
   //
-  // Registered BEFORE the type-reveal handler below and in the capture phase,
-  // because that one focuses the composer on any printable key — a bare `t`
-  // would land in the input instead of opening the mode.
+  // It used to open on a bare `t` with the composer blurred, and that is the
+  // exact bug this whole area had: the mouse resting on the panel is the
+  // reading position, so typing "thanks" opened the rover instead of writing a
+  // message. The composer owns printable keys now, always.
   //
-  // Gated on vi mode, which is off by default: this runs inside twitch.tv's
-  // page, so a bare letter is theirs until the user has explicitly asked for vi
-  // keys. Once the mode IS open it is modal and owns every key, which is what
-  // a mode means.
+  // The rover is modal — it takes j/k/d/a/enter and the rest of the keyboard —
+  // so it can't run with the composer still focused: vi normal mode would eat
+  // every key first. Entering therefore blurs the composer and tells vi to let
+  // go NOW (__hsViDetachNow), because vi's own focusout detach is 150ms behind
+  // and the first rover key would land inside that gap.
   if (!_onceGuardsInput.tabModeHandler) {
     _onceGuardsInput.tabModeHandler = true
+    registerOverlayKey('t', () => {
+      // enterTabMode returns false when there is no visible strip.
+      if (!enterTabMode()) return false
+      const inp = document.getElementById('hs-mc-input')
+      try {
+        inp?.blur()
+        window.__hsViDetachNow?.(inp)
+      } catch (_) {}
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -35090,19 +45782,11 @@ function initInput() {
         const active = document.activeElement
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
         try {
-          if (tabModeActive()) {
-            if (handleTabModeKey(e)) {
-              e.preventDefault()
-              e.stopImmediatePropagation()
-            }
-            return
+          if (!tabModeActive()) return
+          if (handleTabModeKey(e)) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
           }
-          if (e.key !== 't' || !viModeEnabled) return
-          // enterTabMode returns false when there is no visible strip — let the
-          // key through to the host page rather than swallowing it for nothing.
-          if (!enterTabMode()) return
-          e.preventDefault()
-          e.stopImmediatePropagation()
         } catch (err) {
           log('tab-mode keydown:', err)
         }
@@ -35999,14 +46683,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
           { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
         )
-        // Bulk-select entry — twitch/kick only (YT rows carry none of the
-        // dataset bulk-select needs, same reason the hover toolbar skips YT).
-        if (!isYt && typeof startBulkSelectFrom === 'function' && typeof isBulkSelectMode === 'function') {
-          mod.push({
-            label: isBulkSelectMode() ? 'exit select mode' : 'select mode',
-            fn: () => (isBulkSelectMode() ? exitBulkSelectMode() : startBulkSelectFrom(msg)),
-          })
-        }
         mod.push('sep')
         items.push(...mod)
       } else {
@@ -45376,17 +56052,13 @@ function ensureHsPaintSheet() {
       // .hsp-hover is the JS-synced twin of :hover — installHsPaintHoverSync
       // puts it on EVERY visible copy of the hovered user's name so they all
       // freeze together, not just the pointer target.
-      // .hs-mc-row-selected (bulk-select, mod-toolbar.js) reuses the same
-      // flatten: a gradient/clip-text paint left un-flattened would render
-      // invisible against the selected row's white bg (background:#fff would
-      // clip straight through transparent gradient text).
-      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span,.hs-mc-row-selected [class*="hsp-"],.hs-mc-row-selected [class*="hsp-"] span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
+      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
       // Scene plates (v2 ::before/::after dioramas) must vanish entirely on
-      // hover/selection — the element's white background paints UNDER a
-      // negative-z pseudo, so pausing alone would leave the plate covering
-      // the white. text-shadow:none above also drops the scene rim (black
-      // smears on white). Same trigger set as the flatten rule.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after,.hs-mc-row-selected [class*="hsp-"]::before,.hs-mc-row-selected [class*="hsp-"]::after{content:none !important;}' +
+      // hover — the element's white background paints UNDER a negative-z
+      // pseudo, so pausing alone would leave the plate covering the white.
+      // text-shadow:none above also drops the scene rim (black smears on
+      // white). Same trigger set as the flatten rule.
+      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -46978,8 +57650,8 @@ function userPaintStyle(uid, lower, platform) {
 
 // --- multichat/mod-toolbar.js ---
 // mod-toolbar + mod-action dispatch — split out of main.js (2026-07-04).
-// Hover toolbar UI, hotkeys, and the unified ban/timeout/unban/delete dispatch
-// backbone shared by every mod-action surface (toolbar/hotkey/slash/ctx/card).
+// Hover toolbar UI and the unified ban/timeout/unban/delete dispatch backbone
+// shared by every mod-action surface (toolbar/slash/ctx/card).
 
 // =====================================================================
 // MOD TOOLBAR — singleton element moved row→row on hover. Mirrors the
@@ -46994,7 +57666,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'delete',
     durationSec: null,
     needsMsgId: true,
-    hotkey: 'x',
   },
   timeout_1m: {
     label: '1m',
@@ -47002,7 +57673,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 60,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_10m: {
     label: '10m',
@@ -47010,7 +57680,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 600,
     needsMsgId: false,
-    hotkey: 't',
   },
   timeout_1h: {
     label: '1h',
@@ -47018,7 +57687,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 3600,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_24h: {
     label: '24h',
@@ -47026,7 +57694,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 86400,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_7d: {
     label: '7d',
@@ -47034,7 +57701,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 604800,
     needsMsgId: false,
-    hotkey: null,
   },
   purge: {
     label: 'purge',
@@ -47042,10 +57708,9 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
-    hotkey: null,
   },
-  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false, hotkey: 'b' },
-  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false, hotkey: null },
+  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
+  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
 }
 // Hover toolbar is fully opt-in: NO buttons default-on. Even the X
 // (delete-this-message) is hidden until the user enables it in settings →
@@ -47180,7 +57845,7 @@ function rebuildModToolbarButtons() {
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
     b.textContent = def.label
-    b.title = def.title + (def.hotkey ? ` (${def.hotkey.toUpperCase()})` : '')
+    b.title = def.title
     b.dataset.modBtn = id
     b.tabIndex = -1
     b.addEventListener('mousedown', (e) => {
@@ -47466,11 +58131,10 @@ async function dispatchModAction({
   skipConfirm,
 }) {
   // Opt-in ban dialog: confirm (misclick guard) and/or reason chips. Every
-  // surface routes through here, so one gate covers toolbar/hotkey/slash/ctx/
+  // surface routes through here, so one gate covers toolbar/slash/ctx/
   // card. Shows when confirm is on OR ban reasons are configured.
-  // skipConfirm: the bulk-select action bar already confirmed once for the
-  // whole batch ("ban 3 users?") — without this, each of the N per-user calls
-  // below would re-prompt its own "ban X in #channel?" dialog on top of it.
+  // skipConfirm: a caller that already confirmed once for a fan-out (the YT
+  // leg of a twitch/kick ban) must not re-prompt per platform.
   if (action === 'ban' && !skipConfirm) {
     const banReasons = String(modBanReasons || '')
       .split('\n')
@@ -47687,262 +58351,9 @@ async function runModAction(id) {
   detachModToolbar()
 }
 
-// ===== Bulk-select mode =====
-// Mods raid-cleaning a wall of spam select N rows and fire ban/timeout ONCE
-// per unique target, instead of hovering+clicking each row individually.
-// Twitch/kick only (mirrors the hover toolbar + ctx-menu mod gate) — YT rows
-// never carry the dataset (data-msg-id etc.) mod actions need, so they're
-// simply never selectable, same as they're invisible to the hover toolbar.
-let bulkSelectMode = false
-let _bulkAnchorRow = null
-const _bulkSelected = new Set() // Set<row Element> — visual selection, source of truth for the action bar
-
-function isBulkSelectMode() {
-  return bulkSelectMode
-}
-
-// Pure — no DOM. Row descriptors in, deduped-by-user target list out. Exposed
-// at module scope (not nested) so tests can extract it in isolation, same
-// pattern as bgIrcDupModNotice.
-function dedupeBulkTargets(rows) {
-  const seen = new Set()
-  const out = []
-  for (const r of rows || []) {
-    const login = String(r?.login || '')
-      .replace(/^@/, '')
-      .toLowerCase()
-    const channel = String(r?.channel || '')
-    if (!login || !channel) continue
-    const platform = r.platform || 'twitch'
-    const key = `${platform}|${channel.toLowerCase()}|${login}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    out.push({ platform, channel, login })
-  }
-  return out
-}
-
-function _bulkRowDescriptor(row) {
-  return {
-    platform: row.dataset.msgPlatform || 'twitch',
-    channel: row.dataset.msgChannel || '',
-    login: row.dataset.msgLogin || row.dataset.msgUser || '',
-  }
-}
-
-// Same gate the hover toolbar and ctx-menu mod items use: sync per-platform
-// mod-state cache, keyed off the row's own channel (never re-resolved through
-// getChannelLookup — matches the existing per-row check exactly).
-function _isModForRow(row) {
-  const plat = row.dataset.msgPlatform || 'twitch'
-  const ch = row.dataset.msgChannel || ''
-  if (!ch) return false
-  return plat === 'kick' ? isKickModForSync(ch) : isModForSync(ch)
-}
-
-function _bulkRowSelectable(row) {
-  if (!row?.dataset) return false
-  const plat = row.dataset.msgPlatform || 'twitch'
-  if (plat === 'youtube' || plat === 'yt') return false
-  if (!row.dataset.msgId || !row.dataset.msgChannel || !(row.dataset.msgLogin || row.dataset.msgUser)) return false
-  if (row.dataset.msgSelf === '1') return false
-  return _isModForRow(row)
-}
-
-function _toggleBulkRow(row) {
-  if (_bulkSelected.has(row)) {
-    _bulkSelected.delete(row)
-    row.classList.remove('hs-mc-row-selected')
-  } else {
-    _bulkSelected.add(row)
-    row.classList.add('hs-mc-row-selected')
-  }
-}
-
-function _selectBulkRange(messagesEl, fromRow, toRow) {
-  const rows = [...messagesEl.querySelectorAll('.hs-mc-msg')]
-  const i1 = rows.indexOf(fromRow)
-  const i2 = rows.indexOf(toRow)
-  if (i1 < 0 || i2 < 0) {
-    if (_bulkRowSelectable(toRow)) _toggleBulkRow(toRow)
-    return
-  }
-  const lo = Math.min(i1, i2)
-  const hi = Math.max(i1, i2)
-  for (let i = lo; i <= hi; i++) {
-    const r = rows[i]
-    if (_bulkRowSelectable(r) && !_bulkSelected.has(r)) {
-      _bulkSelected.add(r)
-      r.classList.add('hs-mc-row-selected')
-    }
-  }
-}
-
-function _updateBulkBar() {
-  let bar = document.getElementById('hs-mc-bulk-bar')
-  if (!bulkSelectMode || _bulkSelected.size === 0) {
-    if (bar) bar.remove()
-    return
-  }
-  if (!bar) {
-    bar = document.createElement('div')
-    bar.id = 'hs-mc-bulk-bar'
-    bar.innerHTML =
-      '<span id="hs-mc-bulk-count"></span>' +
-      '<button type="button" data-bulk="timeout">timeout</button>' +
-      '<button type="button" data-bulk="ban">ban</button>' +
-      '<button type="button" data-bulk="cancel">cancel</button>'
-    bar.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-bulk]')
-      if (!btn || btn.disabled) return
-      e.preventDefault()
-      e.stopPropagation()
-      const act = btn.dataset.bulk
-      if (act === 'cancel') {
-        exitBulkSelectMode()
-        return
-      }
-      runBulkModAction(act)
-    })
-    const root = document.getElementById('hs-mc-overlay') || document.body
-    root.appendChild(bar)
-  }
-  const countEl = bar.querySelector('#hs-mc-bulk-count')
-  if (countEl) countEl.textContent = `${_bulkSelected.size} selected`
-}
-
-function enterBulkSelectMode() {
-  if (bulkSelectMode) return
-  bulkSelectMode = true
-  _bulkAnchorRow = null
-  try {
-    document.body.classList.add('hs-mc-bulk-select-active')
-  } catch (_) {}
-}
-
-function exitBulkSelectMode() {
-  if (!bulkSelectMode) return
-  bulkSelectMode = false
-  _bulkAnchorRow = null
-  for (const row of _bulkSelected) row.classList.remove('hs-mc-row-selected')
-  _bulkSelected.clear()
-  try {
-    document.body.classList.remove('hs-mc-bulk-select-active')
-  } catch (_) {}
-  _updateBulkBar()
-}
-
-// Public entry point — used by the mod ctx-menu's "select mode" item and the
-// hover hotkey. Idempotent enter + pre-selects the row that triggered it, so
-// starting from a specific spam message immediately arms the action bar.
-function startBulkSelectFrom(row) {
-  enterBulkSelectMode()
-  if (row && _bulkRowSelectable(row)) {
-    _toggleBulkRow(row)
-    _bulkAnchorRow = row
-  }
-  _updateBulkBar()
-}
-
-// Executes once per deduped target — REUSES dispatchModAction (the vetted
-// twitch+kick fan-out path), never a bespoke ban call. skipConfirm:true since
-// the batch-level confirm below already covered "are you sure".
-async function runBulkModAction(action) {
-  if (!_bulkSelected.size) return
-  // Only fire on rows still in the live DOM. A row detached by an epoch rebuild
-  // (badge/emote/settings) or a tab switch keeps a valid dataset but lost its
-  // on-screen highlight — firing it would ban a user the mod can no longer see
-  // selected. isConnected filter keeps the batch == what's visibly highlighted.
-  const attached = [..._bulkSelected].filter((row) => row.isConnected)
-  const targets = dedupeBulkTargets(attached.map(_bulkRowDescriptor))
-  if (!targets.length) {
-    exitBulkSelectMode()
-    return
-  }
-  const verb = action === 'ban' ? 'ban' : 'timeout'
-  // Surface channel scope — a batch can span platforms/channels within one tab
-  // (twitch+kick), so the mod must see WHERE this fires, not just who.
-  const chans = [...new Set(targets.map((tg) => `#${String(tg.channel).replace(/^#/, '')}`))]
-  const scope = chans.length === 1 ? ` in ${chans[0]}` : ` across ${chans.join(', ')}`
-  const names = targets.map((tg) => tg.login).join(', ')
-  const preview = names.length > 120 ? `${names.slice(0, 120)}…` : names
-  const res = await hsConfirm(
-    `${verb} ${targets.length} user${targets.length === 1 ? '' : 's'}${scope}? (${preview})`,
-    verb,
-  )
-  if (!res.ok) return
-  const bar = document.getElementById('hs-mc-bulk-bar')
-  if (bar) for (const b of bar.querySelectorAll('button')) b.disabled = true
-  let okCount = 0
-  for (const tg of targets) {
-    try {
-      const r = await dispatchModAction({
-        channel: tg.channel,
-        platform: tg.platform,
-        action,
-        target: tg.login,
-        durationSec: action === 'timeout' ? 600 : null,
-        skipConfirm: true,
-      })
-      if (r?.anyOk) okCount++
-    } catch (_) {}
-  }
-  showToast(
-    `${okCount}/${targets.length} ${verb === 'ban' ? 'banned' : 'timed out'}`,
-    okCount === targets.length ? 'success' : okCount > 0 ? 'error' : 'error',
-  )
-  exitBulkSelectMode()
-}
-
-// Row-click toggling — only wired on the primary scrollback (#hs-mc-messages),
-// never the transient reply-stack popovers (ephemeral views, not a sane bulk
-// surface). No-op while selection mode is off, so this never touches the hot
-// render/click path for the common (non-mod, non-selecting) case.
-function wireBulkSelectClicks(messagesEl) {
-  messagesEl.addEventListener(
-    'click',
-    (e) => {
-      if (!bulkSelectMode) return
-      const row = e.target.closest('.hs-mc-msg')
-      if (!row || !messagesEl.contains(row)) return
-      // Never hijack a real interactive control inside the row — only bare
-      // row surface toggles selection while the mode is active.
-      if (e.target.closest('a, button, .hs-mod-toolbar, .hs-mc-reply-btn, .hs-mc-reply-ctx')) return
-      if (!_bulkRowSelectable(row)) return
-      e.preventDefault()
-      e.stopPropagation()
-      if (e.shiftKey && _bulkAnchorRow && messagesEl.contains(_bulkAnchorRow)) {
-        _selectBulkRange(messagesEl, _bulkAnchorRow, row)
-      } else {
-        _toggleBulkRow(row)
-        _bulkAnchorRow = row
-      }
-      _updateBulkBar()
-    },
-    { capture: true, signal: mcSignal },
-  )
-}
-
-// Escape always exits selection mode — standard escape-hatch for any
-// modal-like interaction state. Harmless no-op when a confirm dialog's own
-// Escape handler also fires (it just closes the dialog on top of this).
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!bulkSelectMode) return
-    if (e.key !== 'Escape') return
-    const tEl = e.target
-    if (tEl && (tEl.isContentEditable || ['INPUT', 'TEXTAREA'].includes(tEl.tagName))) return
-    exitBulkSelectMode()
-  },
-  { signal: mcSignal },
-)
-
 function wireModToolbarHover(messagesEl) {
   if (!messagesEl || messagesEl._hsModToolbarWired) return
   messagesEl._hsModToolbarWired = true
-  // Bulk-select click handling — primary scrollback only (see wireBulkSelectClicks).
-  if (messagesEl.id === 'hs-mc-messages') wireBulkSelectClicks(messagesEl)
   messagesEl.addEventListener(
     'mouseover',
     (e) => {
@@ -48004,38 +58415,13 @@ function wireModToolbarHover(messagesEl) {
   )
 }
 
-// Hotkeys — x (delete), t (10m timeout), b (ban), s (toggle bulk-select,
-// pre-selecting the hovered row). Hold while hovering a row.
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!_modCtx) return
-    // OS key-repeat (~30Hz after ~500ms) fired many concurrent async
-    // dispatches for one held key before the first cleared _modCtx — a burst
-    // of error toasts (delete) or stacked confirm overlays (ban). One per press.
-    if (e.repeat) return
-    const t = e.target
-    const typing = t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))
-    if (typing) return
-    if (e.ctrlKey || e.metaKey || e.altKey) return
-    const key = (e.key || '').toLowerCase()
-    if (key === 's') {
-      e.preventDefault()
-      if (bulkSelectMode) exitBulkSelectMode()
-      else startBulkSelectFrom(_modCtx.row)
-      return
-    }
-    for (const id of modToolbarButtons) {
-      const def = MOD_BUTTON_CATALOG[id]
-      if (def?.hotkey === key) {
-        e.preventDefault()
-        runModAction(id)
-        return
-      }
-    }
-  },
-  { signal: mcSignal },
-)
+// NO bare-key mod hotkeys. x/t/b/s used to fire off a hovered row whenever the
+// composer wasn't focused — but the mouse resting over chat is the normal
+// reading position, so the first letter of a message ("thanks" → t) silently
+// timed a chatter out, and `s` opened a bulk-select mode nobody asked for.
+// Destructive actions take a deliberate click: the hover toolbar buttons, the
+// right-click menu, or the profile card. Don't re-add a bare-letter bind here
+// — the composer owns printable keys, always.
 
 
 // --- multichat/automod-queue.js ---
@@ -58419,55 +68805,48 @@ const STORAGE_KEY = 'heatsync_multichat'
   // one this fixes. See src/multichat/type-to-focus.js.
   initTypeToFocus(mcSignal)
 
-  // '/' focuses the live-tab chat filter (vim-style) — only when not already
-  // typing, no modifier held, and the filter bar is actually showing.
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      const input = document.getElementById('hs-mc-search-input')
-      if (!input) return
-      e.preventDefault()
-      input.focus()
-      input.select()
-    },
-    { signal: mcSignal },
-  )
+  // ── chat commands ────────────────────────────────────────────────────
+  // ONE implementation each, reachable two ways: the vi-mode <Space> leader
+  // (composer keeps focus — see src/multichat/overlay-keys.js) and the bare
+  // key while the composer is blurred. vi mode is off by default, so the bare
+  // keys stay: without them a non-vi user would have no keyboard surface at
+  // all. Each returns false when it declined to act, so the leader can stay
+  // silent rather than claim the key.
+  //
+  // Every command here is non-destructive on purpose. Bare keys that MODERATE
+  // people used to live alongside these and fired off whatever row the mouse
+  // happened to rest on — see the note at the bottom of mod-toolbar.js.
+
+  // '/' focuses the live-tab chat filter (vim-style) — only when the filter
+  // bar is actually showing.
+  function focusLiveSearch() {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    const input = document.getElementById('hs-mc-search-input')
+    if (!input) return false
+    input.focus()
+    input.select()
+    return true
+  }
 
   // n / N — vim-style cycling through the live-tab search filter's matches.
   // The filter already hides every non-matching row, so every .hs-mc-msg
   // currently in msgsEl IS a match; this just walks that list and marks one
-  // "current". Same guards as '/': live tab, bar visible, not typing — plus
-  // a non-empty query (nothing to cycle through otherwise).
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== 'n' && e.key !== 'N') return
-      if (e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      if (!liveSearchQuery(currentTab)) return
-      e.preventDefault()
-      cycleLiveSearchMatch(e.key === 'n' ? 1 : -1)
-    },
-    { signal: mcSignal },
-  )
+  // "current". Same guards as '/', plus a non-empty query (nothing to cycle
+  // through otherwise).
+  function cycleLiveSearch(dir) {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    if (!liveSearchQuery(currentTab)) return false
+    cycleLiveSearchMatch(dir)
+    return true
+  }
 
-  // Keyboard-first tab nav: alt+1..9 jump to the Nth content tab, alt+] / alt+[
-  // cycle next/prev (wrapping). Alt (not ctrl/cmd) avoids the browser's own
-  // ctrl/cmd+N tab switching. Only the scrollable content tabs (feed/whispers/
-  // mentions/pinned/live + channels) are navigable — the util buttons
-  // (add/settings/collapse/popout) live outside .hs-mc-tabs-scroll, so the
-  // selector skips them. e.code (Digit1.. / Bracket*) is layout-independent and
-  // immune to Alt-composition on non-Linux keymaps.
+  // Only the scrollable content tabs (feed/whispers/mentions/pinned/live +
+  // channels) are navigable — the util buttons (add/settings/collapse/popout)
+  // live outside .hs-mc-tabs-scroll, so the selector skips them.
   function _navigableTabIds() {
     const out = []
     for (const el of document.querySelectorAll('.hs-mc-tabs-scroll .hs-mc-tab[data-tab]')) {
@@ -58476,32 +68855,73 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
     return out
   }
+  function jumpToTabIndex(idx) {
+    const ids = _navigableTabIds()
+    if (idx < 0 || idx >= ids.length) return false
+    switchTab(ids[idx])
+    return true
+  }
+  // Wraps. If the current tab isn't navigable (e.g. settings), start from the
+  // nearest end so the first press lands.
+  function cycleTab(fwd) {
+    const ids = _navigableTabIds()
+    if (!ids.length) return false
+    const cur = ids.indexOf(currentTab)
+    const base = cur === -1 ? (fwd ? -1 : 0) : cur
+    const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
+    switchTab(ids[next])
+    return true
+  }
+
+  initOverlayKeys(mcSignal)
+  registerOverlayKey('/', () => focusLiveSearch())
+  registerOverlayKey('n', () => cycleLiveSearch(1))
+  registerOverlayKey('N', () => cycleLiveSearch(-1))
+  registerOverlayKey(']', () => cycleTab(true))
+  registerOverlayKey('[', () => cycleTab(false))
+  for (let i = 1; i <= 9; i++) registerOverlayKey(String(i), () => jumpToTabIndex(i - 1))
+
+  // Bare-key entry points, composer blurred. `defaultPrevented` matters: both
+  // type-to-focus and the type-reveal handler run first and claim the key by
+  // typing it into the composer — without the check, '/' both typed a slash
+  // AND yanked focus into the search box.
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (focusLiveSearch()) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'n' && e.key !== 'N') return
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (cycleLiveSearch(e.key === 'n' ? 1 : -1)) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+
+  // alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev. Alt
+  // (not ctrl/cmd) avoids the browser's own ctrl/cmd+N tab switching. NOT
+  // gated on where focus is: alt+digit types nothing, so there is no reason to
+  // make the user leave the composer to switch tabs. e.code (Digit1.. /
+  // Bracket*) is layout-independent and immune to Alt-composition on
+  // non-Linux keymaps; the ctrlKey bail also covers AltGr (ctrl+alt).
   document.addEventListener(
     'keydown',
     (e) => {
       if (!e.altKey || e.ctrlKey || e.metaKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
       const isDigit = /^Digit[1-9]$/.test(e.code || '')
       const isBracket = e.code === 'BracketRight' || e.code === 'BracketLeft'
       if (!isDigit && !isBracket) return
-      const ids = _navigableTabIds()
-      if (!ids.length) return
-      if (isDigit) {
-        const idx = Number(e.code.slice(5)) - 1
-        if (idx >= ids.length) return
-        e.preventDefault()
-        switchTab(ids[idx])
-        return
-      }
-      // alt+] next, alt+[ prev — wrap. If the current tab isn't navigable
-      // (e.g. settings), start from the nearest end so the first press lands.
-      const cur = ids.indexOf(currentTab)
-      const fwd = e.code === 'BracketRight'
-      const base = cur === -1 ? (fwd ? -1 : 0) : cur
-      const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
-      e.preventDefault()
-      switchTab(ids[next])
+      const ok = isDigit ? jumpToTabIndex(Number(e.code.slice(5)) - 1) : cycleTab(e.code === 'BracketRight')
+      if (ok) e.preventDefault()
     },
     { signal: mcSignal },
   )
@@ -60489,11 +70909,6 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (_msgsEl) _msgsEl.textContent = ''
     }
     editingChannel = false
-    // Bulk-select is per-tab: leaving a tab clears the selection + action bar so
-    // it can never persist invisibly into another channel and fire there.
-    try {
-      if (typeof exitBulkSelectMode === 'function') exitBulkSelectMode()
-    } catch (_) {}
     // Tab switch is the user telling us they care about live state right
     // now — kick a debounced refresh so any stale red dots on channel tabs
     // get corrected without waiting up to 30s for the next poll cycle.

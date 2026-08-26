@@ -43,6 +43,7 @@
   let operator = null // pending: 'd', 'c', 'y'
   let pendingCmd = null // pending: 'f', 'F', 't', 'T', 'r', 'g'
   let lastFind = null // { type, char }
+  let leaderPending = false // <Space> armed — next key runs an overlay command
   let register = ''
   let undoStack = []
   const redoStack = []
@@ -583,16 +584,15 @@
       right: '12px',
       background: '#000',
       color: '#fff',
-      border: '1px solid #000',
-      borderRadius: '6px',
+      border: '1px solid #808080',
+      borderRadius: '0',
       padding: '8px 10px',
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      lineHeight: '1.5',
+      fontFamily: "'CozetteVector', monospace",
+      fontSize: '13px',
+      lineHeight: '18px',
       zIndex: '10000',
-      maxWidth: '420px',
+      maxWidth: '460px',
       whiteSpace: 'pre',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
     })
     cheatsheetEl.textContent =
       'hl move  kj history  wb/WBE word  0$^ line  gg/G ends\n' +
@@ -600,7 +600,12 @@
       'x/X del char  dw/db/de/dd del  D del→end\n' +
       'cw/cb/ce/cc change  C change→end  s/S subst\n' +
       'yw/yb/ye/yy yank  p/P paste  r replace  ~ case\n' +
-      'i/a/I/A insert  u undo  Ctrl+R redo  . repeat  ? help'
+      'i/a/I/A insert  u undo  Ctrl+R redo  . repeat  ? help\n' +
+      '\n' +
+      'SPC = leader — chat commands without leaving the box\n' +
+      'SPC /    search       SPC n/N  next/prev match\n' +
+      'SPC 1-9  nth tab      SPC ]/[  next/prev tab\n' +
+      'SPC t    tab picker   SPC \\    hide/show chat'
     document.body.appendChild(cheatsheetEl)
     // Auto-dismiss on any key
     const dismiss = () => {
@@ -629,7 +634,7 @@
     // 2px radius, which is three house rules at once (yellow is warn, the
     // palette has no translucency, everything is square). It is a cursor, so it
     // takes the cursor invert, solid — same as heatsync.org.
-    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { background: #ff8700; color: #000; border-radius: 0; }`
+    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } .hs-vi-normal.hs-vi-leader { outline-color: #ff8700 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { background: #ff8700; color: #000; border-radius: 0; }`
     document.head.appendChild(s)
   }
 
@@ -640,6 +645,16 @@
     } else {
       activeEl.classList.remove('hs-vi-normal')
     }
+    // The normal-mode outline goes orange while the leader is armed — the
+    // border is already the mode indicator, so the pending state costs no
+    // extra chrome and no motion.
+    activeEl.classList.toggle('hs-vi-leader', enabled && mode === 'normal' && leaderPending)
+  }
+
+  function setLeader(on) {
+    if (leaderPending === on) return
+    leaderPending = on
+    updateVisual()
   }
 
   // --- Mode transitions ---
@@ -647,6 +662,7 @@
   function enterNormal(el) {
     mode = 'normal'
     count = ''
+    leaderPending = false
     operator = null
     pendingCmd = null
     const len = getLen(el)
@@ -659,6 +675,7 @@
   function enterInsert(el, pos) {
     mode = 'insert'
     count = ''
+    leaderPending = false
     operator = null
     pendingCmd = null
     if (pos !== undefined) cursor = pos
@@ -803,6 +820,28 @@
     // key.length === 1 doesn't catch 'Dead'/'Process' or an in-progress
     // composition, so they fell through to blockEvent and got eaten.
     if (key === 'Dead' || key === 'Process' || e.isComposing) return
+
+    // <Space> leader — the overlay's own commands, reachable without ever
+    // leaving the composer. See src/multichat/overlay-keys.js for the table.
+    // Armed state consumes exactly one key: a bound key runs its command, an
+    // unbound one (or Escape) just disarms. Nothing falls through to typing,
+    // so a mistyped leader sequence can never leak a stray character into a
+    // message. Space itself is free here — vim's space is a redundant `l`.
+    if (leaderPending) {
+      blockEvent(e)
+      setLeader(false)
+      if (key !== 'Escape' && key.length === 1) {
+        try {
+          window.__hsOverlayCommand?.(key)
+        } catch (_) {}
+      }
+      return
+    }
+    if (key === ' ' && !pendingCmd && !operator && !count) {
+      blockEvent(e)
+      setLeader(true)
+      return
+    }
 
     // Overlay-owned Escape (dropdown/picker/ctx/reply) closes the overlay —
     // same pass-through as insert mode; blocking it here stranded open
@@ -1234,6 +1273,7 @@
   function onDisable() {
     mode = 'insert'
     count = ''
+    leaderPending = false
     operator = null
     pendingCmd = null
     updateVisual()
@@ -1295,16 +1335,18 @@
     count = ''
     operator = null
     pendingCmd = null
+    leaderPending = false
     log('Attached to', el.tagName, el.id || el.className)
   }
 
   function detach() {
-    if (activeEl) activeEl.classList.remove('hs-vi-normal')
+    if (activeEl) activeEl.classList.remove('hs-vi-normal', 'hs-vi-leader')
     activeEl = null
     mode = 'insert'
     count = ''
     operator = null
     pendingCmd = null
+    leaderPending = false
   }
 
   // --- Initialization ---

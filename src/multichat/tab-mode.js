@@ -16,10 +16,11 @@
 // Two things differ from the site, both because this runs inside somebody
 // else's page:
 //
-//   1. `t` is gated on vi mode (default off). The site owns its keyboard; here
-//      a bare letter would be taken out of twitch.tv's hands, so nothing is
-//      bound until the user has explicitly asked for vi keys. Once the mode is
-//      ON it is modal and does own the keyboard — that part is expected.
+//   1. It opens on `<Space>t` from vi normal mode (see overlay-keys.js), not on
+//      a bare `t`. The site owns its keyboard; here a bare letter belongs to
+//      twitch.tv — and, more to the point, to whatever message the user is in
+//      the middle of typing. Once the mode is ON it is modal and does own the
+//      keyboard, which is what a mode means.
 //   2. The status line rides the overlay's own statusbar rather than a floating
 //      corner element, which would sit on top of the host page's UI.
 

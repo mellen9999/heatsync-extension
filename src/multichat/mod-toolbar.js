@@ -1,6 +1,6 @@
 // mod-toolbar + mod-action dispatch — split out of main.js (2026-07-04).
-// Hover toolbar UI, hotkeys, and the unified ban/timeout/unban/delete dispatch
-// backbone shared by every mod-action surface (toolbar/hotkey/slash/ctx/card).
+// Hover toolbar UI and the unified ban/timeout/unban/delete dispatch backbone
+// shared by every mod-action surface (toolbar/slash/ctx/card).
 
 // =====================================================================
 // MOD TOOLBAR — singleton element moved row→row on hover. Mirrors the
@@ -15,7 +15,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'delete',
     durationSec: null,
     needsMsgId: true,
-    hotkey: 'x',
   },
   timeout_1m: {
     label: '1m',
@@ -23,7 +22,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 60,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_10m: {
     label: '10m',
@@ -31,7 +29,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 600,
     needsMsgId: false,
-    hotkey: 't',
   },
   timeout_1h: {
     label: '1h',
@@ -39,7 +36,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 3600,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_24h: {
     label: '24h',
@@ -47,7 +43,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 86400,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_7d: {
     label: '7d',
@@ -55,7 +50,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 604800,
     needsMsgId: false,
-    hotkey: null,
   },
   purge: {
     label: 'purge',
@@ -63,10 +57,9 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
-    hotkey: null,
   },
-  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false, hotkey: 'b' },
-  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false, hotkey: null },
+  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
+  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
 }
 // Hover toolbar is fully opt-in: NO buttons default-on. Even the X
 // (delete-this-message) is hidden until the user enables it in settings →
@@ -201,7 +194,7 @@ function rebuildModToolbarButtons() {
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
     b.textContent = def.label
-    b.title = def.title + (def.hotkey ? ` (${def.hotkey.toUpperCase()})` : '')
+    b.title = def.title
     b.dataset.modBtn = id
     b.tabIndex = -1
     b.addEventListener('mousedown', (e) => {
@@ -487,11 +480,10 @@ async function dispatchModAction({
   skipConfirm,
 }) {
   // Opt-in ban dialog: confirm (misclick guard) and/or reason chips. Every
-  // surface routes through here, so one gate covers toolbar/hotkey/slash/ctx/
+  // surface routes through here, so one gate covers toolbar/slash/ctx/
   // card. Shows when confirm is on OR ban reasons are configured.
-  // skipConfirm: the bulk-select action bar already confirmed once for the
-  // whole batch ("ban 3 users?") — without this, each of the N per-user calls
-  // below would re-prompt its own "ban X in #channel?" dialog on top of it.
+  // skipConfirm: a caller that already confirmed once for a fan-out (the YT
+  // leg of a twitch/kick ban) must not re-prompt per platform.
   if (action === 'ban' && !skipConfirm) {
     const banReasons = String(modBanReasons || '')
       .split('\n')
@@ -708,262 +700,9 @@ async function runModAction(id) {
   detachModToolbar()
 }
 
-// ===== Bulk-select mode =====
-// Mods raid-cleaning a wall of spam select N rows and fire ban/timeout ONCE
-// per unique target, instead of hovering+clicking each row individually.
-// Twitch/kick only (mirrors the hover toolbar + ctx-menu mod gate) — YT rows
-// never carry the dataset (data-msg-id etc.) mod actions need, so they're
-// simply never selectable, same as they're invisible to the hover toolbar.
-let bulkSelectMode = false
-let _bulkAnchorRow = null
-const _bulkSelected = new Set() // Set<row Element> — visual selection, source of truth for the action bar
-
-function isBulkSelectMode() {
-  return bulkSelectMode
-}
-
-// Pure — no DOM. Row descriptors in, deduped-by-user target list out. Exposed
-// at module scope (not nested) so tests can extract it in isolation, same
-// pattern as bgIrcDupModNotice.
-function dedupeBulkTargets(rows) {
-  const seen = new Set()
-  const out = []
-  for (const r of rows || []) {
-    const login = String(r?.login || '')
-      .replace(/^@/, '')
-      .toLowerCase()
-    const channel = String(r?.channel || '')
-    if (!login || !channel) continue
-    const platform = r.platform || 'twitch'
-    const key = `${platform}|${channel.toLowerCase()}|${login}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    out.push({ platform, channel, login })
-  }
-  return out
-}
-
-function _bulkRowDescriptor(row) {
-  return {
-    platform: row.dataset.msgPlatform || 'twitch',
-    channel: row.dataset.msgChannel || '',
-    login: row.dataset.msgLogin || row.dataset.msgUser || '',
-  }
-}
-
-// Same gate the hover toolbar and ctx-menu mod items use: sync per-platform
-// mod-state cache, keyed off the row's own channel (never re-resolved through
-// getChannelLookup — matches the existing per-row check exactly).
-function _isModForRow(row) {
-  const plat = row.dataset.msgPlatform || 'twitch'
-  const ch = row.dataset.msgChannel || ''
-  if (!ch) return false
-  return plat === 'kick' ? isKickModForSync(ch) : isModForSync(ch)
-}
-
-function _bulkRowSelectable(row) {
-  if (!row?.dataset) return false
-  const plat = row.dataset.msgPlatform || 'twitch'
-  if (plat === 'youtube' || plat === 'yt') return false
-  if (!row.dataset.msgId || !row.dataset.msgChannel || !(row.dataset.msgLogin || row.dataset.msgUser)) return false
-  if (row.dataset.msgSelf === '1') return false
-  return _isModForRow(row)
-}
-
-function _toggleBulkRow(row) {
-  if (_bulkSelected.has(row)) {
-    _bulkSelected.delete(row)
-    row.classList.remove('hs-mc-row-selected')
-  } else {
-    _bulkSelected.add(row)
-    row.classList.add('hs-mc-row-selected')
-  }
-}
-
-function _selectBulkRange(messagesEl, fromRow, toRow) {
-  const rows = [...messagesEl.querySelectorAll('.hs-mc-msg')]
-  const i1 = rows.indexOf(fromRow)
-  const i2 = rows.indexOf(toRow)
-  if (i1 < 0 || i2 < 0) {
-    if (_bulkRowSelectable(toRow)) _toggleBulkRow(toRow)
-    return
-  }
-  const lo = Math.min(i1, i2)
-  const hi = Math.max(i1, i2)
-  for (let i = lo; i <= hi; i++) {
-    const r = rows[i]
-    if (_bulkRowSelectable(r) && !_bulkSelected.has(r)) {
-      _bulkSelected.add(r)
-      r.classList.add('hs-mc-row-selected')
-    }
-  }
-}
-
-function _updateBulkBar() {
-  let bar = document.getElementById('hs-mc-bulk-bar')
-  if (!bulkSelectMode || _bulkSelected.size === 0) {
-    if (bar) bar.remove()
-    return
-  }
-  if (!bar) {
-    bar = document.createElement('div')
-    bar.id = 'hs-mc-bulk-bar'
-    bar.innerHTML =
-      '<span id="hs-mc-bulk-count"></span>' +
-      '<button type="button" data-bulk="timeout">timeout</button>' +
-      '<button type="button" data-bulk="ban">ban</button>' +
-      '<button type="button" data-bulk="cancel">cancel</button>'
-    bar.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-bulk]')
-      if (!btn || btn.disabled) return
-      e.preventDefault()
-      e.stopPropagation()
-      const act = btn.dataset.bulk
-      if (act === 'cancel') {
-        exitBulkSelectMode()
-        return
-      }
-      runBulkModAction(act)
-    })
-    const root = document.getElementById('hs-mc-overlay') || document.body
-    root.appendChild(bar)
-  }
-  const countEl = bar.querySelector('#hs-mc-bulk-count')
-  if (countEl) countEl.textContent = `${_bulkSelected.size} selected`
-}
-
-function enterBulkSelectMode() {
-  if (bulkSelectMode) return
-  bulkSelectMode = true
-  _bulkAnchorRow = null
-  try {
-    document.body.classList.add('hs-mc-bulk-select-active')
-  } catch (_) {}
-}
-
-function exitBulkSelectMode() {
-  if (!bulkSelectMode) return
-  bulkSelectMode = false
-  _bulkAnchorRow = null
-  for (const row of _bulkSelected) row.classList.remove('hs-mc-row-selected')
-  _bulkSelected.clear()
-  try {
-    document.body.classList.remove('hs-mc-bulk-select-active')
-  } catch (_) {}
-  _updateBulkBar()
-}
-
-// Public entry point — used by the mod ctx-menu's "select mode" item and the
-// hover hotkey. Idempotent enter + pre-selects the row that triggered it, so
-// starting from a specific spam message immediately arms the action bar.
-function startBulkSelectFrom(row) {
-  enterBulkSelectMode()
-  if (row && _bulkRowSelectable(row)) {
-    _toggleBulkRow(row)
-    _bulkAnchorRow = row
-  }
-  _updateBulkBar()
-}
-
-// Executes once per deduped target — REUSES dispatchModAction (the vetted
-// twitch+kick fan-out path), never a bespoke ban call. skipConfirm:true since
-// the batch-level confirm below already covered "are you sure".
-async function runBulkModAction(action) {
-  if (!_bulkSelected.size) return
-  // Only fire on rows still in the live DOM. A row detached by an epoch rebuild
-  // (badge/emote/settings) or a tab switch keeps a valid dataset but lost its
-  // on-screen highlight — firing it would ban a user the mod can no longer see
-  // selected. isConnected filter keeps the batch == what's visibly highlighted.
-  const attached = [..._bulkSelected].filter((row) => row.isConnected)
-  const targets = dedupeBulkTargets(attached.map(_bulkRowDescriptor))
-  if (!targets.length) {
-    exitBulkSelectMode()
-    return
-  }
-  const verb = action === 'ban' ? 'ban' : 'timeout'
-  // Surface channel scope — a batch can span platforms/channels within one tab
-  // (twitch+kick), so the mod must see WHERE this fires, not just who.
-  const chans = [...new Set(targets.map((tg) => `#${String(tg.channel).replace(/^#/, '')}`))]
-  const scope = chans.length === 1 ? ` in ${chans[0]}` : ` across ${chans.join(', ')}`
-  const names = targets.map((tg) => tg.login).join(', ')
-  const preview = names.length > 120 ? `${names.slice(0, 120)}…` : names
-  const res = await hsConfirm(
-    `${verb} ${targets.length} user${targets.length === 1 ? '' : 's'}${scope}? (${preview})`,
-    verb,
-  )
-  if (!res.ok) return
-  const bar = document.getElementById('hs-mc-bulk-bar')
-  if (bar) for (const b of bar.querySelectorAll('button')) b.disabled = true
-  let okCount = 0
-  for (const tg of targets) {
-    try {
-      const r = await dispatchModAction({
-        channel: tg.channel,
-        platform: tg.platform,
-        action,
-        target: tg.login,
-        durationSec: action === 'timeout' ? 600 : null,
-        skipConfirm: true,
-      })
-      if (r?.anyOk) okCount++
-    } catch (_) {}
-  }
-  showToast(
-    `${okCount}/${targets.length} ${verb === 'ban' ? 'banned' : 'timed out'}`,
-    okCount === targets.length ? 'success' : okCount > 0 ? 'error' : 'error',
-  )
-  exitBulkSelectMode()
-}
-
-// Row-click toggling — only wired on the primary scrollback (#hs-mc-messages),
-// never the transient reply-stack popovers (ephemeral views, not a sane bulk
-// surface). No-op while selection mode is off, so this never touches the hot
-// render/click path for the common (non-mod, non-selecting) case.
-function wireBulkSelectClicks(messagesEl) {
-  messagesEl.addEventListener(
-    'click',
-    (e) => {
-      if (!bulkSelectMode) return
-      const row = e.target.closest('.hs-mc-msg')
-      if (!row || !messagesEl.contains(row)) return
-      // Never hijack a real interactive control inside the row — only bare
-      // row surface toggles selection while the mode is active.
-      if (e.target.closest('a, button, .hs-mod-toolbar, .hs-mc-reply-btn, .hs-mc-reply-ctx')) return
-      if (!_bulkRowSelectable(row)) return
-      e.preventDefault()
-      e.stopPropagation()
-      if (e.shiftKey && _bulkAnchorRow && messagesEl.contains(_bulkAnchorRow)) {
-        _selectBulkRange(messagesEl, _bulkAnchorRow, row)
-      } else {
-        _toggleBulkRow(row)
-        _bulkAnchorRow = row
-      }
-      _updateBulkBar()
-    },
-    { capture: true, signal: mcSignal },
-  )
-}
-
-// Escape always exits selection mode — standard escape-hatch for any
-// modal-like interaction state. Harmless no-op when a confirm dialog's own
-// Escape handler also fires (it just closes the dialog on top of this).
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!bulkSelectMode) return
-    if (e.key !== 'Escape') return
-    const tEl = e.target
-    if (tEl && (tEl.isContentEditable || ['INPUT', 'TEXTAREA'].includes(tEl.tagName))) return
-    exitBulkSelectMode()
-  },
-  { signal: mcSignal },
-)
-
 function wireModToolbarHover(messagesEl) {
   if (!messagesEl || messagesEl._hsModToolbarWired) return
   messagesEl._hsModToolbarWired = true
-  // Bulk-select click handling — primary scrollback only (see wireBulkSelectClicks).
-  if (messagesEl.id === 'hs-mc-messages') wireBulkSelectClicks(messagesEl)
   messagesEl.addEventListener(
     'mouseover',
     (e) => {
@@ -1025,35 +764,10 @@ function wireModToolbarHover(messagesEl) {
   )
 }
 
-// Hotkeys — x (delete), t (10m timeout), b (ban), s (toggle bulk-select,
-// pre-selecting the hovered row). Hold while hovering a row.
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!_modCtx) return
-    // OS key-repeat (~30Hz after ~500ms) fired many concurrent async
-    // dispatches for one held key before the first cleared _modCtx — a burst
-    // of error toasts (delete) or stacked confirm overlays (ban). One per press.
-    if (e.repeat) return
-    const t = e.target
-    const typing = t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))
-    if (typing) return
-    if (e.ctrlKey || e.metaKey || e.altKey) return
-    const key = (e.key || '').toLowerCase()
-    if (key === 's') {
-      e.preventDefault()
-      if (bulkSelectMode) exitBulkSelectMode()
-      else startBulkSelectFrom(_modCtx.row)
-      return
-    }
-    for (const id of modToolbarButtons) {
-      const def = MOD_BUTTON_CATALOG[id]
-      if (def?.hotkey === key) {
-        e.preventDefault()
-        runModAction(id)
-        return
-      }
-    }
-  },
-  { signal: mcSignal },
-)
+// NO bare-key mod hotkeys. x/t/b/s used to fire off a hovered row whenever the
+// composer wasn't focused — but the mouse resting over chat is the normal
+// reading position, so the first letter of a message ("thanks" → t) silently
+// timed a chatter out, and `s` opened a bulk-select mode nobody asked for.
+// Destructive actions take a deliberate click: the hover toolbar buttons, the
+// right-click menu, or the profile card. Don't re-add a bare-letter bind here
+// — the composer owns printable keys, always.

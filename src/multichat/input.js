@@ -1676,9 +1676,14 @@ function initInput() {
   }
 
   // Global `\` toggle → hide/show chat. Mirrors heatsync.org keyboard shortcut.
-  // Skip when input is focused so users can type `\` into chat normally.
+  // Skip when input is focused so users can type `\` into chat normally —
+  // vi normal mode reaches it as <Space>\ instead (see overlay-keys.js).
   if (!_onceGuardsInput.chatToggleHandler) {
     _onceGuardsInput.chatToggleHandler = true
+    registerOverlayKey('\\', () => {
+      toggleChatHidden()
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -1698,18 +1703,31 @@ function initInput() {
     )
   }
 
-  // Tab mode — `t` opens a rover cursor over the tab strip (tab-mode.js).
+  // Tab mode — a rover cursor over the tab strip (tab-mode.js), opened with
+  // <Space>t from vi normal mode.
   //
-  // Registered BEFORE the type-reveal handler below and in the capture phase,
-  // because that one focuses the composer on any printable key — a bare `t`
-  // would land in the input instead of opening the mode.
+  // It used to open on a bare `t` with the composer blurred, and that is the
+  // exact bug this whole area had: the mouse resting on the panel is the
+  // reading position, so typing "thanks" opened the rover instead of writing a
+  // message. The composer owns printable keys now, always.
   //
-  // Gated on vi mode, which is off by default: this runs inside twitch.tv's
-  // page, so a bare letter is theirs until the user has explicitly asked for vi
-  // keys. Once the mode IS open it is modal and owns every key, which is what
-  // a mode means.
+  // The rover is modal — it takes j/k/d/a/enter and the rest of the keyboard —
+  // so it can't run with the composer still focused: vi normal mode would eat
+  // every key first. Entering therefore blurs the composer and tells vi to let
+  // go NOW (__hsViDetachNow), because vi's own focusout detach is 150ms behind
+  // and the first rover key would land inside that gap.
   if (!_onceGuardsInput.tabModeHandler) {
     _onceGuardsInput.tabModeHandler = true
+    registerOverlayKey('t', () => {
+      // enterTabMode returns false when there is no visible strip.
+      if (!enterTabMode()) return false
+      const inp = document.getElementById('hs-mc-input')
+      try {
+        inp?.blur()
+        window.__hsViDetachNow?.(inp)
+      } catch (_) {}
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -1717,19 +1735,11 @@ function initInput() {
         const active = document.activeElement
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
         try {
-          if (tabModeActive()) {
-            if (handleTabModeKey(e)) {
-              e.preventDefault()
-              e.stopImmediatePropagation()
-            }
-            return
+          if (!tabModeActive()) return
+          if (handleTabModeKey(e)) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
           }
-          if (e.key !== 't' || !viModeEnabled) return
-          // enterTabMode returns false when there is no visible strip — let the
-          // key through to the host page rather than swallowing it for nothing.
-          if (!enterTabMode()) return
-          e.preventDefault()
-          e.stopImmediatePropagation()
         } catch (err) {
           log('tab-mode keydown:', err)
         }
@@ -2626,14 +2636,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
           { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
         )
-        // Bulk-select entry — twitch/kick only (YT rows carry none of the
-        // dataset bulk-select needs, same reason the hover toolbar skips YT).
-        if (!isYt && typeof startBulkSelectFrom === 'function' && typeof isBulkSelectMode === 'function') {
-          mod.push({
-            label: isBulkSelectMode() ? 'exit select mode' : 'select mode',
-            fn: () => (isBulkSelectMode() ? exitBulkSelectMode() : startBulkSelectFrom(msg)),
-          })
-        }
         mod.push('sep')
         items.push(...mod)
       } else {

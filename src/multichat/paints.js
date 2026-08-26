@@ -304,17 +304,13 @@ function ensureHsPaintSheet() {
       // .hsp-hover is the JS-synced twin of :hover — installHsPaintHoverSync
       // puts it on EVERY visible copy of the hovered user's name so they all
       // freeze together, not just the pointer target.
-      // .hs-mc-row-selected (bulk-select, mod-toolbar.js) reuses the same
-      // flatten: a gradient/clip-text paint left un-flattened would render
-      // invisible against the selected row's white bg (background:#fff would
-      // clip straight through transparent gradient text).
-      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span,.hs-mc-row-selected [class*="hsp-"],.hs-mc-row-selected [class*="hsp-"] span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
+      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
       // Scene plates (v2 ::before/::after dioramas) must vanish entirely on
-      // hover/selection — the element's white background paints UNDER a
-      // negative-z pseudo, so pausing alone would leave the plate covering
-      // the white. text-shadow:none above also drops the scene rim (black
-      // smears on white). Same trigger set as the flatten rule.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after,.hs-mc-row-selected [class*="hsp-"]::before,.hs-mc-row-selected [class*="hsp-"]::after{content:none !important;}' +
+      // hover — the element's white background paints UNDER a negative-z
+      // pseudo, so pausing alone would leave the plate covering the white.
+      // text-shadow:none above also drops the scene rim (black smears on
+      // white). Same trigger set as the flatten rule.
+      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds

@@ -4853,55 +4853,48 @@
   // one this fixes. See src/multichat/type-to-focus.js.
   initTypeToFocus(mcSignal)
 
-  // '/' focuses the live-tab chat filter (vim-style) — only when not already
-  // typing, no modifier held, and the filter bar is actually showing.
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      const input = document.getElementById('hs-mc-search-input')
-      if (!input) return
-      e.preventDefault()
-      input.focus()
-      input.select()
-    },
-    { signal: mcSignal },
-  )
+  // ── chat commands ────────────────────────────────────────────────────
+  // ONE implementation each, reachable two ways: the vi-mode <Space> leader
+  // (composer keeps focus — see src/multichat/overlay-keys.js) and the bare
+  // key while the composer is blurred. vi mode is off by default, so the bare
+  // keys stay: without them a non-vi user would have no keyboard surface at
+  // all. Each returns false when it declined to act, so the leader can stay
+  // silent rather than claim the key.
+  //
+  // Every command here is non-destructive on purpose. Bare keys that MODERATE
+  // people used to live alongside these and fired off whatever row the mouse
+  // happened to rest on — see the note at the bottom of mod-toolbar.js.
+
+  // '/' focuses the live-tab chat filter (vim-style) — only when the filter
+  // bar is actually showing.
+  function focusLiveSearch() {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    const input = document.getElementById('hs-mc-search-input')
+    if (!input) return false
+    input.focus()
+    input.select()
+    return true
+  }
 
   // n / N — vim-style cycling through the live-tab search filter's matches.
   // The filter already hides every non-matching row, so every .hs-mc-msg
   // currently in msgsEl IS a match; this just walks that list and marks one
-  // "current". Same guards as '/': live tab, bar visible, not typing — plus
-  // a non-empty query (nothing to cycle through otherwise).
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== 'n' && e.key !== 'N') return
-      if (e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      if (!liveSearchQuery(currentTab)) return
-      e.preventDefault()
-      cycleLiveSearchMatch(e.key === 'n' ? 1 : -1)
-    },
-    { signal: mcSignal },
-  )
+  // "current". Same guards as '/', plus a non-empty query (nothing to cycle
+  // through otherwise).
+  function cycleLiveSearch(dir) {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    if (!liveSearchQuery(currentTab)) return false
+    cycleLiveSearchMatch(dir)
+    return true
+  }
 
-  // Keyboard-first tab nav: alt+1..9 jump to the Nth content tab, alt+] / alt+[
-  // cycle next/prev (wrapping). Alt (not ctrl/cmd) avoids the browser's own
-  // ctrl/cmd+N tab switching. Only the scrollable content tabs (feed/whispers/
-  // mentions/pinned/live + channels) are navigable — the util buttons
-  // (add/settings/collapse/popout) live outside .hs-mc-tabs-scroll, so the
-  // selector skips them. e.code (Digit1.. / Bracket*) is layout-independent and
-  // immune to Alt-composition on non-Linux keymaps.
+  // Only the scrollable content tabs (feed/whispers/mentions/pinned/live +
+  // channels) are navigable — the util buttons (add/settings/collapse/popout)
+  // live outside .hs-mc-tabs-scroll, so the selector skips them.
   function _navigableTabIds() {
     const out = []
     for (const el of document.querySelectorAll('.hs-mc-tabs-scroll .hs-mc-tab[data-tab]')) {
@@ -4910,32 +4903,73 @@
     }
     return out
   }
+  function jumpToTabIndex(idx) {
+    const ids = _navigableTabIds()
+    if (idx < 0 || idx >= ids.length) return false
+    switchTab(ids[idx])
+    return true
+  }
+  // Wraps. If the current tab isn't navigable (e.g. settings), start from the
+  // nearest end so the first press lands.
+  function cycleTab(fwd) {
+    const ids = _navigableTabIds()
+    if (!ids.length) return false
+    const cur = ids.indexOf(currentTab)
+    const base = cur === -1 ? (fwd ? -1 : 0) : cur
+    const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
+    switchTab(ids[next])
+    return true
+  }
+
+  initOverlayKeys(mcSignal)
+  registerOverlayKey('/', () => focusLiveSearch())
+  registerOverlayKey('n', () => cycleLiveSearch(1))
+  registerOverlayKey('N', () => cycleLiveSearch(-1))
+  registerOverlayKey(']', () => cycleTab(true))
+  registerOverlayKey('[', () => cycleTab(false))
+  for (let i = 1; i <= 9; i++) registerOverlayKey(String(i), () => jumpToTabIndex(i - 1))
+
+  // Bare-key entry points, composer blurred. `defaultPrevented` matters: both
+  // type-to-focus and the type-reveal handler run first and claim the key by
+  // typing it into the composer — without the check, '/' both typed a slash
+  // AND yanked focus into the search box.
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (focusLiveSearch()) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'n' && e.key !== 'N') return
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (cycleLiveSearch(e.key === 'n' ? 1 : -1)) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+
+  // alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev. Alt
+  // (not ctrl/cmd) avoids the browser's own ctrl/cmd+N tab switching. NOT
+  // gated on where focus is: alt+digit types nothing, so there is no reason to
+  // make the user leave the composer to switch tabs. e.code (Digit1.. /
+  // Bracket*) is layout-independent and immune to Alt-composition on
+  // non-Linux keymaps; the ctrlKey bail also covers AltGr (ctrl+alt).
   document.addEventListener(
     'keydown',
     (e) => {
       if (!e.altKey || e.ctrlKey || e.metaKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
       const isDigit = /^Digit[1-9]$/.test(e.code || '')
       const isBracket = e.code === 'BracketRight' || e.code === 'BracketLeft'
       if (!isDigit && !isBracket) return
-      const ids = _navigableTabIds()
-      if (!ids.length) return
-      if (isDigit) {
-        const idx = Number(e.code.slice(5)) - 1
-        if (idx >= ids.length) return
-        e.preventDefault()
-        switchTab(ids[idx])
-        return
-      }
-      // alt+] next, alt+[ prev — wrap. If the current tab isn't navigable
-      // (e.g. settings), start from the nearest end so the first press lands.
-      const cur = ids.indexOf(currentTab)
-      const fwd = e.code === 'BracketRight'
-      const base = cur === -1 ? (fwd ? -1 : 0) : cur
-      const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
-      e.preventDefault()
-      switchTab(ids[next])
+      const ok = isDigit ? jumpToTabIndex(Number(e.code.slice(5)) - 1) : cycleTab(e.code === 'BracketRight')
+      if (ok) e.preventDefault()
     },
     { signal: mcSignal },
   )
@@ -6923,11 +6957,6 @@
       if (_msgsEl) _msgsEl.textContent = ''
     }
     editingChannel = false
-    // Bulk-select is per-tab: leaving a tab clears the selection + action bar so
-    // it can never persist invisibly into another channel and fire there.
-    try {
-      if (typeof exitBulkSelectMode === 'function') exitBulkSelectMode()
-    } catch (_) {}
     // Tab switch is the user telling us they care about live state right
     // now — kick a debounced refresh so any stale red dots on channel tabs
     // get corrected without waiting up to 30s for the next poll cycle.

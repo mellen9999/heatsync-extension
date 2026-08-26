@@ -236,24 +236,34 @@ describe('reorder and close are channels-only', () => {
 })
 
 describe('host-page fences', () => {
-  test('t is gated on vi mode and skips editables, in the capture phase', () => {
+  test('the rover opens from the vi leader, never a bare key', () => {
     const i = INPUT.indexOf('_onceGuardsInput.tabModeHandler')
     expect(i).toBeGreaterThan(-1)
     const block = INPUT.slice(i, i + 1800)
-    expect(block).toContain("if (e.key !== 't' || !viModeEnabled) return")
+    expect(block).toContain("registerOverlayKey('t'")
+    // A bare `t` with the composer blurred used to open the rover, so the
+    // first letter of a message opened a mode instead of typing.
+    expect(block).not.toContain("e.key !== 't'")
+    // A failed enter must NOT claim the key — nothing to open, nothing done.
+    expect(block).toContain('if (!enterTabMode()) return false')
+  })
+
+  test('entering blurs the composer and makes vi let go in the same tick', () => {
+    // The rover is modal. vi normal mode owns every key while the composer is
+    // focused, and vi's own focusout detach is 150ms behind — the first rover
+    // key would land inside that gap and be eaten.
+    const i = INPUT.indexOf('_onceGuardsInput.tabModeHandler')
+    const block = INPUT.slice(i, i + 1800)
+    expect(block).toContain('inp?.blur()')
+    expect(block).toContain('window.__hsViDetachNow?.(inp)')
+  })
+
+  test('the modal key handler still skips editables, in the capture phase', () => {
+    const i = INPUT.indexOf('_onceGuardsInput.tabModeHandler')
+    const block = INPUT.slice(i, i + 1800)
     expect(block).toContain('active.isContentEditable')
     expect(block).toContain('e.ctrlKey || e.altKey || e.metaKey')
     expect(block).toContain('capture: true')
-    // A failed enter must NOT preventDefault — the host page keeps its key.
-    expect(block).toContain('if (!enterTabMode()) return')
-  })
-
-  test('it is registered before the type-reveal handler that focuses the composer', () => {
-    // Same target + same phase means registration order decides, and
-    // type-reveal would otherwise eat a bare `t` into the input.
-    expect(INPUT.indexOf('_onceGuardsInput.tabModeHandler')).toBeLessThan(
-      INPUT.indexOf('_onceGuardsInput.typeRevealHandler'),
-    )
   })
 
   test('the mode tears down with the rest of multichat', () => {

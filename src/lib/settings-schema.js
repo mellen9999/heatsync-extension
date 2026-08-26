@@ -339,6 +339,20 @@ const SETTINGS = [
     runtimeVar: 'platformBadgesEnabled',
     rerender: true,
   },
+  {
+    key: 'textBadges',
+    type: 'bool',
+    default: false,
+    scope: 'sync',
+    category: 'display',
+    section: 'chat messages',
+    labelKey: 'mc_settings_text_badges',
+    tipKey: 'mc_settings_text_badges_desc',
+    control: 'pill',
+    alias: 'textbadges',
+    runtimeVar: 'textBadgesEnabled',
+    rerender: true,
+  },
 
   // ── display / layout ──────────────────────────────────────────────────
   // Written by the rotate buttons too — registry + buttons share one

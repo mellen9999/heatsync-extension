@@ -1084,6 +1084,12 @@
   "mc_settings_platform_badges_desc": {
     "message": "[T] [K] [Y] labels on messages. off keeps them for the platforms you are not on."
   },
+  "mc_settings_text_badges": {
+    "message": "text badges"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "render mod/vip/sub badges as terse text chips instead of images"
+  },
   "mc_settings_tab_position": {
     "message": "tab bar position"
   },

@@ -170,7 +170,12 @@ describe('badge refresh mechanism — structural invariants', () => {
   test('renderBadges and the shared resolver stay in sync: renderBadges delegates to resolveBadgeImageUrl rather than re-implementing the priority chain', () => {
     const fnStart = SRC.indexOf('function renderBadges(')
     expect(fnStart).toBeGreaterThan(-1)
-    const body = SRC.slice(fnStart, fnStart + 400)
+    // Slice to the next top-level function, not a fixed character budget — a
+    // fixed window measures comment length, so adding a comment inside
+    // renderBadges used to "break" an invariant about its code.
+    const fnEnd = SRC.indexOf('\nfunction renderThirdPartyBadges', fnStart)
+    expect(fnEnd).toBeGreaterThan(fnStart)
+    const body = SRC.slice(fnStart, fnEnd)
     expect(body).toContain('resolveBadgeImageUrl(isKick, channel, name, version)')
   })
 })

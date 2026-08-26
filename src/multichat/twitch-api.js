@@ -2217,6 +2217,56 @@ const BADGE_STYLES = {
   verified: { label: '✓', bg: '#53fc18', fg: '#000' },
 }
 
+// Terse chip text for the `textBadges` setting, and for the involuntary text
+// fallback below. Kept identical to the site's BADGE_SHORT
+// (heatsync client/chat/badge-text.js) — the same role has to read the same on
+// both surfaces, and the two repos share no code, so this table IS the
+// contract. A name absent here falls back to its BADGE_STYLES label lowercased;
+// BADGE_STYLES stays the allowlist either way, so a channel-specific badge
+// (whose name is the channel's own id) renders nothing rather than a truncated
+// blob like `ench` for `enchantedbigboiboxers`.
+const BADGE_SHORT = {
+  broadcaster: 'bc',
+  owner: 'bc',
+  moderator: 'mod',
+  vip: 'vip',
+  staff: 'staff',
+  admin: 'admin',
+  global_mod: 'gmod',
+  partner: 'ptnr',
+  verified: 'vrfd',
+  subscriber: 'sub',
+  member: 'mbr',
+  founder: 'fdr',
+  premium: 'prime',
+  turbo: 'turbo',
+  og: 'og',
+  'sub-gifter': 'gift',
+  sub_gifter: 'gift',
+  'sub-gift-leader': 'gift',
+  bits: 'bits',
+  'bits-leader': 'bits',
+  'anonymous-cheerer': 'bits',
+  predictions: 'pred',
+  'hype-train': 'hype',
+  moments: 'mmnt',
+  artist: 'art',
+  'artist-badge': 'art',
+  'game-developer': 'dev',
+  'clip-champ': 'clip',
+  'glhf-pledge': 'glhf',
+  no_audio: 'noaud',
+  no_video: 'novid',
+  'first-msg': 'new',
+}
+
+// Chip text for a badge we have colours for. BADGE_SHORT first so both surfaces
+// agree; otherwise the style table's own label, lowercased to match the rest of
+// the UI's copy.
+function badgeChipText(name) {
+  return BADGE_SHORT[name] || (BADGE_STYLES[name]?.label || '').toLowerCase()
+}
+
 // Semantic background for a known badge type, applied to the <img> so the 18px
 // slot always shows the badge's color — even before the image paints or if it
 // fails to load in the page-load request burst. Without this, native/global
@@ -3817,7 +3867,11 @@ function renderBadges(badgesStr, channel, platform) {
     .split(',')
     .map((badge) => {
       const [name, version] = badge.split('/')
-      const url = resolveBadgeImageUrl(isKick, channel, name, version)
+      // Text mode skips the image path entirely — no url lookup, no request.
+      // _patchBadgesInRoot (cosmetics.js) is gated on the same flag, so the
+      // late badge-fetch retro-paint can't swap these chips back to images
+      // behind the setting's back.
+      const url = textBadgesEnabled ? null : resolveBadgeImageUrl(isKick, channel, name, version)
       if (url) {
         // Semantic bg so the slot shows the badge color even before/without the
         // image (FFZ = padded chip for a transparent icon; native = bg behind).
@@ -3831,10 +3885,13 @@ function renderBadges(badgesStr, channel, platform) {
         // mod/vip/sub badge vanished until a new message or channel switch.
         return `<img class="hs-mc-badge-img" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" src="${escapeHtml(safeUrl(url) || '')}" alt="${escapeHtml(name)}" title="${escapeHtml(label)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${bgStyle}">`
       }
-      // Text fallback
+      // Text chip — the deliberate `textBadges` render, and the fallback when a
+      // badge has no image url yet.
       const style = BADGE_STYLES[name]
       if (!style) return ''
-      return `<span class="hs-mc-badge" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" style="background:${style.bg};color:${style.fg}" title="${escapeHtml(style.label)}">${style.label}</span>`
+      const text = badgeChipText(name)
+      if (!text) return ''
+      return `<span class="hs-mc-badge" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" style="background:${style.bg};color:${style.fg}" title="${escapeHtml(style.label)}">${escapeHtml(text)}</span>`
     })
     .join('')
 }

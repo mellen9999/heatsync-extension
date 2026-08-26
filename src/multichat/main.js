@@ -2101,6 +2101,12 @@
         platformBadgesEnabled = v
       },
     },
+    textBadgesEnabled: {
+      get: () => textBadgesEnabled,
+      set: (v) => {
+        textBadgesEnabled = v
+      },
+    },
     pronounsEnabled: {
       get: () => pronounsEnabled,
       set: (v) => {
@@ -3359,6 +3365,13 @@
 
   // Platform badges [T]/[K]/[Y] on messages (default on)
   let platformBadgesEnabled = true
+
+  // Mod/vip/sub badges as terse text chips instead of images (default off).
+  // Read from twitch-api.js's renderBadges and cosmetics.js's
+  // _patchBadgesInRoot — same concatenated scope, and both only run after
+  // init has executed this line, so the TDZ never bites (same guarantee
+  // _RUNTIME_BRIDGE above relies on).
+  let textBadgesEnabled = false
 
   // Pronouns (pronoundb.org, twitch-only) on the profile card + hover
   // tooltip (default on)

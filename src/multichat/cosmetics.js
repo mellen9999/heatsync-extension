@@ -812,6 +812,9 @@ function updateThirdPartyBadgesInPlace() {
 // the document — querySelectorAll on #hs-mc-messages can't see it) stayed
 // on stale text-fallback badges until something forced a full rebuild.
 function _patchBadgesInRoot(root, channelLogin) {
+  // In text mode there is nothing to upgrade: the chips ARE the intended
+  // render, and this function's entire job is replacing a chip with an image.
+  if (textBadgesEnabled) return
   for (const div of root.querySelectorAll('.hs-mc-msg')) {
     const m = div._hsMsg
     if (!m?.badges || typeof m.badges !== 'string') continue

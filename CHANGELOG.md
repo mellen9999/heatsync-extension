@@ -1,6 +1,6 @@
 # changelog
 
-## unreleased
+## [1.7.68] — 2026-08-26
 
 ### fixed
 - **a stray keystroke can no longer moderate anyone** — with the composer unfocused and the mouse resting anywhere on a chat row, `x`, `t` and `b` deleted, timed out and banned whoever wrote it. that was the normal reading position, so the first letter of a message was enough. mod actions now take a deliberate click: the hover toolbar, right-click, or the profile card.

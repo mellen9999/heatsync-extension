@@ -9001,7 +9001,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f2f4e09+-202608262009' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6ada631-202608262011' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -13131,82 +13131,6 @@ function injectStyles() {
     }
     .hs-mod-btn:last-child { border-right: 0; }
     .hs-mod-btn:hover { background: #fff; color: #000; }
-    /* Bulk-select — clicking a row while selection mode is active toggles this.
-       "white bg, black text" is the universal selected/active treatment (see
-       .hs-mc-emoji-row.selected); orange left-bar ties it to the mod-action
-       accent. !important beats inline per-user username colors, same
-       precedent as .hs-mc-emoji-row.selected .hs-mc-emoji-name. */
-    .hs-mc-msg.hs-mc-row-selected {
-      background: #fff !important;
-      color: #000 !important;
-      box-shadow: inset 2px 0 0 var(--hs-reply-dim);
-    }
-    .hs-mc-msg.hs-mc-row-selected .hs-mc-user,
-    .hs-mc-msg.hs-mc-row-selected .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-row-selected .hs-mc-channel,
-    .hs-mc-msg.hs-mc-row-selected .hs-mc-ts,
-    .hs-mc-msg.hs-mc-row-selected .hs-mc-reply-user {
-      color: #000 !important;
-      -webkit-text-fill-color: #000 !important;
-    }
-    /* Cursor affordance while selection mode is on — rows are click-targets,
-       not text. Reply/mod-toolbar buttons opt back out to their own cursor. */
-    body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id] {
-      cursor: pointer;
-    }
-    body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id] .hs-mc-reply-btn,
-    body.hs-mc-bulk-select-active .hs-mc-msg[data-msg-id] .hs-mod-toolbar {
-      cursor: default;
-    }
-    /* Bottom action bar — floats over #hs-mc-messages like #hs-mc-new-msgs,
-       reverse-video (selection mode = white bg / black text, same treatment
-       as selected rows), square, zero motion. */
-    #hs-mc-bulk-bar {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1006;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 8px;
-      background: #fff;
-      color: #000;
-      font: 13px/18px 'CozetteVector', monospace;
-      border-top: 1px solid #000;
-      box-sizing: border-box;
-    }
-    #hs-mc-bulk-count {
-      font-weight: 700;
-      margin-right: auto;
-    }
-    #hs-mc-bulk-bar button {
-      background: #000;
-      color: #fff;
-      border: 1px solid #000;
-      border-radius: 0;
-      padding: 3px 10px;
-      font: inherit;
-      cursor: pointer;
-    }
-    #hs-mc-bulk-bar button:hover {
-      background: #fff;
-      color: #000;
-    }
-    #hs-mc-bulk-bar button[data-bulk='ban'] {
-      border-color: var(--hs-danger);
-      color: #ff5f5f;
-    }
-    #hs-mc-bulk-bar button[data-bulk='ban']:hover {
-      background: #ff5f5f;
-      color: #000;
-    }
-    #hs-mc-bulk-bar button[disabled] {
-      opacity: 0.5;
-      cursor: default;
-      pointer-events: none;
-    }
     #hs-mc-reply-indicator {
       flex: 1 0 100%;
       order: -1;
@@ -22046,10 +21970,11 @@ function _syncTabCounterTicker(mode) {
 // Two things differ from the site, both because this runs inside somebody
 // else's page:
 //
-//   1. `t` is gated on vi mode (default off). The site owns its keyboard; here
-//      a bare letter would be taken out of twitch.tv's hands, so nothing is
-//      bound until the user has explicitly asked for vi keys. Once the mode is
-//      ON it is modal and does own the keyboard — that part is expected.
+//   1. It opens on `<Space>t` from vi normal mode (see overlay-keys.js), not on
+//      a bare `t`. The site owns its keyboard; here a bare letter belongs to
+//      twitch.tv — and, more to the point, to whatever message the user is in
+//      the middle of typing. Once the mode is ON it is modal and does own the
+//      keyboard, which is what a mode means.
 //   2. The status line rides the overlay's own statusbar rather than a floating
 //      corner element, which would sit on top of the host page's UI.
 
@@ -22236,6 +22161,70 @@ function handleTabModeKey(e) {
   }
 
   return true // swallow stray keys; stay in tab mode
+}
+
+
+// --- multichat/overlay-keys.js ---
+/**
+ * overlay-keys — the overlay's bare-key commands, in ONE table.
+ *
+ * WHY THIS EXISTS
+ *
+ * Every one of these commands used to be its own document-level keydown
+ * listener that fired only while the composer was NOT focused. That made the
+ * blurred state a second, invisible keyboard mode: the same letter meant
+ * "type this" with the composer focused and "run this" without, and the only
+ * way to reach a command was to click off the input onto the background.
+ * Worse, a hovered chat row turned x/t/b into delete/timeout/ban, so the first
+ * letter of a message could moderate someone (that pair is now gone entirely —
+ * see mod-toolbar.js).
+ *
+ * The replacement is a leader key. In vi normal mode, <Space> arms the leader
+ * and the next key runs the command below — the composer keeps focus the whole
+ * time, and there is exactly one place that says what a bare key does.
+ * <Space> is free in normal mode (vim's own space is a redundant `l`) and is
+ * what every vim user already reaches for, so nothing conflicts and nothing
+ * has to be relearned.
+ *
+ * The old blurred-composer listeners stay for the non-destructive commands
+ * (vi mode is off by default; without it there'd be no keyboard surface at
+ * all), but they are now thin wrappers over the same functions registered
+ * here — one implementation, two entry points.
+ */
+
+// key (single char, case-sensitive — 'n' and 'N' differ) -> () => boolean.
+// A command returns false when it decided not to act (wrong tab, nothing to
+// search), so the leader can stay silent instead of claiming the key.
+const _overlayKeyBinds = new Map()
+
+function registerOverlayKey(key, fn) {
+  _overlayKeyBinds.set(key, fn)
+}
+
+function runOverlayKey(key) {
+  const fn = _overlayKeyBinds.get(key)
+  if (!fn) return false
+  try {
+    return fn() !== false
+  } catch (_) {
+    return false
+  }
+}
+
+// vi-mode.js is a separate content script in the same ISOLATED world, so it
+// reaches us through window — the same channel as __hsViChanging/__hsEscOwned.
+function initOverlayKeys(signal) {
+  const hook = (key) => runOverlayKey(key)
+  window.__hsOverlayCommand = hook
+  try {
+    signal?.addEventListener(
+      'abort',
+      () => {
+        if (window.__hsOverlayCommand === hook) window.__hsOverlayCommand = undefined
+      },
+      { once: true },
+    )
+  } catch (_) {}
 }
 
 
@@ -45734,9 +45723,14 @@ function initInput() {
   }
 
   // Global `\` toggle → hide/show chat. Mirrors heatsync.org keyboard shortcut.
-  // Skip when input is focused so users can type `\` into chat normally.
+  // Skip when input is focused so users can type `\` into chat normally —
+  // vi normal mode reaches it as <Space>\ instead (see overlay-keys.js).
   if (!_onceGuardsInput.chatToggleHandler) {
     _onceGuardsInput.chatToggleHandler = true
+    registerOverlayKey('\\', () => {
+      toggleChatHidden()
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -45756,18 +45750,31 @@ function initInput() {
     )
   }
 
-  // Tab mode — `t` opens a rover cursor over the tab strip (tab-mode.js).
+  // Tab mode — a rover cursor over the tab strip (tab-mode.js), opened with
+  // <Space>t from vi normal mode.
   //
-  // Registered BEFORE the type-reveal handler below and in the capture phase,
-  // because that one focuses the composer on any printable key — a bare `t`
-  // would land in the input instead of opening the mode.
+  // It used to open on a bare `t` with the composer blurred, and that is the
+  // exact bug this whole area had: the mouse resting on the panel is the
+  // reading position, so typing "thanks" opened the rover instead of writing a
+  // message. The composer owns printable keys now, always.
   //
-  // Gated on vi mode, which is off by default: this runs inside twitch.tv's
-  // page, so a bare letter is theirs until the user has explicitly asked for vi
-  // keys. Once the mode IS open it is modal and owns every key, which is what
-  // a mode means.
+  // The rover is modal — it takes j/k/d/a/enter and the rest of the keyboard —
+  // so it can't run with the composer still focused: vi normal mode would eat
+  // every key first. Entering therefore blurs the composer and tells vi to let
+  // go NOW (__hsViDetachNow), because vi's own focusout detach is 150ms behind
+  // and the first rover key would land inside that gap.
   if (!_onceGuardsInput.tabModeHandler) {
     _onceGuardsInput.tabModeHandler = true
+    registerOverlayKey('t', () => {
+      // enterTabMode returns false when there is no visible strip.
+      if (!enterTabMode()) return false
+      const inp = document.getElementById('hs-mc-input')
+      try {
+        inp?.blur()
+        window.__hsViDetachNow?.(inp)
+      } catch (_) {}
+      return true
+    })
     document.addEventListener(
       'keydown',
       (e) => {
@@ -45775,19 +45782,11 @@ function initInput() {
         const active = document.activeElement
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
         try {
-          if (tabModeActive()) {
-            if (handleTabModeKey(e)) {
-              e.preventDefault()
-              e.stopImmediatePropagation()
-            }
-            return
+          if (!tabModeActive()) return
+          if (handleTabModeKey(e)) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
           }
-          if (e.key !== 't' || !viModeEnabled) return
-          // enterTabMode returns false when there is no visible strip — let the
-          // key through to the host page rather than swallowing it for nothing.
-          if (!enterTabMode()) return
-          e.preventDefault()
-          e.stopImmediatePropagation()
         } catch (err) {
           log('tab-mode keydown:', err)
         }
@@ -46684,14 +46683,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
           { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
         )
-        // Bulk-select entry — twitch/kick only (YT rows carry none of the
-        // dataset bulk-select needs, same reason the hover toolbar skips YT).
-        if (!isYt && typeof startBulkSelectFrom === 'function' && typeof isBulkSelectMode === 'function') {
-          mod.push({
-            label: isBulkSelectMode() ? 'exit select mode' : 'select mode',
-            fn: () => (isBulkSelectMode() ? exitBulkSelectMode() : startBulkSelectFrom(msg)),
-          })
-        }
         mod.push('sep')
         items.push(...mod)
       } else {
@@ -56061,17 +56052,13 @@ function ensureHsPaintSheet() {
       // .hsp-hover is the JS-synced twin of :hover — installHsPaintHoverSync
       // puts it on EVERY visible copy of the hovered user's name so they all
       // freeze together, not just the pointer target.
-      // .hs-mc-row-selected (bulk-select, mod-toolbar.js) reuses the same
-      // flatten: a gradient/clip-text paint left un-flattened would render
-      // invisible against the selected row's white bg (background:#fff would
-      // clip straight through transparent gradient text).
-      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span,.hs-mc-row-selected [class*="hsp-"],.hs-mc-row-selected [class*="hsp-"] span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
+      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
       // Scene plates (v2 ::before/::after dioramas) must vanish entirely on
-      // hover/selection — the element's white background paints UNDER a
-      // negative-z pseudo, so pausing alone would leave the plate covering
-      // the white. text-shadow:none above also drops the scene rim (black
-      // smears on white). Same trigger set as the flatten rule.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after,.hs-mc-row-selected [class*="hsp-"]::before,.hs-mc-row-selected [class*="hsp-"]::after{content:none !important;}' +
+      // hover — the element's white background paints UNDER a negative-z
+      // pseudo, so pausing alone would leave the plate covering the white.
+      // text-shadow:none above also drops the scene rim (black smears on
+      // white). Same trigger set as the flatten rule.
+      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -57663,8 +57650,8 @@ function userPaintStyle(uid, lower, platform) {
 
 // --- multichat/mod-toolbar.js ---
 // mod-toolbar + mod-action dispatch — split out of main.js (2026-07-04).
-// Hover toolbar UI, hotkeys, and the unified ban/timeout/unban/delete dispatch
-// backbone shared by every mod-action surface (toolbar/hotkey/slash/ctx/card).
+// Hover toolbar UI and the unified ban/timeout/unban/delete dispatch backbone
+// shared by every mod-action surface (toolbar/slash/ctx/card).
 
 // =====================================================================
 // MOD TOOLBAR — singleton element moved row→row on hover. Mirrors the
@@ -57679,7 +57666,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'delete',
     durationSec: null,
     needsMsgId: true,
-    hotkey: 'x',
   },
   timeout_1m: {
     label: '1m',
@@ -57687,7 +57673,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 60,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_10m: {
     label: '10m',
@@ -57695,7 +57680,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 600,
     needsMsgId: false,
-    hotkey: 't',
   },
   timeout_1h: {
     label: '1h',
@@ -57703,7 +57687,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 3600,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_24h: {
     label: '24h',
@@ -57711,7 +57694,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 86400,
     needsMsgId: false,
-    hotkey: null,
   },
   timeout_7d: {
     label: '7d',
@@ -57719,7 +57701,6 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 604800,
     needsMsgId: false,
-    hotkey: null,
   },
   purge: {
     label: 'purge',
@@ -57727,10 +57708,9 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
-    hotkey: null,
   },
-  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false, hotkey: 'b' },
-  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false, hotkey: null },
+  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
+  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
 }
 // Hover toolbar is fully opt-in: NO buttons default-on. Even the X
 // (delete-this-message) is hidden until the user enables it in settings →
@@ -57865,7 +57845,7 @@ function rebuildModToolbarButtons() {
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
     b.textContent = def.label
-    b.title = def.title + (def.hotkey ? ` (${def.hotkey.toUpperCase()})` : '')
+    b.title = def.title
     b.dataset.modBtn = id
     b.tabIndex = -1
     b.addEventListener('mousedown', (e) => {
@@ -58151,11 +58131,10 @@ async function dispatchModAction({
   skipConfirm,
 }) {
   // Opt-in ban dialog: confirm (misclick guard) and/or reason chips. Every
-  // surface routes through here, so one gate covers toolbar/hotkey/slash/ctx/
+  // surface routes through here, so one gate covers toolbar/slash/ctx/
   // card. Shows when confirm is on OR ban reasons are configured.
-  // skipConfirm: the bulk-select action bar already confirmed once for the
-  // whole batch ("ban 3 users?") — without this, each of the N per-user calls
-  // below would re-prompt its own "ban X in #channel?" dialog on top of it.
+  // skipConfirm: a caller that already confirmed once for a fan-out (the YT
+  // leg of a twitch/kick ban) must not re-prompt per platform.
   if (action === 'ban' && !skipConfirm) {
     const banReasons = String(modBanReasons || '')
       .split('\n')
@@ -58372,262 +58351,9 @@ async function runModAction(id) {
   detachModToolbar()
 }
 
-// ===== Bulk-select mode =====
-// Mods raid-cleaning a wall of spam select N rows and fire ban/timeout ONCE
-// per unique target, instead of hovering+clicking each row individually.
-// Twitch/kick only (mirrors the hover toolbar + ctx-menu mod gate) — YT rows
-// never carry the dataset (data-msg-id etc.) mod actions need, so they're
-// simply never selectable, same as they're invisible to the hover toolbar.
-let bulkSelectMode = false
-let _bulkAnchorRow = null
-const _bulkSelected = new Set() // Set<row Element> — visual selection, source of truth for the action bar
-
-function isBulkSelectMode() {
-  return bulkSelectMode
-}
-
-// Pure — no DOM. Row descriptors in, deduped-by-user target list out. Exposed
-// at module scope (not nested) so tests can extract it in isolation, same
-// pattern as bgIrcDupModNotice.
-function dedupeBulkTargets(rows) {
-  const seen = new Set()
-  const out = []
-  for (const r of rows || []) {
-    const login = String(r?.login || '')
-      .replace(/^@/, '')
-      .toLowerCase()
-    const channel = String(r?.channel || '')
-    if (!login || !channel) continue
-    const platform = r.platform || 'twitch'
-    const key = `${platform}|${channel.toLowerCase()}|${login}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    out.push({ platform, channel, login })
-  }
-  return out
-}
-
-function _bulkRowDescriptor(row) {
-  return {
-    platform: row.dataset.msgPlatform || 'twitch',
-    channel: row.dataset.msgChannel || '',
-    login: row.dataset.msgLogin || row.dataset.msgUser || '',
-  }
-}
-
-// Same gate the hover toolbar and ctx-menu mod items use: sync per-platform
-// mod-state cache, keyed off the row's own channel (never re-resolved through
-// getChannelLookup — matches the existing per-row check exactly).
-function _isModForRow(row) {
-  const plat = row.dataset.msgPlatform || 'twitch'
-  const ch = row.dataset.msgChannel || ''
-  if (!ch) return false
-  return plat === 'kick' ? isKickModForSync(ch) : isModForSync(ch)
-}
-
-function _bulkRowSelectable(row) {
-  if (!row?.dataset) return false
-  const plat = row.dataset.msgPlatform || 'twitch'
-  if (plat === 'youtube' || plat === 'yt') return false
-  if (!row.dataset.msgId || !row.dataset.msgChannel || !(row.dataset.msgLogin || row.dataset.msgUser)) return false
-  if (row.dataset.msgSelf === '1') return false
-  return _isModForRow(row)
-}
-
-function _toggleBulkRow(row) {
-  if (_bulkSelected.has(row)) {
-    _bulkSelected.delete(row)
-    row.classList.remove('hs-mc-row-selected')
-  } else {
-    _bulkSelected.add(row)
-    row.classList.add('hs-mc-row-selected')
-  }
-}
-
-function _selectBulkRange(messagesEl, fromRow, toRow) {
-  const rows = [...messagesEl.querySelectorAll('.hs-mc-msg')]
-  const i1 = rows.indexOf(fromRow)
-  const i2 = rows.indexOf(toRow)
-  if (i1 < 0 || i2 < 0) {
-    if (_bulkRowSelectable(toRow)) _toggleBulkRow(toRow)
-    return
-  }
-  const lo = Math.min(i1, i2)
-  const hi = Math.max(i1, i2)
-  for (let i = lo; i <= hi; i++) {
-    const r = rows[i]
-    if (_bulkRowSelectable(r) && !_bulkSelected.has(r)) {
-      _bulkSelected.add(r)
-      r.classList.add('hs-mc-row-selected')
-    }
-  }
-}
-
-function _updateBulkBar() {
-  let bar = document.getElementById('hs-mc-bulk-bar')
-  if (!bulkSelectMode || _bulkSelected.size === 0) {
-    if (bar) bar.remove()
-    return
-  }
-  if (!bar) {
-    bar = document.createElement('div')
-    bar.id = 'hs-mc-bulk-bar'
-    bar.innerHTML =
-      '<span id="hs-mc-bulk-count"></span>' +
-      '<button type="button" data-bulk="timeout">timeout</button>' +
-      '<button type="button" data-bulk="ban">ban</button>' +
-      '<button type="button" data-bulk="cancel">cancel</button>'
-    bar.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-bulk]')
-      if (!btn || btn.disabled) return
-      e.preventDefault()
-      e.stopPropagation()
-      const act = btn.dataset.bulk
-      if (act === 'cancel') {
-        exitBulkSelectMode()
-        return
-      }
-      runBulkModAction(act)
-    })
-    const root = document.getElementById('hs-mc-overlay') || document.body
-    root.appendChild(bar)
-  }
-  const countEl = bar.querySelector('#hs-mc-bulk-count')
-  if (countEl) countEl.textContent = `${_bulkSelected.size} selected`
-}
-
-function enterBulkSelectMode() {
-  if (bulkSelectMode) return
-  bulkSelectMode = true
-  _bulkAnchorRow = null
-  try {
-    document.body.classList.add('hs-mc-bulk-select-active')
-  } catch (_) {}
-}
-
-function exitBulkSelectMode() {
-  if (!bulkSelectMode) return
-  bulkSelectMode = false
-  _bulkAnchorRow = null
-  for (const row of _bulkSelected) row.classList.remove('hs-mc-row-selected')
-  _bulkSelected.clear()
-  try {
-    document.body.classList.remove('hs-mc-bulk-select-active')
-  } catch (_) {}
-  _updateBulkBar()
-}
-
-// Public entry point — used by the mod ctx-menu's "select mode" item and the
-// hover hotkey. Idempotent enter + pre-selects the row that triggered it, so
-// starting from a specific spam message immediately arms the action bar.
-function startBulkSelectFrom(row) {
-  enterBulkSelectMode()
-  if (row && _bulkRowSelectable(row)) {
-    _toggleBulkRow(row)
-    _bulkAnchorRow = row
-  }
-  _updateBulkBar()
-}
-
-// Executes once per deduped target — REUSES dispatchModAction (the vetted
-// twitch+kick fan-out path), never a bespoke ban call. skipConfirm:true since
-// the batch-level confirm below already covered "are you sure".
-async function runBulkModAction(action) {
-  if (!_bulkSelected.size) return
-  // Only fire on rows still in the live DOM. A row detached by an epoch rebuild
-  // (badge/emote/settings) or a tab switch keeps a valid dataset but lost its
-  // on-screen highlight — firing it would ban a user the mod can no longer see
-  // selected. isConnected filter keeps the batch == what's visibly highlighted.
-  const attached = [..._bulkSelected].filter((row) => row.isConnected)
-  const targets = dedupeBulkTargets(attached.map(_bulkRowDescriptor))
-  if (!targets.length) {
-    exitBulkSelectMode()
-    return
-  }
-  const verb = action === 'ban' ? 'ban' : 'timeout'
-  // Surface channel scope — a batch can span platforms/channels within one tab
-  // (twitch+kick), so the mod must see WHERE this fires, not just who.
-  const chans = [...new Set(targets.map((tg) => `#${String(tg.channel).replace(/^#/, '')}`))]
-  const scope = chans.length === 1 ? ` in ${chans[0]}` : ` across ${chans.join(', ')}`
-  const names = targets.map((tg) => tg.login).join(', ')
-  const preview = names.length > 120 ? `${names.slice(0, 120)}…` : names
-  const res = await hsConfirm(
-    `${verb} ${targets.length} user${targets.length === 1 ? '' : 's'}${scope}? (${preview})`,
-    verb,
-  )
-  if (!res.ok) return
-  const bar = document.getElementById('hs-mc-bulk-bar')
-  if (bar) for (const b of bar.querySelectorAll('button')) b.disabled = true
-  let okCount = 0
-  for (const tg of targets) {
-    try {
-      const r = await dispatchModAction({
-        channel: tg.channel,
-        platform: tg.platform,
-        action,
-        target: tg.login,
-        durationSec: action === 'timeout' ? 600 : null,
-        skipConfirm: true,
-      })
-      if (r?.anyOk) okCount++
-    } catch (_) {}
-  }
-  showToast(
-    `${okCount}/${targets.length} ${verb === 'ban' ? 'banned' : 'timed out'}`,
-    okCount === targets.length ? 'success' : okCount > 0 ? 'error' : 'error',
-  )
-  exitBulkSelectMode()
-}
-
-// Row-click toggling — only wired on the primary scrollback (#hs-mc-messages),
-// never the transient reply-stack popovers (ephemeral views, not a sane bulk
-// surface). No-op while selection mode is off, so this never touches the hot
-// render/click path for the common (non-mod, non-selecting) case.
-function wireBulkSelectClicks(messagesEl) {
-  messagesEl.addEventListener(
-    'click',
-    (e) => {
-      if (!bulkSelectMode) return
-      const row = e.target.closest('.hs-mc-msg')
-      if (!row || !messagesEl.contains(row)) return
-      // Never hijack a real interactive control inside the row — only bare
-      // row surface toggles selection while the mode is active.
-      if (e.target.closest('a, button, .hs-mod-toolbar, .hs-mc-reply-btn, .hs-mc-reply-ctx')) return
-      if (!_bulkRowSelectable(row)) return
-      e.preventDefault()
-      e.stopPropagation()
-      if (e.shiftKey && _bulkAnchorRow && messagesEl.contains(_bulkAnchorRow)) {
-        _selectBulkRange(messagesEl, _bulkAnchorRow, row)
-      } else {
-        _toggleBulkRow(row)
-        _bulkAnchorRow = row
-      }
-      _updateBulkBar()
-    },
-    { capture: true, signal: mcSignal },
-  )
-}
-
-// Escape always exits selection mode — standard escape-hatch for any
-// modal-like interaction state. Harmless no-op when a confirm dialog's own
-// Escape handler also fires (it just closes the dialog on top of this).
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!bulkSelectMode) return
-    if (e.key !== 'Escape') return
-    const tEl = e.target
-    if (tEl && (tEl.isContentEditable || ['INPUT', 'TEXTAREA'].includes(tEl.tagName))) return
-    exitBulkSelectMode()
-  },
-  { signal: mcSignal },
-)
-
 function wireModToolbarHover(messagesEl) {
   if (!messagesEl || messagesEl._hsModToolbarWired) return
   messagesEl._hsModToolbarWired = true
-  // Bulk-select click handling — primary scrollback only (see wireBulkSelectClicks).
-  if (messagesEl.id === 'hs-mc-messages') wireBulkSelectClicks(messagesEl)
   messagesEl.addEventListener(
     'mouseover',
     (e) => {
@@ -58689,38 +58415,13 @@ function wireModToolbarHover(messagesEl) {
   )
 }
 
-// Hotkeys — x (delete), t (10m timeout), b (ban), s (toggle bulk-select,
-// pre-selecting the hovered row). Hold while hovering a row.
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (!_modCtx) return
-    // OS key-repeat (~30Hz after ~500ms) fired many concurrent async
-    // dispatches for one held key before the first cleared _modCtx — a burst
-    // of error toasts (delete) or stacked confirm overlays (ban). One per press.
-    if (e.repeat) return
-    const t = e.target
-    const typing = t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))
-    if (typing) return
-    if (e.ctrlKey || e.metaKey || e.altKey) return
-    const key = (e.key || '').toLowerCase()
-    if (key === 's') {
-      e.preventDefault()
-      if (bulkSelectMode) exitBulkSelectMode()
-      else startBulkSelectFrom(_modCtx.row)
-      return
-    }
-    for (const id of modToolbarButtons) {
-      const def = MOD_BUTTON_CATALOG[id]
-      if (def?.hotkey === key) {
-        e.preventDefault()
-        runModAction(id)
-        return
-      }
-    }
-  },
-  { signal: mcSignal },
-)
+// NO bare-key mod hotkeys. x/t/b/s used to fire off a hovered row whenever the
+// composer wasn't focused — but the mouse resting over chat is the normal
+// reading position, so the first letter of a message ("thanks" → t) silently
+// timed a chatter out, and `s` opened a bulk-select mode nobody asked for.
+// Destructive actions take a deliberate click: the hover toolbar buttons, the
+// right-click menu, or the profile card. Don't re-add a bare-letter bind here
+// — the composer owns printable keys, always.
 
 
 // --- multichat/automod-queue.js ---
@@ -69134,55 +68835,48 @@ const STORAGE_KEY = 'heatsync_multichat'
   // one this fixes. See src/multichat/type-to-focus.js.
   initTypeToFocus(mcSignal)
 
-  // '/' focuses the live-tab chat filter (vim-style) — only when not already
-  // typing, no modifier held, and the filter bar is actually showing.
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      const input = document.getElementById('hs-mc-search-input')
-      if (!input) return
-      e.preventDefault()
-      input.focus()
-      input.select()
-    },
-    { signal: mcSignal },
-  )
+  // ── chat commands ────────────────────────────────────────────────────
+  // ONE implementation each, reachable two ways: the vi-mode <Space> leader
+  // (composer keeps focus — see src/multichat/overlay-keys.js) and the bare
+  // key while the composer is blurred. vi mode is off by default, so the bare
+  // keys stay: without them a non-vi user would have no keyboard surface at
+  // all. Each returns false when it declined to act, so the leader can stay
+  // silent rather than claim the key.
+  //
+  // Every command here is non-destructive on purpose. Bare keys that MODERATE
+  // people used to live alongside these and fired off whatever row the mouse
+  // happened to rest on — see the note at the bottom of mod-toolbar.js.
+
+  // '/' focuses the live-tab chat filter (vim-style) — only when the filter
+  // bar is actually showing.
+  function focusLiveSearch() {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    const input = document.getElementById('hs-mc-search-input')
+    if (!input) return false
+    input.focus()
+    input.select()
+    return true
+  }
 
   // n / N — vim-style cycling through the live-tab search filter's matches.
   // The filter already hides every non-matching row, so every .hs-mc-msg
   // currently in msgsEl IS a match; this just walks that list and marks one
-  // "current". Same guards as '/': live tab, bar visible, not typing — plus
-  // a non-empty query (nothing to cycle through otherwise).
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key !== 'n' && e.key !== 'N') return
-      if (e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-      if (!isLiveSearchTab(currentTab)) return
-      const bar = document.getElementById('hs-mc-search-bar')
-      if (!bar?.classList.contains('visible')) return
-      if (!liveSearchQuery(currentTab)) return
-      e.preventDefault()
-      cycleLiveSearchMatch(e.key === 'n' ? 1 : -1)
-    },
-    { signal: mcSignal },
-  )
+  // "current". Same guards as '/', plus a non-empty query (nothing to cycle
+  // through otherwise).
+  function cycleLiveSearch(dir) {
+    if (!isLiveSearchTab(currentTab)) return false
+    const bar = document.getElementById('hs-mc-search-bar')
+    if (!bar?.classList.contains('visible')) return false
+    if (!liveSearchQuery(currentTab)) return false
+    cycleLiveSearchMatch(dir)
+    return true
+  }
 
-  // Keyboard-first tab nav: alt+1..9 jump to the Nth content tab, alt+] / alt+[
-  // cycle next/prev (wrapping). Alt (not ctrl/cmd) avoids the browser's own
-  // ctrl/cmd+N tab switching. Only the scrollable content tabs (feed/whispers/
-  // mentions/pinned/live + channels) are navigable — the util buttons
-  // (add/settings/collapse/popout) live outside .hs-mc-tabs-scroll, so the
-  // selector skips them. e.code (Digit1.. / Bracket*) is layout-independent and
-  // immune to Alt-composition on non-Linux keymaps.
+  // Only the scrollable content tabs (feed/whispers/mentions/pinned/live +
+  // channels) are navigable — the util buttons (add/settings/collapse/popout)
+  // live outside .hs-mc-tabs-scroll, so the selector skips them.
   function _navigableTabIds() {
     const out = []
     for (const el of document.querySelectorAll('.hs-mc-tabs-scroll .hs-mc-tab[data-tab]')) {
@@ -69191,32 +68885,73 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
     return out
   }
+  function jumpToTabIndex(idx) {
+    const ids = _navigableTabIds()
+    if (idx < 0 || idx >= ids.length) return false
+    switchTab(ids[idx])
+    return true
+  }
+  // Wraps. If the current tab isn't navigable (e.g. settings), start from the
+  // nearest end so the first press lands.
+  function cycleTab(fwd) {
+    const ids = _navigableTabIds()
+    if (!ids.length) return false
+    const cur = ids.indexOf(currentTab)
+    const base = cur === -1 ? (fwd ? -1 : 0) : cur
+    const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
+    switchTab(ids[next])
+    return true
+  }
+
+  initOverlayKeys(mcSignal)
+  registerOverlayKey('/', () => focusLiveSearch())
+  registerOverlayKey('n', () => cycleLiveSearch(1))
+  registerOverlayKey('N', () => cycleLiveSearch(-1))
+  registerOverlayKey(']', () => cycleTab(true))
+  registerOverlayKey('[', () => cycleTab(false))
+  for (let i = 1; i <= 9; i++) registerOverlayKey(String(i), () => jumpToTabIndex(i - 1))
+
+  // Bare-key entry points, composer blurred. `defaultPrevented` matters: both
+  // type-to-focus and the type-reveal handler run first and claim the key by
+  // typing it into the composer — without the check, '/' both typed a slash
+  // AND yanked focus into the search box.
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (focusLiveSearch()) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'n' && e.key !== 'N') return
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
+      if (cycleLiveSearch(e.key === 'n' ? 1 : -1)) e.preventDefault()
+    },
+    { signal: mcSignal },
+  )
+
+  // alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev. Alt
+  // (not ctrl/cmd) avoids the browser's own ctrl/cmd+N tab switching. NOT
+  // gated on where focus is: alt+digit types nothing, so there is no reason to
+  // make the user leave the composer to switch tabs. e.code (Digit1.. /
+  // Bracket*) is layout-independent and immune to Alt-composition on
+  // non-Linux keymaps; the ctrlKey bail also covers AltGr (ctrl+alt).
   document.addEventListener(
     'keydown',
     (e) => {
       if (!e.altKey || e.ctrlKey || e.metaKey) return
-      const t = e.target
-      if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
       const isDigit = /^Digit[1-9]$/.test(e.code || '')
       const isBracket = e.code === 'BracketRight' || e.code === 'BracketLeft'
       if (!isDigit && !isBracket) return
-      const ids = _navigableTabIds()
-      if (!ids.length) return
-      if (isDigit) {
-        const idx = Number(e.code.slice(5)) - 1
-        if (idx >= ids.length) return
-        e.preventDefault()
-        switchTab(ids[idx])
-        return
-      }
-      // alt+] next, alt+[ prev — wrap. If the current tab isn't navigable
-      // (e.g. settings), start from the nearest end so the first press lands.
-      const cur = ids.indexOf(currentTab)
-      const fwd = e.code === 'BracketRight'
-      const base = cur === -1 ? (fwd ? -1 : 0) : cur
-      const next = fwd ? (base + 1) % ids.length : (base - 1 + ids.length) % ids.length
-      e.preventDefault()
-      switchTab(ids[next])
+      const ok = isDigit ? jumpToTabIndex(Number(e.code.slice(5)) - 1) : cycleTab(e.code === 'BracketRight')
+      if (ok) e.preventDefault()
     },
     { signal: mcSignal },
   )
@@ -71204,11 +70939,6 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (_msgsEl) _msgsEl.textContent = ''
     }
     editingChannel = false
-    // Bulk-select is per-tab: leaving a tab clears the selection + action bar so
-    // it can never persist invisibly into another channel and fire there.
-    try {
-      if (typeof exitBulkSelectMode === 'function') exitBulkSelectMode()
-    } catch (_) {}
     // Tab switch is the user telling us they care about live state right
     // now — kick a debounced refresh so any stale red dots on channel tabs
     // get corrected without waiting up to 30s for the next poll cycle.

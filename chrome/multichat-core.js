@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a8edda7+-202609051510' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cf852da+-202609051517' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -9588,14 +9588,19 @@ function initKickFallbackSocket() {
     }
   }
 
-  const fbInterval = setInterval(() => {
+  // initKickNativeTap (the only caller of this fn) is gated by window.__hsKickTapBound,
+  // a window-lifetime flag SPA reinit never clears — so this interval is never
+  // re-registered after the first page load and must survive a reinit's partial
+  // drain (see bootstrap.js's _timers.persistent) or it dies on the first SPA
+  // nav and never comes back.
+  const fbInterval = cleanup.setInterval(() => {
     // On an extension reload/update this old content-script context keeps
     // running, but its install-once flag blocks the fresh injection from
     // re-arming — so without this the stale interval polls a dead closure
     // forever. chrome.runtime.id goes undefined once the context is
     // invalidated; clear ourselves then.
     if (!chrome?.runtime?.id) {
-      clearInterval(fbInterval)
+      cleanup.clearInterval(fbInterval)
       close()
       return
     }
@@ -9630,6 +9635,10 @@ function initKickFallbackSocket() {
       stats.fbGate = 'primary-healthy'
     }
   }, KICK_FALLBACK_CHECK_MS)
+  // Registered once at module load (via the window.__hsKickTapBound guard
+  // above), NOT inside a per-nav init — must outlive SPA reinit's partial
+  // drain, same reasoning as bootstrap.js's context-death timer.
+  cleanup.persistInterval(fbInterval)
 }
 
 // ── wiring ──────────────────────────────────────────────────────────────────

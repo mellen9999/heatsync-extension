@@ -656,7 +656,6 @@ const CONFIG = {
     PREVIEW_ACTIVE: 'heatsync-preview-active',
     USERNAME_COLORED: 'hs-username-colored',
     MENTION_COLORED: 'hs-mention-colored',
-    HEAT_BREATHE: 'hs-heat-breathe', // animation class for tier 8+ emotes
 
     // Profile card
     PC_LOADING: 'hs-pc-loading',
@@ -9001,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'add7a1a+-202608262025' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9c931c9+-202609051441' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26313,9 +26312,13 @@ function _nsStart() {
   }
   if (!_nsBeatTimer) {
     _updateNativeSuppress()
-    // Purely cosmetic recompute — skip ticks while hidden, catch up the
-    // moment the tab is visible again (twitch can remount chat while hidden).
-    _nsBeatTimer = cleanup.setIntervalIfVisible(_updateNativeSuppress, 15000)
+    // NOT the visibility-gated variant (see the header comment): the beat is
+    // the dead-man signal, and a hidden tab must KEEP beating or the MAIN
+    // world reads it stale at 45s, twitch resumes rendering its hidden chat
+    // untrimmed, and the watchdog force-reveals native chat — the exact
+    // +118MB case the takeover exists to prevent. Gating this was tried
+    // (29aaa83) and is a regression, not a perf win.
+    _nsBeatTimer = cleanup.setInterval(_updateNativeSuppress, 15000)
     cleanup.addEventListener(document, 'visibilitychange', () => {
       if (!document.hidden) _updateNativeSuppress()
     })
@@ -39056,7 +39059,6 @@ function getHeatNumberStyle(heat, isReply) {
     color = '#fff'
     textShadow =
       '0 0 6px rgba(255,255,255,1),0 0 15px rgba(255,200,100,1),0 0 30px rgba(255,135,0,0.9),0 0 50px rgba(255,80,0,0.6)'
-    animation = 'hs-heat-breathe 2s ease-in-out infinite'
   } else if (heat > 100) {
     color = '#eee'
     textShadow = '0 0 6px rgba(255,170,50,0.9),0 0 16px rgba(255,135,0,0.6),0 0 30px rgba(255,80,0,0.3)'
@@ -41632,7 +41634,7 @@ function formatDiscoverCount(n) {
 // Compact heat tier styling — matches site canonical color tiers from getHeatNumberStyle,
 // but with fixed (small) size so discover rows stay dense.
 // Tiers: 0 → #444, 1-10 → #888, 10-30 → #888, 30-50 → #aaa, 50-100 → #ccc,
-//        100-500 → #eee, 500+ → #fff with breathe animation
+//        100-500 → #eee, 500+ → #fff
 // pinned warm/orange by doctrine — heat FX ramp, not a semantic var
 function discoverHeatStyle(heat) {
   let color = '#444',
@@ -41641,7 +41643,6 @@ function discoverHeatStyle(heat) {
   if (heat > 500) {
     color = '#fff'
     textShadow = '0 0 4px rgba(255,255,255,1),0 0 10px rgba(255,200,100,0.9),0 0 18px rgba(255,135,0,0.6)'
-    animation = 'hs-heat-breathe 2s ease-in-out infinite'
   } else if (heat > 100) {
     color = '#eee'
     textShadow = '0 0 4px rgba(255,170,50,0.85),0 0 10px rgba(255,135,0,0.4)'
@@ -64250,12 +64251,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     _visWedged = false
     hsDiagLog('vis', { hidden: document.hidden, focus: document.hasFocus() })
     if (document.hidden) _hsAbortAllResizes()
-    // Pause our infinite breathe/livedot CSS animations while the tab is
-    // hidden — no paint happens, so running them is pure wasted style recalc on
-    // low-end hardware. The matching rules live in styles.js (body.hs-ext-hidden).
-    try {
-      document.body.classList.toggle('hs-ext-hidden', document.hidden)
-    } catch (_) {}
     // Hidden: shed most of the live chat DOM (rows + their image refs) — the
     // buffers hold everything, and the visible transition below rebuilds the
     // full cap. Setting the skip flag makes that rebuild unconditional, so a
@@ -64312,9 +64307,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!document.hidden) return // tracking agrees — nothing wedged
     if (!_visWedged) hsDiagLog('wedge_detected', { skipped: _hiddenSkippedAppend })
     _visWedged = true
-    try {
-      document.body.classList.remove('hs-ext-hidden')
-    } catch (_) {}
     if (_hiddenSkippedAppend) {
       _hiddenSkippedAppend = false
       hsDiagLog('catchup', { src: 'nudge' })
@@ -71219,6 +71211,11 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (_nativeHiddenWatchdogStarted || hostPlatform !== 'twitch') return
     _nativeHiddenWatchdogStarted = true
     cleanup.setInterval(() => {
+      // Never fire hidden: nothing is visually wrong in a hidden tab, and a
+      // hidden force-reveal hands twitch back its untrimmed native chat AND
+      // disarms the next-load pre-arm — the failure it guards against can be
+      // re-checked on the first visible tick instead.
+      if (document.hidden) return
       const ds = document.body?.dataset
       if (ds?.hsSuppressNative !== '1') return
       const beat = parseInt(ds.hsSuppressBeat, 10)

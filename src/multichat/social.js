@@ -282,7 +282,6 @@ function getHeatNumberStyle(heat, isReply) {
     color = '#fff'
     textShadow =
       '0 0 6px rgba(255,255,255,1),0 0 15px rgba(255,200,100,1),0 0 30px rgba(255,135,0,0.9),0 0 50px rgba(255,80,0,0.6)'
-    animation = 'hs-heat-breathe 2s ease-in-out infinite'
   } else if (heat > 100) {
     color = '#eee'
     textShadow = '0 0 6px rgba(255,170,50,0.9),0 0 16px rgba(255,135,0,0.6),0 0 30px rgba(255,80,0,0.3)'
@@ -2858,7 +2857,7 @@ function formatDiscoverCount(n) {
 // Compact heat tier styling — matches site canonical color tiers from getHeatNumberStyle,
 // but with fixed (small) size so discover rows stay dense.
 // Tiers: 0 → #444, 1-10 → #888, 10-30 → #888, 30-50 → #aaa, 50-100 → #ccc,
-//        100-500 → #eee, 500+ → #fff with breathe animation
+//        100-500 → #eee, 500+ → #fff
 // pinned warm/orange by doctrine — heat FX ramp, not a semantic var
 function discoverHeatStyle(heat) {
   let color = '#444',
@@ -2867,7 +2866,6 @@ function discoverHeatStyle(heat) {
   if (heat > 500) {
     color = '#fff'
     textShadow = '0 0 4px rgba(255,255,255,1),0 0 10px rgba(255,200,100,0.9),0 0 18px rgba(255,135,0,0.6)'
-    animation = 'hs-heat-breathe 2s ease-in-out infinite'
   } else if (heat > 100) {
     color = '#eee'
     textShadow = '0 0 4px rgba(255,170,50,0.85),0 0 10px rgba(255,135,0,0.4)'

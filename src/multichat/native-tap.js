@@ -389,9 +389,13 @@ function _nsStart() {
   }
   if (!_nsBeatTimer) {
     _updateNativeSuppress()
-    // Purely cosmetic recompute — skip ticks while hidden, catch up the
-    // moment the tab is visible again (twitch can remount chat while hidden).
-    _nsBeatTimer = cleanup.setIntervalIfVisible(_updateNativeSuppress, 15000)
+    // NOT the visibility-gated variant (see the header comment): the beat is
+    // the dead-man signal, and a hidden tab must KEEP beating or the MAIN
+    // world reads it stale at 45s, twitch resumes rendering its hidden chat
+    // untrimmed, and the watchdog force-reveals native chat — the exact
+    // +118MB case the takeover exists to prevent. Gating this was tried
+    // (29aaa83) and is a regression, not a perf win.
+    _nsBeatTimer = cleanup.setInterval(_updateNativeSuppress, 15000)
     cleanup.addEventListener(document, 'visibilitychange', () => {
       if (!document.hidden) _updateNativeSuppress()
     })

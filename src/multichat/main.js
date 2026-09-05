@@ -298,12 +298,6 @@
     _visWedged = false
     hsDiagLog('vis', { hidden: document.hidden, focus: document.hasFocus() })
     if (document.hidden) _hsAbortAllResizes()
-    // Pause our infinite breathe/livedot CSS animations while the tab is
-    // hidden — no paint happens, so running them is pure wasted style recalc on
-    // low-end hardware. The matching rules live in styles.js (body.hs-ext-hidden).
-    try {
-      document.body.classList.toggle('hs-ext-hidden', document.hidden)
-    } catch (_) {}
     // Hidden: shed most of the live chat DOM (rows + their image refs) — the
     // buffers hold everything, and the visible transition below rebuilds the
     // full cap. Setting the skip flag makes that rebuild unconditional, so a
@@ -360,9 +354,6 @@
     if (!document.hidden) return // tracking agrees — nothing wedged
     if (!_visWedged) hsDiagLog('wedge_detected', { skipped: _hiddenSkippedAppend })
     _visWedged = true
-    try {
-      document.body.classList.remove('hs-ext-hidden')
-    } catch (_) {}
     if (_hiddenSkippedAppend) {
       _hiddenSkippedAppend = false
       hsDiagLog('catchup', { src: 'nudge' })
@@ -7267,6 +7258,11 @@
     if (_nativeHiddenWatchdogStarted || hostPlatform !== 'twitch') return
     _nativeHiddenWatchdogStarted = true
     cleanup.setInterval(() => {
+      // Never fire hidden: nothing is visually wrong in a hidden tab, and a
+      // hidden force-reveal hands twitch back its untrimmed native chat AND
+      // disarms the next-load pre-arm — the failure it guards against can be
+      // re-checked on the first visible tick instead.
+      if (document.hidden) return
       const ds = document.body?.dataset
       if (ds?.hsSuppressNative !== '1') return
       const beat = parseInt(ds.hsSuppressBeat, 10)

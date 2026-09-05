@@ -240,7 +240,6 @@ const CONFIG = {
     PREVIEW_ACTIVE: 'heatsync-preview-active',
     USERNAME_COLORED: 'hs-username-colored',
     MENTION_COLORED: 'hs-mention-colored',
-    HEAT_BREATHE: 'hs-heat-breathe', // animation class for tier 8+ emotes
 
     // Profile card
     PC_LOADING: 'hs-pc-loading',

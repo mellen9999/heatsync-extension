@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b0a1329+-202609051507' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a8edda7+-202609051510' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -56587,6 +56587,7 @@ function hsPaintRender(userId, rawText) {
   if (!userId) return null
   const cls = getHsPaintClass(userId)
   if (!cls) return null
+  hsAnyPaintedNameSeen = true
   const spec = getHsPaintSpec(userId)
   return {
     cls,
@@ -56607,6 +56608,7 @@ function applyHsPaintToElement(el, userId) {
   const cls = getHsPaintClass(userId)
   const spec = getHsPaintSpec(userId)
   if (!cls || !spec) return
+  hsAnyPaintedNameSeen = true
   if (!el.classList.contains(cls)) {
     for (const c of [...el.classList]) {
       if (c.startsWith('hsp-')) el.classList.remove(c)
@@ -56754,6 +56756,17 @@ const HSP_DISCOVER_MIN_MS = 250
 let hsLastDiscoverAt = 0
 let hsSweepForced = false
 
+// Sticky — never reset. A paint's own render path (hsPaintRender for
+// HTML-string rows, applyHsPaintToElement for the direct-DOM path) flips
+// this the moment a paint actually exists anywhere, overlay or not (7TV
+// chat-logs pages render painted names without an overlay ever mounting).
+// Discovery below skips its full-document walk until this is true, so a
+// pane with zero painted names doesn't pay it every scroll frame — and
+// because the flag is set at paint-render time rather than by discovery
+// itself, an unforced sweep can never be the only path that would have
+// set it, which is what would starve discovery permanently.
+let hsAnyPaintedNameSeen = false
+
 /** Drop targets that left the DOM. An IntersectionObserver holds its targets
  * strongly and a pane trims rows continuously, so this is what stops the set
  * from pinning detached nodes. Bounded by the observed count — no DOM query. */
@@ -56783,6 +56796,9 @@ function sweepHsPaintedNames(force) {
   const io = ensureHsVisibilityObserver()
   if (!io) return
   reapHsObservedNames(io)
+  // Nothing has ever painted — skip the full-document walk. `force` (a paint
+  // just landed) always bypasses this, so the gate can't outlive its reason.
+  if (!force && !hsAnyPaintedNameSeen) return
   if (force || Date.now() - hsLastDiscoverAt >= HSP_DISCOVER_MIN_MS) discoverHsPaintedNames(io)
 }
 

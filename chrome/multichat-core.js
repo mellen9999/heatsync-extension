@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cf852da+-202609051517' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c152748+-202609051519' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39932,9 +39932,7 @@ function handleYoutubeChatMsg(msg) {
       }
     } catch {}
     if (!mapped) {
-      const byUrl = config.channels.find(
-        (c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId),
-      )
+      const byUrl = config.channels.find((c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId))
       if (byUrl) mapped = byUrl.id
     }
     if (!mapped) return
@@ -39949,8 +39947,8 @@ function handleYoutubeChatMsg(msg) {
   // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
   if (targetChannelId === '__live_yt_auto__') {
     const pageVid =
-      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
-        location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] || _autoYtVideoId
+      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] ||
+      _autoYtVideoId
     if (!pageVid) return // not on a watch page and no confirmed sub — reject
     if (msg.videoId && msg.videoId !== pageVid) return // wrong stream
     if (!_autoYtVideoId) _autoYtVideoId = pageVid // heal for downstream reads
@@ -40101,9 +40099,7 @@ function handleYoutubeChatMsg(msg) {
         const ch = config.channels.find((c) => c.id === targetChannelId)
         const isYtOnly = ch && !ch.twitch && !ch.kick && ch.youtube
         if (isYtOnly) {
-          const tabEl = document.querySelector(
-            `#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`,
-          )
+          const tabEl = document.querySelector(`#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`)
           if (tabEl && tabEl.dataset.live !== 'true') tabEl.dataset.live = 'true'
         }
       } catch {}

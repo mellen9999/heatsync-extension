@@ -1009,9 +1009,7 @@ function handleYoutubeChatMsg(msg) {
       }
     } catch {}
     if (!mapped) {
-      const byUrl = config.channels.find(
-        (c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId),
-      )
+      const byUrl = config.channels.find((c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId))
       if (byUrl) mapped = byUrl.id
     }
     if (!mapped) return
@@ -1026,8 +1024,8 @@ function handleYoutubeChatMsg(msg) {
   // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
   if (targetChannelId === '__live_yt_auto__') {
     const pageVid =
-      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
-        location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] || _autoYtVideoId
+      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] ||
+      _autoYtVideoId
     if (!pageVid) return // not on a watch page and no confirmed sub — reject
     if (msg.videoId && msg.videoId !== pageVid) return // wrong stream
     if (!_autoYtVideoId) _autoYtVideoId = pageVid // heal for downstream reads
@@ -1178,9 +1176,7 @@ function handleYoutubeChatMsg(msg) {
         const ch = config.channels.find((c) => c.id === targetChannelId)
         const isYtOnly = ch && !ch.twitch && !ch.kick && ch.youtube
         if (isYtOnly) {
-          const tabEl = document.querySelector(
-            `#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`,
-          )
+          const tabEl = document.querySelector(`#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`)
           if (tabEl && tabEl.dataset.live !== 'true') tabEl.dataset.live = 'true'
         }
       } catch {}

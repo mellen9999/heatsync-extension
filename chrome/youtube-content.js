@@ -1035,11 +1035,18 @@
       const batch = _processQueue.splice(0, _processQueue.length)
       for (const n of batch) processNode(n)
     }
-    if (document.hidden) { setTimeout(drain, 0); return }
+    if (document.hidden) {
+      setTimeout(drain, 0)
+      return
+    }
     // Occluded-but-visible windows can starve rAF too (main.js rafOrTimeout
     // learned this) — a timeout watchdog guarantees the drain either way.
     let ran = false
-    const once = () => { if (ran) return; ran = true; drain() }
+    const once = () => {
+      if (ran) return
+      ran = true
+      drain()
+    }
     requestAnimationFrame(once)
     setTimeout(once, 300)
   }

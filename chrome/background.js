@@ -12583,6 +12583,20 @@ function bgIrcSeenLiveId(id) {
 
 async function bgIrcBroadcast(payload) {
   try {
+    // Route to only the tabs that registered interest in this message's
+    // channel (bgIrcRegisterTabInterest) instead of every platform tab.
+    // 'open_channels' and other channel-less payloads have no ch to route
+    // on; a channel with no tracked interest yet (race on join, or a tab
+    // that predates BG_IRC.channelTabs) falls back to the full broadcast
+    // so delivery is never silently dropped.
+    const ch = payload?.channel || payload?.msg?.channel || null
+    const tabSet = ch ? BG_IRC.channelTabs.get(ch) : null
+    if (ch && tabSet && tabSet.size) {
+      for (const tabId of tabSet) {
+        browser.tabs.sendMessage(tabId, payload).catch(() => {})
+      }
+      return
+    }
     const tabs = await getMatchingTabs()
     for (const tab of tabs) {
       browser.tabs.sendMessage(tab.id, payload).catch(() => {})

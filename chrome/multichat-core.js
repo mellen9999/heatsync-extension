@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9c931c9+-202609051441' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1eb3a6d+-202609051453' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27356,8 +27356,12 @@ let emoteSize = 1
 // static=1 (server extracts the first frame, 30-day immutable cache).
 // data-emote-url keeps the ORIGINAL url for tooltips/copy/re-add.
 let emoteAnimationMode = 'always'
-function staticEmoteSrc(url) {
-  if (emoteAnimationMode === 'always' || !url) return url
+// Mode-independent half of staticEmoteSrc below — the offscreen idle gate
+// needs the static variant of a URL even while emoteAnimationMode is
+// 'always' (that's the one mode staticEmoteSrc itself short-circuits on).
+// The one static-url deriver; nothing else computes a static variant.
+function deriveStaticEmoteSrc(url) {
+  if (!url) return url
   if (url.indexOf('/api/emote-proxy') !== -1) return url
   // 7TV: Nx.{avif,webp,gif} → Nx_static.{avif,webp,gif} (covers avif, which
   // the old gif/webp-only regex missed on Chrome)
@@ -27373,6 +27377,139 @@ function staticEmoteSrc(url) {
     return `https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(url)}&static=1`
   if (!/\.(gif|webp)(\?|$)/i.test(url)) return url
   return `https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(url)}&static=1`
+}
+function staticEmoteSrc(url) {
+  if (emoteAnimationMode === 'always' || !url) return url
+  return deriveStaticEmoteSrc(url)
+}
+
+// ── offscreen idle gate (animateEmotes: 'always') ───────────────────────────
+// 'hover'/'never' already render static srcs (see staticEmoteSrc above) — the
+// only mode with a real cost is 'always', where every row's animated
+// webp/avif keeps its own decoder running for as long as the img stays in
+// the DOM. At DOM_RENDER_CAP=500 a busy channel means ~470 offscreen rows
+// decoding animation forever. Same tax paints.js's viewport gate exists for
+// (see its "viewport gate" section) — a CSS animation can be paused, a
+// decoded raster image can't, so the only lever is swapping the img away
+// from the animated url while it's off-screen and swapping it back with
+// enough runway (rootMargin) that a scroll never uncovers a frozen frame.
+//
+// Reuses the render path's own primitives instead of forking a second
+// static-url deriver or a second stash convention: data-emote-url on the
+// wrapper (set at render time, see hsPaintRender-style templates above) is
+// already the stable ORIGINAL animated url, so there is nothing to stash —
+// restoring is just writing that same url back.
+const hsIdleEmoteRows = new Set()
+let hsIdleEmoteObserver = null
+let hsIdleEmoteSweepScheduled = false
+let hsIdleEmoteSweepForced = false
+let hsIdleEmoteLastDiscoverAt = 0
+const HS_EMOTE_IDLE_DISCOVER_MIN_MS = 250
+
+/** Swap (or restore) every animated emote img in one row. Class/src writes
+ * only — no layout read, so this is safe to call straight from an IO
+ * callback without fighting the chat pane's scroll-pin. */
+function hsSwapRowEmotesForIdle(row, idle) {
+  for (const img of row.querySelectorAll('img.hs-mc-emote')) {
+    const orig = img.closest('.hs-mc-emote-wrapper')?.dataset?.emoteUrl
+    if (!orig) continue
+    if (idle) {
+      // Only swap a row still showing the true original — a static/avif
+      // fallback already in place (hsStaticFell/hsAvifFell) or a prior idle
+      // swap must not be clobbered.
+      if (img.src !== orig) continue
+      const staticSrc = deriveStaticEmoteSrc(orig)
+      if (staticSrc === orig) continue // no static variant for this CDN/url
+      img.src = staticSrc
+    } else if (img.src !== orig) {
+      img.src = orig
+    }
+  }
+}
+
+function ensureHsEmoteIdleObserver() {
+  if (hsIdleEmoteObserver || typeof IntersectionObserver !== 'function') return hsIdleEmoteObserver
+  // No root, same reasoning as paints.js's viewport gate: this module
+  // doesn't know which pane a row lives in. The margin keeps a screen of
+  // rows warm either side so a scroll never uncovers a frozen frame.
+  hsIdleEmoteObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) hsSwapRowEmotesForIdle(entry.target, !entry.isIntersecting)
+    },
+    { rootMargin: '150% 0px' },
+  )
+  return hsIdleEmoteObserver
+}
+
+/** Drop targets that left the DOM — an IntersectionObserver holds its
+ * targets strongly, and the hidden-tab shed + normal trim-to-cap both remove
+ * rows continuously. Bounded by the observed count, no DOM query. */
+function reapHsIdleEmoteRows(io) {
+  for (const row of hsIdleEmoteRows) {
+    if (!row.isConnected) {
+      io.unobserve(row)
+      hsIdleEmoteRows.delete(row)
+    }
+  }
+}
+
+/** Find rows we aren't watching yet. Rows are appended at several call
+ * sites (initial render, live append, history restore) with no single
+ * construction hook, so — same call as paints.js's discovery — a bounded
+ * document query is what actually covers every one of them. */
+function discoverHsIdleEmoteRows(io) {
+  hsIdleEmoteLastDiscoverAt = Date.now()
+  for (const row of document.querySelectorAll('.hs-mc-msg')) {
+    if (hsIdleEmoteRows.has(row)) continue
+    hsIdleEmoteRows.add(row)
+    io.observe(row)
+  }
+}
+
+function sweepHsEmoteIdleRows(force) {
+  if (emoteAnimationMode !== 'always') return
+  const io = ensureHsEmoteIdleObserver()
+  if (!io) return
+  reapHsIdleEmoteRows(io)
+  if (force || Date.now() - hsIdleEmoteLastDiscoverAt >= HS_EMOTE_IDLE_DISCOVER_MIN_MS) discoverHsIdleEmoteRows(io)
+}
+
+/** One sweep per frame — see paints.js's identical scheduler for why. */
+function scheduleHsEmoteIdleSweep(force) {
+  if (force) hsIdleEmoteSweepForced = true
+  if (hsIdleEmoteSweepScheduled || typeof requestAnimationFrame !== 'function') return
+  hsIdleEmoteSweepScheduled = true
+  requestAnimationFrame(() => {
+    hsIdleEmoteSweepScheduled = false
+    const f = hsIdleEmoteSweepForced
+    hsIdleEmoteSweepForced = false
+    sweepHsEmoteIdleRows(f)
+  })
+}
+
+/** A settings change out of 'always' must stop cleanly: unswap every row
+ * still mid-gate, disconnect, and forget them — main.js's emoteAnimation
+ * applier calls this before its full re-render replaces the rows anyway,
+ * but a row this exact tick hasn't been rebuilt yet must not linger frozen
+ * on its static src. Switching back into 'always' just lets the next
+ * scroll/pin re-arm the observer from scratch (ensureHsEmoteIdleObserver). */
+function teardownHsEmoteIdleGate() {
+  if (hsIdleEmoteObserver) {
+    for (const row of hsIdleEmoteRows) hsSwapRowEmotesForIdle(row, false)
+    hsIdleEmoteObserver.disconnect()
+  }
+  hsIdleEmoteObserver = null
+  hsIdleEmoteRows.clear()
+}
+
+// Scroll is when visibility changes, and also when a pane autoscrolls a new
+// message in (scheduleScrollPin's scrollTop write fires it too). Capture so
+// it hears every pane, passive so it never delays one. Reaping is cheap (no
+// query) and runs every sweep; discovery is bounded above. sweepHsEmoteIdleRows
+// itself no-ops outside 'always' mode, so this listener costs one flag check
+// per scroll frame in 'hover'/'never'.
+if (typeof document !== 'undefined' && document.addEventListener) {
+  document.addEventListener('scroll', () => scheduleHsEmoteIdleSweep(false), { capture: true, passive: true })
 }
 
 // Upgrade emote URL to match current emote size setting.
@@ -66382,6 +66519,12 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (onLoad) return
       clearRenderedHtmlCache()
       renderMessages(currentTab)
+      // Offscreen idle gate only exists for 'always' (hover/never already
+      // render static). Leaving it: tear down now, don't wait for the next
+      // scroll to notice the mode changed. Entering it: force one sweep so
+      // the freshly-rendered rows get gated without waiting on a scroll.
+      if ((v || 'always') === 'always') scheduleHsEmoteIdleSweep(true)
+      else teardownHsEmoteIdleGate()
     },
     paintAnimation: (v, _def, onLoad) => {
       // Drives the paint kill-switch in paints.js / youtube-content.js. Set on

@@ -2429,6 +2429,12 @@
       if (onLoad) return
       clearRenderedHtmlCache()
       renderMessages(currentTab)
+      // Offscreen idle gate only exists for 'always' (hover/never already
+      // render static). Leaving it: tear down now, don't wait for the next
+      // scroll to notice the mode changed. Entering it: force one sweep so
+      // the freshly-rendered rows get gated without waiting on a scroll.
+      if ((v || 'always') === 'always') scheduleHsEmoteIdleSweep(true)
+      else teardownHsEmoteIdleGate()
     },
     paintAnimation: (v, _def, onLoad) => {
       // Drives the paint kill-switch in paints.js / youtube-content.js. Set on

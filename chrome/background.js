@@ -7284,16 +7284,12 @@ function handleYoutubeChatBatch(msg, { fromTap = false } = {}) {
     // accuracy: msgs from 30 min ago slot into the chat at 30 min ago.
     const sorted = msg.messages.slice().sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
     const isReplay = !!msg.replay
-    const buildPayload = (ytMsg, channelId) => ({
-      type: 'youtube_chat_message',
-      videoId: msg.videoId,
-      channelId,
+    const buildItem = (ytMsg) => ({
       id: ytMsg.id || undefined, // innertube id — end-to-end yt dedup key
       user: ytMsg.user,
       text: ytMsg.text,
       color: ytMsg.color || '#ff0000',
       time: ytMsg.timestamp || Date.now(),
-      platform: 'youtube',
       emotes: ytMsg.emotes || [],
       msgType: ytMsg.type,
       amount: ytMsg.amount || '',
@@ -7310,20 +7306,29 @@ function handleYoutubeChatBatch(msg, { fromTap = false } = {}) {
       // sender inventory resolved server-side; renders without a per-sender
       // fetch. Server-fed only (absent on the innertube fallback tap).
       hsEmotes: ytMsg.hsEmotes || undefined,
-      source: 'server',
-      replay: isReplay,
     })
-    // Bulk dispatch. content-script's social.js routes:
+    const items = sorted.map(buildItem)
+    // ONE batch payload per bound channel, not one per message — a 20-msg
+    // poll × 2 bound channels used to build 40 payloads and IPC-clone each
+    // across every tab. content-script's social.js unpacks the batch back
+    // through the same per-message routing:
     //   replay → ingestReplayYtMsg (bulk-buffer + 1 microtask render)
     //   live   → enqueueYtForPacing (per-channel 60-400ms cadence)
-    for (const ytMsg of sorted) {
-      for (const channelId of channelIds) {
-        const payload = buildPayload(ytMsg, channelId)
+    for (const channelId of channelIds) {
+      for (const item of items) {
         try {
-          bgYtIngest(payload)
+          bgYtIngest({ channelId, ...item })
         } catch {}
-        broadcastToTabs(payload)
       }
+      broadcastToTabs({
+        type: 'youtube_chat_batch',
+        videoId: msg.videoId,
+        channelId,
+        platform: 'youtube',
+        source: 'server',
+        replay: isReplay,
+        messages: items,
+      })
     }
   }
 }

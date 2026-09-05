@@ -48,7 +48,10 @@ function handlers() {
   return {
     twitch: spanFrom(main, "irc.on('message', (msg) => {"),
     kick: spanFrom(main, "kickChat.on('message', (msg) => {"),
-    youtube: spanFrom(social, "if (msg.type === 'youtube_chat_message') {"),
+    // youtube_chat_message dispatches into handleYoutubeChatMsg — shared by
+    // the single-message relay and each item of a youtube_chat_batch — so the
+    // pipeline steps live in the function body, not the dispatch site.
+    youtube: spanFrom(social, 'function handleYoutubeChatMsg(msg) {'),
   }
 }
 

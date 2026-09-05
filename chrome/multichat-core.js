@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1eb3a6d+-202609051453' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'de845e8+-202609051505' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39890,6 +39890,233 @@ function enqueueYtForPacing(targetChannelId, ytMsg) {
 }
 
 // Listen for social events from background (new messages, notifications)
+// Single youtube chat message — shared by the per-message relay ('youtube_chat_message',
+// still used by youtube-content.js's same-tab native-tap copies) and each item of a
+// server-relay batch ('youtube_chat_batch'). Extracted so a 20-msg poll doesn't rebuild
+// this per-message; the batch loop below calls it once per item instead.
+function handleYoutubeChatMsg(msg) {
+  let targetChannelId = msg.channelId
+  // Same-tab native-tap copies (youtube-content.js broadcasts reach this
+  // overlay directly, not just background) stamp channelId with the RAW
+  // 11-char videoId — they never went through background's videoId→channel
+  // map. Untreated, they land in an orphan buffer nothing renders AND
+  // consume an isSentEcho credit meant for the server relay copy (the
+  // yt-only own-message swallow). Retarget to the owning config channel —
+  // own messages then render instantly and the later server copy dies in
+  // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
+  // dropped BEFORE any credit/dedup state is touched.
+  if (
+    targetChannelId &&
+    targetChannelId !== '__live_yt_auto__' &&
+    /^[a-zA-Z0-9_-]{11}$/.test(targetChannelId) &&
+    !config.channels.some((c) => c.id === targetChannelId)
+  ) {
+    let mapped = null
+    try {
+      if (typeof youtubeLinks !== 'undefined') {
+        for (const [chId, link] of youtubeLinks) {
+          if (link?.videoId === targetChannelId) {
+            mapped = chId
+            break
+          }
+        }
+      }
+    } catch {}
+    if (!mapped) {
+      const byUrl = config.channels.find(
+        (c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId),
+      )
+      if (byUrl) mapped = byUrl.id
+    }
+    if (!mapped) return
+    targetChannelId = mapped
+  }
+  // Filter __live_yt_auto__ messages: only accept this stream's chat
+  // (prevents cross-tab leak — e.g. a stale videoId's chat bleeding in).
+  // Derive the allowed videoId straight from the page URL when we're ON a
+  // youtube watch/live page — that's authoritative and always available, so
+  // the gate no longer depends on a status-echo or a subscribe-time var that
+  // can be missed (which left it shut and the 'live' tab empty). Falls back
+  // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
+  if (targetChannelId === '__live_yt_auto__') {
+    const pageVid =
+      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
+        location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] || _autoYtVideoId
+    if (!pageVid) return // not on a watch page and no confirmed sub — reject
+    if (msg.videoId && msg.videoId !== pageVid) return // wrong stream
+    if (!_autoYtVideoId) _autoYtVideoId = pageVid // heal for downstream reads
+  }
+  // Touch the YT watchdog clock AFTER the videoId gate but before dedup —
+  // dup msgs still prove the BG-server pipe is alive, but a stale stream's
+  // rejected traffic must not keep the watchdog fed (it would mask a new
+  // subscription that failed and never let the 180s rescue fire).
+  try {
+    touchYtChannel(targetChannelId)
+  } catch {}
+  // Event renderers (superchat/supersticker/membership/gift purchase) skip
+  // the normal chat-row path entirely and go out as toggleable stream-event
+  // banners instead — see dispatchYtStreamEvent for what's excluded and why.
+  if (
+    msg.msgType === 'superchat' ||
+    msg.msgType === 'supersticker' ||
+    msg.msgType === 'membership' ||
+    msg.msgType === 'giftpurchase'
+  ) {
+    dispatchYtStreamEvent(targetChannelId, msg)
+    return
+  }
+
+  // Dedup against message buffer + pace queue (survives WS reconnects
+  // unlike 5s hash; id-exact when the server's innertube id is present)
+  if (targetChannelId && isYtDuplicate(msg.user, msg.text, targetChannelId, msg.id)) return
+
+  // Resolve a Twitch-channel name for emote lookup. YT-relayed messages
+  // belong to a streamer who likely also has Twitch/Kick channel emotes
+  // (BTTV/FFZ/7TV) configured under their Twitch handle. Without this
+  // hint, processEmotes only sees globals + the user's heatsync inventory,
+  // missing per-channel emotes for the linked streamer.
+  let ytChannelHint = null
+  // Channel-emote cache key when the display hint can't double as one.
+  // A yt-ONLY channel's emotes are broadcast under the CONFIG id —
+  // join_channel sends { channel: id } and channel_emotes_update echoes
+  // it back as channelOwner — and auto-live is keyed by the BG's
+  // yt_ensure_channel_emotes derivation: videoId, else @handle from the
+  // page URL (channel /live pages carry no ?v=). Neither is fit to
+  // display (raw video/config id), so it rides a separate emoteChannel
+  // field; the old twitch||kick||null hint left these messages on the
+  // dead 'youtube' key and channel emotes never resolved. Lowercased to
+  // match _buildChannelEmoteCache's key normalization.
+  let ytEmoteKey = null
+  if (targetChannelId && targetChannelId !== '__live_yt_auto__') {
+    const linkedCh = config.channels.find((c) => c.id === targetChannelId)
+    if (linkedCh) {
+      ytChannelHint = linkedCh.twitch || linkedCh.kick || null
+      if (!ytChannelHint) ytEmoteKey = String(linkedCh.id).toLowerCase()
+    }
+  } else if (targetChannelId === '__live_yt_auto__') {
+    const vid = msg.videoId || _autoYtVideoId || ''
+    const handle = location.href.match(/youtube\.com\/@([\w.-]{3,30})/)?.[1]
+    ytEmoteKey = (vid || (handle ? `@${handle}` : '')).toLowerCase() || null
+  }
+
+  const ytMsg = {
+    // innertube message id when the server relays one — gives yt messages
+    // a REAL identity: stableMsgId stops falling back to user:time:text
+    // (whose time gets rewritten per pace-commit, defeating render dedup)
+    id: msg.id || undefined,
+    user: msg.user,
+    text: msg.text,
+    // feeds sanitizeColor()/COLOR_RE downstream — must stay literal hex, no var()
+    color: msg.color || '#ff0000',
+    channel: ytChannelHint || 'youtube',
+    // Cache key for channel-emote lookup when channel itself isn't one
+    // (yt-only config channels + auto-live). Render uses it over channel.
+    emoteChannel: ytEmoteKey || undefined,
+    time: msg.time,
+    platform: 'youtube',
+    emotes: msg.emotes || [],
+    msgType: msg.msgType || 'text',
+    amount: msg.amount || '',
+    scColor: msg.scColor || '',
+    sticker: msg.sticker || null,
+    avatar: msg.avatar || undefined,
+    badges: msg.badges || undefined,
+    systemMsg: msg.systemMsg || undefined,
+    // Namespaced heatsync paint uid from the author's UC… id. Same contract
+    // as kick's kickNamePaintUid path: NEVER via queueMcCosmeticsLookup
+    // (twitch-space only) — queued directly below.
+    hsPaintUid: /^UC[A-Za-z0-9_-]{22}$/.test(msg.authorChannelId || '') ? `yt_${msg.authorChannelId}` : undefined,
+    // Server-enriched third-party emote refs — render sender inventory
+    // emotes without a per-sender fetch. Server-fed only. See emote-enrich.ts.
+    hsEmotes: msg.hsEmotes || undefined,
+  }
+  if (ytMsg.hsPaintUid && typeof queuePaintLookup === 'function') queuePaintLookup(ytMsg.hsPaintUid)
+
+  // Echo dedup + host-platform badge attribution (matches IRC/kick
+  // handlers). Without this, a triple-target send would render TWO
+  // copies of the user's own message — the dedup'd twitch/kick echo
+  // PLUS the unfiltered YT echo. peekSentHost ensures the badge
+  // reflects where the user actually typed FROM.
+  if (isSentEcho(ytMsg.text, 'youtube')) return
+  // Gated on peekSentHost alone — currentUsername is null on cross-origin
+  // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
+  {
+    const sentHost = peekSentHost(ytMsg.text)
+    if (sentHost) {
+      ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+      // YouTube has no reply threading, so the bar can ONLY come from what
+      // we remembered at send time — the @mention prepend is all that ships
+      // on the wire. Same ownership proof as twitch/kick.
+      if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(ytMsg)
+    }
+  }
+
+  // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats.
+  // The rule VERDICT is kept, not just its .hide: a highlight rule can carry
+  // a sound, and folding the call into the if-condition threw that away —
+  // so a keyword alert fired on twitch and kick and was silently mute on
+  // youtube. Lazy in the same order as the other two handlers (automod is
+  // cheap, so it short-circuits before the rule eval).
+  const _frOwnYt = ytMsg.user?.toLowerCase() === currentUsername?.toLowerCase()
+  let _frYt = null
+  if (!_frOwnYt) {
+    if (shouldAutomod(ytMsg.text)) return
+    _frYt = evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null)
+    if (_frYt.hide) return
+  }
+  // Highlight-rule audio cue — once, on live youtube arrival.
+  if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt.sound)
+  const isMent = isMention(ytMsg)
+  bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, isMent)
+  if (isMent) {
+    mentionsBuffer.push(ytMsg)
+    if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
+    persistMentions()
+    notifyMention(ytMsg)
+    noteSeenEvent('mentions', ytMsg.time || Date.now())
+    if (currentTab === 'mentions') {
+      bumpSeen('mentions')
+      if (!appendMessage(ytMsg, 'mentions')) renderMessages('mentions')
+    } else {
+      updateTabIndicator('mentions')
+    }
+  }
+
+  if (targetChannelId && targetChannelId !== 'global') {
+    // Instant-live signal for YT-only tabs (no Twitch handle = no helix
+    // truth available, so first chat msg is our best signal). Tabs with
+    // a Twitch or Kick handle defer to the live-status poll — otherwise
+    // a YT replay/buffered msg would override the offline-Twitch truth.
+    if (targetChannelId !== '__live_yt_auto__') {
+      try {
+        const ch = config.channels.find((c) => c.id === targetChannelId)
+        const isYtOnly = ch && !ch.twitch && !ch.kick && ch.youtube
+        if (isYtOnly) {
+          const tabEl = document.querySelector(
+            `#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`,
+          )
+          if (tabEl && tabEl.dataset.live !== 'true') tabEl.dataset.live = 'true'
+        }
+      } catch {}
+    }
+    // Backfill replay: bypass per-channel pacing entirely. Each msg has
+    // its real YT timestamp, so fairMerge places it at the correct
+    // chronological position scattered through the existing twitch/kick
+    // history — no "all at once" flash because they're not appearing
+    // at the bottom; they slot in at their real-time positions. Pacing
+    // here would just delay the correct render.
+    if (msg.replay) {
+      ingestReplayYtMsg(targetChannelId, ytMsg)
+    } else {
+      enqueueYtForPacing(targetChannelId, ytMsg)
+    }
+  } else if (targetChannelId === 'global') {
+    // Surface unresolved-routing drops so future regressions don't go silent.
+    // Real cause is on background side: videoId→channelId map missed an entry.
+    console.warn('[heatsync-ext] yt msg dropped — channelId=global, videoId=', msg.videoId, 'user=', msg.user)
+  }
+}
+
 function listenForSocialEvents() {
   // Guard: only register once (survives SPA reinit via chrome listener persistence)
   if (_onceGuardsSocial.socialListener) return
@@ -40045,225 +40272,11 @@ function listenForSocialEvents() {
       applyYtDeletion(msg.data)
     }
     if (msg.type === 'youtube_chat_message') {
-      let targetChannelId = msg.channelId
-      // Same-tab native-tap copies (youtube-content.js broadcasts reach this
-      // overlay directly, not just background) stamp channelId with the RAW
-      // 11-char videoId — they never went through background's videoId→channel
-      // map. Untreated, they land in an orphan buffer nothing renders AND
-      // consume an isSentEcho credit meant for the server relay copy (the
-      // yt-only own-message swallow). Retarget to the owning config channel —
-      // own messages then render instantly and the later server copy dies in
-      // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
-      // dropped BEFORE any credit/dedup state is touched.
-      if (
-        targetChannelId &&
-        targetChannelId !== '__live_yt_auto__' &&
-        /^[a-zA-Z0-9_-]{11}$/.test(targetChannelId) &&
-        !config.channels.some((c) => c.id === targetChannelId)
-      ) {
-        let mapped = null
-        try {
-          if (typeof youtubeLinks !== 'undefined') {
-            for (const [chId, link] of youtubeLinks) {
-              if (link?.videoId === targetChannelId) {
-                mapped = chId
-                break
-              }
-            }
-          }
-        } catch {}
-        if (!mapped) {
-          const byUrl = config.channels.find(
-            (c) => typeof c.youtube === 'string' && c.youtube.includes(targetChannelId),
-          )
-          if (byUrl) mapped = byUrl.id
-        }
-        if (!mapped) return
-        targetChannelId = mapped
-      }
-      // Filter __live_yt_auto__ messages: only accept this stream's chat
-      // (prevents cross-tab leak — e.g. a stale videoId's chat bleeding in).
-      // Derive the allowed videoId straight from the page URL when we're ON a
-      // youtube watch/live page — that's authoritative and always available, so
-      // the gate no longer depends on a status-echo or a subscribe-time var that
-      // can be missed (which left it shut and the 'live' tab empty). Falls back
-      // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
-      if (targetChannelId === '__live_yt_auto__') {
-        const pageVid =
-          (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) ||
-            location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] || _autoYtVideoId
-        if (!pageVid) return // not on a watch page and no confirmed sub — reject
-        if (msg.videoId && msg.videoId !== pageVid) return // wrong stream
-        if (!_autoYtVideoId) _autoYtVideoId = pageVid // heal for downstream reads
-      }
-      // Touch the YT watchdog clock AFTER the videoId gate but before dedup —
-      // dup msgs still prove the BG-server pipe is alive, but a stale stream's
-      // rejected traffic must not keep the watchdog fed (it would mask a new
-      // subscription that failed and never let the 180s rescue fire).
-      try {
-        touchYtChannel(targetChannelId)
-      } catch {}
-      // Event renderers (superchat/supersticker/membership/gift purchase) skip
-      // the normal chat-row path entirely and go out as toggleable stream-event
-      // banners instead — see dispatchYtStreamEvent for what's excluded and why.
-      if (
-        msg.msgType === 'superchat' ||
-        msg.msgType === 'supersticker' ||
-        msg.msgType === 'membership' ||
-        msg.msgType === 'giftpurchase'
-      ) {
-        dispatchYtStreamEvent(targetChannelId, msg)
-        return
-      }
-
-      // Dedup against message buffer + pace queue (survives WS reconnects
-      // unlike 5s hash; id-exact when the server's innertube id is present)
-      if (targetChannelId && isYtDuplicate(msg.user, msg.text, targetChannelId, msg.id)) return
-
-      // Resolve a Twitch-channel name for emote lookup. YT-relayed messages
-      // belong to a streamer who likely also has Twitch/Kick channel emotes
-      // (BTTV/FFZ/7TV) configured under their Twitch handle. Without this
-      // hint, processEmotes only sees globals + the user's heatsync inventory,
-      // missing per-channel emotes for the linked streamer.
-      let ytChannelHint = null
-      // Channel-emote cache key when the display hint can't double as one.
-      // A yt-ONLY channel's emotes are broadcast under the CONFIG id —
-      // join_channel sends { channel: id } and channel_emotes_update echoes
-      // it back as channelOwner — and auto-live is keyed by the BG's
-      // yt_ensure_channel_emotes derivation: videoId, else @handle from the
-      // page URL (channel /live pages carry no ?v=). Neither is fit to
-      // display (raw video/config id), so it rides a separate emoteChannel
-      // field; the old twitch||kick||null hint left these messages on the
-      // dead 'youtube' key and channel emotes never resolved. Lowercased to
-      // match _buildChannelEmoteCache's key normalization.
-      let ytEmoteKey = null
-      if (targetChannelId && targetChannelId !== '__live_yt_auto__') {
-        const linkedCh = config.channels.find((c) => c.id === targetChannelId)
-        if (linkedCh) {
-          ytChannelHint = linkedCh.twitch || linkedCh.kick || null
-          if (!ytChannelHint) ytEmoteKey = String(linkedCh.id).toLowerCase()
-        }
-      } else if (targetChannelId === '__live_yt_auto__') {
-        const vid = msg.videoId || _autoYtVideoId || ''
-        const handle = location.href.match(/youtube\.com\/@([\w.-]{3,30})/)?.[1]
-        ytEmoteKey = (vid || (handle ? `@${handle}` : '')).toLowerCase() || null
-      }
-
-      const ytMsg = {
-        // innertube message id when the server relays one — gives yt messages
-        // a REAL identity: stableMsgId stops falling back to user:time:text
-        // (whose time gets rewritten per pace-commit, defeating render dedup)
-        id: msg.id || undefined,
-        user: msg.user,
-        text: msg.text,
-        // feeds sanitizeColor()/COLOR_RE downstream — must stay literal hex, no var()
-        color: msg.color || '#ff0000',
-        channel: ytChannelHint || 'youtube',
-        // Cache key for channel-emote lookup when channel itself isn't one
-        // (yt-only config channels + auto-live). Render uses it over channel.
-        emoteChannel: ytEmoteKey || undefined,
-        time: msg.time,
-        platform: 'youtube',
-        emotes: msg.emotes || [],
-        msgType: msg.msgType || 'text',
-        amount: msg.amount || '',
-        scColor: msg.scColor || '',
-        sticker: msg.sticker || null,
-        avatar: msg.avatar || undefined,
-        badges: msg.badges || undefined,
-        systemMsg: msg.systemMsg || undefined,
-        // Namespaced heatsync paint uid from the author's UC… id. Same contract
-        // as kick's kickNamePaintUid path: NEVER via queueMcCosmeticsLookup
-        // (twitch-space only) — queued directly below.
-        hsPaintUid: /^UC[A-Za-z0-9_-]{22}$/.test(msg.authorChannelId || '') ? `yt_${msg.authorChannelId}` : undefined,
-        // Server-enriched third-party emote refs — render sender inventory
-        // emotes without a per-sender fetch. Server-fed only. See emote-enrich.ts.
-        hsEmotes: msg.hsEmotes || undefined,
-      }
-      if (ytMsg.hsPaintUid && typeof queuePaintLookup === 'function') queuePaintLookup(ytMsg.hsPaintUid)
-
-      // Echo dedup + host-platform badge attribution (matches IRC/kick
-      // handlers). Without this, a triple-target send would render TWO
-      // copies of the user's own message — the dedup'd twitch/kick echo
-      // PLUS the unfiltered YT echo. peekSentHost ensures the badge
-      // reflects where the user actually typed FROM.
-      if (isSentEcho(ytMsg.text, 'youtube')) return
-      // Gated on peekSentHost alone — currentUsername is null on cross-origin
-      // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
-      {
-        const sentHost = peekSentHost(ytMsg.text)
-        if (sentHost) {
-          ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
-          // YouTube has no reply threading, so the bar can ONLY come from what
-          // we remembered at send time — the @mention prepend is all that ships
-          // on the wire. Same ownership proof as twitch/kick.
-          if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(ytMsg)
-        }
-      }
-
-      // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats.
-      // The rule VERDICT is kept, not just its .hide: a highlight rule can carry
-      // a sound, and folding the call into the if-condition threw that away —
-      // so a keyword alert fired on twitch and kick and was silently mute on
-      // youtube. Lazy in the same order as the other two handlers (automod is
-      // cheap, so it short-circuits before the rule eval).
-      const _frOwnYt = ytMsg.user?.toLowerCase() === currentUsername?.toLowerCase()
-      let _frYt = null
-      if (!_frOwnYt) {
-        if (shouldAutomod(ytMsg.text)) return
-        _frYt = evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null)
-        if (_frYt.hide) return
-      }
-      // Highlight-rule audio cue — once, on live youtube arrival.
-      if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt.sound)
-      const isMent = isMention(ytMsg)
-      bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, isMent)
-      if (isMent) {
-        mentionsBuffer.push(ytMsg)
-        if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
-        persistMentions()
-        notifyMention(ytMsg)
-        noteSeenEvent('mentions', ytMsg.time || Date.now())
-        if (currentTab === 'mentions') {
-          bumpSeen('mentions')
-          if (!appendMessage(ytMsg, 'mentions')) renderMessages('mentions')
-        } else {
-          updateTabIndicator('mentions')
-        }
-      }
-
-      if (targetChannelId && targetChannelId !== 'global') {
-        // Instant-live signal for YT-only tabs (no Twitch handle = no helix
-        // truth available, so first chat msg is our best signal). Tabs with
-        // a Twitch or Kick handle defer to the live-status poll — otherwise
-        // a YT replay/buffered msg would override the offline-Twitch truth.
-        if (targetChannelId !== '__live_yt_auto__') {
-          try {
-            const ch = config.channels.find((c) => c.id === targetChannelId)
-            const isYtOnly = ch && !ch.twitch && !ch.kick && ch.youtube
-            if (isYtOnly) {
-              const tabEl = document.querySelector(
-                `#hs-mc-tabbar .hs-mc-tab[data-tab="${CSS.escape(targetChannelId)}"]`,
-              )
-              if (tabEl && tabEl.dataset.live !== 'true') tabEl.dataset.live = 'true'
-            }
-          } catch {}
-        }
-        // Backfill replay: bypass per-channel pacing entirely. Each msg has
-        // its real YT timestamp, so fairMerge places it at the correct
-        // chronological position scattered through the existing twitch/kick
-        // history — no "all at once" flash because they're not appearing
-        // at the bottom; they slot in at their real-time positions. Pacing
-        // here would just delay the correct render.
-        if (msg.replay) {
-          ingestReplayYtMsg(targetChannelId, ytMsg)
-        } else {
-          enqueueYtForPacing(targetChannelId, ytMsg)
-        }
-      } else if (targetChannelId === 'global') {
-        // Surface unresolved-routing drops so future regressions don't go silent.
-        // Real cause is on background side: videoId→channelId map missed an entry.
-        console.warn('[heatsync-ext] yt msg dropped — channelId=global, videoId=', msg.videoId, 'user=', msg.user)
+      handleYoutubeChatMsg(msg)
+    }
+    if (msg.type === 'youtube_chat_batch' && Array.isArray(msg.messages)) {
+      for (const item of msg.messages) {
+        handleYoutubeChatMsg({ channelId: msg.channelId, videoId: msg.videoId, replay: msg.replay, ...item })
       }
     }
     if (msg.type === 'youtube_msg_deleted') {

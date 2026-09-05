@@ -1019,6 +1019,31 @@
     return { amount, sticker: { url, alt } }
   }
 
+  // Shared process queue — bounded, drained whole per tick. Cap protects a
+  // runaway (a burst past it drops the OLDEST nodes; YT's own container churn
+  // means those rows were about to be trimmed anyway).
+  const PROCESS_QUEUE_CAP = 600
+  const _processQueue = []
+  let _processScheduled = false
+  function queueProcess(node) {
+    _processQueue.push(node)
+    if (_processQueue.length > PROCESS_QUEUE_CAP) _processQueue.splice(0, _processQueue.length - PROCESS_QUEUE_CAP)
+    if (_processScheduled) return
+    _processScheduled = true
+    const drain = () => {
+      _processScheduled = false
+      const batch = _processQueue.splice(0, _processQueue.length)
+      for (const n of batch) processNode(n)
+    }
+    if (document.hidden) { setTimeout(drain, 0); return }
+    // Occluded-but-visible windows can starve rAF too (main.js rafOrTimeout
+    // learned this) — a timeout watchdog guarantees the drain either way.
+    let ran = false
+    const once = () => { if (ran) return; ran = true; drain() }
+    requestAnimationFrame(once)
+    setTimeout(once, 300)
+  }
+
   function processNode(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return
     if (!SUPPORTED_RENDERERS.has(node.tagName)) return
@@ -1890,35 +1915,40 @@
         // live→replay flip), and re-processing them would double-post; missing
         // a few in-flight rows during a rare mode switch is the safer trade.
         if (processExisting) {
-          for (const child of el.children) {
-            cleanup.raf(() => processNode(child))
-          }
+          for (const child of el.children) queueProcess(child)
         }
 
-        // Watch for new messages
+        // Watch for new messages. One shared queue + one drain per tick, NOT
+        // one rAF per message: a hidden popout live_chat tab never gets a rAF,
+        // so per-message rAFs (and their node-pinning closures) accumulated
+        // unbounded for the whole hidden stretch, then all flushed in one
+        // frame on return. The drain schedules via rAF with a setTimeout
+        // fallback so a hidden tab keeps relaying (it is often the only
+        // source feeding the merged chat).
         const observer = new MutationObserver((mutations) => {
           for (const mut of mutations) {
             for (const node of mut.addedNodes) {
               if (node.nodeType !== Node.ELEMENT_NODE) continue
-              cleanup.raf(() => processNode(node))
+              // Deleted-variant swaps arrive as plain childList adds — fold
+              // deletion detection in here so the deletion observer below
+              // doesn't need childList+subtree (a record per node insert on
+              // a busy chat, the exact storm the reattach comment rejects).
+              if (node.tagName === 'YT-LIVE-CHAT-DELETED-MESSAGE-RENDERER') {
+                broadcastDeletion(node, 'deleted')
+                continue
+              }
+              queueProcess(node)
             }
           }
         })
         cleanup.trackObserver(observer)
         observer.observe(el, { childList: true })
 
-        // Detect moderator deletions: YT either swaps in a deleted-message-renderer
-        // or stamps `is-deleted` / clears #message text on the original renderer.
+        // Detect moderator deletions on EXISTING renderers: YT stamps
+        // `is-deleted` on the renderer. Attribute records only — the swap
+        // variant is handled by the childList observer above.
         const deletionObserver = new MutationObserver((mutations) => {
           for (const mut of mutations) {
-            // Renderer replaced with deleted variant
-            for (const node of mut.addedNodes) {
-              if (node.nodeType !== Node.ELEMENT_NODE) continue
-              if (node.tagName === 'YT-LIVE-CHAT-DELETED-MESSAGE-RENDERER') {
-                broadcastDeletion(node, 'deleted')
-              }
-            }
-            // Existing renderer mutated
             if (mut.type === 'attributes' && mut.attributeName === 'is-deleted') {
               broadcastDeletion(mut.target, mut.target.getAttribute('is-deleted') || 'deleted')
             }
@@ -1926,7 +1956,6 @@
         })
         cleanup.trackObserver(deletionObserver)
         deletionObserver.observe(el, {
-          childList: true,
           subtree: true,
           attributes: true,
           attributeFilter: ['is-deleted'],

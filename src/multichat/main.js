@@ -13801,9 +13801,14 @@
         if (isLive) kickLiveFound = true
       }
       checkKickLive()
+      // Mirrors twitch's checkOffline: self-limits at 10 fast checks so a
+      // channel that never goes live doesn't poll every 1s (hidden tab
+      // included) forever — graduates to the same 10s steady poll it would
+      // have reached on finding live anyway.
+      let fastChecks = 0
       const fastPoll = cleanup.setInterval(() => {
         checkKickLive()
-        if (kickLiveFound) {
+        if (kickLiveFound || ++fastChecks >= 10) {
           cleanup.clearInterval(fastPoll)
           cleanup.setIntervalIfVisible(checkKickLive, 10000)
         }

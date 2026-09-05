@@ -9000,7 +9000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b578445-202609051506' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b0a1329+-202609051507' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77904,9 +77904,14 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (isLive) kickLiveFound = true
       }
       checkKickLive()
+      // Mirrors twitch's checkOffline: self-limits at 10 fast checks so a
+      // channel that never goes live doesn't poll every 1s (hidden tab
+      // included) forever — graduates to the same 10s steady poll it would
+      // have reached on finding live anyway.
+      let fastChecks = 0
       const fastPoll = cleanup.setInterval(() => {
         checkKickLive()
-        if (kickLiveFound) {
+        if (kickLiveFound || ++fastChecks >= 10) {
           cleanup.clearInterval(fastPoll)
           cleanup.setIntervalIfVisible(checkKickLive, 10000)
         }

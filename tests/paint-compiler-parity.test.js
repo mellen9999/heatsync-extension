@@ -17,9 +17,11 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 const HERE = resolve(import.meta.dir, '..')
-const SITE = process.env.HS_SITE_DIR
-  || [resolve(HERE, '..', 'heatsync'), resolve(HERE, '..', '..', 'heatsync'), '/home/mellen/projects/heatsync']
-    .find((p) => existsSync(join(p, 'client', 'utils', 'paint-spec.js')))
+const SITE =
+  process.env.HS_SITE_DIR ||
+  [resolve(HERE, '..', 'heatsync'), resolve(HERE, '..', '..', 'heatsync'), '/home/mellen/projects/heatsync'].find((p) =>
+    existsSync(join(p, 'client', 'utils', 'paint-spec.js')),
+  )
 
 const FILES = ['paint-core.js', 'scene-spec.js', 'paint-spec.js']
 

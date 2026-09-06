@@ -511,8 +511,42 @@ describe('compilePaintCss — adversarial injection resistance', () => {
 })
 
 describe('EFFECTS enum — the catalog, correctly classified', () => {
-  const PAINT = ['chrome', 'conic', 'fire', 'glint', 'gold', 'holo', 'hue', 'ice', 'lava', 'matrix', 'pan', 'pulse', 'rainbow', 'reveal', 'stardust', 'stripes']
-  const MOTION = ['coin', 'flicker', 'float', 'glitch', 'heart', 'heli', 'hop', 'jitter', 'neon', 'ripple', 'swing', 'tumble', 'twirl', 'type', 'wave', 'wobble']
+  const PAINT = [
+    'chrome',
+    'conic',
+    'fire',
+    'glint',
+    'gold',
+    'holo',
+    'hue',
+    'ice',
+    'lava',
+    'matrix',
+    'pan',
+    'pulse',
+    'rainbow',
+    'reveal',
+    'stardust',
+    'stripes',
+  ]
+  const MOTION = [
+    'coin',
+    'flicker',
+    'float',
+    'glitch',
+    'heart',
+    'heli',
+    'hop',
+    'jitter',
+    'neon',
+    'ripple',
+    'swing',
+    'tumble',
+    'twirl',
+    'type',
+    'wave',
+    'wobble',
+  ]
 
   test('has exactly these ids, no more, no less', () => {
     expect(Object.keys(EFFECTS).sort()).toEqual([...PAINT, ...MOTION].sort())

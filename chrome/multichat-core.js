@@ -5822,10 +5822,6 @@ function _signatureMatch(a, b) {
 
 // --- lib/paint-core.js ---
 /**
- * SYNCED COPY of the heatsync monorepo's client/utils/paint-core.js — keep
- * byte-close to the source of truth; mirror changes in both repos. Only
- * bundling adaptations belong here, never a behavior fork.
- *
  * paint-core — tiny pure helpers shared by the paint compiler
  * (paint-spec.js) and the scene compiler (scene-spec.js).
  *
@@ -5904,10 +5900,6 @@ function fnv1a(str) {
 /**
  * Scene spec — the diorama layer of a username paint (spec v2).
  *
- * SYNCED COPY of the heatsync monorepo's client/utils/scene-spec.js — keep
- * byte-close to the source of truth; mirror changes in both repos. Only
- * bundling adaptations belong here, never a behavior fork.
- *
  * A scene turns the name into a three-deep composition, all inside the ONE
  * element the renderer already paints (zero DOM changes, zero new classes):
  *
@@ -5982,69 +5974,40 @@ function cloudDeck(steps, w, color, opacity) {
 // are deliberately narrower than a typical name plate (~56px for a six-glyph
 // name at 13px) so a whole deck of lumps is visible at once; wider tiles put
 // two enormous rectangles across the name instead of a cloud line.
-const CLOUD_FAR_STEPS = [
-  [5, 7],
-  [6, 10],
-  [4, 6],
-  [7, 11],
-  [5, 8],
-  [6, 12],
-  [7, 7],
-]
-const CLOUD_NEAR_STEPS = [
-  [7, 6],
-  [6, 10],
-  [8, 5],
-  [7, 12],
-  [9, 8],
-  [6, 13],
-  [6, 7],
-  [7, 6],
-]
+const CLOUD_FAR_STEPS = [[5, 7], [6, 10], [4, 6], [7, 11], [5, 8], [6, 12], [7, 7]]
+const CLOUD_NEAR_STEPS = [[7, 6], [6, 10], [8, 5], [7, 12], [9, 8], [6, 13], [6, 7], [7, 6]]
 const CLOUD_FAR_W = 40
 const CLOUD_NEAR_W = 56
 
 // ── pixel silhouettes (blocky on purpose — crisp at 13px Cozette scale) ────
 
 const SIL = {
-  dunes: (c) =>
-    svgUrl(svg(96, 20, `<path fill='${c}' d='M0 20v-8h6v-2h8v-2h10v2h8v2h10v4h6v-2h10v-4h8v-2h10v2h8v4h6v2h6v4z'/>`)),
-  graveyard: (c) =>
-    svgUrl(
-      svg(
-        140,
-        26,
-        `<path fill='${c}' d='M0 26v-2h140v2z` +
-          // fence run (pickets + rail)
-          ` M4 24v-7h2v7z M11 24v-7h2v7z M18 24v-7h2v7z M2 19h20v2H2z` +
-          // headstone (stepped arch)
-          ` M34 24v-6h2v-2h6v2h2v6z` +
-          // cross
-          ` M52 24v-8h-3v-2h3v-4h2v4h3v2h-3v8z` +
-          // monument (stepped obelisk)
-          ` M68 24v-2h-2v-2h2v-9h4v9h2v2h-2v2z` +
-          // bare tree (trunk + two arms)
-          ` M96 24v-10h-4v-2h4v-4h2v2h5v2h-5v12z` +
-          // second headstone
-          ` M116 24v-5h2v-2h5v2h2v5z` +
-          // fence run
-          ` M130 24v-7h2v7z M137 24v-7h2v7z M128 19h12v2h-12z'/>`,
-      ),
-    ),
-  reef: (c) =>
-    svgUrl(svg(90, 14, `<path fill='${c}' d='M0 14v-4h8v-2h10v2h10v2h10v-4h8v-2h8v2h8v4h10v-2h10v2h8v2z'/>`)),
-  pines: (c) =>
-    svgUrl(
-      svg(
-        84,
-        24,
-        `<path fill='${c}' d='M0 24v-3h84v3z` +
-          ` M8 21v-3H5v-4h3v-4h2v-3h2v3h2v4h3v4h-3v3z` +
-          ` M30 21v-2h-2v-4h2v-3h2v-3h2v3h2v3h2v4h-2v2z` +
-          ` M52 21v-3h-3v-4h3v-4h2v-4h2v4h2v4h3v4h-3v3z` +
-          ` M74 21v-2h-2v-3h2v-3h2v3h2v3h-2v2z'/>`,
-      ),
-    ),
+  dunes: (c) => svgUrl(svg(96, 20,
+    `<path fill='${c}' d='M0 20v-8h6v-2h8v-2h10v2h8v2h10v4h6v-2h10v-4h8v-2h10v2h8v4h6v2h6v4z'/>`)),
+  graveyard: (c) => svgUrl(svg(140, 26,
+    `<path fill='${c}' d='M0 26v-2h140v2z` +
+    // fence run (pickets + rail)
+    ` M4 24v-7h2v7z M11 24v-7h2v7z M18 24v-7h2v7z M2 19h20v2H2z` +
+    // headstone (stepped arch)
+    ` M34 24v-6h2v-2h6v2h2v6z` +
+    // cross
+    ` M52 24v-8h-3v-2h3v-4h2v4h3v2h-3v8z` +
+    // monument (stepped obelisk)
+    ` M68 24v-2h-2v-2h2v-9h4v9h2v2h-2v2z` +
+    // bare tree (trunk + two arms)
+    ` M96 24v-10h-4v-2h4v-4h2v2h5v2h-5v12z` +
+    // second headstone
+    ` M116 24v-5h2v-2h5v2h2v5z` +
+    // fence run
+    ` M130 24v-7h2v7z M137 24v-7h2v7z M128 19h12v2h-12z'/>`)),
+  reef: (c) => svgUrl(svg(90, 14,
+    `<path fill='${c}' d='M0 14v-4h8v-2h10v2h10v2h10v-4h8v-2h8v2h8v4h10v-2h10v2h8v2z'/>`)),
+  pines: (c) => svgUrl(svg(84, 24,
+    `<path fill='${c}' d='M0 24v-3h84v3z` +
+    ` M8 21v-3H5v-4h3v-4h2v-3h2v3h2v4h3v4h-3v3z` +
+    ` M30 21v-2h-2v-4h2v-3h2v-3h2v3h2v3h2v4h-2v2z` +
+    ` M52 21v-3h-3v-4h3v-4h2v-4h2v4h2v4h3v4h-3v3z` +
+    ` M74 21v-2h-2v-3h2v-3h2v3h2v3h-2v2z'/>`)),
 }
 
 // ── weather tiles (pixel SVG, tiled + scrolled; drops stay inside bounds) ──
@@ -6061,11 +6024,9 @@ const SIL = {
  * tile box (the tile repeats, so anything crossing an edge is cut in half).
  */
 function rainDrop(c, x, y, h) {
-  return (
-    `<g transform='rotate(12 ${x + 1} ${y + h / 2})'>` +
+  return `<g transform='rotate(12 ${x + 1} ${y + h / 2})'>` +
     `<rect x='${x}' y='${y}' width='2' height='${h}' fill='${c}' opacity='.5'/>` +
     `<rect x='${x}' y='${y + h - 3}' width='2' height='3' fill='${c}' opacity='.95'/></g>`
-  )
 }
 
 // Tiles are much larger than the old 1px-drizzle ones for the same reason the
@@ -6074,183 +6035,52 @@ function rainDrop(c, x, y, h) {
 // parallax, so keeping the old tile sizes would have put ~25 fat drops across
 // a six-glyph name and buried it.
 function rainTile(c, density) {
-  if (density >= 3)
-    return {
-      w: 20,
-      h: 24,
-      url: svgUrl(svg(20, 24, rainDrop(c, 2, 2, 9) + rainDrop(c, 10, 8, 9) + rainDrop(c, 15, 1, 8))),
-    }
-  if (density === 2) return { w: 28, h: 28, url: svgUrl(svg(28, 28, rainDrop(c, 4, 3, 10) + rainDrop(c, 18, 13, 10))) }
-  return { w: 40, h: 32, url: svgUrl(svg(40, 32, rainDrop(c, 7, 4, 11) + rainDrop(c, 27, 16, 10))) }
+  if (density >= 3) return { w: 20, h: 24, url: svgUrl(svg(20, 24,
+    rainDrop(c, 2, 2, 9) + rainDrop(c, 10, 8, 9) + rainDrop(c, 15, 1, 8))) }
+  if (density === 2) return { w: 28, h: 28, url: svgUrl(svg(28, 28,
+    rainDrop(c, 4, 3, 10) + rainDrop(c, 18, 13, 10))) }
+  return { w: 40, h: 32, url: svgUrl(svg(40, 32,
+    rainDrop(c, 7, 4, 11) + rainDrop(c, 27, 16, 10))) }
 }
 
 function snowTile(c, density) {
-  if (density >= 3)
-    return {
-      w: 14,
-      h: 18,
-      url: svgUrl(
-        svg(
-          14,
-          18,
-          `<g fill='${c}'><circle cx='3' cy='3' r='1' opacity='.9'/>` +
-            `<circle cx='10' cy='8' r='.7' opacity='.6'/>` +
-            `<circle cx='6' cy='13' r='1' opacity='.8'/>` +
-            `<circle cx='12' cy='15' r='.6' opacity='.5'/></g>`,
-        ),
-      ),
-    }
-  if (density === 2)
-    return {
-      w: 18,
-      h: 22,
-      url: svgUrl(
-        svg(
-          18,
-          22,
-          `<g fill='${c}'><circle cx='4' cy='5' r='1' opacity='.9'/>` +
-            `<circle cx='12' cy='14' r='.7' opacity='.6'/>` +
-            `<circle cx='8' cy='19' r='.6' opacity='.5'/></g>`,
-        ),
-      ),
-    }
-  return {
-    w: 24,
-    h: 28,
-    url: svgUrl(
-      svg(
-        24,
-        28,
-        `<g fill='${c}'><circle cx='6' cy='6' r='1' opacity='.85'/>` +
-          `<circle cx='16' cy='18' r='.7' opacity='.55'/></g>`,
-      ),
-    ),
-  }
+  if (density >= 3) return { w: 14, h: 18, url: svgUrl(svg(14, 18,
+    `<g fill='${c}'><circle cx='3' cy='3' r='1' opacity='.9'/>` +
+    `<circle cx='10' cy='8' r='.7' opacity='.6'/>` +
+    `<circle cx='6' cy='13' r='1' opacity='.8'/>` +
+    `<circle cx='12' cy='15' r='.6' opacity='.5'/></g>`)) }
+  if (density === 2) return { w: 18, h: 22, url: svgUrl(svg(18, 22,
+    `<g fill='${c}'><circle cx='4' cy='5' r='1' opacity='.9'/>` +
+    `<circle cx='12' cy='14' r='.7' opacity='.6'/>` +
+    `<circle cx='8' cy='19' r='.6' opacity='.5'/></g>`)) }
+  return { w: 24, h: 28, url: svgUrl(svg(24, 28,
+    `<g fill='${c}'><circle cx='6' cy='6' r='1' opacity='.85'/>` +
+    `<circle cx='16' cy='18' r='.7' opacity='.55'/></g>`)) }
 }
 
 function emberTile(c1, c2, density) {
-  if (density >= 3)
-    return {
-      w: 14,
-      h: 20,
-      url: svgUrl(
-        svg(
-          14,
-          20,
-          `<g><rect x='3' y='15' width='1' height='2' fill='${c1}' opacity='.9'/>` +
-            `<rect x='9' y='9' width='1' height='1' fill='${c2}' opacity='.8'/>` +
-            `<rect x='6' y='4' width='1' height='1' fill='${c1}' opacity='.5'/>` +
-            `<rect x='12' y='17' width='1' height='1' fill='${c2}' opacity='.7'/></g>`,
-        ),
-      ),
-    }
-  if (density === 2)
-    return {
-      w: 16,
-      h: 24,
-      url: svgUrl(
-        svg(
-          16,
-          24,
-          `<g><rect x='4' y='18' width='1' height='2' fill='${c1}' opacity='.9'/>` +
-            `<rect x='11' y='8' width='1' height='1' fill='${c2}' opacity='.7'/></g>`,
-        ),
-      ),
-    }
-  return {
-    w: 20,
-    h: 28,
-    url: svgUrl(
-      svg(
-        20,
-        28,
-        `<g><rect x='5' y='21' width='1' height='2' fill='${c1}' opacity='.85'/>` +
-          `<rect x='14' y='9' width='1' height='1' fill='${c2}' opacity='.6'/></g>`,
-      ),
-    ),
-  }
+  if (density >= 3) return { w: 14, h: 20, url: svgUrl(svg(14, 20,
+    `<g><rect x='3' y='15' width='1' height='2' fill='${c1}' opacity='.9'/>` +
+    `<rect x='9' y='9' width='1' height='1' fill='${c2}' opacity='.8'/>` +
+    `<rect x='6' y='4' width='1' height='1' fill='${c1}' opacity='.5'/>` +
+    `<rect x='12' y='17' width='1' height='1' fill='${c2}' opacity='.7'/></g>`)) }
+  if (density === 2) return { w: 16, h: 24, url: svgUrl(svg(16, 24,
+    `<g><rect x='4' y='18' width='1' height='2' fill='${c1}' opacity='.9'/>` +
+    `<rect x='11' y='8' width='1' height='1' fill='${c2}' opacity='.7'/></g>`)) }
+  return { w: 20, h: 28, url: svgUrl(svg(20, 28,
+    `<g><rect x='5' y='21' width='1' height='2' fill='${c1}' opacity='.85'/>` +
+    `<rect x='14' y='9' width='1' height='1' fill='${c2}' opacity='.6'/></g>`)) }
 }
 
 function glyphTile(c, density) {
   const col = (x, ys, head) =>
     ys.map(([y, h]) => `<rect x='${x}' y='${y}' width='1' height='${h}' fill='${c}' opacity='.28'/>`).join('') +
     `<rect x='${x}' y='${head}' width='1' height='4' fill='${c}' opacity='.95'/>`
-  if (density >= 3)
-    return {
-      w: 12,
-      h: 22,
-      url: svgUrl(
-        svg(
-          12,
-          22,
-          col(
-            2,
-            [
-              [1, 3],
-              [6, 2],
-              [10, 3],
-            ],
-            15,
-          ) +
-            col(
-              8,
-              [
-                [3, 2],
-                [8, 3],
-                [13, 2],
-              ],
-              17,
-            ),
-        ),
-      ),
-    }
-  if (density === 2)
-    return {
-      w: 14,
-      h: 22,
-      url: svgUrl(
-        svg(
-          14,
-          22,
-          col(
-            3,
-            [
-              [1, 3],
-              [6, 2],
-              [10, 3],
-            ],
-            15,
-          ) +
-            col(
-              10,
-              [
-                [4, 2],
-                [9, 3],
-              ],
-              16,
-            ),
-        ),
-      ),
-    }
-  return {
-    w: 18,
-    h: 24,
-    url: svgUrl(
-      svg(
-        18,
-        24,
-        col(
-          5,
-          [
-            [2, 3],
-            [8, 2],
-            [13, 3],
-          ],
-          18,
-        ),
-      ),
-    ),
-  }
+  if (density >= 3) return { w: 12, h: 22, url: svgUrl(svg(12, 22,
+    col(2, [[1, 3], [6, 2], [10, 3]], 15) + col(8, [[3, 2], [8, 3], [13, 2]], 17))) }
+  if (density === 2) return { w: 14, h: 22, url: svgUrl(svg(14, 22,
+    col(3, [[1, 3], [6, 2], [10, 3]], 15) + col(10, [[4, 2], [9, 3]], 16))) }
+  return { w: 18, h: 24, url: svgUrl(svg(18, 24, col(5, [[2, 3], [8, 2], [13, 3]], 18))) }
 }
 
 // ── foreground silhouettes (the NEAR plane — painted in front of the name) ──
@@ -6262,33 +6092,230 @@ function glyphTile(c, density) {
 // being damage. Nothing here rises past ~5px of a 22px plate.
 
 const FG = {
-  dunes: (c) => svgUrl(svg(64, 8, `<path fill='${c}' d='M0 8V6h6V4h10v2h8v2h8V6h10V4h8v2h6v2z'/>`)),
-  graveyard: (c) =>
-    svgUrl(
-      svg(
-        72,
-        8,
-        `<path fill='${c}' d='M0 8V7h72v1z` +
-          // near headstone
-          ` M8 7V3h2V1h5v2h2v4z` +
-          // near cross
-          ` M30 7V2h-2V0h2v-1h2v1h2v2h-2v5z` +
-          // near picket run
-          ` M50 7V3h2v4z M56 7V3h2v4z M62 7V3h2v4z M48 4h18v1H48z'/>`,
-      ),
-    ),
-  reef: (c) => svgUrl(svg(56, 6, `<path fill='${c}' d='M0 6V4h5V2h6v2h7v2h9V3h6v3h8V4h7v2h8z'/>`)),
-  pines: (c) =>
-    svgUrl(
-      svg(
-        60,
-        9,
-        `<path fill='${c}' d='M0 9V8h60v1z` +
-          ` M9 8V5H7V3h2V1h2v2h2v2h-2v3z` +
-          ` M33 8V6h-2V4h2V2h2v2h2v2h-2v2z` +
-          ` M50 8V5h-2V3h2V2h2v1h2v2h-2v3z'/>`,
-      ),
-    ),
+  dunes: (c) => svgUrl(svg(64, 8,
+    `<path fill='${c}' d='M0 8V6h6V4h10v2h8v2h8V6h10V4h8v2h6v2z'/>`)),
+  graveyard: (c) => svgUrl(svg(72, 8,
+    `<path fill='${c}' d='M0 8V7h72v1z` +
+    // near headstone
+    ` M8 7V3h2V1h5v2h2v4z` +
+    // near cross
+    ` M30 7V2h-2V0h2v-1h2v1h2v2h-2v5z` +
+    // near picket run
+    ` M50 7V3h2v4z M56 7V3h2v4z M62 7V3h2v4z M48 4h18v1H48z'/>`)),
+  reef: (c) => svgUrl(svg(56, 6,
+    `<path fill='${c}' d='M0 6V4h5V2h6v2h7v2h9V3h6v3h8V4h7v2h8z'/>`)),
+  pines: (c) => svgUrl(svg(60, 9,
+    `<path fill='${c}' d='M0 9V8h60v1z` +
+    ` M9 8V5H7V3h2V1h2v2h2v2h-2v3z` +
+    ` M33 8V6h-2V4h2V2h2v2h2v2h-2v2z` +
+    ` M50 8V5h-2V3h2V2h2v1h2v2h-2v3z'/>`)),
+}
+
+// ── bottom-anchored bands (swells, ice shelves, skylines) ──────────────────
+//
+// The mirror of a cloud deck: solid from the BOTTOM edge up to a blocky top
+// edge, tileable, rendered stretched so `<w>px <percent>` sizing scrolls it
+// exactly one tile per loop. First and last depth must match or the seam
+// shows (same guard as the decks).
+
+function bandPath(steps, H) {
+  let d = `M0 ${H}`
+  for (const [w, h] of steps) d += `V${H - h}h${w}`
+  return `${d}V${H}Z`
+}
+
+function band(steps, w, H, color, opacity, extra = '') {
+  return { w, url: svgUrl(svg(w, H, `<path fill='${color}' opacity='${opacity}' d='${bandPath(steps, H)}'/>${extra}`, true)) }
+}
+
+// Skyline: a band of buildings with lit windows. Which windows are lit is a
+// fixed arithmetic pattern, not a roll — a tile must render the same on every
+// build or two copies of one name would show two different cities.
+function cityDeck(steps, w, H, color, win) {
+  let x = 0
+  let rects = ''
+  steps.forEach(([bw, bh], i) => {
+    if (bh >= 8) {
+      for (let y = H - bh + 2; y < H - 2; y += 3) {
+        for (let wx = x + 1; wx < x + bw - 1; wx += 2) {
+          if ((wx * 7 + y * 3 + i) % 5 < 2) rects += `<rect x='${wx}' y='${y}' width='1' height='1' fill='${win}' opacity='.85'/>`
+        }
+      }
+    }
+    x += bw
+  })
+  return band(steps, w, H, color, '1', rects)
+}
+
+// Swells: two bands, the near one narrower so it advances more per loop.
+const SWELL_FAR_STEPS = [[4, 5], [5, 7], [4, 9], [5, 7], [4, 5], [5, 4], [4, 5], [5, 7], [4, 9], [4, 7], [4, 5]]
+const SWELL_NEAR_STEPS = [[3, 4], [4, 6], [3, 8], [4, 6], [3, 4], [4, 3], [3, 4], [4, 6], [3, 8], [3, 6], [2, 4]]
+const SWELL_FAR_W = 48
+const SWELL_NEAR_W = 36
+// Ice shelves, same idea.
+const ICE_FAR_STEPS = [[6, 6], [5, 9], [4, 7], [7, 10], [5, 6], [6, 8], [5, 11], [4, 7], [6, 9], [4, 6]]
+const ICE_NEAR_STEPS = [[5, 4], [4, 6], [5, 5], [4, 7], [5, 4], [4, 3], [5, 4], [4, 6], [4, 4]]
+const ICE_FAR_W = 52
+const ICE_NEAR_W = 40
+// Skyline decks: FAR is short and narrow, NEAR is tall and wide.
+const CITY_FAR_STEPS = [[6, 10], [2, 6], [7, 15], [3, 8], [8, 12], [2, 5], [6, 18], [4, 9], [7, 13], [3, 6], [6, 11], [2, 7], [8, 10]]
+const CITY_NEAR_STEPS = [[8, 14], [3, 9], [10, 20], [4, 11], [9, 16], [3, 8], [11, 22], [5, 12], [8, 17], [3, 10], [10, 19], [6, 13], [8, 14]]
+const CITY_FAR_W = 64
+const CITY_NEAR_W = 88
+
+// Sakura: a trunk with two arms and blocky blossom clusters, plus a small
+// second tree — repeats every 120 units so a long name gets a grove.
+SIL.sakura = (sil, bloom) => svgUrl(svg(120, 26,
+  `<path fill='${sil}' d='M0 26v-2h120v2z` +
+  ` M50 24v-9h-4v-2h4v-3h2v3h5v-2h3v2h-3v2h-5v9z` +
+  ` M96 24v-6h-2v-2h2v-2h2v2h3v2h-3v6z'/>` +
+  `<g fill='${bloom}'><circle cx='46' cy='11' r='3'/><circle cx='52' cy='8' r='3.4'/><circle cx='58' cy='11' r='3'/>` +
+  `<circle cx='49' cy='15' r='2.2'/><circle cx='56' cy='15' r='2'/>` +
+  `<circle cx='95' cy='14' r='2.2'/><circle cx='99' cy='12' r='2.4'/><circle cx='102' cy='16' r='1.8'/></g>`))
+FG.sakura = (c) => svgUrl(svg(48, 6,
+  `<path fill='${c}' d='M0 6V5h48v1z M6 5V3h2v2z M15 5V4h2v1z M27 5V3h2v2z M38 5V4h2v1z'/>`))
+FG.swell = (c) => svgUrl(svg(36, 6,
+  `<path fill='${c}' d='M0 6V4h4V2h4v2h4v2h6V3h4v3h6V4h4v2z'/>`))
+FG.ice = (c) => svgUrl(svg(40, 6,
+  `<path fill='${c}' d='M0 6V4h5V2h6v2h5v2h8V3h5v3h6V4h5v2z'/>`))
+FG.roof = (c) => svgUrl(svg(64, 8,
+  `<path fill='${c}' d='M0 8V7h64v1z` +
+  // antenna mast + a water tower on legs
+  ` M12 7V1h1v6z M10 3h5v1h-5z` +
+  ` M40 7V4h-1V1h6v3h-1v3z M41 4h4v3h-4z'/>`))
+
+// Weather tiles for the drifting/rising particles below.
+function petalTile(c, density) {
+  const p = (x, y, o) => `<rect x='${x}' y='${y}' width='2' height='1' fill='${c}' opacity='${o}'/>` +
+    `<rect x='${x + 1}' y='${y + 1}' width='1' height='1' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 16, h: 18, url: svgUrl(svg(16, 18, p(2, 2, '.9') + p(9, 7, '.7') + p(5, 12, '.85') + p(12, 15, '.6'))) }
+  if (density === 2) return { w: 20, h: 22, url: svgUrl(svg(20, 22, p(4, 4, '.9') + p(13, 13, '.65') + p(8, 18, '.5'))) }
+  return { w: 26, h: 28, url: svgUrl(svg(26, 28, p(6, 6, '.85') + p(17, 18, '.6'))) }
+}
+
+function bubbleTile(c, density) {
+  const b = (cx, cy, r, o) => `<circle cx='${cx}' cy='${cy}' r='${r}' fill='none' stroke='${c}' stroke-width='1' opacity='${o}'/>`
+  if (density >= 3) return { w: 14, h: 20, url: svgUrl(svg(14, 20, b(3, 4, 1.5, '.8') + b(10, 10, 1, '.6') + b(6, 16, 1.5, '.7'))) }
+  if (density === 2) return { w: 18, h: 24, url: svgUrl(svg(18, 24, b(4, 5, 1.5, '.8') + b(13, 15, 1, '.55'))) }
+  return { w: 22, h: 30, url: svgUrl(svg(22, 30, b(6, 7, 1.5, '.75') + b(16, 21, 1, '.5'))) }
+}
+
+function fireflyTile(c, density) {
+  const f = (cx, cy, o) => `<circle cx='${cx}' cy='${cy}' r='2' fill='${c}' opacity='${(o * 0.3).toFixed(2)}'/>` +
+    `<circle cx='${cx}' cy='${cy}' r='.8' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 16, h: 20, url: svgUrl(svg(16, 20, f(3, 4, .95) + f(11, 9, .7) + f(6, 15, .85))) }
+  if (density === 2) return { w: 20, h: 26, url: svgUrl(svg(20, 26, f(4, 6, .9) + f(14, 17, .65))) }
+  return { w: 26, h: 32, url: svgUrl(svg(26, 32, f(7, 8, .9) + f(18, 22, .55))) }
+}
+
+// ── the second shelf of art (backdrops 13-22, weathers 10-15) ──────────────
+
+// Mountains: one ridge is a bottom band with snow on every step tall enough to
+// hold it. Which steps get a cap is arithmetic on the step, never a roll.
+function ridge(steps, w, H, color, cap) {
+  let x = 0, caps = ''
+  for (const [bw, bh] of steps) {
+    if (bh >= 9) caps += `<rect x='${x}' y='${H - bh}' width='${bw}' height='2' fill='${cap}' opacity='.9'/>`
+    x += bw
+  }
+  return band(steps, w, H, color, '1', caps)
+}
+
+const PEAK_STEPS = [[4, 6], [4, 9], [4, 13], [4, 17], [4, 21], [4, 17], [4, 12], [4, 9], [4, 13], [4, 18], [4, 22], [4, 18], [4, 13], [4, 9], [4, 7], [4, 10], [4, 14], [4, 11], [4, 8], [4, 6], [4, 8], [4, 11], [4, 8], [4, 6]]
+const PEAK_W = 96
+const RIDGE_FAR_STEPS = [[5, 8], [5, 12], [5, 16], [5, 13], [5, 9], [5, 11], [5, 15], [5, 19], [5, 15], [5, 11], [5, 8], [5, 10], [5, 13], [5, 10], [5, 8]]
+const RIDGE_FAR_W = 75
+const RIDGE_NEAR_STEPS = [[4, 4], [4, 7], [4, 10], [4, 13], [4, 10], [4, 7], [4, 5], [4, 8], [4, 12], [4, 9], [4, 6], [4, 4], [4, 6], [4, 4]]
+const RIDGE_NEAR_W = 56
+// Castle: curtain wall with merlons, two towers, a keep — lit by cityDeck's
+// window arithmetic exactly as a skyline is.
+const CASTLE_STEPS = [[3, 7], [2, 9], [3, 7], [2, 9], [3, 7], [2, 9], [3, 7], [5, 15], [2, 18], [2, 15], [2, 18], [2, 15], [5, 15], [3, 7], [2, 9], [3, 7], [2, 9], [3, 7], [7, 21], [2, 24], [2, 21], [2, 24], [2, 21], [7, 21], [3, 7], [2, 9], [3, 7], [2, 9], [3, 7], [2, 9], [3, 7], [5, 13], [2, 16], [2, 13], [2, 16], [5, 13], [3, 7]]
+const CASTLE_W = CASTLE_STEPS.reduce((a, [w]) => a + w, 0)
+// Regolith: a low undulating band pocked with craters.
+const MOON_STEPS = [[6, 5], [6, 6], [6, 5], [6, 7], [6, 6], [6, 5], [6, 6], [6, 7], [6, 6], [6, 5]]
+const MOON_W = 60
+
+function craters(color) {
+  const c = (cx, cy, r) => `<circle cx='${cx}' cy='${cy}' r='${r}' fill='${color}' opacity='.55'/>` +
+    `<path d='M${cx - r} ${cy}a${r} ${r} 0 0 1 ${2 * r} 0' fill='none' stroke='#ffffff' stroke-width='.6' opacity='.35'/>`
+  return c(9, 12, 2.5) + c(27, 11.5, 1.6) + c(44, 12.5, 2.8) + c(54, 11.6, 1.2)
+}
+
+// Lava cracks down the flanks of the peaks.
+function lavaCracks(color) {
+  return [[17, 3, 9], [18, 8, 6], [41, 2, 10], [42, 9, 5], [66, 10, 6], [65, 13, 4]]
+    .map(([x, y, h]) => `<rect x='${x}' y='${y}' width='1' height='${h}' fill='${color}' opacity='.9'/>`).join('')
+}
+
+SIL.reeds = (c) => svgUrl(svg(72, 22,
+  `<path fill='${c}' d='M0 22v-1h72v1z` +
+  // cattails: stalk + a fat head, several heights
+  ` M6 21V9h1v12z M5 6h3v4H5z M15 21V12h1v9z M14 9h3v4h-3z M28 21V7h1v14z M27 4h3v4h-3z` +
+  ` M39 21V13h1v8z M52 21V8h1v13z M51 5h3v4h-3z M62 21V11h1v10z M61 8h3v4h-3z'/>`))
+SIL.bamboo = (c) => svgUrl(svg(40, 24,
+  // segmented stalks: 5px culms with 1px nodes, two thick, one thin
+  `<g fill='${c}'>` +
+  [0, 6, 12, 18].map(y => `<rect x='7' y='${y}' width='3' height='5'/><rect x='24' y='${y + 2}' width='3' height='5'/><rect x='34' y='${y + 1}' width='2' height='5'/>`).join('') +
+  `<rect x='7' y='0' width='3' height='24' opacity='.55'/><rect x='24' y='0' width='3' height='24' opacity='.55'/><rect x='34' y='0' width='2' height='24' opacity='.55'/>` +
+  // leaves
+  `<path d='M10 7h6v1h-4v1h-2z M22 14h-6v1h4v1h2z M36 10h5v1h-3v1h-2z'/></g>`))
+SIL.pyramids = (c) => svgUrl(svg(120, 24,
+  `<path fill='${c}' d='M0 24v-2h120v2z M18 22l26-19 26 19z M78 22l15-11 15 11z'/>`))
+
+FG.rock = (c) => svgUrl(svg(48, 6,
+  `<path fill='${c}' d='M0 6V5h48v1z M4 5V3h3V1h4v2h2v2z M22 5V2h5v3z M35 5V3h4V2h3v1h2v2z'/>`))
+FG.reeds = (c) => svgUrl(svg(40, 7,
+  `<path fill='${c}' d='M0 7V6h40v1z M5 6V1h1v5z M4 0h3v2H4z M17 6V2h1v4z M29 6V0h1v6z M28 -2h3v3h-3z M36 6V3h1v3z'/>`))
+FG.wall = (c) => svgUrl(svg(48, 6,
+  `<path fill='${c}' d='M0 6V3h3V1h3v2h4V1h3v2h4V1h3v2h4V1h3v2h4V1h3v2h4V1h3v2h4V1h3v2h1v3z'/>`))
+FG.rocks = (c) => svgUrl(svg(40, 5,
+  `<path fill='${c}' d='M0 5V4h40v1z M6 4V2h5v2z M19 4V3h3v1z M29 4V1h4v3z'/>`))
+FG.grass = (c) => svgUrl(svg(32, 6,
+  `<path fill='${c}' d='M0 6V5h32v1z M3 5V2h1v3z M7 5V3h1v2z M12 5V1h1v4z M17 5V3h1v2z M21 5V2h1v3z M26 5V3h1v2z M29 5V1h1v4z'/>`))
+
+function leafTile(c, density) {
+  // a three-pixel diagonal streak — reads as a falling leaf at name size
+  const l = (x, y, o) => `<path fill='${c}' opacity='${o}' d='M${x} ${y}h1v1h2v1h1v1h-1v-1h-2v-1h-1z'/>`
+  if (density >= 3) return { w: 16, h: 18, url: svgUrl(svg(16, 18, l(2, 2, '.9') + l(9, 8, '.7') + l(4, 13, '.85'))) }
+  if (density === 2) return { w: 20, h: 22, url: svgUrl(svg(20, 22, l(4, 4, '.9') + l(13, 14, '.65'))) }
+  return { w: 26, h: 28, url: svgUrl(svg(26, 28, l(6, 6, '.85') + l(17, 19, '.55'))) }
+}
+
+function sparkTile(c, density) {
+  const sp = (x, y, o) => `<rect x='${x}' y='${y}' width='1' height='3' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 12, h: 16, url: svgUrl(svg(12, 16, sp(2, 2, '.95') + sp(8, 7, '.7') + sp(5, 12, '.85'))) }
+  if (density === 2) return { w: 16, h: 22, url: svgUrl(svg(16, 22, sp(3, 4, '.9') + sp(11, 14, '.65'))) }
+  return { w: 22, h: 28, url: svgUrl(svg(22, 28, sp(6, 7, '.9') + sp(15, 20, '.55'))) }
+}
+
+function dustTile(c, density) {
+  const d = (x, y, o) => `<rect x='${x}' y='${y}' width='1' height='1' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 14, h: 14, url: svgUrl(svg(14, 14, d(2, 3, '.8') + d(9, 6, '.6') + d(5, 11, '.7') + d(12, 1, '.5'))) }
+  if (density === 2) return { w: 18, h: 18, url: svgUrl(svg(18, 18, d(4, 5, '.8') + d(13, 12, '.55') + d(8, 16, '.45'))) }
+  return { w: 24, h: 22, url: svgUrl(svg(24, 22, d(6, 7, '.75') + d(17, 16, '.5'))) }
+}
+
+function confettiTile(v, density) {
+  const r = (x, y, c, o, tall) => `<rect x='${x}' y='${y}' width='${tall ? 1 : 2}' height='${tall ? 2 : 1}' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 16, h: 18, url: svgUrl(svg(16, 18, r(2, 2, v.c1, '.95') + r(9, 6, v.c2, '.85', true) + r(5, 11, v.c3, '.9') + r(12, 15, v.c1, '.7', true))) }
+  if (density === 2) return { w: 20, h: 22, url: svgUrl(svg(20, 22, r(4, 4, v.c1, '.95') + r(13, 12, v.c2, '.8', true) + r(8, 18, v.c3, '.85'))) }
+  return { w: 26, h: 28, url: svgUrl(svg(26, 28, r(6, 6, v.c1, '.9') + r(17, 19, v.c2, '.7', true))) }
+}
+
+function meteorTile(c, density) {
+  // a streak falling to the lower left, bright at the head
+  const m = (x, y, o) => `<path d='M${x + 8} ${y}l-8 5' stroke='${c}' stroke-width='1' opacity='${(o * 0.55).toFixed(2)}'/>` +
+    `<rect x='${x}' y='${y + 4}' width='2' height='2' fill='${c}' opacity='${o}'/>`
+  if (density >= 3) return { w: 24, h: 20, url: svgUrl(svg(24, 20, m(2, 2, .95) + m(12, 11, .7))) }
+  if (density === 2) return { w: 32, h: 26, url: svgUrl(svg(32, 26, m(4, 4, .9) + m(18, 16, .5))) }
+  return { w: 40, h: 30, url: svgUrl(svg(40, 30, m(8, 8, .9))) }
+}
+
+function heartTile(c, density) {
+  const h = (x, y, o) => `<path fill='${c}' opacity='${o}' d='M${x + 1} ${y}h1v1h1v-1h1v2h-1v1h-1v1h-1v-1h-1v-1h-1v-2h1z'/>`
+  if (density >= 3) return { w: 16, h: 18, url: svgUrl(svg(16, 18, h(2, 2, '.9') + h(9, 8, '.7') + h(4, 13, '.85'))) }
+  if (density === 2) return { w: 20, h: 22, url: svgUrl(svg(20, 22, h(4, 4, '.9') + h(13, 14, '.65'))) }
+  return { w: 26, h: 28, url: svgUrl(svg(26, 28, h(6, 6, '.85') + h(17, 19, '.55'))) }
 }
 
 // ── layer model ─────────────────────────────────────────────────────────────
@@ -6313,17 +6340,15 @@ const FG = {
 const L = (img, repeat, size, from, to, mid) => ({ img, repeat, size, from, to, mid })
 
 const layerCss = (l) => `${l.img} ${l.repeat} ${l.from}/${l.size}`
-const positionsAt = (layers, key) => layers.map((l) => l[key] ?? l.from).join(',')
+const positionsAt = (layers, key) => layers.map(l => l[key] ?? l.from).join(',')
 
 function positionalKeyframes(name, layers) {
   const from = positionsAt(layers, 'from')
   const to = positionsAt(layers, 'to')
-  if (layers.some((l) => l.mid)) {
-    return (
-      `@keyframes ${name}{0%{background-position:${from};}` +
+  if (layers.some(l => l.mid)) {
+    return `@keyframes ${name}{0%{background-position:${from};}` +
       `50%{background-position:${positionsAt(layers, 'mid')};}` +
       `100%{background-position:${to};}}`
-    )
   }
   return `@keyframes ${name}{from{background-position:${from};}to{background-position:${to};}}`
 }
@@ -6340,52 +6365,19 @@ function positionalKeyframes(name, layers) {
 
 const BACKDROPS = {
   dawn: {
-    label: 'desert dawn',
-    luminance: false,
-    basePeriod: 16,
+    label: 'desert dawn', luminance: false, basePeriod: 16,
     variants: [
-      {
-        name: 'ember',
-        sky: 'linear-gradient(0deg,#ff8700 0%,#b34700 22%,#6e3a52 55%,#3a2f55 82%,#23233f 100%)',
-        haze: '#ffd7af',
-        bloom: '#ffaf5f',
-        sil: '#140a02',
-        fg: '#0a0501',
-      },
-      {
-        name: 'rose',
-        sky: 'linear-gradient(0deg,#ff5f87 0%,#a03562 26%,#5f2d55 60%,#2e2345 100%)',
-        haze: '#ffc7d7',
-        bloom: '#ff87af',
-        sil: '#170812',
-        fg: '#0c0409',
-      },
-      {
-        name: 'gold',
-        sky: 'linear-gradient(0deg,#ffd700 0%,#af7800 24%,#5f4a3a 58%,#39304a 100%)',
-        haze: '#fff3b0',
-        bloom: '#ffe75f',
-        sil: '#141002',
-        fg: '#0a0801',
-      },
+      { name: 'ember', sky: 'linear-gradient(0deg,#ff8700 0%,#b34700 22%,#6e3a52 55%,#3a2f55 82%,#23233f 100%)', haze: '#ffd7af', bloom: '#ffaf5f', sil: '#140a02', fg: '#0a0501' },
+      { name: 'rose', sky: 'linear-gradient(0deg,#ff5f87 0%,#a03562 26%,#5f2d55 60%,#2e2345 100%)', haze: '#ffc7d7', bloom: '#ff87af', sil: '#170812', fg: '#0c0409' },
+      { name: 'gold', sky: 'linear-gradient(0deg,#ffd700 0%,#af7800 24%,#5f4a3a 58%,#39304a 100%)', haze: '#fff3b0', bloom: '#ffe75f', sil: '#141002', fg: '#0a0801' },
     ],
     build(v) {
       return {
         layers: [
           L(SIL.dunes(v.sil), 'repeat-x', 'auto 42%', '0 100%', '0 100%'),
-          L(
-            `linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
-            'no-repeat',
-            '220% 58%',
-            '200% 78%',
-            '-100% 78%',
-          ),
-          L(
-            `radial-gradient(90% 90% at 50% 108%,${v.bloom}66 0%,${v.bloom}22 40%,transparent 70%)`,
-            'no-repeat',
-            '100% 100%',
-            '0 0',
-          ),
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
+            'no-repeat', '220% 58%', '200% 78%', '-100% 78%'),
+          L(`radial-gradient(90% 90% at 50% 108%,${v.bloom}66 0%,${v.bloom}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
           L(v.sky, 'no-repeat', '100% 100%', '0 0'),
         ],
         fg: L(FG.dunes(v.fg), 'repeat-x', 'auto 26%', '0 100%'),
@@ -6397,40 +6389,14 @@ const BACKDROPS = {
     // Overcast by construction: the sky is brightest at the horizon (the glow
     // the clouds are lit from) and darkest at the top, where two blocky cloud
     // decks hang down over it.
-    label: 'graveyard',
-    luminance: false,
-    basePeriod: 22,
+    label: 'graveyard', luminance: false, basePeriod: 22,
     variants: [
       // Sky runs bright at the horizon (0% is the BOTTOM at 0deg) to near-black
       // at the top; the decks are LIGHTER than that top, because an overcast
       // lid lit from below by the same glow is what you actually see at night.
-      {
-        name: 'ash',
-        sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)',
-        near: '#33333d',
-        far: '#292933',
-        moon: '#c6c6d2',
-        sil: '#08080a',
-        fg: '#000000',
-      },
-      {
-        name: 'blood',
-        sky: 'linear-gradient(0deg,#4a2428 0%,#301a1e 40%,#1c1114 75%,#120b0d 100%)',
-        near: '#3d2126',
-        far: '#33191e',
-        moon: '#e0a0a0',
-        sil: '#0a0608',
-        fg: '#000000',
-      },
-      {
-        name: 'moonlit',
-        sky: 'linear-gradient(0deg,#33435f 0%,#222d44 40%,#141c2b 75%,#0d1220 100%)',
-        near: '#2b3750',
-        far: '#232e44',
-        moon: '#dce8ff',
-        sil: '#060810',
-        fg: '#000105',
-      },
+      { name: 'ash', sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)', near: '#33333d', far: '#292933', moon: '#c6c6d2', sil: '#08080a', fg: '#000000' },
+      { name: 'blood', sky: 'linear-gradient(0deg,#4a2428 0%,#301a1e 40%,#1c1114 75%,#120b0d 100%)', near: '#3d2126', far: '#33191e', moon: '#e0a0a0', sil: '#0a0608', fg: '#000000' },
+      { name: 'moonlit', sky: 'linear-gradient(0deg,#33435f 0%,#222d44 40%,#141c2b 75%,#0d1220 100%)', near: '#2b3750', far: '#232e44', moon: '#dce8ff', sil: '#060810', fg: '#000105' },
     ],
     build(v) {
       const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
@@ -6451,43 +6417,18 @@ const BACKDROPS = {
   },
 
   abyss: {
-    label: 'abyss',
-    luminance: false,
-    basePeriod: 18,
+    label: 'abyss', luminance: false, basePeriod: 18,
     variants: [
-      {
-        name: 'blue',
-        sky: 'linear-gradient(180deg,#00344e 0%,#001d2e 45%,#000a12 100%)',
-        ray: '#00d7ff',
-        sil: '#010508',
-        fg: '#000103',
-      },
-      {
-        name: 'teal',
-        sky: 'linear-gradient(180deg,#00443b 0%,#00251f 45%,#000d0a 100%)',
-        ray: '#00ffd7',
-        sil: '#010806',
-        fg: '#000302',
-      },
-      {
-        name: 'void',
-        sky: 'linear-gradient(180deg,#1e0f38 0%,#100822 45%,#05030e 100%)',
-        ray: '#875fff',
-        sil: '#040208',
-        fg: '#020004',
-      },
+      { name: 'blue', sky: 'linear-gradient(180deg,#00344e 0%,#001d2e 45%,#000a12 100%)', ray: '#00d7ff', sil: '#010508', fg: '#000103' },
+      { name: 'teal', sky: 'linear-gradient(180deg,#00443b 0%,#00251f 45%,#000d0a 100%)', ray: '#00ffd7', sil: '#010806', fg: '#000302' },
+      { name: 'void', sky: 'linear-gradient(180deg,#1e0f38 0%,#100822 45%,#05030e 100%)', ray: '#875fff', sil: '#040208', fg: '#020004' },
     ],
     build(v) {
       return {
         layers: [
           L(SIL.reef(v.sil), 'repeat-x', 'auto 26%', '0 100%', '0 100%'),
-          L(
-            `linear-gradient(104deg,transparent 30%,${v.ray}14 42%,transparent 50%,${v.ray}0e 62%,transparent 72%)`,
-            'no-repeat',
-            '260% 100%',
-            '-90% 0',
-            '190% 0',
-          ),
+          L(`linear-gradient(104deg,transparent 30%,${v.ray}14 42%,transparent 50%,${v.ray}0e 62%,transparent 72%)`,
+            'no-repeat', '260% 100%', '-90% 0', '190% 0'),
           L(`radial-gradient(80% 60% at 50% -10%,${v.ray}20 0%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
           L(v.sky, 'no-repeat', '100% 100%', '0 0'),
         ],
@@ -6497,46 +6438,18 @@ const BACKDROPS = {
   },
 
   nightfall: {
-    label: 'nightfall',
-    luminance: false,
-    basePeriod: 20,
+    label: 'nightfall', luminance: false, basePeriod: 20,
     variants: [
-      {
-        name: 'aurora',
-        sky: 'linear-gradient(0deg,#0a0a16 0%,#12122a 55%,#0a0a18 100%)',
-        a1: '#00ff87',
-        a2: '#00d7ff',
-        sil: '#04040a',
-        fg: '#000004',
-      },
-      {
-        name: 'magenta',
-        sky: 'linear-gradient(0deg,#120a16 0%,#1c122a 55%,#100a18 100%)',
-        a1: '#ff40af',
-        a2: '#875fff',
-        sil: '#08040a',
-        fg: '#030004',
-      },
-      {
-        name: 'ice',
-        sky: 'linear-gradient(0deg,#0a0e16 0%,#101a2a 55%,#0a0e18 100%)',
-        a1: '#87d7ff',
-        a2: '#d7ffff',
-        sil: '#04060c',
-        fg: '#000206',
-      },
+      { name: 'aurora', sky: 'linear-gradient(0deg,#0a0a16 0%,#12122a 55%,#0a0a18 100%)', a1: '#00ff87', a2: '#00d7ff', sil: '#04040a', fg: '#000004' },
+      { name: 'magenta', sky: 'linear-gradient(0deg,#120a16 0%,#1c122a 55%,#100a18 100%)', a1: '#ff40af', a2: '#875fff', sil: '#08040a', fg: '#030004' },
+      { name: 'ice', sky: 'linear-gradient(0deg,#0a0e16 0%,#101a2a 55%,#0a0e18 100%)', a1: '#87d7ff', a2: '#d7ffff', sil: '#04060c', fg: '#000206' },
     ],
     build(v) {
       return {
         layers: [
           L(SIL.pines(v.sil), 'repeat-x', 'auto 46%', '0 100%', '0 100%'),
-          L(
-            `linear-gradient(100deg,transparent 15%,${v.a1}30 35%,${v.a2}2e 50%,${v.a1}24 62%,transparent 82%)`,
-            'no-repeat',
-            '240% 90%',
-            '-90% 0',
-            '190% 0',
-          ),
+          L(`linear-gradient(100deg,transparent 15%,${v.a1}30 35%,${v.a2}2e 50%,${v.a1}24 62%,transparent 82%)`,
+            'no-repeat', '240% 90%', '-90% 0', '190% 0'),
           L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0'),
           L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px'),
           L(v.sky, 'no-repeat', '100% 100%', '0 0'),
@@ -6548,9 +6461,7 @@ const BACKDROPS = {
 
   terminal: {
     // No foreground: a CRT has no landscape to stand in front of.
-    label: 'terminal',
-    luminance: false,
-    basePeriod: 9,
+    label: 'terminal', luminance: false, basePeriod: 9,
     variants: [
       { name: 'phosphor', ph: '#00ff5f', plate: 'linear-gradient(#0c0c0c,#060606)' },
       { name: 'amber', ph: '#ffb000', plate: 'linear-gradient(#0e0a04,#070502)' },
@@ -6559,13 +6470,7 @@ const BACKDROPS = {
     build(v) {
       return {
         layers: [
-          L(
-            `linear-gradient(0deg,transparent 38%,${v.ph}16 50%,transparent 62%)`,
-            'no-repeat',
-            '100% 300%',
-            '0 0',
-            '0 100%',
-          ),
+          L(`linear-gradient(0deg,transparent 38%,${v.ph}16 50%,transparent 62%)`, 'no-repeat', '100% 300%', '0 0', '0 100%'),
           L(`repeating-linear-gradient(0deg,${v.ph}0d 0 1px,transparent 1px 3px)`, 'repeat', '100% auto', '0 0'),
           L(v.plate, 'no-repeat', '100% 100%', '0 0'),
         ],
@@ -6574,9 +6479,7 @@ const BACKDROPS = {
   },
 
   furnace: {
-    label: 'furnace',
-    luminance: true,
-    basePeriod: 5,
+    label: 'furnace', luminance: true, basePeriod: 5,
     variants: [
       { name: 'coal', glow: '#ff3700', plate: 'linear-gradient(0deg,#1c0300 0%,#0d0202 55%,#050505 100%)' },
       { name: 'ion', glow: '#00afff', plate: 'linear-gradient(0deg,#001030 0%,#020818 55%,#040404 100%)' },
@@ -6600,6 +6503,380 @@ const BACKDROPS = {
       }
     },
   },
+  ocean: {
+    label: 'open sea', luminance: false, basePeriod: 14,
+    variants: [
+      { name: 'sunset', sky: 'linear-gradient(0deg,#ff8700 0%,#c04a3a 24%,#6a2e5a 58%,#26203f 100%)', water: '#0d3a4a', far: '#164e60', bloom: '#ffb05f', glit: '#ffd7af', fg: '#061a22' },
+      { name: 'midnight', sky: 'linear-gradient(0deg,#1e3a6e 0%,#10224a 40%,#080f24 100%)', water: '#06182a', far: '#0b2438', bloom: '#c8d8ff', glit: '#e8f0ff', fg: '#030b14' },
+      { name: 'tropic', sky: 'linear-gradient(0deg,#00d7ff 0%,#0090c0 30%,#2a4a8a 70%,#1c2450 100%)', water: '#00485a', far: '#006070', bloom: '#ffffff', glit: '#d7ffff', fg: '#002a34' },
+    ],
+    build(v) {
+      const near = band(SWELL_NEAR_STEPS, SWELL_NEAR_W, 12, v.water, '1')
+      const far = band(SWELL_FAR_STEPS, SWELL_FAR_W, 16, v.far, '1')
+      return {
+        layers: [
+          // Swells advance one own-tile per loop, opposite directions — the
+          // near one faster because its tile is narrower. Seamless by construction.
+          L(near.url, 'repeat-x', `${near.w}px 34%`, '0 100%', `-${near.w}px 100%`),
+          L(far.url, 'repeat-x', `${far.w}px 46%`, '0 100%', `${far.w}px 100%`),
+          // Sun path glitter — a broken line on the water that walks with the swell.
+          L(`repeating-linear-gradient(90deg,transparent 0 3px,${v.glit}66 3px 4px,transparent 4px 7px)`, 'repeat-x', '100% 8%', '0 60%', '7px 60%'),
+          L(`radial-gradient(70% 70% at 50% 62%,${v.bloom}88 0%,${v.bloom}22 35%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.swell(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+      }
+    },
+  },
+
+  skyline: {
+    label: 'city night', luminance: false, basePeriod: 26,
+    variants: [
+      { name: 'neon', sky: 'linear-gradient(0deg,#3a1050 0%,#1a0a2e 40%,#0a0616 100%)', glow: '#ff40af', win: '#00e5ff', near: '#0a0612', far: '#1c1030', fg: '#05030a' },
+      { name: 'sodium', sky: 'linear-gradient(0deg,#2a1a08 0%,#120a04 45%,#070402 100%)', glow: '#ff8700', win: '#ffb000', near: '#0c0804', far: '#1f1408', fg: '#050302' },
+      { name: 'dusk', sky: 'linear-gradient(0deg,#2c3a6e 0%,#182040 45%,#0a0e1e 100%)', glow: '#ff87af', win: '#ffd75f', near: '#0a0c18', far: '#1a2040', fg: '#04050c' },
+    ],
+    build(v) {
+      const near = cityDeck(CITY_NEAR_STEPS, CITY_NEAR_W, 24, v.near, v.win)
+      const far = cityDeck(CITY_FAR_STEPS, CITY_FAR_W, 24, v.far, v.win)
+      return {
+        layers: [
+          L(near.url, 'repeat-x', `${near.w}px 78%`, '0 100%', `-${near.w}px 100%`),
+          L(far.url, 'repeat-x', `${far.w}px 60%`, '0 100%', `-${far.w}px 100%`),
+          L(`radial-gradient(80% 60% at 50% 100%,${v.glow}40 0%,${v.glow}14 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.roof(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+      }
+    },
+  },
+
+  orbit: {
+    // No foreground: nothing stands in front of a name in orbit.
+    label: 'orbit', luminance: false, basePeriod: 30,
+    variants: [
+      { name: 'mars', sky: 'linear-gradient(0deg,#160a0a 0%,#08050a 100%)', planet: '#7a2e14', rim: '#ff875f', neb: '#ff5f00' },
+      { name: 'nebula', sky: 'linear-gradient(0deg,#100a1c 0%,#05040c 100%)', planet: '#1e1440', rim: '#af5fff', neb: '#d787ff' },
+      { name: 'ice', sky: 'linear-gradient(0deg,#08121c 0%,#04070c 100%)', planet: '#0e2a3a', rim: '#87d7ff', neb: '#00d7ff' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          // A curved horizon with a lit rim — the planet is below the plate,
+          // only its limb shows.
+          L(`radial-gradient(160% 110% at 50% 168%,${v.planet} 0 44%,${v.rim}99 45%,transparent 50%)`, 'no-repeat', '100% 100%', '0 0'),
+          // Star fields drift one own-tile per loop — seamless, and the two
+          // tile widths are the parallax.
+          L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0', '-17px 0'),
+          L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px', '-18px 7px'),
+          L(`linear-gradient(100deg,transparent 20%,${v.neb}26 40%,${v.neb}14 52%,transparent 70%)`, 'no-repeat', '240% 100%', '-90% 0', '190% 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+      }
+    },
+  },
+
+  synth: {
+    // No foreground: the grid IS the ground.
+    label: 'outrun', luminance: false, basePeriod: 1.4,
+    variants: [
+      { name: 'magenta', sun: '#ff40af', skyA: '#12041e', skyB: '#3a0c46', line: '#ff5fd7', floor: '#180830' },
+      { name: 'cyan', sun: '#00e5ff', skyA: '#04101e', skyB: '#0a2a46', line: '#00d7ff', floor: '#061a30' },
+      { name: 'gold', sun: '#ffd700', skyA: '#1a0a04', skyB: '#4a1e08', line: '#ffaf00', floor: '#241004' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          // Sun + sky in ONE opaque top box: the disc is centred on the box's
+          // bottom edge, so the horizon cuts it in half, and the box hides the
+          // 5px the grid overlaps past the horizon (below) while it scrolls.
+          L(`radial-gradient(circle at 50% 100%,${v.sun} 0 5px,${v.skyB} 5.5px 14px,${v.skyA} 100%)`, 'no-repeat', '100% 54%', '0 0'),
+          // Horizontal grid lines roll toward the viewer: one 5px period per
+          // loop, seamless. The box is 5px taller than the floor so a line is
+          // never missing at the top mid-scroll.
+          L(`repeating-linear-gradient(0deg,${v.line}cc 0 1px,transparent 1px 5px)`, 'repeat', '100% calc(46% + 5px)', '0 100%', '0 calc(100% + 5px)'),
+          L(`repeating-linear-gradient(90deg,${v.line}55 0 1px,transparent 1px 9px)`, 'no-repeat', '100% 46%', '0 100%'),
+          L(`linear-gradient(180deg,${v.floor} 0%,#000000 100%)`, 'no-repeat', '100% 46%', '0 100%'),
+          L('linear-gradient(#000000,#000000)', 'no-repeat', '100% 100%', '0 0'),
+        ],
+      }
+    },
+  },
+
+  glacier: {
+    label: 'glacier', luminance: false, basePeriod: 28,
+    variants: [
+      { name: 'polar', sky: 'linear-gradient(0deg,#5a7a9a 0%,#2c4560 35%,#131c2c 100%)', ice: '#3a6a8a', far: '#2a4a66', bloom: '#dff3ff', haze: '#c0e0ff', fg: '#1a3448' },
+      { name: 'dusk', sky: 'linear-gradient(0deg,#8a4a6e 0%,#3c2a52 40%,#141224 100%)', ice: '#4a4a7a', far: '#36305a', bloom: '#ffb0d0', haze: '#ffc0e0', fg: '#221a3a' },
+      { name: 'night', sky: 'linear-gradient(0deg,#1c3a4a 0%,#0c1e2c 40%,#050a12 100%)', ice: '#1e4a5e', far: '#163a4a', bloom: '#87ffd7', haze: '#5fd7c0', fg: '#0a2430' },
+    ],
+    build(v) {
+      const near = band(ICE_NEAR_STEPS, ICE_NEAR_W, 10, v.ice, '1')
+      const far = band(ICE_FAR_STEPS, ICE_FAR_W, 14, v.far, '1')
+      return {
+        layers: [
+          L(near.url, 'repeat-x', `${near.w}px 32%`, '0 100%', `-${near.w}px 100%`),
+          L(far.url, 'repeat-x', `${far.w}px 48%`, '0 100%', `-${far.w}px 100%`),
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}30 35%,${v.haze}4a 50%,${v.haze}30 65%,transparent 100%)`,
+            'no-repeat', '220% 40%', '200% 60%', '-100% 60%'),
+          L(`radial-gradient(60% 60% at 50% 70%,${v.bloom}55 0%,${v.bloom}18 40%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.ice(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+      }
+    },
+  },
+
+  sakura: {
+    label: 'sakura', luminance: false, basePeriod: 20,
+    variants: [
+      { name: 'blossom', sky: 'linear-gradient(0deg,#ffafd7 0%,#d76e9e 30%,#6a3a6e 65%,#2e1f44 100%)', bloom: '#ffd7e8', sil: '#1a0a14', haze: '#ffd7e8', fg: '#0e0509' },
+      { name: 'dusk', sky: 'linear-gradient(0deg,#ff87af 0%,#8a3a7a 32%,#3a2058 66%,#181030 100%)', bloom: '#ffafd7', sil: '#140812', haze: '#d7afff', fg: '#0a040a' },
+      { name: 'night', sky: 'linear-gradient(0deg,#3a2050 0%,#1c1030 45%,#0a0818 100%)', bloom: '#ff87c0', sil: '#06040a', haze: '#ffafd7', fg: '#030204' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          L(SIL.sakura(v.sil, v.bloom), 'repeat-x', 'auto 62%', '0 100%', '0 100%'),
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}2e 35%,${v.haze}44 50%,${v.haze}2e 65%,transparent 100%)`,
+            'no-repeat', '220% 50%', '-100% 30%', '200% 30%'),
+          L(`radial-gradient(50% 60% at 30% 20%,${v.bloom}55 0%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.sakura(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+      }
+    },
+  },
+
+  volcano: {
+    label: 'volcano', luminance: false, basePeriod: 12,
+    variants: [
+      { name: 'magma', sky: 'linear-gradient(0deg,#5f0000 0%,#2a0505 30%,#100404 70%,#080303 100%)', lava: '#ff5f00', hot: '#ffaf00', sil: '#0d0404', fg: '#050101' },
+      { name: 'sulfur', sky: 'linear-gradient(0deg,#5f4a00 0%,#2a2005 30%,#121006 70%,#080704 100%)', lava: '#ffd700', hot: '#ffff5f', sil: '#0d0a02', fg: '#050400' },
+      { name: 'hex', sky: 'linear-gradient(0deg,#3a0a5f 0%,#1c0830 30%,#0c0416 70%,#060208 100%)', lava: '#af5fff', hot: '#d7afff', sil: '#08040d', fg: '#030105' },
+    ],
+    build(v) {
+      const peaks = band(PEAK_STEPS, PEAK_W, 24, v.sil, '1', lavaCracks(v.lava))
+      return {
+        layers: [
+          L(peaks.url, 'repeat-x', `${peaks.w}px 58%`, '0 100%', '0 100%'),
+          // ash drifting across the slopes
+          L(`linear-gradient(90deg,transparent 0%,${v.sil}99 40%,${v.sil}bb 50%,${v.sil}99 60%,transparent 100%)`,
+            'no-repeat', '220% 36%', '-100% 30%', '200% 30%'),
+          L(`radial-gradient(80% 70% at 50% 110%,${v.lava}77 0%,${v.lava}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.rock(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+      }
+    },
+  },
+
+  alpine: {
+    label: 'alpine', luminance: false, basePeriod: 24,
+    variants: [
+      { name: 'sunrise', sky: 'linear-gradient(0deg,#ffaf5f 0%,#d75f5f 22%,#5f5f87 55%,#1c1c3a 100%)', far: '#4a4a7a', near: '#22223a', cap: '#ffffff', haze: '#ffd7af', fg: '#0a0a14' },
+      { name: 'day', sky: 'linear-gradient(0deg,#87d7ff 0%,#5fafd7 30%,#1c5f8a 70%,#0c2a4a 100%)', far: '#3a6a8a', near: '#1c3a52', cap: '#ffffff', haze: '#d7ffff', fg: '#081420' },
+      { name: 'dusk', sky: 'linear-gradient(0deg,#ff5f87 0%,#8a3a6e 28%,#3a2a5f 62%,#12102a 100%)', far: '#4a3a6e', near: '#221a3a', cap: '#ffd7ff', haze: '#ffafd7', fg: '#0a0614' },
+    ],
+    build(v) {
+      const near = ridge(RIDGE_NEAR_STEPS, RIDGE_NEAR_W, 14, v.near, v.cap)
+      const far = ridge(RIDGE_FAR_STEPS, RIDGE_FAR_W, 20, v.far, v.cap)
+      return {
+        layers: [
+          L(near.url, 'repeat-x', `${near.w}px 40%`, '0 100%', `-${near.w}px 100%`),
+          L(far.url, 'repeat-x', `${far.w}px 62%`, '0 100%', `-${far.w}px 100%`),
+          // a cloud line hanging at the far ridge's shoulders
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}40 35%,${v.haze}66 50%,${v.haze}40 65%,transparent 100%)`,
+            'no-repeat', '220% 22%', '200% 48%', '-100% 48%'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.pines(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+      }
+    },
+  },
+
+  swamp: {
+    label: 'swamp', luminance: false, basePeriod: 18,
+    variants: [
+      { name: 'bog', sky: 'linear-gradient(0deg,#3a5f2a 0%,#1c3018 35%,#0c160c 75%,#060a06 100%)', water: '#0a1a10', wisp: '#87ff5f', sil: '#08120a', fg: '#030603' },
+      { name: 'blackwater', sky: 'linear-gradient(0deg,#2a3a5f 0%,#141c30 35%,#0a0e18 75%,#050708 100%)', water: '#080e1a', wisp: '#5fd7ff', sil: '#060a12', fg: '#020306' },
+      { name: 'sulfur', sky: 'linear-gradient(0deg,#5f5f1c 0%,#30300c 35%,#161606 75%,#0a0a04 100%)', water: '#14140a', wisp: '#ffff5f', sil: '#101006', fg: '#050502' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          L(SIL.reeds(v.sil), 'repeat-x', 'auto 60%', '0 100%', '0 100%'),
+          // a will-o'-the-wisp wandering behind the reeds
+          L(`radial-gradient(22% 60% at 50% 60%,${v.wisp}66 0%,${v.wisp}22 45%,transparent 70%)`,
+            'no-repeat', '140% 100%', '-60% 0', '160% 0'),
+          L(`linear-gradient(0deg,${v.water} 0%,${v.water} 60%,transparent 100%)`, 'no-repeat', '100% 22%', '0 100%'),
+          L(`linear-gradient(90deg,transparent 0%,${v.sil}66 40%,${v.sil}88 50%,${v.sil}66 60%,transparent 100%)`,
+            'no-repeat', '220% 40%', '200% 70%', '-100% 70%'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.reeds(v.fg), 'repeat-x', 'auto 28%', '0 100%'),
+      }
+    },
+  },
+
+  castle: {
+    label: 'castle', luminance: false, basePeriod: 26,
+    variants: [
+      { name: 'moonlit', sky: 'linear-gradient(0deg,#2c3a5f 0%,#1a2240 40%,#0e1224 75%,#080a14 100%)', wall: '#0a0c16', win: '#ffd75f', near: '#1c2440', far: '#16203a', moon: '#dce8ff', fg: '#040610' },
+      { name: 'blood', sky: 'linear-gradient(0deg,#5f1c24 0%,#361018 40%,#1c0a0e 75%,#0e0508 100%)', wall: '#100608', win: '#ff8700', near: '#3a1820', far: '#2e1218', moon: '#ff8787', fg: '#060203' },
+      { name: 'dawn', sky: 'linear-gradient(0deg,#ffaf87 0%,#af5f6e 30%,#4a3a5f 65%,#1c1a30 100%)', wall: '#14101c', win: '#ffd7af', near: '#3a2e4a', far: '#2c2440', moon: '#fff3d7', fg: '#08060c' },
+    ],
+    build(v) {
+      const keep = cityDeck(CASTLE_STEPS, CASTLE_W, 24, v.wall, v.win)
+      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
+      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
+      return {
+        layers: [
+          L(keep.url, 'repeat-x', `${keep.w}px 70%`, '0 100%', '0 100%'),
+          L(near.url, 'repeat-x', `${near.w}px 40%`, '0 0', `-${near.w}px 0`),
+          L(far.url, 'repeat-x', `${far.w}px 30%`, '0 0', `-${far.w}px 0`),
+          L(`radial-gradient(circle at 70% 18%,${v.moon} 0 3px,${v.moon}44 3.5px 7px,transparent 12px)`, 'no-repeat', '100% 100%', '0 0'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.wall(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+      }
+    },
+  },
+
+  moon: {
+    label: 'moon', luminance: false, basePeriod: 30,
+    variants: [
+      { name: 'regolith', sky: 'linear-gradient(0deg,#0a0a0c 0%,#040406 100%)', ground: '#5f5f5f', crater: '#303030', earth: '#5fafff', earthB: '#1c5f8a', fg: '#262626' },
+      { name: 'blue hour', sky: 'linear-gradient(0deg,#0a1020 0%,#04060c 100%)', ground: '#4a5a7a', crater: '#26304a', earth: '#87d7ff', earthB: '#2a6ab0', fg: '#1c2436' },
+      { name: 'sepia', sky: 'linear-gradient(0deg,#140e08 0%,#080604 100%)', ground: '#7a6a4a', crater: '#3a3020', earth: '#ffd7af', earthB: '#af7a4a', fg: '#302818' },
+    ],
+    build(v) {
+      const ground = band(MOON_STEPS, MOON_W, 14, v.ground, '1', craters(v.crater))
+      return {
+        layers: [
+          L(ground.url, 'repeat-x', `${ground.w}px 44%`, '0 100%', '0 100%'),
+          // earthrise: a lit disc at the upper right, half above the plate
+          L(`radial-gradient(circle at 80% 0%,${v.earth} 0 3px,${v.earthB} 3.5px 6px,${v.earthB}44 6.5px 7px,transparent 7.5px)`, 'no-repeat', '100% 100%', '0 0'),
+          L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0', '-17px 0'),
+          L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px', '-18px 7px'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.rocks(v.fg), 'repeat-x', 'auto 20%', '0 100%'),
+      }
+    },
+  },
+
+  circuit: {
+    // No foreground: a board has nothing standing on it.
+    label: 'circuit', luminance: false, basePeriod: 4,
+    variants: [
+      { name: 'green', c: '#00ff5f', plate: 'linear-gradient(#061a0c,#03100a)' },
+      { name: 'blue', c: '#00afff', plate: 'linear-gradient(#04101c,#020a14)' },
+      { name: 'amber', c: '#ffb000', plate: 'linear-gradient(#1a1204,#100a02)' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          // two signals racing the traces in opposite directions
+          L(`linear-gradient(90deg,transparent 0%,${v.c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '-40% 6px', '140% 6px'),
+          L(`linear-gradient(90deg,transparent 0%,${v.c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '140% 18px', '-40% 18px'),
+          L(`radial-gradient(circle,${v.c}55 0 .7px,transparent 1.1px)`, 'repeat', '18px 12px', '4px 3px'),
+          L(`repeating-linear-gradient(0deg,${v.c}22 0 1px,transparent 1px 6px)`, 'repeat', '100% auto', '0 0'),
+          L(`repeating-linear-gradient(90deg,${v.c}22 0 1px,transparent 1px 9px)`, 'repeat', 'auto 100%', '0 0'),
+          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+        ],
+      }
+    },
+  },
+
+  eclipse: {
+    // No foreground. The corona breathes, so this is the second alternating
+    // plate (with furnace) — and like it, never hosts a far-weather plane.
+    label: 'eclipse', luminance: true, basePeriod: 6,
+    variants: [
+      { name: 'solar', corona: '#ffd7af', plate: 'linear-gradient(#050505,#000000)' },
+      { name: 'blood', corona: '#ff5f5f', plate: 'linear-gradient(#080303,#000000)' },
+      { name: 'void', corona: '#af87ff', plate: 'linear-gradient(#050308,#000000)' },
+    ],
+    build(v, hash) {
+      const cv = `--hsb-${hash}`
+      return {
+        layers: [
+          L(`radial-gradient(circle at 50% 50%,#000000 0 6px,var(${cv}) 6.5px 8px,transparent 13px)`, 'no-repeat', '100% 100%', '0 0'),
+          L('radial-gradient(circle,#ffffff99 0 .5px,transparent 1px)', 'repeat', '19px 15px', '3px 2px'),
+          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        alternate: true,
+        props: `@property ${cv}{syntax:"<color>";initial-value:${v.corona}88;inherits:false;}`,
+        keyframesBody: `{from{${cv}:${v.corona}66;}to{${cv}:${v.corona}cc;}}`,
+      }
+    },
+  },
+
+  arcade: {
+    // No foreground: the floor IS the ground. Same construction as outrun —
+    // the ceiling is an opaque top box over a floor that scrolls sideways one
+    // tile per loop.
+    label: 'arcade', luminance: false, basePeriod: 2,
+    variants: [
+      { name: 'magenta', c: '#ff40af', c1: '#1c0830', c2: '#3a1050', plate: 'linear-gradient(#12041e,#3a1050)' },
+      { name: 'cyan', c: '#00e5ff', c1: '#04101e', c2: '#0a2a46', plate: 'linear-gradient(#04101e,#0a2a46)' },
+      { name: 'yellow', c: '#ffd700', c1: '#1a1204', c2: '#3a2a08', plate: 'linear-gradient(#1a1204,#3a2a08)' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          L(`repeating-linear-gradient(90deg,${v.c} 0 3px,transparent 3px 7px)`, 'repeat-x', '7px 2px', '0 10%', '-7px 10%'),
+          L(`linear-gradient(180deg,${v.c1} 0%,${v.c1} 100%)`, 'no-repeat', '100% 60%', '0 0'),
+          L(`radial-gradient(80% 40% at 50% 60%,${v.c}55 0%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`repeating-conic-gradient(${v.c1} 0 25%,${v.c2} 0 50%)`, 'repeat', '8px 8px', '0 0', '-8px 0'),
+          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+        ],
+      }
+    },
+  },
+
+  bamboo: {
+    label: 'bamboo', luminance: false, basePeriod: 20,
+    variants: [
+      { name: 'grove', sky: 'linear-gradient(0deg,#5f875f 0%,#3a5f3a 35%,#1c301c 75%,#0c160c 100%)', sil: '#0a1a0a', haze: '#d7ffd7', fg: '#040a04' },
+      { name: 'mist', sky: 'linear-gradient(0deg,#5f7a87 0%,#3a4a5f 35%,#1c2430 75%,#0c1016 100%)', sil: '#0a1216', haze: '#d7e4ff', fg: '#040608' },
+      { name: 'dusk', sky: 'linear-gradient(0deg,#af875f 0%,#6e4a3a 35%,#30221c 75%,#16100c 100%)', sil: '#160c08', haze: '#ffd7af', fg: '#080402' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          L(SIL.bamboo(v.sil), 'repeat-x', 'auto 100%', '0 0', '0 0'),
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}30 35%,${v.haze}4a 50%,${v.haze}30 65%,transparent 100%)`,
+            'no-repeat', '220% 50%', '-100% 40%', '200% 40%'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.grass(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+      }
+    },
+  },
+
+  giza: {
+    label: 'pyramids', luminance: false, basePeriod: 22,
+    variants: [
+      { name: 'dusk', sky: 'linear-gradient(0deg,#ff8700 0%,#af4a3a 28%,#5f2e5a 62%,#26203f 100%)', sun: '#ffd75f', sil: '#2a1408', haze: '#ffd7af', fg: '#0e0803' },
+      { name: 'night', sky: 'linear-gradient(0deg,#1c2a5f 0%,#101a40 40%,#080c20 100%)', sun: '#dce8ff', sil: '#0a0e1c', haze: '#afc0ff', fg: '#04060c' },
+      { name: 'sandstorm', sky: 'linear-gradient(0deg,#d7a05f 0%,#a0703a 35%,#5f4a30 70%,#302418 100%)', sun: '#fff3b0', sil: '#3a2410', haze: '#ffd7af', fg: '#120a04' },
+    ],
+    build(v) {
+      return {
+        layers: [
+          L(SIL.pyramids(v.sil), 'repeat-x', 'auto 70%', '0 100%', '0 100%'),
+          L(`radial-gradient(circle at 74% 70%,${v.sun} 0 3px,${v.sun}44 3.5px 7px,transparent 10px)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
+            'no-repeat', '220% 40%', '200% 90%', '-100% 90%'),
+          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+        ],
+        fg: L(FG.dunes(v.fg), 'repeat-x', 'auto 26%', '0 100%'),
+      }
+    },
+  },
+
 }
 
 // ── weather catalog ─────────────────────────────────────────────────────────
@@ -6619,9 +6896,7 @@ const BACKDROPS = {
 
 const WEATHERS = {
   rain: {
-    label: 'rain',
-    luminance: false,
-    basePeriod: 0.9,
+    label: 'rain', luminance: false, basePeriod: 0.9,
     variants: [
       { name: 'silver', c: '#9db4c9' },
       { name: 'blood', c: '#d70000' },
@@ -6629,8 +6904,7 @@ const WEATHERS = {
     ],
     near(v, density) {
       const t = rainTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4),
-        h2 = Math.round(t.h * 1.4)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
           L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
@@ -6641,19 +6915,12 @@ const WEATHERS = {
     far(v, density) {
       // Smaller and dimmer than the near plane — that is what distance is.
       const t = rainTile(v.c, Math.min(3, density + 1))
-      return {
-        img: t.url,
-        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
-        tile: Math.round(t.h * 0.7),
-        opacity: '.5',
-      }
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
     },
   },
 
   snow: {
-    label: 'snow',
-    luminance: false,
-    basePeriod: 4.5,
+    label: 'snow', luminance: false, basePeriod: 4.5,
     variants: [
       { name: 'white', c: '#ffffff' },
       { name: 'ash', c: '#9e9e9e' },
@@ -6661,8 +6928,7 @@ const WEATHERS = {
     ],
     near(v, density) {
       const t = snowTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4),
-        h2 = Math.round(t.h * 1.4)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
           L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `2px ${Math.round(t.h / 2)}px`),
@@ -6672,12 +6938,7 @@ const WEATHERS = {
     },
     far(v, density) {
       const t = snowTile(v.c, Math.min(3, density + 1))
-      return {
-        img: t.url,
-        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
-        tile: Math.round(t.h * 0.7),
-        opacity: '.55',
-      }
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
     },
   },
 
@@ -6687,10 +6948,7 @@ const WEATHERS = {
     // it washes the name out on bright plates — so it takes the space between
     // the plate and the name, which is exactly where a foreground silhouette
     // would also want to be.
-    label: 'fog (behind the name)',
-    luminance: false,
-    basePeriod: 16,
-    behindText: true,
+    label: 'fog (behind the name)', luminance: false, basePeriod: 16, behindText: true,
     variants: [
       // sunglow used to be #ffd7af — the exact hex of the desert-dawn plate's
       // own haze band, so the most obvious pairing in the catalog rendered a
@@ -6703,20 +6961,10 @@ const WEATHERS = {
       const a = density >= 3 ? ['80', '4d'] : density === 2 ? ['66', '38'] : ['40', '26']
       return {
         layers: [
-          L(
-            `radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%)`,
-            'no-repeat',
-            '160% 100%',
-            '-60% 40%',
-            '160% 40%',
-          ),
-          L(
-            `radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%)`,
-            'no-repeat',
-            '200% 100%',
-            '160% 70%',
-            '-60% 70%',
-          ),
+          L(`radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%)`,
+            'no-repeat', '160% 100%', '-60% 40%', '160% 40%'),
+          L(`radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%)`,
+            'no-repeat', '200% 100%', '160% 70%', '-60% 70%'),
         ],
         alternate: true,
       }
@@ -6724,9 +6972,7 @@ const WEATHERS = {
   },
 
   embers: {
-    label: 'embers',
-    luminance: false,
-    basePeriod: 3.2,
+    label: 'embers', luminance: false, basePeriod: 3.2,
     variants: [
       { name: 'fire', c1: '#ff8700', c2: '#ffd700' },
       { name: 'ion', c1: '#00d7ff', c2: '#87ffff' },
@@ -6734,8 +6980,7 @@ const WEATHERS = {
     ],
     near(v, density) {
       const t = emberTile(v.c1, v.c2, density)
-      const w2 = Math.round(t.w * 1.4),
-        h2 = Math.round(t.h * 1.4)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
           L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `2px -${Math.round(t.h / 2)}px`),
@@ -6745,19 +6990,12 @@ const WEATHERS = {
     },
     far(v, density) {
       const t = emberTile(v.c1, v.c2, Math.min(3, density + 1))
-      return {
-        img: t.url,
-        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
-        tile: -Math.round(t.h * 0.7),
-        opacity: '.6',
-      }
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.6' }
     },
   },
 
   glyphs: {
-    label: 'glyph rain',
-    luminance: false,
-    basePeriod: 2.6,
+    label: 'glyph rain', luminance: false, basePeriod: 2.6,
     variants: [
       { name: 'green', c: '#00ff87' },
       { name: 'amber', c: '#ffb000' },
@@ -6765,8 +7003,7 @@ const WEATHERS = {
     ],
     near(v, density) {
       const t = glyphTile(v.c, density)
-      const w2 = Math.round(t.w * 1.5),
-        h2 = Math.round(t.h * 1.5)
+      const w2 = Math.round(t.w * 1.5), h2 = Math.round(t.h * 1.5)
       return {
         layers: [
           L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
@@ -6776,19 +7013,12 @@ const WEATHERS = {
     },
     far(v, density) {
       const t = glyphTile(v.c, Math.min(3, density + 1))
-      return {
-        img: t.url,
-        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
-        tile: Math.round(t.h * 0.7),
-        opacity: '.5',
-      }
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
     },
   },
 
   storm: {
-    label: 'storm',
-    luminance: true,
-    basePeriod: 7,
+    label: 'storm', luminance: true, basePeriod: 7,
     variants: [
       { name: 'silver', c: '#9db4c9' },
       { name: 'blood', c: '#d70000' },
@@ -6801,8 +7031,7 @@ const WEATHERS = {
       // inside a ~120ms window every cycle: far under the 3-flash/s WCAG line
       // even at max speed (the period floor is luminance-clamped below).
       const t = rainTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4),
-        h2 = Math.round(t.h * 1.4)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       const cv = `--hsw-${hash}`
       return {
         layers: [
@@ -6820,14 +7049,210 @@ const WEATHERS = {
     },
     far(v, density) {
       const t = rainTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
+    },
+  },
+  petals: {
+    label: 'petals', luminance: false, basePeriod: 3.8,
+    variants: [
+      { name: 'pink', c: '#ffafd7' },
+      { name: 'white', c: '#ffffff' },
+      { name: 'gold', c: '#ffd75f' },
+    ],
+    near(v, density) {
+      const t = petalTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
-        img: t.url,
-        size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`,
-        tile: Math.round(t.h * 0.7),
-        opacity: '.5',
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `4px ${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-5px ${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = petalTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    },
+  },
+
+  bubbles: {
+    label: 'bubbles', luminance: false, basePeriod: 4,
+    variants: [
+      { name: 'air', c: '#ffffff' },
+      { name: 'teal', c: '#87ffd7' },
+      { name: 'violet', c: '#d7afff' },
+    ],
+    near(v, density) {
+      const t = bubbleTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `2px -${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-3px -${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = bubbleTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    },
+  },
+
+  fireflies: {
+    label: 'fireflies', luminance: false, basePeriod: 6,
+    variants: [
+      { name: 'green', c: '#d7ff5f' },
+      { name: 'gold', c: '#ffd75f' },
+      { name: 'cyan', c: '#87ffff' },
+    ],
+    near(v, density) {
+      const t = fireflyTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `5px -${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-6px -${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = fireflyTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    },
+  },
+
+  leaves: {
+    label: 'leaves', luminance: false, basePeriod: 4.2,
+    variants: [
+      { name: 'autumn', c: '#ff8700' },
+      { name: 'maple', c: '#d70000' },
+      { name: 'green', c: '#87ff5f' },
+    ],
+    near(v, density) {
+      const t = leafTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `5px ${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-6px ${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = leafTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    },
+  },
+
+  sparks: {
+    label: 'sparks', luminance: false, basePeriod: 1.2,
+    variants: [
+      { name: 'white', c: '#ffffff' },
+      { name: 'gold', c: '#ffd75f' },
+      { name: 'blue', c: '#87d7ff' },
+    ],
+    near(v, density) {
+      const t = sparkTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '3px 0', `3px -${h2}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = sparkTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    },
+  },
+
+  dust: {
+    // Sideways: the one weather that blows rather than falls or rises.
+    label: 'dust', luminance: false, basePeriod: 5,
+    variants: [
+      { name: 'sand', c: '#d7af87' },
+      { name: 'ash', c: '#9e9e9e' },
+      { name: 'pollen', c: '#ffd75f' },
+    ],
+    near(v, density) {
+      const t = dustTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `-${t.w}px 0`, `-${Math.round(t.w / 2)}px 1px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `-${w2}px 0`, `-${Math.round(w2 / 2)}px -1px`),
+        ],
       }
     },
   },
+
+  confetti: {
+    label: 'confetti', luminance: false, basePeriod: 4,
+    variants: [
+      { name: 'party', c1: '#ff5f87', c2: '#ffd700', c3: '#00d7ff' },
+      { name: 'ice', c1: '#ffffff', c2: '#87d7ff', c3: '#d7afff' },
+      { name: 'heat', c1: '#ff8700', c2: '#ff0000', c3: '#ffd700' },
+    ],
+    near(v, density) {
+      const t = confettiTile(v, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `4px ${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-5px ${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = confettiTile(v, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    },
+  },
+
+  meteors: {
+    // Diagonal: each loop advances one tile in BOTH axes, so it wraps clean.
+    label: 'meteors', luminance: false, basePeriod: 1.6,
+    variants: [
+      { name: 'white', c: '#ffffff' },
+      { name: 'gold', c: '#ffd75f' },
+      { name: 'cyan', c: '#87ffff' },
+    ],
+    near(v, density) {
+      const t = meteorTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `-${t.w}px ${t.h}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '9px 0', `${9 - w2}px ${h2}px`),
+        ],
+      }
+    },
+  },
+
+  hearts: {
+    label: 'hearts', luminance: false, basePeriod: 4.4,
+    variants: [
+      { name: 'pink', c: '#ff5fd7' },
+      { name: 'red', c: '#ff0000' },
+      { name: 'white', c: '#ffffff' },
+    ],
+    near(v, density) {
+      const t = heartTile(v.c, density)
+      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+      return {
+        layers: [
+          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `3px -${Math.round(t.h / 2)}px`),
+          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-4px -${Math.round(h2 / 2)}px`),
+        ],
+      }
+    },
+    far(v, density) {
+      const t = heartTile(v.c, Math.min(3, density + 1))
+      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    },
+  },
+
 }
 
 const BACKDROP_IDS = new Set(Object.keys(BACKDROPS))
@@ -6888,12 +7313,7 @@ function normalizeSceneForHash(scene) {
       ? { id: scene.backdrop.id, variant: scene.backdrop.variant ?? 0, speed: scene.backdrop.speed ?? 1 }
       : null,
     weather: isPlainObject(scene.weather)
-      ? {
-          id: scene.weather.id,
-          variant: scene.weather.variant ?? 0,
-          density: scene.weather.density ?? 2,
-          speed: scene.weather.speed ?? 1,
-        }
+      ? { id: scene.weather.id, variant: scene.weather.variant ?? 0, density: scene.weather.density ?? 2, speed: scene.weather.speed ?? 1 }
       : null,
   }
 }
@@ -6918,8 +7338,7 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
   if (!isStatic && anims.length) {
-    const names = [],
-      delays = []
+    const names = [], delays = []
     for (const a of anims) {
       const dir = a.alternate ? ' alternate' : ''
       names.push(`${a.name} ${a.period}s ${a.alternate ? 'ease-in-out' : a.timing || 'linear'} infinite${dir}`)
@@ -7005,14 +7424,16 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
     const anims = []
     if (!isStatic) {
       anims.push({
-        name: `hss_${hash}_b`,
-        period: bPeriod,
-        timing: 'linear',
-        alternate: !!bBuilt.alternate,
-        body: bBuilt.keyframesBody || null,
+        name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
+        alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
       })
     }
-    css += bBuilt.props && !isStatic ? bBuilt.props : ''
+    // The @property registration is NOT animation — it is what gives the
+    // plate's `var()` a value at all. Dropping it in static mode made the whole
+    // background shorthand invalid at computed-value time, so furnace and
+    // eclipse rendered as nothing on every static surface (chips, SSR,
+    // reduced-motion) instead of at their resting glow.
+    css += bBuilt.props || ''
     css += pseudoRule(selector, 'before', -1, layers, anims, isStatic)
   }
 
@@ -7027,25 +7448,20 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
     frontLayers.push(...wBuilt.layers)
     if (!isStatic) {
       frontAnims.push({
-        name: `hss_${hash}_w`,
-        period: wPeriod,
-        timing: 'linear',
-        alternate: !!wBuilt.alternate,
+        name: `hss_${hash}_w`, period: wPeriod,
+        timing: 'linear', alternate: !!wBuilt.alternate,
         body: wBuilt.keyframesBody || null,
       })
       if (wBuilt.positionalAnim) {
         frontAnims.push({
-          name: `hss_${hash}_wr`,
-          period: wBuilt.positionalAnim.period,
-          timing: wBuilt.positionalAnim.timing,
-          alternate: false,
-          body: null,
+          name: `hss_${hash}_wr`, period: wBuilt.positionalAnim.period,
+          timing: wBuilt.positionalAnim.timing, alternate: false, body: null,
         })
       }
     }
   }
   if (frontLayers.length) {
-    css += wBuilt?.props && !isStatic ? wBuilt.props : ''
+    css += wBuilt?.props || ''
     css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, frontLayers, frontAnims, isStatic)
   }
 
@@ -7079,28 +7495,32 @@ const SCENE_RIM_CSS = 'text-shadow:0 1px 1px #000d,0 0 2px #000a;'
  */
 const SCENE_RIM_FILTER_CSS = 'filter:drop-shadow(0 1px 1px #000d) drop-shadow(0 0 2px #000a);'
 
-// ── builder-UI metadata (labels + variant names only — no CSS leaks out) ───
+// ── builder-UI metadata (labels, variant names, one swatch per variant) ────
+//
+// `swatches` is the one piece of CSS that does leave here: a variant's sky (or
+// plate, or particle colour) as a plain background value, so the builder can
+// show a variant as a colour chip instead of a word. It is catalog data, never
+// user input, and it is only ever used as a background — nothing else escapes.
 
 const SCENE_BACKDROPS_META = Object.fromEntries(
-  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, variants: m.variants.map((v) => v.name) }]),
-)
+  Object.entries(BACKDROPS).map(([id, m]) => [id, {
+    label: m.label,
+    variants: m.variants.map(v => v.name),
+    swatches: m.variants.map(v => v.sky || v.plate || v.skyB || '#000'),
+  }]))
 
 const SCENE_WEATHERS_META = Object.fromEntries(
-  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, variants: m.variants.map((v) => v.name) }]),
-)
+  Object.entries(WEATHERS).map(([id, m]) => [id, {
+    label: m.label,
+    variants: m.variants.map(v => v.name),
+    swatches: m.variants.map(v => v.c || v.c1 || '#fff'),
+  }]))
 
 
 
 // --- lib/paint-spec.js ---
 /**
  * Paint spec — structured JSON schema + compiler for animated username paints.
- *
- * SYNCED COPY of the heatsync monorepo's client/utils/paint-spec.js — keep
- * byte-close to the source of truth. Cross-repo auto-apply rule: a change to
- * either copy should be mirrored in the other (see feedback_cross_repo_posts_chats
- * in project memory). Only bundling-related adaptations belong here, never a
- * behavior fork — the ext must compile the exact same CSS the site does for
- * the exact same spec, or a paint would render differently across surfaces.
  *
  * Replaces the old free-text `username_css` column (migration 078, removed).
  * A paint is authored as data (base gradient + up to 3 effect layers + glow),
@@ -7141,7 +7561,9 @@ const SCENE_WEATHERS_META = Object.fromEntries(
  * the user's own `base` gradient (pan/conic force linear/conic rendering
  * respectively since they need a directional/rotational gradient; hue/glint/
  * reveal are orthogonal to gradient type and always honor base as-is).
- * chrome / gold / fire / matrix / holo are "themed presets" — faithful ports
+ * stripes / stardust / pulse are generic too (stripes bands the user's stops,
+ * stardust drifts dots over them, pulse breathes the fill).
+ * chrome / gold / fire / matrix / holo / rainbow / ice / lava are "themed presets" — faithful ports
  * of the lab's fixed palettes (that fixed palette IS the point of picking
  * "gold foil"), so they render their own built-in gradient and `base` is
  * visually superseded (still stored/validated normally so switching the
@@ -7192,8 +7614,8 @@ const PAINT_MIN_CONTRAST = 3
 function relativeLuminance(hex) {
   const n = parseInt(hex.slice(1), 16)
   const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
-    .map((v) => v / 255)
-    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+    .map(v => v / 255)
+    .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)))
   return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
 }
 
@@ -7217,8 +7639,8 @@ function isLegiblePaintColor(hex, bg = PAINT_BG) {
 function paintContrast(stops, bg = PAINT_BG) {
   if (!Array.isArray(stops)) return null
   const ratios = stops
-    .filter((s) => isPlainObject(s) && typeof s.color === 'string' && HEX_RE.test(s.color))
-    .map((s) => contrastRatio(s.color, bg))
+    .filter(s => isPlainObject(s) && typeof s.color === 'string' && HEX_RE.test(s.color))
+    .map(s => contrastRatio(s.color, bg))
   return ratios.length ? Math.min(...ratios) : null
 }
 
@@ -7235,99 +7657,77 @@ function paintContrast(stops, bg = PAINT_BG) {
  */
 const EFFECTS = {
   // ── paint slot — mutually exclusive, at most 1 ──────────────────────────
-  pan: { slot: 'paint', luminance: false, basePeriod: 5, letterSplit: false, label: 'gradient pan' },
-  conic: { slot: 'paint', luminance: false, basePeriod: 6, letterSplit: false, label: 'conic sweep' },
-  hue: { slot: 'paint', luminance: true, basePeriod: 8, letterSplit: false, label: 'hue cycle' },
-  glint: { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint' },
-  chrome: { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'liquid chrome' },
-  gold: { slot: 'paint', luminance: false, basePeriod: 5, letterSplit: false, label: 'gold foil' },
-  fire: { slot: 'paint', luminance: false, basePeriod: 1.8, letterSplit: false, label: 'fire' },
-  matrix: { slot: 'paint', luminance: false, basePeriod: 3.2, letterSplit: false, label: 'matrix rain' },
-  holo: { slot: 'paint', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'hologram' },
-  reveal: { slot: 'paint', luminance: false, basePeriod: 3, letterSplit: false, label: 'mask reveal' },
+  // A paint effect owns background/color. The two that animate something
+  // ELSE (hue: filter, pulse: opacity) carry a sig so the validator can keep
+  // a motion off the same property — see effectConflict().
+  pan:      { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gradient pan' },
+  conic:    { slot: 'paint', luminance: false, basePeriod: 6,   letterSplit: false, label: 'conic sweep' },
+  hue:      { slot: 'paint', luminance: true,  basePeriod: 8,   letterSplit: false, label: 'hue cycle', sig: 'self:filter' },
+  glint:    { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint' },
+  chrome:   { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'liquid chrome' },
+  gold:     { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gold foil' },
+  fire:     { slot: 'paint', luminance: false, basePeriod: 1.8, letterSplit: false, label: 'fire' },
+  matrix:   { slot: 'paint', luminance: false, basePeriod: 3.2, letterSplit: false, label: 'matrix rain' },
+  holo:     { slot: 'paint', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'hologram' },
+  reveal:   { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'mask reveal' },
+  rainbow:  { slot: 'paint', luminance: false, basePeriod: 4,   letterSplit: false, label: 'rainbow' },
+  ice:      { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'ice' },
+  lava:     { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'lava' },
+  stripes:  { slot: 'paint', luminance: false, basePeriod: 2.4, letterSplit: false, label: 'barber stripes' },
+  stardust: { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'stardust' },
+  pulse:    { slot: 'paint', luminance: true,  basePeriod: 2.4, letterSplit: false, label: 'pulse', sig: 'self:opacity' },
 
   // ── motion/glow slot — up to 2, distinct sig required ───────────────────
-  wave: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 1.6,
-    letterSplit: true,
-    label: 'letter wave',
-    sig: 'letter:transform',
-  },
-  ripple: {
-    slot: 'motion',
-    luminance: true,
-    basePeriod: 2.4,
-    letterSplit: true,
-    label: 'rainbow ripple',
-    sig: 'letter:filter',
-  },
-  coin: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 5,
-    letterSplit: false,
-    label: 'coin spin',
-    sig: 'self:transform',
-  },
-  heli: { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin', sig: 'self:transform' },
-  float: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 5.5,
-    letterSplit: false,
-    label: 'zero-g float',
-    sig: 'self:transform',
-  },
-  heart: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 1.3,
-    letterSplit: false,
-    label: 'heartbeat',
-    sig: 'self:transform',
-  },
-  wobble: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 2.8,
-    letterSplit: false,
-    label: 'wobble stretch',
-    sig: 'self:transform',
-  },
-  swing: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 2.6,
-    letterSplit: false,
-    label: 'pendulum',
-    sig: 'self:transform',
-  },
-  tumble: {
-    slot: 'motion',
-    luminance: false,
-    basePeriod: 3.4,
-    letterSplit: true,
-    label: 'letter tumble',
-    sig: 'letter:transform',
-  },
-  neon: {
-    slot: 'motion',
-    luminance: true,
-    basePeriod: 2.6,
-    letterSplit: false,
-    label: 'neon breathe',
-    sig: 'self:shadow',
-  },
+  wave:    { slot: 'motion', luminance: false, basePeriod: 1.6, letterSplit: true,  label: 'letter wave',   sig: 'letter:transform' },
+  ripple:  { slot: 'motion', luminance: true,  basePeriod: 2.4, letterSplit: true,  label: 'rainbow ripple', sig: 'letter:filter' },
+  coin:    { slot: 'motion', luminance: false, basePeriod: 5,   letterSplit: false, label: 'coin spin',     sig: 'self:transform' },
+  heli:    { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin',          sig: 'self:transform' },
+  float:   { slot: 'motion', luminance: false, basePeriod: 5.5, letterSplit: false, label: 'zero-g float',  sig: 'self:transform' },
+  heart:   { slot: 'motion', luminance: false, basePeriod: 1.3, letterSplit: false, label: 'heartbeat',     sig: 'self:transform' },
+  wobble:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'wobble stretch', sig: 'self:transform' },
+  swing:   { slot: 'motion', luminance: false, basePeriod: 2.6, letterSplit: false, label: 'pendulum',      sig: 'self:transform' },
+  tumble:  { slot: 'motion', luminance: false, basePeriod: 3.4, letterSplit: true,  label: 'letter tumble', sig: 'letter:transform' },
+  neon:    { slot: 'motion', luminance: true,  basePeriod: 2.6, letterSplit: false, label: 'neon breathe',  sig: 'self:shadow' },
+  glitch:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'glitch',        sig: 'self:shadow' },
+  jitter:  { slot: 'motion', luminance: false, basePeriod: 3,   letterSplit: false, label: 'jitter',        sig: 'self:transform' },
+  hop:     { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: true,  label: 'letter hop',    sig: 'letter:transform' },
+  twirl:   { slot: 'motion', luminance: false, basePeriod: 3.6, letterSplit: true,  label: 'letter twirl',  sig: 'letter:transform' },
+  type:    { slot: 'motion', luminance: true,  basePeriod: 4,   letterSplit: true,  label: 'typewriter',    sig: 'letter:opacity' },
+  flicker: { slot: 'motion', luminance: true,  basePeriod: 3,   letterSplit: false, label: 'flicker',       sig: 'self:opacity' },
+}
+
+/**
+ * Why `id` cannot join `effects` — a string, or null when it can.
+ *
+ * Two motions that animate the same property on the same target clobber each
+ * other outright (the later `animation-name` wins), so that pair is refused.
+ * A paint effect that animates something other than the background (hue:
+ * filter, pulse: opacity) is refused against any motion on that PROPERTY on
+ * either target, because a paint effect follows the split: on a letter-split
+ * name it lands on the spans, where a `letter:` motion already is.
+ *
+ * Shared by the validator (every save) and the builder (which dims the chips
+ * that could not be saved) so the two never disagree about a combination.
+ */
+function effectConflict(id, effects) {
+  const meta = EFFECTS[id]
+  if (!meta) return 'unknown effect'
+  const others = (Array.isArray(effects) ? effects : []).filter(e => isPlainObject(e) && e.id !== id && EFFECTS[e.id])
+  const prop = sig => sig.slice(sig.indexOf(':') + 1)
+  for (const o of others) {
+    const om = EFFECTS[o.id]
+    if (meta.slot === 'paint' && om.slot === 'paint') return 'at most 1 paint-slot effect'
+    if (!meta.sig || !om.sig) continue
+    const bothMotion = meta.slot === 'motion' && om.slot === 'motion'
+    if (bothMotion ? meta.sig === om.sig : prop(meta.sig) === prop(om.sig)) {
+      return `"${id}" conflicts with "${o.id}" — both animate ${prop(meta.sig)}`
+    }
+  }
+  return null
 }
 
 const EFFECT_IDS = new Set(Object.keys(EFFECTS))
-const LETTER_SPLIT_IDS = new Set(
-  Object.entries(EFFECTS)
-    .filter(([, m]) => m.letterSplit)
-    .map(([id]) => id),
-)
+const LETTER_SPLIT_IDS = new Set(Object.entries(EFFECTS).filter(([, m]) => m.letterSplit).map(([id]) => id))
 
 /**
  * Stable short hash of a spec — same spec (key order irrelevant, we
@@ -7363,9 +7763,9 @@ function normalizeForHash(spec) {
     base: spec?.base && {
       type: spec.base.type,
       angle: spec.base.angle,
-      stops: Array.isArray(spec.base.stops) ? spec.base.stops.map((s) => ({ color: s?.color, pos: s?.pos })) : [],
+      stops: Array.isArray(spec.base.stops) ? spec.base.stops.map(s => ({ color: s?.color, pos: s?.pos })) : [],
     },
-    effects: Array.isArray(spec?.effects) ? spec.effects.map((e) => ({ id: e?.id, speed: e?.speed })) : [],
+    effects: Array.isArray(spec?.effects) ? spec.effects.map(e => ({ id: e?.id, speed: e?.speed })) : [],
     glow: spec?.glow ? { color: spec.glow.color, strength: spec.glow.strength } : null,
     scene: normalizeSceneForHash(spec?.scene),
   }
@@ -7383,8 +7783,9 @@ function normalizeForHash(spec) {
  */
 function validatePaintSpec(spec, opts = {}) {
   const errors = []
-  const maxEffects =
-    Number.isInteger(opts.maxEffects) && opts.maxEffects >= 0 ? Math.min(opts.maxEffects, MAX_EFFECTS) : MAX_EFFECTS
+  const maxEffects = Number.isInteger(opts.maxEffects) && opts.maxEffects >= 0
+    ? Math.min(opts.maxEffects, MAX_EFFECTS)
+    : MAX_EFFECTS
 
   if (!isPlainObject(spec)) {
     return { ok: false, errors: ['spec must be an object'] }
@@ -7434,7 +7835,7 @@ function validatePaintSpec(spec, opts = {}) {
       const weakest = paintContrast(stops)
       if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
         errors.push(
-          `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`,
+          `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`
         )
       }
     }
@@ -7444,15 +7845,12 @@ function validatePaintSpec(spec, opts = {}) {
   if (!Array.isArray(spec.effects)) {
     errors.push('effects must be an array')
   } else if (spec.effects.length > maxEffects) {
-    errors.push(
-      maxEffects === 0
-        ? 'effects require plus — free paints are static (0 effect layers)'
-        : `effects must have at most ${maxEffects} ${maxEffects === 1 ? 'entry' : 'entries'}`,
-    )
+    errors.push(maxEffects === 0
+      ? 'effects require plus — free paints are static (0 effect layers)'
+      : `effects must have at most ${maxEffects} ${maxEffects === 1 ? 'entry' : 'entries'}`)
   } else {
     const seenIds = new Set()
     let paintCount = 0
-    const motionSigs = new Set()
     let motionCount = 0
     let structurallyValid = true
 
@@ -7477,24 +7875,16 @@ function validatePaintSpec(spec, opts = {}) {
       seenIds.add(e.id)
 
       const meta = EFFECTS[e.id]
-      if (meta.slot === 'paint') {
-        paintCount++
-      } else {
-        motionCount++
-        if (motionSigs.has(meta.sig)) {
-          errors.push(
-            `effects: "${e.id}" conflicts with another selected effect animating the same property (${meta.sig}) — pick effects with different motion targets`,
-          )
-        }
-        motionSigs.add(meta.sig)
+      if (meta.slot === 'paint') paintCount++
+      else motionCount++
+      const clash = effectConflict(e.id, spec.effects.slice(0, i))
+      if (clash && !clash.startsWith('at most')) {
+        errors.push(`effects: ${clash} — pick effects with different motion targets`)
       }
     })
 
     if (structurallyValid) {
-      if (paintCount > 1)
-        errors.push(
-          'at most 1 paint-slot effect allowed (pan/conic/hue/glint/chrome/gold/fire/matrix/holo/reveal are mutually exclusive)',
-        )
+      if (paintCount > 1) errors.push('at most 1 paint-slot effect allowed (paint effects are mutually exclusive)')
       if (motionCount > 2) errors.push('at most 2 motion-slot effects allowed')
     }
   }
@@ -7522,7 +7912,7 @@ function validatePaintSpec(spec, opts = {}) {
  * may be chopped into one span per letter.
  */
 function paintNeedsPerLetter(spec) {
-  return !!spec && Array.isArray(spec.effects) && spec.effects.some((e) => LETTER_SPLIT_IDS.has(e?.id))
+  return !!spec && Array.isArray(spec.effects) && spec.effects.some(e => LETTER_SPLIT_IDS.has(e?.id))
 }
 
 /** True if the painted name must carry `<span>` children at all — either
@@ -7536,7 +7926,8 @@ function paintNeedsSpans(spec) {
   if (!spec) return false
   if (paintNeedsPerLetter(spec)) return true
   if (spec.v === 2 && isPlainObject(spec.scene)) {
-    const hasPaintEffect = Array.isArray(spec.effects) && spec.effects.some((e) => EFFECTS[e?.id]?.slot === 'paint')
+    const hasPaintEffect = Array.isArray(spec.effects) &&
+      spec.effects.some(e => EFFECTS[e?.id]?.slot === 'paint')
     return hasPaintEffect || spec.base?.type !== 'solid'
   }
   return false
@@ -7685,8 +8076,8 @@ function safePos(pos) {
 function sortedStops(base) {
   const stops = Array.isArray(base?.stops) ? base.stops : []
   return stops
-    .filter((s) => isPlainObject(s) && HEX_RE.test(s?.color) && isIntInRange(s.pos, 0, 100))
-    .map((s) => ({ color: safeHex(s.color), pos: safePos(s.pos) }))
+    .filter(s => isPlainObject(s) && HEX_RE.test(s?.color) && isIntInRange(s.pos, 0, 100))
+    .map(s => ({ color: safeHex(s.color), pos: safePos(s.pos) }))
     .sort((a, b) => a.pos - b.pos)
 }
 
@@ -7724,7 +8115,7 @@ function paintPhaseNow() {
 }
 
 function gradientStopsCss(stops) {
-  return stops.map((s) => `${s.color} ${s.pos}%`).join(', ')
+  return stops.map(s => `${s.color} ${s.pos}%`).join(', ')
 }
 
 /** Build the CSS for the resting `base` paint. Returns { decl, isClipText }. */
@@ -7734,10 +8125,9 @@ function buildBaseCss(base, stops) {
     return { decl: `color:${color};`, isClipText: false, cssImage: `linear-gradient(${color}, ${color})` }
   }
   const angle = safeAngle(base.angle)
-  const image =
-    base.type === 'linear'
-      ? `linear-gradient(${angle}deg, ${gradientStopsCss(stops)})`
-      : `conic-gradient(from ${angle}deg, ${gradientStopsCss(stops)})`
+  const image = base.type === 'linear'
+    ? `linear-gradient(${angle}deg, ${gradientStopsCss(stops)})`
+    : `conic-gradient(from ${angle}deg, ${gradientStopsCss(stops)})`
   return {
     decl: `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`,
     isClipText: true,
@@ -7760,8 +8150,7 @@ function buildBaseCss(base, stops) {
 // because we chose it.
 const THEMED_PAINT = {
   chrome: {
-    gradient:
-      'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #5a6678 38%, #f3f4f6 52%, #556173 70%, #d1d5db 88%, #6b7280)',
+    gradient: 'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #5a6678 38%, #f3f4f6 52%, #556173 70%, #d1d5db 88%, #6b7280)',
     size: '220% 100%',
     timing: 'ease-in-out',
     direction: 'alternate',
@@ -7781,8 +8170,7 @@ const THEMED_PAINT = {
     size: '100% 300%',
     timing: 'ease-in-out',
     direction: 'alternate',
-    keyframes: (name) =>
-      `@keyframes ${name}{from{background-position:0 100%;transform:skewX(0);}to{background-position:0 40%;transform:skewX(-1.5deg);}}`,
+    keyframes: (name) => `@keyframes ${name}{from{background-position:0 100%;transform:skewX(0);}to{background-position:0 40%;transform:skewX(-1.5deg);}}`,
   },
   matrix: {
     gradient: 'repeating-linear-gradient(0deg, #00ff87 0 5px, #00d700 5px 8px, #1a7a38 8px 10px)',
@@ -7797,6 +8185,31 @@ const THEMED_PAINT = {
     timing: 'linear',
     direction: 'normal',
     keyframes: (name) => `@keyframes ${name}{to{background-position:0 200%;}}`,
+  },
+  rainbow: {
+    // The first stop repeated last, so the pan wraps without a seam.
+    gradient: 'linear-gradient(90deg, #ff0000, #ff8700 14%, #ffff00 28%, #00ff00 42%, #00d7ff 57%, #875fff 71%, #ff00ff 85%, #ff0000)',
+    size: '300% 100%',
+    timing: 'linear',
+    direction: 'normal',
+    keyframes: (name) => `@keyframes ${name}{to{background-position:300% 0;}}`,
+  },
+  ice: {
+    gradient: 'linear-gradient(100deg, #87d7ff, #ffffff 24%, #afd7ff 42%, #ffffff 58%, #87d7ff 76%, #d7ffff 100%)',
+    size: '220% 100%',
+    timing: 'ease-in-out',
+    direction: 'alternate',
+    keyframes: (name) => `@keyframes ${name}{to{background-position:120% 0;}}`,
+  },
+  lava: {
+    // Bright crust with darker seams rolling upward — every band clears the
+    // floor, the seams included (a crust that was mostly black read as dashes,
+    // the same lesson as matrix).
+    gradient: 'repeating-linear-gradient(0deg, #ff5f00 0 4px, #ffaf00 4px 5px, #d70000 5px 7px)',
+    size: '100% 300%',
+    timing: 'linear',
+    direction: 'normal',
+    keyframes: (name) => `@keyframes ${name}{to{background-position:0 -300%;}}`,
   },
 }
 
@@ -7815,12 +8228,7 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const t = THEMED_PAINT[effectId]
     const decls = `background:${t.gradient};background-size:${t.size};-webkit-background-clip:text;background-clip:text;color:transparent;`
     const sync = syncDelayCalc(t.direction === 'alternate' ? duration * 2 : duration)
-    return {
-      decls,
-      animShorthand: `${animName} ${duration}s ${t.timing} infinite ${t.direction}`,
-      sync,
-      keyframes: t.keyframes(animName),
-    }
+    return { decls, animShorthand: `${animName} ${duration}s ${t.timing} infinite ${t.direction}`, sync, keyframes: t.keyframes(animName) }
   }
 
   if (effectId === 'pan') {
@@ -7832,12 +8240,7 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
     const decls = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;`
     const kf = `@keyframes ${animName}{to{background-position:300% 0;}}`
-    return {
-      decls,
-      animShorthand: `${animName} ${duration}s linear infinite`,
-      sync: syncDelayCalc(duration),
-      keyframes: kf,
-    }
+    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
   }
 
   if (effectId === 'conic') {
@@ -7848,15 +8251,9 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
     const image = `conic-gradient(from calc(${angle}deg + var(${angleVar})), ${gradientStopsCss(wrapStops)})`
     const decls = `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf =
-      `@property ${angleVar}{syntax:"<angle>";initial-value:0deg;inherits:false;}` +
+    const kf = `@property ${angleVar}{syntax:"<angle>";initial-value:0deg;inherits:false;}` +
       `@keyframes ${animName}{to{${angleVar}:360deg;}}`
-    return {
-      decls,
-      animShorthand: `${animName} ${duration}s linear infinite`,
-      sync: syncDelayCalc(duration),
-      keyframes: kf,
-    }
+    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
   }
 
   if (effectId === 'hue') {
@@ -7864,12 +8261,7 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     // of how base painted the text.
     const baseCss = buildBaseCss(base, stops)
     const kf = `@keyframes ${animName}{to{filter:hue-rotate(360deg);}}`
-    return {
-      decls: baseCss.decl,
-      animShorthand: `${animName} ${duration}s linear infinite`,
-      sync: syncDelayCalc(duration),
-      keyframes: kf,
-    }
+    return { decls: baseCss.decl, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
   }
 
   if (effectId === 'glint') {
@@ -7877,12 +8269,40 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const image = `linear-gradient(115deg, transparent 38%, #ffffffcc 50%, transparent 62%) no-repeat, ${baseCss.cssImage}`
     const decls = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;`
     const kf = `@keyframes ${animName}{0%{background-position:210% 0, 0 0;}100%{background-position:-110% 0, 0 0;}}`
-    return {
-      decls,
-      animShorthand: `${animName} ${duration}s ease-in-out infinite`,
-      sync: syncDelayCalc(duration),
-      keyframes: kf,
-    }
+    return { decls, animShorthand: `${animName} ${duration}s ease-in-out infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+  }
+
+  if (effectId === 'stripes') {
+    // Hard diagonal bands of the user's own stops (a solid gets white as its
+    // second band), rolling like a barber pole. background-size is left at
+    // the element's own box, so shifting the position by one period along x
+    // — period × √2 for a 45° gradient — advances exactly one repeat.
+    const BAND = 5
+    const colors = stops.length > 1 ? stops.map(s => s.color) : [stops[0]?.color || '#e4e4e4', '#ffffff']
+    const bands = colors.map((c, i) => `${c} ${i * BAND}px ${(i + 1) * BAND}px`).join(', ')
+    const shift = (colors.length * BAND * Math.SQRT2).toFixed(2)
+    const decls = `background:repeating-linear-gradient(45deg, ${bands});-webkit-background-clip:text;background-clip:text;color:transparent;`
+    const kf = `@keyframes ${animName}{to{background-position:${shift}px 0;}}`
+    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+  }
+
+  if (effectId === 'stardust') {
+    // Two dot fields drifting across the user's own fill at different rates
+    // (parallax, like the weathers), each advancing a whole number of tiles
+    // per loop so the wrap is seamless.
+    const baseCss = buildBaseCss(base, stops)
+    const image = `radial-gradient(circle, #ffffff 0 .7px, transparent 1.1px) repeat, radial-gradient(circle, #ffffffaa 0 .5px, transparent .9px) repeat, ${baseCss.cssImage}`
+    const decls = `background:${image};background-size:9px 7px, 13px 11px, 100% 100%;background-position:0 0, 4px 3px, 0 0;-webkit-background-clip:text;background-clip:text;color:transparent;`
+    const kf = `@keyframes ${animName}{to{background-position:-27px 21px, -22px 25px, 0 0;}}`
+    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+  }
+
+  if (effectId === 'pulse') {
+    // Breathes the whole fill — opacity, not filter, so it never lands on
+    // the same property as hue. Luminance-flagged: the floor keeps it slow.
+    const baseCss = buildBaseCss(base, stops)
+    const kf = `@keyframes ${animName}{0%,100%{opacity:1;}50%{opacity:.45;}}`
+    return { decls: baseCss.decl, animShorthand: `${animName} ${duration}s ease-in-out infinite`, sync: syncDelayCalc(duration), keyframes: kf }
   }
 
   if (effectId === 'reveal') {
@@ -7890,12 +8310,7 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const mask = 'linear-gradient(90deg, #000 30%, #0003 50%, #000 70%)'
     const decls = `${baseCss.decl}-webkit-mask-image:${mask};mask-image:${mask};-webkit-mask-size:300% 100%;mask-size:300% 100%;`
     const kf = `@keyframes ${animName}{from{-webkit-mask-position:130% 0;mask-position:130% 0;}to{-webkit-mask-position:-130% 0;mask-position:-130% 0;}}`
-    return {
-      decls,
-      animShorthand: `${animName} ${duration}s linear infinite`,
-      sync: syncDelayCalc(duration),
-      keyframes: kf,
-    }
+    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
   }
 
   return null
@@ -7932,6 +8347,37 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
         keyframes: kf,
       }
     }
+    case 'hop': {
+      // A hop, not a wave: up fast, land with a squash, rest for most of it.
+      const kf = `@keyframes ${animName}{0%,22%,100%{transform:translateY(0) scaleY(1);}8%{transform:translateY(-5px) scaleY(1.06);}15%{transform:translateY(0) scaleY(.9);}}`
+      return {
+        decls: 'transform-origin:50% 100%;',
+        animShorthand: `${animName} ${duration}s ease-out infinite`,
+        delayExpr: `calc(var(--i) * ${(0.07 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
+        keyframes: kf,
+      }
+    }
+    case 'twirl': {
+      const kf = `@keyframes ${animName}{0%,64%{transform:rotate(0);}100%{transform:rotate(360deg);}}`
+      return {
+        decls: '',
+        animShorthand: `${animName} ${duration}s ease-in-out infinite`,
+        delayExpr: `calc(var(--i) * ${(0.08 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
+        keyframes: kf,
+      }
+    }
+    case 'type': {
+      // Each glyph blinks out for a moment, in order — a cursor passing
+      // through the name and retyping it. The blink (3% of the cycle) is
+      // exactly one stagger step long, so one glyph is out at a time.
+      const kf = `@keyframes ${animName}{0%,3%{opacity:0;}4%,100%{opacity:1;}}`
+      return {
+        decls: '',
+        animShorthand: `${animName} ${duration}s linear infinite`,
+        delayExpr: `calc(var(--i) * ${(0.12 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
+        keyframes: kf,
+      }
+    }
     case 'tumble': {
       const kf = `@keyframes ${animName}{0%,60%,100%{transform:rotateX(0);}75%{transform:rotateX(180deg);}90%{transform:rotateX(360deg);}}`
       return {
@@ -7947,22 +8393,29 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
   }
 }
 
-/** Build the CSS for a `motion`-slot effect. Applies on top of whatever the
- * base/paint layer already painted — never touches color/background. Only
- * the whole-name motions (coin/heli/float/heart/wobble/swing/neon) — they
- * always target the parent selector and never share it with a paint effect,
- * so they keep emitting a standalone rule. wave/ripple/tumble (per-letter)
+/** Build the pieces for a whole-name `motion`-slot effect: { decls,
+ * animShorthand, delayExpr, keyframes }. Applies on top of whatever the
+ * base/paint layer already painted — never touches color/background.
+ *
+ * These used to emit a standalone `${selector}{animation:…}` rule each. Two
+ * rules setting the `animation` shorthand on one selector do not compose —
+ * the later wins outright — so a paint effect plus ANY of these (gold foil
+ * + heartbeat, the most ordinary combination in the catalog) silently froze
+ * the paint, and coin + neon ran only neon. compilePaintCss now merges every
+ * self-level animation into one comma-listed rule, the same way the split
+ * path always did for spans. wave/ripple/tumble/hop/twirl/type (per-letter)
  * are handled by buildLetterMotionCss instead. */
-function buildMotionEffectCss(effectId, speed, selector, hash, glow) {
+function buildMotionEffectCss(effectId, speed, hash, glow) {
   const duration = effectDuration(effectId, speed)
   const animName = `hsp_${hash}_${effectId}`
+  const sync = syncDelayCalc(duration)
+  const part = (timing, kf, decls = '') => ({ decls, animShorthand: `${animName} ${duration}s ${timing} infinite`, delayExpr: sync, keyframes: kf })
 
   switch (effectId) {
-    case 'coin': {
-      const rule = `${selector}{animation:${animName} ${duration}s cubic-bezier(.6,0,.4,1) infinite;animation-delay:${syncDelayCalc(duration)};transform-style:preserve-3d;}`
-      const kf = `@keyframes ${animName}{0%,55%{transform:rotateY(0);}75%{transform:rotateY(180deg);}95%,100%{transform:rotateY(360deg);}}`
-      return rule + kf
-    }
+    case 'coin':
+      return part('cubic-bezier(.6,0,.4,1)',
+        `@keyframes ${animName}{0%,55%{transform:rotateY(0);}75%{transform:rotateY(180deg);}95%,100%{transform:rotateY(360deg);}}`,
+        'transform-style:preserve-3d;')
     case 'heli': {
       // A spin that RESTS, not a name that never stops turning.
       //
@@ -7974,52 +8427,64 @@ function buildMotionEffectCss(effectId, speed, selector, hash, glow) {
       // the honest evidence for that is that it had to be excluded from the
       // shuffle pool for being unrollable. Fixing it beat documenting it: the
       // rule is now universal, so the exception list is gone.
-      const rule = `${selector}{animation:${animName} ${duration}s cubic-bezier(.5,0,.5,1) infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,72%{transform:rotate(0);}100%{transform:rotate(360deg);}}`
-      return rule + kf
+      return part('cubic-bezier(.5,0,.5,1)',
+        `@keyframes ${animName}{0%,72%{transform:rotate(0);}100%{transform:rotate(360deg);}}`)
     }
-    case 'float': {
-      const rule = `${selector}{animation:${animName} ${duration}s ease-in-out infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,100%{transform:translateY(1.5px) rotate(-1.6deg);}50%{transform:translateY(-2.5px) rotate(1.6deg);}}`
-      return rule + kf
+    case 'float':
+      return part('ease-in-out',
+        `@keyframes ${animName}{0%,100%{transform:translateY(1.5px) rotate(-1.6deg);}50%{transform:translateY(-2.5px) rotate(1.6deg);}}`)
+    case 'heart':
+      return part('ease-out',
+        `@keyframes ${animName}{0%,28%,100%{transform:scale(1);}10%{transform:scale(1.11);}20%{transform:scale(1.04);}}`)
+    case 'wobble':
+      return part('ease-in-out',
+        `@keyframes ${animName}{0%,100%{transform:scaleX(1);}50%{transform:scaleX(1.09);}}`)
+    case 'swing':
+      return part('ease-in-out',
+        `@keyframes ${animName}{0%,100%{transform:rotate(4.5deg);}50%{transform:rotate(-4.5deg);}}`,
+        'transform-origin:50% -60%;')
+    case 'jitter':
+      // Still for four fifths of the cycle, then a burst of one-pixel shoves.
+      return part('steps(1,end)',
+        `@keyframes ${animName}{0%,80%,100%{transform:translate(0,0);}82%{transform:translate(-1px,1px);}84%{transform:translate(1px,-1px);}86%{transform:translate(-1px,-1px);}88%{transform:translate(1px,1px);}90%{transform:translate(-1px,0);}92%{transform:translate(1px,0);}}`)
+    case 'glitch': {
+      // Chromatic split — cyan and magenta ghosts thrown to either side for a
+      // few frames, then clean. The resting frame is the user's own glow (or
+      // none), so a glitch never switches a glow off for the rest of its cycle.
+      const rest = glowShadowValue(glow) || 'none'
+      return part('steps(1,end)',
+        `@keyframes ${animName}{0%,86%,100%{text-shadow:${rest};}88%{text-shadow:-2px 0 #00ffff,2px 0 #ff00ff;}90%{text-shadow:2px 0 #00ffff,-2px 0 #ff00ff;}93%{text-shadow:-1px 0 #00ffff,1px 0 #ff00ff;}95%{text-shadow:${rest};}}`)
     }
-    case 'heart': {
-      const rule = `${selector}{animation:${animName} ${duration}s ease-out infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,28%,100%{transform:scale(1);}10%{transform:scale(1.11);}20%{transform:scale(1.04);}}`
-      return rule + kf
-    }
-    case 'wobble': {
-      const rule = `${selector}{animation:${animName} ${duration}s ease-in-out infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,100%{transform:scaleX(1);}50%{transform:scaleX(1.09);}}`
-      return rule + kf
-    }
-    case 'swing': {
-      const rule = `${selector}{transform-origin:50% -60%;animation:${animName} ${duration}s ease-in-out infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,100%{transform:rotate(4.5deg);}50%{transform:rotate(-4.5deg);}}`
-      return rule + kf
-    }
+    case 'flicker':
+      // A tube with a loose contact: two dips inside half a second, then
+      // steady. Two flashes per cycle at any speed — well under the 3/s line.
+      return part('steps(1,end)',
+        `@keyframes ${animName}{0%,70%,100%{opacity:1;}72%{opacity:.4;}74%{opacity:1;}84%{opacity:.55;}86%{opacity:1;}}`)
     case 'neon': {
       const color = glow && HEX_RE.test(glow.color) ? safeHex(glow.color) : '#ff40af'
       const scale = glow && glow.strength === 2 ? 1.6 : 1
-      const r1 = Math.round(4 * scale),
-        r2 = Math.round(11 * scale)
-      const r1b = Math.round(6 * scale),
-        r2b = Math.round(22 * scale),
-        r3b = Math.round(40 * scale)
-      const rule = `${selector}{animation:${animName} ${duration}s ease-in-out infinite;animation-delay:${syncDelayCalc(duration)};}`
-      const kf = `@keyframes ${animName}{0%,100%{text-shadow:0 0 ${r1}px ${color}80, 0 0 ${r2}px ${color}40;}50%{text-shadow:0 0 ${r1b}px ${color}cc, 0 0 ${r2b}px ${color}88, 0 0 ${r3b}px ${color}44;}}`
-      return rule + kf
+      const r1 = Math.round(4 * scale), r2 = Math.round(11 * scale)
+      const r1b = Math.round(6 * scale), r2b = Math.round(22 * scale), r3b = Math.round(40 * scale)
+      return part('ease-in-out',
+        `@keyframes ${animName}{0%,100%{text-shadow:0 0 ${r1}px ${color}80, 0 0 ${r2}px ${color}40;}50%{text-shadow:0 0 ${r1b}px ${color}cc, 0 0 ${r2b}px ${color}88, 0 0 ${r3b}px ${color}44;}}`)
     }
     default:
-      return ''
+      return null
   }
 }
 
-function buildGlowCss(glow, selector) {
+/** The static glow's text-shadow value, or '' — shared by the glow rule and
+ * by glitch, whose resting frame must be the glow rather than nothing. */
+function glowShadowValue(glow) {
   if (!glow || !HEX_RE.test(glow.color)) return ''
   const color = safeHex(glow.color)
   const [r1, r2] = glow.strength === 2 ? [10, 26] : [6, 14]
-  return `${selector}{text-shadow:0 0 ${r1}px ${color}cc, 0 0 ${r2}px ${color}66;}`
+  return `0 0 ${r1}px ${color}cc, 0 0 ${r2}px ${color}66`
+}
+
+function buildGlowCss(glow, selector) {
+  const value = glowShadowValue(glow)
+  return value ? `${selector}{text-shadow:${value};}` : ''
 }
 
 /**
@@ -8048,11 +8513,9 @@ function compilePaintCss(spec, selector, opts = {}) {
   const stops = sortedStops(base)
   const effects = opts.static
     ? []
-    : Array.isArray(spec.effects)
-      ? spec.effects.filter((e) => isPlainObject(e) && EFFECT_IDS.has(e.id))
-      : []
-  const paintEffect = effects.find((e) => EFFECTS[e.id].slot === 'paint')
-  const motionEffects = effects.filter((e) => EFFECTS[e.id].slot === 'motion')
+    : (Array.isArray(spec.effects) ? spec.effects.filter(e => isPlainObject(e) && EFFECT_IDS.has(e.id)) : [])
+  const paintEffect = effects.find(e => EFFECTS[e.id].slot === 'paint')
+  const motionEffects = effects.filter(e => EFFECTS[e.id].slot === 'motion')
   const needsLetterSplit = paintNeedsSpans(spec)
 
   // Chrome cannot paint a parent's background-clip:text into TRANSFORMED
@@ -8067,6 +8530,23 @@ function compilePaintCss(spec, selector, opts = {}) {
   let css = `${selector}{display:inline-block;`
   if (baseCss && (!needsLetterSplit || !baseCss.isClipText)) css += baseCss.decl
   css += '}'
+
+  // Every animation that lands on the ELEMENT ITSELF — the whole-name motions
+  // always, and the paint effect when the name is not split — goes into one
+  // rule with comma-listed animation/animation-delay. Two rules setting the
+  // shorthand on the same selector do not compose (the later wins outright),
+  // which is how gold foil + heartbeat used to run only the heartbeat.
+  const selfParts = []
+  for (const e of motionEffects) {
+    if (EFFECTS[e.id].letterSplit) continue
+    const m = buildMotionEffectCss(e.id, e.speed, hash, spec.glow)
+    if (m) selfParts.push(m)
+  }
+  const emitSelfRule = () => {
+    if (!selfParts.length) return
+    css += `${selector}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
+    css += selfParts.map(p => p.keyframes).join('')
+  }
 
   if (needsLetterSplit) {
     // Every animation that lands on `${selector} span` (the paint effect,
@@ -8092,19 +8572,17 @@ function compilePaintCss(spec, selector, opts = {}) {
       }
     }
     for (const e of motionEffects) {
-      if (EFFECTS[e.id].letterSplit) {
-        const m = buildLetterMotionCss(e.id, e.speed, selector, hash)
-        if (m) {
-          spanDecls += m.decls
-          animList.push(m.animShorthand)
-          delayList.push(m.delayExpr)
-          css += m.keyframes
-          if (m.extraRule) css += m.extraRule
-        }
-      } else {
-        css += buildMotionEffectCss(e.id, e.speed, selector, hash, spec.glow)
+      if (!EFFECTS[e.id].letterSplit) continue
+      const m = buildLetterMotionCss(e.id, e.speed, selector, hash)
+      if (m) {
+        spanDecls += m.decls
+        animList.push(m.animShorthand)
+        delayList.push(m.delayExpr)
+        css += m.keyframes
+        if (m.extraRule) css += m.extraRule
       }
     }
+    emitSelfRule()
 
     css += `${selector} span{display:inline-block;${spanDecls}`
     if (animList.length) css += `animation:${animList.join(', ')};animation-delay:${delayList.join(', ')};`
@@ -8112,17 +8590,15 @@ function compilePaintCss(spec, selector, opts = {}) {
   } else {
     if (paintEffect) {
       const p = buildPaintEffectCss(paintEffect.id, paintEffect.speed, base, stops, hash)
-      if (p) css += `${paintTarget}{${p.decls}animation:${p.animShorthand};animation-delay:${p.sync};}${p.keyframes}`
+      if (p) selfParts.unshift({ decls: p.decls, animShorthand: p.animShorthand, delayExpr: p.sync, keyframes: p.keyframes })
     }
-    for (const e of motionEffects) {
-      css += buildMotionEffectCss(e.id, e.speed, selector, hash, spec.glow)
-    }
+    emitSelfRule()
   }
 
   // Static glow — skip if neon is active and sourced the same color (neon's
   // own keyframes already carry a shadow on every frame); otherwise layer
   // the constant shadow on so it doesn't require an active effect to show.
-  const hasNeon = motionEffects.some((e) => e.id === 'neon')
+  const hasNeon = motionEffects.some(e => e.id === 'neon')
   if (spec.glow && !hasNeon) {
     css += buildGlowCss(spec.glow, selector)
   }
@@ -8148,10 +8624,16 @@ function compilePaintCss(spec, selector, opts = {}) {
   if (spec.v === 2 && isPlainObject(spec.scene)) {
     css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static })
     const clipTextFill = !!paintEffect || base.type !== 'solid'
-    const filterHostile = motionEffects.some((e) => e.id === 'ripple' || e.id === 'tumble')
+    const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
+    // An ANIMATED clip-text fill under the rim filter is the worst render
+    // cell in the matrix: the gradient moves every frame beneath two stacked
+    // drop-shadows, so the browser re-filters every visible copy of the name
+    // per frame — measurable frame drops on phones. The rim is legibility
+    // garnish; the frames are not. Static mode keeps it (nothing animates).
+    const animatedFill = !!paintEffect && !opts.static
     if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
       if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
-      else if (!filterHostile) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
+      else if (!filterHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
     }
   }
 
@@ -9000,7 +9482,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c152748+-202609051519' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'fc48379+-202609062110' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

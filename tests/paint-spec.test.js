@@ -427,7 +427,10 @@ describe('compilePaintCss — structural checks', () => {
     expect(spanRules[0]).toMatch(/animation:hsp_w_wave[^;,]*;/)
   })
 
-  test('non-split paint + whole-name motion (fire + coin) is untouched — separate rules, out of scope here', () => {
+  test('non-split paint + whole-name motion (fire + coin): ONE selector rule, both animations comma-listed', () => {
+    // Two `.hsp-fc{animation:…}` rules on one selector do not compose — the
+    // later won, so gold foil + heartbeat ran only the heartbeat. Self-level
+    // animations merge like the spans always did.
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -444,7 +447,9 @@ describe('compilePaintCss — structural checks', () => {
     })
     const css = compilePaintCss(spec, '.hsp-fc', { hash: 'fc' })
     expect(css).not.toContain(' span{')
-    expect(css.match(/\.hsp-fc\{[^}]*animation:/g)?.length).toBe(2)
+    const animRules = css.match(/\.hsp-fc\{[^}]*animation:[^}]*\}/g) || []
+    expect(animRules.length).toBe(1)
+    expect(animRules[0]).toMatch(/animation:hsp_fc_fire[^,]*, hsp_fc_coin/)
   })
 
   test('conic effect namespaces its @property angle var per-hash (no cross-user collision)', () => {
@@ -505,48 +510,34 @@ describe('compilePaintCss — adversarial injection resistance', () => {
   })
 })
 
-describe('EFFECTS enum — exactly the 20 phase-1 effects, correctly classified', () => {
-  const EXPECTED_IDS = [
-    'pan',
-    'conic',
-    'hue',
-    'wave',
-    'ripple',
-    'coin',
-    'heli',
-    'glint',
-    'neon',
-    'chrome',
-    'gold',
-    'fire',
-    'matrix',
-    'holo',
-    'float',
-    'heart',
-    'reveal',
-    'wobble',
-    'swing',
-    'tumble',
-  ]
+describe('EFFECTS enum — the catalog, correctly classified', () => {
+  const PAINT = ['chrome', 'conic', 'fire', 'glint', 'gold', 'holo', 'hue', 'ice', 'lava', 'matrix', 'pan', 'pulse', 'rainbow', 'reveal', 'stardust', 'stripes']
+  const MOTION = ['coin', 'flicker', 'float', 'glitch', 'heart', 'heli', 'hop', 'jitter', 'neon', 'ripple', 'swing', 'tumble', 'twirl', 'type', 'wave', 'wobble']
 
-  test('has exactly the 20 required ids, no more, no less', () => {
-    expect(Object.keys(EFFECTS).sort()).toEqual([...EXPECTED_IDS].sort())
+  test('has exactly these ids, no more, no less', () => {
+    expect(Object.keys(EFFECTS).sort()).toEqual([...PAINT, ...MOTION].sort())
   })
 
-  test('paint-slot ids are exactly pan/conic/hue/glint/chrome/gold/fire/matrix/holo/reveal', () => {
+  test('paint-slot ids', () => {
     const paintIds = Object.entries(EFFECTS)
       .filter(([, m]) => m.slot === 'paint')
       .map(([id]) => id)
       .sort()
-    expect(paintIds).toEqual(['chrome', 'conic', 'fire', 'glint', 'gold', 'holo', 'hue', 'matrix', 'pan', 'reveal'])
+    expect(paintIds).toEqual(PAINT)
   })
 
-  test('only hue/ripple/neon are classified as luminance-changing', () => {
+  test('motion-slot ids, every one carrying a sig', () => {
+    const motion = Object.entries(EFFECTS).filter(([, m]) => m.slot === 'motion')
+    expect(motion.map(([id]) => id).sort()).toEqual(MOTION)
+    for (const [id, m] of motion) expect(m.sig, id).toMatch(/^(self|letter):(transform|filter|shadow|opacity)$/)
+  })
+
+  test('luminance-changing effects are exactly the ones that change luminance', () => {
     const lumIds = Object.entries(EFFECTS)
       .filter(([, m]) => m.luminance)
       .map(([id]) => id)
       .sort()
-    expect(lumIds).toEqual(['hue', 'neon', 'ripple'])
+    expect(lumIds).toEqual(['flicker', 'hue', 'neon', 'pulse', 'ripple', 'type'])
   })
 })
 

@@ -24,7 +24,14 @@
     "rules": {
       "preset": "recommended",
       "suspicious": {
-        "noConsole": { "level": "off", "options": { "allow": ["log"] } },
+        "noConsole": {
+          "level": "off",
+          "options": {
+            "allow": [
+              "log"
+            ]
+          }
+        },
         "noControlCharactersInRegex": "off",
         "noMisleadingCharacterClass": "off",
         "noDoubleEquals": "warn",
@@ -53,5 +60,20 @@
       "!chrome/emoji-data.js",
       "!chrome/emoji-data.iso.js"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "src/lib/paint-core.js",
+        "src/lib/scene-spec.js",
+        "src/lib/paint-spec.js"
+      ],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
 }

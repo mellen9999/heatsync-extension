@@ -1,8 +1,4 @@
 /**
- * SYNCED COPY of the heatsync monorepo's client/utils/paint-core.js — keep
- * byte-close to the source of truth; mirror changes in both repos. Only
- * bundling adaptations belong here, never a behavior fork.
- *
  * paint-core — tiny pure helpers shared by the paint compiler
  * (paint-spec.js) and the scene compiler (scene-spec.js).
  *

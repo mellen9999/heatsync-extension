@@ -30,7 +30,7 @@
  */
 
 import {
-  isPlainObject, isIntInRange, isNumInRange,
+  HEX_RE, isPlainObject, isIntInRange, isNumInRange,
   MIN_SPEED, MAX_SPEED, safeSpeed, periodSeconds, syncDelayCalc,
 } from './paint-core.js'
 
@@ -458,34 +458,92 @@ function positionalKeyframes(name, layers) {
   return `@keyframes ${name}{from{background-position:${from};}to{background-position:${to};}}`
 }
 
+// ── tint → palette ──────────────────────────────────────────────────────────
+//
+// A scene is drawn in ONE colour, and the user picks it from the same
+// ANSI-256 palette their name is painted with. Hue and saturation are theirs;
+// lightness is the scene's. That split is what makes a free tint safe: every
+// plate keeps its designed mid-to-dark ladder under the text rim whatever is
+// picked, a grey tint yields a grey scene instead of a broken one, and there
+// is no curated variant list to outgrow.
+//
+// Accents — glows, rays, wisps, lit windows, particles — take the tint AS IS,
+// so a dark pick reads as a dim scene and a bright one as a loud one. That is
+// the one axis the ladder leaves to the user, on purpose.
+//
+// k(l, sat = 1, hue = 0) → #rrggbb at the tint's hue (+hue°), the tint's
+//   saturation × sat, lightness l
+// k.to(l, sat, target, amount) → the same, with the hue pulled toward
+//   `target` by `amount` (0..1) along the shorter arc — how a warm horizon
+//   still ends in a night-blue zenith
+// k.tint → the picked colour, verbatim; k.l → its lightness
+
+function hexToHsl(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  const r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min
+  const l = (max + min) / 2
+  if (!d) return [0, 0, l]
+  const s = d / (1 - Math.abs(2 * l - 1))
+  const h = max === r ? ((g - b) / d + 6) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4
+  return [h * 60, s, l]
+}
+
+function hslToHex(h, s, l) {
+  s = Math.min(1, Math.max(0, s))
+  l = Math.min(1, Math.max(0, l))
+  const f = (n) => {
+    const kk = (n + h / 30) % 12
+    const c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(kk - 3, 9 - kk, 1))
+    return Math.round(c * 255).toString(16).padStart(2, '0')
+  }
+  return `#${f(0)}${f(8)}${f(4)}`
+}
+
+function tintKit(tint) {
+  const [h, s, l] = hexToHsl(tint)
+  const k = (lt, sat = 1, hue = 0) => hslToHex((h + hue + 360) % 360, s * sat, lt)
+  k.to = (lt, sat, target, amount) => {
+    const delta = ((target - h + 540) % 360) - 180
+    return hslToHex((h + delta * amount + 360) % 360, s * sat, lt)
+  }
+  k.tint = tint
+  k.l = l
+  return k
+}
+
+// The zenith a lit horizon fades into — night blue, whatever the tint.
+const NIGHT = 245
+
 // ── backdrop catalog ────────────────────────────────────────────────────────
 //
-// build() returns { layers, alternate?, props?, keyframesBody?, fg? }.
+// build(k) returns { layers, alternate?, props?, keyframesBody?, fg? }.
 // `layers` is back-to-front LAST-to-FIRST, exactly like the CSS shorthand:
 // the first entry paints on top. `fg` is a single NEAR layer, painted in the
 // front pseudo over the name. Backgrounds never escape the pseudo's box — no
 // clipping, no overflow, no layout impact. Every plate is deliberately
 // mid-to-dark so the shared text rim (see paint-spec.js) guarantees legibility
 // on all of them.
+//
+// `legacy` is the tint each retired numbered variant is read as — a saved
+// `{ variant: n }` keeps rendering, and [0] is the tint a fresh pick starts
+// from. Nothing else in the catalog is preconfigured.
 
 const BACKDROPS = {
   dawn: {
     label: 'desert dawn', luminance: false, basePeriod: 16,
-    variants: [
-      { name: 'ember', sky: 'linear-gradient(0deg,#ff8700 0%,#b34700 22%,#6e3a52 55%,#3a2f55 82%,#23233f 100%)', haze: '#ffd7af', bloom: '#ffaf5f', sil: '#140a02', fg: '#0a0501' },
-      { name: 'rose', sky: 'linear-gradient(0deg,#ff5f87 0%,#a03562 26%,#5f2d55 60%,#2e2345 100%)', haze: '#ffc7d7', bloom: '#ff87af', sil: '#170812', fg: '#0c0409' },
-      { name: 'gold', sky: 'linear-gradient(0deg,#ffd700 0%,#af7800 24%,#5f4a3a 58%,#39304a 100%)', haze: '#fff3b0', bloom: '#ffe75f', sil: '#141002', fg: '#0a0801' },
-    ],
-    build(v) {
+    legacy: ['#ff8700', '#ff5f87', '#ffd700'],
+    build(k) {
+      const haze = k(.84), bloom = k(.69)
       return {
         layers: [
-          L(SIL.dunes(v.sil), 'repeat-x', 'auto 42%', '0 100%', '0 100%'),
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
+          L(SIL.dunes(k(.04, .8)), 'repeat-x', 'auto 42%', '0 100%', '0 100%'),
+          L(`linear-gradient(90deg,transparent 0%,${haze}38 35%,${haze}55 50%,${haze}38 65%,transparent 100%)`,
             'no-repeat', '220% 58%', '200% 78%', '-100% 78%'),
-          L(`radial-gradient(90% 90% at 50% 108%,${v.bloom}66 0%,${v.bloom}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(90% 90% at 50% 108%,${bloom}66 0%,${bloom}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.5)} 0%,${k(.35)} 22%,${k.to(.33, .35, NIGHT, .55)} 55%,${k.to(.26, .3, NIGHT, .9)} 82%,${k.to(.19, .3, NIGHT, 1)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.dunes(v.fg), 'repeat-x', 'auto 26%', '0 100%'),
+        fg: L(FG.dunes(k(.02, .8)), 'repeat-x', 'auto 26%', '0 100%'),
       }
     },
   },
@@ -493,73 +551,64 @@ const BACKDROPS = {
   graveyard: {
     // Overcast by construction: the sky is brightest at the horizon (the glow
     // the clouds are lit from) and darkest at the top, where two blocky cloud
-    // decks hang down over it.
+    // decks hang down over it. The decks are LIGHTER than that top, because
+    // an overcast lid lit from below by the same glow is what you actually
+    // see at night.
     label: 'graveyard', luminance: false, basePeriod: 22,
-    variants: [
-      // Sky runs bright at the horizon (0% is the BOTTOM at 0deg) to near-black
-      // at the top; the decks are LIGHTER than that top, because an overcast
-      // lid lit from below by the same glow is what you actually see at night.
-      { name: 'ash', sky: 'linear-gradient(0deg,#2e2e36 0%,#22222a 40%,#15151a 75%,#0e0e13 100%)', near: '#33333d', far: '#292933', moon: '#c6c6d2', sil: '#08080a', fg: '#000000' },
-      { name: 'blood', sky: 'linear-gradient(0deg,#4a2428 0%,#301a1e 40%,#1c1114 75%,#120b0d 100%)', near: '#3d2126', far: '#33191e', moon: '#e0a0a0', sil: '#0a0608', fg: '#000000' },
-      { name: 'moonlit', sky: 'linear-gradient(0deg,#33435f 0%,#222d44 40%,#141c2b 75%,#0d1220 100%)', near: '#2b3750', far: '#232e44', moon: '#dce8ff', sil: '#060810', fg: '#000105' },
-    ],
-    build(v) {
-      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
-      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
+    legacy: ['#808080', '#d70000', '#5f87ff'],
+    build(k) {
+      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, k(.22, .3), '1')
+      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, k(.18, .35), '.9')
       return {
         layers: [
-          L(SIL.graveyard(v.sil), 'repeat-x', 'auto 52%', '0 100%', '0 100%'),
+          L(SIL.graveyard(k(.04, .3)), 'repeat-x', 'auto 52%', '0 100%', '0 100%'),
           // Each deck advances exactly one own-tile width per loop — seamless
           // by construction, and the different widths ARE the parallax.
           L(near.url, 'repeat-x', `${near.w}px 58%`, '0 0', `-${near.w}px 0`),
           L(far.url, 'repeat-x', `${far.w}px 44%`, '0 0', `-${far.w}px 0`),
-          L(`radial-gradient(45% 75% at 62% 6%,${v.moon}2e 0%,transparent 68%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(45% 75% at 62% 6%,${k(.8, .5)}2e 0%,transparent 68%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.2, .35)} 0%,${k(.15, .35)} 40%,${k(.09, .35)} 75%,${k(.06, .35)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.graveyard(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+        fg: L(FG.graveyard('#000000'), 'repeat-x', 'auto 30%', '0 100%'),
       }
     },
   },
 
   abyss: {
     label: 'abyss', luminance: false, basePeriod: 18,
-    variants: [
-      { name: 'blue', sky: 'linear-gradient(180deg,#00344e 0%,#001d2e 45%,#000a12 100%)', ray: '#00d7ff', sil: '#010508', fg: '#000103' },
-      { name: 'teal', sky: 'linear-gradient(180deg,#00443b 0%,#00251f 45%,#000d0a 100%)', ray: '#00ffd7', sil: '#010806', fg: '#000302' },
-      { name: 'void', sky: 'linear-gradient(180deg,#1e0f38 0%,#100822 45%,#05030e 100%)', ray: '#875fff', sil: '#040208', fg: '#020004' },
-    ],
-    build(v) {
+    legacy: ['#00d7ff', '#00ffd7', '#875fff'],
+    build(k) {
+      const ray = k.tint
       return {
         layers: [
-          L(SIL.reef(v.sil), 'repeat-x', 'auto 26%', '0 100%', '0 100%'),
-          L(`linear-gradient(104deg,transparent 30%,${v.ray}14 42%,transparent 50%,${v.ray}0e 62%,transparent 72%)`,
+          L(SIL.reef(k(.02, .8)), 'repeat-x', 'auto 26%', '0 100%', '0 100%'),
+          L(`linear-gradient(104deg,transparent 30%,${ray}14 42%,transparent 50%,${ray}0e 62%,transparent 72%)`,
             'no-repeat', '260% 100%', '-90% 0', '190% 0'),
-          L(`radial-gradient(80% 60% at 50% -10%,${v.ray}20 0%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(80% 60% at 50% -10%,${ray}20 0%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(180deg,${k(.15)} 0%,${k(.09)} 45%,${k(.04)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.reef(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+        fg: L(FG.reef(k(.01)), 'repeat-x', 'auto 22%', '0 100%'),
       }
     },
   },
 
   nightfall: {
     label: 'nightfall', luminance: false, basePeriod: 20,
-    variants: [
-      { name: 'aurora', sky: 'linear-gradient(0deg,#0a0a16 0%,#12122a 55%,#0a0a18 100%)', a1: '#00ff87', a2: '#00d7ff', sil: '#04040a', fg: '#000004' },
-      { name: 'magenta', sky: 'linear-gradient(0deg,#120a16 0%,#1c122a 55%,#100a18 100%)', a1: '#ff40af', a2: '#875fff', sil: '#08040a', fg: '#030004' },
-      { name: 'ice', sky: 'linear-gradient(0deg,#0a0e16 0%,#101a2a 55%,#0a0e18 100%)', a1: '#87d7ff', a2: '#d7ffff', sil: '#04060c', fg: '#000206' },
-    ],
-    build(v) {
+    legacy: ['#00ff87', '#ff40af', '#87d7ff'],
+    build(k) {
+      // The curtain is the tint and a second band 40° along; the sky behind
+      // it is night whatever the curtain's colour.
+      const a1 = k.tint, a2 = k(k.l, 1, 40)
       return {
         layers: [
-          L(SIL.pines(v.sil), 'repeat-x', 'auto 46%', '0 100%', '0 100%'),
-          L(`linear-gradient(100deg,transparent 15%,${v.a1}30 35%,${v.a2}2e 50%,${v.a1}24 62%,transparent 82%)`,
+          L(SIL.pines(k.to(.03, .45, 240, .75)), 'repeat-x', 'auto 46%', '0 100%', '0 100%'),
+          L(`linear-gradient(100deg,transparent 15%,${a1}30 35%,${a2}2e 50%,${a1}24 62%,transparent 82%)`,
             'no-repeat', '240% 90%', '-90% 0', '190% 0'),
           L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0'),
           L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k.to(.06, .4, 240, .75)} 0%,${k.to(.12, .4, 240, .75)} 55%,${k.to(.07, .4, 240, .75)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.pines(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+        fg: L(FG.pines(k.to(.01, 1, 240, .75)), 'repeat-x', 'auto 30%', '0 100%'),
       }
     },
   },
@@ -567,17 +616,14 @@ const BACKDROPS = {
   terminal: {
     // No foreground: a CRT has no landscape to stand in front of.
     label: 'terminal', luminance: false, basePeriod: 9,
-    variants: [
-      { name: 'phosphor', ph: '#00ff5f', plate: 'linear-gradient(#0c0c0c,#060606)' },
-      { name: 'amber', ph: '#ffb000', plate: 'linear-gradient(#0e0a04,#070502)' },
-      { name: 'paper', ph: '#c0c0c0', plate: 'linear-gradient(#101010,#0a0a0a)' },
-    ],
-    build(v) {
+    legacy: ['#00ff5f', '#ffb000', '#c0c0c0'],
+    build(k) {
+      const ph = k.tint
       return {
         layers: [
-          L(`linear-gradient(0deg,transparent 38%,${v.ph}16 50%,transparent 62%)`, 'no-repeat', '100% 300%', '0 0', '0 100%'),
-          L(`repeating-linear-gradient(0deg,${v.ph}0d 0 1px,transparent 1px 3px)`, 'repeat', '100% auto', '0 0'),
-          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,transparent 38%,${ph}16 50%,transparent 62%)`, 'no-repeat', '100% 300%', '0 0', '0 100%'),
+          L(`repeating-linear-gradient(0deg,${ph}0d 0 1px,transparent 1px 3px)`, 'repeat', '100% auto', '0 0'),
+          L(`linear-gradient(${k(.05, .55)},${k(.02, .55)})`, 'no-repeat', '100% 100%', '0 0'),
         ],
       }
     },
@@ -585,39 +631,36 @@ const BACKDROPS = {
 
   furnace: {
     label: 'furnace', luminance: true, basePeriod: 5,
-    variants: [
-      { name: 'coal', glow: '#ff3700', plate: 'linear-gradient(0deg,#1c0300 0%,#0d0202 55%,#050505 100%)' },
-      { name: 'ion', glow: '#00afff', plate: 'linear-gradient(0deg,#001030 0%,#020818 55%,#040404 100%)' },
-      { name: 'hex', glow: '#af5fff', plate: 'linear-gradient(0deg,#14001c 0%,#0a0212 55%,#050505 100%)' },
-    ],
-    build(v, hash) {
+    legacy: ['#ff3700', '#00afff', '#af5fff'],
+    build(k, hash) {
       // Registered <color> custom prop so the underglow's alpha itself
       // interpolates (background-position can't express a breathe). The var is
       // hash-namespaced like conic's angle prop — no cross-user collision.
       // This is the one backdrop whose loop ALTERNATES, which is also why it
       // never hosts a far-weather plane: rain running backwards is not rain.
       const cv = `--hsb-${hash}`
+      const glow = k.tint
       return {
         layers: [
           L(`radial-gradient(120% 90% at 50% 115%,var(${cv}) 0%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.05)} 0%,${k(.03, .75)} 55%,#050505 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
         alternate: true,
-        props: `@property ${cv}{syntax:"<color>";initial-value:${v.glow}66;inherits:false;}`,
-        keyframesBody: `{from{${cv}:${v.glow}55;}to{${cv}:${v.glow}a8;}}`,
+        props: `@property ${cv}{syntax:"<color>";initial-value:${glow}66;inherits:false;}`,
+        keyframesBody: `{from{${cv}:${glow}55;}to{${cv}:${glow}a8;}}`,
       }
     },
   },
+
   ocean: {
     label: 'open sea', luminance: false, basePeriod: 14,
-    variants: [
-      { name: 'sunset', sky: 'linear-gradient(0deg,#ff8700 0%,#c04a3a 24%,#6a2e5a 58%,#26203f 100%)', water: '#0d3a4a', far: '#164e60', bloom: '#ffb05f', glit: '#ffd7af', fg: '#061a22' },
-      { name: 'midnight', sky: 'linear-gradient(0deg,#1e3a6e 0%,#10224a 40%,#080f24 100%)', water: '#06182a', far: '#0b2438', bloom: '#c8d8ff', glit: '#e8f0ff', fg: '#030b14' },
-      { name: 'tropic', sky: 'linear-gradient(0deg,#00d7ff 0%,#0090c0 30%,#2a4a8a 70%,#1c2450 100%)', water: '#00485a', far: '#006070', bloom: '#ffffff', glit: '#d7ffff', fg: '#002a34' },
-    ],
-    build(v) {
-      const near = band(SWELL_NEAR_STEPS, SWELL_NEAR_W, 12, v.water, '1')
-      const far = band(SWELL_FAR_STEPS, SWELL_FAR_W, 16, v.far, '1')
+    legacy: ['#ff8700', '#5f87ff', '#00d7ff'],
+    build(k) {
+      // The water is sea-coloured under any sky: pulled most of the way to
+      // teal, keeping only a cast of the tint.
+      const near = band(SWELL_NEAR_STEPS, SWELL_NEAR_W, 12, k.to(.17, .7, 195, .8), '1')
+      const far = band(SWELL_FAR_STEPS, SWELL_FAR_W, 16, k.to(.23, .65, 195, .8), '1')
+      const bloom = k(.69), glit = k(.84)
       return {
         layers: [
           // Swells advance one own-tile per loop, opposite directions — the
@@ -625,33 +668,32 @@ const BACKDROPS = {
           L(near.url, 'repeat-x', `${near.w}px 34%`, '0 100%', `-${near.w}px 100%`),
           L(far.url, 'repeat-x', `${far.w}px 46%`, '0 100%', `${far.w}px 100%`),
           // Sun path glitter — a broken line on the water that walks with the swell.
-          L(`repeating-linear-gradient(90deg,transparent 0 3px,${v.glit}66 3px 4px,transparent 4px 7px)`, 'repeat-x', '100% 8%', '0 60%', '7px 60%'),
-          L(`radial-gradient(70% 70% at 50% 62%,${v.bloom}88 0%,${v.bloom}22 35%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`repeating-linear-gradient(90deg,transparent 0 3px,${glit}66 3px 4px,transparent 4px 7px)`, 'repeat-x', '100% 8%', '0 60%', '7px 60%'),
+          L(`radial-gradient(70% 70% at 50% 62%,${bloom}88 0%,${bloom}22 35%,transparent 60%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.5)} 0%,${k.to(.49, .55, NIGHT, .25)} 24%,${k.to(.3, .4, NIGHT, .7)} 58%,${k.to(.19, .35, NIGHT, 1)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.swell(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+        fg: L(FG.swell(k.to(.08, .7, 195, .8)), 'repeat-x', 'auto 22%', '0 100%'),
       }
     },
   },
 
   skyline: {
     label: 'city night', luminance: false, basePeriod: 26,
-    variants: [
-      { name: 'neon', sky: 'linear-gradient(0deg,#3a1050 0%,#1a0a2e 40%,#0a0616 100%)', glow: '#ff40af', win: '#00e5ff', near: '#0a0612', far: '#1c1030', fg: '#05030a' },
-      { name: 'sodium', sky: 'linear-gradient(0deg,#2a1a08 0%,#120a04 45%,#070402 100%)', glow: '#ff8700', win: '#ffb000', near: '#0c0804', far: '#1f1408', fg: '#050302' },
-      { name: 'dusk', sky: 'linear-gradient(0deg,#2c3a6e 0%,#182040 45%,#0a0e1e 100%)', glow: '#ff87af', win: '#ffd75f', near: '#0a0c18', far: '#1a2040', fg: '#04050c' },
-    ],
-    build(v) {
-      const near = cityDeck(CITY_NEAR_STEPS, CITY_NEAR_W, 24, v.near, v.win)
-      const far = cityDeck(CITY_FAR_STEPS, CITY_FAR_W, 24, v.far, v.win)
+    legacy: ['#ff40af', '#ff8700', '#ff87af'],
+    build(k) {
+      // Lit windows are warm in every city; the tint is the glow the towers
+      // stand against.
+      const win = '#ffd75f', glow = k.tint
+      const near = cityDeck(CITY_NEAR_STEPS, CITY_NEAR_W, 24, k(.05, .5), win)
+      const far = cityDeck(CITY_FAR_STEPS, CITY_FAR_W, 24, k(.13, .5), win)
       return {
         layers: [
           L(near.url, 'repeat-x', `${near.w}px 78%`, '0 100%', `-${near.w}px 100%`),
           L(far.url, 'repeat-x', `${far.w}px 60%`, '0 100%', `-${far.w}px 100%`),
-          L(`radial-gradient(80% 60% at 50% 100%,${v.glow}40 0%,${v.glow}14 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(80% 60% at 50% 100%,${glow}40 0%,${glow}14 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.19, .65)} 0%,${k(.11, .65)} 40%,${k(.05, .6)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.roof(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+        fg: L(FG.roof(k(.03, .5)), 'repeat-x', 'auto 30%', '0 100%'),
       }
     },
   },
@@ -659,23 +701,20 @@ const BACKDROPS = {
   orbit: {
     // No foreground: nothing stands in front of a name in orbit.
     label: 'orbit', luminance: false, basePeriod: 30,
-    variants: [
-      { name: 'mars', sky: 'linear-gradient(0deg,#160a0a 0%,#08050a 100%)', planet: '#7a2e14', rim: '#ff875f', neb: '#ff5f00' },
-      { name: 'nebula', sky: 'linear-gradient(0deg,#100a1c 0%,#05040c 100%)', planet: '#1e1440', rim: '#af5fff', neb: '#d787ff' },
-      { name: 'ice', sky: 'linear-gradient(0deg,#08121c 0%,#04070c 100%)', planet: '#0e2a3a', rim: '#87d7ff', neb: '#00d7ff' },
-    ],
-    build(v) {
+    legacy: ['#ff5f00', '#af5fff', '#00d7ff'],
+    build(k) {
+      const neb = k.tint, rim = k(.69)
       return {
         layers: [
           // A curved horizon with a lit rim — the planet is below the plate,
           // only its limb shows.
-          L(`radial-gradient(160% 110% at 50% 168%,${v.planet} 0 44%,${v.rim}99 45%,transparent 50%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(160% 110% at 50% 168%,${k(.28, .7)} 0 44%,${rim}99 45%,transparent 50%)`, 'no-repeat', '100% 100%', '0 0'),
           // Star fields drift one own-tile per loop — seamless, and the two
           // tile widths are the parallax.
           L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0', '-17px 0'),
           L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px', '-18px 7px'),
-          L(`linear-gradient(100deg,transparent 20%,${v.neb}26 40%,${v.neb}14 52%,transparent 70%)`, 'no-repeat', '240% 100%', '-90% 0', '190% 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(100deg,transparent 20%,${neb}26 40%,${neb}14 52%,transparent 70%)`, 'no-repeat', '240% 100%', '-90% 0', '190% 0'),
+          L(`linear-gradient(0deg,${k(.06, .4)} 0%,${k(.03, .4)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
       }
     },
@@ -684,24 +723,21 @@ const BACKDROPS = {
   synth: {
     // No foreground: the grid IS the ground.
     label: 'outrun', luminance: false, basePeriod: 1.4,
-    variants: [
-      { name: 'magenta', sun: '#ff40af', skyA: '#12041e', skyB: '#3a0c46', line: '#ff5fd7', floor: '#180830' },
-      { name: 'cyan', sun: '#00e5ff', skyA: '#04101e', skyB: '#0a2a46', line: '#00d7ff', floor: '#061a30' },
-      { name: 'gold', sun: '#ffd700', skyA: '#1a0a04', skyB: '#4a1e08', line: '#ffaf00', floor: '#241004' },
-    ],
-    build(v) {
+    legacy: ['#ff40af', '#00e5ff', '#ffd700'],
+    build(k) {
+      const sun = k.tint, line = k(.6)
       return {
         layers: [
           // Sun + sky in ONE opaque top box: the disc is centred on the box's
           // bottom edge, so the horizon cuts it in half, and the box hides the
           // 5px the grid overlaps past the horizon (below) while it scrolls.
-          L(`radial-gradient(circle at 50% 100%,${v.sun} 0 5px,${v.skyB} 5.5px 14px,${v.skyA} 100%)`, 'no-repeat', '100% 54%', '0 0'),
+          L(`radial-gradient(circle at 50% 100%,${sun} 0 5px,${k(.16, .7)} 5.5px 14px,${k(.07, .75)} 100%)`, 'no-repeat', '100% 54%', '0 0'),
           // Horizontal grid lines roll toward the viewer: one 5px period per
           // loop, seamless. The box is 5px taller than the floor so a line is
           // never missing at the top mid-scroll.
-          L(`repeating-linear-gradient(0deg,${v.line}cc 0 1px,transparent 1px 5px)`, 'repeat', '100% calc(46% + 5px)', '0 100%', '0 calc(100% + 5px)'),
-          L(`repeating-linear-gradient(90deg,${v.line}55 0 1px,transparent 1px 9px)`, 'no-repeat', '100% 46%', '0 100%'),
-          L(`linear-gradient(180deg,${v.floor} 0%,#000000 100%)`, 'no-repeat', '100% 46%', '0 100%'),
+          L(`repeating-linear-gradient(0deg,${line}cc 0 1px,transparent 1px 5px)`, 'repeat', '100% calc(46% + 5px)', '0 100%', '0 calc(100% + 5px)'),
+          L(`repeating-linear-gradient(90deg,${line}55 0 1px,transparent 1px 9px)`, 'no-repeat', '100% 46%', '0 100%'),
+          L(`linear-gradient(180deg,${k(.11, .7)} 0%,#000000 100%)`, 'no-repeat', '100% 46%', '0 100%'),
           L('linear-gradient(#000000,#000000)', 'no-repeat', '100% 100%', '0 0'),
         ],
       }
@@ -710,163 +746,146 @@ const BACKDROPS = {
 
   glacier: {
     label: 'glacier', luminance: false, basePeriod: 28,
-    variants: [
-      { name: 'polar', sky: 'linear-gradient(0deg,#5a7a9a 0%,#2c4560 35%,#131c2c 100%)', ice: '#3a6a8a', far: '#2a4a66', bloom: '#dff3ff', haze: '#c0e0ff', fg: '#1a3448' },
-      { name: 'dusk', sky: 'linear-gradient(0deg,#8a4a6e 0%,#3c2a52 40%,#141224 100%)', ice: '#4a4a7a', far: '#36305a', bloom: '#ffb0d0', haze: '#ffc0e0', fg: '#221a3a' },
-      { name: 'night', sky: 'linear-gradient(0deg,#1c3a4a 0%,#0c1e2c 40%,#050a12 100%)', ice: '#1e4a5e', far: '#163a4a', bloom: '#87ffd7', haze: '#5fd7c0', fg: '#0a2430' },
-    ],
-    build(v) {
-      const near = band(ICE_NEAR_STEPS, ICE_NEAR_W, 10, v.ice, '1')
-      const far = band(ICE_FAR_STEPS, ICE_FAR_W, 14, v.far, '1')
+    legacy: ['#5f87af', '#af5f87', '#00afd7'],
+    build(k) {
+      const near = band(ICE_NEAR_STEPS, ICE_NEAR_W, 10, k(.38, .41), '1')
+      const far = band(ICE_FAR_STEPS, ICE_FAR_W, 14, k(.28, .42), '1')
+      const haze = k(.88), bloom = k(.94)
       return {
         layers: [
           L(near.url, 'repeat-x', `${near.w}px 32%`, '0 100%', `-${near.w}px 100%`),
           L(far.url, 'repeat-x', `${far.w}px 48%`, '0 100%', `-${far.w}px 100%`),
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}30 35%,${v.haze}4a 50%,${v.haze}30 65%,transparent 100%)`,
+          L(`linear-gradient(90deg,transparent 0%,${haze}30 35%,${haze}4a 50%,${haze}30 65%,transparent 100%)`,
             'no-repeat', '220% 40%', '200% 60%', '-100% 60%'),
-          L(`radial-gradient(60% 60% at 50% 70%,${v.bloom}55 0%,${v.bloom}18 40%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(60% 60% at 50% 70%,${bloom}55 0%,${bloom}18 40%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.48, .3)} 0%,${k(.27, .37)} 35%,${k(.12, .4)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.ice(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+        fg: L(FG.ice(k(.19, .47)), 'repeat-x', 'auto 22%', '0 100%'),
       }
     },
   },
 
   sakura: {
     label: 'sakura', luminance: false, basePeriod: 20,
-    variants: [
-      { name: 'blossom', sky: 'linear-gradient(0deg,#ffafd7 0%,#d76e9e 30%,#6a3a6e 65%,#2e1f44 100%)', bloom: '#ffd7e8', sil: '#1a0a14', haze: '#ffd7e8', fg: '#0e0509' },
-      { name: 'dusk', sky: 'linear-gradient(0deg,#ff87af 0%,#8a3a7a 32%,#3a2058 66%,#181030 100%)', bloom: '#ffafd7', sil: '#140812', haze: '#d7afff', fg: '#0a040a' },
-      { name: 'night', sky: 'linear-gradient(0deg,#3a2050 0%,#1c1030 45%,#0a0818 100%)', bloom: '#ff87c0', sil: '#06040a', haze: '#ffafd7', fg: '#030204' },
-    ],
-    build(v) {
+    legacy: ['#ffafd7', '#ff87af', '#af5fff'],
+    build(k) {
+      const bloom = k(.92), haze = k(.92)
       return {
         layers: [
-          L(SIL.sakura(v.sil, v.bloom), 'repeat-x', 'auto 62%', '0 100%', '0 100%'),
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}2e 35%,${v.haze}44 50%,${v.haze}2e 65%,transparent 100%)`,
+          L(SIL.sakura(k(.07, .45), bloom), 'repeat-x', 'auto 62%', '0 100%', '0 100%'),
+          L(`linear-gradient(90deg,transparent 0%,${haze}2e 35%,${haze}44 50%,${haze}2e 65%,transparent 100%)`,
             'no-repeat', '220% 50%', '-100% 30%', '200% 30%'),
-          L(`radial-gradient(50% 60% at 30% 20%,${v.bloom}55 0%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(50% 60% at 30% 20%,${bloom}55 0%,transparent 65%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.84)} 0%,${k(.64, .6)} 30%,${k.to(.33, .35, 250, .6)} 65%,${k.to(.19, .37, 250, 1)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.sakura(v.fg), 'repeat-x', 'auto 22%', '0 100%'),
+        fg: L(FG.sakura(k(.04, .45)), 'repeat-x', 'auto 22%', '0 100%'),
       }
     },
   },
 
   volcano: {
     label: 'volcano', luminance: false, basePeriod: 12,
-    variants: [
-      { name: 'magma', sky: 'linear-gradient(0deg,#5f0000 0%,#2a0505 30%,#100404 70%,#080303 100%)', lava: '#ff5f00', hot: '#ffaf00', sil: '#0d0404', fg: '#050101' },
-      { name: 'sulfur', sky: 'linear-gradient(0deg,#5f4a00 0%,#2a2005 30%,#121006 70%,#080704 100%)', lava: '#ffd700', hot: '#ffff5f', sil: '#0d0a02', fg: '#050400' },
-      { name: 'hex', sky: 'linear-gradient(0deg,#3a0a5f 0%,#1c0830 30%,#0c0416 70%,#060208 100%)', lava: '#af5fff', hot: '#d7afff', sil: '#08040d', fg: '#030105' },
-    ],
-    build(v) {
-      const peaks = band(PEAK_STEPS, PEAK_W, 24, v.sil, '1', lavaCracks(v.lava))
+    legacy: ['#ff5f00', '#ffd700', '#af5fff'],
+    build(k) {
+      // The tint is the lava; the sky and rock sit a little behind it on the
+      // wheel, the way the glow of a vent is warmer than the smoke above it.
+      const lava = k.tint, sil = k(.03, .5, -15)
+      const peaks = band(PEAK_STEPS, PEAK_W, 24, sil, '1', lavaCracks(lava))
       return {
         layers: [
           L(peaks.url, 'repeat-x', `${peaks.w}px 58%`, '0 100%', '0 100%'),
           // ash drifting across the slopes
-          L(`linear-gradient(90deg,transparent 0%,${v.sil}99 40%,${v.sil}bb 50%,${v.sil}99 60%,transparent 100%)`,
+          L(`linear-gradient(90deg,transparent 0%,${sil}99 40%,${sil}bb 50%,${sil}99 60%,transparent 100%)`,
             'no-repeat', '220% 36%', '-100% 30%', '200% 30%'),
-          L(`radial-gradient(80% 70% at 50% 110%,${v.lava}77 0%,${v.lava}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(80% 70% at 50% 110%,${lava}77 0%,${lava}22 40%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.19, 1, -15)} 0%,${k(.09, .8, -15)} 30%,${k(.04, .6, -15)} 70%,${k(.02, .45, -15)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.rock(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+        fg: L(FG.rock(k(.01, .6, -15)), 'repeat-x', 'auto 24%', '0 100%'),
       }
     },
   },
 
   alpine: {
     label: 'alpine', luminance: false, basePeriod: 24,
-    variants: [
-      { name: 'sunrise', sky: 'linear-gradient(0deg,#ffaf5f 0%,#d75f5f 22%,#5f5f87 55%,#1c1c3a 100%)', far: '#4a4a7a', near: '#22223a', cap: '#ffffff', haze: '#ffd7af', fg: '#0a0a14' },
-      { name: 'day', sky: 'linear-gradient(0deg,#87d7ff 0%,#5fafd7 30%,#1c5f8a 70%,#0c2a4a 100%)', far: '#3a6a8a', near: '#1c3a52', cap: '#ffffff', haze: '#d7ffff', fg: '#081420' },
-      { name: 'dusk', sky: 'linear-gradient(0deg,#ff5f87 0%,#8a3a6e 28%,#3a2a5f 62%,#12102a 100%)', far: '#4a3a6e', near: '#221a3a', cap: '#ffd7ff', haze: '#ffafd7', fg: '#0a0614' },
-    ],
-    build(v) {
-      const near = ridge(RIDGE_NEAR_STEPS, RIDGE_NEAR_W, 14, v.near, v.cap)
-      const far = ridge(RIDGE_FAR_STEPS, RIDGE_FAR_W, 20, v.far, v.cap)
+    legacy: ['#ffaf5f', '#87d7ff', '#ff5f87'],
+    build(k) {
+      // Ridges are the blue-grey of distance under any sky.
+      const near = ridge(RIDGE_NEAR_STEPS, RIDGE_NEAR_W, 14, k.to(.18, .27, NIGHT, .85), '#ffffff')
+      const far = ridge(RIDGE_FAR_STEPS, RIDGE_FAR_W, 20, k.to(.38, .25, NIGHT, .85), '#ffffff')
+      const haze = k(.84)
       return {
         layers: [
           L(near.url, 'repeat-x', `${near.w}px 40%`, '0 100%', `-${near.w}px 100%`),
           L(far.url, 'repeat-x', `${far.w}px 62%`, '0 100%', `-${far.w}px 100%`),
           // a cloud line hanging at the far ridge's shoulders
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}40 35%,${v.haze}66 50%,${v.haze}40 65%,transparent 100%)`,
+          L(`linear-gradient(90deg,transparent 0%,${haze}40 35%,${haze}66 50%,${haze}40 65%,transparent 100%)`,
             'no-repeat', '220% 22%', '200% 48%', '-100% 48%'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.69)} 0%,${k.to(.61, .6, NIGHT, .2)} 22%,${k.to(.45, .2, NIGHT, .9)} 55%,${k.to(.17, .35, NIGHT, 1)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.pines(v.fg), 'repeat-x', 'auto 30%', '0 100%'),
+        fg: L(FG.pines(k.to(.06, .33, NIGHT, .9)), 'repeat-x', 'auto 30%', '0 100%'),
       }
     },
   },
 
   swamp: {
     label: 'swamp', luminance: false, basePeriod: 18,
-    variants: [
-      { name: 'bog', sky: 'linear-gradient(0deg,#3a5f2a 0%,#1c3018 35%,#0c160c 75%,#060a06 100%)', water: '#0a1a10', wisp: '#87ff5f', sil: '#08120a', fg: '#030603' },
-      { name: 'blackwater', sky: 'linear-gradient(0deg,#2a3a5f 0%,#141c30 35%,#0a0e18 75%,#050708 100%)', water: '#080e1a', wisp: '#5fd7ff', sil: '#060a12', fg: '#020306' },
-      { name: 'sulfur', sky: 'linear-gradient(0deg,#5f5f1c 0%,#30300c 35%,#161606 75%,#0a0a04 100%)', water: '#14140a', wisp: '#ffff5f', sil: '#101006', fg: '#050502' },
-    ],
-    build(v) {
+    legacy: ['#87ff5f', '#5fd7ff', '#ffff5f'],
+    build(k) {
+      const wisp = k.tint, sil = k(.05, .4, 20), water = k(.07, .45, 30)
       return {
         layers: [
-          L(SIL.reeds(v.sil), 'repeat-x', 'auto 60%', '0 100%', '0 100%'),
+          L(SIL.reeds(sil), 'repeat-x', 'auto 60%', '0 100%', '0 100%'),
           // a will-o'-the-wisp wandering behind the reeds
-          L(`radial-gradient(22% 60% at 50% 60%,${v.wisp}66 0%,${v.wisp}22 45%,transparent 70%)`,
+          L(`radial-gradient(22% 60% at 50% 60%,${wisp}66 0%,${wisp}22 45%,transparent 70%)`,
             'no-repeat', '140% 100%', '-60% 0', '160% 0'),
-          L(`linear-gradient(0deg,${v.water} 0%,${v.water} 60%,transparent 100%)`, 'no-repeat', '100% 22%', '0 100%'),
-          L(`linear-gradient(90deg,transparent 0%,${v.sil}66 40%,${v.sil}88 50%,${v.sil}66 60%,transparent 100%)`,
+          L(`linear-gradient(0deg,${water} 0%,${water} 60%,transparent 100%)`, 'no-repeat', '100% 22%', '0 100%'),
+          L(`linear-gradient(90deg,transparent 0%,${sil}66 40%,${sil}88 50%,${sil}66 60%,transparent 100%)`,
             'no-repeat', '220% 40%', '200% 70%', '-100% 70%'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.27, .4)} 0%,${k(.14, .35)} 35%,${k(.07, .3)} 75%,${k(.03, .25)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.reeds(v.fg), 'repeat-x', 'auto 28%', '0 100%'),
+        fg: L(FG.reeds(k(.02, .35)), 'repeat-x', 'auto 28%', '0 100%'),
       }
     },
   },
 
   castle: {
     label: 'castle', luminance: false, basePeriod: 26,
-    variants: [
-      { name: 'moonlit', sky: 'linear-gradient(0deg,#2c3a5f 0%,#1a2240 40%,#0e1224 75%,#080a14 100%)', wall: '#0a0c16', win: '#ffd75f', near: '#1c2440', far: '#16203a', moon: '#dce8ff', fg: '#040610' },
-      { name: 'blood', sky: 'linear-gradient(0deg,#5f1c24 0%,#361018 40%,#1c0a0e 75%,#0e0508 100%)', wall: '#100608', win: '#ff8700', near: '#3a1820', far: '#2e1218', moon: '#ff8787', fg: '#060203' },
-      { name: 'dawn', sky: 'linear-gradient(0deg,#ffaf87 0%,#af5f6e 30%,#4a3a5f 65%,#1c1a30 100%)', wall: '#14101c', win: '#ffd7af', near: '#3a2e4a', far: '#2c2440', moon: '#fff3d7', fg: '#08060c' },
-    ],
-    build(v) {
-      const keep = cityDeck(CASTLE_STEPS, CASTLE_W, 24, v.wall, v.win)
-      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, v.near, '1')
-      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, v.far, '.9')
+    legacy: ['#5f87ff', '#d70000', '#ffaf87'],
+    build(k) {
+      const keep = cityDeck(CASTLE_STEPS, CASTLE_W, 24, k(.06, .4), '#ffd75f')
+      const near = cloudDeck(CLOUD_NEAR_STEPS, CLOUD_NEAR_W, k(.18, .4), '1')
+      const far = cloudDeck(CLOUD_FAR_STEPS, CLOUD_FAR_W, k(.16, .45), '.9')
+      const moon = k(.93)
       return {
         layers: [
           L(keep.url, 'repeat-x', `${keep.w}px 70%`, '0 100%', '0 100%'),
           L(near.url, 'repeat-x', `${near.w}px 40%`, '0 0', `-${near.w}px 0`),
           L(far.url, 'repeat-x', `${far.w}px 30%`, '0 0', `-${far.w}px 0`),
-          L(`radial-gradient(circle at 70% 18%,${v.moon} 0 3px,${v.moon}44 3.5px 7px,transparent 12px)`, 'no-repeat', '100% 100%', '0 0'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(circle at 70% 18%,${moon} 0 3px,${moon}44 3.5px 7px,transparent 12px)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.27, .4)} 0%,${k(.18, .42)} 40%,${k(.1, .44)} 75%,${k(.05, .43)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.wall(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+        fg: L(FG.wall(k(.04, .6)), 'repeat-x', 'auto 24%', '0 100%'),
       }
     },
   },
 
   moon: {
     label: 'moon', luminance: false, basePeriod: 30,
-    variants: [
-      { name: 'regolith', sky: 'linear-gradient(0deg,#0a0a0c 0%,#040406 100%)', ground: '#5f5f5f', crater: '#303030', earth: '#5fafff', earthB: '#1c5f8a', fg: '#262626' },
-      { name: 'blue hour', sky: 'linear-gradient(0deg,#0a1020 0%,#04060c 100%)', ground: '#4a5a7a', crater: '#26304a', earth: '#87d7ff', earthB: '#2a6ab0', fg: '#1c2436' },
-      { name: 'sepia', sky: 'linear-gradient(0deg,#140e08 0%,#080604 100%)', ground: '#7a6a4a', crater: '#3a3020', earth: '#ffd7af', earthB: '#af7a4a', fg: '#302818' },
-    ],
-    build(v) {
-      const ground = band(MOON_STEPS, MOON_W, 14, v.ground, '1', craters(v.crater))
+    legacy: ['#5fafff', '#87d7ff', '#ffd7af'],
+    build(k) {
+      // The tint is the earth in the sky; the regolith takes only a cast of it.
+      const ground = band(MOON_STEPS, MOON_W, 14, k(.37, .25), '1', craters(k(.19, .3)))
+      const earthB = k(.33, .65)
       return {
         layers: [
           L(ground.url, 'repeat-x', `${ground.w}px 44%`, '0 100%', '0 100%'),
           // earthrise: a lit disc at the upper right, half above the plate
-          L(`radial-gradient(circle at 80% 0%,${v.earth} 0 3px,${v.earthB} 3.5px 6px,${v.earthB}44 6.5px 7px,transparent 7.5px)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`radial-gradient(circle at 80% 0%,${k.tint} 0 3px,${earthB} 3.5px 6px,${earthB}44 6.5px 7px,transparent 7.5px)`, 'no-repeat', '100% 100%', '0 0'),
           L('radial-gradient(circle,#ffffffcc 0 .5px,transparent 1px)', 'repeat', '17px 13px', '0 0', '-17px 0'),
           L('radial-gradient(circle,#ffffff66 0 .5px,transparent 1px)', 'repeat', '23px 19px', '5px 7px', '-18px 7px'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.04, .3)} 0%,${k(.02, .3)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.rocks(v.fg), 'repeat-x', 'auto 20%', '0 100%'),
+        fg: L(FG.rocks(k(.15, .25)), 'repeat-x', 'auto 20%', '0 100%'),
       }
     },
   },
@@ -874,21 +893,18 @@ const BACKDROPS = {
   circuit: {
     // No foreground: a board has nothing standing on it.
     label: 'circuit', luminance: false, basePeriod: 4,
-    variants: [
-      { name: 'green', c: '#00ff5f', plate: 'linear-gradient(#061a0c,#03100a)' },
-      { name: 'blue', c: '#00afff', plate: 'linear-gradient(#04101c,#020a14)' },
-      { name: 'amber', c: '#ffb000', plate: 'linear-gradient(#1a1204,#100a02)' },
-    ],
-    build(v) {
+    legacy: ['#00ff5f', '#00afff', '#ffb000'],
+    build(k) {
+      const c = k.tint
       return {
         layers: [
           // two signals racing the traces in opposite directions
-          L(`linear-gradient(90deg,transparent 0%,${v.c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '-40% 6px', '140% 6px'),
-          L(`linear-gradient(90deg,transparent 0%,${v.c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '140% 18px', '-40% 18px'),
-          L(`radial-gradient(circle,${v.c}55 0 .7px,transparent 1.1px)`, 'repeat', '18px 12px', '4px 3px'),
-          L(`repeating-linear-gradient(0deg,${v.c}22 0 1px,transparent 1px 6px)`, 'repeat', '100% auto', '0 0'),
-          L(`repeating-linear-gradient(90deg,${v.c}22 0 1px,transparent 1px 9px)`, 'repeat', 'auto 100%', '0 0'),
-          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(90deg,transparent 0%,${c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '-40% 6px', '140% 6px'),
+          L(`linear-gradient(90deg,transparent 0%,${c} 50%,transparent 100%)`, 'no-repeat', '40% 1px', '140% 18px', '-40% 18px'),
+          L(`radial-gradient(circle,${c}55 0 .7px,transparent 1.1px)`, 'repeat', '18px 12px', '4px 3px'),
+          L(`repeating-linear-gradient(0deg,${c}22 0 1px,transparent 1px 6px)`, 'repeat', '100% auto', '0 0'),
+          L(`repeating-linear-gradient(90deg,${c}22 0 1px,transparent 1px 9px)`, 'repeat', 'auto 100%', '0 0'),
+          L(`linear-gradient(${k(.06, .65)},${k(.04, .7)})`, 'no-repeat', '100% 100%', '0 0'),
         ],
       }
     },
@@ -898,22 +914,19 @@ const BACKDROPS = {
     // No foreground. The corona breathes, so this is the second alternating
     // plate (with furnace) — and like it, never hosts a far-weather plane.
     label: 'eclipse', luminance: true, basePeriod: 6,
-    variants: [
-      { name: 'solar', corona: '#ffd7af', plate: 'linear-gradient(#050505,#000000)' },
-      { name: 'blood', corona: '#ff5f5f', plate: 'linear-gradient(#080303,#000000)' },
-      { name: 'void', corona: '#af87ff', plate: 'linear-gradient(#050308,#000000)' },
-    ],
-    build(v, hash) {
+    legacy: ['#ffd7af', '#ff5f5f', '#af87ff'],
+    build(k, hash) {
       const cv = `--hsb-${hash}`
+      const corona = k.tint
       return {
         layers: [
           L(`radial-gradient(circle at 50% 50%,#000000 0 6px,var(${cv}) 6.5px 8px,transparent 13px)`, 'no-repeat', '100% 100%', '0 0'),
           L('radial-gradient(circle,#ffffff99 0 .5px,transparent 1px)', 'repeat', '19px 15px', '3px 2px'),
-          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(${k(.02, .45)},#000000)`, 'no-repeat', '100% 100%', '0 0'),
         ],
         alternate: true,
-        props: `@property ${cv}{syntax:"<color>";initial-value:${v.corona}88;inherits:false;}`,
-        keyframesBody: `{from{${cv}:${v.corona}66;}to{${cv}:${v.corona}cc;}}`,
+        props: `@property ${cv}{syntax:"<color>";initial-value:${corona}88;inherits:false;}`,
+        keyframesBody: `{from{${cv}:${corona}66;}to{${cv}:${corona}cc;}}`,
       }
     },
   },
@@ -923,19 +936,16 @@ const BACKDROPS = {
     // the ceiling is an opaque top box over a floor that scrolls sideways one
     // tile per loop.
     label: 'arcade', luminance: false, basePeriod: 2,
-    variants: [
-      { name: 'magenta', c: '#ff40af', c1: '#1c0830', c2: '#3a1050', plate: 'linear-gradient(#12041e,#3a1050)' },
-      { name: 'cyan', c: '#00e5ff', c1: '#04101e', c2: '#0a2a46', plate: 'linear-gradient(#04101e,#0a2a46)' },
-      { name: 'yellow', c: '#ffd700', c1: '#1a1204', c2: '#3a2a08', plate: 'linear-gradient(#1a1204,#3a2a08)' },
-    ],
-    build(v) {
+    legacy: ['#ff40af', '#00e5ff', '#ffd700'],
+    build(k) {
+      const c = k.tint, c1 = k(.1, .72), c2 = k(.18, .68)
       return {
         layers: [
-          L(`repeating-linear-gradient(90deg,${v.c} 0 3px,transparent 3px 7px)`, 'repeat-x', '7px 2px', '0 10%', '-7px 10%'),
-          L(`linear-gradient(180deg,${v.c1} 0%,${v.c1} 100%)`, 'no-repeat', '100% 60%', '0 0'),
-          L(`radial-gradient(80% 40% at 50% 60%,${v.c}55 0%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
-          L(`repeating-conic-gradient(${v.c1} 0 25%,${v.c2} 0 50%)`, 'repeat', '8px 8px', '0 0', '-8px 0'),
-          L(v.plate, 'no-repeat', '100% 100%', '0 0'),
+          L(`repeating-linear-gradient(90deg,${c} 0 3px,transparent 3px 7px)`, 'repeat-x', '7px 2px', '0 10%', '-7px 10%'),
+          L(`linear-gradient(180deg,${c1} 0%,${c1} 100%)`, 'no-repeat', '100% 60%', '0 0'),
+          L(`radial-gradient(80% 40% at 50% 60%,${c}55 0%,transparent 70%)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`repeating-conic-gradient(${c1} 0 25%,${c2} 0 50%)`, 'repeat', '8px 8px', '0 0', '-8px 0'),
+          L(`linear-gradient(${k(.07, .75)},${c2})`, 'no-repeat', '100% 100%', '0 0'),
         ],
       }
     },
@@ -943,41 +953,35 @@ const BACKDROPS = {
 
   bamboo: {
     label: 'bamboo', luminance: false, basePeriod: 20,
-    variants: [
-      { name: 'grove', sky: 'linear-gradient(0deg,#5f875f 0%,#3a5f3a 35%,#1c301c 75%,#0c160c 100%)', sil: '#0a1a0a', haze: '#d7ffd7', fg: '#040a04' },
-      { name: 'mist', sky: 'linear-gradient(0deg,#5f7a87 0%,#3a4a5f 35%,#1c2430 75%,#0c1016 100%)', sil: '#0a1216', haze: '#d7e4ff', fg: '#040608' },
-      { name: 'dusk', sky: 'linear-gradient(0deg,#af875f 0%,#6e4a3a 35%,#30221c 75%,#16100c 100%)', sil: '#160c08', haze: '#ffd7af', fg: '#080402' },
-    ],
-    build(v) {
+    legacy: ['#5faf5f', '#5f87af', '#d7af87'],
+    build(k) {
+      const haze = k(.92)
       return {
         layers: [
-          L(SIL.bamboo(v.sil), 'repeat-x', 'auto 100%', '0 0', '0 0'),
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}30 35%,${v.haze}4a 50%,${v.haze}30 65%,transparent 100%)`,
+          L(SIL.bamboo(k(.07, .45)), 'repeat-x', 'auto 100%', '0 0', '0 0'),
+          L(`linear-gradient(90deg,transparent 0%,${haze}30 35%,${haze}4a 50%,${haze}30 65%,transparent 100%)`,
             'no-repeat', '220% 50%', '-100% 40%', '200% 40%'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.45, .2)} 0%,${k(.3, .25)} 35%,${k(.15, .27)} 75%,${k(.07, .3)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.grass(v.fg), 'repeat-x', 'auto 24%', '0 100%'),
+        fg: L(FG.grass(k(.03, .45)), 'repeat-x', 'auto 24%', '0 100%'),
       }
     },
   },
 
   giza: {
     label: 'pyramids', luminance: false, basePeriod: 22,
-    variants: [
-      { name: 'dusk', sky: 'linear-gradient(0deg,#ff8700 0%,#af4a3a 28%,#5f2e5a 62%,#26203f 100%)', sun: '#ffd75f', sil: '#2a1408', haze: '#ffd7af', fg: '#0e0803' },
-      { name: 'night', sky: 'linear-gradient(0deg,#1c2a5f 0%,#101a40 40%,#080c20 100%)', sun: '#dce8ff', sil: '#0a0e1c', haze: '#afc0ff', fg: '#04060c' },
-      { name: 'sandstorm', sky: 'linear-gradient(0deg,#d7a05f 0%,#a0703a 35%,#5f4a30 70%,#302418 100%)', sun: '#fff3b0', sil: '#3a2410', haze: '#ffd7af', fg: '#120a04' },
-    ],
-    build(v) {
+    legacy: ['#ff8700', '#5f87ff', '#d7af5f'],
+    build(k) {
+      const sun = k(.69, 1, 15), haze = k(.84)
       return {
         layers: [
-          L(SIL.pyramids(v.sil), 'repeat-x', 'auto 70%', '0 100%', '0 100%'),
-          L(`radial-gradient(circle at 74% 70%,${v.sun} 0 3px,${v.sun}44 3.5px 7px,transparent 10px)`, 'no-repeat', '100% 100%', '0 0'),
-          L(`linear-gradient(90deg,transparent 0%,${v.haze}38 35%,${v.haze}55 50%,${v.haze}38 65%,transparent 100%)`,
+          L(SIL.pyramids(k(.1, .65)), 'repeat-x', 'auto 70%', '0 100%', '0 100%'),
+          L(`radial-gradient(circle at 74% 70%,${sun} 0 3px,${sun}44 3.5px 7px,transparent 10px)`, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(90deg,transparent 0%,${haze}38 35%,${haze}55 50%,${haze}38 65%,transparent 100%)`,
             'no-repeat', '220% 40%', '200% 90%', '-100% 90%'),
-          L(v.sky, 'no-repeat', '100% 100%', '0 0'),
+          L(`linear-gradient(0deg,${k(.5)} 0%,${k.to(.46, .5, NIGHT, .2)} 28%,${k.to(.28, .35, NIGHT, .65)} 62%,${k.to(.19, .35, NIGHT, 1)} 100%)`, 'no-repeat', '100% 100%', '0 0'),
         ],
-        fg: L(FG.dunes(v.fg), 'repeat-x', 'auto 26%', '0 100%'),
+        fg: L(FG.dunes(k(.03, .65)), 'repeat-x', 'auto 26%', '0 100%'),
       }
     },
   },
@@ -998,52 +1002,47 @@ const BACKDROPS = {
 // number of tile-heights per backdrop loop — seamless at any ratio. That is
 // the entire depth trick: no extra element, no extra animation, and the name
 // ends up inside the weather instead of under it.
+//
+// Particles are the tint verbatim — weather carries no text, so there is no
+// ladder to hold, and a dark pick is simply a dim fall.
+
+// Two copies of one tile, 1x and 1.4x, each advancing one own-tile per loop;
+// `dir` is the axis sign (falling +y, rising -y), `sway` the optional
+// mid-loop x offsets of the two copies.
+function fallLayers(t, dir, sway) {
+  const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
+  const mid = (x, h) => sway ? `${x}px ${dir * Math.round(h / 2)}px` : undefined
+  return [
+    L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${dir * t.h}px`, sway && mid(sway[0], t.h)),
+    L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${dir * h2}px`, sway && mid(sway[1], h2)),
+  ]
+}
+const triad = (k) => ({ c1: k.tint, c2: k(k.l, 1, 120), c3: k(k.l, 1, 240) })
+const farPlane = (t, dir, opacity) => ({
+  img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: dir * Math.round(t.h * 0.7), opacity,
+})
 
 const WEATHERS = {
   rain: {
     label: 'rain', luminance: false, basePeriod: 0.9,
-    variants: [
-      { name: 'silver', c: '#9db4c9' },
-      { name: 'blood', c: '#d70000' },
-      { name: 'acid', c: '#87ff00' },
-    ],
-    near(v, density) {
-      const t = rainTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`),
-        ],
-      }
+    legacy: ['#9db4c9', '#d70000', '#87ff00'],
+    near(k, density) {
+      return { layers: fallLayers(rainTile(k.tint, density), 1) }
     },
-    far(v, density) {
+    far(k, density) {
       // Smaller and dimmer than the near plane — that is what distance is.
-      const t = rainTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
+      return farPlane(rainTile(k.tint, Math.min(3, density + 1)), 1, '.5')
     },
   },
 
   snow: {
     label: 'snow', luminance: false, basePeriod: 4.5,
-    variants: [
-      { name: 'white', c: '#ffffff' },
-      { name: 'ash', c: '#9e9e9e' },
-      { name: 'gold', c: '#ffd75f' },
-    ],
-    near(v, density) {
-      const t = snowTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `2px ${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-3px ${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ffffff', '#9e9e9e', '#ffd75f'],
+    near(k, density) {
+      return { layers: fallLayers(snowTile(k.tint, density), 1, [2, -3]) }
     },
-    far(v, density) {
-      const t = snowTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    far(k, density) {
+      return farPlane(snowTile(k.tint, Math.min(3, density + 1)), 1, '.55')
     },
   },
 
@@ -1054,21 +1053,15 @@ const WEATHERS = {
     // the plate and the name, which is exactly where a foreground silhouette
     // would also want to be.
     label: 'fog (behind the name)', luminance: false, basePeriod: 16, behindText: true,
-    variants: [
-      // sunglow used to be #ffd7af — the exact hex of the desert-dawn plate's
-      // own haze band, so the most obvious pairing in the catalog rendered a
-      // fog bank that was invisible by construction.
-      { name: 'sunglow', c: '#ffaf87' },
-      { name: 'mist', c: '#c0c8d0' },
-      { name: 'miasma', c: '#87ff5f' },
-    ],
-    near(v, density) {
+    legacy: ['#ffaf87', '#c0c8d0', '#87ff5f'],
+    near(k, density) {
+      const c = k.tint
       const a = density >= 3 ? ['80', '4d'] : density === 2 ? ['66', '38'] : ['40', '26']
       return {
         layers: [
-          L(`radial-gradient(55% 130% at 50% 60%,${v.c}${a[0]} 0%,${v.c}${a[1]} 45%,transparent 72%)`,
+          L(`radial-gradient(55% 130% at 50% 60%,${c}${a[0]} 0%,${c}${a[1]} 45%,transparent 72%)`,
             'no-repeat', '160% 100%', '-60% 40%', '160% 40%'),
-          L(`radial-gradient(65% 150% at 50% 40%,${v.c}${a[1]} 0%,transparent 70%)`,
+          L(`radial-gradient(65% 150% at 50% 40%,${c}${a[1]} 0%,transparent 70%)`,
             'no-repeat', '200% 100%', '160% 70%', '-60% 70%'),
         ],
         alternate: true,
@@ -1078,36 +1071,21 @@ const WEATHERS = {
 
   embers: {
     label: 'embers', luminance: false, basePeriod: 3.2,
-    variants: [
-      { name: 'fire', c1: '#ff8700', c2: '#ffd700' },
-      { name: 'ion', c1: '#00d7ff', c2: '#87ffff' },
-      { name: 'rose', c1: '#ff40af', c2: '#ff87d7' },
-    ],
-    near(v, density) {
-      const t = emberTile(v.c1, v.c2, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `2px -${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-2px -${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ff8700', '#00d7ff', '#ff40af'],
+    // The hot core of each ember is the tint lifted a step toward white.
+    near(k, density) {
+      return { layers: fallLayers(emberTile(k.tint, k(k.l + .2), density), -1, [2, -2]) }
     },
-    far(v, density) {
-      const t = emberTile(v.c1, v.c2, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.6' }
+    far(k, density) {
+      return farPlane(emberTile(k.tint, k(k.l + .2), Math.min(3, density + 1)), -1, '.6')
     },
   },
 
   glyphs: {
     label: 'glyph rain', luminance: false, basePeriod: 2.6,
-    variants: [
-      { name: 'green', c: '#00ff87' },
-      { name: 'amber', c: '#ffb000' },
-      { name: 'cyan', c: '#00e5ff' },
-    ],
-    near(v, density) {
-      const t = glyphTile(v.c, density)
+    legacy: ['#00ff87', '#ffb000', '#00e5ff'],
+    near(k, density) {
+      const t = glyphTile(k.tint, density)
       const w2 = Math.round(t.w * 1.5), h2 = Math.round(t.h * 1.5)
       return {
         layers: [
@@ -1116,33 +1094,25 @@ const WEATHERS = {
         ],
       }
     },
-    far(v, density) {
-      const t = glyphTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(glyphTile(k.tint, Math.min(3, density + 1)), 1, '.5')
     },
   },
 
   storm: {
     label: 'storm', luminance: true, basePeriod: 7,
-    variants: [
-      { name: 'silver', c: '#9db4c9' },
-      { name: 'blood', c: '#d70000' },
-      { name: 'acid', c: '#87ff00' },
-    ],
-    near(v, density, hash, speed) {
+    legacy: ['#9db4c9', '#d70000', '#87ff00'],
+    near(k, density, hash, speed) {
       // Rain layers + a lightning wash carried by a registered <color> var —
       // a separate animation on a separate property, so it comma-lists next to
       // the rain's background-position loop without clobbering it. Two pops
       // inside a ~120ms window every cycle: far under the 3-flash/s WCAG line
       // even at max speed (the period floor is luminance-clamped below).
-      const t = rainTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       const cv = `--hsw-${hash}`
       return {
         layers: [
           L(`linear-gradient(var(${cv}),var(${cv}))`, 'no-repeat', '100% 100%', '0 0'),
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`),
+          ...fallLayers(rainTile(k.tint, density), 1),
         ],
         props: `@property ${cv}{syntax:"<color>";initial-value:#e8f4ff00;inherits:false;}`,
         keyframesBody: `{0%,82%,100%{${cv}:#e8f4ff00;}84%{${cv}:#e8f4ff4d;}86%{${cv}:#e8f4ff10;}88.5%{${cv}:#e8f4ff38;}91%{${cv}:#e8f4ff00;}}`,
@@ -1152,112 +1122,60 @@ const WEATHERS = {
         positionalAnim: { period: periodSeconds(WEATHERS.rain.basePeriod, speed, false), timing: 'linear' },
       }
     },
-    far(v, density) {
-      const t = rainTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(rainTile(k.tint, Math.min(3, density + 1)), 1, '.5')
     },
   },
+
   petals: {
     label: 'petals', luminance: false, basePeriod: 3.8,
-    variants: [
-      { name: 'pink', c: '#ffafd7' },
-      { name: 'white', c: '#ffffff' },
-      { name: 'gold', c: '#ffd75f' },
-    ],
-    near(v, density) {
-      const t = petalTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `4px ${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-5px ${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ffafd7', '#ffffff', '#ffd75f'],
+    near(k, density) {
+      return { layers: fallLayers(petalTile(k.tint, density), 1, [4, -5]) }
     },
-    far(v, density) {
-      const t = petalTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    far(k, density) {
+      return farPlane(petalTile(k.tint, Math.min(3, density + 1)), 1, '.55')
     },
   },
 
   bubbles: {
     label: 'bubbles', luminance: false, basePeriod: 4,
-    variants: [
-      { name: 'air', c: '#ffffff' },
-      { name: 'teal', c: '#87ffd7' },
-      { name: 'violet', c: '#d7afff' },
-    ],
-    near(v, density) {
-      const t = bubbleTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `2px -${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-3px -${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ffffff', '#87ffd7', '#d7afff'],
+    near(k, density) {
+      return { layers: fallLayers(bubbleTile(k.tint, density), -1, [2, -3]) }
     },
-    far(v, density) {
-      const t = bubbleTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(bubbleTile(k.tint, Math.min(3, density + 1)), -1, '.5')
     },
   },
 
   fireflies: {
     label: 'fireflies', luminance: false, basePeriod: 6,
-    variants: [
-      { name: 'green', c: '#d7ff5f' },
-      { name: 'gold', c: '#ffd75f' },
-      { name: 'cyan', c: '#87ffff' },
-    ],
-    near(v, density) {
-      const t = fireflyTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `5px -${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-6px -${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#d7ff5f', '#ffd75f', '#87ffff'],
+    near(k, density) {
+      return { layers: fallLayers(fireflyTile(k.tint, density), -1, [5, -6]) }
     },
-    far(v, density) {
-      const t = fireflyTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(fireflyTile(k.tint, Math.min(3, density + 1)), -1, '.5')
     },
   },
 
   leaves: {
     label: 'leaves', luminance: false, basePeriod: 4.2,
-    variants: [
-      { name: 'autumn', c: '#ff8700' },
-      { name: 'maple', c: '#d70000' },
-      { name: 'green', c: '#87ff5f' },
-    ],
-    near(v, density) {
-      const t = leafTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `5px ${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-6px ${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ff8700', '#d70000', '#87ff5f'],
+    near(k, density) {
+      return { layers: fallLayers(leafTile(k.tint, density), 1, [5, -6]) }
     },
-    far(v, density) {
-      const t = leafTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    far(k, density) {
+      return farPlane(leafTile(k.tint, Math.min(3, density + 1)), 1, '.55')
     },
   },
 
   sparks: {
     label: 'sparks', luminance: false, basePeriod: 1.2,
-    variants: [
-      { name: 'white', c: '#ffffff' },
-      { name: 'gold', c: '#ffd75f' },
-      { name: 'blue', c: '#87d7ff' },
-    ],
-    near(v, density) {
-      const t = sparkTile(v.c, density)
+    legacy: ['#ffffff', '#ffd75f', '#87d7ff'],
+    near(k, density) {
+      const t = sparkTile(k.tint, density)
       const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
@@ -1266,22 +1184,17 @@ const WEATHERS = {
         ],
       }
     },
-    far(v, density) {
-      const t = sparkTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(sparkTile(k.tint, Math.min(3, density + 1)), -1, '.5')
     },
   },
 
   dust: {
     // Sideways: the one weather that blows rather than falls or rises.
     label: 'dust', luminance: false, basePeriod: 5,
-    variants: [
-      { name: 'sand', c: '#d7af87' },
-      { name: 'ash', c: '#9e9e9e' },
-      { name: 'pollen', c: '#ffd75f' },
-    ],
-    near(v, density) {
-      const t = dustTile(v.c, density)
+    legacy: ['#d7af87', '#9e9e9e', '#ffd75f'],
+    near(k, density) {
+      const t = dustTile(k.tint, density)
       const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
@@ -1294,37 +1207,23 @@ const WEATHERS = {
 
   confetti: {
     label: 'confetti', luminance: false, basePeriod: 4,
-    variants: [
-      { name: 'party', c1: '#ff5f87', c2: '#ffd700', c3: '#00d7ff' },
-      { name: 'ice', c1: '#ffffff', c2: '#87d7ff', c3: '#d7afff' },
-      { name: 'heat', c1: '#ff8700', c2: '#ff0000', c3: '#ffd700' },
-    ],
-    near(v, density) {
-      const t = confettiTile(v, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 ${t.h}px`, `4px ${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 ${h2}px`, `-5px ${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ff5f87', '#ffffff', '#ff8700'],
+    // A triad off the tint: the pick, and the two colours a third of the
+    // wheel away from it.
+    near(k, density) {
+      return { layers: fallLayers(confettiTile(triad(k), density), 1, [4, -5]) }
     },
-    far(v, density) {
-      const t = confettiTile(v, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: Math.round(t.h * 0.7), opacity: '.55' }
+    far(k, density) {
+      return farPlane(confettiTile(triad(k), Math.min(3, density + 1)), 1, '.55')
     },
   },
 
   meteors: {
     // Diagonal: each loop advances one tile in BOTH axes, so it wraps clean.
     label: 'meteors', luminance: false, basePeriod: 1.6,
-    variants: [
-      { name: 'white', c: '#ffffff' },
-      { name: 'gold', c: '#ffd75f' },
-      { name: 'cyan', c: '#87ffff' },
-    ],
-    near(v, density) {
-      const t = meteorTile(v.c, density)
+    legacy: ['#ffffff', '#ffd75f', '#87ffff'],
+    near(k, density) {
+      const t = meteorTile(k.tint, density)
       const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
       return {
         layers: [
@@ -1337,24 +1236,12 @@ const WEATHERS = {
 
   hearts: {
     label: 'hearts', luminance: false, basePeriod: 4.4,
-    variants: [
-      { name: 'pink', c: '#ff5fd7' },
-      { name: 'red', c: '#ff0000' },
-      { name: 'white', c: '#ffffff' },
-    ],
-    near(v, density) {
-      const t = heartTile(v.c, density)
-      const w2 = Math.round(t.w * 1.4), h2 = Math.round(t.h * 1.4)
-      return {
-        layers: [
-          L(t.url, 'repeat', `${t.w}px ${t.h}px`, '0 0', `0 -${t.h}px`, `3px -${Math.round(t.h / 2)}px`),
-          L(t.url, 'repeat', `${w2}px ${h2}px`, '0 0', `0 -${h2}px`, `-4px -${Math.round(h2 / 2)}px`),
-        ],
-      }
+    legacy: ['#ff5fd7', '#ff0000', '#ffffff'],
+    near(k, density) {
+      return { layers: fallLayers(heartTile(k.tint, density), -1, [3, -4]) }
     },
-    far(v, density) {
-      const t = heartTile(v.c, Math.min(3, density + 1))
-      return { img: t.url, size: `${Math.round(t.w * 0.7)}px ${Math.round(t.h * 0.7)}px`, tile: -Math.round(t.h * 0.7), opacity: '.5' }
+    far(k, density) {
+      return farPlane(heartTile(k.tint, Math.min(3, density + 1)), -1, '.5')
     },
   },
 
@@ -1364,6 +1251,37 @@ const BACKDROP_IDS = new Set(Object.keys(BACKDROPS))
 const WEATHER_IDS = new Set(Object.keys(WEATHERS))
 
 // ── validation (called from validatePaintSpec — pushes into its errors) ────
+
+// `tint` is any #rrggbb; `variant` is the retired numbered form, still read
+// through the entry's `legacy` list so a saved scene never stops rendering.
+function validateTint(layer, meta, path, errors) {
+  if (layer.tint !== undefined && !(typeof layer.tint === 'string' && HEX_RE.test(layer.tint))) {
+    errors.push(`${path}.tint must match #rrggbb`)
+  }
+  if (layer.variant !== undefined && !isIntInRange(layer.variant, 0, meta.legacy.length - 1)) {
+    errors.push(`${path}.variant out of range`)
+  }
+}
+
+/** The colour a scene layer is drawn in: its tint, else its legacy variant's,
+ * else the entry's default. Never a user string that failed HEX_RE. */
+export function sceneTint(meta, layer) {
+  if (typeof layer?.tint === 'string' && HEX_RE.test(layer.tint)) return layer.tint.toLowerCase()
+  const i = layer?.variant
+  return meta.legacy[isIntInRange(i, 0, meta.legacy.length - 1) ? i : 0]
+}
+
+/** A scene with every layer's colour spelled out as `tint` and the retired
+ * `variant` dropped — what the builder edits. Unknown ids pass through. */
+export function resolveSceneTints(scene) {
+  if (!isPlainObject(scene)) return scene
+  const fix = (layer, catalog) => {
+    if (!isPlainObject(layer) || !catalog[layer.id]) return layer
+    const { variant, ...rest } = layer
+    return { ...rest, tint: sceneTint(catalog[layer.id], layer) }
+  }
+  return { ...scene, backdrop: fix(scene.backdrop, BACKDROPS), weather: fix(scene.weather, WEATHERS) }
+}
 
 export function validateSceneSpec(scene, errors) {
   if (!isPlainObject(scene)) {
@@ -1385,9 +1303,7 @@ export function validateSceneSpec(scene, errors) {
     if (!isPlainObject(backdrop) || !BACKDROP_IDS.has(backdrop.id)) {
       errors.push(`scene.backdrop.id unknown: ${JSON.stringify(backdrop?.id)}`)
     } else {
-      if (!isIntInRange(backdrop.variant ?? 0, 0, BACKDROPS[backdrop.id].variants.length - 1)) {
-        errors.push('scene.backdrop.variant out of range')
-      }
+      validateTint(backdrop, BACKDROPS[backdrop.id], 'scene.backdrop', errors)
       if (backdrop.speed !== undefined && !isNumInRange(backdrop.speed, MIN_SPEED, MAX_SPEED)) {
         errors.push(`scene.backdrop.speed must be a number ${MIN_SPEED}-${MAX_SPEED}`)
       }
@@ -1397,9 +1313,7 @@ export function validateSceneSpec(scene, errors) {
     if (!isPlainObject(weather) || !WEATHER_IDS.has(weather.id)) {
       errors.push(`scene.weather.id unknown: ${JSON.stringify(weather?.id)}`)
     } else {
-      if (!isIntInRange(weather.variant ?? 0, 0, WEATHERS[weather.id].variants.length - 1)) {
-        errors.push('scene.weather.variant out of range')
-      }
+      validateTint(weather, WEATHERS[weather.id], 'scene.weather', errors)
       if (weather.density !== undefined && !DENSITIES.has(weather.density)) {
         errors.push('scene.weather.density must be 1, 2 or 3')
       }
@@ -1414,22 +1328,16 @@ export function validateSceneSpec(scene, errors) {
 export function normalizeSceneForHash(scene) {
   if (!isPlainObject(scene)) return null
   return {
-    backdrop: isPlainObject(scene.backdrop)
-      ? { id: scene.backdrop.id, variant: scene.backdrop.variant ?? 0, speed: scene.backdrop.speed ?? 1 }
+    backdrop: isPlainObject(scene.backdrop) && BACKDROPS[scene.backdrop.id]
+      ? { id: scene.backdrop.id, tint: sceneTint(BACKDROPS[scene.backdrop.id], scene.backdrop), speed: scene.backdrop.speed ?? 1 }
       : null,
-    weather: isPlainObject(scene.weather)
-      ? { id: scene.weather.id, variant: scene.weather.variant ?? 0, density: scene.weather.density ?? 2, speed: scene.weather.speed ?? 1 }
+    weather: isPlainObject(scene.weather) && WEATHERS[scene.weather.id]
+      ? { id: scene.weather.id, tint: sceneTint(WEATHERS[scene.weather.id], scene.weather), density: scene.weather.density ?? 2, speed: scene.weather.speed ?? 1 }
       : null,
   }
 }
 
 // ── compiler ────────────────────────────────────────────────────────────────
-
-/** Resolve a catalog entry's variant, clamped. */
-function pickVariant(meta, index) {
-  const i = isIntInRange(index ?? 0, 0, meta.variants.length - 1) ? (index ?? 0) : 0
-  return meta.variants[i]
-}
 
 /**
  * Emit one pseudo-element rule from a layer list.
@@ -1476,8 +1384,8 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
  *
  * Same defense-in-depth contract as compilePaintCss: assumes validation
  * passed, but unknown ids are silently skipped and every number re-clamped —
- * an unvalidated spec cannot inject anything (no user string ever reaches the
- * output; colors and tiles come exclusively from the catalog).
+ * an unvalidated spec cannot inject anything (the only user string that reaches
+ * the output is a tint, and only after it matched HEX_RE).
  * @param {object} scene
  * @param {string} selector
  * @param {string} hash - hashPaintSpec(spec) of the OWNING spec
@@ -1498,21 +1406,21 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
   let css = `${selector}{position:relative;isolation:isolate;}`
 
   const bMeta = backdrop ? BACKDROPS[backdrop.id] : null
-  const bBuilt = bMeta ? bMeta.build(pickVariant(bMeta, backdrop.variant), hash) : null
+  const bBuilt = bMeta ? bMeta.build(tintKit(sceneTint(bMeta, backdrop)), hash) : null
   const bPeriod = bMeta ? periodSeconds(bMeta.basePeriod, backdrop.speed ?? 1, bMeta.luminance) : 0
 
   const wMeta = weather ? WEATHERS[weather.id] : null
   const wDensity = weather && DENSITIES.has(weather.density) ? weather.density : 2
   const wSpeed = weather ? safeSpeed(weather.speed ?? 1) : 1
-  const wVariant = wMeta ? pickVariant(wMeta, weather.variant) : null
-  const wBuilt = wMeta ? wMeta.near(wVariant, wDensity, hash, wSpeed) : null
+  const wKit = wMeta ? tintKit(sceneTint(wMeta, weather)) : null
+  const wBuilt = wMeta ? wMeta.near(wKit, wDensity, hash, wSpeed) : null
   const wPeriod = wMeta ? periodSeconds(wMeta.basePeriod, wSpeed, wMeta.luminance) : 0
 
   // ── back pseudo: the plate, plus the far weather plane on top of it ──
   if (bBuilt) {
     const layers = [...bBuilt.layers]
     if (wMeta?.far && !wMeta.behindText) {
-      const far = wMeta.far(wVariant, wDensity)
+      const far = wMeta.far(wKit, wDensity)
       // The far plane rides the plate's own loop, so it is given a whole
       // number of tile-heights per backdrop period: seamless at any ratio,
       // and it lands at roughly the weather's apparent speed.
@@ -1600,25 +1508,15 @@ export const SCENE_RIM_CSS = 'text-shadow:0 1px 1px #000d,0 0 2px #000a;'
  */
 export const SCENE_RIM_FILTER_CSS = 'filter:drop-shadow(0 1px 1px #000d) drop-shadow(0 0 2px #000a);'
 
-// ── builder-UI metadata (labels, variant names, one swatch per variant) ────
+// ── builder-UI metadata (labels + the tint a fresh pick starts from) ──────
 //
-// `swatches` is the one piece of CSS that does leave here: a variant's sky (or
-// plate, or particle colour) as a plain background value, so the builder can
-// show a variant as a colour chip instead of a word. It is catalog data, never
-// user input, and it is only ever used as a background — nothing else escapes.
+// No colour CSS leaves here any more: a scene's colour is the user's tint, and
+// the builder's palette is the picker. `tint` is the entry's default.
 
 export const SCENE_BACKDROPS_META = Object.fromEntries(
-  Object.entries(BACKDROPS).map(([id, m]) => [id, {
-    label: m.label,
-    variants: m.variants.map(v => v.name),
-    swatches: m.variants.map(v => v.sky || v.plate || v.skyB || '#000'),
-  }]))
+  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
 
 export const SCENE_WEATHERS_META = Object.fromEntries(
-  Object.entries(WEATHERS).map(([id, m]) => [id, {
-    label: m.label,
-    variants: m.variants.map(v => v.name),
-    swatches: m.variants.map(v => v.c || v.c1 || '#fff'),
-  }]))
+  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
 
 export { BACKDROP_IDS as SCENE_BACKDROP_IDS, WEATHER_IDS as SCENE_WEATHER_IDS }

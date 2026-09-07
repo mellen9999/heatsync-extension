@@ -9557,7 +9557,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b96bd355+-202609071641' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f7b7ca1c+-202609071647' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -63940,7 +63940,13 @@ function watchTwitchPersistentPlayer() {
         }
       })
     })
-    _ttvPpObserver.observe(document.body, { childList: true, subtree: true })
+    // #root is Twitch's own React app root — present from document_start
+    // (early-inject-main.js already relies on it), and narrower than body:
+    // it never fires on <head> mutations from ads/analytics scripts.
+    _ttvPpObserver.observe(document.getElementById('root') || document.documentElement, {
+      childList: true,
+      subtree: true,
+    })
     cleanup.trackObserver(_ttvPpObserver)
   }
   if (_ttvPpLastSeen?.isConnected) armDetachWatch()
@@ -64198,7 +64204,8 @@ function softTwitchNav(prevLiveCh) {
   const obs = new MutationObserver(() => {
     if (tryReparent()) cleanup.untrackObserver(obs)
   })
-  obs.observe(document.documentElement, { childList: true, subtree: true })
+  // #root — see armBodyWatch above for why it's the right stable ancestor here.
+  obs.observe(document.getElementById('root') || document.documentElement, { childList: true, subtree: true })
   cleanup.trackObserver(obs)
   cleanup.setTimeout(
     () => {
@@ -64575,7 +64582,10 @@ function softKickNav(prevLiveCh) {
   const obs = new MutationObserver(() => {
     if (tryReparent()) cleanup.untrackObserver(obs)
   })
-  obs.observe(document.documentElement, { childList: true, subtree: true })
+  // #__next is Kick's Next.js app root (falls back to body on an app-router
+  // page, which has no wrapper div) — present well before #channel-chatroom
+  // mounts, and narrower than documentElement: no <head> mutation noise.
+  obs.observe(document.getElementById('__next') || document.body, { childList: true, subtree: true })
   cleanup.trackObserver(obs)
   cleanup.setTimeout(
     () => {
@@ -71563,7 +71573,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (initialCallouts.length > 0) {
       _narrowIfPossible(initialCallouts[0])
     } else {
-      _hsCalloutCloseObs.observe(document.body, { childList: true, subtree: true })
+      // No callout exists yet to narrow onto — #root (Twitch's app root) is
+      // the nearest stable ancestor that's already mounted at this point,
+      // and narrower than body (never fires on <head> mutations).
+      _hsCalloutCloseObs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true })
     }
     cleanup.trackObserver(_hsCalloutCloseObs)
   }
@@ -80845,7 +80858,12 @@ const STORAGE_KEY = 'heatsync_multichat'
         obs.disconnect()
         inject()
       })
-      obs.observe(document.documentElement, { childList: true, subtree: true })
+      // Platform app root when one exists (#root twitch, #__next kick) is a
+      // stable ancestor present well before this call, and narrower than
+      // documentElement — youtube has neither, so it falls back to body,
+      // still narrower than documentElement (no <head> mutation noise).
+      const mountRoot = document.getElementById('root') || document.getElementById('__next') || document.body
+      obs.observe(mountRoot, { childList: true, subtree: true })
       cleanup.trackObserver(obs)
       cleanup.setTimeout(() => {
         if (done) return

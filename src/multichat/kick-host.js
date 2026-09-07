@@ -355,7 +355,10 @@ function softKickNav(prevLiveCh) {
   const obs = new MutationObserver(() => {
     if (tryReparent()) cleanup.untrackObserver(obs)
   })
-  obs.observe(document.documentElement, { childList: true, subtree: true })
+  // #__next is Kick's Next.js app root (falls back to body on an app-router
+  // page, which has no wrapper div) — present well before #channel-chatroom
+  // mounts, and narrower than documentElement: no <head> mutation noise.
+  obs.observe(document.getElementById('__next') || document.body, { childList: true, subtree: true })
   cleanup.trackObserver(obs)
   cleanup.setTimeout(
     () => {

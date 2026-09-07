@@ -562,11 +562,20 @@
   const YT_HSPAINT_BATCH = 50
   const YT_HSPAINT_DELAY = 250
   const YT_HSPAINT_CACHE_MAX = 500
+  // ytHsPaintCache (uid -> spec) is FIFO-capped above, but a hash can outlive
+  // every uid that referenced it — evicting the uid never removed its rule
+  // from the sheet or its entry here. Capped separately; on overflow the
+  // sheet is rebuilt from only the hashes still referenced by a surviving
+  // cache entry (see rebuildYtHsPaintSheetIfOverCap below).
+  const YT_HSPAINT_HASH_MAX = 500
   const ytHsPaintCache = new Map() // uid -> { spec: object|null, hash: string|null }
   const ytHsPaintPending = new Set()
-  const ytHsPaintHashes = new Set()
+  const ytHsPaintHashes = new Map() // hash -> compiled css rule (Map, not Set, so a rebuild needn't recompile)
   let ytHsPaintTimer = null
   let ytHsPaintSheet = null
+  const YT_HSPAINT_SHEET_BASE =
+    'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *{animation-play-state:paused !important;}' +
+    '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
 
   // The compiler comes from the build-time paint-spec.js embed; typeof-guard
   // every entry point so a bundle built without it degrades to no HS paints
@@ -595,9 +604,7 @@
       // Gated on the setting, NOT prefers-reduced-motion — see the long note in
       // paints.js: the media query is a browser flag, and a chromium run with
       // --force-prefers-reduced-motion froze every paint on the page forever.
-      ytHsPaintSheet.textContent =
-        'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *{animation-play-state:paused !important;}' +
-        '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
+      ytHsPaintSheet.textContent = YT_HSPAINT_SHEET_BASE
       document.head.appendChild(cleanup.trackNode ? cleanup.trackNode(ytHsPaintSheet) : ytHsPaintSheet)
     }
     return ytHsPaintSheet
@@ -650,7 +657,7 @@
               const css = compilePaintCss(spec, `.hsp-${hash}`, { hash })
               if (css) {
                 ensureYtHsPaintSheet().textContent += css
-                ytHsPaintHashes.add(hash)
+                ytHsPaintHashes.set(hash, css)
               } else hash = null
             }
           } catch (_) {
@@ -666,6 +673,7 @@
     } else {
       for (const id of batch) ytHsPaintPending.add(id)
     }
+    rebuildYtHsPaintSheetIfOverCap()
     // Retro-apply to rows already rendered before the fetch resolved.
     if (changed.length) {
       const container = document.querySelector('yt-live-chat-item-list-renderer #items')
@@ -683,6 +691,32 @@
         if (!signal.aborted) flushYtHsPaintBatch()
       }, YT_HSPAINT_DELAY * 5)
     }
+  }
+
+  // ytHsPaintCache evicts old uids (FIFO, capped above), but a hash a uid
+  // referenced stays in ytHsPaintHashes — and its rule in the sheet — forever;
+  // nothing ever removed it. Once the distinct-hash count exceeds the cap,
+  // rebuild both from only the hashes a surviving cache entry still points
+  // at, so a long session's unique-paint count can't grow the sheet without
+  // bound. No recompile needed — ytHsPaintHashes already holds each hash's
+  // css.
+  function rebuildYtHsPaintSheetIfOverCap() {
+    if (ytHsPaintHashes.size <= YT_HSPAINT_HASH_MAX) return
+    const surviving = new Set()
+    for (const entry of ytHsPaintCache.values()) {
+      if (entry.hash) surviving.add(entry.hash)
+    }
+    const next = new Map()
+    let css = YT_HSPAINT_SHEET_BASE
+    for (const hash of surviving) {
+      const rule = ytHsPaintHashes.get(hash)
+      if (!rule) continue // spec was cached but never got a rule (shouldn't happen, defensive)
+      next.set(hash, rule)
+      css += rule
+    }
+    ytHsPaintHashes.clear()
+    for (const [hash, rule] of next) ytHsPaintHashes.set(hash, rule)
+    if (ytHsPaintSheet) ytHsPaintSheet.textContent = css
   }
 
   /** Apply a cached HS paint to the author-name element. Returns true when a

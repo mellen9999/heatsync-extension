@@ -6648,7 +6648,10 @@
     if (initialCallouts.length > 0) {
       _narrowIfPossible(initialCallouts[0])
     } else {
-      _hsCalloutCloseObs.observe(document.body, { childList: true, subtree: true })
+      // No callout exists yet to narrow onto — #root (Twitch's app root) is
+      // the nearest stable ancestor that's already mounted at this point,
+      // and narrower than body (never fires on <head> mutations).
+      _hsCalloutCloseObs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true })
     }
     cleanup.trackObserver(_hsCalloutCloseObs)
   }
@@ -15930,7 +15933,12 @@
         obs.disconnect()
         inject()
       })
-      obs.observe(document.documentElement, { childList: true, subtree: true })
+      // Platform app root when one exists (#root twitch, #__next kick) is a
+      // stable ancestor present well before this call, and narrower than
+      // documentElement — youtube has neither, so it falls back to body,
+      // still narrower than documentElement (no <head> mutation noise).
+      const mountRoot = document.getElementById('root') || document.getElementById('__next') || document.body
+      obs.observe(mountRoot, { childList: true, subtree: true })
       cleanup.trackObserver(obs)
       cleanup.setTimeout(() => {
         if (done) return

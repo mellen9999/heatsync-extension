@@ -159,7 +159,13 @@ function watchTwitchPersistentPlayer() {
         }
       })
     })
-    _ttvPpObserver.observe(document.body, { childList: true, subtree: true })
+    // #root is Twitch's own React app root — present from document_start
+    // (early-inject-main.js already relies on it), and narrower than body:
+    // it never fires on <head> mutations from ads/analytics scripts.
+    _ttvPpObserver.observe(document.getElementById('root') || document.documentElement, {
+      childList: true,
+      subtree: true,
+    })
     cleanup.trackObserver(_ttvPpObserver)
   }
   if (_ttvPpLastSeen?.isConnected) armDetachWatch()
@@ -417,7 +423,8 @@ function softTwitchNav(prevLiveCh) {
   const obs = new MutationObserver(() => {
     if (tryReparent()) cleanup.untrackObserver(obs)
   })
-  obs.observe(document.documentElement, { childList: true, subtree: true })
+  // #root — see armBodyWatch above for why it's the right stable ancestor here.
+  obs.observe(document.getElementById('root') || document.documentElement, { childList: true, subtree: true })
   cleanup.trackObserver(obs)
   cleanup.setTimeout(
     () => {

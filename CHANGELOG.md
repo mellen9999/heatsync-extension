@@ -1,5 +1,20 @@
 # changelog
 
+## [1.7.71] — 2026-09-07
+
+### fixed
+- **firefox: settings, emote size and the blocklist stuck at defaults, feedback form always "failed"** — three of the hand-written scripts awaited `chrome.*` calls, which firefox answers with nothing. every promise-style call now goes through the same `browser` alias the background already used, and a tripwire test keeps it that way.
+- **kick send errors read like error pages** — kick's raw response body landed in the toast. followers-only, subs-only, slow mode and bans now say so in the same words twitch does.
+- **youtube "top chat" quietly filtered the relay** — youtube defaults big streams to top chat, so the relay read a server-filtered stream and heatsync looked like it dropped messages. the panel switches the view to live chat itself; when it can't, it says so.
+- **youtube `/channel/<id>/live` pages join chat** — and a `&pp=` / `&list=` change in the url no longer resubscribes mid-stream.
+- **`kick.com/video/<id>` no longer becomes a ghost channel** — one reserved-path list replaces nine copies (video, following, moderator, videos, login, search, u and p were missing from some).
+- **m.twitch.tv left alone** — the mobile site has its own dom; nothing injects there anymore.
+
+### changed
+- **shared chat names the partner** — the chip reads `shared:<login>` instead of a bare `shared`.
+- **profile card and context menu** — real dialog and menu roles, focus lands in the card and returns on close. the hover-card copy is translatable, and a debounce timer no longer shadowed the translator.
+- **lighter page hooks** — mount-wait observers watch the app root instead of the whole document, and the youtube paint stylesheet stops growing without bound.
+
 ## [1.7.70] — 2026-09-06
 
 ### added

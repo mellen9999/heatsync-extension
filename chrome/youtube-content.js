@@ -823,6 +823,48 @@
 
   // ─── Message Extraction (existing logic) ──────────────────────────────────────
 
+  // YouTube defaults big streams to 'Top chat' — server-side filtered, so the
+  // relay (and every viewer of this tab) reads a filtered stream instead of
+  // everything. Switch the view-selector dropdown to 'Live chat' on attach.
+  // No throw, bounded retries (the header can take a moment to hydrate — and
+  // a replay/VOD page legitimately has no selector at all, which must stay
+  // silent, not toast), idempotent (a no-op once already on Live chat, so the
+  // re-attach after the mode-switch's own container swap can safely call this
+  // again without re-triggering anything).
+  function ensureLiveChatMode(attempt = 0) {
+    if (signal.aborted) return
+    const menuButton = document.querySelector(
+      'yt-live-chat-header-renderer yt-sort-filter-sub-menu-renderer tp-yt-paper-menu-button',
+    )
+    // Two menu-item DOM copies exist (an <a> wrapping each tp-yt-paper-item);
+    // only the <a> carries aria-selected, so that's the one we read + click.
+    const items = menuButton ? [...menuButton.querySelectorAll('a.yt-simple-endpoint')] : []
+    if (!menuButton || items.length < 2) {
+      // Not hydrated yet, or genuinely absent (VOD/replay chat has no view
+      // selector — never toast for that, it isn't a failure).
+      if (attempt < 10 && !signal.aborted) cleanup.setTimeout(() => ensureLiveChatMode(attempt + 1), 1000)
+      return
+    }
+    const isLiveChat = (el) => /live chat/i.test(el.getAttribute('aria-label') || el.textContent || '')
+    const selected = items.find((el) => el.getAttribute('aria-selected') === 'true')
+    if (selected && isLiveChat(selected)) return // already on Live chat
+    // Match by aria-label/text; if YouTube's markup drifts and neither item
+    // matches, fall back to the second entry — YT has always listed Top chat
+    // first, Live chat second (confirmed live 2026-09-06).
+    const liveChatItem = items.find(isLiveChat) || items[1]
+    try {
+      // Opening the trigger first isn't required (a direct item click already
+      // fires the selection handler — confirmed live), but costs nothing and
+      // guards against a future build that DOES need the menu open.
+      menuButton.querySelector('#trigger')?.click()
+      liveChatItem.click()
+    } catch (_) {
+      try {
+        showYtToast('top chat mode — switch youtube to live chat')
+      } catch (_) {}
+    }
+  }
+
   function waitForContainer() {
     return new Promise((resolve, reject) => {
       let elapsed = 0
@@ -1898,6 +1940,13 @@
     // and fetches; the channel_emotes_update broadcast lands in this file's
     // listener and rebuilds the map.
     safeSendMessage({ type: 'yt_ensure_channel_emotes', videoId })
+
+    // Fire-and-forget: self-retrying, never throws, and the mode-switch's own
+    // container swap is picked up by the reattach poll below — no need to
+    // sequence this before/after waitForContainer.
+    try {
+      ensureLiveChatMode()
+    } catch (_) {}
 
     try {
       let container = await waitForContainer()

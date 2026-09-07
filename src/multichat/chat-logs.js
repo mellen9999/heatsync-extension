@@ -52,6 +52,16 @@ function buildLogPermalink({ platform, channel, messageId, time }) {
   return url
 }
 
+// Public post/thread permalink out of a base36 message id. THE canonical
+// builder — every place that links to a heatsync post must use this, not
+// hand-roll the URL. /share/<id> is the public THREAD page; /m/<id> is a
+// DIFFERENT server route (the multichat overlay's own layout permalink) that
+// happens to share the origin — pointing a post link at it 404s the reader.
+function buildPostPermalink(id) {
+  if (!id) return null
+  return `${HS_CL_PUBLIC_ORIGIN}/share/${encodeURIComponent(id)}`
+}
+
 // Archive-viewer row → permalink. Channel falls back to the view's channel
 // (the all-channels view carries it per-row instead).
 function buildChatLogPermalink(r) {

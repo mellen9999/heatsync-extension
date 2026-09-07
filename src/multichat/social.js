@@ -3182,7 +3182,7 @@ function sortProfilesByHeat(a, b) {
 function renderDiscoverPostRow(m) {
   const row = document.createElement('a')
   row.className = 'hs-discover-post-row'
-  row.href = `https://heatsync.org/m/${encodeURIComponent(m.base36_id)}`
+  row.href = buildPostPermalink(m.base36_id) || '#'
   row.target = '_blank'
   row.rel = 'noopener noreferrer'
 
@@ -3561,7 +3561,7 @@ function renderPinnedTab() {
     const row = document.createElement('a')
     row.className = 'hs-pinned-row'
     if (id) {
-      const url = safeUrl(`https://heatsync.org/m/${encodeURIComponent(id)}`)
+      const url = safeUrl(buildPostPermalink(id))
       if (url) {
         row.href = url
         row.target = '_blank'

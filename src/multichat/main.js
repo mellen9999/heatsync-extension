@@ -4807,7 +4807,7 @@
       const user = r.display_name || r.username || ''
       const content = r.content || ''
       const msgId = r.base36_id || ''
-      const permalink = msgId ? `https://heatsync.org/m/${msgId}` : null
+      const permalink = msgId ? buildPostPermalink(msgId) : null
 
       const meta = document.createElement('div')
       meta.className = 'hs-mc-search-meta'

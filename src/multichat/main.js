@@ -10791,15 +10791,9 @@
    * Get current channel from URL
    */
   function getCurrentChannel() {
-    // YouTube: /@handle/live, /watch?v=, /live/videoId
+    // YouTube: /@handle/live, /watch?v=, /live/videoId, /channel/<UCid>/live
     if (location.hostname.includes('youtube.com')) {
-      const handleMatch = location.pathname.match(/^\/@([^/]+)/)
-      if (handleMatch) return handleMatch[1].toLowerCase()
-      const vParam = new URLSearchParams(location.search).get('v')
-      if (vParam) return vParam
-      const liveMatch = location.pathname.match(/^\/live\/([^/?]+)/)
-      if (liveMatch) return liveMatch[1]
-      return null
+      return parseYoutubeChannel(location.pathname, location.search)
     }
 
     // Channel pages live on the apex/www/m hosts only. Sibling subdomains
@@ -14012,25 +14006,32 @@
   // ============================================
 
   let mcInitialized = false
-  // Re-arm the __live_yt_auto__ binding for the CURRENT yt video page.
+  // Re-arm the __live_yt_auto__ binding for the CURRENT yt video/channel page.
   // Called from yt soft-nav (spa-nav.js), which unsubscribes the previous
   // video's binding on every navigation — init()'s auto-join sibling below
   // (~12240) only runs on full page load, so without this, SPA-navigating
-  // into a live stream left the multichat dead until refresh. Video-page
-  // subset only: the channel-mirror (explicit yt link) case stays init-time.
+  // into a live stream left the multichat dead until refresh. Video-page +
+  // /channel/<id>/live subset only: the channel-mirror (explicit yt link)
+  // case stays init-time.
   function autoYtSubscribeForPage() {
     if (hostPlatform !== 'yt') return
     if (gateAtBoot('chat-youtube') === false) return
     const vid = getCurrentChannel()
     if (!vid) return
-    if (!/\/watch|\/live\//.test(location.pathname + location.search)) return
-    const autoYtUrl = `https://youtube.com/watch?v=${vid}`
+    // getCurrentChannel() returns the raw UC channel id on /channel/<id>/live —
+    // that's not a videoId, so it needs the /channel/.../live URL form
+    // (ytSubscribe's own channel-shaped-URL branch resolves it to a concrete
+    // videoId via the BG, same as an @handle URL).
+    const isChannelId = /^UC[\w-]{20,}$/.test(vid)
+    if (!isChannelId && !/\/watch|\/live\//.test(location.pathname + location.search)) return
+    const autoYtUrl = isChannelId ? `https://www.youtube.com/channel/${vid}/live` : `https://youtube.com/watch?v=${vid}`
     ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     // Concrete on-page videoId — open the render gate now (same rationale as
     // the init-time sibling: the poller's 'connected' echo is missed on
-    // already-polled popular streams).
-    _autoYtVideoId = vid
+    // already-polled popular streams). No id yet for the channel-id case —
+    // defers to ytSubscribe's own resolve echo, same as an @handle URL.
+    if (!isChannelId) _autoYtVideoId = vid
     ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
@@ -14678,8 +14679,17 @@
         // /watch?v=<id> form whenever we're on a YT video page so the server has
         // something concrete to bind to. The previous `length > 20` check never
         // matched (videoIds are 11), so YT-tab subs were silently broken.
+        // On /channel/<id>/live, getCurrentChannel returns the raw UC channel
+        // id instead — that goes through the channel-URL form, same as an
+        // @handle URL (ytSubscribe's own channel-shaped-URL branch resolves
+        // it to a concrete videoId via the BG).
+        const isYtChannelId = hostPlatform === 'yt' && /^UC[\w-]{20,}$/.test(currentChannel || '')
         const onYtVideoPage = hostPlatform === 'yt' && /\/watch|\/live\//.test(location.pathname + location.search)
-        const autoYtUrl = onYtVideoPage ? `https://youtube.com/watch?v=${currentChannel}` : ytUrl
+        const autoYtUrl = isYtChannelId
+          ? `https://www.youtube.com/channel/${currentChannel}/live`
+          : onYtVideoPage
+            ? `https://youtube.com/watch?v=${currentChannel}`
+            : ytUrl
         if (gYt && autoYtUrl) {
           ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
           ytChanLastSeen.set('__live_yt_auto__', Date.now())

@@ -720,6 +720,43 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 }
 
 /**
+ * Parse a YouTube URL's pathname/search into heatsync's "current channel"
+ * identifier: an @handle (lowercased), a raw UC channel id, or a videoId
+ * (from ?v= or /live/<id>) — all case-sensitive except the handle. Pure so
+ * getCurrentChannel()'s four URL shapes are unit-testable without a real
+ * `location`.
+ * @param {string} pathname
+ * @param {string} search
+ * @returns {string|null}
+ */
+function parseYoutubeChannel(pathname, search) {
+  const handleMatch = pathname.match(/^\/@([^/]+)/)
+  if (handleMatch) return handleMatch[1].toLowerCase()
+  const vParam = new URLSearchParams(search).get('v')
+  if (vParam) return vParam
+  const liveMatch = pathname.match(/^\/live\/([^/?]+)/)
+  if (liveMatch) return liveMatch[1]
+  // Channel id is case-sensitive — never lowercase it like the handle above.
+  const channelMatch = pathname.match(/^\/channel\/(UC[\w-]+)/)
+  if (channelMatch) return channelMatch[1]
+  return null
+}
+
+/**
+ * True if two YouTube `location.search` strings are the same video — compares
+ * only the `v` param. YouTube's own &pp=/&list=/&index= replaceState churn
+ * (autoplay tracking, playlist position) fires mid-stream on the SAME video;
+ * comparing the full search string read that as a video change and fired a
+ * full WS unsubscribe/resubscribe loop for every param flip.
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+function ytSameVideoSearch(a, b) {
+  return new URLSearchParams(a || '').get('v') === new URLSearchParams(b || '').get('v')
+}
+
+/**
  * Canonical YouTube live URL from a resolveIdentity() result. config.channels
  * youtube slots hold full URLs, never bare handles/ids — a bare value breaks
  * youtube_ws_subscribe and the tab-label handle parse. Prefer the profile's
@@ -1079,6 +1116,8 @@ const utils = {
   resolveYtLiveLabel,
   identityYtLiveUrl,
   liveIdentityCounterpart,
+  parseYoutubeChannel,
+  ytSameVideoSearch,
 
   // Emote provider priority
   EMOTE_THIRD_PARTY_PROVIDERS,
@@ -1140,6 +1179,7 @@ export {
   OVERFLOW_MIRROR_KEYS,
   ordOf,
   outsideTags,
+  parseYoutubeChannel,
   parseYtGiftCount,
   qsArray,
   qsaArray,
@@ -1161,5 +1201,6 @@ export {
   ytItemText,
   ytMatchModAction,
   ytResolveModAction,
+  ytSameVideoSearch,
 }
 export default utils

@@ -1875,6 +1875,43 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 }
 
 /**
+ * Parse a YouTube URL's pathname/search into heatsync's "current channel"
+ * identifier: an @handle (lowercased), a raw UC channel id, or a videoId
+ * (from ?v= or /live/<id>) — all case-sensitive except the handle. Pure so
+ * getCurrentChannel()'s four URL shapes are unit-testable without a real
+ * `location`.
+ * @param {string} pathname
+ * @param {string} search
+ * @returns {string|null}
+ */
+function parseYoutubeChannel(pathname, search) {
+  const handleMatch = pathname.match(/^\/@([^/]+)/)
+  if (handleMatch) return handleMatch[1].toLowerCase()
+  const vParam = new URLSearchParams(search).get('v')
+  if (vParam) return vParam
+  const liveMatch = pathname.match(/^\/live\/([^/?]+)/)
+  if (liveMatch) return liveMatch[1]
+  // Channel id is case-sensitive — never lowercase it like the handle above.
+  const channelMatch = pathname.match(/^\/channel\/(UC[\w-]+)/)
+  if (channelMatch) return channelMatch[1]
+  return null
+}
+
+/**
+ * True if two YouTube `location.search` strings are the same video — compares
+ * only the `v` param. YouTube's own &pp=/&list=/&index= replaceState churn
+ * (autoplay tracking, playlist position) fires mid-stream on the SAME video;
+ * comparing the full search string read that as a video change and fired a
+ * full WS unsubscribe/resubscribe loop for every param flip.
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+function ytSameVideoSearch(a, b) {
+  return new URLSearchParams(a || '').get('v') === new URLSearchParams(b || '').get('v')
+}
+
+/**
  * Canonical YouTube live URL from a resolveIdentity() result. config.channels
  * youtube slots hold full URLs, never bare handles/ids — a bare value breaks
  * youtube_ws_subscribe and the tab-label handle parse. Prefer the profile's
@@ -2234,6 +2271,8 @@ const utils = {
   resolveYtLiveLabel,
   identityYtLiveUrl,
   liveIdentityCounterpart,
+  parseYoutubeChannel,
+  ytSameVideoSearch,
 
   // Emote provider priority
   EMOTE_THIRD_PARTY_PROVIDERS,
@@ -9511,7 +9550,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '14c4733+-202609070328' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f0c9a03+-202609070335' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -63316,13 +63355,19 @@ let spaReinitializing = false
 
 function handleMcNav() {
   // On YouTube, /watch?v=A → /watch?v=B keeps the same pathname — detect
-  // the video change via the full search string so the YT soft-nav block
-  // runs and swaps the WS subscription to the new video. YT-only: Twitch
-  // (?t=, clip params) and Kick (?category=) churn search via replaceState
-  // without a channel change — comparing search there would fire spurious
-  // soft-navs (part+join on the live channel) on every param flip.
+  // the video change via the `v` param so the YT soft-nav block runs and
+  // swaps the WS subscription to the new video. YT-only: Twitch (?t=, clip
+  // params) and Kick (?category=) churn search via replaceState without a
+  // channel change — comparing search there would fire spurious soft-navs
+  // (part+join on the live channel) on every param flip.
+  //
+  // Compare only `v`, not the full search string: YouTube's own &pp=/&list=/
+  // &index= replaceState churn (autoplay tracking, playlist position) fires
+  // mid-stream on the SAME video and was triggering a full unsub/resub loop —
+  // a dropped WS subscription is worse than a missed reinit.
   const newSearch = location.search
-  if (location.pathname === lastPath && (hostPlatform !== 'yt' || newSearch === lastSearch)) return
+  const sameVideo = hostPlatform !== 'yt' || ytSameVideoSearch(newSearch, lastSearch)
+  if (location.pathname === lastPath && sameVideo) return
   // Bug #3: capture the old live channel before updating lastPath so
   // soft-nav can part it and avoid an unbounded irc.channels accumulation.
   // NON_CHANNEL_PATHS filter mirrors getCurrentChannel — without it a nav
@@ -75636,15 +75681,9 @@ const STORAGE_KEY = 'heatsync_multichat'
    * Get current channel from URL
    */
   function getCurrentChannel() {
-    // YouTube: /@handle/live, /watch?v=, /live/videoId
+    // YouTube: /@handle/live, /watch?v=, /live/videoId, /channel/<UCid>/live
     if (location.hostname.includes('youtube.com')) {
-      const handleMatch = location.pathname.match(/^\/@([^/]+)/)
-      if (handleMatch) return handleMatch[1].toLowerCase()
-      const vParam = new URLSearchParams(location.search).get('v')
-      if (vParam) return vParam
-      const liveMatch = location.pathname.match(/^\/live\/([^/?]+)/)
-      if (liveMatch) return liveMatch[1]
-      return null
+      return parseYoutubeChannel(location.pathname, location.search)
     }
 
     // Channel pages live on the apex/www/m hosts only. Sibling subdomains
@@ -78857,25 +78896,32 @@ const STORAGE_KEY = 'heatsync_multichat'
   // ============================================
 
   let mcInitialized = false
-  // Re-arm the __live_yt_auto__ binding for the CURRENT yt video page.
+  // Re-arm the __live_yt_auto__ binding for the CURRENT yt video/channel page.
   // Called from yt soft-nav (spa-nav.js), which unsubscribes the previous
   // video's binding on every navigation — init()'s auto-join sibling below
   // (~12240) only runs on full page load, so without this, SPA-navigating
-  // into a live stream left the multichat dead until refresh. Video-page
-  // subset only: the channel-mirror (explicit yt link) case stays init-time.
+  // into a live stream left the multichat dead until refresh. Video-page +
+  // /channel/<id>/live subset only: the channel-mirror (explicit yt link)
+  // case stays init-time.
   function autoYtSubscribeForPage() {
     if (hostPlatform !== 'yt') return
     if (gateAtBoot('chat-youtube') === false) return
     const vid = getCurrentChannel()
     if (!vid) return
-    if (!/\/watch|\/live\//.test(location.pathname + location.search)) return
-    const autoYtUrl = `https://youtube.com/watch?v=${vid}`
+    // getCurrentChannel() returns the raw UC channel id on /channel/<id>/live —
+    // that's not a videoId, so it needs the /channel/.../live URL form
+    // (ytSubscribe's own channel-shaped-URL branch resolves it to a concrete
+    // videoId via the BG, same as an @handle URL).
+    const isChannelId = /^UC[\w-]{20,}$/.test(vid)
+    if (!isChannelId && !/\/watch|\/live\//.test(location.pathname + location.search)) return
+    const autoYtUrl = isChannelId ? `https://www.youtube.com/channel/${vid}/live` : `https://youtube.com/watch?v=${vid}`
     ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     // Concrete on-page videoId — open the render gate now (same rationale as
     // the init-time sibling: the poller's 'connected' echo is missed on
-    // already-polled popular streams).
-    _autoYtVideoId = vid
+    // already-polled popular streams). No id yet for the channel-id case —
+    // defers to ytSubscribe's own resolve echo, same as an @handle URL.
+    if (!isChannelId) _autoYtVideoId = vid
     ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
@@ -79523,8 +79569,17 @@ const STORAGE_KEY = 'heatsync_multichat'
         // /watch?v=<id> form whenever we're on a YT video page so the server has
         // something concrete to bind to. The previous `length > 20` check never
         // matched (videoIds are 11), so YT-tab subs were silently broken.
+        // On /channel/<id>/live, getCurrentChannel returns the raw UC channel
+        // id instead — that goes through the channel-URL form, same as an
+        // @handle URL (ytSubscribe's own channel-shaped-URL branch resolves
+        // it to a concrete videoId via the BG).
+        const isYtChannelId = hostPlatform === 'yt' && /^UC[\w-]{20,}$/.test(currentChannel || '')
         const onYtVideoPage = hostPlatform === 'yt' && /\/watch|\/live\//.test(location.pathname + location.search)
-        const autoYtUrl = onYtVideoPage ? `https://youtube.com/watch?v=${currentChannel}` : ytUrl
+        const autoYtUrl = isYtChannelId
+          ? `https://www.youtube.com/channel/${currentChannel}/live`
+          : onYtVideoPage
+            ? `https://youtube.com/watch?v=${currentChannel}`
+            : ytUrl
         if (gYt && autoYtUrl) {
           ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
           ytChanLastSeen.set('__live_yt_auto__', Date.now())

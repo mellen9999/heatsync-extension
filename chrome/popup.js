@@ -140,6 +140,8 @@
         if (h.endsWith('youtube.com') || h === 'youtu.be') {
           const handle = u.pathname.match(/^\/@([^/]+)/)
           if (handle) return { platform: 'youtube', channel: handle[1].toLowerCase(), isHandle: true }
+          const channelId = u.pathname.match(/^\/channel\/(UC[\w-]+)/)
+          if (channelId) return { platform: 'youtube', channel: channelId[1], isHandle: false, isChannelId: true }
           const live = u.pathname.match(/^\/live\/([^/?]+)/)
           if (live) return { platform: 'youtube', channel: live[1], isHandle: false }
           const vid = u.searchParams.get('v')
@@ -149,6 +151,11 @@
       // Looked like a URL but matched no channel — don't fall through to bare
       // stripping (which would mangle the whole url into a junk channel name).
       return null
+    }
+    // Bare UC channel id (pasted without a URL) — case-sensitive, so this
+    // check runs on the raw trimmed value, before the lowercasing below.
+    if (platform === 'youtube' && /^UC[\w-]{20,}$/.test(v)) {
+      return { platform: 'youtube', channel: v, isHandle: false, isChannelId: true }
     }
     const channel = v
       .replace(/^@/, '')
@@ -160,9 +167,9 @@
 
   function buildUrl(p) {
     if (p.platform === 'youtube') {
-      return p.isHandle
-        ? `https://www.youtube.com/@${p.channel}/live`
-        : `https://www.youtube.com/live_chat?v=${p.channel}&is_popout=1`
+      if (p.isHandle) return `https://www.youtube.com/@${p.channel}/live`
+      if (p.isChannelId) return `https://www.youtube.com/channel/${p.channel}/live`
+      return `https://www.youtube.com/live_chat?v=${p.channel}&is_popout=1`
     }
     if (p.platform === 'kick') return `https://kick.com/popout/${p.channel}/chat`
     return `https://www.twitch.tv/popout/${p.channel}/chat`
@@ -232,10 +239,16 @@
         } else if (host.endsWith('youtube.com')) {
           setPlatform('youtube')
           const handle = url.pathname.match(/^\/@([^/]+)/)
+          const channelId = url.pathname.match(/^\/channel\/(UC[\w-]+)/)
           if (handle) {
             input.value = handle[1].toLowerCase()
             ytIsHandle = true
             setDetected('youtube', `@${handle[1].toLowerCase()}`)
+          } else if (channelId) {
+            // Case-sensitive — never lowercase a channel id.
+            input.value = channelId[1]
+            ytIsHandle = false
+            setDetected('youtube', channelId[1])
           } else {
             const vid = url.searchParams.get('v')
             const live = url.pathname.match(/^\/live\/([^/?]+)/)

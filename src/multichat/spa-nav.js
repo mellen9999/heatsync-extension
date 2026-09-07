@@ -18,13 +18,19 @@ let spaReinitializing = false
 
 function handleMcNav() {
   // On YouTube, /watch?v=A → /watch?v=B keeps the same pathname — detect
-  // the video change via the full search string so the YT soft-nav block
-  // runs and swaps the WS subscription to the new video. YT-only: Twitch
-  // (?t=, clip params) and Kick (?category=) churn search via replaceState
-  // without a channel change — comparing search there would fire spurious
-  // soft-navs (part+join on the live channel) on every param flip.
+  // the video change via the `v` param so the YT soft-nav block runs and
+  // swaps the WS subscription to the new video. YT-only: Twitch (?t=, clip
+  // params) and Kick (?category=) churn search via replaceState without a
+  // channel change — comparing search there would fire spurious soft-navs
+  // (part+join on the live channel) on every param flip.
+  //
+  // Compare only `v`, not the full search string: YouTube's own &pp=/&list=/
+  // &index= replaceState churn (autoplay tracking, playlist position) fires
+  // mid-stream on the SAME video and was triggering a full unsub/resub loop —
+  // a dropped WS subscription is worse than a missed reinit.
   const newSearch = location.search
-  if (location.pathname === lastPath && (hostPlatform !== 'yt' || newSearch === lastSearch)) return
+  const sameVideo = hostPlatform !== 'yt' || ytSameVideoSearch(newSearch, lastSearch)
+  if (location.pathname === lastPath && sameVideo) return
   // Bug #3: capture the old live channel before updating lastPath so
   // soft-nav can part it and avoid an unbounded irc.channels accumulation.
   // NON_CHANNEL_PATHS filter mirrors getCurrentChannel — without it a nav

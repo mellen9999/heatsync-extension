@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.72] — 2026-09-07
+
+### fixed
+- **7tv emotes vanished for some channels and chatters** — 7tv's api can now return a user without an inline emote set and only the set's id. three paths read the inline set alone: a channel's 7tv emotes came back empty, a set change was never noticed again, and a chatter's 7tv emotes rendered as plain text. all three now fetch the set by id when that is all 7tv sends.
+
 ## [1.7.71] — 2026-09-07
 
 ### fixed

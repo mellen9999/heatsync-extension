@@ -6041,7 +6041,9 @@ async function connectWebSocket() {
 
       socketAuthToken = authToken
 
-      const wsEndpoint = `${WS_URL.replace('https://', 'wss://').replace('http://', 'ws://')}/ws`
+      // b=1: this client unwraps {type:'batch'} frames (handleWSMessage), so
+      // the server may coalesce fan-out for it — one frame per tick, not per message.
+      const wsEndpoint = `${WS_URL.replace('https://', 'wss://').replace('http://', 'ws://')}/ws?b=1`
       log(' 🔌 Connecting to WebSocket:', wsEndpoint, 'with auth:', !!authToken)
 
       // Defensive: detach handlers from any prior closed/closing socket before reassigning
@@ -7228,6 +7230,12 @@ function handleWSMessage(msg) {
         })
         break
       }
+
+      // Coalesced fan-out (server ws-coalesce.ts): one frame per tick carrying
+      // several messages. Unwrap in order — each is a frame handled above.
+      case 'batch':
+        if (Array.isArray(msg.messages)) for (const m of msg.messages) handleWSMessage(m)
+        break
 
       case 'error':
         break

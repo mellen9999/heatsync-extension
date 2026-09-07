@@ -1180,3 +1180,56 @@ describe('surface check-in buffer', () => {
     expect(await h.takePendingSurfaces()).toEqual([])
   })
 })
+
+// ── resolve7TVEmoteSet — 7TV v3 "missing emote_set" API change ─────────────
+//
+// SevenTV/Extension#1253: GET /v3/users/:platform/:id can now return
+// emote_set: null with emote_set_id: null (genuinely no active set) or
+// emote_set: null with emote_set_id: "<id>" still present (has a set, must
+// fetch /v3/emote-sets/:id separately). Every background.js call site that
+// reads a user-lookup response's emote_set goes through this helper so the
+// fallback is tested once here instead of three times against live fetch.
+
+const resolveSetSrc = `async ${extractFn('resolve7TVEmoteSet')}`
+
+function makeResolveSetHarness(fetchWithTimeout) {
+  return new Function('fetchWithTimeout', `${resolveSetSrc}\nreturn { resolve7TVEmoteSet }`)(fetchWithTimeout)
+}
+
+describe('resolve7TVEmoteSet', () => {
+  test('inline emote_set present → returned as-is, no follow-up fetch', async () => {
+    const fetchWithTimeout = () => {
+      throw new Error('should not fetch when emote_set is inline')
+    }
+    const h = makeResolveSetHarness(fetchWithTimeout)
+    const set = { id: 'inline-set', emotes: [] }
+    expect(await h.resolve7TVEmoteSet({ emote_set: set, emote_set_id: 'inline-set' })).toBe(set)
+  })
+
+  test('emote_set null + emote_set_id null → null (genuinely no active set)', async () => {
+    const fetchWithTimeout = () => {
+      throw new Error('should not fetch when emote_set_id is also null')
+    }
+    const h = makeResolveSetHarness(fetchWithTimeout)
+    expect(await h.resolve7TVEmoteSet({ emote_set: null, emote_set_id: null })).toBeNull()
+    expect(await h.resolve7TVEmoteSet({})).toBeNull()
+  })
+
+  test('emote_set null + emote_set_id set → fetches /v3/emote-sets/:id and returns it', async () => {
+    const calls = []
+    const fetchWithTimeout = async (url) => {
+      calls.push(url)
+      return { ok: true, json: async () => ({ id: 'set-abc', emotes: [{ id: 'e1', name: 'PogU' }] }) }
+    }
+    const h = makeResolveSetHarness(fetchWithTimeout)
+    const set = await h.resolve7TVEmoteSet({ emote_set: null, emote_set_id: 'set-abc' })
+    expect(calls).toEqual(['https://7tv.io/v3/emote-sets/set-abc'])
+    expect(set).toEqual({ id: 'set-abc', emotes: [{ id: 'e1', name: 'PogU' }] })
+  })
+
+  test('a failed follow-up fetch throws (caller treats it as the same transient failure a failed user-lookup already is)', async () => {
+    const fetchWithTimeout = async () => ({ ok: false, status: 503, body: { cancel: () => {} } })
+    const h = makeResolveSetHarness(fetchWithTimeout)
+    await expect(h.resolve7TVEmoteSet({ emote_set: null, emote_set_id: 'set-abc' })).rejects.toThrow()
+  })
+})

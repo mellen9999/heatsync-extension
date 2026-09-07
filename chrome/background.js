@@ -3342,6 +3342,24 @@ async function toNotifIconDataUrl(url) {
   }
 }
 
+// 7TV v3: the user-lookup response's inline `emote_set` can be null even when
+// the user has an active set — `emote_set_id` is then the id to fetch
+// separately via /v3/emote-sets/:id (SevenTV/Extension#1253). Null `emote_set`
+// AND no `emote_set_id` together mean the user genuinely has no active set.
+// Throws on a failed follow-up fetch so callers' existing try/catch treats it
+// as the same transient failure a failed user-lookup already is.
+async function resolve7TVEmoteSet(data) {
+  if (data?.emote_set) return data.emote_set
+  const setId = data?.emote_set_id
+  if (!setId) return null
+  const res = await fetchWithTimeout(`https://7tv.io/v3/emote-sets/${setId}`, {}, 8000)
+  if (!res.ok) {
+    res.body?.cancel?.()
+    throw new Error(`7TV emote-set ${setId} fetch failed (${res.status})`)
+  }
+  return await res.json()
+}
+
 // Fetch 7TV channel emotes
 // Supports Twitch (user ID or username) and Kick (username) lookups
 async function fetch7TVChannelEmotes(channelName, channelId = null, platform = 'twitch') {
@@ -3481,7 +3499,7 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
       }
     }
 
-    const emoteSet = data.emote_set
+    const emoteSet = await resolve7TVEmoteSet(data)
     if (!emoteSet) {
       log(' 7TV: No emote set found for', identifier)
       return [] // genuine: user has no emote set
@@ -5410,7 +5428,7 @@ async function poll7TVEmoteSet() {
       if (!response.ok) continue
       const data = await response.json()
 
-      const emoteSet = data.emote_set
+      const emoteSet = await resolve7TVEmoteSet(data)
       if (!emoteSet?.emotes) continue
 
       // Check if emote set ID changed (user recreated their set)
@@ -10683,8 +10701,21 @@ async function handleMessage(message, sender, sendResponse) {
           const bttvErrored = bttvRaw === SENDER_FETCH_ERR
           const stv = stvErrored ? null : stvRaw
           const bttv = bttvErrored ? null : bttvRaw
-          // 7TV active channel set (a useful proxy; TRUE personal sets merge below)
-          const stvEmotes = stv?.emote_set?.emotes || []
+          // 7TV active channel set (a useful proxy; TRUE personal sets merge below).
+          // v3: inline emote_set can be null with the id still on emote_set_id
+          // (SevenTV/Extension#1253) — resolve it, but never let that follow-up
+          // fetch's failure reject this whole Promise.all(senderKeys...); treat
+          // it like any other errored leg via the anyErrored gate below instead.
+          let stvSetErrored = false
+          let stvEmoteSet = stv?.emote_set ?? null
+          if (!stvEmoteSet && stv?.emote_set_id) {
+            try {
+              stvEmoteSet = await resolve7TVEmoteSet(stv)
+            } catch {
+              stvSetErrored = true
+            }
+          }
+          const stvEmotes = stvEmoteSet?.emotes || []
           for (const e of stvEmotes) {
             if (!e?.name || !e?.id) continue
             const flags = (e.flags || 0) | (e.data?.flags || 0)
@@ -10776,7 +10807,7 @@ async function handleMessage(message, sender, sendResponse) {
           // errored, another delivered) is also not cached — next flush retries
           // the failed leg. Error-free results (empty or not) cache normally;
           // cacheFresh picks the 5min/90s TTL by emptiness.
-          const anyErrored = stvErrored || bttvErrored || _hsBatchErrored
+          const anyErrored = stvErrored || stvSetErrored || bttvErrored || _hsBatchErrored
           if (!anyErrored) {
             cache.set(key, { emotes: collected, ts: Date.now() })
             // LRU evict: keep most-recent 500. Each entry holds a sender's full

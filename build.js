@@ -506,6 +506,48 @@ function checkUserKeyParity() {
   console.log('  user-key parity: user-key.js ⇄ background.js ⇄ content.js match ✓')
 }
 
+// Guard: RESERVED_PATHS parity between src/lib/reserved-paths.js and the
+// three hand-written files that can't import it (background.js is the SW,
+// popup.js is the popup page, early-layout.js runs at document_start before
+// the lib bundle exists — none share a module scope with the others). The
+// bundled content scripts (content.js, heatsync-button.js, multichat-core.js)
+// get the real export via LIB_ORDER/LIB_EXTRAS above, so only these three
+// hand-duplicate the literal. This is the guard that keeps a tenth divergent
+// copy from growing back after the nine-way split D1 fixed.
+function checkReservedPathsParity() {
+  const libSrc = readFileSync(join(__dirname, 'src', 'lib', 'reserved-paths.js'), 'utf8')
+
+  function extractSet(src, name) {
+    const m = src.match(new RegExp(`(?:const|let|var)\\s+${name}\\s*=\\s*new Set\\(\\[([\\s\\S]*?)\\]\\)`))
+    if (!m) return null
+    return m[1]
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .sort()
+      .join(',')
+  }
+
+  const canonical = extractSet(libSrc, 'RESERVED_PATHS')
+  if (!canonical) throw new Error('checkReservedPathsParity: could not extract RESERVED_PATHS from reserved-paths.js')
+
+  const files = [
+    ['chrome/background.js', join(__dirname, 'chrome', 'background.js')],
+    ['chrome/popup.js', join(__dirname, 'chrome', 'popup.js')],
+    ['chrome/early-layout.js', join(__dirname, 'chrome', 'early-layout.js')],
+  ]
+  for (const [label, path] of files) {
+    const copy = extractSet(readFileSync(path, 'utf8'), 'RESERVED_PATHS')
+    if (!copy) throw new Error(`checkReservedPathsParity: could not find RESERVED_PATHS in ${label}`)
+    if (copy !== canonical) {
+      throw new Error(
+        `checkReservedPathsParity: ${label} drifted from src/lib/reserved-paths.js\n  canonical: ${canonical}\n  ${label}: ${copy}`,
+      )
+    }
+  }
+  console.log('  RESERVED_PATHS parity: reserved-paths.js ⇄ background.js ⇄ popup.js ⇄ early-layout.js match ✓')
+}
+
 // Guard 7: escapeHtml coverage parity.
 // Three local copies of escapeHtml exist (src/lib/utils.js, chrome/chat-injector.js,
 // chrome/heatsync-button.js). Each must escape all five dangerous HTML chars.
@@ -625,6 +667,7 @@ const LIB_ORDER = [
   'config.js',
   'cleanup.js',
   'user-key.js',
+  'reserved-paths.js',
   'utils.js',
   'diag.js',
   'font-grid.js',
@@ -645,10 +688,10 @@ const LIB_CORE = new Set(['error-reporter.js', 'cleanup.js', 'utils.js', 'diag.j
 // Opt-in lib files per non-multichat content script (multichat bundles embed
 // the full lib). Derived from actual symbol use — keep in sync via the guard.
 const LIB_EXTRAS = {
-  'content.js': ['config.js', 'user-key.js', 'modifiers.js'],
+  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js'],
   'youtube-content.js': ['config.js'],
   'autocomplete-hook.js': ['modifiers.js'],
-  'heatsync-button.js': [],
+  'heatsync-button.js': ['reserved-paths.js'],
   'chat-injector.js': [],
 }
 
@@ -1292,6 +1335,7 @@ checkMultichatCleanupBinding()
 checkErrorReporterParity()
 checkUiSyncBlocklistParity()
 checkUserKeyParity()
+checkReservedPathsParity()
 checkEscapeHtmlCoverage()
 checkNoRuntimeDeps()
 checkNoDynamicCode()

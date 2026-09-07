@@ -1,5 +1,92 @@
 // heatsync popup — channel popout only.
 ;(() => {
+  // Reserved site paths that must never be autofilled as a channel. Literal
+  // copy — the popup page can't `import` src/lib/reserved-paths.js. build.js's
+  // checkReservedPathsParity fails the build if this copy drifts from it.
+  const RESERVED_PATHS = new Set([
+    'about',
+    'accessibility',
+    'activate',
+    'admin',
+    'agency',
+    'agent',
+    'api',
+    'auth',
+    'authorize',
+    'bits',
+    'blog',
+    'broadcast',
+    'browse',
+    'bug',
+    'careers',
+    'categories',
+    'category',
+    'checkout',
+    'clip',
+    'clips',
+    'collections',
+    'community',
+    'company',
+    'contact',
+    'dashboard',
+    'directory',
+    'dmca',
+    'downloads',
+    'drops',
+    'embed',
+    'feedback',
+    'following',
+    'friends',
+    'games',
+    'help',
+    'inventory',
+    'jobs',
+    'kickbot',
+    'leaderboards',
+    'login',
+    'logout',
+    'messages',
+    'moderation',
+    'moderator',
+    'notifications',
+    'oauth',
+    'oauth2',
+    'p',
+    'partner',
+    'partners',
+    'password',
+    'popout',
+    'press',
+    'prime',
+    'privacy',
+    'products',
+    'profile',
+    'redeem',
+    'referrals',
+    'responsible-disclosure',
+    'rules',
+    'schedule',
+    'search',
+    'settings',
+    'signup',
+    'store',
+    'subs',
+    'subscriptions',
+    'support',
+    'team',
+    'teams',
+    'terms',
+    'turbo',
+    'turbo-faq',
+    'u',
+    'vault',
+    'verify',
+    'video',
+    'videos',
+    'vip',
+    'vods',
+    'wallet',
+  ])
   // i18n: localize static [data-i18n*] strings from _locales, with the inline
   // HTML text as the en fallback (a missing key never blanks the UI). Dynamic
   // strings (errors/detected) use t() with the same || english guard below.
@@ -131,30 +218,14 @@
         if (host.endsWith('twitch.tv')) {
           setPlatform('twitch')
           const m = url.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_]+)/)
-          if (
-            m &&
-            ![
-              'directory',
-              'settings',
-              'videos',
-              'moderator',
-              'subscriptions',
-              'search',
-              'jobs',
-              'turbo',
-              'prime',
-              'p',
-              'popout',
-              'embed',
-            ].includes(m[1].toLowerCase())
-          ) {
+          if (m && !RESERVED_PATHS.has(m[1].toLowerCase())) {
             input.value = m[1].toLowerCase()
             setDetected('twitch', m[1].toLowerCase())
           }
         } else if (host.endsWith('kick.com')) {
           setPlatform('kick')
           const m = url.pathname.match(/^\/([a-zA-Z0-9_]+)/)
-          if (m && !['categories', 'following', 'settings', 'search', 'browse'].includes(m[1].toLowerCase())) {
+          if (m && !RESERVED_PATHS.has(m[1].toLowerCase())) {
             input.value = m[1].toLowerCase()
             setDetected('kick', m[1].toLowerCase())
           }

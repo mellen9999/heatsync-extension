@@ -1082,63 +1082,103 @@ const tabChannels = new Map() // tabId → { channel, channelOwner }
 // On WS reconnect (incl. server restart) these must be re-joined or messages drop silently.
 const joinedExtraChannels = new Set() // "platform/channel" keys
 
-// Reserved site paths that must never become channels — the third copy of the
-// overlay blocklist (main.js NON_CHANNEL_PATHS, content.js TWITCH_EXCLUDED_PATHS).
-// BG needs its own because ghost keys persisted in joined_extra_channels replay
-// straight into WS joins + the kick Pusher tap on every SW boot, bypassing the
-// overlay-side purges ('login' is a REAL kick channel — the tap happily
-// subscribed chatroom 31705 to it). Keep the three lists in sync.
-const BG_NON_CHANNEL_PATHS = new Set([
-  'directory',
-  'settings',
-  'login',
-  'logout',
-  'signup',
-  'oauth',
-  'oauth2',
-  'activate',
-  'checkout',
-  'videos',
-  'moderator',
-  'subscriptions',
-  'search',
-  'help',
+// Reserved site paths that must never become channels. BG needs its own
+// literal copy — this is the MV3 service worker, a separate JS context from
+// the content-script lib bundle, so it can't `import` src/lib/reserved-paths.js.
+// Ghost keys persisted in joined_extra_channels replay straight into WS joins
+// + the kick Pusher tap on every SW boot, bypassing the overlay-side purges
+// ('login' is a REAL kick channel — the tap happily subscribed chatroom 31705
+// to it). build.js's checkReservedPathsParity fails the build if this copy
+// drifts from src/lib/reserved-paths.js.
+const RESERVED_PATHS = new Set([
   'about',
-  'jobs',
-  'contact',
-  'wallet',
-  'inventory',
-  'friends',
+  'accessibility',
+  'activate',
   'admin',
-  'broadcast',
-  'drops',
-  'store',
-  'popout',
-  'embed',
-  'partners',
-  'turbo',
-  'prime',
-  'p',
-  'subs',
-  'turbo-faq',
-  'bits',
-  'browse',
-  'category',
-  'categories',
-  'community',
-  'clips',
-  'leaderboards',
-  'dashboard',
-  'vods',
-  'u',
+  'agency',
+  'agent',
+  'api',
   'auth',
   'authorize',
+  'bits',
+  'blog',
+  'broadcast',
+  'browse',
+  'bug',
+  'careers',
+  'categories',
+  'category',
+  'checkout',
+  'clip',
+  'clips',
+  'collections',
+  'community',
+  'company',
+  'contact',
+  'dashboard',
+  'directory',
+  'dmca',
+  'downloads',
+  'drops',
+  'embed',
+  'feedback',
+  'following',
+  'friends',
+  'games',
+  'help',
+  'inventory',
+  'jobs',
+  'kickbot',
+  'leaderboards',
+  'login',
+  'logout',
+  'messages',
+  'moderation',
+  'moderator',
+  'notifications',
+  'oauth',
+  'oauth2',
+  'p',
+  'partner',
+  'partners',
+  'password',
+  'popout',
+  'press',
+  'prime',
+  'privacy',
+  'products',
+  'profile',
+  'redeem',
+  'referrals',
+  'responsible-disclosure',
+  'rules',
+  'schedule',
+  'search',
+  'settings',
+  'signup',
+  'store',
+  'subs',
+  'subscriptions',
+  'support',
+  'team',
+  'teams',
+  'terms',
+  'turbo',
+  'turbo-faq',
+  'u',
+  'vault',
+  'verify',
+  'video',
+  'videos',
+  'vip',
+  'vods',
+  'wallet',
 ])
 function isGhostChannelKey(key) {
   const ch = String(key || '')
     .split('/')
     .pop()
-  return !ch || BG_NON_CHANNEL_PATHS.has(ch)
+  return !ch || RESERVED_PATHS.has(ch)
 }
 
 // Get the most recently set channel owner from any tab
@@ -8562,17 +8602,7 @@ async function handleMessage(message, sender, sendResponse) {
 
   // Query all open Twitch/Kick tabs to find channels the user is watching
   if (message.type === 'get_watching_channels') {
-    const skip = new Set([
-      'directory',
-      'settings',
-      'videos',
-      'moderator',
-      'subscriptions',
-      'downloads',
-      'search',
-      'categories',
-      'following',
-    ])
+    const skip = RESERVED_PATHS
     browser.tabs
       .query({ url: ['*://*.twitch.tv/*', '*://kick.com/*', '*://*.kick.com/*', '*://*.youtube.com/*'] })
       .then(async (tabs) => {
@@ -14578,7 +14608,7 @@ async function kickPusherJoin(slug) {
   // 'login' etc. are REAL kick channels — a ghost join here streams a
   // stranger's chat into the overlay. Last line of defense for callers that
   // bypass the joinedExtraChannels gate.
-  if (BG_NON_CHANNEL_PATHS.has(slug)) return
+  if (RESERVED_PATHS.has(slug)) return
   const chatroomId = await _kpResolveChatroomId(slug)
   if (!chatroomId) return // couldn't resolve -> leave this channel to the server relay
   _kpChannels.set(slug, chatroomId)

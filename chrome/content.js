@@ -204,36 +204,11 @@
     },
   }
 
-  // Twitch URL path segments that are NEVER channels. ONE list — the
-  // open-channel reporter fed 'login' (oauth redirect page) to the BG as a
-  // live channel on 2026-07-14, which IRC-joined it and spawned ghost tabs.
-  const TWITCH_EXCLUDED_PATHS = [
-    'login',
-    'logout',
-    'signup',
-    'oauth',
-    'oauth2',
-    'activate',
-    'checkout',
-    'directory',
-    'settings',
-    'downloads',
-    'p',
-    'videos',
-    'search',
-    'subscriptions',
-    'inventory',
-    'wallet',
-    'drops',
-    'prime',
-    'turbo',
-    'products',
-    'bits',
-    'u',
-    'moderator',
-    'broadcast',
-    'clip',
-  ]
+  // URL path segments that are NEVER channels. ONE list — the open-channel
+  // reporter fed 'login' (oauth redirect page) to the BG as a live channel on
+  // 2026-07-14, which IRC-joined it and spawned ghost tabs. Single source of
+  // truth is src/lib/reserved-paths.js, embedded into this bundle's lib scope.
+  const TWITCH_EXCLUDED_PATHS = RESERVED_PATHS
 
   // Fast context-death detector. chrome.runtime.id becomes undefined sync on
   // extension reload. Once dead: tear down listeners immediately, then defer
@@ -3529,17 +3504,7 @@
     if (url.includes('twitch.tv')) {
       const match = url.match(/\/popout\/([^/]+)\/chat/) || url.match(/twitch\.tv\/([^/?]+)/)
       const ch = match ? match[1]?.toLowerCase() : null
-      const excluded = [
-        'directory',
-        'settings',
-        'videos',
-        'moderator',
-        'subscriptions',
-        'search',
-        'downloads',
-        'inventory',
-      ]
-      return ch && !excluded.includes(ch) ? ch : null
+      return ch && !RESERVED_PATHS.has(ch) ? ch : null
     }
     if (url.includes('kick.com')) {
       // Handle popout/embed URLs: /popout/channel/chat or /embed/channel/chat
@@ -3547,19 +3512,7 @@
       if (popoutMatch) return popoutMatch[1]?.toLowerCase() || null
       const match = url.match(/kick\.com\/([^/?]+)/)
       const ch = match ? match[1]?.toLowerCase() : null
-      const kickExcluded = [
-        'categories',
-        'following',
-        'settings',
-        'browse',
-        'search',
-        'dashboard',
-        'category',
-        'password',
-        'popout',
-        'embed',
-      ]
-      return ch && !kickExcluded.includes(ch) ? ch : null
+      return ch && !RESERVED_PATHS.has(ch) ? ch : null
     }
     return null
   }
@@ -5023,7 +4976,7 @@
     const channel = match?.[1]?.toLowerCase()
     if (!channel) return
 
-    if (TWITCH_EXCLUDED_PATHS.includes(channel)) return
+    if (TWITCH_EXCLUDED_PATHS.has(channel)) return
 
     log(' 📜 Backfilling chat history for', channel)
 
@@ -5574,10 +5527,7 @@
       if (kickUserLink) {
         const href = kickUserLink.getAttribute('href')
         const match = href?.match(/^\/([a-zA-Z0-9_]+)(?:\/|$)/)
-        if (
-          match?.[1] &&
-          !['categories', 'following', 'settings', 'search', 'dashboard'].includes(match[1].toLowerCase())
-        ) {
+        if (match?.[1] && !RESERVED_PATHS.has(match[1].toLowerCase())) {
           log(' ✅ Found Kick username from nav link:', match[1])
           cachedUsername = match[1].toLowerCase()
           return cachedUsername
@@ -8241,15 +8191,13 @@
         const match = window.location.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_]+)/)
         if (!match) return null
         const ch = match[1].toLowerCase()
-        const excluded = ['directory', 'settings', 'videos', 'moderator', 'subscriptions', 'search', 'downloads', 'p']
-        return excluded.includes(ch) ? null : ch
+        return RESERVED_PATHS.has(ch) ? null : ch
       }
       if (hostname.includes('kick.com')) {
         const match = window.location.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_-]+)/)
         if (!match) return null
         const ch = match[1].toLowerCase()
-        const excluded = ['categories', 'following', 'settings', 'search', 'dashboard', 'messages']
-        return excluded.includes(ch) ? null : ch
+        return RESERVED_PATHS.has(ch) ? null : ch
       }
       return null
     }
@@ -10933,7 +10881,7 @@
       channelName = match ? match[1] : null
       // Exclude system paths that aren't actual channels
       const excludedPaths = TWITCH_EXCLUDED_PATHS
-      if (channelName && excludedPaths.includes(channelName.toLowerCase())) {
+      if (channelName && excludedPaths.has(channelName.toLowerCase())) {
         log(' Skipping system path:', channelName)
         channelName = null
       }
@@ -10953,19 +10901,7 @@
       } else {
         const match = url.match(/kick\.com\/([^/?]+)/)
         const slug = match ? match[1]?.toLowerCase() : null
-        const kickExcluded = [
-          'categories',
-          'following',
-          'settings',
-          'browse',
-          'search',
-          'dashboard',
-          'category',
-          'password',
-          'popout',
-          'embed',
-        ]
-        channelName = slug && !kickExcluded.includes(slug) ? slug : null
+        channelName = slug && !RESERVED_PATHS.has(slug) ? slug : null
       }
     }
 

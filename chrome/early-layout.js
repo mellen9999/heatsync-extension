@@ -12,6 +12,95 @@
   if (window.__heatsyncEarlyLayout) return
   window.__heatsyncEarlyLayout = true
 
+  // Reserved site paths that are never a channel. Literal copy — this script
+  // runs at document_start before the lib bundle exists, so it can't `import`
+  // src/lib/reserved-paths.js. build.js's checkReservedPathsParity fails the
+  // build if this copy drifts from it.
+  const RESERVED_PATHS = new Set([
+    'about',
+    'accessibility',
+    'activate',
+    'admin',
+    'agency',
+    'agent',
+    'api',
+    'auth',
+    'authorize',
+    'bits',
+    'blog',
+    'broadcast',
+    'browse',
+    'bug',
+    'careers',
+    'categories',
+    'category',
+    'checkout',
+    'clip',
+    'clips',
+    'collections',
+    'community',
+    'company',
+    'contact',
+    'dashboard',
+    'directory',
+    'dmca',
+    'downloads',
+    'drops',
+    'embed',
+    'feedback',
+    'following',
+    'friends',
+    'games',
+    'help',
+    'inventory',
+    'jobs',
+    'kickbot',
+    'leaderboards',
+    'login',
+    'logout',
+    'messages',
+    'moderation',
+    'moderator',
+    'notifications',
+    'oauth',
+    'oauth2',
+    'p',
+    'partner',
+    'partners',
+    'password',
+    'popout',
+    'press',
+    'prime',
+    'privacy',
+    'products',
+    'profile',
+    'redeem',
+    'referrals',
+    'responsible-disclosure',
+    'rules',
+    'schedule',
+    'search',
+    'settings',
+    'signup',
+    'store',
+    'subs',
+    'subscriptions',
+    'support',
+    'team',
+    'teams',
+    'terms',
+    'turbo',
+    'turbo-faq',
+    'u',
+    'vault',
+    'verify',
+    'video',
+    'videos',
+    'vip',
+    'vods',
+    'wallet',
+  ])
+
   // Platform detection from URL (sync, no waiting)
   const host = location.hostname
   let platform
@@ -76,49 +165,12 @@
       if (isPopout) return true
       const m = p.match(/^\/([a-zA-Z0-9_]{1,40})\/?$/)
       if (!m) return false
-      return ![
-        'directory',
-        'following',
-        'videos',
-        'settings',
-        'search',
-        'wallet',
-        'subscriptions',
-        'friends',
-        'drops',
-        'downloads',
-        'turbo',
-        'prime',
-        'store',
-        'jobs',
-        'clips',
-        'collections',
-        'about',
-        'schedule',
-        'team',
-        'teams',
-        'u',
-        'popout',
-        'embed',
-        'moderator',
-      ].includes(m[1].toLowerCase())
+      return !RESERVED_PATHS.has(m[1].toLowerCase())
     }
     if (platform === 'kick') {
       const m = p.match(/^\/([a-zA-Z0-9_-]{1,40})\/?$/)
       if (!m) return false
-      return ![
-        'browse',
-        'following',
-        'categories',
-        'category',
-        'search',
-        'messages',
-        'settings',
-        'clips',
-        'subscriptions',
-        'help',
-        'about',
-      ].includes(m[1].toLowerCase())
+      return !RESERVED_PATHS.has(m[1].toLowerCase())
     }
     if (platform === 'yt') {
       // The /live_chat pop-out IS the chat surface — a dedicated window the

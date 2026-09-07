@@ -10783,58 +10783,9 @@
   // prevLiveCh extractor. Prod logs showed the server subscribing to
   // 'browse', 'u', 'mellen9' as Kick channels — covers both twitch + kick
   // reserved paths so we don't burn API quota (kick rate-limits subscribe;
-  // each garbage slug eats budget).
-  const NON_CHANNEL_PATHS = new Set([
-    // shared
-    'directory',
-    'settings',
-    // auth-flow paths — the 3-account login odyssey (2026-07-14) created
-    // persisted ghost channels 'login'/'oauth2' with IRC joins + auto tabs
-    'login',
-    'logout',
-    'signup',
-    'oauth',
-    'oauth2',
-    'activate',
-    'checkout',
-    'videos',
-    'moderator',
-    'subscriptions',
-    'search',
-    'help',
-    'about',
-    'jobs',
-    'contact',
-    'wallet',
-    'inventory',
-    'friends',
-    'admin',
-    'broadcast',
-    'drops',
-    'store',
-    'popout',
-    'embed',
-    // twitch-specific
-    'partners',
-    'turbo',
-    'prime',
-    'p',
-    'subs',
-    'turbo-faq',
-    'bits',
-    // kick-specific
-    'browse',
-    'category',
-    'categories',
-    'community',
-    'clips',
-    'leaderboards',
-    'dashboard',
-    'vods',
-    'u',
-    'auth',
-    'authorize',
-  ])
+  // each garbage slug eats budget). Single source of truth is
+  // src/lib/reserved-paths.js, embedded into this bundle's lib scope.
+  const NON_CHANNEL_PATHS = RESERVED_PATHS
 
   /**
    * Get current channel from URL
@@ -15968,33 +15919,8 @@
       // chatroom mounts; waitForMount handles that — except for the reserved
       // path names below, which look channel-shaped to the regex but never
       // mount a chatroom, leaving the overlay invisible on /browse etc.
-      const KICK_RESERVED_PATHS = new Set([
-        'browse',
-        'categories',
-        'category',
-        'following',
-        'search',
-        'settings',
-        'dashboard',
-        'help',
-        'messages',
-        'notifications',
-        'community',
-        'about',
-        'subscriptions',
-        'wallet',
-        'verify',
-        'login',
-        'signup',
-        'logout',
-        'privacy',
-        'terms',
-        'rules',
-        'careers',
-        'press',
-        'profile',
-        'support',
-      ])
+      // Single source of truth is src/lib/reserved-paths.js.
+      const KICK_RESERVED_PATHS = RESERVED_PATHS
       const isPopout = document.body.classList.contains('hs-popout')
       const segMatch = location.pathname.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
       const couldBeChannel = !!segMatch && !KICK_RESERVED_PATHS.has(segMatch[1].toLowerCase()) && !isPopout
@@ -16158,49 +16084,7 @@
         const slug = href.replace(/^\/+|\/+$/g, '').toLowerCase()
         if (!slug) return
         if (slug.includes('/')) return
-        const reserved = new Set([
-          'browse',
-          'category',
-          'categories',
-          'following',
-          'search',
-          'settings',
-          'login',
-          'signup',
-          'help',
-          'community',
-          'privacy',
-          'terms',
-          'support',
-          'dmca',
-          'dashboard',
-          'partner',
-          'vip',
-          'agency',
-          'bug',
-          'press',
-          'redeem',
-          'clips',
-          'games',
-          'api',
-          'admin',
-          'moderation',
-          'jobs',
-          'about',
-          'blog',
-          'company',
-          'careers',
-          'dmca',
-          'responsible-disclosure',
-          'accessibility',
-          'referrals',
-          'agent',
-          'kickbot',
-          'wallet',
-          'vault',
-          'feedback',
-        ])
-        if (reserved.has(slug)) return
+        if (RESERVED_PATHS.has(slug)) return
         // Same URL — don't move anything
         if (location.pathname === href) return
         const container = document.getElementById('hs-mc-container')

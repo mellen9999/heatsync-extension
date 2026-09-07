@@ -343,12 +343,7 @@
         if (popoutMatch) return popoutMatch[2].toLowerCase()
         // Kick channel pages: /channelname or /channelname/chatroom
         const match = path.match(/^\/([a-zA-Z0-9_-]+)/)
-        if (
-          match &&
-          !['categories', 'following', 'settings', 'browse', 'search', 'dashboard', 'popout', 'embed'].includes(
-            match[1],
-          )
-        ) {
+        if (match && !RESERVED_PATHS.has(match[1].toLowerCase())) {
           return match[1].toLowerCase()
         }
         return null
@@ -369,12 +364,7 @@
 
       // Standard channel page: /{channel}
       const match = path.match(/^\/([a-zA-Z0-9_]+)/)
-      if (
-        match &&
-        !['directory', 'settings', 'subscriptions', 'inventory', 'wallet', 'drops', 'popout', 'embed'].includes(
-          match[1],
-        )
-      ) {
+      if (match && !RESERVED_PATHS.has(match[1].toLowerCase())) {
         return match[1].toLowerCase()
       }
       return null

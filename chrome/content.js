@@ -1309,6 +1309,9 @@
   // Shared right-click menu state + placement/dismiss (used by the username menu).
   let _emoteMenuEl = null
   let _emoteMenuCleanup = null
+  // Focus that was active before the menu opened — restored on close so
+  // keyboard/screen-reader users land back where they were, not at <body>.
+  let _emoteMenuOpenerEl = null
   function closeEmoteMenu() {
     if (_emoteMenuEl) {
       _emoteMenuEl.remove()
@@ -1320,10 +1323,18 @@
       } catch {}
       _emoteMenuCleanup = null
     }
+    if (_emoteMenuOpenerEl?.isConnected) {
+      try {
+        _emoteMenuOpenerEl.focus({ preventScroll: true })
+      } catch (_) {}
+    }
+    _emoteMenuOpenerEl = null
   }
   // Shared placement + dismiss wiring for right-click menus (emote + message).
   // Measures off-screen, edge-flips, then wires mousedown/key/blur/scroll dismiss.
   function placeAndWireMenu(el, x, y, kbdHandlers = {}) {
+    el.setAttribute('role', 'menu')
+    _emoteMenuOpenerEl = document.activeElement
     el.style.visibility = 'hidden'
     el.style.left = '0px'
     el.style.top = '0px'
@@ -8176,6 +8187,9 @@
   ;(function setupProfileCard() {
     let cardEl = null
     let cardPollInterval = null
+    // Focus that was active before the card opened — restored on close so
+    // keyboard/screen-reader users land back where they were, not at <body>.
+    let cardOpenerEl = null
     const profileCache = new Map()
     const PROFILE_TTL = 300000 // 5 min
     const PROFILE_CACHE_MAX = 50
@@ -9127,6 +9141,14 @@
         cardEl.remove()
         cardEl = null
       }
+      // Return focus to whatever opened the card — it may have scrolled out
+      // of the DOM (chat trims old rows) or been removed entirely.
+      if (cardOpenerEl?.isConnected) {
+        try {
+          cardOpenerEl.focus({ preventScroll: true })
+        } catch (_) {}
+      }
+      cardOpenerEl = null
     }
 
     // Inject chat command into Twitch input
@@ -9246,8 +9268,12 @@
         // Tear down any existing card before rebuilding
         if (cardEl) closeCard()
 
+        cardOpenerEl = document.activeElement
         cardEl = document.createElement('div')
         cardEl.className = usePanelMode ? 'hs-pc-panel' : 'hs-profile-card'
+        cardEl.setAttribute('role', 'dialog')
+        cardEl.setAttribute('aria-label', t('content_card_dialog_label', [username]))
+        cardEl.tabIndex = -1
         if (usePanelMode) {
           // Ensure host is positioned so absolute inset:0 fills it
           const cs = getComputedStyle(panelTarget)
@@ -9359,6 +9385,12 @@
           cardEl.appendChild(buildCardDOM(profile, username))
           positionCard(cardEl, e)
         }
+
+        // Move focus into the dialog now that it has real content — matches
+        // the role="dialog" contract (opening a dialog moves focus into it).
+        try {
+          cardEl.focus({ preventScroll: true })
+        } catch (_) {}
 
         // Channel-relationship dimension is distinct from viewer-relationship.
         // - profile ↔ viewer    : rendered by buildCardDOM (you follow / follows you / etc)
@@ -10351,6 +10383,7 @@
     const addItem = (label, fn, { danger = false, good = false } = {}) => {
       const it = document.createElement('div')
       it.className = `hs-em-item${danger ? ' hs-em-danger' : ''}${good ? ' hs-em-good' : ''}`
+      it.setAttribute('role', 'menuitem')
       const lab = document.createElement('span')
       lab.className = 'hs-em-label'
       lab.textContent = label

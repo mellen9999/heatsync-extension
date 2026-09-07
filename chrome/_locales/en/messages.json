@@ -481,6 +481,14 @@
   "content_card_mention": {
     "message": "mention"
   },
+  "content_card_dialog_label": {
+    "message": "profile card for $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },

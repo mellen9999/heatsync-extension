@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.70] — 2026-09-06
+
+### added
+- **quote a live chat line into a thread in one click** — `»` on any live message (or right-click → *quote into a thread*) opens the composer in quote mode with the line pinned above it; enter posts a new thread and copies its public link. no more typing `/op` by hand, and the quoted words are pulled from the archive so nobody can put words in a chatter's mouth.
+
+### fixed
+- **public thread links** — the extension pointed at `/m/<id>`, which is the multichat layout permalink. threads live at `/share/<id>`.
+
 ## [1.7.68] — 2026-08-26
 
 ### fixed

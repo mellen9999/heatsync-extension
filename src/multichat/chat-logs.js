@@ -62,6 +62,18 @@ function buildPostPermalink(id) {
   return `${HS_CL_PUBLIC_ORIGIN}/share/${encodeURIComponent(id)}`
 }
 
+// Outgoing content for a quote-mode post — pure, no DOM/network, so this is
+// the one piece of the flow a unit test can pin exactly. `state` carries the
+// citation (permalink) and, when the row could not be cited, the raw text +
+// author as a fallback quote. Returns null when there is nothing to quote at
+// all (should never happen — startQuoteFromRow refuses to enter quote mode
+// without one or the other).
+function buildQuoteContent(state, words) {
+  const quoteLine = state?.permalink || (state?.text ? `"${state.text}" — ${state.user || 'anonymous'}` : null)
+  if (!quoteLine) return null
+  return words ? `${words}\n${quoteLine}` : quoteLine
+}
+
 // Archive-viewer row → permalink. Channel falls back to the view's channel
 // (the all-channels view carries it per-row instead).
 function buildChatLogPermalink(r) {

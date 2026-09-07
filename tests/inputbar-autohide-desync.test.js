@@ -100,6 +100,7 @@ function build({ autoHide = true, visibleFlag = true, hidden = false, keepUntil 
      let _keepComposerOpenUntil = initialKeepUntil
      let _composerStickyUntil = 0
      const replyState = null
+     const quoteState = null
      ${CARVE}
      return {
        showInputBar,

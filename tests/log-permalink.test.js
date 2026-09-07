@@ -173,3 +173,71 @@ describe('buildRowPermalink', () => {
     expect(buildRowPermalink(null)).toBeNull()
   })
 })
+
+/**
+ * Post/thread permalinks — the other half of quoting: what the poster gets
+ * handed back after the thread lands. /share/<id> is the public THREAD page;
+ * /m/<id> is a DIFFERENT server route (the multichat overlay's own layout
+ * permalink) that happens to share the origin. Four call sites built /m/
+ * links by hand before this existed — see fix(links) in the same series.
+ */
+const postBuilder = sliceBetween(SRC('chat-logs.js'), 'function buildPostPermalink(', '\n// Outgoing content')
+
+const { buildPostPermalink } = new Function(`${origin}\n${postBuilder}\nreturn { buildPostPermalink }`)()
+
+describe('buildPostPermalink', () => {
+  test('mints the public /share/ URL, not /m/', () => {
+    expect(buildPostPermalink('1a2b3c')).toBe('https://heatsync.org/share/1a2b3c')
+  })
+
+  test('escapes an id that would otherwise break out of the path', () => {
+    expect(buildPostPermalink('a/b')).toBe('https://heatsync.org/share/a%2Fb')
+  })
+
+  test('no id is not a crash', () => {
+    expect(buildPostPermalink('')).toBeNull()
+    expect(buildPostPermalink(null)).toBeNull()
+    expect(buildPostPermalink(undefined)).toBeNull()
+  })
+})
+
+/**
+ * Quote-mode content assembly — what actually gets POSTed. The composer's own
+ * take (words) is optional; the quote line (permalink, or a fallback textual
+ * quote when the row could never be cited) is not.
+ */
+const contentBuilder = sliceBetween(SRC('chat-logs.js'), 'function buildQuoteContent(', '\n// Archive-viewer row')
+
+const { buildQuoteContent } = new Function(`${contentBuilder}\nreturn { buildQuoteContent }`)()
+
+describe('buildQuoteContent', () => {
+  const withPermalink = {
+    permalink: 'https://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc',
+    text: 'poggers',
+    user: 'someone',
+  }
+  const textOnly = { permalink: null, text: 'no archive for this one', user: 'anon_row' }
+
+  test('words + permalink — the permalink trails the take on its own line', () => {
+    expect(buildQuoteContent(withPermalink, 'this is wild')).toBe(
+      'this is wild\nhttps://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc',
+    )
+  })
+
+  test('permalink alone — an empty take is a valid thread', () => {
+    expect(buildQuoteContent(withPermalink, '')).toBe('https://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc')
+  })
+
+  test('no permalink falls back to a textual quote, not a dropped citation', () => {
+    expect(buildQuoteContent(textOnly, '')).toBe('"no archive for this one" — anon_row')
+  })
+
+  test('words + no permalink — the take still leads, fallback quote trails', () => {
+    expect(buildQuoteContent(textOnly, 'lol')).toBe('lol\n"no archive for this one" — anon_row')
+  })
+
+  test('nothing to quote at all yields null rather than an empty post', () => {
+    expect(buildQuoteContent({ permalink: null, text: '' }, '')).toBeNull()
+    expect(buildQuoteContent(null, 'hello')).toBeNull()
+  })
+})

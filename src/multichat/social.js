@@ -405,6 +405,7 @@ let activeThread = null // { id, op, replies[] } — when set, feed shows thread
 // back handler in main.js. A dedicated slot (not prevTab, which settings clobbers).
 let threadReturnTab = null
 let replyState = null // { msgId, user, channel } when replying to a message
+let quoteState = null // { permalink, user, text, channel, platform } when quoting a live row into a new thread
 let hsAuthToken = null // Heatsync auth state (loaded from storage)
 let hsCurrentUsername = null // Heatsync username (loaded from storage user_info)
 // Batch keys the signed-in HS account resolves as (server-computed, from

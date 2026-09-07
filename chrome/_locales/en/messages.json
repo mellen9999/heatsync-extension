@@ -2858,8 +2858,21 @@
       }
     }
   },
-  "mc_msg_start_thread": {
-    "message": "start a thread from this message",
-    "description": "Tooltip on the per-message button that seeds a new heatsync thread with a quote of that chat message"
+  "mc_msg_quote_thread": {
+    "message": "quote into a thread",
+    "description": "Tooltip/menu label on the per-message action that quotes a chat line into a new heatsync thread"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "add your take — enter posts a thread",
+    "description": "Composer placeholder while quoting a chat line into a new thread"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "cancel quote"
+  },
+  "mc_msg_quote_posted": {
+    "message": "thread posted"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "thread posted · link copied"
   }
 }

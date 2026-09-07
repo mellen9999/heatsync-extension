@@ -70,6 +70,57 @@
       color: var(--hs-brand) !important;
       font-weight: 600 !important;
     }
+    /* Quote mode — one-click "»" quotes a live chat row into a new heatsync
+       thread. Flat 1px inset border, no glow: watch-streak share already owns
+       brand-orange-with-glow, and this needs to read as a distinct state, not
+       a re-skin of it. */
+    #hs-mc-inputbar.hs-mc-quote {
+      box-shadow: 0 0 0 1px var(--hs-brand) inset;
+      background: rgba(255, 135, 0, 0.06);
+    }
+    #hs-mc-input.hs-mc-quote,
+    #hs-mc-input.hs-mc-quote:focus {
+      border-color: var(--hs-brand) !important;
+    }
+    #hs-mc-input.hs-mc-quote::placeholder,
+    #hs-mc-input.hs-mc-quote[contenteditable]:empty::before,
+    #hs-mc-input.hs-mc-quote[contenteditable]:has(br:only-child)::before {
+      color: var(--hs-brand) !important;
+    }
+    #hs-mc-quote-indicator {
+      flex: 1 0 100%;
+      order: -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: #000;
+      border: 1px solid var(--hs-brand);
+      padding: 2px 6px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    #hs-mc-quote-indicator span {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #hs-mc-quote-cancel {
+      background: none;
+      border: none;
+      color: var(--hs-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    #hs-mc-quote-cancel:hover {
+      color: #000;
+      background: #fff;
+    }
     /* Contenteditable placeholder. Browsers leave a stray BR after focus/blur
        cycles which breaks :empty — match BR-only-child too so the placeholder
        still paints in that state. */

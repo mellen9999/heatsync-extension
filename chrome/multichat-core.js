@@ -9404,7 +9404,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '248a53d+-202609070208' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4418dd5+-202609070228' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15734,6 +15734,57 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:has(br:only-child)::before {
       color: var(--hs-brand) !important;
       font-weight: 600 !important;
+    }
+    /* Quote mode — one-click "»" quotes a live chat row into a new heatsync
+       thread. Flat 1px inset border, no glow: watch-streak share already owns
+       brand-orange-with-glow, and this needs to read as a distinct state, not
+       a re-skin of it. */
+    #hs-mc-inputbar.hs-mc-quote {
+      box-shadow: 0 0 0 1px var(--hs-brand) inset;
+      background: rgba(255, 135, 0, 0.06);
+    }
+    #hs-mc-input.hs-mc-quote,
+    #hs-mc-input.hs-mc-quote:focus {
+      border-color: var(--hs-brand) !important;
+    }
+    #hs-mc-input.hs-mc-quote::placeholder,
+    #hs-mc-input.hs-mc-quote[contenteditable]:empty::before,
+    #hs-mc-input.hs-mc-quote[contenteditable]:has(br:only-child)::before {
+      color: var(--hs-brand) !important;
+    }
+    #hs-mc-quote-indicator {
+      flex: 1 0 100%;
+      order: -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: #000;
+      border: 1px solid var(--hs-brand);
+      padding: 2px 6px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    #hs-mc-quote-indicator span {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #hs-mc-quote-cancel {
+      background: none;
+      border: none;
+      color: var(--hs-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    #hs-mc-quote-cancel:hover {
+      color: #000;
+      background: #fff;
     }
     /* Contenteditable placeholder. Browsers leave a stray BR after focus/blur
        cycles which breaks :empty — match BR-only-child too so the placeholder
@@ -39731,6 +39782,7 @@ let activeThread = null // { id, op, replies[] } — when set, feed shows thread
 // back handler in main.js. A dedicated slot (not prevTab, which settings clobbers).
 let threadReturnTab = null
 let replyState = null // { msgId, user, channel } when replying to a message
+let quoteState = null // { permalink, user, text, channel, platform } when quoting a live row into a new thread
 let hsAuthToken = null // Heatsync auth state (loaded from storage)
 let hsCurrentUsername = null // Heatsync username (loaded from storage user_info)
 // Batch keys the signed-in HS account resolves as (server-computed, from
@@ -42508,7 +42560,7 @@ function sortProfilesByHeat(a, b) {
 function renderDiscoverPostRow(m) {
   const row = document.createElement('a')
   row.className = 'hs-discover-post-row'
-  row.href = `https://heatsync.org/m/${encodeURIComponent(m.base36_id)}`
+  row.href = buildPostPermalink(m.base36_id) || '#'
   row.target = '_blank'
   row.rel = 'noopener noreferrer'
 
@@ -42887,7 +42939,7 @@ function renderPinnedTab() {
     const row = document.createElement('a')
     row.className = 'hs-pinned-row'
     if (id) {
-      const url = safeUrl(`https://heatsync.org/m/${encodeURIComponent(id)}`)
+      const url = safeUrl(buildPostPermalink(id))
       if (url) {
         row.href = url
         row.target = '_blank'
@@ -45761,6 +45813,7 @@ window.__hsEscOwned = () => {
   try {
     if (emojiAcState.active || mentionAcState.active || slashAcState.active || acState.active) return true
     if (typeof replyState !== 'undefined' && replyState) return true
+    if (typeof quoteState !== 'undefined' && quoteState) return true
     const picker = document.getElementById('hs-mc-emote-picker')
     if (picker && picker.offsetParent !== null) return true
     if (document.getElementById('hs-mc-msg-ctx')) return true
@@ -46939,11 +46992,12 @@ function initInput() {
     )
   }
 
-  // Thread button click → seed the composer with the /op command and a citation
-  // of the message. A native twitch/kick message has no heatsync id, so it can
-  // never be a reply_to target — quoting it into a NEW top-level thread is the
-  // only honest on-ramp. Seeding (not sending) keeps the user in control of what
-  // gets published under their name, and shows them the command exists.
+  // Thread button click → quote mode, one click. A native twitch/kick message
+  // has no heatsync id, so it can never be a reply_to target — quoting it into
+  // a NEW top-level thread is the only honest on-ramp. The composer switches
+  // to quote mode (chip above the input, distinct border) instead of sending
+  // immediately: the user still types their own take, they just no longer
+  // have to know the /op command exists or retype a citation by hand.
   //
   // The citation is the /logs permalink, not the text. heatsync archives the
   // line, so the post can point AT the original instead of carrying a retyped
@@ -46964,31 +47018,7 @@ function initInput() {
       (e) => {
         const btn = e.target.closest('.hs-mc-thread-btn')
         if (!btn) return
-        const msg = btn.closest('.hs-mc-msg')
-        if (!msg) return
-        const permalink = buildRowPermalink(msg)
-        const quoted = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim()
-        if (!permalink && !quoted) return
-        showInputBar()
-        const input = document.getElementById('hs-mc-input')
-        if (!input) return
-        const seed = permalink ? `/op ${permalink} ` : `/op "${quoted}" — ${msg.dataset.msgUser || ''} `
-        input.focus()
-        // Append at the caret-end rather than overwriting: a half-typed message
-        // in the composer is the user's, and silently eating it to make room
-        // for a quote would be worse than the missing button ever was.
-        if (input.isContentEditable) {
-          const sel = window.getSelection()
-          const range = document.createRange()
-          range.selectNodeContents(input)
-          range.collapse(false)
-          sel.removeAllRanges()
-          sel.addRange(range)
-          document.execCommand('insertText', false, seed)
-        } else {
-          input.value += seed
-          input.selectionStart = input.selectionEnd = input.value.length
-        }
+        startQuoteFromRow(btn.closest('.hs-mc-msg'))
       },
       { signal: mcSignal },
     )
@@ -47205,6 +47235,12 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       label: 'copy → input',
       fn: () => mcQuoteToInput(_extractMcMsgText(msg)),
     })
+    if (msg.dataset?.msgId) {
+      items.push({
+        label: t('mc_msg_quote_thread'),
+        fn: () => startQuoteFromRow(msg),
+      })
+    }
   }
   if (feedDiv && typeof getActiveThreadCopyText === 'function') {
     const threadTxt = getActiveThreadCopyText()
@@ -48038,7 +48074,11 @@ function updateInputPlaceholder() {
   if (!input) return
 
   let placeholder
-  if (currentTab === 'feed') {
+  if (quoteState) {
+    // Overrides every tab's placeholder — quote mode always posts to the
+    // feed regardless of which chat tab the row was quoted from.
+    placeholder = t('mc_msg_quote_placeholder')
+  } else if (currentTab === 'feed') {
     placeholder = t('mc_input_post_heatsync')
   } else if (currentTab === 'live') {
     let channel = getLiveChannel()
@@ -48437,9 +48477,12 @@ function handleInputKeydownInner(e, input) {
     return
   }
 
-  // Escape - cancel reply state and hide autocomplete
+  // Escape - cancel reply/quote state and hide autocomplete
   if (e.key === 'Escape') {
-    if (replyState) {
+    if (quoteState) {
+      clearQuoteState()
+      hideInputBar() // explicit cancel — ok to re-hide an empty composer
+    } else if (replyState) {
       clearReplyState()
       hideInputBar() // explicit cancel — ok to re-hide an empty composer
     } else if (!acWasActive && autoHideEligible() && !getInputText().trim()) {
@@ -51062,6 +51105,9 @@ function checkMentionAutocomplete() {
 
 // Reply state management
 function setReplyState(state) {
+  // Mutually exclusive with quote mode — both drive the same composer and a
+  // leftover indicator from the other would lie about what Enter is about to do.
+  if (quoteState) clearQuoteState()
   replyState = state
   showInputBar()
   const bar = document.getElementById('hs-mc-inputbar')
@@ -51093,6 +51139,67 @@ function clearReplyState() {
   // the hide nuked composer focus for auto-hide users (focus() can't reach an
   // element inside a hidden bar). The two explicit cancel paths (✕ button,
   // Escape) hide at their call sites instead.
+}
+
+// Quote state management — mirrors setReplyState/clearReplyState above. The
+// input text is never prefilled: one click publishing someone else's words
+// under your name would be a trap, so the user always types their own take
+// (or nothing — the quote alone is a valid thread) into a composer that
+// makes clear what Enter is about to do (hs-mc-quote class + placeholder).
+function setQuoteState(state) {
+  if (replyState) clearReplyState()
+  quoteState = state
+  showInputBar()
+  const bar = document.getElementById('hs-mc-inputbar')
+  if (!bar) return
+  bar.classList.add('hs-mc-quote')
+  document.getElementById('hs-mc-input')?.classList.add('hs-mc-quote')
+  document.getElementById('hs-mc-quote-indicator')?.remove()
+  const indicator = document.createElement('div')
+  indicator.id = 'hs-mc-quote-indicator'
+  const label = document.createElement('span')
+  label.textContent = `» ${String(state.user || '').replace(/^@+/, '')}: ${state.text || ''}`
+  const cancel = document.createElement('button')
+  cancel.id = 'hs-mc-quote-cancel'
+  cancel.textContent = '✕'
+  cancel.title = t('mc_msg_quote_cancel')
+  cancel.addEventListener('click', () => {
+    clearQuoteState()
+    hideInputBar() // explicit cancel — ok to re-hide an empty composer
+  })
+  indicator.appendChild(label)
+  indicator.appendChild(cancel)
+  bar.insertBefore(indicator, bar.firstChild)
+  updateInputPlaceholder()
+  document.getElementById('hs-mc-input')?.focus()
+}
+
+function clearQuoteState() {
+  quoteState = null
+  document.getElementById('hs-mc-quote-indicator')?.remove()
+  const bar = document.getElementById('hs-mc-inputbar')
+  if (bar) bar.classList.remove('hs-mc-quote')
+  document.getElementById('hs-mc-input')?.classList.remove('hs-mc-quote')
+  updateInputPlaceholder()
+}
+
+// Quote a live chat row into a new heatsync thread. permalink is the archived
+// line's receipt (see buildRowPermalink) — the composer always cites it when
+// available; a row that can never be cited (no archived platform/channel/send
+// time) falls back to a plain quoted-text state, same degradation the old
+// /op-seed flow used.
+function startQuoteFromRow(msg) {
+  if (!msg) return
+  const permalink = buildRowPermalink(msg)
+  const text = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim().slice(0, 240)
+  if (!permalink && !text) return
+  setQuoteState({
+    permalink,
+    user: msg.dataset.msgUser || '',
+    text,
+    channel: msg.dataset.msgChannel || '',
+    platform: msg.dataset.msgPlatform || '',
+  })
 }
 
 // Get Twitch auth token from cookie
@@ -52957,9 +53064,59 @@ function settleComposerAfterSend(input) {
   armComposerStickyFocus(input)
 }
 
+// Post the active quote as a new top-level thread. Mirrors the /op handler's
+// auth/result handling exactly (same login gate, same "server already
+// toasted the reason" contract on failure) — quote mode is /op with a UI.
+// On success the public thread link is copied to the clipboard so the flow
+// hands the user something to paste, not just a "posted" confirmation.
+async function sendQuoteThread(words) {
+  const state = quoteState
+  if (!state) return
+  if (!hsAuthToken) {
+    showToast(t('mc_input_login_first_op'), 'error')
+    return
+  }
+  const content = buildQuoteContent(state, words)
+  if (!content) {
+    // Nothing left to cite (should not happen — startQuoteFromRow refuses
+    // this state) — bail out of quote mode rather than post nothing.
+    clearQuoteState()
+    hideInputBar()
+    return
+  }
+  const posted = await postFeedMessage(content, { topLevel: true })
+  // postFeedMessage already surfaced the specific failure (401/429/409) —
+  // keep quote mode alive so Enter retries without re-quoting the line.
+  if (!posted) return
+  // Clear AFTER posting, not before: postFeedMessage's own hideInputBar()
+  // call ran while quoteState was still set (the "don't hide mid-quote"
+  // guard in main.js applies to every hide attempt, including its own), so
+  // settle the composer explicitly now that quote mode is actually over.
+  clearQuoteState()
+  settleComposerAfterSend(document.getElementById('hs-mc-input'))
+  const id = posted === true ? null : posted.base36_id
+  const link = id ? buildPostPermalink(id) : null
+  let copied = false
+  if (link) {
+    try {
+      await navigator.clipboard.writeText(link)
+      copied = true
+    } catch {}
+  }
+  showToast(copied ? t('mc_msg_quote_posted_copied') : t('mc_msg_quote_posted'), 'success')
+}
+
 async function sendMessage() {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
+
+  // Quote mode posts to the feed, not this tab's chat, and unlike a normal
+  // send an EMPTY composer is valid here — the quote alone is a complete
+  // thread — so this branches before the empty-text bailout below.
+  if (quoteState) {
+    await sendQuoteThread(convertEmojiShortcodes(getInputText().trim()))
+    return
+  }
 
   let text = convertEmojiShortcodes(getInputText().trim())
   if (!text) return
@@ -55556,6 +55713,28 @@ function buildLogPermalink({ platform, channel, messageId, time }) {
   let url = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
   if (messageId) url += `?m=${encodeURIComponent(messageId)}`
   return url
+}
+
+// Public post/thread permalink out of a base36 message id. THE canonical
+// builder — every place that links to a heatsync post must use this, not
+// hand-roll the URL. /share/<id> is the public THREAD page; /m/<id> is a
+// DIFFERENT server route (the multichat overlay's own layout permalink) that
+// happens to share the origin — pointing a post link at it 404s the reader.
+function buildPostPermalink(id) {
+  if (!id) return null
+  return `${HS_CL_PUBLIC_ORIGIN}/share/${encodeURIComponent(id)}`
+}
+
+// Outgoing content for a quote-mode post — pure, no DOM/network, so this is
+// the one piece of the flow a unit test can pin exactly. `state` carries the
+// citation (permalink) and, when the row could not be cited, the raw text +
+// author as a fallback quote. Returns null when there is nothing to quote at
+// all (should never happen — startQuoteFromRow refuses to enter quote mode
+// without one or the other).
+function buildQuoteContent(state, words) {
+  const quoteLine = state?.permalink || (state?.text ? `"${state.text}" — ${state.user || 'anonymous'}` : null)
+  if (!quoteLine) return null
+  return words ? `${words}\n${quoteLine}` : quoteLine
 }
 
 // Archive-viewer row → permalink. Channel falls back to the view's channel
@@ -68295,8 +68474,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Don't hide while emote picker is open
     const picker = document.getElementById('hs-mc-emote-picker')
     if (picker?.classList.contains('visible')) return
-    // Don't hide while reply is active
-    if (replyState) return
+    // Don't hide while reply or quote is active
+    if (replyState || quoteState) return
     // Rapid-fire window (keepComposerOpen): don't SWALLOW the hide — blur's
     // attempt is one-shot, so a hide dropped here used to leave the empty bar
     // stuck until some later blur ("auto-hide only works sometimes"). Retry
@@ -69366,7 +69545,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       const user = r.display_name || r.username || ''
       const content = r.content || ''
       const msgId = r.base36_id || ''
-      const permalink = msgId ? `https://heatsync.org/m/${msgId}` : null
+      const permalink = msgId ? buildPostPermalink(msgId) : null
 
       const meta = document.createElement('div')
       meta.className = 'hs-mc-search-meta'
@@ -73110,13 +73289,12 @@ const STORAGE_KEY = 'heatsync_multichat'
       // capability already existed as `/op`, a slash command with no UI: 56
       // posts from 2 authors in 41 days, because nobody finds a command they
       // were never shown. `»` mirrors the `>>id` quote syntax the feed already
-      // uses. It SEEDS the composer rather than posting — one click publishing
-      // someone else's words under your name is a trap, and the user's own take
-      // is what makes the thread worth reading.
+      // uses. Click drops the composer into quote mode (input.js) — the user
+      // still types their own take, they just never have to know /op exists.
       const threadBtn = document.createElement('button')
       threadBtn.className = 'hs-mc-thread-btn'
       threadBtn.textContent = '»'
-      threadBtn.title = t('mc_msg_start_thread') || 'start a thread from this message'
+      threadBtn.title = t('mc_msg_quote_thread') || 'quote into a thread'
       div.appendChild(threadBtn)
     }
     // Reply-thread linkage for hover highlight

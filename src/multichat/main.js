@@ -3736,8 +3736,8 @@
     // Don't hide while emote picker is open
     const picker = document.getElementById('hs-mc-emote-picker')
     if (picker?.classList.contains('visible')) return
-    // Don't hide while reply is active
-    if (replyState) return
+    // Don't hide while reply or quote is active
+    if (replyState || quoteState) return
     // Rapid-fire window (keepComposerOpen): don't SWALLOW the hide — blur's
     // attempt is one-shot, so a hide dropped here used to leave the empty bar
     // stuck until some later blur ("auto-hide only works sometimes"). Retry
@@ -8551,13 +8551,12 @@
       // capability already existed as `/op`, a slash command with no UI: 56
       // posts from 2 authors in 41 days, because nobody finds a command they
       // were never shown. `»` mirrors the `>>id` quote syntax the feed already
-      // uses. It SEEDS the composer rather than posting — one click publishing
-      // someone else's words under your name is a trap, and the user's own take
-      // is what makes the thread worth reading.
+      // uses. Click drops the composer into quote mode (input.js) — the user
+      // still types their own take, they just never have to know /op exists.
       const threadBtn = document.createElement('button')
       threadBtn.className = 'hs-mc-thread-btn'
       threadBtn.textContent = '»'
-      threadBtn.title = t('mc_msg_start_thread') || 'start a thread from this message'
+      threadBtn.title = t('mc_msg_quote_thread') || 'quote into a thread'
       div.appendChild(threadBtn)
     }
     // Reply-thread linkage for hover highlight

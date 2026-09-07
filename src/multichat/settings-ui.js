@@ -977,8 +977,8 @@ var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt
 var _SETTINGS_MIRROR_KEYS = new Set(SETTINGS.filter((d) => d.mirrorKey).map((d) => d.mirrorKey))
 async function _exportAllSettings() {
   try {
-    var syncObj = await chrome.storage.sync.get(null)
-    var localObj = await chrome.storage.local.get(null)
+    var syncObj = await browser.storage.sync.get(null)
+    var localObj = await browser.storage.local.get(null)
     var hsLocal = {}
     Object.keys(localObj).forEach((k) => {
       if (k.indexOf('hs_') !== 0 && k.indexOf('viewer_') !== 0 && !_SETTINGS_MIRROR_KEYS.has(k)) return
@@ -1054,7 +1054,7 @@ async function _importAllSettings() {
             if (_SETTINGS_PRIVATE_KEY_RE.test(k)) return
             safeLocal[k] = data.local[k]
           })
-          if (Object.keys(safeLocal).length) writes.push(chrome.storage.local.set(safeLocal))
+          if (Object.keys(safeLocal).length) writes.push(browser.storage.local.set(safeLocal))
         }
         await Promise.all(writes)
         showToast(t('mc_settingsui_import_ok'), 'info')
@@ -1094,7 +1094,7 @@ async function _loadCrashLog() {
     var log = Array.isArray(cur?.hs_errors) ? cur.hs_errors : []
     var diag = null
     try {
-      diag = (await chrome.runtime.sendMessage({ type: 'get_diag' }))?.diag || null
+      diag = (await browser.runtime.sendMessage({ type: 'get_diag' }))?.diag || null
     } catch (_) {}
     function fmtTs(ts) {
       var d = new Date(ts)

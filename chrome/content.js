@@ -606,7 +606,7 @@
       return { success: false, error: 'Extension context invalidated' }
     }
     try {
-      return await chrome.runtime.sendMessage(message)
+      return await browser.runtime.sendMessage(message)
     } catch (err) {
       if (err.message?.includes('Extension context invalidated') || err.message?.includes('context invalidated')) {
         extensionContextValid = false
@@ -858,7 +858,7 @@
   }
   function persistUserColors() {
     const arr = Array.from(_userColors.entries()).map(([username, color]) => ({ username, color }))
-    chrome.storage.local.set({ hs_user_colors: arr }).catch(() => {})
+    browser.storage.local.set({ hs_user_colors: arr }).catch(() => {})
   }
   function setUserColor(username, color) {
     const lower = String(username || '').toLowerCase()
@@ -3439,7 +3439,7 @@
   // Load and apply UI settings on startup
   ;(async function loadUiSettings() {
     try {
-      const stored = await chrome.storage.sync.get('ui_settings')
+      const stored = await browser.storage.sync.get('ui_settings')
       const settings = sanitizeUiSettings(stored.ui_settings || {})
       // Always run applyUiSettings so popout auto-hides header even with no stored settings
       applyUiSettings(settings)
@@ -3450,7 +3450,7 @@
   // Load emote size setting
   ;(async function loadEmoteSize() {
     try {
-      const stored = await chrome.storage.local.get('hs_emote_size')
+      const stored = await browser.storage.local.get('hs_emote_size')
       if (stored.hs_emote_size != null) {
         hsEmoteSize = parseFloat(stored.hs_emote_size) || 1
       }
@@ -3463,7 +3463,7 @@
   // Load emoji size setting (1x/2x/4x — replaces legacy bigEmoji toggle)
   ;(async function loadEmojiSize() {
     try {
-      const stored = await chrome.storage.local.get('hs_emoji_size')
+      const stored = await browser.storage.local.get('hs_emoji_size')
       const v = stored.hs_emoji_size
       if (v === 1 || v === 2 || v === 4) hsEmojiSize = v
       applyEmojiSize()
@@ -3764,7 +3764,7 @@
     // Try storage first (instant access)
     try {
       const storageStart = performance.now()
-      const stored = await chrome.storage.local.get([
+      const stored = await browser.storage.local.get([
         'global_emotes',
         'emote_inventory',
         'blocked_emotes',
@@ -8742,7 +8742,7 @@
       // 1. multichat IRC buffer (persisted by irc.js — most complete history)
       if (channel && chrome?.storage?.local) {
         try {
-          const data = await chrome.storage.local.get(`hs_irc_${channel.toLowerCase()}`)
+          const data = await browser.storage.local.get(`hs_irc_${channel.toLowerCase()}`)
           const stored = data[`hs_irc_${channel.toLowerCase()}`]
           if (stored?.msgs) {
             for (const m of stored.msgs) {
@@ -11876,7 +11876,7 @@
   // user explicitly toggled it off (storage === false).
   ;(async function loadAutoClaimSetting() {
     try {
-      const stored = await chrome.storage.local.get('hs_auto_claim_points')
+      const stored = await browser.storage.local.get('hs_auto_claim_points')
       autoClaimEnabled = stored.hs_auto_claim_points !== false
     } catch {
       /* default on */

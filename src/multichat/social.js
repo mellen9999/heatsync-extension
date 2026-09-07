@@ -25,7 +25,7 @@ function ytSubscribe(channelId, url, emoteChannel) {
   if (gateAtBoot('chat-youtube') === false) return false
   const emit = (u) => {
     try {
-      chrome.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: u, channelId }).catch(() => {})
+      browser.runtime.sendMessage({ type: 'youtube_ws_subscribe', url: u, channelId }).catch(() => {})
     } catch (_) {}
   }
   emit(url)

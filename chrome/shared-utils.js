@@ -1,5 +1,7 @@
 // Shared utilities for Heatsync browser extension
 // Loaded FIRST via manifest content_scripts — exposes window.HS
+// Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
+const browser = globalThis.browser || chrome
 ;(() => {
   // Guard against double-load
   if (window.HS) return
@@ -119,7 +121,7 @@
     const MAX_RETRIES = 5
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
-        return await chrome.runtime.sendMessage(message)
+        return await browser.runtime.sendMessage(message)
       } catch (err) {
         if (err.message?.includes('Extension context invalidated') || err.message?.includes('context invalidated')) {
           _contextValid = false

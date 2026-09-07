@@ -3142,7 +3142,7 @@ async function fetchPoll(channelLogin) {
     // 2. Check persistent storage (survives reloads, no 15s TTL)
     //    activePoll is persisted-query-only — no public GQL query exists
     try {
-      const stored = await chrome.storage.local.get('hs_active_poll')
+      const stored = await browser.storage.local.get('hs_active_poll')
       const entry = stored?.hs_active_poll
       if (entry?.poll && entry.channelId === _twitchChannelId) {
         const poll = _refreshPollTiming(entry.poll)
@@ -4074,7 +4074,7 @@ async function _resolveTwitchChannelIdInner(channelLogin) {
     // Relay via the background SW — a direct heatsync.org fetch from this
     // ISOLATED content-script context gets 503'd by the CF edge bot-check
     // (the origin never sees it), so the fallback would always dead-end.
-    const resp = await chrome.runtime.sendMessage({ type: 'resolve_twitch_id', login: lc })
+    const resp = await browser.runtime.sendMessage({ type: 'resolve_twitch_id', login: lc })
     const id = resp?.id
     if (id && /^\d+$/.test(String(id))) {
       _cacheChannelId(String(id))

@@ -294,7 +294,7 @@ function saveChatHeight() {
 }
 async function loadChatHeight() {
   try {
-    const data = await chrome.storage.local.get(['hs_chat_height'])
+    const data = await browser.storage.local.get(['hs_chat_height'])
     if (data.hs_chat_height) {
       chatHeight = Math.max(MIN_CHAT_HEIGHT, Math.min(getMaxChatHeight(), data.hs_chat_height))
       // Mirror loadChatWidth: push CSS var + reposition the unified handle so
@@ -710,7 +710,7 @@ function hidePlatformResizeHandles(hide) {
 
 async function loadChatWidth() {
   try {
-    const data = await chrome.storage.local.get(['hs_chat_width'])
+    const data = await browser.storage.local.get(['hs_chat_width'])
     if (data.hs_chat_width) {
       chatWidth = data.hs_chat_width
       // Sync the CSS var driving every chat-position rule + reposition the

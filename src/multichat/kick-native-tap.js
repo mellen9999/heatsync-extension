@@ -137,7 +137,7 @@ function initKickFallbackSocket() {
     // BG usually knows (its own tap resolved it); page-origin kick API is the
     // BG-is-dead fallback — same-origin fetch, rides the page's cookies.
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'kick_chatroom_id', slug })
+      const resp = await browser.runtime.sendMessage({ type: 'kick_chatroom_id', slug })
       if (resp?.id) return resp.id
     } catch {}
     try {

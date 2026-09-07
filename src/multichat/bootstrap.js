@@ -117,7 +117,7 @@ window.addEventListener('pageshow', (ev) => {
     if (typeof irc !== 'undefined' && irc?.channels) {
       for (const ch of irc.channels.keys()) {
         try {
-          chrome.runtime.sendMessage({ type: 'bg_irc_join', channel: ch }).catch(() => {})
+          browser.runtime.sendMessage({ type: 'bg_irc_join', channel: ch }).catch(() => {})
         } catch (_) {}
       }
     }
@@ -396,7 +396,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
     () => {
       ;(async () => {
         try {
-          const resp = await chrome.runtime.sendMessage({ type: 'dbg_kick_tap' })
+          const resp = await browser.runtime.sendMessage({ type: 'dbg_kick_tap' })
           document.documentElement.dataset.hsDbgKickTap = JSON.stringify(resp)
         } catch (e) {
           document.documentElement.dataset.hsDbgKickTap = `err:${e?.message || 'unknown'}`
@@ -633,7 +633,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         // async tail: raw storage row for the probed name — distinguishes
         // "BG persisted stale data" from "content ingestion dropped a field"
         if (probe && chrome?.storage?.local) {
-          chrome.storage.local.get('global_emotes').then((st) => {
+          browser.storage.local.get('global_emotes').then((st) => {
             out.storageRow = (st.global_emotes || []).find((e) => e.name === probe) || null
             document.documentElement.dataset.hsDbgEmotes = JSON.stringify(out)
           })

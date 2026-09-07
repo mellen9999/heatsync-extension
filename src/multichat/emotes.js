@@ -1487,7 +1487,7 @@ function rebuildBlockedNames() {
 
 async function loadBlockedEmotes() {
   try {
-    const data = await chrome.storage.local.get(['blocked_emotes'])
+    const data = await browser.storage.local.get(['blocked_emotes'])
     blockedEmoteHashes = new Set(data.blocked_emotes || [])
     rebuildBlockedNames()
     log('Loaded', blockedEmoteHashes.size, 'blocked emote hashes')
@@ -2378,7 +2378,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
     const hash =
       emoteHashes.get(emoteName) ||
       (lookupEmote(emoteName)?.url ? btoa(lookupEmote(emoteName).url).slice(0, 32) : emoteName)
-    resp = await chrome.runtime.sendMessage({
+    resp = await browser.runtime.sendMessage({
       type: block ? 'block_emote' : 'unblock_emote',
       hash: hash,
       emoteName: emoteName,
@@ -2767,7 +2767,7 @@ function replaceSenderEmotes(senderKey, nameToEmote) {
 
 async function loadSenderEmoteSets() {
   try {
-    const stored = await chrome.storage.local.get(['sender_emote_sets', 'sender_emote_sets_v'])
+    const stored = await browser.storage.local.get(['sender_emote_sets', 'sender_emote_sets_v'])
     senderEmoteSets.clear()
     // Version gate — see SENDER_EMOTE_SETS_VERSION. A mismatched blob is
     // discarded rather than rendered-then-corrected.
@@ -3144,7 +3144,7 @@ async function loadEmotes() {
   _loadEmotesInFlight = true
   try {
     try {
-      const stored = await chrome.storage.local.get([
+      const stored = await browser.storage.local.get([
         'global_emotes',
         'emote_inventory',
         'channel_emotes_map',

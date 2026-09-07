@@ -799,7 +799,7 @@ class IRC extends ChatClient {
     }
     this._refreshBusy.add(ch)
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'bg_irc_history', channel: ch })
+      const resp = await browser.runtime.sendMessage({ type: 'bg_irc_history', channel: ch })
       if (!resp?.ok) return
       const wasSize = this.channels.get(ch)?.size ?? 0
       try {
@@ -927,7 +927,7 @@ class IRC extends ChatClient {
       if (typeof _recentSentHydrated !== 'undefined') await _recentSentHydrated
     } catch {}
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'bg_irc_history', channel: ch })
+      const resp = await browser.runtime.sendMessage({ type: 'bg_irc_history', channel: ch })
       if (resp?.ok && Array.isArray(resp.msgs) && resp.msgs.length > 0) {
         const buf = this.channels.get(ch)
         for (const m of resp.msgs) {
@@ -997,7 +997,7 @@ class IRC extends ChatClient {
     for (const k of [...this._deleteNoticeIndex.keys()]) if (k.startsWith(prefix)) this._deleteNoticeIndex.delete(k)
     log('Parted', ch)
     try {
-      chrome.runtime.sendMessage({ type: 'bg_irc_part', channel: ch }).catch(() => {})
+      browser.runtime.sendMessage({ type: 'bg_irc_part', channel: ch }).catch(() => {})
     } catch {}
   }
 
@@ -1499,7 +1499,7 @@ class KickChat extends ChatClient {
     }
     this._refreshBusy.add(ch)
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'bg_kick_history', channel: ch })
+      const resp = await browser.runtime.sendMessage({ type: 'bg_kick_history', channel: ch })
       if (!resp?.ok || !Array.isArray(resp.msgs)) return
       const wasSize = this.channels.get(ch)?.size ?? 0
       try {
@@ -1563,7 +1563,7 @@ class KickChat extends ChatClient {
     let chromeMsgs = null,
       syncMsgs = null
     try {
-      const stored = await chrome.storage.local.get(storageKey)
+      const stored = await browser.storage.local.get(storageKey)
       const data = stored[storageKey]
       if (data?.msgs?.length > 0 && Date.now() - data.ts < 86400000) chromeMsgs = data.msgs
     } catch {}
@@ -1688,7 +1688,7 @@ class KickChat extends ChatClient {
     // history if BG is cold.
     let hydrated = false
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'bg_kick_history', channel: kickUsername })
+      const resp = await browser.runtime.sendMessage({ type: 'bg_kick_history', channel: kickUsername })
       if (resp?.ok && Array.isArray(resp.msgs) && resp.msgs.length > 0) {
         const buf = this.channels.get(kickUsername)
         try {

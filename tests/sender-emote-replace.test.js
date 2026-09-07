@@ -44,24 +44,28 @@ globalThis.getLiveChannel = () => 'chan-a'
 // (v1.7.59 and v1.7.60 both died that way). File order is the only reason it
 // passed locally.
 const _chromeBeforeThisFile = globalThis.chrome
+const _browserBeforeThisFile = globalThis.browser
 const storageData = {}
-globalThis.chrome = {
-  storage: {
-    local: {
-      get: async (keys) => {
-        const out = {}
-        for (const k of Array.isArray(keys) ? keys : [keys]) {
-          if (k in storageData) out[k] = storageData[k]
-        }
-        return out
-      },
-      set: async (obj) => Object.assign(storageData, obj),
-      remove: async (keys) => {
-        for (const k of Array.isArray(keys) ? keys : [keys]) delete storageData[k]
-      },
+const storageStub = {
+  local: {
+    get: async (keys) => {
+      const out = {}
+      for (const k of Array.isArray(keys) ? keys : [keys]) {
+        if (k in storageData) out[k] = storageData[k]
+      }
+      return out
+    },
+    set: async (obj) => Object.assign(storageData, obj),
+    remove: async (keys) => {
+      for (const k of Array.isArray(keys) ? keys : [keys]) delete storageData[k]
     },
   },
 }
+// emotes.js has both callback-style chrome.* calls (left as-is, F-ext-1 scope)
+// and promise-style browser.* calls (the F-ext-1 fix) — both stubs share one
+// backing store so either path sees the same data.
+globalThis.chrome = { storage: storageStub, runtime: { sendMessage: () => {}, lastError: undefined } }
+globalThis.browser = { storage: storageStub, runtime: { sendMessage: async () => undefined } }
 
 const { dropEmoteFromAllSenders, loadSenderEmoteSets, mergeSenderEmotes, replaceSenderEmotes, senderEmoteSets } =
   await import('../src/multichat/emotes.js')
@@ -184,4 +188,6 @@ describe('loadSenderEmoteSets versioning', () => {
 afterAll(() => {
   if (_chromeBeforeThisFile === undefined) delete globalThis.chrome
   else globalThis.chrome = _chromeBeforeThisFile
+  if (_browserBeforeThisFile === undefined) delete globalThis.browser
+  else globalThis.browser = _browserBeforeThisFile
 })

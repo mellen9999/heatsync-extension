@@ -27,6 +27,13 @@ const isFirefox =
   (typeof location !== 'undefined' && location.protocol === 'moz-extension:')
 const isChrome = !isFirefox && typeof chrome !== 'undefined'
 
+// Firefox's chrome.* namespace is callback-only — no promises. `await
+// chrome.storage.local.get(...)` silently resolves undefined there. `browser.*`
+// is promise-based on Firefox and is Chrome's own alias for `chrome.*`, so
+// every promise-style call in this codebase goes through `browser`, matching
+// the alias background.js declares for itself (it isn't lib-bundled).
+export const browser = globalThis.browser || (typeof chrome !== 'undefined' ? chrome : undefined)
+
 // Get the raw API object — prefer the API matching the detected browser, with a
 // fallback chain so a missing global can never null out the wrapper.
 const rawApi =

@@ -6856,7 +6856,7 @@ function handleWSMessage(msg) {
               if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
                 const oldest = BG_KICK.channels.keys().next().value
                 BG_KICK.channels.delete(oldest)
-                chrome.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
+                browser.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
               }
               bgKickFetchArchive(ch).catch(() => {})
             }
@@ -8855,7 +8855,7 @@ async function handleMessage(message, sender, sendResponse) {
       // channel the user has ever added and removed (BG_YT only caps total
       // channel COUNT, it never ages one out on removal).
       BG_YT.channels.delete(channelId)
-      chrome.storage.local.remove(`hs_yt_${channelId}`).catch(() => {})
+      browser.storage.local.remove(`hs_yt_${channelId}`).catch(() => {})
     }
     log(' YouTube unsubscribe:', videoId || '(no videoId)', 'channel:', channelId)
     sendResponse({ ok: true })
@@ -8948,7 +8948,7 @@ async function handleMessage(message, sender, sendResponse) {
           // channel the user has ever added and removed (BG_KICK only caps total
           // channel COUNT, it never ages one out on removal).
           BG_KICK.channels.delete(kch)
-          chrome.storage.local.remove(`hs_kick_${kch}`).catch(() => {})
+          browser.storage.local.remove(`hs_kick_${kch}`).catch(() => {})
         }
       }
       wsSend(message.data)
@@ -11365,7 +11365,7 @@ async function subscribeToPush(token) {
     // browser session — skip the getSubscription() call entirely. Cleared on
     // logout / unsubscribe paths. Cuts SW-wake noise across 100k clients.
     try {
-      const m = await chrome.storage.session?.get?.('hs_push_ok')
+      const m = await browser.storage.session?.get?.('hs_push_ok')
       if (m?.hs_push_ok) return
     } catch {}
     const existing = await self.registration.pushManager.getSubscription()
@@ -11841,7 +11841,7 @@ async function bgIrcRestoreFromStorage() {
   // authed-reader creds survive SW restarts (session storage; cleared when
   // the browser closes — the next twitch tab re-supplies them)
   try {
-    const sess = await chrome.storage.session?.get?.('hs_irc_auth')
+    const sess = await browser.storage.session?.get?.('hs_irc_auth')
     const a = sess?.hs_irc_auth
     if (a?.token && a?.nick && !BG_IRC.authToken) {
       BG_IRC.authToken = a.token
@@ -11849,15 +11849,15 @@ async function bgIrcRestoreFromStorage() {
     }
   } catch {}
   try {
-    const all = await chrome.storage.local.get(null)
+    const all = await browser.storage.local.get(null)
     const storedVer = all.hs_irc_parser_version | 0
     if (storedVer !== BG_IRC_PARSER_VERSION) {
       const stale = Object.keys(all).filter(
         (k) => k.startsWith('hs_irc_') && !k.startsWith('hs_irc_sync_') && k !== 'hs_irc_parser_version',
       )
-      if (stale.length) await chrome.storage.local.remove(stale).catch(() => {})
-      await chrome.storage.local.set({ hs_irc_parser_version: BG_IRC_PARSER_VERSION }).catch(() => {})
-      await chrome.storage.session?.remove?.('hs_irc_last_robotty').catch?.(() => {})
+      if (stale.length) await browser.storage.local.remove(stale).catch(() => {})
+      await browser.storage.local.set({ hs_irc_parser_version: BG_IRC_PARSER_VERSION }).catch(() => {})
+      await browser.storage.session?.remove?.('hs_irc_last_robotty').catch?.(() => {})
       log(
         'BG IRC parser version bump',
         storedVer,
@@ -11899,7 +11899,7 @@ async function bgIrcRestoreFromStorage() {
       BG_IRC.channels.set(ch, buf)
       n++
     }
-    if (expired.length) await chrome.storage.local.remove(expired).catch(() => {})
+    if (expired.length) await browser.storage.local.remove(expired).catch(() => {})
     log('BG IRC restored', n, 'channels from storage', expired.length ? `(purged ${expired.length} stale)` : '')
   } catch (e) {
     log('BG IRC restore failed:', e.message)
@@ -11908,7 +11908,7 @@ async function bgIrcRestoreFromStorage() {
   // the same browser session. Without this, every SW wake refetched robotty
   // for every joined channel, hammering a community-run free service.
   try {
-    const sess = await chrome.storage.session?.get?.('hs_irc_last_robotty')
+    const sess = await browser.storage.session?.get?.('hs_irc_last_robotty')
     const obj = sess?.hs_irc_last_robotty
     if (obj && typeof obj === 'object') {
       for (const [ch, ts] of Object.entries(obj)) {
@@ -11959,7 +11959,7 @@ function bgIrcPersistChannel(ch) {
         const buf = BG_IRC.channels.get(ch)
         if (!buf) return
         const msgs = buf.getAll()
-        chrome.storage.local.set({ [`hs_irc_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
+        browser.storage.local.set({ [`hs_irc_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
       } catch {}
     }, BG_IRC_PERSIST_DEBOUNCE_MS),
   )
@@ -12753,7 +12753,7 @@ function bgIrcEnsureChannel(ch) {
       BG_IRC.chanLastSeen.delete(oldest)
       BG_IRC.lastJustlogAt?.delete?.(oldest)
       BG_IRC.chanRejoinAttempts.delete(oldest)
-      chrome.storage.local.remove(`hs_irc_${oldest}`).catch(() => {})
+      browser.storage.local.remove(`hs_irc_${oldest}`).catch(() => {})
     }
     if (BG_IRC.ws?.readyState === WebSocket.OPEN) {
       try {
@@ -12997,7 +12997,7 @@ async function bgKickRestoreFromStorage() {
   if (BG_KICK.storageRestored) return
   BG_KICK.storageRestored = true
   try {
-    const all = await chrome.storage.local.get(null)
+    const all = await browser.storage.local.get(null)
     // Channels no longer in the user's config never hit the live channel:leave
     // cleanup (removed via another device, or before that handler existed) —
     // sweep them here so hs_kick_* doesn't grow forever.
@@ -13030,7 +13030,7 @@ async function bgKickRestoreFromStorage() {
       BG_KICK.channels.set(ch, buf)
       n++
     }
-    if (toPurge.length) chrome.storage.local.remove(toPurge).catch(() => {})
+    if (toPurge.length) browser.storage.local.remove(toPurge).catch(() => {})
     log('BG KICK restored', n, `channels${toPurge.length ? `, purged ${toPurge.length} orphaned` : ''}`)
   } catch (e) {
     log('BG KICK restore failed:', e.message)
@@ -13041,7 +13041,7 @@ async function bgYtRestoreFromStorage() {
   if (BG_YT.storageRestored) return
   BG_YT.storageRestored = true
   try {
-    const all = await chrome.storage.local.get(null)
+    const all = await browser.storage.local.get(null)
     // Same sweep as the Kick twin above — channels removed from config while
     // this SW wasn't running never hit the live youtube_ws_unsubscribe cleanup.
     const ytKeep = new Set(
@@ -13071,7 +13071,7 @@ async function bgYtRestoreFromStorage() {
       BG_YT.channels.set(channelId, buf)
       n++
     }
-    if (toPurge.length) chrome.storage.local.remove(toPurge).catch(() => {})
+    if (toPurge.length) browser.storage.local.remove(toPurge).catch(() => {})
     log('BG YT restored', n, `channels${toPurge.length ? `, purged ${toPurge.length} orphaned` : ''}`)
   } catch (e) {
     log('BG YT restore failed:', e.message)
@@ -13088,7 +13088,7 @@ function bgKickPersistChannel(ch) {
         const buf = BG_KICK.channels.get(ch)
         if (!buf) return
         const msgs = buf.getAll()
-        chrome.storage.local.set({ [`hs_kick_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
+        browser.storage.local.set({ [`hs_kick_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
       } catch {}
     }, 1500),
   )
@@ -13104,7 +13104,7 @@ function bgYtPersistChannel(channelId) {
         const buf = BG_YT.channels.get(channelId)
         if (!buf) return
         const msgs = buf.getAll()
-        chrome.storage.local.set({ [`hs_yt_${channelId}`]: { msgs, ts: Date.now() } }).catch(() => {})
+        browser.storage.local.set({ [`hs_yt_${channelId}`]: { msgs, ts: Date.now() } }).catch(() => {})
       } catch {}
     }, 1500),
   )
@@ -13138,7 +13138,7 @@ function bgKickIngest(data) {
     if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
       const oldest = BG_KICK.channels.keys().next().value
       BG_KICK.channels.delete(oldest)
-      chrome.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
+      browser.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
     }
     // First time we see this Kick channel — pull deep history from postgres
     // archive in addition to the 200-msg server ring (which came via
@@ -14710,7 +14710,7 @@ function bgYtIngest(payload) {
     if (BG_YT.channels.size > MAX_BG_YT_CHANNELS) {
       const oldest = BG_YT.channels.keys().next().value
       BG_YT.channels.delete(oldest)
-      chrome.storage.local.remove(`hs_yt_${oldest}`).catch(() => {})
+      browser.storage.local.remove(`hs_yt_${oldest}`).catch(() => {})
     }
   }
   // Strip transient flags before storing. `id` (innertube) is NOT transient —

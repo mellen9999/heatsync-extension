@@ -16,19 +16,19 @@ function slice(startMarker, endMarker) {
 }
 
 // The union block, lifted verbatim and wrapped in a harness.
-const UNION = slice('const stored = (await chrome.storage.local.get(STORAGE_KEY))', '      } catch {}')
+const UNION = slice('const stored = (await browser.storage.local.get(STORAGE_KEY))', '      } catch {}')
 
 function run({ mine, theirs, lastPersisted }) {
   const persistable = { channels: [...mine] }
-  const chrome = { storage: { local: { get: async () => ({ cfg: { channels: theirs } }) } } }
+  const browser = { storage: { local: { get: async () => ({ cfg: { channels: theirs } }) } } }
   const fn = new Function(
     'persistable',
-    'chrome',
+    'browser',
     'STORAGE_KEY',
     '_lastPersistedChannelKeys',
     `return (async () => { ${UNION} ; return persistable.channels })()`,
   )
-  return fn(persistable, chrome, 'cfg', lastPersisted)
+  return fn(persistable, browser, 'cfg', lastPersisted)
 }
 
 const key = (c) => `${c.platform || 'twitch'}:${(c.id || c.twitch || c.name || '').toLowerCase()}`

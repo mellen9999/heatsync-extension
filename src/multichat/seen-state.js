@@ -54,7 +54,7 @@ async function loadSeenState() {
   // Local cache first — instant red-dot accuracy on boot before the
   // /api/user/seen-state round-trip lands.
   try {
-    const cached = await chrome.storage.local.get(SEEN_STORAGE_KEY)
+    const cached = await browser.storage.local.get(SEEN_STORAGE_KEY)
     const data = cached?.[SEEN_STORAGE_KEY]
     if (data?.latestAt) {
       for (const k of SEEN_SURFACES) {

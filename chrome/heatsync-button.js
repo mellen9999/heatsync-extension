@@ -1879,7 +1879,7 @@
     // Load settings from chrome.storage.local (async)
     async function loadExtensionSettings() {
       try {
-        const stored = await chrome.storage.sync.get('ui_settings')
+        const stored = await browser.storage.sync.get('ui_settings')
         if (stored.ui_settings) {
           cachedSettings = { ...cachedSettings, ...sanitizeUiSettings(stored.ui_settings) }
         }
@@ -1912,10 +1912,10 @@
               log(' Settings saved to storage')
               return
             }
-            return chrome.storage.sync.set({ ui_settings: cachedSettings })
+            return browser.storage.sync.set({ ui_settings: cachedSettings })
           })
           .catch(() => {
-            chrome.storage.sync.set({ ui_settings: cachedSettings }).catch((err) => {
+            browser.storage.sync.set({ ui_settings: cachedSettings }).catch((err) => {
               console.error('[heatsync-button] Failed to save to storage:', err)
             })
           })
@@ -2151,7 +2151,7 @@
     // throw dropped into the caller's catch.
     async function fetchHistoryStatus() {
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: '/api/user/emotes/history-status',
           method: 'GET',
@@ -2320,7 +2320,7 @@
             const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
-            await chrome.storage.local.set({ hs_login_state: nonce })
+            await browser.storage.local.set({ hs_login_state: nonce })
             window.open(
               `https://heatsync.org/api/auth/login?return_to=%2F&ext_state=${encodeURIComponent(nonce)}`,
               '_blank',
@@ -2394,7 +2394,7 @@
         undoBtn.disabled = true
         redoBtn.disabled = true
         try {
-          const resp = await chrome.runtime.sendMessage({
+          const resp = await browser.runtime.sendMessage({
             type: 'api_fetch',
             path,
             method: 'POST',
@@ -2657,7 +2657,7 @@
       }
       try {
         const platform = window.heatsyncPlatform?.detectPlatform() || 'twitch'
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: '/api/user/emotes/import-channel',
           method: 'POST',
@@ -3411,7 +3411,7 @@
 
     async function loadSets() {
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: '/api/user/sets',
           method: 'GET',
@@ -3440,7 +3440,7 @@
       // promise resolves. Re-rendering here destroys the button before the
       // 'applied' state is shown. Caller is responsible for refresh.
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: `/api/user/sets/${encodeURIComponent(setId)}/apply`,
           method: 'POST',
@@ -3602,7 +3602,7 @@
 
     async function loadHistory() {
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: '/api/user/emotes/removed',
           method: 'GET',
@@ -3627,7 +3627,7 @@
 
     async function restoreEmote(emoteId) {
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: `/api/user/emotes/removed/${encodeURIComponent(emoteId)}/restore`,
           method: 'POST',
@@ -3962,7 +3962,7 @@
       if (hsIndexQuery === q && hsIndexResults.length > 0) return // cached
       hsIndexInFlight = true
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'api_fetch',
           path: `/api/search?mode=emotes&q=${encodeURIComponent(q)}&limit=100`,
           method: 'GET',
@@ -4102,7 +4102,7 @@
         const hash = emote.hash || emote.id || btoa(emote.url || emote.pickerUrl).slice(0, 24)
 
         // Send message to background script (handles both logged in and anonymous)
-        const result = await chrome.runtime.sendMessage({
+        const result = await browser.runtime.sendMessage({
           type: 'block_emote',
           hash: hash,
         })
@@ -4300,7 +4300,7 @@
           dismissContextMenu()
           if (isBlocked) {
             try {
-              const result = await chrome.runtime.sendMessage({ type: 'unblock_emote', hash })
+              const result = await browser.runtime.sendMessage({ type: 'unblock_emote', hash })
               if (result?.success) {
                 _blockedHashSet.delete(hash)
                 renderEmoteGrid()
@@ -4350,7 +4350,7 @@
             // "not in your set", "no slot" or an HTTP failure — it doesn't throw,
             // so the old bare await claimed "removed" and pruned the local cache
             // even when the server kept the emote. Gate both on real success.
-            const result = await chrome.runtime.sendMessage({
+            const result = await browser.runtime.sendMessage({
               type: 'remove_from_inventory',
               emoteHash: hash,
               emoteName: emote.name,
@@ -4433,7 +4433,7 @@
             }
             dismissContextMenu()
             try {
-              const resp = await chrome.runtime.sendMessage({
+              const resp = await browser.runtime.sendMessage({
                 type: 'api_fetch',
                 path: `/api/user/emotes/${slot}/rename`,
                 method: 'PUT',
@@ -4487,7 +4487,7 @@
             }
             dismissContextMenu()
             try {
-              const resp = await chrome.runtime.sendMessage({
+              const resp = await browser.runtime.sendMessage({
                 type: 'api_fetch',
                 path: `/api/user/emotes/${fromSlot}/move`,
                 method: 'PUT',
@@ -4523,7 +4523,7 @@
           if (discoverShareUrl) {
             // Unshare
             try {
-              await chrome.runtime.sendMessage({
+              await browser.runtime.sendMessage({
                 type: 'api_fetch',
                 path: '/api/user/emotes/share',
                 method: 'DELETE',
@@ -4537,7 +4537,7 @@
           } else {
             // Share
             try {
-              const resp = await chrome.runtime.sendMessage({
+              const resp = await browser.runtime.sendMessage({
                 type: 'api_fetch',
                 path: '/api/user/emotes/share',
                 method: 'POST',
@@ -4846,7 +4846,7 @@
       isLoading.mine = true
       loadErrors.mine = null
       try {
-        const resp = await chrome.runtime.sendMessage({ type: 'get_inventory' })
+        const resp = await browser.runtime.sendMessage({ type: 'get_inventory' })
         inventoryEmotesCache = resp?.emotes || []
         rebuildInventoryIndex()
         loadErrors.mine = null
@@ -4890,7 +4890,7 @@
       }
 
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'get_picker_emotes',
           channel,
           platform: window.heatsyncPlatform?.detectPlatform() || 'unknown',
@@ -4931,7 +4931,7 @@
       }
 
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'get_picker_emotes',
           channel: null,
           platform: window.heatsyncPlatform?.detectPlatform() || 'unknown',
@@ -5159,7 +5159,7 @@
     async function init() {
       // picker-button subsystem gate — off = no button, no preload, no panel
       try {
-        const d = await chrome.storage.sync.get('ui_settings')
+        const d = await browser.storage.sync.get('ui_settings')
         if (d?.ui_settings?.subsystems?.['picker-button'] === false) {
           log(' picker-button subsystem off — skipping button module')
           return

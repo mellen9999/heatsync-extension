@@ -1,4 +1,6 @@
 // heatsync popup — channel popout only.
+// Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
+const browser = globalThis.browser || chrome
 ;(() => {
   // Reserved site paths that must never be autofilled as a channel. Literal
   // copy — the popup page can't `import` src/lib/reserved-paths.js. build.js's
@@ -216,7 +218,7 @@
   }
 
   function autofillFromActiveTab() {
-    chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
       const tab = tabs[0]
       if (!tab?.url) return
       try {
@@ -314,7 +316,7 @@
     const arr = Array.isArray(cur?.hs_errors) ? cur.hs_errors : []
     let diag = null
     try {
-      diag = (await chrome.runtime.sendMessage({ type: 'get_diag' }))?.diag || null
+      diag = (await browser.runtime.sendMessage({ type: 'get_diag' }))?.diag || null
     } catch {}
     if (arr.length === 0 && !diag) {
       linkErrors.textContent = t('popup_no_errors') || 'no errors'
@@ -409,7 +411,7 @@
     fbStatus.textContent = ''
     let url = ''
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
       url = (tab?.url || '').slice(0, 2000)
     } catch {}
     const platform = /twitch\.tv/.test(url)
@@ -427,7 +429,7 @@
     if (platform) context.platform = platform
     let res = null
     try {
-      res = await chrome.runtime.sendMessage({ type: 'bg_submit_feedback', kind: fbKind, body, context })
+      res = await browser.runtime.sendMessage({ type: 'bg_submit_feedback', kind: fbKind, body, context })
     } catch {}
     fbSend.textContent = 'send'
     fbSend.disabled = false

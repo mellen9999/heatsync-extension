@@ -287,7 +287,7 @@
    */
   async function loadFollowedUsers() {
     try {
-      const response = await chrome.runtime.sendMessage({ type: 'get_followed_users' })
+      const response = await browser.runtime.sendMessage({ type: 'get_followed_users' })
       if (response?.users) {
         followedUsers = new Set(response.users)
         log(' Loaded followed users:', followedUsers.size)

@@ -20,7 +20,7 @@ function extractFn(src, name) {
 function makeInner({ gql, relay }) {
   return new Function(
     'gqlProxy',
-    'chrome',
+    'browser',
     `const _twChannelIdCache = new Map()
      const _cacheChannelId = (id) => _twChannelIdCache.set('x', { id, ts: Date.now() })
      async ${extractFn(API, '_resolveTwitchChannelIdInner')}

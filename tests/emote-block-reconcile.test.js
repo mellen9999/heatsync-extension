@@ -30,7 +30,7 @@ function run({ block, resp, throws, silent }) {
   const harness = new Function(
     'sendMessage',
     'calls',
-    `const chrome = { runtime: { sendMessage } }
+    `const browser = { runtime: { sendMessage } }
      const emoteHashes = new Map([['KEKW', 'abc']])
      const lookupEmote = () => null
      const log = () => {}

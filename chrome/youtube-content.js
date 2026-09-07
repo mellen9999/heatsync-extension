@@ -18,7 +18,7 @@
   async function safeSendMessage(message) {
     if (!extensionContextValid) return null
     try {
-      return await chrome.runtime.sendMessage(message)
+      return await browser.runtime.sendMessage(message)
     } catch (err) {
       if (err.message?.includes('context invalidated')) extensionContextValid = false
       return null
@@ -85,7 +85,7 @@
   async function loadEmoteInventory() {
     try {
       // Fast path: storage
-      const stored = await chrome.storage.local.get([
+      const stored = await browser.storage.local.get([
         'emote_inventory',
         'global_emotes',
         'blocked_emotes',
@@ -1205,7 +1205,7 @@
   let tabCompleteEnabled = true
   async function readTabCompleteGate() {
     try {
-      const stored = await chrome.storage.sync.get('ui_settings')
+      const stored = await browser.storage.sync.get('ui_settings')
       tabCompleteEnabled = stored?.ui_settings?.subsystems?.['tab-complete'] !== false
     } catch (e) {
       log('tab-complete gate read failed:', e?.message)
@@ -1918,7 +1918,7 @@
   async function init() {
     // Apply the user's emote-size choice before styles so the first paint is correct.
     try {
-      const { hs_emote_size } = await chrome.storage.local.get(['hs_emote_size'])
+      const { hs_emote_size } = await browser.storage.local.get(['hs_emote_size'])
       applyEmoteSize(hs_emote_size)
     } catch (e) {
       log('emote-size read failed:', e?.message)

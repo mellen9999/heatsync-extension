@@ -1028,7 +1028,7 @@
 
   async function restorePersistedBuffers() {
     try {
-      const seenRes = await chrome.storage.local.get('hs_tab_seen_v1')
+      const seenRes = await browser.storage.local.get('hs_tab_seen_v1')
       if (seenRes.hs_tab_seen_v1 && typeof seenRes.hs_tab_seen_v1 === 'object') {
         Object.assign(tabSeenAt, seenRes.hs_tab_seen_v1)
       }
@@ -1047,7 +1047,7 @@
       let mChrome = null,
         mSync = null
       try {
-        const r = await chrome.storage.local.get('hs_mentions_v2')
+        const r = await browser.storage.local.get('hs_mentions_v2')
         if (r.hs_mentions_v2?.msgs?.length > 0 && Date.now() - r.hs_mentions_v2.ts < 86400000) {
           mChrome = r.hs_mentions_v2.msgs
         }
@@ -1095,10 +1095,10 @@
         // buffers. get(null) survives solely as the legacy-browser fallback.
         const allKeys =
           typeof chrome.storage.local.getKeys === 'function'
-            ? await chrome.storage.local.getKeys()
-            : Object.keys(await chrome.storage.local.get(null))
+            ? await browser.storage.local.getKeys()
+            : Object.keys(await browser.storage.local.get(null))
         const ytKeys = allKeys.filter((k) => k.startsWith('hs_yt_') && !k.startsWith('hs_yt_sync_'))
-        const all = ytKeys.length ? await chrome.storage.local.get(ytKeys) : {}
+        const all = ytKeys.length ? await browser.storage.local.get(ytKeys) : {}
         // Self-heal: only YT-linked channels keep persisted YT history. Buffers
         // left behind by the old @<name>/live bleed (see
         // [[heatsync_yt_handle_guess_bleed]]) live under channels that carry NO
@@ -1151,7 +1151,7 @@
         }
         if (staleYtIds.length) {
           try {
-            await chrome.storage.local.remove(staleYtIds.map((id) => `hs_yt_${id}`))
+            await browser.storage.local.remove(staleYtIds.map((id) => `hs_yt_${id}`))
           } catch {}
           for (const id of staleYtIds) {
             try {
@@ -1348,7 +1348,7 @@
    */
   async function loadStaleEmotes() {
     try {
-      const stored = await chrome.storage.local.get(['hs_stale_emotes_v1'])
+      const stored = await browser.storage.local.get(['hs_stale_emotes_v1'])
       const obj = stored?.hs_stale_emotes_v1 || {}
       const reg = window._hsStaleEmotes || (window._hsStaleEmotes = new Map())
       const cutoff = Date.now() - 7 * 86400000
@@ -1806,9 +1806,9 @@
   // the same cleaned record. Gated by ui_settings_migrated_v2 in local.
   async function migrateUiSettingsOnce() {
     try {
-      const flag = await chrome.storage.local.get('ui_settings_migrated_v2')
+      const flag = await browser.storage.local.get('ui_settings_migrated_v2')
       if (flag.ui_settings_migrated_v2) return
-      const synced = await chrome.storage.sync.get('ui_settings')
+      const synced = await browser.storage.sync.get('ui_settings')
       const dirty = synced.ui_settings || {}
       const overflow = {}
       if (dirty.platformFilters && typeof dirty.platformFilters === 'object' && !Array.isArray(dirty.platformFilters)) {
@@ -1830,9 +1830,9 @@
       }
       const cleaned = sanitizeUiSettings(dirty)
       const writes = []
-      writes.push(chrome.storage.sync.set({ ui_settings: cleaned }))
-      if (Object.keys(overflow).length) writes.push(chrome.storage.local.set(overflow))
-      writes.push(chrome.storage.local.set({ ui_settings_migrated_v2: true }))
+      writes.push(browser.storage.sync.set({ ui_settings: cleaned }))
+      if (Object.keys(overflow).length) writes.push(browser.storage.local.set(overflow))
+      writes.push(browser.storage.local.set({ ui_settings_migrated_v2: true }))
       await Promise.all(writes.map((p) => p.catch(() => {})))
       invalidateUiSettingsCache()
       invalidateUiOverflowCache()
@@ -1929,8 +1929,8 @@
     const resp = await safeSendMessage({ type: 'ui_settings_rmw', patch })
     if (resp?.ok) return true
     try {
-      const s = await chrome.storage.sync.get(['ui_settings'])
-      await chrome.storage.sync.set({ ui_settings: sanitizeUiSettings({ ...(s.ui_settings || {}), ...patch }) })
+      const s = await browser.storage.sync.get(['ui_settings'])
+      await browser.storage.sync.set({ ui_settings: sanitizeUiSettings({ ...(s.ui_settings || {}), ...patch }) })
       return true
     } catch (_) {
       return false
@@ -1987,7 +1987,7 @@
 
       if (Object.keys(localPatch).length) {
         invalidateUiOverflowCache()
-        chrome.storage.local.set(localPatch).catch(() => {})
+        browser.storage.local.set(localPatch).catch(() => {})
       }
 
       if (Object.keys(syncPatch).length) {
@@ -1996,7 +1996,7 @@
           // Quota guard: chrome.storage.sync caps each key at 8192 bytes.
           // Check usage before writing — warn + toast if near the ceiling.
           try {
-            const used = await chrome.storage.sync.getBytesInUse('ui_settings')
+            const used = await browser.storage.sync.getBytesInUse('ui_settings')
             if (used > 7000) {
               warn('ui_settings quota near limit:', used, '/ 8192 bytes')
               showToast(t('mc_main_quota_near_limit'), 'error')
@@ -2640,7 +2640,7 @@
       // Failure must be LOUD: the in-memory cache + UI already flipped, so a
       // silently-dropped write means the setting reverts on next load with
       // zero warning (NSFW filters + mute keywords live on this path).
-      chrome.storage.local.set({ [key]: v }).catch(() => {
+      browser.storage.local.set({ [key]: v }).catch(() => {
         try {
           showToast(t('mc_main_settings_save_failed'), 'error')
         } catch {}
@@ -2722,7 +2722,7 @@
     const localKeys = SETTINGS.filter((d) => d.scope === 'local').map((d) => d.key)
     const [synced, local, overflow] = await Promise.all([
       cachedUiSettings().catch(() => ({})),
-      localKeys.length ? chrome.storage.local.get(localKeys).catch(() => ({})) : {},
+      localKeys.length ? browser.storage.local.get(localKeys).catch(() => ({})) : {},
       cachedUiOverflow().catch(() => ({})),
     ])
     const ui = synced?.ui_settings || {}
@@ -2762,7 +2762,7 @@
       if (raw === undefined && def.legacySyncFallback && ui[def.key] !== undefined) {
         raw = ui[def.key]
         if (validateSettingValue(def, coerceSettingValue(def, raw))) {
-          chrome.storage.local.set({ [def.mirrorKey]: coerceSettingValue(def, raw) }).catch(() => {})
+          browser.storage.local.set({ [def.mirrorKey]: coerceSettingValue(def, raw) }).catch(() => {})
         }
       }
       // retired-key migration (e.g. bigEmoji false → emoji size 1x)
@@ -2784,7 +2784,7 @@
       // still gets the default (bigEmoji false → overlay 1x but native 2x).
       // One-shot: the write makes raw defined next boot, so legacy never re-fires.
       if (legacyAdopted) {
-        if (def.scope === 'local') chrome.storage.local.set({ [def.key]: value }).catch(() => {})
+        if (def.scope === 'local') browser.storage.local.set({ [def.key]: value }).catch(() => {})
         else saveUiSetting(def.key, value)
       }
       _settingsCache[def.key] = value
@@ -2794,7 +2794,7 @@
     }
 
     if (Object.keys(firstRunLocal).length) {
-      chrome.storage.local.set(firstRunLocal).catch(() => {})
+      browser.storage.local.set(firstRunLocal).catch(() => {})
     }
     // one-shot: the retired F-/F+ buttons stored a per-device size override in
     // localStorage that quietly beat the fontSize setting. Fold the user's last
@@ -3449,13 +3449,13 @@
   // user hasn't already customized hiddenTabs (never fights a manual choice).
   async function applyFreshInstallHiddenTabs() {
     try {
-      const { hs_fresh_install_hidden_tabs } = await chrome.storage.local.get('hs_fresh_install_hidden_tabs')
+      const { hs_fresh_install_hidden_tabs } = await browser.storage.local.get('hs_fresh_install_hidden_tabs')
       if (!hs_fresh_install_hidden_tabs) return
       // Settings lost the 5s boot race: hiddenTabs would read as its default and
       // this would stamp against a value the user never had. Leave the flag so
       // the next boot does it for real.
       if (!_settingsHydrated) return
-      chrome.storage.local.remove('hs_fresh_install_hidden_tabs').catch(() => {})
+      browser.storage.local.remove('hs_fresh_install_hidden_tabs').catch(() => {})
       const cur = getSetting('hiddenTabs')
       if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') {
         setSetting('hiddenTabs', DEFAULT_HIDDEN_TABS)
@@ -3470,7 +3470,7 @@
   // get_auth_state boot probe (covers "already logged in before install finished").
   async function revealFreshInstallTabsOnce() {
     try {
-      const { ui_settings } = await chrome.storage.sync.get('ui_settings')
+      const { ui_settings } = await browser.storage.sync.get('ui_settings')
       if (!ui_settings?.hiddenTabsRevealPending) return
       saveUiSetting('hiddenTabsRevealPending', false)
       const cur = getSetting('hiddenTabs')
@@ -3508,12 +3508,12 @@
       // hiddenTabs no longer matches the legacy set, so nothing fires. The only
       // cost is that someone who deliberately re-hid exactly the legacy five
       // sees feed once more, one time — worth it against users stranded for good.
-      const { hs_feed_unhidden_v2 } = await chrome.storage.local.get('hs_feed_unhidden_v2')
+      const { hs_feed_unhidden_v2 } = await browser.storage.local.get('hs_feed_unhidden_v2')
       if (hs_feed_unhidden_v2) return
       // Never spend the guard against a cache that never loaded — that is the
       // exact bug above. Leaving it unset means the next boot tries for real.
       if (!_settingsHydrated) return
-      chrome.storage.local.set({ hs_feed_unhidden_v2: true }).catch(() => {})
+      browser.storage.local.set({ hs_feed_unhidden_v2: true }).catch(() => {})
       const cur = getSetting('hiddenTabs')
       const isLegacy =
         Array.isArray(cur) &&
@@ -5215,7 +5215,7 @@
         const legacy = await cachedUiSettings()
         if (legacy.ui_settings?.platformFilters && typeof legacy.ui_settings.platformFilters === 'object') {
           stored = legacy.ui_settings.platformFilters
-          chrome.storage.local.set({ platform_filters: stored }).catch(() => {})
+          browser.storage.local.set({ platform_filters: stored }).catch(() => {})
         }
       }
       if (stored && typeof stored === 'object') {
@@ -9659,7 +9659,7 @@
   async function loadMultistreamDismissed() {
     if (_multistreamDismissed) return _multistreamDismissed
     try {
-      const data = await chrome.storage.local.get('hs_multistream_dismissed')
+      const data = await browser.storage.local.get('hs_multistream_dismissed')
       _multistreamDismissed = new Set(data.hs_multistream_dismissed || [])
     } catch {
       _multistreamDismissed = new Set()
@@ -10596,7 +10596,7 @@
 
   async function loadLivePlatformMap() {
     try {
-      const data = await chrome.storage.local.get('hs_live_platform_map')
+      const data = await browser.storage.local.get('hs_live_platform_map')
       if (data.hs_live_platform_map) livePlatformMap = data.hs_live_platform_map
     } catch {}
   }
@@ -10739,7 +10739,7 @@
     _liveStatusInFlight = true
     _lastLiveStatusPoll = Date.now()
     try {
-      const data = await chrome.runtime.sendMessage({
+      const data = await browser.runtime.sendMessage({
         type: 'fetch_live_status',
         channels: twitchNames,
         kickChannels: kickAll,
@@ -10941,7 +10941,7 @@
   /** Query background script for all channels the user has open tabs for */
   async function getWatchingChannels() {
     try {
-      const resp = await chrome.runtime.sendMessage({ type: 'get_watching_channels' })
+      const resp = await browser.runtime.sendMessage({ type: 'get_watching_channels' })
       return resp?.channels || []
     } catch (_) {
       return []
@@ -11115,7 +11115,7 @@
     let kickLive = new Set()
     if (twitchNames.length > 0 || kickNames.length > 0) {
       try {
-        const resp = await chrome.runtime.sendMessage({
+        const resp = await browser.runtime.sendMessage({
           type: 'fetch_live_status',
           channels: twitchNames,
           kickChannels: kickNames,
@@ -11289,7 +11289,7 @@
 
   async function loadConfig() {
     try {
-      const s = await chrome.storage.local.get([STORAGE_KEY])
+      const s = await browser.storage.local.get([STORAGE_KEY])
       const _raw = s[STORAGE_KEY]
       config = { channels: [], enabled: true, ...(_raw && typeof _raw === 'object' ? _raw : {}) }
       // Guard: a persisted null channels field (corrupted storage) would propagate
@@ -11381,7 +11381,7 @@
       // dropped from storage AND parted locally when the onChanged diff sees
       // it missing. Reconcile on channelKey identity, ours winning on shape.
       try {
-        const stored = (await chrome.storage.local.get(STORAGE_KEY))?.[STORAGE_KEY]
+        const stored = (await browser.storage.local.get(STORAGE_KEY))?.[STORAGE_KEY]
         const theirs = Array.isArray(stored?.channels) ? stored.channels : null
         if (theirs?.length) {
           const key = (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`
@@ -11400,7 +11400,7 @@
           (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
         ),
       )
-      await chrome.storage.local.set({ [STORAGE_KEY]: persistable })
+      await browser.storage.local.set({ [STORAGE_KEY]: persistable })
       // Sync to server for cross-device sync
       safeSendMessage({
         type: 'ws_send',
@@ -13339,7 +13339,7 @@
               }
               if (entries.length) out[ch] = entries.slice(-100)
             }
-            chrome.storage.local.set({ hs_stale_emotes_v1: out }).catch(() => {})
+            browser.storage.local.set({ hs_stale_emotes_v1: out }).catch(() => {})
           } catch (_) {}
         }
         const _patchDom = (emoteName, mode, meta) => {
@@ -14512,7 +14512,7 @@
         }
         if (Object.keys(localOverflow).length) {
           invalidateUiOverflowCache()
-          await chrome.storage.local.set(localOverflow)
+          await browser.storage.local.set(localOverflow)
         }
       } catch (e) {
         log('ui-state seed failed:', e?.message)
@@ -15780,7 +15780,7 @@
           ytSubscribe(channelId, url)
         } else if (attempts === 1) {
           log('YT', channelId, 'still silent', silenceS, 's — unsubscribe + subscribe')
-          chrome.runtime.sendMessage({ type: 'youtube_ws_unsubscribe', channelId }).catch(() => {})
+          browser.runtime.sendMessage({ type: 'youtube_ws_unsubscribe', channelId }).catch(() => {})
           ytSubscribe(channelId, url)
         } else {
           log('YT', channelId, 'unresponsive', silenceS, 's after', attempts, '— BG WS force-reconnect')
@@ -15832,7 +15832,7 @@
       }
       try {
         if (!chrome.runtime?.id) throw new Error('dead')
-        chrome.runtime.sendMessage({ type: 'ping' }).catch(() => {
+        browser.runtime.sendMessage({ type: 'ping' }).catch(() => {
           log('Background unreachable, deferring reload to visibility...')
           scheduleReload()
         })

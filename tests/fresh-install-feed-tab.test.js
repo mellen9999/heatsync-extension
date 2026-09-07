@@ -35,7 +35,7 @@ const TABS_SRC = sliceBetween('  const HIDABLE_TABS = ', '  // Timestamps on mes
 function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}) {
   const settings = { hiddenTabs }
   const localStore = { ...local }
-  const chrome = {
+  const browser = {
     storage: {
       local: {
         get: async (k) => (k in localStore ? { [k]: localStore[k] } : {}),
@@ -49,23 +49,23 @@ function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}
     },
   }
   // storage.local.remove is called with .catch() attached in the source
-  chrome.storage.local.remove = (k) => {
+  browser.storage.local.remove = (k) => {
     delete localStore[k]
     return Promise.resolve()
   }
-  chrome.storage.local.set = (obj) => {
+  browser.storage.local.set = (obj) => {
     Object.assign(localStore, obj)
     return Promise.resolve()
   }
   const api = new Function(
-    'chrome',
+    'browser',
     'getSetting',
     'setSetting',
     'saveUiSetting',
     '_settingsHydrated',
     `${TABS_SRC}\nreturn { DEFAULT_HIDDEN_TABS, LEGACY_FRESH_HIDDEN_TABS, applyFreshInstallHiddenTabs, revealFreshInstallTabsOnce, unhideFeedOnce }`,
   )(
-    chrome,
+    browser,
     (k) => settings[k],
     (k, v) => {
       settings[k] = v

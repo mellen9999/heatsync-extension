@@ -738,6 +738,29 @@ function identityYtLiveUrl(res) {
   return `https://www.youtube.com/@${String(yt).replace(/^@/, '')}/live`
 }
 
+/**
+ * The OTHER platform's live handle for the page channel, read off a
+ * resolveIdentity() result. Twitch↔kick only: a same-name guess is the
+ * default the caller already joined, so only a VERIFIED handle that differs
+ * from it is worth returning (twitch zackrawrr → kick asmongold). Anything
+ * equal to the page channel, missing, or on a youtube host yields ''.
+ * @param {string} hostPlatform 'twitch' | 'kick' | 'yt'
+ * @param {string} urlCh page channel, lowercased by the caller or here
+ * @param {{ok?: boolean, identity?: {twitch?: string|null, kick?: string|null}}|null} res
+ * @returns {{twitch: string, kick: string}} '' where nothing verified differs
+ */
+function liveIdentityCounterpart(hostPlatform, urlCh, res) {
+  const none = { twitch: '', kick: '' }
+  const id = res?.ok ? res.identity : null
+  const ch = String(urlCh || '').toLowerCase()
+  if (!id || !ch) return none
+  const tw = String(id.twitch || '').toLowerCase()
+  const ki = String(id.kick || '').toLowerCase()
+  if (hostPlatform === 'twitch') return { twitch: '', kick: ki && ki !== ch ? ki : '' }
+  if (hostPlatform === 'kick') return { twitch: tw && tw !== ch ? tw : '', kick: '' }
+  return none
+}
+
 // Export
 // ── partial / defanged link detection ───────────────────────────────────────
 // Chat-borne links plain URL regexes miss: bare "watch?v=<id>" youtube refs
@@ -1055,6 +1078,7 @@ const utils = {
   isValidTwitchLogin,
   resolveYtLiveLabel,
   identityYtLiveUrl,
+  liveIdentityCounterpart,
 
   // Emote provider priority
   EMOTE_THIRD_PARTY_PROVIDERS,
@@ -1110,6 +1134,7 @@ export {
   isValidTwitchLogin,
   LARGE_KEY_SYNC_MAX,
   LIVE_WEAVE_SKEW_MS,
+  liveIdentityCounterpart,
   liveOrd,
   log,
   OVERFLOW_MIRROR_KEYS,

@@ -89,10 +89,8 @@ function rearmLiveYtAuto() {
   _autoYtVideoId = null
   if (gateAtBoot('chat-youtube') === false) return
   const names = getLivePlatformNames()
-  if (!names.youtube) {
-    autoResolveLiveYt()
-    return
-  }
+  autoResolveLiveIdentity()
+  if (!names.youtube) return
   ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
   ytChanLastSeen.set('__live_yt_auto__', Date.now())
   // Emote bucket is the bare url-channel name, so a linked channel's emotes
@@ -101,7 +99,11 @@ function rearmLiveYtAuto() {
   ytSubscribe('__live_yt_auto__', names.youtube, urlCh || '')
 }
 
-// Zero-config [Y]. Twitch/kick merge by same-name, but youtube has no safe
+// Zero-config cross-platform. Twitch/kick merge by same-name, but a
+// simulcaster whose handles DIVERGE (twitch zackrawrr / kick asmongold) is
+// invisible to that guess — heatsync's identity record knows the verified
+// pair, so the resolved counterpart replaces the guess (below an explicit
+// override). Youtube has no safe
 // name guess (a fabricated @handle resolves to whoever owns it — see the
 // yt-handle-bleed rule in getLivePlatformNames), so the link has to come
 // from heatsync's identity record. When no explicit override exists,
@@ -114,8 +116,37 @@ function rearmLiveYtAuto() {
 // soft nav.
 const _autoYtNegative = new Map() // urlCh -> ts of last definitive "no link"
 const AUTO_YT_NEGATIVE_TTL_MS = 10 * 60 * 1000
-async function autoResolveLiveYt() {
-  if (gateAtBoot('chat-youtube') === false) return
+
+// Swap the same-name guess for the verified handle on the other platform:
+// part the guessed channel, join the real one, keep the live tab's names in
+// step (getLivePlatformNames reads liveIdentityMap). An explicit override for
+// that platform always wins. Runs after an async hop, so the page channel is
+// re-checked first.
+function applyLiveIdentityCounterpart(urlCh, ri) {
+  const next = liveIdentityCounterpart(hostPlatform, urlCh, ri)
+  const prev = liveIdentityMap[urlCh] || { twitch: '', kick: '' }
+  if (prev.twitch === next.twitch && prev.kick === next.kick) return
+  liveIdentityMap[urlCh] = next
+  if (getCurrentChannel()?.toLowerCase() !== urlCh) return
+  const overrides = livePlatformMap[urlCh] || {}
+  if (!overrides.kick && (next.kick || prev.kick)) {
+    try {
+      kickChat?.part?.(next.kick ? urlCh : prev.kick)
+      kickChat?.join?.(next.kick || urlCh)
+    } catch (_) {}
+  }
+  if (!overrides.twitch && (next.twitch || prev.twitch)) {
+    try {
+      irc?.part?.(next.twitch ? urlCh : prev.twitch)
+      irc?.join?.(next.twitch || urlCh)
+    } catch (_) {}
+  }
+  try {
+    renderMessages(currentTab)
+  } catch (_) {}
+}
+
+async function autoResolveLiveIdentity() {
   if (typeof hostPlatform !== 'undefined' && hostPlatform === 'yt') return // already on youtube
   const urlCh = getCurrentChannel()?.toLowerCase()
   if (!urlCh || typeof resolveIdentity !== 'function') return
@@ -127,6 +158,8 @@ async function autoResolveLiveYt() {
   } catch (_) {
     return
   }
+  applyLiveIdentityCounterpart(urlCh, ri)
+  if (gateAtBoot('chat-youtube') === false) return
   const p = ri?.ok ? ri.profile : null
   const handle = p?.youtube_username ? String(p.youtube_username).replace(/^@/, '') : ''
   // channel id first — immutable, and the /channel/<UC…>/live form can't be

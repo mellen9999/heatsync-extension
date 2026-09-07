@@ -20,7 +20,7 @@ describe('crowd report wiring', () => {
     const hook = src.indexOf("hostPlatform === 'twitch') maybeCrowdReportSocials")
     expect(hook).toBeGreaterThan(-1)
     // it must sit inside the (p || ri?.notFound) definitive branch of
-    // autoResolveLiveYt, not on the transient-failure path
+    // autoResolveLiveIdentity, not on the transient-failure path
     const branch = src.lastIndexOf('if (p || ri?.notFound)', hook)
     expect(branch).toBeGreaterThan(-1)
     expect(hook - branch).toBeLessThan(400)

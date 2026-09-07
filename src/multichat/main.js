@@ -104,6 +104,11 @@
   const CONNECT_GRACE_MS = 5000
   let liveChannel = null // override channel for live tab (null = use URL channel)
   let livePlatformMap = {} // per-URL-channel platform overrides: { [urlCh]: { twitch, kick, youtube } }
+  // Verified cross-platform handles heatsync resolved for a page channel,
+  // { [urlCh]: { twitch, kick } } ('' = same-name stands). Below an explicit
+  // override, above the same-name guess; in-memory only — the server is the
+  // record. See applyLiveIdentityCounterpart (social.js).
+  const liveIdentityMap = {}
   let liveChannelSet = new Set() // live per the direct /live-status poll (lowercase names)
   // Live per the service worker's /api/live/following snapshot. Declared HERE,
   // beside the poll set, so isChannelLive() below can never touch it in its
@@ -10529,6 +10534,7 @@
     const urlCh = getCurrentChannel()?.toLowerCase()
     if (!urlCh) return { twitch: '', kick: '', youtube: '' }
     const overrides = livePlatformMap[urlCh]
+    const identity = liveIdentityMap[urlCh]
     // Same-name fallback is only safe between twitch↔kick. On a YouTube page
     // urlCh is a video id or @handle — guessing it as a twitch/kick channel
     // joins junk channels (bogus IRC joins + external history fetches) and can
@@ -10536,8 +10542,8 @@
     // yt-handle-guess rule below: cross-platform on yt pages is explicit-only.
     const sameNameOk = hostPlatform !== 'yt'
     return {
-      twitch: overrides?.twitch ?? (sameNameOk ? urlCh : ''),
-      kick: overrides?.kick ?? (sameNameOk ? urlCh : ''),
+      twitch: overrides?.twitch ?? (identity?.twitch || (sameNameOk ? urlCh : '')),
+      kick: overrides?.kick ?? (identity?.kick || (sameNameOk ? urlCh : '')),
       // No YT fallback: a guessed youtube.com/@<urlCh>/live resolves to whoever
       // owns that handle (often a different person) and bleeds their live chat
       // into this channel. YouTube must be linked explicitly — same-name across
@@ -14706,10 +14712,15 @@
 
         if (gTwitch && twitchCh) trackJoin('live', irc.join(twitchCh))
         if (gKick && kickCh) trackJoin('live', kickChat.join(kickCh))
-        // Also join the URL channel name if different (for native platform
-        // messages) — twitch/kick hosts only (urlChFallback is '' on yt).
-        if (gTwitch && urlChFallback && twitchCh !== urlChFallback) trackJoin('live', irc.join(urlChFallback))
-        if (gKick && urlChFallback && kickCh !== urlChFallback) trackJoin('live', kickChat.join(urlChFallback))
+        // Also join the URL channel name if different, on the HOST platform
+        // only (native messages for the page we are on). On the other platform
+        // the url name is just the same-name guess an override or a verified
+        // identity has already replaced — joining it too pulls a stranger's
+        // (or a dead) channel into the tab.
+        if (gTwitch && hostPlatform === 'twitch' && urlChFallback && twitchCh !== urlChFallback)
+          trackJoin('live', irc.join(urlChFallback))
+        if (gKick && hostPlatform === 'kick' && urlChFallback && kickCh !== urlChFallback)
+          trackJoin('live', kickChat.join(urlChFallback))
 
         // Subscribe YouTube. On a YT watch/live URL getCurrentChannel returns the
         // 11-char videoId — feeding that to `@${id}/live` produces a bogus
@@ -14749,11 +14760,12 @@
             channel: currentChannel,
             channelId: ytUrl || null,
           })
-        } else if (gYt && hostPlatform !== 'yt') {
-          // No stored/explicit yt link — zero-config path: resolve the
-          // channel's linked youtube from its heatsync identity (social.js).
-          autoResolveLiveYt()
         }
+        // Zero-config cross-platform: resolve the page channel's heatsync
+        // identity — a verified kick/twitch handle that differs from the
+        // same-name guess, and the linked youtube when no explicit link is
+        // stored (social.js).
+        if (hostPlatform !== 'yt') autoResolveLiveIdentity()
         log('Auto-joined current channel:', currentChannel, 'platforms:', twitchCh, kickCh, ytUrl || '(no yt link)')
       }
 

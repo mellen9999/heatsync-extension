@@ -1786,6 +1786,29 @@ function identityYtLiveUrl(res) {
   return `https://www.youtube.com/@${String(yt).replace(/^@/, '')}/live`
 }
 
+/**
+ * The OTHER platform's live handle for the page channel, read off a
+ * resolveIdentity() result. Twitch↔kick only: a same-name guess is the
+ * default the caller already joined, so only a VERIFIED handle that differs
+ * from it is worth returning (twitch zackrawrr → kick asmongold). Anything
+ * equal to the page channel, missing, or on a youtube host yields ''.
+ * @param {string} hostPlatform 'twitch' | 'kick' | 'yt'
+ * @param {string} urlCh page channel, lowercased by the caller or here
+ * @param {{ok?: boolean, identity?: {twitch?: string|null, kick?: string|null}}|null} res
+ * @returns {{twitch: string, kick: string}} '' where nothing verified differs
+ */
+function liveIdentityCounterpart(hostPlatform, urlCh, res) {
+  const none = { twitch: '', kick: '' }
+  const id = res?.ok ? res.identity : null
+  const ch = String(urlCh || '').toLowerCase()
+  if (!id || !ch) return none
+  const tw = String(id.twitch || '').toLowerCase()
+  const ki = String(id.kick || '').toLowerCase()
+  if (hostPlatform === 'twitch') return { twitch: '', kick: ki && ki !== ch ? ki : '' }
+  if (hostPlatform === 'kick') return { twitch: tw && tw !== ch ? tw : '', kick: '' }
+  return none
+}
+
 // Export
 // ── partial / defanged link detection ───────────────────────────────────────
 // Chat-borne links plain URL regexes miss: bare "watch?v=<id>" youtube refs
@@ -2103,6 +2126,7 @@ const utils = {
   isValidTwitchLogin,
   resolveYtLiveLabel,
   identityYtLiveUrl,
+  liveIdentityCounterpart,
 
   // Emote provider priority
   EMOTE_THIRD_PARTY_PROVIDERS,
@@ -9380,7 +9404,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f5dc399+-202609070138' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '248a53d+-202609070208' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39391,10 +39415,8 @@ function rearmLiveYtAuto() {
   _autoYtVideoId = null
   if (gateAtBoot('chat-youtube') === false) return
   const names = getLivePlatformNames()
-  if (!names.youtube) {
-    autoResolveLiveYt()
-    return
-  }
+  autoResolveLiveIdentity()
+  if (!names.youtube) return
   ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
   ytChanLastSeen.set('__live_yt_auto__', Date.now())
   // Emote bucket is the bare url-channel name, so a linked channel's emotes
@@ -39403,7 +39425,11 @@ function rearmLiveYtAuto() {
   ytSubscribe('__live_yt_auto__', names.youtube, urlCh || '')
 }
 
-// Zero-config [Y]. Twitch/kick merge by same-name, but youtube has no safe
+// Zero-config cross-platform. Twitch/kick merge by same-name, but a
+// simulcaster whose handles DIVERGE (twitch zackrawrr / kick asmongold) is
+// invisible to that guess — heatsync's identity record knows the verified
+// pair, so the resolved counterpart replaces the guess (below an explicit
+// override). Youtube has no safe
 // name guess (a fabricated @handle resolves to whoever owns it — see the
 // yt-handle-bleed rule in getLivePlatformNames), so the link has to come
 // from heatsync's identity record. When no explicit override exists,
@@ -39416,8 +39442,37 @@ function rearmLiveYtAuto() {
 // soft nav.
 const _autoYtNegative = new Map() // urlCh -> ts of last definitive "no link"
 const AUTO_YT_NEGATIVE_TTL_MS = 10 * 60 * 1000
-async function autoResolveLiveYt() {
-  if (gateAtBoot('chat-youtube') === false) return
+
+// Swap the same-name guess for the verified handle on the other platform:
+// part the guessed channel, join the real one, keep the live tab's names in
+// step (getLivePlatformNames reads liveIdentityMap). An explicit override for
+// that platform always wins. Runs after an async hop, so the page channel is
+// re-checked first.
+function applyLiveIdentityCounterpart(urlCh, ri) {
+  const next = liveIdentityCounterpart(hostPlatform, urlCh, ri)
+  const prev = liveIdentityMap[urlCh] || { twitch: '', kick: '' }
+  if (prev.twitch === next.twitch && prev.kick === next.kick) return
+  liveIdentityMap[urlCh] = next
+  if (getCurrentChannel()?.toLowerCase() !== urlCh) return
+  const overrides = livePlatformMap[urlCh] || {}
+  if (!overrides.kick && (next.kick || prev.kick)) {
+    try {
+      kickChat?.part?.(next.kick ? urlCh : prev.kick)
+      kickChat?.join?.(next.kick || urlCh)
+    } catch (_) {}
+  }
+  if (!overrides.twitch && (next.twitch || prev.twitch)) {
+    try {
+      irc?.part?.(next.twitch ? urlCh : prev.twitch)
+      irc?.join?.(next.twitch || urlCh)
+    } catch (_) {}
+  }
+  try {
+    renderMessages(currentTab)
+  } catch (_) {}
+}
+
+async function autoResolveLiveIdentity() {
   if (typeof hostPlatform !== 'undefined' && hostPlatform === 'yt') return // already on youtube
   const urlCh = getCurrentChannel()?.toLowerCase()
   if (!urlCh || typeof resolveIdentity !== 'function') return
@@ -39429,6 +39484,8 @@ async function autoResolveLiveYt() {
   } catch (_) {
     return
   }
+  applyLiveIdentityCounterpart(urlCh, ri)
+  if (gateAtBoot('chat-youtube') === false) return
   const p = ri?.ok ? ri.profile : null
   const handle = p?.youtube_username ? String(p.youtube_username).replace(/^@/, '') : ''
   // channel id first — immutable, and the /channel/<UC…>/live form can't be
@@ -62647,9 +62704,8 @@ function applyLivePlatformOverrides() {
     ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     ytSubscribe('__live_yt_auto__', names.youtube)
-  } else {
-    autoResolveLiveYt() // zero-config [Y] via heatsync identity (social.js)
   }
+  autoResolveLiveIdentity() // verified twitch↔kick handle + zero-config [Y] (social.js)
   renderMessages(currentTab)
 }
 
@@ -64607,6 +64663,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   const CONNECT_GRACE_MS = 5000
   let liveChannel = null // override channel for live tab (null = use URL channel)
   let livePlatformMap = {} // per-URL-channel platform overrides: { [urlCh]: { twitch, kick, youtube } }
+  // Verified cross-platform handles heatsync resolved for a page channel,
+  // { [urlCh]: { twitch, kick } } ('' = same-name stands). Below an explicit
+  // override, above the same-name guess; in-memory only — the server is the
+  // record. See applyLiveIdentityCounterpart (social.js).
+  const liveIdentityMap = {}
   let liveChannelSet = new Set() // live per the direct /live-status poll (lowercase names)
   // Live per the service worker's /api/live/following snapshot. Declared HERE,
   // beside the poll set, so isChannelLive() below can never touch it in its
@@ -75032,6 +75093,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     const urlCh = getCurrentChannel()?.toLowerCase()
     if (!urlCh) return { twitch: '', kick: '', youtube: '' }
     const overrides = livePlatformMap[urlCh]
+    const identity = liveIdentityMap[urlCh]
     // Same-name fallback is only safe between twitch↔kick. On a YouTube page
     // urlCh is a video id or @handle — guessing it as a twitch/kick channel
     // joins junk channels (bogus IRC joins + external history fetches) and can
@@ -75039,8 +75101,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     // yt-handle-guess rule below: cross-platform on yt pages is explicit-only.
     const sameNameOk = hostPlatform !== 'yt'
     return {
-      twitch: overrides?.twitch ?? (sameNameOk ? urlCh : ''),
-      kick: overrides?.kick ?? (sameNameOk ? urlCh : ''),
+      twitch: overrides?.twitch ?? (identity?.twitch || (sameNameOk ? urlCh : '')),
+      kick: overrides?.kick ?? (identity?.kick || (sameNameOk ? urlCh : '')),
       // No YT fallback: a guessed youtube.com/@<urlCh>/live resolves to whoever
       // owns that handle (often a different person) and bleeds their live chat
       // into this channel. YouTube must be linked explicitly — same-name across
@@ -79209,10 +79271,15 @@ const STORAGE_KEY = 'heatsync_multichat'
 
         if (gTwitch && twitchCh) trackJoin('live', irc.join(twitchCh))
         if (gKick && kickCh) trackJoin('live', kickChat.join(kickCh))
-        // Also join the URL channel name if different (for native platform
-        // messages) — twitch/kick hosts only (urlChFallback is '' on yt).
-        if (gTwitch && urlChFallback && twitchCh !== urlChFallback) trackJoin('live', irc.join(urlChFallback))
-        if (gKick && urlChFallback && kickCh !== urlChFallback) trackJoin('live', kickChat.join(urlChFallback))
+        // Also join the URL channel name if different, on the HOST platform
+        // only (native messages for the page we are on). On the other platform
+        // the url name is just the same-name guess an override or a verified
+        // identity has already replaced — joining it too pulls a stranger's
+        // (or a dead) channel into the tab.
+        if (gTwitch && hostPlatform === 'twitch' && urlChFallback && twitchCh !== urlChFallback)
+          trackJoin('live', irc.join(urlChFallback))
+        if (gKick && hostPlatform === 'kick' && urlChFallback && kickCh !== urlChFallback)
+          trackJoin('live', kickChat.join(urlChFallback))
 
         // Subscribe YouTube. On a YT watch/live URL getCurrentChannel returns the
         // 11-char videoId — feeding that to `@${id}/live` produces a bogus
@@ -79252,11 +79319,12 @@ const STORAGE_KEY = 'heatsync_multichat'
             channel: currentChannel,
             channelId: ytUrl || null,
           })
-        } else if (gYt && hostPlatform !== 'yt') {
-          // No stored/explicit yt link — zero-config path: resolve the
-          // channel's linked youtube from its heatsync identity (social.js).
-          autoResolveLiveYt()
         }
+        // Zero-config cross-platform: resolve the page channel's heatsync
+        // identity — a verified kick/twitch handle that differs from the
+        // same-name guess, and the linked youtube when no explicit link is
+        // stored (social.js).
+        if (hostPlatform !== 'yt') autoResolveLiveIdentity()
         log('Auto-joined current channel:', currentChannel, 'platforms:', twitchCh, kickCh, ytUrl || '(no yt link)')
       }
 

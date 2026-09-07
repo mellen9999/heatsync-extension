@@ -364,9 +364,8 @@ function applyLivePlatformOverrides() {
     ytSubscribedUrls.set('__live_yt_auto__', names.youtube)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     ytSubscribe('__live_yt_auto__', names.youtube)
-  } else {
-    autoResolveLiveYt() // zero-config [Y] via heatsync identity (social.js)
   }
+  autoResolveLiveIdentity() // verified twitch↔kick handle + zero-config [Y] (social.js)
   renderMessages(currentTab)
 }
 

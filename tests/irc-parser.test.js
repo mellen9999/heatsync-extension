@@ -142,6 +142,24 @@ test('parseIrcLine: PRIVMSG basic shape', () => {
   expect(msg.userId).toBe('1')
 })
 
+// D5: the shared-chat chip needs the partner channel's numeric id to resolve
+// a login, not just the sharedChat boolean — the id used to be dropped after
+// the room-id != source-room-id check, leaving the chip always reading the
+// bare literal 'shared'.
+test('parseIrcLine: PRIVMSG shared-chat sets both sharedChat and sourceRoomId', () => {
+  const raw = '@display-name=Alice;room-id=111;source-room-id=222 :alice!alice@alice.tmi.twitch.tv PRIVMSG #host :hi'
+  const msg = parseIrcLine(raw, 'host')
+  expect(msg.sharedChat).toBe(true)
+  expect(msg.sourceRoomId).toBe('222')
+})
+
+test('parseIrcLine: PRIVMSG same room-id/source-room-id is not shared chat', () => {
+  const raw = '@display-name=Alice;room-id=111;source-room-id=111 :alice!alice@alice.tmi.twitch.tv PRIVMSG #host :hi'
+  const msg = parseIrcLine(raw, 'host')
+  expect(msg.sharedChat).toBeUndefined()
+  expect(msg.sourceRoomId).toBeUndefined()
+})
+
 test('parseIrcLine: PRIVMSG falls back to display-name when no login prefix match', () => {
   const raw = '@display-name=WeirdあName PRIVMSG #chan :hi'
   const msg = parseIrcLine(raw, 'chan')
@@ -336,6 +354,13 @@ test('parseIrcLine: USERNOTICE with no message body → empty text', () => {
   const msg = parseIrcLine(raw, 'chan')
   expect(msg.text).toBe('')
   expect(msg.recipient).toBe('Charlie')
+})
+
+test('parseIrcLine: USERNOTICE shared-chat sets both sharedChat and sourceRoomId', () => {
+  const raw = '@room-id=111;source-room-id=222;msg-id=resub :tmi.twitch.tv USERNOTICE #chan :resub message'
+  const msg = parseIrcLine(raw, 'chan')
+  expect(msg.sharedChat).toBe(true)
+  expect(msg.sourceRoomId).toBe('222')
 })
 
 test('parseIrcLine: USERNOTICE mass gift sets giftCount', () => {

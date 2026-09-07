@@ -503,13 +503,18 @@
       padding: 0 4px;
       margin-right: 6px;
     }
-    /* Shared-chat session: partner-channel origin chip */
+    /* Shared-chat session: partner-channel origin chip. Plain 'shared' until
+       the source-room-id resolves to a login (main.js resolveSharedChatLogin),
+       then the more specific rule below wins and names the channel. */
     .hs-mc-msg.hs-mc-shared::before {
       content: 'shared';
       color: var(--hs-reply);
       border: 1px solid var(--hs-reply-dim);
       padding: 0 4px;
       margin-right: 6px;
+    }
+    .hs-mc-msg.hs-mc-shared[data-hs-shared-login]::before {
+      content: 'shared:' attr(data-hs-shared-login);
     }
     /* Mod-anniversary = gold (authority family — a celebration of mod status,
        distinct from the routine info-blue grant-mod notice) */

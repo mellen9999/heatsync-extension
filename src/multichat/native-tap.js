@@ -145,7 +145,10 @@ function _tapToMsg(m, channel) {
   // names drift across twitch builds — check both casings)
   const roomID = m.roomID ?? m.roomId
   const srcRoomID = m.sourceRoomID ?? m.sourceRoomId
-  if (roomID != null && srcRoomID != null && String(roomID) !== String(srcRoomID)) msg.sharedChat = true
+  if (roomID != null && srcRoomID != null && String(roomID) !== String(srcRoomID)) {
+    msg.sharedChat = true
+    msg.sourceRoomId = String(srcRoomID)
+  }
   const subMatch = badgeStr.match(/subscriber\/(\d+)/)
   if (subMatch) msg.subMonths = parseInt(subMatch[1], 10)
   return msg

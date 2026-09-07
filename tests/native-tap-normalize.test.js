@@ -204,3 +204,44 @@ test('_tapToMsg: messageParts nested one level under m.message.messageParts is a
   }
   expect(_tapToMsg(m, 'chan').text).toBe('nested text')
 })
+
+// D5: the shared-chat chip needs the partner channel's numeric id to resolve
+// a login — not just the sharedChat boolean.
+test('_tapToMsg: differing roomID/sourceRoomID sets sharedChat and sourceRoomId', () => {
+  const m = {
+    id: '1',
+    user: { userDisplayName: 'Alice' },
+    messageParts: [{ content: 'hi' }],
+    roomID: '111',
+    sourceRoomID: '222',
+  }
+  const msg = _tapToMsg(m, 'chan')
+  expect(msg.sharedChat).toBe(true)
+  expect(msg.sourceRoomId).toBe('222')
+})
+
+test('_tapToMsg: the roomId/sourceRoomId casing variant is also read', () => {
+  const m = {
+    id: '1',
+    user: { userDisplayName: 'Alice' },
+    messageParts: [{ content: 'hi' }],
+    roomId: 111,
+    sourceRoomId: 333,
+  }
+  const msg = _tapToMsg(m, 'chan')
+  expect(msg.sharedChat).toBe(true)
+  expect(msg.sourceRoomId).toBe('333')
+})
+
+test('_tapToMsg: matching room ids is not shared chat', () => {
+  const m = {
+    id: '1',
+    user: { userDisplayName: 'Alice' },
+    messageParts: [{ content: 'hi' }],
+    roomID: '111',
+    sourceRoomID: '111',
+  }
+  const msg = _tapToMsg(m, 'chan')
+  expect(msg.sharedChat).toBeUndefined()
+  expect(msg.sourceRoomId).toBeUndefined()
+})

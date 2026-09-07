@@ -3217,6 +3217,47 @@ async function lookupTwitchUserId(username) {
   }
 }
 
+// id → login, the reverse of lookupTwitchUserId above. Shared-chat IRC tags
+// (source-room-id) carry only the numeric channel id of the partner channel a
+// message originated in — nothing resolves that to a displayable name without
+// this. In-memory only (unlike twitchIdCache, not persisted to storage — a
+// stale partner-channel name in a shared-chat chip is low-stakes and this
+// avoids one more disk write on every shared-chat message).
+const twitchLoginCache = new Map()
+const TWITCH_LOGIN_CACHE_MAX = 500
+async function resolveTwitchLoginById(userId) {
+  const id = String(userId || '').replace(/[^0-9]/g, '')
+  if (!id) return null
+  const cached = twitchLoginCache.get(id)
+  if (cached) {
+    twitchLoginCache.delete(id)
+    twitchLoginCache.set(id, cached)
+    return cached
+  }
+  try {
+    // Same public GQL endpoint + client-id as lookupTwitchUserId — no auth needed.
+    const gqlResp = await fetchWithTimeout('https://gql.twitch.tv/gql', {
+      method: 'POST',
+      headers: { 'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: `{ user(id: "${id}") { login } }` }),
+    })
+    if (gqlResp.ok) {
+      const gqlData = await gqlResp.json()
+      const login = gqlData?.data?.user?.login
+      if (login) {
+        if (twitchLoginCache.size >= TWITCH_LOGIN_CACHE_MAX) {
+          twitchLoginCache.delete(twitchLoginCache.keys().next().value)
+        }
+        twitchLoginCache.set(id, login)
+        return login
+      }
+    }
+  } catch (e) {
+    log(' GQL login-by-id lookup failed:', e.message)
+  }
+  return null
+}
+
 // Resolve a user's avatar (pfp) for notification toasts. A toast is about a
 // specific person — their face is the recognizable signal, not the heatsync
 // logo. Cached LRU (success only — never poison the cache on a transient
@@ -9436,6 +9477,12 @@ async function handleMessage(message, sender, sendResponse) {
     ;(async () => {
       const slug = message.slug?.toLowerCase()
       sendResponse(await resolveKickChannelIdBg(slug))
+    })()
+    return true
+  } else if (message.type === 'resolve_twitch_login_by_id') {
+    // Shared-chat chip: source-room-id → the partner channel's login
+    ;(async () => {
+      sendResponse({ login: await resolveTwitchLoginById(message.userId) })
     })()
     return true
   } else if (message.type === 'kick_send_message') {

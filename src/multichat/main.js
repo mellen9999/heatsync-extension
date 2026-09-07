@@ -7644,6 +7644,31 @@
     return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${uidAttr}${splitAttr} style="${style}">${inner}</a>`
   }
 
+  // Shared-chat room-id → login. Keys are twitch numeric channel ids (from
+  // source-room-id); values are the resolved login, `null` while a lookup is
+  // in flight (never re-fired), or '' once a lookup has failed (never
+  // retried — a shared-chat session that never resolves shouldn't hammer the
+  // background on every message it relays).
+  const _sharedChatLoginCache = new Map()
+  function resolveSharedChatLogin(roomId) {
+    _sharedChatLoginCache.set(roomId, null)
+    safeSendMessage({ type: 'resolve_twitch_login_by_id', userId: roomId })
+      .then((r) => {
+        const login = r?.login || ''
+        _sharedChatLoginCache.set(roomId, login)
+        if (!login) return
+        // Retroactively upgrade every 'shared' chip already on screen from
+        // this room — the resolve is async, so rows rendered before it landed
+        // only got the plain chip.
+        for (const el of document.querySelectorAll(`.hs-mc-shared[data-hs-shared-room="${CSS.escape(roomId)}"]`)) {
+          if (!el.dataset.hsSharedLogin) el.dataset.hsSharedLogin = login
+        }
+      })
+      .catch(() => {
+        _sharedChatLoginCache.set(roomId, '')
+      })
+  }
+
   function buildMessageDiv(m, tabId) {
     // Blocked user — fully hide (skip render entirely). Both the append and the
     // full-rebuild path go through buildMessageDiv, so returning null here hides
@@ -8378,8 +8403,22 @@
       div.classList.add('hs-mc-animated')
       div.dataset.hsAnim = String(m.animationId).slice(0, 32)
     }
-    // Shared-chat session: message originated in the partner channel
-    if (m.sharedChat) div.classList.add('hs-mc-shared')
+    // Shared-chat session: message originated in the partner channel. Chip
+    // starts as plain 'shared' (CSS default); once the room id resolves to a
+    // login it upgrades to 'shared:<login>' via the data attribute — both
+    // synchronously for a cache hit and, on a miss, retroactively for every
+    // row already on screen from that room (resolveSharedChatLogin below).
+    if (m.sharedChat) {
+      div.classList.add('hs-mc-shared')
+      if (m.sourceRoomId) {
+        div.dataset.hsSharedRoom = m.sourceRoomId
+        const cachedLogin = _sharedChatLoginCache.get(m.sourceRoomId)
+        if (cachedLogin) div.dataset.hsSharedLogin = cachedLogin
+        // undefined = never requested; null = request in flight (don't refire);
+        // '' = a prior request failed (don't hammer the background on every message)
+        else if (cachedLogin === undefined) resolveSharedChatLogin(m.sourceRoomId)
+      }
+    }
     // Raider — a first message arriving in the window after a raid into this channel.
     if (m.isRaider) div.classList.add('is-raider')
     // Cleared by mod (timeout/ban/delete) — Twitch-native dim + strikethrough on offending content

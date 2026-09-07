@@ -157,7 +157,13 @@ describe('INVALID_EMOTE degrades to plain words', () => {
   }
 
   test('a rejected emote is stripped and the message still delivers', async () => {
-    const { fn, seen } = makeSender([{ ok: false, error: '400: {"message":"INVALID_EMOTE_ERROR"}' }, { ok: true }])
+    // code is the machine-readable field the relay sets from kick's raw body
+    // (see chrome/content.js kickSendErrorCode) — the retry decision never
+    // parses the human-readable `error` text.
+    const { fn, seen } = makeSender([
+      { ok: false, error: 'kick rejected the message (400)', status: 400, code: 'invalid_emote' },
+      { ok: true },
+    ])
     expect(await fn('mellen', 'hi [emote:999:Ghost] there')).toBe(true)
     expect(seen).toHaveLength(2)
     expect(seen[0].body).toBe('hi [emote:999:Ghost] there')
@@ -167,9 +173,9 @@ describe('INVALID_EMOTE degrades to plain words', () => {
 
   test('the de-tokenized resend does not consume a retry slot', async () => {
     const { fn, seen } = makeSender([
-      { ok: false, error: '400: INVALID_EMOTE_ERROR' },
-      { ok: false, error: '500: server' },
-      { ok: false, error: '500: server' },
+      { ok: false, error: 'kick rejected the message (400)', status: 400, code: 'invalid_emote' },
+      { ok: false, error: 'kick server error (500)', status: 500 },
+      { ok: false, error: 'kick server error (500)', status: 500 },
       { ok: true },
     ])
     expect(await fn('mellen', 'x [emote:1:A]')).toBe(true)
@@ -178,7 +184,10 @@ describe('INVALID_EMOTE degrades to plain words', () => {
 
   test('a message with no tokens is not looped on INVALID_EMOTE', async () => {
     // nothing to strip — must fall through to normal retry, never spin
-    const { fn, seen } = makeSender([{ ok: false, error: '400: INVALID_EMOTE_ERROR' }, { ok: true }])
+    const { fn, seen } = makeSender([
+      { ok: false, error: 'kick rejected the message (400)', status: 400, code: 'invalid_emote' },
+      { ok: true },
+    ])
     expect(await fn('mellen', 'plain words')).toBe(true)
     expect(seen[1].body).toBe('plain words')
   })

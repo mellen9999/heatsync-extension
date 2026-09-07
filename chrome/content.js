@@ -4537,11 +4537,22 @@
       signal: AbortSignal.timeout(10000),
     })
       .then((r) => {
-        if (r.ok) sendResponse({ ok: true })
-        else
-          r.text()
-            .then((t) => sendResponse({ ok: false, error: `${r.status}: ${t}` }))
-            .catch(() => sendResponse({ ok: false, error: `${r.status}` }))
+        if (r.ok) {
+          sendResponse({ ok: true })
+          return
+        }
+        r.text()
+          .then((t) =>
+            sendResponse({
+              ok: false,
+              error: explainKickSendError(r.status, t),
+              status: r.status,
+              code: kickSendErrorCode(t),
+            }),
+          )
+          .catch(() =>
+            sendResponse({ ok: false, error: explainKickSendError(r.status, ''), status: r.status, code: null }),
+          )
       })
       // A 10s AbortSignal.timeout beats kick-send.js's own 11s sentinel, so the
       // abort — not the sentinel — is what sendKickMessage sees. Normalize it to
@@ -4551,6 +4562,42 @@
       // retry is safe there.
       .catch((e) => sendResponse({ ok: false, error: e.name === 'TimeoutError' ? 'timeout' : e.message }))
     return true // async sendResponse
+  }
+
+  // Machine-readable code for send-body shapes kick-send.js's retry logic
+  // needs to recognize (INVALID_EMOTE_ERROR → strip emote tokens and resend).
+  // Kept separate from explainKickSendError's human text so a retry decision
+  // never depends on parsing user-facing copy.
+  function kickSendErrorCode(raw) {
+    if (/INVALID_EMOTE/i.test(String(raw || ''))) return 'invalid_emote'
+    return null
+  }
+
+  // Translate kick's send-endpoint rejection into the same copy twitch's IRC
+  // NOTICE handler uses for the equivalent case (src/_locales/en/messages.json
+  // mc_irc_notice_*) — never the raw status/body, which used to land straight
+  // in the retry toast as e.g. '403: {"status":{"message":"..."}}'. Kick's
+  // exact wording isn't pinned down here (no confirmed-live sample of every
+  // mode's rejection body, unlike the chatroom-PUT explain() above), so this
+  // matches on the response's own message text rather than a fixed status
+  // code per condition, and degrades to a clean generic line instead of ever
+  // surfacing kick's raw body.
+  function explainKickSendError(status, raw) {
+    let body = null
+    try {
+      body = JSON.parse(raw)
+    } catch (_) {}
+    const msg = String(body?.message || body?.status?.message || raw || '').toLowerCase()
+    if (/ban/.test(msg)) return 'you are banned from this channel'
+    if (/follow/.test(msg) && /only/.test(msg)) return 'followers-only mode — follow the channel to chat'
+    if (/subscri/.test(msg) && /only/.test(msg)) return 'subscribers-only — sub to chat here'
+    if (/slow/.test(msg)) return 'slow mode — please wait a moment'
+    if (status === 429 || /rate.?limit/.test(msg)) return 'kick rate limited — wait a moment'
+    if (status === 401 || status === 403 || /not authenticated|not logged in|unauthenticated|unauthorized/.test(msg)) {
+      return "you're not logged into kick (or your session expired)"
+    }
+    if (status >= 500) return `kick server error (${status})`
+    return `kick rejected the message (${status})`
   }
   if (window.location.hostname.includes('kick.com')) {
     chrome.runtime.onMessage.removeListener(_onMessageKickRelay)

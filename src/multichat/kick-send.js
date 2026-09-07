@@ -71,7 +71,9 @@ async function sendKickMessage(kickSlug, text, reply = null) {
       lastErr = err
       // Reply-shaped send rejected by kick (4xx) → the message itself is fine,
       // only the threading ref was refused. Deliver flat rather than fail.
-      if (replyRef && /^4\d\d:/.test(err)) {
+      // Checked on the relay's own status field, not the (now human-readable,
+      // not status-prefixed) error text.
+      if (replyRef && resp?.status >= 400 && resp?.status < 500) {
         replyRef = null
         attempt-- // the flat resend shouldn't consume a retry slot
         continue
@@ -82,8 +84,9 @@ async function sendKickMessage(kickSlug, text, reply = null) {
       // gated behind a sub, or belongs to another channel — and then a message
       // that used to send as plain words wouldn't send at all, which is
       // strictly worse than not rendering an emote. Strip the tokens back to
-      // bare names and deliver.
-      if (/INVALID_EMOTE/i.test(err) && /\[emote:\d+:/.test(body)) {
+      // bare names and deliver. Checked via the relay's own `code` field, not
+      // the error text (which is human copy now, not kick's raw body).
+      if (resp?.code === 'invalid_emote' && /\[emote:\d+:/.test(body)) {
         body = typeof _unkickEmotes === 'function' ? _unkickEmotes(body) : body.replace(/\[emote:\d+:([^\]]+)\]/g, '$1')
         attempt-- // the de-tokenized resend shouldn't consume a retry slot
         continue

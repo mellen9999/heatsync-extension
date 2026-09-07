@@ -17,7 +17,13 @@ import { join } from 'node:path'
 
 const ROOT = new URL('..', import.meta.url).pathname
 
-const BUILD_OUTPUT = new Set(['multichat-core.js', 'multichat.js', 'multichat-twitch.js', 'multichat-kick.js', 'multichat-youtube.js'])
+const BUILD_OUTPUT = new Set([
+  'multichat-core.js',
+  'multichat.js',
+  'multichat-twitch.js',
+  'multichat-kick.js',
+  'multichat-youtube.js',
+])
 
 function jsFiles(dir) {
   return readdirSync(join(ROOT, dir))
@@ -28,7 +34,8 @@ function jsFiles(dir) {
 const FILES = [...jsFiles('chrome'), ...jsFiles('src/lib'), ...jsFiles('src/multichat')]
 
 // await chrome.X(...) / chrome.X(...).then( / chrome.X(...).catch( / chrome.X(...).finally(
-const PROMISE_STYLE_RE = /await\s+chrome\.|chrome\.[a-zA-Z.]+\([^()]*(\([^()]*\)[^()]*)?\)\s*\.\s*(then|catch|finally)\(/
+const PROMISE_STYLE_RE =
+  /await\s+chrome\.|chrome\.[a-zA-Z.]+\([^()]*(\([^()]*\)[^()]*)?\)\s*\.\s*(then|catch|finally)\(/
 
 test('no hand-written file awaits/chains a promise directly off chrome.*', () => {
   const offenders = []

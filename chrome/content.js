@@ -8432,7 +8432,8 @@
             if (!subStatusSpan.isConnected) return
             if (result?.subscribed) {
               const tier = result.tier ? Math.round(Number(result.tier) / 1000) : 1
-              subStatusSpan.textContent = tier > 1 ? `subbed T${tier}` : 'subbed'
+              subStatusSpan.textContent =
+                tier > 1 ? t('content_card_sub_badge_tier', [String(tier)]) : t('content_card_sub_badge')
               subStatusSpan.style.display = ''
             }
           } catch (_e) {
@@ -8566,14 +8567,14 @@
       if (followsYou && youFollow) {
         const mSpan = document.createElement('span')
         mSpan.className = 'hs-pc-mutual-follow'
-        mSpan.textContent = 'mutual'
+        mSpan.textContent = t('content_card_mutual')
         row1.appendChild(mSpan)
       }
       // 6. Mutual sub indicator (both directions)
       if (subsYou && youSub) {
         const mSpan = document.createElement('span')
         mSpan.className = 'hs-pc-mutual-sub'
-        mSpan.textContent = 'mutual sub'
+        mSpan.textContent = t('content_card_mutual_sub')
         row1.appendChild(mSpan)
       }
       // Sub tenure from chat badge data (how long they've been subbed to this channel)
@@ -8659,9 +8660,9 @@
 
       const actions = [
         { action: 'timeout', label: '10m' },
-        { action: 'ban', label: 'ban' },
-        { action: 'unban', label: 'unban' },
-        { action: 'block', label: 'block' },
+        { action: 'ban', label: t('content_card_ban') },
+        { action: 'unban', label: t('content_card_unban') },
+        { action: 'block', label: t('content_card_block') },
       ]
       for (const { action, label } of actions) {
         const btn = document.createElement('button')
@@ -8818,7 +8819,7 @@
 
       const title = document.createElement('div')
       title.className = 'hs-pc-section-title'
-      title.textContent = isMod ? 'mod tools' : 'mod tools (no permission)'
+      title.textContent = isMod ? t('content_card_mod_tools') : t('content_card_mod_tools_no_perm')
       section.appendChild(title)
 
       const grid = document.createElement('div')
@@ -8851,12 +8852,12 @@
       const hardGroup = document.createElement('div')
       hardGroup.className = 'hs-pc-mod-group'
       const hardActions = [
-        { action: 'ban', label: 'ban', danger: true },
-        { action: 'unban', label: 'unban' },
-        { action: 'mod', label: 'mod' },
-        { action: 'unmod', label: 'unmod' },
-        { action: 'vip', label: 'vip' },
-        { action: 'unvip', label: 'unvip' },
+        { action: 'ban', label: t('content_card_ban'), danger: true },
+        { action: 'unban', label: t('content_card_unban') },
+        { action: 'mod', label: t('content_card_mod') },
+        { action: 'unmod', label: t('content_card_unmod') },
+        { action: 'vip', label: t('content_card_vip') },
+        { action: 'unvip', label: t('content_card_unvip') },
         { action: 'purge', label: 'x', danger: true },
       ]
       for (const { action, label, danger } of hardActions) {
@@ -8881,7 +8882,7 @@
       section.className = 'hs-pc-section'
       const title = document.createElement('div')
       title.className = 'hs-pc-section-title'
-      title.textContent = 'note'
+      title.textContent = t('content_card_note_title')
       section.appendChild(title)
 
       const ta = document.createElement('textarea')
@@ -8889,16 +8890,19 @@
       ta.rows = 2
       ta.maxLength = HS_NOTE_MAX
       ta.spellcheck = false
-      ta.placeholder = 'private note — only you see this'
+      ta.placeholder = t('content_card_note_placeholder')
       ta.value = noteGet(username)?.text || ''
-      let t = null
+      // NOTE: named debounceTimer, not `t` — `t` is the module i18n function
+      // (used two lines up); shadowing it here silently breaks every t() call
+      // added below it in this closure.
+      let debounceTimer = null
       const save = () => noteSave(username, ta.value)
       ta.addEventListener('input', () => {
-        if (t) clearTimeout(t)
-        t = setTimeout(save, 400)
+        if (debounceTimer) clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(save, 400)
       })
       ta.addEventListener('blur', () => {
-        if (t) clearTimeout(t)
+        if (debounceTimer) clearTimeout(debounceTimer)
         save()
       })
       section.appendChild(ta)
@@ -8915,7 +8919,7 @@
       const title = document.createElement('div')
       title.className = 'hs-pc-section-title'
       const titleText = document.createElement('span')
-      titleText.textContent = 'message history'
+      titleText.textContent = t('content_card_history_title')
       title.appendChild(titleText)
       const count = document.createElement('span')
       count.className = 'hs-pc-count'
@@ -8927,7 +8931,7 @@
       list.className = 'hs-pc-history'
       const empty = document.createElement('div')
       empty.className = 'hs-pc-history-empty'
-      empty.textContent = 'loading…'
+      empty.textContent = t('content_card_loading')
       list.appendChild(empty)
       section.appendChild(list)
 
@@ -8939,7 +8943,9 @@
       if (!messages.length) {
         const e = document.createElement('div')
         e.className = 'hs-pc-history-empty'
-        e.textContent = channelLogin ? `no messages from this user in ${channelLogin}` : 'no message history'
+        e.textContent = channelLogin
+          ? t('content_card_history_empty_channel', [channelLogin])
+          : t('content_card_history_empty')
         list.appendChild(e)
         count.textContent = '0'
         return
@@ -8976,7 +8982,7 @@
       viewLink.target = '_blank'
       viewLink.rel = 'noopener'
       viewLink.className = 'hs-pc-btn'
-      viewLink.textContent = 'view profile'
+      viewLink.textContent = t('content_card_view_profile')
       footer.appendChild(viewLink)
 
       // Follow/unfollow on HeatSync — skip own card and cards with no profile id
@@ -8988,7 +8994,7 @@
         let following = !!(profile.relationship && (profile.relationship.youFollow ?? profile.relationship.isFollowing))
         const followBtn = document.createElement('button')
         followBtn.className = `hs-pc-btn hs-pc-follow-btn${following ? ' hs-pc-following' : ''}`
-        followBtn.textContent = following ? 'unfollow' : 'follow'
+        followBtn.textContent = following ? t('content_card_unfollow') : t('content_card_follow')
         followBtn.addEventListener('click', async () => {
           if (followBtn.disabled) return
           followBtn.disabled = true
@@ -9020,7 +9026,7 @@
             }
           }
           if (followBtn.isConnected) {
-            followBtn.textContent = following ? 'unfollow' : 'follow'
+            followBtn.textContent = following ? t('content_card_unfollow') : t('content_card_follow')
             followBtn.classList.toggle('hs-pc-following', following)
             followBtn.disabled = false
           }
@@ -9034,7 +9040,7 @@
         popout.target = '_blank'
         popout.rel = 'noopener'
         popout.className = 'hs-pc-btn subtle'
-        popout.textContent = 'twitch profile'
+        popout.textContent = t('content_card_twitch_profile')
         popout.href = `https://www.twitch.tv/${encodeURIComponent(username)}`
         footer.appendChild(popout)
       }
@@ -9042,7 +9048,7 @@
       if (platform === 'twitch' && profile && profile.twitch_is_live) {
         const clipBtn = document.createElement('button')
         clipBtn.className = 'hs-pc-btn subtle'
-        clipBtn.textContent = 'clip'
+        clipBtn.textContent = t('content_card_clip')
         let clipEditUrl = null
         clipBtn.addEventListener('click', async () => {
           if (clipEditUrl) {
@@ -9051,7 +9057,7 @@
           }
           if (clipBtn.disabled) return
           clipBtn.disabled = true
-          clipBtn.textContent = 'clipping…'
+          clipBtn.textContent = t('content_card_clipping')
           const channelLogin = getChannelLogin()
           try {
             const result = await HS.apiFetch('/api/twitch/clip', {
@@ -9067,10 +9073,10 @@
               } catch (_e) {}
             }
             if (!clipBtn.isConnected) return
-            clipBtn.textContent = clipShareUrl ? '✓ url copied' : '✓ clip created'
+            clipBtn.textContent = clipShareUrl ? t('content_card_clip_url_copied') : t('content_card_clip_created')
             clipBtn.disabled = false
           } catch (_e) {
-            clipBtn.textContent = 'clip'
+            clipBtn.textContent = t('content_card_clip')
             clipBtn.disabled = false
             clipBtn.style.borderColor = '#ff0000'
             clipBtn.style.color = '#ff0000'
@@ -9085,21 +9091,21 @@
 
       const copyBtn = document.createElement('button')
       copyBtn.className = 'hs-pc-btn subtle'
-      copyBtn.textContent = 'copy name'
+      copyBtn.textContent = t('content_card_copy_name')
       copyBtn.dataset.action = 'copy'
       copyBtn.dataset.user = username
       footer.appendChild(copyBtn)
 
       const mentionBtn = document.createElement('button')
       mentionBtn.className = 'hs-pc-btn subtle'
-      mentionBtn.textContent = 'mention'
+      mentionBtn.textContent = t('content_card_mention')
       mentionBtn.dataset.action = 'mention'
       mentionBtn.dataset.user = username
       footer.appendChild(mentionBtn)
 
       const blockBtn = document.createElement('button')
       blockBtn.className = 'hs-pc-btn danger'
-      blockBtn.textContent = 'block'
+      blockBtn.textContent = t('content_card_block')
       blockBtn.dataset.action = 'block'
       blockBtn.dataset.user = username
       footer.appendChild(blockBtn)

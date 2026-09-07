@@ -61,11 +61,13 @@ const storageStub = {
     },
   },
 }
-// emotes.js has both callback-style chrome.* calls (left as-is, F-ext-1 scope)
-// and promise-style browser.* calls (the F-ext-1 fix) — both stubs share one
-// backing store so either path sees the same data.
-globalThis.chrome = { storage: storageStub, runtime: { sendMessage: () => {}, lastError: undefined } }
-globalThis.browser = { storage: storageStub, runtime: { sendMessage: async () => undefined } }
+// dropEmoteFromAllSenders/loadSenderEmoteSets/mergeSenderEmotes/replaceSenderEmotes
+// are storage-only — no runtime.sendMessage call in that path — so both stubs
+// only need storage. They share one backing store so either the old
+// callback-style chrome.storage.* call (untouched, F-ext-1 scope) or the
+// promise-style browser.storage.* call (the F-ext-1 fix) sees the same data.
+globalThis.chrome = { storage: storageStub }
+globalThis.browser = { storage: storageStub }
 
 const { dropEmoteFromAllSenders, loadSenderEmoteSets, mergeSenderEmotes, replaceSenderEmotes, senderEmoteSets } =
   await import('../src/multichat/emotes.js')

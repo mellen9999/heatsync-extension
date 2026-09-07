@@ -384,6 +384,103 @@
   "content_card_partner": {
     "message": "partner"
   },
+  "content_card_mutual": {
+    "message": "mutual"
+  },
+  "content_card_mutual_sub": {
+    "message": "mutual sub"
+  },
+  "content_card_sub_badge": {
+    "message": "subbed"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "subbed T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "ban"
+  },
+  "content_card_unban": {
+    "message": "unban"
+  },
+  "content_card_block": {
+    "message": "block"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod tools"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod tools (no permission)"
+  },
+  "content_card_note_title": {
+    "message": "note"
+  },
+  "content_card_note_placeholder": {
+    "message": "private note — only you see this"
+  },
+  "content_card_history_title": {
+    "message": "message history"
+  },
+  "content_card_loading": {
+    "message": "loading…"
+  },
+  "content_card_history_empty": {
+    "message": "no message history"
+  },
+  "content_card_history_empty_channel": {
+    "message": "no messages from this user in $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "view profile"
+  },
+  "content_card_follow": {
+    "message": "follow"
+  },
+  "content_card_unfollow": {
+    "message": "unfollow"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch profile"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "clipping…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url copied"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip created"
+  },
+  "content_card_copy_name": {
+    "message": "copy name"
+  },
+  "content_card_mention": {
+    "message": "mention"
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },

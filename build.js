@@ -91,12 +91,13 @@ function checkManifestParity() {
   // Order-independent — coverage matters, not entry ordering.
   function csKey(entry) {
     const matches = [...(entry.matches || [])].sort().join('|')
+    const excludeMatches = [...(entry.exclude_matches || [])].sort().join('|')
     const js = [...(entry.js || [])].sort().join('|')
     const css = [...(entry.css || [])].sort().join('|')
     const world = entry.world || 'ISOLATED'
     const runAt = entry.run_at || 'document_idle'
     const allFrames = entry.all_frames === true
-    return `${matches}::${js}::${css}::${world}::${runAt}::${allFrames}`
+    return `${matches}::${excludeMatches}::${js}::${css}::${world}::${runAt}::${allFrames}`
   }
 
   const chromeKeys = new Set((chrome.content_scripts || []).map(csKey))

@@ -48,6 +48,14 @@
   function detectPlatform() {
     const hostname = window.location.hostname
 
+    // m.twitch.tv serves a genuinely separate mobile DOM none of our
+    // selectors match (manifest exclude_matches already keeps every content
+    // script from injecting there at all — this keeps the detector honest
+    // for any future caller that reaches it a different way).
+    if (hostname === 'm.twitch.tv') {
+      return null
+    }
+
     if (hostname.includes('twitch.tv')) {
       return 'twitch'
     } else if (hostname.includes('kick.com')) {

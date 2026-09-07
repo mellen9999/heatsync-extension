@@ -39,6 +39,9 @@
       "matches": [
         "https://*.twitch.tv/*"
       ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
+      ],
       "js": [
         "early-inject-main.js"
       ],
@@ -74,6 +77,9 @@
         "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
+      ],
       "js": [
         "early-layout.js",
         "pcard-early.js"
@@ -83,6 +89,9 @@
     {
       "matches": [
         "https://*.twitch.tv/*"
+      ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
       ],
       "js": [
         "emoji-data.js",
@@ -110,6 +119,9 @@
         "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
+      ],
       "js": [
         "vi-mode.js"
       ],
@@ -132,6 +144,9 @@
         "https://*.kick.com/*",
         "https://heatsync.org/*"
       ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
+      ],
       "js": [
         "emoji-data.iso.js",
         "shared-utils.js",
@@ -150,6 +165,9 @@
         "https://kick.com/*",
         "https://*.kick.com/*"
       ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
+      ],
       "js": [
         "heatsync-button.js"
       ],
@@ -161,6 +179,9 @@
         "https://kick.com/*",
         "https://*.kick.com/*",
         "https://www.youtube.com/*"
+      ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*"
       ],
       "js": [
         "emoji-data.iso.js",

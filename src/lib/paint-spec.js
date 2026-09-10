@@ -803,75 +803,102 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
   return null
 }
 
-/** Build the pieces for a per-letter motion effect (wave/ripple/tumble):
- * { decls, animShorthand, delayExpr, keyframes, extraRule }. These always
- * target `${selector} span` (one glyph per span), same as any active paint
- * effect on a letter-split name — so compilePaintCss combines them into one
- * `animation:`/`animation-delay:` comma-list rather than emitting separate
- * rules (which would clobber each other; see compilePaintCss). `extraRule`
- * is an optional standalone rule on the parent selector (tumble's
- * `perspective`), unrelated to the animation merge. */
+/** Build the pieces for a per-letter motion effect (wave/ripple/tumble/hop/
+ * twirl/type) — { selfPart, spanDecl, extraRule }.
+ *
+ * These used to put `animation:`/`animation-delay:` directly on
+ * `${selector} span`, so the browser created one live Animation PER GLYPH
+ * (a real `Animation` instance per matching element is intrinsic to CSS
+ * Animations — sharing @keyframes across elements does not share the
+ * instance). A 12-letter name running one of these alone was already 12
+ * concurrent animations; combined with a second letter motion and a
+ * paint-slot fill, prod measured names carrying ~19 live animations each
+ * (see chat/paint-cosmetics.js's MOBILE_ANIMATING_BUDGET comment — a real
+ * device trace, 2026-09-10) against the module doc's own "at most 3
+ * layers" design.
+ *
+ * The fix: ONE Animation, on the PARENT, driving a registered `@property`
+ * phase (0→1, interpolated — an unregistered custom property cannot tween
+ * smoothly, it snaps at 50%). Every span reads that INHERITED value back
+ * through `calc()`/`var(--i)` to get its own stagger — no Animation object
+ * of its own, just a derived style, the same "one timeline, many dependent
+ * values" shape the `conic` paint effect already uses for its rotation
+ * angle (see buildPaintEffectCss). `selfPart` merges into compilePaintCss's
+ * existing self-animation comma-list (built for coin/heli/etc — see
+ * emitSelfRule) since two rules setting `animation` on one selector clobber
+ * each other; `spanDecl` is a plain, unanimated declaration. */
 function buildLetterMotionCss(effectId, speed, selector, hash) {
   const duration = effectDuration(effectId, speed)
+  const phaseVar = `--hsp-${hash}-${effectId}-ph`
   const animName = `hsp_${hash}_${effectId}`
+  const stagger = (stepSeconds, sign = 1) =>
+    (sign * stepSeconds / safeSpeed(speed) / duration).toFixed(6)
+  // p = this letter's own 0..1 phase — the parent's phase plus its stagger,
+  // wrapped. Every formula below is written directly against p, the same
+  // 0%..100% timeline the old keyframes used.
+  const p = (step, sign) => `mod(var(${phaseVar}) + var(--i) * ${stagger(step, sign)}, 1)`
+  const selfPart = {
+    decls: '', animShorthand: `${animName} ${duration}s linear infinite`,
+    delayExpr: syncDelayCalc(duration),
+    keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
+      `@keyframes ${animName}{to{${phaseVar}:1;}}`,
+  }
 
   switch (effectId) {
     case 'wave': {
-      const kf = `@keyframes ${animName}{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}`
+      // Smooth up-down hump — a cosine reproduces the old ease-in-out
+      // 0/-4px/0 keyframe shape without needing a separate easing curve.
+      const ph = p(0.09)
       return {
-        decls: '',
-        animShorthand: `${animName} ${duration}s ease-in-out infinite`,
-        delayExpr: `calc(var(--i) * ${(0.09 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `transform:translateY(calc(-4px * (1 - cos(${ph} * 360deg)) / 2));`,
       }
     }
     case 'ripple': {
-      const kf = `@keyframes ${animName}{to{filter:hue-rotate(360deg);}}`
+      const ph = p(0.18, -1)
       return {
-        decls: '',
-        animShorthand: `${animName} ${duration}s linear infinite`,
-        delayExpr: `calc(var(--i) * -${(0.18 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `filter:hue-rotate(calc(${ph} * 360deg));`,
       }
     }
     case 'hop': {
-      // A hop, not a wave: up fast, land with a squash, rest for most of it.
-      const kf = `@keyframes ${animName}{0%,22%,100%{transform:translateY(0) scaleY(1);}8%{transform:translateY(-5px) scaleY(1.06);}15%{transform:translateY(0) scaleY(.9);}}`
+      // A hop, not a wave: a single sharp triangular pulse (peak ~8% into
+      // the cycle) beats a sinusoid at reproducing "up fast, land, rest".
+      const ph = p(0.07)
+      const pulse = `clamp(0, 1 - abs(${ph} * 6.5 - 1), 1)`
       return {
-        decls: 'transform-origin:50% 100%;',
-        animShorthand: `${animName} ${duration}s ease-out infinite`,
-        delayExpr: `calc(var(--i) * ${(0.07 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `transform-origin:50% 100%;` +
+          `transform:translateY(calc(-5px * ${pulse})) scaleY(calc(1 + 0.06 * ${pulse}));`,
       }
     }
     case 'twirl': {
-      const kf = `@keyframes ${animName}{0%,64%{transform:rotate(0);}100%{transform:rotate(360deg);}}`
+      // Held flat for the first 64% of the cycle, one clean spin in the rest.
+      const ph = p(0.08)
       return {
-        decls: '',
-        animShorthand: `${animName} ${duration}s ease-in-out infinite`,
-        delayExpr: `calc(var(--i) * ${(0.08 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `transform:rotate(calc(360deg * clamp(0, (${ph} - 0.64) / 0.36, 1)));`,
       }
     }
     case 'type': {
       // Each glyph blinks out for a moment, in order — a cursor passing
-      // through the name and retyping it. The blink (3% of the cycle) is
-      // exactly one stagger step long, so one glyph is out at a time.
-      const kf = `@keyframes ${animName}{0%,3%{opacity:0;}4%,100%{opacity:1;}}`
+      // through the name and retyping it. clamp() with a steep multiplier
+      // gives the same near-instant blink the old 0%/3%/4% keyframe did.
+      const ph = p(0.12)
       return {
-        decls: '',
-        animShorthand: `${animName} ${duration}s linear infinite`,
-        delayExpr: `calc(var(--i) * ${(0.12 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `opacity:calc(clamp(0, (${ph} - 0.03) * 100, 1));`,
       }
     }
     case 'tumble': {
-      const kf = `@keyframes ${animName}{0%,60%,100%{transform:rotateX(0);}75%{transform:rotateX(180deg);}90%{transform:rotateX(360deg);}}`
+      // Rest, then two 180deg flips back to back (60%→75%→90%) — two ramps
+      // summed reproduce the old three-keyframe rotateX curve.
+      const ph = p(0.12)
+      const ramp1 = `clamp(0, (${ph} - 0.60) / 0.15, 1)`
+      const ramp2 = `clamp(0, (${ph} - 0.75) / 0.15, 1)`
       return {
-        decls: 'transform-style:preserve-3d;',
-        animShorthand: `${animName} ${duration}s cubic-bezier(.5,0,.5,1) infinite`,
-        delayExpr: `calc(var(--i) * ${(0.12 / safeSpeed(speed)).toFixed(4)}s - mod(var(--hsp-t, 0s), ${duration}s))`,
-        keyframes: kf,
+        selfPart,
+        spanDecl: `transform-style:preserve-3d;transform:rotateX(calc(180deg * (${ramp1} + ${ramp2})));`,
         extraRule: `${selector}{perspective:300px;}`,
       }
     }
@@ -1062,10 +1089,11 @@ export function compilePaintCss(spec, selector, opts = {}) {
       if (!EFFECTS[e.id].letterSplit) continue
       const m = buildLetterMotionCss(e.id, e.speed, selector, hash)
       if (m) {
-        spanDecls += m.decls
-        animList.push(m.animShorthand)
-        delayList.push(m.delayExpr)
-        css += m.keyframes
+        // One Animation on the parent (merged into the same comma-list as
+        // any self-motion effect below), not one per glyph — see
+        // buildLetterMotionCss's doc comment.
+        selfParts.push(m.selfPart)
+        spanDecls += m.spanDecl
         if (m.extraRule) css += m.extraRule
       }
     }

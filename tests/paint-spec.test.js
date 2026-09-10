@@ -322,25 +322,37 @@ describe('compilePaintCss — structural checks', () => {
     expect(css).toContain('color:#ff8700')
   })
 
-  test('letter-split effect (wave) emits ONE `span` rule with --i delay', () => {
+  test('letter-split effect (wave) emits ONE `span` rule and ONE parent-level Animation, not one per glyph', () => {
     const spec = baseSpec({ effects: [{ id: 'wave', speed: 1 }] })
     const css = compilePaintCss(spec, '.hsp-wave1', { hash: 'wave1' })
-    // Single combined rule — display:inline-block + animation live together,
-    // not a separate display-only rule followed by a separate animation rule.
+    // Single combined span rule — display:inline-block + the calc() transform
+    // live together, not a separate display-only rule.
     expect(css.match(/\.hsp-wave1 span\{/g)?.length).toBe(1)
-    expect(css).toContain('.hsp-wave1 span{display:inline-block;animation:hsp_wave1_wave')
-    expect(css).toContain('var(--i)')
+    // The span itself carries NO `animation:` — one Animation per glyph is
+    // exactly the cost this shape replaced (see buildLetterMotionCss).
+    const spanRule = css.match(/\.hsp-wave1 span\{[^}]*\}/)[0]
+    expect(spanRule).not.toContain('animation:')
+    expect(spanRule).toContain('var(--i)')
+    expect(spanRule).toContain('translateY')
+    // The ONE real Animation lives on the parent, driving a registered
+    // (smoothly interpolable) phase property every span reads back.
+    const parentRule = css.match(/\.hsp-wave1\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    expect(parentRule).toContain('animation:hsp_wave1_wave')
+    expect(css).toContain("@property --hsp-wave1-wave-ph{syntax:'<number>'")
   })
 
-  // Regression: paint effect (fire/pan/conic/hue/glint/reveal/themed) and
-  // per-letter motion (wave/ripple/tumble) both target `${selector} span`
-  // when the name is split. Two separate rules each setting the `animation`
-  // shorthand on that same selector don't compose — the later rule wins
-  // outright and blanks the earlier one's animation-name (verified live:
-  // the fire gradient rendered fully static, only the wave transform ran).
-  // The fix combines every span-targeted animation into ONE rule with
-  // comma-listed animation/animation-delay.
-  test('fire (paint) + wave (motion): one span rule, two comma-listed animations, paint delay phase-locked', () => {
+  // Regression (superseded 2026-09-10): paint effect (fire/pan/conic/hue/
+  // glint/reveal/themed) and per-letter motion (wave/ripple/tumble) used to
+  // BOTH target `${selector} span`, so this block originally verified they
+  // combined into one comma-listed rule instead of clobbering. Letter motion
+  // now drives ONE Animation on the PARENT instead (see
+  // buildLetterMotionCss) — a real device trace found the old per-glyph
+  // Animation multiplication was the dominant mobile GPU cost. The paint
+  // slot is unchanged (still per-span, still phase-locked), so these now
+  // verify the two live on DIFFERENT selectors with no clobber, and that a
+  // combo of two letter motions still merges via the same comma-list
+  // mechanism whole-name motions (coin/heli/etc) already used.
+  test('fire (paint) + wave (motion): span keeps ONLY the paint animation; wave is one Animation on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -359,17 +371,22 @@ describe('compilePaintCss — structural checks', () => {
     const spanRules = css.match(/\.hsp-fw span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     const rule = spanRules[0]
-    expect(rule).toMatch(/animation:hsp_fw_fire[^,]*, hsp_fw_wave[^;]*;/)
-    // paint slot delay = wall-clock phase fold; motion slot keeps the --i stagger plus the fold
-    expect(rule).toMatch(
-      /animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\), calc\(var\(--i\)[^;]*mod\(var\(--hsp-t, 0s\)[^;]*\);/,
-    )
+    // Only fire's animation — wave no longer touches the span at all.
+    expect(rule).toMatch(/animation:hsp_fw_fire[^,;]*;/)
+    expect(rule).not.toContain('hsp_fw_wave')
+    expect(rule).toMatch(/animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/)
     // Paint decls (background/clip) must still be present — not clobbered.
     expect(rule).toContain('background:linear-gradient(0deg, #c00000')
     expect(rule).toContain('background-clip:text')
+    // wave's transform lives on the span as a static (unanimated) calc().
+    expect(rule).toContain('var(--i)')
+    expect(rule).toContain('translateY')
+    // The ONE wave Animation is on the parent.
+    const parentRule = css.match(/\.hsp-fw\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    expect(parentRule).toContain('animation:hsp_fw_wave')
   })
 
-  test('wave + ripple (two per-letter motions, no paint): both animations combine, no paint slot', () => {
+  test('wave + ripple (two per-letter motions, no paint): both merge into ONE comma-listed Animation on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -387,13 +404,15 @@ describe('compilePaintCss — structural checks', () => {
     const css = compilePaintCss(spec, '.hsp-wr', { hash: 'wr' })
     const spanRules = css.match(/\.hsp-wr span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
-    expect(spanRules[0]).toMatch(
-      /animation-delay:calc\(var\(--i\) \* 0\.0900s - mod\(var\(--hsp-t, 0s\), [\d.]+s\)\), calc\(var\(--i\) \* -0\.1800s - mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/,
-    )
+    // No Animation on the span at all — both motions are parent-driven.
+    expect(spanRules[0]).not.toContain('animation:')
+    expect(spanRules[0]).toContain('translateY')
+    expect(spanRules[0]).toContain('hue-rotate')
+    const parentRule = css.match(/\.hsp-wr\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    expect(parentRule).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
   })
 
-  test('pan (paint) + tumble (motion): one span rule; tumble perspective stays a separate parent rule', () => {
+  test('pan (paint) + tumble (motion): span keeps only pan; tumble is one Animation + perspective on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -411,20 +430,23 @@ describe('compilePaintCss — structural checks', () => {
     const css = compilePaintCss(spec, '.hsp-pt', { hash: 'pt' })
     const spanRules = css.match(/\.hsp-pt span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).toMatch(/animation:hsp_pt_pan[^,]*, hsp_pt_tumble[^;]*;/)
-    expect(spanRules[0]).toMatch(
-      /animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\), calc\(var\(--i\)[^;]*mod\(var\(--hsp-t, 0s\)[^;]*\);/,
-    )
+    expect(spanRules[0]).toMatch(/animation:hsp_pt_pan[^,;]*;/)
+    expect(spanRules[0]).not.toContain('hsp_pt_tumble')
+    expect(spanRules[0]).toMatch(/animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/)
     expect(spanRules[0]).toContain('transform-style:preserve-3d;')
+    const parentRule = css.match(/\.hsp-pt\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    expect(parentRule).toContain('animation:hsp_pt_tumble')
     expect(css).toContain('.hsp-pt{perspective:300px;}')
   })
 
-  test('split-without-paint (wave only): single animation, still fine, one rule', () => {
+  test('split-without-paint (wave only): span carries no animation at all, one parent Animation', () => {
     const spec = baseSpec({ effects: [{ id: 'wave', speed: 1 }] })
     const css = compilePaintCss(spec, '.hsp-w', { hash: 'w' })
     const spanRules = css.match(/\.hsp-w span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).toMatch(/animation:hsp_w_wave[^;,]*;/)
+    expect(spanRules[0]).not.toContain('animation:')
+    const parentRule = css.match(/\.hsp-w\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    expect(parentRule).toMatch(/animation:hsp_w_wave[^;,]*;/)
   })
 
   test('non-split paint + whole-name motion (fire + coin): ONE selector rule, both animations comma-listed', () => {

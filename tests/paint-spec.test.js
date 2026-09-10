@@ -341,18 +341,20 @@ describe('compilePaintCss — structural checks', () => {
     expect(css).toContain("@property --hsp-wave1-wave-ph{syntax:'<number>'")
   })
 
-  // Regression (superseded 2026-09-10): paint effect (fire/pan/conic/hue/
-  // glint/reveal/themed) and per-letter motion (wave/ripple/tumble) used to
-  // BOTH target `${selector} span`, so this block originally verified they
-  // combined into one comma-listed rule instead of clobbering. Letter motion
-  // now drives ONE Animation on the PARENT instead (see
-  // buildLetterMotionCss) — a real device trace found the old per-glyph
-  // Animation multiplication was the dominant mobile GPU cost. The paint
-  // slot is unchanged (still per-span, still phase-locked), so these now
-  // verify the two live on DIFFERENT selectors with no clobber, and that a
-  // combo of two letter motions still merges via the same comma-list
-  // mechanism whole-name motions (coin/heli/etc) already used.
-  test('fire (paint) + wave (motion): span keeps ONLY the paint animation; wave is one Animation on the parent', () => {
+  // Regression (superseded 2026-09-10, then 2026-09-10 again): paint effect
+  // (fire/pan/conic/hue/glint/reveal/themed) and per-letter motion (wave/
+  // ripple/tumble) used to BOTH target `${selector} span`, so this block
+  // originally verified they combined into one comma-listed rule instead of
+  // clobbering. Letter motion moved to ONE Animation on the PARENT first
+  // (buildLetterMotionCss); the paint slot stayed per-span for a moment
+  // (a real device trace found a paint-slot fill combined with a
+  // letter-split name still ran one Animation PER GLYPH — enough on its own
+  // to blow the whole page's mobile animation budget off one multi-layer
+  // name). buildPaintPhaseCss closed that gap the same way: paint is now
+  // ALSO a parent-driven phase, so these verify the span carries NO
+  // animation at all for either slot — every live Animation for a name
+  // lives on the parent, comma-listed, regardless of letter count.
+  test('fire (paint) + wave (motion): span carries no animation; both are one Animation each on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -371,19 +373,21 @@ describe('compilePaintCss — structural checks', () => {
     const spanRules = css.match(/\.hsp-fw span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     const rule = spanRules[0]
-    // Only fire's animation — wave no longer touches the span at all.
-    expect(rule).toMatch(/animation:hsp_fw_fire[^,;]*;/)
-    expect(rule).not.toContain('hsp_fw_wave')
-    expect(rule).toMatch(/animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/)
+    // No Animation on the span at all — both the paint fill and the
+    // letter motion are parent-driven phases now.
+    expect(rule).not.toContain('animation:')
     // Paint decls (background/clip) must still be present — not clobbered.
     expect(rule).toContain('background:linear-gradient(0deg, #c00000')
     expect(rule).toContain('background-clip:text')
+    // fire's background-position/skewX are static calc()s off its phase.
+    expect(rule).toContain('background-position:')
+    expect(rule).toContain('skewX')
     // wave's transform lives on the span as a static (unanimated) calc().
     expect(rule).toContain('var(--i)')
     expect(rule).toContain('translateY')
-    // The ONE wave Animation is on the parent.
+    // Both Animations — one per effect, still just ONE each — are on the parent.
     const parentRule = css.match(/\.hsp-fw\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toContain('animation:hsp_fw_wave')
+    expect(parentRule).toMatch(/animation:hsp_fw_fire[^,]*, hsp_fw_wave[^;]*;/)
   })
 
   test('wave + ripple (two per-letter motions, no paint): both merge into ONE comma-listed Animation on the parent', () => {
@@ -412,7 +416,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(parentRule).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
   })
 
-  test('pan (paint) + tumble (motion): span keeps only pan; tumble is one Animation + perspective on the parent', () => {
+  test('pan (paint) + tumble (motion): span carries no animation; pan + tumble are one Animation each on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -430,12 +434,11 @@ describe('compilePaintCss — structural checks', () => {
     const css = compilePaintCss(spec, '.hsp-pt', { hash: 'pt' })
     const spanRules = css.match(/\.hsp-pt span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).toMatch(/animation:hsp_pt_pan[^,;]*;/)
-    expect(spanRules[0]).not.toContain('hsp_pt_tumble')
-    expect(spanRules[0]).toMatch(/animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/)
+    expect(spanRules[0]).not.toContain('animation:')
+    expect(spanRules[0]).toContain('background-position:')
     expect(spanRules[0]).toContain('transform-style:preserve-3d;')
     const parentRule = css.match(/\.hsp-pt\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toContain('animation:hsp_pt_tumble')
+    expect(parentRule).toMatch(/animation:hsp_pt_pan[^,]*, hsp_pt_tumble[^;]*;/)
     expect(css).toContain('.hsp-pt{perspective:300px;}')
   })
 
@@ -474,13 +477,13 @@ describe('compilePaintCss — structural checks', () => {
     expect(animRules[0]).toMatch(/animation:hsp_fc_fire[^,]*, hsp_fc_coin/)
   })
 
-  test('conic effect namespaces its @property angle var per-hash (no cross-user collision)', () => {
+  test('conic effect namespaces its @property phase var per-hash (no cross-user collision)', () => {
     const specA = baseSpec({ effects: [{ id: 'conic', speed: 1 }] })
     const cssA = compilePaintCss(specA, '.hsp-a1', { hash: 'a1' })
     const cssB = compilePaintCss(specA, '.hsp-b2', { hash: 'b2' })
-    expect(cssA).toContain('--hsp-a1-ang')
-    expect(cssB).toContain('--hsp-b2-ang')
-    expect(cssA).not.toContain('--hsp-b2-ang')
+    expect(cssA).toContain('--hsp-a1-conic-ph')
+    expect(cssB).toContain('--hsp-b2-conic-ph')
+    expect(cssA).not.toContain('--hsp-b2-conic-ph')
   })
 
   test('glow with no neon effect emits a static (non-animated) text-shadow', () => {
@@ -615,17 +618,25 @@ describe('wall-clock phase sync (--hsp-t)', () => {
     glow: null,
   }
 
-  test('alternate-direction paint (fire) folds over 2x its duration', () => {
+  test('alternate-direction paint (fire) drives its phase over 2x its raw effect duration', () => {
+    // fire used to be a CSS `alternate` animation, where the browser did the
+    // there-and-back doubling and the fold math had to double the duration
+    // separately to match. Now the round trip is baked into ONE linear phase
+    // Animation (see paintPhaseDriver's roundTrip branch), so the
+    // animation's own declared duration already IS the fold period — and
+    // that duration is itself 2x the raw effect duration.
     const css = compilePaintCss({ ...baseOnly, effects: [{ id: 'fire', speed: 1 }] }, '.hsp-f', { hash: 'f' })
     const dur = Number(css.match(/animation:hsp_f_fire ([\d.]+)s/)[1])
     const period = Number(css.match(/mod\(var\(--hsp-t, 0s\), ([\d.]+)s\)/)[1])
-    expect(period).toBeCloseTo(dur * 2, 3)
+    expect(dur).toBeCloseTo(EFFECTS.fire.basePeriod * 2, 3)
+    expect(period).toBeCloseTo(dur, 3)
   })
 
-  test('normal-direction paint (pan) folds over exactly its duration', () => {
+  test('normal-direction paint (pan) folds over exactly its raw effect duration', () => {
     const css = compilePaintCss({ ...baseOnly, effects: [{ id: 'pan', speed: 1 }] }, '.hsp-p', { hash: 'p' })
     const dur = Number(css.match(/animation:hsp_p_pan ([\d.]+)s/)[1])
     const period = Number(css.match(/mod\(var\(--hsp-t, 0s\), ([\d.]+)s\)/)[1])
+    expect(dur).toBeCloseTo(EFFECTS.pan.basePeriod, 3)
     expect(period).toBeCloseTo(dur, 3)
   })
 

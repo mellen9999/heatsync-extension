@@ -639,54 +639,47 @@ const THEMED_PAINT = {
   chrome: {
     gradient: 'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #5a6678 38%, #f3f4f6 52%, #556173 70%, #d1d5db 88%, #6b7280)',
     size: '220% 100%',
-    timing: 'ease-in-out',
-    direction: 'alternate',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:120% 0;}}`,
+    roundTrip: true,
+    decl: ph => `background-position:${bounce(ph, '0%', '120%')} 0;`,
   },
   gold: {
     gradient:
       'repeating-linear-gradient(115deg, transparent 0 3px, #ffffff2e 3px 4px), ' +
       'linear-gradient(90deg, #7a5900, #ffd700 30%, #fff3b0 50%, #ffd700 70%, #7a5900)',
     size: '100% 100%, 200% 100%',
-    timing: 'ease-in-out',
-    direction: 'alternate',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:0 0, 100% 0;}}`,
+    roundTrip: true,
+    decl: ph => `background-position:0 0, ${bounce(ph, '0%', '100%')} 0;`,
   },
   fire: {
     gradient: 'linear-gradient(0deg, #c00000, #d70000 35%, #ff8700 65%, #ffd700 90%)',
     size: '100% 300%',
-    timing: 'ease-in-out',
-    direction: 'alternate',
-    keyframes: (name) => `@keyframes ${name}{from{background-position:0 100%;transform:skewX(0);}to{background-position:0 40%;transform:skewX(-1.5deg);}}`,
+    roundTrip: true,
+    decl: ph => `background-position:0 ${bounce(ph, '100%', '40%')};transform:skewX(${bounce(ph, '0deg', '-1.5deg')});`,
   },
   matrix: {
     gradient: 'repeating-linear-gradient(0deg, #00ff87 0 5px, #00d700 5px 8px, #1a7a38 8px 10px)',
     size: '100% 340%',
-    timing: 'linear',
-    direction: 'normal',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:0 340%;}}`,
+    roundTrip: false,
+    decl: ph => `background-position:0 ${wrap(ph, '0%', '340%')};`,
   },
   holo: {
     gradient: 'repeating-linear-gradient(0deg, #00e5ff 0 2px, #007a88 2px 4px)',
     size: '100% 200%',
-    timing: 'linear',
-    direction: 'normal',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:0 200%;}}`,
+    roundTrip: false,
+    decl: ph => `background-position:0 ${wrap(ph, '0%', '200%')};`,
   },
   rainbow: {
     // The first stop repeated last, so the pan wraps without a seam.
     gradient: 'linear-gradient(90deg, #ff0000, #ff8700 14%, #ffff00 28%, #00ff00 42%, #00d7ff 57%, #875fff 71%, #ff00ff 85%, #ff0000)',
     size: '300% 100%',
-    timing: 'linear',
-    direction: 'normal',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:300% 0;}}`,
+    roundTrip: false,
+    decl: ph => `background-position:${wrap(ph, '0%', '300%')} 0;`,
   },
   ice: {
     gradient: 'linear-gradient(100deg, #87d7ff, #ffffff 24%, #afd7ff 42%, #ffffff 58%, #87d7ff 76%, #d7ffff 100%)',
     size: '220% 100%',
-    timing: 'ease-in-out',
-    direction: 'alternate',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:120% 0;}}`,
+    roundTrip: true,
+    decl: ph => `background-position:${bounce(ph, '0%', '120%')} 0;`,
   },
   lava: {
     // Bright crust with darker seams rolling upward — every band clears the
@@ -694,28 +687,73 @@ const THEMED_PAINT = {
     // the same lesson as matrix).
     gradient: 'repeating-linear-gradient(0deg, #ff5f00 0 4px, #ffaf00 4px 5px, #d70000 5px 7px)',
     size: '100% 300%',
-    timing: 'linear',
-    direction: 'normal',
-    keyframes: (name) => `@keyframes ${name}{to{background-position:0 -300%;}}`,
+    roundTrip: false,
+    decl: ph => `background-position:0 ${wrap(ph, '0%', '-300%')};`,
   },
 }
 
-/** Build the pieces for a `paint`-slot effect: { decls, animShorthand, keyframes }.
- * `decls` never includes `animation` itself — the caller (compilePaintCss)
- * always appends that, either alone (non-split: one paint effect, one rule)
- * or combined with per-letter motion animations into a single comma-list
- * (letter-split: paint + motion share `${selector} span`, and two separate
- * `animation:` shorthand rules on the same selector would silently clobber
- * each other — see compilePaintCss). Returns null for an unknown effect id. */
-function buildPaintEffectCss(effectId, speed, base, stops, hash) {
-  const duration = effectDuration(effectId, speed)
+/** One linear 0→1 `@property` phase Animation, parent-scoped — the same
+ * "one Animation, many dependent values" shape buildLetterMotionCss uses for
+ * motion effects, extended to the paint slot. A paint-slot fill used to put
+ * `animation:`/`animation-delay:` directly on `${selector} span` when the
+ * name was letter-split, so a 12-letter gold/fire/pan/etc. name ran 12 live
+ * Animation instances for that ONE layer alone — the exact "known remaining
+ * gap" flagged when buildLetterMotionCss got this treatment (see its doc
+ * comment): a paint fill combined with a letter-split name still animated
+ * per-glyph. On mobile that's enough on its own to blow the whole page's
+ * MOBILE_ANIMATING_BUDGET (paint-cosmetics.js) off ONE multi-layer name,
+ * which reads as "only one paint animating" even though every other visible
+ * name is correctly configured — the budget froze them, not the compiler.
+ * Every paint-slot effect below now drives its moving value(s) off this one
+ * inherited phase via calc(), so a name's live-animation count from its
+ * paint layer is 1 regardless of letter count or split. */
+function paintPhaseDriver(effectId, period, hash) {
+  const phaseVar = `--hsp-${hash}-${effectId}-ph`
   const animName = `hsp_${hash}_${effectId}`
+  return {
+    phaseVar,
+    selfPart: {
+      decls: '',
+      animShorthand: `${animName} ${period}s linear infinite`,
+      delayExpr: syncDelayCalc(period),
+      keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
+        `@keyframes ${animName}{to{${phaseVar}:1;}}`,
+    },
+  }
+}
+
+// start→end once per phase cycle, then an instant jump back to start — the
+// same discontinuous-but-seamless wrap a bare `to{}` keyframe produces
+// (pan/rainbow/etc. already engineer their gradient to repeat seamlessly
+// across that jump — see pan's own comment).
+const wrap = (ph, start, end) => `calc(${start} + (${end} - ${start}) * var(${ph}))`
+
+// a full there-and-back sweep within ONE phase cycle — replaces
+// `ease-in-out infinite alternate` (paired with a doubled period, since one
+// alternate round trip is 2 CSS animation durations). Same cosine
+// substitution buildLetterMotionCss's `wave` case already uses.
+const bounce = (ph, start, end) =>
+  `calc((${start} + ${end}) / 2 + (${start} - ${end}) / 2 * cos(var(${ph}) * 360deg))`
+
+// one-way ease-in-out — half the cosine period of `bounce`, no return trip.
+const ease = (ph, start, end) =>
+  `calc((${start} + ${end}) / 2 - (${end} - ${start}) / 2 * cos(var(${ph}) * 180deg))`
+
+/** Build the pieces for a `paint`-slot effect: { selfPart, decl }. `decl` is
+ * a plain, unanimated declaration block (background/filter/opacity/mask, all
+ * calc()-derived from the phase); `selfPart` is the one Animation driving it,
+ * merged by the caller into compilePaintCss's shared self-animation
+ * comma-list (same slot motion effects already share — two rules setting
+ * `animation` on one selector clobber each other). Returns null for an
+ * unknown effect id. */
+function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
+  const duration = effectDuration(effectId, speed)
 
   if (THEMED_PAINT[effectId]) {
     const t = THEMED_PAINT[effectId]
-    const decls = `background:${t.gradient};background-size:${t.size};-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const sync = syncDelayCalc(t.direction === 'alternate' ? duration * 2 : duration)
-    return { decls, animShorthand: `${animName} ${duration}s ${t.timing} infinite ${t.direction}`, sync, keyframes: t.keyframes(animName) }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, t.roundTrip ? duration * 2 : duration, hash)
+    const decl = `background:${t.gradient};background-size:${t.size};-webkit-background-clip:text;background-clip:text;color:transparent;${t.decl(phaseVar)}`
+    return { selfPart, decl }
   }
 
   if (effectId === 'pan') {
@@ -725,38 +763,37 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const angle = safeAngle(base.angle)
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
-    const decls = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf = `@keyframes ${animName}{to{background-position:300% 0;}}`
-    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const decl = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0%', '300%')} 0;`
+    return { selfPart, decl }
   }
 
   if (effectId === 'conic') {
-    // Force conic rendering — rotates the whole wheel via a namespaced
-    // @property angle custom prop so two users' paints never collide.
-    const angleVar = `--hsp-${hash}-ang`
+    // Force conic rendering — rotates the whole wheel straight off the
+    // shared phase var (0→1), no extra @property of its own needed.
     const angle = safeAngle(base.angle)
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
-    const image = `conic-gradient(from calc(${angle}deg + var(${angleVar})), ${gradientStopsCss(wrapStops)})`
-    const decls = `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf = `@property ${angleVar}{syntax:"<angle>";initial-value:0deg;inherits:false;}` +
-      `@keyframes ${animName}{to{${angleVar}:360deg;}}`
-    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const image = `conic-gradient(from calc(${angle}deg + 360deg * var(${phaseVar})), ${gradientStopsCss(wrapStops)})`
+    const decl = `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`
+    return { selfPart, decl }
   }
 
   if (effectId === 'hue') {
     // Orthogonal to gradient type — filter applies post-render regardless
     // of how base painted the text.
     const baseCss = buildBaseCss(base, stops)
-    const kf = `@keyframes ${animName}{to{filter:hue-rotate(360deg);}}`
-    return { decls: baseCss.decl, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const decl = `${baseCss.decl}filter:hue-rotate(${wrap(phaseVar, '0deg', '360deg')});`
+    return { selfPart, decl }
   }
 
   if (effectId === 'glint') {
     const baseCss = buildBaseCss(base, stops)
     const image = `linear-gradient(115deg, transparent 38%, #ffffffcc 50%, transparent 62%) no-repeat, ${baseCss.cssImage}`
-    const decls = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf = `@keyframes ${animName}{0%{background-position:210% 0, 0 0;}100%{background-position:-110% 0, 0 0;}}`
-    return { decls, animShorthand: `${animName} ${duration}s ease-in-out infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const decl = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${ease(phaseVar, '210%', '-110%')} 0, 0 0;`
+    return { selfPart, decl }
   }
 
   if (effectId === 'stripes') {
@@ -768,9 +805,9 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     const colors = stops.length > 1 ? stops.map(s => s.color) : [stops[0]?.color || '#e4e4e4', '#ffffff']
     const bands = colors.map((c, i) => `${c} ${i * BAND}px ${(i + 1) * BAND}px`).join(', ')
     const shift = (colors.length * BAND * Math.SQRT2).toFixed(2)
-    const decls = `background:repeating-linear-gradient(45deg, ${bands});-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf = `@keyframes ${animName}{to{background-position:${shift}px 0;}}`
-    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const decl = `background:repeating-linear-gradient(45deg, ${bands});-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0px', `${shift}px`)} 0;`
+    return { selfPart, decl }
   }
 
   if (effectId === 'stardust') {
@@ -779,25 +816,32 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
     // per loop so the wrap is seamless.
     const baseCss = buildBaseCss(base, stops)
     const image = `radial-gradient(circle, #ffffff 0 .7px, transparent 1.1px) repeat, radial-gradient(circle, #ffffffaa 0 .5px, transparent .9px) repeat, ${baseCss.cssImage}`
-    const decls = `background:${image};background-size:9px 7px, 13px 11px, 100% 100%;background-position:0 0, 4px 3px, 0 0;-webkit-background-clip:text;background-clip:text;color:transparent;`
-    const kf = `@keyframes ${animName}{to{background-position:-27px 21px, -22px 25px, 0 0;}}`
-    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const pos1 = `${wrap(phaseVar, '0px', '-27px')} ${wrap(phaseVar, '0px', '21px')}`
+    const pos2 = `${wrap(phaseVar, '4px', '-22px')} ${wrap(phaseVar, '3px', '25px')}`
+    const decl = `background:${image};background-size:9px 7px, 13px 11px, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${pos1}, ${pos2}, 0 0;`
+    return { selfPart, decl }
   }
 
   if (effectId === 'pulse') {
     // Breathes the whole fill — opacity, not filter, so it never lands on
     // the same property as hue. Luminance-flagged: the floor keeps it slow.
+    // Already a full round trip within one cycle (not CSS `alternate`), so
+    // the phase period is the plain duration, same as `bounce`'s other uses
+    // pair with a doubled one.
     const baseCss = buildBaseCss(base, stops)
-    const kf = `@keyframes ${animName}{0%,100%{opacity:1;}50%{opacity:.45;}}`
-    return { decls: baseCss.decl, animShorthand: `${animName} ${duration}s ease-in-out infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.45')};`
+    return { selfPart, decl }
   }
 
   if (effectId === 'reveal') {
     const baseCss = buildBaseCss(base, stops)
     const mask = 'linear-gradient(90deg, #000 30%, #0003 50%, #000 70%)'
-    const decls = `${baseCss.decl}-webkit-mask-image:${mask};mask-image:${mask};-webkit-mask-size:300% 100%;mask-size:300% 100%;`
-    const kf = `@keyframes ${animName}{from{-webkit-mask-position:130% 0;mask-position:130% 0;}to{-webkit-mask-position:-130% 0;mask-position:-130% 0;}}`
-    return { decls, animShorthand: `${animName} ${duration}s linear infinite`, sync: syncDelayCalc(duration), keyframes: kf }
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const pos = wrap(phaseVar, '130%', '-130%')
+    const decl = `${baseCss.decl}-webkit-mask-image:${mask};mask-image:${mask};-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-position:${pos} 0;mask-position:${pos} 0;`
+    return { selfPart, decl }
   }
 
   return null
@@ -822,8 +866,8 @@ function buildPaintEffectCss(effectId, speed, base, stops, hash) {
  * smoothly, it snaps at 50%). Every span reads that INHERITED value back
  * through `calc()`/`var(--i)` to get its own stagger — no Animation object
  * of its own, just a derived style, the same "one timeline, many dependent
- * values" shape the `conic` paint effect already uses for its rotation
- * angle (see buildPaintEffectCss). `selfPart` merges into compilePaintCss's
+ * values" shape every paint-slot effect now uses too (see
+ * buildPaintPhaseCss). `selfPart` merges into compilePaintCss's
  * existing self-animation comma-list (built for coin/heli/etc — see
  * emitSelfRule) since two rules setting `animation` on one selector clobber
  * each other; `spanDecl` is a plain, unanimated declaration. */
@@ -1063,26 +1107,21 @@ export function compilePaintCss(spec, selector, opts = {}) {
   }
 
   if (needsLetterSplit) {
-    // Every animation that lands on `${selector} span` (the paint effect,
-    // when the name is split, plus any per-letter motion effects) must be
-    // ONE rule with comma-listed `animation`/`animation-delay` — two
-    // separate rules setting the `animation` shorthand on the same selector
-    // don't compose, the later rule wins outright and blanks the earlier
-    // one's animation-name entirely (see module-level comment + the
-    // buildPaintEffectCss/buildLetterMotionCss doc comments).
+    // Every span declaration below is a plain, unanimated calc() derived
+    // from an inherited phase custom property — no `${selector} span`
+    // element ever carries its own `animation` anymore (paint effect
+    // included, see buildPaintPhaseCss). Every live Animation for this name
+    // lives on the PARENT, in the one shared comma-list emitSelfRule builds
+    // below, regardless of letter count.
     let spanDecls = ''
-    const animList = []
-    const delayList = []
 
     if (baseCss?.isClipText) spanDecls += baseCss.decl
 
     if (paintEffect) {
-      const p = buildPaintEffectCss(paintEffect.id, paintEffect.speed, base, stops, hash)
+      const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)
       if (p) {
-        spanDecls += p.decls
-        animList.push(p.animShorthand)
-        delayList.push(p.sync)
-        css += p.keyframes
+        selfParts.push(p.selfPart)
+        spanDecls += p.decl
       }
     }
     for (const e of motionEffects) {
@@ -1099,13 +1138,11 @@ export function compilePaintCss(spec, selector, opts = {}) {
     }
     emitSelfRule()
 
-    css += `${selector} span{display:inline-block;${spanDecls}`
-    if (animList.length) css += `animation:${animList.join(', ')};animation-delay:${delayList.join(', ')};`
-    css += '}'
+    css += `${selector} span{display:inline-block;${spanDecls}}`
   } else {
     if (paintEffect) {
-      const p = buildPaintEffectCss(paintEffect.id, paintEffect.speed, base, stops, hash)
-      if (p) selfParts.unshift({ decls: p.decls, animShorthand: p.animShorthand, delayExpr: p.sync, keyframes: p.keyframes })
+      const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)
+      if (p) selfParts.unshift({ ...p.selfPart, decls: p.decl })
     }
     emitSelfRule()
   }

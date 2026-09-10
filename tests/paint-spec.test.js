@@ -336,7 +336,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(spanRule).toContain('translateY')
     // The ONE real Animation lives on the parent, driving a registered
     // (smoothly interpolable) phase property every span reads back.
-    const parentRule = css.match(/\.hsp-wave1\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-wave1\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toContain('animation:hsp_wave1_wave')
     expect(css).toContain("@property --hsp-wave1-wave-ph{syntax:'<number>'")
   })
@@ -382,7 +382,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(rule).toContain('var(--i)')
     expect(rule).toContain('translateY')
     // The ONE wave Animation is on the parent.
-    const parentRule = css.match(/\.hsp-fw\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-fw\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toContain('animation:hsp_fw_wave')
   })
 
@@ -408,7 +408,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(spanRules[0]).not.toContain('animation:')
     expect(spanRules[0]).toContain('translateY')
     expect(spanRules[0]).toContain('hue-rotate')
-    const parentRule = css.match(/\.hsp-wr\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-wr\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
   })
 
@@ -434,7 +434,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(spanRules[0]).not.toContain('hsp_pt_tumble')
     expect(spanRules[0]).toMatch(/animation-delay:calc\(-1 \* mod\(var\(--hsp-t, 0s\), [\d.]+s\)\);/)
     expect(spanRules[0]).toContain('transform-style:preserve-3d;')
-    const parentRule = css.match(/\.hsp-pt\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-pt\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toContain('animation:hsp_pt_tumble')
     expect(css).toContain('.hsp-pt{perspective:300px;}')
   })
@@ -445,7 +445,7 @@ describe('compilePaintCss — structural checks', () => {
     const spanRules = css.match(/\.hsp-w span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     expect(spanRules[0]).not.toContain('animation:')
-    const parentRule = css.match(/\.hsp-w\{[^}]*\}/g).find(r => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-w\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_w_wave[^;,]*;/)
   })
 

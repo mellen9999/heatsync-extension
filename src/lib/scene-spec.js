@@ -1393,6 +1393,33 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
  *   resting positions are each scene's designed hero frame.
  * @returns {string} css
  */
+/**
+ * How many live CSS animations buildSceneCss would emit for this scene, split
+ * by plane so a caller working to a layer budget can hold one still and let the
+ * other run.
+ *
+ * A backdrop is always exactly 1. A weather is 1, or 2 when it carries a
+ * `positionalAnim` — today only `storm`, whose falling loop runs on the rain's
+ * clock while its keyframes do the lightning. So a scene costs at most 3 on its
+ * own and can never blow the cap by itself; only a scene plus a paint-slot fill
+ * can, which is the single case compilePaintCss has to resolve.
+ */
+export function sceneAnimationCost(scene, opts = {}) {
+  const none = { backdrop: 0, weather: 0 }
+  if (opts.static || !isPlainObject(scene)) return none
+  const backdrop = isPlainObject(scene.backdrop) && BACKDROP_IDS.has(scene.backdrop.id) ? scene.backdrop : null
+  const weather = isPlainObject(scene.weather) && WEATHER_IDS.has(scene.weather.id) ? scene.weather : null
+  let w = 0
+  if (weather) {
+    const wMeta = WEATHERS[weather.id]
+    const wDensity = DENSITIES.has(weather.density) ? weather.density : 2
+    const wSpeed = safeSpeed(weather.speed ?? 1)
+    const built = wMeta.near(tintKit(sceneTint(wMeta, weather)), wDensity, 'cost', wSpeed)
+    w = built ? (built.positionalAnim ? 2 : 1) : 0
+  }
+  return { backdrop: backdrop ? 1 : 0, weather: w }
+}
+
 export function buildSceneCss(scene, selector, hash, opts = {}) {
   if (!isPlainObject(scene) || typeof selector !== 'string' || !selector) return ''
   const backdrop = isPlainObject(scene.backdrop) && BACKDROP_IDS.has(scene.backdrop.id) ? scene.backdrop : null
@@ -1459,7 +1486,12 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
   if (fgLayer) frontLayers.push(fgLayer)
   if (wBuilt) {
     frontLayers.push(...wBuilt.layers)
-    if (!isStatic) {
+    // `stillWeather` is the layer cap's overflow valve, and it holds the plane
+    // rather than deleting it — the same call the far plane already makes for
+    // furnace ("a still far plane is still depth") and that static mode makes
+    // for the whole scene. A composition missing a plane is a different
+    // picture; a composition at rest is the same picture.
+    if (!isStatic && !opts.stillWeather) {
       frontAnims.push({
         name: `hss_${hash}_w`, period: wPeriod,
         timing: 'linear', alternate: !!wBuilt.alternate,
@@ -1475,7 +1507,8 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
   }
   if (frontLayers.length) {
     css += wBuilt?.props || ''
-    css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, frontLayers, frontAnims, isStatic)
+    css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, frontLayers, frontAnims,
+      isStatic || (!!opts.stillWeather && !!wBuilt))
   }
 
   return css

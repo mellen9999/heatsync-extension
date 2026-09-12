@@ -20,8 +20,21 @@
  * through this module.
  *
  * ── layering model ──────────────────────────────────────────────────────
- * Every paint is at most 3 layers:
- *   - `base`   the resting gradient (solid / linear / conic). Always present.
+ * Every paint costs at most MAX_ANIMATED_LAYERS (3) live CSS animations. That
+ * is now ENFORCED by compilePaintCss rather than merely claimed here: this
+ * header promised 3 from v1, and the v2 scene block below then added 1-3
+ * animations of its own that MAX_EFFECTS never counted, so a real name could
+ * reach six. The cap is spent in priority order — paint-slot fill, backdrop,
+ * weather, then motion effects in spec order — and an over-budget weather
+ * renders STILL rather than vanishing.
+ *
+ * Note the two caps are different numbers about different things: MAX_EFFECTS
+ * bounds how elaborate a spec may BE (a save-time rule, server-enforced), and
+ * MAX_ANIMATED_LAYERS bounds what one name may COST to draw (a compile-time
+ * rule, so paints saved before it existed get cheaper too).
+ *
+ *   - `base`   the resting gradient (solid / linear / conic). Always present,
+ *              never animated by itself — 0 layers.
  *   - `effects[]` 0-3 animated layers, each in one of two slots:
  *       'paint'  — owns the background/color. At most ONE active (they are
  *                  mutually exclusive: you can't pan AND matrix-rain the
@@ -56,7 +69,7 @@ import {
 } from './paint-core.js'
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
-  sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS,
+  sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
 } from './scene-spec.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
@@ -65,6 +78,15 @@ const BASE_TYPES = new Set(['solid', 'linear', 'conic'])
 const GLOW_STRENGTHS = new Set([1, 2])
 
 const MAX_EFFECTS = 3
+// The rendered ceiling, not the saved one. MAX_EFFECTS bounds how elaborate a
+// spec may BE; this bounds how many live CSS animations one name may COST, and
+// the two are not the same number because a v2 scene adds 1-3 animations that
+// MAX_EFFECTS never counted. 3 is the module's own documented layering model
+// (see the header), enforced over the whole catalog by
+// tests/client/paint-layer-cap.test.js — which is also what lets the mobile
+// animation budget in chat/paint-cosmetics.js be a constant again: that
+// constant went stale twice because the unit kept moving underneath it.
+export const MAX_ANIMATED_LAYERS = 3
 const MIN_STOPS = 1
 const MAX_STOPS = 8
 
@@ -1072,8 +1094,51 @@ export function compilePaintCss(spec, selector, opts = {}) {
   const effects = opts.static
     ? []
     : (Array.isArray(spec.effects) ? spec.effects.filter(e => isPlainObject(e) && EFFECT_IDS.has(e.id)) : [])
-  const paintEffect = effects.find(e => EFFECTS[e.id].slot === 'paint')
-  const motionEffects = effects.filter(e => EFFECTS[e.id].slot === 'motion')
+
+  // ── the layer cap ────────────────────────────────────────────────────────
+  //
+  // MAX_ANIMATED_LAYERS is spent here, in priority order, and what does not fit
+  // is shed. This is the module's own layering model finally being enforced:
+  // the header has promised "at most 3 layers" since v1, and the v2 scene block
+  // quietly broke it by adding 1-3 animations outside MAX_EFFECTS' reach, which
+  // is how a name reached SIX live animations.
+  //
+  // Enforced at COMPILE time, not at save time. validatePaintSpec counts
+  // `effects` — already capped at 3 — and cannot see scene planes at all; and a
+  // save-time rule would leave every paint stored before today rendering six
+  // animations forever, which is the opposite of the point.
+  //
+  // Order: the name's own fill first (it IS the paint), then the backdrop, then
+  // the weather, then motion effects in spec order. Each item is atomic and a
+  // later, smaller one may fill a slot an earlier one could not use.
+  //
+  // A scene costs at most 3 by itself (backdrop 1 + weather ≤2), so it can
+  // never overflow alone — only a fill plus `storm` can, and the weather then
+  // renders STILL rather than disappearing.
+  const sceneOn = spec.v === 2 && isPlainObject(spec.scene)
+  const sceneCost = sceneOn ? sceneAnimationCost(spec.scene, { static: !!opts.static }) : { backdrop: 0, weather: 0 }
+  let layerBudget = MAX_ANIMATED_LAYERS
+
+  const paintEffectRaw = effects.find(e => EFFECTS[e.id].slot === 'paint')
+  const paintEffect = paintEffectRaw && layerBudget >= 1 ? paintEffectRaw : null
+  if (paintEffect) layerBudget -= 1
+
+  layerBudget -= Math.min(layerBudget, sceneCost.backdrop)
+  const stillWeather = sceneCost.weather > layerBudget
+  if (!stillWeather) layerBudget -= sceneCost.weather
+
+  const motionEffects = []
+  for (const e of effects) {
+    if (EFFECTS[e.id].slot !== 'motion') continue
+    if (layerBudget < 1) break
+    motionEffects.push(e)
+    layerBudget -= 1
+  }
+
+  // Reads the RAW spec on purpose: the markup shape is the caller's contract
+  // (paintNameHtml is called separately with the same spec), so a name whose
+  // motion effect the cap just shed still splits into spans — it simply renders
+  // inert, exactly as it already does in static mode.
   const needsLetterSplit = paintNeedsSpans(spec)
 
   // Chrome cannot paint a parent's background-clip:text into TRANSFORMED
@@ -1173,8 +1238,8 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // effects a filter would break: ripple ANIMATES `filter`, so a static one
   // would be clobbered every frame, and tumble needs `transform-style:
   // preserve-3d`, which a filter flattens.
-  if (spec.v === 2 && isPlainObject(spec.scene)) {
-    css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static })
+  if (sceneOn) {
+    css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather })
     const clipTextFill = !!paintEffect || base.type !== 'solid'
     const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
     // An ANIMATED clip-text fill under the rim filter is the worst render

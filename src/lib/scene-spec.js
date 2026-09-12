@@ -1458,11 +1458,17 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
       // Static mode keeps it for the same reason: the resting frame is the
       // composition, and a composition missing a plane is a different picture.
       const cycles = Math.max(1, Math.round(bPeriod / Math.max(0.2, wPeriod)))
-      const travel = bBuilt.alternate || isStatic ? '0 0' : `0 ${far.tile * cycles}px`
+      const stillPlate = isStatic || !!opts.stillBackdrop
+      const travel = bBuilt.alternate || stillPlate ? '0 0' : `0 ${far.tile * cycles}px`
       layers.unshift(L(far.img, 'repeat', far.size, '0 0', travel))
     }
     const anims = []
-    if (!isStatic) {
+    // `stillBackdrop` is the second overflow valve, and it exists because the
+    // first version of the cap had no way to hold the plate: it simply stopped
+    // CHARGING for the backdrop once the budget ran out and emitted its
+    // animation anyway, so a name carrying three motion effects plus a scene
+    // shipped a fourth live animation past a cap that believed it was 3.
+    if (!isStatic && !opts.stillBackdrop) {
       anims.push({
         name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
         alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
@@ -1474,7 +1480,7 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
     // eclipse rendered as nothing on every static surface (chips, SSR,
     // reduced-motion) instead of at their resting glow.
     css += bBuilt.props || ''
-    css += pseudoRule(selector, 'before', -1, layers, anims, isStatic)
+    css += pseudoRule(selector, 'before', -1, layers, anims, isStatic || !!opts.stillBackdrop)
   }
 
   // ── front pseudo: near weather, and the foreground silhouette over it ──

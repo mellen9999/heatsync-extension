@@ -1108,13 +1108,30 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // save-time rule would leave every paint stored before today rendering six
   // animations forever, which is the opposite of the point.
   //
-  // Order: the name's own fill first (it IS the paint), then the backdrop, then
-  // the weather, then motion effects in spec order. Each item is atomic and a
-  // later, smaller one may fill a slot an earlier one could not use.
+  // ORDER: the name's own fill, then its motion, then the backdrop, then the
+  // weather. Every slot spent on the name itself; the scene gets what's left,
+  // and what doesn't fit is held STILL rather than deleted.
   //
-  // A scene costs at most 3 by itself (backdrop 1 + weather ≤2), so it can
-  // never overflow alone — only a fill plus `storm` can, and the weather then
-  // renders STILL rather than disappearing.
+  // The first version of this cap ran the opposite order — scene before the
+  // name's motion — and it was measured wrong by a factor of six.
+  // `scripts/paint-perf.mjs --cost` ablates one painted name and attributes the
+  // renderer time; for the shape actually reported slow (conic fill + strength-2
+  // glow + terminal plate + glyphs weather + letter wave, ONE of them on screen,
+  // 3s at 4x CPU):
+  //
+  //   full 669ms · -weather 377 · -scene 289 · -backdrop 565 · -glow 660 ·
+  //   linear base 667 · -fill effect 622 · static 0
+  //
+  // So the weather plane alone is ~292ms — 44% of the whole cost — the backdrop
+  // ~104ms, the fill effect ~47ms, and the glow and the conic gradient are free
+  // (they are painted once, not per frame). Paint is 507 of the 669: this is a
+  // PAINT cost, which is exactly the phase real-user INP says dominates on the
+  // phone, and the old order shed the letter wave — the cheapest animation in
+  // the spec, a transform — to keep the single most expensive plane running.
+  //
+  // Holding the weather still instead saves that 44% and hands the slot back to
+  // the name. A composition at rest is the same picture; a name that stopped
+  // moving is a different name.
   const sceneOn = spec.v === 2 && isPlainObject(spec.scene)
   const sceneCost = sceneOn ? sceneAnimationCost(spec.scene, { static: !!opts.static }) : { backdrop: 0, weather: 0 }
   let layerBudget = MAX_ANIMATED_LAYERS
@@ -1123,10 +1140,6 @@ export function compilePaintCss(spec, selector, opts = {}) {
   const paintEffect = paintEffectRaw && layerBudget >= 1 ? paintEffectRaw : null
   if (paintEffect) layerBudget -= 1
 
-  layerBudget -= Math.min(layerBudget, sceneCost.backdrop)
-  const stillWeather = sceneCost.weather > layerBudget
-  if (!stillWeather) layerBudget -= sceneCost.weather
-
   const motionEffects = []
   for (const e of effects) {
     if (EFFECTS[e.id].slot !== 'motion') continue
@@ -1134,6 +1147,13 @@ export function compilePaintCss(spec, selector, opts = {}) {
     motionEffects.push(e)
     layerBudget -= 1
   }
+
+  // Cheapest plane first, so a single leftover slot goes to the backdrop rather
+  // than being stranded by a 2-animation weather that cannot fit in it.
+  const stillBackdrop = sceneCost.backdrop > layerBudget
+  if (!stillBackdrop) layerBudget -= sceneCost.backdrop
+  const stillWeather = sceneCost.weather > layerBudget
+  if (!stillWeather) layerBudget -= sceneCost.weather
 
   // Reads the RAW spec on purpose: the markup shape is the caller's contract
   // (paintNameHtml is called separately with the same spec), so a name whose
@@ -1239,7 +1259,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // would be clobbered every frame, and tumble needs `transform-style:
   // preserve-3d`, which a filter flattens.
   if (sceneOn) {
-    css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather })
+    css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather, stillBackdrop })
     const clipTextFill = !!paintEffect || base.type !== 'solid'
     const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
     // An ANIMATED clip-text fill under the rim filter is the worst render

@@ -1133,7 +1133,6 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // the name. A composition at rest is the same picture; a name that stopped
   // moving is a different name.
   const sceneOn = spec.v === 2 && isPlainObject(spec.scene)
-  const sceneCost = sceneOn ? sceneAnimationCost(spec.scene, { static: !!opts.static }) : { backdrop: 0, weather: 0 }
   let layerBudget = MAX_ANIMATED_LAYERS
 
   const paintEffectRaw = effects.find(e => EFFECTS[e.id].slot === 'paint')
@@ -1148,12 +1147,25 @@ export function compilePaintCss(spec, selector, opts = {}) {
     layerBudget -= 1
   }
 
-  // Cheapest plane first, so a single leftover slot goes to the backdrop rather
-  // than being stranded by a 2-animation weather that cannot fit in it.
-  const stillBackdrop = sceneCost.backdrop > layerBudget
-  if (!stillBackdrop) layerBudget -= sceneCost.backdrop
-  const stillWeather = sceneCost.weather > layerBudget
-  if (!stillWeather) layerBudget -= sceneCost.weather
+  // ── THE SCENE IS RATE-LIMITED, NOT SLOT-LIMITED ──────────────────────────
+  //
+  // Scene planes no longer spend the cap, because they no longer cost what a cap
+  // slot prices. scene-spec.js quantises every plane to
+  // SCENE_STEPS_PER_SECOND (12) redraws a second instead of the display's 60,
+  // and `--cost` measured that at a 75% cut for the same visible drift: both
+  // planes animating went 501ms → 124ms per 3s of one name.
+  //
+  // So the cap now bounds what it was always trying to price — animations
+  // running at FULL frame rate, which is the name's own fill and motion. A
+  // stepped plane costs about a fifth of one of those, and charging it a whole
+  // slot is what forced the choice between a user's letter wave and the weather
+  // behind it. Both, now, for less than the frozen version cost before.
+  //
+  // The still-flags remain for `sceneAnimationCost` callers and for a future
+  // overflow rule; nothing currently sets them, and a scene with no animation at
+  // all is still expressible through `opts.static`.
+  const stillBackdrop = false
+  const stillWeather = false
 
   // Reads the RAW spec on purpose: the markup shape is the caller's contract
   // (paintNameHtml is called separately with the same spec), so a name whose

@@ -7419,6 +7419,36 @@ function normalizeSceneForHash(scene) {
  * layer array the shorthand came from, which is what makes the two lists
  * impossible to disagree about.
  */
+/**
+ * How often a scene plane is allowed to redraw, per second.
+ *
+ * A scene plane drifts by animating `background-position`, and that re-rasters
+ * the whole plane on every frame the display offers — 60 a second, for motion
+ * nobody is tracking. `steps(n)` holds the computed value between steps, and a
+ * value that does not change is not repainted, so the same visible drift costs
+ * this many rasters a second instead of 60.
+ *
+ * Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
+ * both planes animating:
+ *
+ *   linear (60/s)  501ms   ·  20/s  211ms  ·  12/s  124ms  ·  8/s  79ms
+ *
+ * 12 is where the curve has given up most of its cost (-75%) while still being
+ * twelve distinct positions a second — ambient drift, not a slideshow. Below
+ * about 8 the motion starts reading as stepping rather than moving.
+ *
+ * Steps are derived PER ANIMATION from its own period, never a fixed count: a
+ * fixed `steps(12)` is twelve steps across the period, so it would quantise a
+ * 16s plate to one jump every 1.3s and leave a 0.9s weather loop untouched.
+ */
+const SCENE_STEPS_PER_SECOND = 12
+
+/** `steps()` timing that redraws SCENE_STEPS_PER_SECOND times a second. */
+function steppedTiming(period) {
+  const n = Math.max(1, Math.round(period * SCENE_STEPS_PER_SECOND))
+  return `steps(${n})`
+}
+
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
@@ -7426,7 +7456,11 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
     const names = [], delays = []
     for (const a of anims) {
       const dir = a.alternate ? ' alternate' : ''
-      names.push(`${a.name} ${a.period}s ${a.alternate ? 'ease-in-out' : a.timing || 'linear'} infinite${dir}`)
+      // Quantised whatever the source timing was. An eased plate reads the same
+      // stepped (the easing is in WHERE it is, and that is still computed per
+      // step), and a plane already carrying its own timing function is still a
+      // plane re-rastering itself.
+      names.push(`${a.name} ${a.period}s ${steppedTiming(a.period)} infinite${dir}`)
       delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
       keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
     }
@@ -8760,7 +8794,6 @@ function compilePaintCss(spec, selector, opts = {}) {
   // the name. A composition at rest is the same picture; a name that stopped
   // moving is a different name.
   const sceneOn = spec.v === 2 && isPlainObject(spec.scene)
-  const sceneCost = sceneOn ? sceneAnimationCost(spec.scene, { static: !!opts.static }) : { backdrop: 0, weather: 0 }
   let layerBudget = MAX_ANIMATED_LAYERS
 
   const paintEffectRaw = effects.find(e => EFFECTS[e.id].slot === 'paint')
@@ -8775,12 +8808,25 @@ function compilePaintCss(spec, selector, opts = {}) {
     layerBudget -= 1
   }
 
-  // Cheapest plane first, so a single leftover slot goes to the backdrop rather
-  // than being stranded by a 2-animation weather that cannot fit in it.
-  const stillBackdrop = sceneCost.backdrop > layerBudget
-  if (!stillBackdrop) layerBudget -= sceneCost.backdrop
-  const stillWeather = sceneCost.weather > layerBudget
-  if (!stillWeather) layerBudget -= sceneCost.weather
+  // ── THE SCENE IS RATE-LIMITED, NOT SLOT-LIMITED ──────────────────────────
+  //
+  // Scene planes no longer spend the cap, because they no longer cost what a cap
+  // slot prices. scene-spec.js quantises every plane to
+  // SCENE_STEPS_PER_SECOND (12) redraws a second instead of the display's 60,
+  // and `--cost` measured that at a 75% cut for the same visible drift: both
+  // planes animating went 501ms → 124ms per 3s of one name.
+  //
+  // So the cap now bounds what it was always trying to price — animations
+  // running at FULL frame rate, which is the name's own fill and motion. A
+  // stepped plane costs about a fifth of one of those, and charging it a whole
+  // slot is what forced the choice between a user's letter wave and the weather
+  // behind it. Both, now, for less than the frozen version cost before.
+  //
+  // The still-flags remain for `sceneAnimationCost` callers and for a future
+  // overflow rule; nothing currently sets them, and a scene with no animation at
+  // all is still expressible through `opts.static`.
+  const stillBackdrop = false
+  const stillWeather = false
 
   // Reads the RAW spec on purpose: the markup shape is the caller's contract
   // (paintNameHtml is called separately with the same spec), so a name whose
@@ -9746,7 +9792,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '063a5837+-202609120211' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '33018473+-202609120326' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

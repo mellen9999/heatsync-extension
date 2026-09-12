@@ -1347,6 +1347,36 @@ export function normalizeSceneForHash(scene) {
  * layer array the shorthand came from, which is what makes the two lists
  * impossible to disagree about.
  */
+/**
+ * How often a scene plane is allowed to redraw, per second.
+ *
+ * A scene plane drifts by animating `background-position`, and that re-rasters
+ * the whole plane on every frame the display offers — 60 a second, for motion
+ * nobody is tracking. `steps(n)` holds the computed value between steps, and a
+ * value that does not change is not repainted, so the same visible drift costs
+ * this many rasters a second instead of 60.
+ *
+ * Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
+ * both planes animating:
+ *
+ *   linear (60/s)  501ms   ·  20/s  211ms  ·  12/s  124ms  ·  8/s  79ms
+ *
+ * 12 is where the curve has given up most of its cost (-75%) while still being
+ * twelve distinct positions a second — ambient drift, not a slideshow. Below
+ * about 8 the motion starts reading as stepping rather than moving.
+ *
+ * Steps are derived PER ANIMATION from its own period, never a fixed count: a
+ * fixed `steps(12)` is twelve steps across the period, so it would quantise a
+ * 16s plate to one jump every 1.3s and leave a 0.9s weather loop untouched.
+ */
+const SCENE_STEPS_PER_SECOND = 12
+
+/** `steps()` timing that redraws SCENE_STEPS_PER_SECOND times a second. */
+function steppedTiming(period) {
+  const n = Math.max(1, Math.round(period * SCENE_STEPS_PER_SECOND))
+  return `steps(${n})`
+}
+
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
@@ -1354,7 +1384,11 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
     const names = [], delays = []
     for (const a of anims) {
       const dir = a.alternate ? ' alternate' : ''
-      names.push(`${a.name} ${a.period}s ${a.alternate ? 'ease-in-out' : a.timing || 'linear'} infinite${dir}`)
+      // Quantised whatever the source timing was. An eased plate reads the same
+      // stepped (the easing is in WHERE it is, and that is still computed per
+      // step), and a plane already carrying its own timing function is still a
+      // plane re-rastering itself.
+      names.push(`${a.name} ${a.period}s ${steppedTiming(a.period)} infinite${dir}`)
       delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
       keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
     }

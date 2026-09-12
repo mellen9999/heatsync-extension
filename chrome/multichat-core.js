@@ -6047,6 +6047,61 @@ function periodSeconds(basePeriod, speed, luminance) {
   return Math.round(seconds * 1000) / 1000
 }
 
+// ── REDRAW RATE LIMITING ────────────────────────────────────────────────────
+//
+// An animation that changes a painted value re-rasters its element on every
+// frame the display offers — 60 a second, for ambient motion nobody is tracking.
+// `steps(n)` holds the computed value between steps, and a value that does not
+// change is not repainted, so the same visible motion costs n redraws a second.
+//
+// Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
+// both scene planes animating:
+//
+//   linear (60/s) 501ms · 20/s 211ms · 12/s 124ms · 8/s 79ms
+//
+// Two rates, because the two populations are watched differently. A scene plane
+// IS the motion you notice, so it keeps more of it. A fill sweeping through the
+// glyphs is texture, and the person who reported the lag said outright that
+// steppiness does not bother them — so it takes the cheaper end.
+const SCENE_STEPS_PER_SECOND = 12
+const FILL_STEPS_PER_SECOND = 8
+
+/**
+ * `steps()` timing that redraws `rate` times a second — or null when this
+ * animation must not be quantised at all.
+ *
+ * **A luminance-changing animation is never stepped.** Quantising a smooth
+ * brightness ramp turns it into `rate` brightness CHANGES a second, and at any
+ * rate worth having for performance that is far past the 3Hz flashing threshold
+ * MIN_LUMINANCE_PERIOD_S above already guards against — 2026-09-11 shipped
+ * exactly that for `furnace`, `eclipse` and `storm` (lightning) before it was
+ * caught. Stepping slower is not a fix either: ≤3/s still sits at the threshold
+ * and looks worse than smooth. So luminance opts out entirely, and callers fall
+ * back to their own timing function.
+ *
+ * `n` is derived from the animation's OWN period, never a fixed count: a flat
+ * `steps(12)` is twelve steps across the period, which would quantise a 16s
+ * plate to one jump every 1.3s and leave a 0.9s loop untouched — the same
+ * requested rate meaning two different pictures.
+ *
+ * Only correct for SINGLE-INTERVAL keyframes. A CSS timing function applies per
+ * keyframe interval, not per animation, so `steps(n)` on multi-stop keyframes
+ * gives n steps *inside each interval* and multiplies the redraw rate instead of
+ * capping it. Every caller here drives a one-interval `to{}` phase.
+ *
+ * @param {number} period - full cycle in seconds
+ * @param {number} rate - target redraws per second
+ * @param {{luminance?: boolean, oneWay?: boolean}} [opts] - `oneWay` uses
+ *   `jump-none` so the final keyframe is actually shown; a one-way ramp under
+ *   the default `jump-end` stops a step short of its end every cycle.
+ * @returns {string|null} timing function, or null if it must not be stepped
+ */
+function steppedTiming(period, rate, opts = {}) {
+  if (opts.luminance) return null
+  const n = Math.max(1, Math.round(period * rate))
+  return opts.oneWay ? `steps(${n}, jump-none)` : `steps(${n})`
+}
+
 /** Phase-lock delay for a paint/scene animation. Elements carry `--hsp-t`
  * (their mount wall-time in seconds — see paintPhaseNow in paint-spec.js),
  * and mod() folds it onto this animation's full visual cycle, so every copy
@@ -7419,36 +7474,6 @@ function normalizeSceneForHash(scene) {
  * layer array the shorthand came from, which is what makes the two lists
  * impossible to disagree about.
  */
-/**
- * How often a scene plane is allowed to redraw, per second.
- *
- * A scene plane drifts by animating `background-position`, and that re-rasters
- * the whole plane on every frame the display offers — 60 a second, for motion
- * nobody is tracking. `steps(n)` holds the computed value between steps, and a
- * value that does not change is not repainted, so the same visible drift costs
- * this many rasters a second instead of 60.
- *
- * Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
- * both planes animating:
- *
- *   linear (60/s)  501ms   ·  20/s  211ms  ·  12/s  124ms  ·  8/s  79ms
- *
- * 12 is where the curve has given up most of its cost (-75%) while still being
- * twelve distinct positions a second — ambient drift, not a slideshow. Below
- * about 8 the motion starts reading as stepping rather than moving.
- *
- * Steps are derived PER ANIMATION from its own period, never a fixed count: a
- * fixed `steps(12)` is twelve steps across the period, so it would quantise a
- * 16s plate to one jump every 1.3s and leave a 0.9s weather loop untouched.
- */
-const SCENE_STEPS_PER_SECOND = 12
-
-/** `steps()` timing that redraws SCENE_STEPS_PER_SECOND times a second. */
-function steppedTiming(period) {
-  const n = Math.max(1, Math.round(period * SCENE_STEPS_PER_SECOND))
-  return `steps(${n})`
-}
-
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
@@ -7456,11 +7481,18 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
     const names = [], delays = []
     for (const a of anims) {
       const dir = a.alternate ? ' alternate' : ''
-      // Quantised whatever the source timing was. An eased plate reads the same
-      // stepped (the easing is in WHERE it is, and that is still computed per
-      // step), and a plane already carrying its own timing function is still a
-      // plane re-rastering itself.
-      names.push(`${a.name} ${a.period}s ${steppedTiming(a.period)} infinite${dir}`)
+      // Rate-limited (paint-core.steppedTiming) so a drifting plane redraws
+      // SCENE_STEPS_PER_SECOND times a second instead of 60 — an eased plate
+      // reads the same stepped, because the easing is in WHERE it is and that is
+      // still computed per step.
+      //
+      // EXCEPT a luminance-changing plane, which steppedTiming refuses: `furnace`,
+      // `eclipse` and `storm` (lightning) all declare `luminance: true`, and
+      // quantising a brightness ramp is flashing, not drifting. Those keep their
+      // own smooth timing. The first version of this stepped all three.
+      const stepped = steppedTiming(a.period, SCENE_STEPS_PER_SECOND, { luminance: a.luminance })
+      const timing = stepped || (a.alternate ? 'ease-in-out' : a.timing || 'linear')
+      names.push(`${a.name} ${a.period}s ${timing} infinite${dir}`)
       delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
       keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
     }
@@ -7578,6 +7610,8 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
       anims.push({
         name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
         alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
+        // furnace and eclipse breathe — pseudoRule must not quantise them.
+        luminance: !!bMeta?.luminance,
       })
     }
     // The @property registration is NOT animation — it is what gives the
@@ -7608,11 +7642,16 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
         name: `hss_${hash}_w`, period: wPeriod,
         timing: 'linear', alternate: !!wBuilt.alternate,
         body: wBuilt.keyframesBody || null,
+        // storm's lightning is the worst case for a stepped brightness ramp.
+        luminance: !!wMeta?.luminance,
       })
       if (wBuilt.positionalAnim) {
         frontAnims.push({
           name: `hss_${hash}_wr`, period: wBuilt.positionalAnim.period,
           timing: wBuilt.positionalAnim.timing, alternate: false, body: null,
+          // The rain's positional loop is position, not brightness — steppable
+          // even on storm, whose luminance flag belongs to the lightning above.
+          luminance: false,
         })
       }
     }
@@ -7658,11 +7697,16 @@ const SCENE_RIM_FILTER_CSS = 'filter:drop-shadow(0 1px 1px #000d) drop-shadow(0 
 // No colour CSS leaves here any more: a scene's colour is the user's tint, and
 // the builder's palette is the picker. `tint` is the entry's default.
 
+// `luminance` is published because it is not an implementation detail: it decides
+// the WCAG period floor (periodSeconds) and whether the plane may be rate-limited
+// at all (steppedTiming refuses — a quantised brightness ramp is flashing). A
+// consumer that cannot ask has to hardcode the three luminance ids, and a fence
+// that hardcodes them stops covering the fourth one somebody adds.
 const SCENE_BACKDROPS_META = Object.fromEntries(
-  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
+  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0], luminance: !!m.luminance }]))
 
 const SCENE_WEATHERS_META = Object.fromEntries(
-  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
+  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0], luminance: !!m.luminance }]))
 
 
 
@@ -8384,20 +8428,45 @@ const THEMED_PAINT = {
  * gap" flagged when buildLetterMotionCss got this treatment (see its doc
  * comment): a paint fill combined with a letter-split name still animated
  * per-glyph. On mobile that's enough on its own to blow the whole page's
- * MOBILE_ANIMATING_BUDGET (paint-cosmetics.js) off ONE multi-layer name,
+ * PAINT_ANIMATION_BUDGET (paint-cosmetics.js) off ONE multi-layer name,
  * which reads as "only one paint animating" even though every other visible
  * name is correctly configured — the budget froze them, not the compiler.
  * Every paint-slot effect below now drives its moving value(s) off this one
  * inherited phase via calc(), so a name's live-animation count from its
  * paint layer is 1 regardless of letter count or split. */
-function paintPhaseDriver(effectId, period, hash) {
+function paintPhaseDriver(effectId, period, hash, opts = {}) {
   const phaseVar = `--hsp-${hash}-${effectId}-ph`
   const animName = `hsp_${hash}_${effectId}`
+  // ── RATE-LIMITED ──────────────────────────────────────────────────────────
+  //
+  // The fill is the one animation every painted name has, and what it moves is
+  // a `background-position` / gradient angle / `mask-position` through
+  // `background-clip:text` — pure raster, redrawn on every frame the display
+  // offers. paint-core.steppedTiming caps that at FILL_STEPS_PER_SECOND.
+  //
+  // Correct here and ONLY here, among the name's animations, because these
+  // keyframes are a single interval (`to{--ph:1}`). A CSS timing function
+  // applies per keyframe INTERVAL, so `steps(n)` on the multi-stop whole-name
+  // motions (buildMotionEffectCss — jitter alone has eight stops at 2%
+  // intervals) would give n steps inside each interval and multiply the redraw
+  // rate rather than cap it. Those keep their own timing; three of them already
+  // use `steps(1,end)` deliberately to hold a resting frame.
+  //
+  // steppedTiming returns null for a luminance effect (hue, pulse) and it stays
+  // smooth — a quantised brightness ramp is flashing, not drifting.
+  const stepped = steppedTiming(period, FILL_STEPS_PER_SECOND, {
+    luminance: !!EFFECTS[effectId]?.luminance,
+    // A one-way ramp needs `jump-none` so its final keyframe is actually shown;
+    // under the default `jump-end` glint would stop a step short of the end of
+    // its sweep every cycle. The `wrap()` fills are cyclic (end is the start
+    // again), so not showing the last step is invisible there.
+    oneWay: !!opts.oneWay,
+  })
   return {
     phaseVar,
     selfPart: {
       decls: '',
-      animShorthand: `${animName} ${period}s linear infinite`,
+      animShorthand: `${animName} ${period}s ${stepped || 'linear'} infinite`,
       delayExpr: syncDelayCalc(period),
       keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
         `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -8474,7 +8543,9 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
   if (effectId === 'glint') {
     const baseCss = buildBaseCss(base, stops)
     const image = `linear-gradient(115deg, transparent 38%, #ffffffcc 50%, transparent 62%) no-repeat, ${baseCss.cssImage}`
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    // `ease()` is a one-way sweep (210% → -110%), not a cyclic wrap, so the
+    // stepped timing must show its final keyframe — see paintPhaseDriver.
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash, { oneWay: true })
     const decl = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${ease(phaseVar, '210%', '-110%')} 0, 0 0;`
     return { selfPart, decl }
   }
@@ -8540,7 +8611,7 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
  * instance). A 12-letter name running one of these alone was already 12
  * concurrent animations; combined with a second letter motion and a
  * paint-slot fill, prod measured names carrying ~19 live animations each
- * (see chat/paint-cosmetics.js's MOBILE_ANIMATING_BUDGET comment — a real
+ * (see chat/paint-cosmetics.js's PAINT_ANIMATION_BUDGET comment — a real
  * device trace, 2026-09-10) against the module doc's own "at most 3
  * layers" design.
  *
@@ -8564,8 +8635,32 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
   // wrapped. Every formula below is written directly against p, the same
   // 0%..100% timeline the old keyframes used.
   const p = (step, sign) => `mod(var(${phaseVar}) + var(--i) * ${stagger(step, sign)}, 1)`
+  // ── RATE-LIMITED, and this is where the name's cost actually was ──────────
+  //
+  // A letter transform looks like it should be free — transforms composite. It
+  // is not, and the number is not close: `--cost` isolated one painted name and
+  // measured the stepped fill at 32.8ms against the letter wave at 195.7ms per
+  // 3s. The reason is two rules up (see `paintTarget`): a letter-split name
+  // carries the clip-text gradient on the SPANS, because Chrome cannot paint a
+  // parent's background-clip:text into transformed descendant layers. So every
+  // glyph is its own clip-text layer being re-rastered on every frame.
+  //
+  // Quantising the phase is safe for the stagger, which is the thing that makes
+  // this a travelling wave rather than a block: each span adds its OWN constant
+  // `var(--i) * stagger` AFTER the phase is read (see `p` above), so a stepped
+  // phase moves every letter in the same discrete jumps while their relative
+  // offsets stay exact. Coarser steps make the motion steppier, never flatter.
+  //
+  // Single-interval `to{}` keyframes, so steps() is a true rate limit here — the
+  // same reason it is correct for the paint-slot drivers and wrong for the
+  // multi-stop whole-name motions.
+  const stepped = steppedTiming(duration, FILL_STEPS_PER_SECOND, {
+    // ripple (hue-rotate) and type (opacity blink) are luminance; they stay
+    // smooth, and type also has a 3%-wide window a coarse grid could skip.
+    luminance: !!EFFECTS[effectId]?.luminance,
+  })
   const selfPart = {
-    decls: '', animShorthand: `${animName} ${duration}s linear infinite`,
+    decls: '', animShorthand: `${animName} ${duration}s ${stepped || 'linear'} infinite`,
     delayExpr: syncDelayCalc(duration),
     keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
       `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -9792,7 +9887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '33018473+-202609120326' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'abce17b7+-202609120435' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

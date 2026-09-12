@@ -724,7 +724,7 @@ const THEMED_PAINT = {
  * gap" flagged when buildLetterMotionCss got this treatment (see its doc
  * comment): a paint fill combined with a letter-split name still animated
  * per-glyph. On mobile that's enough on its own to blow the whole page's
- * MOBILE_ANIMATING_BUDGET (paint-cosmetics.js) off ONE multi-layer name,
+ * PAINT_ANIMATION_BUDGET (paint-cosmetics.js) off ONE multi-layer name,
  * which reads as "only one paint animating" even though every other visible
  * name is correctly configured — the budget froze them, not the compiler.
  * Every paint-slot effect below now drives its moving value(s) off this one
@@ -907,7 +907,7 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
  * instance). A 12-letter name running one of these alone was already 12
  * concurrent animations; combined with a second letter motion and a
  * paint-slot fill, prod measured names carrying ~19 live animations each
- * (see chat/paint-cosmetics.js's MOBILE_ANIMATING_BUDGET comment — a real
+ * (see chat/paint-cosmetics.js's PAINT_ANIMATION_BUDGET comment — a real
  * device trace, 2026-09-10) against the module doc's own "at most 3
  * layers" design.
  *

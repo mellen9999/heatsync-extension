@@ -32,6 +32,7 @@
 import {
   HEX_RE, isPlainObject, isIntInRange, isNumInRange,
   MIN_SPEED, MAX_SPEED, safeSpeed, periodSeconds, syncDelayCalc,
+  steppedTiming, SCENE_STEPS_PER_SECOND,
 } from './paint-core.js'
 
 // ── plate geometry (single source — mirrored nowhere) ──────────────────────
@@ -1347,36 +1348,6 @@ export function normalizeSceneForHash(scene) {
  * layer array the shorthand came from, which is what makes the two lists
  * impossible to disagree about.
  */
-/**
- * How often a scene plane is allowed to redraw, per second.
- *
- * A scene plane drifts by animating `background-position`, and that re-rasters
- * the whole plane on every frame the display offers — 60 a second, for motion
- * nobody is tracking. `steps(n)` holds the computed value between steps, and a
- * value that does not change is not repainted, so the same visible drift costs
- * this many rasters a second instead of 60.
- *
- * Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
- * both planes animating:
- *
- *   linear (60/s)  501ms   ·  20/s  211ms  ·  12/s  124ms  ·  8/s  79ms
- *
- * 12 is where the curve has given up most of its cost (-75%) while still being
- * twelve distinct positions a second — ambient drift, not a slideshow. Below
- * about 8 the motion starts reading as stepping rather than moving.
- *
- * Steps are derived PER ANIMATION from its own period, never a fixed count: a
- * fixed `steps(12)` is twelve steps across the period, so it would quantise a
- * 16s plate to one jump every 1.3s and leave a 0.9s weather loop untouched.
- */
-const SCENE_STEPS_PER_SECOND = 12
-
-/** `steps()` timing that redraws SCENE_STEPS_PER_SECOND times a second. */
-function steppedTiming(period) {
-  const n = Math.max(1, Math.round(period * SCENE_STEPS_PER_SECOND))
-  return `steps(${n})`
-}
-
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
@@ -1384,11 +1355,18 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
     const names = [], delays = []
     for (const a of anims) {
       const dir = a.alternate ? ' alternate' : ''
-      // Quantised whatever the source timing was. An eased plate reads the same
-      // stepped (the easing is in WHERE it is, and that is still computed per
-      // step), and a plane already carrying its own timing function is still a
-      // plane re-rastering itself.
-      names.push(`${a.name} ${a.period}s ${steppedTiming(a.period)} infinite${dir}`)
+      // Rate-limited (paint-core.steppedTiming) so a drifting plane redraws
+      // SCENE_STEPS_PER_SECOND times a second instead of 60 — an eased plate
+      // reads the same stepped, because the easing is in WHERE it is and that is
+      // still computed per step.
+      //
+      // EXCEPT a luminance-changing plane, which steppedTiming refuses: `furnace`,
+      // `eclipse` and `storm` (lightning) all declare `luminance: true`, and
+      // quantising a brightness ramp is flashing, not drifting. Those keep their
+      // own smooth timing. The first version of this stepped all three.
+      const stepped = steppedTiming(a.period, SCENE_STEPS_PER_SECOND, { luminance: a.luminance })
+      const timing = stepped || (a.alternate ? 'ease-in-out' : a.timing || 'linear')
+      names.push(`${a.name} ${a.period}s ${timing} infinite${dir}`)
       delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
       keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
     }
@@ -1506,6 +1484,8 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
       anims.push({
         name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
         alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
+        // furnace and eclipse breathe — pseudoRule must not quantise them.
+        luminance: !!bMeta?.luminance,
       })
     }
     // The @property registration is NOT animation — it is what gives the
@@ -1536,11 +1516,16 @@ export function buildSceneCss(scene, selector, hash, opts = {}) {
         name: `hss_${hash}_w`, period: wPeriod,
         timing: 'linear', alternate: !!wBuilt.alternate,
         body: wBuilt.keyframesBody || null,
+        // storm's lightning is the worst case for a stepped brightness ramp.
+        luminance: !!wMeta?.luminance,
       })
       if (wBuilt.positionalAnim) {
         frontAnims.push({
           name: `hss_${hash}_wr`, period: wBuilt.positionalAnim.period,
           timing: wBuilt.positionalAnim.timing, alternate: false, body: null,
+          // The rain's positional loop is position, not brightness — steppable
+          // even on storm, whose luminance flag belongs to the lightning above.
+          luminance: false,
         })
       }
     }
@@ -1586,10 +1571,15 @@ export const SCENE_RIM_FILTER_CSS = 'filter:drop-shadow(0 1px 1px #000d) drop-sh
 // No colour CSS leaves here any more: a scene's colour is the user's tint, and
 // the builder's palette is the picker. `tint` is the entry's default.
 
+// `luminance` is published because it is not an implementation detail: it decides
+// the WCAG period floor (periodSeconds) and whether the plane may be rate-limited
+// at all (steppedTiming refuses — a quantised brightness ramp is flashing). A
+// consumer that cannot ask has to hardcode the three luminance ids, and a fence
+// that hardcodes them stops covering the fourth one somebody adds.
 export const SCENE_BACKDROPS_META = Object.fromEntries(
-  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
+  Object.entries(BACKDROPS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0], luminance: !!m.luminance }]))
 
 export const SCENE_WEATHERS_META = Object.fromEntries(
-  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0] }]))
+  Object.entries(WEATHERS).map(([id, m]) => [id, { label: m.label, tint: m.legacy[0], luminance: !!m.luminance }]))
 
 export { BACKDROP_IDS as SCENE_BACKDROP_IDS, WEATHER_IDS as SCENE_WEATHER_IDS }

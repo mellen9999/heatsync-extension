@@ -47,6 +47,61 @@ export function periodSeconds(basePeriod, speed, luminance) {
   return Math.round(seconds * 1000) / 1000
 }
 
+// ── REDRAW RATE LIMITING ────────────────────────────────────────────────────
+//
+// An animation that changes a painted value re-rasters its element on every
+// frame the display offers — 60 a second, for ambient motion nobody is tracking.
+// `steps(n)` holds the computed value between steps, and a value that does not
+// change is not repainted, so the same visible motion costs n redraws a second.
+//
+// Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
+// both scene planes animating:
+//
+//   linear (60/s) 501ms · 20/s 211ms · 12/s 124ms · 8/s 79ms
+//
+// Two rates, because the two populations are watched differently. A scene plane
+// IS the motion you notice, so it keeps more of it. A fill sweeping through the
+// glyphs is texture, and the person who reported the lag said outright that
+// steppiness does not bother them — so it takes the cheaper end.
+export const SCENE_STEPS_PER_SECOND = 12
+export const FILL_STEPS_PER_SECOND = 8
+
+/**
+ * `steps()` timing that redraws `rate` times a second — or null when this
+ * animation must not be quantised at all.
+ *
+ * **A luminance-changing animation is never stepped.** Quantising a smooth
+ * brightness ramp turns it into `rate` brightness CHANGES a second, and at any
+ * rate worth having for performance that is far past the 3Hz flashing threshold
+ * MIN_LUMINANCE_PERIOD_S above already guards against — 2026-09-11 shipped
+ * exactly that for `furnace`, `eclipse` and `storm` (lightning) before it was
+ * caught. Stepping slower is not a fix either: ≤3/s still sits at the threshold
+ * and looks worse than smooth. So luminance opts out entirely, and callers fall
+ * back to their own timing function.
+ *
+ * `n` is derived from the animation's OWN period, never a fixed count: a flat
+ * `steps(12)` is twelve steps across the period, which would quantise a 16s
+ * plate to one jump every 1.3s and leave a 0.9s loop untouched — the same
+ * requested rate meaning two different pictures.
+ *
+ * Only correct for SINGLE-INTERVAL keyframes. A CSS timing function applies per
+ * keyframe interval, not per animation, so `steps(n)` on multi-stop keyframes
+ * gives n steps *inside each interval* and multiplies the redraw rate instead of
+ * capping it. Every caller here drives a one-interval `to{}` phase.
+ *
+ * @param {number} period - full cycle in seconds
+ * @param {number} rate - target redraws per second
+ * @param {{luminance?: boolean, oneWay?: boolean}} [opts] - `oneWay` uses
+ *   `jump-none` so the final keyframe is actually shown; a one-way ramp under
+ *   the default `jump-end` stops a step short of its end every cycle.
+ * @returns {string|null} timing function, or null if it must not be stepped
+ */
+export function steppedTiming(period, rate, opts = {}) {
+  if (opts.luminance) return null
+  const n = Math.max(1, Math.round(period * rate))
+  return opts.oneWay ? `steps(${n}, jump-none)` : `steps(${n})`
+}
+
 /** Phase-lock delay for a paint/scene animation. Elements carry `--hsp-t`
  * (their mount wall-time in seconds — see paintPhaseNow in paint-spec.js),
  * and mod() folds it onto this animation's full visual cycle, so every copy

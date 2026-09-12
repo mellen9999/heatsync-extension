@@ -66,6 +66,7 @@ import {
   HEX_RE, MIN_SPEED, MAX_SPEED,
   isPlainObject, isIntInRange, isNumInRange,
   safeHex, safeSpeed, periodSeconds, syncDelayCalc, fnv1a,
+  steppedTiming, FILL_STEPS_PER_SECOND,
 } from './paint-core.js'
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
@@ -729,14 +730,39 @@ const THEMED_PAINT = {
  * Every paint-slot effect below now drives its moving value(s) off this one
  * inherited phase via calc(), so a name's live-animation count from its
  * paint layer is 1 regardless of letter count or split. */
-function paintPhaseDriver(effectId, period, hash) {
+function paintPhaseDriver(effectId, period, hash, opts = {}) {
   const phaseVar = `--hsp-${hash}-${effectId}-ph`
   const animName = `hsp_${hash}_${effectId}`
+  // ── RATE-LIMITED ──────────────────────────────────────────────────────────
+  //
+  // The fill is the one animation every painted name has, and what it moves is
+  // a `background-position` / gradient angle / `mask-position` through
+  // `background-clip:text` — pure raster, redrawn on every frame the display
+  // offers. paint-core.steppedTiming caps that at FILL_STEPS_PER_SECOND.
+  //
+  // Correct here and ONLY here, among the name's animations, because these
+  // keyframes are a single interval (`to{--ph:1}`). A CSS timing function
+  // applies per keyframe INTERVAL, so `steps(n)` on the multi-stop whole-name
+  // motions (buildMotionEffectCss — jitter alone has eight stops at 2%
+  // intervals) would give n steps inside each interval and multiply the redraw
+  // rate rather than cap it. Those keep their own timing; three of them already
+  // use `steps(1,end)` deliberately to hold a resting frame.
+  //
+  // steppedTiming returns null for a luminance effect (hue, pulse) and it stays
+  // smooth — a quantised brightness ramp is flashing, not drifting.
+  const stepped = steppedTiming(period, FILL_STEPS_PER_SECOND, {
+    luminance: !!EFFECTS[effectId]?.luminance,
+    // A one-way ramp needs `jump-none` so its final keyframe is actually shown;
+    // under the default `jump-end` glint would stop a step short of the end of
+    // its sweep every cycle. The `wrap()` fills are cyclic (end is the start
+    // again), so not showing the last step is invisible there.
+    oneWay: !!opts.oneWay,
+  })
   return {
     phaseVar,
     selfPart: {
       decls: '',
-      animShorthand: `${animName} ${period}s linear infinite`,
+      animShorthand: `${animName} ${period}s ${stepped || 'linear'} infinite`,
       delayExpr: syncDelayCalc(period),
       keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
         `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -813,7 +839,9 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
   if (effectId === 'glint') {
     const baseCss = buildBaseCss(base, stops)
     const image = `linear-gradient(115deg, transparent 38%, #ffffffcc 50%, transparent 62%) no-repeat, ${baseCss.cssImage}`
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    // `ease()` is a one-way sweep (210% → -110%), not a cyclic wrap, so the
+    // stepped timing must show its final keyframe — see paintPhaseDriver.
+    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash, { oneWay: true })
     const decl = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${ease(phaseVar, '210%', '-110%')} 0, 0 0;`
     return { selfPart, decl }
   }
@@ -903,8 +931,32 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
   // wrapped. Every formula below is written directly against p, the same
   // 0%..100% timeline the old keyframes used.
   const p = (step, sign) => `mod(var(${phaseVar}) + var(--i) * ${stagger(step, sign)}, 1)`
+  // ── RATE-LIMITED, and this is where the name's cost actually was ──────────
+  //
+  // A letter transform looks like it should be free — transforms composite. It
+  // is not, and the number is not close: `--cost` isolated one painted name and
+  // measured the stepped fill at 32.8ms against the letter wave at 195.7ms per
+  // 3s. The reason is two rules up (see `paintTarget`): a letter-split name
+  // carries the clip-text gradient on the SPANS, because Chrome cannot paint a
+  // parent's background-clip:text into transformed descendant layers. So every
+  // glyph is its own clip-text layer being re-rastered on every frame.
+  //
+  // Quantising the phase is safe for the stagger, which is the thing that makes
+  // this a travelling wave rather than a block: each span adds its OWN constant
+  // `var(--i) * stagger` AFTER the phase is read (see `p` above), so a stepped
+  // phase moves every letter in the same discrete jumps while their relative
+  // offsets stay exact. Coarser steps make the motion steppier, never flatter.
+  //
+  // Single-interval `to{}` keyframes, so steps() is a true rate limit here — the
+  // same reason it is correct for the paint-slot drivers and wrong for the
+  // multi-stop whole-name motions.
+  const stepped = steppedTiming(duration, FILL_STEPS_PER_SECOND, {
+    // ripple (hue-rotate) and type (opacity blink) are luminance; they stay
+    // smooth, and type also has a 3%-wide window a coarse grid could skip.
+    luminance: !!EFFECTS[effectId]?.luminance,
+  })
   const selfPart = {
-    decls: '', animShorthand: `${animName} ${duration}s linear infinite`,
+    decls: '', animShorthand: `${animName} ${duration}s ${stepped || 'linear'} infinite`,
     delayExpr: syncDelayCalc(duration),
     keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
       `@keyframes ${animName}{to{${phaseVar}:1;}}`,

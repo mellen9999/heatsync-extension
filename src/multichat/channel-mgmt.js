@@ -26,6 +26,391 @@ function makeMcBtn(text, primary) {
   return btn
 }
 
+// Tab ids the strip owns. A channel called "live" would shadow the live tab.
+const RESERVED_TAB_IDS = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
+
+/**
+ * Why this channel can't be added, as a locale key — or null if it can.
+ *
+ * One copy on purpose. The add form, the follow-import picker and the paste
+ * list all have to agree about what a duplicate is; a guard enforced at only
+ * one of three entry points is not a guard.
+ */
+function channelAddError(twitchVal, kickVal, ytVal) {
+  const id = twitchVal || kickVal || ''
+  if (id && RESERVED_TAB_IDS.includes(id)) return 'mc_reserved_name'
+  if (id && config.channels.some((c) => c.id === id)) return 'mc_channel_exists'
+  if (twitchVal && config.channels.some((c) => c.twitch === twitchVal)) return 'mc_twitch_exists'
+  if (kickVal && config.channels.some((c) => c.kick === kickVal)) return 'mc_kick_exists'
+  // youtube's generated yt-<ts> id is unique every time, so the id check above
+  // can never catch a repeat — it needs its own.
+  if (ytVal && config.channels.some((c) => c.youtube === ytVal)) return 'mc_channel_exists'
+  return null
+}
+
+/**
+ * Add many channels under ONE commit.
+ *
+ * saveConfig() is called once after the whole loop, not once per channel:
+ * _saveConfigNow does a cross-tab storage union plus a multichat:sync
+ * websocket send every time it runs, so a per-channel save turns a 20-channel
+ * import into 20 redundant syncs queued behind each other on the serialized
+ * save chain. Skips anything channelAddError rejects — including duplicates
+ * created earlier in this same batch, since config.channels grows as we go.
+ *
+ * @param {Array<{twitch?:string,kick?:string,youtube?:string}>} entries
+ * @returns {number} how many were actually added
+ */
+function addChannelsBulk(entries) {
+  let added = 0
+  for (const e of entries) {
+    const twitchVal = e.twitch || ''
+    const kickVal = e.kick || ''
+    const ytVal = e.youtube || ''
+    if (!twitchVal && !kickVal && !ytVal) continue
+    if (channelAddError(twitchVal, kickVal, ytVal)) continue
+
+    const id = twitchVal || kickVal || `yt-${Date.now()}-${added}`
+    config.channels.push({ id, twitch: twitchVal, kick: kickVal, youtube: ytVal })
+
+    if (twitchVal) {
+      irc?.join(twitchVal)
+      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchVal })
+    }
+    if (kickVal) kickChat?.join(kickVal)
+    if (ytVal) {
+      youtubeLinks.set(id, { url: ytVal, videoId: '', channelName: '' })
+      ytSubscribedUrls.set(id, ytVal)
+      ytChanLastSeen.set(id, Date.now())
+      ytSubscribe(id, ytVal, id)
+    }
+    added++
+  }
+  if (added) {
+    saveConfig()
+    updateTabBar()
+  }
+  return added
+}
+
+/** Small gray text link, used for the cross-links between the three add views. */
+function makeMcLink(text) {
+  const a = document.createElement('button')
+  a.textContent = text
+  a.style.cssText =
+    'background:none;border:none;padding:0;color:#808080;font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline;'
+  a.addEventListener('mouseenter', () => (a.style.color = '#ffffff'))
+  a.addEventListener('mouseleave', () => (a.style.color = '#808080'))
+  return a
+}
+
+/** Shared shell for the add/import/paste views so all three look like one thing. */
+function makeAddViewShell(msgsEl, titleText, descText) {
+  _clearMessageIndices()
+  msgsEl.textContent = ''
+  const wrapper = document.createElement('div')
+  wrapper.style.cssText =
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#a8a8a8;font-size:13px;padding:20px;box-sizing:border-box;'
+  const title = document.createElement('div')
+  title.textContent = titleText
+  title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
+  wrapper.appendChild(title)
+  const desc = document.createElement('div')
+  desc.textContent = descText
+  desc.style.cssText = 'font-size:13px;color:#808080;margin-bottom:2px;'
+  wrapper.appendChild(desc)
+  msgsEl.appendChild(wrapper)
+  return wrapper
+}
+
+/**
+ * "fill my cockpit" — pick from the channels you already follow on twitch,
+ * instead of typing them in one at a time.
+ *
+ * Twitch only, and the copy says so rather than implying otherwise: kick's
+ * public api has no follow-list endpoint and there is no youtube oauth at all,
+ * so "import your follows" would be a promise we can only keep on one of the
+ * three platforms in the tab bar. An imported channel is twitch-only; the
+ * existing per-channel autofill is how it picks up a kick/youtube counterpart
+ * afterwards.
+ */
+async function renderFollowImportPicker(msgsEl) {
+  const wrapper = makeAddViewShell(msgsEl, t('mc_fill_cockpit'), t('mc_fill_cockpit_desc'))
+
+  const status = document.createElement('div')
+  status.style.cssText = 'font-size:13px;color:#808080;font-family:ui-monospace,monospace;'
+  status.textContent = t('mc_fill_cockpit_loading')
+  wrapper.appendChild(status)
+
+  const backRow = document.createElement('div')
+  backRow.style.cssText = 'display:flex;gap:12px;margin-top:4px;'
+  const manualLink = makeMcLink(t('mc_add_manually'))
+  manualLink.addEventListener('click', () => renderAddChannelForm(msgsEl))
+  backRow.appendChild(manualLink)
+  wrapper.appendChild(backRow)
+
+  let resp
+  try {
+    resp = await browser.runtime.sendMessage({ type: 'get_twitch_followed_channels' })
+  } catch {
+    resp = { error: 'twitch_unavailable' }
+  }
+
+  // Three failures, three sentences. "you follow nobody", "you're signed out"
+  // and "your twitch link is dead" are different problems with different fixes,
+  // and showing one message for all three is how someone ends up re-authorising
+  // an account that was working fine.
+  if (!resp || resp.error) {
+    const err = resp?.error || 'twitch_unavailable'
+    status.style.color = '#808080'
+    if (err === 'login_required') {
+      status.textContent = t('mc_fill_cockpit_login')
+      const link = document.createElement('a')
+      link.href = 'https://heatsync.org/login'
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      link.textContent = t('mc_sign_in')
+      link.style.cssText = 'color:#ffffff;font-size:13px;'
+      wrapper.insertBefore(link, backRow)
+    } else if (err === 'relink_required') {
+      status.textContent = t('mc_fill_cockpit_relink')
+      const link = document.createElement('a')
+      link.href = 'https://heatsync.org/settings'
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      link.textContent = t('mc_reconnect_twitch')
+      link.style.cssText = 'color:#ffffff;font-size:13px;'
+      wrapper.insertBefore(link, backRow)
+    } else {
+      status.textContent = t('mc_fill_cockpit_unavailable')
+    }
+    return
+  }
+
+  const follows = Array.isArray(resp.channels) ? resp.channels : []
+  if (!follows.length) {
+    status.textContent = t('mc_no_twitch_follows')
+    return
+  }
+
+  // Live-sorting costs nothing extra: /api/platform/live-status is already
+  // public and already proxied for the tab dots, so this reuses that exact
+  // path rather than asking the server for a second opinion.
+  let liveSet = new Set()
+  try {
+    const live = await browser.runtime.sendMessage({
+      type: 'fetch_live_status',
+      channels: follows.map((f) => f.login),
+      kickChannels: [],
+    })
+    if (Array.isArray(live?.live)) liveSet = new Set(live.live.map((c) => c.toLowerCase()))
+  } catch {
+    // A failed live check downgrades the sort, it does not fail the import.
+  }
+
+  const already = new Set(config.channels.map((c) => c.twitch).filter(Boolean))
+  const rows = follows
+    .filter((f) => !already.has(f.login))
+    .sort((a, b) => {
+      const la = liveSet.has(a.login) ? 0 : 1
+      const lb = liveSet.has(b.login) ? 0 : 1
+      if (la !== lb) return la - lb
+      return a.login.localeCompare(b.login)
+    })
+
+  if (!rows.length) {
+    status.textContent = t('mc_all_follows_added')
+    return
+  }
+
+  status.textContent = resp.truncated
+    ? t('mc_channels_truncated', [String(follows.length)])
+    : t('mc_follows_found', [String(rows.length), String(liveSet.size)])
+
+  const list = document.createElement('div')
+  list.style.cssText =
+    'display:flex;flex-direction:column;gap:2px;width:100%;max-width:320px;max-height:240px;overflow-y:auto;border:1px solid #808080;padding:6px;box-sizing:border-box;'
+
+  const boxes = []
+  for (const f of rows) {
+    const isLive = liveSet.has(f.login)
+    const row = document.createElement('label')
+    row.style.cssText =
+      'display:flex;align-items:center;gap:8px;padding:3px 4px;cursor:pointer;font-size:13px;color:#d0d0d0;'
+    row.addEventListener('mouseenter', () => {
+      row.style.background = '#ffffff'
+      row.style.color = '#000000'
+    })
+    row.addEventListener('mouseleave', () => {
+      row.style.background = 'transparent'
+      row.style.color = '#d0d0d0'
+    })
+    const box = document.createElement('input')
+    box.type = 'checkbox'
+    box.checked = isLive
+    box.dataset.login = f.login
+    box.style.cssText = 'margin:0;accent-color:#ffffff;'
+    box.setAttribute('aria-label', f.login)
+    const dot = document.createElement('span')
+    // The one round thing in here, deliberately — a status dot reads as a dot.
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #4ade80)' : '#3a3a3a'};`
+    const name = document.createElement('span')
+    name.textContent =
+      f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
+    name.style.cssText =
+      'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,monospace;'
+    row.appendChild(box)
+    row.appendChild(dot)
+    row.appendChild(name)
+    list.appendChild(row)
+    boxes.push(box)
+  }
+  wrapper.insertBefore(list, backRow)
+
+  const btnRow = document.createElement('div')
+  btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
+  const addBtn = makeMcBtn(t('mc_add_selected'), true)
+  const allLiveBtn = makeMcBtn(t('mc_select_all_live'), false)
+  const cancelBtn = makeMcBtn('cancel', false)
+  btnRow.appendChild(addBtn)
+  btnRow.appendChild(allLiveBtn)
+  btnRow.appendChild(cancelBtn)
+  wrapper.insertBefore(btnRow, backRow)
+
+  allLiveBtn.addEventListener('click', () => {
+    for (const b of boxes) b.checked = liveSet.has(b.dataset.login)
+  })
+  cancelBtn.addEventListener('click', () => switchTab('live'))
+  addBtn.addEventListener('click', () => {
+    const picked = boxes.filter((b) => b.checked).map((b) => ({ twitch: b.dataset.login }))
+    if (!picked.length) {
+      status.textContent = t('mc_select_at_least_one')
+      return
+    }
+    const added = addChannelsBulk(picked)
+    if (added) switchTab(config.channels[config.channels.length - 1].id)
+    else status.textContent = t('mc_nothing_added')
+  })
+}
+
+/**
+ * Paste-a-list bulk add — the logged-out path to a populated cockpit.
+ *
+ * Three boxes rather than one with a `kick:name` prefix syntax: the add form
+ * already trained one twitch/kick/youtube shape, and inventing a second one
+ * here would be a thing to learn for no gain. Bad lines are reported and
+ * skipped, never an all-or-nothing failure — one typo in twenty must not throw
+ * the other nineteen away.
+ */
+function renderPasteListForm(msgsEl) {
+  const wrapper = makeAddViewShell(msgsEl, t('mc_paste_list'), t('mc_paste_list_desc'))
+
+  const makeBox = (label, ph) => {
+    const row = document.createElement('div')
+    row.style.cssText = 'display:flex;flex-direction:column;gap:3px;width:100%;max-width:300px;'
+    const lbl = document.createElement('span')
+    lbl.textContent = label
+    lbl.style.cssText = 'font-size:13px;font-weight:600;color:#949494;text-transform:lowercase;'
+    const ta = document.createElement('textarea')
+    ta.rows = 3
+    ta.placeholder = ph
+    ta.setAttribute('aria-label', label)
+    ta.style.cssText =
+      'background:#000;color:#fff;border:1px solid #808080;padding:6px 10px;border-radius:0;font-size:13px;outline:none;font-family:ui-monospace,monospace;resize:vertical;'
+    ta.addEventListener('keydown', (e) => e.stopPropagation())
+    row.appendChild(lbl)
+    row.appendChild(ta)
+    wrapper.appendChild(row)
+    return ta
+  }
+  const twitchTa = makeBox('twitch', t('mc_paste_list_ph'))
+  const kickTa = makeBox('kick', t('mc_paste_list_ph'))
+  const ytTa = makeBox('youtube', t('mc_username_url_placeholder'))
+
+  const errEl = document.createElement('div')
+  errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);display:none;text-align:center;max-width:300px;'
+  errEl.setAttribute('role', 'alert')
+  wrapper.appendChild(errEl)
+
+  const btnRow = document.createElement('div')
+  btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
+  const addBtn = makeMcBtn('add', true)
+  const cancelBtn = makeMcBtn('cancel', false)
+  btnRow.appendChild(addBtn)
+  btnRow.appendChild(cancelBtn)
+  wrapper.appendChild(btnRow)
+
+  const manualLink = makeMcLink(t('mc_add_manually'))
+  manualLink.addEventListener('click', () => renderAddChannelForm(msgsEl))
+  wrapper.appendChild(manualLink)
+
+  cancelBtn.addEventListener('click', () => switchTab('live'))
+
+  // Newlines and commas only — NOT spaces. Splitting on every whitespace run
+  // turns a pasted sentence into channels: "not a name!" would become three
+  // entries, two of which ("not", "a") pass the charset check and become real
+  // dead tabs. One line is one channel, and a line with a space in it is a
+  // mistake we can report instead of silently half-accepting.
+  const splitLines = (v) =>
+    (v || '')
+      .split(/[\n,]+/)
+      .map((x) => x.trim())
+      .filter(Boolean)
+
+  addBtn.addEventListener('click', () => {
+    errEl.style.display = 'none'
+    const bad = []
+    const entries = []
+    for (const raw of splitLines(twitchTa.value)) {
+      const v = parseTwitchLoginValue(raw)
+      if (!/^[a-z0-9_]{1,25}$/.test(v)) bad.push(raw)
+      else entries.push({ twitch: v })
+    }
+    for (const raw of splitLines(kickTa.value)) {
+      const v = parseKickSlugValue(raw)
+      if (!/^[a-z0-9_-]{1,25}$/.test(v)) bad.push(raw)
+      else entries.push({ kick: v })
+    }
+    for (const raw of splitLines(ytTa.value)) {
+      const v = normalizeYtUrl(raw)
+      if (!v) bad.push(raw)
+      else entries.push({ youtube: v })
+    }
+
+    if (!entries.length && !bad.length) {
+      errEl.textContent = t('mc_enter_platform')
+      errEl.style.display = 'block'
+      return
+    }
+
+    const added = addChannelsBulk(entries)
+    const skipped = entries.length - added
+    if (bad.length || skipped) {
+      errEl.textContent = t('mc_paste_list_result', [String(added), String(skipped + bad.length)])
+      errEl.style.display = 'block'
+    }
+    if (added) {
+      updateTabBar()
+      switchTab(config.channels[config.channels.length - 1].id)
+    }
+  })
+}
+
+// Module-scope copies of the two parsers the add form defines inline, so the
+// paste list and the picker can reuse them without reaching into a closure.
+function parseTwitchLoginValue(raw) {
+  let v = (raw || '').trim().replace(/^@/, '')
+  const m = v.match(/twitch\.tv\/(?:popout\/|moderator\/)?([^/?#\s]+)/i)
+  if (m) v = m[1]
+  return v.toLowerCase()
+}
+function parseKickSlugValue(raw) {
+  let v = (raw || '').trim().replace(/^@/, '')
+  const m = v.match(/kick\.com\/([^/?#\s]+)/i)
+  if (m) v = m[1]
+  return v.toLowerCase()
+}
+
 function renderAddChannelForm(msgsEl) {
   _clearMessageIndices()
   msgsEl.textContent = ''
@@ -89,6 +474,19 @@ function renderAddChannelForm(msgsEl) {
   btnRow.appendChild(cancelBtn)
   wrapper.appendChild(btnRow)
 
+  // Two ways out of typing channels in one at a time. Both are links rather
+  // than buttons because adding one specific channel is still the common case
+  // and should keep the primary action.
+  const bulkRow = document.createElement('div')
+  bulkRow.style.cssText = 'display:flex;gap:12px;margin-top:2px;'
+  const importLink = makeMcLink(t('mc_import_from_twitch'))
+  importLink.addEventListener('click', () => renderFollowImportPicker(msgsEl))
+  const pasteLink = makeMcLink(t('mc_paste_list'))
+  pasteLink.addEventListener('click', () => renderPasteListForm(msgsEl))
+  bulkRow.appendChild(importLink)
+  bulkRow.appendChild(pasteLink)
+  wrapper.appendChild(bulkRow)
+
   msgsEl.appendChild(wrapper)
 
   cancelBtn.addEventListener('click', () => switchTab('live'))
@@ -142,30 +540,11 @@ function renderAddChannelForm(msgsEl) {
     }
 
     const id = twitchVal || kickVal || `yt-${Date.now()}`
-    const reserved = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
-    if (reserved.includes(id)) {
-      showErr(t('mc_reserved_name'))
-      return
-    }
-    if (config.channels.some((c) => c.id === id)) {
-      showErr(t('mc_channel_exists'))
-      return
-    }
-    // Check duplicate Twitch/Kick username across channels
-    if (twitchVal && config.channels.some((c) => c.twitch === twitchVal)) {
-      showErr(t('mc_twitch_exists'))
-      return
-    }
-    if (kickVal && config.channels.some((c) => c.kick === kickVal)) {
-      showErr(t('mc_kick_exists'))
-      return
-    }
-    // youtube had no duplicate guard while twitch and kick both did — and its
-    // generated `yt-<ts>` id is unique every time, so the id check above can
-    // never catch it. Adding the same channel twice gave two tabs fed by one
-    // subscription.
-    if (ytVal && config.channels.some((c) => c.youtube === ytVal)) {
-      showErr(t('mc_channel_exists'))
+    // Reserved-id / duplicate rules live in channelAddError so this form, the
+    // follow-import picker and the paste list can never disagree about them.
+    const addErr = channelAddError(twitchVal, kickVal, ytVal)
+    if (addErr) {
+      showErr(t(addErr))
       return
     }
 

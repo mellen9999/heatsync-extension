@@ -8745,6 +8745,36 @@ async function handleMessage(message, sender, sendResponse) {
   }
 
   // Proxy fetch for live status (avoids CORS in content script)
+  // "fill my cockpit" — the user's twitch follow list, so a fresh install does
+  // not have to type in every channel it wants by hand. The three error shapes
+  // are kept distinct all the way to the UI: an empty cockpit, a logged-out
+  // session and a dead twitch link need three different sentences, and
+  // flattening them is how you tell someone to re-authorise a working account.
+  if (message.type === 'get_twitch_followed_channels') {
+    ;(async () => {
+      try {
+        const authToken = await getAuthCookie()
+        if (!authToken) {
+          sendResponse({ error: 'login_required' })
+          return
+        }
+        const r = await fetch(`${API_URL}/api/twitch/followed-channels`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+          signal: AbortSignal.timeout(15000),
+        })
+        const data = await r.json().catch(() => null)
+        if (!r.ok) {
+          sendResponse({ error: (data && data.error) || (r.status === 401 ? 'login_required' : 'twitch_unavailable') })
+          return
+        }
+        sendResponse(data)
+      } catch {
+        sendResponse({ error: 'twitch_unavailable' })
+      }
+    })()
+    return true // async sendResponse
+  }
+
   if (message.type === 'fetch_live_status') {
     const channels = message.channels || []
     const kickChannels = message.kickChannels || []

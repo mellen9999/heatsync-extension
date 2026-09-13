@@ -2979,5 +2979,97 @@
   },
   "mc_msg_quote_posted_copied": {
     "message": "thread posted · link copied"
+  },
+  "mc_fill_cockpit": {
+    "message": "fill my cockpit"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "add the channels you already follow on twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "reading your twitch follows…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "sign in with twitch to import your follows, sorted by who's live"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "your twitch link expired — reconnect it to import follows"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "couldn't reach twitch — try again in a minute"
+  },
+  "mc_sign_in": {
+    "message": "sign in"
+  },
+  "mc_reconnect_twitch": {
+    "message": "reconnect twitch"
+  },
+  "mc_import_from_twitch": {
+    "message": "import from twitch"
+  },
+  "mc_add_manually": {
+    "message": "add one manually"
+  },
+  "mc_no_twitch_follows": {
+    "message": "you don't follow anyone on twitch yet"
+  },
+  "mc_all_follows_added": {
+    "message": "every channel you follow is already here"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ to add · $LIVE$ live now",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "showing the first $COUNT$ — live first",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "select live"
+  },
+  "mc_add_selected": {
+    "message": "add selected"
+  },
+  "mc_select_at_least_one": {
+    "message": "pick at least one channel"
+  },
+  "mc_nothing_added": {
+    "message": "nothing added — those are already in your cockpit"
+  },
+  "mc_paste_list": {
+    "message": "paste a list"
+  },
+  "mc_paste_list_desc": {
+    "message": "one name per line, or separated by commas"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "added $ADDED$ · skipped $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
   }
 }

@@ -134,8 +134,13 @@ justlog archives · decapi.me (id fallback).
    clean seams exist (content.js emote cluster ~5196–6152 is the lowest-risk
    extraction). pure refactor, medium risk, deferred.
 4. **server-blocked** (spec lives in the private server repo) — hs block endpoint,
-   twitch follow import, twitch block proxy, ws live-status push (still 60s poll).
+   twitch block proxy, ws live-status push (still 60s poll).
    client code mostly already written; blocked on server.
+   ~~twitch follow import~~ SHIPPED 2026-09-13 as "fill my cockpit". It had not
+   actually been blocked since june: `user:read:follows` is in the server's
+   *base* scope pack, so every login already grants it. This entry outliving the
+   scope change is what parked the feature for three months — when a blocker is
+   listed here, check it is still true before believing it.
 5. **styles.js hardcoded colors** — #fff×279, #000×233, #ff8700×91, #808080×96.
    css-var consolidation is possible but LOW value (palette is fixed, theming not
    a goal); skip unless theming becomes a goal.

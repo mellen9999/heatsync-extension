@@ -10161,8 +10161,31 @@
             } catch (_) {}
           })
         } catch (_) {}
+        // The primary way out of an empty cockpit: pull in the channels you
+        // already follow instead of typing them one at a time. Sits ALONGSIDE
+        // the manual button, never replacing it — someone who wants one
+        // specific channel should not be routed through a follow list.
+        const fillBtn = document.createElement('button')
+        fillBtn.style.cssText =
+          'cursor:pointer;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;font:inherit;margin-bottom:6px'
+        fillBtn.textContent = 'fill my cockpit'
+        try {
+          cleanup.addEventListener(fillBtn, 'click', () => {
+            try {
+              switchTab('add')
+              // switchTab('add') renders the manual form; swap straight to the
+              // picker so the button does what it says on one click.
+              // Re-query rather than closing over msgsEl: switchTab has just
+              // re-rendered the panel, and a captured node is how you end up
+              // painting into something already detached.
+              const el = document.getElementById('hs-mc-messages')
+              if (typeof renderFollowImportPicker === 'function' && el) renderFollowImportPicker(el)
+            } catch (_) {}
+          })
+        } catch (_) {}
         empty.appendChild(title)
         empty.appendChild(sub)
+        empty.appendChild(fillBtn)
         // (falls through to the add-channel button appended below)
         empty.appendChild(btn)
       } else if (_tabFilterHidden) {

@@ -6616,6 +6616,233 @@ function positionalKeyframes(name, layers) {
   return `@keyframes ${name}{from{background-position:${from};}to{background-position:${to};}}`
 }
 
+// ── THE SAME MOTION, ON THE OTHER PIPELINE ──────────────────────────────────
+//
+// An animated `background-position` is a PAINTED property: the element
+// re-rasters every frame, on the main thread, per element. That is why twenty
+// copies of one paint cost twenty times one copy — measured 283.8ms for one
+// name and 3648.3ms for twenty, 11454 paints in three seconds
+// (scripts/paint-perf.mjs --composited). A `transform` over a background that
+// was rastered ONCE is a GPU quad blit, and the same arm measures twenty of
+// those at 1.3ms with a single paint. Nothing about the picture changes; the
+// pipeline it is drawn on does.
+//
+// The catch is that one element has ONE transform, and a pseudo's background
+// list moves its layers by DIFFERENT distances in the same loop — that
+// difference is the parallax (fallLayers: two copies of a tile at 1x and 1.4x,
+// each advancing one own-tile per loop; the far plane riding the plate's clock
+// at a whole number of tile-heights). So each layer that moves needs its own
+// box, and the layers around it need boxes too, because 17 of the catalog's
+// layer patterns interleave a moving layer BETWEEN static ones (MsMss, sMsMs)
+// and a background list paints first-listed on top. Splitting only the movers
+// would reorder the stack, which is a different picture.
+//
+// Hence: one box per layer, z-ordered by position in the list. A static box
+// carries no animation and no will-change, so it is not promoted and costs
+// exactly what its background layer cost before — a paint into the shared
+// surface. Only the movers become compositor layers.
+//
+// Safe because nothing here composites in a way a stack of elements cannot
+// reproduce: there is not one `background-blend-mode` in this file, and the
+// per-layer transparency is baked into the SVG content rather than applied as
+// a layer property, so every layer is plain source-over.
+
+/** `12px` / `-90%` / `0` → { v, unit }, or null for anything else (calc, auto,
+ *  a keyword). A layer this cannot read simply does not convert. */
+function parseLen(tok) {
+  if (tok == null) return null
+  const m = /^(-?\d*\.?\d+)(px|%)?$/.exec(String(tok).trim())
+  if (!m) return null
+  const v = parseFloat(m[1])
+  if (!Number.isFinite(v)) return null
+  // A bare 0 is unitless and compatible with either — CSS says so and the
+  // catalog relies on it ('0 0' is the resting position of nearly every layer).
+  return { v, unit: m[2] || (v === 0 ? '0' : null) }
+}
+
+/** Both components of a `background-position` / `background-size` pair. */
+function parsePair(s) {
+  const parts = String(s ?? '').trim().split(/\s+/)
+  if (parts.length !== 2) return null
+  const a = parseLen(parts[0]), b = parseLen(parts[1])
+  return a && b ? [a, b] : null
+}
+
+/**
+ * How far one axis actually travels, as a CSS length usable in `translate()`.
+ *
+ * `background-position` percentages are NOT offsets — `X%` aligns the image's
+ * X% point with the CONTAINER's X% point, so the real offset is
+ * `(container - image) * X/100`. That is the whole reason the one-shot sweeps
+ * (dawn's haze, abyss's rays: `-90% → 190%`) look like they cannot convert.
+ * They can: the box IS the container, a transform percentage resolves against
+ * the box's own size, and the image size is right there in the layer record.
+ * 991 of the catalog's 1425 moving layers are plain px; the other 434 are this.
+ */
+function axisTravel(from, to, size) {
+  if (!from || !to) return null
+  const d = to.v - from.v
+  if (d === 0) return { css: '0px', mag: 0 }
+  const u = from.unit === '0' ? to.unit : to.unit === '0' ? from.unit : (from.unit === to.unit ? from.unit : null)
+  if (u === 'px') return { css: `${d}px`, mag: Math.abs(d) }
+  if (u !== '%') return null
+  if (!size) return null
+  // offset = (container - image) * delta/100, container = 100% of this box.
+  if (size.unit === 'px') {
+    return { css: `calc((100% - ${size.v}px) * ${d / 100})`, mag: null }
+  }
+  if (size.unit === '%' || size.unit === '0') {
+    return { css: `calc(100% * ${(1 - size.v / 100) * (d / 100)})`, mag: null }
+  }
+  return null
+}
+
+/**
+ * How far the moving surface must be OVERSIZED on one axis so that translating
+ * it never uncovers the plate.
+ *
+ * This is the whole difference between the two pipelines, and getting it wrong
+ * is invisible at rest and obvious mid-loop. An animated `background-position`
+ * slides an INFINITE tiling: the box never moves, so its edges stay covered
+ * whatever the offset. A transform moves the BOX, which is finite — shift it
+ * down by one tile and a one-tile strip along the top is simply not painted
+ * any more.
+ *
+ * Oversizing by a WHOLE NUMBER OF TILES, never by the bare travel: the tiling
+ * anchors at the box's own edge, so growing the box by a fraction of a tile
+ * would re-phase the pattern and move every drop slightly. A whole tile grows
+ * the box and lands the pattern exactly where it was.
+ *
+ * `no-repeat` layers are the one-shot sweeps (dawn's haze, abyss's rays). They
+ * are a single sprite crossing the plate, so there is nothing to keep covered
+ * and nothing to re-phase — they get no padding at all, and the clip does the
+ * rest.
+ */
+function axisPad(mag, sizeAxis, tiles) {
+  if (!mag) return '0px'
+  // A sprite that does not tile on this axis has nothing to keep covered and
+  // no phase to preserve: the clip does the work.
+  if (!tiles) return '0px'
+  // A tile measured in percent is measured against a box whose size is not
+  // known until layout, so there is no compile-time whole number of them.
+  // Refuse rather than guess — an under-padded tiling shows a bare strip along
+  // one edge for part of every loop, which is worse than not converting.
+  if (!sizeAxis || sizeAxis.unit !== 'px' || sizeAxis.v <= 0) return null
+  return `${Math.ceil(mag / sizeAxis.v) * sizeAxis.v}px`
+}
+
+/**
+ * Does this layer tile on each axis?
+ *
+ * `no-repeat` CONTAINS the substring `repeat`, and reading it with /repeat/ is
+ * how the first version of this classified every one-shot sweep in the catalog
+ * — dawn's haze, abyss's rays, circuit's traces — as a tiling it then could not
+ * compute a whole-tile pad for, and refused. That single character of sloppiness
+ * cost 16 of the 22 backdrops.
+ */
+function tilesOn(repeat) {
+  const r = String(repeat || '').trim()
+  if (r === 'no-repeat') return [false, false]
+  if (r === 'repeat-x') return [true, false]
+  if (r === 'repeat-y') return [false, true]
+  return [true, true]
+}
+
+/**
+ * The transform this layer moves by, and the padding its surface needs, or
+ * null if it cannot be expressed as a rigid translate of a static background.
+ */
+function layerMotion(l) {
+  const from = parsePair(l.from)
+  const size = parsePair(l.size)
+  if (!from) return null
+  const at = (key) => {
+    const target = parsePair(l[key] ?? l.from)
+    if (!target) return null
+    const x = axisTravel(from[0], target[0], size?.[0])
+    const y = axisTravel(from[1], target[1], size?.[1])
+    return x && y ? { x, y } : null
+  }
+  const to = at('to')
+  if (!to) return null
+  const mid = l.mid ? at('mid') : null
+  if (l.mid && !mid) return null
+
+  const [tileX, tileY] = tilesOn(l.repeat)
+  const moves = !(to.x.css === '0px' && to.y.css === '0px' && !mid)
+
+  if (tileX || tileY) {
+    // ── TILED: the surface keeps the plate's geometry and grows by whole tiles
+    const magX = Math.max(to.x.mag ?? 0, mid?.x.mag ?? 0)
+    const magY = Math.max(to.y.mag ?? 0, mid?.y.mag ?? 0)
+    // A percentage sweep has no compile-time magnitude. Fine on an axis that
+    // does not tile, unknowable on one that does.
+    if (tileX && to.x.mag == null) return null
+    if (tileY && to.y.mag == null) return null
+    if (mid && ((tileX && mid.x.mag == null) || (tileY && mid.y.mag == null))) return null
+    const padX = axisPad(magX, size?.[0], tileX)
+    const padY = axisPad(magY, size?.[1], tileY)
+    if (padX == null || padY == null) return null
+    return { kind: 'tiled', to: `translate(${to.x.css},${to.y.css})`, mid: mid ? `translate(${mid.x.css},${mid.y.css})` : null, padX, padY, moves }
+  }
+
+  // ── SPRITE: a single image crossing the plate ────────────────────────────
+  //
+  // A background NEVER paints outside its own element's box, and these images
+  // start outside it — alpine's ray is 220% of the plate positioned at 200%,
+  // which is 2.4 plate-widths off the left edge. Keeping the plate's geometry
+  // and translating it does not bring that image into view, because the image
+  // moves WITH the box: their relative positions never change, so it is clipped
+  // away for the whole loop and the plane renders as nothing. Measured: the
+  // sweep was the ONLY layer of alpine that differed, and it differed by being
+  // absent.
+  //
+  // So a sprite gets a box the size of the IMAGE, placed where the image was.
+  // `left`/`top` percentages resolve against the plate — the containing block —
+  // which is exactly the box `background-position` percentages resolved
+  // against, so `calc((100% - <size>) * p)` reproduces the CSS definition of a
+  // percentage background position verbatim. The image then fills its own box,
+  // nothing clips it but the plate, and the translate is a plain slide.
+  const sx = size?.[0], sy = size?.[1]
+  if (!sx || !sy) return null
+  const len = (u) => u.unit === 'px' ? `${u.v}px` : u.unit === '%' ? `${u.v}%` : `${u.v}px`
+  const place = (p, sz) => p.unit === 'px' || p.unit === '0' ? `${p.v}px` : `calc((100% - ${len(sz)}) * ${p.v / 100})`
+  // Translate percentages now resolve against the SPRITE's own box, not the
+  // plate's, so a travel derived from plate-relative percentages has to be
+  // rescaled by the sprite's size — and can only be rescaled when that size is
+  // itself a fraction of the plate.
+  const rescale = (t, sz) => {
+    if (t.css === '0px') return '0px'
+    if (t.mag != null) return t.css            // already absolute px
+    if (sz.unit !== '%' || sz.v === 0) return null
+    const m = /^calc\(100% \* (-?[\d.]+)\)$/.exec(t.css)
+    if (!m) return null
+    return `calc(100% * ${parseFloat(m[1]) / (sz.v / 100)})`
+  }
+  const tx = rescale(to.x, sx), ty = rescale(to.y, sy)
+  if (tx == null || ty == null) return null
+  let midCss = null
+  if (mid) {
+    const mx = rescale(mid.x, sx), my = rescale(mid.y, sy)
+    if (mx == null || my == null) return null
+    midCss = `translate(${mx},${my})`
+  }
+  return {
+    kind: 'sprite', to: `translate(${tx},${ty})`, mid: midCss, moves,
+    left: place(from[0], sx), top: place(from[1], sy),
+    width: len(sx), height: len(sy),
+  }
+}
+
+/** True if every layer here can move by transform instead of by repaint. The
+ *  decision is taken PER PSEUDO, never per layer: a half-converted list would
+ *  put some layers on boxes and some on the pseudo, and no z-index ordering
+ *  recovers the original stack once they are on different elements. */
+function layersConvertible(layers) {
+  for (const l of layers) if (layerMotion(l) == null) return false
+  return true
+}
+
 // ── tint → palette ──────────────────────────────────────────────────────────
 //
 // A scene is drawn in ONE colour, and the user picks it from the same
@@ -7505,6 +7732,126 @@ function normalizeSceneForHash(scene) {
  * layer array the shorthand came from, which is what makes the two lists
  * impossible to disagree about.
  */
+// Geometry for a plane box. Identical to PSEUDO_BASE minus `content`, which is
+// a pseudo-element's way of existing and an element does not need one.
+const PLANE_BASE = `position:absolute;inset:${PLATE_INSET};pointer-events:none;`
+
+// Z BANDS. The host sets `isolation:isolate`, so every one of these is fenced
+// inside the name's own stacking context and none of them can reach the chat
+// row. Within a band the FIRST layer paints on top, because that is what a
+// `background:` list does and the whole contract here is "same picture".
+//
+// The bands are spread out rather than adjacent so a scene that converts one
+// band and not the other still stacks correctly: a backdrop on boxes (-100…)
+// sits below a weather left on its pseudo (z-index 1), and below a `behindText`
+// fog whether that fog is on boxes (-10…) or on its pseudo (-1).
+const BAND_Z = { backdrop: -100, behind: -10, front: 100 }
+
+/**
+ * Every animation a converted plane runs is named with this prefix, and that
+ * is load-bearing rather than cosmetic.
+ *
+ * Two things price a paint by COUNTING its animations — the compile-time cap
+ * (MAX_ANIMATED_LAYERS) and the runtime mobile budget (PAINT_ANIMATION_BUDGET,
+ * which reads getAnimations().length). Both were calibrated when every
+ * animation repainted its element, and both would now charge a name up to six
+ * extra units for planes that measure 0ms (`paint-perf --cost`: `scene only`
+ * went 1154.6ms -> 0.0ms at twenty names, and 160 concurrent plane animations
+ * cost 2.2ms in `--composited`).
+ *
+ * Left uncounted, the budget would have started holding names at about a third
+ * of the crowd it was measured for — freezing paints on exactly the phone this
+ * work exists to speed up. The prefix is how both counters tell a composited
+ * animation from a repainting one.
+ */
+const COMPOSITED_ANIM_PREFIX = 'hsq_'
+
+/**
+ * One box per layer, z-ordered, with the moving ones animated by `transform`.
+ *
+ * `posAnim` is the single positional animation this band used to run over the
+ * whole background list. Its period, timing and direction carry over verbatim —
+ * including the phase-lock delay, which is the same `--hsp-t` fold as before,
+ * so a name that mounts mid-loop still lands on the wall-clock frame with every
+ * other copy of itself.
+ *
+ * NOT rate-limited. `steppedTiming` exists because a painted property redraws
+ * per frame and quantising it to SCENE_STEPS_PER_SECOND cut one name's scene
+ * cost 501ms → 124ms per 3s. A transform over a static background does not
+ * redraw at all, so there is nothing left to ration — the plane runs at the
+ * display's rate, which is the quality that cap was spending.
+ */
+function planeRules(selector, band, layers, posAnim, isStatic, hash, startIndex = 1) {
+  const base = BAND_Z[band]
+  let css = ''
+  let keyframes = ''
+  layers.forEach((l, i) => {
+    const m = layerMotion(l)
+    const n = startIndex + i
+    // First listed on top: walk z away from the text as the list goes on. Both
+    // bands step the same way — the front band counts down from +100, the back
+    // bands down from -100/-10 — so in each one the earlier layer is nearer the
+    // viewer, exactly as a background list orders them.
+    //
+    // The OUTER box is the plate, and it clips. That is what makes an oversized
+    // moving surface legal: the surface may be a tile wider and taller than the
+    // plate, and none of that extra paints outside the box the pseudo used to
+    // occupy.
+    css += `${selector}>i:nth-of-type(${n}){${PLANE_BASE}z-index:${base - i};overflow:hidden;}`
+    // The INNER surface carries the background and the motion. Padded by whole
+    // tiles on each axis so translating it never uncovers the plate.
+    css += `${selector}>i:nth-of-type(${n})>b{position:absolute;`
+    css += m.kind === 'sprite'
+      // The box IS the image: placed where the background position put it,
+      // sized to what background-size made it, filled edge to edge.
+      ? `left:${m.left};top:${m.top};width:${m.width};height:${m.height};`
+        + `background:${l.img} no-repeat 0 0/100% 100%;`
+      // The box is the plate, grown by whole tiles so sliding it never
+      // uncovers one edge, with the tiling anchored exactly as it was.
+      : `inset:calc(-1 * ${m.padY}) calc(-1 * ${m.padX});`
+        + `background:${l.img} ${l.repeat} ${l.from}/${l.size};`
+    if (!isStatic && posAnim && m.moves) {
+      const name = `${COMPOSITED_ANIM_PREFIX}${hash}_${band}${i}`
+      const d = posAnim.alternate ? ' alternate' : ''
+      css += `animation:${name} ${posAnim.period}s ${posAnim.timing || 'linear'} infinite${d};`
+        + `animation-delay:${syncDelayCalc(posAnim.alternate ? posAnim.period * 2 : posAnim.period)};`
+        + 'will-change:transform;'
+      keyframes += m.mid
+        ? `@keyframes ${name}{0%{transform:none;}50%{transform:${m.mid};}100%{transform:${m.to};}}`
+        : `@keyframes ${name}{to{transform:${m.to};}}`
+    }
+    css += '}'
+  })
+  return css + keyframes
+}
+
+/**
+ * Can this band move by transform instead of by repaint?
+ *
+ * Three ways it cannot, and all three are deliberate rather than unfinished:
+ *
+ *  - MORE THAN ONE animation, or one that carries its own keyframe body. A
+ *    `body` here is a registered `@property` being animated — furnace and
+ *    eclipse breathe a colour, storm flashes lightning — and a colour
+ *    interpolation is not a translate. Those keep the pseudo they have, which
+ *    is also where the `var()` their layers read is animated; moving that
+ *    animation onto the host would collide with the fill animation the paint
+ *    compiler already writes there.
+ *  - A LAYER THAT IS NOT A RIGID TRANSLATE of a static background.
+ *  - Nothing moving at all.
+ *
+ * Per band, never per layer: 17 of the catalog's layer patterns interleave a
+ * moving layer between static ones, so a half-converted list would reorder the
+ * stack and change the picture.
+ */
+function bandConvertible(layers, anims) {
+  if (!layers.length) return false
+  const positional = anims.filter(a => !a.body)
+  if (positional.length !== 1 || positional.length !== anims.length) return false
+  if (!layers.some(l => (l.to ?? l.from) !== l.from || l.mid)) return false
+  return layersConvertible(layers)
+}
+
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
@@ -7611,33 +7958,57 @@ function crowdTierRules(surface, anims, baseRate) {
  * own and can never blow the cap by itself; only a scene plus a paint-slot fill
  * can, which is the single case compilePaintCss has to resolve.
  */
+/**
+ * What a scene costs, in the unit the caps are denominated in: animations that
+ * REPAINT their element every frame.
+ *
+ * A band that converted to transform-driven planes reports ZERO, however many
+ * plane animations it actually runs. That is not a fudge — it is the whole
+ * result. `scripts/paint-perf.mjs --cost` measures `scene only` at 0.0ms for
+ * both one name and twenty, against 99.9ms and 1154.6ms before the conversion,
+ * and `--composited` runs 160 concurrent plane animations for 2.2ms. Counting
+ * them would charge a name six units for work that does not happen and start
+ * holding names at a third of the crowd the budget was measured against.
+ *
+ * The bands that still report a cost are the ones that still pay it: furnace
+ * and eclipse breathe a registered @property colour, storm flashes lightning,
+ * and ocean and synth tile at percentages whose whole-tile pad cannot be
+ * computed until layout. Those keep their pseudo-element and its
+ * background-position animation, and they keep their slot.
+ */
 function sceneAnimationCost(scene, opts = {}) {
   const none = { backdrop: 0, weather: 0 }
   if (opts.static || !isPlainObject(scene)) return none
-  const backdrop = isPlainObject(scene.backdrop) && BACKDROP_IDS.has(scene.backdrop.id) ? scene.backdrop : null
-  const weather = isPlainObject(scene.weather) && WEATHER_IDS.has(scene.weather.id) ? scene.weather : null
-  let w = 0
-  if (weather) {
-    const wMeta = WEATHERS[weather.id]
-    const wDensity = DENSITIES.has(weather.density) ? weather.density : 2
-    const wSpeed = safeSpeed(weather.speed ?? 1)
-    const built = wMeta.near(tintKit(sceneTint(wMeta, weather)), wDensity, 'cost', wSpeed)
-    w = built ? (built.positionalAnim ? 2 : 1) : 0
+  const bands = sceneBands(scene, 'cost', opts)
+  if (!bands) return none
+  const backdrop = bands.back && !bands.back.convertible && !opts.stillBackdrop ? 1 : 0
+  let weather = 0
+  if (bands.front && !bands.front.convertible && !opts.stillWeather) {
+    weather = bands.front.anims.length
   }
-  return { backdrop: backdrop ? 1 : 0, weather: w }
+  return { backdrop, weather }
 }
 
-function buildSceneCss(scene, selector, hash, opts = {}) {
-  if (!isPlainObject(scene) || typeof selector !== 'string' || !selector) return ''
+/**
+ * The two bands a scene draws, as data — layers, animations, and whether the
+ * band can move by transform.
+ *
+ * Factored out because TWO callers need the same answer and must never differ:
+ * buildSceneCss emits the rules, and sceneBoxCounts tells paintNameHtml how
+ * many `<i>` boxes to write. A markup shape and the CSS that targets it
+ * disagreeing is the exact failure paintNameHtml was made the single chokepoint
+ * to prevent, so they read it from here rather than each deriving it.
+ *
+ * The animation list is built as if motion were on, ALWAYS, even for a static
+ * render. Convertibility — and therefore the box count — is then a pure
+ * function of the spec, so a static chip, an SSR page and a live row all carry
+ * the same markup. Whether the motion is actually emitted is decided later, by
+ * the caller that knows about `static` and the still-flags.
+ */
+function sceneBands(scene, hash, opts = {}) {
   const backdrop = isPlainObject(scene.backdrop) && BACKDROP_IDS.has(scene.backdrop.id) ? scene.backdrop : null
   const weather = isPlainObject(scene.weather) && WEATHER_IDS.has(scene.weather.id) ? scene.weather : null
-  if (!backdrop && !weather) return ''
-  const isStatic = !!opts.static
-
-  // The plate needs the element to anchor absolutely-positioned pseudos and to
-  // fence ::before's z-index:-1 inside its own stacking context (so the
-  // backdrop can sit behind the text but never behind the chat row).
-  let css = `${selector}{position:relative;isolation:isolate;}`
+  if (!backdrop && !weather) return null
 
   const bMeta = backdrop ? BACKDROPS[backdrop.id] : null
   const bBuilt = bMeta ? bMeta.build(tintKit(sceneTint(bMeta, backdrop)), hash) : null
@@ -7650,85 +8021,133 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
   const wBuilt = wMeta ? wMeta.near(wKit, wDensity, hash, wSpeed) : null
   const wPeriod = wMeta ? periodSeconds(wMeta.basePeriod, wSpeed, wMeta.luminance) : 0
 
-  // ── back pseudo: the plate, plus the far weather plane on top of it ──
+  const out = { back: null, front: null, bBuilt, wBuilt, wMeta, bPeriod, wPeriod }
+
   if (bBuilt) {
     const layers = [...bBuilt.layers]
     if (wMeta?.far && !wMeta.behindText) {
       const far = wMeta.far(wKit, wDensity)
-      // The far plane rides the plate's own loop, so it is given a whole
-      // number of tile-heights per backdrop period: seamless at any ratio,
-      // and it lands at roughly the weather's apparent speed.
-      //
-      // Held STILL on a plate whose loop alternates (furnace, whose underglow
-      // breathes) — rain running backwards is not rain. A still far plane is
-      // still depth, which is why this drops the motion rather than the layer.
-      // Static mode keeps it for the same reason: the resting frame is the
-      // composition, and a composition missing a plane is a different picture.
       const cycles = Math.max(1, Math.round(bPeriod / Math.max(0.2, wPeriod)))
-      const stillPlate = isStatic || !!opts.stillBackdrop
+      const stillPlate = !!opts.static || !!opts.stillBackdrop
       const travel = bBuilt.alternate || stillPlate ? '0 0' : `0 ${far.tile * cycles}px`
       layers.unshift(L(far.img, 'repeat', far.size, '0 0', travel))
     }
-    const anims = []
-    // `stillBackdrop` is the second overflow valve, and it exists because the
-    // first version of the cap had no way to hold the plate: it simply stopped
-    // CHARGING for the backdrop once the budget ran out and emitted its
-    // animation anyway, so a name carrying three motion effects plus a scene
-    // shipped a fourth live animation past a cap that believed it was 3.
-    if (!isStatic && !opts.stillBackdrop) {
-      anims.push({
-        name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
-        alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
-        // furnace and eclipse breathe — pseudoRule must not quantise them.
-        luminance: !!bMeta?.luminance,
-      })
-    }
-    // The @property registration is NOT animation — it is what gives the
-    // plate's `var()` a value at all. Dropping it in static mode made the whole
-    // background shorthand invalid at computed-value time, so furnace and
-    // eclipse rendered as nothing on every static surface (chips, SSR,
-    // reduced-motion) instead of at their resting glow.
-    css += bBuilt.props || ''
-    css += pseudoRule(selector, 'before', -1, layers, anims, isStatic || !!opts.stillBackdrop)
+    const anims = [{
+      name: `hss_${hash}_b`, period: bPeriod, timing: 'linear',
+      alternate: !!bBuilt.alternate, body: bBuilt.keyframesBody || null,
+      luminance: !!bMeta?.luminance,
+    }]
+    out.back = { band: 'backdrop', layers, anims, convertible: bandConvertible(layers, anims) }
   }
 
-  // ── front pseudo: near weather, and the foreground silhouette over it ──
-  // fog is the exception on both counts: it is an ambient volume that belongs
-  // BEHIND the name, which is the same slot a foreground would want.
   const frontLayers = []
   const frontAnims = []
   const fgLayer = bBuilt && !wMeta?.behindText ? bBuilt.fg : null
   if (fgLayer) frontLayers.push(fgLayer)
   if (wBuilt) {
     frontLayers.push(...wBuilt.layers)
-    // `stillWeather` is the layer cap's overflow valve, and it holds the plane
-    // rather than deleting it — the same call the far plane already makes for
-    // furnace ("a still far plane is still depth") and that static mode makes
-    // for the whole scene. A composition missing a plane is a different
-    // picture; a composition at rest is the same picture.
-    if (!isStatic && !opts.stillWeather) {
+    frontAnims.push({
+      name: `hss_${hash}_w`, period: wPeriod,
+      timing: 'linear', alternate: !!wBuilt.alternate,
+      body: wBuilt.keyframesBody || null,
+      luminance: !!wMeta?.luminance,
+    })
+    if (wBuilt.positionalAnim) {
       frontAnims.push({
-        name: `hss_${hash}_w`, period: wPeriod,
-        timing: 'linear', alternate: !!wBuilt.alternate,
-        body: wBuilt.keyframesBody || null,
-        // storm's lightning is the worst case for a stepped brightness ramp.
-        luminance: !!wMeta?.luminance,
+        name: `hss_${hash}_wr`, period: wBuilt.positionalAnim.period,
+        timing: wBuilt.positionalAnim.timing, alternate: false, body: null,
+        luminance: false,
       })
-      if (wBuilt.positionalAnim) {
-        frontAnims.push({
-          name: `hss_${hash}_wr`, period: wBuilt.positionalAnim.period,
-          timing: wBuilt.positionalAnim.timing, alternate: false, body: null,
-          // The rain's positional loop is position, not brightness — steppable
-          // even on storm, whose luminance flag belongs to the lightning above.
-          luminance: false,
-        })
-      }
     }
   }
   if (frontLayers.length) {
+    out.front = {
+      band: wMeta?.behindText ? 'behind' : 'front',
+      layers: frontLayers, anims: frontAnims,
+      convertible: bandConvertible(frontLayers, frontAnims),
+    }
+  }
+  return out
+}
+
+/**
+ * How many `<i>` plane boxes this scene's markup must carry, and where each
+ * band's run starts. `nth-of-type` is a document-order index, so a scene that
+ * converts its weather but not its backdrop still has to know that the weather
+ * starts at 1 and not at 4.
+ */
+function sceneBoxCounts(scene) {
+  if (!isPlainObject(scene)) return { total: 0, backStart: 0, frontStart: 0 }
+  // The hash only names @property registrations and gradient ids; it cannot
+  // change how many layers a backdrop has. Pinned by a test, not by this note.
+  const bands = sceneBands(scene, 'boxcount')
+  if (!bands) return { total: 0, backStart: 0, frontStart: 0 }
+  const nBack = bands.back?.convertible ? bands.back.layers.length : 0
+  const nFront = bands.front?.convertible ? bands.front.layers.length : 0
+  return { total: nBack + nFront, backStart: 1, frontStart: 1 + nBack, nBack, nFront }
+}
+
+function buildSceneCss(scene, selector, hash, opts = {}) {
+  if (!isPlainObject(scene) || typeof selector !== 'string' || !selector) return ''
+  const bands = sceneBands(scene, hash, opts)
+  if (!bands) return ''
+  const isStatic = !!opts.static
+  const { bBuilt, wBuilt, wMeta } = bands
+  const counts = sceneBoxCounts(scene)
+
+  // The plate needs the element to anchor its absolutely-positioned planes and
+  // to fence their negative z-index inside its own stacking context (so the
+  // backdrop can sit behind the text but never behind the chat row).
+  let css = `${selector}{position:relative;isolation:isolate;}`
+
+  // ── the plate, plus the far weather plane on top of it ──
+  //
+  // The far plane rides the plate's own loop, so it is given a whole number of
+  // tile-heights per backdrop period: seamless at any ratio, and it lands at
+  // roughly the weather's apparent speed. Held STILL on a plate whose loop
+  // alternates (furnace, whose underglow breathes) — rain running backwards is
+  // not rain — and in static mode, because a still far plane is still depth and
+  // a composition missing a plane is a different picture. Both of those are
+  // decided in sceneBands, which is also what sceneBoxCounts reads.
+  if (bands.back) {
+    // The @property registration is NOT animation — it is what gives the
+    // plate's `var()` a value at all. Dropping it in static mode made the whole
+    // background shorthand invalid at computed-value time, so furnace and
+    // eclipse rendered as nothing on every static surface (chips, SSR,
+    // reduced-motion) instead of at their resting glow.
+    css += bBuilt.props || ''
+    const still = isStatic || !!opts.stillBackdrop
+    if (bands.back.convertible) {
+      css += planeRules(selector, 'backdrop', bands.back.layers,
+        still ? null : bands.back.anims[0], still, hash, counts.backStart)
+    } else {
+      // `stillBackdrop` is the layer cap's overflow valve for the plate, and it
+      // exists because the first version of the cap had no way to hold it: it
+      // stopped CHARGING for the backdrop once the budget ran out and emitted
+      // its animation anyway, so a name carrying three motion effects plus a
+      // scene shipped a fourth live animation past a cap that believed it was 3.
+      css += pseudoRule(selector, 'before', -1, bands.back.layers,
+        still ? [] : bands.back.anims, still)
+    }
+  }
+
+  // ── near weather, and the foreground silhouette over it ──
+  // fog is the exception on both counts: it is an ambient volume that belongs
+  // BEHIND the name, which is the same slot a foreground would want.
+  //
+  // `stillWeather` holds the plane rather than deleting it — the same call the
+  // far plane already makes for furnace, and that static mode makes for the
+  // whole scene.
+  if (bands.front) {
     css += wBuilt?.props || ''
-    css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, frontLayers, frontAnims,
-      isStatic || (!!opts.stillWeather && !!wBuilt))
+    const still = isStatic || (!!opts.stillWeather && !!wBuilt)
+    if (bands.front.convertible) {
+      css += planeRules(selector, bands.front.band, bands.front.layers,
+        still ? null : bands.front.anims[0], still, hash, counts.frontStart)
+    } else {
+      css += pseudoRule(selector, 'after', wMeta?.behindText ? -1 : 1, bands.front.layers,
+        still ? [] : bands.front.anims, still)
+    }
   }
 
   return css
@@ -7861,6 +8280,17 @@ const MAX_EFFECTS = 3
 // animation budget in chat/paint-cosmetics.js be a constant again: that
 // constant went stale twice because the unit kept moving underneath it.
 const MAX_ANIMATED_LAYERS = 3
+
+/**
+ * Hard ceiling on plane boxes in one painted name.
+ *
+ * The catalog's widest band is 6 layers and a name has two bands, so 12 is the
+ * real maximum and this is only ever a bound on a mode string that has been
+ * tampered with or has drifted — paintNameHtmlFor repeats an element `n` times
+ * from a value it parses out of a string, and a parser with no ceiling is a
+ * denial of service waiting for the first bad cache entry.
+ */
+const MAX_PLANE_BOXES = 16
 const MIN_STOPS = 1
 const MAX_STOPS = 8
 
@@ -8295,17 +8725,33 @@ function paintNameHtml(rawText, spec) {
  * the message so an LRU eviction can't unpaint it) hold on to this string
  * instead of the spec object. */
 function paintMarkupMode(spec) {
-  if (paintNeedsPerLetter(spec)) return 'letters'
-  if (paintNeedsSpans(spec)) return 'wrap'
-  return 'none'
+  const shape = paintNeedsPerLetter(spec) ? 'letters' : paintNeedsSpans(spec) ? 'wrap' : 'none'
+  // Plane boxes ride the MODE STRING rather than a second argument, because
+  // renderers cache this string and call paintNameHtmlFor with it later —
+  // message-element bakes it onto the message so an LRU eviction cannot
+  // unpaint a row. A second argument would be one the cache never carried.
+  //
+  // A stale baked mode from before plane boxes existed is still a valid mode,
+  // so it degrades to a name with no boxes rather than to broken markup: the
+  // CSS targets `>i:nth-of-type(n)` and simply matches nothing.
+  const n = spec?.v === 2 ? sceneBoxCounts(spec.scene).total : 0
+  return n > 0 ? `${shape}+${n}` : shape
 }
 
 /** paintNameHtml with the shape already decided. Unknown modes fall through
  * to plain escaped text — a stale baked mode can never emit raw HTML. */
 function paintNameHtmlFor(rawText, mode) {
-  if (mode === 'letters') return splitLettersHtml(rawText)
-  if (mode === 'wrap') return `<span>${escapeTextHtml(rawText)}</span>`
-  return escapeTextHtml(rawText)
+  const [shape, boxes] = String(mode ?? '').split('+')
+  // The boxes come FIRST and carry no content. They are absolutely positioned
+  // and z-ordered by the compiler, so document order decides nothing visual —
+  // but an empty leading element contributes nothing to a copied selection
+  // either, which keeps a painted name copyable as its own text.
+  let planes = ''
+  const n = Number(boxes)
+  if (Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES) planes = "<i aria-hidden=\"true\"><b></b></i>".repeat(n)
+  if (shape === 'letters') return planes + splitLettersHtml(rawText)
+  if (shape === 'wrap') return planes + `<span>${escapeTextHtml(rawText)}</span>`
+  return planes + escapeTextHtml(rawText)
 }
 
 // ── id-space safety (paint lookup key guard) ────────────────────────────────
@@ -9970,7 +10416,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c3519b94-202609132330' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd9b77a73+-202609132350' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -57351,12 +57797,24 @@ function splitHsLettersHtml(rawText) {
  * whole name for a scene (the fill has to paint above the plate pseudo, and
  * that is all it needs — reusing the per-letter split for this gave every
  * letter a private copy of the gradient), and plain escaped text otherwise.
+ *
+ * Plus the scene's plane boxes, which ride the mode string as a `+N` suffix.
+ * This compared `mode === 'wrap'` exactly until the site's compiler started
+ * emitting `wrap+9`, at which point BOTH branches missed and every scened name
+ * in the extension would have rendered as bare text — no wrapper span, so the
+ * fill paints under its own plate, and no boxes, so a converted scene draws
+ * nothing at all. The parity test does not cover this file (it fences the three
+ * lib/ mirrors), so nothing else would have said so.
  */
 function hsPaintNameHtml(rawText, spec) {
-  const mode = paintMarkupMode(spec)
-  if (mode === 'letters') return splitHsLettersHtml(rawText)
-  if (mode === 'wrap') return `<span>${escapeHtml(rawText)}</span>`
-  return escapeHtml(rawText)
+  const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
+  const n = Number(boxes)
+  const planes = Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES
+    ? '<i aria-hidden="true"><b></b></i>'.repeat(n)
+    : ''
+  if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
+  if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
+  return planes + escapeHtml(rawText)
 }
 
 // ── settings gate (guarded — this module is imported standalone in tests) ───

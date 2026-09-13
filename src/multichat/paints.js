@@ -248,12 +248,24 @@ function splitHsLettersHtml(rawText) {
  * whole name for a scene (the fill has to paint above the plate pseudo, and
  * that is all it needs — reusing the per-letter split for this gave every
  * letter a private copy of the gradient), and plain escaped text otherwise.
+ *
+ * Plus the scene's plane boxes, which ride the mode string as a `+N` suffix.
+ * This compared `mode === 'wrap'` exactly until the site's compiler started
+ * emitting `wrap+9`, at which point BOTH branches missed and every scened name
+ * in the extension would have rendered as bare text — no wrapper span, so the
+ * fill paints under its own plate, and no boxes, so a converted scene draws
+ * nothing at all. The parity test does not cover this file (it fences the three
+ * lib/ mirrors), so nothing else would have said so.
  */
 function hsPaintNameHtml(rawText, spec) {
-  const mode = paintMarkupMode(spec)
-  if (mode === 'letters') return splitHsLettersHtml(rawText)
-  if (mode === 'wrap') return `<span>${escapeHtml(rawText)}</span>`
-  return escapeHtml(rawText)
+  const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
+  const n = Number(boxes)
+  const planes = Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES
+    ? '<i aria-hidden="true"><b></b></i>'.repeat(n)
+    : ''
+  if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
+  if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
+  return planes + escapeHtml(rawText)
 }
 
 // ── settings gate (guarded — this module is imported standalone in tests) ───

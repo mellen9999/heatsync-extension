@@ -71,7 +71,7 @@ import {
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
-  crowdTierRules,
+  crowdTierRules, sceneBoxCounts,
 } from './scene-spec.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
@@ -89,6 +89,17 @@ const MAX_EFFECTS = 3
 // animation budget in chat/paint-cosmetics.js be a constant again: that
 // constant went stale twice because the unit kept moving underneath it.
 export const MAX_ANIMATED_LAYERS = 3
+
+/**
+ * Hard ceiling on plane boxes in one painted name.
+ *
+ * The catalog's widest band is 6 layers and a name has two bands, so 12 is the
+ * real maximum and this is only ever a bound on a mode string that has been
+ * tampered with or has drifted — paintNameHtmlFor repeats an element `n` times
+ * from a value it parses out of a string, and a parser with no ceiling is a
+ * denial of service waiting for the first bad cache entry.
+ */
+export const MAX_PLANE_BOXES = 16
 const MIN_STOPS = 1
 const MAX_STOPS = 8
 
@@ -523,17 +534,33 @@ export function paintNameHtml(rawText, spec) {
  * the message so an LRU eviction can't unpaint it) hold on to this string
  * instead of the spec object. */
 export function paintMarkupMode(spec) {
-  if (paintNeedsPerLetter(spec)) return 'letters'
-  if (paintNeedsSpans(spec)) return 'wrap'
-  return 'none'
+  const shape = paintNeedsPerLetter(spec) ? 'letters' : paintNeedsSpans(spec) ? 'wrap' : 'none'
+  // Plane boxes ride the MODE STRING rather than a second argument, because
+  // renderers cache this string and call paintNameHtmlFor with it later —
+  // message-element bakes it onto the message so an LRU eviction cannot
+  // unpaint a row. A second argument would be one the cache never carried.
+  //
+  // A stale baked mode from before plane boxes existed is still a valid mode,
+  // so it degrades to a name with no boxes rather than to broken markup: the
+  // CSS targets `>i:nth-of-type(n)` and simply matches nothing.
+  const n = spec?.v === 2 ? sceneBoxCounts(spec.scene).total : 0
+  return n > 0 ? `${shape}+${n}` : shape
 }
 
 /** paintNameHtml with the shape already decided. Unknown modes fall through
  * to plain escaped text — a stale baked mode can never emit raw HTML. */
 export function paintNameHtmlFor(rawText, mode) {
-  if (mode === 'letters') return splitLettersHtml(rawText)
-  if (mode === 'wrap') return `<span>${escapeTextHtml(rawText)}</span>`
-  return escapeTextHtml(rawText)
+  const [shape, boxes] = String(mode ?? '').split('+')
+  // The boxes come FIRST and carry no content. They are absolutely positioned
+  // and z-ordered by the compiler, so document order decides nothing visual —
+  // but an empty leading element contributes nothing to a copied selection
+  // either, which keeps a painted name copyable as its own text.
+  let planes = ''
+  const n = Number(boxes)
+  if (Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES) planes = "<i aria-hidden=\"true\"><b></b></i>".repeat(n)
+  if (shape === 'letters') return planes + splitLettersHtml(rawText)
+  if (shape === 'wrap') return planes + `<span>${escapeTextHtml(rawText)}</span>`
+  return planes + escapeTextHtml(rawText)
 }
 
 // ── id-space safety (paint lookup key guard) ────────────────────────────────

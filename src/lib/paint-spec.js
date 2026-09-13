@@ -71,6 +71,7 @@ import {
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
+  crowdTierRules,
 } from './scene-spec.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
@@ -763,6 +764,11 @@ function paintPhaseDriver(effectId, period, hash, opts = {}) {
     selfPart: {
       decls: '',
       animShorthand: `${animName} ${period}s ${stepped || 'linear'} infinite`,
+      // What the crowd dial needs to re-time this one animation (see
+      // CROWD_TIERS). `noStep` is carried, not inferred, so a part that must
+      // never be quantised says so itself rather than the tier builder
+      // re-deriving a rule that already lives in steppedTiming.
+      tier: { period, luminance: !!EFFECTS[effectId]?.luminance, oneWay: !!opts.oneWay },
       delayExpr: syncDelayCalc(period),
       keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
         `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -957,6 +963,7 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
   })
   const selfPart = {
     decls: '', animShorthand: `${animName} ${duration}s ${stepped || 'linear'} infinite`,
+    tier: { period: duration, luminance: !!EFFECTS[effectId]?.luminance },
     delayExpr: syncDelayCalc(duration),
     keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
       `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -1041,7 +1048,12 @@ function buildMotionEffectCss(effectId, speed, hash, glow) {
   const duration = effectDuration(effectId, speed)
   const animName = `hsp_${hash}_${effectId}`
   const sync = syncDelayCalc(duration)
-  const part = (timing, kf, decls = '') => ({ decls, animShorthand: `${animName} ${duration}s ${timing} infinite`, delayExpr: sync, keyframes: kf })
+  // noStep: these are the MULTI-STOP whole-name motions. `steps()` applies per
+  // keyframe INTERVAL, so quantising one of these multiplies its redraws
+  // instead of capping them (jitter alone has eight stops at 2% intervals), and
+  // three of them already use `steps(1,end)` deliberately to hold a resting
+  // frame. The crowd dial must leave every one of them exactly as authored.
+  const part = (timing, kf, decls = '') => ({ decls, animShorthand: `${animName} ${duration}s ${timing} infinite`, delayExpr: sync, keyframes: kf, tier: { period: duration, timing, noStep: true } })
 
   switch (effectId) {
     case 'coin':
@@ -1252,6 +1264,9 @@ export function compilePaintCss(spec, selector, opts = {}) {
   const emitSelfRule = () => {
     if (!selfParts.length) return
     css += `${selector}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
+    // One timing list per crowd tier, in the SAME order as the shorthand above —
+    // animation-timing-function is matched positionally to animation-name.
+    css += crowdTierRules(selector, selfParts.map(p => p.tier), FILL_STEPS_PER_SECOND)
     css += selfParts.map(p => p.keyframes).join('')
   }
 

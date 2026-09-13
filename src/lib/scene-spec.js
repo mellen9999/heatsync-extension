@@ -32,7 +32,7 @@
 import {
   HEX_RE, isPlainObject, isIntInRange, isNumInRange,
   MIN_SPEED, MAX_SPEED, safeSpeed, periodSeconds, syncDelayCalc,
-  steppedTiming, SCENE_STEPS_PER_SECOND,
+  steppedTiming, SCENE_STEPS_PER_SECOND, CROWD_TIERS,
 } from './paint-core.js'
 
 // ── plate geometry (single source — mirrored nowhere) ──────────────────────
@@ -1351,6 +1351,7 @@ export function normalizeSceneForHash(scene) {
 function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
   let css = `${selector}::${pseudo}{${PSEUDO_BASE}z-index:${zIndex};background:${layers.map(layerCss).join(',')};`
   let keyframes = ''
+  let tiers = ''
   if (!isStatic && anims.length) {
     const names = [], delays = []
     for (const a of anims) {
@@ -1364,15 +1365,52 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
       // `eclipse` and `storm` (lightning) all declare `luminance: true`, and
       // quantising a brightness ramp is flashing, not drifting. Those keep their
       // own smooth timing. The first version of this stepped all three.
+      const fallback = a.alternate ? 'ease-in-out' : a.timing || 'linear'
       const stepped = steppedTiming(a.period, SCENE_STEPS_PER_SECOND, { luminance: a.luminance })
-      const timing = stepped || (a.alternate ? 'ease-in-out' : a.timing || 'linear')
+      const timing = stepped || fallback
       names.push(`${a.name} ${a.period}s ${timing} infinite${dir}`)
       delays.push(syncDelayCalc(a.alternate ? a.period * 2 : a.period))
       keyframes += a.body ? `@keyframes ${a.name}${a.body}` : positionalKeyframes(a.name, layers)
     }
     css += `animation:${names.join(',')};animation-delay:${delays.join(',')};`
+    tiers = crowdTierRules(`${selector}::${pseudo}`, anims, SCENE_STEPS_PER_SECOND)
   }
-  return css + '}' + keyframes
+  return css + '}' + tiers + keyframes
+}
+
+/**
+ * The per-tier `animation-timing-function` overrides for one animated surface.
+ *
+ * See CROWD_TIERS in paint-core: when many painted names are on screen at once
+ * every animation coarsens together rather than any of them stopping, and the
+ * switch is a class on <body> that paint-cosmetics flips from the weight it
+ * already measures.
+ *
+ * The list is emitted IN FULL, one entry per animation, never a single value —
+ * `animation-timing-function` is positionally matched to `animation-name`, so a
+ * lone value would apply to every animation on the surface. That matters here
+ * because two kinds must never be stepped and both are already handled by
+ * `steppedTiming` returning null: a luminance plane (a quantised brightness ramp
+ * is flashing, not drifting) and any keyframe body with more than one interval
+ * (`steps()` applies PER INTERVAL, so it would multiply redraws rather than cap
+ * them). Reusing the helper is what keeps both exemptions true for free.
+ *
+ * Emitted from the compiler rather than hung off a runtime marker class: it
+ * cannot drift from which animations actually exist, and it is automatically
+ * right for scenes nobody has built yet.
+ */
+export function crowdTierRules(surface, anims, baseRate) {
+  let css = ''
+  for (const [tier, div] of CROWD_TIERS) {
+    const timings = anims.map(a => (a.noStep ? null
+      : steppedTiming(a.period, baseRate / div, { luminance: a.luminance, oneWay: a.oneWay }))
+      || (a.alternate ? 'ease-in-out' : a.timing || 'linear'))
+    // No !important: `body.hs-paint-x .hsp-hash::before` already outranks
+    // `.hsp-hash::before` on specificity, and an !important here would also beat
+    // the offscreen and over-budget pause rules, which must keep winning.
+    css += `body.hs-paint-${tier} ${surface}{animation-timing-function:${timings.join(',')};}`
+  }
+  return css
 }
 
 /**

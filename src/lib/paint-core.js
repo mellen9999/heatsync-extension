@@ -67,6 +67,37 @@ export const SCENE_STEPS_PER_SECOND = 12
 export const FILL_STEPS_PER_SECOND = 8
 
 /**
+ * ── THE CROWD DIAL ──────────────────────────────────────────────────────────
+ *
+ * The rates above are what ONE name costs. Twenty of them cost twenty times as
+ * much: 20 copies of one paint measure 3694ms of renderer time per 3s at 4x CPU
+ * against 287ms for one — nothing is shared between copies but the compiled CSS
+ * rule, because each element's clip mask is its own glyphs.
+ *
+ * So when a lot is moving at once, everything moves in coarser steps instead of
+ * anything stopping. paint-cosmetics puts `hs-paint-chunky` / `hs-paint-chunkier`
+ * on <body> from the on-screen animation weight it already measures, and the
+ * compiler emits a matching `animation-timing-function` for each tier beside
+ * every animation it writes. One class flip retimes every painted name and every
+ * scene plane on the page together — which is the only sense in which identical
+ * animations can be "linked", since the pixels cannot be.
+ *
+ * Measured at 20 copies, same fixture (paint-perf --cost):
+ *
+ *   full          3694ms      scene 12/s (today)  1193ms
+ *   name 2/s      3250ms      scene  6/s           601ms
+ *   all 2/s       2459ms      scene  3/s           357ms
+ *
+ * The scene is where the money is; the name's own fill is already cheap. Both
+ * are dialled anyway, because the tier is one decision and splitting it would
+ * mean two thresholds to keep honest.
+ *
+ * NOT a divisor on the period, which would be slow motion. Same speed, fewer
+ * redraws — "idc about steppy because bitmap and pixels".
+ */
+export const CROWD_TIERS = [['chunky', 2], ['chunkier', 4]]
+
+/**
  * `steps()` timing that redraws `rate` times a second — or null when this
  * animation must not be quantised at all.
  *

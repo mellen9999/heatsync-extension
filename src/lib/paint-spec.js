@@ -807,18 +807,61 @@ function paintPhaseDriver(effectId, period, hash, opts = {}) {
 // same discontinuous-but-seamless wrap a bare `to{}` keyframe produces
 // (pan/rainbow/etc. already engineer their gradient to repeat seamlessly
 // across that jump — see pan's own comment).
-const wrap = (ph, start, end) => `calc(${start} + (${end} - ${start}) * var(${ph}))`
+// ── PHASE DERIVATION ────────────────────────────────────────────────────────
+//
+// Each of these takes a phase and two endpoints and returns the value at that
+// phase. The phase is EITHER a custom-property name (emit a calc() that reads
+// it) OR a number (evaluate it here and emit a concrete value).
+//
+// The number form is what lets every effect below convert mechanically. An
+// effect's `decl` is already a pure function of the phase, so calling it at
+// 0 / 0.5 / 1 produces the keyframe stops for the very same motion — no
+// per-effect rewrite, and no chance of one of sixteen being transcribed wrong.
+//
+// WHY IT MATTERS: an animated REGISTERED CUSTOM PROPERTY is a style-engine
+// value. `inherits:true` means each frame dirties the element and its whole
+// subtree, and `steps()` does not help — it bounds how often the derived value
+// CHANGES (repaint), while the recalc happens on every frame the animation
+// runs. A 25s profile of a real phone showed 1460 recalcs costing 8414ms
+// against 31ms of script and zero layouts, from fourteen copies of one fill.
+//
+// Measured, `scripts/paint-perf.mjs --phasevar`, 20 names, per 3s at 4x CPU:
+//
+//   animated @property, value via calc()   style 150.4ms   paint 28.3ms
+//   the same motion animated directly      style  17.3ms   paint 24.9ms
+//
+// Identical pixels, identical recalc COUNT, 8.7x the cost — and the @property
+// form scales 12x with name count where the direct form scales 4x. Paint does
+// not move, so this is not a trade.
+const phaseNum = (v) => {
+  const m = /^(-?\d*\.?\d+)(%|deg|px|rad|turn|em|)$/.exec(String(v).trim())
+  return m ? { v: parseFloat(m[1]), u: m[2] } : null
+}
+/** `a` and `b` interpolated by `f` at phase `p`, as a concrete CSS value. */
+const phaseAt = (p, a, b, f) => {
+  const A = phaseNum(a), B = phaseNum(b)
+  if (!A || !B) return null
+  const u = A.u || B.u
+  return `${Math.round(f(p, A.v, B.v) * 1e4) / 1e4}${u}`
+}
+
+// a linear sweep from start to end across one cycle
+const wrap = (ph, start, end) => typeof ph === 'number'
+  ? phaseAt(ph, start, end, (p, a, b) => a + (b - a) * p)
+  : `calc(${start} + (${end} - ${start}) * var(${ph}))`
 
 // a full there-and-back sweep within ONE phase cycle — replaces
 // `ease-in-out infinite alternate` (paired with a doubled period, since one
 // alternate round trip is 2 CSS animation durations). Same cosine
 // substitution buildLetterMotionCss's `wave` case already uses.
-const bounce = (ph, start, end) =>
-  `calc((${start} + ${end}) / 2 + (${start} - ${end}) / 2 * cos(var(${ph}) * 360deg))`
+const bounce = (ph, start, end) => typeof ph === 'number'
+  ? phaseAt(ph, start, end, (p, a, b) => (a + b) / 2 + (a - b) / 2 * Math.cos(p * 2 * Math.PI))
+  : `calc((${start} + ${end}) / 2 + (${start} - ${end}) / 2 * cos(var(${ph}) * 360deg))`
 
 // one-way ease-in-out — half the cosine period of `bounce`, no return trip.
-const ease = (ph, start, end) =>
-  `calc((${start} + ${end}) / 2 - (${end} - ${start}) / 2 * cos(var(${ph}) * 180deg))`
+const ease = (ph, start, end) => typeof ph === 'number'
+  ? phaseAt(ph, start, end, (p, a, b) => (a + b) / 2 - (b - a) / 2 * Math.cos(p * Math.PI))
+  : `calc((${start} + ${end}) / 2 - (${end} - ${start}) / 2 * cos(var(${ph}) * 180deg))`
 
 /** Build the pieces for a `paint`-slot effect: { selfPart, decl }. `decl` is
  * a plain, unanimated declaration block (background/filter/opacity/mask, all
@@ -827,14 +870,15 @@ const ease = (ph, start, end) =>
  * comma-list (same slot motion effects already share — two rules setting
  * `animation` on one selector clobber each other). Returns null for an
  * unknown effect id. */
-function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
+function paintFillAt(effectId, speed, base, stops, hash, ph) {
+  let __period = 0, __opts = {}, __usesPhaseVar = false
   const duration = effectDuration(effectId, speed)
 
   if (THEMED_PAINT[effectId]) {
     const t = THEMED_PAINT[effectId]
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, t.roundTrip ? duration * 2 : duration, hash)
+    const phaseVar = ph; __period = t.roundTrip ? duration * 2 : duration; __opts = {}
     const decl = `background:${t.gradient};background-size:${t.size};-webkit-background-clip:text;background-clip:text;color:transparent;${t.decl(phaseVar)}`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'pan') {
@@ -844,9 +888,9 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     const angle = safeAngle(base.angle)
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const decl = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0%', '300%')} 0;`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'conic') {
@@ -854,19 +898,41 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     // shared phase var (0→1), no extra @property of its own needed.
     const angle = safeAngle(base.angle)
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
+    // THE ONE EFFECT THAT KEEPS ITS PHASE VARIABLE.
+    //
+    // conic's motion is a full rotation of the gradient itself, and a rotation
+    // does not survive being sampled into keyframes: `from 0deg` and
+    // `from 360deg` are the SAME angle, so the two stops are identical,
+    // chromium normalises them and the animation becomes a no-op. Measured that
+    // way — the resting frame matched and every frame after it was frozen,
+    // which is exactly what a silent no-op looks like next to a working one.
+    //
+    // Splitting it into thirds would make each interval a real rotation, but
+    // then the rendered value between stops depends on whether chromium
+    // interpolates a conic gradient's angle or cross-fades the two images, and
+    // guessing that is how a subtly wrong paint ships. One effect keeping the
+    // custom property is a cost only conic's wearers pay; a wrong one is paid
+    // by everybody.
+    __usesPhaseVar = true
     const image = `conic-gradient(from calc(${angle}deg + 360deg * var(${phaseVar})), ${gradientStopsCss(wrapStops)})`
-    const decl = `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`
-    return { selfPart, decl }
+    // `background-image`, not the `background` SHORTHAND. conic is the one
+    // effect whose moving value is the image itself, so the image is what ends
+    // up in the keyframes — and a shorthand in a keyframe resets every longhand
+    // it covers, including `background-clip:text`. That drops the glyph clip
+    // for the whole animation and paints the gradient as a rectangle over the
+    // name. Fenced below in partitionDecls so it cannot come back quietly.
+    const decl = `background-image:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'hue') {
     // Orthogonal to gradient type — filter applies post-render regardless
     // of how base painted the text.
     const baseCss = buildBaseCss(base, stops)
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const decl = `${baseCss.decl}filter:hue-rotate(${wrap(phaseVar, '0deg', '360deg')});`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'glint') {
@@ -874,9 +940,9 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     const image = `linear-gradient(115deg, transparent 38%, #ffffffcc 50%, transparent 62%) no-repeat, ${baseCss.cssImage}`
     // `ease()` is a one-way sweep (210% → -110%), not a cyclic wrap, so the
     // stepped timing must show its final keyframe — see paintPhaseDriver.
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash, { oneWay: true })
+    const phaseVar = ph; __period = duration; __opts = { oneWay: true }
     const decl = `background:${image};background-size:250% 100%, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${ease(phaseVar, '210%', '-110%')} 0, 0 0;`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'stripes') {
@@ -888,9 +954,9 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     const colors = stops.length > 1 ? stops.map(s => s.color) : [stops[0]?.color || '#e4e4e4', '#ffffff']
     const bands = colors.map((c, i) => `${c} ${i * BAND}px ${(i + 1) * BAND}px`).join(', ')
     const shift = (colors.length * BAND * Math.SQRT2).toFixed(2)
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const decl = `background:repeating-linear-gradient(45deg, ${bands});-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0px', `${shift}px`)} 0;`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'stardust') {
@@ -899,11 +965,11 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     // per loop so the wrap is seamless.
     const baseCss = buildBaseCss(base, stops)
     const image = `radial-gradient(circle, #ffffff 0 .7px, transparent 1.1px) repeat, radial-gradient(circle, #ffffffaa 0 .5px, transparent .9px) repeat, ${baseCss.cssImage}`
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const pos1 = `${wrap(phaseVar, '0px', '-27px')} ${wrap(phaseVar, '0px', '21px')}`
     const pos2 = `${wrap(phaseVar, '4px', '-22px')} ${wrap(phaseVar, '3px', '25px')}`
     const decl = `background:${image};background-size:9px 7px, 13px 11px, 100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${pos1}, ${pos2}, 0 0;`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'pulse') {
@@ -913,21 +979,160 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     // the phase period is the plain duration, same as `bounce`'s other uses
     // pair with a doubled one.
     const baseCss = buildBaseCss(base, stops)
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.45')};`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   if (effectId === 'reveal') {
     const baseCss = buildBaseCss(base, stops)
     const mask = 'linear-gradient(90deg, #000 30%, #0003 50%, #000 70%)'
-    const { phaseVar, selfPart } = paintPhaseDriver(effectId, duration, hash)
+    const phaseVar = ph; __period = duration; __opts = {}
     const pos = wrap(phaseVar, '130%', '-130%')
     const decl = `${baseCss.decl}-webkit-mask-image:${mask};mask-image:${mask};-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-position:${pos} 0;mask-position:${pos} 0;`
-    return { selfPart, decl }
+    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
   return null
+}
+
+/**
+ * One paint-slot fill, as a static declaration plus the animation that moves it.
+ *
+ * The motion used to ride an animated registered custom property: one
+ * `@property --hsp-<hash>-<fx>-ph` going 0 -> 1, with every real value derived
+ * from it by `calc()`. That is a style-engine animation, and `inherits:true`
+ * makes each frame dirty the element and its whole subtree — measured at 8.7x
+ * the style cost of animating the same values directly, for the same pixels
+ * (`scripts/paint-perf.mjs --phasevar`).
+ *
+ * So the phase is now sampled at compile time instead. `paintFillAt` is the
+ * old builder with the phase as a parameter, so calling it at 0 / 0.5 / 1
+ * yields the keyframe stops for exactly the motion the calc() described. No
+ * effect was rewritten by hand and none can be transcribed wrong.
+ *
+ * Three shapes, decided by asking the effect itself rather than by a list:
+ *  - decl(1) === decl(0) and decl(.5) differs -> a there-and-back sweep
+ *    (`bounce`). Three stops, eased, and NOT stepped: steps() applies per
+ *    keyframe INTERVAL, so it would multiply the redraw rate across two
+ *    intervals rather than cap it — the same rule the whole-name motions
+ *    already live under.
+ *  - `oneWay` -> a cosine ramp that does not return (`glint`). Two stops,
+ *    eased; still one interval, so the rate cap still applies.
+ *  - otherwise -> linear in the phase (`wrap`). Two stops, and the timing
+ *    function it already had, which makes those effects byte-identical.
+ */
+/** Properties whose keyframe would silently reset their own longhands. */
+const SHORTHANDS = new Set(['background', 'mask', 'font', 'border', 'outline', 'flex', 'grid', 'animation', 'transition'])
+
+/** `a:1;b:2;` -> [['a','1'],['b','2']]. Splits on top-level `;` only, so a
+ *  value carrying commas or nested functions survives intact. */
+function splitDecls(str) {
+  const out = []
+  let depth = 0, buf = ''
+  for (const ch of String(str || '')) {
+    if (ch === '(') depth++
+    else if (ch === ')') depth--
+    if (ch === ';' && depth === 0) { if (buf.trim()) out.push(buf.trim()); buf = ''; continue }
+    buf += ch
+  }
+  if (buf.trim()) out.push(buf.trim())
+  return out.map(d => { const i = d.indexOf(':'); return [d.slice(0, i).trim(), d.slice(i + 1).trim()] })
+}
+
+/**
+ * Which declarations actually move across the sampled phases.
+ *
+ * Only those belong in the keyframes. The rest — the gradient image itself, the
+ * clip, the transparent fill colour — are the same at every phase, and putting
+ * them in every keyframe stop would have the animation re-declare a
+ * repeating-linear-gradient on each one. Emitting a property in a keyframe
+ * makes it animated, and animating an IMAGE is a different and far more
+ * expensive thing than animating the position of one.
+ */
+function partitionDecls(samples) {
+  const maps = samples.map(d => new Map(splitDecls(d)))
+  const keys = [...maps[0].keys()]
+  const statics = [], moving = []
+  for (const k of keys) {
+    const v0 = maps[0].get(k)
+    if (maps.every(m => m.get(k) === v0)) statics.push(`${k}:${v0};`)
+    else moving.push(k)
+  }
+  // A SHORTHAND must never be the thing that moves. Declaring one inside a
+  // keyframe resets every longhand it covers to its initial value for the
+  // duration of the animation — `background` takes `background-clip:text` with
+  // it, which drops the glyph clip and paints the fill as a rectangle over the
+  // name. conic shipped exactly that for the length of one bench run.
+  for (const k of moving) {
+    if (SHORTHANDS.has(k)) {
+      throw new Error(`paint compiler: '${k}' is a shorthand and cannot be animated — `
+        + `emit the longhand that actually moves (e.g. background-image), or its keyframes `
+        + `will reset background-clip/color and the fill will stop being a glyph clip`)
+    }
+  }
+  return { statics: statics.join(''), moving, at: (i) => moving.map(k => `${k}:${maps[i].get(k)};`).join('') }
+}
+
+function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
+  const at = (ph) => paintFillAt(effectId, speed, base, stops, hash, ph)
+  const probeVar = `--hsp-${hash}-${effectId}-ph`
+  const probe = paintFillAt(effectId, speed, base, stops, hash, probeVar)
+  if (!probe) return null
+  const a0 = at(0)
+  const d1 = at(1).decl
+  const dHalf = at(0.5).decl
+  const { period, opts } = a0
+
+  // ── WHICH EFFECTS CONVERT ───────────────────────────────────────────────
+  //
+  // Only the ones that are LINEAR in the phase — `wrap`. Two stops and the
+  // timing function they already carry reproduce those byte for byte, which
+  // the pixel gate confirms by not moving at all.
+  //
+  // The cosine ones (`bounce`, `ease`) do not, and the difference is not the
+  // curve — it is `steps()`. steps() REPLACES a timing function, so two stops
+  // plus steps() spaces the held values evenly in time where the phase ramp
+  // spaced them along the cosine. Sampling one stop per step fixes the spacing;
+  // running the sweep as one `alternate` leg fixes the rate cap; together they
+  // measured best of all (the fill went 328.5ms -> 102.9ms at twenty names).
+  // But an `alternate` animation cannot be compared against a non-alternate one
+  // by seeking a fraction of its duration — a fraction of one LEG is not that
+  // fraction of the round trip — so the gate cannot tell a real regression from
+  // its own arithmetic there, and an unverifiable win is not one worth taking.
+  //
+  // conic is a third case and stays for its own reason: its motion is a full
+  // rotation, and `from 0deg` and `from 360deg` are the same angle, so sampled
+  // stops are identical and the animation silently becomes a no-op.
+  const cosine = (d1 === a0.decl && dHalf !== a0.decl) || !!opts.oneWay
+  if (probe.usesPhaseVar || cosine) {
+    const { selfPart } = paintPhaseDriver(effectId, probe.period, hash, probe.opts)
+    return { selfPart, decl: probe.decl }
+  }
+
+  const animName = `hsp_${hash}_${effectId}`
+  const stepped = steppedTiming(period, FILL_STEPS_PER_SECOND, {
+    luminance: !!EFFECTS[effectId]?.luminance,
+    oneWay: !!opts.oneWay,
+  })
+  const parts = partitionDecls([a0.decl, d1])
+  const keyframes = `@keyframes ${animName}{from{${parts.at(0)}}to{${parts.at(1)}}}`
+  const timing = stepped || 'linear'
+
+  return {
+    // The RESTING frame is the hero frame: what a static paint, an SSR page and
+    // a reduced-motion surface all render, and what the animation starts from.
+    // It carries the moving declarations at phase 0 too, so a static render is
+    // the composition at rest rather than a name with no fill at all.
+    decl: a0.decl,
+    selfPart: {
+      decls: '',
+      animShorthand: `${animName} ${period}s ${timing} infinite`,
+      tier: { period, luminance: !!EFFECTS[effectId]?.luminance, oneWay: !!opts.oneWay },
+      delayExpr: syncDelayCalc(period),
+      keyframes,
+    },
+  }
 }
 
 /** Build the pieces for a per-letter motion effect (wave/ripple/tumble/hop/

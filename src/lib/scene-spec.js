@@ -32,7 +32,7 @@
 import {
   HEX_RE, isPlainObject, isIntInRange, isNumInRange,
   MIN_SPEED, MAX_SPEED, safeSpeed, periodSeconds, syncDelayCalc,
-  steppedTiming, SCENE_STEPS_PER_SECOND, CROWD_TIERS,
+  steppedTiming, sampledEasing, SCENE_STEPS_PER_SECOND, CROWD_TIERS,
 } from './paint-core.js'
 
 // ── plate geometry (single source — mirrored nowhere) ──────────────────────
@@ -1746,16 +1746,25 @@ function pseudoRule(selector, pseudo, zIndex, layers, anims, isStatic) {
  * cannot drift from which animations actually exist, and it is automatically
  * right for scenes nobody has built yet.
  */
+export function tierTimings(anims, rate) {
+  return anims.map(a => (
+    // A sampled cosine easing carries its own quantisation, so it has to be
+    // REBUILT at each rate, not swapped for a steps() that would flatten the
+    // curve back out. This is also why the easing never lives in a keyframe:
+    // the dial's rule below could not outrank it there.
+    a.curve ? sampledEasing(a.curve, a.period, rate, { luminance: a.luminance, oneWay: a.oneWay })
+      : a.noStep ? null
+        : steppedTiming(a.period, rate, { luminance: a.luminance, oneWay: a.oneWay }))
+    || (a.alternate ? 'ease-in-out' : a.timing || 'linear'))
+}
+
 export function crowdTierRules(surface, anims, baseRate) {
   let css = ''
   for (const [tier, div] of CROWD_TIERS) {
-    const timings = anims.map(a => (a.noStep ? null
-      : steppedTiming(a.period, baseRate / div, { luminance: a.luminance, oneWay: a.oneWay }))
-      || (a.alternate ? 'ease-in-out' : a.timing || 'linear'))
     // No !important: `body.hs-paint-x .hsp-hash::before` already outranks
     // `.hsp-hash::before` on specificity, and an !important here would also beat
     // the offscreen and over-budget pause rules, which must keep winning.
-    css += `body.hs-paint-${tier} ${surface}{animation-timing-function:${timings.join(',')};}`
+    css += `body.hs-paint-${tier} ${surface}{animation-timing-function:${tierTimings(anims, baseRate / div).join(',')};}`
   }
   return css
 }

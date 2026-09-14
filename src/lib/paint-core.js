@@ -128,9 +128,99 @@ export const CROWD_TIERS = [['chunky', 2], ['chunkier', 4]]
  * @returns {string|null} timing function, or null if it must not be stepped
  */
 export function steppedTiming(period, rate, opts = {}) {
+  const s = steppedSteps(period, rate, opts)
+  if (!s) return null
+  return s.jumpNone ? `steps(${s.n}, jump-none)` : `steps(${s.n})`
+}
+
+/** The step grid behind steppedTiming — `{ n, jumpNone }`, or null when the
+ * effect is luminance-flagged and must not be stepped at all.
+ *
+ * Separate because a caller that samples a curve into a `linear()` easing needs
+ * the SAME grid steppedTiming would have imposed, not a second guess at it: the
+ * sampled easing holds one value per step, so the two have to agree stop for
+ * stop or the conversion is not the motion it replaced. */
+export function steppedSteps(period, rate, opts = {}) {
   if (opts.luminance) return null
-  const n = Math.max(1, Math.round(period * rate))
-  return opts.oneWay ? `steps(${n}, jump-none)` : `steps(${n})`
+  return { n: Math.max(1, Math.round(period * rate)), jumpNone: !!opts.oneWay }
+}
+
+/**
+ * The progress curves a fill can move along, as plain functions of 0→1
+ * animation progress. They are the same cosines the compiler used to write as
+ * calc() over an animated custom property, which is the point: sampling these
+ * reproduces that motion rather than approximating it.
+ */
+export const EASING_CURVES = {
+  /** there-and-back within one cycle — 0 at p=0, 1 at p=.5, 0 at p=1. */
+  roundTrip: (p) => (1 - Math.cos(p * 2 * Math.PI)) / 2,
+  /** one-way eased ramp — 0 at p=0, 1 at p=1. */
+  oneWay: (p) => (1 - Math.cos(p * Math.PI)) / 2,
+}
+
+/** Segments in a smooth (unstepped) sampled easing. Only the luminance effects
+ * reach that path — the rate cap deliberately exempts them — so their curve has
+ * to be a polyline instead of a staircase. 64 segments put the worst-case
+ * deviation from the true cosine at 6e-4 of the animated range: under half a
+ * step of 8-bit colour, and under a subpixel of any fill position. */
+const SMOOTH_EASING_POINTS = 64
+
+/**
+ * A progress curve as a CSS `linear()` easing, quantised to the same grid
+ * `steppedTiming` would have imposed.
+ *
+ * This is what lets a cosine fill stop driving a custom property. The phase used
+ * to be a registered `@property` ramping 0→1 with every real value derived from
+ * it by calc() — a style-engine animation, and `inherits:true` dirties the
+ * element and its whole subtree every frame (8.7x the style cost for the same
+ * pixels, `paint-perf.mjs --phasevar`). The values it produced were not linear
+ * in that phase, which is why two keyframes alone could not replace it:
+ * `steps()` REPLACES a timing function, so two stops plus steps() space the held
+ * values evenly in TIME where the phase ramp spaced them along the COSINE.
+ *
+ * An easing is the missing piece, and it is exact. `linear()` remaps progress to
+ * any curve — including a non-monotonic one, so a there-and-back needs neither a
+ * third keyframe nor `alternate`: the animation still runs A→B, and an easing
+ * that rises to 1 at the half and returns to 0 makes that a round trip. Two
+ * stops, one interval, the original period and direction, so one seek still
+ * lands on one phase and the pixel gate can compare it.
+ *
+ * The staircase is what stops the redraw (REDRAW RATE LIMITING above): one
+ * sampled value held flat across its whole interval. Those held values land on
+ * exactly the phases `steps(n)` on the old ramp held — same n, same boundaries,
+ * same pixels.
+ *
+ * Fails soft twice over. An engine without `linear()` (pre-2023) drops the
+ * `animation-timing-function` declaration and every animation falls back to its
+ * shorthand's own function — `ease-in-out`, the same shape spaced slightly
+ * differently, never a frozen paint. And because the easing rides that
+ * declaration rather than a keyframe, the crowd dial can still replace it: a
+ * timing function named INSIDE a keyframe would outrank the dial's rule and
+ * quietly make it inert.
+ */
+export function sampledEasing(curve, period, rate, opts = {}) {
+  const f = EASING_CURVES[curve]
+  if (!f) return null
+  const r = (v) => String(Math.round(v * 1e5) / 1e5)
+  const pct = (v) => `${Math.round(v * 1e4) / 1e4}%`
+  const grid = steppedSteps(period, rate, opts)
+  const out = []
+  if (!grid) {
+    for (let i = 0; i <= SMOOTH_EASING_POINTS; i++) {
+      const q = i / SMOOTH_EASING_POINTS
+      out.push(`${r(f(q))} ${pct(q * 100)}`)
+    }
+    return `linear(${out.join(',')})`
+  }
+  for (let k = 0; k < grid.n; k++) {
+    // `jump-none` spreads n held values across BOTH endpoints (glint's sweep
+    // has to show its final frame); the default `jump-end` holds n values from
+    // the start and never shows the last. Same rule steppedTiming picks by.
+    const q = grid.jumpNone ? (grid.n === 1 ? 0 : k / (grid.n - 1)) : k / grid.n
+    // One entry, two input positions — the value is held flat between them.
+    out.push(`${r(f(q))} ${pct(k * 100 / grid.n)} ${pct((k + 1) * 100 / grid.n)}`)
+  }
+  return `linear(${out.join(',')})`
 }
 
 /** Phase-lock delay for a paint/scene animation. Elements carry `--hsp-t`

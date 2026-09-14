@@ -71,7 +71,7 @@ import {
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
-  crowdTierRules, sceneBoxCounts,
+  crowdTierRules, tierTimings, sceneBoxCounts,
 } from './scene-spec.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
@@ -1011,19 +1011,16 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
  * yields the keyframe stops for exactly the motion the calc() described. No
  * effect was rewritten by hand and none can be transcribed wrong.
  *
- * Three shapes, decided by asking the effect itself rather than by a list:
- *  - decl(1) === decl(0) and decl(.5) differs -> a there-and-back sweep
- *    (`bounce`). Three stops, eased, and NOT stepped: steps() applies per
- *    keyframe INTERVAL, so it would multiply the redraw rate across two
- *    intervals rather than cap it — the same rule the whole-name motions
- *    already live under.
- *  - `oneWay` -> a cosine ramp that does not return (`glint`). Two stops,
- *    eased; still one interval, so the rate cap still applies.
- *  - otherwise -> linear in the phase (`wrap`). Two stops, and the timing
- *    function it already had, which makes those effects byte-identical.
+ * Every shape ends up as TWO stops and ONE interval, so the rate cap applies
+ * once and the period, direction and phase-lock delay are untouched. What
+ * differs is only the timing function: `steps()` where the effect was already
+ * linear in the phase, and a sampled `linear()` where it was a cosine — see
+ * linearEasing, which is why a there-and-back needs neither a third stop nor
+ * `alternate`.
  */
 /** Properties whose keyframe would silently reset their own longhands. */
 const SHORTHANDS = new Set(['background', 'mask', 'font', 'border', 'outline', 'flex', 'grid', 'animation', 'transition'])
+
 
 /** `a:1;b:2;` -> [['a','1'],['b','2']]. Splits on top-level `;` only, so a
  *  value carrying commas or nested functions survives intact. */
@@ -1086,38 +1083,48 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
 
   // ── WHICH EFFECTS CONVERT ───────────────────────────────────────────────
   //
-  // Only the ones that are LINEAR in the phase — `wrap`. Two stops and the
-  // timing function they already carry reproduce those byte for byte, which
-  // the pixel gate confirms by not moving at all.
+  // All of them but one. Three shapes, each asked of the effect itself rather
+  // than read off a list, so a new effect classifies itself:
   //
-  // The cosine ones (`bounce`, `ease`) do not, and the difference is not the
-  // curve — it is `steps()`. steps() REPLACES a timing function, so two stops
-  // plus steps() spaces the held values evenly in time where the phase ramp
-  // spaced them along the cosine. Sampling one stop per step fixes the spacing;
-  // running the sweep as one `alternate` leg fixes the rate cap; together they
-  // measured best of all (the fill went 328.5ms -> 102.9ms at twenty names).
-  // But an `alternate` animation cannot be compared against a non-alternate one
-  // by seeking a fraction of its duration — a fraction of one LEG is not that
-  // fraction of the round trip — so the gate cannot tell a real regression from
-  // its own arithmetic there, and an unverifiable win is not one worth taking.
+  //  - LINEAR in the phase (`wrap`) -> two stops and the timing function it
+  //    already carried. Byte-identical; the pixel gate confirms by not moving.
+  //  - ROUND TRIP (`bounce`: phase 1 renders as phase 0, phase .5 does not) ->
+  //    two stops from phase 0 to phase .5, and a `linear()` easing that rises to
+  //    1 at the half and returns to 0. The value therefore goes A -> B -> A
+  //    within one interval. NOT `alternate`: the round trip belongs in the
+  //    easing, so the period, the direction and the delay all stay exactly what
+  //    they were, and one seek still lands on one phase.
+  //  - ONE WAY (`ease`, glint) -> two stops and the same easing over half the
+  //    cosine, ending where it arrives.
   //
-  // conic is a third case and stays for its own reason: its motion is a full
-  // rotation, and `from 0deg` and `from 360deg` are the same angle, so sampled
-  // stops are identical and the animation silently becomes a no-op.
-  const cosine = (d1 === a0.decl && dHalf !== a0.decl) || !!opts.oneWay
-  if (probe.usesPhaseVar || cosine) {
+  // conic is the one that stays on the driver, for its own reason: its motion is
+  // a full rotation, and `from 0deg` and `from 360deg` are the same angle, so
+  // sampled stops come out identical, chromium normalises them, and the
+  // animation silently becomes a no-op. Measured exactly that — the resting
+  // frame correct and every frame after it frozen.
+  if (probe.usesPhaseVar) {
     const { selfPart } = paintPhaseDriver(effectId, probe.period, hash, probe.opts)
     return { selfPart, decl: probe.decl }
   }
 
   const animName = `hsp_${hash}_${effectId}`
-  const stepped = steppedTiming(period, FILL_STEPS_PER_SECOND, {
+  const stepOpts = {
     luminance: !!EFFECTS[effectId]?.luminance,
     oneWay: !!opts.oneWay,
-  })
-  const parts = partitionDecls([a0.decl, d1])
+  }
+  const roundTrip = d1 === a0.decl && dHalf !== a0.decl
+
+  // The round trip's far end is phase .5 — phase 1 is where it came back to, so
+  // sampling [0, 1] would find nothing moving at all.
+  const parts = partitionDecls([a0.decl, roundTrip ? dHalf : d1])
+  const curve = roundTrip ? 'roundTrip' : opts.oneWay ? 'oneWay' : null
+  // The shorthand carries the FALLBACK function, never the sampled easing: a
+  // `linear()` an engine rejects would invalidate the whole `animation`
+  // shorthand and leave the paint frozen, where a rejected
+  // `animation-timing-function` declaration just falls back to this.
+  const timing = curve ? 'ease-in-out'
+    : steppedTiming(period, FILL_STEPS_PER_SECOND, stepOpts) || 'linear'
   const keyframes = `@keyframes ${animName}{from{${parts.at(0)}}to{${parts.at(1)}}}`
-  const timing = stepped || 'linear'
 
   return {
     // The RESTING frame is the hero frame: what a static paint, an SSR page and
@@ -1128,7 +1135,7 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     selfPart: {
       decls: '',
       animShorthand: `${animName} ${period}s ${timing} infinite`,
-      tier: { period, luminance: !!EFFECTS[effectId]?.luminance, oneWay: !!opts.oneWay },
+      tier: { period, luminance: !!EFFECTS[effectId]?.luminance, oneWay: !!opts.oneWay, curve, timing },
       delayExpr: syncDelayCalc(period),
       keyframes,
     },
@@ -1495,10 +1502,25 @@ export function compilePaintCss(spec, selector, opts = {}) {
   }
   const emitSelfRule = () => {
     if (!selfParts.length) return
-    css += `${selector}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
+    const tiers = selfParts.map(p => p.tier)
+    // The timing list is emitted SEPARATELY from the shorthand, and built by the
+    // same function the crowd tiers use, so the two can never disagree about
+    // what an animation's function is. It also isolates the failure: a sampled
+    // `linear()` an old engine rejects costs this one declaration, and each
+    // animation falls back to the function its shorthand still carries, instead
+    // of invalidating the shorthand and freezing the paint outright.
+    // Only when something on this surface actually needs it: a sampled easing
+    // cannot be written into the `animation` shorthand (see below), but every
+    // other function already is, and re-stating those would be bytes saying
+    // nothing on the majority of paints.
+    const timingDecl = tiers.some(t => t.curve)
+      ? `animation-timing-function:${tierTimings(tiers, FILL_STEPS_PER_SECOND).join(', ')};` : ''
+    css += `${selector}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};`
+      + timingDecl
+      + `animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
     // One timing list per crowd tier, in the SAME order as the shorthand above —
     // animation-timing-function is matched positionally to animation-name.
-    css += crowdTierRules(selector, selfParts.map(p => p.tier), FILL_STEPS_PER_SECOND)
+    css += crowdTierRules(selector, tiers, FILL_STEPS_PER_SECOND)
     css += selfParts.map(p => p.keyframes).join('')
   }
 

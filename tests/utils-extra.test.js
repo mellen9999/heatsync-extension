@@ -496,14 +496,14 @@ describe('truncateSafe', () => {
   })
 
   test('surrogate pair straddling the boundary is dropped whole', () => {
-    const s = 'a'.repeat(3) + '😀' + 'b'
+    const s = `${'a'.repeat(3)}😀b`
     const out = truncateSafe(s, 4)
     expect(out).toBe('aaa')
     expect(out.isWellFormed()).toBe(true)
   })
 
   test('pair ending exactly at the boundary is kept', () => {
-    const s = 'a'.repeat(3) + '😀' + 'b'
+    const s = `${'a'.repeat(3)}😀b`
     const out = truncateSafe(s, 5)
     expect(out).toBe('aaa😀')
     expect(out.isWellFormed()).toBe(true)

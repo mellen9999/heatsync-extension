@@ -92,6 +92,7 @@ const browser = globalThis.browser || chrome
   // i18n: localize static [data-i18n*] strings from _locales, with the inline
   // HTML text as the en fallback (a missing key never blanks the UI). Dynamic
   // strings (errors/detected) use t() with the same || english guard below.
+  // biome-ignore lint/complexity/useOptionalChain: `browser` is an UNDECLARED global in chrome, so the typeof guard is load-bearing — browser?.x would throw a ReferenceError, not short-circuit.
   const i18n = typeof browser !== 'undefined' && browser.i18n ? browser.i18n : chrome.i18n
   const t = (k, subs) => (i18n?.getMessage ? i18n.getMessage(k, subs) : '') || ''
   for (const el of document.querySelectorAll('[data-i18n]')) {
@@ -353,6 +354,7 @@ const browser = globalThis.browser || chrome
   // Auth state indicator: show note if not signed in
   const notSignedIn = document.getElementById('not-signed-in')
   const setupLink = document.getElementById('setup-link')
+  // biome-ignore lint/complexity/useOptionalChain: `browser` is an UNDECLARED global in chrome, so the typeof guard is load-bearing — browser?.x would throw a ReferenceError, not short-circuit.
   const api = typeof browser !== 'undefined' && browser.storage ? browser : chrome
   function updateAuthUI() {
     if (!api?.storage?.local) {

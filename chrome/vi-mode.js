@@ -82,27 +82,6 @@
     return el && (el.isContentEditable || el.getAttribute('contenteditable') === 'true')
   }
 
-  function getTextNodes(el) {
-    const nodes = []
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
-    let node = walker.nextNode()
-    while (node) {
-      nodes.push(node)
-      node = walker.nextNode()
-    }
-    return nodes
-  }
-
-  function findNodeAt(nodes, pos) {
-    let remaining = pos
-    for (const node of nodes) {
-      if (remaining <= node.length) return { node, offset: remaining }
-      remaining -= node.length
-    }
-    const last = nodes[nodes.length - 1]
-    return last ? { node: last, offset: last.length } : null
-  }
-
   function isAtom(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return false
     if (node.tagName === 'IMG') return true

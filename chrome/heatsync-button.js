@@ -2350,7 +2350,9 @@
           currentSize = btn.dataset.size
           grid.classList.remove('size-1x', 'size-2x', 'size-4x')
           grid.classList.add(`size-${currentSize}`)
-          panel.querySelectorAll('.heatsync-size-btn').forEach((b) => b.classList.remove('active'))
+          panel.querySelectorAll('.heatsync-size-btn').forEach((b) => {
+            b.classList.remove('active')
+          })
           btn.classList.add('active')
           localStorage.setItem('heatsync-emote-size', currentSize)
           // Re-render to load appropriate resolution images
@@ -2367,13 +2369,17 @@
         if (currentTab === 'settings') {
           // Go back to previous tab (default to channel)
           currentTab = 'channel'
-          panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
+          panel.querySelectorAll('.heatsync-tab').forEach((t) => {
+            t.classList.remove('active')
+          })
           panel.querySelector('.heatsync-tab[data-tab="channel"]')?.classList.add('active')
           settingsBtn?.classList.remove('active')
           renderEmoteGrid()
         } else {
           currentTab = 'settings'
-          panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
+          panel.querySelectorAll('.heatsync-tab').forEach((t) => {
+            t.classList.remove('active')
+          })
           settingsBtn?.classList.add('active')
           renderSettings()
         }
@@ -2450,7 +2456,9 @@
               searchQuery = ''
             }
           }
-          panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
+          panel.querySelectorAll('.heatsync-tab').forEach((t) => {
+            t.classList.remove('active')
+          })
           tab.classList.add('active')
           settingsBtn.classList.remove('active')
           renderEmoteGrid()
@@ -5142,7 +5150,9 @@
         if (i > 0) el.remove()
       })
       // Remove ALL loading indicators (feature disabled)
-      document.querySelectorAll('#heatsync-loading-status').forEach((el) => el.remove())
+      document.querySelectorAll('#heatsync-loading-status').forEach((el) => {
+        el.remove()
+      })
     }
 
     // The overlay (#hs-mc-container) has its own emote picker + input and hides the

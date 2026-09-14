@@ -30,8 +30,8 @@
   const BEAT_TTL = 45000
 
   function suppressing() {
-    const ds = document.body && document.body.dataset
-    if (!ds || ds.hsSuppressNative !== '1') return false
+    const ds = document.body?.dataset
+    if (ds?.hsSuppressNative !== '1') return false
     const beat = +ds.hsSuppressBeat || 0
     return Date.now() - beat < BEAT_TTL
   }
@@ -48,7 +48,7 @@
     if (!el) return null
     let f = getFiber(el)
     for (let i = 0; f && i < 40; i++, f = f.return) {
-      const api = f.memoizedProps && f.memoizedProps.messageHandlerAPI
+      const api = f.memoizedProps?.messageHandlerAPI
       if (api && typeof api.handleMessage === 'function') return api
     }
     return null
@@ -96,7 +96,7 @@
     const rawBadges = m.badges || u.badges || null
     if (Array.isArray(rawBadges)) {
       badges = rawBadges
-        .map((b) => (b && b.setID ? { setID: String(b.setID), version: String(b.version || '1') } : null))
+        .map((b) => (b?.setID ? { setID: String(b.setID), version: String(b.version || '1') } : null))
         .filter(Boolean)
     } else if (rawBadges && typeof rawBadges === 'object') {
       badges = {}

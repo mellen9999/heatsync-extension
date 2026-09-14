@@ -1997,7 +1997,7 @@ export function resolveOptions(def, get) {
       // A throwing narrower must not blank the control — fall back to the union.
     }
   }
-  return /** @type {SettingOption[]} */ (def && def.options) || []
+  return /** @type {SettingOption[]} */ (def?.options) || []
 }
 
 function validateSettingValue(def, v) {

@@ -468,7 +468,9 @@
   async function flushYtCosmeticsBatch() {
     if (ytCosmeticsPending.size === 0) return
     const entries = [...ytCosmeticsPending].slice(0, YT_COSMETICS_PENDING_MAX)
-    entries.forEach(([u]) => ytCosmeticsPending.delete(u))
+    entries.forEach(([u]) => {
+      ytCosmeticsPending.delete(u)
+    })
 
     const now = Date.now()
 
@@ -633,7 +635,9 @@
   async function flushYtHsPaintBatch() {
     if (!ytHsPaintPending.size) return
     const batch = [...ytHsPaintPending].slice(0, YT_HSPAINT_BATCH)
-    batch.forEach((id) => ytHsPaintPending.delete(id))
+    batch.forEach((id) => {
+      ytHsPaintPending.delete(id)
+    })
     let paints = null
     try {
       const resp = await safeSendMessage({ type: 'fetch_paints', userIds: batch })
@@ -1527,7 +1531,9 @@
 
   function updateAcSelection() {
     const items = autocompleteEl.querySelectorAll('.hs-yt-ac-item')
-    items.forEach((el, i) => el.classList.toggle('selected', i === acSelectedIndex))
+    items.forEach((el, i) => {
+      el.classList.toggle('selected', i === acSelectedIndex)
+    })
   }
 
   // item: the acItems entry — a heatsync emote, or an {isChatter}/{isEmoji} row.

@@ -260,9 +260,8 @@ function splitHsLettersHtml(rawText) {
 function hsPaintNameHtml(rawText, spec) {
   const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
   const n = Number(boxes)
-  const planes = Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES
-    ? '<i aria-hidden="true"><b></b></i>'.repeat(n)
-    : ''
+  const planes =
+    Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES ? '<i aria-hidden="true"><b></b></i>'.repeat(n) : ''
   if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
   if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
   return planes + escapeHtml(rawText)

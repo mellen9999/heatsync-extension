@@ -96,7 +96,7 @@ const browser = globalThis.browser || chrome
         if (inst && predicate(inst, fiber)) {
           return { instance: inst, fiber }
         }
-      } catch (e) {}
+      } catch {}
       fiber = fiber.return
       depth++
     }
@@ -265,7 +265,7 @@ const browser = globalThis.browser || chrome
     'error',
     (e) => {
       const img = e.target
-      if (!img || img.tagName !== 'IMG' || img.dataset.hsEcFb) return
+      if (img?.tagName !== 'IMG' || img.dataset.hsEcFb) return
       const src = img.currentSrc || img.src || ''
       let host
       try {
@@ -276,7 +276,7 @@ const browser = globalThis.browser || chrome
       if (!HS_EC_HOSTS.has(host)) return
       img.dataset.hsEcFb = '1'
       img.removeAttribute('srcset')
-      img.src = 'https://heatsync.org/api/emotes/cdn?u=' + encodeURIComponent(src)
+      img.src = `https://heatsync.org/api/emotes/cdn?u=${encodeURIComponent(src)}`
     },
     true,
   )

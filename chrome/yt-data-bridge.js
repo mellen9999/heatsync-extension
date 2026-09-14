@@ -72,7 +72,7 @@
     for (const m of muts) {
       for (const n of m.addedNodes) {
         if (n.nodeType !== 1) continue
-        if (n.matches && n.matches(SEL)) stamp(n)
+        if (n.matches?.(SEL)) stamp(n)
         else scan(n)
       }
     }

@@ -4709,7 +4709,7 @@ function resolveOptions(def, get) {
       // A throwing narrower must not blank the control — fall back to the union.
     }
   }
-  return /** @type {SettingOption[]} */ (def && def.options) || []
+  return /** @type {SettingOption[]} */ (def?.options) || []
 }
 
 function validateSettingValue(def, v) {
@@ -10901,7 +10901,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '02da538b+-202609142044' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '095cc62c+-202609142103' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -58594,9 +58594,8 @@ function splitHsLettersHtml(rawText) {
 function hsPaintNameHtml(rawText, spec) {
   const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
   const n = Number(boxes)
-  const planes = Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES
-    ? '<i aria-hidden="true"><b></b></i>'.repeat(n)
-    : ''
+  const planes =
+    Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES ? '<i aria-hidden="true"><b></b></i>'.repeat(n) : ''
   if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
   if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
   return planes + escapeHtml(rawText)

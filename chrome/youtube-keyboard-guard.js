@@ -20,9 +20,9 @@
   const KEY_EVENTS = new Set(['keydown', 'keypress', 'keyup'])
 
   const inOurInput = (t) => {
-    if (!t || t.nodeType !== 1) return false
+    if (t?.nodeType !== 1) return false
     if (t.id === 'hs-mc-input') return true
-    return !!(t.closest && t.closest('#hs-mc-input'))
+    return !!t.closest?.('#hs-mc-input')
   }
 
   const wrapMap = new WeakMap()
@@ -70,7 +70,7 @@
     const origPause = v.pause
     v.pause = function () {
       const ae = document.activeElement
-      if (ae && (ae.id === 'hs-mc-input' || (ae.closest && ae.closest('#hs-mc-input')))) return
+      if (ae && (ae.id === 'hs-mc-input' || ae.closest?.('#hs-mc-input'))) return
       // biome-ignore lint/complexity/noArguments: transparent monkeypatch forward. `arguments` passes through every argument the host actually called with, including any we don't model, and keeps the wrapper's arity — rest params would change fn.length, which host code can branch on.
       return origPause.apply(this, arguments)
     }

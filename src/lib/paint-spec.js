@@ -100,6 +100,21 @@ export const MAX_ANIMATED_LAYERS = 3
  * denial of service waiting for the first bad cache entry.
  */
 export const MAX_PLANE_BOXES = 16
+
+/**
+ * The element that holds the name's text, and only the name's text.
+ *
+ * NOT in the `hsp-` namespace, and that is load-bearing rather than taste.
+ * `[class*="hsp-"]` is how the offscreen sweep finds painted names
+ * (paint-cosmetics), how PAINT_ALL_SEL and the reduced-motion scope select
+ * them, and `c.startsWith('hsp-')` is how a stale paint class is stripped. A
+ * box named `hsp-n` would be matched by every one of those and gated,
+ * measured and de-animated as if it were a second painted name per row.
+ *
+ * It is also why the compiled letter rules address `> span` UNDER this box
+ * rather than any `${selector} span`, which would match the box itself.
+ */
+export const NAME_BOX_CLASS = 'hs-name'
 const MIN_STOPS = 1
 const MAX_STOPS = 8
 
@@ -548,7 +563,22 @@ export function paintMarkupMode(spec) {
 }
 
 /** paintNameHtml with the shape already decided. Unknown modes fall through
- * to plain escaped text — a stale baked mode can never emit raw HTML. */
+ * to plain escaped text — a stale baked mode can never emit raw HTML.
+ *
+ * THE NAME GETS ITS OWN BOX, ALWAYS. `.hs-name` wraps the text and nothing else;
+ * the scene planes are its siblings. Everything about the NAME — the fill, the
+ * whole-name motion, the letter phase driver — is compiled against that box,
+ * and the host is left holding only layout and the planes.
+ *
+ * Without it the two share one element, and a `transform` on an element
+ * transforms its whole subtree: `coin` spun the backdrop and the weather along
+ * with the glyphs, as did heli/float/heart/wobble/swing/jitter, while `flicker`
+ * faded the entire diorama. The fill had already been pushed down onto the
+ * spans for the same class of reason; the motion never was. Reported from a
+ * phone as "the flip is flipping the scenery too and weather".
+ *
+ * It also bounds the inheriting `@property` phase driver: dirtying the name box
+ * no longer dirties six absolutely-positioned plane elements per name. */
 export function paintNameHtmlFor(rawText, mode) {
   const [shape, boxes] = String(mode ?? '').split('+')
   // The boxes come FIRST and carry no content. They are absolutely positioned
@@ -558,9 +588,8 @@ export function paintNameHtmlFor(rawText, mode) {
   let planes = ''
   const n = Number(boxes)
   if (Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES) planes = "<i aria-hidden=\"true\"><b></b></i>".repeat(n)
-  if (shape === 'letters') return planes + splitLettersHtml(rawText)
-  if (shape === 'wrap') return planes + `<span>${escapeTextHtml(rawText)}</span>`
-  return planes + escapeTextHtml(rawText)
+  const body = shape === 'letters' ? splitLettersHtml(rawText) : escapeTextHtml(rawText)
+  return `${planes}<span class="${NAME_BOX_CLASS}">${body}</span>`
 }
 
 // ── id-space safety (paint lookup key guard) ────────────────────────────────
@@ -1482,10 +1511,22 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // (letters render transparent over nothing; only a hover background
   // clipped into the glyphs reveals them). When the name is letter-split,
   // ALL clip-text painting must live on the spans themselves.
-  const paintTarget = needsLetterSplit ? `${selector} span` : selector
+  // The name's own box (paintNameHtmlFor emits it unconditionally). Everything
+  // that belongs to the NAME compiles against this; the host keeps only layout
+  // and the scene planes, which are this box's siblings. A transform applies to
+  // an element's whole subtree, so a whole-name motion compiled against the
+  // host spun the backdrop and the weather with the glyphs.
+  // NAME_BOX_CLASS is deliberately outside the `hsp-` namespace — see its
+  // declaration; the sweep selects painted names with `[class*="hsp-"]`.
+  const nameBox = `${selector}>.${NAME_BOX_CLASS}`
+  const perLetter = paintNeedsPerLetter(spec)
+  const paintTarget = perLetter ? `${nameBox}>span` : nameBox
   const baseCss = paintEffect ? null : buildBaseCss(base, stops)
 
-  let css = `${selector}{display:inline-block;`
+  // display:inline-block on BOTH: the host so the planes have a box to be
+  // absolute against, the name box so a motion transform has something with
+  // geometry to act on.
+  let css = `${selector}{display:inline-block;}${nameBox}{display:inline-block;`
   if (baseCss && (!needsLetterSplit || !baseCss.isClipText)) css += baseCss.decl
   css += '}'
 
@@ -1515,12 +1556,12 @@ export function compilePaintCss(spec, selector, opts = {}) {
     // nothing on the majority of paints.
     const timingDecl = tiers.some(t => t.curve)
       ? `animation-timing-function:${tierTimings(tiers, FILL_STEPS_PER_SECOND).join(', ')};` : ''
-    css += `${selector}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};`
+    css += `${nameBox}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};`
       + timingDecl
       + `animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
     // One timing list per crowd tier, in the SAME order as the shorthand above —
     // animation-timing-function is matched positionally to animation-name.
-    css += crowdTierRules(selector, tiers, FILL_STEPS_PER_SECOND)
+    css += crowdTierRules(nameBox, tiers, FILL_STEPS_PER_SECOND)
     css += selfParts.map(p => p.keyframes).join('')
   }
 
@@ -1544,7 +1585,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
     }
     for (const e of motionEffects) {
       if (!EFFECTS[e.id].letterSplit) continue
-      const m = buildLetterMotionCss(e.id, e.speed, selector, hash)
+      const m = buildLetterMotionCss(e.id, e.speed, nameBox, hash)
       if (m) {
         // One Animation on the parent (merged into the same comma-list as
         // any self-motion effect below), not one per glyph — see
@@ -1556,7 +1597,14 @@ export function compilePaintCss(spec, selector, opts = {}) {
     }
     emitSelfRule()
 
-    css += `${selector} span{display:inline-block;${spanDecls}}`
+    // `> span` under the name box, never `${selector} span`: the name box is
+    // itself a span, and a descendant selector would apply every per-letter
+    // declaration to it as well — with `var(--i)` unset, which makes the whole
+    // property invalid at computed-value time.
+    // Per-letter spans need their own inline-block to be transformable; the
+    // wrap shape IS the name box, which the base rule already declared.
+    if (perLetter) css += `${paintTarget}{display:inline-block;${spanDecls}}`
+    else if (spanDecls) css += `${paintTarget}{${spanDecls}}`
   } else {
     if (paintEffect) {
       const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)

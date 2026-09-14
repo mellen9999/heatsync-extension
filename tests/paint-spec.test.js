@@ -273,7 +273,7 @@ describe('compilePaintCss — structural checks', () => {
   test('solid base with no effects compiles a plain color rule, no gradient/animation', () => {
     const spec = baseSpec()
     const css = compilePaintCss(spec, '.hsp-abc123', { hash: 'abc123' })
-    expect(css).toContain('.hsp-abc123{display:inline-block;color:#ff8700;}')
+    expect(css).toContain('.hsp-abc123>.hs-name{display:inline-block;color:#ff8700;}')
     expect(css).not.toContain('@keyframes')
     expect(css).not.toContain('background-clip')
   })
@@ -329,16 +329,17 @@ describe('compilePaintCss — structural checks', () => {
     const css = compilePaintCss(spec, '.hsp-wave1', { hash: 'wave1' })
     // Single combined span rule — display:inline-block + the calc() transform
     // live together, not a separate display-only rule.
-    expect(css.match(/\.hsp-wave1 span\{/g)?.length).toBe(1)
+    expect(css.match(/\.hsp-wave1>\.hs-name>span\{/g)?.length).toBe(1)
     // The span itself carries NO `animation:` — one Animation per glyph is
     // exactly the cost this shape replaced (see buildLetterMotionCss).
-    const spanRule = css.match(/\.hsp-wave1 span\{[^}]*\}/)[0]
+    const spanRule = css.match(/\.hsp-wave1>\.hs-name>span\{[^}]*\}/)[0]
     expect(spanRule).not.toContain('animation:')
     expect(spanRule).toContain('var(--i)')
     expect(spanRule).toContain('translateY')
-    // The ONE real Animation lives on the parent, driving a registered
-    // (smoothly interpolable) phase property every span reads back.
-    const parentRule = css.match(/\.hsp-wave1\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
+    // The ONE real Animation lives on the name box (the spans' parent),
+    // driving a registered (smoothly interpolable) phase property every span
+    // reads back.
+    const parentRule = css.match(/\.hsp-wave1>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toContain('animation:hsp_wave1_wave')
     expect(css).toContain("@property --hsp-wave1-wave-ph{syntax:'<number>'")
   })
@@ -372,7 +373,7 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-fw', { hash: 'fw' })
-    const spanRules = css.match(/\.hsp-fw span\{[^}]*\}/g) || []
+    const spanRules = css.match(/\.hsp-fw>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     const rule = spanRules[0]
     // No Animation on the span at all — both the paint fill and the
@@ -388,7 +389,7 @@ describe('compilePaintCss — structural checks', () => {
     expect(rule).toContain('var(--i)')
     expect(rule).toContain('translateY')
     // Both Animations — one per effect, still just ONE each — are on the parent.
-    const parentRule = css.match(/\.hsp-fw\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-fw>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_fw_fire[^,]*, hsp_fw_wave[^;]*;/)
   })
 
@@ -408,13 +409,13 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-wr', { hash: 'wr' })
-    const spanRules = css.match(/\.hsp-wr span\{[^}]*\}/g) || []
+    const spanRules = css.match(/\.hsp-wr>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     // No Animation on the span at all — both motions are parent-driven.
     expect(spanRules[0]).not.toContain('animation:')
     expect(spanRules[0]).toContain('translateY')
     expect(spanRules[0]).toContain('hue-rotate')
-    const parentRule = css.match(/\.hsp-wr\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-wr>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
   })
 
@@ -434,28 +435,28 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-pt', { hash: 'pt' })
-    const spanRules = css.match(/\.hsp-pt span\{[^}]*\}/g) || []
+    const spanRules = css.match(/\.hsp-pt>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     expect(spanRules[0]).not.toContain('animation:')
     expect(spanRules[0]).toContain('background-position:')
     expect(spanRules[0]).toContain('transform-style:preserve-3d;')
-    const parentRule = css.match(/\.hsp-pt\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-pt>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_pt_pan[^,]*, hsp_pt_tumble[^;]*;/)
-    expect(css).toContain('.hsp-pt{perspective:300px;}')
+    expect(css).toContain('.hsp-pt>.hs-name{perspective:300px;}')
   })
 
   test('split-without-paint (wave only): span carries no animation at all, one parent Animation', () => {
     const spec = baseSpec({ effects: [{ id: 'wave', speed: 1 }] })
     const css = compilePaintCss(spec, '.hsp-w', { hash: 'w' })
-    const spanRules = css.match(/\.hsp-w span\{[^}]*\}/g) || []
+    const spanRules = css.match(/\.hsp-w>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
     expect(spanRules[0]).not.toContain('animation:')
-    const parentRule = css.match(/\.hsp-w\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
+    const parentRule = css.match(/\.hsp-w>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
     expect(parentRule).toMatch(/animation:hsp_w_wave[^;,]*;/)
   })
 
   test('non-split paint + whole-name motion (fire + coin): ONE selector rule, both animations comma-listed', () => {
-    // Two `.hsp-fc{animation:…}` rules on one selector do not compose — the
+    // Two `.hsp-fc>.hs-name{animation:…}` rules on one selector do not compose — the
     // later won, so gold foil + heartbeat ran only the heartbeat. Self-level
     // animations merge like the spans always did.
     const spec = baseSpec({
@@ -473,8 +474,8 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-fc', { hash: 'fc' })
-    expect(css).not.toContain(' span{')
-    const animRules = css.match(/\.hsp-fc\{[^}]*animation:[^}]*\}/g) || []
+    expect(css).not.toContain('>span{')
+    const animRules = css.match(/\.hsp-fc>\.hs-name\{[^}]*animation:[^}]*\}/g) || []
     expect(animRules.length).toBe(1)
     expect(animRules[0]).toMatch(/animation:hsp_fc_fire[^,]*, hsp_fc_coin/)
   })

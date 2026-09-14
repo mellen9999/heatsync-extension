@@ -66,7 +66,8 @@
       "includes": [
         "src/lib/paint-core.js",
         "src/lib/scene-spec.js",
-        "src/lib/paint-spec.js"
+        "src/lib/paint-spec.js",
+        "src/lib/animation-phase.js"
       ],
       "formatter": {
         "enabled": false

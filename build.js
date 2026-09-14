@@ -251,6 +251,7 @@ function checkScopeCollisions() {
     'paint-core.js',
     'scene-spec.js',
     'paint-spec.js',
+    'animation-phase.js',
   ]
   const libDir = join(__dirname, 'src', 'lib')
   const mcDir = join(__dirname, 'src', 'multichat')
@@ -814,7 +815,12 @@ function readMultichatModules() {
   // (scene catalog/compiler) → paint-spec (validator/compiler, imports both).
   // stripExports drops the relative import lines; concatenation puts all
   // three in one scope, same shape the site gets from real ESM.
-  for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js']) {
+  // animation-phase.js is the same mirror (see scripts/sync-paint-compiler.sh):
+  // the compiled `animation-delay` only phase-locks an animation that has never
+  // been paused, and paints.js pauses offscreen names for CPU. It depends on
+  // nothing, so its position here is free; it sits with the compiler because
+  // they are synced and version-locked together.
+  for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js']) {
     const p = join(SRC_DIR, 'lib', mod)
     if (existsSync(p)) {
       combined += `\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`

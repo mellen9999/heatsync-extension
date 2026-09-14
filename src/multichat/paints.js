@@ -260,9 +260,8 @@ function splitHsLettersHtml(rawText) {
 function hsPaintNameHtml(rawText, spec) {
   const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
   const n = Number(boxes)
-  const planes = Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES
-    ? '<i aria-hidden="true"><b></b></i>'.repeat(n)
-    : ''
+  const planes =
+    Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES ? '<i aria-hidden="true"><b></b></i>'.repeat(n) : ''
   if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
   if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
   return planes + escapeHtml(rawText)
@@ -776,7 +775,25 @@ function ensureHsVisibilityObserver() {
   // of rows warm either side so a scroll never uncovers a frozen name.
   hsVisibilityObserver = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) entry.target.classList.toggle('hs-mc-idle', !entry.isIntersecting)
+      // The class alone is not enough. `animation-play-state:paused` freezes
+      // currentTime and resuming ticks on from the frozen value — the negative
+      // `animation-delay` that phase-locks the paint is consumed once, at
+      // start, and never re-read. So a name came back offset by exactly how
+      // long it had been scrolled away, and after a few scrolls every copy of
+      // one paint ran on its own timing. regateInPhase (lib/animation-phase.js,
+      // the site's, byte for byte) records startTime before the pause and
+      // writes the phase back before the release, so the restore is exact and
+      // an `alternate` plane's direction comes back with it.
+      const pause = []
+      const resume = []
+      for (const entry of entries) (entry.isIntersecting ? resume : pause).push(entry.target)
+      regateInPhase(
+        { pause, resume },
+        {
+          onPause: (el) => el.classList.add('hs-mc-idle'),
+          onResume: (el) => el.classList.remove('hs-mc-idle'),
+        },
+      )
     },
     { rootMargin: '150% 0px' },
   )

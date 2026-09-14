@@ -9538,14 +9538,35 @@ function buildLetterMotionCss(effectId, speed, selector, hash) {
   // Single-interval `to{}` keyframes, so steps() is a true rate limit here — the
   // same reason it is correct for the paint-slot drivers and wrong for the
   // multi-stop whole-name motions.
-  const stepped = steppedTiming(duration, FILL_STEPS_PER_SECOND, {
+  // A GLYPH ROTATED THROUGH EDGE-ON IS NOT THERE.
+  //
+  // The third thing that must never be quantised, alongside a luminance ramp
+  // and a multi-stop keyframe body. tumble turns each letter about X, so twice
+  // a flip it passes through 90deg, where it has no width and paints nothing.
+  // At full rate that is crossed inside one frame and reads as the flip it is.
+  // A step can LAND on it and hold it for the whole step, and then the letter
+  // is simply missing. Measured on "mellen", longest stretch a glyph spends
+  // invisible:
+  //
+  //     unstepped      0 ms
+  //     steps(14)    243 ms   (three of the six letters)
+  //     steps(7)     971 ms   (the second `l`)
+  //
+  // — against 17ms for one frame at 60fps. Reported as "the ll in my name
+  // disappears on name flip animation", and it only bites on a busy phone,
+  // because that is what turns the crowd dial up. No step count is safe: the
+  // stagger puts every letter on its own angle, so a grid coarse enough to help
+  // is coarse enough to park one of them. twirl is 2D `rotate()` and stays flat
+  // to the screen, so it is not affected.
+  const edgeOn = effectId === 'tumble'
+  const stepped = edgeOn ? null : steppedTiming(duration, FILL_STEPS_PER_SECOND, {
     // ripple (hue-rotate) and type (opacity blink) are luminance; they stay
     // smooth, and type also has a 3%-wide window a coarse grid could skip.
     luminance: !!EFFECTS[effectId]?.luminance,
   })
   const selfPart = {
     decls: '', animShorthand: `${animName} ${duration}s ${stepped || 'linear'} infinite`,
-    tier: { period: duration, luminance: !!EFFECTS[effectId]?.luminance },
+    tier: { period: duration, luminance: !!EFFECTS[effectId]?.luminance, noStep: edgeOn },
     delayExpr: syncDelayCalc(duration),
     keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
       `@keyframes ${animName}{to{${phaseVar}:1;}}`,
@@ -10814,7 +10835,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '32e526d8+-202609141539' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6bba0824+-202609141659' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

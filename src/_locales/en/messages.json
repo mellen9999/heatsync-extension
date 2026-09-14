@@ -908,7 +908,7 @@
     }
   },
   "mc_input_send_message": {
-    "message": "send a message..."
+    "message": "send a message... or / for commands"
   },
   "mc_input_attach": {
     "message": "attach image or video"

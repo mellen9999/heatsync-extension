@@ -8968,8 +8968,32 @@ function hasHeatsyncPaint(el) {
 }
 
 function paintPhaseNow() {
-  return `${(Date.now() / 1000).toFixed(3)}s`
+  // ONE STAMP PER FRAME, and that is the whole correctness of the lock.
+  //
+  // The phase a copy lands on is (its animation's startTime − its own stamp).
+  // A CSS animation starts at the frame's timeline time, so every element
+  // created in one frame starts at the SAME instant — while a per-call
+  // Date.now() gave each of them a DIFFERENT stamp. Measured on a phone: 24
+  // painted rows carried 24 distinct stamps spread over 61ms but their
+  // animations started in only 7 distinct frames, leaving every copy on its own
+  // phase by up to 161ms. Visible as "on scroll up still making a 2nd
+  // animation start time for the same paints".
+  //
+  // document.timeline.currentTime is constant for the whole frame and is the
+  // exact value those animations will take as their startTime, so keying the
+  // memo on it makes stamp and start move together instead of nearly together.
+  // It still advances in step with the wall clock across frames, so copies
+  // mounted in DIFFERENT frames stay locked to each other too.
+  const frame = typeof document !== 'undefined' && document.timeline
+    ? document.timeline.currentTime : null
+  if (frame !== null && frame === phaseStampFrame) return phaseStamp
+  phaseStamp = `${(Date.now() / 1000).toFixed(3)}s`
+  phaseStampFrame = frame
+  return phaseStamp
 }
+let phaseStamp = ''
+/** The timeline time `phaseStamp` was taken in; null outside a document (SSR). */
+let phaseStampFrame = null
 
 function gradientStopsCss(stops) {
   return stops.map(s => `${s.color} ${s.pos}%`).join(', ')
@@ -10790,7 +10814,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c2e69ff9+-202609140542' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '32e526d8+-202609141539' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

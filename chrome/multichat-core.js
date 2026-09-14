@@ -10901,7 +10901,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e5a12fbd-202609141851' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '02da538b+-202609142044' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -11239,6 +11239,425 @@ const cleanup = {
     _trackedNodes.push(node)
     return node
   },
+}
+
+
+// --- multichat/slash-registry.js ---
+/**
+ * Slash command registry — THE source of truth for every heatsync command.
+ *
+ * Before this file there were six lists: SLASH_COMMANDS and SLASH_HELP_LINES and
+ * SLASH_ALIASES here, and SLASH_SUGGESTIONS + SLASH_ALIASES + HELP_LINES in the
+ * site repo. They drifted, and the site's copy ended up advertising thirteen
+ * commands that Twitch stopped parsing in Feb 2023 — typing /ban on heatsync.org
+ * posted the literal text "/ban <name>" into chat. Autocomplete, /help, the
+ * public /commands page and the alias map are now all projections of this array,
+ * so that class of lie cannot come back.
+ *
+ * Written as ESM: build.js `stripExports` rewrites `export const` to `const`, so
+ * this lands in the extension bundle as a plain top-level const (same mechanism
+ * palette.js and send-targets.js already use) while the site repo imports it
+ * normally. It MUST be listed in MULTICHAT_MODULES before input.js.
+ *
+ * Fields:
+ *   cmd    canonical name, no slash
+ *   args   literal usage; '' when it takes none
+ *   desc   plain description — NO metadata in the prose; that is what the
+ *          other fields are for
+ *   on     'ext' | 'web' | 'both' — which composer actually implements it.
+ *          The two surfaces are genuinely not at parity; a list that pretends
+ *          otherwise is wrong on one of them.
+ *   needs  single strictest requirement: 'none' | 'login' | 'twitch' | 'mod' |
+ *          'broadcaster'. Deliberately scalar — a set turns this into a matrix.
+ *   does   where the effect lands: 'local' (never leaves the browser) |
+ *          'heatsync' | 'twitch' | 'kick' | 'twitch+kick' | 'passthrough'
+ *          (the platform parses it, we only format the wire)
+ *   alias  optional shorthands; the alias map is derived from these
+ *   warn   optional: 'bits' (spends the user's real money) | 'destructive'
+ *   hidden optional: implemented but never advertised, so the coverage test can
+ *          be total instead of carrying an allowlist
+ */
+
+const SLASH_REGISTRY = [
+  // ── everyday ──────────────────────────────────────────────────────────────
+  {
+    cmd: 'op',
+    args: '<text>',
+    desc: 'post a thread to your heatsync feed',
+    on: 'both',
+    needs: 'login',
+    does: 'heatsync',
+    alias: ['post'],
+  },
+  {
+    cmd: 'opr',
+    args: '<text>',
+    desc: 'reply to the last [OP] shown in chat',
+    on: 'ext',
+    needs: 'login',
+    does: 'heatsync',
+  },
+  {
+    cmd: 'dm',
+    args: '<user> <msg>',
+    desc: 'send a heatsync DM; no message opens the conversation',
+    on: 'both',
+    needs: 'login',
+    does: 'heatsync',
+  },
+  {
+    cmd: 'w',
+    args: '<user> <msg>',
+    desc: 'send a twitch whisper',
+    on: 'both',
+    needs: 'twitch',
+    does: 'twitch',
+    alias: ['whisper'],
+  },
+  {
+    cmd: 'r',
+    args: '<msg>',
+    desc: 'reply to the last whisper you received',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+    alias: ['re', 'reply'],
+  },
+  {
+    cmd: 'user',
+    args: '<name>',
+    desc: 'open a profile card with recent logs',
+    on: 'web',
+    needs: 'none',
+    does: 'heatsync',
+    alias: ['u'],
+  },
+  {
+    cmd: 'follow',
+    args: '<user>',
+    desc: 'follow on heatsync, mirrored to twitch and kick',
+    on: 'ext',
+    needs: 'login',
+    does: 'heatsync',
+  },
+  {
+    cmd: 'unfollow',
+    args: '<user>',
+    desc: 'unfollow on heatsync, mirrored to twitch and kick',
+    on: 'ext',
+    needs: 'login',
+    does: 'heatsync',
+  },
+  { cmd: 'me', args: '<action>', desc: 'send an action message', on: 'both', needs: 'none', does: 'twitch+kick' },
+  { cmd: 'shrug', args: '[text]', desc: 'append ¯\\_(ツ)_/¯', on: 'both', needs: 'none', does: 'local' },
+  { cmd: 'tableflip', args: '[text]', desc: 'append (╯°□°)╯︵ ┻━┻', on: 'both', needs: 'none', does: 'local' },
+  { cmd: 'unflip', args: '[text]', desc: 'append ┬─┬ノ( ゜-゜ノ)', on: 'both', needs: 'none', does: 'local' },
+  { cmd: 'help', args: '', desc: 'list commands', on: 'both', needs: 'none', does: 'local', alias: ['?'] },
+
+  // ── this window only — nothing leaves the browser ─────────────────────────
+  {
+    cmd: 'lclear',
+    args: '',
+    desc: 'clear the current tab for you only',
+    on: 'both',
+    needs: 'none',
+    does: 'local',
+    alias: ['lc'],
+  },
+  {
+    cmd: 'mute',
+    args: '<user>',
+    desc: 'mute someone for 24h, across their linked accounts',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+  },
+  { cmd: 'unmute', args: '<user>', desc: 'clear a mute', on: 'ext', needs: 'none', does: 'local' },
+  { cmd: 'block', args: '<user>', desc: 'toggle a block', on: 'ext', needs: 'login', does: 'heatsync' },
+  {
+    cmd: 'hide',
+    args: '<user>',
+    desc: 'hide someone in this tab only, until reload',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+  },
+  { cmd: 'unhide', args: '<user>', desc: 'undo a hide', on: 'ext', needs: 'none', does: 'local' },
+  {
+    cmd: 'note',
+    args: '<user> <text>',
+    desc: 'save a private note on someone',
+    on: 'ext',
+    needs: 'login',
+    does: 'heatsync',
+  },
+  { cmd: 'delnote', args: '<user>', desc: 'remove your note', on: 'ext', needs: 'login', does: 'heatsync' },
+  {
+    cmd: 'set',
+    args: '<setting> <value>',
+    desc: 'change a setting, e.g. /set zebra off',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+  },
+  {
+    cmd: 'tab',
+    args: '<name>',
+    desc: 'switch tab: live, feed, mentions, whispers, settings, or a channel',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+  },
+  {
+    cmd: 'status',
+    args: '[channel]',
+    desc: 'show chat modes and stream info',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+    alias: ['modes'],
+  },
+
+  // ── moderation ────────────────────────────────────────────────────────────
+  {
+    cmd: 'ban',
+    args: '<user> [reason]',
+    desc: 'permanently ban someone from the channel',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['b'],
+  },
+  {
+    cmd: 'timeout',
+    args: '<user> [secs] [reason]',
+    desc: 'time someone out, default 10 minutes',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['to'],
+  },
+  {
+    cmd: 'unban',
+    args: '<user>',
+    desc: 'lift a ban or end a timeout',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['untimeout', 'unto'],
+  },
+  {
+    cmd: 'delete',
+    args: '<msg-id>',
+    desc: 'delete a single message',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['del'],
+  },
+  {
+    cmd: 'nuke',
+    args: '<term> [secs]',
+    desc: 'bulk-delete recent messages containing a term',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch',
+    warn: 'destructive',
+  },
+  {
+    cmd: 'announce',
+    args: '<msg>',
+    desc: 'post an announcement, optionally coloured',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch',
+    alias: ['announceblue', 'announcegreen', 'announceorange', 'announcepurple'],
+  },
+  { cmd: 'vip', args: '<user>', desc: 'grant VIP', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'unvip', args: '<user>', desc: 'remove VIP', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'mod', args: '<user>', desc: 'grant moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'unmod', args: '<user>', desc: 'remove moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+
+  // ── chat modes ────────────────────────────────────────────────────────────
+  {
+    cmd: 'slow',
+    args: '[secs|off]',
+    desc: 'slow mode, default 30s',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['slowmode'],
+  },
+  {
+    cmd: 'followers',
+    args: '[mins|off]',
+    desc: 'followers-only mode',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['followersonly', 'followeronly'],
+  },
+  {
+    cmd: 'emoteonly',
+    args: '[off]',
+    desc: 'emote-only mode',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['emote', 'emoteonlymode'],
+  },
+  {
+    cmd: 'subscribers',
+    args: '[off]',
+    desc: 'subscribers-only mode',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch+kick',
+    alias: ['subonly', 'subsonly', 'subscribersonly', 'subs'],
+  },
+  {
+    cmd: 'unique',
+    args: '[off]',
+    desc: 'unique-chat mode; twitch only, kick has no equivalent',
+    on: 'ext',
+    needs: 'mod',
+    does: 'twitch',
+    alias: ['uniquechat', 'r9k', 'r9kbeta'],
+  },
+
+  // ── polls, predictions, bits ──────────────────────────────────────────────
+  {
+    cmd: 'poll',
+    args: '<q> | <a> | <b> [| …] [| secs]',
+    desc: 'create a poll, 2-5 choices',
+    on: 'ext',
+    needs: 'broadcaster',
+    does: 'twitch',
+  },
+  { cmd: 'endpoll', args: '', desc: 'end the active poll', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  {
+    cmd: 'vote',
+    args: '<n>',
+    desc: 'vote for choice n in the active poll',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+  },
+  {
+    cmd: 'prediction',
+    args: '<title> | <a> | <b> [| …] [| secs]',
+    desc: 'start a prediction, 2-10 outcomes',
+    on: 'ext',
+    needs: 'broadcaster',
+    does: 'twitch',
+    alias: ['pred', 'predict'],
+  },
+  {
+    cmd: 'bet',
+    args: '<n> <points>',
+    desc: 'bet channel points on outcome n',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+  },
+  { cmd: 'lockpred', args: '', desc: 'lock the active prediction', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  {
+    cmd: 'resolvepred',
+    args: '<n>',
+    desc: 'resolve the prediction to outcome n',
+    on: 'ext',
+    needs: 'broadcaster',
+    does: 'twitch',
+  },
+  {
+    cmd: 'cancelpred',
+    args: '',
+    desc: 'cancel the active prediction',
+    on: 'ext',
+    needs: 'broadcaster',
+    does: 'twitch',
+  },
+  {
+    cmd: 'highlight',
+    args: '<msg>',
+    desc: 'highlight your message in twitch chat',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+    alias: ['hl'],
+    warn: 'bits',
+  },
+
+  // ── never advertised ──────────────────────────────────────────────────────
+  {
+    cmd: 'testnotices',
+    args: '[raw]',
+    desc: 'render one synthetic row per twitch event type',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+    hidden: true,
+  },
+]
+
+/** Sections for /help and the public /commands page, in reading order. */
+const SLASH_SECTIONS = [
+  {
+    key: 'everyday',
+    title: 'everyday',
+    cmds: ['op', 'opr', 'dm', 'w', 'r', 'user', 'follow', 'unfollow', 'me', 'shrug', 'tableflip', 'unflip', 'help'],
+  },
+  {
+    key: 'local',
+    title: 'this window only',
+    cmds: ['lclear', 'mute', 'unmute', 'block', 'hide', 'unhide', 'note', 'delnote', 'set', 'tab', 'status'],
+  },
+  {
+    key: 'mod',
+    title: 'moderation',
+    cmds: ['ban', 'timeout', 'unban', 'delete', 'nuke', 'announce', 'vip', 'unvip', 'mod', 'unmod'],
+  },
+  { key: 'modes', title: 'chat modes', cmds: ['slow', 'followers', 'emoteonly', 'subscribers', 'unique'] },
+  {
+    key: 'events',
+    title: 'polls, predictions, bits',
+    cmds: ['poll', 'endpoll', 'vote', 'prediction', 'bet', 'lockpred', 'resolvepred', 'cancelpred', 'highlight'],
+  },
+]
+
+/** Commands safe to advertise on a given surface. */
+function slashCommandsFor(surface) {
+  return SLASH_REGISTRY.filter((c) => !c.hidden && (c.on === 'both' || c.on === surface))
+}
+
+/** alias -> canonical, derived so the two can never disagree. */
+function slashAliasMap(surface) {
+  const src = surface ? slashCommandsFor(surface) : SLASH_REGISTRY.filter((c) => !c.hidden)
+  const out = {}
+  for (const c of src) for (const a of c.alias || []) out[a] = c.cmd
+  return out
+}
+
+/**
+ * Plain-text help, column-aligned by padEnd rather than by hand. The old
+ * hand-counted version is why nobody maintained it: it advertised a debug-only
+ * command and omitted fourteen shipped ones.
+ */
+function slashHelpText(surface) {
+  const cmds = slashCommandsFor(surface)
+  const usage = (c) => `/${c.cmd}${c.args ? ' ' + c.args : ''}`
+  const lines = []
+  for (const sec of SLASH_SECTIONS) {
+    const rows = sec.cmds.map((n) => cmds.find((c) => c.cmd === n)).filter(Boolean)
+    if (!rows.length) continue
+    // per-section width: one global column makes /prediction's long signature
+    // pad every short row in the list out to nothing
+    const width = Math.min(34, Math.max(...rows.map((c) => usage(c).length)) + 2)
+    if (lines.length) lines.push('')
+    lines.push(`── ${sec.title}`)
+    for (const c of rows) lines.push(`${usage(c).padEnd(width)}${c.desc}`)
+  }
+  return lines.join('\n')
 }
 
 
@@ -47266,56 +47685,12 @@ const MENTION_DROPDOWN_MAX = 20
 
 // Slash command autocomplete dropdown — shows command list when input begins
 // with /<word>. Heatsync-owned + common pass-through Twitch/Kick mod commands.
-const SLASH_COMMANDS = [
-  { cmd: 'op', args: '<text>', desc: 'post to home feed' },
-  { cmd: 'opr', args: '<text>', desc: 'reply to the last [OP] shown in chat' },
-  { cmd: 'w', args: '<user> <msg>', desc: 'twitch whisper' },
-  { cmd: 'dm', args: '<user> <msg>', desc: 'heatsync DM' },
-  { cmd: 'r', args: '<msg>', desc: 'reply to last whisper' },
-  { cmd: 'follow', args: '<user>', desc: 'follow on heatsync (+ twitch/kick mirror)' },
-  { cmd: 'unfollow', args: '<user>', desc: 'unfollow on heatsync (+ twitch/kick mirror)' },
-  { cmd: 'mute', args: '<user>', desc: 'local mute 24h' },
-  { cmd: 'unmute', args: '<user>', desc: 'local unmute' },
-  { cmd: 'shrug', args: '[text]', desc: 'append ¯\\_(ツ)_/¯' },
-  { cmd: 'tableflip', args: '[text]', desc: 'append (╯°□°)╯︵ ┻━┻' },
-  { cmd: 'unflip', args: '[text]', desc: 'append ┬─┬ノ( ゜-゜ノ)' },
-  { cmd: 'lclear', args: '', desc: 'clear current tab locally' },
-  { cmd: 'status', args: '[channel]', desc: 'show chat modes + stream info' },
-  { cmd: 'help', args: '', desc: 'list commands' },
-  { cmd: 'me', args: '<action>', desc: 'twitch/kick action message' },
-  { cmd: 'highlight', args: '<msg>', desc: 'highlight your message (twitch bits power-up)' },
-  { cmd: 'ban', args: '<user>', desc: 'twitch/kick ban (mod)' },
-  { cmd: 'timeout', args: '<user> [secs]', desc: 'twitch/kick timeout (mod)' },
-  { cmd: 'unban', args: '<user>', desc: 'twitch/kick unban (mod)' },
-  { cmd: 'untimeout', args: '<user>', desc: 'twitch/kick untimeout (mod)' },
-  { cmd: 'delete', args: '<msg-id>', desc: 'delete one message (mod)' },
-  { cmd: 'nuke', args: '<term> [secs]', desc: 'bulk-delete matching messages (mod)' },
-  { cmd: 'announce', args: '<msg>', desc: 'twitch announcement (mod, +blue/green/orange/purple)' },
-  { cmd: 'slow', args: '[secs|off]', desc: 'slow mode (twitch mod)' },
-  { cmd: 'followers', args: '[mins|off]', desc: 'followers-only (twitch mod)' },
-  { cmd: 'emoteonly', args: '[off]', desc: 'emote-only mode (twitch mod)' },
-  { cmd: 'subscribers', args: '[off]', desc: 'subs-only mode (twitch mod)' },
-  { cmd: 'unique', args: '[off]', desc: 'unique-chat/r9k (twitch mod)' },
-  { cmd: 'poll', args: '<q> | <a> | <b> [| …] [| secs]', desc: 'create a poll (twitch broadcaster)' },
-  { cmd: 'endpoll', args: '', desc: 'end the active poll (twitch broadcaster)' },
-  { cmd: 'vote', args: '<n>', desc: 'vote for choice n in the active poll (twitch)' },
-  { cmd: 'prediction', args: '<title> | <a> | <b> [| …] [| secs]', desc: 'start a prediction (twitch broadcaster)' },
-  { cmd: 'bet', args: '<n> <points>', desc: 'bet points on prediction outcome n (twitch)' },
-  { cmd: 'lockpred', args: '', desc: 'lock the active prediction (twitch broadcaster)' },
-  { cmd: 'resolvepred', args: '<n>', desc: 'resolve the prediction to outcome n (twitch broadcaster)' },
-  { cmd: 'cancelpred', args: '', desc: 'cancel the active prediction (twitch broadcaster)' },
-  { cmd: 'note', args: '<user> <text>', desc: 'save a private note on a user' },
-  { cmd: 'delnote', args: '<user>', desc: 'remove your note on a user' },
-  { cmd: 'block', args: '<user>', desc: 'toggle block for a user' },
-  { cmd: 'hide', args: '<user>', desc: 'hide a user in THIS tab only (ephemeral)' },
-  { cmd: 'unhide', args: '<user>', desc: 'unhide a user in this tab' },
-  { cmd: 'set', args: '<setting> <value>', desc: 'change a setting (e.g. /set zebra off, /set fontsize 15)' },
-  { cmd: 'tab', args: '<name>', desc: 'switch tab (live/feed/mentions/whispers/settings or a channel)' },
-  { cmd: 'vip', args: '<user>', desc: 'VIP a user (twitch broadcaster)' },
-  { cmd: 'unvip', args: '<user>', desc: 'remove a user VIP (twitch broadcaster)' },
-  { cmd: 'mod', args: '<user>', desc: 'mod a user (twitch broadcaster)' },
-  { cmd: 'unmod', args: '<user>', desc: 'unmod a user (twitch broadcaster)' },
-]
+// Advertised command list + alias map, both projections of slash-registry.js.
+// They used to be hand-maintained here alongside a third copy (SLASH_HELP_LINES)
+// and three more in the site repo; the site's drifted far enough to advertise
+// commands Twitch removed in 2023.
+const SLASH_COMMANDS = slashCommandsFor('ext')
+
 const slashAcState = { active: false, matches: [], index: 0 }
 
 // vi-mode (chrome/vi-mode.js, same isolated world) asks this before treating
@@ -52901,40 +53276,7 @@ function insertSlashCommand(c) {
 //   true     -> consumed, do nothing else
 //   string   -> rewrite the outgoing text to this and continue normal send
 //   anything else -> not a slash command we handle, pass through unchanged
-const SLASH_ALIASES = {
-  post: 'op',
-  whisper: 'w',
-  re: 'r',
-  reply: 'r',
-  // /ban /unban /timeout /to /b /untimeout /delete — handled below via GQL,
-  // not passthrough. Twitch deprecated these as IRC chat commands in Feb 2023;
-  // sending them as text now silently no-ops, which is what caused multichat's
-  // pre-fix /unban to do nothing. Aliases map all common shorthands to the
-  // canonical command.
-  hl: 'highlight',
-  b: 'ban',
-  to: 'timeout',
-  untimeout: 'unban',
-  unto: 'unban',
-  del: 'delete',
-  lc: 'lclear',
-  '?': 'help',
-  pred: 'prediction',
-  predict: 'prediction',
-  // chat-mode aliases → canonical mode command (see CHAT_MODES)
-  followersonly: 'followers',
-  followeronly: 'followers',
-  slowmode: 'slow',
-  emote: 'emoteonly',
-  emoteonlymode: 'emoteonly',
-  subonly: 'subscribers',
-  subsonly: 'subscribers',
-  subscribersonly: 'subscribers',
-  subs: 'subscribers',
-  uniquechat: 'unique',
-  r9k: 'unique',
-  r9kbeta: 'unique',
-}
+const SLASH_ALIASES = slashAliasMap('ext')
 
 // Twitch chat modes — set via Helix /chat/settings (setTwitchChatMode). Each maps
 // to the Helix boolean field; `dur` modes also take a duration arg. follower
@@ -54281,48 +54623,6 @@ async function handleSlashCommand(text, input) {
   return false
 }
 
-const SLASH_HELP_LINES = [
-  '/op <text>             — post to home',
-  '/opr <text>            — reply to last [OP] in chat',
-  '/w <user> <msg>        — twitch whisper',
-  '/dm <user> <msg>       — heatsync DM',
-  '/r <msg>               — reply to last whisper',
-  '/mute <user>           — local mute (24h)',
-  '/unmute <user>         — local unmute',
-  '/shrug [text]          — append ¯\\_(ツ)_/¯',
-  '/tableflip [text]      — append (╯°□°)╯︵ ┻━┻',
-  '/unflip [text]         — append ┬─┬ノ( ゜-゜ノ)',
-  '/lclear                — clear current tab locally',
-  '/status [channel]      — show chat modes + stream info',
-  '/help                  — this list',
-  '',
-  'mod (need a channel tab — fires both twitch+kick if linked):',
-  '/ban <user> [reason]   — perma ban',
-  '/timeout <user> [s] [r]— timeout, default 600s',
-  '/unban <user>          — unban or end timeout',
-  '/delete <msg-id>       — delete one message',
-  '/nuke <term> [secs]    — delete recent msgs matching term (default 30s)',
-  '/vip <user>            — VIP a user (twitch broadcaster)',
-  '/unvip <user>          — remove a user VIP (twitch broadcaster)',
-  '/mod <user>            — mod a user (twitch broadcaster)',
-  '/unmod <user>          — unmod a user (twitch broadcaster)',
-  '',
-  'chat modes (twitch, mod):',
-  '/followers [mins]      — followers-only ("/followers off")',
-  '/slow [secs]           — slow mode, default 30s ("/slow off")',
-  '/emoteonly             — emote-only ("/emoteonly off")',
-  '/subscribers           — subs-only ("/subscribers off")',
-  '/unique                — unique-chat/r9k ("/unique off")',
-  '',
-  '/announce <msg>        — announcement (blue/green/orange/purple variants)',
-  '/highlight <msg>       — highlight your message (twitch bits power-up, /hl)',
-  '/testnotices           — render every event type locally (dev)',
-  '',
-  '/me and chat pass through to twitch & kick.',
-  '/clear /color /raid /commercial /marker not wired —',
-  'twitch dropped them from chat. use its own mod tools.',
-]
-
 function showSlashHelp() {
   // Reuse toast for short feedback — but the help list is multi-line, so build a
   // lightweight inline overlay instead.
@@ -54335,7 +54635,7 @@ function showSlashHelp() {
   panel.id = 'hs-mc-slash-help'
   panel.style.cssText =
     "position:fixed;bottom:60px;right:20px;z-index:99999;background:#000;border:2px solid #fff;padding:10px 14px;font:13px/1.4 'CozetteVector','Courier New',monospace;color:#fff;white-space:pre;max-width:420px;box-shadow:0 0 12px rgba(255,255,255,0.3)"
-  panel.textContent = SLASH_HELP_LINES.join('\n')
+  panel.textContent = `${slashHelpText('ext')}\n\nfull list -> heatsync.org/commands`
   panel.addEventListener('click', () => panel.remove())
   document.body.appendChild(panel)
   setTimeout(() => panel?.remove(), 12000)

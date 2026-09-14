@@ -168,6 +168,31 @@ function checkMultichatCleanupBinding() {
     )
   }
   checkMultichatOrphanedRenames(mcDir)
+  checkMultichatModuleList(mcDir)
+}
+
+// Companion guard: every src/multichat/*.js must actually be in
+// MULTICHAT_MODULES. Nothing enforced this — the list was complete by luck, and
+// an omission is silent and fatal: the file's top-level consts simply never
+// exist, so the first cross-file reference throws at load and the whole
+// multichat block dies on every site, with a clean build and green tests. Same
+// outage class as checkMultichatOrphanedRenames, different cause.
+const MULTICHAT_ENTRIES = new Set(['main.js', 'twitch-host.js', 'kick-host.js', 'youtube-host.js'])
+function checkMultichatModuleList(mcDir) {
+  const listed = new Set(MULTICHAT_MODULES)
+  const orphans = readdirSync(mcDir).filter((f) => f.endsWith('.js') && !listed.has(f) && !MULTICHAT_ENTRIES.has(f))
+  if (orphans.length) {
+    throw new Error(
+      `build: src/multichat/${orphans.join(', ')} not in MULTICHAT_MODULES — it would be silently\n` +
+        '       dropped from the bundle, and the first cross-file reference kills multichat at load.',
+    )
+  }
+  // Data must be defined before the module that reads it: one flat bundle scope,
+  // and `const` is not hoisted into a usable state.
+  const before = (a, b) => MULTICHAT_MODULES.indexOf(a) < MULTICHAT_MODULES.indexOf(b)
+  if (!before('slash-registry.js', 'input.js')) {
+    throw new Error('build: slash-registry.js must precede input.js in MULTICHAT_MODULES')
+  }
 }
 
 // Companion guard, whole-directory: EVERY multichat file shares one flat
@@ -736,6 +761,7 @@ function verifyLibSlim(entryName, entrySrc, extras) {
 // Read multichat module files (only bundled into multichat-<platform>.js)
 const MULTICHAT_MODULES = [
   'bootstrap.js',
+  'slash-registry.js',
   'palette.js',
   'kick-native-tap.js',
   'send-targets.js',

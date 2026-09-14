@@ -16,6 +16,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { SLASH_REGISTRY } from '../src/multichat/slash-registry.js'
 
 const ROOT = join(import.meta.dir, '..')
 const SRC = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
@@ -28,10 +29,11 @@ function slice(start, end) {
 }
 
 const deadSrc = slice('const DEAD_TWITCH_CHAT_COMMANDS = new Set([', '\nconst NON_ECHOING_CHAT_COMMANDS')
-const commandsSrc = slice('const SLASH_COMMANDS = [', '\nconst slashAcState')
-const { DEAD_TWITCH_CHAT_COMMANDS, SLASH_COMMANDS } = new Function(
-  `${deadSrc}\n${commandsSrc}\nreturn { DEAD_TWITCH_CHAT_COMMANDS, SLASH_COMMANDS }`,
-)()
+// The dead set still lives in input.js beside the guard it feeds, so it stays
+// carved. The command list comes from the registry — and the check now covers
+// hidden rows too, which a slice of the advertised array could not.
+const SLASH_COMMANDS = SLASH_REGISTRY
+const { DEAD_TWITCH_CHAT_COMMANDS } = new Function(`${deadSrc}\nreturn { DEAD_TWITCH_CHAT_COMMANDS }`)()
 
 describe('dead twitch chat commands', () => {
   test('the whole deprecated set is covered', () => {

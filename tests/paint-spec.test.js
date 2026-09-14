@@ -207,7 +207,8 @@ describe('validatePaintSpec — luminance min-period enforcement (via compiler)'
       for (const speed of [0.25, 1, 2, 3]) {
         const spec = baseSpec({ effects: [{ id, speed }] })
         const css = compilePaintCss(spec, '.hsp-test', { hash: 'test' })
-        const match = css.match(new RegExp(`hsp_test_${id} ([0-9.]+)s`))
+        // hs[pq]: a letter motion's keyframes carry the composited prefix now.
+        const match = css.match(new RegExp(`hs[pq]_test_${id} ([0-9.]+)s`))
         expect(match, css).not.toBeNull()
         expect(Number(match[1])).toBeGreaterThanOrEqual(1)
       }
@@ -324,24 +325,23 @@ describe('compilePaintCss — structural checks', () => {
     expect(css).toContain('color:#ff8700')
   })
 
-  test('letter-split effect (wave) emits ONE `span` rule and ONE parent-level Animation, not one per glyph', () => {
+  test('letter-split effect (wave) emits ONE `span` rule, one animation per EFFECT, and no inherited phase', () => {
     const spec = baseSpec({ effects: [{ id: 'wave', speed: 1 }] })
     const css = compilePaintCss(spec, '.hsp-wave1', { hash: 'wave1' })
-    // Single combined span rule — display:inline-block + the calc() transform
-    // live together, not a separate display-only rule.
     expect(css.match(/\.hsp-wave1>\.hs-name>span\{/g)?.length).toBe(1)
-    // The span itself carries NO `animation:` — one Animation per glyph is
-    // exactly the cost this shape replaced (see buildLetterMotionCss).
     const spanRule = css.match(/\.hsp-wave1>\.hs-name>span\{[^}]*\}/)[0]
-    expect(spanRule).not.toContain('animation:')
-    expect(spanRule).toContain('var(--i)')
-    expect(spanRule).toContain('translateY')
-    // The ONE real Animation lives on the name box (the spans' parent),
-    // driving a registered (smoothly interpolable) phase property every span
-    // reads back.
-    const parentRule = css.match(/\.hsp-wave1>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toContain('animation:hsp_wave1_wave')
-    expect(css).toContain("@property --hsp-wave1-wave-ph{syntax:'<number>'")
+    // The glyph animates itself, with literal keyframes the compositor owns —
+    // one per EFFECT, never one per property or per stop.
+    expect(spanRule.match(/animation:/g)?.length).toBe(1)
+    expect(spanRule).toContain('animation:hsq_wave1_wave')
+    expect(css).toContain('@keyframes hsq_wave1_wave')
+    // The stagger is a time offset now, riding the same delay as the
+    // wall-clock phase lock.
+    expect(spanRule).toContain('var(--i, 0)')
+    // The parent drives nothing: an animated custom property that INHERITS
+    // restyles the whole subtree every frame, which is what this replaced.
+    expect(css).not.toContain('inherits:true')
+    expect(css).not.toContain('--hsp-wave1-wave-ph')
   })
 
   // Regression (superseded 2026-09-10, then 2026-09-10 again): paint effect
@@ -357,7 +357,7 @@ describe('compilePaintCss — structural checks', () => {
   // ALSO a parent-driven phase, so these verify the span carries NO
   // animation at all for either slot — every live Animation for a name
   // lives on the parent, comma-listed, regardless of letter count.
-  test('fire (paint) + wave (motion): span carries no animation; both are one Animation each on the parent', () => {
+  test('fire (paint) + wave (motion): both animate the SPAN, comma-listed, one each', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -373,27 +373,29 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-fw', { hash: 'fw' })
-    const spanRules = css.match(/\.hsp-fw>\.hs-name>span\{[^}]*\}/g) || []
+    // Anchored so a crowd-tier rule (`body.hs-paint-x .hsp-fw>.hs-name>span`)
+    // is not counted as a second copy of the spec — the span only started
+    // carrying tier rules when the fill's animation moved onto it.
+    const spanRules = (css.match(/(^|\})[^{}]*\.hsp-fw>\.hs-name>span\{[^}]*\}/g) || []).filter(
+      (r) => !r.includes('body.hs-paint-'),
+    )
     expect(spanRules.length).toBe(1)
     const rule = spanRules[0]
-    // No Animation on the span at all — both the paint fill and the
-    // letter motion are parent-driven phases now.
-    expect(rule).not.toContain('animation:')
     // Paint decls (background/clip) must still be present — not clobbered.
     expect(rule).toContain('background:linear-gradient(0deg, #c00000')
     expect(rule).toContain('background-clip:text')
-    // fire's background-position/skewX are static calc()s off its phase.
     expect(rule).toContain('background-position:')
-    expect(rule).toContain('skewX')
-    // wave's transform lives on the span as a static (unanimated) calc().
-    expect(rule).toContain('var(--i)')
-    expect(rule).toContain('translateY')
-    // Both Animations — one per effect, still just ONE each — are on the parent.
-    const parentRule = css.match(/\.hsp-fw>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toMatch(/animation:hsp_fw_fire[^,]*, hsp_fw_wave[^;]*;/)
+    // ONE comma-listed shorthand, one entry per effect. The fill's animation
+    // has to be HERE: `background-position` is declared on the span and
+    // nowhere else, so running it on the name box animated nothing at all.
+    expect(rule.match(/animation:/g).length).toBe(1)
+    expect(rule).toMatch(/animation:hsp_fw_fire[^,]*, hsq_fw_wave[^;]*;/)
+    // And the name box is left with nothing of its own to run.
+    const parentAnim = (css.match(/\.hsp-fw>\.hs-name\{[^}]*\}/g) || []).find((r) => r.includes('animation:'))
+    expect(parentAnim).toBeUndefined()
   })
 
-  test('wave + ripple (two per-letter motions, no paint): both merge into ONE comma-listed Animation on the parent', () => {
+  test('wave + ripple (two per-letter motions): ONE comma-listed shorthand, two staggers', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -411,15 +413,19 @@ describe('compilePaintCss — structural checks', () => {
     const css = compilePaintCss(spec, '.hsp-wr', { hash: 'wr' })
     const spanRules = css.match(/\.hsp-wr>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    // No Animation on the span at all — both motions are parent-driven.
-    expect(spanRules[0]).not.toContain('animation:')
-    expect(spanRules[0]).toContain('translateY')
-    expect(spanRules[0]).toContain('hue-rotate')
-    const parentRule = css.match(/\.hsp-wr>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toMatch(/animation:hsp_wr_wave[^,]*, hsp_wr_ripple[^;]*;/)
+    expect(spanRules[0].match(/animation:/g).length).toBe(1)
+    expect(spanRules[0]).toMatch(/animation:hsq_wr_wave[^,]*, hsq_wr_ripple[^;]*;/)
+    expect(css).toContain('translateY')
+    expect(css).toContain('hue-rotate')
+    // ripple's wave travels the other way, so its per-glyph offset is POSITIVE
+    // where wave's is negative — the sign the old `mod()` carried.
+    expect(spanRules[0]).toContain(
+      'animation-delay:calc(calc(-1 * mod(var(--hsp-t, 0s), 1.6s)) + var(--i, 0) * -0.09s),' +
+        ' calc(calc(-1 * mod(var(--hsp-t, 0s), 2.4s)) + var(--i, 0) * 0.18s);',
+    )
   })
 
-  test('pan (paint) + tumble (motion): span carries no animation; pan + tumble are one Animation each on the parent', () => {
+  test('pan (paint) + tumble (motion): both on the span; only the perspective stays on the parent', () => {
     const spec = baseSpec({
       base: {
         type: 'linear',
@@ -435,24 +441,25 @@ describe('compilePaintCss — structural checks', () => {
       ],
     })
     const css = compilePaintCss(spec, '.hsp-pt', { hash: 'pt' })
-    const spanRules = css.match(/\.hsp-pt>\.hs-name>span\{[^}]*\}/g) || []
+    const spanRules = (css.match(/(^|\})[^{}]*\.hsp-pt>\.hs-name>span\{[^}]*\}/g) || []).filter(
+      (r) => !r.includes('body.hs-paint-'),
+    )
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).not.toContain('animation:')
     expect(spanRules[0]).toContain('background-position:')
     expect(spanRules[0]).toContain('transform-style:preserve-3d;')
-    const parentRule = css.match(/\.hsp-pt>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toMatch(/animation:hsp_pt_pan[^,]*, hsp_pt_tumble[^;]*;/)
+    expect(spanRules[0]).toMatch(/animation:hsp_pt_pan[^,]*, hsq_pt_tumble[^;]*;/)
+    // perspective is the one thing that genuinely belongs to the parent: a
+    // glyph cannot give itself the vanishing point it rotates about.
     expect(css).toContain('.hsp-pt>.hs-name{perspective:300px;}')
   })
 
-  test('split-without-paint (wave only): span carries no animation at all, one parent Animation', () => {
+  test('split-without-paint (wave only): the name box runs nothing at all', () => {
     const spec = baseSpec({ effects: [{ id: 'wave', speed: 1 }] })
     const css = compilePaintCss(spec, '.hsp-w', { hash: 'w' })
     const spanRules = css.match(/\.hsp-w>\.hs-name>span\{[^}]*\}/g) || []
     expect(spanRules.length).toBe(1)
-    expect(spanRules[0]).not.toContain('animation:')
-    const parentRule = css.match(/\.hsp-w>\.hs-name\{[^}]*\}/g).find((r) => r.includes('animation:')) || ''
-    expect(parentRule).toMatch(/animation:hsp_w_wave[^;,]*;/)
+    expect(spanRules[0]).toMatch(/animation:hsq_w_wave[^;,]*;/)
+    expect((css.match(/\.hsp-w>\.hs-name\{[^}]*\}/g) || []).find((r) => r.includes('animation:'))).toBeUndefined()
   })
 
   test('non-split paint + whole-name motion (fire + coin): ONE selector rule, both animations comma-listed', () => {

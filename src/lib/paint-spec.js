@@ -71,7 +71,7 @@ import {
 import {
   validateSceneSpec, normalizeSceneForHash, buildSceneCss,
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
-  crowdTierRules, tierTimings, sceneBoxCounts,
+  crowdTierRules, tierTimings, sceneBoxCounts, COMPOSITED_ANIM_PREFIX,
 } from './scene-spec.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
@@ -1157,7 +1157,10 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
   // frame correct and every frame after it frozen.
   if (probe.usesPhaseVar) {
     const { selfPart } = paintPhaseDriver(effectId, probe.period, hash, probe.opts)
-    return { selfPart, decl: probe.decl }
+    // A driver animates an INHERITING custom property, so it has to run on an
+    // ancestor of whatever reads it — the one part that must not follow the
+    // fill down onto the spans.
+    return { selfPart, decl: probe.decl, drivesPhaseVar: true }
   }
 
   const animName = `hsp_${hash}_${effectId}`
@@ -1185,6 +1188,7 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
     // It carries the moving declarations at phase 0 too, so a static render is
     // the composition at rest rather than a name with no fill at all.
     decl: a0.decl,
+    drivesPhaseVar: false,
     selfPart: {
       decls: '',
       animShorthand: `${animName} ${period}s ${timing} infinite`,
@@ -1195,153 +1199,176 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
   }
 }
 
-/** Build the pieces for a per-letter motion effect (wave/ripple/tumble/hop/
- * twirl/type) — { selfPart, spanDecl, extraRule }.
+/**
+ * The six per-letter motions, each as one declaration written against a phase.
  *
- * These used to put `animation:`/`animation-delay:` directly on
- * `${selector} span`, so the browser created one live Animation PER GLYPH
- * (a real `Animation` instance per matching element is intrinsic to CSS
- * Animations — sharing @keyframes across elements does not share the
- * instance). A 12-letter name running one of these alone was already 12
- * concurrent animations; combined with a second letter motion and a
- * paint-slot fill, prod measured names carrying ~19 live animations each
- * (see chat/paint-cosmetics.js's PAINT_ANIMATION_BUDGET comment — a real
- * device trace, 2026-09-10) against the module doc's own "at most 3
- * layers" design.
+ * `decl(p)` takes `p` as a STRING and drops it into the formula, so the exact
+ * same expression serves both ways of driving it: a `var()` reference, or a
+ * literal number that CSS folds at parse time. That duality is what lets
+ * buildLetterMotionCss sample a shape into keyframes without any effect being
+ * transcribed by hand — the same trick `ease()` plays for the paint fills.
  *
- * The fix: ONE Animation, on the PARENT, driving a registered `@property`
- * phase (0→1, interpolated — an unregistered custom property cannot tween
- * smoothly, it snaps at 50%). Every span reads that INHERITED value back
- * through `calc()`/`var(--i)` to get its own stagger — no Animation object
- * of its own, just a derived style, the same "one timeline, many dependent
- * values" shape every paint-slot effect now uses too (see
- * buildPaintPhaseCss). `selfPart` merges into compilePaintCss's
- * existing self-animation comma-list (built for coin/heli/etc — see
- * emitSelfRule) since two rules setting `animation` on one selector clobber
- * each other; `spanDecl` is a plain, unanimated declaration. */
-function buildLetterMotionCss(effectId, speed, selector, hash) {
-  const duration = effectDuration(effectId, speed)
-  const phaseVar = `--hsp-${hash}-${effectId}-ph`
-  const animName = `hsp_${hash}_${effectId}`
-  const stagger = (stepSeconds, sign = 1) =>
-    (sign * stepSeconds / safeSpeed(speed) / duration).toFixed(6)
-  // p = this letter's own 0..1 phase — the parent's phase plus its stagger,
-  // wrapped. Every formula below is written directly against p, the same
-  // 0%..100% timeline the old keyframes used.
-  const p = (step, sign) => `mod(var(${phaseVar}) + var(--i) * ${stagger(step, sign)}, 1)`
-  // ── RATE-LIMITED, and this is where the name's cost actually was ──────────
-  //
-  // A letter transform looks like it should be free — transforms composite. It
-  // is not, and the number is not close: `--cost` isolated one painted name and
-  // measured the stepped fill at 32.8ms against the letter wave at 195.7ms per
-  // 3s. The reason is two rules up (see `paintTarget`): a letter-split name
-  // carries the clip-text gradient on the SPANS, because Chrome cannot paint a
-  // parent's background-clip:text into transformed descendant layers. So every
-  // glyph is its own clip-text layer being re-rastered on every frame.
-  //
-  // Quantising the phase is safe for the stagger, which is the thing that makes
-  // this a travelling wave rather than a block: each span adds its OWN constant
-  // `var(--i) * stagger` AFTER the phase is read (see `p` above), so a stepped
-  // phase moves every letter in the same discrete jumps while their relative
-  // offsets stay exact. Coarser steps make the motion steppier, never flatter.
-  //
-  // Single-interval `to{}` keyframes, so steps() is a true rate limit here — the
-  // same reason it is correct for the paint-slot drivers and wrong for the
-  // multi-stop whole-name motions.
-  // A GLYPH ROTATED THROUGH EDGE-ON IS NOT THERE.
-  //
-  // The third thing that must never be quantised, alongside a luminance ramp
-  // and a multi-stop keyframe body. tumble turns each letter about X, so twice
-  // a flip it passes through 90deg, where it has no width and paints nothing.
-  // At full rate that is crossed inside one frame and reads as the flip it is.
-  // A step can LAND on it and hold it for the whole step, and then the letter
-  // is simply missing. Measured on "mellen", longest stretch a glyph spends
-  // invisible:
-  //
-  //     unstepped      0 ms
-  //     steps(14)    243 ms   (three of the six letters)
-  //     steps(7)     971 ms   (the second `l`)
-  //
-  // — against 17ms for one frame at 60fps. Reported as "the ll in my name
-  // disappears on name flip animation", and it only bites on a busy phone,
-  // because that is what turns the crowd dial up. No step count is safe: the
-  // stagger puts every letter on its own angle, so a grid coarse enough to help
-  // is coarse enough to park one of them. twirl is 2D `rotate()` and stays flat
-  // to the screen, so it is not affected.
-  const edgeOn = effectId === 'tumble'
-  const stepped = edgeOn ? null : steppedTiming(duration, FILL_STEPS_PER_SECOND, {
-    // ripple (hue-rotate) and type (opacity blink) are luminance; they stay
-    // smooth, and type also has a 3%-wide window a coarse grid could skip.
-    luminance: !!EFFECTS[effectId]?.luminance,
-  })
-  const selfPart = {
-    decls: '', animShorthand: `${animName} ${duration}s ${stepped || 'linear'} infinite`,
-    tier: { period: duration, luminance: !!EFFECTS[effectId]?.luminance, noStep: edgeOn },
-    delayExpr: syncDelayCalc(duration),
-    keyframes: `@property ${phaseVar}{syntax:'<number>';inherits:true;initial-value:0;}` +
-      `@keyframes ${animName}{to{${phaseVar}:1;}}`,
-  }
+ * `step` is the per-glyph stagger in seconds (negated by `back` for a wave that
+ * travels the other way); `corners` are the phases where the formula changes
+ * slope. A piecewise-linear shape sampled AT its corners is reproduced exactly
+ * by linear interpolation between them, so they are listed next to the literals
+ * they come from. `smooth` means there are no corners to hit and the curve is
+ * sampled on an even grid instead.
+ */
+const LETTER_MOTIONS = {
+  // Smooth up-down hump — a cosine reproduces the old ease-in-out 0/-4px/0
+  // keyframe shape without needing a separate easing curve.
+  wave: {
+    step: 0.09, smooth: true,
+    decl: p => `transform:translateY(calc(-4px * (1 - cos(${p} * 360deg)) / 2));`,
+  },
+  // Linear all the way round, so two stops reproduce it exactly.
+  ripple: {
+    step: 0.18, back: true, corners: [],
+    decl: p => `filter:hue-rotate(calc(${p} * 360deg));`,
+  },
+  // A hop, not a wave: a single sharp triangular pulse (peak ~15% into the
+  // cycle) beats a sinusoid at reproducing "up fast, land, rest". The pulse
+  // turns at p*6.5-1 = ±1.
+  hop: {
+    step: 0.07, corners: [1 / 6.5, 2 / 6.5],
+    decl: p => {
+      const pulse = `clamp(0, 1 - abs(${p} * 6.5 - 1), 1)`
+      return `transform-origin:50% 100%;`
+        + `transform:translateY(calc(-5px * ${pulse})) scaleY(calc(1 + 0.06 * ${pulse}));`
+    },
+  },
+  // Held flat for the first 64% of the cycle, one clean spin in the rest.
+  twirl: {
+    step: 0.08, corners: [0.64],
+    decl: p => `transform:rotate(calc(360deg * clamp(0, (${p} - 0.64) / 0.36, 1)));`,
+  },
+  // Each glyph blinks out for a moment, in order — a cursor passing through the
+  // name and retyping it. A 1%-wide window, which is exactly why it is sampled
+  // at its own corners and not on a grid that would step straight over it.
+  type: {
+    step: 0.12, corners: [0.03, 0.04],
+    decl: p => `opacity:calc(clamp(0, (${p} - 0.03) * 100, 1));`,
+  },
+  // Rest, then two 180deg flips back to back — two ramps summed reproduce the
+  // old three-keyframe rotateX curve.
+  tumble: {
+    step: 0.12, corners: [0.60, 0.75, 0.90],
+    decl: p => {
+      const ramp1 = `clamp(0, (${p} - 0.60) / 0.15, 1)`
+      const ramp2 = `clamp(0, (${p} - 0.75) / 0.15, 1)`
+      return `transform-style:preserve-3d;transform:rotateX(calc(180deg * (${ramp1} + ${ramp2})));`
+    },
+    extraRule: selector => `${selector}{perspective:300px;}`,
+  },
+}
 
-  switch (effectId) {
-    case 'wave': {
-      // Smooth up-down hump — a cosine reproduces the old ease-in-out
-      // 0/-4px/0 keyframe shape without needing a separate easing curve.
-      const ph = p(0.09)
-      return {
-        selfPart,
-        spanDecl: `transform:translateY(calc(-4px * (1 - cos(${ph} * 360deg)) / 2));`,
-      }
-    }
-    case 'ripple': {
-      const ph = p(0.18, -1)
-      return {
-        selfPart,
-        spanDecl: `filter:hue-rotate(calc(${ph} * 360deg));`,
-      }
-    }
-    case 'hop': {
-      // A hop, not a wave: a single sharp triangular pulse (peak ~8% into
-      // the cycle) beats a sinusoid at reproducing "up fast, land, rest".
-      const ph = p(0.07)
-      const pulse = `clamp(0, 1 - abs(${ph} * 6.5 - 1), 1)`
-      return {
-        selfPart,
-        spanDecl: `transform-origin:50% 100%;` +
-          `transform:translateY(calc(-5px * ${pulse})) scaleY(calc(1 + 0.06 * ${pulse}));`,
-      }
-    }
-    case 'twirl': {
-      // Held flat for the first 64% of the cycle, one clean spin in the rest.
-      const ph = p(0.08)
-      return {
-        selfPart,
-        spanDecl: `transform:rotate(calc(360deg * clamp(0, (${ph} - 0.64) / 0.36, 1)));`,
-      }
-    }
-    case 'type': {
-      // Each glyph blinks out for a moment, in order — a cursor passing
-      // through the name and retyping it. clamp() with a steep multiplier
-      // gives the same near-instant blink the old 0%/3%/4% keyframe did.
-      const ph = p(0.12)
-      return {
-        selfPart,
-        spanDecl: `opacity:calc(clamp(0, (${ph} - 0.03) * 100, 1));`,
-      }
-    }
-    case 'tumble': {
-      // Rest, then two 180deg flips back to back (60%→75%→90%) — two ramps
-      // summed reproduce the old three-keyframe rotateX curve.
-      const ph = p(0.12)
-      const ramp1 = `clamp(0, (${ph} - 0.60) / 0.15, 1)`
-      const ramp2 = `clamp(0, (${ph} - 0.75) / 0.15, 1)`
-      return {
-        selfPart,
-        spanDecl: `transform-style:preserve-3d;transform:rotateX(calc(180deg * (${ramp1} + ${ramp2})));`,
-        extraRule: `${selector}{perspective:300px;}`,
-      }
-    }
-    default:
-      return null
+/** Stops for a smooth curve. 16 intervals holds a cosine to under a tenth of a
+ *  pixel at this amplitude, which is well below one device pixel. */
+const LETTER_SMOOTH_STOPS = 16
+
+/** Build the pieces for a per-letter motion effect (wave/ripple/tumble/hop/
+ * twirl/type) — { spanPart, extraRule }.
+ *
+ * ── WHY EACH GLYPH OWNS ITS ANIMATION AGAIN ────────────────────────────────
+ *
+ * This shape has now been all three ways, and the third is the one with a
+ * number behind it in both columns.
+ *
+ * It began as `animation:` on `${selector} span`, which makes the browser
+ * create one live Animation PER GLYPH — an `Animation` instance per matching
+ * element is intrinsic to CSS Animations, sharing @keyframes does not share the
+ * instance. Prod measured names carrying ~19 live animations each against the
+ * module doc's "at most 3 layers", so d75a0d872 moved to ONE Animation on the
+ * parent driving a registered `@property` phase that every span read back
+ * through `calc()`/`var(--i)`.
+ *
+ * That traded the animation count for a worse cost, and it took a device trace
+ * to see it: an animated custom property that INHERITS invalidates style for
+ * the whole subtree on every frame, and the letters then recompute a calc() and
+ * re-raster, because a letter-split name carries the clip-text gradient on the
+ * SPANS (Chrome cannot paint a parent's background-clip:text into transformed
+ * descendants — see `paintTarget`). So every glyph was its own clip-text layer
+ * being restyled and repainted 60 times a second. On the phone that was the
+ * single largest line in an 8s trace of real chat: UpdateLayoutTree 2059ms.
+ *
+ * Both arms benched at 20 names, 414x896 @ dpr3, cpu 4x, per 3s, with the fill
+ * on the spans exactly as the compiler puts it (`--phasevar`):
+ *
+ *                       style      paint            raster   anims
+ *   shared @property    128.3ms    3844 / 206.8ms    24.7ms      20
+ *   per-glyph keyframes   0.0ms       0 /   0.0ms     0.0ms     160
+ *
+ * Zero, not "less": a transform/opacity/filter animation with literal keyframes
+ * runs on the compositor and never touches the main thread. The animation count
+ * is the thing that got worse, and it is the thing that does not cost anything
+ * — which is precisely what COMPOSITED_ANIM_PREFIX already exists to record, so
+ * these keyframes carry it and neither the layer cap nor the runtime animation
+ * budget counts them. See its comment in scene-spec.js.
+ *
+ * The stagger stops being arithmetic and becomes what it always was: a time
+ * offset. `mod(phase + i*s, 1)` where phase is linear in time is the SAME
+ * motion shifted by `i*s` of a cycle, so it is expressed as a negative
+ * `animation-delay` alongside the wall-clock phase lock, and the two add.
+ *
+ * ── AND THE EDGE-ON BUG CANNOT COME BACK ───────────────────────────────────
+ *
+ * The crowd dial used to rate-limit these with `steps()`, because they
+ * repainted. tumble turns each letter about X, so twice a flip it passes
+ * through 90deg where it has no width and paints nothing; at full rate that is
+ * one frame and reads as the flip, but a step can LAND there and hold it, and
+ * the letter is simply missing. Measured on "mellen", longest stretch one glyph
+ * spent invisible: unstepped 0ms, steps(14) 243ms, steps(7) 971ms — against
+ * 17ms for a frame. Reported as "the ll in my name disappears on name flip
+ * animation". Nothing here repaints any more, so there is nothing to rate-limit
+ * and no step count to get wrong.
+ */
+function buildLetterMotionCss(effectId, speed, selector, hash) {
+  const shape = LETTER_MOTIONS[effectId]
+  if (!shape) return null
+  const duration = effectDuration(effectId, speed)
+  // Prefixed as composited on purpose: what these animate (transform, opacity,
+  // filter) the compositor owns outright, so one per glyph is not a cost. The
+  // prefix is the ONLY thing that tells the two budgets so.
+  const animName = `${COMPOSITED_ANIM_PREFIX}${hash}_${effectId}`
+
+  // Sample the shape's own formula at fixed phases. The corners are where it
+  // changes slope, so between them it is a straight line and the browser's
+  // interpolation is exact; a genuinely smooth curve gets an even grid instead.
+  const stops = shape.smooth
+    ? Array.from({ length: LETTER_SMOOTH_STOPS + 1 }, (_, i) => i / LETTER_SMOOTH_STOPS)
+    : [0, ...shape.corners, 1]
+  // Nine decimals, not six: a corner is where a clamp() turns, and a phase
+  // rounded SHORT of it leaves the clamp un-bitten — hop's rest phase came out
+  // as 2e-6 of a pixel of travel rather than a flat zero.
+  const samples = stops.map(q => shape.decl(String(Math.round(q * 1e9) / 1e9)))
+  // Only what actually moves belongs in the keyframes — transform-origin and
+  // transform-style are constant, and a property named in a keyframe is an
+  // animated property.
+  const parts = partitionDecls(samples)
+  // The stop's POSITION needs the same precision as its value: a corner
+  // rounded to four decimals of a percent sits a hair off where the formula
+  // turns, and every sample after it interpolates from the wrong place.
+  const body = stops
+    .map((q, i) => `${Math.round(q * 1e9) / 1e7}%{${parts.at(i)}}`)
+    .join('')
+
+  // Glyph i runs AHEAD by i*step seconds, which is a delay that much more
+  // negative. `back` walks the wave the other way. The fallback keeps the whole
+  // declaration valid — and with it the phase lock — on a span that somehow has
+  // no --i, rather than dropping the list at computed-value time.
+  const per = Math.round((shape.back ? 1 : -1) * shape.step / safeSpeed(speed) * 1e6) / 1e6
+
+  return {
+    extraRule: shape.extraRule?.(selector),
+    spanPart: {
+      decls: parts.statics,
+      animShorthand: `${animName} ${duration}s linear infinite`,
+      delayExpr: `calc(${syncDelayCalc(duration)} + var(--i, 0) * ${per}s)`,
+      // noStep because nothing repaints: see the doc comment above.
+      tier: { period: duration, luminance: !!EFFECTS[effectId]?.luminance, noStep: true },
+      keyframes: `@keyframes ${animName}{${body}}`,
+    },
   }
 }
 
@@ -1586,9 +1613,13 @@ export function compilePaintCss(spec, selector, opts = {}) {
     const m = buildMotionEffectCss(e.id, e.speed, hash, spec.glow)
     if (m) selfParts.push(m)
   }
-  const emitSelfRule = () => {
-    if (!selfParts.length) return
-    const tiers = selfParts.map(p => p.tier)
+  /** The animation half of a rule: one comma-list, never one rule per effect.
+   *  Two rules setting the `animation` shorthand on the same selector do not
+   *  compose — the later wins outright, which is how gold foil + heartbeat used
+   *  to run only the heartbeat. Used for both surfaces a paint animates, the
+   *  name box and (when a name is split into glyphs) the spans. */
+  const animDecls = (parts) => {
+    const tiers = parts.map(p => p.tier)
     // The timing list is emitted SEPARATELY from the shorthand, and built by the
     // same function the crowd tiers use, so the two can never disagree about
     // what an animation's function is. It also isolates the failure: a sampled
@@ -1601,30 +1632,64 @@ export function compilePaintCss(spec, selector, opts = {}) {
     // nothing on the majority of paints.
     const timingDecl = tiers.some(t => t.curve)
       ? `animation-timing-function:${tierTimings(tiers, FILL_STEPS_PER_SECOND).join(', ')};` : ''
-    css += `${nameBox}{${selfParts.map(p => p.decls).join('')}animation:${selfParts.map(p => p.animShorthand).join(', ')};`
+    return parts.map(p => p.decls).join('')
+      + `animation:${parts.map(p => p.animShorthand).join(', ')};`
       + timingDecl
-      + `animation-delay:${selfParts.map(p => p.delayExpr).join(', ')};}`
-    // One timing list per crowd tier, in the SAME order as the shorthand above —
-    // animation-timing-function is matched positionally to animation-name.
-    css += crowdTierRules(nameBox, tiers, FILL_STEPS_PER_SECOND)
-    css += selfParts.map(p => p.keyframes).join('')
+      + `animation-delay:${parts.map(p => p.delayExpr).join(', ')};`
+  }
+
+  /** The crowd dial for one surface.
+   *
+   *  One timing list per tier, in the SAME order as that surface's `animation`
+   *  shorthand — animation-timing-function is matched positionally to
+   *  animation-name, so a composited entry still takes its slot in the list.
+   *
+   *  Skipped outright when NOTHING on the surface repaints: the dial lowers a
+   *  redraw rate, and a transform over a background rastered once has none, so
+   *  the rules would be a copy of `linear` at every tier. */
+  const tierRules = (surface, parts) => {
+    const tiers = parts.map(p => p.tier)
+    if (!tiers.some(t => !t.noStep || t.curve)) return ''
+    return crowdTierRules(surface, tiers, FILL_STEPS_PER_SECOND)
+  }
+
+  const emitSelfRule = () => {
+    if (!selfParts.length) return
+    css += `${nameBox}{${animDecls(selfParts)}}`
+      // Unconditional on the name box: only a letter motion is composited, and
+      // a letter motion never lands here. Routing it through tierRules would
+      // silently drop the dial for neon and flicker, which set `noStep` for a
+      // different reason — their own multi-stop keyframes.
+      + crowdTierRules(nameBox, selfParts.map(p => p.tier), FILL_STEPS_PER_SECOND)
+      + selfParts.map(p => p.keyframes).join('')
   }
 
   if (needsLetterSplit) {
-    // Every span declaration below is a plain, unanimated calc() derived
-    // from an inherited phase custom property — no `${selector} span`
-    // element ever carries its own `animation` anymore (paint effect
-    // included, see buildPaintPhaseCss). Every live Animation for this name
-    // lives on the PARENT, in the one shared comma-list emitSelfRule builds
-    // below, regardless of letter count.
+    // The fill on a span is still a plain, unanimated calc() off the parent's
+    // phase. The letter MOTIONS are not: each glyph carries its own composited
+    // keyframe animation, staggered by a negative delay — see
+    // buildLetterMotionCss for the two benches that moved it there and back.
     let spanDecls = ''
+    const spanParts = []
 
     if (baseCss?.isClipText) spanDecls += baseCss.decl
 
     if (paintEffect) {
       const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)
       if (p) {
-        selfParts.push(p.selfPart)
+        // AN ANIMATION HAS TO RUN ON THE ELEMENT THAT CARRIES THE PROPERTY.
+        //
+        // When a name is split, its fill is on the SPANS — Chrome cannot paint
+        // a parent's background-clip:text into transformed descendants. The
+        // fill's animation used to be pushed onto the name box regardless,
+        // where `background-position` (or mask-position, or opacity, or
+        // filter) is not declared at all, so it animated nothing. Fifteen of
+        // the sixteen paint-slot effects rendered a DEAD fill next to any
+        // letter motion; only conic escaped, because a driver animates an
+        // inheriting custom property and genuinely does belong on the ancestor.
+        // Latent since the fills came off the driver.
+        if (p.drivesPhaseVar) selfParts.push(p.selfPart)
+        else spanParts.push(p.selfPart)
         spanDecls += p.decl
       }
     }
@@ -1632,15 +1697,13 @@ export function compilePaintCss(spec, selector, opts = {}) {
       if (!EFFECTS[e.id].letterSplit) continue
       const m = buildLetterMotionCss(e.id, e.speed, nameBox, hash)
       if (m) {
-        // One Animation on the parent (merged into the same comma-list as
-        // any self-motion effect below), not one per glyph — see
-        // buildLetterMotionCss's doc comment.
-        selfParts.push(m.selfPart)
-        spanDecls += m.spanDecl
+        spanParts.push(m.spanPart)
         if (m.extraRule) css += m.extraRule
       }
     }
     emitSelfRule()
+
+    const spanRule = spanDecls + (spanParts.length ? animDecls(spanParts) : '')
 
     // `> span` under the name box, never `${selector} span`: the name box is
     // itself a span, and a descendant selector would apply every per-letter
@@ -1648,8 +1711,11 @@ export function compilePaintCss(spec, selector, opts = {}) {
     // property invalid at computed-value time.
     // Per-letter spans need their own inline-block to be transformable; the
     // wrap shape IS the name box, which the base rule already declared.
-    if (perLetter) css += `${paintTarget}{display:inline-block;${spanDecls}}`
-    else if (spanDecls) css += `${paintTarget}{${spanDecls}}`
+    if (perLetter) css += `${paintTarget}{display:inline-block;${spanRule}}`
+    else if (spanRule) css += `${paintTarget}{${spanRule}}`
+
+    css += spanParts.map(p => p.keyframes).join('')
+      + tierRules(paintTarget, spanParts)
   } else {
     if (paintEffect) {
       const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)

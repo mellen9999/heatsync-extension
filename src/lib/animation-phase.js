@@ -450,8 +450,36 @@ export function resyncAnimationPhase(el, now = frameNow()) {
         // an infinite/zero period has no phase to speak of.
         if (typeof d !== 'number' || !Number.isFinite(d) || d <= 0) continue
 
-        // THE EXACT PATH. We watched this animation pause, so we know where it
-        // would be now had it not: the same distance past the startTime it was
+        // ── THE CANONICAL PHASE WINS WHEREVER THERE IS ONE ──────────────────
+        //
+        // A stamped element has an answer that depends on NOTHING about this
+        // copy: `now - stamp`, against a delay of `-mod(stamp, P)`, reduces to
+        // `now mod P` (plus the glyph's own stagger term, which the delay keeps
+        // — see phaseFor). Two copies of one paint therefore land on the same
+        // phase however differently they were mounted, paused or resumed.
+        //
+        // Restoring `tl - wasAt` instead reproduces where THIS copy would have
+        // been, which is only the same thing when the copy was already right.
+        // It carries that copy's mount-frame error back with it, and the error
+        // is what the reader sees: mellen, 2026-09-15, "slightly different
+        // timings when i scroll up to see the history ... there should never be
+        // 2 names of the same person with different spin timings". Measured on
+        // `paint-perf --phase` before this change, drift from a twin that never
+        // paused, 4s loop: 43-92ms after a 500ms pause, shrinking to single
+        // digits at 5s. Faithful to its own past, out of step with its twin.
+        //
+        // So the remembered startTime is now the FALLBACK, not the preference —
+        // it is still the only answer for an animation with no stamp at all
+        // (7TV paints, the subscriber rainbow, animated emote textures), which
+        // is why it stays.
+        if (stamp !== null) {
+            try { a.currentTime = phaseFor(t, d, now, stamp) } catch (_) { /* not seekable */ }
+            pausedStartTimes.delete(a)
+            continue
+        }
+
+        // No stamp. We watched this animation pause, so we know where it would
+        // be now had it not: the same distance past the startTime it was
         // running on. currentTime is unbounded, so the iteration index — and
         // with it an `alternate` animation's direction — comes back too.
         const wasAt = pausedStartTimes.get(a)
@@ -462,9 +490,9 @@ export function resyncAnimationPhase(el, now = frameNow()) {
             continue
         }
 
-        // THE FALLBACK, for an animation this module never saw pause. Derived
-        // from the element's own mount stamp where it has one, so a per-glyph
-        // stagger in `animation-delay` survives — see phaseFor.
+        // Never saw it pause and it has no stamp: fold the delay out against
+        // the wall clock, which is exactly right for an emote texture whose
+        // delay only ever carries the sync term.
         try { a.currentTime = phaseFor(t, d, now, stamp) } catch (_) { /* not seekable */ }
     }
 }

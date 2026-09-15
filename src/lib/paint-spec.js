@@ -1281,32 +1281,59 @@ export const MASKED_CLASS = 'hs-masked'
  * Anything absent from this table simply keeps the clip-text path, which is
  * why the table is the whole opt-in.
  */
-const COMPOSITED_FILL = {
-  //         axis         tiles (N) — background-size on that axis, in boxes
-  pan:     { axis: 'x', tiles: 3 },
-  rainbow: { axis: 'x', tiles: 3 },
-  matrix:  { axis: 'y', tiles: 3.4 },
-  holo:    { axis: 'y', tiles: 2 },
-  lava:    { axis: 'y', tiles: 3, dir: -1 },
-}
-
 /** Round to 4dp the way phaseAt does, so a percentage never carries float noise
  *  into the stylesheet. */
 const pct = (n) => `${Math.round(n * 1e6) / 1e4}%`
+
+/** Split a CSS comma list at depth 0. Every layer here is a gradient and every
+ *  gradient is full of commas of its own, so a plain `split(',')` shreds them. */
+function splitLayers(v) {
+  if (!v) return []
+  const out = []
+  let depth = 0
+  let start = 0
+  for (let i = 0; i < v.length; i++) {
+    const c = v[i]
+    if (c === '(') depth++
+    else if (c === ')') depth--
+    else if (c === ',' && depth === 0) { out.push(v.slice(start, i).trim()); start = i + 1 }
+  }
+  out.push(v.slice(start).trim())
+  return out.filter(Boolean)
+}
+
+/** One property's value out of a `a:b;c:d;` declaration block. Anchored on `;`
+ *  or the start, so `background-size` cannot match a request for `background`. */
+function cssValue(decl, prop) {
+  const m = new RegExp(`(?:^|;)\\s*${prop}:([^;]*)`).exec(decl)
+  return m ? m[1].trim() : ''
+}
+
+/** A percentage as a plain number — `200%` -> 200. NaN for anything else, which
+ *  is how a px-sized layer declines to be converted. */
+function posPct(v) {
+  return /^-?[\d.]+%$/.test(String(v).trim()) ? parseFloat(v) : NaN
+}
+
+/** A percentage as a multiple of the box — `200%` -> 2. */
+function sizeUnits(v) {
+  return posPct(v) / 100
+}
 
 /**
  * Does this spec compile a composited fill?
  *
  * The runtime's gate: masking a name whose paint kept the clip-text path builds
- * a letterform nothing reads, on the render path, per row. Asked of the spec
- * rather than of the compiled CSS so the answer costs nothing.
+ * a letterform nothing reads, on the render path, per row.
+ *
+ * Asked of the COMPILED CSS, not of the spec. Which effects convert is derived
+ * per effect — from where its own declaration moves — rather than listed, so a
+ * list here would be a second opinion about the first, and the two would drift
+ * the way the crowd dial's thresholds drifted from their comment. The caller
+ * compiles once per hash and remembers the answer, so this is read once too.
  */
-export function paintHasCompositedFill(spec) {
-  if (!isPlainObject(spec) || !Array.isArray(spec.effects)) return false
-  // Only a letter-split name puts its fill on spans, and only a span can carry
-  // a per-glyph mask.
-  if (!paintNeedsPerLetter(spec)) return false
-  return spec.effects.some(e => COMPOSITED_FILL[e?.id])
+export function compiledCssHasCompositedFill(css) {
+  return typeof css === 'string' && css.includes(`.${MASKED_CLASS}>span>i{`)
 }
 
 /**
@@ -1316,59 +1343,128 @@ export function paintHasCompositedFill(spec) {
  * @returns {{spanDecl:string,beforeRule:string,keyframes:string,tier:object}|null}
  */
 function buildCompositedFill(effectId, speed, base, stops, hash, nameBox) {
-  const g = COMPOSITED_FILL[effectId]
-  if (!g) return null
+  const at = (ph) => paintFillAt(effectId, speed, base, stops, hash, ph)?.decl || ''
   const probe = paintFillAt(effectId, speed, base, stops, hash, 0)
   if (!probe) return null
-  // The image is whatever the effect already paints; only how it MOVES changes.
-  const image = /background:([^;]+);/.exec(probe.decl)?.[1]
-  if (!image) return null
-  const N = g.tiles
-  if (!(N > 1)) return null
+  const d0 = probe.decl
+  const dHalf = at(0.5)
+  const d1 = at(1)
 
-  // One tile of travel, and the period scaled by the N-1 tiles the old sweep
-  // covered — seamless for any N, and the same apparent speed.
-  const extent = 1 + N
+  // A declaration that moves anything BUT a background layer is not this
+  // function's to convert, and silently converting it would drop whatever else
+  // it animates. `fire` skews as it pans; `hue` and `pulse` drive filter and
+  // opacity (already composited on their own); `reveal` moves a mask, which
+  // would fight the glyph mask outright.
+  if (/transform:|filter:|opacity:|mask-position:/.test(d0)) return null
+
+  const images = splitLayers(cssValue(d0, 'background'))
+  const sizes = splitLayers(cssValue(d0, 'background-size'))
+  const p0 = splitLayers(cssValue(d0, 'background-position'))
+  const pH = splitLayers(cssValue(dHalf, 'background-position'))
+  if (!images.length || images.length !== sizes.length || p0.length !== images.length) return null
+  if (pH.length !== p0.length) return null
+
+  // WHICH LAYER MOVES — asked of the effect rather than read off a list, so a
+  // new effect classifies itself. `conic` bakes its rotation into the image
+  // string and never moves a position, so it falls out here with no special
+  // case; `stardust` moves TWO layers, which needs a box each and is a second
+  // shape, so it falls out too.
+  const moving = p0.map((v, i) => (v === pH[i] ? -1 : i)).filter(i => i >= 0)
+  if (moving.length !== 1) return null
+  const m = moving[0]
+
+  // At a NUMERIC phase every value is a plain `<len> <len>` — the calc() form
+  // only appears when the phase is a variable — so a whitespace split is safe.
+  const axisOf = (a, b) => {
+    const [ax, ay] = a.trim().split(/\s+/)
+    const [bx, by] = b.trim().split(/\s+/)
+    if (ax !== bx) return { x: true, from: posPct(ax), to: posPct(bx) }
+    if (ay !== by) return { x: false, from: posPct(ay), to: posPct(by) }
+    return null
+  }
+  const half = axisOf(p0[m], pH[m])
+  if (!half) return null
+  const x = half.x
+  const sz = sizes[m].trim().split(/\s+/)
+  const N = sizeUnits(x ? sz[0] : sz[1])
+  if (!(N > 1) || !Number.isFinite(half.from) || !Number.isFinite(half.to)) return null
+
+  // `background-position:p%` resolves against (box - tile), and the tile is the
+  // larger, so a RISING position moves the image LEFT/UP. That sign is why the
+  // whole catalog would otherwise run mirror-image.
+  const boxesPer = (dp) => (1 - N) * dp / 100
+
+  // A round trip returns to phase 0 at phase 1 and is somewhere else at the
+  // half — the same classification buildPaintPhaseCss makes.
+  const roundTrip = d1 === d0 && dHalf !== d0
+  let travel, period, curve
+  if (roundTrip) {
+    // No seam to keep: it comes back the way it went, so it travels exactly what
+    // it always travelled, keeps its period, and keeps its sampled easing. That
+    // easing is the motion — rendered as a plain `ease-in-out` it is visibly a
+    // different animation.
+    travel = boxesPer(half.to - half.from)
+    period = probe.period
+    curve = 'roundTrip'
+  } else {
+    // ONE TILE, and the period scaled by however many tiles the old sweep
+    // covered. One tile is seamless for any N by definition; the sweep's own
+    // distance is N-1 tiles, which is only whole when N is (matrix tiles at
+    // 3.4, so its sweep lands mid-gradient).
+    const full = axisOf(p0[m], splitLayers(cssValue(d1, 'background-position'))[m])
+    if (!full) return null
+    const swept = boxesPer(full.to - full.from)
+    if (!swept) return null
+    travel = Math.sign(swept) * N
+    period = probe.period * Math.abs(travel / swept)
+    curve = null
+  }
+  if (!travel || !Number.isFinite(period) || period <= 0) return null
+
+  const extent = 1 + Math.abs(travel)
   const size = N / extent
-  // NEGATIVE for a forward sweep. `background-position:p%` resolves against
-  // (box - tile), and the tile is the larger, so a RISING position moves the
-  // image left/up. Getting this backwards runs every paint in the catalog
-  // mirror-image, which is the kind of wrong that looks deliberate.
-  const shift = -(N / extent) * (g.dir === -1 ? -1 : 1)
-  const x = g.axis === 'x'
-  const period = probe.period / (N - 1)
+  const shift = travel / extent
 
   const animName = `${COMPOSITED_ANIM_PREFIX}${hash}_${effectId}fill`
-  // Linear, always: every effect in the table above is a `wrap`, and a wrap
-  // that eased would not meet itself at the loop.
-  const timing = 'linear'
+  const tier = { period, luminance: false, oneWay: false, curve, timing: curve ? 'ease-in-out' : 'linear' }
+  // A sampled `linear()` cannot go in the shorthand — an engine that rejects it
+  // would invalidate the whole declaration and freeze the fill — so it is stated
+  // separately and the shorthand keeps a function that always parses. Same split,
+  // and the same builder, animDecls uses.
+  const timingDecl = curve ? `animation-timing-function:${tierTimings([tier], FILL_STEPS_PER_SECOND).join(', ')};` : ''
   const keyframes = `@keyframes ${animName}{to{transform:${x ? 'translateX' : 'translateY'}(${pct(shift)});}}`
 
   const beforeRule = `${nameBox}.${MASKED_CLASS}>span>i{position:absolute;top:0;left:0;`
     + `width:${x ? pct(extent) : '100%'};height:${x ? '100%' : pct(extent)};`
-    + `background-image:${image};`
+    + `background-image:${images[m]};`
     + `background-size:${x ? `${pct(size)} 100%` : `100% ${pct(size)}`};`
     + `background-repeat:${x ? 'repeat-x' : 'repeat-y'};`
-    + `animation:${animName} ${period}s ${timing} infinite;`
+    + `animation:${animName} ${period}s ${tier.timing} infinite;`
+    + timingDecl
     + `animation-delay:${syncDelayCalc(period)};}`
 
-  // The span stops painting anything itself: no gradient, no clip, no colour.
-  // The letterform arrives as a mask and the pixels come from the pseudo.
-  // No `mask-image` here: the letterform differs per glyph, so it arrives from
-  // the per-character rule glyph-mask.js publishes. Deliberately NOT through a
+  // THE LAYERS THAT DO NOT MOVE STAY ON THE SPAN. gold's diagonal sheen and
+  // glint's base are painted once and never again, so they cost nothing where
+  // they are — and moving them would need a second box each. The span keeps
+  // `background-clip:text` for them, which clips to the same glyph the mask
+  // does, so the two agree.
+  //
+  // No `mask-image` here: the letterform differs per glyph and arrives from the
+  // per-character rule glyph-mask.js publishes. Deliberately not through a
   // custom property — substituting a multi-KB url() on every span on every style
-  // recalc made each recalc 4-5x more expensive and turned this whole change
-  // into a regression (595ms -> 1436ms at twenty names, paint-perf --masked).
-  const spanDecl = `position:relative;background:none;color:transparent;`
+  // recalc made each recalc 4-5x more expensive.
+  const statics = images.map((img, i) => i === m ? null : i).filter(i => i !== null)
+  const staticDecl = statics.length
+    ? `background:${statics.map(i => images[i]).join(', ')};`
+      + `background-size:${statics.map(i => sizes[i]).join(', ')};`
+      + `background-position:${statics.map(i => p0[i]).join(', ')};`
+      + `-webkit-background-clip:text;background-clip:text;`
+    : 'background:none;'
+  const spanDecl = `position:relative;${staticDecl}color:transparent;`
     + `-webkit-mask-size:100% 100%;mask-size:100% 100%;`
     + `-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;`
 
-  return {
-    spanDecl,
-    beforeRule,
-    keyframes,
-    tier: { period, luminance: false, oneWay: false, curve: null, timing },
-  }
+  return { spanDecl, beforeRule, keyframes, tier }
 }
 
 /**

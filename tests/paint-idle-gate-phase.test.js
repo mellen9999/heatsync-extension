@@ -54,14 +54,19 @@ function makeGate(regateInPhase) {
     unobserve() {}
     disconnect() {}
   }
+  // hsVisiblePainted / scheduleHsCrowdDial: the crowd dial reads the same
+  // entry partition this gate makes, so the sliced callback references both.
+  // Stood in here so this file keeps testing only the phase contract.
   const factory = new Function(
     'IntersectionObserver',
     'regateInPhase',
+    'hsVisiblePainted',
+    'scheduleHsCrowdDial',
     `let hsVisibilityObserver = null
      ${sliceObserverFactory()}
      return ensureHsVisibilityObserver()`,
   )
-  const observer = factory(FakeIntersectionObserver, regateInPhase)
+  const observer = factory(FakeIntersectionObserver, regateInPhase, new Set(), () => {})
   return { observer, instances }
 }
 

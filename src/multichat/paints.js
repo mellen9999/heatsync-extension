@@ -742,8 +742,146 @@ function applyHsPaintToElement(el, userId) {
   if (el.style) {
     el.style.setProperty('--hsp-t', existingPhase || paintPhaseNow())
   }
+  // The class swap and the letter-split above both change how many animations
+  // this name runs, which is the dial's unit.
+  invalidateHsPaintMeasurement(el)
   // Freshly painted, so gate it now instead of waiting for the next scroll.
   scheduleHsPaintSweep(true)
+}
+
+// ── the crowd dial ──────────────────────────────────────────────────────────
+//
+// The compiler already emits `body.hs-paint-chunky` / `body.hs-paint-chunkier`
+// timing overrides beside every animation it writes (lib/paint-core.js
+// CROWD_TIERS, lib/scene-spec.js crowdTierRules) — and until this existed
+// NOTHING in the overlay ever put either class on <body>. Every one of those
+// rules was unreachable, so ext paints ran at FULL rate at any crowd size while
+// the site they mirror has coarsened since 8839cd015. The compiler half was
+// mirrored (scripts/sync-paint-compiler.sh, four byte-identical files); the
+// runtime half lives in the site's client/chat/paint-cosmetics.js, which is a
+// port rather than a mirror, and the port never carried the dial across.
+//
+// What it does: when a lot is moving at once, EVERYTHING moves in coarser steps
+// instead of anything stopping. One class flip retimes every painted name and
+// every scene plane on the page together. Not a divisor on the period — same
+// speed, fewer redraws.
+//
+// The site's mobile animation shed (PAINT_ANIMATION_BUDGET, newest-N floor) is
+// deliberately NOT ported: it early-returns on desktop there, and a multichat
+// overlay is a desktop surface. The dial is the half that runs on both.
+
+/** el → its last-measured weight. `getAnimations({subtree:true})` walks the
+ * whole descendant tree, and this pass runs over every visible name on each
+ * dial frame — on the site that exact call once sat on the critical path a
+ * keystroke's paint was queued behind. A name's live-animation count is fixed
+ * by its spec's layer/letter-span shape, not by scroll position, so it only
+ * needs remeasuring when that markup is rebuilt. */
+const hsWeightCache = new WeakMap()
+
+/** The visible painted names, maintained by the viewport gate below — the same
+ * entries it already partitions, so the dial costs no extra observation. */
+const hsVisiblePainted = new Set()
+let hsDialScheduled = false
+
+/**
+ * The thresholds, read LAZILY and written as a product of the compiler's own
+ * per-name cap.
+ *
+ * A product, never literals: both times the site's dial drifted it was because
+ * a literal stood in for the product and the unit moved underneath it. 3 full
+ * names to chunky, 6 to chunkier — the site's numbers, because the CSS they
+ * switch is the same compiled CSS.
+ *
+ * Lazy + guarded because MAX_ANIMATED_LAYERS is a bundle-scope free variable
+ * (build.js concatenates lib/paint-spec.js ahead of this file). A standalone
+ * `import` of this module in a test has no such binding, and the honest
+ * degradation is NO dial — today's behaviour — rather than NaN thresholds that
+ * would silently never engage while looking like they had.
+ */
+function hsCrowdThresholds() {
+  const full = typeof MAX_ANIMATED_LAYERS === 'number' ? MAX_ANIMATED_LAYERS : 0
+  if (!(full > 0)) return null
+  return { chunky: 3 * full, chunkier: 6 * full }
+}
+
+/**
+ * How many live CSS animations this one name is responsible for — itself plus
+ * every descendant (letter spans, scene ::before/::after planes).
+ *
+ * Count EFFECTS, not animation instances. A letter-split paint puts the same
+ * fill animation on one span per glyph, so counting instances charges a name by
+ * how many LETTERS it has — the glyphs partition the name, they do not multiply
+ * it. That bug tripped the site's dial at three names instead of six.
+ *
+ * `hsq_` animations are skipped: a composited transform on a promoted layer is
+ * a GPU quad blit, not a main-thread repaint, and charging one a unit each would
+ * put a scene name at nine instead of three.
+ *
+ * Zero is a real answer and is NOT cached — it is also what an element reports
+ * before its animations have started, and this first runs inside a rAF.
+ */
+function hsAnimatingWeight(el) {
+  const cached = hsWeightCache.get(el)
+  if (cached !== undefined) return cached
+  const composited = typeof COMPOSITED_ANIM_PREFIX === 'string' ? COMPOSITED_ANIM_PREFIX : ''
+  let weight = 0
+  if (typeof el.getAnimations === 'function') {
+    try {
+      const effects = new Set()
+      for (const a of el.getAnimations({ subtree: true })) {
+        const n = a?.animationName
+        if (typeof n !== 'string') { weight++; continue } // no identity to fold on
+        if (composited && n.startsWith(composited)) continue
+        effects.add(n)
+      }
+      weight += effects.size
+    } catch { weight = 0 }
+  }
+  if (weight > 0) hsWeightCache.set(el, weight)
+  return weight
+}
+
+/** Forget what this element measured. Called wherever the paint markup is
+ * rewritten or removed — the two events that change the animation count. */
+function invalidateHsPaintMeasurement(el) {
+  if (el) hsWeightCache.delete(el)
+}
+
+/** Sum the visible weight and set the tier. Detached names are dropped here
+ * rather than by a separate reaper: this walk already visits every one. */
+function applyHsCrowdDial() {
+  const t = hsCrowdThresholds()
+  const cls = typeof document !== 'undefined' ? document.body?.classList : null
+  if (!t || !cls) return
+  let weight = 0
+  for (const el of hsVisiblePainted) {
+    if (!el.isConnected) { hsVisiblePainted.delete(el); continue }
+    weight += hsAnimatingWeight(el)
+  }
+  cls.toggle('hs-paint-chunky', weight > t.chunky && weight <= t.chunkier)
+  cls.toggle('hs-paint-chunkier', weight > t.chunkier)
+}
+
+/** One dial pass per frame. Visibility changes arrive in bursts while a pane
+ * scrolls, and the tier is one decision about the whole page. */
+function scheduleHsCrowdDial() {
+  if (hsDialScheduled || typeof requestAnimationFrame !== 'function') return
+  hsDialScheduled = true
+  requestAnimationFrame(() => { hsDialScheduled = false; applyHsCrowdDial() })
+}
+
+/** Test seams. The thresholds are a product and the weight is its unit, so both
+ * are worth asserting directly rather than only through which tier lands. */
+function _hsCrowdThresholdsForTests() { return hsCrowdThresholds() }
+/** The real visible set, so a test can drive the SHIPPING observer source into
+ *  it and then read the tier off the SHIPPING dial — rather than proving the
+ *  governor against a set nothing in production writes. */
+function _hsVisiblePaintedForTests() { return hsVisiblePainted }
+function _hsAnimatingWeightForTests(el) { return hsAnimatingWeight(el) }
+function _resetHsCrowdDialForTests() {
+  hsVisiblePainted.clear()
+  hsDialScheduled = false
+  document.body?.classList?.remove('hs-paint-chunky', 'hs-paint-chunkier')
 }
 
 // ── viewport gate ───────────────────────────────────────────────────────────
@@ -774,6 +912,11 @@ function ensureHsVisibilityObserver() {
       const pause = []
       const resume = []
       for (const entry of entries) (entry.isIntersecting ? resume : pause).push(entry.target)
+      // The crowd dial reads exactly this partition — the tier is about what is
+      // ON SCREEN, and a paused offscreen name costs nothing to coarsen.
+      for (const el of resume) hsVisiblePainted.add(el)
+      for (const el of pause) hsVisiblePainted.delete(el)
+      scheduleHsCrowdDial()
       regateInPhase(
         { pause, resume },
         {
@@ -814,6 +957,9 @@ function clearHsPaintFromElement(el) {
   const ours = [...el.classList].filter((c) => c.startsWith('hsp-'))
   if (!ours.length) return
   for (const c of ours) el.classList.remove(c)
+  // The paint is what was animating; whatever this name weighs now, it is not
+  // what the dial last measured.
+  invalidateHsPaintMeasurement(el)
   if (el.dataset.hsPaintSplit) {
     // Assigning the plain text back collapses the per-letter spans in one
     // step, leaving the name exactly as it started. Via a local so it reads as
@@ -892,6 +1038,8 @@ function reapHsObservedNames(io) {
     if (!el.isConnected) {
       io.unobserve(el)
       hsObservedNames.delete(el)
+      hsVisiblePainted.delete(el)
+      invalidateHsPaintMeasurement(el)
     }
   }
 }
@@ -942,9 +1090,14 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 }
 
 export {
+  applyHsCrowdDial,
   applyHsPaintToElement,
   clearHsPaintFromElement,
   clearHsPaintSheet,
+  _hsAnimatingWeightForTests,
+  _hsCrowdThresholdsForTests,
+  _hsVisiblePaintedForTests,
+  _resetHsCrowdDialForTests,
   evictOldestPaintEntry,
   getHsPaintClass,
   getHsPaintSpec,

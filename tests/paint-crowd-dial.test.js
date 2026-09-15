@@ -226,6 +226,32 @@ describe('the dial engages by NAME COUNT', () => {
   })
 })
 
+describe('the dial resolves its unit in the SHIPPED bundle', () => {
+  // Every test above hands the compiler constants to the module on globalThis.
+  // In production they are bundle-scope free variables, and the dial degrades
+  // to OFF if they are not there — an honest degradation that is also a silent
+  // one. So pin the precondition: build.js must concatenate the files that
+  // declare them ahead of paints.js.
+  const BUILD = readFileSync(join(import.meta.dir, '..', 'build.js'), 'utf8')
+
+  test('build.js embeds scene-spec and paint-spec ahead of the multichat modules', () => {
+    const libLoop = BUILD.indexOf("for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js'])")
+    expect(libLoop, 'the paint compiler lib loop moved or was renamed in build.js').toBeGreaterThan(-1)
+    const mcLoop = BUILD.indexOf('const modules = CORE_MODULES')
+    expect(mcLoop, 'the multichat module loop moved in build.js').toBeGreaterThan(-1)
+    expect(libLoop).toBeLessThan(mcLoop)
+  })
+
+  test('the two constants the dial reads are declared in those files', () => {
+    const paintSpec = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'paint-spec.js'), 'utf8')
+    const sceneSpec = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'scene-spec.js'), 'utf8')
+    // stripExports drops the `export ` prefix and leaves the declaration, so a
+    // top-level `export const` becomes a bundle-scope `const`.
+    expect(paintSpec).toMatch(/^export const MAX_ANIMATED_LAYERS = /m)
+    expect(sceneSpec).toMatch(/^export const COMPOSITED_ANIM_PREFIX = /m)
+  })
+})
+
 describe('the viewport gate feeds the dial', () => {
   test('intersecting names join the visible set, leaving names drop out', () => {
     const on = fullWeightName()

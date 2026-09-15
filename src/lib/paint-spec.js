@@ -1199,6 +1199,166 @@ function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
   }
 }
 
+/** Put on the name box by the runtime once every glyph has a mask. Everything
+ *  below is gated on it, so a browser without `mask-image`, a font that has not
+ *  loaded, or a name the masker refused all keep exactly today's clip-text
+ *  path. See client/cosmetics/glyph-mask.js. */
+export const MASKED_CLASS = 'hs-masked'
+
+/**
+ * ── THE COMPOSITED FILL ─────────────────────────────────────────────────────
+ *
+ * The fill is the one animation every painted name has, and it was the last
+ * cosmetic still on the repaint path: a `background-position` moving under
+ * `background-clip:text` re-rasters its element every frame it changes, and a
+ * split name puts that on one span per GLYPH. Measured on this compiler,
+ * 414x896 @ dpr3, cpu 4x, renderer ms per 3s (`paint-perf --composited`):
+ *
+ *   background-clip:text   104.5ms @ 1 name    851.4ms @ 20    3704 paints
+ *   masked + transform       1.1ms @ 1 name      6.8ms @ 20       1 paint
+ *
+ * Same trick as animated-texture.js and buildLetterMotionCss: stop moving a
+ * painted value, move a static texture instead. The glyph's letterform becomes
+ * a `mask-image` on the span (rasterised once per CHARACTER — the fill is
+ * already per-glyph local, because the spans are inline-block, so
+ * `background-size:300%` is 300% of ONE LETTER), and the gradient moves on a
+ * `::before` under it with `transform` alone.
+ *
+ * `::before` and not a new element on purpose: the markup does not change at
+ * all, so the copyable-text contract at paintNameHtmlFor, the pre-built
+ * `identity.nameHtml` that mentions and reply heads depend on, and every markup
+ * test all stay exactly as they were. The span keeps its real text node at
+ * `color:transparent`, so selection, copy, find-in-page and screen readers are
+ * untouched.
+ *
+ * ── THE GEOMETRY IS DERIVED, NOT AUTHORED ───────────────────────────────────
+ *
+ * `background-position: p%` resolves against (box - tile), so with a tile N
+ * boxes wide the sweep 0 -> N*100% travels N(N-1) boxes — 6 boxes at N=3. A
+ * transform cannot be handed that number directly and stay seamless: N(N-1)/N
+ * = N-1 tiles is whole only when N is.
+ *
+ * So translate exactly ONE tile and scale the period to match the old speed.
+ * One tile is seamless for any repeating background by definition, whatever N
+ * is, and speed is preserved because the old sweep covered N-1 tiles in one
+ * period. Everything is then a constant off N:
+ *
+ *   ::before size   (1 + N) * 100%      background-size   N/(1+N) * 100%
+ *   translate       N/(1+N) * 100%      period            P / (N-1)
+ *
+ * ── WHAT IS NOT CONVERTED, AND WHY ──────────────────────────────────────────
+ *
+ * One-way (`wrap`) sweeps with a single moving layer — which is the table
+ * above, and nothing else yet.
+ *
+ * `chrome` and `ice` are round trips: they have no seam to keep, so the tile
+ * trick is unnecessary, but their motion lives in a sampled `linear()` easing
+ * that this function would have to reproduce rather than approximate — a
+ * `bounce` rendered as `ease-in-out` is a visibly different motion. `gold`,
+ * `glint` and `stardust` comma-list a moving layer with one or two STATIC ones,
+ * and want the static layers left on the span with only the moving one on the
+ * pseudo. `fire` couples its position to a `skewX` in one declaration. `conic`
+ * bakes rotation into the image string and keeps the phase driver for the
+ * reason buildPaintPhaseCss documents. `hue` and `pulse` already animate
+ * `filter` and `opacity`, which composite on their own. `reveal` is already
+ * mask-based and collides with this mask outright.
+ *
+ * Anything absent from the table keeps the clip-text path unchanged, so this is
+ * additive — no paint renders differently because of what is missing here.
+ *
+ * Anything absent from this table simply keeps the clip-text path, which is
+ * why the table is the whole opt-in.
+ */
+const COMPOSITED_FILL = {
+  //         axis         tiles (N) — background-size on that axis, in boxes
+  pan:     { axis: 'x', tiles: 3 },
+  rainbow: { axis: 'x', tiles: 3 },
+  matrix:  { axis: 'y', tiles: 3.4 },
+  holo:    { axis: 'y', tiles: 2 },
+  lava:    { axis: 'y', tiles: 3, dir: -1 },
+}
+
+/** Round to 4dp the way phaseAt does, so a percentage never carries float noise
+ *  into the stylesheet. */
+const pct = (n) => `${Math.round(n * 1e6) / 1e4}%`
+
+/**
+ * Does this spec compile a composited fill?
+ *
+ * The runtime's gate: masking a name whose paint kept the clip-text path builds
+ * a letterform nothing reads, on the render path, per row. Asked of the spec
+ * rather than of the compiled CSS so the answer costs nothing.
+ */
+export function paintHasCompositedFill(spec) {
+  if (!isPlainObject(spec) || !Array.isArray(spec.effects)) return false
+  // Only a letter-split name puts its fill on spans, and only a span can carry
+  // a per-glyph mask.
+  if (!paintNeedsPerLetter(spec)) return false
+  return spec.effects.some(e => COMPOSITED_FILL[e?.id])
+}
+
+/**
+ * The composited form of a positional fill, or null if this effect keeps the
+ * clip-text path.
+ *
+ * @returns {{spanDecl:string,beforeRule:string,keyframes:string,tier:object}|null}
+ */
+function buildCompositedFill(effectId, speed, base, stops, hash, nameBox) {
+  const g = COMPOSITED_FILL[effectId]
+  if (!g) return null
+  const probe = paintFillAt(effectId, speed, base, stops, hash, 0)
+  if (!probe) return null
+  // The image is whatever the effect already paints; only how it MOVES changes.
+  const image = /background:([^;]+);/.exec(probe.decl)?.[1]
+  if (!image) return null
+  const N = g.tiles
+  if (!(N > 1)) return null
+
+  // One tile of travel, and the period scaled by the N-1 tiles the old sweep
+  // covered — seamless for any N, and the same apparent speed.
+  const extent = 1 + N
+  const size = N / extent
+  // NEGATIVE for a forward sweep. `background-position:p%` resolves against
+  // (box - tile), and the tile is the larger, so a RISING position moves the
+  // image left/up. Getting this backwards runs every paint in the catalog
+  // mirror-image, which is the kind of wrong that looks deliberate.
+  const shift = -(N / extent) * (g.dir === -1 ? -1 : 1)
+  const x = g.axis === 'x'
+  const period = probe.period / (N - 1)
+
+  const animName = `${COMPOSITED_ANIM_PREFIX}${hash}_${effectId}fill`
+  // Linear, always: every effect in the table above is a `wrap`, and a wrap
+  // that eased would not meet itself at the loop.
+  const timing = 'linear'
+  const keyframes = `@keyframes ${animName}{to{transform:${x ? 'translateX' : 'translateY'}(${pct(shift)});}}`
+
+  const beforeRule = `${nameBox}.${MASKED_CLASS}>span::before{content:'';position:absolute;top:0;left:0;`
+    + `width:${x ? pct(extent) : '100%'};height:${x ? '100%' : pct(extent)};`
+    + `background-image:${image};`
+    + `background-size:${x ? `${pct(size)} 100%` : `100% ${pct(size)}`};`
+    + `background-repeat:${x ? 'repeat-x' : 'repeat-y'};`
+    + `animation:${animName} ${period}s ${timing} infinite;`
+    + `animation-delay:${syncDelayCalc(period)};}`
+
+  // The span stops painting anything itself: no gradient, no clip, no colour.
+  // The letterform arrives as a mask and the pixels come from the pseudo.
+  // No `mask-image` here: the letterform differs per glyph, so it arrives from
+  // the per-character rule glyph-mask.js publishes. Deliberately NOT through a
+  // custom property — substituting a multi-KB url() on every span on every style
+  // recalc made each recalc 4-5x more expensive and turned this whole change
+  // into a regression (595ms -> 1436ms at twenty names, paint-perf --masked).
+  const spanDecl = `position:relative;background:none;color:transparent;`
+    + `-webkit-mask-size:100% 100%;mask-size:100% 100%;`
+    + `-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;`
+
+  return {
+    spanDecl,
+    beforeRule,
+    keyframes,
+    tier: { period, luminance: false, oneWay: false, curve: null, timing },
+  }
+}
+
 /**
  * The six per-letter motions, each as one declaration written against a phase.
  *
@@ -1671,6 +1831,11 @@ export function compilePaintCss(spec, selector, opts = {}) {
     // buildLetterMotionCss for the two benches that moved it there and back.
     let spanDecls = ''
     const spanParts = []
+    // Tracked apart from the motions so the composited variant below can emit a
+    // span rule WITHOUT it — under a mask the fill moves to the pseudo, and a
+    // leftover background-position animation on the span would repaint exactly
+    // what this exists to stop repainting.
+    let fillSpanPart = null
 
     if (baseCss?.isClipText) spanDecls += baseCss.decl
 
@@ -1689,7 +1854,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
         // inheriting custom property and genuinely does belong on the ancestor.
         // Latent since the fills came off the driver.
         if (p.drivesPhaseVar) selfParts.push(p.selfPart)
-        else spanParts.push(p.selfPart)
+        else { spanParts.push(p.selfPart); fillSpanPart = p.selfPart }
         spanDecls += p.decl
       }
     }
@@ -1716,6 +1881,35 @@ export function compilePaintCss(spec, selector, opts = {}) {
 
     css += spanParts.map(p => p.keyframes).join('')
       + tierRules(paintTarget, spanParts)
+
+    // ── the composited variant, gated on the runtime's mask ──────────────
+    //
+    // Emitted ALONGSIDE the rules above, never instead of them: everything here
+    // is behind `.hs-masked`, which the runtime only adds once every glyph has
+    // a letterform to be masked by. A browser without mask-image, a webfont
+    // still loading, or a character the masker refused all fall through to the
+    // clip-text path that just compiled.
+    if (perLetter && paintEffect) {
+      const comp = buildCompositedFill(paintEffect.id, paintEffect.speed, base, stops, hash, nameBox)
+      if (comp) {
+        const motionParts = spanParts.filter(p => p !== fillSpanPart)
+        const maskedSpan = `${nameBox}.${MASKED_CLASS}>span`
+        css += `${maskedSpan}{${comp.spanDecl}`
+          // The letter motions stay on the span and stay composited; the fill is
+          // gone from this list because it now lives on the pseudo. With no
+          // motions at all the shorthand still has to be reset, or the span
+          // keeps animating the background-position it no longer declares.
+          + (motionParts.length ? animDecls(motionParts) : 'animation:none;')
+          + '}'
+          + comp.beforeRule
+          + comp.keyframes
+        // NO crowd tier on the pseudo. The dial exists to buy back redraws from
+        // an effect that costs one per frame; this one is a composited transform
+        // that costs nothing at any rate, so stepping it would trade motion
+        // quality for a saving that is not there. The dial still governs the
+        // letter motions and the scene planes through the rules above.
+      }
+    }
   } else {
     if (paintEffect) {
       const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)

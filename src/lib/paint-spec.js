@@ -1224,12 +1224,24 @@ export const MASKED_CLASS = 'hs-masked'
  * `background-size:300%` is 300% of ONE LETTER), and the gradient moves on a
  * `::before` under it with `transform` alone.
  *
- * `::before` and not a new element on purpose: the markup does not change at
- * all, so the copyable-text contract at paintNameHtmlFor, the pre-built
- * `identity.nameHtml` that mentions and reply heads depend on, and every markup
- * test all stay exactly as they were. The span keeps its real text node at
- * `color:transparent`, so selection, copy, find-in-page and screen readers are
- * untouched.
+ * A REAL CHILD ELEMENT, not `::before`, and that is the whole difference
+ * between this working and not. The first cut used a pseudo — no markup change
+ * at all, which was the appeal — and it removed the repaint exactly as designed
+ * (3865 paint operations to 1) while costing MORE overall, because a pseudo's
+ * animation forces a full style recalc of the element that owns it, every
+ * frame. Same rules on an `<i>` instead, measured by the same arm at twenty
+ * names (paint-perf --masked):
+ *
+ *   ::before   1100.3ms total, 141 style recalcs per 3s
+ *   <i>           2.1ms total,   1 style recalc  per 3s
+ *
+ * The `<i>` is appended by the RUNTIME, never by paintNameHtml, so the compiler's
+ * markup and everything resting on it are still untouched: the copyable-text
+ * contract at paintNameHtmlFor, the pre-built `identity.nameHtml` that mentions
+ * and reply heads depend on, and every markup test. It is out of flow and
+ * carries no text, so selection, copy and find-in-page do not see it, and it is
+ * `aria-hidden` like the scene planes. The span keeps its real text node at
+ * `color:transparent`.
  *
  * ── THE GEOMETRY IS DERIVED, NOT AUTHORED ───────────────────────────────────
  *
@@ -1332,7 +1344,7 @@ function buildCompositedFill(effectId, speed, base, stops, hash, nameBox) {
   const timing = 'linear'
   const keyframes = `@keyframes ${animName}{to{transform:${x ? 'translateX' : 'translateY'}(${pct(shift)});}}`
 
-  const beforeRule = `${nameBox}.${MASKED_CLASS}>span::before{content:'';position:absolute;top:0;left:0;`
+  const beforeRule = `${nameBox}.${MASKED_CLASS}>span>i{position:absolute;top:0;left:0;`
     + `width:${x ? pct(extent) : '100%'};height:${x ? '100%' : pct(extent)};`
     + `background-image:${image};`
     + `background-size:${x ? `${pct(size)} 100%` : `100% ${pct(size)}`};`

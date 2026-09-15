@@ -263,6 +263,34 @@ export function effectConflict(id, effects) {
   return null
 }
 
+/**
+ * Does this paint fill with YOUR colours, or does it bring its own?
+ *
+ * Half the paint slot (the themed presets — gold, fire, ice …) is a fixed
+ * palette that ignores `base.stops` entirely, and nothing said so: you would
+ * set five colours, tap "fire", and watch every one of them do nothing. The
+ * builder splits the rail on this and says it out loud.
+ *
+ * Derived from THEMED_PAINT rather than duplicated as a flag, so a preset
+ * added there can never disagree with the label the picker shows. A motion
+ * effect answers true: it does not fill at all, so your colours still show.
+ */
+export function effectUsesBaseColors(id) {
+  return !!EFFECTS[id] && !THEMED_PAINT[id]
+}
+
+/**
+ * Paints that read EVERY stop, not just the first — so a one-stop "solid"
+ * base starves them. `pan` and `conic` force a gradient outright; `stripes`
+ * bands whatever stops it finds. Picking one with a solid base used to
+ * compile a gradient from a single colour (nothing to see) while the builder
+ * hid both the angle and the "add stop" button behind that same solid base:
+ * you picked movement and got a still name with no way to fix it.
+ */
+export function effectNeedsStops(id) {
+  return id === 'pan' || id === 'conic' || id === 'stripes'
+}
+
 const EFFECT_IDS = new Set(Object.keys(EFFECTS))
 const LETTER_SPLIT_IDS = new Set(Object.entries(EFFECTS).filter(([, m]) => m.letterSplit).map(([id]) => id))
 
@@ -916,6 +944,37 @@ const ease = (ph, start, end) => typeof ph === 'number'
   ? phaseAt(ph, start, end, (p, a, b) => (a + b) / 2 - (b - a) / 2 * Math.cos(p * Math.PI))
   : `calc((${start} + ${end}) / 2 - (${end} - ${start}) / 2 * cos(var(${ph}) * 180deg))`
 
+/**
+ * Which way a `pan` sweeps, from the angle the user set.
+ *
+ * A pan slides the gradient IMAGE past the glyphs, and sliding it across its
+ * own bands moves nothing you can see. The sweep was hard-coded to x, so a
+ * `0deg`/`180deg` pan — horizontal bands, swept horizontally — was completely
+ * STATIC: the one paint whose whole job is movement, frozen, for a third of
+ * the angle dial. And at every angle that did move, it moved the same way
+ * (right to left) no matter what the dial said, so "angle" only ever tilted
+ * the bands and never chose a direction.
+ *
+ * Now the sweep follows the gradient's own axis, and the angle means what it
+ * reads as: 90° flows left→right, 270° right→left, 0° bottom→top, 180°
+ * top→bottom, with the diagonals leaning on whichever axis they favour.
+ *
+ * CSS gradient angles are clockwise from "to top", so the gradient's direction
+ * in screen coordinates (x right, y down) is `(sin θ, -cos θ)`. A
+ * `background-position` percentage moves an oversized image the OTHER way —
+ * larger p pulls it left/up — hence the sign flips below. One axis only: two
+ * axes would need the image to tile seamlessly in both, which a linear
+ * gradient does not.
+ */
+function panSweep(angle, ph) {
+  const rad = angle * Math.PI / 180
+  const sin = Math.sin(rad), cos = Math.cos(rad)
+  if (Math.abs(sin) >= Math.abs(cos)) {
+    return { size: '300% 100%', x: wrap(ph, '0%', sin > 0 ? '-300%' : '300%'), y: '0' }
+  }
+  return { size: '100% 300%', x: '0', y: wrap(ph, '0%', cos > 0 ? '300%' : '-300%') }
+}
+
 /** Build the pieces for a `paint`-slot effect: { selfPart, decl }. `decl` is
  * a plain, unanimated declaration block (background/filter/opacity/mask, all
  * calc()-derived from the phase); `selfPart` is the one Animation driving it,
@@ -942,7 +1001,8 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
     const phaseVar = ph; __period = duration; __opts = {}
-    const decl = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0%', '300%')} 0;`
+    const { size, x, y } = panSweep(angle, phaseVar)
+    const decl = `background:${image};background-size:${size};-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${x} ${y};`
     return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 

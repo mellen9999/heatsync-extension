@@ -6069,28 +6069,42 @@ const FILL_STEPS_PER_SECOND = 8
 /**
  * ── THE CROWD DIAL ──────────────────────────────────────────────────────────
  *
- * The rates above are what ONE name costs. Twenty of them cost twenty times as
- * much: 20 copies of one paint measure 3694ms of renderer time per 3s at 4x CPU
- * against 287ms for one — nothing is shared between copies but the compiled CSS
- * rule, because each element's clip mask is its own glyphs.
+ * The rates above are what ONE name costs. When a lot is moving at once,
+ * everything moves in coarser steps instead of anything stopping.
+ * paint-cosmetics puts `hs-paint-chunky` / `hs-paint-chunkier` on <body> from
+ * the on-screen animation weight it already measures, and the compiler emits a
+ * matching `animation-timing-function` for each tier beside every animation it
+ * writes. One class flip retimes every painted name and every scene plane on
+ * the page together — which is the only sense in which identical animations can
+ * be "linked", since the pixels cannot be.
  *
- * So when a lot is moving at once, everything moves in coarser steps instead of
- * anything stopping. paint-cosmetics puts `hs-paint-chunky` / `hs-paint-chunkier`
- * on <body> from the on-screen animation weight it already measures, and the
- * compiler emits a matching `animation-timing-function` for each tier beside
- * every animation it writes. One class flip retimes every painted name and every
- * scene plane on the page together — which is the only sense in which identical
- * animations can be "linked", since the pixels cannot be.
+ * ── WHAT THE DIAL IS WORTH NOW, AND WHY IT IS NOT WHAT IT USED TO BE ────────
  *
- * Measured at 20 copies, same fixture (paint-perf --cost):
+ * This paragraph read "20 copies measure 3694ms of renderer per 3s" for months
+ * after that stopped being true. That figure is the `background-clip:text` era,
+ * when every glyph of every copy was its own re-rastering clip-text layer.
+ * Scene planes moved onto composited transforms and the fill followed, and the
+ * cost collapsed by a factor of sixty — while the sentence justifying the dial
+ * stayed put. A stale measurement reads exactly like a current one.
  *
- *   full          3694ms      scene 12/s (today)  1193ms
- *   name 2/s      3250ms      scene  6/s           601ms
- *   all 2/s       2459ms      scene  3/s           357ms
+ * Measured 2026-09-14 with `paint-perf --dial`, lava, 414x896 @ dpr3, cpu 4x,
+ * renderer ms per 3s of a 3000ms budget:
  *
- * The scene is where the money is; the name's own fill is already cheap. Both
- * are dialled anyway, because the tier is one decision and splitting it would
- * mean two thresholds to keep honest.
+ *   names    full    chunky   chunkier      of which raster
+ *      3     19.0     10.1      12.5        1.8 / 0.9 / 0.5
+ *      6     27.6     17.4      15.0        2.8 / 1.5 / 0.7
+ *     20     62.1     40.7      25.0        9.1 / 4.2 / 1.9
+ *
+ * So renderer time can no longer justify this: 62ms of a 3000ms budget is ~2%,
+ * and the tiers are within noise of each other at small crowds. What the dial
+ * still buys is RASTER — 4.8x across the tiers at twenty names — and raster is
+ * what a phone GPU pays and what `scripts/paint-perf.mjs` documents itself as
+ * blind to. That is the whole remaining case for it, and it is a real one:
+ * real-user `inp_kb_presentation` is most of mobile INP.
+ *
+ * To move any of this: `paint-perf --dial` for the ratio, then Titan's
+ * real-user inp_kb_presentation for the verdict — and write which one moved it
+ * here, with the date, so the next reader can tell a measurement from a memory.
  *
  * NOT a divisor on the period, which would be slow motion. Same speed, fewer
  * redraws — "idc about steppy because bitmap and pixels".
@@ -8553,6 +8567,34 @@ function effectConflict(id, effects) {
   return null
 }
 
+/**
+ * Does this paint fill with YOUR colours, or does it bring its own?
+ *
+ * Half the paint slot (the themed presets — gold, fire, ice …) is a fixed
+ * palette that ignores `base.stops` entirely, and nothing said so: you would
+ * set five colours, tap "fire", and watch every one of them do nothing. The
+ * builder splits the rail on this and says it out loud.
+ *
+ * Derived from THEMED_PAINT rather than duplicated as a flag, so a preset
+ * added there can never disagree with the label the picker shows. A motion
+ * effect answers true: it does not fill at all, so your colours still show.
+ */
+function effectUsesBaseColors(id) {
+  return !!EFFECTS[id] && !THEMED_PAINT[id]
+}
+
+/**
+ * Paints that read EVERY stop, not just the first — so a one-stop "solid"
+ * base starves them. `pan` and `conic` force a gradient outright; `stripes`
+ * bands whatever stops it finds. Picking one with a solid base used to
+ * compile a gradient from a single colour (nothing to see) while the builder
+ * hid both the angle and the "add stop" button behind that same solid base:
+ * you picked movement and got a still name with no way to fix it.
+ */
+function effectNeedsStops(id) {
+  return id === 'pan' || id === 'conic' || id === 'stripes'
+}
+
 const EFFECT_IDS = new Set(Object.keys(EFFECTS))
 const LETTER_SPLIT_IDS = new Set(Object.entries(EFFECTS).filter(([, m]) => m.letterSplit).map(([id]) => id))
 
@@ -9206,6 +9248,37 @@ const ease = (ph, start, end) => typeof ph === 'number'
   ? phaseAt(ph, start, end, (p, a, b) => (a + b) / 2 - (b - a) / 2 * Math.cos(p * Math.PI))
   : `calc((${start} + ${end}) / 2 - (${end} - ${start}) / 2 * cos(var(${ph}) * 180deg))`
 
+/**
+ * Which way a `pan` sweeps, from the angle the user set.
+ *
+ * A pan slides the gradient IMAGE past the glyphs, and sliding it across its
+ * own bands moves nothing you can see. The sweep was hard-coded to x, so a
+ * `0deg`/`180deg` pan — horizontal bands, swept horizontally — was completely
+ * STATIC: the one paint whose whole job is movement, frozen, for a third of
+ * the angle dial. And at every angle that did move, it moved the same way
+ * (right to left) no matter what the dial said, so "angle" only ever tilted
+ * the bands and never chose a direction.
+ *
+ * Now the sweep follows the gradient's own axis, and the angle means what it
+ * reads as: 90° flows left→right, 270° right→left, 0° bottom→top, 180°
+ * top→bottom, with the diagonals leaning on whichever axis they favour.
+ *
+ * CSS gradient angles are clockwise from "to top", so the gradient's direction
+ * in screen coordinates (x right, y down) is `(sin θ, -cos θ)`. A
+ * `background-position` percentage moves an oversized image the OTHER way —
+ * larger p pulls it left/up — hence the sign flips below. One axis only: two
+ * axes would need the image to tile seamlessly in both, which a linear
+ * gradient does not.
+ */
+function panSweep(angle, ph) {
+  const rad = angle * Math.PI / 180
+  const sin = Math.sin(rad), cos = Math.cos(rad)
+  if (Math.abs(sin) >= Math.abs(cos)) {
+    return { size: '300% 100%', x: wrap(ph, '0%', sin > 0 ? '-300%' : '300%'), y: '0' }
+  }
+  return { size: '100% 300%', x: '0', y: wrap(ph, '0%', cos > 0 ? '300%' : '-300%') }
+}
+
 /** Build the pieces for a `paint`-slot effect: { selfPart, decl }. `decl` is
  * a plain, unanimated declaration block (background/filter/opacity/mask, all
  * calc()-derived from the phase); `selfPart` is the one Animation driving it,
@@ -9232,7 +9305,8 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
     const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
     const phaseVar = ph; __period = duration; __opts = {}
-    const decl = `background:${image};background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${wrap(phaseVar, '0%', '300%')} 0;`
+    const { size, x, y } = panSweep(angle, phaseVar)
+    const decl = `background:${image};background-size:${size};-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${x} ${y};`
     return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
@@ -11719,7 +11793,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'effd2763+-202609151924' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ed7516c6+-202609152244' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

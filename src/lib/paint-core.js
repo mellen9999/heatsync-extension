@@ -69,28 +69,42 @@ export const FILL_STEPS_PER_SECOND = 8
 /**
  * ── THE CROWD DIAL ──────────────────────────────────────────────────────────
  *
- * The rates above are what ONE name costs. Twenty of them cost twenty times as
- * much: 20 copies of one paint measure 3694ms of renderer time per 3s at 4x CPU
- * against 287ms for one — nothing is shared between copies but the compiled CSS
- * rule, because each element's clip mask is its own glyphs.
+ * The rates above are what ONE name costs. When a lot is moving at once,
+ * everything moves in coarser steps instead of anything stopping.
+ * paint-cosmetics puts `hs-paint-chunky` / `hs-paint-chunkier` on <body> from
+ * the on-screen animation weight it already measures, and the compiler emits a
+ * matching `animation-timing-function` for each tier beside every animation it
+ * writes. One class flip retimes every painted name and every scene plane on
+ * the page together — which is the only sense in which identical animations can
+ * be "linked", since the pixels cannot be.
  *
- * So when a lot is moving at once, everything moves in coarser steps instead of
- * anything stopping. paint-cosmetics puts `hs-paint-chunky` / `hs-paint-chunkier`
- * on <body> from the on-screen animation weight it already measures, and the
- * compiler emits a matching `animation-timing-function` for each tier beside
- * every animation it writes. One class flip retimes every painted name and every
- * scene plane on the page together — which is the only sense in which identical
- * animations can be "linked", since the pixels cannot be.
+ * ── WHAT THE DIAL IS WORTH NOW, AND WHY IT IS NOT WHAT IT USED TO BE ────────
  *
- * Measured at 20 copies, same fixture (paint-perf --cost):
+ * This paragraph read "20 copies measure 3694ms of renderer per 3s" for months
+ * after that stopped being true. That figure is the `background-clip:text` era,
+ * when every glyph of every copy was its own re-rastering clip-text layer.
+ * Scene planes moved onto composited transforms and the fill followed, and the
+ * cost collapsed by a factor of sixty — while the sentence justifying the dial
+ * stayed put. A stale measurement reads exactly like a current one.
  *
- *   full          3694ms      scene 12/s (today)  1193ms
- *   name 2/s      3250ms      scene  6/s           601ms
- *   all 2/s       2459ms      scene  3/s           357ms
+ * Measured 2026-09-14 with `paint-perf --dial`, lava, 414x896 @ dpr3, cpu 4x,
+ * renderer ms per 3s of a 3000ms budget:
  *
- * The scene is where the money is; the name's own fill is already cheap. Both
- * are dialled anyway, because the tier is one decision and splitting it would
- * mean two thresholds to keep honest.
+ *   names    full    chunky   chunkier      of which raster
+ *      3     19.0     10.1      12.5        1.8 / 0.9 / 0.5
+ *      6     27.6     17.4      15.0        2.8 / 1.5 / 0.7
+ *     20     62.1     40.7      25.0        9.1 / 4.2 / 1.9
+ *
+ * So renderer time can no longer justify this: 62ms of a 3000ms budget is ~2%,
+ * and the tiers are within noise of each other at small crowds. What the dial
+ * still buys is RASTER — 4.8x across the tiers at twenty names — and raster is
+ * what a phone GPU pays and what `scripts/paint-perf.mjs` documents itself as
+ * blind to. That is the whole remaining case for it, and it is a real one:
+ * real-user `inp_kb_presentation` is most of mobile INP.
+ *
+ * To move any of this: `paint-perf --dial` for the ratio, then Titan's
+ * real-user inp_kb_presentation for the verdict — and write which one moved it
+ * here, with the date, so the next reader can tell a measurement from a memory.
  *
  * NOT a divisor on the period, which would be slow motion. Same speed, fewer
  * redraws — "idc about steppy because bitmap and pixels".

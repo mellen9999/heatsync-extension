@@ -6067,17 +6067,21 @@ function periodSeconds(basePeriod, speed, luminance) {
 // `steps(n)` holds the computed value between steps, and a value that does not
 // change is not repainted, so the same visible motion costs n redraws a second.
 //
-// Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
-// both scene planes animating:
-//
-//   linear (60/s) 501ms · 20/s 211ms · 12/s 124ms · 8/s 79ms
-//
-// Two rates, because the two populations are watched differently. A scene plane
-// IS the motion you notice, so it keeps more of it. A fill sweeping through the
-// glyphs is texture, and the person who reported the lag said outright that
-// steppiness does not bother them — so it takes the cheaper end.
-const SCENE_STEPS_PER_SECOND = 12
-const FILL_STEPS_PER_SECOND = 8
+// RAISED 2026-09-16, from 8/12 to 16/24 — see THE CROWD DIAL below for the
+// measurement. Doubling both keeps the fill/scene ratio (a scene plane is the
+// motion you notice, so it still keeps more of it) and, because CROWD_TIERS is
+// unchanged, doubles the redraw rate at EVERY tier uniformly: the new "chunky"
+// lands where "full" used to sit, the new "chunkier" where "chunky" used to —
+// nothing here is a new regime, the whole ladder just moved up one rung. This
+// is also the direct fix for "fire rain is choppy": fire (a paint-slot fill,
+// FILL_STEPS_PER_SECOND) and rain (a scene weather plane, SCENE_STEPS_PER_SECOND)
+// quantise on two INDEPENDENT steps() schedules that were never going to phase-
+// align, and at the old chunkier tier they fell to 2/s and 3/s respectively —
+// coarse enough that the mismatch between them reads as stutter rather than
+// texture. Raising the floor doesn't make them agree, it makes the disagreement
+// small enough to stop being visible.
+const SCENE_STEPS_PER_SECOND = 24
+const FILL_STEPS_PER_SECOND = 16
 
 /**
  * ── THE CROWD DIAL ──────────────────────────────────────────────────────────
@@ -6100,24 +6104,35 @@ const FILL_STEPS_PER_SECOND = 8
  * cost collapsed by a factor of sixty — while the sentence justifying the dial
  * stayed put. A stale measurement reads exactly like a current one.
  *
- * Measured 2026-09-14 with `paint-perf --dial`, lava, 414x896 @ dpr3, cpu 4x,
- * renderer ms per 3s of a 3000ms budget:
+ * Measured 2026-09-16 with `paint-perf --dial` (heatpc), lava, 414x896 @ dpr3,
+ * cpu 4x, renderer ms per 3s of a 3000ms budget, AT THE OLD RATES (8/12,
+ * the numbers the raise above is measured against):
  *
  *   names    full    chunky   chunkier      of which raster
- *      3     19.0     10.1      12.5        1.8 / 0.9 / 0.5
- *      6     27.6     17.4      15.0        2.8 / 1.5 / 0.7
- *     20     62.1     40.7      25.0        9.1 / 4.2 / 1.9
+ *      3     42.1     24.0      20.8        2.5 / 1.4 / 0.6
+ *      6     48.5     38.9      19.0        3.6 / 1.8 / 0.8
+ *     12     61.6     46.5      35.1        5.5 / 2.6 / 1.2
+ *     20     86.7     52.1      33.0        9.8 / 5.6 / 2.0
  *
- * So renderer time can no longer justify this: 62ms of a 3000ms budget is ~2%,
- * and the tiers are within noise of each other at small crowds. What the dial
- * still buys is RASTER — 4.8x across the tiers at twenty names — and raster is
- * what a phone GPU pays and what `scripts/paint-perf.mjs` documents itself as
- * blind to. That is the whole remaining case for it, and it is a real one:
- * real-user `inp_kb_presentation` is most of mobile INP.
+ * So renderer time cannot justify keeping this low: 86.7ms of a 3000ms budget
+ * is ~2.9% even at 20 names UNTHROTTLED, and doubling the redraw rate (the
+ * change above) tracks sub-linearly with raster in this range (8/s->16/s
+ * measured elsewhere as +1.75x cost, not +2x) — so the new "full" tier is
+ * still comfortably under 1% of budget. CORRECTION to every prior version of
+ * this comment: the harness is NOT blind to raster — `--dial`'s table above
+ * has carried a raster column since the arm was written (RasterTask trace
+ * events, real Chrome tracing, not a guess). What it cannot see is a real
+ * mobile GPU's own compositing/submission cost, which is a narrower gap than
+ * "blind to raster" claimed. The one real-user number this reasoning used to
+ * lean on — mobile `inp_kb_presentation` — was separately investigated and
+ * found to be noise at n=6-20/day, not a genuine paint-cost regression (see
+ * project memory, 2026-09-14), so it is no longer a reason to hold this rate
+ * down; the real pre-launch mobile number is LCP, unrelated to paint cost.
  *
- * To move any of this: `paint-perf --dial` for the ratio, then Titan's
- * real-user inp_kb_presentation for the verdict — and write which one moved it
- * here, with the date, so the next reader can tell a measurement from a memory.
+ * To move this further: `paint-perf --dial` for the ratio, a real device or
+ * Titan's real-user data for anything raster-adjacent it still can't see —
+ * and write which one moved it here, with the date, so the next reader can
+ * tell a measurement from a memory.
  *
  * NOT a divisor on the period, which would be slow motion. Same speed, fewer
  * redraws — "idc about steppy because bitmap and pixels".
@@ -8382,18 +8397,31 @@ const SCENE_WEATHERS_META = Object.fromEntries(
  * reveal are orthogonal to gradient type and always honor base as-is).
  * stripes / stardust / pulse are generic too (stripes bands the user's stops,
  * stardust drifts dots over them, pulse breathes the fill).
- * chrome / gold / fire / matrix / holo / rainbow / ice / lava are "themed presets" — faithful ports
- * of the lab's fixed palettes (that fixed palette IS the point of picking
- * "gold foil"), so they render their own built-in gradient and `base` is
- * visually superseded (still stored/validated normally so switching the
- * effect off reverts to the user's base).
+ *
+ * chrome / gold / fire / matrix / holo / rainbow / ice / lava used to be
+ * "themed presets" — a fixed palette baked into the effect itself, so the
+ * user's own stops were visually superseded and everyone who picked "gold
+ * foil" wore the same gold. Deleted 2026-09-16: every one of those was a
+ * `pan` sweep over a linear or hard-banded (`repeating-linear`) base wearing
+ * the preset's OWN colours, so `pan` grew the three knobs those looks
+ * actually needed instead — `scale` (how large one sweep tile is, 150-340),
+ * `loop` (`wrap`: travels one direction and re-seams; `bounce`: there-and-
+ * back), and `skew` (a small tilt riding the same sweep — fire's wobble) —
+ * and `base.type` grew `repeating-linear` + `tileWidth` for the hard-edged
+ * banded looks (matrix, holo, lava). Gold's diagonal foil sheen (a second,
+ * static overlay layer) did not migrate: the paint slot is one gradient, and
+ * a second layer is a data-model change, not a flag. Gold survives as its
+ * moving gold-to-cream sweep without the sheen. Every existing wearer's spec
+ * was expanded into the equivalent editable form in place — see
+ * migrations/298_expand_themed_paints.sql — so nobody lost a look, and
+ * everybody can now edit the one they had.
  */
 
 
 
 // ── enums ──────────────────────────────────────────────────────────────────
 
-const BASE_TYPES = new Set(['solid', 'linear', 'conic'])
+const BASE_TYPES = new Set(['solid', 'linear', 'conic', 'repeating-linear'])
 const GLOW_STRENGTHS = new Set([1, 2])
 
 const MAX_EFFECTS = 3
@@ -8434,6 +8462,21 @@ const MAX_PLANE_BOXES = 16
 const NAME_BOX_CLASS = 'hs-name'
 const MIN_STOPS = 1
 const MAX_STOPS = 8
+
+// `base.type: 'repeating-linear'` — hard-edged bands built from ordinary
+// point stops (see repeatingBandsCss), sized by this one pixel width. 2px is
+// the smallest band a name-sized glyph still reads as a band rather than a
+// blur; 40px comfortably covers a single wide stripe.
+const MIN_TILE_WIDTH = 2
+const MAX_TILE_WIDTH = 40
+const DEFAULT_TILE_WIDTH = 10
+
+// `pan`'s sweep tile, exposed so the builder can offer what the old themed
+// presets hardcoded per-look (220-340%) as one shared control. 150 is the
+// tightest sweep that still reads as a gradient rather than a hard flash.
+const PAN_MIN_SCALE = 150
+const PAN_MAX_SCALE = 340
+const PAN_DEFAULT_SCALE = 300
 
 // ── plus tier caps (single source — server save gate + builder UI) ────────
 // Free = a single solid color (base.type 'solid', no glow, ZERO effect
@@ -8514,40 +8557,32 @@ const EFFECTS = {
   // A paint effect owns background/color. The two that animate something
   // ELSE (hue: filter, pulse: opacity) carry a sig so the validator can keep
   // a motion off the same property — see effectConflict().
-  pan:      { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gradient pan' },
-  conic:    { slot: 'paint', luminance: false, basePeriod: 6,   letterSplit: false, label: 'conic sweep' },
-  hue:      { slot: 'paint', luminance: true,  basePeriod: 8,   letterSplit: false, label: 'hue cycle', sig: 'self:filter' },
-  glint:    { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint' },
-  chrome:   { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'liquid chrome' },
-  gold:     { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gold foil' },
-  fire:     { slot: 'paint', luminance: false, basePeriod: 1.8, letterSplit: false, label: 'fire' },
-  matrix:   { slot: 'paint', luminance: false, basePeriod: 3.2, letterSplit: false, label: 'matrix rain' },
-  holo:     { slot: 'paint', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'hologram' },
-  reveal:   { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'mask reveal' },
-  rainbow:  { slot: 'paint', luminance: false, basePeriod: 4,   letterSplit: false, label: 'rainbow' },
-  ice:      { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'ice' },
-  lava:     { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'lava' },
-  stripes:  { slot: 'paint', luminance: false, basePeriod: 2.4, letterSplit: false, label: 'barber stripes' },
-  stardust: { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'stardust' },
-  pulse:    { slot: 'paint', luminance: true,  basePeriod: 2.4, letterSplit: false, label: 'pulse', sig: 'self:opacity' },
+  pan:      { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gradient pan', desc: 'slides the gradient across the name' },
+  conic:    { slot: 'paint', luminance: false, basePeriod: 6,   letterSplit: false, label: 'conic sweep', desc: 'spins the gradient around the name' },
+  hue:      { slot: 'paint', luminance: true,  basePeriod: 8,   letterSplit: false, label: 'hue cycle', sig: 'self:filter', desc: 'cycles the whole name through the colour wheel' },
+  glint:    { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint', desc: 'a bright streak sweeps across once per cycle' },
+  reveal:   { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'mask reveal', desc: 'a soft mask wipes the name in and out' },
+  stripes:  { slot: 'paint', luminance: false, basePeriod: 2.4, letterSplit: false, label: 'barber stripes', desc: 'diagonal bands of your colours, rolling' },
+  stardust: { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'stardust', desc: 'sparkle dots drifting over your fill' },
+  pulse:    { slot: 'paint', luminance: true,  basePeriod: 2.4, letterSplit: false, label: 'pulse', sig: 'self:opacity', desc: 'the whole name breathes brighter and dimmer' },
 
   // ── motion/glow slot — up to 2, distinct sig required ───────────────────
-  wave:    { slot: 'motion', luminance: false, basePeriod: 1.6, letterSplit: true,  label: 'letter wave',   sig: 'letter:transform' },
-  ripple:  { slot: 'motion', luminance: true,  basePeriod: 2.4, letterSplit: true,  label: 'rainbow ripple', sig: 'letter:filter' },
-  coin:    { slot: 'motion', luminance: false, basePeriod: 5,   letterSplit: false, label: 'coin spin',     sig: 'self:transform' },
-  heli:    { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin',          sig: 'self:transform' },
-  float:   { slot: 'motion', luminance: false, basePeriod: 5.5, letterSplit: false, label: 'zero-g float',  sig: 'self:transform' },
-  heart:   { slot: 'motion', luminance: false, basePeriod: 1.3, letterSplit: false, label: 'heartbeat',     sig: 'self:transform' },
-  wobble:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'wobble stretch', sig: 'self:transform' },
-  swing:   { slot: 'motion', luminance: false, basePeriod: 2.6, letterSplit: false, label: 'pendulum',      sig: 'self:transform' },
-  tumble:  { slot: 'motion', luminance: false, basePeriod: 3.4, letterSplit: true,  label: 'letter tumble', sig: 'letter:transform' },
-  neon:    { slot: 'motion', luminance: true,  basePeriod: 2.6, letterSplit: false, label: 'neon breathe',  sig: 'self:shadow' },
-  glitch:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'glitch',        sig: 'self:shadow' },
-  jitter:  { slot: 'motion', luminance: false, basePeriod: 3,   letterSplit: false, label: 'jitter',        sig: 'self:transform' },
-  hop:     { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: true,  label: 'letter hop',    sig: 'letter:transform' },
-  twirl:   { slot: 'motion', luminance: false, basePeriod: 3.6, letterSplit: true,  label: 'letter twirl',  sig: 'letter:transform' },
-  type:    { slot: 'motion', luminance: true,  basePeriod: 4,   letterSplit: true,  label: 'typewriter',    sig: 'letter:opacity' },
-  flicker: { slot: 'motion', luminance: true,  basePeriod: 3,   letterSplit: false, label: 'flicker',       sig: 'self:opacity' },
+  wave:    { slot: 'motion', luminance: false, basePeriod: 1.6, letterSplit: true,  label: 'letter wave',   sig: 'letter:transform', desc: 'letters ripple in a wave, one after another' },
+  ripple:  { slot: 'motion', luminance: true,  basePeriod: 2.4, letterSplit: true,  label: 'rainbow ripple', sig: 'letter:filter', desc: 'letters cycle through the rainbow, one after another' },
+  coin:    { slot: 'motion', luminance: false, basePeriod: 5,   letterSplit: false, label: 'coin spin',     sig: 'self:transform', desc: 'the whole name spins like a coin' },
+  heli:    { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin',          sig: 'self:transform', desc: 'the whole name spins flat' },
+  float:   { slot: 'motion', luminance: false, basePeriod: 5.5, letterSplit: false, label: 'zero-g float',  sig: 'self:transform', desc: 'drifts gently up and down' },
+  heart:   { slot: 'motion', luminance: false, basePeriod: 1.3, letterSplit: false, label: 'heartbeat',     sig: 'self:transform', desc: 'pulses to a heartbeat rhythm' },
+  wobble:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'wobble stretch', sig: 'self:transform', desc: 'stretches and squashes rhythmically' },
+  swing:   { slot: 'motion', luminance: false, basePeriod: 2.6, letterSplit: false, label: 'pendulum',      sig: 'self:transform', desc: 'swings side to side like a pendulum' },
+  tumble:  { slot: 'motion', luminance: false, basePeriod: 3.4, letterSplit: true,  label: 'letter tumble', sig: 'letter:transform', desc: 'letters flip end over end, one after another' },
+  neon:    { slot: 'motion', luminance: true,  basePeriod: 2.6, letterSplit: false, label: 'neon breathe',  sig: 'self:shadow', desc: 'the glow breathes brighter and dimmer' },
+  glitch:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'glitch',        sig: 'self:shadow', desc: 'the shadow flickers and jumps' },
+  jitter:  { slot: 'motion', luminance: false, basePeriod: 3,   letterSplit: false, label: 'jitter',        sig: 'self:transform', desc: 'shakes with a nervous jitter' },
+  hop:     { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: true,  label: 'letter hop',    sig: 'letter:transform', desc: 'letters hop up and down, one after another' },
+  twirl:   { slot: 'motion', luminance: false, basePeriod: 3.6, letterSplit: true,  label: 'letter twirl',  sig: 'letter:transform', desc: 'letters spin in place, one after another' },
+  type:    { slot: 'motion', luminance: true,  basePeriod: 4,   letterSplit: true,  label: 'typewriter',    sig: 'letter:opacity', desc: 'letters type in and out like a typewriter' },
+  flicker: { slot: 'motion', luminance: true,  basePeriod: 3,   letterSplit: false, label: 'flicker',       sig: 'self:opacity', desc: 'fades in and out like a failing bulb' },
 }
 
 /**
@@ -8581,22 +8616,6 @@ function effectConflict(id, effects) {
 }
 
 /**
- * Does this paint fill with YOUR colours, or does it bring its own?
- *
- * Half the paint slot (the themed presets — gold, fire, ice …) is a fixed
- * palette that ignores `base.stops` entirely, and nothing said so: you would
- * set five colours, tap "fire", and watch every one of them do nothing. The
- * builder splits the rail on this and says it out loud.
- *
- * Derived from THEMED_PAINT rather than duplicated as a flag, so a preset
- * added there can never disagree with the label the picker shows. A motion
- * effect answers true: it does not fill at all, so your colours still show.
- */
-function effectUsesBaseColors(id) {
-  return !!EFFECTS[id] && !THEMED_PAINT[id]
-}
-
-/**
  * Paints that read EVERY stop, not just the first — so a one-stop "solid"
  * base starves them. `pan` and `conic` force a gradient outright; `stripes`
  * bands whatever stops it finds. Picking one with a solid base used to
@@ -8606,6 +8625,27 @@ function effectUsesBaseColors(id) {
  */
 function effectNeedsStops(id) {
   return id === 'pan' || id === 'conic' || id === 'stripes'
+}
+
+/**
+ * Where a new stop should land: the midpoint of the largest gap between the
+ * existing stops, sorted by position.
+ *
+ * The builder used to hardcode `pos:100` for every new stop, which collided
+ * with the default gradient's own last stop (also at 100) — two stops at the
+ * same position compile to a zero-width band, so the third colour a user
+ * added was in the CSS and invisible. Fewer than 2 stops has no gap to split;
+ * 50 is as good a first guess as any.
+ */
+function midpointOfLargestGap(stops) {
+  const sorted = [...(Array.isArray(stops) ? stops : [])].sort((a, b) => a.pos - b.pos)
+  if (sorted.length < 2) return 50
+  let bestGap = -1, bestMid = 50
+  for (let i = 1; i < sorted.length; i++) {
+    const gap = sorted[i].pos - sorted[i - 1].pos
+    if (gap > bestGap) { bestGap = gap; bestMid = Math.round((sorted[i - 1].pos + sorted[i].pos) / 2) }
+  }
+  return bestMid
 }
 
 const EFFECT_IDS = new Set(Object.keys(EFFECTS))
@@ -8689,12 +8729,22 @@ function validatePaintSpec(spec, opts = {}) {
   if (!isPlainObject(spec.base)) {
     errors.push('base must be an object')
   } else {
-    const { type, angle, stops } = spec.base
+    const { type, angle, stops, tileWidth } = spec.base
     if (!BASE_TYPES.has(type)) {
-      errors.push(`base.type must be one of solid|linear|conic, got ${JSON.stringify(type)}`)
+      errors.push(`base.type must be one of solid|linear|conic|repeating-linear, got ${JSON.stringify(type)}`)
     }
     if (!isIntInRange(angle, 0, 360)) {
       errors.push('base.angle must be an integer 0-360')
+    }
+    // Only meaningful for the banded fill (matrix/holo/lava's replacement —
+    // see repeatingBandsCss), but checked whenever it's PRESENT so a spec
+    // can't carry a garbage value that only surfaces once someone switches
+    // fill types onto it later.
+    if (tileWidth !== undefined && !isIntInRange(tileWidth, MIN_TILE_WIDTH, MAX_TILE_WIDTH)) {
+      errors.push(`base.tileWidth must be an integer ${MIN_TILE_WIDTH}-${MAX_TILE_WIDTH}`)
+    }
+    if (type === 'repeating-linear' && tileWidth === undefined) {
+      errors.push('base.tileWidth is required when base.type is repeating-linear')
     }
     if (!Array.isArray(stops) || stops.length < MIN_STOPS || stops.length > MAX_STOPS) {
       errors.push(`base.stops must be an array of ${MIN_STOPS}-${MAX_STOPS} stops`)
@@ -8709,6 +8759,18 @@ function validatePaintSpec(spec, opts = {}) {
       })
       if (type === 'solid' && stops.length !== 1) {
         errors.push('base.type solid requires exactly 1 stop')
+      }
+      // Two stops at the same position compile to a zero-width band — no
+      // visible run between them, and (for pan/conic, which append a wrap
+      // duplicate of their own) a hard edge at the seam. Checked on the
+      // rounded ints the compiler actually emits, not the raw input, so a
+      // spec that only collides after rounding is still caught.
+      const posCounts = new Map()
+      stops.forEach(s => {
+        if (isIntInRange(s.pos, 0, 100)) posCounts.set(s.pos, (posCounts.get(s.pos) || 0) + 1)
+      })
+      for (const [pos, count] of posCounts) {
+        if (count > 1) errors.push(`base.stops has ${count} stops at pos ${pos} — two stops at the same position compile to a zero-width band`)
       }
       // Legibility floor — scored on the DIMMEST stop, because that is the
       // part of the name that disappears. Only runs once the stops are
@@ -8755,6 +8817,22 @@ function validatePaintSpec(spec, opts = {}) {
         errors.push(`duplicate effect id: ${e.id}`)
       }
       seenIds.add(e.id)
+
+      // pan's three optional knobs — scale/loop/skew. Every other effect
+      // ignores these keys if present (no other effect reads them), so they
+      // are only checked on pan itself, and only when present: a bare
+      // {id:'pan',speed} is still the whole valid spec it always was.
+      if (e.id === 'pan') {
+        if (e.scale !== undefined && !isIntInRange(e.scale, PAN_MIN_SCALE, PAN_MAX_SCALE)) {
+          errors.push(`effects[${i}].scale must be an integer ${PAN_MIN_SCALE}-${PAN_MAX_SCALE}`)
+        }
+        if (e.loop !== undefined && e.loop !== 'wrap' && e.loop !== 'bounce') {
+          errors.push(`effects[${i}].loop must be "wrap" or "bounce"`)
+        }
+        if (e.skew !== undefined && typeof e.skew !== 'boolean') {
+          errors.push(`effects[${i}].skew must be a boolean`)
+        }
+      }
 
       const meta = EFFECTS[e.id]
       if (meta.slot === 'paint') paintCount++
@@ -8985,12 +9063,78 @@ function safePos(pos) {
   return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0
 }
 
+/**
+ * Nudge any stops sharing a position apart into the smallest gap available,
+ * preserving relative colour order and the caller's own array order (input
+ * order is NOT assumed sorted by pos — the builder's array is insertion
+ * order, e.g. a stop added last can sit anywhere in the gradient).
+ *
+ * Two passes over the pos-sorted view: forward, pushing each stop to at
+ * least one more than the one before it (the common case — one duplicate at
+ * the tail); then, only if that ran a stop past 100, backward from 100 doing
+ * the mirror image. With at most MAX_STOPS (8) stops across a 0-100 range
+ * there is always room for both — the two passes can never fight.
+ *
+ * Pure — returns a new array, same length and order as `stops`, reusing
+ * unchanged stop objects and only cloning the ones whose position moved.
+ *
+ * validatePaintSpec refuses a spec with a collision outright (a save-time
+ * rule — see its own doc), which is correct for anything arriving over the
+ * wire. This is the other half: a spec that already collided when it was
+ * saved (before that check existed) must never be HANDED to that validator
+ * unrepaired by the one surface that authors specs — the builder repairs on
+ * load, before the person sees it — and the compiler repairs its own working
+ * copy so an already-saved colliding paint stops rendering a zero-width band
+ * on every surface immediately, without waiting for anyone to open the
+ * builder and re-save.
+ */
+function repairStopCollisions(stops) {
+  if (!Array.isArray(stops) || stops.length < 2) return stops
+  const withIndex = stops.map((s, i) => ({ pos: s?.pos, i }))
+  withIndex.sort((a, b) => a.pos - b.pos)
+  for (let k = 1; k < withIndex.length; k++) {
+    if (withIndex[k].pos <= withIndex[k - 1].pos) withIndex[k].pos = withIndex[k - 1].pos + 1
+  }
+  if (withIndex[withIndex.length - 1].pos > 100) {
+    withIndex[withIndex.length - 1].pos = 100
+    for (let k = withIndex.length - 2; k >= 0; k--) {
+      if (withIndex[k].pos >= withIndex[k + 1].pos) withIndex[k].pos = withIndex[k + 1].pos - 1
+    }
+  }
+  const posByIndex = new Array(stops.length)
+  for (const { pos, i } of withIndex) posByIndex[i] = pos
+  return stops.map((s, i) => (s?.pos === posByIndex[i] ? s : { ...s, pos: posByIndex[i] }))
+}
+
 function sortedStops(base) {
   const stops = Array.isArray(base?.stops) ? base.stops : []
-  return stops
+  const cleaned = stops
     .filter(s => isPlainObject(s) && HEX_RE.test(s?.color) && isIntInRange(s.pos, 0, 100))
     .map(s => ({ color: safeHex(s.color), pos: safePos(s.pos) }))
     .sort((a, b) => a.pos - b.pos)
+  // Repairs an already-saved colliding spec (predates validatePaintSpec's
+  // collision check) so it renders correctly on every surface, immediately —
+  // see repairStopCollisions' doc for why this lives here as well as in the
+  // builder.
+  return repairStopCollisions(cleaned)
+}
+
+/**
+ * `stops` plus a duplicate of the first colour appended at 100% so a
+ * `pan`/`conic` sweep loops without a visible seam.
+ *
+ * The real stops are compressed into 0-99 first, because a user's own last
+ * stop routinely already sits at pos 100 (it's the default gradient's own
+ * end). Appending the wrap duplicate there too used to put two stops at the
+ * exact same position — 0% -> 100% -> 100% — which compiles to a zero-width
+ * band: no visible run between them, i.e. a hard edge at the exact instant
+ * the sweep wraps. Scaling preserves stop order and only shifts each
+ * position by ~1%, invisible next to the bug it prevents.
+ */
+function stopsWithWrap(stops) {
+  if (!stops.length) return stops
+  const scaled = stops.map(s => ({ color: s.color, pos: Math.round(s.pos * 99 / 100) }))
+  return [...scaled, { color: stops[0].color, pos: 100 }]
 }
 
 /** duration in seconds for an effect at the given speed, with the WCAG
@@ -9054,6 +9198,35 @@ function gradientStopsCss(stops) {
   return stops.map(s => `${s.color} ${s.pos}%`).join(', ')
 }
 
+function safeTileWidth(w) {
+  const n = Math.round(Number(w))
+  return Number.isFinite(n) ? Math.min(MAX_TILE_WIDTH, Math.max(MIN_TILE_WIDTH, n)) : DEFAULT_TILE_WIDTH
+}
+
+/**
+ * Hard-edged bands for a `repeating-linear-gradient`, from ordinary POINT
+ * stops (one colour, one position) scaled against a pixel-wide tile — never
+ * from a duplicated stop. Two stops sharing a position is exactly the shape
+ * validatePaintSpec's no-collision rule forbids (see its own doc), so a
+ * banded look is built by widening each colour to the gap before the next
+ * one, at COMPILE time, rather than asking the spec to carry a start/end
+ * pair per band the way matrix/holo/lava's old fixed CSS strings did.
+ *
+ * `stops` is already pos-sorted (sortedStops runs before this). The last
+ * stop's band always runs to the tile edge (100%), so the pattern closes
+ * cleanly on itself when it repeats — a banded look never needs its own
+ * first colour restated at the end the way a plain gradient pan does.
+ */
+function repeatingBandsCss(stops, tileWidth) {
+  if (!stops.length) return `#e4e4e4 0px ${tileWidth}px`
+  return stops.map((s, i) => {
+    const start = Math.round(s.pos * tileWidth / 100 * 100) / 100
+    const endPos = i + 1 < stops.length ? stops[i + 1].pos : 100
+    const end = Math.round(endPos * tileWidth / 100 * 100) / 100
+    return `${s.color} ${start}px ${end}px`
+  }).join(', ')
+}
+
 /** Build the CSS for the resting `base` paint. Returns { decl, isClipText }. */
 function buildBaseCss(base, stops) {
   if (base.type === 'solid') {
@@ -9061,84 +9234,16 @@ function buildBaseCss(base, stops) {
     return { decl: `color:${color};`, isClipText: false, cssImage: `linear-gradient(${color}, ${color})` }
   }
   const angle = safeAngle(base.angle)
-  const image = base.type === 'linear'
-    ? `linear-gradient(${angle}deg, ${gradientStopsCss(stops)})`
-    : `conic-gradient(from ${angle}deg, ${gradientStopsCss(stops)})`
+  const image = base.type === 'conic'
+    ? `conic-gradient(from ${angle}deg, ${gradientStopsCss(stops)})`
+    : base.type === 'repeating-linear'
+      ? `repeating-linear-gradient(${angle}deg, ${repeatingBandsCss(stops, safeTileWidth(base.tileWidth))})`
+      : `linear-gradient(${angle}deg, ${gradientStopsCss(stops)})`
   return {
     decl: `background:${image};-webkit-background-clip:text;background-clip:text;color:transparent;`,
     isClipText: true,
     cssImage: image,
   }
-}
-
-// ── themed paint presets (fixed palettes, faithful port of paint-lab.html) ──
-
-// Every colour here clears PAINT_MIN_CONTRAST against PAINT_BG, and a test
-// holds them to it. They did not: chrome bottomed out at 1.92:1, fire at
-// 1.91:1 and matrix at 1.39:1 — while the validator refused to let a USER
-// save a stop that dim. matrix was the worst of it: 60% of its pattern was
-// #003300, so at name size the glyphs were near-black most of the time and
-// the effect read as a row of faint dashes. Its bands are inverted now —
-// bright phosphor with a thin dark scanline, instead of the reverse — which
-// is also what a name-sized matrix should have looked like all along (the
-// falling-glyph fantasy is the `glyphs` weather's job, not a six-glyph name).
-// A curated set that ships an unreadable paint is worse than a free picker,
-// because we chose it.
-const THEMED_PAINT = {
-  chrome: {
-    gradient: 'linear-gradient(100deg, #6b7280, #e5e7eb 20%, #5a6678 38%, #f3f4f6 52%, #556173 70%, #d1d5db 88%, #6b7280)',
-    size: '220% 100%',
-    roundTrip: true,
-    decl: ph => `background-position:${bounce(ph, '0%', '120%')} 0;`,
-  },
-  gold: {
-    gradient:
-      'repeating-linear-gradient(115deg, transparent 0 3px, #ffffff2e 3px 4px), ' +
-      'linear-gradient(90deg, #7a5900, #ffd700 30%, #fff3b0 50%, #ffd700 70%, #7a5900)',
-    size: '100% 100%, 200% 100%',
-    roundTrip: true,
-    decl: ph => `background-position:0 0, ${bounce(ph, '0%', '100%')} 0;`,
-  },
-  fire: {
-    gradient: 'linear-gradient(0deg, #c00000, #d70000 35%, #ff8700 65%, #ffd700 90%)',
-    size: '100% 300%',
-    roundTrip: true,
-    decl: ph => `background-position:0 ${bounce(ph, '100%', '40%')};transform:skewX(${bounce(ph, '0deg', '-1.5deg')});`,
-  },
-  matrix: {
-    gradient: 'repeating-linear-gradient(0deg, #00ff87 0 5px, #00d700 5px 8px, #1a7a38 8px 10px)',
-    size: '100% 340%',
-    roundTrip: false,
-    decl: ph => `background-position:0 ${wrap(ph, '0%', '340%')};`,
-  },
-  holo: {
-    gradient: 'repeating-linear-gradient(0deg, #00e5ff 0 2px, #007a88 2px 4px)',
-    size: '100% 200%',
-    roundTrip: false,
-    decl: ph => `background-position:0 ${wrap(ph, '0%', '200%')};`,
-  },
-  rainbow: {
-    // The first stop repeated last, so the pan wraps without a seam.
-    gradient: 'linear-gradient(90deg, #ff0000, #ff8700 14%, #ffff00 28%, #00ff00 42%, #00d7ff 57%, #875fff 71%, #ff00ff 85%, #ff0000)',
-    size: '300% 100%',
-    roundTrip: false,
-    decl: ph => `background-position:${wrap(ph, '0%', '300%')} 0;`,
-  },
-  ice: {
-    gradient: 'linear-gradient(100deg, #87d7ff, #ffffff 24%, #afd7ff 42%, #ffffff 58%, #87d7ff 76%, #d7ffff 100%)',
-    size: '220% 100%',
-    roundTrip: true,
-    decl: ph => `background-position:${bounce(ph, '0%', '120%')} 0;`,
-  },
-  lava: {
-    // Bright crust with darker seams rolling upward — every band clears the
-    // floor, the seams included (a crust that was mostly black read as dashes,
-    // the same lesson as matrix).
-    gradient: 'repeating-linear-gradient(0deg, #ff5f00 0 4px, #ffaf00 4px 5px, #d70000 5px 7px)',
-    size: '100% 300%',
-    roundTrip: false,
-    decl: ph => `background-position:0 ${wrap(ph, '0%', '-300%')};`,
-  },
 }
 
 /** One linear 0→1 `@property` phase Animation, parent-scoped — the same
@@ -9282,14 +9387,27 @@ const ease = (ph, start, end) => typeof ph === 'number'
  * larger p pulls it left/up — hence the sign flips below. One axis only: two
  * axes would need the image to tile seamlessly in both, which a linear
  * gradient does not.
+ *
+ * `scale` is the tile size in percent of the box (`background-size` on the
+ * moving axis) — what every themed preset hardcoded per-look (220% for
+ * chrome, 340% for matrix…) before pan grew a control for it. `loop` picks
+ * the shape of one cycle: `wrap` travels the tile once and re-seams (needs
+ * `stops` to already carry the wrap duplicate — see stopsWithWrap), `bounce`
+ * goes out and back within the same cycle and never needs one.
  */
-function panSweep(angle, ph) {
+function panSweep(angle, ph, scale, loop) {
   const rad = angle * Math.PI / 180
   const sin = Math.sin(rad), cos = Math.cos(rad)
+  const move = loop === 'bounce' ? bounce : wrap
   if (Math.abs(sin) >= Math.abs(cos)) {
-    return { size: '300% 100%', x: wrap(ph, '0%', sin > 0 ? '-300%' : '300%'), y: '0' }
+    return { size: `${scale}% 100%`, x: move(ph, '0%', sin > 0 ? `-${scale}%` : `${scale}%`), y: '0' }
   }
-  return { size: '100% 300%', x: '0', y: wrap(ph, '0%', cos > 0 ? '300%' : '-300%') }
+  return { size: `100% ${scale}%`, x: '0', y: move(ph, '0%', cos > 0 ? `${scale}%` : `-${scale}%`) }
+}
+
+function safePanScale(v) {
+  const n = Math.round(Number(v))
+  return Number.isFinite(n) ? Math.min(PAN_MAX_SCALE, Math.max(PAN_MIN_SCALE, n)) : PAN_DEFAULT_SCALE
 }
 
 /** Build the pieces for a `paint`-slot effect: { selfPart, decl }. `decl` is
@@ -9299,27 +9417,33 @@ function panSweep(angle, ph) {
  * comma-list (same slot motion effects already share — two rules setting
  * `animation` on one selector clobber each other). Returns null for an
  * unknown effect id. */
-function paintFillAt(effectId, speed, base, stops, hash, ph) {
+function paintFillAt(effect, base, stops, hash, ph) {
+  const effectId = effect.id, speed = effect.speed
   let __period = 0, __opts = {}, __usesPhaseVar = false
   const duration = effectDuration(effectId, speed)
 
-  if (THEMED_PAINT[effectId]) {
-    const t = THEMED_PAINT[effectId]
-    const phaseVar = ph; __period = t.roundTrip ? duration * 2 : duration; __opts = {}
-    const decl = `background:${t.gradient};background-size:${t.size};-webkit-background-clip:text;background-clip:text;color:transparent;${t.decl(phaseVar)}`
-    return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
-  }
-
   if (effectId === 'pan') {
-    // Force linear rendering — pan is a directional positional sweep, and
-    // needs the gradient axis a linear-gradient provides. Append the first
-    // stop again so the pan wraps without a visible seam.
+    // Directional positional sweep — linear or repeating-linear, whichever
+    // base.type calls for (never conic; pan forces one of the other two).
+    // `wrap` needs the wrap-duplicate seam (see stopsWithWrap); a repeating
+    // band tiles on its own and never needs one, and neither does `bounce`,
+    // which returns to its start within the same cycle.
     const angle = safeAngle(base.angle)
-    const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
-    const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
-    const phaseVar = ph; __period = duration; __opts = {}
-    const { size, x, y } = panSweep(angle, phaseVar)
-    const decl = `background:${image};background-size:${size};-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${x} ${y};`
+    const scale = safePanScale(effect.scale)
+    const loop = effect.loop === 'bounce' ? 'bounce' : 'wrap'
+    const repeating = base.type === 'repeating-linear'
+    const image = repeating
+      ? `repeating-linear-gradient(${angle}deg, ${repeatingBandsCss(stops, safeTileWidth(base.tileWidth))})`
+      : `linear-gradient(${angle}deg, ${gradientStopsCss(loop === 'bounce' ? stops : stopsWithWrap(stops))})`
+    const phaseVar = ph; __period = loop === 'bounce' ? duration * 2 : duration; __opts = {}
+    const { size, x, y } = panSweep(angle, phaseVar, scale, loop)
+    let decl = `background:${image};background-size:${size};-webkit-background-clip:text;background-clip:text;color:transparent;background-position:${x} ${y};`
+    // The wobble — fire's skew, generalised. Rides the identical sweep so it
+    // never drifts out of phase with the fill it's attached to.
+    if (effect.skew) {
+      const skewMove = loop === 'bounce' ? bounce : wrap
+      decl += `transform:skewX(${skewMove(phaseVar, '0deg', '-1.5deg')});`
+    }
     return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
@@ -9327,7 +9451,7 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
     // Force conic rendering — rotates the whole wheel straight off the
     // shared phase var (0→1), no extra @property of its own needed.
     const angle = safeAngle(base.angle)
-    const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
+    const wrapStops = stopsWithWrap(stops)
     const phaseVar = ph; __period = duration; __opts = {}
     // THE ONE EFFECT THAT KEEPS ITS PHASE VARIABLE.
     //
@@ -9404,13 +9528,22 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
 
   if (effectId === 'pulse') {
     // Breathes the whole fill — opacity, not filter, so it never lands on
-    // the same property as hue. Luminance-flagged: the floor keeps it slow.
+    // the same property as hue. Luminance-flagged: the floor keeps it slow
+    // (MIN_LUMINANCE_PERIOD_S, paint-core.js — a period guard, untouched by
+    // the dip depth below).
+    //
+    // The dip was .45 — at name size, beside twenty other names in a moving
+    // feed, that read as "not working" (reported: "what does pulse even
+    // do/mean i think its not working for my paint"). .12 is a much more
+    // legible breathe without ever hitting fully transparent, so the name
+    // never disappears at the bottom of the cycle.
+    //
     // Already a full round trip within one cycle (not CSS `alternate`), so
     // the phase period is the plain duration, same as `bounce`'s other uses
     // pair with a doubled one.
     const baseCss = buildBaseCss(base, stops)
     const phaseVar = ph; __period = duration; __opts = {}
-    const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.45')};`
+    const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.12')};`
     return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 
@@ -9501,10 +9634,11 @@ function partitionDecls(samples) {
   return { statics: statics.join(''), moving, at: (i) => moving.map(k => `${k}:${maps[i].get(k)};`).join('') }
 }
 
-function buildPaintPhaseCss(effectId, speed, base, stops, hash) {
-  const at = (ph) => paintFillAt(effectId, speed, base, stops, hash, ph)
+function buildPaintPhaseCss(effect, base, stops, hash) {
+  const effectId = effect.id
+  const at = (ph) => paintFillAt(effect, base, stops, hash, ph)
   const probeVar = `--hsp-${hash}-${effectId}-ph`
-  const probe = paintFillAt(effectId, speed, base, stops, hash, probeVar)
+  const probe = paintFillAt(effect, base, stops, hash, probeVar)
   if (!probe) return null
   const a0 = at(0)
   const d1 = at(1).decl
@@ -9719,9 +9853,10 @@ function compiledCssHasCompositedFill(css) {
  *
  * @returns {{spanDecl:string,beforeRule:string,keyframes:string,tier:object}|null}
  */
-function buildCompositedFill(effectId, speed, base, stops, hash, nameBox) {
-  const at = (ph) => paintFillAt(effectId, speed, base, stops, hash, ph)?.decl || ''
-  const probe = paintFillAt(effectId, speed, base, stops, hash, 0)
+function buildCompositedFill(effect, base, stops, hash, nameBox) {
+  const effectId = effect.id
+  const at = (ph) => paintFillAt(effect, base, stops, hash, ph)?.decl || ''
+  const probe = paintFillAt(effect, base, stops, hash, 0)
   if (!probe) return null
   const d0 = probe.decl
   const dHalf = at(0.5)
@@ -10325,7 +10460,7 @@ function compilePaintCss(spec, selector, opts = {}) {
     if (baseCss?.isClipText) spanDecls += baseCss.decl
 
     if (paintEffect) {
-      const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)
+      const p = buildPaintPhaseCss(paintEffect, base, stops, hash)
       if (p) {
         // AN ANIMATION HAS TO RUN ON THE ELEMENT THAT CARRIES THE PROPERTY.
         //
@@ -10375,7 +10510,7 @@ function compilePaintCss(spec, selector, opts = {}) {
     // still loading, or a character the masker refused all fall through to the
     // clip-text path that just compiled.
     if (perLetter && paintEffect) {
-      const comp = buildCompositedFill(paintEffect.id, paintEffect.speed, base, stops, hash, nameBox)
+      const comp = buildCompositedFill(paintEffect, base, stops, hash, nameBox)
       if (comp) {
         const motionParts = spanParts.filter(p => p !== fillSpanPart)
         const maskedSpan = `${nameBox}.${MASKED_CLASS}>span`
@@ -10397,7 +10532,7 @@ function compilePaintCss(spec, selector, opts = {}) {
     }
   } else {
     if (paintEffect) {
-      const p = buildPaintPhaseCss(paintEffect.id, paintEffect.speed, base, stops, hash)
+      const p = buildPaintPhaseCss(paintEffect, base, stops, hash)
       if (p) selfParts.unshift({ ...p.selfPart, decls: p.decl })
     }
     emitSelfRule()
@@ -11005,7 +11140,7 @@ function plusTenureColor(months) {
   if (m >= 36) return '#cccccc' // 3y+  — bright
   if (m >= 12) return '#aaaaaa' // 1y+  — mid
   if (m >= 6) return '#999999'  // 6mo+ — dim
-  return '#777777'              // 1–5mo — dimmest (--dim)
+  return '#808080'              // 1–5mo — dimmest (--dim)
 }
 
 /** Hover text, no middot. "3 years on heatsync plus" / "heatsync plus member". */
@@ -11801,7 +11936,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '36d66e25+-202609161917' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5a2e864d-202609162134' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

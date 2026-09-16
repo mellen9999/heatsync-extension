@@ -541,16 +541,7 @@ describe('EFFECTS enum — the catalog, correctly classified', () => {
   // chrome/fire/gold/holo/ice/lava/matrix/rainbow left on 2026-09-16 — fixed
   // palettes that overrode the wearer's own colours, replaced by banded fills
   // and pan's scale/loop/skew controls in the builder.
-  const PAINT = [
-    'conic',
-    'glint',
-    'hue',
-    'pan',
-    'pulse',
-    'reveal',
-    'stardust',
-    'stripes',
-  ]
+  const PAINT = ['conic', 'glint', 'hue', 'pan', 'pulse', 'reveal', 'stardust', 'stripes']
   const MOTION = [
     'coin',
     'flicker',
@@ -622,7 +613,9 @@ describe('wall-clock phase sync (--hsp-t)', () => {
     // Animation (see paintPhaseDriver's roundTrip branch), so the
     // animation's own declared duration already IS the fold period — and
     // that duration is itself 2x the raw effect duration.
-    const css = compilePaintCss({ ...baseOnly, effects: [{ id: 'pan', speed: 1, loop: 'bounce' }] }, '.hsp-f', { hash: 'f' })
+    const css = compilePaintCss({ ...baseOnly, effects: [{ id: 'pan', speed: 1, loop: 'bounce' }] }, '.hsp-f', {
+      hash: 'f',
+    })
     const dur = Number(css.match(/animation:hsp_f_pan ([\d.]+)s/)[1])
     const period = Number(css.match(/mod\(var\(--hsp-t, 0s\), ([\d.]+)s\)/)[1])
     expect(dur).toBeCloseTo(EFFECTS.pan.basePeriod * 2, 3)

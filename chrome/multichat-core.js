@@ -2639,10 +2639,23 @@ try {
 /**
  * font-grid.js — which sizes a font actually has.
  *
- * MIRROR of client/utils/font-grid.js in the heatsync site repo. Separate repos
- * cannot share a module, so this file is duplicated on purpose; keep the table
- * and the snap semantics identical in both, or the same account gets different
- * sizes in the extension and on the site.
+ * SHARED CONTRACT with client/utils/font-grid.js in the site repo — NOT a byte
+ * mirror, and it must not become one. The site ships two faces, this ships one
+ * (chrome/fonts/ holds a single woff2), so the tables cannot match: offering a
+ * face the extension does not carry would be a broken option, not parity.
+ *
+ * What must never drift is what has to be true for a person using both:
+ *   - every face BOTH sides list declares the SAME sizes;
+ *   - snapSize/nativeSize/isBitmapFamily resolve the same for those faces;
+ *   - VECTOR_SIZES stays DERIVED from the table, never hand-listed.
+ * Otherwise the same account gets a different font size in the extension than
+ * on heatsync.org. tests/paint-compiler-parity.test.js enforces exactly that
+ * and deliberately nothing more; the four byte-mirrored files are listed there
+ * separately and are synced by scripts/sync-paint-compiler.sh.
+ *
+ * ALL_SIZES and the empty-family fall-through below are this side's alone —
+ * the settings schema validates against a static union with no access to the
+ * current family, and an unset family here means CozetteVector.
  *
  * A bitmap face is a grid of cells. Rendered at a size it does not have it is
  * not a smaller font — it is a resampled one, and it smears. CozetteVector is a
@@ -10955,25 +10968,20 @@ function resumeInPhase(els, release) {
 
 // --- lib/plus-tenure.js ---
 /**
- * plus-tenure.js — the HeatSync Plus tenure token, ported for the extension.
+ * plus-tenure.js — the HeatSync Plus tenure token.
  *
- * SYNCED COPY of the heatsync monorepo's client/utils/plus-tenure.js — keep
- * byte-close to the source of truth (see the cross-repo auto-apply rule in
- * project memory). A small text badge shown next to an ACTIVE Plus member's
- * name: the bare "+" Plus mark. Tenure lives in the COLOR (longer = brighter
- * through neutral greys; orange is reserved for the heat metric — landing
- * palette doctrine, only 5y+ legends reach medal gold) and the hover title —
- * never in extra text, the mark stays one char.
+ * A small text badge shown next to an ACTIVE Plus member's name: the bare "+"
+ * Plus mark. It's the paid-tier flex — the counterpart to paints. Tenure lives
+ * in the COLOR (longer = brighter through neutral greys; orange is reserved for
+ * the heat metric — landing palette doctrine, only 5y+ legends reach medal
+ * gold) and the hover title — never in extra text, the mark stays one char.
  *
- * Data source: `plus_since` (an ISO timestamp), which the server exposes ONLY
- * while the user is currently entitled (GET /api/paints `plus` map — see
- * chrome/background.js fetch_paints). A null/undefined `since` means "not an
- * active Plus member" → no token. Inputs are date/number coerced, so the
- * output needs no escaping.
+ * Data source: `plus_since` (users.plus_first_subscribed_at), which the server
+ * exposes ONLY while the user is currently entitled (see server/routes/
+ * profiles.ts + /api/auth/me). A null `since` means "not an active Plus member"
+ * → no token. Inputs are date/number coerced, so the output needs no escaping.
  *
- * Pure-data module (no DOM in the ratio helpers) — bundled into the
- * multichat overlay only, alongside lib/paint-spec.js (see build.js's
- * readMultichatModules).
+ * @module utils/plus-tenure
  */
 
 const MONTH_MS = 2629746000 // average gregorian month (365.2425/12 days)
@@ -10996,8 +11004,8 @@ function plusTenureColor(months) {
   if (m >= 60) return '#ffd700' // 5y+  — medal gold (premium/VIP token)
   if (m >= 36) return '#cccccc' // 3y+  — bright
   if (m >= 12) return '#aaaaaa' // 1y+  — mid
-  if (m >= 6) return '#999999' // 6mo+ — dim
-  return '#777777' // 1–5mo — dimmest (--dim)
+  if (m >= 6) return '#999999'  // 6mo+ — dim
+  return '#777777'              // 1–5mo — dimmest (--dim)
 }
 
 /** Hover text, no middot. "3 years on heatsync plus" / "heatsync plus member". */
@@ -11005,8 +11013,7 @@ function plusTenureTitle(months) {
   const m = Number(months) || 0
   if (m < 1) return 'heatsync plus member'
   if (m < 12) return `${m} month${m === 1 ? '' : 's'} on heatsync plus`
-  const y = Math.floor(m / 12),
-    r = m % 12
+  const y = Math.floor(m / 12), r = m % 12
   const yr = `${y} year${y === 1 ? '' : 's'}`
   return r > 0 ? `${yr} ${r}mo on heatsync plus` : `${yr} on heatsync plus`
 }
@@ -11014,8 +11021,9 @@ function plusTenureTitle(months) {
 /**
  * The token, ready to drop beside a username. Empty string when `since` is
  * absent (not an active Plus member). The visible text is ALWAYS the bare "+"
- * Plus brand mark — tenure is carried by the ramp color and the hover title
- * only. Injection-safe: only date/number-derived text reaches the HTML.
+ * Plus brand mark (see the plus page's "+ " feature bullets) — tenure is
+ * carried by the ramp color and the hover title only. Injection-safe: only
+ * date/number-derived text reaches the HTML.
  */
 function renderPlusTenureToken(since) {
   if (!since) return ''
@@ -11025,9 +11033,9 @@ function renderPlusTenureToken(since) {
 
 /**
  * Same token as an HTMLElement, built via safe DOM setters (textContent/style/
- * title — never innerHTML). Use for live DOM injection so no HTML-string sink
- * is involved at all. Returns null when `since` is absent. Browser-only (uses
- * document); the string form above covers initial-render/SSR-style embeds.
+ * title — never innerHTML). Use for live DOM injection so no HTML-string sink is
+ * involved at all. Returns null when `since` is absent. Browser-only (uses
+ * document); SSR uses renderPlusTenureToken above.
  */
 function buildPlusTenureToken(since) {
   if (!since) return null
@@ -11793,7 +11801,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9864a880-202609161910' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '36d66e25+-202609161917' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

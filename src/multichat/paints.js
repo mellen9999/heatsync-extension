@@ -830,12 +830,17 @@ function hsAnimatingWeight(el) {
       const effects = new Set()
       for (const a of el.getAnimations({ subtree: true })) {
         const n = a?.animationName
-        if (typeof n !== 'string') { weight++; continue } // no identity to fold on
+        if (typeof n !== 'string') {
+          weight++
+          continue
+        } // no identity to fold on
         if (composited && n.startsWith(composited)) continue
         effects.add(n)
       }
       weight += effects.size
-    } catch { weight = 0 }
+    } catch {
+      weight = 0
+    }
   }
   if (weight > 0) hsWeightCache.set(el, weight)
   return weight
@@ -855,7 +860,10 @@ function applyHsCrowdDial() {
   if (!t || !cls) return
   let weight = 0
   for (const el of hsVisiblePainted) {
-    if (!el.isConnected) { hsVisiblePainted.delete(el); continue }
+    if (!el.isConnected) {
+      hsVisiblePainted.delete(el)
+      continue
+    }
     weight += hsAnimatingWeight(el)
   }
   cls.toggle('hs-paint-chunky', weight > t.chunky && weight <= t.chunkier)
@@ -867,17 +875,26 @@ function applyHsCrowdDial() {
 function scheduleHsCrowdDial() {
   if (hsDialScheduled || typeof requestAnimationFrame !== 'function') return
   hsDialScheduled = true
-  requestAnimationFrame(() => { hsDialScheduled = false; applyHsCrowdDial() })
+  requestAnimationFrame(() => {
+    hsDialScheduled = false
+    applyHsCrowdDial()
+  })
 }
 
 /** Test seams. The thresholds are a product and the weight is its unit, so both
  * are worth asserting directly rather than only through which tier lands. */
-function _hsCrowdThresholdsForTests() { return hsCrowdThresholds() }
+function _hsCrowdThresholdsForTests() {
+  return hsCrowdThresholds()
+}
 /** The real visible set, so a test can drive the SHIPPING observer source into
  *  it and then read the tier off the SHIPPING dial — rather than proving the
  *  governor against a set nothing in production writes. */
-function _hsVisiblePaintedForTests() { return hsVisiblePainted }
-function _hsAnimatingWeightForTests(el) { return hsAnimatingWeight(el) }
+function _hsVisiblePaintedForTests() {
+  return hsVisiblePainted
+}
+function _hsAnimatingWeightForTests(el) {
+  return hsAnimatingWeight(el)
+}
 function _resetHsCrowdDialForTests() {
   hsVisiblePainted.clear()
   hsDialScheduled = false
@@ -1090,14 +1107,14 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 }
 
 export {
-  applyHsCrowdDial,
-  applyHsPaintToElement,
-  clearHsPaintFromElement,
-  clearHsPaintSheet,
   _hsAnimatingWeightForTests,
   _hsCrowdThresholdsForTests,
   _hsVisiblePaintedForTests,
   _resetHsCrowdDialForTests,
+  applyHsCrowdDial,
+  applyHsPaintToElement,
+  clearHsPaintFromElement,
+  clearHsPaintSheet,
   evictOldestPaintEntry,
   getHsPaintClass,
   getHsPaintSpec,

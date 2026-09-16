@@ -31,11 +31,11 @@ import { join } from 'node:path'
 import { MAX_ANIMATED_LAYERS } from '../src/lib/paint-spec.js'
 import { COMPOSITED_ANIM_PREFIX } from '../src/lib/scene-spec.js'
 import {
-  applyHsCrowdDial,
   _hsAnimatingWeightForTests,
   _hsCrowdThresholdsForTests,
   _hsVisiblePaintedForTests,
   _resetHsCrowdDialForTests,
+  applyHsCrowdDial,
 } from '../src/multichat/paints.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'paints.js'), 'utf8')
@@ -62,7 +62,9 @@ function feedGate(entries) {
   let cb = null
   let dialled = false
   class FakeIO {
-    constructor(fn) { cb = fn }
+    constructor(fn) {
+      cb = fn
+    }
     observe() {}
     unobserve() {}
     disconnect() {}
@@ -76,7 +78,14 @@ function feedGate(entries) {
      ${sliceObserverFactory()}
      return ensureHsVisibilityObserver()`,
   )
-  factory(FakeIO, () => {}, _hsVisiblePaintedForTests(), () => { dialled = true })
+  factory(
+    FakeIO,
+    () => {},
+    _hsVisiblePaintedForTests(),
+    () => {
+      dialled = true
+    },
+  )
   cb(entries)
   return dialled
 }
@@ -132,8 +141,12 @@ afterEach(() => {
   globalThis.document = undefined
 })
 
-const tier = () => (doc.body.classList.contains('hs-paint-chunkier') ? 'chunkier'
-  : doc.body.classList.contains('hs-paint-chunky') ? 'chunky' : 'plain')
+const tier = () =>
+  doc.body.classList.contains('hs-paint-chunkier')
+    ? 'chunkier'
+    : doc.body.classList.contains('hs-paint-chunky')
+      ? 'chunky'
+      : 'plain'
 
 describe("the thresholds are the compiler's cap, multiplied", () => {
   test('chunky at 3 full names, chunkier at 6 — written as a product', () => {
@@ -169,10 +182,11 @@ describe('a name is charged by what REPAINTS', () => {
   test('a composited hsq_ transform is free', () => {
     // A GPU quad blit on a promoted layer, not a main-thread repaint. Charging
     // one a unit each puts a scene name at nine instead of three.
-    expect(_hsAnimatingWeightForTests(paintedName(3, 2, [
-      `${COMPOSITED_ANIM_PREFIX}deadbeef_goldfill`,
-      `${COMPOSITED_ANIM_PREFIX}deadbeef_band0`,
-    ]))).toBe(3)
+    expect(
+      _hsAnimatingWeightForTests(
+        paintedName(3, 2, [`${COMPOSITED_ANIM_PREFIX}deadbeef_goldfill`, `${COMPOSITED_ANIM_PREFIX}deadbeef_band0`]),
+      ),
+    ).toBe(3)
   })
 
   test('zero is a real answer and is never cached as one', () => {
@@ -198,11 +212,7 @@ describe('the dial engages by NAME COUNT', () => {
       applyHsCrowdDial()
       seen.push(tier())
     }
-    expect(seen).toEqual([
-      'plain', 'plain', 'plain',
-      'chunky', 'chunky', 'chunky',
-      'chunkier', 'chunkier',
-    ])
+    expect(seen).toEqual(['plain', 'plain', 'plain', 'chunky', 'chunky', 'chunky', 'chunkier', 'chunkier'])
   })
 
   test('scrolling a crowd away dials back down', () => {
@@ -235,7 +245,9 @@ describe('the dial resolves its unit in the SHIPPED bundle', () => {
   const BUILD = readFileSync(join(import.meta.dir, '..', 'build.js'), 'utf8')
 
   test('build.js embeds scene-spec and paint-spec ahead of the multichat modules', () => {
-    const libLoop = BUILD.indexOf("for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js'])")
+    const libLoop = BUILD.indexOf(
+      "for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js'])",
+    )
     expect(libLoop, 'the paint compiler lib loop moved or was renamed in build.js').toBeGreaterThan(-1)
     const mcLoop = BUILD.indexOf('const modules = CORE_MODULES')
     expect(mcLoop, 'the multichat module loop moved in build.js').toBeGreaterThan(-1)

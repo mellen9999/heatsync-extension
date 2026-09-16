@@ -4,7 +4,9 @@ import { join } from 'node:path'
 import {
   compilePaintCss,
   hashPaintSpec,
+  NAME_BOX_CLASS,
   paintMarkupMode,
+  paintNameHtmlFor,
   paintNeedsSpans,
   paintPhaseNow,
 } from '../src/lib/paint-spec.js'
@@ -12,7 +14,6 @@ import { escapeHtml } from '../src/lib/utils.js'
 import {
   applyHsPaintToElement,
   clearHsPaintSheet,
-  computeHsLetterSpans,
   evictOldestPaintEntry,
   getHsPaintClass,
   getHsPickedColor,
@@ -22,7 +23,6 @@ import {
   reinjectHsPaintSheet,
   setHsColorEntry,
   setHsPaintEntry,
-  splitHsLettersHtml,
 } from '../src/multichat/paints.js'
 
 // Reference copy of the SHARED djb2 username-colour contract (website
@@ -61,10 +61,8 @@ function refUsernameColor(username) {
 // repo's existing test convention (see filter-rules.test.js / mod-log.test.js)
 // of unit-testing pure logic only, not the DOM/network-bound glue.
 //
-// splitHsLettersHtml DOES reach for one bundle-global (escapeHtml, from
-// src/lib/utils.js) — stand it in on globalThis for the duration of this
-// file (using the real implementation), same pattern as
-// tests/user-notes.test.js does for its identity-graph globals.
+// The per-letter splitter used to be a local copy reaching for a bundle-global
+// escapeHtml; it is lib/paint-spec.js's own now, like the rest of the markup.
 //
 // applyHsPaintToElement/setHsPaintEntry ARE exercised below (the "in-place
 // application" describe block) — they need a `document` for the injected
@@ -83,6 +81,11 @@ beforeEach(() => {
   globalThis.hashPaintSpec = hashPaintSpec
   globalThis.paintNeedsSpans = paintNeedsSpans
   globalThis.paintMarkupMode = paintMarkupMode
+  // The bundle hands these over as free variables (build.js embeds
+  // lib/paint-spec.js ahead of this module); the markup and the box class both
+  // come from there now instead of a local copy.
+  globalThis.paintNameHtmlFor = paintNameHtmlFor
+  globalThis.NAME_BOX_CLASS = NAME_BOX_CLASS
   globalThis.paintPhaseNow = paintPhaseNow
   // Records appended nodes so the per-paint rule lifecycle (one <style> per
   // hash, removed when the LRU drops its last user) is observable.
@@ -120,6 +123,8 @@ afterEach(() => {
   globalThis.hashPaintSpec = undefined
   globalThis.paintNeedsSpans = undefined
   globalThis.paintMarkupMode = undefined
+  globalThis.paintNameHtmlFor = undefined
+  globalThis.NAME_BOX_CLASS = undefined
   globalThis.paintPhaseNow = undefined
   globalThis.document = undefined
 })
@@ -186,13 +191,18 @@ describe('applyHsPaintToElement — in-place DOM application (BUG #3 hardening)'
     expect(el.innerHTML.replace(/<[^>]+>/g, '')).toBe('@mellen')
   })
 
-  test('does NOT split (no per-letter spans) for a solid paint that needs no split', () => {
+  test('a solid paint gets the name box, and no per-letter spans', () => {
+    // This asserted `innerHTML === '@mellen'` — bare text under the paint
+    // class — and passed for three days while that was exactly the bug: every
+    // compiled rule addresses `.hsp-<hash>>.hs-name`, so a solid or gradient
+    // paint matched none of its own and rendered as plain text. A test that
+    // pins the defect is worse than no test, because it defends it.
     setHsPaintEntry(UID, SOLID_SPEC)
     const el = fakeAnchor('@mellen')
     applyHsPaintToElement(el, UID)
     expect(el.classList.contains(getHsPaintClass(UID))).toBe(true)
-    expect(el.dataset.hsPaintSplit).toBeUndefined()
-    expect(el.innerHTML).toBe('@mellen')
+    expect(el.dataset.hsPaintSplit, 'no per-letter shape to protect').toBeUndefined()
+    expect(el.innerHTML).toBe('<span class="hs-name">@mellen</span>')
   })
 
   test('clears a pre-existing inline color decl (precedence: class-based paint must win), but re-adds the phase-lock mount stamp', () => {
@@ -318,71 +328,6 @@ describe('partitionPaintBatch — pure batch/rest split, newest-queued first', (
   })
 })
 
-describe('computeHsLetterSpans — pure per-letter split data', () => {
-  test('computes 0-based index per letter and midpoint = (len-1)/2', () => {
-    const { mid, letters } = computeHsLetterSpans('abcd')
-    expect(mid).toBe(1.5)
-    expect(letters).toEqual([
-      { ch: 'a', i: 0 },
-      { ch: 'b', i: 1 },
-      { ch: 'c', i: 2 },
-      { ch: 'd', i: 3 },
-    ])
-  })
-
-  test('handles a single character (mid = 0)', () => {
-    const { mid, letters } = computeHsLetterSpans('x')
-    expect(mid).toBe(0)
-    expect(letters).toEqual([{ ch: 'x', i: 0 }])
-  })
-
-  test('handles empty string', () => {
-    const { mid, letters } = computeHsLetterSpans('')
-    expect(mid).toBe(-0.5)
-    expect(letters).toEqual([])
-  })
-
-  test('handles null/undefined gracefully', () => {
-    expect(computeHsLetterSpans(null).letters).toEqual([])
-    expect(computeHsLetterSpans(undefined).letters).toEqual([])
-  })
-
-  test('includes the leading @ as its own letter for mention/reply anchors', () => {
-    const { letters } = computeHsLetterSpans('@bob')
-    expect(letters[0]).toEqual({ ch: '@', i: 0 })
-    expect(letters.length).toBe(4)
-  })
-})
-
-describe('splitHsLettersHtml — escapes each glyph individually', () => {
-  test('wraps each character in a span with --i/--mid custom props', () => {
-    const html = splitHsLettersHtml('ab')
-    expect(html).toBe('<span style="--i:0;--mid:0.5">a</span><span style="--i:1;--mid:0.5">b</span>')
-  })
-
-  test('HTML-escapes glyphs that are themselves markup-shaped (defense in depth)', () => {
-    const html = splitHsLettersHtml('<>')
-    expect(html).not.toContain('<>')
-    expect(html).toContain('&lt;')
-    expect(html).toContain('&gt;')
-  })
-})
-
-// ── ID-space guard: structural invariant, not a value-based check ───────────
-//
-// Paints are keyed by heatsync-side ids in per-platform NAMESPACES: bare
-// numeric ids are twitch-space; kick-origin ids are `kick_<kickid>` (server
-// migration 200, 2026-07-05). Bare kick/twitch numeric ids collide in VALUE
-// (see heatsync_userid_collision_kick_twitch in project memory — both are
-// bare numeric, indistinguishable by shape), so the safety here is
-// architectural: queuePaintLookup must be called from exactly TWO places —
-// queueMcCosmeticsLookup (twitch-space: native twitch id, or a RESOLVED
-// linked-twitch-id for kick/YouTube via flushYtNameLookups — never a bare
-// kick/yt id) and flushKickNameLookups (kick-space: always the `kick_`-
-// namespaced string, never the bare numeric kick id on its own). A third
-// call site, or either of these two accepting an unnamespaced platform-native
-// id, would be a silent way to reintroduce the collision trap — asserted
-// directly against the source rather than left to convention.
 describe('paint lookup id-space guard — structural invariant', () => {
   // Both call sites live in cosmetics.js (split out of main.js)
   const cosmeticsJs = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'cosmetics.js'), 'utf8')
@@ -573,5 +518,100 @@ describe('paint rule lifecycle', () => {
     fakeHead.length = 0
     reinjectHsPaintSheet()
     expect(hashesInHead().has(hash)).toBe(true)
+  })
+})
+
+/**
+ * THE MARKUP THE EXTENSION RENDERS MUST MATCH THE CSS IT COMPILES.
+ *
+ * lib/paint-spec.js is mirrored from the site byte for byte, and the parity
+ * test fences exactly those three lib/ files — so the COMPILER can never drift,
+ * while the runtime that feeds it is local and hand-written. That is the gap,
+ * and it has now been walked through twice:
+ *
+ *   - the local markup builder compared `mode === 'wrap'` exactly, and missed
+ *     when the site's compiler started emitting `wrap+9`;
+ *   - the site gave the name its own box and moved EVERY compiled rule onto
+ *     `.hsp-<hash>>.hs-name`. The local builder never emitted that box, so from
+ *     2026-09-13 every heatsync name paint in the extension rendered as plain
+ *     text. It shipped that way in 1.7.73.
+ *
+ * Byte-parity on the compiler cannot see either one. This reads what the sheet
+ * asks for BELOW the host element and checks the rendered string carries it.
+ * There is no DOM engine in this repo, so it is a string check and not a real
+ * selector match — it still fails on both bugs above, which is the bar.
+ */
+describe('a compiled paint can select the markup the extension emits', () => {
+  const SPECS = {
+    'solid (the common case)': { base: { type: 'solid', angle: 0, stops: [{ color: '#FFB000', pos: 0 }] } },
+    gradient: {
+      base: {
+        stops: [
+          { color: '#ff8700', pos: 0 },
+          { color: '#ffffff', pos: 100 },
+        ],
+      },
+    },
+    'per-letter motion': { base: { stops: [{ color: '#ff8700', pos: 0 }] }, effects: [{ id: 'wave' }] },
+  }
+
+  /** Every selector the sheet carries, from the `.hsp-` onward. */
+  function compiledSelectors(css) {
+    const out = new Set()
+    for (const m of css.matchAll(/(\.hsp-[a-z0-9]+[^{},@]*?)\s*\{/g)) {
+      const sel = m[1].trim()
+      if (/hs-masked|hs-paint-offscreen/.test(sel)) continue
+      out.add(sel.replace(/::?[a-z-]+(\([^)]*\))?/g, '').trim())
+    }
+    return [...out].filter(Boolean)
+  }
+
+  for (const [label, spec] of Object.entries(SPECS)) {
+    test(`${label}: the sheet addresses nothing the markup lacks`, () => {
+      const hash = hashPaintSpec(spec)
+      const selectors = compiledSelectors(compilePaintCss(spec, `.hsp-${hash}`, { hash }))
+      expect(selectors.length).toBeGreaterThan(0)
+
+      const html = paintNameHtmlFor('ennortix', paintMarkupMode(spec))
+
+      // Every class the sheet names UNDER the host has to exist in the markup.
+      const needed = new Set()
+      for (const sel of selectors) {
+        const below = sel.slice(sel.indexOf('>') + 1)
+        if (below === sel) continue
+        for (const m of below.matchAll(/\.([a-z][\w-]*)/g)) needed.add(m[1])
+      }
+      expect(needed.has('hs-name'), 'the compiler puts the fill on the name box').toBe(true)
+      for (const cls of needed) expect(html).toContain(`class="${cls}"`)
+
+      // ...and when it addresses spans under the box, the markup needs them.
+      if (selectors.some((sel) => /\.hs-name>span/.test(sel))) {
+        expect(html).toMatch(/<span class="hs-name"><span/)
+      }
+    })
+  }
+
+  test('the extension builds its markup with the mirrored builder, not a copy', () => {
+    // A copy of a contract is a copy that drifts. This one drifted twice.
+    const src = readFileSync(join(import.meta.dir, '../src/multichat/paints.js'), 'utf8')
+    expect(src).toContain('return paintNameHtmlFor(rawText, paintMarkupMode(spec))')
+    expect(
+      /function splitHsLettersHtml/.test(src),
+      'the local per-letter splitter was a second copy of the same contract',
+    ).toBe(false)
+  })
+
+  test('the in-place applier asks whether the box is THERE, not whether letters are needed', () => {
+    // applyHsPaintToElement is where a name drawn before its paint resolved
+    // gets it — most of them, on a cold pane. paintNeedsSpans answers a
+    // different question and is false for a solid or gradient paint, so it
+    // added the class over bare text and the name stayed unpainted.
+    const src = readFileSync(join(import.meta.dir, '../src/multichat/paints.js'), 'utf8')
+    const fn = src.slice(src.indexOf('function applyHsPaintToElement'))
+    expect(fn).toContain('NAME_BOX_CLASS')
+    expect(
+      /paintNeedsSpans\(spec\)[^\n]*!el\.dataset\.hsPaintSplit/.test(fn),
+      'the shaping guard must not be keyed on per-letter need',
+    ).toBe(false)
   })
 })

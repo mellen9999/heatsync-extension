@@ -1,10 +1,23 @@
 /**
  * font-grid.js — which sizes a font actually has.
  *
- * MIRROR of client/utils/font-grid.js in the heatsync site repo. Separate repos
- * cannot share a module, so this file is duplicated on purpose; keep the table
- * and the snap semantics identical in both, or the same account gets different
- * sizes in the extension and on the site.
+ * SHARED CONTRACT with client/utils/font-grid.js in the site repo — NOT a byte
+ * mirror, and it must not become one. The site ships two faces, this ships one
+ * (chrome/fonts/ holds a single woff2), so the tables cannot match: offering a
+ * face the extension does not carry would be a broken option, not parity.
+ *
+ * What must never drift is what has to be true for a person using both:
+ *   - every face BOTH sides list declares the SAME sizes;
+ *   - snapSize/nativeSize/isBitmapFamily resolve the same for those faces;
+ *   - VECTOR_SIZES stays DERIVED from the table, never hand-listed.
+ * Otherwise the same account gets a different font size in the extension than
+ * on heatsync.org. tests/paint-compiler-parity.test.js enforces exactly that
+ * and deliberately nothing more; the four byte-mirrored files are listed there
+ * separately and are synced by scripts/sync-paint-compiler.sh.
+ *
+ * ALL_SIZES and the empty-family fall-through below are this side's alone —
+ * the settings schema validates against a static union with no access to the
+ * current family, and an unset family here means CozetteVector.
  *
  * A bitmap face is a grid of cells. Rendered at a size it does not have it is
  * not a smaller font — it is a resampled one, and it smears. CozetteVector is a

@@ -28,7 +28,8 @@ for pair in \
   client/utils/paint-core.js \
   client/utils/scene-spec.js \
   client/utils/paint-spec.js \
-  client/cosmetics/animation-phase.js
+  client/cosmetics/animation-phase.js \
+  client/utils/plus-tenure.js
 do
   cp "$site/$pair" "$here/src/lib/$(basename "$pair")"
   echo "synced src/lib/$(basename "$pair") ← $site/$pair"

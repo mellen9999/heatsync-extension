@@ -11793,7 +11793,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ad75db13+-202609152341' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f9af53ae-202609161904' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -59147,50 +59147,26 @@ function partitionPaintBatch(queue, batchSize) {
   return { batch: all.slice(-batchSize), rest: all.slice(0, Math.max(0, all.length - batchSize)) }
 }
 
-/** Per-letter span data for a username: `{ mid, letters: [{ch, i}] }`. Matches
- * the site's splitter exactly — mid = (length-1)/2, i = index. */
-function computeHsLetterSpans(text) {
-  const chars = [...String(text ?? '')]
-  return {
-    mid: (chars.length - 1) / 2,
-    letters: chars.map((ch, i) => ({ ch, i })),
-  }
-}
-
-/** Build the innerHTML for a letter-split username: one <span> per glyph with
- * --i/--mid custom properties. Takes raw (unescaped) text — each glyph is
- * escaped individually, so this is safe to call on el.textContent directly. */
-function splitHsLettersHtml(rawText) {
-  const { mid, letters } = computeHsLetterSpans(rawText)
-  return letters.map(({ ch, i }) => `<span style="--i:${i};--mid:${mid}">${escapeHtml(ch)}</span>`).join('')
-}
-
 /**
- * Local mirror of lib/paint-spec.js's paintNameHtml — the ext bundle
- * concatenates modules and escapes through its own escapeHtml, so the markup
- * DECISION is shared (paintMarkupMode) while the string building stays local.
+ * THE MARKUP COMES FROM THE MIRRORED COMPILER, NOT FROM A COPY OF IT.
  *
- * Three shapes: one span per glyph for per-letter motion, ONE span around the
- * whole name for a scene (the fill has to paint above the plate pseudo, and
- * that is all it needs — reusing the per-letter split for this gave every
- * letter a private copy of the gradient), and plain escaped text otherwise.
+ * This was a local re-implementation of paintNameHtmlFor, kept because the ext
+ * bundle escapes through its own escapeHtml. It had already been caught missing
+ * the `+N` plane-box suffix; then the site gave the name its own box
+ * (`.hs-name`) and moved EVERY compiled rule onto `.hsp-<hash>>.hs-name`, and
+ * this copy — which never emitted that box — stopped matching a single one of
+ * its own rules. Every heatsync name paint in the extension rendered as plain
+ * text from 2026-09-13 until now, shipped that way in 1.7.73.
  *
- * Plus the scene's plane boxes, which ride the mode string as a `+N` suffix.
- * This compared `mode === 'wrap'` exactly until the site's compiler started
- * emitting `wrap+9`, at which point BOTH branches missed and every scened name
- * in the extension would have rendered as bare text — no wrapper span, so the
- * fill paints under its own plate, and no boxes, so a converted scene draws
- * nothing at all. The parity test does not cover this file (it fences the three
- * lib/ mirrors), so nothing else would have said so.
+ * lib/paint-spec.js is mirrored from the site BYTE FOR BYTE and is already in
+ * scope here (build.js embeds it ahead of this file), so the function that
+ * emits the markup and the function that compiles the CSS against it are now
+ * the same pair the site runs. A copy of a contract is a copy that drifts; the
+ * comment this replaces even said the parity test fences lib/ and would not
+ * cover this file.
  */
 function hsPaintNameHtml(rawText, spec) {
-  const [shape, boxes] = String(paintMarkupMode(spec)).split('+')
-  const n = Number(boxes)
-  const planes =
-    Number.isInteger(n) && n > 0 && n <= MAX_PLANE_BOXES ? '<i aria-hidden="true"><b></b></i>'.repeat(n) : ''
-  if (shape === 'letters') return planes + splitHsLettersHtml(rawText)
-  if (shape === 'wrap') return planes + `<span>${escapeHtml(rawText)}</span>`
-  return planes + escapeHtml(rawText)
+  return paintNameHtmlFor(rawText, paintMarkupMode(spec))
 }
 
 // ── settings gate (guarded — this module is imported standalone in tests) ───
@@ -59630,7 +59606,7 @@ function hsPaintRender(userId, rawText) {
   return {
     cls,
     html: hsPaintNameHtml(rawText, spec),
-    splitAttr: paintNeedsSpans(spec) ? ' data-hs-paint-split="1"' : '',
+    splitAttr: paintMarkupMode(spec) === 'none' ? '' : ' data-hs-paint-split="1"',
   }
 }
 
@@ -59669,9 +59645,20 @@ function applyHsPaintToElement(el, userId) {
   // anchor DOM-correction, a mid-flight rebuild): splitting '' is a silent
   // no-op that would still mark the node as "split" and leave it permanently
   // blank. Never touch innerHTML when there's no text to split.
-  if (paintNeedsSpans(spec) && !el.dataset.hsPaintSplit && el.textContent) {
+  // ── THE NAME BOX IS NOT OPTIONAL ──────────────────────────────────────────
+  // Every compiled rule addresses `.hsp-<hash>>.hs-name`, so an element
+  // carrying the class with no box under it paints nothing. This asked
+  // paintNeedsSpans — a DIFFERENT question, "does it need one span per LETTER"
+  // — which is false for a solid or gradient paint, i.e. most of them. Asking
+  // whether the box is THERE is also idempotent in a way the marker was not:
+  // after the first write the child exists and every later pass skips it.
+  const mode = paintMarkupMode(spec)
+  const boxed = el.firstElementChild && el.firstElementChild.classList.contains(NAME_BOX_CLASS)
+  const shaped = mode === 'none' || el.dataset.hsPaintSplit
+  if ((!boxed || !shaped) && el.textContent) {
     el.innerHTML = hsPaintNameHtml(el.textContent, spec)
-    el.dataset.hsPaintSplit = '1'
+    if (mode === 'none') delete el.dataset.hsPaintSplit
+    else el.dataset.hsPaintSplit = '1'
   }
   // Mount stamp for phase-locking — restore the preserved value, or stamp a
   // fresh one for an element that never had one (in-place resolve, hover-

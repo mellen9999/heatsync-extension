@@ -36,7 +36,7 @@ export function plusTenureColor(months) {
   if (m >= 36) return '#cccccc' // 3y+  — bright
   if (m >= 12) return '#aaaaaa' // 1y+  — mid
   if (m >= 6) return '#999999'  // 6mo+ — dim
-  return '#777777'              // 1–5mo — dimmest (--dim)
+  return '#808080'              // 1–5mo — dimmest (--dim)
 }
 
 /** Hover text, no middot. "3 years on heatsync plus" / "heatsync plus member". */

@@ -197,40 +197,40 @@ const EFFECTS = {
   // A paint effect owns background/color. The two that animate something
   // ELSE (hue: filter, pulse: opacity) carry a sig so the validator can keep
   // a motion off the same property — see effectConflict().
-  pan:      { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gradient pan' },
-  conic:    { slot: 'paint', luminance: false, basePeriod: 6,   letterSplit: false, label: 'conic sweep' },
-  hue:      { slot: 'paint', luminance: true,  basePeriod: 8,   letterSplit: false, label: 'hue cycle', sig: 'self:filter' },
-  glint:    { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint' },
-  chrome:   { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'liquid chrome' },
-  gold:     { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gold foil' },
-  fire:     { slot: 'paint', luminance: false, basePeriod: 1.8, letterSplit: false, label: 'fire' },
-  matrix:   { slot: 'paint', luminance: false, basePeriod: 3.2, letterSplit: false, label: 'matrix rain' },
-  holo:     { slot: 'paint', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'hologram' },
-  reveal:   { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'mask reveal' },
-  rainbow:  { slot: 'paint', luminance: false, basePeriod: 4,   letterSplit: false, label: 'rainbow' },
-  ice:      { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'ice' },
-  lava:     { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'lava' },
-  stripes:  { slot: 'paint', luminance: false, basePeriod: 2.4, letterSplit: false, label: 'barber stripes' },
-  stardust: { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'stardust' },
-  pulse:    { slot: 'paint', luminance: true,  basePeriod: 2.4, letterSplit: false, label: 'pulse', sig: 'self:opacity' },
+  pan:      { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gradient pan', desc: 'slides the gradient across the name' },
+  conic:    { slot: 'paint', luminance: false, basePeriod: 6,   letterSplit: false, label: 'conic sweep', desc: 'spins the gradient around the name' },
+  hue:      { slot: 'paint', luminance: true,  basePeriod: 8,   letterSplit: false, label: 'hue cycle', sig: 'self:filter', desc: 'cycles the whole name through the colour wheel' },
+  glint:    { slot: 'paint', luminance: false, basePeriod: 3.4, letterSplit: false, label: 'shimmer glint', desc: 'a bright streak sweeps across once per cycle' },
+  chrome:   { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'liquid chrome', desc: 'metallic sheen sweeping back and forth' },
+  gold:     { slot: 'paint', luminance: false, basePeriod: 5,   letterSplit: false, label: 'gold foil', desc: 'foil sheen with a moving highlight band' },
+  fire:     { slot: 'paint', luminance: false, basePeriod: 1.8, letterSplit: false, label: 'fire', desc: 'flame gradient licking upward' },
+  matrix:   { slot: 'paint', luminance: false, basePeriod: 3.2, letterSplit: false, label: 'matrix rain', desc: 'falling phosphor scanlines' },
+  holo:     { slot: 'paint', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'hologram', desc: 'shifting rainbow scanlines' },
+  reveal:   { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'mask reveal', desc: 'a soft mask wipes the name in and out' },
+  rainbow:  { slot: 'paint', luminance: false, basePeriod: 4,   letterSplit: false, label: 'rainbow', desc: 'the full spectrum sweeps across' },
+  ice:      { slot: 'paint', luminance: false, basePeriod: 4.5, letterSplit: false, label: 'ice', desc: 'frosted sheen sweeping back and forth' },
+  lava:     { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'lava', desc: 'molten bands rolling upward' },
+  stripes:  { slot: 'paint', luminance: false, basePeriod: 2.4, letterSplit: false, label: 'barber stripes', desc: 'diagonal bands of your colours, rolling' },
+  stardust: { slot: 'paint', luminance: false, basePeriod: 3,   letterSplit: false, label: 'stardust', desc: 'sparkle dots drifting over your fill' },
+  pulse:    { slot: 'paint', luminance: true,  basePeriod: 2.4, letterSplit: false, label: 'pulse', sig: 'self:opacity', desc: 'the whole name breathes brighter and dimmer' },
 
   // ── motion/glow slot — up to 2, distinct sig required ───────────────────
-  wave:    { slot: 'motion', luminance: false, basePeriod: 1.6, letterSplit: true,  label: 'letter wave',   sig: 'letter:transform' },
-  ripple:  { slot: 'motion', luminance: true,  basePeriod: 2.4, letterSplit: true,  label: 'rainbow ripple', sig: 'letter:filter' },
-  coin:    { slot: 'motion', luminance: false, basePeriod: 5,   letterSplit: false, label: 'coin spin',     sig: 'self:transform' },
-  heli:    { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin',          sig: 'self:transform' },
-  float:   { slot: 'motion', luminance: false, basePeriod: 5.5, letterSplit: false, label: 'zero-g float',  sig: 'self:transform' },
-  heart:   { slot: 'motion', luminance: false, basePeriod: 1.3, letterSplit: false, label: 'heartbeat',     sig: 'self:transform' },
-  wobble:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'wobble stretch', sig: 'self:transform' },
-  swing:   { slot: 'motion', luminance: false, basePeriod: 2.6, letterSplit: false, label: 'pendulum',      sig: 'self:transform' },
-  tumble:  { slot: 'motion', luminance: false, basePeriod: 3.4, letterSplit: true,  label: 'letter tumble', sig: 'letter:transform' },
-  neon:    { slot: 'motion', luminance: true,  basePeriod: 2.6, letterSplit: false, label: 'neon breathe',  sig: 'self:shadow' },
-  glitch:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'glitch',        sig: 'self:shadow' },
-  jitter:  { slot: 'motion', luminance: false, basePeriod: 3,   letterSplit: false, label: 'jitter',        sig: 'self:transform' },
-  hop:     { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: true,  label: 'letter hop',    sig: 'letter:transform' },
-  twirl:   { slot: 'motion', luminance: false, basePeriod: 3.6, letterSplit: true,  label: 'letter twirl',  sig: 'letter:transform' },
-  type:    { slot: 'motion', luminance: true,  basePeriod: 4,   letterSplit: true,  label: 'typewriter',    sig: 'letter:opacity' },
-  flicker: { slot: 'motion', luminance: true,  basePeriod: 3,   letterSplit: false, label: 'flicker',       sig: 'self:opacity' },
+  wave:    { slot: 'motion', luminance: false, basePeriod: 1.6, letterSplit: true,  label: 'letter wave',   sig: 'letter:transform', desc: 'letters ripple in a wave, one after another' },
+  ripple:  { slot: 'motion', luminance: true,  basePeriod: 2.4, letterSplit: true,  label: 'rainbow ripple', sig: 'letter:filter', desc: 'letters cycle through the rainbow, one after another' },
+  coin:    { slot: 'motion', luminance: false, basePeriod: 5,   letterSplit: false, label: 'coin spin',     sig: 'self:transform', desc: 'the whole name spins like a coin' },
+  heli:    { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: false, label: 'spin',          sig: 'self:transform', desc: 'the whole name spins flat' },
+  float:   { slot: 'motion', luminance: false, basePeriod: 5.5, letterSplit: false, label: 'zero-g float',  sig: 'self:transform', desc: 'drifts gently up and down' },
+  heart:   { slot: 'motion', luminance: false, basePeriod: 1.3, letterSplit: false, label: 'heartbeat',     sig: 'self:transform', desc: 'pulses to a heartbeat rhythm' },
+  wobble:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'wobble stretch', sig: 'self:transform', desc: 'stretches and squashes rhythmically' },
+  swing:   { slot: 'motion', luminance: false, basePeriod: 2.6, letterSplit: false, label: 'pendulum',      sig: 'self:transform', desc: 'swings side to side like a pendulum' },
+  tumble:  { slot: 'motion', luminance: false, basePeriod: 3.4, letterSplit: true,  label: 'letter tumble', sig: 'letter:transform', desc: 'letters flip end over end, one after another' },
+  neon:    { slot: 'motion', luminance: true,  basePeriod: 2.6, letterSplit: false, label: 'neon breathe',  sig: 'self:shadow', desc: 'the glow breathes brighter and dimmer' },
+  glitch:  { slot: 'motion', luminance: false, basePeriod: 2.8, letterSplit: false, label: 'glitch',        sig: 'self:shadow', desc: 'the shadow flickers and jumps' },
+  jitter:  { slot: 'motion', luminance: false, basePeriod: 3,   letterSplit: false, label: 'jitter',        sig: 'self:transform', desc: 'shakes with a nervous jitter' },
+  hop:     { slot: 'motion', luminance: false, basePeriod: 2.2, letterSplit: true,  label: 'letter hop',    sig: 'letter:transform', desc: 'letters hop up and down, one after another' },
+  twirl:   { slot: 'motion', luminance: false, basePeriod: 3.6, letterSplit: true,  label: 'letter twirl',  sig: 'letter:transform', desc: 'letters spin in place, one after another' },
+  type:    { slot: 'motion', luminance: true,  basePeriod: 4,   letterSplit: true,  label: 'typewriter',    sig: 'letter:opacity', desc: 'letters type in and out like a typewriter' },
+  flicker: { slot: 'motion', luminance: true,  basePeriod: 3,   letterSplit: false, label: 'flicker',       sig: 'self:opacity', desc: 'fades in and out like a failing bulb' },
 }
 
 /**
@@ -289,6 +289,27 @@ export function effectUsesBaseColors(id) {
  */
 export function effectNeedsStops(id) {
   return id === 'pan' || id === 'conic' || id === 'stripes'
+}
+
+/**
+ * Where a new stop should land: the midpoint of the largest gap between the
+ * existing stops, sorted by position.
+ *
+ * The builder used to hardcode `pos:100` for every new stop, which collided
+ * with the default gradient's own last stop (also at 100) — two stops at the
+ * same position compile to a zero-width band, so the third colour a user
+ * added was in the CSS and invisible. Fewer than 2 stops has no gap to split;
+ * 50 is as good a first guess as any.
+ */
+export function midpointOfLargestGap(stops) {
+  const sorted = [...(Array.isArray(stops) ? stops : [])].sort((a, b) => a.pos - b.pos)
+  if (sorted.length < 2) return 50
+  let bestGap = -1, bestMid = 50
+  for (let i = 1; i < sorted.length; i++) {
+    const gap = sorted[i].pos - sorted[i - 1].pos
+    if (gap > bestGap) { bestGap = gap; bestMid = Math.round((sorted[i - 1].pos + sorted[i].pos) / 2) }
+  }
+  return bestMid
 }
 
 const EFFECT_IDS = new Set(Object.keys(EFFECTS))
@@ -392,6 +413,18 @@ export function validatePaintSpec(spec, opts = {}) {
       })
       if (type === 'solid' && stops.length !== 1) {
         errors.push('base.type solid requires exactly 1 stop')
+      }
+      // Two stops at the same position compile to a zero-width band — no
+      // visible run between them, and (for pan/conic, which append a wrap
+      // duplicate of their own) a hard edge at the seam. Checked on the
+      // rounded ints the compiler actually emits, not the raw input, so a
+      // spec that only collides after rounding is still caught.
+      const posCounts = new Map()
+      stops.forEach(s => {
+        if (isIntInRange(s.pos, 0, 100)) posCounts.set(s.pos, (posCounts.get(s.pos) || 0) + 1)
+      })
+      for (const [pos, count] of posCounts) {
+        if (count > 1) errors.push(`base.stops has ${count} stops at pos ${pos} — two stops at the same position compile to a zero-width band`)
       }
       // Legibility floor — scored on the DIMMEST stop, because that is the
       // part of the name that disappears. Only runs once the stops are
@@ -674,6 +707,24 @@ function sortedStops(base) {
     .filter(s => isPlainObject(s) && HEX_RE.test(s?.color) && isIntInRange(s.pos, 0, 100))
     .map(s => ({ color: safeHex(s.color), pos: safePos(s.pos) }))
     .sort((a, b) => a.pos - b.pos)
+}
+
+/**
+ * `stops` plus a duplicate of the first colour appended at 100% so a
+ * `pan`/`conic` sweep loops without a visible seam.
+ *
+ * The real stops are compressed into 0-99 first, because a user's own last
+ * stop routinely already sits at pos 100 (it's the default gradient's own
+ * end). Appending the wrap duplicate there too used to put two stops at the
+ * exact same position — 0% -> 100% -> 100% — which compiles to a zero-width
+ * band: no visible run between them, i.e. a hard edge at the exact instant
+ * the sweep wraps. Scaling preserves stop order and only shifts each
+ * position by ~1%, invisible next to the bug it prevents.
+ */
+function stopsWithWrap(stops) {
+  if (!stops.length) return stops
+  const scaled = stops.map(s => ({ color: s.color, pos: Math.round(s.pos * 99 / 100) }))
+  return [...scaled, { color: stops[0].color, pos: 100 }]
 }
 
 /** duration in seconds for an effect at the given speed, with the WCAG
@@ -998,7 +1049,7 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
     // needs the gradient axis a linear-gradient provides. Append the first
     // stop again so the pan wraps without a visible seam.
     const angle = safeAngle(base.angle)
-    const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
+    const wrapStops = stopsWithWrap(stops)
     const image = `linear-gradient(${angle}deg, ${gradientStopsCss(wrapStops)})`
     const phaseVar = ph; __period = duration; __opts = {}
     const { size, x, y } = panSweep(angle, phaseVar)
@@ -1010,7 +1061,7 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
     // Force conic rendering — rotates the whole wheel straight off the
     // shared phase var (0→1), no extra @property of its own needed.
     const angle = safeAngle(base.angle)
-    const wrapStops = stops.length ? [...stops, { color: stops[0].color, pos: 100 }] : stops
+    const wrapStops = stopsWithWrap(stops)
     const phaseVar = ph; __period = duration; __opts = {}
     // THE ONE EFFECT THAT KEEPS ITS PHASE VARIABLE.
     //
@@ -1087,13 +1138,22 @@ function paintFillAt(effectId, speed, base, stops, hash, ph) {
 
   if (effectId === 'pulse') {
     // Breathes the whole fill — opacity, not filter, so it never lands on
-    // the same property as hue. Luminance-flagged: the floor keeps it slow.
+    // the same property as hue. Luminance-flagged: the floor keeps it slow
+    // (MIN_LUMINANCE_PERIOD_S, paint-core.js — a period guard, untouched by
+    // the dip depth below).
+    //
+    // The dip was .45 — at name size, beside twenty other names in a moving
+    // feed, that read as "not working" (reported: "what does pulse even
+    // do/mean i think its not working for my paint"). .12 is a much more
+    // legible breathe without ever hitting fully transparent, so the name
+    // never disappears at the bottom of the cycle.
+    //
     // Already a full round trip within one cycle (not CSS `alternate`), so
     // the phase period is the plain duration, same as `bounce`'s other uses
     // pair with a doubled one.
     const baseCss = buildBaseCss(base, stops)
     const phaseVar = ph; __period = duration; __opts = {}
-    const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.45')};`
+    const decl = `${baseCss.decl}opacity:${bounce(phaseVar, '1', '.12')};`
     return { decl, period: __period, opts: __opts, usesPhaseVar: __usesPhaseVar }
   }
 

@@ -54,17 +54,21 @@ export function periodSeconds(basePeriod, speed, luminance) {
 // `steps(n)` holds the computed value between steps, and a value that does not
 // change is not repainted, so the same visible motion costs n redraws a second.
 //
-// Measured with `scripts/paint-perf.mjs --cost`, one painted name, 3s at 4x CPU,
-// both scene planes animating:
-//
-//   linear (60/s) 501ms · 20/s 211ms · 12/s 124ms · 8/s 79ms
-//
-// Two rates, because the two populations are watched differently. A scene plane
-// IS the motion you notice, so it keeps more of it. A fill sweeping through the
-// glyphs is texture, and the person who reported the lag said outright that
-// steppiness does not bother them — so it takes the cheaper end.
-export const SCENE_STEPS_PER_SECOND = 12
-export const FILL_STEPS_PER_SECOND = 8
+// RAISED 2026-09-16, from 8/12 to 16/24 — see THE CROWD DIAL below for the
+// measurement. Doubling both keeps the fill/scene ratio (a scene plane is the
+// motion you notice, so it still keeps more of it) and, because CROWD_TIERS is
+// unchanged, doubles the redraw rate at EVERY tier uniformly: the new "chunky"
+// lands where "full" used to sit, the new "chunkier" where "chunky" used to —
+// nothing here is a new regime, the whole ladder just moved up one rung. This
+// is also the direct fix for "fire rain is choppy": fire (a paint-slot fill,
+// FILL_STEPS_PER_SECOND) and rain (a scene weather plane, SCENE_STEPS_PER_SECOND)
+// quantise on two INDEPENDENT steps() schedules that were never going to phase-
+// align, and at the old chunkier tier they fell to 2/s and 3/s respectively —
+// coarse enough that the mismatch between them reads as stutter rather than
+// texture. Raising the floor doesn't make them agree, it makes the disagreement
+// small enough to stop being visible.
+export const SCENE_STEPS_PER_SECOND = 24
+export const FILL_STEPS_PER_SECOND = 16
 
 /**
  * ── THE CROWD DIAL ──────────────────────────────────────────────────────────
@@ -87,24 +91,35 @@ export const FILL_STEPS_PER_SECOND = 8
  * cost collapsed by a factor of sixty — while the sentence justifying the dial
  * stayed put. A stale measurement reads exactly like a current one.
  *
- * Measured 2026-09-14 with `paint-perf --dial`, lava, 414x896 @ dpr3, cpu 4x,
- * renderer ms per 3s of a 3000ms budget:
+ * Measured 2026-09-16 with `paint-perf --dial` (heatpc), lava, 414x896 @ dpr3,
+ * cpu 4x, renderer ms per 3s of a 3000ms budget, AT THE OLD RATES (8/12,
+ * the numbers the raise above is measured against):
  *
  *   names    full    chunky   chunkier      of which raster
- *      3     19.0     10.1      12.5        1.8 / 0.9 / 0.5
- *      6     27.6     17.4      15.0        2.8 / 1.5 / 0.7
- *     20     62.1     40.7      25.0        9.1 / 4.2 / 1.9
+ *      3     42.1     24.0      20.8        2.5 / 1.4 / 0.6
+ *      6     48.5     38.9      19.0        3.6 / 1.8 / 0.8
+ *     12     61.6     46.5      35.1        5.5 / 2.6 / 1.2
+ *     20     86.7     52.1      33.0        9.8 / 5.6 / 2.0
  *
- * So renderer time can no longer justify this: 62ms of a 3000ms budget is ~2%,
- * and the tiers are within noise of each other at small crowds. What the dial
- * still buys is RASTER — 4.8x across the tiers at twenty names — and raster is
- * what a phone GPU pays and what `scripts/paint-perf.mjs` documents itself as
- * blind to. That is the whole remaining case for it, and it is a real one:
- * real-user `inp_kb_presentation` is most of mobile INP.
+ * So renderer time cannot justify keeping this low: 86.7ms of a 3000ms budget
+ * is ~2.9% even at 20 names UNTHROTTLED, and doubling the redraw rate (the
+ * change above) tracks sub-linearly with raster in this range (8/s->16/s
+ * measured elsewhere as +1.75x cost, not +2x) — so the new "full" tier is
+ * still comfortably under 1% of budget. CORRECTION to every prior version of
+ * this comment: the harness is NOT blind to raster — `--dial`'s table above
+ * has carried a raster column since the arm was written (RasterTask trace
+ * events, real Chrome tracing, not a guess). What it cannot see is a real
+ * mobile GPU's own compositing/submission cost, which is a narrower gap than
+ * "blind to raster" claimed. The one real-user number this reasoning used to
+ * lean on — mobile `inp_kb_presentation` — was separately investigated and
+ * found to be noise at n=6-20/day, not a genuine paint-cost regression (see
+ * project memory, 2026-09-14), so it is no longer a reason to hold this rate
+ * down; the real pre-launch mobile number is LCP, unrelated to paint cost.
  *
- * To move any of this: `paint-perf --dial` for the ratio, then Titan's
- * real-user inp_kb_presentation for the verdict — and write which one moved it
- * here, with the date, so the next reader can tell a measurement from a memory.
+ * To move this further: `paint-perf --dial` for the ratio, a real device or
+ * Titan's real-user data for anything raster-adjacent it still can't see —
+ * and write which one moved it here, with the date, so the next reader can
+ * tell a measurement from a memory.
  *
  * NOT a divisor on the period, which would be slow motion. Same speed, fewer
  * redraws — "idc about steppy because bitmap and pixels".

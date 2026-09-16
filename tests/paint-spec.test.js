@@ -293,9 +293,10 @@ describe('compilePaintCss — structural checks', () => {
     })
     const css = compilePaintCss(spec, '.hsp-xyz789', { hash: 'xyz789' })
     expect(css).toContain('background-clip:text')
-    // steps(40), not linear: the fill's phase is rate-limited to
-    // FILL_STEPS_PER_SECOND redraws a second (paint-core.steppedTiming).
-    expect(css).toContain('animation:hsp_xyz789_pan 5s steps(40) infinite')
+    // steps(80), not linear: the fill's phase is rate-limited to
+    // FILL_STEPS_PER_SECOND redraws a second (paint-core.steppedTiming,
+    // raised 8->16 2026-09-16 — synced from the site).
+    expect(css).toContain('animation:hsp_xyz789_pan 5s steps(80) infinite')
     expect(css).toContain('@keyframes hsp_xyz789_pan')
     expect(css).toContain('linear-gradient(90deg,')
     expect(css).toContain('#ff0000 100%')

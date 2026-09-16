@@ -701,12 +701,60 @@ function safePos(pos) {
   return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0
 }
 
+/**
+ * Nudge any stops sharing a position apart into the smallest gap available,
+ * preserving relative colour order and the caller's own array order (input
+ * order is NOT assumed sorted by pos — the builder's array is insertion
+ * order, e.g. a stop added last can sit anywhere in the gradient).
+ *
+ * Two passes over the pos-sorted view: forward, pushing each stop to at
+ * least one more than the one before it (the common case — one duplicate at
+ * the tail); then, only if that ran a stop past 100, backward from 100 doing
+ * the mirror image. With at most MAX_STOPS (8) stops across a 0-100 range
+ * there is always room for both — the two passes can never fight.
+ *
+ * Pure — returns a new array, same length and order as `stops`, reusing
+ * unchanged stop objects and only cloning the ones whose position moved.
+ *
+ * validatePaintSpec refuses a spec with a collision outright (a save-time
+ * rule — see its own doc), which is correct for anything arriving over the
+ * wire. This is the other half: a spec that already collided when it was
+ * saved (before that check existed) must never be HANDED to that validator
+ * unrepaired by the one surface that authors specs — the builder repairs on
+ * load, before the person sees it — and the compiler repairs its own working
+ * copy so an already-saved colliding paint stops rendering a zero-width band
+ * on every surface immediately, without waiting for anyone to open the
+ * builder and re-save.
+ */
+export function repairStopCollisions(stops) {
+  if (!Array.isArray(stops) || stops.length < 2) return stops
+  const withIndex = stops.map((s, i) => ({ pos: s?.pos, i }))
+  withIndex.sort((a, b) => a.pos - b.pos)
+  for (let k = 1; k < withIndex.length; k++) {
+    if (withIndex[k].pos <= withIndex[k - 1].pos) withIndex[k].pos = withIndex[k - 1].pos + 1
+  }
+  if (withIndex[withIndex.length - 1].pos > 100) {
+    withIndex[withIndex.length - 1].pos = 100
+    for (let k = withIndex.length - 2; k >= 0; k--) {
+      if (withIndex[k].pos >= withIndex[k + 1].pos) withIndex[k].pos = withIndex[k + 1].pos - 1
+    }
+  }
+  const posByIndex = new Array(stops.length)
+  for (const { pos, i } of withIndex) posByIndex[i] = pos
+  return stops.map((s, i) => (s?.pos === posByIndex[i] ? s : { ...s, pos: posByIndex[i] }))
+}
+
 function sortedStops(base) {
   const stops = Array.isArray(base?.stops) ? base.stops : []
-  return stops
+  const cleaned = stops
     .filter(s => isPlainObject(s) && HEX_RE.test(s?.color) && isIntInRange(s.pos, 0, 100))
     .map(s => ({ color: safeHex(s.color), pos: safePos(s.pos) }))
     .sort((a, b) => a.pos - b.pos)
+  // Repairs an already-saved colliding spec (predates validatePaintSpec's
+  // collision check) so it renders correctly on every surface, immediately —
+  // see repairStopCollisions' doc for why this lives here as well as in the
+  // builder.
+  return repairStopCollisions(cleaned)
 }
 
 /**

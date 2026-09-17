@@ -328,13 +328,13 @@
     "message": "mențiuni"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "vizionez"
   },
   "mc_tab_pinned": {
     "message": "salvate"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "vizionez · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

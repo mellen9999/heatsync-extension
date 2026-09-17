@@ -328,13 +328,13 @@
     "message": "menções"
   },
   "mc_tab_live": {
-    "message": "ao vivo"
+    "message": "a ver"
   },
   "mc_tab_pinned": {
     "message": "guardados"
   },
   "mc_tab_live_channel": {
-    "message": "ao vivo · $CHANNEL$",
+    "message": "a ver · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

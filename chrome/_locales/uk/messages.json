@@ -328,13 +328,13 @@
     "message": "згадки"
   },
   "mc_tab_live": {
-    "message": "ефір"
+    "message": "дивлюся"
   },
   "mc_tab_pinned": {
     "message": "збережене"
   },
   "mc_tab_live_channel": {
-    "message": "ефір · $CHANNEL$",
+    "message": "дивлюся · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

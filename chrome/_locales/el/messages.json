@@ -328,13 +328,13 @@
     "message": "αναφορές"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "θέαση"
   },
   "mc_tab_pinned": {
     "message": "αποθηκευμένα"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "θέαση · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

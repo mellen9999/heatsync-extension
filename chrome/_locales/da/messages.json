@@ -328,13 +328,13 @@
     "message": "omtaler"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "ser"
   },
   "mc_tab_pinned": {
     "message": "gemt"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "ser · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

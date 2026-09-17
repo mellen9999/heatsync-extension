@@ -328,13 +328,13 @@
     "message": "bahsetmeler"
   },
   "mc_tab_live": {
-    "message": "canlı"
+    "message": "izliyor"
   },
   "mc_tab_pinned": {
     "message": "kayıtlı"
   },
   "mc_tab_live_channel": {
-    "message": "canlı · $CHANNEL$",
+    "message": "izliyor · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

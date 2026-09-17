@@ -328,13 +328,13 @@
     "message": "إشارات"
   },
   "mc_tab_live": {
-    "message": "مباشر"
+    "message": "المشاهدة"
   },
   "mc_tab_pinned": {
     "message": "محفوظ"
   },
   "mc_tab_live_channel": {
-    "message": "مباشر · $CHANNEL$",
+    "message": "المشاهدة · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

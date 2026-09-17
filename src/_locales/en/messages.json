@@ -519,7 +519,7 @@
     "message": "mentions"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "watching"
   },
   "mc_tab_pinned": {
     "message": "saved"
@@ -528,7 +528,7 @@
     "message": "mod log"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "watching · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

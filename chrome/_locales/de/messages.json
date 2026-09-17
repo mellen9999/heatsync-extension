@@ -328,13 +328,13 @@
     "message": "erwähnungen"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "zuschauen"
   },
   "mc_tab_pinned": {
     "message": "gespeichert"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "zuschauen · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

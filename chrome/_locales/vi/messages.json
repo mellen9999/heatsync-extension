@@ -328,13 +328,13 @@
     "message": "nhắc đến"
   },
   "mc_tab_live": {
-    "message": "trực tiếp"
+    "message": "đang xem"
   },
   "mc_tab_pinned": {
     "message": "đã lưu"
   },
   "mc_tab_live_channel": {
-    "message": "trực tiếp · $CHANNEL$",
+    "message": "đang xem · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

@@ -328,13 +328,13 @@
     "message": "споменавания"
   },
   "mc_tab_live": {
-    "message": "живо"
+    "message": "гледане"
   },
   "mc_tab_pinned": {
     "message": "запазени"
   },
   "mc_tab_live_channel": {
-    "message": "живо · $CHANNEL$",
+    "message": "гледане · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

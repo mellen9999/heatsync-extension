@@ -328,13 +328,13 @@
     "message": "提及"
   },
   "mc_tab_live": {
-    "message": "直播"
+    "message": "观看中"
   },
   "mc_tab_pinned": {
     "message": "已保存"
   },
   "mc_tab_live_channel": {
-    "message": "直播 · $CHANNEL$",
+    "message": "观看中 · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

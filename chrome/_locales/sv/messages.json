@@ -328,13 +328,13 @@
     "message": "omnämnanden"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "tittar"
   },
   "mc_tab_pinned": {
     "message": "sparade"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "tittar · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

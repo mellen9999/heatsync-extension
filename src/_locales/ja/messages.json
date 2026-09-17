@@ -328,13 +328,13 @@
     "message": "メンション"
   },
   "mc_tab_live": {
-    "message": "ライブ"
+    "message": "視聴中"
   },
   "mc_tab_pinned": {
     "message": "保存済み"
   },
   "mc_tab_live_channel": {
-    "message": "ライブ · $CHANNEL$",
+    "message": "視聴中 · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

@@ -328,13 +328,13 @@
     "message": "mention"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "menonton"
   },
   "mc_tab_pinned": {
     "message": "tersimpan"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "menonton · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

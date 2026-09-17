@@ -328,13 +328,13 @@
     "message": "멘션"
   },
   "mc_tab_live": {
-    "message": "라이브"
+    "message": "시청 중"
   },
   "mc_tab_pinned": {
     "message": "저장됨"
   },
   "mc_tab_live_channel": {
-    "message": "라이브 · $CHANNEL$",
+    "message": "시청 중 · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

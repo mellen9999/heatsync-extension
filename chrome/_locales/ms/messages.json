@@ -328,13 +328,13 @@
     "message": "sebutan"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "menonton"
   },
   "mc_tab_pinned": {
     "message": "disimpan"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "menonton · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

@@ -328,13 +328,13 @@
     "message": "मेन्शन"
   },
   "mc_tab_live": {
-    "message": "लाइव"
+    "message": "देख रहे"
   },
   "mc_tab_pinned": {
     "message": "सहेजे"
   },
   "mc_tab_live_channel": {
-    "message": "लाइव · $CHANNEL$",
+    "message": "देख रहे · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

@@ -328,13 +328,13 @@
     "message": "mentions"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "pinapanood"
   },
   "mc_tab_pinned": {
     "message": "naka-save"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "pinapanood · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

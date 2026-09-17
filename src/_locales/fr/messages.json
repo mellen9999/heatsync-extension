@@ -328,13 +328,13 @@
     "message": "mentions"
   },
   "mc_tab_live": {
-    "message": "en direct"
+    "message": "visionnage"
   },
   "mc_tab_pinned": {
     "message": "enregistrés"
   },
   "mc_tab_live_channel": {
-    "message": "en direct · $CHANNEL$",
+    "message": "visionnage · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

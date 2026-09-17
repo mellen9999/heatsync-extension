@@ -328,13 +328,13 @@
     "message": "zmienky"
   },
   "mc_tab_live": {
-    "message": "živo"
+    "message": "sledujem"
   },
   "mc_tab_pinned": {
     "message": "uložené"
   },
   "mc_tab_live_channel": {
-    "message": "živo · $CHANNEL$",
+    "message": "sledujem · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

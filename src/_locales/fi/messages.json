@@ -328,13 +328,13 @@
     "message": "maininnat"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "katselu"
   },
   "mc_tab_pinned": {
     "message": "tallennetut"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "katselu · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

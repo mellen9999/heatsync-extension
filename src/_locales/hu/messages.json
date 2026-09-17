@@ -328,13 +328,13 @@
     "message": "említések"
   },
   "mc_tab_live": {
-    "message": "élő"
+    "message": "nézem"
   },
   "mc_tab_pinned": {
     "message": "mentve"
   },
   "mc_tab_live_channel": {
-    "message": "élő · $CHANNEL$",
+    "message": "nézem · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

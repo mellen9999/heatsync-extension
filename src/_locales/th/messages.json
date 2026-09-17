@@ -328,13 +328,13 @@
     "message": "การกล่าวถึง"
   },
   "mc_tab_live": {
-    "message": "ไลฟ์"
+    "message": "กำลังดู"
   },
   "mc_tab_pinned": {
     "message": "บันทึก"
   },
   "mc_tab_live_channel": {
-    "message": "ไลฟ์ · $CHANNEL$",
+    "message": "กำลังดู · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

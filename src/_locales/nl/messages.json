@@ -328,13 +328,13 @@
     "message": "vermeldingen"
   },
   "mc_tab_live": {
-    "message": "live"
+    "message": "kijken"
   },
   "mc_tab_pinned": {
     "message": "opgeslagen"
   },
   "mc_tab_live_channel": {
-    "message": "live · $CHANNEL$",
+    "message": "kijken · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

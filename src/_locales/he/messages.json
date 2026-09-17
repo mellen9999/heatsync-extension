@@ -328,13 +328,13 @@
     "message": "אזכורים"
   },
   "mc_tab_live": {
-    "message": "שידור"
+    "message": "צופה"
   },
   "mc_tab_pinned": {
     "message": "שמור"
   },
   "mc_tab_live_channel": {
-    "message": "שידור · $CHANNEL$",
+    "message": "צופה · $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"

@@ -6325,7 +6325,25 @@ function fnv1a(str) {
 
 
 // ── plate geometry (single source — mirrored nowhere) ──────────────────────
-const PLATE_INSET = '-1px -4px'
+/**
+ * How far the plate's ink reaches OUTSIDE the name's own box, per axis.
+ *
+ * The plate is deliberately bigger than the glyphs — a backdrop that stopped at
+ * the letters would read as a highlight, not a plate. But it is drawn by
+ * absolutely-positioned children, so those pixels cost the element nothing in
+ * layout and land on whatever is next to it. In a chat row that is the ':'
+ * immediately after the name, which live-chat.js appends with no space, so the
+ * plate's 4px covers the whole separator: mellen, 2026-09-16, "on the right of
+ * namepaints in chat we still need the ':' — it might be hidden but i cant
+ * tell". The left edge does the same to the last badge.
+ *
+ * Exported as numbers so the reservation below and the inset itself can only
+ * ever be the same measurement. Hand-writing '4px' in the margin is how the two
+ * drift and the overlap comes back on one side only.
+ */
+const PLATE_OVERHANG_X = 4
+const PLATE_OVERHANG_Y = 1
+const PLATE_INSET = `-${PLATE_OVERHANG_Y}px -${PLATE_OVERHANG_X}px`
 const PSEUDO_BASE = `content:'';position:absolute;inset:${PLATE_INSET};pointer-events:none;`
 
 const DENSITIES = new Set([1, 2, 3])
@@ -8239,7 +8257,13 @@ function buildSceneCss(scene, selector, hash, opts = {}) {
   // The plate needs the element to anchor its absolutely-positioned planes and
   // to fence their negative z-index inside its own stacking context (so the
   // backdrop can sit behind the text but never behind the chat row).
-  let css = `${selector}{position:relative;isolation:isolate;}`
+  // ...and to RESERVE the ink it is about to draw outside itself. Horizontal
+  // only: a row's neighbours are horizontal, and 1px of vertical bleed lands in
+  // the line box's own leading where nothing else is drawn, while a vertical
+  // margin would space out every chat row that happens to contain a painted
+  // name. `isolation` fences the plate's z-order inside this element; it does
+  // not clip, and never did.
+  let css = `${selector}{position:relative;isolation:isolate;margin-left:${PLATE_OVERHANG_X}px;margin-right:${PLATE_OVERHANG_X}px;}`
 
   // ── the plate, plus the far weather plane on top of it ──
   //
@@ -11936,7 +11960,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c0622228+-202609162256' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9f238d83+-202609170233' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

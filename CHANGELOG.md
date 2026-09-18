@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.75] — 2026-09-18
+
+### added
+- **a gifs tab in the emote picker** — searches heatsync's own gif library (built from what people actually post in chat) and drops the direct media url in the composer, the same bytes twitch's gif keyboard sends. the grid paints stills and animates only the tile you point at, so opening it is not a space heater. keyboard-first: type, enter inserts, `esc` for normal mode, then `hjkl` to move.
+- **the picker's tab bar shows on kick and youtube** — it was only ever drawn when the twitch tab was there, so two platforms out of three had no way to switch tabs at all.
+
+### changed
+- **the live tab is called watching**, matching the site.
+- **name paints** — pan/base controls mirrored from the site, the eight themed presets removed, and the crowd dial (which the overlay compiled and never turned on) now runs.
+
 ## [1.7.72] — 2026-09-07
 
 ### fixed

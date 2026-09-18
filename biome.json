@@ -68,7 +68,8 @@
         "src/lib/scene-spec.js",
         "src/lib/paint-spec.js",
         "src/lib/animation-phase.js",
-        "src/lib/plus-tenure.js"
+        "src/lib/plus-tenure.js",
+        "src/lib/gif-search-remote.js"
       ],
       "formatter": {
         "enabled": false

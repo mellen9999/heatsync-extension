@@ -3071,5 +3071,53 @@
         "example": "2"
       }
     }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "search gifs..."
+  },
+  "mc_gif_searching": {
+    "message": "searching..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifs · hjkl move · enter insert",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "rate limited - wait $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "search failed - type to retry"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync builds its gif library from what people actually post in chat. nothing collected yet."
+  },
+  "mc_gif_library_building": {
+    "message": "no match yet - the library is still filling up ($COUNT$ gifs so far)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "no gifs found"
+  },
+  "mc_gif_type_to_search": {
+    "message": "type to search gifs"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a search  esc close"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   }
 }

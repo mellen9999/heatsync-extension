@@ -1025,7 +1025,27 @@ function emoteImgHtml([name, emote]) {
  * even the very first click open instantly. Cache invalidates on channel
  * switch, emote-size change, or any emote-cache reload via markPickerDirty().
  */
-let pickerTab = 'emotes' // 'emotes' or 'twitch'
+/**
+ * The picker's tabs, in order.
+ *
+ * A table, not hand-written buttons: the tab bar used to live INSIDE the
+ * `showTwitchTab` ternary, so a kick or youtube viewer got no tab bar at all —
+ * which was invisible while twitch was the only thing on the other side of it,
+ * and would have hidden the gifs tab from two platforms out of three. `when`
+ * is the per-tab answer to "does this host have it", and adding a tab is one
+ * entry here plus one renderer.
+ */
+const MC_PICKER_TABS = [
+  { id: 'emotes', label: 'emotes' },
+  { id: 'gifs', label: 'gifs' },
+  { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
+]
+
+function mcVisiblePickerTabs() {
+  return MC_PICKER_TABS.filter((t) => !t.when || t.when())
+}
+
+let pickerTab = 'emotes'
 let _pickerCloseHandler = null
 let _pickerBuiltKey = null
 let _pickerPrebuildScheduled = false
@@ -1070,10 +1090,10 @@ function prebuildPickerIdle() {
 }
 
 function syncPickerTabDisplay(picker) {
-  const emTab = picker.querySelector('#hs-mc-tab-emotes')
-  const twTab = picker.querySelector('#hs-mc-tab-twitch')
-  if (emTab) emTab.style.display = pickerTab === 'emotes' ? 'flex' : 'none'
-  if (twTab) twTab.style.display = pickerTab === 'twitch' ? 'flex' : 'none'
+  for (const tab of MC_PICKER_TABS) {
+    const el = picker.querySelector(`#hs-mc-tab-${tab.id}`)
+    if (el) el.style.display = pickerTab === tab.id ? 'flex' : 'none'
+  }
   picker.querySelectorAll('.hs-mc-picker-tab').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === pickerTab)
   })
@@ -1100,7 +1120,7 @@ function showEmotePicker(tab = null) {
   // Twitch features tab (predictions/polls/rewards/clip/popout/mod) needs the
   // twitch.tv page context for auth + GQL proxy. Hide it on YT/Kick host.
   const showTwitchTab = hostPlatform === 'twitch'
-  if (!showTwitchTab && pickerTab === 'twitch') pickerTab = 'emotes'
+  if (!mcVisiblePickerTabs().some((t) => t.id === pickerTab)) pickerTab = 'emotes'
 
   // Cache hit → no rebuild, just sync which tab content is shown.
   if (!isPrebuild && pickerCacheKey() === _pickerBuiltKey && picker.firstChild) {
@@ -1111,6 +1131,7 @@ function showEmotePicker(tab = null) {
     // never got to (first open in a hidden/occluded tab — IO doesn't fire there).
     renderVisibleChunks(picker)
     if (pickerTab === 'twitch') renderTwitchTab()
+    if (pickerTab === 'gifs') hsOnGifTabShown()
     attachPickerCloseHandler(picker)
     return
   }
@@ -1137,17 +1158,22 @@ function showEmotePicker(tab = null) {
           ${renderEmoteSections(sections)}
         </div>
       </div>
+      ${hsGifTabHtml()}
       ${
         showTwitchTab
           ? `<div class="hs-mc-tab-content" id="hs-mc-tab-twitch" style="display: ${pickerTab === 'twitch' ? 'flex' : 'none'}; flex-direction: column; padding: 8px 0;">
         <div class="hs-mc-pred-loading">${t('common_loading')}</div>
-      </div>
-      <div class="hs-mc-picker-tabs">
-        <button class="hs-mc-picker-tab ${pickerTab === 'emotes' ? 'active' : ''}" data-tab="emotes">emotes</button>
-        <button class="hs-mc-picker-tab ${pickerTab === 'twitch' ? 'active' : ''}" data-tab="twitch">twitch</button>
       </div>`
           : ''
       }
+      <div class="hs-mc-picker-tabs">
+        ${mcVisiblePickerTabs()
+          .map(
+            (tab) =>
+              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.label)}</button>`,
+          )
+          .join('')}
+      </div>
     `
 
   // Inject provider filter chips INSIDE the search wrap (not as a sibling
@@ -1235,6 +1261,8 @@ function showEmotePicker(tab = null) {
   // result callbacks can call it directly.
   const rerenderSearch = mcRerenderSearch
 
+  hsWireGifTab(picker)
+
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -1261,10 +1289,16 @@ function showEmotePicker(tab = null) {
       picker.querySelectorAll('.hs-mc-tab-content').forEach((c) => {
         c.style.display = 'none'
       })
-      const display = newTab === 'emotes' || newTab === 'settings' || newTab === 'twitch' ? 'flex' : 'block'
-      document.getElementById(`hs-mc-tab-${newTab}`).style.display = display
+      // Every tab content is a flex column; the old ternary listed the three
+      // that were and fell through to `block` for a tab that never existed.
+      const el = document.getElementById(`hs-mc-tab-${newTab}`)
+      if (el) el.style.display = 'flex'
       if (newTab === 'twitch') renderTwitchTab()
+      if (newTab === 'gifs') hsOnGifTabShown()
       if (oldTab === 'twitch' && newTab !== 'twitch') stopPredictionPoll()
+      // Leaving the gifs tab drops the in-flight request on the floor: its
+      // .then() would otherwise land on a grid nobody is looking at.
+      if (oldTab === 'gifs' && newTab !== 'gifs') hsLeaveGifTab()
     })
   })
 
@@ -1378,46 +1412,59 @@ function showEmotePicker(tab = null) {
   // hidden/occluded tab (where the IntersectionObserver never fires) isn't blank.
   renderVisibleChunks(picker)
 
+  // ONE code path decides which tab is showing, including the first paint. The
+  // emotes and twitch panes used to bake `display` into their own markup — a
+  // second source of truth syncPickerTabDisplay then had to keep in step, and
+  // a third pane would have had to remember to join in.
+  syncPickerTabDisplay(picker)
+
   if (pickerTab === 'twitch') renderTwitchTab()
+  if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)
 }
 
 let _pickerEscHandler = null
-function attachPickerCloseHandler(picker) {
+
+/** Take down the document-level close handlers. */
+function detachPickerCloseHandlers() {
   if (_pickerCloseHandler) document.removeEventListener('click', _pickerCloseHandler)
   if (_pickerEscHandler) document.removeEventListener('keydown', _pickerEscHandler)
+  _pickerCloseHandler = null
+  _pickerEscHandler = null
+}
+
+/**
+ * The one way to close the panel from code.
+ *
+ * Those document handlers self-remove when THEY close the picker, so anything
+ * that closes it on its own has to take them down too — or the next Escape
+ * still runs hideInputBar(), over a composer the reader is typing into. A gif
+ * pick is the first close that does not go through them.
+ *
+ * `keepInput` is for exactly that case: the panel goes away, the composer does
+ * not, because the reader is mid-send with a url already in the box.
+ */
+function closeEmotePickerPanel({ keepInput = false } = {}) {
+  const picker = document.getElementById('hs-mc-emote-picker')
+  if (!picker) return
+  picker.classList.remove('visible')
+  if (!keepInput) hideInputBar()
+  stopPredictionPoll()
+  detachPickerCloseHandlers()
+}
+
+function attachPickerCloseHandler(picker) {
+  detachPickerCloseHandlers()
   cleanup.setTimeout(() => {
     _pickerCloseHandler = (e) => {
-      if (mcSignal?.aborted) {
-        document.removeEventListener('click', _pickerCloseHandler)
-        _pickerCloseHandler = null
-        return
-      }
-      if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) {
-        picker.classList.remove('visible')
-        hideInputBar()
-        stopPredictionPoll()
-        document.removeEventListener('click', _pickerCloseHandler)
-        _pickerCloseHandler = null
-        document.removeEventListener('keydown', _pickerEscHandler)
-        _pickerEscHandler = null
-      }
+      if (mcSignal?.aborted) return detachPickerCloseHandlers()
+      if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) closeEmotePickerPanel()
     }
     _pickerEscHandler = (e) => {
       if (e.key !== 'Escape') return
-      if (mcSignal?.aborted) {
-        document.removeEventListener('keydown', _pickerEscHandler)
-        _pickerEscHandler = null
-        return
-      }
-      picker.classList.remove('visible')
-      hideInputBar()
-      stopPredictionPoll()
-      document.removeEventListener('keydown', _pickerEscHandler)
-      _pickerEscHandler = null
-      document.removeEventListener('click', _pickerCloseHandler)
-      _pickerCloseHandler = null
+      if (mcSignal?.aborted) return detachPickerCloseHandlers()
+      closeEmotePickerPanel()
     }
     cleanup.addEventListener(document, 'click', _pickerCloseHandler, 'mc-picker-close')
     cleanup.addEventListener(document, 'keydown', _pickerEscHandler, 'mc-picker-esc')

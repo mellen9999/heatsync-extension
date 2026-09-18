@@ -252,6 +252,9 @@ function checkScopeCollisions() {
     'scene-spec.js',
     'paint-spec.js',
     'animation-phase.js',
+    // Same story: the site's gifs-tab fetch layer, multichat-only, landing in
+    // this scope (see readMultichatModules).
+    'gif-search-remote.js',
   ]
   const libDir = join(__dirname, 'src', 'lib')
   const mcDir = join(__dirname, 'src', 'multichat')
@@ -650,7 +653,9 @@ function stripExports(content) {
     content
       .replace(/^export\s+default\s+\w+\s*;?\s*$/gm, '')
       .replace(/^export\s*\{[^}]*\}\s*;?\s*$/gm, '')
-      .replace(/^export\s+(const|let|var|function|class)\s+/gm, '$1 ')
+      // `async` sits between `export` and `function`; without it the keyword
+      // survived into the bundle and the whole content script failed to parse.
+      .replace(/^export\s+(async\s+function|const|let|var|function|class)\s+/gm, '$1 ')
       // Relative imports between synced-copy modules (paint-spec.js imports
       // paint-core.js/scene-spec.js) — the bundle concatenates those files
       // into one scope in dependency order, so the import lines just go.
@@ -760,6 +765,7 @@ const MULTICHAT_MODULES = [
   'auth-irc.js',
   'kick-send.js',
   'emotes.js',
+  'gifs.js',
   'tooltips.js',
   'twitch-api.js',
   'feed-embed.js',
@@ -834,6 +840,15 @@ function readMultichatModules() {
   const plusTenurePath = join(SRC_DIR, 'lib', 'plus-tenure.js')
   if (existsSync(plusTenurePath)) {
     combined += `\n// --- lib/plus-tenure.js ---\n${stripExports(readFileSync(plusTenurePath, 'utf8'))}\n`
+  }
+
+  // The gifs tab's fetch layer — another verbatim site copy
+  // (scripts/sync-site-copies.sh), multichat-only for the same reason as the
+  // compiler: no other content script opens the picker. gifs.js calls
+  // createGifSearch/nextGridIndex, so it must land before the modules loop.
+  const gifSearchPath = join(SRC_DIR, 'lib', 'gif-search-remote.js')
+  if (existsSync(gifSearchPath)) {
+    combined += `\n// --- lib/gif-search-remote.js ---\n${stripExports(readFileSync(gifSearchPath, 'utf8'))}\n`
   }
 
   const modules = CORE_MODULES

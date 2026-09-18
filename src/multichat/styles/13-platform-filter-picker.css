@@ -504,3 +504,90 @@
       --hs-emote-size: 32px;
     }
 
+
+    /* ── gifs tab ──────────────────────────────────────────────────────────
+       A real grid, not a wrapping flex row: keyboard navigation needs to know
+       how many columns there are, and only a grid will tell it (hsGifCols
+       reads grid-template-columns off the live element, so this stays right at
+       every overlay width without a breakpoint). */
+    .hs-mc-gif-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      grid-auto-rows: 82px;
+      align-content: start;
+      gap: 2px;
+      padding: 4px;
+    }
+    .hs-mc-gif-grid .hs-mc-gif-status,
+    .hs-mc-gif-grid .hs-mc-picker-empty {
+      grid-column: 1 / -1;
+    }
+    .hs-mc-gif-status {
+      color: var(--hs-muted);
+      font-size: 13px;
+      padding: 2px 2px 4px;
+      letter-spacing: 0.5px;
+    }
+    .hs-mc-gif {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      background: var(--hs-bg);
+      border: 1px solid #333;
+      cursor: pointer;
+      overflow: hidden;
+      transition: none;
+    }
+    .hs-mc-gif > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Hover is white, the keyboard cursor is cyan — the same split every other
+       list in the overlay uses, so "where the mouse is" never reads as "where
+       enter will land". */
+    .hs-mc-gif:hover {
+      border-color: var(--hs-fg);
+      outline: 2px solid var(--hs-fg);
+      outline-offset: -2px;
+    }
+    .hs-mc-gif[data-sel='1'] {
+      border-color: var(--hs-sel);
+      outline: 2px solid var(--hs-sel);
+      outline-offset: -2px;
+    }
+    .hs-mc-gif-cap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      font-size: 13px;
+      line-height: 1.3;
+      padding: 0 3px;
+      color: var(--hs-muted);
+      background: var(--hs-bg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hs-mc-gif:hover .hs-mc-gif-cap {
+      background: var(--hs-fg);
+      color: var(--hs-bg);
+    }
+    .hs-mc-gif[data-sel='1'] .hs-mc-gif-cap {
+      background: var(--hs-sel);
+      color: var(--hs-sel-fg);
+    }
+    /* The mode line. An unannounced mode is a bug report. */
+    .hs-mc-gif-mode {
+      flex-shrink: 0;
+      border-top: 1px solid var(--hs-border);
+      color: var(--hs-border);
+      font-size: 13px;
+      padding: 1px 6px;
+      letter-spacing: 1px;
+    }

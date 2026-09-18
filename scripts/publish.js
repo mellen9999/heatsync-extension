@@ -320,7 +320,21 @@ function composeReleaseNotes() {
       .trim()
       .split('\n')
       .filter(Boolean)
-    const prevTag = tags[0]
+    // The tag for THIS release may already exist: the repo's own convention is
+    // a `chore: release X` commit tagged and pushed BEFORE publishing, because
+    // the approval notes tell a reviewer to `git checkout v<ver>`. A tag that
+    // points at HEAD would make the range empty and ship the placeholder as the
+    // public release notes, which is what happened on the first release that
+    // followed that order.
+    const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT }).toString().trim()
+    const atHead = (tag) => {
+      try {
+        return execFileSync('git', ['rev-list', '-n', '1', tag], { cwd: ROOT }).toString().trim() === head
+      } catch {
+        return false
+      }
+    }
+    const prevTag = tags.find((t) => !atHead(t))
     if (!prevTag) return placeholder
     const log = execFileSync('git', ['log', `${prevTag}..HEAD`, '--oneline', '--no-merges'], { cwd: ROOT })
       .toString()

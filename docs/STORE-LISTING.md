@@ -19,8 +19,24 @@ Multichat is also the one thing 7tv's extension does not do at all (see POSITION
 surface a user sees — see POSITIONING.md "permission surface". Trust copy stays a footer line.
 
 ## Name (localized — `manifest_name`, all 34 locales, CWS max 75)
-Toolbar/UI name stays bare `heatsync` via manifest `short_name` in both MV3 + MV2 — the long
-name is store-facing only.
+
+⛔ **NOT SHIPPED. This section described a rename that never happened.**
+Checked 2026-09-21: `manifest_name` is the bare string `heatsync` in en, de,
+fr, es and ja, and the live AMO listing serves `heatsync` in all 25 locales it
+carries. The name below is a proposal, not the current value — do not cite this
+file as evidence that it shipped.
+
+It is still the right call, and it is a distribution decision rather than a
+copy one: the store search index reads the listing NAME, and nobody searching
+"twitch kick multichat" can match a listing called `heatsync`. Distribution is
+the weakest link in the whole project, and this is one of the few levers that
+touches it without a single line of product code.
+
+Shipping it needs a release and a store review, so it is mellen's tap, not a
+session's. Toolbar/UI name stays bare `heatsync` via manifest `short_name` in
+both MV3 + MV2 either way — the long name is store-facing only.
+
+**proposed:**
 ```
 heatsync — twitch, kick + youtube in one chat
 ```

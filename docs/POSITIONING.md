@@ -15,6 +15,20 @@ claims drift — **recheck anything marked ⏳ before publishing**, ours are sta
 
 ## verified claims — ours (v1.7.21)
 
+⛔ **"no third-party calls" was in this table and it was FALSE.** The manifest
+declares `api.betterttv.net`, `api.frankerfacez.com`, `7tv.io`, `api.7tv.app`
+and `pronoundb.org`, and `docs/PRIVACY.md` documents exactly what goes to each.
+This file is public, MIT, and we tell people to audit the repo — so a claim the
+manifest disproves is the first comment on any launch thread, and it costs the
+one thing the privacy posture is for. The true claim is narrower and stronger:
+**no analytics, no trackers, no ad networks, nothing about you leaves for our
+benefit.** Cosmetics come from the emote providers because that is how emotes
+render. Say that; never round it up to "no third-party calls".
+
+⚠ The version stamps below are pinned to **v1.7.21**; the extension ships
+**1.7.75**. Re-measure before quoting any of the build-derived rows (package
+size, test count) — do not refresh them by guessing.
+
 | claim | value | proof |
 |---|---|---|
 | emote slots | 5000, free | `src/lib/config.js` MAX_EMOTES_PER_SOURCE, shipped copy since 1.6.8 |
@@ -24,7 +38,8 @@ claims drift — **recheck anything marked ⏳ before publishing**, ours are sta
 | runtime deps | zero (vanilla js) | `package.json` — no dependencies key |
 | package size | 1.68 MiB zipped | `dist/heatsync-chrome-1.7.21.zip` |
 | tests | 1148 cases / 48 files | `bun test` |
-| telemetry | none — no analytics, no third-party calls, local-only error buffer | grep clean; `src/lib/error-reporter.js` |
+| telemetry | none — no analytics, no trackers, no ad networks, local-only error buffer | grep clean; `src/lib/error-reporter.js` |
+| third-party calls | yes, and named: 7tv, bttv, ffz, pronoundb for cosmetics; pusher for kick chat. no data is sold or shared | `chrome/manifest.json` host_permissions; `docs/PRIVACY.md` |
 | permissions | 5 (storage, unlimitedStorage, cookies, alarms, notifications) + host allowlist | `chrome/manifest.json`; justifications in AMO-REVIEW-NOTES.md |
 | locales | 34 | `src/_locales/` |
 | license | MIT, open source | LICENSE |

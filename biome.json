@@ -69,6 +69,8 @@
         "src/lib/paint-spec.js",
         "src/lib/animation-phase.js",
         "src/lib/plus-tenure.js",
+        "src/lib/fill-layers.js",
+        "src/lib/glyph-mask.js",
         "src/lib/gif-search-remote.js"
       ],
       "formatter": {

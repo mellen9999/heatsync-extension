@@ -8704,14 +8704,23 @@ function hashPaintSpec(spec) {
 
 function normalizeForHash(spec) {
   // Deterministic shape regardless of input key order.
+  //
+  // EVERY field the compiler reads belongs here: two specs that hash alike
+  // share one compiled class, and whichever compiles first paints both — pan
+  // at scale 150 and at 340/bounce/skew did exactly that. Knobs that are
+  // absent stay `undefined`, which JSON.stringify drops, so a spec without
+  // them keeps the hash it always had.
   return {
     v: spec?.v,
     base: spec?.base && {
       type: spec.base.type,
       angle: spec.base.angle,
       stops: Array.isArray(spec.base.stops) ? spec.base.stops.map(s => ({ color: s?.color, pos: s?.pos })) : [],
+      tileWidth: spec.base.tileWidth,
     },
-    effects: Array.isArray(spec?.effects) ? spec.effects.map(e => ({ id: e?.id, speed: e?.speed })) : [],
+    effects: Array.isArray(spec?.effects)
+      ? spec.effects.map(e => ({ id: e?.id, speed: e?.speed, scale: e?.scale, loop: e?.loop, skew: e?.skew }))
+      : [],
     glow: spec?.glow ? { color: spec.glow.color, strength: spec.glow.strength } : null,
     scene: normalizeSceneForHash(spec?.scene),
   }
@@ -12075,7 +12084,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '82afd105+-202609232227' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2bbc8cfe-202609232238' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

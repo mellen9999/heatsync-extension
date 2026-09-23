@@ -107,21 +107,26 @@ describe('clipboardImageSourceUrl', () => {
 
 // ── the paste route ─────────────────────────────────────────────────────────
 describe('paste prefers the source url, then falls back', () => {
-  test('every image entry point passes the clipboard source through', () => {
+  test('every multi-file entry point passes the clipboard/drag source through', () => {
     // Composer paste, paste with the bar hidden, and drag-drop. A drag out of a
     // page carries the same html flavor, so it gets the same route.
-    const wired = INPUT_SRC.match(/handleMediaUpload\(file, clipboardImageSourceUrl\(/g) || []
-    expect(wired).toHaveLength(3)
-    expect(INPUT_SRC).not.toMatch(/handleMediaUpload\(file\)/)
+    expect(INPUT_SRC).toMatch(/handleMediaUpload\(files, clipboardImageSourceUrl\(e\.clipboardData\)\)/)
+    expect(
+      INPUT_SRC.match(/handleMediaUpload\(files, clipboardImageSourceUrl\(e\.clipboardData\)\)/g) || [],
+    ).toHaveLength(2)
+    expect(INPUT_SRC).toMatch(/handleMediaUpload\(Array\.from\(files\), clipboardImageSourceUrl\(e\.dataTransfer\)\)/)
   })
 
-  test('a source url is spent only on animation, never on a still', () => {
+  test('a source url is spent only on animation, never on a still, and only for a single file', () => {
     // Resolving it hands our server a url the user never meant to share — they
     // meant to share the picture. For a still there is nothing to buy: the
     // clipboard bitmap is lossless PNG, so the upload is already an exact copy.
+    // With several files there's no way to know which one the source url
+    // belonged to, so it's spent only when exactly one file came through.
     const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
+    expect(fn).toMatch(/const src = files\.length === 1 \? sourceUrl : ''/)
     expect(fn).toMatch(/const maybeAnimated = \/\\\.\(gif\|webp\|avif\)/)
-    expect(fn).toMatch(/maybeAnimated \? await storeRemoteMedia\(sourceUrl\) : ''/)
+    expect(fn).toMatch(/maybeAnimated \? await storeRemoteMedia\(src\) : ''/)
   })
 
   test('the bitmap is still uploaded when the source url does not resolve', () => {
@@ -129,6 +134,29 @@ describe('paste prefers the source url, then falls back', () => {
     // source must cost you animation, never the paste.
     const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
     expect(fn).toMatch(/if \(!url\) url = await uploadMediaFile\(file\)/)
+  })
+
+  test('multiple files upload sequentially and land as one space-separated insert', () => {
+    const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
+    // One await per file, in a loop — not Promise.all (sequential, not
+    // parallel: uploadMediaFile is single-flight via _mcUploading, so a
+    // parallel fan-out would just reject every file after the first).
+    expect(fn).toMatch(/for \(let i = 0; i < files\.length; i\+\+\)/)
+    expect(fn).toMatch(/insertComposerText\(urls\.join\(' '\)\)/)
+  })
+
+  test('a file that fails to upload does not blank the others', () => {
+    // Only files that actually resolved a url go in; if none did, nothing is
+    // inserted (no bare trailing space from an all-failed batch).
+    const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
+    expect(fn).toMatch(/if \(url\) urls\.push\(url\)/)
+    expect(fn).toMatch(/if \(!urls\.length\) return/)
+  })
+
+  test('paste and drop accept video, not just image', () => {
+    const pasteHandlers =
+      INPUT_SRC.match(/item\.type\.startsWith\('image\/'\) \|\| item\.type\.startsWith\('video\/'\)/g) || []
+    expect(pasteHandlers).toHaveLength(2)
   })
 
   test('storeRemoteMedia reports failure as empty, never as a thrown paste', () => {
@@ -149,6 +177,46 @@ describe('paste prefers the source url, then falls back', () => {
     // upload cost. Per-call-site timers meant the first wiped the second.
     expect(INPUT_SRC).not.toMatch(/setTimeout\(\(\) => showUploadStatus\(null\), \d/)
     expect(sliceFn(INPUT_SRC, 'showUploadStatus')).toMatch(/clearTimeout\(_mcStatusTimer\)/)
+  })
+})
+
+describe('drag-drop: multi-file, link-only, and the install latch', () => {
+  const fn = sliceFn(INPUT_SRC, 'setupMediaDropHandlers')
+
+  test('the installed latch is set only after the overlay is found', () => {
+    // Setting it first meant a call that ran before the overlay mounted (page
+    // still loading) latched anyway, and no later call ever retried — drop
+    // silently never worked for the rest of that page load.
+    const overlayLookup = fn.indexOf("getElementById('hs-mc-overlay')")
+    const latchSet = fn.indexOf('_mcDropHandlersInstalled = true')
+    expect(overlayLookup).toBeGreaterThan(-1)
+    expect(latchSet).toBeGreaterThan(overlayLookup)
+  })
+
+  test('drop accepts every dropped file, not just the first', () => {
+    expect(fn).toMatch(/handleMediaUpload\(Array\.from\(files\), clipboardImageSourceUrl\(e\.dataTransfer\)\)/)
+    expect(fn).not.toMatch(/e\.dataTransfer\.files\[0\]/)
+  })
+
+  test('a link-only drag (no Files entry) still shows the drop zone and inserts as text', () => {
+    // Chrome puts no 'Files' entry on the dataTransfer for a plain link/text
+    // drag — only 'text/uri-list' — so gating solely on 'Files' both hid the
+    // zone and dropped the drag on the floor.
+    expect(fn).toMatch(/types\.includes\('Files'\) \|\| dt\.types\.includes\('text\/uri-list'\)/)
+    expect(fn).toMatch(/getData\('text\/uri-list'\)/)
+    expect(fn).toMatch(/insertComposerText\(url\)/)
+  })
+
+  test('a uri-list with a comment line still resolves to the real url', () => {
+    // text/uri-list per RFC 2483: '#'-prefixed lines are comments, the browser
+    // may prepend one, and the real url is whichever non-comment line survives.
+    const pick = (uriList) =>
+      uriList
+        .split('\n')
+        .map((s) => s.trim())
+        .find((s) => s && !s.startsWith('#'))
+    expect(pick('# a comment\nhttps://example.com/a.png')).toBe('https://example.com/a.png')
+    expect(pick('https://example.com/a.png\n')).toBe('https://example.com/a.png')
   })
 })
 

@@ -1510,19 +1510,20 @@ function initInput() {
   // Set up drag-drop handlers for media upload
   setupMediaDropHandlers()
 
-  // Pasted image handler — applies in BOTH wysiwyg and plain modes
+  // Pasted image/video handler — applies in BOTH wysiwyg and plain modes
   input.addEventListener('paste', (e) => {
     const items = e.clipboardData?.items
     if (!items) return
+    const files = []
     for (const item of items) {
-      if (item.kind === 'file' && item.type.startsWith('image/')) {
+      if (item.kind === 'file' && (item.type.startsWith('image/') || item.type.startsWith('video/'))) {
         const file = item.getAsFile()
-        if (file) {
-          e.preventDefault()
-          handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
-          return
-        }
+        if (file) files.push(file)
       }
+    }
+    if (files.length) {
+      e.preventDefault()
+      handleMediaUpload(files, clipboardImageSourceUrl(e.clipboardData))
     }
   })
 
@@ -1819,18 +1820,20 @@ function initInput() {
         // Don't steal paste from other inputs
         const active = document.activeElement
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return
-        // Check for pasted image first
+        // Check for pasted image/video first
         const items = e.clipboardData?.items
         if (items) {
+          const files = []
           for (const item of items) {
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
+            if (item.kind === 'file' && (item.type.startsWith('image/') || item.type.startsWith('video/'))) {
               const file = item.getAsFile()
-              if (file) {
-                e.preventDefault()
-                handleMediaUpload(file, clipboardImageSourceUrl(e.clipboardData))
-                return
-              }
+              if (file) files.push(file)
             }
+          }
+          if (files.length) {
+            e.preventDefault()
+            handleMediaUpload(files, clipboardImageSourceUrl(e.clipboardData))
+            return
           }
         }
         const text = e.clipboardData?.getData('text/plain')
@@ -9126,43 +9129,69 @@ async function storeRemoteMedia(srcUrl) {
   }
 }
 
-async function handleMediaUpload(file, sourceUrl) {
-  // The source url is used ONLY when it looks animated, never for stills.
-  // Resolving it means handing our server a url the user never meant to share —
-  // they meant to share the picture — and for a still there is nothing to gain:
-  // Chromium's clipboard bitmap is lossless PNG, so the upload is already an
-  // exact copy. Animation is the one thing the clipboard destroys, so animation
-  // is the only thing worth spending a url on.
-  const maybeAnimated = /\.(gif|webp|avif)(\?|#|$)/i.test(sourceUrl || '')
-  let url = maybeAnimated ? await storeRemoteMedia(sourceUrl) : ''
-  const lostAnimation = maybeAnimated && !url
-  if (!url) url = await uploadMediaFile(file)
-  if (!url) return
-  // Say it out loud. The fallback posts a picture either way, so the failure is
-  // invisible — you'd just be left wondering why your gif came out frozen.
-  if (lostAnimation) {
-    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
-  }
+// Insert plain text at the end of the composer, focusing/revealing it first.
+// Shared by media-url insertion and the uri-list-only drop path below.
+function insertComposerText(text) {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
   showInputBar()
   input.focus()
   if (input.isContentEditable) {
-    if (!document.execCommand('insertText', false, `${url} `)) {
-      input.textContent = `${(input.textContent || '') + url} `
+    if (!document.execCommand('insertText', false, `${text} `)) {
+      input.textContent = `${(input.textContent || '') + text} `
     }
   } else {
-    input.value = `${(input.value || '') + url} `
+    input.value = `${(input.value || '') + text} `
     input.dispatchEvent(new Event('input', { bubbles: true }))
   }
+}
+
+// fileOrFiles is a single File (the common case: attach button, one pasted/
+// dropped item) or an array of them (multi-file paste/drop) — normalized to
+// an array so both shapes share one upload+insert path. sourceUrl (the
+// clipboard/drag html flavor's original <img src>, for gif recovery) only
+// ever applies to a single file — with several files there is no way to
+// know which one it belonged to, so it's ignored past the first.
+async function handleMediaUpload(fileOrFiles, sourceUrl) {
+  const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles]
+  if (!files.length) return
+  const urls = []
+  let lostAnimation = false
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    if (!file) continue
+    // The source url is used ONLY when it looks animated, never for stills.
+    // Resolving it means handing our server a url the user never meant to share —
+    // they meant to share the picture — and for a still there is nothing to gain:
+    // Chromium's clipboard bitmap is lossless PNG, so the upload is already an
+    // exact copy. Animation is the one thing the clipboard destroys, so animation
+    // is the only thing worth spending a url on.
+    const src = files.length === 1 ? sourceUrl : ''
+    const maybeAnimated = /\.(gif|webp|avif)(\?|#|$)/i.test(src || '')
+    let url = maybeAnimated ? await storeRemoteMedia(src) : ''
+    if (maybeAnimated && !url) lostAnimation = true
+    if (!url) url = await uploadMediaFile(file)
+    if (url) urls.push(url)
+  }
+  if (!urls.length) return
+  // Say it out loud. The fallback posts a picture either way, so the failure is
+  // invisible — you'd just be left wondering why your gif came out frozen.
+  if (lostAnimation) {
+    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
+  }
+  insertComposerText(urls.join(' '))
 }
 
 let _mcDropHandlersInstalled = false
 function setupMediaDropHandlers() {
   if (_mcDropHandlersInstalled) return
-  _mcDropHandlersInstalled = true
   const overlay = document.getElementById('hs-mc-overlay')
+  // Only latch once the overlay actually exists and listeners are attached —
+  // setting the flag before this lookup meant a call that ran before the
+  // overlay mounted (page still loading) latched anyway, and no later call
+  // ever retried, so drop silently never worked for that page load.
   if (!overlay) return
+  _mcDropHandlersInstalled = true
 
   let dragCounter = 0
   const showDropZone = () => {
@@ -9172,7 +9201,7 @@ function setupMediaDropHandlers() {
       dz.id = 'hs-mc-drop-zone'
       dz.style.cssText =
         'position:absolute;inset:0;background:rgba(255,255,255,0.1);border:2px dashed #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:99998;pointer-events:none;'
-      dz.textContent = 'drop image/video to upload'
+      dz.textContent = 'drop image/video/link to upload'
       overlay.appendChild(dz)
     }
   }
@@ -9180,11 +9209,14 @@ function setupMediaDropHandlers() {
     document.getElementById('hs-mc-drop-zone')?.remove()
     dragCounter = 0
   }
+  // A dragged web image/link carries no 'Files' entry — only text/uri-list —
+  // so gating solely on 'Files' never showed the zone or allowed the drop.
+  const isDraggableMedia = (dt) => !!dt?.types && (dt.types.includes('Files') || dt.types.includes('text/uri-list'))
 
   overlay.addEventListener(
     'dragenter',
     (e) => {
-      if (!e.dataTransfer?.types?.includes('Files')) return
+      if (!isDraggableMedia(e.dataTransfer)) return
       e.preventDefault()
       dragCounter++
       showDropZone()
@@ -9194,7 +9226,7 @@ function setupMediaDropHandlers() {
   overlay.addEventListener(
     'dragover',
     (e) => {
-      if (!e.dataTransfer?.types?.includes('Files')) return
+      if (!isDraggableMedia(e.dataTransfer)) return
       e.preventDefault()
       e.dataTransfer.dropEffect = 'copy'
     },
@@ -9203,7 +9235,7 @@ function setupMediaDropHandlers() {
   overlay.addEventListener(
     'dragleave',
     (e) => {
-      if (!e.dataTransfer?.types?.includes('Files')) return
+      if (!isDraggableMedia(e.dataTransfer)) return
       dragCounter--
       if (dragCounter <= 0) hideDropZone()
     },
@@ -9212,13 +9244,25 @@ function setupMediaDropHandlers() {
   overlay.addEventListener(
     'drop',
     (e) => {
-      if (!e.dataTransfer?.files?.length) return
+      if (!isDraggableMedia(e.dataTransfer)) return
       e.preventDefault()
       hideDropZone()
-      const file = e.dataTransfer.files[0]
-      // A drag out of a web page carries the same html flavor as a copy, so a
-      // dragged gif gets the same route back to its frames.
-      handleMediaUpload(file, clipboardImageSourceUrl(e.dataTransfer))
+      const files = e.dataTransfer.files
+      if (files?.length) {
+        // A drag out of a web page carries the same html flavor as a copy, so a
+        // dragged gif gets the same route back to its frames.
+        handleMediaUpload(Array.from(files), clipboardImageSourceUrl(e.dataTransfer))
+        return
+      }
+      // No file, just a link (e.g. dragging an <a> or an image with no
+      // fetchable bytes attached) — drop the url in as text instead of
+      // silently doing nothing.
+      const uriList = e.dataTransfer.getData('text/uri-list') || ''
+      const url = uriList
+        .split('\n')
+        .map((s) => s.trim())
+        .find((s) => s && !s.startsWith('#'))
+      if (url) insertComposerText(url)
     },
     { signal: mcSignal },
   )

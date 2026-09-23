@@ -348,14 +348,23 @@ export function hashPaintSpec(spec) {
 
 function normalizeForHash(spec) {
   // Deterministic shape regardless of input key order.
+  //
+  // EVERY field the compiler reads belongs here: two specs that hash alike
+  // share one compiled class, and whichever compiles first paints both — pan
+  // at scale 150 and at 340/bounce/skew did exactly that. Knobs that are
+  // absent stay `undefined`, which JSON.stringify drops, so a spec without
+  // them keeps the hash it always had.
   return {
     v: spec?.v,
     base: spec?.base && {
       type: spec.base.type,
       angle: spec.base.angle,
       stops: Array.isArray(spec.base.stops) ? spec.base.stops.map(s => ({ color: s?.color, pos: s?.pos })) : [],
+      tileWidth: spec.base.tileWidth,
     },
-    effects: Array.isArray(spec?.effects) ? spec.effects.map(e => ({ id: e?.id, speed: e?.speed })) : [],
+    effects: Array.isArray(spec?.effects)
+      ? spec.effects.map(e => ({ id: e?.id, speed: e?.speed, scale: e?.scale, loop: e?.loop, skew: e?.skew }))
+      : [],
     glow: spec?.glow ? { color: spec.glow.color, strength: spec.glow.strength } : null,
     scene: normalizeSceneForHash(spec?.scene),
   }

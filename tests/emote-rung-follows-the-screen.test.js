@@ -55,9 +55,7 @@ const WANT_SRC = carve('function hsWantedRung() {', '\n}')
 const rungUrl = RUNG_SRC ? new Function(`${RUNG_SRC}; return hsRungUrl`)() : null
 /** hsWantedRung closes over `emoteSize` and the global `devicePixelRatio`;
  *  hand it both so the real arithmetic runs. */
-const wantedRung = WANT_SRC
-  ? new Function('emoteSize', 'devicePixelRatio', `${WANT_SRC}; return hsWantedRung()`)
-  : null
+const wantedRung = WANT_SRC ? new Function('emoteSize', 'devicePixelRatio', `${WANT_SRC}; return hsWantedRung()`) : null
 
 describe('the carve markers still exist', () => {
   test('both functions were found — otherwise everything below proves nothing', () => {
@@ -96,10 +94,30 @@ describe('the rung a screen needs', () => {
 describe('every provider reaches every rung it publishes', () => {
   // [label, 1x, 2x, top]
   const LADDER = [
-    ['7tv', 'https://cdn.7tv.app/emote/01F6MZ/1x.avif', 'https://cdn.7tv.app/emote/01F6MZ/2x.avif', 'https://cdn.7tv.app/emote/01F6MZ/4x.avif'],
-    ['bttv', 'https://cdn.betterttv.net/emote/5f1b/1x', 'https://cdn.betterttv.net/emote/5f1b/2x', 'https://cdn.betterttv.net/emote/5f1b/3x'],
-    ['ffz', 'https://cdn.frankerfacez.com/emote/128054/1', 'https://cdn.frankerfacez.com/emote/128054/2', 'https://cdn.frankerfacez.com/emote/128054/4'],
-    ['twitch', 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/1.0', 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0', 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/3.0'],
+    [
+      '7tv',
+      'https://cdn.7tv.app/emote/01F6MZ/1x.avif',
+      'https://cdn.7tv.app/emote/01F6MZ/2x.avif',
+      'https://cdn.7tv.app/emote/01F6MZ/4x.avif',
+    ],
+    [
+      'bttv',
+      'https://cdn.betterttv.net/emote/5f1b/1x',
+      'https://cdn.betterttv.net/emote/5f1b/2x',
+      'https://cdn.betterttv.net/emote/5f1b/3x',
+    ],
+    [
+      'ffz',
+      'https://cdn.frankerfacez.com/emote/128054/1',
+      'https://cdn.frankerfacez.com/emote/128054/2',
+      'https://cdn.frankerfacez.com/emote/128054/4',
+    ],
+    [
+      'twitch',
+      'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/1.0',
+      'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0',
+      'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/3.0',
+    ],
   ]
 
   for (const [label, one, two, top] of LADDER) {

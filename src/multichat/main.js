@@ -12867,8 +12867,24 @@
           if (rows) {
             for (const m of rows) {
               if (m && m.id === msg.id) {
-                if (!m.hsEmotes) {
-                  m.hsEmotes = msg.hsEmotes
+                // ⛔ THIS WAS GATED ON `!m.hsEmotes` AND ASSIGNED THE WHOLE
+                // OBJECT. hsEmotes is a MAP, so a row already carrying one name
+                // discarded every other name the server had resolved — AND,
+                // because the re-render lived inside that same gate, it did not
+                // repaint either. The emote stayed a word on screen with the
+                // ref sitting right there on the row.
+                //
+                // Additive by name, and repaint whenever anything was actually
+                // gained (never on a no-op — this runs per enrich frame).
+                if (!m.hsEmotes) m.hsEmotes = {}
+                let gained = false
+                for (const n in msg.hsEmotes) {
+                  if (msg.hsEmotes[n] && !m.hsEmotes[n]) {
+                    m.hsEmotes[n] = msg.hsEmotes[n]
+                    gained = true
+                  }
+                }
+                if (gained) {
                   m._renderedHtml = null
                   if (typeof queueImmediateReprocess === 'function') queueImmediateReprocess()
                 }

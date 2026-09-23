@@ -6836,7 +6836,22 @@ function handleWSMessage(msg) {
                 if (buf?.getAll) {
                   for (const m of buf.getAll()) {
                     if (m && m.id === ext.id) {
-                      if (!m.hsEmotes) m.hsEmotes = ext.hsEmotes
+                      // ⛔ THIS WAS `if (!m.hsEmotes) m.hsEmotes = ext.hsEmotes`.
+                      // hsEmotes is a MAP of name→ref, and a whole-object fill
+                      // is only ever correct for a SCALAR: one name already on
+                      // the row discarded every name on the server copy. The
+                      // server's set is built per-message from the sender's
+                      // inventory and the native tap's is not, so a two-emote
+                      // message that had picked up one ref anywhere else kept
+                      // that one and sent the other out as text.
+                      //
+                      // Same bug the site repo fixed at five leg-merge sites
+                      // (79e944503) and again a tier deeper on 2026-09-22.
+                      // Additive by name, never overwrite.
+                      if (!m.hsEmotes) m.hsEmotes = {}
+                      for (const n in ext.hsEmotes) {
+                        if (ext.hsEmotes[n] && !m.hsEmotes[n]) m.hsEmotes[n] = ext.hsEmotes[n]
+                      }
                       break
                     }
                   }

@@ -99,7 +99,42 @@ describe('window.HS.uploadMediaFiles is the single source of caps/filter/upload/
       expect(src).not.toMatch(/1024 \* 1024/)
     }
     expect(SHARED_SRC).toMatch(/HS_UPLOAD_MAX_IMG = 5 \* 1024 \* 1024/)
-    expect(SHARED_SRC).toMatch(/HS_UPLOAD_MAX_VID = 50 \* 1024 \* 1024/)
+    expect(SHARED_SRC).toMatch(/HS_UPLOAD_MAX_VID = 45 \* 1024 \* 1024/)
+  })
+
+  test('the video cap leaves margin under sendMessage’s ~64MiB structured-clone limit', () => {
+    // The file rides to the background as base64 (~4/3 the raw size) inside a
+    // chrome.runtime.sendMessage payload — there is no ArrayBuffer/Blob path
+    // across that bridge, so this cap IS the size guard. 50MB would overflow
+    // it; 45MB must not.
+    const CHROME_MESSAGE_CAP = 64 * 1024 * 1024
+    const HS_UPLOAD_MAX_VID = 45 * 1024 * 1024
+    const base64Size = Math.ceil(HS_UPLOAD_MAX_VID / 3) * 4
+    expect(base64Size).toBeLessThan(CHROME_MESSAGE_CAP)
+    // ...with real margin left for the JSON envelope, not just barely under.
+    expect(CHROME_MESSAGE_CAP - base64Size).toBeGreaterThan(2 * 1024 * 1024)
+  })
+
+  test('shows a persistent "uploading..." status, since a video can take 10-60s', () => {
+    const start = SHARED_SRC.indexOf('async function uploadMediaFiles')
+    const fn = SHARED_SRC.slice(start, SHARED_SRC.indexOf('\n  }', start) + 4)
+    // durationMs: 0 means "don't auto-dismiss" — see showToast's own contract.
+    expect(fn).toMatch(/showToast\('uploading\.\.\.', 'info', 0\)/)
+  })
+
+  test('the uploading status only self-clears when every file succeeded', () => {
+    // Clearing unconditionally would cut off a just-shown error toast — the
+    // failure message needs its own time on screen, not the success path's.
+    const start = SHARED_SRC.indexOf('async function uploadMediaFiles')
+    const fn = SHARED_SRC.slice(start, SHARED_SRC.indexOf('\n  }', start) + 4)
+    expect(fn).toMatch(/if \(urls\.length === files\.length\) showToast\(null\)/)
+  })
+
+  test('showToast(null) hides immediately, and a fresh call cancels any pending auto-dismiss', () => {
+    const fn = SHARED_SRC.slice(SHARED_SRC.indexOf('function showToast'), SHARED_SRC.indexOf('function apiFetch'))
+    expect(fn).toMatch(/if \(!message\) \{\s*document\.getElementById\('heatsync-toast'\)\?\.remove\(\)/)
+    expect(fn).toMatch(/if \(_toastTimer\) \{\s*clearTimeout\(_toastTimer\)/)
+    expect(fn).toMatch(/if \(durationMs === 0\) return/)
   })
 
   test('kick and youtube call the shared helper instead of their own upload/toast', () => {

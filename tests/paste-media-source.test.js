@@ -178,6 +178,17 @@ describe('paste prefers the source url, then falls back', () => {
     expect(INPUT_SRC).not.toMatch(/setTimeout\(\(\) => showUploadStatus\(null\), \d/)
     expect(sliceFn(INPUT_SRC, 'showUploadStatus')).toMatch(/clearTimeout\(_mcStatusTimer\)/)
   })
+
+  test('the video cap leaves margin under sendMessage’s ~64MiB structured-clone limit', () => {
+    // uploadMediaFile hands the file to the background as a base64 dataUrl
+    // inside a chrome.runtime.sendMessage payload — JSON only, no
+    // ArrayBuffer/Blob transfer across that bridge — so this cap IS the size
+    // guard. A 50MB video used to inflate past the ~64MiB ceiling and the
+    // message would simply fail to send.
+    expect(INPUT_SRC).toMatch(/MC_UPLOAD_MAX_VID = 45 \* 1024 \* 1024/)
+    const base64Size = Math.ceil((45 * 1024 * 1024) / 3) * 4
+    expect(base64Size).toBeLessThan(64 * 1024 * 1024)
+  })
 })
 
 describe('drag-drop: multi-file, link-only, and the install latch', () => {

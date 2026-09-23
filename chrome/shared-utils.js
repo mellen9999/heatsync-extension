@@ -140,7 +140,21 @@ const browser = globalThis.browser || chrome
     }
   }
 
-  function showToast(message, type = 'info') {
+  // durationMs: omit for the default per-type duration, 0 to persist until a
+  // later showToast(null) (or another showToast) clears it — used for an
+  // "uploading..." status that must survive as long as the upload does, not
+  // just the default 2s.
+  let _toastTimer = null
+  function showToast(message, type = 'info', durationMs) {
+    if (_toastTimer) {
+      clearTimeout(_toastTimer)
+      _toastTimer = null
+    }
+    if (!message) {
+      document.getElementById('heatsync-toast')?.remove()
+      return
+    }
+
     // Prefer the overlay statusbar slot (the `>` line) when the multichat
     // overlay is mounted — one toast surface, deduped (×N) instead of a fresh
     // floating box per attempt. Float bottom-center only when no overlay exists.
@@ -168,12 +182,13 @@ const browser = globalThis.browser || chrome
     }
 
     document.body.appendChild(toast)
-    setTimeout(
+    if (durationMs === 0) return
+    _toastTimer = setTimeout(
       () => {
         toast.style.animation = 'heatsync-toast-out .2s ease-in forwards'
         setTimeout(() => toast.remove(), 200)
       },
-      type === 'error' ? 3000 : 2000,
+      durationMs ?? (type === 'error' ? 3000 : 2000),
     )
   }
 
@@ -211,7 +226,12 @@ const browser = globalThis.browser || chrome
   // multichat's MC_UPLOAD_MAX_IMG/VID (src/multichat/input.js) — kept as
   // literals since this file has no import path to that one.
   const HS_UPLOAD_MAX_IMG = 5 * 1024 * 1024
-  const HS_UPLOAD_MAX_VID = 50 * 1024 * 1024
+  // 45MB, not 50: the file crosses to the background as a base64 dataUrl in a
+  // chrome.runtime.sendMessage payload, which runs ~4/3 the raw size — 50MB
+  // would be ~67MB, over that bridge's ~64MiB structured-clone cap (JSON only;
+  // a Blob/ArrayBuffer can't ride it), so the message itself would fail to
+  // send. 45MB inflates to ~60MiB, leaving headroom for the envelope.
+  const HS_UPLOAD_MAX_VID = 45 * 1024 * 1024
   let _hsMediaUploading = false
 
   function readFileAsDataUrl(file) {
@@ -236,6 +256,10 @@ const browser = globalThis.browser || chrome
     const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/') || f.type.startsWith('video/'))
     if (!files.length) return []
     _hsMediaUploading = true
+    // Persists (durationMs: 0) until an error replaces it or the loop clears
+    // it below — a pasted video is 10-60s of otherwise-total silence, long
+    // enough that a user with no feedback re-pastes, thinking nothing happened.
+    showToast('uploading...', 'info', 0)
     try {
       const urls = []
       for (const file of files) {
@@ -254,6 +278,10 @@ const browser = globalThis.browser || chrome
           showToast(err.message || 'upload failed', 'error')
         }
       }
+      // Only clear proactively when every file made it — the url appearing IS
+      // the success signal. If anything failed, its own toast is already
+      // showing (and will auto-dismiss); clearing here would cut it off.
+      if (urls.length === files.length) showToast(null)
       return urls
     } finally {
       _hsMediaUploading = false

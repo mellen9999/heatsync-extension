@@ -12075,7 +12075,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '23d75c37+-202609232200' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '82afd105+-202609232227' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -46197,7 +46197,12 @@ async function sendYoutubeMessage(text, videoId) {
 // ============================================
 
 const MC_UPLOAD_MAX_IMG = 5 * 1024 * 1024 // 5MB
-const MC_UPLOAD_MAX_VID = 50 * 1024 * 1024 // 50MB
+// 45MB, not 50: the file crosses to the background as a base64 dataUrl, which
+// runs ~4/3 the raw size — 50MB would be ~67MB, over chrome.runtime.sendMessage's
+// ~64MiB structured-clone cap (JSON only; a Blob/ArrayBuffer can't ride this
+// bridge), so the message itself would fail to send. 45MB inflates to ~60MiB,
+// leaving headroom for the envelope (name/mime/type fields).
+const MC_UPLOAD_MAX_VID = 45 * 1024 * 1024
 let _mcUploading = false
 
 // One status line, one timer. The auto-clear lives here rather than at each

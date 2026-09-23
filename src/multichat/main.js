@@ -2448,6 +2448,11 @@
       // the whole effect and every painted name on screen follows it live.
       document.documentElement.dataset.hsPaintAnim = v || 'always'
       if (onLoad) return
+      // A composited fill's mounted mask/layers are pure overhead once every
+      // animation is frozen — drop them; flipping back rebuilds from the
+      // specs still cached (see paints.js's unmount/remountAllHsFillLayers).
+      if ((v || 'always') === 'never') unmountAllHsFillLayers()
+      else remountAllHsFillLayers()
     },
     locale: (v) => {
       setI18nLocale(v).catch(() => {})

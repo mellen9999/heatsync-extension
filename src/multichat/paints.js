@@ -115,6 +115,15 @@ function markAllHsCosmeticsStale() {
 const hsPaintInjectedHashes = new Set()
 /** hash -> its <style> node, so a rule can be dropped without touching others. */
 const hsPaintRuleNodes = new Map()
+/** `hsp-<hash>` class -> how its composited `fill` mounts (see the runtime
+ * section below), so the mask sweep knows which painted names are worth
+ * building letterforms for. Cleared per-hash alongside hsPaintRuleNodes —
+ * mirrors the site's compositedPaintClasses (client/chat/paint-cosmetics.js). */
+const hsCompositedPaintClasses = new Map()
+/** The legacy paint-slot fill's composited form (pre-`fill`-block sweeps —
+ * pan/conic/hue/pulse/glint/stripes/stardust): one box per glyph, masked per
+ * glyph. A `fill` spec (compositedFillPlan) says its own shape instead. */
+const HS_LEGACY_FILL_PLAN = { mode: 'glyph', layers: 1, wrapper: false, legacy: true }
 const hsPaintPending = new Set()
 // Priority lane — the viewer's OWN identities (primeSelfHsCosmetics). Drained
 // before hsPaintPending and exempt from HS_PAINT_PENDING_MAX: plain FIFO left
@@ -298,6 +307,13 @@ function ensureHsPaintSheet() {
       // text-shadow:none above also drops the scene rim (black smears on
       // white). Same trigger set as the flatten rule.
       '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
+      // A composited `fill` paints in `<i>` boxes ABOVE the name's own
+      // background (see lib/fill-layers.js), so the white flatten rule above
+      // never showed — the fill kept moving over it, cut to the letterform.
+      // Hide the boxes and drop the mask so the name flattens like every
+      // other paint (mirrors the site's buildPaintHoverFreezeRule).
+      '[class*="hsp-"]:hover .hs-name i,[class*="hsp-"].hsp-hover .hs-name i{display:none !important;}' +
+      '[class*="hsp-"]:hover .hs-name,[class*="hsp-"]:hover .hs-name span,[class*="hsp-"].hsp-hover .hs-name,[class*="hsp-"].hsp-hover .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -422,6 +438,20 @@ function ensureHsPaintRule(spec, hash) {
   document.head.appendChild(typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(node) : node)
   hsPaintRuleNodes.set(hash, node)
   hsPaintInjectedHashes.add(hash)
+  // Whether this paint got a composited fill is a property of what the
+  // compiler actually emitted — asking the spec again would be a second
+  // opinion that could drift from the CSS just injected. Read once, per hash.
+  // Guarded like MAX_ANIMATED_LAYERS below: these are bundle-scope free
+  // variables (readMultichatModules embeds lib/fill-layers.js + glyph-mask.js
+  // ahead of this file), absent from a standalone-module test that hasn't
+  // stubbed them — the honest degradation there is no composited plan, same
+  // as today's behaviour, not a ReferenceError.
+  const plan =
+    (typeof compositedFillPlan === 'function' && compositedFillPlan(spec)) ||
+    (typeof compiledCssHasCompositedFill === 'function' && compiledCssHasCompositedFill(css)
+      ? HS_LEGACY_FILL_PLAN
+      : null)
+  if (plan) hsCompositedPaintClasses.set(`hsp-${hash}`, plan)
 }
 
 /** Drop the rule for `hash` — but only once no cached uid still wants it.
@@ -435,6 +465,7 @@ function dropHsPaintRule(hash) {
   if (node?.parentNode) node.parentNode.removeChild(node)
   hsPaintRuleNodes.delete(hash)
   hsPaintInjectedHashes.delete(hash)
+  hsCompositedPaintClasses.delete(`hsp-${hash}`)
 }
 
 /** Evict the oldest paint cache entry AND the CSS it was the last user of.
@@ -459,6 +490,7 @@ function clearHsPaintSheet() {
   }
   hsPaintRuleNodes.clear()
   hsPaintInjectedHashes.clear()
+  hsCompositedPaintClasses.clear()
 }
 
 // Toggle-on recovery: rebuild the sheet from every cached spec. clearHsPaintSheet
@@ -503,10 +535,16 @@ function setHsPaintEntry(userId, spec) {
     hsPaintCache.set(userId, { spec: null, hash: null })
     return
   }
-  const hash = hashPaintSpec(spec)
-  ensureHsPaintRule(spec, hash)
+  // A saved paint renders as its fill upgrade (renderSpecOf) wherever the
+  // composited runtime can actually mount it — moving on the compositor
+  // instead of in steps() — but only there: without the runtime an upgraded
+  // fill is its own still rest frame, and the legacy clip-text at least moves.
+  // Mirrors the site's setPaintEntry (client/chat/paint-cosmetics.js).
+  const shown = canCompositeHsFills() && typeof renderSpecOf === 'function' ? renderSpecOf(spec) : spec
+  const hash = hashPaintSpec(shown)
+  ensureHsPaintRule(shown, hash)
   if (!hsPaintCache.has(userId)) evictOldestHsPaintEntry()
-  hsPaintCache.set(userId, { spec, hash })
+  hsPaintCache.set(userId, { spec: shown, hash })
 }
 
 /**
@@ -734,6 +772,10 @@ function applyHsPaintToElement(el, userId) {
     if (mode === 'none') delete el.dataset.hsPaintSplit
     else el.dataset.hsPaintSplit = '1'
   }
+  // The fill moves off the repaint path only if every glyph has a letterform
+  // to be masked by. Asked after shaping, because it reads the spans (or box)
+  // that just got (re)built.
+  if (hsCompositedPaintClasses.has(cls)) applyHsGlyphMasks(el, hsCompositedPaintClasses.get(cls))
   // Mount stamp for phase-locking — restore the preserved value, or stamp a
   // fresh one for an element that never had one (in-place resolve, hover-
   // freeze repaint, restored history; a synchronous render-path element
@@ -748,6 +790,144 @@ function applyHsPaintToElement(el, userId) {
   // Freshly painted, so gate it now instead of waiting for the next scroll.
   scheduleHsPaintSweep(true)
 }
+
+// ── the composited fill's runtime half ──────────────────────────────────────
+//
+// Mirrors client/chat/paint-cosmetics.js's own composited-fill section. The
+// compiler (lib/paint-spec.js) emits the masked rules behind MASKED_CLASS;
+// this is what decides a name has earned it — mounting the letterform masks
+// (lib/glyph-mask.js) and the moving fill boxes (lib/fill-layers.js) onto the
+// name it was compiled for. Everything here is best-effort by design: a
+// browser without mask-image, a webfont still loading, a glyph the masker
+// refuses — any of them just leaves the gate class off, and the name renders
+// exactly as it did before this existed (its clip-text rest frame).
+
+setLoggerOnGlyphMask()
+function setLoggerOnGlyphMask() {
+  // Injected, not imported — glyph-mask.js is a leaf synced verbatim from the
+  // site (scripts/sync-paint-compiler.sh) and takes its logger only through
+  // setLogger. `log` is the multichat-wide logger (bootstrap.js), a bare
+  // function rather than an object, hence the tiny adapter. Guarded: a
+  // standalone import of this module in a test has neither binding.
+  if (typeof setLogger === 'function' && typeof log === 'function') {
+    setLogger({ debug: (...args) => log(...args) })
+  }
+}
+
+/** hypot() sizes a spinning layer's square; an engine without it would drop
+ * the width, and a zero-size box under the mask is a name with no fill at
+ * all. Asked once. */
+let hsFillLayersSupported = null
+function canMountHsFillLayers() {
+  if (hsFillLayersSupported === null) {
+    hsFillLayersSupported =
+      typeof CSS !== 'undefined' &&
+      typeof CSS.supports === 'function' &&
+      CSS.supports('width', 'calc(hypot(1px, 1px) * 2)')
+  }
+  return hsFillLayersSupported
+}
+
+/** Whether a `fill`'s motion can render here at all — mask-image support and
+ * the geometry the boxes are sized with. Exported so setHsPaintEntry can
+ * decide whether a saved paint's fill-upgrade (renderSpecOf) is worth taking:
+ * without the runtime, an upgraded fill is its own still rest frame, and the
+ * legacy clip-text at least moves. */
+function canCompositeHsFills() {
+  return typeof supported === 'function' && supported() && canMountHsFillLayers()
+}
+
+/** The span box every painted name shares, measured once. A per-row
+ * getComputedStyle on the firehose is the cost this whole change exists to
+ * avoid paying, so it is read on the first masked name and reused. Dropped
+ * whenever the masks are (webfont landing, mode change). */
+let hsGlyphBox = null
+
+function readHsGlyphBox(el) {
+  if (typeof getComputedStyle !== 'function') return null
+  const cs = getComputedStyle(el)
+  // `font` is the shorthand the canvas wants, but it comes back empty in some
+  // engines — rebuild it from the longhands rather than rasterise with a
+  // default face, which would mask every glyph with the wrong letterform.
+  const font = cs.font || `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize}/${cs.lineHeight} ${cs.fontFamily}`.trim()
+  const h = parseFloat(cs.height) || parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5
+  if (!font || !(h > 0)) return null
+  // The EXACT ratio, capped — a resampled letterform is a soft one, and a 4x
+  // phone rasterising four times the pixels buys nothing visible at 13px.
+  const dpr = Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
+  return { font, h, dpr }
+}
+
+/** The composited plan for whatever `hsp-` class `el` wears, or undefined. */
+function hsPlanFor(el) {
+  if (!el?.classList) return undefined
+  for (const c of el.classList) {
+    if (c.startsWith('hsp-')) return hsCompositedPaintClasses.get(c)
+  }
+  return undefined
+}
+
+/** Mount the composited fill on one painted name, if its paint has one and
+ * everything it needs is here. Best-effort: any refusal leaves the clip-text
+ * rest frame, never a half-masked name. */
+function applyHsGlyphMasks(el, plan) {
+  if (!plan || typeof supported !== 'function' || !supported()) return
+  // The legacy per-glyph sweep and the `fill` block are two different
+  // populations (see HS_LEGACY_FILL_PLAN) — only the latter needs the full
+  // canCompositeHsFills gate (mask-image AND the layer-sizing geometry).
+  if (plan.legacy ? false : !canCompositeHsFills()) return
+  const box = el?.querySelector?.(`.${NAME_BOX_CLASS}`)
+  if (!box || box.classList.contains(MASKED_CLASS)) return
+  const probe = box.querySelector?.(':scope > span') || box
+  if (!hsGlyphBox) hsGlyphBox = readHsGlyphBox(probe)
+  if (!hsGlyphBox) return
+  const geom = hsGlyphBox
+  // A CLASS, not an inline url() — the bytes live once in the mask sheet
+  // (lib/glyph-mask.js); a copy per span would move the cost into style
+  // recalc instead of removing the repaint this exists to remove.
+  mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })
+}
+
+/** Test seam — the real call sites (discoverHsPaintedNames, applyHsPaintToElement)
+ * only ever reach this through an already-cached hsp- class, which a test has
+ * no easy way to fabricate; this lets a test drive the mount directly against
+ * a plan it built with compositedFillPlan. */
+function _applyHsGlyphMasksForTests(el, plan) {
+  applyHsGlyphMasks(el, plan)
+}
+
+/** Drop every mounted fill's boxes + mask gate, without rebuilding them.
+ * A composited fill only costs anything while it is actually compositing, so
+ * keeping the mask/layers mounted while data-hs-paint-anim="never" freezes
+ * every animation is pure overhead for zero visual gain — the paint still
+ * reads correctly off its clip-text rest frame underneath. Cheap to reverse:
+ * hsCompositedPaintClasses (what each hsp- class is entitled to) never
+ * changes with the mode, so remountAllHsFillLayers rebuilds from it exactly. */
+function unmountAllHsFillLayers() {
+  for (const box of [...document.querySelectorAll(`.${NAME_BOX_CLASS}.${MASKED_CLASS}`)]) {
+    unmountFillLayers(box, MASKED_CLASS)
+  }
+}
+
+/** Unmount + remount every currently-masked fill, against whatever plan its
+ * host still carries. Used when webfonts land — every mask was drawn against
+ * the wrong face — and when paint-anim flips back to 'always' after
+ * unmountAllHsFillLayers dropped them. */
+function remountAllHsFillLayers() {
+  hsGlyphBox = null
+  const boxes = new Set()
+  for (const el of document.querySelectorAll(`.${NAME_BOX_CLASS}.${MASKED_CLASS}`)) boxes.add(el)
+  for (const box of boxes) {
+    unmountFillLayers(box, MASKED_CLASS)
+    const host = box.parentElement
+    const plan = host && hsPlanFor(host)
+    if (plan) applyHsGlyphMasks(host, plan)
+  }
+}
+
+// Webfonts landed: every mask was drawn with the wrong face. Guarded exactly
+// like setLoggerOnGlyphMask above — a standalone import has neither binding.
+if (typeof setOnReady === 'function') setOnReady(remountAllHsFillLayers)
 
 // ── the crowd dial ──────────────────────────────────────────────────────────
 //
@@ -1070,6 +1250,12 @@ function discoverHsPaintedNames(io) {
   for (const el of document.querySelectorAll('[class*="hsp-"]')) {
     if (hsObservedNames.has(el)) continue
     hsObservedNames.add(el)
+    // A renderer that had the paint cached baked the class straight into its
+    // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
+    // first sight here is the only place such a row can be given its
+    // composited fill.
+    const plan = hsPlanFor(el)
+    if (plan) applyHsGlyphMasks(el, plan)
     io.observe(el)
   }
 }
@@ -1107,12 +1293,14 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 }
 
 export {
+  _applyHsGlyphMasksForTests,
   _hsAnimatingWeightForTests,
   _hsCrowdThresholdsForTests,
   _hsVisiblePaintedForTests,
   _resetHsCrowdDialForTests,
   applyHsCrowdDial,
   applyHsPaintToElement,
+  canCompositeHsFills,
   clearHsPaintFromElement,
   clearHsPaintSheet,
   evictOldestPaintEntry,
@@ -1132,9 +1320,11 @@ export {
   queuePaintLookup,
   queuePlusTenureLookup,
   reinjectHsPaintSheet,
+  remountAllHsFillLayers,
   scheduleHsPaintSweep,
   setHsColorEntry,
   setHsPaintEntry,
   setHsPlusEntry,
   sweepHsPaintedNames,
+  unmountAllHsFillLayers,
 }

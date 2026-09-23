@@ -51,8 +51,8 @@
  *  which has its own logger, and a leaf module that reaches for the app's
  *  services is one the extension cannot take as-is. Silent until the owner
  *  hands one in (paint-cosmetics does, at import). */
-let log = { debug() { } }
-export function setLogger(l) { if (l && typeof l.debug === 'function') log = l }
+let maskLog = { debug() { } }
+export function setLogger(l) { if (l && typeof l.debug === 'function') maskLog = l }
 
 /** Built masks, keyed by `dpr|box|font|char`. Insertion-ordered, so the first
  *  key is the least recently used — the Map is the LRU. */
@@ -173,7 +173,7 @@ function publish(src, prefix) {
 function unpublish(cls) {
     const i = ruleOrder.indexOf(cls)
     if (i < 0) return
-    try { sheet?.sheet?.deleteRule(i) } catch (err) { log.debug('[glyph-mask] deleteRule failed', err) }
+    try { sheet?.sheet?.deleteRule(i) } catch (err) { maskLog.debug('[glyph-mask] deleteRule failed', err) }
     ruleOrder.splice(i, 1)
     if (typeof document.getElementsByClassName !== 'function') return
     // Live collection — copy before mutating the class it is keyed on.
@@ -259,7 +259,7 @@ export function maskFor(ch, font, boxH, dpr) {
         remember(cache, CACHE_MAX, k, built)
         return built
     } catch (err) {
-        log.debug('[glyph-mask] build failed', err)
+        maskLog.debug('[glyph-mask] build failed', err)
         refused.add(k)
         return null
     }
@@ -336,7 +336,7 @@ export function maskForText(text, font, boxH, dpr) {
         remember(textCache, TEXT_CACHE_MAX, k, built)
         return built
     } catch (err) {
-        log.debug('[glyph-mask] text build failed', err)
+        maskLog.debug('[glyph-mask] text build failed', err)
         refused.add(`T${k}`)
         return null
     }
@@ -355,7 +355,7 @@ export function _resetForTests() {
     ruleOrder.length = 0
     onReady = null
     fontsHooked = false
-    log = { debug() { } }
+    maskLog = { debug() { } }
     ctx = null
     sheet?.remove?.()
     sheet = null

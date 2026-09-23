@@ -1843,9 +1843,8 @@ const FILL_SPIN_PERIOD = 6
 const FILL_HUE_PERIOD = 8
 const FILL_BREATHE_PERIOD = 2.4
 
-/** Class on each fill box (index appended) and on the modulation wrapper.
- *  Must match cosmetics/fill-layers.js — not imported, that module is a leaf
- *  the extension syncs verbatim. A test holds the two together. */
+/** Class on each fill box (index appended), and on the masked container that
+ *  holds them — the one definition; cosmetics/fill-layers.js imports these. */
 export const FILL_LAYER_CLASS = 'hs-fl'
 export const FILL_WRAP_CLASS = 'hs-fw'
 

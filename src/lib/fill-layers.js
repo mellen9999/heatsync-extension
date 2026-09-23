@@ -7,8 +7,8 @@
  * geometry the rules read, and appends the empty `<i>` boxes the gradient
  * actually moves in.
  *
- * Dependency-free on purpose — the masker and the class names are handed in —
- * so the extension can take this file verbatim.
+ * The masker is handed in and the only import is the compiler this pairs with,
+ * so the extension (which syncs both) can take this file verbatim.
  *
  * ── WHY REAL ELEMENTS, APPENDED HERE ─────────────────────────────────────────
  *
@@ -31,16 +31,11 @@
  * @module cosmetics/fill-layers
  */
 
-/** Class every mounted fill box wears, and its per-box index suffix. */
-export const FILL_LAYER_CLASS = 'hs-fl'
-/** The box that holds the layer boxes and carries the letterform mask — and,
- *  when the fill is modulated (hue / breathe), the filter or opacity too.
- *
- *  The mask lives HERE, not on the name, because everything a name draws
- *  OUTSIDE its letterform lives on the name: a glow's text-shadow, a scene's
- *  rim drop-shadow, neon's breathing halo. A mask on the name box cuts all of
- *  them away; a mask on a child cuts only the fill it holds. */
-export const FILL_WRAP_CLASS = 'hs-fw'
+// The class names are the compiler's — the rules it emits select exactly these,
+// so there is one definition of each, there. (The extension also concatenates
+// its synced files into one scope, where a second `const` of the same name is
+// a redeclaration.)
+import { FILL_LAYER_CLASS, FILL_WRAP_CLASS } from '../utils/paint-spec.js'
 
 function box(doc, cls) {
   const i = doc.createElement('i')

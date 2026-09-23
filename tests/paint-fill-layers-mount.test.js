@@ -13,12 +13,14 @@
  * to rasterise a fake letterform and hand back a class + advance.
  */
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { FILL_LAYER_CLASS, FILL_WRAP_CLASS, mountFillLayers, unmountFillLayers } from '../src/lib/fill-layers.js'
+import { mountFillLayers, unmountFillLayers } from '../src/lib/fill-layers.js'
 import { maskFor, maskForText, _resetForTests as resetGlyphMaskCache, supported } from '../src/lib/glyph-mask.js'
 import {
   compiledCssHasCompositedFill,
   compilePaintCss,
   compositedFillPlan,
+  FILL_LAYER_CLASS,
+  FILL_WRAP_CLASS,
   hashPaintSpec,
   MASKED_CLASS,
   NAME_BOX_CLASS,

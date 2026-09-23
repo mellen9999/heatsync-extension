@@ -572,34 +572,77 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 // Chrome too, which (verified live) wrongly stripped avif on Chrome. The UA is
 // the reliable discriminator: only Firefox's userAgent contains "Firefox".
 const HS_IS_FF = typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox')
+
+/** The emote url at one rung of its provider's ladder. `want` is a multiple of
+ *  the emote's LOGICAL 1x size, not a pixel count — providers disagree about
+ *  how many pixels 1x is (twitch 28, 7TV 32) and that disagreement is what
+ *  "native size" means. 4 is the largest rung, not literally 4x: twitch's
+ *  `3.0` is 112px = 4x its 28px base, and BTTV stops at `3x`. */
+function hsRungUrl(url, want) {
+  if (want === 1) {
+    // True native: downgrade Twitch native (IRC fetches at /2.0) and 3rd-party CDNs to 1x.
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[23]\.0/, '/1.0')
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[234]x/, '/1x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[23]x/, '/1x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[24](?=\.|$)/, '/1')
+  } else if (want === 2) {
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[134]x/, '/2x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[13]x/, '/2x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[14](?=\.|$)/, '/2')
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[13]\.0/, '/2.0')
+  } else if (want === 4) {
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[123]x/, '/4x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[12]x/, '/3x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[12](?=\.|$)/, '/4')
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[12]\.0/, '/3.0')
+  }
+  return url
+}
+
+/**
+ * WHICH RUNG A SCREEN ACTUALLY NEEDS.
+ *
+ * ⛔ The setting was the only input. Measured on the live extension in Chrome
+ * 2026-09-23, twitch.tv/xqc: 247 `img.hs-mc-emote`, **0 with a srcset**, every
+ * src the 1x rung. On a DPR-2 laptop or a phone that is a 32px file drawn into
+ * a 32px box and upscaled — the same defect the site carried until fc066d6bb.
+ *
+ * ⭐ It costs no layout to fix, because the emote box is CSS: `height: auto`
+ * with `max-height: var(--hs-emote-size)` (styles/10-emotes.css), and
+ * max-height only ever SHRINKS. A 64px file in a 32px box renders 32px tall
+ * with its aspect kept — so asking for a denser rung changes the pixels and
+ * nothing else.
+ *
+ * ⚠ A `srcset` would be the web-standard answer and is the WRONG one HERE:
+ * `hsSwapRowEmotesForIdle` parks offscreen animated emotes by assigning
+ * `img.src`, and a srcset candidate outranks src — the offscreen animation
+ * gate would silently stop working and every parked row would keep its
+ * decoder running. One url keeps that gate honest.
+ */
+function hsWantedRung() {
+  const dpr = typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1
+  // emoteSize is 1|2|4 and dpr doubles it; 8 does not exist, so 4 is the cap.
+  // At size 4 on a retina screen the top rung is already all there is — an
+  // honest limit, not a rounding error.
+  return Math.min(4, emoteSize * dpr)
+}
+
 let _resCacheSize = 1
 const _resCache = new Map()
 function getChatResUrl(url) {
   if (!url) return url
-  if (_resCacheSize !== emoteSize) {
+  const want = hsWantedRung()
+  // Keyed on the EFFECTIVE rung, not on emoteSize: dragging the window to a
+  // monitor with a different pixel ratio changes the answer without the
+  // setting moving, and a cache keyed on the setting would keep serving the
+  // old screen's file.
+  if (_resCacheSize !== want) {
     _resCache.clear()
-    _resCacheSize = emoteSize
+    _resCacheSize = want
   }
   const hit = _resCache.get(url)
   if (hit !== undefined) return hit
-  let out = url
-  if (emoteSize === 1) {
-    // True native: downgrade Twitch native (IRC fetches at /2.0) and 3rd-party CDNs to 1x.
-    if (url.includes('static-cdn.jtvnw.net')) out = url.replace(/\/[23]\.0/, '/1.0')
-    else if (url.includes('cdn.7tv.app')) out = url.replace(/\/[234]x/, '/1x')
-    else if (url.includes('cdn.betterttv.net')) out = url.replace(/\/[23]x/, '/1x')
-    else if (url.includes('cdn.frankerfacez.com')) out = url.replace(/\/[24](?=\.|$)/, '/1')
-  } else if (emoteSize === 2) {
-    if (url.includes('cdn.7tv.app')) out = url.replace('/1x', '/2x')
-    else if (url.includes('cdn.betterttv.net')) out = url.replace('/1x', '/2x')
-    else if (url.includes('cdn.frankerfacez.com')) out = url.replace(/\/1(?=\.|$)/, '/2')
-    else if (url.includes('static-cdn.jtvnw.net')) out = url.replace('/1.0', '/2.0')
-  } else if (emoteSize === 4) {
-    if (url.includes('cdn.7tv.app')) out = url.replace('/1x', '/4x').replace('/2x', '/4x')
-    else if (url.includes('cdn.betterttv.net')) out = url.replace('/1x', '/3x').replace('/2x', '/3x')
-    else if (url.includes('cdn.frankerfacez.com')) out = url.replace(/\/[12](?=\.|$)/, '/4')
-    else if (url.includes('static-cdn.jtvnw.net')) out = url.replace(/\/[12]\.0/, '/3.0')
-  }
+  let out = hsRungUrl(url, want)
   // Firefox: 7TV avif → webp (animated avif freezes on FF; see HS_IS_FF above).
   // Applied after the size rewrite so it isn't clobbered.
   if (HS_IS_FF && out.includes('cdn.7tv.app')) out = out.replace(/\.avif(\?|$)/i, '.webp$1')
@@ -1016,7 +1059,12 @@ function emoteImgHtml([name, emote]) {
   const cwAttr = flagCat ? ` data-cw="${escapeHtml(flagCat)}"` : ''
   const wrapCls = (isBlocked ? 'hs-mc-picker-emote-wrap blocked' : 'hs-mc-picker-emote-wrap') + nsfwTag
   const safeName = escapeHtml(name)
-  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(emote.url)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}" data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
+  // The picker grid is a FIXED 32px box (.hs-mc-picker-emote, max-height:32px)
+  // — it does not move with the emote-size setting, so it asks for the rung the
+  // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
+  // only shrinks, so a denser file changes the pixels and not the layout.
+  const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
+  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}" data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
 }
 
 /**

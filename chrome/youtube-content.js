@@ -1400,7 +1400,45 @@
       { capture: true, signal },
     )
 
+    input.addEventListener('paste', handleMediaPaste, { signal })
+    input.addEventListener('drop', handleMediaDrop, { signal })
+
     log('autocomplete ready')
+  }
+
+  // ── Media paste/drop → upload, insert absolute url as text ──────────────────
+  // The upload (filter, size caps, background relay, toast) is shared with
+  // kick/twitch via window.HS.uploadMediaFiles (shared-utils.js) — that file
+  // loads alongside this one on every youtube live_chat page. Only the
+  // insertion below is platform-specific.
+  async function handleMediaFiles(fileList) {
+    const urls = await window.HS.uploadMediaFiles(fileList)
+    if (!urls.length) return
+    handleInsertEmote(urls.join(' '))
+  }
+
+  function handleMediaPaste(e) {
+    const items = e.clipboardData?.items
+    if (!items) return
+    const files = []
+    for (const item of items) {
+      if (item.kind === 'file' && (item.type.startsWith('image/') || item.type.startsWith('video/'))) {
+        const file = item.getAsFile()
+        if (file) files.push(file)
+      }
+    }
+    if (files.length) {
+      e.preventDefault()
+      handleMediaFiles(files)
+    }
+  }
+
+  function handleMediaDrop(e) {
+    const files = e.dataTransfer?.files
+    if (files?.length) {
+      e.preventDefault()
+      handleMediaFiles(files)
+    }
   }
 
   function getWordAtCaret(el) {

@@ -753,6 +753,45 @@
     }
   }
 
+  // ── Media paste/drop → upload, insert absolute url as text ──────────────────
+  // The upload (filter, size caps, background relay, toast) is shared with
+  // kick/youtube/twitch via window.HS.uploadMediaFiles (shared-utils.js) —
+  // that file loads alongside this one on every kick.com page. Only the
+  // insertion below is platform-specific.
+  async function handleMediaFiles(fileList) {
+    const input = document.querySelector('div.editor-input')
+    if (!input) return
+    const urls = await window.HS.uploadMediaFiles(fileList)
+    if (!urls.length) return
+    input.focus()
+    document.execCommand('insertText', false, `${urls.join(' ')} `)
+    log('inserted media', urls.length, 'file(s)')
+  }
+
+  function handleMediaPaste(e) {
+    const items = e.clipboardData?.items
+    if (!items) return
+    const files = []
+    for (const item of items) {
+      if (item.kind === 'file' && (item.type.startsWith('image/') || item.type.startsWith('video/'))) {
+        const file = item.getAsFile()
+        if (file) files.push(file)
+      }
+    }
+    if (files.length) {
+      e.preventDefault()
+      handleMediaFiles(files)
+    }
+  }
+
+  function handleMediaDrop(e) {
+    const files = e.dataTransfer?.files
+    if (files?.length) {
+      e.preventDefault()
+      handleMediaFiles(files)
+    }
+  }
+
   function findAndHook() {
     const input = document.querySelector('div.editor-input')
     if (!input) return false
@@ -769,6 +808,8 @@
       },
       { signal: sig },
     )
+    input.addEventListener('paste', handleMediaPaste, { signal: sig })
+    input.addEventListener('drop', handleMediaDrop, { signal: sig })
 
     // Trigger initial emote fetch for the current channel
     refreshEmotes(getCurrentChannel())

@@ -1461,6 +1461,62 @@
     'auth-message-handler',
   )
 
+  // Native Twitch chat: paste/drop image/video → upload → insert as text.
+  //
+  // Lives here (isolated world), not in autocomplete-hook.js (MAIN world),
+  // on purpose: MAIN-world code runs in the page's own JS context, which any
+  // twitch.tv page script (ads, third-party embeds) shares. If the upload
+  // itself were triggered from there, any such script could window.postMessage
+  // straight into it and spend the user's own auth token uploading arbitrary
+  // bytes — no DOM interaction needed at all. Doing the upload here, gated on
+  // a real paste/drop event's clipboardData/dataTransfer, keeps the privileged
+  // action (spending the auth token) out of reach of a bare postMessage.
+  // Insertion still has to cross to MAIN world (Slate lives there) — that
+  // bridge only carries text, the same class of thing heatsync-insert-emote
+  // already exposes to any page script today.
+  function isTwitchChatInput(target) {
+    return !!(target?.closest?.('[data-slate-editor="true"]') || target?.closest?.('[data-a-target="chat-input"]'))
+  }
+  if (window.location.hostname.includes('twitch.tv')) {
+    cleanup.addEventListener(
+      document,
+      'paste',
+      async (e) => {
+        if (!isTwitchChatInput(e.target)) return
+        const items = e.clipboardData?.items
+        if (!items) return
+        const files = []
+        for (const item of items) {
+          if (item.kind === 'file' && (item.type.startsWith('image/') || item.type.startsWith('video/'))) {
+            const file = item.getAsFile()
+            if (file) files.push(file)
+          }
+        }
+        if (!files.length) return
+        e.preventDefault()
+        const urls = await window.HS.uploadMediaFiles(files)
+        if (urls.length) window.postMessage({ type: 'heatsync-insert-text', text: urls.join(' ') }, location.origin)
+      },
+      // Capture on purpose — must beat Slate's own bubble-phase paste handling.
+      { capture: true },
+      'twitch-media-paste',
+    )
+    cleanup.addEventListener(
+      document,
+      'drop',
+      async (e) => {
+        if (!isTwitchChatInput(e.target)) return
+        const files = e.dataTransfer?.files
+        if (!files?.length) return
+        e.preventDefault()
+        const urls = await window.HS.uploadMediaFiles(Array.from(files))
+        if (urls.length) window.postMessage({ type: 'heatsync-insert-text', text: urls.join(' ') }, location.origin)
+      },
+      { capture: true },
+      'twitch-media-drop',
+    )
+  }
+
   // Inject CSS for emote hover effects (full emote background like website)
   const style = document.createElement('style')
   style.id = 'heatsync-emote-styles'

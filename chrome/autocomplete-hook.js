@@ -3045,6 +3045,38 @@
 
   function injectEmojiInputStyle() {}
 
+  // ── Media url insertion (upload happens in content.js, isolated world) ──────
+  // The upload itself does NOT happen here: this file runs in the MAIN world,
+  // which shares its JS context with every other script on the page (ads,
+  // third-party embeds). If a privileged action like "spend the user's auth
+  // token uploading a file" were triggerable from here, any such script could
+  // reach it with a bare window.postMessage — no DOM interaction needed.
+  // content.js (isolated world) does the actual paste/drop listening and
+  // upload, gated on a real clipboard/drag event, then hands the resulting
+  // url here to insert — the same class of thing heatsync-insert-emote
+  // already exposes to any page script (text into the user's own draft).
+  window.addEventListener(
+    'message',
+    (e) => {
+      if (e.source !== window || e.origin !== location.origin) return
+      if (e.data?.type !== 'heatsync-insert-text' || typeof e.data.text !== 'string') return
+      const text = e.data.text
+      if (text.length < 1 || text.length > 2000) return
+      const inst = chatInputInstance || findChatInput()
+      const slateEditor = inst?.chatInputRef?.state?.slateEditor
+      if (!slateEditor) return
+      try {
+        slateEditor.select(slateEditor.end([]))
+        slateEditor.insertText(`${text} `)
+        slateEditor.select(slateEditor.end([]))
+        getInputElement()?.focus()
+      } catch (err) {
+        log(' ❌ text insert failed:', err.message)
+      }
+    },
+    { signal: acSignal },
+  )
+
   // Main init
   let clickHandlerInstalled = false
   function init() {

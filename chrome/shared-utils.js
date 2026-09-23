@@ -204,6 +204,62 @@ const browser = globalThis.browser || chrome
     return resp.data
   }
 
+  // ── Media upload ───────────────────────────────────────────────────
+  // Shared by every native chat surface that accepts a pasted/dropped
+  // image/video (kick, youtube, and twitch via content.js) so the size caps,
+  // file filter, and upload path can't drift between them. Caps mirror
+  // multichat's MC_UPLOAD_MAX_IMG/VID (src/multichat/input.js) — kept as
+  // literals since this file has no import path to that one.
+  const HS_UPLOAD_MAX_IMG = 5 * 1024 * 1024
+  const HS_UPLOAD_MAX_VID = 50 * 1024 * 1024
+  let _hsMediaUploading = false
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader()
+      fr.addEventListener('load', () => resolve(String(fr.result || '')))
+      fr.addEventListener('error', () => reject(new Error('could not read file')))
+      fr.readAsDataURL(file)
+    })
+  }
+
+  /**
+   * Filter fileList down to image/video, upload each sequentially through
+   * the background's api_upload (bypasses host-page CORS, carries the stored
+   * auth token), toast on any per-file failure, and return the urls that made
+   * it. A second call while one is already in flight is a no-op — sequential,
+   * not queued, since the caller is a single paste/drop.
+   * @returns {Promise<string[]>}
+   */
+  async function uploadMediaFiles(fileList) {
+    if (_hsMediaUploading) return []
+    const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/') || f.type.startsWith('video/'))
+    if (!files.length) return []
+    _hsMediaUploading = true
+    try {
+      const urls = []
+      for (const file of files) {
+        const isImage = file.type.startsWith('image/')
+        const max = isImage ? HS_UPLOAD_MAX_IMG : HS_UPLOAD_MAX_VID
+        if (file.size > max) {
+          showToast(`file too large (max ${max / 1048576}MB)`, 'error')
+          continue
+        }
+        try {
+          const dataUrl = await readFileAsDataUrl(file)
+          const resp = await safeSend({ type: 'api_upload', name: file.name || 'paste', mime: file.type, dataUrl })
+          if (resp?.ok && resp.url) urls.push(resp.url)
+          else showToast(resp?.error || 'upload failed', 'error')
+        } catch (err) {
+          showToast(err.message || 'upload failed', 'error')
+        }
+      }
+      return urls
+    } finally {
+      _hsMediaUploading = false
+    }
+  }
+
   // ── MAIN-world nonce ──────────────────────────────────────────────
   // Generates a random per-session nonce and sends it to early-inject-main.js
   // (MAIN world) so that subsequent GQL/Helix/Apollo messages can be verified.
@@ -239,6 +295,7 @@ const browser = globalThis.browser || chrome
     safeSend,
     apiFetch,
     showToast,
+    uploadMediaFiles,
     initMainWorldNonce,
     getMainWorldNonce,
   }

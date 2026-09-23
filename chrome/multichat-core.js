@@ -8502,6 +8502,36 @@ const PAN_MIN_SCALE = 150
 const PAN_MAX_SCALE = 340
 const PAN_DEFAULT_SCALE = 300
 
+// ── fill (additive v1/v2 block — see plan Part B, phase P1) ────────────────
+// A `fill` is 1-4 composable gradient layers, bottom to top, sharing one
+// angle (each layer's own direction = angle + layer.tilt). Additive on top
+// of v1/v2 rather than a new `v: 3` — an old extension install gates scene
+// rendering on `spec.v === 2` exactly, so a paint that only ADDS a key an old
+// compiler has never heard of still renders its legacy shadow correctly
+// (see legacyShadowOf) instead of being refused outright by a version bump.
+//
+// Two renders. The clip-text REST FRAME (buildFillBaseCss) is what every
+// surface without the runtime gets — SSR, static mode, an old extension, the
+// frames before a mask lands. The motion (flow/spin, hue, breathe) is
+// composited, behind the runtime's mask: see "the composited fill (P2)" and
+// client/cosmetics/fill-layers.js.
+const MIN_FILL_LAYERS = 1
+const MAX_FILL_LAYERS = 4
+const MIN_FILL_STOPS = 1
+const MAX_FILL_STOPS = 8
+// A repeating layer's tile is either a fraction of the NAME's own box (the
+// same knob `pan.scale` already exposed, renamed and rescaled to a plain
+// multiplier — 1.5-3.4 covers everything the deleted themed presets used) or
+// an absolute pixel band (what `base.type: repeating-linear`'s `tileWidth`
+// already was). Two units because the two motions that consume them measure
+// differently: a `flow` sweeping the user's own gradient wants "how many
+// name-widths is one loop", a hard-banded barber-pole wants "how many
+// pixels is one stripe" regardless of how long the name is.
+const MIN_FILL_TILE_NAME = 0.1
+const MAX_FILL_TILE_NAME = 10
+const MIN_FILL_TILE_PX = 1
+const MAX_FILL_TILE_PX = 200
+
 // ── plus tier caps (single source — server save gate + builder UI) ────────
 // Free = a single solid color (base.type 'solid', no glow, ZERO effect
 // layers); plus = gradients + glow + up to MAX_EFFECTS animated layers.
@@ -8563,6 +8593,101 @@ function paintContrast(stops, bg = PAINT_BG) {
     .filter(s => isPlainObject(s) && typeof s.color === 'string' && HEX_RE.test(s.color))
     .map(s => contrastRatio(s.color, bg))
   return ratios.length ? Math.min(...ratios) : null
+}
+
+// ── fill colour + contrast (alpha-aware) ────────────────────────────────────
+
+const HEX_A_RE = /^#[0-9a-fA-F]{8}$/
+
+/** True for a fill colour — #rrggbb (opaque) or #rrggbbaa (alpha). */
+function isFillColor(v) {
+  return typeof v === 'string' && (HEX_RE.test(v) || HEX_A_RE.test(v))
+}
+
+/** #rrggbb(aa) -> {r,g,b,a}, channels 0-255, alpha 0-1. Assumes a value
+ * already passed isFillColor — callers that can't guarantee that go through
+ * safeFillColor first (paint-spec's compiler-side "never trust the input"
+ * contract). */
+function parseFillColor(hex) {
+  const h = hex.slice(1)
+  return {
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16),
+    a: h.length === 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1,
+  }
+}
+
+/** src-over: `fg` (with alpha) painted onto an opaque `bg`. */
+function compositeOver(fg, bg) {
+  return {
+    r: fg.r * fg.a + bg.r * (1 - fg.a),
+    g: fg.g * fg.a + bg.g * (1 - fg.a),
+    b: fg.b * fg.a + bg.b * (1 - fg.a),
+  }
+}
+
+function rgbToHex({ r, g, b }) {
+  const h = (n) => Math.round(Math.max(0, Math.min(255, n))).toString(16).padStart(2, '0')
+  return `#${h(r)}${h(g)}${h(b)}`
+}
+
+/** A single layer's colour at `pos` (0-100), linearly interpolating between
+ * its bracketing stops (colour AND alpha) — flat before the first stop and
+ * after the last, same as the gradient itself paints. Stops need not be
+ * pre-sorted. */
+function layerColorAt(stops, pos) {
+  const sorted = [...stops]
+    .filter(s => isPlainObject(s) && isFillColor(s?.color) && isNumInRange(s?.pos, 0, 100))
+    .sort((a, b) => a.pos - b.pos)
+  if (!sorted.length) return { r: 0, g: 0, b: 0, a: 0 }
+  if (pos <= sorted[0].pos) return parseFillColor(sorted[0].color)
+  const last = sorted[sorted.length - 1]
+  if (pos >= last.pos) return parseFillColor(last.color)
+  for (let i = 1; i < sorted.length; i++) {
+    if (pos > sorted[i].pos) continue
+    const a = sorted[i - 1], b = sorted[i]
+    const t = b.pos === a.pos ? 0 : (pos - a.pos) / (b.pos - a.pos)
+    const ca = parseFillColor(a.color), cb = parseFillColor(b.color)
+    return { r: ca.r + (cb.r - ca.r) * t, g: ca.g + (cb.g - ca.g) * t, b: ca.b + (cb.b - ca.b) * t, a: ca.a + (cb.a - ca.a) * t }
+  }
+  return parseFillColor(last.color)
+}
+
+/**
+ * Worst-case (dimmest) contrast of a flattened fill layer stack against
+ * `bg`, alpha-composited bottom to top — NOT scored per stop, because a stop
+ * is only ever seen through the layers on top of it. A shine layer whose own
+ * stops go transparent -> white -> transparent must not fail the floor at
+ * its transparent ends: composited there, it's simply whatever the base
+ * layer already painted (which the base's own stops already had to clear).
+ *
+ * Sampled at every stop position across the stack (plus 0/100), which is
+ * exactly where the composite can change — linear interpolation between
+ * samples can't introduce a new local extreme a stop position didn't already
+ * bracket. Returns null if there is nothing valid to score.
+ */
+function fillContrast(layers, bg = PAINT_BG) {
+  if (!Array.isArray(layers) || !layers.length) return null
+  const bgRgb = parseFillColor(bg)
+  const positions = new Set([0, 100])
+  for (const layer of layers) {
+    if (!isPlainObject(layer) || !Array.isArray(layer.stops)) continue
+    for (const s of layer.stops) {
+      if (isPlainObject(s) && isNumInRange(s?.pos, 0, 100)) positions.add(Math.round(s.pos * 10) / 10)
+    }
+  }
+  let worst = null
+  for (const pos of positions) {
+    let composite = { r: bgRgb.r, g: bgRgb.g, b: bgRgb.b }
+    for (const layer of layers) {
+      if (!isPlainObject(layer) || !Array.isArray(layer.stops) || !layer.stops.length) continue
+      composite = compositeOver(layerColorAt(layer.stops, pos), composite)
+    }
+    const ratio = contrastRatio(rgbToHex(composite), bg)
+    if (worst === null || ratio < worst) worst = ratio
+  }
+  return worst
 }
 
 /**
@@ -8723,7 +8848,207 @@ function normalizeForHash(spec) {
       : [],
     glow: spec?.glow ? { color: spec.glow.color, strength: spec.glow.strength } : null,
     scene: normalizeSceneForHash(spec?.scene),
+    fill: normalizeFillForHash(spec?.fill),
   }
+}
+
+/** `fill`'s canonical shape for hashing — explicit, sorted keys, same
+ * contract as the rest of normalizeForHash: every field the compiler reads
+ * belongs here, and a spec with no `fill` hashes exactly as it did before
+ * this key existed (undefined fields are dropped by JSON.stringify). */
+function normalizeFillForHash(fill) {
+  if (!isPlainObject(fill)) return undefined
+  return {
+    angle: fill.angle,
+    layers: Array.isArray(fill.layers) ? fill.layers.map(l => ({
+      kind: l?.kind,
+      tilt: l?.tilt,
+      stops: Array.isArray(l?.stops) ? l.stops.map(s => ({ color: s?.color, pos: s?.pos, hint: s?.hint })) : [],
+      repeat: !!l?.repeat,
+      tile: l?.tile ? { unit: l.tile.unit, size: l.tile.size } : null,
+      shape: l?.shape,
+      center: l?.center ? { x: l.center.x, y: l.center.y } : null,
+      motion: l?.motion ? { type: l.motion.type, speed: l.motion.speed, reverse: !!l.motion.reverse, loop: l.motion.loop } : null,
+    })) : [],
+    hue: fill.hue ? { speed: fill.hue.speed } : null,
+    breathe: fill.breathe ? { speed: fill.breathe.speed, depth: fill.breathe.depth } : null,
+  }
+}
+
+// ── fill validation ──────────────────────────────────────────────────────
+
+const FILL_LAYER_KINDS = new Set(['linear', 'radial', 'conic'])
+const FILL_SHAPES = new Set(['circle', 'ellipse'])
+const FILL_TILE_UNITS = new Set(['name', 'px'])
+const FILL_MOTION_TYPES = new Set(['flow', 'spin'])
+const FILL_LOOPS = new Set(['wrap', 'bounce'])
+
+/** `v` is a multiple of `step` within [min, max] — fill's stepped ranges
+ * (0.5° angles/tilts, 0.1% positions) are numbers, not integers, so
+ * isIntInRange doesn't fit and a plain range check would accept any
+ * fractional value the builder's dial never offers. */
+function isStepInRange(v, min, max, step) {
+  if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max) return false
+  const n = Math.round((v - min) / step)
+  return Math.abs(min + n * step - v) < 1e-9
+}
+
+function validateFillCenter(center, path, errors) {
+  if (!isPlainObject(center)) { errors.push(`${path}.center must be an object`); return }
+  const allowed = new Set(['x', 'y'])
+  for (const k of Object.keys(center)) if (!allowed.has(k)) errors.push(`${path}.center: unknown key "${k}"`)
+  if (!isStepInRange(center.x, 0, 100, 0.1)) errors.push(`${path}.center.x must be a number 0-100 (0.1 step)`)
+  if (!isStepInRange(center.y, 0, 100, 0.1)) errors.push(`${path}.center.y must be a number 0-100 (0.1 step)`)
+}
+
+function validateFillMotion(motion, path, errors) {
+  if (!isPlainObject(motion)) { errors.push(`${path}.motion must be null or an object`); return }
+  const allowed = new Set(['type', 'speed', 'reverse', 'loop'])
+  for (const k of Object.keys(motion)) if (!allowed.has(k)) errors.push(`${path}.motion: unknown key "${k}"`)
+  if (!FILL_MOTION_TYPES.has(motion.type)) errors.push(`${path}.motion.type must be "flow" or "spin"`)
+  if (!isNumInRange(motion.speed, MIN_SPEED, MAX_SPEED)) errors.push(`${path}.motion.speed must be a number ${MIN_SPEED}-${MAX_SPEED}`)
+  if (motion.reverse !== undefined && typeof motion.reverse !== 'boolean') errors.push(`${path}.motion.reverse must be a boolean`)
+  if (motion.loop !== undefined && !FILL_LOOPS.has(motion.loop)) errors.push(`${path}.motion.loop must be "wrap" or "bounce"`)
+}
+
+function validateFillStop(s, layerPath, j, errors) {
+  const path = `${layerPath}.stops[${j}]`
+  if (!isPlainObject(s)) { errors.push(`${path} must be an object`); return }
+  const allowed = new Set(['color', 'pos', 'hint'])
+  for (const k of Object.keys(s)) if (!allowed.has(k)) errors.push(`${path}: unknown key "${k}"`)
+  if (!isFillColor(s.color)) errors.push(`${path}.color must match #rrggbb or #rrggbbaa`)
+  if (!isStepInRange(s.pos, 0, 100, 0.1)) errors.push(`${path}.pos must be a number 0-100 (0.1 step)`)
+  // Duplicate positions are DELIBERATELY not checked here — a fill's own
+  // hard edge (two stops at the same pos) is the user's, see module note in
+  // the plan; repairStopCollisions/stopsWithWrap/repeatingBandsCss must
+  // never touch fill.
+  if (s.hint !== undefined && !isStepInRange(s.hint, 0, 100, 0.1)) errors.push(`${path}.hint must be a number 0-100 (0.1 step)`)
+}
+
+function validateFillLayer(layer, i, errors) {
+  const path = `fill.layers[${i}]`
+  if (!isPlainObject(layer)) { errors.push(`${path} must be an object`); return }
+  const allowed = new Set(['kind', 'tilt', 'stops', 'repeat', 'tile', 'shape', 'center', 'motion'])
+  for (const k of Object.keys(layer)) if (!allowed.has(k)) errors.push(`${path}: unknown key "${k}"`)
+  if (!FILL_LAYER_KINDS.has(layer.kind)) errors.push(`${path}.kind must be one of linear|radial|conic`)
+  if (layer.tilt !== undefined && !isStepInRange(layer.tilt, -180, 180, 0.5)) errors.push(`${path}.tilt must be a number -180..180 (0.5 step)`)
+
+  if (!Array.isArray(layer.stops) || layer.stops.length < MIN_FILL_STOPS || layer.stops.length > MAX_FILL_STOPS) {
+    errors.push(`${path}.stops must be an array of ${MIN_FILL_STOPS}-${MAX_FILL_STOPS} stops`)
+  } else {
+    layer.stops.forEach((s, j) => validateFillStop(s, path, j, errors))
+  }
+
+  if (layer.repeat !== undefined && typeof layer.repeat !== 'boolean') errors.push(`${path}.repeat must be a boolean`)
+  if (layer.repeat === true) {
+    if (!isPlainObject(layer.tile)) {
+      errors.push(`${path}.tile is required when repeat is true`)
+    } else {
+      const allowedTile = new Set(['unit', 'size'])
+      for (const k of Object.keys(layer.tile)) if (!allowedTile.has(k)) errors.push(`${path}.tile: unknown key "${k}"`)
+      if (!FILL_TILE_UNITS.has(layer.tile.unit)) {
+        errors.push(`${path}.tile.unit must be "name" or "px"`)
+      } else if (layer.tile.unit === 'name') {
+        if (!isNumInRange(layer.tile.size, MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME)) errors.push(`${path}.tile.size must be a number ${MIN_FILL_TILE_NAME}-${MAX_FILL_TILE_NAME} for unit "name"`)
+      } else if (!isNumInRange(layer.tile.size, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX)) {
+        errors.push(`${path}.tile.size must be a number ${MIN_FILL_TILE_PX}-${MAX_FILL_TILE_PX} for unit "px"`)
+      }
+    }
+  } else if (layer.tile !== undefined) {
+    errors.push(`${path}.tile is only valid when repeat is true`)
+  }
+
+  if (layer.kind === 'radial') {
+    if (layer.shape !== undefined && !FILL_SHAPES.has(layer.shape)) errors.push(`${path}.shape must be "circle" or "ellipse"`)
+  } else if (layer.shape !== undefined) {
+    errors.push(`${path}.shape is only valid for radial layers`)
+  }
+
+  if (layer.kind === 'radial' || layer.kind === 'conic') {
+    if (layer.center !== undefined) validateFillCenter(layer.center, path, errors)
+  } else if (layer.center !== undefined) {
+    errors.push(`${path}.center is only valid for radial/conic layers`)
+  }
+
+  if (layer.motion !== null && layer.motion !== undefined) validateFillMotion(layer.motion, path, errors)
+}
+
+function validateFillModulator(mod, path, errors, hasDepth) {
+  if (mod === null || mod === undefined) return
+  if (!isPlainObject(mod)) { errors.push(`${path} must be null or an object`); return }
+  const allowed = hasDepth ? new Set(['speed', 'depth']) : new Set(['speed'])
+  for (const k of Object.keys(mod)) if (!allowed.has(k)) errors.push(`${path}: unknown key "${k}"`)
+  if (!isNumInRange(mod.speed, MIN_SPEED, MAX_SPEED)) errors.push(`${path}.speed must be a number ${MIN_SPEED}-${MAX_SPEED}`)
+  if (hasDepth && !isNumInRange(mod.depth, 0.1, 0.9)) errors.push(`${path}.depth must be a number 0.1-0.9`)
+}
+
+/**
+ * Validate a `fill` block on its own — strict (unknown keys rejected at
+ * every level), bounds per the plan's spec, no silent repair of stop
+ * collisions (a fill's hard edges are user-placed). Contrast is scored on
+ * the FLATTENED, alpha-composited layer stack (fillContrast), not per stop.
+ * @returns {{ ok: boolean, errors: string[] }}
+ */
+function validateFill(fill) {
+  const errors = []
+  if (!isPlainObject(fill)) return { ok: false, errors: ['fill must be an object'] }
+
+  const allowedTop = new Set(['angle', 'layers', 'hue', 'breathe'])
+  for (const k of Object.keys(fill)) if (!allowedTop.has(k)) errors.push(`fill: unknown key "${k}"`)
+  if (!isStepInRange(fill.angle, 0, 360, 0.5)) errors.push('fill.angle must be a number 0-360 (0.5 step)')
+
+  let layersOk = false
+  if (!Array.isArray(fill.layers) || fill.layers.length < MIN_FILL_LAYERS || fill.layers.length > MAX_FILL_LAYERS) {
+    errors.push(`fill.layers must be an array of ${MIN_FILL_LAYERS}-${MAX_FILL_LAYERS} layers`)
+  } else {
+    const before = errors.length
+    fill.layers.forEach((layer, i) => validateFillLayer(layer, i, errors))
+    layersOk = errors.length === before
+  }
+
+  validateFillModulator(fill.hue, 'fill.hue', errors, false)
+  validateFillModulator(fill.breathe, 'fill.breathe', errors, true)
+
+  // Legibility floor — only once the layers are structurally sound, so a
+  // malformed fill reports its real problem instead of also being called
+  // unreadable off garbage stops.
+  if (layersOk) {
+    const weakest = fillContrast(fill.layers)
+    if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
+      errors.push(
+        `fill contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest composited point is unreadable at name size`
+      )
+    }
+  }
+
+  return { ok: errors.length === 0, errors }
+}
+
+/** Canonical key for a fill layer's `motion` — two layers with identical
+ * motion share one live animation, so they cost the budget below ONE slot
+ * together rather than one each. */
+function motionGroupKey(m) {
+  if (!isPlainObject(m)) return null
+  return `${m.type}|${m.speed}|${!!m.reverse}|${m.loop || ''}`
+}
+
+/**
+ * Effect-budget cost of a fill block: one per DISTINCT motion group across
+ * its layers, plus one each for `hue`/`breathe` — mirrors how a v1/v2 paint-
+ * slot effect always cost exactly one animation. A free-tier fill (maxEffects
+ * 0) therefore has to leave every layer's `motion` null and both modulators
+ * null: static fill only, same free/plus line `base` already drew.
+ */
+function fillEffectCount(fill) {
+  if (!isPlainObject(fill)) return 0
+  const groups = new Set()
+  if (Array.isArray(fill.layers)) {
+    for (const layer of fill.layers) {
+      const key = isPlainObject(layer) ? motionGroupKey(layer.motion) : null
+      if (key) groups.add(key)
+    }
+  }
+  return groups.size + (isPlainObject(fill.hue) ? 1 : 0) + (isPlainObject(fill.breathe) ? 1 : 0)
 }
 
 // ── validation ───────────────────────────────────────────────────────────
@@ -8809,7 +9134,11 @@ function validatePaintSpec(spec, opts = {}) {
       // part of the name that disappears. Only runs once the stops are
       // structurally sound, so a malformed spec reports its real problem
       // instead of also being called unreadable.
-      const weakest = paintContrast(stops)
+      // Skipped under a fill: there `base` is the derived legacy shadow, and
+      // the floor that matters is the fill's own, scored on its composited
+      // stack (validateFill) — a dark stop beneath an opaque upper layer is
+      // legible there and would be refused here for a picture nobody sees.
+      const weakest = isPlainObject(spec.fill) ? null : paintContrast(stops)
       if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
         errors.push(
           `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`
@@ -8818,13 +9147,23 @@ function validatePaintSpec(spec, opts = {}) {
     }
   }
 
-  // ── effects ──
+  // ── effects (fill's own motion/hue/breathe joins this SAME budget — see
+  // fillEffectCount — since fill is the paint-slot effects' replacement, not
+  // a second allowance alongside them) ──
+  const hasFill = isPlainObject(spec.fill)
+  const fillCount = hasFill ? fillEffectCount(spec.fill) : 0
+  // With a fill, the paint-slot effect in `effects` is its legacy SHADOW (see
+  // withLegacyShadow) — the compiler never runs it here, only an old extension
+  // does. So it spends no budget and clashes with nothing: the fill's own
+  // motion/hue/breathe already paid for what it stands in for.
+  const isShadow = e => hasFill && isPlainObject(e) && EFFECTS[e.id]?.slot === 'paint'
+  const liveEffectCount = Array.isArray(spec.effects) ? spec.effects.filter(e => !isShadow(e)).length : 0
   if (!Array.isArray(spec.effects)) {
     errors.push('effects must be an array')
-  } else if (spec.effects.length > maxEffects) {
+  } else if (liveEffectCount + fillCount > maxEffects) {
     errors.push(maxEffects === 0
       ? 'effects require plus — free paints are static (0 effect layers)'
-      : `effects must have at most ${maxEffects} ${maxEffects === 1 ? 'entry' : 'entries'}`)
+      : `effects must have at most ${maxEffects} ${maxEffects === 1 ? 'entry' : 'entries'}${fillCount ? ' (incl. fill motion/hue/breathe)' : ''}`)
   } else {
     const seenIds = new Set()
     let paintCount = 0
@@ -8870,7 +9209,7 @@ function validatePaintSpec(spec, opts = {}) {
       const meta = EFFECTS[e.id]
       if (meta.slot === 'paint') paintCount++
       else motionCount++
-      const clash = effectConflict(e.id, spec.effects.slice(0, i))
+      const clash = isShadow(e) ? null : effectConflict(e.id, spec.effects.slice(0, i).filter(o => !isShadow(o)))
       if (clash && !clash.startsWith('at most')) {
         errors.push(`effects: ${clash} — pick effects with different motion targets`)
       }
@@ -8880,6 +9219,12 @@ function validatePaintSpec(spec, opts = {}) {
       if (paintCount > 1) errors.push('at most 1 paint-slot effect allowed (paint effects are mutually exclusive)')
       if (motionCount > 2) errors.push('at most 2 motion-slot effects allowed')
     }
+  }
+
+  // ── fill (additive v1/v2 block) ──
+  if (spec.fill !== null && spec.fill !== undefined) {
+    const fillResult = validateFill(spec.fill)
+    errors.push(...fillResult.errors)
   }
 
   // ── glow ──
@@ -8921,7 +9266,7 @@ function paintNeedsSpans(spec) {
   if (spec.v === 2 && isPlainObject(spec.scene)) {
     const hasPaintEffect = Array.isArray(spec.effects) &&
       spec.effects.some(e => EFFECTS[e?.id]?.slot === 'paint')
-    return hasPaintEffect || spec.base?.type !== 'solid'
+    return hasPaintEffect || !!spec.fill || spec.base?.type !== 'solid'
   }
   return false
 }
@@ -9170,6 +9515,334 @@ function stopsWithWrap(stops) {
   return [...scaled, { color: stops[0].color, pos: 100 }]
 }
 
+/** stopsWithWrap, but never past fill's MAX_STOPS — a base at exactly 8
+ * stops (the structural ceiling both share) would otherwise wrap to 9 and
+ * upgradeSpec would hand back a fill that can never validate. Vanishingly
+ * rare (every catalog look upgraded today lands well under it) and the
+ * fallback is just the un-wrapped stops: a visible seam at the loop point
+ * instead of a spec nothing can save again. */
+function wrapStopsCapped(stops) {
+  const wrapped = stopsWithWrap(stops)
+  return wrapped.length <= MAX_STOPS ? wrapped : stops
+}
+
+/**
+ * `base.type: 'repeating-linear'`'s point stops, expanded into fill's
+ * explicit duplicate-pos hard-edge pairs — the exact bands repeatingBandsCss
+ * draws, reproduced as ordinary stops instead of a compile-time px trick.
+ * Each point stop becomes {pos: start, color} + {pos: end, color}; the last
+ * band always runs to 100%, same as the base compiler's own rule.
+ *
+ * Capped at MAX_STOPS: a base with more than 4 point stops would double past
+ * fill's ceiling. Not reachable by anything in the catalog today (the widest
+ * banded look, matrix, uses 3), so this is a documented edge rather than a
+ * tested one.
+ */
+function bandExpandStops(stops, tileWidth) {
+  const sorted = [...stops]
+    .filter(s => isPlainObject(s) && typeof s.color === 'string')
+    .sort((a, b) => a.pos - b.pos)
+  const out = []
+  sorted.forEach((s, i) => {
+    const endPos = i + 1 < sorted.length ? sorted[i + 1].pos : 100
+    out.push({ color: s.color, pos: s.pos })
+    out.push({ color: s.color, pos: endPos })
+  })
+  return out.length <= MAX_STOPS ? out : out.slice(0, MAX_STOPS)
+}
+
+function clampNum(v, min, max, fallback) {
+  const n = Number(v)
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback
+}
+
+/** A base's OWN gradient, as a single non-repeating fill layer — the shared
+ * "just carry the colours across" case hue/pulse/glint/stardust all need,
+ * since none of them touch what base painted, only how (hue rotates it,
+ * pulse breathes it, glint/stardust add a layer on top of it). `solid` and
+ * `linear` both become a plain linear layer (a 1-stop layer paints flat,
+ * same as solid's own `color:` declaration does today). */
+function baseAsFillLayer(base) {
+  const rawStops = Array.isArray(base?.stops) ? base.stops.map(s => ({ color: s.color, pos: s.pos })) : [{ color: '#e4e4e4', pos: 0 }]
+  if (base?.type === 'repeating-linear') {
+    return {
+      kind: 'linear', tilt: 0, stops: bandExpandStops(rawStops, base.tileWidth),
+      repeat: true, tile: { unit: 'px', size: clampNum(base.tileWidth, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX, DEFAULT_TILE_WIDTH) },
+      motion: null,
+    }
+  }
+  if (base?.type === 'conic') {
+    return { kind: 'conic', tilt: 0, stops: rawStops, motion: null }
+  }
+  return { kind: 'linear', tilt: 0, stops: rawStops, motion: null }
+}
+
+function upgradePan(base, effect) {
+  const loop = effect.loop === 'bounce' ? 'bounce' : 'wrap'
+  const scale = isIntInRange(effect.scale, PAN_MIN_SCALE, PAN_MAX_SCALE) ? effect.scale : PAN_DEFAULT_SCALE
+  const rawStops = Array.isArray(base?.stops) ? base.stops.map(s => ({ color: s.color, pos: s.pos })) : []
+
+  if (base?.type === 'repeating-linear') {
+    // matrix/holo/lava's shape: a hard-banded repeat sweeping — one layer,
+    // px tile (the band width IS the loop period), flow motion.
+    return {
+      layers: [{
+        kind: 'linear', tilt: 0, stops: bandExpandStops(rawStops, base.tileWidth),
+        repeat: true, tile: { unit: 'px', size: clampNum(base.tileWidth, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX, DEFAULT_TILE_WIDTH) },
+        motion: { type: 'flow', speed: safeSpeed(effect.speed), reverse: false, loop },
+      }],
+      hue: null, breathe: null,
+    }
+  }
+
+  // chrome/gold/fire(no-skew)/rainbow/ice's shape: a plain gradient sweeping
+  // its own length — one layer, name tile (a multiple of the box, same as
+  // `pan.scale` already meant), flow motion. `wrap` needs the identical seam
+  // duplicate stopsWithWrap produced; `bounce` returns to its start and
+  // never needed one.
+  const sorted = sortedStops({ stops: rawStops })
+  const stops = loop === 'wrap' ? wrapStopsCapped(sorted) : sorted
+  return {
+    layers: [{
+      kind: 'linear', tilt: 0, stops,
+      repeat: true, tile: { unit: 'name', size: clampNum(scale / 100, MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME, 3) },
+      motion: { type: 'flow', speed: safeSpeed(effect.speed), reverse: false, loop },
+    }],
+    hue: null, breathe: null,
+  }
+}
+
+function upgradeConic(base, effect) {
+  const sorted = sortedStops({ stops: Array.isArray(base?.stops) ? base.stops : [] })
+  return {
+    layers: [{
+      kind: 'conic', tilt: 0, stops: wrapStopsCapped(sorted),
+      motion: { type: 'spin', speed: safeSpeed(effect.speed), reverse: false, loop: 'wrap' },
+    }],
+    hue: null, breathe: null,
+  }
+}
+
+function upgradeHue(base, effect) {
+  return { layers: [baseAsFillLayer(base)], hue: { speed: safeSpeed(effect.speed) }, breathe: null }
+}
+
+function upgradePulse(base, effect) {
+  // The dip deepened .45 -> .12 (paint-core's opacity floor for legibility,
+  // see buildPaintPhaseCss's own note); fill's `depth` is the NEW model's
+  // knob for the same idea and the plan pins its value here directly rather
+  // than re-deriving one number's meaning from another's.
+  return { layers: [baseAsFillLayer(base)], hue: null, breathe: { speed: safeSpeed(effect.speed), depth: 0.88 } }
+}
+
+function upgradeGlint(base, effect) {
+  const angle = isIntInRange(base?.angle, 0, 360) ? base.angle : 0
+  return {
+    layers: [
+      baseAsFillLayer(base),
+      {
+        // glint always swept at a fixed 115deg regardless of the user's own
+        // gradient angle — tilt compensates so angle+tilt lands on 115 again.
+        kind: 'linear', tilt: clampNum(115 - angle, -180, 180, 0),
+        stops: [{ color: '#ffffff00', pos: 38 }, { color: '#ffffffcc', pos: 50 }, { color: '#ffffff00', pos: 62 }],
+        repeat: true, tile: { unit: 'name', size: 2.5 },
+        motion: { type: 'flow', speed: safeSpeed(effect.speed), reverse: false, loop: 'wrap' },
+      },
+    ],
+    hue: null, breathe: null,
+  }
+}
+
+function upgradeStripes(base, effect) {
+  const angle = isIntInRange(base?.angle, 0, 360) ? base.angle : 0
+  const sorted = sortedStops({ stops: Array.isArray(base?.stops) ? base.stops : [] })
+  const colors = sorted.length > 1 ? sorted.map(s => s.color) : [sorted[0]?.color || '#e4e4e4', '#ffffff']
+  const stops = []
+  colors.forEach((c, i) => {
+    stops.push({ color: c, pos: Math.round((i / colors.length) * 1000) / 10 })
+    stops.push({ color: c, pos: Math.round(((i + 1) / colors.length) * 1000) / 10 })
+  })
+  return {
+    layers: [{
+      // stripes always banded at a fixed 45deg regardless of the user's own
+      // gradient angle — same compensation glint's tilt does.
+      kind: 'linear', tilt: clampNum(45 - angle, -180, 180, 0), stops,
+      repeat: true, tile: { unit: 'px', size: clampNum(colors.length * 5, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX, 10) },
+      motion: { type: 'flow', speed: safeSpeed(effect.speed), reverse: false, loop: 'wrap' },
+    }],
+    hue: null, breathe: null,
+  }
+}
+
+/** Approximate — see the plan's own call-out. The original is a base fill
+ * plus two independently-drifting dot fields; reproduced as the base layer
+ * plus two small repeating radial dots at different tile sizes, each its
+ * own flow. Close in spirit, not pixel-identical, which is the documented
+ * gap (stardust/reveal upgrade is approximate — golden-screenshot territory
+ * for a later phase, not this one). */
+function upgradeStardust(base, effect) {
+  const dot = (color, px) => ({
+    kind: 'radial', tilt: 0, shape: 'circle', center: { x: 50, y: 50 },
+    stops: [{ color, pos: 0 }, { color: '#00000000', pos: 100 }],
+    repeat: true, tile: { unit: 'px', size: px },
+    motion: { type: 'flow', speed: safeSpeed(effect.speed), reverse: false, loop: 'wrap' },
+  })
+  return { layers: [baseAsFillLayer(base), dot('#ffffffaa', 13), dot('#ffffff', 9)], hue: null, breathe: null }
+}
+
+const CONVERTIBLE_FILL_EFFECTS = new Set(['pan', 'conic', 'hue', 'pulse', 'glint', 'stripes', 'stardust'])
+
+/**
+ * Pure v1/v2 -> fill upgrade. A spec with no convertible paint-slot effect
+ * comes back UNCHANGED (same reference) — that covers both "nothing to
+ * convert" (no paint effect, or one already static) and the two documented
+ * gaps: `reveal` (no fill equivalent yet) and a skewed `pan` (fire's wobble —
+ * "leave the pan effect's skew handling", see the plan). Motion-slot/letter
+ * effects, glow and scene are never touched; only the ONE paint-slot effect
+ * (at most one can exist in a valid spec) moves into the new `fill` block.
+ * @param {object} spec
+ * @returns {object} the same spec, or a new one carrying `fill` instead of
+ *   its paint-slot effect.
+ */
+function upgradeSpec(spec) {
+  if (!isPlainObject(spec)) return spec
+  const base = isPlainObject(spec.base) ? spec.base : null
+  const effects = Array.isArray(spec.effects) ? spec.effects : []
+  const paintEffect = base ? effects.find(e => isPlainObject(e) && EFFECTS[e.id]?.slot === 'paint') : null
+  if (!paintEffect || !CONVERTIBLE_FILL_EFFECTS.has(paintEffect.id)) return spec
+  if (paintEffect.id === 'pan' && paintEffect.skew) return spec
+
+  const built =
+    paintEffect.id === 'pan' ? upgradePan(base, paintEffect) :
+    paintEffect.id === 'conic' ? upgradeConic(base, paintEffect) :
+    paintEffect.id === 'hue' ? upgradeHue(base, paintEffect) :
+    paintEffect.id === 'pulse' ? upgradePulse(base, paintEffect) :
+    paintEffect.id === 'glint' ? upgradeGlint(base, paintEffect) :
+    paintEffect.id === 'stripes' ? upgradeStripes(base, paintEffect) :
+    upgradeStardust(base, paintEffect)
+
+  const angle = isIntInRange(base.angle, 0, 360) ? base.angle : 0
+  const fill = { angle, layers: built.layers, hue: built.hue, breathe: built.breathe }
+  return { ...spec, effects: effects.filter(e => e !== paintEffect), fill }
+}
+
+/**
+ * The spec a SAVED paint renders as: upgraded to a fill wherever the upgrade
+ * still looks like the paint its owner picked, so it moves on the compositor
+ * instead of in steps() — and left alone where it does not.
+ *
+ * Read-time, never written back: the stored spec is untouched, the upgrade is
+ * a pure function of it, and an old extension still reads the original.
+ *
+ * `stardust` stays on its own path. Its upgrade is two soft radial dot layers
+ * standing in for 0.7px sparkles, and side by side (paint-perf --upgradeshot)
+ * it washes the name out to near-white — not the paint anyone picked. `reveal`
+ * and a skewed `pan` have no fill form at all (upgradeSpec returns them as-is).
+ */
+function renderSpecOf(spec) {
+  if (!isPlainObject(spec) || isPlainObject(spec.fill)) return spec
+  const effects = Array.isArray(spec.effects) ? spec.effects : []
+  if (effects.some(e => e?.id === 'stardust')) return spec
+  return upgradeSpec(spec)
+}
+
+/** #rrggbbaa -> #rrggbb. Legacy stops (base/scene) never carry alpha. */
+function stripFillAlpha(hex) {
+  return typeof hex === 'string' && hex.length === 9 ? hex.slice(0, 7) : hex
+}
+
+/**
+ * A v1/v2-valid base+effects APPROXIMATION of a fill block, so an old
+ * extension build (which has never heard of `fill`) still renders something
+ * sane instead of nothing: first layer's stops -> base linear/conic, its
+ * motion -> pan/conic, hue/breathe -> hue/pulse. Only ever ONE paint-slot
+ * effect (a valid spec allows at most one), so when a fill has a motion AND
+ * a modulator, the motion wins — a moving shadow beats a modulated static
+ * one for "still recognisably this paint".
+ *
+ * Legacy stops are plain #rrggbb (alpha stripped) and MAY NOT collide on
+ * position (unlike fill's own, deliberately unchecked, hard edges) —
+ * repaired here, for the shadow only, exactly like an already-saved
+ * colliding spec is repaired at compile time elsewhere.
+ * @param {object} fill
+ * @returns {{ base: object, effects: object[], glow: null }}
+ */
+function legacyShadowOf(fill) {
+  const fallback = { base: { type: 'solid', angle: 0, stops: [{ color: '#e4e4e4', pos: 0 }] }, effects: [], glow: null }
+  if (!isPlainObject(fill) || !Array.isArray(fill.layers) || !fill.layers.length) return fallback
+
+  const first = fill.layers.find(isPlainObject) || null
+  if (!first) return fallback
+
+  const angle = safeAngle(Number(fill.angle) + Number(first.tilt || 0))
+  const rawStops = Array.isArray(first.stops) ? first.stops.slice(0, MAX_STOPS) : []
+  const repaired = repairStopCollisions(
+    rawStops
+      .filter(s => isPlainObject(s) && isFillColor(s?.color) && isNumInRange(s?.pos, 0, 100))
+      .map(s => ({ color: stripFillAlpha(s.color), pos: Math.round(s.pos) }))
+  )
+  const legacyStops = repaired.length ? repaired : [{ color: '#e4e4e4', pos: 0 }]
+
+  const kind = first.kind === 'conic' ? 'conic' : 'linear'
+  const base = { type: kind, angle, stops: legacyStops }
+
+  const effects = []
+  if (isPlainObject(first.motion)) {
+    effects.push(first.motion.type === 'spin'
+      ? { id: 'conic', speed: safeSpeed(first.motion.speed) }
+      : { id: 'pan', speed: safeSpeed(first.motion.speed), loop: first.motion.loop === 'bounce' ? 'bounce' : 'wrap' })
+  } else if (isPlainObject(fill.hue)) {
+    effects.push({ id: 'hue', speed: safeSpeed(fill.hue.speed) })
+  } else if (isPlainObject(fill.breathe)) {
+    effects.push({ id: 'pulse', speed: safeSpeed(fill.breathe.speed) })
+  }
+
+  return { base, effects, glow: null }
+}
+
+/**
+ * A fill spec with its legacy `base` + paint-slot effect derived from the fill
+ * (legacyShadowOf) — what gets STORED, so an old extension that has never heard
+ * of `fill` still paints something recognisable. Motion-slot effects are the
+ * user's and pass through untouched; any paint-slot effect already present is
+ * replaced, never kept — it would be a stale shadow of a fill since edited.
+ * Shared by the builder (what it validates and sends) and the save route
+ * (which re-derives, so a client can never store a shadow that lies).
+ * A spec with no fill comes back as-is.
+ */
+function withLegacyShadow(spec) {
+  if (!isPlainObject(spec) || !isPlainObject(spec.fill)) return spec
+  const shadow = legacyShadowOf(spec.fill)
+  const effects = (Array.isArray(spec.effects) ? spec.effects : []).filter(e => !(isPlainObject(e) && EFFECTS[e.id]?.slot === 'paint'))
+  return { ...spec, base: shadow.base, effects: [...effects, ...shadow.effects] }
+}
+
+/**
+ * The spec the builder EDITS: always a fill. A saved fill is itself; a legacy
+ * paint takes its upgradeSpec form; one with no fill form at all (a solid or
+ * static gradient, `reveal`, a wobbling `pan`) becomes its base as one layer.
+ * `dropped` names what saving will lose — `reveal` has no fill equivalent and
+ * a pan's wobble has no fill knob — so the builder can say so rather than
+ * quietly deleting it on the first save.
+ * @returns {{ spec: object, dropped: string|null }}
+ */
+function editableFillSpec(spec) {
+  if (!isPlainObject(spec) || isPlainObject(spec.fill)) return { spec, dropped: null }
+  const base = isPlainObject(spec.base) ? spec.base : { type: 'solid', angle: 0, stops: [{ color: '#e4e4e4', pos: 0 }] }
+  const effects = Array.isArray(spec.effects) ? spec.effects : []
+  const paint = effects.find(e => isPlainObject(e) && EFFECTS[e.id]?.slot === 'paint') || null
+  const angle = isIntInRange(base.angle, 0, 360) ? base.angle : 0
+  const rest = effects.filter(e => e !== paint)
+  if (paint?.id === 'pan' && paint.skew) {
+    const built = upgradePan(base, paint)
+    return { spec: { ...spec, effects: rest, fill: { angle, layers: built.layers, hue: null, breathe: null } }, dropped: 'wobble' }
+  }
+  const up = upgradeSpec(spec)
+  if (up !== spec && isPlainObject(up.fill)) return { spec: up, dropped: null }
+  const fill = { angle, layers: [baseAsFillLayer(base)], hue: null, breathe: null }
+  return { spec: { ...spec, effects: rest, fill }, dropped: paint ? paint.id : null }
+}
+
 /** duration in seconds for an effect at the given speed, with the WCAG
  * luminance floor applied when the effect changes luminance. */
 function effectDuration(effectId, speed) {
@@ -9277,6 +9950,579 @@ function buildBaseCss(base, stops) {
     isClipText: true,
     cssImage: image,
   }
+}
+
+// ── fill compiler: the clip-text rest frame ─────────────────────────────
+
+function safeFillAngle(angle) {
+  const n = Math.round(Number(angle) * 2) / 2
+  return Number.isFinite(n) ? ((n % 360) + 360) % 360 : 0
+}
+
+function safeFillTilt(tilt) {
+  const n = Math.round(Number(tilt) * 2) / 2
+  return Number.isFinite(n) ? Math.min(180, Math.max(-180, n)) : 0
+}
+
+function safeFillPos(pos) {
+  const n = Math.round(Number(pos) * 10) / 10
+  return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0
+}
+
+function safeFillColor(color) {
+  return isFillColor(color) ? color.toLowerCase() : '#e4e4e4'
+}
+
+/** A layer's stops, re-clamped and pos-sorted — same defense-in-depth
+ * contract as sortedStops for `base`. Duplicate positions are kept, never
+ * repaired: a fill's hard edge is the user's. */
+function sortedFillStops(stops) {
+  return (Array.isArray(stops) ? stops : [])
+    .filter(s => isPlainObject(s) && isFillColor(s?.color) && isNumInRange(s?.pos, 0, 100))
+    .map(s => ({
+      color: safeFillColor(s.color),
+      pos: safeFillPos(s.pos),
+      hint: s.hint !== undefined && isNumInRange(s.hint, 0, 100) ? safeFillPos(s.hint) : undefined,
+    }))
+    .sort((a, b) => a.pos - b.pos)
+}
+
+/**
+ * Where a stop pair's colour midpoint sits, as a position — or null when
+ * there is nothing to place.
+ *
+ * `hint` is RELATIVE to the gap it bends: 0-100 of the way from this stop to
+ * the next, 50 being the plain even blend. Absolute would let a hint land
+ * outside its own pair (a stop at 50 hinted "30" sat before itself), and it
+ * would silently stop meaning the same softness the moment either stop moved.
+ * A zero-width gap is a hard edge the user placed, and has no midpoint.
+ */
+function hintPos(s, next) {
+  if (s.hint === undefined || s.hint === 50 || !next) return null
+  const gap = next.pos - s.pos
+  return gap > 0 ? s.pos + gap * s.hint / 100 : null
+}
+
+/** `color pos%[, hint%]` list — the colour-hint form CSS gradients accept: a
+ * bare percentage between two colour stops is that stop-pair's interpolation
+ * midpoint. */
+function fillStopsCss(stops) {
+  const out = []
+  stops.forEach((s, i) => {
+    out.push(`${s.color} ${s.pos}%`)
+    const h = hintPos(s, stops[i + 1])
+    if (h !== null) out.push(`${Math.round(h * 100) / 100}%`)
+  })
+  return out.join(', ')
+}
+
+/**
+ * One tile of a REPEATING stop list, positions mapped by `at` (pos 0-100 ->
+ * a CSS length). A repeating gradient repeats from its first stop to its last,
+ * so a list that starts after 0 or ends before 100 would silently repeat at a
+ * shorter period than the tile the user set — and a band that repeats at the
+ * wrong period no longer lines up with one tile of travel, which is what keeps
+ * a flow seamless. So the ends are pinned: the first colour held back to 0, the
+ * last carried on to 100.
+ */
+function fillTileStopsCss(stops, at) {
+  const out = []
+  if (stops.length && stops[0].pos > 0) out.push(`${stops[0].color} ${at(0)}`)
+  stops.forEach((s, i) => {
+    out.push(`${s.color} ${at(s.pos)}`)
+    const h = hintPos(s, stops[i + 1])
+    if (h !== null) out.push(at(h))
+  })
+  const last = stops.at(-1)
+  if (last && last.pos < 100) out.push(`${last.color} ${at(100)}`)
+  return out.join(', ')
+}
+
+/** fillTileStopsCss into an absolute px tile — what a
+ * `repeating-linear-gradient` needs to hold a fixed-width band regardless of
+ * box size, same trick repeatingBandsCss uses for `base`. */
+function fillPxStopsCss(stops, tilePx) {
+  return fillTileStopsCss(stops, (pos) => `${Math.round(pos * tilePx / 100 * 100) / 100}px`)
+}
+
+/** fillTileStopsCss into a tile `n` gradient-lines long. A repeating
+ * gradient's percentages are of its own gradient line, so `n * pos%` IS a tile
+ * of n name-lengths laid along the angle — the same band the composited flow
+ * translates by exactly one of. */
+function fillNameStopsCss(stops, n) {
+  return fillTileStopsCss(stops, (pos) => `${Math.round(pos * n * 100) / 100}%`)
+}
+
+function fillCenter(layer) {
+  const c = isPlainObject(layer?.center) ? layer.center : null
+  return {
+    x: c && isNumInRange(c.x, 0, 100) ? safeFillPos(c.x) : 50,
+    y: c && isNumInRange(c.y, 0, 100) ? safeFillPos(c.y) : 50,
+  }
+}
+
+/**
+ * One fill layer's `background-image`/`background-size`/`background-position`
+ * pieces, at rest (motion is composited separately — see the module note). Every
+ * value is re-clamped here, same defense-in-depth contract as the rest of
+ * this compiler.
+ *
+ * Which tile unit actually renders as visible repetition, deliberately
+ * asymmetric:
+ *  - linear + px tile   -> a real `repeating-linear-gradient`, band width in
+ *    absolute pixels (matrix/holo/lava's shape).
+ *  - linear + name tile -> a `repeating-linear-gradient` whose tile is `size`
+ *    gradient-lines long. It used to be a plain gradient stretched by
+ *    `background-size` along whichever axis the angle mostly ran — which, at
+ *    any angle that is not a multiple of 90, tiles the BOX, not the band: the
+ *    seams run along the box edges, across the stripes. A flow can only be
+ *    seamless if one tile of travel lands the pattern on itself, and that is
+ *    only true of a pattern that repeats along the gradient line. Laid along
+ *    the line, the rest frame is also pixel-for-pixel what the composited
+ *    flow shows at phase 0 (see fillBoxCss).
+ *  - radial + px tile   -> a small dot painted once, then left to
+ *    `background-repeat`'s own default — stardust's old sparkle-field trick.
+ *  - conic repeat, radial name-tile -> accepted and stored (validated), not
+ *    yet expressed: an angular tile period has no rest-frame form, and a
+ *    radial layer has no axis a name-length tile could run along. Renders
+ *    as a plain (non-tiled) gradient, and flows by the box (fillBoxOf).
+ */
+function fillLayerCss(layer, globalAngle) {
+  const kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
+  const stops = sortedFillStops(layer?.stops)
+  const stopsCss = stops.length ? fillStopsCss(stops) : '#e4e4e4 0%, #e4e4e4 100%'
+  const direction = safeFillAngle(Number(globalAngle) + safeFillTilt(layer?.tilt))
+  const repeat = layer?.repeat === true
+  const tile = repeat && isPlainObject(layer?.tile) ? layer.tile : null
+  const unit = tile && FILL_TILE_UNITS.has(tile.unit) ? tile.unit : null
+  const tileBounds = unit === 'px' ? [MIN_FILL_TILE_PX, MAX_FILL_TILE_PX] : [MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME]
+  const size = unit && isNumInRange(tile.size, tileBounds[0], tileBounds[1]) ? tile.size : null
+
+  if (kind === 'conic') {
+    const { x, y } = fillCenter(layer)
+    return { image: `conic-gradient(from ${direction}deg at ${x}% ${y}%, ${stopsCss})`, size: null, position: null }
+  }
+
+  if (kind === 'radial') {
+    const shape = layer?.shape === 'circle' ? 'circle' : 'ellipse'
+    const { x, y } = fillCenter(layer)
+    if (unit === 'px' && size) {
+      const px = Math.max(1, Math.round(size))
+      return { image: `radial-gradient(${shape} at 50% 50%, ${stopsCss})`, size: `${px}px ${px}px`, position: `${x}% ${y}%` }
+    }
+    return { image: `radial-gradient(${shape} at ${x}% ${y}%, ${stopsCss})`, size: null, position: null }
+  }
+
+  // linear
+  if (!stops.length) return { image: `linear-gradient(${direction}deg, ${stopsCss})`, size: null, position: null }
+  if (unit === 'px' && size) {
+    const px = Math.max(1, Math.round(size))
+    return { image: `repeating-linear-gradient(${direction}deg, ${fillPxStopsCss(stops, px)})`, size: null, position: null }
+  }
+  if (unit === 'name' && size) {
+    return { image: `repeating-linear-gradient(${direction}deg, ${fillNameStopsCss(stops, size)})`, size: null, position: null }
+  }
+  return { image: `linear-gradient(${direction}deg, ${stopsCss})`, size: null, position: null }
+}
+
+/**
+ * Build the CSS for a `fill` block's rest frame — a static, multi-layer
+ * clip-text paint. Layers are stored bottom-to-top (the plan's own order,
+ * matching how a person stacks a shine over a base) and reversed here,
+ * since CSS's `background-image` comma list paints its FIRST entry on top.
+ * Returns { decl, isClipText: true } — the same shape buildBaseCss returns,
+ * so it drops into the exact spot `baseCss` already occupies.
+ */
+function buildFillBaseCss(fill) {
+  const angle = safeFillAngle(fill?.angle)
+  const layers = (Array.isArray(fill?.layers) ? fill.layers : [])
+    .filter(isPlainObject)
+    .slice(0, MAX_FILL_LAYERS)
+  if (!layers.length) return { decl: 'color:#e4e4e4;', isClipText: false }
+
+  const built = [...layers].reverse().map(l => fillLayerCss(l, angle))
+  const images = built.map(b => b.image).join(', ')
+  const sizes = built.map(b => b.size || 'auto').join(', ')
+  const positions = built.map(b => b.position || '0% 0%').join(', ')
+  return {
+    decl: `background-image:${images};background-size:${sizes};background-position:${positions};`
+      + `-webkit-background-clip:text;background-clip:text;color:transparent;`,
+    isClipText: true,
+  }
+}
+
+// ── the composited fill (P2) ─────────────────────────────────────────────
+//
+// A fill that MOVES used to be one of two things: a clip-text background whose
+// position animated in steps() — repainted every step, per element, and
+// quantised to FILL_STEPS_PER_SECOND plus whatever the crowd dial took off
+// that — or, on a letter-split name only, a per-glyph gradient sliding under a
+// mask, where every letter carried its own private copy of the sweep.
+//
+// Neither is the thing people wanted: one gradient across the whole name,
+// moving at the display's own rate. This is that.
+//
+//  - The NAME is the mask. The runtime rasterises the whole string once
+//    (glyph-mask.js maskForText) and sets it on the box; the fill moves in
+//    empty `<i>` boxes under it, on `transform` alone. A transform over a
+//    background rastered once is a compositor blit — no repaint, no style
+//    recalc, no steps(), and so nothing for the crowd dial to buy back.
+//  - A split name keeps its per-glyph masks (its letters move), but each
+//    glyph's boxes are offset by `--gx`, the glyph's position in the name, so
+//    the letters show slices of ONE gradient instead of one copy each.
+//  - Every motion reads the one angle. A linear flow at any angle is a strip
+//    rotated to that angle and translated by exactly one tile along it — one
+//    tile of travel lands the pattern on itself, so it is seamless for any
+//    angle and any stops, and its frame at rest is exactly the clip-text frame
+//    the compiler paints when there is no mask.
+//  - A spin is a square big enough to cover the name at every angle, turned
+//    on transform. This retires the conic `@property` driver for fill specs.
+//  - Layers with the same motion and geometry share a box; layers below every
+//    moving one stay on the name itself as clip-text, which is free.
+//  - hue / breathe animate `filter` / `opacity` on one wrapper box holding the
+//    rest — both composite, and neither has to touch the layers.
+//
+// Everything is behind MASKED_CLASS, which only the runtime sets, so SSR, the
+// static mode, an old extension, a browser without mask-image and the frames
+// before the mask lands all keep the clip-text rest frame.
+
+/** Seconds per tile of flow for a name-unit tile one name long, at speed 1.
+ *  A pan's sweep at its old default scale (3 names) covered 2 names in 5s;
+ *  holding that velocity, one 3-name tile takes 7.5s — 2.5s per name. */
+const FILL_FLOW_NAME_PERIOD = 2.5
+/** Seconds per tile of flow for a px tile at speed 1 — stripes' old roll. */
+const FILL_FLOW_PX_PERIOD = 2.4
+/** Seconds per turn of a spin at speed 1 — conic's old sweep. */
+const FILL_SPIN_PERIOD = 6
+/** hue / breathe at speed 1 — the effects they replace. Both change luminance,
+ *  so both keep the flashing floor through periodSeconds. */
+const FILL_HUE_PERIOD = 8
+const FILL_BREATHE_PERIOD = 2.4
+
+/** Class on each fill box (index appended), and on the masked container that
+ *  holds them — the one definition; cosmetics/fill-layers.js imports these. */
+const FILL_LAYER_CLASS = 'hs-fl'
+const FILL_WRAP_CLASS = 'hs-fw'
+
+/** 4dp, no float noise, no trailing zeros. */
+const fnum = (n) => String(Math.round(n * 1e4) / 1e4)
+
+const FW = 'var(--nw,0px)'
+const FH = 'var(--nh,0px)'
+const FGX = 'var(--gx,0px)'
+
+/** `(W*a + H*b)` with the zero and unit terms folded out — at the axis angles
+ *  most fills use, the projection is just one side of the box. */
+function projCalc(a, b) {
+  const term = (v, k) => (k === 0 ? null : k === 1 ? v : `${v} * ${fnum(k)}`)
+  const t = [term(FW, Math.round(a * 1e4) / 1e4), term(FH, Math.round(b * 1e4) / 1e4)].filter(Boolean)
+  return t.length ? `(${t.join(' + ')})` : '0px'
+}
+
+/** A layer's motion, re-clamped, or null. */
+function fillMotion(m) {
+  if (!isPlainObject(m) || !FILL_MOTION_TYPES.has(m.type)) return null
+  return { type: m.type, speed: safeSpeed(m.speed), reverse: m.reverse === true, loop: m.loop === 'bounce' ? 'bounce' : 'wrap' }
+}
+
+/** A layer's tile, re-clamped: `{unit:'name'|'px', size}` or null. */
+function fillTile(layer) {
+  if (layer?.repeat !== true || !isPlainObject(layer.tile)) return null
+  const unit = layer.tile.unit
+  if (unit === 'px' && isNumInRange(layer.tile.size, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX)) return { unit, size: Math.max(1, Math.round(layer.tile.size)) }
+  if (unit === 'name' && isNumInRange(layer.tile.size, MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME)) return { unit, size: layer.tile.size }
+  return null
+}
+
+/**
+ * The box a layer moves in, as a key two layers can share, plus the geometry
+ * that box needs. Two layers share a box only when one transform moves both
+ * correctly: the same motion, the same angle, the same tile — a strip rotated
+ * for one angle and translated by one tile of it is not a tile of anything
+ * else.
+ */
+function fillBoxOf(layer, angle) {
+  const kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
+  const motion = fillMotion(layer?.motion)
+  if (!motion) return { key: 'static', type: 'static', motion: null }
+  const mk = motionGroupKey(motion)
+  const theta = safeFillAngle(angle + safeFillTilt(layer?.tilt))
+  const tile = fillTile(layer)
+  if (motion.type === 'spin') {
+    const { x, y } = kind === 'linear' ? { x: 50, y: 50 } : fillCenter(layer)
+    return { key: `spin|${mk}|${x}|${y}`, type: 'spin', motion, cx: x, cy: y }
+  }
+  if (kind === 'linear') {
+    // Tile length along the gradient line: a px tile is itself; a name-unit
+    // tile is that many gradient lines; a layer that does not repeat is ONE
+    // gradient line, and its seam is the user's own (bounce never shows it).
+    const t = tile?.unit === 'px' ? { px: tile.size } : { n: tile?.unit === 'name' ? tile.size : 1 }
+    return { key: `flow|${mk}|lin|${theta}|${t.px ? `${t.px}px` : `${t.n}n`}`, type: 'flow', motion, theta, tile: t }
+  }
+  // A radial or conic layer has no direction of its own to rotate onto, and a
+  // rotated dot lattice is not the lattice at rest. It flows along whichever
+  // box axis the angle mostly runs, by one tile of its own pattern: a px tile's
+  // period, or the box itself.
+  const rad = theta * Math.PI / 180
+  const axisX = Math.abs(Math.sin(rad)) >= Math.abs(Math.cos(rad))
+  // Forward flow carries the colours back along the gradient's direction —
+  // the same sense as a linear layer at this angle.
+  const dir = axisX ? -Math.sign(Math.sin(rad)) : Math.sign(Math.cos(rad))
+  const px = kind === 'radial' && tile?.unit === 'px' ? tile.size : null
+  return { key: `flow|${mk}|ax|${axisX ? 'x' : 'y'}${dir}|${px || 'box'}`, type: 'axis', motion, axisX, dir: dir || -1, px }
+}
+
+/**
+ * The composited plan for a fill, or null when nothing in it moves.
+ * @returns {{angle:number, hostLayers:object[], boxes:object[], hue:object|null, breathe:object|null}|null}
+ */
+function planCompositedFill(fill) {
+  if (!isPlainObject(fill)) return null
+  const angle = safeFillAngle(fill.angle)
+  const layers = (Array.isArray(fill.layers) ? fill.layers : []).filter(isPlainObject).slice(0, MAX_FILL_LAYERS)
+  if (!layers.length) return null
+  const hue = isPlainObject(fill.hue) ? { speed: safeSpeed(fill.hue.speed) } : null
+  const breathe = isPlainObject(fill.breathe)
+    ? { speed: safeSpeed(fill.breathe.speed), depth: isNumInRange(fill.breathe.depth, 0.1, 0.9) ? fill.breathe.depth : 0.5 }
+    : null
+  const firstMoving = layers.findIndex(l => fillMotion(l.motion))
+  if (firstMoving < 0 && !hue && !breathe) return null
+  // A modulator has to reach EVERY layer, so under one nothing can stay on the
+  // name; otherwise the layers below the lowest mover are painted once, on the
+  // name itself, and cost nothing.
+  const split = hue || breathe ? 0 : firstMoving
+  const boxes = []
+  for (const layer of layers.slice(split)) {
+    const b = fillBoxOf(layer, angle)
+    const last = boxes.at(-1)
+    // Adjacent only: sharing a box across a layer that sits between them in
+    // the stack would paint that layer out of order.
+    if (last && last.key === b.key) last.layers.push(layer)
+    else boxes.push({ ...b, layers: [layer] })
+  }
+  return { angle, hostLayers: layers.slice(0, split), boxes, hue, breathe }
+}
+
+/** The runtime's half of the plan: how many boxes to mount, and whether the
+ *  mask is per glyph or per name.
+ *  Null when the spec has no composited fill to mount. */
+function compositedFillPlan(spec, opts = {}) {
+  if (opts.static || !isPlainObject(spec?.fill)) return null
+  const plan = planCompositedFill(spec.fill)
+  if (!plan) return null
+  return { mode: paintNeedsPerLetter(spec) ? 'glyph' : 'name', layers: plan.boxes.length }
+}
+
+/** Comma-joined background longhands for a set of layers, top first. */
+function fillBackgroundDecl(parts) {
+  const top = [...parts].reverse()
+  return `background-image:${top.map(p => p.image).join(', ')};`
+    + `background-size:${top.map(p => p.size || 'auto').join(', ')};`
+    + `background-position:${top.map(p => p.position || '0 0').join(', ')};`
+    + `background-repeat:${top.map(p => p.repeat || 'repeat').join(', ')};`
+}
+
+/** One linear layer in a flow strip's own frame: the strip is already rotated
+ *  onto the angle, so the gradient runs along local x at 90deg, one tile wide. */
+function stripLayerCss(layer, tile) {
+  const stops = sortedFillStops(layer?.stops)
+  const stopsCss = stops.length ? fillStopsCss(stops) : '#e4e4e4 0%, #e4e4e4 100%'
+  return {
+    image: `linear-gradient(90deg, ${stopsCss})`,
+    // Against the strip's width less its 2px of bleed, so a name-unit tile is
+    // exactly n gradient lines whatever the bleed.
+    size: tile.px ? `${tile.px}px 100%` : `calc((100% - 2px) * ${fnum(tile.n / (1 + tile.n))}) 100%`,
+    position: '1px 0',
+    repeat: 'repeat-x',
+  }
+}
+
+/** A layer's rest-frame background placed in a box whose origin sits at
+ *  (ox, oy) from the name box's — so the pixels under the name are exactly
+ *  the clip-text frame's, whatever the box around them is doing. */
+function placedLayerCss(layer, angle, ox, oy, repeat = 'repeat') {
+  const b = fillLayerCss(layer, angle)
+  if (b.size) {
+    // A px tile (radial dots): the rest frame puts it at `x% y%` of the NAME,
+    // which is (box - tile) * x%, resolved here against the name's own size.
+    const [sx] = b.size.split(' ')
+    const P = parseFloat(sx)
+    const { x, y } = fillCenter(layer)
+    return {
+      image: b.image, size: b.size, repeat,
+      position: `calc(${ox} + (${FW} - ${P}px) * ${fnum(x / 100)}) calc(${oy} + (${FH} - ${P}px) * ${fnum(y / 100)})`,
+    }
+  }
+  return { image: b.image, size: `${FW} ${FH}`, position: `${ox} ${oy}`, repeat }
+}
+
+/** The declarations + keyframes for one box. `k` is its index. */
+function fillBoxCss(b, k, angle, hash) {
+  const m = b.motion
+  let geom = ''
+  let from = ''
+  let to = ''
+  let period = 0
+  let parts = []
+
+  if (b.type === 'flow') {
+    // A strip laid along the gradient line. At angle θ the name's projection
+    // onto the line is G = W|sinθ| + H|cosθ| — the CSS gradient line's own
+    // length — and across it S = W|cosθ| + H|sinθ|. The strip starts at the
+    // line's start (-G/2 from the centre), is one tile longer than G so a
+    // tile of travel never uncovers its end, and turns about the name's
+    // centre.
+    const rad = b.theta * Math.PI / 180
+    const s = Math.abs(Math.sin(rad))
+    const c = Math.abs(Math.cos(rad))
+    const G = projCalc(s, c)
+    const S = projCalc(c, s)
+    const t = b.tile
+    //
+    // A pixel of bleed on every side: the strip's edges otherwise sit exactly
+    // on the name's corners, where antialiasing a rotated edge leaves a hairline
+    // the mask would show. The bleed is filled by the repeat, so it is seamless.
+    const width = t.px ? `calc(${G} + ${t.px + 2}px)` : `calc(${G} * ${fnum(1 + t.n)} + 2px)`
+    const travel = t.px ? `-${t.px}px` : `calc(${G} * ${fnum(-t.n)})`
+    geom = `left:calc(${FW} / 2 - ${G} / 2 - 1px - ${FGX});top:calc(${FH} / 2 - ${S} / 2 - 1px);`
+      + `width:${width};height:calc(${S} + 2px);transform-origin:calc(${G} / 2 + 1px) 50%;`
+    const rot = `rotate(${fnum(b.theta - 90)}deg)`
+    from = `${rot} translateX(0)`
+    to = `${rot} translateX(${travel})`
+    period = (t.px ? FILL_FLOW_PX_PERIOD : FILL_FLOW_NAME_PERIOD * t.n) / m.speed
+    parts = b.layers.map(l => stripLayerCss(l, t))
+  } else if (b.type === 'spin') {
+    // A square about the layer's centre, big enough to cover the name at every
+    // angle: twice the distance from the centre to the farthest corner.
+    const ax = fnum(Math.max(b.cx, 100 - b.cx) / 100)
+    const ay = fnum(Math.max(b.cy, 100 - b.cy) / 100)
+    const R = `hypot(${FW} * ${ax}, ${FH} * ${ay})`
+    const cx = fnum(b.cx / 100)
+    const cy = fnum(b.cy / 100)
+    geom = `left:calc(${FW} * ${cx} - ${R} - ${FGX});top:calc(${FH} * ${cy} - ${R});`
+      + `width:calc(${R} * 2);height:calc(${R} * 2);`
+    from = 'rotate(0deg)'
+    to = 'rotate(360deg)'
+    period = FILL_SPIN_PERIOD / m.speed
+    // The name's own origin, inside the square.
+    const ox = `calc(${R} - ${FW} * ${cx})`
+    const oy = `calc(${R} - ${FH} * ${cy})`
+    parts = b.layers.map(l => {
+      if (l.kind !== 'conic') return placedLayerCss(l, angle, ox, oy)
+      // A conic is scale-free about its centre, which is the square's centre.
+      const stops = sortedFillStops(l.stops)
+      const theta = safeFillAngle(angle + safeFillTilt(l.tilt))
+      return { image: `conic-gradient(from ${theta}deg at 50% 50%, ${stops.length ? fillStopsCss(stops) : '#e4e4e4 0%, #e4e4e4 100%'})`, size: 'auto', position: '0 0', repeat: 'no-repeat' }
+    })
+  } else if (b.type === 'axis') {
+    // One tile of the pattern along one box axis. The box extends on the side
+    // the pattern moves away from; because it repeats every tile, the extra
+    // tile needs no offset of its own.
+    const T = b.px ? `${b.px}px` : (b.axisX ? FW : FH)
+    const back = b.dir > 0
+    const ox = back ? T : '0px'
+    geom = b.axisX
+      ? `left:calc(${back ? `-1 * ${T}` : '0px'} - ${FGX});top:0;width:calc(${FW} + ${T});height:${FH};`
+      : `left:calc(0px - ${FGX});top:${back ? `calc(-1 * ${T})` : '0'};width:${FW};height:calc(${FH} + ${T});`
+    const axis = b.axisX ? 'translateX' : 'translateY'
+    from = `${axis}(0)`
+    to = `${axis}(${b.dir > 0 ? '' : '-'}${T})`
+    period = (b.px ? FILL_FLOW_PX_PERIOD : FILL_FLOW_NAME_PERIOD) / m.speed
+    parts = b.layers.map(l => placedLayerCss(l, angle, b.axisX ? ox : '0px', b.axisX ? '0px' : ox))
+  } else {
+    // Static: exactly the name box, exactly its rest frame.
+    geom = `left:calc(0px - ${FGX});top:0;width:${FW};height:${FH};`
+    parts = b.layers.map(l => placedLayerCss(l, angle, '0px', '0px'))
+  }
+
+  let anim = ''
+  let keyframes = ''
+  if (m) {
+    period = Math.round(period * 1000) / 1000
+    const name = `${COMPOSITED_ANIM_PREFIX}${hash}_fl${k}`
+    const [a, z] = m.reverse ? [to, from] : [from, to]
+    keyframes = `@keyframes ${name}{from{transform:${a};}to{transform:${z};}}`
+    // Full rate, linear, never stepped: nothing here repaints. A bounce is the
+    // same there-and-back curve the legacy fills sample — smooth, because no
+    // redraw cap applies to a transform — stated apart from the shorthand so an
+    // engine without linear() falls back to ease-in-out, never to a frozen fill.
+    const bounce = m.loop === 'bounce'
+    anim = `animation:${name} ${period}s ${bounce ? 'ease-in-out' : 'linear'} infinite;`
+      + (bounce ? `animation-timing-function:${sampledEasing('roundTrip', period, 0, { luminance: true })};` : '')
+      + `animation-delay:${syncDelayCalc(period)};`
+      + `transform:${a};`
+  }
+  return { decl: `position:absolute;${geom}${fillBackgroundDecl(parts)}${anim}`, keyframes }
+}
+
+/**
+ * The composited rules for a fill spec, all gated on MASKED_CLASS — or '' when
+ * the fill has nothing to composite.
+ *
+ * @param {object} spec
+ * @param {string} nameBox the compiled `${selector}>.hs-name`
+ * @param {string} hash
+ * @param {boolean} perLetter the name is split into one `>span` per glyph
+ */
+function buildFillLayersCss(spec, nameBox, hash, perLetter) {
+  const plan = planCompositedFill(spec.fill)
+  if (!plan) return ''
+  const gate = `${nameBox}.${MASKED_CLASS}`
+  const host = perLetter ? `${gate}>span` : gate
+
+  // The element that holds the text keeps only the layers below every mover
+  // on its own background, still clip-text — painted once, free — and becomes
+  // the containing block for the boxes.
+  const statics = plan.hostLayers.map(l => fillLayerCss(l, plan.angle))
+  const hostBg = statics.length
+    ? `${fillBackgroundDecl(statics)}-webkit-background-clip:text;background-clip:text;`
+    : 'background:none;'
+  let css = `${host}{position:relative;${hostBg}color:transparent;}`
+
+  // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws
+  // outside its letterform — a glow's text-shadow, a scene's rim drop-shadow,
+  // neon's halo — is drawn by the name box, and a mask there cut all of it
+  // away (the first cut of this did, and a glint over a scene rendered as a
+  // bare plate). On a child, the mask cuts only the fill it holds, and a
+  // filter on the name still sees the masked fill as the name's own pixels.
+  // `overflow:clip` keeps a strip longer than the name from widening anything's
+  // scrollable area — it paints nothing out there anyway.
+  const wrapDecl = 'position:absolute;left:0;top:0;width:100%;height:100%;overflow:clip;'
+    + '-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;'
+
+  let keyframes = ''
+  plan.boxes.forEach((b, k) => {
+    const out = fillBoxCss(b, k, plan.angle, hash)
+    css += `${gate} i.${FILL_LAYER_CLASS}${k}{${out.decl}}`
+    keyframes += out.keyframes
+  })
+
+  if (!plan.hue && !plan.breathe) css += `${gate} i.${FILL_WRAP_CLASS}{${wrapDecl}}`
+  else {
+    const anims = []
+    const kfs = []
+    const timing = []
+    if (plan.hue) {
+      const p = periodSeconds(FILL_HUE_PERIOD, plan.hue.speed, true)
+      const name = `${COMPOSITED_ANIM_PREFIX}${hash}_fhue`
+      anims.push({ name, p, fn: 'linear' })
+      timing.push('linear')
+      kfs.push(`@keyframes ${name}{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}`)
+    }
+    if (plan.breathe) {
+      const p = periodSeconds(FILL_BREATHE_PERIOD, plan.breathe.speed, true)
+      const name = `${COMPOSITED_ANIM_PREFIX}${hash}_fbr`
+      anims.push({ name, p, fn: 'ease-in-out' })
+      timing.push(sampledEasing('roundTrip', p, 0, { luminance: true }))
+      kfs.push(`@keyframes ${name}{from{opacity:1;}to{opacity:${fnum(1 - plan.breathe.depth)};}}`)
+    }
+    css += `${gate} i.${FILL_WRAP_CLASS}{${wrapDecl}`
+      + `animation:${anims.map(a => `${a.name} ${a.p}s ${a.fn} infinite`).join(', ')};`
+      + (plan.breathe ? `animation-timing-function:${timing.join(', ')};` : '')
+      + `animation-delay:${anims.map(a => syncDelayCalc(a.p)).join(', ')};}`
+    keyframes += kfs.join('')
+  }
+  return css + keyframes
 }
 
 /** One linear 0→1 `@property` phase Animation, parent-scoped — the same
@@ -10352,7 +11598,12 @@ function compilePaintCss(spec, selector, opts = {}) {
   const sceneOn = spec.v === 2 && isPlainObject(spec.scene)
   let layerBudget = MAX_ANIMATED_LAYERS
 
-  const paintEffectRaw = effects.find(e => EFFECTS[e.id].slot === 'paint')
+  // A `fill` block REPLACES the paint slot outright (it's what a paint-slot
+  // effect upgrades into — see upgradeSpec) rather than adding a second
+  // paint layer alongside it, so a spec carrying both never double-paints:
+  // fill wins, and no layerBudget slot is spent on the legacy effect here.
+  const hasFill = isPlainObject(spec.fill)
+  const paintEffectRaw = !hasFill && effects.find(e => EFFECTS[e.id].slot === 'paint')
   const paintEffect = paintEffectRaw && layerBudget >= 1 ? paintEffectRaw : null
   if (paintEffect) layerBudget -= 1
 
@@ -10406,7 +11657,11 @@ function compilePaintCss(spec, selector, opts = {}) {
   const nameBox = `${selector}>.${NAME_BOX_CLASS}`
   const perLetter = paintNeedsPerLetter(spec)
   const paintTarget = perLetter ? `${nameBox}>span` : nameBox
-  const baseCss = paintEffect ? null : buildBaseCss(base, stops)
+  // A fill's rest frame drops straight into the slot `baseCss` already
+  // occupies — every downstream branch (letter-split spans, the scene rim,
+  // glow) treats it exactly like any other clip-text base. Its motion is
+  // compiled separately, behind the mask (buildFillLayersCss, below).
+  const baseCss = hasFill ? buildFillBaseCss(spec.fill) : (paintEffect ? null : buildBaseCss(base, stops))
 
   // display:inline-block on BOTH: the host so the planes have a box to be
   // absolute against, the name box so a motion transform has something with
@@ -10571,6 +11826,11 @@ function compilePaintCss(spec, selector, opts = {}) {
     emitSelfRule()
   }
 
+  // The composited fill — gated on the runtime's mask, so this is additive to
+  // everything above: without the class the name renders the clip-text rest
+  // frame just compiled. Static mode moves nothing and emits none of it.
+  if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter)
+
   // Static glow — skip if neon is active and sourced the same color (neon's
   // own keyframes already carry a shadow on every frame); otherwise layer
   // the constant shadow on so it doesn't require an active effect to show.
@@ -10599,14 +11859,16 @@ function compilePaintCss(spec, selector, opts = {}) {
   // preserve-3d`, which a filter flattens.
   if (sceneOn) {
     css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather, stillBackdrop })
-    const clipTextFill = !!paintEffect || base.type !== 'solid'
+    const clipTextFill = !!paintEffect || hasFill || base.type !== 'solid'
     const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
     // An ANIMATED clip-text fill under the rim filter is the worst render
     // cell in the matrix: the gradient moves every frame beneath two stacked
     // drop-shadows, so the browser re-filters every visible copy of the name
     // per frame — measurable frame drops on phones. The rim is legibility
     // garnish; the frames are not. Static mode keeps it (nothing animates).
-    const animatedFill = !!paintEffect && !opts.static
+    // A moving fill is a moving fill whether it composites or not: a filter
+    // over it re-runs every frame it changes, on every copy of the name.
+    const animatedFill = (!!paintEffect || (hasFill && !!planCompositedFill(spec.fill))) && !opts.static
     if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
       if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
       else if (!filterHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
@@ -11131,6 +12393,498 @@ function resyncAnimationPhase(el, now = frameNow()) {
  */
 function resumeInPhase(els, release) {
     regateInPhase({ resume: els }, { onResume: release })
+}
+
+
+// --- lib/fill-layers.js ---
+/**
+ * Fill layers — the runtime half of the composited fill.
+ *
+ * The compiler (utils/paint-spec.js) emits every rule a moving fill needs, all
+ * of it gated behind the mask class on the name box. This module is what earns
+ * a name that class: it finds a letterform to cut the fill with, stamps the
+ * geometry the rules read, and appends the empty `<i>` boxes the gradient
+ * actually moves in.
+ *
+ * The masker is handed in and the only import is the compiler this pairs with,
+ * so the extension (which syncs both) can take this file verbatim.
+ *
+ * ── WHY REAL ELEMENTS, APPENDED HERE ─────────────────────────────────────────
+ *
+ * A pseudo-element's animation recalculates its owner's style every frame
+ * (1100ms against 2.1ms for the same rules on an `<i>`, paint-perf --masked),
+ * so the moving boxes are real children. They are appended by the runtime and
+ * never by paintNameHtml, because copy, find-in-page, SSR and the pre-built
+ * mention markup all rest on that markup being exactly the name's text. The
+ * boxes carry no text and are `aria-hidden`, so none of that sees them.
+ *
+ * ── WHY THE GEOMETRY IS STAMPED ─────────────────────────────────────────────
+ *
+ * A gradient at an angle is the length of the name's projection onto that
+ * angle, and a rotated strip that has to cover the name needs its width AND
+ * height. The rules read `--nw`/`--nh` for that, and a split name's glyphs
+ * read `--gx`, their offset into the name, so every letter shows its slice of
+ * ONE gradient instead of a private copy each. All three come from the masker,
+ * which measured the text to rasterise it anyway — nothing here reads layout.
+ *
+ * @module cosmetics/fill-layers
+ */
+
+// The class names are the compiler's — the rules it emits select exactly these,
+// so there is one definition of each, there. (The extension also concatenates
+// its synced files into one scope, where a second `const` of the same name is
+// a redeclaration.)
+
+function box(doc, cls) {
+  const i = doc.createElement('i')
+  i.className = cls
+  i.setAttribute('aria-hidden', 'true')
+  return i
+}
+
+/** The masked container with `layers` boxes inside, one append. */
+function layerStack(doc, plan, maskCls) {
+  const wrap = box(doc, `${FILL_WRAP_CLASS} ${maskCls}`)
+  for (let k = 0; k < plan.layers; k++) wrap.appendChild(box(doc, `${FILL_LAYER_CLASS} ${FILL_LAYER_CLASS}${k}`))
+  return wrap
+}
+
+/** Remove a previous mount — a remount after webfonts land must not stack a
+ *  second set of boxes under the first. */
+function unmountFillLayers(nameBox, maskedClass) {
+  nameBox.classList.remove(maskedClass)
+  for (const el of [...nameBox.querySelectorAll(`i.${FILL_LAYER_CLASS},i.${FILL_WRAP_CLASS}`)]) {
+    // Only the top of each stack: removing the container takes its layers.
+    if (!el.parentElement?.classList?.contains(FILL_WRAP_CLASS)) el.remove()
+  }
+}
+
+/**
+ * Mount a composited fill on one painted name.
+ *
+ * All or nothing. A glyph the masker refuses, a name it cannot measure, a
+ * browser without mask-image — any of them leaves the name exactly as the
+ * compiler's clip-text rest frame paints it, never half-masked: one unmasked
+ * letter under a moving layer is a solid block of gradient.
+ *
+ * @param {Element} nameBox the `.hs-name` element
+ * @param {{mode:'glyph'|'name', layers:number, legacy?:boolean}} plan from the compiler
+ * @param {{maskedClass:string, font:string, h:number, dpr:number,
+ *   maskFor:Function, maskForText:Function}} ctx
+ * @returns {boolean} whether the name is now masked
+ */
+function mountFillLayers(nameBox, plan, ctx) {
+  if (!nameBox || !plan || !ctx) return false
+  const { maskedClass, font, h, dpr } = ctx
+  if (nameBox.classList.contains(maskedClass)) return true
+  // A stale stack from an earlier mount (webfonts landed, a mask was evicted)
+  // is cleared first, so a remount always starts from the compiler's markup.
+  unmountFillLayers(nameBox, maskedClass)
+  const doc = nameBox.ownerDocument
+
+  if (plan.mode === 'glyph') {
+    const spans = nameBox.querySelectorAll(':scope > span')
+    if (!spans.length) return false
+    const masks = []
+    for (const s of spans) {
+      const m = ctx.maskFor(s.textContent, font, h, dpr)
+      if (!m) return false
+      masks.push(m)
+    }
+    // Running advance: each glyph's offset into the name, so its layers can
+    // shift into the one gradient that crosses the whole name.
+    let gx = 0
+    for (let i = 0; i < spans.length; i++) {
+      const s = spans[i]
+      s.style.setProperty('--gx', `${round(gx)}px`)
+      gx += masks[i].w
+      if (plan.legacy) {
+        // The legacy paint-slot sweep: letterform on the span, one bare box.
+        s.classList.add(masks[i].cls)
+        s.appendChild(box(doc, `${FILL_LAYER_CLASS} ${FILL_LAYER_CLASS}0`))
+      } else {
+        s.appendChild(layerStack(doc, plan, masks[i].cls))
+      }
+    }
+    nameBox.style.setProperty('--nw', `${round(gx)}px`)
+    nameBox.style.setProperty('--nh', `${round(h)}px`)
+  } else {
+    const m = ctx.maskForText(nameBox.textContent, font, h, dpr)
+    if (!m) return false
+    nameBox.style.setProperty('--nw', `${round(m.w)}px`)
+    nameBox.style.setProperty('--nh', `${round(h)}px`)
+    nameBox.appendChild(layerStack(doc, plan, m.cls))
+  }
+  nameBox.classList.add(maskedClass)
+  return true
+}
+
+const round = (n) => Math.round(n * 1000) / 1000
+
+
+// --- lib/glyph-mask.js ---
+/**
+ * Glyph mask — rasterise a letterform ONCE, then move the fill under it.
+ *
+ * ── WHY THIS EXISTS ─────────────────────────────────────────────────────────
+ *
+ * `animated-texture.js` argues the general case and proved it for emotes: a
+ * moving `background-position` under `background-clip:text` is a main-thread
+ * repaint, every frame, PER ELEMENT, while a `transform` on a promoted layer is
+ * a GPU quad blit that costs about the same at twenty copies as at one.
+ *
+ * The name FILL — the one animation every painted name has — was never
+ * converted, and because a letter-split paint puts it on one span per GLYPH,
+ * every glyph is its own clip-text layer re-rastering. Measured on today's
+ * compiler, 414x896 @ dpr3, cpu 4x, renderer ms per 3s (`paint-perf
+ * --composited`):
+ *
+ *   variant                          1 name    20 names   paint ops
+ *   A  background-clip:text (ships)  104.5ms    851.4ms      3704
+ *   E  per-glyph mask + transform      1.1ms      6.8ms         1
+ *   static (the floor)                 0.9ms      2.5ms         1
+ *
+ * 851ms per 3s is a third of the wall-clock budget at 4x CPU, on a phone, for
+ * ambient motion nobody is tracking.
+ *
+ * ── PER CHARACTER, AND PER NAME ─────────────────────────────────────────────
+ *
+ * A letter-split name moves its letters, so each glyph needs its own
+ * letterform — maskFor, keyed by CHARACTER, a cache the size of an alphabet.
+ * Its fill is still one gradient across the name: each glyph's boxes are
+ * offset by the glyph's position in the name (`--gx`, from the advances
+ * returned here), not given a private copy each.
+ *
+ * A name that is not split is one run of text and gets ONE letterform for the
+ * whole string — maskForText, keyed by the name. One element per motion under
+ * it, however long the name is; the cost is a cache the size of the painted
+ * names seen lately, so it is capped harder and its rules leave with it.
+ *
+ * ── WHY THE TEXT STAYS ──────────────────────────────────────────────────────
+ *
+ * The spans keep their real text nodes, set to `color:transparent`. The visible
+ * pixels come from the masked `::before`. paint-spec.js:586 places the scene
+ * planes ahead of the name specifically so "a painted name stays copyable as
+ * its own text", and NOTHING tests it — a bitmap glyph would break selection,
+ * copy, find-in-page and screen readers silently. A transparent text node still
+ * does all four, and using `::before` means the markup does not change at all.
+ *
+ * @module cosmetics/glyph-mask
+ */
+
+/** Injected, not imported: this file is synced verbatim into the extension,
+ *  which has its own logger, and a leaf module that reaches for the app's
+ *  services is one the extension cannot take as-is. Silent until the owner
+ *  hands one in (paint-cosmetics does, at import). */
+let maskLog = { debug() { } }
+function setLogger(l) { if (l && typeof l.debug === 'function') maskLog = l }
+
+/** Built masks, keyed by `dpr|box|font|char`. Insertion-ordered, so the first
+ *  key is the least recently used — the Map is the LRU. */
+const cache = new Map()
+
+/** An alphabet, its punctuation, and room for several scripts at once. Names
+ *  repeat their letters hard, so this is a high hit rate at a small size. */
+const CACHE_MAX = 512
+
+/** Whole-name masks, same LRU shape. A name is not an alphabet — the cache is
+ *  as big as the set of painted names on screen recently, and every entry is a
+ *  rule in the sheet, so it is capped harder than the glyphs. */
+const textCache = new Map()
+const TEXT_CACHE_MAX = 256
+
+/** Characters that cannot be masked — zero advance, canvas refused. Remembered
+ *  so a firehose does not retry per row. */
+const refused = new Set()
+
+/** Called once webfonts land, so glyphs measured against a fallback face can be
+ *  rebuilt against the real one. */
+let onReady = null
+let fontsHooked = false
+
+function setOnReady(fn) { onReady = fn }
+
+function supported() {
+    if (typeof document === 'undefined' || typeof document.createElement !== 'function') return false
+    // Safari still needs the prefix; a browser with neither keeps the clip-text
+    // path, which is exactly today's behaviour.
+    return typeof CSS !== 'undefined' && typeof CSS.supports === 'function'
+        && (CSS.supports('mask-image', 'url(a)') || CSS.supports('-webkit-mask-image', 'url(a)'))
+}
+
+let ctx = null
+/** One measuring context for the module — creating a canvas per call is most of
+ *  the cost of measuring one character. */
+function measureCtx() {
+    if (!ctx) ctx = document.createElement('canvas').getContext('2d')
+    return ctx
+}
+
+// ── the URL lives in the CSSOM, never on the element ─────────────────────────
+//
+// The first cut set `--hsp-m` as an inline style per span. It worked and it was
+// a disaster: a mask is a few KB of base64, and putting a copy on all 160 spans
+// of a twenty-name screen moved the cost from raster to STYLE — paint ops fell
+// 3864 -> 1 and raster 46.4ms -> 1.5ms, while UpdateLayoutTree went 346ms ->
+// 1453ms and the total got WORSE (paint-perf --masked, the arm that caught it).
+//
+// So each distinct letterform gets ONE rule in one sheet, and a span references
+// it by class. The bytes exist once in the CSSOM however many rows use them,
+// which is the same "one texture, N free copies" the rest of this rung is about.
+//
+// AND THE RULE SETS `mask-image` DIRECTLY, never through a custom property.
+// That indirection was the second version and it barely helped: the recalc COUNT
+// was identical (180 per 3s either way, one per frame) but each recalc cost 4-5x
+// more, because substituting a multi-KB token stream on 160 spans is work that
+// happens every single time style is resolved. As a plain declaration in a
+// matched rule it is resolved once. 1388ms -> see the table in paint-spec.js.
+//
+// Scoped under the gate class so dropping the gate drops the mask with it —
+// otherwise a name whose masks were invalidated would keep its letterforms
+// punched out while the fill went back to the clip-text path.
+
+/** Must match MASKED_CLASS in utils/paint-spec.js, which is what the compiler
+ *  gates the composited rules on. Not imported: this module is a leaf, and the
+ *  compiler is 70KB. A test holds the two together. */
+const GATE_CLASS = 'hs-masked'
+
+let sheet = null
+let nextId = 0
+/** Class -> nothing; insertion-ordered, which is the order of the rules in the
+ *  sheet, so a class's position in this list IS its rule index. */
+const ruleOrder = []
+
+function ruleSheet() {
+    if (sheet?.isConnected && sheet.sheet) return sheet.sheet
+    sheet = document.getElementById('hs-glyph-masks')
+    if (!sheet) {
+        sheet = document.createElement('style')
+        sheet.id = 'hs-glyph-masks'
+        document.head.appendChild(sheet)
+    }
+    // A re-found or re-created sheet starts empty as far as we know: rules we
+    // counted into a detached one are gone with it.
+    ruleOrder.length = 0
+    return sheet.sheet
+}
+
+// ── ONE RULE PER MASK, AND IT LEAVES WITH THE MASK ──────────────────────────
+//
+// This used to append a text node per mask and never remove one. The LRU above
+// dropped its entry and the rule stayed — a few KB of base64 per letterform,
+// forever, which on a whole-name cache keyed by every painted name that scrolls
+// past is a leak measured in megabytes of CSSOM by the end of a stream.
+//
+// So the rule is inserted through the CSSOM and deleted by index when its cache
+// entry goes. And a name still WEARING the evicted class must not be left
+// holding the gate: its fill layers would keep rendering with no letterform to
+// cut them, which is a solid block of gradient where the name was. Dropping
+// the gate puts that name back on the clip-text rest frame the compiler always
+// emits underneath.
+
+/** Put one mask in the sheet and hand back the class that selects it. */
+function publish(src, prefix) {
+    const cls = `${prefix}${nextId++}`
+    const url = `url("${src}")`
+    const css = ruleSheet()
+    if (!css) return null
+    // Both forms: a glyph class sits on a span INSIDE the gated box, a whole-name
+    // class can sit on the gated box itself.
+    css.insertRule(`.${GATE_CLASS}.${cls},.${GATE_CLASS} .${cls}{-webkit-mask-image:${url};mask-image:${url};}`, ruleOrder.length)
+    ruleOrder.push(cls)
+    return cls
+}
+
+function unpublish(cls) {
+    const i = ruleOrder.indexOf(cls)
+    if (i < 0) return
+    try { sheet?.sheet?.deleteRule(i) } catch (err) { maskLog.debug('[glyph-mask] deleteRule failed', err) }
+    ruleOrder.splice(i, 1)
+    if (typeof document.getElementsByClassName !== 'function') return
+    // Live collection — copy before mutating the class it is keyed on.
+    for (const el of [...document.getElementsByClassName(cls)]) {
+        el.classList.remove(cls)
+        const gated = el.classList.contains(GATE_CLASS) ? el : el.closest?.(`.${GATE_CLASS}`)
+        gated?.classList.remove(GATE_CLASS)
+    }
+}
+
+/** Drop every mask, rules included. */
+function clearAll() {
+    for (const m of cache.values()) unpublish(m.cls)
+    for (const m of textCache.values()) unpublish(m.cls)
+    cache.clear()
+    textCache.clear()
+    refused.clear()
+}
+
+/** LRU put: evicting an entry deletes its rule. */
+function remember(map, max, k, v) {
+    if (map.size >= max) {
+        const oldest = map.keys().next().value
+        const gone = map.get(oldest)
+        map.delete(oldest)
+        if (gone) unpublish(gone.cls)
+    }
+    map.set(k, v)
+}
+
+/**
+ * Wait for webfonts once, then let the owner re-drive.
+ *
+ * A glyph rasterised before CozetteVector loads is the FALLBACK face's
+ * letterform, and it will not line up with the text the browser finally lays
+ * out. That is not a reason to block the first paint — it is a reason to drop
+ * every mask and rebuild after.
+ */
+function hookFonts() {
+    if (fontsHooked || typeof document === 'undefined' || !document.fonts?.ready) return
+    fontsHooked = true
+    // Already loaded means every mask built from here on IS the real face.
+    // Hooking anyway threw away the first mounts on every page and made the
+    // owner rebuild them one tick later for nothing.
+    if (document.fonts.status === 'loaded') return
+    document.fonts.ready.then(() => {
+        clearAll()
+        onReady?.()
+    }).catch(() => { /* no webfonts is not an error */ })
+}
+
+/**
+ * The mask for one character, building it if needed.
+ *
+ * Synchronous on purpose. Unlike an emote strip there is nothing to decode —
+ * this is one `fillText` into a box the size of a letter — and the render path
+ * needs an answer in the tick it shapes the span. The cache is what keeps it
+ * off the firehose.
+ *
+ * @param {string} ch a single character, exactly as it renders
+ * @param {string} font a CSS `font` shorthand, as `getComputedStyle().font` gives it
+ * @param {number} boxH the span's box height in CSS px (its line box)
+ * @param {number} dpr device pixel ratio to rasterise at
+ * @returns {{src:string,w:number,h:number,cls:string}|null} `cls` is the class
+ *   to put on the span — the URL itself lives in the sheet, once. `w` is the
+ *   glyph's advance, the width the inline-block span will take.
+ */
+function maskFor(ch, font, boxH, dpr) {
+    if (!ch || !font || !(boxH > 0) || !supported()) return null
+    const k = `${dpr}|${boxH}|${font}|${ch}`
+    if (refused.has(k)) return null
+    const hit = cache.get(k)
+    if (hit) {
+        // Touch for LRU — delete+set moves it to the end of the insertion order.
+        cache.delete(k)
+        cache.set(k, hit)
+        return hit
+    }
+    hookFonts()
+    try {
+        const built = build(ch, font, boxH, dpr)
+        if (!built) { refused.add(k); return null }
+        remember(cache, CACHE_MAX, k, built)
+        return built
+    } catch (err) {
+        maskLog.debug('[glyph-mask] build failed', err)
+        refused.add(k)
+        return null
+    }
+}
+
+function build(text, font, boxH, dpr, prefix = 'hs-g') {
+    const m = measureCtx()
+    m.font = font
+    const metrics = m.measureText(text)
+    const w = metrics.width
+    if (!(w > 0)) return null
+
+    // The glyph is drawn on the span's own baseline, not the canvas's middle:
+    // the mask has to register with the text the browser lays out underneath it,
+    // and a mask a pixel out reads as a smeared letter rather than as a bug.
+    // Centre the face's own box inside the line box to find that baseline.
+    const ascent = metrics.fontBoundingBoxAscent || metrics.actualBoundingBoxAscent || boxH * 0.8
+    const descent = metrics.fontBoundingBoxDescent || metrics.actualBoundingBoxDescent || boxH * 0.2
+    const baseline = (boxH - (ascent + descent)) / 2 + ascent
+
+    // The EXACT ratio, never rounded up. The mask is stretched to its box
+    // (mask-size:100% 100%), so a canvas rastered at ceil(1.25) = 2 is scaled
+    // back down by 0.625 — resampled, and a resampled letterform is a soft one.
+    // Whole device pixels are still whole: the canvas is sized to round(w*dpr)
+    // and the scale is corrected to land the text exactly on that grid.
+    const scale = Math.max(1, dpr || 1)
+    const c = document.createElement('canvas')
+    c.width = Math.max(1, Math.round(w * scale))
+    c.height = Math.max(1, Math.round(boxH * scale))
+    const g = c.getContext('2d')
+    if (!g) return null
+    g.scale(c.width / w, c.height / boxH)
+    g.font = font
+    g.textBaseline = 'alphabetic'
+    // White on transparent: a mask reads the ALPHA channel, so drawing the
+    // letterform opaque is what lets the fill show through exactly it.
+    g.fillStyle = '#fff'
+    g.fillText(text, 0, baseline)
+
+    const src = c.toDataURL()
+    const cls = publish(src, prefix)
+    return cls ? { src, w, h: boxH, cls } : null
+}
+
+/**
+ * The mask for a WHOLE name, building it if needed.
+ *
+ * The per-glyph mask exists because a letter-split name's fill was per-glyph
+ * local. A name that is not split has no such excuse — it is one run of text,
+ * and one gradient should cross it. So it gets one letterform for the whole
+ * string, and the fill layers move under THAT: one element per motion, however
+ * long the name is.
+ *
+ * Same contract as maskFor — synchronous, cached, refused once — keyed by the
+ * whole string, and capped harder because a name is not an alphabet.
+ *
+ * @returns {{src:string,w:number,h:number,cls:string}|null} `w` is the laid-out
+ *   advance of the whole run, which is the name box's width.
+ */
+function maskForText(text, font, boxH, dpr) {
+    if (!text || !font || !(boxH > 0) || !supported()) return null
+    const k = `${dpr}|${boxH}|${font}|${text}`
+    if (refused.has(`T${k}`)) return null
+    const hit = textCache.get(k)
+    if (hit) {
+        textCache.delete(k)
+        textCache.set(k, hit)
+        return hit
+    }
+    hookFonts()
+    try {
+        const built = build(text, font, boxH, dpr, 'hs-t')
+        if (!built) { refused.add(`T${k}`); return null }
+        remember(textCache, TEXT_CACHE_MAX, k, built)
+        return built
+    } catch (err) {
+        maskLog.debug('[glyph-mask] text build failed', err)
+        refused.add(`T${k}`)
+        return null
+    }
+}
+
+/** The mask for `ch` if it is ALREADY built, else undefined. */
+function peekMask(ch, font, boxH, dpr) {
+    return cache.get(`${dpr}|${boxH}|${font}|${ch}`)
+}
+
+/** Test seam — drops every memo so a case starts from nothing. */
+function _resetForTests() {
+    cache.clear()
+    textCache.clear()
+    refused.clear()
+    ruleOrder.length = 0
+    onReady = null
+    fontsHooked = false
+    maskLog = { debug() { } }
+    ctx = null
+    sheet?.remove?.()
+    sheet = null
+    nextId = 0
 }
 
 
@@ -12084,7 +13838,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2bbc8cfe-202609232238' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4cfb14a6-202609232350' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -49211,6 +50965,15 @@ function markAllHsCosmeticsStale() {
 const hsPaintInjectedHashes = new Set()
 /** hash -> its <style> node, so a rule can be dropped without touching others. */
 const hsPaintRuleNodes = new Map()
+/** `hsp-<hash>` class -> how its composited `fill` mounts (see the runtime
+ * section below), so the mask sweep knows which painted names are worth
+ * building letterforms for. Cleared per-hash alongside hsPaintRuleNodes —
+ * mirrors the site's compositedPaintClasses (client/chat/paint-cosmetics.js). */
+const hsCompositedPaintClasses = new Map()
+/** The legacy paint-slot fill's composited form (pre-`fill`-block sweeps —
+ * pan/conic/hue/pulse/glint/stripes/stardust): one box per glyph, masked per
+ * glyph. A `fill` spec (compositedFillPlan) says its own shape instead. */
+const HS_LEGACY_FILL_PLAN = { mode: 'glyph', layers: 1, wrapper: false, legacy: true }
 const hsPaintPending = new Set()
 // Priority lane — the viewer's OWN identities (primeSelfHsCosmetics). Drained
 // before hsPaintPending and exempt from HS_PAINT_PENDING_MAX: plain FIFO left
@@ -49394,6 +51157,13 @@ function ensureHsPaintSheet() {
       // text-shadow:none above also drops the scene rim (black smears on
       // white). Same trigger set as the flatten rule.
       '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
+      // A composited `fill` paints in `<i>` boxes ABOVE the name's own
+      // background (see lib/fill-layers.js), so the white flatten rule above
+      // never showed — the fill kept moving over it, cut to the letterform.
+      // Hide the boxes and drop the mask so the name flattens like every
+      // other paint (mirrors the site's buildPaintHoverFreezeRule).
+      '[class*="hsp-"]:hover .hs-name i,[class*="hsp-"].hsp-hover .hs-name i{display:none !important;}' +
+      '[class*="hsp-"]:hover .hs-name,[class*="hsp-"]:hover .hs-name span,[class*="hsp-"].hsp-hover .hs-name,[class*="hsp-"].hsp-hover .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -49518,6 +51288,20 @@ function ensureHsPaintRule(spec, hash) {
   document.head.appendChild(typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(node) : node)
   hsPaintRuleNodes.set(hash, node)
   hsPaintInjectedHashes.add(hash)
+  // Whether this paint got a composited fill is a property of what the
+  // compiler actually emitted — asking the spec again would be a second
+  // opinion that could drift from the CSS just injected. Read once, per hash.
+  // Guarded like MAX_ANIMATED_LAYERS below: these are bundle-scope free
+  // variables (readMultichatModules embeds lib/fill-layers.js + glyph-mask.js
+  // ahead of this file), absent from a standalone-module test that hasn't
+  // stubbed them — the honest degradation there is no composited plan, same
+  // as today's behaviour, not a ReferenceError.
+  const plan =
+    (typeof compositedFillPlan === 'function' && compositedFillPlan(spec)) ||
+    (typeof compiledCssHasCompositedFill === 'function' && compiledCssHasCompositedFill(css)
+      ? HS_LEGACY_FILL_PLAN
+      : null)
+  if (plan) hsCompositedPaintClasses.set(`hsp-${hash}`, plan)
 }
 
 /** Drop the rule for `hash` — but only once no cached uid still wants it.
@@ -49531,6 +51315,7 @@ function dropHsPaintRule(hash) {
   if (node?.parentNode) node.parentNode.removeChild(node)
   hsPaintRuleNodes.delete(hash)
   hsPaintInjectedHashes.delete(hash)
+  hsCompositedPaintClasses.delete(`hsp-${hash}`)
 }
 
 /** Evict the oldest paint cache entry AND the CSS it was the last user of.
@@ -49555,6 +51340,7 @@ function clearHsPaintSheet() {
   }
   hsPaintRuleNodes.clear()
   hsPaintInjectedHashes.clear()
+  hsCompositedPaintClasses.clear()
 }
 
 // Toggle-on recovery: rebuild the sheet from every cached spec. clearHsPaintSheet
@@ -49599,10 +51385,16 @@ function setHsPaintEntry(userId, spec) {
     hsPaintCache.set(userId, { spec: null, hash: null })
     return
   }
-  const hash = hashPaintSpec(spec)
-  ensureHsPaintRule(spec, hash)
+  // A saved paint renders as its fill upgrade (renderSpecOf) wherever the
+  // composited runtime can actually mount it — moving on the compositor
+  // instead of in steps() — but only there: without the runtime an upgraded
+  // fill is its own still rest frame, and the legacy clip-text at least moves.
+  // Mirrors the site's setPaintEntry (client/chat/paint-cosmetics.js).
+  const shown = canCompositeHsFills() && typeof renderSpecOf === 'function' ? renderSpecOf(spec) : spec
+  const hash = hashPaintSpec(shown)
+  ensureHsPaintRule(shown, hash)
   if (!hsPaintCache.has(userId)) evictOldestHsPaintEntry()
-  hsPaintCache.set(userId, { spec, hash })
+  hsPaintCache.set(userId, { spec: shown, hash })
 }
 
 /**
@@ -49830,6 +51622,10 @@ function applyHsPaintToElement(el, userId) {
     if (mode === 'none') delete el.dataset.hsPaintSplit
     else el.dataset.hsPaintSplit = '1'
   }
+  // The fill moves off the repaint path only if every glyph has a letterform
+  // to be masked by. Asked after shaping, because it reads the spans (or box)
+  // that just got (re)built.
+  if (hsCompositedPaintClasses.has(cls)) applyHsGlyphMasks(el, hsCompositedPaintClasses.get(cls))
   // Mount stamp for phase-locking — restore the preserved value, or stamp a
   // fresh one for an element that never had one (in-place resolve, hover-
   // freeze repaint, restored history; a synchronous render-path element
@@ -49844,6 +51640,144 @@ function applyHsPaintToElement(el, userId) {
   // Freshly painted, so gate it now instead of waiting for the next scroll.
   scheduleHsPaintSweep(true)
 }
+
+// ── the composited fill's runtime half ──────────────────────────────────────
+//
+// Mirrors client/chat/paint-cosmetics.js's own composited-fill section. The
+// compiler (lib/paint-spec.js) emits the masked rules behind MASKED_CLASS;
+// this is what decides a name has earned it — mounting the letterform masks
+// (lib/glyph-mask.js) and the moving fill boxes (lib/fill-layers.js) onto the
+// name it was compiled for. Everything here is best-effort by design: a
+// browser without mask-image, a webfont still loading, a glyph the masker
+// refuses — any of them just leaves the gate class off, and the name renders
+// exactly as it did before this existed (its clip-text rest frame).
+
+setLoggerOnGlyphMask()
+function setLoggerOnGlyphMask() {
+  // Injected, not imported — glyph-mask.js is a leaf synced verbatim from the
+  // site (scripts/sync-paint-compiler.sh) and takes its logger only through
+  // setLogger. `log` is the multichat-wide logger (bootstrap.js), a bare
+  // function rather than an object, hence the tiny adapter. Guarded: a
+  // standalone import of this module in a test has neither binding.
+  if (typeof setLogger === 'function' && typeof log === 'function') {
+    setLogger({ debug: (...args) => log(...args) })
+  }
+}
+
+/** hypot() sizes a spinning layer's square; an engine without it would drop
+ * the width, and a zero-size box under the mask is a name with no fill at
+ * all. Asked once. */
+let hsFillLayersSupported = null
+function canMountHsFillLayers() {
+  if (hsFillLayersSupported === null) {
+    hsFillLayersSupported =
+      typeof CSS !== 'undefined' &&
+      typeof CSS.supports === 'function' &&
+      CSS.supports('width', 'calc(hypot(1px, 1px) * 2)')
+  }
+  return hsFillLayersSupported
+}
+
+/** Whether a `fill`'s motion can render here at all — mask-image support and
+ * the geometry the boxes are sized with. Exported so setHsPaintEntry can
+ * decide whether a saved paint's fill-upgrade (renderSpecOf) is worth taking:
+ * without the runtime, an upgraded fill is its own still rest frame, and the
+ * legacy clip-text at least moves. */
+function canCompositeHsFills() {
+  return typeof supported === 'function' && supported() && canMountHsFillLayers()
+}
+
+/** The span box every painted name shares, measured once. A per-row
+ * getComputedStyle on the firehose is the cost this whole change exists to
+ * avoid paying, so it is read on the first masked name and reused. Dropped
+ * whenever the masks are (webfont landing, mode change). */
+let hsGlyphBox = null
+
+function readHsGlyphBox(el) {
+  if (typeof getComputedStyle !== 'function') return null
+  const cs = getComputedStyle(el)
+  // `font` is the shorthand the canvas wants, but it comes back empty in some
+  // engines — rebuild it from the longhands rather than rasterise with a
+  // default face, which would mask every glyph with the wrong letterform.
+  const font = cs.font || `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize}/${cs.lineHeight} ${cs.fontFamily}`.trim()
+  const h = parseFloat(cs.height) || parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5
+  if (!font || !(h > 0)) return null
+  // The EXACT ratio, capped — a resampled letterform is a soft one, and a 4x
+  // phone rasterising four times the pixels buys nothing visible at 13px.
+  const dpr = Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
+  return { font, h, dpr }
+}
+
+/** The composited plan for whatever `hsp-` class `el` wears, or undefined. */
+function hsPlanFor(el) {
+  if (!el?.classList) return undefined
+  for (const c of el.classList) {
+    if (c.startsWith('hsp-')) return hsCompositedPaintClasses.get(c)
+  }
+  return undefined
+}
+
+/** Mount the composited fill on one painted name, if its paint has one and
+ * everything it needs is here. Best-effort: any refusal leaves the clip-text
+ * rest frame, never a half-masked name. */
+function applyHsGlyphMasks(el, plan) {
+  if (!plan || typeof supported !== 'function' || !supported()) return
+  // The legacy per-glyph sweep and the `fill` block are two different
+  // populations (see HS_LEGACY_FILL_PLAN) — only the latter needs the full
+  // canCompositeHsFills gate (mask-image AND the layer-sizing geometry).
+  if (plan.legacy ? false : !canCompositeHsFills()) return
+  const box = el?.querySelector?.(`.${NAME_BOX_CLASS}`)
+  if (!box || box.classList.contains(MASKED_CLASS)) return
+  const probe = box.querySelector?.(':scope > span') || box
+  if (!hsGlyphBox) hsGlyphBox = readHsGlyphBox(probe)
+  if (!hsGlyphBox) return
+  const geom = hsGlyphBox
+  // A CLASS, not an inline url() — the bytes live once in the mask sheet
+  // (lib/glyph-mask.js); a copy per span would move the cost into style
+  // recalc instead of removing the repaint this exists to remove.
+  mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })
+}
+
+/** Test seam — the real call sites (discoverHsPaintedNames, applyHsPaintToElement)
+ * only ever reach this through an already-cached hsp- class, which a test has
+ * no easy way to fabricate; this lets a test drive the mount directly against
+ * a plan it built with compositedFillPlan. */
+function _applyHsGlyphMasksForTests(el, plan) {
+  applyHsGlyphMasks(el, plan)
+}
+
+/** Drop every mounted fill's boxes + mask gate, without rebuilding them.
+ * A composited fill only costs anything while it is actually compositing, so
+ * keeping the mask/layers mounted while data-hs-paint-anim="never" freezes
+ * every animation is pure overhead for zero visual gain — the paint still
+ * reads correctly off its clip-text rest frame underneath. Cheap to reverse:
+ * hsCompositedPaintClasses (what each hsp- class is entitled to) never
+ * changes with the mode, so remountAllHsFillLayers rebuilds from it exactly. */
+function unmountAllHsFillLayers() {
+  for (const box of [...document.querySelectorAll(`.${NAME_BOX_CLASS}.${MASKED_CLASS}`)]) {
+    unmountFillLayers(box, MASKED_CLASS)
+  }
+}
+
+/** Unmount + remount every currently-masked fill, against whatever plan its
+ * host still carries. Used when webfonts land — every mask was drawn against
+ * the wrong face — and when paint-anim flips back to 'always' after
+ * unmountAllHsFillLayers dropped them. */
+function remountAllHsFillLayers() {
+  hsGlyphBox = null
+  const boxes = new Set()
+  for (const el of document.querySelectorAll(`.${NAME_BOX_CLASS}.${MASKED_CLASS}`)) boxes.add(el)
+  for (const box of boxes) {
+    unmountFillLayers(box, MASKED_CLASS)
+    const host = box.parentElement
+    const plan = host && hsPlanFor(host)
+    if (plan) applyHsGlyphMasks(host, plan)
+  }
+}
+
+// Webfonts landed: every mask was drawn with the wrong face. Guarded exactly
+// like setLoggerOnGlyphMask above — a standalone import has neither binding.
+if (typeof setOnReady === 'function') setOnReady(remountAllHsFillLayers)
 
 // ── the crowd dial ──────────────────────────────────────────────────────────
 //
@@ -50166,6 +52100,12 @@ function discoverHsPaintedNames(io) {
   for (const el of document.querySelectorAll('[class*="hsp-"]')) {
     if (hsObservedNames.has(el)) continue
     hsObservedNames.add(el)
+    // A renderer that had the paint cached baked the class straight into its
+    // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
+    // first sight here is the only place such a row can be given its
+    // composited fill.
+    const plan = hsPlanFor(el)
+    if (plan) applyHsGlyphMasks(el, plan)
     io.observe(el)
   }
 }
@@ -60339,6 +62279,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       // the whole effect and every painted name on screen follows it live.
       document.documentElement.dataset.hsPaintAnim = v || 'always'
       if (onLoad) return
+      // A composited fill's mounted mask/layers are pure overhead once every
+      // animation is frozen — drop them; flipping back rebuilds from the
+      // specs still cached (see paints.js's unmount/remountAllHsFillLayers).
+      if ((v || 'always') === 'never') unmountAllHsFillLayers()
+      else remountAllHsFillLayers()
     },
     locale: (v) => {
       setI18nLocale(v).catch(() => {})

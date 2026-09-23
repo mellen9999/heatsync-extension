@@ -553,6 +553,30 @@ function checkReservedPathsParity() {
   console.log('  RESERVED_PATHS parity: reserved-paths.js ⇄ background.js ⇄ popup.js ⇄ early-layout.js match ✓')
 }
 
+// Guard: readMultichatModules drops fill-layers.js's own FILL_LAYER_CLASS/
+// FILL_WRAP_CLASS declarations (a `const` redeclared in the same bundle scope
+// is a SyntaxError) and lets its uses resolve to paint-spec.js's copy instead
+// — the site keeps both because they're separate ES modules there. That is
+// only safe while the two copies actually agree; this is what would catch a
+// site-side edit to one and not the other before it ever reaches the ext.
+function checkFillLayerClassParity() {
+  const paintSpecSrc = readFileSync(join(__dirname, 'src', 'lib', 'paint-spec.js'), 'utf8')
+  const fillLayersSrc = readFileSync(join(__dirname, 'src', 'lib', 'fill-layers.js'), 'utf8')
+  for (const name of ['FILL_LAYER_CLASS', 'FILL_WRAP_CLASS']) {
+    const re = new RegExp(`export const ${name} = (.+)`)
+    const a = paintSpecSrc.match(re)?.[1]
+    const b = fillLayersSrc.match(re)?.[1]
+    if (!a || !b) throw new Error(`checkFillLayerClassParity: could not find ${name} in both files`)
+    if (a !== b) {
+      throw new Error(
+        `checkFillLayerClassParity: ${name} drifted — paint-spec.js: ${a}  fill-layers.js: ${b}\n` +
+          "  readMultichatModules drops the fill-layers.js copy and trusts paint-spec.js's; re-sync both.",
+      )
+    }
+  }
+  console.log('  FILL_LAYER_CLASS/FILL_WRAP_CLASS parity: paint-spec.js ⇄ fill-layers.js match ✓')
+}
+
 // Guard 7: escapeHtml coverage parity.
 // Three local copies of escapeHtml exist (src/lib/utils.js, chrome/chat-injector.js,
 // chrome/heatsync-button.js). Each must escape all five dangerous HTML chars.
@@ -826,10 +850,62 @@ function readMultichatModules() {
   // been paused, and paints.js pauses offscreen names for CPU. It depends on
   // nothing, so its position here is free; it sits with the compiler because
   // they are synced and version-locked together.
-  for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js']) {
+  // fill-layers.js + glyph-mask.js are the `fill` block's composited-fill
+  // runtime, synced the same way. Both are dependency-free ON THE SITE, where
+  // each lives in its own ES module — but two of their top-level bindings
+  // collide once concatenated into this shared scope, so each gets one
+  // surgical rewrite of the EMBEDDED TEXT ONLY (the synced files on disk stay
+  // byte-identical to the site, which is what the parity test guards):
+  //   - fill-layers.js redeclares FILL_LAYER_CLASS/FILL_WRAP_CLASS, but
+  //     paint-spec.js (embedded just above, same loop) already declares the
+  //     identical pair — a `const` cannot be declared twice in one scope, so
+  //     the redeclaration is dropped and fill-layers.js's own uses resolve to
+  //     paint-spec.js's binding instead.
+  //   - glyph-mask.js's internal `log` (its pre-injection no-op logger) is a
+  //     `let`, and a `let` sharing a name with bootstrap.js's `function log`
+  //     in the same block is a SyntaxError, not a shadow (unlike the
+  //     lib-IIFE/multichat-block `log` shadow SCOPE_COLLISION_ALLOWLIST covers
+  //     below — both of these land in the SAME block). Renamed to a name
+  //     nothing else in the bundle declares; setLogger/maskFor etc. keep
+  //     their real names, so paints.js's call sites are untouched.
+  for (const mod of [
+    'paint-core.js',
+    'scene-spec.js',
+    'paint-spec.js',
+    'animation-phase.js',
+    'fill-layers.js',
+    'glyph-mask.js',
+  ]) {
     const p = join(SRC_DIR, 'lib', mod)
     if (existsSync(p)) {
-      combined += `\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`
+      let modSrc = stripExports(readFileSync(p, 'utf8'))
+      if (mod === 'fill-layers.js') {
+        modSrc = modSrc.replace(/^const FILL_LAYER_CLASS = .*$/m, '').replace(/^const FILL_WRAP_CLASS = .*$/m, '')
+        // Prove the drop actually fired — a site-side rename of either const
+        // (e.g. to `export let`) would make this a silent no-op and the
+        // collision would come back with no guard anywhere else watching for
+        // it (checkScopeCollisions doesn't scan these two files — see above).
+        if (/\bFILL_LAYER_CLASS\s*=|\bFILL_WRAP_CLASS\s*=/.test(modSrc)) {
+          throw new Error(
+            'build: fill-layers.js still declares FILL_LAYER_CLASS/FILL_WRAP_CLASS after the drop — sync drifted its declaration syntax',
+          )
+        }
+      }
+      if (mod === 'glyph-mask.js') {
+        modSrc = modSrc.replace(/\blog\b/g, 'hsGlyphMaskLog')
+        // Same proof, for the same reason: confirm the rename fired (found at
+        // least one `log`) and left no bare `log` behind to collide with
+        // bootstrap.js's function of the same name.
+        if (!/\bhsGlyphMaskLog\b/.test(modSrc)) {
+          throw new Error('build: glyph-mask.js log rename matched nothing — sync drifted its logger variable name')
+        }
+        if (/\blog\b/.test(modSrc)) {
+          throw new Error(
+            'build: glyph-mask.js still contains a bare `log` after the rename — would collide with bootstrap.js',
+          )
+        }
+      }
+      combined += `\n// --- lib/${mod} ---\n${modSrc}\n`
     }
   }
 
@@ -1358,6 +1434,7 @@ checkErrorReporterParity()
 checkUiSyncBlocklistParity()
 checkUserKeyParity()
 checkReservedPathsParity()
+checkFillLayerClassParity()
 checkEscapeHtmlCoverage()
 checkNoRuntimeDeps()
 checkNoDynamicCode()

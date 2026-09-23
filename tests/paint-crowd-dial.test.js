@@ -245,9 +245,12 @@ describe('the dial resolves its unit in the SHIPPED bundle', () => {
   const BUILD = readFileSync(join(import.meta.dir, '..', 'build.js'), 'utf8')
 
   test('build.js embeds scene-spec and paint-spec ahead of the multichat modules', () => {
-    const libLoop = BUILD.indexOf(
-      "for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js', 'animation-phase.js'])",
-    )
+    // A regex, not a literal string: biome is free to reflow this array
+    // literal onto multiple lines (it did, once this grew past 6 entries),
+    // and a plain indexOf broke on exactly that reflow.
+    const libLoopRe =
+      /for \(const mod of \[\s*'paint-core\.js',\s*'scene-spec\.js',\s*'paint-spec\.js',\s*'animation-phase\.js',\s*'fill-layers\.js',\s*'glyph-mask\.js',?\s*\]\)/
+    const libLoop = BUILD.search(libLoopRe)
     expect(libLoop, 'the paint compiler lib loop moved or was renamed in build.js').toBeGreaterThan(-1)
     const mcLoop = BUILD.indexOf('const modules = CORE_MODULES')
     expect(mcLoop, 'the multichat module loop moved in build.js').toBeGreaterThan(-1)

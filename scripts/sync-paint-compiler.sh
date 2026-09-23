@@ -17,6 +17,13 @@
 # had the compiler and not the restore, and drifted a name by exactly how long
 # it had been scrolled away.
 #
+# fill-layers.js + glyph-mask.js are the composited fill's runtime half (the
+# `fill` block's moving layers, masked to the name's own letterform — see
+# utils/paint-spec.js's compositedFillPlan/buildFillLayersCss). Both are
+# dependency-free leaves on the site (glyph-mask.js takes its logger by
+# injection, never by import — see setLogger there), which is exactly what
+# lets the extension take them verbatim like the compiler.
+#
 #   scripts/sync-paint-compiler.sh            # from ../heatsync (or $HS_SITE_DIR)
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -29,6 +36,8 @@ for pair in \
   client/utils/scene-spec.js \
   client/utils/paint-spec.js \
   client/cosmetics/animation-phase.js \
+  client/cosmetics/fill-layers.js \
+  client/cosmetics/glyph-mask.js \
   client/utils/plus-tenure.js
 do
   cp "$site/$pair" "$here/src/lib/$(basename "$pair")"

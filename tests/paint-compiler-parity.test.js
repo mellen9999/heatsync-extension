@@ -34,6 +34,12 @@ const FILES = [
   'client/utils/scene-spec.js',
   'client/utils/paint-spec.js',
   'client/cosmetics/animation-phase.js',
+  // Joined 2026-09-23, alongside the `fill` block's composited-fill runtime.
+  // Both are dependency-free leaves (glyph-mask.js takes its logger by
+  // injection — setLogger — never by import), which is what lets the
+  // extension take them verbatim instead of porting them.
+  'client/cosmetics/fill-layers.js',
+  'client/cosmetics/glyph-mask.js',
   // Joined 2026-09-16. It had called itself a "SYNCED COPY … keep byte-close"
   // for months with no script and no gate, and had drifted — only by a line
   // wrap biome introduced, but nothing would have said so if it had been more.

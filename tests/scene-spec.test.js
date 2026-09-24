@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { compilePaintCss, paintNeedsSpans, validatePaintSpec } from '../src/lib/paint-spec.js'
+import { validatePaintSpec } from '../src/lib/paint-authoring.js'
+import { compilePaintCss, paintNeedsSpans } from '../src/lib/paint-spec.js'
 import { sceneBoxCounts } from '../src/lib/scene-spec.js'
 
 // Smoke-test coverage for the ext's synced copy of scene paints v2 (scene-spec.js

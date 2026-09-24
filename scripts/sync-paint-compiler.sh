@@ -35,6 +35,7 @@ for pair in \
   client/utils/paint-core.js \
   client/utils/scene-spec.js \
   client/utils/paint-spec.js \
+  client/utils/paint-authoring.js \
   client/cosmetics/animation-phase.js \
   client/cosmetics/fill-layers.js \
   client/cosmetics/glyph-mask.js \

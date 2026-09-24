@@ -1,12 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import {
-  compilePaintCss,
-  EFFECTS,
-  hashPaintSpec,
-  paintNeedsSpans,
-  paintPhaseNow,
-  validatePaintSpec,
-} from '../src/lib/paint-spec.js'
+import { validatePaintSpec } from '../src/lib/paint-authoring.js'
+import { compilePaintCss, EFFECTS, hashPaintSpec, paintNeedsSpans, paintPhaseNow } from '../src/lib/paint-spec.js'
 
 // Smoke-test coverage for the ext's ported copy of the heatsync monorepo's
 // client/utils/paint-spec.js — see the provenance header in src/lib/paint-spec.js.

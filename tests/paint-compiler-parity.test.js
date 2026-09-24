@@ -33,6 +33,12 @@ const FILES = [
   'client/utils/paint-core.js',
   'client/utils/scene-spec.js',
   'client/utils/paint-spec.js',
+  // Joined 2026-09-23, when the site split the save-time half of paint-spec.js
+  // out of its render path. Nothing here validates a paint, so this copy is
+  // inert — mirrored anyway because the two halves are one module's worth of
+  // rules, and a validator that drifts is how the two come to disagree about
+  // which specs exist.
+  'client/utils/paint-authoring.js',
   'client/cosmetics/animation-phase.js',
   // Joined 2026-09-23, alongside the `fill` block's composited-fill runtime.
   // Both are dependency-free leaves (glyph-mask.js takes its logger by

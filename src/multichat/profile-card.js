@@ -463,32 +463,6 @@ function getUserSessionStats(username) {
   return { count, firstTime, lastTime, channels }
 }
 
-// Build a 'session' section showing local-only mod context derived purely from
-// the in-memory chat buffers. Returns null when the user has no buffered messages
-// so the caller can skip the section entirely.
-function pcBuildSessionSection(username) {
-  const { count, firstTime, channels } = getUserSessionStats(username)
-  if (!count) return null
-  const sec = pcMakeSection('session')
-  const sheet = document.createElement('dl')
-  sheet.className = 'hs-pcard-sheet'
-  const addRow = (label, value) => {
-    const dt = document.createElement('dt')
-    dt.textContent = label
-    const dd = document.createElement('dd')
-    dd.textContent = value
-    sheet.appendChild(dt)
-    sheet.appendChild(dd)
-  }
-  addRow('msgs', String(count))
-  if (firstTime) {
-    addRow('first', new Date(firstTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
-  }
-  if (channels.size) addRow('channels', String(channels.size))
-  sec.appendChild(sheet)
-  return sec
-}
-
 function pcFmt(n) {
   n = Number(n) || 0
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}m`
@@ -496,33 +470,10 @@ function pcFmt(n) {
   return String(n)
 }
 
-// Tokenize bio text and append @mention/#tag/text nodes safely (no innerHTML).
-// @mentions reuse `.hs-mc-user` so the existing capture-phase click handler
-// opens the profile card. #tags link to heatsync.org/tags/<name> in a new tab.
-function pcAppendBioWithAutolinks(parent, text) {
-  const parts = String(text || '').split(/(@[A-Za-z0-9_]{3,25}|#[A-Za-z0-9]{1,30})/g)
-  for (const p of parts) {
-    if (!p) continue
-    if (p[0] === '@' && p.length >= 4) {
-      const name = p.slice(1)
-      const span = document.createElement('span')
-      span.className = 'hs-mc-user hs-pcard-bio-mention'
-      span.dataset.username = name
-      span.textContent = `@${name}`
-      parent.appendChild(span)
-    } else if (p[0] === '#' && p.length >= 2) {
-      const a = document.createElement('a')
-      a.className = 'hs-pcard-bio-tag'
-      a.href = `https://heatsync.org/tags/${encodeURIComponent(p.slice(1).toLowerCase())}`
-      a.target = '_blank'
-      a.rel = 'noopener noreferrer'
-      a.textContent = `#${p.slice(1)}`
-      parent.appendChild(a)
-    } else {
-      parent.appendChild(document.createTextNode(p))
-    }
-  }
-}
+// Bio autolinking now goes through hsExtRenderBio (tooltips.js, same
+// concatenated bundle scope) — the one bio autolinker every card surface
+// uses, passed as hsCardHtml's renderBio hook below. No DOM-node version
+// needed anymore (hsCardHtml wants a trusted HTML string).
 
 function pcMakeSection(title) {
   const sec = document.createElement('div')
@@ -536,20 +487,26 @@ function pcMakeSection(title) {
 
 // Top-of-card mod actions — left-click username on a chatter in a channel you
 // mod surfaces delete/timeout/ban right at the top, replacing the bulky inline
-// hover toolbar on every row. Returns null when not applicable so callers can
-// skip the section entirely. Twitch-only (Kick/YT mod GQL not wired).
-function pcBuildModActions(username) {
-  if (typeof getRecentMessagesFromUser !== 'function') return null
-  if (!username) return null
+// hover toolbar on every row. Twitch-only (Kick/YT mod GQL not wired) for role
+// grants; delete/timeout/ban/unban work on both via dispatchModAction.
+//
+// Pure data now (ctx.modGroups — see card-model.js's doc) — card-render.js
+// renders the reason input + buttons as escaped HTML with data-hs-card-mod-*
+// attributes; pcHandleModAction below wires the real behavior via the
+// delegated click listener in setupProfileCardHandlers. Returns [] when not
+// applicable (own profile, no recent messages, no channel you mod) so
+// hsCardModel's `ctx.modGroups.length` check skips the section entirely.
+function pcBuildModGroups(username) {
+  if (typeof getRecentMessagesFromUser !== 'function' || !username) return []
   // Don't surface mod actions on your own profile — self-mod buttons are nonsense.
   if (
     typeof currentUsername !== 'undefined' &&
     currentUsername &&
     username.toLowerCase() === currentUsername.toLowerCase()
   )
-    return null
+    return []
   const recent = getRecentMessagesFromUser(username)
-  if (!recent.length) return null
+  if (!recent.length) return []
   // Group by channel+platform — most recent msgId per channel where I'm a mod.
   // Twitch gates on GQL mod-state, Kick on kick_mod_status; the key keeps the
   // two namespaces apart (a twitch login and kick slug can collide).
@@ -578,178 +535,246 @@ function pcBuildModActions(username) {
         login: (m.login || m.user || '').toLowerCase(),
       })
   }
-  if (!groups.size) return null
-  const sec = document.createElement('div')
-  sec.className = 'hs-pcard-section hs-pcard-mod'
-  // Optional reason — applied to every ban/timeout fired from this card. Empty =
-  // none. Click surfaces (right-click/hover) stay reason-free for speed; this is
-  // the considered surface where a reason makes sense. Terminal palette, square.
-  const reasonInput = document.createElement('input')
-  reasonInput.type = 'text'
-  reasonInput.placeholder = 'reason (optional)'
-  reasonInput.className = 'hs-pcard-mod-reason'
-  reasonInput.maxLength = 200
-  reasonInput.style.cssText =
-    'width:100%;box-sizing:border-box;background:#000;color:#fff;border:1px solid #333;border-radius:0;padding:2px 5px;margin-bottom:3px;font:inherit;outline:none'
-  reasonInput.addEventListener('focus', () => {
-    reasonInput.style.borderColor = '#fff'
-  })
-  reasonInput.addEventListener('blur', () => {
-    reasonInput.style.borderColor = '#333'
-  })
-  // Don't let card-level key handlers (vim nav etc.) hijack typing; keep Escape.
-  reasonInput.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') e.stopPropagation()
-  })
-  sec.appendChild(reasonInput)
+  if (!groups.size) return []
+  const out = []
   for (const { channel, platform, msgId, login } of groups.values()) {
     const target = login || (username || '').toLowerCase()
-    const row = document.createElement('div')
-    row.className = 'hs-pcard-mod-row'
-    const chLabel = document.createElement('span')
-    chLabel.className = 'hs-pcard-mod-ch'
-    chLabel.textContent = platform === 'kick' ? `#${channel} (kick)` : `#${channel}`
-    row.appendChild(chLabel)
     const actions = [
-      { label: 'del msg', title: "delete this user's latest message", need: 'msg', action: 'delete' },
-      { label: '1m', title: 'timeout 1 minute', action: 'timeout', durationSec: 60 },
-      { label: '10m', title: 'timeout 10 minutes', action: 'timeout', durationSec: 600 },
-      { label: '1h', title: 'timeout 1 hour', action: 'timeout', durationSec: 3600 },
-      { label: '24h', title: 'timeout 24 hours', action: 'timeout', durationSec: 86400 },
-      { label: '7d', title: 'timeout 7 days', action: 'timeout', durationSec: 604800 },
-      { label: 'ban', title: 'permanent ban', action: 'ban', danger: true },
-      { label: 'unban', title: 'unban user', action: 'unban' },
+      { action: 'delete', label: 'del msg', title: "delete this user's latest message", disabled: !msgId },
+      { action: 'timeout', label: '1m', title: 'timeout 1 minute', durationSec: 60 },
+      { action: 'timeout', label: '10m', title: 'timeout 10 minutes', durationSec: 600 },
+      { action: 'timeout', label: '1h', title: 'timeout 1 hour', durationSec: 3600 },
+      { action: 'timeout', label: '24h', title: 'timeout 24 hours', durationSec: 86400 },
+      { action: 'timeout', label: '7d', title: 'timeout 7 days', durationSec: 604800 },
+      { action: 'ban', label: 'ban', title: 'permanent ban', danger: true },
+      { action: 'unban', label: 'unban', title: 'unban user' },
     ]
-    for (const a of actions) {
-      const b = document.createElement('button')
-      b.className = `hs-pcard-mod-btn${a.danger ? ' hs-pcard-mod-btn-danger' : ''}`
-      b.type = 'button'
-      b.textContent = a.label
-      b.title = a.title
-      if (a.need === 'msg' && !msgId) b.disabled = true
-      b.addEventListener('click', async (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        b.disabled = true
-        const orig = b.textContent
-        b.textContent = '…'
-        const reason = reasonInput.value.trim()
-        // Act on this row's own platform (twitch or kick), single-platform.
-        let r
-        try {
-          r = await dispatchModAction({
-            channel,
-            platform,
-            action: a.action,
-            target,
-            durationSec: a.durationSec,
-            msgId,
-            reason,
-          })
-        } catch (err) {
-          r = { anyOk: false, tResp: { error: err?.message || 'error' } }
-        }
-        b.textContent = orig
-        if (a.action === 'delete') {
-          if (typeof showToast === 'function')
-            showToast(
-              r?.anyOk
-                ? t('mc_profile_deleted_message')
-                : t('mc_profile_delete_failed', [(r?.tResp || r?.kResp)?.error || t('mc_common_unknown')]),
-              r?.anyOk ? 'success' : 'error',
-            )
-        } else {
-          const label =
-            a.action === 'ban'
-              ? t('mc_mod_label_banned')
-              : a.action === 'unban'
-                ? t('mc_mod_label_unbanned')
-                : t('mc_mod_label_timed_out', [String(a.durationSec)])
-          if (typeof showModResultToast === 'function') showModResultToast(label, target, r)
-        }
-        b.disabled = a.need === 'msg' && !msgId
-      })
-      row.appendChild(b)
-    }
-    sec.appendChild(row)
-
     // Role grants — mod/unmod/vip/unvip. Separate mutation pair (VIPUser/
     // UnVIPUser, ModUser/UnmodUser in twitch-api.js) from the ban/timeout/
-    // delete union dispatchModAction covers above, so it's its own row.
-    // Twitch only (same restriction as input.js's /mod /vip slash commands
-    // this reuses — Kick/YT have no equivalent GQL wired). Twitch itself
-    // restricts mod/unmod to the broadcaster; that's enforced server-side
-    // and surfaced as a failed toast here, same as any other row action —
-    // no client-side broadcaster pre-check to keep this in step with
+    // delete union dispatchModAction covers above. Twitch only (same
+    // restriction as input.js's /mod /vip slash commands this reuses —
+    // Kick/YT have no equivalent GQL wired). Twitch itself restricts
+    // mod/unmod to the broadcaster; that's enforced server-side and
+    // surfaced as a failed toast, same as any other row action — no
+    // client-side broadcaster pre-check to keep this in step with
     // whatever Twitch's own rule is.
-    if (platform === 'twitch') {
-      const roleRow = document.createElement('div')
-      roleRow.className = 'hs-pcard-mod-row'
-      const roleActions = [
-        { label: 'mod', kind: 'mod', add: true, title: 'grant moderator (broadcaster only)' },
-        { label: 'unmod', kind: 'mod', add: false, title: 'remove moderator (broadcaster only)' },
-        { label: 'vip', kind: 'vip', add: true, title: 'grant VIP' },
-        { label: 'unvip', kind: 'vip', add: false, title: 'remove VIP' },
-      ]
-      for (const { label, kind, add, title } of roleActions) {
-        const b = document.createElement('button')
-        b.className = 'hs-pcard-mod-btn'
-        b.type = 'button'
-        b.textContent = label
-        b.title = title
-        b.addEventListener('click', async (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          if (typeof getTwitchAuthToken !== 'function' || !getTwitchAuthToken()) {
-            if (typeof showToast === 'function')
-              showToast(t('mc_input_pp_login') || 'log into twitch.tv first', 'error')
-            return
-          }
-          b.disabled = true
-          const orig = b.textContent
-          b.textContent = '…'
-          let r
-          try {
-            const { id: channelId } = await resolveTwitchChannelIdEx(channel)
-            if (!channelId) throw new Error('could not resolve channel')
-            r =
-              kind === 'vip' ? await vipTwitchUser(channelId, target, add) : await modTwitchUser(channelId, target, add)
-          } catch (err) {
-            r = { error: err?.message || 'error' }
-          }
-          if (typeof showToast === 'function') {
-            showToast(
-              r?.ok ? `${label}: ${target}` : `${label} failed: ${r?.error || 'unknown'}`,
-              r?.ok ? 'success' : 'error',
-            )
-          }
-          b.textContent = orig
-          b.disabled = false
-        })
-        roleRow.appendChild(b)
-      }
-      sec.appendChild(roleRow)
-    }
+    const roleActions =
+      platform === 'twitch'
+        ? [
+            { kind: 'mod', add: true, label: 'mod', title: 'grant moderator (broadcaster only)' },
+            { kind: 'mod', add: false, label: 'unmod', title: 'remove moderator (broadcaster only)' },
+            { kind: 'vip', add: true, label: 'vip', title: 'grant VIP' },
+            { kind: 'vip', add: false, label: 'unvip', title: 'remove VIP' },
+          ]
+        : []
+    out.push({ channel, platform, msgId, login: target, actions, roleActions })
   }
-  return sec
+  return out
 }
 
+// Fires a mod-action or role-grant button click — reads the data-hs-card-mod-*
+// attributes card-render.js's renderMod stamped on the button, and the
+// optional reason from the same .hs-card-mod section's reason input.
+// Optional reason — applied to every ban/timeout fired from this card. Empty
+// = none. Click surfaces (right-click/hover) stay reason-free for speed;
+// this is the considered surface where a reason makes sense.
+async function pcHandleModAction(btn) {
+  const ds = btn.dataset
+  const channel = ds.hsCardModChannel
+  const platform = ds.hsCardModPlatform
+  const login = ds.hsCardModLogin
+  const msgId = ds.hsCardModMsgId || null
+
+  if (ds.hsCardModRole) {
+    const kind = ds.hsCardModRole
+    const add = ds.hsCardModAdd === '1'
+    if (typeof getTwitchAuthToken !== 'function' || !getTwitchAuthToken()) {
+      if (typeof showToast === 'function') showToast(t('mc_input_pp_login') || 'log into twitch.tv first', 'error')
+      return
+    }
+    btn.disabled = true
+    const orig = btn.textContent
+    btn.textContent = '…'
+    let r
+    try {
+      const { id: channelId } = await resolveTwitchChannelIdEx(channel)
+      if (!channelId) throw new Error('could not resolve channel')
+      r = kind === 'vip' ? await vipTwitchUser(channelId, login, add) : await modTwitchUser(channelId, login, add)
+    } catch (err) {
+      r = { error: err?.message || 'error' }
+    }
+    if (typeof showToast === 'function') {
+      showToast(r?.ok ? `${orig}: ${login}` : `${orig} failed: ${r?.error || 'unknown'}`, r?.ok ? 'success' : 'error')
+    }
+    btn.textContent = orig
+    btn.disabled = false
+    return
+  }
+
+  const action = ds.hsCardModAction
+  const durationSec = ds.hsCardModDuration ? Number(ds.hsCardModDuration) : undefined
+  const reason = btn.closest('.hs-card-mod')?.querySelector('.hs-card-mod-reason')?.value.trim() || ''
+  btn.disabled = true
+  const orig = btn.textContent
+  btn.textContent = '…'
+  let r
+  try {
+    r = await dispatchModAction({ channel, platform, action, target: login, durationSec, msgId, reason })
+  } catch (err) {
+    r = { anyOk: false, tResp: { error: err?.message || 'error' } }
+  }
+  btn.textContent = orig
+  if (action === 'delete') {
+    if (typeof showToast === 'function') {
+      showToast(
+        r?.anyOk
+          ? t('mc_profile_deleted_message')
+          : t('mc_profile_delete_failed', [(r?.tResp || r?.kResp)?.error || t('mc_common_unknown')]),
+        r?.anyOk ? 'success' : 'error',
+      )
+    }
+  } else {
+    const label =
+      action === 'ban'
+        ? t('mc_mod_label_banned')
+        : action === 'unban'
+          ? t('mc_mod_label_unbanned')
+          : t('mc_mod_label_timed_out', [String(durationSec)])
+    if (typeof showModResultToast === 'function') showModResultToast(label, login, r)
+  }
+  btn.disabled = action === 'delete' ? !msgId : false
+}
+
+// Session stats (local buffers, zero API calls) as ctx.extraSheet rows —
+// same shape pcMakeSection's old DOM sheet built, now data hsCardModel folds
+// into the one sheet every variant renders.
+function pcBuildSessionSheetRows(username) {
+  const { count, firstTime, channels } = getUserSessionStats(username)
+  if (!count) return []
+  const rows = [{ k: 'session-msgs', label: 'session', value: String(count) }]
+  if (firstTime) {
+    rows.push({
+      k: 'session-first',
+      label: 'first',
+      value: new Date(firstTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    })
+  }
+  if (channels.size) rows.push({ k: 'session-channels', label: 'channels', value: String(channels.size) })
+  return rows
+}
+
+// Kick bio socials (from pcFetchKickEnrich/pcMergeKickEnrich's `_kick_socials`)
+// as payload.socials-shaped links. Discord has no single canonical URL shape
+// (tag vs invite vs username) so it renders as plain text, same as before.
+function pcBuildSocials(data) {
+  const s = data?._kick_socials
+  if (!s) return null
+  const out = []
+  if (s.twitter) out.push({ label: 'twitter', href: `https://twitter.com/${s.twitter}` })
+  if (s.instagram) out.push({ label: 'instagram', href: `https://instagram.com/${s.instagram}` })
+  if (s.youtube)
+    out.push({ label: 'youtube', href: s.youtube.startsWith('http') ? s.youtube : `https://youtube.com/${s.youtube}` })
+  if (s.tiktok) out.push({ label: 'tiktok', href: `https://tiktok.com/@${s.tiktok}` })
+  if (s.facebook)
+    out.push({
+      label: 'facebook',
+      href: s.facebook.startsWith('http') ? s.facebook : `https://facebook.com/${s.facebook}`,
+    })
+  if (s.discord) out.push({ label: `discord: ${s.discord}` })
+  return out.length ? out : null
+}
+
+// Native chat badges + 7TV/BTTV/FFZ/Chatterino chips for the identity row —
+// hsCardHtml's renderBadges hook. Closes over `data`/`username` (not the
+// trimmed model card-render.js passes) since the raw twitch_user_id these
+// need lives on the profile payload, not the shared model.
+function pcRenderBadgesHtml(data, username) {
+  try {
+    const userId = data?.twitch_user_id || data?.twitch_id || null
+    const recent = typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : []
+    const recentTwitch = recent.find((m) => (m.platform || 'twitch') === 'twitch' && m.badges)
+    let html = ''
+    if (recentTwitch && typeof renderBadges === 'function')
+      html += renderBadges(recentTwitch.badges, recentTwitch.channel)
+    if (userId && typeof renderThirdPartyBadges === 'function') html += renderThirdPartyBadges(String(userId))
+    return html
+  } catch {
+    return ''
+  }
+}
+
+// The full overlay card — the shared card model + renderer, variant 'panel'.
+// Ext-only enhancements not on the shared model go through its host hooks
+// the same way the hover tooltip (tooltips.js) does: ctx.extraSheet (session
+// stats), ctx.modGroups (mod actions), payload.socials (kick bio links),
+// opts.renderBadges (native/7TV/BTTV/FFZ chips) — all pure data/string
+// builders above. Mute-state labeling and the ext-only "+add channel"
+// action (channels/tabs have no site equivalent) are the two things that
+// stay small post-render DOM patches, same discipline as the tooltip's
+// banner/pronoun patches: real DOM interactivity (notes editing) or purely
+// local, ephemeral, host-only state with no shared-model slot to earn.
 function renderProfileCardView() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl || !activeProfileCard) return
   msgsEl.textContent = ''
 
-  const { username, data } = activeProfileCard
-  // Prefer display_identity (public streamer_identities + opted-in self-links,
-  // server-gated) over raw fields. Both sources are redacted server-side for
-  // non-opted-in users → null||null = no pill = no leak.
-  const di = data?.display_identity || {}
-  const ls = data?.live_status || {}
-  const card = document.createElement('div')
-  card.className = 'hs-pcard'
+  const { username, data, platform } = activeProfileCard
+
+  if (!data) {
+    const loading = document.createElement('div')
+    loading.className = 'hs-pcard-loading' // old CSS, not yet deleted — see the CSS-cleanup TODO
+    loading.textContent = `${data?.display_name || username}…`
+    msgsEl.appendChild(loading)
+    return
+  }
+  if (data.error) {
+    renderProfileCardErrorView(msgsEl, username, data)
+    return
+  }
+
+  // Normalize relationship field names — the ext's own fetch/synth paths
+  // have historically read youFollow/youBlock as primary (with isFollowing/
+  // isBlocked as fallback); hsCardModel's actions read isFollowing/isBlocked
+  // (the site's own names). Same idea as pcAddAsChannel's shapeIdentity call
+  // — adapting host data to the shared contract, never the other way round.
+  const rel = data.relationship || {}
+  const isFollowing = !!(rel.isFollowing ?? rel.youFollow)
+  const isBlocked = !!(rel.isBlocked ?? rel.youBlock)
+  const normalizedProfile =
+    rel.isFollowing === isFollowing && rel.isBlocked === isBlocked
+      ? data
+      : { ...data, relationship: { ...rel, isFollowing, isBlocked } }
+
+  const model = hsCardModel(
+    { profile: normalizedProfile, socials: pcBuildSocials(data) },
+    {
+      hint: { platform: platform || undefined, login: (username || '').toLowerCase() },
+      capabilities: { follow: true, whisper: true, dm: true, mention: true, mute: true, block: true, isBlocked },
+      extraSheet: pcBuildSessionSheetRows(username),
+      modGroups: pcBuildModGroups(username),
+    },
+    { formatCompactNumber: pcFmt },
+  )
+
+  const html = hsCardHtml(model, {
+    variant: 'panel',
+    escapeHtml,
+    renderBio: hsExtRenderBio,
+    renderPlusBadge: typeof renderPlusTenureToken === 'function' ? renderPlusTenureToken : undefined,
+    paintColor: typeof sanitizeColor === 'function' ? sanitizeColor : undefined,
+    renderBadges: () => pcRenderBadgesHtml(data, username),
+  })
+
+  // NOTE: innerHTML XSS-safe — hsCardHtml escapes every untrusted field
+  const wrap = document.createElement('div')
+  wrap.innerHTML = html
+  const card = wrap.firstElementChild
+  if (!card) return
 
   // Sticky close — pinned top-right, stays in place while card scrolls.
-  // Redundant with ESC + actions-grid close, but discoverability is king.
+  // Redundant with ESC, but discoverability is king. hs-pcard-close is old
+  // CSS (09/12), not yet deleted — no shared-card equivalent exists since
+  // peek/full/page never show a visible X (ESC/outside-click dismiss).
   const closeBtn = document.createElement('button')
   closeBtn.className = 'hs-pcard-close'
   closeBtn.type = 'button'
@@ -757,523 +782,90 @@ function renderProfileCardView() {
   closeBtn.setAttribute('aria-label', 'close profile')
   closeBtn.textContent = '×'
   closeBtn.addEventListener('click', closeProfileCard)
-  card.appendChild(closeBtn)
-
-  // === Identity section ===
-  const idSec = pcMakeSection(data?.display_name || username)
-  idSec.classList.add('hs-pcard-id')
-  // Paint the identity title with the user's cosmetic when known. HeatSync
-  // paint (own-platform cosmetic) wins over 7TV — same precedence rule as the
-  // live sender row (see hsPaintRender/applyHsPaintToElement in paints.js).
-  const idUid = String(data?.twitch_user_id || data?.twitch_id || '')
-  const idPaint = userPaintStyle(idUid, (username || '').toLowerCase(), activeProfileCard?.platform)
-  const titleEl = idSec.querySelector('.hs-pcard-section-title')
-  if (titleEl) {
-    if (idUid && typeof hasResolvedHsPaint === 'function' && hasResolvedHsPaint(idUid)) {
-      applyHsPaintToElement(titleEl, idUid)
-    } else if (idPaint) {
-      titleEl.style.cssText += `;${idPaint}`
-    } else if (data?.color) {
-      // No paint — fall back to the user's saved HeatSync name color instead
-      // of leaving the header uncolored.
-      titleEl.style.color = sanitizeColor(data.color)
-    }
-  }
-
-  // Hero banner — wide channel banner image as background, with a gradient
-  // scrim so text/avatar always read clearly. Filled async by pcApplyBanner
-  // when the Twitch GQL response lands. Stays empty (CSS gradient placeholder)
-  // until then so layout doesn't jump.
-  const heroBanner = document.createElement('div')
-  heroBanner.className = 'hs-pcard-hero'
-  // dataset target so async banner fetch can find it without storing a closure
-  heroBanner.dataset.heroFor = username
-  const heroImg = document.createElement('div')
-  heroImg.className = 'hs-pcard-hero-img'
-  const heroScrim = document.createElement('div')
-  heroScrim.className = 'hs-pcard-hero-scrim'
-  heroBanner.appendChild(heroImg)
-  heroBanner.appendChild(heroScrim)
-  idSec.appendChild(heroBanner)
-
-  const idRow = document.createElement('div')
-  idRow.className = 'hs-pcard-id-row'
-
-  const avatar = document.createElement('img')
-  avatar.className = 'hs-pcard-avatar'
-  // For YT users with no heatsync profile, the heatsync API has no avatar,
-  // so fall back to the avatar pulled off any recent YT message they sent.
-  let ytAvatar = null
-  if (!data?.twitch_profile_pic && !data?.kick_profile_pic && !data?.profile_image_url) {
-    try {
-      const recent = getRecentMessagesFromUser(username)
-      const withAv = recent.find((m) => m.avatar)
-      if (withAv) ytAvatar = withAv.avatar
-    } catch {}
-  }
-  avatar.src =
-    safeUrl(data?.twitch_profile_pic || data?.kick_profile_pic || data?.profile_image_url || ytAvatar) ||
-    'https://heatsync.org/anon.webp'
-  avatar.alt = ''
-  avatar.decoding = 'async'
-  avatar.referrerPolicy = 'no-referrer'
-  idRow.appendChild(avatar)
-
-  const idText = document.createElement('div')
-  idText.className = 'hs-pcard-id-text'
-
-  // Chip row holds ONLY native chat badge images (sub/mod/vip + 7TV/FFZ/BTTV/
-  // Chatterino) — these are visual identity tokens that can't fit a text sheet.
-  // Platform usernames, age, role, verified, heat, posts, followers, rel are
-  // all rendered as text rows in the property sheet below.
-  const chips = document.createElement('div')
-  chips.className = 'hs-pcard-id-chips'
-  try {
-    const userId = data?.twitch_user_id || data?.twitch_id || null
-    const recent = typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : []
-    const recentTwitch = recent.find((m) => (m.platform || 'twitch') === 'twitch' && m.badges)
-    let html = ''
-    if (recentTwitch && typeof renderBadges === 'function') {
-      html += renderBadges(recentTwitch.badges, recentTwitch.channel)
-    }
-    if (userId && typeof renderThirdPartyBadges === 'function') {
-      html += renderThirdPartyBadges(String(userId))
-    }
-    if (html) {
-      const range = document.createRange()
-      range.selectNodeContents(chips)
-      chips.appendChild(range.createContextualFragment(html))
-    }
-  } catch {}
-
-  if (chips.children.length) idText.appendChild(chips)
-
-  if (data?.bio) {
-    const bio = document.createElement('div')
-    bio.className = 'hs-pcard-bio'
-    pcAppendBioWithAutolinks(bio, data.bio)
-    idText.appendChild(bio)
-  }
-
-  // Cross-platform link — "also @xqc on twitch" for Kick chatters whose 7TV
-  // account links a Twitch handle. Surfaces the unified identity.
-  const linkedTwitch = data?._linked_twitch_username || data?.twitch_username
-  if (linkedTwitch && activeProfileCard.platform === 'kick') {
-    const xref = document.createElement('div')
-    xref.className = 'hs-pcard-xref'
-    xref.style.cssText = 'font-size:13px;color:#999;margin-top:2px;'
-    xref.appendChild(document.createTextNode('also '))
-    const a = document.createElement('a')
-    a.href = `https://twitch.tv/${encodeURIComponent(linkedTwitch)}`
-    a.target = '_blank'
-    a.rel = 'noopener noreferrer'
-    a.style.cssText = 'color:var(--hs-plat-twitch);font-weight:700;text-decoration:none;'
-    a.textContent = `@${linkedTwitch}`
-    xref.appendChild(a)
-    xref.appendChild(document.createTextNode(' on twitch'))
-    idText.appendChild(xref)
-  }
-
-  // Kick socials row — twitter, instagram, youtube, tiktok, discord, facebook.
-  // Compact icon-ish text links, only rendered when populated. Pure visibility
-  // win for Kick-only users who'd otherwise see a near-empty card.
-  const kickSocials = data?._kick_socials
-  if (kickSocials) {
-    const socEntries = []
-    if (kickSocials.twitter) socEntries.push(['twitter', `https://twitter.com/${kickSocials.twitter}`])
-    if (kickSocials.instagram) socEntries.push(['instagram', `https://instagram.com/${kickSocials.instagram}`])
-    if (kickSocials.youtube)
-      socEntries.push([
-        'youtube',
-        kickSocials.youtube.startsWith('http') ? kickSocials.youtube : `https://youtube.com/${kickSocials.youtube}`,
-      ])
-    if (kickSocials.tiktok) socEntries.push(['tiktok', `https://tiktok.com/@${kickSocials.tiktok}`])
-    if (kickSocials.facebook)
-      socEntries.push([
-        'facebook',
-        kickSocials.facebook.startsWith('http') ? kickSocials.facebook : `https://facebook.com/${kickSocials.facebook}`,
-      ])
-    if (kickSocials.discord) socEntries.push(['discord', kickSocials.discord])
-    if (socEntries.length) {
-      const soc = document.createElement('div')
-      soc.className = 'hs-pcard-socials'
-      soc.style.cssText = 'font-size:13px;margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;'
-      for (const [label, href] of socEntries) {
-        if (!/^https?:\/\//i.test(href)) {
-          const span = document.createElement('span')
-          span.style.cssText = 'color:#999;'
-          span.textContent = `${label}: ${href}`
-          soc.appendChild(span)
-        } else {
-          const a = document.createElement('a')
-          a.href = href
-          a.target = '_blank'
-          a.rel = 'noopener noreferrer'
-          a.style.cssText = 'color:var(--hs-plat-kick);text-decoration:none;'
-          a.textContent = label
-          soc.appendChild(a)
-        }
-      }
-      idText.appendChild(soc)
-    }
-  }
-
-  idRow.appendChild(idText)
-  idSec.appendChild(idRow)
-  card.appendChild(idSec)
-
-  // === Mod actions === — top priority when you mod a channel this user is in
-  const modSec = pcBuildModActions(username)
-  if (modSec) card.appendChild(modSec)
-
-  // === Actions section === — main interactions (follow/whisper/etc) sit above
-  // stats now so the useful buttons land in the first viewport, not below the
-  // recent-messages scroll.
-  {
-    const asec = pcMakeSection('actions')
-    asec.classList.add('hs-pcard-actions')
-    const grid = document.createElement('div')
-    grid.className = 'hs-pcard-action-grid'
-
-    const isMuted =
-      typeof isUserMuted === 'function' ? isUserMuted(username, activeProfileCard.platform) : mutedUsers.has(username)
-    const inChannels = config.channels.some((c) => {
-      const id = c.id?.toLowerCase()
-      const tw = c.twitch?.toLowerCase()
-      const ki = c.kick?.toLowerCase()
-      return id === username || tw === username || ki === username
-    })
-
-    const youFollow = !!(data?.relationship?.youFollow ?? data?.relationship?.isFollowing)
-    const youBlock = !!(data?.relationship?.youBlock ?? data?.relationship?.isBlocked)
-    const profileId = data?.id || data?.userId || null
-
-    // hotkeys: f follow / w whisper / d dm / @ mention / m mute / b block /
-    // + add channel. Letter shown as a leading [k] indicator. Platform
-    // pills get t/k/y/h on the pcMakePill side.
-    const actions = [
-      {
-        label: youFollow ? 'unfollow' : 'follow',
-        key: 'f',
-        fn: () => pcToggleFollow(profileId, username, youFollow),
-        disabled: !profileId,
-      },
-      { label: 'whisper', key: 'w', fn: () => pcDoWhisper(username, activeProfileCard?.platform) },
-      { label: 'dm', key: 'd', fn: () => pcDoDm(username, activeProfileCard?.platform) },
-      { label: 'mention', key: '@', fn: () => pcMention(data?.display_name || username) },
-      { label: isMuted ? 'unmute' : 'mute', key: 'm', fn: () => pcToggleMute(username) },
-      {
-        label: youBlock ? 'unblock' : 'block',
-        key: 'b',
-        fn: () => pcToggleBlock(profileId, username, youBlock),
-        disabled: !profileId,
-      },
-    ]
-    if (!inChannels) actions.push({ label: 'add channel', key: '+', fn: () => pcAddAsChannel(username) })
-
-    for (const a of actions) {
-      const btn = document.createElement('button')
-      btn.className = 'hs-pcard-action'
-      if (a.disabled) btn.disabled = true
-      btn.textContent = a.label
-      if (a.key) btn.dataset.pcKey = a.key
-      btn.addEventListener('click', a.fn)
-      grid.appendChild(btn)
-    }
-    asec.appendChild(grid)
-    card.appendChild(asec)
-  }
-
-  // === Notes section === — private cross-platform note on this chatter, sits
-  // next to the actions so it's in the first viewport. Renders read-preview +
-  // edit button; the editor popover is owned by user-notes.js.
-  if (typeof hsNoteRenderCardSection === 'function') {
-    const nsec = hsNoteRenderCardSection(username, activeProfileCard.platform, pcMakeSection)
-    if (nsec) card.appendChild(nsec)
-  }
-
-  // === Stats section ===
-  const statsSec = pcMakeSection('stats')
-  if (!data) {
-    statsSec.appendChild(document.createTextNode('loading…'))
-  } else if (data.error) {
-    // No heatsync profile — still surface the platform identity row so the
-    // card has at least one useful link (channel url) instead of a dead end.
-    // data.transient means we never got an answer: say so and offer a retry
-    // instead of asserting they have no account.
-    if (data.transient) {
-      const retry = document.createElement('button')
-      retry.className = 'hs-pcard-action'
-      retry.textContent = 'couldn’t load — retry'
-      retry.addEventListener('click', () => {
-        if (!activeProfileCard) return
-        // Re-open from scratch: openProfileCard re-runs the fetch and its cache
-        // check (the failed attempt was never cached, so this really retries).
-        openProfileCard(username, activeProfileCard.platform)
-      })
-      statsSec.appendChild(retry)
-    }
-    const plat = activeProfileCard.platform
-    const sheet = document.createElement('dl')
-    sheet.className = 'hs-pcard-sheet'
-    const addRow = (label, value, valueClass) => {
-      const dt = document.createElement('dt')
-      dt.textContent = label
-      const dd = document.createElement('dd')
-      if (valueClass) dd.className = valueClass
-      dd.textContent = value
-      sheet.appendChild(dt)
-      sheet.appendChild(dd)
-    }
-    if (plat === 'kick') addRow('kick', username, 'val-kick')
-    else if (plat === 'youtube' || plat === 'yt') addRow('yt', username, 'val-yt')
-    else addRow('ttv', username, 'val-ttv')
-    statsSec.appendChild(sheet)
-  } else {
-    const stats = data.stats || {}
-    const heat = stats.total_heat || 0
-    const posts = (stats.op_count || 0) + (stats.mop_count || 0) + (stats.re_count || 0)
-    const followers = Math.max(stats.followers || 0, data.twitch_followers || 0, data.kick_followers || 0)
-
-    const rel = data.relationship || {}
-    const youFollow = rel.youFollow ?? rel.isFollowing ?? rel.followsOnTwitch ?? rel.followsOnKick
-    // Platform-verified only — heatsync-DB-only flags can be stale for streamers
-    const followsYou = rel.profileFollowsViewerOnTwitch || rel.profileFollowsViewerOnKick
-    const youSub = rel.youSub ?? rel.isSubscribed ?? rel.subscribedOnTwitch ?? rel.subscribedOnKick
-    const subsYou = rel.profileSubbedToViewerOnTwitch || rel.profileSubbedToViewerOnKick
-
-    // Property sheet — 2-col zebra list. Label = dim gray, value = bold white
-    // except semantic-state values (age, role, verified, heat, rel) which
-    // carry their own brand/state color. 13px Cozette + bitmap render block
-    // for crispness; matches house "color when it earns it" rule.
-    const sheet = document.createElement('dl')
-    sheet.className = 'hs-pcard-sheet'
-    const addRow = (label, value, valueClass) => {
-      const dt = document.createElement('dt')
-      dt.textContent = label
-      const dd = document.createElement('dd')
-      if (valueClass) dd.className = valueClass
-      if (value instanceof Node) dd.appendChild(value)
-      else dd.textContent = value
-      sheet.appendChild(dt)
-      sheet.appendChild(dd)
-    }
-
-    // Platform usernames — value text is brand-colored. Live indicator (🔴 +
-    // viewer count) appended inline when broadcasting.
-    const liveDot = (vc) => {
-      const live = document.createElement('span')
-      live.className = 'hs-pc-live'
-      live.textContent = vc ? ` 🔴 ${pcFmt(vc)}` : ' 🔴'
-      return live
-    }
-    // Platform usernames render as clickable links to the channel page —
-    // same tab navigation (no _blank) per "go to page" UX. Useful for
-    // actually following on a platform: heatsync follow is the source of
-    // truth, but if the user wants to follow on twitch/kick natively
-    // (e.g. to get their notification, or because twitch's anti-bot
-    // blocks programmatic propagation), they click here to open the
-    // channel page and click the native follow button.
-    const mkLink = (href, label, liveVc, pcKey) => {
-      const a = document.createElement('a')
-      a.href = href
-      a.target = '_blank' // never navigate the multichat host page away
-      a.rel = 'noopener noreferrer'
-      a.textContent = label
-      a.dataset.pcardPill = '1' // bypasses overlay click interception
-      // Hotkey: t/k/y/h jumps here — the shared keydown handler at the bottom
-      // of this file clicks .hs-pcard-action[data-pc-key] (pill-era contract;
-      // the dl rows lost it in the property-sheet refactor).
-      if (pcKey) {
-        a.classList.add('hs-pcard-action')
-        a.dataset.pcKey = pcKey
-      }
-      if (typeof liveVc === 'number') a.appendChild(liveDot(liveVc))
-      return a
-    }
-    const twU = di.twitch || data.twitch_username
-    const kiU = di.kick || data.kick_username
-    const ytU = di.youtube || data.youtube_username
-    if (twU) {
-      addRow(
-        'ttv',
-        mkLink(
-          `https://twitch.tv/${encodeURIComponent(twU)}`,
-          twU,
-          (ls.twitch ?? data.twitch_is_live) ? data.twitch_viewer_count || 0 : undefined,
-          't',
-        ),
-        'val-ttv',
-      )
-    }
-    if (kiU) {
-      addRow(
-        'kick',
-        mkLink(
-          `https://kick.com/${encodeURIComponent(kiU)}`,
-          kiU,
-          (ls.kick ?? data.kick_is_live) ? data.kick_viewer_count || 0 : undefined,
-          'k',
-        ),
-        'val-kick',
-      )
-    }
-    if (ytU || data.youtube_channel_id) {
-      const ytName = ytU || username
-      const ytHref = ytU
-        ? `https://youtube.com/@${encodeURIComponent(ytU)}`
-        : `https://youtube.com/channel/${encodeURIComponent(data.youtube_channel_id)}`
-      addRow(
-        'yt',
-        mkLink(ytHref, ytName, (ls.youtube ?? data.youtube_is_live) ? data.youtube_viewer_count || 0 : undefined, 'y'),
-        'val-yt',
-      )
-    } else if (activeProfileCard.platform === 'yt' || activeProfileCard.platform === 'youtube') {
-      addRow('yt', mkLink(`https://youtube.com/@${encodeURIComponent(username)}`, username, undefined, 'y'), 'val-yt')
-    }
-    // heatsync profile — always present ('h' hotkey; pill-era parity)
-    addRow(
-      'hs',
-      mkLink(`https://heatsync.org/user/${encodeURIComponent(username)}`, username, undefined, 'h'),
-      'val-hs',
-    )
-
-    // acctage
-    const dates = [data.twitch_created_at, data.kick_created_at]
-      .filter(Boolean)
-      .filter((d) => !Number.isNaN(new Date(d).getTime()))
-    const oldest = dates.length ? dates.reduce((a, b) => (new Date(b) < new Date(a) ? b : a)) : null
-    const age = typeof getAccountAge === 'function' ? getAccountAge(oldest) : null
-    if (age) addRow('acctage', age, 'val-age')
-
-    // type (broadcaster status)
-    const bt = data.twitch_broadcaster_type
-    if (bt === 'partner') addRow('type', 'partner', 'val-partner')
-    else if (bt === 'affiliate') addRow('type', 'affiliate', 'val-affiliate')
-
-    // verified
-    if (data.twitch_verified) addRow('verified', '✓ twitch', 'val-ttv')
-    if (data.kick_verified) addRow('verified', '✓ kick', 'val-kick')
-
-    // heat (keep heatSpanEl for tier glow + degree symbol)
-    if (heat) addRow('heat', heatSpanEl(heat), 'val-heat')
-
-    // counts — posts neutral, followers blue (popularity scalar)
-    if (posts) addRow('posts', pcFmt(posts))
-    if (followers) addRow('followers', pcFmt(followers), 'val-followers')
-    // Kick channel-specific stats from /api/v2/channels — only when no
-    // heatsync-tracked twitch followers (would be redundant) or when the
-    // profile is Kick-only (synth).
-    if (data._kick_recent_categories?.length) {
-      const cat = data._kick_recent_categories[0]
-      if (cat?.name) addRow('playing', cat.name, 'val-kick')
-    }
-    if (data.kick_is_live && data._kick_live_title) {
-      addRow('stream', data._kick_live_title.slice(0, 60))
-    }
-
-    // Relationship — direction-coded colors. Outflow (you→them) cool side
-    // of the wheel (cyan/violet); inflow (them→you) warm side (magenta/pink);
-    // mutual gets a saturated handshake color (lime/gold).
-    if (youFollow && followsYou) addRow('rel', 'mutual follow', 'val-mutual')
-    else if (youFollow) addRow('you', 'follow', 'val-you-follow')
-    else if (followsYou) addRow('they', 'follow you', 'val-they-follow')
-    if (youSub && subsYou) addRow('rel', 'mutual sub', 'val-mutual-sub')
-    else if (youSub) addRow('you', 'sub', 'val-you-sub')
-    else if (subsYou) addRow('they', 'sub to you', 'val-they-sub')
-
-    if (sheet.children.length) statsSec.appendChild(sheet)
-    else statsSec.appendChild(document.createTextNode('no stats yet'))
-  }
-  card.appendChild(statsSec)
-
-  // === Session section — local-only mod context from in-memory buffers ===
-  const sessionSec = pcBuildSessionSection(username)
-  if (sessionSec) card.appendChild(sessionSec)
-
-  // === Stream section (only when live) ===
-  if (
-    data &&
-    ((ls.twitch ?? data.twitch_is_live) || (ls.kick ?? data.kick_is_live) || (ls.youtube ?? data.youtube_is_live))
-  ) {
-    let plat, platName, vc, url
-    if (ls.twitch ?? data.twitch_is_live) {
-      plat = 'twitch'
-      platName = di.twitch || data.twitch_username
-      vc = data.twitch_viewer_count || 0
-      url = `https://twitch.tv/${platName}`
-    } else if (ls.kick ?? data.kick_is_live) {
-      plat = 'kick'
-      platName = di.kick || data.kick_username
-      vc = data.kick_viewer_count || 0
-      url = `https://kick.com/${platName}`
-    } else {
-      plat = 'youtube'
-      platName = di.youtube || data.youtube_username || data.youtube_channel_id
-      vc = data.youtube_viewer_count || 0
-      url =
-        di.youtube || data.youtube_username
-          ? `https://youtube.com/@${di.youtube || data.youtube_username}/live`
-          : data.youtube_channel_id
-            ? `https://youtube.com/channel/${data.youtube_channel_id}/live`
-            : 'https://youtube.com'
-    }
-
-    const ssec = pcMakeSection(`${plat} · live`)
-    ssec.classList.add('hs-pcard-stream')
-    const line = document.createElement('div')
-    if (vc) line.appendChild(document.createTextNode(`${pcFmt(vc)} viewers — `))
-    const link = document.createElement('a')
-    link.href = url
-    link.target = '_blank'
-    link.rel = 'noopener noreferrer'
-    link.textContent = 'watch stream →'
-    link.className = 'hs-pcard-link'
-    link.dataset.pcardPill = '1'
-    line.appendChild(link)
-    ssec.appendChild(line)
-    card.appendChild(ssec)
-  }
-
-  // === Recent messages section ===
-  const recent = getRecentMessagesFromUser(username)
-  if (recent.length > 0) {
-    const rsec = pcMakeSection(`recent · ${recent.length} msg${recent.length === 1 ? '' : 's'}`)
-    rsec.classList.add('hs-pcard-recent')
-    for (const m of recent) {
-      const row = document.createElement('div')
-      row.className = 'hs-pcard-msg'
-      const ts = m.time ? new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
-      const tsEl = document.createElement('span')
-      tsEl.className = 'hs-pcard-msg-ts'
-      tsEl.textContent = ts
-      const platEl = document.createElement('span')
-      const plat = m.platform || 'twitch'
-      platEl.className = `hs-pcard-msg-plat hs-pcard-pill-${plat}`
-      platEl.textContent = plat === 'kick' ? 'k' : plat === 'youtube' ? 'y' : 't'
-      const textEl = document.createElement('span')
-      textEl.className = 'hs-pcard-msg-text'
-      textEl.textContent = m.text.length > 240 ? `${m.text.slice(0, 240)}…` : m.text
-      row.appendChild(tsEl)
-      row.appendChild(platEl)
-      row.appendChild(textEl)
-      rsec.appendChild(row)
-    }
-    card.appendChild(rsec)
-  }
+  card.prepend(closeBtn)
 
   msgsEl.appendChild(card)
 
-  // Hero banner — kick off async fetch using the multi-platform chain. The
-  // hero element is already in the DOM with a gradient placeholder; the
-  // applier mutates .hs-pcard-hero-img once a banner resolves.
-  const chain = pickBannerChain(data, activeProfileCard.platform, username)
-  if (chain.length) pcApplyBanner(card, chain)
+  // Mute label — local-only ephemeral state (chrome.storage), never part of
+  // the shared model: unlike follow/block it isn't server-authoritative, and
+  // the site has no equivalent capability at all.
+  const isMuted = typeof isUserMuted === 'function' ? isUserMuted(username, platform) : mutedUsers.has(username)
+  if (isMuted) {
+    const muteBtn = card.querySelector('.hs-card-action[data-hs-card-action="mute"]')
+    if (muteBtn) {
+      muteBtn.textContent = 'unmute'
+      muteBtn.classList.add('hs-card-active')
+    }
+  }
 
-  // Pronouns — keyed off the same twitch numeric id the identity paint uses
-  // above, independent of context platform (a kick chatter with a linked
-  // heatsync/twitch identity still gets their pronoundb pronouns).
+  // "+add channel" — ext-only (channels/tabs are a multichat concept the
+  // site has no equivalent of), so it isn't in card-model.js's ACTION_DEFS.
+  // Appended after the shared action row, same visual family.
+  const inChannels = config.channels.some((c) => {
+    const id = c.id?.toLowerCase()
+    const lower = (username || '').toLowerCase()
+    return id === lower || c.twitch?.toLowerCase() === lower || c.kick?.toLowerCase() === lower
+  })
+  if (!inChannels) {
+    const actionsRow = card.querySelector('.hs-card-actions')
+    if (actionsRow) {
+      const addBtn = document.createElement('button')
+      addBtn.type = 'button'
+      addBtn.className = 'hs-card-action'
+      addBtn.dataset.hsCardAction = 'addchannel'
+      addBtn.innerHTML = `${hk('+add channel', escapeHtml)}`
+      actionsRow.appendChild(addBtn)
+    }
+  }
+
+  // Notes — still the ext's own local/chrome.storage system (server sync +
+  // migration is a separate pass, tracked in the phase-2 plan's step 5); not
+  // wired to the shared model's `note` field yet on purpose. Appended as its
+  // own section, same as before.
+  if (typeof hsNoteRenderCardSection === 'function') {
+    const nsec = hsNoteRenderCardSection(username, platform, pcMakeSection)
+    if (nsec) card.querySelector('.hs-card-body')?.appendChild(nsec)
+  }
+
+  // Hero banner + pronouns — same async progressive-enhancement pattern as
+  // the hover tooltip (tooltips.js's applyTooltipBanner/applyTooltipPronouns),
+  // retargeted at this card's own root instead of #hs-user-tooltip.
+  const idUid = String(data.twitch_user_id || data.twitch_id || '')
+  const chain = pickBannerChain(data, platform, username)
+  if (chain.length) pcApplyBanner(card, chain)
   if (idUid) pcApplyPronouns(card, idUid)
+}
+
+// No-heatsync-profile view — still surfaces the platform identity so the
+// card has at least one useful link, and a retry when the failure was
+// transient (network blip, not "this person has no account").
+function renderProfileCardErrorView(msgsEl, username, data) {
+  const wrap = document.createElement('div')
+  wrap.className = 'hs-card hs-card-panel hs-card-empty'
+  const closeBtn = document.createElement('button')
+  closeBtn.className = 'hs-pcard-close'
+  closeBtn.type = 'button'
+  closeBtn.title = 'close (Esc)'
+  closeBtn.setAttribute('aria-label', 'close profile')
+  closeBtn.textContent = '×'
+  closeBtn.addEventListener('click', closeProfileCard)
+  wrap.appendChild(closeBtn)
+  const name = document.createElement('div')
+  name.className = 'hs-card-name'
+  name.textContent = username
+  wrap.appendChild(name)
+  if (data.transient) {
+    const retry = document.createElement('button')
+    retry.type = 'button'
+    retry.className = 'hs-card-action'
+    retry.textContent = 'couldn’t load — retry'
+    retry.addEventListener('click', () => {
+      if (!activeProfileCard) return
+      openProfileCard(username, activeProfileCard.platform)
+    })
+    wrap.appendChild(retry)
+  }
+  msgsEl.appendChild(wrap)
 }
 
 // Async pronoun application — fetches via SW and drops a chip into the
@@ -1284,20 +876,15 @@ async function pcApplyPronouns(card, twitchUserId) {
   const data = await fetchPronouns('twitch', twitchUserId)
   const words = data?.pronouns
   if (!words?.length) return
-  const root = document.getElementById('hs-mc-messages')?.querySelector('.hs-pcard') || card
-  const idText = root.querySelector('.hs-pcard-id-text')
-  if (!idText) return
-  let chips = root.querySelector('.hs-pcard-id-chips')
-  if (!chips) {
-    chips = document.createElement('div')
-    chips.className = 'hs-pcard-id-chips'
-    idText.insertBefore(chips, idText.firstChild)
-  }
-  if (chips.querySelector('.hs-pcard-pronoun')) return
+  const root = document.getElementById('hs-mc-messages')?.querySelector('.hs-card-panel') || card
+  const identity = root.querySelector('.hs-card-identity')
+  if (!identity || identity.querySelector('.hs-card-pronouns')) return
   const chip = document.createElement('span')
-  chip.className = 'hs-pcard-pronoun'
+  chip.className = 'hs-card-pronouns'
   chip.textContent = words.join('/').toLowerCase()
-  chips.appendChild(chip)
+  const name = identity.querySelector('.hs-card-name')
+  if (name?.nextSibling) identity.insertBefore(chip, name.nextSibling)
+  else identity.appendChild(chip)
 }
 
 // Async banner application — walks the platform chain and applies the first
@@ -1306,50 +893,33 @@ async function pcApplyPronouns(card, twitchUserId) {
 async function pcApplyBanner(card, chain) {
   const banner = await fetchBannerChain(chain)
   if (!banner) return
-  const root = document.getElementById('hs-mc-messages')?.querySelector('.hs-pcard') || card
-  const hero = root.querySelector('.hs-pcard-hero')
+  const root = document.getElementById('hs-mc-messages')?.querySelector('.hs-card-panel') || card
+  const hero = root.querySelector('.hs-card-hero')
   if (!hero) return
-  const heroImg = hero.querySelector('.hs-pcard-hero-img')
+  const heroImg = hero.querySelector('.hs-card-hero-img')
   if (!heroImg) return
   // safeUrl gates protocol (http/https only); escape quote+backslash so a
   // crafted banner URL (kick/yt-sourced) can't break out of url("…") and
   // inject CSS.
   const safe = safeUrl(banner.bannerUrl || banner.offlineUrl)
-  if (safe) {
-    // Preload, then commit — so the fade-in starts on a decoded image,
-    // not on a flash of nothing → cached image.
-    const probe = new Image()
-    probe.onload = () => {
-      heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
-      hero.classList.add('hs-pcard-hero-loaded')
-    }
-    probe.referrerPolicy = 'no-referrer'
-    probe.src = safe
-  }
+  if (safe) heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
   // Fill avatar from banner fetch's profile_pic when the card landed on the
   // anon placeholder (no heatsync profile pic). Kick API returns profile_pic
   // alongside the banner so unregistered kick chatters get a real face.
   if (banner.profileUrl) {
-    const avatar = root.querySelector('.hs-pcard-avatar')
+    const avatar = root.querySelector('.hs-card-avatar')
     // safeUrl-gate like every other avatar path (tooltips.js/social.js/main.js):
     // profileUrl is Kick v2 profile_pic / YT og:image, neither URL-validated by
     // the BG, so a javascript:/data: value must not reach img.src. On reject,
     // leave the anon placeholder rather than blank it.
-    const safe = safeUrl(banner.profileUrl)
-    if (avatar && safe && (avatar.src || '').includes('anon.webp')) {
-      avatar.src = safe
+    const safeAv = safeUrl(banner.profileUrl)
+    if (avatar && safeAv && (avatar.src || '').includes('anon.webp')) {
+      avatar.src = safeAv
     }
   }
-  if (banner.accent) {
-    // Accent tints scrim + avatar ring + section divider so the whole card
-    // adopts the streamer's identity color (Twitch primaryColorHex when
-    // present, platform-brand fallbacks for Kick/YouTube).
-    root.style.setProperty('--hs-pcard-accent', banner.accent)
-    hero.classList.add('hs-pcard-hero-accent')
-  }
-  if (banner.sourcePlatform) {
-    hero.dataset.source = banner.sourcePlatform
-  }
+  // Same CSSOM-at-mount discipline as data-color/data-accent — see
+  // hsExtApplyAccent (tooltips.js, shared bundle scope).
+  if (banner.accent) hsExtApplyAccent(root, banner.accent)
 }
 
 async function pcToggleMute(username) {
@@ -1663,6 +1233,33 @@ function setupProfileCardHandlers() {
     { capture: true, signal: mcSignal },
   )
 
+  // Action/mod button clicks — delegated, since card-render.js's output is
+  // inert escaped HTML (data-hs-card-action / data-hs-card-mod-* attributes,
+  // no listeners of its own). pcHandleCardAction/pcHandleModAction (above)
+  // read the attributes and dispatch to the same fetch/toggle functions the
+  // old per-button addEventListener calls used.
+  cleanup.addEventListener(
+    document,
+    'click',
+    (e) => {
+      if (!activeProfileCard) return
+      const modBtn = e.target.closest('.hs-card-mod-btn')
+      if (modBtn) {
+        e.preventDefault()
+        e.stopPropagation()
+        pcHandleModAction(modBtn)
+        return
+      }
+      const actionBtn = e.target.closest('.hs-card-action')
+      if (actionBtn?.dataset.hsCardAction) {
+        e.preventDefault()
+        e.stopPropagation()
+        pcHandleCardAction(actionBtn.dataset.hsCardAction, actionBtn)
+      }
+    },
+    { signal: mcSignal },
+  )
+
   // ESC closes the card; single-letter hotkeys trigger actions while open
   cleanup.addEventListener(
     document,
@@ -1691,7 +1288,17 @@ function setupProfileCardHandlers() {
       const allowed = new Set(['t', 'k', 'y', 'h', 'f', 'w', 'd', '@', 'm', 'b', '+', '='])
       if (!allowed.has(key)) return
       const target = key === '=' ? '+' : key
-      const btn = document.querySelector(`.hs-pcard-action[data-pc-key="${target}"]`)
+      let btn
+      if (target === 't' || target === 'k' || target === 'y' || target === 'h') {
+        // Platform pills — card-render.js's renderPlatformsRow (.hs-card-plat-link[data-tone]).
+        const tone = { t: 'ttv', k: 'kick', y: 'yt', h: 'hs' }[target]
+        btn = document.querySelector(`.hs-card-plat-link[data-tone="${tone}"]`)
+      } else if (target === '+') {
+        btn = document.querySelector('.hs-card-action[data-hs-card-action="addchannel"]')
+      } else {
+        const action = { f: 'follow', w: 'whisper', d: 'dm', '@': 'mention', m: 'mute', b: 'block' }[target]
+        btn = document.querySelector(`.hs-card-action[data-hs-card-action="${action}"]`)
+      }
       if (btn && !btn.disabled) {
         e.preventDefault()
         btn.click()
@@ -1699,6 +1306,39 @@ function setupProfileCardHandlers() {
     },
     'mc-pcard-keys',
   )
+}
+
+// Dispatches a click on a .hs-card-action button (data-hs-card-action) to
+// the same fetch/toggle functions the old per-button addEventListener calls
+// used — the delegated click handler above is the one call site.
+function pcHandleCardAction(actionKey, _btn) {
+  if (!activeProfileCard) return
+  const { username, data, platform } = activeProfileCard
+  const rel = data?.relationship || {}
+  const profileId = data?.id || data?.userId || null
+  switch (actionKey) {
+    case 'follow':
+      pcToggleFollow(profileId, username, !!(rel.isFollowing ?? rel.youFollow))
+      break
+    case 'whisper':
+      pcDoWhisper(username, platform)
+      break
+    case 'dm':
+      pcDoDm(username, platform)
+      break
+    case 'mention':
+      pcMention(data?.display_name || username)
+      break
+    case 'mute':
+      pcToggleMute(username)
+      break
+    case 'block':
+      pcToggleBlock(profileId, username, !!(rel.isBlocked ?? rel.youBlock))
+      break
+    case 'addchannel':
+      pcAddAsChannel(username)
+      break
+  }
 }
 
 function pcMention(name) {

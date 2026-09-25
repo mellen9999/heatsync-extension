@@ -1041,10 +1041,10 @@ function hsExtRenderBio(text) {
 // would use for its own host-only data. `extras` are whatever's resolved so
 // far; showUserTooltip re-calls this (a cheap pure function) and replaces
 // the tooltip's innerHTML each time a fetch resolves — see `paint()` there.
-// Only the channel banner image stays a post-render DOM patch
-// (applyTooltipBanner below): it targets an <img> background outside the
-// model entirely, and card.css has no accent treatment to hook a resolved
-// accent color into (see that function's own note).
+// Only the channel banner image + its resolved accent color stay a
+// post-render DOM patch (applyTooltipBanner below): the banner is its own
+// cached fetch outside this payload entirely, by design (see the plan's
+// architecture note — "banner stays its own cached request").
 function renderProfileCard(p, platform, extras = {}) {
   const uname = (p.username || p.twitch_username || p.kick_username || p.youtube_username || '').toLowerCase()
   const model = hsCardModel(
@@ -1183,10 +1183,18 @@ async function applyTooltipBanner(tooltip, profile, platform, username, gen) {
       if (safeAv) avatar.src = safeAv
     }
   }
-  // banner.accent (a per-streamer hero tint) is dropped here — card.css has
-  // no accent variant (it's a deliberately flat, gradient-free scrim by
-  // doctrine); the old .hs-pc-hero-accent/--hs-pc-accent pair was ext-only
-  // chrome with no shared-card equivalent to hook into.
+  // Same CSSOM-at-mount discipline as data-color/data-accent — card.css's
+  // .hs-card-avatar border reads var(--hs-card-accent, var(--hs-card-border)),
+  // so setting the property is the whole "apply" step.
+  if (banner.accent) hsExtApplyAccent(tooltip, banner.accent)
+}
+
+// Applies a resolved accent hex the same CSSOM-at-mount way every other
+// per-user color in this app uses under CSP — never inline style= on a
+// template. Shared by the tooltip and the overlay panel (pcApplyBanner).
+function hsExtApplyAccent(root, hex) {
+  const card = root.querySelector('.hs-card') || root
+  card.style.setProperty('--hs-card-accent', hex)
 }
 
 // Async pronoun fetch + apply for the hover tooltip — mirrors

@@ -125,10 +125,20 @@ describe('content.js: gateOn() behavior', () => {
 })
 
 describe('profile-card.js: mod/unmod/vip/unvip ride along with the migration (parity with the old card)', () => {
-  test('the card mod-actions row grants/revokes moderator and VIP, twitch only', () => {
-    const fn = body(CARD, 'function pcBuildModActions(username) {', 8000)
+  // The shared card model (card-model.js) is now the ONE mod-actions builder,
+  // so this split into two functions: pcBuildModGroups (pure data — which
+  // channels/role-grants apply, twitch-only gate) and pcHandleModAction (the
+  // delegated click handler that actually calls modTwitchUser/vipTwitchUser),
+  // wired via card-render.js's data-hs-card-mod-* attributes.
+  test('role grants (mod/vip) are twitch-only', () => {
+    const fn = body(CARD, 'function pcBuildModGroups(username) {', 4000)
     expect(fn).toContain("platform === 'twitch'")
-    expect(fn).toContain('modTwitchUser(channelId, target, add)')
-    expect(fn).toContain('vipTwitchUser(channelId, target, add)')
+    expect(fn).toContain("{ kind: 'mod'")
+    expect(fn).toContain("{ kind: 'vip'")
+  })
+  test('the delegated handler actually grants/revokes moderator and VIP', () => {
+    const fn = body(CARD, 'async function pcHandleModAction(btn) {', 3000)
+    expect(fn).toContain('modTwitchUser(channelId, login, add)')
+    expect(fn).toContain('vipTwitchUser(channelId, login, add)')
   })
 })

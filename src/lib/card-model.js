@@ -381,7 +381,12 @@ function buildCorpusRow(corpus, ctx, fmt) {
   if (!corpus) return null
   const parts = []
   if (corpus.messages > 0) parts.push(`${fmt(corpus.messages)} msgs`)
-  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} ${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+  // corpus.firstChannel is the channel of the FIRST message (server/routes/
+  // chatter-lite.ts pairs it with firstDay from the same row) — "since DATE
+  // in #channel", never a bare channel name with no label (read as a typo)
+  // and never "most in" (that would claim something about VOLUME this field
+  // doesn't carry).
+  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} in #${corpus.firstChannel}` : `since ${corpus.firstDay}`)
   const skip = ctx.channel ? String(ctx.channel).toLowerCase() : null
   const also = (corpus.also || []).filter(c => c.toLowerCase() !== skip)
   let alsoText = null

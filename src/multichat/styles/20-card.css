@@ -224,6 +224,15 @@
  * something. */
 .hs-card-hero.hs-card-hero-loaded + .hs-card-body .hs-card-identity {
   margin-top: -20px;
+  /* align-items: center (the base rule) put the NAME at the row's vertical
+   * centre — half the 40px avatar's height above its own midpoint, which
+   * landed it flush against (sometimes fractionally past) the banner's
+   * bottom edge, the same edge the -20px above straddles. The avatar is
+   * the tallest item and already defines the row's height either way, so
+   * flex-end doesn't move IT — it moves the shorter siblings (name,
+   * badges, flair) down to sit level with the avatar's own bottom edge,
+   * which is well clear of the banner. */
+  align-items: flex-end;
 }
 .hs-card-avatar {
   width: 40px;
@@ -254,7 +263,15 @@
   font-size: 13px;
   color: var(--hs-card-dim);
 }
+/* core/reset.css's blanket `img { height: auto }` beats the <img width=16
+ * height=16> attributes card-render.js stamps on this (a CSS declaration
+ * always wins over an HTML presentation attribute, whatever its
+ * specificity) — with no height of its own, the badge rendered at its
+ * SOURCE image's native size (~32px), not the 16px the markup asked for.
+ * Explicit here, not left to the attribute. */
 .hs-card-flair {
+  width: 16px;
+  height: 16px;
   vertical-align: middle;
 }
 /* Ember (tenure achievement) chip — the one achievement the card still
@@ -279,6 +296,24 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Bio emotes render via the same .emote-hover-wrapper system as chat
+   * (renderBio → parseInlineText) — its own height comes from the GLOBAL
+   * --emote-max-height (32px), not a card-scoped size. Scoped override,
+   * same 20px cap as the recent-log emotes; the custom property cascades
+   * into .emote-hover-wrapper's `height` and img.emote's `max-height`
+   * calc() below for free. */
+  --emote-max-height: 20px;
+}
+/* .chat-message/.message ancestor is what the doctrine's measured -8px
+ * targets (emotes.css) — bio has neither, so without this the wrapper falls
+ * through to its OWN base rule's `vertical-align: text-bottom !important`,
+ * a keyword, not the measured length the sheet-row/recent-log emotes get.
+ * Same measurement method, same result: real Chrome, this wrapper's own
+ * 20px inline-block box against 13px Cozette text, swept until centred —
+ * see .hs-card-log-body's identical -12px note above (independent of
+ * line-height, so one number covers this 13px/17px context too). */
+.hs-card-bio .emote-hover-wrapper {
+  vertical-align: -12px !important;
 }
 /* Own-profile inline bio edit trigger (click-delegation.js setupBioEditHandler) */
 .hs-card-bio .bio-edit-trigger {
@@ -517,14 +552,56 @@
 }
 .hs-card-log-row {
   display: flex;
+  align-items: baseline;
   gap: 6px;
   font-size: 13px;
-  line-height: 17px; /* same 13px-integer rule */
-  white-space: normal;
+  height: 20px; /* same dense rhythm as .hs-card-sheet-row */
+  line-height: 20px;
 }
 .hs-card-log-ts { flex-shrink: 0; font-size: 13px; }
 .hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 13px; }
-.hs-card-log-body { color: var(--hs-card-fg); word-break: break-word; }
+/* Single line, ellipsis on overflow — was `white-space: normal` +
+ * word-break, which let a full-size (unbounded) emote wrap the row onto a
+ * second line and made every row a different height. min-width: 0 is load-
+ * bearing: a flex item's default min-width is its content's natural width,
+ * which is unbounded here (the text) and defeats text-overflow entirely
+ * without it. */
+.hs-card-log-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--hs-card-fg);
+}
+/* Emotes in a recent-log line sit ON the text line, not at chat size — a
+ * bare 28-32px emote (main.css's blanket `.emote` rule) pushed the row
+ * height past the 20px it was given and wrapped onto a second line.
+ * vertical-align is a MEASURED integer, not `middle`: Cozette's 13px
+ * x-height is fractional, so `middle` grows the line box by a fraction and
+ * smears the bitmap glyphs (see emotes.css's own -8px note for the method).
+ * Measured here the same way — real Chrome, a 20px-capped emote against a
+ * reference text run, sweeping vertical-align until the two centres
+ * matched — at both the 20px (this row) and 17px (.hs-card-bio) line-
+ * heights this card actually uses; the same integer centred at both,
+ * confirming a length is independent of line-height and only depends on
+ * font metrics, which do not change here. */
+.hs-card-log-body img.emote,
+.hs-card-log-body .hs-archive-emote {
+  max-height: 20px !important;
+  height: 20px !important;
+  width: auto !important;
+  margin: 0 1px !important;
+  vertical-align: -12px !important;
+}
+/* Zero-width overlay emotes (server-rendered message_html, e.g. a modifier
+ * stacked on a base emote) stack via a negative margin sized to the emote's
+ * own width — chat-logs.css's -28px assumes its 28px height; this row's
+ * emotes are capped to 20px, so the overlay offset scales down with it. */
+.hs-card-log-body img.emote.zw,
+.hs-card-log-body .hs-archive-emote.zw {
+  margin-left: -20px !important;
+}
 
 /* ── mod actions (host-only — ctx.modGroups) ─────────────────────────────
  * Danger stays red (ban), everything else the same reverse-video hover as
@@ -701,6 +778,26 @@
   }
   .hs-card-peek {
     display: none; /* no ambient hover on touch — peek never opens (see card-time/card-model host wiring) */
+  }
+  /* The full-screen card used to scroll hero+body+actions as ONE column —
+   * a short profile left the actions row floating mid-screen with a dead
+   * gap below it, since nothing told it to sit at the bottom. margin-top:
+   * auto pushes it there when the column has slack; position:sticky keeps
+   * it there once hero+body grow past one screen and start scrolling (the
+   * scroll container is .hs-card-full itself — this is a flex child of it,
+   * not nested, so "nearest scrolling ancestor" for sticky purposes is the
+   * same element). Desktop is untouched (this whole block is phone-only). */
+  .hs-card-actions {
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    background: var(--hs-card-bg);
+  }
+  /* !important: beats .hs-card-action.hs-follow/.block-btn/.report-btn's
+   * own `min-height: 24px !important` (desktop-scoped rule above, higher
+   * specificity too — a plain phone-query override would lose to it). */
+  .hs-card-action {
+    min-height: 44px !important; /* real touch target, not the desktop 24px */
   }
 }
 

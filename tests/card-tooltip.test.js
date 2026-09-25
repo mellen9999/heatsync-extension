@@ -21,6 +21,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { hsCardModel } from '../src/lib/card-model.js'
 import { hsCardHtml } from '../src/lib/card-render.js'
+import { hsCardRelativeTime, hsCardTenureMonths } from '../src/lib/card-time.js'
 import { escapeHtml } from '../src/lib/utils.js'
 
 const ROOT = join(import.meta.dir, '..')
@@ -34,17 +35,33 @@ function slice(src, startMarker, endMarker) {
   return src.slice(start, end)
 }
 
-// hsExtRenderBio + renderProfileCard, evaluated for real against the real
-// (imported) hsCardModel/hsCardHtml — only escapeHtml/formatCompact are
-// stand-ins for globals tooltips.js gets from the concatenated bundle scope.
+// hsExtRenderBio + renderProfileCard + the two compute*Rows helpers,
+// evaluated for real against the real (imported) hsCardModel/hsCardHtml —
+// only escapeHtml/formatCompact are stand-ins for globals tooltips.js gets
+// from the concatenated bundle scope. getTooltipChannelContext/subTenureMap/
+// currentUsername are stubbed since computeSubTenureRow reads them.
 const cardSrc = slice(TIPS, 'function hsExtRenderBio(text) {', '\nfunction hsExtUpsertSheetRow(')
 const formatCompactSrc = slice(TIPS, 'function formatCompact(n) {', '\nfunction hsExtRenderBio(')
-const { renderProfileCard, hsExtRenderBio } = new Function(
+const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowageRows } = new Function(
   'escapeHtml',
   'hsCardModel',
   'hsCardHtml',
-  `${formatCompactSrc}\n${cardSrc}\nreturn { renderProfileCard, hsExtRenderBio }`,
-)(escapeHtml, hsCardModel, hsCardHtml)
+  'hsCardRelativeTime',
+  'hsCardTenureMonths',
+  'getTooltipChannelContext',
+  'subTenureMap',
+  'currentUsername',
+  `${formatCompactSrc}\n${cardSrc}\nreturn { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowageRows }`,
+)(
+  escapeHtml,
+  hsCardModel,
+  hsCardHtml,
+  hsCardRelativeTime,
+  hsCardTenureMonths,
+  () => 'forsen',
+  new Map([['forsen', new Map([['x', 14]])]]),
+  'viewerlogin',
+)
 
 const upsertSrc = slice(
   TIPS,
@@ -105,6 +122,72 @@ describe('renderProfileCard runs through the shared card pipeline', () => {
     expect(html).toContain('hs-card-bio-mention')
     expect(html).toContain('hs-card-bio-tag')
     expect(html).toContain('plain text')
+  })
+})
+
+describe('renderProfileCard extras flow through the model, not a DOM patch', () => {
+  test('extras.sheetRows lands in the sheet on the FIRST render, no post-render append needed', () => {
+    const html = renderProfileCard(PROFILE, 'twitch', {
+      sheetRows: [{ k: 'ch-sub', label: 'ch sub', value: 'forsen 1y 2mo', tone: 'ch' }],
+    })
+    expect(html).toContain('data-tone="ch"')
+    expect(html).toContain('ch sub')
+    expect(html).toContain('forsen 1y 2mo')
+  })
+
+  test('extras.pronouns renders the pronoun chip inline, in .hs-card-identity', () => {
+    const html = renderProfileCard(PROFILE, 'twitch', { pronouns: 'they/them' })
+    expect(html).toMatch(/<div class="hs-card-identity">[\s\S]*hs-card-pronouns[\s\S]*they\/them/)
+  })
+
+  test('with no extras, behaves exactly like a bare call (backward compatible)', () => {
+    expect(renderProfileCard(PROFILE, 'twitch')).toBe(renderProfileCard(PROFILE, 'twitch', {}))
+  })
+})
+
+describe('computeSubTenureRow — sync, no fetch (host-only IRC data)', () => {
+  test('a known chatter in a channel that is not you gets a "ch sub" row', () => {
+    const row = computeSubTenureRow('x', null)
+    expect(row).toEqual({ k: 'sub-tenure', label: 'ch sub', value: 'forsen 1y 2mo', tone: 'ch' })
+  })
+
+  test('an unknown chatter yields no row', () => {
+    expect(computeSubTenureRow('nobody', null)).toBeNull()
+  })
+
+  test('msgChannel overrides the tab-level channel context when given', () => {
+    // getTooltipChannelContext is stubbed to always return 'forsen' here — a
+    // msgChannel for a channel with no subTenureMap entry must still win
+    // (never silently fall back to the tab context).
+    expect(computeSubTenureRow('x', 'someotherchannel')).toBeNull()
+  })
+})
+
+describe('computeFollowageRows — pure row-building from a resolved lookupFollowage() result', () => {
+  test('not following renders a dim "not following" row, never a guess', () => {
+    const rows = computeFollowageRows('forsen', false, { followedAt: null })
+    expect(rows).toContainEqual({ k: 'ch-follow', label: 'ch follow', value: 'not following forsen', tone: 'dim' })
+  })
+
+  test('following renders the ch-follow age', () => {
+    const rows = computeFollowageRows('forsen', false, { followedAt: new Date(Date.now() - 86400000).toISOString() })
+    const row = rows.find((r) => r.k === 'ch-follow')
+    expect(row.value).toContain('forsen')
+    expect(row.tone).toBe('ch')
+  })
+
+  test('self-channel skips the literal ch-follow row (dedupes against the model rel row)', () => {
+    const rows = computeFollowageRows('forsen', true, {
+      followedAt: '2020-01-01T00:00:00Z',
+      channelFollowedAt: '2021-01-01T00:00:00Z',
+    })
+    expect(rows.find((r) => r.k === 'ch-follow')).toBeUndefined()
+    expect(rows.find((r) => r.k === 'you-follow')).toBeTruthy()
+  })
+
+  test('follower count always renders when present, either way, through the real formatCompact', () => {
+    const rows = computeFollowageRows('forsen', true, { followerCount: 1234 })
+    expect(rows.find((r) => r.k === 'followers').value).toBe('1.2K')
   })
 })
 

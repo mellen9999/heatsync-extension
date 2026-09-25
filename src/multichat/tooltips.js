@@ -1036,16 +1036,25 @@ function hsExtRenderBio(text) {
 // heatsync-account viewer id to compare against here.
 //
 // The ext-only enhancements the site doesn't have — live Twitch followage,
-// IRC-observed sub tenure, pronoundb pronouns, the channel banner image —
-// are NOT part of the shared model (no extra fetch is the whole point of
-// 'peek'). They're layered on top as plain DOM appends into the SAME
-// `.hs-card-sheet` this render produces, by appendSubTenureBadge/
-// fetchAndShowFollowage/applyTooltipBanner/applyTooltipPronouns below.
-function renderProfileCard(p, platform) {
+// IRC-observed sub tenure, pronoundb pronouns — go through the shared
+// model's own host hooks (ctx.extraSheet, ctx.pronouns), same as the site
+// would use for its own host-only data. `extras` are whatever's resolved so
+// far; showUserTooltip re-calls this (a cheap pure function) and replaces
+// the tooltip's innerHTML each time a fetch resolves — see `paint()` there.
+// Only the channel banner image stays a post-render DOM patch
+// (applyTooltipBanner below): it targets an <img> background outside the
+// model entirely, and card.css has no accent treatment to hook a resolved
+// accent color into (see that function's own note).
+function renderProfileCard(p, platform, extras = {}) {
   const uname = (p.username || p.twitch_username || p.kick_username || p.youtube_username || '').toLowerCase()
   const model = hsCardModel(
     { profile: p },
-    { hint: { platform: platform || undefined, login: uname || undefined }, capabilities: {} },
+    {
+      hint: { platform: platform || undefined, login: uname || undefined },
+      capabilities: {},
+      pronouns: extras.pronouns || null,
+      extraSheet: extras.sheetRows || [],
+    },
     { formatCompactNumber: formatCompact },
   )
   return hsCardHtml(model, {
@@ -1057,11 +1066,69 @@ function renderProfileCard(p, platform) {
   })
 }
 
-// Ext-only sheet-row helper: the shared card model has no slot for the
-// followage/sub-tenure rows below (no extra fetch is the whole point of the
-// 'peek' variant) — they're plain DOM appends into the .hs-card-sheet the
-// shared renderer already produced, in the exact row shape card-render.js's
-// renderSheet uses so card.css's tone styling applies unmodified.
+// Sync (no fetch) sub-tenure row, from the local IRC-observed subTenureMap —
+// shared by both the real-profile path (folded into hsCardModel's
+// ctx.extraSheet, via renderProfileCard above) and the no-heatsync-account
+// fallback below (which has no model to feed, so it DOM-patches instead via
+// hsExtUpsertSheetRow). Same {k,label,value,tone} shape hsCardModel's own
+// `row()` helper produces.
+function computeSubTenureRow(username, msgChannel) {
+  const channelLogin = msgChannel || getTooltipChannelContext()
+  if (!channelLogin) return null
+  const channelMap = subTenureMap.get(channelLogin)
+  const months = channelMap?.get(username.toLowerCase())
+  if (!months) return null
+  const isSelfChannel =
+    typeof currentUsername === 'string' &&
+    currentUsername &&
+    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const tenure = hsCardTenureMonths(months) || `${months}mo`
+  return isSelfChannel
+    ? { k: 'sub-tenure', label: 'they', value: `sub to you ${tenure}`, tone: 'they-sub' }
+    : { k: 'sub-tenure', label: 'ch sub', value: `${channelLogin} ${tenure}`, tone: 'ch' }
+}
+
+// Live Twitch followage rows from a resolved `lookupFollowage` result — same
+// dual-use shape as computeSubTenureRow above (feeds ctx.extraSheet for the
+// real-profile path, hsExtUpsertSheetRow for the fallback path). When the
+// channel context IS the viewer (hovering a chatter in your own channel
+// tab), the literal "ch follow" row would duplicate the heatsync "they → you"
+// rel-row from the model's own sheet, so it's skipped; channelFollowedAt
+// still fills the you-follow row's age in that case.
+function computeFollowageRows(channelLogin, isSelfChannel, result) {
+  const rows = []
+  if (!isSelfChannel) {
+    rows.push(
+      result.followedAt
+        ? {
+            k: 'ch-follow',
+            label: 'ch follow',
+            value: `${channelLogin} ${hsCardRelativeTime(result.followedAt)}`,
+            tone: 'ch',
+          }
+        : { k: 'ch-follow', label: 'ch follow', value: `not following ${channelLogin}`, tone: 'dim' },
+    )
+    if (result.channelFollowedAt) rows.push({ k: 'ch-follows', label: 'follower', value: channelLogin, tone: 'ch' })
+  } else if (result.channelFollowedAt) {
+    rows.push({
+      k: 'you-follow',
+      label: 'you',
+      value: `follow ${hsCardRelativeTime(result.channelFollowedAt)}`,
+      tone: 'you-follow',
+    })
+  }
+  if (result.followerCount != null) {
+    rows.push({ k: 'followers', label: 'followers', value: formatCompact(result.followerCount), tone: 'followers' })
+  }
+  return rows
+}
+
+// Ext-only sheet-row DOM patch — used ONLY by the no-heatsync-account
+// fallback below, which has no hsCardModel to feed (renderChatter's minimal
+// shape would drop the native badges/paint that fallback path exists for).
+// The real-profile path (renderProfileCard) goes through ctx.extraSheet
+// instead. Row shape matches card-render.js's own renderSheet output
+// exactly, so card.css's tone styling applies unmodified either way.
 function hsExtUpsertSheetRow(sheetEl, key, label, value, tone) {
   if (!sheetEl) return
   const existingDd = sheetEl.querySelector(`.hs-card-sheet-row dd[data-k="${key}"]`)
@@ -1170,6 +1237,76 @@ function getTooltipChannelContext(userPlatform) {
   return getLiveChannel()
 }
 
+// Async Twitch-followage fetch for the no-heatsync-account fallback ONLY —
+// the real-profile path resolves followage inline in showUserTooltip and
+// feeds it through ctx.extraSheet via renderProfileCard's re-render instead.
+async function fetchAndShowFollowageFallback(tooltip, username, gen, userPlatform) {
+  if (userPlatform && userPlatform !== 'twitch') return
+  const channelLogin = getTooltipChannelContext(userPlatform)
+  if (!channelLogin) return
+  if (typeof lookupFollowage !== 'function') return
+  const result = await lookupFollowage(username, channelLogin)
+  if (gen !== _profileGen || !result) return
+  const isSelfChannel =
+    typeof currentUsername === 'string' &&
+    currentUsername &&
+    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const sheetEl = tooltip.querySelector('.hs-card-sheet')
+  if (!sheetEl) return
+  for (const r of computeFollowageRows(channelLogin, isSelfChannel, result)) {
+    hsExtUpsertSheetRow(sheetEl, r.k, r.label, r.value, r.tone)
+  }
+}
+
+// No-heatsync-account hover card — populated from client-only signals so
+// kick/yt chatters with no linked profile still get a real card: chat badges
+// from recent msgs, platform-link row, color-tinted name. Not on the shared
+// card model (renderChatter's minimal shape would drop the badges/paint this
+// path exists for) — hand-built HTML, enhanced the old DOM-patch way.
+function renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel) {
+  const safeName = escapeHtml(username)
+  const safeColor = sanitizeColor(color || '#fff')
+  let nativeBadges = ''
+  try {
+    const recent = typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : []
+    const rTwitch = recent.find((m) => (m.platform || 'twitch') === 'twitch' && m.badges)
+    if (rTwitch && typeof renderBadges === 'function') nativeBadges += renderBadges(rTwitch.badges, rTwitch.channel)
+    const rKick = recent.find((m) => m.platform === 'kick' && m.badges)
+    if (rKick && typeof renderBadges === 'function') nativeBadges += renderBadges(rKick.badges, rKick.channel, 'kick')
+    const rYt = recent.find((m) => m.platform === 'youtube' && m.badges)
+    if (rYt && typeof renderBadges === 'function') nativeBadges += renderBadges(rYt.badges, rYt.channel, 'youtube')
+  } catch {}
+  const platTone = platform === 'kick' ? 'kick' : platform === 'youtube' || platform === 'yt' ? 'yt' : 'ttv'
+  const platLabel = platTone === 'ttv' ? 'ttv' : platTone
+  // val-kick/val-yt/val-ttv are still styled by 09-tooltips-menus.css (not
+  // yet deleted — this no-heatsync-account fallback isn't on the shared
+  // card model, which needs a real profile to build a card from).
+  const platRow = `<div class="hs-card-sheet-row"><dt>${platLabel}</dt><dd class="val-${platTone}" data-k="${platTone}">${safeName}</dd></div>`
+  // Resolve the twitch-space uid the same way userPaintStyle does internally,
+  // so HeatSync-paint precedence (which needs the uid) can win over 7TV — same
+  // rule as the live sender row (see hsPaintRender in paints.js).
+  const fbLower = username.toLowerCase()
+  const fbUid =
+    platform === 'twitch' && typeof knownUserIds !== 'undefined' && typeof userKey === 'function'
+      ? knownUserIds.get(userKey(fbLower, 'twitch')) || ''
+      : ''
+  const namePaint = platform === 'twitch' ? userPaintStyle(fbUid, fbLower, 'twitch') : ''
+  const nameHsPaint = fbUid ? hsPaintRender(fbUid, username) : null
+  const header = nativeBadges
+    ? nativeBadges
+    : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? '' : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
+  // NOTE: innerHTML XSS-safe — username via escapeHtml, color via sanitizeColor (hex-only),
+  // nativeBadges from renderBadges which emits escaped <img> markup
+  tooltip.innerHTML = `<div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div>`
+  if (_userTooltipTarget) positionTooltipAtElement(tooltip, _userTooltipTarget)
+  const subRow = computeSubTenureRow(username, msgChannel)
+  if (subRow)
+    hsExtUpsertSheetRow(tooltip.querySelector('.hs-card-sheet'), subRow.k, subRow.label, subRow.value, subRow.tone)
+  fetchAndShowFollowageFallback(tooltip, username, gen, platform)
+  applyTooltipBanner(tooltip, null, platform, username, gen)
+  applyTooltipPronouns(tooltip, fbUid, gen)
+}
+
 // NOTE: innerHTML usage is XSS-safe — all user content goes through escapeHtml() in renderProfileCard
 // (escapeHtml converts &, <, >, ", ' to HTML entities before any innerHTML assignment)
 async function showUserTooltip(targetEl, username, color, platform) {
@@ -1191,168 +1328,81 @@ async function showUserTooltip(targetEl, username, color, platform) {
   // Check cache (keyed by platform:username to avoid cross-platform collisions)
   const cacheKey = `${platform || 'unknown'}:${username.toLowerCase()}`
   const cached = _profileCache.get(cacheKey)
+  let profile = null
   if (cached && Date.now() - cached.ts < PROFILE_CACHE_TTL) {
-    if (gen !== _profileGen) return
-    // NOTE: innerHTML is XSS-safe — all user content goes through escapeHtml() in renderProfileCard
-    tooltip.innerHTML = renderProfileCard(cached.profile, platform)
-    appendSubTenureBadge(tooltip, username, msgChannel)
-    positionTooltipAtElement(tooltip, targetEl)
-    fetchAndShowFollowage(tooltip, username, gen, platform)
-    applyTooltipBanner(tooltip, cached.profile, platform, username, gen)
-    applyTooltipPronouns(tooltip, cached.profile?.twitch_user_id || cached.profile?.twitch_id, gen)
+    profile = cached.profile
+  } else {
+    // Fetch profile — pass platform so server can disambiguate same-name users across platforms
+    const platParam = platform ? `?platform=${encodeURIComponent(platform)}` : ''
+    const resp = await apiFetch(`/api/profile/${encodeURIComponent(username)}${platParam}`)
+    if (gen !== _profileGen) return // user moved away
+    if (resp?.ok && resp.data?.profile) {
+      profile = resp.data.profile
+    } else if (platform === 'kick') {
+      // Cross-platform probe — most unregistered kick chatters share their
+      // handle on twitch. Same-name twitch hit lands a full profile (heat,
+      // follows, banner, partner status) for what would otherwise be a bare
+      // fallback. Only fires when the kick lookup misses.
+      const twResp = await apiFetch(`/api/profile/${encodeURIComponent(username)}?platform=twitch`)
+      if (gen !== _profileGen) return
+      if (twResp?.ok && twResp.data?.profile) profile = twResp.data.profile
+    }
+    if (profile) {
+      _profileCache.set(cacheKey, { profile, ts: Date.now() })
+      while (_profileCache.size > PROFILE_CACHE_MAX) _profileCache.delete(_profileCache.keys().next().value)
+    }
+  }
+
+  if (!profile) {
+    renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel)
     return
   }
 
-  // Fetch profile — pass platform so server can disambiguate same-name users across platforms
-  const platParam = platform ? `?platform=${encodeURIComponent(platform)}` : ''
-  const resp = await apiFetch(`/api/profile/${encodeURIComponent(username)}${platParam}`)
-  if (gen !== _profileGen) return // user moved away
-
-  let profile = null
-  if (resp?.ok && resp.data?.profile) {
-    profile = resp.data.profile
-  } else if (platform === 'kick') {
-    // Cross-platform probe — most unregistered kick chatters share their
-    // handle on twitch. Same-name twitch hit lands a full profile (heat,
-    // follows, banner, partner status) for what would otherwise be a bare
-    // fallback. Only fires when the kick lookup misses.
-    const twResp = await apiFetch(`/api/profile/${encodeURIComponent(username)}?platform=twitch`)
-    if (gen !== _profileGen) return
-    if (twResp?.ok && twResp.data?.profile) profile = twResp.data.profile
-  }
-
-  if (profile) {
-    _profileCache.set(cacheKey, { profile, ts: Date.now() })
-    while (_profileCache.size > PROFILE_CACHE_MAX) _profileCache.delete(_profileCache.keys().next().value)
+  // The real-profile path: sub tenure is sync (no fetch, already known), so
+  // it's in the model from the very first paint. Followage/pronouns resolve
+  // async and re-call paint() with the model fed through ctx.extraSheet/
+  // ctx.pronouns — a cheap full re-render (pure functions, no DOM diffing),
+  // not a DOM patch, per the same discipline the site's own host uses.
+  // applyTooltipBanner is idempotent (its own local cache resolves instantly
+  // on repeat calls) so it's safe to re-run after every paint() — a re-render
+  // wipes the hero's background-image, which only a fresh apply restores.
+  const subRow = computeSubTenureRow(username, msgChannel)
+  let followageRows = []
+  let pronouns = null
+  const paint = () => {
     // NOTE: innerHTML XSS-safe — renderProfileCard escapes everything
-    tooltip.innerHTML = renderProfileCard(profile, platform)
-    appendSubTenureBadge(tooltip, username, msgChannel)
+    tooltip.innerHTML = renderProfileCard(profile, platform, {
+      pronouns,
+      sheetRows: [subRow, ...followageRows].filter(Boolean),
+    })
     positionTooltipAtElement(tooltip, targetEl)
-    fetchAndShowFollowage(tooltip, username, gen, platform)
     applyTooltipBanner(tooltip, profile, platform, username, gen)
-    applyTooltipPronouns(tooltip, profile?.twitch_user_id || profile?.twitch_id, gen)
-  } else {
-    // Fallback — populated from client-only signals so kick chatters with
-    // no heatsync acct still get a real card: chat badges from recent msgs,
-    // platform-link row, color-tinted name. applyTooltipBanner extends to
-    // also fill the avatar from kick.com profile_pic.
-    const safeName = escapeHtml(username)
-    const safeColor = sanitizeColor(color || '#fff')
-    let nativeBadges = ''
-    try {
-      const recent = typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : []
-      const rTwitch = recent.find((m) => (m.platform || 'twitch') === 'twitch' && m.badges)
-      if (rTwitch && typeof renderBadges === 'function') nativeBadges += renderBadges(rTwitch.badges, rTwitch.channel)
-      const rKick = recent.find((m) => m.platform === 'kick' && m.badges)
-      if (rKick && typeof renderBadges === 'function') nativeBadges += renderBadges(rKick.badges, rKick.channel, 'kick')
-      const rYt = recent.find((m) => m.platform === 'youtube' && m.badges)
-      if (rYt && typeof renderBadges === 'function') nativeBadges += renderBadges(rYt.badges, rYt.channel, 'youtube')
-    } catch {}
-    const platTone = platform === 'kick' ? 'kick' : platform === 'youtube' || platform === 'yt' ? 'yt' : 'ttv'
-    const platLabel = platTone === 'ttv' ? 'ttv' : platTone
-    // val-kick/val-yt/val-ttv are still styled by 09-tooltips-menus.css (not
-    // yet deleted — this no-heatsync-account fallback isn't on the shared
-    // card model, which needs a real profile to build a card from).
-    const platRow = `<div class="hs-card-sheet-row"><dt>${platLabel}</dt><dd class="val-${platTone}" data-k="${platTone}">${safeName}</dd></div>`
-    // Resolve the twitch-space uid the same way userPaintStyle does internally,
-    // so HeatSync-paint precedence (which needs the uid) can win over 7TV — same
-    // rule as the live sender row (see hsPaintRender in paints.js).
-    const fbLower = username.toLowerCase()
-    const fbUid =
-      platform === 'twitch' && typeof knownUserIds !== 'undefined' && typeof userKey === 'function'
-        ? knownUserIds.get(userKey(fbLower, 'twitch')) || ''
-        : ''
-    const namePaint = platform === 'twitch' ? userPaintStyle(fbUid, fbLower, 'twitch') : ''
-    const nameHsPaint = fbUid ? hsPaintRender(fbUid, username) : null
-    const header = nativeBadges
-      ? nativeBadges
-      : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? '' : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
-    // NOTE: innerHTML XSS-safe — username via escapeHtml, color via sanitizeColor (hex-only),
-    // nativeBadges from renderBadges which emits escaped <img> markup
-    tooltip.innerHTML = `<div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div>`
-    appendSubTenureBadge(tooltip, username, msgChannel)
-    fetchAndShowFollowage(tooltip, username, gen, platform)
-    applyTooltipBanner(tooltip, null, platform, username, gen)
-    applyTooltipPronouns(tooltip, fbUid, gen)
   }
-}
+  paint()
 
-// Append sub tenure as a sheet row (sync, no fetch). Dedupes via data-k.
-// Tenure text goes through the shared card-time.js formatter (hsCardTenureMonths,
-// "1y 2mo"/"3mo") instead of this file's own retired formatSubTenure — one
-// less relative-time formatter to keep in sync.
-function appendSubTenureBadge(tooltip, username, msgChannel) {
-  const channelLogin = msgChannel || getTooltipChannelContext()
-  if (!channelLogin) return
-  const channelMap = subTenureMap.get(channelLogin)
-  if (!channelMap) return
-  const months = channelMap.get(username.toLowerCase())
-  if (!months) return
-  const sheet = tooltip.querySelector('.hs-card-sheet')
-  if (!sheet) return
-  if (sheet.querySelector('dd[data-k="sub-tenure"]')) return
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
-  const tenure = hsCardTenureMonths(months) || `${months}mo`
-  if (isSelfChannel) {
-    hsExtUpsertSheetRow(sheet, 'sub-tenure', 'they', `sub to you ${tenure}`, 'they-sub')
-  } else {
-    hsExtUpsertSheetRow(sheet, 'sub-tenure', 'ch sub', `${channelLogin} ${tenure}`, 'ch')
-  }
-}
-
-// Async followage fetch — appends to tooltip after profile renders (DOM methods, no innerHTML)
-async function fetchAndShowFollowage(tooltip, username, gen, userPlatform) {
-  // Only show followage for Twitch users (followage API is Twitch-only)
-  if (userPlatform && userPlatform !== 'twitch') return
-  const channelLogin = getTooltipChannelContext(userPlatform)
-  if (!channelLogin) return
-  if (typeof lookupFollowage !== 'function') return
-  const result = await lookupFollowage(username, channelLogin)
-  if (gen !== _profileGen || !result) return
-  // When the channel context IS the viewer (e.g. you're hovering a chatter
-  // in your own channel tab), the followage rows duplicate the heatsync
-  // "they → you" rel-row. Skip the literal Twitch followage row in that
-  // case. Still process channelFollowedAt below for the you-follow age fill.
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
-  const sheetEl = tooltip.querySelector('.hs-card-sheet')
-  if (!sheetEl) return
-  if (!isSelfChannel) {
-    if (result.followedAt) {
-      hsExtUpsertSheetRow(
-        sheetEl,
-        'ch-follow',
-        'ch follow',
-        `${channelLogin} ${hsCardRelativeTime(result.followedAt)}`,
-        'ch',
-      )
-    } else {
-      hsExtUpsertSheetRow(sheetEl, 'ch-follow', 'ch follow', `not following ${channelLogin}`, 'dim')
+  if (!platform || platform === 'twitch') {
+    const channelLogin = getTooltipChannelContext(platform)
+    if (channelLogin && typeof lookupFollowage === 'function') {
+      const isSelfChannel =
+        typeof currentUsername === 'string' &&
+        currentUsername &&
+        channelLogin.toLowerCase() === currentUsername.toLowerCase()
+      lookupFollowage(username, channelLogin).then((result) => {
+        if (gen !== _profileGen || !result) return
+        followageRows = computeFollowageRows(channelLogin, isSelfChannel, result)
+        paint()
+      })
     }
   }
-  // Channel follows this user.
-  if (result.channelFollowedAt && !isSelfChannel) {
-    hsExtUpsertSheetRow(sheetEl, 'ch-follows', 'follower', channelLogin, 'ch')
-  }
-  // When channel === viewer, channelFollowedAt is the viewer's authoritative
-  // Twitch follow date. Use it to fill in (or override) the you-follow row.
-  if (isSelfChannel && result.channelFollowedAt) {
-    hsExtUpsertSheetRow(
-      sheetEl,
-      'you-follow',
-      'you',
-      `follow ${hsCardRelativeTime(result.channelFollowedAt)}`,
-      'you-follow',
-    )
-  }
-  // Update follower count from live data
-  if (result.followerCount != null) {
-    hsExtUpsertSheetRow(sheetEl, 'followers', 'followers', formatCompact(result.followerCount), 'followers')
+  const twitchUid = profile.twitch_user_id || profile.twitch_id
+  if (twitchUid && typeof fetchPronouns === 'function') {
+    fetchPronouns('twitch', twitchUid).then((data) => {
+      if (gen !== _profileGen) return
+      if (data?.pronouns?.length) {
+        pronouns = data.pronouns.join('/').toLowerCase()
+        paint()
+      }
+    })
   }
 }
 

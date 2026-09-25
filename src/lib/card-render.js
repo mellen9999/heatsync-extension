@@ -67,6 +67,11 @@ function relRow(esc, fmtTime, entry) {
  *   (`el.style.setProperty('color', el.dataset.color)`), same pattern every
  *   other per-user color in this app already uses under CSP. Falls back to
  *   the raw model color, unclamped, when omitted.
+ * @param {(model: object) => string} [opts.renderBadges] host-trusted HTML
+ *   for a chip row (native chat badges, 7TV/BTTV/FFZ/Chatterino paints) —
+ *   the shared model carries no chat-badge data (it's per-message, not
+ *   per-profile), so this is purely a host hook, same contract as
+ *   `renderBio`. Omitted or empty return → no chip row.
  * @returns {string}
  */
 export function hsCardHtml(model, opts) {
@@ -85,7 +90,17 @@ export function hsCardHtml(model, opts) {
   if (model.kind === 'chatter') {
     return renderChatter(model, { esc, variant })
   }
-  return renderProfile(model, { esc, variant, fmtTime, renderBio: opts.renderBio, renderPlusBadge: opts.renderPlusBadge, paintColor: opts.paintColor, clickable, hideLogsLink })
+  return renderProfile(model, {
+    esc,
+    variant,
+    fmtTime,
+    renderBio: opts.renderBio,
+    renderPlusBadge: opts.renderPlusBadge,
+    paintColor: opts.paintColor,
+    renderBadges: opts.renderBadges,
+    clickable,
+    hideLogsLink,
+  })
 }
 
 function renderChatter(model, { esc, variant }) {
@@ -187,6 +202,47 @@ function renderActions(actions, esc, userId) {
   return `<div class="hs-card-actions">${btns}</div>`
 }
 
+function renderSocials(socials, esc) {
+  if (!socials?.length) return ''
+  const items = socials
+    .map((s) =>
+      s.href
+        ? `<a href="${esc(s.href)}" target="_blank" rel="noopener">${esc(s.label)}</a>`
+        : `<span>${esc(s.label)}</span>`,
+    )
+    .join('')
+  return `<div class="hs-card-socials">${items}</div>`
+}
+
+// Host-only mod actions (ctx.modGroups — see card-model.js doc). Pure escaped
+// HTML with data-hs-card-mod-* attributes; the host wires real handlers via
+// event delegation on the card root, same discipline as the actions row.
+function renderMod(mod, esc) {
+  if (!mod?.groups?.length) return ''
+  const reason = `<input type="text" class="hs-card-mod-reason" placeholder="reason (optional)" maxlength="200">`
+  const groups = mod.groups
+    .map((g) => {
+      const chLabel = g.platform === 'kick' ? `#${g.channel} (kick)` : `#${g.channel}`
+      const attrs = (extra) =>
+        `data-hs-card-mod-channel="${esc(g.channel)}" data-hs-card-mod-platform="${esc(g.platform)}" data-hs-card-mod-login="${esc(g.login)}"${g.msgId ? ` data-hs-card-mod-msg-id="${esc(g.msgId)}"` : ''}${extra}`
+      const actionBtns = (g.actions || [])
+        .map(
+          (a) =>
+            `<button type="button" class="hs-card-mod-btn${a.danger ? ' hs-card-mod-btn-danger' : ''}" ${attrs(` data-hs-card-mod-action="${esc(a.action)}"${a.durationSec ? ` data-hs-card-mod-duration="${esc(String(a.durationSec))}"` : ''}`)}${a.disabled ? ' disabled' : ''} title="${esc(a.title || '')}">${esc(a.label)}</button>`,
+        )
+        .join('')
+      const roleBtns = (g.roleActions || [])
+        .map(
+          (a) =>
+            `<button type="button" class="hs-card-mod-btn" data-hs-card-mod-role="${esc(a.kind)}" data-hs-card-mod-add="${a.add ? '1' : '0'}" data-hs-card-mod-channel="${esc(g.channel)}" title="${esc(a.title || '')}">${esc(a.label)}</button>`,
+        )
+        .join('')
+      return `<div class="hs-card-mod-group"><div class="hs-card-mod-ch">${esc(chLabel)}</div>${actionBtns ? `<div class="hs-card-mod-row">${actionBtns}</div>` : ''}${roleBtns ? `<div class="hs-card-mod-row">${roleBtns}</div>` : ''}</div>`
+    })
+    .join('')
+  return `<div class="hs-card-mod">${reason}${groups}</div>`
+}
+
 function renderFooterLinks(model, esc, hideLogsLink) {
   const links = []
   if (model.links.profileUrl) links.push(`<a href="${esc(model.links.profileUrl)}" target="_blank" rel="noopener">profile →</a>`)
@@ -196,7 +252,10 @@ function renderFooterLinks(model, esc, hideLogsLink) {
   return `<div class="hs-card-links">${links.join('')}</div>`
 }
 
-function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadge, paintColor, clickable, hideLogsLink }) {
+function renderProfile(
+  model,
+  { esc, variant, fmtTime, renderBio, renderPlusBadge, paintColor, renderBadges, clickable, hideLogsLink },
+) {
   const peek = variant === 'peek'
   const cls = [`hs-card`, `hs-card-${esc(variant)}`, model.isOwnProfile ? 'hs-card-own' : ''].filter(Boolean).join(' ')
   const nameColor = paintColor ? paintColor(model.color) : model.color
@@ -205,6 +264,10 @@ function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadg
   const clickAttrs = (clickable && model.identity.userId != null)
     ? ` data-user-id="${esc(String(model.identity.userId))}" data-clickable="true"${model.identity.platform ? ` data-platform="${esc(model.identity.platform)}" data-username="${esc(model.identity.login)}"` : ''}${model.links.profileUrl ? ` data-profile-url="${esc(model.links.profileUrl)}"` : ''}`
     : ''
+  // Same CSSOM-at-mount discipline as data-color/paintColor above — the host
+  // reads this and calls el.style.setProperty('--hs-card-accent', ...) once
+  // it has a value (often resolved asynchronously, after a banner fetch).
+  const accentAttr = ` data-accent="${esc(model.accent || '')}"`
 
   const plusBadge = model.plusSince
     ? (renderPlusBadge ? renderPlusBadge(model.plusSince) : `<span class="hs-card-plus" title="plus">+</span>`)
@@ -222,6 +285,11 @@ function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadg
       ${pronouns}${plusBadge}${flair}${ember}
     </div>`
 
+  // Host-only chat-badge chip row (native + 7TV/BTTV/FFZ/Chatterino) — see
+  // opts.renderBadges doc. Shown on peek too (the old hover tooltip had it).
+  const badgesInner = renderBadges ? renderBadges(model) : ''
+  const badgesHtml = badgesInner ? `<div class="hs-card-badges">${badgesInner}</div>` : ''
+
   // Own-profile bio carries the inline-edit affordance (click-delegation.js
   // setupBioEditHandler) — kept on its legacy class names (.profile-bio-line/
   // .profile-bio-text/.bio-edit-trigger) since that handler is DOM-structure
@@ -235,10 +303,11 @@ function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadg
   const platformsHtml = renderPlatformsRow(model.platforms, esc)
 
   if (peek) {
-    return `<div class="${cls}"${clickAttrs}>
+    return `<div class="${cls}"${clickAttrs}${accentAttr}>
       <div class="hs-card-hero" data-banner-pending="1" data-username="${esc(model.identity.login || '')}" data-platform="${esc(model.identity.platform || '')}"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div>
       <div class="hs-card-body">
         ${identityRow}
+        ${badgesHtml}
         ${platformsHtml}
         ${bioHtml}
         ${renderSheet(model.sheet, esc, fmtTime)}
@@ -246,12 +315,14 @@ function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadg
     </div>`
   }
 
-  return `<div class="${cls}"${clickAttrs}>
+  return `<div class="${cls}"${clickAttrs}${accentAttr}>
     <div class="hs-card-hero" data-banner-pending="1" data-username="${esc(model.identity.login || '')}" data-platform="${esc(model.identity.platform || '')}"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div>
     <div class="hs-card-body">
       ${identityRow}
+      ${badgesHtml}
       ${platformsHtml}
       ${bioHtml}
+      ${renderSocials(model.socials, esc)}
       ${renderSheet(model.sheet, esc, fmtTime)}
       ${renderChannel(model.channel, esc, fmtTime)}
       ${model.corpus ? `<dl class="hs-card-sheet">${renderCorpusRow(model.corpus, esc)}</dl>` : ''}
@@ -259,6 +330,7 @@ function renderProfile(model, { esc, variant, fmtTime, renderBio, renderPlusBadg
       ${renderTopEmotes(model.topEmotes, esc)}
       ${renderFooterLinks(model, esc, hideLogsLink)}
       ${renderRecent(model.recent, esc, model.links)}
+      ${renderMod(model.mod, esc)}
     </div>
     ${renderActions(model.actions, esc, model.identity.userId)}
   </div>`

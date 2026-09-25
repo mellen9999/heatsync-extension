@@ -112,6 +112,31 @@ const ACTION_DEFS = [
  *   went-live notif's own platform can lag the profile snapshot by minutes)
  * @param {Record<string, boolean>} [ctx.capabilities] which actions this
  *   host can perform (site: follow/report/block; ext adds whisper/dm/mute/…)
+ * @param {string|null} [ctx.pronouns] a host-resolved pronoun string (e.g.
+ *   the extension's pronoundb lookup, which the server payload never
+ *   carries) — wins over `profile.pronouns` when both are present.
+ * @param {Array<{k: string, label: string, value: string, tone?: string}>} [ctx.extraSheet]
+ *   host-computed rows appended to the SAME sheet every variant renders (not
+ *   the channel-only section, which only `full`/`page`/`panel` show) — e.g.
+ *   the extension's IRC-observed sub tenure, live Twitch followage resolved
+ *   outside `payload.followage`, or local session-message stats. Lets a host
+ *   surface data it alone has, in `peek` too, without DOM-patching the
+ *   rendered HTML after the fact.
+ * @param {string|null} [ctx.accent] a host-resolved per-streamer accent hex
+ *   (e.g. the extension's channel-banner fetch) — rendered as `data-accent`
+ *   on the card root; the host applies it via CSSOM at mount, same discipline
+ *   as `paintColor`'s `data-color` (never inline `style=`).
+ * @param {Array<{channel: string, platform: string, msgId?: string|null, login: string,
+ *   actions?: Array<{action: string, label: string, title?: string, danger?: boolean,
+ *   durationSec?: number, disabled?: boolean}>,
+ *   roleActions?: Array<{kind: string, add: boolean, label: string, title?: string}>}>}
+ *   [ctx.modGroups] per-channel mod actions for channels the viewer mods that
+ *   this chatter has recently posted in (host-only — the server payload
+ *   carries no moderation state). Rendered as escaped buttons carrying
+ *   `data-hs-card-mod-*` attributes; the host wires real handlers via event
+ *   delegation on the card root (this file never touches the DOM).
+ * @param {Array<{label: string, href?: string}>} [payload.socials] host- or
+ *   server-resolved social links (e.g. the extension's Kick bio scrape).
  * @param {{formatCompactNumber: (n: number) => string}} deps
  * @returns {object} the card model — see module doc for shape
  */
@@ -133,6 +158,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
         links: { chatterUrl: `/chatter/${encodeURIComponent(hint.platform)}/${encodeURIComponent(hint.login)}` },
         actions: [],
         sheet: [], platforms: [], channel: null, note: null, recent: null, topEmotes: null,
+        socials: null, mod: null, accent: ctx.accent || null,
       }
     }
     return { kind: 'not-found', identity: { platform: null, login: null, userId: null, isAnonymous: false }, sheet: [], platforms: [], actions: [] }
@@ -237,6 +263,10 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     if (rel.mutuals?.count > 0) row('mutuals', 'mutuals', rel.mutuals, 'mutual')
   }
 
+  // ---- host-supplied extra rows — same shape, appended to the same sheet
+  // every variant renders (see ctx.extraSheet doc above).
+  for (const r of ctx.extraSheet || []) row(r.k, r.label, r.value, r.tone)
+
   // ---- channel section (only when known — never a guess from degraded data)
   let channel = null
   if (ctx.channel) {
@@ -277,6 +307,12 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
   // ---- top emotes ------------------------------------------------------------
   const topEmotes = Array.isArray(profile.top_emotes) && profile.top_emotes.length ? profile.top_emotes : null
 
+  // ---- socials (host- or server-resolved external links) ---------------------
+  const socials = Array.isArray(payload.socials) && payload.socials.length ? payload.socials : null
+
+  // ---- mod actions (host-only — see ctx.modGroups doc above) -----------------
+  const mod = Array.isArray(ctx.modGroups) && ctx.modGroups.length ? { groups: ctx.modGroups } : null
+
   // ---- flair / plus / achievements -------------------------------------------
   const flair = profile.flair ? { badgeUrl: profile.flair.badge_url, broadcasterLogin: profile.flair.broadcaster_login } : null
   const ember = (profile.achievements || []).find(a => a.id === 'ember') || null
@@ -293,7 +329,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     displayName: profile.display_name || profile.displayName || 'Anonymous',
     color: profile.color || profile.userColor || '#ffffff',
     avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || '/anon.webp',
-    pronouns: profile.pronouns || null,
+    pronouns: ctx.pronouns || profile.pronouns || null,
     plusSince: profile.plus_since || null,
     flair,
     ember: ember ? { name: ember.name } : null,
@@ -305,6 +341,9 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     note,
     recent,
     topEmotes,
+    socials,
+    mod,
+    accent: ctx.accent || null,
     links: {
       profileUrl: !isAnonymous && profile.username ? `/u/${encodeURIComponent(profile.username)}` : null,
       chatterUrl: identity.platform && identity.login ? `/chatter/${encodeURIComponent(identity.platform)}/${encodeURIComponent(identity.login)}` : null,

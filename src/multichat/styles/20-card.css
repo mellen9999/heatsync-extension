@@ -189,10 +189,21 @@
 .hs-card-avatar {
   width: 40px;
   height: 40px;
-  border: 1px solid var(--hs-card-border);
+  /* --hs-card-accent (data-accent on the root, host-applied via CSSOM once
+   * resolved — e.g. from a channel banner fetch) rings the avatar in the
+   * streamer's own color; falls back to the plain border when unset. */
+  border: 1px solid var(--hs-card-accent, var(--hs-card-border));
   background: #000;
   object-fit: cover;
   flex-shrink: 0;
+}
+
+/* ── host-only chat-badge chip row (native + 7TV/BTTV/FFZ/Chatterino) ──── */
+.hs-card-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
 }
 .hs-card-name {
   font-size: 13px;
@@ -240,6 +251,28 @@
 .hs-card-bio .bio-edit-trigger:focus-visible {
   background: #ffffff;
   color: #000000;
+}
+
+/* ── host-only socials row (e.g. a Kick bio's twitter/instagram/tiktok/…) ── */
+.hs-card-socials {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.hs-card-socials a {
+  color: var(--hs-card-link);
+  text-decoration: none;
+}
+.hs-card-socials a:hover,
+.hs-card-socials a:active,
+.hs-card-socials a:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+.hs-card-socials span {
+  color: var(--hs-card-dim);
 }
 
 /* ── platform links row ───────────────────────────────────────────────── */
@@ -441,6 +474,65 @@
 .hs-card-log-ts { flex-shrink: 0; font-size: 13px; }
 .hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 13px; }
 .hs-card-log-body { color: var(--hs-card-fg); word-break: break-word; }
+
+/* ── mod actions (host-only — ctx.modGroups) ─────────────────────────────
+ * Danger stays red (ban), everything else the same reverse-video hover as
+ * every other button in this file. Not shown in peek (see card-render.js). */
+.hs-card-mod {
+  border-top: 1px solid var(--hs-card-border);
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hs-card-mod-reason {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--hs-card-bg);
+  color: var(--hs-card-fg);
+  border: 1px solid var(--hs-card-border);
+  border-radius: 0;
+  padding: 2px 5px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.hs-card-mod-reason:focus-visible {
+  border-color: var(--hs-card-fg);
+}
+.hs-card-mod-ch {
+  font-size: 13px;
+  color: var(--hs-card-dim);
+}
+.hs-card-mod-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.hs-card-mod-btn {
+  font: inherit;
+  font-size: 13px;
+  background: transparent;
+  color: var(--hs-card-fg);
+  border: 1px solid var(--hs-card-border);
+  border-radius: 0;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.hs-card-mod-btn:hover,
+.hs-card-mod-btn:active,
+.hs-card-mod-btn:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+.hs-card-mod-btn:disabled {
+  color: var(--hs-card-dim);
+  cursor: default;
+}
+.hs-card-mod-btn-danger {
+  color: var(--hs-card-danger);
+}
 
 /* ── actions ──────────────────────────────────────────────────────────── */
 .hs-card-actions {

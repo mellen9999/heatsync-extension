@@ -14000,7 +14000,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '01656de1+-202609250559' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '88d65763+-202609250601' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -48472,7 +48472,18 @@ async function openProfileCard(username, platform) {
   if (inputBar) inputBar.classList.add('hs-hidden')
   inputBarVisible = false
 
-  activeProfileCard = { username, platform: platform || null, data: null, ts: Date.now() }
+  // followageRows/followageFetchedFor: filled in by renderProfileCardView's
+  // own async lookupFollowage call (see its bottom) — the panel never had
+  // followage before; now it's the same ctx.extraSheet mechanism the hover
+  // tooltip uses (computeFollowageRows, tooltips.js, same bundle scope).
+  activeProfileCard = {
+    username,
+    platform: platform || null,
+    data: null,
+    ts: Date.now(),
+    followageRows: null,
+    followageFetchedFor: null,
+  }
   renderProfileCardView()
 
   // Try cache first (shared with tooltip via _profileCache)
@@ -49058,7 +49069,7 @@ function renderProfileCardView() {
     {
       hint: { platform: platform || undefined, login: (username || '').toLowerCase() },
       capabilities: { follow: true, whisper: true, dm: true, mention: true, mute: true, block: true, isBlocked },
-      extraSheet: pcBuildSessionSheetRows(username),
+      extraSheet: [...pcBuildSessionSheetRows(username), ...(activeProfileCard.followageRows || [])],
       modGroups: pcBuildModGroups(username),
     },
     { formatCompactNumber: pcFmt },
@@ -49142,6 +49153,36 @@ function renderProfileCardView() {
   const chain = pickBannerChain(data, platform, username)
   if (chain.length) pcApplyBanner(card, chain)
   if (idUid) pcApplyPronouns(card, idUid)
+
+  // Live Twitch followage — the panel never had this before (team-lead ask:
+  // "the overlay card currently has none"). Reuses computeFollowageRows +
+  // lookupFollowage (tooltips.js, same bundle scope — lookupFollowage
+  // already tries the server first and falls back to gqlProxy on a
+  // degraded answer). Fetched once per card open — followageFetchedFor
+  // guards against refiring on every renderProfileCardView() re-render
+  // (follow/mute toggles, hs-channels-changed, etc).
+  if (
+    (!platform || platform === 'twitch') &&
+    activeProfileCard.followageFetchedFor !== username &&
+    typeof getTooltipChannelContext === 'function' &&
+    typeof lookupFollowage === 'function' &&
+    typeof computeFollowageRows === 'function'
+  ) {
+    const channelLogin = getTooltipChannelContext(platform)
+    if (channelLogin) {
+      activeProfileCard.followageFetchedFor = username
+      const openedFor = activeProfileCard
+      lookupFollowage(username, channelLogin).then((result) => {
+        if (activeProfileCard !== openedFor || !result) return
+        const isSelfChannel =
+          typeof currentUsername === 'string' &&
+          currentUsername &&
+          channelLogin.toLowerCase() === currentUsername.toLowerCase()
+        activeProfileCard.followageRows = computeFollowageRows(channelLogin, isSelfChannel, result)
+        renderProfileCardView()
+      })
+    }
+  }
 }
 
 // No-heatsync-profile view — still surfaces the platform identity so the

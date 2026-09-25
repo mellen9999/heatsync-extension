@@ -164,9 +164,17 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(view).toContain('hsCardModel(')
     expect(view).toContain("variant: 'panel'")
     expect(view).toContain('modGroups: pcBuildModGroups(username)')
-    expect(view).toContain('extraSheet: pcBuildSessionSheetRows(username)')
+    expect(view).toContain('pcBuildSessionSheetRows(username)')
     expect(view).toContain('socials: pcBuildSocials(data)')
     expect(view).toContain('renderBadges: () => pcRenderBadgesHtml(data, username)')
+  })
+
+  test('followage is fetched once per card open and folded into extraSheet, never DOM-patched', () => {
+    const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
+    expect(view).toContain('...(activeProfileCard.followageRows || [])')
+    expect(view).toContain('followageFetchedFor !== username')
+    expect(view).toContain('computeFollowageRows(channelLogin, isSelfChannel, result)')
+    expect(view).toContain('renderProfileCardView()') // re-render, not a sheet-row DOM patch
   })
 
   test('every old .hs-pcard-id/.hs-pcard-mod/.hs-pcard-actions DOM-building class is gone', () => {

@@ -638,29 +638,78 @@
 .hs-card-action.hs-card-active { color: var(--hs-card-danger); }
 .hs-card-action[data-hs-card-action="report"] { color: var(--hs-card-danger); }
 
-/* ── phone: full card becomes a square bottom sheet ──────────────────── */
+/* ── close (×) — 'full' variant only, see card-render.js closeButtonHtml.
+ * Desktop: small, top-right of the pinned popover. Phone media query below
+ * bumps it to a real ≥44px touch target. `.hs-card-full` is itself the
+ * positioned ancestor (position:fixed above), so this needs no wrapper. */
+.hs-card-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  border: none;
+  border-left: 1px solid var(--hs-card-border);
+  border-bottom: 1px solid var(--hs-card-border);
+  border-radius: 0;
+  background: var(--hs-card-bg);
+  color: var(--hs-card-fg);
+  font-size: 13px; /* bitmap grid — 13px/26px only, see tests/unit/bitmap-grid-client.test.ts */
+  line-height: 1;
+  padding: 0;
+  appearance: none; /* iOS/older Safari rounds+shades a bare <button> */
+  cursor: pointer;
+  z-index: 1;
+}
+.hs-card-close:hover,
+.hs-card-close:active,
+.hs-card-close:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+
+/* ── phone: full card takes the entire screen, not a bottom sheet ────── */
 @media (max-width: 768px), (pointer: coarse) {
   .hs-card-full {
     position: fixed;
-    left: 0 !important; /* beats the host's measured desktop left/top — mobile ignores anchor position entirely */
-    right: 0;
-    bottom: 0;
-    top: auto !important;
+    inset: 0 !important; /* beats the host's measured desktop top/left — mobile ignores anchor position entirely */
     width: 100%;
     max-width: 100%;
-    max-height: 70vh;
+    height: 100vh; /* fallback for a browser with no dvh support */
+    height: 100dvh;
+    max-height: none;
     overflow-y: auto;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    /* Explicit, not just inherited from .hs-card's shorthand — the sheet's
-     * top edge is the ONLY thing separating it from whatever's behind it
-     * (there's no backdrop scrim), and a border that only exists because
-     * nothing else happened to override it is one factoring-out away from
-     * silently vanishing again. */
-    border-top: 1px solid var(--hs-card-border) !important;
+    -webkit-overflow-scrolling: touch;
+    border: none !important; /* edge-to-edge — nothing behind it to separate from */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .hs-card-close {
+    /* Absolute offsets ignore the container's own padding, so the safe
+     * area has to be restated here too — see .hs-card-full's padding
+     * above for the scrollable content half of this same guard. */
+    top: env(safe-area-inset-top, 0px);
+    right: env(safe-area-inset-right, 0px);
+    width: 44px;
+    height: 44px;
+    font-size: 26px; /* bitmap grid — 13px/26px only */
   }
   .hs-card-peek {
     display: none; /* no ambient hover on touch — peek never opens (see card-time/card-model host wiring) */
   }
+}
+
+/* Host toggles this on <html> while a phone full-screen card is open —
+ * the card scrolls internally; the page underneath must not (iOS rubber-
+ * band would otherwise flash a gap around the fixed card's edges). See
+ * hover-previews.js _mountCard/_dismissCard. */
+html.hs-card-scroll-lock,
+html.hs-card-scroll-lock body {
+  overflow: hidden !important;
+  height: 100%;
 }

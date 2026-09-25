@@ -891,17 +891,22 @@ function renderProfileCardView() {
   card.tabIndex = -1
 
   // Sticky close — pinned top-right, stays in place while card scrolls.
-  // Redundant with ESC, but discoverability is king. hs-pcard-close is old
-  // CSS (09/12), not yet deleted — no shared-card equivalent exists since
-  // peek/full/page never show a visible X (ESC/outside-click dismiss).
-  const closeBtn = document.createElement('button')
-  closeBtn.className = 'hs-pcard-close'
-  closeBtn.type = 'button'
-  closeBtn.title = 'close (Esc)'
-  closeBtn.setAttribute('aria-label', 'close profile')
-  closeBtn.textContent = '×'
-  closeBtn.addEventListener('click', closeProfileCard)
-  card.prepend(closeBtn)
+  // panel only now: card-render.js's own closeButtonHtml (synced from the
+  // site) renders a `.hs-card-close` baked into the 'full' variant's own
+  // markup (wired below, pcHandleCardAction's 'close' case), so a floating
+  // card prepending this ext-only one too would stack two ×s. hs-pcard-close
+  // is old CSS (09/12), not yet deleted — panel still has no shared-card
+  // equivalent (card-render.js's × is 'full' only).
+  if (!floating) {
+    const closeBtn = document.createElement('button')
+    closeBtn.className = 'hs-pcard-close'
+    closeBtn.type = 'button'
+    closeBtn.title = 'close (Esc)'
+    closeBtn.setAttribute('aria-label', 'close profile')
+    closeBtn.textContent = '×'
+    closeBtn.addEventListener('click', closeProfileCard)
+    card.prepend(closeBtn)
+  }
 
   msgsEl.appendChild(card)
 
@@ -1539,7 +1544,10 @@ function setupProfileCardHandlers() {
         pcHandleModAction(modBtn)
         return
       }
-      const actionBtn = e.target.closest('.hs-card-action')
+      // .hs-card-close (card-render.js closeButtonHtml, 'full' variant only)
+      // isn't a `.hs-card-action` — same data-hs-card-action attribute
+      // contract, separate class, so it needs its own branch here.
+      const actionBtn = e.target.closest('.hs-card-action, .hs-card-close')
       if (actionBtn?.dataset.hsCardAction) {
         e.preventDefault()
         e.stopPropagation()
@@ -1610,6 +1618,9 @@ function pcHandleCardAction(actionKey, btn) {
   const rel = data?.relationship || {}
   const profileId = data?.id || data?.userId || null
   switch (actionKey) {
+    case 'close':
+      closeProfileCard()
+      break
     case 'follow':
       pcToggleFollow(profileId, username, !!(rel.isFollowing ?? rel.youFollow))
       break

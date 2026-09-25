@@ -35,6 +35,20 @@ const HOTKEY_LABEL = {
  * as "k" + gap + "ick" = "k ick". Wrapping them together makes the whole
  * label one flex item, immune to a parent's gap no matter where it's used.
  */
+/**
+ * The card's own × — 'full' only (a pinned desktop popover or the phone
+ * full-screen sheet; 'peek'/'page' dismiss some other way, and the
+ * extension's 'panel' variant already has its own sticky × — the host
+ * suppresses this one there, see profile-card.js). Wired by the host via
+ * `data-hs-card-action="close"`, same delegation contract as follow/block/
+ * report. Static markup, no escaping needed.
+ */
+function closeButtonHtml(variant) {
+  return variant === 'full'
+    ? '<button type="button" class="hs-card-close" data-hs-card-action="close" aria-label="close">×</button>'
+    : ''
+}
+
 function hk(label, esc) {
   const first = label.slice(0, 1)
   const rest = label.slice(1)
@@ -89,10 +103,10 @@ export function hsCardHtml(model, opts) {
   const hideLogsLink = !!opts.hideLogsLink
 
   if (!model || model.kind === 'not-found') {
-    return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty"><div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div></div>`
+    return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty">${closeButtonHtml(variant)}<div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div></div>`
   }
   if (model.kind === 'error') {
-    return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty"><div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div><div class="hs-card-meta">lookup failed</div></div>`
+    return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty">${closeButtonHtml(variant)}<div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div><div class="hs-card-meta">lookup failed</div></div>`
   }
   if (model.kind === 'chatter') {
     return renderChatter(model, { esc, variant })
@@ -112,6 +126,7 @@ export function hsCardHtml(model, opts) {
 
 function renderChatter(model, { esc, variant }) {
   const parts = []
+  parts.push(closeButtonHtml(variant))
   parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
   if (model.links?.chatterUrl) {
@@ -326,6 +341,7 @@ function renderProfile(
   }
 
   return `<div class="${cls}"${clickAttrs}${accentAttr}>
+    ${closeButtonHtml(variant)}
     <div class="hs-card-hero" data-banner-pending="1" data-username="${esc(model.identity.login || '')}" data-platform="${esc(model.identity.platform || '')}"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div>
     <div class="hs-card-body">
       ${identityRow}

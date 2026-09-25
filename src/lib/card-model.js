@@ -77,6 +77,29 @@ export function hsCardPickIdentity(profile, hint = {}) {
   return { platform: null, login: null }
 }
 
+/**
+ * A `POST /api/card` request that failed outright (network error, non-2xx —
+ * rate limit, 5xx, an unmapped platform) — never mount nothing for a
+ * deliberate open. `hsCardHtml` already renders this kind as a compact
+ * "lookup failed" card; this is the one place that builds it.
+ * @param {{platform?: string|null, login?: string|null}} [hint] same shape
+ *   as `hsCardModel`'s `ctx.hint` — the identity the caller was trying to open
+ * @returns {object}
+ */
+export function hsCardErrorModel(hint = {}) {
+  return {
+    kind: 'error',
+    identity: { platform: hint.platform || null, login: hint.login || null, userId: null, isAnonymous: false },
+    displayName: hint.login || 'unknown',
+    isOwnProfile: false,
+    corpus: null,
+    links: {},
+    actions: [],
+    sheet: [], platforms: [], channel: null, note: null, recent: null, topEmotes: null,
+    socials: null, mod: null, accent: null,
+  }
+}
+
 const later = (a, b) => {
   const ta = a ? new Date(a).getTime() : NaN
   const tb = b ? new Date(b).getTime() : NaN

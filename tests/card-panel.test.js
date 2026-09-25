@@ -243,6 +243,24 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     }
   })
 
+  test('close dispatches to closeProfileCard', () => {
+    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
+    expect(fn).toContain("case 'close':")
+    expect(fn).toContain('closeProfileCard()')
+  })
+
+  test('the click delegator matches .hs-card-close too — closeButtonHtml is not a .hs-card-action', () => {
+    const handlers = slice(CARD, 'function setupProfileCardHandlers() {', '\n\n// Dispatches a click')
+    expect(handlers).toMatch(/closest\(['"]\.hs-card-action,\s*\.hs-card-close['"]\)/)
+  })
+
+  test('the ext-only sticky × (.hs-pcard-close) only mounts for panel — card-render.js already gives the floating (full) card its own, avoiding two', () => {
+    const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
+    const closeBlock = view.slice(view.indexOf('Sticky close'), view.indexOf('msgsEl.appendChild(card)'))
+    expect(closeBlock).toMatch(/if\s*\(!floating\)\s*\{/)
+    expect(closeBlock).toContain("closeBtn.className = 'hs-pcard-close'")
+  })
+
   test('addchannel is dispatched, even though it is not a card-model.js ACTION_DEFS key', () => {
     const fn = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
     expect(fn).toContain("case 'addchannel':")

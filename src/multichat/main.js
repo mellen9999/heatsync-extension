@@ -2708,6 +2708,14 @@
       stored = (await cachedUiSettings())?.ui_settings?.subsystems || null
     } catch (_) {}
     _gatesAtBoot = Object.assign({}, _SETTINGS_BY_KEY.get('subsystems')?.default, stored)
+    // Mirror to localStorage — pcard-early.js runs at document_start, before
+    // this async snapshot resolves, and needs a synchronously-readable copy
+    // to decide whether to swallow the native user-card click at all (a
+    // reload-gated setting, so a page-stale value here is the same lag the
+    // setting itself already has).
+    try {
+      localStorage.setItem('hs_gate_profile-cards', _gatesAtBoot['profile-cards'] !== false ? '1' : '0')
+    } catch (_) {}
   }
   function gateAtBoot(id) {
     try {
@@ -4521,6 +4529,18 @@
           const oDown = document.getElementById('hs-mc-reply-stack-down')
           if (oDown?.contains(e.target)) return
           dismissStack()
+        },
+        { signal: mcSignal },
+      )
+      // Profile card opening is its own click, capture-swallowed upstream by
+      // pcard-early.js — the "outside click" mousedown listener just above
+      // never sees it, so the stack would linger, fixed and above the card
+      // that just opened underneath it. openProfileCard fires this the
+      // instant a card is actually about to open.
+      document.addEventListener(
+        'hs-mc-close-overlays',
+        () => {
+          if (_stackActiveRow) dismissStack()
         },
         { signal: mcSignal },
       )
@@ -7649,7 +7669,10 @@
     // the same wall-clock frame as every other copy of the paint.
     const style = hsPaint ? `--hsp-t:${paintPhaseNow()};` : paintStyle || `color:${sanitizeColor(color || '#fff')}`
     const inner = hsPaint ? hsPaint.html : escapeHtml(name)
-    return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${uidAttr}${splitAttr} style="${style}">${inner}</a>`
+    // feedUid above is always resolved twitch-space (userKey(..., 'twitch')) —
+    // an inline feed quote only ever names a twitch chatter, same convention
+    // as the mention/reply-bar platform default elsewhere in this file.
+    return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="twitch"${uidAttr}${splitAttr} style="${style}">${inner}</a>`
   }
 
   // Shared-chat room-id → login. Keys are twitch numeric channel ids (from
@@ -8483,7 +8506,7 @@
           // already knew. The trailing caret is the affordance, aria-expanded is
           // the state, and both the universal hover invert and keyboard
           // activation come free once it is a button.
-          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}<span class="hs-mc-reply-caret" aria-hidden="true"></span>${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
+          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}<span class="hs-mc-reply-caret" aria-hidden="true"></span>${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''

@@ -2128,7 +2128,7 @@ function buildFeedMessageDiv(m, opUsername) {
   const tripcodeHtml = m.tripcode ? `<span class="hs-tripcode">${escapeHtml(m.tripcode)}</span>` : ''
   const userHtml = isAnon
     ? `${anonAvatar}<span class="hs-feed-user" style="color:#808080">Anonymous</span>${tripcodeHtml}`
-    : `${userAvatar}<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="hs-feed-user hs-mc-user" data-username="${escapeHtml((m.username || 'anon').toLowerCase())}" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>${tripcodeHtml}`
+    : `${userAvatar}<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="hs-feed-user hs-mc-user" data-username="${escapeHtml((m.username || 'anon').toLowerCase())}" data-platform="${escapeHtml(m.platform || '')}" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>${tripcodeHtml}`
 
   // Media/embeds (img, video, iframe) — values inside are pre-sanitized via escapeHtml/safeUrl/sanitizeEmbedId
   const mediaHtml = buildFeedMediaHtml(m)

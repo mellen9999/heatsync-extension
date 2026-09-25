@@ -4440,8 +4440,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
           .toLowerCase()
         const color =
           typeof mentionColor === 'function' ? mentionColor(name) : sanitizeColor(knownColors.get(name) || '#fff')
+        // skipMentions=false only ever reaches here for twitch prediction/
+        // outcome titles (twitch-api.js) — the only processEmotes() callers
+        // that don't pass skipMentions=true — so twitch is not a guess here.
         result.push(
-          `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="hs-mc-user hs-mc-mention" data-username="${name}" style="color:${color};font-weight:bold">${word}</a>`,
+          `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="hs-mc-user hs-mc-mention" data-username="${name}" data-platform="twitch" style="color:${color};font-weight:bold">${word}</a>`,
         )
       } else if (linksEnabled && LINK_RE.test(word)) {
         // Validate URL protocol before creating link (block javascript:, data:, etc.)

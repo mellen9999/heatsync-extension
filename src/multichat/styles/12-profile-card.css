@@ -167,9 +167,9 @@
     .hs-pcard-sheet .val-ttv { color: var(--hs-plat-twitch); }        /* twitch brand */
     .hs-pcard-sheet .val-kick { color: var(--hs-plat-kick); }       /* kick brand */
     .hs-pcard-sheet .val-yt { color: var(--hs-plat-youtube); }         /* xterm 196 — yt brand */
-    .hs-pcard-sheet .val-hs { color: var(--hs-brand); }         /* xterm 208 — heatsync brand */
+    .hs-pcard-sheet .val-hs { color: #fff; }         /* normal fg — identity link, not a state */
     .hs-pcard-sheet .val-admin { color: #ff0000; }      /* xterm 196 — power */
-    .hs-pcard-sheet .val-staff { color: #fff; }      /* xterm 208 — hs orange */
+    .hs-pcard-sheet .val-staff { color: #fff; }      /* normal fg — identity, not a state */
     .hs-pcard-sheet .val-heat { color: #ff0000; }       /* xterm 196 — fire */
     .hs-pcard-sheet .val-followers { color: #0087ff; }  /* xterm 33 — popularity */
     .hs-pcard-sheet .val-you-follow { color: var(--hs-reply); } /* xterm 51 — outflow */
@@ -178,7 +178,7 @@
     .hs-pcard-sheet .val-they-sub { color: #ff5fff; }   /* xterm 207 — paid inflow */
     .hs-pcard-sheet .val-mutual { color: var(--hs-ok); }     /* xterm 46 — handshake */
     .hs-pcard-sheet .val-mutual-sub { color: var(--hs-gold); } /* xterm 220 — premium handshake */
-    .hs-pcard-sheet .val-ch { color: #fff; }         /* xterm 208 — channel context */
+    .hs-pcard-sheet .val-ch { color: #fff; }         /* normal fg — channel context, not a state */
     .hs-pcard-sheet .hs-pc-live { color: var(--hs-live); font-weight: 700; }
     /* Inside the sheet: digits inherit cozette from the sheet (bitmap-crisp),
        degree symbol falls back to ui-monospace (vector AA, has clean °). */

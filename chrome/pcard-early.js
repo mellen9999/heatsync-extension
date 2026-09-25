@@ -7,7 +7,20 @@
   if (window.__heatsyncPCardEarly) return
   window.__heatsyncPCardEarly = true
 
+  // Mirrored by main.js's snapshotGates() on every boot (localStorage is the
+  // only synchronously-readable store at document_start — same reasoning as
+  // early-layout.js's hs_layout_* mirror). Missing entry = first-ever load,
+  // default true (matches settings-schema.js's default).
+  function gateOn() {
+    try {
+      return localStorage.getItem('hs_gate_profile-cards') !== '0'
+    } catch (_) {
+      return true
+    }
+  }
+
   function shouldIntercept(e) {
+    if (!gateOn()) return null
     if (e.button !== undefined && e.button !== 0) return null
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return null
     const target = e.target
@@ -15,7 +28,6 @@
     const userEl = target.closest('.hs-mc-user')
     if (!userEl) return null
     if (target.closest('[data-pcard-pill]')) return null
-    if (userEl.classList.contains('hs-mc-reply-user')) return null
     // Mention chips inside the composer (#hs-mc-input) share .hs-mc-user for
     // color/hover, but they're EDITABLE text — clicking one must place the caret
     // to edit, never open a profile card (that was pulling up your own profile

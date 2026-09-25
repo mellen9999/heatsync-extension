@@ -1801,7 +1801,7 @@
     white-space: nowrap !important;
   }
   .hs-pc-role.admin { background: #ff0000 !important; color: #fff !important; border: 1px solid #000 !important; }
-  .hs-pc-role.staff { background: #ff8700 !important; color: #000 !important; border: 1px solid #000 !important; }
+  .hs-pc-role.staff { background: #fff !important; color: #000 !important; border: 1px solid #000 !important; }
   .hs-pc-role.partner { background: #000 !important; color: #fff !important; border: 1px solid #fff !important; }
   .hs-pc-role.affiliate { background: #404040 !important; color: #fff !important; border: 1px solid #fff !important; }
   .hs-pc-role.sub-status { background: #9146ff !important; color: #fff !important; border: 1px solid #6b30d4 !important; }
@@ -2169,7 +2169,7 @@
     line-height: 1.4 !important;
     outline: none !important;
   }
-  .hs-pc-note-ta:focus { box-shadow: inset 0 0 0 1px #ff8700 !important; }
+  .hs-pc-note-ta:focus { box-shadow: inset 0 0 0 1px #fff !important; }
   .hs-pc-note-ta::placeholder { color: #555 !important; }
 
   /* Mod tools grid — groups stack vertically (timeout row, then hard actions row) */
@@ -8261,7 +8261,6 @@
       '.hs-username-colored',
       '.hs-mention-colored',
       '[data-hs-username]',
-      '.hs-mc-user', // multichat usernames
     ].join(', ')
 
     // safeUrl is provided by the auto-bundled lib (src/lib/utils.js) at an

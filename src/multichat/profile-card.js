@@ -149,6 +149,13 @@ async function openProfileCard(username, platform) {
   if (!username) return
   username = String(username).toLowerCase()
 
+  // The reply-thread stack renders as a fixed, max-z-index overlay above
+  // everything else — a card opened underneath a lingering stack would be
+  // invisible/unclickable behind it. Its dismiss logic lives in a closure
+  // private to createOverlay() in main.js; this event is the bridge (same
+  // idiom as hs-channels-changed below).
+  document.dispatchEvent(new CustomEvent('hs-mc-close-overlays'))
+
   // Hide input bar — typing makes no sense in card view. Flag must move with
   // the class: a class-only hide leaves inputBarVisible=true, which makes
   // every later showInputBar() early-return — composer unreachable until a
@@ -1567,7 +1574,6 @@ function setupProfileCardHandlers() {
       const userEl = e.target.closest('.hs-mc-user')
       if (!userEl) return
       if (e.target.closest('[data-pcard-pill]')) return
-      if (userEl.classList.contains('hs-mc-reply-user')) return
       // Composer mention chips (#hs-mc-input) are editable text, not an author
       // reference — clicking one places the caret to edit, never opens a card.
       if (userEl.closest('#hs-mc-input')) return
@@ -1590,7 +1596,6 @@ function setupProfileCardHandlers() {
       const userEl = e.target.closest('.hs-mc-user')
       if (!userEl) return
       if (e.target.closest('[data-pcard-pill]')) return
-      if (userEl.classList.contains('hs-mc-reply-user')) return
       // Composer mention chips are editable — don't swallow their mousedown, or
       // the caret can't land in the input to edit the @mention you're typing.
       if (userEl.closest('#hs-mc-input')) return

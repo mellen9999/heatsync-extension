@@ -100,6 +100,17 @@ const STRUCTURAL = new Set(['ffffff', '000000'])
  */
 const ROLE_COLLISION = new Set(['10-emotes.css:008080'])
 
+/**
+ * Files this repo cannot edit at all — they are byte-identical mirrors of the
+ * site's own copy (tests/site-copy-parity.test.js enforces it; the sync
+ * command is scripts/sync-site-copies.sh). 20-card.css is the shared card's
+ * stylesheet: it deliberately defines its own self-contained `--hs-card-*`
+ * token layer (see the file's header comment) rather than reusing this
+ * extension's `--hs-*` palette — retyping its hexes here would just be a
+ * local edit to a file whose only valid change is re-running the sync.
+ */
+const MIRRORED_FILES = new Set(['20-card.css'])
+
 const OFF_GRID_BY_DESIGN = new Map([
   ['2e2e08', '--hs-warn-bg — mellen-explicit dark-olive zebra for mentioned/quoted rows'],
   ['9146ff', '--hs-plat-twitch — twitch brand hex, only ever beside a platform glyph'],
@@ -118,7 +129,9 @@ describe('colour doctrine', () => {
 
   test('no stylesheet re-types a colour the palette already names', () => {
     const offenders = []
-    for (const file of readdirSync(STYLES).filter((f) => f.endsWith('.css') && f !== '00-palette.css')) {
+    for (const file of readdirSync(STYLES).filter(
+      (f) => f.endsWith('.css') && f !== '00-palette.css' && !MIRRORED_FILES.has(f),
+    )) {
       const css = stripComments(readFileSync(join(STYLES, file), 'utf8'))
       const seen = new Map()
       for (const m of css.matchAll(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g)) {

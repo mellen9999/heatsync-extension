@@ -1,0 +1,492 @@
+/* card.css — the one user-card stylesheet, shared by every card surface
+ * (hover peek, pinned full card, profile-page header, popout, and mirrored
+ * into the extension's panel/tooltip). Replaces profile-card-pro.css,
+ * profile-card.css, the dead .profile-preview-* rules and the chatter-card
+ * block in messages.css, and the card overrides in mobile.css.
+ *
+ * Doctrine: square (no border-radius — status dots are the only round
+ * exception), 1px #808080 border, dense 20px sheet rows, dt dim/dd fg,
+ * links #5f87ff, live green, mod/vip gold, danger red, ZERO orange, hover
+ * AND :active AND :focus-visible = white bg/black text, text >=13px (meta
+ * <=11px only), zero gradients/glow/motion. !important only where noted —
+ * beating a host rule that predates this file.
+ */
+
+.hs-card {
+  --hs-card-fg: #ffffff;
+  --hs-card-dim: #a8a8a8;
+  --hs-card-border: #808080;
+  --hs-card-link: #5f87ff;
+  --hs-card-live: #00d700;
+  --hs-card-gold: #d7af00;
+  --hs-card-magenta: #d700d7;
+  --hs-card-danger: #ff0000;
+  --hs-card-bg: #000000;
+
+  display: flex;
+  flex-direction: column;
+  background: var(--hs-card-bg);
+  color: var(--hs-card-fg);
+  border: 1px solid var(--hs-card-border);
+  border-radius: 0;
+  font-size: 13px;
+  line-height: 17px; /* 13px bitmap font, integer px — ratio smears the glyph */
+  width: 320px;
+  max-width: 92vw;
+  animation: none;
+}
+
+/* Floating variants (hover peek / pinned full) — host sets top/left via
+ * CSSOM after measuring the mounted element; this just establishes the
+ * positioning context + stacking. */
+.hs-card-peek,
+.hs-card-full {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: auto;
+}
+
+/* Embedded variants — inline on a profile page / extension panel. No fixed
+ * positioning; the host's layout owns placement. */
+.hs-card-page,
+.hs-card-panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* ── the 'page' variant's layout inside profile-view.js's .profile-header
+ * wrapper — consolidated here (was scattered across mobile.css/profiles.css/
+ * emotes.css as a BARE `.hs-card` match, which also matched the floating
+ * peek/full popovers and clobbered their `position:fixed`, leaving a pinned
+ * card invisible on phones). Scoped to `.hs-card-page` only now. Card
+ * styling lives in this one file — nothing outside it should target
+ * `.hs-card`/`.hs-card-*`. ──────────────────────────────────────────── */
+@media (min-width: 769px) {
+  /* 2px to match the visual weight of a fit-content card. */
+  .profile-header .hs-card-page {
+    border: 2px solid #444444 !important;
+  }
+}
+@media (max-width: 768px) {
+  .hs-card-page,
+  #messages-container > .hs-card-page:first-child,
+  #messages-container .hs-card-page,
+  body .hs-card-page,
+  html .hs-card-page {
+    order: 0 !important; /* container is a plain column on mobile — header flows first */
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: 0 !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    margin: 0 !important;
+    z-index: 10 !important; /* low, so the page still scrolls under fixed chrome */
+    background: #000000 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: fit-content !important;
+    height: auto !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    padding: 6px !important;
+    overflow: visible !important;
+  }
+  .profile-header .hs-card-page {
+    border: 2px solid #444444 !important;
+  }
+  /* Search/trending result rows keep their rank gutter — the header-card
+   * min-width:100% treatment above is meant for the profile PAGE card only;
+   * inside .trending-profile-row (flex: [40px rank][card]) it pushes the
+   * card 40px past the right viewport edge. */
+  #messages-container .trending-profile-row .hs-card-page,
+  .trending-profile-row .hs-card-page {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: 1 1 0 !important;
+  }
+  /* Emote-inventory page: sticky header overrides "flows first" above. */
+  #messages-container:has(.emote-inventory-container) > .hs-card-page,
+  #messages-container:has(.emote-inventory-container) .hs-card-page {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    background: #a8a8a8 !important;
+    order: unset !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+.hs-card-empty,
+.hs-card-chatter {
+  padding: 8px 10px;
+  min-width: 200px;
+}
+.hs-card-chatter .hs-card-name {
+  font-size: 13px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.hs-card-plat {
+  font-size: 13px;
+  color: var(--hs-card-dim);
+}
+.hs-card-meta {
+  font-size: 13px;
+  color: var(--hs-card-dim);
+  margin-top: 2px;
+}
+
+/* ── hero banner ──────────────────────────────────────────────────────── */
+.hs-card-hero {
+  position: relative;
+  height: 48px;
+  overflow: hidden;
+  background: #121212;
+  flex-shrink: 0;
+}
+.hs-card-hero-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px) brightness(0.55);
+  transform: scale(1.08); /* hide the blur's edge feather */
+}
+.hs-card-hero-scrim {
+  /* Flat, not a gradient — doctrine bans gradients even here. A single
+   * translucent black wash still separates the banner from the identity
+   * row without a blend. */
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* ── body ─────────────────────────────────────────────────────────────── */
+.hs-card-body {
+  padding: 8px 10px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.hs-card-identity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: -20px; /* pull avatar up over the hero, matches old card */
+}
+.hs-card-avatar {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--hs-card-border);
+  background: #000;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.hs-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hs-card-fg); /* host overwrites via CSSOM from data-color */
+}
+.hs-card-pronouns,
+.hs-card-plus {
+  font-size: 13px;
+  color: var(--hs-card-dim);
+}
+.hs-card-flair {
+  vertical-align: middle;
+}
+/* Ember (tenure achievement) chip — the one achievement the card still
+ * shows (see card-model.js). Gold, not orange — same token as the mutual/
+ * mutual-sub sheet rows. */
+.hs-card-ember {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000000;
+  background: var(--hs-card-gold);
+  vertical-align: middle;
+  cursor: default;
+}
+
+.hs-card-bio {
+  font-size: 13px;
+  color: var(--hs-card-fg);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Own-profile inline bio edit trigger (click-delegation.js setupBioEditHandler) */
+.hs-card-bio .bio-edit-trigger {
+  color: var(--hs-card-link);
+  cursor: pointer;
+}
+.hs-card-bio .bio-edit-trigger:hover,
+.hs-card-bio .bio-edit-trigger:active,
+.hs-card-bio .bio-edit-trigger:focus-visible {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* ── platform links row ───────────────────────────────────────────────── */
+.hs-card-platforms {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.hs-card-plat-link {
+  color: var(--hs-card-dim);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.hs-card-plat-link:hover,
+.hs-card-plat-link:active,
+.hs-card-plat-link:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+.hs-card-plat-link[data-tone="ttv"] { color: #9146ff; }
+.hs-card-plat-link[data-tone="kick"] { color: #53fc18; }
+.hs-card-plat-link[data-tone="yt"] { color: #ff0000; }
+.hs-card-plat-link[data-tone="hs"] { color: var(--hs-card-fg); }
+.hs-card-plat-link:hover[data-tone],
+.hs-card-plat-link:active[data-tone],
+.hs-card-plat-link:focus-visible[data-tone] { color: #000000; }
+.hs-card-hk { text-decoration: underline; }
+.hs-card-live {
+  color: var(--hs-card-live);
+  font-size: 13px;
+}
+.hs-card-verified { color: var(--hs-card-link); font-size: 13px; }
+
+/* ── property sheet ───────────────────────────────────────────────────── */
+.hs-card-sheet {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 14px;
+  row-gap: 0;
+}
+.hs-card-sheet-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  height: 20px;
+  white-space: nowrap;
+}
+.hs-card-sheet-row dt {
+  color: var(--hs-card-dim);
+  font-size: 13px;
+}
+.hs-card-sheet-row dd {
+  margin: 0;
+  color: var(--hs-card-fg);
+  font-size: 13px;
+}
+.hs-card-channel-sheet {
+  border-top: 1px solid var(--hs-card-border);
+  padding-top: 4px;
+}
+
+/* tone → color. Heat uses a red ramp on purpose — never orange. */
+.hs-card-sheet-row[data-tone="partner"] dd,
+.hs-card-sheet-row[data-tone="admin"] dd { color: var(--hs-card-magenta); }
+.hs-card-sheet-row[data-tone="affiliate"] dd,
+.hs-card-sheet-row[data-tone="staff"] dd { color: var(--hs-card-gold); }
+.hs-card-sheet-row[data-tone="heat-cold"] dd { color: #767676; }
+.hs-card-sheet-row[data-tone="heat-spark"] dd { color: #870000; }
+.hs-card-sheet-row[data-tone="heat-warm"] dd { color: #af0000; }
+.hs-card-sheet-row[data-tone="heat-hot"] dd { color: #d70000; }
+.hs-card-sheet-row[data-tone="heat-erupting"] dd { color: #ff0000; font-weight: 600; }
+.hs-card-sheet-row[data-tone="heat-mythic"] dd { color: var(--hs-card-magenta); font-weight: 600; }
+.hs-card-sheet-row[data-tone="you-follow"] dd,
+.hs-card-sheet-row[data-tone="you-sub"] dd { color: #5fd7ff; }
+.hs-card-sheet-row[data-tone="they-follow"] dd,
+.hs-card-sheet-row[data-tone="they-sub"] dd { color: #d787d7; }
+.hs-card-sheet-row[data-tone="mutual"] dd,
+.hs-card-sheet-row[data-tone="mutual-sub"] dd { color: var(--hs-card-gold); }
+.hs-card-sheet-row[data-tone="ch"] dd { color: var(--hs-card-fg); }
+.hs-card-sheet-row[data-tone="dim"] dd { color: var(--hs-card-dim); }
+.hs-card-sheet-row[data-tone="note"] { height: auto; flex-wrap: wrap; }
+
+.hs-card-mutual-av {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--hs-card-border);
+  margin-right: -4px;
+  vertical-align: middle;
+}
+.hs-card-mutual-n { font-size: 13px; color: var(--hs-card-dim); margin-left: 6px; }
+
+/* ── note ─────────────────────────────────────────────────────────────── */
+.hs-card-note-text { color: var(--hs-card-fg); }
+.hs-card-note-textarea {
+  width: 100%;
+  min-height: 40px;
+  margin: 2px 0;
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+.hs-card-note-edit,
+.hs-card-emote,
+.hs-card-action {
+  font: inherit;
+  background: transparent;
+  color: var(--hs-card-dim);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.hs-card-note-edit:hover,
+.hs-card-note-edit:active,
+.hs-card-note-edit:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+
+/* ── top emotes ───────────────────────────────────────────────────────── */
+.hs-card-emotes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.hs-card-emote {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  cursor: default;
+}
+.hs-card-emote img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.hs-card-emote-n {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 9px;
+  color: var(--hs-card-dim);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0 2px;
+}
+
+/* ── footer links ─────────────────────────────────────────────────────── */
+.hs-card-links {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  border-top: 1px solid var(--hs-card-border);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+.hs-card-links a,
+.hs-card-recent-head a,
+.hs-card-log-ts {
+  color: var(--hs-card-link);
+  text-decoration: none;
+}
+.hs-card-links a:hover,
+.hs-card-links a:active,
+.hs-card-links a:focus-visible,
+.hs-card-log-ts:hover,
+.hs-card-log-ts:active,
+.hs-card-log-ts:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+
+/* ── recent logs ──────────────────────────────────────────────────────── */
+.hs-card-recent {
+  border-top: 1px solid var(--hs-card-border);
+  padding-top: 4px;
+}
+.hs-card-recent-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--hs-card-dim);
+  margin-bottom: 2px;
+}
+.hs-card-log-row {
+  display: flex;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 17px; /* same 13px-integer rule */
+  white-space: normal;
+}
+.hs-card-log-ts { flex-shrink: 0; font-size: 13px; }
+.hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 13px; }
+.hs-card-log-body { color: var(--hs-card-fg); word-break: break-word; }
+
+/* ── actions ──────────────────────────────────────────────────────────── */
+.hs-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--hs-card-border);
+  /* Same rhythm as .hs-card-links/.hs-card-recent (border + padding-top) —
+   * this row sits OUTSIDE .hs-card-body (its own action-bar chrome spans
+   * the full card width), so it gets none of that container's `gap`
+   * automatically and needs its own top padding to match. */
+  padding-top: 4px;
+}
+.hs-card-action {
+  flex: 1 1 auto;
+  min-height: 24px;
+  padding: 4px 8px;
+  text-align: center;
+  font-size: 13px;
+}
+.hs-card-action:hover,
+.hs-card-action:active,
+.hs-card-action:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+.hs-card-action.hs-card-active { color: var(--hs-card-danger); }
+.hs-card-action[data-hs-card-action="report"] { color: var(--hs-card-danger); }
+
+/* ── phone: full card becomes a square bottom sheet ──────────────────── */
+@media (max-width: 768px), (pointer: coarse) {
+  .hs-card-full {
+    position: fixed;
+    left: 0 !important; /* beats the host's measured desktop left/top — mobile ignores anchor position entirely */
+    right: 0;
+    bottom: 0;
+    top: auto !important;
+    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+  .hs-card-peek {
+    display: none; /* no ambient hover on touch — peek never opens (see card-time/card-model host wiring) */
+  }
+}

@@ -255,6 +255,12 @@ function checkScopeCollisions() {
     // Same story: the site's gifs-tab fetch layer, multichat-only, landing in
     // this scope (see readMultichatModules).
     'gif-search-remote.js',
+    // The one user-card model/renderer/formatter (client/card/*.js on the
+    // site) — multichat-only for now (tooltips.js/profile-card.js consume
+    // hsCardModel/hsCardHtml), same embed point as gif-search-remote.js above.
+    'card-time.js',
+    'card-model.js',
+    'card-render.js',
   ]
   const libDir = join(__dirname, 'src', 'lib')
   const mcDir = join(__dirname, 'src', 'multichat')
@@ -866,6 +872,20 @@ function readMultichatModules() {
   const gifSearchPath = join(SRC_DIR, 'lib', 'gif-search-remote.js')
   if (existsSync(gifSearchPath)) {
     combined += `\n// --- lib/gif-search-remote.js ---\n${stripExports(readFileSync(gifSearchPath, 'utf8'))}\n`
+  }
+
+  // The one user-card model/renderer/formatter (scripts/sync-site-copies.sh
+  // mirror of client/card/*.js) — card-time before card-model before
+  // card-render, matching card-render.js's own `import ... from './card-time.js'`
+  // (stripExports drops that import line; dependency order is what makes the
+  // concatenated scope resolve it). tooltips.js (peek) and profile-card.js
+  // (panel) call hsCardModel/hsCardHtml, so this must land before the modules
+  // loop below.
+  for (const mod of ['card-time.js', 'card-model.js', 'card-render.js']) {
+    const p = join(SRC_DIR, 'lib', mod)
+    if (existsSync(p)) {
+      combined += `\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`
+    }
   }
 
   const modules = CORE_MODULES

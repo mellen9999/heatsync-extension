@@ -13,6 +13,12 @@
  * is `base`: '' on the site, https://heatsync.org here, because a root-relative
  * /api/gifs/... inside a twitch.tv page asks TWITCH for our gifs.
  *
+ * card-time.js/card-model.js/card-render.js + card.css are the one user-card
+ * model/renderer/formatter/stylesheet, shared by every card surface on both
+ * the site and the extension. card.css lands as a numbered styles/ fragment
+ * (styles/20-card.css), not src/lib/ — see src/multichat/styles.js, which
+ * concatenates every styles/*.css fragment at build time.
+ *
  * scripts/sync-site-copies.sh is the only way these files change, and
  * biome.json leaves them unformatted so a formatter pass cannot break parity.
  *
@@ -31,19 +37,26 @@ const SITE =
     existsSync(join(p, 'client', 'utils', 'gif-search-remote.js')),
   )
 
-const FILES = ['client/utils/gif-search-remote.js']
+// [site-relative path, our-relative path] — most pairs are src/lib/<basename>
+// of the site path, but card.css lands as a renamed styles/ fragment instead.
+const FILES = [
+  ['client/utils/gif-search-remote.js', 'src/lib/gif-search-remote.js'],
+  ['client/card/card-time.js', 'src/lib/card-time.js'],
+  ['client/card/card-model.js', 'src/lib/card-model.js'],
+  ['client/card/card-render.js', 'src/lib/card-render.js'],
+  ['public/css/modules/card.css', 'src/multichat/styles/20-card.css'],
+]
 
 describe('site-copy parity', () => {
   if (!SITE) {
     test.skip('site repo not present — parity cannot be checked here', () => {})
     return
   }
-  for (const rel of FILES) {
-    const f = rel.slice(rel.lastIndexOf('/') + 1)
-    test(`src/lib/${f} is byte-identical to the site's ${rel}`, () => {
-      const ours = readFileSync(join(HERE, 'src', 'lib', f), 'utf8')
+  for (const [rel, ours_rel] of FILES) {
+    test(`${ours_rel} is byte-identical to the site's ${rel}`, () => {
+      const ours = readFileSync(join(HERE, ours_rel), 'utf8')
       const theirs = readFileSync(join(SITE, rel), 'utf8')
-      expect(ours === theirs, `run scripts/sync-site-copies.sh — ${f} drifted from ${SITE}`).toBe(true)
+      expect(ours === theirs, `run scripts/sync-site-copies.sh — ${ours_rel} drifted from ${SITE}/${rel}`).toBe(true)
     })
   }
 

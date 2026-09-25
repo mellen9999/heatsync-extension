@@ -27,9 +27,7 @@
         "noConsole": {
           "level": "off",
           "options": {
-            "allow": [
-              "log"
-            ]
+            "allow": ["log"]
           }
         },
         "noControlCharactersInRegex": "off",
@@ -72,7 +70,10 @@
         "src/lib/plus-tenure.js",
         "src/lib/fill-layers.js",
         "src/lib/glyph-mask.js",
-        "src/lib/gif-search-remote.js"
+        "src/lib/gif-search-remote.js",
+        "src/lib/card-time.js",
+        "src/lib/card-model.js",
+        "src/lib/card-render.js"
       ],
       "formatter": {
         "enabled": false

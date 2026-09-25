@@ -51,6 +51,17 @@ const HOST_PAGE = [
   'right-column',
 ]
 
+/**
+ * Classes belonging to SITE-ONLY markup that ride along in 20-card.css — that
+ * file is a byte-identical mirror of the site's public/css/modules/card.css
+ * (tests/site-copy-parity.test.js enforces it), so it cannot be trimmed for
+ * an extension-only ruleset without breaking parity. `.trending-profile-row`
+ * is heatsync.org's search/trending result row, a wrapper this extension
+ * never renders; the rule stays harmless dead weight here on purpose (see
+ * card.css's own header comment).
+ */
+const SITE_ONLY_PAGE = ['trending-profile-row']
+
 function definedClasses() {
   let css = ''
   for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
@@ -93,6 +104,7 @@ describe('dead css', () => {
     for (const c of defined) {
       if (literals.has(c)) continue
       if (HOST_PAGE.some((p) => c.startsWith(p))) continue
+      if (SITE_ONLY_PAGE.includes(c)) continue
       // built at runtime from a prefix?
       const parts = c.split('-')
       let built = false

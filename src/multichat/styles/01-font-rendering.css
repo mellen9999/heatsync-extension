@@ -48,13 +48,18 @@
     }
     /* Counter-rule: a handful of surfaces explicitly use NON-bitmap fonts
        (system sans, Inter, ui-monospace) where the user expects AA + kern.
-       Order matters — these rules must come after the bitmap rule. */
+       Order matters — these rules must come after the bitmap rule.
+       .hs-card itself stays bitmap (13px CozetteVector -- the shared card's
+       own doctrine, see 20-card.css's header) -- only its one off-grid
+       element joins this list below: the 9px emote-use-count corner badge,
+       too small to stay crisp on the 13/26/39 grid. */
     body.hs-font-bitmap .hs-pcard,
     body.hs-font-bitmap .hs-pcard *,
     body.hs-font-bitmap .hs-notif,
     body.hs-font-bitmap .hs-notif *,
     body.hs-font-bitmap .hs-mc-pred-result-amount,
-    body.hs-font-bitmap .hs-heat-num {
+    body.hs-font-bitmap .hs-heat-num,
+    body.hs-font-bitmap .hs-card-emote-n {
       -webkit-font-smoothing: subpixel-antialiased !important;
       -moz-osx-font-smoothing: auto !important;
       font-smooth: auto !important;

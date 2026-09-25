@@ -3,7 +3,7 @@
  *
  * The `»` thread button used to seed the composer with a retyped copy of the
  * message. heatsync archives the line, so the post can point AT the original
- * instead: /logs/<platform>/<channel>/<utc-day>?m=<message_id> resolves back
+ * instead: /search/logs/<platform>/<channel>/<utc-day>?m=<message_id> resolves back
  * into the real chat line on heatsync.org AND in the panel.
  *
  * Verified against production while this was written: the Twitch IRC `id` tag
@@ -49,7 +49,7 @@ const MSG = {
 describe('buildLogPermalink', () => {
   test('mints the URL shape the server serves', () => {
     expect(buildLogPermalink(MSG)).toBe(
-      'https://heatsync.org/logs/twitch/xqc/2026-08-16?m=eca4db81-e5a1-42e3-9173-edf805329077',
+      'https://heatsync.org/search/logs/twitch/xqc/2026-08-16?m=eca4db81-e5a1-42e3-9173-edf805329077',
     )
   })
 
@@ -62,7 +62,7 @@ describe('buildLogPermalink', () => {
   })
 
   test('normalises the channel — a #-prefixed IRC channel is the same channel', () => {
-    expect(buildLogPermalink({ ...MSG, channel: '#XQC' })).toContain('/logs/twitch/xqc/')
+    expect(buildLogPermalink({ ...MSG, channel: '#XQC' })).toContain('/search/logs/twitch/xqc/')
   })
 
   test('refuses platforms the archive does not store', () => {
@@ -77,13 +77,13 @@ describe('buildLogPermalink', () => {
 
   test('still yields the day page when the message id is missing', () => {
     const url = buildLogPermalink({ ...MSG, messageId: '' })
-    expect(url).toBe('https://heatsync.org/logs/twitch/xqc/2026-08-16')
+    expect(url).toBe('https://heatsync.org/search/logs/twitch/xqc/2026-08-16')
     expect(url).not.toContain('?m=')
   })
 
   test('escapes a channel that would otherwise break out of the path', () => {
     const url = buildLogPermalink({ ...MSG, channel: 'a/b?c' })
-    expect(url).toContain('/logs/twitch/a%2Fb%3Fc/')
+    expect(url).toContain('/search/logs/twitch/a%2Fb%3Fc/')
   })
 })
 
@@ -100,18 +100,26 @@ describe('logPermalinkParts', () => {
     // A message archived a few hundred ms the other side of UTC midnight gets
     // the neighbouring day in its URL. The quote must still resolve; only the
     // click-through lands one page over.
-    const wrongDay = 'https://heatsync.org/logs/twitch/xqc/1999-01-01?m=' + MSG.messageId
+    const wrongDay = `https://heatsync.org/search/logs/twitch/xqc/1999-01-01?m=${MSG.messageId}`
     expect(logPermalinkParts(wrongDay)?.messageId).toBe(MSG.messageId)
   })
 
+  test('still parses the pre-2026-09 /logs/... shape (no /search prefix)', () => {
+    // The site 301s the old path now, but post content is immutable — a quote
+    // pasted before the move still carries the bare /logs/... link, and it has
+    // to keep resolving forever.
+    const legacy = `https://heatsync.org/logs/twitch/xqc/2026-08-16?m=${MSG.messageId}`
+    expect(logPermalinkParts(legacy)).toEqual({ platform: 'twitch', channel: 'xqc', messageId: MSG.messageId })
+  })
+
   test('accepts subdomains of heatsync.org, rejects lookalikes', () => {
-    expect(logPermalinkParts('https://www.heatsync.org/logs/twitch/xqc/2026-08-16?m=x')).not.toBeNull()
-    expect(logPermalinkParts('https://heatsync.org.evil.com/logs/twitch/xqc/2026-08-16?m=x')).toBeNull()
-    expect(logPermalinkParts('https://notheatsync.org/logs/twitch/xqc/2026-08-16?m=x')).toBeNull()
+    expect(logPermalinkParts('https://www.heatsync.org/search/logs/twitch/xqc/2026-08-16?m=x')).not.toBeNull()
+    expect(logPermalinkParts('https://heatsync.org.evil.com/search/logs/twitch/xqc/2026-08-16?m=x')).toBeNull()
+    expect(logPermalinkParts('https://notheatsync.org/search/logs/twitch/xqc/2026-08-16?m=x')).toBeNull()
   })
 
   test('rejects a day page with no message to quote', () => {
-    expect(logPermalinkParts('https://heatsync.org/logs/twitch/xqc/2026-08-16')).toBeNull()
+    expect(logPermalinkParts('https://heatsync.org/search/logs/twitch/xqc/2026-08-16')).toBeNull()
   })
 
   test('rejects other heatsync pages and junk', () => {
@@ -148,21 +156,21 @@ describe('buildRowPermalink', () => {
     const url = buildRowPermalink(
       row({ msgPlatform: '', msgChannel: 'nl_kripp', msgId: MSG.messageId, msgTime: '1786906443358' }),
     )
-    expect(url).toBe(`https://heatsync.org/logs/twitch/nl_kripp/2026-08-16?m=${MSG.messageId}`)
+    expect(url).toBe(`https://heatsync.org/search/logs/twitch/nl_kripp/2026-08-16?m=${MSG.messageId}`)
   })
 
   test('a kick row is never mistaken for twitch', () => {
     const url = buildRowPermalink(
       row({ msgPlatform: 'kick', msgChannel: 'nl_kripp', msgId: 'k1', msgTime: '1786906443358' }),
     )
-    expect(url).toContain('/logs/kick/nl_kripp/')
+    expect(url).toContain('/search/logs/kick/nl_kripp/')
   })
 
   test('a youtube row keeps its own platform too', () => {
     const url = buildRowPermalink(
       row({ msgPlatform: 'youtube', msgChannel: 'somechan', msgId: 'y1', msgTime: '1786906443358' }),
     )
-    expect(url).toContain('/logs/youtube/somechan/')
+    expect(url).toContain('/search/logs/youtube/somechan/')
   })
 
   test('a row with no send time yields nothing rather than a wrong day', () => {
@@ -212,7 +220,7 @@ const { buildQuoteContent } = new Function(`${contentBuilder}\nreturn { buildQuo
 
 describe('buildQuoteContent', () => {
   const withPermalink = {
-    permalink: 'https://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc',
+    permalink: 'https://heatsync.org/search/logs/twitch/xqc/2026-08-16?m=abc',
     text: 'poggers',
     user: 'someone',
   }
@@ -220,12 +228,12 @@ describe('buildQuoteContent', () => {
 
   test('words + permalink — the permalink trails the take on its own line', () => {
     expect(buildQuoteContent(withPermalink, 'this is wild')).toBe(
-      'this is wild\nhttps://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc',
+      'this is wild\nhttps://heatsync.org/search/logs/twitch/xqc/2026-08-16?m=abc',
     )
   })
 
   test('permalink alone — an empty take is a valid thread', () => {
-    expect(buildQuoteContent(withPermalink, '')).toBe('https://heatsync.org/logs/twitch/xqc/2026-08-16?m=abc')
+    expect(buildQuoteContent(withPermalink, '')).toBe('https://heatsync.org/search/logs/twitch/xqc/2026-08-16?m=abc')
   })
 
   test('no permalink falls back to a textual quote, not a dropped citation', () => {

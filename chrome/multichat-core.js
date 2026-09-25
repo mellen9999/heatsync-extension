@@ -14040,7 +14040,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e878c13b+-202609251615' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '24e000b9+-202609251904' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -32934,7 +32934,7 @@ function instagramEmbed(url) {
 }
 
 // Convert a single URL → embed HTML, or '' if not embeddable
-// Platforms the archive stores — everything else has no /logs surface at all,
+// Platforms the archive stores — everything else has no /search/logs surface at all,
 // so a permalink for one would point at a page that can never hold it. Declared
 // here rather than next to buildLogPermalink in chat-logs.js because that file
 // is concatenated LATER: a const read from an earlier file is still in its
@@ -32950,10 +32950,11 @@ function logPermalinkParts(url) {
   try {
     const u = new URL(url)
     if (!/(^|\.)heatsync\.org$/.test(u.hostname)) return null
-    const seg = u.pathname.split('/') // ['', 'logs', platform, channel, date]
-    if (seg[1] !== 'logs' || seg.length < 5) return null
-    const platform = (seg[2] || '').toLowerCase()
-    const channel = (seg[3] || '').toLowerCase()
+    const seg = u.pathname.split('/') // ['', 'search', 'logs', platform, channel, date] or (legacy) ['', 'logs', platform, channel, date]
+    const base = seg[1] === 'search' && seg[2] === 'logs' ? 3 : seg[1] === 'logs' ? 2 : -1
+    if (base === -1 || seg.length < base + 3) return null
+    const platform = (seg[base] || '').toLowerCase()
+    const channel = (seg[base + 1] || '').toLowerCase()
     const messageId = u.searchParams.get('m')
     if (!messageId || !channel || !HS_LOG_PLATFORMS.has(platform)) return null
     return { platform, channel, messageId }
@@ -33098,7 +33099,7 @@ function extractFeedEmbed(content) {
   // Same priority order as website _extractEmbed, with the first-party chat-log
   // permalink ahead of everything: it is the one embed that IS the post's point.
   const priorityPatterns = [
-    /https?:\/\/(?:[\w-]+\.)?heatsync\.org\/logs\/\w+\/[\w-]+\/[\d-]+\?m=[^\s]+/,
+    /https?:\/\/(?:[\w-]+\.)?heatsync\.org\/(?:search\/logs|logs)\/\w+\/[\w-]+\/[\d-]+\?m=[^\s]+/,
     /https?:\/\/(?:www\.)?streamable\.com\/\w+/,
     /https?:\/\/(?:www\.)?youtu(?:\.be\/|be\.com\/watch\?v=)[\w-]+/,
     /https?:\/\/clips\.twitch\.tv\/[\w-]+/,
@@ -33235,7 +33236,7 @@ function buildFeedMediaHtml(m) {
   // Media URLs come back origin-relative (/uploads/...). The ext renders
   // cross-origin (twitch/kick/yt), so a relative src silently 404s AND safeUrl()
   // throws on a relative URL → the image is dropped entirely. Absolutize here —
-  // the single render chokepoint for feed, thread, and /logs — so no insert path
+  // the single render chokepoint for feed, thread, and /search/logs — so no insert path
   // can leak a relative URL. Idempotent: absolute URLs pass through untouched.
   if (typeof _absolutizeThreadMedia === 'function') _absolutizeThreadMedia(m)
   const isReply = !!m.reply_to
@@ -36421,7 +36422,7 @@ function formatTimeFromTs(ts) {
 // cross-origin, so a relative src silently 404s against twitch.tv/kick.com AND
 // safeUrl() throws on relative URLs (dropping the image). Prefix in place;
 // absolute URLs pass through untouched. Called from buildFeedMediaHtml (the
-// render chokepoint) so every surface — feed, thread, /logs — is covered.
+// render chokepoint) so every surface — feed, thread, /search/logs — is covered.
 function _absolutizeThreadMedia(m) {
   if (!m) return
   for (const k of ['media_url', 'thumbnail_url']) {
@@ -41597,7 +41598,7 @@ function initInput() {
   // immediately: the user still types their own take, they just no longer
   // have to know the /op command exists or retype a citation by hand.
   //
-  // The citation is the /logs permalink, not the text. heatsync archives the
+  // The citation is the /search/logs permalink, not the text. heatsync archives the
   // line, so the post can point AT the original instead of carrying a retyped
   // copy: both heatsync.org and the panel resolve the link back into the real
   // chat line — the author, the time, the emotes, the channel — and a reader
@@ -50387,12 +50388,12 @@ const HS_CL_PUBLIC_ORIGIN = 'https://heatsync.org'
 // that file is concatenated BEFORE this one, and a const referenced from an
 // earlier file would still be in its temporal dead zone.
 
-// Build a public /logs/ permalink out of the four things that identify one
+// Build a public /search/logs/ permalink out of the four things that identify one
 // archived line. THE canonical builder — the archive viewer, the live-row
 // permalink and the thread composer all mint their URLs here.
 //
 // URL shape mirrors server/routes/chat-log-permalinks.ts:
-//   /logs/<platform>/<channel>/<yyyy-mm-dd>?m=<message_id>
+//   /search/logs/<platform>/<channel>/<yyyy-mm-dd>?m=<message_id>
 //
 // The date is the UTC day (the archive partitions on it), taken from the
 // message's own timestamp — never from "now", which is a different day for
@@ -50409,7 +50410,7 @@ function buildLogPermalink({ platform, channel, messageId, time }) {
   const d = new Date(time)
   if (Number.isNaN(d.getTime())) return null
   const ymd = d.toISOString().slice(0, 10)
-  let url = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
+  let url = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
   if (messageId) url += `?m=${encodeURIComponent(messageId)}`
   return url
 }
@@ -50758,11 +50759,11 @@ function renderChatLogsView() {
   ctrls.appendChild(exportJson)
 
   // Public archive link — only meaningful when scoped to a channel (the
-  // public surface is /logs/<platform>/<channel>/<date>, channel-keyed).
+  // public surface is /search/logs/<platform>/<channel>/<date>, channel-keyed).
   if (channel) {
     const pub = document.createElement('a')
     pub.className = 'hs-cl-public-archive'
-    pub.href = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
+    pub.href = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
     pub.target = '_blank'
     pub.rel = 'noopener noreferrer'
     pub.textContent = 'public archive ↗'
@@ -50902,7 +50903,7 @@ function renderChatLogRow(r) {
   appendChatLogBody(body, r)
   row.appendChild(body)
 
-  // Permalink copy — hover-revealed ¶ that puts the public /logs/ URL on
+  // Permalink copy — hover-revealed ¶ that puts the public /search/logs/ URL on
   // the clipboard. Matches server's chat-log-permalinks.ts pattern; every
   // copied permalink is a backlink into the SEO acquisition surface.
   if (buildChatLogPermalink(r)) {
@@ -51370,7 +51371,7 @@ const hsColorCache = new Map() // uid (yt_<UCid> / kick_<id>) -> "#RRGGBB" | nul
 // djb2 → palette. MUST stay byte-identical to the website
 // (client/utils/color-utils.js usernameColor + server chat-log-permalinks.ts)
 // so a chatter is the same colour in the extension, on heatsync.org, and on
-// SSR /logs pages.
+// SSR /search/logs pages.
 const HS_USERNAME_PALETTE = [
   '#ff7a7a',
   '#ff9d4d',
@@ -68801,7 +68802,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       div.dataset.msgChannel = m.channel || ''
       div.dataset.msgPlatform = m.platform || ''
       // Send time (tmi-sent-ts / the platform's own stamp), not receive time —
-      // it picks the UTC day in a /logs permalink, and the archive stores the
+      // it picks the UTC day in a /search/logs permalink, and the archive stores the
       // same value. Without it a row can be identified but not cited.
       if (m.time) div.dataset.msgTime = String(m.time)
       // Mark self-messages so the mod hover toolbar can skip them without

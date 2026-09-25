@@ -25,12 +25,12 @@ const HS_CL_PUBLIC_ORIGIN = 'https://heatsync.org'
 // that file is concatenated BEFORE this one, and a const referenced from an
 // earlier file would still be in its temporal dead zone.
 
-// Build a public /logs/ permalink out of the four things that identify one
+// Build a public /search/logs/ permalink out of the four things that identify one
 // archived line. THE canonical builder — the archive viewer, the live-row
 // permalink and the thread composer all mint their URLs here.
 //
 // URL shape mirrors server/routes/chat-log-permalinks.ts:
-//   /logs/<platform>/<channel>/<yyyy-mm-dd>?m=<message_id>
+//   /search/logs/<platform>/<channel>/<yyyy-mm-dd>?m=<message_id>
 //
 // The date is the UTC day (the archive partitions on it), taken from the
 // message's own timestamp — never from "now", which is a different day for
@@ -47,7 +47,7 @@ function buildLogPermalink({ platform, channel, messageId, time }) {
   const d = new Date(time)
   if (Number.isNaN(d.getTime())) return null
   const ymd = d.toISOString().slice(0, 10)
-  let url = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
+  let url = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(p)}/${encodeURIComponent(c)}/${ymd}`
   if (messageId) url += `?m=${encodeURIComponent(messageId)}`
   return url
 }
@@ -396,11 +396,11 @@ function renderChatLogsView() {
   ctrls.appendChild(exportJson)
 
   // Public archive link — only meaningful when scoped to a channel (the
-  // public surface is /logs/<platform>/<channel>/<date>, channel-keyed).
+  // public surface is /search/logs/<platform>/<channel>/<date>, channel-keyed).
   if (channel) {
     const pub = document.createElement('a')
     pub.className = 'hs-cl-public-archive'
-    pub.href = `${HS_CL_PUBLIC_ORIGIN}/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
+    pub.href = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
     pub.target = '_blank'
     pub.rel = 'noopener noreferrer'
     pub.textContent = 'public archive ↗'
@@ -540,7 +540,7 @@ function renderChatLogRow(r) {
   appendChatLogBody(body, r)
   row.appendChild(body)
 
-  // Permalink copy — hover-revealed ¶ that puts the public /logs/ URL on
+  // Permalink copy — hover-revealed ¶ that puts the public /search/logs/ URL on
   // the clipboard. Matches server's chat-log-permalinks.ts pattern; every
   // copied permalink is a backlink into the SEO acquisition surface.
   if (buildChatLogPermalink(r)) {

@@ -229,7 +229,7 @@ function instagramEmbed(url) {
 }
 
 // Convert a single URL → embed HTML, or '' if not embeddable
-// Platforms the archive stores — everything else has no /logs surface at all,
+// Platforms the archive stores — everything else has no /search/logs surface at all,
 // so a permalink for one would point at a page that can never hold it. Declared
 // here rather than next to buildLogPermalink in chat-logs.js because that file
 // is concatenated LATER: a const read from an earlier file is still in its
@@ -245,10 +245,11 @@ function logPermalinkParts(url) {
   try {
     const u = new URL(url)
     if (!/(^|\.)heatsync\.org$/.test(u.hostname)) return null
-    const seg = u.pathname.split('/') // ['', 'logs', platform, channel, date]
-    if (seg[1] !== 'logs' || seg.length < 5) return null
-    const platform = (seg[2] || '').toLowerCase()
-    const channel = (seg[3] || '').toLowerCase()
+    const seg = u.pathname.split('/') // ['', 'search', 'logs', platform, channel, date] or (legacy) ['', 'logs', platform, channel, date]
+    const base = seg[1] === 'search' && seg[2] === 'logs' ? 3 : seg[1] === 'logs' ? 2 : -1
+    if (base === -1 || seg.length < base + 3) return null
+    const platform = (seg[base] || '').toLowerCase()
+    const channel = (seg[base + 1] || '').toLowerCase()
     const messageId = u.searchParams.get('m')
     if (!messageId || !channel || !HS_LOG_PLATFORMS.has(platform)) return null
     return { platform, channel, messageId }
@@ -393,7 +394,7 @@ function extractFeedEmbed(content) {
   // Same priority order as website _extractEmbed, with the first-party chat-log
   // permalink ahead of everything: it is the one embed that IS the post's point.
   const priorityPatterns = [
-    /https?:\/\/(?:[\w-]+\.)?heatsync\.org\/logs\/\w+\/[\w-]+\/[\d-]+\?m=[^\s]+/,
+    /https?:\/\/(?:[\w-]+\.)?heatsync\.org\/(?:search\/logs|logs)\/\w+\/[\w-]+\/[\d-]+\?m=[^\s]+/,
     /https?:\/\/(?:www\.)?streamable\.com\/\w+/,
     /https?:\/\/(?:www\.)?youtu(?:\.be\/|be\.com\/watch\?v=)[\w-]+/,
     /https?:\/\/clips\.twitch\.tv\/[\w-]+/,
@@ -530,7 +531,7 @@ function buildFeedMediaHtml(m) {
   // Media URLs come back origin-relative (/uploads/...). The ext renders
   // cross-origin (twitch/kick/yt), so a relative src silently 404s AND safeUrl()
   // throws on a relative URL → the image is dropped entirely. Absolutize here —
-  // the single render chokepoint for feed, thread, and /logs — so no insert path
+  // the single render chokepoint for feed, thread, and /search/logs — so no insert path
   // can leak a relative URL. Idempotent: absolute URLs pass through untouched.
   if (typeof _absolutizeThreadMedia === 'function') _absolutizeThreadMedia(m)
   const isReply = !!m.reply_to

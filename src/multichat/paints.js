@@ -152,7 +152,7 @@ const hsColorCache = new Map() // uid (yt_<UCid> / kick_<id>) -> "#RRGGBB" | nul
 // djb2 → palette. MUST stay byte-identical to the website
 // (client/utils/color-utils.js usernameColor + server chat-log-permalinks.ts)
 // so a chatter is the same colour in the extension, on heatsync.org, and on
-// SSR /logs pages.
+// SSR /search/logs pages.
 const HS_USERNAME_PALETTE = [
   '#ff7a7a',
   '#ff9d4d',

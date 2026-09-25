@@ -2449,7 +2449,7 @@ function formatTimeFromTs(ts) {
 // cross-origin, so a relative src silently 404s against twitch.tv/kick.com AND
 // safeUrl() throws on relative URLs (dropping the image). Prefix in place;
 // absolute URLs pass through untouched. Called from buildFeedMediaHtml (the
-// render chokepoint) so every surface — feed, thread, /logs — is covered.
+// render chokepoint) so every surface — feed, thread, /search/logs — is covered.
 function _absolutizeThreadMedia(m) {
   if (!m) return
   for (const k of ['media_url', 'thumbnail_url']) {

@@ -2311,7 +2311,7 @@ function initInput() {
   // immediately: the user still types their own take, they just no longer
   // have to know the /op command exists or retype a citation by hand.
   //
-  // The citation is the /logs permalink, not the text. heatsync archives the
+  // The citation is the /search/logs permalink, not the text. heatsync archives the
   // line, so the post can point AT the original instead of carrying a retyped
   // copy: both heatsync.org and the panel resolve the link back into the real
   // chat line — the author, the time, the emotes, the channel — and a reader

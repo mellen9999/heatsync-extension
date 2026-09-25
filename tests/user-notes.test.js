@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, test } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import {
   _hsNoteResetForTest,
   HS_NOTE_MAX,
@@ -6,6 +6,8 @@ import {
   hsNoteGet,
   hsNoteHas,
   hsNoteSave,
+  hsNoteServerEligible,
+  hsNoteSyncOnOpen,
 } from '../src/multichat/user-notes.js'
 
 // The module resolves a chatter to their alias set via the (bundle-global)
@@ -165,4 +167,155 @@ test('empty legacy blob is dropped without a persist', async () => {
   await hsNoteSave('x', 'twitch', 'y')
   expect(calls.removed).toContain('hs_user_notes')
   expect(store.hs_user_notes).toBeUndefined()
+})
+
+// ── server sync (logged-in only) ────────────────────────────────────────────
+// hsAuthToken/apiFetch are bundle-globals (social.js) — simulated here the
+// same way getUserAliases/expandUserAliases are above.
+describe('hsNoteServerEligible', () => {
+  test('a real heatsync profile id is eligible', () => {
+    expect(hsNoteServerEligible('42')).toBe(true)
+    expect(hsNoteServerEligible(42)).toBe(true)
+  })
+  test('kick_/yt_ synth ids (unregistered chatters) are not — no server row exists', () => {
+    expect(hsNoteServerEligible('kick_12345')).toBe(false)
+    expect(hsNoteServerEligible('yt_UCabc123')).toBe(false)
+  })
+  test('no id at all is not eligible', () => {
+    expect(hsNoteServerEligible(null)).toBe(false)
+    expect(hsNoteServerEligible(undefined)).toBe(false)
+    expect(hsNoteServerEligible('')).toBe(false)
+  })
+})
+
+describe('server sync — logged out or no eligible id: local-only, untouched', () => {
+  afterEach(() => {
+    globalThis.hsAuthToken = undefined
+    globalThis.apiFetch = undefined
+  })
+
+  test('hsNoteSave never calls apiFetch when logged out', async () => {
+    globalThis.hsAuthToken = false
+    let called = false
+    globalThis.apiFetch = async () => {
+      called = true
+      return { ok: true }
+    }
+    const rec = await hsNoteSave('bob', 'twitch', 'local only', undefined, '42')
+    expect(called).toBe(false)
+    expect(rec.serverSynced).toBe(false)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('local only')
+  })
+
+  test('hsNoteSyncOnOpen is a no-op when logged out', async () => {
+    globalThis.hsAuthToken = false
+    await hsNoteSave('bob', 'twitch', 'stays local')
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    expect(changed).toBe(false)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('stays local')
+  })
+
+  test('hsNoteSyncOnOpen is a no-op for a kick/yt synth id even when logged in', async () => {
+    globalThis.hsAuthToken = true
+    let called = false
+    globalThis.apiFetch = async () => {
+      called = true
+      return { ok: true, data: { note: 'server text' } }
+    }
+    await hsNoteSave('bob', 'twitch', 'local only')
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', 'kick_999')
+    expect(called).toBe(false)
+    expect(changed).toBe(false)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('local only')
+  })
+})
+
+describe('server sync — logged in with a real profile id', () => {
+  afterEach(() => {
+    globalThis.hsAuthToken = undefined
+    globalThis.apiFetch = undefined
+  })
+
+  test('hsNoteSave PUTs to the server and marks serverSynced on success', async () => {
+    globalThis.hsAuthToken = true
+    const calls = []
+    globalThis.apiFetch = async (path, opts) => {
+      calls.push({ path, opts })
+      return { ok: true }
+    }
+    const rec = await hsNoteSave('bob', 'twitch', 'synced note', undefined, '42')
+    expect(calls).toHaveLength(1)
+    expect(calls[0].path).toBe('/api/user-notes/42')
+    expect(calls[0].opts).toMatchObject({ method: 'PUT', auth: true, body: { note: 'synced note' } })
+    expect(rec.serverSynced).toBe(true)
+  })
+
+  test('a save the server rejects still keeps the note locally, unsynced (never lose a note)', async () => {
+    globalThis.hsAuthToken = true
+    globalThis.apiFetch = async () => {
+      throw new Error('network down')
+    }
+    const rec = await hsNoteSave('bob', 'twitch', 'kept locally', undefined, '42')
+    expect(rec.serverSynced).toBe(false)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('kept locally')
+  })
+
+  test('hsNoteSyncOnOpen adopts a real server note over a stale/absent local one', async () => {
+    globalThis.hsAuthToken = true
+    globalThis.apiFetch = async () => ({ ok: true, data: { note: 'from the server' } })
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    expect(changed).toBe(true)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('from the server')
+  })
+
+  test('hsNoteSyncOnOpen uploads a local-only never-synced note once when the server has none', async () => {
+    globalThis.hsAuthToken = false
+    await hsNoteSave('bob', 'twitch', 'never synced yet') // saved while logged out
+    globalThis.hsAuthToken = true
+    const calls = []
+    globalThis.apiFetch = async (path, opts) => {
+      calls.push({ path, opts })
+      if (opts.method === 'PUT') return { ok: true }
+      return { ok: true, data: { note: '' } } // server has nothing yet
+    }
+    await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    const put = calls.find((c) => c.opts.method === 'PUT')
+    expect(put).toBeTruthy()
+    expect(put.opts.body).toEqual({ note: 'never synced yet' })
+    expect(hsNoteGet('bob', 'twitch')?.serverSynced).toBe(true)
+  })
+
+  test('a failed server fetch never clobbers the good local note', async () => {
+    globalThis.hsAuthToken = true
+    await hsNoteSave('bob', 'twitch', 'good local note')
+    globalThis.apiFetch = async () => {
+      throw new Error('down')
+    }
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    expect(changed).toBe(false)
+    expect(hsNoteGet('bob', 'twitch')?.text).toBe('good local note')
+  })
+
+  test('an already-synced local note matching the server does not re-persist (no spurious repaint)', async () => {
+    globalThis.hsAuthToken = true
+    globalThis.apiFetch = async (path, opts) =>
+      opts.method === 'PUT' ? { ok: true } : { ok: true, data: { note: 'x' } }
+    await hsNoteSave('bob', 'twitch', 'x', undefined, '42') // serverSynced: true
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    expect(changed).toBe(false)
+  })
+
+  test('deleting a note best-effort PUTs an empty note to the server too', async () => {
+    globalThis.hsAuthToken = true
+    const calls = []
+    globalThis.apiFetch = async (path, opts) => {
+      calls.push({ path, opts })
+      return { ok: true }
+    }
+    await hsNoteSave('bob', 'twitch', 'goes away', undefined, '42')
+    await hsNoteDelete('bob', 'twitch', '42')
+    const del = calls.find((c) => c.opts.method === 'PUT' && c.opts.body.note === '')
+    expect(del).toBeTruthy()
+    expect(hsNoteGet('bob', 'twitch')).toBeNull()
+  })
 })

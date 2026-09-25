@@ -829,12 +829,14 @@ function renderProfileCardView() {
     }
   }
 
-  // Notes — still the ext's own local/chrome.storage system (server sync +
-  // migration is a separate pass, tracked in the phase-2 plan's step 5); not
-  // wired to the shared model's `note` field yet on purpose. Appended as its
-  // own section, same as before.
+  // Notes — the ext's own local/chrome.storage system, now with server sync
+  // (user-notes.js's hsNoteSyncOnOpen/hsNoteSave/hsNoteDelete): logged in +
+  // a real heatsync profile id (kick/yt synth ids have no server row) →
+  // server note wins on open, or a local-only note uploads once. Still not
+  // wired to the shared model's `note` field (that's server-note-shaped for
+  // the SITE's card; this section owns its own richer local+server logic).
   if (typeof hsNoteRenderCardSection === 'function') {
-    const nsec = hsNoteRenderCardSection(username, platform, pcMakeSection)
+    const nsec = hsNoteRenderCardSection(username, platform, pcMakeSection, data.id)
     if (nsec) card.querySelector('.hs-card-body')?.appendChild(nsec)
   }
 

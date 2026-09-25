@@ -14010,7 +14010,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '981e5018+-202609250605' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3d470296+-202609250610' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17311,28 +17311,114 @@ function hsNoteHas(username, platform) {
   return !!n?.text
 }
 
-/** Create/update a note. Async so it can pull the fullest alias set. Empty text deletes. */
-async function hsNoteSave(username, platform, text, nowMs) {
+// ── server sync (logged-in only) ───────────────────────────────────────────
+// PUT/GET /api/user-notes/:profileId — the SAME note a server-authoritative
+// card (site, or this ext once logged in) reads via /api/card's note part
+// (server/routes/card.ts calls the identical fetchUserNote). `profileId`
+// must be a real heatsync user id — kick_<id>/yt_<id> synth ids (unregistered
+// chatters, see pcSynthFromKickEnrich/pcSynthFromYtContext in profile-card.js)
+// have no server-side note row to read or write, so those stay local-only,
+// same as today.
+function hsNoteServerEligible(profileId) {
+  return !!profileId && !/^(kick|yt)_/.test(String(profileId))
+}
+
+async function hsNoteFetchServer(profileId) {
+  if (!hsNoteServerEligible(profileId) || typeof apiFetch !== 'function') return null
+  try {
+    const resp = await apiFetch(`/api/user-notes/${encodeURIComponent(profileId)}`, { auth: true })
+    if (resp?.ok && resp.data) return resp.data.note || ''
+  } catch {}
+  return null // network/auth failure — distinct from "" (a real, empty server note)
+}
+
+async function hsNotePutServer(profileId, text) {
+  if (!hsNoteServerEligible(profileId) || typeof apiFetch !== 'function') return false
+  try {
+    const resp = await apiFetch(`/api/user-notes/${encodeURIComponent(profileId)}`, {
+      method: 'PUT',
+      auth: true,
+      body: { note: text },
+    })
+    return !!resp?.ok
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Called once per card open (logged in + a real profileId only). Server is
+ * the source of truth once logged in: a server note overwrites the local
+ * cache; an EMPTY server note with a local-only, never-synced note left over
+ * uploads it once (the one-time local→server migration). A fetch failure
+ * touches nothing — never clobber a good local note because the network
+ * hiccuped, and `serverSynced` stays false so the next open retries.
+ */
+async function hsNoteSyncOnOpen(username, platform, profileId) {
+  if (!(typeof hsAuthToken !== 'undefined' && hsAuthToken) || !hsNoteServerEligible(profileId)) return false
+  await _hsnLoad()
+  const serverText = await hsNoteFetchServer(profileId)
+  if (serverText === null) return false // fetch failed — local note (if any) is untouched
+  const aliases = await _hsnAliasesAsync(username, platform)
+  if (!aliases.length) return false
+  const local = hsNoteGet(username, platform)
+  if (serverText) {
+    if (local?.text !== serverText || !local?.serverSynced) {
+      const canonical = _hsnCanonicalFor(aliases) || aliases.slice().sort()[0]
+      _hsnNotes.set(canonical, { text: serverText, updatedAt: _hsnNow(), serverSynced: true, profileId })
+      for (const a of aliases) _hsnIndex.set(a, canonical)
+      _hsnPersist()
+      return true
+    }
+    return false
+  }
+  if (local?.text && !local.serverSynced) {
+    const ok = await hsNotePutServer(profileId, local.text)
+    if (ok) {
+      local.serverSynced = true
+      local.profileId = profileId
+      _hsnPersist()
+    }
+    return false // text didn't change, just its sync state — no repaint needed
+  }
+  return false
+}
+
+/**
+ * Create/update a note. Async so it can pull the fullest alias set and — when
+ * logged in with a real profileId — write through to the server. The local
+ * write always happens regardless of the server call's outcome: a failed PUT
+ * never loses the note, it just leaves `serverSynced: false` so the next
+ * hsNoteSyncOnOpen (or edit) retries it. Empty text deletes.
+ */
+async function hsNoteSave(username, platform, text, nowMs, profileId) {
   await _hsnLoad() // never build a snapshot from a model the initial read hasn't populated yet
   const clean = String(text == null ? '' : text)
     .slice(0, HS_NOTE_MAX)
     .trim()
   const aliases = await _hsnAliasesAsync(username, platform)
   if (!aliases.length) return null
-  if (!clean) return hsNoteDelete(username, platform)
+  if (!clean) return hsNoteDelete(username, platform, profileId)
   const canonical = _hsnCanonicalFor(aliases) || aliases.slice().sort()[0]
-  const rec = { text: clean, updatedAt: typeof nowMs === 'number' ? nowMs : _hsnNow() }
+  let serverSynced = false
+  if (typeof hsAuthToken !== 'undefined' && hsAuthToken && hsNoteServerEligible(profileId)) {
+    serverSynced = await hsNotePutServer(profileId, clean)
+  }
+  const rec = { text: clean, updatedAt: typeof nowMs === 'number' ? nowMs : _hsnNow(), serverSynced, profileId }
   _hsnNotes.set(canonical, rec)
   for (const a of aliases) _hsnIndex.set(a, canonical)
   _hsnPersist()
   return rec
 }
 
-/** Delete a note and every alias pointer at it. */
-async function hsNoteDelete(username, platform) {
+/** Delete a note and every alias pointer at it. Best-effort server delete too (empty PUT). */
+async function hsNoteDelete(username, platform, profileId) {
   await _hsnLoad()
   const aliases = await _hsnAliasesAsync(username, platform)
   const canonical = _hsnCanonicalFor(aliases)
+  if (typeof hsAuthToken !== 'undefined' && hsAuthToken && hsNoteServerEligible(profileId)) {
+    await hsNotePutServer(profileId, '') // best-effort — local delete proceeds regardless of outcome
+  }
   if (!canonical) return false
   _hsnNotes.delete(canonical)
   for (const [a, c] of [..._hsnIndex]) if (c === canonical) _hsnIndex.delete(a)
@@ -17354,7 +17440,7 @@ function _hsnNow() {
 // One small square terminal-styled popover, reused by the context menu and the
 // profile-card "edit" button. Autofocus, char counter, debounced auto-save,
 // esc / outside-click to close (saves on close). No modal, no framework.
-function hsNoteOpenEditor(username, platform, x, y, onSaved) {
+function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
   if (typeof document === 'undefined') return
   document.getElementById('hs-note-editor')?.remove()
   const existing = hsNoteGet(username, platform)
@@ -17410,7 +17496,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved) {
   const flush = async () => {
     if (!dirty) return
     dirty = false
-    await hsNoteSave(username, platform, ta.value)
+    await hsNoteSave(username, platform, ta.value, undefined, profileId)
     del.style.visibility = ta.value.trim() ? '' : 'hidden'
     status.textContent = 'saved · esc to close'
     if (typeof onSaved === 'function') {
@@ -17428,7 +17514,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved) {
   del.addEventListener('click', async () => {
     ta.value = ''
     dirty = false
-    await hsNoteDelete(username, platform)
+    await hsNoteDelete(username, platform, profileId)
     if (typeof onSaved === 'function') {
       try {
         onSaved()
@@ -17463,8 +17549,14 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved) {
   }, 0)
 }
 
-/** Build the profile-card "notes" section (read preview + edit button). */
-function hsNoteRenderCardSection(username, platform, mkSection) {
+/**
+ * Build the profile-card "notes" section (read preview + edit button).
+ * `profileId` (the heatsync user id — data.id on the card's profile, absent
+ * for kick/yt synth profiles) enables server sync: logged in + a real id →
+ * fetches the server note once on open (adopting it, or uploading a
+ * local-only note that's never been synced) and repaints when that resolves.
+ */
+function hsNoteRenderCardSection(username, platform, mkSection, profileId) {
   if (typeof document === 'undefined') return null
   const make = typeof mkSection === 'function' ? mkSection : typeof pcMakeSection === 'function' ? pcMakeSection : null
   const sec = make ? make('notes') : document.createElement('div')
@@ -17484,9 +17576,12 @@ function hsNoteRenderCardSection(username, platform, mkSection) {
   }
   btn.addEventListener('click', (e) => {
     const r = btn.getBoundingClientRect()
-    hsNoteOpenEditor(username, platform, e?.clientX || r.left, e?.clientY || r.bottom, paint)
+    hsNoteOpenEditor(username, platform, e?.clientX || r.left, e?.clientY || r.bottom, paint, profileId)
   })
   paint()
+  hsNoteSyncOnOpen(username, platform, profileId).then((changed) => {
+    if (changed && sec.isConnected) paint()
+  })
   sec.appendChild(body)
   sec.appendChild(btn)
   return sec
@@ -49159,12 +49254,14 @@ function renderProfileCardView() {
     }
   }
 
-  // Notes — still the ext's own local/chrome.storage system (server sync +
-  // migration is a separate pass, tracked in the phase-2 plan's step 5); not
-  // wired to the shared model's `note` field yet on purpose. Appended as its
-  // own section, same as before.
+  // Notes — the ext's own local/chrome.storage system, now with server sync
+  // (user-notes.js's hsNoteSyncOnOpen/hsNoteSave/hsNoteDelete): logged in +
+  // a real heatsync profile id (kick/yt synth ids have no server row) →
+  // server note wins on open, or a local-only note uploads once. Still not
+  // wired to the shared model's `note` field (that's server-note-shaped for
+  // the SITE's card; this section owns its own richer local+server logic).
   if (typeof hsNoteRenderCardSection === 'function') {
-    const nsec = hsNoteRenderCardSection(username, platform, pcMakeSection)
+    const nsec = hsNoteRenderCardSection(username, platform, pcMakeSection, data.id)
     if (nsec) card.querySelector('.hs-card-body')?.appendChild(nsec)
   }
 

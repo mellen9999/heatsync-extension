@@ -100,7 +100,7 @@
      * shared 20-card.css. This shell still matters for exactly one thing:
      * the "username…" loading text shown for the ~100-300ms before that
      * child exists (see tooltips.js showUserTooltip) — everything else that
-     * used to style a whole `.hs-pc-*` card tree directly under this id is
+     * used to style a whole .hs-pc-* card tree directly under this id is
      * gone (see hsExtTooltipPositionTarget in tooltips.js, which targets the
      * inner .hs-card once it's mounted instead of this shell). */
     #hs-user-tooltip {

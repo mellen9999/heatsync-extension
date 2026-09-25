@@ -182,6 +182,7 @@
  * appearing"); nothing else should move when it happens. */
 .hs-card-hero {
   position: relative;
+  width: 100%;
   height: 0;
   overflow: hidden;
   background: #121212;

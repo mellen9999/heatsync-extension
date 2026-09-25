@@ -8250,6 +8250,20 @@
     const PROFILE_TTL = 300000 // 5 min
     const PROFILE_CACHE_MAX = 50
 
+    // Profile-cards gate — mirrors pcard-early.js's gateOn() (b6ea234d):
+    // same localStorage key, same "missing = on" default. Gate off means the
+    // user opted OUT of every heatsync profile card, not just the overlay
+    // one — a native name click must then not be intercepted at all (no
+    // stopPropagation/preventDefault below), so twitch/kick's own native
+    // viewer card opens exactly as if the extension weren't here.
+    function gateOn() {
+      try {
+        return localStorage.getItem('hs_gate_profile-cards') !== '0'
+      } catch (_) {
+        return true
+      }
+    }
+
     // Username selectors for click interception (capture phase)
     // Modern Twitch wraps display name span inside button.inline.font-bold —
     // clicks land on the button, so closest() needs to match the button itself.
@@ -9578,8 +9592,25 @@
           const raw = src.dataset?.hsUsername || src.dataset?.username || src.textContent?.replace(/^@/, '').trim()
           const username = raw?.replace(/[:\s]+$/, '').trim()
           if (!username) return
+          // Gate off → hands off completely, no card of ours opens on this
+          // click. See gateOn() above.
+          if (!gateOn()) return
           e.stopPropagation()
           e.preventDefault()
+          // Overlay mounted → route through the ONE profile card (the
+          // multichat btop-style panel) instead of this file's own takeover
+          // panel, so a native twitch/kick name and a multichat name open
+          // identical UI. Same bridge event pcard-early.js dispatches for
+          // overlay names (see hs-pcard-open in profile-card.js). When the
+          // overlay isn't mounted (native chat still visible — multichat
+          // failed to find a chat root, or a non-channel page) this file's
+          // own card is the only one that can render, so it stays the path.
+          if (document.getElementById('hs-mc-container')) {
+            document.dispatchEvent(
+              new CustomEvent('hs-pcard-open', { detail: { username, platform: getPlatform() }, bubbles: false }),
+            )
+            return
+          }
           showCard(src, e)
           return
         }

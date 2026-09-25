@@ -13188,7 +13188,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ab99ae64-202609250046' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'af896b1b-202609250224' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -48278,6 +48278,64 @@ function pcBuildModActions(username) {
       row.appendChild(b)
     }
     sec.appendChild(row)
+
+    // Role grants — mod/unmod/vip/unvip. Separate mutation pair (VIPUser/
+    // UnVIPUser, ModUser/UnmodUser in twitch-api.js) from the ban/timeout/
+    // delete union dispatchModAction covers above, so it's its own row.
+    // Twitch only (same restriction as input.js's /mod /vip slash commands
+    // this reuses — Kick/YT have no equivalent GQL wired). Twitch itself
+    // restricts mod/unmod to the broadcaster; that's enforced server-side
+    // and surfaced as a failed toast here, same as any other row action —
+    // no client-side broadcaster pre-check to keep this in step with
+    // whatever Twitch's own rule is.
+    if (platform === 'twitch') {
+      const roleRow = document.createElement('div')
+      roleRow.className = 'hs-pcard-mod-row'
+      const roleActions = [
+        { label: 'mod', kind: 'mod', add: true, title: 'grant moderator (broadcaster only)' },
+        { label: 'unmod', kind: 'mod', add: false, title: 'remove moderator (broadcaster only)' },
+        { label: 'vip', kind: 'vip', add: true, title: 'grant VIP' },
+        { label: 'unvip', kind: 'vip', add: false, title: 'remove VIP' },
+      ]
+      for (const { label, kind, add, title } of roleActions) {
+        const b = document.createElement('button')
+        b.className = 'hs-pcard-mod-btn'
+        b.type = 'button'
+        b.textContent = label
+        b.title = title
+        b.addEventListener('click', async (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (typeof getTwitchAuthToken !== 'function' || !getTwitchAuthToken()) {
+            if (typeof showToast === 'function')
+              showToast(t('mc_input_pp_login') || 'log into twitch.tv first', 'error')
+            return
+          }
+          b.disabled = true
+          const orig = b.textContent
+          b.textContent = '…'
+          let r
+          try {
+            const { id: channelId } = await resolveTwitchChannelIdEx(channel)
+            if (!channelId) throw new Error('could not resolve channel')
+            r =
+              kind === 'vip' ? await vipTwitchUser(channelId, target, add) : await modTwitchUser(channelId, target, add)
+          } catch (err) {
+            r = { error: err?.message || 'error' }
+          }
+          if (typeof showToast === 'function') {
+            showToast(
+              r?.ok ? `${label}: ${target}` : `${label} failed: ${r?.error || 'unknown'}`,
+              r?.ok ? 'success' : 'error',
+            )
+          }
+          b.textContent = orig
+          b.disabled = false
+        })
+        roleRow.appendChild(b)
+      }
+      sec.appendChild(roleRow)
+    }
   }
   return sec
 }

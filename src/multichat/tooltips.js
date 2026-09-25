@@ -965,22 +965,36 @@ function ensureUserTooltip() {
     userTooltip = document.createElement('div')
     userTooltip.id = 'hs-user-tooltip'
     document.body.appendChild(cleanup.trackNode(userTooltip))
-    // Keep tooltip away from the hovered username even as content fills in async
-    // (followage badge, sub tenure badge, lazy-loaded data — all change height)
+    // Keep tooltip away from the hovered username even as content fills in
+    // async (followage badge, sub tenure badge, lazy-loaded data — all
+    // change height). Observes the SHELL, which only usefully resizes during
+    // the loading state — once a real .hs-card child mounts, it's
+    // position:fixed (card.css) and takes itself out of the shell's flow, so
+    // the shell stops tracking its growth. The MutationObserver below covers
+    // that case instead (it fires on every DOM change, which is every case
+    // this comment originally cared about); this one stays for the rarer
+    // non-mutation resize (e.g. a webfont finishing load mid-loading-state).
     if (typeof ResizeObserver !== 'undefined') {
       _userTooltipResizeObs = new ResizeObserver(() => {
         if (_userTooltipTarget && userTooltip.classList.contains('visible') && document.contains(_userTooltipTarget)) {
-          positionTooltipAtElement(userTooltip, _userTooltipTarget)
+          positionTooltipAtElement(hsExtTooltipPositionTarget(userTooltip), _userTooltipTarget)
         }
       })
       cleanup.trackObserver(_userTooltipResizeObs)
       _userTooltipResizeObs.observe(userTooltip)
     }
-    // MutationObserver — round badge widths whenever the tooltip's subtree
-    // changes (sync renderProfileCard + async sub-tenure + followage adds
-    // children at different times; this catches all paths).
+    // MutationObserver — rounds badge widths AND repositions (see above)
+    // whenever the tooltip's subtree changes (sync renderProfileCard + async
+    // sub-tenure + followage/pronoun/banner all add/change children at
+    // different times; this catches every path, including growth inside the
+    // now out-of-flow .hs-card that ResizeObserver on the shell can't see).
     if (typeof MutationObserver !== 'undefined') {
-      _userTooltipMutObs = new MutationObserver(() => roundTooltipBadgeWidths(userTooltip))
+      _userTooltipMutObs = new MutationObserver(() => {
+        roundTooltipBadgeWidths(userTooltip)
+        if (_userTooltipTarget && userTooltip.classList.contains('visible') && document.contains(_userTooltipTarget)) {
+          positionTooltipAtElement(hsExtTooltipPositionTarget(userTooltip), _userTooltipTarget)
+        }
+      })
       cleanup.trackObserver(_userTooltipMutObs)
       _userTooltipMutObs.observe(userTooltip, { childList: true, subtree: true })
     }
@@ -1178,7 +1192,7 @@ async function applyTooltipBanner(tooltip, profile, platform, username, gen) {
       if (gen !== _profileGen || !hero.isConnected) return
       heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
       hero.classList.add('hs-card-hero-loaded')
-      if (_userTooltipTarget) positionTooltipAtElement(tooltip, _userTooltipTarget)
+      if (_userTooltipTarget) positionTooltipAtElement(hsExtTooltipPositionTarget(tooltip), _userTooltipTarget)
     }
     probe.referrerPolicy = 'no-referrer'
     probe.src = safe
@@ -1298,10 +1312,11 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
   } catch {}
   const platTone = platform === 'kick' ? 'kick' : platform === 'youtube' || platform === 'yt' ? 'yt' : 'ttv'
   const platLabel = platTone === 'ttv' ? 'ttv' : platTone
-  // val-kick/val-yt/val-ttv are still styled by 09-tooltips-menus.css (not
-  // yet deleted — this no-heatsync-account fallback isn't on the shared
-  // card model, which needs a real profile to build a card from).
-  const platRow = `<div class="hs-card-sheet-row"><dt>${platLabel}</dt><dd class="val-${platTone}" data-k="${platTone}">${safeName}</dd></div>`
+  // No brand-color class here (val-ttv/val-kick/val-yt are gone with the old
+  // card's CSS) — card.css's own tone vocabulary has no platform-brand entry
+  // to borrow (see its data-tone list), so this is plain text, same as any
+  // other sheet value with no tone.
+  const platRow = `<div class="hs-card-sheet-row"><dt>${platLabel}</dt><dd data-k="${platTone}">${safeName}</dd></div>`
   // Resolve the twitch-space uid the same way userPaintStyle does internally,
   // so HeatSync-paint precedence (which needs the uid) can win over 7TV — same
   // rule as the live sender row (see hsPaintRender in paints.js).
@@ -1317,8 +1332,8 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
     : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? '' : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
   // NOTE: innerHTML XSS-safe — username via escapeHtml, color via sanitizeColor (hex-only),
   // nativeBadges from renderBadges which emits escaped <img> markup
-  tooltip.innerHTML = `<div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div>`
-  if (_userTooltipTarget) positionTooltipAtElement(tooltip, _userTooltipTarget)
+  tooltip.innerHTML = `<div class="hs-card hs-card-peek"><div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div></div>`
+  if (_userTooltipTarget) positionTooltipAtElement(hsExtTooltipPositionTarget(tooltip), _userTooltipTarget)
   const subRow = computeSubTenureRow(username, msgChannel)
   if (subRow)
     hsExtUpsertSheetRow(tooltip.querySelector('.hs-card-sheet'), subRow.k, subRow.label, subRow.value, subRow.tone)
@@ -1395,7 +1410,7 @@ async function showUserTooltip(targetEl, username, color, platform) {
       pronouns,
       sheetRows: [subRow, ...followageRows].filter(Boolean),
     })
-    positionTooltipAtElement(tooltip, targetEl)
+    positionTooltipAtElement(hsExtTooltipPositionTarget(tooltip), targetEl)
     applyTooltipBanner(tooltip, profile, platform, username, gen)
   }
   paint()
@@ -1424,6 +1439,18 @@ async function showUserTooltip(targetEl, username, color, platform) {
       }
     })
   }
+}
+
+// The shared card (card-render.js's .hs-card-peek output) is mounted AS A
+// CHILD of #hs-user-tooltip, and card.css gives it its own position:fixed —
+// nested inside #hs-user-tooltip's own position:fixed shell (09-tooltips-
+// menus.css). Positioning the outer shell would do nothing useful once the
+// inner card exists (position:fixed always resolves against the viewport,
+// not an ancestor, so the inner element's own left/top is what actually
+// matters); this resolves to whichever one is real right now. Falls back to
+// the shell itself during the loading state, before any .hs-card exists.
+function hsExtTooltipPositionTarget(tooltip) {
+  return tooltip.querySelector('.hs-card') || tooltip
 }
 
 function positionTooltipAtElement(tooltip, targetEl) {

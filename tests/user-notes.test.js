@@ -298,7 +298,7 @@ describe('server sync — logged in with a real profile id', () => {
 
   test('an already-synced local note matching the server does not re-persist (no spurious repaint)', async () => {
     globalThis.hsAuthToken = true
-    globalThis.apiFetch = async (path, opts) =>
+    globalThis.apiFetch = async (_path, opts) =>
       opts.method === 'PUT' ? { ok: true } : { ok: true, data: { note: 'x' } }
     await hsNoteSave('bob', 'twitch', 'x', undefined, '42') // serverSynced: true
     const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')

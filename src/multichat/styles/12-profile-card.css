@@ -1,291 +1,90 @@
-    /* === Profile card — system sans, no chrome, badges-first === */
-    .hs-pcard {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
-      padding: 10px;
-      color: #fff;
-      background: #000;
+    /* 12-profile-card.css — the extension-only remnants of the profile card:
+     * a handful of pieces the shared card.css (src/multichat/styles/20-card.css,
+     * byte-identical mirror of the site's — tests/site-copy-parity.test.js
+     * enforces it) can't own because they have no site equivalent. The site's
+     * pinned card has no visible close button (ESC/outside-click dismiss
+     * only); this extension's floating card needs one for discoverability on
+     * touch. The notes section is this extension's own local+server system
+     * (user-notes.js), not the shared card's `note` field.
+     *
+     * Everything else that used to live here — the whole old .hs-pcard-hero/
+     * -avatar/-id/-mod/-actions/-sheet panel — is gone, replaced entirely by
+     * src/lib/card-render.js's .hs-card-* output (see profile-card.js's
+     * renderProfileCardView). These rules always sit inside a `.hs-card`, so
+     * they read the shared --hs-card-* tokens rather than duplicating them.
+     */
+    .hs-pcard-close {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      z-index: 1;
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      color: var(--hs-card-fg);
+      border: 1px solid var(--hs-card-border);
+      border-radius: 0;
+      font: inherit;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      appearance: none;
+    }
+    .hs-pcard-close:hover,
+    .hs-pcard-close:active,
+    .hs-pcard-close:focus-visible {
+      background: #ffffff;
+      color: #000000;
+      outline: none;
+    }
+
+    .hs-pcard-loading {
+      padding: 8px 10px;
       font-size: 13px;
-      line-height: 18px;
-      box-sizing: border-box;
+      color: var(--hs-card-dim);
+    }
+
+    .hs-pcard-section {
+      padding: 6px 10px;
+      border-top: 1px solid var(--hs-card-border);
+    }
+    /* The notes section's own body text + edit button ARE the label —
+     * mkSection's title ("notes") would just repeat that. */
+    .hs-pcard-section-title {
+      display: none;
+    }
+
+    .hs-pcard-notes {
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      height: 100%;
-      overflow-y: auto;
-      position: relative;
-      /* Accent CSS var — defaults to heatsync orange, overridden per-streamer
-         when the GQL response carries a primaryColorHex. Drives the hero
-         border, avatar ring, and accent-tinted divider glow below. */
-      --hs-pcard-accent: #fff;
+      gap: 4px;
     }
-    /* Hero banner — compact strip, image lives behind the avatar/name. Shorter
-       than the original 140px so identity + actions fit in the first viewport. */
-    .hs-pcard-hero {
-      position: relative;
-      height: 76px;
-      margin: -10px -10px 0 -10px;
-      background: #0a0a0a;
-      overflow: hidden;
-      border-bottom: 1px solid var(--hs-pcard-accent, #2a2a2a);
-    }
-    .hs-pcard-hero-img {
-      position: absolute; inset: 0;
-      background-position: center; background-size: cover; background-repeat: no-repeat;
-      opacity: 0;
-      transition: opacity 0.15s ease-out;
-      filter: saturate(1.1) contrast(1.04);
-    }
-    .hs-pcard-hero.hs-pcard-hero-loaded .hs-pcard-hero-img {
-      opacity: 0.9;
-    }
-    .hs-pcard-hero-scrim {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55);
-      pointer-events: none;
-    }
-    /* Identity row sits flush below the hero; only the avatar lifts upward
-       to overlap the seam. Discord/Twitter idiom — banner + half-overlapping
-       pfp + name below, with the rest of the column flowing normally. */
-    .hs-pcard-id .hs-pcard-id-row {
-      position: relative;
-      z-index: 1;
-      margin-top: 4px;
-    }
-    /* Sticky close — pinned to card top-right, stays visible while scrolling.
-       Negative bottom margin lets it overlay the id-row without taking column
-       space; id-row gets right padding so display name never slides under it. */
-    .hs-pcard-close {
-      position: absolute; top: 8px; right: 8px;
-      margin: 0;
-      width: 30px; height: 30px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; line-height: 1; font-weight: 400;
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      cursor: pointer; padding: 0;
-      z-index: 10;
-      transition: none;
-    }
-    .hs-pcard-close:hover { background: #fff; color: #000; border-color: #fff; }
-    .hs-pcard-close:active { }
-    .hs-pcard-close:focus-visible { outline: 1px solid #fff; outline-offset: 1px; }
-    /* Close button overlays the hero — no need to reserve right space on the id row.
-       Kept rule absent so the row sits flush; the absolute-positioned close has its own footprint. */
-    /* Sections are pure spacing — drop chrome borders + label-on-top */
-    .hs-pcard-section {
-      border: 0; padding: 0; margin: 0; position: static; background: transparent;
-    }
-    .hs-pcard-section-title { display: none; }
-    /* Section dividers — accent-tinted at low opacity so each card adopts
-       the streamer's identity color, without the divider screaming for
-       attention. Falls back to #1a1a1a when accent is unset. */
-    .hs-pcard-section + .hs-pcard-section {
-      border-top: 1px solid color-mix(in srgb, var(--hs-pcard-accent, #1a1a1a) 18%, #0a0a0a);
-      padding-top: 7px;
-    }
-
-    .hs-pcard-id-row { display: flex; gap: 10px; align-items: flex-start; }
-    .hs-pcard-avatar {
-      width: 56px; height: 56px; border-radius: 0; object-fit: cover;
-      flex-shrink: 0;
-      border: 2px solid var(--hs-pcard-accent, #fff);
-      background: #000;
-      /* Lifts avatar so it half-overlaps the shorter (76px) hero strip. */
-      margin-top: -32px;
-      position: relative;
-      z-index: 2;
-      box-shadow:
-        0 0 0 2px #000,
-        0 6px 16px rgba(0, 0, 0, 0.7),
-        0 0 18px color-mix(in srgb, var(--hs-pcard-accent, transparent) 35%, transparent);
-    }
-    .hs-pcard-id-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    /* Identity chip row — pills + native badges + age/role/verified all flow
-       as flex-wrap siblings; no forced line breaks between groups. */
-    .hs-pcard-id-chips {
-      display: flex; flex-wrap: wrap; gap: 3px; align-items: center;
-      font-size: 13px; line-height: 18px;
-    }
-    .hs-pcard-id-chips img.hs-mc-badge-img { width: 18px; height: 18px; }
-    /* Pronoun chip (pronoundb.org) — square, terminal-styled, neutral ANSI
-       cyan so it never competes with the platform brand colors on the pills
-       below it. No hover/active state — static info, not interactive. */
-    .hs-pcard-pronoun {
-      display: inline-flex; align-items: center;
-      padding: 1px 4px; border: 1px solid #333; background: #111;
-      color: #5fd7d7; font-size: 13px; font-weight: 700;
-      line-height: 16px; white-space: nowrap;
-    }
-    .hs-pcard-name {
-      font-size: 16px; font-weight: 700; color: #fff;
-      display: flex; align-items: center; gap: 6px; line-height: 18px;
-    }
-    .hs-pcard-livedot { color: var(--hs-live); font-size: 9px; }
-    /* Filled-style platform pills — mirror #hs-user-tooltip .hs-pc-platform
-       so the click-card identity row looks identical to the hover tooltip. */
-    .hs-pcard-pill-twitch { background: var(--hs-plat-twitch); color: #fff; }
-    .hs-pcard-pill-kick { background: var(--hs-plat-kick); color: #000; }
-    .hs-pcard-pill-youtube { background: var(--hs-plat-youtube); color: #fff; }
-    .hs-pcard-bio {
-      color: var(--hs-muted); font-size: 13px; line-height: 18px;
-      white-space: pre-wrap; word-break: break-word;
-      border-left: 2px solid #1a1a1a; padding: 0 0 0 8px;
-    }
-    .hs-pcard-bio-mention { color: #fff; cursor: pointer; }
-    .hs-pcard-bio-mention:hover { text-decoration: underline; }
-    .hs-pcard-bio-tag { color: var(--hs-thread); text-decoration: none; }
-    .hs-pcard-bio-tag:hover { text-decoration: underline; }
-    /* Property sheet — 2-col zebra list. The pcard surface uses system-sans
-       by default (see body.hs-font-bitmap .hs-pcard counter-rule near top
-       of styles.js), so the sheet must opt back into 13px CozetteVector +
-       bitmap render block for crispness. dt/dd cells must NEVER have
-       fractional metrics (no kerning, ligatures, letter-spacing) or the
-       bitmap glyphs smear — same root cause as the tooltip badge fix. */
-    .hs-pcard-sheet {
-      display: grid; grid-template-columns: max-content 1fr;
-      column-gap: 12px; row-gap: 0;
-      font-family: 'CozetteVector', 'Courier New', monospace;
-      font-size: 13px; line-height: 18px;
-      margin: 0;
-    }
-    .hs-pcard-sheet dt, .hs-pcard-sheet dd {
-      padding: 1px 6px; margin: 0;
-    }
-    .hs-pcard-sheet dt { color: #888; font-weight: 400; }
-    .hs-pcard-sheet dd { color: #fff; font-weight: 700; }
-    /* Zebra cadence — alt rows use the same #1f1f1f as chat zebra. */
-    .hs-pcard-sheet dt:nth-of-type(even),
-    .hs-pcard-sheet dd:nth-of-type(even) { background: #303030; }
-    /* Semantic color on values — only fields with state earn a color. */
-    /* ANSI 256-mapped semantic colors. Each row's value carries meaning via hue:
-       identity = brand, time = yellow, tier = amber/silver, power = red,
-       relationship direction = cool (outflow) / warm (inflow) / saturated (mutual). */
-    .hs-pcard-sheet .val-age { color: var(--hs-warn); }       /* xterm 226 — time */
-    .hs-pcard-sheet .val-partner { color: var(--hs-gold); }    /* xterm 214 — premium */
-    .hs-pcard-sheet .val-affiliate { color: #bcbcbc; }  /* xterm 250 — entry */
-    .hs-pcard-sheet .val-ttv { color: var(--hs-plat-twitch); }        /* twitch brand */
-    .hs-pcard-sheet .val-kick { color: var(--hs-plat-kick); }       /* kick brand */
-    .hs-pcard-sheet .val-yt { color: var(--hs-plat-youtube); }         /* xterm 196 — yt brand */
-    .hs-pcard-sheet .val-hs { color: #fff; }         /* normal fg — identity link, not a state */
-    .hs-pcard-sheet .val-admin { color: #ff0000; }      /* xterm 196 — power */
-    .hs-pcard-sheet .val-staff { color: #fff; }      /* normal fg — identity, not a state */
-    .hs-pcard-sheet .val-heat { color: #ff0000; }       /* xterm 196 — fire */
-    .hs-pcard-sheet .val-followers { color: #0087ff; }  /* xterm 33 — popularity */
-    .hs-pcard-sheet .val-you-follow { color: var(--hs-reply); } /* xterm 51 — outflow */
-    .hs-pcard-sheet .val-you-sub { color: #875fff; }    /* xterm 99 — paid outflow */
-    .hs-pcard-sheet .val-they-follow { color: var(--hs-thread); }/* xterm 201 — inflow */
-    .hs-pcard-sheet .val-they-sub { color: #ff5fff; }   /* xterm 207 — paid inflow */
-    .hs-pcard-sheet .val-mutual { color: var(--hs-ok); }     /* xterm 46 — handshake */
-    .hs-pcard-sheet .val-mutual-sub { color: var(--hs-gold); } /* xterm 220 — premium handshake */
-    .hs-pcard-sheet .val-ch { color: #fff; }         /* normal fg — channel context, not a state */
-    .hs-pcard-sheet .hs-pc-live { color: var(--hs-live); font-weight: 700; }
-    /* Inside the sheet: digits inherit cozette from the sheet (bitmap-crisp),
-       degree symbol falls back to ui-monospace (vector AA, has clean °). */
-    .hs-pcard-sheet .hs-heat-num { font-family: inherit; }
-    .hs-pcard-sheet .hs-heat-n { font-family: inherit; }
-    .hs-pcard-sheet .hs-heat-deg { font-family: ui-monospace, SFMono-Regular, monospace; }
-    /* Counter-counter: re-apply bitmap render block to the sheet so cozette
-       renders crisp inside the .hs-pcard system-sans bubble. */
-    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet,
-    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet * {
-      -webkit-font-smoothing: none !important;
-      -moz-osx-font-smoothing: unset !important;
-      font-smooth: never !important;
-      text-rendering: optimizeSpeed !important;
-      font-synthesis: none !important;
-      font-optical-sizing: none !important;
-      font-kerning: none !important;
-      font-variant-ligatures: none !important;
-      font-feature-settings: "kern" 0, "liga" 0, "clig" 0, "calt" 0 !important;
-      letter-spacing: 0 !important;
-    }
-    /* Counter-counter-counter: the ° span inside the sheet wants AA back —
-       cozette's degree glyph (if it exists) renders thin/uneven, vector AA °
-       looks cleaner. Listed AFTER the sheet bitmap block so it wins. */
-    body.hs-font-bitmap .hs-pcard .hs-pcard-sheet .hs-heat-deg {
-      -webkit-font-smoothing: subpixel-antialiased !important;
-      -moz-osx-font-smoothing: auto !important;
-      font-smooth: auto !important;
-      text-rendering: auto !important;
-      font-kerning: auto !important;
-      font-feature-settings: normal !important;
-      letter-spacing: normal !important;
-    }
-    .hs-pcard-link { color: #fff; text-decoration: none; font-weight: 600; }
-    .hs-pcard-link:hover { text-decoration: underline; }
-    .hs-pcard-msg {
-      display: flex; gap: 6px; padding: 2px 0;
-      font-size: 13px; align-items: baseline;
-    }
-    .hs-pcard-msg-ts { color: var(--hs-muted); flex-shrink: 0; font-size: 13px; min-width: 38px; }
-    .hs-pcard-msg-plat {
-      flex-shrink: 0; font-size: 13px; padding: 0 3px;
-      font-weight: 600; line-height: 19px; color: #888;
-    }
-    /* Recent-message platform letter — text-only override, no bg. The
-       identity-row pills above share .hs-pcard-pill-* classes for color but
-       want the filled tooltip look; the inline message-history badge stays
-       plain so 12 stacked rows don't read as a wall of purple. */
-    .hs-pcard-msg-plat.hs-pcard-pill-twitch { background: transparent; color: var(--hs-plat-twitch); border: none; }
-    .hs-pcard-msg-plat.hs-pcard-pill-kick { background: transparent; color: var(--hs-plat-kick); border: none; }
-    .hs-pcard-msg-plat.hs-pcard-pill-youtube { background: transparent; color: var(--hs-plat-youtube); border: none; }
-    .hs-pcard-msg-text {
-      color: #fff; word-break: break-word; overflow-wrap: anywhere; flex: 1;
-    }
-    .hs-pcard-action-grid {
-      display: flex; flex-wrap: wrap; gap: 3px;
-    }
-    .hs-pcard-action {
-      background: transparent; color: #fff; border: 1px solid #333;
-      padding: 4px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
-      text-align: center; box-sizing: border-box; line-height: 18px;
-    }
-    .hs-pcard-action:hover:not(:disabled) { background: #fff; color: #000; border-color: #fff; }
-    .hs-pcard-action:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    /* Notes section — private cross-platform note preview + edit trigger. */
-    .hs-pcard-notes { display: flex; flex-direction: column; gap: 4px; }
     .hs-pcard-note-body {
-      color: #fff; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
-      max-height: 96px; overflow-y: auto; font-size: 13px; line-height: 1.4;
+      font-size: 13px;
+      color: var(--hs-card-fg);
+      white-space: pre-wrap;
+      word-break: break-word;
     }
-    .hs-pcard-note-body.hs-pcard-note-empty { color: var(--hs-muted); font-style: italic; }
+    .hs-pcard-note-body.hs-pcard-note-empty {
+      color: var(--hs-card-dim);
+      font-style: italic;
+    }
     .hs-pcard-note-edit {
-      align-self: flex-start; background: transparent; color: #fff; border: 1px solid #333;
-      padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
+      align-self: flex-start;
+      font: inherit;
+      font-size: 13px;
+      background: transparent;
+      color: var(--hs-card-dim);
+      border: 1px solid var(--hs-card-border);
+      border-radius: 0;
+      padding: 2px 6px;
+      cursor: pointer;
+      appearance: none;
     }
-    .hs-pcard-note-edit:hover { background: #fff; color: #000; border-color: #fff; }
-
-    /* Mod actions row — compact toolbar at the top of the card when you mod
-       a channel this user has chatted in. Channel label + del/timeout/ban
-       buttons sit on a single line per channel. Buttons share borders so the
-       group reads as one unit, mirroring the inline hover toolbar style. */
-    .hs-pcard-mod {
-      background: rgba(255,255,255,0.08);
-      border-left: 2px solid var(--hs-pcard-accent, #fff);
-      padding: 5px 8px;
-      margin: -2px 0;
+    .hs-pcard-note-edit:hover,
+    .hs-pcard-note-edit:active,
+    .hs-pcard-note-edit:focus-visible {
+      background: #ffffff;
+      color: #000000;
+      outline: none;
     }
-    .hs-pcard-mod-row {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-      font-size: 13px; line-height: 18px;
-    }
-    .hs-pcard-mod-row + .hs-pcard-mod-row { margin-top: 4px; }
-    .hs-pcard-mod-ch {
-      color: var(--hs-pcard-accent, #fff);
-      font-weight: 700; font-size: 13px;
-      min-width: 0; flex-shrink: 0; margin-right: 2px;
-    }
-    .hs-pcard-mod-btn {
-      background: transparent; color: #fff;
-      border: 1px solid #555; border-right-width: 0;
-      padding: 2px 7px; cursor: pointer; font-family: inherit;
-      font-size: 13px; line-height: 16px; box-sizing: border-box;
-    }
-    .hs-pcard-mod-btn:last-child { border-right-width: 1px; }
-    .hs-pcard-mod-btn:hover:not(:disabled) { background: #fff; color: #000; border-color: #fff; }
-    .hs-pcard-mod-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .hs-pcard-mod-btn-danger { color: var(--hs-danger); border-color: #5a1414; }
-    .hs-pcard-mod-btn-danger:hover:not(:disabled) { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
-

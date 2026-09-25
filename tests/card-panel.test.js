@@ -159,14 +159,37 @@ describe('pcBuildModGroups — mod actions as ctx.modGroups (pure data)', () => 
 })
 
 describe('renderProfileCardView runs through the shared card pipeline (source invariants)', () => {
-  test('builds the model via hsCardModel and renders variant panel', () => {
+  test('builds the model via hsCardModel and renders panel (embedded) or full (floating)', () => {
     const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
     expect(view).toContain('hsCardModel(')
-    expect(view).toContain("variant: 'panel'")
+    expect(view).toContain("variant: floating ? 'full' : 'panel'")
     expect(view).toContain('modGroups: pcBuildModGroups(username)')
     expect(view).toContain('pcBuildSessionSheetRows(username)')
     expect(view).toContain('socials: pcBuildSocials(data)')
     expect(view).toContain('renderBadges: () => pcRenderBadgesHtml(data, username)')
+  })
+
+  test('a floating open (no overlay mounted) mounts at #hs-pcard-floating and positions/follows the anchor', () => {
+    const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
+    expect(view).toContain('if (floating) pcPositionFloating(msgsEl)')
+    const resolve = slice(CARD, 'function pcResolveMount() {', '\n\nfunction renderProfileCardView')
+    expect(resolve).toContain("document.getElementById('hs-mc-messages')")
+    expect(resolve).toContain("el.id = 'hs-pcard-floating'")
+    const position = slice(CARD, 'function pcPositionFloating(mountEl) {', '\n}\n')
+    expect(position).toContain('positionTooltipAtElement(card, anchorEl)')
+    expect(position).toContain('pcFollowAnchor(anchorEl, card)')
+  })
+
+  test('the floating card closes itself if its anchor leaves the DOM (anchor-gone, not just scroll-away)', () => {
+    const follow = slice(CARD, 'function pcFollowAnchor(anchorEl, cardEl) {', '\n}\n')
+    expect(follow).toContain('if (!anchorEl.isConnected)')
+    expect(follow).toContain('closeProfileCard()')
+  })
+
+  test('role=dialog + focus-in-once + focus-return-on-close (F-ext-4 parity — see profile-card-context-menu-aria.test.js)', () => {
+    const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
+    expect(view).toContain(`card.setAttribute('role', 'dialog')`)
+    expect(view).toContain('if (!activeProfileCard.focusMoved)')
   })
 
   test('followage is fetched once per card open and folded into extraSheet, never DOM-patched', () => {

@@ -1,47 +1,56 @@
 /**
  * F-ext-4 — the injected profile-card/context-menu carried no self-authored
  * ARIA: no role="dialog", no role="menu"/menuitem, no focus management.
- * Escape-closes already existed for both (content.js:9509 for the card,
- * placeAndWireMenu's onKey for the menu) — this pins the rest: dialog/menu
- * roles, and focus moving in on open and back to the opener on close.
+ * Escape-closes already existed for both (content.js's card, placeAndWireMenu's
+ * onKey for the menu) — this pinned the rest: dialog/menu roles, and focus
+ * moving in on open and back to the opener on close.
+ *
+ * The card itself later moved (phase 2 of the shared-card migration):
+ * content.js no longer builds a card at all — it's a thin router that
+ * dispatches hs-pcard-open, and src/multichat/profile-card.js's
+ * renderProfileCardView/closeProfileCard own the dialog semantics for both
+ * the embedded overlay panel and the floating (no-overlay, native page)
+ * mount. Same assertions, new home. The context-menu half is untouched
+ * (still content.js) and unaffected.
  */
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const SRC = readFileSync(join(new URL('..', import.meta.url).pathname, 'chrome', 'content.js'), 'utf8')
+const CARD = readFileSync(join(new URL('..', import.meta.url).pathname, 'src', 'multichat', 'profile-card.js'), 'utf8')
 
 describe('profile card — role=dialog + focus management', () => {
-  const showCardStart = SRC.indexOf('async function showCard(target, e) {')
-  const closeCardStart = SRC.indexOf('function closeCard() {')
-  const showCardBody = SRC.slice(showCardStart, showCardStart + 6000)
-  const closeCardBody = SRC.slice(closeCardStart, closeCardStart + 600)
+  const renderStart = CARD.indexOf('function renderProfileCardView() {')
+  const closeStart = CARD.indexOf('function closeProfileCard() {')
+  const renderBody = CARD.slice(renderStart, renderStart + 6000)
+  const closeBody = CARD.slice(closeStart, closeStart + 800)
 
   test('sanity: found both functions', () => {
-    expect(showCardStart).toBeGreaterThan(-1)
-    expect(closeCardStart).toBeGreaterThan(-1)
+    expect(renderStart).toBeGreaterThan(-1)
+    expect(closeStart).toBeGreaterThan(-1)
   })
 
   test('the card declares role="dialog" with an aria-label', () => {
-    expect(showCardBody).toContain(`cardEl.setAttribute('role', 'dialog')`)
-    expect(showCardBody).toContain(`cardEl.setAttribute('aria-label',`)
+    expect(renderBody).toContain(`card.setAttribute('role', 'dialog')`)
+    expect(renderBody).toContain(`card.setAttribute('aria-label',`)
   })
 
   test('opening the card captures the previously-focused element', () => {
-    expect(showCardBody).toContain('cardOpenerEl = document.activeElement')
+    expect(CARD).toContain('openerEl: document.activeElement')
   })
 
-  test('opening the card moves focus into it', () => {
-    expect(showCardBody).toMatch(/cardEl\.focus\(\{\s*preventScroll:\s*true\s*\}\)/)
+  test('opening the card moves focus into it, once real content exists', () => {
+    expect(renderBody).toMatch(/card\.focus\(\{\s*preventScroll:\s*true\s*\}\)/)
   })
 
   test('closing the card restores focus to the opener', () => {
-    expect(closeCardBody).toContain('cardOpenerEl?.isConnected')
-    expect(closeCardBody).toMatch(/cardOpenerEl\.focus\(/)
+    expect(closeBody).toContain('openerEl?.isConnected')
+    expect(closeBody).toMatch(/openerEl\.focus\(/)
   })
 
   test('Escape already closes the card (pre-existing, not re-broken)', () => {
-    expect(SRC).toMatch(/e\.key === 'Escape' && cardEl/)
+    expect(CARD).toMatch(/if \(!activeProfileCard\) return[\s\S]{0,400}e\.key === 'Escape'/)
   })
 })
 

@@ -162,7 +162,7 @@ describe('profile-card.js click/mousedown handlers no longer carve out the reply
 
 describe('opening a card dismisses the fixed, max-z reply-thread stack', () => {
   test('openProfileCard dispatches the close-overlays bridge event', () => {
-    const fn = body(CARD, 'async function openProfileCard(username, platform) {', 900)
+    const fn = body(CARD, 'async function openProfileCard(username, platform, opts = {}) {', 900)
     expect(fn).toContain("document.dispatchEvent(new CustomEvent('hs-mc-close-overlays'))")
     // Must come after both early-return gates, or a no-op open (gate off, no
     // username) would still visibly dismiss an open stack.

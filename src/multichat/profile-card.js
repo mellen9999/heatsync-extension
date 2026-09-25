@@ -141,7 +141,11 @@ async function fetchBannerChain(chain) {
 // with the native surface). The old profile-card-local hs_user_notes blob is
 // migrated into it on first load — see _hsnLoad.
 
-async function openProfileCard(username, platform) {
+// `opts.anchorEl`: the clicked element, ONLY meaningful when no overlay is
+// mounted (see pcResolveMount) — a native twitch/kick name click has nowhere
+// embedded to render into, so the card floats at the anchor instead. Ignored
+// (harmlessly) whenever #hs-mc-messages exists.
+async function openProfileCard(username, platform, opts = {}) {
   // Chokepoint for the profile-cards switch. Gating only the click handlers
   // (setupProfileCardHandlers) left every other opener live — the unified
   // context menu's "view profile" row called straight in here.
@@ -153,13 +157,14 @@ async function openProfileCard(username, platform) {
   // everything else — a card opened underneath a lingering stack would be
   // invisible/unclickable behind it. Its dismiss logic lives in a closure
   // private to createOverlay() in main.js; this event is the bridge (same
-  // idiom as hs-channels-changed below).
+  // idiom as hs-channels-changed below). Harmless no-op when nothing's
+  // listening (no overlay mounted at all).
   document.dispatchEvent(new CustomEvent('hs-mc-close-overlays'))
 
   // Hide input bar — typing makes no sense in card view. Flag must move with
   // the class: a class-only hide leaves inputBarVisible=true, which makes
   // every later showInputBar() early-return — composer unreachable until a
-  // full reload ("no way to type").
+  // full reload ("no way to type"). No-op when there's no overlay input bar.
   const inputBar = document.getElementById('hs-mc-inputbar')
   if (inputBar) inputBar.classList.add('hs-hidden')
   inputBarVisible = false
@@ -168,6 +173,14 @@ async function openProfileCard(username, platform) {
   // own async lookupFollowage call (see its bottom) — the panel never had
   // followage before; now it's the same ctx.extraSheet mechanism the hover
   // tooltip uses (computeFollowageRows, tooltips.js, same bundle scope).
+  // floating is set for real inside pcResolveMount (this is just the initial
+  // guess renderProfileCardView's very first, data-less paint needs).
+  // openerEl (focus-restore target on close) vs anchorEl (position-follow
+  // target while floating) are deliberately separate: the old content.js
+  // card conflated them into one cardOpenerEl because it was always opened
+  // from a real click on a real element — the overlay's own .hs-mc-user
+  // click path doesn't pass an anchorEl at all (never floats, #hs-mc-messages
+  // always exists there), but focus should still return to whatever had it.
   activeProfileCard = {
     username,
     platform: platform || null,
@@ -175,6 +188,10 @@ async function openProfileCard(username, platform) {
     ts: Date.now(),
     followageRows: null,
     followageFetchedFor: null,
+    anchorEl: opts.anchorEl || null,
+    openerEl: document.activeElement,
+    floating: !document.getElementById('hs-mc-messages'),
+    focusMoved: false,
   }
   renderProfileCardView()
 
@@ -383,7 +400,22 @@ async function resolveFollowTargetId(platform, username, ids = {}) {
 
 function closeProfileCard() {
   if (!activeProfileCard) return
+  const { floating, openerEl } = activeProfileCard
   activeProfileCard = null
+  pcStopFollowingAnchor()
+  // Return focus to whatever had it before the card opened — same as the
+  // old native-page card's closeCard did (role="dialog" needs a focus-return
+  // partner, not just a focus-in). It may have scrolled out of the DOM (chat
+  // trims old rows) or been removed entirely.
+  if (openerEl?.isConnected) {
+    try {
+      openerEl.focus({ preventScroll: true })
+    } catch {}
+  }
+  if (floating) {
+    document.getElementById('hs-pcard-floating')?.remove()
+    return
+  }
   // switchTab isn't called here, so restore the bar ourselves — through
   // showInputBar, which owns the "may this tab have a composer" call and keeps
   // the visible flag in step. (The local tab list this replaced was a copy
@@ -724,10 +756,32 @@ function pcRenderBadgesHtml(data, username) {
 // stay small post-render DOM patches, same discipline as the tooltip's
 // banner/pronoun patches: real DOM interactivity (notes editing) or purely
 // local, ephemeral, host-only state with no shared-model slot to earn.
-function renderProfileCardView() {
+// Mounts the card either embedded in the overlay's message pane (variant
+// 'panel', as before) or, when the overlay isn't mounted at all (native
+// twitch/kick page, multichat failed to find a chat root, or a transient
+// window during SPA nav), floating at the clicked name (variant 'full' —
+// card.css already gives `.hs-card-full` position:fixed + the phone bottom-
+// sheet treatment, the exact same CSS the site's own pinned card uses).
+// Returns null when there is truly nowhere to render (activeProfileCard
+// gone, or a floating open with no anchor).
+function pcResolveMount() {
   const msgsEl = document.getElementById('hs-mc-messages')
-  if (!msgsEl || !activeProfileCard) return
-  msgsEl.textContent = ''
+  if (msgsEl) return { el: msgsEl, floating: false }
+  if (!activeProfileCard?.anchorEl) return null
+  document.getElementById('hs-pcard-floating')?.remove()
+  const el = document.createElement('div')
+  el.id = 'hs-pcard-floating'
+  document.body.appendChild(el)
+  return { el, floating: true }
+}
+
+function renderProfileCardView() {
+  if (!activeProfileCard) return
+  const mount = pcResolveMount()
+  if (!mount) return
+  const { el: msgsEl, floating } = mount
+  activeProfileCard.floating = floating
+  if (!floating) msgsEl.textContent = ''
 
   const { username, data, platform } = activeProfileCard
 
@@ -736,10 +790,12 @@ function renderProfileCardView() {
     loading.className = 'hs-pcard-loading' // old CSS, not yet deleted — see the CSS-cleanup TODO
     loading.textContent = `${data?.display_name || username}…`
     msgsEl.appendChild(loading)
+    if (floating) pcPositionFloating(msgsEl)
     return
   }
   if (data.error) {
-    renderProfileCardErrorView(msgsEl, username, data)
+    renderProfileCardErrorView(msgsEl, username, data, floating)
+    if (floating) pcPositionFloating(msgsEl)
     return
   }
 
@@ -768,7 +824,7 @@ function renderProfileCardView() {
   )
 
   const html = hsCardHtml(model, {
-    variant: 'panel',
+    variant: floating ? 'full' : 'panel',
     escapeHtml,
     renderBio: hsExtRenderBio,
     renderPlusBadge: typeof renderPlusTenureToken === 'function' ? renderPlusTenureToken : undefined,
@@ -781,6 +837,15 @@ function renderProfileCardView() {
   wrap.innerHTML = html
   const card = wrap.firstElementChild
   if (!card) return
+
+  // Dialog semantics — ported from the old content.js card (F-ext-4):
+  // role="dialog" + aria-label, focus moves in once real content exists
+  // (not on every re-render — a follow-up followage/pronoun update must
+  // never steal focus back from, say, the note textarea the user is
+  // mid-edit in), focus returns to openerEl on close (see closeProfileCard).
+  card.setAttribute('role', 'dialog')
+  card.setAttribute('aria-label', t('content_card_dialog_label', [data.display_name || username]))
+  card.tabIndex = -1
 
   // Sticky close — pinned top-right, stays in place while card scrolls.
   // Redundant with ESC, but discoverability is king. hs-pcard-close is old
@@ -796,6 +861,15 @@ function renderProfileCardView() {
   card.prepend(closeBtn)
 
   msgsEl.appendChild(card)
+
+  // Move focus in once, the first time real content exists (see the
+  // role="dialog" comment above — never on a later re-render).
+  if (!activeProfileCard.focusMoved) {
+    activeProfileCard.focusMoved = true
+    try {
+      card.focus({ preventScroll: true })
+    } catch {}
+  }
 
   // Mute label — local-only ephemeral state (chrome.storage), never part of
   // the shared model: unlike follow/block it isn't server-authoritative, and
@@ -877,14 +951,19 @@ function renderProfileCardView() {
       })
     }
   }
+
+  if (floating) pcPositionFloating(msgsEl)
 }
 
 // No-heatsync-profile view — still surfaces the platform identity so the
 // card has at least one useful link, and a retry when the failure was
 // transient (network blip, not "this person has no account").
-function renderProfileCardErrorView(msgsEl, username, data) {
+function renderProfileCardErrorView(msgsEl, username, data, floating) {
   const wrap = document.createElement('div')
-  wrap.className = 'hs-card hs-card-panel hs-card-empty'
+  wrap.className = `hs-card ${floating ? 'hs-card-full' : 'hs-card-panel'} hs-card-empty`
+  wrap.setAttribute('role', 'dialog')
+  wrap.setAttribute('aria-label', t('content_card_dialog_label', [username]))
+  wrap.tabIndex = -1
   const closeBtn = document.createElement('button')
   closeBtn.className = 'hs-pcard-close'
   closeBtn.type = 'button'
@@ -904,11 +983,84 @@ function renderProfileCardErrorView(msgsEl, username, data) {
     retry.textContent = 'couldn’t load — retry'
     retry.addEventListener('click', () => {
       if (!activeProfileCard) return
-      openProfileCard(username, activeProfileCard.platform)
+      openProfileCard(username, activeProfileCard.platform, { anchorEl: activeProfileCard.anchorEl })
     })
     wrap.appendChild(retry)
   }
   msgsEl.appendChild(wrap)
+  if (activeProfileCard && !activeProfileCard.focusMoved) {
+    activeProfileCard.focusMoved = true
+    try {
+      wrap.focus({ preventScroll: true })
+    } catch {}
+  }
+}
+
+// ── floating mount: position at the clicked anchor, follow it on scroll/
+// resize (rAF-coalesced), close if the anchor leaves the DOM — the same
+// contract the site's own pinned card uses (client/events/hover-previews.js
+// _positionHoverCard/_followPinnedAnchor), ported since this file already
+// has a richer flip/clamp positioner (tooltips.js positionTooltipAtElement,
+// same bundle scope) than the site's version.
+let _pcAnchorFollowCleanup = null
+
+function pcStopFollowingAnchor() {
+  if (_pcAnchorFollowCleanup) {
+    _pcAnchorFollowCleanup()
+    _pcAnchorFollowCleanup = null
+  }
+}
+
+function pcFollowAnchor(anchorEl, cardEl) {
+  pcStopFollowingAnchor()
+  let scheduled = false
+  const reposition = () => {
+    scheduled = false
+    if (!activeProfileCard?.floating || activeProfileCard.anchorEl !== anchorEl) {
+      pcStopFollowingAnchor()
+      return
+    }
+    if (!anchorEl.isConnected) {
+      closeProfileCard()
+      return
+    }
+    positionTooltipAtElement(cardEl, anchorEl)
+  }
+  const onScrollOrResize = () => {
+    if (scheduled) return
+    scheduled = true
+    requestAnimationFrame(reposition)
+  }
+  document.addEventListener('scroll', onScrollOrResize, { capture: true, passive: true })
+  window.addEventListener('resize', onScrollOrResize, { passive: true })
+  _pcAnchorFollowCleanup = () => {
+    document.removeEventListener('scroll', onScrollOrResize, { capture: true })
+    window.removeEventListener('resize', onScrollOrResize)
+  }
+}
+
+// Outside-click dismiss — the floating card's only other close path besides
+// ESC/its own close button (the embedded panel needs neither: it fills the
+// whole message pane, "outside" doesn't mean anything there).
+function pcOutsideClickHandler(e) {
+  if (!activeProfileCard?.floating) return
+  const mount = document.getElementById('hs-pcard-floating')
+  if (mount && !mount.contains(e.target)) closeProfileCard()
+}
+
+function pcPositionFloating(mountEl) {
+  const anchorEl = activeProfileCard?.anchorEl
+  const card = mountEl.querySelector('.hs-card-full') || mountEl.firstElementChild
+  if (!anchorEl?.isConnected || !card) {
+    closeProfileCard()
+    return
+  }
+  positionTooltipAtElement(card, anchorEl)
+  pcFollowAnchor(anchorEl, card)
+  if (!_onceGuardsProfileCard.pcOutsideClickWired) {
+    _onceGuardsProfileCard.pcOutsideClickWired = true
+    cleanup.addEventListener(document, 'mousedown', pcOutsideClickHandler, { capture: true, signal: mcSignal })
+  }
 }
 
 // Async pronoun application — fetches via SW and drops a chip into the
@@ -1231,8 +1383,12 @@ function setupProfileCardHandlers() {
     document,
     'hs-pcard-open',
     (e) => {
-      const { username, platform } = e.detail || {}
-      if (username) openProfileCard(username, platform || null)
+      // anchorEl: content.js's thin router passes the clicked native-page
+      // element for the floating-mount case (see pcResolveMount); overlay
+      // names (pcard-early.js) never need it — #hs-mc-messages always exists
+      // there, so pcResolveMount ignores it.
+      const { username, platform, anchorEl } = e.detail || {}
+      if (username) openProfileCard(username, platform || null, { anchorEl })
     },
     { signal: mcSignal },
   )

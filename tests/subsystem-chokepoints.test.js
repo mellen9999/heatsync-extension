@@ -146,7 +146,7 @@ describe('subsystem chokepoints', () => {
   })
 
   test('profile cards: gated at the opener, not only at the click handlers', () => {
-    expect(body(CARD, 'async function openProfileCard(username, platform) {', 400)).toContain(
+    expect(body(CARD, 'async function openProfileCard(username, platform, opts = {}) {', 400)).toContain(
       "if (gateAtBoot('profile-cards') === false) return",
     )
   })

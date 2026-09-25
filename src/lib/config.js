@@ -241,20 +241,6 @@ const CONFIG = {
     USERNAME_COLORED: 'hs-username-colored',
     MENTION_COLORED: 'hs-mention-colored',
 
-    // Profile card
-    PC_LOADING: 'hs-pc-loading',
-    PC_AVATAR: 'hs-pc-avatar',
-    PC_INFO: 'hs-pc-info',
-    PC_HEADER_LINE: 'hs-pc-header-line',
-    PC_PLATFORM: 'hs-pc-platform',
-    PC_NAME: 'hs-pc-name',
-    PC_ROLE: 'hs-pc-role',
-    PC_VERIFIED: 'hs-pc-verified',
-    PC_AGE: 'hs-pc-age',
-    PC_LIVE: 'hs-pc-live',
-    PC_BADGE_OP: 'hs-pc-badge-op',
-    PC_OP: 'hs-pc-op',
-
     // Multichat container IDs / classes
     MC_CONTAINER: 'hs-mc-container',
     MC_OVERLAY: 'hs-mc-overlay',

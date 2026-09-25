@@ -102,14 +102,11 @@ const KNOWN_OFF_GRID = new Set([
   'pinned-callout__icon', // twitch's own icon element, restyled
   'hs-feed-embed-yt-play', // ▶ glyph
   'hs-mc-playable', // ▶/⏸ ::before glyph
-  'hs-pc-name', // profile-card chrome (vector stack)
   'hs-mc-empty-title', // empty-state heading
   'hs-mc-stack-block-all', // control label
   'hs-mc-emoji-preview', // emoji, not text
   'hs-mc-send', // send-button glyph
   'hs-pcard-close', // ✕ glyph
-  'hs-pcard-name', // profile-card chrome (vector stack)
-  'hs-pcard-livedot', // ● dot
   'hs-mc-st-arrow', // ▸ glyph
   'hs-mc-cold-start-title', // empty-state heading
 ])

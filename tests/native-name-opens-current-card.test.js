@@ -1,25 +1,25 @@
 /**
- * "one profile card everywhere" — part 2. b6ea234d unified every OVERLAY
- * name (`.hs-mc-user`) onto the current btop-style card. Native Twitch/Kick
- * chat names (`.chat-author__display-name` etc, content.js's own
- * `usernameSelectors`) still opened content.js's OLD `.hs-pc-panel` card,
- * with different UI/orange/behavior — the two cards disagreed on what a
- * name click looked like depending on which DOM rendered the name.
+ * "one profile card everywhere" — part 3. b6ea234d unified every OVERLAY
+ * name (`.hs-mc-user`) onto the current btop-style card; dbda609d then made
+ * a native name route through it too, but only WHEN the overlay was mounted
+ * — otherwise it fell back to content.js's own legacy `.hs-pc-panel` card
+ * with its `/ban`-typed-into-chat-input mod path and drag-to-reposition.
  *
- * Fix: when the multichat overlay is mounted (#hs-mc-container exists —
- * true essentially always once multichat-core.js finds a chat root; it
- * self-heals via startLayoutWatcher's reinject poll), a native name click
- * now dispatches the same `hs-pcard-open` bridge event pcard-early.js uses
- * for overlay names, instead of calling content.js's own `showCard`. The
- * old card is NOT deleted: it's the only thing that CAN render when the
- * overlay isn't mounted (multichat failed to find a chat root, or a
- * transient window during SPA nav before it re-injects) — profile-card.js's
- * renderProfileCardView() hard-requires `#hs-mc-messages`, which only
- * exists inside the overlay, so there's nothing for it to mount into there.
+ * This round deletes that legacy card entirely. content.js is now a thin,
+ * unconditional router: ANY native name click dispatches the same
+ * `hs-pcard-open` bridge event pcard-early.js uses for overlay names — no
+ * more `#hs-mc-container` branch, no more `showCard` fallback. profile-
+ * card.js's renderProfileCardView owns BOTH outcomes now: embedded in the
+ * overlay's message pane when it's mounted (unchanged), or a floating mount
+ * at the clicked name (`pcResolveMount`/`pcPositionFloating`/`pcFollowAnchor`)
+ * when it isn't — the exact case the old card used to own. Mod actions on
+ * the floating card go through the SAME GQL dispatch the embedded card uses
+ * (dispatchModAction/modTwitchUser/vipTwitchUser), not the old text-
+ * injection path.
  *
- * profile-card.js has top-level side effects and cannot be imported (house
- * pattern — see reply-name-opens-card.test.js), so this is pinned as a
- * source-text invariant.
+ * content.js/profile-card.js have top-level side effects and cannot be
+ * imported (house pattern — see reply-name-opens-card.test.js), so this is
+ * pinned as a source-text invariant.
  */
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
@@ -38,57 +38,56 @@ function body(src, signature, n = 1200) {
   return src.slice(at, at + n)
 }
 
-describe('content.js: a native chat name routes through the overlay when it exists', () => {
-  test('the username-click branch checks for #hs-mc-container before deciding which card opens', () => {
-    const handler = body(CONTENT, 'const target = e.target.closest(usernameSelectors)', 1800)
-    expect(handler).toContain("document.getElementById('hs-mc-container')")
+describe('content.js: every native chat name click dispatches hs-pcard-open, unconditionally', () => {
+  test('the click handler no longer branches on #hs-mc-container', () => {
+    const setup = body(CONTENT, 'function setupProfileCard() {', 4000)
+    expect(setup).not.toContain('hs-mc-container')
   })
 
-  test('overlay present → dispatches hs-pcard-open (the ONE profile card), not showCard', () => {
-    const handler = body(CONTENT, 'const target = e.target.closest(usernameSelectors)', 1800)
-    const gateAt = handler.indexOf("document.getElementById('hs-mc-container')")
-    const dispatchAt = handler.indexOf("new CustomEvent('hs-pcard-open'")
-    const showCardAt = handler.indexOf('showCard(src, e)')
-    expect(gateAt).toBeGreaterThan(-1)
-    expect(dispatchAt).toBeGreaterThan(gateAt)
-    // showCard must still be reachable — it's the no-overlay fallback, not deleted.
-    expect(showCardAt).toBeGreaterThan(dispatchAt)
+  test('dispatches hs-pcard-open with username, platform, and the clicked element as anchorEl', () => {
+    const setup = body(CONTENT, 'function setupProfileCard() {', 4000)
+    expect(setup).toContain("new CustomEvent('hs-pcard-open'")
+    expect(setup).toContain('detail: { username, platform: getPlatform(), anchorEl: src }')
   })
 
-  test('the dispatched event carries username + platform, same detail shape pcard-early.js sends', () => {
-    const handler = body(CONTENT, 'const target = e.target.closest(usernameSelectors)', 1800)
-    expect(handler).toContain('detail: { username, platform: getPlatform() }')
-  })
-
-  test('the old card is not deleted — it is still the fallback for no-overlay pages', () => {
-    expect(CONTENT).toContain('async function showCard(target, e) {')
-    expect(CONTENT).toContain("cardEl.className = usePanelMode ? 'hs-pc-panel' : 'hs-profile-card'")
+  test('the legacy card is gone — no buildCardDOM, showCard, handleAction, or /ban text injection', () => {
+    for (const dead of [
+      'function buildCardDOM(',
+      'async function showCard(',
+      'function handleAction(',
+      'function injectChatCommand(',
+      'function buildModSection(',
+      'function buildNotesSection(',
+      'function buildHistorySection(',
+      'function buildPanelFooter(',
+      "'hs-profile-card'",
+      "'hs-pc-panel'",
+    ]) {
+      expect(CONTENT).not.toContain(dead)
+    }
   })
 })
 
-// ── gate off = hands off completely, on every branch ────────────────────────
+// ── gate off = hands off completely ──────────────────────────────────────
 //
-// A native name click used to ignore the profile-cards gate outright (old
-// card had no gateOn()/gateAtBoot() check anywhere) — gate off still opened
-// the takeover panel. Fixed alongside the routing migration: gate off must
-// mean no heatsync card at all, so twitch/kick's own native viewer card can
-// open as if the extension weren't here. That means NOT calling
-// stopPropagation/preventDefault either — those are what block the native
-// card from opening underneath.
+// A native name click used to ignore the profile-cards gate outright before
+// dbda609d (the old card had no gateOn()/gateAtBoot() check anywhere) — gate
+// off still opened the takeover panel. Still true post-deletion: gate off
+// must mean no heatsync card at all, so twitch/kick's own native viewer card
+// can open as if the extension weren't here — no stopPropagation/
+// preventDefault either.
 
 describe('content.js: the profile-cards gate is checked before ANY interception', () => {
-  test('gateOn() runs before stopPropagation/preventDefault and before either card path', () => {
-    const handler = body(CONTENT, 'const target = e.target.closest(usernameSelectors)', 1800)
-    const gateCheckAt = handler.indexOf('if (!gateOn()) return')
-    const stopPropAt = handler.indexOf('e.stopPropagation()')
-    const preventDefAt = handler.indexOf('e.preventDefault()')
-    const containerCheckAt = handler.indexOf("document.getElementById('hs-mc-container')")
-    const showCardAt = handler.indexOf('showCard(src, e)')
+  test('gateOn() runs before stopPropagation/preventDefault/dispatch', () => {
+    const setup = body(CONTENT, 'function setupProfileCard() {', 4000)
+    const gateCheckAt = setup.indexOf('if (!gateOn()) return')
+    const stopPropAt = setup.indexOf('e.stopPropagation()')
+    const preventDefAt = setup.indexOf('e.preventDefault()')
+    const dispatchAt = setup.indexOf("new CustomEvent('hs-pcard-open'")
     expect(gateCheckAt).toBeGreaterThan(-1)
     expect(gateCheckAt).toBeLessThan(stopPropAt)
     expect(gateCheckAt).toBeLessThan(preventDefAt)
-    expect(gateCheckAt).toBeLessThan(containerCheckAt)
-    expect(gateCheckAt).toBeLessThan(showCardAt)
+    expect(gateCheckAt).toBeLessThan(dispatchAt)
   })
 
   test('gateOn() mirrors pcard-early.js: same localStorage key, same "missing = on" default', () => {

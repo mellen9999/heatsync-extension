@@ -1,8 +1,11 @@
     /* Username hover tooltip - profile preview */
     /* Body-appended popovers — pull font from :root vars so they render in
-       Cozette/user-chosen face instead of inheriting Twitch's Inter. .hs-pcard
-       and .hs-notif set their own font-family intentionally (system sans /
-       ui-monospace) — leave those alone. */
+       Cozette/user-chosen face instead of inheriting Twitch's Inter. This is
+       what makes the shared card (20-card.css's .hs-card, mounted inside
+       #hs-user-tooltip — see tooltips.js) render in bitmap font at all: that
+       file never declares its own font-family, by design, since the site
+       host establishes it differently. .hs-notif sets its own font-family
+       intentionally (ui-monospace) — leave that alone. */
     #hs-user-tooltip,
     #hs-badge-tooltip,
     #hs-emote-tooltip,
@@ -91,6 +94,15 @@
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { opacity: 0.4; cursor: not-allowed; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
     .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #1a1a1a; margin: 2px 0; }
+    /* #hs-user-tooltip is a bare positioning/show-hide shell now — the actual
+     * card (src/lib/card-render.js's .hs-card-peek output, appended as its
+     * child) carries its OWN position:fixed + all visual chrome from the
+     * shared 20-card.css. This shell still matters for exactly one thing:
+     * the "username…" loading text shown for the ~100-300ms before that
+     * child exists (see tooltips.js showUserTooltip) — everything else that
+     * used to style a whole `.hs-pc-*` card tree directly under this id is
+     * gone (see hsExtTooltipPositionTarget in tooltips.js, which targets the
+     * inner .hs-card once it's mounted instead of this shell). */
     #hs-user-tooltip {
       position: fixed;
       /* Must beat the unified resize bar (#hs-c-resize-handle uses max int).
@@ -103,294 +115,9 @@
       border-radius: 0;
       padding: 0;
       display: none;
-      min-width: 210px;
-      max-width: 360px;
-      overflow: hidden;
-      isolation: isolate;
-      --hs-pc-accent: #fff;
     }
     #hs-user-tooltip.visible {
       display: block;
-    }
-    /* Hero band — channel banner fills the WHOLE card as an ambient background;
-       content layers on top over a scrim. Accent-tinted gradient placeholder
-       until the GQL response lands. Image is decoded off-DOM (Image() probe)
-       and committed in one go so there's no flash. */
-    #hs-user-tooltip .hs-pc-hero {
-      position: absolute; inset: 0;
-      z-index: 0;
-      background: #0a0a0a;
-      overflow: hidden;
-    }
-    #hs-user-tooltip .hs-pc-hero-img {
-      position: absolute; inset: -8px; /* over-bleed so blur doesn't feather edges */
-      background-position: center; background-size: cover; background-repeat: no-repeat;
-      opacity: 0; transition: opacity 0.15s ease-out;
-      /* Blurred + dimmed so the banner whispers as ambient texture behind the
-         identity row — mirrors the site's .profile-card-pro hero treatment. */
-      filter: saturate(1.15) blur(3px);
-    }
-    #hs-user-tooltip .hs-pc-hero.hs-pc-hero-loaded .hs-pc-hero-img {
-      opacity: 0.55;
-    }
-    /* Scrim — covers the whole card so the banner reads as ambient texture
-       while name/badges/sheet stay crisp over any banner color. */
-    #hs-user-tooltip .hs-pc-hero-scrim {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.50);
-      pointer-events: none;
-    }
-    /* Body layers on top of the full-card banner background. */
-    #hs-user-tooltip .hs-pc-body {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      padding: 8px;
-    }
-    #hs-user-tooltip .hs-pc-avatar {
-      /* content.js's bare .hs-pc-avatar {!important} (native chat-tile card)
-         pins this to 32px; keep these in sync so the rule isn't misleading. */
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
-      border: 2px solid var(--hs-pc-accent, #2a2a2a);
-      object-fit: cover;
-      flex-shrink: 0;
-      align-self: flex-start;
-      /* Sits inline in the body over the banner — no overlap lift needed now
-         that the banner is the full-card background. */
-      margin-top: 0;
-      margin-right: 10px;
-      box-shadow:
-        0 0 0 1px #000,
-        0 0 12px rgba(0, 0, 0, 0.6),
-        0 0 18px color-mix(in srgb, var(--hs-pc-accent, transparent) 25%, transparent);
-      background: #000;
-      position: relative;
-      z-index: 1;
-    }
-    #hs-user-tooltip .hs-pc-info {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    #hs-user-tooltip .hs-pc-header {
-      display: flex;
-      align-items: center;
-      column-gap: 4px;
-      row-gap: 6px;
-      flex-wrap: wrap;
-      line-height: 15px;
-    }
-    /* Broad reset — content.js injects ~12 bare-class .hs-pc-* rules with
-       font-size: 10px !important + padding: 2px 4px !important + letter-
-       spacing: 0.3px !important for the native chat-tile profile card. At
-       the !important tier those bare-class rules beat tooltip-scoped rules
-       on specificity tie. This one selector normalizes every .hs-pc-* badge
-       inside the tooltip to consistent 13px / padding / line-height so
-       badges share an identical baseline (mismatched heights produced
-       fractional vertical centers in the flex row → bitmap glyphs smeared
-       on the off-baseline rows, which read as "blurry"). */
-    #hs-user-tooltip [class*="hs-pc-"] {
-      font-size: 13px !important;
-      padding: 1px 2px !important;
-      line-height: 16px !important;
-      letter-spacing: 0 !important;
-    }
-    #hs-user-tooltip .hs-pc-platform {
-      font-size: 13px !important;
-      padding: 1px 2px !important;
-      font-weight: 900 !important;
-      border: 1px solid #000 !important;
-      white-space: nowrap !important;
-      letter-spacing: 0.2px !important;
-      line-height: 16px !important;
-    }
-    #hs-user-tooltip .hs-pc-platform.twitch {
-      background: var(--hs-plat-twitch);
-      color: #fff;
-    }
-    #hs-user-tooltip .hs-pc-platform.kick {
-      background: var(--hs-plat-kick);
-      color: #000;
-    }
-    #hs-user-tooltip .hs-pc-name {
-      font-size: 15px;
-      font-weight: 700;
-      white-space: nowrap;
-      color: #fff;
-    }
-    /* Pronoun chip (pronoundb.org) — square, neutral ANSI cyan, no
-       hover/active state (static info, matches .hs-pcard-pronoun). Sizing
-       (font-size/padding/line-height) comes from the [class*="hs-pc-"] reset
-       above; only color/border/background need setting here. */
-    #hs-user-tooltip .hs-pc-pronoun {
-      border: 1px solid #333 !important;
-      background: #111;
-      color: #5fd7d7;
-      font-weight: 700 !important;
-      white-space: nowrap;
-    }
-    #hs-user-tooltip .hs-pc-role {
-      padding: 2px 3px;
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-      border: 1px solid #000;
-      letter-spacing: 0.3px;
-    }
-    #hs-user-tooltip .hs-pc-role.admin { background: #ff0000; color: #fff; }
-    #hs-user-tooltip .hs-pc-role.staff { background: #ff8800; color: #000; }
-    #hs-user-tooltip .hs-pc-role.partner { background: var(--hs-gold); color: #000; }
-    #hs-user-tooltip .hs-pc-role.affiliate { background: transparent; color: #fff; }
-    #hs-user-tooltip .hs-pc-age {
-      padding: 2px 4px;
-      font-size: 13px;
-      font-weight: 900;
-      border: 1px solid #000;
-      background: var(--hs-mention);
-      color: #000;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-    }
-    #hs-user-tooltip .hs-pc-bio {
-      font-size: 13px;
-      color: #fff;
-      line-height: 17px;
-      word-break: break-word;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    #hs-user-tooltip .hs-pc-bio-mention { color: #fff; cursor: pointer; }
-    #hs-user-tooltip .hs-pc-bio-mention:hover { text-decoration: underline; }
-    #hs-user-tooltip .hs-pc-bio-tag { color: var(--hs-thread); text-decoration: none; }
-    #hs-user-tooltip .hs-pc-bio-tag:hover { text-decoration: underline; }
-    #hs-user-tooltip .hs-pc-stats {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      font-size: 13px;
-      color: #fff;
-      line-height: 17px;
-    }
-    #hs-user-tooltip .hs-pc-stat {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      height: 20px;
-      padding: 0 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #fff;
-      border: 1px solid #fff;
-      background: transparent;
-      white-space: nowrap;
-      box-sizing: border-box;
-    }
-    #hs-user-tooltip .hs-pc-sep { display: none; }
-    #hs-user-tooltip .hs-pc-stat.op { border-color: #ff0000; color: #ff0000; }
-    #hs-user-tooltip .hs-pc-stat.op .hs-pc-num { color: #fff; }
-    #hs-user-tooltip .hs-pc-stat.mop { border-color: var(--hs-thread); color: var(--hs-thread); }
-    #hs-user-tooltip .hs-pc-stat.mop .hs-pc-num { color: #fff; }
-    #hs-user-tooltip .hs-pc-stat.re { border-color: var(--hs-reply); color: var(--hs-reply); }
-    #hs-user-tooltip .hs-pc-stat.re .hs-pc-num { color: #fff; }
-    #hs-user-tooltip .hs-pc-stat-heat { border-color: #fff; }
-    #hs-user-tooltip .hs-pc-stat-heat .hs-heat-num { font-size: 13px; font-weight: 700; }
-    #hs-user-tooltip .hs-pc-rel {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
-      font-size: 13px;
-      line-height: 15px;
-    }
-    #hs-user-tooltip .hs-pc-rel-badge {
-      padding: 2px 3px;
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-    }
-    #hs-user-tooltip .hs-pc-rel-badge.mutual { background: #00aaaa; color: #fff; }
-    #hs-user-tooltip .hs-pc-rel-badge.supporter { background: #fff; color: #000; }
-    #hs-user-tooltip .hs-pc-rel-badge.following { background: #0099ff; color: #fff; }
-    #hs-user-tooltip .hs-pc-rel-badge.subbed { background: var(--hs-plat-twitch); color: #fff; }
-    #hs-user-tooltip .hs-pc-rel-badge.mutual-follow { background: #000; color: #fff; border: 1px solid #00aaaa; }
-    #hs-user-tooltip .hs-pc-rel-badge.mutual-sub { background: #000; color: #fff; border: 1px solid #fff; }
-    /* Property sheet — mirrors .hs-pcard-sheet. Tooltip already inherits
-       CozetteVector bitmap rendering from body.hs-font-bitmap, so no
-       counter-counter block needed here (unlike the pcard sheet which
-       sits inside a system-sans counter-rule). */
-    #hs-user-tooltip .hs-pc-sheet {
-      display: grid; grid-template-columns: max-content 1fr;
-      column-gap: 12px; row-gap: 0;
-      font-size: 13px; line-height: 18px;
-      margin: 4px 0 0 0;
-    }
-    #hs-user-tooltip .hs-pc-sheet dt,
-    #hs-user-tooltip .hs-pc-sheet dd {
-      padding: 1px 6px; margin: 0;
-    }
-    #hs-user-tooltip .hs-pc-sheet dt { color: #888; font-weight: 400; }
-    #hs-user-tooltip .hs-pc-sheet dd { color: #fff; font-weight: 700; }
-    #hs-user-tooltip .hs-pc-sheet dt:nth-of-type(even),
-    #hs-user-tooltip .hs-pc-sheet dd:nth-of-type(even) { background: #303030; }
-    /* Mirror of .hs-pcard-sheet ANSI semantic palette — see comment in
-       the pcard sheet block for the full reasoning. */
-    #hs-user-tooltip .hs-pc-sheet .val-age { color: var(--hs-warn); }
-    #hs-user-tooltip .hs-pc-sheet .val-partner { color: var(--hs-gold); }
-    #hs-user-tooltip .hs-pc-sheet .val-affiliate { color: #bcbcbc; }
-    #hs-user-tooltip .hs-pc-sheet .val-ttv { color: var(--hs-plat-twitch); }
-    #hs-user-tooltip .hs-pc-sheet .val-kick { color: var(--hs-plat-kick); }
-    #hs-user-tooltip .hs-pc-sheet .val-yt { color: var(--hs-plat-youtube); }
-    #hs-user-tooltip .hs-pc-sheet .val-admin { color: #ff0000; }
-    #hs-user-tooltip .hs-pc-sheet .val-staff { color: #fff; }
-    #hs-user-tooltip .hs-pc-sheet .val-heat { color: #ff0000; }
-    #hs-user-tooltip .hs-pc-sheet .val-followers { color: #0087ff; }
-    #hs-user-tooltip .hs-pc-sheet .val-you-follow { color: var(--hs-reply); }
-    #hs-user-tooltip .hs-pc-sheet .val-you-sub { color: #875fff; }
-    #hs-user-tooltip .hs-pc-sheet .val-they-follow { color: var(--hs-thread); }
-    #hs-user-tooltip .hs-pc-sheet .val-they-sub { color: #ff5fff; }
-    #hs-user-tooltip .hs-pc-sheet .val-mutual { color: var(--hs-ok); }
-    #hs-user-tooltip .hs-pc-sheet .val-mutual-sub { color: var(--hs-gold); }
-    #hs-user-tooltip .hs-pc-sheet .val-ch { color: #fff; }
-    #hs-user-tooltip .hs-pc-sheet .hs-pc-live { color: var(--hs-live); font-weight: 700; }
-    /* Heat number inside the sheet: digits inherit Cozette (already crisp
-       on this tooltip surface), ° gets vector fallback for a clean glyph. */
-    #hs-user-tooltip .hs-pc-sheet .hs-heat-n { font-family: inherit; }
-    #hs-user-tooltip .hs-pc-sheet .hs-heat-deg {
-      font-family: ui-monospace, SFMono-Regular, monospace;
-    }
-    #hs-user-tooltip .hs-pc-followage {
-      padding: 2px 3px;
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      background: #00aa00;
-      color: #fff;
-    }
-    #hs-user-tooltip .hs-pc-channel-follows {
-      padding: 2px 3px;
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      background: #daa520;
-      color: #000;
-    }
-    #hs-user-tooltip .hs-pc-sub-tenure {
-      padding: 2px 3px;
-      font-size: 13px;
-      font-weight: 900;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      background: #e91e8c;
-      color: #fff;
     }
     #hs-user-tooltip .hs-pc-loading {
       color: #fff;

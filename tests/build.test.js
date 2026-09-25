@@ -63,6 +63,48 @@ t('firefox manifest is valid json with required fields', () => {
   expect(Array.isArray(m.background?.scripts)).toBe(true)
 })
 
+// ── CSS-to-template-literal escaping ──────────────────────────────────────────
+// build.js concatenates every src/multichat/styles/*.css fragment and embeds
+// it into a JS template literal. A stray backtick or ${ in ANY fragment
+// (mirrored from the site or not) used to hard-error the plain build — it
+// only survived minified builds because minify strips comments. This proves
+// escapeCssForTemplateLiteral() makes any CSS text — including backslashes,
+// backticks, and ${ — round-trip safely through real template-literal eval.
+// Extracted from build.js's own source (it has no exports; build.js is a
+// script, not a module) rather than duplicated, so this test rots if the
+// escape logic ever drifts out of sync with what actually ships.
+const BUILD_SRC = readFileSync(join(ROOT, 'build.js'), 'utf8')
+
+function extractEscapeFn() {
+  const start = BUILD_SRC.indexOf('function escapeCssForTemplateLiteral(cssBody) {')
+  if (start === -1) throw new Error('escapeCssForTemplateLiteral not found in build.js')
+  const end = BUILD_SRC.indexOf('\n}', start) + 2
+  const fnSrc = BUILD_SRC.slice(start, end)
+  return new Function(`${fnSrc}\nreturn escapeCssForTemplateLiteral`)()
+}
+
+test('escapeCssForTemplateLiteral round-trips backtick + dollar-brace + backslash through a real template literal', () => {
+  const escapeCssForTemplateLiteral = extractEscapeFn()
+  const original = [
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: a literal CSS comment, not JS interpolation — that's the point of the test
+    '/* a comment with a `backtick` and a ${trap} */',
+    '.hs-card-x::after { content: "\\2014"; }',
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: a literal CSS attribute selector, not JS interpolation — that's the point of the test
+    'a[data-x="${not-js}"] { color: red; }',
+  ].join('\n')
+
+  const escaped = escapeCssForTemplateLiteral(original)
+  const rebuilt = new Function(`return \`${escaped}\``)()
+
+  expect(rebuilt).toBe(original)
+})
+
+test('escapeCssForTemplateLiteral leaves plain CSS (no backtick/${/backslash) untouched', () => {
+  const escapeCssForTemplateLiteral = extractEscapeFn()
+  const plain = '.hs-card { border: 1px solid #808080; padding: 4px 8px; }'
+  expect(escapeCssForTemplateLiteral(plain)).toBe(plain)
+})
+
 // ── version sync ──────────────────────────────────────────────────────────────
 
 t('versions match across package.json and both manifests', async () => {

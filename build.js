@@ -808,6 +808,18 @@ const MULTICHAT_MODULES = [
 // the manifest's match patterns gate injection to exactly those hostnames.
 const CORE_MODULES = [...MULTICHAT_MODULES, 'twitch-host.js', 'kick-host.js', 'youtube-host.js']
 
+// Escapes everything that would otherwise break out of (or interpolate into)
+// the JS template literal CSS gets embedded into below: backslash first
+// (else the next two replaces double-escape it), then backtick, then ${.
+// This used to be a hard error on backtick/${ instead — safe for minified
+// builds (comments, the only place backticks showed up, get stripped) but it
+// broke ANY plain/non-minified build the moment a fragment's comment used a
+// backtick (v1.3.7, and again on 09-24 in a card.css comment). Escaping
+// makes both build modes safe for any CSS text, mirrored or not.
+function escapeCssForTemplateLiteral(cssBody) {
+  return cssBody.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
+}
+
 function readMultichatModules() {
   const mcDir = join(SRC_DIR, 'multichat')
   let combined = '// === MULTICHAT MODULES (auto-bundled) ===\n'
@@ -919,11 +931,7 @@ function readMultichatModules() {
           throw new Error('build: css minify lost the __HS_FONT_COZETTE__ placeholder — font would silently die')
         }
       }
-      if (cssBody.includes('`') || cssBody.includes('${')) {
-        throw new Error(
-          'build: a styles/*.css fragment contains a backtick or ${ — unsafe to embed in the css template literal',
-        )
-      }
+      cssBody = escapeCssForTemplateLiteral(cssBody)
       if (!content.includes("'__HS_STYLES_BUNDLE__'")) {
         throw new Error('build: styles.js missing __HS_STYLES_BUNDLE__ placeholder')
       }

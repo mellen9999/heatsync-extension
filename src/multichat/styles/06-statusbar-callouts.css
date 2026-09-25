@@ -26,8 +26,8 @@
        the window IS the chat so there's nothing to collapse. */
     #hs-mc-collapse-btn::before { content: '>'; }
     body.hs-chat-left   #hs-mc-collapse-btn::before { content: '<'; }
-    body.hs-chat-top    #hs-mc-collapse-btn::before { content: '\\2303'; }
-    body.hs-chat-bottom #hs-mc-collapse-btn::before { content: '\\2304'; }
+    body.hs-chat-top    #hs-mc-collapse-btn::before { content: '\2303'; }
+    body.hs-chat-bottom #hs-mc-collapse-btn::before { content: '\2304'; }
     body.hs-popout #hs-mc-collapse-btn { display: none; }
 
     /* Toast slot — single-line status text; gone when empty. */

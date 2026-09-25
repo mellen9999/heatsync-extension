@@ -215,16 +215,10 @@ describe('server sync — logged out or no eligible id: local-only, untouched', 
     expect(hsNoteGet('bob', 'twitch')?.text).toBe('stays local')
   })
 
-  test('hsNoteSyncOnOpen is a no-op for a kick/yt synth id even when logged in', async () => {
+  test('hsNoteSyncOnOpen is a no-op for a kick/yt synth id even when logged in, even with a prefetched note in hand', async () => {
     globalThis.hsAuthToken = true
-    let called = false
-    globalThis.apiFetch = async () => {
-      called = true
-      return { ok: true, data: { note: 'server text' } }
-    }
     await hsNoteSave('bob', 'twitch', 'local only')
-    const changed = await hsNoteSyncOnOpen('bob', 'twitch', 'kick_999')
-    expect(called).toBe(false)
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', 'kick_999', 'server text')
     expect(changed).toBe(false)
     expect(hsNoteGet('bob', 'twitch')?.text).toBe('local only')
   })
@@ -262,8 +256,10 @@ describe('server sync — logged in with a real profile id', () => {
 
   test('hsNoteSyncOnOpen adopts a real server note over a stale/absent local one', async () => {
     globalThis.hsAuthToken = true
-    globalThis.apiFetch = async () => ({ ok: true, data: { note: 'from the server' } })
-    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    // No apiFetch mock needed — the note is prefetched now (POST /api/card's
+    // own `note` part, the same round trip that got the profile), not a
+    // separate GET hsNoteSyncOnOpen fires itself.
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42', 'from the server')
     expect(changed).toBe(true)
     expect(hsNoteGet('bob', 'twitch')?.text).toBe('from the server')
   })
@@ -275,19 +271,24 @@ describe('server sync — logged in with a real profile id', () => {
     const calls = []
     globalThis.apiFetch = async (path, opts) => {
       calls.push({ path, opts })
-      if (opts.method === 'PUT') return { ok: true }
-      return { ok: true, data: { note: '' } } // server has nothing yet
+      return { ok: true }
     }
-    await hsNoteSyncOnOpen('bob', 'twitch', '42')
-    const put = calls.find((c) => c.opts.method === 'PUT')
-    expect(put).toBeTruthy()
-    expect(put.opts.body).toEqual({ note: 'never synced yet' })
+    await hsNoteSyncOnOpen('bob', 'twitch', '42', '') // prefetched note: server has nothing yet
+    expect(calls).toHaveLength(1) // the one-time upload PUT — nothing else
+    expect(calls[0].opts.method).toBe('PUT')
+    expect(calls[0].opts.body).toEqual({ note: 'never synced yet' })
     expect(hsNoteGet('bob', 'twitch')?.serverSynced).toBe(true)
   })
 
-  test('a failed server fetch never clobbers the good local note', async () => {
+  test('a missing prefetched note (the /api/card note part failed server-side) never clobbers the good local note', async () => {
     globalThis.hsAuthToken = true
     await hsNoteSave('bob', 'twitch', 'good local note')
+    // /api/card's note resolution is wrapped in its own Promise.allSettled
+    // slot server-side and collapses a throw to null, same as "no note" —
+    // prefetchedNote omitted here simulates exactly that. The one-time
+    // upload this triggers is a redundant-but-harmless PUT attempt (not a
+    // real fetch failure at this layer anymore), which itself failing here
+    // must still never touch the local text.
     globalThis.apiFetch = async () => {
       throw new Error('down')
     }
@@ -298,10 +299,13 @@ describe('server sync — logged in with a real profile id', () => {
 
   test('an already-synced local note matching the server does not re-persist (no spurious repaint)', async () => {
     globalThis.hsAuthToken = true
-    globalThis.apiFetch = async (_path, opts) =>
-      opts.method === 'PUT' ? { ok: true } : { ok: true, data: { note: 'x' } }
-    await hsNoteSave('bob', 'twitch', 'x', undefined, '42') // serverSynced: true
-    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42')
+    await hsNoteSave('bob', 'twitch', 'x') // local only — no profileId, serverSynced false
+    // First open adopts the (matching) server text and marks it synced.
+    const firstChanged = await hsNoteSyncOnOpen('bob', 'twitch', '42', 'x')
+    expect(firstChanged).toBe(true)
+    expect(hsNoteGet('bob', 'twitch')?.serverSynced).toBe(true)
+    // A second open with the same server text is now a true no-op.
+    const changed = await hsNoteSyncOnOpen('bob', 'twitch', '42', 'x')
     expect(changed).toBe(false)
   })
 

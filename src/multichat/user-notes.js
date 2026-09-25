@@ -217,6 +217,11 @@ function hsNoteServerEligible(profileId) {
   return !!profileId && !/^(kick|yt)_/.test(String(profileId))
 }
 
+// Kept for callers with no /api/card round trip already in hand (none left
+// in this codebase as of the /api/card migration — every card surface's
+// note now comes prefetched, see hsNoteSyncOnOpen below — but this is still
+// the one place that knows the GET's shape, so a future non-card caller has
+// somewhere to reach for it instead of re-deriving the endpoint).
 async function hsNoteFetchServer(profileId) {
   if (!hsNoteServerEligible(profileId) || typeof apiFetch !== 'function') return null
   try {
@@ -244,15 +249,25 @@ async function hsNotePutServer(profileId, text) {
  * Called once per card open (logged in + a real profileId only). Server is
  * the source of truth once logged in: a server note overwrites the local
  * cache; an EMPTY server note with a local-only, never-synced note left over
- * uploads it once (the one-time local→server migration). A fetch failure
- * touches nothing — never clobber a good local note because the network
- * hiccuped, and `serverSynced` stays false so the next open retries.
+ * uploads it once (the one-time local→server migration).
+ *
+ * `prefetchedNote` is /api/card's own `note` part (server/routes/card.ts's
+ * resolveCardNote — the exact function GET /api/user-notes/:id used to
+ * call), already fetched as part of the same round trip that got the
+ * profile — no separate GET here anymore. It's `''`/null/undefined for "the
+ * server has nothing" (a real empty note and "no row yet" are the same
+ * answer, same as the old GET's `resp.data.note || ''`), which is
+ * indistinguishable from "the note PART of /api/card failed" — that part is
+ * wrapped in its own Promise.allSettled server-side and collapses to null on
+ * a throw, same as "nothing". That's an accepted, low-frequency edge case: a
+ * transient failure there can trigger a redundant-but-harmless local→server
+ * upload instead of a true no-op, never data loss (the local write always
+ * happens regardless in hsNoteSave).
  */
-async function hsNoteSyncOnOpen(username, platform, profileId) {
+async function hsNoteSyncOnOpen(username, platform, profileId, prefetchedNote) {
   if (!(typeof hsAuthToken !== 'undefined' && hsAuthToken) || !hsNoteServerEligible(profileId)) return false
   await _hsnLoad()
-  const serverText = await hsNoteFetchServer(profileId)
-  if (serverText === null) return false // fetch failed — local note (if any) is untouched
+  const serverText = prefetchedNote || ''
   const aliases = await _hsnAliasesAsync(username, platform)
   if (!aliases.length) return false
   const local = hsNoteGet(username, platform)
@@ -447,10 +462,11 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
  * Build the profile-card "notes" section (read preview + edit button).
  * `profileId` (the heatsync user id — data.id on the card's profile, absent
  * for kick/yt synth profiles) enables server sync: logged in + a real id →
- * fetches the server note once on open (adopting it, or uploading a
- * local-only note that's never been synced) and repaints when that resolves.
+ * `prefetchedNote` (part of the same POST /api/card that got the profile —
+ * no separate GET) is adopted, or a local-only note that's never been synced
+ * uploads once; either way this repaints when hsNoteSyncOnOpen resolves.
  */
-function hsNoteRenderCardSection(username, platform, mkSection, profileId) {
+function hsNoteRenderCardSection(username, platform, mkSection, profileId, prefetchedNote) {
   if (typeof document === 'undefined') return null
   const make = typeof mkSection === 'function' ? mkSection : typeof pcMakeSection === 'function' ? pcMakeSection : null
   const sec = make ? make('notes') : document.createElement('div')
@@ -473,7 +489,7 @@ function hsNoteRenderCardSection(username, platform, mkSection, profileId) {
     hsNoteOpenEditor(username, platform, e?.clientX || r.left, e?.clientY || r.bottom, paint, profileId)
   })
   paint()
-  hsNoteSyncOnOpen(username, platform, profileId).then((changed) => {
+  hsNoteSyncOnOpen(username, platform, profileId, prefetchedNote).then((changed) => {
     if (changed && sec.isConnected) paint()
   })
   sec.appendChild(body)

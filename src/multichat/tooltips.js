@@ -1040,6 +1040,57 @@ function hsExtRenderBio(text) {
     .join('')
 }
 
+// ── POST /api/card — the one card-fetch, shared by peek and panel/full ─────
+// Used to be up to two separate round trips per open (GET /api/profile, then
+// GET /api/twitch/followage) with no corpus/recent/note at all — this is the
+// site's own `_fetchCardPayload` (client/events/hover-previews.js), ported.
+// A 60s LRU + in-flight dedupe means a hover immediately followed by a click
+// on the same identity is ONE request, not two, and a repeat hover/reopen
+// within the window is zero. Keyed exactly like `_profileCache` above
+// (`platform:username`) so `_patchProfileCacheRel`/`_pcKnownCrossLinks`
+// (profile-card.js) can patch this cache too after a follow/block toggle.
+const _cardCache = new Map() // platform:username -> { payload, ts }
+const _cardInflight = new Map() // platform:username -> Promise
+const CARD_CACHE_TTL = 60 * 1000
+
+// Every channel this session has open, as `platform:channel` tokens — the
+// server's "also in #channel" corpus scoping (openChannels body param,
+// resolveChatterOverlap server-side). Mirrors the site's own
+// _viewerChannelTokens, off the extension's own multi-channel config instead
+// of the site's channelBuffer.
+function cardOpenChannels() {
+  const out = new Set()
+  for (const c of config.channels || []) {
+    if (c.twitch) out.add(`twitch:${String(c.twitch).toLowerCase()}`)
+    if (c.kick) out.add(`kick:${String(c.kick).toLowerCase()}`)
+  }
+  return [...out]
+}
+
+async function fetchCardPayload(platform, login, channel) {
+  const key = `${String(platform || 'twitch').toLowerCase()}:${String(login).toLowerCase()}`
+  const cached = _cardCache.get(key)
+  if (cached && Date.now() - cached.ts < CARD_CACHE_TTL) return cached.payload
+  const flying = _cardInflight.get(key)
+  if (flying) return flying
+  const p = apiFetch('/api/card', {
+    method: 'POST',
+    body: { platform: platform || 'twitch', login, channel: channel || undefined, openChannels: cardOpenChannels() },
+  })
+    .then((resp) => {
+      const payload =
+        resp?.ok && resp.data ? resp.data : { profile: null, followage: null, corpus: null, note: null, recent: null }
+      _cardCache.set(key, { payload, ts: Date.now() })
+      if (_cardCache.size > 300) _cardCache.delete(_cardCache.keys().next().value)
+      return payload
+    })
+    .finally(() => {
+      _cardInflight.delete(key)
+    })
+  _cardInflight.set(key, p)
+  return p
+}
+
 // The shared card model + renderer (src/lib/card-{time,model,render}.js,
 // mirrored byte-for-byte from the site — scripts/sync-site-copies.sh) is now
 // the ONE "which platform/login", heat-tier and relative-time rule for the
@@ -1102,7 +1153,8 @@ function computeSubTenureRow(username, msgChannel) {
     : { k: 'sub-tenure', label: 'ch sub', value: `${channelLogin} ${tenure}`, tone: 'ch' }
 }
 
-// Live Twitch followage rows from a resolved `lookupFollowage` result — same
+// Live Twitch followage rows from a resolved followage result (payload.followage
+// off /api/card, or the degraded-fallback gqlFollowageDirect) — same
 // dual-use shape as computeSubTenureRow above (feeds ctx.extraSheet for the
 // real-profile path, hsExtUpsertSheetRow for the fallback path). When the
 // channel context IS the viewer (hovering a chatter in your own channel
@@ -1135,6 +1187,30 @@ function computeFollowageRows(channelLogin, isSelfChannel, result) {
     rows.push({ k: 'followers', label: 'followers', value: formatCompact(result.followerCount), tone: 'followers' })
   }
   return rows
+}
+
+// `/api/card`'s corpus part (msg count/first-seen/"also in") as one sheet
+// row, for the no-heatsync-account fallback below — same text card-model.js's
+// own buildCorpusRow produces for the panel's `full`/`panel` variants
+// (renderChatter/renderCorpusRow), flattened into hsExtUpsertSheetRow's plain
+// dt/dd shape since this path DOM-patches instead of going through the model.
+function cardCorpusSheetRow(corpus, skipChannel) {
+  if (!corpus) return null
+  const parts = []
+  if (corpus.messages > 0) parts.push(`${formatCompact(corpus.messages)} msgs`)
+  if (corpus.firstDay)
+    parts.push(corpus.firstChannel ? `since ${corpus.firstDay} ${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+  const skip = skipChannel ? String(skipChannel).toLowerCase() : null
+  const also = (corpus.also || []).filter((c) => c.toLowerCase() !== skip)
+  if (also.length) {
+    const shown = also
+      .slice(0, 3)
+      .map((c) => `#${c}`)
+      .join(' ')
+    parts.push(also.length > 3 ? `${shown} +${also.length - 3}` : shown)
+  }
+  if (!parts.length) return null
+  return { k: 'corpus', label: 'logs', value: parts.join(' · '), tone: '' }
 }
 
 // Ext-only sheet-row DOM patch — used ONLY by the no-heatsync-account
@@ -1271,25 +1347,37 @@ function getTooltipChannelContext(userPlatform) {
   return getLiveChannel()
 }
 
-// Async Twitch-followage fetch for the no-heatsync-account fallback ONLY —
-// the real-profile path resolves followage inline in showUserTooltip and
-// feeds it through ctx.extraSheet via renderProfileCard's re-render instead.
-async function fetchAndShowFollowageFallback(tooltip, username, gen, userPlatform) {
-  if (userPlatform && userPlatform !== 'twitch') return
-  const channelLogin = getTooltipChannelContext(userPlatform)
+// Renders whatever followage rows are available right now — from
+// `payload.followage` when /api/card resolved it cleanly, or (only when that
+// part came back degraded/absent, and only for twitch) the in-page GQL
+// fallback (gqlFollowageDirect, twitch-api.js). Shared by both the
+// real-profile paint() and the no-account fallback below; the caller decides
+// where the rows land (extraSheet array vs a DOM-patched sheet element).
+// `onRows` always fires on a LATER microtask, never in the same call stack
+// as this call — a caller invoked from inside its own render pass (the
+// panel's renderProfileCardView does exactly this) would otherwise recurse
+// into itself synchronously the moment `followage` is already known
+// (non-degraded, the common case since /api/card resolves it up front), and
+// the recursive render can detach/replace the DOM nodes the outer call is
+// still mid-way through touching. Callers own their own staleness check
+// inside `onRows` (tooltip: `gen !== _profileGen`; panel:
+// `activeProfileCard !== openedFor` — two different signals, so that check
+// can't live in here).
+function resolveFollowageRows(username, channelLogin, followage, onRows) {
   if (!channelLogin) return
-  if (typeof lookupFollowage !== 'function') return
-  const result = await lookupFollowage(username, channelLogin)
-  if (gen !== _profileGen || !result) return
   const isSelfChannel =
     typeof currentUsername === 'string' &&
     currentUsername &&
     channelLogin.toLowerCase() === currentUsername.toLowerCase()
-  const sheetEl = tooltip.querySelector('.hs-card-sheet')
-  if (!sheetEl) return
-  for (const r of computeFollowageRows(channelLogin, isSelfChannel, result)) {
-    hsExtUpsertSheetRow(sheetEl, r.k, r.label, r.value, r.tone)
+  if (followage && !followage.degraded) {
+    Promise.resolve().then(() => onRows(computeFollowageRows(channelLogin, isSelfChannel, followage)))
+    return
   }
+  if (typeof gqlFollowageDirect !== 'function') return
+  gqlFollowageDirect(username, channelLogin).then((result) => {
+    if (!result) return
+    onRows(computeFollowageRows(channelLogin, isSelfChannel, result))
+  })
 }
 
 // No-heatsync-account hover card — populated from client-only signals so
@@ -1297,7 +1385,10 @@ async function fetchAndShowFollowageFallback(tooltip, username, gen, userPlatfor
 // from recent msgs, platform-link row, color-tinted name. Not on the shared
 // card model (renderChatter's minimal shape would drop the badges/paint this
 // path exists for) — hand-built HTML, enhanced the old DOM-patch way.
-function renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel) {
+// `payload` is still whatever /api/card returned (a no-account chatter still
+// gets a real corpus/followage — the server's resolveCardCorpus/Followage
+// key off platform+login, not a matched profile row).
+function renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel, payload) {
   const safeName = escapeHtml(username)
   const safeColor = sanitizeColor(color || '#fff')
   let nativeBadges = ''
@@ -1337,7 +1428,24 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
   const subRow = computeSubTenureRow(username, msgChannel)
   if (subRow)
     hsExtUpsertSheetRow(tooltip.querySelector('.hs-card-sheet'), subRow.k, subRow.label, subRow.value, subRow.tone)
-  fetchAndShowFollowageFallback(tooltip, username, gen, platform)
+  const corpusRow = cardCorpusSheetRow(payload?.corpus, getTooltipChannelContext(platform))
+  if (corpusRow)
+    hsExtUpsertSheetRow(
+      tooltip.querySelector('.hs-card-sheet'),
+      corpusRow.k,
+      corpusRow.label,
+      corpusRow.value,
+      corpusRow.tone,
+    )
+  if (!platform || platform === 'twitch') {
+    const channelLogin = getTooltipChannelContext(platform)
+    resolveFollowageRows(username, channelLogin, payload?.followage, (rows) => {
+      if (gen !== _profileGen) return
+      const sheetEl = tooltip.querySelector('.hs-card-sheet')
+      if (!sheetEl) return
+      for (const r of rows) hsExtUpsertSheetRow(sheetEl, r.k, r.label, r.value, r.tone)
+    })
+  }
   applyTooltipBanner(tooltip, null, platform, username, gen)
   applyTooltipPronouns(tooltip, fbUid, gen)
 }
@@ -1360,41 +1468,23 @@ async function showUserTooltip(targetEl, username, color, platform) {
   tooltip.classList.add('visible')
   positionTooltipAtElement(tooltip, targetEl)
 
-  // Check cache (keyed by platform:username to avoid cross-platform collisions)
-  const cacheKey = `${platform || 'unknown'}:${username.toLowerCase()}`
-  const cached = _profileCache.get(cacheKey)
-  let profile = null
-  if (cached && Date.now() - cached.ts < PROFILE_CACHE_TTL) {
-    profile = cached.profile
-  } else {
-    // Fetch profile — pass platform so server can disambiguate same-name users across platforms
-    const platParam = platform ? `?platform=${encodeURIComponent(platform)}` : ''
-    const resp = await apiFetch(`/api/profile/${encodeURIComponent(username)}${platParam}`)
-    if (gen !== _profileGen) return // user moved away
-    if (resp?.ok && resp.data?.profile) {
-      profile = resp.data.profile
-    } else if (platform === 'kick') {
-      // Cross-platform probe — most unregistered kick chatters share their
-      // handle on twitch. Same-name twitch hit lands a full profile (heat,
-      // follows, banner, partner status) for what would otherwise be a bare
-      // fallback. Only fires when the kick lookup misses.
-      const twResp = await apiFetch(`/api/profile/${encodeURIComponent(username)}?platform=twitch`)
-      if (gen !== _profileGen) return
-      if (twResp?.ok && twResp.data?.profile) profile = twResp.data.profile
-    }
-    if (profile) {
-      _profileCache.set(cacheKey, { profile, ts: Date.now() })
-      while (_profileCache.size > PROFILE_CACHE_MAX) _profileCache.delete(_profileCache.keys().next().value)
-    }
-  }
+  // One POST /api/card — profile, corpus, server-recent, followage and (when
+  // logged in) the note, all in the one round trip. 60s LRU + in-flight
+  // dedupe (fetchCardPayload above) means a click right after this hover
+  // reuses the same payload instead of firing a second request.
+  const channelLogin = getTooltipChannelContext(platform)
+  const payload = await fetchCardPayload(platform || 'twitch', username, channelLogin)
+  if (gen !== _profileGen) return // user moved away
+  const profile = payload.profile
 
   if (!profile) {
-    renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel)
+    renderTooltipFallback(tooltip, username, platform, color, gen, msgChannel, payload)
     return
   }
 
   // The real-profile path: sub tenure is sync (no fetch, already known), so
-  // it's in the model from the very first paint. Followage/pronouns resolve
+  // it's in the model from the very first paint. Followage (already in
+  // `payload`, or the degraded-fallback gql lookup) and pronouns resolve
   // async and re-call paint() with the model fed through ctx.extraSheet/
   // ctx.pronouns — a cheap full re-render (pure functions, no DOM diffing),
   // not a DOM patch, per the same discipline the site's own host uses.
@@ -1416,18 +1506,11 @@ async function showUserTooltip(targetEl, username, color, platform) {
   paint()
 
   if (!platform || platform === 'twitch') {
-    const channelLogin = getTooltipChannelContext(platform)
-    if (channelLogin && typeof lookupFollowage === 'function') {
-      const isSelfChannel =
-        typeof currentUsername === 'string' &&
-        currentUsername &&
-        channelLogin.toLowerCase() === currentUsername.toLowerCase()
-      lookupFollowage(username, channelLogin).then((result) => {
-        if (gen !== _profileGen || !result) return
-        followageRows = computeFollowageRows(channelLogin, isSelfChannel, result)
-        paint()
-      })
-    }
+    resolveFollowageRows(username, channelLogin, payload.followage, (rows) => {
+      if (gen !== _profileGen) return
+      followageRows = rows
+      paint()
+    })
   }
   const twitchUid = profile.twitch_user_id || profile.twitch_id
   if (twitchUid && typeof fetchPronouns === 'function') {
@@ -1547,8 +1630,8 @@ function setupUserTooltipHandlers() {
         const color = target.style.color
         const platform = target.dataset.platform || null
         const cacheKey = `${platform || 'unknown'}:${username.toLowerCase()}`
-        const cached = _profileCache.get(cacheKey)
-        if (cached && Date.now() - cached.ts < PROFILE_CACHE_TTL) {
+        const cached = _cardCache.get(cacheKey)
+        if (cached && Date.now() - cached.ts < CARD_CACHE_TTL) {
           // Cache hit: render synchronously, no debounce needed.
           clearUserHoverTimer()
           showUserTooltip(target, username, color, platform)

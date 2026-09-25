@@ -192,12 +192,26 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(view).toContain('if (!activeProfileCard.focusMoved)')
   })
 
-  test('followage is fetched once per card open and folded into extraSheet, never DOM-patched', () => {
+  test('followage comes from the same /api/card fetch as the profile, folded into extraSheet, never DOM-patched', () => {
     const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
     expect(view).toContain('...(activeProfileCard.followageRows || [])')
     expect(view).toContain('followageFetchedFor !== username')
-    expect(view).toContain('computeFollowageRows(channelLogin, isSelfChannel, result)')
+    // No separate request for the common case — resolveFollowageRows only
+    // fires the (twitch-api.js) gql fallback when activeProfileCard.followage
+    // came back degraded; otherwise it folds payload.followage straight in.
+    expect(view).toContain('resolveFollowageRows(username, channelLogin, activeProfileCard.followage')
     expect(view).toContain('renderProfileCardView()') // re-render, not a sheet-row DOM patch
+  })
+
+  test('openProfileCard fetches one POST /api/card, not a separate profile + followage pair', () => {
+    const open = slice(
+      CARD,
+      'async function openProfileCard(username, platform, opts = {}) {',
+      '\nasync function pcFetchKickEnrich',
+    )
+    expect(open).toContain("fetchCardPayload(platform || 'twitch', username, channelLogin)")
+    expect(open).not.toContain('/api/profile/')
+    expect(open).not.toContain('/api/twitch/followage')
   })
 
   test('every old .hs-pcard-id/.hs-pcard-mod/.hs-pcard-actions DOM-building class is gone', () => {

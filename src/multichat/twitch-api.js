@@ -3947,7 +3947,18 @@ function renderThirdPartyBadges(userId) {
 const _followageCache = new Map() // "user:channel" → { result, ts }
 const FOLLOWAGE_CACHE_TTL = 300000 // 5min
 
-async function lookupFollowage(username, channelLogin) {
+// Direct-GQL followage — the fallback path for a `POST /api/card` response
+// whose `followage` part came back degraded (Twitch integrity-gated the
+// follow field for the server's own IP; its nulls are "couldn't see", not
+// "not following"). Rides the viewer's OWN session integrity via the
+// in-page GQL proxy instead, so it still resolves. /api/card already covers
+// the non-degraded case server-side (server/routes/card.ts's
+// resolveCardFollowage) — this is the one request card-fetch's degraded
+// check kicks off, not a general-purpose followage lookup anymore (the old
+// standalone `/api/twitch/followage`-then-fallback `lookupFollowage` this
+// replaced is gone; every card surface fetches followage as part of the one
+// `/api/card` round trip now).
+async function gqlFollowageDirect(username, channelLogin) {
   if (!username || !channelLogin) return null
   if (username.toLowerCase() === channelLogin.toLowerCase()) return null
   const key = `${username.toLowerCase()}:${channelLogin.toLowerCase()}`
@@ -3955,32 +3966,6 @@ async function lookupFollowage(username, channelLogin) {
   if (cached && Date.now() - cached.ts < FOLLOWAGE_CACHE_TTL) return cached.result
 
   try {
-    // Try server-side API first (works everywhere, including multichat on heatsync.org)
-    const resp =
-      typeof apiFetch === 'function'
-        ? await apiFetch(
-            `/api/twitch/followage?user=${encodeURIComponent(username)}&channel=${encodeURIComponent(channelLogin)}`,
-          )
-        : null
-    // degraded=true means twitch integrity-gated the follow field for the
-    // server's IP — its nulls are "couldn't see", not "not following". Fall
-    // through to the in-browser GQL proxy, which rides the user's own
-    // session integrity and still resolves.
-    if (resp?.ok && resp.data && !resp.data.degraded) {
-      const d = resp.data
-      const result = {
-        followedAt: d.followedAt || null,
-        followerCount: d.followerCount ?? null,
-        channelFollowedAt: d.channelFollowedAt || null,
-      }
-      _followageCache.set(key, { result, ts: Date.now() })
-      if (_followageCache.size > 500) {
-        _followageCache.delete(_followageCache.keys().next().value)
-      }
-      return result
-    }
-
-    // Fallback: direct GQL proxy (works on Twitch tabs with MAIN world script)
     const safeUser = username.replace(/[^a-z0-9_]/gi, '')
     const safeChan = channelLogin.replace(/[^a-z0-9_]/gi, '')
     const data = await gqlProxy(null, null, {

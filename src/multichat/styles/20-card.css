@@ -83,6 +83,16 @@
   .profile-header .hs-card-page {
     border: 2px solid #444444 !important;
   }
+  /* This is the profile HEADER, not a popover — it belongs at the content
+   * column's width (its own .profile-header wrapper is already width:100%,
+   * profiles.css), not the base rule's 460px popover cap. peek/full/panel
+   * keep that cap; unaffected (this selector is .hs-card-page only). The
+   * action row (already a full-width flex row) and everything else in the
+   * card follow this width automatically — no separate "full-width actions"
+   * rule needed. */
+  .hs-card-page {
+    max-width: none;
+  }
 }
 @media (max-width: 768px) {
   .hs-card-page,
@@ -212,28 +222,17 @@
   gap: 6px;
   flex-wrap: wrap;
 }
-/* Pull the avatar up to straddle the banner's bottom edge — ONLY once
- * there's a banner to straddle. Unconditional, this clipped the avatar's
- * own top edge against .hs-card-body's overflow-y:auto whenever the hero
- * was collapsed (no banner) or on the phone sheet, where .hs-card-full adds
- * a SECOND scroll boundary above it — a negative margin pulls the avatar
- * outside the nearest scrolling box's content edge, and content beyond that
- * edge in the "before" direction is clipped, not just scrolled-past. With
- * the hero collapsed to 0 by default this never applied until a banner
- * really painted, which is also the moment the overlap is supposed to mean
- * something. */
-.hs-card-hero.hs-card-hero-loaded + .hs-card-body .hs-card-identity {
-  margin-top: -20px;
-  /* align-items: center (the base rule) put the NAME at the row's vertical
-   * centre — half the 40px avatar's height above its own midpoint, which
-   * landed it flush against (sometimes fractionally past) the banner's
-   * bottom edge, the same edge the -20px above straddles. The avatar is
-   * the tallest item and already defines the row's height either way, so
-   * flex-end doesn't move IT — it moves the shorter siblings (name,
-   * badges, flair) down to sit level with the avatar's own bottom edge,
-   * which is well clear of the banner. */
-  align-items: flex-end;
-}
+/* No overlap — the avatar used to straddle the banner's bottom edge via a
+ * negative margin, which had two failure modes, both real bugs, not
+ * theoretical: (1) .hs-card-body's own overflow-y:auto clips anything a
+ * negative margin pulls above its content edge, cutting the avatar's own
+ * top off (the 'page'/'full' variant bug — a real banner, not the
+ * collapsed 0-height case this rule used to gate on); (2) .hs-card-hero's
+ * blurred banner paints in normal DOM order, so the "straddle" was really
+ * the banner winning the overlap, not the avatar. Simplest fix is the
+ * correct one: no overlap at all. The avatar sits fully below the banner
+ * at the body's own top padding, square and predictable — never
+ * conditional on whether a banner loaded. */
 .hs-card-avatar {
   width: 40px;
   height: 40px;

@@ -1167,6 +1167,10 @@ async function pcApplyBanner(card, chain) {
     const probe = new Image()
     probe.onload = () => {
       if (!hero.isConnected) return
+      // onload fires for a 200 with an empty/0x0 body too (a dead mirror
+      // link, a moderated placeholder) — that painted a solid black 48px
+      // band with nothing in it. Same fix as the site's applyBannersIn.
+      if (!(probe.naturalWidth > 0 && probe.naturalHeight > 0)) return
       heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
       hero.classList.add('hs-card-hero-loaded')
     }

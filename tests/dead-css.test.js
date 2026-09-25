@@ -58,9 +58,13 @@ const HOST_PAGE = [
  * an extension-only ruleset without breaking parity. `.trending-profile-row`
  * is heatsync.org's search/trending result row, a wrapper this extension
  * never renders; the rule stays harmless dead weight here on purpose (see
- * card.css's own header comment).
+ * card.css's own header comment). `.block-btn`/`.report-btn` are
+ * hover-previews.js's OWN click-delegation classnames, reused as the
+ * card's follow/block/report action buttons so the site's existing global
+ * delegated handlers fire — an ext-only concept with no site equivalent
+ * (the extension dispatches its own actions via data-hs-card-action).
  */
-const SITE_ONLY_PAGE = ['trending-profile-row']
+const SITE_ONLY_PAGE = ['trending-profile-row', 'block-btn', 'report-btn']
 
 function definedClasses() {
   let css = ''

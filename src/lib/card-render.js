@@ -27,11 +27,18 @@ const HOTKEY_LABEL = {
  * whole word (that duplicated the first letter: "follow" with hotkey 'f'
  * rendered as "f" + "follow" = "ffollow"). The hotkey is always the label's
  * own first character; note-edit's label is picked so that holds too.
+ *
+ * The hotkey span and the rest-of-word text both go inside ONE wrapping
+ * span — every caller of this (platform links, actions, note-edit) sits in
+ * a `display:flex` container with its own `gap`, and a bare trailing text
+ * node next to the hotkey span is its OWN flex item there: "kick" rendered
+ * as "k" + gap + "ick" = "k ick". Wrapping them together makes the whole
+ * label one flex item, immune to a parent's gap no matter where it's used.
  */
 function hk(label, esc) {
   const first = label.slice(0, 1)
   const rest = label.slice(1)
-  return `<span class="hs-card-hk">${esc(first)}</span>${esc(rest)}`
+  return `<span class="hs-card-label"><span class="hs-card-hk">${esc(first)}</span>${esc(rest)}</span>`
 }
 
 /**
@@ -42,7 +49,7 @@ function hk(label, esc) {
  */
 function hkShort(label, esc) {
   return label.length <= 2
-    ? `<span class="hs-card-hk">${esc(label)}</span>`
+    ? `<span class="hs-card-label"><span class="hs-card-hk">${esc(label)}</span></span>`
     : hk(label, esc)
 }
 
@@ -261,8 +268,11 @@ function renderProfile(
   const nameColor = paintColor ? paintColor(model.color) : model.color
   // Whole-card navigation (search results) — click-delegation.js's
   // setupProfileCardClickHandler matches this exact attribute contract.
+  // tabindex/role make it a real Tab stop with Enter/Space activation
+  // (same handler) — a hover-only CSS invert with nothing focusable to
+  // trigger it was half a feature.
   const clickAttrs = (clickable && model.identity.userId != null)
-    ? ` data-user-id="${esc(String(model.identity.userId))}" data-clickable="true"${model.identity.platform ? ` data-platform="${esc(model.identity.platform)}" data-username="${esc(model.identity.login)}"` : ''}${model.links.profileUrl ? ` data-profile-url="${esc(model.links.profileUrl)}"` : ''}`
+    ? ` data-user-id="${esc(String(model.identity.userId))}" data-clickable="true" tabindex="0" role="link"${model.identity.platform ? ` data-platform="${esc(model.identity.platform)}" data-username="${esc(model.identity.login)}"` : ''}${model.links.profileUrl ? ` data-profile-url="${esc(model.links.profileUrl)}"` : ''}`
     : ''
   // Same CSSOM-at-mount discipline as data-color/paintColor above — the host
   // reads this and calls el.style.setProperty('--hs-card-accent', ...) once

@@ -943,7 +943,20 @@ async function pcApplyBanner(card, chain) {
   // crafted banner URL (kick/yt-sourced) can't break out of url("…") and
   // inject CSS.
   const safe = safeUrl(banner.bannerUrl || banner.offlineUrl)
-  if (safe) heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
+  if (safe) {
+    // card.css's .hs-card-hero starts at height:0 — it only expands once
+    // .hs-card-hero-loaded lands, and only on a REAL <img> onload (not just
+    // a resolved URL), same as the site's own profile-renderer.js
+    // applyBannersIn. Skipping the preload would mean the hero never shows.
+    const probe = new Image()
+    probe.onload = () => {
+      if (!hero.isConnected) return
+      heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
+      hero.classList.add('hs-card-hero-loaded')
+    }
+    probe.referrerPolicy = 'no-referrer'
+    probe.src = safe
+  }
   // Fill avatar from banner fetch's profile_pic when the card landed on the
   // anon placeholder (no heatsync profile pic). Kick API returns profile_pic
   // alongside the banner so unregistered kick chatters get a real face.

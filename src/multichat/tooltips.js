@@ -1168,8 +1168,20 @@ async function applyTooltipBanner(tooltip, profile, platform, username, gen) {
   // can't break out of url("…") and inject CSS.
   const safe = safeUrl(banner.bannerUrl || banner.offlineUrl)
   if (safe && heroImg) {
-    heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
-    if (_userTooltipTarget) positionTooltipAtElement(tooltip, _userTooltipTarget)
+    // card.css's .hs-card-hero starts at height:0 — it only expands once
+    // .hs-card-hero-loaded lands, and that only happens on a REAL <img>
+    // onload (not just a resolved URL), same as the site's own
+    // profile-renderer.js applyBannersIn. Skipping the preload here would
+    // mean the hero never shows at all on the extension.
+    const probe = new Image()
+    probe.onload = () => {
+      if (gen !== _profileGen || !hero.isConnected) return
+      heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
+      hero.classList.add('hs-card-hero-loaded')
+      if (_userTooltipTarget) positionTooltipAtElement(tooltip, _userTooltipTarget)
+    }
+    probe.referrerPolicy = 'no-referrer'
+    probe.src = safe
   }
   // Fallback path leaves the avatar as anon.webp — fill it from the banner
   // fetch's profile_pic (kick api hands this back next to the banner URL).

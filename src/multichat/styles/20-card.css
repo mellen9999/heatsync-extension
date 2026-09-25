@@ -46,6 +46,22 @@
   pointer-events: auto;
 }
 
+/* Whole-card navigation (search results — click-delegation.js's
+ * setupProfileCardClickHandler, driven off this attribute). The card itself
+ * is the click target here, so it needs the doctrine's own hover/active/
+ * focus-visible treatment same as any other interactive element — it had
+ * none at all. */
+.hs-card[data-clickable="true"] {
+  cursor: pointer;
+}
+.hs-card[data-clickable="true"]:hover,
+.hs-card[data-clickable="true"]:active,
+.hs-card[data-clickable="true"]:focus-visible {
+  background: #ffffff;
+  color: #000000;
+  outline: none;
+}
+
 /* Embedded variants — inline on a profile page / extension panel. No fixed
  * positioning; the host's layout owns placement. */
 .hs-card-page,
@@ -146,12 +162,23 @@
 }
 
 /* ── hero banner ──────────────────────────────────────────────────────── */
+/* Collapsed until a banner actually resolves — most accounts have none, and
+ * a permanent 48px #121212 strip with nothing in it read as a dead/broken
+ * element, not a banner slot. profile-renderer.js's applyBannersIn only adds
+ * .hs-card-hero-loaded once the image has actually finished loading (a real
+ * <img> onload, not just a resolved URL), so this never flashes an empty
+ * loading state either — it snaps straight from 0 to 48px with the image
+ * already painted. That's the one allowed layout jump ("the banner
+ * appearing"); nothing else should move when it happens. */
 .hs-card-hero {
   position: relative;
-  height: 48px;
+  height: 0;
   overflow: hidden;
   background: #121212;
   flex-shrink: 0;
+}
+.hs-card-hero.hs-card-hero-loaded {
+  height: 48px;
 }
 .hs-card-hero-img {
   position: absolute;
@@ -184,7 +211,19 @@
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: -20px; /* pull avatar up over the hero, matches old card */
+}
+/* Pull the avatar up to straddle the banner's bottom edge — ONLY once
+ * there's a banner to straddle. Unconditional, this clipped the avatar's
+ * own top edge against .hs-card-body's overflow-y:auto whenever the hero
+ * was collapsed (no banner) or on the phone sheet, where .hs-card-full adds
+ * a SECOND scroll boundary above it — a negative margin pulls the avatar
+ * outside the nearest scrolling box's content edge, and content beyond that
+ * edge in the "before" direction is clipped, not just scrolled-past. With
+ * the hero collapsed to 0 by default this never applied until a banner
+ * really painted, which is also the moment the overlap is supposed to mean
+ * something. */
+.hs-card-hero.hs-card-hero-loaded + .hs-card-body .hs-card-identity {
+  margin-top: -20px;
 }
 .hs-card-avatar {
   width: 40px;
@@ -303,6 +342,8 @@
 .hs-card-plat-link:hover[data-tone],
 .hs-card-plat-link:active[data-tone],
 .hs-card-plat-link:focus-visible[data-tone] { color: #000000; }
+/* One flex item per label — see hk()/hkShort()'s own doc comment. */
+.hs-card-label { display: inline; }
 .hs-card-hk { text-decoration: underline; }
 .hs-card-live {
   color: var(--hs-card-live);
@@ -379,6 +420,14 @@
   font: inherit;
   font-size: 13px;
   resize: vertical;
+  appearance: none;
+  border-radius: 0;
+}
+/* base.css's universal `textarea:focus { border-color: #ff8700 }` — orange,
+ * same specificity, later in the cascade than this file's own import.
+ * Zero orange on the card, no exceptions. */
+.hs-card-note-textarea:focus {
+  border-color: var(--hs-card-link) !important;
 }
 .hs-card-note-edit,
 .hs-card-emote,
@@ -389,6 +438,8 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  appearance: none;
+  border-radius: 0;
 }
 .hs-card-note-edit:hover,
 .hs-card-note-edit:active,
@@ -551,6 +602,31 @@
   padding: 4px 8px;
   text-align: center;
   font-size: 13px;
+  appearance: none; /* iOS/older Safari rounds+shades a bare <button> */
+  border-radius: 0;
+}
+/* A cell grid needs visible seams, not just a hover invert to tell one
+ * action from the next — a bare row of buttons with no border between them
+ * read as one smear of text. */
+.hs-card-action:not(:first-child) {
+  border-left: 1px solid var(--hs-card-border);
+}
+/* .hs-card-action also carries .hs-follow/.block-btn/.report-btn
+ * (hover-previews.js _mountCard) so the app's EXISTING global delegated
+ * click handlers fire for these buttons too, instead of a second follow/
+ * block/report implementation. Those classes carry their own resting
+ * background/height/padding from share.css/mobile.css (built for the
+ * 18px icon buttons in a message row) — leaked onto the action row and
+ * made report visibly darker/shorter than follow and block, which don't
+ * carry a styled class of their own. Card sizing wins; tone stays
+ * text-color-only (danger red below), never a different resting fill. */
+.hs-card-action.hs-follow,
+.hs-card-action.block-btn,
+.hs-card-action.report-btn {
+  background: transparent !important;
+  height: auto !important;
+  min-height: 24px !important;
+  padding: 4px 8px !important;
 }
 .hs-card-action:hover,
 .hs-card-action:active,
@@ -577,6 +653,12 @@
     border-left: none;
     border-right: none;
     border-bottom: none;
+    /* Explicit, not just inherited from .hs-card's shorthand — the sheet's
+     * top edge is the ONLY thing separating it from whatever's behind it
+     * (there's no backdrop scrim), and a border that only exists because
+     * nothing else happened to override it is one factoring-out away from
+     * silently vanishing again. */
+    border-top: 1px solid var(--hs-card-border) !important;
   }
   .hs-card-peek {
     display: none; /* no ambient hover on touch — peek never opens (see card-time/card-model host wiring) */

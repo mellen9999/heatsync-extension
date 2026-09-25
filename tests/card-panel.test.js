@@ -215,7 +215,7 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
   })
 
   test('pcHandleCardAction dispatches every action key to its existing toggle/nav function', () => {
-    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, _btn) {', '\n}\n')
+    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
     for (const call of [
       'pcToggleFollow(',
       'pcDoWhisper(',
@@ -230,8 +230,31 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
   })
 
   test('addchannel is dispatched, even though it is not a card-model.js ACTION_DEFS key', () => {
-    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, _btn) {', '\n}\n')
+    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
     expect(fn).toContain("case 'addchannel':")
+  })
+
+  test('clip is dispatched with the button (two-click UX needs it), twitch-only, shown only while live', () => {
+    const dispatch = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
+    expect(dispatch).toContain("case 'clip':")
+    expect(dispatch).toContain('pcDoClip(username, platform, btn)')
+    const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
+    expect(view).toContain("platform === 'twitch' && (data.twitch_is_live || data.live_status?.twitch)")
+    expect(view).toContain("clipBtn.dataset.hsCardAction = 'clip'")
+  })
+
+  test('pcDoClip: second click (edit url already on the button) opens the editor instead of re-clipping', () => {
+    const fn = slice(CARD, 'async function pcDoClip(username, platform, btn) {', '\n}\n')
+    expect(fn).toContain('if (btn.dataset.editUrl)')
+    expect(fn).toContain('window.open(safeUrl(btn.dataset.editUrl)')
+  })
+
+  test('pcDoClip posts to /api/twitch/clip and copies the share url on success', () => {
+    const fn = slice(CARD, 'async function pcDoClip(username, platform, btn) {', '\n}\n')
+    expect(fn).toContain(
+      "apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })",
+    )
+    expect(fn).toContain('navigator.clipboard.writeText(clipUrl)')
   })
 })
 

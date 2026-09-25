@@ -903,6 +903,22 @@ function renderProfileCardView() {
     }
   }
 
+  // Clip — ext-only (the site has no live-clip capability), same append
+  // pattern as +add channel. Twitch-only, only while the subject is live
+  // (old content.js card's own gate). Hotkey 'c' — free in the existing
+  // t/k/y/h/f/w/d/@/m/b/+ map.
+  if (platform === 'twitch' && (data.twitch_is_live || data.live_status?.twitch)) {
+    const actionsRow = card.querySelector('.hs-card-actions')
+    if (actionsRow) {
+      const clipBtn = document.createElement('button')
+      clipBtn.type = 'button'
+      clipBtn.className = 'hs-card-action'
+      clipBtn.dataset.hsCardAction = 'clip'
+      clipBtn.innerHTML = hk('clip', escapeHtml)
+      actionsRow.appendChild(clipBtn)
+    }
+  }
+
   // Notes — the ext's own local/chrome.storage system, now with server sync
   // (user-notes.js's hsNoteSyncOnOpen/hsNoteSave/hsNoteDelete): logged in +
   // a real heatsync profile id (kick/yt synth ids have no server row) →
@@ -1494,10 +1510,12 @@ function setupProfileCardHandlers() {
         return
       }
       // Keymap: t/k/y/h jump to platform pills (twitch/kick/youtube/heatsync),
-      // f follow, w whisper, d dm, @ mention, m mute, b block, + add channel.
-      // '=' aliases '+' (shifted on US keyboards) for one-handed access.
+      // f follow, w whisper, d dm, @ mention, m mute, b block, + add channel,
+      // c clip (twitch, live only — button doesn't exist otherwise, so the
+      // querySelector below is just null and nothing happens). '=' aliases
+      // '+' (shifted on US keyboards) for one-handed access.
       const key = e.key.toLowerCase()
-      const allowed = new Set(['t', 'k', 'y', 'h', 'f', 'w', 'd', '@', 'm', 'b', '+', '='])
+      const allowed = new Set(['t', 'k', 'y', 'h', 'f', 'w', 'd', '@', 'm', 'b', '+', '=', 'c'])
       if (!allowed.has(key)) return
       const target = key === '=' ? '+' : key
       let btn
@@ -1507,6 +1525,8 @@ function setupProfileCardHandlers() {
         btn = document.querySelector(`.hs-card-plat-link[data-tone="${tone}"]`)
       } else if (target === '+') {
         btn = document.querySelector('.hs-card-action[data-hs-card-action="addchannel"]')
+      } else if (target === 'c') {
+        btn = document.querySelector('.hs-card-action[data-hs-card-action="clip"]')
       } else {
         const action = { f: 'follow', w: 'whisper', d: 'dm', '@': 'mention', m: 'mute', b: 'block' }[target]
         btn = document.querySelector(`.hs-card-action[data-hs-card-action="${action}"]`)
@@ -1523,7 +1543,7 @@ function setupProfileCardHandlers() {
 // Dispatches a click on a .hs-card-action button (data-hs-card-action) to
 // the same fetch/toggle functions the old per-button addEventListener calls
 // used — the delegated click handler above is the one call site.
-function pcHandleCardAction(actionKey, _btn) {
+function pcHandleCardAction(actionKey, btn) {
   if (!activeProfileCard) return
   const { username, data, platform } = activeProfileCard
   const rel = data?.relationship || {}
@@ -1549,6 +1569,9 @@ function pcHandleCardAction(actionKey, _btn) {
       break
     case 'addchannel':
       pcAddAsChannel(username)
+      break
+    case 'clip':
+      pcDoClip(username, platform, btn)
       break
   }
 }
@@ -1589,6 +1612,44 @@ function pcDoDm(username, platform) {
   closeProfileCard()
   // _openDmFor handles platform-aware heatsync-handle resolution + tab switch + prefill.
   cleanup.setTimeout(() => _openDmFor(username, platform), 50)
+}
+
+// Clip — ext-only, twitch-only, only shown while the card subject is live
+// (see renderProfileCardView). Two-click UX ported from the old content.js
+// card: first click creates the clip + copies its share URL, second click
+// (state kept on the button's own dataset, since this dispatches fresh each
+// time rather than closing over a persistent var) opens the editor.
+// Channel = whatever the overlay is currently scoped to (same context
+// followage uses), falling back to the card subject's own login.
+async function pcDoClip(username, platform, btn) {
+  if (platform !== 'twitch' || !btn) return
+  if (btn.dataset.editUrl) {
+    window.open(safeUrl(btn.dataset.editUrl), '_blank', 'noopener')
+    return
+  }
+  if (btn.disabled) return
+  const channelLogin =
+    (typeof getTooltipChannelContext === 'function' ? getTooltipChannelContext(platform) : null) || username
+  btn.disabled = true
+  btn.textContent = 'clipping…'
+  try {
+    const resp = await apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })
+    if (!resp?.ok) throw new Error(resp?.error || 'unknown')
+    const editUrl = resp.data?.edit_url || resp.data?.editUrl || null
+    const clipUrl = resp.data?.clip_url || resp.data?.clipUrl || null
+    if (editUrl) btn.dataset.editUrl = editUrl
+    if (clipUrl) {
+      try {
+        await navigator.clipboard.writeText(clipUrl)
+      } catch {}
+    }
+    btn.textContent = clipUrl ? 'url copied' : editUrl ? 'clip created' : 'clip'
+    btn.disabled = false
+  } catch (err) {
+    btn.innerHTML = hk('clip', escapeHtml)
+    btn.disabled = false
+    if (typeof showToast === 'function') showToast(`clip failed: ${err?.message || 'error'}`, 'error')
+  }
 }
 
 async function pcAddAsChannel(username) {

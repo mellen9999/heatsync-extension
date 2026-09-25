@@ -2330,7 +2330,7 @@ function renderFeedContent(content, emoteRefs) {
         if (i % 2 === 1) return part
         // (?<!&) — part is already escaped; don't tag #x27 inside &#x27; etc.
         return part.replace(/(?<!&)#([a-zA-Z][a-zA-Z0-9_]{1,29})\b/g, (_m, tag) => {
-          return `<a href="https://heatsync.org/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
+          return `<a href="https://heatsync.org/feed/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
         })
       })
       .join('')
@@ -3430,7 +3430,7 @@ function renderDiscoverTab() {
         if (!name) continue
         const chip = document.createElement('a')
         chip.className = 'hs-discover-chip'
-        chip.href = `https://heatsync.org/tags/${encodeURIComponent(name)}`
+        chip.href = `https://heatsync.org/feed/tags/${encodeURIComponent(name)}`
         chip.target = '_blank'
         chip.rel = 'noopener noreferrer'
         chip.textContent = name

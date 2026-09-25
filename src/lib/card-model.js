@@ -225,7 +225,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     })
   }
   if (!isAnonymous && profile.username) {
-    platforms.push({ key: 'hs', hotkey: 'h', login: profile.username, live: false, viewers: null, verified: false, url: `/u/${encodeURIComponent(profile.username)}` })
+    platforms.push({ key: 'hs', hotkey: 'h', login: profile.username, live: false, viewers: null, verified: false, url: `/profile/${encodeURIComponent(profile.username)}` })
   }
 
   // ---- sheet rows ----------------------------------------------------------
@@ -368,7 +368,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     mod,
     accent: ctx.accent || null,
     links: {
-      profileUrl: !isAnonymous && profile.username ? `/u/${encodeURIComponent(profile.username)}` : null,
+      profileUrl: !isAnonymous && profile.username ? `/profile/${encodeURIComponent(profile.username)}` : null,
       chatterUrl: identity.platform && identity.login ? `/chatter/${encodeURIComponent(identity.platform)}/${encodeURIComponent(identity.login)}` : null,
       logsUrl: identity.platform && identity.login && identity.login.toLowerCase() !== 'anonymous'
         ? `/${identity.platform}/${encodeURIComponent(identity.login.toLowerCase())}/logs` : null,

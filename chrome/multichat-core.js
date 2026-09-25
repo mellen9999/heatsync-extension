@@ -12749,7 +12749,7 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
     })
   }
   if (!isAnonymous && profile.username) {
-    platforms.push({ key: 'hs', hotkey: 'h', login: profile.username, live: false, viewers: null, verified: false, url: `/u/${encodeURIComponent(profile.username)}` })
+    platforms.push({ key: 'hs', hotkey: 'h', login: profile.username, live: false, viewers: null, verified: false, url: `/profile/${encodeURIComponent(profile.username)}` })
   }
 
   // ---- sheet rows ----------------------------------------------------------
@@ -12892,7 +12892,7 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
     mod,
     accent: ctx.accent || null,
     links: {
-      profileUrl: !isAnonymous && profile.username ? `/u/${encodeURIComponent(profile.username)}` : null,
+      profileUrl: !isAnonymous && profile.username ? `/profile/${encodeURIComponent(profile.username)}` : null,
       chatterUrl: identity.platform && identity.login ? `/chatter/${encodeURIComponent(identity.platform)}/${encodeURIComponent(identity.login)}` : null,
       logsUrl: identity.platform && identity.login && identity.login.toLowerCase() !== 'anonymous'
         ? `/${identity.platform}/${encodeURIComponent(identity.login.toLowerCase())}/logs` : null,
@@ -14040,7 +14040,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '24e000b9+-202609251904' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e072670d+-202609251946' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27468,7 +27468,7 @@ function hsExtRenderBio(text) {
         return `<span class="hs-mc-user hs-card-bio-mention" data-username="${escapeHtml(s.slice(1))}">@${escapeHtml(s.slice(1))}</span>`
       }
       if (s[0] === '#' && s.length >= 2) {
-        return `<a class="hs-card-bio-tag" href="https://heatsync.org/tags/${encodeURIComponent(s.slice(1).toLowerCase())}" target="_blank" rel="noopener noreferrer">#${escapeHtml(s.slice(1))}</a>`
+        return `<a class="hs-card-bio-tag" href="https://heatsync.org/feed/tags/${encodeURIComponent(s.slice(1).toLowerCase())}" target="_blank" rel="noopener noreferrer">#${escapeHtml(s.slice(1))}</a>`
       }
       return escapeHtml(s)
     })
@@ -36303,7 +36303,7 @@ function renderFeedContent(content, emoteRefs) {
         if (i % 2 === 1) return part
         // (?<!&) — part is already escaped; don't tag #x27 inside &#x27; etc.
         return part.replace(/(?<!&)#([a-zA-Z][a-zA-Z0-9_]{1,29})\b/g, (_m, tag) => {
-          return `<a href="https://heatsync.org/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
+          return `<a href="https://heatsync.org/feed/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
         })
       })
       .join('')
@@ -37403,7 +37403,7 @@ function renderDiscoverTab() {
         if (!name) continue
         const chip = document.createElement('a')
         chip.className = 'hs-discover-chip'
-        chip.href = `https://heatsync.org/tags/${encodeURIComponent(name)}`
+        chip.href = `https://heatsync.org/feed/tags/${encodeURIComponent(name)}`
         chip.target = '_blank'
         chip.rel = 'noopener noreferrer'
         chip.textContent = name
@@ -69172,7 +69172,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         const tag = p.slice(1)
         const a = document.createElement('a')
         a.className = 'hs-hashtag'
-        a.href = `https://heatsync.org/tags/${encodeURIComponent(tag)}`
+        a.href = `https://heatsync.org/feed/tags/${encodeURIComponent(tag)}`
         a.target = '_blank'
         a.rel = 'noopener noreferrer'
         a.dataset.tag = tag
@@ -69198,7 +69198,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // (&#x27; → #x27, &#39; → #39) must NOT match, else an apostrophe renders
     // as a bogus magenta tag.
     return outsideTags(html, /(?<!&)#([a-zA-Z][a-zA-Z0-9_]{1,29})\b/g, (_m, tag) => {
-      return `<a href="https://heatsync.org/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
+      return `<a href="https://heatsync.org/feed/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
     })
   }
 

@@ -8972,7 +8972,7 @@
         const tag = p.slice(1)
         const a = document.createElement('a')
         a.className = 'hs-hashtag'
-        a.href = `https://heatsync.org/tags/${encodeURIComponent(tag)}`
+        a.href = `https://heatsync.org/feed/tags/${encodeURIComponent(tag)}`
         a.target = '_blank'
         a.rel = 'noopener noreferrer'
         a.dataset.tag = tag
@@ -8998,7 +8998,7 @@
     // (&#x27; → #x27, &#39; → #39) must NOT match, else an apostrophe renders
     // as a bogus magenta tag.
     return outsideTags(html, /(?<!&)#([a-zA-Z][a-zA-Z0-9_]{1,29})\b/g, (_m, tag) => {
-      return `<a href="https://heatsync.org/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
+      return `<a href="https://heatsync.org/feed/tags/${encodeURIComponent(tag)}" target="_blank" rel="noopener noreferrer" class="hs-hashtag" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}</a>`
     })
   }
 

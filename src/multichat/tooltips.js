@@ -1033,7 +1033,7 @@ function hsExtRenderBio(text) {
         return `<span class="hs-mc-user hs-card-bio-mention" data-username="${escapeHtml(s.slice(1))}">@${escapeHtml(s.slice(1))}</span>`
       }
       if (s[0] === '#' && s.length >= 2) {
-        return `<a class="hs-card-bio-tag" href="https://heatsync.org/tags/${encodeURIComponent(s.slice(1).toLowerCase())}" target="_blank" rel="noopener noreferrer">#${escapeHtml(s.slice(1))}</a>`
+        return `<a class="hs-card-bio-tag" href="https://heatsync.org/feed/tags/${encodeURIComponent(s.slice(1).toLowerCase())}" target="_blank" rel="noopener noreferrer">#${escapeHtml(s.slice(1))}</a>`
       }
       return escapeHtml(s)
     })

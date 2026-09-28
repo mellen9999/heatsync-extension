@@ -743,6 +743,28 @@ function parseYoutubeChannel(pathname, search) {
 }
 
 /**
+ * What KIND of identifier parseYoutubeChannel(pathname, search) returned for
+ * the same URL — 'handle' and 'channel' ARE a channel identity (safe to feed
+ * straight to /api/profile or a 7TV/channel-emote lookup); 'video' is a
+ * video id, which is NOT a channel identity — it must be resolved to its
+ * owning channel first (oEmbed / the server) before any identity/profile/
+ * emote lookup, and it must never be lowercased (case-sensitive). Callers
+ * that skip this and pass a video id straight into a channel-keyed lookup
+ * get a 404 (or worse, a same-cased collision) — see parseYoutubeChannel's
+ * `v`/`/live/<id>` branches, which hand back the bare id with no type tag.
+ * @param {string} pathname
+ * @param {string} search
+ * @returns {'handle'|'channel'|'video'|null}
+ */
+function parseYoutubeChannelType(pathname, search) {
+  if (/^\/@([^/]+)/.test(pathname)) return 'handle'
+  if (/^\/channel\/(UC[\w-]+)/.test(pathname)) return 'channel'
+  if (new URLSearchParams(search).get('v')) return 'video'
+  if (/^\/live\/([^/?]+)/.test(pathname)) return 'video'
+  return null
+}
+
+/**
  * True if two YouTube `location.search` strings are the same video — compares
  * only the `v` param. YouTube's own &pp=/&list=/&index= replaceState churn
  * (autoplay tracking, playlist position) fires mid-stream on the SAME video;
@@ -1117,6 +1139,7 @@ const utils = {
   identityYtLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
+  parseYoutubeChannelType,
   ytSameVideoSearch,
 
   // Emote provider priority
@@ -1180,6 +1203,7 @@ export {
   ordOf,
   outsideTags,
   parseYoutubeChannel,
+  parseYoutubeChannelType,
   parseYtGiftCount,
   qsArray,
   qsaArray,

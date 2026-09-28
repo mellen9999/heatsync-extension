@@ -433,11 +433,13 @@ const SETTINGS = [
   {
     key: 'ytChatOnNonLive',
     type: 'bool',
-    default: true,
-    // default flipped false→true (chat on all YT pages); one-shot migration
-    // so installs with a materialized `false` in the sync blob adopt the new
-    // default once — opting out afterwards sticks (guard key stamped)
-    migrate: 'ytChatOnNonLiveOn_v1',
+    default: false,
+    // default is OFF: panel shows only on a page's own live stream (or a
+    // followed-live channel) unless the user opts into chat on every YT
+    // page. A prior migration force-flipped this true for everyone
+    // (including explicit opt-outs) — removed; no migration needed to
+    // reach the schema default, and forcing a flip in either direction
+    // stomps a user's real choice.
     scope: 'sync',
     category: 'display',
     section: 'layout',
@@ -1495,7 +1497,7 @@ const SETTINGS = [
     // gated live by the wheel listener reading scrollWheelVolumeEnabled.
     key: 'scrollWheelVolume',
     type: 'bool',
-    default: true,
+    default: false,
     scope: 'sync',
     category: 'tweaks',
     section: 'player overlay',

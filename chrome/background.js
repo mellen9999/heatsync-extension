@@ -1282,6 +1282,12 @@ const USER_COSMETICS_TTL = 30 * 60 * 1000
 // Shorter TTL for negative results (no paint+badge) so newly-added cosmetics
 // pick up within 5 min instead of being masked for 30.
 const COSMETICS_NEGATIVE_TTL = 5 * 60 * 1000
+// A 429/5xx/network failure is NOT proof of "no cosmetics" — caching it at
+// COSMETICS_NEGATIVE_TTL (or forever) would blank a real paint/badge for
+// minutes. But caching nothing at all just re-fires the same doomed request
+// on the next flush (800ms later), which is what turned a kick.com rate-limit
+// into a storm. Short negative TTL: fails fast, retries soon, never poisons.
+const KICK_TRANSIENT_NEGATIVE_TTL = 20 * 1000
 const USER_COSMETICS_MAX = 500
 // SW-side LRU for /api/embed/resolve responses. Re-rendered feed posts (tab
 // switch, scrollback) reuse cached embed metadata instead of re-fetching
@@ -1731,6 +1737,58 @@ async function fetchWithTimeout(url, opts = {}, ms = 10000) {
     if (Date.now() - _heatsyncBackoffWarnAt > 1000) {
       _heatsyncBackoffWarnAt = Date.now()
       console.warn('[heatsync] 429 — backing off all heatsync fetches for', waitMs, 'ms (first url:', url, ')')
+    }
+  }
+  return resp
+}
+
+// ── kick.com token bucket + backoff ─────────────────────────────────────────
+// get_kick_user_cosmetics + the sender-emote-batch resolver both hit
+// kick.com/api/v1/users/<name> per-chatter with zero pacing — a busy channel's
+// chatter churn fired up to 8 lookups every 800ms with no backoff, tripping
+// kick.com's rate limit and then repeating the exact same burst on the next
+// flush forever. A small token bucket paces steady-state volume; a 429's
+// Retry-After (or a 5s default) pauses every kick.com call until it passes —
+// same shape as the heatsync.org backoff above, scoped to this one host.
+const KICK_COM_BUCKET_RATE = 3 // tokens refilled per second
+const KICK_COM_BUCKET_CAPACITY = 5 // burst allowance
+let _kickComTokens = KICK_COM_BUCKET_CAPACITY
+let _kickComTokensAt = Date.now()
+let kickComBackoffUntil = 0
+let _kickComBackoffWarnAt = 0
+function _kickComTakeToken() {
+  const now = Date.now()
+  const elapsed = (now - _kickComTokensAt) / 1000
+  _kickComTokens = Math.min(KICK_COM_BUCKET_CAPACITY, _kickComTokens + elapsed * KICK_COM_BUCKET_RATE)
+  _kickComTokensAt = now
+  if (_kickComTokens >= 1) {
+    _kickComTokens -= 1
+    return true
+  }
+  return false
+}
+async function fetchKickCom(url, opts = {}, ms = 10000) {
+  while (Date.now() < kickComBackoffUntil) {
+    await new Promise((r) => setTimeout(r, Math.min(500, kickComBackoffUntil - Date.now())))
+  }
+  // Bounded poll for a bucket token rather than a real queue — nothing to
+  // lose on an MV3 service-worker restart, and callers here are already
+  // fire-and-await per-chatter lookups.
+  while (!_kickComTakeToken()) {
+    await new Promise((r) => setTimeout(r, 100))
+  }
+  const resp = await fetchWithTimeout(url, opts, ms)
+  if (resp.status === 429) {
+    const retryAfter = resp.headers.get('retry-after')
+    let waitMs = 5000
+    if (retryAfter) {
+      const n = parseInt(retryAfter, 10)
+      if (!Number.isNaN(n) && n > 0) waitMs = Math.min(60000, n * 1000)
+    }
+    kickComBackoffUntil = Math.max(kickComBackoffUntil, Date.now() + waitMs)
+    if (Date.now() - _kickComBackoffWarnAt > 1000) {
+      _kickComBackoffWarnAt = Date.now()
+      console.warn('[heatsync] kick.com 429 — backing off', waitMs, 'ms')
     }
   }
   return resp
@@ -10309,58 +10367,71 @@ async function handleMessage(message, sender, sendResponse) {
     // kick.com/api/v1/users/{username} first (returns {id, username, ...}),
     // cache that id forever (LRU), then hit 7TV with the id to pull cosmetics
     // and the linked Twitch connection.
+    //
+    // message.kickIds: optional { username → numeric kick user id }, threaded
+    // through from the Pusher tap / server relay, which already carry the
+    // sender's numeric id on every chat message. When present, Step 1 is
+    // skipped entirely — this is what took a busy Kick channel from ~2
+    // kick.com+7TV round-trips per chatter down to one.
     const usernames = (message.kickUsernames || []).slice(0, 10)
+    const kickIds = message.kickIds || {}
     ;(async () => {
       const result = {}
       await Promise.all(
         usernames.map(async (username) => {
           const cacheKey = `kick:${username}`
           const cached = userCosmeticsCache.get(cacheKey)
-          const isNegative = cached && !cached.paint && !cached.badge
-          const ttl = isNegative ? COSMETICS_NEGATIVE_TTL : USER_COSMETICS_TTL
-          if (cached && Date.now() - cached.fetchedAt < ttl) {
-            // kickId is absent on cache entries written before this field
-            // existed — omit it rather than force a re-fetch (graceful).
-            result[username] = {
-              paint: cached.paint,
-              badge: cached.badge,
-              twitchId: cached.twitchId || null,
-              ...(cached.kickId ? { kickId: cached.kickId } : {}),
-              avatar: kickUsernameToPfpCache.get(username) || null,
+          // A transient (429/5xx/network) failure gets a short negative-TTL
+          // cache entry, NOT the long confirmed-negative TTL and NOT forever —
+          // it fails fast on repeat asks within the window instead of
+          // re-hitting a rate-limited endpoint, but forgets quickly so a real
+          // cosmetic isn't masked. While cooling down, the key is left OUT of
+          // `result` (undefined, not null) so the client knows to retry later
+          // rather than caching a permanent "no cosmetics".
+          if (cached?.transient) {
+            if (Date.now() - cached.fetchedAt < KICK_TRANSIENT_NEGATIVE_TTL) return
+          } else {
+            const isNegative = cached && !cached.paint && !cached.badge
+            const ttl = isNegative ? COSMETICS_NEGATIVE_TTL : USER_COSMETICS_TTL
+            if (cached && Date.now() - cached.fetchedAt < ttl) {
+              // kickId is absent on cache entries written before this field
+              // existed — omit it rather than force a re-fetch (graceful).
+              result[username] = {
+                paint: cached.paint,
+                badge: cached.badge,
+                twitchId: cached.twitchId || null,
+                ...(cached.kickId ? { kickId: cached.kickId } : {}),
+                avatar: kickUsernameToPfpCache.get(username) || null,
+              }
+              return
             }
-            return
           }
           try {
-            // Step 1 — username → kick user_id (cached separately)
-            let kickUserId = kickUsernameToIdCache.get(username)
+            // Step 1 — username → kick user_id. Skip the fetch entirely when
+            // the caller already knows the numeric id (pusher/relay) or it's
+            // cached from a prior resolve; only a cold, id-less lookup pays
+            // for kick.com.
+            const providedId = String(kickIds[username] || '')
+            let kickUserId = /^\d+$/.test(providedId) ? providedId : kickUsernameToIdCache.get(username)
             if (!kickUserId) {
-              const userResp = await fetchWithTimeout(`https://kick.com/api/v1/users/${encodeURIComponent(username)}`)
+              const userResp = await fetchKickCom(`https://kick.com/api/v1/users/${encodeURIComponent(username)}`)
               if (!userResp.ok) {
                 userResp.body?.cancel?.()
-                // Only a 404 is proof the user has no cosmetics — cache that.
-                // A 429/5xx is transient; caching it blanks real paints/badges
-                // for COSMETICS_NEGATIVE_TTL. Matches get_user_cosmetics / yt /
-                // fetch_paints, which all skip the cache on non-404 failures.
+                // Only a 404 is proof the user has no cosmetics — cache that
+                // long. A 429/5xx is transient — short negative TTL (see above).
                 if (userResp.status === 404) setUserCosmetic(cacheKey, null)
-                result[username] = null
+                else setUserCosmetic(cacheKey, { paint: null, badge: null, transient: true })
                 return
               }
               const userData = await userResp.json().catch(() => null)
               kickUserId = userData?.id || null
               if (!kickUserId) {
                 setUserCosmetic(cacheKey, null)
-                result[username] = null
                 return
               }
-              if (kickUsernameToIdCache.size >= 1000) {
-                kickUsernameToIdCache.delete(kickUsernameToIdCache.keys().next().value)
-              }
-              kickUsernameToIdCache.set(username, kickUserId)
               // Capture the real avatar from the same response (free — no extra
-              // fetch). Kept parallel to the id cache so it's available even when
-              // a later request skips v1/users on an id-cache hit. NOTE: v1/users
-              // spells it `profilepic` (no underscore) — v2/channels uses
-              // `profile_pic`; accept both to be safe.
+              // fetch). NOTE: v1/users spells it `profilepic` (no underscore) —
+              // v2/channels uses `profile_pic`; accept both to be safe.
               const _pfp = userData?.profilepic || userData?.profile_pic
               if (_pfp) {
                 if (kickUsernameToPfpCache.size >= 1000) {
@@ -10369,6 +10440,10 @@ async function handleMessage(message, sender, sendResponse) {
                 kickUsernameToPfpCache.set(username, _pfp)
               }
             }
+            if (kickUsernameToIdCache.size >= 1000) {
+              kickUsernameToIdCache.delete(kickUsernameToIdCache.keys().next().value)
+            }
+            kickUsernameToIdCache.set(username, kickUserId)
             // Step 2 — kick user_id → 7TV cosmetics + twitch connection.
             // Most kick chatters have no 7TV account (404) — the resolved
             // kickId + avatar must still flow back so kick-origin heatsync
@@ -10376,9 +10451,13 @@ async function handleMessage(message, sender, sendResponse) {
             const resp = await fetchWithTimeout(`https://7tv.io/v3/users/kick/${kickUserId}`)
             if (!resp.ok) {
               resp.body?.cancel?.()
-              const bare = { paint: null, badge: null, twitchId: null, twitchUsername: null, kickId: kickUserId }
-              if (resp.status === 404) setUserCosmetic(cacheKey, bare) // genuine: no 7TV account
-              result[username] = { ...bare, avatar: kickUsernameToPfpCache.get(username) || null }
+              if (resp.status === 404) {
+                const bare = { paint: null, badge: null, twitchId: null, twitchUsername: null, kickId: kickUserId }
+                setUserCosmetic(cacheKey, bare) // genuine: no 7TV account
+                result[username] = { ...bare, avatar: kickUsernameToPfpCache.get(username) || null }
+              } else {
+                setUserCosmetic(cacheKey, { paint: null, badge: null, transient: true })
+              }
               return
             }
             const data = await resp.json()
@@ -10398,7 +10477,8 @@ async function handleMessage(message, sender, sendResponse) {
             setUserCosmetic(cacheKey, full)
             result[username] = { ...full, avatar: kickUsernameToPfpCache.get(username) || null }
           } catch (_e) {
-            result[username] = null // transient: network/timeout — don't cache
+            // transient: network/timeout — short negative TTL, key omitted
+            setUserCosmetic(cacheKey, { paint: null, badge: null, transient: true })
           }
         }),
       )
@@ -10669,7 +10749,7 @@ async function handleMessage(message, sender, sendResponse) {
             let kid = kickUsernameToIdCache.get(id)
             if (kid === undefined) {
               try {
-                const ur = await fetchWithTimeout(`https://kick.com/api/v1/users/${encodeURIComponent(id)}`)
+                const ur = await fetchKickCom(`https://kick.com/api/v1/users/${encodeURIComponent(id)}`)
                 if (ur.ok) {
                   const uj = await ur.json()
                   kid = uj?.id != null ? String(uj.id) : null

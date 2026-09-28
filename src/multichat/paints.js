@@ -54,7 +54,15 @@
 
 const HS_PAINT_CACHE_MAX = 500
 const HS_PAINT_BATCH_SIZE = 50
-const HS_PAINT_BATCH_DELAY = 100
+// 2s window — was 100ms, which on a busy channel's chatter churn meant a
+// fresh /api/paints request roughly every 100-120ms (HS_PAINT_BACKLOG_DELAY
+// below) until the backlog drained: a real burst rate far above the ~1/s
+// steady-state average, and most of it wasted on requests too small to
+// justify their own round trip. 50 ids/2s is still well within TTL freshness
+// budgets (paints don't change mid-stream) and cuts request volume sharply
+// with no visible latency cost — a name paints in within 2s of first render,
+// not 100ms.
+const HS_PAINT_BATCH_DELAY = 2000
 // Mirrors MC_COSMETICS_PENDING_MAX (main.js) — a very busy/firehose channel
 // can queue unique uids faster than the batch drain rate; cap so the pending
 // Set can't grow unbounded between flushes.

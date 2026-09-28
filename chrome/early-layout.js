@@ -133,9 +133,10 @@
   } catch {}
   const chatWidth = parseInt(readLS('chatWidth', '340'), 10) || 340
   const chatHeight = parseInt(readLS('chatHeight', ''), 10) || null
-  // YT chat-on-all-pages (ytChatOnNonLive, default ON). String() — readLS
-  // JSON-parses, so '1' comes back as the number 1.
-  const ytNonLive = platform === 'yt' && String(readLS('ytNonLiveChat', '1')) === '1'
+  // YT chat-on-all-pages (ytChatOnNonLive, default OFF — panel shows only on
+  // a live page unless the user opts in). String() — readLS JSON-parses, so
+  // '1'/'0' come back as numbers.
+  const ytNonLive = platform === 'yt' && String(readLS('ytNonLiveChat', '0')) === '1'
 
   // #hs-bridge = BG send-bridge tab: the multichat never boots there, so a
   // popout prepaint would be a permanent black screen over the native chat.
@@ -177,11 +178,12 @@
       // overlay fills edge-to-edge. Prepaint it (full-window black, below) so
       // there's no flash of native YT chat before our overlay mounts.
       if (isPopout) return true
-      // Chat-on-all-pages (ytChatOnNonLive, default ON, mirrored by its apply
-      // fn): the panel mounts on every YT page, so prepaint every page.
-      // Opted out ('0'): panel only appears on confirmed livestreams, which
-      // can't be told from a VOD at document_start — no prepaint, the overlay
-      // docks into #secondary post-mount like before.
+      // Chat-on-all-pages (ytChatOnNonLive, default OFF, mirrored by its
+      // apply fn): opted in — the panel mounts on every YT page, prepaint
+      // every page. Default/opted-out: panel only appears on confirmed
+      // livestreams (or a followed-live channel), which can't be told from
+      // a VOD/home page at document_start — no prepaint, the overlay
+      // mounts post-boot only once liveness resolves.
       return ytNonLive
     }
     return false

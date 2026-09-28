@@ -76,6 +76,16 @@
       display: none !important;
     }
 
+    /* Twitch: a no-channel page (directory/settings/search/…) with ZERO
+       configured chat tabs has nothing to show — an empty 340px panel
+       floating over pure browsing. hs-twitch-no-channel-empty (set by
+       updateTwitchNoChannelClass only when both no-channel AND
+       config.channels is empty) hides it; a user who HAS tabs keeps the real
+       feature — chat follows you while browsing away from it. */
+    body.hs-platform-twitch.hs-twitch-no-channel-empty #hs-mc-container {
+      display: none !important;
+    }
+
     /* YOUTUBE FULLSCREEN — hide the panel outright.
        On twitch, fullscreen promotes #root to the top layer, so a body-mounted
        panel is simply never painted and no rule is needed. YouTube instead

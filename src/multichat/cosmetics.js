@@ -286,6 +286,17 @@ const kickNameToTwitchUsername = new Map() // kickHandle → twitchUsername | nu
 // without a linked twitch account.
 const kickNamePaintUid = new Map()
 const kickNameLookupPending = new Set()
+// kickHandle → numeric kick user id, when the caller already knows it (the
+// Pusher tap / server relay carry it on every message) — threaded into the
+// BG request so it can skip the kick.com username→id lookup entirely.
+const kickNamePendingIds = new Map()
+// kickHandle → timestamp before which a fresh queue is refused. Set only when
+// a flush came back WITHOUT this key (BG hit a transient 429/5xx/network
+// failure and deliberately omitted it — see flushKickNameLookups). Without
+// this, a busy channel's next message from the same chatter re-queues into
+// the very next 800ms flush and re-hits the same rate limit.
+const kickNameRetryAt = new Map()
+const KICK_NAME_RETRY_COOLDOWN = 20 * 1000
 let kickNameLookupTimer = null
 const KICK_NAME_BATCH = 8
 const KICK_NAME_CACHE_MAX = 1000
@@ -310,11 +321,14 @@ function getKickLinkedTwitch(kickUsername) {
   return null
 }
 
-function queueKickNameToCosmetics(user) {
+function queueKickNameToCosmetics(user, kickId) {
   const key = (user || '').toLowerCase()
   if (!key) return
   if (kickNameResolved.has(key)) return
   if (kickNameLookupPending.has(key)) return
+  const retryAt = kickNameRetryAt.get(key)
+  if (retryAt && Date.now() < retryAt) return
+  if (kickId != null && /^\d+$/.test(String(kickId))) kickNamePendingIds.set(key, String(kickId))
   kickNameLookupPending.add(key)
   if (kickNameLookupPending.size >= KICK_NAME_BATCH) {
     if (kickNameLookupTimer) {
@@ -335,18 +349,33 @@ function queueKickNameToCosmetics(user) {
 async function flushKickNameLookups() {
   if (!kickNameLookupPending.size) return
   const batch = [...kickNameLookupPending].slice(0, KICK_NAME_BATCH)
+  const kickIds = {}
   batch.forEach((k) => {
     kickNameLookupPending.delete(k)
+    const id = kickNamePendingIds.get(k)
+    if (id) kickIds[k] = id
+    kickNamePendingIds.delete(k)
   })
   let resp = null
   try {
-    resp = await safeSendMessage({ type: 'get_kick_user_cosmetics', kickUsernames: batch })
+    resp = await safeSendMessage({ type: 'get_kick_user_cosmetics', kickUsernames: batch, kickIds })
   } catch {
     resp = null
   }
   const cosmetics = resp?.cosmetics || {}
   const changedIds = []
   for (const key of batch) {
+    // BG omits the key entirely on a transient (429/5xx/network) failure —
+    // it is NOT the same as a resolved "no cosmetics" (which comes back as a
+    // real object with null fields). Don't mark it resolved: a short cooldown
+    // lets it retry later instead of getting permanently cached as null for
+    // the rest of the session (the original bug) or instantly re-queued into
+    // the next 800ms flush (a re-hit of the same rate limit).
+    if (!Object.hasOwn(cosmetics, key)) {
+      kickNameRetryAt.set(key, Date.now() + KICK_NAME_RETRY_COOLDOWN)
+      continue
+    }
+    kickNameRetryAt.delete(key)
     const c = cosmetics[key]
     evictKickNameCache()
     const tid = c?.twitchId ? String(c.twitchId) : null
@@ -453,10 +482,15 @@ function queueMcCosmeticsLookup(userId) {
   if (mcCosmeticsPending.size >= MC_COSMETICS_PENDING_MAX) return
   mcCosmeticsPending.add(userId)
   if (!mcCosmeticsTimer) {
+    // 2s window — was 100ms, which on a busy channel's chatter churn fired a
+    // fresh /api/cosmetics/batch request roughly every 100-600ms continuously
+    // (see the 500ms continuation below). Cosmetics don't change mid-stream,
+    // so batching a whole 2s worth of newly-seen chatters into one request
+    // costs nothing but a slightly later first paint for the tail of the batch.
     mcCosmeticsTimer = cleanup.setTimeout(() => {
       mcCosmeticsTimer = null
       flushMcCosmeticsBatch()
-    }, 100)
+    }, 2000)
   }
 }
 
@@ -487,7 +521,7 @@ function flushMcCosmeticsBatch() {
     mcCosmeticsTimer = cleanup.setTimeout(() => {
       mcCosmeticsTimer = null
       flushMcCosmeticsBatch()
-    }, 500)
+    }, 2000)
   }
 }
 

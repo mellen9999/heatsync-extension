@@ -1366,7 +1366,13 @@
   const senderEmotePending = new Set()
   let senderEmoteTimer = null
   let senderEmoteTimerUrgent = false
-  const SENDER_EMOTE_BATCH = 15
+  // background.js's get_sender_emotes handler truncates to 30 keys
+  // (`.slice(0, 30)`) — this is the real ceiling, not an arbitrary choice.
+  // Was 15, which under a busy channel's chatter churn hit the immediate-
+  // flush branch in queueSenderEmoteFetch below every couple new chatters,
+  // largely defeating the point of batching. Doubling it to the server's
+  // actual cap halves how often that branch fires for the same churn rate.
+  const SENDER_EMOTE_BATCH = 30
   // Per-sender fetch freshness (in-memory, NOT persisted). A sender's set was
   // previously fetched once and never re-validated, so any emote they ADDED
   // afterward never reached viewers who'd already cached them. Re-fetch when the
@@ -1494,9 +1500,10 @@
     }
     // A non-empty cached set never verified this session is the one case where
     // first paint may already be showing stale (since-removed) emotes — fetch
-    // on a 50ms tick instead of 250ms so the correction lands before the eye
-    // settles. Only ever SHORTENS an armed timer; batching is unaffected
-    // because same-tick renders queue their keys before any timer fires.
+    // on a 50ms tick instead of the steady-state window so the correction
+    // lands before the eye settles. Only ever SHORTENS an armed timer;
+    // batching is unaffected because same-tick renders queue their keys
+    // before any timer fires.
     const urgent = !fetchedAt && !!(known && known.size > 0)
     if (senderEmoteTimer && urgent && !senderEmoteTimerUrgent) {
       cleanup.clearTimeout(senderEmoteTimer)
@@ -1504,13 +1511,19 @@
     }
     if (!senderEmoteTimer) {
       senderEmoteTimerUrgent = urgent
+      // 2s steady-state window — was 250ms, which on a busy channel's chatter
+      // churn meant a fresh get_sender_emotes request every ~250ms-1s even
+      // outside the immediate-flush-at-cap branch above. Sender emote sets
+      // don't change mid-message; a 2s delay before an unseen chatter's
+      // custom emotes resolve is invisible next to the 2min refetch TTL
+      // (SENDER_EMOTE_REFETCH_MS) that governs freshness overall.
       senderEmoteTimer = cleanup.setTimeout(
         () => {
           senderEmoteTimer = null
           senderEmoteTimerUrgent = false
           flushSenderEmoteBatch()
         },
-        urgent ? 50 : 250,
+        urgent ? 50 : 2000,
       )
     }
   }
@@ -3424,9 +3437,9 @@
   // whispers entirely).
   let whisperToastEnabled = true
 
-  // Scroll-wheel volume on the player (classic BTTV behavior, default on) —
+  // Scroll-wheel volume on the player (classic BTTV behavior, default off) —
   // read live by the document-level wheel listener (see setupScrollWheelVolume).
-  let scrollWheelVolumeEnabled = true
+  let scrollWheelVolumeEnabled = false
 
   // Util row collapsed — hides C/T/F-/F+/⚙ for clean single-line tabs
 
@@ -5405,6 +5418,16 @@
 
   function updateTabBar() {
     if (!tabBarElement) return
+
+    // Every add/remove-channel path calls updateTabBar() right after mutating
+    // config.channels — single chokepoint to keep hs-twitch-no-channel-empty
+    // (empty-panel hide, see updateTwitchNoChannelClass) in sync without
+    // threading a call through every one of those call sites individually.
+    if (hostPlatform === 'twitch' && typeof updateTwitchNoChannelClass === 'function') {
+      try {
+        updateTwitchNoChannelClass()
+      } catch (_) {}
+    }
 
     // Clear existing channel tabs (keep built-in tabs). NOTE: the exclusion list
     // must cover EVERY util button or this strips it — native + actions live in
@@ -8236,7 +8259,11 @@
       if (cached) {
         m.userId = cached
         m._uidTwitch = cached
-      } else if (cached === undefined) queueKickNameToCosmetics(m.user)
+      } else if (cached === undefined) {
+        // m.userId (pre-hoist) is the raw numeric kick id — skips the
+        // kick.com username→id lookup when the pusher tap already gave it.
+        queueKickNameToCosmetics(m.user, m.userId || null)
+      }
     }
     // Kick-space paint uid (kick_<kickid>) — set independent of whether the
     // twitch lookup above resolved (a kick-origin HeatSync account can have
@@ -11006,16 +11033,27 @@
    * Resolve a live candidate ({name, platform, youtubeUrl?}) to a real channel tab.
    * Auto-adds the channel to config.channels so 'live' is a launcher, never the sticky tab.
    */
-  async function resolveLiveCandidateToTab({ name, platform, youtubeUrl }) {
+  async function resolveLiveCandidateToTab({ name, platform, youtubeUrl, _videoId }) {
     const lower = name.toLowerCase()
     const reserved = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
 
     // Resolve all 3 platform identities up-front via /api/profile so the resulting
     // tab pulls Twitch + Kick + YouTube together — not just the platform we
     // anchored on. resolveIdentity is the same path pcAddAsChannel uses.
+    //
+    // `_videoId` (set by get_watching_channels when its oEmbed handle lookup
+    // failed) means `name` is still the raw YouTube video id, not a channel
+    // identity — it was never resolved to the owning channel. Hitting
+    // /api/profile/<videoId>?platform=youtube with it 404s (or worse, on an
+    // id that happens to collide with something else). Skip identity
+    // resolution for that case; youtubeUrl (built from the same video id)
+    // still points the tab at the right stream, so nothing breaks — the tab
+    // just won't have cross-platform (twitch/kick) linkage until a later
+    // real resolve fills it in.
+    const skipIdentity = platform === 'youtube' && !!_videoId
     let identity = null,
       profile = null
-    if (typeof resolveIdentity === 'function') {
+    if (typeof resolveIdentity === 'function' && !skipIdentity) {
       try {
         const res = await resolveIdentity(name, platform ? { platform } : {})
         if (res?.ok && res.identity) {
@@ -11655,6 +11693,13 @@
     }
     const prev = document.body.classList.contains('hs-twitch-no-channel')
     document.body.classList.toggle('hs-twitch-no-channel', noChannel)
+    // A no-channel page (directory/settings/search/…) with ZERO configured
+    // chat tabs (no saved channels, no ephemeral auto-tabs from other open
+    // browser tabs) has nothing to show — an empty 340px panel floating over
+    // pure browsing, which is exactly the audit-1.7.75 finding. A user WITH
+    // tabs keeps the real feature (watch your chats while browsing away from
+    // them); only the genuinely-empty case hides.
+    document.body.classList.toggle('hs-twitch-no-channel-empty', noChannel && config.channels.length === 0)
     // State flip: re-run width so the right-column slot zeros (entering
     // no-channel) or reclaims its size (returning to a channel page).
     if (prev !== noChannel) {
@@ -14131,7 +14176,7 @@
     // that's not a videoId, so it needs the /channel/.../live URL form
     // (ytSubscribe's own channel-shaped-URL branch resolves it to a concrete
     // videoId via the BG, same as an @handle URL).
-    const isChannelId = /^UC[\w-]{20,}$/.test(vid)
+    const isChannelId = parseYoutubeChannelType(location.pathname, location.search) === 'channel'
     if (!isChannelId && !/\/watch|\/live\//.test(location.pathname + location.search)) return
     const autoYtUrl = isChannelId ? `https://www.youtube.com/channel/${vid}/live` : `https://youtube.com/watch?v=${vid}`
     ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
@@ -15208,8 +15253,10 @@
       // NOT gated on !msg.userId: pusher/relay kick messages always carry the
       // numeric KICK id now, and that gate starved this pipeline entirely
       // (no kick avatars/paints/linked-twitch cosmetics). Dedup lives inside
-      // queueKickNameToCosmetics (kickNameResolved/pending).
-      if (msg.user) queueKickNameToCosmetics(msg.user)
+      // queueKickNameToCosmetics (kickNameResolved/pending). msg.userId is
+      // the raw numeric kick id (pusher/relay) — threading it through skips
+      // the kick.com username→id lookup on the hot per-message path.
+      if (msg.user) queueKickNameToCosmetics(msg.user, msg.userId || null)
       // Echo confirmation for pending-send tracker. Runs before isSentEcho
       // for the same reason as the IRC handler above.
       // Pass 'kick' platform so per-platform awaiting set drains correctly.

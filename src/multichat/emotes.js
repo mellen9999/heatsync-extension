@@ -407,12 +407,21 @@ let emoteAnimationMode = 'always'
 // needs the static variant of a URL even while emoteAnimationMode is
 // 'always' (that's the one mode staticEmoteSrc itself short-circuits on).
 // The one static-url deriver; nothing else computes a static variant.
-function deriveStaticEmoteSrc(url) {
+// `animated` is the emote's own flag (7TV/FFZ/BTTV metadata). 7TV only hosts
+// an Nx_static file for ANIMATED emotes — asking for it on a static emote is a
+// 404, which the page-wide img-error fallback then retried through
+// heatsync.org once per img (86 requests / 30s on one busy twitch channel).
+// Unknown (inventory rows carry no flag) keeps the original url: an animated
+// emote keeps animating offscreen, a static one never 404s.
+function deriveStaticEmoteSrc(url, animated) {
   if (!url) return url
   if (url.indexOf('/api/emote-proxy') !== -1) return url
   // 7TV: Nx.{avif,webp,gif} → Nx_static.{avif,webp,gif} (covers avif, which
   // the old gif/webp-only regex missed on Chrome)
-  if (url.includes('cdn.7tv.app')) return url.replace(/\/(\dx)\.(avif|webp|gif)(\?|$)/i, '/$1_static.$2$3')
+  if (url.includes('cdn.7tv.app')) {
+    if (animated !== true) return url
+    return url.replace(/\/(\dx)\.(avif|webp|gif)(\?|$)/i, '/$1_static.$2$3')
+  }
   // Twitch native: /default/ format token → /static/ (extensionless URLs;
   // identical image for non-animated emotes, so no animated-detection needed)
   if (url.includes('static-cdn.jtvnw.net/emoticons/')) return url.replace('/default/', '/static/')
@@ -425,9 +434,9 @@ function deriveStaticEmoteSrc(url) {
   if (!/\.(gif|webp)(\?|$)/i.test(url)) return url
   return `https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(url)}&static=1`
 }
-function staticEmoteSrc(url) {
+function staticEmoteSrc(url, animated) {
   if (emoteAnimationMode === 'always' || !url) return url
-  return deriveStaticEmoteSrc(url)
+  return deriveStaticEmoteSrc(url, animated)
 }
 
 // ── offscreen idle gate (animateEmotes: 'always') ───────────────────────────
@@ -458,14 +467,15 @@ const HS_EMOTE_IDLE_DISCOVER_MIN_MS = 250
  * callback without fighting the chat pane's scroll-pin. */
 function hsSwapRowEmotesForIdle(row, idle) {
   for (const img of row.querySelectorAll('img.hs-mc-emote')) {
-    const orig = img.closest('.hs-mc-emote-wrapper')?.dataset?.emoteUrl
+    const wrap = img.closest('.hs-mc-emote-wrapper')
+    const orig = wrap?.dataset?.emoteUrl
     if (!orig) continue
     if (idle) {
       // Only swap a row still showing the true original — a static/avif
       // fallback already in place (hsStaticFell/hsAvifFell) or a prior idle
       // swap must not be clobbered.
       if (img.src !== orig) continue
-      const staticSrc = deriveStaticEmoteSrc(orig)
+      const staticSrc = deriveStaticEmoteSrc(orig, wrap.dataset.animated === '1')
       if (staticSrc === orig) continue // no static variant for this CDN/url
       img.src = staticSrc
     } else if (img.src !== orig) {
@@ -3184,6 +3194,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       source,
       state,
       zeroWidth: !!e.zeroWidth,
+      animated: e.animated === true,
       os: e.os,
       _plat: platform,
       nsfw: !!(e.flags & 65536),
@@ -3324,7 +3335,15 @@ async function loadEmotes() {
           const source = e.source || detectEmoteSource(e.url, 'heatsync')
           const state = getEmoteState(e.name, source)
           _hsRegisterOversize(e)
-          const entry = { url: e.url, source, state, zeroWidth: !!e.zeroWidth, nsfw: !!e.nsfw, os: e.os }
+          const entry = {
+            url: e.url,
+            source,
+            state,
+            zeroWidth: !!e.zeroWidth,
+            animated: e.animated === true,
+            nsfw: !!e.nsfw,
+            os: e.os,
+          }
           // See _buildChannelEmoteCache — same 7tv/bttv/ffz collision rule
           // applied to the global-tier pool.
           emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, emoteProviderPriority))
@@ -4098,7 +4117,8 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const safeName = escapeHtml(rawEmoteName)
       const chatUrl = getChatResUrl(finalUrl)
       const safeUrlAttr = escapeHtml(chatUrl)
-      const safeSrc = escapeHtml(staticEmoteSrc(chatUrl))
+      const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, cached?.animated === true))
+      const animAttr = cached?.animated === true ? ' data-animated="1"' : ''
       const safeProvider = escapeHtml(provider)
       const safeHash = cached?.hash ? escapeHtml(cached.hash) : ''
       const ownerAttr = cached?.ownerDisplay ? ` data-owner="${escapeHtml(cached.ownerDisplay)}"` : ''
@@ -4120,7 +4140,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const kickCwCat = _kickCwRaw ? escapeHtml(_kickCwRaw) : ''
       const imgHtmlRaw = kickCwCat
         ? _hsCwBoxHtml(kickCwCat, safeName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" title="${titleAttr}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" title="${titleAttr}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
       if (isOverlay && pendingStack) {
         const itemMods = pendingMods.slice()
         const itemHue = pendingHue
@@ -4266,7 +4286,8 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const source = escapeHtml(emote.source || 'unknown')
       const rawChatUrl = getChatResUrl(emote.url)
       const imgSrc = escapeHtml(rawChatUrl)
-      const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl))
+      const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, emote.animated === true))
+      const animAttr = emote.animated === true ? ' data-animated="1"' : ''
       const safeHash = emote.hash ? escapeHtml(emote.hash) : ''
       const displayName = escapeHtml(rawWord)
       const ownerAttr = emote.ownerDisplay ? ` data-owner="${escapeHtml(emote.ownerDisplay)}"` : ''
@@ -4319,7 +4340,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const cwCat = _cwRaw ? escapeHtml(_cwRaw) : ''
       const imgHtmlRaw = cwCat
         ? _hsCwBoxHtml(cwCat, displayName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}" title="${displayName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}" title="${displayName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
 
       // Build the new item — inline-glued suffix mod attaches to THIS emote
       // (e.g. "RainTimew!" → wide RainTime, not wide whatever-was-base).

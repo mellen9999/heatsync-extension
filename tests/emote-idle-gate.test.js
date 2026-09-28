@@ -76,13 +76,22 @@ function loadIdleGateModule({ IntersectionObserver, documentImpl, raf } = {}) {
 describe('deriveStaticEmoteSrc — mode-independent static-url derivation', () => {
   const mod = loadIdleGateModule()
 
-  test('7TV: Nx.webp/avif/gif → Nx_static', () => {
-    expect(mod.deriveStaticEmoteSrc('https://cdn.7tv.app/emote/abc123/3x.webp')).toBe(
+  test('7TV: an ANIMATED Nx.webp/avif/gif → Nx_static', () => {
+    expect(mod.deriveStaticEmoteSrc('https://cdn.7tv.app/emote/abc123/3x.webp', true)).toBe(
       'https://cdn.7tv.app/emote/abc123/3x_static.webp',
     )
-    expect(mod.deriveStaticEmoteSrc('https://cdn.7tv.app/emote/abc123/2x.avif')).toBe(
+    expect(mod.deriveStaticEmoteSrc('https://cdn.7tv.app/emote/abc123/2x.avif', true)).toBe(
       'https://cdn.7tv.app/emote/abc123/2x_static.avif',
     )
+  })
+
+  // 7TV hosts Nx_static only for animated emotes. A static or unflagged one
+  // 404'd, and the page-wide img-error fallback retried each through
+  // heatsync.org — 86 requests / 30s on one busy channel.
+  test('7TV: a static or unflagged emote keeps its own url (no 404 _static)', () => {
+    const url = 'https://cdn.7tv.app/emote/abc123/1x.avif'
+    expect(mod.deriveStaticEmoteSrc(url, false)).toBe(url)
+    expect(mod.deriveStaticEmoteSrc(url)).toBe(url)
   })
 
   test('Twitch native: /default/ → /static/', () => {
@@ -139,9 +148,9 @@ describe("staticEmoteSrc — gates on emoteAnimationMode, 'always' is the one mo
     const url = 'https://cdn.7tv.app/emote/abc123/3x.webp'
     const expected = 'https://cdn.7tv.app/emote/abc123/3x_static.webp'
     mod.setMode('hover')
-    expect(mod.staticEmoteSrc(url)).toBe(expected)
+    expect(mod.staticEmoteSrc(url, true)).toBe(expected)
     mod.setMode('never')
-    expect(mod.staticEmoteSrc(url)).toBe(expected)
+    expect(mod.staticEmoteSrc(url, true)).toBe(expected)
   })
 })
 
@@ -151,8 +160,8 @@ describe("staticEmoteSrc — gates on emoteAnimationMode, 'always' is the one mo
 // imgs; each img.closest('.hs-mc-emote-wrapper') returns its own wrapper —
 // enough surface for hsSwapRowEmotesForIdle, no real DOM needed.
 function fakeRow(emotes) {
-  const imgs = emotes.map(({ src, emoteUrl }) => {
-    const wrapper = { dataset: { emoteUrl } }
+  const imgs = emotes.map(({ src, emoteUrl, animated = true }) => {
+    const wrapper = { dataset: animated ? { emoteUrl, animated: '1' } : { emoteUrl } }
     const img = {
       _src: src,
       get src() {
@@ -179,6 +188,13 @@ describe('hsSwapRowEmotesForIdle — offscreen swap and restore', () => {
     const row = fakeRow([{ src: url, emoteUrl: url }])
     mod.hsSwapRowEmotesForIdle(row, true)
     expect(row.imgs[0].src).toBe('https://cdn.7tv.app/emote/abc/3x_static.webp')
+  })
+
+  test('going idle leaves a static 7tv emote alone — its _static file does not exist', () => {
+    const url = 'https://cdn.7tv.app/emote/abc/1x.avif'
+    const row = fakeRow([{ src: url, emoteUrl: url, animated: false }])
+    mod.hsSwapRowEmotesForIdle(row, true)
+    expect(row.imgs[0].src).toBe(url)
   })
 
   test('coming back into view restores the original animated src', () => {

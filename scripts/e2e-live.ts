@@ -242,14 +242,20 @@ try {
     // ── 6. heatsync.org request rate on a busy live page ────────────────
     if (label === 'twitch live' && visible) {
       let hsReqs = 0
+      const byPath = new Map<string, number>()
       const onReq = (r: any) => {
-        if (r.url().includes('heatsync.org/')) hsReqs++
+        const u = r.url()
+        if (!u.includes('heatsync.org/')) return
+        hsReqs++
+        const key = new URL(u).pathname.split('/').slice(0, 4).join('/')
+        byPath.set(key, (byPath.get(key) ?? 0) + 1)
       }
       p.on('request', onReq)
       console.log('  counting heatsync.org requests over 30s…')
       await new Promise((r) => setTimeout(r, 30_000))
       p.off('request', onReq)
       console.log(`  heatsync.org requests in 30s: ${hsReqs} (budget: ${HEATSYNC_REQUEST_BUDGET_PER_30S})`)
+      for (const [k, n] of [...byPath].sort((a, b) => b[1] - a[1]).slice(0, 8)) console.log(`    ${n}\t${k}`)
       if (hsReqs <= HEATSYNC_REQUEST_BUDGET_PER_30S) ok(`twitch live: heatsync.org request rate under budget (${hsReqs}/30s)`)
       else fail(`twitch live: heatsync.org request rate over budget (${hsReqs}/30s > ${HEATSYNC_REQUEST_BUDGET_PER_30S}/30s)`)
 

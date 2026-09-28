@@ -66,3 +66,88 @@ function t(k) {
     if (area === 'local' && KEY in changes) render(!!changes[KEY].newValue)
   })
 })()
+
+// Headline import step — one-click "pull every 7tv/bttv/ffz emote you
+// already have into your heatsync set". Reuses the exact server endpoint
+// (POST /api/user/emotes/import-channel) and message shape as the in-chat
+// import CTA (chrome/heatsync-button.js hsImportChannel / src/multichat/
+// emotes.js hsMcImportChannelEmotes) — the only new thing here is resolving
+// WHICH channel to import: welcome.html has no page channel context, so it
+// imports the just-signed-in user's OWN linked handle (background.js's
+// fetchUserInfo writes user_info to storage.local right after login).
+;(() => {
+  const api = typeof browser !== 'undefined' && browser.storage ? browser : chrome
+  const btn = document.getElementById('hs-import-btn')
+  if (!api?.storage?.local || !btn) return
+
+  // Twitch > kick > youtube — same preference order used elsewhere for a
+  // same-name platform guess (getLivePlatformNames et al).
+  function ownChannel(info) {
+    if (info?.twitch_username) return { channel: info.twitch_username, platform: 'twitch' }
+    if (info?.kick_username) return { channel: info.kick_username, platform: 'kick' }
+    if (info?.youtube_username) return { channel: info.youtube_username, platform: 'youtube' }
+    return null
+  }
+
+  const label = t('welcome_import_cta')
+  let own = null
+  let busy = false
+
+  // Never actually disabled — even with no linked platform yet the button
+  // stays clickable, just pointing at account-linking instead of a dead end.
+  function renderButtonState() {
+    btn.classList.remove('ok', 'err')
+    btn.textContent = own ? label : t('welcome_import_no_platform')
+  }
+
+  function applyUserInfo(info) {
+    own = ownChannel(info)
+    if (!busy) renderButtonState()
+  }
+
+  api.storage.local
+    .get('user_info')
+    .then((o) => applyUserInfo(o.user_info))
+    .catch(() => {})
+  // user_info is written by a separate async call than auth_token_encrypted
+  // (both fire off the same login event) — if it lands after this button is
+  // first shown, pick it up live instead of leaving the button stuck locked.
+  api.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && 'user_info' in changes) applyUserInfo(changes.user_info.newValue)
+  })
+
+  btn.addEventListener('click', async () => {
+    if (busy) return
+    if (!own) {
+      window.open('https://heatsync.org/settings/account', '_blank', 'noopener')
+      return
+    }
+    busy = true
+    btn.classList.remove('ok', 'err')
+    btn.textContent = t('welcome_import_importing')
+    try {
+      const resp = await api.runtime.sendMessage({
+        type: 'api_fetch',
+        path: '/api/user/emotes/import-channel',
+        method: 'POST',
+        auth: true,
+        body: { channel: own.channel, platform: own.platform },
+      })
+      if (resp && resp.ok !== false) {
+        const n = resp.data?.imported ?? resp.imported ?? resp.data?.count ?? 0
+        btn.textContent = chrome.i18n.getMessage('welcome_import_done', [String(n)]) || label
+        btn.classList.add('ok')
+      } else {
+        btn.textContent = t('welcome_import_failed')
+        btn.classList.add('err')
+        setTimeout(renderButtonState, 2500)
+      }
+    } catch {
+      btn.textContent = t('welcome_import_failed')
+      btn.classList.add('err')
+      setTimeout(renderButtonState, 2500)
+    } finally {
+      busy = false
+    }
+  })
+})()

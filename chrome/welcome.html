@@ -105,6 +105,26 @@
       color: #000;
       outline: none;
     }
+    .import-step {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+      padding: 16px 0;
+    }
+    .import-step .import-title { font-size: 15px; }
+    .import-step .import-sub { color: #bbb; }
+    .import-step .import-locked { color: #888; }
+    .import-step .import-locked a { color: #fff; }
+    #hs-import-btn {
+      font: inherit;
+      cursor: pointer;
+    }
+    #hs-import-btn.ok { border-color: #5fd700; color: #5fd700; }
+    #hs-import-btn.err { border-color: #ff5f5f; color: #ff5f5f; }
     [hidden] { display: none !important; }
     footer {
       display: flex;
@@ -126,6 +146,13 @@
       <img src="icon-48.png" alt="">
       <h1 data-i18n="welcome_title">heatsync</h1>
     </header>
+
+    <section class="import-step">
+      <p class="import-title" data-i18n="welcome_import_title">bring your emotes</p>
+      <p class="import-sub" data-i18n="welcome_import_sub">one-click import from 7tv, bttv &amp; ffz</p>
+      <p class="import-locked" data-when="out" data-i18n="welcome_import_locked">sign in below to import your existing 7tv/bttv/ffz emotes</p>
+      <button type="button" class="cta-kick" id="hs-import-btn" data-when="in" hidden data-i18n="welcome_import_cta">import my emotes →</button>
+    </section>
 
     <a class="cta" data-when="out" href="https://www.twitch.tv/"
        target="_blank" rel="noopener" data-i18n="welcome_cta">open twitch →</a>

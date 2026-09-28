@@ -84,6 +84,33 @@
   "welcome_done_title": {
     "message": "you're in"
   },
+  "welcome_import_title": {
+    "message": "bring your emotes"
+  },
+  "welcome_import_sub": {
+    "message": "one-click import from 7tv, bttv & ffz"
+  },
+  "welcome_import_locked": {
+    "message": "sign in below to import your existing 7tv/bttv/ffz emotes"
+  },
+  "welcome_import_cta": {
+    "message": "import my emotes →"
+  },
+  "welcome_import_importing": {
+    "message": "importing…"
+  },
+  "welcome_import_done": {
+    "message": "imported $COUNT$ emotes",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "import failed — try again"
+  },
+  "welcome_import_no_platform": {
+    "message": "link a twitch, kick or youtube account first →"
+  },
   "welcome_privacy": {
     "message": "privacy"
   },

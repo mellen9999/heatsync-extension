@@ -139,3 +139,41 @@ describe('amoHealthy', () => {
     expect(await amoHealthy()).toBe(false)
   })
 })
+
+describe('a 429 is told when to come back', () => {
+  const throttled = (secs) =>
+    new Response(JSON.stringify({ detail: `Request was throttled. Expected available in ${secs} seconds.` }), {
+      status: 429,
+    })
+
+  test('a long throttle is not retried — retrying only extends it', async () => {
+    let calls = 0
+    const r = await amoFetchWithRetry(async () => {
+      calls++
+      return throttled(82554)
+    }, fast)
+    expect(calls).toBe(1)
+    expect(r.status).toBe(429)
+    expect((await r.json()).detail).toContain('82554')
+  })
+
+  test('a short throttle waits what it says, then succeeds', async () => {
+    let calls = 0
+    const r = await amoFetchWithRetry(async () => (++calls === 1 ? throttled(0) : res(200)), {
+      ...fast,
+      maxThrottleWaitMs: 5_000,
+    })
+    expect(calls).toBe(2)
+    expect(r.status).toBe(200)
+  })
+
+  test('Retry-After is honored too', async () => {
+    let calls = 0
+    const r = await amoFetchWithRetry(async () => {
+      calls++
+      return new Response('', { status: 429, headers: { 'retry-after': '3600' } })
+    }, fast)
+    expect(calls).toBe(1)
+    expect(r.status).toBe(429)
+  })
+})

@@ -33,22 +33,50 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
  *   caller rebuilds rather than us holding one hostage across a long backoff.
  */
 export async function amoFetchWithRetry(doFetch, opts = {}) {
-  const { attempts = 4, baseDelayMs = 5_000, label = 'amo', log = console.error } = opts
+  const { attempts = 4, baseDelayMs = 5_000, maxThrottleWaitMs = 120_000, label = 'amo', log = console.error } = opts
   let lastErr = null
   for (let i = 1; i <= attempts; i++) {
+    let delay = baseDelayMs * 2 ** (i - 1)
     try {
       const res = await doFetch()
       if (!isRetryableStatus(res.status) || i === attempts) return res
-      log(`  ${label}: HTTP ${res.status} (attempt ${i}/${attempts}) — retrying`)
+      // A 429 says exactly when to come back. Retrying sooner is not a retry,
+      // it is another request against the same quota — 2026-09-28 three quick
+      // retries on a "19 seconds" throttle turned it into a 23-hour one.
+      const wait = res.status === 429 ? await throttleWaitMs(res) : null
+      if (wait !== null) {
+        if (wait > maxThrottleWaitMs) {
+          log(`  ${label}: throttled for ${Math.ceil(wait / 60_000)}min — not retrying`)
+          return res
+        }
+        delay = wait + 1_000
+      }
+      log(`  ${label}: HTTP ${res.status} (attempt ${i}/${attempts}) — retrying in ${Math.ceil(delay / 1000)}s`)
     } catch (e) {
       lastErr = e
       if (i === attempts) throw e
       log(`  ${label}: ${e?.message || e} (attempt ${i}/${attempts}) — retrying`)
     }
-    await sleep(baseDelayMs * 2 ** (i - 1))
+    await sleep(delay)
   }
   // Unreachable: the loop either returns or throws on its final attempt.
   throw lastErr || new Error(`${label}: exhausted ${attempts} attempts`)
+}
+
+/**
+ * How long a 429 asks us to wait, from Retry-After or AMO's body
+ * ("Request was throttled. Expected available in N seconds."). Reads a clone
+ * so the caller still gets an unread body. null when neither says.
+ */
+export async function throttleWaitMs(res) {
+  const header = Number(res.headers?.get?.('retry-after'))
+  if (Number.isFinite(header) && header > 0) return header * 1000
+  try {
+    const text = await res.clone().text()
+    const m = /available in (\d+) seconds?/i.exec(text)
+    if (m) return Number(m[1]) * 1000
+  } catch {}
+  return null
 }
 
 /** True once AMO's heartbeat answers 200. Never throws — a dead host is a `false`. */

@@ -17,7 +17,7 @@
 
 import { execFileSync } from 'node:child_process'
 import { createHmac } from 'node:crypto'
-import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { homedir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
@@ -560,13 +560,82 @@ async function amoAttachSource(creds, versionId, sourceZipPath) {
   }
 }
 
+// AMO's store-listing "summary" per locale is separate from the extension's
+// own manifest description, set once by hand through AMO's dashboard and
+// never touched again — a stale summary (old "unlimited emotes" pitch, wrong
+// product name) can sit live for months after the real copy moved on. Source
+// of truth for what the product actually says is src/_locales/*/messages.json
+// manifest_description — push it to AMO on every listed release so the two
+// can never drift again.
+//
+// Chrome's _locales directory names mostly match AMO's locale codes 1:1
+// (ru, uk, ko, pl, fi, hu, sk, cs, el, he, …). The few that don't: Chrome
+// spells regional variants with an underscore (pt_BR), AMO wants a hyphen
+// (pt-BR); AMO's "default" locale is en-US, not bare en.
+const AMO_LOCALE_OVERRIDES = {
+  en: 'en-US',
+  pt_BR: 'pt-BR',
+  pt_PT: 'pt-PT',
+  zh_CN: 'zh-CN',
+  zh_TW: 'zh-TW',
+  no: 'nb-NO',
+}
+
+function readLocaleSummaries() {
+  const localesDir = join(ROOT, 'src', '_locales')
+  const summaries = {}
+  for (const dir of readdirSync(localesDir, { withFileTypes: true })) {
+    if (!dir.isDirectory()) continue
+    const msgPath = join(localesDir, dir.name, 'messages.json')
+    if (!existsSync(msgPath)) continue
+    let messages
+    try {
+      messages = JSON.parse(readFileSync(msgPath, 'utf8'))
+    } catch {
+      continue
+    }
+    const desc = messages.manifest_description?.message
+    if (!desc) continue
+    const amoLocale = AMO_LOCALE_OVERRIDES[dir.name] || dir.name.replace('_', '-')
+    summaries[amoLocale] = desc
+  }
+  return summaries
+}
+
+// summary/description are addon-level (not per-version) metadata — PATCH the
+// addon resource directly. Deliberately non-fatal: a listing-copy hiccup
+// must never block the actual version submission that follows it.
+async function amoUpdateLocaleSummaries(creds) {
+  const summaries = readLocaleSummaries()
+  const count = Object.keys(summaries).length
+  if (!count) {
+    console.warn('  firefox: no locale summaries found under src/_locales — skipping AMO summary push')
+    return
+  }
+  try {
+    const res = await amoRequest('PATCH', `https://addons.mozilla.org/api/v5/addons/addon/${AMO_SLUG}/`, creds, {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ summary: summaries }),
+    })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      throw new Error(`${res.status} ${JSON.stringify(data)}`)
+    }
+    console.log(`  firefox: synced ${count} locale summaries to AMO from src/_locales`)
+  } catch (e) {
+    console.warn(`  firefox: AMO summary sync failed (non-fatal, listing copy may be stale): ${e.message}`)
+  }
+}
+
 async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
   if (!existsSync(zipPath)) throw new Error(`missing ${zipPath} — build failed?`)
   if (!existsSync(sourceZipPath)) throw new Error(`missing ${sourceZipPath} — build failed?`)
   if (!willPublish) {
+    const localeCount = Object.keys(readLocaleSummaries()).length
     console.log(
       `  [dry-run] firefox: would upload ${basename(zipPath)} (channel=listed), poll validation, ` +
-        `create a version on "${AMO_SLUG}", attach ${basename(sourceZipPath)} as source`,
+        `create a version on "${AMO_SLUG}", attach ${basename(sourceZipPath)} as source, ` +
+        `sync ${localeCount} locale summaries from src/_locales`,
     )
     return { status: 'dry-run' }
   }
@@ -580,6 +649,8 @@ async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
         'mozilla is having an outage, not us. re-run when it answers 200.',
     )
   }
+
+  await amoUpdateLocaleSummaries(creds)
 
   console.log(`  firefox: uploading ${basename(zipPath)} to amo (channel=listed)…`)
   const uuid = await amoUploadZip(creds, zipPath)

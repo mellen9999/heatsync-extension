@@ -1,4 +1,5 @@
 import { expect, test } from 'bun:test'
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -184,4 +185,37 @@ for (const dir of [DIST_CHROME, DIST_FIREFOX]) {
 test('src/lib/cleanup.js re-exports the bundle-scope cleanup binding', () => {
   const src = readFileSync(join(ROOT, 'src', 'lib', 'cleanup.js'), 'utf8')
   expect(/\nconst cleanup = window\.heatsyncCleanup\s*$/m.test(src)).toBe(true)
+})
+
+// ── checked-in chrome/ freshness ────────────────────────────────────────────
+// chrome/multichat-core.js (and its siblings) are TRACKED build output, not
+// hand-edited source — `git clone` + "load unpacked" reads them straight off
+// disk with no build step in between. A src/ change committed without a
+// matching `bun run build.js` rebuild ships a stale chrome/ that throws at
+// load ("sanitizeUiSettings is not defined", "RESERVED_PATHS is not defined")
+// — exactly what shipped in store build 1.7.75. Every content-script bundle
+// carries a build stamp (sha[+dirty]-timestamp, swapped in from bootstrap.js's
+// '__HS_BUILD_STAMP__' literal) — compare its sha+dirty flag against the
+// CURRENT repo state the same way build.js computes it. A mismatch means
+// chrome/ was built from a different commit (or a since-modified src/) than
+// what's checked out right now.
+//
+// Gated on HS_VERIFY_DIST like the rest of this file's t()-tests, so plain
+// `bun test` (build.js's pre-build gate, before chrome/ has been rebuilt)
+// never deadlocks against itself — but it runs standalone too, with no build
+// step required: `HS_VERIFY_DIST=1 bun test tests/build.test.js` against a
+// fresh checkout is exactly the CI check that would have caught 1.7.75.
+t('chrome/multichat-core.js build stamp matches the current repo state', () => {
+  const src = readFileSync(join(ROOT, 'chrome', 'multichat-core.js'), 'utf8')
+  const m = src.match(/build:\s*'([0-9a-f]+)(\+?)-\d+'/)
+  expect(m).not.toBeNull()
+  const [, stampedSha, stampedDirty] = m
+
+  const currentSha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim()
+  const currentDirty = execFileSync('git', ['status', '--porcelain', '--', 'src'], { cwd: ROOT }).toString().trim()
+    ? '+'
+    : ''
+
+  expect(stampedSha).toBe(currentSha)
+  expect(stampedDirty).toBe(currentDirty)
 })

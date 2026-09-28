@@ -14,6 +14,7 @@
     "test": "bun test",
     "test:smoke": "bun run build.js chrome && bun scripts/smoke-extension.ts",
     "test:render": "bun run build.js chrome && bun scripts/render-extension.ts",
+    "test:e2e-live": "bun run build.js chrome && bun scripts/e2e-live.ts",
     "build": "bun run build.js",
     "build:chrome": "bun run build.js chrome",
     "build:firefox": "bun run build.js firefox",

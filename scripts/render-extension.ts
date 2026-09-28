@@ -36,7 +36,15 @@ import { assertBuilt, launchWithExtension } from './lib/chromium'
  * to be faked:
  *  - twitch: a non-channel url (no `.channel-root`).
  *  - kick:   a RESERVED path (`/browse`), which main.js treats as non-channel.
- *  - youtube: any url — the yt panel body-mounts on every page by design.
+ *  - youtube: a /watch url with a fake `ytd-live-chat-frame#chat` + a
+ *    non-replay iframe src — checkYtLive() (main.js) reads exactly that DOM
+ *    shape to decide "this page has its own live stream", which is what
+ *    ungates the panel (`hs-offline` off). The panel is intentionally OFFLINE
+ *    (display:none, #hs-mc-container gated by `:not(.hs-offline)`) on any
+ *    other YouTube page by default — showing an empty 340px panel on every
+ *    yt page including home/VODs/directory was the audit-1.7.75 bug; a
+ *    genuinely non-live fixture here would (correctly) never mount and this
+ *    whole check would be worthless.
  *
  * The twitch fixture also carries `.right-column.right-column--beside`, because
  * ensureUIElements starts a MutationObserver on that element whose callback
@@ -60,9 +68,11 @@ const PLATFORMS = [
   },
   {
     name: 'youtube',
-    url: 'https://www.youtube.com/feed/subscriptions',
+    url: 'https://www.youtube.com/watch?v=RENDERLIVEXX',
     glob: 'https://www.youtube.com/**',
-    body: '<div id="host-content" style="height:100vh">host page</div>',
+    body:
+      '<div id="host-content" style="height:100vh">host page</div>' +
+      '<ytd-live-chat-frame id="chat"><iframe src="https://www.youtube.com/live_chat?is_popout=1&v=RENDERLIVEXX"></iframe></ytd-live-chat-frame>',
     rerender: false,
   },
 ]
@@ -1530,6 +1540,31 @@ try {
     await ctx.route(plat.glob, (r: any) =>
       r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) }),
     )
+  }
+
+  // Seed one saved channel via an extension page (chrome.storage isn't
+  // reachable from a fixture page's main-world evaluate — it only exists in
+  // the content script's isolated world). The twitch fixture is a
+  // non-channel url (/directory) on purpose (see the PLATFORMS doc comment),
+  // and updateTwitchNoChannelClass now hides the panel there when
+  // config.channels is empty — the audit-1.7.75 fix for an empty 340px panel
+  // floating over pure browsing. Seeding one channel keeps this suite
+  // testing what it always tested (persistent-overlay geometry on a
+  // non-channel page with a real saved tab), same pattern the send-check
+  // block below already uses for its own probechan fixture.
+  {
+    const sw = ctx.serviceWorkers()[0]
+    const id = sw?.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
+    if (!id) fail('could not resolve the extension id to seed a channel')
+    const seed = await ctx.newPage()
+    await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    await seed.evaluate(async () => {
+      // @ts-ignore — extension page
+      await chrome.storage.local.set({
+        heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
+      })
+    })
+    await seed.close()
   }
 
   for (const plat of PLATFORMS) {

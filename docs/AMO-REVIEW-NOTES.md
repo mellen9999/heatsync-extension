@@ -24,12 +24,17 @@ or remotely-loaded scripts. Every third-party response (Twitch/Kick/YouTube,
 images — never executed as code. (The only eval/new Function in the repository
 live under tests/ and are not part of the package.)
 
-DATA HANDLING. No telemetry, analytics, or tracking. We do not collect chat
-message content, browsing history, clickstream, or device identifiers. The user's
-emote inventory, preferences, blocked-emote list, channel/tab list, and an
-ENCRYPTED auth token are stored locally in browser.storage.local. Session cookies
-are read locally and never transmitted to anyone other than their originating
-first party.
+DATA HANDLING. No third-party tracking, no ad networks, no analytics SDK. We do
+not collect chat message content, browsing history, clickstream, or device
+identifiers. One first-party exception: a health/kill-switch poll to
+heatsync.org (every 5 min + on startup) sends a rotating install id (changes
+daily, cannot be joined across days), extension version, and which of
+multichat/feed/dm/mentions were opened — merged server-side into a HyperLogLog
+and discarded, aggregate counts kept 90 days. Full detail in PRIVACY.md
+("health / kill-switch poll"). The user's emote inventory, preferences,
+blocked-emote list, channel/tab list, and an ENCRYPTED auth token are stored
+locally in browser.storage.local. Session cookies are read locally and never
+transmitted to anyone other than their originating first party.
 
 WHY THE PERMISSIONS (summary; details below):
 - cookies: read the user's EXISTING twitch.tv / kick.com / heatsync.org session
@@ -75,4 +80,4 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 - [ ] `src/manifests/firefox.json` version == the version being submitted (build.js guards this).
 - [ ] attach `dist/heatsync-source-X.Y.Z.zip` (produced by `bun run build.js --package`).
 - [ ] permissions in the tables above still match both manifests.
-- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` (declares `authenticationInfo`). Declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync, plus synced account data (emote inventory, blocked emotes, channel names, ui prefs). Do NOT declare "no data collected" — the extension transmits the heatsync account token + inventory to heatsync.org and retains it server-side (see PRIVACY.md / table above, heatsync.org row). No third-party sharing, no analytics/telemetry. Twitch/Kick cookies are read locally for identity and never sent to us.
+- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` (declares `authenticationInfo`). Declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync, plus synced account data (emote inventory, blocked emotes, channel names, ui prefs). Do NOT declare "no data collected" — the extension transmits the heatsync account token + inventory to heatsync.org and retains it server-side (see PRIVACY.md / table above, heatsync.org row). Also declare **technical and interaction data**, required, for the rotating-id health/kill-switch check-in (PRIVACY.md "health / kill-switch poll") — first-party, not shared. No third-party sharing, no third-party analytics/telemetry. Twitch/Kick cookies are read locally for identity and never sent to us.

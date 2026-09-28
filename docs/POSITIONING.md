@@ -21,9 +21,13 @@ and `pronoundb.org`, and `docs/PRIVACY.md` documents exactly what goes to each.
 This file is public, MIT, and we tell people to audit the repo — so a claim the
 manifest disproves is the first comment on any launch thread, and it costs the
 one thing the privacy posture is for. The true claim is narrower and stronger:
-**no analytics, no trackers, no ad networks, nothing about you leaves for our
+**no ad trackers, no third-party analytics, nothing about you leaves for our
 benefit.** Cosmetics come from the emote providers because that is how emotes
-render. Say that; never round it up to "no third-party calls".
+render. There is one exception, and it's ours, not a third party's: a
+rotating-id health/kill-switch check-in to heatsync.org itself (PRIVACY.md,
+"health / kill-switch poll") — no chat content, no cross-day tracking, id
+discarded server-side. Say the narrower claim above; never round it up to "no
+third-party calls" or "no telemetry".
 
 ⚠ The version stamps below are pinned to **v1.7.21**; the extension ships
 **1.7.75**. Re-measure before quoting any of the build-derived rows (package
@@ -38,7 +42,7 @@ size, test count) — do not refresh them by guessing.
 | runtime deps | zero (vanilla js) | `package.json` — no dependencies key |
 | package size | 1.68 MiB zipped | `dist/heatsync-chrome-1.7.21.zip` |
 | tests | 1148 cases / 48 files | `bun test` |
-| telemetry | none — no analytics, no trackers, no ad networks, local-only error buffer | grep clean; `src/lib/error-reporter.js` |
+| telemetry | none from third parties — first-party rotating-id health check-in only (see PRIVACY.md), local-only error buffer | grep clean; `src/lib/error-reporter.js`; `chrome/background.js` fetchHealth |
 | third-party calls | yes, and named: 7tv, bttv, ffz, pronoundb for cosmetics; pusher for kick chat. no data is sold or shared | `chrome/manifest.json` host_permissions; `docs/PRIVACY.md` |
 | permissions | 5 (storage, unlimitedStorage, cookies, alarms, notifications) + host allowlist | `chrome/manifest.json`; justifications in AMO-REVIEW-NOTES.md |
 | locales | 34 | `src/_locales/` |

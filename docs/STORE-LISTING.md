@@ -69,7 +69,7 @@ twitch, kick + youtube live chat in one panel — read every stream you follow a
 
 • moderation + profiles — hover mod toolbar (ban/timeout/unban/delete), client-side automod, mute or block that carries a user across twitch and kick, profile cards with a searchable chat-log archive, one-click twitch clips.
 
-free · open source (MIT) · no trackers, no analytics · your emotes stay yours
+free · open source (MIT) · no ads, no third-party analytics · your emotes stay yours
 ```
 
 ## Tags / categories
@@ -121,4 +121,4 @@ chat, streaming, twitch, kick, youtube, emotes, 7tv
 ## Pre-release / pre-submit checklist
 - [ ] `bun run build.js --package` green (build + node --check + zips + source zip + tests) — verified 1.7.5: 552 tests pass.
 - [ ] CWS: short description auto-from manifest (118 chars, OK); paste long description above; set tags.
-- [ ] AMO: submit 1.7.5; attach `dist/heatsync-source-1.7.5.zip`; paste AMO-REVIEW-NOTES "Notes for Reviewers"; add `kick`/`emotes`/`7tv` tags; data form must MATCH the manifest `data_collection_permissions` (declares `authenticationInfo`) — declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync; plus the synced account data (emote inventory, blocked emotes, channel names, ui prefs). NOT "no data collected" — that contradicts the manifest + PRIVACY.md (server-side retention). no third-party sharing, no analytics/telemetry. twitch/kick cookies are read locally and never sent to us.
+- [ ] AMO: submit 1.7.5; attach `dist/heatsync-source-1.7.5.zip`; paste AMO-REVIEW-NOTES "Notes for Reviewers"; add `kick`/`emotes`/`7tv` tags; data form must MATCH the manifest `data_collection_permissions` (declares `authenticationInfo`) — declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync; plus the synced account data (emote inventory, blocked emotes, channel names, ui prefs). NOT "no data collected" — that contradicts the manifest + PRIVACY.md (server-side retention). also declare **technical and interaction data** for the rotating-id health/kill-switch check-in (PRIVACY.md "health / kill-switch poll") — required, not third-party. no third-party sharing, no third-party analytics/telemetry. twitch/kick cookies are read locally and never sent to us.

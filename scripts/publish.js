@@ -7,6 +7,7 @@
 //   bun scripts/publish.js --chrome-only --publish
 //   bun scripts/publish.js --firefox-only --publish
 //   bun scripts/publish.js --cws-auth                # one-time: mint a CWS_REFRESH_TOKEN
+//   bun scripts/publish.js --sync-summaries --publish   # push _locales summaries to AMO only
 //
 // safe by default: without --publish, nothing is ever uploaded — every network
 // call to a store api is skipped and logged instead. --dry-run forces that same
@@ -51,6 +52,7 @@ function parseArgs(argv) {
     publish: flags.has('--publish'),
     cwsAuth: flags.has('--cws-auth'),
     setCreds: flags.has('--set-creds'),
+    syncSummaries: flags.has('--sync-summaries'),
   }
   if (opts.chromeOnly && opts.firefoxOnly) {
     console.error('error: --chrome-only and --firefox-only are mutually exclusive')
@@ -607,24 +609,49 @@ function readLocaleSummaries() {
 // must never block the actual version submission that follows it.
 async function amoUpdateLocaleSummaries(creds) {
   const summaries = readLocaleSummaries()
-  const count = Object.keys(summaries).length
-  if (!count) {
+  if (!Object.keys(summaries).length) {
     console.warn('  firefox: no locale summaries found under src/_locales — skipping AMO summary push')
     return
   }
+  // AMO accepts only its own locale list, and answers a bad code with one 400
+  // naming it ("The language code \"ar\" is invalid.") — the whole PATCH fails,
+  // so one unsupported _locales dir used to leave every locale stale. Drop what
+  // it names and retry; bounded by the locale count.
+  const skipped = []
   try {
-    const res = await amoRequest('PATCH', `https://addons.mozilla.org/api/v5/addons/addon/${AMO_SLUG}/`, creds, {
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ summary: summaries }),
-    })
-    if (!res.ok) {
+    for (let attempt = 0; attempt <= Object.keys(summaries).length; attempt++) {
+      const res = await amoRequest('PATCH', `https://addons.mozilla.org/api/v5/addons/addon/${AMO_SLUG}/`, creds, {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary: summaries }),
+      })
+      if (res.ok) {
+        const count = Object.keys(summaries).length
+        console.log(
+          `  firefox: synced ${count} locale summaries to AMO from src/_locales` +
+            (skipped.length ? ` (amo has no locale for: ${skipped.join(', ')})` : ''),
+        )
+        return
+      }
       const data = await res.json().catch(() => ({}))
-      throw new Error(`${res.status} ${JSON.stringify(data)}`)
+      const bad = invalidAmoLocales(data).filter((code) => code in summaries)
+      if (res.status !== 400 || !bad.length) throw new Error(`${res.status} ${JSON.stringify(data)}`)
+      for (const code of bad) {
+        delete summaries[code]
+        skipped.push(code)
+      }
     }
-    console.log(`  firefox: synced ${count} locale summaries to AMO from src/_locales`)
+    throw new Error('gave up after dropping every rejected locale')
   } catch (e) {
     console.warn(`  firefox: AMO summary sync failed (non-fatal, listing copy may be stale): ${e.message}`)
   }
+}
+
+/** Locale codes AMO's 400 body calls invalid. */
+function invalidAmoLocales(body) {
+  const msgs = Array.isArray(body?.summary) ? body.summary : []
+  const out = []
+  for (const m of msgs) for (const hit of String(m).matchAll(/language code "([^"]+)" is invalid/g)) out.push(hit[1])
+  return out
 }
 
 async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
@@ -704,6 +731,15 @@ async function main() {
   const opts = parseArgs(process.argv.slice(2))
   if (opts.setCreds) return setCredsFlow()
   if (opts.cwsAuth) return cwsAuthFlow()
+  // Listing copy only — no build, no version. Same safe-by-default rule as a
+  // release: without --publish it only says what it would push.
+  if (opts.syncSummaries) {
+    if (!opts.publish || opts.dryRun) {
+      console.log(`[dry-run] would sync ${Object.keys(readLocaleSummaries()).length} AMO locale summaries (pass --publish)`)
+      return
+    }
+    return amoUpdateLocaleSummaries(loadCreds(REQUIRED_KEYS.filter((k) => k.startsWith('AMO_'))))
+  }
 
   // Only demand the keys for the store(s) actually being published — a
   // chrome-only release must not block on absent AMO keys (and vice versa).

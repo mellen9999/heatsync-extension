@@ -14065,7 +14065,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f0fb6d87+-202609282223' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '05b60ed2-202609282230' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -24877,7 +24877,15 @@ async function loadEmotes() {
           const source = e.source || detectEmoteSource(e.url, 'heatsync')
           const state = getEmoteState(e.name, source)
           _hsRegisterOversize(e)
-          const entry = { url: e.url, source, state, zeroWidth: !!e.zeroWidth, animated: e.animated === true, nsfw: !!e.nsfw, os: e.os }
+          const entry = {
+            url: e.url,
+            source,
+            state,
+            zeroWidth: !!e.zeroWidth,
+            animated: e.animated === true,
+            nsfw: !!e.nsfw,
+            os: e.os,
+          }
           // See _buildChannelEmoteCache — same 7tv/bttv/ffz collision rule
           // applied to the global-tier pool.
           emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, emoteProviderPriority))

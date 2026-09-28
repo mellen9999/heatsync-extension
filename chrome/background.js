@@ -854,6 +854,21 @@ async function clearPendingSurfaces(sent) {
   } catch {}
 }
 
+// Firefox lists this check-in under the optional technicalAndInteraction
+// data category (src/manifests/firefox.json), so there it is the user's call:
+// without the grant the poll still goes out — the kill-switch must never
+// depend on it — but carries no id and no surfaces. Chromium has no such
+// permission; its store disclosure covers the poll. A Firefox too old to know
+// the key throws, and has no consent to honor either.
+async function mayCountInstall() {
+  if (typeof browser.runtime.getBrowserInfo !== 'function') return true
+  try {
+    return (await browser.permissions.contains({ data_collection: ['technicalAndInteraction'] })) === true
+  } catch {
+    return true
+  }
+}
+
 async function fetchHealth() {
   try {
     // Identity is best-effort: a storage failure must never cost us the
@@ -861,7 +876,7 @@ async function fetchHealth() {
     let url = HEALTH_URL
     let sent = []
     try {
-      const id = await getInstallId()
+      const id = (await mayCountInstall()) ? await getInstallId() : null
       const version = browser.runtime.getManifest()?.version
       if (id) {
         const q = new URLSearchParams({ id })

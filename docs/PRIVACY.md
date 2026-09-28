@@ -39,6 +39,8 @@ every 5 minutes, and once when the browser starts the extension, it checks in wi
 - your extension version
 - the names of any surfaces (multichat/feed/dm/mentions) you opened since the last successful check-in
 
+on firefox this is opt-in: it's listed under the optional "technical and interaction data" permission (about:addons → heatsync → permissions). without it the poll still runs — the kill switch has to — but sends no id, no version and no surfaces.
+
 the server never stores the id itself: it's merged into a HyperLogLog (a data structure built to count distinct values without retaining the values that produced the count) and discarded. the resulting daily install/version/surface counts persist for 90 days, then auto-expire. no chat content, no browsing history, no cross-site identifier — just "how many installs checked in today" and "did any of them open the feed."
 
 the extension acts on a third-party platform only when *you* explicitly initiate it — sending a chat message, setting your username color, creating a clip, following a channel, or (if you are a moderator) moderation actions like timeouts. it never acts autonomously or in the background, and never changes account settings you did not trigger.

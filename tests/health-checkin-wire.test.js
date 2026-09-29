@@ -36,7 +36,7 @@ function sliceBetween(marker, endMarker) {
 const PRELUDE_SRC = sliceBetween('const HEALTH_URL =', 'async function fetchHealth()')
 const FETCH_HEALTH_SRC = sliceBetween('async function fetchHealth()', '\n// A cached kill/disabled')
 
-function makeHarness({ pending = [], ok = true } = {}) {
+function makeHarness({ pending = [], ok = true, installType } = {}) {
   const store = pending.length ? { hs_surfaces_pending: [...pending] } : {}
   const urls = []
   const browser = {
@@ -54,6 +54,7 @@ function makeHarness({ pending = [], ok = true } = {}) {
       },
     },
     runtime: { getManifest: () => ({ version: '1.7.64' }) },
+    ...(installType && { management: { getSelf: async () => ({ installType }) } }),
   }
   const fetchWithTimeout = async (url) => {
     urls.push(url)
@@ -107,5 +108,20 @@ describe('fetchHealth — surface names on the wire', () => {
     const h = makeHarness({ pending: ['feed'], ok: false })
     await h.fetchHealth()
     expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  // A dev build or headless fresh profile mints a new id per run; counted, they
+  // read as growth. The poll itself must still go out: it carries the kill-switch.
+  test('an unpacked install polls but is never counted', async () => {
+    const h = makeHarness({ pending: ['feed'], installType: 'development' })
+    await h.fetchHealth()
+    expect(h.urls).toEqual(['https://heatsync.org/api/extension/health'])
+    expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  test('a store install is counted', async () => {
+    const h = makeHarness({ installType: 'normal' })
+    await h.fetchHealth()
+    expect(new URL(h.urls[0]).searchParams.get('id')).toBe('install-fixed-id')
   })
 })

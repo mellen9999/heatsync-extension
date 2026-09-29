@@ -860,7 +860,20 @@ async function clearPendingSurfaces(sent) {
 // depend on it — but carries no id and no surfaces. Chromium has no such
 // permission; its store disclosure covers the poll. A Firefox too old to know
 // the key throws, and has no consent to honor either.
+//
+// An unpacked / temporary load is never a user: it is a dev build or a headless
+// fresh-profile run, and each of those mints a new id. In sep 2026 they were 19
+// of 21 "installs" on the days they ran, which read as 5x growth.
+async function isDevInstall() {
+  try {
+    return (await browser.management?.getSelf?.())?.installType === 'development'
+  } catch {
+    return false
+  }
+}
+
 async function mayCountInstall() {
+  if (await isDevInstall()) return false
   if (typeof browser.runtime.getBrowserInfo !== 'function') return true
   try {
     return (await browser.permissions.contains({ data_collection: ['technicalAndInteraction'] })) === true

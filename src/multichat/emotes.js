@@ -961,7 +961,13 @@ function renderEmoteSections(sections, emptyMsg = t('mc_emote_no_loaded'), opts)
     // Cold-start: personal + channel + global caches are all empty. Not the
     // "no search matches" case (that passes opts.noHeaders + its own emptyMsg)
     // — point the user at the one-click channel import instead of a dead end.
-    const channel = !opts?.noHeaders && getCurrentChannel()
+    // On a youtube /watch page getCurrentChannel() is the VIDEO id — the
+    // channel is not known until the page resolves it, and an import button
+    // pointed at a video id imports nothing.
+    const onVideo =
+      location.hostname.includes('youtube.com') &&
+      parseYoutubeChannelType(location.pathname, location.search) === 'video'
+    const channel = !opts?.noHeaders && !onVideo && getCurrentChannel()
     if (channel) return renderEmoteColdStart(channel)
     return `<div class="hs-mc-picker-empty">${escapeHtml(emptyMsg)}</div>`
   }

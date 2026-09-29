@@ -546,6 +546,18 @@ async function retryWhisperSend(sendId) {
   await sendWhisperMessage(old.key, old.text)
 }
 
+// Server shapes: GET /api/dm -> { conversations: [{ other_user_id, display_name,
+// user_color, ... }] }; GET /api/dm/:userId -> { messages: [...], otherUser, ... }.
+function whisperConversations(data) {
+  const list = data?.conversations ?? []
+  return Array.isArray(list) ? list : []
+}
+
+function whisperThreadMessages(data) {
+  const list = data?.messages ?? []
+  return Array.isArray(list) ? list : []
+}
+
 function renderWhispersTab() {
   if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
   const msgsEl = document.getElementById('hs-mc-messages')
@@ -557,7 +569,7 @@ function renderWhispersTab() {
     whisperDmsLoaded = true
     apiFetch('/api/dm')
       .then((resp) => {
-        if (!resp.ok || !Array.isArray(resp.data)) {
+        if (!resp.ok || !Array.isArray(resp.data?.conversations)) {
           // Clear the latch so the next render retries. apiFetch RESOLVES
           // {ok:false} on failure (it never throws), so the .catch below never
           // runs for this path — without this reset a single failed fetch (a
@@ -567,27 +579,29 @@ function renderWhispersTab() {
           whisperDmsLoaded = false
           return
         }
-        for (const dm of resp.data) {
+        for (const dm of whisperConversations(resp.data)) {
+          const otherName = dm.display_name || dm.username || ''
+          const otherColor = dm.user_color || '#fff'
           const key = `hs:${dm.other_user_id}`
           whisperUsersSet(key, {
             platform: 'heatsync',
             userId: dm.other_user_id,
-            displayName: dm.other_display_name,
-            color: dm.other_color || '#fff',
+            displayName: otherName,
+            color: otherColor,
           })
           // Fetch recent messages for each conversation
           apiFetch(`/api/dm/${dm.other_user_id}`)
             .then((resp2) => {
-              if (!resp2.ok || !Array.isArray(resp2.data)) return
+              if (!resp2.ok) return
               let added = false
-              for (const m of resp2.data) {
+              for (const m of whisperThreadMessages(resp2.data)) {
                 const t = new Date(m.created_at).getTime()
                 if (_whisperMarkSeen(_whisperDedupKey('heatsync', m.id, m.from_display_name, t, m.content))) continue
                 const isSelf = m.from_user_id !== dm.other_user_id
                 whisperTimeline.push({
-                  user: isSelf ? 'you' : dm.other_display_name,
+                  user: isSelf ? 'you' : otherName,
                   text: m.content,
-                  color: isSelf ? '#808080' : dm.other_color || '#fff',
+                  color: isSelf ? '#808080' : otherColor,
                   time: t,
                   self: isSelf,
                   platform: 'heatsync',

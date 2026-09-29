@@ -1,6 +1,6 @@
 {
   "manifest_name": {
-    "message": "heatsync"
+    "message": "heatsync — Twitch、Kick、YouTube 合成一個聊天"
   },
   "manifest_description": {
     "message": "一個面板同時看 Twitch、Kick、YouTube 直播聊天。另有 5000 個免費表情位，隨你進入任何頻道"

@@ -40,8 +40,6 @@ WHY THE PERMISSIONS (summary; details below):
 - cookies: read the user's EXISTING twitch.tv / kick.com / heatsync.org session
   cookies only, to act on their behalf in chat (send messages, mod actions) and
   load their emote inventory — no second login, never sent off-device.
-- tabs: coordinate the multichat panel across the user's own open stream tabs
-  (query stream tabs, route chat to the right content script, clean up on close).
 - broad hosts: render the user's emotes + read PUBLIC chat on Twitch/Kick/YouTube,
   and fetch emote/badge assets from public emote-provider CDNs (read-only).
 
@@ -58,7 +56,6 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 |---|---|
 | `storage` | persist the user's emote inventory, preferences, blocked-emote list, and channel/tab state locally (`browser.storage.local`). Nothing leaves the device. |
 | `unlimitedStorage` | an emote inventory holds up to 5,000 emotes plus cached image metadata, which can exceed the 5 MB default quota; prevents the browser from evicting the user's inventory. |
-| `tabs` | coordinate the multichat overlay across the user's own open stream tabs — `tabs.query` to find open Twitch/Kick/YouTube tabs, `tabs.sendMessage` to route chat to the right content script, `tabs.onRemoved` to tear down panel state when a stream tab closes. Not used to read history or unrelated tab content. |
 | `cookies` | read the user's EXISTING first-party session cookies for **twitch.tv, kick.com, heatsync.org only**, to act on their behalf in chat (send messages, mod actions) and load their inventory without a second login. `cookies.onChanged` detects logout to clear local session state. Cookies are never transmitted off-device. |
 | `alarms` | schedule periodic MV3 service-worker work (auth-token refresh, emote-cache refresh, websocket reconnect backoff) where `setInterval` is unavailable. |
 | `notifications` | optional, user-controllable desktop notifications for @-mentions and whispers. |

@@ -460,9 +460,13 @@ async function sendWhisperMessage(key, text) {
   // path's else-branch (line 244/289). Without this a /r from a channel tab
   // stored the message silently and the user couldn't tell anything sent.
   // outgoing:true flips the render to "→ recipient" (see main.js inline-dm).
+  // force: this is a receipt for something YOU just did, not a notification
+  // about someone else — the inline-DM toggle (off by default) silences other
+  // people's whispers, and used to silence your own send with them.
+  let inlineEcho = null
   if (currentTab === 'whispers') renderWhispersTab()
-  else
-    injectInlineNotif('dm', {
+  else {
+    inlineEcho = {
       type: 'inline-dm',
       outgoing: true,
       user: userInfo.displayName || key,
@@ -471,7 +475,10 @@ async function sendWhisperMessage(key, text) {
       color: userInfo.color,
       time: msg.time,
       platform: userInfo.platform,
-    })
+      sendId,
+    }
+    injectInlineNotif('dm', inlineEcho, { force: true })
+  }
   whisperSaveDebounced()
 
   let ok = false
@@ -501,6 +508,11 @@ async function sendWhisperMessage(key, text) {
 
   // Mutate the original push (still referenced by sendId) so re-renders pick up state.
   msg.status = ok ? 'sent' : 'failed'
+  // The inline receipt must not keep claiming a send that failed.
+  if (!ok && inlineEcho) {
+    inlineEcho.failed = true
+    for (const el of document.querySelectorAll(`[data-send-id="${sendId}"]`)) el.classList.add('hs-whisper-failed')
+  }
   if (!ok) {
     msg.error = errMsg
     if (errorKind) msg.errorKind = errorKind

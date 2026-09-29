@@ -7938,7 +7938,8 @@
       // unmistakable at a glance: cyan (--hs-reply, the whisper accent) = came
       // IN to you, orange (--hs-brand, self) = went OUT from you. Border, label
       // and the big arrow all share it.
-      div.className = `hs-mc-feed-inline hs-mc-dm-inline ${m.outgoing ? 'hs-whisper-out' : 'hs-whisper-in'}`
+      div.className = `hs-mc-feed-inline hs-mc-dm-inline ${m.outgoing ? 'hs-whisper-out' : 'hs-whisper-in'}${m.failed ? ' hs-whisper-failed' : ''}`
+      if (m.sendId) div.dataset.sendId = m.sendId
       const dirColor = m.outgoing ? 'var(--hs-brand)' : 'var(--hs-reply)'
       div.style.borderLeftColor = dirColor
       const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''

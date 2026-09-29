@@ -10,6 +10,11 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      # The paint-compiler parity gate needs the site repo checked out beside
+      # this one. It is private until the flip, so this runner cannot have it;
+      # the gate refuses to skip quietly anywhere this is not set.
+      HS_PARITY_SKIP_OK: "1"
 
     steps:
       - uses: actions/checkout@v4
@@ -24,8 +29,16 @@ jobs:
         # release.yml; keep the two in sync.
         run: bun install --frozen-lockfile
 
+      # --minify is how the tracked chrome/ bundle is built (a plain build is
+      # ~220KB larger and would never match it).
       - name: build
-        run: bun run build.js
+        run: bun run build.js --minify
+
+      # The tracked bundle is the build of this src/ — a src edit that shipped
+      # without a rebuild (1.7.75) fails here, in the open, instead of on a
+      # user's tab.
+      - name: tracked bundle matches this build
+        run: git diff --exit-code --stat -- chrome/
 
       - name: test
         run: bun test
@@ -46,3 +59,11 @@ jobs:
 
       - name: check version sync
         run: bun tests/check-versions.js
+
+      # Load the built extension in a real browser and prove it starts: a
+      # bundle that throws on evaluation, a manifest the browser rejects, a
+      # service worker that dies on registration — nothing above sees those.
+      - name: smoke (built extension boots in chrome)
+        env:
+          CHROMIUM_BIN: /usr/bin/google-chrome
+        run: bun scripts/smoke-extension.ts

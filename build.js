@@ -20,28 +20,14 @@ import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, r
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
+import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
 
 // Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
 // every hs_diag_ring boot event names the code it ran. Needed because a tab
 // can run a build hours older than dist: a popout froze on code whose fix had
 // landed 3h earlier but was never reloaded, and the ring couldn't show that.
-const BUILD_STAMP = (() => {
-  try {
-    const sha = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: dirname(fileURLToPath(import.meta.url)) })
-      .toString()
-      .trim()
-    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'src'], {
-      cwd: dirname(fileURLToPath(import.meta.url)),
-    })
-      .toString()
-      .trim()
-      ? '+'
-      : ''
-    return `${sha}${dirty}-${new Date().toISOString().slice(0, 16).replace(/[-T:]/g, '')}`
-  } catch (_) {
-    return `nogit-${Date.now()}`
-  }
-})()
+// A digest of the inputs, not a commit sha: see scripts/lib/build-stamp.mjs.
+const BUILD_STAMP = computeBuildStamp(dirname(fileURLToPath(import.meta.url)))
 
 // ── Pre-build guards ──────────────────────────────────────────────────────────
 // All four checks run before any bundling and fail the build loudly on violation.

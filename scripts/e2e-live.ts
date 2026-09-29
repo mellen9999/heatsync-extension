@@ -229,7 +229,11 @@ try {
       const kick429s: string[] = []
       const onResp = (r: any) => {
         const u = r.url()
-        if (u.includes('kick.com/') && r.status() === 429) kick429s.push(u)
+        // Only kick's /api/ — the only kick.com surface the extension calls and
+        // the one its token bucket governs. kick's own bot-protection script
+        // (a KPSDK fingerprint call, kick.com/<uuid>/<uuid>/fp?x-kpsdk-v=…)
+        // gets throttled by kick on its own and says nothing about us.
+        if (/kick\.com\/api\//.test(u) && r.status() === 429) kick429s.push(u)
       }
       p.on('response', onResp)
       console.log('  watching kick.com for 429s over 60s…')

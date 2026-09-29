@@ -173,7 +173,10 @@ async function renderFollowImportPicker(msgsEl) {
       link.style.cssText = 'color:#ffffff;font-size:13px;'
       wrapper.insertBefore(link, backRow)
     } else if (err === 'relink_required') {
-      status.textContent = t('mc_fill_cockpit_relink')
+      // A grant that never included follows is not an expired one — telling
+      // someone their working link "expired" sends them hunting for a break
+      // that isn't there. The server says which; 'scope' gets its own sentence.
+      status.textContent = t(resp?.reason === 'scope' ? 'mc_fill_cockpit_relink_scope' : 'mc_fill_cockpit_relink')
       const link = document.createElement('a')
       link.href = 'https://heatsync.org/settings'
       link.target = '_blank'

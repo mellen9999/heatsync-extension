@@ -3022,6 +3022,9 @@
   "mc_fill_cockpit_relink": {
     "message": "your twitch link expired — reconnect it to import follows"
   },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "your twitch link doesn't include follows — reconnect it to import them"
+  },
   "mc_fill_cockpit_unavailable": {
     "message": "couldn't reach twitch — try again in a minute"
   },

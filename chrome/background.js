@@ -8865,7 +8865,12 @@ async function handleMessage(message, sender, sendResponse) {
         })
         const data = await r.json().catch(() => null)
         if (!r.ok) {
-          sendResponse({ error: (data && data.error) || (r.status === 401 ? 'login_required' : 'twitch_unavailable') })
+          sendResponse({
+            error: data?.error || (r.status === 401 ? 'login_required' : 'twitch_unavailable'),
+            // 'scope' (link works, never included follows) vs 'expired' (token
+            // dead) — the cockpit says a different sentence for each.
+            reason: data?.reason || undefined,
+          })
           return
         }
         sendResponse(data)

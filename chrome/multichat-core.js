@@ -14065,7 +14065,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e28c93b3-202609290231' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7ac994f1-202609290616' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -58004,7 +58004,10 @@ async function renderFollowImportPicker(msgsEl) {
       link.style.cssText = 'color:#ffffff;font-size:13px;'
       wrapper.insertBefore(link, backRow)
     } else if (err === 'relink_required') {
-      status.textContent = t('mc_fill_cockpit_relink')
+      // A grant that never included follows is not an expired one — telling
+      // someone their working link "expired" sends them hunting for a break
+      // that isn't there. The server says which; 'scope' gets its own sentence.
+      status.textContent = t(resp?.reason === 'scope' ? 'mc_fill_cockpit_relink_scope' : 'mc_fill_cockpit_relink')
       const link = document.createElement('a')
       link.href = 'https://heatsync.org/settings'
       link.target = '_blank'

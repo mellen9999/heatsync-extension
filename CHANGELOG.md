@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.77] — 2026-09-28
+
+### fixed
+- **your own whisper always echoes inline** — and a failed one says so instead of vanishing.
+
+### changed
+- **store name says what it does** — `heatsync — twitch, kick + youtube in one chat`, in all 34 languages. the toolbar still says heatsync.
+- **dev and unpacked builds are no longer counted as installs** — the daily check-in still runs (it carries the kill-switch), it just sends no id. firefox also sends no id without the data grant.
+
 ## [1.7.75] — 2026-09-18
 
 ### added

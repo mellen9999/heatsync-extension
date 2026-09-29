@@ -15,25 +15,13 @@ export const EXT_DIR = join(import.meta.dir, '..', '..', 'dist', 'chrome')
 export const CHROME_BIN = process.env.CHROMIUM_BIN || '/home/mellen/.local/bin/chromium'
 
 /**
- * playwright-core is NOT a dependency of this repo — a browser driver is a lot
- * of weight for opt-in scripts. It is resolved from the sibling heatsync repo,
- * which already has it. Override with PLAYWRIGHT_CORE.
- *
- * The sibling lookup must survive being run from a worktree: inside
- * `.worktrees/<name>/`, `../..` is the worktrees dir, not the projects dir, so
- * the plain sibling path misses and the script reports "not found" on a machine
- * that has playwright installed. Both roots are tried.
+ * playwright-core is a devDependency (it was borrowed from the sibling site
+ * repo's node_modules, which meant the smoke and render scripts could not run
+ * anywhere that repo was not checked out beside this one — ci included).
+ * Override with PLAYWRIGHT_CORE to point at another copy.
  */
 export async function loadChromium() {
-  const repoRoot = join(import.meta.dir, '..', '..')
-  const siblingFrom = (root: string) => join(root, '..', 'heatsync', 'node_modules', 'playwright-core', 'index.js')
-  const candidates = [
-    'playwright-core',
-    process.env.PLAYWRIGHT_CORE,
-    siblingFrom(repoRoot),
-    // worktree: <projects>/heatsync-extension/.worktrees/<name>
-    siblingFrom(join(repoRoot, '..', '..')),
-  ].filter(Boolean) as string[]
+  const candidates = ['playwright-core', process.env.PLAYWRIGHT_CORE].filter(Boolean) as string[]
   for (const spec of candidates) {
     try {
       return (await import(spec)).chromium

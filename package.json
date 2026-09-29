@@ -31,6 +31,7 @@
     "@biomejs/biome": "^2.5.1",
     "@types/chrome": "^0.2.0",
     "esbuild": "^0.28.0",
+    "playwright-core": "^1.63.0",
     "typescript": "^6.0.3"
   }
 }

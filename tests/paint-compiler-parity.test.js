@@ -54,7 +54,14 @@ const FILES = [
 
 describe('paint compiler parity with the site', () => {
   if (!SITE) {
-    test.skip('site repo not present — parity cannot be checked here', () => {})
+    // A green run that checked nothing is how 1,300 lines drifted in three
+    // weeks. Skipping is allowed only where the sibling cannot exist.
+    if (process.env.HS_PARITY_SKIP_OK !== '1') {
+      throw new Error(
+        'site repo not found beside this checkout — parity cannot be checked. clone heatsync as a sibling, or set HS_PARITY_SKIP_OK=1 where that is impossible (ci, until the site repo is public)',
+      )
+    }
+    test.skip('site repo not present — HS_PARITY_SKIP_OK=1', () => {})
     return
   }
   for (const rel of FILES) {
@@ -88,7 +95,14 @@ const theirs = SITE ? await import(join(SITE, 'client', 'utils', 'font-grid.js')
 
 describe('font-grid contract parity with the site', () => {
   if (!SITE) {
-    test.skip('site repo not present — parity cannot be checked here', () => {})
+    // A green run that checked nothing is how 1,300 lines drifted in three
+    // weeks. Skipping is allowed only where the sibling cannot exist.
+    if (process.env.HS_PARITY_SKIP_OK !== '1') {
+      throw new Error(
+        'site repo not found beside this checkout — parity cannot be checked. clone heatsync as a sibling, or set HS_PARITY_SKIP_OK=1 where that is impossible (ci, until the site repo is public)',
+      )
+    }
+    test.skip('site repo not present — HS_PARITY_SKIP_OK=1', () => {})
     return
   }
 

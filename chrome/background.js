@@ -553,13 +553,18 @@ async function syncKickFollows() {
       try {
         // ?kickUsername= is the hint ensureKickShadowUser needs to materialize a
         // shadow account (it verifies the pair server-side before grafting).
+        // x-hs-follow-source self-declares this as an import, not a hand-made
+        // follow, so the server can tag it separately (source='kick_import')
+        // and it stays prunable later.
         const res = await fetchWithTimeout(
           `${API_URL}/api/follow/kick_${kickId}?kickUsername=${encodeURIComponent(slug)}`,
-          { method: 'POST', headers: { Authorization: `Bearer ${hsToken}` } },
+          { method: 'POST', headers: { Authorization: `Bearer ${hsToken}`, 'x-hs-follow-source': 'kick_import' } },
         )
         // Already-following comes back as a conflict — still "synced", so mark it
-        // and stop retrying it every hour.
-        if (res.ok || res.status === 409) {
+        // and stop retrying it every hour. Accept both 409 (current server)
+        // and 400 (older server, pre-heatsync-322) since the extension and
+        // server deploy independently and can be out of step either way.
+        if (res.ok || res.status === 409 || res.status === 400) {
           already.add(slug)
           pushed++
         }

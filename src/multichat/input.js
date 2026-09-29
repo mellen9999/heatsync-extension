@@ -6772,13 +6772,146 @@ function _parseModeDuration(arg, unit) {
   return Math.min(129600, Math.max(0, n))
 }
 
-async function handleSlashCommand(text, input) {
+// ═══ Inline command receipts ═══
+// "Anything I send should show up inline as a confirmation — every command
+// typed starting with /." One place, not ~50 handler edits: every
+// side-effecting command gets an inline row (the text as typed, pending,
+// then ✓ or ✗ + why); handlers keep reporting failure exactly how
+// they already do (showToast(..., 'error'), or an explicit {ok:false}) and
+// the wrapper below derives the receipt from that instead of each handler
+// building its own.
+//
+// Scope decides where the row lives:
+//   'echo'    — already has a richer inline echo of its own (/w /dm /r via
+//               sendWhisperMessage's outgoing echo) — no 'cmd' receipt, that
+//               would double it.
+//   'none'    — view-only; the visible effect (a panel, a sent chat line, a
+//               tab switch) IS the confirmation.
+//   'global'  — account-level action, not tied to one channel — receipt
+//               persists into every chat tab's buffer, like a real inline
+//               notif (injectInlineNotif with no onlyTab).
+//   'channel' — acts on the channel this command was sent from — receipt is
+//               scoped to THAT tab only (injectInlineNotif onlyTab); showing
+//               a /ban in another channel's tab would read as a ban there.
+//
+// This is the single allow/deny list — see command-receipt-scope.test.js,
+// which parses handleSlashCommand's actual `cmd === '…'` branches (+
+// CHAT_MODES' keys) out of the shipped source and fails if either side has
+// an entry the other doesn't. Add a command, add it here, or the test fails.
+const COMMAND_RECEIPT_SCOPE = {
+  // already echoed elsewhere
+  w: 'echo',
+  dm: 'echo',
+  r: 'echo',
+  // view-only — the effect already IS the confirmation
+  help: 'none',
+  status: 'none',
+  modes: 'none',
+  tab: 'none',
+  testnotices: 'none',
+  lclear: 'none',
+  shrug: 'none',
+  tableflip: 'none',
+  unflip: 'none',
+  // account-level — every chat tab
+  op: 'global',
+  opr: 'global',
+  follow: 'global',
+  unfollow: 'global',
+  mute: 'global',
+  unmute: 'global',
+  block: 'global',
+  hide: 'global',
+  unhide: 'global',
+  note: 'global',
+  delnote: 'global',
+  set: 'global',
+  // channel-bound — the tab it was sent from only
+  ban: 'channel',
+  timeout: 'channel',
+  unban: 'channel',
+  delete: 'channel',
+  nuke: 'channel',
+  announce: 'channel',
+  announceblue: 'channel',
+  announcegreen: 'channel',
+  announceorange: 'channel',
+  announcepurple: 'channel',
+  poll: 'channel',
+  endpoll: 'channel',
+  vote: 'channel',
+  prediction: 'channel',
+  bet: 'channel',
+  lockpred: 'channel',
+  resolvepred: 'channel',
+  cancelpred: 'channel',
+  vip: 'channel',
+  unvip: 'channel',
+  mod: 'channel',
+  unmod: 'channel',
+  highlight: 'channel',
+  slow: 'channel',
+  followers: 'channel',
+  emoteonly: 'channel',
+  subscribers: 'channel',
+  unique: 'channel',
+}
+
+// Runs a slash command's handler with the inline-receipt lifecycle wrapped
+// around it. `execute` is the actual dispatch (handleSlashCommand(text,
+// input)) — this never re-implements a handler, only observes it:
+//   - an 'error' toast fired anywhere during the await (showToast routes
+//     through the capture stack in tooltips.js) marks the receipt failed
+//     with that toast's text
+//   - a thrown error marks it failed with the error's message and rethrows
+//     (the existing catch in sendMessage still owns surfacing that)
+//   - an explicit `{ ok: false, error }' return marks it failed too, for any
+//     handler that reports failure by return value instead of a toast
+//   - otherwise it succeeded when the handler settles
+async function runSlashCommandWithReceipt(text, execute) {
+  const resolved = resolveSlashCmd(text)
+  const scope = resolved && COMMAND_RECEIPT_SCOPE[resolved.cmd]
+  if (scope !== 'global' && scope !== 'channel') return execute()
+
+  const receipt = beginCmdReceipt(text, scope === 'channel' ? currentTab : undefined)
+  const frame = { reason: '' }
+  _cmdReceiptStack.push(frame)
+  let result
+  try {
+    result = await execute()
+  } catch (e) {
+    const idx = _cmdReceiptStack.lastIndexOf(frame)
+    if (idx !== -1) _cmdReceiptStack.splice(idx, 1)
+    settleCmdReceipt(receipt, false, e?.message || String(e))
+    throw e
+  }
+  const idx = _cmdReceiptStack.lastIndexOf(frame)
+  if (idx !== -1) _cmdReceiptStack.splice(idx, 1)
+  const explicitFail = result && typeof result === 'object' && result.ok === false
+  const failed = !!frame.reason || explicitFail
+  settleCmdReceipt(receipt, !failed, explicitFail ? result.error || '' : frame.reason)
+  return result
+}
+
+// Shared parse: canonical command name (aliases resolved) + the rest of the
+// text. Pulled out of handleSlashCommand so the receipt wrapper below can
+// classify a command WITHOUT re-implementing alias resolution — a second
+// parser drifting from this one is exactly how a receipt ends up keyed to
+// the wrong scope. Returns null for non-commands and explicit pass-through.
+function resolveSlashCmd(text) {
   const parts = text.match(/^\/(\w+|\?)\s*(.*)$/)
-  if (!parts) return false
+  if (!parts) return null
   let [, cmd, rest] = parts
   cmd = cmd.toLowerCase()
-  if (SLASH_ALIASES[cmd] === null) return false // explicit pass-through
+  if (SLASH_ALIASES[cmd] === null) return null // explicit pass-through
   if (typeof SLASH_ALIASES[cmd] === 'string') cmd = SLASH_ALIASES[cmd]
+  return { cmd, rest }
+}
+
+async function handleSlashCommand(text, input) {
+  const resolved = resolveSlashCmd(text)
+  if (!resolved) return false
+  const { cmd, rest } = resolved
 
   if (cmd === 'op') {
     if (!rest.trim()) {
@@ -8473,7 +8606,7 @@ async function sendMessage() {
     // platform as literal text would be worse.
     let result
     try {
-      result = await handleSlashCommand(text, input)
+      result = await runSlashCommandWithReceipt(text, () => handleSlashCommand(text, input))
     } catch (e) {
       console.error('[hs] slash command threw:', e?.message || e)
       showToast(

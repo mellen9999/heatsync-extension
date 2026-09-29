@@ -3660,6 +3660,13 @@
       desc: o.tipKey ? t(o.tipKey) : o.tip,
     }
   }
+  // 'cmd' — the slash-command receipt row (runSlashCommandWithReceipt, input.js).
+  // Deliberately NOT in the settings schema's inlineNotifs.options: every other
+  // entry there gates an incoming notification about someone ELSE, and 'cmd' has
+  // no such use — it is only ever your own action, injected with force:true, so
+  // a toggle for it would be a pill that does nothing when flipped. Color/tag
+  // live here instead of in a boolmap option nobody can meaningfully turn off.
+  INLINE_NOTIF_TYPES.cmd = { tag: '[cmd]', color: '#808080', borderColor: '#808080', defaultOn: true }
   // Runtime state: { op: true, re: false, dm: false, mention: true }
   const inlineNotifs = {}
   for (const [k, v] of Object.entries(INLINE_NOTIF_TYPES)) inlineNotifs[k] = v.defaultOn
@@ -5151,6 +5158,33 @@
     msg.inlineNotifBorderColor = typeDef.borderColor
     msg.inlineNotifLabel = typeDef.tag
 
+    // opts.onlyTab — scope persistence + live-append to ONE tab's buffer(s)
+    // instead of broadcasting to every channel (channel-scoped command
+    // receipts: a /ban shown in another channel's tab would read as a ban
+    // there). 'live' resolves the anonymous live channel by name (it has no
+    // config.channels entry); anything else is a configured channel id.
+    if (opts.onlyTab) {
+      const tabId = opts.onlyTab
+      if (tabId === 'live') {
+        const liveCh = getLiveChannel()?.toLowerCase()
+        if (liveCh) {
+          irc?.channels?.get(liveCh)?.push(msg)
+          kickChat?.channels?.get(liveCh)?.push(msg)
+        }
+      } else {
+        const ch = getChannelById(tabId)
+        if (ch?.twitch) irc?.channels?.get(ch.twitch)?.push(msg)
+        if (ch?.kick) kickChat?.channels?.get(ch.kick)?.push(msg)
+        const ytBuf = channelYtMessages.get(tabId)
+        if (ytBuf) {
+          ytBuf.push(msg)
+          if (ytBuf.length > PERSIST_MAX_YT) ytBuf.splice(0, ytBuf.length - PERSIST_MAX_YT)
+        }
+      }
+      if (currentTab === tabId) appendMessage(msg, tabId)
+      return
+    }
+
     // Persist into ALL channel buffers (IRC + Kick + YouTube) so notification appears on every tab
     for (const ch of config.channels) {
       const twitchName = ch?.twitch
@@ -5170,6 +5204,37 @@
     const active = currentTab
     const isChatTab = active === 'live' || active === 'mentions' || config.channels.some((ch) => ch.id === active)
     if (isChatTab) appendMessage(msg, active)
+  }
+
+  // Slash-command receipts — one inline row per side-effecting /command: the
+  // text as typed, pending, then a checkmark or an X + why. Driven by
+  // runSlashCommandWithReceipt (input.js); this half owns the row's DOM life.
+  // onlyTab (channel-scoped commands) is the tab the command was sent from —
+  // omit it for account-level commands that broadcast to every chat tab.
+  function beginCmdReceipt(text, onlyTab) {
+    const sendId = `cmd_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const msg = { type: 'cmd-receipt', id: sendId, sendId, text, status: 'pending', time: Date.now() }
+    injectInlineNotif('cmd', msg, { force: true, onlyTab })
+    return msg
+  }
+
+  // Mutates the buffered message in place (so a later render of ANY tab
+  // holding it — global-scope commands push the SAME object into every
+  // buffer — picks up the final state for free) and patches every live DOM
+  // copy directly, the same data-send-id pattern the whisper echo uses for
+  // its failed-mark, so a row already on screen updates without a re-render.
+  function settleCmdReceipt(msg, ok, reason) {
+    if (!msg) return
+    msg.status = ok ? 'ok' : 'failed'
+    msg.reason = ok ? '' : reason || ''
+    for (const el of document.querySelectorAll(`[data-send-id="${msg.sendId}"]`)) {
+      el.classList.toggle('hs-cmd-failed', !ok)
+      const mark = el.querySelector('.hs-cmd-mark')
+      if (mark) {
+        mark.textContent = ok ? '✓' : `✗${msg.reason ? ` ${msg.reason}` : ''}`
+        mark.className = `hs-cmd-mark ${ok ? 'hs-cmd-ok' : 'hs-cmd-fail'}`
+      }
+    }
   }
 
   // Font family + size — mirrors heatsync.org's appearance picker.
@@ -7988,6 +8053,24 @@
       return div
     }
 
+    // Slash-command receipt: the command as typed, pending, then a checkmark
+    // or an X + failure reason. Always forced (beginCmdReceipt, above) — this
+    // is a confirmation of your own action, not a notification to gate.
+    if (m.type === 'cmd-receipt') {
+      const div = document.createElement('div')
+      div.className = `hs-mc-feed-inline hs-mc-cmd-inline${m.status === 'failed' ? ' hs-cmd-failed' : ''}`
+      if (m.sendId) div.dataset.sendId = m.sendId
+      div.style.borderLeftColor = m.inlineNotifBorderColor || '#808080'
+      const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
+      const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
+      const label = `<span style="color:${m.inlineNotifColor || '#808080'};font-size:13px;font-weight:700;margin-right:4px">[cmd]</span>`
+      const cmdText = `<span class="hs-cmd-text">${escapeHtml(m.text)}</span>`
+      const markCls = m.status === 'ok' ? 'hs-cmd-ok' : m.status === 'failed' ? 'hs-cmd-fail' : 'hs-cmd-pending'
+      const markText = m.status === 'ok' ? '✓' : m.status === 'failed' ? `✗${m.reason ? ` ${m.reason}` : ''}` : '…'
+      div.innerHTML = `${tsSpan}${label}${cmdText} <span class="hs-cmd-mark ${markCls}">${escapeHtml(markText)}</span>`
+      return div
+    }
+
     if (m.type === 'moment') {
       const div = document.createElement('div')
       div.className = 'hs-mc-feed-inline hs-mc-moment-inline'
@@ -9439,6 +9522,7 @@
       msg.type !== 'feed-post' &&
       msg.type !== 'inline-dm' &&
       msg.type !== 'moment' &&
+      msg.type !== 'cmd-receipt' &&
       msg.type !== 'automod-hold'
     ) {
       const prev = msgsEl.lastElementChild
@@ -9701,6 +9785,7 @@
       m.type === 'feed-post' ||
       m.type === 'inline-dm' ||
       m.type === 'moment' ||
+      m.type === 'cmd-receipt' ||
       m.type === 'automod-hold'
     )
       return false

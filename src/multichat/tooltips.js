@@ -6,7 +6,19 @@
 // handlers dead until hard refresh
 const _onceGuardsTooltips = {}
 
+// Command-receipt capture stack — the slash-command dispatcher wrapper
+// (runSlashCommandWithReceipt, src/multichat/input.js) pushes a frame here
+// while a handler runs, so an 'error' toast fired mid-command attaches its
+// text to that command's inline receipt instead of just scrolling past as a
+// toast. A stack, not one slot, so nothing breaks if a handler's own await
+// chain re-enters this (each frame only ever reads/writes itself). Empty the
+// overwhelming rest of the time — the check below is a length read.
+const _cmdReceiptStack = []
 function showToast(msg, type) {
+  if (type === 'error' && _cmdReceiptStack.length) {
+    const top = _cmdReceiptStack[_cmdReceiptStack.length - 1]
+    if (!top.reason) top.reason = msg // first error wins — usually the root cause
+  }
   // Routed through HsNotifs (notifs.js) — single source of truth for layers,
   // dedup, lifecycle. Adding/removing notif types happens there.
   try {

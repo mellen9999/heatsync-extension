@@ -537,6 +537,16 @@
     .hs-mc-dm-inline {
       border-left-color: var(--hs-mention);
     }
+    /* Slash-command receipt — the command as typed, pending, then a mark.
+       Muted by default; a failed command dims + strikes the command text
+       itself (same treatment as a failed whisper) so a glance at the tab
+       tells you it didn't go through without reading the reason. */
+    .hs-mc-cmd-inline { color: var(--hs-border); }
+    .hs-mc-cmd-inline .hs-cmd-text { color: #c0c0c0; }
+    .hs-mc-cmd-inline.hs-cmd-failed .hs-cmd-text { text-decoration: line-through; opacity: 0.7; }
+    .hs-cmd-mark.hs-cmd-pending { color: var(--hs-border); }
+    .hs-cmd-mark.hs-cmd-ok { color: var(--hs-ok); }
+    .hs-cmd-mark.hs-cmd-fail { color: var(--hs-danger); }
     /* Live dot — red indicator, composes with any state. Inset 3px from edge
        so it never lands on or past the border during bold-active layout
        shifts. No box-shadow so overflow:hidden ancestors can't clip it. */

@@ -578,6 +578,7 @@ async function loadHsAuth() {
   } catch (_) {
     hsAuthToken = false
   }
+  if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
   loadHsUsername()
 
   // Watch for auth changes (login/logout on heatsync.org)
@@ -601,6 +602,7 @@ async function loadHsAuth() {
         hsAuthToken = !!(changes.auth_token_encrypted?.newValue || changes.auth_token?.newValue)
         if (wasAuthed !== hsAuthToken) {
           log('Auth state changed:', hsAuthToken ? 'logged in' : 'logged out')
+          if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
           // On login, replay any whispers that failed with auth errors so the
           // user doesn't have to manually retry each one.
           if (!wasAuthed && hsAuthToken && typeof retryAuthFailedWhispers === 'function') {

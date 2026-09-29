@@ -1861,6 +1861,19 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 }
 
 /**
+ * True when the send composer should tell the user to log in instead of
+ * promising "send to #channel". Only a KNOWN anonymous heatsync session counts
+ * (=== false; null = not resolved yet), and a twitch page with a live twitch
+ * auth cookie can still send, so it keeps its normal placeholder.
+ * @param {{hsAuth: boolean|null, hostPlatform?: string, twitchCookie?: string|null}} o
+ * @returns {boolean}
+ */
+function composerNeedsLogin({ hsAuth, hostPlatform, twitchCookie }) {
+  if (hsAuth !== false) return false
+  return !(hostPlatform === 'twitch' && twitchCookie)
+}
+
+/**
  * Parse a YouTube URL's pathname/search into heatsync's "current channel"
  * identifier: an @handle (lowercased), a raw UC channel id, or a videoId
  * (from ?v= or /live/<id>) — all case-sensitive except the handle. Pure so
@@ -2277,6 +2290,7 @@ const utils = {
   // Identity validation
   isValidTwitchLogin,
   resolveYtLiveLabel,
+  composerNeedsLogin,
   identityYtLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
@@ -14065,7 +14079,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8bd92d9f24d1' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a07d4cb059ac' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -34615,6 +34629,7 @@ async function loadHsAuth() {
   } catch (_) {
     hsAuthToken = false
   }
+  if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
   loadHsUsername()
 
   // Watch for auth changes (login/logout on heatsync.org)
@@ -34638,6 +34653,7 @@ async function loadHsAuth() {
         hsAuthToken = !!(changes.auth_token_encrypted?.newValue || changes.auth_token?.newValue)
         if (wasAuthed !== hsAuthToken) {
           log('Auth state changed:', hsAuthToken ? 'logged in' : 'logged out')
+          if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
           // On login, replay any whispers that failed with auth errors so the
           // user doesn't have to manually retry each one.
           if (!wasAuthed && hsAuthToken && typeof retryAuthFailedWhispers === 'function') {
@@ -42747,6 +42763,11 @@ function stripMcMutedMessage(msg) {
   })
 }
 
+// logged-out first run: say so up front instead of "send to #x" (input stays enabled)
+function _composerNeedsLogin() {
+  return composerNeedsLogin({ hsAuth: hsAuthToken, hostPlatform, twitchCookie: getTwitchAuthToken() })
+}
+
 function updateInputPlaceholder() {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
@@ -42776,6 +42797,7 @@ function updateInputPlaceholder() {
     // message..." promises a send that can't happen: Enter just flashes red. Name
     // the actual state instead.
     placeholder = channel ? t('mc_input_send_channel', [channel]) : t('mc_input_no_channel')
+    if (channel && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   } else if (currentTab === 'mentions') {
     // Mentions aggregates across channels, so sendMessage refuses every plain
     // send here — promising "send to #channel" was a lie regardless of whether
@@ -42801,6 +42823,7 @@ function updateInputPlaceholder() {
     // fallbacks empty). The no-channel copy is the honest thing to show then —
     // t() no longer leaks the raw key either way, but don't render "send to #".
     placeholder = chanName ? t('mc_input_send_channel', [chanName]) : t('mc_input_no_channel')
+    if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   }
 
   if (wysiwygEnabled) {

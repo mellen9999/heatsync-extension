@@ -3384,6 +3384,11 @@ function stripMcMutedMessage(msg) {
   })
 }
 
+// logged-out first run: say so up front instead of "send to #x" (input stays enabled)
+function _composerNeedsLogin() {
+  return composerNeedsLogin({ hsAuth: hsAuthToken, hostPlatform, twitchCookie: getTwitchAuthToken() })
+}
+
 function updateInputPlaceholder() {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
@@ -3413,6 +3418,7 @@ function updateInputPlaceholder() {
     // message..." promises a send that can't happen: Enter just flashes red. Name
     // the actual state instead.
     placeholder = channel ? t('mc_input_send_channel', [channel]) : t('mc_input_no_channel')
+    if (channel && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   } else if (currentTab === 'mentions') {
     // Mentions aggregates across channels, so sendMessage refuses every plain
     // send here — promising "send to #channel" was a lie regardless of whether
@@ -3438,6 +3444,7 @@ function updateInputPlaceholder() {
     // fallbacks empty). The no-channel copy is the honest thing to show then —
     // t() no longer leaks the raw key either way, but don't render "send to #".
     placeholder = chanName ? t('mc_input_send_channel', [chanName]) : t('mc_input_no_channel')
+    if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   }
 
   if (wysiwygEnabled) {

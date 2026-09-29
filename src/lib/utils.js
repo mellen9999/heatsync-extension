@@ -720,6 +720,19 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 }
 
 /**
+ * True when the send composer should tell the user to log in instead of
+ * promising "send to #channel". Only a KNOWN anonymous heatsync session counts
+ * (=== false; null = not resolved yet), and a twitch page with a live twitch
+ * auth cookie can still send, so it keeps its normal placeholder.
+ * @param {{hsAuth: boolean|null, hostPlatform?: string, twitchCookie?: string|null}} o
+ * @returns {boolean}
+ */
+function composerNeedsLogin({ hsAuth, hostPlatform, twitchCookie }) {
+  if (hsAuth !== false) return false
+  return !(hostPlatform === 'twitch' && twitchCookie)
+}
+
+/**
  * Parse a YouTube URL's pathname/search into heatsync's "current channel"
  * identifier: an @handle (lowercased), a raw UC channel id, or a videoId
  * (from ?v= or /live/<id>) — all case-sensitive except the handle. Pure so
@@ -1136,6 +1149,7 @@ const utils = {
   // Identity validation
   isValidTwitchLogin,
   resolveYtLiveLabel,
+  composerNeedsLogin,
   identityYtLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
@@ -1179,6 +1193,7 @@ export {
   boostReadability,
   classifyYtMembership,
   classifyYtRendererType,
+  composerNeedsLogin,
   createElement,
   DEVICE_LOCAL_KEYS,
   debounce,

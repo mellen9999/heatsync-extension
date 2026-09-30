@@ -346,6 +346,7 @@
     .hs-whisper-msg.hs-whisper-out { border-left: 3px solid var(--hs-brand); }
     /* a send that did not go through: the inline receipt stops claiming it did (the toast says why) */
     .hs-mc-dm-inline.hs-whisper-failed { border-left-color: var(--hs-danger) !important; text-decoration: line-through; opacity: 0.6; }
+    .hs-mc-dm-inline.hs-whisper-failed .hs-cmd-mark { text-decoration: none; }
     .hs-whisper-msg.hs-whisper-in { border-left: 3px solid var(--hs-reply); }
     /* The arrow is a SYMBOL, not text — pull it out of the bitmap font stack so
        it can scale crisply. Cozette only renders sharp at its native grid, so

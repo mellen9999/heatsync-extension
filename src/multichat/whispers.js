@@ -511,7 +511,16 @@ async function sendWhisperMessage(key, text) {
   // The inline receipt must not keep claiming a send that failed.
   if (!ok && inlineEcho) {
     inlineEcho.failed = true
-    for (const el of document.querySelectorAll(`[data-send-id="${sendId}"]`)) el.classList.add('hs-whisper-failed')
+    inlineEcho.error = errMsg
+    // The strike-through said "failed"; the reason lived only on the whispers
+    // tab. Same mark as a command receipt, on the row you are looking at.
+    for (const el of document.querySelectorAll(`[data-send-id="${sendId}"]`)) {
+      el.classList.add('hs-whisper-failed')
+      const mark = document.createElement('span')
+      mark.className = 'hs-cmd-mark hs-cmd-fail'
+      mark.textContent = ` ✗${errMsg ? ` ${errMsg}` : ''}`
+      el.appendChild(mark)
+    }
   }
   if (!ok) {
     msg.error = errMsg

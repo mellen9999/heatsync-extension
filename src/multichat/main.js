@@ -8039,7 +8039,10 @@
           ),
         )
       // All values already sanitized via escapeHtml/processEmotes — safe innerHTML (existing pattern)
-      div.innerHTML = `${tsSpan}${label}${platBadge}${dirPair}: ${m._renderedHtml}`
+      const failMark = m.failed
+        ? ` <span class="hs-cmd-mark hs-cmd-fail">${escapeHtml(`✗${m.error ? ` ${m.error}` : ''}`)}</span>`
+        : ''
+      div.innerHTML = `${tsSpan}${label}${platBadge}${dirPair}: ${m._renderedHtml}${failMark}`
       // Clickable rows must obey the universal hover invert like every other
       // control. role="button" isn't an option — the row contains anchors
       // (@mentions), so it'd nest interactive-in-interactive; the data attribute

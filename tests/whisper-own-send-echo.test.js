@@ -21,6 +21,7 @@ const fnSrc = SRC.slice(start, end)
 function harness({ ok = true, currentTab = 'chan1' } = {}) {
   const injected = []
   const marked = []
+  const appended = []
   const stubs = {
     whisperUsers: new Map([
       ['twitch:rusticatedcharm', { platform: 'twitch', userId: '1', displayName: 'rusticatedcharm', color: '#fff' }],
@@ -36,11 +37,16 @@ function harness({ ok = true, currentTab = 'chan1' } = {}) {
     apiFetch: async () => ({ ok }),
     showToast: () => {},
     t: (k) => k,
-    document: { querySelectorAll: (sel) => [{ classList: { add: (c) => marked.push([sel, c]) } }] },
+    document: {
+      querySelectorAll: (sel) => [
+        { classList: { add: (c) => marked.push([sel, c]) }, appendChild: (el) => appended.push(el) },
+      ],
+      createElement: () => ({}),
+    },
   }
   const names = Object.keys(stubs)
   const fn = new Function(...names, `${fnSrc}\nreturn sendWhisperMessage`)(...names.map((n) => stubs[n]))
-  return { fn, injected, marked }
+  return { fn, injected, marked, appended }
 }
 
 describe('own whisper echoes inline', () => {
@@ -60,6 +66,17 @@ describe('own whisper echoes inline', () => {
     expect(h.injected[0].msg.failed).toBe(true)
     expect(h.marked[0][1]).toBe('hs-whisper-failed')
     expect(h.marked[0][0]).toContain(h.injected[0].msg.sendId)
+  })
+
+  test('a failed send says why, on the row itself', async () => {
+    const h = harness({ ok: false })
+    await h.fn('twitch:rusticatedcharm', 'hi')
+    // the buffered message carries the reason for any later render…
+    expect(h.injected[0].msg.error).toBe('nope')
+    // …and the row already on screen gets the same mark a command receipt uses
+    expect(h.appended).toHaveLength(1)
+    expect(h.appended[0].className).toBe('hs-cmd-mark hs-cmd-fail')
+    expect(h.appended[0].textContent).toContain('✗ nope')
   })
 
   test('on the whispers tab it renders there, no inline copy', async () => {

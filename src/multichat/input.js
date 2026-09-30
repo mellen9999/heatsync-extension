@@ -6845,7 +6845,7 @@ async function handleSlashCommand(text, input) {
 
   if (cmd === 'op') {
     if (!rest.trim()) {
-      showToast(t('mc_input_usage_op'))
+      showToast(t('mc_input_usage_op'), 'error')
       return true
     }
     if (!hsAuthToken) {
@@ -6866,7 +6866,7 @@ async function handleSlashCommand(text, input) {
   // post, and that is not a direction this should ever fail in.
   if (cmd === 'opr') {
     if (!rest.trim()) {
-      showToast('usage: /opr <text>')
+      showToast('usage: /opr <text>', 'error')
       return true
     }
     if (!hsAuthToken) {
@@ -6895,7 +6895,7 @@ async function handleSlashCommand(text, input) {
       await openWhisperConversation('twitch', bare, input)
       return true
     }
-    showToast(t('mc_input_usage_w'))
+    showToast(t('mc_input_usage_w'), 'error')
     return true
   }
 
@@ -6911,13 +6911,13 @@ async function handleSlashCommand(text, input) {
       await openWhisperConversation('heatsync', bare, input)
       return true
     }
-    showToast(t('mc_input_usage_dm'))
+    showToast(t('mc_input_usage_dm'), 'error')
     return true
   }
 
   if (cmd === 'r') {
     if (!rest.trim()) {
-      showToast(t('mc_input_usage_r'))
+      showToast(t('mc_input_usage_r'), 'error')
       return true
     }
     // armed (↩-clicked) target takes priority and survives incoming whispers
@@ -6944,7 +6944,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'follow' || cmd === 'unfollow') {
     const u = rest.trim().replace(/^@/, '').toLowerCase()
     if (!u) {
-      showToast(t('mc_input_usage_follow', [cmd]))
+      showToast(t('mc_input_usage_follow', [cmd]), 'error')
       return true
     }
     if (typeof resolveIdentity !== 'function') {
@@ -6970,15 +6970,17 @@ async function handleSlashCommand(text, input) {
     const yf = !!(p.relationship?.youFollow || p.relationship?.isFollowing)
     const wantFollow = cmd === 'follow'
     if (wantFollow && yf) {
-      showToast(t('mc_input_already_following', [u]))
+      showToast(t('mc_input_already_following', [u]), 'error')
       return true
     }
     if (!wantFollow && !yf) {
-      showToast(t('mc_input_not_following', [u]))
+      showToast(t('mc_input_not_following', [u]), 'error')
       return true
     }
-    // pcToggleFollow flips the current state — pass `yf` as currentlyFollowing
-    pcToggleFollow(id, u, yf)
+    // pcToggleFollow flips the current state — pass `yf` as currentlyFollowing.
+    // Awaited: it toasts the failure itself, and the receipt wrapper can only
+    // read that toast while the command is still running.
+    await pcToggleFollow(id, u, yf)
     return true
   }
 
@@ -7005,7 +7007,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'mute') {
     const u = rest.trim().replace(/^@/, '').toLowerCase()
     if (!u) {
-      showToast(t('mc_input_usage_mute'))
+      showToast(t('mc_input_usage_mute'), 'error')
       return true
     }
     // platform unknown from slash command — expandUserAliasKeys does both the
@@ -7015,7 +7017,7 @@ async function handleSlashCommand(text, input) {
     const aliasKeys = typeof expandUserAliasKeys === 'function' ? await expandUserAliasKeys(u, null) : [u]
     const already = _muteKeyForms(u, aliasKeys).some((k) => mutedUsers.has(k))
     if (already) {
-      showToast(t('mc_input_already_muted', [u]))
+      showToast(t('mc_input_already_muted', [u]), 'error')
       return true
     }
     for (const k of aliasKeys) mutedUsers.add(k)
@@ -7031,7 +7033,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'unmute') {
     const u = rest.trim().replace(/^@/, '').toLowerCase()
     if (!u) {
-      showToast(t('mc_input_usage_unmute'))
+      showToast(t('mc_input_usage_unmute'), 'error')
       return true
     }
     // Same async fan-out as /mute and right-click mute — covers server-linked
@@ -7040,7 +7042,7 @@ async function handleSlashCommand(text, input) {
     const forms = _muteKeyForms(u, aliasKeys)
     const wasMuted = forms.some((k) => mutedUsers.has(k))
     if (!wasMuted) {
-      showToast(t('mc_input_not_muted', [u]))
+      showToast(t('mc_input_not_muted', [u]), 'error')
       return true
     }
     for (const k of forms) mutedUsers.delete(k)
@@ -7190,6 +7192,11 @@ async function handleSlashCommand(text, input) {
     } catch (_) {}
     return false
   }
+  // Handler results the receipt wrapper marks ✗ with a reason. `return true`
+  // on these paths read as ✓ for a command that did nothing: a ban whose
+  // confirm was cancelled, a mod command typed while logged out.
+  const _notLoggedIn = () => ({ ok: false, error: t('mc_input_not_logged_in') || 'not logged in' })
+  const _cancelled = () => ({ ok: false, error: 'cancelled' })
 
   if (cmd === 'ban' || cmd === 'timeout' || cmd === 'unban') {
     if (!modChannel) {
@@ -7201,7 +7208,7 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_mod_needs_platform_channel', [cmd]), 'error')
       return true
     }
-    if (_hasTk && !(await _twitchModAuthOk())) return true
+    if (_hasTk && !(await _twitchModAuthOk())) return _notLoggedIn()
     if (cmd === 'ban') {
       const m = rest.match(/^@?(\S+)(?:\s+(.+))?$/)
       if (!m) {
@@ -7213,7 +7220,7 @@ async function handleSlashCommand(text, input) {
         ? await dispatchModAction({ channel: modChannel, action: 'ban', target, reason, fanout: true })
         : null
       if (r) showModResultToast(t('mc_mod_label_banned'), target, r)
-      if (r?.cancelled) return true
+      if (r?.cancelled) return _cancelled()
       const y = await _ytModLeg('ban', target, t('mc_mod_label_banned'), !!r)
       if (r?.anyOk || y?.anyOk) clearInput(input)
       return true
@@ -7930,7 +7937,7 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_announce_twitch_only') || '/announce is twitch-only', 'error')
       return true
     }
-    if (!(await _twitchModAuthOk())) return true
+    if (!(await _twitchModAuthOk())) return _notLoggedIn()
     const message = rest.trim()
     if (!message) {
       showToast(t('mc_input_usage_announce') || '/announce <message>', 'error')
@@ -7960,7 +7967,7 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_delete_needs_platform_channel'), 'error')
       return true
     }
-    if (!(await _twitchModAuthOk())) return true
+    if (!(await _twitchModAuthOk())) return _notLoggedIn()
     // Raw id → platform unknown; dispatcher tries Twitch first, then Kick.
     const r = await dispatchModAction({ channel: modChannel, action: 'delete', msgId: messageID })
     const err = (r?.tResp || r?.kResp)?.error || t('mc_common_unknown')
@@ -7983,7 +7990,7 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_nuke_needs_platform_channel'), 'error')
       return true
     }
-    if (!(await _twitchModAuthOk())) return true
+    if (!(await _twitchModAuthOk())) return _notLoggedIn()
     const NUKE_MAX = 100 // never delete more than this in one invocation
     const NUKE_MAX_WINDOW = 300 // seconds — furthest lookback allowed
     const nm = rest.trim().match(/^(.+?)(?:\s+(\d+))?$/)
@@ -8025,7 +8032,7 @@ async function handleSlashCommand(text, input) {
       `nuke ${batch.length}${capped ? `+ (capped from ${targets.length})` : ''} message${batch.length === 1 ? '' : 's'} matching "${term}" in #${modChannel}?`,
       'nuke',
     )
-    if (!ok) return true
+    if (!ok) return _cancelled()
     const results = await Promise.allSettled(
       batch.map((t) =>
         dispatchModAction({ channel: modChannel, platform: t.platform, action: 'delete', msgId: t.msgId }),
@@ -8503,8 +8510,23 @@ async function sendMessage() {
       )
       return
     }
-    if (result === true) return
+    // An object result ({ ok: false, … }) is a handled command too — falling
+    // through here would send "/ban x" as chat text after a cancelled confirm.
+    if (result === true || (result && typeof result === 'object')) return
     if (typeof result === 'string') text = result
+    else if (/^\/[a-zA-Z]/.test(text) && !/^\/me\b/i.test(text)) {
+      // Nothing here owns this command. No platform parses one out of a
+      // chat message any more (twitch stopped in Feb 2023; kick and youtube
+      // never did), so passing it through only ever posted the literal text
+      // — or, on twitch, bought a NOTICE from the server. Refuse it here,
+      // with the same inline row every other command gets, on every
+      // platform. /me keeps its wire form below; a lone "/" or "//x" is text.
+      const reason = `${t('mc_input_unknown_command') || 'unknown command'} — /help`
+      settleCmdReceipt(beginCmdReceipt(text), false, reason)
+      showToast(reason, 'error')
+      flashInputError(input)
+      return
+    }
   }
 
   // Feed tab: plain text + media paste posts directly to home feed.
@@ -8573,14 +8595,6 @@ async function sendMessage() {
   const twitchName = ch?.twitch
   const anonLive = currentTab === 'live' && !ch
 
-  // Orphan slash command: starts with /word but nothing here consumed it
-  // (handleSlashCommand returned false / explicit pass-through) and it isn't
-  // /me. Twitch parses slash commands server-side so passing it through is
-  // correct there, but Kick/YouTube sends are plain REST posts — "/announce
-  // hi" would land as literal chat text. Gate those platforms off; /me is
-  // exempt (each platform gets its wire form below).
-  const orphanSlash = /^\/[a-zA-Z]/.test(text) && !/^\/me\b/i.test(text)
-
   const ytUrl = ch?.youtube
   const isLiveYt = currentTab === 'live' && hostPlatform === 'yt'
 
@@ -8593,10 +8607,9 @@ async function sendMessage() {
     ? resolveSendTargets(ch.sendTargets, { twitch: !!twitchName, kick: !!kickSlug, youtube: !!ytUrl })
     : null
 
-  const sendToKick =
-    (!!kickSlug || (anonLive && hostPlatform === 'kick')) && !orphanSlash && (!sendTargets || sendTargets.kick)
+  const sendToKick = (!!kickSlug || (anonLive && hostPlatform === 'kick')) && (!sendTargets || sendTargets.kick)
   const sendToTwitch = (!!twitchName || (anonLive && hostPlatform === 'twitch')) && (!sendTargets || sendTargets.twitch)
-  const ytWanted = (!!ytUrl || isLiveYt) && !orphanSlash && (!sendTargets || sendTargets.youtube)
+  const ytWanted = (!!ytUrl || isLiveYt) && (!sendTargets || sendTargets.youtube)
   // Exact stream video id (or '' if not concretely known) — lets background
   // auto-open a login-inheriting live_chat bridge tab when no YT tab is open.
   const ytVideoId = ytWanted ? currentYoutubeVideoId(ytUrl) : ''
@@ -8609,14 +8622,6 @@ async function sendMessage() {
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
   const isDualSend = sendToKick && sendToTwitch
-
-  // Orphan slash with no twitch leg = nothing left to send (kick/yt-only
-  // target). Fail loud and keep the input so the text isn't lost.
-  if (orphanSlash && !sendToTwitch) {
-    showToast(t('mc_input_unknown_command'), 'error')
-    flashInputError(input)
-    return
-  }
 
   // /me action — give each platform the right wire form for an action message.
   // Twitch IRC carries actions as a CTCP ACTION (\x01ACTION text\x01) — the same

@@ -3295,8 +3295,23 @@ function stripMcMutedMessage(msg) {
 }
 
 // logged-out first run: say so up front instead of "send to #x" (input stays enabled)
+// kick: null until background answers (never blocks render); youtube stays null
+// (no host-page session probe, unchanged behaviour)
+let _kickHostSession = null
+function _refreshKickHostSession() {
+  if (hostPlatform !== 'kick') return
+  safeSendMessage({ type: 'kick_session_status' }).then((resp) => {
+    const next = resp ? !!resp.loggedIn : null
+    if (next === _kickHostSession) return
+    _kickHostSession = next
+    updateInputPlaceholder()
+  })
+}
+
 function _composerNeedsLogin() {
-  return composerNeedsLogin({ hsAuth: hsAuthToken, hostPlatform, twitchCookie: getTwitchAuthToken() })
+  const hostSession =
+    hostPlatform === 'twitch' ? !!getTwitchAuthToken() : hostPlatform === 'kick' ? _kickHostSession : null
+  return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
 }
 
 function updateInputPlaceholder() {

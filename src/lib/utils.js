@@ -722,14 +722,16 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 /**
  * True when the send composer should tell the user to log in instead of
  * promising "send to #channel". Only a KNOWN anonymous heatsync session counts
- * (=== false; null = not resolved yet), and a twitch page with a live twitch
- * auth cookie can still send, so it keeps its normal placeholder.
- * @param {{hsAuth: boolean|null, hostPlatform?: string, twitchCookie?: string|null}} o
+ * (=== false; null = not resolved yet), and a host page that can send on its
+ * own (twitch via its auth cookie, kick via its session cookie) keeps its
+ * normal placeholder. hostSession: true = host can send, false = known absent,
+ * null = unknown (treated like absent once heatsync is known anonymous).
+ * @param {{hsAuth: boolean|null, hostSession?: boolean|null}} o
  * @returns {boolean}
  */
-function composerNeedsLogin({ hsAuth, hostPlatform, twitchCookie }) {
+function composerNeedsLogin({ hsAuth, hostSession }) {
   if (hsAuth !== false) return false
-  return !(hostPlatform === 'twitch' && twitchCookie)
+  return hostSession !== true
 }
 
 /**

@@ -1863,14 +1863,16 @@ function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName 
 /**
  * True when the send composer should tell the user to log in instead of
  * promising "send to #channel". Only a KNOWN anonymous heatsync session counts
- * (=== false; null = not resolved yet), and a twitch page with a live twitch
- * auth cookie can still send, so it keeps its normal placeholder.
- * @param {{hsAuth: boolean|null, hostPlatform?: string, twitchCookie?: string|null}} o
+ * (=== false; null = not resolved yet), and a host page that can send on its
+ * own (twitch via its auth cookie, kick via its session cookie) keeps its
+ * normal placeholder. hostSession: true = host can send, false = known absent,
+ * null = unknown (treated like absent once heatsync is known anonymous).
+ * @param {{hsAuth: boolean|null, hostSession?: boolean|null}} o
  * @returns {boolean}
  */
-function composerNeedsLogin({ hsAuth, hostPlatform, twitchCookie }) {
+function composerNeedsLogin({ hsAuth, hostSession }) {
   if (hsAuth !== false) return false
-  return !(hostPlatform === 'twitch' && twitchCookie)
+  return hostSession !== true
 }
 
 /**
@@ -14079,7 +14081,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c79add1cce3f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '68207077eef6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35048,6 +35050,7 @@ async function loadHsAuth() {
   } catch (_) {
     hsAuthToken = false
   }
+  if (typeof _refreshKickHostSession === 'function') _refreshKickHostSession()
   if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
   loadHsUsername()
 
@@ -35072,6 +35075,7 @@ async function loadHsAuth() {
         hsAuthToken = !!(changes.auth_token_encrypted?.newValue || changes.auth_token?.newValue)
         if (wasAuthed !== hsAuthToken) {
           log('Auth state changed:', hsAuthToken ? 'logged in' : 'logged out')
+          if (typeof _refreshKickHostSession === 'function') _refreshKickHostSession()
           if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
           // On login, replay any whispers that failed with auth errors so the
           // user doesn't have to manually retry each one.
@@ -43116,8 +43120,23 @@ function stripMcMutedMessage(msg) {
 }
 
 // logged-out first run: say so up front instead of "send to #x" (input stays enabled)
+// kick: null until background answers (never blocks render); youtube stays null
+// (no host-page session probe, unchanged behaviour)
+let _kickHostSession = null
+function _refreshKickHostSession() {
+  if (hostPlatform !== 'kick') return
+  safeSendMessage({ type: 'kick_session_status' }).then((resp) => {
+    const next = resp ? !!resp.loggedIn : null
+    if (next === _kickHostSession) return
+    _kickHostSession = next
+    updateInputPlaceholder()
+  })
+}
+
 function _composerNeedsLogin() {
-  return composerNeedsLogin({ hsAuth: hsAuthToken, hostPlatform, twitchCookie: getTwitchAuthToken() })
+  const hostSession =
+    hostPlatform === 'twitch' ? !!getTwitchAuthToken() : hostPlatform === 'kick' ? _kickHostSession : null
+  return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
 }
 
 function updateInputPlaceholder() {

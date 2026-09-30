@@ -3065,14 +3065,23 @@ function rankKickRelayTabs(tabs) {
   )
 }
 
+// The kick login, as two cookies: XSRF-TOKEN (present = signed in) and the
+// non-httpOnly session_token kick now wants as a Bearer. One read, shared by
+// every kick relay and the logged-in probe.
+async function readKickSession() {
+  const [cookie, session] = await Promise.all([
+    browser.cookies.get({ url: 'https://kick.com', name: 'XSRF-TOKEN' }),
+    browser.cookies.get({ url: 'https://kick.com', name: 'session_token' }),
+  ])
+  return { cookie, session }
+}
+
 async function sendKickMessageViaTab(channelId, content, reply = null) {
   if (!channelId || !content) return { ok: false, error: 'missing params' }
-  const cookie = await browser.cookies.get({ url: 'https://kick.com', name: 'XSRF-TOKEN' })
+  // Kick's send API demands Authorization: Bearer <session_token> (2026-07);
+  // the laravel session cookie + XSRF alone 403s. Absent XSRF = logged out.
+  const { cookie, session } = await readKickSession()
   if (!cookie?.value) return { ok: false, error: 'kick_not_logged_in' }
-  // Kick's send API now demands Authorization: Bearer <session_token> — the
-  // laravel session cookie + XSRF alone 403s "User is not authenticated"
-  // (changed 2026-07). Cookie is non-httpOnly; absent = logged out.
-  const session = await browser.cookies.get({ url: 'https://kick.com', name: 'session_token' })
   const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' })
   if (!tabs || tabs.length === 0) return { ok: false, error: 'no_kick_tab' }
   let lastError = 'no response from tab'
@@ -3100,9 +3109,8 @@ async function sendKickMessageViaTab(channelId, content, reply = null) {
 // must run inside a kick.com tab.
 async function setKickChatModeViaTab(chatroomId, body) {
   if (!chatroomId || !body) return { ok: false, error: 'missing params' }
-  const cookie = await browser.cookies.get({ url: 'https://kick.com', name: 'XSRF-TOKEN' })
+  const { cookie, session } = await readKickSession()
   if (!cookie?.value) return { ok: false, error: 'kick_not_logged_in' }
-  const session = await browser.cookies.get({ url: 'https://kick.com', name: 'session_token' })
   const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' })
   if (!tabs || tabs.length === 0) return { ok: false, error: 'no_kick_tab' }
   let lastError = 'no response from tab'
@@ -9642,6 +9650,17 @@ async function handleMessage(message, sender, sendResponse) {
     // Shared-chat chip: source-room-id → the partner channel's login
     ;(async () => {
       sendResponse({ login: await resolveTwitchLoginById(message.userId) })
+    })()
+    return true
+  } else if (message.type === 'kick_session_status') {
+    // Composer placeholder probe: is the user signed in on kick? Answer only the
+    // boolean — never the cookie values.
+    ;(async () => {
+      try {
+        sendResponse({ loggedIn: !!(await readKickSession()).cookie?.value })
+      } catch {
+        sendResponse({ loggedIn: false })
+      }
     })()
     return true
   } else if (message.type === 'kick_send_message') {

@@ -4,18 +4,26 @@ import { join } from 'node:path'
 import { composerNeedsLogin } from '../src/lib/utils.js'
 
 // logged-out first run: composer placeholder says to log in (input stays enabled)
-test('composerNeedsLogin: known anonymous session asks for login', () => {
-  expect(composerNeedsLogin({ hsAuth: false, hostPlatform: 'kick', twitchCookie: null })).toBe(true)
-  expect(composerNeedsLogin({ hsAuth: false, hostPlatform: 'twitch', twitchCookie: null })).toBe(true)
+test('composerNeedsLogin: known anonymous session with no host session asks for login', () => {
+  expect(composerNeedsLogin({ hsAuth: false, hostSession: false })).toBe(true)
+  expect(composerNeedsLogin({ hsAuth: false, hostSession: null })).toBe(true)
+  expect(composerNeedsLogin({ hsAuth: false })).toBe(true)
 })
 
 test('composerNeedsLogin: unresolved or logged-in keeps the send placeholder', () => {
-  expect(composerNeedsLogin({ hsAuth: null, hostPlatform: 'twitch', twitchCookie: null })).toBe(false)
-  expect(composerNeedsLogin({ hsAuth: true, hostPlatform: 'kick', twitchCookie: null })).toBe(false)
+  expect(composerNeedsLogin({ hsAuth: null, hostSession: false })).toBe(false)
+  expect(composerNeedsLogin({ hsAuth: true, hostSession: false })).toBe(false)
 })
 
-test('composerNeedsLogin: twitch page with a twitch session can still send', () => {
-  expect(composerNeedsLogin({ hsAuth: false, hostPlatform: 'twitch', twitchCookie: 'tok' })).toBe(false)
+test('composerNeedsLogin: a host page that can send on its own keeps the placeholder', () => {
+  // twitch cookie / kick session present
+  expect(composerNeedsLogin({ hsAuth: false, hostSession: true })).toBe(false)
+})
+
+test('input.js derives hostSession per platform; kick asks background', () => {
+  const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
+  expect(src).toContain("type: 'kick_session_status'")
+  expect(src).toContain("hostPlatform === 'twitch' ? !!getTwitchAuthToken()")
 })
 
 test('input.js wires the hint into live + channel placeholders with the existing key', () => {

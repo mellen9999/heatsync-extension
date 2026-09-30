@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.78] — 2026-09-30
+
+### fixed
+- **a command's receipt says ✓ only when the command ran** — a bare `/op`, `/follow`, `/mute` and friends used to settle ✓ while nothing happened; a cancelled ban, and a mod command typed while logged out of twitch, did the same. each is ✗ now with the reason on the row.
+- **a whisper or dm that bounced says why on its own row**, not only in the whispers tab.
+- **an unknown `/word` is refused on every platform** — twitch tabs were sending it on the wire, and kick and youtube tabs posted it as chat.
+- **`/help` and autocomplete list every command that exists** — fourteen shipped commands were missing and a debug-only one was listed. one registry drives both, shared with heatsync.org's `/commands` page.
+- **chat logs: the time sits right and is the permalink**, like the site.
+- **whispers read the server's conversations shape**; the logged-out composer says to log in.
+
+### changed
+- **`/opr`, `/follow`, `/unfollow`, `/block`, `/note`, `/delnote` also work on heatsync.org**; the help marks which commands work where.
+
 ## [1.7.77] — 2026-09-28
 
 ### fixed

@@ -8,7 +8,7 @@
       height: 100%; width: 100%;
       background: #000; color: #fff;
       font-family: var(--hs-mc-font);
-      font-size: 13px; line-height: 17px;
+      font-size: 13px; line-height: 19px;
       box-sizing: border-box;
     }
     .hs-cl-hdr {
@@ -63,28 +63,21 @@
       padding: 4px 8px;
     }
     .hs-cl-row {
-      padding: 1px 0;
-      display: flex; flex-wrap: wrap; align-items: baseline;
-      gap: 6px;
+      padding: 1px 0; line-height: 19px;
       border-bottom: 1px solid #0a0a0a;
     }
+    .hs-cl-row::after { content: ""; display: block; clear: both; }
     .hs-cl-row.hs-cl-deleted {
       opacity: 0.5;
       text-decoration: line-through;
     }
-    .hs-cl-ts {
-      color: var(--hs-muted);
-      font-variant-numeric: tabular-nums;
-      flex-shrink: 0;
-      white-space: nowrap;
-    }
     .hs-cl-ch {
-      color: #fff; flex-shrink: 0;
+      color: #fff; margin-right: 6px;
     }
     .hs-cl-user {
-      color: #fff; font-weight: 700; flex-shrink: 0;
+      color: #fff; font-weight: 700; margin-right: 6px;
     }
-    .hs-cl-body { color: #ddd; min-width: 0; word-break: break-word; }
+    .hs-cl-body { color: #ddd; word-break: break-word; }
     .hs-cl-emote {
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;
@@ -104,18 +97,14 @@
       flex-shrink: 0;
     }
     .hs-cl-public-archive:hover { background: #fff; color: #000; border-color: #fff; }
-    .hs-cl-permalink {
-      margin-left: auto;
-      background: transparent; color: var(--hs-muted);
-      border: none; padding: 0 4px; cursor: pointer;
-      font-family: inherit; font-size: 13px; line-height: 1;
-      opacity: 0; transition: opacity 0.08s;
-      flex-shrink: 0;
+    .hs-cl-time {
+      float: right; min-width: 8ch; margin-left: 8px; padding: 0 2px;
+      text-align: right; color: var(--hs-muted); font-size: 13px;
+      font-variant-numeric: tabular-nums; white-space: nowrap;
+      text-decoration: none;
     }
-    .hs-cl-row:hover .hs-cl-permalink { opacity: 1; }
-    .hs-cl-permalink:hover { color: #fff; }
-    .hs-cl-permalink.hs-cl-permalink-copied {
-      opacity: 1; color: #fff;
-    }
+    .hs-cl-time time { color: inherit; }
+    a.hs-cl-time:hover { background: #fff; color: #000; }
+    a.hs-cl-time.hs-cl-time-copied { color: #fff; }
 
   

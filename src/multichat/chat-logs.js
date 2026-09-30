@@ -121,12 +121,13 @@ async function copyChatLogPermalink(btn, r) {
       showToast(t('mc_chatlogs_copy_failed'), 'error')
     } catch {}
   }
-  const prev = btn.textContent
-  btn.textContent = ok ? '✓' : '✗'
-  if (ok) btn.classList.add('hs-cl-permalink-copied')
+  const time = btn.querySelector('time')
+  const prev = time.textContent
+  time.textContent = ok ? 'copied' : 'failed'
+  if (ok) btn.classList.add('hs-cl-time-copied')
   setTimeout(() => {
-    btn.textContent = prev
-    btn.classList.remove('hs-cl-permalink-copied')
+    time.textContent = prev
+    btn.classList.remove('hs-cl-time-copied')
   }, 1200)
 }
 
@@ -474,16 +475,34 @@ function renderChatLogRow(r) {
   row.className = 'hs-cl-row'
   if (r.deleted_at) row.classList.add('hs-cl-deleted')
 
-  const ts = document.createElement('span')
-  ts.className = 'hs-cl-ts'
-  if (r.timestamp) {
-    const d = new Date(r.timestamp)
-    if (!Number.isNaN(d.getTime())) {
-      ts.textContent = d.toISOString().replace('T', ' ').slice(5, 16)
-      ts.title = d.toLocaleString()
+  // Time sits right and IS the permalink (like the site's logTimeHtml): first
+  // in source so the float lands on the first line. Click copies the public
+  // /search/logs/ URL; modified/middle click opens it.
+  const d = r.timestamp ? new Date(r.timestamp) : null
+  if (d && !Number.isNaN(d.getTime())) {
+    const hhmmss = d.toISOString().slice(11, 19)
+    const url = buildChatLogPermalink(r)
+    const ts = document.createElement(url ? 'a' : 'span')
+    ts.className = 'hs-cl-time'
+    const time = document.createElement('time')
+    time.dateTime = d.toISOString()
+    time.textContent = hhmmss
+    ts.appendChild(time)
+    if (url) {
+      ts.href = url
+      ts.target = '_blank'
+      ts.rel = 'noopener'
+      ts.title = 'copy permalink'
+      ts.setAttribute('aria-label', `permalink ${hhmmss}`)
+      ts.addEventListener('click', (e) => {
+        e.stopPropagation()
+        if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return
+        e.preventDefault()
+        copyChatLogPermalink(ts, r)
+      })
     }
+    row.appendChild(ts)
   }
-  row.appendChild(ts)
 
   if (activeChatLogs && activeChatLogs.scope === 'all' && r.channel) {
     const ch = document.createElement('span')
@@ -539,22 +558,6 @@ function renderChatLogRow(r) {
   body.className = 'hs-cl-body'
   appendChatLogBody(body, r)
   row.appendChild(body)
-
-  // Permalink copy — hover-revealed ¶ that puts the public /search/logs/ URL on
-  // the clipboard. Matches server's chat-log-permalinks.ts pattern; every
-  // copied permalink is a backlink into the SEO acquisition surface.
-  if (buildChatLogPermalink(r)) {
-    const link = document.createElement('button')
-    link.className = 'hs-cl-permalink'
-    link.type = 'button'
-    link.textContent = '¶'
-    link.title = 'copy permalink'
-    link.addEventListener('click', (e) => {
-      e.stopPropagation()
-      copyChatLogPermalink(link, r)
-    })
-    row.appendChild(link)
-  }
 
   return row
 }

@@ -10,6 +10,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { slashAliasMap, slashCommandsFor } from '../src/multichat/slash-registry.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 
@@ -20,15 +21,17 @@ function slice(start, end) {
   return SRC.slice(s, e)
 }
 
-// SLASH_COMMANDS array literal + SLASH_ALIASES object + the matcher fn.
-const commandsSrc = slice('const SLASH_COMMANDS = [', '\nconst slashAcState')
-const aliasesSrc = slice('const SLASH_ALIASES = {', '\nasync function handleSlashCommand')
+// The matcher still lives in input.js and is still carved out. Its two data
+// inputs now come from the registry instead of being re-eval'd from source —
+// same values the bundle sees, minus the string surgery.
 const matcherSrc = slice('function matchSlashCommands(q)', '\nfunction checkSlashAutocomplete')
 
-// t() is referenced by nothing in these slices, but keep a stub for safety.
-const matchSlashCommands = new Function('t', `${commandsSrc}\n${aliasesSrc}\n${matcherSrc}\nreturn matchSlashCommands`)(
-  () => '',
-)
+const matchSlashCommands = new Function(
+  't',
+  'SLASH_COMMANDS',
+  'SLASH_ALIASES',
+  `${matcherSrc}\nreturn matchSlashCommands`,
+)(() => '', slashCommandsFor('ext'), slashAliasMap('ext'))
 
 describe('matchSlashCommands resolves aliases', () => {
   test('/hl → highlight (the reported case)', () => {

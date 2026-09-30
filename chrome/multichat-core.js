@@ -14079,7 +14079,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'fff28bc3a6f0' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'decee0a199de' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -51357,44 +51357,7 @@ function makeSynthId() {
 // (VIPUser/UnVIPUser), so they must reach their handler instead of being refused.
 const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'color', 'raid', 'unraid', 'commercial', 'marker'])
 
-const NON_ECHOING_CHAT_COMMANDS = new Set([
-  'followers',
-  'followersoff',
-  'emoteonly',
-  'emoteonlyoff',
-  'subscribers',
-  'subscribersoff',
-  'slow',
-  'slowoff',
-  'uniquechat',
-  'uniquechatoff',
-  'r9kbeta',
-  'r9kbetaoff',
-  'clear',
-  'color',
-  'mod',
-  'unmod',
-  'vip',
-  'unvip',
-  'untimeout',
-  'unban',
-  'raid',
-  'unraid',
-  'commercial',
-  'marker',
-  'announce',
-  'announceblue',
-  'announcegreen',
-  'announceorange',
-  'announcepurple',
-])
-function isNonEchoingCommand(text) {
-  if (typeof text !== 'string' || text[0] !== '/') return false
-  const m = text.match(/^\/(\w+)/)
-  return !!m && NON_ECHOING_CHAT_COMMANDS.has(m[1].toLowerCase())
-}
-
-function registerPendingSend({ text, channel, platforms, replyParentId, replyUser, noEcho }) {
+function registerPendingSend({ text, channel, platforms, replyParentId, replyUser }) {
   const synthId = makeSynthId()
   const entry = {
     synthId,
@@ -51410,20 +51373,11 @@ function registerPendingSend({ text, channel, platforms, replyParentId, replyUse
     replyUser: replyUser || null,
     sentAt: Date.now(),
     state: 'pending',
-    noEcho: !!noEcho,
     timer: null,
   }
   entry.timer = cleanup.setTimeout(() => {
     const e = pendingSends.get(synthId)
     if (e?.state !== 'pending') return
-    // Non-echoing platform commands get no PRIVMSG echo — the write already
-    // succeeded, so retire silently rather than firing a false no_echo. Genuine
-    // write failures still surface via the explicit markPendingFailed calls in
-    // the send paths (auth_failed/send_failed).
-    if (e.noEcho) {
-      pendingSends.delete(synthId)
-      return
-    }
     markPendingFailed(synthId, 'no_echo')
   }, PENDING_ECHO_TIMEOUT_MS)
   pendingSends.set(synthId, entry)
@@ -59584,7 +59538,6 @@ async function sendMessage() {
     platforms: _pendingPlatforms,
     replyParentId: replyState?.msgId || null,
     replyUser: replyState?.user || null,
-    noEcho: isNonEchoingCommand(text),
   })
 
   // Track every send (not just dual-send). The host platform stored on each

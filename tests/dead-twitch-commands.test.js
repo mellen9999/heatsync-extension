@@ -28,7 +28,7 @@ function slice(start, end) {
   return SRC.slice(s, e)
 }
 
-const deadSrc = slice('const DEAD_TWITCH_CHAT_COMMANDS = new Set([', '\nconst NON_ECHOING_CHAT_COMMANDS')
+const deadSrc = slice('const DEAD_TWITCH_CHAT_COMMANDS = new Set([', '\nfunction registerPendingSend(')
 // The dead set still lives in input.js beside the guard it feeds, so it stays
 // carved. The command list comes from the registry — and the check now covers
 // hidden rows too, which a slice of the advertised array could not.

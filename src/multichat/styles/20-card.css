@@ -513,23 +513,40 @@
 }
 
 /* ── footer links ─────────────────────────────────────────────────────── */
+/* A cell row like .hs-card-actions, not a line of arrow-links: the label is
+ * the path the click lands on (card-render.js footerLink), so a cell reads
+ * as a destination and gets a destination's hit area. Three paths do not
+ * fit a 320px peek on one line, so the row wraps — the seams come from a
+ * 1px gap over each cell's own 1px ring (box-shadow takes no layout), which
+ * stays a single 1px line between neighbours on every row, where a
+ * border-left-on-siblings seam breaks at the wrap. */
 .hs-card-links {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 1px;
   font-size: 13px;
   border-top: 1px solid var(--hs-card-border);
   padding-top: 4px;
+  padding-inline: 1px;
+  padding-bottom: 1px;
   margin-top: 2px;
 }
-.hs-card-links a,
+.hs-card-link {
+  flex: 1 1 auto;
+  min-height: 24px;
+  padding: 4px 8px;
+  text-align: center;
+  box-shadow: 0 0 0 1px var(--hs-card-border);
+}
+.hs-card-link,
 .hs-card-recent-head a,
 .hs-card-log-ts {
   color: var(--hs-card-link);
   text-decoration: none;
 }
-.hs-card-links a:hover,
-.hs-card-links a:active,
-.hs-card-links a:focus-visible,
+.hs-card-link:hover,
+.hs-card-link:active,
+.hs-card-link:focus-visible,
 .hs-card-log-ts:hover,
 .hs-card-log-ts:active,
 .hs-card-log-ts:focus-visible {

@@ -130,7 +130,7 @@ function renderChatter(model, { esc, variant }) {
   parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
   if (model.links?.chatterUrl) {
-    parts.push(`<div class="hs-card-links"><a href="${esc(model.links.chatterUrl)}" target="_blank" rel="noopener">chatter stats →</a></div>`)
+    parts.push(`<div class="hs-card-links">${footerLink('stats', model.links.chatterUrl, esc)}</div>`)
   }
   return `<div class="hs-card hs-card-${esc(variant)} hs-card-chatter">${parts.join('')}</div>`
 }
@@ -265,11 +265,25 @@ function renderMod(mod, esc) {
   return `<div class="hs-card-mod">${reason}${groups}</div>`
 }
 
-function renderFooterLinks(model, esc, hideLogsLink) {
+/**
+ * One footer cell. The label IS the destination — `profile/ennortix`,
+ * `twitch/ennortix/logs` — so the row reads as the address bar will after
+ * the click, and nobody has to learn what "stats" means before pressing it.
+ * Site-relative hrefs only (card-model builds them); the leading slash goes,
+ * nothing else is rewritten.
+ */
+function footerLink(key, href, esc) {
+  const label = href.replace(/^\//, '')
+  return `<a class="hs-card-link" data-hs-link="${esc(key)}" href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>`
+}
+
+function renderFooterLinks(model, esc, variant, hideLogsLink) {
   const links = []
-  if (model.links.profileUrl) links.push(`<a href="${esc(model.links.profileUrl)}" target="_blank" rel="noopener">profile →</a>`)
-  if (!hideLogsLink && model.links.logsUrl) links.push(`<a href="${esc(model.links.logsUrl)}" target="_blank" rel="noopener">logs →</a>`)
-  if (model.links.chatterUrl) links.push(`<a href="${esc(model.links.chatterUrl)}" target="_blank" rel="noopener">stats →</a>`)
+  // The page variant IS the profile — a cell that reopens this page in a new
+  // tab is noise. hideLogsLink is the same call for the logs tab.
+  if (variant !== 'page' && model.links.profileUrl) links.push(footerLink('profile', model.links.profileUrl, esc))
+  if (!hideLogsLink && model.links.logsUrl) links.push(footerLink('logs', model.links.logsUrl, esc))
+  if (model.links.chatterUrl) links.push(footerLink('stats', model.links.chatterUrl, esc))
   if (!links.length) return ''
   return `<div class="hs-card-links">${links.join('')}</div>`
 }
@@ -303,10 +317,18 @@ function renderProfile(
   const ember = model.ember ? `<span class="hs-card-ember" title="${esc(model.ember.name)}">🜂</span>` : ''
   const pronouns = model.pronouns ? `<span class="hs-card-pronouns">${esc(model.pronouns)}</span>` : ''
 
+  // The name is an identity surface, so it is a paint target like a chat row
+  // or a DM — but this file cannot reach the paint runtime (pure, mirrored
+  // into the extension), so it only says WHOSE name this is and that nobody
+  // has resolved it yet. The host's names/card-name-paint.js does the rest;
+  // a host without one is left with the flat colour, which is today.
+  const paintAttrs = (model.identity.userId != null && !model.identity.isAnonymous)
+    ? ` data-paint-pending="1" data-paint-uid="${esc(String(model.identity.userId))}" data-platform="${esc(model.identity.platform || '')}"`
+    : ''
   const identityRow = `
     <div class="hs-card-identity">
       <img class="hs-card-avatar" src="${esc(model.avatarUrl)}" alt="${esc(model.displayName)}" data-imgerr-src="/anon.webp">
-      <strong class="hs-card-name" data-color="${esc(nameColor)}">${esc(model.displayName)}</strong>
+      <strong class="hs-card-name" data-color="${esc(nameColor)}"${paintAttrs}>${esc(model.displayName)}</strong>
       ${pronouns}${plusBadge}${flair}${ember}
     </div>`
 
@@ -354,7 +376,7 @@ function renderProfile(
       ${model.corpus ? `<dl class="hs-card-sheet">${renderCorpusRow(model.corpus, esc)}</dl>` : ''}
       ${renderNote(model.note, esc)}
       ${renderTopEmotes(model.topEmotes, esc)}
-      ${renderFooterLinks(model, esc, hideLogsLink)}
+      ${renderFooterLinks(model, esc, variant, hideLogsLink)}
       ${renderRecent(model.recent, esc, model.links)}
       ${renderMod(model.mod, esc)}
     </div>

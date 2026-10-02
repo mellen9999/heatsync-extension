@@ -987,11 +987,11 @@ fetchHealth().catch(() => {})
 // Show welcome page on first install, clear stale intervals on update
 browser.runtime.onInstalled.addListener((details) => {
   log(' 📦 onInstalled - extension installed/updated', details.reason)
+  stampInstallDay(details.reason)
   // Spread the herd: when 30k Chrome clients auto-update around the same
   // hour, every SW will wake and try to connect /ws at once. Delay each
   // client's first connect by a random 0–60s. Skip on fresh install — that's
   // one human waiting on a blank panel, not a thundering herd.
-  stampInstallDay(details.reason)
   pendingStartupJitterMs = details.reason === 'install' ? 0 : Math.random() * 60000
   browser.storage.session?.set({ startup_jitter_at: Date.now() + pendingStartupJitterMs }).catch(() => {})
   // Clear any stale intervals from previous version

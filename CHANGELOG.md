@@ -1,5 +1,10 @@
 # changelog
 
+## unreleased
+
+### changed
+- **the health check-in carries a rough install age** — first day / first week / first month / older, computed on your device and counted only in per-range daily totals, so we can see new installs and retention without following anyone. the id still rotates every UTC midnight.
+
 ## [1.7.78] — 2026-09-30
 
 ### fixed

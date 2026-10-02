@@ -17,7 +17,7 @@ the heatsync extension collects the following data:
 - **youtube video ids:** IDs of YouTube streams you join for real-time chat sync
 - **ui preferences:** chat collapse state, tab order, visual settings
 - **cosmetics:** cache of 7TV paints, FFZ/BTTV badges, and badge assignments for display purposes
-- **health check-in:** a daily-rotating install id, your extension version, and which social surfaces (multichat/feed/dm/mentions) you've opened — sent with the periodic kill-switch poll, see "health / kill-switch poll" below
+- **health check-in:** a daily-rotating install id, your extension version, a rough install-age range, and which social surfaces (multichat/feed/dm/mentions) you've opened — sent with the periodic kill-switch poll, see "health / kill-switch poll" below
 
 **we do not collect:** chat message content, browsing history, clickstream data, device identifiers, or any analytics/tracking beyond the aggregate health check-in described below.
 
@@ -37,11 +37,12 @@ every 5 minutes, and once when the browser starts the extension, it checks in wi
 
 - a random id that **rotates every UTC midnight** — it identifies your install for one day only and cannot be used to follow you across days
 - your extension version
+- a rough install-age range (first day / first week / first month / older), computed on your device — never a date; it lands only in per-range daily counts like the rest
 - the names of any surfaces (multichat/feed/dm/mentions) you opened since the last successful check-in
 
-on firefox this is opt-in: it's listed under the optional "technical and interaction data" permission (about:addons → heatsync → permissions). without it the poll still runs — the kill switch has to — but sends no id, no version and no surfaces.
+on firefox this is opt-in: it's listed under the optional "technical and interaction data" permission (about:addons → heatsync → permissions). without it the poll still runs — the kill switch has to — but sends no id, no version, no age range and no surfaces.
 
-the server never stores the id itself: it's merged into a HyperLogLog (a data structure built to count distinct values without retaining the values that produced the count) and discarded. the resulting daily install/version/surface counts persist for 90 days, then auto-expire. no chat content, no browsing history, no cross-site identifier — just "how many installs checked in today" and "did any of them open the feed."
+the server never stores the id itself: it's merged into a HyperLogLog (a data structure built to count distinct values without retaining the values that produced the count) and discarded. the resulting daily install/version/age-range/surface counts persist for 90 days, then auto-expire. no chat content, no browsing history, no cross-site identifier — just "how many installs checked in today" and "did any of them open the feed."
 
 the extension acts on a third-party platform only when *you* explicitly initiate it — sending a chat message, setting your username color, creating a clip, following a channel, or (if you are a moderator) moderation actions like timeouts. it never acts autonomously or in the background, and never changes account settings you did not trigger.
 
@@ -74,7 +75,7 @@ the extension communicates with the following services. **no personal data is so
 | twitch.tv, kick.com | none — extension reads DOM only | display overlays in chat |
 | www.youtube.com | YouTube channel handles + video IDs | fetch live-page metadata (oembed) to resolve channels and route live-chat messages |
 | pronoundb.org | Twitch numeric user ID | look up self-declared pronouns for the profile card + hover tooltip (Twitch only). on by default — toggle off in settings → display → pronouns |
-| heatsync.org | rotating daily install id, extension version, opened surface names (multichat/feed/dm/mentions) | health/kill-switch check-in, every 5 min — counts distinct installs and surface usage in aggregate; see "health / kill-switch poll" above for retention |
+| heatsync.org | rotating daily install id, extension version, rough install-age range, opened surface names (multichat/feed/dm/mentions) | health/kill-switch check-in, every 5 min — counts distinct installs and surface usage in aggregate; see "health / kill-switch poll" above for retention |
 
 ## what we don't collect
 
@@ -86,7 +87,7 @@ we **explicitly do not** collect:
 - device hardware specs, OS info, or system details
 - Twitch, Kick, or YouTube account credentials
 
-the one exception is the aggregate health check-in above (rotating daily id, version, opened surfaces) — it exists to run the kill switch and count installs, not to profile you, and the id can't be joined across days.
+the one exception is the aggregate health check-in above (rotating daily id, version, install-age range, opened surfaces) — it exists to run the kill switch and count installs, not to profile you, and the id can't be joined across days.
 
 ## user rights
 
@@ -105,7 +106,7 @@ the one exception is the aggregate health check-in above (rotating daily id, ver
 - **cosmetics cache:** global cosmetics refreshed every 24 hours; channel cosmetics refreshed on-demand
 - **chat history:** multichat messages are cached in memory only during your session; not written to disk
 - **pronoun lookups:** cached in memory for 24h, then re-fetched on next hover
-- **health check-in id:** never stored — merged into a daily HyperLogLog and discarded immediately; the resulting install/version/surface counts persist 90 days then auto-expire
+- **health check-in id:** never stored — merged into a daily HyperLogLog and discarded immediately; the resulting install/version/age-range/surface counts persist 90 days then auto-expire
 - **server-side:** heatsync.org retains account data until you delete your account; see heatsync.org privacy policy for server retention details
 
 ## contact

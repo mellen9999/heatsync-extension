@@ -28,7 +28,8 @@ DATA HANDLING. No third-party tracking, no ad networks, no analytics SDK. We do
 not collect chat message content, browsing history, clickstream, or device
 identifiers. One first-party exception: a health/kill-switch poll to
 heatsync.org (every 5 min + on startup) sends a rotating install id (changes
-daily, cannot be joined across days), extension version, and which of
+daily, cannot be joined across days), extension version, a rough install-age range (first day/week/month/older,
+computed on-device), and which of
 multichat/feed/dm/mentions were opened — merged server-side into a HyperLogLog
 and discarded, aggregate counts kept 90 days. Full detail in PRIVACY.md
 ("health / kill-switch poll"). The user's emote inventory, preferences,

@@ -887,6 +887,37 @@ async function mayCountInstall() {
   }
 }
 
+// Coarse install age for the check-in: a range, never a date, so it cannot
+// single anyone out. 'pre' = installed before the stamp existed. Read-only on
+// purpose: the top-level fetchHealth() at SW start runs before onInstalled
+// writes the stamp on a fresh install, so that first poll omits it and the
+// next one (5 min on) sends d0 — no guessing, no race.
+async function installAgeBucket() {
+  try {
+    const { hs_installed_day: day } = await browser.storage.local.get(['hs_installed_day'])
+    if (day === 'pre') return 'pre'
+    if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return null
+    const days = Math.floor((Date.parse(new Date().toISOString().slice(0, 10)) - Date.parse(day)) / 86400000)
+    if (Number.isNaN(days) || days < 0) return null
+    return days === 0 ? 'd0' : days < 7 ? 'd1' : days < 30 ? 'd7' : 'd30'
+  } catch {
+    return null
+  }
+}
+
+// Install stamps the day (date only); an update from a build without the stamp
+// marks 'pre' once and never clobbers a real one.
+async function stampInstallDay(reason) {
+  try {
+    if (reason === 'install') {
+      await browser.storage.local.set({ hs_installed_day: new Date().toISOString().slice(0, 10) })
+    } else if (reason === 'update') {
+      const { hs_installed_day } = await browser.storage.local.get(['hs_installed_day'])
+      if (hs_installed_day === undefined) await browser.storage.local.set({ hs_installed_day: 'pre' })
+    }
+  } catch {}
+}
+
 async function fetchHealth() {
   try {
     // Identity is best-effort: a storage failure must never cost us the
@@ -903,6 +934,8 @@ async function fetchHealth() {
         // about nobody, and the server drops it anyway.
         sent = await takePendingSurfaces()
         if (sent.length) q.set('s', sent.join(','))
+        const age = await installAgeBucket()
+        if (age) q.set('a', age)
         url = `${HEALTH_URL}?${q}`
       }
     } catch {}
@@ -958,6 +991,7 @@ browser.runtime.onInstalled.addListener((details) => {
   // hour, every SW will wake and try to connect /ws at once. Delay each
   // client's first connect by a random 0–60s. Skip on fresh install — that's
   // one human waiting on a blank panel, not a thundering herd.
+  stampInstallDay(details.reason)
   pendingStartupJitterMs = details.reason === 'install' ? 0 : Math.random() * 60000
   browser.storage.session?.set({ startup_jitter_at: Date.now() + pendingStartupJitterMs }).catch(() => {})
   // Clear any stale intervals from previous version

@@ -36,8 +36,9 @@ function sliceBetween(marker, endMarker) {
 const PRELUDE_SRC = sliceBetween('const HEALTH_URL =', 'async function fetchHealth()')
 const FETCH_HEALTH_SRC = sliceBetween('async function fetchHealth()', '\n// A cached kill/disabled')
 
-function makeHarness({ pending = [], ok = true, installType } = {}) {
+function makeHarness({ pending = [], ok = true, installType, installedDay } = {}) {
   const store = pending.length ? { hs_surfaces_pending: [...pending] } : {}
+  if (installedDay !== undefined) store.hs_installed_day = installedDay
   const urls = []
   const browser = {
     storage: {
@@ -67,7 +68,7 @@ function makeHarness({ pending = [], ok = true, installType } = {}) {
     'browser',
     'fetchWithTimeout',
     'crypto',
-    `${PRELUDE_SRC}\n${FETCH_HEALTH_SRC}\nreturn { fetchHealth, takePendingSurfaces }`,
+    `${PRELUDE_SRC}\n${FETCH_HEALTH_SRC}\nreturn { fetchHealth, takePendingSurfaces, stampInstallDay }`,
   )(browser, fetchWithTimeout, { randomUUID: () => 'install-fixed-id' })
   return { ...api, urls, store }
 }
@@ -123,5 +124,77 @@ describe('fetchHealth — surface names on the wire', () => {
     const h = makeHarness({ installType: 'normal' })
     await h.fetchHealth()
     expect(new URL(h.urls[0]).searchParams.get('id')).toBe('install-fixed-id')
+  })
+})
+
+const dayStamp = (daysAgo) => new Date(Date.now() - daysAgo * 86400000).toISOString().slice(0, 10)
+
+describe('fetchHealth — install-age bucket', () => {
+  const a = async (installedDay, opts) => {
+    const h = makeHarness({ installedDay, ...opts })
+    await h.fetchHealth()
+    return new URL(h.urls[0]).searchParams.get('a')
+  }
+
+  test.each([
+    [0, 'd0'],
+    [1, 'd1'],
+    [6, 'd1'],
+    [7, 'd7'],
+    [29, 'd7'],
+    [30, 'd30'],
+    [400, 'd30'],
+  ])('%i days since install → a=%s', async (days, bucket) => {
+    expect(await a(dayStamp(days))).toBe(bucket)
+  })
+
+  test("'pre' is sent as a=pre", async () => {
+    expect(await a('pre')).toBe('pre')
+  })
+
+  test.each([[undefined], ['garbage'], ['2026-13-99'], [12345], [dayStamp(-1)], [dayStamp(-400)]])(
+    'stamp %p sends no a=',
+    async (stamp) => {
+      expect(await a(stamp)).toBeNull()
+    },
+  )
+
+  test('an unpacked install sends no id and no a=', async () => {
+    const h = makeHarness({ installedDay: dayStamp(0), installType: 'development' })
+    await h.fetchHealth()
+    expect(h.urls).toEqual(['https://heatsync.org/api/extension/health'])
+  })
+
+  test('the poll never writes the stamp', async () => {
+    const h = makeHarness()
+    await h.fetchHealth()
+    expect('hs_installed_day' in h.store).toBe(false)
+  })
+})
+
+describe('stampInstallDay', () => {
+  test('install stamps today as a date only, overwriting', async () => {
+    const h = makeHarness({ installedDay: '2020-01-01' })
+    await h.stampInstallDay('install')
+    expect(h.store.hs_installed_day).toBe(dayStamp(0))
+    expect(h.store.hs_installed_day).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  test("update marks 'pre' only when no stamp exists", async () => {
+    const h = makeHarness()
+    await h.stampInstallDay('update')
+    expect(h.store.hs_installed_day).toBe('pre')
+  })
+
+  test('update never clobbers a real stamp', async () => {
+    const h = makeHarness({ installedDay: '2026-01-02' })
+    await h.stampInstallDay('update')
+    expect(h.store.hs_installed_day).toBe('2026-01-02')
+  })
+
+  test('other reasons write nothing', async () => {
+    const h = makeHarness()
+    await h.stampInstallDay('chrome_update')
+    expect('hs_installed_day' in h.store).toBe(false)
   })
 })

@@ -14114,7 +14114,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b3dfec00534b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b8d912f2d4a7' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -50049,22 +50049,20 @@ function pcBuildSessionSheetRows(username) {
 }
 
 // Kick bio socials (from pcFetchKickEnrich/pcMergeKickEnrich's `_kick_socials`)
-// as payload.socials-shaped links. Discord has no single canonical URL shape
-// (tag vs invite vs username) so it renders as plain text, same as before.
+// as payload.socials-shaped labels (plain text, no hrefs).
 function pcBuildSocials(data) {
   const s = data?._kick_socials
   if (!s) return null
+  // plain text, `site @handle` — the card has no links outside its address row
+  const handle = (v) =>
+    String(v)
+      .replace(/^https?:\/\/(www\.)?[^/]+\//, '')
+      .replace(/^@/, '')
+      .replace(/\/$/, '')
   const out = []
-  if (s.twitter) out.push({ label: 'twitter', href: `https://twitter.com/${s.twitter}` })
-  if (s.instagram) out.push({ label: 'instagram', href: `https://instagram.com/${s.instagram}` })
-  if (s.youtube)
-    out.push({ label: 'youtube', href: s.youtube.startsWith('http') ? s.youtube : `https://youtube.com/${s.youtube}` })
-  if (s.tiktok) out.push({ label: 'tiktok', href: `https://tiktok.com/@${s.tiktok}` })
-  if (s.facebook)
-    out.push({
-      label: 'facebook',
-      href: s.facebook.startsWith('http') ? s.facebook : `https://facebook.com/${s.facebook}`,
-    })
+  for (const k of ['twitter', 'instagram', 'youtube', 'tiktok', 'facebook']) {
+    if (s[k]) out.push({ label: `${k} @${handle(s[k])}` })
+  }
   if (s.discord) out.push({ label: `discord: ${s.discord}` })
   return out.length ? out : null
 }

@@ -46,17 +46,14 @@ describe('pcBuildSocials — Kick bio socials as payload.socials', () => {
     expect(pcBuildSocials({ _kick_socials: {} })).toBeNull()
   })
 
-  test('builds a link entry per populated field', () => {
+  test('builds a plain `site @handle` entry per populated field, never an href', () => {
     const out = pcBuildSocials({ _kick_socials: { twitter: 'xqc', instagram: 'xqc' } })
-    expect(out).toEqual([
-      { label: 'twitter', href: 'https://twitter.com/xqc' },
-      { label: 'instagram', href: 'https://instagram.com/xqc' },
-    ])
+    expect(out).toEqual([{ label: 'twitter @xqc' }, { label: 'instagram @xqc' }])
   })
 
-  test('youtube/facebook pass an already-absolute URL through unmodified', () => {
+  test('an absolute url is reduced to its handle', () => {
     const out = pcBuildSocials({ _kick_socials: { youtube: 'https://youtube.com/@xqc' } })
-    expect(out).toEqual([{ label: 'youtube', href: 'https://youtube.com/@xqc' }])
+    expect(out).toEqual([{ label: 'youtube @xqc' }])
   })
 
   test('discord has no canonical URL shape — renders as a labeled entry with no href', () => {

@@ -26,11 +26,9 @@ function makeMcBtn(text, primary) {
   return btn
 }
 
-// Tab ids the strip owns. A channel called "live" would shadow the live tab.
-const RESERVED_TAB_IDS = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
-
 /**
  * Why this channel can't be added, as a locale key — or null if it can.
+ * Reserved ids come from tab-registry.js: a channel called "live" would shadow the live tab.
  *
  * One copy on purpose. The add form, the follow-import picker and the paste
  * list all have to agree about what a duplicate is; a guard enforced at only
@@ -38,7 +36,7 @@ const RESERVED_TAB_IDS = ['live', 'feed', 'mentions', 'whispers', 'discover', 'p
  */
 function channelAddError(twitchVal, kickVal, ytVal) {
   const id = twitchVal || kickVal || ''
-  if (id && RESERVED_TAB_IDS.includes(id)) return 'mc_reserved_name'
+  if (id && mcIsReservedTab(id)) return 'mc_reserved_name'
   if (id && config.channels.some((c) => c.id === id)) return 'mc_channel_exists'
   if (twitchVal && config.channels.some((c) => c.twitch === twitchVal)) return 'mc_twitch_exists'
   if (kickVal && config.channels.some((c) => c.kick === kickVal)) return 'mc_kick_exists'

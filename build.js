@@ -762,6 +762,7 @@ function verifyLibSlim(entryName, entrySrc, extras) {
 const MULTICHAT_MODULES = [
   'bootstrap.js',
   'slash-registry.js',
+  'tab-registry.js',
   'palette.js',
   'kick-native-tap.js',
   'send-targets.js',

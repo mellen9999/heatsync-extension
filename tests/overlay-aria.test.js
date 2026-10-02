@@ -31,12 +31,15 @@ describe('overlay aria', () => {
   })
 
   test('every static chat tab is a tab with a selected state', () => {
+    // the strip renders from MC_TABS (tab-registry.js) through mcTabButtonHtml
+    const REG = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
     for (const tab of ['feed', 'whispers', 'mentions', 'pinned', 'modlog', 'live']) {
-      const row = MAIN.match(new RegExp(`<button[^>]*data-tab="${tab}"[^>]*>`))
-      expect(row, `no button for data-tab="${tab}"`).toBeTruthy()
-      expect(row[0]).toContain('role="tab"')
-      expect(row[0]).toContain('aria-selected=')
+      expect(REG, `no registry cell for ${tab}`).toMatch(new RegExp(`id: '${tab}'[^}]*bar: 'scroll'`))
     }
+    const row = MAIN.match(/function mcTabButtonHtml[\s\S]*?\n  }\n/)
+    expect(row, 'no mcTabButtonHtml').toBeTruthy()
+    expect(row[0]).toContain('role="tab"')
+    expect(row[0]).toContain('aria-selected=')
   })
 
   test('the utility buttons do NOT claim to be tabs', () => {

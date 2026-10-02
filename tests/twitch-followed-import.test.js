@@ -16,7 +16,8 @@ function slice(startMarker, endMarker) {
   return SRC.slice(s, e)
 }
 
-const GUARD = slice('const RESERVED_TAB_IDS', 'function addChannelsBulk')
+const REGISTRY = readFileSync(new URL('../src/multichat/tab-registry.js', import.meta.url), 'utf8')
+const GUARD = `${REGISTRY}\n${slice('/**\n * Why this channel can', 'function addChannelsBulk')}`
 const BULK = slice('function addChannelsBulk', 'function makeMcLink')
 
 /** Run the real guard + bulk-add against a fake config, counting side effects. */

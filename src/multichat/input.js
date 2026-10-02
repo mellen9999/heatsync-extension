@@ -7811,9 +7811,8 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_usage_tab') || '/tab <live|feed|mentions|whispers|settings|channel>', 'error')
       return true
     }
-    const SPECIAL = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
     let target = null
-    if (SPECIAL.includes(q)) {
+    if (mcIsReservedTab(q)) {
       target = q
     } else if (typeof config !== 'undefined' && config.channels) {
       const ch = config.channels.find(

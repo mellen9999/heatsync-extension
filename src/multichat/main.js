@@ -1176,7 +1176,7 @@
   function applyUnreadIndicatorsFromPersist() {
     if (!tabBarElement) return
     const tabs = tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')
-    const SPECIAL = new Set(['mentions', 'whispers', 'feed', 'discover', 'pinned', 'modlog', 'add', 'settings', 'live'])
+    const SPECIAL = new Set(mcReservedTabIds())
     for (const tabEl of tabs) {
       const tabId = tabEl.dataset.tab
       if (!tabId || tabId === currentTab) continue
@@ -3171,6 +3171,15 @@
     if (el.getAttribute('role') === 'tab') el.setAttribute('aria-selected', String(on))
   }
 
+  // One button per registry cell. 'add' is a plain button (no tab role); live
+  // is born active. Labels come from locale keys, '+' is literal.
+  function mcTabButtonHtml(tab) {
+    const label = tab.labelKey ? t(tab.labelKey) : tab.label
+    if (tab.id === 'add') return `<button class="hs-mc-tab" data-tab="add">${label}</button>`
+    const on = tab.id === 'live'
+    return `<button class="hs-mc-tab${on ? ' active' : ''}" role="tab" aria-selected="${on}" data-tab="${tab.id}">${label}</button>`
+  }
+
   function createTabBar() {
     const container = document.createElement('div')
     container.id = 'hs-mc-tabbar'
@@ -3180,13 +3189,9 @@
     // Static hardcoded buttons — all in one wrapping flow, no user input
     container.innerHTML = `
       <div class="hs-mc-tabs-scroll" role="tablist" aria-label="chat tabs">
-        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="feed">${t('mc_tab_feed')}</button>
-        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="whispers">${t('mc_tab_whispers')}</button>
-        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="mentions">${t('mc_tab_mentions')}</button>
-        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="pinned">${t('mc_tab_pinned')}</button>
-        <button class="hs-mc-tab" role="tab" aria-selected="false" data-tab="modlog">${t('mc_tab_modlog')}</button>
-        <button class="hs-mc-tab active" role="tab" aria-selected="true" data-tab="live">${t('mc_tab_live')}</button>
-        <button class="hs-mc-tab" data-tab="add">+</button>
+        ${MC_TABS.filter((tab) => tab.bar === 'scroll')
+          .map(mcTabButtonHtml)
+          .join('')}
       </div>
       <div class="hs-mc-right-cluster">
         <div class="hs-mc-util-row">
@@ -3294,8 +3299,7 @@
       }
 
       // Channel tabs get edit/remove context menu
-      const reserved = ['feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
-      if (reserved.includes(tabId)) return
+      if (mcIsReservedTab(tabId)) return
       e.preventDefault()
 
       // Remove any existing context menu
@@ -3461,7 +3465,7 @@
   // all, which is why prod measured ~5 live installs a day and ZERO requests to
   // the feed endpoint over three days. Same bug as the other three layers, one
   // repo up: each looked fixed from the layer above.
-  const DEFAULT_HIDDEN_TABS = ['pinned', 'whispers', 'mentions', 'modlog']
+  const DEFAULT_HIDDEN_TABS = mcDefaultHiddenTabs()
   // The set stamped on installs from 2026-07-27 to 2026-08-25. Still recognised
   // so those installs are treated as "never customised" rather than stranded
   // with a hidden feed forever.
@@ -5500,7 +5504,9 @@
     // them updateTabBar (runs on every channel load) silently removes the ⇄ / ⚡
     // buttons right after they render. That was "BUG 1: ⇄ missing on kick".
     const existingChannelTabs = tabBarElement.querySelectorAll(
-      '.hs-mc-tab[data-tab]:not([data-tab="live"]):not([data-tab="feed"]):not([data-tab="mentions"]):not([data-tab="whispers"]):not([data-tab="discover"]):not([data-tab="pinned"]):not([data-tab="modlog"]):not([data-tab="add"]):not([data-tab="settings"]):not([data-tab="popout"]):not([data-tab="collapse"]):not([data-tab="native"]):not([data-tab="actions"]):not([data-tab="subscribe"])',
+      `.hs-mc-tab[data-tab]${mcChromeTabIds()
+        .map((id) => `:not([data-tab="${id}"])`)
+        .join('')}`,
     )
     existingChannelTabs.forEach((t) => {
       t.remove()
@@ -11124,7 +11130,7 @@
    */
   async function resolveLiveCandidateToTab({ name, platform, youtubeUrl, _videoId }) {
     const lower = name.toLowerCase()
-    const reserved = ['live', 'feed', 'mentions', 'whispers', 'discover', 'pinned', 'modlog', 'add', 'settings']
+    const reserved = mcReservedTabIds()
 
     // Resolve all 3 platform identities up-front via /api/profile so the resulting
     // tab pulls Twitch + Kick + YouTube together — not just the platform we
@@ -11615,7 +11621,7 @@
   // so a stale saved 'discover' falls back to 'live' on restore.
   // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
   // silently bounced you to 'live' every reload if that's where you were.
-  const BUILTIN_TABS = ['live', 'feed', 'mentions', 'whispers', 'pinned', 'modlog', 'add']
+  const BUILTIN_TABS = mcRestorableTabs()
   async function loadActiveTab() {
     try {
       const stored = await cachedUiSettings()

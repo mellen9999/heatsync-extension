@@ -30,7 +30,8 @@ function sliceBetween(marker, endMarker) {
   return MAIN_SRC.slice(start, end)
 }
 
-const TABS_SRC = sliceBetween('  const HIDABLE_TABS = ', '  // Timestamps on messages')
+const REGISTRY_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
+const TABS_SRC = `${REGISTRY_SRC}\n${sliceBetween('  const HIDABLE_TABS = ', '  // Timestamps on messages')}`
 
 function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}) {
   const settings = { hiddenTabs }

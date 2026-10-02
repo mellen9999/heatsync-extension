@@ -39,6 +39,7 @@ const SURFACES = {
   'add channel': ['add'],
   settings: ['settings', 'display'],
   help: ['settings', 'help'],
+  'edit live platforms': ['live', 'platforms'],
 }
 
 describe('every full surface is a cell', () => {
@@ -82,6 +83,13 @@ describe('openers are shortcuts to a cell, never the door', () => {
     expect(api.mcCellAddress('discover')).toEqual({ tab: 'feed', sub: 'discover' })
   })
 
+  test('edit live platforms is a shortcut to live › platforms (dropdown + right-click call it)', () => {
+    expect(read('channel-mgmt.js')).toMatch(
+      /function showEditLivePlatforms\(\) \{[^}]*switchTab\('live', 'platforms'\)/,
+    )
+    expect(read('main.js').match(/showEditLivePlatforms\(\)/g).length).toBeGreaterThanOrEqual(2)
+  })
+
   test('the empty-feed button switches to the discover cell', () => {
     expect(read('social.js')).toMatch(/switchTab\('feed', 'discover'\)/)
   })
@@ -106,7 +114,7 @@ describe('openers are shortcuts to a cell, never the door', () => {
 
   test('every cell an opener names exists in the registry', () => {
     const cellsOf = (tab) => new Set(api.mcSubCells(tab).map((c) => c.id))
-    const channel = cellsOf('live')
+    const channel = cellsOf('live') // live's cells are a superset of a channel tab's
     for (const f of files) {
       const src = read(f)
       for (const m of src.matchAll(/mcOpenChannelCell\('(\w+)'/g)) {

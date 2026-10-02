@@ -20,6 +20,10 @@ const MC_CHANNEL_SUB = [
   { id: 'status', label: 'status' },
 ]
 
+// live is a launcher for whichever channel is up, so it also owns the form that
+// says which platforms that channel means.
+const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
+
 const MC_TABS = [
   {
     id: 'feed',
@@ -35,7 +39,7 @@ const MC_TABS = [
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
-  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_CHANNEL_SUB },
+  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_LIVE_SUB },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
   // a cell of feed that keeps its own internal id (renderers key on it)
   { id: 'discover', cellOf: 'feed', restorable: true },

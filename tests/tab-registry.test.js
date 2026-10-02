@@ -68,10 +68,9 @@ describe('mcResolveSub', () => {
     expect(api.mcResolveSub('pinned', 'x', {})).toBeNull()
   })
 
-  test('a channel tab and live share chat · summary · logs · status, chat is home', () => {
-    for (const id of ['xqc', 'live']) {
-      expect(api.mcSubCells(id).map((c) => c.id)).toEqual(['chat', 'summary', 'logs', 'status'])
-    }
+  test('a channel tab has chat · summary · logs · status; live adds platforms; chat is home', () => {
+    expect(api.mcSubCells('xqc').map((c) => c.id)).toEqual(['chat', 'summary', 'logs', 'status'])
+    expect(api.mcSubCells('live').map((c) => c.id)).toEqual(['chat', 'summary', 'logs', 'status', 'platforms'])
   })
 
   test('asked cell wins, else the last used, else the first', () => {

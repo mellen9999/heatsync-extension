@@ -749,16 +749,19 @@ function applyLivePlatformOverrides() {
   renderMessages(currentTab)
 }
 
+// Shortcut to the live tab's platforms cell (also reachable from the live
+// picker dropdown and the live tab's right-click).
 function showEditLivePlatforms() {
+  if (!getCurrentChannel()) return
+  switchTab('live', 'platforms')
+}
+
+// The platforms cell's pane: which twitch/kick/youtube this live channel means.
+function renderLivePlatformsPane(pane) {
   const urlCh = getCurrentChannel()?.toLowerCase()
   if (!urlCh) return
-  editingChannel = true
   const names = getLivePlatformNames()
-
-  const msgsEl = document.getElementById('hs-mc-messages')
-  if (!msgsEl) return
-  _clearMessageIndices()
-  msgsEl.textContent = ''
+  const home = () => switchTab('live', 'chat')
 
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
@@ -805,19 +808,15 @@ function showEditLivePlatforms() {
   btnRow.appendChild(cancelBtn)
   btnRow.appendChild(resetBtn)
   wrapper.appendChild(btnRow)
-  msgsEl.appendChild(wrapper)
+  pane.appendChild(wrapper)
 
-  cancelBtn.addEventListener('click', () => {
-    editingChannel = false
-    switchTab('live')
-  })
+  cancelBtn.addEventListener('click', home)
 
   resetBtn.addEventListener('click', () => {
     delete livePlatformMap[urlCh]
     saveLivePlatformMap()
-    editingChannel = false
+    home()
     applyLivePlatformOverrides()
-    switchTab('live')
   })
 
   const doSave = () => {
@@ -827,13 +826,12 @@ function showEditLivePlatforms() {
 
     livePlatformMap[urlCh] = { twitch: tw, kick: ki, youtube: ytVal }
     saveLivePlatformMap()
-    editingChannel = false
+    home()
     applyLivePlatformOverrides()
-    switchTab('live')
   }
 
   saveBtn.addEventListener('click', doSave)
-  // Enter in any input saves
+  // Enter in any input saves; Esc is the shared cell Esc (main.js)
   ;[twitch.input, kick.input, yt.input].forEach((inp) => {
     inp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -841,13 +839,6 @@ function showEditLivePlatforms() {
         doSave()
       }
     })
-  })
-  // Esc cancels
-  wrapper.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      editingChannel = false
-      switchTab('live')
-    }
   })
   twitch.input.focus()
 }

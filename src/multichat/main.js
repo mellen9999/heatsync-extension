@@ -3292,6 +3292,7 @@
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(panel)
     },
+    platforms: (pane) => renderLivePlatformsPane(pane),
     // Your own messages in this channel, or the user a right-click named.
     logs: (pane, ctx) => {
       const ch = getChannelById(ctx.tab)

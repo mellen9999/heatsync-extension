@@ -9,7 +9,7 @@ import { join } from 'node:path'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
 const api = new Function(
-  `${SRC}\nreturn { MC_TABS, MC_CHANNEL_SUB, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs }`,
+  `${SRC}\nreturn { MC_TABS, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs }`,
 )()
 
 describe('tab registry', () => {
@@ -34,32 +34,24 @@ describe('tab registry', () => {
 })
 
 describe('mcResolveSub', () => {
-  const cells = [{ id: 'chat' }, { id: 'logs' }]
-  const withCells = (fn) => {
-    api.MC_CHANNEL_SUB.push(...cells)
-    try {
-      fn()
-    } finally {
-      api.MC_CHANNEL_SUB.length = 0
-    }
-  }
-
   test('a tab with no cells has no 2nd row', () => {
     expect(api.mcSubCells('settings')).toEqual([])
     expect(api.mcResolveSub('settings', 'x', {})).toBeNull()
   })
 
+  test('a channel tab and live share chat · summary · logs · status, chat is home', () => {
+    for (const id of ['xqc', 'live']) {
+      expect(api.mcSubCells(id).map((c) => c.id)).toEqual(['chat', 'summary', 'logs', 'status'])
+    }
+  })
+
   test('asked cell wins, else the last used, else the first', () => {
-    withCells(() => {
-      expect(api.mcResolveSub('xqc', 'logs', {})).toBe('logs')
-      expect(api.mcResolveSub('xqc', undefined, { xqc: 'logs' })).toBe('logs')
-      expect(api.mcResolveSub('xqc', undefined, {})).toBe('chat')
-    })
+    expect(api.mcResolveSub('xqc', 'logs', {})).toBe('logs')
+    expect(api.mcResolveSub('xqc', undefined, { xqc: 'logs' })).toBe('logs')
+    expect(api.mcResolveSub('xqc', undefined, {})).toBe('chat')
   })
 
   test('an unknown cell never sticks', () => {
-    withCells(() => {
-      expect(api.mcResolveSub('xqc', 'nope', { xqc: 'gone' })).toBe('chat')
-    })
+    expect(api.mcResolveSub('xqc', 'nope', { xqc: 'gone' })).toBe('chat')
   })
 })

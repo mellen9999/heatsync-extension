@@ -54,8 +54,6 @@ function renderQuickLinks() {
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 4h6v2h-6v-2zm0-4h6v2h-6v-2z"/></svg>',
     settings:
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 6.5A3.5 3.5 0 1010 13.5 3.5 3.5 0 0010 6.5zm6.5 3.5a6.5 6.5 0 00-.1-1.1l2-1.5-1.5-2.6-2.3.8c-.6-.5-1.3-.9-2-1.2L12.2 2h-3l-.4 2.4c-.7.3-1.4.7-2 1.2l-2.3-.8L3 7.4l2 1.5a6.6 6.6 0 000 2.2L3 12.6l1.5 2.6 2.3-.8c.6.5 1.3.9 2 1.2l.4 2.4h3l.4-2.4c.7-.3 1.4-.7 2-1.2l2.3.8 1.5-2.6-2-1.5c.1-.4.1-.7.1-1.1z"/></svg>',
-    chart:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M3 17V3h2v14h12v2H3zm4-3V8h2v6H7zm4 0V5h2v9h-2zm4 0V10h2v4h-2z"/></svg>',
     people:
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M7 8a3 3 0 100-6 3 3 0 000 6zm6 1a2 2 0 100-4 2 2 0 000 4zM1 17v-1c0-2.5 4-4 6-4s6 1.5 6 4v1H1zm12-1c0-1.2-.8-2.2-2-2.9.6-.1 1.3-.1 2-.1 2 0 5 1 5 3v1h-5v-1z"/></svg>',
     cash: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 2a8 8 0 100 16 8 8 0 000-16zm.5 12.5v1h-1v-1c-1.4-.2-2.5-1-2.7-2.5H8c.1.6.5 1 1.5 1 .8 0 1.5-.3 1.5-1 0-.5-.3-.8-1.5-1.1-1.5-.4-2.8-.9-2.8-2.4 0-1.1 1-1.9 2.3-2.1V5h1v1.4c1.2.2 2.2.8 2.5 2.1H11c-.1-.5-.5-1-1.5-1-.7 0-1.5.3-1.5.9 0 .6.4.9 1.5 1.2 1.7.5 2.8 1 2.8 2.4 0 1.2-1 2-2.3 2.4z"/></svg>',
@@ -78,9 +76,6 @@ function renderQuickLinks() {
       items: [
         { action: 'sub', accent: '#e91916', icon: ICONS.sub, label: 'subscribe', direct: true },
         { action: 'popout', accent: '#4a90d9', icon: ICONS.popout, label: 'popout chat', direct: true },
-        // In-app, never a window: twitch's own stream-summary page can't be
-        // embedded and has no api, so this is heatsync's count of this chat.
-        { action: 'summary', accent: 'var(--hs-brand)', icon: ICONS.chart, label: 'stream summary', inline: true },
       ],
     },
     {
@@ -221,13 +216,6 @@ function renderQuickLinks() {
 
       el.addEventListener('click', (e) => {
         e.stopPropagation()
-        if (item.inline) {
-          const slot = el.nextElementSibling
-          if (slot.firstChild) slot.textContent = ''
-          else if (ch) mountLiveStreamSummary(slot, ch)
-          else showToast(t('mc_twitchapi_no_channel'), 'error')
-          return
-        }
         if (item.direct) {
           triggerTwitchFeature(item.action)
           return
@@ -241,11 +229,6 @@ function renderQuickLinks() {
         } catch {}
       })
       wrap.appendChild(el)
-      if (item.inline) {
-        const slot = document.createElement('div')
-        slot.className = 'hs-mc-summary-slot'
-        wrap.appendChild(slot)
-      }
     }
   }
   return wrap

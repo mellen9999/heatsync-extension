@@ -3197,18 +3197,152 @@
         b.setAttribute('role', 'tab')
         b.setAttribute('aria-selected', String(c.id === currentSub))
         b.classList.toggle('active', c.id === currentSub)
+        b.classList.toggle('has-dot', subDots.has(`${currentTab}:${c.id}`))
         b.textContent = c.label
         return b
       }),
     )
   }
 
-  // Land on a cell: remember it for the tab, repaint the row.
-  function applySub(tabId, sub) {
+  // Land on a cell: remember it for the tab, repaint the row, mount its pane.
+  function applySub(tabId, sub, opts) {
     currentSub = sub
-    if (sub) lastSubByTab[tabId] = sub
+    if (sub) {
+      lastSubByTab[tabId] = sub
+      subDots.delete(`${tabId}:${sub}`)
+    }
+    renderSubRow()
+    mountSubPane(tabId, sub, opts || {})
+  }
+
+  // ── cell panes ──────────────────────────────────────────────────────────
+  // A non-home cell draws into #hs-mc-subpane, a layer over the overlay. The
+  // chat rows underneath are never touched, so coming back to `chat` is free.
+  // Panes are rebuilt on every mount, which makes a stale async fill harmless
+  // (its pane is gone, `isConnected` says so).
+  const subDots = new Set() // `${tab}:${cell}` with something not yet seen
+  let _paneHidInput = false
+
+  // The channel a channel tab (or live) is about.
+  function subChannelOf(tabId) {
+    if (tabId === 'live') return getLiveChannel()
+    const ch = getChannelById(tabId)
+    return (ch && (ch.twitch || ch.kick)) || tabId
+  }
+
+  // Tabs showing `channel`: its own tab(s) first, then live when it is the pick.
+  function channelTabIdsFor(channel) {
+    const c = String(channel || '').toLowerCase()
+    if (!c) return []
+    const ids = (config.channels || [])
+      .filter((ch) => [ch.id, ch.twitch, ch.kick].some((n) => String(n || '').toLowerCase() === c))
+      .map((ch) => ch.id)
+    if (String(getLiveChannel() || '').toLowerCase() === c) ids.push('live')
+    return ids
+  }
+
+  function setSummaryDot(channel) {
+    for (const id of channelTabIdsFor(channel)) subDots.add(`${id}:summary`)
     renderSubRow()
   }
+
+  function clearSummaryDots(channel) {
+    for (const id of channelTabIdsFor(channel)) subDots.delete(`${id}:summary`)
+    renderSubRow()
+  }
+
+  // Shortcut target for slash commands and right-click items: open `sub` on the
+  // tab that shows `channel` (this tab if it does, or has no channel to name).
+  function mcOpenChannelCell(sub, channel, opts = {}) {
+    const ids = channelTabIdsFor(channel)
+    const here = mcSubCells(currentTab).some((c) => c.id === sub)
+    const tab = channel ? (ids.includes(currentTab) ? currentTab : ids[0] || 'live') : here ? currentTab : 'live'
+    switchTab(tab, sub, { ...opts, channel: channel || undefined })
+  }
+
+  // Leave a pane for the tab's home cell (×, Esc).
+  function mcLeaveSubPane() {
+    const home = mcSubCells(currentTab)[0]?.id
+    if (home && currentSub !== home) switchTab(currentTab, home)
+  }
+
+  function _paneNote(pane, text) {
+    const d = document.createElement('div')
+    d.className = 'hs-mc-status-loading hs-mc-subpane-pad'
+    d.textContent = text
+    pane.replaceChildren(d)
+  }
+
+  const MC_SUB_PANES = {
+    summary: (pane, ctx) => {
+      pane.classList.add('hs-mc-subpane-pad')
+      mountLiveStreamSummary(pane, ctx.channel, mcLeaveSubPane)
+    },
+    status: async (pane, ctx) => {
+      const ch = String(ctx.channel || '').toLowerCase()
+      _paneNote(pane, `fetching #${ch}…`)
+      let panel = null
+      try {
+        panel = await buildChatStatusPanel(ch)
+      } catch (_) {}
+      if (!pane.isConnected) return
+      if (!panel) return _paneNote(pane, `could not fetch #${ch} (offline or not on twitch?)`)
+      panel.classList.add('hs-mc-subpane-pad')
+      pane.replaceChildren(panel)
+    },
+    // Your own messages in this channel, or the user a right-click named.
+    logs: (pane, ctx) => {
+      const ch = getChannelById(ctx.tab)
+      const platform = ctx.platform || (ch && !ch.twitch && ch.kick ? 'kick' : 'twitch')
+      const username = ctx.username || currentUsername
+      if (!username) return _paneNote(pane, 'sign in to see your logs here — right-click a chatter for theirs')
+      openChatLogsView(username, { platform, channel: ctx.channel })
+    },
+  }
+
+  function mountSubPane(tabId, sub, opts) {
+    const home = mcSubCells(tabId)[0]?.id
+    document.getElementById('hs-mc-subpane')?.remove()
+    dropChatLogsState()
+    const render = MC_SUB_PANES[sub]
+    if (!sub || sub === home || !render || !overlayElement) {
+      if (_paneHidInput) {
+        _paneHidInput = false
+        showInputBar()
+      }
+      return
+    }
+    const pane = document.createElement('div')
+    pane.id = 'hs-mc-subpane'
+    pane.tabIndex = -1
+    overlayElement.appendChild(pane)
+    // no composer behind a pane: nothing typed there could be sent anywhere
+    if (inputBarElement && !inputBarElement.classList.contains('hs-hidden')) {
+      inputBarElement.classList.add('hs-hidden')
+      inputBarVisible = false
+      _paneHidInput = true
+    }
+    render(pane, {
+      tab: tabId,
+      channel: opts.channel || subChannelOf(tabId),
+      username: opts.username,
+      platform: opts.platform,
+    })
+  }
+
+  // Esc in any pane goes back to chat — the cell's own back door.
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented || !currentSub) return
+      if (e.target?.closest?.('#hs-mc-inputbar')) return
+      const home = mcSubCells(currentTab)[0]?.id
+      if (!home || currentSub === home) return
+      e.preventDefault()
+      switchTab(currentTab, home)
+    },
+    { signal: mcSignal, capture: true },
+  )
 
   function createTabBar() {
     const container = document.createElement('div')
@@ -7137,11 +7271,11 @@
 
   // switchTab(tab, sub): a tab with a 2nd row opens at `sub`, else the cell
   // last used there, else its first. Same tab + new cell only swaps the cell.
-  function switchTab(id, sub) {
+  function switchTab(id, sub, subOpts) {
     log('switchTab called:', id, sub || '')
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
-    if (id === currentTab && sub && nextSub === sub && nextSub !== currentSub) {
-      applySub(id, nextSub)
+    if (id === currentTab && sub && nextSub === sub) {
+      applySub(id, nextSub, subOpts)
       return
     }
     _reportSurfaceOpen(id)
@@ -7350,7 +7484,7 @@
       log('No overlay element to show!')
     }
 
-    applySub(id, nextSub)
+    applySub(id, nextSub, subOpts)
 
     // Update input placeholder for new tab
     updateInputPlaceholder()
@@ -15508,6 +15642,7 @@
         } else if (msg.eventType === 'stream:online') {
           try {
             streamStats.delete((channel || '').toLowerCase())
+            clearSummaryDots(channel)
           } catch (_) {}
           if (!hermesToggles?.online) return
           // Same gate as the follow_stream_event listener: if the authoritative
@@ -15542,7 +15677,8 @@
         } else if (msg.eventType === 'stream:offline') {
           sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
           try {
-            renderStreamSummary(channel)
+            // no card pinned over chat: the channel tab's summary cell gets a dot
+            if (markStreamEnded(channel)) setSummaryDot(channel)
           } catch (_) {}
           if (!hermesToggles?.offline) return
           text = `[${channel}] \u25C6 went offline`

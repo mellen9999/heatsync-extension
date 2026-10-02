@@ -1,9 +1,10 @@
 // Stream stats - per-channel message/mention/chatter/emote counters + summary card
 
-// Stream stats (per channel, lowercase). Reset on stream:online; rendered on
-// stream:offline, and on demand from the twitch tab's links ("stream summary").
-// { msgCount, mentionCount, startedAt, peakMps, chatters: Map<user,count>,
-//   chattersFloor, emotes: Map<name,count> }
+// Stream stats (per channel, lowercase). Reset on stream:online; read by the
+// channel tab's `summary` cell (live-refreshing; titled "ended" once endedAt is
+// set by stream:offline).
+// { msgCount, mentionCount, startedAt, endedAt?, peakMps, chatters:
+//   Map<user,count>, chattersFloor, emotes: Map<name,count> }
 const streamStats = new Map()
 const STREAM_STATS_TOP_N = 5
 function getStats(channel) {
@@ -114,11 +115,12 @@ function fmtClock(ms) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-// One summary card for `channel`, read fresh from the counters. `ended` titles
-// it as the offline recap; otherwise it's the live view opened from the links
-// tab. Counting starts when multichat first sees the channel's chat, so the
-// window is labelled by that instant, never by twitch's stream uptime.
-function buildStreamSummary(channel, ended) {
+// One summary card for `channel`, read fresh from the counters. `ended` (or a
+// stream:offline stamp on the stats) titles it as the offline recap. Counting
+// starts when multichat first sees the channel's chat, so the window is
+// labelled by that instant, never by twitch's stream uptime. `onClose` adds a
+// × that calls it (the cell's way back to chat); without it there is no ×.
+function buildStreamSummary(channel, ended, onClose) {
   const key = (channel || '').toLowerCase()
   const s = streamStats.get(key)
   const card = document.createElement('div')
@@ -127,17 +129,20 @@ function buildStreamSummary(channel, ended) {
   const title = document.createElement('div')
   title.className = 'hs-mc-summary-title'
   const titleText = document.createElement('span')
-  titleText.textContent = ended ? `${key} stream ended` : `${key} stream summary`
-  const dismiss = document.createElement('button')
-  dismiss.type = 'button'
-  dismiss.className = 'hs-mc-summary-x'
-  dismiss.textContent = '×'
-  dismiss.title = 'close'
-  dismiss.addEventListener('click', (e) => {
-    e.stopPropagation()
-    card.remove()
-  })
-  title.append(titleText, dismiss)
+  titleText.textContent = ended || s?.endedAt ? `${key} stream ended` : `${key} stream summary`
+  title.append(titleText)
+  if (onClose) {
+    const dismiss = document.createElement('button')
+    dismiss.type = 'button'
+    dismiss.className = 'hs-mc-summary-x'
+    dismiss.textContent = '×'
+    dismiss.title = 'back to chat (Esc)'
+    dismiss.addEventListener('click', (e) => {
+      e.stopPropagation()
+      onClose()
+    })
+    title.append(dismiss)
+  }
   card.append(title)
 
   const line = (cls, text) => {
@@ -178,34 +183,30 @@ function buildStreamSummary(channel, ended) {
   return card
 }
 
-// Offline recap, pinned to the top of the chat container once per channel.
-function renderStreamSummary(channel) {
+// stream:offline: stamp the stats as ended and keep them an hour so the
+// summary cell can still be read. True when there was chat worth a recap.
+function markStreamEnded(channel) {
   const key = (channel || '').toLowerCase()
   const s = streamStats.get(key)
-  if (!s || s.msgCount === 0) return
-  const container = document.getElementById('hs-mc-container')
-  if (!container) return
-  const id = `hs-mc-summary-${key.replace(/[^a-z0-9]/gi, '')}`
-  if (document.getElementById(id)) return
-  const card = buildStreamSummary(key, true)
-  card.id = id
-  container.insertBefore(card, container.firstChild)
-  // Keep stats around for 1h after offline so user can review on toggle/scroll
-  cleanup.setTimeout(() => streamStats.delete(key), 60 * 60 * 1000)
+  if (!s || s.msgCount === 0) return false
+  s.endedAt = Date.now()
+  cleanup.setTimeout(
+    () => {
+      if (streamStats.get(key) === s) {
+        streamStats.delete(key)
+        if (typeof clearSummaryDots === 'function') clearSummaryDots(key)
+      }
+    },
+    60 * 60 * 1000,
+  )
+  return true
 }
 
 // Live summary mounted in `slot`, redrawn every 2s while it stays attached.
-function mountLiveStreamSummary(slot, channel) {
-  const draw = () => {
-    const card = buildStreamSummary(channel, false)
-    card.querySelector('.hs-mc-summary-x').addEventListener('click', () => {
-      cleanup.clearInterval(timer)
-      slot.textContent = ''
-    })
-    slot.replaceChildren(card)
-  }
+function mountLiveStreamSummary(slot, channel, onClose) {
+  const draw = () => slot.replaceChildren(buildStreamSummary(channel, false, onClose))
   const timer = cleanup.setInterval(() => {
-    if (!slot.isConnected || !slot.firstChild) return cleanup.clearInterval(timer)
+    if (!slot.isConnected) return cleanup.clearInterval(timer)
     draw()
   }, 2000)
   draw()

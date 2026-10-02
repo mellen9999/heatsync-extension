@@ -2624,11 +2624,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const msgChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     items.push({
       label: 'chat logs',
-      fn: () =>
-        openChatLogsView(
-          username,
-          msgChannel ? { platform: logPlatform, channel: msgChannel } : { platform: logPlatform },
-        ),
+      fn: () => mcOpenChannelCell('logs', msgChannel, { username, platform: logPlatform }),
     })
   }
   if (feedMsg && typeof isOwnFeedPost === 'function' && isOwnFeedPost(feedMsg)) {
@@ -7061,18 +7057,14 @@ async function handleSlashCommand(text, input) {
   // delay) light up automatically when the viewer mods the channel.
   if (cmd === 'status' || cmd === 'modes') {
     const arg = rest.trim().toLowerCase().replace(/^#/, '')
-    const ch =
-      arg && /^[a-z0-9_]{2,40}$/.test(arg)
-        ? arg
-        : typeof currentTab === 'string' && /^[a-z0-9_]{2,40}$/.test(currentTab)
-          ? currentTab
-          : null
+    const own = String(mcSubCells(currentTab).length ? subChannelOf(currentTab) : '').toLowerCase()
+    const ch = arg && /^[a-z0-9_]{2,40}$/.test(arg) ? arg : /^[a-z0-9_]{2,40}$/.test(own) ? own : null
     if (!ch) {
       showToast(t('mc_input_status_needs_channel'), 'error')
       return true
     }
     clearInput(input)
-    showChatStatusPanel(ch)
+    mcOpenChannelCell('status', ch)
     return true
   }
 
@@ -8135,37 +8127,6 @@ function showSlashHelp() {
   panel.addEventListener('click', () => panel.remove())
   document.body.appendChild(panel)
   setTimeout(() => panel?.remove(), 12000)
-}
-
-// Mounts the status panel built by buildChatStatusPanel into a fixed
-// overlay anchored bottom-right (matches /help). Click panel or wait 20s
-// to dismiss. Re-invoking /status replaces the existing panel.
-async function showChatStatusPanel(channel) {
-  document.getElementById('hs-mc-status-overlay')?.remove()
-  const wrap = document.createElement('div')
-  wrap.id = 'hs-mc-status-overlay'
-  wrap.className = 'hs-mc-status-overlay'
-  const loading = document.createElement('div')
-  loading.className = 'hs-mc-status-loading'
-  loading.textContent = `fetching #${channel}…`
-  wrap.appendChild(loading)
-  wrap.addEventListener('click', () => wrap.remove())
-  document.body.appendChild(wrap)
-  let panel
-  try {
-    panel = await buildChatStatusPanel(channel)
-  } catch (_) {
-    panel = null
-  }
-  if (!document.body.contains(wrap)) return
-  if (!panel) {
-    loading.textContent = `could not fetch #${channel} (offline or not on twitch?)`
-    setTimeout(() => wrap?.remove(), 5000)
-    return
-  }
-  loading.remove()
-  wrap.appendChild(panel)
-  setTimeout(() => wrap?.remove(), 20000)
 }
 
 // Resolve a username → whisper key, registering the user in whisperUsers so the

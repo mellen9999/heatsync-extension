@@ -721,7 +721,7 @@
       padding-top: 4px;
     }
 
-    /* ═══ stream summary (offline recap + links tab) ═══ */
+    /* ═══ stream summary (the channel tab's summary cell) ═══ */
     .hs-mc-stream-summary {
       background: #000; color: #fff;
       border: 1px solid var(--hs-brand);
@@ -745,15 +745,13 @@
        renderer (see memory: feedback_browser_text_cozette_13). The crisp
        block on body.hs-font-bitmap covers descendants so we don't repeat
        it here; just lock the family + size. */
-    .hs-mc-status-overlay {
-      position: fixed; bottom: 60px; right: 20px; z-index: 99999;
-      background: #000; border: 2px solid #fff;
-      padding: 12px 16px; min-width: 280px; max-width: 420px;
+    /* a non-home cell's pane: a layer over the overlay, chat untouched below */
+    #hs-mc-subpane {
+      position: absolute; inset: 0; z-index: 30;
+      background: #000; color: #fff; overflow: auto; outline: none;
       font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
-      color: #fff;
-      box-shadow: 0 0 12px rgba(255,255,255,0.3);
-      cursor: pointer;
     }
+    .hs-mc-subpane-pad { padding: 6px 10px; }
     .hs-mc-status-loading { font-size: 13px; color: #999; }
     .hs-mc-status-title { font-size: 13px; font-weight: 600; color: #fff; }
     .hs-mc-status-sub { font-size: 13px; margin-top: 2px; }

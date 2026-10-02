@@ -1,7 +1,7 @@
 /**
- * Stream summary — the twitch tab's "stream summary" link renders heatsync's
- * own count of this chat in place (twitch's stream-summary page opened a
- * second window and can't be embedded). stream-stats.js is a concatenated
+ * Stream summary — the channel tab's summary cell renders heatsync's own
+ * count of this chat in place (twitch's stream-summary page opened a second
+ * window and can't be embedded). stream-stats.js is a concatenated
  * multichat global, so its real source is evaluated against stubs.
  */
 
@@ -27,14 +27,19 @@ const text = (n) => (n.children.length ? n.children.map(text).join('') : n.textC
 
 function load({ enabled = true } = {}) {
   const document = { createElement: el }
-  const cleanup = { setTimeout() {}, setInterval() {}, clearInterval() {} }
+  const timers = []
+  const cleanup = {
+    setTimeout: (fn) => timers.push(fn),
+    setInterval() {},
+    clearInterval() {},
+  }
   return new Function(
     'document',
     'cleanup',
     'isEnabled',
     'emoteCache',
     'requestIdleCallback',
-    `${SRC}; return { bumpStreamStats, buildStreamSummary, streamStats, _flushStatsScanQueue }`,
+    `${SRC}; return { bumpStreamStats, buildStreamSummary, markStreamEnded, streamStats, _flushStatsScanQueue }`,
   )(
     document,
     cleanup,
@@ -62,6 +67,22 @@ describe('stream summary', () => {
     const m = load()
     m.bumpStreamStats('chan', { user: 'a', text: 'x' }, false)
     expect(text(m.buildStreamSummary('chan', true))).toContain('chan stream ended')
+  })
+
+  test('stream:offline stamps the stats, so the cell reads as the recap', () => {
+    const m = load()
+    expect(m.markStreamEnded('chan')).toBe(false) // no chat, nothing to recap
+    m.bumpStreamStats('chan', { user: 'a', text: 'x' }, false)
+    expect(text(m.buildStreamSummary('chan', false))).toContain('chan stream summary')
+    expect(m.markStreamEnded('chan')).toBe(true)
+    expect(text(m.buildStreamSummary('chan', false))).toContain('chan stream ended')
+  })
+
+  test('the × exists only when the cell gives it a way back', () => {
+    const m = load()
+    const has = (n) => n.className === 'hs-mc-summary-x' || n.children.some(has)
+    expect(has(m.buildStreamSummary('chan', false))).toBe(false)
+    expect(has(m.buildStreamSummary('chan', false, () => {}))).toBe(true)
   })
 
   test('says why it is empty instead of rendering nothing', () => {

@@ -137,12 +137,6 @@ async function openChatLogsView(username, opts = {}) {
   const platform = (opts.platform || 'twitch').toLowerCase()
   const channel = opts.channel ? String(opts.channel).toLowerCase() : null
 
-  // Hide inputbar — no message composition in log view. Flag must move with
-  // the class or showInputBar() early-returns forever (composer unreachable).
-  const inputBar = document.getElementById('hs-mc-inputbar')
-  if (inputBar) inputBar.classList.add('hs-hidden')
-  inputBarVisible = false
-
   activeChatLogs = {
     username,
     platform,
@@ -158,18 +152,20 @@ async function openChatLogsView(username, opts = {}) {
   await fetchChatLogsPage()
 }
 
-function closeChatLogsView() {
-  if (!activeChatLogs) return
+// Forget the open view without leaving its cell (a pane remount owns the rest).
+function dropChatLogsState() {
   activeChatLogs = null
   if (_clLoadMoreObs) {
     cleanup.untrackObserver(_clLoadMoreObs)
     _clLoadMoreObs = null
   }
-  // showInputBar owns the "may this tab have a composer" call (and keeps the
-  // visible flag in step) — the local tab list here was a third copy of it,
-  // already out of date: it never included modlog.
-  showInputBar()
-  if (typeof renderMessages === 'function') renderMessages(currentTab)
+}
+
+// × / Esc: logs is a cell, so closing it goes back to the tab's home cell.
+function closeChatLogsView() {
+  if (!activeChatLogs) return
+  dropChatLogsState()
+  mcLeaveSubPane()
 }
 
 async function fetchChatLogsPage() {
@@ -298,7 +294,7 @@ function exportChatLogs(format) {
 }
 
 function renderChatLogsView() {
-  const msgsEl = document.getElementById('hs-mc-messages')
+  const msgsEl = document.getElementById('hs-mc-subpane')
   if (!msgsEl || !activeChatLogs) return
   msgsEl.textContent = ''
 

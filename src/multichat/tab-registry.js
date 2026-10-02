@@ -10,9 +10,15 @@
  * hand-mounted overlays: a slash command, hotkey or right-click is a shortcut
  * TO a cell (switchTab(tab, sub)), never the only door.
  */
-// Cells of a channel tab (and live): the first is home. Filled in as each
-// surface becomes a cell.
-const MC_CHANNEL_SUB = []
+// Cells of a channel tab (and live): the first is home. summary / logs /
+// status are full surfaces that used to be a links item, a message right-click
+// and a slash overlay; each is now a cell, the old entries are shortcuts to it.
+const MC_CHANNEL_SUB = [
+  { id: 'chat', label: 'chat' },
+  { id: 'summary', label: 'summary' },
+  { id: 'logs', label: 'logs' },
+  { id: 'status', label: 'status' },
+]
 
 const MC_TABS = [
   { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },

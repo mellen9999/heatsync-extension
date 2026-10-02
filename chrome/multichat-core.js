@@ -14103,7 +14103,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '999adf9f974c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd38bee2df1d1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -14886,6 +14886,10 @@ const MC_CHANNEL_SUB = [
   { id: 'status', label: 'status' },
 ]
 
+// live is a launcher for whichever channel is up, so it also owns the form that
+// says which platforms that channel means.
+const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
+
 const MC_TABS = [
   {
     id: 'feed',
@@ -14901,7 +14905,7 @@ const MC_TABS = [
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
-  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_CHANNEL_SUB },
+  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_LIVE_SUB },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
   // a cell of feed that keeps its own internal id (renderers key on it)
   { id: 'discover', cellOf: 'feed', restorable: true },
@@ -59071,16 +59075,19 @@ function applyLivePlatformOverrides() {
   renderMessages(currentTab)
 }
 
+// Shortcut to the live tab's platforms cell (also reachable from the live
+// picker dropdown and the live tab's right-click).
 function showEditLivePlatforms() {
+  if (!getCurrentChannel()) return
+  switchTab('live', 'platforms')
+}
+
+// The platforms cell's pane: which twitch/kick/youtube this live channel means.
+function renderLivePlatformsPane(pane) {
   const urlCh = getCurrentChannel()?.toLowerCase()
   if (!urlCh) return
-  editingChannel = true
   const names = getLivePlatformNames()
-
-  const msgsEl = document.getElementById('hs-mc-messages')
-  if (!msgsEl) return
-  _clearMessageIndices()
-  msgsEl.textContent = ''
+  const home = () => switchTab('live', 'chat')
 
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
@@ -59127,19 +59134,15 @@ function showEditLivePlatforms() {
   btnRow.appendChild(cancelBtn)
   btnRow.appendChild(resetBtn)
   wrapper.appendChild(btnRow)
-  msgsEl.appendChild(wrapper)
+  pane.appendChild(wrapper)
 
-  cancelBtn.addEventListener('click', () => {
-    editingChannel = false
-    switchTab('live')
-  })
+  cancelBtn.addEventListener('click', home)
 
   resetBtn.addEventListener('click', () => {
     delete livePlatformMap[urlCh]
     saveLivePlatformMap()
-    editingChannel = false
+    home()
     applyLivePlatformOverrides()
-    switchTab('live')
   })
 
   const doSave = () => {
@@ -59149,13 +59152,12 @@ function showEditLivePlatforms() {
 
     livePlatformMap[urlCh] = { twitch: tw, kick: ki, youtube: ytVal }
     saveLivePlatformMap()
-    editingChannel = false
+    home()
     applyLivePlatformOverrides()
-    switchTab('live')
   }
 
   saveBtn.addEventListener('click', doSave)
-  // Enter in any input saves
+  // Enter in any input saves; Esc is the shared cell Esc (main.js)
   ;[twitch.input, kick.input, yt.input].forEach((inp) => {
     inp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -59163,13 +59165,6 @@ function showEditLivePlatforms() {
         doSave()
       }
     })
-  })
-  // Esc cancels
-  wrapper.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      editingChannel = false
-      switchTab('live')
-    }
   })
   twitch.input.focus()
 }
@@ -64229,6 +64224,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(panel)
     },
+    platforms: (pane) => renderLivePlatformsPane(pane),
     // Your own messages in this channel, or the user a right-click named.
     logs: (pane, ctx) => {
       const ch = getChannelById(ctx.tab)

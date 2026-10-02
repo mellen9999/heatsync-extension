@@ -83,13 +83,20 @@
     }
     .hs-mc-dest-close {
       margin-left: auto;
+      align-self: stretch;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 24px;
+      min-width: 28px;
       padding: 0 6px;
+      background: #000;
+      color: #fff;
       appearance: none;
     }
+    .hs-mc-dest-close svg { width: 14px; height: 14px; display: block; }
+    .hs-mc-dest-close:hover,
+    .hs-mc-dest-close:active,
+    .hs-mc-dest-close:focus-visible { background: #fff; color: #000; }
     @media (pointer: coarse) {
       .hs-mc-dest-close { min-width: 40px; min-height: 40px; }
     }

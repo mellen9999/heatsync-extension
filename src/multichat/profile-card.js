@@ -421,7 +421,7 @@ function pcMountDestRow(items) {
   x.className = 'hs-mc-dest hs-mc-dest-close'
   x.setAttribute('aria-label', 'close')
   x.innerHTML =
-    '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="2" fill="none"/></svg>'
+    '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>'
   x.addEventListener('click', closeProfileCard)
   row.append(x)
   row.hidden = false

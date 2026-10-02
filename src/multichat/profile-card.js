@@ -397,6 +397,36 @@ async function resolveFollowTargetId(platform, username, ids = {}) {
   return null
 }
 
+// The card panel's address row: profile · logs · chatter · platforms, then the
+// one × cell, drawn into the multichat 2nd row (#hs-mc-subrow) for as long as
+// the card is open. renderSubRow() repaints it for the tab on close/switch.
+// These are the only links the card has; heatsync.org cells open a tab (a
+// different app), platform cells open the platform.
+function pcMountDestRow(items) {
+  const row = document.getElementById('hs-mc-subrow')
+  if (!row) return
+  row.replaceChildren(
+    ...items.map((it) => {
+      const a = document.createElement('a')
+      a.className = 'hs-mc-dest'
+      a.textContent = it.label + (it.live ? ' ●' : '')
+      a.href = it.external ? it.href : `https://heatsync.org${it.href}`
+      a.target = '_blank'
+      a.rel = 'noopener'
+      return a
+    }),
+  )
+  const x = document.createElement('button')
+  x.type = 'button'
+  x.className = 'hs-mc-dest hs-mc-dest-close'
+  x.setAttribute('aria-label', 'close')
+  x.innerHTML =
+    '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="2" fill="none"/></svg>'
+  x.addEventListener('click', closeProfileCard)
+  row.append(x)
+  row.hidden = false
+}
+
 function closeProfileCard() {
   if (!activeProfileCard) return
   const { floating, openerEl } = activeProfileCard
@@ -421,6 +451,7 @@ function closeProfileCard() {
   // that never learned about modlog.)
   showInputBar()
   renderMessages(currentTab)
+  renderSubRow() // the 2nd row gets its own cells back
 }
 
 function getRecentMessagesFromUser(username) {
@@ -868,6 +899,8 @@ function renderProfileCardView() {
 
   const html = hsCardHtml(model, {
     variant: floating ? 'full' : 'panel',
+    // in the panel the destinations ride the 2nd row (pcMountDestRow), not the card
+    navInBar: !floating,
     escapeHtml,
     renderBio: hsExtRenderBio,
     renderPlusBadge: typeof renderPlusTenureToken === 'function' ? renderPlusTenureToken : undefined,
@@ -890,23 +923,10 @@ function renderProfileCardView() {
   card.setAttribute('aria-label', t('content_card_dialog_label', [data.display_name || username]))
   card.tabIndex = -1
 
-  // Sticky close — pinned top-right, stays in place while card scrolls.
-  // panel only now: card-render.js's own closeButtonHtml (synced from the
-  // site) renders a `.hs-card-close` baked into the 'full' variant's own
-  // markup (wired below, pcHandleCardAction's 'close' case), so a floating
-  // card prepending this ext-only one too would stack two ×s. hs-pcard-close
-  // is old CSS (09/12), not yet deleted — panel still has no shared-card
-  // equivalent (card-render.js's × is 'full' only).
-  if (!floating) {
-    const closeBtn = document.createElement('button')
-    closeBtn.className = 'hs-pcard-close'
-    closeBtn.type = 'button'
-    closeBtn.title = 'close (Esc)'
-    closeBtn.setAttribute('aria-label', 'close profile')
-    closeBtn.textContent = '×'
-    closeBtn.addEventListener('click', closeProfileCard)
-    card.prepend(closeBtn)
-  }
+  // The panel's destinations + its × live in the multichat 2nd row while the
+  // card is open (pcMountDestRow); the floating card keeps the shared card's
+  // own × (closeButtonHtml, 'full') and nav row.
+  if (!floating) pcMountDestRow(hsCardNavItems(model, { variant: 'panel' }))
 
   msgsEl.appendChild(card)
 
@@ -1026,14 +1046,18 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
   wrap.setAttribute('role', 'dialog')
   wrap.setAttribute('aria-label', t('content_card_dialog_label', [username]))
   wrap.tabIndex = -1
-  const closeBtn = document.createElement('button')
-  closeBtn.className = 'hs-pcard-close'
-  closeBtn.type = 'button'
-  closeBtn.title = 'close (Esc)'
-  closeBtn.setAttribute('aria-label', 'close profile')
-  closeBtn.textContent = '×'
-  closeBtn.addEventListener('click', closeProfileCard)
-  wrap.appendChild(closeBtn)
+  if (floating) {
+    const closeBtn = document.createElement('button')
+    closeBtn.className = 'hs-pcard-close'
+    closeBtn.type = 'button'
+    closeBtn.title = 'close (Esc)'
+    closeBtn.setAttribute('aria-label', 'close profile')
+    closeBtn.textContent = '×'
+    closeBtn.addEventListener('click', closeProfileCard)
+    wrap.appendChild(closeBtn)
+  } else {
+    pcMountDestRow([]) // the panel's × is the 2nd row's last cell
+  }
   const name = document.createElement('div')
   name.className = 'hs-card-name'
   name.textContent = username

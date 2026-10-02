@@ -38,6 +38,44 @@
       outline: none;
     }
 
+    /* The panel's address row (#hs-mc-subrow while a card is open): the card's
+     * only links, subcell-shaped, with ONE thick × as the last cell. */
+    .hs-mc-dest {
+      position: relative;
+      padding: 2px 10px;
+      margin: 0 -1px -1px 0;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .hs-mc-dest:hover,
+    .hs-mc-dest:active,
+    .hs-mc-dest:focus-visible {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      outline: none;
+    }
+    .hs-mc-dest-close {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      padding: 0 6px;
+      appearance: none;
+    }
+    @media (pointer: coarse) {
+      .hs-mc-dest-close { min-width: 40px; min-height: 40px; }
+    }
+
     .hs-pcard-loading {
       padding: 8px 10px;
       font-size: 13px;

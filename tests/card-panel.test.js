@@ -254,11 +254,14 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(handlers).toMatch(/closest\(['"]\.hs-card-action,\s*\.hs-card-close['"]\)/)
   })
 
-  test('the ext-only sticky × (.hs-pcard-close) only mounts for panel — card-render.js already gives the floating (full) card its own, avoiding two', () => {
+  test('the panel has no ×/links inside the card: its destinations + × are cells of the 2nd row (pcMountDestRow)', () => {
     const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
-    const closeBlock = view.slice(view.indexOf('Sticky close'), view.indexOf('msgsEl.appendChild(card)'))
-    expect(closeBlock).toMatch(/if\s*\(!floating\)\s*\{/)
-    expect(closeBlock).toContain("closeBtn.className = 'hs-pcard-close'")
+    expect(view).toContain('navInBar: !floating')
+    expect(view).toMatch(/if\s*\(!floating\)\s*pcMountDestRow\(hsCardNavItems\(/)
+    expect(view).not.toContain("closeBtn.className = 'hs-pcard-close'")
+    const mount = slice(CARD, 'function pcMountDestRow(items) {', '\n}\n')
+    expect(mount).toContain("'hs-mc-dest hs-mc-dest-close'")
+    expect(mount).toContain('#hs-mc-subrow'.slice(1))
   })
 
   test('addchannel is dispatched, even though it is not a card-model.js ACTION_DEFS key', () => {

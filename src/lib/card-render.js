@@ -89,6 +89,8 @@ function relRow(esc, fmtTime, entry) {
  *   (`el.style.setProperty('color', el.dataset.color)`), same pattern every
  *   other per-user color in this app already uses under CSP. Falls back to
  *   the raw model color, unclamped, when omitted.
+ * @param {boolean} [opts.navInBar] the host draws the destination row itself
+ *   (site: the bar stack, from `hsCardNavItems`) — print none in the card
  * @param {(model: object) => string} [opts.renderBadges] host-trusted HTML
  *   for a chip row (native chat badges, 7TV/BTTV/FFZ/Chatterino paints) —
  *   the shared model carries no chat-badge data (it's per-message, not
@@ -110,7 +112,7 @@ export function hsCardHtml(model, opts) {
     return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty">${closeButtonHtml(variant)}<div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div><div class="hs-card-meta">lookup failed</div></div>`
   }
   if (model.kind === 'chatter') {
-    return renderChatter(model, { esc, variant })
+    return renderChatter(model, { esc, variant, navInBar: !!opts.navInBar })
   }
   return renderProfile(model, {
     esc,
@@ -122,15 +124,16 @@ export function hsCardHtml(model, opts) {
     renderBadges: opts.renderBadges,
     clickable,
     hideLogsLink,
+    navInBar: !!opts.navInBar,
   })
 }
 
-function renderChatter(model, { esc, variant }) {
+function renderChatter(model, { esc, variant, navInBar }) {
   const parts = []
   parts.push(closeButtonHtml(variant))
   parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
-  parts.push(renderNavRow(model, esc, variant, false, []))
+  if (!navInBar) parts.push(renderNavRow(model, esc, variant, false))
   return `<div class="hs-card hs-card-${esc(variant)} hs-card-chatter">${parts.join('')}</div>`
 }
 
@@ -263,27 +266,43 @@ function navCell(cls, attrs, href, label) {
   return `<a class="hs-card-nav-cell${cls ? ` ${cls}` : ''}"${attrs} href="${href}" target="_blank" rel="noopener">${label}</a>`
 }
 
-function renderNavRow(model, esc, variant, hideLogsLink, platforms) {
-  const cells = []
-  const links = model.links || {}
+/**
+ * The destinations this card can name, as data — what the nav row prints, and
+ * what a host that draws its own row (the site's bar stack) builds cells from.
+ * @param {object} model output of `hsCardModel`
+ * @param {{variant?: string, hideLogsLink?: boolean}} [o]
+ * @returns {{key: string, label: string, href: string, external: boolean, tone?: string, login?: string, live?: boolean, viewers?: number|null, verified?: boolean}[]}
+ */
+export function hsCardNavItems(model, o = {}) {
+  const items = []
+  const links = model?.links || {}
   // The page variant IS the profile — a cell that reopens it is noise.
-  if (variant !== 'page' && links.profileUrl) cells.push(navCell('hs-card-plat-link', ` data-hs-link="profile" data-tone="hs"`, esc(links.profileUrl), 'profile'))
-  if (!hideLogsLink && links.logsUrl) cells.push(navCell('', ` data-hs-link="logs"`, esc(links.logsUrl), 'logs'))
-  if (links.chatterUrl) cells.push(navCell('', ` data-hs-link="chatter"`, esc(links.chatterUrl), 'chatter'))
-  for (const p of platforms) {
-    // the heatsync platform IS the profile cell above (it carries data-tone="hs")
+  if (o.variant !== 'page' && links.profileUrl) items.push({ key: 'profile', label: 'profile', href: links.profileUrl, external: false, tone: 'hs' })
+  if (!o.hideLogsLink && links.logsUrl) items.push({ key: 'logs', label: 'logs', href: links.logsUrl, external: false })
+  if (links.chatterUrl) items.push({ key: 'chatter', label: 'chatter', href: links.chatterUrl, external: false })
+  // the heatsync platform IS the profile cell above (it carries tone "hs")
+  for (const p of model?.platforms || []) {
     if (!p.url || p.key === 'hs') continue
-    const live = p.live ? `<span class="hs-card-live" data-tone="live">●${p.viewers ? esc(String(p.viewers)) : ''}</span>` : ''
-    const verified = p.verified ? '<span class="hs-card-verified">✓</span>' : ''
-    cells.push(navCell('hs-card-plat-link', ` data-tone="${esc(p.key)}" title="${esc(p.login)}"`, esc(p.url), `${hk(PLATFORM_CELL[p.key] || p.key, esc)}${verified}${live}`))
+    items.push({ key: p.key, label: PLATFORM_CELL[p.key] || p.key, href: p.url, external: true, tone: p.key, login: p.login, live: !!p.live, viewers: p.viewers || null, verified: !!p.verified })
   }
+  return items
+}
+
+function renderNavRow(model, esc, variant, hideLogsLink) {
+  const cells = hsCardNavItems(model, { variant, hideLogsLink }).map((it) => {
+    if (it.key === 'profile') return navCell('hs-card-plat-link', ` data-hs-link="profile" data-tone="hs"`, esc(it.href), 'profile')
+    if (!it.external) return navCell('', ` data-hs-link="${esc(it.key)}"`, esc(it.href), esc(it.label))
+    const live = it.live ? `<span class="hs-card-live" data-tone="live">●${it.viewers ? esc(String(it.viewers)) : ''}</span>` : ''
+    const verified = it.verified ? '<span class="hs-card-verified">✓</span>' : ''
+    return navCell('hs-card-plat-link', ` data-tone="${esc(it.tone)}" title="${esc(it.login || '')}"`, esc(it.href), `${hk(it.label, esc)}${verified}${live}`)
+  })
   if (!cells.length) return ''
   return `<div class="hs-card-nav">${cells.join('')}</div>`
 }
 
 function renderProfile(
   model,
-  { esc, variant, fmtTime, renderBio, renderPlusBadge, paintColor, renderBadges, clickable, hideLogsLink },
+  { esc, variant, fmtTime, renderBio, renderPlusBadge, paintColor, renderBadges, clickable, hideLogsLink, navInBar },
 ) {
   const peek = variant === 'peek'
   const cls = [`hs-card`, `hs-card-${esc(variant)}`, model.isOwnProfile ? 'hs-card-own' : ''].filter(Boolean).join(' ')
@@ -340,7 +359,7 @@ function renderProfile(
     ? `<div class="hs-card-bio profile-bio-line"><span class="profile-bio-text" data-userid="${esc(String(model.identity.userId ?? ''))}">${model.bio ? bioInner : '<span class="bio-edit-trigger">add bio</span>'}</span></div>`
     : model.bio ? `<div class="hs-card-bio">${bioInner}</div>` : ''
 
-  const navHtml = renderNavRow(model, esc, variant, hideLogsLink, model.platforms || [])
+  const navHtml = navInBar ? '' : renderNavRow(model, esc, variant, hideLogsLink)
 
   if (peek) {
     return `<div class="${cls}"${clickAttrs}${accentAttr}>

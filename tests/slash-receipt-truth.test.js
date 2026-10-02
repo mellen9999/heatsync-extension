@@ -18,7 +18,7 @@ import { join } from 'node:path'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const hStart = SRC.indexOf('async function handleSlashCommand(text, input) {')
-const hEnd = SRC.indexOf('\nfunction showSlashHelp', hStart)
+const hEnd = SRC.indexOf('\n// Resolve a username → whisper key', hStart)
 const HANDLER = SRC.slice(hStart, hEnd)
 
 /** every showToast(...) call in the handler, with its full argument text */

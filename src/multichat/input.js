@@ -7047,7 +7047,7 @@ async function handleSlashCommand(text, input) {
   }
 
   if (cmd === 'help') {
-    showSlashHelp()
+    switchTab('settings', 'help')
     clearInput(input)
     return true
   }
@@ -8110,24 +8110,6 @@ async function handleSlashCommand(text, input) {
   }
 
   return false
-}
-
-function showSlashHelp() {
-  // Reuse toast for short feedback — but the help list is multi-line, so build a
-  // lightweight inline overlay instead.
-  let panel = document.getElementById('hs-mc-slash-help')
-  if (panel) {
-    panel.remove()
-    return
-  }
-  panel = document.createElement('div')
-  panel.id = 'hs-mc-slash-help'
-  panel.style.cssText =
-    "position:fixed;bottom:60px;right:20px;z-index:99999;background:#000;border:2px solid #fff;padding:10px 14px;font:13px/1.4 'CozetteVector','Courier New',monospace;color:#fff;white-space:pre;max-width:420px;box-shadow:0 0 12px rgba(255,255,255,0.3)"
-  panel.textContent = `${slashHelpText('ext')}\n\nfull list -> heatsync.org/commands`
-  panel.addEventListener('click', () => panel.remove())
-  document.body.appendChild(panel)
-  setTimeout(() => panel?.remove(), 12000)
 }
 
 // Resolve a username → whisper key, registering the user in whisperUsers so the

@@ -39,7 +39,14 @@ const MC_TABS = [
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
   // a cell of feed that keeps its own internal id (renderers key on it)
   { id: 'discover', cellOf: 'feed', restorable: true },
-  { id: 'settings', bar: 'util' },
+  {
+    id: 'settings',
+    bar: 'util',
+    // settings draws its own row inside the pane (settings-ui.js); the cells
+    // are still addressable: switchTab('settings', 'help')
+    ownRow: true,
+    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'tweaks', 'system', 'help'].map((id) => ({ id, label: id })),
+  },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },
   { id: 'native', util: true },
@@ -112,4 +119,9 @@ function mcCanonTab(id, sub) {
 function mcCellAddress(id) {
   const own = MC_TABS.find((t) => t.id === id)
   return own?.cellOf ? { tab: own.cellOf, sub: id } : { tab: id, sub: undefined }
+}
+
+/** true when the tab draws its cells itself, so the shared 2nd row stays out */
+function mcHasOwnRow(tabId) {
+  return !!MC_TABS.find((t) => t.id === tabId)?.ownRow
 }

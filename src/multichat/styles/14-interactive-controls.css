@@ -1306,31 +1306,16 @@
       flex-direction: column;
       background: #000;
     }
-    .hs-mc-set-help-btn {
-      background: #000;
-      color: #fff;
-      border: 1px solid var(--hs-border);
-      font-family: inherit;
-      font-size: 13px;
-      padding: 3px 8px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .hs-mc-set-help-btn:hover {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-    .hs-mc-set-help {
-      position: absolute;
-      top: 84px;
-      right: 8px;
-      z-index: 3;
-      background: #000;
-      border: 1px solid var(--hs-border);
+    .hs-mc-set-help-pane {
       padding: 8px 10px;
       font-size: 13px;
-      cursor: pointer;
+    }
+    .hs-mc-set-help-cmds {
+      margin: 0;
+      white-space: pre;
+      overflow-x: auto;
+      color: #c0c0c0;
+      font: inherit;
     }
     .hs-mc-set-help-grid {
       display: grid;

@@ -17,6 +17,7 @@ const _SET_SUBTAB_ICONS = {
   notifs:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 1 5 5v3l1 1H2l1-1V7a5 5 0 0 1 5-5z"/><line x1="6.5" y1="13" x2="9.5" y2="13"/></svg>',
   mod: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5l5 2.5v4c0 3-2.5 5.5-5 6.5C5.5 13.5 3 11 3 8V4l5-2.5z"/></svg>',
+  help: '<span style="font-size:16px;line-height:1">?</span>',
   filters:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>',
   tweaks:
@@ -24,7 +25,24 @@ const _SET_SUBTAB_ICONS = {
   system:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/></svg>',
 }
-const _SET_SUBTAB_ORDER = ['display', 'chat', 'notifs', 'mod', 'filters', 'tweaks', 'system']
+// One list: the registry's settings cells (tab-registry.js), `help` last.
+const _SET_SUBTAB_ORDER = mcSubCells('settings').map((c) => c.id)
+let _setHelpFrom = 'display' // cell Esc returns to from help
+
+// Land on a settings cell. True when it changed; remembers where help was
+// opened from.
+function _setSettingsSubtab(id) {
+  if (id === 'help' && _settingsSubtab !== 'help') _setHelpFrom = _settingsSubtab
+  const changed = id !== _settingsSubtab
+  _settingsSubtab = id
+  return changed
+}
+
+// Every way of changing cell goes through switchTab, like any other tab's.
+function _gotoSetSubtab(id) {
+  if (typeof switchTab === 'function') switchTab('settings', id)
+  else if (_setSettingsSubtab(id)) renderSettingsTab()
+}
 
 // Tweaks (twitch ui noise toggles) render straight from the registry
 // (`tweak: true` entries); content.js applyUiSettings owns the CSS rules.
@@ -60,7 +78,6 @@ let _setQuery = ''
 const _setCollapsed = new Set() // '<category>|<section title>'
 let _setFocusRow = null // data-set-row id of keyboard focus
 let _setPaneCtx = '' // pane identity for scroll preservation
-let _setHelpOpen = false // '?' keybinding overlay
 // Opening ~90 settings at once is the single loudest thing a new user meets
 // ("very confusing and a lot to learn" — first external tester, 2026-07-25).
 // The catalog stays whole; the default VIEW is the dozen rows that actually
@@ -938,6 +955,7 @@ function _renderCategoryPane(cat) {
 }
 
 function _renderCategoryPaneInner(cat) {
+  if (cat === 'help') return _renderHelpPane()
   if (cat === 'mod') return _renderPageDefaultsRow(cat) + _regSections(cat)
   if (cat === 'filters') {
     // 'rules' section is custom-rendered; exclude it from auto-sections
@@ -1318,41 +1336,42 @@ function _renderPresetPanel() {
   )
 }
 
-// '?' keybinding overlay — square, two-column key grid; vim block only
-// when vi mode is on. Click anywhere on it (or Esc / ?) closes.
-function _renderHelpOverlay() {
-  var always = [
-    ['/', 'search'],
-    ['1-7', 'category'],
-    ['↑ ↓', 'move'],
-    ['← →', 'adjust'],
-    ['enter', 'toggle'],
-    ['bksp', 'reset row'],
-    ['esc', 'close / clear'],
-    ['?', 'this help'],
-  ]
-  var vim = [
-    ['j k', 'move'],
-    ['h l', 'adjust'],
-    ['gg G', 'first / last'],
-    ['za', 'fold section'],
-    ['d', 'reset row'],
-    ['p', 'presets'],
-    ['H L', 'prev / next category'],
-  ]
+// settings › help — the one help: keys for this pane, then the slash commands.
+// Esc (or ?) goes back to the cell it was opened from.
+const _SET_HELP_KEYS = [
+  ['/', 'search'],
+  ['1-7', 'category'],
+  ['↑ ↓', 'move'],
+  ['← →', 'adjust'],
+  ['enter', 'toggle'],
+  ['bksp', 'reset row'],
+  ['esc', 'close / clear'],
+  ['?', 'this help'],
+]
+const _SET_HELP_VIM = [
+  ['j k', 'move'],
+  ['h l', 'adjust'],
+  ['gg G', 'first / last'],
+  ['za', 'fold section'],
+  ['d', 'reset row'],
+  ['p', 'presets'],
+  ['H L', 'prev / next category'],
+]
+function _renderHelpPane() {
   function grid(pairs) {
     return pairs
       .map((kv) => `<span class="hs-mc-set-help-key">${escapeHtml(kv[0])}</span><span>${escapeHtml(kv[1])}</span>`)
       .join('')
   }
   return (
-    '<div class="hs-mc-set-help">' +
-    '<div class="hs-mc-set-help-grid">' +
-    grid(always) +
-    '</div>' +
+    '<div class="hs-mc-set-help-pane">' +
+    '<div class="hs-mc-set-help-title">keys</div>' +
+    `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_KEYS)}</div>` +
     (viModeEnabled
-      ? `<div class="hs-mc-set-help-title">vi</div><div class="hs-mc-set-help-grid">${grid(vim)}</div>`
+      ? `<div class="hs-mc-set-help-title">vi</div><div class="hs-mc-set-help-grid">${grid(_SET_HELP_VIM)}</div>`
       : '') +
+    '<div class="hs-mc-set-help-title">commands</div>' +
+    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\nfull list -> heatsync.org/commands`)}</pre>` +
     '</div>'
   )
 }
@@ -1471,14 +1490,12 @@ function _bindSettingsKeyboard() {
       }
       if (k === '?') {
         e.preventDefault()
-        _setHelpOpen = !_setHelpOpen
-        renderSettingsTab()
+        _gotoSetSubtab(_settingsSubtab === 'help' ? _setHelpFrom : 'help')
         return
       }
       if (k === 'Escape') {
-        if (_setHelpOpen) {
-          _setHelpOpen = false
-          renderSettingsTab()
+        if (_settingsSubtab === 'help') {
+          _gotoSetSubtab(_setHelpFrom)
           return
         }
         if (_setQuery) {
@@ -1495,9 +1512,8 @@ function _bindSettingsKeyboard() {
       // 1-7 jump straight to a category
       if (k.length === 1 && k >= '1' && k <= '7') {
         e.preventDefault()
-        _settingsSubtab = _SET_SUBTAB_ORDER[+k - 1]
         _setFocusRow = null
-        renderSettingsTab()
+        _gotoSetSubtab(_SET_SUBTAB_ORDER[+k - 1])
         return
       }
       if (k === 'ArrowLeft' && idx >= 0) {
@@ -1561,9 +1577,8 @@ function _bindSettingsKeyboard() {
         e.preventDefault()
         const cur = _SET_SUBTAB_ORDER.indexOf(_settingsSubtab)
         const len = _SET_SUBTAB_ORDER.length
-        _settingsSubtab = _SET_SUBTAB_ORDER[(cur + (k === 'L' ? 1 : len - 1)) % len]
         _setFocusRow = null
-        renderSettingsTab()
+        _gotoSetSubtab(_SET_SUBTAB_ORDER[(cur + (k === 'L' ? 1 : len - 1)) % len])
         return
       }
       if (k === 'd' && idx >= 0) {
@@ -1650,12 +1665,10 @@ function renderSettingsTab() {
     (_setShowAll ? 'all' : 'basic') +
     '</button>' +
     '<button class="hs-mc-set-presets-btn">presets</button>' +
-    '<button class="hs-mc-set-help-btn" title="keybindings">?</button>' +
     '</div>' +
     '<div class="hs-mc-set-subtab-body">' +
     bodyContent +
     '</div>' +
-    (_setHelpOpen ? _renderHelpOverlay() : '') +
     '</div>'
 
   // Controls render with live values inline (getSetting); only the crash
@@ -1680,10 +1693,7 @@ function renderSettingsTab() {
     var subtabBtn = e.target.closest('.hs-mc-set-subtab[data-set-subtab]')
     if (subtabBtn) {
       var next = subtabBtn.dataset.setSubtab
-      if (next && next !== _settingsSubtab) {
-        _settingsSubtab = next
-        renderSettingsTab()
-      }
+      if (next && next !== _settingsSubtab) _gotoSetSubtab(next)
       return
     }
 
@@ -1699,18 +1709,6 @@ function renderSettingsTab() {
       return
     }
 
-    // '?' help — button toggles, clicking the overlay closes
-    if (e.target.closest('.hs-mc-set-help-btn')) {
-      _setHelpOpen = !_setHelpOpen
-      renderSettingsTab()
-      return
-    }
-    if (e.target.closest('.hs-mc-set-help')) {
-      _setHelpOpen = false
-      renderSettingsTab()
-      return
-    }
-
     // [reload] chip — value differs from the boot snapshot; apply it now
     if (e.target.closest('[data-set-reload]')) {
       location.reload()
@@ -1721,9 +1719,9 @@ function renderSettingsTab() {
     var jumpHdr = e.target.closest('[data-set-jump]')
     if (jumpHdr) {
       var jump = jumpHdr.dataset.setJump.split('|')
-      _settingsSubtab = jump[0]
       _setQuery = ''
       _setFocusRow = null
+      _setSettingsSubtab(jump[0])
       renderSettingsTab()
       var tgt = [...msgsEl.querySelectorAll('[data-set-fold]')].find((el2) => el2.dataset.setFold === jump[1])
       if (tgt) tgt.scrollIntoView({ block: 'start' })

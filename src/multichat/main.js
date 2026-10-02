@@ -3186,7 +3186,7 @@
   function renderSubRow() {
     const row = tabBarElement?.querySelector('#hs-mc-subrow')
     if (!row) return
-    const cells = mcSubCells(currentTab)
+    const cells = mcHasOwnRow(currentTab) ? [] : mcSubCells(currentTab)
     row.hidden = cells.length === 0
     row.replaceChildren(
       ...cells.map((c) => {
@@ -3211,6 +3211,8 @@
       lastSubByTab[tabId] = sub
       subDots.delete(`${tabId}:${sub}`)
     }
+    // settings draws its own row; landing on one of its cells swaps the pane
+    if (tabId === 'settings' && sub && _setSettingsSubtab(sub) && currentTab === 'settings') renderSettingsTab()
     renderSubRow()
     mountSubPane(tabId, sub, opts || {})
   }
@@ -3304,6 +3306,7 @@
     const home = mcSubCells(tabId)[0]?.id
     document.getElementById('hs-mc-subpane')?.remove()
     dropChatLogsState()
+    if (mcHasOwnRow(tabId)) return
     const render = MC_SUB_PANES[sub]
     if (!sub || sub === home || !render || !overlayElement) {
       if (_paneHidInput) {
@@ -3335,7 +3338,7 @@
     'keydown',
     (e) => {
       if (e.key !== 'Escape' || e.defaultPrevented || !currentSub) return
-      if (e.target?.closest?.('#hs-mc-inputbar')) return
+      if (e.target?.closest?.('#hs-mc-inputbar') || mcHasOwnRow(currentTab)) return
       const home = mcSubCells(currentTab)[0]?.id
       if (!home || currentSub === home) return
       e.preventDefault()
@@ -7275,6 +7278,7 @@
     log('switchTab called:', id, sub || '')
     ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
+    if (id === 'settings' && nextSub) _setSettingsSubtab(nextSub) // before the pane renders
     if (id === currentTab && sub && nextSub === sub) {
       applySub(id, nextSub, subOpts)
       return

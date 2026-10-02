@@ -9,7 +9,7 @@ import { join } from 'node:path'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
 const api = new Function(
-  `${SRC}\nreturn { MC_TABS, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs, mcCanonTab, mcCellAddress, mcRowOwner }`,
+  `${SRC}\nreturn { MC_TABS, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs, mcCanonTab, mcCellAddress, mcRowOwner, mcHasOwnRow }`,
 )()
 
 describe('tab registry', () => {
@@ -51,10 +51,21 @@ describe('feed › discover', () => {
   })
 })
 
+describe('settings › help', () => {
+  test('settings has one row of its own, and help is its last cell', () => {
+    const ids = api.mcSubCells('settings').map((c) => c.id)
+    expect(ids[0]).toBe('display')
+    expect(ids.at(-1)).toBe('help')
+    expect(api.mcHasOwnRow('settings')).toBe(true)
+    expect(api.mcHasOwnRow('feed')).toBe(false)
+    expect(api.mcResolveSub('settings', 'help', {})).toBe('help')
+  })
+})
+
 describe('mcResolveSub', () => {
   test('a tab with no cells has no 2nd row', () => {
-    expect(api.mcSubCells('settings')).toEqual([])
-    expect(api.mcResolveSub('settings', 'x', {})).toBeNull()
+    expect(api.mcSubCells('pinned')).toEqual([])
+    expect(api.mcResolveSub('pinned', 'x', {})).toBeNull()
   })
 
   test('a channel tab and live share chat · summary · logs · status, chat is home', () => {

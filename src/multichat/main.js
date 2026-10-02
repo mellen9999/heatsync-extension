@@ -7273,6 +7273,7 @@
   // last used there, else its first. Same tab + new cell only swaps the cell.
   function switchTab(id, sub, subOpts) {
     log('switchTab called:', id, sub || '')
+    ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
     if (id === currentTab && sub && nextSub === sub) {
       applySub(id, nextSub, subOpts)
@@ -7391,7 +7392,7 @@
     if (tabBarElement) {
       const liveCh = getLiveChannel()?.toLowerCase()
       tabBarElement.querySelectorAll('.hs-mc-tab').forEach((t) => {
-        setTabActive(t, t.dataset.tab === id)
+        setTabActive(t, t.dataset.tab === mcRowOwner(id))
         if (t.dataset.tab === id) {
           t.classList.remove('has-new')
           t.classList.remove('has-stream-event')
@@ -11797,8 +11798,7 @@
   }
 
   let _savedActiveTab = null
-  // 'discover' intentionally omitted — tab is hidden from the bar pre-launch,
-  // so a stale saved 'discover' falls back to 'live' on restore.
+  // 'discover' is feed's second cell now, so it restores like any other tab.
   // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
   // silently bounced you to 'live' every reload if that's where you were.
   const BUILTIN_TABS = mcRestorableTabs()
@@ -14496,7 +14496,7 @@
     // — on a cold boot it doesn't.
     const restorable =
       _savedActiveTab &&
-      !hiddenTabs.has(_savedActiveTab) &&
+      !hiddenTabs.has(mcRowOwner(_savedActiveTab)) &&
       !(_TAB_SUBSYSTEM[_savedActiveTab] && !isEnabled(_TAB_SUBSYSTEM[_savedActiveTab]))
     return isYtPopout || (onStreamPage && !hasChannelTabs) ? 'live' : restorable ? _savedActiveTab : 'live'
   }

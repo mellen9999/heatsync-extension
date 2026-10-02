@@ -7821,7 +7821,8 @@ async function handleSlashCommand(text, input) {
       showToast(t('mc_input_tab_unavailable') || 'tabs unavailable', 'error')
       return true
     }
-    switchTab(target)
+    const addr = mcCellAddress(target)
+    switchTab(addr.tab, addr.sub)
     clearInput(input)
     return true
   }

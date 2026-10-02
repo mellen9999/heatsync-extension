@@ -1857,7 +1857,7 @@ function _renderFeedEmptyCard() {
   discoverBtn.className = 'hs-mc-empty-btn'
   discoverBtn.textContent = 'discover people →'
   discoverBtn.addEventListener('click', () => {
-    if (typeof switchTab === 'function') switchTab('discover')
+    if (typeof switchTab === 'function') switchTab('feed', 'discover')
   })
   actions.appendChild(discoverBtn)
 

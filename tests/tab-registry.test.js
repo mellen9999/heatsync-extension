@@ -9,7 +9,7 @@ import { join } from 'node:path'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
 const api = new Function(
-  `${SRC}\nreturn { MC_TABS, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs }`,
+  `${SRC}\nreturn { MC_TABS, mcReservedTabIds, mcIsReservedTab, mcSubCells, mcResolveSub, mcDefaultHiddenTabs, mcRestorableTabs, mcCanonTab, mcCellAddress, mcRowOwner }`,
 )()
 
 describe('tab registry', () => {
@@ -28,8 +28,26 @@ describe('tab registry', () => {
 
   test('fresh installs hide the login-walled tabs, feed stays', () => {
     expect(api.mcDefaultHiddenTabs().sort()).toEqual(['mentions', 'modlog', 'pinned', 'whispers'])
-    expect(api.mcRestorableTabs()).not.toContain('discover')
+    expect(api.mcRestorableTabs()).toContain('discover') // feed's 2nd cell restores on reload
     expect(api.mcRestorableTabs()).not.toContain('settings')
+  })
+})
+
+describe('feed › discover', () => {
+  test('feed has feed · discover, and the two spellings land on one place', () => {
+    expect(api.mcSubCells('feed').map((c) => c.id)).toEqual(['feed', 'discover'])
+    expect(api.mcSubCells('discover').map((c) => c.id)).toEqual(['feed', 'discover'])
+    expect(api.mcCanonTab('feed', 'discover')).toEqual({ id: 'discover', sub: undefined })
+    expect(api.mcCanonTab('discover', 'feed')).toEqual({ id: 'feed', sub: undefined })
+    expect(api.mcCanonTab('xqc', 'logs')).toEqual({ id: 'xqc', sub: 'logs' })
+    expect(api.mcCellAddress('discover')).toEqual({ tab: 'feed', sub: 'discover' })
+    expect(api.mcCellAddress('live')).toEqual({ tab: 'live', sub: undefined })
+  })
+
+  test('the feed button owns discover, and discover is always on its own cell', () => {
+    expect(api.mcRowOwner('discover')).toBe('feed')
+    expect(api.mcResolveSub('discover', undefined, {})).toBe('discover')
+    expect(api.mcResolveSub('feed', undefined, {})).toBe('feed')
   })
 })
 

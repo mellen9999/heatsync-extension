@@ -334,49 +334,46 @@
   flex-wrap: wrap;
   font-size: 13px;
 }
-.hs-card-socials a {
-  color: var(--hs-card-link);
-  text-decoration: none;
-}
-.hs-card-socials a:hover,
-.hs-card-socials a:active,
-.hs-card-socials a:focus-visible {
-  background: #ffffff;
-  color: #000000;
-  outline: none;
-}
 .hs-card-socials span {
   color: var(--hs-card-dim);
 }
 
-/* ── platform links row ───────────────────────────────────────────────── */
-.hs-card-platforms {
+/* ── nav row: the card's only links ─────────────────────────────────────
+ * Navbar form — square flush cells, no gaps, 13px, white-bg/black-text on
+ * hover AND active. Sits at the card's bottom edge; platform cells keep their
+ * brand tone until hovered. */
+.hs-card-nav {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
   font-size: 13px;
+  border-top: 1px solid var(--hs-card-border);
 }
-.hs-card-plat-link {
-  color: var(--hs-card-dim);
-  text-decoration: none;
+.hs-card-nav-cell {
+  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
+  min-height: 24px;
+  padding: 0 8px;
+  color: var(--hs-card-link);
+  text-decoration: none;
+  border-radius: 0;
+  box-shadow: 0 0 0 1px var(--hs-card-border);
 }
-.hs-card-plat-link:hover,
-.hs-card-plat-link:active,
-.hs-card-plat-link:focus-visible {
+.hs-card-nav-cell:hover,
+.hs-card-nav-cell:active,
+.hs-card-nav-cell:focus-visible,
+.hs-card-nav-cell[data-tone]:hover,
+.hs-card-nav-cell[data-tone]:active,
+.hs-card-nav-cell[data-tone]:focus-visible {
   background: #ffffff;
   color: #000000;
   outline: none;
 }
-.hs-card-plat-link[data-tone="ttv"] { color: #9146ff; }
-.hs-card-plat-link[data-tone="kick"] { color: #53fc18; }
-.hs-card-plat-link[data-tone="yt"] { color: #ff0000; }
-.hs-card-plat-link[data-tone="hs"] { color: var(--hs-card-fg); }
-.hs-card-plat-link:hover[data-tone],
-.hs-card-plat-link:active[data-tone],
-.hs-card-plat-link:focus-visible[data-tone] { color: #000000; }
+.hs-card-nav-cell[data-tone="ttv"] { color: #9146ff; }
+.hs-card-nav-cell[data-tone="kick"] { color: #53fc18; }
+.hs-card-nav-cell[data-tone="yt"] { color: #ff0000; }
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */
 .hs-card-label { display: inline; }
 .hs-card-hk { text-decoration: underline; }
@@ -512,49 +509,6 @@
   padding: 0 2px;
 }
 
-/* ── footer links ─────────────────────────────────────────────────────── */
-/* A cell row like .hs-card-actions, not a line of arrow-links: the label is
- * the path the click lands on (card-render.js footerLink), so a cell reads
- * as a destination and gets a destination's hit area. Three paths do not
- * fit a 320px peek on one line, so the row wraps — the seams come from a
- * 1px gap over each cell's own 1px ring (box-shadow takes no layout), which
- * stays a single 1px line between neighbours on every row, where a
- * border-left-on-siblings seam breaks at the wrap. */
-.hs-card-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  font-size: 13px;
-  border-top: 1px solid var(--hs-card-border);
-  padding-top: 4px;
-  padding-inline: 1px;
-  padding-bottom: 1px;
-  margin-top: 2px;
-}
-.hs-card-link {
-  flex: 1 1 auto;
-  min-height: 24px;
-  padding: 4px 8px;
-  text-align: center;
-  box-shadow: 0 0 0 1px var(--hs-card-border);
-}
-.hs-card-link,
-.hs-card-recent-head a,
-.hs-card-log-ts {
-  color: var(--hs-card-link);
-  text-decoration: none;
-}
-.hs-card-link:hover,
-.hs-card-link:active,
-.hs-card-link:focus-visible,
-.hs-card-log-ts:hover,
-.hs-card-log-ts:active,
-.hs-card-log-ts:focus-visible {
-  background: #ffffff;
-  color: #000000;
-  outline: none;
-}
-
 /* ── recent logs ──────────────────────────────────────────────────────── */
 .hs-card-recent {
   border-top: 1px solid var(--hs-card-border);
@@ -575,7 +529,7 @@
   height: 20px; /* same dense rhythm as .hs-card-sheet-row */
   line-height: 20px;
 }
-.hs-card-log-ts { flex-shrink: 0; font-size: 13px; }
+.hs-card-log-ts { flex-shrink: 0; font-size: 13px; color: var(--hs-card-dim); }
 .hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 13px; }
 /* Single line, ellipsis on overflow — was `white-space: normal` +
  * word-break, which let a full-size (unbounded) emote wrap the row onto a
@@ -684,7 +638,7 @@
   display: flex;
   flex-wrap: wrap;
   border-top: 1px solid var(--hs-card-border);
-  /* Same rhythm as .hs-card-links/.hs-card-recent (border + padding-top) —
+  /* Same rhythm as .hs-card-nav/.hs-card-recent (border + padding-top) —
    * this row sits OUTSIDE .hs-card-body (its own action-bar chrome spans
    * the full card width), so it gets none of that container's `gap`
    * automatically and needs its own top padding to match. */

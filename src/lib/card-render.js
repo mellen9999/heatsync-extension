@@ -56,15 +56,16 @@ function hk(label, esc) {
 }
 
 /**
- * Same hotkey-underline idea, but for a label too short to split without
- * reading as two separate letters (2 chars — "hs"/"yt" split to a lone
- * underlined letter next to a lone plain one, which read like "h s"/"y t").
- * Underline the whole label instead of carving one character off it.
+ * Host-trusted fragments (bio mentions, log-line bodies, badge chips, the plus
+ * badge) may carry their own <a>. The card body has no links — navigation is
+ * the nav row — so anchors are defused to spans here, once (class/data-* kept, href/target/rel dropped), whatever the host
+ * hands in. Escaped text never contains a literal `<a`, so only real markup matches.
  */
-function hkShort(label, esc) {
-  return label.length <= 2
-    ? `<span class="hs-card-label"><span class="hs-card-hk">${esc(label)}</span></span>`
-    : hk(label, esc)
+function unlink(html) {
+  return html ? String(html)
+        .replace(/<a(?=[\s>])[^>]*>/gi, (tag) => `<span${tag.slice(2).replace(/\s(?:href|target|rel|download)=(?:"[^"]*"|'[^']*')/gi, '')}`)
+        .replace(/<\/a>/gi, '</span>')
+    : ''
 }
 
 function relRow(esc, fmtTime, entry) {
@@ -129,9 +130,7 @@ function renderChatter(model, { esc, variant }) {
   parts.push(closeButtonHtml(variant))
   parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
-  if (model.links?.chatterUrl) {
-    parts.push(`<div class="hs-card-links">${footerLink('stats', model.links.chatterUrl, esc)}</div>`)
-  }
+  parts.push(renderNavRow(model, esc, variant, false, []))
   return `<div class="hs-card hs-card-${esc(variant)} hs-card-chatter">${parts.join('')}</div>`
 }
 
@@ -140,16 +139,6 @@ function renderCorpusRow(corpus, esc) {
   if (corpus.text) bits.push(esc(corpus.text))
   if (corpus.also) bits.push(`also ${esc(corpus.also)}`)
   return `<div class="hs-card-sheet-row"><dt>${esc(corpus.label)}</dt><dd>${bits.join(' · ')}</dd></div>`
-}
-
-function renderPlatformsRow(platforms, esc) {
-  if (!platforms.length) return ''
-  const items = platforms.map(p => {
-    const live = p.live ? `<span class="hs-card-live" data-tone="live">●${p.viewers ? esc(String(p.viewers)) : ''}</span>` : ''
-    const verified = p.verified ? '<span class="hs-card-verified">✓</span>' : ''
-    return `<a class="hs-card-plat-link" data-tone="${esc(p.key)}" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.login)}">${hkShort(p.key, esc)}${verified}${live}</a>`
-  }).join('')
-  return `<div class="hs-card-platforms">${items}</div>`
 }
 
 function renderSheetValue(k, value, esc, fmtTime) {
@@ -192,19 +181,16 @@ function renderNote(note, esc) {
   return `<div class="hs-card-sheet-row" data-tone="note"><dt>note</dt><dd>${text}${btn}</dd></div>`
 }
 
-function renderRecent(recent, esc, links) {
+function renderRecent(recent, esc) {
   if (!recent || !recent.length) return ''
   const rows = [...recent].reverse().map(r => {
     const ts = hsCardLogTime(r.timestamp)
-    const tsEl = r.permalink
-      ? `<a class="hs-card-log-ts" href="${esc(r.permalink)}" target="_blank" rel="noopener">${esc(ts)}</a>`
-      : `<span class="hs-card-log-ts">${esc(ts)}</span>`
+    const tsEl = `<span class="hs-card-log-ts">${esc(ts)}</span>`
     const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channel)}</span>` : ''
-    const body = r.messageHtml || esc(r.message)
+    const body = unlink(r.messageHtml) || esc(r.message)
     return `<div class="hs-card-log-row">${tsEl}${ch}<span class="hs-card-log-body">${body}</span></div>`
   }).join('')
-  const all = links?.logsSearchUrl ? `<a class="hs-card-logs-all" href="${esc(links.logsSearchUrl)}" target="_blank" rel="noopener">all →</a>` : ''
-  return `<div class="hs-card-recent"><div class="hs-card-recent-head"><span>recent</span>${all}</div><div class="hs-card-recent-list">${rows}</div></div>`
+  return `<div class="hs-card-recent"><div class="hs-card-recent-head"><span>recent</span></div><div class="hs-card-recent-list">${rows}</div></div>`
 }
 
 function renderTopEmotes(emotes, esc) {
@@ -227,11 +213,7 @@ function renderActions(actions, esc, userId) {
 function renderSocials(socials, esc) {
   if (!socials?.length) return ''
   const items = socials
-    .map((s) =>
-      s.href
-        ? `<a href="${esc(s.href)}" target="_blank" rel="noopener">${esc(s.label)}</a>`
-        : `<span>${esc(s.label)}</span>`,
-    )
+    .map((s) => `<span>${esc(s.label)}</span>`)
     .join('')
   return `<div class="hs-card-socials">${items}</div>`
 }
@@ -265,27 +247,38 @@ function renderMod(mod, esc) {
   return `<div class="hs-card-mod">${reason}${groups}</div>`
 }
 
+const PLATFORM_CELL = { ttv: 'twitch', kick: 'kick', yt: 'youtube', hs: 'heatsync' }
+
 /**
- * One footer cell. The label IS the destination — `profile/ennortix`,
- * `twitch/ennortix/logs` — so the row reads as the address bar will after
- * the click, and nobody has to learn what "stats" means before pressing it.
- * Site-relative hrefs only (card-model builds them); the leading slash goes,
- * nothing else is rewritten.
+ * The card's ONE navigation surface: a navbar-form row of square flush cells
+ * at the bottom edge. Nothing else on the card is a link — the body (name,
+ * badges, bio, stats, recent lines, identities) is text. Same-origin cells
+ * (profile / logs / chatter) keep target=_blank here because this file is
+ * mirrored into the extension, where heatsync.org is another app and opens a
+ * tab; the site intercepts own-origin card links and routes them in place
+ * (click-delegation.js). Platform cells open the platform. Only destinations
+ * that resolve for this person print.
  */
-function footerLink(key, href, esc) {
-  const label = href.replace(/^\//, '')
-  return `<a class="hs-card-link" data-hs-link="${esc(key)}" href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>`
+function navCell(cls, attrs, href, label) {
+  return `<a class="hs-card-nav-cell${cls ? ` ${cls}` : ''}"${attrs} href="${href}" target="_blank" rel="noopener">${label}</a>`
 }
 
-function renderFooterLinks(model, esc, variant, hideLogsLink) {
-  const links = []
-  // The page variant IS the profile — a cell that reopens this page in a new
-  // tab is noise. hideLogsLink is the same call for the logs tab.
-  if (variant !== 'page' && model.links.profileUrl) links.push(footerLink('profile', model.links.profileUrl, esc))
-  if (!hideLogsLink && model.links.logsUrl) links.push(footerLink('logs', model.links.logsUrl, esc))
-  if (model.links.chatterUrl) links.push(footerLink('stats', model.links.chatterUrl, esc))
-  if (!links.length) return ''
-  return `<div class="hs-card-links">${links.join('')}</div>`
+function renderNavRow(model, esc, variant, hideLogsLink, platforms) {
+  const cells = []
+  const links = model.links || {}
+  // The page variant IS the profile — a cell that reopens it is noise.
+  if (variant !== 'page' && links.profileUrl) cells.push(navCell('hs-card-plat-link', ` data-hs-link="profile" data-tone="hs"`, esc(links.profileUrl), 'profile'))
+  if (!hideLogsLink && links.logsUrl) cells.push(navCell('', ` data-hs-link="logs"`, esc(links.logsUrl), 'logs'))
+  if (links.chatterUrl) cells.push(navCell('', ` data-hs-link="chatter"`, esc(links.chatterUrl), 'chatter'))
+  for (const p of platforms) {
+    // the heatsync platform IS the profile cell above (it carries data-tone="hs")
+    if (!p.url || p.key === 'hs') continue
+    const live = p.live ? `<span class="hs-card-live" data-tone="live">●${p.viewers ? esc(String(p.viewers)) : ''}</span>` : ''
+    const verified = p.verified ? '<span class="hs-card-verified">✓</span>' : ''
+    cells.push(navCell('hs-card-plat-link', ` data-tone="${esc(p.key)}" title="${esc(p.login)}"`, esc(p.url), `${hk(PLATFORM_CELL[p.key] || p.key, esc)}${verified}${live}`))
+  }
+  if (!cells.length) return ''
+  return `<nav class="hs-card-nav">${cells.join('')}</nav>`
 }
 
 function renderProfile(
@@ -309,7 +302,7 @@ function renderProfile(
   const accentAttr = ` data-accent="${esc(model.accent || '')}"`
 
   const plusBadge = model.plusSince
-    ? (renderPlusBadge ? renderPlusBadge(model.plusSince) : `<span class="hs-card-plus" title="plus">+</span>`)
+    ? (renderPlusBadge ? unlink(renderPlusBadge(model.plusSince)) : `<span class="hs-card-plus" title="plus">+</span>`)
     : ''
   const flair = model.flair
     ? `<img class="hs-card-flair" src="${esc(model.flair.badgeUrl)}" alt="${esc(model.flair.broadcasterLogin)} sub" title="${esc(model.flair.broadcasterLogin)} sub" width="16" height="16">`
@@ -334,7 +327,7 @@ function renderProfile(
 
   // Host-only chat-badge chip row (native + 7TV/BTTV/FFZ/Chatterino) — see
   // opts.renderBadges doc. Shown on peek too (the old hover tooltip had it).
-  const badgesInner = renderBadges ? renderBadges(model) : ''
+  const badgesInner = renderBadges ? unlink(renderBadges(model)) : ''
   const badgesHtml = badgesInner ? `<div class="hs-card-badges">${badgesInner}</div>` : ''
 
   // Own-profile bio carries the inline-edit affordance (click-delegation.js
@@ -342,12 +335,12 @@ function renderProfile(
   // .profile-bio-text/.bio-edit-trigger) since that handler is DOM-structure
   // generic and this is the lowest-risk reuse, same rationale as the
   // follow/block/report action classes below.
-  const bioInner = model.bio ? (renderBio ? renderBio(model.bio) : esc(model.bio)) : ''
+  const bioInner = model.bio ? (renderBio ? unlink(renderBio(model.bio)) : esc(model.bio)) : ''
   const bioHtml = model.isOwnProfile
     ? `<div class="hs-card-bio profile-bio-line"><span class="profile-bio-text" data-userid="${esc(String(model.identity.userId ?? ''))}">${model.bio ? bioInner : '<span class="bio-edit-trigger">add bio</span>'}</span></div>`
     : model.bio ? `<div class="hs-card-bio">${bioInner}</div>` : ''
 
-  const platformsHtml = renderPlatformsRow(model.platforms, esc)
+  const navHtml = renderNavRow(model, esc, variant, hideLogsLink, model.platforms || [])
 
   if (peek) {
     return `<div class="${cls}"${clickAttrs}${accentAttr}>
@@ -355,10 +348,10 @@ function renderProfile(
       <div class="hs-card-body">
         ${identityRow}
         ${badgesHtml}
-        ${platformsHtml}
         ${bioHtml}
         ${renderSheet(model.sheet, esc, fmtTime)}
       </div>
+      ${navHtml}
     </div>`
   }
 
@@ -368,7 +361,6 @@ function renderProfile(
     <div class="hs-card-body">
       ${identityRow}
       ${badgesHtml}
-      ${platformsHtml}
       ${bioHtml}
       ${renderSocials(model.socials, esc)}
       ${renderSheet(model.sheet, esc, fmtTime)}
@@ -376,10 +368,10 @@ function renderProfile(
       ${model.corpus ? `<dl class="hs-card-sheet">${renderCorpusRow(model.corpus, esc)}</dl>` : ''}
       ${renderNote(model.note, esc)}
       ${renderTopEmotes(model.topEmotes, esc)}
-      ${renderFooterLinks(model, esc, variant, hideLogsLink)}
-      ${renderRecent(model.recent, esc, model.links)}
+      ${renderRecent(model.recent, esc)}
       ${renderMod(model.mod, esc)}
     </div>
     ${renderActions(model.actions, esc, model.identity.userId)}
+    ${navHtml}
   </div>`
 }

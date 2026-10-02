@@ -2633,14 +2633,7 @@ async function fireLiveNotificationFromStream(stream, username, platform) {
       : platform === 'kick'
         ? stream.kick_username || username
         : stream.youtube_username || stream.youtube_channel_id || username
-  const url =
-    platform === 'twitch'
-      ? `https://www.twitch.tv/${slug}`
-      : platform === 'kick'
-        ? `https://kick.com/${slug}`
-        : platform === 'youtube'
-          ? `https://www.youtube.com/${slug?.startsWith('UC') ? `channel/${slug}` : `@${slug}`}`
-          : null
+  const url = channelPageUrl(platform, slug)
   if (!url) return
 
   const viewerStr = viewers > 0 ? ` · ${viewers.toLocaleString()} viewers` : ''
@@ -2722,17 +2715,62 @@ function _liveNotificationUrlFromId(id) {
   if (id.startsWith('hs-live-batch-')) return `${API_URL}/?tab=following`
   const m = /^hs-live-(twitch|kick|youtube)-(.+)-\d+$/.exec(id)
   if (!m) return null
-  const [, platform, username] = m
-  if (platform === 'twitch') return `https://www.twitch.tv/${username}`
-  if (platform === 'kick') return `https://kick.com/${username}`
-  return `https://www.youtube.com/${username.startsWith('UC') ? `channel/${username}` : `@${username}`}`
+  return channelPageUrl(m[1], m[2])
+}
+
+// The streamer's own page — where their live + chat (and multichat) are.
+// Slugs come off the wire, so anything that isn't a plain handle is refused.
+function channelPageUrl(platform, slug) {
+  const v = String(slug || '').trim()
+  if (!/^[\w.-]{1,100}$/.test(v)) return null
+  if (platform === 'twitch') return `https://www.twitch.tv/${v}`
+  if (platform === 'kick') return `https://kick.com/${v}`
+  if (platform === 'youtube') return `https://www.youtube.com/${v.startsWith('UC') ? `channel/${v}` : `@${v}`}`
+  return null
+}
+
+// Which channel a page belongs to, so a second click finds the first tab.
+// twitch popout/moderator/embed chat counts as that channel's chat.
+function channelPageKey(url) {
+  try {
+    const u = new URL(url)
+    const host = u.hostname.replace(/^(www|m)\./, '')
+    if (host === 'heatsync.org') return `${host}${u.pathname}${u.search}`
+    const seg = u.pathname.split('/').filter(Boolean)
+    if (host === 'twitch.tv' && ['popout', 'moderator', 'embed'].includes(seg[0])) seg.shift()
+    if (host === 'youtube.com' && seg[0] === 'channel') seg.shift()
+    if (!seg[0] || !['twitch.tv', 'kick.com', 'youtube.com'].includes(host)) return null
+    return `${host}/${seg[0].toLowerCase()}`
+  } catch {
+    return null
+  }
+}
+
+// Focus a tab already on that channel (or heatsync page), else open one.
+// host_permissions let tabs.query read these urls — no "tabs" permission.
+async function focusOrOpenTab(url) {
+  const key = channelPageKey(url)
+  if (key) {
+    try {
+      const tabs = await browser.tabs.query({
+        url: ['https://*.twitch.tv/*', 'https://kick.com/*', 'https://www.youtube.com/*', 'https://heatsync.org/*'],
+      })
+      const hit = tabs.find((t) => channelPageKey(t.url) === key)
+      if (hit) {
+        await browser.tabs.update(hit.id, { active: true })
+        await browser.windows?.update(hit.windowId, { focused: true })
+        return
+      }
+    } catch {}
+  }
+  await browser.tabs.create({ url }).catch(() => {})
 }
 
 if (browser.notifications?.onClicked) {
   browser.notifications.onClicked.addListener((id) => {
     const url = _liveNotificationUrls.get(id) || _liveNotificationUrlFromId(id)
     if (url) {
-      browser.tabs.create({ url }).catch(() => {})
+      focusOrOpenTab(url)
       _liveNotificationUrls.delete(id)
       try {
         browser.notifications.clear(id)
@@ -9546,6 +9584,12 @@ async function handleMessage(message, sender, sendResponse) {
       colors: cachedFollowColors,
     })
     return true // Required for Firefox — sendResponse ignored without this
+  } else if (message.type === 'focus_channel_tab') {
+    // multichat's went-live toast was clicked: same landing as the system one
+    const url = channelPageUrl(message.platform, message.channel)
+    if (url) focusOrOpenTab(url)
+    sendResponse({ ok: !!url })
+    return true
   } else if (message.type === 'get_roomstate') {
     // Return cached IRC ROOMSTATE for a channel (modes from the JOIN tag set).
     // Available as soon as the SW's IRC connection has joined the channel —

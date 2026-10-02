@@ -100,14 +100,15 @@ if (!_onceGuardsMentions.notifStorageListener) {
   })
 }
 
-function fireNotification(title, body, tag, icon) {
+function fireNotification(title, body, tag, icon, onClick) {
   if (!notificationsEnabled) return
   if (notificationPermission === 'denied') return
   try {
     const iconUrl = icon || api.runtime.getURL('icon-48.png')
     const n = new Notification(title, { body, icon: iconUrl, tag, silent: false })
     n.onclick = () => {
-      window.focus()
+      if (onClick) onClick()
+      else window.focus()
       n.close()
     }
     cleanup.setTimeout(() => n.close(), 8000)
@@ -367,7 +368,10 @@ function notifyStreamEvent(channel, eventType, game, platform) {
   }
   // The event is about the streamer — show their pfp, not the logo.
   resolveNotifIcon(channel, platform, null).then((icon) =>
-    fireNotification(title, body, `hs-stream-${channel}-${Date.now()}`, icon),
+    // Click lands on the streamer's page: their tab if one is open, else a new one.
+    fireNotification(title, body, `hs-stream-${channel}-${Date.now()}`, icon, () =>
+      safeSendMessage({ type: 'focus_channel_tab', platform: platform || 'twitch', channel }),
+    ),
   )
 }
 

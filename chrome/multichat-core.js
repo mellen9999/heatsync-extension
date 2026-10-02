@@ -13244,7 +13244,7 @@ function renderNavRow(model, esc, variant, hideLogsLink, platforms) {
     cells.push(navCell('hs-card-plat-link', ` data-tone="${esc(p.key)}" title="${esc(p.login)}"`, esc(p.url), `${hk(PLATFORM_CELL[p.key] || p.key, esc)}${verified}${live}`))
   }
   if (!cells.length) return ''
-  return `<nav class="hs-card-nav">${cells.join('')}</nav>`
+  return `<div class="hs-card-nav">${cells.join('')}</div>`
 }
 
 function renderProfile(
@@ -14095,7 +14095,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ebe3f8afd4a6' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '63a460610fb8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

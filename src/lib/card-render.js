@@ -278,7 +278,7 @@ function renderNavRow(model, esc, variant, hideLogsLink, platforms) {
     cells.push(navCell('hs-card-plat-link', ` data-tone="${esc(p.key)}" title="${esc(p.login)}"`, esc(p.url), `${hk(PLATFORM_CELL[p.key] || p.key, esc)}${verified}${live}`))
   }
   if (!cells.length) return ''
-  return `<nav class="hs-card-nav">${cells.join('')}</nav>`
+  return `<div class="hs-card-nav">${cells.join('')}</div>`
 }
 
 function renderProfile(

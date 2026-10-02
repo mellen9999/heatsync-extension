@@ -38,6 +38,24 @@
       outline: none;
     }
 
+    /* The multichat card panel fills the whole message area (below the tabs +
+     * 2nd row): absolute over the scroller's padding box, own scroll, black
+     * ground, square. The shared .hs-card-panel caps at 460px for the site's
+     * inline page card; here it is the surface. */
+    #hs-mc-messages > .hs-card-panel {
+      position: absolute;
+      inset: 0;
+      width: auto;
+      max-width: none;
+      box-sizing: border-box;
+      overflow-y: auto;
+      background: #000;
+      border: 0;
+      border-radius: 0;
+      z-index: 2;
+    }
+    #hs-mc-messages > .hs-card-panel .hs-card-actions { margin-top: auto; }
+
     /* The panel's address row (#hs-mc-subrow while a card is open): the card's
      * only links, subcell-shaped, with ONE thick × as the last cell. */
     .hs-mc-dest {

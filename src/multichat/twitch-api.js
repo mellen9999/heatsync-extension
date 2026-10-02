@@ -78,6 +78,9 @@ function renderQuickLinks() {
       items: [
         { action: 'sub', accent: '#e91916', icon: ICONS.sub, label: 'subscribe', direct: true },
         { action: 'popout', accent: '#4a90d9', icon: ICONS.popout, label: 'popout chat', direct: true },
+        // In-app, never a window: twitch's own stream-summary page can't be
+        // embedded and has no api, so this is heatsync's count of this chat.
+        { action: 'summary', accent: 'var(--hs-brand)', icon: ICONS.chart, label: 'stream summary', inline: true },
       ],
     },
     {
@@ -138,13 +141,6 @@ function renderQuickLinks() {
           label: 'monetization',
           url: (c) => `https://dashboard.twitch.tv/u/${c}/monetization`,
           opts: 'width=1000,height=750',
-        },
-        {
-          accent: HS_PLAT_COLORS.twitch,
-          icon: ICONS.chart,
-          label: 'analytics',
-          url: (c) => `https://dashboard.twitch.tv/u/${c}/analytics/stream-summary`,
-          opts: 'width=1200,height=800',
         },
       ],
     },
@@ -225,6 +221,13 @@ function renderQuickLinks() {
 
       el.addEventListener('click', (e) => {
         e.stopPropagation()
+        if (item.inline) {
+          const slot = el.nextElementSibling
+          if (slot.firstChild) slot.textContent = ''
+          else if (ch) mountLiveStreamSummary(slot, ch)
+          else showToast(t('mc_twitchapi_no_channel'), 'error')
+          return
+        }
         if (item.direct) {
           triggerTwitchFeature(item.action)
           return
@@ -238,6 +241,11 @@ function renderQuickLinks() {
         } catch {}
       })
       wrap.appendChild(el)
+      if (item.inline) {
+        const slot = document.createElement('div')
+        slot.className = 'hs-mc-summary-slot'
+        wrap.appendChild(slot)
+      }
     }
   }
   return wrap

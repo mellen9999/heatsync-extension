@@ -721,6 +721,25 @@
       padding-top: 4px;
     }
 
+    /* ═══ stream summary (offline recap + links tab) ═══ */
+    .hs-mc-stream-summary {
+      background: #000; color: #fff;
+      border: 1px solid var(--hs-brand);
+      font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
+      padding: 6px 10px; margin: 4px 6px;
+    }
+    .hs-mc-summary-title {
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--hs-brand); font-weight: 600;
+    }
+    .hs-mc-summary-x {
+      background: none; border: 0; padding: 0 4px; cursor: pointer;
+      color: var(--hs-muted); font: inherit;
+    }
+    .hs-mc-summary-x:hover, .hs-mc-summary-x:active { background: #fff; color: #000; }
+    .hs-mc-summary-stats, .hs-mc-summary-row { color: #c0c0c0; }
+    .hs-mc-summary-dim { color: var(--hs-muted); }
+
     /* ═══ /status panel ═══
        All text 13px CozetteVector — anything else looks jank in Chrome's
        renderer (see memory: feedback_browser_text_cozette_13). The crisp

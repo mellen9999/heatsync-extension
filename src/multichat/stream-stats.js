@@ -1,7 +1,9 @@
 // Stream stats - per-channel message/mention/chatter/emote counters + summary card
 
-// Stream stats (per channel, lowercase). Reset on stream:online; rendered on stream:offline.
-// { msgCount, mentionCount, startedAt, chatters: Map<user,count>, emotes: Map<name,count> }
+// Stream stats (per channel, lowercase). Reset on stream:online; rendered on
+// stream:offline, and on demand from the twitch tab's links ("stream summary").
+// { msgCount, mentionCount, startedAt, peakMps, chatters: Map<user,count>,
+//   chattersFloor, emotes: Map<name,count> }
 const streamStats = new Map()
 const STREAM_STATS_TOP_N = 5
 function getStats(channel) {
@@ -9,7 +11,17 @@ function getStats(channel) {
   const key = channel.toLowerCase()
   let s = streamStats.get(key)
   if (!s) {
-    s = { msgCount: 0, mentionCount: 0, startedAt: Date.now(), chatters: new Map(), emotes: new Map() }
+    s = {
+      msgCount: 0,
+      mentionCount: 0,
+      startedAt: Date.now(),
+      peakMps: 0,
+      _sec: 0,
+      _secN: 0,
+      chatters: new Map(),
+      chattersFloor: 0, // unique count seen before a trim; the total is at least this
+      emotes: new Map(),
+    }
     streamStats.set(key, s)
     if (streamStats.size > 50) streamStats.delete(streamStats.keys().next().value)
   }
@@ -66,11 +78,18 @@ function bumpStreamStats(channel, msg, isMent) {
   if (!s || !msg) return
   s.msgCount++
   if (isMent) s.mentionCount++
+  const sec = (Date.now() / 1000) | 0
+  if (sec !== s._sec) {
+    s._sec = sec
+    s._secN = 0
+  }
+  if (++s._secN > s.peakMps) s.peakMps = s._secN
   if (msg.user) {
     const u = msg.user
     s.chatters.set(u, (s.chatters.get(u) || 0) + 1)
     if (s.chatters.size > 5000) {
       // Keep top by trimming smallest
+      s.chattersFloor = Math.max(s.chattersFloor, s.chatters.size)
       const arr = [...s.chatters.entries()].sort((a, b) => b[1] - a[1]).slice(0, 1000)
       s.chatters = new Map(arr)
     }
@@ -90,6 +109,76 @@ function fmtDuration(ms) {
   const h = Math.floor(m / 60)
   return h > 0 ? `${h}h ${m % 60}m` : `${m}m`
 }
+function fmtClock(ms) {
+  const d = new Date(ms)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+// One summary card for `channel`, read fresh from the counters. `ended` titles
+// it as the offline recap; otherwise it's the live view opened from the links
+// tab. Counting starts when multichat first sees the channel's chat, so the
+// window is labelled by that instant, never by twitch's stream uptime.
+function buildStreamSummary(channel, ended) {
+  const key = (channel || '').toLowerCase()
+  const s = streamStats.get(key)
+  const card = document.createElement('div')
+  card.className = 'hs-mc-stream-summary'
+
+  const title = document.createElement('div')
+  title.className = 'hs-mc-summary-title'
+  const titleText = document.createElement('span')
+  titleText.textContent = ended ? `${key} stream ended` : `${key} stream summary`
+  const dismiss = document.createElement('button')
+  dismiss.type = 'button'
+  dismiss.className = 'hs-mc-summary-x'
+  dismiss.textContent = '×'
+  dismiss.title = 'close'
+  dismiss.addEventListener('click', (e) => {
+    e.stopPropagation()
+    card.remove()
+  })
+  title.append(titleText, dismiss)
+  card.append(title)
+
+  const line = (cls, text) => {
+    const el = document.createElement('div')
+    el.className = cls
+    el.textContent = text
+    card.append(el)
+  }
+  if (!isEnabled('stream-stats')) {
+    line('hs-mc-summary-dim', 'stream stats are off in settings')
+    return card
+  }
+  if (!s || s.msgCount === 0) {
+    line('hs-mc-summary-dim', 'no chat counted yet — it fills in as messages arrive')
+    return card
+  }
+  const n = (v) => v.toLocaleString('en-US')
+  const chatters = s.chattersFloor > s.chatters.size ? `${n(s.chattersFloor)}+` : n(s.chatters.size)
+  line(
+    'hs-mc-summary-stats',
+    `${n(s.msgCount)} msgs · ${chatters} chatters · ${n(s.mentionCount)} mentions · ${s.peakMps}/s peak`,
+  )
+  line('hs-mc-summary-dim', `since ${fmtClock(s.startedAt)} · ${fmtDuration(Date.now() - s.startedAt)}`)
+  const top = (label, items) => {
+    if (items.length === 0) return
+    const row = document.createElement('div')
+    row.className = 'hs-mc-summary-row'
+    const lbl = document.createElement('span')
+    lbl.className = 'hs-mc-summary-dim'
+    lbl.textContent = `${label} `
+    const list = document.createElement('span')
+    list.textContent = items.map(([k, v]) => `${k} ${n(v)}`).join(' · ')
+    row.append(lbl, list)
+    card.append(row)
+  }
+  top('top chatters', topN(s.chatters, STREAM_STATS_TOP_N))
+  top('top emotes', topN(s.emotes, STREAM_STATS_TOP_N))
+  return card
+}
+
+// Offline recap, pinned to the top of the chat container once per channel.
 function renderStreamSummary(channel) {
   const key = (channel || '').toLowerCase()
   const s = streamStats.get(key)
@@ -98,41 +187,26 @@ function renderStreamSummary(channel) {
   if (!container) return
   const id = `hs-mc-summary-${key.replace(/[^a-z0-9]/gi, '')}`
   if (document.getElementById(id)) return
-  const card = document.createElement('div')
+  const card = buildStreamSummary(key, true)
   card.id = id
-  card.className = 'hs-mc-stream-summary'
-  card.style.cssText =
-    'background:#0a0a0a;color:#fff;border:1px solid #808080;font:11px/1.5 monospace;padding:10px 12px;margin:6px;display:flex;flex-direction:column;gap:6px;'
-  const title = document.createElement('div')
-  title.style.cssText = 'display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:700'
-  const titleText = document.createElement('span')
-  titleText.textContent = `${key} stream summary`
-  const dismiss = document.createElement('span')
-  dismiss.textContent = '×'
-  dismiss.style.cssText = 'cursor:pointer;color:#808080;font-weight:700'
-  dismiss.addEventListener('click', () => card.remove())
-  title.append(titleText, dismiss)
-  const stats = document.createElement('div')
-  stats.style.color = '#c0c0c0'
-  stats.textContent = `${s.msgCount} messages · ${s.chatters.size} chatters · ${s.mentionCount} mentions · ${fmtDuration(Date.now() - s.startedAt)}`
-  card.append(title, stats)
-  const top = (label, items) => {
-    if (items.length === 0) return null
-    const row = document.createElement('div')
-    row.style.color = '#c0c0c0'
-    const lbl = document.createElement('span')
-    lbl.style.color = '#808080'
-    lbl.textContent = `${label} `
-    const list = document.createElement('span')
-    list.textContent = items.map(([k, v]) => `${k} (${v})`).join(' · ')
-    row.append(lbl, list)
-    return row
-  }
-  const te = top('top emotes:', topN(s.emotes, STREAM_STATS_TOP_N))
-  const tc = top('top chatters:', topN(s.chatters, STREAM_STATS_TOP_N))
-  if (te) card.append(te)
-  if (tc) card.append(tc)
   container.insertBefore(card, container.firstChild)
   // Keep stats around for 1h after offline so user can review on toggle/scroll
   cleanup.setTimeout(() => streamStats.delete(key), 60 * 60 * 1000)
+}
+
+// Live summary mounted in `slot`, redrawn every 2s while it stays attached.
+function mountLiveStreamSummary(slot, channel) {
+  const draw = () => {
+    const card = buildStreamSummary(channel, false)
+    card.querySelector('.hs-mc-summary-x').addEventListener('click', () => {
+      cleanup.clearInterval(timer)
+      slot.textContent = ''
+    })
+    slot.replaceChildren(card)
+  }
+  const timer = cleanup.setInterval(() => {
+    if (!slot.isConnected || !slot.firstChild) return cleanup.clearInterval(timer)
+    draw()
+  }, 2000)
+  draw()
 }

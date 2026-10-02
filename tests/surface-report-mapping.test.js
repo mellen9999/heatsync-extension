@@ -27,7 +27,7 @@ function sliceBetween(marker, endMarker) {
   return MAIN_SRC.slice(start, end)
 }
 
-const REPORT_SRC = sliceBetween('  const _UNCOUNTED_TABS = new Set(', '\n  function switchTab(id) {')
+const REPORT_SRC = sliceBetween('  const _UNCOUNTED_TABS = new Set(', '\n  // switchTab(tab, sub)')
 
 function makeReporter() {
   const sent = []

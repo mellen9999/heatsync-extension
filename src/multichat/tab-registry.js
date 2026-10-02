@@ -10,13 +10,17 @@
  * hand-mounted overlays: a slash command, hotkey or right-click is a shortcut
  * TO a cell (switchTab(tab, sub)), never the only door.
  */
+// Cells of a channel tab (and live): the first is home. Filled in as each
+// surface becomes a cell.
+const MC_CHANNEL_SUB = []
+
 const MC_TABS = [
   { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
   { id: 'whispers', labelKey: 'mc_tab_whispers', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
-  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true },
+  { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_CHANNEL_SUB },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
   { id: 'discover' },
   { id: 'settings', bar: 'util' },
@@ -47,4 +51,24 @@ function mcDefaultHiddenTabs() {
 
 function mcRestorableTabs() {
   return MC_TABS.filter((tab) => tab.restorable).map((tab) => tab.id)
+}
+
+/** the 2nd-row cells of a tab: its own `sub`, or a channel tab's shared set */
+function mcSubCells(tabId) {
+  const tab = MC_TABS.find((t) => t.id === tabId)
+  if (tab) return tab.sub || []
+  return tabId ? MC_CHANNEL_SUB : []
+}
+
+/**
+ * Which cell opens: the one asked for, else the one last used on this tab,
+ * else the first. null when the tab has no 2nd row.
+ */
+function mcResolveSub(tabId, sub, lastByTab) {
+  const cells = mcSubCells(tabId)
+  if (!cells.length) return null
+  if (sub && cells.some((c) => c.id === sub)) return sub
+  const last = lastByTab?.[tabId]
+  if (last && cells.some((c) => c.id === last)) return last
+  return cells[0].id
 }

@@ -223,6 +223,8 @@
   let currentUsername = null
   let originalRender = null
   let tabBarElement = null
+  let currentSub = null // active cell of the 2nd row (null = tab has none)
+  const lastSubByTab = {} // last cell used per tab, restored on return
   let overlayElement = null
   let inputBarElement = null // Separate input bar (always visible)
   let pendingMessage = '' // Persists across tab switches
@@ -3180,6 +3182,34 @@
     return `<button class="hs-mc-tab${on ? ' active' : ''}" role="tab" aria-selected="${on}" data-tab="${tab.id}">${label}</button>`
   }
 
+  // Rebuild the 2nd row for the active tab; hidden when the tab has no cells.
+  function renderSubRow() {
+    const row = tabBarElement?.querySelector('#hs-mc-subrow')
+    if (!row) return
+    const cells = mcSubCells(currentTab)
+    row.hidden = cells.length === 0
+    row.replaceChildren(
+      ...cells.map((c) => {
+        const b = document.createElement('button')
+        b.className = 'hs-mc-subcell'
+        b.type = 'button'
+        b.dataset.sub = c.id
+        b.setAttribute('role', 'tab')
+        b.setAttribute('aria-selected', String(c.id === currentSub))
+        b.classList.toggle('active', c.id === currentSub)
+        b.textContent = c.label
+        return b
+      }),
+    )
+  }
+
+  // Land on a cell: remember it for the tab, repaint the row.
+  function applySub(tabId, sub) {
+    currentSub = sub
+    if (sub) lastSubByTab[tabId] = sub
+    renderSubRow()
+  }
+
   function createTabBar() {
     const container = document.createElement('div')
     container.id = 'hs-mc-tabbar'
@@ -3202,6 +3232,7 @@
         </div>
         <div id="hs-mc-platfilter"></div>
       </div>
+      <div id="hs-mc-subrow" role="tablist" aria-label="views" hidden></div>
     `
 
     // native-chat escape hatch removed (too fragile across chat positions/boot).
@@ -3238,6 +3269,12 @@
       } else {
         switchTab(tabId)
       }
+    })
+
+    // 2nd row: a cell is an address inside the active tab
+    container.querySelector('#hs-mc-subrow').addEventListener('click', (e) => {
+      const cell = e.target.closest('.hs-mc-subcell')
+      if (cell) switchTab(currentTab, cell.dataset.sub)
     })
 
     // Right-click tabs → mark as read + channel context menu
@@ -7098,8 +7135,15 @@
     } catch (_) {}
   }
 
-  function switchTab(id) {
-    log('switchTab called:', id)
+  // switchTab(tab, sub): a tab with a 2nd row opens at `sub`, else the cell
+  // last used there, else its first. Same tab + new cell only swaps the cell.
+  function switchTab(id, sub) {
+    log('switchTab called:', id, sub || '')
+    const nextSub = mcResolveSub(id, sub, lastSubByTab)
+    if (id === currentTab && sub && nextSub === sub && nextSub !== currentSub) {
+      applySub(id, nextSub)
+      return
+    }
     _reportSurfaceOpen(id)
     // Leaving an edit form: drop the outgoing tab's cache and clear msgsEl so
     // the upcoming snapshotTabState doesn't capture the form (which would then
@@ -7305,6 +7349,8 @@
     } else {
       log('No overlay element to show!')
     }
+
+    applySub(id, nextSub)
 
     // Update input placeholder for new tab
     updateInputPlaceholder()

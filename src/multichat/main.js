@@ -1550,7 +1550,7 @@
         el.id = 'hs-mc-idwarn'
         const acct = hsCurrentUsername || 'unknown'
         const ident = senderKey.replace(':', ' ')
-        el.innerHTML = `<span>your emotes won't render for others here — heatsync acct <b>${escapeHtml(acct)}</b>, chatting as <b>${escapeHtml(ident)}</b> — <a href="https://heatsync.org/settings" target="_blank" rel="noopener">link accounts</a></span><button id="hs-mc-idwarn-x" title="dismiss">×</button>`
+        el.innerHTML = `<span>your emotes won't render for others here — heatsync acct <b>${escapeHtml(acct)}</b>, chatting as <b>${escapeHtml(ident)}</b> — <a href="https://heatsync.org/settings" target="_blank" rel="noopener">link accounts</a></span>${hsXButtonHtml('hs-x-inline', 'dismiss', 'id="hs-mc-idwarn-x" title="dismiss"')}`
         bar.parentNode.insertBefore(el, bar)
         el.querySelector('#hs-mc-idwarn-x')?.addEventListener('click', () => {
           el.remove()
@@ -7303,6 +7303,8 @@
     } catch {}
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) activeProfileCard = null
+    // …and so does an open confirm panel (the switch repaints the 2nd row itself)
+    hsPanePanelAbort()
 
     // Clicking feed tab (relabeled "back") while in thread view → close the
     // thread. If we entered from a channel tab, return THERE, not the feed —
@@ -7339,7 +7341,12 @@
     // Update settings button icon: X when settings open, cog otherwise
     if (tabBarElement) {
       const settingsBtn = tabBarElement.querySelector('[data-tab="settings"]')
-      if (settingsBtn) settingsBtn.textContent = id === 'settings' ? '✕' : '⚙'
+      if (settingsBtn) {
+        const open = id === 'settings'
+        settingsBtn.classList.toggle('hs-x', open)
+        if (open) settingsBtn.innerHTML = HS_X_SVG
+        else settingsBtn.textContent = '\u2699'
+      }
     }
     updatePopoutBtnVisibility()
     updateSubBtnVisibility()
@@ -9641,6 +9648,7 @@
     if (msg?.hidden) return true
     // Skip live append while profile card is open — buffer keeps the msg, restored on close
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
+    if (hsPanePanelOpen()) return true // a confirm panel covers the pane; close repaints
     // Same for the predictions/polls view — it owns the chat area while open.
     if (typeof predViewOpen === 'function' && predViewOpen()) return true
     if (isScrolledUp || currentTab !== tabId) return false
@@ -10122,9 +10130,7 @@
       } catch {}
       hideMultistreamBanner()
     })
-    const dismissBtn = document.createElement('button')
-    dismissBtn.className = 'hs-mc-multi-dismiss'
-    dismissBtn.textContent = '×'
+    const dismissBtn = hsXButton('hs-x-inline', 'dismiss')
     dismissBtn.title = 'dismiss (right-click also works)'
     const dismissNow = () => {
       _multistreamDismissed.add(key)
@@ -10270,6 +10276,8 @@
     // actions without a cold-cache miss (resolve the linked kick slug for this tab).
     const _chForMod = typeof getChannelById === 'function' ? getChannelById(id) : null
     if (_chForMod?.kick) prefetchKickModFor(_chForMod.kick)
+    // A confirm panel sits over the pane: leave the rows alone, close repaints
+    if (hsPanePanelOpen()) return
     // Profile card overrides normal tab content while open
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
       renderProfileCardView()
@@ -13106,10 +13114,7 @@
     const label = source === 'heatsync' ? 'heatsync.org unreachable — reconnecting' : `${source} unreachable`
     const text = document.createElement('span')
     text.textContent = label
-    const dismiss = document.createElement('span')
-    dismiss.textContent = '×'
-    dismiss.style.cssText = 'cursor:pointer;font-weight:700;padding:0 4px;'
-    dismiss.addEventListener('click', () => banner.remove())
+    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
     banner.append(text, dismiss)
     _insertPanelCallout(banner)
   }
@@ -13145,10 +13150,8 @@
     link.rel = 'noopener'
     link.textContent = 'sign in'
     link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;'
-    const dismiss = document.createElement('span')
-    dismiss.textContent = '×'
-    dismiss.style.cssText = 'cursor:pointer;font-weight:700;padding:0 4px;margin-left:4px;'
-    dismiss.addEventListener('click', () => banner.remove())
+    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+    dismiss.style.marginLeft = '4px'
     banner.append(text, link, dismiss)
     _insertPanelCallout(banner)
   }
@@ -13178,10 +13181,8 @@
     link.textContent = 'log in'
     // nowrap so the link never splits across lines when the panel is narrow
     link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;cursor:pointer;white-space:nowrap;'
-    const dismiss = document.createElement('span')
-    dismiss.textContent = '×'
-    dismiss.style.cssText = 'cursor:pointer;font-weight:700;padding:0 4px;margin-left:4px;'
-    dismiss.addEventListener('click', () => banner.remove())
+    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+    dismiss.style.marginLeft = '4px'
     banner.append(text, link, dismiss)
     _insertPanelCallout(banner)
   }

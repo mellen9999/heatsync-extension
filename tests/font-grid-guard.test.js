@@ -95,7 +95,6 @@ function sizeDeclarations() {
  */
 const KNOWN_OFF_GRID = new Set([
   'hs-whisper-arrow', // ▸ glyph
-  'hs-mc-multi-dismiss', // ✕ glyph
   'hs-mc-chat-banner-icon', // banner icon glyph
   'hs-notif-resub-icon', // icon glyph
   'hs-notif-watchstreak-icon', // icon glyph
@@ -106,7 +105,6 @@ const KNOWN_OFF_GRID = new Set([
   'hs-mc-stack-block-all', // control label
   'hs-mc-emoji-preview', // emoji, not text
   'hs-mc-send', // send-button glyph
-  'hs-pcard-close', // ✕ glyph
   'hs-mc-st-arrow', // ▸ glyph
   'hs-mc-cold-start-title', // empty-state heading
 ])

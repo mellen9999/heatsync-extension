@@ -361,19 +361,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    #hs-mc-reply-cancel {
-      background: none;
-      border: none;
-      color: var(--hs-muted);
-      cursor: pointer;
-      font-size: 13px;
-      padding: 0 2px;
-      line-height: 1;
-    }
-    #hs-mc-reply-cancel:hover {
-      color: #000;
-      background: #fff;
-    }
     .hs-mc-muted {
       user-select: none;
     }
@@ -1097,28 +1084,6 @@
     #hs-mc-player-dock .hs-feed-embed-soundcloud iframe {
       height: 120px;
     }
-    .hs-mc-player-close {
-      flex: none;
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      padding: 0;
-      font: inherit;
-      font-size: 13px;
-      line-height: 16px;
-      text-align: center;
-      color: #fff;
-      background: #000;
-      border: 1px solid var(--hs-border);
-      border-radius: 0;
-      cursor: pointer;
-    }
-    .hs-mc-player-close:hover,
-    .hs-mc-player-close:active {
-      color: #000;
-      background: #fff;
-    }
-
     /* identity-mismatch warning — emotes won't render for others (see
        warnIdentityMismatch in main.js). terse inline red, square, no motion. */
     #hs-mc-idwarn {
@@ -1135,23 +1100,6 @@
     }
     #hs-mc-idwarn a { color: var(--hs-danger); text-decoration: underline; }
     #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 600; }
-    #hs-mc-idwarn button {
-      /* see .hs-mc-reply-btn — a <button> needs font-family stated */
-      font-family: inherit;
-      flex: none;
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      font-size: 13px;
-      line-height: 1;
-      color: var(--hs-danger);
-      background: #000;
-      border: 1px solid var(--hs-danger);
-      border-radius: 0;
-      cursor: pointer;
-    }
-    #hs-mc-idwarn button:hover,
-    #hs-mc-idwarn button:active { color: #000; background: #fff; border-color: #fff; }
 
     /* Reply pill is a control — look like one. The caret is the only thing
        that says "this expands", and it flips while the thread stack is open so

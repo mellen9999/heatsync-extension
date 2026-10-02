@@ -13,36 +13,16 @@
      * renderProfileCardView). These rules always sit inside a `.hs-card`, so
      * they read the shared --hs-card-* tokens rather than duplicating them.
      */
-    .hs-pcard-close {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      z-index: 1;
-      width: 20px;
-      height: 20px;
-      background: transparent;
-      color: var(--hs-card-fg);
-      border: 1px solid var(--hs-card-border);
-      border-radius: 0;
-      font: inherit;
-      font-size: 14px;
-      line-height: 1;
-      cursor: pointer;
-      appearance: none;
-    }
-    .hs-pcard-close:hover,
-    .hs-pcard-close:active,
-    .hs-pcard-close:focus-visible {
-      background: #ffffff;
-      color: #000000;
-      outline: none;
-    }
+    /* the floating card's × sits in its top-right corner (the glyph is the shared .hs-x) */
+    .hs-pcard-close,
+    .hs-card-full > .hs-card-close { position: absolute; top: 0; right: 0; z-index: 3; }
 
     /* The multichat card panel fills the whole message area (below the tabs +
      * 2nd row): absolute over the scroller's padding box, own scroll, black
      * ground, square. The shared .hs-card-panel caps at 460px for the site's
      * inline page card; here it is the surface. */
-    #hs-mc-messages > .hs-card-panel {
+    #hs-mc-messages > .hs-card-panel,
+    #hs-mc-messages > .hs-pane-panel {
       position: absolute;
       inset: 0;
       width: auto;
@@ -56,9 +36,9 @@
     }
     /* While the card is open it covers everything below the 2nd row: the
      * pane's filter input and banner strips step aside (back on close). */
-    #hs-mc-overlay:has(> #hs-mc-messages > .hs-card-panel) > #hs-mc-search-bar,
-    #hs-mc-overlay:has(> #hs-mc-messages > .hs-card-panel) > #hs-mc-statusbar,
-    #hs-mc-overlay:has(> #hs-mc-messages > .hs-card-panel) > #hs-mc-multistream-banner { display: none !important; }
+    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-search-bar,
+    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-statusbar,
+    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-multistream-banner { display: none !important; }
     #hs-mc-messages > .hs-card-panel .hs-card-actions { margin-top: auto; }
 
     /* The panel's address row (#hs-mc-subrow while a card is open): the card's
@@ -86,25 +66,17 @@
       border-color: #fff;
       outline: none;
     }
-    .hs-mc-dest-close {
-      margin-left: auto;
-      align-self: stretch;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 28px;
-      padding: 0 6px;
-      background: #000;
+    /* pane-panel.js — a popup that is the whole message pane: body on top, its
+       buttons pinned to the bottom. The card is the same shape with its own body. */
+    .hs-pane-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 14px;
       color: #fff;
-      appearance: none;
+      font-size: 13px;
     }
-    .hs-mc-dest-close svg { width: 14px; height: 14px; display: block; }
-    .hs-mc-dest-close:hover,
-    .hs-mc-dest-close:active,
-    .hs-mc-dest-close:focus-visible { background: #fff; color: #000; }
-    @media (pointer: coarse) {
-      .hs-mc-dest-close { min-width: 40px; min-height: 40px; }
-    }
+    .hs-pane-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+    .hs-pane-actions { flex: none; display: flex; gap: 8px; justify-content: flex-end; padding-top: 12px; }
 
     .hs-pcard-loading {
       padding: 8px 10px;

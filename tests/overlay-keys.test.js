@@ -108,11 +108,14 @@ describe('overlay key registry', () => {
 
 describe('no bare printable key moderates anyone', () => {
   const modToolbar = read('mod-toolbar.js')
+  const confirmPanel = read('pane-panel.js')
 
-  // The confirm dialog's own Escape/Enter is the ONLY key this file may read.
-  // Anything else means a printable-key bind crept back in.
-  test('mod-toolbar reads no key but Escape and Enter', () => {
-    const keys = [...modToolbar.matchAll(/e\.key\s*===\s*'([^']+)'/g)].map((m) => m[1])
+  // The confirm panel's own Escape/Enter is the ONLY key mod-toolbar's dialog may
+  // read (it lives in pane-panel.js now). Anything else means a printable-key
+  // bind crept back in.
+  test('mod-toolbar reads no key; the confirm panel reads only Escape and Enter', () => {
+    expect([...modToolbar.matchAll(/e\.key\s*[!=]==/g)]).toHaveLength(0)
+    const keys = [...confirmPanel.matchAll(/e\.key\s*[!=]==\s*'([^']+)'/g)].map((m) => m[1])
     expect(new Set(keys)).toEqual(new Set(['Escape', 'Enter']))
   })
 

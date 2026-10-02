@@ -397,34 +397,13 @@ async function resolveFollowTargetId(platform, username, ids = {}) {
   return null
 }
 
-// The card panel's address row: profile · logs · chatter · platforms, then the
-// one × cell, drawn into the multichat 2nd row (#hs-mc-subrow) for as long as
-// the card is open. renderSubRow() repaints it for the tab on close/switch.
-// These are the only links the card has; heatsync.org cells open a tab (a
-// different app), platform cells open the platform.
+// The card panel's address row (profile · logs · chatter · platforms + the one
+// × cell) is drawn into the multichat 2nd row for as long as the card is open,
+// by the shared pane-panel helper. renderSubRow() repaints it for the tab on
+// close/switch. heatsync.org cells open a tab (a different app), platform cells
+// open the platform.
 function pcMountDestRow(items) {
-  const row = document.getElementById('hs-mc-subrow')
-  if (!row) return
-  row.replaceChildren(
-    ...items.map((it) => {
-      const a = document.createElement('a')
-      a.className = 'hs-mc-dest'
-      a.textContent = it.label + (it.live ? ' ●' : '')
-      a.href = it.external ? it.href : `https://heatsync.org${it.href}`
-      a.target = '_blank'
-      a.rel = 'noopener'
-      return a
-    }),
-  )
-  const x = document.createElement('button')
-  x.type = 'button'
-  x.className = 'hs-mc-dest hs-mc-dest-close'
-  x.setAttribute('aria-label', 'close')
-  x.innerHTML =
-    '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>'
-  x.addEventListener('click', closeProfileCard)
-  row.append(x)
-  row.hidden = false
+  hsPaneMountRow(items, closeProfileCard)
 }
 
 function closeProfileCard() {
@@ -838,6 +817,7 @@ function pcResolveMount() {
 
 function renderProfileCardView() {
   if (!activeProfileCard) return
+  if (hsPanePanelOpen()) return // a confirm covers the pane; it repaints the card on close
   const mount = pcResolveMount()
   if (!mount) return
   const { el: msgsEl, floating } = mount
@@ -920,6 +900,8 @@ function renderProfileCardView() {
   card.setAttribute('role', 'dialog')
   card.setAttribute('aria-label', t('content_card_dialog_label', [data.display_name || username]))
   card.tabIndex = -1
+  // the floating card's own × (shared markup) becomes the one thick glyph
+  hsXify(card.querySelector('.hs-card-close'))
 
   // The panel's destinations + its × live in the multichat 2nd row while the
   // card is open (pcMountDestRow); the floating card keeps the shared card's
@@ -1045,13 +1027,8 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
   wrap.setAttribute('aria-label', t('content_card_dialog_label', [username]))
   wrap.tabIndex = -1
   if (floating) {
-    const closeBtn = document.createElement('button')
-    closeBtn.className = 'hs-pcard-close'
-    closeBtn.type = 'button'
+    const closeBtn = hsXButton('hs-pcard-close', 'close profile', closeProfileCard)
     closeBtn.title = 'close (Esc)'
-    closeBtn.setAttribute('aria-label', 'close profile')
-    closeBtn.textContent = '×'
-    closeBtn.addEventListener('click', closeProfileCard)
     wrap.appendChild(closeBtn)
   } else {
     pcMountDestRow([]) // the panel's × is the 2nd row's last cell

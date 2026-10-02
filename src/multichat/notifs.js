@@ -35,7 +35,7 @@
 //         el.textContent = `${data.raidFrom} raided with ${data.viewers}!`
 //         return el
 //       },
-//       actions: { dismiss: { label: '✕' } },
+//       actions: { dismiss: {} },  // dismiss draws the shared × glyph (no label)
 //     })
 //     // Then anywhere:
 //     HsNotifs.emit('twitch-raid', { raidFrom: 'someone', viewers: 50 })
@@ -267,8 +267,10 @@ const HsNotifs = (() => {
         if (!def) continue
         const btn = document.createElement('button')
         btn.type = 'button'
-        btn.className = `hs-notif-action hs-notif-action-${kind}`
-        btn.textContent = def.label || kind
+        btn.className = `hs-notif-action hs-notif-action-${kind}${kind === 'dismiss' ? ' hs-x hs-x-inline' : ''}`
+        if (kind === 'dismiss') btn.innerHTML = HS_X_SVG
+        else btn.textContent = def.label || kind
+        if (kind === 'dismiss') btn.setAttribute('aria-label', def.title || 'dismiss')
         if (def.title) btn.title = def.title
         btn.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -679,7 +681,7 @@ const HsNotifs = (() => {
           return false
         },
       },
-      dismiss: { label: '✕' },
+      dismiss: {},
     },
   })
 
@@ -734,7 +736,7 @@ const HsNotifs = (() => {
           return false
         },
       },
-      dismiss: { label: '✕' },
+      dismiss: {},
     },
   })
 
@@ -754,7 +756,7 @@ const HsNotifs = (() => {
       el.textContent = body
       return el
     },
-    actions: { dismiss: { label: '✕' } },
+    actions: { dismiss: {} },
   })
 
   // Send-pending — fires when an outgoing chat message hasn't echoed back from
@@ -817,7 +819,7 @@ const HsNotifs = (() => {
           return true
         },
       },
-      dismiss: { label: '✕' },
+      dismiss: {},
     },
   })
 
@@ -845,7 +847,7 @@ const HsNotifs = (() => {
           return true
         },
       },
-      dismiss: { label: '✕' },
+      dismiss: {},
     },
   })
 
@@ -872,7 +874,7 @@ const HsNotifs = (() => {
           return true
         },
       },
-      dismiss: { label: '✕' },
+      dismiss: {},
     },
   })
 
@@ -892,7 +894,7 @@ const HsNotifs = (() => {
       el.className = 'hs-notif-toast-text hs-notif-toast-mention'
       return el
     },
-    actions: { dismiss: { label: '✕' } },
+    actions: { dismiss: {} },
   })
 
   return {

@@ -24,7 +24,10 @@ const end = SRC.indexOf('export {')
 if (start === -1 || end === -1 || end <= start) throw new Error('renderEmoteStack carve markers not found')
 
 const makeRender = (widths) =>
-  new Function('_hsEmoteBoxW', `${SRC.slice(start, end)}; return renderEmoteStack`)(new Map(Object.entries(widths)))
+  new Function('_hsEmoteBoxW', 'hsXButtonHtml', `${SRC.slice(start, end)}; return renderEmoteStack`)(
+    new Map(Object.entries(widths)),
+    (cls) => `<button class="hs-x ${cls}"></button>`,
+  )
 
 const wrap = (url) =>
   `<span class="hs-mc-emote-wrapper" data-emote-name="x" data-emote-url="${url}"><img src="${url}" class="hs-mc-emote hs-emote-channel"></span>`

@@ -558,11 +558,11 @@ function _renderMutedGroup() {
               '<span class="hs-mc-setting-label" style="font-size:13px">' +
               escapeHtml(displayU) +
               '</span>' +
-              '<button class="hs-mc-unmute-btn" data-username="' +
-              escapeHtml(u) +
-              '" style="background:none;border:1px solid #808080;color:#808080;font-size:13px;cursor:pointer;padding:1px 6px;line-height:1.4" title="' +
-              t('mc_settings_unmute') +
-              '">✕</button>' +
+              hsXButtonHtml(
+                'hs-x-inline hs-mc-unmute-btn',
+                t('mc_settings_unmute'),
+                'data-username="' + escapeHtml(u) + '" title="' + t('mc_settings_unmute') + '"',
+              ) +
               '</div>'
             )
           })
@@ -747,11 +747,7 @@ function _renderFilterRuleRow(r) {
     '" style="' +
     FR_BTN +
     ';color:#808080;flex-shrink:0;padding:1px 4px" title="move down">▼</button>' +
-    '<button data-fr-action="delete" data-fr-id="' +
-    id +
-    '" style="' +
-    FR_BTN +
-    ';color:#808080;flex-shrink:0" title="delete rule">✕</button>' +
+    hsXButtonHtml('hs-x-inline', 'delete rule', 'data-fr-action="delete" data-fr-id="' + id + '" title="delete rule"') +
     '</div>'
   )
 }
@@ -1255,7 +1251,7 @@ function _openPresetMenu(anchorEl) {
       danger: true,
       fn: () => {
         const delItems = _customPresets.map((p) => ({
-          label: `✕ ${p.name}`,
+          label: `delete ${p.name}`,
           danger: true,
           fn: () => {
             _deleteCustomPreset(p.id)

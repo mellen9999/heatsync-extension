@@ -1886,7 +1886,7 @@ function _feedVirtualTeardown(msgsEl) {
 }
 
 function renderFeed() {
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
@@ -2014,7 +2014,7 @@ function renderFeed() {
 // scrollTop to 0 — yanking the reader to the top on every "load more". Only
 // the newly-fetched rows get built; scroll position is never touched.
 function renderFeedAppend(startIndex) {
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   if (activeThread) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
@@ -2562,14 +2562,11 @@ function _renderFeedReplyChip(thread) {
   ref.textContent = ` replying to >>${displayId}`
   chip.appendChild(ref)
 
-  const cancel = document.createElement('button')
-  cancel.className = 'hs-mc-feed-reply-cancel'
-  cancel.textContent = '✕'
-  cancel.title = 'leave thread'
-  cancel.addEventListener('click', (e) => {
+  const cancel = hsXButton('hs-mc-feed-reply-cancel hs-x-inline', 'leave thread', (e) => {
     e.preventDefault()
     closeThread()
   })
+  cancel.title = 'leave thread'
   chip.appendChild(cancel)
 
   bar.insertBefore(chip, bar.firstChild)
@@ -3294,7 +3291,7 @@ function makeDiscoverSection(titleText, subtitleText, metaText, extraClass) {
 }
 
 function renderDiscoverTab() {
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
@@ -3527,7 +3524,7 @@ async function fetchPinned() {
 }
 
 function renderPinnedTab() {
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
@@ -3614,7 +3611,7 @@ function renderPinnedTab() {
 // (no innerHTML), mirroring renderPinnedTab; display strings from mod-log.js's
 // unit-tested modLogLine().
 function renderModLogTab() {
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   msgsEl.textContent = ''

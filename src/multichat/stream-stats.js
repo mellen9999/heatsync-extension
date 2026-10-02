@@ -132,15 +132,11 @@ function buildStreamSummary(channel, ended, onClose) {
   titleText.textContent = ended || s?.endedAt ? `${key} stream ended` : `${key} stream summary`
   title.append(titleText)
   if (onClose) {
-    const dismiss = document.createElement('button')
-    dismiss.type = 'button'
-    dismiss.className = 'hs-mc-summary-x'
-    dismiss.textContent = '×'
-    dismiss.title = 'back to chat (Esc)'
-    dismiss.addEventListener('click', (e) => {
+    const dismiss = hsXButton('hs-x-inline', 'back to chat', (e) => {
       e.stopPropagation()
       onClose()
     })
+    dismiss.title = 'back to chat (Esc)'
     title.append(dismiss)
   }
   card.append(title)

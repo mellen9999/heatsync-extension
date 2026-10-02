@@ -4538,7 +4538,7 @@ function renderEmoteStack(stack) {
     _urlRe.lastIndex = 0
   }
   const _resAttr = _reserve ? ` style="min-width:${_reserve}px"` : ''
-  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="expand"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span><span class="hs-mc-stack-collapse" title="collapse">\u00d7</span><span class="hs-mc-stack-block-all" title="block all">\u2298</span></span>`
+  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="expand"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span>${hsXButtonHtml('hs-mc-stack-collapse hs-x-inline', 'collapse', 'title="collapse"')}<span class="hs-mc-stack-block-all" title="block all">\u2298</span></span>`
 }
 
 export {

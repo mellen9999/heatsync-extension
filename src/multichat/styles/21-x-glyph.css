@@ -1,0 +1,34 @@
+    /* THE close glyph (x-glyph.js): one thick svg cross, white on black, reversed on
+       hover/active/focus. >=24px on desktop, >=40px under a coarse pointer. Every
+       dismiss x in the overlay is this rule plus (at most) a placement class. */
+    .hs-x {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      box-sizing: border-box;
+      min-width: 24px;
+      min-height: 24px;
+      margin: 0;
+      padding: 0 4px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font: inherit;
+      line-height: 0;
+      cursor: pointer;
+      appearance: none;
+      user-select: none;
+    }
+    .hs-x svg { width: 12px; height: 12px; display: block; pointer-events: none; }
+    .hs-x:hover,
+    .hs-x:active,
+    .hs-x:focus-visible { background: #fff; color: #000; border-color: #fff; outline: none; }
+    /* last cell of the 2nd row, full row height */
+    .hs-x-cell { margin: 0 0 -1px auto; align-self: stretch; min-width: 28px; padding: 0 6px; border: 0; }
+    .hs-x-cell svg { width: 14px; height: 14px; }
+    @media (pointer: coarse) {
+      .hs-x { min-width: 40px; min-height: 40px; }
+      .hs-x svg { width: 16px; height: 16px; }
+    }

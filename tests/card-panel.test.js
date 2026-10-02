@@ -257,8 +257,10 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(view).toMatch(/if\s*\(!floating\)\s*pcMountDestRow\(hsCardNavItems\(/)
     expect(view).not.toContain("closeBtn.className = 'hs-pcard-close'")
     const mount = slice(CARD, 'function pcMountDestRow(items) {', '\n}\n')
-    expect(mount).toContain("'hs-mc-dest hs-mc-dest-close'")
-    expect(mount).toContain('#hs-mc-subrow'.slice(1))
+    expect(mount).toContain('hsPaneMountRow(items, closeProfileCard)')
+    const pane = readFileSync(join(ROOT, 'src', 'multichat', 'pane-panel.js'), 'utf8')
+    expect(pane).toContain("hsXButton('hs-x-cell'")
+    expect(pane).toContain('hs-mc-subrow')
   })
 
   test('addchannel is dispatched, even though it is not a card-model.js ACTION_DEFS key', () => {

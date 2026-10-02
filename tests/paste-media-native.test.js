@@ -58,7 +58,7 @@ describe('the upload lives in content.js (isolated world), gated on a real event
       CONTENT_SRC.indexOf("'twitch-media-paste'"),
     )
     expect(pasteBlock).toMatch(/isTwitchChatInput\(e\.target\)/)
-    expect(pasteBlock).toMatch(/e\.clipboardData\?\.\items/)
+    expect(pasteBlock).toMatch(/e\.clipboardData\?\.items/)
   })
 
   test('capture phase, so it runs before Slate’s own bubble-phase handling', () => {

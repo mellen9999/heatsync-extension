@@ -192,7 +192,7 @@
       pointer-events: auto;
     }
     /* EMOTE STACK EXPAND/COLLAPSE */
-    .hs-mc-stack-collapse,
+    .hs-mc-emote-stack .hs-mc-stack-collapse,
     .hs-mc-stack-block-all {
       display: none;
       cursor: pointer;
@@ -234,14 +234,8 @@
     .hs-mc-emote-stack.expanded > .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper {
       grid-area: auto;
     }
-    .hs-mc-emote-stack.expanded .hs-mc-stack-collapse,
-    .hs-mc-emote-stack.expanded .hs-mc-stack-block-all {
-      display: inline-block;
-    }
-    .hs-mc-stack-collapse:hover {
-      background: #fff;
-      color: #000;
-    }
+    .hs-mc-emote-stack.expanded .hs-mc-stack-collapse { display: inline-flex; }
+    .hs-mc-emote-stack.expanded .hs-mc-stack-block-all { display: inline-block; }
     .hs-mc-stack-block-all:hover {
       background: #fff;
       color: #000;

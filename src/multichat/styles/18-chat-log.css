@@ -22,15 +22,6 @@
     .hs-cl-title { display: flex; align-items: baseline; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .hs-cl-title-name { font-weight: 700; color: #fff; }
     .hs-cl-title-sub { color: #999; overflow: hidden; text-overflow: ellipsis; }
-    .hs-cl-close {
-      width: 22px; height: 22px; padding: 0;
-      background: transparent; color: #999;
-      border: 1px solid #333; cursor: pointer;
-      font-family: inherit; font-size: 13px; line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .hs-cl-close:hover { background: #fff; color: #000; border-color: #fff; }
     .hs-cl-ctrls {
       display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 6px;
       background: #0a0a0a;

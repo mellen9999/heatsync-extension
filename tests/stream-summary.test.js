@@ -39,6 +39,7 @@ function load({ enabled = true } = {}) {
     'isEnabled',
     'emoteCache',
     'requestIdleCallback',
+    'hsXButton',
     `${SRC}; return { bumpStreamStats, buildStreamSummary, markStreamEnded, streamStats, _flushStatsScanQueue }`,
   )(
     document,
@@ -46,6 +47,7 @@ function load({ enabled = true } = {}) {
     () => enabled,
     new Set(['KEKW']),
     () => {},
+    (cls) => Object.assign(el('button'), { className: `hs-x ${cls}`, setAttribute() {} }),
   )
 }
 
@@ -80,7 +82,7 @@ describe('stream summary', () => {
 
   test('the × exists only when the cell gives it a way back', () => {
     const m = load()
-    const has = (n) => n.className === 'hs-mc-summary-x' || n.children.some(has)
+    const has = (n) => /\bhs-x\b/.test(n.className) || n.children.some(has)
     expect(has(m.buildStreamSummary('chan', false))).toBe(false)
     expect(has(m.buildStreamSummary('chan', false, () => {}))).toBe(true)
   })

@@ -6361,14 +6361,12 @@ function setReplyState(state) {
   indicator.id = 'hs-mc-reply-indicator'
   const label = document.createElement('span')
   label.textContent = `\u21a9 ${t('mc_input_replying_to', [String(state.user || '').replace(/^@+/, '')])}`
-  const cancel = document.createElement('button')
-  cancel.id = 'hs-mc-reply-cancel'
-  cancel.textContent = '✕'
-  cancel.title = t('mc_input_cancel_reply')
-  cancel.addEventListener('click', () => {
+  const cancel = hsXButton('hs-x-inline', t('mc_input_cancel_reply'), () => {
     clearReplyState()
     hideInputBar() // explicit cancel — ok to re-hide an empty composer
   })
+  cancel.id = 'hs-mc-reply-cancel'
+  cancel.title = t('mc_input_cancel_reply')
   indicator.appendChild(label)
   indicator.appendChild(cancel)
   bar.insertBefore(indicator, bar.firstChild)
@@ -6402,14 +6400,12 @@ function setQuoteState(state) {
   indicator.id = 'hs-mc-quote-indicator'
   const label = document.createElement('span')
   label.textContent = `» ${String(state.user || '').replace(/^@+/, '')}: ${state.text || ''}`
-  const cancel = document.createElement('button')
-  cancel.id = 'hs-mc-quote-cancel'
-  cancel.textContent = '✕'
-  cancel.title = t('mc_msg_quote_cancel')
-  cancel.addEventListener('click', () => {
+  const cancel = hsXButton('hs-x-inline', t('mc_msg_quote_cancel'), () => {
     clearQuoteState()
     hideInputBar() // explicit cancel — ok to re-hide an empty composer
   })
+  cancel.id = 'hs-mc-quote-cancel'
+  cancel.title = t('mc_msg_quote_cancel')
   indicator.appendChild(label)
   indicator.appendChild(cancel)
   bar.insertBefore(indicator, bar.firstChild)

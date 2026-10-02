@@ -36,7 +36,7 @@ describe('overlay aria', () => {
     for (const tab of ['feed', 'whispers', 'mentions', 'pinned', 'modlog', 'live']) {
       expect(REG, `no registry cell for ${tab}`).toMatch(new RegExp(`id: '${tab}'[^}]*bar: 'scroll'`))
     }
-    const row = MAIN.match(/function mcTabButtonHtml[\s\S]*?\n  }\n/)
+    const row = MAIN.match(/function mcTabButtonHtml[\s\S]*?\n {2}}\n/)
     expect(row, 'no mcTabButtonHtml').toBeTruthy()
     expect(row[0]).toContain('role="tab"')
     expect(row[0]).toContain('aria-selected=')

@@ -83,11 +83,8 @@ function renderPredView() {
   sub.className = 'hs-pv-sub'
   sub.textContent = `#${activePredView.channel}`
   title.appendChild(sub)
-  const close = document.createElement('button')
-  close.className = 'hs-pv-close'
-  close.textContent = '✕'
+  const close = hsXButton('hs-pv-close', 'close', closePredView)
   close.title = t('common_close') || 'close'
-  close.addEventListener('click', closePredView)
   hdr.appendChild(title)
   hdr.appendChild(close)
   wrap.appendChild(hdr)

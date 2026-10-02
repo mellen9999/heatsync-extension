@@ -123,8 +123,6 @@
     }
     .hs-notif-action-primary:hover,
     .hs-notif-action-primary:active { background: #fff; color: #000; border-color: #fff; }
-    .hs-notif-action-dismiss { padding: 0 10px; font-size: 14px; color: #848494; }
-    .hs-notif-action-dismiss:hover { background: var(--hs-danger); color: #000; }
 
     /* Toast-stack — every notif on this layer gets the toast aesthetic:
        icon prefix, level accent, click-to-dismiss cursor. Applies to the

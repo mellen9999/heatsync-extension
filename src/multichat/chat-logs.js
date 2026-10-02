@@ -319,12 +319,8 @@ function renderChatLogsView() {
   title.appendChild(tSub)
   hdr.appendChild(title)
 
-  const closeBtn = document.createElement('button')
-  closeBtn.className = 'hs-cl-close'
-  closeBtn.type = 'button'
+  const closeBtn = hsXButton('hs-cl-close', 'close', closeChatLogsView)
   closeBtn.title = 'close (Esc)'
-  closeBtn.textContent = '×'
-  closeBtn.addEventListener('click', closeChatLogsView)
   hdr.appendChild(closeBtn)
   wrap.appendChild(hdr)
 

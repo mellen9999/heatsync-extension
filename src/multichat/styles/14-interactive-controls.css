@@ -732,11 +732,6 @@
       display: flex; justify-content: space-between; align-items: center;
       color: var(--hs-brand); font-weight: 600;
     }
-    .hs-mc-summary-x {
-      background: none; border: 0; padding: 0 4px; cursor: pointer;
-      color: var(--hs-muted); font: inherit;
-    }
-    .hs-mc-summary-x:hover, .hs-mc-summary-x:active { background: #fff; color: #000; }
     .hs-mc-summary-stats, .hs-mc-summary-row { color: #c0c0c0; }
     .hs-mc-summary-dim { color: var(--hs-muted); }
 
@@ -1444,31 +1439,14 @@
     .hs-mc-ch-input::placeholder { color: var(--hs-muted); }
     .hs-mc-ch-input:focus { border-color: #fff; }
 
-    /* Confirm modal (hsConfirm) — square, terminal, hover-inverts; ban = danger red */
-    .hs-mc-confirm-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.6);
-    }
-    .hs-mc-confirm-box {
-      background: #000;
-      border: 1px solid var(--hs-border);
-      padding: 14px 16px;
-      max-width: 300px;
-      color: #fff;
-      font-size: 13px;
-    }
+    /* Confirm panel (hsConfirm, pane-panel.js) — square, terminal, hover-inverts; ban = danger red */
     .hs-mc-confirm-msg { margin-bottom: 12px; line-height: 1.4; word-break: break-word; }
-    .hs-mc-confirm-btns { display: flex; gap: 8px; justify-content: flex-end; }
-    .hs-mc-confirm-btns button {
+    .hs-pane-actions .hs-mc-confirm-cancel,
+    .hs-pane-actions .hs-mc-confirm-ok {
       background: #000;
       color: #fff;
       border: 1px solid var(--hs-border);
-      padding: 3px 12px;
+      padding: 6px 16px;
       font-size: 13px;
       font-family: inherit;
       cursor: pointer;
@@ -1527,20 +1505,6 @@
       text-overflow: ellipsis;
     }
     .hs-pv-sub { color: var(--hs-border); font-weight: 400; }
-    .hs-pv-close {
-      flex: 0 0 auto;
-      /* a <button> does not inherit font-family — see .hs-mc-reply-btn */
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: 13px;
-      line-height: 18px;
-      padding: 0 6px;
-      background: #000;
-      color: #fff;
-      border: 1px solid var(--hs-border);
-      border-radius: 0;
-      cursor: pointer;
-    }
-    .hs-pv-close:hover { background: #fff; color: #000; }
     /* The body scrolls; the header stays. A prediction with ten outcomes is
        taller than a narrow panel, which is the case the popup handled worst. */
     .hs-pv-body {

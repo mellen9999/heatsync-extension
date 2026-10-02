@@ -1209,7 +1209,7 @@ function _hsPlayerDockOpen(url, label) {
       (safeu
         ? `<a class="hs-mc-player-dock-out" href="${attr(safeu)}" target="_blank" rel="noopener" title="open in new tab">↗</a>`
         : '') +
-      `<button class="hs-mc-player-close" type="button" title="close player">×</button>` +
+      hsXButtonHtml('hs-mc-player-close', 'close player', 'title="close player"') +
       `</div>${html}`,
   )
   overlay.appendChild(dock)

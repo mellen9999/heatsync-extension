@@ -96,20 +96,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .hs-mc-feed-reply-cancel {
-      background: none;
-      border: none;
-      color: var(--hs-muted);
-      cursor: pointer;
-      font-size: 13px;
-      padding: 0 4px;
-      font-family: inherit;
-      flex-shrink: 0;
-    }
-    .hs-mc-feed-reply-cancel:hover {
-      background: #fff;
-      color: #000;
-    }
     /* Canonical heat number — used everywhere via heatSpanHtml/heatSpanEl. Tier color/glow is set inline.
        Structure: <span.hs-heat-num><span.hs-heat-n>{digits}</span><span.hs-heat-deg>°</span></span>
        The two sub-spans let surfaces using a bitmap font keep the digits crisp

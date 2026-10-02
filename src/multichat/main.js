@@ -11584,6 +11584,26 @@
       menu.appendChild(item)
     }
 
+    // The live tab's own settings live in its dropdown (right-click stays a
+    // shortcut to the same form).
+    const edit = document.createElement('div')
+    edit.textContent = 'edit platforms'
+    edit.style.cssText =
+      'padding:6px 12px;cursor:pointer;color:#fff;white-space:nowrap;border-top:1px solid #808080;margin-top:4px;'
+    edit.addEventListener('mouseenter', () => {
+      edit.style.background = '#fff'
+      edit.style.color = '#000'
+    })
+    edit.addEventListener('mouseleave', () => {
+      edit.style.background = 'none'
+      edit.style.color = '#fff'
+    })
+    edit.addEventListener('click', () => {
+      menu.remove()
+      showEditLivePlatforms()
+    })
+    menu.appendChild(edit)
+
     document.body.appendChild(menu)
 
     // Clamp position so menu stays fully visible

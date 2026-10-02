@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.80] — 2026-10-02
+
+### changed
+- **every panel has a place in the tab bar** — a 2nd row under the tabs holds the active tab's cells. channel tabs: `chat · summary · logs · status`; live adds `platforms`; feed gets `discover`; settings gets `help`. `/status`, `/modes`, `/help`, the right-click "chat logs" and "edit platforms" now open those cells instead of their own pop-up panels, and esc goes back to chat.
+- **stream summary stays in the app** — msgs, chatters, mentions, peak msg/s, top chatters and emotes, live while you watch. the twitch analytics window it used to open is gone. when a stream ends, the summary cell gets a dot instead of a card over chat.
+
+### fixed
+- **clicking a went-live notification focuses the streamer's tab** if you already have it open (popout chat counts), instead of opening another one every time.
+
 ## [1.7.79] — 2026-10-01
 
 ### changed

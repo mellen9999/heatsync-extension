@@ -128,6 +128,16 @@ describe('openers are shortcuts to a cell, never the door', () => {
   })
 })
 
+describe('switching cell inside a tab', () => {
+  test('a settings cell change is detected before switchTab records it (else the pane never repaints)', () => {
+    const m = read('main.js')
+    const fast = m.indexOf('applySub(id, nextSub, subOpts)\n      return')
+    const rec = m.indexOf("if (id === 'settings' && nextSub) _setSettingsSubtab(nextSub)")
+    expect(fast).toBeGreaterThan(0)
+    expect(rec).toBeGreaterThan(fast)
+  })
+})
+
 describe('every cell has somewhere to land', () => {
   const MAIN = read('main.js')
   const panes = MAIN.match(/const MC_SUB_PANES = \{([\s\S]*?)\n {2}\}\n/)?.[1] || ''

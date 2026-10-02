@@ -7279,11 +7279,11 @@
     log('switchTab called:', id, sub || '')
     ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
-    if (id === 'settings' && nextSub) _setSettingsSubtab(nextSub) // before the pane renders
     if (id === currentTab && sub && nextSub === sub) {
       applySub(id, nextSub, subOpts)
       return
     }
+    if (id === 'settings' && nextSub) _setSettingsSubtab(nextSub) // before the pane renders
     _reportSurfaceOpen(id)
     // Leaving an edit form: drop the outgoing tab's cache and clear msgsEl so
     // the upcoming snapshotTabState doesn't capture the form (which would then

@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.81] — 2026-10-02
+
+### changed
+- **a user card fills the whole chat panel** — click a name and the card takes everything under the tabs, chat filter included. its places (`profile · logs · chatter · twitch · kick`) sit in the 2nd row while it's open; esc, the ×, or any tab closes it and the row comes back.
+- **no links in the middle of a card** — log lines, timestamps, bio mentions and socials are plain text now; the card's one row of places is the only way out of it. the card on the twitch page itself keeps that row at its bottom edge.
+- **one close button** — every × in multichat is the same thick, high-contrast cross.
+- **mod confirms fill the panel** — a ban or timeout confirm takes the whole pane instead of a small box.
+
 ## [1.7.80] — 2026-10-02
 
 ### changed

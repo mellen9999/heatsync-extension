@@ -2279,6 +2279,102 @@ const badgesFetchedChannels = new Set()
 // Sorted numeric version lists per "channel:setID" — for nearest-tier fallback
 // (e.g. user has subscriber/5 but channel only defines 0,3,6 → use 3).
 const channelBadgeVersions = new Map()
+// helix/GQL badge titles, same keys as twitchBadgeUrls ("set/version" or "channel:set/version")
+const twitchBadgeTitles = new Map()
+
+// Unknown badge versions: twitch adds badges (sub tiers, events, globals) faster
+// than a channel's cached set turns over. A row naming a set/version the set
+// lacks renders nothing (never another version's art), notes the miss, and the
+// first miss of a (channel, key) inside BADGE_ASK_WINDOW_MS schedules ONE
+// debounced refetch of that channel's set. The timestamp is the negative: kept
+// whether or not the refetch found the version, so a badge twitch still does
+// not list is asked about once per window, not once per row.
+const BADGE_ASK_WINDOW_MS = 10 * 60 * 1000
+const BADGE_ASK_DEBOUNCE_MS = 1500
+function createBadgeRefetcher({
+  refetch,
+  now = Date.now,
+  debounceMs = BADGE_ASK_DEBOUNCE_MS,
+  windowMs = BADGE_ASK_WINDOW_MS,
+}) {
+  const asked = new Map()
+  const pending = new Set()
+  let timer = 0
+  const flush = () => {
+    timer = 0
+    const chans = [...pending]
+    pending.clear()
+    for (const c of chans) Promise.resolve(refetch(c)).catch(() => {})
+  }
+  return {
+    note(channel, key) {
+      const t = now()
+      const id = `${channel}|${key}`
+      const last = asked.get(id)
+      if (last !== undefined && t - last < windowMs) return false
+      asked.set(id, t)
+      if (asked.size > 500) for (const [k, v] of asked) if (t - v >= windowMs) asked.delete(k)
+      pending.add(channel)
+      if (!timer) timer = setTimeout(flush, debounceMs)
+      return true
+    },
+  }
+}
+
+// Fold a GQL badge list into the maps under `prefix` ('' global, 'chan:' channel).
+// Returns whether anything new or changed landed.
+function mergeBadgeRows(prefix, badges) {
+  let changed = false
+  for (const b of badges || []) {
+    if (!b?.setID) continue
+    const key = `${prefix}${b.setID}/${b.version}`
+    if (b.imageURL && twitchBadgeUrls.get(key) !== b.imageURL) {
+      twitchBadgeUrls.set(key, b.imageURL)
+      changed = true
+    }
+    if (b.title) twitchBadgeTitles.set(key, b.title)
+  }
+  return changed
+}
+
+function rebuildChannelBadgeVersions(channelLogin) {
+  const versionsBySet = new Map()
+  const prefix = `${channelLogin}:`
+  for (const key of twitchBadgeUrls.keys()) {
+    if (!key.startsWith(prefix)) continue
+    const slash = key.lastIndexOf('/')
+    const v = parseInt(key.slice(slash + 1), 10)
+    if (!Number.isFinite(v)) continue
+    const setID = key.slice(prefix.length, slash)
+    let arr = versionsBySet.get(setID)
+    if (!arr) versionsBySet.set(setID, (arr = []))
+    arr.push(v)
+  }
+  for (const [setID, arr] of versionsBySet) {
+    arr.sort((a, b) => a - b)
+    channelBadgeVersions.set(`${channelLogin}:${setID}`, arr)
+  }
+}
+
+async function refetchBadgeSet(channelLogin) {
+  const safe = channelLogin.replace(/[^a-z0-9_]/g, '')
+  if (!safe) return
+  const [chan, glob] = await Promise.allSettled([
+    twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version title } } }`),
+    twitchGql('{ badges { imageURL(size: NORMAL) setID version title } }'),
+  ])
+  let changed = false
+  if (chan.status === 'fulfilled') {
+    const rows = chan.value?.data?.user?.broadcastBadges
+    if (mergeBadgeRows(`${channelLogin}:`, rows)) changed = true
+    if (rows?.length) rebuildChannelBadgeVersions(channelLogin)
+  }
+  if (glob.status === 'fulfilled' && mergeBadgeRows('', glob.value?.data?.badges)) changed = true
+  // repaint just that channel's rows; the in-place patch also fills in titles
+  if (changed && typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(channelLogin)
+}
+
+const badgeRefetcher = createBadgeRefetcher({ refetch: refetchBadgeSet })
 
 function findNearestChannelBadgeVersion(channel, name, version) {
   const versions = channelBadgeVersions.get(`${channel}:${name}`)
@@ -2400,7 +2496,7 @@ async function fetchGlobalBadges() {
     // pick up global badges too — direct fetch to gql.twitch.tv from kick.com
     // origin fails silently (CORS/Origin headers), leaving moderator/vip/
     // broadcaster/premium badges as text-only "MOD" / "VIP" / "LIVE" chips.
-    const data = await twitchGql('{ badges { imageURL(size: NORMAL) setID version } }')
+    const data = await twitchGql('{ badges { imageURL(size: NORMAL) setID version title } }')
     const badges = data?.data?.badges
     if (!badges) {
       globalBadgesFetched = false
@@ -2408,6 +2504,7 @@ async function fetchGlobalBadges() {
     }
     for (const b of badges) {
       twitchBadgeUrls.set(`${b.setID}/${b.version}`, b.imageURL)
+      if (b.title) twitchBadgeTitles.set(`${b.setID}/${b.version}`, b.title)
     }
     log('Loaded global badges:', twitchBadgeUrls.size)
     // Patch live rows in-place instead of bumping epoch + full rebuild.
@@ -3642,7 +3739,7 @@ async function fetchChannelBadges(channelLogin) {
   try {
     // Fetch channel badges (GQL broadcastBadges) + FFZ in parallel
     const [gqlResp, ffzResp] = await Promise.allSettled([
-      twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version } } }`),
+      twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version title } } }`),
       fetch(`https://api.frankerfacez.com/v1/room/${safe}`, { credentials: 'omit', signal: AbortSignal.timeout(5000) }),
     ])
 
@@ -3654,6 +3751,7 @@ async function fetchChannelBadges(channelLogin) {
         for (const b of badges) {
           if (b.imageURL) {
             twitchBadgeUrls.set(`${channelLogin}:${b.setID}/${b.version}`, b.imageURL)
+            if (b.title) twitchBadgeTitles.set(`${channelLogin}:${b.setID}/${b.version}`, b.title)
             populated = true
           }
           const v = parseInt(b.version, 10)
@@ -3704,6 +3802,9 @@ async function fetchChannelBadges(channelLogin) {
         badgesFetchedChannels.delete(oldest)
         for (const key of twitchBadgeUrls.keys()) {
           if (key.startsWith(`${oldest}:`)) twitchBadgeUrls.delete(key)
+        }
+        for (const key of twitchBadgeTitles.keys()) {
+          if (key.startsWith(`${oldest}:`)) twitchBadgeTitles.delete(key)
         }
         for (const key of ffzBadgeKeys) {
           if (key.startsWith(`${oldest}:`)) ffzBadgeKeys.delete(key)
@@ -3849,7 +3950,26 @@ function resolveBadgeImageUrl(isKick, channel, name, version) {
     const nearest = findNearestChannelBadgeVersion(channel, name, version)
     if (nearest != null) url = twitchBadgeUrls.get(`${channel}:${name}/${nearest}`)
   }
-  return url || twitchBadgeUrls.get(`${name}/${version}`) || twitchBadgeUrls.get(`${name}/1`) || null
+  // No `${name}/1` last resort: twitch's version 1 is a different badge from
+  // the one asked for (a tier, an event). Unknown renders nothing and refetches.
+  return url || twitchBadgeUrls.get(`${name}/${version}`) || null
+}
+
+// helix title for the exact set/version (channel's own wins over global).
+function resolveBadgeTitle(channel, name, version) {
+  return (
+    (channel && twitchBadgeTitles.get(`${channel}:${name}/${version}`)) ||
+    twitchBadgeTitles.get(`${name}/${version}`) ||
+    null
+  )
+}
+
+// A twitch badge the loaded sets cannot place: queue one refetch. Only once both
+// sets have landed — before that every badge "misses" and the normal fetches
+// are already on their way.
+function noteBadgeMiss(channel, name, version) {
+  if (!channel || !globalBadgesFetched || !badgesFetchedChannels.has(channel)) return
+  badgeRefetcher.note(channel, `${name}/${version}`)
 }
 
 function renderBadges(badgesStr, channel, platform) {
@@ -3864,18 +3984,19 @@ function renderBadges(badgesStr, channel, platform) {
       // late badge-fetch retro-paint can't swap these chips back to images
       // behind the setting's back.
       const url = textBadgesEnabled ? null : resolveBadgeImageUrl(isKick, channel, name, version)
+      if (!url && !isKick && !textBadgesEnabled) noteBadgeMiss(channel, name, version)
       if (url) {
         // Semantic bg so the slot shows the badge color even before/without the
         // image (FFZ = padded chip for a transparent icon; native = bg behind).
         const isFFZ = channel && ffzBadgeKeys.has(`${channel}:${name}`)
         const bgStyle = badgeBgStyle(name, isFFZ)
-        const label = BADGE_STYLES[name]?.label || name
+        const label = (!isKick && resolveBadgeTitle(channel, name, version)) || BADGE_STYLES[name]?.label || name
         // NOT loading="lazy": badges are 18px and always at the row start next
         // to visible text. When the async channel-badge fetch lands and the
         // retro-paint (_patchBadgesInRoot) swaps the green text fallback for
         // this img, a lazy img wouldn't paint until the next reflow — so the
         // mod/vip/sub badge vanished until a new message or channel switch.
-        return `<img class="hs-mc-badge-img" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" src="${escapeHtml(safeUrl(url) || '')}" alt="${escapeHtml(name)}" title="${escapeHtml(label)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${bgStyle}">`
+        return `<img class="hs-mc-badge-img" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" src="${escapeHtml(safeUrl(url) || '')}" alt="${escapeHtml(label)}" title="${escapeHtml(label)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${bgStyle}">`
       }
       // Text chip — the deliberate `textBadges` render, and the fallback when a
       // badge has no image url yet.

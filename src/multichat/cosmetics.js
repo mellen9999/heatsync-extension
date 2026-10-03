@@ -873,8 +873,13 @@ function _patchBadgesInRoot(root, channelLogin) {
       if (!safeU) continue
       const key = `${name}/${version}`
       // Dedup: img already present — update src if a better URL is available
+      const label = (!isKick && resolveBadgeTitle(ch, name, version)) || BADGE_STYLES[name]?.label || name
       const existingImg = div.querySelector(`img.hs-mc-badge-img[data-badge="${key}"]`)
       if (existingImg) {
+        if (existingImg.title !== label) {
+          existingImg.title = label
+          existingImg.alt = label
+        }
         if (existingImg.getAttribute('src') !== safeU) {
           existingImg.dataset.hsSrc = safeU
           existingImg.src = safeU
@@ -886,8 +891,8 @@ function _patchBadgesInRoot(root, channelLogin) {
       const img = document.createElement('img')
       img.className = 'hs-mc-badge-img'
       img.dataset.badge = key
-      img.alt = name
-      img.title = BADGE_STYLES[name]?.label || name
+      img.alt = label
+      img.title = label
       img.decoding = 'async'
       img.width = 18
       img.height = 18

@@ -36,7 +36,7 @@ const SETTINGS = {
   follower_mode: false,
   follower_mode_duration: null,
   subscriber_mode: false,
-  emote_only_mode: true,
+  emote_mode: true,
   unique_chat_mode: false,
 }
 
@@ -68,7 +68,7 @@ beforeEach(() => {
   if (!Window) return
   win = new Window()
   sent = []
-  reply = (m) => (m.op === 'get' ? { ok: true, settings: SETTINGS } : { ok: true, settings: {} })
+  reply = (m) => (m.op === 'get' ? { ok: true, settings: SETTINGS } : { ok: true, settings: null })
   prevDocument = globalThis.document
   prevWindow = globalThis.window
   globalThis.document = win.document
@@ -84,8 +84,8 @@ afterEach(() => {
 describe('cmBody — mode + value → helix fields', () => {
   const { cmBody } = new Function('t', `${MODES}; return { cmBody }`)()
   test('boolean modes', () => {
-    expect(cmBody('emoteonly', true)).toEqual({ emote_only_mode: true })
-    expect(cmBody('emoteonly', false)).toEqual({ emote_only_mode: false })
+    expect(cmBody('emoteonly', true)).toEqual({ emote_mode: true })
+    expect(cmBody('emoteonly', false)).toEqual({ emote_mode: false })
     expect(cmBody('subscribers', true)).toEqual({ subscriber_mode: true })
     expect(cmBody('unique', false)).toEqual({ unique_chat_mode: false })
   })
@@ -138,7 +138,7 @@ suite('the modes cell', () => {
       await flush()
       return sent[0]
     }
-    expect((await click('emoteonly')).settings).toEqual({ emote_only_mode: false })
+    expect((await click('emoteonly')).settings).toEqual({ emote_mode: false })
     expect((await click('subscribers')).settings).toEqual({ subscriber_mode: true })
     expect((await click('unique')).settings).toEqual({ unique_chat_mode: true })
     expect((await click('slow')).settings).toEqual({ slow_mode: false })
@@ -166,8 +166,12 @@ suite('the modes cell', () => {
   })
 
   test('a successful set re-renders from the returned settings', async () => {
-    reply = (m) =>
-      m.op === 'get' ? { ok: true, settings: SETTINGS } : { ok: true, settings: { emote_only_mode: false } }
+    // the POST answers only {success}; the cell re-reads to show twitch's state
+    let held = SETTINGS
+    reply = (m) => {
+      if (m.op === 'set') held = { ...held, ...m.settings }
+      return m.op === 'get' ? { ok: true, settings: held } : { ok: true, settings: null }
+    }
     const { grid } = await mount()
     row(grid, 'emoteonly').querySelector('.hs-cm-tog').click()
     await flush()
@@ -214,7 +218,7 @@ describe('background handler', () => {
     expect(h).toContain("method: 'POST'")
     expect(h).toContain('Authorization: `Bearer ${authToken}`')
     for (const k of [
-      'emote_only_mode',
+      'emote_mode',
       'subscriber_mode',
       'unique_chat_mode',
       'slow_mode_wait_time',
@@ -222,6 +226,10 @@ describe('background handler', () => {
     ]) {
       expect(h).toContain(`'${k}'`)
     }
+  })
+  test('POST carries platform + channel + a settings object; GET hands back the raw object', () => {
+    expect(h).toContain("JSON.stringify({ platform: 'twitch', channel, settings })")
+    expect(h).toContain("op === 'get' && data && typeof data === 'object' ? data : null")
   })
   test('401 → relink_required / auth_required, 403 → not_moderator', () => {
     expect(h).toContain("'relink_required' : 'auth_required'")

@@ -14115,7 +14115,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4d389c9070e8' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2285d8e72e99' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -67170,7 +67170,7 @@ const CM_FOLLOW_MAX = 129600
 
 // cell rows in order; `num` = the mode carries a number the user types
 const CM_ROWS = [
-  { cmd: 'emoteonly', label: 'mc_cm_emote', on: (s) => s.emote_only_mode === true },
+  { cmd: 'emoteonly', label: 'mc_cm_emote', on: (s) => s.emote_mode === true },
   {
     cmd: 'followers',
     label: 'mc_cm_follower',
@@ -67191,7 +67191,7 @@ const CM_ROWS = [
 
 // one mode + value → the POST's settings fields (the helix names); null = unknown mode
 function cmBody(cmd, value) {
-  if (cmd === 'emoteonly') return { emote_only_mode: !!value }
+  if (cmd === 'emoteonly') return { emote_mode: !!value }
   if (cmd === 'subscribers') return { subscriber_mode: !!value }
   if (cmd === 'unique') return { unique_chat_mode: !!value }
   if (cmd === 'followers') {
@@ -67313,7 +67313,11 @@ async function cmMountControls(grid, status, channel) {
     grid.classList.remove('hs-cm-busy')
     if (!grid.isConnected) return
     if (out.ok) {
-      if (out.settings) settings = { ...settings, ...out.settings }
+      // the POST answers only {success}: re-read so the cell shows what twitch
+      // holds, and fall back to the fields we just sent if the read fails
+      const again = await cmGet(channel)
+      if (!grid.isConnected) return
+      settings = again.ok && again.settings ? again.settings : { ...settings, ...cmBody(r.cmd, value) }
       say('')
       return render()
     }

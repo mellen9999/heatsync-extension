@@ -8249,9 +8249,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           })
         } else {
           // only the helix fields the site accepts — nothing else rides along
-          const body = { channel }
-          for (const k of ['emote_only_mode', 'subscriber_mode', 'unique_chat_mode', 'slow_mode', 'follower_mode']) {
-            if (typeof message.settings?.[k] === 'boolean') body[k] = message.settings[k]
+          const settings = {}
+          for (const k of ['emote_mode', 'subscriber_mode', 'unique_chat_mode', 'slow_mode', 'follower_mode']) {
+            if (typeof message.settings?.[k] === 'boolean') settings[k] = message.settings[k]
           }
           for (const k of ['slow_mode_wait_time', 'follower_mode_duration']) {
             if (Number.isFinite(message.settings?.[k])) body[k] = Math.trunc(message.settings[k])
@@ -8260,12 +8260,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             method: 'POST',
             credentials: 'omit',
             headers: { ...headers, 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
+            body: JSON.stringify({ platform: 'twitch', channel, settings }),
           })
         }
         const data = await res.json().catch(() => null)
         if (res.ok) {
-          sendResponse({ ok: true, settings: data?.settings || null })
+          // GET answers with the settings object itself; POST answers {success:true}
+          sendResponse({ ok: true, settings: op === 'get' && data && typeof data === 'object' ? data : null })
         } else if (res.status === 401) {
           sendResponse({
             ok: false,

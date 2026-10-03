@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "ブロックした用語"
+  },
+  "mc_cm_link": {
+    "message": "設定するには heatsync を連携してください"
+  },
+  "mc_cm_link_btn": {
+    "message": "連携"
+  },
+  "mc_cm_not_mod": {
+    "message": "チャットモードを変更できるのはモデレーターだけです"
   }
 }

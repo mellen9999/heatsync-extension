@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "blockerade ord"
+  },
+  "mc_cm_link": {
+    "message": "länka heatsync för att ställa in detta"
+  },
+  "mc_cm_link_btn": {
+    "message": "länka"
+  },
+  "mc_cm_not_mod": {
+    "message": "bara moderatorer kan ändra chattlägen"
   }
 }

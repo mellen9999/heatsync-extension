@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "termeni blocați"
+  },
+  "mc_cm_link": {
+    "message": "conectează heatsync ca să setezi asta"
+  },
+  "mc_cm_link_btn": {
+    "message": "conectează"
+  },
+  "mc_cm_not_mod": {
+    "message": "doar moderatorii pot schimba modurile chatului"
   }
 }

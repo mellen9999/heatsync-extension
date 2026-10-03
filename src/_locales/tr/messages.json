@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "engellenen terimler"
+  },
+  "mc_cm_link": {
+    "message": "bunu ayarlamak için heatsync'i bağla"
+  },
+  "mc_cm_link_btn": {
+    "message": "bağla"
+  },
+  "mc_cm_not_mod": {
+    "message": "sohbet modlarını yalnızca moderatörler ayarlayabilir"
   }
 }

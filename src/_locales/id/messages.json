@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "istilah yang diblokir"
+  },
+  "mc_cm_link": {
+    "message": "tautkan heatsync untuk mengatur ini"
+  },
+  "mc_cm_link_btn": {
+    "message": "tautkan"
+  },
+  "mc_cm_not_mod": {
+    "message": "hanya mod yang bisa mengatur mode obrolan"
   }
 }

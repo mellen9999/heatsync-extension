@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "geblokkeerde termen"
+  },
+  "mc_cm_link": {
+    "message": "koppel heatsync om dit in te stellen"
+  },
+  "mc_cm_link_btn": {
+    "message": "koppel"
+  },
+  "mc_cm_not_mod": {
+    "message": "alleen mods kunnen chatmodi instellen"
   }
 }

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "屏蔽词"
+  },
+  "mc_cm_link": {
+    "message": "关联 heatsync 才能设置"
+  },
+  "mc_cm_link_btn": {
+    "message": "关联"
+  },
+  "mc_cm_not_mod": {
+    "message": "只有管理员能设置聊天模式"
   }
 }

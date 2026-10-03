@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "blokkerte ord"
+  },
+  "mc_cm_link": {
+    "message": "koble til heatsync for å sette dette"
+  },
+  "mc_cm_link_btn": {
+    "message": "koble til"
+  },
+  "mc_cm_not_mod": {
+    "message": "bare moderatorer kan endre chatmoduser"
   }
 }

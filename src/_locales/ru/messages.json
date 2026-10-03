@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "заблокированные слова"
+  },
+  "mc_cm_link": {
+    "message": "привяжи heatsync, чтобы это настроить"
+  },
+  "mc_cm_link_btn": {
+    "message": "привязать"
+  },
+  "mc_cm_not_mod": {
+    "message": "режимы чата меняют только модераторы"
   }
 }

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "ब्लॉक किए गए शब्द"
+  },
+  "mc_cm_link": {
+    "message": "इसे सेट करने के लिए heatsync लिंक करें"
+  },
+  "mc_cm_link_btn": {
+    "message": "लिंक"
+  },
+  "mc_cm_not_mod": {
+    "message": "चैट मोड सिर्फ़ मॉड बदल सकते हैं"
   }
 }

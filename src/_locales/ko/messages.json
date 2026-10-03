@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "차단된 단어"
+  },
+  "mc_cm_link": {
+    "message": "설정하려면 heatsync를 연결하세요"
+  },
+  "mc_cm_link_btn": {
+    "message": "연결"
+  },
+  "mc_cm_not_mod": {
+    "message": "채팅 모드는 매니저만 바꿀 수 있어요"
   }
 }

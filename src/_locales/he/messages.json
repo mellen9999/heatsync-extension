@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "מונחים חסומים"
+  },
+  "mc_cm_link": {
+    "message": "חבר את heatsync כדי להגדיר זאת"
+  },
+  "mc_cm_link_btn": {
+    "message": "חבר"
+  },
+  "mc_cm_not_mod": {
+    "message": "רק מנהלים יכולים לשנות מצבי צ'אט"
   }
 }

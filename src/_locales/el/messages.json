@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "αποκλεισμένοι όροι"
+  },
+  "mc_cm_link": {
+    "message": "σύνδεσε το heatsync για να το ορίσεις"
+  },
+  "mc_cm_link_btn": {
+    "message": "σύνδεση"
+  },
+  "mc_cm_not_mod": {
+    "message": "μόνο οι διαχειριστές αλλάζουν τις λειτουργίες συνομιλίας"
   }
 }

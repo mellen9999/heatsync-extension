@@ -14115,7 +14115,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5eeb624693fc' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f03401ec2d5c' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -14626,7 +14626,7 @@ const SLASH_REGISTRY = [
     cmd: 'status',
     args: '[channel]',
     desc: 'show chat modes and stream info',
-    on: 'ext',
+    on: 'both',
     needs: 'none',
     does: 'local',
     alias: ['modes'],
@@ -14699,13 +14699,54 @@ const SLASH_REGISTRY = [
     needs: 'mod',
     does: 'twitch',
   },
+  {
+    cmd: 'modtools',
+    args: '',
+    desc: 'open the mod tools panel',
+    on: 'web',
+    needs: 'mod',
+    does: 'twitch',
+  },
+  {
+    cmd: 'shield',
+    args: '[on|off]',
+    desc: 'turn shield mode on or off',
+    on: 'web',
+    needs: 'mod',
+    does: 'twitch',
+  },
+  {
+    cmd: 'warn',
+    args: '<user> <reason>',
+    desc: 'warn a chatter',
+    on: 'web',
+    needs: 'mod',
+    does: 'twitch',
+  },
+  {
+    cmd: 'shoutout',
+    args: '<user>',
+    desc: 'shout a channel out',
+    on: 'web',
+    needs: 'mod',
+    does: 'twitch',
+    alias: ['so'],
+  },
+  {
+    cmd: 'unbanrequests',
+    args: '',
+    desc: 'open unban requests',
+    on: 'web',
+    needs: 'mod',
+    does: 'twitch',
+  },
 
   // ── chat modes ────────────────────────────────────────────────────────────
   {
     cmd: 'slow',
     args: '[secs|off]',
     desc: 'slow mode, default 30s',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
     alias: ['slowmode'],
@@ -14714,7 +14755,7 @@ const SLASH_REGISTRY = [
     cmd: 'followers',
     args: '[mins|off]',
     desc: 'followers-only mode',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
     alias: ['followersonly', 'followeronly'],
@@ -14723,7 +14764,7 @@ const SLASH_REGISTRY = [
     cmd: 'emoteonly',
     args: '[off]',
     desc: 'emote-only mode',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
     alias: ['emote', 'emoteonlymode'],
@@ -14732,7 +14773,7 @@ const SLASH_REGISTRY = [
     cmd: 'subscribers',
     args: '[off]',
     desc: 'subscribers-only mode',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
     alias: ['subonly', 'subsonly', 'subscribersonly', 'subs'],
@@ -14741,7 +14782,7 @@ const SLASH_REGISTRY = [
     cmd: 'unique',
     args: '[off]',
     desc: 'unique-chat mode; twitch only, kick has no equivalent',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch',
     alias: ['uniquechat', 'r9k', 'r9kbeta'],
@@ -14837,7 +14878,24 @@ const SLASH_SECTIONS = [
   {
     key: 'mod',
     title: 'moderation',
-    cmds: ['ban', 'timeout', 'unban', 'delete', 'nuke', 'announce', 'vip', 'unvip', 'mod', 'unmod', 'blocked'],
+    cmds: [
+      'ban',
+      'timeout',
+      'unban',
+      'delete',
+      'nuke',
+      'announce',
+      'vip',
+      'unvip',
+      'mod',
+      'unmod',
+      'blocked',
+      'modtools',
+      'shield',
+      'warn',
+      'shoutout',
+      'unbanrequests',
+    ],
   },
   { key: 'modes', title: 'chat modes', cmds: ['slow', 'followers', 'emoteonly', 'subscribers', 'unique'] },
   {

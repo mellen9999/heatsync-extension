@@ -45,7 +45,10 @@ describe('slash registry covers the implementation', () => {
   test('every registry row is a real command name or has a handler branch', () => {
     // A row may be dispatched by its canonical name or reached only via a
     // grouped branch; what must never happen is a row with no trace at all.
-    const ghosts = [...registryNames].filter((c) => !implemented.has(c) && !SRC.includes(`'${c}'`))
+    // A row the web composer alone implements (`on: 'web'`) has no handler here
+    // by definition; it is in the shared file so both surfaces list one set.
+    const extRows = SLASH_REGISTRY.filter((c) => c.on !== 'web').map((c) => c.cmd)
+    const ghosts = extRows.filter((c) => !implemented.has(c) && !SRC.includes(`'${c}'`))
     expect(ghosts).toEqual([])
   })
 

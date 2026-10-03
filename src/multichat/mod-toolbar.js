@@ -60,6 +60,15 @@ const MOD_BUTTON_CATALOG = {
   },
   ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
   unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
+  // opens the channel's blocked-terms panel; twitch rows only (kick has no such list)
+  blocked_terms: {
+    label: 'bt',
+    title: 'blocked terms',
+    action: 'blocked_terms',
+    durationSec: null,
+    needsMsgId: false,
+    twitchOnly: true,
+  },
 }
 // Hover toolbar is fully opt-in: NO buttons default-on. Even the X
 // (delete-this-message) is hidden until the user enables it in settings →
@@ -216,6 +225,7 @@ function gateModButtons(ctx) {
     const def = MOD_BUTTON_CATALOG[btn.dataset.modBtn]
     let ok = !!def
     if (ok && def.needsMsgId && !ctx.msgId) ok = false
+    if (ok && def.twitchOnly && ctx.platform && ctx.platform !== 'twitch') ok = false
     if (ok && !ctx.user) ok = false
     btn.style.display = ok ? '' : 'none'
     if (ok) anyVisible = true
@@ -596,6 +606,11 @@ async function runModAction(id) {
   const def = MOD_BUTTON_CATALOG[id]
   if (!def || !_modCtx) return
   const { channel, user, login, msgId, row } = _modCtx
+  if (def.action === 'blocked_terms') {
+    detachModToolbar()
+    openBlockedTerms(channel)
+    return
+  }
   const target = login || user
   const wasOp = row?.style?.opacity
   if (row) row.style.opacity = '0.5'

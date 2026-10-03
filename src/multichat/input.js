@@ -2536,6 +2536,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
           { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
         )
+        if (!isKick && !isYt) mod.push({ label: 'blocked terms', fn: () => openBlockedTerms(modCh) })
         mod.push('sep')
         items.push(...mod)
       } else {
@@ -6700,6 +6701,7 @@ const COMMAND_RECEIPT_SCOPE = {
   modes: 'none',
   tab: 'none',
   testnotices: 'none',
+  blocked: 'none', // opens a panel — the panel is the confirmation
   lclear: 'none',
   shrug: 'none',
   tableflip: 'none',
@@ -7998,6 +8000,26 @@ async function handleSlashCommand(text, input) {
     const okCount = results.filter((r) => r.status === 'fulfilled' && r.value?.anyOk).length
     showToast(t('mc_input_nuke_done', [String(okCount), String(batch.length), term]), okCount ? 'success' : 'error')
     if (okCount) clearInput(input)
+    return true
+  }
+
+  // /blocked — the twitch channel's blocked terms, in a panel. Helix is the
+  // real mod check (a 403 reads "not a moderator" inside the panel); this one
+  // only keeps the panel from opening on a channel the user plainly doesn't mod.
+  if (cmd === 'blocked') {
+    if (!_twitchModName) {
+      showToast(t('mc_bt_no_channel'), 'error')
+      return true
+    }
+    if (!(await _twitchModAuthOk())) return _notLoggedIn()
+    const login = _twitchModName.toLowerCase()
+    const own = login === (await automodSelfLogin())
+    if (!own && !(await isModFor(login))) {
+      showToast(t('mc_bt_not_mod_slash'), 'error')
+      return { ok: false, error: t('mc_bt_not_mod_slash') }
+    }
+    if (!(await openBlockedTerms(login))) return { ok: false, error: t('mc_bt_err') }
+    clearInput(input)
     return true
   }
 

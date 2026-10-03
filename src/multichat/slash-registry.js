@@ -232,6 +232,14 @@ export const SLASH_REGISTRY = [
   { cmd: 'unvip', args: '<user>', desc: 'remove VIP', on: 'ext', needs: 'broadcaster', does: 'twitch' },
   { cmd: 'mod', args: '<user>', desc: 'grant moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
   { cmd: 'unmod', args: '<user>', desc: 'remove moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  {
+    cmd: 'blocked',
+    args: '',
+    desc: 'open the blocked terms list for this channel',
+    on: 'both',
+    needs: 'mod',
+    does: 'twitch',
+  },
 
   // ── chat modes ────────────────────────────────────────────────────────────
   {
@@ -370,7 +378,7 @@ export const SLASH_SECTIONS = [
   {
     key: 'mod',
     title: 'moderation',
-    cmds: ['ban', 'timeout', 'unban', 'delete', 'nuke', 'announce', 'vip', 'unvip', 'mod', 'unmod'],
+    cmds: ['ban', 'timeout', 'unban', 'delete', 'nuke', 'announce', 'vip', 'unvip', 'mod', 'unmod', 'blocked'],
   },
   { key: 'modes', title: 'chat modes', cmds: ['slow', 'followers', 'emoteonly', 'subscribers', 'unique'] },
   {

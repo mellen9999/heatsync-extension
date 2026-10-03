@@ -1153,6 +1153,7 @@ const SETTINGS = [
       { value: 'purge', tag: 'purge', labelKey: 'mc_settings_mod_btn_purge' },
       { value: 'ban', tag: '⛔', labelKey: 'mc_settings_mod_btn_ban' },
       { value: 'unban', tag: '✓', labelKey: 'mc_settings_mod_btn_unban' },
+      { value: 'blocked_terms', tag: 'bt', labelKey: 'mc_settings_mod_btn_blocked_terms' },
     ],
   },
 

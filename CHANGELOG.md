@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.82] — 2026-10-03
+
+### added
+- **blocked terms** — `/blocked` on a twitch channel you mod opens its blocked terms list: `a` adds, `d` deletes (inline confirm), `/` filters, `j/k` move, esc closes. also in the right-click menu as "blocked terms" and as an opt-in toolbar button (settings → mod toolbar buttons). the first open asks for one twitch permission. in 34 languages.
+
 ## [1.7.81] — 2026-10-02
 
 ### changed

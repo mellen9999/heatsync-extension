@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "blockiert (klicken zum Entsperren)"
+  },
+  "mc_bt_title": {
+    "message": "gesperrte begriffe"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "begriff hinzufügen (enter)"
+  },
+  "mc_bt_add": {
+    "message": "hinzufügen"
+  },
+  "mc_bt_count": {
+    "message": "begriffe: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "begriffe: $SHOWN$ von $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "lädt…"
+  },
+  "mc_bt_empty": {
+    "message": "noch keine gesperrten begriffe — füge oben einen hinzu"
+  },
+  "mc_bt_no_match": {
+    "message": "keine treffer"
+  },
+  "mc_bt_delete": {
+    "message": "diesen begriff löschen"
+  },
+  "mc_bt_confirm": {
+    "message": "\"$TERM$\" löschen?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ja"
+  },
+  "mc_bt_no": {
+    "message": "nein"
+  },
+  "mc_bt_hint": {
+    "message": "j/k bewegen · d löschen · a hinzufügen · / filter · esc schließen"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync braucht eine weitere twitch-berechtigung, um gesperrte begriffe zu verwalten"
+  },
+  "mc_bt_allow": {
+    "message": "gesperrte begriffe erlauben"
+  },
+  "mc_bt_not_mod": {
+    "message": "du bist kein moderator dieses kanals"
+  },
+  "mc_bt_err": {
+    "message": "twitch nicht erreichbar — versuch es nochmal"
+  },
+  "mc_bt_retry": {
+    "message": "nochmal"
+  },
+  "mc_bt_added": {
+    "message": "gesperrt: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "entsperrt: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "ein begriff hat 2 bis 500 zeichen"
+  },
+  "mc_bt_no_channel": {
+    "message": "öffne zuerst einen twitch-kanal-tab"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked braucht mod in diesem twitch-kanal"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "gesperrte begriffe"
   }
 }

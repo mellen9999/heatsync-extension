@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "μπλοκαρισμένο (πάτα για ξεμπλοκάρισμα)"
+  },
+  "mc_bt_title": {
+    "message": "αποκλεισμένοι όροι"
+  },
+  "mc_bt_filter_ph": {
+    "message": "φίλτρο"
+  },
+  "mc_bt_add_ph": {
+    "message": "πρόσθεσε όρο (enter)"
+  },
+  "mc_bt_add": {
+    "message": "προσθήκη"
+  },
+  "mc_bt_count": {
+    "message": "όροι: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "όροι: $SHOWN$ από $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "φόρτωση…"
+  },
+  "mc_bt_empty": {
+    "message": "δεν υπάρχουν αποκλεισμένοι όροι ακόμα — πρόσθεσε έναν πάνω"
+  },
+  "mc_bt_no_match": {
+    "message": "κανένα αποτέλεσμα"
+  },
+  "mc_bt_delete": {
+    "message": "διαγραφή αυτού του όρου"
+  },
+  "mc_bt_confirm": {
+    "message": "διαγραφή του \"$TERM$\";",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ναι"
+  },
+  "mc_bt_no": {
+    "message": "όχι"
+  },
+  "mc_bt_hint": {
+    "message": "j/k κίνηση · d διαγραφή · a προσθήκη · / φίλτρο · esc κλείσιμο"
+  },
+  "mc_bt_need_perm": {
+    "message": "το heatsync χρειάζεται μία ακόμα άδεια twitch για τη διαχείριση αποκλεισμένων όρων"
+  },
+  "mc_bt_allow": {
+    "message": "επέτρεψε αποκλεισμένους όρους"
+  },
+  "mc_bt_not_mod": {
+    "message": "δεν είσαι συντονιστής σε αυτό το κανάλι"
+  },
+  "mc_bt_err": {
+    "message": "δεν έγινε σύνδεση με το twitch — δοκίμασε ξανά"
+  },
+  "mc_bt_retry": {
+    "message": "ξανά"
+  },
+  "mc_bt_added": {
+    "message": "αποκλείστηκε: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "άρση αποκλεισμού: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "ένας όρος έχει 2 έως 500 χαρακτήρες"
+  },
+  "mc_bt_no_channel": {
+    "message": "άνοιξε πρώτα μια καρτέλα καναλιού twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "το /blocked θέλει mod σε αυτό το κανάλι twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "αποκλεισμένοι όροι"
   }
 }

@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "блокирано (натисни за отблокиране)"
+  },
+  "mc_bt_title": {
+    "message": "блокирани термини"
+  },
+  "mc_bt_filter_ph": {
+    "message": "филтър"
+  },
+  "mc_bt_add_ph": {
+    "message": "добави термин (enter)"
+  },
+  "mc_bt_add": {
+    "message": "добави"
+  },
+  "mc_bt_count": {
+    "message": "термини: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "термини: $SHOWN$ от $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "зарежда се…"
+  },
+  "mc_bt_empty": {
+    "message": "още няма блокирани термини — добави един по-горе"
+  },
+  "mc_bt_no_match": {
+    "message": "няма съвпадения"
+  },
+  "mc_bt_delete": {
+    "message": "изтрий този термин"
+  },
+  "mc_bt_confirm": {
+    "message": "да се изтрие ли \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "да"
+  },
+  "mc_bt_no": {
+    "message": "не"
+  },
+  "mc_bt_hint": {
+    "message": "j/k движение · d изтрий · a добави · / филтър · esc затвори"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync има нужда от още едно разрешение за twitch, за да управлява блокираните термини"
+  },
+  "mc_bt_allow": {
+    "message": "разреши блокирани термини"
+  },
+  "mc_bt_not_mod": {
+    "message": "не си модератор на този канал"
+  },
+  "mc_bt_err": {
+    "message": "няма връзка с twitch — опитай пак"
+  },
+  "mc_bt_retry": {
+    "message": "опитай пак"
+  },
+  "mc_bt_added": {
+    "message": "блокиран: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "отблокиран: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "терминът е от 2 до 500 знака"
+  },
+  "mc_bt_no_channel": {
+    "message": "първо отвори таб с twitch канал"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked изисква mod в този twitch канал"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "блокирани термини"
   }
 }

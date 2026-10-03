@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "محظور (اضغط لإلغاء الحظر)"
+  },
+  "mc_bt_title": {
+    "message": "المصطلحات المحظورة"
+  },
+  "mc_bt_filter_ph": {
+    "message": "تصفية"
+  },
+  "mc_bt_add_ph": {
+    "message": "أضف مصطلحًا (enter)"
+  },
+  "mc_bt_add": {
+    "message": "إضافة"
+  },
+  "mc_bt_count": {
+    "message": "المصطلحات: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "المصطلحات: $SHOWN$ من $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "جارٍ التحميل…"
+  },
+  "mc_bt_empty": {
+    "message": "لا توجد مصطلحات محظورة بعد — أضف واحدًا أعلاه"
+  },
+  "mc_bt_no_match": {
+    "message": "لا نتائج"
+  },
+  "mc_bt_delete": {
+    "message": "احذف هذا المصطلح"
+  },
+  "mc_bt_confirm": {
+    "message": "حذف \"$TERM$\"؟",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "نعم"
+  },
+  "mc_bt_no": {
+    "message": "لا"
+  },
+  "mc_bt_hint": {
+    "message": "j/k تنقل · d حذف · a إضافة · / تصفية · esc إغلاق"
+  },
+  "mc_bt_need_perm": {
+    "message": "يحتاج heatsync إلى إذن twitch إضافي لإدارة المصطلحات المحظورة"
+  },
+  "mc_bt_allow": {
+    "message": "اسمح بالمصطلحات المحظورة"
+  },
+  "mc_bt_not_mod": {
+    "message": "لست مشرفًا في هذه القناة"
+  },
+  "mc_bt_err": {
+    "message": "تعذّر الوصول إلى twitch — حاول مجددًا"
+  },
+  "mc_bt_retry": {
+    "message": "إعادة المحاولة"
+  },
+  "mc_bt_added": {
+    "message": "تم حظر \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "أُلغي حظر \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "المصطلح من 2 إلى 500 حرف"
+  },
+  "mc_bt_no_channel": {
+    "message": "افتح تبويب قناة twitch أولًا"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "يتطلب /blocked صلاحية mod في قناة twitch هذه"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "المصطلحات المحظورة"
   }
 }

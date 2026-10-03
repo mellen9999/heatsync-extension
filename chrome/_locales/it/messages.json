@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "bloccata (clicca per sbloccare)"
+  },
+  "mc_bt_title": {
+    "message": "termini bloccati"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filtra"
+  },
+  "mc_bt_add_ph": {
+    "message": "aggiungi un termine (enter)"
+  },
+  "mc_bt_add": {
+    "message": "aggiungi"
+  },
+  "mc_bt_count": {
+    "message": "termini: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "termini: $SHOWN$ su $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "caricamento…"
+  },
+  "mc_bt_empty": {
+    "message": "ancora nessun termine bloccato — aggiungine uno qui sopra"
+  },
+  "mc_bt_no_match": {
+    "message": "nessun risultato"
+  },
+  "mc_bt_delete": {
+    "message": "elimina questo termine"
+  },
+  "mc_bt_confirm": {
+    "message": "eliminare \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "sì"
+  },
+  "mc_bt_no": {
+    "message": "no"
+  },
+  "mc_bt_hint": {
+    "message": "j/k muovi · d elimina · a aggiungi · / filtra · esc chiudi"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync ha bisogno di un altro permesso twitch per gestire i termini bloccati"
+  },
+  "mc_bt_allow": {
+    "message": "consenti termini bloccati"
+  },
+  "mc_bt_not_mod": {
+    "message": "non sei moderatore di questo canale"
+  },
+  "mc_bt_err": {
+    "message": "twitch non risponde — riprova"
+  },
+  "mc_bt_retry": {
+    "message": "riprova"
+  },
+  "mc_bt_added": {
+    "message": "bloccato: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "sbloccato: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "un termine va da 2 a 500 caratteri"
+  },
+  "mc_bt_no_channel": {
+    "message": "apri prima una scheda di un canale twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked richiede mod su questo canale twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "termini bloccati"
   }
 }

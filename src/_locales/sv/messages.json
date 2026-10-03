@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "blockerad (klicka för att avblockera)"
+  },
+  "mc_bt_title": {
+    "message": "blockerade ord"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "lägg till ett ord (enter)"
+  },
+  "mc_bt_add": {
+    "message": "lägg till"
+  },
+  "mc_bt_count": {
+    "message": "ord: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "ord: $SHOWN$ av $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "laddar…"
+  },
+  "mc_bt_empty": {
+    "message": "inga blockerade ord än — lägg till ett ovan"
+  },
+  "mc_bt_no_match": {
+    "message": "inga träffar"
+  },
+  "mc_bt_delete": {
+    "message": "ta bort det här ordet"
+  },
+  "mc_bt_confirm": {
+    "message": "ta bort \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ja"
+  },
+  "mc_bt_no": {
+    "message": "nej"
+  },
+  "mc_bt_hint": {
+    "message": "j/k flytta · d ta bort · a lägg till · / filter · esc stäng"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync behöver ytterligare en twitch-behörighet för att hantera blockerade ord"
+  },
+  "mc_bt_allow": {
+    "message": "tillåt blockerade ord"
+  },
+  "mc_bt_not_mod": {
+    "message": "du är inte moderator i den här kanalen"
+  },
+  "mc_bt_err": {
+    "message": "kunde inte nå twitch — försök igen"
+  },
+  "mc_bt_retry": {
+    "message": "försök igen"
+  },
+  "mc_bt_added": {
+    "message": "blockerat: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "avblockerat: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "ett ord är 2 till 500 tecken"
+  },
+  "mc_bt_no_channel": {
+    "message": "öppna en twitch-kanalflik först"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked kräver mod i den här twitch-kanalen"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "blockerade ord"
   }
 }

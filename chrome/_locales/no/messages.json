@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "blokkert (klikk for å fjerne blokkering)"
+  },
+  "mc_bt_title": {
+    "message": "blokkerte ord"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "legg til et ord (enter)"
+  },
+  "mc_bt_add": {
+    "message": "legg til"
+  },
+  "mc_bt_count": {
+    "message": "ord: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "ord: $SHOWN$ av $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "laster…"
+  },
+  "mc_bt_empty": {
+    "message": "ingen blokkerte ord ennå — legg til ett over"
+  },
+  "mc_bt_no_match": {
+    "message": "ingen treff"
+  },
+  "mc_bt_delete": {
+    "message": "slett dette ordet"
+  },
+  "mc_bt_confirm": {
+    "message": "slette \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ja"
+  },
+  "mc_bt_no": {
+    "message": "nei"
+  },
+  "mc_bt_hint": {
+    "message": "j/k flytt · d slett · a legg til · / filter · esc lukk"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync trenger én twitch-tillatelse til for å styre blokkerte ord"
+  },
+  "mc_bt_allow": {
+    "message": "tillat blokkerte ord"
+  },
+  "mc_bt_not_mod": {
+    "message": "du er ikke moderator i denne kanalen"
+  },
+  "mc_bt_err": {
+    "message": "fikk ikke kontakt med twitch — prøv igjen"
+  },
+  "mc_bt_retry": {
+    "message": "prøv igjen"
+  },
+  "mc_bt_added": {
+    "message": "blokkert: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "opphevet: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "et ord er 2 til 500 tegn"
+  },
+  "mc_bt_no_channel": {
+    "message": "åpne en twitch-kanalfane først"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked krever mod i denne twitch-kanalen"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "blokkerte ord"
   }
 }

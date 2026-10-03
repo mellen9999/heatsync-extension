@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "letiltva (kattints a feloldáshoz)"
+  },
+  "mc_bt_title": {
+    "message": "tiltott kifejezések"
+  },
+  "mc_bt_filter_ph": {
+    "message": "szűrő"
+  },
+  "mc_bt_add_ph": {
+    "message": "kifejezés hozzáadása (enter)"
+  },
+  "mc_bt_add": {
+    "message": "hozzáad"
+  },
+  "mc_bt_count": {
+    "message": "kifejezések: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "kifejezések: $SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "betöltés…"
+  },
+  "mc_bt_empty": {
+    "message": "még nincs tiltott kifejezés — adj hozzá egyet fent"
+  },
+  "mc_bt_no_match": {
+    "message": "nincs találat"
+  },
+  "mc_bt_delete": {
+    "message": "kifejezés törlése"
+  },
+  "mc_bt_confirm": {
+    "message": "törlöd: \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "igen"
+  },
+  "mc_bt_no": {
+    "message": "nem"
+  },
+  "mc_bt_hint": {
+    "message": "j/k mozgás · d törlés · a hozzáadás · / szűrő · esc bezár"
+  },
+  "mc_bt_need_perm": {
+    "message": "a heatsync-nek még egy twitch-engedély kell a tiltott kifejezések kezeléséhez"
+  },
+  "mc_bt_allow": {
+    "message": "tiltott kifejezések engedélyezése"
+  },
+  "mc_bt_not_mod": {
+    "message": "nem vagy moderátor ezen a csatornán"
+  },
+  "mc_bt_err": {
+    "message": "a twitch nem elérhető — próbáld újra"
+  },
+  "mc_bt_retry": {
+    "message": "újra"
+  },
+  "mc_bt_added": {
+    "message": "tiltva: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "tiltás feloldva: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "egy kifejezés 2–500 karakter"
+  },
+  "mc_bt_no_channel": {
+    "message": "előbb nyiss meg egy twitch-csatorna fület"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "a /blocked-hoz mod kell ezen a twitch-csatornán"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "tiltott kifejezések"
   }
 }

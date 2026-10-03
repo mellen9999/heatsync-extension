@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "חסום (לחץ לביטול)"
+  },
+  "mc_bt_title": {
+    "message": "מונחים חסומים"
+  },
+  "mc_bt_filter_ph": {
+    "message": "סינון"
+  },
+  "mc_bt_add_ph": {
+    "message": "הוסף מונח (enter)"
+  },
+  "mc_bt_add": {
+    "message": "הוסף"
+  },
+  "mc_bt_count": {
+    "message": "מונחים: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "מונחים: $SHOWN$ מתוך $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "טוען…"
+  },
+  "mc_bt_empty": {
+    "message": "אין עדיין מונחים חסומים — הוסף אחד למעלה"
+  },
+  "mc_bt_no_match": {
+    "message": "אין התאמות"
+  },
+  "mc_bt_delete": {
+    "message": "מחק את המונח הזה"
+  },
+  "mc_bt_confirm": {
+    "message": "למחוק את \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "כן"
+  },
+  "mc_bt_no": {
+    "message": "לא"
+  },
+  "mc_bt_hint": {
+    "message": "j/k תזוזה · d מחיקה · a הוספה · / סינון · esc סגירה"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync צריך הרשאה נוספת אחת מ-twitch כדי לנהל מונחים חסומים"
+  },
+  "mc_bt_allow": {
+    "message": "אפשר מונחים חסומים"
+  },
+  "mc_bt_not_mod": {
+    "message": "אינך מודרטור בערוץ הזה"
+  },
+  "mc_bt_err": {
+    "message": "אין חיבור ל-twitch — נסה שוב"
+  },
+  "mc_bt_retry": {
+    "message": "נסה שוב"
+  },
+  "mc_bt_added": {
+    "message": "נחסם: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "החסימה הוסרה: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "מונח הוא 2 עד 500 תווים"
+  },
+  "mc_bt_no_channel": {
+    "message": "פתח קודם לשונית של ערוץ twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked דורש הרשאת mod בערוץ twitch הזה"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "מונחים חסומים"
   }
 }

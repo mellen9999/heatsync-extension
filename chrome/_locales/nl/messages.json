@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "geblokkeerd (klik om te deblokkeren)"
+  },
+  "mc_bt_title": {
+    "message": "geblokkeerde termen"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "term toevoegen (enter)"
+  },
+  "mc_bt_add": {
+    "message": "toevoegen"
+  },
+  "mc_bt_count": {
+    "message": "termen: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "termen: $SHOWN$ van $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "laden…"
+  },
+  "mc_bt_empty": {
+    "message": "nog geen geblokkeerde termen — voeg er hierboven een toe"
+  },
+  "mc_bt_no_match": {
+    "message": "niets gevonden"
+  },
+  "mc_bt_delete": {
+    "message": "verwijder deze term"
+  },
+  "mc_bt_confirm": {
+    "message": "\"$TERM$\" verwijderen?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ja"
+  },
+  "mc_bt_no": {
+    "message": "nee"
+  },
+  "mc_bt_hint": {
+    "message": "j/k bewegen · d verwijderen · a toevoegen · / filter · esc sluiten"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync heeft nog één twitch-toestemming nodig om geblokkeerde termen te beheren"
+  },
+  "mc_bt_allow": {
+    "message": "geblokkeerde termen toestaan"
+  },
+  "mc_bt_not_mod": {
+    "message": "je bent geen moderator van dit kanaal"
+  },
+  "mc_bt_err": {
+    "message": "twitch niet bereikbaar — probeer opnieuw"
+  },
+  "mc_bt_retry": {
+    "message": "opnieuw"
+  },
+  "mc_bt_added": {
+    "message": "geblokkeerd: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "gedeblokkeerd: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "een term is 2 tot 500 tekens"
+  },
+  "mc_bt_no_channel": {
+    "message": "open eerst een twitch-kanaaltab"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked vereist mod in dit twitch-kanaal"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "geblokkeerde termen"
   }
 }

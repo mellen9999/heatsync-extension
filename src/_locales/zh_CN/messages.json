@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "已屏蔽 (点击解除)"
+  },
+  "mc_bt_title": {
+    "message": "屏蔽词"
+  },
+  "mc_bt_filter_ph": {
+    "message": "筛选"
+  },
+  "mc_bt_add_ph": {
+    "message": "添加屏蔽词（enter）"
+  },
+  "mc_bt_add": {
+    "message": "添加"
+  },
+  "mc_bt_count": {
+    "message": "屏蔽词：$N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "屏蔽词：$SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "加载中…"
+  },
+  "mc_bt_empty": {
+    "message": "还没有屏蔽词 — 在上方添加"
+  },
+  "mc_bt_no_match": {
+    "message": "没有匹配项"
+  },
+  "mc_bt_delete": {
+    "message": "删除此屏蔽词"
+  },
+  "mc_bt_confirm": {
+    "message": "删除\"$TERM$\"？",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "是"
+  },
+  "mc_bt_no": {
+    "message": "否"
+  },
+  "mc_bt_hint": {
+    "message": "j/k 移动 · d 删除 · a 添加 · / 筛选 · esc 关闭"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync 还需要一项 twitch 权限来管理屏蔽词"
+  },
+  "mc_bt_allow": {
+    "message": "允许屏蔽词"
+  },
+  "mc_bt_not_mod": {
+    "message": "你不是此频道的管理员"
+  },
+  "mc_bt_err": {
+    "message": "无法连接 twitch — 请重试"
+  },
+  "mc_bt_retry": {
+    "message": "重试"
+  },
+  "mc_bt_added": {
+    "message": "已屏蔽：\"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "已取消屏蔽：\"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "屏蔽词长度为 2 到 500 个字符"
+  },
+  "mc_bt_no_channel": {
+    "message": "请先打开一个 twitch 频道标签页"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked 需要在此 twitch 频道拥有 mod 权限"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "屏蔽词"
   }
 }

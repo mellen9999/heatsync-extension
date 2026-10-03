@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "ถูกบล็อก (คลิกเพื่อปลดบล็อก)"
+  },
+  "mc_bt_title": {
+    "message": "คำที่ถูกบล็อก"
+  },
+  "mc_bt_filter_ph": {
+    "message": "กรอง"
+  },
+  "mc_bt_add_ph": {
+    "message": "เพิ่มคำ (enter)"
+  },
+  "mc_bt_add": {
+    "message": "เพิ่ม"
+  },
+  "mc_bt_count": {
+    "message": "คำ: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "คำ: $SHOWN$ จาก $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "กำลังโหลด…"
+  },
+  "mc_bt_empty": {
+    "message": "ยังไม่มีคำที่ถูกบล็อก — เพิ่มด้านบน"
+  },
+  "mc_bt_no_match": {
+    "message": "ไม่พบรายการ"
+  },
+  "mc_bt_delete": {
+    "message": "ลบคำนี้"
+  },
+  "mc_bt_confirm": {
+    "message": "ลบ \"$TERM$\" ไหม",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ใช่"
+  },
+  "mc_bt_no": {
+    "message": "ไม่"
+  },
+  "mc_bt_hint": {
+    "message": "j/k เลื่อน · d ลบ · a เพิ่ม · / กรอง · esc ปิด"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync ต้องการสิทธิ์ twitch อีกหนึ่งอย่างเพื่อจัดการคำที่ถูกบล็อก"
+  },
+  "mc_bt_allow": {
+    "message": "อนุญาตคำที่ถูกบล็อก"
+  },
+  "mc_bt_not_mod": {
+    "message": "คุณไม่ใช่ม็อดของช่องนี้"
+  },
+  "mc_bt_err": {
+    "message": "เชื่อมต่อ twitch ไม่ได้ — ลองอีกครั้ง"
+  },
+  "mc_bt_retry": {
+    "message": "ลองใหม่"
+  },
+  "mc_bt_added": {
+    "message": "บล็อกแล้ว: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "เลิกบล็อกแล้ว: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "คำหนึ่งยาว 2 ถึง 500 ตัวอักษร"
+  },
+  "mc_bt_no_channel": {
+    "message": "เปิดแท็บช่อง twitch ก่อน"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked ต้องเป็น mod ในช่อง twitch นี้"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "คำที่ถูกบล็อก"
   }
 }

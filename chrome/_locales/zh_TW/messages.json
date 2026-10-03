@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "已封鎖(點擊解除)"
+  },
+  "mc_bt_title": {
+    "message": "封鎖詞"
+  },
+  "mc_bt_filter_ph": {
+    "message": "篩選"
+  },
+  "mc_bt_add_ph": {
+    "message": "新增封鎖詞（enter）"
+  },
+  "mc_bt_add": {
+    "message": "新增"
+  },
+  "mc_bt_count": {
+    "message": "封鎖詞：$N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "封鎖詞：$SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "載入中…"
+  },
+  "mc_bt_empty": {
+    "message": "還沒有封鎖詞 — 在上方新增"
+  },
+  "mc_bt_no_match": {
+    "message": "沒有符合的項目"
+  },
+  "mc_bt_delete": {
+    "message": "刪除此封鎖詞"
+  },
+  "mc_bt_confirm": {
+    "message": "刪除\"$TERM$\"？",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "是"
+  },
+  "mc_bt_no": {
+    "message": "否"
+  },
+  "mc_bt_hint": {
+    "message": "j/k 移動 · d 刪除 · a 新增 · / 篩選 · esc 關閉"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync 還需要一項 twitch 權限來管理封鎖詞"
+  },
+  "mc_bt_allow": {
+    "message": "允許封鎖詞"
+  },
+  "mc_bt_not_mod": {
+    "message": "你不是此頻道的管理員"
+  },
+  "mc_bt_err": {
+    "message": "無法連線 twitch — 請重試"
+  },
+  "mc_bt_retry": {
+    "message": "重試"
+  },
+  "mc_bt_added": {
+    "message": "已封鎖：\"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "已解除封鎖：\"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "封鎖詞長度為 2 到 500 個字元"
+  },
+  "mc_bt_no_channel": {
+    "message": "請先開啟一個 twitch 頻道分頁"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked 需要在此 twitch 頻道擁有 mod 權限"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "封鎖詞"
   }
 }

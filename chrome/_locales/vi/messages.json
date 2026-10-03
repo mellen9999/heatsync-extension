@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "đã chặn (bấm để bỏ chặn)"
+  },
+  "mc_bt_title": {
+    "message": "từ bị chặn"
+  },
+  "mc_bt_filter_ph": {
+    "message": "lọc"
+  },
+  "mc_bt_add_ph": {
+    "message": "thêm từ (enter)"
+  },
+  "mc_bt_add": {
+    "message": "thêm"
+  },
+  "mc_bt_count": {
+    "message": "từ: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "từ: $SHOWN$ trên $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "đang tải…"
+  },
+  "mc_bt_empty": {
+    "message": "chưa có từ nào bị chặn — thêm một từ ở trên"
+  },
+  "mc_bt_no_match": {
+    "message": "không khớp"
+  },
+  "mc_bt_delete": {
+    "message": "xóa từ này"
+  },
+  "mc_bt_confirm": {
+    "message": "xóa \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "có"
+  },
+  "mc_bt_no": {
+    "message": "không"
+  },
+  "mc_bt_hint": {
+    "message": "j/k di chuyển · d xóa · a thêm · / lọc · esc đóng"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync cần thêm một quyền twitch để quản lý từ bị chặn"
+  },
+  "mc_bt_allow": {
+    "message": "cho phép từ bị chặn"
+  },
+  "mc_bt_not_mod": {
+    "message": "bạn không phải mod của kênh này"
+  },
+  "mc_bt_err": {
+    "message": "không kết nối được twitch — thử lại nhé"
+  },
+  "mc_bt_retry": {
+    "message": "thử lại"
+  },
+  "mc_bt_added": {
+    "message": "đã chặn: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "đã bỏ chặn: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "một từ dài 2 đến 500 ký tự"
+  },
+  "mc_bt_no_channel": {
+    "message": "hãy mở tab kênh twitch trước"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked cần quyền mod trong kênh twitch này"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "từ bị chặn"
   }
 }

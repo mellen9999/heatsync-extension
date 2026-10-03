@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "engellendi (kaldırmak için tıkla)"
+  },
+  "mc_bt_title": {
+    "message": "engellenen terimler"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filtre"
+  },
+  "mc_bt_add_ph": {
+    "message": "terim ekle (enter)"
+  },
+  "mc_bt_add": {
+    "message": "ekle"
+  },
+  "mc_bt_count": {
+    "message": "terimler: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "terimler: $SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "yükleniyor…"
+  },
+  "mc_bt_empty": {
+    "message": "henüz engellenen terim yok — yukarıdan bir tane ekle"
+  },
+  "mc_bt_no_match": {
+    "message": "eşleşme yok"
+  },
+  "mc_bt_delete": {
+    "message": "bu terimi sil"
+  },
+  "mc_bt_confirm": {
+    "message": "\"$TERM$\" silinsin mi?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "evet"
+  },
+  "mc_bt_no": {
+    "message": "hayır"
+  },
+  "mc_bt_hint": {
+    "message": "j/k hareket · d sil · a ekle · / filtre · esc kapat"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync'in engellenen terimleri yönetmesi için bir twitch izni daha gerekiyor"
+  },
+  "mc_bt_allow": {
+    "message": "engellenen terimlere izin ver"
+  },
+  "mc_bt_not_mod": {
+    "message": "bu kanalın moderatörü değilsin"
+  },
+  "mc_bt_err": {
+    "message": "twitch'e ulaşılamadı — tekrar dene"
+  },
+  "mc_bt_retry": {
+    "message": "tekrar dene"
+  },
+  "mc_bt_added": {
+    "message": "engellendi: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "engeli kaldırıldı: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "bir terim 2 ile 500 karakter arasındadır"
+  },
+  "mc_bt_no_channel": {
+    "message": "önce bir twitch kanal sekmesi aç"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked bu twitch kanalında mod olmayı gerektirir"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "engellenen terimler"
   }
 }

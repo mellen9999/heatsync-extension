@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "zablokované (klikni pre odblokovanie)"
+  },
+  "mc_bt_title": {
+    "message": "blokované výrazy"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filtrovať"
+  },
+  "mc_bt_add_ph": {
+    "message": "pridať výraz (enter)"
+  },
+  "mc_bt_add": {
+    "message": "pridať"
+  },
+  "mc_bt_count": {
+    "message": "výrazy: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "výrazy: $SHOWN$ z $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "načítava sa…"
+  },
+  "mc_bt_empty": {
+    "message": "zatiaľ žiadne blokované výrazy — pridaj jeden vyššie"
+  },
+  "mc_bt_no_match": {
+    "message": "nič sa nenašlo"
+  },
+  "mc_bt_delete": {
+    "message": "zmazať tento výraz"
+  },
+  "mc_bt_confirm": {
+    "message": "zmazať \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "áno"
+  },
+  "mc_bt_no": {
+    "message": "nie"
+  },
+  "mc_bt_hint": {
+    "message": "j/k pohyb · d zmazať · a pridať · / filtrovať · esc zavrieť"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync potrebuje ešte jedno povolenie twitchu na správu blokovaných výrazov"
+  },
+  "mc_bt_allow": {
+    "message": "povoliť blokované výrazy"
+  },
+  "mc_bt_not_mod": {
+    "message": "nie si moderátor tohto kanála"
+  },
+  "mc_bt_err": {
+    "message": "twitch je nedostupný — skús znova"
+  },
+  "mc_bt_retry": {
+    "message": "znova"
+  },
+  "mc_bt_added": {
+    "message": "zablokované: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "odblokované: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "výraz má 2 až 500 znakov"
+  },
+  "mc_bt_no_channel": {
+    "message": "najprv otvor kartu twitch kanála"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked vyžaduje mod na tomto twitch kanáli"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "blokované výrazy"
   }
 }

@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "차단됨 (클릭하여 해제)"
+  },
+  "mc_bt_title": {
+    "message": "차단된 단어"
+  },
+  "mc_bt_filter_ph": {
+    "message": "필터"
+  },
+  "mc_bt_add_ph": {
+    "message": "단어 추가 (enter)"
+  },
+  "mc_bt_add": {
+    "message": "추가"
+  },
+  "mc_bt_count": {
+    "message": "단어: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "단어: $TOTAL$개 중 $SHOWN$개",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "불러오는 중…"
+  },
+  "mc_bt_empty": {
+    "message": "아직 차단된 단어가 없어요 — 위에서 추가하세요"
+  },
+  "mc_bt_no_match": {
+    "message": "일치하는 항목 없음"
+  },
+  "mc_bt_delete": {
+    "message": "이 단어 삭제"
+  },
+  "mc_bt_confirm": {
+    "message": "\"$TERM$\" 삭제할까요?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "예"
+  },
+  "mc_bt_no": {
+    "message": "아니요"
+  },
+  "mc_bt_hint": {
+    "message": "j/k 이동 · d 삭제 · a 추가 · / 필터 · esc 닫기"
+  },
+  "mc_bt_need_perm": {
+    "message": "차단 단어를 관리하려면 twitch 권한이 하나 더 필요해요"
+  },
+  "mc_bt_allow": {
+    "message": "차단 단어 허용"
+  },
+  "mc_bt_not_mod": {
+    "message": "이 채널의 모더레이터가 아니에요"
+  },
+  "mc_bt_err": {
+    "message": "twitch에 연결할 수 없어요 — 다시 시도하세요"
+  },
+  "mc_bt_retry": {
+    "message": "다시 시도"
+  },
+  "mc_bt_added": {
+    "message": "차단됨: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "차단 해제됨: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "단어는 2~500자예요"
+  },
+  "mc_bt_no_channel": {
+    "message": "먼저 twitch 채널 탭을 여세요"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked는 이 twitch 채널의 mod 권한이 필요해요"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "차단된 단어"
   }
 }

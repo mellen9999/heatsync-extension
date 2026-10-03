@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "заблоковано (натисни для розблокування)"
+  },
+  "mc_bt_title": {
+    "message": "заблоковані слова"
+  },
+  "mc_bt_filter_ph": {
+    "message": "фільтр"
+  },
+  "mc_bt_add_ph": {
+    "message": "додати слово (enter)"
+  },
+  "mc_bt_add": {
+    "message": "додати"
+  },
+  "mc_bt_count": {
+    "message": "слова: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "слова: $SHOWN$ з $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "завантаження…"
+  },
+  "mc_bt_empty": {
+    "message": "заблокованих слів поки немає — додай вище"
+  },
+  "mc_bt_no_match": {
+    "message": "нічого не знайдено"
+  },
+  "mc_bt_delete": {
+    "message": "видалити це слово"
+  },
+  "mc_bt_confirm": {
+    "message": "видалити \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "так"
+  },
+  "mc_bt_no": {
+    "message": "ні"
+  },
+  "mc_bt_hint": {
+    "message": "j/k вгору/вниз · d видалити · a додати · / фільтр · esc закрити"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync потрібен ще один дозвіл twitch, щоб керувати заблокованими словами"
+  },
+  "mc_bt_allow": {
+    "message": "дозволити заблоковані слова"
+  },
+  "mc_bt_not_mod": {
+    "message": "ти не модератор цього каналу"
+  },
+  "mc_bt_err": {
+    "message": "не вдалося зв'язатися з twitch — спробуй ще раз"
+  },
+  "mc_bt_retry": {
+    "message": "повторити"
+  },
+  "mc_bt_added": {
+    "message": "заблоковано: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "розблоковано: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "слово — від 2 до 500 символів"
+  },
+  "mc_bt_no_channel": {
+    "message": "спершу відкрий вкладку каналу twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "для /blocked потрібен мод на цьому каналі twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "заблоковані слова"
   }
 }

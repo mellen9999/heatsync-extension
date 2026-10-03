@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "zablokowane (kliknij aby odblokować)"
+  },
+  "mc_bt_title": {
+    "message": "zablokowane wyrażenia"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filtr"
+  },
+  "mc_bt_add_ph": {
+    "message": "dodaj wyrażenie (enter)"
+  },
+  "mc_bt_add": {
+    "message": "dodaj"
+  },
+  "mc_bt_count": {
+    "message": "wyrażenia: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "wyrażenia: $SHOWN$ z $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "ładowanie…"
+  },
+  "mc_bt_empty": {
+    "message": "brak zablokowanych wyrażeń — dodaj jedno powyżej"
+  },
+  "mc_bt_no_match": {
+    "message": "brak wyników"
+  },
+  "mc_bt_delete": {
+    "message": "usuń to wyrażenie"
+  },
+  "mc_bt_confirm": {
+    "message": "usunąć \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "tak"
+  },
+  "mc_bt_no": {
+    "message": "nie"
+  },
+  "mc_bt_hint": {
+    "message": "j/k ruch · d usuń · a dodaj · / filtr · esc zamknij"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync potrzebuje jeszcze jednej zgody twitcha, by zarządzać zablokowanymi wyrażeniami"
+  },
+  "mc_bt_allow": {
+    "message": "zezwól na zablokowane wyrażenia"
+  },
+  "mc_bt_not_mod": {
+    "message": "nie jesteś moderatorem tego kanału"
+  },
+  "mc_bt_err": {
+    "message": "brak połączenia z twitchem — spróbuj ponownie"
+  },
+  "mc_bt_retry": {
+    "message": "ponów"
+  },
+  "mc_bt_added": {
+    "message": "zablokowano: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "odblokowano: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "wyrażenie ma od 2 do 500 znaków"
+  },
+  "mc_bt_no_channel": {
+    "message": "najpierw otwórz kartę kanału twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked wymaga bycia modem na tym kanale twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "zablokowane wyrażenia"
   }
 }

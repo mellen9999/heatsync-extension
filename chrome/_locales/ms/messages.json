@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "disekat (klik untuk buka)"
+  },
+  "mc_bt_title": {
+    "message": "istilah disekat"
+  },
+  "mc_bt_filter_ph": {
+    "message": "tapis"
+  },
+  "mc_bt_add_ph": {
+    "message": "tambah istilah (enter)"
+  },
+  "mc_bt_add": {
+    "message": "tambah"
+  },
+  "mc_bt_count": {
+    "message": "istilah: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "istilah: $SHOWN$ daripada $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "memuatkan…"
+  },
+  "mc_bt_empty": {
+    "message": "belum ada istilah disekat — tambah satu di atas"
+  },
+  "mc_bt_no_match": {
+    "message": "tiada padanan"
+  },
+  "mc_bt_delete": {
+    "message": "padam istilah ini"
+  },
+  "mc_bt_confirm": {
+    "message": "padam \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ya"
+  },
+  "mc_bt_no": {
+    "message": "tidak"
+  },
+  "mc_bt_hint": {
+    "message": "j/k gerak · d padam · a tambah · / tapis · esc tutup"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync perlukan satu kebenaran twitch lagi untuk mengurus istilah disekat"
+  },
+  "mc_bt_allow": {
+    "message": "benarkan istilah disekat"
+  },
+  "mc_bt_not_mod": {
+    "message": "kamu bukan moderator saluran ini"
+  },
+  "mc_bt_err": {
+    "message": "tidak dapat hubungi twitch — cuba lagi"
+  },
+  "mc_bt_retry": {
+    "message": "cuba lagi"
+  },
+  "mc_bt_added": {
+    "message": "disekat: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "sekatan dibuka: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "satu istilah ialah 2 hingga 500 aksara"
+  },
+  "mc_bt_no_channel": {
+    "message": "buka tab saluran twitch dahulu"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked perlukan mod di saluran twitch ini"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "istilah disekat"
   }
 }

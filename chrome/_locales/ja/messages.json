@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "ブロック済み (クリックで解除)"
+  },
+  "mc_bt_title": {
+    "message": "ブロックした用語"
+  },
+  "mc_bt_filter_ph": {
+    "message": "絞り込み"
+  },
+  "mc_bt_add_ph": {
+    "message": "用語を追加（enter）"
+  },
+  "mc_bt_add": {
+    "message": "追加"
+  },
+  "mc_bt_count": {
+    "message": "用語: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "用語: $SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "読み込み中…"
+  },
+  "mc_bt_empty": {
+    "message": "ブロックした用語はまだありません — 上で追加"
+  },
+  "mc_bt_no_match": {
+    "message": "一致なし"
+  },
+  "mc_bt_delete": {
+    "message": "この用語を削除"
+  },
+  "mc_bt_confirm": {
+    "message": "「$TERM$」を削除しますか？",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "はい"
+  },
+  "mc_bt_no": {
+    "message": "いいえ"
+  },
+  "mc_bt_hint": {
+    "message": "j/k 移動 · d 削除 · a 追加 · / 絞り込み · esc 閉じる"
+  },
+  "mc_bt_need_perm": {
+    "message": "ブロック用語の管理には twitch の権限がもう1つ必要です"
+  },
+  "mc_bt_allow": {
+    "message": "ブロック用語を許可"
+  },
+  "mc_bt_not_mod": {
+    "message": "このチャンネルのモデレーターではありません"
+  },
+  "mc_bt_err": {
+    "message": "twitch に接続できません — もう一度試してください"
+  },
+  "mc_bt_retry": {
+    "message": "再試行"
+  },
+  "mc_bt_added": {
+    "message": "ブロック: 「$TERM$」",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "ブロック解除: 「$TERM$」",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "用語は2〜500文字です"
+  },
+  "mc_bt_no_channel": {
+    "message": "先に twitch チャンネルのタブを開いてください"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked には、この twitch チャンネルでの mod 権限が必要です"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "ブロックした用語"
   }
 }

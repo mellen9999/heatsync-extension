@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "naka-block (i-click para i-unblock)"
+  },
+  "mc_bt_title": {
+    "message": "mga naka-block na termino"
+  },
+  "mc_bt_filter_ph": {
+    "message": "salain"
+  },
+  "mc_bt_add_ph": {
+    "message": "magdagdag ng termino (enter)"
+  },
+  "mc_bt_add": {
+    "message": "idagdag"
+  },
+  "mc_bt_count": {
+    "message": "mga termino: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "mga termino: $SHOWN$ sa $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "naglo-load…"
+  },
+  "mc_bt_empty": {
+    "message": "wala pang naka-block na termino — magdagdag sa itaas"
+  },
+  "mc_bt_no_match": {
+    "message": "walang tugma"
+  },
+  "mc_bt_delete": {
+    "message": "burahin ang terminong ito"
+  },
+  "mc_bt_confirm": {
+    "message": "burahin ang \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "oo"
+  },
+  "mc_bt_no": {
+    "message": "hindi"
+  },
+  "mc_bt_hint": {
+    "message": "j/k galaw · d burahin · a idagdag · / salain · esc isara"
+  },
+  "mc_bt_need_perm": {
+    "message": "kailangan ng heatsync ng isa pang pahintulot ng twitch para ma-manage ang mga naka-block na termino"
+  },
+  "mc_bt_allow": {
+    "message": "payagan ang mga naka-block na termino"
+  },
+  "mc_bt_not_mod": {
+    "message": "hindi ka moderator ng channel na ito"
+  },
+  "mc_bt_err": {
+    "message": "hindi maabot ang twitch — subukan ulit"
+  },
+  "mc_bt_retry": {
+    "message": "subukan ulit"
+  },
+  "mc_bt_added": {
+    "message": "na-block: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "na-unblock: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "ang termino ay 2 hanggang 500 character"
+  },
+  "mc_bt_no_channel": {
+    "message": "magbukas muna ng tab ng twitch channel"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "kailangan ng /blocked ang mod sa twitch channel na ito"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "mga naka-block na termino"
   }
 }

@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "заблокирован (нажмите чтобы разблокировать)"
+  },
+  "mc_bt_title": {
+    "message": "заблокированные слова"
+  },
+  "mc_bt_filter_ph": {
+    "message": "фильтр"
+  },
+  "mc_bt_add_ph": {
+    "message": "добавить слово (enter)"
+  },
+  "mc_bt_add": {
+    "message": "добавить"
+  },
+  "mc_bt_count": {
+    "message": "слова: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "слова: $SHOWN$ из $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "загрузка…"
+  },
+  "mc_bt_empty": {
+    "message": "заблокированных слов пока нет — добавь выше"
+  },
+  "mc_bt_no_match": {
+    "message": "ничего не найдено"
+  },
+  "mc_bt_delete": {
+    "message": "удалить это слово"
+  },
+  "mc_bt_confirm": {
+    "message": "удалить \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "да"
+  },
+  "mc_bt_no": {
+    "message": "нет"
+  },
+  "mc_bt_hint": {
+    "message": "j/k вверх/вниз · d удалить · a добавить · / фильтр · esc закрыть"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync нужно ещё одно разрешение twitch, чтобы управлять заблокированными словами"
+  },
+  "mc_bt_allow": {
+    "message": "разрешить заблокированные слова"
+  },
+  "mc_bt_not_mod": {
+    "message": "ты не модератор этого канала"
+  },
+  "mc_bt_err": {
+    "message": "не удалось связаться с twitch — попробуй ещё раз"
+  },
+  "mc_bt_retry": {
+    "message": "повторить"
+  },
+  "mc_bt_added": {
+    "message": "заблокировано: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "разблокировано: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "слово — от 2 до 500 символов"
+  },
+  "mc_bt_no_channel": {
+    "message": "сначала открой вкладку канала twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "для /blocked нужен мод на этом канале twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "заблокированные слова"
   }
 }

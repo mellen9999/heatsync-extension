@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "blokeret (klik for at fjerne blokering)"
+  },
+  "mc_bt_title": {
+    "message": "blokerede ord"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "tilføj et ord (enter)"
+  },
+  "mc_bt_add": {
+    "message": "tilføj"
+  },
+  "mc_bt_count": {
+    "message": "ord: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "ord: $SHOWN$ af $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "indlæser…"
+  },
+  "mc_bt_empty": {
+    "message": "ingen blokerede ord endnu — tilføj et ovenfor"
+  },
+  "mc_bt_no_match": {
+    "message": "ingen match"
+  },
+  "mc_bt_delete": {
+    "message": "slet dette ord"
+  },
+  "mc_bt_confirm": {
+    "message": "slet \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ja"
+  },
+  "mc_bt_no": {
+    "message": "nej"
+  },
+  "mc_bt_hint": {
+    "message": "j/k flyt · d slet · a tilføj · / filter · esc luk"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync skal bruge en tilladelse mere fra twitch for at styre blokerede ord"
+  },
+  "mc_bt_allow": {
+    "message": "tillad blokerede ord"
+  },
+  "mc_bt_not_mod": {
+    "message": "du er ikke moderator i denne kanal"
+  },
+  "mc_bt_err": {
+    "message": "kunne ikke nå twitch — prøv igen"
+  },
+  "mc_bt_retry": {
+    "message": "prøv igen"
+  },
+  "mc_bt_added": {
+    "message": "blokeret: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "ophævet: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "et ord er 2 til 500 tegn"
+  },
+  "mc_bt_no_channel": {
+    "message": "åbn først en twitch-kanalfane"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked kræver mod i denne twitch-kanal"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "blokerede ord"
   }
 }

@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "diblokir (klik untuk buka blokir)"
+  },
+  "mc_bt_title": {
+    "message": "istilah yang diblokir"
+  },
+  "mc_bt_filter_ph": {
+    "message": "saring"
+  },
+  "mc_bt_add_ph": {
+    "message": "tambah istilah (enter)"
+  },
+  "mc_bt_add": {
+    "message": "tambah"
+  },
+  "mc_bt_count": {
+    "message": "istilah: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "istilah: $SHOWN$ dari $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "memuat…"
+  },
+  "mc_bt_empty": {
+    "message": "belum ada istilah yang diblokir — tambah satu di atas"
+  },
+  "mc_bt_no_match": {
+    "message": "tidak ada yang cocok"
+  },
+  "mc_bt_delete": {
+    "message": "hapus istilah ini"
+  },
+  "mc_bt_confirm": {
+    "message": "hapus \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "ya"
+  },
+  "mc_bt_no": {
+    "message": "tidak"
+  },
+  "mc_bt_hint": {
+    "message": "j/k pindah · d hapus · a tambah · / saring · esc tutup"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync butuh satu izin twitch lagi untuk mengelola istilah yang diblokir"
+  },
+  "mc_bt_allow": {
+    "message": "izinkan istilah yang diblokir"
+  },
+  "mc_bt_not_mod": {
+    "message": "kamu bukan moderator channel ini"
+  },
+  "mc_bt_err": {
+    "message": "tidak bisa menjangkau twitch — coba lagi"
+  },
+  "mc_bt_retry": {
+    "message": "coba lagi"
+  },
+  "mc_bt_added": {
+    "message": "diblokir: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "blokir dibuka: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "satu istilah terdiri dari 2 sampai 500 karakter"
+  },
+  "mc_bt_no_channel": {
+    "message": "buka tab channel twitch dulu"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked butuh mod di channel twitch ini"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "istilah yang diblokir"
   }
 }

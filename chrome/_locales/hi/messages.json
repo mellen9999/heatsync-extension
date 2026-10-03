@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "ब्लॉक (अनब्लॉक के लिए क्लिक)"
+  },
+  "mc_bt_title": {
+    "message": "ब्लॉक किए गए शब्द"
+  },
+  "mc_bt_filter_ph": {
+    "message": "फ़िल्टर"
+  },
+  "mc_bt_add_ph": {
+    "message": "शब्द जोड़ें (enter)"
+  },
+  "mc_bt_add": {
+    "message": "जोड़ें"
+  },
+  "mc_bt_count": {
+    "message": "शब्द: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "शब्द: $TOTAL$ में से $SHOWN$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "लोड हो रहा है…"
+  },
+  "mc_bt_empty": {
+    "message": "अभी कोई ब्लॉक किया गया शब्द नहीं — ऊपर एक जोड़ें"
+  },
+  "mc_bt_no_match": {
+    "message": "कुछ नहीं मिला"
+  },
+  "mc_bt_delete": {
+    "message": "यह शब्द हटाएँ"
+  },
+  "mc_bt_confirm": {
+    "message": "\"$TERM$\" हटाएँ?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "हाँ"
+  },
+  "mc_bt_no": {
+    "message": "नहीं"
+  },
+  "mc_bt_hint": {
+    "message": "j/k चलें · d हटाएँ · a जोड़ें · / फ़िल्टर · esc बंद"
+  },
+  "mc_bt_need_perm": {
+    "message": "ब्लॉक किए गए शब्द संभालने के लिए heatsync को twitch की एक और अनुमति चाहिए"
+  },
+  "mc_bt_allow": {
+    "message": "ब्लॉक किए गए शब्दों की अनुमति दें"
+  },
+  "mc_bt_not_mod": {
+    "message": "तुम इस चैनल के मॉडरेटर नहीं हो"
+  },
+  "mc_bt_err": {
+    "message": "twitch तक नहीं पहुँच सके — फिर कोशिश करो"
+  },
+  "mc_bt_retry": {
+    "message": "फिर कोशिश करें"
+  },
+  "mc_bt_added": {
+    "message": "ब्लॉक किया: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "अनब्लॉक किया: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "एक शब्द 2 से 500 अक्षरों का होता है"
+  },
+  "mc_bt_no_channel": {
+    "message": "पहले एक twitch चैनल टैब खोलो"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "इस twitch चैनल पर /blocked के लिए मॉड होना ज़रूरी है"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "ब्लॉक किए गए शब्द"
   }
 }

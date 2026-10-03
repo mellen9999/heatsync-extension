@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "estetty (klikkaa poistaaksesi eston)"
+  },
+  "mc_bt_title": {
+    "message": "estetyt termit"
+  },
+  "mc_bt_filter_ph": {
+    "message": "suodata"
+  },
+  "mc_bt_add_ph": {
+    "message": "lisää termi (enter)"
+  },
+  "mc_bt_add": {
+    "message": "lisää"
+  },
+  "mc_bt_count": {
+    "message": "termit: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "termit: $SHOWN$ / $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "ladataan…"
+  },
+  "mc_bt_empty": {
+    "message": "ei vielä estettyjä termejä — lisää yksi yllä"
+  },
+  "mc_bt_no_match": {
+    "message": "ei osumia"
+  },
+  "mc_bt_delete": {
+    "message": "poista tämä termi"
+  },
+  "mc_bt_confirm": {
+    "message": "poistetaanko \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "kyllä"
+  },
+  "mc_bt_no": {
+    "message": "ei"
+  },
+  "mc_bt_hint": {
+    "message": "j/k siirry · d poista · a lisää · / suodata · esc sulje"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync tarvitsee yhden twitch-luvan lisää estettyjen termien hallintaan"
+  },
+  "mc_bt_allow": {
+    "message": "salli estetyt termit"
+  },
+  "mc_bt_not_mod": {
+    "message": "et ole tämän kanavan moderaattori"
+  },
+  "mc_bt_err": {
+    "message": "twitchiin ei saatu yhteyttä — yritä uudelleen"
+  },
+  "mc_bt_retry": {
+    "message": "yritä uudelleen"
+  },
+  "mc_bt_added": {
+    "message": "estetty: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "esto poistettu: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "termi on 2–500 merkkiä"
+  },
+  "mc_bt_no_channel": {
+    "message": "avaa ensin twitch-kanavan välilehti"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked vaatii modin tällä twitch-kanavalla"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "estetyt termit"
   }
 }

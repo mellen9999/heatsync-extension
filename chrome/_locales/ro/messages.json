@@ -759,5 +759,108 @@
   },
   "mc_emote_blocked": {
     "message": "blocat (apasă pentru a debloca)"
+  },
+  "mc_bt_title": {
+    "message": "termeni blocați"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filtru"
+  },
+  "mc_bt_add_ph": {
+    "message": "adaugă un termen (enter)"
+  },
+  "mc_bt_add": {
+    "message": "adaugă"
+  },
+  "mc_bt_count": {
+    "message": "termeni: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "termeni: $SHOWN$ din $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "se încarcă…"
+  },
+  "mc_bt_empty": {
+    "message": "niciun termen blocat încă — adaugă unul mai sus"
+  },
+  "mc_bt_no_match": {
+    "message": "nicio potrivire"
+  },
+  "mc_bt_delete": {
+    "message": "șterge acest termen"
+  },
+  "mc_bt_confirm": {
+    "message": "ștergi \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "da"
+  },
+  "mc_bt_no": {
+    "message": "nu"
+  },
+  "mc_bt_hint": {
+    "message": "j/k mută · d șterge · a adaugă · / filtru · esc închide"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync mai are nevoie de o permisiune twitch pentru a gestiona termenii blocați"
+  },
+  "mc_bt_allow": {
+    "message": "permite termenii blocați"
+  },
+  "mc_bt_not_mod": {
+    "message": "nu ești moderator pe acest canal"
+  },
+  "mc_bt_err": {
+    "message": "nu s-a putut ajunge la twitch — încearcă din nou"
+  },
+  "mc_bt_retry": {
+    "message": "reîncearcă"
+  },
+  "mc_bt_added": {
+    "message": "blocat: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "deblocat: \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "un termen are între 2 și 500 de caractere"
+  },
+  "mc_bt_no_channel": {
+    "message": "deschide mai întâi un tab de canal twitch"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked cere mod pe acest canal twitch"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "termeni blocați"
   }
 }

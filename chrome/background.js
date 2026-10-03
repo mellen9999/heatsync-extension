@@ -8220,6 +8220,71 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })()
     return true
   }
+  if (message.type === 'chat_settings') {
+    // A twitch channel's chat modes (modes cell + /slow /followers /emoteonly …).
+    // op: get | set. Same bearer + error vocabulary as blocked_terms; the
+    // server's helix call is the moderator check, so a 403 means "not a mod".
+    ;(async () => {
+      try {
+        const channel = String(message.channel || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9_]/g, '')
+        const op = message.op === 'set' ? 'set' : message.op === 'get' ? 'get' : ''
+        if (!channel || !op) {
+          sendResponse({ ok: false, error: 'missing params' })
+          return
+        }
+        const authToken = await getAuthCookie()
+        if (!authToken) {
+          sendResponse({ ok: false, error: 'auth_required' })
+          return
+        }
+        const url = `${API_URL}/api/mod/chat-settings`
+        const headers = { Authorization: `Bearer ${authToken}` }
+        let res
+        if (op === 'get') {
+          res = await fetchWithTimeout(`${url}?channel=${encodeURIComponent(channel)}`, {
+            credentials: 'omit',
+            headers,
+          })
+        } else {
+          // only the helix fields the site accepts — nothing else rides along
+          const body = { channel }
+          for (const k of ['emote_only_mode', 'subscriber_mode', 'unique_chat_mode', 'slow_mode', 'follower_mode']) {
+            if (typeof message.settings?.[k] === 'boolean') body[k] = message.settings[k]
+          }
+          for (const k of ['slow_mode_wait_time', 'follower_mode_duration']) {
+            if (Number.isFinite(message.settings?.[k])) body[k] = Math.trunc(message.settings[k])
+          }
+          res = await fetchWithTimeout(url, {
+            method: 'POST',
+            credentials: 'omit',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          })
+        }
+        const data = await res.json().catch(() => null)
+        if (res.ok) {
+          sendResponse({ ok: true, settings: data?.settings || null })
+        } else if (res.status === 401) {
+          sendResponse({
+            ok: false,
+            error:
+              data?.error === 'relink_required' || data?.relink_required === true ? 'relink_required' : 'auth_required',
+          })
+        } else if (res.status === 403) {
+          sendResponse({ ok: false, error: 'not_moderator' })
+        } else if (res.status === 429) {
+          sendResponse({ ok: false, error: 'rate_limited' })
+        } else {
+          sendResponse({ ok: false, error: data?.error || `http ${res.status}` })
+        }
+      } catch (e) {
+        sendResponse({ ok: false, error: e?.message || 'network error' })
+      }
+    })()
+    return true
+  }
   if (message.type === 'resolve_twitch_id') {
     // login → numeric twitch id for content scripts. They must not fetch
     // heatsync.org themselves — CF edge bot-checks 503 cross-origin

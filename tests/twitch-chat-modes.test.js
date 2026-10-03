@@ -101,7 +101,7 @@ describe('mutation shape', () => {
 
   test('kick success wins over a twitch refusal', () => {
     expect(INPUT).toContain('resp?.unsupported && kickResp?.ok')
-    expect(INPUT).toContain('mc_input_mode_twitch_unsupported')
+    expect(INPUT).toContain("showToast(t('mc_cm_link'), 'error')")
   })
 
   test('confirmation reads the read-type field, not a write field', () => {

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "blokované výrazy"
+  },
+  "mc_cm_link": {
+    "message": "prepoj heatsync, aby si to mohol nastaviť"
+  },
+  "mc_cm_link_btn": {
+    "message": "prepojiť"
+  },
+  "mc_cm_not_mod": {
+    "message": "režimy chatu môžu meniť len moderátori"
   }
 }

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "estetyt termit"
+  },
+  "mc_cm_link": {
+    "message": "yhdistä heatsync asettaaksesi tämän"
+  },
+  "mc_cm_link_btn": {
+    "message": "yhdistä"
+  },
+  "mc_cm_not_mod": {
+    "message": "vain moderaattorit voivat vaihtaa chatin tiloja"
   }
 }

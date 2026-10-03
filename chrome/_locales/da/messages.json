@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "blokerede ord"
+  },
+  "mc_cm_link": {
+    "message": "forbind heatsync for at sætte dette"
+  },
+  "mc_cm_link_btn": {
+    "message": "forbind"
+  },
+  "mc_cm_not_mod": {
+    "message": "kun moderatorer kan ændre chattilstande"
   }
 }

@@ -2168,6 +2168,14 @@ async function buildChatStatusPanel(channel) {
     grid.appendChild(empty)
   }
   panel.appendChild(grid)
+  // mods (and the broadcaster) get the real settings + live toggles; everyone
+  // else keeps the read-only rows above
+  const modeStatus = document.createElement('div')
+  modeStatus.className = 'hs-mc-status-note hs-cm-status'
+  modeStatus.setAttribute('role', 'status')
+  modeStatus.hidden = true
+  panel.appendChild(modeStatus)
+  cmMountControls(grid, modeStatus, ch).catch(() => {})
   return panel
 }
 

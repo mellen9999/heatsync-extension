@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "từ bị chặn"
+  },
+  "mc_cm_link": {
+    "message": "liên kết heatsync để đặt mục này"
+  },
+  "mc_cm_link_btn": {
+    "message": "liên kết"
+  },
+  "mc_cm_not_mod": {
+    "message": "chỉ mod mới đặt được chế độ chat"
   }
 }

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "termos bloqueados"
+  },
+  "mc_cm_link": {
+    "message": "associa o heatsync para definir isto"
+  },
+  "mc_cm_link_btn": {
+    "message": "associar"
+  },
+  "mc_cm_not_mod": {
+    "message": "só os mods podem mudar os modos do chat"
   }
 }

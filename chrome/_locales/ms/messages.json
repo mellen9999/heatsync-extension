@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "istilah disekat"
+  },
+  "mc_cm_link": {
+    "message": "pautkan heatsync untuk menetapkan ini"
+  },
+  "mc_cm_link_btn": {
+    "message": "pautkan"
+  },
+  "mc_cm_not_mod": {
+    "message": "hanya moderator boleh menetapkan mod sembang"
   }
 }

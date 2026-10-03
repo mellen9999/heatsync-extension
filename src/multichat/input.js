@@ -6640,6 +6640,15 @@ const CHAT_MODES = {
   unique: { field: 'unique_chat_mode', label: 'unique-chat' },
 }
 
+// The retired `<mode>off` spellings, each the same command as `/<mode> off`.
+const CHAT_MODE_OFF_FORMS = {
+  emoteonlyoff: 'emoteonly',
+  subscribersoff: 'subscribers',
+  uniquechatoff: 'unique',
+  slowoff: 'slow',
+  followersoff: 'followers',
+}
+
 // Kick supports four of the five (no unique-chat/r9k equivalent).
 const KICK_MODE_CMDS = new Set(['slow', 'followers', 'subscribers', 'emoteonly'])
 
@@ -6796,6 +6805,9 @@ function resolveSlashCmd(text) {
   if (!parts) return null
   let [, cmd, rest] = parts
   cmd = cmd.toLowerCase()
+  // /emoteonlyoff, /subscribersoff, /uniquechatoff, /slowoff, /followersoff —
+  // twitch's old spelling of "<mode> off"
+  if (CHAT_MODE_OFF_FORMS[cmd]) return { cmd: CHAT_MODE_OFF_FORMS[cmd], rest: 'off' }
   if (SLASH_ALIASES[cmd] === null) return null // explicit pass-through
   if (typeof SLASH_ALIASES[cmd] === 'string') cmd = SLASH_ALIASES[cmd]
   return { cmd, rest }
@@ -8074,10 +8086,21 @@ async function handleSlashCommand(text, input) {
       kickTarget && typeof setKickChatMode === 'function' && KICK_MODE_CMDS.has(cmd)
         ? setKickChatMode(kickTarget, cmd, value)
         : Promise.resolve(null)
-    const [resp, kickResp] = await Promise.all([
-      twitchTarget ? setTwitchChatMode(twitchTarget, cmd, value) : Promise.resolve(null),
-      kickPromise,
-    ])
+    // Twitch leg: heatsync.org's helix route sets every mode (twitch retired the
+    // IRC commands). A viewer who isn't linked for it (401) falls back to the
+    // GQL path, which only does slow + followers — the other three then say
+    // plainly what to link instead of failing silently.
+    const twitchLeg = async () => {
+      if (!twitchTarget) return null
+      const site = await cmSet(twitchTarget, cmd, value)
+      if (site.ok) return { ok: true }
+      if (!cmNeedsLink(site)) {
+        return { ok: false, error: site.error === 'not_moderator' ? t('mc_bt_not_mod_slash') : site.error }
+      }
+      const gql = await setTwitchChatMode(twitchTarget, cmd, value)
+      return gql?.unsupported ? { ok: false, unsupported: true, error: t('mc_cm_link') } : gql
+    }
+    const [resp, kickResp] = await Promise.all([twitchLeg(), kickPromise])
     // Twitch can't do the boolean modes (see TWITCH_CHAT_MODE_SPEC). If kick
     // handled it, that's a real success — don't surface twitch's refusal.
     if (resp?.unsupported && kickResp?.ok) {
@@ -8086,7 +8109,7 @@ async function handleSlashCommand(text, input) {
       return true
     }
     if (resp?.unsupported && !kickResp?.ok) {
-      showToast(t('mc_input_mode_twitch_unsupported', [cmd]), 'error')
+      showToast(t('mc_cm_link'), 'error')
       return true
     }
     if (kickResp && !kickResp.ok && !resp?.ok) {

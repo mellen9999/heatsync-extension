@@ -766,6 +766,15 @@
     .hs-mc-status-val.on  { color: var(--hs-ok); }
     .hs-mc-status-val.off { color: var(--hs-muted); }
     .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
+    .hs-cm-row { align-items: center; }
+    .hs-cm-ctl { display: inline-flex; align-items: center; gap: 4px; }
+    .hs-cm-num { width: 6ch; font: inherit; font-size: 13px; color: #fff; background: #000; border: 1px solid #333; border-radius: 0; padding: 1px 3px; }
+    .hs-cm-tog, .hs-cm-btn { font: inherit; font-size: 13px; background: transparent; border: 1px solid #333; border-radius: 0; padding: 1px 6px; cursor: pointer; }
+    .hs-cm-btn { color: #fff; }
+    .hs-cm-tog:hover, .hs-cm-tog:active, .hs-cm-tog:focus-visible,
+    .hs-cm-btn:hover, .hs-cm-btn:active, .hs-cm-btn:focus-visible { background: #fff; color: #000; outline: none; }
+    .hs-cm-bad { color: var(--hs-err, #ff5f5f); }
+    .hs-cm-busy { opacity: 0.6; pointer-events: none; }
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {

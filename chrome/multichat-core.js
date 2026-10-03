@@ -14115,7 +14115,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f03401ec2d5c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'eb7e13708f8b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -14626,7 +14626,7 @@ const SLASH_REGISTRY = [
     cmd: 'status',
     args: '[channel]',
     desc: 'show chat modes and stream info',
-    on: 'both',
+    on: 'ext',
     needs: 'none',
     does: 'local',
     alias: ['modes'],
@@ -14699,93 +14699,52 @@ const SLASH_REGISTRY = [
     needs: 'mod',
     does: 'twitch',
   },
-  {
-    cmd: 'modtools',
-    args: '',
-    desc: 'open the mod tools panel',
-    on: 'web',
-    needs: 'mod',
-    does: 'twitch',
-  },
-  {
-    cmd: 'shield',
-    args: '[on|off]',
-    desc: 'turn shield mode on or off',
-    on: 'web',
-    needs: 'mod',
-    does: 'twitch',
-  },
-  {
-    cmd: 'warn',
-    args: '<user> <reason>',
-    desc: 'warn a chatter',
-    on: 'web',
-    needs: 'mod',
-    does: 'twitch',
-  },
-  {
-    cmd: 'shoutout',
-    args: '<user>',
-    desc: 'shout a channel out',
-    on: 'web',
-    needs: 'mod',
-    does: 'twitch',
-    alias: ['so'],
-  },
-  {
-    cmd: 'unbanrequests',
-    args: '',
-    desc: 'open unban requests',
-    on: 'web',
-    needs: 'mod',
-    does: 'twitch',
-  },
 
   // ── chat modes ────────────────────────────────────────────────────────────
   {
     cmd: 'slow',
     args: '[secs|off]',
     desc: 'slow mode, default 30s',
-    on: 'both',
+    on: 'ext',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['slowmode'],
+    alias: ['slowmode', 'slowoff'],
   },
   {
     cmd: 'followers',
     args: '[mins|off]',
     desc: 'followers-only mode',
-    on: 'both',
+    on: 'ext',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['followersonly', 'followeronly'],
+    alias: ['followersonly', 'followeronly', 'followersoff'],
   },
   {
     cmd: 'emoteonly',
     args: '[off]',
     desc: 'emote-only mode',
-    on: 'both',
+    on: 'ext',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['emote', 'emoteonlymode'],
+    alias: ['emote', 'emoteonlymode', 'emoteonlyoff'],
   },
   {
     cmd: 'subscribers',
     args: '[off]',
     desc: 'subscribers-only mode',
-    on: 'both',
+    on: 'ext',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['subonly', 'subsonly', 'subscribersonly', 'subs'],
+    alias: ['subonly', 'subsonly', 'subscribersonly', 'subs', 'subscribersoff'],
   },
   {
     cmd: 'unique',
     args: '[off]',
     desc: 'unique-chat mode; twitch only, kick has no equivalent',
-    on: 'both',
+    on: 'ext',
     needs: 'mod',
     does: 'twitch',
-    alias: ['uniquechat', 'r9k', 'r9kbeta'],
+    alias: ['uniquechat', 'r9k', 'r9kbeta', 'uniquechatoff'],
   },
 
   // ── polls, predictions, bits ──────────────────────────────────────────────
@@ -14878,24 +14837,7 @@ const SLASH_SECTIONS = [
   {
     key: 'mod',
     title: 'moderation',
-    cmds: [
-      'ban',
-      'timeout',
-      'unban',
-      'delete',
-      'nuke',
-      'announce',
-      'vip',
-      'unvip',
-      'mod',
-      'unmod',
-      'blocked',
-      'modtools',
-      'shield',
-      'warn',
-      'shoutout',
-      'unbanrequests',
-    ],
+    cmds: ['ban', 'timeout', 'unban', 'delete', 'nuke', 'announce', 'vip', 'unvip', 'mod', 'unmod', 'blocked'],
   },
   { key: 'modes', title: 'chat modes', cmds: ['slow', 'followers', 'emoteonly', 'subscribers', 'unique'] },
   {
@@ -23024,6 +22966,15 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     .hs-mc-status-val.on  { color: var(--hs-ok); }
     .hs-mc-status-val.off { color: var(--hs-muted); }
     .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
+    .hs-cm-row { align-items: center; }
+    .hs-cm-ctl { display: inline-flex; align-items: center; gap: 4px; }
+    .hs-cm-num { width: 6ch; font: inherit; font-size: 13px; color: #fff; background: #000; border: 1px solid #333; border-radius: 0; padding: 1px 3px; }
+    .hs-cm-tog, .hs-cm-btn { font: inherit; font-size: 13px; background: transparent; border: 1px solid #333; border-radius: 0; padding: 1px 6px; cursor: pointer; }
+    .hs-cm-btn { color: #fff; }
+    .hs-cm-tog:hover, .hs-cm-tog:active, .hs-cm-tog:focus-visible,
+    .hs-cm-btn:hover, .hs-cm-btn:active, .hs-cm-btn:focus-visible { background: #fff; color: #000; outline: none; }
+    .hs-cm-bad { color: var(--hs-err, #ff5f5f); }
+    .hs-cm-busy { opacity: 0.6; pointer-events: none; }
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {
@@ -42626,6 +42577,14 @@ async function buildChatStatusPanel(channel) {
     grid.appendChild(empty)
   }
   panel.appendChild(grid)
+  // mods (and the broadcaster) get the real settings + live toggles; everyone
+  // else keeps the read-only rows above
+  const modeStatus = document.createElement('div')
+  modeStatus.className = 'hs-mc-status-note hs-cm-status'
+  modeStatus.setAttribute('role', 'status')
+  modeStatus.hidden = true
+  panel.appendChild(modeStatus)
+  cmMountControls(grid, modeStatus, ch).catch(() => {})
   return panel
 }
 
@@ -42737,102 +42696,6 @@ const badgesFetchedChannels = new Set()
 // Sorted numeric version lists per "channel:setID" — for nearest-tier fallback
 // (e.g. user has subscriber/5 but channel only defines 0,3,6 → use 3).
 const channelBadgeVersions = new Map()
-// helix/GQL badge titles, same keys as twitchBadgeUrls ("set/version" or "channel:set/version")
-const twitchBadgeTitles = new Map()
-
-// Unknown badge versions: twitch adds badges (sub tiers, events, globals) faster
-// than a channel's cached set turns over. A row naming a set/version the set
-// lacks renders nothing (never another version's art), notes the miss, and the
-// first miss of a (channel, key) inside BADGE_ASK_WINDOW_MS schedules ONE
-// debounced refetch of that channel's set. The timestamp is the negative: kept
-// whether or not the refetch found the version, so a badge twitch still does
-// not list is asked about once per window, not once per row.
-const BADGE_ASK_WINDOW_MS = 10 * 60 * 1000
-const BADGE_ASK_DEBOUNCE_MS = 1500
-function createBadgeRefetcher({
-  refetch,
-  now = Date.now,
-  debounceMs = BADGE_ASK_DEBOUNCE_MS,
-  windowMs = BADGE_ASK_WINDOW_MS,
-}) {
-  const asked = new Map()
-  const pending = new Set()
-  let timer = 0
-  const flush = () => {
-    timer = 0
-    const chans = [...pending]
-    pending.clear()
-    for (const c of chans) Promise.resolve(refetch(c)).catch(() => {})
-  }
-  return {
-    note(channel, key) {
-      const t = now()
-      const id = `${channel}|${key}`
-      const last = asked.get(id)
-      if (last !== undefined && t - last < windowMs) return false
-      asked.set(id, t)
-      if (asked.size > 500) for (const [k, v] of asked) if (t - v >= windowMs) asked.delete(k)
-      pending.add(channel)
-      if (!timer) timer = setTimeout(flush, debounceMs)
-      return true
-    },
-  }
-}
-
-// Fold a GQL badge list into the maps under `prefix` ('' global, 'chan:' channel).
-// Returns whether anything new or changed landed.
-function mergeBadgeRows(prefix, badges) {
-  let changed = false
-  for (const b of badges || []) {
-    if (!b?.setID) continue
-    const key = `${prefix}${b.setID}/${b.version}`
-    if (b.imageURL && twitchBadgeUrls.get(key) !== b.imageURL) {
-      twitchBadgeUrls.set(key, b.imageURL)
-      changed = true
-    }
-    if (b.title) twitchBadgeTitles.set(key, b.title)
-  }
-  return changed
-}
-
-function rebuildChannelBadgeVersions(channelLogin) {
-  const versionsBySet = new Map()
-  const prefix = `${channelLogin}:`
-  for (const key of twitchBadgeUrls.keys()) {
-    if (!key.startsWith(prefix)) continue
-    const slash = key.lastIndexOf('/')
-    const v = parseInt(key.slice(slash + 1), 10)
-    if (!Number.isFinite(v)) continue
-    const setID = key.slice(prefix.length, slash)
-    let arr = versionsBySet.get(setID)
-    if (!arr) versionsBySet.set(setID, (arr = []))
-    arr.push(v)
-  }
-  for (const [setID, arr] of versionsBySet) {
-    arr.sort((a, b) => a - b)
-    channelBadgeVersions.set(`${channelLogin}:${setID}`, arr)
-  }
-}
-
-async function refetchBadgeSet(channelLogin) {
-  const safe = channelLogin.replace(/[^a-z0-9_]/g, '')
-  if (!safe) return
-  const [chan, glob] = await Promise.allSettled([
-    twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version title } } }`),
-    twitchGql('{ badges { imageURL(size: NORMAL) setID version title } }'),
-  ])
-  let changed = false
-  if (chan.status === 'fulfilled') {
-    const rows = chan.value?.data?.user?.broadcastBadges
-    if (mergeBadgeRows(`${channelLogin}:`, rows)) changed = true
-    if (rows?.length) rebuildChannelBadgeVersions(channelLogin)
-  }
-  if (glob.status === 'fulfilled' && mergeBadgeRows('', glob.value?.data?.badges)) changed = true
-  // repaint just that channel's rows; the in-place patch also fills in titles
-  if (changed && typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(channelLogin)
-}
-
-const badgeRefetcher = createBadgeRefetcher({ refetch: refetchBadgeSet })
 
 function findNearestChannelBadgeVersion(channel, name, version) {
   const versions = channelBadgeVersions.get(`${channel}:${name}`)
@@ -42954,7 +42817,7 @@ async function fetchGlobalBadges() {
     // pick up global badges too — direct fetch to gql.twitch.tv from kick.com
     // origin fails silently (CORS/Origin headers), leaving moderator/vip/
     // broadcaster/premium badges as text-only "MOD" / "VIP" / "LIVE" chips.
-    const data = await twitchGql('{ badges { imageURL(size: NORMAL) setID version title } }')
+    const data = await twitchGql('{ badges { imageURL(size: NORMAL) setID version } }')
     const badges = data?.data?.badges
     if (!badges) {
       globalBadgesFetched = false
@@ -42962,7 +42825,6 @@ async function fetchGlobalBadges() {
     }
     for (const b of badges) {
       twitchBadgeUrls.set(`${b.setID}/${b.version}`, b.imageURL)
-      if (b.title) twitchBadgeTitles.set(`${b.setID}/${b.version}`, b.title)
     }
     log('Loaded global badges:', twitchBadgeUrls.size)
     // Patch live rows in-place instead of bumping epoch + full rebuild.
@@ -44197,7 +44059,7 @@ async function fetchChannelBadges(channelLogin) {
   try {
     // Fetch channel badges (GQL broadcastBadges) + FFZ in parallel
     const [gqlResp, ffzResp] = await Promise.allSettled([
-      twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version title } } }`),
+      twitchGql(`{ user(login:"${safe}") { broadcastBadges { imageURL(size: NORMAL) setID version } } }`),
       fetch(`https://api.frankerfacez.com/v1/room/${safe}`, { credentials: 'omit', signal: AbortSignal.timeout(5000) }),
     ])
 
@@ -44209,7 +44071,6 @@ async function fetchChannelBadges(channelLogin) {
         for (const b of badges) {
           if (b.imageURL) {
             twitchBadgeUrls.set(`${channelLogin}:${b.setID}/${b.version}`, b.imageURL)
-            if (b.title) twitchBadgeTitles.set(`${channelLogin}:${b.setID}/${b.version}`, b.title)
             populated = true
           }
           const v = parseInt(b.version, 10)
@@ -44260,9 +44121,6 @@ async function fetchChannelBadges(channelLogin) {
         badgesFetchedChannels.delete(oldest)
         for (const key of twitchBadgeUrls.keys()) {
           if (key.startsWith(`${oldest}:`)) twitchBadgeUrls.delete(key)
-        }
-        for (const key of twitchBadgeTitles.keys()) {
-          if (key.startsWith(`${oldest}:`)) twitchBadgeTitles.delete(key)
         }
         for (const key of ffzBadgeKeys) {
           if (key.startsWith(`${oldest}:`)) ffzBadgeKeys.delete(key)
@@ -44408,26 +44266,7 @@ function resolveBadgeImageUrl(isKick, channel, name, version) {
     const nearest = findNearestChannelBadgeVersion(channel, name, version)
     if (nearest != null) url = twitchBadgeUrls.get(`${channel}:${name}/${nearest}`)
   }
-  // No `${name}/1` last resort: twitch's version 1 is a different badge from
-  // the one asked for (a tier, an event). Unknown renders nothing and refetches.
-  return url || twitchBadgeUrls.get(`${name}/${version}`) || null
-}
-
-// helix title for the exact set/version (channel's own wins over global).
-function resolveBadgeTitle(channel, name, version) {
-  return (
-    (channel && twitchBadgeTitles.get(`${channel}:${name}/${version}`)) ||
-    twitchBadgeTitles.get(`${name}/${version}`) ||
-    null
-  )
-}
-
-// A twitch badge the loaded sets cannot place: queue one refetch. Only once both
-// sets have landed — before that every badge "misses" and the normal fetches
-// are already on their way.
-function noteBadgeMiss(channel, name, version) {
-  if (!channel || !globalBadgesFetched || !badgesFetchedChannels.has(channel)) return
-  badgeRefetcher.note(channel, `${name}/${version}`)
+  return url || twitchBadgeUrls.get(`${name}/${version}`) || twitchBadgeUrls.get(`${name}/1`) || null
 }
 
 function renderBadges(badgesStr, channel, platform) {
@@ -44442,19 +44281,18 @@ function renderBadges(badgesStr, channel, platform) {
       // late badge-fetch retro-paint can't swap these chips back to images
       // behind the setting's back.
       const url = textBadgesEnabled ? null : resolveBadgeImageUrl(isKick, channel, name, version)
-      if (!url && !isKick && !textBadgesEnabled) noteBadgeMiss(channel, name, version)
       if (url) {
         // Semantic bg so the slot shows the badge color even before/without the
         // image (FFZ = padded chip for a transparent icon; native = bg behind).
         const isFFZ = channel && ffzBadgeKeys.has(`${channel}:${name}`)
         const bgStyle = badgeBgStyle(name, isFFZ)
-        const label = (!isKick && resolveBadgeTitle(channel, name, version)) || BADGE_STYLES[name]?.label || name
+        const label = BADGE_STYLES[name]?.label || name
         // NOT loading="lazy": badges are 18px and always at the row start next
         // to visible text. When the async channel-badge fetch lands and the
         // retro-paint (_patchBadgesInRoot) swaps the green text fallback for
         // this img, a lazy img wouldn't paint until the next reflow — so the
         // mod/vip/sub badge vanished until a new message or channel switch.
-        return `<img class="hs-mc-badge-img" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" src="${escapeHtml(safeUrl(url) || '')}" alt="${escapeHtml(label)}" title="${escapeHtml(label)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${bgStyle}">`
+        return `<img class="hs-mc-badge-img" data-badge="${escapeHtml(name)}/${escapeHtml(version)}" src="${escapeHtml(safeUrl(url) || '')}" alt="${escapeHtml(name)}" title="${escapeHtml(label)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${bgStyle}">`
       }
       // Text chip — the deliberate `textBadges` render, and the fallback when a
       // badge has no image url yet.
@@ -58189,6 +58027,15 @@ const CHAT_MODES = {
   unique: { field: 'unique_chat_mode', label: 'unique-chat' },
 }
 
+// The retired `<mode>off` spellings, each the same command as `/<mode> off`.
+const CHAT_MODE_OFF_FORMS = {
+  emoteonlyoff: 'emoteonly',
+  subscribersoff: 'subscribers',
+  uniquechatoff: 'unique',
+  slowoff: 'slow',
+  followersoff: 'followers',
+}
+
 // Kick supports four of the five (no unique-chat/r9k equivalent).
 const KICK_MODE_CMDS = new Set(['slow', 'followers', 'subscribers', 'emoteonly'])
 
@@ -58345,6 +58192,9 @@ function resolveSlashCmd(text) {
   if (!parts) return null
   let [, cmd, rest] = parts
   cmd = cmd.toLowerCase()
+  // /emoteonlyoff, /subscribersoff, /uniquechatoff, /slowoff, /followersoff —
+  // twitch's old spelling of "<mode> off"
+  if (CHAT_MODE_OFF_FORMS[cmd]) return { cmd: CHAT_MODE_OFF_FORMS[cmd], rest: 'off' }
   if (SLASH_ALIASES[cmd] === null) return null // explicit pass-through
   if (typeof SLASH_ALIASES[cmd] === 'string') cmd = SLASH_ALIASES[cmd]
   return { cmd, rest }
@@ -59623,10 +59473,21 @@ async function handleSlashCommand(text, input) {
       kickTarget && typeof setKickChatMode === 'function' && KICK_MODE_CMDS.has(cmd)
         ? setKickChatMode(kickTarget, cmd, value)
         : Promise.resolve(null)
-    const [resp, kickResp] = await Promise.all([
-      twitchTarget ? setTwitchChatMode(twitchTarget, cmd, value) : Promise.resolve(null),
-      kickPromise,
-    ])
+    // Twitch leg: heatsync.org's helix route sets every mode (twitch retired the
+    // IRC commands). A viewer who isn't linked for it (401) falls back to the
+    // GQL path, which only does slow + followers — the other three then say
+    // plainly what to link instead of failing silently.
+    const twitchLeg = async () => {
+      if (!twitchTarget) return null
+      const site = await cmSet(twitchTarget, cmd, value)
+      if (site.ok) return { ok: true }
+      if (!cmNeedsLink(site)) {
+        return { ok: false, error: site.error === 'not_moderator' ? t('mc_bt_not_mod_slash') : site.error }
+      }
+      const gql = await setTwitchChatMode(twitchTarget, cmd, value)
+      return gql?.unsupported ? { ok: false, unsupported: true, error: t('mc_cm_link') } : gql
+    }
+    const [resp, kickResp] = await Promise.all([twitchLeg(), kickPromise])
     // Twitch can't do the boolean modes (see TWITCH_CHAT_MODE_SPEC). If kick
     // handled it, that's a real success — don't surface twitch's refusal.
     if (resp?.unsupported && kickResp?.ok) {
@@ -59635,7 +59496,7 @@ async function handleSlashCommand(text, input) {
       return true
     }
     if (resp?.unsupported && !kickResp?.ok) {
-      showToast(t('mc_input_mode_twitch_unsupported', [cmd]), 'error')
+      showToast(t('mc_cm_link'), 'error')
       return true
     }
     if (kickResp && !kickResp.ok && !resp?.ok) {
@@ -65605,13 +65466,8 @@ function _patchBadgesInRoot(root, channelLogin) {
       if (!safeU) continue
       const key = `${name}/${version}`
       // Dedup: img already present — update src if a better URL is available
-      const label = (!isKick && resolveBadgeTitle(ch, name, version)) || BADGE_STYLES[name]?.label || name
       const existingImg = div.querySelector(`img.hs-mc-badge-img[data-badge="${key}"]`)
       if (existingImg) {
-        if (existingImg.title !== label) {
-          existingImg.title = label
-          existingImg.alt = label
-        }
         if (existingImg.getAttribute('src') !== safeU) {
           existingImg.dataset.hsSrc = safeU
           existingImg.src = safeU
@@ -65623,8 +65479,8 @@ function _patchBadgesInRoot(root, channelLogin) {
       const img = document.createElement('img')
       img.className = 'hs-mc-badge-img'
       img.dataset.badge = key
-      img.alt = label
-      img.title = label
+      img.alt = name
+      img.title = BADGE_STYLES[name]?.label || name
       img.decoding = 'async'
       img.width = 18
       img.height = 18
@@ -67288,6 +67144,180 @@ async function openBlockedTerms(login) {
     return false
   }
   load()
+  return true
+}
+
+
+// --- multichat/chat-modes.js ---
+// chat modes — set a twitch channel's chat modes through heatsync.org.
+// Twitch retired the IRC commands for emote-only / subs-only / unique-chat, and
+// helix PATCH chat/settings is the only way left; heatsync.org's
+// /api/mod/chat-settings does that call with the viewer's linked twitch grant.
+// This talks to it through the background worker (content scripts must not
+// fetch heatsync.org themselves — see resolve_twitch_id).
+//
+//   cmSet(channel, cmd, value)     → {ok, settings} | {ok:false, error}
+//   cmGet(channel)                 → {ok, settings} | {ok:false, error}
+//   cmMountControls(grid, status, channel)   the modes cell: real state, live toggles
+//
+// cmd: followers|slow|emoteonly|subscribers|unique, value: followers −1=off,
+// 0=any follower, N=minutes · slow 0=off, N=seconds · booleans for the rest.
+
+const CM_RELINK_URL = 'https://heatsync.org/api/auth/login?scopes=mod&return_to=%2Fhome%2Fhot'
+const CM_SLOW_MIN = 3
+const CM_SLOW_MAX = 120
+const CM_FOLLOW_MAX = 129600
+
+// cell rows in order; `num` = the mode carries a number the user types
+const CM_ROWS = [
+  { cmd: 'emoteonly', label: 'emote-only', on: (s) => s.emote_only_mode === true },
+  {
+    cmd: 'followers',
+    label: 'follower-mode',
+    num: 'min',
+    on: (s) => s.follower_mode === true,
+    n: (s) => s.follower_mode_duration,
+  },
+  { cmd: 'subscribers', label: 'sub-mode', on: (s) => s.subscriber_mode === true },
+  { cmd: 'slow', label: 'slow-mode', num: 'sec', on: (s) => s.slow_mode === true, n: (s) => s.slow_mode_wait_time },
+  { cmd: 'unique', label: 'unique-chat', on: (s) => s.unique_chat_mode === true },
+]
+
+// one mode + value → the POST's settings fields (the helix names); null = unknown mode
+function cmBody(cmd, value) {
+  if (cmd === 'emoteonly') return { emote_only_mode: !!value }
+  if (cmd === 'subscribers') return { subscriber_mode: !!value }
+  if (cmd === 'unique') return { unique_chat_mode: !!value }
+  if (cmd === 'followers') {
+    const n = Number(value)
+    if (!Number.isFinite(n) || n < 0) return { follower_mode: false }
+    return { follower_mode: true, follower_mode_duration: Math.min(CM_FOLLOW_MAX, Math.trunc(n)) }
+  }
+  if (cmd === 'slow') {
+    const n = Number(value)
+    if (!Number.isFinite(n) || n <= 0) return { slow_mode: false }
+    return { slow_mode: true, slow_mode_wait_time: Math.max(CM_SLOW_MIN, Math.min(CM_SLOW_MAX, Math.trunc(n))) }
+  }
+  return null
+}
+
+async function cmGet(channel) {
+  return (await safeSendMessage({ type: 'chat_settings', op: 'get', channel })) || { ok: false, error: 'no reply' }
+}
+
+async function cmSet(channel, cmd, value) {
+  const settings = cmBody(cmd, value)
+  if (!settings) return { ok: false, error: 'unknown chat mode' }
+  return (
+    (await safeSendMessage({ type: 'chat_settings', op: 'set', channel, settings })) || { ok: false, error: 'no reply' }
+  )
+}
+
+// the account isn't linked for mod calls: 401 either way (no heatsync session,
+// or a twitch grant without the mod pack)
+function cmNeedsLink(res) {
+  return res?.error === 'relink_required' || res?.error === 'auth_required'
+}
+
+function cmEl(tag, cls, text) {
+  const n = document.createElement(tag)
+  if (cls) n.className = cls
+  if (text != null) n.textContent = text
+  return n
+}
+
+// Replace the cell's read-only rows (IRC roomstate) with the channel's real
+// settings and controls. `grid` keeps its rows if the viewer can't set modes
+// (not a mod, not linked, offline) — `status` then says why when it's fixable.
+async function cmMountControls(grid, status, channel) {
+  const say = (text, bad) => {
+    status.textContent = text || ''
+    status.classList.toggle('hs-cm-bad', !!bad)
+    status.hidden = !text
+  }
+  const res = await cmGet(channel)
+  if (!grid.isConnected) return false
+  if (!res.ok || !res.settings) {
+    if (cmNeedsLink(res)) {
+      say(t('mc_cm_link'), true)
+      const b = cmEl('button', 'hs-cm-btn', t('mc_cm_link_btn'))
+      b.type = 'button'
+      b.addEventListener('click', () => {
+        try {
+          window.open(CM_RELINK_URL, '_blank', 'noopener')
+        } catch (_) {}
+      })
+      status.append(' ', b)
+    }
+    return false
+  }
+  let settings = res.settings
+
+  const render = () => {
+    const rows = CM_ROWS.map((r) => {
+      const on = r.on(settings)
+      const row = cmEl('div', 'hs-mc-status-row hs-cm-row')
+      row.dataset.mode = r.cmd
+      const key = cmEl('span', 'hs-mc-status-key', r.label)
+      const ctl = cmEl('span', 'hs-cm-ctl')
+      let num = null
+      if (r.num) {
+        num = cmEl('input', 'hs-cm-num')
+        num.type = 'number'
+        num.min = r.cmd === 'slow' ? String(CM_SLOW_MIN) : '0'
+        num.max = r.cmd === 'slow' ? String(CM_SLOW_MAX) : String(CM_FOLLOW_MAX)
+        num.value = on && r.n(settings) != null ? String(r.n(settings)) : ''
+        num.placeholder = r.num
+        num.setAttribute('aria-label', `${r.label} ${r.num}`)
+        num.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter') return
+          e.preventDefault()
+          e.stopPropagation()
+          const n = Number(num.value)
+          if (num.value.trim() === '' || !Number.isFinite(n) || n < 0)
+            return say(t('mc_input_usage_mode', [r.cmd]), true)
+          apply(r, n)
+        })
+        num.addEventListener('keyup', (e) => e.stopPropagation())
+        ctl.append(num)
+      }
+      const tog = cmEl('button', `hs-mc-status-val hs-cm-tog ${on ? 'on' : 'off'}`, on ? 'on' : 'off')
+      tog.type = 'button'
+      tog.setAttribute('aria-pressed', on ? 'true' : 'false')
+      tog.addEventListener('click', () => {
+        // turning a duration mode on takes what's typed, else twitch's own default
+        const typed = num && num.value.trim() !== '' ? Number(num.value) : null
+        const onValue = typed != null && Number.isFinite(typed) ? typed : r.cmd === 'slow' ? 30 : 0
+        apply(r, on ? (r.cmd === 'followers' ? -1 : r.cmd === 'slow' ? 0 : false) : r.num ? onValue : true)
+      })
+      ctl.append(tog)
+      row.append(key, ctl)
+      return row
+    })
+    grid.replaceChildren(...rows)
+  }
+
+  let busy = false
+  async function apply(r, value) {
+    if (busy) return
+    busy = true
+    grid.classList.add('hs-cm-busy')
+    const out = await cmSet(channel, r.cmd, value)
+    busy = false
+    grid.classList.remove('hs-cm-busy')
+    if (!grid.isConnected) return
+    if (out.ok) {
+      if (out.settings) settings = { ...settings, ...out.settings }
+      say('')
+      return render()
+    }
+    if (cmNeedsLink(out)) return say(t('mc_cm_link'), true)
+    if (out.error === 'not_moderator') return say(t('mc_cm_not_mod'), true)
+    say(t('mc_input_mode_failed', [r.label, out.error || '?']), true)
+  }
+
+  say('')
+  render()
   return true
 }
 

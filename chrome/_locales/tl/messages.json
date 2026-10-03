@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "mga naka-block na termino"
+  },
+  "mc_cm_link": {
+    "message": "i-link ang heatsync para i-set ito"
+  },
+  "mc_cm_link_btn": {
+    "message": "i-link"
+  },
+  "mc_cm_not_mod": {
+    "message": "mga mod lang ang puwedeng magbago ng chat mode"
   }
 }

@@ -862,5 +862,14 @@
   },
   "mc_settings_mod_btn_blocked_terms": {
     "message": "блокирани термини"
+  },
+  "mc_cm_link": {
+    "message": "свържи heatsync, за да зададеш това"
+  },
+  "mc_cm_link_btn": {
+    "message": "свържи"
+  },
+  "mc_cm_not_mod": {
+    "message": "само модераторите могат да сменят режимите на чата"
   }
 }

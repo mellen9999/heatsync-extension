@@ -290,7 +290,7 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['slowmode'],
+    alias: ['slowmode', 'slowoff'],
   },
   {
     cmd: 'followers',
@@ -299,7 +299,7 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['followersonly', 'followeronly'],
+    alias: ['followersonly', 'followeronly', 'followersoff'],
   },
   {
     cmd: 'emoteonly',
@@ -308,7 +308,7 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['emote', 'emoteonlymode'],
+    alias: ['emote', 'emoteonlymode', 'emoteonlyoff'],
   },
   {
     cmd: 'subscribers',
@@ -317,7 +317,7 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
-    alias: ['subonly', 'subsonly', 'subscribersonly', 'subs'],
+    alias: ['subonly', 'subsonly', 'subscribersonly', 'subs', 'subscribersoff'],
   },
   {
     cmd: 'unique',
@@ -326,7 +326,7 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'mod',
     does: 'twitch',
-    alias: ['uniquechat', 'r9k', 'r9kbeta'],
+    alias: ['uniquechat', 'r9k', 'r9kbeta', 'uniquechatoff'],
   },
 
   // ── polls, predictions, bits ──────────────────────────────────────────────

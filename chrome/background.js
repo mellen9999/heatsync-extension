@@ -8155,6 +8155,71 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }, 50)
     return true
   }
+  if (message.type === 'blocked_terms') {
+    // A twitch channel's blocked terms (blocked-terms-panel in multichat).
+    // op: list | add | remove. The server's helix call is the moderator check,
+    // so a 403 here means "not a mod of this channel", not a bad session.
+    ;(async () => {
+      try {
+        const broadcasterId = String(message.broadcasterId || '').replace(/[^0-9]/g, '')
+        const op = message.op === 'add' || message.op === 'remove' ? message.op : message.op === 'list' ? 'list' : ''
+        if (!broadcasterId || !op) {
+          sendResponse({ ok: false, error: 'missing params' })
+          return
+        }
+        const authToken = await getAuthCookie()
+        if (!authToken) {
+          sendResponse({ ok: false, error: 'auth_required' })
+          return
+        }
+        const url = `${API_URL}/api/mod/blocked-terms`
+        const headers = { Authorization: `Bearer ${authToken}` }
+        let res
+        if (op === 'list') {
+          res = await fetchWithTimeout(`${url}?broadcaster_id=${broadcasterId}`, { credentials: 'omit', headers })
+        } else {
+          const body =
+            op === 'add'
+              ? { broadcaster_id: broadcasterId, text: String(message.text || '').trim() }
+              : { broadcaster_id: broadcasterId, id: String(message.id || '') }
+          res = await fetchWithTimeout(url, {
+            method: op === 'add' ? 'POST' : 'DELETE',
+            credentials: 'omit',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          })
+        }
+        const data = await res.json().catch(() => null)
+        if (res.ok) {
+          sendResponse(
+            op === 'list'
+              ? { ok: true, terms: Array.isArray(data?.terms) ? data.terms : [] }
+              : { ok: true, term: data?.term || null },
+          )
+        } else if (res.status === 401) {
+          // relink_required (a flag, not an error string, on this route) = the
+          // twitch grant lacks the blockedterms scopes; a bare 401 is OUR
+          // expired session, which relinking twitch cannot fix.
+          sendResponse({
+            ok: false,
+            error:
+              data?.error === 'relink_required' || data?.relink_required === true ? 'relink_required' : 'auth_required',
+          })
+        } else if (res.status === 403) {
+          sendResponse({ ok: false, error: 'not_moderator' })
+        } else if (res.status === 404) {
+          sendResponse({ ok: false, error: 'gone' })
+        } else if (res.status === 429) {
+          sendResponse({ ok: false, error: 'rate_limited' })
+        } else {
+          sendResponse({ ok: false, error: data?.error || `http ${res.status}` })
+        }
+      } catch (e) {
+        sendResponse({ ok: false, error: e?.message || 'network error' })
+      }
+    })()
+    return true
+  }
   if (message.type === 'resolve_twitch_id') {
     // login → numeric twitch id for content scripts. They must not fetch
     // heatsync.org themselves — CF edge bot-checks 503 cross-origin

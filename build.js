@@ -804,6 +804,7 @@ const MULTICHAT_MODULES = [
   'cosmetics.js',
   'mod-toolbar.js',
   'automod-queue.js',
+  'blocked-terms.js',
   'resize.js',
   'settings-ui.js',
   'channel-mgmt.js',

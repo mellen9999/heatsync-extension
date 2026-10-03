@@ -102,7 +102,9 @@
   "welcome_import_done": {
     "message": "imported $COUNT$ emotes",
     "placeholders": {
-      "count": { "content": "$1" }
+      "count": {
+        "content": "$1"
+      }
     }
   },
   "welcome_import_failed": {
@@ -3149,5 +3151,108 @@
   },
   "mc_gif_mode_insert": {
     "message": "-- insert --  esc normal"
+  },
+  "mc_bt_title": {
+    "message": "blocked terms"
+  },
+  "mc_bt_filter_ph": {
+    "message": "filter"
+  },
+  "mc_bt_add_ph": {
+    "message": "add a term (enter)"
+  },
+  "mc_bt_add": {
+    "message": "add"
+  },
+  "mc_bt_count": {
+    "message": "terms: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_count_of": {
+    "message": "terms: $SHOWN$ of $TOTAL$",
+    "placeholders": {
+      "shown": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_bt_loading": {
+    "message": "loading…"
+  },
+  "mc_bt_empty": {
+    "message": "no blocked terms yet — add one above"
+  },
+  "mc_bt_no_match": {
+    "message": "nothing matches"
+  },
+  "mc_bt_delete": {
+    "message": "delete this term"
+  },
+  "mc_bt_confirm": {
+    "message": "delete \"$TERM$\"?",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_yes": {
+    "message": "yes"
+  },
+  "mc_bt_no": {
+    "message": "no"
+  },
+  "mc_bt_hint": {
+    "message": "j/k move · d delete · a add · / filter · esc close"
+  },
+  "mc_bt_need_perm": {
+    "message": "heatsync needs one more twitch permission to manage blocked terms"
+  },
+  "mc_bt_allow": {
+    "message": "allow blocked terms"
+  },
+  "mc_bt_not_mod": {
+    "message": "you are not a moderator of this channel"
+  },
+  "mc_bt_err": {
+    "message": "couldn't reach twitch — try again"
+  },
+  "mc_bt_retry": {
+    "message": "retry"
+  },
+  "mc_bt_added": {
+    "message": "blocked \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_removed": {
+    "message": "unblocked \"$TERM$\"",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_bt_short": {
+    "message": "a term is 2 to 500 characters"
+  },
+  "mc_bt_no_channel": {
+    "message": "open a twitch channel tab first"
+  },
+  "mc_bt_not_mod_slash": {
+    "message": "/blocked needs mod on this twitch channel"
+  },
+  "mc_settings_mod_btn_blocked_terms": {
+    "message": "blocked terms"
   }
 }

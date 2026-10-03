@@ -1,0 +1,53 @@
+
+    /* Blocked terms panel (blocked-terms.js) — rides .hs-pane-panel. Square,
+       terminal, hover/active/focus = reverse video, no motion. */
+    .hs-bt { outline: none; font-size: 13px; }
+    .hs-bt-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .hs-bt-title { color: var(--hs-brand); }
+    .hs-bt-count { color: var(--hs-muted); }
+    .hs-bt-inputs { display: flex; gap: 6px; margin-bottom: 6px; }
+    .hs-bt-inputs[hidden] { display: none; }
+    .hs-bt-input {
+      flex: 1 1 0;
+      min-width: 0;
+      box-sizing: border-box;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      padding: 4px 6px;
+      font: inherit;
+    }
+    .hs-bt-input::placeholder { color: var(--hs-muted); }
+    .hs-bt-input:focus { border-color: #fff; outline: none; }
+    .hs-bt-btn {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      padding: 4px 10px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .hs-bt-btn:hover, .hs-bt-btn:active, .hs-bt-btn:focus-visible { background: #fff; color: #000; outline: none; }
+    .hs-bt-primary { border-color: var(--hs-brand); color: var(--hs-brand); }
+    .hs-bt-danger { border-color: var(--hs-danger); color: var(--hs-danger); }
+    .hs-bt-danger:hover, .hs-bt-danger:active, .hs-bt-danger:focus-visible { background: var(--hs-danger); color: #000; }
+    .hs-bt-msg { min-height: 17px; margin-bottom: 6px; color: var(--hs-ok); }
+    .hs-bt-msg.hs-bt-bad { color: var(--hs-danger); }
+    .hs-bt-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .hs-bt-row:hover, .hs-bt-row:active { background: #fff; color: #000; }
+    .hs-bt-sel { border-color: #fff; }
+    .hs-bt-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+    .hs-bt-x { padding: 0 8px; }
+    .hs-bt-confirm .hs-bt-text { color: var(--hs-danger); }
+    .hs-bt-confirm:hover .hs-bt-text, .hs-bt-confirm:active .hs-bt-text { color: #000; }
+    .hs-bt-note { color: var(--hs-muted); padding: 8px 0; line-height: 1.6; }
+    .hs-bt-hint { margin-top: 8px; color: var(--hs-muted); }

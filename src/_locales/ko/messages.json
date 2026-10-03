@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "채팅 모드는 매니저만 바꿀 수 있어요"
+  },
+  "mc_cm_emote": {
+    "message": "이모티콘 전용"
+  },
+  "mc_cm_follower": {
+    "message": "팔로워 전용"
+  },
+  "mc_cm_sub": {
+    "message": "구독자 전용"
+  },
+  "mc_cm_slow": {
+    "message": "슬로우 모드"
+  },
+  "mc_cm_unique": {
+    "message": "고유 채팅"
+  },
+  "mc_cm_on": {
+    "message": "켬"
+  },
+  "mc_cm_off": {
+    "message": "끔"
+  },
+  "mc_cm_min": {
+    "message": "분"
+  },
+  "mc_cm_sec": {
+    "message": "초"
+  },
+  "mc_cm_secs": {
+    "message": "초"
+  },
+  "mc_cm_title": {
+    "message": "채팅 모드"
+  },
+  "mc_cm_unknown": {
+    "message": "모드를 알 수 없음 — 아직 채널에 참여하지 않음"
   }
 }

@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "المشرفون فقط يمكنهم ضبط أوضاع الدردشة"
+  },
+  "mc_cm_emote": {
+    "message": "الرموز فقط"
+  },
+  "mc_cm_follower": {
+    "message": "للمتابعين فقط"
+  },
+  "mc_cm_sub": {
+    "message": "للمشتركين فقط"
+  },
+  "mc_cm_slow": {
+    "message": "الوضع البطيء"
+  },
+  "mc_cm_unique": {
+    "message": "دردشة فريدة"
+  },
+  "mc_cm_on": {
+    "message": "تشغيل"
+  },
+  "mc_cm_off": {
+    "message": "إيقاف"
+  },
+  "mc_cm_min": {
+    "message": "دقيقة"
+  },
+  "mc_cm_sec": {
+    "message": "ثانية"
+  },
+  "mc_cm_secs": {
+    "message": "ث"
+  },
+  "mc_cm_title": {
+    "message": "أوضاع الدردشة"
+  },
+  "mc_cm_unknown": {
+    "message": "الأوضاع غير معروفة — لم تتم عضوية القناة بعد"
   }
 }

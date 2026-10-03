@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "režimy chatu mohou měnit jen moderátoři"
+  },
+  "mc_cm_emote": {
+    "message": "jen emotikony"
+  },
+  "mc_cm_follower": {
+    "message": "jen sledující"
+  },
+  "mc_cm_sub": {
+    "message": "jen odběratelé"
+  },
+  "mc_cm_slow": {
+    "message": "pomalý režim"
+  },
+  "mc_cm_unique": {
+    "message": "unikátní chat"
+  },
+  "mc_cm_on": {
+    "message": "zap"
+  },
+  "mc_cm_off": {
+    "message": "vyp"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "s"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "režimy chatu"
+  },
+  "mc_cm_unknown": {
+    "message": "režimy neznámé — kanál ještě není připojen"
   }
 }

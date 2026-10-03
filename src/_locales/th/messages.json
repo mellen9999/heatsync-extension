@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "เฉพาะม็อดเท่านั้นที่ตั้งโหมดแชทได้"
+  },
+  "mc_cm_emote": {
+    "message": "เฉพาะอีโมต"
+  },
+  "mc_cm_follower": {
+    "message": "เฉพาะผู้ติดตาม"
+  },
+  "mc_cm_sub": {
+    "message": "เฉพาะผู้สมัคร"
+  },
+  "mc_cm_slow": {
+    "message": "โหมดช้า"
+  },
+  "mc_cm_unique": {
+    "message": "แชทไม่ซ้ำ"
+  },
+  "mc_cm_on": {
+    "message": "เปิด"
+  },
+  "mc_cm_off": {
+    "message": "ปิด"
+  },
+  "mc_cm_min": {
+    "message": "นาที"
+  },
+  "mc_cm_sec": {
+    "message": "วิ"
+  },
+  "mc_cm_secs": {
+    "message": "วิ"
+  },
+  "mc_cm_title": {
+    "message": "โหมดแชท"
+  },
+  "mc_cm_unknown": {
+    "message": "ไม่ทราบโหมด — ยังไม่ได้เข้าช่อง"
   }
 }

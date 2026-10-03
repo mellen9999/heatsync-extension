@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "chỉ mod mới đặt được chế độ chat"
+  },
+  "mc_cm_emote": {
+    "message": "chỉ emote"
+  },
+  "mc_cm_follower": {
+    "message": "chỉ người theo dõi"
+  },
+  "mc_cm_sub": {
+    "message": "chỉ người đăng ký"
+  },
+  "mc_cm_slow": {
+    "message": "chế độ chậm"
+  },
+  "mc_cm_unique": {
+    "message": "chat duy nhất"
+  },
+  "mc_cm_on": {
+    "message": "bật"
+  },
+  "mc_cm_off": {
+    "message": "tắt"
+  },
+  "mc_cm_min": {
+    "message": "phút"
+  },
+  "mc_cm_sec": {
+    "message": "giây"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chế độ chat"
+  },
+  "mc_cm_unknown": {
+    "message": "chưa rõ chế độ — chưa vào kênh"
   }
 }

@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "bara moderatorer kan ändra chattlägen"
+  },
+  "mc_cm_emote": {
+    "message": "endast emotes"
+  },
+  "mc_cm_follower": {
+    "message": "endast följare"
+  },
+  "mc_cm_sub": {
+    "message": "endast prenumeranter"
+  },
+  "mc_cm_slow": {
+    "message": "långsamt läge"
+  },
+  "mc_cm_unique": {
+    "message": "unik chatt"
+  },
+  "mc_cm_on": {
+    "message": "på"
+  },
+  "mc_cm_off": {
+    "message": "av"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "sek"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chattlägen"
+  },
+  "mc_cm_unknown": {
+    "message": "lägen okända — kanalen är inte ansluten än"
   }
 }

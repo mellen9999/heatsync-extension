@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "tryby czatu mogą zmieniać tylko moderatorzy"
+  },
+  "mc_cm_emote": {
+    "message": "tylko emotki"
+  },
+  "mc_cm_follower": {
+    "message": "tylko obserwujący"
+  },
+  "mc_cm_sub": {
+    "message": "tylko subskrybenci"
+  },
+  "mc_cm_slow": {
+    "message": "tryb powolny"
+  },
+  "mc_cm_unique": {
+    "message": "unikalny czat"
+  },
+  "mc_cm_on": {
+    "message": "wł"
+  },
+  "mc_cm_off": {
+    "message": "wył"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "s"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "tryby czatu"
+  },
+  "mc_cm_unknown": {
+    "message": "tryby nieznane — nie dołączono jeszcze do kanału"
   }
 }

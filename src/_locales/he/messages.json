@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "רק מנהלים יכולים לשנות מצבי צ'אט"
+  },
+  "mc_cm_emote": {
+    "message": "אימוטים בלבד"
+  },
+  "mc_cm_follower": {
+    "message": "עוקבים בלבד"
+  },
+  "mc_cm_sub": {
+    "message": "מנויים בלבד"
+  },
+  "mc_cm_slow": {
+    "message": "מצב איטי"
+  },
+  "mc_cm_unique": {
+    "message": "צ'אט ייחודי"
+  },
+  "mc_cm_on": {
+    "message": "פעיל"
+  },
+  "mc_cm_off": {
+    "message": "כבוי"
+  },
+  "mc_cm_min": {
+    "message": "דק׳"
+  },
+  "mc_cm_sec": {
+    "message": "שנ׳"
+  },
+  "mc_cm_secs": {
+    "message": "ש׳"
+  },
+  "mc_cm_title": {
+    "message": "מצבי צ'אט"
+  },
+  "mc_cm_unknown": {
+    "message": "המצבים לא ידועים — עוד לא הצטרפת לערוץ"
   }
 }

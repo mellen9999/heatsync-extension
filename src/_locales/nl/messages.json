@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "alleen mods kunnen chatmodi instellen"
+  },
+  "mc_cm_emote": {
+    "message": "alleen emotes"
+  },
+  "mc_cm_follower": {
+    "message": "alleen volgers"
+  },
+  "mc_cm_sub": {
+    "message": "alleen abonnees"
+  },
+  "mc_cm_slow": {
+    "message": "langzame modus"
+  },
+  "mc_cm_unique": {
+    "message": "unieke chat"
+  },
+  "mc_cm_on": {
+    "message": "aan"
+  },
+  "mc_cm_off": {
+    "message": "uit"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "sec"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chatmodi"
+  },
+  "mc_cm_unknown": {
+    "message": "modi onbekend — kanaal nog niet betreden"
   }
 }

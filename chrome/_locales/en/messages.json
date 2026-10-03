@@ -3263,5 +3263,41 @@
   },
   "mc_cm_not_mod": {
     "message": "only mods can set chat modes"
+  },
+  "mc_cm_emote": {
+    "message": "emote-only"
+  },
+  "mc_cm_follower": {
+    "message": "followers-only"
+  },
+  "mc_cm_sub": {
+    "message": "subs-only"
+  },
+  "mc_cm_slow": {
+    "message": "slow mode"
+  },
+  "mc_cm_unique": {
+    "message": "unique chat"
+  },
+  "mc_cm_on": {
+    "message": "on"
+  },
+  "mc_cm_off": {
+    "message": "off"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "sec"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chat modes"
+  },
+  "mc_cm_unknown": {
+    "message": "modes unknown — channel not joined yet"
   }
 }

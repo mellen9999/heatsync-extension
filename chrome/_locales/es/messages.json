@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "solo los mods pueden cambiar los modos del chat"
+  },
+  "mc_cm_emote": {
+    "message": "solo emotes"
+  },
+  "mc_cm_follower": {
+    "message": "solo seguidores"
+  },
+  "mc_cm_sub": {
+    "message": "solo suscriptores"
+  },
+  "mc_cm_slow": {
+    "message": "modo lento"
+  },
+  "mc_cm_unique": {
+    "message": "chat único"
+  },
+  "mc_cm_on": {
+    "message": "sí"
+  },
+  "mc_cm_off": {
+    "message": "no"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "seg"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "modos del chat"
+  },
+  "mc_cm_unknown": {
+    "message": "modos desconocidos — aún no te has unido al canal"
   }
 }

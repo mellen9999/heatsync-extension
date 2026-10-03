@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "само модераторите могат да сменят режимите на чата"
+  },
+  "mc_cm_emote": {
+    "message": "само емотикони"
+  },
+  "mc_cm_follower": {
+    "message": "само последователи"
+  },
+  "mc_cm_sub": {
+    "message": "само абонати"
+  },
+  "mc_cm_slow": {
+    "message": "бавен режим"
+  },
+  "mc_cm_unique": {
+    "message": "уникален чат"
+  },
+  "mc_cm_on": {
+    "message": "вкл"
+  },
+  "mc_cm_off": {
+    "message": "изкл"
+  },
+  "mc_cm_min": {
+    "message": "мин"
+  },
+  "mc_cm_sec": {
+    "message": "сек"
+  },
+  "mc_cm_secs": {
+    "message": "с"
+  },
+  "mc_cm_title": {
+    "message": "режими на чата"
+  },
+  "mc_cm_unknown": {
+    "message": "режимите са неизвестни — каналът още не е присъединен"
   }
 }

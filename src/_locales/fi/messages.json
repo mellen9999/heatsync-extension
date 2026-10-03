@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "vain moderaattorit voivat vaihtaa chatin tiloja"
+  },
+  "mc_cm_emote": {
+    "message": "vain emotet"
+  },
+  "mc_cm_follower": {
+    "message": "vain seuraajat"
+  },
+  "mc_cm_sub": {
+    "message": "vain tilaajat"
+  },
+  "mc_cm_slow": {
+    "message": "hidastustila"
+  },
+  "mc_cm_unique": {
+    "message": "uniikki chat"
+  },
+  "mc_cm_on": {
+    "message": "päällä"
+  },
+  "mc_cm_off": {
+    "message": "pois"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "s"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chatin tilat"
+  },
+  "mc_cm_unknown": {
+    "message": "tilat tuntemattomia — kanavaan ei ole vielä liitytty"
   }
 }

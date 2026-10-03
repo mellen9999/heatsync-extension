@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "μόνο οι διαχειριστές αλλάζουν τις λειτουργίες συνομιλίας"
+  },
+  "mc_cm_emote": {
+    "message": "μόνο emotes"
+  },
+  "mc_cm_follower": {
+    "message": "μόνο ακόλουθοι"
+  },
+  "mc_cm_sub": {
+    "message": "μόνο συνδρομητές"
+  },
+  "mc_cm_slow": {
+    "message": "αργή λειτουργία"
+  },
+  "mc_cm_unique": {
+    "message": "μοναδική συνομιλία"
+  },
+  "mc_cm_on": {
+    "message": "ενεργό"
+  },
+  "mc_cm_off": {
+    "message": "ανενεργό"
+  },
+  "mc_cm_min": {
+    "message": "λεπτά"
+  },
+  "mc_cm_sec": {
+    "message": "δευτ."
+  },
+  "mc_cm_secs": {
+    "message": "δ"
+  },
+  "mc_cm_title": {
+    "message": "λειτουργίες συνομιλίας"
+  },
+  "mc_cm_unknown": {
+    "message": "άγνωστες λειτουργίες — το κανάλι δεν έχει συνδεθεί ακόμα"
   }
 }

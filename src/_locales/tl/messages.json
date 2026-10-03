@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "mga mod lang ang puwedeng magbago ng chat mode"
+  },
+  "mc_cm_emote": {
+    "message": "emote lang"
+  },
+  "mc_cm_follower": {
+    "message": "followers lang"
+  },
+  "mc_cm_sub": {
+    "message": "subs lang"
+  },
+  "mc_cm_slow": {
+    "message": "slow mode"
+  },
+  "mc_cm_unique": {
+    "message": "unique chat"
+  },
+  "mc_cm_on": {
+    "message": "on"
+  },
+  "mc_cm_off": {
+    "message": "off"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "seg"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "mga chat mode"
+  },
+  "mc_cm_unknown": {
+    "message": "hindi alam ang mga mode — hindi pa nakasali sa channel"
   }
 }

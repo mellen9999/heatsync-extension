@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "doar moderatorii pot schimba modurile chatului"
+  },
+  "mc_cm_emote": {
+    "message": "doar emoticoane"
+  },
+  "mc_cm_follower": {
+    "message": "doar urmăritori"
+  },
+  "mc_cm_sub": {
+    "message": "doar abonați"
+  },
+  "mc_cm_slow": {
+    "message": "mod lent"
+  },
+  "mc_cm_unique": {
+    "message": "chat unic"
+  },
+  "mc_cm_on": {
+    "message": "pornit"
+  },
+  "mc_cm_off": {
+    "message": "oprit"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "sec"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "moduri chat"
+  },
+  "mc_cm_unknown": {
+    "message": "moduri necunoscute — canalul nu e încă alăturat"
   }
 }

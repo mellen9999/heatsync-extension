@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "चैट मोड सिर्फ़ मॉड बदल सकते हैं"
+  },
+  "mc_cm_emote": {
+    "message": "सिर्फ़ इमोट"
+  },
+  "mc_cm_follower": {
+    "message": "सिर्फ़ फ़ॉलोअर"
+  },
+  "mc_cm_sub": {
+    "message": "सिर्फ़ सब्सक्राइबर"
+  },
+  "mc_cm_slow": {
+    "message": "धीमा मोड"
+  },
+  "mc_cm_unique": {
+    "message": "यूनिक चैट"
+  },
+  "mc_cm_on": {
+    "message": "चालू"
+  },
+  "mc_cm_off": {
+    "message": "बंद"
+  },
+  "mc_cm_min": {
+    "message": "मिन"
+  },
+  "mc_cm_sec": {
+    "message": "सेक"
+  },
+  "mc_cm_secs": {
+    "message": "से"
+  },
+  "mc_cm_title": {
+    "message": "चैट मोड"
+  },
+  "mc_cm_unknown": {
+    "message": "मोड अज्ञात — चैनल अभी जुड़ा नहीं"
   }
 }

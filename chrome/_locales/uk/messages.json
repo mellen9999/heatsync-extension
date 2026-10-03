@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "режими чату змінюють лише модератори"
+  },
+  "mc_cm_emote": {
+    "message": "лише емоути"
+  },
+  "mc_cm_follower": {
+    "message": "лише фоловери"
+  },
+  "mc_cm_sub": {
+    "message": "лише підписники"
+  },
+  "mc_cm_slow": {
+    "message": "повільний режим"
+  },
+  "mc_cm_unique": {
+    "message": "унікальний чат"
+  },
+  "mc_cm_on": {
+    "message": "увімк"
+  },
+  "mc_cm_off": {
+    "message": "вимк"
+  },
+  "mc_cm_min": {
+    "message": "хв"
+  },
+  "mc_cm_sec": {
+    "message": "с"
+  },
+  "mc_cm_secs": {
+    "message": "с"
+  },
+  "mc_cm_title": {
+    "message": "режими чату"
+  },
+  "mc_cm_unknown": {
+    "message": "режими невідомі — канал ще не підключено"
   }
 }

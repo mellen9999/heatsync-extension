@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "hanya moderator boleh menetapkan mod sembang"
+  },
+  "mc_cm_emote": {
+    "message": "emote sahaja"
+  },
+  "mc_cm_follower": {
+    "message": "pengikut sahaja"
+  },
+  "mc_cm_sub": {
+    "message": "pelanggan sahaja"
+  },
+  "mc_cm_slow": {
+    "message": "mod perlahan"
+  },
+  "mc_cm_unique": {
+    "message": "sembang unik"
+  },
+  "mc_cm_on": {
+    "message": "hidup"
+  },
+  "mc_cm_off": {
+    "message": "mati"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "saat"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "mod sembang"
+  },
+  "mc_cm_unknown": {
+    "message": "mod tidak diketahui — belum menyertai saluran"
   }
 }

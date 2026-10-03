@@ -2130,7 +2130,7 @@ async function buildChatStatusPanel(channel) {
 
   const modesHeader = document.createElement('div')
   modesHeader.className = 'hs-mc-status-section'
-  modesHeader.textContent = 'chat modes'
+  modesHeader.textContent = t('mc_cm_title')
   panel.appendChild(modesHeader)
 
   const grid = document.createElement('div')
@@ -2139,14 +2139,14 @@ async function buildChatStatusPanel(channel) {
   if (rs) {
     // followersOnly: -1 = off, 0 = on no min, N>0 = N min req
     const followerOn = rs.followersOnly != null && rs.followersOnly >= 0
-    const followerDetail = followerOn && rs.followersOnly > 0 ? `${rs.followersOnly} min` : null
+    const followerDetail = followerOn && rs.followersOnly > 0 ? `${rs.followersOnly} ${t('mc_cm_min')}` : null
     const slowOn = rs.slow != null && rs.slow > 0
     const modes = [
-      ['emote-only', rs.emoteOnly === true],
-      ['follower-mode', followerOn, followerDetail],
-      ['sub-mode', rs.subsOnly === true],
-      ['slow-mode', slowOn, slowOn ? `${rs.slow}s` : null],
-      ['unique-chat', rs.r9k === true],
+      [t('mc_cm_emote'), rs.emoteOnly === true],
+      [t('mc_cm_follower'), followerOn, followerDetail],
+      [t('mc_cm_sub'), rs.subsOnly === true],
+      [t('mc_cm_slow'), slowOn, slowOn ? `${rs.slow}${t('mc_cm_secs')}` : null],
+      [t('mc_cm_unique'), rs.r9k === true],
     ]
     for (const [label, on, detail] of modes) {
       const row = document.createElement('div')
@@ -2156,7 +2156,7 @@ async function buildChatStatusPanel(channel) {
       k.textContent = label
       const v = document.createElement('span')
       v.className = `hs-mc-status-val ${on ? 'on' : 'off'}`
-      v.textContent = on ? (detail ? `on (${detail})` : 'on') : 'off'
+      v.textContent = on ? (detail ? `${t('mc_cm_on')} (${detail})` : t('mc_cm_on')) : t('mc_cm_off')
       row.appendChild(k)
       row.appendChild(v)
       grid.appendChild(row)
@@ -2164,7 +2164,7 @@ async function buildChatStatusPanel(channel) {
   } else {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-status-note'
-    empty.textContent = '(modes unknown — channel not joined yet)'
+    empty.textContent = t('mc_cm_unknown')
     grid.appendChild(empty)
   }
   panel.appendChild(grid)

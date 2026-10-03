@@ -19,17 +19,23 @@ const CM_FOLLOW_MAX = 129600
 
 // cell rows in order; `num` = the mode carries a number the user types
 const CM_ROWS = [
-  { cmd: 'emoteonly', label: 'emote-only', on: (s) => s.emote_only_mode === true },
+  { cmd: 'emoteonly', label: 'mc_cm_emote', on: (s) => s.emote_only_mode === true },
   {
     cmd: 'followers',
-    label: 'follower-mode',
-    num: 'min',
+    label: 'mc_cm_follower',
+    num: 'mc_cm_min',
     on: (s) => s.follower_mode === true,
     n: (s) => s.follower_mode_duration,
   },
-  { cmd: 'subscribers', label: 'sub-mode', on: (s) => s.subscriber_mode === true },
-  { cmd: 'slow', label: 'slow-mode', num: 'sec', on: (s) => s.slow_mode === true, n: (s) => s.slow_mode_wait_time },
-  { cmd: 'unique', label: 'unique-chat', on: (s) => s.unique_chat_mode === true },
+  { cmd: 'subscribers', label: 'mc_cm_sub', on: (s) => s.subscriber_mode === true },
+  {
+    cmd: 'slow',
+    label: 'mc_cm_slow',
+    num: 'mc_cm_sec',
+    on: (s) => s.slow_mode === true,
+    n: (s) => s.slow_mode_wait_time,
+  },
+  { cmd: 'unique', label: 'mc_cm_unique', on: (s) => s.unique_chat_mode === true },
 ]
 
 // one mode + value → the POST's settings fields (the helix names); null = unknown mode
@@ -107,7 +113,7 @@ async function cmMountControls(grid, status, channel) {
       const on = r.on(settings)
       const row = cmEl('div', 'hs-mc-status-row hs-cm-row')
       row.dataset.mode = r.cmd
-      const key = cmEl('span', 'hs-mc-status-key', r.label)
+      const key = cmEl('span', 'hs-mc-status-key', t(r.label))
       const ctl = cmEl('span', 'hs-cm-ctl')
       let num = null
       if (r.num) {
@@ -116,8 +122,8 @@ async function cmMountControls(grid, status, channel) {
         num.min = r.cmd === 'slow' ? String(CM_SLOW_MIN) : '0'
         num.max = r.cmd === 'slow' ? String(CM_SLOW_MAX) : String(CM_FOLLOW_MAX)
         num.value = on && r.n(settings) != null ? String(r.n(settings)) : ''
-        num.placeholder = r.num
-        num.setAttribute('aria-label', `${r.label} ${r.num}`)
+        num.placeholder = t(r.num)
+        num.setAttribute('aria-label', `${t(r.label)} ${t(r.num)}`)
         num.addEventListener('keydown', (e) => {
           if (e.key !== 'Enter') return
           e.preventDefault()
@@ -130,7 +136,7 @@ async function cmMountControls(grid, status, channel) {
         num.addEventListener('keyup', (e) => e.stopPropagation())
         ctl.append(num)
       }
-      const tog = cmEl('button', `hs-mc-status-val hs-cm-tog ${on ? 'on' : 'off'}`, on ? 'on' : 'off')
+      const tog = cmEl('button', `hs-mc-status-val hs-cm-tog ${on ? 'on' : 'off'}`, t(on ? 'mc_cm_on' : 'mc_cm_off'))
       tog.type = 'button'
       tog.setAttribute('aria-pressed', on ? 'true' : 'false')
       tog.addEventListener('click', () => {
@@ -162,7 +168,7 @@ async function cmMountControls(grid, status, channel) {
     }
     if (cmNeedsLink(out)) return say(t('mc_cm_link'), true)
     if (out.error === 'not_moderator') return say(t('mc_cm_not_mod'), true)
-    say(t('mc_input_mode_failed', [r.label, out.error || '?']), true)
+    say(t('mc_input_mode_failed', [t(r.label), out.error || '?']), true)
   }
 
   say('')

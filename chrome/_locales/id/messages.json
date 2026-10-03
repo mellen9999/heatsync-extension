@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "hanya mod yang bisa mengatur mode obrolan"
+  },
+  "mc_cm_emote": {
+    "message": "hanya emote"
+  },
+  "mc_cm_follower": {
+    "message": "hanya pengikut"
+  },
+  "mc_cm_sub": {
+    "message": "hanya pelanggan"
+  },
+  "mc_cm_slow": {
+    "message": "mode lambat"
+  },
+  "mc_cm_unique": {
+    "message": "obrolan unik"
+  },
+  "mc_cm_on": {
+    "message": "aktif"
+  },
+  "mc_cm_off": {
+    "message": "mati"
+  },
+  "mc_cm_min": {
+    "message": "mnt"
+  },
+  "mc_cm_sec": {
+    "message": "dtk"
+  },
+  "mc_cm_secs": {
+    "message": "d"
+  },
+  "mc_cm_title": {
+    "message": "mode obrolan"
+  },
+  "mc_cm_unknown": {
+    "message": "mode tidak diketahui — belum bergabung ke kanal"
   }
 }

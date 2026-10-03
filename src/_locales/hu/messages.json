@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "csak moderátorok állíthatják a csevegési módokat"
+  },
+  "mc_cm_emote": {
+    "message": "csak emote"
+  },
+  "mc_cm_follower": {
+    "message": "csak követők"
+  },
+  "mc_cm_sub": {
+    "message": "csak előfizetők"
+  },
+  "mc_cm_slow": {
+    "message": "lassú mód"
+  },
+  "mc_cm_unique": {
+    "message": "egyedi chat"
+  },
+  "mc_cm_on": {
+    "message": "be"
+  },
+  "mc_cm_off": {
+    "message": "ki"
+  },
+  "mc_cm_min": {
+    "message": "perc"
+  },
+  "mc_cm_sec": {
+    "message": "mp"
+  },
+  "mc_cm_secs": {
+    "message": "mp"
+  },
+  "mc_cm_title": {
+    "message": "csevegési módok"
+  },
+  "mc_cm_unknown": {
+    "message": "a módok ismeretlenek — a csatornához még nem csatlakoztál"
   }
 }

@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "只有管理员能设置聊天模式"
+  },
+  "mc_cm_emote": {
+    "message": "仅表情"
+  },
+  "mc_cm_follower": {
+    "message": "仅关注者"
+  },
+  "mc_cm_sub": {
+    "message": "仅订阅者"
+  },
+  "mc_cm_slow": {
+    "message": "慢速模式"
+  },
+  "mc_cm_unique": {
+    "message": "唯一聊天"
+  },
+  "mc_cm_on": {
+    "message": "开"
+  },
+  "mc_cm_off": {
+    "message": "关"
+  },
+  "mc_cm_min": {
+    "message": "分钟"
+  },
+  "mc_cm_sec": {
+    "message": "秒"
+  },
+  "mc_cm_secs": {
+    "message": "秒"
+  },
+  "mc_cm_title": {
+    "message": "聊天模式"
+  },
+  "mc_cm_unknown": {
+    "message": "模式未知 — 尚未加入频道"
   }
 }

@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "bare moderatorer kan endre chatmoduser"
+  },
+  "mc_cm_emote": {
+    "message": "kun emotes"
+  },
+  "mc_cm_follower": {
+    "message": "kun følgere"
+  },
+  "mc_cm_sub": {
+    "message": "kun abonnenter"
+  },
+  "mc_cm_slow": {
+    "message": "sakte modus"
+  },
+  "mc_cm_unique": {
+    "message": "unik chat"
+  },
+  "mc_cm_on": {
+    "message": "på"
+  },
+  "mc_cm_off": {
+    "message": "av"
+  },
+  "mc_cm_min": {
+    "message": "min"
+  },
+  "mc_cm_sec": {
+    "message": "sek"
+  },
+  "mc_cm_secs": {
+    "message": "s"
+  },
+  "mc_cm_title": {
+    "message": "chatmoduser"
+  },
+  "mc_cm_unknown": {
+    "message": "moduser ukjente — kanalen er ikke koblet til ennå"
   }
 }

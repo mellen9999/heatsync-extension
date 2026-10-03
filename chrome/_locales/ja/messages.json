@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "チャットモードを変更できるのはモデレーターだけです"
+  },
+  "mc_cm_emote": {
+    "message": "エモートのみ"
+  },
+  "mc_cm_follower": {
+    "message": "フォロワーのみ"
+  },
+  "mc_cm_sub": {
+    "message": "サブスクのみ"
+  },
+  "mc_cm_slow": {
+    "message": "スローモード"
+  },
+  "mc_cm_unique": {
+    "message": "ユニークチャット"
+  },
+  "mc_cm_on": {
+    "message": "オン"
+  },
+  "mc_cm_off": {
+    "message": "オフ"
+  },
+  "mc_cm_min": {
+    "message": "分"
+  },
+  "mc_cm_sec": {
+    "message": "秒"
+  },
+  "mc_cm_secs": {
+    "message": "秒"
+  },
+  "mc_cm_title": {
+    "message": "チャットモード"
+  },
+  "mc_cm_unknown": {
+    "message": "モード不明 — まだチャンネルに参加していません"
   }
 }

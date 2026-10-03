@@ -871,5 +871,41 @@
   },
   "mc_cm_not_mod": {
     "message": "sohbet modlarını yalnızca moderatörler ayarlayabilir"
+  },
+  "mc_cm_emote": {
+    "message": "yalnızca emote"
+  },
+  "mc_cm_follower": {
+    "message": "yalnızca takipçi"
+  },
+  "mc_cm_sub": {
+    "message": "yalnızca abone"
+  },
+  "mc_cm_slow": {
+    "message": "yavaş mod"
+  },
+  "mc_cm_unique": {
+    "message": "benzersiz sohbet"
+  },
+  "mc_cm_on": {
+    "message": "açık"
+  },
+  "mc_cm_off": {
+    "message": "kapalı"
+  },
+  "mc_cm_min": {
+    "message": "dk"
+  },
+  "mc_cm_sec": {
+    "message": "sn"
+  },
+  "mc_cm_secs": {
+    "message": "sn"
+  },
+  "mc_cm_title": {
+    "message": "sohbet modları"
+  },
+  "mc_cm_unknown": {
+    "message": "modlar bilinmiyor — kanala henüz katılınmadı"
   }
 }

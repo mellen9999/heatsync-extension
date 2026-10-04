@@ -11,7 +11,7 @@ function makeMcBtn(text, primary) {
   btn.textContent = text
   const base = primary
     ? 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
-    : 'background:transparent;color:#808080;border:1px solid #808080;'
+    : 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
   btn.style.cssText =
     base +
     'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;'
@@ -21,7 +21,7 @@ function makeMcBtn(text, primary) {
   })
   btn.addEventListener('mouseleave', () => {
     btn.style.background = 'transparent'
-    btn.style.color = primary ? '#ffffff' : '#808080'
+    btn.style.color = primary ? '#ffffff' : '#000000'
   })
   return btn
 }
@@ -96,9 +96,9 @@ function makeMcLink(text) {
   const a = document.createElement('button')
   a.textContent = text
   a.style.cssText =
-    'background:none;border:none;padding:0;color:#808080;font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline;'
+    'background:none;border:none;padding:0;color:#ffffff;font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline;'
   a.addEventListener('mouseenter', () => (a.style.color = '#ffffff'))
-  a.addEventListener('mouseleave', () => (a.style.color = '#808080'))
+  a.addEventListener('mouseleave', () => (a.style.color = '#ffffff'))
   return a
 }
 
@@ -108,14 +108,14 @@ function makeAddViewShell(msgsEl, titleText, descText) {
   msgsEl.textContent = ''
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#a8a8a8;font-size:13px;padding:20px;box-sizing:border-box;'
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
   const title = document.createElement('div')
   title.textContent = titleText
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
   wrapper.appendChild(title)
   const desc = document.createElement('div')
   desc.textContent = descText
-  desc.style.cssText = 'font-size:13px;color:#808080;margin-bottom:2px;'
+  desc.style.cssText = 'font-size:13px;color:#ffffff;margin-bottom:2px;'
   wrapper.appendChild(desc)
   msgsEl.appendChild(wrapper)
   return wrapper
@@ -136,7 +136,7 @@ async function renderFollowImportPicker(msgsEl) {
   const wrapper = makeAddViewShell(msgsEl, t('mc_fill_cockpit'), t('mc_fill_cockpit_desc'))
 
   const status = document.createElement('div')
-  status.style.cssText = 'font-size:13px;color:#808080;font-family:ui-monospace,monospace;'
+  status.style.cssText = 'font-size:13px;color:#ffffff;font-family:ui-monospace,monospace;'
   status.textContent = t('mc_fill_cockpit_loading')
   wrapper.appendChild(status)
 
@@ -160,7 +160,7 @@ async function renderFollowImportPicker(msgsEl) {
   // an account that was working fine.
   if (!resp || resp.error) {
     const err = resp?.error || 'twitch_unavailable'
-    status.style.color = '#808080'
+    status.style.color = '#ffffff'
     if (err === 'login_required') {
       status.textContent = t('mc_fill_cockpit_login')
       const link = document.createElement('a')
@@ -230,21 +230,21 @@ async function renderFollowImportPicker(msgsEl) {
 
   const list = document.createElement('div')
   list.style.cssText =
-    'display:flex;flex-direction:column;gap:2px;width:100%;max-width:320px;max-height:240px;overflow-y:auto;border:1px solid #808080;padding:6px;box-sizing:border-box;'
+    'display:flex;flex-direction:column;gap:2px;width:100%;max-width:320px;max-height:240px;overflow-y:auto;border:1px solid #ffffff;padding:6px;box-sizing:border-box;'
 
   const boxes = []
   for (const f of rows) {
     const isLive = liveSet.has(f.login)
     const row = document.createElement('label')
     row.style.cssText =
-      'display:flex;align-items:center;gap:8px;padding:3px 4px;cursor:pointer;font-size:13px;color:#d0d0d0;'
+      'display:flex;align-items:center;gap:8px;padding:3px 4px;cursor:pointer;font-size:13px;color:#ffffff;'
     row.addEventListener('mouseenter', () => {
       row.style.background = '#ffffff'
       row.style.color = '#000000'
     })
     row.addEventListener('mouseleave', () => {
       row.style.background = 'transparent'
-      row.style.color = '#d0d0d0'
+      row.style.color = '#000000'
     })
     const box = document.createElement('input')
     box.type = 'checkbox'
@@ -254,7 +254,7 @@ async function renderFollowImportPicker(msgsEl) {
     box.setAttribute('aria-label', f.login)
     const dot = document.createElement('span')
     // The one round thing in here, deliberately — a status dot reads as a dot.
-    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #4ade80)' : '#3a3a3a'};`
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : '#000000'};`
     const name = document.createElement('span')
     name.textContent =
       f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
@@ -311,13 +311,13 @@ function renderPasteListForm(msgsEl) {
     row.style.cssText = 'display:flex;flex-direction:column;gap:3px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;color:#949494;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:600;color:#ffffff;text-transform:lowercase;'
     const ta = document.createElement('textarea')
     ta.rows = 3
     ta.placeholder = ph
     ta.setAttribute('aria-label', label)
     ta.style.cssText =
-      'background:#000;color:#fff;border:1px solid #808080;padding:6px 10px;border-radius:0;font-size:13px;outline:none;font-family:ui-monospace,monospace;resize:vertical;'
+      'background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:13px;outline:none;font-family:ui-monospace,monospace;resize:vertical;'
     ta.addEventListener('keydown', (e) => e.stopPropagation())
     row.appendChild(lbl)
     row.appendChild(ta)
@@ -417,7 +417,7 @@ function renderAddChannelForm(msgsEl) {
   msgsEl.textContent = ''
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#a8a8a8;font-size:13px;padding:20px;box-sizing:border-box;'
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
 
   const title = document.createElement('div')
   title.textContent = t('mc_add_channel')
@@ -426,7 +426,7 @@ function renderAddChannelForm(msgsEl) {
 
   const desc = document.createElement('div')
   desc.textContent = t('mc_enter_platform')
-  desc.style.cssText = 'font-size:13px;color:#808080;margin-bottom:2px;'
+  desc.style.cssText = 'font-size:13px;color:#ffffff;margin-bottom:2px;'
   wrapper.appendChild(desc)
 
   const makeRow = (label, placeholder) => {
@@ -434,7 +434,7 @@ function renderAddChannelForm(msgsEl) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#949494;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'
@@ -443,7 +443,7 @@ function renderAddChannelForm(msgsEl) {
     // to assistive tech — name it explicitly (label is 'twitch'/'kick'/'youtube').
     input.setAttribute('aria-label', label)
     input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #808080;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
+      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
     // Stop YouTube/Kick keyboard shortcuts from stealing keystrokes
     input.addEventListener('keydown', (e) => e.stopPropagation())
     row.appendChild(lbl)
@@ -593,7 +593,7 @@ function renderAddChannelForm(msgsEl) {
 
   // Heatsync linkage status indicator (between rows and error)
   const linkStatus = document.createElement('div')
-  linkStatus.style.cssText = 'font-size:13px;color:#808080;min-height:14px;font-family:ui-monospace,monospace;'
+  linkStatus.style.cssText = 'font-size:13px;color:#ffffff;min-height:14px;font-family:ui-monospace,monospace;'
   wrapper.insertBefore(linkStatus, errEl)
 
   // Debounced autofill — when user types in any field, look up that name on
@@ -612,13 +612,13 @@ function renderAddChannelForm(msgsEl) {
     }
     const gen = ++_autofillGen
     linkStatus.textContent = 'checking heatsync…'
-    linkStatus.style.color = '#808080'
+    linkStatus.style.color = '#ffffff'
     const res =
       typeof resolveIdentity === 'function' ? await resolveIdentity(name, { platform: sourcePlatform }) : { ok: false }
     if (gen !== _autofillGen) return
     if (!res?.ok) {
       linkStatus.textContent = res?.notFound ? 'no heatsync profile — fill manually' : "couldn't reach heatsync"
-      linkStatus.style.color = '#666'
+      linkStatus.style.color = '#ffffff'
       return
     }
     const id = res.identity
@@ -765,7 +765,7 @@ function renderLivePlatformsPane(pane) {
 
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#a8a8a8;font-size:13px;padding:20px;box-sizing:border-box;'
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
 
   const title = document.createElement('div')
   title.textContent = `edit live — ${urlCh}`
@@ -777,14 +777,14 @@ function renderLivePlatformsPane(pane) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#949494;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'
     input.placeholder = placeholder
     input.value = value || ''
     input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #808080;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
+      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
     input.addEventListener('keydown', (e) => e.stopPropagation())
     row.appendChild(lbl)
     row.appendChild(input)
@@ -855,7 +855,7 @@ function showEditChannelForm(tabId) {
 
   const wrapper = document.createElement('div')
   wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#a8a8a8;font-size:13px;padding:20px;box-sizing:border-box;'
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
 
   const title = document.createElement('div')
   title.textContent = t('mc_edit_channel', [tabId])
@@ -867,14 +867,14 @@ function showEditChannelForm(tabId) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#949494;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'
     input.placeholder = placeholder
     input.value = value || ''
     input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #808080;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
+      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
     // Stop YouTube/Kick keyboard shortcuts from stealing keystrokes
     input.addEventListener('keydown', (e) => e.stopPropagation())
     row.appendChild(lbl)

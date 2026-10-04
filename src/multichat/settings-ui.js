@@ -534,7 +534,7 @@ function _renderSearchResults() {
       actions.map((a) => a.html).join('') +
       '</div>'
   }
-  if (!count) html = '<div class="hs-mc-setting-row" style="color:#808080">no matches</div>'
+  if (!count) html = '<div class="hs-mc-setting-row" style="color:#ffffff">no matches</div>'
   return { html: html, count: count, total: total }
 }
 
@@ -547,7 +547,7 @@ function _renderMutedGroup() {
     t('mc_settings_muted_users') +
     '</div>' +
     (mutedUsers.size === 0
-      ? `<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${t('mc_settings_no_muted')}</div>`
+      ? `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${t('mc_settings_no_muted')}</div>`
       : Array.from(mutedUsers)
           .sort()
           .map((u) => {
@@ -580,8 +580,8 @@ function _renderCrashLogBlock() {
     '<div style="display:flex;justify-content:space-between;align-items:center;width:100%">' +
     '<span class="hs-mc-setting-label">recent errors</span>' +
     '<div style="display:flex;gap:4px">' +
-    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">copy</button>' +
-    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">clear</button>' +
+    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">copy</button>' +
+    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">clear</button>' +
     '</div>' +
     '</div>' +
     '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">(loading...)</pre>' +
@@ -597,7 +597,7 @@ const _SET_ACTION_ROWS = [
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
       '<span class="hs-mc-setting-label" data-tip="dump ui_settings + all hs_* keys to a JSON file. portable across devices and browsers.">export settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">download .json</button>' +
+      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">download .json</button>' +
       '</div>',
   },
   {
@@ -605,14 +605,14 @@ const _SET_ACTION_ROWS = [
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
       '<span class="hs-mc-setting-label" data-tip="restore from a previously-exported JSON file. merges into existing settings.">import settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">load .json</button>' +
+      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">load .json</button>' +
       '</div>',
   },
   {
     hay: 'default reset all settings factory system',
     html:
       '<div class="hs-mc-setting-row" style="justify-content:flex-end">' +
-      '<button class="hs-mc-defaults-btn" title="reset every setting on every page" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">all defaults</button>' +
+      '<button class="hs-mc-defaults-btn" title="reset every setting on every page" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">all defaults</button>' +
       '</div>',
   },
 ]
@@ -689,10 +689,10 @@ var FR_TYPE_LABELS = {
   expr: 'expr',
 }
 var FR_BTN =
-  'background:#000;color:#fff;border:1px solid #808080;padding:1px 6px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4'
-var FR_SEL = 'background:#000;color:#fff;border:1px solid #808080;padding:1px 3px;font-size:13px;font-family:inherit'
+  'background:#000;color:#fff;border:1px solid #ffffff;padding:1px 6px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4'
+var FR_SEL = 'background:#000;color:#fff;border:1px solid #ffffff;padding:1px 3px;font-size:13px;font-family:inherit'
 var FR_INPUT =
-  'background:#000;color:#fff;border:1px solid #808080;padding:1px 4px;font-size:13px;font-family:inherit;flex:1;min-width:60px'
+  'background:#000;color:#fff;border:1px solid #ffffff;padding:1px 4px;font-size:13px;font-family:inherit;flex:1;min-width:60px'
 
 function _renderFilterRuleRow(r) {
   var on = !!r.enabled
@@ -712,7 +712,7 @@ function _renderFilterRuleRow(r) {
     '" data-fr-action="toggle" data-fr-id="' +
     id +
     '" style="flex-shrink:0"><span class="hs-mc-toggle-knob"></span></button>' +
-    '<span style="color:#808080;font-size:13px;min-width:28px;flex-shrink:0">' +
+    '<span style="color:#ffffff;font-size:13px;min-width:28px;flex-shrink:0">' +
     typeLabel +
     '</span>' +
     '<span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1" title="' +
@@ -720,20 +720,20 @@ function _renderFilterRuleRow(r) {
     '">' +
     val +
     '</span>' +
-    '<span style="color:#aaa;font-size:13px;flex-shrink:0">▶' +
+    '<span style="color:#ffffff;font-size:13px;flex-shrink:0">▶' +
     aLabel +
     '</span>' +
     (aColor
       ? '<span style="display:inline-block;width:10px;height:10px;background:' +
         aColor +
-        ';border:1px solid #444;flex-shrink:0"></span>'
+        ';border:1px solid #ffffff;flex-shrink:0"></span>'
       : '') +
     (r.action === 'highlight' && r.sound
-      ? '<span style="color:#808080;font-size:13px;flex-shrink:0" title="sound: ' +
+      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="sound: ' +
         escapeHtml(String(r.sound)) +
         '">♪</span>'
       : '') +
-    '<span style="color:#666;font-size:13px;flex-shrink:0">' +
+    '<span style="color:#ffffff;font-size:13px;flex-shrink:0">' +
     scopeLabel +
     '</span>' +
     '</div>' +
@@ -741,12 +741,12 @@ function _renderFilterRuleRow(r) {
     id +
     '" style="' +
     FR_BTN +
-    ';color:#808080;flex-shrink:0;padding:1px 4px" title="move up (higher priority — first match wins)">▲</button>' +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move up (higher priority — first match wins)">▲</button>' +
     '<button data-fr-action="down" data-fr-id="' +
     id +
     '" style="' +
     FR_BTN +
-    ';color:#808080;flex-shrink:0;padding:1px 4px" title="move down">▼</button>' +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move down">▼</button>' +
     hsXButtonHtml('hs-x-inline', 'delete rule', 'data-fr-action="delete" data-fr-id="' + id + '" title="delete rule"') +
     '</div>'
   )
@@ -764,7 +764,7 @@ function _renderFilterRuleAddForm() {
       .join('')
   return (
     '<div class="hs-mc-setting-row hs-mc-setting-row-block hs-mc-fr-addform" style="padding:4px 4px 6px">' +
-    '<div style="font-size:13px;color:#808080;margin-bottom:4px">add rule</div>' +
+    '<div style="font-size:13px;color:#ffffff;margin-bottom:4px">add rule</div>' +
     '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">' +
     '<select data-fr-field="type" style="' +
     FR_SEL +
@@ -785,7 +785,7 @@ function _renderFilterRuleAddForm() {
     '<option value="highlight">highlight</option>' +
     '<option value="hide">hide</option>' +
     '</select>' +
-    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #808080;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="highlight color">' +
+    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #ffffff;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="highlight color">' +
     '<select data-fr-field="sound" style="' +
     FR_SEL +
     ';width:62px" title="highlight sound (highlight action only)">' +
@@ -795,7 +795,7 @@ function _renderFilterRuleAddForm() {
     '<option value="knock">knock</option>' +
     '<option value="chime">chime</option>' +
     '</select>' +
-    '<label style="display:flex;align-items:center;gap:2px;color:#808080;font-size:13px;cursor:pointer;flex-shrink:0" title="case-sensitive match">' +
+    '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="case-sensitive match">' +
     '<input type="checkbox" data-fr-field="cs" style="margin:0;cursor:pointer">Aa</label>' +
     '<select data-fr-field="scope" style="' +
     FR_SEL +
@@ -804,11 +804,11 @@ function _renderFilterRuleAddForm() {
     '</select>' +
     '<button data-fr-action="add" style="' +
     FR_BTN +
-    ';background:#222">+ add</button>' +
+    ';background:#000000">+ add</button>' +
     '</div>' +
-    '<div style="font-size:13px;color:#808080;margin-top:4px;line-height:1.4">' +
+    '<div style="font-size:13px;color:#ffffff;margin-top:4px;line-height:1.4">' +
     'expr: compose with &amp;&amp; || ! and ( ). fields user: badge: type: contains: regex: · flags first action reply cheer · bits&gt;100. ' +
-    'e.g. <code style="color:#808080">first &amp;&amp; !badge:subscriber</code>' +
+    'e.g. <code style="color:#ffffff">first &amp;&amp; !badge:subscriber</code>' +
     '</div>' +
     '</div>'
   )
@@ -819,7 +819,7 @@ function _renderFilterRulesGroup() {
   var rules = _getRawFilterRules()
   var ruleRows =
     rules.length === 0
-      ? '<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">no rules — add one below</div>'
+      ? '<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">no rules — add one below</div>'
       : rules.map(_renderFilterRuleRow).join('')
   return (
     '<div class="hs-mc-settings-group">' +
@@ -925,7 +925,7 @@ function _renderPageDefaultsRow(cat) {
     '<div class="hs-mc-setting-row" style="justify-content:flex-end;padding-top:6px">' +
     '<button class="hs-mc-pagedefaults-btn" data-set-cat="' +
     escapeHtml(cat) +
-    '" title="reset this page to defaults" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">default</button>' +
+    '" title="reset this page to defaults" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">default</button>' +
     '</div>'
   )
 }
@@ -1292,8 +1292,8 @@ function _renderPresetPanel() {
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
       '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="preset name" maxlength="24" style="flex:1">' +
       '<div style="display:flex;gap:4px">' +
-      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">save</button>' +
-      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">save</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
       '</div>' +
       '</div>' +
       '<div class="hs-mc-set-keyhint">snapshots every setting that differs from defaults — sharable via export settings</div>' +
@@ -1303,7 +1303,7 @@ function _renderPresetPanel() {
   const changes = _presetChanges(_presetPending.diff)
   let rows = ''
   if (!changes.length) {
-    rows = '<div class="hs-mc-setting-row" style="color:#808080">already matching — nothing to change</div>'
+    rows = '<div class="hs-mc-setting-row" style="color:#ffffff">already matching — nothing to change</div>'
   }
   for (const c of changes) {
     rows +=
@@ -1311,7 +1311,7 @@ function _renderPresetPanel() {
       '<span class="hs-mc-setting-label">' +
       escapeHtml(_setLabel(c.def)) +
       '</span>' +
-      '<span style="font-size:13px;flex-shrink:0"><span style="color:#808080">' +
+      '<span style="font-size:13px;flex-shrink:0"><span style="color:#ffffff">' +
       escapeHtml(_fmtPresetVal(c.def, c.from)) +
       '</span>' +
       ' → <span style="color:#fff">' +
@@ -1329,7 +1329,7 @@ function _renderPresetPanel() {
     (changes.length
       ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">apply</button>'
       : '') +
-    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #808080;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
     '</div>' +
     '</div>'
   )

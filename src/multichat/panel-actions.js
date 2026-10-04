@@ -187,12 +187,12 @@ function openSubForCurrentTab(anchorEl) {
   const menu = document.createElement('div')
   menu.id = 'hs-mc-ctx-menu'
   menu.style.cssText =
-    'position:fixed;z-index:99999;background:#000;border:1px solid #808080;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
+    'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
   for (const l of links) {
     const item = document.createElement('div')
     item.textContent = l.label
-    item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#ff8700;'
-    item.addEventListener('mouseenter', () => (item.style.background = 'rgba(255,255,255,0.06)'), {
+    item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#ffffff;'
+    item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
       signal: mcSignal,
     })
     item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })

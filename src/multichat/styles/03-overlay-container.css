@@ -25,8 +25,7 @@
     #hs-kick-resize-handle,
     #hs-c-resize-handle {
       background: #fff;
-      opacity: 0.9;
-      transition: opacity 0.12s;
+       transition: opacity 0.12s;
     }
     #hs-mc-resize-handle::before,
     #hs-yt-resize-handle::before,
@@ -165,7 +164,7 @@
       cursor: pointer;
       border-left: 3px solid var(--hs-brand);
       border-bottom: 1px solid var(--hs-border);
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+      box-shadow: 0 2px 0 #000000;
     }
     .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
     .hs-mc-chat-banner-poll { border-left-color: var(--hs-reply); }
@@ -174,8 +173,7 @@
       content: '▸';
       margin-left: auto;
       padding-left: 6px;
-      opacity: 0.75;
-    }
+     }
     .hs-mc-chat-banner-item:hover::after { opacity: 1; }
     /* The title is the part that must survive a narrow panel — it ellipsises
        while the timer, badge and ▸ keep their space. */
@@ -193,24 +191,24 @@
       color: #000 !important;
     }
     .hs-mc-chat-banner-pred {
-      background: #0e0e10;
-      border-bottom: 1px solid rgba(56,122,255,0.3);
-      color: #a8c8ff;
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
+      color: #ffffff;
     }
     .hs-mc-chat-banner-poll {
-      background: #0e0e10;
-      border-bottom: 1px solid rgba(0,200,100,0.25);
-      color: #80e0a0;
+      background: #000000;
+      border-bottom: 1px solid #00ff00;
+      color: #00ff00;
     }
     .hs-mc-chat-banner-pin {
-      background: #0e0e10;
-      border-bottom: 1px solid rgba(191,148,255,0.2);
-      color: #d4bfff;
+      background: #000000;
+      border-bottom: 1px solid #ff00ff;
+      color: #ffffff;
     }
     .hs-mc-chat-banner-hype {
-      background: #0e0e10;
-      border-bottom: 1px solid rgba(255,135,0,0.3);
-      color: #ffb060;
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
+      color: #ffff00;
     }
     .hs-mc-chat-banner-icon {
       font-size: 14px;
@@ -228,7 +226,7 @@
       font-size: 13px;
       font-weight: 700;
       color: #fff;
-      background: rgba(0,0,0,0.4);
+      background: #000000;
       padding: 1px 5px;
       border-radius: 0;
       flex-shrink: 0;

@@ -59,7 +59,7 @@
       unicode-bidi: plaintext;
     }
     .hs-mc-msg.hs-mc-zebra, .hs-feed-msg.hs-mc-zebra {
-      background: #303030;
+      background: #000000;
     }
     /* Hovered-row tint while the reply stack is shown — same dark olive as stack rows.
        Critical: ONLY change the background. Changing padding/line-height shrinks the
@@ -137,7 +137,7 @@
        — visually rich rather than a wall of olive. */
     #hs-mc-reply-stack .hs-mc-reply-stack-row:nth-last-child(odd),
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row:nth-child(odd) {
-      background: #1a1a04 !important;
+      background: #000000 !important;
     }
     /* Reply-context chip on dark olive rows — dim gray reads as skip-me
        metadata against the dark bg (was black against bright olive). */
@@ -147,9 +147,9 @@
     #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx *,
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx,
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx * {
-      color: #999 !important;
-      -webkit-text-fill-color: #999 !important;
-      border-left-color: #999 !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      border-left-color: #ffffff !important;
     }
     .hs-mc-reply-stack-chip {
       flex: 0 0 auto;
@@ -187,14 +187,14 @@
       background: var(--hs-warn-bg) !important;
       box-shadow: none !important;
       margin: 0 !important;
-      border-bottom: 1px solid #555500;
+      border-bottom: 1px solid #ffff00;
       color: #fff;
     }
     .hs-feed-postlink-preview-row:last-child {
       border-bottom: none;
     }
     .hs-feed-postlink-preview-row:nth-child(even) {
-      background: #1a1a04 !important;
+      background: #000000 !important;
     }
     /* Two classes (row + linked) to out-specify the :nth-child(even) zebra rule
        so the referenced post keeps its brighter highlight instead of blending
@@ -202,7 +202,7 @@
     .hs-feed-postlink-preview-row.hs-feed-postlink-preview-linked {
       /* linked target = attention/yellow family; #555500 is one olive step
          brighter than the #2e2e08 stack rows so the row still pops */
-      background: #555500 !important;
+      background: #000000 !important;
       border-left: 2px solid var(--hs-mention) !important;
     }
     /* Brief flash on the message that the overflow chip scrolled to */
@@ -376,19 +376,19 @@
     .hs-mc-msg.hs-mc-system {
       border-left: 3px solid var(--hs-plat-twitch);
       padding-left: 8px;
-      background: rgba(145, 71, 255, 0.08);
+      background: #000000;
     }
     .hs-mc-msg.hs-mc-kicks {
-      border-left: 3px solid #ffd600;
+      border-left: 3px solid #ffff00;
       padding-left: 8px;
-      background: rgba(255, 214, 0, 0.1);
+      background: #000000;
     }
     .hs-mc-kicks .hs-mc-system-text {
-      color: #ffd600;
+      color: #ffff00;
       font-weight: 700;
     }
     .hs-mc-system-text {
-      color: #b0b0b0;
+      color: #ffffff;
       font-size: 13px;
       font-style: italic;
       display: block;
@@ -401,32 +401,32 @@
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
     .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
     .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
-    .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00cc44; }
+    .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00ff00; }
     .hs-mc-msg.hs-mc-notice-unban     { border-left-color: var(--hs-ok) !important; background: var(--hs-ok-tint) !important; }
     .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: rgba(0, 128, 0, 0.10) !important; }
-    .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00cc44; }
+    .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00ff00; }
     /* Role grants (blue mod / pink VIP) */
-    .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: rgba(64, 128, 255, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-mod-add     .hs-mc-system-text { color: var(--hs-info); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-mod-remove  { border-left-color: #c0c0c0 !important; background: rgba(192, 192, 192, 0.06) !important; }
-    .hs-mc-msg.hs-mc-notice-mod-remove  .hs-mc-system-text { color: #c0c0c0; }
+    .hs-mc-msg.hs-mc-notice-mod-remove  { border-left-color: #ffffff !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-mod-remove  .hs-mc-system-text { color: #ffffff; }
     .hs-mc-msg.hs-mc-notice-vip-add     { border-left-color: var(--hs-thread) !important; background: var(--hs-thread-tint) !important; }
     .hs-mc-msg.hs-mc-notice-vip-add     .hs-mc-system-text { color: var(--hs-thread); font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-vip-remove  { border-left-color: #c0c0c0 !important; background: rgba(192, 192, 192, 0.06) !important; }
-    .hs-mc-msg.hs-mc-notice-vip-remove  .hs-mc-system-text { color: #c0c0c0; }
+    .hs-mc-msg.hs-mc-notice-vip-remove  { border-left-color: #ffffff !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-vip-remove  .hs-mc-system-text { color: #ffffff; }
     /* Single message delete = dark red (less severe than ban) */
-    .hs-mc-msg.hs-mc-notice-delete    { border-left-color: var(--hs-danger-dim) !important; background: rgba(128, 0, 0, 0.10) !important; }
-    .hs-mc-msg.hs-mc-notice-delete    .hs-mc-system-text { color: #ff8080; }
+    .hs-mc-msg.hs-mc-notice-delete    { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-delete    .hs-mc-system-text { color: #ff0000; }
     /* Room mode change = aqua */
     .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
     .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Sub events (Twitch convention = purple, gifts = brighter magenta variant) */
-    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: var(--hs-plat-twitch) !important; background: rgba(145, 70, 255, 0.12) !important; }
-    .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #b87aff; font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-gift      { border-left-color: #cc44ff !important; background: rgba(204, 68, 255, 0.16) !important; }
-    .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #cc44ff; font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-sub       { border-left-color: var(--hs-plat-twitch) !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #ff00ff; font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-gift      { border-left-color: #ff00ff !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #ff00ff; font-weight: 600; }
     /* Raid = magenta (ANSI 13) — special event family */
     .hs-mc-msg.hs-mc-notice-raid      { border-left-color: var(--hs-thread) !important; background: var(--hs-thread-tint) !important; }
     .hs-mc-msg.hs-mc-notice-raid      .hs-mc-system-text { color: var(--hs-thread); font-weight: 700; }
@@ -448,13 +448,13 @@
     }
     .hs-mc-msg.hs-mc-notice-announce  .hs-mc-system-text { color: var(--hs-warn); font-weight: 700; }
     /* Bits = gold/amber (distinct from raid orange and announce yellow) */
-    .hs-mc-msg.hs-mc-notice-bits      { border-left-color: var(--hs-gold) !important; background: rgba(255, 170, 0, 0.10) !important; }
+    .hs-mc-msg.hs-mc-notice-bits      { border-left-color: var(--hs-gold) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-bits      .hs-mc-system-text { color: var(--hs-gold); font-weight: 600; }
     /* viewermilestone (sub anniversary, etc.) = teal */
-    .hs-mc-msg.hs-mc-notice-milestone { border-left-color: var(--hs-reply-dim) !important; background: rgba(0, 128, 128, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-milestone { border-left-color: var(--hs-reply-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Watch-streak = brand orange — engagement heat, distinct from raid magenta */
-    .hs-mc-msg.hs-mc-notice-watchstreak { border-left-color: var(--hs-brand) !important; background: rgba(255, 127, 0, 0.12) !important; }
+    .hs-mc-msg.hs-mc-notice-watchstreak { border-left-color: var(--hs-brand) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text { color: var(--hs-brand); font-weight: 600; }
     /* Charity donation = gold (generosity family, same as bits/gifts) */
     .hs-mc-msg.hs-mc-notice-charity { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
@@ -508,10 +508,10 @@
     .hs-mc-msg.hs-mc-notice-mod-anniversary { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
     .hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
     /* Errors / rejections = dim maroon */
-    .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: rgba(128, 0, 0, 0.06) !important; }
-    .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff8080; }
+    .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff0000; }
     /* First-time chatter (Twitch first-msg=1) = Twitch magenta-purple */
-    .hs-mc-msg.hs-mc-first-msg { border-left: 3px solid #bd5fff; padding-left: 8px; background: rgba(189, 95, 255, 0.12); }
+    .hs-mc-msg.hs-mc-first-msg { border-left: 3px solid #ff00ff; padding-left: 8px; background: #000000; }
     /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */
@@ -525,7 +525,7 @@
        0.5, not 0.45: white text at half opacity over the panel's black lands
        on exactly #808080 — the ansi grey — instead of #737373, which is off
        the palette for no reason. Measured, not assumed. */
-    .hs-mc-msg.hs-mc-msg-cleared { opacity: 0.5; }
+    .hs-mc-msg.hs-mc-msg-cleared { }
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote,
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-wrapper > img,
     /* emoji too — without this an emoji kept full colour while every emote
@@ -541,7 +541,7 @@
       background: var(--hs-gold-tint);
       padding: 4px 8px;
     }
-    .hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved { opacity: 0.6; }
+    .hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved { }
     .hs-mc-automod-badge {
       display: inline-block;
       background: var(--hs-gold);
@@ -565,7 +565,7 @@
       word-break: break-word;
     }
     .hs-mc-automod-sender { font-weight: 700; color: #fff; }
-    .hs-mc-automod-text { color: #e0e0e0; }
+    .hs-mc-automod-text { color: #ffffff; }
     .hs-mc-automod-actions { margin-top: 4px; display: flex; align-items: center; gap: 6px; }
     .hs-mc-automod-btn {
       background: #000;
@@ -581,7 +581,7 @@
     .hs-mc-automod-status { font-size: 13px; color: var(--hs-gold); }
     .hs-mc-automod-status.hs-mc-automod-err { color: var(--hs-danger); }
     .hs-mc-msg.hs-mc-redeemed {
-      background: rgba(145, 71, 255, 0.15);
+      background: #000000;
       border-left: 3px solid var(--hs-plat-twitch);
       padding-left: 8px;
     }
@@ -601,7 +601,7 @@
        words are one signal instead of two: the colour stays for scanning a fast
        chat, the words are there the first time you meet it. */
     .hs-mc-first-label {
-      color: #bd5fff;
+      color: #ff00ff;
       font-size: 13px;
       font-style: normal;
       font-weight: 600;
@@ -656,7 +656,7 @@
        sides were three different reds. */
     .hs-mc-msg.mention,
     .hs-feed-msg.mention {
-      background: #870000;
+      background: #000000;
     }
     /* Zebra striping for consecutive mentions — leverages the existing
        neighbor-flip .hs-mc-zebra cadence so adjacent mention rows alternate
@@ -664,7 +664,7 @@
        the mention semantic while distinguishing rows. */
     .hs-mc-msg.mention.hs-mc-zebra,
     .hs-feed-msg.mention.hs-mc-zebra {
-      background: #5f0000;
+      background: #000000;
     }
     /* Row base color white for non-colored text (gray timestamps, plain
        message body) — inline user colors override naturally. No star-cascade
@@ -675,8 +675,8 @@
     /* Channel tag — dim gray reads as skip-me metadata against the dark bg. */
     .hs-mc-msg.mention .hs-mc-channel,
     .hs-mc-msg.mention .hs-mc-channel * {
-      color: #999 !important;
-      -webkit-text-fill-color: #999 !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
     }
     .hs-mc-msg.hs-first-msg {
       /* Session-first glow — "first time YOU have seen them since this tab
@@ -687,10 +687,10 @@
          dozens that didn't. Magenta is now exclusively .hs-mc-first-msg.
          Bar + inset glow (the setting is called "glow", so it glows); an
          earlier 0.30 alpha at -2px spread read as nothing on this background. */
-      box-shadow: inset 2px 0 0 var(--hs-mention), inset 0 0 14px -1px rgba(255, 255, 0, 0.42);
+      box-shadow: inset 2px 0 0 var(--hs-mention);
     }
     .hs-mc-msg.hs-kw-match {
-      background: rgba(255, 255, 0, 0.14);
+      background: #000000;
       box-shadow: inset 0 0 0 1px var(--hs-mention);
     }
     /* Mention red wins over keyword-yellow when a row is both — "you got pinged"
@@ -698,12 +698,12 @@
        regardless of source order; drops the keyword's yellow inset border too. */
     .hs-mc-msg.mention.hs-kw-match,
     .hs-feed-msg.mention.hs-kw-match {
-      background: #5c1212;
+      background: #000000;
       box-shadow: none;
     }
     .hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,
     .hs-feed-msg.mention.hs-kw-match.hs-mc-zebra {
-      background: #380b0b;
+      background: #000000;
     }
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
        Monochrome by intent: a low-key gray bar (familiar, seen before). */
@@ -715,7 +715,7 @@
        without a color. */
     .hs-mc-msg.is-raider {
       box-shadow: inset 2px 0 0 #fff;
-      background: rgba(255, 255, 255, 0.06);
+      background: #000000;
     }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */
     .hs-mc-msg.hs-mc-rule-highlight {
@@ -724,7 +724,7 @@
       background: color-mix(in srgb, var(--hs-rule-hl, #fff) 12%, transparent);
     }
     .hs-mc-msg.tweet {
-      background: rgba(212, 73, 73, 0.3);
+      background: #000000;
     }
     .hs-mc-user {
       font-weight: 600;
@@ -770,6 +770,7 @@
     .hs-mc-platform-badge.hs-mc-pb-twitch { color: var(--hs-plat-twitch); }
     .hs-mc-platform-badge.hs-mc-pb-kick { color: var(--hs-plat-kick); }
     .hs-mc-platform-badge.hs-mc-pb-yt { color: var(--hs-plat-youtube); }
+    .hs-mc-platform-badge.hs-mc-pb-heatsync { color: var(--hs-plat-hs); }
     .hs-mc-badge {
       display: inline-block;
       /* Single font setting drives family + size (see .hs-mc-platform-badge). */
@@ -839,7 +840,6 @@
       transform: translate(-50%, -50%);
       color: #fff;
       font-size: 22px;
-      text-shadow: 0 0 4px #000;
       pointer-events: none;
     }
     /* pending/resolved rich cards reuse feed-embed styling; just cap + de-gap here */
@@ -873,7 +873,6 @@
       font-size: 15px;
       line-height: 15px;
       color: #fff;
-      text-shadow: 0 0 4px #000;
       pointer-events: none;
     }
     .hs-mc-media.hs-mc-playable.hs-playing:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending)::before {
@@ -962,7 +961,7 @@
       margin: 0;
       appearance: none;
       -webkit-appearance: none;
-      background: #303030;
+      background: #000000;
       border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
@@ -1125,8 +1124,7 @@
          soft. Subtlety comes from opacity, which costs no geometry.
          Guarded by the smear assertion in scripts/render-extension.ts. */
       font-size: inherit;
-      opacity: 0.55;
-      margin-left: 2px;
+       margin-left: 2px;
     }
     .hs-mc-reply-caret::before {
       content: '▾';

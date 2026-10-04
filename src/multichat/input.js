@@ -6076,13 +6076,13 @@ function showCycleTooltip() {
     if (css) s.style.cssText = css
     return s
   }
-  const dot = () => mkSpan(' · ', 'color:#555;')
+  const dot = () => mkSpan(' · ', 'color:#fff;')
   tt.replaceChildren()
-  tt.appendChild(mkSpan(`${acState.index + 1}/${acState.matches.length}`, 'color:#888;'))
+  tt.appendChild(mkSpan(`${acState.index + 1}/${acState.matches.length}`, 'color:#fff;'))
   tt.appendChild(mkSpan(` ${m.type === 'emoji' ? `${m.emoji} ${m.name}` : m.name}`, 'color:#fff;'))
   if (meta.cat) {
     tt.appendChild(dot())
-    tt.appendChild(mkSpan(meta.cat, 'color:#9e9e9e;'))
+    tt.appendChild(mkSpan(meta.cat, 'color:#fff;'))
   }
   if (meta.vis) {
     tt.appendChild(dot())
@@ -9128,7 +9128,7 @@ function showUploadStatus(msg, isError, clearAfterMs) {
     if (!inputbar) return
     const el = document.createElement('div')
     el.id = 'hs-mc-upload-status'
-    el.style.cssText = 'padding:2px 8px;font-size:13px;color:#fff;background:#000;border-top:1px solid #808080;'
+    el.style.cssText = 'padding:2px 8px;font-size:13px;color:#fff;background:#000;border-top:1px solid #ffffff;'
     el.textContent = msg
     inputbar.insertBefore(el, inputbar.firstChild)
   } else if (bar) {
@@ -9314,7 +9314,7 @@ function setupMediaDropHandlers() {
       dz = document.createElement('div')
       dz.id = 'hs-mc-drop-zone'
       dz.style.cssText =
-        'position:absolute;inset:0;background:rgba(255,255,255,0.1);border:2px dashed #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:99998;pointer-events:none;'
+        'position:absolute;inset:0;background:#000000;border:2px dashed #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:99998;pointer-events:none;'
       dz.textContent = 'drop image/video/link to upload'
       overlay.appendChild(dz)
     }

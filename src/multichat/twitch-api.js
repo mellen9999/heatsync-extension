@@ -74,8 +74,8 @@ function renderQuickLinks() {
       label: null,
       show: true,
       items: [
-        { action: 'sub', accent: '#e91916', icon: ICONS.sub, label: 'subscribe', direct: true },
-        { action: 'popout', accent: '#4a90d9', icon: ICONS.popout, label: 'popout chat', direct: true },
+        { action: 'sub', accent: '#ff0000', icon: ICONS.sub, label: 'subscribe', direct: true },
+        { action: 'popout', accent: '#ffffff', icon: ICONS.popout, label: 'popout chat', direct: true },
       ],
     },
     {
@@ -83,7 +83,7 @@ function renderQuickLinks() {
       show: isMod,
       items: [
         {
-          accent: '#00c8af',
+          accent: '#00ffff',
           icon: ICONS.shield,
           label: 'mod view (chat, automod, blocked terms)',
           url: (c) => `https://www.twitch.tv/moderator/${c}`,
@@ -143,32 +143,47 @@ function renderQuickLinks() {
       label: 'channel pages',
       show: !!ch,
       items: [
-        { accent: '#888', icon: ICONS.info, label: 'about page', url: (c) => `https://www.twitch.tv/${c}/about` },
-        { accent: '#888', icon: ICONS.video, label: 'videos', url: (c) => `https://www.twitch.tv/${c}/videos` },
-        { accent: '#888', icon: ICONS.video, label: 'clips', url: (c) => `https://www.twitch.tv/${c}/clips` },
-        { accent: '#888', icon: ICONS.calendar, label: 'schedule', url: (c) => `https://www.twitch.tv/${c}/schedule` },
+        { accent: '#ffffff', icon: ICONS.info, label: 'about page', url: (c) => `https://www.twitch.tv/${c}/about` },
+        { accent: '#ffffff', icon: ICONS.video, label: 'videos', url: (c) => `https://www.twitch.tv/${c}/videos` },
+        { accent: '#ffffff', icon: ICONS.video, label: 'clips', url: (c) => `https://www.twitch.tv/${c}/clips` },
+        {
+          accent: '#ffffff',
+          icon: ICONS.calendar,
+          label: 'schedule',
+          url: (c) => `https://www.twitch.tv/${c}/schedule`,
+        },
       ],
     },
     {
       label: 'your account',
       show: true,
       items: [
-        { accent: '#888', icon: ICONS.gift, label: 'drops / inventory', url: () => 'https://www.twitch.tv/inventory' },
         {
-          accent: '#888',
+          accent: '#ffffff',
+          icon: ICONS.gift,
+          label: 'drops / inventory',
+          url: () => 'https://www.twitch.tv/inventory',
+        },
+        {
+          accent: '#ffffff',
           icon: ICONS.sub,
           label: 'my subscriptions',
           url: () => 'https://www.twitch.tv/subscriptions',
         },
         {
-          accent: '#888',
+          accent: '#ffffff',
           icon: ICONS.user,
           label: 'following directory',
           url: () => 'https://www.twitch.tv/directory/following',
         },
-        { accent: '#888', icon: ICONS.settings, label: 'twitch settings', url: () => 'https://www.twitch.tv/settings' },
         {
-          accent: '#888',
+          accent: '#ffffff',
+          icon: ICONS.settings,
+          label: 'twitch settings',
+          url: () => 'https://www.twitch.tv/settings',
+        },
+        {
+          accent: '#ffffff',
           icon: ICONS.lock,
           label: 'privacy + security',
           url: () => 'https://www.twitch.tv/settings/security',
@@ -363,18 +378,18 @@ function makeCoinSvg(size) {
 
 function outcomeColor(color) {
   const map = {
-    PINK: '#f5009b',
-    BLUE: '#387aff',
+    PINK: '#ff00ff',
+    BLUE: '#ffffff',
     ORANGE: '#fff',
-    GREEN: '#00c853',
-    TEAL: '#00bcd4',
-    PURPLE: '#9c27b0',
-    YELLOW: '#fdd835',
-    LIGHT_BLUE: '#4fc3f7',
-    RED: '#e53935',
-    BROWN: '#795548',
+    GREEN: '#00ff00',
+    TEAL: '#00ffff',
+    PURPLE: '#ff00ff',
+    YELLOW: '#ffff00',
+    LIGHT_BLUE: '#00ffff',
+    RED: '#ff0000',
+    BROWN: '#ffff00',
   }
-  return map[color] || '#387aff'
+  return map[color] || '#ffffff'
 }
 
 function makePointIcon(size, cpImage) {
@@ -787,7 +802,7 @@ function renderRewards(rewards, balance, channelId) {
     card.dataset.channelId = channelId
     if (reward.isUserInputRequired) card.dataset.textRequired = '1'
     if (reward.prompt) card.dataset.prompt = reward.prompt
-    card.style.setProperty('--rc', reward.backgroundColor || '#9146ff')
+    card.style.setProperty('--rc', reward.backgroundColor || '#ff00ff')
 
     const imgUrl = reward.image?.url || reward.defaultImage?.url || ''
     if (imgUrl) {
@@ -1980,12 +1995,12 @@ function stopPredictionPoll() {
 // tags a chat message with bits>0, the `cheer<N>` token in the visible text
 // should render as the tier-appropriate cheermote + colored bits amount.
 const HS_CHEER_TIERS = [
-  { min: 100000, tier: 100000, color: '#f43021' },
-  { min: 10000, tier: 10000, color: '#fa0d72' },
-  { min: 5000, tier: 5000, color: '#0099fe' },
-  { min: 1000, tier: 1000, color: '#1db2a5' },
-  { min: 100, tier: 100, color: '#9c3ee8' },
-  { min: 1, tier: 1, color: '#979797' },
+  { min: 100000, tier: 100000, color: '#ff0000' },
+  { min: 10000, tier: 10000, color: '#ff00ff' },
+  { min: 5000, tier: 5000, color: '#ffffff' },
+  { min: 1000, tier: 1000, color: '#00ffff' },
+  { min: 100, tier: 100, color: '#ff00ff' },
+  { min: 1, tier: 1, color: '#ffffff' },
 ]
 function hsCheerTier(amount) {
   for (const t of HS_CHEER_TIERS) if (amount >= t.min) return t
@@ -2196,25 +2211,25 @@ function getOwnTwitchLogin() {
 
 // Twitch IRC badge rendering
 const BADGE_STYLES = {
-  broadcaster: { label: 'LIVE', bg: '#e91916', fg: '#fff' },
-  moderator: { label: 'MOD', bg: '#00ad03', fg: '#fff' },
-  vip: { label: 'VIP', bg: '#e005b9', fg: '#fff' },
-  subscriber: { label: 'SUB', bg: '#8205b4', fg: '#fff' },
-  predictions: { label: 'PRED', bg: '#1f69ff', fg: '#fff' },
-  premium: { label: 'PRIME', bg: '#0d6efd', fg: '#fff' },
-  admin: { label: 'ADMIN', bg: '#faaf19', fg: '#000' },
-  staff: { label: 'STAFF', bg: '#faaf19', fg: '#000' },
-  global_mod: { label: 'GMOD', bg: '#00ad03', fg: '#fff' },
-  partner: { label: '✓', bg: '#9146ff', fg: '#fff' },
-  'bits-leader': { label: 'BITS', bg: '#ffd700', fg: '#000' },
-  'sub-gifter': { label: 'GIFT', bg: '#8205b4', fg: '#fff' },
-  artist: { label: 'ART', bg: '#ff6b35', fg: '#fff' },
-  turbo: { label: 'T+', bg: '#6441a5', fg: '#fff' },
-  founder: { label: 'FND', bg: '#8205b4', fg: '#fff' },
+  broadcaster: { label: 'LIVE', bg: '#ff0000', fg: '#fff' },
+  moderator: { label: 'MOD', bg: '#000000', fg: '#fff' },
+  vip: { label: 'VIP', bg: '#ff00ff', fg: '#fff' },
+  subscriber: { label: 'SUB', bg: '#ff00ff', fg: '#fff' },
+  predictions: { label: 'PRED', bg: '#000080', fg: '#fff' },
+  premium: { label: 'PRIME', bg: '#000080', fg: '#fff' },
+  admin: { label: 'ADMIN', bg: '#ffff00', fg: '#000' },
+  staff: { label: 'STAFF', bg: '#ffff00', fg: '#000' },
+  global_mod: { label: 'GMOD', bg: '#000000', fg: '#fff' },
+  partner: { label: '✓', bg: '#ff00ff', fg: '#fff' },
+  'bits-leader': { label: 'BITS', bg: '#ffff00', fg: '#000' },
+  'sub-gifter': { label: 'GIFT', bg: '#ff00ff', fg: '#fff' },
+  artist: { label: 'ART', bg: '#ffff00', fg: '#fff' },
+  turbo: { label: 'T+', bg: '#ff00ff', fg: '#fff' },
+  founder: { label: 'FND', bg: '#ff00ff', fg: '#fff' },
   // Kick badges (underscore variants)
-  sub_gifter: { label: 'GIFT', bg: '#8205b4', fg: '#fff' },
-  og: { label: 'OG', bg: '#53fc18', fg: '#000' },
-  verified: { label: '✓', bg: '#53fc18', fg: '#000' },
+  sub_gifter: { label: 'GIFT', bg: '#ff00ff', fg: '#fff' },
+  og: { label: 'OG', bg: '#00ff00', fg: '#000' },
+  verified: { label: '✓', bg: '#00ff00', fg: '#000' },
 }
 
 // Terse chip text for the `textBadges` setting, and for the involuntary text

@@ -70,9 +70,9 @@ describe('provider colouring', () => {
     expect(api.hsTtModProvider('c!#00aaff')).toBe('bttv')
   })
   test('brand colours match the source chips used elsewhere', () => {
-    expect(api.HS_TT_PROVIDER_COLOR['7tv']).toBe('#29d8f6')
-    expect(api.HS_TT_PROVIDER_COLOR.bttv).toBe('#d50014')
-    expect(api.HS_TT_PROVIDER_COLOR.ffz).toBe('#0086c8')
+    expect(api.HS_TT_PROVIDER_COLOR['7tv']).toBe('#00ffff')
+    expect(api.HS_TT_PROVIDER_COLOR.bttv).toBe('#ff0000')
+    expect(api.HS_TT_PROVIDER_COLOR.ffz).toBe('#ffffff')
   })
 })
 

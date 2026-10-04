@@ -3445,11 +3445,11 @@
         const menu = document.createElement('div')
         menu.id = 'hs-mc-ctx-menu'
         menu.style.cssText =
-          'position:fixed;z-index:99999;background:#000;border:1px solid #808080;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
+          'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
         const item = document.createElement('div')
         item.textContent = 'edit platforms'
         item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#fff;'
-        item.addEventListener('mouseenter', () => (item.style.background = 'rgba(255,255,255,0.06)'), {
+        item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
           signal: mcSignal,
         })
         item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
@@ -3484,13 +3484,13 @@
       const menu = document.createElement('div')
       menu.id = 'hs-mc-ctx-menu'
       menu.style.cssText =
-        'position:fixed;z-index:99999;background:#000;border:1px solid #808080;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
+        'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
 
       const mkItem = (label, color, fn) => {
         const item = document.createElement('div')
         item.textContent = label
         item.style.cssText = `padding:6px 12px;cursor:pointer;color:${color};`
-        item.addEventListener('mouseenter', () => (item.style.background = 'rgba(255,255,255,0.06)'), {
+        item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
           signal: mcSignal,
         })
         item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
@@ -3503,7 +3503,7 @@
 
       mkItem('edit', '#fff', () => showEditChannelForm(tabId))
       for (const l of channelSubLinks(ch)) {
-        mkItem(l.label, '#ff8700', () => window.open(l.url, '_blank', 'noopener'))
+        mkItem(l.label, '#ffffff', () => window.open(l.url, '_blank', 'noopener'))
       }
       mkItem('remove', 'var(--hs-danger)', () => removeChannel(tabId))
 
@@ -3845,7 +3845,7 @@
   // no such use — it is only ever your own action, injected with force:true, so
   // a toggle for it would be a pill that does nothing when flipped. Color/tag
   // live here instead of in a boolmap option nobody can meaningfully turn off.
-  INLINE_NOTIF_TYPES.cmd = { tag: '[cmd]', color: '#808080', borderColor: '#808080', defaultOn: true }
+  INLINE_NOTIF_TYPES.cmd = { tag: '[cmd]', color: '#ffffff', borderColor: '#ffffff', defaultOn: true }
   // Runtime state: { op: true, re: false, dm: false, mention: true }
   const inlineNotifs = {}
   for (const [k, v] of Object.entries(INLINE_NOTIF_TYPES)) inlineNotifs[k] = v.defaultOn
@@ -7374,10 +7374,10 @@
       const div = document.createElement('div')
       div.className = `hs-mc-feed-inline hs-mc-cmd-inline${m.status === 'failed' ? ' hs-cmd-failed' : ''}`
       if (m.sendId) div.dataset.sendId = m.sendId
-      div.style.borderLeftColor = m.inlineNotifBorderColor || '#808080'
+      div.style.borderLeftColor = m.inlineNotifBorderColor || '#ffffff'
       const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
-      const label = `<span style="color:${m.inlineNotifColor || '#808080'};font-size:13px;font-weight:700;margin-right:4px">[cmd]</span>`
+      const label = `<span style="color:${m.inlineNotifColor || '#ffffff'};font-size:13px;font-weight:700;margin-right:4px">[cmd]</span>`
       const cmdText = `<span class="hs-cmd-text">${escapeHtml(m.text)}</span>`
       const markCls = m.status === 'ok' ? 'hs-cmd-ok' : m.status === 'failed' ? 'hs-cmd-fail' : 'hs-cmd-pending'
       const markText = m.status === 'ok' ? '✓' : m.status === 'failed' ? `✗${m.reason ? ` ${m.reason}` : ''}` : '…'
@@ -7401,7 +7401,7 @@
         m.momentId && /^\d+$/.test(m.momentId)
           ? ` <a class="hs-mc-moment-perma" href="https://heatsync.org/moment/${m.momentId}" target="_blank" rel="noopener" title="permalink — click to open, shift-click to paste into chat">¶</a>`
           : ''
-      div.innerHTML = `${tsSpan}${label}<span style="color:#c0c0c0">${escapeHtml(m.text || '')}</span>${perma}`
+      div.innerHTML = `${tsSpan}${label}<span style="color:#ffffff">${escapeHtml(m.text || '')}</span>${perma}`
       // Same deal as the inline DM row: clickable, contains an anchor (¶ perma),
       // so it opts into the universal hover via the attribute, not role.
       div.dataset.hsClickable = ''
@@ -7618,8 +7618,8 @@
           }
           // Text fallback for owner/mod without image
           const ytBadgeStyles = {
-            owner: { bg: '#ffd600', fg: '#000', label: '\u2606' },
-            moderator: { bg: '#5e84f1', fg: '#fff', label: '\u2694' },
+            owner: { bg: '#ffff00', fg: '#000', label: '\u2606' },
+            moderator: { bg: '#000080', fg: '#fff', label: '\u2694' },
           }
           const style = ytBadgeStyles[b.type]
           if (style)
@@ -7696,7 +7696,7 @@
       platformBadgesEnabled || plat !== hostPlatform
         ? `<span class="hs-mc-platform-badge hs-mc-pb-${plat}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[plat]}">${platLabel}</span>`
         : ''
-    const safeScColor = sanitizeColor(m.scColor || '#ffd600')
+    const safeScColor = sanitizeColor(m.scColor || '#ffff00')
     const scBadge =
       isSuperChat && m.amount
         ? `<span class="hs-mc-sc-badge" style="background:${safeScColor};color:#000;padding:0 4px;border-radius:0;font-size:13px;font-weight:700;margin-right:3px;">${escapeHtml(m.amount)}</span>`
@@ -10673,7 +10673,7 @@
     const menu = document.createElement('div')
     menu.id = 'hs-mc-live-picker'
     const rect = anchorEl.getBoundingClientRect()
-    menu.style.cssText = `position:fixed;z-index:99999;background:#000;border:1px solid #808080;padding:4px 0;min-width:130px;font-size:13px;font-family:inherit;left:${rect.left}px;top:${rect.bottom + 2}px;`
+    menu.style.cssText = `position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;padding:4px 0;min-width:130px;font-size:13px;font-family:inherit;left:${rect.left}px;top:${rect.bottom + 2}px;`
 
     const curLive = getLiveChannel()?.toLowerCase()
 
@@ -10712,7 +10712,7 @@
     const edit = document.createElement('div')
     edit.textContent = 'edit platforms'
     edit.style.cssText =
-      'padding:6px 12px;cursor:pointer;color:#fff;white-space:nowrap;border-top:1px solid #808080;margin-top:4px;'
+      'padding:6px 12px;cursor:pointer;color:#fff;white-space:nowrap;border-top:1px solid #ffffff;margin-top:4px;'
     edit.addEventListener('mouseenter', () => {
       edit.style.background = '#fff'
       edit.style.color = '#000'
@@ -12360,7 +12360,7 @@
       const banner = document.createElement('div')
       banner.id = 'hs-mc-killswitch-banner'
       banner.style.cssText =
-        'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#ff8700;color:#000;' +
+        'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#ffff00;color:#000;' +
         'font:600 12px/1.4 monospace;padding:6px 10px;text-align:center;'
       banner.textContent = msg ? `heatsync: ${reason} — ${msg}` : `heatsync: ${reason}`
       ;(document.body || document.documentElement).appendChild(banner)

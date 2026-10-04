@@ -584,7 +584,7 @@
       right: '12px',
       background: '#000',
       color: '#fff',
-      border: '1px solid #808080',
+      border: '1px solid #ffffff',
       borderRadius: '0',
       padding: '8px 10px',
       fontFamily: "'CozetteVector', monospace",
@@ -634,7 +634,7 @@
     // 2px radius, which is three house rules at once (yellow is warn, the
     // palette has no translucency, everything is square). It is a cursor, so it
     // takes the cursor invert, solid — same as heatsync.org.
-    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } .hs-vi-normal.hs-vi-leader { outline-color: #ff8700 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { background: #ff8700; color: #000; border-radius: 0; }`
+    s.textContent = `.hs-vi-normal { outline: 2px solid #f00 !important; outline-offset: 0 !important; } .hs-vi-normal.hs-vi-leader { outline-color: #ffff00 !important; } #hs-mc-input-wrap:has(> .hs-vi-normal) { overflow: visible !important; } .hs-vi-cursor { background: #ffffff; color: #000; border-radius: 0; }`
     document.head.appendChild(s)
   }
 

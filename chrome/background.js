@@ -5914,7 +5914,7 @@ function recomputeBadge() {
     badgeApi.setBadgeBackgroundColor({ color: '#ff0000' }).catch(() => {}) // doctrine: --hs-danger
   } else if (notifs > 0) {
     badgeApi.setBadgeText({ text: String(notifs) }).catch(() => {})
-    badgeApi.setBadgeBackgroundColor({ color: '#555' }).catch(() => {})
+    badgeApi.setBadgeBackgroundColor({ color: '#000000' }).catch(() => {})
   } else {
     badgeApi.setBadgeText({ text: '' }).catch(() => {})
   }
@@ -12312,7 +12312,7 @@ function bgIrcParseLine(raw, channelHint) {
         noticeType,
         user: 'system',
         text: notice[2],
-        color: '#808080',
+        color: '#ffffff',
         badges: '',
         channel: ch,
         time,
@@ -12368,7 +12368,7 @@ function bgIrcParseLine(raw, channelHint) {
         noticeType: duration ? 'timeout_success' : 'ban_success',
         user: 'system',
         text,
-        color: '#808080',
+        color: '#ffffff',
         badges: '',
         channel: ch,
         time,
@@ -12389,7 +12389,7 @@ function bgIrcParseLine(raw, channelHint) {
         noticeType: 'delete_message_success',
         user: 'system',
         text,
-        color: '#808080',
+        color: '#ffffff',
         badges: '',
         channel: channelHint || clearmsg[1].toLowerCase(),
         time: parseInt(tags['tmi-sent-ts'], 10) || parseInt(tags['rm-received-ts'], 10) || Date.now(),
@@ -12877,7 +12877,7 @@ function bgIrcHandleLine(line) {
           noticeType: 'mode_change',
           user: 'system',
           text,
-          color: '#808080',
+          color: '#ffffff',
           badges: '',
           channel: msg.channel,
           time: Date.now(),
@@ -13232,7 +13232,7 @@ function bgIrcRecordToExt(rec, channelHint) {
       noticeType: duration ? 'timeout_success' : 'ban_success',
       user: 'system',
       text,
-      color: '#808080',
+      color: '#ffffff',
       badges: '',
       channel: ch,
       time: rec.timestamp || Date.now(),
@@ -15025,7 +15025,7 @@ async function _kpHandleChatroomUpdated(d) {
       noticeType: 'mode_change',
       user: 'system',
       text,
-      color: '#808080',
+      color: '#ffffff',
       badges: '',
       channel: slug,
       time: Date.now(),

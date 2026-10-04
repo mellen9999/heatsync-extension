@@ -821,6 +821,7 @@
     .catch(() => {})
 
   // User color picker popup (right-click username → open)
+  // hs-exempt-start: swatches are the USER's name-colour choices, not our chrome
   const HS_USER_COLOR_SWATCHES = [
     '#fff',
     '#ffd700',
@@ -839,6 +840,7 @@
     '#888888',
     '#000000',
   ]
+  // hs-exempt-end
   let _ucpEl = null
   let _ucpOffClick = null // outside-click listener — removed on EVERY close path
   let _ucpAttachTimer = null // pending deferred-attach; cancelled if we close first
@@ -1597,7 +1599,7 @@
 
   /* Blocked emotes - gray outline always visible (compensate for modifier scale via --hs-mod-scale) */
   img[data-heatsync-state="blocked"] {
-    outline: calc(2px / var(--hs-mod-scale, 1)) solid #7f7f7f !important;
+    outline: calc(2px / var(--hs-mod-scale, 1)) solid #ffffff !important;
     outline-offset: calc(-2px / var(--hs-mod-scale, 1)) !important;
   }
 
@@ -1606,7 +1608,7 @@
      even when wrapper has scale(2,1) etc. */
   .heatsync-emote-wrapper.emote-overlay-blocked > img.heatsync-emote {
     opacity: 0 !important;
-    outline: calc(2px / var(--hs-mod-scale, 1)) dashed #7f7f7f !important;
+    outline: calc(2px / var(--hs-mod-scale, 1)) dashed #ffffff !important;
     outline-offset: calc(-2px / var(--hs-mod-scale, 1)) !important;
   }
 
@@ -1630,7 +1632,6 @@
     border: none !important;
     border-radius: 0 !important;
     padding: 6px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
     max-width: none !important;
     max-height: none !important;
     overflow: visible !important;
@@ -1679,18 +1680,6 @@
   /* ============================================ */
   /* HEAT MESSAGE BORDERS (by heat tier)          */
   /* ============================================ */
-  @keyframes hs-heat-breathe {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
-  }
-  /* Pause our infinite heat-breathe animation when the host page is
-     hidden. Scoped to chat-line messages that we've decorated, not
-     the whole document — universal selector against twitch's massive
-     subtree caused selector-match thrash. */
-  body.hs-ext-hidden .chat-line__message[data-hs-heat-applied] {
-    animation-play-state: paused !important;
-  }
-
   /* ============================================ */
   /* EMOTE STACK EXPAND/COLLAPSE (website parity) */
   /* ============================================ */
@@ -1761,7 +1750,7 @@
     justify-content: center !important;
     width: 16px !important;
     height: 16px !important;
-    background: rgba(255,255,255,0.12) !important;
+    background: #000000 !important;
     color: #fff !important;
     border-radius: 0 !important;
     font-size: 12px !important;
@@ -1787,7 +1776,7 @@
     justify-content: center !important;
     width: 16px !important;
     height: 16px !important;
-    background: #7f0000 !important;
+    background: #000000 !important;
     color: #fff !important;
     border-radius: 0 !important;
     font-size: 10px !important;
@@ -1798,7 +1787,7 @@
     pointer-events: auto !important;
   }
   .heatsync-emote-stack.expanded .heatsync-stack-block-all:hover {
-    background: #c00000 !important;
+    background: #ff0000 !important;
     color: #fff !important;
   }
 
@@ -1817,10 +1806,10 @@
   .hs-user-muted .chat-author__display-name,
   .hs-user-muted [data-a-target="chat-message-username"],
   .hs-user-muted button.inline.font-bold {
-    color: #808080 !important;
+    color: #ffffff !important;
     background: none !important;
     -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #808080 !important;
+    -webkit-text-fill-color: #ffffff !important;
     animation: none !important;
     text-shadow: none !important;
   }
@@ -1862,7 +1851,7 @@
     position: fixed;
     z-index: 999999;
     background: #000;
-    border: 2px solid #808080;
+    border: 2px solid #ffffff;
     border-radius: 0;
     padding: 8px;
     pointer-events: none;
@@ -1870,7 +1859,6 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
   }
   #hs-badge-tooltip.active {
     display: flex;
@@ -1896,7 +1884,7 @@
     margin: 2px -8px -8px;
     width: calc(100% + 16px);
     text-align: center;
-    background: #808080;
+    background: #000000;
     color: #fff;
   }
 
@@ -1945,8 +1933,8 @@
   /* Custom keyword highlight (BTTV/FFZ-style) */
   .chat-line__message.hs-keyword-match,
   .hs-keyword-match {
-    background-color: rgba(255,255,255,0.08) !important;
-    box-shadow: inset 0 0 0 1px #808080 !important;
+    background-color: #000000 !important;
+    box-shadow: inset 0 0 0 1px #ffffff !important;
   }
 
   /* Show deleted/timeout messages (toggle .hs-show-cleared on <html>) */
@@ -1973,7 +1961,6 @@
     border: 1px solid #fff;
     padding: 8px; min-width: 220px;
     font-family: ui-monospace, Menlo, monospace; font-size: 12px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
   }
   #hs-user-color-picker .hs-ucp-header {
     font-size: 11px; opacity: 0.8; margin-bottom: 6px;
@@ -1984,14 +1971,14 @@
   }
   #hs-user-color-picker .hs-ucp-swatch {
     width: 20px; height: 20px; cursor: pointer;
-    border: 1px solid #444;
+    border: 1px solid #ffffff;
   }
   #hs-user-color-picker .hs-ucp-swatch:hover { border-color: #fff; }
   #hs-user-color-picker .hs-ucp-row { display: flex; gap: 4px; }
-  #hs-user-color-picker input[type=color] { width: 32px; height: 24px; padding: 0; border: 1px solid #444; background: #000; }
-  #hs-user-color-picker input[type=text] { flex: 1; background: #000; color: #fff; border: 1px solid #444; padding: 2px 4px; font-family: inherit; font-size: 11px; }
+  #hs-user-color-picker input[type=color] { width: 32px; height: 24px; padding: 0; border: 1px solid #ffffff; background: #000; }
+  #hs-user-color-picker input[type=text] { flex: 1; background: #000; color: #fff; border: 1px solid #ffffff; padding: 2px 4px; font-family: inherit; font-size: 11px; }
   #hs-user-color-picker button {
-    background: #000; color: #fff; border: 1px solid #444;
+    background: #000; color: #fff; border: 1px solid #ffffff;
     padding: 2px 8px; cursor: pointer; font: inherit;
   }
   #hs-user-color-picker button:hover { background: #fff; color: #000; }
@@ -2003,7 +1990,6 @@
     border: 1px solid #fff;
     padding: 0; min-width: 220px; max-width: 280px;
     font-family: ui-monospace, Menlo, monospace; font-size: 13px;
-    box-shadow: 0 6px 32px rgba(0,0,0,0.75);
     animation: hs-em-in 80ms ease-out;
     transform-origin: top left;
   }
@@ -2015,9 +2001,9 @@
   .hs-ctx-menu.hs-em-flip-y { transform-origin: bottom left; }
   .hs-ctx-menu.hs-em-flip-x.hs-em-flip-y { transform-origin: bottom right; }
   .hs-ctx-menu .hs-em-header {
-    padding: 4px 10px; font-size: 10px; color: #666;
+    padding: 4px 10px; font-size: 10px; color: #ffffff;
     text-transform: uppercase; letter-spacing: 0.5px;
-    background: #050505;
+    background: #000000;
   }
   .hs-ctx-menu .hs-em-item {
     padding: 6px 10px; cursor: pointer; user-select: none;
@@ -2033,10 +2019,10 @@
   .hs-ctx-menu .hs-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hs-ctx-menu .hs-em-kbd {
     display: inline-block; min-width: 14px; padding: 0 4px;
-    border: 1px solid #333; background: #0a0a0a; color: #888;
+    border: 1px solid #ffffff; background: #000000; color: #ffffff;
     font-size: 10px; line-height: 14px; text-align: center;
   }
-  .hs-ctx-menu .hs-em-sep { height: 1px; background: #1a1a1a; margin: 2px 0; }
+  .hs-ctx-menu .hs-em-sep { height: 1px; background: #000000; margin: 2px 0; }
 
   /* Predictions/polls chip */
   .hs-event-chip {
@@ -2047,7 +2033,6 @@
     padding: 6px 10px;
     font-family: ui-monospace, Menlo, monospace; font-size: 13px;
     max-width: 280px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
   }
   .hs-event-chip .hs-event-title { font-weight: 600; margin-bottom: 4px; }
   .hs-event-chip .hs-event-row {
@@ -4531,19 +4516,20 @@
   const kickCosmeticsPending = new Set()
   let kickCosmeticsBatchTimer = null
 
-  // Heat tier config — monochrome intensity ramp (ext is taste-neutral; the
-  // site keeps the orange gradient). Dark grey = cold, white = hot.
+  // Heat tier ramp — the site's VT320 ladder (client/config/colors.js): white
+  // while cold, yellow warming, red at blowing-up and above. Tier thickens the
+  // border; hue steps, never fades.
   const HEAT_GRADIENT = [
-    '#808080',
-    '#909090',
-    '#a0a0a0',
-    '#b0b0b0',
-    '#c0c0c0',
-    '#cccccc',
-    '#d6d6d6',
-    '#e2e2e2',
-    '#f0f0f0',
     '#ffffff',
+    '#ffffff',
+    '#ffffff',
+    '#ffffff',
+    '#ffff00',
+    '#ffff00',
+    '#ffff00',
+    '#ffff00',
+    '#ff0000',
+    '#ff0000',
   ]
 
   function getHeatTier(heat) {
@@ -4636,16 +4622,6 @@
     // box-shadow inset doesn't reflow the chat (border-left did) — kills flicker
     // when heat data arrives after messages render.
     s.setProperty('box-shadow', `inset ${borderWidth}px 0 0 0 ${color}`)
-    if (tier >= 5) {
-      const glowAlpha = Math.min(0.3 + (tier - 5) * 0.1, 0.7)
-      s.setProperty(
-        'filter',
-        `drop-shadow(0 0 ${10 + (tier - 5) * 3}px rgba(${parseInt(color.slice(1, 3), 16)}, ${parseInt(color.slice(3, 5), 16)}, ${parseInt(color.slice(5, 7), 16)}, ${glowAlpha}))`,
-      )
-    }
-    if (tier >= 8) {
-      s.setProperty('animation', 'hs-heat-breathe 2s ease-in-out infinite')
-    }
     messageElement.dataset.hsHeatApplied = '1'
   }
 
@@ -9135,7 +9111,7 @@
       bottom: 120px;
       left: 20px;
       background: #000000;
-      border: 1px solid rgba(255,0,0,0.4);
+      border: 1px solid #ff0000;
       padding: 4px 8px;
       z-index: 10001;
       display: flex;
@@ -9156,11 +9132,11 @@
 
       const name = document.createElement('div')
       name.id = 'heatsync-tab-name'
-      name.style.cssText = 'color: #808080; font-size: 11px;'
+      name.style.cssText = 'color: #ffffff; font-size: 11px;'
 
       const hint = document.createElement('div')
       hint.id = 'heatsync-tab-hint'
-      hint.style.cssText = 'color: #9146ff; font-size: 10px; margin-left: 4px;'
+      hint.style.cssText = 'color: #ff00ff; font-size: 10px; margin-left: 4px;'
 
       preview.appendChild(counter)
       preview.appendChild(img)

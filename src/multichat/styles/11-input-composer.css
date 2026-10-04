@@ -39,13 +39,13 @@
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
     #hs-mc-inputbar.hs-mc-resub-share {
-      box-shadow: 0 0 0 2px var(--hs-plat-twitch) inset, 0 0 8px rgba(145,71,255,0.4);
-      background: rgba(145,71,255,0.08);
+      box-shadow: 0 0 0 2px var(--hs-plat-twitch) inset;
+      background: #000000;
     }
     #hs-mc-input.hs-mc-resub-share,
     #hs-mc-input.hs-mc-resub-share:focus {
       border-color: var(--hs-plat-twitch) !important;
-      background: #140d22 !important;
+      background: #000000 !important;
     }
     #hs-mc-input.hs-mc-resub-share::placeholder,
     #hs-mc-input.hs-mc-resub-share[contenteditable]:empty::before,
@@ -56,13 +56,13 @@
     /* Watch-streak share mode — orange glow signals heat/streak, distinct
        from resub purple. Same input mechanism, different brand color. */
     #hs-mc-inputbar.hs-mc-watchstreak-share {
-      box-shadow: 0 0 0 2px var(--hs-brand) inset, 0 0 8px rgba(255,127,0,0.4);
-      background: rgba(255,127,0,0.08);
+      box-shadow: 0 0 0 2px var(--hs-heat) inset;
+      background: #000000;
     }
     #hs-mc-input.hs-mc-watchstreak-share,
     #hs-mc-input.hs-mc-watchstreak-share:focus {
       border-color: var(--hs-brand) !important;
-      background: #1a1206 !important;
+      background: #000000 !important;
     }
     #hs-mc-input.hs-mc-watchstreak-share::placeholder,
     #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:empty::before,
@@ -76,7 +76,7 @@
        a re-skin of it. */
     #hs-mc-inputbar.hs-mc-quote {
       box-shadow: 0 0 0 1px var(--hs-brand) inset;
-      background: rgba(255, 135, 0, 0.06);
+      background: #000000;
     }
     #hs-mc-input.hs-mc-quote,
     #hs-mc-input.hs-mc-quote:focus {
@@ -422,7 +422,7 @@
       display: flex;
       gap: 4px;
       padding: 6px 8px 4px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid #ffffff;
       flex-shrink: 0;
     }
     .hs-mc-tw-subtab {
@@ -431,7 +431,7 @@
       padding: 0;
       background: #000;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px solid #ffffff;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -482,7 +482,7 @@
       align-items: baseline;
       gap: 8px;
       padding-bottom: 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.25);
+      border-bottom: 1px solid #ffffff;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-title {
       font-weight: 600;
@@ -493,8 +493,7 @@
     }
     .hs-mc-cheer-panel .hs-mc-cheer-balance {
       font-variant-numeric: tabular-nums;
-      opacity: 0.85;
-      flex-shrink: 0;
+       flex-shrink: 0;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-preview {
       display: flex;
@@ -502,8 +501,8 @@
       gap: 6px;
       min-height: 28px;
       padding: 4px 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: #000000;
+      border: 1px solid #ffffff;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-preview-img {
       width: 28px;
@@ -568,7 +567,7 @@
     }
     .hs-mc-cheer-panel .hs-mc-cheer-msg::placeholder,
     .hs-mc-cheer-panel .hs-mc-cheer-custom::placeholder {
-      color: rgba(255,255,255,0.45);
+      color: #ffffff;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-actions {
       display: flex;
@@ -590,8 +589,7 @@
       color: #000;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-send:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+       cursor: not-allowed;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-launch {
       width: 100%;

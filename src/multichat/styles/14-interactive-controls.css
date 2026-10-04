@@ -24,7 +24,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,0.12);
+      background: #000000;
       background: color-mix(in srgb, var(--menu-accent, #fff) 12%, transparent);
       color: var(--menu-accent, #fff);
       flex-shrink: 0;
@@ -57,7 +57,7 @@
     }
     .hs-mc-menu-divider {
       height: 1px;
-      background: rgba(255,255,255,0.06);
+      background: #000000;
       margin: 4px 20px;
     }
 
@@ -103,7 +103,7 @@
       font-size: 13px;
       padding: 2px 6px;
       border-radius: 0;
-      background: rgba(255,255,255,0.1);
+      background: #000000;
       color: var(--hs-muted);
       white-space: nowrap;
       flex-shrink: 0;
@@ -130,7 +130,7 @@
       gap: 8px;
     }
     .hs-mc-pred-outcome {
-      background: rgba(255,255,255,0.04);
+      background: #000000;
       border-radius: 0;
       padding: 8px 10px;
       border-left: 3px solid var(--oc, var(--hs-info));
@@ -154,7 +154,7 @@
     }
     .hs-mc-pred-bar-track {
       height: 4px;
-      background: rgba(255,255,255,0.08);
+      background: #000000;
       border-radius: 0;
       overflow: hidden;
       margin-bottom: 4px;
@@ -176,8 +176,8 @@
       flex-wrap: wrap;
     }
     .hs-mc-pred-bet-btn {
-      background: rgba(0,0,0,0.7);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #000000;
+      border: 1px solid #ffffff;
       color: #fff;
       font-size: 13px;
       padding: 3px 8px;
@@ -189,11 +189,10 @@
       color: #000;
     }
     .hs-mc-pred-bet-btn:disabled {
-      opacity: 0.3;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-pred-bet-btn:disabled:hover {
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
     }
     .hs-mc-pred-bet-custom {
@@ -211,18 +210,17 @@
       border-color: #fff;
     }
     .hs-mc-pred-bet-custom:disabled {
-      background: rgba(255,255,255,0.04);
+      background: #000000;
       color: var(--hs-muted);
-      opacity: 0.3;
-    }
+     }
     .hs-mc-pred-bet-custom::-webkit-inner-spin-button,
     .hs-mc-pred-bet-custom::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
     .hs-mc-pred-bet-go {
-      background: rgba(0,0,0,0.7);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #000000;
+      border: 1px solid #ffffff;
       color: #fff;
       font-size: 13px;
       font-weight: 600;
@@ -235,11 +233,10 @@
       color: #000;
     }
     .hs-mc-pred-bet-go:disabled {
-      opacity: 0.3;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-pred-bet-go:disabled:hover {
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
     }
     .hs-mc-pred-bet-max {
@@ -262,11 +259,11 @@
       letter-spacing: 0.5px;
     }
     .hs-mc-pred-status-resolved {
-      background: rgba(0,200,100,0.15);
+      background: #000000;
       color: var(--hs-ok);
     }
     .hs-mc-pred-status-canceled {
-      background: rgba(255,255,255,0.08);
+      background: #000000;
       color: var(--hs-muted);
     }
 
@@ -290,44 +287,42 @@
     .hs-mc-pred-result-label {
       font-size: 13px;
       font-weight: 600;
-      opacity: 0.7;
-      text-transform: uppercase;
+       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-left: 4px;
     }
     .hs-mc-pred-result-won {
-      background: rgba(0,200,100,0.12);
+      background: #000000;
       color: var(--hs-ok);
-      border: 1px solid rgba(0,200,100,0.3);
+      border: 1px solid #00ff00;
     }
     .hs-mc-pred-result-lost {
-      background: rgba(255,60,60,0.08);
+      background: #000000;
       color: var(--hs-danger);
-      border: 1px solid rgba(255,60,60,0.2);
+      border: 1px solid #ff0000;
     }
     .hs-mc-pred-result-refund {
-      background: rgba(255,255,255,0.1);
+      background: #000000;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid #ffffff;
     }
     .hs-mc-pred-result-neutral {
       font-size: 13px;
       font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      color: #ffffff;
+      background: #000000;
+      border: 1px solid #ffffff;
     }
 
     /* Outcome states */
     .hs-mc-pred-outcome-won {
       border-left-color: var(--hs-ok);
-      background: rgba(0,200,100,0.08);
+      background: #000000;
     }
     .hs-mc-pred-outcome-lost {
-      opacity: 0.45;
-    }
+     }
     .hs-mc-pred-outcome-yours {
-      box-shadow: inset 0 0 0 1px rgba(255,135,0,0.3);
+      box-shadow: inset 0 0 0 1px #ffffff;
     }
     .hs-mc-pred-winner-badge {
       font-size: 13px;
@@ -345,8 +340,8 @@
     .hs-mc-pred-mod-notice {
       font-size: 13px;
       color: #fff;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #000000;
+      border: 1px solid #ffffff;
       border-radius: 0;
       padding: 5px 8px;
       margin-top: 6px;
@@ -368,9 +363,9 @@
     .hs-mc-pred-mod-btn {
       font-size: 13px;
       padding: 4px 10px;
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid #ffffff;
       cursor: pointer;
       font-family: inherit;
     }
@@ -379,11 +374,10 @@
       color: #000;
     }
     .hs-mc-pred-mod-btn:disabled {
-      opacity: 0.3;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-pred-mod-btn:disabled:hover {
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
     }
     .hs-mc-pred-lock-btn:hover,
@@ -445,9 +439,9 @@
     .hs-mc-pred-create-dur {
       font-size: 13px;
       padding: 2px 6px;
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: var(--hs-muted);
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid #ffffff;
       cursor: pointer;
       font-family: inherit;
     }
@@ -461,7 +455,7 @@
       border-color: #fff;
     }
     .hs-mc-pred-create-submit {
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
       border-color: #fff;
       font-weight: 600;
@@ -475,7 +469,7 @@
     /* ═══ Polls ═══ */
     .hs-mc-poll {
       padding: 10px 12px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #ffffff;
     }
     .hs-mc-poll-header {
       display: flex;
@@ -501,7 +495,7 @@
       letter-spacing: 0.5px;
     }
     .hs-mc-poll-status-ended {
-      background: rgba(255,255,255,0.08);
+      background: #000000;
       color: var(--hs-muted);
     }
     .hs-mc-poll-timer {
@@ -530,7 +524,7 @@
     .hs-mc-poll-choice-track {
       flex: 1;
       height: 28px;
-      background: rgba(255,255,255,0.06);
+      background: #000000;
       position: relative;
       overflow: hidden;
     }
@@ -539,13 +533,13 @@
       top: 0;
       left: 0;
       height: 100%;
-      background: rgba(145,71,255,0.35);
+      background: #000000;
     }
     .hs-mc-poll-choice-top .hs-mc-poll-choice-fill {
-      background: rgba(145,71,255,0.6);
+      background: #000000;
     }
     .hs-mc-poll-choice-voted .hs-mc-poll-choice-track {
-      box-shadow: inset 0 0 0 1px rgba(255,135,0,0.3);
+      box-shadow: inset 0 0 0 1px #ffffff;
     }
     .hs-mc-poll-choice-label {
       position: relative;
@@ -572,16 +566,16 @@
       margin-left: 8px;
     }
     .hs-mc-poll-choice-top .hs-mc-poll-choice-pct {
-      color: #bf8fff;
+      color: #ff00ff;
     }
     .hs-mc-poll-voted-check {
       color: #fff;
       font-weight: 700;
     }
     .hs-mc-poll-vote-btn {
-      background: rgba(145,71,255,0.3);
+      background: #000000;
       border: none;
-      color: #bf8fff;
+      color: #ff00ff;
       font-size: 13px;
       font-weight: 600;
       padding: 4px 10px;
@@ -594,8 +588,7 @@
       color: #000;
     }
     .hs-mc-poll-vote-btn:disabled {
-      opacity: 0.3;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-poll-mod-row {
       display: flex;
@@ -605,9 +598,9 @@
     .hs-mc-poll-mod-btn {
       font-size: 13px;
       padding: 4px 10px;
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid #ffffff;
       cursor: pointer;
       font-family: inherit;
     }
@@ -616,18 +609,17 @@
       color: #000;
     }
     .hs-mc-poll-mod-btn:disabled {
-      opacity: 0.3;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-poll-mod-btn:disabled:hover {
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
     }
     .hs-mc-poll-empty {
       padding: 0 12px;
     }
     .hs-mc-poll-create {
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #ffffff;
       padding-top: 8px;
       margin-top: 4px;
     }
@@ -669,9 +661,9 @@
     .hs-mc-poll-create-dur {
       font-size: 13px;
       padding: 2px 6px;
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: var(--hs-muted);
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid #ffffff;
       cursor: pointer;
       font-family: inherit;
     }
@@ -687,7 +679,7 @@
     .hs-mc-poll-create-submit {
       width: 100%;
       text-align: center;
-      background: rgba(0,0,0,0.7);
+      background: #000000;
       color: #fff;
       border-color: #fff;
       font-weight: 600;
@@ -699,7 +691,7 @@
     }
 
     .hs-mc-pred-links {
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #ffffff;
       margin-top: 8px;
       padding-top: 4px;
     }
@@ -732,7 +724,7 @@
       display: flex; justify-content: space-between; align-items: center;
       color: var(--hs-brand); font-weight: 600;
     }
-    .hs-mc-summary-stats, .hs-mc-summary-row { color: #c0c0c0; }
+    .hs-mc-summary-stats, .hs-mc-summary-row { color: #ffffff; }
     .hs-mc-summary-dim { color: var(--hs-muted); }
 
     /* ═══ /status panel ═══
@@ -747,38 +739,38 @@
       font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
     }
     .hs-mc-subpane-pad { padding: 6px 10px; }
-    .hs-mc-status-loading { font-size: 13px; color: #999; }
+    .hs-mc-status-loading { font-size: 13px; color: #ffffff; }
     .hs-mc-status-title { font-size: 13px; font-weight: 600; color: #fff; }
     .hs-mc-status-sub { font-size: 13px; margin-top: 2px; }
     .hs-mc-status-sub.live { color: var(--hs-live); }
-    .hs-mc-status-sub.off  { color: #999; }
+    .hs-mc-status-sub.off  { color: #ffffff; }
     .hs-mc-status-streamtitle { font-size: 13px; color: #fff; margin-top: 6px; }
-    .hs-mc-status-meta { font-size: 13px; color: #999; margin-top: 2px; }
+    .hs-mc-status-meta { font-size: 13px; color: #ffffff; margin-top: 2px; }
     .hs-mc-status-section {
       margin-top: 10px; padding-bottom: 4px;
       font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid #ffffff;
     }
     .hs-mc-status-modes { margin-top: 4px; }
     .hs-mc-status-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
-    .hs-mc-status-key { color: #ccc; }
+    .hs-mc-status-key { color: #ffffff; }
     .hs-mc-status-val.on  { color: var(--hs-ok); }
     .hs-mc-status-val.off { color: var(--hs-muted); }
     .hs-mc-status-note { font-size: 13px; color: var(--hs-muted); margin-top: 4px; }
     .hs-cm-row { align-items: center; }
     .hs-cm-ctl { display: inline-flex; align-items: center; gap: 4px; }
-    .hs-cm-num { width: 6ch; font: inherit; font-size: 13px; color: #fff; background: #000; border: 1px solid #333; border-radius: 0; padding: 1px 3px; }
-    .hs-cm-tog, .hs-cm-btn { font: inherit; font-size: 13px; background: transparent; border: 1px solid #333; border-radius: 0; padding: 1px 6px; cursor: pointer; }
+    .hs-cm-num { width: 6ch; font: inherit; font-size: 13px; color: #fff; background: #000; border: 1px solid #ffffff; border-radius: 0; padding: 1px 3px; }
+    .hs-cm-tog, .hs-cm-btn { font: inherit; font-size: 13px; background: transparent; border: 1px solid #ffffff; border-radius: 0; padding: 1px 6px; cursor: pointer; }
     .hs-cm-btn { color: #fff; }
     .hs-cm-tog:hover, .hs-cm-tog:active, .hs-cm-tog:focus-visible,
     .hs-cm-btn:hover, .hs-cm-btn:active, .hs-cm-btn:focus-visible { background: #fff; color: #000; outline: none; }
-    .hs-cm-bad { color: var(--hs-err, #ff5f5f); }
-    .hs-cm-busy { opacity: 0.6; pointer-events: none; }
+    .hs-cm-bad { color: var(--hs-err, #ff0000); }
+    .hs-cm-busy { pointer-events: none; }
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #ffffff;
       margin-top: 8px;
       padding-top: 8px;
     }
@@ -815,7 +807,7 @@
       align-items: center;
       gap: 8px;
       padding: 6px 8px;
-      background: rgba(255,255,255,0.04);
+      background: #000000;
       border-left: 2px solid var(--rc, var(--hs-plat-twitch));
       cursor: pointer;
       transition: none;
@@ -829,11 +821,10 @@
       color: #000;
     }
     .hs-mc-reward-unavailable {
-      opacity: 0.4;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-reward-unavailable:hover {
-      background: rgba(255,255,255,0.04);
+      background: #ffffff; color: #000000;
     }
     .hs-mc-reward-img {
       flex-shrink: 0;
@@ -856,7 +847,7 @@
     }
     .hs-mc-reward-reason {
       font-size: 13px;
-      color: #f5009b;
+      color: #ff00ff;
       margin-top: 1px;
     }
     .hs-mc-reward-input-row {
@@ -867,8 +858,8 @@
     }
     .hs-mc-reward-input {
       flex: 1;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #000000;
+      border: 1px solid #ffffff;
       color: #fff;
       font-size: 13px;
       padding: 4px 6px;
@@ -894,8 +885,7 @@
       color: #000;
     }
     .hs-mc-reward-submit:disabled {
-      opacity: 0.5;
-      cursor: default;
+       cursor: default;
     }
 
     /* ═══ Chat Color Picker ═══ */
@@ -909,7 +899,7 @@
       border-radius: 0;
       vertical-align: -2px;
       margin-left: 6px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid #ffffff;
     }
     .hs-mc-color-grid {
       display: flex;
@@ -936,8 +926,8 @@
     }
     .hs-mc-color-hex {
       flex: 1;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #000000;
+      border: 1px solid #ffffff;
       color: #fff;
       font-size: 13px;
       padding: 3px 6px;
@@ -977,10 +967,10 @@
       font-family: inherit;
       font-size: 13px;
       padding: 3px 8px;
-      background: rgba(255,255,255,0.06);
+      background: #000000;
       color: var(--hs-muted);
       cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid #ffffff;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.3px;
@@ -1001,7 +991,7 @@
       padding: 4px 0;
     }
     .hs-mc-settings-group + .hs-mc-settings-group {
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #ffffff;
     }
     .hs-mc-settings-group-title {
       font-size: 13px;
@@ -1027,7 +1017,7 @@
       flex-wrap: wrap;
     }
     .hs-mc-setting-row:nth-child(even) {
-      background: #303030;
+      background: #000000;
     }
     /* White-bg/black-text hover is for CLICKABLE toggle rows. Exclude the
        filter-rules editor (the add-form + each rule row): those are a multi-field
@@ -1043,7 +1033,7 @@
     /* Filter-rules rows keep their own colours; just a subtle dark row-hint. */
     .hs-mc-setting-row.hs-mc-fr-addform:hover,
     .hs-mc-setting-row[data-fr-row]:hover {
-      background: #222;
+      background: #ffffff; color: #000000;
     }
     .hs-mc-setting-label {
       color: #fff !important;
@@ -1167,7 +1157,7 @@
       align-items: center;
       gap: 6px;
       padding: 4px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid #ffffff;
       position: sticky;
       top: 46px; /* below the subtab rail */
       background: #000;
@@ -1318,7 +1308,7 @@
       margin: 0;
       white-space: pre;
       overflow-x: auto;
-      color: #c0c0c0;
+      color: #ffffff;
       font: inherit;
     }
     .hs-mc-set-help-grid {
@@ -1346,7 +1336,7 @@
       appearance: none;
       width: 120px;
       height: 4px;
-      background: #333;
+      background: #000000;
       outline: none;
       flex-shrink: 0;
     }
@@ -1373,7 +1363,7 @@
       display: flex;
       gap: 4px;
       padding: 6px 8px 4px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid #ffffff;
       flex-shrink: 0;
       overflow-x: auto;
       position: sticky;
@@ -1387,7 +1377,7 @@
       padding: 0;
       background: #000;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px solid #ffffff;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -1429,9 +1419,9 @@
     }
     /* Crash log pre block */
     .hs-mc-set-crash-pre {
-      background: #0a0a0a;
-      color: #c0c0c0;
-      border: 1px solid #333;
+      background: #000000;
+      color: #ffffff;
+      border: 1px solid #ffffff;
       padding: 6px 8px;
       font-size: 13px;
       max-height: 180px;
@@ -1461,13 +1451,13 @@
       cursor: pointer;
     }
     .hs-mc-confirm-cancel:hover { background: #fff; color: #000; }
-    .hs-mc-confirm-ok { border-color: #ff5f5f; color: #ff5f5f; }
-    .hs-mc-confirm-ok:hover { background: #ff5f5f; color: #000; }
+    .hs-mc-confirm-ok { border-color: #ff0000; color: #ff0000; }
+    .hs-mc-confirm-ok:hover { background: #ff0000; color: #000; }
     .hs-mc-confirm-reasons { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
     .hs-mc-confirm-reason {
       background: #000;
-      color: #bbb;
-      border: 1px solid #555;
+      color: #ffffff;
+      border: 1px solid #ffffff;
       padding: 2px 8px;
       font-size: 13px;
       font-family: inherit;
@@ -1498,7 +1488,7 @@
       flex: 0 0 auto;
       padding: 4px 6px;
       border-bottom: 1px solid var(--hs-border);
-      background: #0a0a0a;
+      background: #000000;
     }
     .hs-pv-title {
       display: flex;

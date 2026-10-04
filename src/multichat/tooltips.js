@@ -243,7 +243,7 @@ function buildStackPreview(box, stackEmotes) {
 // Provider is inferred from the token SHAPE: "ffz*" is FrankerFaceZ, anything
 // ending in "!" is BetterTTV. Brand colours match the source chips already used
 // elsewhere in this tooltip.
-const HS_TT_PROVIDER_COLOR = { '7tv': '#29d8f6', bttv: '#d50014', ffz: '#0086c8', twitch: '#9147ff', kick: '#53fc18' }
+const HS_TT_PROVIDER_COLOR = { '7tv': '#00ffff', bttv: '#ff0000', ffz: '#ffffff', twitch: '#ff00ff', kick: '#00ff00' }
 
 function hsTtModProvider(tok) {
   if (/^ffz/i.test(tok)) return 'ffz'
@@ -279,7 +279,7 @@ function hsTtRenderComposition(nameEl, pieces, mods) {
     mods.forEach((m, i) => {
       if (i) nameEl.appendChild(hsTtChip(' ', null, 'tooltip-join'))
       const prov = hsTtModProvider(m)
-      const chip = hsTtChip(m, HS_TT_PROVIDER_COLOR[prov] || '#c8c8c8', 'tooltip-mod')
+      const chip = hsTtChip(m, HS_TT_PROVIDER_COLOR[prov] || '#ffffff', 'tooltip-mod')
       // c!#rrggbb tints — show the actual colour as the chip's own colour.
       const hex = m.match(/^c!#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/)
       if (hex) chip.style.color = `#${hex[1]}`

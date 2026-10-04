@@ -1112,7 +1112,7 @@
             const toast = document.createElement('div')
             toast.textContent = 'type modifier after an emote name: LUL w! h! c!#ff0000'
             toast.style.cssText =
-              'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#ccc;font:13px/1.4 monospace;padding:7px 14px;border-radius:0;z-index:2147483647;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px #0008'
+              'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#000000;color:#ffffff;font:13px/1.4 monospace;padding:7px 14px;border-radius:0;z-index:2147483647;pointer-events:none;white-space:nowrap;border:1px solid #fff'
             document.body.appendChild(toast)
             setTimeout(() => toast.remove(), 2000)
           }
@@ -1415,14 +1415,14 @@
   // only — non-heatsync viewers get plain text).
   function emoteCycleMeta(m) {
     if (!m) return { cat: '', vis: null }
-    if (m.isUser || m.type === 'user') return { cat: 'chatter', vis: { t: 'everyone', c: '#5fd75f' } }
-    if (m.isEmoji || m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: '#5fd75f' } }
+    if (m.isUser || m.type === 'user') return { cat: 'chatter', vis: { t: 'everyone', c: '#00ff00' } }
+    if (m.isEmoji || m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: '#00ff00' } }
     if (m.remote) return { cat: '7tv search', vis: { t: 'heatsync only', c: '#fff' } }
     const tier = m.tier ?? 2
     const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
-    if (m.source === 'twitch' || m.native) return { cat, vis: { t: 'all twitch', c: '#5fd75f' } }
+    if (m.source === 'twitch' || m.native) return { cat, vis: { t: 'all twitch', c: '#00ff00' } }
     if (tier === 1 || m.source === 'heatsync') return { cat, vis: { t: 'heatsync only', c: '#fff' } }
-    return { cat, vis: { t: `${m.source || 'ext'} users`, c: '#ffd75f' } }
+    return { cat, vis: { t: `${m.source || 'ext'} users`, c: '#ffff00' } }
   }
 
   function showCycleTooltip(index, total, m) {
@@ -1432,7 +1432,7 @@
       cycleTooltip.id = 'heatsync-cycle-tooltip'
       cycleTooltip.style.cssText = `
         position: fixed;
-        background: rgba(0, 0, 0, 0.95);
+        background: #000000;
         color: #fff;
         padding: 4px 8px;
         border-radius: 0;
@@ -1440,8 +1440,7 @@
         font-family: inherit;
         z-index: 10000;
         pointer-events: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid #ffffff;
         opacity: 0;
         transition: opacity 0.15s;
         white-space: nowrap;
@@ -1461,13 +1460,13 @@
       if (css) s.style.cssText = css
       return s
     }
-    const dot = () => mk(' · ', 'color:#555;')
+    const dot = () => mk(' · ', 'color:#ffffff;')
     cycleTooltip.replaceChildren()
-    cycleTooltip.appendChild(mk(`${index}/${total}`, 'color:#888;'))
+    cycleTooltip.appendChild(mk(`${index}/${total}`, 'color:#ffffff;'))
     cycleTooltip.appendChild(mk(` ${label}`, 'color:#fff;'))
     if (meta.cat) {
       cycleTooltip.appendChild(dot())
-      cycleTooltip.appendChild(mk(meta.cat, 'color:#9e9e9e;'))
+      cycleTooltip.appendChild(mk(meta.cat, 'color:#ffffff;'))
     }
     if (meta.vis) {
       cycleTooltip.appendChild(dot())
@@ -1475,7 +1474,7 @@
     }
     if (cycleState.remotePending) {
       cycleTooltip.appendChild(dot())
-      cycleTooltip.appendChild(mk('searching 7tv…', 'color:#ffd75f;'))
+      cycleTooltip.appendChild(mk('searching 7tv…', 'color:#ffff00;'))
     }
 
     // Position above input

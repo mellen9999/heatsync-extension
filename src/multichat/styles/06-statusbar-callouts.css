@@ -13,8 +13,8 @@
       display: flex;
       align-items: stretch;
       min-height: 0;
-      background: #0a0a0d;
-      border-bottom: 1px solid #2a2a2e;
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
       overflow: hidden;
     }
     /* No toast → no bar at all. Reclaims the row; never a reserved gap. */
@@ -75,8 +75,8 @@
        grabs the eye despite being inline. */
     #hs-mc-statusbar:has(.hs-notif-toast-error) { animation: hs-statusbar-flash-err 700ms ease-out; }
     #hs-mc-statusbar:has(.hs-notif-toast-warn)  { animation: hs-statusbar-flash-warn 700ms ease-out; }
-    @keyframes hs-statusbar-flash-err  { 0% { background: #3a0f0f; } 100% { background: #0a0a0d; } }
-    @keyframes hs-statusbar-flash-warn { 0% { background: #38330d; } 100% { background: #0a0a0d; } }
+    @keyframes hs-statusbar-flash-err  { 0% { background: #000000; } 100% { background: #000000; } }
+    @keyframes hs-statusbar-flash-warn { 0% { background: #000000; } 100% { background: #000000; } }
     @media (prefers-reduced-motion: reduce) {
       #hs-mc-statusbar { animation: none !important; }
     }
@@ -97,8 +97,7 @@
       border: none;
       border-top: 1px solid var(--hs-border);
       border-bottom: 1px solid var(--hs-border);
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
-      background: #0a0a0d;
+      background: #000000;
     }
     .hs-notif-resub-body {
       display: flex;
@@ -200,12 +199,11 @@
       overflow: hidden !important;
       z-index: 100000 !important;
       pointer-events: auto !important;
-      background: #18181b !important;
+      background: #000000 !important;
       border: none !important;
       border-top: 1px solid var(--hs-border) !important;
       border-bottom: 1px solid var(--hs-border) !important;
       border-radius: 0 !important;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.5) !important;
       box-sizing: border-box !important;
     }
     /* Hide Twitch's native Pin toggle on the callout — it pins the resub to

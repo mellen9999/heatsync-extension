@@ -208,15 +208,14 @@
       #${EMOTE_DROPDOWN_ID} {
         position: fixed;
         z-index: 99999;
-        background: #1a1a1a;
-        border: 1px solid #333;
+        background: #000000;
+        border: 1px solid #ffffff;
         border-radius: 0;
         padding: 4px 0;
         max-height: 280px;
         overflow-y: auto;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         font-size: 13px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         display: none;
       }
       #${DROPDOWN_ID} .hs-ac-item,
@@ -242,7 +241,7 @@
       }
       #${DROPDOWN_ID} .hs-ac-name,
       #${EMOTE_DROPDOWN_ID} .hs-ac-name {
-        color: #ccc;
+        color: #ffffff;
         flex: 1;
       }
       #${EMOTE_DROPDOWN_ID} .hs-ac-item.selected .hs-ac-name,
@@ -253,10 +252,10 @@
         flex-shrink: 0;
         margin-left: 8px;
       }
-      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-all { color: #5fd75f; }
-      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-ext { color: #ffd75f; }
+      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-all { color: #00ff00; }
+      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-ext { color: #ffff00; }
       #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-hs  { color: #fff; }
-      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-dim { color: #9e9e9e; }
+      #${EMOTE_DROPDOWN_ID} .hs-ac-vis.v-dim { color: #ffffff; }
       #${EMOTE_DROPDOWN_ID} .hs-ac-item.selected .hs-ac-vis,
       #${EMOTE_DROPDOWN_ID} .hs-ac-item:hover .hs-ac-vis { color: #000; }
       #${EMOTE_DROPDOWN_ID} .hs-ac-img {
@@ -268,7 +267,7 @@
       #${EMOTE_DROPDOWN_ID} .hs-ac-placeholder {
         width: 28px;
         height: 28px;
-        background: #333;
+        background: #000000;
         border-radius: 0;
         flex-shrink: 0;
       }

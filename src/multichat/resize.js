@@ -66,7 +66,7 @@ function getTwitchMaxChatWidth() {
 // Shared drag-ghost style — identical across the twitch/kick/yt resize
 // handles. One spec to keep in sync (orange tint, 3px left edge, z 99998).
 const buildGhostCss = (rect, w0) =>
-  `position:fixed;top:${rect.top}px;right:0;height:${rect.height}px;width:${w0}px;background:rgba(255,255,255,0.06);border-left:3px solid #fff;pointer-events:none;z-index:99998;will-change:width;`
+  `position:fixed;top:${rect.top}px;right:0;height:${rect.height}px;width:${w0}px;background:#000000;border-left:3px solid #fff;pointer-events:none;z-index:99998;will-change:width;`
 function setupResizeHandle() {
   const rightCol = document.querySelector('.right-column.right-column--beside')
   if (!rightCol || document.getElementById('hs-mc-resize-handle')) return
@@ -472,7 +472,7 @@ function ensureChatResizeHandle() {
       // and inline-style writes on YT player wrappers thrash IMA SDK.
       ghost = document.createElement('div')
       ghost.id = 'hs-c-resize-ghost'
-      const baseStyle = 'position:fixed;background:rgba(255,255,255,0.06);pointer-events:none;z-index:99997;'
+      const baseStyle = 'position:fixed;background:#000000;pointer-events:none;z-index:99997;'
       if (chatPosition === 'right') {
         ghost.style.cssText =
           baseStyle +

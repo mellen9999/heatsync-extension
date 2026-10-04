@@ -120,15 +120,15 @@
       gap: 4px;
       padding: 3px 8px;
       background: #000;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
+      border-top: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
       font-size: 13px;
       line-height: 18px;
       box-sizing: border-box;
       z-index: 1002;
     }
     .hs-mc-feed-reply-ref {
-      color: #a0a0a0;
+      color: #ffffff;
       flex: 1;
       min-width: 0;
       overflow: hidden;
@@ -283,8 +283,7 @@
       justify-content: center;
       color: #fff;
       font-size: 28px;
-      text-shadow: 0 0 6px rgba(0,0,0,0.8);
-      background: rgba(0,0,0,0.25);
+      background: #000000;
       transition: background 0.15s;
     }
     .hs-feed-embed-yt-thumb:hover .hs-feed-embed-yt-play {
@@ -295,8 +294,8 @@
     .hs-feed-link-card {
       margin: 4px 0 2px;
       padding: 4px 6px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid #333;
+      background: #000000;
+      border: 1px solid #ffffff;
       border-radius: 0;
       max-width: 480px;
     }
@@ -312,7 +311,7 @@
       text-decoration: underline;
     }
     .hs-feed-link-card-icon {
-      color: #888;
+      color: #ffffff;
       font-size: 13px;
       flex-shrink: 0;
     }
@@ -338,9 +337,9 @@
     }
     .hs-feed-media-deleted {
       padding: 6px 8px;
-      background: #1a1a1a;
-      border: 1px solid #444;
-      color: #888;
+      background: #000000;
+      border: 1px solid #ffffff;
+      color: #ffffff;
       font-size: 13px;
       border-radius: 0;
       max-width: 480px;
@@ -352,27 +351,26 @@
       justify-content: center;
       min-height: 60px;
       padding: 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid #333;
+      background: #000000;
+      border: 1px solid #ffffff;
       max-width: 480px;
       margin: 4px 0 2px;
     }
     .hs-feed-embed-pending-label {
-      color: #888;
+      color: #ffffff;
       font-size: 13px;
-      opacity: 0.7;
-    }
+     }
     .hs-feed-embed-rich-card {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid #333;
+      background: #000000;
+      border: 1px solid #ffffff;
       max-width: 480px;
       margin: 4px 0 2px;
       text-decoration: none;
-      color: #ddd;
+      color: #ffffff;
       white-space: normal;
     }
     .hs-feed-embed-rich-card * { white-space: normal; }
@@ -397,7 +395,7 @@
     /* The placeholder's fill is white-on-black; on the plate that's white-on-
        white and the tile vanishes. Flip it to a black wash. */
     .hs-feed-embed-rich-card:is(:hover, :active) .hs-feed-embed-rich-thumb-placeholder {
-      background: rgba(0,0,0,0.08);
+      background: #000000;
       color: #000;
     }
     .hs-feed-embed-rich-thumb,
@@ -406,11 +404,11 @@
       height: 64px;
       flex-shrink: 0;
       object-fit: cover;
-      background: rgba(255,255,255,0.05);
+      background: #000000;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #888;
+      color: #ffffff;
       font-size: 13px;
     }
     .hs-feed-embed-rich-meta {
@@ -421,13 +419,13 @@
     .hs-feed-embed-rich-platform {
       font-size: 13px;
       text-transform: uppercase;
-      color: #888;
+      color: #ffffff;
       letter-spacing: 0.5px;
     }
     .hs-feed-embed-rich-title {
       font-size: 13px;
       font-weight: 600;
-      color: #ddd;
+      color: #ffffff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -473,7 +471,7 @@
       color: inherit;
     }
     .hs-greentext {
-      color: #789922;
+      color: #00ff00;
     }
     .hs-inline-code {
       background: #000;
@@ -491,7 +489,7 @@
       text-decoration: underline;
     }
     .hs-mention.self {
-      background: #800000;
+      background: #000000;
       color: #fff;
       padding: 0 2px;
       border-radius: 0;
@@ -506,7 +504,7 @@
       color: #000;
     }
     .hs-tripcode {
-      color: #117743;
+      color: #00ff00;
       font-weight: normal;
       margin-left: 4px;
       font-size: 13px;
@@ -711,7 +709,7 @@
       display: none;
       flex-shrink: 0;
       padding: 4px 6px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #ffffff;
       background: #000;
     }
     #hs-mc-search-bar.visible {
@@ -741,8 +739,8 @@
       font-size: 13px;
       font-family: inherit;
       color: var(--hs-muted);
-      background: #111;
-      border: 1px solid #333;
+      background: #000000;
+      border: 1px solid #ffffff;
       padding: 1px 5px;
       flex-shrink: 0;
       white-space: nowrap;
@@ -766,7 +764,7 @@
       flex-direction: column;
       gap: 2px;
       padding: 5px 8px;
-      border-bottom: 1px solid #1a1a1a;
+      border-bottom: 1px solid #ffffff;
       cursor: pointer;
       font-size: 13px;
     }
@@ -789,7 +787,7 @@
       color: #fff;
     }
     .hs-mc-search-content {
-      color: #ccc;
+      color: #ffffff;
       word-break: break-word;
     }
     .hs-mc-search-empty {
@@ -819,8 +817,8 @@
     }
     .hs-discover-section {
       padding: 0;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.18);
+      border: 1px solid #ffffff;
+      background: #000000;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -834,8 +832,8 @@
       letter-spacing: 0.6px;
       margin: 0;
       padding: 4px 8px;
-      background: rgba(255,255,255,0.08);
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
       line-height: 17px;
       display: flex;
       justify-content: space-between;
@@ -919,7 +917,7 @@
       flex-shrink: 0;
       border-radius: 0;
       object-fit: cover;
-      background: #1a1a1a;
+      background: #000000;
     }
     .hs-discover-avatar-empty { display: inline-block; }
     .hs-discover-profile-name {
@@ -949,18 +947,18 @@
     .hs-discover-platforms .hs-plat-t { color: var(--hs-plat-twitch); }
     .hs-discover-platforms .hs-plat-k { color: var(--hs-plat-kick); }
     .hs-discover-platforms .hs-plat-yt { color: var(--hs-plat-youtube); }
-    .hs-discover-platforms .hs-plat-h { color: #fff; }
+    .hs-discover-platforms .hs-plat-h { color: var(--hs-plat-hs); }
     /* Post platform letters use same colors */
     .hs-discover-post-plat.hs-plat-t { color: var(--hs-plat-twitch); }
     .hs-discover-post-plat.hs-plat-k { color: var(--hs-plat-kick); }
     .hs-discover-post-plat.hs-plat-yt { color: var(--hs-plat-youtube); }
-    .hs-discover-post-plat.hs-plat-h { color: #fff; }
+    .hs-discover-post-plat.hs-plat-h { color: var(--hs-plat-hs); }
     .hs-discover-bar {
       flex: 1;
       min-width: 28px;
       max-width: 90px;
       height: 5px;
-      background: rgba(255,255,255,0.06);
+      background: #000000;
       overflow: hidden;
     }
     .hs-discover-bar > i {
@@ -995,8 +993,8 @@
       align-items: center;
       gap: 5px;
       padding: 5px 8px;
-      background: rgba(0,0,0,0.25);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
       font-size: 13px;
       font-family: ui-monospace, SFMono-Regular, monospace;
     }
@@ -1009,7 +1007,7 @@
     .hs-discover-chip-btn {
       padding: 2px 8px;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid #ffffff;
       color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
@@ -1050,35 +1048,35 @@
 
     /* Section colour variants — distinct accent borders + headers per widget */
     .hs-discover-section-live {
-      border-color: rgba(255,0,0,0.35);
+      border-color: #ff0000;
     }
     .hs-discover-section-live > .hs-discover-heading {
       background: var(--hs-live-tint);
-      border-bottom-color: rgba(255,0,0,0.35);
+      border-bottom-color: #ff0000;
       color: var(--hs-live);
     }
     .hs-discover-section-posts {
-      border-color: rgba(255,255,255,0.3);
+      border-color: #ffffff;
     }
     .hs-discover-section-posts > .hs-discover-heading {
-      background: rgba(255,255,255,0.10);
+      background: #000000;
       color: #fff;
     }
     .hs-discover-section-trending {
-      border-color: rgba(255,255,255,0.15);
+      border-color: #ffffff;
     }
     .hs-discover-section-trending > .hs-discover-heading {
-      background: rgba(255,255,255,0.04);
+      background: #000000;
       color: #fff;
-      border-bottom-color: rgba(255,255,255,0.15);
+      border-bottom-color: #ffffff;
     }
     .hs-discover-section-tags {
-      border-color: rgba(255,0,255,0.35);
+      border-color: #ff00ff;
     }
     .hs-discover-section-tags > .hs-discover-heading {
-      background: rgba(255,0,255,0.08);
+      background: #000000;
       color: var(--hs-thread);
-      border-bottom-color: rgba(255,0,255,0.35);
+      border-bottom-color: #ff00ff;
     }
 
     /* Leaderboard multi-column when wide — fewer scrolls */
@@ -1090,7 +1088,7 @@
       .hs-discover-leaderboard-body {
         columns: 2;
         column-gap: 0;
-        column-rule: 1px solid rgba(255,255,255,0.05);
+        column-rule: 1px solid #ffffff;
       }
     }
     @container (min-width: 800px) {
@@ -1109,7 +1107,7 @@
       cursor: pointer;
       line-height: 17px;
       border-left: 2px solid transparent;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid #ffffff;
     }
     .hs-discover-post-row:last-child { border-bottom: none; }
     .hs-discover-post-row:hover {
@@ -1145,7 +1143,7 @@
       text-overflow: ellipsis;
     }
     .hs-discover-post-text {
-      color: #c8c8c8;
+      color: #ffffff;
       font-size: 13px;
       line-height: 18px;
       overflow: hidden;
@@ -1170,7 +1168,7 @@
     /* Tag chips with optional inline count */
     .hs-discover-chip-count {
       margin-left: 5px;
-      color: rgba(255,0,255,0.6);
+      color: #ff00ff;
       font-variant-numeric: tabular-nums;
       font-size: 13px;
     }
@@ -1179,7 +1177,7 @@
     .hs-pinned-row {
       display: block;
       padding: 2px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid #ffffff;
       text-decoration: none;
       cursor: pointer;
       line-height: 18px;
@@ -1193,11 +1191,11 @@
       margin: 0;
     }
     .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
-    .hs-pinned-user { font-size: 13px; color: #bbb; }
+    .hs-pinned-user { font-size: 13px; color: #ffffff; }
     .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-left: auto; }
     .hs-pinned-body {
       font-size: 13px;
-      color: #ddd;
+      color: #ffffff;
       word-break: break-word;
       white-space: nowrap;
       overflow: hidden;
@@ -1210,19 +1208,19 @@
       align-items: baseline;
       gap: 6px;
       padding: 2px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid #ffffff;
       line-height: 18px;
       font-size: 13px;
     }
-    .hs-modlog-row:hover { background: rgba(255,135,0,0.07); }
+    .hs-modlog-row:hover { background: #ffffff; color: #000000; }
     .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
     .hs-modlog-channel { color: #fff; font-weight: 600; }
-    .hs-modlog-body { color: #ddd; word-break: break-word; }
+    .hs-modlog-body { color: #ffffff; word-break: break-word; }
     .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }
     .hs-modlog-timeout .hs-modlog-body { color: var(--hs-gold); }
     .hs-modlog-unban .hs-modlog-body,
     .hs-modlog-untimeout .hs-modlog-body { color: var(--hs-ok); }
-    .hs-modlog-delete .hs-modlog-body { color: #9e9e9e; }
+    .hs-modlog-delete .hs-modlog-body { color: #ffffff; }
 
     /* Quoted chat line (the post↔log bridge). A post that cites a chat message
        resolves the /logs permalink back into the real line: who said it, when,
@@ -1235,8 +1233,8 @@
       margin: 4px 0 0;
       padding: 3px 6px;
       border-left: 2px solid var(--hs-reply-dim);
-      background: rgba(0, 255, 255, 0.05);
-      color: #ddd;
+      background: #000000;
+      color: #ffffff;
       font-size: 13px;
       line-height: 18px;
       text-decoration: none;
@@ -1270,3 +1268,5 @@
       width: auto;
       vertical-align: text-bottom;
     }
+    /* the one blink: top heat tier (5000+) */
+    @keyframes hs-blink { 50% { opacity: 0; } }

@@ -26,7 +26,6 @@
       background: #000; color: #fff;
       border: 1px solid #fff;
       padding: 0; min-width: 220px; max-width: 280px;
-      box-shadow: 0 6px 32px rgba(0,0,0,0.75);
       user-select: none;
     }
     .hs-mc-ctx.hs-mc-em-flip-x { transform-origin: top right; }
@@ -42,7 +41,6 @@
       background: #000; color: #fff;
       border: 1px solid var(--hs-gold);
       padding: 0; width: 300px;
-      box-shadow: 0 6px 32px rgba(0,0,0,0.75);
       font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
       font-size: var(--hs-mc-base-size, 13px);
       user-select: none;
@@ -50,11 +48,11 @@
     .hs-note-editor-head {
       padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase; letter-spacing: 0.5px;
-      background: #050505; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      background: #000000; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .hs-note-editor-ta {
       display: block; width: 100%; box-sizing: border-box;
-      background: #000; color: #fff; border: none; border-top: 1px solid #1a1a1a;
+      background: #000; color: #fff; border: none; border-top: 1px solid #ffffff;
       padding: 8px 10px; margin: 0; resize: vertical; min-height: 72px;
       font-family: inherit; font-size: 13px; line-height: 1.4; outline: none;
     }
@@ -62,17 +60,17 @@
     .hs-note-editor-ta:focus { box-shadow: inset 0 0 0 1px var(--hs-gold); }
     .hs-note-editor-foot {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 4px 10px; background: #050505; border-top: 1px solid #1a1a1a;
+      padding: 4px 10px; background: #000000; border-top: 1px solid #ffffff;
     }
     .hs-note-editor-status { font-size: 13px; color: var(--hs-border); text-transform: uppercase; letter-spacing: 0.5px; }
     .hs-note-editor-del {
-      background: transparent; color: var(--hs-border); border: 1px solid #333;
+      background: transparent; color: var(--hs-border); border: 1px solid #ffffff;
       padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 13px;
     }
     .hs-note-editor-del:hover { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
     .hs-mc-ctx .hs-mc-em-header {
       padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
-      background: #050505;
+      background: #000000;
     }
     .hs-mc-ctx .hs-mc-em-item {
       padding: 6px 10px; cursor: pointer;
@@ -88,12 +86,12 @@
     .hs-mc-ctx .hs-mc-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .hs-mc-ctx .hs-mc-em-kbd {
       display: inline-block; min-width: 14px; padding: 0 4px;
-      border: 1px solid #333; background: #0a0a0a; color: #888;
+      border: 1px solid #ffffff; background: #000000; color: #ffffff;
       font-size: 13px; line-height: 14px; text-align: center;
     }
-    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { opacity: 0.4; cursor: not-allowed; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { cursor: not-allowed; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
-    .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #1a1a1a; margin: 2px 0; }
+    .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #000000; margin: 2px 0; }
     /* #hs-user-tooltip is a bare positioning/show-hide shell now — the actual
      * card (src/lib/card-render.js's .hs-card-peek output, appended as its
      * child) carries its OWN position:fixed + all visual chrome from the
@@ -111,7 +109,7 @@
       z-index: 2147483647 !important;
       pointer-events: none;
       background: #000;
-      border: 1px solid #2a2a2a;
+      border: 1px solid #ffffff;
       border-radius: 0;
       padding: 0;
       display: none;
@@ -143,8 +141,8 @@
       max-width: 360px;
       margin: 16px auto;
       text-align: center;
-      color: #ddd;
-      border: 1px solid #1a1a1a;
+      color: #ffffff;
+      border: 1px solid #ffffff;
       background: #000;
     }
     .hs-mc-empty-title {
@@ -155,7 +153,7 @@
     }
     .hs-mc-empty-sub {
       font-size: 13px;
-      color: #999;
+      color: #ffffff;
       margin-bottom: 14px;
       line-height: 18px;
     }
@@ -168,9 +166,9 @@
     .hs-mc-empty-btn {
       display: block;
       padding: 7px 10px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #ddd;
+      background: #000000;
+      border: 1px solid #ffffff;
+      color: #ffffff;
       font-family: inherit;
       font-size: 13px;
       cursor: pointer;
@@ -194,8 +192,7 @@
       border-color: #fff;
     }
     .hs-mc-empty-btn:disabled {
-      opacity: 0.6;
-      cursor: default;
+       cursor: default;
     }
     .hs-mc-empty-note {
       font-size: 13px;

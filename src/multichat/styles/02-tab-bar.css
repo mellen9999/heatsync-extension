@@ -70,8 +70,7 @@
        number does; the number is the part you can't guess. */
     .hs-mc-tab-count {
       margin-left: 5px;
-      opacity: 0.6;
-      font-variant-numeric: tabular-nums;
+       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
     }
 
@@ -132,7 +131,7 @@
     }
     .hs-mc-tab.has-whispers:not(.active):hover {
       background: #fff !important;
-      color: #00aaaa !important;
+      color: #00ffff !important;
     }
     /* Active — focused tab. Weight stays at 400: Cozette ships only the
        regular face, and font-synthesis:none in the bitmap block tells the
@@ -345,7 +344,7 @@
        OWN sends the hardest to read — removed; direction is the signal now.) */
     .hs-whisper-msg.hs-whisper-out { border-left: 3px solid var(--hs-brand); }
     /* a send that did not go through: the inline receipt stops claiming it did (the toast says why) */
-    .hs-mc-dm-inline.hs-whisper-failed { border-left-color: var(--hs-danger) !important; text-decoration: line-through; opacity: 0.6; }
+    .hs-mc-dm-inline.hs-whisper-failed { border-left-color: var(--hs-danger) !important; text-decoration: line-through; }
     .hs-mc-dm-inline.hs-whisper-failed .hs-cmd-mark { text-decoration: none; }
     .hs-whisper-msg.hs-whisper-in { border-left: 3px solid var(--hs-reply); }
     /* The arrow is a SYMBOL, not text — pull it out of the bitmap font stack so
@@ -385,12 +384,11 @@
       margin: 0 5px;
     }
     .hs-whisper-you {
-      color: #bbb;
+      color: #ffffff;
       font-weight: 700;
     }
     .hs-whisper-pending {
-      opacity: 0.45;
-    }
+     }
     .hs-whisper-pending .hs-whisper-status {
       color: var(--hs-gold);
     }
@@ -438,7 +436,7 @@
       align-items: center;
       gap: 6px;
       padding: 4px 8px;
-      background: #1a1a1a;
+      background: #000000;
       border-bottom: 1px solid #fff;
       font-size: 13px;
       color: #fff;
@@ -491,23 +489,23 @@
     .hs-mc-stream-event.event-update  { --evt: var(--hs-warn); }
     .hs-mc-stream-event.event-online  { --evt: var(--hs-live); }
     .hs-mc-stream-event.event-online .hs-evt-game { color: #fff; }
-    .hs-mc-stream-event.event-offline { --evt: #888888; }
+    .hs-mc-stream-event.event-offline { --evt: #ffffff; }
     .hs-mc-stream-event.event-raid    { --evt: var(--hs-plat-twitch); }
     .hs-mc-stream-event.event-hype    { --evt: var(--hs-reply); }
     .hs-mc-stream-event.event-sub     { --evt: var(--hs-ok); }
-    .hs-mc-stream-event.event-redeem  { --evt: #00bfff; }
-    .hs-mc-stream-event.event-emote   { --evt: #29d391; }
+    .hs-mc-stream-event.event-redeem  { --evt: #00ffff; }
+    .hs-mc-stream-event.event-emote   { --evt: #00ff00; }
     .hs-mc-stream-event.event-pred    { --evt: var(--hs-gold); }
     .hs-mc-stream-event.event-poll    { --evt: var(--hs-info); }
-    .hs-mc-stream-event.event-follow  { opacity: 0.8; }
+    .hs-mc-stream-event.event-follow  { }
     /* YouTube event banners — superchat/sticker default to the amount-tier gold;
        m.scColor (inline style, set in main.js) overrides with the real per-message
        tier color from YouTube's own renderer when present. */
     .hs-mc-stream-event.event-yt-superchat    { --evt: var(--hs-gold); }
-    .hs-mc-stream-event.event-yt-supersticker { --evt: #ff8a65; }
-    .hs-mc-stream-event.event-yt-membership   { --evt: #2ba640; }
-    .hs-mc-stream-event.event-yt-milestone    { --evt: #00e5ff; }
-    .hs-mc-stream-event.event-yt-gift         { --evt: #ff4081; }
+    .hs-mc-stream-event.event-yt-supersticker { --evt: #ff0000; }
+    .hs-mc-stream-event.event-yt-membership   { --evt: #00ff00; }
+    .hs-mc-stream-event.event-yt-milestone    { --evt: #00ffff; }
+    .hs-mc-stream-event.event-yt-gift         { --evt: #ff0000; }
     /* Inline feed posts in chat timeline */
     .hs-mc-feed-inline {
       padding: 2px 8px;
@@ -532,8 +530,8 @@
        itself (same treatment as a failed whisper) so a glance at the tab
        tells you it didn't go through without reading the reason. */
     .hs-mc-cmd-inline { color: var(--hs-border); }
-    .hs-mc-cmd-inline .hs-cmd-text { color: #c0c0c0; }
-    .hs-mc-cmd-inline.hs-cmd-failed .hs-cmd-text { text-decoration: line-through; opacity: 0.7; }
+    .hs-mc-cmd-inline .hs-cmd-text { color: #ffffff; }
+    .hs-mc-cmd-inline.hs-cmd-failed .hs-cmd-text { text-decoration: line-through; }
     .hs-cmd-mark.hs-cmd-pending { color: var(--hs-border); }
     .hs-cmd-mark.hs-cmd-ok { color: var(--hs-ok); }
     .hs-cmd-mark.hs-cmd-fail { color: var(--hs-danger); }

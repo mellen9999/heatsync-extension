@@ -367,7 +367,7 @@
        on the chat side. */
     .hs-mc-picker-emote-wrap.hs-state-nsfw > img,
     img.hs-input-emote.hs-state-nsfw {
-      border: 2px dashed #008080 !important;
+      border: 2px dashed #00ffff !important;
       box-sizing: border-box !important;
     }
     /* Per-category color coding on decision surfaces — teal above stays the
@@ -381,7 +381,7 @@
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="gore"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="gore"]   { border-color: #ff0000 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="drugs"] > img,
-    img.hs-input-emote.hs-state-nsfw[data-cw="drugs"]  { border-color: #00d700 !important; }
+    img.hs-input-emote.hs-state-nsfw[data-cw="drugs"]  { border-color: #00ff00 !important; }
     .hs-mc-picker-emote-wrap.hs-state-nsfw[data-cw="hate"] > img,
     img.hs-input-emote.hs-state-nsfw[data-cw="hate"]   { border-color: var(--hs-border) !important; }
 
@@ -389,8 +389,7 @@
        has since been removed. Dim + desaturate the cached IMG; muted-orange
        marker on the wrap ::before signals "stale, channel removed it". */
     .hs-mc-emote-wrapper.hs-state-stale > img {
-      opacity: 0.55;
-      filter: saturate(0.45);
+       filter: saturate(0.45);
       transition: none;
     }
     .hs-mc-emote-wrapper.hs-state-stale:hover > img {
@@ -398,7 +397,7 @@
       filter: none;
     }
     .hs-mc-emote-wrapper.hs-state-stale::before {
-      background: #7a4400;
+      background: #000000;
     }
 
     /* Blocked emotes: hide img (keeps natural dimensions), dashed line via ::before.
@@ -448,7 +447,7 @@
        .hs-emote-cw[data-cw]. */
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="sexual"] { border-color: var(--hs-thread); color: var(--hs-thread); }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="gore"]   { border-color: #ff0000; color: #ff0000; }
-    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="drugs"]  { border-color: #00d700; color: #00d700; }
+    .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="drugs"]  { border-color: #00ff00; color: #00ff00; }
     .hs-mc-emote-wrapper.hs-mc-emote-cw[data-cw="hate"]   { border-color: var(--hs-border); color: var(--hs-border); }
     /* Sized stub — when a prior sighting of this URL cached its rendered box
        width (_hsEmoteBoxW, same cache the normal wrapper's wAttr reads), the
@@ -504,11 +503,11 @@
     }
 
     /* Flash animations */
-    @keyframes hs-flash-paste { 0% { box-shadow: 0 0 12px 4px #fff; } 100% { box-shadow: none; } }
-    @keyframes hs-flash-add { 0% { box-shadow: 0 0 12px 4px var(--hs-ok); } 100% { box-shadow: none; } }
-    @keyframes hs-flash-block { 0% { box-shadow: 0 0 12px 4px var(--hs-danger); } 100% { box-shadow: none; } }
-    @keyframes hs-flash-unblock { 0% { box-shadow: 0 0 12px 4px var(--hs-ok); } 100% { box-shadow: none; } }
-    @keyframes hs-flash-remove { 0% { box-shadow: 0 0 12px 4px #fff; } 100% { box-shadow: none; } }
+    @keyframes hs-flash-paste { 0% { box-shadow: 0 0 0 2px #ffffff; } 100% { box-shadow: none; } }
+    @keyframes hs-flash-add { 0% { box-shadow: 0 0 0 2px var(--hs-ok); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-block { 0% { box-shadow: 0 0 0 2px var(--hs-danger); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-unblock { 0% { box-shadow: 0 0 0 2px var(--hs-ok); } 100% { box-shadow: none; } }
+    @keyframes hs-flash-remove { 0% { box-shadow: 0 0 0 2px #ffffff; } 100% { box-shadow: none; } }
     .hs-flash-paste { animation: hs-flash-paste 0.4s ease-out; }
     .hs-flash-add { animation: hs-flash-add 0.4s ease-out; }
     .hs-flash-block { animation: hs-flash-block 0.4s ease-out; }
@@ -620,9 +619,9 @@
     #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #fff; }
     #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #fff; }
     /* Per-provider source label colors (override .global/.channel) */
-    #hs-emote-tooltip .tooltip-source.src-7tv { background: #29d8f6; color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-bttv { background: #d50014; color: #fff; }
-    #hs-emote-tooltip .tooltip-source.src-ffz { background: #0086c8; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-7tv { background: #00ffff; color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-bttv { background: #ff0000; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-ffz { background: #ffffff; color: #000; }
     #hs-emote-tooltip .tooltip-source.src-twitch { background: var(--hs-plat-twitch); color: #fff; }
     #hs-emote-tooltip .tooltip-source.src-kick { background: var(--hs-plat-kick); color: #000; }
     #hs-emote-tooltip .tooltip-source.src-heatsync,
@@ -785,7 +784,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       font-weight: 700;
     }
     #hs-emote-tooltip .tooltip-join {
-      color: #6a6a6a;
+      color: #ffffff;
     }
     /* Effects read as a distinct class of thing from emote names — slightly
        dimmer weight so the composition scans base-first. */

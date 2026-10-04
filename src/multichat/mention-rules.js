@@ -120,7 +120,7 @@ function mrHitUrl(h) {
 
 function mrHitsHtml(hits) {
   if (!hits.length)
-    return `<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_hits_none'))}</div>`
+    return `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_hits_none'))}</div>`
   return hits
     .map((h) => {
       const tag = MR_PLAT_TAG[h.platform] || '?'
@@ -133,8 +133,8 @@ function mrHitsHtml(hits) {
       return (
         '<div class="hs-mc-setting-row" style="gap:4px;font-size:13px;overflow:hidden">' +
         open +
-        `<span style="color:#808080">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}${url ? '</a>' : '</span>'}` +
-        `<span style="color:#666;flex-shrink:0">${when}</span></div>`
+        `<span style="color:#ffffff">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}${url ? '</a>' : '</span>'}` +
+        `<span style="color:#ffffff;flex-shrink:0">${when}</span></div>`
       )
     })
     .join('')
@@ -152,14 +152,14 @@ function mrRuleRowHtml(r) {
     `<div class="hs-mc-setting-row hs-mc-setting-row-split" data-mr-row="${id}" style="gap:4px">` +
     '<div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:hidden">' +
     `<button class="hs-mc-toggle-pill${r.enabled ? ' active' : ''}" data-mr-action="toggle" data-mr-id="${id}" style="flex-shrink:0"><span class="hs-mc-toggle-knob"></span></button>` +
-    `<span style="color:#808080;font-size:13px;min-width:44px;flex-shrink:0">${escapeHtml(r.rule_type || '')}</span>` +
+    `<span style="color:#ffffff;font-size:13px;min-width:44px;flex-shrink:0">${escapeHtml(r.rule_type || '')}</span>` +
     `<span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1" title="${escapeHtml(r.pattern || '')}">${escapeHtml(r.pattern || '')}</span>` +
-    (scope ? `<span style="color:#666;font-size:13px;flex-shrink:0">${escapeHtml(scope)}</span>` : '') +
+    (scope ? `<span style="color:#ffffff;font-size:13px;flex-shrink:0">${escapeHtml(scope)}</span>` : '') +
     (r.dormant
-      ? `<span style="color:#ff8700;font-size:13px;flex-shrink:0">${escapeHtml(t('mc_mr_dormant'))}</span>`
+      ? `<span style="color:#ffff00;font-size:13px;flex-shrink:0">${escapeHtml(t('mc_mr_dormant'))}</span>`
       : '') +
     '</div>' +
-    `<button data-mr-action="edit" data-mr-id="${id}" style="${FR_BTN};color:#808080;flex-shrink:0;padding:1px 4px" title="${escapeHtml(t('mc_mr_edit'))}">✎</button>` +
+    `<button data-mr-action="edit" data-mr-id="${id}" style="${FR_BTN};color:#ffffff;flex-shrink:0;padding:1px 4px" title="${escapeHtml(t('mc_mr_edit'))}">✎</button>` +
     hsXButtonHtml(
       'hs-x-inline',
       t('mc_mr_delete'),
@@ -179,17 +179,17 @@ function mrTabChannels() {
 function mrFormHtml(d, editing) {
   const opt = (v, cur) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`
   const box = (field, value, label, on, title) =>
-    `<label style="display:flex;align-items:center;gap:2px;color:#808080;font-size:13px;cursor:pointer;flex-shrink:0"${title ? ` title="${escapeHtml(title)}"` : ''}>` +
+    `<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0"${title ? ` title="${escapeHtml(title)}"` : ''}>` +
     `<input type="checkbox" data-mr-field="${field}" value="${value}"${on ? ' checked' : ''} style="margin:0;cursor:pointer">${label}</label>`
   const chips = mrTabChannels()
     .map(
       (c) =>
-        `<button data-mr-action="chip" data-mr-chan="${escapeHtml(c)}" style="${FR_BTN};color:#808080;padding:0 4px">+#${escapeHtml(c)}</button>`,
+        `<button data-mr-action="chip" data-mr-chan="${escapeHtml(c)}" style="${FR_BTN};color:#ffffff;padding:0 4px">+#${escapeHtml(c)}</button>`,
     )
     .join('')
   return (
     '<div class="hs-mc-setting-row hs-mc-setting-row-block hs-mc-mr-form" style="padding:4px 4px 6px">' +
-    `<div style="font-size:13px;color:#808080;margin-bottom:4px">${escapeHtml(t(editing ? 'mc_mr_edit' : 'mc_mr_add'))}</div>` +
+    `<div style="font-size:13px;color:#ffffff;margin-bottom:4px">${escapeHtml(t(editing ? 'mc_mr_edit' : 'mc_mr_add'))}</div>` +
     '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">' +
     `<select data-mr-field="type" style="${FR_SEL};width:64px">${MR_TYPES.map((v) => opt(v, d.rule_type)).join('')}</select>` +
     `<input type="text" data-mr-field="pattern" maxlength="${MR_PATTERN_MAX}" value="${escapeHtml(d.pattern)}" placeholder="${escapeHtml(t('mc_mr_pattern_ph'))}" style="${FR_INPUT}">` +
@@ -201,10 +201,10 @@ function mrFormHtml(d, editing) {
     '</div>' +
     '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px">' +
     MR_PLATFORMS.map((p) => box('plat', p, MR_PLAT_TAG[p], d.platforms.includes(p))).join('') +
-    '<span style="color:#444">|</span>' +
+    '<span style="color:#ffffff">|</span>' +
     MR_NOTIFY_VIA.map((v) => box('via', v, v, d.notify_via.includes(v))).join('') +
     `<input type="text" inputmode="numeric" data-mr-field="cd" value="${escapeHtml(d.cooldown_seconds)}" placeholder="${escapeHtml(t('mc_mr_cooldown_ph'))}" title="${MR_COOLDOWN_MIN}–${MR_COOLDOWN_MAX}" style="${FR_INPUT};width:64px;flex:none">` +
-    `<button data-mr-action="save" style="${FR_BTN};background:#222">${escapeHtml(t('mc_mr_save'))}</button>` +
+    `<button data-mr-action="save" style="${FR_BTN};background:#000000">${escapeHtml(t('mc_mr_save'))}</button>` +
     (editing ? `<button data-mr-action="cancel" style="${FR_BTN}">${escapeHtml(t('mc_mr_cancel'))}</button>` : '') +
     '</div>' +
     '<div style="display:flex;gap:4px;align-items:center;margin-top:4px">' +
@@ -232,16 +232,16 @@ function mrGroupHtml() {
     mrState.loaded = false
     mrState.rules = []
     mrState.hits = []
-    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
   }
   if (!mrState.loaded && !mrState.loading && Date.now() - mrState.failedAt > MR_RETRY_MS) mrLoad()
   if (!mrState.loaded && mrState.failedAt) {
     const line = mrState.unauthed ? t('mc_mr_signin') : mrState.error
-    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(line)}</div></div>`
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(line)}</div></div>`
   }
   const rows = mrState.rules.length
     ? mrState.rules.map(mrRuleRowHtml).join('')
-    : `<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
+    : `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
   const editing = mrState.editId !== null
   return (
     `<div class="hs-mc-settings-group">${title}${rows}` +

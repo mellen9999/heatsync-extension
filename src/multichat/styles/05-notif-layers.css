@@ -55,16 +55,15 @@
       align-items: stretch;
       gap: 0;
       padding: 0;
-      background: #0a0a0d;
-      color: #efeff1;
+      background: #000000;
+      color: #ffffff;
       font: 12px/1.35 ui-monospace, 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
       /* container-type lives on the statusbar layer's notifs only (06-…css).
          On a shrink-to-fit layer (toast-stack) inline-size containment zeroes
          the content's width contribution — every toast collapsed to the 180px
          min-width and char-wrapped into a tower. */
-      border: 1px solid #2a2a2e;
-      border-left: 3px solid var(--hs-notif-accent, #555);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      border: 1px solid #ffffff;
+      border-left: 3px solid var(--hs-notif-accent, #ffffff);
       animation: hs-notif-fade-in 120ms ease both;
     }
     @keyframes hs-notif-fade-in {
@@ -89,7 +88,7 @@
       padding: 6px 10px;
       word-break: break-word;
     }
-    .hs-notif-body-fallback { opacity: 0.55; font-style: italic; }
+    .hs-notif-body-fallback { font-style: italic; }
     .hs-notif-actions {
       display: inline-flex;
       gap: 0;
@@ -99,9 +98,9 @@
     }
     .hs-notif-action {
       background: transparent;
-      color: #efeff1;
+      color: #ffffff;
       border: none;
-      border-left: 1px solid #2a2a2e;
+      border-left: 1px solid #ffffff;
       padding: 0 12px;
       font: 600 11px/1 inherit;
       cursor: pointer;
@@ -116,7 +115,7 @@
     .hs-notif-action-primary {
       color: #fff;
       font-weight: 700;
-      border: 1px solid #efeff1;
+      border: 1px solid #ffffff;
       align-self: center;
       padding: 4px 10px;
       margin: 0 8px;
@@ -133,10 +132,10 @@
       max-width: 100%;
       cursor: pointer;
     }
-    .hs-notif-toast-text { color: #efeff1; display: inline; }
+    .hs-notif-toast-text { color: #ffffff; display: inline; }
     .hs-notif-toast-text::before {
       content: var(--hs-notif-icon, '·');
-      color: var(--hs-notif-accent, #888);
+      color: var(--hs-notif-accent, #ffffff);
       display: inline-block;
       width: 14px;
       margin-right: 8px;
@@ -144,11 +143,11 @@
       text-align: center;
       flex: 0 0 auto;
     }
-    .hs-notif-toast-text.hs-notif-toast-success { --hs-notif-icon: '✓'; --hs-notif-accent: var(--hs-ok); color: #efeff1; }
-    .hs-notif-toast-text.hs-notif-toast-error   { --hs-notif-icon: '✕'; --hs-notif-accent: var(--hs-danger); color: #efeff1; }
-    .hs-notif-toast-text.hs-notif-toast-warn    { --hs-notif-icon: '!'; --hs-notif-accent: var(--hs-warn); color: #efeff1; }
-    .hs-notif-toast-text.hs-notif-toast-info    { --hs-notif-icon: 'i'; --hs-notif-accent: var(--hs-info); color: #efeff1; }
-    .hs-notif-toast-text.hs-notif-toast-mention { --hs-notif-icon: '@'; --hs-notif-accent: var(--hs-mention); color: #efeff1; }
+    .hs-notif-toast-text.hs-notif-toast-success { --hs-notif-icon: '✓'; --hs-notif-accent: var(--hs-ok); color: #ffffff; }
+    .hs-notif-toast-text.hs-notif-toast-error   { --hs-notif-icon: '✕'; --hs-notif-accent: var(--hs-danger); color: #ffffff; }
+    .hs-notif-toast-text.hs-notif-toast-warn    { --hs-notif-icon: '!'; --hs-notif-accent: var(--hs-warn); color: #ffffff; }
+    .hs-notif-toast-text.hs-notif-toast-info    { --hs-notif-icon: 'i'; --hs-notif-accent: var(--hs-info); color: #ffffff; }
+    .hs-notif-toast-text.hs-notif-toast-mention { --hs-notif-icon: '@'; --hs-notif-accent: var(--hs-mention); color: #ffffff; }
     /* Wrapper accent strip mirrors the text level (CSS custom property
        cascades from the inner span up via :has). */
     .hs-notif:has(.hs-notif-toast-success) { --hs-notif-accent: var(--hs-ok); }

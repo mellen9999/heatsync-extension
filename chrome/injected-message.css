@@ -11,7 +11,7 @@
 
 /* Hover effect */
 .heatsync-injected-message:hover {
-  background: rgba(255, 0, 0, 0.2) !important;
+  background: #000000 !important;
 }
 
 /* OP Badge - UNIFIED with site style (bulletproof) */
@@ -32,7 +32,6 @@
   justify-content: center !important;
   vertical-align: middle !important;
   border: none !important;
-  text-shadow: 0 0 1px #fff, 0 0 1px #fff !important;
   box-sizing: border-box !important;
   line-height: 1 !important;
 }
@@ -42,26 +41,26 @@
 /* Twitch */
 .heatsync-twitch-message .chat-line__no-background {
   border-left: 4px solid #ff0000 !important;
-  background: rgba(255, 0, 0, 0.1) !important;
+  background: #000000 !important;
   padding: 8px !important;
   margin: 2px 0 !important;
 }
 
 .heatsync-twitch-message:hover .chat-line__no-background {
-  background: rgba(255, 0, 0, 0.15) !important;
+  background: #000000 !important;
 }
 
 /* Kick */
 .heatsync-kick-message[data-index] > div {
   border-left: 4px solid #ff0000 !important;
-  background: rgba(255, 0, 0, 0.1) !important;
+  background: #000000 !important;
   padding: 8px !important;
   margin: 4px 0 !important;
   border-radius: 0 !important;
 }
 
 .heatsync-kick-message[data-index]:hover > div {
-  background: rgba(255, 0, 0, 0.15) !important;
+  background: #000000 !important;
 }
 
 /* Click cursor */

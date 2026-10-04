@@ -478,9 +478,8 @@
         height: auto;
         margin-bottom: 8px;
         background: #000;
-        border: 1px solid rgba(255,255,255,0.12);
+        border: 1px solid #ffffff;
         border-radius: 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         z-index: 4999;
         overflow: hidden;
         /* CozetteVector bitmap @ 13px with smoothing off — crisp, matches the
@@ -503,7 +502,7 @@
         justify-content: space-between;
         padding: 6px 12px;
         background: #000;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid #ffffff;
       }
 
       .heatsync-panel-title {
@@ -524,7 +523,7 @@
       .heatsync-panel-close {
         background: none;
         border: none;
-        color: #808080;
+        color: #ffffff;
         cursor: pointer;
         padding: 4px;
         border-radius: 0;
@@ -543,8 +542,8 @@
 
       .heatsync-header-btn {
         background: none;
-        border: 1px solid rgba(255,255,255,0.12);
-        color: #808080;
+        border: 1px solid #ffffff;
+        color: #ffffff;
         cursor: pointer;
         padding: 4px 8px;
         border-radius: 0;
@@ -568,7 +567,7 @@
       .heatsync-panel-bottom {
         flex-shrink: 0;
         background: #000;
-        border-top: 1px solid rgba(255,255,255,0.12);
+        border-top: 1px solid #ffffff;
       }
 
       .heatsync-panel-bottom .heatsync-search {
@@ -587,8 +586,8 @@
 
       .heatsync-settings-cog {
         background: none;
-        border: 1px solid rgba(255,255,255,0.12);
-        color: #808080;
+        border: 1px solid #ffffff;
+        color: #ffffff;
         cursor: pointer;
         padding: 6px;
         border-radius: 0;
@@ -624,8 +623,8 @@
 
       .heatsync-size-btn {
         background: none;
-        border: 1px solid rgba(255,255,255,0.12);
-        color: #808080;
+        border: 1px solid #ffffff;
+        color: #ffffff;
         cursor: pointer;
         padding: 6px 10px;
         border-radius: 0;
@@ -656,14 +655,14 @@
       /* Search bar */
       .heatsync-search {
         padding: 8px 12px;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid #ffffff;
       }
 
       .heatsync-search input {
         width: 100%;
         padding: 8px 12px;
         background: #000;
-        border: 1px solid rgba(255,255,255,0.12);
+        border: 1px solid #ffffff;
         border-radius: 0;
         color: #fff;
         font-size: 13px;
@@ -675,7 +674,7 @@
       }
 
       .heatsync-search input::placeholder {
-        color: #808080;
+        color: #ffffff;
       }
 
       /* Top search row — search input + source chips. Replaces the bottom search wrap. */
@@ -685,14 +684,14 @@
         gap: 6px;
         padding: 3px 8px;
         background: #000;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid #ffffff;
         flex-shrink: 0;
       }
       .hs-top-search input {
         flex: 1;
         min-width: 0;
         background: #000;
-        border: 1px solid rgba(255,255,255,0.12);
+        border: 1px solid #ffffff;
         border-radius: 0;
         color: #fff;
         font-size: 13px;
@@ -701,7 +700,7 @@
         font-family: inherit;
       }
       .hs-top-search input:focus { border-color: #fff; }
-      .hs-top-search input::placeholder { color: #808080; }
+      .hs-top-search input::placeholder { color: #ffffff; }
 
       .hs-src-chips {
         display: none;
@@ -713,8 +712,8 @@
       }
       .hs-src-chip {
         background: none;
-        border: 1px solid rgba(255,255,255,0.18);
-        color: #808080;
+        border: 1px solid #ffffff;
+        color: #ffffff;
         font-size: 13px;
         font-weight: 600;
         padding: 3px 6px;
@@ -738,7 +737,7 @@
       .heatsync-tabs {
         display: flex;
         flex-shrink: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid #ffffff;
         background: #000;
       }
 
@@ -752,7 +751,7 @@
         padding: 3px 4px;
         background: none;
         border: none;
-        color: #808080;
+        color: #ffffff;
         font-size: 13px;
         cursor: pointer;
         border-bottom: 2px solid transparent;
@@ -772,7 +771,7 @@
       .heatsync-tab-count {
         display: block;
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
         margin-left: 0;
       }
 
@@ -861,7 +860,7 @@
          doesn't drag the outline into invisibility), image hidden via
          visibility so the slot keeps its 32×32 layout. */
       .heatsync-emote-wrap.blocked {
-        outline: 2px dashed #808080 !important;
+        outline: 2px dashed #ffffff !important;
         outline-offset: -2px !important;
       }
       .heatsync-emote-wrap.blocked img {
@@ -900,20 +899,20 @@
 
       .heatsync-provider-label.seventv,
       .heatsync-provider-label.bttv,
-      .heatsync-provider-label.ffz { color: #29b6f6; }
+      .heatsync-provider-label.ffz { color: #ffffff; }
 
       .heatsync-provider-count {
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
         font-weight: normal;
       }
 
       .heatsync-add-all-btn {
         padding: 3px 8px;
         background: transparent;
-        border: 1px solid #808080;
+        border: 1px solid #ffffff;
         border-radius: 0;
-        color: #808080;
+        color: #ffffff;
         font-size: 13px;
         cursor: pointer;
         transition: none;
@@ -939,12 +938,12 @@
       .heatsync-login-msg {
         padding: 20px;
         text-align: center;
-        color: #808080;
+        color: #ffffff;
         font-size: 13px;
       }
 
       .heatsync-login-msg a {
-        color: #9146ff;
+        color: #ff00ff;
         text-decoration: none;
       }
 
@@ -963,9 +962,9 @@
 
       .heatsync-size-toggle {
         background: none;
-        border: 1px solid #808080;
+        border: 1px solid #ffffff;
         border-radius: 0;
-        color: #808080;
+        color: #ffffff;
         font-size: 11px;
         padding: 2px 6px;
         cursor: pointer;
@@ -981,7 +980,7 @@
       .heatsync-empty {
         padding: 40px 20px;
         text-align: center;
-        color: #a0a0a0;
+        color: #ffffff;
         font-size: 13px;
       }
 
@@ -995,7 +994,7 @@
         text-align: center;
       }
       .hs-coldstart-title { color: #fff; font-size: 13px; font-weight: 600; }
-      .hs-coldstart-sub { color: #a0a0a0; font-size: 13px; max-width: 260px; line-height: 1.4; }
+      .hs-coldstart-sub { color: #ffffff; font-size: 13px; max-width: 260px; line-height: 1.4; }
       .hs-coldstart .hs-import-channel-btn { flex: none; padding: 6px 14px; }
 
       /* Saved emote sets list */
@@ -1013,11 +1012,11 @@
         padding: 2px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        border-bottom: 1px solid #ffffff;
         line-height: 1.3;
       }
       .heatsync-set-item:hover {
-        background: rgba(255,135,0,0.07);
+        background: #000000;
       }
       .heatsync-set-info {
         display: flex;
@@ -1038,7 +1037,7 @@
       }
       .heatsync-set-meta {
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
         flex-shrink: 0;
         white-space: nowrap;
       }
@@ -1094,11 +1093,11 @@
         padding: 1px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        border-bottom: 1px solid #ffffff;
         line-height: 1.3;
       }
       .heatsync-history-item:hover {
-        background: rgba(255,135,0,0.07);
+        background: #000000;
       }
       .heatsync-history-thumb {
         width: 18px;
@@ -1126,7 +1125,7 @@
       }
       .heatsync-history-meta {
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
         flex-shrink: 0;
         white-space: nowrap;
       }
@@ -1215,7 +1214,7 @@
       }
 
       .heatsync-channel-name {
-        color: #bf94ff;
+        color: #ff00ff;
         font-weight: 700;
       }
 
@@ -1249,7 +1248,7 @@
       .heatsync-status {
         text-align: center;
         padding: 16px;
-        color: #808080;
+        color: #ffffff;
         font-size: 13px;
       }
 
@@ -1259,7 +1258,7 @@
         width: 12px;
         height: 12px;
         margin-left: 8px;
-        border: 2px solid #808080;
+        border: 2px solid #ffffff;
         border-top-color: transparent;
         border-radius: 50%;
         animation: heatsync-spin 0.8s linear infinite;
@@ -1275,16 +1274,16 @@
         gap: 8px;
         margin-top: 12px;
         padding-top: 12px;
-        border-top: 1px solid rgba(255,255,255,0.12);
+        border-top: 1px solid #ffffff;
       }
 
       .heatsync-link {
         flex: 1;
         padding: 8px;
-        background: rgba(255,255,255,0.08);
+        background: #000000;
         border: none;
         border-radius: 0;
-        color: #808080;
+        color: #ffffff;
         font-size: 13px;
         cursor: pointer;
         text-align: center;
@@ -1301,10 +1300,10 @@
       .heatsync-emote-count {
         display: inline-block;
         padding: 2px 6px;
-        background: rgba(255,255,255,0.08);
+        background: #000000;
         border-radius: 0;
         font-size: 13px;
-        color: #808080;
+        color: #ffffff;
         margin-left: 8px;
       }
 
@@ -1318,15 +1317,15 @@
         margin-right: 4px;
       }
 
-      .heatsync-provider.seventv { background: #29b6f6; color: #000; }
-      .heatsync-provider.bttv { background: #d50014; color: #fff; }
-      .heatsync-provider.ffz { background: #6b54ff; color: #fff; }
+      .heatsync-provider.seventv { background: #00ffff; color: #000; }
+      .heatsync-provider.bttv { background: #ff0000; color: #fff; }
+      .heatsync-provider.ffz { background: #ffffff; color: #000; }
 
       /* Section titles */
       .heatsync-section-title {
         font-size: 11px;
         font-weight: 600;
-        color: #808080;
+        color: #ffffff;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
@@ -1335,7 +1334,7 @@
       .heatsync-inventory-section {
         margin-bottom: 16px;
         padding-bottom: 12px;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid #ffffff;
       }
 
       /* Settings view - compact */
@@ -1349,7 +1348,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 12px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid #ffffff;
       }
 
       .heatsync-setting-row:last-child {
@@ -1427,14 +1426,14 @@
         align-items: center;
         gap: 8px;
         padding: 4px 10px;
-        background: rgba(145, 71, 255, 0.15);
-        border-bottom: 1px solid #9146ff;
-        color: #bf94ff;
+        background: #000000;
+        border-bottom: 1px solid #ff00ff;
+        color: #ff00ff;
         font-size: 13px;
       }
 
       .heatsync-auth-banner a {
-        color: #9146ff;
+        color: #ff00ff;
         font-weight: 600;
         text-decoration: none;
       }
@@ -1453,7 +1452,7 @@
         justify-content: center;
         padding: 40px 20px;
         text-align: center;
-        color: #808080;
+        color: #ffffff;
       }
 
       .heatsync-error-icon {
@@ -1469,7 +1468,7 @@
 
       .heatsync-retry-btn {
         padding: 8px 16px;
-        background: rgba(255,255,255,0.06);
+        background: #000000;
         border: none;
         border-radius: 0;
         color: #fff;
@@ -1489,9 +1488,9 @@
         align-items: center;
         gap: 4px;
         padding: 2px 6px;
-        background: rgba(255, 204, 0, 0.2);
+        background: #000000;
         border-radius: 0;
-        color: #ffd700;
+        color: #ffff00;
         font-size: 10px;
         margin-left: 8px;
       }
@@ -1502,7 +1501,7 @@
         align-items: center;
         gap: 4px;
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
       }
 
       .heatsync-status-dot {
@@ -1512,7 +1511,7 @@
       }
 
       .heatsync-status-dot.connected { background: #00ff00; }
-      .heatsync-status-dot.disconnected { background: #ffd700; }
+      .heatsync-status-dot.disconnected { background: #ffff00; }
       .heatsync-status-dot.error { background: #ff0000; }
 
       /* Disabled add buttons when not logged in */
@@ -1532,26 +1531,25 @@
         padding: 0 0 4px;
         min-width: 200px;
         max-width: 280px;
-        box-shadow: 0 6px 32px rgba(0,0,0,0.75);
         font-size: 13px;
       }
       .hs-emote-ctx-preview {
         display: flex; align-items: center; gap: 10px;
         padding: 8px 10px; margin-bottom: 4px;
-        border-bottom: 1px solid #222;
-        background: #0a0a0a;
+        border-bottom: 1px solid #ffffff;
+        background: #000000;
       }
       .hs-emote-ctx-thumb {
         width: 56px; height: 56px; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
         background-image:
-          linear-gradient(45deg, #161616 25%, transparent 25%),
-          linear-gradient(-45deg, #161616 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #161616 75%),
-          linear-gradient(-45deg, transparent 75%, #161616 75%);
+          linear-gradient(45deg, #000000 25%, transparent 25%),
+          linear-gradient(-45deg, #000000 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #000000 75%),
+          linear-gradient(-45deg, transparent 75%, #000000 75%);
         background-size: 12px 12px;
         background-position: 0 0, 0 6px, 6px -6px, -6px 0;
-        border: 1px solid #222;
+        border: 1px solid #ffffff;
       }
       .hs-emote-ctx-thumb img { max-width: 100%; max-height: 100%; }
       .hs-emote-ctx-meta { flex: 1; min-width: 0; }
@@ -1560,12 +1558,12 @@
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       }
       .hs-emote-ctx-sub {
-        font-size: 11px; color: #888; margin-top: 2px;
+        font-size: 11px; color: #ffffff; margin-top: 2px;
         display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
       }
       .hs-emote-ctx-provider {
         display: inline-block; padding: 0 4px;
-        border: 1px solid #444; color: #fff;
+        border: 1px solid #ffffff; color: #fff;
         font-size: 10px; line-height: 14px;
       }
       .hs-emote-ctx-item {
@@ -1586,7 +1584,7 @@
       }
       .hs-emote-ctx-sep {
         height: 1px;
-        background: #1a1a1a;
+        background: #000000;
         margin: 4px 0;
       }
 
@@ -1596,8 +1594,8 @@
         width: calc(100% - 16px);
         margin: 4px 8px;
         padding: 5px 8px;
-        background: #1a1a1a;
-        border: 1px solid #808080;
+        background: #000000;
+        border: 1px solid #ffffff;
         border-radius: 2px;
         color: #fff;
         font-size: 13px;
@@ -1626,7 +1624,7 @@
         align-items: center;
         gap: 6px;
         padding: 6px 8px;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
+        border-bottom: 1px solid #ffffff;
         flex-shrink: 0;
       }
       .hs-import-channel-btn {
@@ -1658,11 +1656,11 @@
         padding: 1px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        border-bottom: 1px solid #ffffff;
         line-height: 1.3;
       }
       .hs-discover-item.blocked {
-        outline: 2px dashed #808080;
+        outline: 2px dashed #ffffff;
         outline-offset: -2px;
         opacity: 0.5;
       }
@@ -1671,7 +1669,7 @@
         content: 'blocked';
         margin-left: auto;
         font-size: 10px;
-        color: #808080;
+        color: #ffffff;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -1709,9 +1707,9 @@
       .hs-discover-add-btn:disabled { opacity: 0.4; cursor: wait; }
       .hs-discover-hint {
         font-size: 10px;
-        color: #888;
+        color: #ffffff;
         padding: 4px 8px 6px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid #ffffff;
         line-height: 1.3;
       }
       .hs-search-all-cta {
@@ -1739,14 +1737,14 @@
         border: 1px solid currentColor;
         flex-shrink: 0;
       }
-      .hs-discover-prov.prov-7tv { color: #29d9ff; }
-      .hs-discover-prov.prov-bttv { color: #ffaa00; }
-      .hs-discover-prov.prov-ffz { color: #5c8bff; }
+      .hs-discover-prov.prov-7tv { color: #00ffff; }
+      .hs-discover-prov.prov-bttv { color: #ff0000; }
+      .hs-discover-prov.prov-ffz { color: #ffffff; }
       .hs-discover-prov.prov-hs { color: #fff; }
       .hs-discover-item:hover .hs-discover-prov { color: #000 !important; border-color: #000 !important; }
       .hs-discover-uses {
         font-size: 10px;
-        color: #888;
+        color: #ffffff;
         flex-shrink: 0;
         min-width: 28px;
         text-align: right;
@@ -1816,8 +1814,8 @@
         log(' 🔴 INJECTING RED BACKGROUND CSS FOR MENTIONS')
 
         // Primary rule: entire message line gets dark blood-red bg so full-color usernames read on top
-        rules.push('.chat-line__message.hs-mentioned { background-color: #5c1212 !important; }')
-        rules.push('.hs-mentioned.chat-line__message { background-color: #5c1212 !important; }')
+        rules.push('.chat-line__message.hs-mentioned { background-color: #000000 !important; }')
+        rules.push('.hs-mentioned.chat-line__message { background-color: #000000 !important; }')
 
         // All children must be transparent so red shows through
         rules.push(
@@ -1825,7 +1823,7 @@
         )
 
         // Generic fallback if class is on wrong element
-        rules.push('.hs-mentioned { background-color: #5c1212 !important; }')
+        rules.push('.hs-mentioned { background-color: #000000 !important; }')
         rules.push('.hs-mentioned * { background-color: transparent !important; background: transparent !important; }')
       }
 
@@ -1996,7 +1994,7 @@
               <div class="heatsync-setting-label">right-click block</div>
               <div class="heatsync-setting-desc">instant blocks immediately · menu shows block/cancel · off disables it</div>
             </div>
-            <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #808080;font-family:'CozetteVector',monospace;font-size:13px;-webkit-font-smoothing:none;font-smooth:never;font-synthesis:none;text-rendering:optimizeSpeed">
+            <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #ffffff;font-family:'CozetteVector',monospace;font-size:13px;-webkit-font-smoothing:none;font-smooth:never;font-synthesis:none;text-rendering:optimizeSpeed">
               ${['instant', 'menu', 'off'].map((v) => `<button type="button" class="heatsync-rcb-opt" data-rcb="${v}" style="background:${(settings.rightClickBlockMode || 'menu') === v ? '#fff' : 'transparent'};color:${(settings.rightClickBlockMode || 'menu') === v ? '#000' : '#fff'};border:none;cursor:pointer;padding:4px 10px;font-family:inherit;font-size:13px">${v}</button>`).join('')}
             </div>
           </div>
@@ -2007,7 +2005,7 @@
 
           <div class="heatsync-setting-row">
             <div>
-              <div class="heatsync-setting-label">${t('btn_settings_hide_header')} <span style="color:#808080;font-size:11px">${t('btn_settings_always_popout')}</span></div>
+              <div class="heatsync-setting-label">${t('btn_settings_hide_header')} <span style="color:#ffffff;font-size:11px">${t('btn_settings_always_popout')}</span></div>
             </div>
             <div class="heatsync-toggle ${settings.hideChatHeader ? 'active' : ''}" data-setting="hideChatHeader"></div>
           </div>
@@ -3155,7 +3153,7 @@
         const header = document.createElement('div')
         header.className = 'heatsync-section-header'
         header.textContent = t('btn_recent') || 'recent'
-        header.style.cssText = 'width: 100%; font-size: 11px; color: #808080; padding: 2px 4px; margin-bottom: 2px;'
+        header.style.cssText = 'width: 100%; font-size: 11px; color: #ffffff; padding: 2px 4px; margin-bottom: 2px;'
         recentContainer.appendChild(header)
 
         for (const r of recentEmotes) {
@@ -3169,7 +3167,7 @@
         _virtualRecentCount = recentEmotes.length
 
         const divider = document.createElement('div')
-        divider.style.cssText = 'width: 100%; border-top: 1px solid #333; margin: 4px 0;'
+        divider.style.cssText = 'width: 100%; border-top: 1px solid #ffffff; margin: 4px 0;'
         recentContainer.appendChild(divider)
       }
 

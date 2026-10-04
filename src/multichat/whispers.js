@@ -443,7 +443,7 @@ async function sendWhisperMessage(key, text) {
   const msg = {
     user: 'you',
     text,
-    color: '#808080',
+    color: '#ffffff',
     time: Date.now(),
     self: true,
     platform: userInfo.platform,
@@ -610,7 +610,7 @@ function renderWhispersTab() {
                 whisperTimeline.push({
                   user: isSelf ? 'you' : otherName,
                   text: m.content,
-                  color: isSelf ? '#808080' : otherColor,
+                  color: isSelf ? '#ffffff' : otherColor,
                   time: t,
                   self: isSelf,
                   platform: 'heatsync',
@@ -676,7 +676,7 @@ function renderWhispersTab() {
 
     const ts = formatTimeFromTs(m.time)
     const tsHtml = ts ? `<span class="hs-mc-ts">${ts}</span>` : ''
-    const platColor = m.platform === 'twitch' ? 'var(--hs-plat-twitch)' : '#808080'
+    const platColor = m.platform === 'twitch' ? 'var(--hs-plat-twitch)' : 'var(--hs-plat-hs)'
     const platTag = m.platform === 'twitch' ? 'T' : 'H'
 
     // Show sender -> recipient for both directions (the links below swap by

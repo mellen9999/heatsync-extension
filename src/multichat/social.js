@@ -299,8 +299,19 @@ function clearYtPace(channelId) {
   _ytPaceLastEmit.delete(channelId)
 }
 
-// Heat tier display — big scaling numbers + color glow + row effects, no emoji
-// Matches website colors.js: #444 → #888 → #aaa → #ccc → #eee → #fff
+// Heat ladder — the site's VT320 ramp (client/config/colors.js): white plain →
+// white bold (10+) → yellow (50+) → yellow bold (250+) → red bold (1000+) →
+// reverse red + blink (5000+, the only tier that blinks). Hue steps, never
+// fades; no glow, no shadow.
+function heatLadder(heat) {
+  if (heat >= 5000) return { color: '#000000', bg: '#ff0000', bold: true, blink: true }
+  if (heat >= 1000) return { color: '#ff0000', bold: true }
+  if (heat >= 250) return { color: '#ffff00', bold: true }
+  if (heat >= 50) return { color: '#ffff00', bold: false }
+  if (heat >= 10) return { color: '#ffffff', bold: true }
+  return { color: '#ffffff', bold: false }
+}
+
 function formatHeat(heat) {
   if (heat >= 1000) {
     const k = heat / 1000
@@ -310,9 +321,18 @@ function formatHeat(heat) {
   return String(heat)
 }
 
-// pinned warm/orange by doctrine — heat FX ramp, not a semantic var
+// inline style for a heat numeral: tier hue/weight/reverse, optional size scale
+function heatLadderStyle(heat, size) {
+  const t = heatLadder(heat)
+  let style = `color:${t.color};font-weight:${t.bold ? 700 : 400};`
+  if (t.bg) style += `background:${t.bg};padding:0 2px;`
+  if (t.blink) style += 'animation:hs-blink 1s steps(1) infinite;'
+  if (size) style += `font-size:${size}px;line-height:1;`
+  return style
+}
+
 function getHeatNumberStyle(heat, isReply) {
-  let fontSize, color, textShadow, animation
+  let fontSize
   if (isReply) {
     if (heat > 500) fontSize = 20
     else if (heat > 100) fontSize = 18
@@ -326,57 +346,17 @@ function getHeatNumberStyle(heat, isReply) {
     else if (heat > 10) fontSize = 18
     else fontSize = 14
   }
-  if (heat > 500) {
-    color = '#fff'
-    textShadow =
-      '0 0 6px rgba(255,255,255,1),0 0 15px rgba(255,200,100,1),0 0 30px rgba(255,135,0,0.9),0 0 50px rgba(255,80,0,0.6)'
-  } else if (heat > 100) {
-    color = '#eee'
-    textShadow = '0 0 6px rgba(255,170,50,0.9),0 0 16px rgba(255,135,0,0.6),0 0 30px rgba(255,80,0,0.3)'
-  } else if (heat > 50) {
-    color = '#fff'
-    textShadow = '0 0 6px rgba(255,135,0,0.7),0 0 14px rgba(255,135,0,0.3)'
-  } else if (heat > 10) {
-    color = heat > 30 ? '#aaa' : '#888'
-    textShadow = heat > 30 ? '0 0 4px rgba(204,102,0,0.3)' : undefined
-  } else {
-    color = '#444'
-    textShadow = undefined
-  }
-  let style = `font-size:${fontSize}px;color:${color};font-weight:900;line-height:1;`
-  if (textShadow) style += `text-shadow:${textShadow};`
-  if (animation) style += `animation:${animation};`
-  return style
+  return heatLadderStyle(heat, fontSize)
 }
 
-// pinned warm/orange by doctrine — heat FX ramp, not a semantic var
+// Row border: width thickens with the tier, hue comes from the ladder.
 function getHeatDisplay(heat) {
   if (!heat || heat <= 0) return null
-  let border = '#444',
-    borderWidth = 2,
-    bg = ''
-  if (heat >= 500) {
-    border = '#fff'
-    borderWidth = 4
-    bg = 'rgba(60,20,0,0.15)'
-  } else if (heat >= 100) {
-    border = '#eee'
-    borderWidth = 3
-    bg = 'rgba(50,15,0,0.10)'
-  } else if (heat >= 25) {
-    border = '#fff'
-    borderWidth = 3
-    bg = 'rgba(40,12,0,0.07)'
-  } else if (heat >= 10) {
-    border = '#fff'
-    borderWidth = 2
-  } else {
-    border = '#444'
-    borderWidth = 2
-  }
+  const t = heatLadder(heat)
+  const border = t.bg || t.color
+  const borderWidth = heat >= 500 ? 4 : heat >= 100 ? 3 : 2
   const suffix = heat >= 10 ? '°' : ''
-  const breathe = heat >= 500
-  return { suffix, border, borderWidth, bg, breathe }
+  return { suffix, border, borderWidth, bg: '' }
 }
 
 // Feed & notifications state
@@ -476,7 +456,7 @@ function showFeedEditUI(div, msg) {
   ta.maxLength = 500
   ta.rows = 2
   ta.style.cssText =
-    'flex:1;background:#000;color:#fff;border:1px solid #808080;padding:4px;font-family:inherit;font-size:13px;resize:vertical;'
+    'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:4px;font-family:inherit;font-size:13px;resize:vertical;'
   const saveBtn = document.createElement('button')
   saveBtn.textContent = 'save'
   saveBtn.style.cssText =
@@ -484,7 +464,7 @@ function showFeedEditUI(div, msg) {
   const cancelBtn = document.createElement('button')
   cancelBtn.textContent = 'cancel'
   cancelBtn.style.cssText =
-    'background:#000;color:#fff;border:1px solid #808080;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
+    'background:#000;color:#fff;border:1px solid #ffffff;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
   const errEl = document.createElement('div')
   errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);margin-top:2px;'
   form.append(ta, saveBtn, cancelBtn)
@@ -1979,7 +1959,7 @@ function renderFeed() {
     // grid. No faux-bold either (synthetic bold double-strikes bitmap glyphs);
     // the #fff vs #bbb contrast carries the hierarchy.
     banner.style.cssText =
-      'padding:8px 10px;background:#1a1408;border-left:2px solid #808080;color:#e6e6e6;font-size:13px;margin-bottom:4px;line-height:18px'
+      'padding:8px 10px;background:#000000;border-left:2px solid #ffffff;color:#ffffff;font-size:13px;margin-bottom:4px;line-height:18px'
     const head = document.createElement('div')
     head.style.cssText = 'color:#fff;margin-bottom:2px'
     // Logged out, "no posts from your follows" is nonsense — there is no account
@@ -1988,7 +1968,7 @@ function renderFeed() {
     // used to carry the CTA) no longer renders once there are rows.
     head.textContent = hsAuthToken ? 'no posts from your follows' : 'what is hot on heatsync'
     const sub = document.createElement('div')
-    sub.style.cssText = 'color:#bbb'
+    sub.style.cssText = 'color:#ffffff'
     sub.textContent = !hsAuthToken
       ? 'log in at heatsync.org to follow people and fill this with their posts'
       : feedFallbackIsCold
@@ -2135,7 +2115,6 @@ function buildFeedMessageDiv(m, opUsername) {
   if (hd) {
     let rowStyle = `border-left:${hd.borderWidth}px solid ${hd.border};`
     if (hd.bg) rowStyle += `background:${hd.bg};`
-    if (hd.breathe) div.className += ' hs-feed-heat-breathe'
     div.setAttribute('style', rowStyle)
   }
   const isReply = !!m.reply_to
@@ -2159,7 +2138,7 @@ function buildFeedMessageDiv(m, opUsername) {
     : ''
   const tripcodeHtml = m.tripcode ? `<span class="hs-tripcode">${escapeHtml(m.tripcode)}</span>` : ''
   const userHtml = isAnon
-    ? `${anonAvatar}<span class="hs-feed-user" style="color:#808080">Anonymous</span>${tripcodeHtml}`
+    ? `${anonAvatar}<span class="hs-feed-user" style="color:#ffffff">Anonymous</span>${tripcodeHtml}`
     : `${userAvatar}<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="hs-feed-user hs-mc-user" data-username="${escapeHtml((m.username || 'anon').toLowerCase())}" data-platform="${escapeHtml(m.platform || '')}" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>${tripcodeHtml}`
 
   // Media/embeds (img, video, iframe) — values inside are pre-sanitized via escapeHtml/safeUrl/sanitizeEmbedId
@@ -2219,7 +2198,7 @@ function buildFeedMessageDiv(m, opUsername) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
       badge.textContent = ' (edited)'
-      badge.style.cssText = 'color:#888;font-size:13px;font-style:italic;margin-left:4px;'
+      badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
       body.appendChild(badge)
     }
   }
@@ -2930,33 +2909,10 @@ function formatDiscoverCount(n) {
   return String(n)
 }
 
-// Compact heat tier styling — matches site canonical color tiers from getHeatNumberStyle,
-// but with fixed (small) size so discover rows stay dense.
-// Tiers: 0 → #444, 1-10 → #888, 10-30 → #888, 30-50 → #aaa, 50-100 → #ccc,
-//        100-500 → #eee, 500+ → #fff
-// pinned warm/orange by doctrine — heat FX ramp, not a semantic var
+// Compact heat numeral for discover rows — same ladder, fixed (small) size so
+// the rows stay dense.
 function discoverHeatStyle(heat) {
-  let color = '#444',
-    textShadow = '',
-    animation = ''
-  if (heat > 500) {
-    color = '#fff'
-    textShadow = '0 0 4px rgba(255,255,255,1),0 0 10px rgba(255,200,100,0.9),0 0 18px rgba(255,135,0,0.6)'
-  } else if (heat > 100) {
-    color = '#eee'
-    textShadow = '0 0 4px rgba(255,170,50,0.85),0 0 10px rgba(255,135,0,0.4)'
-  } else if (heat > 50) {
-    color = '#fff'
-    textShadow = '0 0 3px rgba(255,135,0,0.55)'
-  } else if (heat > 30) {
-    color = '#aaa'
-  } else if (heat > 10) {
-    color = '#888'
-  }
-  let style = `color:${color};font-weight:900;font-variant-numeric:tabular-nums;`
-  if (textShadow) style += `text-shadow:${textShadow};`
-  if (animation) style += `animation:${animation};`
-  return style
+  return `${heatLadderStyle(heat)}font-variant-numeric:tabular-nums;`
 }
 
 // Apply canonical row-level heat effects (border, bg tint, breathe class)
@@ -2966,7 +2922,6 @@ function applyDiscoverHeatRowEffects(row, heat) {
   row.style.borderLeftColor = hd.border
   row.style.borderLeftWidth = `${hd.borderWidth}px`
   if (hd.bg) row.style.background = hd.bg
-  if (hd.breathe) row.classList.add('hs-feed-heat-breathe')
 }
 
 // Canonical heat number — formatHeat + ° suffix at ≥ 10 + tier color/glow/breathe inline style.

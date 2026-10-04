@@ -112,9 +112,7 @@
       z-index: 2147483647 !important;
       cursor: pointer !important;
       transition: opacity 120ms ease-out !important;
-      opacity: 0.85 !important;
-      box-shadow: 0 0 4px rgba(255,135,0,0.5) !important;
-    }
+     }
     #hs-chat-restore-pill:hover { opacity: 1 !important; }
     #hs-chat-restore-pill[data-edge="right"] { top: 25% !important; right: 0 !important; width: 6px !important; height: 50% !important; }
     #hs-chat-restore-pill[data-edge="left"] { top: 25% !important; left: 0 !important; width: 6px !important; height: 50% !important; }

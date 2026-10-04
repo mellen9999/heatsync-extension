@@ -14,33 +14,33 @@
     .hs-cl-hdr {
       display: flex; align-items: center; justify-content: space-between;
       padding: 4px 6px;
-      background: #0a0a0a;
-      border-bottom: 1px solid #222;
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
       flex-shrink: 0;
       gap: 6px;
     }
     .hs-cl-title { display: flex; align-items: baseline; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .hs-cl-title-name { font-weight: 700; color: #fff; }
-    .hs-cl-title-sub { color: #999; overflow: hidden; text-overflow: ellipsis; }
+    .hs-cl-title-sub { color: #ffffff; overflow: hidden; text-overflow: ellipsis; }
     .hs-cl-ctrls {
       display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 6px;
-      background: #0a0a0a;
-      border-bottom: 1px solid #222;
+      background: #000000;
+      border-bottom: 1px solid #ffffff;
       flex-shrink: 0;
       align-items: center;
     }
     .hs-cl-search {
       flex: 1 1 100px; min-width: 80px;
       background: #000; color: #fff;
-      border: 1px solid #333; padding: 2px 6px;
+      border: 1px solid #ffffff; padding: 2px 6px;
       font-family: inherit; font-size: 13px; line-height: 17px;
       outline: none; height: 22px;
       box-sizing: border-box;
     }
     .hs-cl-search:focus { border-color: #fff; }
     .hs-cl-scope, .hs-cl-export {
-      background: #111; color: #ccc;
-      border: 1px solid #333; padding: 1px 6px;
+      background: #000000; color: #ffffff;
+      border: 1px solid #ffffff; padding: 1px 6px;
       cursor: pointer; font-family: inherit; font-size: 13px;
       height: 22px; line-height: 18px;
       box-sizing: border-box;
@@ -55,12 +55,11 @@
     }
     .hs-cl-row {
       padding: 1px 0; line-height: 19px;
-      border-bottom: 1px solid #0a0a0a;
+      border-bottom: 1px solid #000000;
     }
     .hs-cl-row::after { content: ""; display: block; clear: both; }
     .hs-cl-row.hs-cl-deleted {
-      opacity: 0.5;
-      text-decoration: line-through;
+       text-decoration: line-through;
     }
     .hs-cl-ch {
       color: #fff; margin-right: 6px;
@@ -68,7 +67,7 @@
     .hs-cl-user {
       color: #fff; font-weight: 700; margin-right: 6px;
     }
-    .hs-cl-body { color: #ddd; word-break: break-word; }
+    .hs-cl-body { color: #ffffff; word-break: break-word; }
     .hs-cl-emote {
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;
@@ -82,7 +81,7 @@
     .hs-cl-public-archive {
       color: #fff; text-decoration: none;
       font-size: 13px; padding: 1px 6px;
-      border: 1px solid #333;
+      border: 1px solid #ffffff;
       height: 22px; line-height: 18px;
       display: inline-flex; align-items: center;
       flex-shrink: 0;
@@ -98,4 +97,3 @@
     a.hs-cl-time:hover { background: #fff; color: #000; }
     a.hs-cl-time.hs-cl-time-copied { color: #fff; }
 
-  

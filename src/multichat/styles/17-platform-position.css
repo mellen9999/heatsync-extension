@@ -1354,7 +1354,7 @@
       padding: 10px 18px !important;
       overflow-y: auto !important;
       box-sizing: border-box !important;
-      background: #0a0a0a !important;
+      background: #000000 !important;
       z-index: 1 !important;
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below {
@@ -1369,7 +1369,7 @@
       padding: 10px 18px !important;
       overflow-y: auto !important;
       box-sizing: border-box !important;
-      background: #0a0a0a !important;
+      background: #000000 !important;
       z-index: 1 !important;
     }
     /* high-contrast metadata text (theme-independent). Target the TEXT containers
@@ -1389,8 +1389,8 @@
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description *,
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below ytd-channel-name *,
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info, body.hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #below #info * {
-      color: #e6e6e6 !important;
-      -webkit-text-fill-color: #e6e6e6 !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
     }
     /* links stay heatsync-orange — out-specify the #description * rule above */
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #below a,
@@ -1439,7 +1439,7 @@
       flex: 0 0 auto !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
-      background: #0a0a0a !important;
+      background: #000000 !important;
       padding: 8px !important;
       box-sizing: border-box !important;
       z-index: 1 !important;
@@ -1470,7 +1470,7 @@
     }
     /* high-contrast text in the strip */
     body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary,
-    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary * { color: #e6e6e6 !important; }
+    body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary * { color: #ffffff !important; }
     body.hs-yt-suggestions.hs-platform-yt:not(.hs-offline) ytd-watch-flexy:not([theater]):not([fullscreen]) #secondary a { color: #ffffff !important; }
 
     /* ============================================

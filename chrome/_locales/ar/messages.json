@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "لم تصل إلى الأرشيف بعد — حاول بعد قليل"
+  },
+  "mc_feed_upvote": {
+    "message": "تصويت إيجابي"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "إزالة التصويت"
+  },
+  "mc_feed_bookmark": {
+    "message": "إضافة إشارة"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "إزالة الإشارة"
+  },
+  "mc_feed_bookmarked": {
+    "message": "تمت الإشارة"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "أُزيلت الإشارة"
+  },
+  "mc_feed_action_failed": {
+    "message": "لم ينجح ذلك — حاول مجددًا"
   }
 }

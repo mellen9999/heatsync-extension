@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "δεν είναι ακόμα στο αρχείο — δοκίμασε σε λίγο"
+  },
+  "mc_feed_upvote": {
+    "message": "θετική ψήφος"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "αφαίρεση ψήφου"
+  },
+  "mc_feed_bookmark": {
+    "message": "σελιδοδείκτης"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "αφαίρεση σελιδοδείκτη"
+  },
+  "mc_feed_bookmarked": {
+    "message": "προστέθηκε σελιδοδείκτης"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "ο σελιδοδείκτης αφαιρέθηκε"
+  },
+  "mc_feed_action_failed": {
+    "message": "δεν λειτούργησε — δοκίμασε ξανά"
   }
 }

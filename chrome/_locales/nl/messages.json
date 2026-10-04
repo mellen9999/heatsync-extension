@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "nog niet in het archief — probeer het zo opnieuw"
+  },
+  "mc_feed_upvote": {
+    "message": "upvoten"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "upvote intrekken"
+  },
+  "mc_feed_bookmark": {
+    "message": "bladwijzer"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "bladwijzer verwijderen"
+  },
+  "mc_feed_bookmarked": {
+    "message": "bladwijzer gemaakt"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "bladwijzer verwijderd"
+  },
+  "mc_feed_action_failed": {
+    "message": "dat lukte niet — probeer opnieuw"
   }
 }

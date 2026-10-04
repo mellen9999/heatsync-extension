@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "finns inte i arkivet än — försök igen om en stund"
+  },
+  "mc_feed_upvote": {
+    "message": "rösta upp"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "ta bort röst"
+  },
+  "mc_feed_bookmark": {
+    "message": "bokmärke"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "ta bort bokmärke"
+  },
+  "mc_feed_bookmarked": {
+    "message": "bokmärkt"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "bokmärke borttaget"
+  },
+  "mc_feed_action_failed": {
+    "message": "det funkade inte — försök igen"
   }
 }

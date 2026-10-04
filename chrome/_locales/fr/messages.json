@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "pas encore dans l'archive — réessaie dans un instant"
+  },
+  "mc_feed_upvote": {
+    "message": "voter pour"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "retirer le vote"
+  },
+  "mc_feed_bookmark": {
+    "message": "favori"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "retirer le favori"
+  },
+  "mc_feed_bookmarked": {
+    "message": "ajouté aux favoris"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "favori retiré"
+  },
+  "mc_feed_action_failed": {
+    "message": "ça n’a pas marché — réessaie"
   }
 }

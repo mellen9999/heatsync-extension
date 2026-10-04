@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "ще немає в архіві — спробуйте за хвилину"
+  },
+  "mc_feed_upvote": {
+    "message": "плюс"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "прибрати плюс"
+  },
+  "mc_feed_bookmark": {
+    "message": "закладка"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "прибрати закладку"
+  },
+  "mc_feed_bookmarked": {
+    "message": "додано в закладки"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "закладку прибрано"
+  },
+  "mc_feed_action_failed": {
+    "message": "не вийшло — спробуй ще раз"
   }
 }

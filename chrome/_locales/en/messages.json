@@ -3601,5 +3601,26 @@
   },
   "mc_pin_retry": {
     "message": "not in the archive yet — try again in a moment"
+  },
+  "mc_feed_upvote": {
+    "message": "upvote"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "remove upvote"
+  },
+  "mc_feed_bookmark": {
+    "message": "bookmark"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "remove bookmark"
+  },
+  "mc_feed_bookmarked": {
+    "message": "bookmarked"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "bookmark removed"
+  },
+  "mc_feed_action_failed": {
+    "message": "that didn’t work — try again"
   }
 }

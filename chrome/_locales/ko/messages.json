@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "아직 보관소에 없습니다 — 잠시 후 다시 시도하세요"
+  },
+  "mc_feed_upvote": {
+    "message": "추천"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "추천 취소"
+  },
+  "mc_feed_bookmark": {
+    "message": "북마크"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "북마크 해제"
+  },
+  "mc_feed_bookmarked": {
+    "message": "북마크했어요"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "북마크 해제됨"
+  },
+  "mc_feed_action_failed": {
+    "message": "실패했어요 — 다시 시도하세요"
   }
 }

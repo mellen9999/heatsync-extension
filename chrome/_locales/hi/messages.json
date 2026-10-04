@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "अभी आर्काइव में नहीं है — थोड़ी देर में फिर कोशिश करें"
+  },
+  "mc_feed_upvote": {
+    "message": "अपवोट"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "अपवोट हटाएँ"
+  },
+  "mc_feed_bookmark": {
+    "message": "बुकमार्क"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "बुकमार्क हटाएँ"
+  },
+  "mc_feed_bookmarked": {
+    "message": "बुकमार्क किया"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "बुकमार्क हटाया"
+  },
+  "mc_feed_action_failed": {
+    "message": "यह नहीं हुआ — फिर कोशिश करें"
   }
 }

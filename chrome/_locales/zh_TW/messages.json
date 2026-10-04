@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "尚未存檔 — 請稍後再試"
+  },
+  "mc_feed_upvote": {
+    "message": "按讚"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "取消按讚"
+  },
+  "mc_feed_bookmark": {
+    "message": "收藏"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "取消收藏"
+  },
+  "mc_feed_bookmarked": {
+    "message": "已收藏"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "已取消收藏"
+  },
+  "mc_feed_action_failed": {
+    "message": "沒成功 — 請重試"
   }
 }

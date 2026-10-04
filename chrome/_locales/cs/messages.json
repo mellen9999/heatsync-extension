@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "v archivu ještě není — zkus to za chvíli"
+  },
+  "mc_feed_upvote": {
+    "message": "hlasovat"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "zrušit hlas"
+  },
+  "mc_feed_bookmark": {
+    "message": "záložka"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "odebrat záložku"
+  },
+  "mc_feed_bookmarked": {
+    "message": "uloženo do záložek"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "záložka odebrána"
+  },
+  "mc_feed_action_failed": {
+    "message": "nepovedlo se — zkus to znovu"
   }
 }

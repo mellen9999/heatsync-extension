@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "ainda não está no arquivo — tenta de novo daqui a pouco"
+  },
+  "mc_feed_upvote": {
+    "message": "gostar"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "remover gosto"
+  },
+  "mc_feed_bookmark": {
+    "message": "marcador"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "remover marcador"
+  },
+  "mc_feed_bookmarked": {
+    "message": "marcado"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "marcador removido"
+  },
+  "mc_feed_action_failed": {
+    "message": "não resultou — tenta de novo"
   }
 }

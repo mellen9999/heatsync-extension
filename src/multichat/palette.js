@@ -5,7 +5,7 @@
 // tags, dots, source chips), never as free-standing semantic color.
 // Both `yt` and `youtube` keys exist — callers disagree on the spelling.
 const HS_PLAT_COLORS = {
-  twitch: '#ff00ff',
+  twitch: '#a970ff',
   kick: '#00ff00',
   yt: '#ff0000',
   youtube: '#ff0000',

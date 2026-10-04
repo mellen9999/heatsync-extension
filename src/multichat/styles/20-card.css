@@ -369,7 +369,7 @@
   color: #000000;
   outline: none;
 }
-.hs-card-nav-cell[data-tone="ttv"] { color: #ff00ff; }
+.hs-card-nav-cell[data-tone="ttv"] { color: #a970ff; }
 .hs-card-nav-cell[data-tone="kick"] { color: #00ff00; }
 .hs-card-nav-cell[data-tone="yt"] { color: #ff0000; }
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */

@@ -25,6 +25,18 @@ const STYLES = join(ROOT, 'src', 'multichat', 'styles')
 
 const PALETTE = new Set(['000000', 'ff0000', '00ff00', 'ffff00', '8888ff', 'ff00ff', '00ffff', 'ffffff'])
 const ORANGE = 'ff8700'
+// twitch's light purple: the [T] platform colour, only in the twitch token, HS_PLAT_COLORS,
+// and the scopes that cannot see those tokens (standalone content scripts, the schema, the tooltip map)
+const TWITCH = 'a970ff'
+const TWITCH_FILES = new Set([
+  'src/multichat/styles/20-card.css',
+  'src/multichat/styles/00-palette.css',
+  'src/multichat/palette.js',
+  'src/multichat/tooltips.js',
+  'src/lib/settings-schema.js',
+  'chrome/content.js',
+  'chrome/heatsync-button.js',
+])
 
 /** Whole files that are not ours to recolour. */
 const EXEMPT_FILES = new Map([
@@ -306,6 +318,10 @@ describe('colour doctrine — 8 colours', () => {
       const t = code(readFileSync(path, 'utf8'), rel)
       for (const { lit, hex, partial } of literals(t)) {
         if (hex === ORANGE) continue // judged by the [H]-only test below
+        if (hex === TWITCH && !partial) {
+          if (!TWITCH_FILES.has(rel)) offenders.push(`${rel}: ${lit} (twitch purple outside its scopes)`)
+          continue
+        }
         if (allowed?.has(hex)) continue
         if (!PALETTE.has(hex) || partial) offenders.push(`${rel}: ${lit}`)
       }
@@ -347,22 +363,30 @@ describe('colour doctrine — 8 colours', () => {
     const bad = []
     for (const m of css.matchAll(/(--hs-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
       const h = expand(m[2].slice(1))
-      if (m[1] === '--hs-zebra' ? h !== '161616' : m[1] === '--hs-plat-hs' ? h !== ORANGE : !PALETTE.has(h))
+      if (
+        m[1] === '--hs-plat-twitch'
+          ? h !== TWITCH
+          : m[1] === '--hs-zebra'
+            ? h !== '161616'
+            : m[1] === '--hs-plat-hs'
+              ? h !== ORANGE
+              : !PALETTE.has(h)
+      )
         bad.push(`${m[1]}: ${m[2]}`)
     }
     expect(bad).toEqual([])
   })
 
-  test('platform tags: [T] magenta, [K] green, [Y] red, [H] orange', () => {
+  test('platform tags: [T] twitch purple, [K] green, [Y] red, [H] orange', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     const tok = (n) => css.match(new RegExp(`${n}:\\s*(#[0-9a-fA-F]+)`))?.[1].toLowerCase()
-    expect(tok('--hs-plat-twitch')).toBe('#ff00ff')
+    expect(tok('--hs-plat-twitch')).toBe('#a970ff')
     expect(tok('--hs-plat-kick')).toBe('#00ff00')
     expect(tok('--hs-plat-youtube')).toBe('#ff0000')
     expect(tok('--hs-plat-hs')).toBe('#ff8700')
     const js = readFileSync(join(ROOT, 'src', 'multichat', 'palette.js'), 'utf8')
     for (const [k, v] of [
-      ['twitch', '#ff00ff'],
+      ['twitch', '#a970ff'],
       ['kick', '#00ff00'],
       ['youtube', '#ff0000'],
       ['heatsync', '#ff8700'],

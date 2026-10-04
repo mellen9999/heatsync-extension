@@ -243,7 +243,7 @@ function buildStackPreview(box, stackEmotes) {
 // Provider is inferred from the token SHAPE: "ffz*" is FrankerFaceZ, anything
 // ending in "!" is BetterTTV. Brand colours match the source chips already used
 // elsewhere in this tooltip.
-const HS_TT_PROVIDER_COLOR = { '7tv': '#00ffff', bttv: '#ff0000', ffz: '#ffffff', twitch: '#ff00ff', kick: '#00ff00' }
+const HS_TT_PROVIDER_COLOR = { '7tv': '#00ffff', bttv: '#ff0000', ffz: '#ffffff', twitch: '#a970ff', kick: '#00ff00' }
 
 function hsTtModProvider(tok) {
   if (/^ffz/i.test(tok)) return 'ffz'

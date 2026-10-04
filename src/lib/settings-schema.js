@@ -969,7 +969,7 @@ const SETTINGS = [
       {
         value: 'raid',
         default: true,
-        color: '#ff00ff',
+        color: '#a970ff',
         labelKey: 'mc_settings_raids',
         tipKey: 'mc_settings_raids_desc',
       },
@@ -1650,7 +1650,7 @@ const SETTINGS = [
       {
         value: 'irc-twitch',
         default: true,
-        color: '#ff00ff',
+        color: '#a970ff',
         applies: 'reload',
         labelKey: 'mc_settings_sub_irc_twitch',
         tipKey: 'mc_settings_sub_irc_twitch_desc',
@@ -1746,7 +1746,7 @@ const SETTINGS = [
       {
         value: 'native-takeover',
         default: true,
-        color: '#ff00ff',
+        color: '#a970ff',
         applies: 'live',
         labelKey: 'mc_settings_sub_native_takeover',
         tipKey: 'mc_settings_sub_native_takeover_desc',

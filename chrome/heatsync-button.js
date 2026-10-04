@@ -937,7 +937,7 @@
       }
 
       .heatsync-login-msg a {
-        color: #ff00ff;
+        color: #a970ff;
         text-decoration: none;
       }
 
@@ -1208,7 +1208,7 @@
       }
 
       .heatsync-channel-name {
-        color: #ff00ff;
+        color: #a970ff;
         font-weight: 700;
       }
 
@@ -1421,13 +1421,13 @@
         gap: 8px;
         padding: 4px 10px;
         background: #000000;
-        border-bottom: 1px solid #ff00ff;
-        color: #ff00ff;
+        border-bottom: 1px solid #a970ff;
+        color: #a970ff;
         font-size: 13px;
       }
 
       .heatsync-auth-banner a {
-        color: #ff00ff;
+        color: #a970ff;
         font-weight: 600;
         text-decoration: none;
       }

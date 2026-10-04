@@ -802,7 +802,7 @@ function renderRewards(rewards, balance, channelId) {
     card.dataset.channelId = channelId
     if (reward.isUserInputRequired) card.dataset.textRequired = '1'
     if (reward.prompt) card.dataset.prompt = reward.prompt
-    card.style.setProperty('--rc', reward.backgroundColor || '#ff00ff')
+    card.style.setProperty('--rc', reward.backgroundColor || HS_PLAT_COLORS.twitch)
 
     const imgUrl = reward.image?.url || reward.defaultImage?.url || ''
     if (imgUrl) {
@@ -2220,7 +2220,7 @@ const BADGE_STYLES = {
   admin: { label: 'ADMIN', bg: '#000000', fg: '#ffff00' },
   staff: { label: 'STAFF', bg: '#000000', fg: '#ffff00' },
   global_mod: { label: 'GMOD', bg: '#000000', fg: '#fff' },
-  partner: { label: '✓', bg: '#000000', fg: '#ff00ff' },
+  partner: { label: '✓', bg: '#000000', fg: HS_PLAT_COLORS.twitch },
   'bits-leader': { label: 'BITS', bg: '#000000', fg: '#ffff00' },
   'sub-gifter': { label: 'GIFT', bg: '#000000', fg: '#ff00ff' },
   artist: { label: 'ART', bg: '#000000', fg: '#ffff00' },

@@ -566,7 +566,7 @@
       margin-left: 8px;
     }
     .hs-mc-poll-choice-top .hs-mc-poll-choice-pct {
-      color: #ff00ff;
+      color: var(--hs-plat-twitch);
     }
     .hs-mc-poll-voted-check {
       color: #fff;
@@ -575,7 +575,7 @@
     .hs-mc-poll-vote-btn {
       background: #000000;
       border: none;
-      color: #ff00ff;
+      color: var(--hs-plat-twitch);
       font-size: 13px;
       font-weight: 600;
       padding: 4px 10px;

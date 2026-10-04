@@ -13,7 +13,7 @@ import { join, relative } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 const COLORED_TOK = /var\(--hs-(plat-[a-z]+|ok|warn|danger|live|reply|thread|info|gold|mention|heat|sel|[a-z]+-dim)\)/
-const COLORED_HEX = /^#(ff0000|00ff00|ffff00|8888ff|ff00ff|00ffff|ff8700|f00|0f0|ff0|f0f|0ff)$/i
+const COLORED_HEX = /^#(ff0000|00ff00|ffff00|8888ff|ff00ff|00ffff|ff8700|a970ff|f00|0f0|ff0|f0f|0ff)$/i
 const WHITE = /^(#fff|#ffffff|white|var\(--hs-fg\))$/i
 const SKIP =
   /multichat-core|multichat-twitch|emoji-data|20-card|paint-|scene-spec|fill-layers|glyph-mask|animation-phase|plus-tenure|cosmetics\.js|paints\.js|_locales/

@@ -21,6 +21,7 @@
   --hs-card-gold: #ffff00;
   --hs-card-magenta: #ff00ff;
   --hs-card-danger: #ff0000;
+  --hs-card-twitch: #a970ff;
   --hs-card-bg: #000000;
 
   display: flex;
@@ -369,7 +370,7 @@
   color: #000000;
   outline: none;
 }
-.hs-card-nav-cell[data-tone="ttv"] { color: #a970ff; }
+.hs-card-nav-cell[data-tone="ttv"] { color: var(--hs-card-twitch); }
 .hs-card-nav-cell[data-tone="kick"] { color: #00ff00; }
 .hs-card-nav-cell[data-tone="yt"] { color: #ff0000; }
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */

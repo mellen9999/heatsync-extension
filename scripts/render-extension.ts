@@ -1800,22 +1800,17 @@ try {
     await p.evaluate(() => document.querySelectorAll('.hs-probe').forEach((e) => e.remove()))
   }
 
-  // ── bitmap crispness: the reply context must not smear the message ───────
-  // CozetteVector is a 6x13 bitmap cell. It is crisp only when a glyph starts
-  // on a whole pixel, so anything inline BEFORE the message text leaks its
-  // advance into every glyph after it. The reply pill is an inline-block, so a
-  // fractional child made the pill fractional and put the entire message on a
-  // sub-pixel x — measured 0.625 with a reply, 0 without. That is invisible to
-  // every other kind of test in this repo: the DOM is correct, the CSS is
-  // correct, and the only symptom is that the letters look soft.
+  // ── row geometry: the reply context must not break the message row ──────
+  // System monospace has fractional advances, so an integer-pixel x is NOT
+  // expected; what still matters is clipping, baseline and overlap.
   //
-  // The markup is copied verbatim from the reply-bar builder in main.js, and
-  // the assertion below pins that it has not drifted from the renderer.
-  const smear = await p.evaluate(() => {
+  // Baseline is taken inside the text's own line box (the reply pill is a block on its own line).
+  // The markup is copied verbatim from the reply-bar builder in main.js.
+  const geo = await p.evaluate(() => {
     const msgs = document.getElementById('hs-mc-messages')
     if (!msgs) return null
     const keep = msgs.innerHTML
-    const TAIL = 'florida is building charging stations for flying car launch pads'
+    const TAIL = 'florida is building charging stations for flying car launch pads gypsy jumpy'
     const pill =
       '<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="dongblob: hi">&#8618;' +
       '<a href="https://heatsync.org/user/dongblob" class="hs-mc-user hs-mc-reply-user" data-username="dongblob">@dongblob</a>' +
@@ -1829,46 +1824,64 @@ try {
     }
     const withReply = mk(pill + TAIL)
     const plain = mk(TAIL)
-    const tailFrac = (el: HTMLElement) => {
+    const tailText = (el: HTMLElement) => {
       const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
       let n: Node | null
       let last: Node | null = null
       while ((n = w.nextNode())) if ((n.textContent || '').trim().length > 3) last = n
-      if (!last) return null
-      const r = document.createRange()
-      r.setStart(last, 0)
-      r.setEnd(last, 1)
-      return +(r.getBoundingClientRect().x % 1).toFixed(3)
+      return last
     }
-    const caret = withReply.querySelector('.hs-mc-reply-caret') as HTMLElement
+    // glyph box = the text's own line box (ascent+descent), baseline = a zero-height probe sitting on it
+    const measure = (row: HTMLElement) => {
+      const t = tailText(row)
+      if (!t) return null
+      const r = document.createRange()
+      r.selectNodeContents(t)
+      const first = r.getClientRects()[0]
+      const probe = document.createElement('span')
+      probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline'
+      t.parentNode!.insertBefore(probe, t)
+      const base = probe.getBoundingClientRect().bottom
+      probe.remove()
+      const rr = row.getBoundingClientRect()
+      return { gTop: first.top, gBottom: first.bottom, left: first.left, top: rr.top, bottom: rr.bottom, base: base - first.top }
+    }
+    const mr = measure(withReply)
+    const mp = measure(plain)
     const pillEl = withReply.querySelector('.hs-mc-reply-ctx') as HTMLElement
+    const pr = pillEl.getBoundingClientRect()
     const out = {
-      withReply: tailFrac(withReply),
-      plain: tailFrac(plain),
-      pillWidth: +pillEl.getBoundingClientRect().width.toFixed(3),
-      caretWidth: +caret.getBoundingClientRect().width.toFixed(3),
-      caretPx: getComputedStyle(caret).fontSize,
-      pillPx: getComputedStyle(pillEl).fontSize,
+      mr,
+      mp,
+      pillRight: pr.right,
+      pillTop: pr.top,
+      pillBottom: pr.bottom,
+      pillWidth: +pr.width.toFixed(3),
+      rowsOverlap: withReply.getBoundingClientRect().bottom > plain.getBoundingClientRect().top + 0.5,
     }
     msgs.innerHTML = keep
     return out
   })
 
-  if (!smear) fail('could not reach #hs-mc-messages to measure bitmap crispness')
-  if (smear.plain !== 0) {
-    fail(`plain message text is already off the pixel grid (x-fraction ${smear.plain}) — the baseline is broken`)
+  if (!geo || !geo.mr || !geo.mp) fail('could not reach #hs-mc-messages to measure row geometry')
+  else {
+    for (const [name, m] of [['reply', geo.mr], ['plain', geo.mp]] as const) {
+      if (m.gTop < m.top - 0.5 || m.gBottom > m.bottom + 0.5) {
+        fail(
+          `${name} row clips its text: glyph box ${m.gTop.toFixed(2)}-${m.gBottom.toFixed(2)} vs row ${m.top.toFixed(2)}-${m.bottom.toFixed(2)} — descenders (p g j y) would be cut`,
+        )
+      }
+    }
+    if (Math.abs(geo.mr.base - geo.mp.base) > 0.5) {
+      fail(`baselines differ row to row: ${geo.mr.base.toFixed(2)}px with a reply context vs ${geo.mp.base.toFixed(2)}px plain`)
+    }
+    // rect intersection: the pill and the message text must not share any pixels
+    if (geo.pillBottom > geo.mr.gTop + 0.5 && geo.pillTop < geo.mr.gBottom - 0.5 && geo.pillRight > geo.mr.left + 0.5) {
+      fail(`the reply pill overlaps the message text (pill ${geo.pillTop.toFixed(1)}-${geo.pillBottom.toFixed(1)}, text ${geo.mr.gTop.toFixed(1)}-${geo.mr.gBottom.toFixed(1)})`)
+    }
+    if (geo.rowsOverlap) fail('consecutive message rows overlap')
+    ok(`${plat.name}: reply row keeps glyphs inside the row, one baseline, no overlap (pill ${geo.pillWidth}px)`)
   }
-  if (smear.withReply !== 0) {
-    fail(
-      `a reply context smears the message: text starts at x-fraction ${smear.withReply} (plain text is ${smear.plain}). ` +
-        `Reply pill is ${smear.pillWidth}px, caret ${smear.caretWidth}px at ${smear.caretPx}. ` +
-        'CozetteVector is a bitmap face — a fractional advance before the text makes every glyph after it soft.',
-    )
-  }
-  if (smear.caretWidth % 1 !== 0) {
-    fail(`the reply caret has a fractional advance (${smear.caretWidth}px at ${smear.caretPx}) — it will smear whatever follows it`)
-  }
-  ok(`${plat.name}: reply context keeps the message on the pixel grid (pill ${smear.pillWidth}px, caret ${smear.caretWidth}px)`)
 
     await p.close()
   }

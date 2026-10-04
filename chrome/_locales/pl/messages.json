@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "tryby nieznane — nie dołączono jeszcze do kanału"
+  },
+  "mc_ms_title": {
+    "message": "narzędzia moda"
+  },
+  "mc_ms_cell_shield": {
+    "message": "tarcza"
+  },
+  "mc_ms_cell_unban": {
+    "message": "prośby o unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "czatujący"
+  },
+  "mc_ms_hint": {
+    "message": "h/l komórka · j/k ruch · ? klawisze · esc zamknij"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s włącz lub wyłącz"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a zatwierdź · d odrzuć · f następny status · enter wysyła"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k wybierz wiersz · 0-4 ustaw poziom · a zaawansowane"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtr · enter otwiera kartę"
+  },
+  "mc_ms_loading": {
+    "message": "ładowanie…"
+  },
+  "mc_ms_need_perm": {
+    "message": "narzędzia moda potrzebują jeszcze jednego uprawnienia twitcha"
+  },
+  "mc_ms_allow": {
+    "message": "zezwól na narzędzia moda"
+  },
+  "mc_ms_not_mod": {
+    "message": "nie jesteś moderatorem tego kanału"
+  },
+  "mc_ms_err": {
+    "message": "brak połączenia z twitchem — spróbuj ponownie"
+  },
+  "mc_ms_retry": {
+    "message": "ponów"
+  },
+  "mc_ms_yes": {
+    "message": "tak"
+  },
+  "mc_ms_no": {
+    "message": "nie"
+  },
+  "mc_ms_cancel": {
+    "message": "anuluj"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtr"
+  },
+  "mc_ms_no_match": {
+    "message": "brak wyników"
+  },
+  "mc_ms_no_channel": {
+    "message": "najpierw otwórz kartę kanału twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "użycie: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "użycie: /warn <użytkownik> <powód>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "użycie: /shoutout <użytkownik>"
+  },
+  "mc_ms_shield_on": {
+    "message": "tryb tarczy jest włączony"
+  },
+  "mc_ms_shield_off": {
+    "message": "tryb tarczy jest wyłączony"
+  },
+  "mc_ms_shield_since": {
+    "message": "włączony od $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "włączyć tryb tarczy? czat się zablokuje."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "włącz"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "wyłącz"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "tryb tarczy włączony"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "tryb tarczy wyłączony"
+  },
+  "mc_ms_st_pending": {
+    "message": "oczekujące"
+  },
+  "mc_ms_st_approved": {
+    "message": "zatwierdzone"
+  },
+  "mc_ms_st_denied": {
+    "message": "odrzucone"
+  },
+  "mc_ms_ub_count": {
+    "message": "prośby: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "brak próśb: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "zatwierdź"
+  },
+  "mc_ms_ub_deny": {
+    "message": "odrzuć"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "powód (opcjonalnie)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "zatwierdzić $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "odrzucić $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "zatwierdzono $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "odrzucono $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "ogólnie"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 wył. · 4 najostrzej"
+  },
+  "mc_ms_am_advanced": {
+    "message": "zaawansowane"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod zapisany"
+  },
+  "mc_ms_cat_disability": {
+    "message": "niepełnosprawność"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresja"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksualność, płeć lub tożsamość płciowa"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "mizoginia"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "nękanie"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "przekleństwa"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rasa, pochodzenie lub religia"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "określenia seksualne"
+  },
+  "mc_ms_ch_count": {
+    "message": "czatujący: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "czatujący: $P1$ z $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "czatujący: pokazano $P1$ z $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "nikogo na czacie"
+  },
+  "mc_ms_reason_ph": {
+    "message": "powód ostrzeżenia"
+  },
+  "mc_ms_warn_to": {
+    "message": "ostrzeż $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "wyślij ostrzeżenie"
+  },
+  "mc_ms_warned": {
+    "message": "ostrzeżono $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout dla $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

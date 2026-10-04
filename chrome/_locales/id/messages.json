@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "mode tidak diketahui — belum bergabung ke kanal"
+  },
+  "mc_ms_title": {
+    "message": "alat mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "perisai"
+  },
+  "mc_ms_cell_unban": {
+    "message": "permintaan unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatter"
+  },
+  "mc_ms_hint": {
+    "message": "h/l sel · j/k pindah · ? tombol · esc tutup"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s nyala atau mati"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a setujui · d tolak · f status berikutnya · enter kirim"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k pilih baris · 0-4 atur level · a lanjutan"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ saring · enter buka kartu"
+  },
+  "mc_ms_loading": {
+    "message": "memuat…"
+  },
+  "mc_ms_need_perm": {
+    "message": "alat mod butuh satu izin twitch lagi"
+  },
+  "mc_ms_allow": {
+    "message": "izinkan alat mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "kamu bukan moderator channel ini"
+  },
+  "mc_ms_err": {
+    "message": "tidak bisa terhubung ke twitch — coba lagi"
+  },
+  "mc_ms_retry": {
+    "message": "coba lagi"
+  },
+  "mc_ms_yes": {
+    "message": "ya"
+  },
+  "mc_ms_no": {
+    "message": "tidak"
+  },
+  "mc_ms_cancel": {
+    "message": "batal"
+  },
+  "mc_ms_filter_ph": {
+    "message": "saring"
+  },
+  "mc_ms_no_match": {
+    "message": "tidak ada yang cocok"
+  },
+  "mc_ms_no_channel": {
+    "message": "buka dulu tab channel twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "pakai: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "pakai: /warn <pengguna> <alasan>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "pakai: /shoutout <pengguna>"
+  },
+  "mc_ms_shield_on": {
+    "message": "mode perisai nyala"
+  },
+  "mc_ms_shield_off": {
+    "message": "mode perisai mati"
+  },
+  "mc_ms_shield_since": {
+    "message": "nyala sejak $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "nyalakan mode perisai? chat dikunci."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "nyalakan"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "matikan"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "mode perisai nyala"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "mode perisai mati"
+  },
+  "mc_ms_st_pending": {
+    "message": "tertunda"
+  },
+  "mc_ms_st_approved": {
+    "message": "disetujui"
+  },
+  "mc_ms_st_denied": {
+    "message": "ditolak"
+  },
+  "mc_ms_ub_count": {
+    "message": "permintaan: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "tidak ada permintaan $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "setujui"
+  },
+  "mc_ms_ub_deny": {
+    "message": "tolak"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "alasan (opsional)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "setujui $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "tolak $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ disetujui",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ ditolak",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "keseluruhan"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 mati · 4 paling ketat"
+  },
+  "mc_ms_am_advanced": {
+    "message": "lanjutan"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod disimpan"
+  },
+  "mc_ms_cat_disability": {
+    "message": "disabilitas"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresi"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksualitas, jenis kelamin atau gender"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misogini"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "perundungan"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "umpatan"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "ras, etnis atau agama"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "istilah seksual"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatter: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatter: $P1$ dari $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatter: $P1$ dari $P2$ ditampilkan",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "tidak ada siapa-siapa di chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "alasan peringatan"
+  },
+  "mc_ms_warn_to": {
+    "message": "peringatkan $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "kirim peringatan"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ diperingatkan",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout ke $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

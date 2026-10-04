@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "tilat tuntemattomia — kanavaan ei ole vielä liitytty"
+  },
+  "mc_ms_title": {
+    "message": "moderointityökalut"
+  },
+  "mc_ms_cell_shield": {
+    "message": "suoja"
+  },
+  "mc_ms_cell_unban": {
+    "message": "unban-pyynnöt"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chattaajat"
+  },
+  "mc_ms_hint": {
+    "message": "h/l solu · j/k liiku · ? näppäimet · esc sulje"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s päälle tai pois"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a hyväksy · d hylkää · f seuraava tila · enter lähettää"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k valitse rivi · 0-4 aseta taso · a lisäasetukset"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ suodata · enter avaa kortin"
+  },
+  "mc_ms_loading": {
+    "message": "ladataan…"
+  },
+  "mc_ms_need_perm": {
+    "message": "moderointityökalut tarvitsevat yhden twitch-luvan lisää"
+  },
+  "mc_ms_allow": {
+    "message": "salli moderointityökalut"
+  },
+  "mc_ms_not_mod": {
+    "message": "et ole tämän kanavan moderaattori"
+  },
+  "mc_ms_err": {
+    "message": "twitchiin ei saatu yhteyttä — yritä uudelleen"
+  },
+  "mc_ms_retry": {
+    "message": "yritä uudelleen"
+  },
+  "mc_ms_yes": {
+    "message": "kyllä"
+  },
+  "mc_ms_no": {
+    "message": "ei"
+  },
+  "mc_ms_cancel": {
+    "message": "peruuta"
+  },
+  "mc_ms_filter_ph": {
+    "message": "suodata"
+  },
+  "mc_ms_no_match": {
+    "message": "ei osumia"
+  },
+  "mc_ms_no_channel": {
+    "message": "avaa ensin twitch-kanavan välilehti"
+  },
+  "mc_ms_usage_shield": {
+    "message": "käyttö: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "käyttö: /warn <käyttäjä> <syy>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "käyttö: /shoutout <käyttäjä>"
+  },
+  "mc_ms_shield_on": {
+    "message": "suojatila on päällä"
+  },
+  "mc_ms_shield_off": {
+    "message": "suojatila on pois päältä"
+  },
+  "mc_ms_shield_since": {
+    "message": "päällä alkaen $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "otetaanko suojatila käyttöön? chat lukitaan."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "ota käyttöön"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "poista käytöstä"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "suojatila päällä"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "suojatila pois"
+  },
+  "mc_ms_st_pending": {
+    "message": "odottavat"
+  },
+  "mc_ms_st_approved": {
+    "message": "hyväksytyt"
+  },
+  "mc_ms_st_denied": {
+    "message": "hylätyt"
+  },
+  "mc_ms_ub_count": {
+    "message": "pyynnöt: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "$P1$: ei pyyntöjä",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "hyväksy"
+  },
+  "mc_ms_ub_deny": {
+    "message": "hylkää"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "syy (valinnainen)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "hyväksytäänkö $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "hylätäänkö $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "hyväksyttiin $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "hylättiin $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "yleinen"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 pois · 4 tiukin"
+  },
+  "mc_ms_am_advanced": {
+    "message": "lisäasetukset"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod tallennettu"
+  },
+  "mc_ms_cat_disability": {
+    "message": "vammaisuus"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggressio"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksuaalisuus, sukupuoli"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misogynia"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "kiusaaminen"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "kiroilu"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rotu, etnisyys tai uskonto"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "seksiin liittyvät termit"
+  },
+  "mc_ms_ch_count": {
+    "message": "chattaajat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chattaajat: $P1$ / $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chattaajat: $P1$ / $P2$ näkyvissä",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "ei ketään chatissa"
+  },
+  "mc_ms_reason_ph": {
+    "message": "varoituksen syy"
+  },
+  "mc_ms_warn_to": {
+    "message": "varoita $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "lähetä varoitus"
+  },
+  "mc_ms_warned": {
+    "message": "varoitettu: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout lähetetty: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

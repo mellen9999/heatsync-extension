@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "模式未知 — 尚未加入頻道"
+  },
+  "mc_ms_title": {
+    "message": "管理工具"
+  },
+  "mc_ms_cell_shield": {
+    "message": "護盾"
+  },
+  "mc_ms_cell_unban": {
+    "message": "解封申請"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "聊天使用者"
+  },
+  "mc_ms_hint": {
+    "message": "h/l 切換格 · j/k 移動 · ? 按鍵 · esc 關閉"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s 開/關"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a 核准 · d 拒絕 · f 下一狀態 · enter 送出"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k 選列 · 0-4 設定等級 · a 進階"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ 篩選 · enter 開啟名片"
+  },
+  "mc_ms_loading": {
+    "message": "載入中…"
+  },
+  "mc_ms_need_perm": {
+    "message": "管理工具還需要一項 twitch 權限"
+  },
+  "mc_ms_allow": {
+    "message": "允許管理工具"
+  },
+  "mc_ms_not_mod": {
+    "message": "你不是此頻道的管理員"
+  },
+  "mc_ms_err": {
+    "message": "無法連線 twitch — 請重試"
+  },
+  "mc_ms_retry": {
+    "message": "重試"
+  },
+  "mc_ms_yes": {
+    "message": "是"
+  },
+  "mc_ms_no": {
+    "message": "否"
+  },
+  "mc_ms_cancel": {
+    "message": "取消"
+  },
+  "mc_ms_filter_ph": {
+    "message": "篩選"
+  },
+  "mc_ms_no_match": {
+    "message": "沒有符合的項目"
+  },
+  "mc_ms_no_channel": {
+    "message": "請先開啟一個 twitch 頻道分頁"
+  },
+  "mc_ms_usage_shield": {
+    "message": "用法：/shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "用法：/warn <使用者> <原因>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "用法：/shoutout <使用者>"
+  },
+  "mc_ms_shield_on": {
+    "message": "護盾模式已開啟"
+  },
+  "mc_ms_shield_off": {
+    "message": "護盾模式已關閉"
+  },
+  "mc_ms_shield_since": {
+    "message": "開啟於 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "開啟護盾模式？聊天將被鎖定。"
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "開啟"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "關閉"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "護盾模式已開"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "護盾模式已關"
+  },
+  "mc_ms_st_pending": {
+    "message": "待處理"
+  },
+  "mc_ms_st_approved": {
+    "message": "已核准"
+  },
+  "mc_ms_st_denied": {
+    "message": "已拒絕"
+  },
+  "mc_ms_ub_count": {
+    "message": "申請：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "沒有$P1$的申請",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "核准"
+  },
+  "mc_ms_ub_deny": {
+    "message": "拒絕"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "原因（選填）"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "核准 $P1$？",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "拒絕 $P1$？",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "已核准 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "已拒絕 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "整體"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 關閉 · 4 最嚴"
+  },
+  "mc_ms_am_advanced": {
+    "message": "進階"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod 已儲存"
+  },
+  "mc_ms_cat_disability": {
+    "message": "身心障礙"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "攻擊性"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "性傾向、性別"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "厭女"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "霸凌"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "髒話"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "種族、族裔或宗教"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "性相關用語"
+  },
+  "mc_ms_ch_count": {
+    "message": "聊天使用者：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "聊天使用者：$P1$ / $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "聊天使用者：顯示 $P1$ / $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "聊天室裡沒有人"
+  },
+  "mc_ms_reason_ph": {
+    "message": "警告原因"
+  },
+  "mc_ms_warn_to": {
+    "message": "警告 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "送出警告"
+  },
+  "mc_ms_warned": {
+    "message": "已警告 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "已推薦 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

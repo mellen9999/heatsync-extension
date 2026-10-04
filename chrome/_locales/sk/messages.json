@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "režimy neznáme — kanál ešte nie je pripojený"
+  },
+  "mc_ms_title": {
+    "message": "nástroje moda"
+  },
+  "mc_ms_cell_shield": {
+    "message": "štít"
+  },
+  "mc_ms_cell_unban": {
+    "message": "žiadosti o unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "diváci v chate"
+  },
+  "mc_ms_hint": {
+    "message": "h/l bunka · j/k posun · ? klávesy · esc zavrieť"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s zapnúť alebo vypnúť"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a schváliť · d zamietnuť · f ďalší stav · enter odošle"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k vybrať riadok · 0-4 nastaviť úroveň · a rozšírené"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filter · enter otvorí kartu"
+  },
+  "mc_ms_loading": {
+    "message": "načítava sa…"
+  },
+  "mc_ms_need_perm": {
+    "message": "nástroje moda potrebujú ešte jedno povolenie twitchu"
+  },
+  "mc_ms_allow": {
+    "message": "povoliť nástroje moda"
+  },
+  "mc_ms_not_mod": {
+    "message": "nie si moderátor tohto kanála"
+  },
+  "mc_ms_err": {
+    "message": "nepodarilo sa spojiť s twitchom — skús znova"
+  },
+  "mc_ms_retry": {
+    "message": "skúsiť znova"
+  },
+  "mc_ms_yes": {
+    "message": "áno"
+  },
+  "mc_ms_no": {
+    "message": "nie"
+  },
+  "mc_ms_cancel": {
+    "message": "zrušiť"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "nič nenájdené"
+  },
+  "mc_ms_no_channel": {
+    "message": "najprv otvor kartu s twitch kanálom"
+  },
+  "mc_ms_usage_shield": {
+    "message": "použitie: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "použitie: /warn <používateľ> <dôvod>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "použitie: /shoutout <používateľ>"
+  },
+  "mc_ms_shield_on": {
+    "message": "štítový režim je zapnutý"
+  },
+  "mc_ms_shield_off": {
+    "message": "štítový režim je vypnutý"
+  },
+  "mc_ms_shield_since": {
+    "message": "zapnutý od $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "zapnúť štítový režim? chat sa zamkne."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "zapnúť"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "vypnúť"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "štítový režim zapnutý"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "štítový režim vypnutý"
+  },
+  "mc_ms_st_pending": {
+    "message": "čakajúce"
+  },
+  "mc_ms_st_approved": {
+    "message": "schválené"
+  },
+  "mc_ms_st_denied": {
+    "message": "zamietnuté"
+  },
+  "mc_ms_ub_count": {
+    "message": "žiadosti: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "žiadne žiadosti ($P1$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "schváliť"
+  },
+  "mc_ms_ub_deny": {
+    "message": "zamietnuť"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "dôvod (nepovinné)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "schváliť $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "zamietnuť $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "schválený $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "zamietnutý $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "celkovo"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 vypnuté · 4 najprísnejšie"
+  },
+  "mc_ms_am_advanced": {
+    "message": "rozšírené"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod uložený"
+  },
+  "mc_ms_cat_disability": {
+    "message": "zdravotné postihnutie"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresia"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexualita, pohlavie alebo rod"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "mizogýnia"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "šikana"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "vulgarizmy"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rasa, etnicita alebo náboženstvo"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "sexuálne výrazy"
+  },
+  "mc_ms_ch_count": {
+    "message": "diváci: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "diváci: $P1$ z $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "diváci: zobrazených $P1$ z $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "v chate nikto nie je"
+  },
+  "mc_ms_reason_ph": {
+    "message": "dôvod varovania"
+  },
+  "mc_ms_warn_to": {
+    "message": "varovať $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "odoslať varovanie"
+  },
+  "mc_ms_warned": {
+    "message": "varovaný $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout pre $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

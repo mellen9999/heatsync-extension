@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "режимы неизвестны — канал ещё не подключён"
+  },
+  "mc_ms_title": {
+    "message": "инструменты модера"
+  },
+  "mc_ms_cell_shield": {
+    "message": "защита"
+  },
+  "mc_ms_cell_unban": {
+    "message": "запросы на разбан"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "зрители в чате"
+  },
+  "mc_ms_hint": {
+    "message": "h/l ячейка · j/k вниз/вверх · ? клавиши · esc закрыть"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s вкл или выкл"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a одобрить · d отклонить · f следующий статус · enter отправляет"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k выбрать строку · 0-4 задать уровень · a расширенные"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ фильтр · enter открывает карточку"
+  },
+  "mc_ms_loading": {
+    "message": "загрузка…"
+  },
+  "mc_ms_need_perm": {
+    "message": "для инструментов модера нужно ещё одно разрешение twitch"
+  },
+  "mc_ms_allow": {
+    "message": "разрешить инструменты модера"
+  },
+  "mc_ms_not_mod": {
+    "message": "ты не модератор этого канала"
+  },
+  "mc_ms_err": {
+    "message": "не удалось связаться с twitch — попробуй ещё раз"
+  },
+  "mc_ms_retry": {
+    "message": "повторить"
+  },
+  "mc_ms_yes": {
+    "message": "да"
+  },
+  "mc_ms_no": {
+    "message": "нет"
+  },
+  "mc_ms_cancel": {
+    "message": "отмена"
+  },
+  "mc_ms_filter_ph": {
+    "message": "фильтр"
+  },
+  "mc_ms_no_match": {
+    "message": "ничего не найдено"
+  },
+  "mc_ms_no_channel": {
+    "message": "сначала открой вкладку с каналом twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "использование: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "использование: /warn <пользователь> <причина>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "использование: /shoutout <пользователь>"
+  },
+  "mc_ms_shield_on": {
+    "message": "режим защиты включён"
+  },
+  "mc_ms_shield_off": {
+    "message": "режим защиты выключен"
+  },
+  "mc_ms_shield_since": {
+    "message": "включён с $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "включить режим защиты? чат будет заблокирован."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "включить"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "выключить"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "режим защиты включён"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "режим защиты выключен"
+  },
+  "mc_ms_st_pending": {
+    "message": "в ожидании"
+  },
+  "mc_ms_st_approved": {
+    "message": "одобрены"
+  },
+  "mc_ms_st_denied": {
+    "message": "отклонены"
+  },
+  "mc_ms_ub_count": {
+    "message": "запросы: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "нет запросов ($P1$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "одобрить"
+  },
+  "mc_ms_ub_deny": {
+    "message": "отклонить"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "причина (необязательно)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "одобрить $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "отклонить $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "одобрено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "отклонено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "общий"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 выкл · 4 строжайший"
+  },
+  "mc_ms_am_advanced": {
+    "message": "расширенные"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod сохранён"
+  },
+  "mc_ms_cat_disability": {
+    "message": "инвалидность"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "агрессия"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "сексуальность, пол или гендер"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "женоненавистничество"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "буллинг"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "мат"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "раса, этничность или религия"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "сексуальные термины"
+  },
+  "mc_ms_ch_count": {
+    "message": "зрители: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "зрители: $P1$ из $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "зрители: показано $P1$ из $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "в чате никого нет"
+  },
+  "mc_ms_reason_ph": {
+    "message": "причина предупреждения"
+  },
+  "mc_ms_warn_to": {
+    "message": "предупредить $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "отправить предупреждение"
+  },
+  "mc_ms_warned": {
+    "message": "предупреждён $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "шаутаут для $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

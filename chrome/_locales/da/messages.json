@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "tilstande ukendte — kanalen er ikke tilsluttet endnu"
+  },
+  "mc_ms_title": {
+    "message": "mod-værktøj"
+  },
+  "mc_ms_cell_shield": {
+    "message": "shield"
+  },
+  "mc_ms_cell_unban": {
+    "message": "unban-anmodninger"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chattere"
+  },
+  "mc_ms_hint": {
+    "message": "h/l celle · j/k flyt · ? taster · esc luk"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s slå til eller fra"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a godkend · d afvis · f næste status · enter sender"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k vælg række · 0-4 sæt niveau · a avanceret"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtrer · enter åbner kortet"
+  },
+  "mc_ms_loading": {
+    "message": "indlæser…"
+  },
+  "mc_ms_need_perm": {
+    "message": "mod-værktøj mangler en twitch-tilladelse mere"
+  },
+  "mc_ms_allow": {
+    "message": "tillad mod-værktøj"
+  },
+  "mc_ms_not_mod": {
+    "message": "du er ikke mod på denne kanal"
+  },
+  "mc_ms_err": {
+    "message": "kunne ikke nå twitch — prøv igen"
+  },
+  "mc_ms_retry": {
+    "message": "prøv igen"
+  },
+  "mc_ms_yes": {
+    "message": "ja"
+  },
+  "mc_ms_no": {
+    "message": "nej"
+  },
+  "mc_ms_cancel": {
+    "message": "annuller"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "ingen match"
+  },
+  "mc_ms_no_channel": {
+    "message": "åbn en twitch-kanalfane først"
+  },
+  "mc_ms_usage_shield": {
+    "message": "brug: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "brug: /warn <bruger> <årsag>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "brug: /shoutout <bruger>"
+  },
+  "mc_ms_shield_on": {
+    "message": "shield-tilstand er slået til"
+  },
+  "mc_ms_shield_off": {
+    "message": "shield-tilstand er slået fra"
+  },
+  "mc_ms_shield_since": {
+    "message": "til siden $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "slå shield-tilstand til? chatten låses."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "slå til"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "slå fra"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "shield-tilstand til"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "shield-tilstand fra"
+  },
+  "mc_ms_st_pending": {
+    "message": "afventer"
+  },
+  "mc_ms_st_approved": {
+    "message": "godkendt"
+  },
+  "mc_ms_st_denied": {
+    "message": "afvist"
+  },
+  "mc_ms_ub_count": {
+    "message": "anmodninger: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "ingen anmodninger · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "godkend"
+  },
+  "mc_ms_ub_deny": {
+    "message": "afvis"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "årsag (valgfri)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "godkend $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "afvis $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ godkendt",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ afvist",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "samlet"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 fra · 4 strengest"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avanceret"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod gemt"
+  },
+  "mc_ms_cat_disability": {
+    "message": "handicap"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggression"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksualitet, køn eller kønsidentitet"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "kvindehad"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "mobning"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "bandeord"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "race, etnicitet eller religion"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "seksuelle udtryk"
+  },
+  "mc_ms_ch_count": {
+    "message": "chattere: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chattere: $P1$ af $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chattere: $P1$ af $P2$ vist",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "ingen i chatten"
+  },
+  "mc_ms_reason_ph": {
+    "message": "årsag til advarsel"
+  },
+  "mc_ms_warn_to": {
+    "message": "advar $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "send advarsel"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ advaret",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout til $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

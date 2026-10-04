@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "режими невідомі — канал ще не підключено"
+  },
+  "mc_ms_title": {
+    "message": "інструменти модера"
+  },
+  "mc_ms_cell_shield": {
+    "message": "щит"
+  },
+  "mc_ms_cell_unban": {
+    "message": "запити на розбан"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "чат зараз"
+  },
+  "mc_ms_hint": {
+    "message": "h/l клітинка · j/k рух · ? клавіші · esc закрити"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s увімк./вимк."
+  },
+  "mc_ms_keys_unban": {
+    "message": "a схвалити · d відхилити · f наступний статус · enter надсилає"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k обрати рядок · 0-4 рівень · a додатково"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ фільтр · enter відкриває картку"
+  },
+  "mc_ms_loading": {
+    "message": "завантаження…"
+  },
+  "mc_ms_need_perm": {
+    "message": "для інструментів модера потрібен ще один дозвіл twitch"
+  },
+  "mc_ms_allow": {
+    "message": "дозволити інструменти модера"
+  },
+  "mc_ms_not_mod": {
+    "message": "ти не модератор цього каналу"
+  },
+  "mc_ms_err": {
+    "message": "не вдалося зв'язатися з twitch — спробуй ще раз"
+  },
+  "mc_ms_retry": {
+    "message": "повторити"
+  },
+  "mc_ms_yes": {
+    "message": "так"
+  },
+  "mc_ms_no": {
+    "message": "ні"
+  },
+  "mc_ms_cancel": {
+    "message": "скасувати"
+  },
+  "mc_ms_filter_ph": {
+    "message": "фільтр"
+  },
+  "mc_ms_no_match": {
+    "message": "нічого не знайдено"
+  },
+  "mc_ms_no_channel": {
+    "message": "спочатку відкрий вкладку каналу twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "використання: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "використання: /warn <користувач> <причина>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "використання: /shoutout <користувач>"
+  },
+  "mc_ms_shield_on": {
+    "message": "режим щита увімкнено"
+  },
+  "mc_ms_shield_off": {
+    "message": "режим щита вимкнено"
+  },
+  "mc_ms_shield_since": {
+    "message": "увімкнено з $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "увімкнути режим щита? чат буде заблоковано."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "увімкнути"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "вимкнути"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "режим щита увімкнено"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "режим щита вимкнено"
+  },
+  "mc_ms_st_pending": {
+    "message": "очікують"
+  },
+  "mc_ms_st_approved": {
+    "message": "схвалені"
+  },
+  "mc_ms_st_denied": {
+    "message": "відхилені"
+  },
+  "mc_ms_ub_count": {
+    "message": "запити: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "запитів немає: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "схвалити"
+  },
+  "mc_ms_ub_deny": {
+    "message": "відхилити"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "причина (необов'язково)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "схвалити $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "відхилити $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "схвалено $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "відхилено $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "загалом"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 вимк. · 4 найсуворіше"
+  },
+  "mc_ms_am_advanced": {
+    "message": "додатково"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod збережено"
+  },
+  "mc_ms_cat_disability": {
+    "message": "інвалідність"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "агресія"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "сексуальність, стать або гендер"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "мізогінія"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "булінг"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "лайка"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "раса, етнічність або релігія"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "сексуальні терміни"
+  },
+  "mc_ms_ch_count": {
+    "message": "у чаті: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "у чаті: $P1$ з $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "у чаті: показано $P1$ з $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "у чаті нікого"
+  },
+  "mc_ms_reason_ph": {
+    "message": "причина попередження"
+  },
+  "mc_ms_warn_to": {
+    "message": "попередити $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "надіслати попередження"
+  },
+  "mc_ms_warned": {
+    "message": "попереджено $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "шаутаут для $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

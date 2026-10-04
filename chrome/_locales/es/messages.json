@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modos desconocidos — aún no te has unido al canal"
+  },
+  "mc_ms_title": {
+    "message": "herramientas de mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "escudo"
+  },
+  "mc_ms_cell_unban": {
+    "message": "solicitudes de desbaneo"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatters"
+  },
+  "mc_ms_hint": {
+    "message": "h/l celda · j/k mover · ? teclas · esc cerrar"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s activar o desactivar"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a aprobar · d denegar · f siguiente estado · enter envía"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k elegir fila · 0-4 fijar nivel · a avanzado"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtrar · enter abre la tarjeta"
+  },
+  "mc_ms_loading": {
+    "message": "cargando…"
+  },
+  "mc_ms_need_perm": {
+    "message": "las herramientas de mod necesitan un permiso más de twitch"
+  },
+  "mc_ms_allow": {
+    "message": "permitir herramientas de mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "no eres moderador de este canal"
+  },
+  "mc_ms_err": {
+    "message": "no se pudo contactar con twitch — reintenta"
+  },
+  "mc_ms_retry": {
+    "message": "reintentar"
+  },
+  "mc_ms_yes": {
+    "message": "sí"
+  },
+  "mc_ms_no": {
+    "message": "no"
+  },
+  "mc_ms_cancel": {
+    "message": "cancelar"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtrar"
+  },
+  "mc_ms_no_match": {
+    "message": "sin coincidencias"
+  },
+  "mc_ms_no_channel": {
+    "message": "abre primero una pestaña de canal de twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "uso: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "uso: /warn <usuario> <motivo>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "uso: /shoutout <usuario>"
+  },
+  "mc_ms_shield_on": {
+    "message": "el modo escudo está activado"
+  },
+  "mc_ms_shield_off": {
+    "message": "el modo escudo está desactivado"
+  },
+  "mc_ms_shield_since": {
+    "message": "activo desde $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "¿activar el modo escudo? el chat se bloquea."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "activar"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "desactivar"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "modo escudo activado"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "modo escudo desactivado"
+  },
+  "mc_ms_st_pending": {
+    "message": "pendientes"
+  },
+  "mc_ms_st_approved": {
+    "message": "aprobadas"
+  },
+  "mc_ms_st_denied": {
+    "message": "denegadas"
+  },
+  "mc_ms_ub_count": {
+    "message": "solicitudes: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "sin solicitudes · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "aprobar"
+  },
+  "mc_ms_ub_deny": {
+    "message": "denegar"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "motivo (opcional)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "¿aprobar a $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "¿denegar a $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ aprobado",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ denegado",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "general"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 apagado · 4 más estricto"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avanzado"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod guardado"
+  },
+  "mc_ms_cat_disability": {
+    "message": "discapacidad"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresión"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexualidad, sexo o género"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misoginia"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "acoso"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "palabrotas"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "raza, etnia o religión"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "términos sexuales"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatters: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatters: $P1$ de $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatters: $P1$ de $P2$ mostrados",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "nadie en el chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "motivo de la advertencia"
+  },
+  "mc_ms_warn_to": {
+    "message": "advertir a $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "enviar advertencia"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ advertido",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout a $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

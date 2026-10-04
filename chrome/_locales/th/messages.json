@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "ไม่ทราบโหมด — ยังไม่ได้เข้าช่อง"
+  },
+  "mc_ms_title": {
+    "message": "เครื่องมือม็อด"
+  },
+  "mc_ms_cell_shield": {
+    "message": "โล่"
+  },
+  "mc_ms_cell_unban": {
+    "message": "คำขอปลดแบน"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "คนในแชท"
+  },
+  "mc_ms_hint": {
+    "message": "h/l ช่อง · j/k เลื่อน · ? ปุ่ม · esc ปิด"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s เปิดหรือปิด"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a อนุมัติ · d ปฏิเสธ · f สถานะถัดไป · enter ส่ง"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k เลือกแถว · 0-4 ตั้งระดับ · a ขั้นสูง"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ กรอง · enter เปิดการ์ด"
+  },
+  "mc_ms_loading": {
+    "message": "กำลังโหลด…"
+  },
+  "mc_ms_need_perm": {
+    "message": "เครื่องมือม็อดต้องการสิทธิ์ twitch อีกหนึ่งอย่าง"
+  },
+  "mc_ms_allow": {
+    "message": "อนุญาตเครื่องมือม็อด"
+  },
+  "mc_ms_not_mod": {
+    "message": "คุณไม่ใช่ม็อดของช่องนี้"
+  },
+  "mc_ms_err": {
+    "message": "เชื่อมต่อ twitch ไม่ได้ — ลองอีกครั้ง"
+  },
+  "mc_ms_retry": {
+    "message": "ลองใหม่"
+  },
+  "mc_ms_yes": {
+    "message": "ใช่"
+  },
+  "mc_ms_no": {
+    "message": "ไม่"
+  },
+  "mc_ms_cancel": {
+    "message": "ยกเลิก"
+  },
+  "mc_ms_filter_ph": {
+    "message": "กรอง"
+  },
+  "mc_ms_no_match": {
+    "message": "ไม่พบ"
+  },
+  "mc_ms_no_channel": {
+    "message": "เปิดแท็บช่อง twitch ก่อน"
+  },
+  "mc_ms_usage_shield": {
+    "message": "วิธีใช้: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "วิธีใช้: /warn <ผู้ใช้> <เหตุผล>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "วิธีใช้: /shoutout <ผู้ใช้>"
+  },
+  "mc_ms_shield_on": {
+    "message": "โหมดโล่เปิดอยู่"
+  },
+  "mc_ms_shield_off": {
+    "message": "โหมดโล่ปิดอยู่"
+  },
+  "mc_ms_shield_since": {
+    "message": "เปิดตั้งแต่ $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "เปิดโหมดโล่? แชทจะถูกล็อก"
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "เปิด"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "ปิด"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "เปิดโหมดโล่แล้ว"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "ปิดโหมดโล่แล้ว"
+  },
+  "mc_ms_st_pending": {
+    "message": "รอดำเนินการ"
+  },
+  "mc_ms_st_approved": {
+    "message": "อนุมัติแล้ว"
+  },
+  "mc_ms_st_denied": {
+    "message": "ปฏิเสธแล้ว"
+  },
+  "mc_ms_ub_count": {
+    "message": "คำขอ: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "ไม่มีคำขอ ($P1$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "อนุมัติ"
+  },
+  "mc_ms_ub_deny": {
+    "message": "ปฏิเสธ"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "เหตุผล (ไม่บังคับ)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "อนุมัติ $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "ปฏิเสธ $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "อนุมัติ $P1$ แล้ว",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "ปฏิเสธ $P1$ แล้ว",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "ภาพรวม"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 ปิด · 4 เข้มสุด"
+  },
+  "mc_ms_am_advanced": {
+    "message": "ขั้นสูง"
+  },
+  "mc_ms_am_saved": {
+    "message": "บันทึก automod แล้ว"
+  },
+  "mc_ms_cat_disability": {
+    "message": "ความพิการ"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "ความก้าวร้าว"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "เพศวิถี เพศกำเนิด หรือเพศสภาพ"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "การเกลียดชังผู้หญิง"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "การกลั่นแกล้ง"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "คำหยาบ"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "เชื้อชาติ ชาติพันธุ์ หรือศาสนา"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "คำเกี่ยวกับเรื่องเพศ"
+  },
+  "mc_ms_ch_count": {
+    "message": "คนในแชท: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "คนในแชท: $P1$ จาก $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "คนในแชท: แสดง $P1$ จาก $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "ไม่มีใครในแชท"
+  },
+  "mc_ms_reason_ph": {
+    "message": "เหตุผลที่เตือน"
+  },
+  "mc_ms_warn_to": {
+    "message": "เตือน $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "ส่งคำเตือน"
+  },
+  "mc_ms_warned": {
+    "message": "เตือน $P1$ แล้ว",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "ชาวต์เอาต์ให้ $P1$ แล้ว",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

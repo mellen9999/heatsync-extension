@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "a módok ismeretlenek — a csatornához még nem csatlakoztál"
+  },
+  "mc_ms_title": {
+    "message": "moderátor eszközök"
+  },
+  "mc_ms_cell_shield": {
+    "message": "pajzs"
+  },
+  "mc_ms_cell_unban": {
+    "message": "tiltásfeloldási kérelmek"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatelők"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cella · j/k mozgás · ? billentyűk · esc bezár"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s be vagy ki"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a jóváhagy · d elutasít · f következő állapot · enter küld"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k sor kiválasztása · 0-4 szint beállítása · a haladó"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ szűrés · enter megnyitja a kártyát"
+  },
+  "mc_ms_loading": {
+    "message": "betöltés…"
+  },
+  "mc_ms_need_perm": {
+    "message": "a moderátor eszközökhöz még egy twitch-engedély kell"
+  },
+  "mc_ms_allow": {
+    "message": "moderátor eszközök engedélyezése"
+  },
+  "mc_ms_not_mod": {
+    "message": "nem vagy moderátor ezen a csatornán"
+  },
+  "mc_ms_err": {
+    "message": "nem érem el a twitchet — próbáld újra"
+  },
+  "mc_ms_retry": {
+    "message": "újra"
+  },
+  "mc_ms_yes": {
+    "message": "igen"
+  },
+  "mc_ms_no": {
+    "message": "nem"
+  },
+  "mc_ms_cancel": {
+    "message": "mégse"
+  },
+  "mc_ms_filter_ph": {
+    "message": "szűrő"
+  },
+  "mc_ms_no_match": {
+    "message": "nincs találat"
+  },
+  "mc_ms_no_channel": {
+    "message": "előbb nyiss meg egy twitch-csatorna fület"
+  },
+  "mc_ms_usage_shield": {
+    "message": "használat: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "használat: /warn <felhasználó> <ok>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "használat: /shoutout <felhasználó>"
+  },
+  "mc_ms_shield_on": {
+    "message": "a pajzs mód be van kapcsolva"
+  },
+  "mc_ms_shield_off": {
+    "message": "a pajzs mód ki van kapcsolva"
+  },
+  "mc_ms_shield_since": {
+    "message": "bekapcsolva: $P1$ óta",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "bekapcsolod a pajzs módot? a chat lezárul."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "bekapcsol"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "kikapcsol"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "pajzs mód bekapcsolva"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "pajzs mód kikapcsolva"
+  },
+  "mc_ms_st_pending": {
+    "message": "függő"
+  },
+  "mc_ms_st_approved": {
+    "message": "jóváhagyott"
+  },
+  "mc_ms_st_denied": {
+    "message": "elutasított"
+  },
+  "mc_ms_ub_count": {
+    "message": "kérelmek: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "nincs $P1$ kérelem",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "jóváhagy"
+  },
+  "mc_ms_ub_deny": {
+    "message": "elutasít"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "indok (nem kötelező)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "jóváhagyod: $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "elutasítod: $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ jóváhagyva",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ elutasítva",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "összesített"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 ki · 4 legszigorúbb"
+  },
+  "mc_ms_am_advanced": {
+    "message": "haladó"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod mentve"
+  },
+  "mc_ms_cat_disability": {
+    "message": "fogyatékosság"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresszió"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "szexualitás, nem vagy nemi identitás"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "nőgyűlölet"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "zaklatás"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "káromkodás"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rassz, etnikum vagy vallás"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "szexuális kifejezések"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatelők: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatelők: $P1$ / $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatelők: $P1$ / $P2$ látható",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "senki sincs a chatben"
+  },
+  "mc_ms_reason_ph": {
+    "message": "figyelmeztetés oka"
+  },
+  "mc_ms_warn_to": {
+    "message": "figyelmeztetés: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "figyelmeztetés küldése"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ figyelmeztetve",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

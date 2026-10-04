@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "άγνωστες λειτουργίες — το κανάλι δεν έχει συνδεθεί ακόμα"
+  },
+  "mc_ms_title": {
+    "message": "εργαλεία mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "ασπίδα"
+  },
+  "mc_ms_cell_unban": {
+    "message": "αιτήματα unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "χρήστες chat"
+  },
+  "mc_ms_hint": {
+    "message": "h/l κελί · j/k κίνηση · ? πλήκτρα · esc κλείσιμο"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s ενεργοποίηση ή απενεργοποίηση"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a έγκριση · d απόρριψη · f επόμενη κατάσταση · enter στέλνει"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k επιλογή γραμμής · 0-4 ορισμός επιπέδου · a σύνθετα"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ φίλτρο · enter ανοίγει την κάρτα"
+  },
+  "mc_ms_loading": {
+    "message": "φόρτωση…"
+  },
+  "mc_ms_need_perm": {
+    "message": "τα εργαλεία mod χρειάζονται άλλη μία άδεια του twitch"
+  },
+  "mc_ms_allow": {
+    "message": "να επιτραπούν τα εργαλεία mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "δεν είσαι moderator σε αυτό το κανάλι"
+  },
+  "mc_ms_err": {
+    "message": "το twitch δεν αποκρίθηκε — δοκίμασε ξανά"
+  },
+  "mc_ms_retry": {
+    "message": "ξανά"
+  },
+  "mc_ms_yes": {
+    "message": "ναι"
+  },
+  "mc_ms_no": {
+    "message": "όχι"
+  },
+  "mc_ms_cancel": {
+    "message": "ακύρωση"
+  },
+  "mc_ms_filter_ph": {
+    "message": "φίλτρο"
+  },
+  "mc_ms_no_match": {
+    "message": "κανένα αποτέλεσμα"
+  },
+  "mc_ms_no_channel": {
+    "message": "άνοιξε πρώτα μια καρτέλα καναλιού twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "χρήση: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "χρήση: /warn <χρήστης> <λόγος>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "χρήση: /shoutout <χρήστης>"
+  },
+  "mc_ms_shield_on": {
+    "message": "η λειτουργία ασπίδας είναι ενεργή"
+  },
+  "mc_ms_shield_off": {
+    "message": "η λειτουργία ασπίδας είναι ανενεργή"
+  },
+  "mc_ms_shield_since": {
+    "message": "ενεργή από $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "ενεργοποίηση λειτουργίας ασπίδας; το chat κλειδώνει."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "ενεργοποίηση"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "απενεργοποίηση"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "λειτουργία ασπίδας ενεργή"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "λειτουργία ασπίδας ανενεργή"
+  },
+  "mc_ms_st_pending": {
+    "message": "σε εκκρεμότητα"
+  },
+  "mc_ms_st_approved": {
+    "message": "εγκεκριμένα"
+  },
+  "mc_ms_st_denied": {
+    "message": "απορριφθέντα"
+  },
+  "mc_ms_ub_count": {
+    "message": "αιτήματα: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "κανένα αίτημα · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "έγκριση"
+  },
+  "mc_ms_ub_deny": {
+    "message": "απόρριψη"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "λόγος (προαιρετικό)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "έγκριση $P1$;",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "απόρριψη $P1$;",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "εγκρίθηκε $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "απορρίφθηκε $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "συνολικά"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 off · 4 αυστηρότερο"
+  },
+  "mc_ms_am_advanced": {
+    "message": "σύνθετα"
+  },
+  "mc_ms_am_saved": {
+    "message": "το automod αποθηκεύτηκε"
+  },
+  "mc_ms_cat_disability": {
+    "message": "αναπηρία"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "επιθετικότητα"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "σεξουαλικότητα, φύλο ή ταυτότητα φύλου"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "μισογυνισμός"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "εκφοβισμός"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "βρισιές"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "φυλή, εθνικότητα ή θρησκεία"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "σεξουαλικοί όροι"
+  },
+  "mc_ms_ch_count": {
+    "message": "χρήστες: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "χρήστες: $P1$ από $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "χρήστες: $P1$ από $P2$ εμφανίζονται",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "κανείς στο chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "λόγος προειδοποίησης"
+  },
+  "mc_ms_warn_to": {
+    "message": "προειδοποίηση για $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "αποστολή προειδοποίησης"
+  },
+  "mc_ms_warned": {
+    "message": "προειδοποιήθηκε $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout στον $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

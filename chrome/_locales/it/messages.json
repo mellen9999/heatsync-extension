@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modalità sconosciute — canale non ancora unito"
+  },
+  "mc_ms_title": {
+    "message": "strumenti mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "scudo"
+  },
+  "mc_ms_cell_unban": {
+    "message": "richieste di unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatter"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cella · j/k muovi · ? tasti · esc chiudi"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s attiva o disattiva"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a approva · d rifiuta · f stato successivo · enter invia"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k scegli una riga · 0-4 imposta il livello · a avanzate"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtra · enter apre la scheda"
+  },
+  "mc_ms_loading": {
+    "message": "caricamento…"
+  },
+  "mc_ms_need_perm": {
+    "message": "gli strumenti mod richiedono un altro permesso twitch"
+  },
+  "mc_ms_allow": {
+    "message": "consenti strumenti mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "non sei moderatore di questo canale"
+  },
+  "mc_ms_err": {
+    "message": "impossibile raggiungere twitch — riprova"
+  },
+  "mc_ms_retry": {
+    "message": "riprova"
+  },
+  "mc_ms_yes": {
+    "message": "sì"
+  },
+  "mc_ms_no": {
+    "message": "no"
+  },
+  "mc_ms_cancel": {
+    "message": "annulla"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtra"
+  },
+  "mc_ms_no_match": {
+    "message": "nessun risultato"
+  },
+  "mc_ms_no_channel": {
+    "message": "apri prima una scheda di un canale twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "uso: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "uso: /warn <utente> <motivo>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "uso: /shoutout <utente>"
+  },
+  "mc_ms_shield_on": {
+    "message": "la modalità scudo è attiva"
+  },
+  "mc_ms_shield_off": {
+    "message": "la modalità scudo è disattivata"
+  },
+  "mc_ms_shield_since": {
+    "message": "attiva da $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "attivare la modalità scudo? la chat si blocca."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "attiva"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "disattiva"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "modalità scudo attiva"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "modalità scudo disattivata"
+  },
+  "mc_ms_st_pending": {
+    "message": "in attesa"
+  },
+  "mc_ms_st_approved": {
+    "message": "approvata"
+  },
+  "mc_ms_st_denied": {
+    "message": "rifiutata"
+  },
+  "mc_ms_ub_count": {
+    "message": "richieste: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "nessuna richiesta $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "approva"
+  },
+  "mc_ms_ub_deny": {
+    "message": "rifiuta"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "motivo (facoltativo)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "approvare $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "rifiutare $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "approvato $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "rifiutato $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "generale"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 off · 4 più severo"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avanzate"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod salvato"
+  },
+  "mc_ms_cat_disability": {
+    "message": "disabilità"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggressività"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sessualità, sesso o genere"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misoginia"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "bullismo"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "parolacce"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "razza, etnia o religione"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "termini sessuali"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatter: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatter: $P1$ su $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatter: $P1$ su $P2$ mostrati",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "nessuno in chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "motivo dell'avviso"
+  },
+  "mc_ms_warn_to": {
+    "message": "avvisa $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "invia avviso"
+  },
+  "mc_ms_warned": {
+    "message": "avvisato $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout a $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

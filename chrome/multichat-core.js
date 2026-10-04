@@ -14130,7 +14130,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c996ae128d61' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'baca1276159a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -57954,6 +57954,902 @@ async function cmMountControls(grid, status, channel) {
 }
 
 
+// --- multichat/share-callouts.js ---
+// resub / watch-streak share-mode + callout-token scan + callout close button —
+// split out of main.js (2026-10-04). pure move; shares main.js's closure scope
+// via the build's flat concat (loaded before main.js).
+
+// Twitch resub-share / sub-anniversary callout: hide the native Pin toggle
+// (it pins to the hidden native chat → looks broken), inject our own X
+// button that just hides the callout. Idempotent + survives re-mounts via
+// dataset guard. Also hooks the Share button so we can guarantee a local
+// celebration line even if Twitch suppresses the self-echo USERNOTICE.
+//
+// Share-dedupe contract (bulletproof against duplicates):
+//   Phase 1 [0–2000ms after click]: wait for Twitch's real USERNOTICE.
+//     - If it arrives matching channel+user+msg-id → cancel synthetic.
+//   Phase 2 [+0–30s after synthetic injection]: keep watching.
+//     - If real arrives late → hide synthetic from buffer + remove its
+//       DOM row → real takes its place. Single celebration always.
+let _hsCalloutCloseObs = null
+let _pendingShareClaim = null
+let _resubShareModeTimer = null
+let _resubShareCtx = null
+let _watchstreakShareModeTimer = null
+let _watchstreakShareCtx = null
+let _lastSurfacedShareBtn = null
+let _lastSurfacedCallout = null
+const CALLOUT_QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
+
+// Twitch's callout tokens are base64 of "<userId>:<channelId>:<count>:<kind>"
+// (kind = "cumulative" for a sub anniversary). Decoding is the validation:
+// nothing else on the page base64-decodes to that exact shape, so a match is
+// the token by construction — no prop name to guess and nothing to re-learn
+// when twitch renames its components.
+const CALLOUT_TOKEN_SHAPE = /^(\d+):(\d+):(\d+):([a-z_]+)$/i
+function decodeCalloutToken(raw) {
+  if (typeof raw !== 'string' || raw.length < 16 || raw.length > 200) return null
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(raw)) return null
+  let plain
+  try {
+    plain = atob(raw)
+  } catch {
+    return null
+  }
+  const m = CALLOUT_TOKEN_SHAPE.exec(plain)
+  if (!m) return null
+  return { raw, userId: m[1], channelId: m[2], count: Number(m[3]), kind: m[4].toLowerCase() }
+}
+
+// Once-per-day rate-limit on the watch-streak share UI. Twitch sometimes
+// re-shows the callout if you reload the tab mid-stream; cap our surfacing
+// at one per channel per local-day so it never feels spammy.
+function _watchstreakDayKey(channel) {
+  const d = new Date()
+  const ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return `hs-watchstreak-shared:${channel}:${ymd}`
+}
+function _watchstreakAlreadySharedToday(channel) {
+  try {
+    return !!localStorage.getItem(_watchstreakDayKey(channel))
+  } catch (_) {
+    return false
+  }
+}
+function _markWatchstreakSharedToday(channel) {
+  try {
+    localStorage.setItem(_watchstreakDayKey(channel), '1')
+  } catch (_) {}
+}
+function _injectShareSynthetic(claim, user, months, customText) {
+  const synthId = `hs-synth-share-${claim.channel}-${months}-${Date.now()}`
+  claim.synthId = synthId
+  claim.customText = customText || ''
+  const synth = {
+    type: 'usernotice',
+    msgId: 'resub',
+    user,
+    text: customText || '',
+    systemMsg: `${user} is celebrating ${months} months as a subscriber!`,
+    color: '#fff',
+    badges: ownBadgesFor(claim.channel) || '',
+    channel: claim.channel,
+    time: Date.now(),
+    subTier: '1',
+    subMonths: months,
+    giftCount: 0,
+    recipient: '',
+    raidViewers: 0,
+    raidFrom: '',
+    announceColor: '',
+    bitsTier: 0,
+    id: synthId,
+    isSynthetic: true,
+    userOverride: !!customText,
+  }
+  try {
+    irc?._handleMsg?.(synth)
+  } catch (_) {}
+  claim.postTimer = cleanup.setTimeout(() => {
+    if (_pendingShareClaim === claim) _pendingShareClaim = null
+  }, 30000)
+}
+function _enterResubShareMode(claim, user, months) {
+  // Mutually exclusive with watchstreak-share — exit that first if active,
+  // silently (keep its banner up so user can come back to it).
+  if (_watchstreakShareCtx) _exitWatchstreakShareMode(_watchstreakShareCtx.claim, false, true)
+  _resubShareCtx = { claim, user, months }
+  const input = document.getElementById('hs-mc-input')
+  const inputBar = document.getElementById('hs-mc-inputbar')
+  if (!input) return
+  inputBar?.classList.add('hs-mc-resub-share')
+  input.classList.add('hs-mc-resub-share')
+  if (input.dataset.hsOrigPlaceholder === undefined) {
+    input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
+  }
+  if (input.dataset.hsOrigDataPlaceholder === undefined) {
+    input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
+  }
+  const placeholder = `resub message (${months}mo) — enter to share`
+  input.setAttribute('placeholder', placeholder)
+  input.setAttribute('data-placeholder', placeholder)
+  try {
+    input.focus()
+  } catch (_) {}
+  if (_resubShareModeTimer) cleanup.clearTimeout(_resubShareModeTimer)
+  _resubShareModeTimer = cleanup.setTimeout(() => _exitResubShareMode(claim, true), 30000)
+}
+function _exitResubShareMode(claim, fireFallback, silent) {
+  if (claim && _resubShareCtx?.claim !== claim) return
+  const wasCtx = _resubShareCtx
+  _resubShareCtx = null
+  if (_resubShareModeTimer) {
+    cleanup.clearTimeout(_resubShareModeTimer)
+    _resubShareModeTimer = null
+  }
+  // Dismiss the HsNotifs banner only on VOLUNTARY exit (consume, timeout,
+  // dismiss-click). On a forced exit (another share-mode took the input),
+  // silent=true keeps the banner visible so the user can come back to it.
+  if (wasCtx && !silent) {
+    try {
+      window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${wasCtx.claim.channel}:${wasCtx.months}`)
+    } catch (_) {}
+  }
+  const input = document.getElementById('hs-mc-input')
+  const inputBar = document.getElementById('hs-mc-inputbar')
+  inputBar?.classList.remove('hs-mc-resub-share')
+  input?.classList.remove('hs-mc-resub-share')
+  if (input?.dataset.hsOrigPlaceholder !== undefined) {
+    input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
+    delete input.dataset.hsOrigPlaceholder
+  }
+  if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
+    if (input.dataset.hsOrigDataPlaceholder) {
+      input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
+    } else {
+      input.removeAttribute('data-placeholder')
+    }
+    delete input.dataset.hsOrigDataPlaceholder
+  }
+  // 30s timeout with no user text → fall back to the empty-body synthetic so
+  // the celebration banner still shows locally.
+  if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
+    _injectShareSynthetic(wasCtx.claim, wasCtx.user, wasCtx.months, '')
+  }
+}
+// Celebration failed AFTER the text was consumed — never let the user's
+// message vanish: surface the failure and send the text as plain chat.
+async function _resubShareTextRescue(channel, text) {
+  showToast(t('mc_main_celebration_share_failed'), 'error')
+  if (!text) return
+  try {
+    const token = getTwitchAuthToken()
+    if (token) {
+      const res = await sendIrcMessage(channel, text, token)
+      if (res === true || res === 'queued') return
+    }
+  } catch (_) {}
+  showToast(t('mc_main_message_not_sent'), 'error')
+}
+
+// Programmatic-click escape hatch so consume() can fire the native Twitch
+// Share button without our own surface() hook re-entering share-mode.
+let _allowNativeShare = false
+// Exposed for input.js sendMessage: consume typed text as resub-share body.
+// .enter() is called directly by the HsNotifs Share button — bypasses the
+// native Twitch click which would insta-send a default celebration message.
+// Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
+// click path re-runs it when the token it was emitted with is missing. The
+// callout is emitted the moment it is detected, and the event payload lives in
+// contextMenu.props.children.props.event — a subtree React may not have mounted
+// yet. Measured on a live 107mo callout: the payload was absent from the notif
+// but sitting at BFS step 46 minutes later, so the extension fell through to
+// twitch's own button every time, which posts twitch's default celebration and
+// drops the custom message. Re-scanning at click time is correct whether the
+// cause was that race or a root that never reached the payload.
+/**
+ * Does this scan hold the token for the callout we think it does?
+ *
+ * The count is months for a sub anniversary and streams for a watch streak,
+ * which is why the scan reports a generic `count` — an `out.months` read as
+ * `scan.count` is undefined, silently false, and disables the whole path.
+ * That shipped once. Every gate goes through here now.
+ */
+function calloutTokenMatches(scan, expect) {
+  if (!scan?.token) return false
+  if (!expect) return true
+  if (expect.kind !== undefined && scan.kind !== expect.kind) return false
+  if (expect.count !== undefined && scan.count !== expect.count) return false
+  return true
+}
+
+function fiberTokenScan(rootEl) {
+  if (typeof getFiber !== 'function' || !rootEl) return null
+  const out = { token: null, channelId: null, count: 0, kind: null }
+  const root = getFiber(rootEl)
+  if (!root) return out
+  // Breadth-first over the callout's own subtree. Twitch carries the token as
+  // the React *key* of the element it renders the callout from — measured
+  // live on a 107-month callout, two fibers below the queue container. It is
+  // not a prop under any name, which is why every earlier scan came back
+  // empty and the whole share flow fell through to twitch's own button. That
+  // button hands the celebration to twitch's composer, which heatsync has
+  // replaced, so the share never completed and the callout came back on the
+  // next reload.
+  // Children + siblings only: from the container there is nothing above worth
+  // walking, and climbing turns a two-step lookup into a walk of the whole
+  // chat tree.
+  //
+  // The ROOT's siblings are the exception — they are the other callouts in
+  // the queue (a sub anniversary and a watch streak mount side by side), each
+  // carrying its own token. Following them would hand back a neighbour's
+  // token, which the caller cannot tell apart from its own.
+  const queue = [root]
+  const seen = new WeakSet()
+  let steps = 0
+  while (queue.length && steps < 400 && !out.token) {
+    const f = queue.shift()
+    if (!f || seen.has(f)) continue
+    seen.add(f)
+    steps++
+    const tok = decodeCalloutToken(f.key)
+    if (tok) {
+      out.token = tok.raw
+      out.channelId = tok.channelId
+      out.count = tok.count
+      out.kind = tok.kind
+      break
+    }
+    if (f.child) queue.push(f.child)
+    if (f !== root && f.sibling) queue.push(f.sibling)
+  }
+  return out
+}
+
+/**
+ * Hand a callout token back to twitch with the user's own words as the
+ * celebration body. This is the whole point of taking the click: twitch's own
+ * Share button only puts twitch's composer into share-mode, and heatsync has
+ * replaced that composer, so the native path can never finish the job.
+ *
+ * One mutation serves every callout kind — the resolver is
+ * `useChatNotificationToken`, and the token says which callout is being
+ * consumed. Throws on rejection so both callers can rescue the typed text
+ * into plain chat; a rejected token comes back HTTP 200 with an errors[]
+ * entry and a null field, so "no exception" is not "it worked".
+ */
+async function _consumeCalloutToken(channel, token, text) {
+  const data = await gqlProxy('Chat_ShareResub_UseResubToken', {
+    input: { message: text || '', channelLogin: channel, includeStreak: false, tokenID: token },
+  })
+  const errs =
+    (Array.isArray(data?.errors) && data.errors.length ? data.errors : null) ||
+    (data?.data && data.data.useChatNotificationToken === null ? [{ message: 'token rejected' }] : null)
+  if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
+}
+
+window.__hsResubShare = {
+  active: () => !!_resubShareCtx,
+  // Returns false so input.js sendMessage CONTINUES into the regular IRC
+  // send path — the typed text needs to actually go to Twitch chat so other
+  // viewers see it and it persists across refresh. We also inject a local
+  // synthetic usernotice for instant visual feedback, AND fire the native
+  // Twitch share button for the global celebration broadcast.
+  consume: (text) => {
+    if (!_resubShareCtx) return false
+    const { claim, user, months } = _resubShareCtx
+    // 1. Local synthetic — instant styled celebration in OUR view with the
+    //    user's custom text. Doesn't go anywhere else; viewer-only.
+    try {
+      _injectShareSynthetic(claim, user, months, text || '')
+    } catch (_) {}
+    // 2. GQL broadcast — call Chat_ShareResub_UseResubToken directly with the
+    //    typed body. Sidesteps Twitch's hidden composer UI entirely; reaches
+    //    the same backend mutation their native "Send" button fires after the
+    //    composer opens. The token is the resub claim Twitch hands us in the
+    //    callout's React props (or reconstructed from <userId>:<channelId>:
+    //    <months>:cumulative when the prop wasn't found).
+    const nativeClickFallback = () => {
+      // No token — last-resort: programmatic-click the hidden native button.
+      // Fires Twitch's default empty-body celebration; the typed text still
+      // goes out as a plain follow-up message via the IRC send path below.
+      const liveBtn = document.querySelector(
+        `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
+      )
+      const btn = liveBtn || claim._nativeShareBtn
+      if (!btn || typeof getFiber !== 'function') return false
+      try {
+        let f = getFiber(btn)
+        for (let i = 0; f && i < 10; i++, f = f.return) {
+          const oc = f?.memoizedProps?.onClick
+          if (typeof oc === 'function') {
+            oc({
+              preventDefault() {},
+              stopPropagation() {},
+              persist() {},
+              currentTarget: btn,
+              target: btn,
+              nativeEvent: { isTrusted: true },
+              type: 'click',
+              button: 0,
+              buttons: 0,
+            })
+            return true
+          }
+        }
+      } catch (_) {}
+      return false
+    }
+    // No token → the native click can only post Twitch's DEFAULT
+    // celebration (no body). Return false so sendMessage continues and
+    // the typed text still lands as a normal chat message — celebration
+    // + message, nothing swallowed. (This was the documented contract;
+    // an unconditional `return true` here used to eat the text.)
+    if (!claim.resubToken) {
+      console.warn('[heatsync-ext] resub-share: no token — native btn fallback')
+      _exitResubShareMode(claim, false)
+      let clicked = false
+      try {
+        clicked = nativeClickFallback()
+      } catch (_) {}
+      showToast(clicked ? t('mc_main_no_share_token') : t('mc_main_share_unavailable'), 'error')
+      return false
+    }
+
+    // Token path: instant exit, GQL in the background. Any failure rescues
+    // the typed text into plain chat — the user's words must never silently
+    // vanish. The optimistic synthetic is NOT re-injected here: step 1 above
+    // already ran unconditionally, and _injectShareSynthetic stamps a fresh
+    // Date.now() id and pushes a new row every call, so doing it twice put
+    // two identical celebrations in the sharer's own view.
+    _exitResubShareMode(claim, false)
+    ;(async () => {
+      try {
+        await _consumeCalloutToken(claim.channel, claim.resubToken, text)
+        log('resub-share: GQL fired ok')
+      } catch (e) {
+        console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
+        await _resubShareTextRescue(claim.channel, text)
+      }
+    })()
+    // true = sendMessage stops here; the typed text is the celebration
+    // body (or gets rescued above on failure).
+    return true
+  },
+  enter: (months, user, channel, resubToken) => {
+    try {
+      if (_pendingShareClaim) {
+        cleanup.clearTimeout(_pendingShareClaim.postTimer)
+      }
+      const claim = {
+        channel,
+        userLc: (user || '').toLowerCase(),
+        months,
+        synthId: null,
+        postTimer: null,
+        customText: '',
+        _nativeShareBtn: _lastSurfacedShareBtn,
+        resubToken: resubToken || null,
+      }
+      _pendingShareClaim = claim
+      _enterResubShareMode(claim, user, months)
+    } catch (_) {}
+  },
+  /**
+   * Re-scan for the resub token at CLICK time. The notif carries whatever the
+   * scan found when the callout was first detected, and that can be nothing —
+   * the payload lives in a React subtree that may not be mounted yet. By the
+   * time a human clicks share, it always is. Returns the base64 tokenID
+   * (<userId>:<channelId>:<months>:cumulative) or null.
+   */
+  rescanToken: (rootEl, expect) => {
+    try {
+      // Scan the callout we were HANDED. Reaching for
+      // querySelector(CALLOUT_QUEUE_SEL) takes the first container in the
+      // DOM, which is a different callout whenever a sub anniversary and a
+      // watch streak are queued together — the same cross-callout mixup the
+      // scan itself refuses to make by not following the root's siblings.
+      if (rootEl?.isConnected) {
+        const scan = fiberTokenScan(rootEl)
+        if (calloutTokenMatches(scan, expect)) return scan.token
+        return null
+      }
+      // Detached: twitch re-rendered the queue under us and a detached fiber
+      // still hands back its stale key. Re-find the live callout by asking
+      // each one whether it is ours — that is what `expect` is for.
+      for (const el of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {
+        const scan = fiberTokenScan(el)
+        if (calloutTokenMatches(scan, expect)) return scan.token
+      }
+      return null
+    } catch (_) {
+      return null
+    }
+  },
+  // Internal: surface()'s native-button hook reads this to know whether to
+  // block the click (user-initiated) or pass through (programmatic from us).
+  _allowNativeShare: () => _allowNativeShare,
+  /**
+   * Fire twitch's own share button, with our interceptor standing down for
+   * the duration. Used when we have no genuine resub token: twitch's flow is
+   * then the only one that can actually consume it, so ours gets out of the
+   * way rather than half-completing. Mirrors tryDomClick's sequence — a bare
+   * .click() alone does not always satisfy their handler.
+   */
+  clickNative: (btn) => {
+    if (!btn) return false
+    try {
+      _allowNativeShare = true
+      try {
+        const opts = { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }
+        btn.dispatchEvent(new MouseEvent('mousedown', opts))
+        btn.dispatchEvent(new MouseEvent('mouseup', opts))
+        btn.dispatchEvent(new MouseEvent('click', opts))
+        btn.click()
+      } finally {
+        _allowNativeShare = false
+      }
+      return true
+    } catch (_) {
+      return false
+    }
+  },
+}
+
+// ── Watch-streak share: mirror of resub-share for Twitch's daily ───────
+// "you're on an N stream watch streak!" callout. Same dedupe contract,
+// same native-button forwarding, separate placeholder/mode CSS so the
+// user can tell which celebration they're composing. Once-per-day per
+// channel via localStorage.
+function _injectWatchstreakSynthetic(claim, user, streakCount, customText) {
+  const synthId = `hs-synth-wstreak-${claim.channel}-${streakCount}-${Date.now()}`
+  claim.synthId = synthId
+  claim.customText = customText || ''
+  const synth = {
+    type: 'usernotice',
+    msgId: 'watchstreak',
+    user,
+    text: customText || '',
+    systemMsg: `${user} watched ${streakCount} streams in a row — watch streak`,
+    color: '#fff',
+    badges: ownBadgesFor(claim.channel) || '',
+    channel: claim.channel,
+    time: Date.now(),
+    subTier: '',
+    subMonths: 0,
+    giftCount: 0,
+    recipient: '',
+    raidViewers: 0,
+    raidFrom: '',
+    announceColor: '',
+    bitsTier: 0,
+    streakCount,
+    id: synthId,
+    isSynthetic: true,
+    userOverride: !!customText,
+  }
+  try {
+    irc?._handleMsg?.(synth)
+  } catch (_) {}
+  claim.postTimer = cleanup.setTimeout(() => {
+    if (_pendingShareClaim === claim) _pendingShareClaim = null
+  }, 30000)
+}
+function _enterWatchstreakShareMode(claim, user, streakCount) {
+  // Mutually exclusive with resub-share — exit that first if active, silently
+  // (keep its banner up so user can come back to it).
+  if (_resubShareCtx) _exitResubShareMode(_resubShareCtx.claim, false, true)
+  _watchstreakShareCtx = { claim, user, streakCount }
+  const input = document.getElementById('hs-mc-input')
+  const inputBar = document.getElementById('hs-mc-inputbar')
+  if (!input) return
+  inputBar?.classList.add('hs-mc-watchstreak-share')
+  input.classList.add('hs-mc-watchstreak-share')
+  if (input.dataset.hsOrigPlaceholder === undefined) {
+    input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
+  }
+  if (input.dataset.hsOrigDataPlaceholder === undefined) {
+    input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
+  }
+  const placeholder = `watch streak (${streakCount}) — enter to share`
+  input.setAttribute('placeholder', placeholder)
+  input.setAttribute('data-placeholder', placeholder)
+  try {
+    input.focus()
+  } catch (_) {}
+  if (_watchstreakShareModeTimer) cleanup.clearTimeout(_watchstreakShareModeTimer)
+  _watchstreakShareModeTimer = cleanup.setTimeout(() => _exitWatchstreakShareMode(claim, true), 30000)
+}
+function _exitWatchstreakShareMode(claim, fireFallback, silent) {
+  if (claim && _watchstreakShareCtx?.claim !== claim) return
+  const wasCtx = _watchstreakShareCtx
+  _watchstreakShareCtx = null
+  if (_watchstreakShareModeTimer) {
+    cleanup.clearTimeout(_watchstreakShareModeTimer)
+    _watchstreakShareModeTimer = null
+  }
+  if (wasCtx && !silent) {
+    try {
+      window.HsNotifs?.dismissByKey?.(
+        'twitch-watchstreak-share',
+        `watchstreak:${wasCtx.claim.channel}:${wasCtx.streakCount}`,
+      )
+    } catch (_) {}
+  }
+  const input = document.getElementById('hs-mc-input')
+  const inputBar = document.getElementById('hs-mc-inputbar')
+  inputBar?.classList.remove('hs-mc-watchstreak-share')
+  input?.classList.remove('hs-mc-watchstreak-share')
+  if (input?.dataset.hsOrigPlaceholder !== undefined) {
+    input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
+    delete input.dataset.hsOrigPlaceholder
+  }
+  if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
+    if (input.dataset.hsOrigDataPlaceholder) {
+      input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
+    } else {
+      input.removeAttribute('data-placeholder')
+    }
+    delete input.dataset.hsOrigDataPlaceholder
+  }
+  if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
+    _injectWatchstreakSynthetic(wasCtx.claim, wasCtx.user, wasCtx.streakCount, '')
+  }
+}
+window.__hsWatchstreakShare = {
+  active: () => !!_watchstreakShareCtx,
+  consume: (text) => {
+    if (!_watchstreakShareCtx) return false
+    const { claim, user, streakCount } = _watchstreakShareCtx
+    try {
+      _injectWatchstreakSynthetic(claim, user, streakCount, text || '')
+    } catch (_) {}
+    const broadcastShare = () => {
+      const liveBtn = document.querySelector(
+        `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
+      )
+      const candidates = [liveBtn, claim._nativeShareBtn].filter(Boolean)
+      const seen = new Set()
+      const tryFiberOnClick = (btn) => {
+        try {
+          if (typeof getFiber !== 'function') return false
+          let f = getFiber(btn)
+          for (let i = 0; f && i < 10; i++, f = f.return) {
+            const oc = f?.memoizedProps?.onClick
+            if (typeof oc === 'function') {
+              const fakeEvt = {
+                preventDefault() {},
+                stopPropagation() {},
+                persist() {},
+                currentTarget: btn,
+                target: btn,
+                nativeEvent: { isTrusted: true },
+                type: 'click',
+                button: 0,
+                buttons: 0,
+              }
+              oc(fakeEvt)
+              log('watchstreak-share: fired via fiber onClick')
+              return true
+            }
+          }
+        } catch (e) {
+          console.warn('[heatsync-ext] watchstreak-share fiber onClick threw:', e)
+        }
+        return false
+      }
+      const tryDomClick = (btn) => {
+        try {
+          _allowNativeShare = true
+          try {
+            const opts = { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }
+            btn.dispatchEvent(new MouseEvent('mousedown', opts))
+            btn.dispatchEvent(new MouseEvent('mouseup', opts))
+            btn.dispatchEvent(new MouseEvent('click', opts))
+            btn.click()
+          } finally {
+            _allowNativeShare = false
+          }
+          log('watchstreak-share: fired via DOM click sequence')
+          return true
+        } catch (e) {
+          console.warn('[heatsync-ext] watchstreak-share DOM click threw:', e)
+          return false
+        }
+      }
+      for (const btn of candidates) {
+        if (!btn || seen.has(btn)) continue
+        seen.add(btn)
+        if (tryFiberOnClick(btn)) return true
+      }
+      for (const btn of candidates) {
+        if (!btn) continue
+        if (tryDomClick(btn)) return true
+      }
+      console.warn('[heatsync-ext] watchstreak-share: NO broadcast — native callout btn missing')
+      return false
+    }
+    // With a token we can finish the share ourselves, body and all — same
+    // path the sub anniversary takes. Without one, fall back to clicking
+    // twitch's button and letting the typed text go out as ordinary chat,
+    // which is all this flow could ever do before.
+    if (claim.streakToken) {
+      _exitWatchstreakShareMode(claim, false)
+      ;(async () => {
+        try {
+          await _consumeCalloutToken(claim.channel, claim.streakToken, text)
+          // Marked only once it landed. A failed share leaves the day
+          // unspent so a reload can offer it again — twitch never consumed
+          // the token, so the callout is still there to offer.
+          _markWatchstreakSharedToday(claim.channel)
+          log('watchstreak-share: GQL fired ok')
+        } catch (e) {
+          console.warn('[heatsync-ext] watchstreak-share GQL failed:', e?.message || e)
+          await _resubShareTextRescue(claim.channel, text)
+        }
+      })()
+      // true = the typed text IS the celebration body, so sendMessage stops
+      // here rather than posting it a second time as a plain message.
+      return true
+    }
+    try {
+      broadcastShare()
+    } catch (e) {
+      console.warn('[heatsync-ext] watchstreak-share broadcast outer threw:', e)
+    }
+    _markWatchstreakSharedToday(claim.channel)
+    _exitWatchstreakShareMode(claim, false)
+    return false
+  },
+  enter: (streakCount, user, channel, streakToken) => {
+    try {
+      if (_pendingShareClaim) {
+        cleanup.clearTimeout(_pendingShareClaim.postTimer)
+      }
+      const claim = {
+        kind: 'watchstreak',
+        channel,
+        userLc: (user || '').toLowerCase(),
+        streakCount,
+        synthId: null,
+        postTimer: null,
+        customText: '',
+        _nativeShareBtn: _lastSurfacedShareBtn,
+        streakToken: streakToken || null,
+      }
+      _pendingShareClaim = claim
+      _enterWatchstreakShareMode(claim, user, streakCount)
+    } catch (_) {}
+  },
+}
+
+function setupHsCalloutCloseButton() {
+  if (_hsCalloutCloseObs) return
+  // Native callout is hidden by CSS (.hs-notif-twitch-resub-share rule).
+  // We extract data from the native DOM, hook its Share button so the
+  // existing _enterResubShareMode flow runs when user clicks our forwarded
+  // Share, and emit our own HsNotifs notif to render the controlled UI.
+  const surface = (calloutEl) => {
+    if (!calloutEl || calloutEl.dataset.hsSurfaced === '1') return
+    const txt = calloutEl.textContent || ''
+    const ch = (getLiveChannel?.() || getCurrentChannel?.() || '').toLowerCase()
+    const user = currentUsername || ''
+    if (!ch || !user) return
+    const shareBtn = calloutEl.querySelector('[data-a-target="chat-private-callout__primary-button"]')
+
+    // Capture twitch's callout token from the callout subtree. It is what
+    // Chat_ShareResub_UseResubToken takes as input.tokenID, and it decodes to
+    // "<userId>:<channelId>:<count>:<kind>". Scan the container, never the
+    // button: the token sits two fibers under the container, while from the
+    // button the same breadth-first walk fans out across the chat tree
+    // without ever reaching it.
+    const scan = fiberTokenScan(calloutEl) || {}
+
+    // Watch-streak first (text mentions "watch streak"); resub fallback (only
+    // "N month" — without "watch streak"). Order matters: a watch-streak
+    // callout never mentions months, but a sub-anniversary may incidentally
+    // contain "stream", so explicit watchstreak check wins.
+    const isWatchstreak = /watch[\s-]*streak/i.test(txt)
+    const streakMatch = isWatchstreak ? txt.match(/(\d+)\s*stream/i) : null
+    const streakCount = streakMatch ? parseInt(streakMatch[1], 10) : 0
+    const monthMatch = !isWatchstreak ? txt.match(/(\d+)\s*month/i) : null
+    const months = monthMatch ? parseInt(monthMatch[1], 10) : 0
+
+    if (isWatchstreak && streakCount) {
+      if (_watchstreakAlreadySharedToday(ch)) {
+        calloutEl.dataset.hsSurfaced = '1'
+        return
+      }
+      calloutEl.dataset.hsSurfaced = '1'
+      // A watch-streak token counts streams where a resub token counts
+      // months; the kind string differs and we never assume it. If the count
+      // does not match the callout, we hold no token and the flow stays on
+      // twitch's own button exactly as before.
+      const streakToken = calloutTokenMatches(scan, { count: streakCount }) ? scan.token : null
+      if (shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
+        shareBtn.dataset.hsShareHooked = '1'
+        shareBtn.addEventListener(
+          'click',
+          (e) => {
+            if (_allowNativeShare) return
+            e.stopImmediatePropagation()
+            e.preventDefault()
+            try {
+              if (_pendingShareClaim) {
+                cleanup.clearTimeout(_pendingShareClaim.postTimer)
+              }
+              const claim = {
+                kind: 'watchstreak',
+                channel: ch,
+                userLc: user.toLowerCase(),
+                streakCount,
+                synthId: null,
+                postTimer: null,
+                customText: '',
+                _nativeShareBtn: shareBtn,
+                streakToken,
+              }
+              _pendingShareClaim = claim
+              _enterWatchstreakShareMode(claim, user, streakCount)
+            } catch (_) {}
+          },
+          { capture: true },
+        )
+      }
+      _lastSurfacedShareBtn = shareBtn || null
+      _lastSurfacedCallout = calloutEl
+      try {
+        HsNotifs.emit('twitch-watchstreak-share', {
+          streakCount,
+          user,
+          channel: ch,
+          _nativeShareBtn: shareBtn,
+          _nativeCallout: calloutEl,
+          _streakToken: streakToken,
+        })
+      } catch (_) {}
+      try {
+        _updateMcLayout?.()
+      } catch (_) {}
+      return
+    }
+
+    if (!months) return
+    calloutEl.dataset.hsSurfaced = '1'
+    // Only take the click when the token we hold is genuinely this callout's:
+    // the months it encodes must match the months the callout announces. A
+    // token is never guessed or reconstructed — a wrong one fails the
+    // mutation, and the failure path posts the typed text as ordinary chat,
+    // which reads as success while twitch never marks the resub shared, so
+    // the callout returns on every reload. Without a token we do not
+    // intervene at all; a silent half-success is worse than not helping.
+    const resubToken = calloutTokenMatches(scan, { kind: 'cumulative', count: months }) ? scan.token : null
+    const hasRealToken = !!resubToken
+    if (hasRealToken && shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
+      shareBtn.dataset.hsShareHooked = '1'
+      shareBtn.addEventListener(
+        'click',
+        (e) => {
+          if (window.__hsResubShare?._allowNativeShare?.()) return
+          e.stopImmediatePropagation()
+          e.preventDefault()
+          try {
+            if (_pendingShareClaim) {
+              cleanup.clearTimeout(_pendingShareClaim.postTimer)
+            }
+            const claim = {
+              kind: 'resub',
+              channel: ch,
+              userLc: user.toLowerCase(),
+              months,
+              synthId: null,
+              postTimer: null,
+              customText: '',
+              _nativeShareBtn: shareBtn,
+              resubToken,
+            }
+            _pendingShareClaim = claim
+            _enterResubShareMode(claim, user, months)
+          } catch (_) {}
+        },
+        { capture: true },
+      )
+    }
+    _lastSurfacedShareBtn = shareBtn || null
+    _lastSurfacedCallout = calloutEl
+    try {
+      HsNotifs.emit('twitch-resub-share', {
+        months,
+        user,
+        channel: ch,
+        _nativeShareBtn: shareBtn,
+        _nativeCallout: calloutEl,
+        // Only ever a token twitch handed us. Downstream reads its absence
+        // as "we cannot finish this" and routes the click to twitch's own
+        // button instead of half-completing.
+        _resubToken: resubToken,
+      })
+    } catch (_) {}
+    try {
+      _updateMcLayout?.()
+    } catch (_) {}
+  }
+  // Twitch removed `.pinned-callout` in a recent refactor — the callout body
+  // now lives directly under the queue container. Surface every container;
+  // surface() reads text + Share button via descendant selectors and self-
+  // gates with dataset.hsSurfaced='1'. Multiple callouts (e.g. resub +
+  // watch-streak) can fire as siblings inside the queue parent — we must
+  // observe each on first touch and the parent of any we see so subsequent
+  // siblings are caught.
+  document.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
+    if (c.querySelector('*')) surface(c)
+  })
+  let _narrowedTo = null
+  const _narrowIfPossible = (calloutEl) => {
+    const parent = calloutEl?.parentElement
+    if (!parent || _narrowedTo === parent) return
+    _narrowedTo = parent
+    try {
+      _hsCalloutCloseObs.disconnect()
+    } catch (_) {}
+    // Observe the queue PARENT (not the callout itself) — sibling callouts
+    // added later land as direct children and fire childList mutations here.
+    _hsCalloutCloseObs.observe(parent, { childList: true, subtree: true })
+  }
+  _hsCalloutCloseObs = new MutationObserver((muts) => {
+    // While un-narrowed this observes document.body — our own overlay appends
+    // (every chat row) land here too. Callouts are twitch DOM and can never
+    // appear inside the overlay, so batches entirely within it are noise.
+    const _ov = document.getElementById('hs-mc-overlay')
+    if (_ov) {
+      let outside = false
+      for (const m of muts) {
+        if (!_ov.contains(m.target)) {
+          outside = true
+          break
+        }
+      }
+      if (!outside) return
+    }
+    // Callouts touched by this batch: a container inserted empty gets its
+    // children as later mutations whose target IS the container (or a
+    // descendant) — closest() catches those without the document-wide
+    // querySelectorAll this used to run on every twitch react tick.
+    // New containers arriving are covered by the addedNodes walk below,
+    // pre-existing ones by the initial scan; surface() self-gates via
+    // dataset.hsSurfaced so overlap is idempotent.
+    for (const m of muts) {
+      const c = m.target instanceof Element ? m.target.closest(CALLOUT_QUEUE_SEL) : null
+      if (c && c.querySelector('*')) surface(c)
+    }
+    for (const m of muts) {
+      for (const node of m.addedNodes) {
+        if (node.nodeType !== 1) continue
+        if (node.matches?.(CALLOUT_QUEUE_SEL)) {
+          if (node.querySelector('*')) surface(node)
+          _narrowIfPossible(node)
+        } else if (node.querySelector) {
+          node.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
+            if (c.querySelector('*')) surface(c)
+            _narrowIfPossible(c)
+          })
+        }
+      }
+    }
+  })
+  const initialCallouts = document.querySelectorAll(CALLOUT_QUEUE_SEL)
+  if (initialCallouts.length > 0) {
+    _narrowIfPossible(initialCallouts[0])
+  } else {
+    // No callout exists yet to narrow onto — #root (Twitch's app root) is
+    // the nearest stable ancestor that's already mounted at this point,
+    // and narrower than body (never fires on <head> mutations).
+    _hsCalloutCloseObs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true })
+  }
+  cleanup.trackObserver(_hsCalloutCloseObs)
+}
+
+
 // --- multichat/resize.js ---
 // ghost-resize, chat width/height, and yt sidebar-width cluster — split out
 // of main.js (2026-07-04). twitch/kick/yt player-pin + layout-watch helpers
@@ -58785,6 +59681,1310 @@ function applyYouTubeChatWidth() {
 // watchKickViewportClamp moved to kick-host.js (platform module)
 
 // setupYouTubeResizeHandle moved to youtube-host.js (platform module)
+
+
+// --- multichat/chat-position.js ---
+// chat dock position (C button), theatre-mode + platform side/top-nav tracking,
+// scroll-wheel player volume, and the per-platform position overrides — split
+// out of main.js (2026-10-04). pure move; loaded after resize.js (owns the
+// TWITCH_SIDE_NAV_WIDTH / TWITCH_TOP_NAV_HEIGHT consts its lets read at load).
+
+// ============================================
+// CHAT POSITION SETTING (C button)
+// Cycles which side of the player the chat panel docks to.
+// right (default) → bottom → left → top → right
+// Vertical-monitor parity: top/bottom horizontal strips matter when the
+// viewport is taller than wide.
+//
+// Single source of truth: 3 body classes are the ONLY layout signal.
+//   hs-platform-{twitch,kick,yt}  (set once at init)
+//   hs-mode-{normal,theatre}      (set by theatre observer)
+//   hs-chat-{right,left,top,bottom} (set by C button)
+// CSS in styles.js fully derives layout from these three dimensions.
+// ============================================
+let chatPosition = 'right' // 'right', 'bottom', 'left', 'top'
+let theatreMode = false
+let _theatreObserver = null
+let _panelWObs = null // ResizeObserver on #hs-mc-container → --hs-panel-w
+let _twitchSideNavObs = null
+let _twitchSideNavWinHooked = false
+let _twitchSideNavW = TWITCH_SIDE_NAV_WIDTH
+// _twitchTopNavObs moved to twitch-host.js (platform module)
+let _twitchTopNavH = TWITCH_TOP_NAV_HEIGHT
+// _kickTopNavObs, _kickTopNavH moved to kick-host.js (platform module)
+
+// Twitch's left side-nav is 50px when collapsed, ~240px when expanded.
+// It auto-expands on wide viewports (>~1200px), and the user can also
+// toggle it. chat-left layout subtracts this width from chatWidth to land
+// the player flush with the HS panel — so the live value must be tracked,
+// not assumed. Pushes --hs-twitch-sidenav-w for the CSS rules to consume,
+// and re-runs applyPlatformPositionOverrides so JS-side arithmetic
+// (persistent-player inset, channel-root padding) updates too.
+// updateTwitchSideNavWidth moved to twitch-host.js (platform module)
+
+// Twitch's top nav (.top-nav) is 50px tall and lives in a sibling DOM tree
+// that paints above HS's chat container — even though HS has z-index 9999,
+// the chat container is trapped inside .channel-root__right-column's z=1
+// stacking context. Fight: don't compete on z-index, just offset chat down
+// by the nav height when chat docks left/top so the rotate buttons aren't
+// hidden under Following/Browse. Theatre mode hides .top-nav (height = 0),
+// so the offset auto-collapses and chat reclaims the full viewport.
+// updateTwitchTopNavHeight moved to twitch-host.js (platform module)
+
+// setupTwitchTopNavObserver moved to twitch-host.js (platform module)
+
+// Kick's top nav is position:fixed, ~60px tall (matches the CSS fallback).
+// Mirrors the twitch pattern: measure once, track via ResizeObserver, push
+// --hs-kick-topnav-h so CSS rules that offset the panel don't need to
+// hard-code the height. Selector matches the <nav> used elsewhere in the
+// codebase for kick nav height measurement.
+// updateKickTopNavHeight moved to kick-host.js (platform module)
+
+// setupKickTopNavObserver moved to kick-host.js (platform module)
+
+// Persistent-overlay mode toggle. Sets `hs-twitch-no-channel` on body when
+// we're on a twitch URL with no .channel-root (directory, settings, videos,
+// search, …). CSS rules keyed off this class flip the panel to position:
+// fixed and squeeze twitch's main content via a body width/height
+// constraint. Re-checked on every SPA nav.
+function updateTwitchNoChannelClass() {
+  if (hostPlatform !== 'twitch') return
+  // Chokepoint that runs on every soft nav (reparent + 700ms + 4s timers)
+  // and theatre flip — re-assert the stylesheet here, since twitch SPA
+  // transitions can sweep injected <style> tags. Idempotent (id check).
+  try {
+    injectStyles()
+  } catch (_) {}
+  const onChannel = !!document.querySelector('.channel-root, [class*="channel-root"]')
+  const popout = document.body.classList.contains('hs-popout')
+  let noChannel = !onChannel && !popout
+  if (!noChannel && !popout) {
+    // Twitch layout bug: on miniplayer-restore from twitch.tv/, the channel
+    // page mounts but the right-column flex slot stays 0-width — chat-shell
+    // overflows off-screen to the right (x ≥ viewport.right). Detect and
+    // fall back to body-mounted fixed-overlay mode so chat stays visible.
+    const chatShell = document.querySelector(`.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
+    if (chatShell) {
+      const r = chatShell.getBoundingClientRect()
+      // A zero-width chat shell is NOT proof of the layout bug above — it is
+      // also the normal state when the right column is collapsed, and when
+      // WE hid the native chat ourselves (hs-native-hidden). Treating those
+      // as "broken" was self-inflicted: hiding native chat zeroed the shell,
+      // this branch then forced hs-twitch-no-channel, which squeezes the
+      // layout AND early-returns the player guard (player-guard.js), so
+      // twitch demoted the video into .persistent-player — the stream turned
+      // into a white rectangle at the bottom of the page. That is the
+      // "ext breaks the stream / white screen" report.
+      //
+      // Only the genuine off-screen overflow still counts on its own; a bare
+      // width===0 counts only when nothing we or the user did explains it.
+      const selfHidden = chatShell.classList.contains('hs-native-hidden')
+      const collapsed = !!document.querySelector('.right-column--collapsed, [class*="right-column--collapsed"]')
+      const overflowsOffScreen = r.right > window.innerWidth + 1
+      const unexplainedZeroWidth = r.width === 0 && !selfHidden && !collapsed
+      if (overflowsOffScreen || unexplainedZeroWidth) {
+        noChannel = true
+        const c = document.getElementById('hs-mc-container')
+        if (c && c.parentElement !== document.body) document.body.appendChild(c)
+      }
+    }
+  }
+  const prev = document.body.classList.contains('hs-twitch-no-channel')
+  document.body.classList.toggle('hs-twitch-no-channel', noChannel)
+  // A no-channel page (directory/settings/search/…) with ZERO configured
+  // chat tabs (no saved channels, no ephemeral auto-tabs from other open
+  // browser tabs) has nothing to show — an empty 340px panel floating over
+  // pure browsing, which is exactly the audit-1.7.75 finding. A user WITH
+  // tabs keeps the real feature (watch your chats while browsing away from
+  // them); only the genuinely-empty case hides.
+  document.body.classList.toggle('hs-twitch-no-channel-empty', noChannel && config.channels.length === 0)
+  // State flip: re-run width so the right-column slot zeros (entering
+  // no-channel) or reclaims its size (returning to a channel page).
+  if (prev !== noChannel) {
+    try {
+      applyChatWidth()
+    } catch (_) {}
+  }
+}
+
+// updateKickNoChannelClass moved to kick-host.js (platform module)
+
+// ── Scroll-wheel volume (BTTV-style) ────────────────────────────────────
+// Wheel over the platform's <video> steps volume ±0.05/tick (clamped
+// [0,1]); scrolling up while muted unmutes first. One delegated listener
+// on document (target-checked via closest() at event time) — the player
+// node gets torn down/rebuilt across SPA nav on all 3 platforms, so a
+// single persistent listener beats re-observing a moving target. Gated
+// live on scrollWheelVolumeEnabled (audit-toggle rule: read at event time,
+// not just at listener-setup time) — off behaves exactly like the
+// listener isn't there (native page scroll).
+// yt is `#movie_player` ONLY — deliberately NOT `.html5-video-player`, which
+// also matches `#shorts-player` and the home-feed hover-preview player. On
+// both of those the wheel is the PAGE's own control (advance the reel, scroll
+// the feed), so preventDefault there wedges youtube: the short can't be
+// scrolled past, and muting/unmuting the <video> directly desyncs shorts'
+// own per-reel audio state, leaving the previous short audible under the next.
+const HS_PLAYER_SELECTOR = {
+  twitch: '.video-player',
+  kick: '.channel-root__player, #injected-channel-player',
+  yt: '#movie_player',
+}
+// Shorts still gets volume — behind shift, which the reel itself doesn't use.
+const HS_MODIFIER_PLAYER_SELECTOR = { yt: '#shorts-player' }
+let _hsVolOsdEl = null
+let _hsVolOsdHideTimer = null
+function _hsShowVolumeOsd(playerEl, video) {
+  if (!_hsVolOsdEl) {
+    _hsVolOsdEl = document.createElement('div')
+    _hsVolOsdEl.id = 'hs-vol-osd'
+    document.body.appendChild(cleanup.trackNode(_hsVolOsdEl))
+  }
+  _hsVolOsdEl.textContent = `vol ${Math.round(video.volume * 100)}%`
+  const r = playerEl.getBoundingClientRect()
+  _hsVolOsdEl.style.left = `${Math.round(r.left + r.width / 2)}px`
+  _hsVolOsdEl.style.top = `${Math.round(r.top + 16)}px`
+  _hsVolOsdEl.classList.add('visible')
+  cleanup.clearTimeout(_hsVolOsdHideTimer)
+  _hsVolOsdHideTimer = cleanup.setTimeout(() => {
+    if (_hsVolOsdEl) _hsVolOsdEl.classList.remove('visible')
+  }, 800)
+}
+function setupScrollWheelVolume() {
+  const sel = HS_PLAYER_SELECTOR[hostPlatform]
+  const modSel = HS_MODIFIER_PLAYER_SELECTOR[hostPlatform]
+  if (!sel && !modSel) return
+  document.addEventListener(
+    'wheel',
+    (e) => {
+      if (!scrollWheelVolumeEnabled) return
+      // Never hijack scroll over HeatSync's own UI — every floating HS
+      // surface (panel, picker, ctx menu, banners) uses an hs- prefixed id.
+      if (e.target.closest?.('[id^="hs-"]')) return
+      let playerEl = sel ? e.target.closest(sel) : null
+      // Shift-only players (yt shorts): plain wheel stays the page's.
+      if (!playerEl && modSel && e.shiftKey) playerEl = e.target.closest(modSel)
+      if (!playerEl) return
+      // Scoped lookup only — the old document-wide fallback grabbed an
+      // arbitrary <video> on multi-player pages. Fall back only when the
+      // page has exactly one, where "arbitrary" can't be wrong.
+      const all = document.querySelectorAll('video')
+      const video = playerEl.querySelector('video') || (all.length === 1 ? all[0] : null)
+      if (!video) return
+      e.preventDefault()
+      const next = resolveVolumeWheelStep({ volume: video.volume, muted: video.muted }, e.deltaY)
+      video.muted = next.muted
+      video.volume = next.volume
+      _hsShowVolumeOsd(playerEl, video)
+    },
+    { passive: false, signal: mcSignal },
+  )
+}
+
+function setupTwitchSideNavObserver() {
+  if (hostPlatform !== 'twitch') return
+  document.documentElement.style.setProperty('--hs-twitch-sidenav-w', `${_twitchSideNavW}px`)
+  if (_twitchSideNavObs) {
+    try {
+      _twitchSideNavObs.disconnect()
+    } catch (_) {}
+    _twitchSideNavObs = null
+  }
+  const nav = document.querySelector('.side-nav')
+  if (nav && typeof ResizeObserver !== 'undefined') {
+    _twitchSideNavObs = new ResizeObserver(() => updateTwitchSideNavWidth())
+    _twitchSideNavObs.observe(nav)
+    cleanup.trackObserver(_twitchSideNavObs)
+  }
+  if (!_twitchSideNavWinHooked) {
+    _twitchSideNavWinHooked = true
+    window.addEventListener('resize', () => updateTwitchSideNavWidth(), { passive: true, signal: mcSignal })
+  }
+  updateTwitchSideNavWidth()
+}
+
+async function loadChatPosition() {
+  try {
+    const stored = await cachedUiSettings()
+    if (stored.ui_settings?.chatPosition !== undefined) {
+      chatPosition = stored.ui_settings.chatPosition
+    }
+    // Load previous-visible for hide↔show toggle restore.
+    const prevStored = stored.ui_settings?.chatPositionPrevious
+    if (['right', 'bottom', 'left', 'top'].includes(prevStored)) chatPositionPrevious = prevStored
+    if (['right', 'bottom', 'left', 'top'].includes(chatPosition)) {
+      chatPositionPrevious = chatPosition
+    }
+    // Legacy heal: 'hidden' used to be persisted into the SYNCED setting, so
+    // one \ press hid chat in every tab forever. Hidden is tab-local now
+    // (sessionStorage) — migrate a stored 'hidden' into this tab's local
+    // flag and restore the synced value to the last visible position.
+    if (chatPosition === 'hidden') {
+      chatHiddenLocal = true
+      try {
+        sessionStorage.setItem('hs-chat-hidden-local', '1')
+      } catch (_) {}
+      // silent: heal the stored value only — the applier would treat this
+      // as an explicit local position pick and clear the tab-local flag.
+      setSetting('chatPosition', chatPositionPrevious, { silent: true })
+      chatPosition = 'hidden' // runtime stays hidden HERE; other tabs unhide
+    } else {
+      // Per-tab hide survives reload/SPA nav via sessionStorage (scoped to
+      // this browser tab by definition — exactly the ask).
+      try {
+        if (sessionStorage.getItem('hs-chat-hidden-local')) {
+          chatHiddenLocal = true
+          chatPosition = 'hidden'
+        }
+      } catch (_) {}
+    }
+    // Load saved width + height BEFORE first applyChatPosition. Without this,
+    // applyChatPosition runs with default chatHeight (35% innerHeight) and
+    // positions the orange handle there. loadChatHeight then updates the
+    // variable but not the handle's screen position, so first click captures
+    // the saved value and the bar instantly snaps to it — looks like a
+    // mouse teleport from the user's POV.
+    await Promise.all([loadChatWidth(), loadChatHeight()])
+    // Stamp the platform class once — never changes per-page
+    const platformClass = `hs-platform-${hostPlatform === 'yt' ? 'yt' : isKick ? 'kick' : 'twitch'}`
+    document.body.classList.add(platformClass)
+    detectTheatreMode()
+    setupTheatreObserver()
+    setupTwitchSideNavObserver()
+    if (hostPlatform === 'twitch') setupTwitchTopNavObserver()
+    if (isKick) setupKickTopNavObserver()
+    updateTwitchNoChannelClass()
+    if (isKick) updateKickNoChannelClass()
+    applyChatPosition()
+  } catch (e) {
+    log('Error loading chat position:', e)
+  }
+}
+
+// Detect platform-native theatre/cinema/expanded-player mode.
+// Twitch:  .right-column--theatre OR .video-player--theatre
+// Kick:    main[data-theatre="true"]
+// YouTube: ytd-watch-flexy[theater]
+// Publish the container's MEASURED width (chat column + side tab strip)
+// for CSS that must reserve the full panel footprint (theatre player inset).
+function publishPanelWidth() {
+  const c = document.getElementById('hs-mc-container')
+  if (!c) return
+  if (c.offsetWidth > 0) {
+    document.documentElement.style.setProperty('--hs-panel-w', `${c.offsetWidth}px`)
+  }
+  // Self-install a ResizeObserver on the container the first time we see it.
+  // Call-site timing is unreliable on cold load (the panel is still 0-width
+  // when applyChatPosition / the tab-bar observer fire, so the guard above
+  // skips and --hs-panel-w stays unset until a drag-resize). Observing the
+  // container directly catches its 0 → full-width layout and every later
+  // resize, so the chat-left player inset is correct from first paint.
+  if (!_panelWObs && typeof ResizeObserver !== 'undefined') {
+    _panelWObs = new ResizeObserver(() => {
+      const el = document.getElementById('hs-mc-container')
+      if (el && el.offsetWidth > 0) {
+        document.documentElement.style.setProperty('--hs-panel-w', `${el.offsetWidth}px`)
+      }
+    })
+    _panelWObs.observe(c)
+    cleanup.trackObserver(_panelWObs)
+  }
+}
+
+function detectTheatreMode() {
+  let next = false
+  if (hostPlatform === 'yt') {
+    next = !!document.querySelector('ytd-watch-flexy[theater], ytd-watch-flexy[fullscreen]')
+  } else if (isKick) {
+    // Kick MOVED the theatre flag off <main>: it now lives on a wrapper
+    // div.group/main that CONTAINS main (a direct child of body), and <main>
+    // only keeps a static data-theatre-mode-container marker. Both old checks
+    // were pinned to the main tag, so theatre silently stopped being detected
+    // — hs-mode-theatre never applied, and every theatre layout rule (which is
+    // what keeps the panel off the player) went dead. Don't pin it to a tag,
+    // just find the flag wherever Kick puts it next.
+    next = !!document.querySelector('[data-theatre="true"]')
+  } else {
+    next = !!document.querySelector('.right-column--theatre, .video-player--theatre')
+  }
+  if (next !== theatreMode) {
+    theatreMode = next
+    applyChatPosition()
+    // Theatre flips collapse/restore the right column — re-evaluate the
+    // no-channel body-mount AFTER the 500ms column animation settles, same
+    // contract as the soft-nav path. Without this, exiting theatre strands
+    // the panel in fixed body-mount until the next SPA nav.
+    cleanup.setTimeout(
+      () => {
+        try {
+          updateTwitchNoChannelClass()
+        } catch (_) {}
+        try {
+          positionChatResizeHandle()
+        } catch (_) {}
+        try {
+          publishPanelWidth()
+        } catch (_) {}
+        // Theatre transitions can transiently overflow the root scroller
+        // horizontally; if a scroll sticks, the whole page renders shifted
+        // left with a dead zone before the panel. Reset it.
+        try {
+          const sa = document.querySelector('.root-scrollable')
+          if (sa && sa.scrollLeft > 0) sa.scrollLeft = 0
+        } catch (_) {}
+      },
+      700,
+      'theatre-flip-nochannel-recheck',
+    )
+  }
+  return next
+}
+
+function setupTheatreObserver() {
+  if (_theatreObserver) {
+    try {
+      _theatreObserver.disconnect()
+    } catch (_) {}
+    _theatreObserver = null
+  }
+  const targets = []
+  if (hostPlatform === 'yt') {
+    const flexy = document.querySelector('ytd-watch-flexy:not([hidden])')
+    if (flexy) targets.push(flexy)
+  } else if (isKick) {
+    // Must watch the BODY, not main: the theatre flag sits on an ANCESTOR of
+    // main, and subtree:true only ever sees descendants — observing main could
+    // never fire on the toggle. The class pre-filter below keeps this cheap.
+    targets.push(document.body)
+  } else {
+    // Twitch: theatre class lands on .right-column AND inside the player.
+    // Watch the body — most-specific reliable observation point covers SPA navs.
+    targets.push(document.body)
+  }
+  if (targets.length === 0) return
+  // Body-subtree observation fires on every React class flip (chat-line
+  // animations, hover toggles, ad layer churn) — ~100+ callbacks/sec.
+  // Cheap pre-filter: skip mutations whose target class doesn't contain
+  // a theatre token. Saves the querySelector inside detectTheatreMode().
+  _theatreObserver = new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.attributeName !== 'class') {
+        detectTheatreMode()
+        return
+      }
+      const c = m.target?.className
+      const s = typeof c === 'string' ? c : c?.baseVal || ''
+      if (s.indexOf('theat') !== -1 || s.indexOf('fullscreen') !== -1) {
+        detectTheatreMode()
+        return
+      }
+    }
+  })
+  for (const t of targets) {
+    _theatreObserver.observe(t, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theatre', 'theater', 'fullscreen'],
+      subtree: true,
+    })
+  }
+  cleanup.trackObserver(_theatreObserver)
+  // Deadman: the observer's attributeFilter + class-substring pre-filter are
+  // guesses about how the platform flags theatre — kick has already moved
+  // the flag once (v1.7.31) and a miss fails silent. A slow poll bounds the
+  // damage of any future filter miss to 5s instead of forever.
+  cleanup.setIntervalIfVisible(() => detectTheatreMode(), 5000)
+}
+
+function applyChatPosition() {
+  // Native chat shown: don't re-position/override layout (races native chat).
+  if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
+  // Sanitize — 5 valid positions: 4 visible + 'hidden'.
+  const VALID_POSITIONS = ['right', 'bottom', 'left', 'top', 'hidden']
+  if (!VALID_POSITIONS.includes(chatPosition)) {
+    log('[c-button] sanitizing invalid chatPosition:', chatPosition, '→ right')
+    chatPosition = 'right'
+  }
+  // Popout chat = full window. Force 'right' + visible.
+  if (document.body.classList.contains('hs-popout') && chatPosition !== 'right') {
+    chatPosition = 'right'
+  }
+  // Hidden state: collapse overlay, drop all handles, show edge-pill.
+  // Pill + `\` shortcut are the ONLY restore paths.
+  if (chatPosition === 'hidden') {
+    document.body.classList.remove('hs-chat-top', 'hs-chat-right', 'hs-chat-bottom', 'hs-chat-left')
+    document.body.classList.add('hs-chat-hidden')
+    document.body.classList.toggle('hs-platform-yt', hostPlatform === 'yt')
+    document.body.classList.toggle('hs-platform-twitch', hostPlatform !== 'yt' && !isKick)
+    document.body.classList.toggle('hs-platform-kick', !!isKick)
+    document.body.classList.toggle('hs-mode-theatre', theatreMode)
+    document.body.classList.toggle('hs-mode-normal', !theatreMode)
+    hidePlatformResizeHandles(true)
+    const uh = document.getElementById('hs-c-resize-handle')
+    if (uh) uh.style.setProperty('display', 'none', 'important')
+    ensureChatRestorePill(true)
+    try {
+      applyPlatformPositionOverrides()
+    } catch (_) {}
+    log('Chat position: hidden, theatre:', theatreMode)
+    return
+  }
+  document.body.classList.remove('hs-chat-hidden')
+  ensureChatRestorePill(false)
+  // YouTube: layout overrides that touch #primary/#secondary are gated
+  // separately (live-only via :not(.hs-offline)). The hs-chat-{position}
+  // class is now applied on EVERY YT page so the persistent multichat
+  // panel renders via the position:fixed CSS rule across home, search,
+  // VOD, channel, and live — matching the Twitch persistent overlay.
+  const isYtNonWatch = hostPlatform === 'yt' && !document.querySelector('ytd-watch-flexy:not([hidden])')
+  document.body.classList.remove('hs-chat-top', 'hs-chat-right', 'hs-chat-bottom', 'hs-chat-left')
+  document.body.classList.toggle('hs-platform-yt', hostPlatform === 'yt')
+  document.body.classList.toggle('hs-platform-twitch', hostPlatform !== 'yt' && !isKick)
+  document.body.classList.toggle('hs-platform-kick', !!isKick)
+  document.body.classList.add(`hs-chat-${chatPosition}`)
+  if (isYtNonWatch && location.pathname === '/watch') {
+    // We're on a watch URL but flexy hasn't mounted yet (SPA cold-load,
+    // /watch → /watch transition where React unmounted then remounts).
+    // Re-arm the flexy-mount observer so applyChatPosition fires again
+    // once it's there.
+    try {
+      watchYtFlexyMount()
+    } catch (_) {}
+  }
+  document.body.classList.toggle('hs-mode-theatre', theatreMode)
+  document.body.classList.toggle('hs-mode-normal', !theatreMode)
+  // Push the chatWidth css var down so the per-position CSS can build offsets
+  // off it (rather than chasing platform-specific selectors twice).
+  document.documentElement.style.setProperty('--hs-chat-w', `${chatWidth}px`)
+  document.documentElement.style.setProperty('--hs-chat-h', `${chatHeight}px`)
+  // Refresh Twitch side-nav width — it can flip 50↔240 across a chat
+  // toggle (user F11s, viewport crosses Twitch's expand breakpoint, etc).
+  if (hostPlatform === 'twitch') updateTwitchSideNavWidth()
+  // Apply inline-style overrides on platform-native elements that set
+  // width/height with inline !important (CSS alone can't beat that).
+  applyPlatformPositionOverrides()
+  // Bulletproof orange resize handle — covers all 4 chat positions.
+  positionChatResizeHandle()
+  // Hide platform handles when chat is non-right OR when on YT (where
+  // unified handle now owns chat-right too since YT uses position:fixed).
+  hidePlatformResizeHandles(chatPosition !== 'right' || hostPlatform === 'yt')
+  log('Chat position:', chatPosition, 'theatre:', theatreMode)
+  // Reflow the multichat layout so input/overlay/picker re-anchor.
+  try {
+    _updateMcLayout?.()
+  } catch (_) {}
+  // YT computes player size in JS asynchronously and caches it; nudge it
+  // to re-read CSS vars (margin, non-player-{width,height}) by dispatching
+  // resize events at multiple timing points. The player init is async and
+  // can complete after our applyChatPosition runs on initial load — without
+  // multiple nudges, YT's own resize observer doesn't fire until ~10s.
+  if (hostPlatform === 'yt') {
+    const fire = () => {
+      try {
+        window.dispatchEvent(new Event('resize'))
+      } catch (_) {}
+    }
+    fire()
+    cleanup.setTimeout(fire, 100)
+    cleanup.setTimeout(fire, 500)
+    cleanup.setTimeout(fire, 1500)
+  }
+}
+
+// Inline-style overrides keyed off chatPosition. These run AFTER class
+// toggling. They exist because Twitch/Kick/YT set inline width/height/
+// padding with !important that beats CSS rules — only inline can fight
+// inline. When chatPosition flips back to 'right' we restore the native
+// values (Twitch's chat-width JS will re-apply them on next tick).
+const _overrideObserver = null
+// _hsSetYtBelowTop, _hsEnsureYtBelowObserver moved to youtube-host.js (platform module)
+function applyPlatformPositionOverrides() {
+  // Native chat shown: stop touching the player/chat geometry — our overrides
+  // race Twitch's native layout and push the native input off-screen. The panel
+  // is collapsed to its strip (handled in the nativeVisible reader); leave the
+  // rest to Twitch.
+  if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
+  // The guard already caught this page's player collapsing under our
+  // geometry and handed layout back to the platform. Re-asserting here would
+  // walk straight back into the race it just bailed out of.
+  if (typeof playerGuardDisengaged === 'function' && playerGuardDisengaged()) return
+  const isRight = chatPosition === 'right'
+  const w = `${chatWidth}px`
+  const h = `${chatHeight}px`
+
+  // The chat container itself: inline styles beat any platform-bundled CSS
+  // (Twitch's chat-shell rules, Kick's existing hs-tabs-* rules etc.).
+  // We only touch geometry when overriding; the platform's mount code
+  // (getOrCreateHsContainer for YT) may set its own inline height/etc that
+  // we must not blow away when chatPosition === 'right'.
+  const container = document.getElementById('hs-mc-container')
+  const GEOM_PROPS = [
+    'top',
+    'bottom',
+    'left',
+    'right',
+    'width',
+    'min-width',
+    'max-width',
+    'height',
+    'position',
+    'z-index',
+  ]
+  if (container) {
+    if (isRight) {
+      if (container.dataset._hsChatOverride === '1') {
+        delete container.dataset._hsChatOverride
+        GEOM_PROPS.forEach((p) => {
+          container.style.removeProperty(p)
+        })
+        container.style.removeProperty('background')
+        container.style.removeProperty('overflow')
+        // YT chat-right is now position:fixed via CSS rule — don't set
+        // any inline geometry, let the stylesheet own it (works on
+        // initial load without waiting for a C-cycle).
+        if (isKick) {
+          try {
+            applyKickChatWidth()
+          } catch (_) {}
+        }
+      }
+    } else {
+      container.dataset._hsChatOverride = '1'
+      GEOM_PROPS.forEach((p) => {
+        container.style.removeProperty(p)
+      })
+      container.style.setProperty('position', 'fixed', 'important')
+      // On twitch no-channel pages (directory/settings/…) the panel mounts in
+      // a gutter with no host content beneath it, so it can sit BELOW twitch's
+      // popup layers (balloon 2000 / overlay 3000 / modal 5000) — otherwise a
+      // full-width top-nav's dropdowns (user menu, browse, search) open over
+      // the panel and get buried under z 9999. Mirrors the CSS z for the
+      // right dock (which is stylesheet-owned). Channel pages keep 9999 — there
+      // the panel overlaps host chat and must outrank twitch's React layout.
+      const twitchNoChannel = hostPlatform === 'twitch' && document.body.classList.contains('hs-twitch-no-channel')
+      container.style.setProperty('z-index', twitchNoChannel ? '1500' : '9999', 'important')
+      container.style.setProperty('background', '#000', 'important')
+      // Twitch-only: offset by .top-nav height for left/top so the rotate
+      // buttons aren't trapped under Following/Browse (HS lives inside
+      // .channel-root__right-column's z=1 stacking context, can't outrank).
+      const twitchTopOffset = hostPlatform === 'twitch' && !theatreMode ? _twitchTopNavH : 0
+      const topPx = `${twitchTopOffset}px`
+      if (chatPosition === 'left') {
+        container.style.setProperty('top', topPx, 'important')
+        container.style.setProperty('bottom', '0', 'important')
+        container.style.setProperty('left', '0', 'important')
+        container.style.setProperty('right', 'auto', 'important')
+        container.style.setProperty('width', w, 'important')
+        container.style.setProperty('height', `calc(100vh - ${topPx})`, 'important')
+      } else if (chatPosition === 'top') {
+        container.style.setProperty('top', topPx, 'important')
+        container.style.setProperty('bottom', 'auto', 'important')
+        container.style.setProperty('left', '0', 'important')
+        container.style.setProperty('right', '0', 'important')
+        container.style.setProperty('width', '100vw', 'important')
+        container.style.setProperty('height', h, 'important')
+      } else if (chatPosition === 'bottom') {
+        container.style.setProperty('top', 'auto', 'important')
+        container.style.setProperty('bottom', '0', 'important')
+        container.style.setProperty('left', '0', 'important')
+        container.style.setProperty('right', '0', 'important')
+        container.style.setProperty('width', '100vw', 'important')
+        container.style.setProperty('height', h, 'important')
+      }
+    }
+  }
+
+  if (hostPlatform === 'yt') {
+    // Panel hidden on this YT page (non-live + no opt-in → hs-offline): don't
+    // reshape the page for a chat that isn't showing. Revert any inline player
+    // sizing + the reflow var so it's normal YT (full player, related videos).
+    if (document.body.classList.contains('hs-offline')) {
+      ;[
+        '#player-container-outer',
+        '#player-container-inner',
+        '#player-container',
+        '#player',
+        'ytd-player#ytd-player',
+      ].forEach((s) => {
+        const e = document.querySelector(s)
+        if (e && e.dataset._hsCYtSized === '1') {
+          delete e.dataset._hsCYtSized
+          ;['width', 'height', 'max-width', 'max-height', 'min-height'].forEach((p) => {
+            e.style.removeProperty(p)
+          })
+        }
+      })
+      document.documentElement.style.removeProperty('--hs-yt-below-top')
+      return
+    }
+    const sec = document.querySelector('#secondary')
+    if (sec) {
+      // 'hidden' (collapsed) restores #secondary too: with the chat gone there's
+      // nothing occupying the sidebar, so YT's recommended-videos list must come
+      // back. Squashing it to 0 here was hiding recommendations on collapse.
+      if (isRight || chatPosition === 'hidden') {
+        sec.style.removeProperty('width')
+        sec.style.removeProperty('min-width')
+        sec.style.removeProperty('max-width')
+        sec.style.removeProperty('flex')
+        // applyYouTubeChatWidth will reset width on next reflow
+      } else {
+        sec.style.setProperty('width', '0', 'important')
+        sec.style.setProperty('min-width', '0', 'important')
+        sec.style.setProperty('max-width', '0', 'important')
+        sec.style.setProperty('flex', '0 0 0', 'important')
+      }
+    }
+    // Keep --hs-yt-below-top synced to the real video bottom via a
+    // ResizeObserver (robust against fresh-load timing). Retries each run
+    // until #movie_player exists; re-observes the new player on SPA nav.
+    _hsEnsureYtBelowObserver()
+    // Force aspect-preserved player size inline on the player WRAPPER chain.
+    // We deliberately omit #movie_player itself — YT's controls (volume,
+    // play, settings) compute hit-targets from #movie_player's intrinsic
+    // dimensions, and forcing a size on it desyncs the click hitboxes from
+    // the visible buttons. Sizing the wrappers only constrains the player
+    // visually (movie_player fills its parent via CSS) without disturbing
+    // YT's controls geometry.
+    const ytSelectors = [
+      '#player-container-outer',
+      '#player-container-inner',
+      '#player-container',
+      '#player',
+      'ytd-player#ytd-player',
+    ]
+    const ytSizedEls = ytSelectors.map((s) => document.querySelector(s)).filter(Boolean)
+    const PLAYER_GEOM = ['width', 'height', 'max-width', 'max-height', 'min-height']
+    if (chatPosition === 'top' || chatPosition === 'bottom' || chatPosition === 'left' || chatPosition === 'right') {
+      // Compute aspect-preserved player size for the freed area.
+      // top/bottom: chat eats height, player fills the rest (full width).
+      // left/right: chat eats width, player fills the rest (full height).
+      // Use clientWidth (NOT innerWidth) — innerWidth counts the ~15px
+      // vertical scrollbar that the fixed panel anchors outside of, so
+      // sizing off innerWidth makes the player overshoot its column and
+      // tuck its right edge (where the Skip Ad / fullscreen buttons live)
+      // under the panel.
+      const usableW = document.documentElement.clientWidth
+      let availH, availW
+      if (chatPosition === 'left' || chatPosition === 'right') {
+        // Opt-in suggestions strip eats a fixed column beside the player on
+        // left/right dock — subtract it or the player renders UNDER the strip
+        // (overshoots its column, clips off-edge). Publish the width so the
+        // stylesheet (#below inset + strip geometry) and this arithmetic stay
+        // in lockstep. Off → drop the var so CSS sees 0 contribution.
+        const suggOn = document.body.classList.contains('hs-yt-suggestions')
+        const suggW = suggOn ? YT_SUGG_STRIP_W : 0
+        if (suggOn) document.documentElement.style.setProperty('--hs-yt-sugg-w', `${suggW}px`)
+        else document.documentElement.style.removeProperty('--hs-yt-sugg-w')
+        availW = Math.max(200, usableW - chatWidth - suggW)
+        availH = innerHeight
+      } else {
+        availH = Math.max(200, innerHeight - chatHeight)
+        availW = usableW - 32
+      }
+      const aspectW = (availH * 16) / 9
+      const aspectH = (availW * 9) / 16
+      // Pick the dimension that hits its limit first (16:9 fits inside both)
+      let finalW, finalH
+      if (aspectW <= availW) {
+        finalW = aspectW
+        finalH = availH
+      } else {
+        finalW = availW
+        finalH = aspectH
+      }
+      const wPx = `${Math.round(finalW)}px`
+      const hPx = `${Math.round(finalH)}px`
+      for (const el of ytSizedEls) {
+        el.dataset._hsCYtSized = '1'
+        el.style.setProperty('width', wPx, 'important')
+        el.style.setProperty('height', hPx, 'important')
+        el.style.setProperty('max-width', wPx, 'important')
+        el.style.setProperty('max-height', hPx, 'important')
+        el.style.setProperty('min-height', '0', 'important')
+      }
+      requestAnimationFrame(() => {
+        for (const el of ytSizedEls) {
+          if (!el.dataset._hsCYtSized) continue
+          el.style.setProperty('width', wPx, 'important')
+          el.style.setProperty('height', hPx, 'important')
+          el.style.setProperty('max-width', wPx, 'important')
+          el.style.setProperty('max-height', hPx, 'important')
+        }
+        // Left/right: publish the REAL video bottom so the CSS can pin the
+        // metadata column (#below) directly under it. On live/single-column
+        // YT renders the player in #full-bleed-container and reserves more
+        // flow height than the shrunk 16:9 video uses — that reserved-but-
+        // empty band is the black gap. Reading #movie_player's rendered rect
+        // (we never resize it ourselves) works for both single- and two-
+        // column layouts. Skip in theater/fullscreen (no metadata column).
+        if (chatPosition === 'left' || chatPosition === 'right') {
+          const flexy = document.querySelector('ytd-watch-flexy')
+          const special = flexy && (flexy.hasAttribute('theater') || flexy.hasAttribute('fullscreen'))
+          const mp = document.querySelector('#movie_player') || document.querySelector('.html5-video-player')
+          const b = mp?.getBoundingClientRect()
+          if (!special && b && b.height > 0) {
+            document.documentElement.style.setProperty('--hs-yt-below-top', `${Math.round(b.bottom)}px`)
+          } else {
+            document.documentElement.style.removeProperty('--hs-yt-below-top')
+          }
+        } else {
+          // top/bottom (or any non-left/right that still reached here): the
+          // pin is left/right-only, so clear any stale value from a prior dock.
+          document.documentElement.style.removeProperty('--hs-yt-below-top')
+        }
+      })
+    } else {
+      for (const el of ytSizedEls) {
+        if (el.dataset._hsCYtSized === '1') {
+          delete el.dataset._hsCYtSized
+          PLAYER_GEOM.forEach((p) => {
+            el.style.removeProperty(p)
+          })
+        }
+      }
+      document.documentElement.style.removeProperty('--hs-yt-below-top')
+    }
+  } else if (isKick) {
+    // Keep --hs-kick-sidebar-w in sync — Kick drops the sidebar from the
+    // DOM at narrow widths, and main's padding-left depends on this value.
+    syncKickSidebarVar()
+    // Kick's player chain uses Tailwind `aspect-video w-full` which locks
+    // height = width × 9/16 — it ignores the freed area when chat eats
+    // top/bottom. Force aspect-preserved width + height inline on the
+    // player wrapper + injected container. Don't touch <main> — that's
+    // the entire content column.
+    const injected = document.querySelector('#injected-channel-player')
+    const playerWrap = injected?.parentElement // div.bg-black, immediate player box
+    const kickPlayerEls = [playerWrap, injected].filter(Boolean)
+    const KICK_PLAYER_GEOM = ['width', 'height', 'max-width', 'max-height', 'min-height', 'aspect-ratio']
+    // Strip stale overrides from any element no longer in our target list.
+    // First buggy version of this branch targeted <main> by mistake, so
+    // clean up any leftover marker so legacy inline styles don't pin main's
+    // size after a fresh load.
+    const targetSet = new Set(kickPlayerEls)
+    for (const stale of document.querySelectorAll('[data-_hs-c-kick-sized]')) {
+      if (targetSet.has(stale)) continue
+      delete stale.dataset._hsCKickSized
+      KICK_PLAYER_GEOM.forEach((p) => {
+        stale.style.removeProperty(p)
+      })
+    }
+    if (chatPosition === 'top' || chatPosition === 'bottom' || chatPosition === 'left' || chatPosition === 'right') {
+      const navEl = document.querySelector('nav, [class*="navbar"]')
+      const navH = navEl ? Math.round(navEl.getBoundingClientRect().height) : 60
+      // Kick reserves space for its left sidebar (~56px) inside main's flex
+      // parent — when the sidebar is present, the freed video area is
+      // innerWidth - chatWidth - sidebar. Use the live measurement (not a
+      // CSS var) because Kick drops the sidebar from the DOM at narrow
+      // viewports, where subtracting 56 would shrink the player needlessly.
+      const sidebarW = getKickSidebarWidth()
+      let availH, availW
+      if (chatPosition === 'right') {
+        availW = Math.max(200, innerWidth - chatWidth - sidebarW)
+        availH = Math.max(200, innerHeight - navH)
+      } else if (chatPosition === 'left') {
+        // chat panel is fixed at left:0 width:chatW — it covers the sidebar.
+        // Subtracting sidebar again leaves a useless gap on the right edge
+        // of the video.
+        availW = Math.max(200, innerWidth - chatWidth)
+        availH = Math.max(200, innerHeight - navH)
+      } else {
+        availH = Math.max(200, innerHeight - chatHeight - navH)
+        availW = Math.max(200, innerWidth - sidebarW)
+      }
+      const aspectW = (availH * 16) / 9
+      const aspectH = (availW * 9) / 16
+      let finalW, finalH
+      if (aspectW <= availW) {
+        finalW = aspectW
+        finalH = availH
+      } else {
+        finalW = availW
+        finalH = aspectH
+      }
+      const wPx = `${Math.round(finalW)}px`
+      const hPx = `${Math.round(finalH)}px`
+      for (const el of kickPlayerEls) {
+        el.dataset._hsCKickSized = '1'
+        el.style.setProperty('width', wPx, 'important')
+        el.style.setProperty('height', hPx, 'important')
+        el.style.setProperty('max-width', wPx, 'important')
+        el.style.setProperty('max-height', hPx, 'important')
+        el.style.setProperty('aspect-ratio', 'auto', 'important')
+      }
+      // Kick re-asserts inline `height: unset` on the wrapper post-render.
+      // Re-apply on the next frame so our values stick.
+      requestAnimationFrame(() => {
+        for (const el of kickPlayerEls) {
+          if (!el.dataset._hsCKickSized) continue
+          el.style.setProperty('width', wPx, 'important')
+          el.style.setProperty('height', hPx, 'important')
+          el.style.setProperty('max-width', wPx, 'important')
+          el.style.setProperty('max-height', hPx, 'important')
+        }
+      })
+    } else {
+      // chat-right: clear our overrides — Kick's native layout owns sizing.
+      for (const el of kickPlayerEls) {
+        if (el?.dataset._hsCKickSized === '1') {
+          delete el.dataset._hsCKickSized
+          KICK_PLAYER_GEOM.forEach((p) => {
+            el.style.removeProperty(p)
+          })
+        }
+      }
+    }
+  } else {
+    // Twitch
+    const rc = document.querySelector('.right-column')
+    if (rc) {
+      if (isRight) {
+        // Restore: clear our overrides; Twitch's own width logic will
+        // re-assert on next layout pass.
+        rc.style.removeProperty('width')
+        rc.style.removeProperty('min-width')
+        rc.style.removeProperty('max-width')
+        rc.style.removeProperty('flex-shrink')
+      } else {
+        rc.style.setProperty('width', '0', 'important')
+        rc.style.setProperty('min-width', '0', 'important')
+        rc.style.setProperty('max-width', '0', 'important')
+      }
+    }
+    // .persistent-player has inline height:100%/max-height:100vh that
+    // ignores any CSS bottom: inset. Override the player's geometry
+    // directly so the chat strip doesn't sit on top of the video.
+    const pp = document.querySelector('.persistent-player')
+    if (pp) {
+      // On no-channel pages (directory, browse, following) .persistent-player
+      // is Twitch's floating mini-player. Clear any stale overrides we applied
+      // on the prior channel page and let Twitch own the mini-player geometry.
+      if (document.body.classList.contains('hs-twitch-no-channel')) {
+        pp.style.removeProperty('top')
+        pp.style.removeProperty('left')
+        pp.style.removeProperty('bottom')
+        pp.style.removeProperty('right')
+        pp.style.removeProperty('width')
+        pp.style.removeProperty('height')
+        pp.style.removeProperty('max-height')
+      } else if (isRight) {
+        // Twitch's persistent-player has position:absolute with no CSS
+        // rule setting `top`. The previous code removed inline top expecting
+        // Twitch's React effect to re-apply it — but on certain layouts
+        // (narrow window / chat resize / cold load) Twitch never sets it,
+        // so the element falls to its natural-flow position at the bottom
+        // of root-scrollable__wrapper (y ≈ 2000+px), pushing the video
+        // off-screen below the about section. Pin it explicitly to top:0
+        // (within root-scrollable__wrapper, that's the player slot).
+        pp.style.setProperty('top', '0', 'important')
+        pp.style.setProperty('left', '0', 'important')
+        pp.style.removeProperty('bottom')
+        pp.style.removeProperty('right')
+        pp.style.removeProperty('max-height')
+        pp.style.removeProperty('height')
+        pp.style.removeProperty('width')
+      } else if (chatPosition === 'left') {
+        // chat-left: geometry is owned entirely by the .hs-chat-left CSS
+        // rules (width:auto, left:calc(--hs-chat-w - sidenav), right:0,
+        // top:0). They use --hs-chat-w with a 340px fallback so they're
+        // correct even before the var is published, and a stylesheet
+        // !important survives React's later inline writes.
+        // Writing left inline here raced: on a cold load chatWidth was
+        // momentarily 0, so left computed to 0 and the player slid under
+        // the HS panel (inline !important beats the correct CSS rule).
+        // Just clear any stale inline geometry — including a top:0/left:0
+        // pair left behind by a prior right-mode pass — so CSS wins.
+        pp.style.removeProperty('left')
+        pp.style.removeProperty('inset-inline-start')
+        pp.style.removeProperty('top')
+        pp.style.removeProperty('width')
+        pp.style.removeProperty('height')
+        pp.style.removeProperty('max-height')
+      } else {
+        // chat-top / chat-bottom: full overhaul. Width/height are
+        // handled by the .hs-chat-* CSS rules (width:auto !important /
+        // height:auto !important). We can't do it here via inline
+        // setProperty('important') because Twitch's React effect later
+        // does `el.style.height = 'X'` which wipes the inline priority
+        // — only a stylesheet rule survives that.
+        pp.style.removeProperty('width')
+        pp.style.removeProperty('height')
+        pp.style.removeProperty('max-height')
+        pp.style.setProperty('top', chatPosition === 'top' ? h : '0', 'important')
+        pp.style.setProperty('bottom', chatPosition === 'bottom' ? h : '0', 'important')
+        pp.style.setProperty('left', '0', 'important')
+        pp.style.setProperty('right', '0', 'important')
+        pp.style.setProperty('inset-inline-start', '0', 'important')
+        pp.style.setProperty('inset-inline-end', '0', 'important')
+      }
+    }
+  }
+
+  // If the platform re-asserts its inline width/height (e.g. Twitch's
+  // own chat-width JS on resize), we re-apply on the same hooks the
+  // platform uses: window.resize + chat-width persistence. No observer
+  // here — observers on style attrs loop on our own writes.
+
+  // Watch what our geometry actually did to the player. Idempotent, and it
+  // only ever acts when the player has ended up unusable — see
+  // player-guard.js for why this watches the outcome instead of adding
+  // another !important to the race.
+  try {
+    installPlayerGuard()
+  } catch (_) {}
+}
+
+function rotateChatPosition() {
+  // C cycles 4 visible. Hidden via toggleChatHidden(). From hidden → previous-visible.
+  if (document.body.classList.contains('hs-popout')) return
+  const positions = ['right', 'bottom', 'left', 'top']
+  const prev = chatPosition
+  if (chatPosition === 'hidden') {
+    chatPosition = positions.includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
+  } else {
+    let idx = positions.indexOf(chatPosition)
+    if (idx === -1) idx = 0
+    chatPosition = positions[(idx + 1) % positions.length]
+  }
+  log('rotate-chat:', prev, '→', chatPosition)
+  setSetting('chatPosition', chatPosition) // applier applies + tracks previous
+}
+
+
+// --- multichat/panel-actions.js ---
+// chat hide/show toggle + edge pill, popout, sub button, and the panel status
+// banners (api / auth / emote-login nudge) — split out of main.js (2026-10-04).
+// pure move; loaded after chat-position.js (chatPosition state it reads).
+
+// ============================================
+// CHAT HIDE/SHOW TOGGLE — \ key + edge-pill.
+// TAB-LOCAL on purpose (viewer ask): hiding chat on one stream must not
+// hide it on every other open tab. The hidden state lives in this page's
+// runtime + sessionStorage (per browser tab, survives reload/SPA nav) and
+// is NEVER written to the synced chatPosition setting. chatPositionPrevious
+// still syncs so restore lands on the last-known visible position.
+// ============================================
+let chatPositionPrevious = 'right'
+let chatHiddenLocal = false
+
+function _saveChatHiddenLocal() {
+  try {
+    if (chatHiddenLocal) sessionStorage.setItem('hs-chat-hidden-local', '1')
+    else sessionStorage.removeItem('hs-chat-hidden-local')
+  } catch (_) {}
+}
+
+function toggleChatHidden() {
+  if (document.body.classList.contains('hs-popout')) return
+  const visible = ['right', 'bottom', 'left', 'top']
+  if (chatPosition === 'hidden') {
+    chatHiddenLocal = false
+    chatPosition = visible.includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
+    // The synced setting already holds a visible position — hide never
+    // writes it (and boot heals legacy stored-'hidden'). Local apply only.
+    applyChatPosition()
+  } else {
+    if (visible.includes(chatPosition)) {
+      chatPositionPrevious = chatPosition
+      saveUiSetting('chatPositionPrevious', chatPositionPrevious)
+    }
+    chatHiddenLocal = true
+    chatPosition = 'hidden' // runtime only — the synced setting keeps the visible position
+    applyChatPosition()
+  }
+  _saveChatHiddenLocal()
+  log('[chat-toggle] →', chatPosition, 'local-only:', chatHiddenLocal, 'prev:', chatPositionPrevious)
+}
+
+// Edge-pill: orange strip pinned to the edge where chat last lived. Click to
+// restore (not a resize bar) — kept visible/thick on purpose, #fff, no text.
+function ensureChatRestorePill(show) {
+  let pill = document.getElementById('hs-chat-restore-pill')
+  if (!show) {
+    if (pill) pill.remove()
+    return
+  }
+  if (!pill) {
+    pill = document.createElement('div')
+    pill.id = 'hs-chat-restore-pill'
+    pill.title = 'show chat (\\)'
+    pill.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      toggleChatHidden()
+    })
+    pill.addEventListener('mousedown', (e) => e.stopPropagation())
+    document.body.appendChild(pill)
+  }
+  const edge = ['right', 'bottom', 'left', 'top'].includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
+  pill.dataset.edge = edge
+}
+
+// Resolve the channel context to popout for the active tab.
+// Returns { name, twitch, kick, youtube } or null if no channel context.
+function resolvePopoutContext() {
+  const id = currentTab
+  if (!id) return null
+  // Per-channel tab → use its config row directly
+  if (_isChatTab(id) && id !== 'live') {
+    const ch = (config.channels || []).find((c) => c.id === id)
+    if (!ch) return null
+    return { name: ch.id, twitch: ch.twitch || '', kick: ch.kick || '', youtube: ch.youtube || '' }
+  }
+  // Live tab → use the live channel for the host platform
+  if (id === 'live') {
+    const ch = (getLiveChannel() || '').toLowerCase()
+    if (!ch) return null
+    const ctx = { name: ch, twitch: '', kick: '', youtube: '' }
+    if (hostPlatform === 'twitch') ctx.twitch = ch
+    else if (hostPlatform === 'kick') ctx.kick = ch
+    else if (hostPlatform === 'yt') ctx.youtube = ch
+    return ctx.twitch || ctx.kick || ctx.youtube ? ctx : null
+  }
+  return null
+}
+
+// Pop out the active tab to the host platform's native chat popout window
+// (twitch.tv / kick.com / youtube.com). When a tab is linked to multiple
+// platforms, prefer the platform we're currently browsing on so the user
+// gets the chat for the page they're already watching.
+function openPopoutForCurrentTab() {
+  const ctx = resolvePopoutContext()
+  if (!ctx) return
+
+  // Pick which platform's native chat to open. Prefer host platform if the
+  // tab has a channel for it; else fall back to whichever platform exists.
+  const hostPick =
+    hostPlatform === 'twitch' && ctx.twitch
+      ? 'twitch'
+      : hostPlatform === 'kick' && ctx.kick
+        ? 'kick'
+        : hostPlatform === 'yt' && ctx.youtube
+          ? 'youtube'
+          : null
+  const platform = hostPick || (ctx.twitch ? 'twitch' : ctx.kick ? 'kick' : ctx.youtube ? 'youtube' : null)
+  if (!platform) return
+
+  let url,
+    features = 'width=400,height=600,menubar=no,toolbar=no,location=no,status=no'
+  if (platform === 'twitch') {
+    url = `https://www.twitch.tv/popout/${ctx.twitch}/chat?popout=`
+  } else if (platform === 'kick') {
+    url = `https://kick.com/popout/${ctx.kick}/chat`
+  } else if (platform === 'youtube') {
+    // A YouTube pop-out is CHAT-ONLY (youtube.com/live_chat) — never the whole
+    // watch page. Resolve a concrete live videoId from every source we trust,
+    // tab-scoped first: the poller-cached link for this tab, then a watch/live
+    // url stored in ctx.youtube, then (only when we're on a youtube page) the
+    // current page url or the auto-live stream. A channel/handle url has NO
+    // videoId → nothing to pop out; show that instead of opening a full page
+    // with the video + title + description (which is not a chat pop-out).
+    const link = youtubeLinks.get(currentTab)
+    const videoId =
+      link?.videoId ||
+      extractYoutubeVideoId(ctx.youtube) ||
+      (hostPlatform === 'yt' ? extractYoutubeVideoId(location.href) || _autoYtVideoId || '' : '')
+    if (!videoId) {
+      showToast(t('mc_main_no_yt_stream'), 'info')
+      return
+    }
+    url = `https://www.youtube.com/live_chat?v=${videoId}&is_popout=1`
+  }
+  try {
+    window.open(url, `hs-popout-${platform}-${ctx.name}`, features)
+  } catch (e) {
+    log('popout open failed:', e)
+  }
+}
+
+// Show the popout button when the active tab has a channel context.
+// Hidden on static tabs (feed/mentions/whispers/pinned/settings/add).
+function updatePopoutBtnVisibility() {
+  const btn = tabBarElement?.querySelector('.hs-mc-popout-btn')
+  if (!btn) return
+  btn.style.display = resolvePopoutContext() ? '' : 'none'
+}
+
+// Platform subscribe deep-links for a channel tab. The money path must
+// never dead-end: twitch/kick land on the real checkout, youtube lands on
+// the channel with the subscribe confirm (join/membership sits right next
+// to it when the channel has one — a /join deep-link 404-pages channels
+// without memberships, so we deliberately don't use it).
+function channelSubLinks(ch) {
+  const links = []
+  if (!ch) return links
+  if (ch.twitch)
+    links.push({ label: 'sub — twitch', url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}` })
+  if (ch.kick) links.push({ label: 'sub — kick', url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
+  if (ch.youtube) {
+    try {
+      const u = new URL(ch.youtube)
+      const m = u.pathname.match(/^\/(@[\w.-]+|channel\/[\w-]+|c\/[\w.-]+|user\/[\w.-]+)/)
+      if (u.protocol === 'https:' && /(^|\.)(youtube\.com|youtube-nocookie\.com)$/.test(u.hostname) && m) {
+        links.push({ label: 'sub — youtube', url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
+      }
+    } catch (_) {}
+  }
+  return links
+}
+
+// One platform → straight to its sub page. Simulcast tab → tiny picker,
+// same square black chrome as the tab context menu.
+function openSubForCurrentTab(anchorEl) {
+  const links = channelSubLinks(getChannelById(currentTab))
+  if (!links.length) return
+  if (links.length === 1) {
+    window.open(links[0].url, '_blank', 'noopener')
+    return
+  }
+  document.getElementById('hs-mc-ctx-menu')?.remove()
+  const menu = document.createElement('div')
+  menu.id = 'hs-mc-ctx-menu'
+  menu.style.cssText =
+    'position:fixed;z-index:99999;background:#000;border:1px solid #808080;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
+  for (const l of links) {
+    const item = document.createElement('div')
+    item.textContent = l.label
+    item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#ff8700;'
+    item.addEventListener('mouseenter', () => (item.style.background = 'rgba(255,255,255,0.06)'), {
+      signal: mcSignal,
+    })
+    item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
+    item.addEventListener('click', () => {
+      menu.remove()
+      window.open(l.url, '_blank', 'noopener')
+    })
+    menu.appendChild(item)
+  }
+  document.body.appendChild(menu)
+  const r = anchorEl?.getBoundingClientRect?.()
+  const mw = menu.offsetWidth,
+    mh = menu.offsetHeight
+  menu.style.left = `${Math.min(r ? r.left : 0, window.innerWidth - mw - 4)}px`
+  menu.style.top = `${Math.min(r ? r.bottom + 2 : 0, window.innerHeight - mh - 4)}px`
+  const dismiss = (ev) => {
+    if (!menu.contains(ev.target)) {
+      menu.remove()
+      document.removeEventListener('click', dismiss)
+    }
+  }
+  cleanup.setTimeout(() => document.addEventListener('click', dismiss, { signal: mcSignal }), 0)
+}
+
+// $ shows only when the active tab has at least one platform sub target.
+function updateSubBtnVisibility() {
+  const btn = tabBarElement?.querySelector('.hs-mc-sub-btn')
+  if (!btn) return
+  btn.style.display = channelSubLinks(getChannelById(currentTab)).length ? '' : 'none'
+}
+
+// Drop a panel callout (status/error banner) directly below the search/filter
+// bar — never above it, where it would shove the filter input down on reload.
+// Falls back to the container top only if the overlay isn't mounted yet.
+function _insertPanelCallout(el) {
+  const searchBar = document.getElementById('hs-mc-search-bar')
+  if (searchBar?.parentNode) {
+    searchBar.parentNode.insertBefore(el, searchBar.nextSibling)
+    return
+  }
+  const container = document.getElementById('hs-mc-container')
+  if (container) container.insertBefore(el, container.firstChild)
+}
+
+// Render a small banner inside the multichat panel when an upstream API is unreachable.
+// Auto-removes when state flips back to 'up'. Only renders when our panel is mounted.
+function showApiStatusBanner(source, state) {
+  const container = document.getElementById('hs-mc-container')
+  if (!container) return
+  const id = `hs-mc-api-banner-${(source || 'unknown').replace(/[^a-z0-9_-]/gi, '')}`
+  const existing = document.getElementById(id)
+  if (state === 'up') {
+    existing?.remove()
+    return
+  }
+  if (existing) return
+  const banner = document.createElement('div')
+  banner.id = id
+  banner.className = 'hs-mc-api-banner'
+  banner.style.cssText =
+    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  const label = source === 'heatsync' ? 'heatsync.org unreachable — reconnecting' : `${source} unreachable`
+  const text = document.createElement('span')
+  text.textContent = label
+  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  banner.append(text, dismiss)
+  _insertPanelCallout(banner)
+}
+
+// Auth banner: shown when bg signals loggedIn=false AND the user has at least
+// one channel with a youtube URL — YT chat needs server-side scraping, which
+// requires auth, so without it the user sees zero YT messages and no clue why.
+function showAuthLoginBanner(loggedIn) {
+  const container = document.getElementById('hs-mc-container')
+  if (!container) return
+  const id = 'hs-mc-auth-banner'
+  const existing = document.getElementById(id)
+  if (loggedIn) {
+    existing?.remove()
+    return
+  }
+  const hasYt = Array.isArray(config?.channels) && config.channels.some((c) => c.youtube)
+  if (!hasYt) {
+    existing?.remove()
+    return
+  }
+  if (existing) return
+  const banner = document.createElement('div')
+  banner.id = id
+  banner.className = 'hs-mc-auth-banner'
+  banner.style.cssText =
+    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  const text = document.createElement('span')
+  text.textContent = 'youtube chat needs heatsync login —'
+  const link = document.createElement('a')
+  link.href = 'https://heatsync.org/settings/account'
+  link.target = '_blank'
+  link.rel = 'noopener'
+  link.textContent = 'sign in'
+  link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;'
+  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  dismiss.style.marginLeft = '4px'
+  banner.append(text, link, dismiss)
+  _insertPanelCallout(banner)
+}
+
+// Persistent one-click login nudge — shown when someone tries to collect/use an
+// emote while signed out of heatsync. Their emotes render for nobody and vanish
+// on refresh until they log in; a transient toast never conveys that, so people
+// conclude the ext is broken. Square, terminal, dead-simple: one button to
+// login. Auto-dismisses on successful login (auth_changed) and on any
+// successful add (emote_added). Idempotent.
+function showEmoteLoginNudge() {
+  const container = document.getElementById('hs-mc-container')
+  if (!container) return
+  const id = 'hs-mc-emote-login-nudge'
+  if (document.getElementById(id)) return
+  const banner = document.createElement('div')
+  banner.id = id
+  banner.className = 'hs-mc-auth-banner'
+  banner.style.cssText =
+    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  const text = document.createElement('span')
+  text.textContent = 'log in to heatsync so your emotes work for everyone'
+  const link = document.createElement('a')
+  link.href = 'https://heatsync.org/login'
+  link.target = '_blank'
+  link.rel = 'noopener'
+  link.textContent = 'log in'
+  // nowrap so the link never splits across lines when the panel is narrow
+  link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;cursor:pointer;white-space:nowrap;'
+  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  dismiss.style.marginLeft = '4px'
+  banner.append(text, link, dismiss)
+  _insertPanelCallout(banner)
+}
+function dismissEmoteLoginNudge() {
+  document.getElementById('hs-mc-emote-login-nudge')?.remove()
+}
 
 
 // --- multichat/settings-ui.js ---
@@ -69825,896 +72025,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     return container
   }
 
-  // Twitch resub-share / sub-anniversary callout: hide the native Pin toggle
-  // (it pins to the hidden native chat → looks broken), inject our own X
-  // button that just hides the callout. Idempotent + survives re-mounts via
-  // dataset guard. Also hooks the Share button so we can guarantee a local
-  // celebration line even if Twitch suppresses the self-echo USERNOTICE.
-  //
-  // Share-dedupe contract (bulletproof against duplicates):
-  //   Phase 1 [0–2000ms after click]: wait for Twitch's real USERNOTICE.
-  //     - If it arrives matching channel+user+msg-id → cancel synthetic.
-  //   Phase 2 [+0–30s after synthetic injection]: keep watching.
-  //     - If real arrives late → hide synthetic from buffer + remove its
-  //       DOM row → real takes its place. Single celebration always.
-  let _hsCalloutCloseObs = null
-  let _pendingShareClaim = null
-  let _resubShareModeTimer = null
-  let _resubShareCtx = null
-  let _watchstreakShareModeTimer = null
-  let _watchstreakShareCtx = null
-  let _lastSurfacedShareBtn = null
-  let _lastSurfacedCallout = null
-  const CALLOUT_QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
-
-  // Twitch's callout tokens are base64 of "<userId>:<channelId>:<count>:<kind>"
-  // (kind = "cumulative" for a sub anniversary). Decoding is the validation:
-  // nothing else on the page base64-decodes to that exact shape, so a match is
-  // the token by construction — no prop name to guess and nothing to re-learn
-  // when twitch renames its components.
-  const CALLOUT_TOKEN_SHAPE = /^(\d+):(\d+):(\d+):([a-z_]+)$/i
-  function decodeCalloutToken(raw) {
-    if (typeof raw !== 'string' || raw.length < 16 || raw.length > 200) return null
-    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(raw)) return null
-    let plain
-    try {
-      plain = atob(raw)
-    } catch {
-      return null
-    }
-    const m = CALLOUT_TOKEN_SHAPE.exec(plain)
-    if (!m) return null
-    return { raw, userId: m[1], channelId: m[2], count: Number(m[3]), kind: m[4].toLowerCase() }
-  }
-
-  // Once-per-day rate-limit on the watch-streak share UI. Twitch sometimes
-  // re-shows the callout if you reload the tab mid-stream; cap our surfacing
-  // at one per channel per local-day so it never feels spammy.
-  function _watchstreakDayKey(channel) {
-    const d = new Date()
-    const ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-    return `hs-watchstreak-shared:${channel}:${ymd}`
-  }
-  function _watchstreakAlreadySharedToday(channel) {
-    try {
-      return !!localStorage.getItem(_watchstreakDayKey(channel))
-    } catch (_) {
-      return false
-    }
-  }
-  function _markWatchstreakSharedToday(channel) {
-    try {
-      localStorage.setItem(_watchstreakDayKey(channel), '1')
-    } catch (_) {}
-  }
-  function _injectShareSynthetic(claim, user, months, customText) {
-    const synthId = `hs-synth-share-${claim.channel}-${months}-${Date.now()}`
-    claim.synthId = synthId
-    claim.customText = customText || ''
-    const synth = {
-      type: 'usernotice',
-      msgId: 'resub',
-      user,
-      text: customText || '',
-      systemMsg: `${user} is celebrating ${months} months as a subscriber!`,
-      color: '#fff',
-      badges: ownBadgesFor(claim.channel) || '',
-      channel: claim.channel,
-      time: Date.now(),
-      subTier: '1',
-      subMonths: months,
-      giftCount: 0,
-      recipient: '',
-      raidViewers: 0,
-      raidFrom: '',
-      announceColor: '',
-      bitsTier: 0,
-      id: synthId,
-      isSynthetic: true,
-      userOverride: !!customText,
-    }
-    try {
-      irc?._handleMsg?.(synth)
-    } catch (_) {}
-    claim.postTimer = cleanup.setTimeout(() => {
-      if (_pendingShareClaim === claim) _pendingShareClaim = null
-    }, 30000)
-  }
-  function _enterResubShareMode(claim, user, months) {
-    // Mutually exclusive with watchstreak-share — exit that first if active,
-    // silently (keep its banner up so user can come back to it).
-    if (_watchstreakShareCtx) _exitWatchstreakShareMode(_watchstreakShareCtx.claim, false, true)
-    _resubShareCtx = { claim, user, months }
-    const input = document.getElementById('hs-mc-input')
-    const inputBar = document.getElementById('hs-mc-inputbar')
-    if (!input) return
-    inputBar?.classList.add('hs-mc-resub-share')
-    input.classList.add('hs-mc-resub-share')
-    if (input.dataset.hsOrigPlaceholder === undefined) {
-      input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
-    }
-    if (input.dataset.hsOrigDataPlaceholder === undefined) {
-      input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
-    }
-    const placeholder = `resub message (${months}mo) — enter to share`
-    input.setAttribute('placeholder', placeholder)
-    input.setAttribute('data-placeholder', placeholder)
-    try {
-      input.focus()
-    } catch (_) {}
-    if (_resubShareModeTimer) cleanup.clearTimeout(_resubShareModeTimer)
-    _resubShareModeTimer = cleanup.setTimeout(() => _exitResubShareMode(claim, true), 30000)
-  }
-  function _exitResubShareMode(claim, fireFallback, silent) {
-    if (claim && _resubShareCtx?.claim !== claim) return
-    const wasCtx = _resubShareCtx
-    _resubShareCtx = null
-    if (_resubShareModeTimer) {
-      cleanup.clearTimeout(_resubShareModeTimer)
-      _resubShareModeTimer = null
-    }
-    // Dismiss the HsNotifs banner only on VOLUNTARY exit (consume, timeout,
-    // dismiss-click). On a forced exit (another share-mode took the input),
-    // silent=true keeps the banner visible so the user can come back to it.
-    if (wasCtx && !silent) {
-      try {
-        window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${wasCtx.claim.channel}:${wasCtx.months}`)
-      } catch (_) {}
-    }
-    const input = document.getElementById('hs-mc-input')
-    const inputBar = document.getElementById('hs-mc-inputbar')
-    inputBar?.classList.remove('hs-mc-resub-share')
-    input?.classList.remove('hs-mc-resub-share')
-    if (input?.dataset.hsOrigPlaceholder !== undefined) {
-      input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
-      delete input.dataset.hsOrigPlaceholder
-    }
-    if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
-      if (input.dataset.hsOrigDataPlaceholder) {
-        input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
-      } else {
-        input.removeAttribute('data-placeholder')
-      }
-      delete input.dataset.hsOrigDataPlaceholder
-    }
-    // 30s timeout with no user text → fall back to the empty-body synthetic so
-    // the celebration banner still shows locally.
-    if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
-      _injectShareSynthetic(wasCtx.claim, wasCtx.user, wasCtx.months, '')
-    }
-  }
-  // Celebration failed AFTER the text was consumed — never let the user's
-  // message vanish: surface the failure and send the text as plain chat.
-  async function _resubShareTextRescue(channel, text) {
-    showToast(t('mc_main_celebration_share_failed'), 'error')
-    if (!text) return
-    try {
-      const token = getTwitchAuthToken()
-      if (token) {
-        const res = await sendIrcMessage(channel, text, token)
-        if (res === true || res === 'queued') return
-      }
-    } catch (_) {}
-    showToast(t('mc_main_message_not_sent'), 'error')
-  }
-
-  // Programmatic-click escape hatch so consume() can fire the native Twitch
-  // Share button without our own surface() hook re-entering share-mode.
-  let _allowNativeShare = false
-  // Exposed for input.js sendMessage: consume typed text as resub-share body.
-  // .enter() is called directly by the HsNotifs Share button — bypasses the
-  // native Twitch click which would insta-send a default celebration message.
-  // Resub/watchstreak token scan. Module scope, NOT inside surface(): the notif
-  // click path re-runs it when the token it was emitted with is missing. The
-  // callout is emitted the moment it is detected, and the event payload lives in
-  // contextMenu.props.children.props.event — a subtree React may not have mounted
-  // yet. Measured on a live 107mo callout: the payload was absent from the notif
-  // but sitting at BFS step 46 minutes later, so the extension fell through to
-  // twitch's own button every time, which posts twitch's default celebration and
-  // drops the custom message. Re-scanning at click time is correct whether the
-  // cause was that race or a root that never reached the payload.
-  /**
-   * Does this scan hold the token for the callout we think it does?
-   *
-   * The count is months for a sub anniversary and streams for a watch streak,
-   * which is why the scan reports a generic `count` — an `out.months` read as
-   * `scan.count` is undefined, silently false, and disables the whole path.
-   * That shipped once. Every gate goes through here now.
-   */
-  function calloutTokenMatches(scan, expect) {
-    if (!scan?.token) return false
-    if (!expect) return true
-    if (expect.kind !== undefined && scan.kind !== expect.kind) return false
-    if (expect.count !== undefined && scan.count !== expect.count) return false
-    return true
-  }
-
-  function fiberTokenScan(rootEl) {
-    if (typeof getFiber !== 'function' || !rootEl) return null
-    const out = { token: null, channelId: null, count: 0, kind: null }
-    const root = getFiber(rootEl)
-    if (!root) return out
-    // Breadth-first over the callout's own subtree. Twitch carries the token as
-    // the React *key* of the element it renders the callout from — measured
-    // live on a 107-month callout, two fibers below the queue container. It is
-    // not a prop under any name, which is why every earlier scan came back
-    // empty and the whole share flow fell through to twitch's own button. That
-    // button hands the celebration to twitch's composer, which heatsync has
-    // replaced, so the share never completed and the callout came back on the
-    // next reload.
-    // Children + siblings only: from the container there is nothing above worth
-    // walking, and climbing turns a two-step lookup into a walk of the whole
-    // chat tree.
-    //
-    // The ROOT's siblings are the exception — they are the other callouts in
-    // the queue (a sub anniversary and a watch streak mount side by side), each
-    // carrying its own token. Following them would hand back a neighbour's
-    // token, which the caller cannot tell apart from its own.
-    const queue = [root]
-    const seen = new WeakSet()
-    let steps = 0
-    while (queue.length && steps < 400 && !out.token) {
-      const f = queue.shift()
-      if (!f || seen.has(f)) continue
-      seen.add(f)
-      steps++
-      const tok = decodeCalloutToken(f.key)
-      if (tok) {
-        out.token = tok.raw
-        out.channelId = tok.channelId
-        out.count = tok.count
-        out.kind = tok.kind
-        break
-      }
-      if (f.child) queue.push(f.child)
-      if (f !== root && f.sibling) queue.push(f.sibling)
-    }
-    return out
-  }
-
-  /**
-   * Hand a callout token back to twitch with the user's own words as the
-   * celebration body. This is the whole point of taking the click: twitch's own
-   * Share button only puts twitch's composer into share-mode, and heatsync has
-   * replaced that composer, so the native path can never finish the job.
-   *
-   * One mutation serves every callout kind — the resolver is
-   * `useChatNotificationToken`, and the token says which callout is being
-   * consumed. Throws on rejection so both callers can rescue the typed text
-   * into plain chat; a rejected token comes back HTTP 200 with an errors[]
-   * entry and a null field, so "no exception" is not "it worked".
-   */
-  async function _consumeCalloutToken(channel, token, text) {
-    const data = await gqlProxy('Chat_ShareResub_UseResubToken', {
-      input: { message: text || '', channelLogin: channel, includeStreak: false, tokenID: token },
-    })
-    const errs =
-      (Array.isArray(data?.errors) && data.errors.length ? data.errors : null) ||
-      (data?.data && data.data.useChatNotificationToken === null ? [{ message: 'token rejected' }] : null)
-    if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
-  }
-
-  window.__hsResubShare = {
-    active: () => !!_resubShareCtx,
-    // Returns false so input.js sendMessage CONTINUES into the regular IRC
-    // send path — the typed text needs to actually go to Twitch chat so other
-    // viewers see it and it persists across refresh. We also inject a local
-    // synthetic usernotice for instant visual feedback, AND fire the native
-    // Twitch share button for the global celebration broadcast.
-    consume: (text) => {
-      if (!_resubShareCtx) return false
-      const { claim, user, months } = _resubShareCtx
-      // 1. Local synthetic — instant styled celebration in OUR view with the
-      //    user's custom text. Doesn't go anywhere else; viewer-only.
-      try {
-        _injectShareSynthetic(claim, user, months, text || '')
-      } catch (_) {}
-      // 2. GQL broadcast — call Chat_ShareResub_UseResubToken directly with the
-      //    typed body. Sidesteps Twitch's hidden composer UI entirely; reaches
-      //    the same backend mutation their native "Send" button fires after the
-      //    composer opens. The token is the resub claim Twitch hands us in the
-      //    callout's React props (or reconstructed from <userId>:<channelId>:
-      //    <months>:cumulative when the prop wasn't found).
-      const nativeClickFallback = () => {
-        // No token — last-resort: programmatic-click the hidden native button.
-        // Fires Twitch's default empty-body celebration; the typed text still
-        // goes out as a plain follow-up message via the IRC send path below.
-        const liveBtn = document.querySelector(
-          `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
-        )
-        const btn = liveBtn || claim._nativeShareBtn
-        if (!btn || typeof getFiber !== 'function') return false
-        try {
-          let f = getFiber(btn)
-          for (let i = 0; f && i < 10; i++, f = f.return) {
-            const oc = f?.memoizedProps?.onClick
-            if (typeof oc === 'function') {
-              oc({
-                preventDefault() {},
-                stopPropagation() {},
-                persist() {},
-                currentTarget: btn,
-                target: btn,
-                nativeEvent: { isTrusted: true },
-                type: 'click',
-                button: 0,
-                buttons: 0,
-              })
-              return true
-            }
-          }
-        } catch (_) {}
-        return false
-      }
-      // No token → the native click can only post Twitch's DEFAULT
-      // celebration (no body). Return false so sendMessage continues and
-      // the typed text still lands as a normal chat message — celebration
-      // + message, nothing swallowed. (This was the documented contract;
-      // an unconditional `return true` here used to eat the text.)
-      if (!claim.resubToken) {
-        console.warn('[heatsync-ext] resub-share: no token — native btn fallback')
-        _exitResubShareMode(claim, false)
-        let clicked = false
-        try {
-          clicked = nativeClickFallback()
-        } catch (_) {}
-        showToast(clicked ? t('mc_main_no_share_token') : t('mc_main_share_unavailable'), 'error')
-        return false
-      }
-
-      // Token path: instant exit, GQL in the background. Any failure rescues
-      // the typed text into plain chat — the user's words must never silently
-      // vanish. The optimistic synthetic is NOT re-injected here: step 1 above
-      // already ran unconditionally, and _injectShareSynthetic stamps a fresh
-      // Date.now() id and pushes a new row every call, so doing it twice put
-      // two identical celebrations in the sharer's own view.
-      _exitResubShareMode(claim, false)
-      ;(async () => {
-        try {
-          await _consumeCalloutToken(claim.channel, claim.resubToken, text)
-          log('resub-share: GQL fired ok')
-        } catch (e) {
-          console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
-          await _resubShareTextRescue(claim.channel, text)
-        }
-      })()
-      // true = sendMessage stops here; the typed text is the celebration
-      // body (or gets rescued above on failure).
-      return true
-    },
-    enter: (months, user, channel, resubToken) => {
-      try {
-        if (_pendingShareClaim) {
-          cleanup.clearTimeout(_pendingShareClaim.postTimer)
-        }
-        const claim = {
-          channel,
-          userLc: (user || '').toLowerCase(),
-          months,
-          synthId: null,
-          postTimer: null,
-          customText: '',
-          _nativeShareBtn: _lastSurfacedShareBtn,
-          resubToken: resubToken || null,
-        }
-        _pendingShareClaim = claim
-        _enterResubShareMode(claim, user, months)
-      } catch (_) {}
-    },
-    /**
-     * Re-scan for the resub token at CLICK time. The notif carries whatever the
-     * scan found when the callout was first detected, and that can be nothing —
-     * the payload lives in a React subtree that may not be mounted yet. By the
-     * time a human clicks share, it always is. Returns the base64 tokenID
-     * (<userId>:<channelId>:<months>:cumulative) or null.
-     */
-    rescanToken: (rootEl, expect) => {
-      try {
-        // Scan the callout we were HANDED. Reaching for
-        // querySelector(CALLOUT_QUEUE_SEL) takes the first container in the
-        // DOM, which is a different callout whenever a sub anniversary and a
-        // watch streak are queued together — the same cross-callout mixup the
-        // scan itself refuses to make by not following the root's siblings.
-        if (rootEl?.isConnected) {
-          const scan = fiberTokenScan(rootEl)
-          if (calloutTokenMatches(scan, expect)) return scan.token
-          return null
-        }
-        // Detached: twitch re-rendered the queue under us and a detached fiber
-        // still hands back its stale key. Re-find the live callout by asking
-        // each one whether it is ours — that is what `expect` is for.
-        for (const el of document.querySelectorAll(CALLOUT_QUEUE_SEL)) {
-          const scan = fiberTokenScan(el)
-          if (calloutTokenMatches(scan, expect)) return scan.token
-        }
-        return null
-      } catch (_) {
-        return null
-      }
-    },
-    // Internal: surface()'s native-button hook reads this to know whether to
-    // block the click (user-initiated) or pass through (programmatic from us).
-    _allowNativeShare: () => _allowNativeShare,
-    /**
-     * Fire twitch's own share button, with our interceptor standing down for
-     * the duration. Used when we have no genuine resub token: twitch's flow is
-     * then the only one that can actually consume it, so ours gets out of the
-     * way rather than half-completing. Mirrors tryDomClick's sequence — a bare
-     * .click() alone does not always satisfy their handler.
-     */
-    clickNative: (btn) => {
-      if (!btn) return false
-      try {
-        _allowNativeShare = true
-        try {
-          const opts = { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }
-          btn.dispatchEvent(new MouseEvent('mousedown', opts))
-          btn.dispatchEvent(new MouseEvent('mouseup', opts))
-          btn.dispatchEvent(new MouseEvent('click', opts))
-          btn.click()
-        } finally {
-          _allowNativeShare = false
-        }
-        return true
-      } catch (_) {
-        return false
-      }
-    },
-  }
-
-  // ── Watch-streak share: mirror of resub-share for Twitch's daily ───────
-  // "you're on an N stream watch streak!" callout. Same dedupe contract,
-  // same native-button forwarding, separate placeholder/mode CSS so the
-  // user can tell which celebration they're composing. Once-per-day per
-  // channel via localStorage.
-  function _injectWatchstreakSynthetic(claim, user, streakCount, customText) {
-    const synthId = `hs-synth-wstreak-${claim.channel}-${streakCount}-${Date.now()}`
-    claim.synthId = synthId
-    claim.customText = customText || ''
-    const synth = {
-      type: 'usernotice',
-      msgId: 'watchstreak',
-      user,
-      text: customText || '',
-      systemMsg: `${user} watched ${streakCount} streams in a row — watch streak`,
-      color: '#fff',
-      badges: ownBadgesFor(claim.channel) || '',
-      channel: claim.channel,
-      time: Date.now(),
-      subTier: '',
-      subMonths: 0,
-      giftCount: 0,
-      recipient: '',
-      raidViewers: 0,
-      raidFrom: '',
-      announceColor: '',
-      bitsTier: 0,
-      streakCount,
-      id: synthId,
-      isSynthetic: true,
-      userOverride: !!customText,
-    }
-    try {
-      irc?._handleMsg?.(synth)
-    } catch (_) {}
-    claim.postTimer = cleanup.setTimeout(() => {
-      if (_pendingShareClaim === claim) _pendingShareClaim = null
-    }, 30000)
-  }
-  function _enterWatchstreakShareMode(claim, user, streakCount) {
-    // Mutually exclusive with resub-share — exit that first if active, silently
-    // (keep its banner up so user can come back to it).
-    if (_resubShareCtx) _exitResubShareMode(_resubShareCtx.claim, false, true)
-    _watchstreakShareCtx = { claim, user, streakCount }
-    const input = document.getElementById('hs-mc-input')
-    const inputBar = document.getElementById('hs-mc-inputbar')
-    if (!input) return
-    inputBar?.classList.add('hs-mc-watchstreak-share')
-    input.classList.add('hs-mc-watchstreak-share')
-    if (input.dataset.hsOrigPlaceholder === undefined) {
-      input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
-    }
-    if (input.dataset.hsOrigDataPlaceholder === undefined) {
-      input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
-    }
-    const placeholder = `watch streak (${streakCount}) — enter to share`
-    input.setAttribute('placeholder', placeholder)
-    input.setAttribute('data-placeholder', placeholder)
-    try {
-      input.focus()
-    } catch (_) {}
-    if (_watchstreakShareModeTimer) cleanup.clearTimeout(_watchstreakShareModeTimer)
-    _watchstreakShareModeTimer = cleanup.setTimeout(() => _exitWatchstreakShareMode(claim, true), 30000)
-  }
-  function _exitWatchstreakShareMode(claim, fireFallback, silent) {
-    if (claim && _watchstreakShareCtx?.claim !== claim) return
-    const wasCtx = _watchstreakShareCtx
-    _watchstreakShareCtx = null
-    if (_watchstreakShareModeTimer) {
-      cleanup.clearTimeout(_watchstreakShareModeTimer)
-      _watchstreakShareModeTimer = null
-    }
-    if (wasCtx && !silent) {
-      try {
-        window.HsNotifs?.dismissByKey?.(
-          'twitch-watchstreak-share',
-          `watchstreak:${wasCtx.claim.channel}:${wasCtx.streakCount}`,
-        )
-      } catch (_) {}
-    }
-    const input = document.getElementById('hs-mc-input')
-    const inputBar = document.getElementById('hs-mc-inputbar')
-    inputBar?.classList.remove('hs-mc-watchstreak-share')
-    input?.classList.remove('hs-mc-watchstreak-share')
-    if (input?.dataset.hsOrigPlaceholder !== undefined) {
-      input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
-      delete input.dataset.hsOrigPlaceholder
-    }
-    if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
-      if (input.dataset.hsOrigDataPlaceholder) {
-        input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
-      } else {
-        input.removeAttribute('data-placeholder')
-      }
-      delete input.dataset.hsOrigDataPlaceholder
-    }
-    if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
-      _injectWatchstreakSynthetic(wasCtx.claim, wasCtx.user, wasCtx.streakCount, '')
-    }
-  }
-  window.__hsWatchstreakShare = {
-    active: () => !!_watchstreakShareCtx,
-    consume: (text) => {
-      if (!_watchstreakShareCtx) return false
-      const { claim, user, streakCount } = _watchstreakShareCtx
-      try {
-        _injectWatchstreakSynthetic(claim, user, streakCount, text || '')
-      } catch (_) {}
-      const broadcastShare = () => {
-        const liveBtn = document.querySelector(
-          `${CALLOUT_QUEUE_SEL} [data-a-target="chat-private-callout__primary-button"]`,
-        )
-        const candidates = [liveBtn, claim._nativeShareBtn].filter(Boolean)
-        const seen = new Set()
-        const tryFiberOnClick = (btn) => {
-          try {
-            if (typeof getFiber !== 'function') return false
-            let f = getFiber(btn)
-            for (let i = 0; f && i < 10; i++, f = f.return) {
-              const oc = f?.memoizedProps?.onClick
-              if (typeof oc === 'function') {
-                const fakeEvt = {
-                  preventDefault() {},
-                  stopPropagation() {},
-                  persist() {},
-                  currentTarget: btn,
-                  target: btn,
-                  nativeEvent: { isTrusted: true },
-                  type: 'click',
-                  button: 0,
-                  buttons: 0,
-                }
-                oc(fakeEvt)
-                log('watchstreak-share: fired via fiber onClick')
-                return true
-              }
-            }
-          } catch (e) {
-            console.warn('[heatsync-ext] watchstreak-share fiber onClick threw:', e)
-          }
-          return false
-        }
-        const tryDomClick = (btn) => {
-          try {
-            _allowNativeShare = true
-            try {
-              const opts = { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }
-              btn.dispatchEvent(new MouseEvent('mousedown', opts))
-              btn.dispatchEvent(new MouseEvent('mouseup', opts))
-              btn.dispatchEvent(new MouseEvent('click', opts))
-              btn.click()
-            } finally {
-              _allowNativeShare = false
-            }
-            log('watchstreak-share: fired via DOM click sequence')
-            return true
-          } catch (e) {
-            console.warn('[heatsync-ext] watchstreak-share DOM click threw:', e)
-            return false
-          }
-        }
-        for (const btn of candidates) {
-          if (!btn || seen.has(btn)) continue
-          seen.add(btn)
-          if (tryFiberOnClick(btn)) return true
-        }
-        for (const btn of candidates) {
-          if (!btn) continue
-          if (tryDomClick(btn)) return true
-        }
-        console.warn('[heatsync-ext] watchstreak-share: NO broadcast — native callout btn missing')
-        return false
-      }
-      // With a token we can finish the share ourselves, body and all — same
-      // path the sub anniversary takes. Without one, fall back to clicking
-      // twitch's button and letting the typed text go out as ordinary chat,
-      // which is all this flow could ever do before.
-      if (claim.streakToken) {
-        _exitWatchstreakShareMode(claim, false)
-        ;(async () => {
-          try {
-            await _consumeCalloutToken(claim.channel, claim.streakToken, text)
-            // Marked only once it landed. A failed share leaves the day
-            // unspent so a reload can offer it again — twitch never consumed
-            // the token, so the callout is still there to offer.
-            _markWatchstreakSharedToday(claim.channel)
-            log('watchstreak-share: GQL fired ok')
-          } catch (e) {
-            console.warn('[heatsync-ext] watchstreak-share GQL failed:', e?.message || e)
-            await _resubShareTextRescue(claim.channel, text)
-          }
-        })()
-        // true = the typed text IS the celebration body, so sendMessage stops
-        // here rather than posting it a second time as a plain message.
-        return true
-      }
-      try {
-        broadcastShare()
-      } catch (e) {
-        console.warn('[heatsync-ext] watchstreak-share broadcast outer threw:', e)
-      }
-      _markWatchstreakSharedToday(claim.channel)
-      _exitWatchstreakShareMode(claim, false)
-      return false
-    },
-    enter: (streakCount, user, channel, streakToken) => {
-      try {
-        if (_pendingShareClaim) {
-          cleanup.clearTimeout(_pendingShareClaim.postTimer)
-        }
-        const claim = {
-          kind: 'watchstreak',
-          channel,
-          userLc: (user || '').toLowerCase(),
-          streakCount,
-          synthId: null,
-          postTimer: null,
-          customText: '',
-          _nativeShareBtn: _lastSurfacedShareBtn,
-          streakToken: streakToken || null,
-        }
-        _pendingShareClaim = claim
-        _enterWatchstreakShareMode(claim, user, streakCount)
-      } catch (_) {}
-    },
-  }
-
-  function setupHsCalloutCloseButton() {
-    if (_hsCalloutCloseObs) return
-    // Native callout is hidden by CSS (.hs-notif-twitch-resub-share rule).
-    // We extract data from the native DOM, hook its Share button so the
-    // existing _enterResubShareMode flow runs when user clicks our forwarded
-    // Share, and emit our own HsNotifs notif to render the controlled UI.
-    const surface = (calloutEl) => {
-      if (!calloutEl || calloutEl.dataset.hsSurfaced === '1') return
-      const txt = calloutEl.textContent || ''
-      const ch = (getLiveChannel?.() || getCurrentChannel?.() || '').toLowerCase()
-      const user = currentUsername || ''
-      if (!ch || !user) return
-      const shareBtn = calloutEl.querySelector('[data-a-target="chat-private-callout__primary-button"]')
-
-      // Capture twitch's callout token from the callout subtree. It is what
-      // Chat_ShareResub_UseResubToken takes as input.tokenID, and it decodes to
-      // "<userId>:<channelId>:<count>:<kind>". Scan the container, never the
-      // button: the token sits two fibers under the container, while from the
-      // button the same breadth-first walk fans out across the chat tree
-      // without ever reaching it.
-      const scan = fiberTokenScan(calloutEl) || {}
-
-      // Watch-streak first (text mentions "watch streak"); resub fallback (only
-      // "N month" — without "watch streak"). Order matters: a watch-streak
-      // callout never mentions months, but a sub-anniversary may incidentally
-      // contain "stream", so explicit watchstreak check wins.
-      const isWatchstreak = /watch[\s-]*streak/i.test(txt)
-      const streakMatch = isWatchstreak ? txt.match(/(\d+)\s*stream/i) : null
-      const streakCount = streakMatch ? parseInt(streakMatch[1], 10) : 0
-      const monthMatch = !isWatchstreak ? txt.match(/(\d+)\s*month/i) : null
-      const months = monthMatch ? parseInt(monthMatch[1], 10) : 0
-
-      if (isWatchstreak && streakCount) {
-        if (_watchstreakAlreadySharedToday(ch)) {
-          calloutEl.dataset.hsSurfaced = '1'
-          return
-        }
-        calloutEl.dataset.hsSurfaced = '1'
-        // A watch-streak token counts streams where a resub token counts
-        // months; the kind string differs and we never assume it. If the count
-        // does not match the callout, we hold no token and the flow stays on
-        // twitch's own button exactly as before.
-        const streakToken = calloutTokenMatches(scan, { count: streakCount }) ? scan.token : null
-        if (shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
-          shareBtn.dataset.hsShareHooked = '1'
-          shareBtn.addEventListener(
-            'click',
-            (e) => {
-              if (_allowNativeShare) return
-              e.stopImmediatePropagation()
-              e.preventDefault()
-              try {
-                if (_pendingShareClaim) {
-                  cleanup.clearTimeout(_pendingShareClaim.postTimer)
-                }
-                const claim = {
-                  kind: 'watchstreak',
-                  channel: ch,
-                  userLc: user.toLowerCase(),
-                  streakCount,
-                  synthId: null,
-                  postTimer: null,
-                  customText: '',
-                  _nativeShareBtn: shareBtn,
-                  streakToken,
-                }
-                _pendingShareClaim = claim
-                _enterWatchstreakShareMode(claim, user, streakCount)
-              } catch (_) {}
-            },
-            { capture: true },
-          )
-        }
-        _lastSurfacedShareBtn = shareBtn || null
-        _lastSurfacedCallout = calloutEl
-        try {
-          HsNotifs.emit('twitch-watchstreak-share', {
-            streakCount,
-            user,
-            channel: ch,
-            _nativeShareBtn: shareBtn,
-            _nativeCallout: calloutEl,
-            _streakToken: streakToken,
-          })
-        } catch (_) {}
-        try {
-          _updateMcLayout?.()
-        } catch (_) {}
-        return
-      }
-
-      if (!months) return
-      calloutEl.dataset.hsSurfaced = '1'
-      // Only take the click when the token we hold is genuinely this callout's:
-      // the months it encodes must match the months the callout announces. A
-      // token is never guessed or reconstructed — a wrong one fails the
-      // mutation, and the failure path posts the typed text as ordinary chat,
-      // which reads as success while twitch never marks the resub shared, so
-      // the callout returns on every reload. Without a token we do not
-      // intervene at all; a silent half-success is worse than not helping.
-      const resubToken = calloutTokenMatches(scan, { kind: 'cumulative', count: months }) ? scan.token : null
-      const hasRealToken = !!resubToken
-      if (hasRealToken && shareBtn && shareBtn.dataset.hsShareHooked !== '1') {
-        shareBtn.dataset.hsShareHooked = '1'
-        shareBtn.addEventListener(
-          'click',
-          (e) => {
-            if (window.__hsResubShare?._allowNativeShare?.()) return
-            e.stopImmediatePropagation()
-            e.preventDefault()
-            try {
-              if (_pendingShareClaim) {
-                cleanup.clearTimeout(_pendingShareClaim.postTimer)
-              }
-              const claim = {
-                kind: 'resub',
-                channel: ch,
-                userLc: user.toLowerCase(),
-                months,
-                synthId: null,
-                postTimer: null,
-                customText: '',
-                _nativeShareBtn: shareBtn,
-                resubToken,
-              }
-              _pendingShareClaim = claim
-              _enterResubShareMode(claim, user, months)
-            } catch (_) {}
-          },
-          { capture: true },
-        )
-      }
-      _lastSurfacedShareBtn = shareBtn || null
-      _lastSurfacedCallout = calloutEl
-      try {
-        HsNotifs.emit('twitch-resub-share', {
-          months,
-          user,
-          channel: ch,
-          _nativeShareBtn: shareBtn,
-          _nativeCallout: calloutEl,
-          // Only ever a token twitch handed us. Downstream reads its absence
-          // as "we cannot finish this" and routes the click to twitch's own
-          // button instead of half-completing.
-          _resubToken: resubToken,
-        })
-      } catch (_) {}
-      try {
-        _updateMcLayout?.()
-      } catch (_) {}
-    }
-    // Twitch removed `.pinned-callout` in a recent refactor — the callout body
-    // now lives directly under the queue container. Surface every container;
-    // surface() reads text + Share button via descendant selectors and self-
-    // gates with dataset.hsSurfaced='1'. Multiple callouts (e.g. resub +
-    // watch-streak) can fire as siblings inside the queue parent — we must
-    // observe each on first touch and the parent of any we see so subsequent
-    // siblings are caught.
-    document.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
-      if (c.querySelector('*')) surface(c)
-    })
-    let _narrowedTo = null
-    const _narrowIfPossible = (calloutEl) => {
-      const parent = calloutEl?.parentElement
-      if (!parent || _narrowedTo === parent) return
-      _narrowedTo = parent
-      try {
-        _hsCalloutCloseObs.disconnect()
-      } catch (_) {}
-      // Observe the queue PARENT (not the callout itself) — sibling callouts
-      // added later land as direct children and fire childList mutations here.
-      _hsCalloutCloseObs.observe(parent, { childList: true, subtree: true })
-    }
-    _hsCalloutCloseObs = new MutationObserver((muts) => {
-      // While un-narrowed this observes document.body — our own overlay appends
-      // (every chat row) land here too. Callouts are twitch DOM and can never
-      // appear inside the overlay, so batches entirely within it are noise.
-      const _ov = document.getElementById('hs-mc-overlay')
-      if (_ov) {
-        let outside = false
-        for (const m of muts) {
-          if (!_ov.contains(m.target)) {
-            outside = true
-            break
-          }
-        }
-        if (!outside) return
-      }
-      // Callouts touched by this batch: a container inserted empty gets its
-      // children as later mutations whose target IS the container (or a
-      // descendant) — closest() catches those without the document-wide
-      // querySelectorAll this used to run on every twitch react tick.
-      // New containers arriving are covered by the addedNodes walk below,
-      // pre-existing ones by the initial scan; surface() self-gates via
-      // dataset.hsSurfaced so overlap is idempotent.
-      for (const m of muts) {
-        const c = m.target instanceof Element ? m.target.closest(CALLOUT_QUEUE_SEL) : null
-        if (c && c.querySelector('*')) surface(c)
-      }
-      for (const m of muts) {
-        for (const node of m.addedNodes) {
-          if (node.nodeType !== 1) continue
-          if (node.matches?.(CALLOUT_QUEUE_SEL)) {
-            if (node.querySelector('*')) surface(node)
-            _narrowIfPossible(node)
-          } else if (node.querySelector) {
-            node.querySelectorAll(CALLOUT_QUEUE_SEL).forEach((c) => {
-              if (c.querySelector('*')) surface(c)
-              _narrowIfPossible(c)
-            })
-          }
-        }
-      }
-    })
-    const initialCallouts = document.querySelectorAll(CALLOUT_QUEUE_SEL)
-    if (initialCallouts.length > 0) {
-      _narrowIfPossible(initialCallouts[0])
-    } else {
-      // No callout exists yet to narrow onto — #root (Twitch's app root) is
-      // the nearest stable ancestor that's already mounted at this point,
-      // and narrower than body (never fires on <head> mutations).
-      _hsCalloutCloseObs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true })
-    }
-    cleanup.trackObserver(_hsCalloutCloseObs)
-  }
-
   function ensureUIElements() {
     // Re-assert the stylesheet — twitch SPA navigations can sweep injected
     // <style> tags from <head>, leaving a remounted overlay fully unstyled
@@ -75665,1297 +76975,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     log('rotate:', prev, '→', tabPosition)
 
     setSetting('tabPosition', tabPosition) // applier applies + rerender
-  }
-
-  // ============================================
-  // CHAT POSITION SETTING (C button)
-  // Cycles which side of the player the chat panel docks to.
-  // right (default) → bottom → left → top → right
-  // Vertical-monitor parity: top/bottom horizontal strips matter when the
-  // viewport is taller than wide.
-  //
-  // Single source of truth: 3 body classes are the ONLY layout signal.
-  //   hs-platform-{twitch,kick,yt}  (set once at init)
-  //   hs-mode-{normal,theatre}      (set by theatre observer)
-  //   hs-chat-{right,left,top,bottom} (set by C button)
-  // CSS in styles.js fully derives layout from these three dimensions.
-  // ============================================
-  let chatPosition = 'right' // 'right', 'bottom', 'left', 'top'
-  let theatreMode = false
-  let _theatreObserver = null
-  let _panelWObs = null // ResizeObserver on #hs-mc-container → --hs-panel-w
-  let _twitchSideNavObs = null
-  let _twitchSideNavWinHooked = false
-  let _twitchSideNavW = TWITCH_SIDE_NAV_WIDTH
-  // _twitchTopNavObs moved to twitch-host.js (platform module)
-  let _twitchTopNavH = TWITCH_TOP_NAV_HEIGHT
-  // _kickTopNavObs, _kickTopNavH moved to kick-host.js (platform module)
-
-  // Twitch's left side-nav is 50px when collapsed, ~240px when expanded.
-  // It auto-expands on wide viewports (>~1200px), and the user can also
-  // toggle it. chat-left layout subtracts this width from chatWidth to land
-  // the player flush with the HS panel — so the live value must be tracked,
-  // not assumed. Pushes --hs-twitch-sidenav-w for the CSS rules to consume,
-  // and re-runs applyPlatformPositionOverrides so JS-side arithmetic
-  // (persistent-player inset, channel-root padding) updates too.
-  // updateTwitchSideNavWidth moved to twitch-host.js (platform module)
-
-  // Twitch's top nav (.top-nav) is 50px tall and lives in a sibling DOM tree
-  // that paints above HS's chat container — even though HS has z-index 9999,
-  // the chat container is trapped inside .channel-root__right-column's z=1
-  // stacking context. Fight: don't compete on z-index, just offset chat down
-  // by the nav height when chat docks left/top so the rotate buttons aren't
-  // hidden under Following/Browse. Theatre mode hides .top-nav (height = 0),
-  // so the offset auto-collapses and chat reclaims the full viewport.
-  // updateTwitchTopNavHeight moved to twitch-host.js (platform module)
-
-  // setupTwitchTopNavObserver moved to twitch-host.js (platform module)
-
-  // Kick's top nav is position:fixed, ~60px tall (matches the CSS fallback).
-  // Mirrors the twitch pattern: measure once, track via ResizeObserver, push
-  // --hs-kick-topnav-h so CSS rules that offset the panel don't need to
-  // hard-code the height. Selector matches the <nav> used elsewhere in the
-  // codebase for kick nav height measurement.
-  // updateKickTopNavHeight moved to kick-host.js (platform module)
-
-  // setupKickTopNavObserver moved to kick-host.js (platform module)
-
-  // Persistent-overlay mode toggle. Sets `hs-twitch-no-channel` on body when
-  // we're on a twitch URL with no .channel-root (directory, settings, videos,
-  // search, …). CSS rules keyed off this class flip the panel to position:
-  // fixed and squeeze twitch's main content via a body width/height
-  // constraint. Re-checked on every SPA nav.
-  function updateTwitchNoChannelClass() {
-    if (hostPlatform !== 'twitch') return
-    // Chokepoint that runs on every soft nav (reparent + 700ms + 4s timers)
-    // and theatre flip — re-assert the stylesheet here, since twitch SPA
-    // transitions can sweep injected <style> tags. Idempotent (id check).
-    try {
-      injectStyles()
-    } catch (_) {}
-    const onChannel = !!document.querySelector('.channel-root, [class*="channel-root"]')
-    const popout = document.body.classList.contains('hs-popout')
-    let noChannel = !onChannel && !popout
-    if (!noChannel && !popout) {
-      // Twitch layout bug: on miniplayer-restore from twitch.tv/, the channel
-      // page mounts but the right-column flex slot stays 0-width — chat-shell
-      // overflows off-screen to the right (x ≥ viewport.right). Detect and
-      // fall back to body-mounted fixed-overlay mode so chat stays visible.
-      const chatShell = document.querySelector(`.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
-      if (chatShell) {
-        const r = chatShell.getBoundingClientRect()
-        // A zero-width chat shell is NOT proof of the layout bug above — it is
-        // also the normal state when the right column is collapsed, and when
-        // WE hid the native chat ourselves (hs-native-hidden). Treating those
-        // as "broken" was self-inflicted: hiding native chat zeroed the shell,
-        // this branch then forced hs-twitch-no-channel, which squeezes the
-        // layout AND early-returns the player guard (player-guard.js), so
-        // twitch demoted the video into .persistent-player — the stream turned
-        // into a white rectangle at the bottom of the page. That is the
-        // "ext breaks the stream / white screen" report.
-        //
-        // Only the genuine off-screen overflow still counts on its own; a bare
-        // width===0 counts only when nothing we or the user did explains it.
-        const selfHidden = chatShell.classList.contains('hs-native-hidden')
-        const collapsed = !!document.querySelector('.right-column--collapsed, [class*="right-column--collapsed"]')
-        const overflowsOffScreen = r.right > window.innerWidth + 1
-        const unexplainedZeroWidth = r.width === 0 && !selfHidden && !collapsed
-        if (overflowsOffScreen || unexplainedZeroWidth) {
-          noChannel = true
-          const c = document.getElementById('hs-mc-container')
-          if (c && c.parentElement !== document.body) document.body.appendChild(c)
-        }
-      }
-    }
-    const prev = document.body.classList.contains('hs-twitch-no-channel')
-    document.body.classList.toggle('hs-twitch-no-channel', noChannel)
-    // A no-channel page (directory/settings/search/…) with ZERO configured
-    // chat tabs (no saved channels, no ephemeral auto-tabs from other open
-    // browser tabs) has nothing to show — an empty 340px panel floating over
-    // pure browsing, which is exactly the audit-1.7.75 finding. A user WITH
-    // tabs keeps the real feature (watch your chats while browsing away from
-    // them); only the genuinely-empty case hides.
-    document.body.classList.toggle('hs-twitch-no-channel-empty', noChannel && config.channels.length === 0)
-    // State flip: re-run width so the right-column slot zeros (entering
-    // no-channel) or reclaims its size (returning to a channel page).
-    if (prev !== noChannel) {
-      try {
-        applyChatWidth()
-      } catch (_) {}
-    }
-  }
-
-  // updateKickNoChannelClass moved to kick-host.js (platform module)
-
-  // ── Scroll-wheel volume (BTTV-style) ────────────────────────────────────
-  // Wheel over the platform's <video> steps volume ±0.05/tick (clamped
-  // [0,1]); scrolling up while muted unmutes first. One delegated listener
-  // on document (target-checked via closest() at event time) — the player
-  // node gets torn down/rebuilt across SPA nav on all 3 platforms, so a
-  // single persistent listener beats re-observing a moving target. Gated
-  // live on scrollWheelVolumeEnabled (audit-toggle rule: read at event time,
-  // not just at listener-setup time) — off behaves exactly like the
-  // listener isn't there (native page scroll).
-  // yt is `#movie_player` ONLY — deliberately NOT `.html5-video-player`, which
-  // also matches `#shorts-player` and the home-feed hover-preview player. On
-  // both of those the wheel is the PAGE's own control (advance the reel, scroll
-  // the feed), so preventDefault there wedges youtube: the short can't be
-  // scrolled past, and muting/unmuting the <video> directly desyncs shorts'
-  // own per-reel audio state, leaving the previous short audible under the next.
-  const HS_PLAYER_SELECTOR = {
-    twitch: '.video-player',
-    kick: '.channel-root__player, #injected-channel-player',
-    yt: '#movie_player',
-  }
-  // Shorts still gets volume — behind shift, which the reel itself doesn't use.
-  const HS_MODIFIER_PLAYER_SELECTOR = { yt: '#shorts-player' }
-  let _hsVolOsdEl = null
-  let _hsVolOsdHideTimer = null
-  function _hsShowVolumeOsd(playerEl, video) {
-    if (!_hsVolOsdEl) {
-      _hsVolOsdEl = document.createElement('div')
-      _hsVolOsdEl.id = 'hs-vol-osd'
-      document.body.appendChild(cleanup.trackNode(_hsVolOsdEl))
-    }
-    _hsVolOsdEl.textContent = `vol ${Math.round(video.volume * 100)}%`
-    const r = playerEl.getBoundingClientRect()
-    _hsVolOsdEl.style.left = `${Math.round(r.left + r.width / 2)}px`
-    _hsVolOsdEl.style.top = `${Math.round(r.top + 16)}px`
-    _hsVolOsdEl.classList.add('visible')
-    cleanup.clearTimeout(_hsVolOsdHideTimer)
-    _hsVolOsdHideTimer = cleanup.setTimeout(() => {
-      if (_hsVolOsdEl) _hsVolOsdEl.classList.remove('visible')
-    }, 800)
-  }
-  function setupScrollWheelVolume() {
-    const sel = HS_PLAYER_SELECTOR[hostPlatform]
-    const modSel = HS_MODIFIER_PLAYER_SELECTOR[hostPlatform]
-    if (!sel && !modSel) return
-    document.addEventListener(
-      'wheel',
-      (e) => {
-        if (!scrollWheelVolumeEnabled) return
-        // Never hijack scroll over HeatSync's own UI — every floating HS
-        // surface (panel, picker, ctx menu, banners) uses an hs- prefixed id.
-        if (e.target.closest?.('[id^="hs-"]')) return
-        let playerEl = sel ? e.target.closest(sel) : null
-        // Shift-only players (yt shorts): plain wheel stays the page's.
-        if (!playerEl && modSel && e.shiftKey) playerEl = e.target.closest(modSel)
-        if (!playerEl) return
-        // Scoped lookup only — the old document-wide fallback grabbed an
-        // arbitrary <video> on multi-player pages. Fall back only when the
-        // page has exactly one, where "arbitrary" can't be wrong.
-        const all = document.querySelectorAll('video')
-        const video = playerEl.querySelector('video') || (all.length === 1 ? all[0] : null)
-        if (!video) return
-        e.preventDefault()
-        const next = resolveVolumeWheelStep({ volume: video.volume, muted: video.muted }, e.deltaY)
-        video.muted = next.muted
-        video.volume = next.volume
-        _hsShowVolumeOsd(playerEl, video)
-      },
-      { passive: false, signal: mcSignal },
-    )
-  }
-
-  function setupTwitchSideNavObserver() {
-    if (hostPlatform !== 'twitch') return
-    document.documentElement.style.setProperty('--hs-twitch-sidenav-w', `${_twitchSideNavW}px`)
-    if (_twitchSideNavObs) {
-      try {
-        _twitchSideNavObs.disconnect()
-      } catch (_) {}
-      _twitchSideNavObs = null
-    }
-    const nav = document.querySelector('.side-nav')
-    if (nav && typeof ResizeObserver !== 'undefined') {
-      _twitchSideNavObs = new ResizeObserver(() => updateTwitchSideNavWidth())
-      _twitchSideNavObs.observe(nav)
-      cleanup.trackObserver(_twitchSideNavObs)
-    }
-    if (!_twitchSideNavWinHooked) {
-      _twitchSideNavWinHooked = true
-      window.addEventListener('resize', () => updateTwitchSideNavWidth(), { passive: true, signal: mcSignal })
-    }
-    updateTwitchSideNavWidth()
-  }
-
-  async function loadChatPosition() {
-    try {
-      const stored = await cachedUiSettings()
-      if (stored.ui_settings?.chatPosition !== undefined) {
-        chatPosition = stored.ui_settings.chatPosition
-      }
-      // Load previous-visible for hide↔show toggle restore.
-      const prevStored = stored.ui_settings?.chatPositionPrevious
-      if (['right', 'bottom', 'left', 'top'].includes(prevStored)) chatPositionPrevious = prevStored
-      if (['right', 'bottom', 'left', 'top'].includes(chatPosition)) {
-        chatPositionPrevious = chatPosition
-      }
-      // Legacy heal: 'hidden' used to be persisted into the SYNCED setting, so
-      // one \ press hid chat in every tab forever. Hidden is tab-local now
-      // (sessionStorage) — migrate a stored 'hidden' into this tab's local
-      // flag and restore the synced value to the last visible position.
-      if (chatPosition === 'hidden') {
-        chatHiddenLocal = true
-        try {
-          sessionStorage.setItem('hs-chat-hidden-local', '1')
-        } catch (_) {}
-        // silent: heal the stored value only — the applier would treat this
-        // as an explicit local position pick and clear the tab-local flag.
-        setSetting('chatPosition', chatPositionPrevious, { silent: true })
-        chatPosition = 'hidden' // runtime stays hidden HERE; other tabs unhide
-      } else {
-        // Per-tab hide survives reload/SPA nav via sessionStorage (scoped to
-        // this browser tab by definition — exactly the ask).
-        try {
-          if (sessionStorage.getItem('hs-chat-hidden-local')) {
-            chatHiddenLocal = true
-            chatPosition = 'hidden'
-          }
-        } catch (_) {}
-      }
-      // Load saved width + height BEFORE first applyChatPosition. Without this,
-      // applyChatPosition runs with default chatHeight (35% innerHeight) and
-      // positions the orange handle there. loadChatHeight then updates the
-      // variable but not the handle's screen position, so first click captures
-      // the saved value and the bar instantly snaps to it — looks like a
-      // mouse teleport from the user's POV.
-      await Promise.all([loadChatWidth(), loadChatHeight()])
-      // Stamp the platform class once — never changes per-page
-      const platformClass = `hs-platform-${hostPlatform === 'yt' ? 'yt' : isKick ? 'kick' : 'twitch'}`
-      document.body.classList.add(platformClass)
-      detectTheatreMode()
-      setupTheatreObserver()
-      setupTwitchSideNavObserver()
-      if (hostPlatform === 'twitch') setupTwitchTopNavObserver()
-      if (isKick) setupKickTopNavObserver()
-      updateTwitchNoChannelClass()
-      if (isKick) updateKickNoChannelClass()
-      applyChatPosition()
-    } catch (e) {
-      log('Error loading chat position:', e)
-    }
-  }
-
-  // Detect platform-native theatre/cinema/expanded-player mode.
-  // Twitch:  .right-column--theatre OR .video-player--theatre
-  // Kick:    main[data-theatre="true"]
-  // YouTube: ytd-watch-flexy[theater]
-  // Publish the container's MEASURED width (chat column + side tab strip)
-  // for CSS that must reserve the full panel footprint (theatre player inset).
-  function publishPanelWidth() {
-    const c = document.getElementById('hs-mc-container')
-    if (!c) return
-    if (c.offsetWidth > 0) {
-      document.documentElement.style.setProperty('--hs-panel-w', `${c.offsetWidth}px`)
-    }
-    // Self-install a ResizeObserver on the container the first time we see it.
-    // Call-site timing is unreliable on cold load (the panel is still 0-width
-    // when applyChatPosition / the tab-bar observer fire, so the guard above
-    // skips and --hs-panel-w stays unset until a drag-resize). Observing the
-    // container directly catches its 0 → full-width layout and every later
-    // resize, so the chat-left player inset is correct from first paint.
-    if (!_panelWObs && typeof ResizeObserver !== 'undefined') {
-      _panelWObs = new ResizeObserver(() => {
-        const el = document.getElementById('hs-mc-container')
-        if (el && el.offsetWidth > 0) {
-          document.documentElement.style.setProperty('--hs-panel-w', `${el.offsetWidth}px`)
-        }
-      })
-      _panelWObs.observe(c)
-      cleanup.trackObserver(_panelWObs)
-    }
-  }
-
-  function detectTheatreMode() {
-    let next = false
-    if (hostPlatform === 'yt') {
-      next = !!document.querySelector('ytd-watch-flexy[theater], ytd-watch-flexy[fullscreen]')
-    } else if (isKick) {
-      // Kick MOVED the theatre flag off <main>: it now lives on a wrapper
-      // div.group/main that CONTAINS main (a direct child of body), and <main>
-      // only keeps a static data-theatre-mode-container marker. Both old checks
-      // were pinned to the main tag, so theatre silently stopped being detected
-      // — hs-mode-theatre never applied, and every theatre layout rule (which is
-      // what keeps the panel off the player) went dead. Don't pin it to a tag,
-      // just find the flag wherever Kick puts it next.
-      next = !!document.querySelector('[data-theatre="true"]')
-    } else {
-      next = !!document.querySelector('.right-column--theatre, .video-player--theatre')
-    }
-    if (next !== theatreMode) {
-      theatreMode = next
-      applyChatPosition()
-      // Theatre flips collapse/restore the right column — re-evaluate the
-      // no-channel body-mount AFTER the 500ms column animation settles, same
-      // contract as the soft-nav path. Without this, exiting theatre strands
-      // the panel in fixed body-mount until the next SPA nav.
-      cleanup.setTimeout(
-        () => {
-          try {
-            updateTwitchNoChannelClass()
-          } catch (_) {}
-          try {
-            positionChatResizeHandle()
-          } catch (_) {}
-          try {
-            publishPanelWidth()
-          } catch (_) {}
-          // Theatre transitions can transiently overflow the root scroller
-          // horizontally; if a scroll sticks, the whole page renders shifted
-          // left with a dead zone before the panel. Reset it.
-          try {
-            const sa = document.querySelector('.root-scrollable')
-            if (sa && sa.scrollLeft > 0) sa.scrollLeft = 0
-          } catch (_) {}
-        },
-        700,
-        'theatre-flip-nochannel-recheck',
-      )
-    }
-    return next
-  }
-
-  function setupTheatreObserver() {
-    if (_theatreObserver) {
-      try {
-        _theatreObserver.disconnect()
-      } catch (_) {}
-      _theatreObserver = null
-    }
-    const targets = []
-    if (hostPlatform === 'yt') {
-      const flexy = document.querySelector('ytd-watch-flexy:not([hidden])')
-      if (flexy) targets.push(flexy)
-    } else if (isKick) {
-      // Must watch the BODY, not main: the theatre flag sits on an ANCESTOR of
-      // main, and subtree:true only ever sees descendants — observing main could
-      // never fire on the toggle. The class pre-filter below keeps this cheap.
-      targets.push(document.body)
-    } else {
-      // Twitch: theatre class lands on .right-column AND inside the player.
-      // Watch the body — most-specific reliable observation point covers SPA navs.
-      targets.push(document.body)
-    }
-    if (targets.length === 0) return
-    // Body-subtree observation fires on every React class flip (chat-line
-    // animations, hover toggles, ad layer churn) — ~100+ callbacks/sec.
-    // Cheap pre-filter: skip mutations whose target class doesn't contain
-    // a theatre token. Saves the querySelector inside detectTheatreMode().
-    _theatreObserver = new MutationObserver((muts) => {
-      for (const m of muts) {
-        if (m.attributeName !== 'class') {
-          detectTheatreMode()
-          return
-        }
-        const c = m.target?.className
-        const s = typeof c === 'string' ? c : c?.baseVal || ''
-        if (s.indexOf('theat') !== -1 || s.indexOf('fullscreen') !== -1) {
-          detectTheatreMode()
-          return
-        }
-      }
-    })
-    for (const t of targets) {
-      _theatreObserver.observe(t, {
-        attributes: true,
-        attributeFilter: ['class', 'data-theatre', 'theater', 'fullscreen'],
-        subtree: true,
-      })
-    }
-    cleanup.trackObserver(_theatreObserver)
-    // Deadman: the observer's attributeFilter + class-substring pre-filter are
-    // guesses about how the platform flags theatre — kick has already moved
-    // the flag once (v1.7.31) and a miss fails silent. A slow poll bounds the
-    // damage of any future filter miss to 5s instead of forever.
-    cleanup.setIntervalIfVisible(() => detectTheatreMode(), 5000)
-  }
-
-  function applyChatPosition() {
-    // Native chat shown: don't re-position/override layout (races native chat).
-    if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
-    // Sanitize — 5 valid positions: 4 visible + 'hidden'.
-    const VALID_POSITIONS = ['right', 'bottom', 'left', 'top', 'hidden']
-    if (!VALID_POSITIONS.includes(chatPosition)) {
-      log('[c-button] sanitizing invalid chatPosition:', chatPosition, '→ right')
-      chatPosition = 'right'
-    }
-    // Popout chat = full window. Force 'right' + visible.
-    if (document.body.classList.contains('hs-popout') && chatPosition !== 'right') {
-      chatPosition = 'right'
-    }
-    // Hidden state: collapse overlay, drop all handles, show edge-pill.
-    // Pill + `\` shortcut are the ONLY restore paths.
-    if (chatPosition === 'hidden') {
-      document.body.classList.remove('hs-chat-top', 'hs-chat-right', 'hs-chat-bottom', 'hs-chat-left')
-      document.body.classList.add('hs-chat-hidden')
-      document.body.classList.toggle('hs-platform-yt', hostPlatform === 'yt')
-      document.body.classList.toggle('hs-platform-twitch', hostPlatform !== 'yt' && !isKick)
-      document.body.classList.toggle('hs-platform-kick', !!isKick)
-      document.body.classList.toggle('hs-mode-theatre', theatreMode)
-      document.body.classList.toggle('hs-mode-normal', !theatreMode)
-      hidePlatformResizeHandles(true)
-      const uh = document.getElementById('hs-c-resize-handle')
-      if (uh) uh.style.setProperty('display', 'none', 'important')
-      ensureChatRestorePill(true)
-      try {
-        applyPlatformPositionOverrides()
-      } catch (_) {}
-      log('Chat position: hidden, theatre:', theatreMode)
-      return
-    }
-    document.body.classList.remove('hs-chat-hidden')
-    ensureChatRestorePill(false)
-    // YouTube: layout overrides that touch #primary/#secondary are gated
-    // separately (live-only via :not(.hs-offline)). The hs-chat-{position}
-    // class is now applied on EVERY YT page so the persistent multichat
-    // panel renders via the position:fixed CSS rule across home, search,
-    // VOD, channel, and live — matching the Twitch persistent overlay.
-    const isYtNonWatch = hostPlatform === 'yt' && !document.querySelector('ytd-watch-flexy:not([hidden])')
-    document.body.classList.remove('hs-chat-top', 'hs-chat-right', 'hs-chat-bottom', 'hs-chat-left')
-    document.body.classList.toggle('hs-platform-yt', hostPlatform === 'yt')
-    document.body.classList.toggle('hs-platform-twitch', hostPlatform !== 'yt' && !isKick)
-    document.body.classList.toggle('hs-platform-kick', !!isKick)
-    document.body.classList.add(`hs-chat-${chatPosition}`)
-    if (isYtNonWatch && location.pathname === '/watch') {
-      // We're on a watch URL but flexy hasn't mounted yet (SPA cold-load,
-      // /watch → /watch transition where React unmounted then remounts).
-      // Re-arm the flexy-mount observer so applyChatPosition fires again
-      // once it's there.
-      try {
-        watchYtFlexyMount()
-      } catch (_) {}
-    }
-    document.body.classList.toggle('hs-mode-theatre', theatreMode)
-    document.body.classList.toggle('hs-mode-normal', !theatreMode)
-    // Push the chatWidth css var down so the per-position CSS can build offsets
-    // off it (rather than chasing platform-specific selectors twice).
-    document.documentElement.style.setProperty('--hs-chat-w', `${chatWidth}px`)
-    document.documentElement.style.setProperty('--hs-chat-h', `${chatHeight}px`)
-    // Refresh Twitch side-nav width — it can flip 50↔240 across a chat
-    // toggle (user F11s, viewport crosses Twitch's expand breakpoint, etc).
-    if (hostPlatform === 'twitch') updateTwitchSideNavWidth()
-    // Apply inline-style overrides on platform-native elements that set
-    // width/height with inline !important (CSS alone can't beat that).
-    applyPlatformPositionOverrides()
-    // Bulletproof orange resize handle — covers all 4 chat positions.
-    positionChatResizeHandle()
-    // Hide platform handles when chat is non-right OR when on YT (where
-    // unified handle now owns chat-right too since YT uses position:fixed).
-    hidePlatformResizeHandles(chatPosition !== 'right' || hostPlatform === 'yt')
-    log('Chat position:', chatPosition, 'theatre:', theatreMode)
-    // Reflow the multichat layout so input/overlay/picker re-anchor.
-    try {
-      _updateMcLayout?.()
-    } catch (_) {}
-    // YT computes player size in JS asynchronously and caches it; nudge it
-    // to re-read CSS vars (margin, non-player-{width,height}) by dispatching
-    // resize events at multiple timing points. The player init is async and
-    // can complete after our applyChatPosition runs on initial load — without
-    // multiple nudges, YT's own resize observer doesn't fire until ~10s.
-    if (hostPlatform === 'yt') {
-      const fire = () => {
-        try {
-          window.dispatchEvent(new Event('resize'))
-        } catch (_) {}
-      }
-      fire()
-      cleanup.setTimeout(fire, 100)
-      cleanup.setTimeout(fire, 500)
-      cleanup.setTimeout(fire, 1500)
-    }
-  }
-
-  // Inline-style overrides keyed off chatPosition. These run AFTER class
-  // toggling. They exist because Twitch/Kick/YT set inline width/height/
-  // padding with !important that beats CSS rules — only inline can fight
-  // inline. When chatPosition flips back to 'right' we restore the native
-  // values (Twitch's chat-width JS will re-apply them on next tick).
-  const _overrideObserver = null
-  // _hsSetYtBelowTop, _hsEnsureYtBelowObserver moved to youtube-host.js (platform module)
-  function applyPlatformPositionOverrides() {
-    // Native chat shown: stop touching the player/chat geometry — our overrides
-    // race Twitch's native layout and push the native input off-screen. The panel
-    // is collapsed to its strip (handled in the nativeVisible reader); leave the
-    // rest to Twitch.
-    if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
-    // The guard already caught this page's player collapsing under our
-    // geometry and handed layout back to the platform. Re-asserting here would
-    // walk straight back into the race it just bailed out of.
-    if (typeof playerGuardDisengaged === 'function' && playerGuardDisengaged()) return
-    const isRight = chatPosition === 'right'
-    const w = `${chatWidth}px`
-    const h = `${chatHeight}px`
-
-    // The chat container itself: inline styles beat any platform-bundled CSS
-    // (Twitch's chat-shell rules, Kick's existing hs-tabs-* rules etc.).
-    // We only touch geometry when overriding; the platform's mount code
-    // (getOrCreateHsContainer for YT) may set its own inline height/etc that
-    // we must not blow away when chatPosition === 'right'.
-    const container = document.getElementById('hs-mc-container')
-    const GEOM_PROPS = [
-      'top',
-      'bottom',
-      'left',
-      'right',
-      'width',
-      'min-width',
-      'max-width',
-      'height',
-      'position',
-      'z-index',
-    ]
-    if (container) {
-      if (isRight) {
-        if (container.dataset._hsChatOverride === '1') {
-          delete container.dataset._hsChatOverride
-          GEOM_PROPS.forEach((p) => {
-            container.style.removeProperty(p)
-          })
-          container.style.removeProperty('background')
-          container.style.removeProperty('overflow')
-          // YT chat-right is now position:fixed via CSS rule — don't set
-          // any inline geometry, let the stylesheet own it (works on
-          // initial load without waiting for a C-cycle).
-          if (isKick) {
-            try {
-              applyKickChatWidth()
-            } catch (_) {}
-          }
-        }
-      } else {
-        container.dataset._hsChatOverride = '1'
-        GEOM_PROPS.forEach((p) => {
-          container.style.removeProperty(p)
-        })
-        container.style.setProperty('position', 'fixed', 'important')
-        // On twitch no-channel pages (directory/settings/…) the panel mounts in
-        // a gutter with no host content beneath it, so it can sit BELOW twitch's
-        // popup layers (balloon 2000 / overlay 3000 / modal 5000) — otherwise a
-        // full-width top-nav's dropdowns (user menu, browse, search) open over
-        // the panel and get buried under z 9999. Mirrors the CSS z for the
-        // right dock (which is stylesheet-owned). Channel pages keep 9999 — there
-        // the panel overlaps host chat and must outrank twitch's React layout.
-        const twitchNoChannel = hostPlatform === 'twitch' && document.body.classList.contains('hs-twitch-no-channel')
-        container.style.setProperty('z-index', twitchNoChannel ? '1500' : '9999', 'important')
-        container.style.setProperty('background', '#000', 'important')
-        // Twitch-only: offset by .top-nav height for left/top so the rotate
-        // buttons aren't trapped under Following/Browse (HS lives inside
-        // .channel-root__right-column's z=1 stacking context, can't outrank).
-        const twitchTopOffset = hostPlatform === 'twitch' && !theatreMode ? _twitchTopNavH : 0
-        const topPx = `${twitchTopOffset}px`
-        if (chatPosition === 'left') {
-          container.style.setProperty('top', topPx, 'important')
-          container.style.setProperty('bottom', '0', 'important')
-          container.style.setProperty('left', '0', 'important')
-          container.style.setProperty('right', 'auto', 'important')
-          container.style.setProperty('width', w, 'important')
-          container.style.setProperty('height', `calc(100vh - ${topPx})`, 'important')
-        } else if (chatPosition === 'top') {
-          container.style.setProperty('top', topPx, 'important')
-          container.style.setProperty('bottom', 'auto', 'important')
-          container.style.setProperty('left', '0', 'important')
-          container.style.setProperty('right', '0', 'important')
-          container.style.setProperty('width', '100vw', 'important')
-          container.style.setProperty('height', h, 'important')
-        } else if (chatPosition === 'bottom') {
-          container.style.setProperty('top', 'auto', 'important')
-          container.style.setProperty('bottom', '0', 'important')
-          container.style.setProperty('left', '0', 'important')
-          container.style.setProperty('right', '0', 'important')
-          container.style.setProperty('width', '100vw', 'important')
-          container.style.setProperty('height', h, 'important')
-        }
-      }
-    }
-
-    if (hostPlatform === 'yt') {
-      // Panel hidden on this YT page (non-live + no opt-in → hs-offline): don't
-      // reshape the page for a chat that isn't showing. Revert any inline player
-      // sizing + the reflow var so it's normal YT (full player, related videos).
-      if (document.body.classList.contains('hs-offline')) {
-        ;[
-          '#player-container-outer',
-          '#player-container-inner',
-          '#player-container',
-          '#player',
-          'ytd-player#ytd-player',
-        ].forEach((s) => {
-          const e = document.querySelector(s)
-          if (e && e.dataset._hsCYtSized === '1') {
-            delete e.dataset._hsCYtSized
-            ;['width', 'height', 'max-width', 'max-height', 'min-height'].forEach((p) => {
-              e.style.removeProperty(p)
-            })
-          }
-        })
-        document.documentElement.style.removeProperty('--hs-yt-below-top')
-        return
-      }
-      const sec = document.querySelector('#secondary')
-      if (sec) {
-        // 'hidden' (collapsed) restores #secondary too: with the chat gone there's
-        // nothing occupying the sidebar, so YT's recommended-videos list must come
-        // back. Squashing it to 0 here was hiding recommendations on collapse.
-        if (isRight || chatPosition === 'hidden') {
-          sec.style.removeProperty('width')
-          sec.style.removeProperty('min-width')
-          sec.style.removeProperty('max-width')
-          sec.style.removeProperty('flex')
-          // applyYouTubeChatWidth will reset width on next reflow
-        } else {
-          sec.style.setProperty('width', '0', 'important')
-          sec.style.setProperty('min-width', '0', 'important')
-          sec.style.setProperty('max-width', '0', 'important')
-          sec.style.setProperty('flex', '0 0 0', 'important')
-        }
-      }
-      // Keep --hs-yt-below-top synced to the real video bottom via a
-      // ResizeObserver (robust against fresh-load timing). Retries each run
-      // until #movie_player exists; re-observes the new player on SPA nav.
-      _hsEnsureYtBelowObserver()
-      // Force aspect-preserved player size inline on the player WRAPPER chain.
-      // We deliberately omit #movie_player itself — YT's controls (volume,
-      // play, settings) compute hit-targets from #movie_player's intrinsic
-      // dimensions, and forcing a size on it desyncs the click hitboxes from
-      // the visible buttons. Sizing the wrappers only constrains the player
-      // visually (movie_player fills its parent via CSS) without disturbing
-      // YT's controls geometry.
-      const ytSelectors = [
-        '#player-container-outer',
-        '#player-container-inner',
-        '#player-container',
-        '#player',
-        'ytd-player#ytd-player',
-      ]
-      const ytSizedEls = ytSelectors.map((s) => document.querySelector(s)).filter(Boolean)
-      const PLAYER_GEOM = ['width', 'height', 'max-width', 'max-height', 'min-height']
-      if (chatPosition === 'top' || chatPosition === 'bottom' || chatPosition === 'left' || chatPosition === 'right') {
-        // Compute aspect-preserved player size for the freed area.
-        // top/bottom: chat eats height, player fills the rest (full width).
-        // left/right: chat eats width, player fills the rest (full height).
-        // Use clientWidth (NOT innerWidth) — innerWidth counts the ~15px
-        // vertical scrollbar that the fixed panel anchors outside of, so
-        // sizing off innerWidth makes the player overshoot its column and
-        // tuck its right edge (where the Skip Ad / fullscreen buttons live)
-        // under the panel.
-        const usableW = document.documentElement.clientWidth
-        let availH, availW
-        if (chatPosition === 'left' || chatPosition === 'right') {
-          // Opt-in suggestions strip eats a fixed column beside the player on
-          // left/right dock — subtract it or the player renders UNDER the strip
-          // (overshoots its column, clips off-edge). Publish the width so the
-          // stylesheet (#below inset + strip geometry) and this arithmetic stay
-          // in lockstep. Off → drop the var so CSS sees 0 contribution.
-          const suggOn = document.body.classList.contains('hs-yt-suggestions')
-          const suggW = suggOn ? YT_SUGG_STRIP_W : 0
-          if (suggOn) document.documentElement.style.setProperty('--hs-yt-sugg-w', `${suggW}px`)
-          else document.documentElement.style.removeProperty('--hs-yt-sugg-w')
-          availW = Math.max(200, usableW - chatWidth - suggW)
-          availH = innerHeight
-        } else {
-          availH = Math.max(200, innerHeight - chatHeight)
-          availW = usableW - 32
-        }
-        const aspectW = (availH * 16) / 9
-        const aspectH = (availW * 9) / 16
-        // Pick the dimension that hits its limit first (16:9 fits inside both)
-        let finalW, finalH
-        if (aspectW <= availW) {
-          finalW = aspectW
-          finalH = availH
-        } else {
-          finalW = availW
-          finalH = aspectH
-        }
-        const wPx = `${Math.round(finalW)}px`
-        const hPx = `${Math.round(finalH)}px`
-        for (const el of ytSizedEls) {
-          el.dataset._hsCYtSized = '1'
-          el.style.setProperty('width', wPx, 'important')
-          el.style.setProperty('height', hPx, 'important')
-          el.style.setProperty('max-width', wPx, 'important')
-          el.style.setProperty('max-height', hPx, 'important')
-          el.style.setProperty('min-height', '0', 'important')
-        }
-        requestAnimationFrame(() => {
-          for (const el of ytSizedEls) {
-            if (!el.dataset._hsCYtSized) continue
-            el.style.setProperty('width', wPx, 'important')
-            el.style.setProperty('height', hPx, 'important')
-            el.style.setProperty('max-width', wPx, 'important')
-            el.style.setProperty('max-height', hPx, 'important')
-          }
-          // Left/right: publish the REAL video bottom so the CSS can pin the
-          // metadata column (#below) directly under it. On live/single-column
-          // YT renders the player in #full-bleed-container and reserves more
-          // flow height than the shrunk 16:9 video uses — that reserved-but-
-          // empty band is the black gap. Reading #movie_player's rendered rect
-          // (we never resize it ourselves) works for both single- and two-
-          // column layouts. Skip in theater/fullscreen (no metadata column).
-          if (chatPosition === 'left' || chatPosition === 'right') {
-            const flexy = document.querySelector('ytd-watch-flexy')
-            const special = flexy && (flexy.hasAttribute('theater') || flexy.hasAttribute('fullscreen'))
-            const mp = document.querySelector('#movie_player') || document.querySelector('.html5-video-player')
-            const b = mp?.getBoundingClientRect()
-            if (!special && b && b.height > 0) {
-              document.documentElement.style.setProperty('--hs-yt-below-top', `${Math.round(b.bottom)}px`)
-            } else {
-              document.documentElement.style.removeProperty('--hs-yt-below-top')
-            }
-          } else {
-            // top/bottom (or any non-left/right that still reached here): the
-            // pin is left/right-only, so clear any stale value from a prior dock.
-            document.documentElement.style.removeProperty('--hs-yt-below-top')
-          }
-        })
-      } else {
-        for (const el of ytSizedEls) {
-          if (el.dataset._hsCYtSized === '1') {
-            delete el.dataset._hsCYtSized
-            PLAYER_GEOM.forEach((p) => {
-              el.style.removeProperty(p)
-            })
-          }
-        }
-        document.documentElement.style.removeProperty('--hs-yt-below-top')
-      }
-    } else if (isKick) {
-      // Keep --hs-kick-sidebar-w in sync — Kick drops the sidebar from the
-      // DOM at narrow widths, and main's padding-left depends on this value.
-      syncKickSidebarVar()
-      // Kick's player chain uses Tailwind `aspect-video w-full` which locks
-      // height = width × 9/16 — it ignores the freed area when chat eats
-      // top/bottom. Force aspect-preserved width + height inline on the
-      // player wrapper + injected container. Don't touch <main> — that's
-      // the entire content column.
-      const injected = document.querySelector('#injected-channel-player')
-      const playerWrap = injected?.parentElement // div.bg-black, immediate player box
-      const kickPlayerEls = [playerWrap, injected].filter(Boolean)
-      const KICK_PLAYER_GEOM = ['width', 'height', 'max-width', 'max-height', 'min-height', 'aspect-ratio']
-      // Strip stale overrides from any element no longer in our target list.
-      // First buggy version of this branch targeted <main> by mistake, so
-      // clean up any leftover marker so legacy inline styles don't pin main's
-      // size after a fresh load.
-      const targetSet = new Set(kickPlayerEls)
-      for (const stale of document.querySelectorAll('[data-_hs-c-kick-sized]')) {
-        if (targetSet.has(stale)) continue
-        delete stale.dataset._hsCKickSized
-        KICK_PLAYER_GEOM.forEach((p) => {
-          stale.style.removeProperty(p)
-        })
-      }
-      if (chatPosition === 'top' || chatPosition === 'bottom' || chatPosition === 'left' || chatPosition === 'right') {
-        const navEl = document.querySelector('nav, [class*="navbar"]')
-        const navH = navEl ? Math.round(navEl.getBoundingClientRect().height) : 60
-        // Kick reserves space for its left sidebar (~56px) inside main's flex
-        // parent — when the sidebar is present, the freed video area is
-        // innerWidth - chatWidth - sidebar. Use the live measurement (not a
-        // CSS var) because Kick drops the sidebar from the DOM at narrow
-        // viewports, where subtracting 56 would shrink the player needlessly.
-        const sidebarW = getKickSidebarWidth()
-        let availH, availW
-        if (chatPosition === 'right') {
-          availW = Math.max(200, innerWidth - chatWidth - sidebarW)
-          availH = Math.max(200, innerHeight - navH)
-        } else if (chatPosition === 'left') {
-          // chat panel is fixed at left:0 width:chatW — it covers the sidebar.
-          // Subtracting sidebar again leaves a useless gap on the right edge
-          // of the video.
-          availW = Math.max(200, innerWidth - chatWidth)
-          availH = Math.max(200, innerHeight - navH)
-        } else {
-          availH = Math.max(200, innerHeight - chatHeight - navH)
-          availW = Math.max(200, innerWidth - sidebarW)
-        }
-        const aspectW = (availH * 16) / 9
-        const aspectH = (availW * 9) / 16
-        let finalW, finalH
-        if (aspectW <= availW) {
-          finalW = aspectW
-          finalH = availH
-        } else {
-          finalW = availW
-          finalH = aspectH
-        }
-        const wPx = `${Math.round(finalW)}px`
-        const hPx = `${Math.round(finalH)}px`
-        for (const el of kickPlayerEls) {
-          el.dataset._hsCKickSized = '1'
-          el.style.setProperty('width', wPx, 'important')
-          el.style.setProperty('height', hPx, 'important')
-          el.style.setProperty('max-width', wPx, 'important')
-          el.style.setProperty('max-height', hPx, 'important')
-          el.style.setProperty('aspect-ratio', 'auto', 'important')
-        }
-        // Kick re-asserts inline `height: unset` on the wrapper post-render.
-        // Re-apply on the next frame so our values stick.
-        requestAnimationFrame(() => {
-          for (const el of kickPlayerEls) {
-            if (!el.dataset._hsCKickSized) continue
-            el.style.setProperty('width', wPx, 'important')
-            el.style.setProperty('height', hPx, 'important')
-            el.style.setProperty('max-width', wPx, 'important')
-            el.style.setProperty('max-height', hPx, 'important')
-          }
-        })
-      } else {
-        // chat-right: clear our overrides — Kick's native layout owns sizing.
-        for (const el of kickPlayerEls) {
-          if (el?.dataset._hsCKickSized === '1') {
-            delete el.dataset._hsCKickSized
-            KICK_PLAYER_GEOM.forEach((p) => {
-              el.style.removeProperty(p)
-            })
-          }
-        }
-      }
-    } else {
-      // Twitch
-      const rc = document.querySelector('.right-column')
-      if (rc) {
-        if (isRight) {
-          // Restore: clear our overrides; Twitch's own width logic will
-          // re-assert on next layout pass.
-          rc.style.removeProperty('width')
-          rc.style.removeProperty('min-width')
-          rc.style.removeProperty('max-width')
-          rc.style.removeProperty('flex-shrink')
-        } else {
-          rc.style.setProperty('width', '0', 'important')
-          rc.style.setProperty('min-width', '0', 'important')
-          rc.style.setProperty('max-width', '0', 'important')
-        }
-      }
-      // .persistent-player has inline height:100%/max-height:100vh that
-      // ignores any CSS bottom: inset. Override the player's geometry
-      // directly so the chat strip doesn't sit on top of the video.
-      const pp = document.querySelector('.persistent-player')
-      if (pp) {
-        // On no-channel pages (directory, browse, following) .persistent-player
-        // is Twitch's floating mini-player. Clear any stale overrides we applied
-        // on the prior channel page and let Twitch own the mini-player geometry.
-        if (document.body.classList.contains('hs-twitch-no-channel')) {
-          pp.style.removeProperty('top')
-          pp.style.removeProperty('left')
-          pp.style.removeProperty('bottom')
-          pp.style.removeProperty('right')
-          pp.style.removeProperty('width')
-          pp.style.removeProperty('height')
-          pp.style.removeProperty('max-height')
-        } else if (isRight) {
-          // Twitch's persistent-player has position:absolute with no CSS
-          // rule setting `top`. The previous code removed inline top expecting
-          // Twitch's React effect to re-apply it — but on certain layouts
-          // (narrow window / chat resize / cold load) Twitch never sets it,
-          // so the element falls to its natural-flow position at the bottom
-          // of root-scrollable__wrapper (y ≈ 2000+px), pushing the video
-          // off-screen below the about section. Pin it explicitly to top:0
-          // (within root-scrollable__wrapper, that's the player slot).
-          pp.style.setProperty('top', '0', 'important')
-          pp.style.setProperty('left', '0', 'important')
-          pp.style.removeProperty('bottom')
-          pp.style.removeProperty('right')
-          pp.style.removeProperty('max-height')
-          pp.style.removeProperty('height')
-          pp.style.removeProperty('width')
-        } else if (chatPosition === 'left') {
-          // chat-left: geometry is owned entirely by the .hs-chat-left CSS
-          // rules (width:auto, left:calc(--hs-chat-w - sidenav), right:0,
-          // top:0). They use --hs-chat-w with a 340px fallback so they're
-          // correct even before the var is published, and a stylesheet
-          // !important survives React's later inline writes.
-          // Writing left inline here raced: on a cold load chatWidth was
-          // momentarily 0, so left computed to 0 and the player slid under
-          // the HS panel (inline !important beats the correct CSS rule).
-          // Just clear any stale inline geometry — including a top:0/left:0
-          // pair left behind by a prior right-mode pass — so CSS wins.
-          pp.style.removeProperty('left')
-          pp.style.removeProperty('inset-inline-start')
-          pp.style.removeProperty('top')
-          pp.style.removeProperty('width')
-          pp.style.removeProperty('height')
-          pp.style.removeProperty('max-height')
-        } else {
-          // chat-top / chat-bottom: full overhaul. Width/height are
-          // handled by the .hs-chat-* CSS rules (width:auto !important /
-          // height:auto !important). We can't do it here via inline
-          // setProperty('important') because Twitch's React effect later
-          // does `el.style.height = 'X'` which wipes the inline priority
-          // — only a stylesheet rule survives that.
-          pp.style.removeProperty('width')
-          pp.style.removeProperty('height')
-          pp.style.removeProperty('max-height')
-          pp.style.setProperty('top', chatPosition === 'top' ? h : '0', 'important')
-          pp.style.setProperty('bottom', chatPosition === 'bottom' ? h : '0', 'important')
-          pp.style.setProperty('left', '0', 'important')
-          pp.style.setProperty('right', '0', 'important')
-          pp.style.setProperty('inset-inline-start', '0', 'important')
-          pp.style.setProperty('inset-inline-end', '0', 'important')
-        }
-      }
-    }
-
-    // If the platform re-asserts its inline width/height (e.g. Twitch's
-    // own chat-width JS on resize), we re-apply on the same hooks the
-    // platform uses: window.resize + chat-width persistence. No observer
-    // here — observers on style attrs loop on our own writes.
-
-    // Watch what our geometry actually did to the player. Idempotent, and it
-    // only ever acts when the player has ended up unusable — see
-    // player-guard.js for why this watches the outcome instead of adding
-    // another !important to the race.
-    try {
-      installPlayerGuard()
-    } catch (_) {}
-  }
-
-  function rotateChatPosition() {
-    // C cycles 4 visible. Hidden via toggleChatHidden(). From hidden → previous-visible.
-    if (document.body.classList.contains('hs-popout')) return
-    const positions = ['right', 'bottom', 'left', 'top']
-    const prev = chatPosition
-    if (chatPosition === 'hidden') {
-      chatPosition = positions.includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
-    } else {
-      let idx = positions.indexOf(chatPosition)
-      if (idx === -1) idx = 0
-      chatPosition = positions[(idx + 1) % positions.length]
-    }
-    log('rotate-chat:', prev, '→', chatPosition)
-    setSetting('chatPosition', chatPosition) // applier applies + tracks previous
-  }
-
-  // ============================================
-  // CHAT HIDE/SHOW TOGGLE — \ key + edge-pill.
-  // TAB-LOCAL on purpose (viewer ask): hiding chat on one stream must not
-  // hide it on every other open tab. The hidden state lives in this page's
-  // runtime + sessionStorage (per browser tab, survives reload/SPA nav) and
-  // is NEVER written to the synced chatPosition setting. chatPositionPrevious
-  // still syncs so restore lands on the last-known visible position.
-  // ============================================
-  let chatPositionPrevious = 'right'
-  let chatHiddenLocal = false
-
-  function _saveChatHiddenLocal() {
-    try {
-      if (chatHiddenLocal) sessionStorage.setItem('hs-chat-hidden-local', '1')
-      else sessionStorage.removeItem('hs-chat-hidden-local')
-    } catch (_) {}
-  }
-
-  function toggleChatHidden() {
-    if (document.body.classList.contains('hs-popout')) return
-    const visible = ['right', 'bottom', 'left', 'top']
-    if (chatPosition === 'hidden') {
-      chatHiddenLocal = false
-      chatPosition = visible.includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
-      // The synced setting already holds a visible position — hide never
-      // writes it (and boot heals legacy stored-'hidden'). Local apply only.
-      applyChatPosition()
-    } else {
-      if (visible.includes(chatPosition)) {
-        chatPositionPrevious = chatPosition
-        saveUiSetting('chatPositionPrevious', chatPositionPrevious)
-      }
-      chatHiddenLocal = true
-      chatPosition = 'hidden' // runtime only — the synced setting keeps the visible position
-      applyChatPosition()
-    }
-    _saveChatHiddenLocal()
-    log('[chat-toggle] →', chatPosition, 'local-only:', chatHiddenLocal, 'prev:', chatPositionPrevious)
-  }
-
-  // Edge-pill: orange strip pinned to the edge where chat last lived. Click to
-  // restore (not a resize bar) — kept visible/thick on purpose, #fff, no text.
-  function ensureChatRestorePill(show) {
-    let pill = document.getElementById('hs-chat-restore-pill')
-    if (!show) {
-      if (pill) pill.remove()
-      return
-    }
-    if (!pill) {
-      pill = document.createElement('div')
-      pill.id = 'hs-chat-restore-pill'
-      pill.title = 'show chat (\\)'
-      pill.addEventListener('click', (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        toggleChatHidden()
-      })
-      pill.addEventListener('mousedown', (e) => e.stopPropagation())
-      document.body.appendChild(pill)
-    }
-    const edge = ['right', 'bottom', 'left', 'top'].includes(chatPositionPrevious) ? chatPositionPrevious : 'right'
-    pill.dataset.edge = edge
-  }
-
-  // Resolve the channel context to popout for the active tab.
-  // Returns { name, twitch, kick, youtube } or null if no channel context.
-  function resolvePopoutContext() {
-    const id = currentTab
-    if (!id) return null
-    // Per-channel tab → use its config row directly
-    if (_isChatTab(id) && id !== 'live') {
-      const ch = (config.channels || []).find((c) => c.id === id)
-      if (!ch) return null
-      return { name: ch.id, twitch: ch.twitch || '', kick: ch.kick || '', youtube: ch.youtube || '' }
-    }
-    // Live tab → use the live channel for the host platform
-    if (id === 'live') {
-      const ch = (getLiveChannel() || '').toLowerCase()
-      if (!ch) return null
-      const ctx = { name: ch, twitch: '', kick: '', youtube: '' }
-      if (hostPlatform === 'twitch') ctx.twitch = ch
-      else if (hostPlatform === 'kick') ctx.kick = ch
-      else if (hostPlatform === 'yt') ctx.youtube = ch
-      return ctx.twitch || ctx.kick || ctx.youtube ? ctx : null
-    }
-    return null
-  }
-
-  // Pop out the active tab to the host platform's native chat popout window
-  // (twitch.tv / kick.com / youtube.com). When a tab is linked to multiple
-  // platforms, prefer the platform we're currently browsing on so the user
-  // gets the chat for the page they're already watching.
-  function openPopoutForCurrentTab() {
-    const ctx = resolvePopoutContext()
-    if (!ctx) return
-
-    // Pick which platform's native chat to open. Prefer host platform if the
-    // tab has a channel for it; else fall back to whichever platform exists.
-    const hostPick =
-      hostPlatform === 'twitch' && ctx.twitch
-        ? 'twitch'
-        : hostPlatform === 'kick' && ctx.kick
-          ? 'kick'
-          : hostPlatform === 'yt' && ctx.youtube
-            ? 'youtube'
-            : null
-    const platform = hostPick || (ctx.twitch ? 'twitch' : ctx.kick ? 'kick' : ctx.youtube ? 'youtube' : null)
-    if (!platform) return
-
-    let url,
-      features = 'width=400,height=600,menubar=no,toolbar=no,location=no,status=no'
-    if (platform === 'twitch') {
-      url = `https://www.twitch.tv/popout/${ctx.twitch}/chat?popout=`
-    } else if (platform === 'kick') {
-      url = `https://kick.com/popout/${ctx.kick}/chat`
-    } else if (platform === 'youtube') {
-      // A YouTube pop-out is CHAT-ONLY (youtube.com/live_chat) — never the whole
-      // watch page. Resolve a concrete live videoId from every source we trust,
-      // tab-scoped first: the poller-cached link for this tab, then a watch/live
-      // url stored in ctx.youtube, then (only when we're on a youtube page) the
-      // current page url or the auto-live stream. A channel/handle url has NO
-      // videoId → nothing to pop out; show that instead of opening a full page
-      // with the video + title + description (which is not a chat pop-out).
-      const link = youtubeLinks.get(currentTab)
-      const videoId =
-        link?.videoId ||
-        extractYoutubeVideoId(ctx.youtube) ||
-        (hostPlatform === 'yt' ? extractYoutubeVideoId(location.href) || _autoYtVideoId || '' : '')
-      if (!videoId) {
-        showToast(t('mc_main_no_yt_stream'), 'info')
-        return
-      }
-      url = `https://www.youtube.com/live_chat?v=${videoId}&is_popout=1`
-    }
-    try {
-      window.open(url, `hs-popout-${platform}-${ctx.name}`, features)
-    } catch (e) {
-      log('popout open failed:', e)
-    }
-  }
-
-  // Show the popout button when the active tab has a channel context.
-  // Hidden on static tabs (feed/mentions/whispers/pinned/settings/add).
-  function updatePopoutBtnVisibility() {
-    const btn = tabBarElement?.querySelector('.hs-mc-popout-btn')
-    if (!btn) return
-    btn.style.display = resolvePopoutContext() ? '' : 'none'
-  }
-
-  // Platform subscribe deep-links for a channel tab. The money path must
-  // never dead-end: twitch/kick land on the real checkout, youtube lands on
-  // the channel with the subscribe confirm (join/membership sits right next
-  // to it when the channel has one — a /join deep-link 404-pages channels
-  // without memberships, so we deliberately don't use it).
-  function channelSubLinks(ch) {
-    const links = []
-    if (!ch) return links
-    if (ch.twitch)
-      links.push({ label: 'sub — twitch', url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}` })
-    if (ch.kick) links.push({ label: 'sub — kick', url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
-    if (ch.youtube) {
-      try {
-        const u = new URL(ch.youtube)
-        const m = u.pathname.match(/^\/(@[\w.-]+|channel\/[\w-]+|c\/[\w.-]+|user\/[\w.-]+)/)
-        if (u.protocol === 'https:' && /(^|\.)(youtube\.com|youtube-nocookie\.com)$/.test(u.hostname) && m) {
-          links.push({ label: 'sub — youtube', url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
-        }
-      } catch (_) {}
-    }
-    return links
-  }
-
-  // One platform → straight to its sub page. Simulcast tab → tiny picker,
-  // same square black chrome as the tab context menu.
-  function openSubForCurrentTab(anchorEl) {
-    const links = channelSubLinks(getChannelById(currentTab))
-    if (!links.length) return
-    if (links.length === 1) {
-      window.open(links[0].url, '_blank', 'noopener')
-      return
-    }
-    document.getElementById('hs-mc-ctx-menu')?.remove()
-    const menu = document.createElement('div')
-    menu.id = 'hs-mc-ctx-menu'
-    menu.style.cssText =
-      'position:fixed;z-index:99999;background:#000;border:1px solid #808080;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
-    for (const l of links) {
-      const item = document.createElement('div')
-      item.textContent = l.label
-      item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#ff8700;'
-      item.addEventListener('mouseenter', () => (item.style.background = 'rgba(255,255,255,0.06)'), {
-        signal: mcSignal,
-      })
-      item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
-      item.addEventListener('click', () => {
-        menu.remove()
-        window.open(l.url, '_blank', 'noopener')
-      })
-      menu.appendChild(item)
-    }
-    document.body.appendChild(menu)
-    const r = anchorEl?.getBoundingClientRect?.()
-    const mw = menu.offsetWidth,
-      mh = menu.offsetHeight
-    menu.style.left = `${Math.min(r ? r.left : 0, window.innerWidth - mw - 4)}px`
-    menu.style.top = `${Math.min(r ? r.bottom + 2 : 0, window.innerHeight - mh - 4)}px`
-    const dismiss = (ev) => {
-      if (!menu.contains(ev.target)) {
-        menu.remove()
-        document.removeEventListener('click', dismiss)
-      }
-    }
-    cleanup.setTimeout(() => document.addEventListener('click', dismiss, { signal: mcSignal }), 0)
-  }
-
-  // $ shows only when the active tab has at least one platform sub target.
-  function updateSubBtnVisibility() {
-    const btn = tabBarElement?.querySelector('.hs-mc-sub-btn')
-    if (!btn) return
-    btn.style.display = channelSubLinks(getChannelById(currentTab)).length ? '' : 'none'
-  }
-
-  // Drop a panel callout (status/error banner) directly below the search/filter
-  // bar — never above it, where it would shove the filter input down on reload.
-  // Falls back to the container top only if the overlay isn't mounted yet.
-  function _insertPanelCallout(el) {
-    const searchBar = document.getElementById('hs-mc-search-bar')
-    if (searchBar?.parentNode) {
-      searchBar.parentNode.insertBefore(el, searchBar.nextSibling)
-      return
-    }
-    const container = document.getElementById('hs-mc-container')
-    if (container) container.insertBefore(el, container.firstChild)
-  }
-
-  // Render a small banner inside the multichat panel when an upstream API is unreachable.
-  // Auto-removes when state flips back to 'up'. Only renders when our panel is mounted.
-  function showApiStatusBanner(source, state) {
-    const container = document.getElementById('hs-mc-container')
-    if (!container) return
-    const id = `hs-mc-api-banner-${(source || 'unknown').replace(/[^a-z0-9_-]/gi, '')}`
-    const existing = document.getElementById(id)
-    if (state === 'up') {
-      existing?.remove()
-      return
-    }
-    if (existing) return
-    const banner = document.createElement('div')
-    banner.id = id
-    banner.className = 'hs-mc-api-banner'
-    banner.style.cssText =
-      'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
-    const label = source === 'heatsync' ? 'heatsync.org unreachable — reconnecting' : `${source} unreachable`
-    const text = document.createElement('span')
-    text.textContent = label
-    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
-    banner.append(text, dismiss)
-    _insertPanelCallout(banner)
-  }
-
-  // Auth banner: shown when bg signals loggedIn=false AND the user has at least
-  // one channel with a youtube URL — YT chat needs server-side scraping, which
-  // requires auth, so without it the user sees zero YT messages and no clue why.
-  function showAuthLoginBanner(loggedIn) {
-    const container = document.getElementById('hs-mc-container')
-    if (!container) return
-    const id = 'hs-mc-auth-banner'
-    const existing = document.getElementById(id)
-    if (loggedIn) {
-      existing?.remove()
-      return
-    }
-    const hasYt = Array.isArray(config?.channels) && config.channels.some((c) => c.youtube)
-    if (!hasYt) {
-      existing?.remove()
-      return
-    }
-    if (existing) return
-    const banner = document.createElement('div')
-    banner.id = id
-    banner.className = 'hs-mc-auth-banner'
-    banner.style.cssText =
-      'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
-    const text = document.createElement('span')
-    text.textContent = 'youtube chat needs heatsync login —'
-    const link = document.createElement('a')
-    link.href = 'https://heatsync.org/settings/account'
-    link.target = '_blank'
-    link.rel = 'noopener'
-    link.textContent = 'sign in'
-    link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;'
-    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
-    dismiss.style.marginLeft = '4px'
-    banner.append(text, link, dismiss)
-    _insertPanelCallout(banner)
-  }
-
-  // Persistent one-click login nudge — shown when someone tries to collect/use an
-  // emote while signed out of heatsync. Their emotes render for nobody and vanish
-  // on refresh until they log in; a transient toast never conveys that, so people
-  // conclude the ext is broken. Square, terminal, dead-simple: one button to
-  // login. Auto-dismisses on successful login (auth_changed) and on any
-  // successful add (emote_added). Idempotent.
-  function showEmoteLoginNudge() {
-    const container = document.getElementById('hs-mc-container')
-    if (!container) return
-    const id = 'hs-mc-emote-login-nudge'
-    if (document.getElementById(id)) return
-    const banner = document.createElement('div')
-    banner.id = id
-    banner.className = 'hs-mc-auth-banner'
-    banner.style.cssText =
-      'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
-    const text = document.createElement('span')
-    text.textContent = 'log in to heatsync so your emotes work for everyone'
-    const link = document.createElement('a')
-    link.href = 'https://heatsync.org/login'
-    link.target = '_blank'
-    link.rel = 'noopener'
-    link.textContent = 'log in'
-    // nowrap so the link never splits across lines when the panel is narrow
-    link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;cursor:pointer;white-space:nowrap;'
-    const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
-    dismiss.style.marginLeft = '4px'
-    banner.append(text, link, dismiss)
-    _insertPanelCallout(banner)
-  }
-  function dismissEmoteLoginNudge() {
-    document.getElementById('hs-mc-emote-login-nudge')?.remove()
   }
 
   function listenForSettingsChanges() {

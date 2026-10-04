@@ -231,6 +231,42 @@ describe('background handler', () => {
     expect(h).toContain("JSON.stringify({ platform: 'twitch', channel, settings })")
     expect(h).toContain("op === 'get' && data && typeof data === 'object' ? data : null")
   })
+  test('runs: slow_mode_wait_time reaches the POST body (was a ReferenceError on `body`)', async () => {
+    const code = `if (${h.replace(/if \($/, '')}`
+    const calls = []
+    const run = new Function(
+      'message',
+      'sendResponse',
+      'getAuthCookie',
+      'API_URL',
+      'fetchWithTimeout',
+      `${code}\n return false`,
+    )
+    const out = await new Promise((resolve) => {
+      run(
+        {
+          type: 'chat_settings',
+          op: 'set',
+          channel: 'SomeChan',
+          settings: { slow_mode: true, slow_mode_wait_time: 30, junk: 1 },
+        },
+        resolve,
+        async () => 'tok',
+        'https://x',
+        async (url, init) => {
+          calls.push([url, init])
+          return { ok: true, status: 200, json: async () => ({ success: true }) }
+        },
+      )
+    })
+    expect(out).toEqual({ ok: true, settings: null })
+    expect(calls[0][0]).toBe('https://x/api/mod/chat-settings')
+    expect(JSON.parse(calls[0][1].body)).toEqual({
+      platform: 'twitch',
+      channel: 'somechan',
+      settings: { slow_mode: true, slow_mode_wait_time: 30 },
+    })
+  })
   test('401 → relink_required / auth_required, 403 → not_moderator', () => {
     expect(h).toContain("'relink_required' : 'auth_required'")
     expect(h).toContain("error: 'not_moderator'")

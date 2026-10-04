@@ -56,3 +56,19 @@ export async function launchWithExtension(profile: string, extraArgs: string[] =
     ],
   })
 }
+
+/**
+ * A CDP call never times out on its own: a renderer that stops answering hangs
+ * the whole run silently (e2e-live sat at "waiting 3min…" until killed, and the
+ * kick/youtube checks after it never ran). Race every call that talks to a live
+ * page so a stuck renderer is a FAIL line, not a hang.
+ */
+export function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  let t: ReturnType<typeof setTimeout> | undefined
+  return Promise.race([
+    p.finally(() => clearTimeout(t)),
+    new Promise<T>((_, rej) => {
+      t = setTimeout(() => rej(new Error(`${label} timed out after ${ms / 1000}s — renderer unresponsive`)), ms)
+    }),
+  ])
+}

@@ -44,7 +44,7 @@
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { assertBuilt, launchWithExtension } from './lib/chromium'
+import { assertBuilt, launchWithExtension, withTimeout } from './lib/chromium'
 
 // Measured live against mitchjones (~9k viewers, heavy chatter churn) post-fix:
 // ~20-22 req/30s (was ~135/30s pre-fix at the audit's ~4.5 req/s figure — a
@@ -52,13 +52,34 @@ import { assertBuilt, launchWithExtension } from './lib/chromium'
 // batching window getting reverted to its old 100ms-250ms values (which
 // would spike this well past 100/30s on the same channel), not a precise SLA.
 const HEATSYNC_REQUEST_BUDGET_PER_30S = 35
-const YT_LIVE_VIDEO_ID = 'jfKfPfyJRdk' // Lofi Girl — near-always-live, used by tests/yt-ghost-tab.test.js
+// Lofi Girl's CURRENT live video, resolved per run: a pinned id goes stale the
+// day a 24/7 stream is restarted (jfKfPfyJRdk ended and this check silently
+// SKIPPED as a "headless limitation" for weeks). The handle's /live page
+// canonicalizes to whatever is live right now.
+const YT_LIVE_HANDLE = 'LofiGirl'
+async function resolveYtLiveVideoId() {
+  const res = await fetch(`https://www.youtube.com/@${YT_LIVE_HANDLE}/live`, {
+    headers: { 'user-agent': 'Mozilla/5.0', 'accept-language': 'en' },
+  })
+  const id = (await res.text()).match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/)?.[1]
+  if (!id) throw new Error(`@${YT_LIVE_HANDLE} has no live video right now — can't check youtube live`)
+  return id
+}
 const YT_VOD_VIDEO_ID = 'dQw4w9WgXcQ' // permanent non-live upload
 
 const profile = mkdtempSync(join(tmpdir(), 'hs-ext-e2e-live-'))
 const checks: string[] = []
 const failures: string[] = []
 let ctx: any = null
+
+// Whole-run ceiling. Every live-page call is bounded, but a hang somewhere this
+// script didn't wrap must still end in a loud failure, never a silent stall.
+const RUN_CEILING_MS = 15 * 60_000
+setTimeout(() => {
+  console.error(`✗ e2e-live exceeded ${RUN_CEILING_MS / 60_000}min — aborting (passed so far: ${checks.length}, failed: ${failures.length})`)
+  rmSync(profile, { recursive: true, force: true })
+  process.exit(1)
+}, RUN_CEILING_MS).unref()
 
 function ok(msg: string) {
   checks.push(msg)
@@ -140,7 +161,8 @@ function attachConsoleWatch(p: any, label: string, errors: string[]) {
 try {
   assertBuilt()
   const { twitch, kick } = await resolveLiveChannels()
-  console.log(`resolved live channels: twitch=${twitch} kick=${kick} youtube=${YT_LIVE_VIDEO_ID} (lofi girl)`)
+  const ytLive = await resolveYtLiveVideoId()
+  console.log(`resolved live channels: twitch=${twitch} kick=${kick} youtube=${ytLive} (@${YT_LIVE_HANDLE})`)
 
   ctx = await launchWithExtension(profile, ['--window-size=1600,900'])
   const consoleErrors: string[] = []
@@ -172,7 +194,7 @@ try {
     const staysAbsent = await overlayStaysAbsent(p, 8000)
     if (staysAbsent) ok(`${label}: panel absent (${url})`)
     else fail(`${label}: panel became visible on a non-live/non-channel page — the audit-1.7.75 bug (${url})`)
-    await p.close()
+    await withTimeout(p.close(), 20_000, 'page close').catch((e: Error) => fail(e.message))
   }
 
   // ── 1. panel PRESENT on live pages ──────────────────────────────────────
@@ -180,7 +202,7 @@ try {
   for (const [label, url] of [
     ['twitch live', `https://www.twitch.tv/${twitch}`],
     ['kick live', `https://kick.com/${kick}`],
-    ['youtube live', `https://www.youtube.com/watch?v=${YT_LIVE_VIDEO_ID}`],
+    ['youtube live', `https://www.youtube.com/watch?v=${ytLive}`],
   ] as const) {
     const p = await ctx.newPage()
     attachConsoleWatch(p, label, consoleErrors)
@@ -266,9 +288,12 @@ try {
       // ── 7. memory stable over 3 minutes (reuses this same page/tab) ────
       try {
         const cdp = await ctx.newCDPSession(p)
-        await cdp.send('Performance.enable')
+        await withTimeout(cdp.send('Performance.enable'), 20_000, 'Performance.enable')
+        // GC first, so the delta is memory the page KEEPS, not garbage the
+        // collector hasn't reached yet on a page allocating this fast.
         const metricsAt = async () => {
-          const { metrics } = await cdp.send('Performance.getMetrics')
+          await withTimeout(cdp.send('HeapProfiler.collectGarbage'), 60_000, 'collectGarbage')
+          const { metrics } = await withTimeout(cdp.send('Performance.getMetrics'), 20_000, 'Performance.getMetrics')
           return metrics.find((m: any) => m.name === 'JSHeapUsedSize')?.value ?? 0
         }
         const before = await metricsAt()
@@ -288,7 +313,7 @@ try {
       }
     }
 
-    await p.close()
+    await withTimeout(p.close(), 20_000, 'page close').catch((e: Error) => fail(e.message))
   }
 
   console.log(`\n${checks.length} passed, ${failures.length} failed`)

@@ -2660,6 +2660,24 @@ try {
 
 
 
+// --- palette.js ---
+// Palette — the ONE source of the brand hexes in JS (and, with 00-palette.css's
+// tokens, anywhere). Lives in lib/ so content scripts, the schema and the overlay
+// all read it instead of re-typing a hex. The one JS-side platform→accent map. CSS-side doctrine lives in
+// styles/00-palette.css; anything a JS-built inline style needs should use
+// `var(--hs-*)` rather than a hex from here. Values frozen; scope rule:
+// platform hexes render ONLY next to a platform glyph/label ([T]/[K]/[Y]
+// tags, dots, source chips), never as free-standing semantic color.
+// Both `yt` and `youtube` keys exist — callers disagree on the spelling.
+const HS_PLAT_COLORS = {
+  twitch: '#a970ff',
+  kick: '#00ff00',
+  yt: '#ff0000',
+  youtube: '#ff0000',
+  heatsync: '#ff8700',
+}
+
+
 // --- font-grid.js ---
 /**
  * font-grid.js — which sizes a font actually has.
@@ -2736,6 +2754,7 @@ function nativeSize(family) {
 // Relative import, same pattern as paint-spec.js: the build's stripExports
 // removes this line and relies on font-grid.js being concatenated before this
 // file (see readLib in build.js), while `bun test` imports it for real.
+
 
 // settings registry — every multichat setting as one declarative entry.
 // pure data + pure validators only: no DOM, no chrome.*, no i18n calls.
@@ -3702,7 +3721,7 @@ const SETTINGS = [
       {
         value: 'raid',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         labelKey: 'mc_settings_raids',
         tipKey: 'mc_settings_raids_desc',
       },
@@ -4383,7 +4402,7 @@ const SETTINGS = [
       {
         value: 'irc-twitch',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         applies: 'reload',
         labelKey: 'mc_settings_sub_irc_twitch',
         tipKey: 'mc_settings_sub_irc_twitch_desc',
@@ -4479,7 +4498,7 @@ const SETTINGS = [
       {
         value: 'native-takeover',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         applies: 'live',
         labelKey: 'mc_settings_sub_native_takeover',
         tipKey: 'mc_settings_sub_native_takeover_desc',
@@ -14112,7 +14131,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '00ebd41de633' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a32ce67404b8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15069,22 +15088,6 @@ function mcCellAddress(id) {
 /** true when the tab draws its cells itself, so the shared 2nd row stays out */
 function mcHasOwnRow(tabId) {
   return !!MC_TABS.find((t) => t.id === tabId)?.ownRow
-}
-
-
-// --- multichat/palette.js ---
-// Palette — the one JS-side platform→accent map. CSS-side doctrine lives in
-// styles/00-palette.css; anything a JS-built inline style needs should use
-// `var(--hs-*)` rather than a hex from here. Values frozen; scope rule:
-// platform hexes render ONLY next to a platform glyph/label ([T]/[K]/[Y]
-// tags, dots, source chips), never as free-standing semantic color.
-// Both `yt` and `youtube` keys exist — callers disagree on the spelling.
-const HS_PLAT_COLORS = {
-  twitch: '#a970ff',
-  kick: '#00ff00',
-  yt: '#ff0000',
-  youtube: '#ff0000',
-  heatsync: '#ff8700',
 }
 
 
@@ -27635,7 +27638,13 @@ function buildStackPreview(box, stackEmotes) {
 // Provider is inferred from the token SHAPE: "ffz*" is FrankerFaceZ, anything
 // ending in "!" is BetterTTV. Brand colours match the source chips already used
 // elsewhere in this tooltip.
-const HS_TT_PROVIDER_COLOR = { '7tv': '#00ffff', bttv: '#ff0000', ffz: '#ffffff', twitch: '#a970ff', kick: '#00ff00' }
+const HS_TT_PROVIDER_COLOR = {
+  '7tv': '#00ffff',
+  bttv: '#ff0000',
+  ffz: '#ffffff',
+  twitch: HS_PLAT_COLORS.twitch,
+  kick: '#00ff00',
+}
 
 function hsTtModProvider(tok) {
   if (/^ffz/i.test(tok)) return 'ffz'

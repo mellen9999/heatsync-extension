@@ -11,7 +11,7 @@ import { join, relative } from 'node:path'
  * a partial alpha or a glow. Mirrors heatsync.org (css/core/variables.css,
  * client/config/colors.js). #ff8700 survives ONLY as the [H] heatsync platform
  * tag — --hs-plat-hs in 00-palette.css and HS_PLAT_COLORS.heatsync in
- * palette.js — so nothing else can borrow it.
+ * lib/palette.js — so nothing else can borrow it.
  *
  * Every colour literal in a shipped source file (hex 3/4/6/8, rgb/rgba/hsl/hsla,
  * and CSS named colours in stylesheets) must be one of the eight. What is NOT
@@ -25,17 +25,15 @@ const STYLES = join(ROOT, 'src', 'multichat', 'styles')
 
 const PALETTE = new Set(['000000', 'ff0000', '00ff00', 'ffff00', '8888ff', 'ff00ff', '00ffff', 'ffffff'])
 const ORANGE = 'ff8700'
-// twitch's light purple: the [T] platform colour, only in the twitch token, HS_PLAT_COLORS,
-// and the scopes that cannot see those tokens (standalone content scripts, the schema, the tooltip map)
+// twitch's light purple: the [T] platform colour. Like #ff8700 for [H], it is spelled in ONE
+// place — lib/palette.js (HS_PLAT_COLORS) and the 00-palette.css token. Everything else
+// (content scripts, the schema, the tooltip map) reads HS_PLAT_COLORS. 20-card.css is the
+// single exception: a byte-synced site copy, covered by the site's own token.
 const TWITCH = 'a970ff'
 const TWITCH_FILES = new Set([
-  'src/multichat/styles/20-card.css',
   'src/multichat/styles/00-palette.css',
-  'src/multichat/palette.js',
-  'src/multichat/tooltips.js',
-  'src/lib/settings-schema.js',
-  'chrome/content.js',
-  'chrome/heatsync-button.js',
+  'src/lib/palette.js',
+  'src/multichat/styles/20-card.css',
 ])
 
 /** Whole files that are not ours to recolour. */
@@ -351,7 +349,7 @@ describe('colour doctrine — 8 colours', () => {
     }
     const allowed = [
       ['src/multichat/styles/00-palette.css', '--hs-plat-hs'],
-      ['src/multichat/palette.js', 'heatsync:'],
+      ['src/lib/palette.js', 'heatsync:'],
     ]
     const stray = where.filter((w) => !allowed.some(([f, needle]) => w.startsWith(`${f}:`) && w.includes(needle)))
     expect(stray, 'orange is only ever the [H] tag').toEqual([])
@@ -384,7 +382,7 @@ describe('colour doctrine — 8 colours', () => {
     expect(tok('--hs-plat-kick')).toBe('#00ff00')
     expect(tok('--hs-plat-youtube')).toBe('#ff0000')
     expect(tok('--hs-plat-hs')).toBe('#ff8700')
-    const js = readFileSync(join(ROOT, 'src', 'multichat', 'palette.js'), 'utf8')
+    const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     for (const [k, v] of [
       ['twitch', '#a970ff'],
       ['kick', '#00ff00'],

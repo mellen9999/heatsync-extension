@@ -9136,7 +9136,7 @@
 
       const hint = document.createElement('div')
       hint.id = 'heatsync-tab-hint'
-      hint.style.cssText = 'color: #a970ff; font-size: 10px; margin-left: 4px;'
+      hint.style.cssText = `color: ${HS_PLAT_COLORS.twitch}; font-size: 10px; margin-left: 4px;`
 
       preview.appendChild(counter)
       preview.appendChild(img)

@@ -696,6 +696,7 @@ const LIB_ORDER = [
   'reserved-paths.js',
   'utils.js',
   'diag.js',
+  'palette.js',
   'font-grid.js',
   'settings-schema.js',
   'browser-api.js',
@@ -714,10 +715,10 @@ const LIB_CORE = new Set(['error-reporter.js', 'cleanup.js', 'utils.js', 'diag.j
 // Opt-in lib files per non-multichat content script (multichat bundles embed
 // the full lib). Derived from actual symbol use — keep in sync via the guard.
 const LIB_EXTRAS = {
-  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js'],
+  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js'],
   'youtube-content.js': ['config.js'],
   'autocomplete-hook.js': ['modifiers.js'],
-  'heatsync-button.js': ['reserved-paths.js'],
+  'heatsync-button.js': ['reserved-paths.js', 'palette.js'],
   'chat-injector.js': [],
 }
 
@@ -763,7 +764,6 @@ const MULTICHAT_MODULES = [
   'bootstrap.js',
   'slash-registry.js',
   'tab-registry.js',
-  'palette.js',
   'kick-native-tap.js',
   'send-targets.js',
   'tab-messages.js',

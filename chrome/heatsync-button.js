@@ -937,7 +937,7 @@
       }
 
       .heatsync-login-msg a {
-        color: #a970ff;
+        color: ${HS_PLAT_COLORS.twitch};
         text-decoration: none;
       }
 
@@ -1208,7 +1208,7 @@
       }
 
       .heatsync-channel-name {
-        color: #a970ff;
+        color: ${HS_PLAT_COLORS.twitch};
         font-weight: 700;
       }
 
@@ -1421,13 +1421,13 @@
         gap: 8px;
         padding: 4px 10px;
         background: #000000;
-        border-bottom: 1px solid #a970ff;
-        color: #a970ff;
+        border-bottom: 1px solid ${HS_PLAT_COLORS.twitch};
+        color: ${HS_PLAT_COLORS.twitch};
         font-size: 13px;
       }
 
       .heatsync-auth-banner a {
-        color: #a970ff;
+        color: ${HS_PLAT_COLORS.twitch};
         font-weight: 600;
         text-decoration: none;
       }

@@ -3,6 +3,7 @@
 // removes this line and relies on font-grid.js being concatenated before this
 // file (see readLib in build.js), while `bun test` imports it for real.
 import { ALL_SIZES, sizesFor } from './font-grid.js'
+import { HS_PLAT_COLORS } from './palette.js'
 
 // settings registry — every multichat setting as one declarative entry.
 // pure data + pure validators only: no DOM, no chrome.*, no i18n calls.
@@ -969,7 +970,7 @@ const SETTINGS = [
       {
         value: 'raid',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         labelKey: 'mc_settings_raids',
         tipKey: 'mc_settings_raids_desc',
       },
@@ -1650,7 +1651,7 @@ const SETTINGS = [
       {
         value: 'irc-twitch',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         applies: 'reload',
         labelKey: 'mc_settings_sub_irc_twitch',
         tipKey: 'mc_settings_sub_irc_twitch_desc',
@@ -1746,7 +1747,7 @@ const SETTINGS = [
       {
         value: 'native-takeover',
         default: true,
-        color: '#a970ff',
+        color: HS_PLAT_COLORS.twitch,
         applies: 'live',
         labelKey: 'mc_settings_sub_native_takeover',
         tipKey: 'mc_settings_sub_native_takeover_desc',

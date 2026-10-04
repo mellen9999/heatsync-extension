@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.86] — 2026-10-04
+
+### fixed
+- **twitch video size** — the stream no longer shrinks to two-thirds of its space next to the chat panel on a fresh install.
+
 ## [1.7.85] — 2026-10-04
 
 ### fixed

@@ -6748,6 +6748,7 @@ const COMMAND_RECEIPT_SCOPE = {
   hide: 'global',
   unhide: 'global',
   note: 'global',
+  user: 'none', // opens the profile card — the card is the confirmation
   delnote: 'global',
   set: 'global',
   // channel-bound — the tab it was sent from only
@@ -7763,6 +7764,18 @@ async function handleSlashCommand(text, input) {
     // _toggleMcBlock inside it show their own success/error toast, so don't add
     // a second one here.
     await hsBlockFromMenu(user, hostPlatform || 'twitch')
+    clearInput(input)
+    return true
+  }
+
+  // ── /user — open the profile card for the current host platform ─────────
+  if (cmd === 'user') {
+    const user = rest.trim().replace(/^@/, '')
+    if (!user || /\s/.test(user)) {
+      showToast('/user <name> — opens their profile card', 'error')
+      return true
+    }
+    await openProfileCard(user, hostPlatform || 'twitch', { anchorEl: input })
     clearInput(input)
     return true
   }

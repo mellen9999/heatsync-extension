@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "angeheftet"
+  },
+  "mc_pin_menu_pin": {
+    "message": "nachricht anheften"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "lösen"
+  },
+  "mc_pin_unpin_all": {
+    "message": "für alle lösen"
+  },
+  "mc_pin_dismiss": {
+    "message": "diese anheftung ausblenden"
+  },
+  "mc_pin_confirm": {
+    "message": "für alle lösen? y / enter, esc bricht ab"
+  },
+  "mc_pin_done": {
+    "message": "angeheftet"
+  },
+  "mc_pin_gone": {
+    "message": "gelöst"
+  },
+  "mc_pin_failed": {
+    "message": "anheften fehlgeschlagen"
+  },
+  "mc_pin_denied": {
+    "message": "nur mods können hier anheften"
+  },
+  "mc_pin_retry": {
+    "message": "noch nicht im archiv — gleich nochmal versuchen"
   }
 }

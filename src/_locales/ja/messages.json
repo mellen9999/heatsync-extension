@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "固定"
+  },
+  "mc_pin_menu_pin": {
+    "message": "メッセージを固定"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "固定を解除"
+  },
+  "mc_pin_unpin_all": {
+    "message": "全員の固定を解除"
+  },
+  "mc_pin_dismiss": {
+    "message": "この固定を隠す"
+  },
+  "mc_pin_confirm": {
+    "message": "全員の固定を解除しますか？ y / enter、esc でやめる"
+  },
+  "mc_pin_done": {
+    "message": "固定しました"
+  },
+  "mc_pin_gone": {
+    "message": "固定を解除しました"
+  },
+  "mc_pin_failed": {
+    "message": "固定できませんでした"
+  },
+  "mc_pin_denied": {
+    "message": "ここで固定できるのは mods だけです"
+  },
+  "mc_pin_retry": {
+    "message": "まだアーカイブにありません — 少し待ってもう一度"
   }
 }

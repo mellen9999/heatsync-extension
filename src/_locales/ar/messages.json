@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "مثبّت"
+  },
+  "mc_pin_menu_pin": {
+    "message": "تثبيت الرسالة"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "إلغاء التثبيت"
+  },
+  "mc_pin_unpin_all": {
+    "message": "إلغاء التثبيت للجميع"
+  },
+  "mc_pin_dismiss": {
+    "message": "إخفاء هذا التثبيت"
+  },
+  "mc_pin_confirm": {
+    "message": "إلغاء التثبيت للجميع؟ y / enter، esc للتراجع"
+  },
+  "mc_pin_done": {
+    "message": "تم التثبيت"
+  },
+  "mc_pin_gone": {
+    "message": "أُلغي التثبيت"
+  },
+  "mc_pin_failed": {
+    "message": "تعذّر التثبيت"
+  },
+  "mc_pin_denied": {
+    "message": "التثبيت هنا للـ mods فقط"
+  },
+  "mc_pin_retry": {
+    "message": "لم تصل إلى الأرشيف بعد — حاول بعد قليل"
   }
 }

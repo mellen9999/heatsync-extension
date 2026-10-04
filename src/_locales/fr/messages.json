@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "épinglé"
+  },
+  "mc_pin_menu_pin": {
+    "message": "épingler le message"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "désépingler"
+  },
+  "mc_pin_unpin_all": {
+    "message": "désépingler pour tous"
+  },
+  "mc_pin_dismiss": {
+    "message": "masquer cette épingle"
+  },
+  "mc_pin_confirm": {
+    "message": "désépingler pour tous ? y / enter, esc annule"
+  },
+  "mc_pin_done": {
+    "message": "épinglé"
+  },
+  "mc_pin_gone": {
+    "message": "désépinglé"
+  },
+  "mc_pin_failed": {
+    "message": "épinglage impossible"
+  },
+  "mc_pin_denied": {
+    "message": "seuls les mods peuvent épingler ici"
+  },
+  "mc_pin_retry": {
+    "message": "pas encore dans l'archive — réessaie dans un instant"
   }
 }

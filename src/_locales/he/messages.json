@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "מוצמד"
+  },
+  "mc_pin_menu_pin": {
+    "message": "הצמד הודעה"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "בטל הצמדה"
+  },
+  "mc_pin_unpin_all": {
+    "message": "בטל הצמדה לכולם"
+  },
+  "mc_pin_dismiss": {
+    "message": "הסתר הצמדה זו"
+  },
+  "mc_pin_confirm": {
+    "message": "לבטל הצמדה לכולם? y / enter, esc לביטול"
+  },
+  "mc_pin_done": {
+    "message": "הוצמד"
+  },
+  "mc_pin_gone": {
+    "message": "ההצמדה בוטלה"
+  },
+  "mc_pin_failed": {
+    "message": "ההצמדה נכשלה"
+  },
+  "mc_pin_denied": {
+    "message": "רק mods יכולים להצמיד כאן"
+  },
+  "mc_pin_retry": {
+    "message": "עוד לא בארכיון — נסו שוב עוד רגע"
   }
 }

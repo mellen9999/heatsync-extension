@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "sabit"
+  },
+  "mc_pin_menu_pin": {
+    "message": "mesajı sabitle"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "sabitlemeyi kaldır"
+  },
+  "mc_pin_unpin_all": {
+    "message": "herkes için kaldır"
+  },
+  "mc_pin_dismiss": {
+    "message": "bu sabiti gizle"
+  },
+  "mc_pin_confirm": {
+    "message": "herkes için kaldırılsın mı? y / enter, esc iptal"
+  },
+  "mc_pin_done": {
+    "message": "sabitlendi"
+  },
+  "mc_pin_gone": {
+    "message": "sabitleme kaldırıldı"
+  },
+  "mc_pin_failed": {
+    "message": "sabitlenemedi"
+  },
+  "mc_pin_denied": {
+    "message": "burada sadece mods sabitleyebilir"
+  },
+  "mc_pin_retry": {
+    "message": "henüz arşivde değil — birazdan tekrar dene"
   }
 }

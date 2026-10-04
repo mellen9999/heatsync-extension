@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "закачено"
+  },
+  "mc_pin_menu_pin": {
+    "message": "закачи съобщението"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "откачи"
+  },
+  "mc_pin_unpin_all": {
+    "message": "откачи за всички"
+  },
+  "mc_pin_dismiss": {
+    "message": "скрий това закачане"
+  },
+  "mc_pin_confirm": {
+    "message": "откачане за всички? y / enter, esc за отказ"
+  },
+  "mc_pin_done": {
+    "message": "закачено"
+  },
+  "mc_pin_gone": {
+    "message": "откачено"
+  },
+  "mc_pin_failed": {
+    "message": "не се закачи"
+  },
+  "mc_pin_denied": {
+    "message": "само mods могат да закачат тук"
+  },
+  "mc_pin_retry": {
+    "message": "още не е в архива — опитай след малко"
   }
 }

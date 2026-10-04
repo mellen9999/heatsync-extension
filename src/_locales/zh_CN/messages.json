@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "置顶"
+  },
+  "mc_pin_menu_pin": {
+    "message": "置顶消息"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "取消置顶"
+  },
+  "mc_pin_unpin_all": {
+    "message": "为所有人取消置顶"
+  },
+  "mc_pin_dismiss": {
+    "message": "隐藏此置顶"
+  },
+  "mc_pin_confirm": {
+    "message": "为所有人取消置顶？y / enter 确认，esc 取消"
+  },
+  "mc_pin_done": {
+    "message": "已置顶"
+  },
+  "mc_pin_gone": {
+    "message": "已取消置顶"
+  },
+  "mc_pin_failed": {
+    "message": "置顶失败"
+  },
+  "mc_pin_denied": {
+    "message": "这里只有 mods 可以置顶"
+  },
+  "mc_pin_retry": {
+    "message": "尚未归档 — 请稍后再试"
   }
 }

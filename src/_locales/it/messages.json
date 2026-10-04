@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "fissato"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fissa messaggio"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "rimuovi"
+  },
+  "mc_pin_unpin_all": {
+    "message": "rimuovi per tutti"
+  },
+  "mc_pin_dismiss": {
+    "message": "nascondi questo fissato"
+  },
+  "mc_pin_confirm": {
+    "message": "rimuovere per tutti? y / enter, esc annulla"
+  },
+  "mc_pin_done": {
+    "message": "fissato"
+  },
+  "mc_pin_gone": {
+    "message": "rimosso"
+  },
+  "mc_pin_failed": {
+    "message": "impossibile fissare"
+  },
+  "mc_pin_denied": {
+    "message": "qui possono fissare solo i mods"
+  },
+  "mc_pin_retry": {
+    "message": "non è ancora nell'archivio — riprova tra un attimo"
   }
 }

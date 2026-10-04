@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "kiinnitetty"
+  },
+  "mc_pin_menu_pin": {
+    "message": "kiinnitä viesti"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "irrota"
+  },
+  "mc_pin_unpin_all": {
+    "message": "irrota kaikilta"
+  },
+  "mc_pin_dismiss": {
+    "message": "piilota tämä kiinnitys"
+  },
+  "mc_pin_confirm": {
+    "message": "irrotetaanko kaikilta? y / enter, esc peruu"
+  },
+  "mc_pin_done": {
+    "message": "kiinnitetty"
+  },
+  "mc_pin_gone": {
+    "message": "irrotettu"
+  },
+  "mc_pin_failed": {
+    "message": "kiinnitys epäonnistui"
+  },
+  "mc_pin_denied": {
+    "message": "vain mods voivat kiinnittää täällä"
+  },
+  "mc_pin_retry": {
+    "message": "ei ole vielä arkistossa — yritä hetken päästä uudelleen"
   }
 }

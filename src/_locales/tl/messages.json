@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "naka-pin"
+  },
+  "mc_pin_menu_pin": {
+    "message": "i-pin ang mensahe"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "i-unpin"
+  },
+  "mc_pin_unpin_all": {
+    "message": "i-unpin para sa lahat"
+  },
+  "mc_pin_dismiss": {
+    "message": "itago ang pin na ito"
+  },
+  "mc_pin_confirm": {
+    "message": "i-unpin para sa lahat? y / enter, esc para kanselahin"
+  },
+  "mc_pin_done": {
+    "message": "na-pin"
+  },
+  "mc_pin_gone": {
+    "message": "na-unpin"
+  },
+  "mc_pin_failed": {
+    "message": "hindi na-pin"
+  },
+  "mc_pin_denied": {
+    "message": "mods lang ang puwedeng mag-pin dito"
+  },
+  "mc_pin_retry": {
+    "message": "wala pa sa archive — subukan ulit sa sandali"
   }
 }

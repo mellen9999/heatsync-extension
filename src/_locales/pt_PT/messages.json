@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "afixado"
+  },
+  "mc_pin_menu_pin": {
+    "message": "afixar mensagem"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "desafixar"
+  },
+  "mc_pin_unpin_all": {
+    "message": "desafixar para todos"
+  },
+  "mc_pin_dismiss": {
+    "message": "ocultar este afixado"
+  },
+  "mc_pin_confirm": {
+    "message": "desafixar para todos? y / enter, esc cancela"
+  },
+  "mc_pin_done": {
+    "message": "afixado"
+  },
+  "mc_pin_gone": {
+    "message": "desafixado"
+  },
+  "mc_pin_failed": {
+    "message": "não foi possível afixar"
+  },
+  "mc_pin_denied": {
+    "message": "só os mods podem afixar aqui"
+  },
+  "mc_pin_retry": {
+    "message": "ainda não está no arquivo — tenta de novo daqui a pouco"
   }
 }

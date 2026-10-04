@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "закреп"
+  },
+  "mc_pin_menu_pin": {
+    "message": "закрепить сообщение"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "открепить"
+  },
+  "mc_pin_unpin_all": {
+    "message": "открепить для всех"
+  },
+  "mc_pin_dismiss": {
+    "message": "скрыть этот закреп"
+  },
+  "mc_pin_confirm": {
+    "message": "открепить для всех? y / enter, esc отмена"
+  },
+  "mc_pin_done": {
+    "message": "закреплено"
+  },
+  "mc_pin_gone": {
+    "message": "откреплено"
+  },
+  "mc_pin_failed": {
+    "message": "не удалось закрепить"
+  },
+  "mc_pin_denied": {
+    "message": "закреплять здесь могут только mods"
+  },
+  "mc_pin_retry": {
+    "message": "ещё нет в архиве — попробуйте через минуту"
   }
 }

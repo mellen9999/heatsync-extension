@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "festet"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fest melding"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "løsne"
+  },
+  "mc_pin_unpin_all": {
+    "message": "løsne for alle"
+  },
+  "mc_pin_dismiss": {
+    "message": "skjul denne festingen"
+  },
+  "mc_pin_confirm": {
+    "message": "løsne for alle? y / enter, esc avbryter"
+  },
+  "mc_pin_done": {
+    "message": "festet"
+  },
+  "mc_pin_gone": {
+    "message": "løsnet"
+  },
+  "mc_pin_failed": {
+    "message": "kunne ikke feste"
+  },
+  "mc_pin_denied": {
+    "message": "bare mods kan feste her"
+  },
+  "mc_pin_retry": {
+    "message": "er ikke i arkivet ennå — prøv igjen om litt"
   }
 }

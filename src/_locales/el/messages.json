@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "καρφιτσωμένο"
+  },
+  "mc_pin_menu_pin": {
+    "message": "καρφίτσωμα μηνύματος"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "ξεκαρφίτσωμα"
+  },
+  "mc_pin_unpin_all": {
+    "message": "ξεκαρφίτσωμα για όλους"
+  },
+  "mc_pin_dismiss": {
+    "message": "απόκρυψη αυτού του καρφιτσώματος"
+  },
+  "mc_pin_confirm": {
+    "message": "ξεκαρφίτσωμα για όλους; y / enter, esc ακυρώνει"
+  },
+  "mc_pin_done": {
+    "message": "καρφιτσώθηκε"
+  },
+  "mc_pin_gone": {
+    "message": "ξεκαρφιτσώθηκε"
+  },
+  "mc_pin_failed": {
+    "message": "το καρφίτσωμα απέτυχε"
+  },
+  "mc_pin_denied": {
+    "message": "μόνο οι mods καρφιτσώνουν εδώ"
+  },
+  "mc_pin_retry": {
+    "message": "δεν είναι ακόμα στο αρχείο — δοκίμασε σε λίγο"
   }
 }

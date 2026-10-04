@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "закріп"
+  },
+  "mc_pin_menu_pin": {
+    "message": "закріпити повідомлення"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "відкріпити"
+  },
+  "mc_pin_unpin_all": {
+    "message": "відкріпити для всіх"
+  },
+  "mc_pin_dismiss": {
+    "message": "сховати цей закріп"
+  },
+  "mc_pin_confirm": {
+    "message": "відкріпити для всіх? y / enter, esc скасувати"
+  },
+  "mc_pin_done": {
+    "message": "закріплено"
+  },
+  "mc_pin_gone": {
+    "message": "відкріплено"
+  },
+  "mc_pin_failed": {
+    "message": "не вдалося закріпити"
+  },
+  "mc_pin_denied": {
+    "message": "закріплювати тут можуть лише mods"
+  },
+  "mc_pin_retry": {
+    "message": "ще немає в архіві — спробуйте за хвилину"
   }
 }

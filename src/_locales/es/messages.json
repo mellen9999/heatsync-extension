@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "fijado"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fijar mensaje"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "desfijar"
+  },
+  "mc_pin_unpin_all": {
+    "message": "desfijar para todos"
+  },
+  "mc_pin_dismiss": {
+    "message": "ocultar este fijado"
+  },
+  "mc_pin_confirm": {
+    "message": "¿desfijar para todos? y / enter, esc cancela"
+  },
+  "mc_pin_done": {
+    "message": "fijado"
+  },
+  "mc_pin_gone": {
+    "message": "desfijado"
+  },
+  "mc_pin_failed": {
+    "message": "no se pudo fijar"
+  },
+  "mc_pin_denied": {
+    "message": "solo los mods pueden fijar aquí"
+  },
+  "mc_pin_retry": {
+    "message": "aún no está en el archivo — inténtalo en un momento"
   }
 }

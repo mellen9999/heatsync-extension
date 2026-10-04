@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "disematkan"
+  },
+  "mc_pin_menu_pin": {
+    "message": "sematkan pesan"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "lepas sematan"
+  },
+  "mc_pin_unpin_all": {
+    "message": "lepas untuk semua"
+  },
+  "mc_pin_dismiss": {
+    "message": "sembunyikan sematan ini"
+  },
+  "mc_pin_confirm": {
+    "message": "lepas sematan untuk semua? y / enter, esc batal"
+  },
+  "mc_pin_done": {
+    "message": "disematkan"
+  },
+  "mc_pin_gone": {
+    "message": "sematan dilepas"
+  },
+  "mc_pin_failed": {
+    "message": "gagal menyematkan"
+  },
+  "mc_pin_denied": {
+    "message": "hanya mods yang bisa menyematkan di sini"
+  },
+  "mc_pin_retry": {
+    "message": "belum ada di arsip — coba lagi sebentar lagi"
   }
 }

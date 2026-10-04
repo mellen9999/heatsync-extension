@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "fixat"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fixează mesajul"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "anulează fixarea"
+  },
+  "mc_pin_unpin_all": {
+    "message": "anulează fixarea pentru toți"
+  },
+  "mc_pin_dismiss": {
+    "message": "ascunde această fixare"
+  },
+  "mc_pin_confirm": {
+    "message": "anulezi fixarea pentru toți? y / enter, esc renunță"
+  },
+  "mc_pin_done": {
+    "message": "fixat"
+  },
+  "mc_pin_gone": {
+    "message": "fixare anulată"
+  },
+  "mc_pin_failed": {
+    "message": "nu s-a putut fixa"
+  },
+  "mc_pin_denied": {
+    "message": "doar mods pot fixa aici"
+  },
+  "mc_pin_retry": {
+    "message": "încă nu e în arhivă — încearcă din nou peste puțin"
   }
 }

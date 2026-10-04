@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "przypięte"
+  },
+  "mc_pin_menu_pin": {
+    "message": "przypnij wiadomość"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "odepnij"
+  },
+  "mc_pin_unpin_all": {
+    "message": "odepnij dla wszystkich"
+  },
+  "mc_pin_dismiss": {
+    "message": "ukryj to przypięcie"
+  },
+  "mc_pin_confirm": {
+    "message": "odpiąć dla wszystkich? y / enter, esc anuluje"
+  },
+  "mc_pin_done": {
+    "message": "przypięto"
+  },
+  "mc_pin_gone": {
+    "message": "odpięto"
+  },
+  "mc_pin_failed": {
+    "message": "nie udało się przypiąć"
+  },
+  "mc_pin_denied": {
+    "message": "przypinać tu mogą tylko mods"
+  },
+  "mc_pin_retry": {
+    "message": "jeszcze nie ma go w archiwum — spróbuj za chwilę"
   }
 }

@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "fäst"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fäst meddelande"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "lossa"
+  },
+  "mc_pin_unpin_all": {
+    "message": "lossa för alla"
+  },
+  "mc_pin_dismiss": {
+    "message": "dölj den här fästningen"
+  },
+  "mc_pin_confirm": {
+    "message": "lossa för alla? y / enter, esc avbryter"
+  },
+  "mc_pin_done": {
+    "message": "fäst"
+  },
+  "mc_pin_gone": {
+    "message": "lossad"
+  },
+  "mc_pin_failed": {
+    "message": "kunde inte fästa"
+  },
+  "mc_pin_denied": {
+    "message": "bara mods kan fästa här"
+  },
+  "mc_pin_retry": {
+    "message": "finns inte i arkivet än — försök igen om en stund"
   }
 }

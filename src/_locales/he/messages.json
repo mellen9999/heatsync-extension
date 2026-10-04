@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "כללי אזכור (שרת)"
+  },
+  "mc_mr_signin": {
+    "message": "התחבר ל-heatsync כדי לנהל כללי אזכור"
+  },
+  "mc_mr_none": {
+    "message": "אין כללים — הוסף אחד למטה"
+  },
+  "mc_mr_add": {
+    "message": "הוסף כלל"
+  },
+  "mc_mr_edit": {
+    "message": "ערוך כלל"
+  },
+  "mc_mr_delete": {
+    "message": "מחק כלל"
+  },
+  "mc_mr_save": {
+    "message": "שמור"
+  },
+  "mc_mr_cancel": {
+    "message": "בטל"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "תבנית..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "ערוצים, מופרדים בפסיק (ריק = הכול)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "השהיה בשניות"
+  },
+  "mc_mr_case": {
+    "message": "רגיש לאותיות"
+  },
+  "mc_mr_test_ph": {
+    "message": "בדוק הודעה..."
+  },
+  "mc_mr_test": {
+    "message": "בדוק"
+  },
+  "mc_mr_match": {
+    "message": "תואם"
+  },
+  "mc_mr_nomatch": {
+    "message": "לא תואם"
+  },
+  "mc_mr_hits": {
+    "message": "פגיעות אחרונות"
+  },
+  "mc_mr_hits_none": {
+    "message": "אין פגיעות עדיין"
+  },
+  "mc_mr_dormant": {
+    "message": "מושהה (מעל המגבלה)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "התבנית חייבת להיות 1–200 תווים"
+  },
+  "mc_mr_err_regex": {
+    "message": "ה-regex הזה אינו תקין"
+  },
+  "mc_mr_err_channels": {
+    "message": "ערוצים: עד 50, כל אחד עד 60 תווים"
+  },
+  "mc_mr_err_notify": {
+    "message": "בחר לפחות אחד: web או push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "ההשהיה חייבת להיות 5–3600 שניות"
   }
 }

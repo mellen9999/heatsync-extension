@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "omnämnanderegler (server)"
+  },
+  "mc_mr_signin": {
+    "message": "logga in på heatsync för att hantera regler"
+  },
+  "mc_mr_none": {
+    "message": "inga regler — lägg till en nedan"
+  },
+  "mc_mr_add": {
+    "message": "lägg till regel"
+  },
+  "mc_mr_edit": {
+    "message": "redigera regel"
+  },
+  "mc_mr_delete": {
+    "message": "ta bort regel"
+  },
+  "mc_mr_save": {
+    "message": "spara"
+  },
+  "mc_mr_cancel": {
+    "message": "avbryt"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "mönster..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanaler, kommaseparerade (tomt = alla)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "paus s"
+  },
+  "mc_mr_case": {
+    "message": "skiftlägeskänslig"
+  },
+  "mc_mr_test_ph": {
+    "message": "testa ett meddelande..."
+  },
+  "mc_mr_test": {
+    "message": "testa"
+  },
+  "mc_mr_match": {
+    "message": "träff"
+  },
+  "mc_mr_nomatch": {
+    "message": "ingen träff"
+  },
+  "mc_mr_hits": {
+    "message": "senaste träffar"
+  },
+  "mc_mr_hits_none": {
+    "message": "inga träffar än"
+  },
+  "mc_mr_dormant": {
+    "message": "pausad (över gränsen)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "mönstret måste vara 1–200 tecken"
+  },
+  "mc_mr_err_regex": {
+    "message": "det regex-uttrycket är ogiltigt"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanaler: upp till 50, vardera upp till 60 tecken"
+  },
+  "mc_mr_err_notify": {
+    "message": "välj minst en: web eller push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "pausen måste vara 5–3600 sekunder"
   }
 }

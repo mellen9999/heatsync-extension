@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "قواعد الإشارة (الخادم)"
+  },
+  "mc_mr_signin": {
+    "message": "سجّل الدخول إلى heatsync لإدارة قواعد الإشارة"
+  },
+  "mc_mr_none": {
+    "message": "لا قواعد — أضف واحدة أدناه"
+  },
+  "mc_mr_add": {
+    "message": "إضافة قاعدة"
+  },
+  "mc_mr_edit": {
+    "message": "تعديل القاعدة"
+  },
+  "mc_mr_delete": {
+    "message": "حذف القاعدة"
+  },
+  "mc_mr_save": {
+    "message": "حفظ"
+  },
+  "mc_mr_cancel": {
+    "message": "إلغاء"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "النمط..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "القنوات، مفصولة بفواصل (فارغ = الكل)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "مهلة بالثواني"
+  },
+  "mc_mr_case": {
+    "message": "حساس لحالة الأحرف"
+  },
+  "mc_mr_test_ph": {
+    "message": "جرّب رسالة..."
+  },
+  "mc_mr_test": {
+    "message": "اختبار"
+  },
+  "mc_mr_match": {
+    "message": "مطابقة"
+  },
+  "mc_mr_nomatch": {
+    "message": "لا مطابقة"
+  },
+  "mc_mr_hits": {
+    "message": "آخر النتائج"
+  },
+  "mc_mr_hits_none": {
+    "message": "لا نتائج بعد"
+  },
+  "mc_mr_dormant": {
+    "message": "متوقفة (تجاوز الحد)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "يجب أن يكون النمط من 1 إلى 200 حرف"
+  },
+  "mc_mr_err_regex": {
+    "message": "التعبير النمطي غير صالح"
+  },
+  "mc_mr_err_channels": {
+    "message": "القنوات: حتى 50، وكل واحدة حتى 60 حرفًا"
+  },
+  "mc_mr_err_notify": {
+    "message": "اختر واحدًا على الأقل: web أو push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "يجب أن تكون المهلة بين 5 و3600 ثانية"
   }
 }

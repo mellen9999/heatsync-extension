@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "κανόνες αναφοράς (διακομιστής)"
+  },
+  "mc_mr_signin": {
+    "message": "συνδέσου στο heatsync για να διαχειριστείς κανόνες"
+  },
+  "mc_mr_none": {
+    "message": "κανένας κανόνας — πρόσθεσε έναν παρακάτω"
+  },
+  "mc_mr_add": {
+    "message": "προσθήκη κανόνα"
+  },
+  "mc_mr_edit": {
+    "message": "επεξεργασία κανόνα"
+  },
+  "mc_mr_delete": {
+    "message": "διαγραφή κανόνα"
+  },
+  "mc_mr_save": {
+    "message": "αποθήκευση"
+  },
+  "mc_mr_cancel": {
+    "message": "ακύρωση"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "μοτίβο..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "κανάλια, χωρισμένα με κόμμα (κενό = όλα)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "αναμονή δ"
+  },
+  "mc_mr_case": {
+    "message": "διάκριση πεζών/κεφαλαίων"
+  },
+  "mc_mr_test_ph": {
+    "message": "δοκίμασε ένα μήνυμα..."
+  },
+  "mc_mr_test": {
+    "message": "δοκιμή"
+  },
+  "mc_mr_match": {
+    "message": "ταιριάζει"
+  },
+  "mc_mr_nomatch": {
+    "message": "δεν ταιριάζει"
+  },
+  "mc_mr_hits": {
+    "message": "πρόσφατα αποτελέσματα"
+  },
+  "mc_mr_hits_none": {
+    "message": "κανένα αποτέλεσμα ακόμη"
+  },
+  "mc_mr_dormant": {
+    "message": "σε παύση (πάνω από το όριο)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "το μοτίβο πρέπει να έχει 1–200 χαρακτήρες"
+  },
+  "mc_mr_err_regex": {
+    "message": "αυτό το regex δεν είναι έγκυρο"
+  },
+  "mc_mr_err_channels": {
+    "message": "κανάλια: έως 50, έως 60 χαρακτήρες το καθένα"
+  },
+  "mc_mr_err_notify": {
+    "message": "διάλεξε τουλάχιστον ένα: web ή push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "η αναμονή πρέπει να είναι 5–3600 δευτερόλεπτα"
   }
 }

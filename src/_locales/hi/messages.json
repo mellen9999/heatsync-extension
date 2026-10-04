@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "मेंशन नियम (सर्वर)"
+  },
+  "mc_mr_signin": {
+    "message": "नियम प्रबंधित करने के लिए heatsync में साइन इन करें"
+  },
+  "mc_mr_none": {
+    "message": "कोई नियम नहीं — नीचे जोड़ें"
+  },
+  "mc_mr_add": {
+    "message": "नियम जोड़ें"
+  },
+  "mc_mr_edit": {
+    "message": "नियम बदलें"
+  },
+  "mc_mr_delete": {
+    "message": "नियम हटाएँ"
+  },
+  "mc_mr_save": {
+    "message": "सहेजें"
+  },
+  "mc_mr_cancel": {
+    "message": "रद्द करें"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "पैटर्न..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "चैनल, कॉमा से अलग (खाली = सभी)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "कूलडाउन से."
+  },
+  "mc_mr_case": {
+    "message": "अक्षर-संवेदी"
+  },
+  "mc_mr_test_ph": {
+    "message": "संदेश परखें..."
+  },
+  "mc_mr_test": {
+    "message": "परखें"
+  },
+  "mc_mr_match": {
+    "message": "मेल खाता है"
+  },
+  "mc_mr_nomatch": {
+    "message": "मेल नहीं खाता"
+  },
+  "mc_mr_hits": {
+    "message": "हाल के हिट"
+  },
+  "mc_mr_hits_none": {
+    "message": "अभी कोई हिट नहीं"
+  },
+  "mc_mr_dormant": {
+    "message": "रुका हुआ (सीमा से ऊपर)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "पैटर्न 1–200 अक्षरों का होना चाहिए"
+  },
+  "mc_mr_err_regex": {
+    "message": "यह regex मान्य नहीं है"
+  },
+  "mc_mr_err_channels": {
+    "message": "चैनल: अधिकतम 50, हर एक अधिकतम 60 अक्षर"
+  },
+  "mc_mr_err_notify": {
+    "message": "कम से कम एक चुनें: web या push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "कूलडाउन 5–3600 सेकंड होना चाहिए"
   }
 }

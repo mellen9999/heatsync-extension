@@ -812,6 +812,7 @@ const MULTICHAT_MODULES = [
   'chat-modes.js',
   'resize.js',
   'settings-ui.js',
+  'mention-rules.js',
   'channel-mgmt.js',
   'spa-nav.js',
   'type-to-focus.js',

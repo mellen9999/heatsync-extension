@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "nævnregler (server)"
+  },
+  "mc_mr_signin": {
+    "message": "log ind på heatsync for at styre nævnregler"
+  },
+  "mc_mr_none": {
+    "message": "ingen regler — tilføj en nedenfor"
+  },
+  "mc_mr_add": {
+    "message": "tilføj regel"
+  },
+  "mc_mr_edit": {
+    "message": "rediger regel"
+  },
+  "mc_mr_delete": {
+    "message": "slet regel"
+  },
+  "mc_mr_save": {
+    "message": "gem"
+  },
+  "mc_mr_cancel": {
+    "message": "annuller"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "mønster..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanaler, adskilt med komma (tom = alle)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "pause s"
+  },
+  "mc_mr_case": {
+    "message": "skelner mellem store/små"
+  },
+  "mc_mr_test_ph": {
+    "message": "test en besked..."
+  },
+  "mc_mr_test": {
+    "message": "test"
+  },
+  "mc_mr_match": {
+    "message": "match"
+  },
+  "mc_mr_nomatch": {
+    "message": "intet match"
+  },
+  "mc_mr_hits": {
+    "message": "seneste træffere"
+  },
+  "mc_mr_hits_none": {
+    "message": "ingen træffere endnu"
+  },
+  "mc_mr_dormant": {
+    "message": "sat på pause (over grænsen)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "mønstret skal være 1–200 tegn"
+  },
+  "mc_mr_err_regex": {
+    "message": "det regex er ikke gyldigt"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanaler: op til 50, hver op til 60 tegn"
+  },
+  "mc_mr_err_notify": {
+    "message": "vælg mindst en: web eller push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "pause skal være 5–3600 sekunder"
   }
 }

@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "pravidla zmínek (server)"
+  },
+  "mc_mr_signin": {
+    "message": "přihlas se k heatsync a spravuj pravidla zmínek"
+  },
+  "mc_mr_none": {
+    "message": "žádná pravidla — přidej níže"
+  },
+  "mc_mr_add": {
+    "message": "přidat pravidlo"
+  },
+  "mc_mr_edit": {
+    "message": "upravit pravidlo"
+  },
+  "mc_mr_delete": {
+    "message": "smazat pravidlo"
+  },
+  "mc_mr_save": {
+    "message": "uložit"
+  },
+  "mc_mr_cancel": {
+    "message": "zrušit"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "vzor..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanály, oddělené čárkou (prázdné = všechny)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "prodleva s"
+  },
+  "mc_mr_case": {
+    "message": "rozlišovat velikost písmen"
+  },
+  "mc_mr_test_ph": {
+    "message": "otestuj zprávu..."
+  },
+  "mc_mr_test": {
+    "message": "test"
+  },
+  "mc_mr_match": {
+    "message": "shoda"
+  },
+  "mc_mr_nomatch": {
+    "message": "žádná shoda"
+  },
+  "mc_mr_hits": {
+    "message": "poslední zásahy"
+  },
+  "mc_mr_hits_none": {
+    "message": "zatím žádné zásahy"
+  },
+  "mc_mr_dormant": {
+    "message": "pozastaveno (nad limitem)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "vzor musí mít 1–200 znaků"
+  },
+  "mc_mr_err_regex": {
+    "message": "tento regex není platný"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanály: max 50, každý max 60 znaků"
+  },
+  "mc_mr_err_notify": {
+    "message": "vyber aspoň jedno: web nebo push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "prodleva musí být 5–3600 sekund"
   }
 }

@@ -957,6 +957,9 @@ function _renderCategoryPaneInner(cat) {
     // 'rules' section is custom-rendered; exclude it from auto-sections
     return _renderPageDefaultsRow(cat) + _regSections(cat, ['content', 'messages']) + _renderFilterRulesGroup()
   }
+  if (cat === 'notifs') {
+    return _renderPageDefaultsRow(cat) + _regSections(cat) + mrGroupHtml()
+  }
   if (cat === 'tweaks') {
     return (
       _renderPageDefaultsRow(cat) +
@@ -1766,6 +1769,13 @@ function renderSettingsTab() {
     var frEl = e.target.closest('[data-fr-action]')
     if (frEl && !/^(SELECT|INPUT|TEXTAREA)$/.test(frEl.tagName)) {
       _handleFilterRuleAction(frEl, msgsEl)
+      return
+    }
+
+    // Mention rule editor (server-side rules) — data-mr-action
+    var mrEl = e.target.closest('[data-mr-action]')
+    if (mrEl && !/^(SELECT|INPUT|TEXTAREA)$/.test(mrEl.tagName)) {
+      mrHandleAction(mrEl)
       return
     }
 

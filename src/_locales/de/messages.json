@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "erwähnungsregeln (server)"
+  },
+  "mc_mr_signin": {
+    "message": "bei heatsync anmelden, um erwähnungsregeln zu verwalten"
+  },
+  "mc_mr_none": {
+    "message": "keine regeln — unten eine hinzufügen"
+  },
+  "mc_mr_add": {
+    "message": "regel hinzufügen"
+  },
+  "mc_mr_edit": {
+    "message": "regel bearbeiten"
+  },
+  "mc_mr_delete": {
+    "message": "regel löschen"
+  },
+  "mc_mr_save": {
+    "message": "speichern"
+  },
+  "mc_mr_cancel": {
+    "message": "abbrechen"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "muster..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanäle, durch komma getrennt (leer = alle)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "abklingzeit s"
+  },
+  "mc_mr_case": {
+    "message": "groß-/kleinschreibung beachten"
+  },
+  "mc_mr_test_ph": {
+    "message": "nachricht testen..."
+  },
+  "mc_mr_test": {
+    "message": "testen"
+  },
+  "mc_mr_match": {
+    "message": "treffer"
+  },
+  "mc_mr_nomatch": {
+    "message": "kein treffer"
+  },
+  "mc_mr_hits": {
+    "message": "letzte treffer"
+  },
+  "mc_mr_hits_none": {
+    "message": "noch keine treffer"
+  },
+  "mc_mr_dormant": {
+    "message": "pausiert (über dem limit)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "muster muss 1–200 zeichen lang sein"
+  },
+  "mc_mr_err_regex": {
+    "message": "dieser regex ist ungültig"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanäle: bis zu 50, je bis zu 60 zeichen"
+  },
+  "mc_mr_err_notify": {
+    "message": "wähle mindestens eins: web oder push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "abklingzeit muss 5–3600 sekunden betragen"
   }
 }

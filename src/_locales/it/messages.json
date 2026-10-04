@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "regole di menzione (server)"
+  },
+  "mc_mr_signin": {
+    "message": "accedi a heatsync per gestire le regole"
+  },
+  "mc_mr_none": {
+    "message": "nessuna regola — aggiungine una sotto"
+  },
+  "mc_mr_add": {
+    "message": "aggiungi regola"
+  },
+  "mc_mr_edit": {
+    "message": "modifica regola"
+  },
+  "mc_mr_delete": {
+    "message": "elimina regola"
+  },
+  "mc_mr_save": {
+    "message": "salva"
+  },
+  "mc_mr_cancel": {
+    "message": "annulla"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "schema..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "canali, separati da virgola (vuoto = tutti)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "attesa s"
+  },
+  "mc_mr_case": {
+    "message": "distingui maiuscole"
+  },
+  "mc_mr_test_ph": {
+    "message": "prova un messaggio..."
+  },
+  "mc_mr_test": {
+    "message": "prova"
+  },
+  "mc_mr_match": {
+    "message": "corrisponde"
+  },
+  "mc_mr_nomatch": {
+    "message": "non corrisponde"
+  },
+  "mc_mr_hits": {
+    "message": "ultimi riscontri"
+  },
+  "mc_mr_hits_none": {
+    "message": "ancora nessun riscontro"
+  },
+  "mc_mr_dormant": {
+    "message": "in pausa (oltre il limite)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "lo schema deve avere 1–200 caratteri"
+  },
+  "mc_mr_err_regex": {
+    "message": "questa regex non è valida"
+  },
+  "mc_mr_err_channels": {
+    "message": "canali: fino a 50, ciascuno fino a 60 caratteri"
+  },
+  "mc_mr_err_notify": {
+    "message": "scegli almeno uno: web o push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "l’attesa deve essere di 5–3600 secondi"
   }
 }

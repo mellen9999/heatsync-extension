@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "กฎการกล่าวถึง (เซิร์ฟเวอร์)"
+  },
+  "mc_mr_signin": {
+    "message": "ลงชื่อเข้าใช้ heatsync เพื่อจัดการกฎ"
+  },
+  "mc_mr_none": {
+    "message": "ยังไม่มีกฎ — เพิ่มด้านล่าง"
+  },
+  "mc_mr_add": {
+    "message": "เพิ่มกฎ"
+  },
+  "mc_mr_edit": {
+    "message": "แก้ไขกฎ"
+  },
+  "mc_mr_delete": {
+    "message": "ลบกฎ"
+  },
+  "mc_mr_save": {
+    "message": "บันทึก"
+  },
+  "mc_mr_cancel": {
+    "message": "ยกเลิก"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "รูปแบบ..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "ช่อง คั่นด้วยจุลภาค (ว่าง = ทั้งหมด)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "คูลดาวน์ วิ"
+  },
+  "mc_mr_case": {
+    "message": "แยกตัวพิมพ์เล็กใหญ่"
+  },
+  "mc_mr_test_ph": {
+    "message": "ลองทดสอบข้อความ..."
+  },
+  "mc_mr_test": {
+    "message": "ทดสอบ"
+  },
+  "mc_mr_match": {
+    "message": "ตรงกัน"
+  },
+  "mc_mr_nomatch": {
+    "message": "ไม่ตรงกัน"
+  },
+  "mc_mr_hits": {
+    "message": "รายการที่ตรงล่าสุด"
+  },
+  "mc_mr_hits_none": {
+    "message": "ยังไม่มีรายการที่ตรง"
+  },
+  "mc_mr_dormant": {
+    "message": "หยุดชั่วคราว (เกินขีดจำกัด)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "รูปแบบต้องยาว 1–200 ตัวอักษร"
+  },
+  "mc_mr_err_regex": {
+    "message": "regex นี้ไม่ถูกต้อง"
+  },
+  "mc_mr_err_channels": {
+    "message": "ช่อง: สูงสุด 50 ช่อง ช่องละไม่เกิน 60 ตัวอักษร"
+  },
+  "mc_mr_err_notify": {
+    "message": "เลือกอย่างน้อยหนึ่งอย่าง: web หรือ push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "คูลดาวน์ต้องอยู่ระหว่าง 5–3600 วินาที"
   }
 }

@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "правила за споменавания (сървър)"
+  },
+  "mc_mr_signin": {
+    "message": "влез в heatsync, за да управляваш правилата"
+  },
+  "mc_mr_none": {
+    "message": "няма правила — добави отдолу"
+  },
+  "mc_mr_add": {
+    "message": "добави правило"
+  },
+  "mc_mr_edit": {
+    "message": "редактирай правило"
+  },
+  "mc_mr_delete": {
+    "message": "изтрий правило"
+  },
+  "mc_mr_save": {
+    "message": "запази"
+  },
+  "mc_mr_cancel": {
+    "message": "отказ"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "шаблон..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "канали, разделени със запетая (празно = всички)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "пауза сек."
+  },
+  "mc_mr_case": {
+    "message": "различава главни/малки"
+  },
+  "mc_mr_test_ph": {
+    "message": "тествай съобщение..."
+  },
+  "mc_mr_test": {
+    "message": "тест"
+  },
+  "mc_mr_match": {
+    "message": "съвпада"
+  },
+  "mc_mr_nomatch": {
+    "message": "не съвпада"
+  },
+  "mc_mr_hits": {
+    "message": "последни попадения"
+  },
+  "mc_mr_hits_none": {
+    "message": "още няма попадения"
+  },
+  "mc_mr_dormant": {
+    "message": "на пауза (над лимита)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "шаблонът трябва да е 1–200 знака"
+  },
+  "mc_mr_err_regex": {
+    "message": "този regex не е валиден"
+  },
+  "mc_mr_err_channels": {
+    "message": "канали: до 50, всеки до 60 знака"
+  },
+  "mc_mr_err_notify": {
+    "message": "избери поне едно: web или push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "паузата трябва да е 5–3600 секунди"
   }
 }

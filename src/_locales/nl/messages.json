@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "vermeldingsregels (server)"
+  },
+  "mc_mr_signin": {
+    "message": "log in bij heatsync om regels te beheren"
+  },
+  "mc_mr_none": {
+    "message": "geen regels — voeg er hieronder een toe"
+  },
+  "mc_mr_add": {
+    "message": "regel toevoegen"
+  },
+  "mc_mr_edit": {
+    "message": "regel bewerken"
+  },
+  "mc_mr_delete": {
+    "message": "regel verwijderen"
+  },
+  "mc_mr_save": {
+    "message": "opslaan"
+  },
+  "mc_mr_cancel": {
+    "message": "annuleren"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "patroon..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanalen, gescheiden door komma (leeg = alle)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "wachttijd s"
+  },
+  "mc_mr_case": {
+    "message": "hoofdlettergevoelig"
+  },
+  "mc_mr_test_ph": {
+    "message": "test een bericht..."
+  },
+  "mc_mr_test": {
+    "message": "testen"
+  },
+  "mc_mr_match": {
+    "message": "match"
+  },
+  "mc_mr_nomatch": {
+    "message": "geen match"
+  },
+  "mc_mr_hits": {
+    "message": "recente treffers"
+  },
+  "mc_mr_hits_none": {
+    "message": "nog geen treffers"
+  },
+  "mc_mr_dormant": {
+    "message": "gepauzeerd (boven de limiet)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "patroon moet 1–200 tekens zijn"
+  },
+  "mc_mr_err_regex": {
+    "message": "die regex is ongeldig"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanalen: max 50, elk max 60 tekens"
+  },
+  "mc_mr_err_notify": {
+    "message": "kies minstens één: web of push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "wachttijd moet 5–3600 seconden zijn"
   }
 }

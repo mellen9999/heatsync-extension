@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "提及规则（服务器）"
+  },
+  "mc_mr_signin": {
+    "message": "登录 heatsync 以管理提及规则"
+  },
+  "mc_mr_none": {
+    "message": "没有规则 — 在下方添加"
+  },
+  "mc_mr_add": {
+    "message": "添加规则"
+  },
+  "mc_mr_edit": {
+    "message": "编辑规则"
+  },
+  "mc_mr_delete": {
+    "message": "删除规则"
+  },
+  "mc_mr_save": {
+    "message": "保存"
+  },
+  "mc_mr_cancel": {
+    "message": "取消"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "匹配模式..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "频道，用逗号分隔（留空 = 全部）"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "冷却秒数"
+  },
+  "mc_mr_case": {
+    "message": "区分大小写"
+  },
+  "mc_mr_test_ph": {
+    "message": "测试一条消息..."
+  },
+  "mc_mr_test": {
+    "message": "测试"
+  },
+  "mc_mr_match": {
+    "message": "匹配"
+  },
+  "mc_mr_nomatch": {
+    "message": "不匹配"
+  },
+  "mc_mr_hits": {
+    "message": "最近命中"
+  },
+  "mc_mr_hits_none": {
+    "message": "暂无命中"
+  },
+  "mc_mr_dormant": {
+    "message": "已暂停（超出上限）"
+  },
+  "mc_mr_err_pattern": {
+    "message": "模式长度须为 1–200 个字符"
+  },
+  "mc_mr_err_regex": {
+    "message": "该正则无效"
+  },
+  "mc_mr_err_channels": {
+    "message": "频道：最多 50 个，每个最多 60 个字符"
+  },
+  "mc_mr_err_notify": {
+    "message": "web 或 push 至少选一个"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "冷却时间须为 5–3600 秒"
   }
 }

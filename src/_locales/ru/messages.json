@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "правила упоминаний (сервер)"
+  },
+  "mc_mr_signin": {
+    "message": "войди в heatsync, чтобы управлять правилами"
+  },
+  "mc_mr_none": {
+    "message": "правил нет — добавь ниже"
+  },
+  "mc_mr_add": {
+    "message": "добавить правило"
+  },
+  "mc_mr_edit": {
+    "message": "изменить правило"
+  },
+  "mc_mr_delete": {
+    "message": "удалить правило"
+  },
+  "mc_mr_save": {
+    "message": "сохранить"
+  },
+  "mc_mr_cancel": {
+    "message": "отмена"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "шаблон..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "каналы через запятую (пусто = все)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "пауза, с"
+  },
+  "mc_mr_case": {
+    "message": "учитывать регистр"
+  },
+  "mc_mr_test_ph": {
+    "message": "проверь сообщение..."
+  },
+  "mc_mr_test": {
+    "message": "проверить"
+  },
+  "mc_mr_match": {
+    "message": "совпадает"
+  },
+  "mc_mr_nomatch": {
+    "message": "не совпадает"
+  },
+  "mc_mr_hits": {
+    "message": "последние срабатывания"
+  },
+  "mc_mr_hits_none": {
+    "message": "срабатываний пока нет"
+  },
+  "mc_mr_dormant": {
+    "message": "приостановлено (сверх лимита)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "шаблон должен быть длиной 1–200 символов"
+  },
+  "mc_mr_err_regex": {
+    "message": "это регулярное выражение недопустимо"
+  },
+  "mc_mr_err_channels": {
+    "message": "каналы: до 50, каждый до 60 символов"
+  },
+  "mc_mr_err_notify": {
+    "message": "выбери хотя бы одно: web или push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "пауза должна быть 5–3600 секунд"
   }
 }

@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "멘션 규칙 (서버)"
+  },
+  "mc_mr_signin": {
+    "message": "규칙을 관리하려면 heatsync에 로그인하세요"
+  },
+  "mc_mr_none": {
+    "message": "규칙 없음 — 아래에서 추가"
+  },
+  "mc_mr_add": {
+    "message": "규칙 추가"
+  },
+  "mc_mr_edit": {
+    "message": "규칙 편집"
+  },
+  "mc_mr_delete": {
+    "message": "규칙 삭제"
+  },
+  "mc_mr_save": {
+    "message": "저장"
+  },
+  "mc_mr_cancel": {
+    "message": "취소"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "패턴..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "채널, 쉼표로 구분 (비우면 전체)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "쿨다운 초"
+  },
+  "mc_mr_case": {
+    "message": "대소문자 구분"
+  },
+  "mc_mr_test_ph": {
+    "message": "메시지 테스트..."
+  },
+  "mc_mr_test": {
+    "message": "테스트"
+  },
+  "mc_mr_match": {
+    "message": "일치"
+  },
+  "mc_mr_nomatch": {
+    "message": "불일치"
+  },
+  "mc_mr_hits": {
+    "message": "최근 적중"
+  },
+  "mc_mr_hits_none": {
+    "message": "아직 적중 없음"
+  },
+  "mc_mr_dormant": {
+    "message": "일시중지 (한도 초과)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "패턴은 1–200자여야 합니다"
+  },
+  "mc_mr_err_regex": {
+    "message": "이 정규식은 올바르지 않습니다"
+  },
+  "mc_mr_err_channels": {
+    "message": "채널: 최대 50개, 각 60자 이하"
+  },
+  "mc_mr_err_notify": {
+    "message": "web 또는 push 중 하나 이상 선택"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "쿨다운은 5–3600초여야 합니다"
   }
 }

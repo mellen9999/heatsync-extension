@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "említésszabályok (szerver)"
+  },
+  "mc_mr_signin": {
+    "message": "jelentkezz be a heatsyncbe a szabályok kezeléséhez"
+  },
+  "mc_mr_none": {
+    "message": "nincs szabály — adj hozzá alább"
+  },
+  "mc_mr_add": {
+    "message": "szabály hozzáadása"
+  },
+  "mc_mr_edit": {
+    "message": "szabály szerkesztése"
+  },
+  "mc_mr_delete": {
+    "message": "szabály törlése"
+  },
+  "mc_mr_save": {
+    "message": "mentés"
+  },
+  "mc_mr_cancel": {
+    "message": "mégse"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "minta..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "csatornák, vesszővel elválasztva (üres = mind)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "várakozás mp"
+  },
+  "mc_mr_case": {
+    "message": "kis- és nagybetű számít"
+  },
+  "mc_mr_test_ph": {
+    "message": "próbálj ki egy üzenetet..."
+  },
+  "mc_mr_test": {
+    "message": "teszt"
+  },
+  "mc_mr_match": {
+    "message": "egyezik"
+  },
+  "mc_mr_nomatch": {
+    "message": "nem egyezik"
+  },
+  "mc_mr_hits": {
+    "message": "legutóbbi találatok"
+  },
+  "mc_mr_hits_none": {
+    "message": "még nincs találat"
+  },
+  "mc_mr_dormant": {
+    "message": "szünetel (a korlát felett)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "a minta 1–200 karakter lehet"
+  },
+  "mc_mr_err_regex": {
+    "message": "ez a regex érvénytelen"
+  },
+  "mc_mr_err_channels": {
+    "message": "csatornák: legfeljebb 50, egyenként legfeljebb 60 karakter"
+  },
+  "mc_mr_err_notify": {
+    "message": "válassz legalább egyet: web vagy push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "a várakozás 5–3600 másodperc lehet"
   }
 }

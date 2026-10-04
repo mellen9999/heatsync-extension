@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "quy tắc nhắc tên (máy chủ)"
+  },
+  "mc_mr_signin": {
+    "message": "đăng nhập heatsync để quản lý quy tắc"
+  },
+  "mc_mr_none": {
+    "message": "chưa có quy tắc — thêm bên dưới"
+  },
+  "mc_mr_add": {
+    "message": "thêm quy tắc"
+  },
+  "mc_mr_edit": {
+    "message": "sửa quy tắc"
+  },
+  "mc_mr_delete": {
+    "message": "xóa quy tắc"
+  },
+  "mc_mr_save": {
+    "message": "lưu"
+  },
+  "mc_mr_cancel": {
+    "message": "hủy"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "mẫu..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kênh, cách nhau bằng dấu phẩy (trống = tất cả)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "chờ giây"
+  },
+  "mc_mr_case": {
+    "message": "phân biệt hoa thường"
+  },
+  "mc_mr_test_ph": {
+    "message": "thử một tin nhắn..."
+  },
+  "mc_mr_test": {
+    "message": "thử"
+  },
+  "mc_mr_match": {
+    "message": "khớp"
+  },
+  "mc_mr_nomatch": {
+    "message": "không khớp"
+  },
+  "mc_mr_hits": {
+    "message": "lượt khớp gần đây"
+  },
+  "mc_mr_hits_none": {
+    "message": "chưa có lượt khớp"
+  },
+  "mc_mr_dormant": {
+    "message": "tạm dừng (vượt giới hạn)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "mẫu phải dài 1–200 ký tự"
+  },
+  "mc_mr_err_regex": {
+    "message": "regex này không hợp lệ"
+  },
+  "mc_mr_err_channels": {
+    "message": "kênh: tối đa 50, mỗi kênh tối đa 60 ký tự"
+  },
+  "mc_mr_err_notify": {
+    "message": "chọn ít nhất một: web hoặc push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "thời gian chờ phải từ 5–3600 giây"
   }
 }

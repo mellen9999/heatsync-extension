@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "règles de mention (serveur)"
+  },
+  "mc_mr_signin": {
+    "message": "connecte-toi à heatsync pour gérer les règles"
+  },
+  "mc_mr_none": {
+    "message": "aucune règle — ajoute-en une ci-dessous"
+  },
+  "mc_mr_add": {
+    "message": "ajouter une règle"
+  },
+  "mc_mr_edit": {
+    "message": "modifier la règle"
+  },
+  "mc_mr_delete": {
+    "message": "supprimer la règle"
+  },
+  "mc_mr_save": {
+    "message": "enregistrer"
+  },
+  "mc_mr_cancel": {
+    "message": "annuler"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "motif..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "chaînes, séparées par des virgules (vide = toutes)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "délai s"
+  },
+  "mc_mr_case": {
+    "message": "sensible à la casse"
+  },
+  "mc_mr_test_ph": {
+    "message": "teste un message..."
+  },
+  "mc_mr_test": {
+    "message": "tester"
+  },
+  "mc_mr_match": {
+    "message": "correspond"
+  },
+  "mc_mr_nomatch": {
+    "message": "ne correspond pas"
+  },
+  "mc_mr_hits": {
+    "message": "derniers résultats"
+  },
+  "mc_mr_hits_none": {
+    "message": "aucun résultat pour l’instant"
+  },
+  "mc_mr_dormant": {
+    "message": "en pause (limite dépassée)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "le motif doit faire 1–200 caractères"
+  },
+  "mc_mr_err_regex": {
+    "message": "cette regex n’est pas valide"
+  },
+  "mc_mr_err_channels": {
+    "message": "chaînes : 50 max, 60 caractères max chacune"
+  },
+  "mc_mr_err_notify": {
+    "message": "choisis au moins un : web ou push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "le délai doit être de 5–3600 secondes"
   }
 }

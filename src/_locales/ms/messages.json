@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "peraturan sebutan (pelayan)"
+  },
+  "mc_mr_signin": {
+    "message": "log masuk ke heatsync untuk urus peraturan"
+  },
+  "mc_mr_none": {
+    "message": "tiada peraturan — tambah di bawah"
+  },
+  "mc_mr_add": {
+    "message": "tambah peraturan"
+  },
+  "mc_mr_edit": {
+    "message": "ubah peraturan"
+  },
+  "mc_mr_delete": {
+    "message": "padam peraturan"
+  },
+  "mc_mr_save": {
+    "message": "simpan"
+  },
+  "mc_mr_cancel": {
+    "message": "batal"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "corak..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "saluran, dipisah koma (kosong = semua)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "jeda saat"
+  },
+  "mc_mr_case": {
+    "message": "peka huruf besar/kecil"
+  },
+  "mc_mr_test_ph": {
+    "message": "uji satu mesej..."
+  },
+  "mc_mr_test": {
+    "message": "uji"
+  },
+  "mc_mr_match": {
+    "message": "padan"
+  },
+  "mc_mr_nomatch": {
+    "message": "tidak padan"
+  },
+  "mc_mr_hits": {
+    "message": "padanan terkini"
+  },
+  "mc_mr_hits_none": {
+    "message": "belum ada padanan"
+  },
+  "mc_mr_dormant": {
+    "message": "dijeda (melebihi had)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "corak mesti 1–200 aksara"
+  },
+  "mc_mr_err_regex": {
+    "message": "regex itu tidak sah"
+  },
+  "mc_mr_err_channels": {
+    "message": "saluran: maksimum 50, setiap satu maksimum 60 aksara"
+  },
+  "mc_mr_err_notify": {
+    "message": "pilih sekurang-kurangnya satu: web atau push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "jeda mesti 5–3600 saat"
   }
 }

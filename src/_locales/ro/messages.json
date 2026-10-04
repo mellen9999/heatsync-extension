@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "reguli de mențiune (server)"
+  },
+  "mc_mr_signin": {
+    "message": "conectează-te la heatsync pentru a gestiona regulile"
+  },
+  "mc_mr_none": {
+    "message": "nicio regulă — adaugă una mai jos"
+  },
+  "mc_mr_add": {
+    "message": "adaugă regulă"
+  },
+  "mc_mr_edit": {
+    "message": "editează regula"
+  },
+  "mc_mr_delete": {
+    "message": "șterge regula"
+  },
+  "mc_mr_save": {
+    "message": "salvează"
+  },
+  "mc_mr_cancel": {
+    "message": "anulează"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "tipar..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "canale, separate prin virgulă (gol = toate)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "pauză s"
+  },
+  "mc_mr_case": {
+    "message": "sensibil la majuscule"
+  },
+  "mc_mr_test_ph": {
+    "message": "testează un mesaj..."
+  },
+  "mc_mr_test": {
+    "message": "testează"
+  },
+  "mc_mr_match": {
+    "message": "se potrivește"
+  },
+  "mc_mr_nomatch": {
+    "message": "nu se potrivește"
+  },
+  "mc_mr_hits": {
+    "message": "ultimele potriviri"
+  },
+  "mc_mr_hits_none": {
+    "message": "încă nicio potrivire"
+  },
+  "mc_mr_dormant": {
+    "message": "în pauză (peste limită)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "tiparul trebuie să aibă 1–200 de caractere"
+  },
+  "mc_mr_err_regex": {
+    "message": "acest regex nu este valid"
+  },
+  "mc_mr_err_channels": {
+    "message": "canale: maximum 50, fiecare maximum 60 de caractere"
+  },
+  "mc_mr_err_notify": {
+    "message": "alege cel puțin unul: web sau push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "pauza trebuie să fie de 5–3600 secunde"
   }
 }

@@ -1246,5 +1246,77 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mr_title": {
+    "message": "reguły wzmianek (serwer)"
+  },
+  "mc_mr_signin": {
+    "message": "zaloguj się do heatsync, aby zarządzać regułami"
+  },
+  "mc_mr_none": {
+    "message": "brak reguł — dodaj poniżej"
+  },
+  "mc_mr_add": {
+    "message": "dodaj regułę"
+  },
+  "mc_mr_edit": {
+    "message": "edytuj regułę"
+  },
+  "mc_mr_delete": {
+    "message": "usuń regułę"
+  },
+  "mc_mr_save": {
+    "message": "zapisz"
+  },
+  "mc_mr_cancel": {
+    "message": "anuluj"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "wzorzec..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanały, oddzielone przecinkami (puste = wszystkie)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "odstęp s"
+  },
+  "mc_mr_case": {
+    "message": "rozróżniaj wielkość liter"
+  },
+  "mc_mr_test_ph": {
+    "message": "przetestuj wiadomość..."
+  },
+  "mc_mr_test": {
+    "message": "testuj"
+  },
+  "mc_mr_match": {
+    "message": "pasuje"
+  },
+  "mc_mr_nomatch": {
+    "message": "nie pasuje"
+  },
+  "mc_mr_hits": {
+    "message": "ostatnie trafienia"
+  },
+  "mc_mr_hits_none": {
+    "message": "brak trafień"
+  },
+  "mc_mr_dormant": {
+    "message": "wstrzymana (powyżej limitu)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "wzorzec musi mieć 1–200 znaków"
+  },
+  "mc_mr_err_regex": {
+    "message": "to wyrażenie regex jest nieprawidłowe"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanały: do 50, każdy do 60 znaków"
+  },
+  "mc_mr_err_notify": {
+    "message": "wybierz co najmniej jedno: web lub push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "odstęp musi wynosić 5–3600 sekund"
   }
 }

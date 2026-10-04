@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.83] — 2026-10-03
+
+### added
+- **mod tools** — `/modtools` on a twitch channel you mod: shield mode, unban requests (approve / deny), automod levels, chatters. `/shield [on|off]`, `/warn <user> <reason>`, `/shoutout <user>` (`/so`), `/unbanrequests`. row menu "warn", opt-in toolbar button. one twitch permission on first use.
+- **chat modes set from the extension** — the modes cell reads twitch's real settings and every toggle (slow, followers, subs, emote-only, unique) applies through heatsync; `/emoteonly`, `/subscribers`, `/uniquechat` work again (twitch retired their chat commands), with `off` forms.
+- **pinned message** — mods pin a line from the row menu or `p`; it sits above chat for every heatsync viewer of that channel with an × (mods unpin for all, viewers hide it).
+
+### fixed
+- **new twitch badges show** — an unknown badge version refetches its set instead of falling back to the wrong one; badge titles on hover.
+
 ## [1.7.82] — 2026-10-03
 
 ### added

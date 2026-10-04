@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.85] — 2026-10-04
+
+### fixed
+- **bttv emotes** — non-animated bttv emotes no longer show as broken images with emote animation set to hover or never, or while scrolled offscreen.
+
 ## [1.7.84] — 2026-10-04
 
 ### added

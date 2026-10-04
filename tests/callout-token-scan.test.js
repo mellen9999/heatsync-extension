@@ -14,7 +14,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const MAIN_SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN_SRC = ['main.js', 'share-callouts.js'].map((f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')).join('\n')
 
 // Lift the two functions plus the regex they close over.
 function lift() {

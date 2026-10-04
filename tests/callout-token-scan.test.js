@@ -2,7 +2,7 @@
  * The callout token, for real — not by grep.
  *
  * decodeCalloutToken and fiberTokenScan are pure, so this suite lifts them out
- * of main.js (which has top-level side effects and cannot be imported) and runs
+ * of share-callouts.js (which has top-level side effects and cannot be imported) and runs
  * them against a fake fiber tree shaped like twitch's.
  *
  * The shape under test was measured live on a 107-month sub-anniversary
@@ -14,20 +14,22 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const MAIN_SRC = ['main.js', 'share-callouts.js'].map((f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')).join('\n')
+// share-callouts.js is a top-level file in the build's flat concat, so its
+// function bodies close on a column-0 brace.
+const MAIN_SRC = readFileSync(new URL('../src/multichat/share-callouts.js', import.meta.url), 'utf8')
 
 // Lift the two functions plus the regex they close over.
 function lift() {
   const from = MAIN_SRC.indexOf('const CALLOUT_TOKEN_SHAPE')
   const declEnd = MAIN_SRC.indexOf('function fiberTokenScan')
-  const scanEnd = MAIN_SRC.indexOf('\n  }', MAIN_SRC.indexOf('return out', declEnd)) + 4
+  const scanEnd = MAIN_SRC.indexOf('\n}', MAIN_SRC.indexOf('return out', declEnd)) + 2
   expect(from).toBeGreaterThan(-1)
   expect(declEnd).toBeGreaterThan(from)
   const matchFrom = MAIN_SRC.indexOf('function calloutTokenMatches')
   expect(matchFrom).toBeGreaterThan(-1)
   const src =
-    MAIN_SRC.slice(from, MAIN_SRC.indexOf('\n  }', from) + 4) +
-    MAIN_SRC.slice(matchFrom, MAIN_SRC.indexOf('\n  }', matchFrom) + 4) +
+    MAIN_SRC.slice(from, MAIN_SRC.indexOf('\n}', from) + 2) +
+    MAIN_SRC.slice(matchFrom, MAIN_SRC.indexOf('\n}', matchFrom) + 2) +
     MAIN_SRC.slice(declEnd, scanEnd)
   // getFiber is main.js's shared util; the tree here is already fibers.
   return new Function('getFiber', `${src}\nreturn { decodeCalloutToken, fiberTokenScan, calloutTokenMatches }`)(

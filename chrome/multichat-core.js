@@ -14130,7 +14130,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'baca1276159a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7b4cf415c3f2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -22904,10 +22904,11 @@ let emoteAnimationMode = 'always'
 // needs the static variant of a URL even while emoteAnimationMode is
 // 'always' (that's the one mode staticEmoteSrc itself short-circuits on).
 // The one static-url deriver; nothing else computes a static variant.
-// `animated` is the emote's own flag (7TV/FFZ/BTTV metadata). 7TV only hosts
-// an Nx_static file for ANIMATED emotes — asking for it on a static emote is a
+// `animated` is the emote's own flag (7TV/FFZ/BTTV metadata). 7TV and BTTV only
+// host a static file for ANIMATED emotes — asking for it on a static emote is a
 // 404, which the page-wide img-error fallback then retried through
-// heatsync.org once per img (86 requests / 30s on one busy twitch channel).
+// heatsync.org once per img (86 requests / 30s on one busy twitch channel; the
+// bttv half was still 45 / 30s on 10-04, and the retry 404s too — a broken img).
 // Unknown (inventory rows carry no flag) keeps the original url: an animated
 // emote keeps animating offscreen, a static one never 404s.
 function deriveStaticEmoteSrc(url, animated) {
@@ -22923,7 +22924,10 @@ function deriveStaticEmoteSrc(url, animated) {
   // identical image for non-animated emotes, so no animated-detection needed)
   if (url.includes('static-cdn.jtvnw.net/emoticons/')) return url.replace('/default/', '/static/')
   // BTTV: /emote/{id}/{size} → /emote/{id}/static/{size}
-  if (url.includes('cdn.betterttv.net/emote/')) return url.replace(/(\/emote\/[a-f0-9]+)\//i, '$1/static/')
+  if (url.includes('cdn.betterttv.net/emote/')) {
+    if (animated !== true) return url
+    return url.replace(/(\/emote\/[a-f0-9]+)\//i, '$1/static/')
+  }
   // Kick: extensionless /fullsize URLs have no CDN static variant — proxy
   // them (files.kick.com is allowlisted server-side; static pngs pass through)
   if (/files\.kick\.com\/emotes\//i.test(url))

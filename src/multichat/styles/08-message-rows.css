@@ -608,22 +608,22 @@
       color: var(--hs-muted);
       font-weight: 400;
     }
-    /* xterm 88 — saturated enough to read as "you got mentioned" but dark
-       enough to let full-color Twitch usernames render on top without the bg
-       drowning them. This is the same pair as heatsync.org's --mention-bg /
-       --mention-bg-alt; the comment used to claim that while the hexes on both
-       sides were three different reds. */
+    /* The row is black because black is the surface; the red EDGE is the whole
+       "you got mentioned" signal, same as the site's --mention-edge. A fill
+       alone was invisible here — see --hs-mention-edge in 00-palette.css. */
     .hs-mc-msg.mention,
     .hs-feed-msg.mention {
       background: #000000;
+      box-shadow: inset 0 0 0 1px var(--hs-mention-edge);
     }
     /* Zebra striping for consecutive mentions — leverages the existing
-       neighbor-flip .hs-mc-zebra cadence so adjacent mention rows alternate
-       without looking like a wall of identical red. Darker red maintains
-       the mention semantic while distinguishing rows. */
+       neighbor-flip .hs-mc-zebra cadence so adjacent mention rows stay
+       separable instead of reading as one block. The edge still marks each
+       one; only the fill alternates. */
     .hs-mc-msg.mention.hs-mc-zebra,
     .hs-feed-msg.mention.hs-mc-zebra {
-      background: #000000;
+      background: var(--hs-zebra);
+      box-shadow: inset 0 0 0 1px var(--hs-mention-edge);
     }
     /* Row base color white for non-colored text (gray timestamps, plain
        message body) — inline user colors override naturally. No star-cascade

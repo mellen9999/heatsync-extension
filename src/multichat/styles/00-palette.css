@@ -44,6 +44,14 @@
       --hs-reply-tint: #000000;
       --hs-gold-tint: #000000;
       --hs-warn-bg: #000000;
+      /* THE MENTION SIGNAL — mirrors the site's --mention-edge (messages.css).
+         The fill is black because black is the surface, so the EDGE is the
+         whole signal. It was a saturated red fill until the palette sweep
+         mapped it onto the 8 colours; black is the nearest allowed colour to a
+         dark red, and the site gave .message-mentioned an inset red edge to
+         carry the signal instead. This renderer never got one, so an @-mention
+         of you in multichat went pixel-identical to every other row. */
+      --hs-mention-edge: #ff0000;
       --hs-zebra: #161616; /* alternating-row stripe — the ONE off-palette value: the lightest gray every palette colour still passes 4.5:1 on */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).

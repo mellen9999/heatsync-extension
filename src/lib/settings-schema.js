@@ -271,7 +271,7 @@ const SETTINGS = [
   {
     key: 'zebra',
     type: 'bool',
-    default: false,
+    default: true,
     scope: 'sync',
     category: 'display',
     section: 'chat messages',

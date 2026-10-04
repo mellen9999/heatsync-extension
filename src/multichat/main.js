@@ -3609,7 +3609,7 @@
   let pronounsEnabled = true
 
   // Zebra striping — alternate row backgrounds (default on)
-  let zebraEnabled = false
+  let zebraEnabled = true
 
   // Toast on incoming whisper/DM while not on the whispers tab (default on) —
   // the has-whispers tab badge alone was easy to miss (wollip kept missing

@@ -102,7 +102,8 @@ const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
 
 /** Drop inline `hs-exempt-start … hs-exempt-end` regions (user-chosen colour pickers), then comments. */
 function code(text, rel) {
-  let t = text.replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
+  // the zebra stripe is the single allowed off-palette value, and only as this token
+  let t = text.replace(/--hs-zebra:\s*#161616;/g, '').replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
   if (rel.endsWith('.html')) t = t.replace(/<!--[\s\S]*?-->/g, '')
@@ -342,11 +343,12 @@ describe('colour doctrine — 8 colours', () => {
   })
 
   test('the palette tokens are the eight (+ the [H] orange)', () => {
-    const css = code(readFileSync(join(STYLES, '00-palette.css'), 'utf8'), 'x.css')
+    const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
     const bad = []
     for (const m of css.matchAll(/(--hs-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
       const h = expand(m[2].slice(1))
-      if (m[1] === '--hs-plat-hs' ? h !== ORANGE : !PALETTE.has(h)) bad.push(`${m[1]}: ${m[2]}`)
+      if (m[1] === '--hs-zebra' ? h !== '161616' : m[1] === '--hs-plat-hs' ? h !== ORANGE : !PALETTE.has(h))
+        bad.push(`${m[1]}: ${m[2]}`)
     }
     expect(bad).toEqual([])
   })

@@ -299,7 +299,7 @@
       font-size: 13px;
       color: var(--hs-border);
       background: #000;
-      border-top: 1px solid #ffffff;
+      border-top: none;
     }
     .hs-mc-picker-section:first-child .hs-mc-picker-section-header {
       border-top: none;
@@ -320,7 +320,7 @@
     }
     .hs-mc-picker-header {
       padding: 8px !important;
-      border-bottom: 1px solid #ffffff !important;
+      border-bottom: none !important;
       display: block !important;
       visibility: visible !important;
       background: #000 !important;

@@ -1006,7 +1006,7 @@
         padding: 2px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         line-height: 1.3;
       }
       .heatsync-set-item:hover {
@@ -1087,7 +1087,7 @@
         padding: 1px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         line-height: 1.3;
       }
       .heatsync-history-item:hover {
@@ -1342,7 +1342,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 12px 0;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
       }
 
       .heatsync-setting-row:last-child {
@@ -1530,7 +1530,7 @@
       .hs-emote-ctx-preview {
         display: flex; align-items: center; gap: 10px;
         padding: 8px 10px; margin-bottom: 4px;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         background: #000000;
       }
       .hs-emote-ctx-thumb {
@@ -1612,7 +1612,7 @@
         align-items: center;
         gap: 6px;
         padding: 6px 8px;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         flex-shrink: 0;
       }
       .hs-import-channel-btn {
@@ -1644,7 +1644,7 @@
         padding: 1px 8px;
         background: transparent;
         border: none;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         line-height: 1.3;
       }
       .hs-discover-item.blocked {
@@ -1697,7 +1697,7 @@
         font-size: 10px;
         color: #ffffff;
         padding: 4px 8px 6px;
-        border-bottom: 1px solid #ffffff;
+        border-bottom: none;
         line-height: 1.3;
       }
       .hs-search-all-cta {

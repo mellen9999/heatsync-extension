@@ -469,7 +469,7 @@
     /* ═══ Polls ═══ */
     .hs-mc-poll {
       padding: 10px 12px;
-      border-top: 1px solid #ffffff;
+      border-top: none;
     }
     .hs-mc-poll-header {
       display: flex;
@@ -619,7 +619,7 @@
       padding: 0 12px;
     }
     .hs-mc-poll-create {
-      border-top: 1px solid #ffffff;
+      border-top: none;
       padding-top: 8px;
       margin-top: 4px;
     }
@@ -691,7 +691,7 @@
     }
 
     .hs-mc-pred-links {
-      border-top: 1px solid #ffffff;
+      border-top: none;
       margin-top: 8px;
       padding-top: 4px;
     }
@@ -745,7 +745,7 @@
       margin-top: 10px; padding-bottom: 4px;
       font-size: 13px; color: var(--hs-muted);
       text-transform: uppercase;
-      border-bottom: 1px solid #ffffff;
+      border-bottom: none;
     }
     .hs-mc-status-modes { margin-top: 4px; }
     .hs-mc-status-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 13px; }
@@ -765,7 +765,7 @@
 
     /* ═══ Rewards ═══ */
     .hs-mc-rewards {
-      border-top: 1px solid #ffffff;
+      border-top: none;
       margin-top: 8px;
       padding-top: 8px;
     }
@@ -986,7 +986,7 @@
       padding: 4px 0;
     }
     .hs-mc-settings-group + .hs-mc-settings-group {
-      border-top: 1px solid #ffffff;
+      border-top: none;
     }
     .hs-mc-settings-group-title {
       font-size: 13px;

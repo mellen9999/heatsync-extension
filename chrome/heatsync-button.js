@@ -1536,13 +1536,7 @@
       .hs-emote-ctx-thumb {
         width: 56px; height: 56px; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
-        background-image:
-          linear-gradient(45deg, #000000 25%, transparent 25%),
-          linear-gradient(-45deg, #000000 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #000000 75%),
-          linear-gradient(-45deg, transparent 75%, #000000 75%);
-        background-size: 12px 12px;
-        background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+        background: #000000;
         border: 1px solid #ffffff;
       }
       .hs-emote-ctx-thumb img { max-width: 100%; max-height: 100%; }

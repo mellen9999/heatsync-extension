@@ -945,16 +945,11 @@ function readMultichatModules() {
       // pass can't touch string contents, so without this the shipped bundle
       // carries the full commented stylesheet (~437KB raw → ~215KB minified).
       // Dev builds stay unminified so greps against dist css keep working.
-      // The __HS_FONT_COZETTE__ url() placeholder survives (quotes may drop —
-      // styles.js replaces the bare token, so that's fine).
       if (shouldMinify) {
         // charset utf8: keep glyphs literal — the default ascii mode rewrites
         // them as \NN css escapes, which are illegal octal escapes inside the
         // JS template literal this css gets embedded into.
         cssBody = transformSync(cssBody, { loader: 'css', minify: true, charset: 'utf8' }).code
-        if (!cssBody.includes('__HS_FONT_COZETTE__')) {
-          throw new Error('build: css minify lost the __HS_FONT_COZETTE__ placeholder — font would silently die')
-        }
       }
       cssBody = escapeCssForTemplateLiteral(cssBody)
       if (!content.includes("'__HS_STYLES_BUNDLE__'")) {
@@ -1172,13 +1167,6 @@ function build(browser) {
     cpSync(localesDir, join(outDir, '_locales'), { recursive: true })
     cpSync(localesDir, join(chromeDir, '_locales'), { recursive: true })
     console.log(`  Copied _locales`)
-  }
-
-  // Copy fonts (bundled bitmap font: CozetteVector)
-  const fontsDir = join(chromeDir, 'fonts')
-  if (existsSync(fontsDir)) {
-    cpSync(fontsDir, join(outDir, 'fonts'), { recursive: true })
-    console.log(`  Copied fonts`)
   }
 
   console.log(`✓ Built ${browser} → ${outDir}`)

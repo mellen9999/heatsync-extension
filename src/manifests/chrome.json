@@ -272,17 +272,6 @@
         "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ]
-    },
-    {
-      "resources": [
-        "fonts/CozetteVector.woff2"
-      ],
-      "matches": [
-        "https://*.twitch.tv/*",
-        "https://kick.com/*",
-        "https://*.kick.com/*",
-        "https://www.youtube.com/*"
-      ]
     }
   ]
 }

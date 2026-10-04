@@ -1,151 +1,372 @@
 import { describe, expect, test } from 'bun:test'
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { join, relative } from 'node:path'
 
 /**
- * Colour is a vocabulary, not a set of literals.
+ * VT320 doctrine: eight colours and nothing else.
  *
- * The doctrine is settled: every role maps to one ANSI-256 entry, and
- * 00-palette.css is the single source of truth — "new color = use a token,
- * never raw hex". Both halves of that are checkable, so they are checked.
+ *   #000000 #ff0000 #00ff00 #ffff00 #000080 #ff00ff #00ffff #ffffff
  *
- * When this was written the overlay had 190 raw hexes that re-typed a token
- * that already existed, across 13 files. Converting them changed nothing
- * visually (65 elements compared before/after in a real browser, zero
- * differences) — which is exactly why it was worth doing and worth pinning:
- * a duplicate literal costs nothing today and silently defeats the palette the
- * first time a colour is retuned.
+ * Emphasis is bold / underline / reverse video / blink — never a grey, a shade,
+ * a partial alpha or a glow. Mirrors heatsync.org (css/core/variables.css,
+ * client/config/colors.js). #ff8700 survives ONLY as the [H] heatsync platform
+ * tag — --hs-plat-hs in 00-palette.css and HS_PLAT_COLORS.heatsync in
+ * palette.js — so nothing else can borrow it.
+ *
+ * Every colour literal in a shipped source file (hex 3/4/6/8, rgb/rgba/hsl/hsla,
+ * and CSS named colours in stylesheets) must be one of the eight. What is NOT
+ * ours to recolour is listed below, explicitly and with the reason: user
+ * content, paid cosmetics, platform data. A new exemption is a new line here,
+ * reviewed — not a silent drift.
  */
 
-const STYLES = join(import.meta.dir, '..', 'src', 'multichat', 'styles')
-const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '')
+const ROOT = join(import.meta.dir, '..')
+const STYLES = join(ROOT, 'src', 'multichat', 'styles')
 
-/** The real xterm-256 palette: 16 system + 6x6x6 cube + 24 greys. */
-function ansi256() {
-  const sys = [
-    '000000',
-    '800000',
-    '008000',
-    '808000',
-    '000080',
-    '800080',
-    '008080',
-    'c0c0c0',
-    '808080',
-    'ff0000',
-    '00ff00',
-    'ffff00',
-    '0000ff',
-    'ff00ff',
-    '00ffff',
-    'ffffff',
-  ]
-  const lv = [0, 95, 135, 175, 215, 255]
-  const hex = (n) => n.toString(16).padStart(2, '0')
-  const cube = []
-  for (const r of lv) for (const g of lv) for (const b of lv) cube.push(hex(r) + hex(g) + hex(b))
-  const grey = []
-  for (let i = 0; i < 24; i++) {
-    const v = hex(8 + 10 * i)
-    grey.push(v + v + v)
+const PALETTE = new Set(['000000', 'ff0000', '00ff00', 'ffff00', '000080', 'ff00ff', '00ffff', 'ffffff'])
+const ORANGE = 'ff8700'
+
+/** Whole files that are not ours to recolour. */
+const EXEMPT_FILES = new Map([
+  ['src/lib/paint-core.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/scene-spec.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/paint-spec.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/paint-authoring.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/animation-phase.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/fill-layers.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/glyph-mask.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/plus-tenure.js', 'byte-synced from the site (sync-paint-compiler.sh)'],
+  ['src/multichat/styles/20-card.css', 'shared card stylesheet, byte-synced from the site (sync-site-copies.sh)'],
+  ['src/multichat/paints.js', 'HS_USERNAME_PALETTE — user name colours, byte-identical with the site'],
+  ['src/multichat/cosmetics.js', '7TV/BTTV/FFZ cosmetics — paid/user content'],
+  ['src/multichat/irc.js', 'platform default name colours — user-name content'],
+  ['src/multichat/kick-native-tap.js', 'kick default name colour — user-name content'],
+])
+
+/** Per-file hexes that are platform DATA, not our chrome. */
+const EXEMPT_HEX = new Map([
+  [
+    'chrome/background.js',
+    new Set([
+      '53fc18', // kick default name colour
+      'e62117',
+      'e91e63',
+      'ff6d00',
+      'ffd600',
+      '00c853',
+      '00bfa5',
+      '1565c0', // youtube super chat tiers (parity with server SC_TIERS)
+    ]),
+  ],
+  [
+    'src/multichat/input.js',
+    new Set([
+      // twitch's named default name colours + IRC tag fixtures for /sim
+      '0000ff',
+      '008000',
+      'b22222',
+      'ff7f50',
+      '9acd32',
+      'ff4500',
+      '2e8b57',
+      'daa520',
+      'd2691e',
+      '5f9ea0',
+      '1e90ff',
+      'ff69b4',
+      '8a2be2',
+      '00ff7f',
+      '5f87ff',
+      'ffd700',
+    ]),
+  ],
+])
+
+/** Built output and generated data — not source. */
+const SKIP = (rel) =>
+  /(^|\/)(_locales|node_modules|dist|fonts)\//.test(rel) ||
+  /(^|\/)(multichat-core|multichat-twitch|emoji-data(\.iso)?)\.js$/.test(rel) ||
+  /\.(png|webp|json)$/.test(rel)
+
+function walk(dir, out = []) {
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name)
+    if (statSync(p).isDirectory()) walk(p, out)
+    else if (/\.(js|css|html)$/.test(name)) out.push(p)
   }
-  return new Set([...sys, ...cube, ...grey])
+  return out
 }
-const ANSI = ansi256()
+
+const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
+  .map((p) => ({ path: p, rel: relative(ROOT, p) }))
+  .filter((f) => !SKIP(f.rel))
+
+/** Drop inline `hs-exempt-start … hs-exempt-end` regions (user-chosen colour pickers), then comments. */
+function code(text, rel) {
+  let t = text.replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
+  t = t.replace(/\/\*[\s\S]*?\*\//g, '')
+  if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
+  if (rel.endsWith('.html')) t = t.replace(/<!--[\s\S]*?-->/g, '')
+  return t
+}
+
+const HEX = /(?<![&\w])#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![0-9a-zA-Z_-])/g
+const FUNC = /\b(rgba?|hsla?)\(([^)]*)\)/g
 
 const expand = (h) => {
-  const s = h.toLowerCase().replace('#', '')
-  return s.length === 3
-    ? s
-        .split('')
-        .map((c) => c + c)
-        .join('')
-    : s
+  const s = h.toLowerCase()
+  if (s.length <= 4) return [...s].map((c) => c + c).join('')
+  return s
 }
 
-/**
- * Hexes the palette deliberately names for MORE THAN ONE ROLE. The literal is
- * the role choice, and no mechanical mapping can make it: a delete button
- * tagged --hs-live would silently flip colour the day live changes.
- *
- * Inferring this from "defined twice" was wrong — #ff8700 is --hs-brand and
- * --hs-heat, which are synonyms for one role, and exempting it let brand orange
- * be re-typed freely. Hand-listed, with the reason.
- */
-const AMBIGUOUS = new Map([
-  ['ff0000', '--hs-live / --hs-danger / --hs-plat-youtube — three unrelated roles'],
-  ['800000', '--hs-live-dim / --hs-danger-dim — same split, dim'],
-])
-
-function paletteTokens() {
-  const css = stripComments(readFileSync(join(STYLES, '00-palette.css'), 'utf8'))
-  const byHex = new Map()
-  for (const m of css.matchAll(/(--hs-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,6})\s*;/g)) {
-    const h = expand(m[2])
-    if (!byHex.has(h)) byHex.set(h, m[1])
+/** [{ lit, hex }] for every colour literal in the text, normalised to 6 digits (alpha folded to a flag). */
+function literals(t) {
+  const out = []
+  for (const m of t.matchAll(HEX)) {
+    const h = expand(m[1])
+    const alpha = h.length === 8 ? h.slice(6) : 'ff'
+    if (alpha === '00') continue // fully transparent is "no colour", not a shade
+    out.push({ lit: m[0], hex: h.slice(0, 6), partial: alpha !== 'ff' })
   }
-  return byHex
+  for (const m of t.matchAll(FUNC)) {
+    if (m[2].includes('$')) continue // painted from data (paints, cosmetics) — see EXEMPT_FILES
+    const nums = m[2].match(/[\d.]+%?/g) || []
+    if (m[1].startsWith('hsl')) {
+      out.push({ lit: m[0], hex: 'hsl', partial: true })
+      continue
+    }
+    const [r, g, b] = nums.slice(0, 3).map(Number)
+    const a = nums[3] === undefined ? 1 : nums[3].endsWith('%') ? Number.parseFloat(nums[3]) / 100 : Number(nums[3])
+    if (a === 0) continue // transparent
+    const hex = [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')
+    out.push({ lit: m[0], hex, partial: a < 1 })
+  }
+  return out
 }
 
-/**
- * White and black are structural, not themable. hover/active is reverse-video
- * by doctrine, so `#fff`/`#000` there encode a RULE — swapping them for tokens
- * would invite someone to retheme the invert itself.
- */
-const STRUCTURAL = new Set(['ffffff', '000000'])
+const NAMED = [
+  'aliceblue',
+  'antiquewhite',
+  'aqua',
+  'aquamarine',
+  'azure',
+  'beige',
+  'bisque',
+  'blanchedalmond',
+  'blueviolet',
+  'brown',
+  'burlywood',
+  'cadetblue',
+  'chartreuse',
+  'chocolate',
+  'coral',
+  'cornflowerblue',
+  'cornsilk',
+  'crimson',
+  'darkblue',
+  'darkcyan',
+  'darkgoldenrod',
+  'darkgray',
+  'darkgreen',
+  'darkgrey',
+  'darkkhaki',
+  'darkmagenta',
+  'darkolivegreen',
+  'darkorange',
+  'darkorchid',
+  'darkred',
+  'darksalmon',
+  'darkseagreen',
+  'darkslateblue',
+  'darkslategray',
+  'darkturquoise',
+  'darkviolet',
+  'deeppink',
+  'deepskyblue',
+  'dimgray',
+  'dimgrey',
+  'dodgerblue',
+  'firebrick',
+  'floralwhite',
+  'forestgreen',
+  'gainsboro',
+  'ghostwhite',
+  'gold',
+  'goldenrod',
+  'gray',
+  'grey',
+  'green',
+  'greenyellow',
+  'honeydew',
+  'hotpink',
+  'indianred',
+  'indigo',
+  'ivory',
+  'khaki',
+  'lavender',
+  'lavenderblush',
+  'lawngreen',
+  'lemonchiffon',
+  'lightblue',
+  'lightcoral',
+  'lightcyan',
+  'lightgoldenrodyellow',
+  'lightgray',
+  'lightgreen',
+  'lightgrey',
+  'lightpink',
+  'lightsalmon',
+  'lightseagreen',
+  'lightskyblue',
+  'lightslategray',
+  'lightsteelblue',
+  'lightyellow',
+  'limegreen',
+  'linen',
+  'maroon',
+  'mediumaquamarine',
+  'mediumblue',
+  'mediumorchid',
+  'mediumpurple',
+  'mediumseagreen',
+  'mediumslateblue',
+  'mediumspringgreen',
+  'mediumturquoise',
+  'mediumvioletred',
+  'midnightblue',
+  'mintcream',
+  'mistyrose',
+  'moccasin',
+  'navajowhite',
+  'oldlace',
+  'olive',
+  'olivedrab',
+  'orange',
+  'orangered',
+  'orchid',
+  'palegoldenrod',
+  'palegreen',
+  'paleturquoise',
+  'palevioletred',
+  'papayawhip',
+  'peachpuff',
+  'peru',
+  'pink',
+  'plum',
+  'powderblue',
+  'purple',
+  'rebeccapurple',
+  'rosybrown',
+  'royalblue',
+  'saddlebrown',
+  'salmon',
+  'sandybrown',
+  'seagreen',
+  'seashell',
+  'sienna',
+  'silver',
+  'skyblue',
+  'slateblue',
+  'slategray',
+  'snow',
+  'springgreen',
+  'steelblue',
+  'tan',
+  'teal',
+  'thistle',
+  'tomato',
+  'turquoise',
+  'violet',
+  'wheat',
+  'whitesmoke',
+  'yellowgreen',
+]
+const NAMED_RE = new RegExp(
+  `(?:^|[;{\\s])(?:color|background(?:-color)?|border(?:-[a-z]+)*|outline(?:-color)?|fill|stroke|caret-color)\\s*:[^;{}]*(?<![-\\w])(${NAMED.join('|')})(?![-\\w])`,
+  'gi',
+)
 
-/**
- * Palette entries that are deliberately off the ANSI grid, each for a stated
- * reason. Anything not on this list must be an exact xterm-256 colour.
- */
-const ROLE_COLLISION = new Set(['10-emotes.css:008080'])
-
-/**
- * Files this repo cannot edit at all — they are byte-identical mirrors of the
- * site's own copy (tests/site-copy-parity.test.js enforces it; the sync
- * command is scripts/sync-site-copies.sh). 20-card.css is the shared card's
- * stylesheet: it deliberately defines its own self-contained `--hs-card-*`
- * token layer (see the file's header comment) rather than reusing this
- * extension's `--hs-*` palette — retyping its hexes here would just be a
- * local edit to a file whose only valid change is re-running the sync.
- */
-const MIRRORED_FILES = new Set(['20-card.css'])
-
-const OFF_GRID_BY_DESIGN = new Map([
-  ['2e2e08', '--hs-warn-bg — mellen-explicit dark-olive zebra for mentioned/quoted rows'],
-  ['9146ff', '--hs-plat-twitch — twitch brand hex, only ever beside a platform glyph'],
-  ['53fc18', '--hs-plat-kick — kick brand hex, same rule'],
-])
-
-describe('colour doctrine', () => {
-  const tokens = paletteTokens()
-
-  test('the palette is real ANSI-256, every entry', () => {
-    const offGrid = [...tokens.entries()]
-      .filter(([hex]) => !ANSI.has(hex) && !OFF_GRID_BY_DESIGN.has(hex))
-      .map(([hex, name]) => `${name}: #${hex}`)
-    expect(offGrid, 'every palette token must be an exact xterm-256 colour.').toEqual([])
+describe('colour doctrine — 8 colours', () => {
+  test('reads the source tree at all', () => {
+    expect(FILES.length).toBeGreaterThan(40)
+    expect(FILES.some((f) => f.rel === 'src/multichat/styles/00-palette.css')).toBe(true)
+    expect(FILES.some((f) => f.rel === 'chrome/content.js')).toBe(true)
   })
 
-  test('no stylesheet re-types a colour the palette already names', () => {
+  test('the exempt list names real files', () => {
+    for (const rel of EXEMPT_FILES.keys()) expect(statSync(join(ROOT, rel)).isFile(), rel).toBe(true)
+    for (const rel of EXEMPT_HEX.keys()) expect(statSync(join(ROOT, rel)).isFile(), rel).toBe(true)
+  })
+
+  test('every colour literal in our chrome is one of the eight', () => {
     const offenders = []
-    for (const file of readdirSync(STYLES).filter(
-      (f) => f.endsWith('.css') && f !== '00-palette.css' && !MIRRORED_FILES.has(f),
-    )) {
-      const css = stripComments(readFileSync(join(STYLES, file), 'utf8'))
-      const seen = new Map()
-      for (const m of css.matchAll(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g)) {
-        const h = expand(m[1])
-        // A hex can collide with a token while meaning something else entirely:
-        // the NSFW border is teal xterm-30 by design (commented at the site) and
-        // merely happens to equal --hs-reply-dim. Converting it would state a
-        // relationship that does not exist.
-        if (STRUCTURAL.has(h) || AMBIGUOUS.has(h) || ROLE_COLLISION.has(`${file}:${h}`)) continue
-        if (tokens.has(h)) seen.set(h, (seen.get(h) || 0) + 1)
+    for (const { path, rel } of FILES) {
+      if (EXEMPT_FILES.has(rel)) continue
+      const allowed = EXEMPT_HEX.get(rel)
+      const t = code(readFileSync(path, 'utf8'), rel)
+      for (const { lit, hex, partial } of literals(t)) {
+        if (hex === ORANGE) continue // judged by the [H]-only test below
+        if (allowed?.has(hex)) continue
+        if (!PALETTE.has(hex) || partial) offenders.push(`${rel}: ${lit}`)
       }
-      for (const [h, n] of seen) offenders.push(`${file}: #${h} x${n} — use var(${tokens.get(h)})`)
     }
-    expect(offenders, 'new color = use a token, never raw hex.').toEqual([])
+    expect(offenders, 'off-palette colour — use one of the eight (or add a reasoned exemption)').toEqual([])
+  })
+
+  test('no CSS named colour outside the eight', () => {
+    const offenders = []
+    for (const { path, rel } of FILES) {
+      if (EXEMPT_FILES.has(rel) || !(rel.endsWith('.css') || rel.endsWith('.html'))) continue
+      const t = code(readFileSync(path, 'utf8'), rel)
+      for (const m of t.matchAll(NAMED_RE)) offenders.push(`${rel}: ${m[1]}`)
+    }
+    expect(offenders).toEqual([])
+  })
+
+  test('#ff8700 is the [H] platform tag and nothing else', () => {
+    const where = []
+    for (const { path, rel } of FILES) {
+      if (EXEMPT_FILES.has(rel)) continue
+      const t = code(readFileSync(path, 'utf8'), rel)
+      for (const line of t.split('\n')) {
+        if (/#ff8700\b/i.test(line) || /rgba?\(\s*255\s*,\s*135\s*,\s*0/i.test(line))
+          where.push(`${rel}: ${line.trim()}`)
+      }
+    }
+    const allowed = [
+      ['src/multichat/styles/00-palette.css', '--hs-plat-hs'],
+      ['src/multichat/palette.js', 'heatsync:'],
+    ]
+    const stray = where.filter((w) => !allowed.some(([f, needle]) => w.startsWith(`${f}:`) && w.includes(needle)))
+    expect(stray, 'orange is only ever the [H] tag').toEqual([])
+    expect(where.length, 'both [H] definitions must exist').toBe(allowed.length)
+  })
+
+  test('the palette tokens are the eight (+ the [H] orange)', () => {
+    const css = code(readFileSync(join(STYLES, '00-palette.css'), 'utf8'), 'x.css')
+    const bad = []
+    for (const m of css.matchAll(/(--hs-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
+      const h = expand(m[2].slice(1))
+      if (m[1] === '--hs-plat-hs' ? h !== ORANGE : !PALETTE.has(h)) bad.push(`${m[1]}: ${m[2]}`)
+    }
+    expect(bad).toEqual([])
+  })
+
+  test('platform tags: [T] magenta, [K] green, [Y] red, [H] orange', () => {
+    const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
+    const tok = (n) => css.match(new RegExp(`${n}:\\s*(#[0-9a-fA-F]+)`))?.[1].toLowerCase()
+    expect(tok('--hs-plat-twitch')).toBe('#ff00ff')
+    expect(tok('--hs-plat-kick')).toBe('#00ff00')
+    expect(tok('--hs-plat-youtube')).toBe('#ff0000')
+    expect(tok('--hs-plat-hs')).toBe('#ff8700')
+    const js = readFileSync(join(ROOT, 'src', 'multichat', 'palette.js'), 'utf8')
+    for (const [k, v] of [
+      ['twitch', '#ff00ff'],
+      ['kick', '#00ff00'],
+      ['youtube', '#ff0000'],
+      ['heatsync', '#ff8700'],
+    ])
+      expect(js).toMatch(new RegExp(`${k}:\\s*'${v}'`))
   })
 
   test('the palette is actually used', () => {

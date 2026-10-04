@@ -145,10 +145,10 @@
       line-height: 1;
     }
     .hs-heat-n {
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
     }
     .hs-heat-deg {
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
     }
     .hs-post-link {
       color: var(--hs-mention);
@@ -902,7 +902,7 @@
       width: 18px;
       text-align: right;
       flex-shrink: 0;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
     }
     .hs-discover-row-live .hs-discover-rank { color: var(--hs-muted); }
     .hs-discover-live-dot {
@@ -935,7 +935,7 @@
       flex-shrink: 0;
     }
     .hs-discover-platforms .hs-plat {
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       font-size: 13px;
       font-weight: 700;
       padding: 0 3px;
@@ -975,14 +975,14 @@
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       line-height: 1;
     }
     .hs-discover-viewers {
       font-size: 13px;
       color: var(--hs-danger);
       font-variant-numeric: tabular-nums;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       flex-shrink: 0;
     }
 
@@ -996,7 +996,7 @@
       background: #000000;
       border-bottom: 1px solid #ffffff;
       font-size: 13px;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
     }
     .hs-discover-chips-label {
       color: var(--hs-muted);
@@ -1011,7 +1011,7 @@
       color: var(--hs-muted);
       cursor: pointer;
       font-size: 13px;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       font-weight: 600;
       border-radius: 0;
       line-height: 18px;
@@ -1127,7 +1127,7 @@
       color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       flex-shrink: 0;
     }
     .hs-discover-post-plat {
@@ -1161,7 +1161,7 @@
       font-size: 13px;
       color: var(--hs-muted);
       font-variant-numeric: tabular-nums;
-      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-family: monospace;
       flex-shrink: 0;
     }
 

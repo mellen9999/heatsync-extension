@@ -249,8 +249,7 @@
     "icon-16.png",
     "icon-48.png",
     "icon-48-black.png",
-    "_locales/*/messages.json",
-    "fonts/CozetteVector.woff2"
+    "_locales/*/messages.json"
   ],
   "browser_specific_settings": {
     "gecko": {

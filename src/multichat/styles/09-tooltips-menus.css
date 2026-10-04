@@ -12,8 +12,8 @@
     #hs-link-tooltip,
     #hs-mc-msg-ctx,
     .hs-mc-ctx {
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace);
+      font-size: var(--hs-mc-base-size, 15px);
     }
 
     /* Right-click emote action menu (multichat panel) */
@@ -41,8 +41,8 @@
       background: #000; color: #fff;
       border: 1px solid var(--hs-gold);
       padding: 0; width: 300px;
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace);
+      font-size: var(--hs-mc-base-size, 15px);
       user-select: none;
     }
     .hs-note-editor-head {

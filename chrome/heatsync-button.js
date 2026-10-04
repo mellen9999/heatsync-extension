@@ -482,15 +482,9 @@
         border-radius: 0;
         z-index: 4999;
         overflow: hidden;
-        /* CozetteVector bitmap @ 13px with smoothing off — crisp, matches the
-           overlay. Inter was soft/blurry against the rest of the house font.
-           Cozette only stays sharp at 13px (or 26px), so children use 13px. */
-        font-family: 'CozetteVector', monospace;
+        /* system monospace, same as the overlay */
+        font-family: monospace;
         font-size: 13px;
-        -webkit-font-smoothing: none;
-        font-smooth: never;
-        font-synthesis: none;
-        text-rendering: optimizeSpeed;
         display: flex;
         flex-direction: column;
       }
@@ -1994,7 +1988,7 @@
               <div class="heatsync-setting-label">right-click block</div>
               <div class="heatsync-setting-desc">instant blocks immediately · menu shows block/cancel · off disables it</div>
             </div>
-            <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #ffffff;font-family:'CozetteVector',monospace;font-size:13px;-webkit-font-smoothing:none;font-smooth:never;font-synthesis:none;text-rendering:optimizeSpeed">
+            <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #ffffff;font-family:monospace;font-size:13px">
               ${['instant', 'menu', 'off'].map((v) => `<button type="button" class="heatsync-rcb-opt" data-rcb="${v}" style="background:${(settings.rightClickBlockMode || 'menu') === v ? '#fff' : 'transparent'};color:${(settings.rightClickBlockMode || 'menu') === v ? '#000' : '#fff'};border:none;cursor:pointer;padding:4px 10px;font-family:inherit;font-size:13px">${v}</button>`).join('')}
             </div>
           </div>

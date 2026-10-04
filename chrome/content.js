@@ -1651,7 +1651,7 @@
     font-weight: 600 !important;
     text-align: center !important;
     margin-top: 4px !important;
-    font-family: Inter, -apple-system, system-ui, sans-serif !important;
+    font-family: monospace !important;
   }
 
   /* Stacked emotes preview - horizontal layout */
@@ -1960,7 +1960,7 @@
     background: #000; color: #fff;
     border: 1px solid #fff;
     padding: 8px; min-width: 220px;
-    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    font-family: monospace; font-size: 12px;
   }
   #hs-user-color-picker .hs-ucp-header {
     font-size: 11px; opacity: 0.8; margin-bottom: 6px;
@@ -1989,7 +1989,7 @@
     background: #000; color: #fff;
     border: 1px solid #fff;
     padding: 0; min-width: 220px; max-width: 280px;
-    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    font-family: monospace; font-size: 13px;
     animation: hs-em-in 80ms ease-out;
     transform-origin: top left;
   }
@@ -2031,7 +2031,7 @@
     background: #000; color: #fff;
     border: 1px solid #fff;
     padding: 6px 10px;
-    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    font-family: monospace; font-size: 13px;
     max-width: 280px;
   }
   .hs-event-chip .hs-event-title { font-weight: 600; margin-bottom: 4px; }
@@ -9119,7 +9119,7 @@
       align-items: center;
       gap: 8px;
       pointer-events: none;
-      font-family: Inter, -apple-system, sans-serif;
+      font-family: monospace;
     `
 
       const counter = document.createElement('div')

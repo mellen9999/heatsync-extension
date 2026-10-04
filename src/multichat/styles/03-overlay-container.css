@@ -74,7 +74,7 @@
          for density. (The pred/poll/hype banner is now an absolute overlay
          sibling, not an in-flow child, so no margin mirroring is needed here.) */
       padding: 6px 6px 6px 6px;
-      font-size: var(--hs-chat-font, 13px) !important;
+      font-size: var(--hs-chat-font, 15px) !important;
       line-height: 18px !important;
       word-wrap: break-word;
       word-break: break-word;
@@ -222,7 +222,7 @@
       color: #fff;
     }
     .hs-mc-chat-banner-timer {
-      font-family: 'SF Mono', 'Consolas', monospace;
+      font-family: monospace;
       font-size: 13px;
       font-weight: 700;
       color: #fff;

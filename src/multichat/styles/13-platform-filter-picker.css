@@ -174,7 +174,7 @@
        vertical-align hack is needed. */
     .hs-mc-st-arrow {
       color: var(--hs-muted);
-      font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
+      font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
       font-size: 19px;
       font-weight: 700;
       display: inline-block;

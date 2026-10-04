@@ -136,7 +136,7 @@ async function renderFollowImportPicker(msgsEl) {
   const wrapper = makeAddViewShell(msgsEl, t('mc_fill_cockpit'), t('mc_fill_cockpit_desc'))
 
   const status = document.createElement('div')
-  status.style.cssText = 'font-size:13px;color:#ffffff;font-family:ui-monospace,monospace;'
+  status.style.cssText = 'font-size:13px;color:#ffffff;font-family:monospace;'
   status.textContent = t('mc_fill_cockpit_loading')
   wrapper.appendChild(status)
 
@@ -258,8 +258,7 @@ async function renderFollowImportPicker(msgsEl) {
     const name = document.createElement('span')
     name.textContent =
       f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
-    name.style.cssText =
-      'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,monospace;'
+    name.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;'
     row.appendChild(box)
     row.appendChild(dot)
     row.appendChild(name)
@@ -317,7 +316,7 @@ function renderPasteListForm(msgsEl) {
     ta.placeholder = ph
     ta.setAttribute('aria-label', label)
     ta.style.cssText =
-      'background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:13px;outline:none;font-family:ui-monospace,monospace;resize:vertical;'
+      'background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:13px;outline:none;font-family:monospace;resize:vertical;'
     ta.addEventListener('keydown', (e) => e.stopPropagation())
     row.appendChild(lbl)
     row.appendChild(ta)
@@ -593,7 +592,7 @@ function renderAddChannelForm(msgsEl) {
 
   // Heatsync linkage status indicator (between rows and error)
   const linkStatus = document.createElement('div')
-  linkStatus.style.cssText = 'font-size:13px;color:#ffffff;min-height:14px;font-family:ui-monospace,monospace;'
+  linkStatus.style.cssText = 'font-size:13px;color:#ffffff;min-height:14px;font-family:monospace;'
   wrapper.insertBefore(linkStatus, errEl)
 
   // Debounced autofill — when user types in any field, look up that name on

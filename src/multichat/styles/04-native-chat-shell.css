@@ -74,8 +74,8 @@
          resolve to a known font with stable metrics — matching heatsync.org's
          --font-family-mono. Without it the browser picks an unpredictable
          system emoji font and the per-glyph advance can be fractional. */
-      font-family: var(--hs-mc-font, 'CozetteVector'), 'Courier New', monospace, 'Noto Color Emoji';
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace), 'Noto Color Emoji';
+      font-size: var(--hs-mc-base-size, 15px);
       /* Integer line-height (mirrors heatsync.org body 17px). Unitless lh
          multiplied by 13px = 18.2px = fractional baseline = bitmap blur on
          every line. Anything that inherits this stays on the pixel grid. */

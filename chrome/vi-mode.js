@@ -587,7 +587,7 @@
       border: '1px solid #ffffff',
       borderRadius: '0',
       padding: '8px 10px',
-      fontFamily: "'CozetteVector', monospace",
+      fontFamily: 'monospace',
       fontSize: '13px',
       lineHeight: '18px',
       zIndex: '10000',

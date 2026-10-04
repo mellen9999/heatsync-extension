@@ -123,7 +123,9 @@ const SETTINGS = [
   {
     key: 'fontFamily',
     type: 'enum',
-    default: 'CozetteVector',
+    default: 'monospace',
+    // retired faces (bitmap fonts no longer shipped) fall back to the system monospace
+    coerce: (v) => (v === 'CozetteVector' || v === 'GohuFont' || v === 'DepartureMono' ? 'monospace' : undefined),
     scope: 'sync',
     category: 'display',
     section: 'font',
@@ -135,7 +137,6 @@ const SETTINGS = [
     applyOnLoad: true,
     rerenderSettings: true,
     options: [
-      { value: 'CozetteVector', label: 'CozetteVector (13px)' },
       { value: 'monospace', label: 'system monospace' },
       { value: 'twitch', label: 'platform default (Inter — twitch + kick)' },
       { value: 'custom', label: 'custom...' },
@@ -159,14 +160,13 @@ const SETTINGS = [
   {
     key: 'fontSize',
     basic: true, // day-one row — shows in the default (basic) settings view
-    // enum, not range: a bitmap face has SIZES, not a continuum. The old
-    // continuous 10-26 slider offered CozetteVector one legal size and fifteen
-    // smears. `options` is the static UNION of every size any family may hold —
+    // enum, not range: a face may declare SIZES, not a continuum (see
+    // src/lib/font-grid.js; today every face is a vector face). `options` is the static UNION of every size any family may hold —
     // validateSettingValue/coerceSettingValue/lint read it directly and have no
     // access to the current family — and `optionsFor` narrows it to the
     // selected family at render time. See src/lib/font-grid.js.
     type: 'enum',
-    default: 13,
+    default: 15,
     scope: 'sync',
     category: 'display',
     section: 'font',

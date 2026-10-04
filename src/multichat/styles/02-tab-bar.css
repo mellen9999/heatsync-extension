@@ -315,9 +315,6 @@
       /* Cozette bitmap font needs the full crisp render block — without
          these, the browser anti-aliases the glyph and the buttons read
          as blurry-soft. mirrors heatsync.org base.css text rules. */
-      -webkit-font-smoothing: none !important;
-      font-smooth: never !important;
-      text-rendering: optimizeSpeed !important;
       font-kerning: normal !important;
       font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
     }
@@ -353,7 +350,7 @@
        the bitmap-smear trap). A scalable mono face + line-height:1 keeps the row
        height pinned at 18px, so it reads bigger without costing any density. */
     .hs-whisper-arrow {
-      font-family: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", monospace;
+      font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
       font-size: 19px;
       font-weight: 700;
       /* Pin the box to the row's own line-height. A 19px glyph in an auto-height

@@ -57,7 +57,7 @@
       padding: 0;
       background: #000000;
       color: #ffffff;
-      font: 12px/1.35 ui-monospace, 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+      font: 12px/1.35 monospace;
       /* container-type lives on the statusbar layer's notifs only (06-…css).
          On a shrink-to-fit layer (toast-stack) inline-size containment zeroes
          the content's width contribution — every toast collapsed to the 180px

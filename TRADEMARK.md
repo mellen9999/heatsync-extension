@@ -14,7 +14,3 @@ compatibility, nothing more. heatsync isn't affiliated with or endorsed by
 any of them.
 
 kick brand assets in `store-assets/` come from kick's official brand kit.
-
-## fonts
-
-the bundled Cozette font is MIT licensed separately — see [LICENSE-Cozette](LICENSE-Cozette).

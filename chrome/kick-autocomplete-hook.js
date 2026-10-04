@@ -214,7 +214,7 @@
         padding: 4px 0;
         max-height: 280px;
         overflow-y: auto;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: monospace;
         font-size: 13px;
         display: none;
       }

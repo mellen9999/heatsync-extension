@@ -5418,47 +5418,25 @@
   }
 
   // Font family + size — mirrors heatsync.org's appearance picker.
-  // CozetteVector is the bundled bitmap font (chrome/fonts/);
-  // 'monospace' uses host system, 'custom' uses settings.customFontName.
+  // 'monospace' (default) is the host system's monospace, 'twitch' the
+  // platform sans, 'custom' uses settings.customFontName. No web fonts ship.
   // Apply via CSS vars on #hs-mc-container so storage.onChanged can flip
   // it live without rebuilding the panel.
   function resolveFontStack(family, customName) {
-    if (family === 'monospace') return 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
     if (family === 'twitch') return "Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     if (family === 'custom') {
       const name = (customName || '').trim()
-      if (name) return `'${name.replace(/'/g, '')}', 'Courier New', monospace`
+      if (name) return `'${name.replace(/'/g, '')}', monospace`
     }
-    return "'CozetteVector', 'Courier New', monospace"
+    return 'monospace'
   }
   function applyFontSettings(fontFamily, fontSize, customFontName) {
-    // Migrate the removed GohuFont option → Cozette. Users who had it selected
-    // keep a crisp bitmap font instead of stranding on a now-missing face.
-    if (fontFamily === 'GohuFont') fontFamily = 'CozetteVector'
-    // Bitmap-font mode flag — kills AA + faux-bold + hinting for crisp
-    // pixel-grid rendering. CozetteVector only ships a single 400 master,
-    // so any font-weight ≥500 in CSS would otherwise synthesize a blurry
-    // bold. .hs-font-bitmap rule in styles.js sets font-synthesis:none.
-    // Toggle on body+root FIRST (always available) — reply-stack/notif
-    // overlays mount to <body> outside the container, so body is the
-    // authoritative carrier. Container toggle below is belt-and-braces.
-    // A bitmap face is crisp on its own pixel grid and nowhere else.
-    // CozetteVector renders whole only at 13px and its 2x, 26px — every other
-    // size resamples the glyphs and smears them, which is why "cozette looks
-    // bad sometimes" was never about cozette. The size control accepted 10-22,
-    // i.e. eleven sizes that cannot render and one that can.
-    //
-    // So the grid is part of choosing the font, the way it is for any pixel
-    // face: pick cozette and the size snaps to the nearest size cozette HAS.
-    // Snapping rather than switching typeface behind the user's back — family
-    // is the deliberate aesthetic choice, size is comfort, so we honour the
-    // choice and correct the thing that cannot be honoured. A user who wants a
-    // size off the grid picks a vector font and gets exactly that size.
-    // One policy, shared with the settings UI and the site: font-grid.js.
+    // Retired bitmap faces (CozetteVector / GohuFont / DepartureMono) → system monospace.
+    if (fontFamily === 'GohuFont' || fontFamily === 'CozetteVector' || fontFamily === 'DepartureMono') {
+      fontFamily = 'monospace'
+    }
+    // One size policy, shared with the settings UI and the site: font-grid.js.
     fontSize = snapSize(fontFamily, fontSize)
-    const isBitmap = isBitmapFamily(fontFamily) || !fontFamily
-    document.body.classList.toggle('hs-font-bitmap', isBitmap)
-    document.documentElement.classList.toggle('hs-font-bitmap', isBitmap)
     // Set the vars on :root FIRST, unconditionally — the panel often mounts
     // AFTER settings load (the load-time applier ran with no container), so a
     // non-default size used to silently fall back to 13px until the user poked
@@ -5477,7 +5455,6 @@
     const container = document.getElementById('hs-mc-container')
     if (!container) return
     container.style.setProperty('--hs-mc-font', stack)
-    container.classList.toggle('hs-font-bitmap', isBitmap)
     if (sizeNum >= 10 && sizeNum <= 26) {
       container.style.setProperty('--hs-mc-base-size', `${sizeNum}px`)
       container.style.setProperty('--hs-chat-font', `${sizeNum}px`)

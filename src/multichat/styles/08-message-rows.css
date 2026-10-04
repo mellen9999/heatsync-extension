@@ -39,7 +39,7 @@
          classic compact look */
       padding: var(--hs-mc-row-pad, 2px 4px);
       border-radius: 0;
-      font-size: var(--hs-chat-font, 13px) !important;
+      font-size: var(--hs-chat-font, 15px) !important;
       /* 18px integer (mirrors heatsync.org main.css:629) — keep baseline on
          the pixel grid. 1.4 × 13px = 18.2px fractional half-leading makes
          every bitmap glyph render off-grid. */
@@ -91,8 +91,8 @@
       /* Overlay lives on <body>, outside #hs-mc-container — pull font from
          :root vars so rows render in Cozette at the panel size, not the
          host page's font (Inter/Roobert on Twitch). */
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace);
+      font-size: var(--hs-mc-base-size, 15px);
     }
     /* Down overlay — descendants stacked BELOW the hovered row. No top border so
        it butts snug against the row (top edge meets row's content bottom). */
@@ -106,8 +106,8 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace);
+      font-size: var(--hs-mc-base-size, 15px);
     }
     /* Overlay rows must match native .hs-mc-msg height EXACTLY — same padding,
        same line-height. Mismatched heights make the olive stack look like a
@@ -180,8 +180,8 @@
       overflow: hidden;
       display: none;
       pointer-events: auto;
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
-      font-size: var(--hs-mc-base-size, 13px);
+      font-family: var(--hs-mc-font, monospace);
+      font-size: var(--hs-mc-base-size, 15px);
     }
     .hs-feed-postlink-preview-row {
       background: var(--hs-warn-bg) !important;
@@ -239,7 +239,7 @@
       background: #000;
       border: 1px solid var(--hs-border);
       color: #fff;
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-family: var(--hs-mc-font, monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -269,7 +269,7 @@
       border: 1px solid var(--hs-border);
       color: #fff;
       /* same reason as .hs-mc-reply-btn — see the note there */
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-family: var(--hs-mc-font, monospace);
       font-size: 13px;
       padding: 0 4px;
       cursor: pointer;
@@ -314,7 +314,7 @@
       border-right: 0;
       /* follows the single font setting like every other chip in a row, rather
          than pinning Cozette behind the user's back */
-      font: 13px/18px var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font: 13px/18px var(--hs-mc-font, monospace);
       user-select: none;
       height: 20px;
     }
@@ -571,7 +571,7 @@
       background: #000;
       color: #fff;
       border: 1px solid var(--hs-gold);
-      font: 13px/18px 'CozetteVector', monospace;
+      font: 13px/18px monospace;
       padding: 1px 8px;
       cursor: pointer;
       user-select: none;
@@ -761,7 +761,7 @@
       /* Text badges follow the single font setting (family + size), not the
          emote-size scale — one appearance control drives every badge glyph.
          Crispness on Cozette comes from the .hs-font-bitmap block. */
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-family: var(--hs-mc-font, monospace);
       font-size: 13px;
       margin-right: 3px;
       font-weight: 700;
@@ -774,7 +774,7 @@
     .hs-mc-badge {
       display: inline-block;
       /* Single font setting drives family + size (see .hs-mc-platform-badge). */
-      font-family: var(--hs-mc-font, 'CozetteVector', 'Courier New', monospace);
+      font-family: var(--hs-mc-font, monospace);
       font-size: 13px;
       padding: 0 3px;
       border-radius: 0;

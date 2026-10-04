@@ -281,7 +281,7 @@
     .hs-mc-pred-result-amount {
       font-size: 18px;
       font-weight: 900;
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-family: monospace;
       letter-spacing: -0.5px;
     }
     .hs-mc-pred-result-label {
@@ -717,7 +717,7 @@
     .hs-mc-stream-summary {
       background: #000; color: #fff;
       border: 1px solid var(--hs-brand);
-      font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
+      font: 13px/1.4 monospace;
       padding: 6px 10px; margin: 4px 6px;
     }
     .hs-mc-summary-title {
@@ -736,7 +736,7 @@
     #hs-mc-subpane {
       position: absolute; inset: 0; z-index: 30;
       background: #000; color: #fff; overflow: auto; outline: none;
-      font: 13px/1.4 'CozetteVector', 'Courier New', monospace;
+      font: 13px/1.4 monospace;
     }
     .hs-mc-subpane-pad { padding: 6px 10px; }
     .hs-mc-status-loading { font-size: 13px; color: #ffffff; }

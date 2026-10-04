@@ -8,67 +8,44 @@ import {
   snapSize,
   VECTOR_SIZES,
 } from '../src/lib/font-grid.js'
-import { resolveOptions, SETTINGS } from '../src/lib/settings-schema.js'
+import { coerceSettingValue, resolveOptions, SETTINGS } from '../src/lib/settings-schema.js'
 
 /**
- * A bitmap face off its cell size is resampled, not smaller. These tests exist
- * so the table cannot be quietly widened to fit a size someone liked, and so
- * the settings schema cannot drift away from it.
+ * No bitmap face ships any more (system monospace everywhere), so the grid is
+ * empty and every family is a vector face that holds any offered size. The
+ * module stays because the size control and the site contract are built on it.
  */
 describe('font grid', () => {
-  it('CozetteVector offers only integer multiples of its 13px cell', () => {
-    expect(FONT_GRID.CozetteVector).toEqual([13, 26, 39])
-    for (const px of FONT_GRID.CozetteVector) expect(px % 13).toBe(0)
-  })
-
-  it('never offers a size CozetteVector does not have', () => {
-    // The old control was a continuous range 10-26: one legal size, fifteen smears.
-    for (const bad of [10, 11, 12, 14, 15, 16, 18, 20, 22, 24, 25]) {
-      expect(sizesFor('CozetteVector')).not.toContain(bad)
+  it('declares no bitmap face', () => {
+    expect(FONT_GRID).toEqual({})
+    for (const family of ['monospace', 'twitch', 'custom', '', undefined]) {
+      expect(isBitmapFamily(family)).toBe(false)
     }
   })
 
-  it('snaps off-grid onto the grid and leaves a legal size alone', () => {
-    expect(snapSize('CozetteVector', 16)).toBe(13)
-    expect(snapSize('CozetteVector', 24)).toBe(26)
-    expect(snapSize('CozetteVector', 13)).toBe(13)
-    expect(snapSize('CozetteVector', 26)).toBe(26)
-  })
-
-  it('resolves a tie downward rather than doubling a chat unasked', () => {
-    expect(snapSize('CozetteVector', 19)).toBe(13)
-  })
-
-  it('treats an empty family as CozetteVector, matching resolveFontStack', () => {
-    // resolveFontStack falls through to the Cozette stack for empty/unknown,
-    // so the size policy has to agree or the default install gets the vector list.
-    expect(sizesFor('')).toEqual(FONT_GRID.CozetteVector)
-    expect(sizesFor(undefined)).toEqual(FONT_GRID.CozetteVector)
-    expect(snapSize('', 16)).toBe(13)
-  })
-
-  it('a vector face can express every size a bitmap face can', () => {
-    // Otherwise switching family destroys a size the new family could hold.
-    for (const [family, sizes] of Object.entries(FONT_GRID)) {
-      for (const px of sizes) expect(VECTOR_SIZES, `${family} ${px}px`).toContain(px)
+  it('every family gets the full vector size list', () => {
+    for (const family of ['monospace', 'twitch', 'custom', '', undefined]) {
+      expect(sizesFor(family)).toEqual(VECTOR_SIZES)
     }
+    expect(VECTOR_SIZES).toContain(15)
+    expect(VECTOR_SIZES).toContain(13)
   })
 
-  it('vector faces keep the in-between sizes — the grid is opt-in', () => {
-    expect(sizesFor('monospace')).toContain(16)
-    expect(isBitmapFamily('monospace')).toBe(false)
-    expect(isBitmapFamily('twitch')).toBe(false) // Inter is vector, not a bitmap face
-    expect(isBitmapFamily('CozetteVector')).toBe(true)
+  it('snaps an off-list size to the nearest, ties DOWN, and leaves a legal size alone', () => {
+    expect(snapSize('monospace', 15)).toBe(15)
+    expect(snapSize('monospace', 17)).toBe(16)
+    expect(snapSize('monospace', 39)).toBe(22)
+    expect(snapSize('monospace', 9)).toBe(10)
   })
 
   it('survives junk without inventing a size', () => {
     for (const junk of [null, '', 'abc', NaN, {}]) {
-      expect(FONT_GRID.CozetteVector).toContain(snapSize('CozetteVector', junk))
+      expect(VECTOR_SIZES).toContain(snapSize('monospace', junk))
     }
   })
 
-  it('starts a freshly picked family on its native size', () => {
-    expect(nativeSize('CozetteVector')).toBe(13)
+  it('starts a freshly picked family on a listed size', () => {
+    expect(VECTOR_SIZES).toContain(nativeSize('monospace'))
   })
 })
 
@@ -81,10 +58,10 @@ describe('fontSize schema entry agrees with the grid', () => {
     expect(def.control).toBe('sizebtns')
   })
 
-  it('its default is a size the default family actually has', () => {
-    // The registry defaults family to CozetteVector; a default of 14 or 16
-    // would make the schema's own defaults a blurry pair.
+  it('defaults to 15px on the system monospace', () => {
     const famDef = SETTINGS.find((d) => d.key === 'fontFamily')
+    expect(famDef.default).toBe('monospace')
+    expect(def.default).toBe(15)
     expect(sizesFor(famDef.default)).toContain(def.default)
   })
 
@@ -92,21 +69,25 @@ describe('fontSize schema entry agrees with the grid', () => {
     expect(def.options.map((o) => o.value)).toEqual(ALL_SIZES)
   })
 
-  it('optionsFor narrows to exactly the selected family', () => {
-    const forCozette = def.optionsFor(() => 'CozetteVector').map((o) => o.value)
-    expect(forCozette).toEqual(FONT_GRID.CozetteVector)
-    const forVector = def.optionsFor(() => 'monospace').map((o) => o.value)
-    expect(forVector).toEqual(VECTOR_SIZES)
-    expect(forVector.length).toBeGreaterThan(forCozette.length)
-  })
-
   it('every narrowed option is also a valid stored value', () => {
-    // The UI narrows; validation uses the union. A size offered by the UI that
-    // the validator would reject is a setting the user cannot actually keep.
-    for (const family of ['CozetteVector', 'monospace', 'twitch', 'custom']) {
+    for (const family of ['monospace', 'twitch', 'custom']) {
       for (const o of def.optionsFor(() => family)) {
         expect(ALL_SIZES, `${family} ${o.value}`).toContain(o.value)
       }
+    }
+  })
+})
+
+describe('fontFamily schema entry', () => {
+  const def = SETTINGS.find((d) => d.key === 'fontFamily')
+
+  it('offers no bitmap face', () => {
+    expect(def.options.map((o) => o.value)).toEqual(['monospace', 'twitch', 'custom'])
+  })
+
+  it('a stored retired bitmap face falls back to the system monospace', () => {
+    for (const old of ['CozetteVector', 'GohuFont', 'DepartureMono']) {
+      expect(coerceSettingValue(def, old), old).toBe('monospace')
     }
   })
 })
@@ -115,18 +96,10 @@ describe('resolveOptions — what the settings row actually renders', () => {
   const def = SETTINGS.find((d) => d.key === 'fontSize')
   const withFamily = (fam) => (key) => (key === 'fontFamily' ? fam : undefined)
 
-  it('renders exactly the bitmap grid for a bitmap family', () => {
-    expect(resolveOptions(def, withFamily('CozetteVector')).map((o) => o.value)).toEqual([13, 26, 39])
-  })
-
-  it('renders the wider list for a vector family', () => {
-    const vals = resolveOptions(def, withFamily('monospace')).map((o) => o.value)
-    expect(vals).toEqual(VECTOR_SIZES)
-    expect(vals).toContain(16)
-  })
-
-  it('treats an unset family as CozetteVector, matching the applier', () => {
-    expect(resolveOptions(def, withFamily(undefined)).map((o) => o.value)).toEqual([13, 26, 39])
+  it('renders the vector list for every family, set or unset', () => {
+    for (const fam of ['monospace', 'twitch', undefined]) {
+      expect(resolveOptions(def, withFamily(fam)).map((o) => o.value)).toEqual(VECTOR_SIZES)
+    }
   })
 
   it('falls back to the union rather than blanking the control if a narrower throws', () => {
@@ -138,7 +111,7 @@ describe('resolveOptions — what the settings row actually renders', () => {
         throw new Error('boom')
       },
     }
-    expect(resolveOptions(broken, withFamily('CozetteVector'))).toEqual(def.options)
+    expect(resolveOptions(broken, withFamily('monospace'))).toEqual(def.options)
   })
 
   it('leaves a def without a narrower completely alone', () => {

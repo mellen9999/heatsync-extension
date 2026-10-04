@@ -77,15 +77,13 @@ describe('paint compiler parity with the site', () => {
 /**
  * FONT-GRID IS A SHARED CONTRACT, NOT A SHARED FILE.
  *
- * Byte parity is the WRONG gate here, and enforcing it would break both sides:
- * the site ships CozetteVector and DepartureMono, the extension ships only
- * CozetteVector (chrome/fonts/ has one woff2), so their tables cannot match and
- * the extension must not offer a face it does not carry. The extension also
- * exports ALL_SIZES for its settings schema and treats an empty family as
- * CozetteVector, neither of which the site needs.
+ * Byte parity is the WRONG gate here: the extension exports ALL_SIZES for its
+ * settings schema and carries a wider VECTOR_ONLY list (10-22) than the site
+ * (14-20), neither of which the site needs. Neither side ships a bitmap face
+ * any more, so FONT_GRID is empty on both.
  *
  * What must never drift is what the file's own header always claimed: THE TABLE
- * ROWS THEY SHARE, and the snap semantics. If CozetteVector's sizes differ, or
+ * ROWS THEY SHARE, and the snap semantics. If a face's sizes differ, or
  * snapSize resolves differently, the same account gets a different font size in
  * the extension than on heatsync.org — which is the whole reason the module was
  * copied across in the first place.
@@ -107,9 +105,11 @@ describe('font-grid contract parity with the site', () => {
   }
 
   test('every face BOTH ship declares the same sizes', () => {
-    const shared = Object.keys(ours.FONT_GRID).filter((f) => f in theirs.FONT_GRID)
-    expect(shared.length, 'the two tables share no face at all — one of them is wrong').toBeGreaterThan(0)
-    for (const family of shared) {
+    // both empty today (no bitmap face ships); a face on one side only is a drift
+    expect(Object.keys(ours.FONT_GRID).sort(), 'the two tables list different faces').toEqual(
+      Object.keys(theirs.FONT_GRID).sort(),
+    )
+    for (const family of Object.keys(ours.FONT_GRID)) {
       expect(ours.FONT_GRID[family], `${family} has different sizes in the extension`).toEqual(theirs.FONT_GRID[family])
     }
   })
@@ -142,16 +142,6 @@ describe('font-grid contract parity with the site', () => {
       expect(mod.VECTOR_SIZES, `${side}: VECTOR_SIZES must be sorted ascending`).toEqual(
         [...mod.VECTOR_SIZES].sort((a, b) => a - b),
       )
-    }
-  })
-
-  test('the face inventory is allowed to differ, and the extension carries every face it lists', () => {
-    // Named so the next reader does not "fix" the difference by syncing the
-    // file: this asymmetry is correct, and the gate above is scoped around it.
-    const fonts = readFileSync(join(HERE, 'build.js'), 'utf8')
-    for (const family of Object.keys(ours.FONT_GRID)) {
-      const shipped = existsSync(join(HERE, 'chrome', 'fonts', `${family}.woff2`))
-      expect(shipped || fonts.includes(family), `the extension lists ${family} but ships no face for it`).toBe(true)
     }
   })
 })

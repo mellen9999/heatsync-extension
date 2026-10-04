@@ -75,7 +75,7 @@ describe('valid settings round-trip', () => {
       timestamps: true,
       avatars: true,
       mentionSoundVolume: 0,
-      fontFamily: 'CozetteVector',
+      fontFamily: 'monospace',
     }
     expect(sanitizeUiSettings(input)).toEqual(input)
   })
@@ -272,8 +272,8 @@ describe('real-world sync blob', () => {
       viMode: false,
       wysiwygEnabled: true,
       mentionSoundVolume: 0.5,
-      fontFamily: 'CozetteVector',
-      fontSize: 13,
+      fontFamily: 'monospace',
+      fontSize: 15,
       hs_emote_size: 2,
       hs_emoji_size: 1,
       hs_notifications: true,
@@ -295,10 +295,10 @@ describe('real-world sync blob', () => {
       constructor: 'evil', // prototype pollution
       __proto__: { x: 1 }, // prototype pollution
       bigString: 'x'.repeat(5000), // oversized string
-      fontFamily: 'CozetteVector', // valid
+      fontFamily: 'monospace', // valid
     }
     const out = sanitizeUiSettings(blob)
-    expect(out).toEqual({ zebra: true, fontFamily: 'CozetteVector' })
+    expect(out).toEqual({ zebra: true, fontFamily: 'monospace' })
   })
 })
 

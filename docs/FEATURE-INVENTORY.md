@@ -57,7 +57,7 @@ predictions, upsells, etc); auto-claim channel points.
 
 **multichat overlay** — tabbed panel (feed/whispers/mentions/pinned/live);
 per-tab platform filters; resizable + dockable 4 edges; `\` toggle; font picker
-(cozette 13px / gohu 14px / mono / platform / custom); density/zebra/timestamps/
+(system mono / platform / custom); density/zebra/timestamps/
 avatars/[T][K][Y] row badges; first-chatter glow; readable-names; dom-row cap
 100–1500 (default 500); 1500-entry circular buffer.
 

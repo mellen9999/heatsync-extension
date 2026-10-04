@@ -8254,7 +8254,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             if (typeof message.settings?.[k] === 'boolean') settings[k] = message.settings[k]
           }
           for (const k of ['slow_mode_wait_time', 'follower_mode_duration']) {
-            if (Number.isFinite(message.settings?.[k])) body[k] = Math.trunc(message.settings[k])
+            if (Number.isFinite(message.settings?.[k])) settings[k] = Math.trunc(message.settings[k])
           }
           res = await fetchWithTimeout(url, {
             method: 'POST',
@@ -8282,6 +8282,104 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
       } catch (e) {
         sendResponse({ ok: false, error: e?.message || 'network error' })
+      }
+    })()
+    return true
+  }
+  if (message.type === 'mod_suite') {
+    // A twitch channel's mod suite (mod-suite.js in multichat): shield, warn,
+    // unban requests, automod settings, shoutout, chatters. One handler, one op
+    // per server route; the server's helix call is the moderator check.
+    // Failures carry a code (relink_required / auth_required / not_moderator /
+    // rate_limited / gone / error) and `message`: the server's own words.
+    ;(async () => {
+      try {
+        const clean = (v) =>
+          String(v || '')
+            .toLowerCase()
+            .replace(/[^a-z0-9_]/g, '')
+        const channel = clean(message.channel)
+        const op = String(message.op || '')
+        const lvl = (n) => (Number.isInteger(n) && n >= 0 && n <= 4 ? n : null)
+        const AM = [
+          'overall_level',
+          'disability',
+          'aggression',
+          'sexuality_sex_or_gender',
+          'misogyny',
+          'bullying',
+          'swearing',
+          'race_ethnicity_or_religion',
+          'sex_based_terms',
+        ]
+        const base = `${API_URL}/api/mod`
+        const q = (path, extra = {}) => `${base}/${path}?${new URLSearchParams({ channel, ...extra })}`
+        let req = null // [method, url, body?]
+        if (op === 'shield_get') req = ['GET', q('shield')]
+        else if (op === 'shield_set' && typeof message.active === 'boolean')
+          req = ['POST', `${base}/shield`, { channel, is_active: message.active }]
+        else if (op === 'warn' && clean(message.user) && String(message.reason || '').trim())
+          req = [
+            'POST',
+            `${base}/warn`,
+            { channel, user: clean(message.user), reason: String(message.reason).trim().slice(0, 500) },
+          ]
+        else if (op === 'shoutout' && clean(message.user))
+          req = ['POST', `${base}/shoutout`, { channel, to_user: clean(message.user) }]
+        else if (op === 'unban_list') {
+          const status = ['pending', 'approved', 'denied'].includes(message.status) ? message.status : 'pending'
+          req = ['GET', q('unban-requests', { status })]
+        } else if (op === 'unban_resolve' && message.id && ['approved', 'denied'].includes(message.status)) {
+          const body = { channel, id: String(message.id), status: message.status }
+          const text = String(message.text || '')
+            .trim()
+            .slice(0, 500)
+          if (text) body.resolution_text = text
+          req = ['POST', `${base}/unban-requests/resolve`, body]
+        } else if (op === 'automod_get') req = ['GET', q('automod-settings')]
+        else if (op === 'automod_set' && AM.includes(message.key) && lvl(message.level) !== null)
+          req = ['PUT', `${base}/automod-settings`, { channel, [message.key]: message.level }]
+        else if (op === 'chatters') req = ['GET', q('chatters')]
+        if (!channel || !req) {
+          sendResponse({ ok: false, error: 'missing params' })
+          return
+        }
+        const authToken = await getAuthCookie()
+        if (!authToken) {
+          sendResponse({ ok: false, error: 'auth_required' })
+          return
+        }
+        const headers = { Authorization: `Bearer ${authToken}` }
+        const init = { credentials: 'omit', headers }
+        if (req[0] !== 'GET') {
+          init.method = req[0]
+          init.headers = { ...headers, 'Content-Type': 'application/json' }
+          init.body = JSON.stringify(req[2])
+        }
+        const res = await fetchWithTimeout(req[1], init)
+        const data = await res.json().catch(() => null)
+        if (res.ok) {
+          sendResponse({ ok: true, data: data && typeof data === 'object' ? data : {} })
+          return
+        }
+        const words = typeof data?.error === 'string' ? data.error : ''
+        // a 401 flagged relink_required = the twitch grant lacks the modsuite
+        // pack; a bare 401 is OUR expired session, which relinking cannot fix
+        const error =
+          res.status === 401
+            ? data?.relink_required === true || data?.error === 'relink_required'
+              ? 'relink_required'
+              : 'auth_required'
+            : res.status === 403
+              ? 'not_moderator'
+              : res.status === 404
+                ? 'gone'
+                : res.status === 429
+                  ? 'rate_limited'
+                  : 'error'
+        sendResponse({ ok: false, error, message: error === 'relink_required' ? '' : words, status: res.status })
+      } catch (e) {
+        sendResponse({ ok: false, error: 'error', message: e?.message || 'network error' })
       }
     })()
     return true

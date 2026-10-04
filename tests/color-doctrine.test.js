@@ -30,6 +30,13 @@ const ORANGE = 'ff8700'
 // (content scripts, the schema, the tooltip map) reads HS_PLAT_COLORS. 20-card.css is the
 // single exception: a byte-synced site copy, covered by the site's own token.
 const TWITCH = 'a970ff'
+// Single-definition hexes. Moderator green is Twitch's real mod badge colour; dim gray is for exactly
+// two roles (the reply-context line, and a fully-read chat tab) and nothing else. Each is spelled once
+// per layer: the CSS token, and (mod green) the JS constant.
+const SINGLE = new Map([
+  ['00ad03', new Set(['src/multichat/styles/00-palette.css', 'src/lib/palette.js'])],
+  ['808080', new Set(['src/multichat/styles/00-palette.css'])],
+])
 const TWITCH_FILES = new Set([
   'src/multichat/styles/00-palette.css',
   'src/lib/palette.js',
@@ -316,6 +323,10 @@ describe('colour doctrine — 8 colours', () => {
       const t = code(readFileSync(path, 'utf8'), rel)
       for (const { lit, hex, partial } of literals(t)) {
         if (hex === ORANGE) continue // judged by the [H]-only test below
+        if (SINGLE.has(hex) && !partial) {
+          if (!SINGLE.get(hex).has(rel)) offenders.push(`${rel}: ${lit} (single-definition colour outside its token)`)
+          continue
+        }
         if (hex === TWITCH && !partial) {
           if (!TWITCH_FILES.has(rel)) offenders.push(`${rel}: ${lit} (twitch purple outside its scopes)`)
           continue
@@ -361,16 +372,14 @@ describe('colour doctrine — 8 colours', () => {
     const bad = []
     for (const m of css.matchAll(/(--hs-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
       const h = expand(m[2].slice(1))
-      if (
-        m[1] === '--hs-plat-twitch'
-          ? h !== TWITCH
-          : m[1] === '--hs-zebra'
-            ? h !== '161616'
-            : m[1] === '--hs-plat-hs'
-              ? h !== ORANGE
-              : !PALETTE.has(h)
-      )
-        bad.push(`${m[1]}: ${m[2]}`)
+      const ONE = {
+        '--hs-plat-twitch': TWITCH,
+        '--hs-zebra': '161616',
+        '--hs-plat-hs': ORANGE,
+        '--hs-mod': '00ad03',
+        '--hs-dim': '808080',
+      }
+      if (m[1] in ONE ? h !== ONE[m[1]] : !PALETTE.has(h)) bad.push(`${m[1]}: ${m[2]}`)
     }
     expect(bad).toEqual([])
   })
@@ -398,5 +407,25 @@ describe('colour doctrine — 8 colours', () => {
       uses += (readFileSync(join(STYLES, f), 'utf8').match(/var\(--hs-/g) || []).length
     }
     expect(uses).toBeGreaterThan(600)
+  })
+})
+
+describe('single-definition colours', () => {
+  test('mod green and dim gray are each spelled exactly once per layer', () => {
+    const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
+    expect(css.match(/#00ad03/gi)).toHaveLength(1)
+    expect(css.match(/#808080/gi)).toHaveLength(1)
+    const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
+    expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
+  })
+
+  test('dim gray is used for exactly two roles: reply-context and fully-read tabs', () => {
+    const users = []
+    for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
+      const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+      for (const m of css.matchAll(/([^{}]+)\{([^{}]*var\(--hs-dim\)[^{}]*)\}/g))
+        users.push(m[1].trim().replace(/\s+/g, ' '))
+    }
+    expect(users).toEqual(['.hs-mc-tab', '.hs-mc-reply-ctx'])
   })
 })

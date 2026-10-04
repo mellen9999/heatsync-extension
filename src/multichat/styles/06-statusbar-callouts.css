@@ -221,7 +221,7 @@
       gap: 8px !important;
       padding: 4px 8px !important;
       min-height: 0 !important;
-      line-height: 15px !important;
+      line-height: 20px !important;
       min-width: 0 !important;
       max-width: 100% !important;
       overflow: hidden !important;
@@ -235,7 +235,7 @@
     [data-test-selector="chat-private-callout-queue__callout-container"] .pinned-callout :is(div, span, p):not(:has(button)) {
       display: inline !important;
       font-size: 13px !important;
-      line-height: 15px !important;
+      line-height: 20px !important;
     }
     /* Text wrapper — single block that ellipsifies when chat narrows.
        flex: 1 1 0 + min-width: 0 lets it shrink past content width, which is

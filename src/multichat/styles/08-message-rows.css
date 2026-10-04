@@ -40,7 +40,7 @@
       padding: var(--hs-mc-row-pad, 2px 4px);
       border-radius: 0;
       font-size: var(--hs-chat-font, 15px) !important;
-      line-height: var(--hs-mc-row-lh, 18px) !important;
+      line-height: var(--hs-mc-row-lh, 20px) !important;
       word-wrap: break-word;
       word-break: break-word;
       overflow-wrap: anywhere;
@@ -586,7 +586,7 @@
       display: block;
       max-width: 100%;
       font-size: 13px;
-      color: var(--hs-muted);
+      color: var(--hs-dim);
       line-height: inherit;
       padding: 0;
       margin: 0;
@@ -978,7 +978,7 @@
     .hs-mc-media .hs-feed-embed-rich-platform,
     .hs-mc-media .hs-feed-embed-rich-author {
       font-size: 13px;
-      line-height: 15px;
+      line-height: 17px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

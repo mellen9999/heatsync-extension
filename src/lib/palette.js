@@ -6,6 +6,10 @@
 // platform hexes render ONLY next to a platform glyph/label ([T]/[K]/[Y]
 // tags, dots, source chips), never as free-standing semantic color.
 // Both `yt` and `youtube` keys exist — callers disagree on the spelling.
+// moderator green — Twitch's real mod badge colour. The ONE place it is spelled in JS
+// (the CSS twin is --hs-mod in styles/00-palette.css).
+export const HS_MOD_GREEN = '#00ad03'
+
 export const HS_PLAT_COLORS = {
   twitch: '#a970ff',
   kick: '#00ff00',

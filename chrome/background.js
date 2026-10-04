@@ -1302,6 +1302,9 @@ browser.tabs.onRemoved.addListener((tabId) => {
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   _cachedTabs = null // Invalidate tab cache on navigation/load
+  // A reload or hard navigation restarts the content script (its thread view is
+  // gone), so the room it held would otherwise be joined forever.
+  if (changeInfo.status === 'loading') feedThreadSet(tabId, null)
   if (tabChannels.has(tabId) && changeInfo.url && !/twitch\.tv|kick\.com|youtube\.com/.test(changeInfo.url)) {
     tabChannels.delete(tabId)
     saveTabChannels()

@@ -289,6 +289,7 @@ function fullSpaReinit() {
   feedLoaded = false
   feedLoading = false
   feedMessages = []
+  feedBookmarks.clear()
   feedPage = 1
   feedHasMore = true
   feedLastFetch = 0

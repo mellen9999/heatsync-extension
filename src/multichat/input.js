@@ -2564,18 +2564,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       })
     }
   }
-  // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
-  if (feedMsg?.base36_id && hsAuthToken) {
-    if (!isOwnFeedPost(feedMsg)) {
-      const up = feedMsg.user_vote === 1
-      items.push({ label: t(up ? 'mc_feed_upvote_remove' : 'mc_feed_upvote'), fn: () => feedUpvote(feedMsg) })
-    }
-    const bm = feedBookmarks.get(feedMsg.base36_id) === true
-    items.push({
-      label: t(bm ? 'mc_feed_bookmark_remove' : 'mc_feed_bookmark'),
-      fn: () => feedBookmarkToggle(feedMsg.base36_id),
-    })
-  }
   // Reply — only when right-clicked on a real chat message with an id (Twitch
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {
@@ -2609,6 +2597,24 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (gateAtBoot('profile-cards') !== false) {
     items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
   }
+  items.push({
+    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    fn: () => hsNoteOpenEditor(username, platform, x, y),
+  })
+  // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
+  // Placed after the core rows — the numbered menu caps at 9 keys, and the
+  // optional rows below must not push reply/profile/note off their numbers.
+  if (feedMsg?.base36_id && hsAuthToken) {
+    if (!isOwnFeedPost(feedMsg)) {
+      const up = feedMsg.user_vote === 1
+      items.push({ label: t(up ? 'mc_feed_upvote_remove' : 'mc_feed_upvote'), fn: () => feedUpvote(feedMsg) })
+    }
+    const bm = feedBookmarks.get(feedMsg.base36_id) === true
+    items.push({
+      label: t(bm ? 'mc_feed_bookmark_remove' : 'mc_feed_bookmark'),
+      fn: () => feedBookmarkToggle(feedMsg.base36_id),
+    })
+  }
   // Hide / show this chatter's heatsync name paint — only for a row whose name
   // actually has one (a hidden paint stays in the cache, so "show" survives).
   const paintUid = typeof hsPaintUidOfMsg === 'function' ? hsPaintUidOfMsg(msg?._hsMsg) : null
@@ -2619,10 +2625,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       fn: () => toggleHsPaintHidden(paintUid),
     })
   }
-  items.push({
-    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
-    fn: () => hsNoteOpenEditor(username, platform, x, y),
-  })
   // Twitch-native actions we don't reimplement (report, gift sub) — the
   // official viewer-card popout carries both. Twitch rows with a known
   // channel only; window.open keeps twitch's own auth/session context.

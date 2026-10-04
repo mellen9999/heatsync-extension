@@ -22,7 +22,7 @@ function load({ auth = true, replies = () => ({ ok: true, data: {} }) } = {}) {
     showToast: (m, k) => toasts.push([m, k]),
     t: (k) => k,
     escapeHtml: (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
-    safeUrl: (u) => (/^https:/.test(u) ? u : ''),
+    clEmoteUrlAllowed: (u) => /^https:\/\/(cdn\.7tv\.app|heatsync\.org)\//.test(u),
     isOwnFeedPost: (m) => !!m.own,
     formatHeat: (h) => String(h),
     CSS: { escape: (s) => s },
@@ -30,7 +30,7 @@ function load({ auth = true, replies = () => ({ ok: true, data: {} }) } = {}) {
   }
   const api = new Function(
     ...Object.keys(g),
-    `${SRC}\nreturn { feedBookmarks, feedVoteOptimistic, feedVoteReconcile, feedVoteRollback, feedReactionApply, feedBookmarkUnknown, feedBookmarksLoad, feedBookmarkToggle, feedUpvote, feedReactionToggle, feedReactionsHtml, feedUpvoteHtml }`,
+    `${SRC}\nreturn { feedBookmarks, feedBookmarkSet, feedVoteOptimistic, feedVoteReconcile, feedVoteRollback, feedReactionApply, feedBookmarkUnknown, feedBookmarksLoad, feedBookmarkToggle, feedUpvote, feedReactionToggle, feedReactionsHtml, feedUpvoteHtml }`,
   )(...Object.values(g))
   return { ...api, calls, toasts }
 }
@@ -111,8 +111,8 @@ describe('reactions', () => {
   const mk = () => ({
     base36_id: 'a',
     reactions: [
-      { emote_id: 1, emote_name: 'kappa', emote_url: 'https://x/k.webp', count: 2, reacted: true },
-      { emote_id: 2, emote_name: 'pog', emote_url: 'https://x/p.webp', count: 1, reacted: false },
+      { emote_id: 1, emote_name: 'kappa', emote_url: 'https://cdn.7tv.app/k.webp', count: 2, reacted: true },
+      { emote_id: 2, emote_name: 'pog', emote_url: 'https://cdn.7tv.app/p.webp', count: 1, reacted: false },
     ],
   })
   test('apply flips mine and the count; zero drops the chip', () => {
@@ -149,11 +149,53 @@ describe('reactions', () => {
     const { feedReactionsHtml } = load()
     expect(feedReactionsHtml({ reactions: [] })).toBe('')
     const html = feedReactionsHtml({
-      reactions: [{ emote_id: 3, emote_name: '"><b>', emote_url: 'javascript:1', count: 4, reacted: true }],
+      reactions: [
+        { emote_id: 3, emote_name: '"><b>', emote_url: 'https://evil.example/x.png', count: 4, reacted: true },
+      ],
     })
     expect(html).not.toContain('<b>')
     expect(html).not.toContain('<img')
     expect(html).toContain('hs-feed-chip on')
+  })
+})
+
+describe('review fixes', () => {
+  test('chips only show images from the emote CDN hosts, https only', () => {
+    const { feedReactionsHtml } = load()
+    const html = feedReactionsHtml({
+      reactions: [
+        { emote_id: 1, emote_name: 'a', emote_url: 'http://cdn.7tv.app/a.webp', count: 1 },
+        { emote_id: 2, emote_name: 'b', emote_url: 'https://evil.example/b.webp', count: 1 },
+        { emote_id: 3, emote_name: 'c', emote_url: 'https://cdn.7tv.app/c.webp', count: 1 },
+      ],
+    })
+    expect(html.match(/<img/g)?.length).toBe(1)
+    expect(html).toContain('https://cdn.7tv.app/c.webp')
+  })
+  test('the bookmark map is capped, oldest dropped, re-set refreshes', () => {
+    const e = load()
+    for (let i = 0; i < 2005; i++) e.feedBookmarkSet(`id${i}`, true)
+    expect(e.feedBookmarks.size).toBe(2000)
+    expect(e.feedBookmarks.has('id0')).toBe(false)
+    expect(e.feedBookmarks.has('id2004')).toBe(true)
+    e.feedBookmarkSet('id5', false)
+    expect([...e.feedBookmarks.keys()].pop()).toBe('id5')
+  })
+  test('a second click while a vote is in flight is ignored', async () => {
+    let release
+    const gate = new Promise((r) => {
+      release = r
+    })
+    const e = load({ replies: async () => (await gate, { ok: true, data: { success: true, score: 1, user_vote: 1 } }) })
+    const m = { base36_id: 'a', user_vote: null, vote_score: 0 }
+    const first = e.feedUpvote(m)
+    await e.feedUpvote(m)
+    expect(e.calls.length).toBe(1)
+    release()
+    await first
+    expect(m.user_vote).toBe(1)
+    await e.feedUpvote(m)
+    expect(e.calls.length).toBe(2)
   })
 })
 
@@ -164,5 +206,12 @@ describe('wiring', () => {
     expect(build.indexOf("'feed-engage.js'")).toBeLessThan(build.indexOf("'social.js'"))
     const input = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
     expect(input).toContain('feedBookmarkToggle(feedMsg.base36_id)')
+    // the optional rows come after the core ones: the numbered menu caps at 9
+    const at = (needle) => input.indexOf(needle)
+    expect(at("label: 'reply'")).toBeGreaterThan(0)
+    expect(at("label: 'view profile'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+    expect(at("'edit note' : 'add note'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+    expect(at("'mc_paint_hide'")).toBeGreaterThan(at("'mc_feed_bookmark_remove'"))
+    expect(at("label: 'reply'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
   })
 })

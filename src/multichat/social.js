@@ -1260,6 +1260,9 @@ function listenForSocialEvents() {
   // Guard: only register once (survives SPA reinit via chrome listener persistence)
   if (_onceGuardsSocial.socialListener) return
   _onceGuardsSocial.socialListener = true
+  // A fresh content script has no thread view: clear any room a previous page
+  // life left registered for this tab (reload, extension update).
+  safeSendMessage({ type: 'feed_thread', room: null })
 
   cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
     // One listener, three subsystems — so each family checks its OWN switch

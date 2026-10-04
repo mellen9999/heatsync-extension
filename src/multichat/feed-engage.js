@@ -15,6 +15,15 @@
 // without a DOM.
 
 const feedBookmarks = new Map() // base36_id → bookmarked?
+const FEED_BOOKMARKS_MAX = 2000
+const feedVoting = new Set() // post ids with a vote request in flight
+
+// Insertion-ordered cap: re-setting an id moves it to the newest end.
+function feedBookmarkSet(id, on) {
+  feedBookmarks.delete(id)
+  feedBookmarks.set(id, on)
+  while (feedBookmarks.size > FEED_BOOKMARKS_MAX) feedBookmarks.delete(feedBookmarks.keys().next().value)
+}
 
 function feedVoteOptimistic(m) {
   const snap = { user_vote: m.user_vote ?? null, vote_score: Number(m.vote_score) || 0 }
@@ -69,7 +78,7 @@ async function feedBookmarksLoad(msgs) {
     const r = await apiFetch('/api/bookmarks/check', { method: 'POST', body: { message_ids: chunk } })
     const map = r?.ok ? r.data?.bookmarked : null
     if (!map) return
-    for (const id of chunk) feedBookmarks.set(id, map[id] === true)
+    for (const id of chunk) feedBookmarkSet(id, map[id] === true)
   }
 }
 
@@ -104,18 +113,26 @@ function feedPaintVote(m) {
 
 async function feedUpvote(m) {
   if (!hsAuthToken) return showToast(t('mc_social_login_first'), 'error')
-  const snap = feedVoteOptimistic(m)
-  feedPaintVote(m)
-  const r = await apiFetch(`/api/messages/${encodeURIComponent(m.base36_id)}/vote`, {
-    method: 'POST',
-    body: { vote_type: 1 },
-  })
-  if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
-  else {
-    feedVoteRollback(m, snap)
-    feedFail(r)
+  // One request per post at a time — two fast clicks would stack stale rollback
+  // snapshots and the server toggle would land the opposite of what's shown.
+  if (feedVoting.has(m.base36_id)) return
+  feedVoting.add(m.base36_id)
+  try {
+    const snap = feedVoteOptimistic(m)
+    feedPaintVote(m)
+    const r = await apiFetch(`/api/messages/${encodeURIComponent(m.base36_id)}/vote`, {
+      method: 'POST',
+      body: { vote_type: 1 },
+    })
+    if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
+    else {
+      feedVoteRollback(m, snap)
+      feedFail(r)
+    }
+    feedPaintVote(m)
+  } finally {
+    feedVoting.delete(m.base36_id)
   }
-  feedPaintVote(m)
 }
 
 async function feedBookmarkToggle(id) {
@@ -123,7 +140,7 @@ async function feedBookmarkToggle(id) {
   const was = feedBookmarks.get(id) === true
   const r = await apiFetch(`/api/bookmarks/${encodeURIComponent(id)}`, { method: was ? 'DELETE' : 'POST' })
   if (!r?.ok) return feedFail(r)
-  feedBookmarks.set(id, !was)
+  feedBookmarkSet(id, !was)
   showToast(t(was ? 'mc_feed_bookmark_removed' : 'mc_feed_bookmarked'), 'success')
 }
 
@@ -133,7 +150,7 @@ function feedReactionsHtml(m) {
   const chips = rs
     .map((r) => {
       const name = escapeHtml(r.emote_name || '')
-      const url = r.emote_url ? safeUrl(r.emote_url) : ''
+      const url = r.emote_url && clEmoteUrlAllowed(r.emote_url) ? r.emote_url : ''
       const img = url ? `<img class="hs-feed-chip-img" src="${escapeHtml(url)}" alt="${name}" loading="lazy">` : ''
       const on = !!r.reacted
       return `<span class="hs-feed-chip${on ? ' on' : ''}" role="button" aria-pressed="${on}" data-emote-id="${Number(r.emote_id) || 0}" title="${name} (${Number(r.count) || 0})">${img}<span class="hs-feed-chip-n">${Number(r.count) || 0}</span></span>`
@@ -192,6 +209,8 @@ function feedEngageWire(div, m) {
 
 const FEED_THREAD_ROOM_RE = /^[a-z0-9]{1,8}$/i
 let feedThreadRoom = null
+let feedThreadKeep = null
+const FEED_THREAD_KEEP_MS = 30000
 
 function feedThreadRoomFor(id) {
   return typeof id === 'string' && FEED_THREAD_ROOM_RE.test(id) ? `thread:${id.toLowerCase()}` : null
@@ -203,6 +222,17 @@ function feedThreadSync(id) {
   if (room === feedThreadRoom) return
   feedThreadRoom = room
   safeSendMessage({ type: 'feed_thread', room })
+  // The background dedupes, so re-announcing the open room is free — and it is
+  // what re-registers it after the service worker restarted with an empty map.
+  if (feedThreadKeep) {
+    cleanup.clearInterval(feedThreadKeep)
+    feedThreadKeep = null
+  }
+  if (room) {
+    feedThreadKeep = cleanup.setIntervalIfVisible(() => {
+      if (feedThreadRoom) safeSendMessage({ type: 'feed_thread', room: feedThreadRoom })
+    }, FEED_THREAD_KEEP_MS)
+  }
 }
 
 // Apply one frame to a cached post. Returns 'reactions' | 'vote' | null (what
@@ -229,7 +259,7 @@ function feedFrameApply(m, frame, selfId) {
       list.push({
         emote_id: emoteId,
         emote_name: frame.emote_name || '',
-        emote_url: gated ? '' : frame.emote_url || '',
+        emote_url: gated || !clEmoteUrlAllowed(frame.emote_url) ? '' : frame.emote_url,
         count: 1,
         reacted: false,
       })

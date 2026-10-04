@@ -19,6 +19,7 @@ const MR_TYPES = ['word', 'phrase', 'regex']
 const MR_PLATFORMS = ['twitch', 'kick', 'youtube']
 const MR_PLAT_TAG = { twitch: 'T', kick: 'K', youtube: 'Y' }
 const MR_NOTIFY_VIA = ['web', 'push']
+const MR_RETRY_MS = 15000
 
 const mrState = {
   rules: [],
@@ -31,6 +32,8 @@ const mrState = {
   testMsg: '',
   testResult: null, // true | false | null
   error: '',
+  failedAt: 0,
+  unauthed: false,
 }
 
 function mrBlankDraft() {
@@ -108,7 +111,9 @@ function mrDraftToBody(d) {
 }
 
 function mrHitUrl(h) {
-  const day = new Date(h.matched_at).toISOString().slice(0, 10)
+  const when = new Date(h.matched_at)
+  if (Number.isNaN(+when)) return ''
+  const day = when.toISOString().slice(0, 10)
   const anchor = h.message_id ? `?m=${encodeURIComponent(h.message_id)}` : ''
   return `https://heatsync.org/search/logs/${encodeURIComponent(h.platform || '')}/${encodeURIComponent(h.channel || '')}/${day}${anchor}`
 }
@@ -121,10 +126,14 @@ function mrHitsHtml(hits) {
       const tag = MR_PLAT_TAG[h.platform] || '?'
       const who = escapeHtml(h.display_name || h.username || '')
       const when = Number.isNaN(new Date(h.matched_at).getTime()) ? '' : escapeHtml(formatRelativeTime(h.matched_at))
+      const url = mrHitUrl(h) // '' for a hit with no usable date: shown, just not linked
+      const open = url
+        ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">`
+        : '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
       return (
         '<div class="hs-mc-setting-row" style="gap:4px;font-size:13px;overflow:hidden">' +
-        `<a href="${escapeHtml(mrHitUrl(h))}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">` +
-        `<span style="color:#808080">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}</a>` +
+        open +
+        `<span style="color:#808080">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}${url ? '</a>' : '</span>'}` +
         `<span style="color:#666;flex-shrink:0">${when}</span></div>`
       )
     })
@@ -225,7 +234,11 @@ function mrGroupHtml() {
     mrState.hits = []
     return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
   }
-  if (!mrState.loaded && !mrState.loading) mrLoad()
+  if (!mrState.loaded && !mrState.loading && Date.now() - mrState.failedAt > MR_RETRY_MS) mrLoad()
+  if (!mrState.loaded && mrState.failedAt) {
+    const line = mrState.unauthed ? t('mc_mr_signin') : mrState.error
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(line)}</div></div>`
+  }
   const rows = mrState.rules.length
     ? mrState.rules.map(mrRuleRowHtml).join('')
     : `<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
@@ -248,11 +261,21 @@ async function mrLoad() {
     apiFetch('/api/mention-rules/hits?limit=25'),
   ])
   mrState.loading = false
-  mrState.loaded = true
-  if (rules?.ok) {
-    mrState.rules = Array.isArray(rules.data?.rules) ? rules.data.rules : []
-    mrState.limit = Number(rules.data?.limit) || 0
+  if (!rules?.ok) {
+    // Not loaded: a 401 keeps the sign-in line up, anything else shows its error,
+    // and a later open (after MR_RETRY_MS) tries again instead of showing "none".
+    mrState.loaded = false
+    mrState.failedAt = Date.now()
+    mrState.unauthed = rules?.status === 401
+    mrState.error = mrState.unauthed ? '' : mrServerError(rules)
+    if (currentTab === 'settings') renderSettingsTab()
+    return
   }
+  mrState.loaded = true
+  mrState.failedAt = 0
+  mrState.unauthed = false
+  mrState.rules = Array.isArray(rules.data?.rules) ? rules.data.rules : []
+  mrState.limit = Number(rules.data?.limit) || 0
   mrState.hits = hits?.ok && Array.isArray(hits.data?.hits) ? hits.data.hits : []
   if (currentTab === 'settings') renderSettingsTab()
 }
@@ -349,6 +372,8 @@ async function mrHandleAction(el) {
   }
   const rule = mrState.rules.find((r) => String(r.id) === id)
   if (!rule) return
+  // keep a half-typed new rule across the reload that follows toggle / delete
+  if (act === 'toggle' || act === 'delete') mrReadForm(form)
   if (act === 'edit') {
     mrState.editId = rule.id
     mrState.draft = mrRuleToDraft(rule)

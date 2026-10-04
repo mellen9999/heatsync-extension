@@ -180,6 +180,53 @@ describe('markup', () => {
   })
 })
 
+describe('review fixes', () => {
+  test('a hit with a bad date is listed without a link instead of throwing', () => {
+    const { mrHitsHtml, mrHitUrl } = load()
+    const h = { platform: 'twitch', channel: 'c', matched_at: 'garbage', username: 'u', snippet: 'hi' }
+    expect(mrHitUrl(h)).toBe('')
+    const html = mrHitsHtml([h, { ...h, matched_at: '2026-10-03T00:00:00Z' }])
+    expect(html.match(/<a /g)?.length).toBe(1)
+    expect(html).toContain('hi')
+  })
+  test('a failed load keeps it unloaded: 401 shows sign-in, other errors their text, retry after the wait', async () => {
+    let status = 401
+    const e = load({ replies: () => ({ ok: false, status, error: 'boom' }) })
+    await e.mrLoad()
+    expect(e.mrState.loaded).toBe(false)
+    expect(e.mrGroupHtml()).toContain('mc_mr_signin')
+    expect(e.mrGroupHtml()).not.toContain('mc_mr_none')
+    status = 500
+    await e.mrLoad()
+    expect(e.mrGroupHtml()).toContain('boom')
+    const calls = e.calls.length
+    e.mrGroupHtml()
+    expect(e.calls.length).toBe(calls) // inside the retry window: no request storm
+    e.mrState.failedAt = Date.now() - 20000
+    e.mrGroupHtml()
+    await Promise.resolve()
+    expect(e.calls.length).toBeGreaterThan(calls)
+  })
+  test('toggle keeps what was typed in the add form', async () => {
+    const e = load({ replies: () => ({ ok: true, data: { rules: [] } }) })
+    e.mrState.rules = [{ id: 3, enabled: true }]
+    const form = {
+      querySelector: (s) =>
+        ({
+          type: { value: 'regex' },
+          pattern: { value: 'half typed' },
+          channels: { value: '' },
+          cs: { checked: false },
+          cd: { value: '' },
+          testmsg: { value: '' },
+        })[s.match(/"(.+)"/)[1]],
+      querySelectorAll: () => [],
+    }
+    await e.mrHandleAction({ dataset: { mrAction: 'toggle', mrId: '3' }, closest: () => form })
+    expect(e.mrState.draft.pattern).toBe('half typed')
+  })
+})
+
 describe('actions', () => {
   test('load fetches rules and the last 25 hits', async () => {
     const e = load({

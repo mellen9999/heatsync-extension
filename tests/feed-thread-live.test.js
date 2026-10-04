@@ -13,6 +13,8 @@ const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
 function load(posts = {}) {
   const sent = []
   const painted = []
+  const timers = []
+  const cleared = []
   const g = {
     hsAuthToken: true,
     hsCurrentUserId: '7',
@@ -22,7 +24,11 @@ function load(posts = {}) {
     showToast: () => {},
     t: (k) => k,
     escapeHtml: (s) => String(s),
-    safeUrl: (u) => u,
+    clEmoteUrlAllowed: (u) => /^https:\/\/cdn\.7tv\.app\//.test(u),
+    cleanup: {
+      setIntervalIfVisible: (fn, ms) => (timers.push([fn, ms]), timers.length),
+      clearInterval: (id) => cleared.push(id),
+    },
     isOwnFeedPost: () => false,
     formatHeat: (h) => String(h),
     CSS: { escape: (s) => s },
@@ -39,7 +45,7 @@ function load(posts = {}) {
     return { feedThreadSync, feedThreadRoomFor, feedFrameApply, feedOnFrame, room: () => feedThreadRoom }`,
   )
   const bound = new Function('__painted', `return (...a) => (${api.toString()})(...a)`)(painted)
-  return { ...bound(...Object.values(g)), sent, painted }
+  return { ...bound(...Object.values(g)), sent, painted, timers, cleared }
 }
 
 describe('join / leave state machine', () => {
@@ -75,10 +81,15 @@ describe('frame → cached post', () => {
     expect(m.reactions[0]).toMatchObject({ count: 3, reacted: true })
     e.feedFrameApply(
       m,
-      { type: 'reaction:added', user_id: 9, emote_id: 2, emote_name: 'p', emote_url: 'https://x/p.webp' },
+      { type: 'reaction:added', user_id: 9, emote_id: 2, emote_name: 'p', emote_url: 'https://cdn.7tv.app/p.webp' },
       '7',
     )
-    expect(m.reactions[1]).toMatchObject({ emote_id: 2, count: 1, reacted: false, emote_url: 'https://x/p.webp' })
+    expect(m.reactions[1]).toMatchObject({
+      emote_id: 2,
+      count: 1,
+      reacted: false,
+      emote_url: 'https://cdn.7tv.app/p.webp',
+    })
     e.feedFrameApply(m, { type: 'reaction:removed', user_id: 9, emote_id: 2 }, '7')
     expect(m.reactions.map((r) => r.emote_id)).toEqual([1])
   })
@@ -93,12 +104,26 @@ describe('frame → cached post', () => {
     const m = { reactions: [] }
     e.feedFrameApply(
       m,
-      { type: 'reaction:added', user_id: 9, emote_id: 5, emote_name: 'x', emote_url: 'https://x/y', nsfw: true },
+      {
+        type: 'reaction:added',
+        user_id: 9,
+        emote_id: 5,
+        emote_name: 'x',
+        emote_url: 'https://cdn.7tv.app/y',
+        nsfw: true,
+      },
       '7',
     )
     e.feedFrameApply(
       m,
-      { type: 'reaction:added', user_id: 9, emote_id: 6, emote_name: 'z', emote_url: 'https://x/z', cw_cats: ['gore'] },
+      {
+        type: 'reaction:added',
+        user_id: 9,
+        emote_id: 6,
+        emote_name: 'z',
+        emote_url: 'https://cdn.7tv.app/z',
+        cw_cats: ['gore'],
+      },
       '7',
     )
     expect(m.reactions.map((r) => r.emote_url)).toEqual(['', ''])
@@ -121,6 +146,36 @@ describe('frame → cached post', () => {
       ['r', 'p'],
       ['v', 'p'],
     ])
+  })
+})
+
+describe('review fixes', () => {
+  test('an open thread re-announces its room on a timer (re-registers after a bg restart); close stops it', () => {
+    const e = load()
+    e.feedThreadSync('abc')
+    expect(e.timers.length).toBe(1)
+    e.timers[0][0]()
+    expect(e.sent.at(-1)).toEqual({ type: 'feed_thread', room: 'thread:abc' })
+    e.feedThreadSync(null)
+    expect(e.cleared.length).toBe(1)
+    const n = e.sent.length
+    e.timers[0][0]()
+    expect(e.sent.length).toBe(n)
+  })
+  test('a frame emote from outside the CDN hosts shows as a name only', () => {
+    const e = load()
+    const m = { reactions: [] }
+    e.feedFrameApply(
+      m,
+      { type: 'reaction:added', user_id: 9, emote_id: 8, emote_name: 'q', emote_url: 'https://evil.example/q' },
+      '7',
+    )
+    expect(m.reactions[0].emote_url).toBe('')
+  })
+  test('a tab that reloads leaves its room, and a fresh content script clears one', () => {
+    expect(BG).toContain("if (changeInfo.status === 'loading') feedThreadSet(tabId, null)")
+    const social = readFileSync(join(ROOT, 'src', 'multichat', 'social.js'), 'utf8')
+    expect(social).toContain("safeSendMessage({ type: 'feed_thread', room: null })")
   })
 })
 

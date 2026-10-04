@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "още не е в архива — опитай след малко"
+  },
+  "mc_feed_upvote": {
+    "message": "харесване"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "махни харесването"
+  },
+  "mc_feed_bookmark": {
+    "message": "отметка"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "махни отметката"
+  },
+  "mc_feed_bookmarked": {
+    "message": "отбелязано"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "отметката е махната"
+  },
+  "mc_feed_action_failed": {
+    "message": "не стана — опитай пак"
   }
 }

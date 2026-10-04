@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "noch nicht im archiv — gleich nochmal versuchen"
+  },
+  "mc_feed_upvote": {
+    "message": "upvote"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "upvote entfernen"
+  },
+  "mc_feed_bookmark": {
+    "message": "lesezeichen"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "lesezeichen entfernen"
+  },
+  "mc_feed_bookmarked": {
+    "message": "lesezeichen gesetzt"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "lesezeichen entfernt"
+  },
+  "mc_feed_action_failed": {
+    "message": "das hat nicht geklappt — versuch es nochmal"
   }
 }

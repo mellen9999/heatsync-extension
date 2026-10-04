@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "ещё нет в архиве — попробуйте через минуту"
+  },
+  "mc_feed_upvote": {
+    "message": "плюс"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "убрать плюс"
+  },
+  "mc_feed_bookmark": {
+    "message": "закладка"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "убрать закладку"
+  },
+  "mc_feed_bookmarked": {
+    "message": "добавлено в закладки"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "закладка убрана"
+  },
+  "mc_feed_action_failed": {
+    "message": "не вышло — попробуй ещё раз"
   }
 }

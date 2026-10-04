@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "belum ada dalam arkib — cuba lagi sebentar"
+  },
+  "mc_feed_upvote": {
+    "message": "undi naik"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "buang undi"
+  },
+  "mc_feed_bookmark": {
+    "message": "penanda buku"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "buang penanda buku"
+  },
+  "mc_feed_bookmarked": {
+    "message": "ditanda"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "penanda buku dibuang"
+  },
+  "mc_feed_action_failed": {
+    "message": "gagal — cuba lagi"
   }
 }

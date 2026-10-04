@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "még nincs az archívumban — próbáld újra egy perc múlva"
+  },
+  "mc_feed_upvote": {
+    "message": "felszavazás"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "szavazat törlése"
+  },
+  "mc_feed_bookmark": {
+    "message": "könyvjelző"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "könyvjelző törlése"
+  },
+  "mc_feed_bookmarked": {
+    "message": "könyvjelzőzve"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "könyvjelző törölve"
+  },
+  "mc_feed_action_failed": {
+    "message": "nem sikerült — próbáld újra"
   }
 }

@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "jeszcze nie ma go w archiwum — spróbuj za chwilę"
+  },
+  "mc_feed_upvote": {
+    "message": "głosuj na tak"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "cofnij głos"
+  },
+  "mc_feed_bookmark": {
+    "message": "zakładka"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "usuń zakładkę"
+  },
+  "mc_feed_bookmarked": {
+    "message": "dodano zakładkę"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "usunięto zakładkę"
+  },
+  "mc_feed_action_failed": {
+    "message": "nie udało się — spróbuj ponownie"
   }
 }

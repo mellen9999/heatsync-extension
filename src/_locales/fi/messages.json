@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "ei ole vielä arkistossa — yritä hetken päästä uudelleen"
+  },
+  "mc_feed_upvote": {
+    "message": "äänestä ylös"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "poista ääni"
+  },
+  "mc_feed_bookmark": {
+    "message": "kirjanmerkki"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "poista kirjanmerkki"
+  },
+  "mc_feed_bookmarked": {
+    "message": "kirjanmerkki lisätty"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "kirjanmerkki poistettu"
+  },
+  "mc_feed_action_failed": {
+    "message": "ei onnistunut — yritä uudelleen"
   }
 }

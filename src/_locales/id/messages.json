@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "belum ada di arsip — coba lagi sebentar lagi"
+  },
+  "mc_feed_upvote": {
+    "message": "upvote"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "hapus upvote"
+  },
+  "mc_feed_bookmark": {
+    "message": "markah"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "hapus markah"
+  },
+  "mc_feed_bookmarked": {
+    "message": "ditandai"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "markah dihapus"
+  },
+  "mc_feed_action_failed": {
+    "message": "gagal — coba lagi"
   }
 }

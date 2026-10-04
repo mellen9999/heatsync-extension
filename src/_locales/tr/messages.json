@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "henüz arşivde değil — birazdan tekrar dene"
+  },
+  "mc_feed_upvote": {
+    "message": "beğen"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "beğeniyi geri al"
+  },
+  "mc_feed_bookmark": {
+    "message": "yer imi"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "yer imini kaldır"
+  },
+  "mc_feed_bookmarked": {
+    "message": "yer imine eklendi"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "yer imi kaldırıldı"
+  },
+  "mc_feed_action_failed": {
+    "message": "olmadı — tekrar dene"
   }
 }

@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "עוד לא בארכיון — נסו שוב עוד רגע"
+  },
+  "mc_feed_upvote": {
+    "message": "הצבעה בעד"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "הסר הצבעה"
+  },
+  "mc_feed_bookmark": {
+    "message": "סימנייה"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "הסר סימנייה"
+  },
+  "mc_feed_bookmarked": {
+    "message": "נשמר בסימניות"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "הסימנייה הוסרה"
+  },
+  "mc_feed_action_failed": {
+    "message": "זה לא עבד — נסה שוב"
   }
 }

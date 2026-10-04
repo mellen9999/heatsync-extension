@@ -1209,5 +1209,26 @@
   },
   "mc_pin_retry": {
     "message": "non è ancora nell'archivio — riprova tra un attimo"
+  },
+  "mc_feed_upvote": {
+    "message": "voto positivo"
+  },
+  "mc_feed_upvote_remove": {
+    "message": "rimuovi voto"
+  },
+  "mc_feed_bookmark": {
+    "message": "segnalibro"
+  },
+  "mc_feed_bookmark_remove": {
+    "message": "rimuovi segnalibro"
+  },
+  "mc_feed_bookmarked": {
+    "message": "salvato nei segnalibri"
+  },
+  "mc_feed_bookmark_removed": {
+    "message": "segnalibro rimosso"
+  },
+  "mc_feed_action_failed": {
+    "message": "non ha funzionato — riprova"
   }
 }

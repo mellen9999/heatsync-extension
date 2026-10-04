@@ -246,6 +246,24 @@ try {
       else fail('twitch live: no chat lines rendered at all in 30s')
     }
 
+    // ── 4. the video fills its column (twitch live) ─────────────────────
+    // 1.7.75–1.7.85 shipped a player squeezed to 680px in a 1020px column on
+    // every fresh install: a mid-boot probe read the channel page as "no
+    // channel" and stuck. No DOM test noticed; a screenshot did.
+    if (label === 'twitch live' && visible) {
+      const geo = await withTimeout(
+        p.evaluate(() => {
+          const w = (s: string) => document.querySelector(s)?.getBoundingClientRect().width ?? 0
+          return { video: Math.round(w('video')), main: Math.round(w('main')) }
+        }),
+        20_000,
+        'player geometry',
+      ).catch(() => null)
+      if (!geo || !geo.video || !geo.main) fail(`twitch live: couldn't measure the player (${JSON.stringify(geo)})`)
+      else if (geo.video >= geo.main - 24) ok(`twitch live: video fills its column (${geo.video}/${geo.main}px)`)
+      else fail(`twitch live: video squeezed to ${geo.video}px in a ${geo.main}px column`)
+    }
+
     // ── 5. no kick.com 429s over 60s on the kick live page ──────────────
     if (label === 'kick live' && visible) {
       const kick429s: string[] = []

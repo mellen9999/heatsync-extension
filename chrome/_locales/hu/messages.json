@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "külön ablak"
   },
+  "popup_not_signed_in": {
+    "message": "nincs bejelentkezve — "
+  },
+  "popup_setup_link": {
+    "message": "heatsync beállítása →"
+  },
+  "popup_errors_title": {
+    "message": "bal klikk: utolsó 50 hiba másolása / jobb klikk: törlés"
+  },
+  "popup_errors_count": {
+    "message": "hibák ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "nincs hiba"
+  },
+  "popup_copied": {
+    "message": "másolva: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "a másolás nem sikerült"
+  },
+  "popup_cleared": {
+    "message": "törölve"
+  },
+  "popup_detected_prefix": {
+    "message": "itt: "
+  },
+  "popup_privacy_link": {
+    "message": "nincs harmadik feles követés"
+  },
   "welcome_title": {
     "message": "üdv a heatsync-en"
+  },
+  "welcome_cta": {
+    "message": "nyisd meg a twitchet →"
+  },
+  "welcome_cta_fallback": {
+    "message": "nyisd meg a twitchet →"
+  },
+  "welcome_cta_kick": {
+    "message": "jelentkezz be →"
+  },
+  "welcome_done_title": {
+    "message": "bent vagy"
+  },
+  "welcome_import_title": {
+    "message": "hozd át az emote-jaidat"
+  },
+  "welcome_import_sub": {
+    "message": "egy kattintásos import 7tv-ből, bttv-ből és ffz-ből"
+  },
+  "welcome_import_locked": {
+    "message": "jelentkezz be lent, hogy behozd a meglévő 7tv/bttv/ffz emote-jaidat"
+  },
+  "welcome_import_cta": {
+    "message": "emote-jaim importálása →"
+  },
+  "welcome_import_importing": {
+    "message": "importálás…"
+  },
+  "welcome_import_done": {
+    "message": "$COUNT$ emote importálva",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "az import nem sikerült — próbáld újra"
+  },
+  "welcome_import_no_platform": {
+    "message": "előbb kösd össze a twitch, kick vagy youtube fiókodat →"
   },
   "welcome_privacy": {
     "message": "adatvédelem"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "szettek"
   },
   "btn_rotate_title": {
     "message": "tabsáv pozíció forgatása"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "tiltás feloldva"
   },
+  "btn_toast_block_failed": {
+    "message": "nem sikerült blokkolni — próbáld újra"
+  },
   "btn_toast_blocked": {
     "message": "letiltva"
   },
   "btn_toast_removed": {
     "message": "eltávolítva"
+  },
+  "btn_toast_remove_failed": {
+    "message": "az eltávolítás nem sikerült"
   },
   "btn_toast_added": {
     "message": "hozzáadva"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "nem sikerült blokkolni: $NAME$ — próbáld újra",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "nem sikerült feloldani: $NAME$ — próbáld újra",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "nem sikerült követni — próbáld újra"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "a követés megszüntetése nem sikerült — próbáld újra"
+  },
+  "content_toast_no_chat_input": {
+    "message": "nyisd meg a twitch chatet a mod műveletekhez"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ letiltva",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "partner"
   },
+  "content_card_mutual": {
+    "message": "kölcsönös"
+  },
+  "content_card_mutual_sub": {
+    "message": "kölcsönös sub"
+  },
+  "content_card_sub_badge": {
+    "message": "subolt"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "subolt T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "ban"
+  },
+  "content_card_unban": {
+    "message": "unban"
+  },
+  "content_card_block": {
+    "message": "blokkolás"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod eszközök"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod eszközök (nincs jogosultság)"
+  },
+  "content_card_note_title": {
+    "message": "jegyzet"
+  },
+  "content_card_note_placeholder": {
+    "message": "privát jegyzet — csak te látod"
+  },
+  "content_card_history_title": {
+    "message": "üzenetelőzmény"
+  },
+  "content_card_loading": {
+    "message": "betöltés…"
+  },
+  "content_card_history_empty": {
+    "message": "nincs üzenetelőzmény"
+  },
+  "content_card_history_empty_channel": {
+    "message": "nincs üzenete ettől a felhasználótól itt: $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "profil megnyitása"
+  },
+  "content_card_follow": {
+    "message": "követés"
+  },
+  "content_card_unfollow": {
+    "message": "követés megszüntetése"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch profil"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "clip készül…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url másolva"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip kész"
+  },
+  "content_card_copy_name": {
+    "message": "név másolása"
+  },
+  "content_card_mention": {
+    "message": "megemlítés"
+  },
+  "content_card_dialog_label": {
+    "message": "$USERNAME$ profilkártyája",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "mentve"
   },
+  "mc_tab_modlog": {
+    "message": "mod napló"
+  },
   "mc_tab_live_channel": {
     "message": "nézem · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "folytatás"
   },
+  "mc_connecting": {
+    "message": "csatlakozás…"
+  },
   "mc_no_messages": {
     "message": "még nincs üzenet"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "adj meg legalább egy platformot"
+  },
+  "mc_invalid_name": {
+    "message": "érvénytelen csatornanév — nézd meg, nincs-e elírás vagy szóköz"
   },
   "mc_username_placeholder": {
     "message": "felhasználónév"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "kattintható linkek"
   },
+  "mc_settings_partial_links": {
+    "message": "részleges linkek"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "a részleges és elferdített linkeket is linkké alakítja — csupasz watch?v= youtube hivatkozások és \"site (dot) com\" féle domainek, amikkel a chatek kijátsszák a linkszűrőket."
+  },
+  "mc_settings_link_previews": {
+    "message": "link előnézet"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "og:title/description buborék rámutatáskor"
+  },
+  "mc_settings_media_embeds": {
+    "message": "beágyazott média"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "képek, gifek, videók és linkkártyák megjelenítése a chatben (nincs automatikusan lejátszódó iframe)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi mód"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "időbélyeg minden üzeneten"
+  },
+  "mc_settings_show_avatars": {
+    "message": "profilképek"
   },
   "mc_settings_avatars_desc": {
     "message": "avatarok felhasználónevek mellett"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "aktív szavazásbanner, szavazz közvetlenül"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chat-ek"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "sáv a youtube super chat-ekhez, összeggel"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super sticker-ek"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "sáv a youtube super sticker-ekhez, összeggel"
+  },
+  "mc_settings_yt_membership": {
+    "message": "új tagok"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "sáv, ha valaki csatornatagként csatlakozik"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "tagsági mérföldkövek"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "sáv a tagsági mérföldkő hónapokhoz"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "ajándék tagságok"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "sáv az ajándékozott tagságokhoz, darabszámmal"
+  },
   "mc_settings_dim_timeouts": {
     "message": "timeoutolt üzenetek tompítása"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "predikció címe"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "nyertes kiválasztása"
+  },
+  "mc_pred_cancel_form": {
+    "message": "mégse"
+  },
+  "mc_pred_load_failed": {
+    "message": "a predikciók betöltése nem sikerült"
+  },
+  "mc_poll_ended": {
+    "message": "vége"
+  },
+  "mc_poll_optional": {
+    "message": "opcionális"
+  },
+  "mc_error_no_permission": {
+    "message": "nincs jogosultság"
+  },
+  "mc_error_not_logged_in": {
+    "message": "nem vagy bejelentkezve"
+  },
+  "mc_error_poll_active": {
+    "message": "már fut egy szavazás"
   },
   "mc_pred_option1": {
     "message": "1. opció (kék)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "küldj üzenetet..."
   },
+  "mc_input_attach": {
+    "message": "kép vagy videó csatolása"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote választó"
+  },
+  "mc_input_tab_hidden": {
+    "message": "elrejtve ezen a lapon: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "megjelenítve ezen a lapon: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "posztolás a heatsync-re..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "még nincs válasz"
   },
+  "mc_social_thread_unavailable": {
+    "message": "a szál nem elérhető — lehet, hogy a posztot törölték"
+  },
   "mc_social_login_first": {
     "message": "először jelentkezz be a heatsync.org-on"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "elküldve neki: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "Twitch felhasználó keresése sikertelen"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "nem érem el a heatsync-et — próbáld újra"
+  },
+  "mc_irc_queue_full": {
+    "message": "tele a küldési sor — az üzenet nem lett elmentve"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "említések — küldéshez válts csatornalapra"
+  },
+  "mc_input_no_channel": {
+    "message": "nincs csatorna — válassz egy lapot fent"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "kövesd $USER$-t, hogy dm-elhess neki — követés + küldés",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync felhasználó \"$USER$\" nem található",
@@ -730,6 +1087,14 @@
     "message": "$USER$ üzenete törölve",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "nem sikerült csatlakozni: $CHANNEL$ — nyisd újra a lapot",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "nincs betöltött emote"
   },
+  "mc_emote_cold_start_title": {
+    "message": "az emote-jaid minden chatben"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "húzd be $CHANNEL$ összes 7tv, bttv és ffz emote-ját a készletedbe — egy kattintás, minden chatben megjelenik.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "$CHANNEL$ összes emote-jának importálása",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "importálás…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "$COUNT$ importálva",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "az import nem sikerült"
+  },
+  "mc_emote_load_more": {
+    "message": "több betöltése"
+  },
+  "mc_emote_exact": {
+    "message": "pontos"
+  },
   "mc_emote_in_set": {
     "message": "a setedben"
   },
+  "mc_feed_delete_failed": {
+    "message": "nem sikerült törölni — próbáld újra"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "blokkolva: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "letiltva (kattints a feloldáshoz)"
+  },
+  "welcome_cta_live": {
+    "message": "nézd élőben"
+  },
+  "mc_settings_font_family": {
+    "message": "betűtípus"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "multichat betűtípus"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "egyéni betűtípus neve"
+  },
+  "mc_settings_font_size": {
+    "message": "betűméret"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "chat betűméret px-ben — húzd ízlés szerint (a régi F-/F+ gombokat váltja)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "emoji méret"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "emoji méret — 1x natív, 2x (alap)/4x felnagyítja az unicode emojit"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "időbélyeg formátum"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "óraformátum a chatsorok időbélyegéhez"
+  },
+  "mc_settings_readable_names": {
+    "message": "halvány nevek javítása"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "felélénkíti a halvány névszíneket, hogy olvashatók legyenek a fekete háttéren"
+  },
+  "mc_settings_platform_badges": {
+    "message": "platform jelvények"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "[T] [K] [Y] címkék az üzeneteken. kikapcsolva azokon a platformokon marad meg, ahol nem vagy."
+  },
+  "mc_settings_text_badges": {
+    "message": "szöveges jelvények"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "a mod/vip/sub jelvényeket tömör szöveges chipekként mutatja képek helyett"
+  },
+  "mc_settings_tab_counter": {
+    "message": "lapszám"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "szám minden chatlap jobb oldalán. olvasatlan = még nem látott üzenetek. heat = az utolsó percben érkezett üzenetek, így egy pörgős csatorna akkor is pörgősnek látszik, ha épp benne vagy"
+  },
+  "mc_settings_tab_position": {
+    "message": "lapsáv helye"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "melyik szélre dokkoljon a multichat lapsáv"
+  },
+  "mc_settings_chat_position": {
+    "message": "chat dokkolási oldala"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "a lejátszó melyik oldalára dokkoljon a chatpanel — az elrejtve eltünteti (a \\ billentyű váltja)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: javaslatsáv"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "javasolt videók függőleges sávban a cím mellett (csak youtube, bal/jobb dokknál) — alapból ki, mert a chat elfoglalja a helyet"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: chat nem élő oldalakon"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "a multichat panel megjelenítése youtube VOD-okon, a főoldalon és a keresőben is — alapból ki, így a panel csak élő adásokon jelenik meg (ahol van élő chat)"
+  },
+  "mc_settings_message_density": {
+    "message": "üzenetsűrűség"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "sorok kitöltése — a compact a klasszikus szoros kinézet"
+  },
+  "mc_settings_line_height": {
+    "message": "sormagasság"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "chatsor magassága px-ben — a 18 a bitmap betűket a pixelrácson tartja"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "látható üzenetek max."
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "ennyi chatsor marad élő DOM-ban (az adatpuffer 1500 marad). kevesebb = kevesebb ram forgalmas csatornákon."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync névfestékek"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "animált névfestékek a heatsync-től — elsőbbséget kap a 7tv festékkel szemben, ha a chatternek mindkettő megvan"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv festékek + jelvények"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "névfestékek és 7tv jelvények a chattereken"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv jelvények"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv jelvények a chattereken"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz jelvények"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez jelvények a chattereken"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "emote-ok animálása"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always: mindig lejátssza az animált emote-okat. hover: statikus képkockák, amíg a mutató nincs egy üzeneten — sok cpu/ram-ot spórol forgalmas csatornákon. never: teljesen statikus. multichat üzenetek; a választó animált marad."
+  },
+  "mc_settings_animate_paints": {
+    "message": "festékek animálása"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always: mindig lejátssza a névfestékek mozgását — a tiédet és másokét is. never: laposra fagyasztja őket. ez a beállítást követi, nem a böngésző csökkentett mozgás jelzőjét."
+  },
+  "mc_predview_title": {
+    "message": "predikciók és szavazások"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino jelvények"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino jelvények a chattereken"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "emote szolgáltató prioritás"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "ha a 7tv/bttv/ffz-nek ugyanolyan nevű emote-ja van, ez a szolgáltató nyer"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "készlet-emote-ok megjelenítése"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "kirajzolja a heatsync készletből jövő emote-okat — a tieidet és másokét is. kikapcsolva sima szó látszik helyette. a csatorna és globális emote-okat nem érinti"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "készlet-emote-ok javaslata"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "felkínálja a készletedet a tab-kiegészítésben és a gépelés közbeni javaslatokban. kikapcsolva csak a csatorna és globális emote-ok maradnak"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "névmások"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "pronoundb.org névmások a profilkártyán + a hover buborékban (csak twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "névtelen jelenlét"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "ne küldjön gépelés/jelenlét jelzéseket a platformnak"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "whisper értesítés"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "felugró értesítés, ha whisper vagy dm érkezik, miközben másik lapon vagy — kattints rá, hogy a whisperekre ugorj"
+  },
+  "mc_settings_notif_moment": {
+    "message": "pillanat riasztások"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "egy csatorna chatje hirtelen felrobban — a szerver észleli a heat-csúcsot; kattints a sorra a stream megnyitásához"
+  },
+  "mc_settings_evt_online": {
+    "message": "élő lett"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "sáv, amikor egy csatorna élő adásba kezd"
+  },
+  "mc_settings_evt_offline": {
+    "message": "offline lett"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "sáv, amikor egy csatorna offline lesz (alapból ki — zajos)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "játékváltások"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "sáv, amikor a streamer játékot vált"
+  },
+  "mc_settings_browser_notification": {
+    "message": "böngésző értesítés"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "asztali értesítés, ha valaki @-ol téged"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "lapcím villogtatás"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "a böngészőlap címe az említő nevével pulzál, amíg rá nem fókuszálsz"
+  },
+  "mc_settings_mention_volume": {
+    "message": "említés hangerő"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "hangjelzés hangereje említéskor. 0 = néma. tiszta WebAudio hangok, nincs csomagolt fájl."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "kövesd kicken is"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "ha a heatsync-en követsz, kövesd kicken is, ha van összekötött kick fiókja. kick.com bejelentkezés kell; különben sorba kerül"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "kövesd twitchen is"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "ha a heatsync-en követsz, kövesd twitchen is, ha van összekötött twitch fiókja. nyitott twitch.tv lap kell; különben sorba kerül"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch követés értesítésekkel"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "a platformközi twitch követések az élő értesítést is bekapcsolják arra a csatornára"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod eszköztár gombok"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "hover műveletek a chatsorokon, ha modod a csatornát — alapból mind ki"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "üzenet törlése"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 perc"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 perc"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 óra"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 óra"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 nap"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (üzenetek törlése, 1mp)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "végleges ban"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "felhasználó unban"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "ban megerősítése"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "megerősítő ablak végleges ban előtt — véd a félrekattintás ellen"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "ban indokok"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "soronként egy — kiválasztható chipként jelennek meg a ban ablakban; a választás a bannal együtt megy"
+  },
+  "mc_settings_automod_caps": {
+    "message": "csupa nagybetűs spam elrejtése"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "elrejti a 10 karakternél hosszabb, főleg nagybetűs üzeneteket"
+  },
+  "mc_settings_automod_regex": {
+    "message": "szűrő regex"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "soronként egy minta, kis/nagybetű nem számít — az egyező üzenetek elrejtődnek"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "szexuális emote-ok mutatása"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "a szexuális tartalomra jelölt emote-ok (≥ 70%) alapból rejtve vannak. bekapcsolva szaggatott kerettel látszanak."
+  },
+  "mc_settings_show_gore": {
+    "message": "gore emote-ok mutatása"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "az erőszak/gore jelölésű emote-ok (≥ 70%) alapból rejtve vannak. bekapcsolva szaggatott kerettel látszanak."
+  },
+  "mc_settings_show_weapon": {
+    "message": "fegyveres emote-ok mutatása"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "a fegyverábrázolásra jelölt emote-ok. alapból be."
+  },
+  "mc_settings_show_drug": {
+    "message": "drogos emote-ok mutatása"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "a drogábrázolásra jelölt emote-ok. alapból be."
+  },
+  "mc_settings_show_hate": {
+    "message": "gyűlöletkeltő emote-ok mutatása"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "a gyűlöletkeltő ábrázolásra jelölt emote-ok. alapból be."
+  },
+  "mc_settings_hide_bots": {
+    "message": "botok elrejtése"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "ismert chatbotok üzeneteinek elrejtése (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "!parancsok elrejtése"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "a !-lel kezdődő üzenetek elrejtése"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "duplikátumok elrejtése"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "egymás utáni azonos üzenetek (spamhullámok) összevonása az elsőre"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "kulcsszavak némítása"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "soronként egy kifejezés — bármelyiket tartalmazó üzenet elrejtődik. nem azonos a kulcsszó kiemeléssel."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "szűrőszabályok"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "szabályonkénti kiemelő/rejtő szűrők — kulcsszó, regex, felhasználó, jelvény vagy üzenettípus; a szabályszerkesztőben kezelhető"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "ajánlott csatornák"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "oldalsáv \"ajánlott csatornák\" rész"
+  },
+  "mc_settings_hide_stories": {
+    "message": "stories polc"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "oldalsáv / felső stories sáv"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming loot reklám"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "koronás prime loot gomb"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo reklám"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo cta linkek"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / szezonális bannerek"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "szezonális előfizetős színátmenetes bannerek"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "élő értesítés kapcsoló"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "értesítésre feliratkozó csengő gomb"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "követés megszüntetése gomb"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "követés megszüntetése gomb (megelőzi a félrekattintást)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "feliratkozás gomb"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "csatorna feliratkozás gomb"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "képernyős ünneplések"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "konfetti / ünneplő overlayek a videón"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "lejátszó bővítmények"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "a videót takaró overlay bővítmények"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "görgetős hangerő"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "görgess a lejátszón a hangerő állításához"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "stream cím"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "a lejátszó alatti stream cím blokk elrejtése"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "nézőszám"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "az élő nézőszámláló elrejtése"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "látható lapok"
+  },
+  "mc_settings_ui_locale": {
+    "message": "felület nyelve"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichat felület nyelve — újratöltéskor frissül teljesen"
+  },
+  "mc_settings_subsystems": {
+    "message": "alrendszerek"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch chat feed"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc kapcsolat + csatorna csatlakozások az overlayen belül"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick chat feed"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket kapcsolat + csatorna csatlakozások az overlayen belül"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube chat feed"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "youtube élő chat feliratkozások az overlayen belül"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "harmadik feles kozmetikumok"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv festékek + bttv/ffz/chatterino jelvények. kikapcsolva ram-ot spórol forgalmas csatornákon."
+  },
+  "mc_settings_sub_feed": {
+    "message": "hírfolyam"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsync közösségi hírfolyam lap + eseményfolyama"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whisperek"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub socket + whisper lap"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "említések"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "említés-észlelés, említések lap és értesítések"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "stream statisztikák"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "csatornánkénti üzenetráta-statisztika a heat rangsorhoz"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "profilkártyák"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "kattints egy felhasználónévre a profilkártya felugróhoz"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emote-ok a natív chatben"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "heatsync emote-ok megjelenítése a platform saját chatjében"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-kiegészítés a natív chatben"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "emote + felhasználónév kiegészítés a platform saját beviteli mezőjében"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote választó gomb"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "a heatsync választó gomb a natív chat beviteli mező mellett"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "natív chat átvétel"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "amíg az overlay takarja a twitch chatet, a twitch ne renderelje a rejtett másolatát — sok ram-ot spórol forgalmas csatornákon. hiba esetén nyitva marad: overlay leáll → a twitch chat magától visszajön."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick chat tartalék"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "tartaléknak olvassa az aktuális kick oldal saját chatfolyamát. tétlen, amíg a normál átvitelek működnek — csak akkor lép be, ha elcsendesednek."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "yt tartalék"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "közvetlenül lekérdezi a youtube-ot, ha mindkét normál feed 5 percig elnémul — végső mentőháló, nem helyettesítő átvitel."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod tartási sor"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "a twitch automod visszatartásait sorban mutatja a csatornákban, amiket modolsz, allow/deny gombokkal — tükrözi a twitch saját ellenőrző sorát."
+  },
+  "mc_automod_label": {
+    "message": "automod tartás"
+  },
+  "mc_automod_allow": {
+    "message": "engedélyez"
+  },
+  "mc_automod_deny": {
+    "message": "elutasít"
+  },
+  "mc_automod_resolving": {
+    "message": "feloldás…"
+  },
+  "mc_automod_error": {
+    "message": "a művelet nem sikerült"
+  },
+  "mc_automod_relink_toast": {
+    "message": "az automod sorhoz újra kell kötni a twitchet"
+  },
+  "mc_automod_signin": {
+    "message": "jelentkezz be újra a heatsync-be"
+  },
+  "mc_automod_relink_action": {
+    "message": "újrakötés"
+  },
+  "mc_settings_diag_errors": {
+    "message": "diagnosztikai hibák mutatása"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "a hibák csak helyben tárolódnak — soha nem töltődnek fel. ez a kapcsoló csak az alábbi diagnosztikai panelt mutatja."
+  },
+  "mc_settings_debug_logging": {
+    "message": "debug naplózás"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "bőbeszédű konzolnapló az összes heatsync szkriptből — a következő oldalbetöltéskor lép életbe"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimális"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "haladó"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "mod"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "kevés ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "a másolás nem sikerült"
+  },
+  "mc_common_unknown": {
+    "message": "ismeretlen"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch követés blokkolva: 2FA kell — fejezd be a twitch.tv-n"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch követés megszüntetése blokkolva: 2FA kell — fejezd be a twitch.tv-n"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "$USER$ követve itt: $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "$USER$ követése megszüntetve itt: $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "$COUNT$ függő $PLATFORM$ követés szinkronizálva",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick követés sorban — szinkronizál, ha bejelentkezel a kick.com-ra"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick követés megszüntetése sorban — szinkronizál, ha bejelentkezel a kick.com-ra"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch követés sorban — szinkronizál, amikor legközelebb megnyitod a twitch.tv-t"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch követés megszüntetése sorban — szinkronizál, amikor legközelebb megnyitod a twitch.tv-t"
+  },
+  "mc_emote_add_error": {
+    "message": "hiba a hozzáadásnál: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "nem sikerült hozzáadni: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "emote-ok hozzáadásához jelentkezz be a heatsync.org-ra"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "$NAME$ nem adható hozzá — a kép nem elérhető",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "hozzáadva: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "nem sikerült blokkolni — próbáld újra"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "nem sikerült feloldani — próbáld újra"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "a blokk nem mentődött a fiókodba — más eszközökön eltérhet"
+  },
+  "mc_emote_blocked_count": {
+    "message": "$COUNT$ emote blokkolva",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "hiba az eltávolításnál: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "nem sikerült eltávolítani: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "eltávolítva: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "a feloldás nem mentődött a fiókodba — más eszközökön eltérhet"
+  },
+  "mc_emote_unblocked": {
+    "message": "feloldva: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "már követed $USER$-t",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ már némítva van",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "$USER$ blokkolva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "helyi puffer törölve"
+  },
+  "mc_input_copied": {
+    "message": "másolva"
+  },
+  "mc_input_delete_failed": {
+    "message": "a törlés nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "a /delete-hez csatornalap kell"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "a /delete-hez twitch vagy kick csatorna kell"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji másolva"
+  },
+  "mc_input_followers_failed": {
+    "message": "a /followers nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "csak követőknek: ki"
+  },
+  "mc_input_followers_on": {
+    "message": "csak követőknek: be"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "csak követőknek: be ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "a /followers csak twitchen működik — nyiss egy twitch csatornát"
+  },
+  "mc_input_login_first_op": {
+    "message": "a /op-hoz előbb jelentkezz be a heatsync.org-on"
+  },
+  "mc_input_message_copied": {
+    "message": "üzenet másolva"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "a /$CMD$-hez csatornalap kell (nem live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "a /$CMD$-hez twitch, kick vagy youtube csatorna kell",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: nincs friss üzenet tőle: $TARGET$ — használd az üzenetmenüt",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "a /$CMD$ még nincs bekötve — egyelőre csak a /followers megy",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ némítva (24ó)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "név másolva"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "nincs kinek válaszolni"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$-nek nincs twitchje — próbáld inkább a /dm-et",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "nem követed $USER$-t",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ nincs némítva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ nincs a heatsync-en",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "nem kész"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — nem sub ezen a csatornán",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "nincs mit posztolni a veremben"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "itt nincs mit törölni"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "nincs mit posztolni"
+  },
+  "mc_input_nuke_done": {
+    "message": "nuke: $OK$/$TOTAL$ egyező \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "a /nuke-hoz csatornalap kell"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "a /nuke-hoz twitch vagy kick csatorna kell"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: nincs \"$TERM$\" egyező üzenet az utolsó $SEC$ mp-ben",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "a posztolás nem sikerült"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "posztolva a hírfolyamba"
+  },
+  "mc_input_rate_limited": {
+    "message": "sebességkorlát — próbáld egy pillanat múlva"
+  },
+  "mc_input_server_unreachable": {
+    "message": "nem érem el a szervert ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "a /status-hoz csatornalap kell (vagy /status <név>)"
+  },
+  "mc_input_success": {
+    "message": "sikerült"
+  },
+  "mc_input_thread_copied": {
+    "message": "szál másolva"
+  },
+  "mc_input_unblocked": {
+    "message": "$USER$ blokkja feloldva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "ismeretlen parancs"
+  },
+  "mc_input_unmuted": {
+    "message": "$USER$ némítása feloldva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url másolva"
+  },
+  "mc_input_usage_ban": {
+    "message": "használat: /ban <felhasználó> [ok]"
+  },
+  "mc_input_usage_delete": {
+    "message": "használat: /delete <üzenet-id> (jobb klikk egy üzenetre)"
+  },
+  "mc_input_usage_dm": {
+    "message": "használat: /dm <felhasználó> <üzenet>"
+  },
+  "mc_input_usage_follow": {
+    "message": "használat: /$CMD$ <felhasználó>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "használat: /followers [perc] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "használat: /mute <felhasználó>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "használat: /nuke <kifejezés> [másodperc] — a kifejezés legalább 2 karakter"
+  },
+  "mc_input_usage_op": {
+    "message": "használat: /op <szöveg>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "a /highlight-hoz twitch csatornalap kell"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <üzenet>"
+  },
+  "mc_input_highlight_login": {
+    "message": "előbb jelentkezz be a twitch.tv-re"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "a twitch nem elérhető — próbáld újra"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "ehhez twitch csatornalap kell"
+  },
+  "mc_input_pp_login": {
+    "message": "előbb jelentkezz be a twitch.tv-re"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "a csatornát nem sikerült azonosítani"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll kérdés | opció1 | opció2 [| … max 5] [| mp]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction cím | kimenet1 | kimenet2 [| … max 10] [| mp]"
+  },
+  "mc_input_poll_created": {
+    "message": "szavazás létrehozva"
+  },
+  "mc_input_prediction_created": {
+    "message": "predikció elindítva"
+  },
+  "mc_input_poll_ended": {
+    "message": "szavazás vége"
+  },
+  "mc_input_no_active_poll": {
+    "message": "nincs aktív szavazás"
+  },
+  "mc_input_no_active_pred": {
+    "message": "nincs aktív predikció"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <pont>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "predikció lezárva"
+  },
+  "mc_input_pred_canceled": {
+    "message": "predikció törölve"
+  },
+  "mc_input_voted": {
+    "message": "szavazat: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "$POINTS$ tét erre: $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "eldőlt: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <felhasználó> <szöveg>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <felhasználó>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <felhasználó> — blokkot kapcsol"
+  },
+  "mc_input_note_failed": {
+    "message": "a jegyzetet nem sikerült menteni"
+  },
+  "mc_input_note_saved": {
+    "message": "jegyzet mentve: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "jegyzet törölve: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "nincs jegyzet: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <beállítás> <érték>"
+  },
+  "mc_input_set_complex": {
+    "message": "ezt a beállítások panelben módosítsd"
+  },
+  "mc_input_set_unknown": {
+    "message": "ismeretlen beállítás: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "ehhez on/off kell: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "érvénytelen érték: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|csatorna>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "a lapok nem elérhetők"
+  },
+  "mc_input_tab_unknown": {
+    "message": "nincs ilyen lap: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <felhasználó>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <felhasználó>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ vip lett",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "$USER$ vip-je elvéve",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <felhasználó>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <felhasználó>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ mod lett",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "$USER$ mod-ja elvéve",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "a twitchnek nincs api-ja ehhez: $LABEL$ — csak kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "a twitch kivette a /$CMD$-t a chatből — használd a saját mod eszközeit",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "a kicken nincs $LABEL$ mód",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ be",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ ki",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ be ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ nem sikerült: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "használat: /$LABEL$ [időtartam|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "a csatornát nem sikerült azonosítani"
+  },
+  "mc_input_highlight_sent": {
+    "message": "kiemelve · $BALANCE$ bits maradt",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "a kiemelés nem erősödött meg — újraküldhető, a bits csak egyszer fogy"
+  },
+  "mc_input_highlight_failed": {
+    "message": "a kiemelés nem sikerült: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "a parancs nem sikerült: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "használat: /r <üzenet>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "használat: /timeout <felhasználó> [másodperc] [ok]"
+  },
+  "mc_input_usage_unban": {
+    "message": "használat: /unban <felhasználó>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "használat: /unmute <felhasználó>"
+  },
+  "mc_input_usage_w": {
+    "message": "használat: /w <felhasználó> <üzenet>"
+  },
+  "mc_irc_join_queued": {
+    "message": "nem sikerült csatlakozni a #$CHANNEL$ chathez — sorban",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "ki vagy tiltva erről a csatornáról"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "a csatorna blokkolja az üzeneteket"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "a csatorna fel van függesztve"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "duplikált üzenet — a twitch elutasította"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "csak emote mód — az üzenetnek csupa emote-nak kell lennie"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "csak követőknek — kövesd a csatornát a chateléshez"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "kövesd a csatornát még egy kicsit a chateléshez"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "csak követőknek — előbb követned kell"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "itt nincs jogosultságod ehhez"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "egyedi chat mód — az üzenetnek egyedinek kell lennie"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod ellenőrzi az üzenetedet"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod blokkolta az üzenetedet"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "lassú mód — várj egy kicsit"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "csak subscribereknek — subolj a chateléshez"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "timeoutban vagy"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "ki vagy tiltva a twitchről"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "a twitch nem ismerte fel a parancsot"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "a csatornán chateléshez megerősített e-mail kell"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "a csatornán chateléshez megerősített telefonszám kell"
+  },
+  "mc_main_age_confirm": {
+    "message": "erősítsd meg, hogy elmúltál 18, a felnőtt tartalomhoz"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "elmúltam 18"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "az ünneplés megosztása nem sikerült — az üzeneted a chatbe megy"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "$NOUN$ mentése nem sikerült — próbáld újra",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "az üzenetet nem sikerült elküldeni — az ünneplő sorodban még látszik"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ nem mentődött a készletedbe — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "a csatorna nem mentődött — tárolási hiba"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "a némítási lista nem mentődött — tárolási hiba"
+  },
+  "mc_main_no_share_token": {
+    "message": "nincs megosztási token — az ünneplés szöveg nélkül ment el, az üzeneted a chatbe kerül"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "nincs élő youtube stream a kinyitáshoz"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "a beállítások tárhelye majdnem megtelt — egyes beállítások nem szinkronizálódnak az eszközök közt"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "a beállítások mentése nem sikerült — túllépted a tárkvótát"
+  },
+  "mc_main_share_unavailable": {
+    "message": "a megosztás nem elérhető — az üzeneted a chatbe megy"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "hiányzik a megosztási token — megosztáshoz használd a twitch saját chatjét"
+  },
+  "mc_mod_label_banned": {
+    "message": "bannolva"
+  },
+  "mc_mod_label_deleted": {
+    "message": "törölve"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$mp",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "unbannolva"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "itt nem vagy youtube mod"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ nem sikerült: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ kicken — a twitch nem sikerült: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ nem sikerült: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ twitchen — a kick nem sikerült: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "a blokkolás nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "$USER$ blokkolva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "követve a heatsync-en — a platformközi szinkron nem elérhető"
+  },
+  "mc_profile_delete_failed": {
+    "message": "a törlés nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "törölt üzenet"
+  },
+  "mc_profile_follow_failed": {
+    "message": "a követés nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "követed: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "nincs összekötött csatorna: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "nincs regisztrálva a heatsync-en"
+  },
+  "mc_profile_unblocked": {
+    "message": "$USER$ blokkja feloldva",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "$USER$ követése megszüntetve",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "az export nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "beállítások exportálva"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "túl nagy fájl (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "az import nem sikerült: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "beállítások importálva — újratöltés…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "érvénytelen kifejezés"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "nem heatsync beállításfájl"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "értelmezési hiba"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "már megegyezik: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "alkalmazva: $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "preset törölve"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "a presetnek név kell"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "preset mentve: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "tele a preset tár — előbb törölj egyet"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "minden beállítás visszaállítva az alapokra"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ visszaállítva az alapokra",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "a szabály értéke üres"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "a szűrőszabályok sérültek — a szerkesztés újratöltésig tiltva"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "a szűrőszabályok sérültek — szerkesztés előtt töltsd újra az oldalt"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "cheer ablak megnyitva"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "érvénytelen csatorna"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "nincs twitch csatorna"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "felugró blokkolva — engedélyezd a twitch.tv felugróit a cheerhez"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "a jegyzet nem mentődött — tárolási hiba"
+  },
+  "mc_whisper_failed": {
+    "message": "a whisper nem sikerült: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "a twitch whisperek nincsenek bekapcsolva — kösd újra a heatsync.org-on"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "ismeretlen felhasználó — előbb whispereld meg valakit"
+  },
+  "mc_yt_send_blocked": {
+    "message": "a youtube blokkolta a küldést (lassú mód?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "nem érem el a youtube chatet — próbáld újra"
+  },
+  "mc_yt_send_failed": {
+    "message": "a youtube küldés nem sikerült"
+  },
+  "mc_yt_send_loading": {
+    "message": "a youtube chat még tölt — próbáld újra"
+  },
+  "mc_yt_send_login": {
+    "message": "küldéshez jelentkezz be a youtube-ra"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "a youtube-nak nincs ilyen művelete ahhoz az üzenethez"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "az üzenet már nincs a képernyőn"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "a youtube nem kínált mod műveleteket ahhoz az üzenethez"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "nincs kijelölt üzenet"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "nem vagy mod ezen a streamen"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "moderáláshoz jelentkezz be a youtube-ra"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "a youtube elutasította a műveletet"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "a youtube nem erősítette meg a küldést"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "küldéshez nyisd meg a youtube streamet"
+  },
+  "mc_yt_send_restricted": {
+    "message": "a yt chat korlátozott ennél a streamnél"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — itt nem chatelhetsz",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "idézés szálba"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "add hozzá a véleményed — enter posztol egy szálat"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "idézés mégse"
+  },
+  "mc_msg_quote_posted": {
+    "message": "szál posztolva"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "szál posztolva · link másolva"
+  },
+  "mc_fill_cockpit": {
+    "message": "töltsd fel a pilótafülkémet"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "add hozzá a csatornákat, amiket már követsz twitchen"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "twitch követéseid olvasása…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "jelentkezz be twitchcsel a követéseid importálásához, élők elöl"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "a twitch kapcsolatod lejárt — kösd újra a követések importálásához"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "a twitch kapcsolatod nem tartalmazza a követéseket — kösd újra az importáláshoz"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "nem érem el a twitchet — próbáld újra egy perc múlva"
+  },
+  "mc_sign_in": {
+    "message": "bejelentkezés"
+  },
+  "mc_reconnect_twitch": {
+    "message": "twitch újrakötése"
+  },
+  "mc_import_from_twitch": {
+    "message": "import twitchről"
+  },
+  "mc_add_manually": {
+    "message": "egy hozzáadása kézzel"
+  },
+  "mc_no_twitch_follows": {
+    "message": "még nem követsz senkit twitchen"
+  },
+  "mc_all_follows_added": {
+    "message": "minden követett csatorna már itt van"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ hozzáadható · $LIVE$ most élő",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "az első $COUNT$ látszik — élők elöl",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "élők kijelölése"
+  },
+  "mc_add_selected": {
+    "message": "kijelöltek hozzáadása"
+  },
+  "mc_select_at_least_one": {
+    "message": "válassz legalább egy csatornát"
+  },
+  "mc_nothing_added": {
+    "message": "nem lett hozzáadva semmi — már a pilótafülkédben vannak"
+  },
+  "mc_paste_list": {
+    "message": "lista beillesztése"
+  },
+  "mc_paste_list_desc": {
+    "message": "soronként egy név, vagy vesszővel elválasztva"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "hozzáadva: $ADDED$ · kihagyva: $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "gif keresés..."
+  },
+  "mc_gif_searching": {
+    "message": "keresés..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gif · hjkl mozgás · enter beszúrás",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "sebességkorlát - várj $SECONDS$mp-et",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "a keresés nem sikerült - írj az újrapróbáláshoz"
+  },
+  "mc_gif_library_empty": {
+    "message": "a heatsync a gif könyvtárát abból építi, amit az emberek tényleg posztolnak a chatben. még nincs semmi összegyűjtve."
+  },
+  "mc_gif_library_building": {
+    "message": "még nincs találat - a könyvtár még töltődik ($COUNT$ gif eddig)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "nem találtam gifet"
+  },
+  "mc_gif_type_to_search": {
+    "message": "írj a gifek kereséséhez"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a keresés  esc bezár"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "tiltott kifejezések"

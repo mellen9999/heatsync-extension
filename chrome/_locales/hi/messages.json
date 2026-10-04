@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "अलग विंडो"
   },
+  "popup_not_signed_in": {
+    "message": "साइन इन नहीं हो — "
+  },
+  "popup_setup_link": {
+    "message": "heatsync सेट करो →"
+  },
+  "popup_errors_title": {
+    "message": "लेफ्ट-क्लिक: आखिरी 50 एरर कॉपी करो / राइट-क्लिक: साफ़ करो"
+  },
+  "popup_errors_count": {
+    "message": "एरर ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "कोई एरर नहीं"
+  },
+  "popup_copied": {
+    "message": "$COUNT$ कॉपी हुए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "कॉपी नहीं हुआ"
+  },
+  "popup_cleared": {
+    "message": "साफ़ हो गया"
+  },
+  "popup_detected_prefix": {
+    "message": "यहाँ: "
+  },
+  "popup_privacy_link": {
+    "message": "कोई थर्ड-पार्टी ट्रैकिंग नहीं"
+  },
   "welcome_title": {
     "message": "heatsync में आपका स्वागत है"
+  },
+  "welcome_cta": {
+    "message": "twitch खोलो →"
+  },
+  "welcome_cta_fallback": {
+    "message": "twitch खोलो →"
+  },
+  "welcome_cta_kick": {
+    "message": "साइन इन करो →"
+  },
+  "welcome_done_title": {
+    "message": "तुम अंदर हो"
+  },
+  "welcome_import_title": {
+    "message": "अपने emotes ले आओ"
+  },
+  "welcome_import_sub": {
+    "message": "7tv, bttv और ffz से एक क्लिक में इम्पोर्ट"
+  },
+  "welcome_import_locked": {
+    "message": "अपने मौजूदा 7tv/bttv/ffz emotes इम्पोर्ट करने के लिए नीचे साइन इन करो"
+  },
+  "welcome_import_cta": {
+    "message": "मेरे emotes इम्पोर्ट करो →"
+  },
+  "welcome_import_importing": {
+    "message": "इम्पोर्ट हो रहा है…"
+  },
+  "welcome_import_done": {
+    "message": "$COUNT$ emotes इम्पोर्ट हुए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "इम्पोर्ट नहीं हुआ — फिर कोशिश करो"
+  },
+  "welcome_import_no_platform": {
+    "message": "पहले twitch, kick या youtube अकाउंट लिंक करो →"
   },
   "welcome_privacy": {
     "message": "गोपनीयता"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "इमोजी"
+  },
+  "btn_tab_sets": {
+    "message": "सेट"
   },
   "btn_rotate_title": {
     "message": "टैब बार की स्थिति घुमाएं"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "अनब्लॉक किया गया"
   },
+  "btn_toast_block_failed": {
+    "message": "ब्लॉक नहीं हो पाया — फिर कोशिश करो"
+  },
   "btn_toast_blocked": {
     "message": "ब्लॉक किया गया"
   },
   "btn_toast_removed": {
     "message": "हटाया गया"
+  },
+  "btn_toast_remove_failed": {
+    "message": "हटाना नहीं हुआ"
   },
   "btn_toast_added": {
     "message": "जोड़ा गया"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "$NAME$ ब्लॉक नहीं हो पाया — फिर कोशिश करो",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "$NAME$ अनब्लॉक नहीं हो पाया — फिर कोशिश करो",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "फ़ॉलो नहीं हो पाया — फिर कोशिश करो"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "अनफ़ॉलो नहीं हो पाया — फिर कोशिश करो"
+  },
+  "content_toast_no_chat_input": {
+    "message": "mod एक्शन के लिए twitch चैट खोलो"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ ब्लॉक किया",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "पार्टनर"
   },
+  "content_card_mutual": {
+    "message": "म्यूचुअल"
+  },
+  "content_card_mutual_sub": {
+    "message": "म्यूचुअल sub"
+  },
+  "content_card_sub_badge": {
+    "message": "sub है"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "sub है T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "बैन"
+  },
+  "content_card_unban": {
+    "message": "अनबैन"
+  },
+  "content_card_block": {
+    "message": "ब्लॉक"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod टूल"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod टूल (अनुमति नहीं)"
+  },
+  "content_card_note_title": {
+    "message": "नोट"
+  },
+  "content_card_note_placeholder": {
+    "message": "निजी नोट — सिर्फ़ तुम देख सकते हो"
+  },
+  "content_card_history_title": {
+    "message": "मैसेज हिस्ट्री"
+  },
+  "content_card_loading": {
+    "message": "लोड हो रहा है…"
+  },
+  "content_card_history_empty": {
+    "message": "कोई मैसेज हिस्ट्री नहीं"
+  },
+  "content_card_history_empty_channel": {
+    "message": "$CHANNEL$ में इस यूज़र का कोई मैसेज नहीं",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "प्रोफ़ाइल देखो"
+  },
+  "content_card_follow": {
+    "message": "फ़ॉलो"
+  },
+  "content_card_unfollow": {
+    "message": "अनफ़ॉलो"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch प्रोफ़ाइल"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "clip बन रहा है…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url कॉपी हुआ"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip बन गया"
+  },
+  "content_card_copy_name": {
+    "message": "नाम कॉपी करो"
+  },
+  "content_card_mention": {
+    "message": "मेंशन"
+  },
+  "content_card_dialog_label": {
+    "message": "$USERNAME$ का प्रोफ़ाइल कार्ड",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "सहेजे"
   },
+  "mc_tab_modlog": {
+    "message": "mod लॉग"
+  },
   "mc_tab_live_channel": {
     "message": "देख रहे · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "जारी रखें"
   },
+  "mc_connecting": {
+    "message": "कनेक्ट हो रहा है…"
+  },
   "mc_no_messages": {
     "message": "अभी कोई संदेश नहीं"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "कम से कम एक प्लेटफ़ॉर्म दर्ज करें"
+  },
+  "mc_invalid_name": {
+    "message": "चैनल का नाम गलत है — टाइपो या स्पेस देखो"
   },
   "mc_username_placeholder": {
     "message": "उपयोगकर्ता"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "क्लिक करने योग्य लिंक"
   },
+  "mc_settings_partial_links": {
+    "message": "आंशिक लिंक"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "आंशिक और छिपे हुए लिंक भी क्लिक करने लायक बनाओ — सीधे watch?v= youtube रेफ़रेंस और \"site (dot) com\" जैसे डोमेन, जिन्हें चैट लिंक फ़िल्टर से बचने के लिए इस्तेमाल करती है।"
+  },
+  "mc_settings_link_previews": {
+    "message": "लिंक प्रीव्यू"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "होवर पर og:title/description टूलटिप दिखाओ"
+  },
+  "mc_settings_media_embeds": {
+    "message": "इनलाइन मीडिया"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "चैट में ही इमेज, gif, वीडियो और लिंक कार्ड दिखाओ (अपने-आप चलने वाले iframe नहीं)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi मोड"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "प्रत्येक संदेश पर टाइमस्टैम्प"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfps"
   },
   "mc_settings_avatars_desc": {
     "message": "उपयोगकर्ता नामों के पास अवतार"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "सक्रिय पोल बैनर, सीधे वोट करें"
   },
+  "mc_settings_yt_superchat": {
+    "message": "सुपर चैट"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "youtube सुपर चैट के लिए रकम के साथ बैनर"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "सुपर स्टिकर"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "youtube सुपर स्टिकर के लिए रकम के साथ बैनर"
+  },
+  "mc_settings_yt_membership": {
+    "message": "नए मेंबर"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "जब कोई चैनल मेंबर बने तब बैनर"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "मेंबर माइलस्टोन"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "मेंबरशिप के माइलस्टोन महीनों के लिए बैनर"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "गिफ़्ट मेंबरशिप"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "गिफ़्ट की गई मेंबरशिप के लिए गिनती के साथ बैनर"
+  },
   "mc_settings_dim_timeouts": {
     "message": "टाइमआउट संदेशों को धुंधला करें"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "भविष्यवाणी का शीर्षक"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "विजेता चुनो"
+  },
+  "mc_pred_cancel_form": {
+    "message": "रद्द करो"
+  },
+  "mc_pred_load_failed": {
+    "message": "प्रेडिक्शन लोड नहीं हुए"
+  },
+  "mc_poll_ended": {
+    "message": "खत्म"
+  },
+  "mc_poll_optional": {
+    "message": "वैकल्पिक"
+  },
+  "mc_error_no_permission": {
+    "message": "अनुमति नहीं है"
+  },
+  "mc_error_not_logged_in": {
+    "message": "लॉग इन नहीं हो"
+  },
+  "mc_error_poll_active": {
+    "message": "पोल पहले से चल रहा है"
   },
   "mc_pred_option1": {
     "message": "विकल्प 1 (नीला)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "संदेश भेजें..."
   },
+  "mc_input_attach": {
+    "message": "इमेज या वीडियो जोड़ो"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote पिकर"
+  },
+  "mc_input_tab_hidden": {
+    "message": "इस टैब में छिपा: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "इस टैब में फिर दिखेगा: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "heatsync पर पोस्ट करें..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "अभी तक कोई उत्तर नहीं"
   },
+  "mc_social_thread_unavailable": {
+    "message": "थ्रेड उपलब्ध नहीं — पोस्ट हट गई होगी"
+  },
   "mc_social_login_first": {
     "message": "पहले heatsync.org पर लॉगिन करें"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "$USER$ को भेजा",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "Twitch उपयोगकर्ता खोजना विफल"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "heatsync तक नहीं पहुँच पाया — फिर कोशिश करो"
+  },
+  "mc_irc_queue_full": {
+    "message": "भेजने की कतार भरी है — मैसेज सेव नहीं हुआ"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "मेंशन — भेजने के लिए चैनल टैब पर जाओ"
+  },
+  "mc_input_no_channel": {
+    "message": "कोई चैनल नहीं — ऊपर से टैब चुनो"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "dm करने के लिए $USER$ को फ़ॉलो करो — फ़ॉलो + भेजो",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync उपयोगकर्ता \"$USER$\" नहीं मिला",
@@ -730,6 +1087,14 @@
     "message": "$USER$ का संदेश हटाया गया",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "$CHANNEL$ से जुड़ नहीं पाया — दोबारा कोशिश के लिए टैब फिर खोलो",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "कोई इमोट लोड नहीं"
   },
+  "mc_emote_cold_start_title": {
+    "message": "तुम्हारे emotes, हर चैट में"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "$CHANNEL$ के सारे 7tv, bttv और ffz emotes अपने इन्वेंटरी में ले आओ — एक क्लिक, हर चैट में दिखेंगे।",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "$CHANNEL$ के सारे emotes इम्पोर्ट करो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "इम्पोर्ट हो रहा है…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "$COUNT$ इम्पोर्ट हुए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "इम्पोर्ट नहीं हुआ"
+  },
+  "mc_emote_load_more": {
+    "message": "और लोड करो"
+  },
+  "mc_emote_exact": {
+    "message": "सटीक"
+  },
   "mc_emote_in_set": {
     "message": "आपके सेट में"
   },
+  "mc_feed_delete_failed": {
+    "message": "डिलीट नहीं हो पाया — फिर कोशिश करो"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "ब्लॉक किया: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "ब्लॉक (अनब्लॉक के लिए क्लिक)"
+  },
+  "welcome_cta_live": {
+    "message": "लाइव देखो"
+  },
+  "mc_settings_font_family": {
+    "message": "फ़ॉन्ट"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "multichat का फ़ॉन्ट"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "कस्टम फ़ॉन्ट का नाम"
+  },
+  "mc_settings_font_size": {
+    "message": "फ़ॉन्ट साइज़"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "चैट फ़ॉन्ट साइज़ px में — अपने हिसाब से खींचो (पुराने F-/F+ बटन की जगह)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "इमोजी साइज़"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "इमोजी साइज़ — 1x नेटिव, 2x (डिफ़ॉल्ट)/4x unicode इमोजी बड़े करता है"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "टाइमस्टैम्प फ़ॉर्मैट"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "चैट पंक्तियों के टाइमस्टैम्प का घड़ी फ़ॉर्मैट"
+  },
+  "mc_settings_readable_names": {
+    "message": "फीके नाम ठीक करो"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "फीके यूज़रनेम रंग चमकाओ ताकि काले बैकग्राउंड पर पढ़े जा सकें"
+  },
+  "mc_settings_platform_badges": {
+    "message": "प्लेटफ़ॉर्म बैज"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "मैसेज पर [T] [K] [Y] लेबल। बंद करने पर वे उन प्लेटफ़ॉर्म के लिए रहते हैं जिन पर तुम नहीं हो।"
+  },
+  "mc_settings_text_badges": {
+    "message": "टेक्स्ट बैज"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "mod/vip/sub बैज इमेज की जगह छोटे टेक्स्ट चिप में दिखाओ"
+  },
+  "mc_settings_tab_counter": {
+    "message": "टैब नंबर"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "हर चैट टैब के दाईं ओर नंबर। unread = जो मैसेज तुमने नहीं देखे। heat = पिछले एक मिनट के मैसेज, ताकि व्यस्त चैनल तब भी व्यस्त दिखे जब तुम उसमें हो"
+  },
+  "mc_settings_tab_position": {
+    "message": "टैब बार की जगह"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "multichat टैब बार किस किनारे पर लगे"
+  },
+  "mc_settings_chat_position": {
+    "message": "चैट डॉक की तरफ़"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "चैट पैनल प्लेयर की किस तरफ़ लगे — hidden उसे छिपा देता है (\\ कुंजी से टॉगल)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: सुझाव पट्टी"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "सुझाए गए वीडियो टाइटल के बगल में खड़ी पट्टी में दिखाओ (youtube, सिर्फ़ बाएँ/दाएँ डॉक) — डिफ़ॉल्ट बंद, क्योंकि चैट वह जगह ले लेती है"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: नॉन-लाइव पेज पर चैट"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "multichat पैनल youtube के vod, होम और सर्च पर भी दिखाओ — डिफ़ॉल्ट बंद, तो पैनल सिर्फ़ लाइवस्ट्रीम पर दिखता है (जहाँ लाइव चैट होती है)"
+  },
+  "mc_settings_message_density": {
+    "message": "मैसेज डेंसिटी"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "पंक्ति पैडिंग — compact वही क्लासिक कसा हुआ लुक है"
+  },
+  "mc_settings_line_height": {
+    "message": "लाइन हाइट"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "चैट पंक्ति की लाइन हाइट px में — 18 बिटमैप फ़ॉन्ट को पिक्सल ग्रिड पर रखता है"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "ज़्यादा से ज़्यादा दिखने वाले मैसेज"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "लाइव DOM में रखी जाने वाली अधिकतम चैट पंक्तियाँ (डेटा बफ़र 1500 ही रहता है)। कम = व्यस्त चैनल पर कम ram।"
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync name paints"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "heatsync के एनिमेटेड name paints — चैटर के पास दोनों हों तो 7tv paint पर भारी पड़ते हैं"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paints + बैज"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "चैटर पर name paints और 7tv बैज"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv बैज"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "चैटर पर betterttv बैज"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz बैज"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "चैटर पर frankerfacez बैज"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "emotes एनिमेट करो"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always एनिमेटेड emotes हमेशा चलाता है। hover पॉइंटर के मैसेज पर आने तक स्थिर फ़्रेम दिखाता है — व्यस्त चैनल पर cpu/ram की बड़ी बचत। never पूरी तरह स्थिर। multichat मैसेज; पिकर एनिमेटेड ही रहता है।"
+  },
+  "mc_settings_animate_paints": {
+    "message": "paints एनिमेट करो"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always name paints की गति हमेशा चलाता है — तुम्हारे और बाकी सबके। never उन्हें जमा देता है। यह इसी सेटिंग को मानता है, ब्राउज़र के reduced-motion फ़्लैग को नहीं।"
+  },
+  "mc_predview_title": {
+    "message": "प्रेडिक्शन और पोल"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino बैज"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "चैटर पर chatterino बैज"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "emote प्रोवाइडर की प्राथमिकता"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "जब 7tv/bttv/ffz के पास एक ही नाम का emote हो, तो यह प्रोवाइडर जीतता है"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "इन्वेंटरी emotes दिखाओ"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "heatsync इन्वेंटरी से आने वाले emotes बनाओ — तुम्हारे या किसी और चैटर के। बंद करने पर सादा शब्द दिखता है। चैनल और ग्लोबल emotes पर असर नहीं"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "इन्वेंटरी emotes सुझाओ"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "tab-complete और टाइपिंग सुझावों में तुम्हारी इन्वेंटरी दिखाओ। बंद करने पर सिर्फ़ चैनल और ग्लोबल emotes बचते हैं"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "प्रोनाउन"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "प्रोफ़ाइल कार्ड + होवर टूलटिप में pronoundb.org प्रोनाउन (सिर्फ़ twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "गुप्त उपस्थिति"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "प्लेटफ़ॉर्म को टाइपिंग/उपस्थिति के संकेत मत भेजो"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "whisper टोस्ट"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "दूसरे टैब पर रहते हुए whisper या dm आए तो पॉपअप टोस्ट — क्लिक करके whispers पर जाओ"
+  },
+  "mc_settings_notif_moment": {
+    "message": "मोमेंट अलर्ट"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "किसी चैनल की चैट अचानक फट पड़ी — heat स्पाइक सर्वर पर पकड़ा गया; स्ट्रीम खोलने के लिए पंक्ति पर क्लिक करो"
+  },
+  "mc_settings_evt_online": {
+    "message": "लाइव आया"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "चैनल के लाइव आने पर बैनर"
+  },
+  "mc_settings_evt_offline": {
+    "message": "ऑफ़लाइन हुआ"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "चैनल के ऑफ़लाइन होने पर बैनर (डिफ़ॉल्ट बंद — शोरभरा)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "गेम बदलना"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "स्ट्रीमर के गेम बदलने पर बैनर"
+  },
+  "mc_settings_browser_notification": {
+    "message": "ब्राउज़र नोटिफ़िकेशन"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "कोई @ करे तो डेस्कटॉप नोटिफ़िकेशन दिखाओ"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "टैब टाइटल झपकाना"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "जब तक तुम टैब पर नहीं आते, ब्राउज़र टैब का टाइटल मेंशन करने वाले के नाम से धड़कता रहे"
+  },
+  "mc_settings_mention_volume": {
+    "message": "मेंशन साउंड वॉल्यूम"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "मेंशन पर ऑडियो पिंग का वॉल्यूम। 0 = शांत। शुद्ध WebAudio टोन इस्तेमाल करता है, कोई ऑडियो फ़ाइल नहीं।"
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "kick पर भी फ़ॉलो करो"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "heatsync पर फ़ॉलो करो तो kick पर भी फ़ॉलो करो, अगर उनका kick अकाउंट लिंक है। kick.com लॉगिन चाहिए; वरना कतार में रहता है"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "twitch पर भी फ़ॉलो करो"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "heatsync पर फ़ॉलो करो तो twitch पर भी फ़ॉलो करो, अगर उनका twitch अकाउंट लिंक है। खुला twitch.tv टैब चाहिए; वरना कतार में रहता है"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "नोटिफ़िकेशन के साथ twitch फ़ॉलो"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "क्रॉस-प्लेटफ़ॉर्म twitch फ़ॉलो उस चैनल के लाइव नोटिफ़िकेशन भी चालू करते हैं"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod टूलबार बटन"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "चैनल के mod होने पर चैट पंक्तियों पर होवर एक्शन — सब डिफ़ॉल्ट बंद"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "यह मैसेज डिलीट करो"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 मिनट"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 मिनट"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 घंटा"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 घंटे"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 दिन"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (मैसेज साफ़ करो, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "परमानेंट बैन"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "यूज़र अनबैन करो"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "बैन से पहले पूछो"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "परमानेंट बैन से पहले पुष्टि डायलॉग दिखाओ — गलत क्लिक से बचाता है"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "बैन के कारण"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "हर पंक्ति में एक — बैन डायलॉग में चुनने लायक चिप की तरह दिखते हैं; चुना हुआ कारण बैन के साथ जाता है"
+  },
+  "mc_settings_automod_caps": {
+    "message": "ALL-CAPS स्पैम छिपाओ"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "10 अक्षरों से लंबे, ज़्यादातर बड़े अक्षरों वाले मैसेज छिपाओ"
+  },
+  "mc_settings_automod_regex": {
+    "message": "regex फ़िल्टर"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "हर पंक्ति में एक पैटर्न, केस-इनसेंसिटिव — मैच होने वाले मैसेज छिप जाते हैं"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "यौन emotes दिखाओ"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "यौन सामग्री के लिए फ़्लैग किए emotes (≥ 70%) डिफ़ॉल्ट रूप से छिपे रहते हैं। चालू होने पर डैश वाले बॉर्डर के साथ दिखते हैं।"
+  },
+  "mc_settings_show_gore": {
+    "message": "गोर emotes दिखाओ"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "हिंसा/गोर के लिए फ़्लैग किए emotes (≥ 70%) डिफ़ॉल्ट रूप से छिपे रहते हैं। चालू होने पर डैश वाले बॉर्डर के साथ दिखते हैं।"
+  },
+  "mc_settings_show_weapon": {
+    "message": "हथियार वाले emotes दिखाओ"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "हथियारों की छवि के लिए फ़्लैग किए emotes। डिफ़ॉल्ट चालू।"
+  },
+  "mc_settings_show_drug": {
+    "message": "ड्रग्स वाले emotes दिखाओ"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "ड्रग्स की छवि के लिए फ़्लैग किए emotes। डिफ़ॉल्ट चालू।"
+  },
+  "mc_settings_show_hate": {
+    "message": "नफ़रत वाले emotes दिखाओ"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "नफ़रत की छवि के लिए फ़्लैग किए emotes। डिफ़ॉल्ट चालू।"
+  },
+  "mc_settings_hide_bots": {
+    "message": "बॉट छिपाओ"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "जाने-पहचाने चैट बॉट के मैसेज छिपाओ (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "!कमांड छिपाओ"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "! से शुरू होने वाले मैसेज छिपाओ"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "डुप्लिकेट छिपाओ"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "लगातार आने वाले एक जैसे मैसेज (स्पैम की लहरें) पहले वाले में समेट दो"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "कीवर्ड म्यूट करो"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "हर पंक्ति में एक शब्द — जिन मैसेज में कोई भी हो वे छिप जाते हैं। कीवर्ड हाइलाइट से अलग।"
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "फ़िल्टर नियम"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "नियम-वार हाइलाइट/छिपाने वाले फ़िल्टर — कीवर्ड, regex, यूज़र, बैज या msgtype; नियम एडिटर से संभालो"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "सुझाए गए चैनल"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "साइडबार का \"सुझाए गए चैनल\" सेक्शन"
+  },
+  "mc_settings_hide_stories": {
+    "message": "स्टोरीज़ शेल्फ़"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "साइडबार / ऊपर की स्टोरीज़ पट्टी"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming loot का विज्ञापन"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "क्राउन आइकन वाला prime loot बटन"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo का विज्ञापन"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo के cta लिंक"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / मौसमी बैनर"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "मौसमी सब्सक्रिप्शन के ग्रेडिएंट बैनर"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "लाइव नोटिफ़िकेशन टॉगल"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "नोटिफ़िकेशन सब्सक्राइब वाला घंटी बटन"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "अनफ़ॉलो बटन"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "अनफ़ॉलो बटन (गलत क्लिक से बचाता है)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "सब्सक्राइब बटन"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "चैनल का सब्सक्राइब बटन"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "स्क्रीन पर सेलिब्रेशन"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "वीडियो पर कंफ़ेटी / सेलिब्रेशन ओवरले"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "प्लेयर एक्सटेंशन"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "वीडियो को ढकने वाले ओवरले एक्सटेंशन"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "स्क्रॉल-व्हील वॉल्यूम"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "वॉल्यूम बदलने के लिए प्लेयर पर स्क्रॉल करो"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "स्ट्रीम टाइटल"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "प्लेयर के नीचे का स्ट्रीम टाइटल ब्लॉक छिपाओ"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "व्यूअर गिनती"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "लाइव व्यूअर काउंटर छिपाओ"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "दिखने वाले टैब"
+  },
+  "mc_settings_ui_locale": {
+    "message": "इंटरफ़ेस भाषा"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichat UI की भाषा — रीलोड पर पूरी तरह बदलती है"
+  },
+  "mc_settings_subsystems": {
+    "message": "सबसिस्टम"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch चैट फ़ीड"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "ओवरले के अंदर twitch irc कनेक्शन + चैनल जॉइन"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick चैट फ़ीड"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "ओवरले के अंदर kick websocket कनेक्शन + चैनल जॉइन"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube चैट फ़ीड"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "ओवरले के अंदर youtube लाइव चैट सब्सक्रिप्शन"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "थर्ड-पार्टी कॉस्मेटिक्स"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paints + bttv/ffz/chatterino बैज। बंद करने से व्यस्त चैनल पर ram बचती है।"
+  },
+  "mc_settings_sub_feed": {
+    "message": "फ़ीड"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsync सोशल फ़ीड टैब + उसका इवेंट स्ट्रीम"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whispers"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub सॉकेट + whispers टैब"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "मेंशन"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "मेंशन पहचान, मेंशन टैब और पिंग"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "स्ट्रीम स्टैट्स"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "हर चैनल की मैसेज-रेट स्टैट्स, जिनसे heat रैंकिंग बनती है"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "प्रोफ़ाइल कार्ड"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "प्रोफ़ाइल कार्ड पॉपअप के लिए यूज़रनेम पर क्लिक करो"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "नेटिव चैट में emotes"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "प्लेटफ़ॉर्म की अपनी चैट में heatsync emotes दिखाओ"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "नेटिव चैट में tab-complete"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "प्लेटफ़ॉर्म के अपने इनपुट में emote + यूज़रनेम कम्प्लीशन"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote पिकर बटन"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "नेटिव चैट इनपुट के बगल में heatsync पिकर बटन"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "नेटिव चैट टेकओवर"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "जब ओवरले twitch चैट को ढके हो, तब twitch को उसकी छिपी कॉपी बनाने से रोको — व्यस्त चैनल पर ram की बड़ी बचत। फ़ेल-ओपन: ओवरले गिरा → twitch चैट अपने-आप लौट आती है।"
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick चैट फ़ॉलबैक टैप"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "बैकअप के तौर पर मौजूदा kick पेज की अपनी चैट स्ट्रीम पढ़ता है। सामान्य ट्रांसपोर्ट ठीक हों तो निष्क्रिय — सिर्फ़ तब चलता है जब वे शांत हो जाएँ।"
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "yt फ़ॉलबैक टैप"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "अगर दोनों सामान्य फ़ीड 5 मिनट चुप रहें तो youtube को सीधे पोल करता है — आखिरी सहारा, ट्रांसपोर्ट का विकल्प नहीं।"
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod होल्ड कतार"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "जिन चैनलों में तुम mod हो वहाँ twitch automod होल्ड allow/deny बटन के साथ इनलाइन दिखाता है — twitch की अपनी रिव्यू कतार जैसा।"
+  },
+  "mc_automod_label": {
+    "message": "automod होल्ड"
+  },
+  "mc_automod_allow": {
+    "message": "अनुमति दो"
+  },
+  "mc_automod_deny": {
+    "message": "मना करो"
+  },
+  "mc_automod_resolving": {
+    "message": "निपट रहा है…"
+  },
+  "mc_automod_error": {
+    "message": "एक्शन नहीं हुआ"
+  },
+  "mc_automod_relink_toast": {
+    "message": "automod कतार को twitch फिर से लिंक करना होगा"
+  },
+  "mc_automod_signin": {
+    "message": "heatsync में फिर साइन इन करो"
+  },
+  "mc_automod_relink_action": {
+    "message": "फिर लिंक करो"
+  },
+  "mc_settings_diag_errors": {
+    "message": "डायग्नोस्टिक एरर दिखाओ"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "एरर सिर्फ़ लोकल रूप से कैप्चर होते हैं — कभी अपलोड नहीं होते। यह टॉगल बस नीचे का डायग्नोस्टिक पैनल दिखाता है।"
+  },
+  "mc_settings_debug_logging": {
+    "message": "डीबग लॉगिंग"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "सभी heatsync स्क्रिप्ट से कंसोल में विस्तृत लॉग — अगले पेज लोड पर लागू होता है"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "मिनिमल"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "मॉडरेटर"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "कम ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "कॉपी नहीं हुआ"
+  },
+  "mc_common_unknown": {
+    "message": "अज्ञात"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch फ़ॉलो रुका: 2FA चाहिए — twitch.tv पर पूरा करो"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch अनफ़ॉलो रुका: 2FA चाहिए — twitch.tv पर पूरा करो"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "$PLATFORM$ पर $USER$ को फ़ॉलो किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "$PLATFORM$ पर $USER$ को अनफ़ॉलो किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "$COUNT$ लंबित $PLATFORM$ फ़ॉलो सिंक हुए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick फ़ॉलो कतार में है — kick.com पर लॉग इन करते ही सिंक होगा"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick अनफ़ॉलो कतार में है — kick.com पर लॉग इन करते ही सिंक होगा"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch फ़ॉलो कतार में है — अगली बार twitch.tv खोलने पर सिंक होगा"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch अनफ़ॉलो कतार में है — अगली बार twitch.tv खोलने पर सिंक होगा"
+  },
+  "mc_emote_add_error": {
+    "message": "जोड़ने में एरर: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "जोड़ नहीं पाया: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "emotes जोड़ने के लिए heatsync.org पर लॉग इन करो"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "$NAME$ नहीं जोड़ सकते — इमेज उपलब्ध नहीं",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "जोड़ा: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "ब्लॉक नहीं हो पाया — फिर कोशिश करो"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "अनब्लॉक नहीं हो पाया — फिर कोशिश करो"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "ब्लॉक तुम्हारे अकाउंट में सेव नहीं हुआ — दूसरे डिवाइस पर अलग दिखेगा"
+  },
+  "mc_emote_blocked_count": {
+    "message": "$COUNT$ emotes ब्लॉक किए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "हटाने में एरर: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "हटा नहीं पाया: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "हटाया: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "अनब्लॉक तुम्हारे अकाउंट में सेव नहीं हुआ — दूसरे डिवाइस पर अलग दिखेगा"
+  },
+  "mc_emote_unblocked": {
+    "message": "अनब्लॉक किया: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "$USER$ को पहले से फ़ॉलो कर रहे हो",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ पहले से म्यूट है",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "$USER$ ब्लॉक किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "लोकल बफ़र साफ़ हुआ"
+  },
+  "mc_input_copied": {
+    "message": "कॉपी हुआ"
+  },
+  "mc_input_delete_failed": {
+    "message": "डिलीट नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete के लिए चैनल टैब चाहिए"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete के लिए twitch या kick चैनल चाहिए"
+  },
+  "mc_input_emoji_copied": {
+    "message": "इमोजी कॉपी हुआ"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "followers-only बंद"
+  },
+  "mc_input_followers_on": {
+    "message": "followers-only चालू"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "followers-only चालू ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers सिर्फ़ twitch पर है — twitch चैनल खोलो"
+  },
+  "mc_input_login_first_op": {
+    "message": "/op के लिए पहले heatsync.org पर लॉग इन करो"
+  },
+  "mc_input_message_copied": {
+    "message": "मैसेज कॉपी हुआ"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ के लिए चैनल टैब चाहिए (live/mentions/posts नहीं)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ के लिए twitch, kick या youtube चैनल चाहिए",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: $TARGET$ का कोई हाल का मैसेज नहीं — मैसेज मेन्यू इस्तेमाल करो",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ अभी जुड़ा नहीं है — फ़िलहाल सिर्फ़ /followers चलता है",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ म्यूट किया (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "नाम कॉपी हुआ"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "जवाब देने को कोई नहीं"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ के पास twitch नहीं है — /dm आज़माओ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "तुम $USER$ को फ़ॉलो नहीं करते",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ म्यूट नहीं है",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ heatsync पर नहीं है",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "तैयार नहीं"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — इस चैनल का sub नहीं",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "स्टैक में पोस्ट करने लायक कुछ नहीं"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "यहाँ साफ़ करने को कुछ नहीं"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "पोस्ट करने को कुछ नहीं"
+  },
+  "mc_input_nuke_done": {
+    "message": "\"$TERM$\" से मेल खाते $OK$/$TOTAL$ nuke किए",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke के लिए चैनल टैब चाहिए"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke के लिए twitch या kick चैनल चाहिए"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: पिछले $SEC$ सेकंड में \"$TERM$\" से मेल खाता कोई मैसेज नहीं",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "पोस्ट नहीं हुआ"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "फ़ीड में पोस्ट हुआ"
+  },
+  "mc_input_rate_limited": {
+    "message": "रेट लिमिट — थोड़ी देर में कोशिश करो"
+  },
+  "mc_input_server_unreachable": {
+    "message": "सर्वर तक नहीं पहुँच पाया ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status के लिए चैनल टैब चाहिए (या /status <नाम>)"
+  },
+  "mc_input_success": {
+    "message": "सफल"
+  },
+  "mc_input_thread_copied": {
+    "message": "थ्रेड कॉपी हुआ"
+  },
+  "mc_input_unblocked": {
+    "message": "$USER$ अनब्लॉक किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "अज्ञात कमांड"
+  },
+  "mc_input_unmuted": {
+    "message": "$USER$ अनम्यूट किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url कॉपी हुआ"
+  },
+  "mc_input_usage_ban": {
+    "message": "उपयोग: /ban <यूज़र> [कारण]"
+  },
+  "mc_input_usage_delete": {
+    "message": "उपयोग: /delete <मैसेज-id> (मैसेज पर राइट-क्लिक करो)"
+  },
+  "mc_input_usage_dm": {
+    "message": "उपयोग: /dm <यूज़र> <मैसेज>"
+  },
+  "mc_input_usage_follow": {
+    "message": "उपयोग: /$CMD$ <यूज़र>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "उपयोग: /followers [मिनट] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "उपयोग: /mute <यूज़र>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "उपयोग: /nuke <शब्द> [सेकंड] — शब्द में 2+ अक्षर हों"
+  },
+  "mc_input_usage_op": {
+    "message": "उपयोग: /op <टेक्स्ट>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight के लिए twitch चैनल टैब चाहिए"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <मैसेज>"
+  },
+  "mc_input_highlight_login": {
+    "message": "पहले twitch.tv में लॉग इन करो"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch तक नहीं पहुँच पाया — फिर कोशिश करो"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "इसके लिए twitch चैनल टैब चाहिए"
+  },
+  "mc_input_pp_login": {
+    "message": "पहले twitch.tv में लॉग इन करो"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "चैनल नहीं मिला"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll सवाल | विकल्प1 | विकल्प2 [| … 5 तक] [| सेकंड]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction शीर्षक | नतीजा1 | नतीजा2 [| … 10 तक] [| सेकंड]"
+  },
+  "mc_input_poll_created": {
+    "message": "पोल बन गया"
+  },
+  "mc_input_prediction_created": {
+    "message": "प्रेडिक्शन शुरू हुआ"
+  },
+  "mc_input_poll_ended": {
+    "message": "पोल खत्म हुआ"
+  },
+  "mc_input_no_active_poll": {
+    "message": "कोई एक्टिव पोल नहीं"
+  },
+  "mc_input_no_active_pred": {
+    "message": "कोई एक्टिव प्रेडिक्शन नहीं"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <पॉइंट>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "प्रेडिक्शन लॉक हुआ"
+  },
+  "mc_input_pred_canceled": {
+    "message": "प्रेडिक्शन रद्द हुआ"
+  },
+  "mc_input_voted": {
+    "message": "वोट दिया: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "$OUTCOME$ पर $POINTS$ का दांव",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "तय हुआ: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <यूज़र> <टेक्स्ट>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <यूज़र>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <यूज़र> — ब्लॉक टॉगल करता है"
+  },
+  "mc_input_note_failed": {
+    "message": "नोट सेव नहीं हो पाया"
+  },
+  "mc_input_note_saved": {
+    "message": "$USER$ के लिए नोट सेव हुआ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "$USER$ के लिए नोट हटा",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "$USER$ के लिए कोई नोट नहीं",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <सेटिंग> <मान>"
+  },
+  "mc_input_set_complex": {
+    "message": "इसे सेटिंग पैनल में बदलो"
+  },
+  "mc_input_set_unknown": {
+    "message": "अज्ञात सेटिंग: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "$KEY$ के लिए on/off इस्तेमाल करो",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "$KEY$ के लिए गलत मान",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|चैनल>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "टैब उपलब्ध नहीं"
+  },
+  "mc_input_tab_unknown": {
+    "message": "कोई टैब नहीं: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <यूज़र>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <यूज़र>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ अब vip है",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "$USER$ से vip हटाया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <यूज़र>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <यूज़र>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ अब mod है",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "$USER$ से mod हटाया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch के पास $LABEL$ के लिए api नहीं है — सिर्फ़ kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch ने चैट से /$CMD$ हटा दिया — उसके अपने mod टूल इस्तेमाल करो",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick में $LABEL$ मोड नहीं है",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ चालू",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ बंद",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ चालू ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ नहीं हुआ: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "उपयोग: /$LABEL$ [अवधि|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "चैनल नहीं मिला"
+  },
+  "mc_input_highlight_sent": {
+    "message": "हाइलाइट हुआ · $BALANCE$ bits बचे",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "हाइलाइट की पुष्टि नहीं हुई — दोबारा भेजना सुरक्षित है, bits एक ही बार कटेंगे"
+  },
+  "mc_input_highlight_failed": {
+    "message": "हाइलाइट नहीं हुआ: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "कमांड नहीं चली: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "उपयोग: /r <मैसेज>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "उपयोग: /timeout <यूज़र> [सेकंड] [कारण]"
+  },
+  "mc_input_usage_unban": {
+    "message": "उपयोग: /unban <यूज़र>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "उपयोग: /unmute <यूज़र>"
+  },
+  "mc_input_usage_w": {
+    "message": "उपयोग: /w <यूज़र> <मैसेज>"
+  },
+  "mc_irc_join_queued": {
+    "message": "#$CHANNEL$ चैट से जुड़ नहीं पाया — कतार में",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "तुम इस चैनल से बैन हो"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "चैनल मैसेज ब्लॉक कर रहा है"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "चैनल सस्पेंड है"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "डुप्लिकेट मैसेज — twitch ने ठुकरा दिया"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "emote-only मोड — मैसेज में सिर्फ़ emotes हों"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "followers-only मोड — चैट के लिए चैनल को फ़ॉलो करो"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "चैट के लिए चैनल को थोड़ी देर और फ़ॉलो करके रखो"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "followers-only — पहले फ़ॉलो करना होगा"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "यहाँ यह करने की अनुमति नहीं है"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "यूनिक-चैट मोड — मैसेज यूनिक होना चाहिए"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod तुम्हारा मैसेज जाँच रहा है"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod ने तुम्हारा मैसेज रोक दिया"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — ज़रा रुको"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "सिर्फ़ subs के लिए — यहाँ चैट के लिए sub बनो"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "तुम timeout पर हो"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "तुम twitch से बैन हो"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch ने यह कमांड नहीं पहचानी"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "चैनल पर चैट के लिए वेरिफ़ाइड ईमेल चाहिए"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "चैनल पर चैट के लिए वेरिफ़ाइड फ़ोन चाहिए"
+  },
+  "mc_main_age_confirm": {
+    "message": "एडल्ट कंटेंट चालू करने के लिए पुष्टि करो कि तुम 18+ हो"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "मैं 18+ हूँ"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "सेलिब्रेशन शेयर नहीं हुआ — तुम्हारा मैसेज चैट में जा रहा है"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "$NOUN$ सेव नहीं हो पाया — फिर कोशिश करो",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "मैसेज भेजा नहीं जा सका — वह अब भी तुम्हारी सेलिब्रेशन पंक्ति में दिख रहा है"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ तुम्हारी इन्वेंटरी में सेव नहीं हुआ — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "चैनल सेव नहीं हुआ — स्टोरेज एरर"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "म्यूट सूची सेव नहीं हुई — स्टोरेज एरर"
+  },
+  "mc_main_no_share_token": {
+    "message": "शेयर टोकन नहीं है — सेलिब्रेशन बिना टेक्स्ट के गया, तुम्हारा मैसेज चैट में जाता है"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "पॉप आउट करने के लिए कोई लाइव youtube स्ट्रीम नहीं"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "सेटिंग स्टोरेज लगभग भर गई — कुछ पसंद डिवाइसों में सेव न हों"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "सेटिंग सेव नहीं हुईं — स्टोरेज कोटा पार हो गया"
+  },
+  "mc_main_share_unavailable": {
+    "message": "शेयर उपलब्ध नहीं — तुम्हारा मैसेज चैट में जा रहा है"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "शेयर टोकन नहीं है — शेयर करने के लिए twitch की अपनी चैट इस्तेमाल करो"
+  },
+  "mc_mod_label_banned": {
+    "message": "बैन"
+  },
+  "mc_mod_label_deleted": {
+    "message": "डिलीट"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "अनबैन"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "यहाँ youtube mod नहीं हो"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ नहीं हुआ: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "kick पर $LABEL$ $TARGET$ — twitch नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "twitch पर $LABEL$ $TARGET$ — kick नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "ब्लॉक नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "$USER$ ब्लॉक किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "heatsync पर फ़ॉलो किया — क्रॉस-प्लेटफ़ॉर्म सिंक उपलब्ध नहीं"
+  },
+  "mc_profile_delete_failed": {
+    "message": "डिलीट नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "डिलीट किया हुआ मैसेज"
+  },
+  "mc_profile_follow_failed": {
+    "message": "फ़ॉलो नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "$USER$ को फ़ॉलो कर रहे हो",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "$USER$ के लिए कोई लिंक किया चैनल नहीं मिला",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "heatsync पर रजिस्टर नहीं है"
+  },
+  "mc_profile_unblocked": {
+    "message": "$USER$ अनब्लॉक किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "$USER$ को अनफ़ॉलो किया",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "एक्सपोर्ट नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "सेटिंग एक्सपोर्ट हुईं"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "फ़ाइल बहुत बड़ी है (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "इम्पोर्ट नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "सेटिंग इम्पोर्ट हुईं — रीलोड हो रहा है…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "गलत एक्सप्रेशन"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "यह heatsync सेटिंग फ़ाइल नहीं है"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "पार्स एरर"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "पहले से $LABEL$ जैसा है",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "$LABEL$ लागू हुआ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "प्रीसेट हटा"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "प्रीसेट को नाम चाहिए"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "प्रीसेट सेव हुआ: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "प्रीसेट स्टोरेज भरी है — पहले एक हटाओ"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "सारी सेटिंग डिफ़ॉल्ट पर लौटीं"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ डिफ़ॉल्ट पर लौटा",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "नियम का मान खाली है"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "फ़िल्टर नियम खराब हो गए — रीलोड तक एडिटिंग बंद"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "फ़िल्टर नियम खराब हो गए — एडिट से पहले पेज रीलोड करो"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "cheer विंडो खुली"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "गलत चैनल"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "कोई twitch चैनल नहीं"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "पॉपअप ब्लॉक हुआ — cheer के लिए twitch.tv के पॉपअप की अनुमति दो"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "नोट सेव नहीं हुआ — स्टोरेज एरर"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper नहीं गया: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch whispers चालू नहीं हैं — heatsync.org पर फिर से लिंक करो"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "अज्ञात यूज़र — पहले किसी को whisper करो"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube ने भेजना रोक दिया (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "youtube चैट तक नहीं पहुँच पाया — फिर कोशिश करो"
+  },
+  "mc_yt_send_failed": {
+    "message": "youtube पर भेजना नहीं हुआ"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube चैट अभी लोड हो रही है — फिर कोशिश करो"
+  },
+  "mc_yt_send_login": {
+    "message": "भेजने के लिए youtube में लॉग इन करो"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube में उस मैसेज के लिए ऐसा एक्शन नहीं है"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "वह मैसेज अब स्क्रीन पर नहीं है"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube ने उस मैसेज पर mod एक्शन नहीं दिए"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "कोई मैसेज चुना नहीं गया"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "तुम इस स्ट्रीम के मॉडरेटर नहीं हो"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "मॉडरेट करने के लिए youtube में लॉग इन करो"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube ने एक्शन ठुकरा दिया"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube ने भेजने की पुष्टि नहीं की"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "भेजने के लिए youtube स्ट्रीम खोलो"
+  },
+  "mc_yt_send_restricted": {
+    "message": "इस स्ट्रीम के लिए yt चैट प्रतिबंधित है"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — यहाँ चैट नहीं कर सकते",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "थ्रेड में कोट करो"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "अपनी बात जोड़ो — enter से थ्रेड पोस्ट होगा"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "कोट रद्द करो"
+  },
+  "mc_msg_quote_posted": {
+    "message": "थ्रेड पोस्ट हुआ"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "थ्रेड पोस्ट हुआ · लिंक कॉपी हुआ"
+  },
+  "mc_fill_cockpit": {
+    "message": "मेरा cockpit भरो"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "जिन चैनलों को तुम twitch पर पहले से फ़ॉलो करते हो उन्हें जोड़ो"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "तुम्हारे twitch फ़ॉलो पढ़ रहा है…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "अपने फ़ॉलो इम्पोर्ट करने के लिए twitch से साइन इन करो, लाइव वालों को ऊपर रखकर"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "तुम्हारा twitch लिंक एक्सपायर हो गया — फ़ॉलो इम्पोर्ट करने के लिए फिर से कनेक्ट करो"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "तुम्हारे twitch लिंक में फ़ॉलो शामिल नहीं हैं — इम्पोर्ट के लिए फिर से कनेक्ट करो"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "twitch तक नहीं पहुँच पाया — एक मिनट बाद फिर कोशिश करो"
+  },
+  "mc_sign_in": {
+    "message": "साइन इन"
+  },
+  "mc_reconnect_twitch": {
+    "message": "twitch फिर से कनेक्ट करो"
+  },
+  "mc_import_from_twitch": {
+    "message": "twitch से इम्पोर्ट करो"
+  },
+  "mc_add_manually": {
+    "message": "एक खुद जोड़ो"
+  },
+  "mc_no_twitch_follows": {
+    "message": "तुम अभी twitch पर किसी को फ़ॉलो नहीं करते"
+  },
+  "mc_all_follows_added": {
+    "message": "तुम जिन चैनलों को फ़ॉलो करते हो वे सब यहाँ पहले से हैं"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ जोड़ने को · $LIVE$ अभी लाइव",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "पहले $COUNT$ दिख रहे हैं — लाइव पहले",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "लाइव वाले चुनो"
+  },
+  "mc_add_selected": {
+    "message": "चुने हुए जोड़ो"
+  },
+  "mc_select_at_least_one": {
+    "message": "कम से कम एक चैनल चुनो"
+  },
+  "mc_nothing_added": {
+    "message": "कुछ नहीं जुड़ा — वे पहले से तुम्हारे cockpit में हैं"
+  },
+  "mc_paste_list": {
+    "message": "सूची पेस्ट करो"
+  },
+  "mc_paste_list_desc": {
+    "message": "हर पंक्ति में एक नाम, या कॉमा से अलग"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "$ADDED$ जुड़े · $SKIPPED$ छोड़े",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "gif खोजो..."
+  },
+  "mc_gif_searching": {
+    "message": "खोज रहा है..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gif · hjkl चलो · enter डालो",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "रेट लिमिट - $SECONDS$s रुको",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "खोज नहीं हुई - फिर कोशिश के लिए टाइप करो"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync अपनी gif लाइब्रेरी उसी से बनाता है जो लोग सच में चैट में पोस्ट करते हैं। अभी कुछ जमा नहीं हुआ।"
+  },
+  "mc_gif_library_building": {
+    "message": "अभी कोई मैच नहीं - लाइब्रेरी अभी भर रही है (अब तक $COUNT$ gif)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "कोई gif नहीं मिला"
+  },
+  "mc_gif_type_to_search": {
+    "message": "gif खोजने के लिए टाइप करो"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a खोज  esc बंद"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "ब्लॉक किए गए शब्द"

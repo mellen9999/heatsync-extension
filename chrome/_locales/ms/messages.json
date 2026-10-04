@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "tetingkap berasingan"
   },
+  "popup_not_signed_in": {
+    "message": "belum log masuk — "
+  },
+  "popup_setup_link": {
+    "message": "sediakan heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "klik kiri: salin 50 ralat terakhir / klik kanan: kosongkan"
+  },
+  "popup_errors_count": {
+    "message": "ralat ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "tiada ralat"
+  },
+  "popup_copied": {
+    "message": "disalin $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "gagal menyalin"
+  },
+  "popup_cleared": {
+    "message": "dikosongkan"
+  },
+  "popup_detected_prefix": {
+    "message": "di "
+  },
+  "popup_privacy_link": {
+    "message": "tiada penjejakan pihak ketiga"
+  },
   "welcome_title": {
     "message": "selamat datang ke heatsync"
+  },
+  "welcome_cta": {
+    "message": "buka twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "buka twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "log masuk →"
+  },
+  "welcome_done_title": {
+    "message": "dah masuk"
+  },
+  "welcome_import_title": {
+    "message": "bawa emote kau"
+  },
+  "welcome_import_sub": {
+    "message": "import dari 7tv, bttv & ffz dengan satu klik"
+  },
+  "welcome_import_locked": {
+    "message": "log masuk di bawah untuk import emote 7tv/bttv/ffz sedia ada"
+  },
+  "welcome_import_cta": {
+    "message": "import emote saya →"
+  },
+  "welcome_import_importing": {
+    "message": "mengimport…"
+  },
+  "welcome_import_done": {
+    "message": "$COUNT$ emote diimport",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "import gagal — cuba lagi"
+  },
+  "welcome_import_no_platform": {
+    "message": "pautkan akaun twitch, kick atau youtube dulu →"
   },
   "welcome_privacy": {
     "message": "privasi"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "set"
   },
   "btn_rotate_title": {
     "message": "putar kedudukan bar tab"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "sekatan dibuka"
   },
+  "btn_toast_block_failed": {
+    "message": "tak dapat sekat — cuba lagi"
+  },
   "btn_toast_blocked": {
     "message": "disekat"
   },
   "btn_toast_removed": {
     "message": "dibuang"
+  },
+  "btn_toast_remove_failed": {
+    "message": "gagal alih keluar"
   },
   "btn_toast_added": {
     "message": "ditambah"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "tak dapat sekat $NAME$ — cuba lagi",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "tak dapat nyahsekat $NAME$ — cuba lagi",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "tak dapat ikut — cuba lagi"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "tak dapat nyahikut — cuba lagi"
+  },
+  "content_toast_no_chat_input": {
+    "message": "buka sembang twitch untuk guna tindakan mod"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ disekat",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "rakan kongsi"
   },
+  "content_card_mutual": {
+    "message": "saling"
+  },
+  "content_card_mutual_sub": {
+    "message": "sub saling"
+  },
+  "content_card_sub_badge": {
+    "message": "sub"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "ban"
+  },
+  "content_card_unban": {
+    "message": "unban"
+  },
+  "content_card_block": {
+    "message": "sekat"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "alat mod"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "alat mod (tiada kebenaran)"
+  },
+  "content_card_note_title": {
+    "message": "nota"
+  },
+  "content_card_note_placeholder": {
+    "message": "nota peribadi — hanya kau nampak ini"
+  },
+  "content_card_history_title": {
+    "message": "sejarah mesej"
+  },
+  "content_card_loading": {
+    "message": "memuatkan…"
+  },
+  "content_card_history_empty": {
+    "message": "tiada sejarah mesej"
+  },
+  "content_card_history_empty_channel": {
+    "message": "tiada mesej daripada pengguna ini di $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "lihat profil"
+  },
+  "content_card_follow": {
+    "message": "ikut"
+  },
+  "content_card_unfollow": {
+    "message": "nyahikut"
+  },
+  "content_card_twitch_profile": {
+    "message": "profil twitch"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "membuat clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url disalin"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip dibuat"
+  },
+  "content_card_copy_name": {
+    "message": "salin nama"
+  },
+  "content_card_mention": {
+    "message": "sebut"
+  },
+  "content_card_dialog_label": {
+    "message": "kad profil untuk $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "disimpan"
   },
+  "mc_tab_modlog": {
+    "message": "log mod"
+  },
   "mc_tab_live_channel": {
     "message": "menonton · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "sambung"
   },
+  "mc_connecting": {
+    "message": "menyambung…"
+  },
   "mc_no_messages": {
     "message": "belum ada mesej"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "masukkan sekurang-kurangnya satu platform"
+  },
+  "mc_invalid_name": {
+    "message": "nama saluran tak sah — semak salah taip atau ruang kosong"
   },
   "mc_username_placeholder": {
     "message": "nama pengguna"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "pautan boleh klik"
   },
+  "mc_settings_partial_links": {
+    "message": "pautan separa"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "jadikan pautan separa dan yang disamarkan boleh diklik juga — rujukan watch?v= youtube tanpa domain dan domain gaya \"site (dot) com\" yang digunakan sembang untuk mengelak penapis pautan."
+  },
+  "mc_settings_link_previews": {
+    "message": "pratonton pautan"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "tunjuk tooltip og:title/description bila hover"
+  },
+  "mc_settings_media_embeds": {
+    "message": "media sebaris"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "tunjuk imej, gif, video dan kad pautan terus dalam sembang (tiada iframe automain)"
+  },
   "mc_settings_vi_mode": {
     "message": "mod vi"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "cap masa pada setiap mesej"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfp"
   },
   "mc_settings_avatars_desc": {
     "message": "avatar di sebelah nama pengguna"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "sepanduk pengundian aktif, undi terus"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chat"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "sepanduk untuk super chat youtube berserta jumlah"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super sticker"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "sepanduk untuk super sticker youtube berserta jumlah"
+  },
+  "mc_settings_yt_membership": {
+    "message": "ahli baharu"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "sepanduk bila seseorang menjadi ahli saluran"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "pencapaian ahli"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "sepanduk untuk bulan pencapaian keahlian"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "keahlian hadiah"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "sepanduk untuk keahlian yang dihadiahkan berserta bilangan"
+  },
   "mc_settings_dim_timeouts": {
     "message": "malapkan mesej timeout"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "tajuk ramalan"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "pilih pemenang"
+  },
+  "mc_pred_cancel_form": {
+    "message": "batal"
+  },
+  "mc_pred_load_failed": {
+    "message": "gagal memuatkan ramalan"
+  },
+  "mc_poll_ended": {
+    "message": "tamat"
+  },
+  "mc_poll_optional": {
+    "message": "pilihan"
+  },
+  "mc_error_no_permission": {
+    "message": "tiada kebenaran"
+  },
+  "mc_error_not_logged_in": {
+    "message": "belum log masuk"
+  },
+  "mc_error_poll_active": {
+    "message": "undian sedang berjalan"
   },
   "mc_pred_option1": {
     "message": "pilihan 1 (biru)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "hantar mesej..."
   },
+  "mc_input_attach": {
+    "message": "lampirkan imej atau video"
+  },
+  "mc_input_emote_picker": {
+    "message": "pemilih emote"
+  },
+  "mc_input_tab_hidden": {
+    "message": "disembunyikan dalam tab ini: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "dipaparkan semula dalam tab ini: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "siar di heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "belum ada balasan"
   },
+  "mc_social_thread_unavailable": {
+    "message": "thread tiada — siaran mungkin telah dibuang"
+  },
   "mc_social_login_first": {
     "message": "log masuk dahulu di heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "dihantar kepada $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "gagal cari pengguna Twitch"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "tak dapat hubungi heatsync — cuba lagi"
+  },
+  "mc_irc_queue_full": {
+    "message": "baris gilir hantar penuh — mesej tak disimpan"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "sebutan — tukar ke tab saluran untuk hantar"
+  },
+  "mc_input_no_channel": {
+    "message": "tiada saluran — pilih tab di atas"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "ikut $USER$ untuk dm — ikut + hantar",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "pengguna heatsync \"$USER$\" tidak dijumpai",
@@ -730,6 +1087,14 @@
     "message": "mesej dari $USER$ dipadam",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "tak dapat sertai $CHANNEL$ — buka semula tab untuk cuba lagi",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "tiada emote dimuat"
   },
+  "mc_emote_cold_start_title": {
+    "message": "emote kau, dalam setiap sembang"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "bawa semua emote 7tv, bttv & ffz dari $CHANNEL$ ke inventori kau — satu klik, dipaparkan dalam setiap sembang.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "import semua emote $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "mengimport…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "$COUNT$ diimport",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "import gagal"
+  },
+  "mc_emote_load_more": {
+    "message": "muat lagi"
+  },
+  "mc_emote_exact": {
+    "message": "tepat"
+  },
   "mc_emote_in_set": {
     "message": "dalam set anda"
   },
+  "mc_feed_delete_failed": {
+    "message": "tak dapat padam — cuba lagi"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "disekat: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "disekat (klik untuk buka)"
+  },
+  "welcome_cta_live": {
+    "message": "tonton secara langsung"
+  },
+  "mc_settings_font_family": {
+    "message": "jenis huruf"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "jenis huruf multichat"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "nama jenis huruf tersuai"
+  },
+  "mc_settings_font_size": {
+    "message": "saiz huruf"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "saiz huruf sembang dalam px — seret ikut selera (gantikan butang F-/F+ lama)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "saiz emoji"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "saiz emoji — 1x asal, 2x (lalai)/4x skala emoji unicode"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "format masa"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "format jam untuk cap masa baris sembang"
+  },
+  "mc_settings_readable_names": {
+    "message": "baiki nama pengguna malap"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "cerahkan warna nama pengguna yang malap supaya boleh dibaca pada latar hitam"
+  },
+  "mc_settings_platform_badges": {
+    "message": "lencana platform"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "label [T] [K] [Y] pada mesej. mati kekalkannya untuk platform yang kau tak berada di sana."
+  },
+  "mc_settings_text_badges": {
+    "message": "lencana teks"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "paparkan lencana mod/vip/sub sebagai cip teks ringkas, bukan imej"
+  },
+  "mc_settings_tab_counter": {
+    "message": "nombor tab"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "nombor di sebelah kanan setiap tab sembang. unread = mesej yang belum kau lihat. heat = mesej dalam seminit lepas, supaya saluran sibuk nampak sibuk walaupun kau berada di dalamnya"
+  },
+  "mc_settings_tab_position": {
+    "message": "kedudukan bar tab"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "tepi mana bar tab multichat dilekatkan"
+  },
+  "mc_settings_chat_position": {
+    "message": "sisi sembang"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "sebelah mana pemain panel sembang dilekatkan — hidden menyorokkannya (kekunci \\ togol)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: jalur cadangan"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "tunjuk video cadangan dalam jalur menegak di sebelah tajuk (youtube, lekap kiri/kanan sahaja) — mati secara lalai kerana sembang mengambil semula ruang itu"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: sembang di halaman bukan langsung"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "tunjuk panel multichat di VOD youtube, laman utama dan carian juga — mati secara lalai, jadi panel hanya muncul pada siaran langsung (yang ada sembang langsung)"
+  },
+  "mc_settings_message_density": {
+    "message": "kepadatan mesej"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "lapik baris — compact ialah rupa rapat klasik"
+  },
+  "mc_settings_line_height": {
+    "message": "tinggi baris"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "tinggi baris sembang dalam px — 18 kekalkan fon bitmap pada grid piksel"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "maks mesej kelihatan"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "maks baris sembang disimpan sebagai DOM langsung (penimbal data kekal 1500). rendah = kurang ram pada saluran sibuk."
+  },
+  "mc_settings_name_paints": {
+    "message": "warna nama heatsync"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "warna nama beranimasi daripada heatsync — diutamakan berbanding paint 7tv bila pengsembang ada kedua-duanya"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "paint + lencana 7tv"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "warna nama dan lencana 7tv pada pengsembang"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "lencana bttv"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "lencana betterttv pada pengsembang"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "lencana ffz"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "lencana frankerfacez pada pengsembang"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "animasikan emote"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "sentiasa mainkan emote beranimasi. hover tunjuk bingkai statik sehingga penuding berada pada mesej — penjimat cpu/ram besar pada saluran sibuk. tidak pernah sepenuhnya statik. mesej multichat; pemilih kekal beranimasi."
+  },
+  "mc_settings_animate_paints": {
+    "message": "animasikan paint"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "sentiasa mainkan gerakan warna nama — milik kau dan semua orang. tidak pernah bekukannya rata. ini ikut tetapan ini, bukan bendera gerakan-dikurangkan pelayar kau."
+  },
+  "mc_predview_title": {
+    "message": "ramalan & undian"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "lencana chatterino"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "lencana chatterino pada pengsembang"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "keutamaan penyedia emote"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "bila 7tv/bttv/ffz ada emote dengan nama sama, penyedia ini menang"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "paparkan emote inventori"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "lukis emote daripada inventori heatsync — milik kau atau pengsembang lain. mati tunjuk perkataan biasa. emote saluran dan global tak terkesan"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "cadangkan emote inventori"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "tawarkan inventori kau dalam tab-complete dan cadangan menaip. mati tinggalkan emote saluran dan global sahaja"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "kata ganti nama"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "kata ganti nama pronoundb.org pada kad profil + tooltip hover (twitch sahaja)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "kehadiran tanpa nama"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "jangan siarkan isyarat menaip/kehadiran kepada platform"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "toast whisper"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "toast popup bila whisper atau dm tiba semasa kau di tab lain — klik untuk ke whisper"
+  },
+  "mc_settings_notif_moment": {
+    "message": "amaran detik"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "sembang sesebuah saluran tiba-tiba meletup — lonjakan heat dikesan di pelayan; klik baris untuk buka strim"
+  },
+  "mc_settings_evt_online": {
+    "message": "mula langsung"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "sepanduk bila saluran mula siaran langsung"
+  },
+  "mc_settings_evt_offline": {
+    "message": "offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "sepanduk bila saluran offline (mati secara lalai — bising)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "tukar permainan"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "sepanduk bila streamer menukar permainan"
+  },
+  "mc_settings_browser_notification": {
+    "message": "notifikasi pelayar"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "tunjuk notifikasi desktop bila seseorang @ kau"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "tajuk tab berkelip"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "denyutkan tajuk tab pelayar dengan nama penyebut sehingga kau fokus pada tab"
+  },
+  "mc_settings_mention_volume": {
+    "message": "kelantangan bunyi sebutan"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "kelantangan bunyi ping bila disebut. 0 = senyap. guna nada WebAudio tulen, tiada fail disertakan."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "ikut di kick juga"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "bila kau ikut di heatsync, ikut di kick juga jika mereka ada akaun kick berpaut. perlu log masuk kick.com; jika tidak, beratur"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "ikut di twitch juga"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "bila kau ikut di heatsync, ikut di twitch juga jika mereka ada akaun twitch berpaut. perlu tab twitch.tv terbuka; jika tidak, beratur"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "ikut twitch dengan notifikasi"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "ikut twitch merentas platform turut hidupkan notifikasi langsung untuk saluran itu"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "butang bar alat mod"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "tindakan hover pada baris sembang bila kau mod saluran — semua mati secara lalai"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "padam mesej ini"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 minit"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 minit"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 jam"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 jam"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 hari"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (kosongkan mesej, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "ban kekal"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "unban pengguna"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "sahkan sebelum ban"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "tunjuk dialog pengesahan sebelum ban kekal — elak tersalah klik"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "sebab ban"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "satu setiap baris — dipaparkan sebagai cip boleh pilih dalam dialog ban; pilihan dihantar bersama ban"
+  },
+  "mc_settings_automod_caps": {
+    "message": "sorok spam huruf besar"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "sorok mesej melebihi 10 aksara yang kebanyakannya huruf besar"
+  },
+  "mc_settings_automod_regex": {
+    "message": "penapis regex"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "satu corak setiap baris, tak peka huruf besar-kecil — mesej yang sepadan disorok"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "tunjuk emote seksual"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "emote yang ditanda kandungan seksual (≥ 70%) disorok secara lalai. dipaparkan dengan sempadan putus-putus bila hidup."
+  },
+  "mc_settings_show_gore": {
+    "message": "tunjuk emote gore"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "emote yang ditanda keganasan/gore (≥ 70%) disorok secara lalai. dipaparkan dengan sempadan putus-putus bila hidup."
+  },
+  "mc_settings_show_weapon": {
+    "message": "tunjuk emote senjata"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "emote yang ditanda imejan senjata. hidup secara lalai."
+  },
+  "mc_settings_show_drug": {
+    "message": "tunjuk emote dadah"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "emote yang ditanda imejan dadah. hidup secara lalai."
+  },
+  "mc_settings_show_hate": {
+    "message": "tunjuk emote kebencian"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "emote yang ditanda imejan kebencian. hidup secara lalai."
+  },
+  "mc_settings_hide_bots": {
+    "message": "sorok bot"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "sorok mesej daripada bot sembang yang dikenali (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "sorok !arahan"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "sorok mesej yang bermula dengan !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "sorok pendua"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "lipat mesej sama berturut-turut (gelombang spam) kepada yang pertama"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "senyapkan kata kunci"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "satu istilah setiap baris — mesej yang mengandungi mana-mana disorok. berbeza daripada sorotan kata kunci."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "peraturan penapis"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "penapis sorot/sorok setiap peraturan — kata kunci, regex, pengguna, lencana atau jenis mesej; diurus melalui editor peraturan"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "saluran disyorkan"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "bahagian \"Recommended Channels\" di bar sisi"
+  },
+  "mc_settings_hide_stories": {
+    "message": "rak stories"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "landasan stories di bar sisi / atas"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "promosi prime gaming loot"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "butang prime loot ikon mahkota"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "promosi twitch turbo"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "pautan cta turbo"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / sepanduk bermusim"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "sepanduk langganan bermusim berkecerunan"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "togol notifikasi langsung"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "butang loceng langgan notifikasi"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "butang nyahikut"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "butang nyahikut (elak tersalah klik)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "butang langgan"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "butang langgan saluran"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "perayaan atas skrin"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "confetti / tindihan perayaan pada video"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "sambungan pemain"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "sambungan tindihan yang menutup video"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "kelantangan roda tatal"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "tatal di atas pemain untuk laras kelantangan"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "tajuk strim"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "sorok blok tajuk strim di bawah pemain"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "bilangan penonton"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "sorok kaunter penonton langsung"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "tab kelihatan"
+  },
+  "mc_settings_ui_locale": {
+    "message": "bahasa antara muka"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "bahasa ui multichat — label bertukar sepenuhnya selepas muat semula"
+  },
+  "mc_settings_subsystems": {
+    "message": "subsistem"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "suapan sembang twitch"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "sambungan irc twitch + sertai saluran dalam tindihan"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "suapan sembang kick"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "sambungan websocket kick + sertai saluran dalam tindihan"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "suapan sembang youtube"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "langganan sembang langsung youtube dalam tindihan"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "kosmetik pihak ketiga"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "paint 7tv + lencana bttv/ffz/chatterino. mati jimat ram pada saluran sibuk."
+  },
+  "mc_settings_sub_feed": {
+    "message": "feed"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "tab feed sosial heatsync + strim peristiwanya"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whisper"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "soket eventsub whisper twitch + tab whisper"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "sebutan"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "pengesanan sebutan, tab sebutan dan ping"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "statistik strim"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "statistik kadar mesej setiap saluran yang menggerakkan kedudukan heat"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "kad profil"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "klik nama pengguna untuk popup kad profil"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emote dalam sembang asal"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "paparkan emote heatsync dalam sembang platform itu sendiri"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-complete dalam sembang asal"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "pelengkapan emote + nama pengguna dalam input platform itu sendiri"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "butang pemilih emote"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "butang pemilih heatsync di sebelah input sembang asal"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "ambil alih sembang asal"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "semasa tindihan menutup sembang twitch, hentikan twitch memaparkan salinan tersembunyinya — jimat ram besar pada saluran sibuk. gagal terbuka: tindihan mati → sembang twitch kembali sendiri."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "sandaran sembang kick"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "baca strim sembang halaman kick semasa sebagai sandaran. tidak aktif selagi pengangkutan biasa sihat — hanya bertindak jika ia senyap."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "sandaran yt"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "tinjau youtube terus jika kedua-dua suapan biasa senyap selama 5 minit — benteng terakhir, bukan pengganti."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "baris gilir tahanan automod"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "tunjuk tahanan automod twitch sebaris dalam saluran yang kau mod, dengan butang benar/tolak — mencerminkan baris gilir semakan twitch sendiri."
+  },
+  "mc_automod_label": {
+    "message": "tahanan automod"
+  },
+  "mc_automod_allow": {
+    "message": "benarkan"
+  },
+  "mc_automod_deny": {
+    "message": "tolak"
+  },
+  "mc_automod_resolving": {
+    "message": "menyelesaikan…"
+  },
+  "mc_automod_error": {
+    "message": "tindakan gagal"
+  },
+  "mc_automod_relink_toast": {
+    "message": "baris gilir automod perlukan pautan semula twitch"
+  },
+  "mc_automod_signin": {
+    "message": "log masuk ke heatsync semula"
+  },
+  "mc_automod_relink_action": {
+    "message": "paut semula"
+  },
+  "mc_settings_diag_errors": {
+    "message": "tunjuk ralat diagnostik"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "ralat ditangkap secara setempat sahaja — tidak pernah dimuat naik. togol ini hanya menunjuk panel diagnostik di bawah."
+  },
+  "mc_settings_debug_logging": {
+    "message": "log nyahpepijat"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "log konsol terperinci daripada semua skrip heatsync — berkuat kuasa pada muat halaman seterusnya"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimum"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "moderator"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "ram rendah"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "gagal menyalin"
+  },
+  "mc_common_unknown": {
+    "message": "tidak diketahui"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "ikut twitch disekat: 2FA diperlukan — selesaikan di twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "nyahikut twitch disekat: 2FA diperlukan — selesaikan di twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "mengikut $USER$ di $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "nyahikut $USER$ di $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "$COUNT$ ikut $PLATFORM$ tertunggak disegerakkan",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "ikut kick beratur — disegerakkan bila kau log masuk kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "nyahikut kick beratur — disegerakkan bila kau log masuk kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "ikut twitch beratur — disegerakkan kali seterusnya kau buka twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "nyahikut twitch beratur — disegerakkan kali seterusnya kau buka twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "ralat menambah: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "gagal menambah: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "log masuk ke heatsync.org untuk tambah emote"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "tak boleh tambah $NAME$ — imej tiada",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "ditambah: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "tak dapat sekat — cuba lagi"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "tak dapat nyahsekat — cuba lagi"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "sekatan tak disimpan ke akaun kau — akan berbeza pada peranti lain"
+  },
+  "mc_emote_blocked_count": {
+    "message": "$COUNT$ emote disekat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "ralat membuang: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "gagal membuang: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "dibuang: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "nyahsekat tak disimpan ke akaun kau — akan berbeza pada peranti lain"
+  },
+  "mc_emote_unblocked": {
+    "message": "dinyahsekat: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "sudah mengikut $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ sudah disenyapkan",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "$USER$ disekat",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "penimbal setempat dikosongkan"
+  },
+  "mc_input_copied": {
+    "message": "disalin"
+  },
+  "mc_input_delete_failed": {
+    "message": "gagal padam: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete perlukan tab saluran"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete perlukan saluran twitch atau kick"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji disalin"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "pengikut sahaja mati"
+  },
+  "mc_input_followers_on": {
+    "message": "pengikut sahaja hidup"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "pengikut sahaja hidup ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers hanya untuk twitch — buka saluran twitch"
+  },
+  "mc_input_login_first_op": {
+    "message": "log masuk di heatsync.org dulu untuk guna /op"
+  },
+  "mc_input_message_copied": {
+    "message": "mesej disalin"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ perlukan tab saluran (bukan live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ perlukan saluran twitch, kick atau youtube",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: tiada mesej terkini daripada $TARGET$ — guna menu mesej",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ belum disambung — buat masa ini hanya /followers berfungsi",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ disenyapkan (24j)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "nama disalin"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "tiada siapa untuk dibalas"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ tiada twitch — cuba /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "tak mengikut $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ tak disenyapkan",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ tiada di heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "belum sedia"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — tak sub saluran ini",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "tiada apa untuk disiarkan dalam tindanan"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "tiada apa untuk dikosongkan di sini"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "tiada apa untuk disiarkan"
+  },
+  "mc_input_nuke_done": {
+    "message": "nuke $OK$/$TOTAL$ yang sepadan \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke perlukan tab saluran"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke perlukan saluran twitch atau kick"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: tiada mesej sepadan \"$TERM$\" dalam $SEC$s lepas",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "gagal siar"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "disiarkan ke feed"
+  },
+  "mc_input_rate_limited": {
+    "message": "terlalu laju — cuba sebentar lagi"
+  },
+  "mc_input_server_unreachable": {
+    "message": "tak dapat hubungi pelayan ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status perlukan tab saluran (atau /status <name>)"
+  },
+  "mc_input_success": {
+    "message": "berjaya"
+  },
+  "mc_input_thread_copied": {
+    "message": "thread disalin"
+  },
+  "mc_input_unblocked": {
+    "message": "$USER$ dinyahsekat",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "arahan tidak dikenali"
+  },
+  "mc_input_unmuted": {
+    "message": "$USER$ dinyahsenyap",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url disalin"
+  },
+  "mc_input_usage_ban": {
+    "message": "guna: /ban <user> [reason]"
+  },
+  "mc_input_usage_delete": {
+    "message": "guna: /delete <message-id> (klik kanan mesej)"
+  },
+  "mc_input_usage_dm": {
+    "message": "guna: /dm <user> <message>"
+  },
+  "mc_input_usage_follow": {
+    "message": "guna: /$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "guna: /followers [mins] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "guna: /mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "guna: /nuke <term> [seconds] — istilah mesti 2+ aksara"
+  },
+  "mc_input_usage_op": {
+    "message": "guna: /op <text>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight perlukan tab saluran twitch"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <message>"
+  },
+  "mc_input_highlight_login": {
+    "message": "log masuk twitch.tv dulu"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch tak dapat dihubungi — cuba lagi"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "ini perlukan tab saluran twitch"
+  },
+  "mc_input_pp_login": {
+    "message": "log masuk twitch.tv dulu"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "tak dapat kenal pasti saluran"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+  },
+  "mc_input_poll_created": {
+    "message": "undian dibuat"
+  },
+  "mc_input_prediction_created": {
+    "message": "ramalan dimulakan"
+  },
+  "mc_input_poll_ended": {
+    "message": "undian tamat"
+  },
+  "mc_input_no_active_poll": {
+    "message": "tiada undian aktif"
+  },
+  "mc_input_no_active_pred": {
+    "message": "tiada ramalan aktif"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <points>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "ramalan dikunci"
+  },
+  "mc_input_pred_canceled": {
+    "message": "ramalan dibatalkan"
+  },
+  "mc_input_voted": {
+    "message": "mengundi: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "pertaruh $POINTS$ pada $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "diselesaikan: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <text>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — togol sekat"
+  },
+  "mc_input_note_failed": {
+    "message": "tak dapat simpan nota"
+  },
+  "mc_input_note_saved": {
+    "message": "nota disimpan untuk $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "nota dibuang untuk $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "tiada nota untuk $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <setting> <value>"
+  },
+  "mc_input_set_complex": {
+    "message": "tukar yang itu di panel tetapan"
+  },
+  "mc_input_set_unknown": {
+    "message": "tetapan tidak dikenali: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "guna on/off untuk $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "nilai tak sah untuk $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|channel>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "tab tiada"
+  },
+  "mc_input_tab_unknown": {
+    "message": "tiada tab: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ dijadikan vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "vip $USER$ dibuang",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ dijadikan mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "mod $USER$ dibuang",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch tiada api untuk $LABEL$ — kick sahaja",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch buang /$CMD$ dari sembang — guna alat mod twitch sendiri",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick tiada mod $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ hidup",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ mati",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ hidup ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ gagal: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "guna: /$LABEL$ [duration|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "tak dapat kenal pasti saluran"
+  },
+  "mc_input_highlight_sent": {
+    "message": "disorot · baki $BALANCE$ bits",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "sorotan tak disahkan — hantar semula selamat, bits dicaj sekali sahaja"
+  },
+  "mc_input_highlight_failed": {
+    "message": "sorotan gagal: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "arahan gagal: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "guna: /r <message>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "guna: /timeout <user> [seconds] [reason]"
+  },
+  "mc_input_usage_unban": {
+    "message": "guna: /unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "guna: /unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "guna: /w <user> <message>"
+  },
+  "mc_irc_join_queued": {
+    "message": "tak dapat sertai sembang #$CHANNEL$ — beratur",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "kau diban dari saluran ini"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "saluran menyekat mesej"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "saluran digantung"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "mesej pendua — twitch menolaknya"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "mod emote sahaja — mesej mesti emote semata-mata"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "mod pengikut sahaja — ikut saluran untuk bersembang"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "ikut saluran sedikit lebih lama untuk bersembang"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "pengikut sahaja — kau perlu ikut dulu"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "tiada kebenaran untuk buat itu di sini"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "mod sembang unik — mesej mesti unik"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod sedang menyemak mesej kau"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod menyekat mesej kau"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "mod perlahan — tunggu sebentar"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "sub sahaja — sub untuk bersembang di sini"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "kau sedang timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "kau diban dari twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch tak kenal arahan itu"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "saluran perlukan e-mel disahkan untuk bersembang"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "saluran perlukan telefon disahkan untuk bersembang"
+  },
+  "mc_main_age_confirm": {
+    "message": "sahkan kau 18+ untuk hidupkan kandungan dewasa"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "saya 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "kongsi perayaan gagal — menghantar mesej kau ke sembang"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "gagal simpan $NOUN$ — cuba lagi",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "mesej tak dapat dihantar — masih dipaparkan dalam baris perayaan kau"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ tak disimpan ke inventori kau — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "saluran tak disimpan — ralat storan"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "senarai senyap tak disimpan — ralat storan"
+  },
+  "mc_main_no_share_token": {
+    "message": "tiada token kongsi — perayaan dihantar tanpa teks, mesej kau ke sembang"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "tiada strim youtube langsung untuk dikeluarkan"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "storan tetapan hampir penuh — sesetengah pilihan mungkin tak disimpan merentas peranti"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "tetapan gagal disimpan — kuota storan melebihi had"
+  },
+  "mc_main_share_unavailable": {
+    "message": "kongsi tiada — menghantar mesej kau ke sembang"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "token kongsi tiada — guna sembang twitch sendiri untuk berkongsi"
+  },
+  "mc_mod_label_banned": {
+    "message": "diban"
+  },
+  "mc_mod_label_deleted": {
+    "message": "dipadam"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "diunban"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "bukan mod youtube di sini"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ gagal: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ di kick — twitch gagal: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ gagal: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ di twitch — kick gagal: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "gagal sekat: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "$USER$ disekat",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "diikut di heatsync — segerak merentas platform tiada"
+  },
+  "mc_profile_delete_failed": {
+    "message": "gagal padam: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "mesej dipadam"
+  },
+  "mc_profile_follow_failed": {
+    "message": "gagal ikut: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "mengikut $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "tiada saluran berpaut ditemui untuk $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "tidak berdaftar di heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "$USER$ dinyahsekat",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "nyahikut $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "eksport gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "tetapan dieksport"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "fail terlalu besar (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "import gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "tetapan diimport — memuat semula…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "ungkapan tak sah"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "bukan fail tetapan heatsync"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "ralat bacaan"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "sudah sepadan dengan $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "$LABEL$ digunakan — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "pratetap dipadam"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "pratetap perlukan nama"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "pratetap disimpan: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "storan pratetap penuh — padam satu dulu"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "semua tetapan dipulihkan ke lalai"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ dipulihkan ke lalai",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "nilai peraturan kosong"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "peraturan penapis rosak — pengeditan dimatikan sehingga muat semula"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "peraturan penapis rosak — muat semula halaman sebelum edit"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "tetingkap cheer dibuka"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "saluran tak sah"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "tiada saluran twitch"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "popup disekat — benarkan popup untuk twitch.tv untuk cheer"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "nota tak disimpan — ralat storan"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper gagal: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "whisper twitch tak diaktifkan — paut semula di heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "pengguna tak dikenali — whisper seseorang dulu"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube menyekat penghantaran (mod perlahan?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "tak dapat hubungi sembang youtube — cuba lagi"
+  },
+  "mc_yt_send_failed": {
+    "message": "hantar ke youtube gagal"
+  },
+  "mc_yt_send_loading": {
+    "message": "sembang youtube masih dimuatkan — cuba lagi"
+  },
+  "mc_yt_send_login": {
+    "message": "log masuk youtube untuk hantar"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube tiada tindakan sedemikian untuk mesej itu"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "mesej itu tiada lagi di skrin"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube tak tawarkan tindakan mod pada mesej itu"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "tiada mesej dipilih"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "kau bukan moderator strim ini"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "log masuk youtube untuk memoderasi"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube menolak tindakan itu"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube tak mengesahkan penghantaran"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "buka strim youtube untuk hantar"
+  },
+  "mc_yt_send_restricted": {
+    "message": "sembang yt dihadkan untuk strim ini"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — tak boleh bersembang di sini",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "petik ke dalam thread"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "tambah pendapat kau — enter siarkan thread"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "batal petikan"
+  },
+  "mc_msg_quote_posted": {
+    "message": "thread disiarkan"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "thread disiarkan · pautan disalin"
+  },
+  "mc_fill_cockpit": {
+    "message": "isi cockpit saya"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "tambah saluran yang kau sudah ikut di twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "membaca ikutan twitch kau…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "log masuk dengan twitch untuk import ikutan kau, disusun ikut siapa yang sedang langsung"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "pautan twitch kau tamat tempoh — paut semula untuk import ikutan"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "pautan twitch kau tak termasuk ikutan — paut semula untuk mengimportnya"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "tak dapat hubungi twitch — cuba lagi seminit lagi"
+  },
+  "mc_sign_in": {
+    "message": "log masuk"
+  },
+  "mc_reconnect_twitch": {
+    "message": "sambung semula twitch"
+  },
+  "mc_import_from_twitch": {
+    "message": "import dari twitch"
+  },
+  "mc_add_manually": {
+    "message": "tambah secara manual"
+  },
+  "mc_no_twitch_follows": {
+    "message": "kau belum mengikut sesiapa di twitch"
+  },
+  "mc_all_follows_added": {
+    "message": "setiap saluran yang kau ikut sudah ada di sini"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ untuk ditambah · $LIVE$ langsung sekarang",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "menunjukkan $COUNT$ pertama — langsung dahulu",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "pilih langsung"
+  },
+  "mc_add_selected": {
+    "message": "tambah terpilih"
+  },
+  "mc_select_at_least_one": {
+    "message": "pilih sekurang-kurangnya satu saluran"
+  },
+  "mc_nothing_added": {
+    "message": "tiada ditambah — semuanya sudah ada dalam cockpit kau"
+  },
+  "mc_paste_list": {
+    "message": "tampal senarai"
+  },
+  "mc_paste_list_desc": {
+    "message": "satu nama setiap baris, atau dipisahkan koma"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "ditambah $ADDED$ · dilangkau $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "cari gif..."
+  },
+  "mc_gif_searching": {
+    "message": "mencari..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gif · hjkl gerak · enter sisip",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "terlalu laju - tunggu $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "carian gagal - taip untuk cuba lagi"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync bina perpustakaan gif daripada apa yang orang betul-betul siarkan dalam sembang. belum ada yang dikumpul."
+  },
+  "mc_gif_library_building": {
+    "message": "belum ada padanan - perpustakaan masih diisi ($COUNT$ gif setakat ini)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "tiada gif ditemui"
+  },
+  "mc_gif_type_to_search": {
+    "message": "taip untuk cari gif"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a cari  esc tutup"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "istilah disekat"

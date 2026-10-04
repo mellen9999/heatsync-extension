@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "erillinen ikkuna"
   },
+  "popup_not_signed_in": {
+    "message": "ei kirjautunut — "
+  },
+  "popup_setup_link": {
+    "message": "ota heatsync käyttöön →"
+  },
+  "popup_errors_title": {
+    "message": "vasen klikkaus: kopioi viimeiset 50 virhettä / oikea klikkaus: tyhjennä"
+  },
+  "popup_errors_count": {
+    "message": "virheet ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "ei virheitä"
+  },
+  "popup_copied": {
+    "message": "kopioitu $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "kopiointi epäonnistui"
+  },
+  "popup_cleared": {
+    "message": "tyhjennetty"
+  },
+  "popup_detected_prefix": {
+    "message": "sivulla "
+  },
+  "popup_privacy_link": {
+    "message": "ei kolmansien osapuolten seurantaa"
+  },
   "welcome_title": {
     "message": "tervetuloa heatsynciin"
+  },
+  "welcome_cta": {
+    "message": "avaa twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "avaa twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "kirjaudu →"
+  },
+  "welcome_done_title": {
+    "message": "olet sisällä"
+  },
+  "welcome_import_title": {
+    "message": "tuo emotesi"
+  },
+  "welcome_import_sub": {
+    "message": "tuo yhdellä klikkauksella 7tv:stä, bttv:stä ja ffz:stä"
+  },
+  "welcome_import_locked": {
+    "message": "kirjaudu alla tuodaksesi nykyiset 7tv/bttv/ffz-emotesi"
+  },
+  "welcome_import_cta": {
+    "message": "tuo emoteni →"
+  },
+  "welcome_import_importing": {
+    "message": "tuodaan…"
+  },
+  "welcome_import_done": {
+    "message": "tuotu $COUNT$ emotea",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "tuonti epäonnistui — yritä uudelleen"
+  },
+  "welcome_import_no_platform": {
+    "message": "yhdistä ensin twitch-, kick- tai youtube-tili →"
   },
   "welcome_privacy": {
     "message": "yksityisyys"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "setit"
   },
   "btn_rotate_title": {
     "message": "käännä välilehtipalkin sijainti"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "esto poistettu"
   },
+  "btn_toast_block_failed": {
+    "message": "estäminen ei onnistunut — yritä uudelleen"
+  },
   "btn_toast_blocked": {
     "message": "estetty"
   },
   "btn_toast_removed": {
     "message": "poistettu"
+  },
+  "btn_toast_remove_failed": {
+    "message": "poisto epäonnistui"
   },
   "btn_toast_added": {
     "message": "lisätty"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "käyttäjän $NAME$ estäminen ei onnistunut — yritä uudelleen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "käyttäjän $NAME$ eston poisto ei onnistunut — yritä uudelleen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "seuraaminen ei onnistunut — yritä uudelleen"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "seurannan lopetus ei onnistunut — yritä uudelleen"
+  },
+  "content_toast_no_chat_input": {
+    "message": "avaa twitch-chat käyttääksesi mod-toimintoja"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ estetty",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "kumppani"
   },
+  "content_card_mutual": {
+    "message": "molemminpuolinen"
+  },
+  "content_card_mutual_sub": {
+    "message": "molemminpuolinen sub"
+  },
+  "content_card_sub_badge": {
+    "message": "subaa"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "subaa T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "bannaa"
+  },
+  "content_card_unban": {
+    "message": "poista banni"
+  },
+  "content_card_block": {
+    "message": "estä"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "poista mod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "poista vip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod-työkalut"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod-työkalut (ei oikeutta)"
+  },
+  "content_card_note_title": {
+    "message": "muistiinpano"
+  },
+  "content_card_note_placeholder": {
+    "message": "yksityinen muistiinpano — vain sinä näet sen"
+  },
+  "content_card_history_title": {
+    "message": "viestihistoria"
+  },
+  "content_card_loading": {
+    "message": "ladataan…"
+  },
+  "content_card_history_empty": {
+    "message": "ei viestihistoriaa"
+  },
+  "content_card_history_empty_channel": {
+    "message": "ei viestejä tältä käyttäjältä kanavalla $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "näytä profiili"
+  },
+  "content_card_follow": {
+    "message": "seuraa"
+  },
+  "content_card_unfollow": {
+    "message": "lopeta seuraaminen"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch-profiili"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "luodaan clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url kopioitu"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip luotu"
+  },
+  "content_card_copy_name": {
+    "message": "kopioi nimi"
+  },
+  "content_card_mention": {
+    "message": "mainitse"
+  },
+  "content_card_dialog_label": {
+    "message": "käyttäjän $USERNAME$ profiilikortti",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "tallennetut"
   },
+  "mc_tab_modlog": {
+    "message": "mod-loki"
+  },
   "mc_tab_live_channel": {
     "message": "katselu · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "jatka"
   },
+  "mc_connecting": {
+    "message": "yhdistetään…"
+  },
   "mc_no_messages": {
     "message": "ei vielä viestejä"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "syötä vähintään yksi alusta"
+  },
+  "mc_invalid_name": {
+    "message": "virheellinen kanavan nimi — tarkista kirjoitusvirheet ja välilyönnit"
   },
   "mc_username_placeholder": {
     "message": "käyttäjänimi"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "klikattavat linkit"
   },
+  "mc_settings_partial_links": {
+    "message": "osittaiset linkit"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "tee linkeiksi myös osittaiset ja piilotetut linkit — paljaat watch?v= youtube-viitteet ja \"site (dot) com\" -tyyliset verkkotunnukset, joilla chatissa kierretään linkkisuodattimia."
+  },
+  "mc_settings_link_previews": {
+    "message": "linkkien esikatselu"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "näytä og:title/description-vihje osoittaessa"
+  },
+  "mc_settings_media_embeds": {
+    "message": "upotettu media"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "näytä kuvat, gifit, videot ja linkkikortit suoraan chatissa (ei automaattisesti toistuvia iframeja)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi-tila"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "aikaleima jokaisessa viestissä"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfp:t"
   },
   "mc_settings_avatars_desc": {
     "message": "profiilikuvat käyttäjänimien vieressä"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "aktiivisen äänestyksen banneri, äänestä suoraan"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chatit"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "banneri youtuben super chateille summan kanssa"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super stickerit"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "banneri youtuben super stickereille summan kanssa"
+  },
+  "mc_settings_yt_membership": {
+    "message": "uudet jäsenet"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "banneri kun joku liittyy kanavan jäseneksi"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "jäsenyyden virstanpylväät"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "banneri jäsenyyskuukausien virstanpylväistä"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "lahjajäsenyydet"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "banneri lahjajäsenyyksille määrän kanssa"
+  },
   "mc_settings_dim_timeouts": {
     "message": "himmennä timeoutatut viestit"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "ennustuksen otsikko"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "valitse voittaja"
+  },
+  "mc_pred_cancel_form": {
+    "message": "peruuta"
+  },
+  "mc_pred_load_failed": {
+    "message": "ennusteiden lataus epäonnistui"
+  },
+  "mc_poll_ended": {
+    "message": "päättynyt"
+  },
+  "mc_poll_optional": {
+    "message": "valinnainen"
+  },
+  "mc_error_no_permission": {
+    "message": "ei oikeutta"
+  },
+  "mc_error_not_logged_in": {
+    "message": "ei kirjautunut"
+  },
+  "mc_error_poll_active": {
+    "message": "äänestys on jo käynnissä"
   },
   "mc_pred_option1": {
     "message": "vaihtoehto 1 (sininen)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "lähetä viesti..."
   },
+  "mc_input_attach": {
+    "message": "liitä kuva tai video"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote-valitsin"
+  },
+  "mc_input_tab_hidden": {
+    "message": "piilotettu tässä välilehdessä: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "näkyvissä taas tässä välilehdessä: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "julkaise heatsynciin..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "ei vielä vastauksia"
   },
+  "mc_social_thread_unavailable": {
+    "message": "ketju ei ole saatavilla — postaus on voitu poistaa"
+  },
   "mc_social_login_first": {
     "message": "kirjaudu ensin sivulle heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "lähetetty käyttäjälle $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "Twitch-käyttäjän selvitys epäonnistui"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "heatsyncia ei tavoitettu — yritä uudelleen"
+  },
+  "mc_irc_queue_full": {
+    "message": "lähetysjono täynnä — viestiä ei tallennettu"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "maininnat — vaihda kanavavälilehteen lähettääksesi"
+  },
+  "mc_input_no_channel": {
+    "message": "ei kanavaa — valitse välilehti ylhäältä"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "seuraa käyttäjää $USER$ lähettääksesi dm — seuraa + lähetä",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync-käyttäjää \"$USER$\" ei löydy",
@@ -730,6 +1087,14 @@
     "message": "käyttäjän $USER$ viesti poistettu",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "kanavaan $CHANNEL$ liittyminen ei onnistunut — avaa välilehti uudelleen",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "ei ladattuja emotia"
   },
+  "mc_emote_cold_start_title": {
+    "message": "emotesi, jokaisessa chatissa"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "tuo kaikki kanavan $CHANNEL$ 7tv-, bttv- ja ffz-emotet reppuusi — yksi klikkaus, näkyvät jokaisessa chatissa.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "tuo kaikki kanavan $CHANNEL$ emotet",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "tuodaan…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "tuotu $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "tuonti epäonnistui"
+  },
+  "mc_emote_load_more": {
+    "message": "lataa lisää"
+  },
+  "mc_emote_exact": {
+    "message": "tarkka"
+  },
   "mc_emote_in_set": {
     "message": "setissäsi"
   },
+  "mc_feed_delete_failed": {
+    "message": "poisto ei onnistunut — yritä uudelleen"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "estetty: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "estetty (klikkaa poistaaksesi eston)"
+  },
+  "welcome_cta_live": {
+    "message": "katso livenä"
+  },
+  "mc_settings_font_family": {
+    "message": "fontti"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "multichatin fontti"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "oman fontin nimi"
+  },
+  "mc_settings_font_size": {
+    "message": "fonttikoko"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "chatin fonttikoko pikseleinä — vedä mieleiseksesi (korvaa vanhat F-/F+-napit)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "emojin koko"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "emojin koko — 1x natiivi, 2x (oletus)/4x skaalaa unicode-emojit"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "aikaleiman muoto"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "kellonajan muoto chatin riviaikaleimoissa"
+  },
+  "mc_settings_readable_names": {
+    "message": "korjaa himmeät nimet"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "kirkasta himmeät nimivärit, jotta ne näkyvät mustalla taustalla"
+  },
+  "mc_settings_platform_badges": {
+    "message": "alustamerkit"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "[T] [K] [Y] -tunnisteet viesteissä. pois päältä ne jäävät alustoille, joilla et ole."
+  },
+  "mc_settings_text_badges": {
+    "message": "tekstibadget"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "näytä mod/vip/sub-badget tiiviinä tekstilaattoina kuvien sijaan"
+  },
+  "mc_settings_tab_counter": {
+    "message": "välilehden numero"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "numero jokaisen chat-välilehden oikealla puolella. unread = näkemättömät viestit. heat = viestit viimeisen minuutin ajalta, joten vilkas kanava näyttää vilkkaalta vaikka olisit siinä itse"
+  },
+  "mc_settings_tab_position": {
+    "message": "välilehtipalkin paikka"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "mihin reunaan multichatin välilehtipalkki kiinnittyy"
+  },
+  "mc_settings_chat_position": {
+    "message": "chatin puoli"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "kummalle puolelle soitinta chat-paneeli kiinnittyy — hidden piilottaa sen (\\-näppäin vaihtaa)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: ehdotuskaista"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "näytä ehdotetut videot pystykaistalla otsikon vieressä (youtube, vain vasen/oikea kiinnitys) — oletuksena pois, koska chat ottaa tilan itselleen"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: chat muilla kuin live-sivuilla"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "näytä multichat-paneeli myös youtuben vodeilla, etusivulla ja haussa — oletuksena pois, jolloin paneeli näkyy vain livelähetyksissä (joissa on live-chat)"
+  },
+  "mc_settings_message_density": {
+    "message": "viestien tiheys"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "rivien täyte — compact on klassinen tiivis ulkoasu"
+  },
+  "mc_settings_line_height": {
+    "message": "rivinkorkeus"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "chatin rivinkorkeus pikseleinä — 18 pitää bittikarttafontit pikseliruudukossa"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "näkyviä viestejä enintään"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "chat-rivien enimmäismäärä elävässä DOMissa (databuffer pysyy 1500:ssa). pienempi = vähemmän ramia vilkkailla kanavilla."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync name paintit"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "heatsyncin animoidut name paintit — ohittavat 7tv paintin, jos chatissaolijalla on molemmat"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paintit + badget"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "name paintit ja 7tv-badget chatissaolijoilla"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv-badget"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv-badget chatissaolijoilla"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz-badget"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez-badget chatissaolijoilla"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "animoi emotet"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always toistaa animoidut emotet aina. hover näyttää still-kuvat kunnes osoitin on viestin päällä — iso cpu/ram-säästö vilkkailla kanavilla. never on täysin staattinen. multichat-viestit; valitsin pysyy animoituna."
+  },
+  "mc_settings_animate_paints": {
+    "message": "animoi paintit"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always toistaa name paintien liikkeen aina — omat ja muiden. never jäädyttää ne litteiksi. seuraa tätä asetusta, ei selaimesi vähennetyn liikkeen asetusta."
+  },
+  "mc_predview_title": {
+    "message": "ennusteet ja äänestykset"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino-badget"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino-badget chatissaolijoilla"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "emote-palvelun prioriteetti"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "kun 7tv/bttv/ffz:llä on samanniminen emote, tämä palvelu voittaa"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "näytä reppuemotet"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "piirrä heatsync-reppuun kuuluvat emotet — omasi tai toisen chattaajan. pois päältä näkyy pelkkä sana. kanavan ja globaalit emotet eivät muutu"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "ehdota reppuemoteja"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "tarjoa reppusi tab-täydennyksessä ja kirjoitusehdotuksissa. pois päältä jäävät vain kanavan ja globaalit emotet"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "pronominit"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "pronoundb.org-pronominit profiilikortissa + hover-vihjeessä (vain twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "anonyymi läsnäolo"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "älä lähetä kirjoitus-/läsnäolosignaaleja alustalle"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "whisper-ilmoitus"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "ponnahdusilmoitus kun whisper tai dm saapuu ollessasi toisella välilehdellä — klikkaa hypätäksesi whispereihin"
+  },
+  "mc_settings_notif_moment": {
+    "message": "hetki-hälytykset"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "kanavan chat räjähtää yhtäkkiä — heat-piikki havaittu palvelimella; klikkaa riviä avataksesi streamin"
+  },
+  "mc_settings_evt_online": {
+    "message": "aloitti livenä"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "banneri kun kanava menee livenä"
+  },
+  "mc_settings_evt_offline": {
+    "message": "meni offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "banneri kun kanava menee offline (oletuksena pois — meluisa)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "pelinvaihdot"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "banneri kun streamaaja vaihtaa peliä"
+  },
+  "mc_settings_browser_notification": {
+    "message": "selainilmoitus"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "näytä työpöytäilmoitus kun joku @mainitsee sinut"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "välilehden otsikon vilkutus"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "sykytä selaimen välilehden otsikkoa mainitsijan nimellä kunnes palaat välilehdelle"
+  },
+  "mc_settings_mention_volume": {
+    "message": "maininta-äänen voimakkuus"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "äänimerkin voimakkuus maininnasta. 0 = hiljainen. käyttää puhtaita WebAudio-ääniä, ei mukana tiedostoja."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "seuraa myös kickissä"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "kun seuraat heatsyncissä, seuraa myös kickissä jos heillä on yhdistetty kick-tili. vaatii kick.com-kirjautumisen; muuten jonoon"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "seuraa myös twitchissä"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "kun seuraat heatsyncissä, seuraa myös twitchissä jos heillä on yhdistetty twitch-tili. vaatii avoimen twitch.tv-välilehden; muuten jonoon"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch-seuranta ilmoituksilla"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "alustojen väliset twitch-seurannat laittavat myös kanavan live-ilmoitukset päälle"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod-työkalupalkin napit"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "hover-toiminnot chat-riveillä kun olet kanavan mod — kaikki oletuksena pois"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "poista tämä viesti"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 minuutti"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 minuuttia"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 tunti"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 tuntia"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 päivää"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (tyhjennä viestit, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "pysyvä banni"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "poista käyttäjän banni"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "vahvista ennen bannia"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "näytä vahvistusikkuna ennen pysyvää bannia — suojaa vahingosta"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "bannin syyt"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "yksi per rivi — näytetään valittavina laattoina bannidialogissa; valinta lähtee bannin mukana"
+  },
+  "mc_settings_automod_caps": {
+    "message": "piilota kokonaan isoilla kirjoitettu spämmi"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "piilota yli 10 merkin viestit, jotka ovat enimmäkseen isoja kirjaimia"
+  },
+  "mc_settings_automod_regex": {
+    "message": "regex-suodatin"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "yksi kuvio per rivi, kirjainkoosta riippumaton — täsmäävät viestit piilotetaan"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "näytä seksuaaliset emotet"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "seksuaalisesta sisällöstä liputetut emotet (≥ 70 %) piilotetaan oletuksena. näytetään katkoviivareunalla kun päällä."
+  },
+  "mc_settings_show_gore": {
+    "message": "näytä gore-emotet"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "väkivallasta/gorest liputetut emotet (≥ 70 %) piilotetaan oletuksena. näytetään katkoviivareunalla kun päällä."
+  },
+  "mc_settings_show_weapon": {
+    "message": "näytä aseemotet"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "aseaiheisesta kuvastosta liputetut emotet. oletuksena päällä."
+  },
+  "mc_settings_show_drug": {
+    "message": "näytä huumeemotet"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "huumeaiheisesta kuvastosta liputetut emotet. oletuksena päällä."
+  },
+  "mc_settings_show_hate": {
+    "message": "näytä vihaemotet"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "vihakuvastosta liputetut emotet. oletuksena päällä."
+  },
+  "mc_settings_hide_bots": {
+    "message": "piilota botit"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "piilota tunnettujen chat-bottien viestit (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "piilota !komennot"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "piilota viestit, jotka alkavat !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "piilota duplikaatit"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "tiivistä peräkkäiset identtiset viestit (spämmiaallot) ensimmäiseen"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "mykistä avainsanat"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "yksi termi per rivi — viestit, joissa on jokin niistä, piilotetaan. eri asia kuin avainsanakorostukset."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "suodatussäännöt"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "sääntökohtaiset korosta/piilota-suodattimet — avainsana, regex, käyttäjä, badge tai msgtype; hallitaan sääntöeditorissa"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "suositellut kanavat"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "sivupalkin \"Suositellut kanavat\" -osio"
+  },
+  "mc_settings_hide_stories": {
+    "message": "stories-hylly"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "sivupalkin / ylälaidan stories-kaista"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming loot -mainos"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "kruunukuvakkeinen prime loot -nappi"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo -mainos"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo-kehotelinkit"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / kausibannerit"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "kausitilausten liukuvärisbannerit"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "live-ilmoitusnappi"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "ilmoitusten tilauskellonappi"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "seurannan lopetus -nappi"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "seurannan lopetus -nappi (estää vahinkoklikkaukset)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "tilaa-nappi"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "kanavan tilausnappi"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "ruudun juhlinnat"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "konfetti- / juhlaoverlayt videon päällä"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "soittimen laajennukset"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "videon peittävät overlay-laajennukset"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "äänenvoimakkuus rullalla"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "rullaa soittimen päällä säätääksesi äänenvoimakkuutta"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "streamin otsikko"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "piilota otsikkolohko soittimen alta"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "katsojamäärä"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "piilota live-katsojalaskuri"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "näkyvät välilehdet"
+  },
+  "mc_settings_ui_locale": {
+    "message": "käyttöliittymän kieli"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichatin käyttöliittymän kieli — päivittyy kokonaan latauksen jälkeen"
+  },
+  "mc_settings_subsystems": {
+    "message": "alijärjestelmät"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch-chat-syöte"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc -yhteys + kanaviin liittyminen overlayn sisällä"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick-chat-syöte"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket -yhteys + kanaviin liittyminen overlayn sisällä"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube-chat-syöte"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "youtuben live-chat-tilaukset overlayn sisällä"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "kolmansien osapuolten kosmetiikka"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paintit + bttv/ffz/chatterino-badget. pois päältä säästää ramia vilkkailla kanavilla."
+  },
+  "mc_settings_sub_feed": {
+    "message": "feed"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsyncin sosiaalinen feed-välilehti + sen tapahtumavirta"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whisperit"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub -socket + whisper-välilehti"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "maininnat"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "maininnan tunnistus, mainintavälilehti ja äänimerkit"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "streamitilastot"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "kanavakohtaiset viestinopeustilastot, jotka ajavat heat-järjestystä"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "profiilikortit"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "klikkaa käyttäjänimeä avataksesi profiilikortin"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emotet natiivichatissa"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "näytä heatsync-emotet alustan omassa chatissa"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-täydennys natiivichatissa"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "emote- ja käyttäjänimitäydennys alustan omassa syöttökentässä"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote-valitsimen nappi"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "heatsync-valitsimen nappi natiivin chat-kentän vieressä"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "natiivichatin korvaus"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "kun overlay peittää twitch-chatin, estä twitchiä piirtämästä piilotettua kopiotaan — iso ram-säästö vilkkailla kanavilla. epäonnistuu avoimeksi: overlay kaatuu → twitch-chat palaa itsestään."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick-chatin varakuuntelu"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "lukee nykyisen kick-sivun oman chat-virran varana. ei tee mitään kun normaalit kanavat toimivat — astuu mukaan vain jos ne hiljenevät."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "yt-varakuuntelu"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "kysyy youtubelta suoraan jos molemmat normaalit syötteet vaikenevat 5 minuutiksi — viimeinen turvaverkko, ei korvaava kanava."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod-pitojono"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "näyttää twitch automod -pidot suoraan kanavilla joita modaat, allow/deny-napeilla — peilaa twitchin omaa tarkistusjonoa."
+  },
+  "mc_automod_label": {
+    "message": "automod-pito"
+  },
+  "mc_automod_allow": {
+    "message": "salli"
+  },
+  "mc_automod_deny": {
+    "message": "hylkää"
+  },
+  "mc_automod_resolving": {
+    "message": "käsitellään…"
+  },
+  "mc_automod_error": {
+    "message": "toiminto epäonnistui"
+  },
+  "mc_automod_relink_toast": {
+    "message": "automod-jono tarvitsee twitchin uudelleenyhdistämisen"
+  },
+  "mc_automod_signin": {
+    "message": "kirjaudu heatsynciin uudelleen"
+  },
+  "mc_automod_relink_action": {
+    "message": "yhdistä uudelleen"
+  },
+  "mc_settings_diag_errors": {
+    "message": "näytä diagnostiikkavirheet"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "virheet tallennetaan vain paikallisesti — niitä ei koskaan lähetetä. tämä kytkin vain näyttää diagnostiikkapaneelin alla."
+  },
+  "mc_settings_debug_logging": {
+    "message": "debug-lokitus"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "laaja konsolilokitus kaikista heatsync-skripteistä — astuu voimaan seuraavalla sivun latauksella"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimaalinen"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "moderaattori"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "vähän ramia"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "kopiointi epäonnistui"
+  },
+  "mc_common_unknown": {
+    "message": "tuntematon"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch-seuranta estetty: 2FA vaaditaan — viimeistele twitch.tv:ssä"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch-seurannan lopetus estetty: 2FA vaaditaan — viimeistele twitch.tv:ssä"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "$USER$ seurattu alustalla $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "lopetettu käyttäjän $USER$ seuraaminen alustalla $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "synkronoitu $COUNT$ odottavaa $PLATFORM$-seurantaa",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick-seuranta jonossa — synkronoituu kun kirjaudut kick.comiin"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick-seurannan lopetus jonossa — synkronoituu kun kirjaudut kick.comiin"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch-seuranta jonossa — synkronoituu kun avaat twitch.tv:n seuraavan kerran"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch-seurannan lopetus jonossa — synkronoituu kun avaat twitch.tv:n seuraavan kerran"
+  },
+  "mc_emote_add_error": {
+    "message": "virhe lisättäessä: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "lisäys epäonnistui: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "kirjaudu heatsync.orgiin lisätäksesi emoteja"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "$NAME$ ei voi lisätä — kuva ei saatavilla",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "lisätty: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "estäminen ei onnistunut — yritä uudelleen"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "eston poisto ei onnistunut — yritä uudelleen"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "estoa ei tallennettu tilillesi — eroaa muilla laitteilla"
+  },
+  "mc_emote_blocked_count": {
+    "message": "estetty $COUNT$ emotea",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "virhe poistettaessa: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "poisto epäonnistui: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "poistettu: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "eston poistoa ei tallennettu tilillesi — eroaa muilla laitteilla"
+  },
+  "mc_emote_unblocked": {
+    "message": "esto poistettu: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "seuraat jo käyttäjää $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ on jo mykistetty",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "estetty $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "paikallinen puskuri tyhjennetty"
+  },
+  "mc_input_copied": {
+    "message": "kopioitu"
+  },
+  "mc_input_delete_failed": {
+    "message": "poisto epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete vaatii kanavavälilehden"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete vaatii twitch- tai kick-kanavan"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji kopioitu"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "followers-only pois"
+  },
+  "mc_input_followers_on": {
+    "message": "followers-only päällä"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "followers-only päällä ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers on vain twitchille — avaa twitch-kanava"
+  },
+  "mc_input_login_first_op": {
+    "message": "kirjaudu ensin heatsync.orgiin käyttääksesi /op"
+  },
+  "mc_input_message_copied": {
+    "message": "viesti kopioitu"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ vaatii kanavavälilehden (ei live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ vaatii twitch-, kick- tai youtube-kanavan",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: ei tuoretta viestiä käyttäjältä $TARGET$ — käytä viestivalikkoa",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ ei ole vielä kytketty — toistaiseksi toimii vain /followers",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ mykistetty (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "nimi kopioitu"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "ei ketään kenelle vastata"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "käyttäjällä $USER$ ei ole twitchiä — kokeile /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "et seuraa käyttäjää $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ ei ole mykistetty",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ ei ole heatsyncissä",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "ei valmis"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — ei sub tälle kanavalle",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "pinossa ei mitään postattavaa"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "täällä ei ole mitään tyhjennettävää"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "ei mitään postattavaa"
+  },
+  "mc_input_nuke_done": {
+    "message": "nukettu $OK$/$TOTAL$ viestiä, jotka täsmäävät \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke vaatii kanavavälilehden"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke vaatii twitch- tai kick-kanavan"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: ei viestejä, jotka täsmäävät \"$TERM$\", viimeisen $SEC$ s aikana",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "postaus epäonnistui"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "postattu feediin"
+  },
+  "mc_input_rate_limited": {
+    "message": "liian tiheästi — yritä hetken päästä"
+  },
+  "mc_input_server_unreachable": {
+    "message": "palvelinta ei tavoitettu ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status vaatii kanavavälilehden (tai /status <nimi>)"
+  },
+  "mc_input_success": {
+    "message": "onnistui"
+  },
+  "mc_input_thread_copied": {
+    "message": "ketju kopioitu"
+  },
+  "mc_input_unblocked": {
+    "message": "esto poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "tuntematon komento"
+  },
+  "mc_input_unmuted": {
+    "message": "mykistys poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url kopioitu"
+  },
+  "mc_input_usage_ban": {
+    "message": "käyttö: /ban <käyttäjä> [syy]"
+  },
+  "mc_input_usage_delete": {
+    "message": "käyttö: /delete <viesti-id> (klikkaa viestiä oikealla)"
+  },
+  "mc_input_usage_dm": {
+    "message": "käyttö: /dm <käyttäjä> <viesti>"
+  },
+  "mc_input_usage_follow": {
+    "message": "käyttö: /$CMD$ <käyttäjä>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "käyttö: /followers [min] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "käyttö: /mute <käyttäjä>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "käyttö: /nuke <termi> [sekuntia] — termissä 2+ merkkiä"
+  },
+  "mc_input_usage_op": {
+    "message": "käyttö: /op <teksti>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight vaatii twitch-kanavavälilehden"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <viesti>"
+  },
+  "mc_input_highlight_login": {
+    "message": "kirjaudu ensin twitch.tv:hen"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitchiä ei tavoitettu — yritä uudelleen"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "tämä vaatii twitch-kanavavälilehden"
+  },
+  "mc_input_pp_login": {
+    "message": "kirjaudu ensin twitch.tv:hen"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "kanavaa ei löytynyt"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll kysymys | valinta1 | valinta2 [| … enintään 5] [| sek]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction otsikko | tulos1 | tulos2 [| … enintään 10] [| sek]"
+  },
+  "mc_input_poll_created": {
+    "message": "äänestys luotu"
+  },
+  "mc_input_prediction_created": {
+    "message": "ennuste aloitettu"
+  },
+  "mc_input_poll_ended": {
+    "message": "äänestys päättyi"
+  },
+  "mc_input_no_active_poll": {
+    "message": "ei aktiivista äänestystä"
+  },
+  "mc_input_no_active_pred": {
+    "message": "ei aktiivista ennustetta"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <pisteet>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "ennuste lukittu"
+  },
+  "mc_input_pred_canceled": {
+    "message": "ennuste peruttu"
+  },
+  "mc_input_voted": {
+    "message": "äänestit: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "veikattu $POINTS$ kohteeseen $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "ratkaistu: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <käyttäjä> <teksti>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <käyttäjä>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <käyttäjä> — vaihtaa eston"
+  },
+  "mc_input_note_failed": {
+    "message": "muistiinpanoa ei voitu tallentaa"
+  },
+  "mc_input_note_saved": {
+    "message": "muistiinpano tallennettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "muistiinpano poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "ei muistiinpanoa: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <asetus> <arvo>"
+  },
+  "mc_input_set_complex": {
+    "message": "muuta tämä asetuspaneelissa"
+  },
+  "mc_input_set_unknown": {
+    "message": "tuntematon asetus: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "käytä on/off asetukselle $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "virheellinen arvo asetukselle $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|kanava>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "välilehdet eivät käytettävissä"
+  },
+  "mc_input_tab_unknown": {
+    "message": "ei välilehteä: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <käyttäjä>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <käyttäjä>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ on nyt vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "vip poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <käyttäjä>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <käyttäjä>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ on nyt mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "mod poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitchillä ei ole apia tilalle $LABEL$ — vain kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch poisti /$CMD$ chatistä — käytä sen omia mod-työkaluja",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kickissä ei ole tilaa $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ päällä",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ pois",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ päällä ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ epäonnistui: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "käyttö: /$LABEL$ [kesto|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "kanavaa ei löytynyt"
+  },
+  "mc_input_highlight_sent": {
+    "message": "korostettu · $BALANCE$ bitsiä jäljellä",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "korostusta ei vahvistettu — uudelleenlähetys on turvallista, bitsit veloitetaan vain kerran"
+  },
+  "mc_input_highlight_failed": {
+    "message": "korostus epäonnistui: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "komento epäonnistui: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "käyttö: /r <viesti>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "käyttö: /timeout <käyttäjä> [sekuntia] [syy]"
+  },
+  "mc_input_usage_unban": {
+    "message": "käyttö: /unban <käyttäjä>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "käyttö: /unmute <käyttäjä>"
+  },
+  "mc_input_usage_w": {
+    "message": "käyttö: /w <käyttäjä> <viesti>"
+  },
+  "mc_irc_join_queued": {
+    "message": "kanavan #$CHANNEL$ chattiin liittyminen ei onnistunut — jonossa",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "olet bannattu tältä kanavalta"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "kanava estää viestit"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "kanava on jäädytetty"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "kaksoisviesti — twitch hylkäsi sen"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "emote-only-tila — viestin on oltava pelkkiä emoteja"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "followers-only-tila — seuraa kanavaa chatataksesi"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "seuraa kanavaa vähän pidempään chatataksesi"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "followers-only — sinun pitää ensin seurata"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "ei oikeutta tehdä tuota täällä"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "uniikki chat -tila — viestin on oltava uniikki"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod tarkistaa viestisi"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod esti viestisi"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — odota hetki"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "vain subeille — subaa chatataksesi täällä"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "olet timeoutissa"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "olet bannattu twitchistä"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch ei tunnistanut komentoa"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "kanava vaatii vahvistetun sähköpostin chattaamiseen"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "kanava vaatii vahvistetun puhelinnumeron chattaamiseen"
+  },
+  "mc_main_age_confirm": {
+    "message": "vahvista, että olet 18+ ottaaksesi aikuissisällön käyttöön"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "olen 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "juhlinnan jako epäonnistui — viestisi lähetetään chattiin"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "kohteen $NOUN$ tallennus epäonnistui — yritä uudelleen",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "viestiä ei voitu lähettää — se näkyy yhä juhlarivissäsi"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ ei tallentunut reppuusi — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "kanavaa ei tallennettu — tallennusvirhe"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "mykistyslistaa ei tallennettu — tallennusvirhe"
+  },
+  "mc_main_no_share_token": {
+    "message": "ei jakotokenia — juhlinta lähetettiin ilman tekstiä, viestisi menee chattiin"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "ei live-youtube-streamia irrotettavaksi"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "asetustallennus lähes täynnä — kaikki asetukset eivät ehkä tallennu laitteiden välillä"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "asetuksia ei tallennettu — tallennuskiintiö ylittyi"
+  },
+  "mc_main_share_unavailable": {
+    "message": "jako ei käytettävissä — viestisi lähetetään chattiin"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "jakotoken puuttuu — käytä twitchin omaa chattia jakamiseen"
+  },
+  "mc_mod_label_banned": {
+    "message": "bannattu"
+  },
+  "mc_mod_label_deleted": {
+    "message": "poistettu"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "banni poistettu"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "et ole youtube-mod täällä"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ epäonnistui: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ kickissä — twitch epäonnistui: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ epäonnistui: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ twitchissä — kick epäonnistui: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "estäminen epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "estetty $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "seurattu heatsyncissä — alustojen välinen synkronointi ei käytettävissä"
+  },
+  "mc_profile_delete_failed": {
+    "message": "poisto epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "poistettu viesti"
+  },
+  "mc_profile_follow_failed": {
+    "message": "seuraaminen epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "seuraat käyttäjää $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "käyttäjälle $USER$ ei löytynyt yhdistettyjä kanavia",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "ei rekisteröitynyt heatsynciin"
+  },
+  "mc_profile_unblocked": {
+    "message": "esto poistettu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "et enää seuraa käyttäjää $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "vienti epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "asetukset viety"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "tiedosto liian suuri (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "tuonti epäonnistui: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "asetukset tuotu — ladataan uudelleen…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "virheellinen lauseke"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "ei ole heatsync-asetustiedosto"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "jäsennysvirhe"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "vastaa jo esiasetusta $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "otettu käyttöön $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "esiasetus poistettu"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "esiasetus tarvitsee nimen"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "esiasetus tallennettu: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "esiasetusten tila täynnä — poista ensin yksi"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "kaikki asetukset palautettu oletuksiin"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ palautettu oletuksiin",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "säännön arvo on tyhjä"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "suodatussäännöt rikki — muokkaus pois käytöstä lataukseen asti"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "suodatussäännöt rikki — lataa sivu uudelleen ennen muokkausta"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "cheer-ikkuna avattu"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "virheellinen kanava"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "ei twitch-kanavaa"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "ponnahdus estetty — salli ponnahdusikkunat twitch.tv:lle cheeratakseen"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "muistiinpanoa ei tallennettu — tallennusvirhe"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper epäonnistui: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch-whisperit eivät käytössä — yhdistä uudelleen heatsync.orgissa"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "tuntematon käyttäjä — whisperöi ensin jollekin"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube esti lähetyksen (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "youtube-chattia ei tavoitettu — yritä uudelleen"
+  },
+  "mc_yt_send_failed": {
+    "message": "youtube-lähetys epäonnistui"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube-chat latautuu vielä — yritä uudelleen"
+  },
+  "mc_yt_send_login": {
+    "message": "kirjaudu youtubeen lähettääksesi"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtubessa ei ole tuota toimintoa tälle viestille"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "tuo viesti ei ole enää ruudulla"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube ei tarjonnut mod-toimintoja tälle viestille"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "viestiä ei valittu"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "et ole tämän streamin moderaattori"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "kirjaudu youtubeen moderoidaksesi"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube hylkäsi toiminnon"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube ei vahvistanut lähetystä"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "avaa youtube-stream lähettääksesi"
+  },
+  "mc_yt_send_restricted": {
+    "message": "yt-chat on rajoitettu tälle streamille"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — ei voi chattailla täällä",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "lainaa ketjuun"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "lisää oma kantasi — enter postaa ketjun"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "peruuta lainaus"
+  },
+  "mc_msg_quote_posted": {
+    "message": "ketju postattu"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "ketju postattu · linkki kopioitu"
+  },
+  "mc_fill_cockpit": {
+    "message": "täytä cockpitini"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "lisää kanavat, joita jo seuraat twitchissä"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "luetaan twitch-seurantojasi…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "kirjaudu twitchillä tuodaksesi seurannat, järjestettynä sen mukaan ketkä ovat livenä"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "twitch-yhteytesi vanheni — yhdistä uudelleen tuodaksesi seurannat"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "twitch-yhteytesi ei sisällä seurantoja — yhdistä uudelleen tuodaksesi ne"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "twitchiä ei tavoitettu — yritä minuutin päästä uudelleen"
+  },
+  "mc_sign_in": {
+    "message": "kirjaudu"
+  },
+  "mc_reconnect_twitch": {
+    "message": "yhdistä twitch uudelleen"
+  },
+  "mc_import_from_twitch": {
+    "message": "tuo twitchistä"
+  },
+  "mc_add_manually": {
+    "message": "lisää yksi käsin"
+  },
+  "mc_no_twitch_follows": {
+    "message": "et seuraa vielä ketään twitchissä"
+  },
+  "mc_all_follows_added": {
+    "message": "jokainen seuraamasi kanava on jo täällä"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ lisättävää · $LIVE$ livenä nyt",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "näytetään ensimmäiset $COUNT$ — live ensin",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "valitse livenä olevat"
+  },
+  "mc_add_selected": {
+    "message": "lisää valitut"
+  },
+  "mc_select_at_least_one": {
+    "message": "valitse vähintään yksi kanava"
+  },
+  "mc_nothing_added": {
+    "message": "ei lisätty mitään — ne ovat jo cockpitissäsi"
+  },
+  "mc_paste_list": {
+    "message": "liitä lista"
+  },
+  "mc_paste_list_desc": {
+    "message": "yksi nimi per rivi tai pilkuilla erotettuna"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "lisätty $ADDED$ · ohitettu $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "hae gifejä..."
+  },
+  "mc_gif_searching": {
+    "message": "haetaan..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifiä · hjkl liiku · enter lisää",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "liian tiheästi - odota $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "haku epäonnistui - kirjoita yrittääksesi uudelleen"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync rakentaa gif-kirjastonsa siitä, mitä ihmiset oikeasti postaavat chatissa. mitään ei ole vielä kerätty."
+  },
+  "mc_gif_library_building": {
+    "message": "ei vielä osumaa - kirjasto täyttyy vielä ($COUNT$ gifiä toistaiseksi)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "gifejä ei löytynyt"
+  },
+  "mc_gif_type_to_search": {
+    "message": "kirjoita hakeaksesi gifejä"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a hae  esc sulje"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "estetyt termit"

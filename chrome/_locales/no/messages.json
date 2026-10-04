@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "eget vindu"
   },
+  "popup_not_signed_in": {
+    "message": "ikke logget inn — "
+  },
+  "popup_setup_link": {
+    "message": "sett opp heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "venstreklikk: kopier siste 50 feil / høyreklikk: tøm"
+  },
+  "popup_errors_count": {
+    "message": "feil ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "ingen feil"
+  },
+  "popup_copied": {
+    "message": "kopierte $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "kopiering feilet"
+  },
+  "popup_cleared": {
+    "message": "tømt"
+  },
+  "popup_detected_prefix": {
+    "message": "på "
+  },
+  "popup_privacy_link": {
+    "message": "ingen sporing fra tredjeparter"
+  },
   "welcome_title": {
     "message": "velkommen til heatsync"
+  },
+  "welcome_cta": {
+    "message": "åpne twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "åpne twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "logg inn →"
+  },
+  "welcome_done_title": {
+    "message": "du er inne"
+  },
+  "welcome_import_title": {
+    "message": "ta med emotene dine"
+  },
+  "welcome_import_sub": {
+    "message": "importer fra 7tv, bttv & ffz med ett klikk"
+  },
+  "welcome_import_locked": {
+    "message": "logg inn under for å importere dine eksisterende 7tv/bttv/ffz-emotes"
+  },
+  "welcome_import_cta": {
+    "message": "importer emotene mine →"
+  },
+  "welcome_import_importing": {
+    "message": "importerer…"
+  },
+  "welcome_import_done": {
+    "message": "importerte $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "import feilet — prøv igjen"
+  },
+  "welcome_import_no_platform": {
+    "message": "koble til en twitch-, kick- eller youtube-konto først →"
   },
   "welcome_privacy": {
     "message": "personvern"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "sett"
   },
   "btn_rotate_title": {
     "message": "roter fanelinjens posisjon"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "blokkering fjernet"
   },
+  "btn_toast_block_failed": {
+    "message": "kunne ikke blokkere — prøv igjen"
+  },
   "btn_toast_blocked": {
     "message": "blokkert"
   },
   "btn_toast_removed": {
     "message": "fjernet"
+  },
+  "btn_toast_remove_failed": {
+    "message": "fjerning feilet"
   },
   "btn_toast_added": {
     "message": "lagt til"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "kunne ikke blokkere $NAME$ — prøv igjen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "kunne ikke fjerne blokkeringen av $NAME$ — prøv igjen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "kunne ikke følge — prøv igjen"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "kunne ikke slutte å følge — prøv igjen"
+  },
+  "content_toast_no_chat_input": {
+    "message": "åpne twitch-chatten for å bruke mod-handlinger"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ blokkert",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "partner"
   },
+  "content_card_mutual": {
+    "message": "gjensidig"
+  },
+  "content_card_mutual_sub": {
+    "message": "gjensidig sub"
+  },
+  "content_card_sub_badge": {
+    "message": "subbet"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "subbet T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "ban"
+  },
+  "content_card_unban": {
+    "message": "unban"
+  },
+  "content_card_block": {
+    "message": "blokker"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod-verktøy"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod-verktøy (ingen tilgang)"
+  },
+  "content_card_note_title": {
+    "message": "notat"
+  },
+  "content_card_note_placeholder": {
+    "message": "privat notat — bare du ser dette"
+  },
+  "content_card_history_title": {
+    "message": "meldingshistorikk"
+  },
+  "content_card_loading": {
+    "message": "laster…"
+  },
+  "content_card_history_empty": {
+    "message": "ingen meldingshistorikk"
+  },
+  "content_card_history_empty_channel": {
+    "message": "ingen meldinger fra denne brukeren i $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "se profil"
+  },
+  "content_card_follow": {
+    "message": "følg"
+  },
+  "content_card_unfollow": {
+    "message": "slutt å følge"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch-profil"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "lager clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url kopiert"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip laget"
+  },
+  "content_card_copy_name": {
+    "message": "kopier navn"
+  },
+  "content_card_mention": {
+    "message": "nevn"
+  },
+  "content_card_dialog_label": {
+    "message": "profilkort for $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "lagret"
   },
+  "mc_tab_modlog": {
+    "message": "mod-logg"
+  },
   "mc_tab_live_channel": {
     "message": "ser på · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "fortsett"
   },
+  "mc_connecting": {
+    "message": "kobler til…"
+  },
   "mc_no_messages": {
     "message": "ingen meldinger ennå"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "skriv inn minst én plattform"
+  },
+  "mc_invalid_name": {
+    "message": "ugyldig kanalnavn — sjekk for skrivefeil eller mellomrom"
   },
   "mc_username_placeholder": {
     "message": "brukernavn"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "klikkbare lenker"
   },
+  "mc_settings_partial_links": {
+    "message": "delvise lenker"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "gjør også delvise og avskjermede lenker klikkbare — bare watch?v=-referanser til youtube og domener som \"site (dot) com\" som chatter bruker for å lure lenkefiltre."
+  },
+  "mc_settings_link_previews": {
+    "message": "lenkeforhåndsvisning"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "vis og:title/description-tooltip ved hover"
+  },
+  "mc_settings_media_embeds": {
+    "message": "innebygd media"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "vis bilder, gifs, video og lenkekort rett i chatten (ingen iframes som spilles av automatisk)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi-modus"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "tidsstempel på hver melding"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfps"
   },
   "mc_settings_avatars_desc": {
     "message": "avatarer ved siden av brukernavn"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "aktivt avstemningsbanner, stem direkte"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chats"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "banner for youtube super chats med beløp"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super stickers"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "banner for youtube super stickers med beløp"
+  },
+  "mc_settings_yt_membership": {
+    "message": "nye medlemmer"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "banner når noen blir kanalmedlem"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "medlemsmilepæler"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "banner for milepælsmåneder som medlem"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "gavemedlemskap"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "banner for gavemedlemskap med antall"
+  },
   "mc_settings_dim_timeouts": {
     "message": "demp timeoutede meldinger"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "prediction-tittel"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "velg vinner"
+  },
+  "mc_pred_cancel_form": {
+    "message": "avbryt"
+  },
+  "mc_pred_load_failed": {
+    "message": "kunne ikke laste prediksjoner"
+  },
+  "mc_poll_ended": {
+    "message": "avsluttet"
+  },
+  "mc_poll_optional": {
+    "message": "valgfritt"
+  },
+  "mc_error_no_permission": {
+    "message": "ingen tilgang"
+  },
+  "mc_error_not_logged_in": {
+    "message": "ikke logget inn"
+  },
+  "mc_error_poll_active": {
+    "message": "en avstemning pågår allerede"
   },
   "mc_pred_option1": {
     "message": "alternativ 1 (blå)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "send en melding..."
   },
+  "mc_input_attach": {
+    "message": "legg ved bilde eller video"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote-velger"
+  },
+  "mc_input_tab_hidden": {
+    "message": "skjult i denne fanen: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "synlig igjen i denne fanen: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "post på heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "ingen svar ennå"
   },
+  "mc_social_thread_unavailable": {
+    "message": "tråden er utilgjengelig — innlegget kan være fjernet"
+  },
   "mc_social_login_first": {
     "message": "logg først inn på heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "sendt til $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "kunne ikke finne Twitch-bruker"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "fikk ikke kontakt med heatsync — prøv igjen"
+  },
+  "mc_irc_queue_full": {
+    "message": "sendekøen er full — meldingen ble ikke lagret"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "omtaler — bytt til en kanalfane for å sende"
+  },
+  "mc_input_no_channel": {
+    "message": "ingen kanal — velg en fane over"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "følg $USER$ for å dm'e — følg + send",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync-bruker \"$USER$\" ikke funnet",
@@ -730,6 +1087,14 @@
     "message": "melding fra $USER$ slettet",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "kunne ikke bli med i $CHANNEL$ — åpne fanen på nytt for å prøve igjen",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "ingen lastede emotes"
   },
+  "mc_emote_cold_start_title": {
+    "message": "emotene dine, i hver chat"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "hent alle 7tv-, bttv- & ffz-emotes fra $CHANNEL$ inn i inventaret ditt — ett klikk, vises i hver chat.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "importer alle emotes fra $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "importerer…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "importerte $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "import feilet"
+  },
+  "mc_emote_load_more": {
+    "message": "last flere"
+  },
+  "mc_emote_exact": {
+    "message": "eksakt"
+  },
   "mc_emote_in_set": {
     "message": "i settet ditt"
   },
+  "mc_feed_delete_failed": {
+    "message": "kunne ikke slette — prøv igjen"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "blokkert: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "blokkert (klikk for å fjerne blokkering)"
+  },
+  "welcome_cta_live": {
+    "message": "se live"
+  },
+  "mc_settings_font_family": {
+    "message": "skrifttype"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "skrifttype for multichat"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "eget skrifttypenavn"
+  },
+  "mc_settings_font_size": {
+    "message": "skriftstørrelse"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "skriftstørrelse i chat i px — dra til det passer (erstatter de gamle F-/F+-knappene)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "emoji-størrelse"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "emoji-størrelse — 1x native, 2x (standard)/4x skalerer unicode-emoji"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "tidsformat"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "klokkeformat for tidsstempler på chatlinjer"
+  },
+  "mc_settings_readable_names": {
+    "message": "fiks mørke brukernavn"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "lysne svake navnefarger så de er leselige på svart bakgrunn"
+  },
+  "mc_settings_platform_badges": {
+    "message": "plattformmerker"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "[T] [K] [Y]-merker på meldinger. av beholder dem for plattformene du ikke er på."
+  },
+  "mc_settings_text_badges": {
+    "message": "tekstmerker"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "vis mod/vip/sub-merker som korte tekstchips i stedet for bilder"
+  },
+  "mc_settings_tab_counter": {
+    "message": "fanenummer"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "tall til høyre på hver chatfane. unread = meldinger du ikke har sett. heat = meldinger siste minutt, så en travel kanal ser travel ut selv når du er i den"
+  },
+  "mc_settings_tab_position": {
+    "message": "fanelinjens plassering"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "hvilken kant multichat-fanelinjen fester seg til"
+  },
+  "mc_settings_chat_position": {
+    "message": "chatside"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "hvilken side av spilleren chatpanelet fester seg til — skjult gjemmer det unna (\\-tasten bytter)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: forslagsstripe"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "vis foreslåtte videoer i en vertikal stripe ved siden av tittelen (youtube, bare venstre/høyre) — av som standard siden chatten tar tilbake plassen"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: chat på sider uten live"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "vis multichat-panelet også på youtube-VODs, forsiden og søk — av som standard, så panelet bare vises på livestreamer (der det finnes live chat)"
+  },
+  "mc_settings_message_density": {
+    "message": "meldingstetthet"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "radmarg — compact er det klassiske tette utseendet"
+  },
+  "mc_settings_line_height": {
+    "message": "linjehøyde"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "linjehøyde for chatrader i px — 18 holder bitmap-skrifter på pikselrutenettet"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "maks synlige meldinger"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "maks antall chatrader som live DOM (databufferen forblir 1500). lavere = mindre ram på travle kanaler."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync navnefarger"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "animerte navnefarger fra heatsync — har forrang over en 7tv-paint når en chatter har begge"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paints + merker"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "navnefarger og 7tv-merker på chattere"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv-merker"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv-merker på chattere"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz-merker"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez-merker på chattere"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "animer emotes"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "alltid spiller av animerte emotes. hover viser stillbilder til pekeren er på en melding — sparer mye cpu/ram på travle kanaler. aldri er helt statisk. multichat-meldinger; velgeren forblir animert."
+  },
+  "mc_settings_animate_paints": {
+    "message": "animer paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "alltid spiller av bevegelsen i navnefarger — dine og alle andres. aldri fryser dem flate. dette følger denne innstillingen, ikke nettleserens reduced-motion-flagg."
+  },
+  "mc_predview_title": {
+    "message": "prediksjoner & avstemninger"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino-merker"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino-merker på chattere"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "emote-leverandør, prioritet"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "når 7tv/bttv/ffz har en emote med samme navn, vinner denne leverandøren"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "vis inventar-emotes"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "tegn emotes fra et heatsync-inventar — ditt eller en annen chatters. av viser ordet i vanlig tekst. kanal- og globale emotes påvirkes ikke"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "foreslå inventar-emotes"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "tilby inventaret ditt i tab-fullføring og skriveforslag. av levner bare kanal- og globale emotes"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "pronomen"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "pronoundb.org-pronomen på profilkortet + hover-tooltip (bare twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "anonym tilstedeværelse"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "ikke send skrive-/tilstedeværelsessignaler til plattformen"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "whisper-varsel"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "popup-varsel når en whisper eller dm kommer mens du er på en annen fane — klikk for å hoppe til whispers"
+  },
+  "mc_settings_notif_moment": {
+    "message": "øyeblikksvarsler"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "chatten i en kanal eksploderer plutselig — heat-topp oppdaget på serveren; klikk på raden for å åpne streamen"
+  },
+  "mc_settings_evt_online": {
+    "message": "gikk live"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "banner når en kanal går live"
+  },
+  "mc_settings_evt_offline": {
+    "message": "gikk offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "banner når en kanal går offline (av som standard — støyende)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "spillbytter"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "banner når en streamer bytter spill"
+  },
+  "mc_settings_browser_notification": {
+    "message": "nettleservarsel"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "vis et skrivebordsvarsel når noen @er deg"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "blinkende fanetittel"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "pulser fanetittelen med navnet til den som nevnte deg til du går til fanen"
+  },
+  "mc_settings_mention_volume": {
+    "message": "volum for omtalelyd"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "volum på pinget ved omtale. 0 = stille. bruker rene WebAudio-toner, ingen filer følger med."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "følg også på kick"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "når du følger på heatsync, følg også på kick hvis de har en koblet kick-konto. krever kick.com-innlogging; ellers settes det i kø"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "følg også på twitch"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "når du følger på heatsync, følg også på twitch hvis de har en koblet twitch-konto. krever en åpen twitch.tv-fane; ellers settes det i kø"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch-følging med varsler"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "twitch-følginger på tvers av plattformer slår også på live-varsler for den kanalen"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod-verktøylinjeknapper"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "hover-handlinger på chatrader når du er mod i kanalen — alle av som standard"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "slett denne meldingen"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 minutt"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 minutter"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 time"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 timer"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 dager"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (fjern meldinger, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "permanent ban"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "unban bruker"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "bekreft før ban"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "vis en bekreftelsesdialog før permanent ban — beskytter mot feilklikk"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "ban-årsaker"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "én per linje — vises som valgbare chips i ban-dialogen; valget sendes med bannet"
+  },
+  "mc_settings_automod_caps": {
+    "message": "skjul caps-spam"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "skjul meldinger over 10 tegn som for det meste er store bokstaver"
+  },
+  "mc_settings_automod_regex": {
+    "message": "filter-regex"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "ett mønster per linje, ufølsomt for store/små bokstaver — treff skjules"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "vis seksuelle emotes"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "emotes flagget for seksuelt innhold (≥ 70%) er skjult som standard. vises med stiplet kant når på."
+  },
+  "mc_settings_show_gore": {
+    "message": "vis gore-emotes"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "emotes flagget for vold/gore (≥ 70%) er skjult som standard. vises med stiplet kant når på."
+  },
+  "mc_settings_show_weapon": {
+    "message": "vis våpen-emotes"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "emotes flagget for våpenbilder. på som standard."
+  },
+  "mc_settings_show_drug": {
+    "message": "vis narkotika-emotes"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "emotes flagget for narkotikabilder. på som standard."
+  },
+  "mc_settings_show_hate": {
+    "message": "vis hat-emotes"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "emotes flagget for hatefulle bilder. på som standard."
+  },
+  "mc_settings_hide_bots": {
+    "message": "skjul bots"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "skjul meldinger fra kjente chatboter (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "skjul !kommandoer"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "skjul meldinger som starter med !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "skjul duplikater"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "slå sammen identiske meldinger på rad (spambølger) til den første"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "demp nøkkelord"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "ett ord per linje — meldinger som inneholder noen av dem skjules. skiller seg fra nøkkelord-highlights."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "filterregler"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "highlight/skjul-filtre per regel — nøkkelord, regex, bruker, merke eller meldingstype; styres i regelredigereren"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "anbefalte kanaler"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "sidefeltseksjonen \"Recommended Channels\""
+  },
+  "mc_settings_hide_stories": {
+    "message": "stories-hylle"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "stories-rail i sidefeltet / øverst"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming loot-salgspitch"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "prime loot-knapp med kroneikon"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo-salgspitch"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo cta-lenker"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / sesongbannere"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "sesongbaserte abonnementsbannere med fargeovergang"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "live-varselknapp"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "bjelleknappen for å abonnere på varsler"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "slutt å følge-knapp"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "slutt å følge-knapp (hindrer feilklikk)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "abonner-knapp"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "kanalens abonner-knapp"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "feiring på skjermen"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "konfetti / feiringsoverlegg på videoen"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "spillerutvidelser"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "overlegg-utvidelser som dekker videoen"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "volum med musehjul"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "scroll over spilleren for å justere volumet"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "streamtittel"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "skjul streamtittel-blokken under spilleren"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "seertall"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "skjul den levende seertelleren"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "synlige faner"
+  },
+  "mc_settings_ui_locale": {
+    "message": "grensesnittspråk"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichat-språk — alt får nye navn etter omlasting"
+  },
+  "mc_settings_subsystems": {
+    "message": "delsystemer"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch-chatstrøm"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc-tilkobling + kanaltilkoblinger i overlegget"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick-chatstrøm"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket-tilkobling + kanaltilkoblinger i overlegget"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube-chatstrøm"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "youtube livechat-abonnementer i overlegget"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "kosmetikk fra tredjeparter"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paints + bttv/ffz/chatterino-merker. av sparer ram på travle kanaler."
+  },
+  "mc_settings_sub_feed": {
+    "message": "feed"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsync social feed-fane + hendelsesstrømmen"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whispers"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub-socket + whispers-fane"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "omtaler"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "omtaledeteksjon, omtale-fane og pings"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "stream-statistikk"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "meldingsrate per kanal som driver heat-rangeringen"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "profilkort"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "klikk på et brukernavn for profilkort-popup"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emotes i native chat"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "vis heatsync-emotes i plattformens egen chat"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-fullføring i native chat"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "emote- og brukernavn-fullføring i plattformens eget inputfelt"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote-velgerknapp"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "heatsync-velgerknappen ved siden av native chat-input"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "overta native chat"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "mens overlegget dekker twitch-chatten, slutter twitch å rendre sin skjulte kopi — sparer mye ram på travle kanaler. feiler åpent: overlegget dør → twitch-chatten kommer tilbake av seg selv."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick-chat reserve"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "leser kick-sidens egen chatstrøm som backup. inaktiv så lenge de vanlige kanalene fungerer — slår bare inn hvis de blir stille."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "yt-reserve"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "spør youtube direkte hvis begge vanlige strømmene er stille i 5 minutter — siste utvei, ikke en erstatning."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod-holdkø"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "viser twitch automod-holds rett i kanaler du er mod i, med tillat/avslå-knapper — speiler twitchs egen gjennomgangskø."
+  },
+  "mc_automod_label": {
+    "message": "automod hold"
+  },
+  "mc_automod_allow": {
+    "message": "tillat"
+  },
+  "mc_automod_deny": {
+    "message": "avslå"
+  },
+  "mc_automod_resolving": {
+    "message": "behandler…"
+  },
+  "mc_automod_error": {
+    "message": "handlingen feilet"
+  },
+  "mc_automod_relink_toast": {
+    "message": "automod-køen trenger ny twitch-kobling"
+  },
+  "mc_automod_signin": {
+    "message": "logg inn på heatsync igjen"
+  },
+  "mc_automod_relink_action": {
+    "message": "koble på nytt"
+  },
+  "mc_settings_diag_errors": {
+    "message": "vis diagnosefeil"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "feil lagres bare lokalt — aldri lastet opp. denne bryteren viser bare diagnosepanelet under."
+  },
+  "mc_settings_debug_logging": {
+    "message": "debug-logging"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "detaljert konsoll-logging fra alle heatsync-skript — gjelder ved neste sidelasting"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimal"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "moderator"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "lite ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "kopiering feilet"
+  },
+  "mc_common_unknown": {
+    "message": "ukjent"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch-følging blokkert: 2FA kreves — fullfør på twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch-avfølging blokkert: 2FA kreves — fullfør på twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "fulgte $USER$ på $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "sluttet å følge $USER$ på $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "synkroniserte $COUNT$ ventende $PLATFORM$-følging(er)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick-følging i kø — synkroniseres når du logger inn på kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick-avfølging i kø — synkroniseres når du logger inn på kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch-følging i kø — synkroniseres neste gang du åpner twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch-avfølging i kø — synkroniseres neste gang du åpner twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "feil ved tillegging: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "kunne ikke legge til: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "logg inn på heatsync.org for å legge til emotes"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "kan ikke legge til $NAME$ — bildet er utilgjengelig",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "lagt til: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "kunne ikke blokkere — prøv igjen"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "kunne ikke fjerne blokkeringen — prøv igjen"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "blokkeringen ble ikke lagret på kontoen din — vil avvike på andre enheter"
+  },
+  "mc_emote_blocked_count": {
+    "message": "blokkerte $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "feil ved fjerning: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "kunne ikke fjerne: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "fjernet: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "opphevingen ble ikke lagret på kontoen din — vil avvike på andre enheter"
+  },
+  "mc_emote_unblocked": {
+    "message": "blokkering fjernet: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "du følger allerede $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ er allerede dempet",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "blokkerte $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "lokal buffer tømt"
+  },
+  "mc_input_copied": {
+    "message": "kopiert"
+  },
+  "mc_input_delete_failed": {
+    "message": "sletting feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete trenger en kanalfane"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete trenger en twitch- eller kick-kanal"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji kopiert"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "bare følgere av"
+  },
+  "mc_input_followers_on": {
+    "message": "bare følgere på"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "bare følgere på ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers finnes bare på twitch — åpne en twitch-kanal"
+  },
+  "mc_input_login_first_op": {
+    "message": "logg inn på heatsync.org først for å bruke /op"
+  },
+  "mc_input_message_copied": {
+    "message": "melding kopiert"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ trenger en kanalfane (ikke live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ trenger en twitch-, kick- eller youtube-kanal",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: ingen fersk melding fra $TARGET$ — bruk meldingsmenyen",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ er ikke koblet opp ennå — bare /followers fungerer foreløpig",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "dempet $USER$ (24t)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "navn kopiert"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "ingen å svare"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ har ikke twitch — prøv /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "du følger ikke $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ er ikke dempet",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ er ikke på heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "ikke klar"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — ikke subbet til denne kanalen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "ingenting å poste i stacken"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "ingenting å tømme her"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "ingenting å poste"
+  },
+  "mc_input_nuke_done": {
+    "message": "nuket $OK$/$TOTAL$ som matcher \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke trenger en kanalfane"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke trenger en twitch- eller kick-kanal"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: ingen meldinger som matcher \"$TERM$\" siste $SEC$s",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "posting feilet"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "postet til feeden"
+  },
+  "mc_input_rate_limited": {
+    "message": "for fort — prøv om litt"
+  },
+  "mc_input_server_unreachable": {
+    "message": "fikk ikke kontakt med serveren ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status trenger en kanalfane (eller /status <name>)"
+  },
+  "mc_input_success": {
+    "message": "vellykket"
+  },
+  "mc_input_thread_copied": {
+    "message": "tråd kopiert"
+  },
+  "mc_input_unblocked": {
+    "message": "fjernet blokkeringen av $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "ukjent kommando"
+  },
+  "mc_input_unmuted": {
+    "message": "opphevet demping av $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url kopiert"
+  },
+  "mc_input_usage_ban": {
+    "message": "bruk: /ban <user> [reason]"
+  },
+  "mc_input_usage_delete": {
+    "message": "bruk: /delete <message-id> (høyreklikk på en melding)"
+  },
+  "mc_input_usage_dm": {
+    "message": "bruk: /dm <user> <message>"
+  },
+  "mc_input_usage_follow": {
+    "message": "bruk: /$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "bruk: /followers [mins] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "bruk: /mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "bruk: /nuke <term> [seconds] — term må være 2+ tegn"
+  },
+  "mc_input_usage_op": {
+    "message": "bruk: /op <text>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight trenger en twitch-kanalfane"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <message>"
+  },
+  "mc_input_highlight_login": {
+    "message": "logg inn på twitch.tv først"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch utilgjengelig — prøv igjen"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "dette trenger en twitch-kanalfane"
+  },
+  "mc_input_pp_login": {
+    "message": "logg inn på twitch.tv først"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "fant ikke kanalen"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+  },
+  "mc_input_poll_created": {
+    "message": "avstemning opprettet"
+  },
+  "mc_input_prediction_created": {
+    "message": "prediksjon startet"
+  },
+  "mc_input_poll_ended": {
+    "message": "avstemning avsluttet"
+  },
+  "mc_input_no_active_poll": {
+    "message": "ingen aktiv avstemning"
+  },
+  "mc_input_no_active_pred": {
+    "message": "ingen aktiv prediksjon"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <points>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "prediksjon låst"
+  },
+  "mc_input_pred_canceled": {
+    "message": "prediksjon avbrutt"
+  },
+  "mc_input_voted": {
+    "message": "stemte: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "satset $POINTS$ på $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "avgjort: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <text>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — bytter blokkering"
+  },
+  "mc_input_note_failed": {
+    "message": "kunne ikke lagre notatet"
+  },
+  "mc_input_note_saved": {
+    "message": "notat lagret for $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "notat fjernet for $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "ingen notat for $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <setting> <value>"
+  },
+  "mc_input_set_complex": {
+    "message": "endre den i innstillingspanelet"
+  },
+  "mc_input_set_unknown": {
+    "message": "ukjent innstilling: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "bruk on/off for $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "ugyldig verdi for $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|channel>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "faner utilgjengelige"
+  },
+  "mc_input_tab_unknown": {
+    "message": "ingen fane: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "ga $USER$ vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "fjernet vip fra $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "ga $USER$ mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "fjernet mod fra $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch har ikke api for $LABEL$ — bare kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch fjernet /$CMD$ fra chatten — bruk twitchs egne mod-verktøy",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick har ingen $LABEL$-modus",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ på",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ av",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ på ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ feilet: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "bruk: /$LABEL$ [duration|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "fant ikke kanalen"
+  },
+  "mc_input_highlight_sent": {
+    "message": "highlightet · $BALANCE$ bits igjen",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "highlight ble ikke bekreftet — trygt å sende på nytt, bits trekkes bare én gang"
+  },
+  "mc_input_highlight_failed": {
+    "message": "highlight feilet: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "kommando feilet: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "bruk: /r <message>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "bruk: /timeout <user> [seconds] [reason]"
+  },
+  "mc_input_usage_unban": {
+    "message": "bruk: /unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "bruk: /unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "bruk: /w <user> <message>"
+  },
+  "mc_irc_join_queued": {
+    "message": "kunne ikke bli med i #$CHANNEL$-chatten — i kø",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "du er bannlyst fra denne kanalen"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "kanalen blokkerer meldinger"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "kanalen er suspendert"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "duplikat melding — twitch avviste den"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "emote-only-modus — meldingen må bestå av bare emotes"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "bare følgere-modus — følg kanalen for å chatte"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "følg kanalen litt lenger for å chatte"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "bare følgere — du må følge først"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "du har ikke lov til det her"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "unik-chat-modus — meldingen må være unik"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod sjekker meldingen din"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod blokkerte meldingen din"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — vent litt"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "bare subs — sub for å chatte her"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "du er i timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "du er bannlyst fra twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch kjente ikke igjen den kommandoen"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "kanalen krever bekreftet e-post for å chatte"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "kanalen krever bekreftet telefonnummer for å chatte"
+  },
+  "mc_main_age_confirm": {
+    "message": "bekreft at du er 18+ for å slå på innhold for voksne"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "jeg er 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "deling av feiring feilet — sender meldingen din til chatten"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "kunne ikke lagre $NOUN$ — prøv igjen",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "meldingen kunne ikke sendes — den vises fortsatt i feiringsraden din"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ ble ikke lagret i inventaret ditt — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "kanalen ble ikke lagret — lagringsfeil"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "demping-listen ble ikke lagret — lagringsfeil"
+  },
+  "mc_main_no_share_token": {
+    "message": "ingen delingstoken — feiring sendt uten tekst, meldingen din går til chatten"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "ingen live youtube-stream å løsne"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "innstillingslagringen er nesten full — noen innstillinger lagres kanskje ikke på tvers av enheter"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "kunne ikke lagre innstillinger — lagringskvote overskredet"
+  },
+  "mc_main_share_unavailable": {
+    "message": "deling utilgjengelig — sender meldingen din til chatten"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "delingstoken mangler — del via twitchs egen chat"
+  },
+  "mc_mod_label_banned": {
+    "message": "bannlyst"
+  },
+  "mc_mod_label_deleted": {
+    "message": "slettet"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "unbannet"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "ikke youtube-mod her"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ feilet: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ på kick — twitch feilet: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ feilet: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ på twitch — kick feilet: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "blokkering feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "blokkerte $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "fulgt på heatsync — synk på tvers av plattformer utilgjengelig"
+  },
+  "mc_profile_delete_failed": {
+    "message": "sletting feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "slettet melding"
+  },
+  "mc_profile_follow_failed": {
+    "message": "følging feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "følger $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "fant ingen koblede kanaler for $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "ikke registrert på heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "fjernet blokkeringen av $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "sluttet å følge $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "eksport feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "innstillinger eksportert"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "filen er for stor (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "import feilet: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "innstillinger importert — laster på nytt…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "ugyldig uttrykk"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "ikke en heatsync-innstillingsfil"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "lesefeil"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "samsvarer allerede med $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "brukte $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "preset slettet"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "preset trenger et navn"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "lagret preset: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "preset-lagringen er full — slett en først"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "alle innstillinger tilbakestilt til standard"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ tilbakestilt til standard",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "regelverdien er tom"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "filterregler skadet — redigering av til omlasting"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "filterregler skadet — last siden på nytt før du redigerer"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "cheer-vindu åpnet"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "ugyldig kanal"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "ingen twitch-kanal"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "popup blokkert — tillat popups for twitch.tv for å cheere"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "notatet ble ikke lagret — lagringsfeil"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper feilet: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch-whispers er ikke slått på — koble til på nytt på heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "ukjent bruker — whisper noen først"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube blokkerte sendingen (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "fikk ikke kontakt med youtube-chatten — prøv igjen"
+  },
+  "mc_yt_send_failed": {
+    "message": "youtube-sending feilet"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube-chatten laster fortsatt — prøv igjen"
+  },
+  "mc_yt_send_login": {
+    "message": "logg inn på youtube for å sende"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube har ingen slik handling for den meldingen"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "den meldingen er ikke lenger på skjermen"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube tilbød ikke mod-handlinger for den meldingen"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "ingen melding valgt"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "du er ikke moderator for denne streamen"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "logg inn på youtube for å moderere"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube avviste handlingen"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube bekreftet ikke sendingen"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "åpne youtube-streamen for å sende"
+  },
+  "mc_yt_send_restricted": {
+    "message": "yt-chatten er begrenset for denne streamen"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — kan ikke chatte her",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "siter i en tråd"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "legg til din take — enter poster en tråd"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "avbryt sitat"
+  },
+  "mc_msg_quote_posted": {
+    "message": "tråd postet"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "tråd postet · lenke kopiert"
+  },
+  "mc_fill_cockpit": {
+    "message": "fyll cockpiten min"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "legg til kanalene du allerede følger på twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "leser twitch-følgingene dine…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "logg inn med twitch for å importere følgingene dine, sortert etter hvem som er live"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "twitch-koblingen din har utløpt — koble til på nytt for å importere følginger"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "twitch-koblingen din inkluderer ikke følginger — koble til på nytt for å importere dem"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "fikk ikke kontakt med twitch — prøv igjen om et minutt"
+  },
+  "mc_sign_in": {
+    "message": "logg inn"
+  },
+  "mc_reconnect_twitch": {
+    "message": "koble til twitch på nytt"
+  },
+  "mc_import_from_twitch": {
+    "message": "importer fra twitch"
+  },
+  "mc_add_manually": {
+    "message": "legg til manuelt"
+  },
+  "mc_no_twitch_follows": {
+    "message": "du følger ingen på twitch ennå"
+  },
+  "mc_all_follows_added": {
+    "message": "alle kanalene du følger er allerede her"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ å legge til · $LIVE$ live nå",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "viser de første $COUNT$ — live først",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "velg live"
+  },
+  "mc_add_selected": {
+    "message": "legg til valgte"
+  },
+  "mc_select_at_least_one": {
+    "message": "velg minst én kanal"
+  },
+  "mc_nothing_added": {
+    "message": "ingenting lagt til — de er allerede i cockpiten din"
+  },
+  "mc_paste_list": {
+    "message": "lim inn en liste"
+  },
+  "mc_paste_list_desc": {
+    "message": "ett navn per linje, eller skilt med komma"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "la til $ADDED$ · hoppet over $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "søk gifs..."
+  },
+  "mc_gif_searching": {
+    "message": "søker..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifs · hjkl flytt · enter sett inn",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "for fort - vent $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "søket feilet - skriv for å prøve igjen"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync bygger gif-biblioteket sitt av det folk faktisk poster i chatten. ingenting samlet ennå."
+  },
+  "mc_gif_library_building": {
+    "message": "ingen treff ennå - biblioteket fylles fortsatt opp ($COUNT$ gifs så langt)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "fant ingen gifs"
+  },
+  "mc_gif_type_to_search": {
+    "message": "skriv for å søke etter gifs"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a søk  esc lukk"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "blokkerte ord"

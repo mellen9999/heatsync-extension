@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "eget fönster"
   },
+  "popup_not_signed_in": {
+    "message": "inte inloggad — "
+  },
+  "popup_setup_link": {
+    "message": "sätt upp heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "vänsterklick: kopiera senaste 50 felen / högerklick: rensa"
+  },
+  "popup_errors_count": {
+    "message": "fel ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "inga fel"
+  },
+  "popup_copied": {
+    "message": "kopierade $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "kopiering misslyckades"
+  },
+  "popup_cleared": {
+    "message": "rensat"
+  },
+  "popup_detected_prefix": {
+    "message": "på "
+  },
+  "popup_privacy_link": {
+    "message": "ingen spårning från tredje part"
+  },
   "welcome_title": {
     "message": "välkommen till heatsync"
+  },
+  "welcome_cta": {
+    "message": "öppna twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "öppna twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "logga in →"
+  },
+  "welcome_done_title": {
+    "message": "du är med"
+  },
+  "welcome_import_title": {
+    "message": "ta med dina emotes"
+  },
+  "welcome_import_sub": {
+    "message": "import med ett klick från 7tv, bttv och ffz"
+  },
+  "welcome_import_locked": {
+    "message": "logga in nedan för att importera dina emotes från 7tv/bttv/ffz"
+  },
+  "welcome_import_cta": {
+    "message": "importera mina emotes →"
+  },
+  "welcome_import_importing": {
+    "message": "importerar…"
+  },
+  "welcome_import_done": {
+    "message": "importerade $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "importen misslyckades — försök igen"
+  },
+  "welcome_import_no_platform": {
+    "message": "länka först ett twitch-, kick- eller youtube-konto →"
   },
   "welcome_privacy": {
     "message": "integritet"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "set"
   },
   "btn_rotate_title": {
     "message": "rotera flikradens position"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "avblockerad"
   },
+  "btn_toast_block_failed": {
+    "message": "kunde inte blockera — försök igen"
+  },
   "btn_toast_blocked": {
     "message": "blockerad"
   },
   "btn_toast_removed": {
     "message": "borttagen"
+  },
+  "btn_toast_remove_failed": {
+    "message": "borttagning misslyckades"
   },
   "btn_toast_added": {
     "message": "tillagd"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "kunde inte blockera $NAME$ — försök igen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "kunde inte avblockera $NAME$ — försök igen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "kunde inte följa — försök igen"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "kunde inte sluta följa — försök igen"
+  },
+  "content_toast_no_chat_input": {
+    "message": "öppna twitch-chatten för att använda mod-åtgärder"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ blockerad",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "partner"
   },
+  "content_card_mutual": {
+    "message": "ömsesidig"
+  },
+  "content_card_mutual_sub": {
+    "message": "ömsesidig sub"
+  },
+  "content_card_sub_badge": {
+    "message": "sub"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "banna"
+  },
+  "content_card_unban": {
+    "message": "avbanna"
+  },
+  "content_card_block": {
+    "message": "blockera"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "ta bort mod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "ta bort vip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod-verktyg"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod-verktyg (ingen behörighet)"
+  },
+  "content_card_note_title": {
+    "message": "anteckning"
+  },
+  "content_card_note_placeholder": {
+    "message": "privat anteckning — bara du ser den"
+  },
+  "content_card_history_title": {
+    "message": "meddelandehistorik"
+  },
+  "content_card_loading": {
+    "message": "laddar…"
+  },
+  "content_card_history_empty": {
+    "message": "ingen meddelandehistorik"
+  },
+  "content_card_history_empty_channel": {
+    "message": "inga meddelanden från den här användaren i $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "visa profil"
+  },
+  "content_card_follow": {
+    "message": "följ"
+  },
+  "content_card_unfollow": {
+    "message": "sluta följa"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch-profil"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "skapar clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url kopierad"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip skapad"
+  },
+  "content_card_copy_name": {
+    "message": "kopiera namn"
+  },
+  "content_card_mention": {
+    "message": "nämn"
+  },
+  "content_card_dialog_label": {
+    "message": "profilkort för $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "sparade"
   },
+  "mc_tab_modlog": {
+    "message": "mod-logg"
+  },
   "mc_tab_live_channel": {
     "message": "tittar · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "återuppta"
   },
+  "mc_connecting": {
+    "message": "ansluter…"
+  },
   "mc_no_messages": {
     "message": "inga meddelanden ännu"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "ange minst en plattform"
+  },
+  "mc_invalid_name": {
+    "message": "ogiltigt kanalnamn — kolla stavfel och mellanslag"
   },
   "mc_username_placeholder": {
     "message": "användarnamn"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "klickbara länkar"
   },
+  "mc_settings_partial_links": {
+    "message": "delvisa länkar"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "gör även delvisa och förvanskade länkar klickbara — bara watch?v= från youtube och domäner som \"site (dot) com\" som chattar använder för att smita förbi länkfilter."
+  },
+  "mc_settings_link_previews": {
+    "message": "länkförhandsvisning"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "visa og:title/description som tooltip vid hovring"
+  },
+  "mc_settings_media_embeds": {
+    "message": "media i chatten"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "visa bilder, gifs, video och länkkort direkt i chatten (inga iframes som spelas automatiskt)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi-läge"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "tidsstämpel på varje meddelande"
+  },
+  "mc_settings_show_avatars": {
+    "message": "profilbilder"
   },
   "mc_settings_avatars_desc": {
     "message": "avatarer bredvid användarnamn"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "aktiv omröstningsbanner, rösta direkt"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chats"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "banner för youtube super chats med belopp"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super stickers"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "banner för youtube super stickers med belopp"
+  },
+  "mc_settings_yt_membership": {
+    "message": "nya medlemmar"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "banner när någon går med som kanalmedlem"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "medlemsmilstolpar"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "banner för medlemmars milstolpsmånader"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "presentmedlemskap"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "banner för skänkta medlemskap med antal"
+  },
   "mc_settings_dim_timeouts": {
     "message": "dimma timeoutade meddelanden"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "prediction-titel"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "välj vinnare"
+  },
+  "mc_pred_cancel_form": {
+    "message": "avbryt"
+  },
+  "mc_pred_load_failed": {
+    "message": "kunde inte ladda förutsägelser"
+  },
+  "mc_poll_ended": {
+    "message": "avslutad"
+  },
+  "mc_poll_optional": {
+    "message": "valfritt"
+  },
+  "mc_error_no_permission": {
+    "message": "ingen behörighet"
+  },
+  "mc_error_not_logged_in": {
+    "message": "inte inloggad"
+  },
+  "mc_error_poll_active": {
+    "message": "en omröstning pågår redan"
   },
   "mc_pred_option1": {
     "message": "alternativ 1 (blå)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "skicka ett meddelande..."
   },
+  "mc_input_attach": {
+    "message": "bifoga bild eller video"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote-väljare"
+  },
+  "mc_input_tab_hidden": {
+    "message": "dold i den här fliken: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "synlig igen i den här fliken: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "posta på heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "inga svar ännu"
   },
+  "mc_social_thread_unavailable": {
+    "message": "tråden är inte tillgänglig — inlägget kan ha tagits bort"
+  },
   "mc_social_login_first": {
     "message": "logga in på heatsync.org först"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "skickat till $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "kunde inte hitta Twitch-användare"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "kunde inte nå heatsync — försök igen"
+  },
+  "mc_irc_queue_full": {
+    "message": "sändkön är full — meddelandet sparades inte"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "omnämnanden — byt till en kanalflik för att skicka"
+  },
+  "mc_input_no_channel": {
+    "message": "ingen kanal — välj en flik ovan"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "följ $USER$ för att dm:a — följ + skicka",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync-användare \"$USER$\" hittades inte",
@@ -730,6 +1087,14 @@
     "message": "meddelande från $USER$ raderat",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "kunde inte gå med i $CHANNEL$ — öppna fliken igen",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "inga emotes laddade"
   },
+  "mc_emote_cold_start_title": {
+    "message": "dina emotes, i varje chatt"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "hämta alla 7tv-, bttv- och ffz-emotes från $CHANNEL$ till ditt inventarie — ett klick, och de visas i varje chatt.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "importera alla emotes från $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "importerar…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "importerade $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "importen misslyckades"
+  },
+  "mc_emote_load_more": {
+    "message": "ladda fler"
+  },
+  "mc_emote_exact": {
+    "message": "exakt"
+  },
   "mc_emote_in_set": {
     "message": "i ditt set"
   },
+  "mc_feed_delete_failed": {
+    "message": "kunde inte radera — försök igen"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "blockerad: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "blockerad (klicka för att avblockera)"
+  },
+  "welcome_cta_live": {
+    "message": "titta live"
+  },
+  "mc_settings_font_family": {
+    "message": "typsnitt"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "typsnitt för multichat"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "eget typsnittsnamn"
+  },
+  "mc_settings_font_size": {
+    "message": "textstorlek"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "chattens textstorlek i px — dra som du vill (ersätter de gamla F-/F+-knapparna)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "emoji-storlek"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "emoji-storlek — 1x inbyggd, 2x (standard)/4x skalar unicode-emoji"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "tidsformat"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "klockformat för tidsstämplar på chattrader"
+  },
+  "mc_settings_readable_names": {
+    "message": "fixa svaga namn"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "ljusar upp svaga namnfärger så de går att läsa på svart bakgrund"
+  },
+  "mc_settings_platform_badges": {
+    "message": "plattformsmärken"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "[T] [K] [Y]-etiketter på meddelanden. av behåller dem för de plattformar du inte är på."
+  },
+  "mc_settings_text_badges": {
+    "message": "textmärken"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "visa mod/vip/sub-märken som korta textchips istället för bilder"
+  },
+  "mc_settings_tab_counter": {
+    "message": "fliknummer"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "siffra till höger på varje chattflik. unread = meddelanden du inte sett. heat = meddelanden senaste minuten, så en livlig kanal syns som livlig även när du är i den"
+  },
+  "mc_settings_tab_position": {
+    "message": "flikradens position"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "vilken kant multichats flikrad dockar mot"
+  },
+  "mc_settings_chat_position": {
+    "message": "chattens sida"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "vilken sida om spelaren chattpanelen dockar mot — hidden gömmer den (tangenten \\ växlar)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: förslagsremsa"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "visa föreslagna videor i en lodrät remsa bredvid titeln (youtube, bara vänster/höger dock) — av som standard eftersom chatten tar över utrymmet"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: chatt på icke-live"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "visa multichat-panelen även på youtube VOD, startsida och sök — av som standard, så panelen syns bara på livesändningar (där det finns livechatt)"
+  },
+  "mc_settings_message_density": {
+    "message": "meddelandetäthet"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "radavstånd — compact är det klassiska täta utseendet"
+  },
+  "mc_settings_line_height": {
+    "message": "radhöjd"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "chattradens höjd i px — 18 håller bitmappstypsnitt på pixelrutnätet"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "max synliga meddelanden"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "max chattrader som hålls i live-DOM (databufferten förblir 1500). lägre = mindre ram på livliga kanaler."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync name paints"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "animerade name paints från heatsync — går före en 7tv-paint när en chattare har båda"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paints + märken"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "name paints och 7tv-märken på chattare"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv-märken"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv-märken på chattare"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz-märken"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez-märken på chattare"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "animera emotes"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always spelar animerade emotes alltid. hover visar stillbilder tills pekaren är på ett meddelande — stor cpu/ram-besparing på livliga kanaler. never är helt stilla. multichat-meddelanden; väljaren förblir animerad."
+  },
+  "mc_settings_animate_paints": {
+    "message": "animera paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always spelar rörelsen i name paints alltid — dina och alla andras. never fryser dem. följer den här inställningen, inte webbläsarens reduced-motion."
+  },
+  "mc_predview_title": {
+    "message": "förutsägelser och omröstningar"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino-märken"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino-märken på chattare"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "prioritet för emote-leverantörer"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "när 7tv/bttv/ffz har en emote med samma namn vinner den här leverantören"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "visa inventarie-emotes"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "rita emotes från ett heatsync-inventarie — ditt eller någon annans. av visar bara ordet. kanal- och globala emotes påverkas inte"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "föreslå inventarie-emotes"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "erbjud ditt inventarie vid tab-komplettering och skrivförslag. av lämnar bara kanal- och globala emotes"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "pronomen"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "pronomen från pronoundb.org på profilkortet + hover-tooltip (bara twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "anonym närvaro"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "skicka inte skriv- och närvarosignaler till plattformen"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "viskningstoast"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "toast när en viskning eller dm kommer medan du är på en annan flik — klicka för att hoppa till viskningar"
+  },
+  "mc_settings_notif_moment": {
+    "message": "moment-notiser"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "en kanals chatt exploderar plötsligt — heat-topp upptäcks på servern; klicka på raden för att öppna streamen"
+  },
+  "mc_settings_evt_online": {
+    "message": "gick live"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "banner när en kanal går live"
+  },
+  "mc_settings_evt_offline": {
+    "message": "gick offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "banner när en kanal går offline (av som standard — bullrigt)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "spelbyten"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "banner när en streamer byter spel"
+  },
+  "mc_settings_browser_notification": {
+    "message": "webbläsarnotis"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "visa en skrivbordsnotis när någon @:ar dig"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "blinkande fliktitel"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "blinka webbläsarens fliktitel med omnämnarens namn tills du fokuserar fliken"
+  },
+  "mc_settings_mention_volume": {
+    "message": "volym för omnämnandeljud"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "volym på ljudsignalen vid omnämnande. 0 = tyst. använder rena WebAudio-toner, ingen fil medföljer."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "följ även på kick"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "när du följer på heatsync, följ även på kick om de har ett länkat kick-konto. kräver inloggning på kick.com; köas annars"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "följ även på twitch"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "när du följer på heatsync, följ även på twitch om de har ett länkat twitch-konto. kräver en öppen twitch.tv-flik; köas annars"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch-följning med notiser"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "plattformsöverskridande twitch-följningar slår också på live-notiser för kanalen"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod-verktygsknappar"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "hovringsåtgärder på chattrader när du är mod i kanalen — alla av som standard"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "radera det här meddelandet"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 minut"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 minuter"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 timme"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 timmar"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 dagar"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (rensa meddelanden, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "permanent ban"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "avbanna användare"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "bekräfta före ban"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "visa en bekräftelseruta före permanent ban — skyddar mot felklick"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "ban-skäl"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "ett per rad — visas som valbara chips i ban-rutan; valet skickas med bannen"
+  },
+  "mc_settings_automod_caps": {
+    "message": "dölj versalspam"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "dölj meddelanden över 10 tecken som mest är versaler"
+  },
+  "mc_settings_automod_regex": {
+    "message": "regex-filter"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "ett mönster per rad, skiftlägesokänsligt — matchande meddelanden döljs"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "visa sexuella emotes"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "emotes flaggade för sexuellt innehåll (≥ 70%) är dolda som standard. visas med streckad ram när på."
+  },
+  "mc_settings_show_gore": {
+    "message": "visa gore-emotes"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "emotes flaggade för våld/gore (≥ 70%) är dolda som standard. visas med streckad ram när på."
+  },
+  "mc_settings_show_weapon": {
+    "message": "visa vapen-emotes"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "emotes flaggade för vapenbilder. på som standard."
+  },
+  "mc_settings_show_drug": {
+    "message": "visa drog-emotes"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "emotes flaggade för drogbilder. på som standard."
+  },
+  "mc_settings_show_hate": {
+    "message": "visa hat-emotes"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "emotes flaggade för hatbilder. på som standard."
+  },
+  "mc_settings_hide_bots": {
+    "message": "dölj bottar"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "dölj meddelanden från kända chattbottar (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "dölj !kommandon"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "dölj meddelanden som börjar med !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "dölj dubbletter"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "slå ihop identiska meddelanden i rad (spamvågor) till det första"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "tysta nyckelord"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "en term per rad — meddelanden som innehåller någon döljs. skilt från nyckelordsmarkering."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "filterregler"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "markera/dölj-filter per regel — nyckelord, regex, användare, märke eller meddelandetyp; hanteras i regelredigeraren"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "rekommenderade kanaler"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "sidofältets sektion \"Recommended Channels\""
+  },
+  "mc_settings_hide_stories": {
+    "message": "stories-hylla"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "stories-lista i sidofält / överst"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming loot-reklam"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "prime loot-knapp med krona"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo-reklam"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo cta-länkar"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / säsongsbanners"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "säsongsbanners med gradient för prenumeration"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "live-notisknapp"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "klockknapp för att prenumerera på notiser"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "knapp för att sluta följa"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "knapp för att sluta följa (förhindrar felklick)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "prenumerationsknapp"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "kanalens prenumerationsknapp"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "firande på skärmen"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "konfetti / firande-overlays på videon"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "spelartillägg"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "overlay-tillägg som täcker videon"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "volym med mushjul"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "scrolla över spelaren för att ändra volymen"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "streamtitel"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "dölj streamtiteln under spelaren"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "tittarantal"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "dölj räknaren för live-tittare"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "synliga flikar"
+  },
+  "mc_settings_ui_locale": {
+    "message": "gränssnittsspråk"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichats språk — byter helt vid omladdning"
+  },
+  "mc_settings_subsystems": {
+    "message": "delsystem"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch-chattflöde"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc-anslutning + kanalanslutningar i overlayn"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick-chattflöde"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket-anslutning + kanalanslutningar i overlayn"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube-chattflöde"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "youtube livechatt-prenumerationer i overlayn"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "kosmetik från tredje part"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paints + bttv/ffz/chatterino-märken. av sparar ram på livliga kanaler."
+  },
+  "mc_settings_sub_feed": {
+    "message": "flöde"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsyncs sociala flödesflik + dess händelseström"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "viskningar"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch viskningar eventsub-socket + viskningsflik"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "omnämnanden"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "omnämnandedetektering, omnämnandeflik och pingar"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "streamstatistik"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "meddelandehastighet per kanal som driver heat-rankingen"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "profilkort"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "klicka på ett användarnamn för profilkortet"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emotes i inbyggd chatt"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "rita heatsync-emotes i plattformens egen chatt"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-komplettering i inbyggd chatt"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "emote- och namnkomplettering i plattformens eget inmatningsfält"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote-väljarknapp"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "heatsync-väljarknappen bredvid den inbyggda chattrutan"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "övertagning av inbyggd chatt"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "medan overlayn täcker twitch-chatten får twitch inte rita sin dolda kopia — stor ram-besparing på livliga kanaler. fallerar öppet: dör overlayn → twitch-chatten kommer tillbaka av sig själv."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick-chattens reservavlyssning"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "läser den aktuella kick-sidans egen chattström som backup. overksam medan de vanliga transporterna mår bra — slår bara till om de tystnar."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "yt reservavlyssning"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "pollar youtube direkt om båda vanliga flödena är tysta i 5 minuter — sista utvägen, inte en ersättningstransport."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod-hållkö"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "visar twitch automod-hållna meddelanden direkt i kanaler du är mod i, med allow/deny-knappar — speglar twitchs egen granskningskö."
+  },
+  "mc_automod_label": {
+    "message": "automod-håll"
+  },
+  "mc_automod_allow": {
+    "message": "tillåt"
+  },
+  "mc_automod_deny": {
+    "message": "neka"
+  },
+  "mc_automod_resolving": {
+    "message": "behandlar…"
+  },
+  "mc_automod_error": {
+    "message": "åtgärden misslyckades"
+  },
+  "mc_automod_relink_toast": {
+    "message": "automod-kön behöver en ny twitch-länkning"
+  },
+  "mc_automod_signin": {
+    "message": "logga in på heatsync igen"
+  },
+  "mc_automod_relink_action": {
+    "message": "länka om"
+  },
+  "mc_settings_diag_errors": {
+    "message": "visa diagnostikfel"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "fel fångas bara lokalt — laddas aldrig upp. den här knappen visar bara diagnostikpanelen nedan."
+  },
+  "mc_settings_debug_logging": {
+    "message": "felsökningslogg"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "utförlig konsolloggning från alla heatsync-skript — gäller vid nästa sidladdning"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimal"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "moderator"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "lågt ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "kopiering misslyckades"
+  },
+  "mc_common_unknown": {
+    "message": "okänd"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch-följning blockerad: 2FA krävs — slutför på twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch-avföljning blockerad: 2FA krävs — slutför på twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "följde $USER$ på $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "slutade följa $USER$ på $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "synkade $COUNT$ väntande $PLATFORM$-följning(ar)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick-följning köad — synkas när du loggar in på kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick-avföljning köad — synkas när du loggar in på kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch-följning köad — synkas nästa gång du öppnar twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch-avföljning köad — synkas nästa gång du öppnar twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "fel vid tillägg: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "kunde inte lägga till: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "logga in på heatsync.org för att lägga till emotes"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "kan inte lägga till $NAME$ — bilden är inte tillgänglig",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "tillagd: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "kunde inte blockera — försök igen"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "kunde inte avblockera — försök igen"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "blockeringen sparades inte på ditt konto — skiljer sig på andra enheter"
+  },
+  "mc_emote_blocked_count": {
+    "message": "blockerade $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "fel vid borttagning: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "kunde inte ta bort: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "borttagen: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "avblockeringen sparades inte på ditt konto — skiljer sig på andra enheter"
+  },
+  "mc_emote_unblocked": {
+    "message": "avblockerad: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "du följer redan $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ är redan tystad",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "blockerade $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "lokal buffert rensad"
+  },
+  "mc_input_copied": {
+    "message": "kopierat"
+  },
+  "mc_input_delete_failed": {
+    "message": "radering misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete kräver en kanalflik"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete kräver en twitch- eller kick-kanal"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji kopierad"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "bara följare: av"
+  },
+  "mc_input_followers_on": {
+    "message": "bara följare: på"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "bara följare: på ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers finns bara på twitch — öppna en twitch-kanal"
+  },
+  "mc_input_login_first_op": {
+    "message": "logga in på heatsync.org först för att /op"
+  },
+  "mc_input_message_copied": {
+    "message": "meddelande kopierat"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ kräver en kanalflik (inte live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ kräver en twitch-, kick- eller youtube-kanal",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: inget nyligt meddelande från $TARGET$ — använd meddelandemenyn",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ är inte kopplat än — än så länge funkar bara /followers",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "tystade $USER$ (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "namn kopierat"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "ingen att svara"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ har ingen twitch — prova /dm istället",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "du följer inte $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ är inte tystad",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ finns inte på heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "inte redo"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — inte sub i den här kanalen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "inget att posta i stacken"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "inget att rensa här"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "inget att posta"
+  },
+  "mc_input_nuke_done": {
+    "message": "nukade $OK$/$TOTAL$ träffar på \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke kräver en kanalflik"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke kräver en twitch- eller kick-kanal"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: inga meddelanden med \"$TERM$\" de senaste $SEC$s",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "postning misslyckades"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "postat i flödet"
+  },
+  "mc_input_rate_limited": {
+    "message": "för många förfrågningar — försök om en sekund"
+  },
+  "mc_input_server_unreachable": {
+    "message": "kunde inte nå servern ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status kräver en kanalflik (eller /status <name>)"
+  },
+  "mc_input_success": {
+    "message": "klart"
+  },
+  "mc_input_thread_copied": {
+    "message": "tråd kopierad"
+  },
+  "mc_input_unblocked": {
+    "message": "avblockerade $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "okänt kommando"
+  },
+  "mc_input_unmuted": {
+    "message": "avtystade $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url kopierad"
+  },
+  "mc_input_usage_ban": {
+    "message": "använd: /ban <user> [reason]"
+  },
+  "mc_input_usage_delete": {
+    "message": "använd: /delete <message-id> (högerklicka på ett meddelande)"
+  },
+  "mc_input_usage_dm": {
+    "message": "använd: /dm <user> <message>"
+  },
+  "mc_input_usage_follow": {
+    "message": "använd: /$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "använd: /followers [mins] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "använd: /mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "använd: /nuke <term> [seconds] — termen måste vara 2+ tecken"
+  },
+  "mc_input_usage_op": {
+    "message": "använd: /op <text>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight kräver en twitch-kanalflik"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <message>"
+  },
+  "mc_input_highlight_login": {
+    "message": "logga in på twitch.tv först"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch nås inte — försök igen"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "det här kräver en twitch-kanalflik"
+  },
+  "mc_input_pp_login": {
+    "message": "logga in på twitch.tv först"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "kunde inte hitta kanalen"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll fråga | val1 | val2 [| … upp till 5] [| sek]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction titel | utfall1 | utfall2 [| … upp till 10] [| sek]"
+  },
+  "mc_input_poll_created": {
+    "message": "omröstning skapad"
+  },
+  "mc_input_prediction_created": {
+    "message": "förutsägelse startad"
+  },
+  "mc_input_poll_ended": {
+    "message": "omröstning avslutad"
+  },
+  "mc_input_no_active_poll": {
+    "message": "ingen aktiv omröstning"
+  },
+  "mc_input_no_active_pred": {
+    "message": "ingen aktiv förutsägelse"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <points>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "förutsägelse låst"
+  },
+  "mc_input_pred_canceled": {
+    "message": "förutsägelse avbruten"
+  },
+  "mc_input_voted": {
+    "message": "röstade: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "satsade $POINTS$ på $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "avgjort: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <text>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — växlar blockering"
+  },
+  "mc_input_note_failed": {
+    "message": "kunde inte spara anteckningen"
+  },
+  "mc_input_note_saved": {
+    "message": "anteckning sparad för $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "anteckning borttagen för $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "ingen anteckning för $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <setting> <value>"
+  },
+  "mc_input_set_complex": {
+    "message": "ändra den i inställningspanelen"
+  },
+  "mc_input_set_unknown": {
+    "message": "okänd inställning: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "använd on/off för $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "ogiltigt värde för $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|channel>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "flikar inte tillgängliga"
+  },
+  "mc_input_tab_unknown": {
+    "message": "ingen flik: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "gjorde $USER$ till vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "tog bort vip från $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "gjorde $USER$ till mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "tog bort mod från $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch har inget api för $LABEL$ — bara kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch tog bort /$CMD$ från chatten — använd twitchs egna mod-verktyg",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick har inget $LABEL$-läge",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ på",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ av",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ på ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ misslyckades: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "använd: /$LABEL$ [längd|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "kunde inte hitta kanalen"
+  },
+  "mc_input_highlight_sent": {
+    "message": "markerat · $BALANCE$ bits kvar",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "markeringen bekräftades inte — det är säkert att skicka igen, bits dras en gång"
+  },
+  "mc_input_highlight_failed": {
+    "message": "markering misslyckades: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "kommandot misslyckades: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "använd: /r <message>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "använd: /timeout <user> [seconds] [reason]"
+  },
+  "mc_input_usage_unban": {
+    "message": "använd: /unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "använd: /unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "använd: /w <user> <message>"
+  },
+  "mc_irc_join_queued": {
+    "message": "kunde inte gå med i chatten #$CHANNEL$ — köad",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "du är bannad från den här kanalen"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "kanalen blockerar meddelanden"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "kanalen är avstängd"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "dubblettmeddelande — twitch avvisade det"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "emote-only-läge — meddelandet måste bara vara emotes"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "bara följare — följ kanalen för att chatta"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "följ kanalen lite längre för att chatta"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "bara följare — du måste följa först"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "ingen behörighet att göra det här"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "unik-chatt-läge — meddelandet måste vara unikt"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod kollar ditt meddelande"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod blockerade ditt meddelande"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — vänta ett ögonblick"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "bara subs — bli sub för att chatta här"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "du har timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "du är bannad från twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch kände inte igen kommandot"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "kanalen kräver verifierad e-post för att chatta"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "kanalen kräver verifierad telefon för att chatta"
+  },
+  "mc_main_age_confirm": {
+    "message": "bekräfta att du är 18+ för att slå på vuxeninnehåll"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "jag är 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "det gick inte att dela firandet — skickar ditt meddelande till chatten"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "kunde inte spara $NOUN$ — försök igen",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "meddelandet kunde inte skickas — det visas fortfarande i din firanderad"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ sparades inte i ditt inventarie — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "kanalen sparades inte — lagringsfel"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "tystlistan sparades inte — lagringsfel"
+  },
+  "mc_main_no_share_token": {
+    "message": "ingen delningstoken — firandet skickades utan text, ditt meddelande går till chatten"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "ingen live youtube-stream att poppa ut"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "inställningslagringen nära gränsen — vissa inställningar kanske inte sparas mellan enheter"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "inställningarna kunde inte sparas — lagringskvoten överskriden"
+  },
+  "mc_main_share_unavailable": {
+    "message": "delning inte tillgänglig — skickar ditt meddelande till chatten"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "delningstoken saknas — använd twitchs egen chatt för att dela"
+  },
+  "mc_mod_label_banned": {
+    "message": "bannad"
+  },
+  "mc_mod_label_deleted": {
+    "message": "raderad"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "avbannad"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "inte mod på youtube här"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ misslyckades: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ på kick — twitch misslyckades: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ misslyckades: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ på twitch — kick misslyckades: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "blockering misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "blockerade $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "följer på heatsync — plattformssynk inte tillgänglig"
+  },
+  "mc_profile_delete_failed": {
+    "message": "radering misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "raderat meddelande"
+  },
+  "mc_profile_follow_failed": {
+    "message": "följning misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "följer $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "inga länkade kanaler hittades för $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "inte registrerad på heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "avblockerade $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "slutade följa $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "export misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "inställningar exporterade"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "filen är för stor (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "import misslyckades: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "inställningar importerade — laddar om…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "ogiltigt uttryck"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "inte en heatsync-inställningsfil"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "tolkningsfel"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "matchar redan $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "tillämpade $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "förinställning raderad"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "förinställningen behöver ett namn"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "sparade förinställning: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "förinställningslagringen är full — radera en först"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "alla inställningar återställda till standard"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ återställd till standard",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "regelvärdet är tomt"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "filterreglerna är korrupta — redigering avstängd tills omladdning"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "filterreglerna är korrupta — ladda om sidan före redigering"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "cheer-fönstret öppnat"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "ogiltig kanal"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "ingen twitch-kanal"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "popup blockerad — tillåt popups för twitch.tv för att cheera"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "anteckningen sparades inte — lagringsfel"
+  },
+  "mc_whisper_failed": {
+    "message": "viskning misslyckades: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch-viskningar inte påslagna — länka om på heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "okänd användare — viska till någon först"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube blockerade sändningen (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "kunde inte nå youtube-chatten — försök igen"
+  },
+  "mc_yt_send_failed": {
+    "message": "youtube-sändning misslyckades"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube-chatten laddar fortfarande — försök igen"
+  },
+  "mc_yt_send_login": {
+    "message": "logga in på youtube för att skicka"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube har ingen sådan åtgärd för det meddelandet"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "meddelandet finns inte längre på skärmen"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube erbjöd inga mod-åtgärder för det meddelandet"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "inget meddelande valt"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "du är inte mod i den här streamen"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "logga in på youtube för att moderera"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube avvisade åtgärden"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube bekräftade inte sändningen"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "öppna youtube-streamen för att skicka"
+  },
+  "mc_yt_send_restricted": {
+    "message": "yt-chatten är begränsad för den här streamen"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — kan inte chatta här",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "citera i tråd"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "lägg till din åsikt — enter postar en tråd"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "avbryt citat"
+  },
+  "mc_msg_quote_posted": {
+    "message": "tråd postad"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "tråd postad · länk kopierad"
+  },
+  "mc_fill_cockpit": {
+    "message": "fyll min cockpit"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "lägg till kanalerna du redan följer på twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "läser dina twitch-följningar…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "logga in med twitch för att importera dina följningar, sorterade efter vem som är live"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "din twitch-länk har gått ut — anslut igen för att importera följningar"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "din twitch-länk omfattar inte följningar — anslut igen för att importera dem"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "kunde inte nå twitch — försök igen om en minut"
+  },
+  "mc_sign_in": {
+    "message": "logga in"
+  },
+  "mc_reconnect_twitch": {
+    "message": "anslut twitch igen"
+  },
+  "mc_import_from_twitch": {
+    "message": "importera från twitch"
+  },
+  "mc_add_manually": {
+    "message": "lägg till manuellt"
+  },
+  "mc_no_twitch_follows": {
+    "message": "du följer ingen på twitch än"
+  },
+  "mc_all_follows_added": {
+    "message": "alla kanaler du följer finns redan här"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ att lägga till · $LIVE$ live nu",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "visar de första $COUNT$ — live först",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "välj live"
+  },
+  "mc_add_selected": {
+    "message": "lägg till valda"
+  },
+  "mc_select_at_least_one": {
+    "message": "välj minst en kanal"
+  },
+  "mc_nothing_added": {
+    "message": "inget tillagt — de finns redan i din cockpit"
+  },
+  "mc_paste_list": {
+    "message": "klistra in en lista"
+  },
+  "mc_paste_list_desc": {
+    "message": "ett namn per rad, eller separerade med kommatecken"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "la till $ADDED$ · hoppade över $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "sök gifs..."
+  },
+  "mc_gif_searching": {
+    "message": "söker..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifs · hjkl flytta · enter infoga",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "för många förfrågningar - vänta $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "sökningen misslyckades - skriv för att försöka igen"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsyncs gif-bibliotek byggs av det folk faktiskt postar i chatten. inget insamlat än."
+  },
+  "mc_gif_library_building": {
+    "message": "ingen träff än - biblioteket fylls fortfarande på ($COUNT$ gifs hittills)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "inga gifs hittades"
+  },
+  "mc_gif_type_to_search": {
+    "message": "skriv för att söka gifs"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a sök  esc stäng"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "blockerade ord"

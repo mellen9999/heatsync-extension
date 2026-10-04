@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "弹出"
   },
+  "popup_not_signed_in": {
+    "message": "未登录 — "
+  },
+  "popup_setup_link": {
+    "message": "设置 heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "左键：复制最近 50 条错误 / 右键：清除"
+  },
+  "popup_errors_count": {
+    "message": "错误 ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "无错误"
+  },
+  "popup_copied": {
+    "message": "已复制 $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "复制失败"
+  },
+  "popup_cleared": {
+    "message": "已清除"
+  },
+  "popup_detected_prefix": {
+    "message": "在 "
+  },
+  "popup_privacy_link": {
+    "message": "无第三方追踪"
+  },
   "welcome_title": {
     "message": "欢迎使用 heatsync"
+  },
+  "welcome_cta": {
+    "message": "打开 twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "打开 twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "登录 →"
+  },
+  "welcome_done_title": {
+    "message": "你已就绪"
+  },
+  "welcome_import_title": {
+    "message": "导入你的 emote"
+  },
+  "welcome_import_sub": {
+    "message": "一键从 7tv、bttv 和 ffz 导入"
+  },
+  "welcome_import_locked": {
+    "message": "请在下方登录以导入你现有的 7tv/bttv/ffz emote"
+  },
+  "welcome_import_cta": {
+    "message": "导入我的 emote →"
+  },
+  "welcome_import_importing": {
+    "message": "导入中…"
+  },
+  "welcome_import_done": {
+    "message": "已导入 $COUNT$ 个 emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "导入失败 — 请重试"
+  },
+  "welcome_import_no_platform": {
+    "message": "请先绑定 twitch、kick 或 youtube 账号 →"
   },
   "welcome_privacy": {
     "message": "隐私政策"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "表情符号"
+  },
+  "btn_tab_sets": {
+    "message": "合集"
   },
   "btn_rotate_title": {
     "message": "切换标签栏位置"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "已取消屏蔽"
   },
+  "btn_toast_block_failed": {
+    "message": "无法屏蔽 — 请重试"
+  },
   "btn_toast_blocked": {
     "message": "已屏蔽"
   },
   "btn_toast_removed": {
     "message": "已移除"
+  },
+  "btn_toast_remove_failed": {
+    "message": "移除失败"
   },
   "btn_toast_added": {
     "message": "已添加"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "无法屏蔽 $NAME$ — 请重试",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "无法取消屏蔽 $NAME$ — 请重试",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "关注失败 — 请重试"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "取消关注失败 — 请重试"
+  },
+  "content_toast_no_chat_input": {
+    "message": "打开 twitch 聊天以使用 mod 操作"
+  },
   "content_toast_blocked": {
     "message": "已屏蔽 $NAME$",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "合作伙伴"
   },
+  "content_card_mutual": {
+    "message": "互关"
+  },
+  "content_card_mutual_sub": {
+    "message": "互相 sub"
+  },
+  "content_card_sub_badge": {
+    "message": "已 sub"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "已 sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "封禁"
+  },
+  "content_card_unban": {
+    "message": "解封"
+  },
+  "content_card_block": {
+    "message": "屏蔽"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "取消 mod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "取消 vip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod 工具"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod 工具（无权限）"
+  },
+  "content_card_note_title": {
+    "message": "备注"
+  },
+  "content_card_note_placeholder": {
+    "message": "私人备注 — 仅你可见"
+  },
+  "content_card_history_title": {
+    "message": "消息记录"
+  },
+  "content_card_loading": {
+    "message": "加载中…"
+  },
+  "content_card_history_empty": {
+    "message": "暂无消息记录"
+  },
+  "content_card_history_empty_channel": {
+    "message": "$CHANNEL$ 中没有该用户的消息",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "查看资料"
+  },
+  "content_card_follow": {
+    "message": "关注"
+  },
+  "content_card_unfollow": {
+    "message": "取消关注"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch 资料"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "正在创建 clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ 已复制 url"
+  },
+  "content_card_clip_created": {
+    "message": "✓ 已创建 clip"
+  },
+  "content_card_copy_name": {
+    "message": "复制名称"
+  },
+  "content_card_mention": {
+    "message": "提及"
+  },
+  "content_card_dialog_label": {
+    "message": "$USERNAME$ 的资料卡",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "联盟主播"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "已保存"
   },
+  "mc_tab_modlog": {
+    "message": "mod 日志"
+  },
   "mc_tab_live_channel": {
     "message": "观看中 · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "继续"
   },
+  "mc_connecting": {
+    "message": "连接中…"
+  },
   "mc_no_messages": {
     "message": "暂无消息"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "至少输入一个平台"
+  },
+  "mc_invalid_name": {
+    "message": "频道名无效 — 检查拼写或空格"
   },
   "mc_username_placeholder": {
     "message": "用户名"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "可点击链接"
   },
+  "mc_settings_partial_links": {
+    "message": "部分链接"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "同时把部分链接和变形链接转成可点击链接 — 裸写的 youtube watch?v= 和聊天里用来绕过链接过滤的 \"site (dot) com\" 式域名。"
+  },
+  "mc_settings_link_previews": {
+    "message": "链接预览"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "悬停时显示 og:title/description 提示"
+  },
+  "mc_settings_media_embeds": {
+    "message": "内嵌媒体"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "在聊天中内嵌显示图片、gif、视频和链接卡片（不含自动播放的 iframe）"
+  },
   "mc_settings_vi_mode": {
     "message": "vi 模式"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "每条消息显示时间戳"
+  },
+  "mc_settings_show_avatars": {
+    "message": "头像"
   },
   "mc_settings_avatars_desc": {
     "message": "用户名旁显示头像"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "活跃投票横幅，直接投票"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chat"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "显示 youtube super chat 横幅及金额"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super sticker"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "显示 youtube super sticker 横幅及金额"
+  },
+  "mc_settings_yt_membership": {
+    "message": "新会员"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "有人成为频道会员时显示横幅"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "会员里程碑"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "会员里程碑月数横幅"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "赠送会员"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "显示赠送会员横幅及数量"
+  },
   "mc_settings_dim_timeouts": {
     "message": "淡化超时消息"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "预测标题"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "选择赢家"
+  },
+  "mc_pred_cancel_form": {
+    "message": "取消"
+  },
+  "mc_pred_load_failed": {
+    "message": "预测加载失败"
+  },
+  "mc_poll_ended": {
+    "message": "已结束"
+  },
+  "mc_poll_optional": {
+    "message": "可选"
+  },
+  "mc_error_no_permission": {
+    "message": "无权限"
+  },
+  "mc_error_not_logged_in": {
+    "message": "未登录"
+  },
+  "mc_error_poll_active": {
+    "message": "已有进行中的投票"
   },
   "mc_pred_option1": {
     "message": "选项 1 (蓝色)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "发送消息..."
   },
+  "mc_input_attach": {
+    "message": "附加图片或视频"
+  },
+  "mc_input_emote_picker": {
+    "message": "emote 选择器"
+  },
+  "mc_input_tab_hidden": {
+    "message": "已在此标签页隐藏：$USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "已在此标签页取消隐藏：$USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "发布到 heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "暂无回复"
   },
+  "mc_social_thread_unavailable": {
+    "message": "帖子串不可用 — 帖子可能已被删除"
+  },
   "mc_social_login_first": {
     "message": "请先在 heatsync.org 登录"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "已发送给 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "解析 twitch 用户失败"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "无法连接 heatsync — 请重试"
+  },
+  "mc_irc_queue_full": {
+    "message": "发送队列已满 — 消息未保存"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "提及 — 切换到频道标签页再发送"
+  },
+  "mc_input_no_channel": {
+    "message": "没有频道 — 请在上方选择标签页"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "关注 $USER$ 才能发 dm — 关注并发送",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "找不到 heatsync 用户 \"$USER$\"",
@@ -730,6 +1087,14 @@
     "message": "已删除 $USER$ 的消息",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "无法加入 $CHANNEL$ — 重新打开标签页重试",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "没有已加载的表情"
   },
+  "mc_emote_cold_start_title": {
+    "message": "你的 emote，所有聊天通用"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "把 $CHANNEL$ 的所有 7tv、bttv 和 ffz emote 一键拉进你的库存 — 在所有聊天中显示。",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "导入 $CHANNEL$ 的所有 emote",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "导入中…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "已导入 $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "导入失败"
+  },
+  "mc_emote_load_more": {
+    "message": "加载更多"
+  },
+  "mc_emote_exact": {
+    "message": "精确"
+  },
   "mc_emote_in_set": {
     "message": "已在套装中"
   },
+  "mc_feed_delete_failed": {
+    "message": "删除失败 — 请重试"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "已屏蔽：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "已屏蔽 (点击解除)"
+  },
+  "welcome_cta_live": {
+    "message": "观看直播"
+  },
+  "mc_settings_font_family": {
+    "message": "字体"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "multichat 字体"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "自定义字体名称"
+  },
+  "mc_settings_font_size": {
+    "message": "字号"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "聊天字号（px）— 拖动调整（取代旧的 F-/F+ 按钮）"
+  },
+  "mc_settings_emoji_size": {
+    "message": "emoji 大小"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "emoji 大小 — 1x 原生，2x（默认）/4x 放大 unicode emoji"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "时间格式"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "聊天行时间戳的时钟格式"
+  },
+  "mc_settings_readable_names": {
+    "message": "修复暗淡用户名"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "提亮暗淡的用户名颜色，使其在黑色背景上清晰可读"
+  },
+  "mc_settings_platform_badges": {
+    "message": "平台徽章"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "消息上的 [T] [K] [Y] 标签。关闭后仍会为你当前不在的平台保留。"
+  },
+  "mc_settings_text_badges": {
+    "message": "文字徽章"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "把 mod/vip/sub 徽章显示为简短文字标签，而不是图片"
+  },
+  "mc_settings_tab_counter": {
+    "message": "标签页数字"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "每个聊天标签页右侧的数字。未读 = 你没看过的消息。heat = 最近一分钟的消息，所以即使你就在其中，热闹的频道也看得出热闹"
+  },
+  "mc_settings_tab_position": {
+    "message": "标签栏位置"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "multichat 标签栏停靠在哪条边"
+  },
+  "mc_settings_chat_position": {
+    "message": "聊天停靠侧"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "聊天面板停靠在播放器哪一侧 — 隐藏则收起（按 \\ 键切换）"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube：推荐栏"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "在标题旁的竖条中显示推荐视频（仅 youtube，仅左/右停靠）— 默认关闭，因为聊天会占用这块空间"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube：非直播页显示聊天"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "在 youtube 的 vod、首页和搜索页也显示 multichat 面板 — 默认关闭，面板只在直播（有实时聊天）时出现"
+  },
+  "mc_settings_message_density": {
+    "message": "消息密度"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "行内边距 — 紧凑是经典的紧密样式"
+  },
+  "mc_settings_line_height": {
+    "message": "行高"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "聊天行高（px）— 18 可让位图字体对齐像素网格"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "最大可见消息数"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "作为实时 DOM 保留的最大聊天行数（数据缓冲仍为 1500）。越低，繁忙频道占用的 ram 越少。"
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync 名字涂装"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "heatsync 的动画名字涂装 — 若用户同时拥有，优先于 7tv 涂装"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv 涂装 + 徽章"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "用户的 7tv 名字涂装和徽章"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv 徽章"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "用户的 betterttv 徽章"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz 徽章"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "用户的 frankerfacez 徽章"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "动画 emote"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always 始终播放动画 emote。hover 在指针移到消息上之前显示静态帧 — 繁忙频道可大幅节省 cpu/ram。never 完全静态。仅限 multichat 消息；选择器仍保持动画。"
+  },
+  "mc_settings_animate_paints": {
+    "message": "动画涂装"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always 始终播放名字涂装的动效 — 你的和所有人的。never 让它们保持静止。此项以设置为准，不跟随浏览器的减少动态效果标志。"
+  },
+  "mc_predview_title": {
+    "message": "预测与投票"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino 徽章"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "用户的 chatterino 徽章"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "emote 来源优先级"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "当 7tv/bttv/ffz 有同名 emote 时，以此来源为准"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "显示库存 emote"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "绘制来自 heatsync 库存的 emote — 你的或其他用户的。关闭则显示纯文字。频道和全局 emote 不受影响"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "建议库存 emote"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "在 tab 补全和输入建议中提供你的库存。关闭则只保留频道和全局 emote"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "代词"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "资料卡和悬停提示中显示 pronoundb.org 的代词（仅 twitch）"
+  },
+  "mc_settings_anon_chat": {
+    "message": "匿名在线状态"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "不向平台广播输入/在线信号"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "悄悄话提示"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "当你在其他标签页时收到悄悄话或 dm，弹出提示 — 点击跳转到悄悄话"
+  },
+  "mc_settings_notif_moment": {
+    "message": "高光提醒"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "某个频道的聊天突然爆发 — 服务器检测到 heat 峰值；点击该行打开直播"
+  },
+  "mc_settings_evt_online": {
+    "message": "开播"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "频道开播时显示横幅"
+  },
+  "mc_settings_evt_offline": {
+    "message": "下播"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "频道下播时显示横幅（默认关闭 — 太吵）"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "切换游戏"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "主播切换游戏时显示横幅"
+  },
+  "mc_settings_browser_notification": {
+    "message": "浏览器通知"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "有人 @ 你时显示桌面通知"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "标签页标题闪烁"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "用提及你的人的名字让标签页标题闪烁，直到你回到该标签页"
+  },
+  "mc_settings_mention_volume": {
+    "message": "提及音量"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "被提及时提示音的音量。0 = 静音。使用纯 WebAudio 音调，不附带音频文件。"
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "同时在 kick 关注"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "在 heatsync 关注时，若对方绑定了 kick 账号，也会在 kick 关注。需要登录 kick.com，否则排队等待"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "同时在 twitch 关注"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "在 heatsync 关注时，若对方绑定了 twitch 账号，也会在 twitch 关注。需要打开一个 twitch.tv 标签页，否则排队等待"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch 关注并开启通知"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "跨平台的 twitch 关注也会为该频道开启开播通知"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "mod 工具栏按钮"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "当你是频道 mod 时，在聊天行上悬停显示的操作 — 默认全部关闭"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "删除此消息"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "禁言 1 分钟"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "禁言 10 分钟"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "禁言 1 小时"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "禁言 24 小时"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "禁言 7 天"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "清除消息（1 秒）"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "永久封禁"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "解封用户"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "封禁前确认"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "永久封禁前显示确认对话框 — 防止误点"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "封禁原因"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "每行一个 — 在封禁对话框中显示为可选标签；所选原因会随封禁一并发送"
+  },
+  "mc_settings_automod_caps": {
+    "message": "隐藏全大写刷屏"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "隐藏超过 10 个字符且大部分为大写的消息"
+  },
+  "mc_settings_automod_regex": {
+    "message": "过滤正则"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "每行一个模式，不区分大小写 — 匹配的消息会被隐藏"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "显示色情 emote"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "被标记为色情内容的 emote（≥ 70%）默认隐藏。开启后以虚线边框显示。"
+  },
+  "mc_settings_show_gore": {
+    "message": "显示血腥 emote"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "被标记为暴力/血腥的 emote（≥ 70%）默认隐藏。开启后以虚线边框显示。"
+  },
+  "mc_settings_show_weapon": {
+    "message": "显示武器 emote"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "被标记为武器图像的 emote。默认开启。"
+  },
+  "mc_settings_show_drug": {
+    "message": "显示毒品 emote"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "被标记为毒品图像的 emote。默认开启。"
+  },
+  "mc_settings_show_hate": {
+    "message": "显示仇恨 emote"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "被标记为仇恨图像的 emote。默认开启。"
+  },
+  "mc_settings_hide_bots": {
+    "message": "隐藏机器人"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "隐藏已知聊天机器人的消息（nightbot、streamelements、fossabot…）"
+  },
+  "mc_settings_hide_commands": {
+    "message": "隐藏 !命令"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "隐藏以 ! 开头的消息"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "隐藏重复消息"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "把连续的相同消息（刷屏潮）折叠为第一条"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "屏蔽关键词"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "每行一个词 — 包含其中任意一个的消息会被隐藏。与关键词高亮不同。"
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "剧透\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "过滤规则"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "按规则高亮/隐藏 — 关键词、正则、用户、徽章或消息类型；在规则编辑器中管理"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "推荐频道"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "侧边栏的 \"Recommended Channels\" 区块"
+  },
+  "mc_settings_hide_stories": {
+    "message": "快拍栏"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "侧边栏/顶部的快拍栏"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "prime gaming 战利品推广"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "带皇冠图标的 prime 战利品按钮"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "twitch turbo 推广"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo 行动号召链接"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / 季节性横幅"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "季节性订阅渐变横幅"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "开播通知开关"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "订阅通知的铃铛按钮"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "取消关注按钮"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "取消关注按钮（防止误点）"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "订阅按钮"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "频道订阅按钮"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "屏幕庆祝特效"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "视频上的彩纸/庆祝覆盖层"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "播放器扩展"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "遮挡视频的覆盖层扩展"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "滚轮调音量"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "在播放器上滚动以调整音量"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "直播标题"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "隐藏播放器下方的直播标题区块"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "观众数"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "隐藏实时观众计数"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "可见标签页"
+  },
+  "mc_settings_ui_locale": {
+    "message": "界面语言"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "multichat 界面语言 — 重新加载后完全生效"
+  },
+  "mc_settings_subsystems": {
+    "message": "子系统"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch 聊天源"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "覆盖层内的 twitch irc 连接和频道加入"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick 聊天源"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "覆盖层内的 kick websocket 连接和频道加入"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube 聊天源"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "覆盖层内的 youtube 实时聊天订阅"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "第三方外观"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv 涂装 + bttv/ffz/chatterino 徽章。关闭可在繁忙频道节省 ram。"
+  },
+  "mc_settings_sub_feed": {
+    "message": "动态"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "heatsync 社交动态标签页及其事件流"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "悄悄话"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch 悄悄话 eventsub 套接字和悄悄话标签页"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "提及"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "提及检测、提及标签页和提示音"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "直播统计"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "各频道的消息速率统计，用于 heat 排名"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "资料卡"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "点击用户名打开资料卡弹窗"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "原生聊天中的 emote"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "在平台自带聊天中渲染 heatsync emote"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "原生聊天中的 tab 补全"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "在平台自带输入框中补全 emote 和用户名"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "emote 选择器按钮"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "原生聊天输入框旁的 heatsync 选择器按钮"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "接管原生聊天"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "当覆盖层盖住 twitch 聊天时，阻止 twitch 渲染其隐藏副本 — 繁忙频道可大幅节省 ram。失败时放行：覆盖层挂掉 → twitch 聊天自动恢复。"
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "kick 聊天备用抓取"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "读取当前 kick 页面自带的聊天流作为备份。常规通道正常时不工作 — 仅在它们沉默时才介入。"
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "youtube 备用抓取"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "如果两个常规源都沉默 5 分钟，则直接轮询 youtube — 最后的兜底，不是替代通道。"
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "automod 待审队列"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "在你担任 mod 的频道内联显示 twitch automod 拦截的消息，带允许/拒绝按钮 — 与 twitch 自带的审核队列同步。"
+  },
+  "mc_automod_label": {
+    "message": "automod 拦截"
+  },
+  "mc_automod_allow": {
+    "message": "允许"
+  },
+  "mc_automod_deny": {
+    "message": "拒绝"
+  },
+  "mc_automod_resolving": {
+    "message": "处理中…"
+  },
+  "mc_automod_error": {
+    "message": "操作失败"
+  },
+  "mc_automod_relink_toast": {
+    "message": "automod 队列需要重新绑定 twitch"
+  },
+  "mc_automod_signin": {
+    "message": "重新登录 heatsync"
+  },
+  "mc_automod_relink_action": {
+    "message": "重新绑定"
+  },
+  "mc_settings_diag_errors": {
+    "message": "显示诊断错误"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "错误仅在本地记录 — 绝不上传。此开关只是显示下方的诊断面板。"
+  },
+  "mc_settings_debug_logging": {
+    "message": "调试日志"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "所有 heatsync 脚本的详细控制台日志 — 下次加载页面时生效"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "极简"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "高级用户"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "管理员"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "低 ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "复制失败"
+  },
+  "mc_common_unknown": {
+    "message": "未知"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch 关注被拦截：需要 2FA — 请到 twitch.tv 完成"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "twitch 取消关注被拦截：需要 2FA — 请到 twitch.tv 完成"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "已在 $PLATFORM$ 关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "已在 $PLATFORM$ 取消关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "已同步 $COUNT$ 个待处理的 $PLATFORM$ 关注",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick 关注已排队 — 登录 kick.com 后同步"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "kick 取消关注已排队 — 登录 kick.com 后同步"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch 关注已排队 — 下次打开 twitch.tv 时同步"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "twitch 取消关注已排队 — 下次打开 twitch.tv 时同步"
+  },
+  "mc_emote_add_error": {
+    "message": "添加出错：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "添加失败：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "登录 heatsync.org 以添加 emote"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "无法添加 $NAME$ — 图片不可用",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "已添加：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "无法屏蔽 — 请重试"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "无法取消屏蔽 — 请重试"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "屏蔽未保存到你的账号 — 在其他设备上会不同"
+  },
+  "mc_emote_blocked_count": {
+    "message": "已屏蔽 $COUNT$ 个 emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "移除出错：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "移除失败：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "已移除：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "取消屏蔽未保存到你的账号 — 在其他设备上会不同"
+  },
+  "mc_emote_unblocked": {
+    "message": "已取消屏蔽：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "已关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ 已被静音",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "已屏蔽 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "本地缓冲已清除"
+  },
+  "mc_input_copied": {
+    "message": "已复制"
+  },
+  "mc_input_delete_failed": {
+    "message": "删除失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete 需要频道标签页"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete 需要 twitch 或 kick 频道"
+  },
+  "mc_input_emoji_copied": {
+    "message": "已复制 emoji"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers 失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "仅粉丝模式已关闭"
+  },
+  "mc_input_followers_on": {
+    "message": "仅粉丝模式已开启"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "仅粉丝模式已开启（$MINS$ 分钟）",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers 仅限 twitch — 请打开 twitch 频道"
+  },
+  "mc_input_login_first_op": {
+    "message": "请先登录 heatsync.org 再使用 /op"
+  },
+  "mc_input_message_copied": {
+    "message": "已复制消息"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ 需要频道标签页（不是 live/mentions/posts）",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ 需要 twitch、kick 或 youtube 频道",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube：$TARGET$ 没有最近的消息 — 请用消息菜单",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ 尚未接入 — 目前只有 /followers 可用",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "已静音 $USER$（24 小时）",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "已复制名称"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "没有可回复的人"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ 没有 twitch — 试试 /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "未关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ 未被静音",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ 不在 heatsync 上",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "未就绪"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — 未 sub 此频道",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "堆栈中没有可发布的内容"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "这里没有可清除的内容"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "没有可发布的内容"
+  },
+  "mc_input_nuke_done": {
+    "message": "已清除 $OK$/$TOTAL$ 条匹配 \"$TERM$\" 的消息",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke 需要频道标签页"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke 需要 twitch 或 kick 频道"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke：最近 $SEC$ 秒内没有匹配 \"$TERM$\" 的消息",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "发布失败"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "已发布到动态"
+  },
+  "mc_input_rate_limited": {
+    "message": "触发频率限制 — 稍后再试"
+  },
+  "mc_input_server_unreachable": {
+    "message": "无法连接服务器（$STATUS$）",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status 需要频道标签页（或 /status <name>）"
+  },
+  "mc_input_success": {
+    "message": "成功"
+  },
+  "mc_input_thread_copied": {
+    "message": "已复制帖子串"
+  },
+  "mc_input_unblocked": {
+    "message": "已取消屏蔽 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "未知命令"
+  },
+  "mc_input_unmuted": {
+    "message": "已取消静音 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "已复制 url"
+  },
+  "mc_input_usage_ban": {
+    "message": "用法：/ban <user> [reason]"
+  },
+  "mc_input_usage_delete": {
+    "message": "用法：/delete <message-id>（右键点击消息）"
+  },
+  "mc_input_usage_dm": {
+    "message": "用法：/dm <user> <message>"
+  },
+  "mc_input_usage_follow": {
+    "message": "用法：/$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "用法：/followers [mins] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "用法：/mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "用法：/nuke <term> [seconds] — 关键词至少 2 个字符"
+  },
+  "mc_input_usage_op": {
+    "message": "用法：/op <text>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight 需要 twitch 频道标签页"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <message>"
+  },
+  "mc_input_highlight_login": {
+    "message": "请先登录 twitch.tv"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "无法连接 twitch — 请重试"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "这需要 twitch 频道标签页"
+  },
+  "mc_input_pp_login": {
+    "message": "请先登录 twitch.tv"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "无法解析频道"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+  },
+  "mc_input_poll_created": {
+    "message": "投票已创建"
+  },
+  "mc_input_prediction_created": {
+    "message": "预测已开始"
+  },
+  "mc_input_poll_ended": {
+    "message": "投票已结束"
+  },
+  "mc_input_no_active_poll": {
+    "message": "没有进行中的投票"
+  },
+  "mc_input_no_active_pred": {
+    "message": "没有进行中的预测"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <points>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "预测已锁定"
+  },
+  "mc_input_pred_canceled": {
+    "message": "预测已取消"
+  },
+  "mc_input_voted": {
+    "message": "已投票：$CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "已押注 $POINTS$ 于 $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "已结算：$OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <text>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — 切换屏蔽"
+  },
+  "mc_input_note_failed": {
+    "message": "无法保存备注"
+  },
+  "mc_input_note_saved": {
+    "message": "已保存 $USER$ 的备注",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "已移除 $USER$ 的备注",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "$USER$ 没有备注",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <setting> <value>"
+  },
+  "mc_input_set_complex": {
+    "message": "请在设置面板中修改"
+  },
+  "mc_input_set_unknown": {
+    "message": "未知设置：$KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "$KEY$ 请使用 on/off",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "$KEY$ 的值无效",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|channel>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "标签页不可用"
+  },
+  "mc_input_tab_unknown": {
+    "message": "没有标签页：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "已将 $USER$ 设为 vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "已移除 $USER$ 的 vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "已将 $USER$ 设为 mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "已移除 $USER$ 的 mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch 没有 $LABEL$ 的 api — 仅限 kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch 已从聊天中移除 /$CMD$ — 请用它自带的 mod 工具",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick 没有 $LABEL$ 模式",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ 已开启",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ 已关闭",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ 已开启（$DETAIL$）",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ 失败：$DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "用法：/$LABEL$ [duration|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "无法解析频道"
+  },
+  "mc_input_highlight_sent": {
+    "message": "已高亮 · 剩余 $BALANCE$ bits",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "高亮未确认 — 可放心重发，bits 只扣一次"
+  },
+  "mc_input_highlight_failed": {
+    "message": "高亮失败：$REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "命令失败：$REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "用法：/r <message>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "用法：/timeout <user> [seconds] [reason]"
+  },
+  "mc_input_usage_unban": {
+    "message": "用法：/unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "用法：/unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "用法：/w <user> <message>"
+  },
+  "mc_irc_join_queued": {
+    "message": "无法加入 #$CHANNEL$ 的聊天 — 已排队",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "你已被此频道封禁"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "频道正在屏蔽消息"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "频道已被暂停"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "重复消息 — twitch 已拒绝"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "仅 emote 模式 — 消息必须全是 emote"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "仅粉丝模式 — 关注频道后才能聊天"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "再多关注频道一会儿才能聊天"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "仅粉丝 — 你需要先关注"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "你在这里无权执行该操作"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "唯一聊天模式 — 消息必须是唯一的"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod 正在检查你的消息"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod 已拦截你的消息"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "慢速模式 — 请稍等"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "仅限 sub — 成为 sub 才能在此聊天"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "你正处于禁言中"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "你已被 twitch 封禁"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch 无法识别该命令"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "频道要求已验证邮箱才能聊天"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "频道要求已验证手机才能聊天"
+  },
+  "mc_main_age_confirm": {
+    "message": "确认你已满 18 岁以启用成人内容"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "我已满 18 岁"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "分享庆祝失败 — 正在把你的消息发到聊天"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "保存 $NOUN$ 失败 — 请重试",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "消息发送失败 — 仍显示在你的庆祝行中"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ 未保存到你的库存 — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "频道未保存 — 存储出错"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "静音列表未保存 — 存储出错"
+  },
+  "mc_main_no_share_token": {
+    "message": "没有分享令牌 — 庆祝已发出但不含文字，你的消息会发到聊天"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "没有可弹出的 youtube 直播"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "设置存储接近上限 — 部分偏好可能无法跨设备保存"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "设置保存失败 — 存储配额已超出"
+  },
+  "mc_main_share_unavailable": {
+    "message": "无法分享 — 正在把你的消息发到聊天"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "缺少分享令牌 — 请用 twitch 自带聊天来分享"
+  },
+  "mc_mod_label_banned": {
+    "message": "已封禁"
+  },
+  "mc_mod_label_deleted": {
+    "message": "已删除"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "已禁言 $SEC$ 秒",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "已解封"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "你不是此处的 youtube mod"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$（twitch+kick）",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ 失败：twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$（kick）— twitch 失败：$ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ 失败：$ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$（twitch）— kick 失败：$ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "屏蔽失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "已屏蔽 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "已在 heatsync 关注 — 跨平台同步不可用"
+  },
+  "mc_profile_delete_failed": {
+    "message": "删除失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "已删除的消息"
+  },
+  "mc_profile_follow_failed": {
+    "message": "关注失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "已关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "未找到 $USER$ 的关联频道",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "未在 heatsync 注册"
+  },
+  "mc_profile_unblocked": {
+    "message": "已取消屏蔽 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "已取消关注 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "导出失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "设置已导出"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "文件过大（>2MB）"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "导入失败：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "设置已导入 — 正在重新加载…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "表达式无效"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "不是 heatsync 设置文件"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "解析错误"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "已与 $LABEL$ 一致",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "已应用 $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "预设已删除"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "预设需要名称"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "已保存预设：$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "预设存储已满 — 请先删除一个"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "所有设置已恢复默认"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ 已恢复默认",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "规则值为空"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "过滤规则已损坏 — 重新加载前无法编辑"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "过滤规则已损坏 — 编辑前请重新加载页面"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "已打开 cheer 窗口"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "频道无效"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "没有 twitch 频道"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "弹窗被拦截 — 请允许 twitch.tv 的弹窗以发送 cheer"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "备注未保存 — 存储出错"
+  },
+  "mc_whisper_failed": {
+    "message": "悄悄话失败：$MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "未启用 twitch 悄悄话 — 请在 heatsync.org 重新绑定"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "未知用户 — 请先给某人发悄悄话"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube 拦截了发送（慢速模式？）"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "无法连接 youtube 聊天 — 请重试"
+  },
+  "mc_yt_send_failed": {
+    "message": "发送到 youtube 失败"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube 聊天仍在加载 — 请重试"
+  },
+  "mc_yt_send_login": {
+    "message": "登录 youtube 后才能发送"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube 对该消息没有这个操作"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "该消息已不在屏幕上"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube 没有为该消息提供 mod 操作"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "未选择消息"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "你不是此直播的 mod"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "登录 youtube 后才能管理"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube 拒绝了该操作"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube 未确认发送"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "请打开 youtube 直播以发送"
+  },
+  "mc_yt_send_restricted": {
+    "message": "此直播的 yt 聊天受限"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt：$REASON$ — 无法在此聊天",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "引用到帖子串"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "写下你的看法 — enter 发布帖子串"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "取消引用"
+  },
+  "mc_msg_quote_posted": {
+    "message": "帖子串已发布"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "帖子串已发布 · 链接已复制"
+  },
+  "mc_fill_cockpit": {
+    "message": "填充我的 cockpit"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "添加你在 twitch 上已关注的频道"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "正在读取你的 twitch 关注…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "用 twitch 登录以导入你的关注，按谁在直播排序"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "你的 twitch 绑定已过期 — 重新连接后才能导入关注"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "你的 twitch 绑定不含关注权限 — 重新连接后才能导入"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "无法连接 twitch — 一分钟后再试"
+  },
+  "mc_sign_in": {
+    "message": "登录"
+  },
+  "mc_reconnect_twitch": {
+    "message": "重新连接 twitch"
+  },
+  "mc_import_from_twitch": {
+    "message": "从 twitch 导入"
+  },
+  "mc_add_manually": {
+    "message": "手动添加"
+  },
+  "mc_no_twitch_follows": {
+    "message": "你在 twitch 上还没有关注任何人"
+  },
+  "mc_all_follows_added": {
+    "message": "你关注的每个频道都已在这里"
+  },
+  "mc_follows_found": {
+    "message": "待添加 $COUNT$ · 正在直播 $LIVE$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "显示前 $COUNT$ 个 — 直播中的优先",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "选择直播中"
+  },
+  "mc_add_selected": {
+    "message": "添加所选"
+  },
+  "mc_select_at_least_one": {
+    "message": "至少选择一个频道"
+  },
+  "mc_nothing_added": {
+    "message": "没有添加 — 它们已在你的 cockpit 里"
+  },
+  "mc_paste_list": {
+    "message": "粘贴列表"
+  },
+  "mc_paste_list_desc": {
+    "message": "每行一个名称，或用逗号分隔"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "已添加 $ADDED$ · 跳过 $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "搜索 gif..."
+  },
+  "mc_gif_searching": {
+    "message": "搜索中..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ 个 gif · hjkl 移动 · enter 插入",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "触发频率限制 - 请等待 $SECONDS$ 秒",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "搜索失败 - 输入以重试"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync 用大家在聊天里真正发过的内容建立 gif 库。目前还没有收集到任何内容。"
+  },
+  "mc_gif_library_building": {
+    "message": "暂无匹配 - 库仍在积累中（目前 $COUNT$ 个 gif）",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "未找到 gif"
+  },
+  "mc_gif_type_to_search": {
+    "message": "输入以搜索 gif"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a 搜索  esc 关闭"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "屏蔽词"

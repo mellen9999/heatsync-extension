@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "отделен прозорец"
   },
+  "popup_not_signed_in": {
+    "message": "не си влязъл — "
+  },
+  "popup_setup_link": {
+    "message": "настрой heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "ляв клик: копирай последните 50 грешки / десен клик: изчисти"
+  },
+  "popup_errors_count": {
+    "message": "грешки ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "няма грешки"
+  },
+  "popup_copied": {
+    "message": "копирани $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "копирането не успя"
+  },
+  "popup_cleared": {
+    "message": "изчистено"
+  },
+  "popup_detected_prefix": {
+    "message": "на "
+  },
+  "popup_privacy_link": {
+    "message": "без проследяване от трети страни"
+  },
   "welcome_title": {
     "message": "добре дошъл в heatsync"
+  },
+  "welcome_cta": {
+    "message": "отвори twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "отвори twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "влез →"
+  },
+  "welcome_done_title": {
+    "message": "вътре си"
+  },
+  "welcome_import_title": {
+    "message": "донеси си emotes"
+  },
+  "welcome_import_sub": {
+    "message": "внос с един клик от 7tv, bttv и ffz"
+  },
+  "welcome_import_locked": {
+    "message": "влез по-долу, за да импортираш твоите 7tv/bttv/ffz emotes"
+  },
+  "welcome_import_cta": {
+    "message": "импортирай моите emotes →"
+  },
+  "welcome_import_importing": {
+    "message": "импортирам…"
+  },
+  "welcome_import_done": {
+    "message": "импортирани $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "импортът не успя — опитай пак"
+  },
+  "welcome_import_no_platform": {
+    "message": "първо свържи twitch, kick или youtube акаунт →"
   },
   "welcome_privacy": {
     "message": "поверителност"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "сетове"
   },
   "btn_rotate_title": {
     "message": "завърти позицията на лентата с табове"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "отблокирано"
   },
+  "btn_toast_block_failed": {
+    "message": "не можах да блокирам — опитай пак"
+  },
   "btn_toast_blocked": {
     "message": "блокирано"
   },
   "btn_toast_removed": {
     "message": "премахнато"
+  },
+  "btn_toast_remove_failed": {
+    "message": "премахването не успя"
   },
   "btn_toast_added": {
     "message": "добавено"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "не можах да блокирам $NAME$ — опитай пак",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "не можах да отблокирам $NAME$ — опитай пак",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "не можах да последвам — опитай пак"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "не можах да спра следването — опитай пак"
+  },
+  "content_toast_no_chat_input": {
+    "message": "отвори twitch чата, за да ползваш mod действия"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ е блокиран",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "партньор"
   },
+  "content_card_mutual": {
+    "message": "взаимно"
+  },
+  "content_card_mutual_sub": {
+    "message": "взаимен sub"
+  },
+  "content_card_sub_badge": {
+    "message": "sub"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "бан"
+  },
+  "content_card_unban": {
+    "message": "без бан"
+  },
+  "content_card_block": {
+    "message": "блокирай"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod инструменти"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod инструменти (няма права)"
+  },
+  "content_card_note_title": {
+    "message": "бележка"
+  },
+  "content_card_note_placeholder": {
+    "message": "лична бележка — само ти я виждаш"
+  },
+  "content_card_history_title": {
+    "message": "история на съобщенията"
+  },
+  "content_card_loading": {
+    "message": "зареждане…"
+  },
+  "content_card_history_empty": {
+    "message": "няма история на съобщенията"
+  },
+  "content_card_history_empty_channel": {
+    "message": "няма съобщения от този потребител в $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "виж профила"
+  },
+  "content_card_follow": {
+    "message": "последвай"
+  },
+  "content_card_unfollow": {
+    "message": "спри следването"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch профил"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "правя clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url копиран"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip създаден"
+  },
+  "content_card_copy_name": {
+    "message": "копирай името"
+  },
+  "content_card_mention": {
+    "message": "спомени"
+  },
+  "content_card_dialog_label": {
+    "message": "профилна карта на $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "запазени"
   },
+  "mc_tab_modlog": {
+    "message": "mod лог"
+  },
   "mc_tab_live_channel": {
     "message": "гледане · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "продължи"
   },
+  "mc_connecting": {
+    "message": "свързване…"
+  },
   "mc_no_messages": {
     "message": "няма съобщения още"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "въведи поне една платформа"
+  },
+  "mc_invalid_name": {
+    "message": "невалидно име на канал — провери за грешки или интервали"
   },
   "mc_username_placeholder": {
     "message": "потребител"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "кликаеми линкове"
   },
+  "mc_settings_partial_links": {
+    "message": "частични линкове"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "прави кликаеми и частични и скрити линкове — голи youtube препратки watch?v= и домейни от типа \"site (dot) com\", с които чатовете заобикалят филтрите за линкове."
+  },
+  "mc_settings_link_previews": {
+    "message": "преглед на линкове"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "показва tooltip с og:title/description при посочване"
+  },
+  "mc_settings_media_embeds": {
+    "message": "медия в чата"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "показва снимки, gif-ове, видео и карти с линкове директно в чата (без автоматично пускащи се iframe)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi режим"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "времеви печат на всяко съобщение"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfps"
   },
   "mc_settings_avatars_desc": {
     "message": "аватари до потребителските имена"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "банер за активно гласуване, гласувай директно"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chats"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "банер за youtube super chats със сума"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super stickers"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "банер за youtube super stickers със сума"
+  },
+  "mc_settings_yt_membership": {
+    "message": "нови членове"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "банер, когато някой стане член на канала"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "членски етапи"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "банер за етапни месеци на членство"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "подарени членства"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "банер за подарени членства с брой"
+  },
   "mc_settings_dim_timeouts": {
     "message": "затъмни timeoutнатите съобщения"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "заглавие на предсказание"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "избери победител"
+  },
+  "mc_pred_cancel_form": {
+    "message": "отказ"
+  },
+  "mc_pred_load_failed": {
+    "message": "прогнозите не се заредиха"
+  },
+  "mc_poll_ended": {
+    "message": "приключи"
+  },
+  "mc_poll_optional": {
+    "message": "по избор"
+  },
+  "mc_error_no_permission": {
+    "message": "няма права"
+  },
+  "mc_error_not_logged_in": {
+    "message": "не си влязъл"
+  },
+  "mc_error_poll_active": {
+    "message": "вече има активна анкета"
   },
   "mc_pred_option1": {
     "message": "опция 1 (синьо)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "изпрати съобщение..."
   },
+  "mc_input_attach": {
+    "message": "прикачи снимка или видео"
+  },
+  "mc_input_emote_picker": {
+    "message": "избор на emote"
+  },
+  "mc_input_tab_hidden": {
+    "message": "скрит в този таб: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "отново видим в този таб: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "публикувай в heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "още няма отговори"
   },
+  "mc_social_thread_unavailable": {
+    "message": "нишката не е налична — публикацията може да е изтрита"
+  },
   "mc_social_login_first": {
     "message": "влез първо в heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "изпратено до $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "не може да се намери Twitch потребител"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "heatsync не отговаря — опитай пак"
+  },
+  "mc_irc_queue_full": {
+    "message": "опашката за изпращане е пълна — съобщението не е запазено"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "споменавания — за да пишеш, премини на таб на канал"
+  },
+  "mc_input_no_channel": {
+    "message": "няма канал — избери таб горе"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "последвай $USER$, за да му пишеш — последвай + изпрати",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync потребител \"$USER$\" не е намерен",
@@ -730,6 +1087,14 @@
     "message": "съобщение от $USER$ е изтрито",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "не успях да вляза в $CHANNEL$ — отвори таба пак, за да опиташ отново",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "няма заредени emotes"
   },
+  "mc_emote_cold_start_title": {
+    "message": "твоите emotes, във всеки чат"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "вземи всички 7tv, bttv и ffz emotes от $CHANNEL$ в инвентара си — един клик, показват се във всеки чат.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "импортирай всички emotes на $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "импортирам…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "импортирани $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "импортът не успя"
+  },
+  "mc_emote_load_more": {
+    "message": "зареди още"
+  },
+  "mc_emote_exact": {
+    "message": "точно"
+  },
   "mc_emote_in_set": {
     "message": "в сета ти"
   },
+  "mc_feed_delete_failed": {
+    "message": "не можах да изтрия — опитай пак"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "блокиран: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "блокирано (натисни за отблокиране)"
+  },
+  "welcome_cta_live": {
+    "message": "гледай на живо"
+  },
+  "mc_settings_font_family": {
+    "message": "шрифт"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "шрифт на multichat"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "име на собствен шрифт"
+  },
+  "mc_settings_font_size": {
+    "message": "размер на шрифта"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "размер на шрифта в чата в px — дръпни на вкус (заменя старите бутони F-/F+)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "размер на emoji"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "размер на emoji — 1x нативен, 2x (по подразбиране)/4x увеличава unicode emoji"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "формат на часа"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "формат на часовника за времената на редовете в чата"
+  },
+  "mc_settings_readable_names": {
+    "message": "поправи тъмни имена"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "изсветлява тъмните цветове на имената, за да се четат на черния фон"
+  },
+  "mc_settings_platform_badges": {
+    "message": "значки на платформи"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "етикети [T] [K] [Y] на съобщенията. изключено ги пази за платформите, на които не си."
+  },
+  "mc_settings_text_badges": {
+    "message": "текстови значки"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "показва mod/vip/sub значките като кратки текстови чипове вместо картинки"
+  },
+  "mc_settings_tab_counter": {
+    "message": "число на таба"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "число отдясно на всеки чат таб. unread = съобщения, които не си виждал. heat = съобщения за последната минута, така че натоварен канал изглежда натоварен, дори когато си в него"
+  },
+  "mc_settings_tab_position": {
+    "message": "позиция на лентата с табове"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "към кой край се закача лентата с табове на multichat"
+  },
+  "mc_settings_chat_position": {
+    "message": "страна на чата"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "към коя страна на плейъра се закача панелът на чата — hidden го скрива (клавишът \\ превключва)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: лента с предложения"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "показва предложени видеа във вертикална лента до заглавието (youtube, само при закачане ляво/дясно) — изключено по подразбиране, защото чатът си връща мястото"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: чат на страници без live"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "показва панела на multichat и на youtube VOD, началната страница и търсенето — изключено по подразбиране, така че панелът се появява само при livestream (където има чат на живо)"
+  },
+  "mc_settings_message_density": {
+    "message": "гъстота на съобщенията"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "отстъп на редовете — compact е класическият плътен вид"
+  },
+  "mc_settings_line_height": {
+    "message": "височина на реда"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "височина на реда в чата в px — 18 държи bitmap шрифтовете върху пикселната мрежа"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "макс. видими съобщения"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "макс. редове в чата, държани като жив DOM (буферът с данни остава 1500). по-малко = по-малко ram на натоварени канали."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync цветове на имена"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "анимирани цветове на имена от heatsync — имат предимство пред 7tv paint, когато чатър има и двата"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paints + значки"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "цветове на имена и 7tv значки на чатъри"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv значки"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv значки на чатъри"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz значки"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez значки на чатъри"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "анимирай emotes"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always пуска анимираните emotes винаги. hover показва статични кадри, докато курсорът не е върху съобщение — голяма икономия на cpu/ram на натоварени канали. never е напълно статично. важи за съобщенията в multichat; изборът остава анимиран."
+  },
+  "mc_settings_animate_paints": {
+    "message": "анимирай paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always пуска движението в цветовете на имена винаги — твоите и на всички останали. never ги замразява. следва тази настройка, не флага reduced-motion на браузъра ти."
+  },
+  "mc_predview_title": {
+    "message": "прогнози и анкети"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino значки"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino значки на чатъри"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "приоритет на emote доставчици"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "когато 7tv/bttv/ffz имат emote с едно и също име, печели този доставчик"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "показвай emotes от инвентара"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "рисува emotes от heatsync инвентар — твоя или на друг чатър. изключено показва простата дума. канални и глобални emotes не се засягат"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "предлагай emotes от инвентара"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "предлага инвентара ти при tab допълване и предложения докато пишеш. изключено оставя само канални и глобални emotes"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "местоимения"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "местоимения от pronoundb.org на профилната карта + в tooltip при посочване (само twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "анонимно присъствие"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "не изпраща сигнали за писане/присъствие към платформата"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "toast за whisper"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "изскачащ toast, когато пристигне whisper или dm, докато си в друг таб — клик за скок към whispers"
+  },
+  "mc_settings_notif_moment": {
+    "message": "известия за моменти"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "чатът на канал изведнъж гръмва — heat скок, засечен от сървъра; клик върху реда отваря стрийма"
+  },
+  "mc_settings_evt_online": {
+    "message": "започна live"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "банер, когато канал тръгне live"
+  },
+  "mc_settings_evt_offline": {
+    "message": "излезе offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "банер, когато канал излезе offline (изключено по подразбиране — шумно)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "смяна на игра"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "банер, когато стриймър смени играта"
+  },
+  "mc_settings_browser_notification": {
+    "message": "известие на браузъра"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "показва известие на десктопа, когато някой те @спомене"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "мигане на заглавието на таба"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "пулсира заглавието на таба с името на споменалия, докато не фокусираш таба"
+  },
+  "mc_settings_mention_volume": {
+    "message": "сила на звука при споменаване"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "сила на звуковия сигнал при споменаване. 0 = тихо. ползва чисти WebAudio тонове, без файл в пакета."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "следвай и в kick"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "когато следваш в heatsync, следвай и в kick, ако имат свързан kick акаунт. иска вход в kick.com; иначе влиза в опашка"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "следвай и в twitch"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "когато следваш в heatsync, следвай и в twitch, ако имат свързан twitch акаунт. иска отворен таб twitch.tv; иначе влиза в опашка"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch следване с известия"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "следването в twitch между платформи включва и live известия за този канал"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "бутони на mod лентата"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "действия при посочване на редове в чата, когато си mod на канала — всички изключени по подразбиране"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "изтрий това съобщение"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 минута"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 минути"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 час"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 часа"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 дни"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (изчисти съобщенията, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "постоянен бан"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "свали бана на потребител"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "потвърди преди бан"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "показва диалог за потвърждение преди постоянен бан — пази от случаен клик"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "причини за бан"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "по една на ред — показват се като избираеми чипове в диалога за бан; изборът се изпраща с бана"
+  },
+  "mc_settings_automod_caps": {
+    "message": "скрий caps спам"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "скрива съобщения над 10 знака, които са предимно с главни букви"
+  },
+  "mc_settings_automod_regex": {
+    "message": "regex филтър"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "по един шаблон на ред, без значение на регистъра — съвпадащите съобщения се скриват"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "показвай сексуални emotes"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "emotes, маркирани за сексуално съдържание (≥ 70%), са скрити по подразбиране. при включено се показват с прекъсната рамка."
+  },
+  "mc_settings_show_gore": {
+    "message": "показвай gore emotes"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "emotes, маркирани за насилие/gore (≥ 70%), са скрити по подразбиране. при включено се показват с прекъсната рамка."
+  },
+  "mc_settings_show_weapon": {
+    "message": "показвай emotes с оръжия"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "emotes, маркирани за изображения на оръжия. включено по подразбиране."
+  },
+  "mc_settings_show_drug": {
+    "message": "показвай emotes с наркотици"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "emotes, маркирани за изображения на наркотици. включено по подразбиране."
+  },
+  "mc_settings_show_hate": {
+    "message": "показвай emotes с омраза"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "emotes, маркирани за изображения на омраза. включено по подразбиране."
+  },
+  "mc_settings_hide_bots": {
+    "message": "скрий ботове"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "скрива съобщения от познати чат ботове (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "скрий !commands"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "скрива съобщения, които започват с !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "скрий дубликати"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "свива еднакви последователни съобщения (спам вълни) до първото"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "заглуши ключови думи"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "по един израз на ред — съобщения, съдържащи някой от тях, се скриват. различно от подчертаването на ключови думи."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "правила за филтри"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "филтри за подчертаване/скриване по правило — keyword, regex, user, badge или msgtype; управляват се в редактора на правила"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "препоръчани канали"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "секцията \"Recommended Channels\" в страничната лента"
+  },
+  "mc_settings_hide_stories": {
+    "message": "лента със stories"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "лента със stories отстрани / горе"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "реклама за prime gaming loot"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "бутон prime loot с икона корона"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "реклама за twitch turbo"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "turbo cta линкове"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / сезонни банери"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "сезонни банери за абонамент с градиент"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "превключвател за live известия"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "бутон със звънец за абониране за известия"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "бутон за спиране на следването"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "бутон за спиране на следването (пази от случайни кликове)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "бутон за абониране"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "бутон за абониране за канала"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "празненства на екрана"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "конфети / празнични наслагвания върху видеото"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "разширения на плейъра"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "разширения-наслагвания, които покриват видеото"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "звук с колелото"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "превърти над плейъра, за да смениш звука"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "заглавие на стрийма"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "скрива блока със заглавието на стрийма под плейъра"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "брой зрители"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "скрива брояча на зрителите на живо"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "видими табове"
+  },
+  "mc_settings_ui_locale": {
+    "message": "език на интерфейса"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "език на ui на multichat — преименува всичко след презареждане"
+  },
+  "mc_settings_subsystems": {
+    "message": "подсистеми"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch чат поток"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc връзка + влизане в канали вътре в overlay-а"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick чат поток"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket връзка + влизане в канали вътре в overlay-а"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube чат поток"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "абонаменти за youtube live чат вътре в overlay-а"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "козметика от трети страни"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paints + bttv/ffz/chatterino значки. изключено спестява ram на натоварени канали."
+  },
+  "mc_settings_sub_feed": {
+    "message": "feed"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "таб със социалния feed на heatsync + неговият поток от събития"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whispers"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub сокет + таб whispers"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "споменавания"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "засичане на споменавания, таб споменавания и пингове"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "статистика на стрийма"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "скорост на съобщенията по канал, която захранва heat класацията"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "профилни карти"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "клик върху потребителско име отваря профилната карта"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emotes в нативния чат"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "показва heatsync emotes в собствения чат на платформата"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab допълване в нативния чат"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "допълване на emote + потребителско име в собственото поле на платформата"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "бутон за избор на emote"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "бутонът за избор на heatsync до нативното поле на чата"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "поемане на нативния чат"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "докато overlay-ът покрива twitch чата, twitch спира да рисува скритото си копие — голяма икономия на ram на натоварени канали. проваля се безопасно: overlay-ът спре → twitch чатът се връща сам."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "резервно подслушване на kick чат"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "чете потока на чата на текущата kick страница като резерва. неактивно, докато нормалните транспорти са здрави — включва се само ако замлъкнат."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "резервно подслушване на yt"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "пита youtube директно, ако и двата нормални потока мълчат 5 минути — последна защита, не заместващ транспорт."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "опашка със задържани от automod"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "показва задържаните от twitch automod съобщения директно в канали, в които си mod, с бутони allow/deny — огледало на собствената опашка за преглед на twitch."
+  },
+  "mc_automod_label": {
+    "message": "automod hold"
+  },
+  "mc_automod_allow": {
+    "message": "позволи"
+  },
+  "mc_automod_deny": {
+    "message": "откажи"
+  },
+  "mc_automod_resolving": {
+    "message": "решавам…"
+  },
+  "mc_automod_error": {
+    "message": "действието не успя"
+  },
+  "mc_automod_relink_toast": {
+    "message": "опашката на automod иска ново свързване с twitch"
+  },
+  "mc_automod_signin": {
+    "message": "влез в heatsync отново"
+  },
+  "mc_automod_relink_action": {
+    "message": "свържи пак"
+  },
+  "mc_settings_diag_errors": {
+    "message": "показвай диагностични грешки"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "грешките се записват само локално — никога не се качват. този ключ само показва диагностичния панел по-долу."
+  },
+  "mc_settings_debug_logging": {
+    "message": "debug логове"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "подробни логове в конзолата от всички heatsync скриптове — важат при следващо зареждане на страницата"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "минимален"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "модератор"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "малко ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "копирането не успя"
+  },
+  "mc_common_unknown": {
+    "message": "непознато"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "twitch следването е блокирано: нужен е 2FA — довърши в twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "спирането на twitch следването е блокирано: нужен е 2FA — довърши в twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "последва $USER$ в $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "спря да следва $USER$ в $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "синхронизирани $COUNT$ чакащи $PLATFORM$ следвания",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "kick следването е в опашка — ще се синхронизира, когато влезеш в kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "спирането на kick следването е в опашка — ще се синхронизира, когато влезеш в kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "twitch следването е в опашка — ще се синхронизира при следващото отваряне на twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "спирането на twitch следването е в опашка — ще се синхронизира при следващото отваряне на twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "грешка при добавяне: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "добавянето не успя: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "влез в heatsync.org, за да добавяш emotes"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "не мога да добавя $NAME$ — снимката не е налична",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "добавен: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "не можах да блокирам — опитай пак"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "не можах да отблокирам — опитай пак"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "блокирането не е запазено в акаунта ти — ще се различава на други устройства"
+  },
+  "mc_emote_blocked_count": {
+    "message": "блокирани $COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "грешка при премахване: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "премахването не успя: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "премахнат: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "отблокирането не е запазено в акаунта ти — ще се различава на други устройства"
+  },
+  "mc_emote_unblocked": {
+    "message": "отблокиран: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "вече следваш $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ вече е заглушен",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "блокиран $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "локалният буфер е изчистен"
+  },
+  "mc_input_copied": {
+    "message": "копирано"
+  },
+  "mc_input_delete_failed": {
+    "message": "изтриването не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete иска таб на канал"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete иска twitch или kick канал"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji копирано"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "followers-only изкл."
+  },
+  "mc_input_followers_on": {
+    "message": "followers-only вкл."
+  },
+  "mc_input_followers_on_mins": {
+    "message": "followers-only вкл. ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers е само за twitch — отвори twitch канал"
+  },
+  "mc_input_login_first_op": {
+    "message": "първо влез в heatsync.org, за да ползваш /op"
+  },
+  "mc_input_message_copied": {
+    "message": "съобщението е копирано"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ иска таб на канал (не live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ иска twitch, kick или youtube канал",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: няма скорошно съобщение от $TARGET$ — ползвай менюто на съобщението",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ още не е свързано — засега работи само /followers",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "заглушен $USER$ (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "името е копирано"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "няма кому да отговориш"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ няма twitch — пробвай /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "не следваш $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ не е заглушен",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ го няма в heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "не е готово"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — не е sub на този канал",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "няма какво да се публикува в стека"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "тук няма какво да се чисти"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "няма какво да се публикува"
+  },
+  "mc_input_nuke_done": {
+    "message": "nuke $OK$/$TOTAL$ съвпадения за \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke иска таб на канал"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke иска twitch или kick канал"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: няма съобщения със \"$TERM$\" за последните $SEC$ s",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "публикуването не успя"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "публикувано във feed"
+  },
+  "mc_input_rate_limited": {
+    "message": "ограничение на скоростта — опитай след секунда"
+  },
+  "mc_input_server_unreachable": {
+    "message": "сървърът не отговаря ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status иска таб на канал (или /status <име>)"
+  },
+  "mc_input_success": {
+    "message": "успех"
+  },
+  "mc_input_thread_copied": {
+    "message": "нишката е копирана"
+  },
+  "mc_input_unblocked": {
+    "message": "отблокиран $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "непозната команда"
+  },
+  "mc_input_unmuted": {
+    "message": "$USER$ вече не е заглушен",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url копиран"
+  },
+  "mc_input_usage_ban": {
+    "message": "употреба: /ban <user> [причина]"
+  },
+  "mc_input_usage_delete": {
+    "message": "употреба: /delete <message-id> (десен клик върху съобщение)"
+  },
+  "mc_input_usage_dm": {
+    "message": "употреба: /dm <user> <съобщение>"
+  },
+  "mc_input_usage_follow": {
+    "message": "употреба: /$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "употреба: /followers [мин] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "употреба: /mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "употреба: /nuke <дума> [секунди] — думата трябва да е 2+ знака"
+  },
+  "mc_input_usage_op": {
+    "message": "употреба: /op <текст>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight иска таб на twitch канал"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <съобщение>"
+  },
+  "mc_input_highlight_login": {
+    "message": "първо влез в twitch.tv"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch не отговаря — опитай пак"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "това иска таб на twitch канал"
+  },
+  "mc_input_pp_login": {
+    "message": "първо влез в twitch.tv"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "не успях да определя канала"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll въпрос | избор1 | избор2 [| … до 5] [| сек]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction заглавие | изход1 | изход2 [| … до 10] [| сек]"
+  },
+  "mc_input_poll_created": {
+    "message": "анкетата е създадена"
+  },
+  "mc_input_prediction_created": {
+    "message": "прогнозата е започнала"
+  },
+  "mc_input_poll_ended": {
+    "message": "анкетата приключи"
+  },
+  "mc_input_no_active_poll": {
+    "message": "няма активна анкета"
+  },
+  "mc_input_no_active_pred": {
+    "message": "няма активна прогноза"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <точки>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "прогнозата е заключена"
+  },
+  "mc_input_pred_canceled": {
+    "message": "прогнозата е отменена"
+  },
+  "mc_input_voted": {
+    "message": "гласувано: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "заложени $POINTS$ на $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "решена: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <текст>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — превключва блокиране"
+  },
+  "mc_input_note_failed": {
+    "message": "бележката не се запази"
+  },
+  "mc_input_note_saved": {
+    "message": "бележка запазена за $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "бележката за $USER$ е премахната",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "няма бележка за $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <настройка> <стойност>"
+  },
+  "mc_input_set_complex": {
+    "message": "тази я смени в панела с настройки"
+  },
+  "mc_input_set_unknown": {
+    "message": "непозната настройка: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "ползвай on/off за $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "невалидна стойност за $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|канал>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "табовете не са налични"
+  },
+  "mc_input_tab_unknown": {
+    "message": "няма таб: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ стана vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "$USER$ вече не е vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ стана mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "$USER$ вече не е mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch няма api за $LABEL$ — само kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch махна /$CMD$ от чата — ползвай техните mod инструменти",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick няма режим $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ вкл.",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ изкл.",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ вкл. ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ не успя: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "употреба: /$LABEL$ [продължителност|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "не успях да определя канала"
+  },
+  "mc_input_highlight_sent": {
+    "message": "подчертано · остават $BALANCE$ bits",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "highlight не се потвърди — безопасно е да пратиш пак, bits се таксуват веднъж"
+  },
+  "mc_input_highlight_failed": {
+    "message": "highlight не успя: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "командата не успя: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "употреба: /r <съобщение>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "употреба: /timeout <user> [секунди] [причина]"
+  },
+  "mc_input_usage_unban": {
+    "message": "употреба: /unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "употреба: /unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "употреба: /w <user> <съобщение>"
+  },
+  "mc_irc_join_queued": {
+    "message": "не успях да вляза в чата #$CHANNEL$ — в опашка",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "имаш бан в този канал"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "каналът блокира съобщения"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "каналът е спрян"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "повторено съобщение — twitch го отхвърли"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "emote-only режим — съобщението трябва да е само от emotes"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "followers-only режим — последвай канала, за да пишеш"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "последвай канала още малко, за да пишеш"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "followers-only — първо трябва да последваш"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "нямаш права за това тук"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "режим на уникален чат — съобщението трябва да е уникално"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod проверява съобщението ти"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod блокира съобщението ти"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — изчакай малко"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "само за subscribers — стани sub, за да пишеш тук"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "имаш timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "имаш бан от twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch не разпозна тази команда"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "каналът изисква потвърден имейл, за да пишеш"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "каналът изисква потвърден телефон, за да пишеш"
+  },
+  "mc_main_age_confirm": {
+    "message": "потвърди, че си на 18+, за да включиш съдържание за възрастни"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "на 18+ съм"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "споделянето на празненството не успя — пращам съобщението ти в чата"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "не успях да запазя $NOUN$ — опитай пак",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "съобщението не можа да се изпрати — още се вижда в реда на празненството"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ не се запази в инвентара ти — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "каналът не е запазен — грешка в хранилището"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "списъкът със заглушени не е запазен — грешка в хранилището"
+  },
+  "mc_main_no_share_token": {
+    "message": "няма токен за споделяне — празненството е изпратено без текст, съобщението ти отива в чата"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "няма youtube стрийм на живо за изкарване"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "хранилището за настройки е почти пълно — някои предпочитания може да не се запазят между устройствата"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "настройките не се запазиха — надвишена квота на хранилището"
+  },
+  "mc_main_share_unavailable": {
+    "message": "споделянето не е налично — пращам съобщението ти в чата"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "липсва токен за споделяне — сподели през собствения чат на twitch"
+  },
+  "mc_mod_label_banned": {
+    "message": "баннат"
+  },
+  "mc_mod_label_deleted": {
+    "message": "изтрито"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$ s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "без бан"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "не си youtube mod тук"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ не успя: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ в kick — twitch не успя: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ не успя: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ в twitch — kick не успя: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "блокирането не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "блокиран $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "последвано в heatsync — синхронизацията между платформи не е налична"
+  },
+  "mc_profile_delete_failed": {
+    "message": "изтриването не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "изтрито съобщение"
+  },
+  "mc_profile_follow_failed": {
+    "message": "следването не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "следваш $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "няма свързани канали за $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "не е регистриран в heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "отблокиран $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "спря да следва $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "експортът не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "настройките са експортирани"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "файлът е твърде голям (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "импортът не успя: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "настройките са импортирани — презареждам…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "невалиден израз"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "не е файл с настройки на heatsync"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "грешка при парсване"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "вече съвпада с $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "приложено $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "preset изтрит"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "preset-ът иска име"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "preset запазен: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "хранилището за preset-и е пълно — първо изтрий един"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "всички настройки са върнати по подразбиране"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ върнато по подразбиране",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "стойността на правилото е празна"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "правилата за филтри са повредени — редакцията е изключена до презареждане"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "правилата за филтри са повредени — презареди страницата преди редакция"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "прозорецът за cheer е отворен"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "невалиден канал"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "няма twitch канал"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "popup блокиран — позволи popup-и за twitch.tv, за да cheer-неш"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "бележката не е запазена — грешка в хранилището"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper не успя: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch whispers не са включени — свържи пак в heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "непознат потребител — първо прати whisper на някого"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube блокира изпращането (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "не успях да стигна до youtube чата — опитай пак"
+  },
+  "mc_yt_send_failed": {
+    "message": "изпращането към youtube не успя"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube чатът още се зарежда — опитай пак"
+  },
+  "mc_yt_send_login": {
+    "message": "влез в youtube, за да пишеш"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube няма такова действие за това съобщение"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "това съобщение вече го няма на екрана"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube не предложи mod действия за това съобщение"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "не е избрано съобщение"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "не си модератор на този стрийм"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "влез в youtube, за да модерираш"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube отхвърли действието"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube не потвърди изпращането"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "отвори youtube стрийма, за да пишеш"
+  },
+  "mc_yt_send_restricted": {
+    "message": "yt чатът е ограничен за този стрийм"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — не можеш да пишеш тук",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "цитирай в нишка"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "добави мнението си — enter публикува нишка"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "откажи цитата"
+  },
+  "mc_msg_quote_posted": {
+    "message": "нишката е публикувана"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "нишката е публикувана · линкът е копиран"
+  },
+  "mc_fill_cockpit": {
+    "message": "напълни моя cockpit"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "добави каналите, които вече следваш в twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "чета твоите twitch следвания…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "влез с twitch, за да импортираш следванията си, подредени по това кой е live"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "връзката ти с twitch изтече — свържи пак, за да импортираш следвания"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "връзката ти с twitch не включва следвания — свържи пак, за да ги импортираш"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "twitch не отговаря — опитай след минута"
+  },
+  "mc_sign_in": {
+    "message": "влез"
+  },
+  "mc_reconnect_twitch": {
+    "message": "свържи twitch пак"
+  },
+  "mc_import_from_twitch": {
+    "message": "импортирай от twitch"
+  },
+  "mc_add_manually": {
+    "message": "добави ръчно"
+  },
+  "mc_no_twitch_follows": {
+    "message": "още не следваш никого в twitch"
+  },
+  "mc_all_follows_added": {
+    "message": "всеки канал, който следваш, вече е тук"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ за добавяне · $LIVE$ live сега",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "показани първите $COUNT$ — live първи",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "избери live"
+  },
+  "mc_add_selected": {
+    "message": "добави избраните"
+  },
+  "mc_select_at_least_one": {
+    "message": "избери поне един канал"
+  },
+  "mc_nothing_added": {
+    "message": "нищо не е добавено — те вече са в cockpit-а ти"
+  },
+  "mc_paste_list": {
+    "message": "постави списък"
+  },
+  "mc_paste_list_desc": {
+    "message": "по едно име на ред или разделени със запетаи"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "добавени $ADDED$ · пропуснати $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "търси gif-ове..."
+  },
+  "mc_gif_searching": {
+    "message": "търся..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gif-а · hjkl движи · enter вмъкни",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "ограничение на скоростта - изчакай $SECONDS$ s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "търсенето не успя - пиши, за да опиташ пак"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync гради gif библиотеката си от това, което хората наистина пускат в чата. още няма събрано."
+  },
+  "mc_gif_library_building": {
+    "message": "още няма съвпадение - библиотеката още се пълни (засега $COUNT$ gif-а)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "няма намерени gif-ове"
+  },
+  "mc_gif_type_to_search": {
+    "message": "пиши, за да търсиш gif-ове"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a търси  esc затвори"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "блокирани термини"

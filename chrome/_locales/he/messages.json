@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "חלון נפרד"
   },
+  "popup_not_signed_in": {
+    "message": "לא מחובר — "
+  },
+  "popup_setup_link": {
+    "message": "הגדר את heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "קליק שמאלי: העתק 50 שגיאות אחרונות / קליק ימני: נקה"
+  },
+  "popup_errors_count": {
+    "message": "שגיאות ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "אין שגיאות"
+  },
+  "popup_copied": {
+    "message": "הועתקו $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "ההעתקה נכשלה"
+  },
+  "popup_cleared": {
+    "message": "נוקה"
+  },
+  "popup_detected_prefix": {
+    "message": "ב-"
+  },
+  "popup_privacy_link": {
+    "message": "בלי מעקב צד שלישי"
+  },
   "welcome_title": {
     "message": "ברוך הבא ל-heatsync"
+  },
+  "welcome_cta": {
+    "message": "פתח twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "פתח twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "התחבר →"
+  },
+  "welcome_done_title": {
+    "message": "אתה בפנים"
+  },
+  "welcome_import_title": {
+    "message": "תביא את האימוטים שלך"
+  },
+  "welcome_import_sub": {
+    "message": "ייבוא בקליק אחד מ-7tv, bttv ו-ffz"
+  },
+  "welcome_import_locked": {
+    "message": "התחבר למטה כדי לייבא את אימוטי 7tv/bttv/ffz הקיימים שלך"
+  },
+  "welcome_import_cta": {
+    "message": "ייבא את האימוטים שלי →"
+  },
+  "welcome_import_importing": {
+    "message": "מייבא…"
+  },
+  "welcome_import_done": {
+    "message": "יובאו $COUNT$ אימוטים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "הייבוא נכשל — נסה שוב"
+  },
+  "welcome_import_no_platform": {
+    "message": "קשר קודם חשבון twitch, kick או youtube →"
   },
   "welcome_privacy": {
     "message": "פרטיות"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "אימוג'י"
+  },
+  "btn_tab_sets": {
+    "message": "סטים"
   },
   "btn_rotate_title": {
     "message": "סובב מיקום סרגל הלשוניות"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "חסימה בוטלה"
   },
+  "btn_toast_block_failed": {
+    "message": "החסימה נכשלה — נסה שוב"
+  },
   "btn_toast_blocked": {
     "message": "נחסם"
   },
   "btn_toast_removed": {
     "message": "הוסר"
+  },
+  "btn_toast_remove_failed": {
+    "message": "ההסרה נכשלה"
   },
   "btn_toast_added": {
     "message": "נוסף"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "לא הצלחתי לחסום את $NAME$ — נסה שוב",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "לא הצלחתי לבטל חסימה של $NAME$ — נסה שוב",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "לא הצלחתי לעקוב — נסה שוב"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "לא הצלחתי להפסיק לעקוב — נסה שוב"
+  },
+  "content_toast_no_chat_input": {
+    "message": "פתח את הצ'אט של twitch כדי להשתמש בפעולות mod"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ חסום",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "שותף"
   },
+  "content_card_mutual": {
+    "message": "הדדי"
+  },
+  "content_card_mutual_sub": {
+    "message": "sub הדדי"
+  },
+  "content_card_sub_badge": {
+    "message": "מנוי"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "מנוי T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "באן"
+  },
+  "content_card_unban": {
+    "message": "בטל באן"
+  },
+  "content_card_block": {
+    "message": "חסום"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "הסר mod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "הסר vip"
+  },
+  "content_card_mod_tools": {
+    "message": "כלי mod"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "כלי mod (אין הרשאה)"
+  },
+  "content_card_note_title": {
+    "message": "הערה"
+  },
+  "content_card_note_placeholder": {
+    "message": "הערה פרטית — רק אתה רואה אותה"
+  },
+  "content_card_history_title": {
+    "message": "היסטוריית הודעות"
+  },
+  "content_card_loading": {
+    "message": "טוען…"
+  },
+  "content_card_history_empty": {
+    "message": "אין היסטוריית הודעות"
+  },
+  "content_card_history_empty_channel": {
+    "message": "אין הודעות מהמשתמש הזה ב-$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "צפה בפרופיל"
+  },
+  "content_card_follow": {
+    "message": "עקוב"
+  },
+  "content_card_unfollow": {
+    "message": "הפסק לעקוב"
+  },
+  "content_card_twitch_profile": {
+    "message": "פרופיל twitch"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "יוצר clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ הכתובת הועתקה"
+  },
+  "content_card_clip_created": {
+    "message": "✓ ה-clip נוצר"
+  },
+  "content_card_copy_name": {
+    "message": "העתק שם"
+  },
+  "content_card_mention": {
+    "message": "תייג"
+  },
+  "content_card_dialog_label": {
+    "message": "כרטיס פרופיל של $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "שמור"
   },
+  "mc_tab_modlog": {
+    "message": "לוג mod"
+  },
   "mc_tab_live_channel": {
     "message": "צופה · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "המשך"
   },
+  "mc_connecting": {
+    "message": "מתחבר…"
+  },
   "mc_no_messages": {
     "message": "עדיין אין הודעות"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "הזן לפחות פלטפורמה אחת"
+  },
+  "mc_invalid_name": {
+    "message": "שם ערוץ לא תקין — בדוק שגיאות כתיב או רווחים"
   },
   "mc_username_placeholder": {
     "message": "שם משתמש"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "קישורים לחיצים"
   },
+  "mc_settings_partial_links": {
+    "message": "קישורים חלקיים"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "הפוך לקישורים גם קישורים חלקיים ומוסווים — הפניות youtube חשופות מסוג watch?v= ודומיינים בסגנון \"site (dot) com\" שהצ'אט משתמש בהם כדי לעקוף פילטרים של קישורים."
+  },
+  "mc_settings_link_previews": {
+    "message": "תצוגה מקדימה של קישורים"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "הצג טולטיפ og:title/description במעבר עכבר"
+  },
+  "mc_settings_media_embeds": {
+    "message": "מדיה משובצת"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "הצג תמונות, gifs, וידאו וכרטיסי קישור ישר בצ'אט (בלי iframes שמתנגנים לבד)"
+  },
   "mc_settings_vi_mode": {
     "message": "מצב vi"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "חותמת זמן על כל הודעה"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfps"
   },
   "mc_settings_avatars_desc": {
     "message": "אווטארים ליד שמות המשתמשים"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "באנר הצבעה פעיל, הצבע ישירות"
   },
+  "mc_settings_yt_superchat": {
+    "message": "סופר צ'אטים"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "באנר לסופר צ'אטים של youtube עם הסכום"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "סופר סטיקרים"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "באנר לסופר סטיקרים של youtube עם הסכום"
+  },
+  "mc_settings_yt_membership": {
+    "message": "חברים חדשים"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "באנר כשמישהו מצטרף כחבר בערוץ"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "ציוני דרך של חברים"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "באנר לציוני דרך של חודשי חברות"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "חברויות במתנה"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "באנר לחברויות שניתנו במתנה, עם הכמות"
+  },
   "mc_settings_dim_timeouts": {
     "message": "עמעם הודעות timeout"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "כותרת תחזית"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "בחר מנצח"
+  },
+  "mc_pred_cancel_form": {
+    "message": "ביטול"
+  },
+  "mc_pred_load_failed": {
+    "message": "טעינת התחזיות נכשלה"
+  },
+  "mc_poll_ended": {
+    "message": "הסתיים"
+  },
+  "mc_poll_optional": {
+    "message": "אופציונלי"
+  },
+  "mc_error_no_permission": {
+    "message": "אין הרשאה"
+  },
+  "mc_error_not_logged_in": {
+    "message": "לא מחובר"
+  },
+  "mc_error_poll_active": {
+    "message": "כבר יש סקר פעיל"
   },
   "mc_pred_option1": {
     "message": "אפשרות 1 (כחול)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "שלח הודעה..."
   },
+  "mc_input_attach": {
+    "message": "צרף תמונה או וידאו"
+  },
+  "mc_input_emote_picker": {
+    "message": "בורר אימוטים"
+  },
+  "mc_input_tab_hidden": {
+    "message": "מוסתר בלשונית הזו: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "מוצג שוב בלשונית הזו: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "פרסם ב-heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "עדיין אין תגובות"
   },
+  "mc_social_thread_unavailable": {
+    "message": "השרשור לא זמין — ייתכן שהפוסט נמחק"
+  },
   "mc_social_login_first": {
     "message": "התחבר תחילה ב-heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "נשלח אל $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "כשל בחיפוש משתמש Twitch"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "לא הצלחתי להגיע ל-heatsync — נסה שוב"
+  },
+  "mc_irc_queue_full": {
+    "message": "תור השליחה מלא — ההודעה לא נשמרה"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "תיוגים — עבור ללשונית ערוץ כדי לשלוח"
+  },
+  "mc_input_no_channel": {
+    "message": "אין ערוץ — בחר לשונית למעלה"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "עקוב אחרי $USER$ כדי לשלוח dm — עקוב + שלח",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "משתמש heatsync \"$USER$\" לא נמצא",
@@ -730,6 +1087,14 @@
     "message": "ההודעה של $USER$ נמחקה",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "לא הצלחתי להצטרף ל-$CHANNEL$ — פתח את הלשונית מחדש כדי לנסות שוב",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "אין אימוג'ים טעונים"
   },
+  "mc_emote_cold_start_title": {
+    "message": "האימוטים שלך, בכל צ'אט"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "הכנס למלאי שלך את כל אימוטי 7tv, bttv ו-ffz של $CHANNEL$ — קליק אחד, ויופיעו בכל צ'אט.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "ייבא את כל האימוטים של $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "מייבא…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "יובאו $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "הייבוא נכשל"
+  },
+  "mc_emote_load_more": {
+    "message": "טען עוד"
+  },
+  "mc_emote_exact": {
+    "message": "מדויק"
+  },
   "mc_emote_in_set": {
     "message": "בסט שלך"
   },
+  "mc_feed_delete_failed": {
+    "message": "המחיקה נכשלה — נסה שוב"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "נחסם: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "חסום (לחץ לביטול)"
+  },
+  "welcome_cta_live": {
+    "message": "צפה בלייב"
+  },
+  "mc_settings_font_family": {
+    "message": "גופן"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "גופן של multichat"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "שם גופן מותאם"
+  },
+  "mc_settings_font_size": {
+    "message": "גודל גופן"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "גודל גופן הצ'אט ב-px — גרור לפי הטעם (מחליף את כפתורי F-/F+ הישנים)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "גודל אמוג'י"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "גודל אמוג'י — 1x מקורי, 2x (ברירת מחדל)/4x מגדיל אמוג'י unicode"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "פורמט זמן"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "פורמט השעון בחותמות הזמן של שורות הצ'אט"
+  },
+  "mc_settings_readable_names": {
+    "message": "תקן שמות עמומים"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "מבהיר צבעי שמות עמומים כדי שיהיו קריאים על הרקע השחור"
+  },
+  "mc_settings_platform_badges": {
+    "message": "תגי פלטפורמה"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "תוויות [T] [K] [Y] על הודעות. כשכבוי, הן נשארות עבור פלטפורמות שאתה לא נמצא בהן."
+  },
+  "mc_settings_text_badges": {
+    "message": "תגי טקסט"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "הצג תגי mod/vip/sub כצ'יפים קצרים של טקסט במקום תמונות"
+  },
+  "mc_settings_tab_counter": {
+    "message": "מספר בלשונית"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "מספר מימין לכל לשונית צ'אט. unread = הודעות שלא ראית. heat = הודעות בדקה האחרונה, כך שערוץ סוער נראה סוער גם כשאתה בתוכו"
+  },
+  "mc_settings_tab_position": {
+    "message": "מיקום סרגל הלשוניות"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "לאיזה קצה סרגל הלשוניות של multichat נצמד"
+  },
+  "mc_settings_chat_position": {
+    "message": "צד הצ'אט"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "לאיזה צד של הנגן פאנל הצ'אט נצמד — hidden מסתיר אותו (מקש \\ מחליף)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: פס הצעות"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "הצג סרטונים מוצעים בפס אנכי ליד הכותרת (youtube, עגינה שמאל/ימין בלבד) — כבוי כברירת מחדל כי הצ'אט תופס את המקום הזה"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: צ'אט בדפים שאינם לייב"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "הצג את פאנל multichat גם ב-vod, בדף הבית ובחיפוש של youtube — כבוי כברירת מחדל, כך שהפאנל מופיע רק בשידורים חיים (שיש בהם צ'אט חי)"
+  },
+  "mc_settings_message_density": {
+    "message": "צפיפות הודעות"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "ריווח שורות — compact הוא המראה הצפוף הקלאסי"
+  },
+  "mc_settings_line_height": {
+    "message": "גובה שורה"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "גובה שורת צ'אט ב-px — 18 שומר גופני bitmap על רשת הפיקסלים"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "מקסימום הודעות גלויות"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "מקסימום שורות צ'אט שנשמרות כ-DOM חי (מאגר הנתונים נשאר 1500). פחות = פחות ram בערוצים עמוסים."
+  },
+  "mc_settings_name_paints": {
+    "message": "name paints של heatsync"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "name paints מונפשים מ-heatsync — גוברים על paint של 7tv כשלצ'אטר יש את שניהם"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "paints + תגים של 7tv"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "name paints ותגי 7tv אצל צ'אטרים"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "תגי bttv"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "תגי betterttv אצל צ'אטרים"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "תגי ffz"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "תגי frankerfacez אצל צ'אטרים"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "הנפש אימוטים"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always מנגן אימוטים מונפשים תמיד. hover מציג פריימים סטטיים עד שהסמן על הודעה — חיסכון גדול ב-cpu/ram בערוצים עמוסים. never סטטי לגמרי. הודעות multichat; הבורר נשאר מונפש."
+  },
+  "mc_settings_animate_paints": {
+    "message": "הנפש paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always מנגן תמיד את התנועה ב-name paints — שלך ושל כולם. never מקפיא אותם. הולך לפי ההגדרה הזו, לא לפי הגדרת התנועה המופחתת של הדפדפן."
+  },
+  "mc_predview_title": {
+    "message": "תחזיות וסקרים"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "תגי chatterino"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "תגי chatterino אצל צ'אטרים"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "עדיפות ספק אימוטים"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "כש-7tv/bttv/ffz יש אימוט עם אותו שם, הספק הזה מנצח"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "הצג אימוטים ממלאי"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "צייר אימוטים שמגיעים ממלאי heatsync — שלך או של צ'אטר אחר. כבוי מציג את המילה הרגילה. אימוטי ערוץ ואימוטים גלובליים לא מושפעים"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "הצע אימוטים ממלאי"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "הצע את המלאי שלך בהשלמת tab ובהצעות הקלדה. כבוי משאיר רק אימוטי ערוץ וגלובליים"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "כינויי גוף"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "כינויי גוף מ-pronoundb.org בכרטיס הפרופיל + בטולטיפ במעבר עכבר (twitch בלבד)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "נוכחות אנונימית"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "אל תשדר לפלטפורמה אותות הקלדה/נוכחות"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "טוסט whisper"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "טוסט קופץ כשמגיע whisper או dm בזמן שאתה בלשונית אחרת — לחץ עליו כדי לקפוץ ל-whispers"
+  },
+  "mc_settings_notif_moment": {
+    "message": "התראות רגע"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "הצ'אט של ערוץ מתפוצץ פתאום — זינוק heat שזוהה בשרת; לחץ על השורה כדי לפתוח את הסטרים"
+  },
+  "mc_settings_evt_online": {
+    "message": "עלה ללייב"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "באנר כשערוץ עולה ללייב"
+  },
+  "mc_settings_evt_offline": {
+    "message": "ירד מהלייב"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "באנר כשערוץ יורד מהלייב (כבוי כברירת מחדל — רועש)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "החלפות משחק"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "באנר כשסטרימר מחליף משחק"
+  },
+  "mc_settings_browser_notification": {
+    "message": "התראת דפדפן"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "הצג התראת שולחן עבודה כשמישהו מתייג אותך עם @"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "הבהוב כותרת לשונית"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "פעימה בכותרת לשונית הדפדפן עם שם המתייג עד שתחזור ללשונית"
+  },
+  "mc_settings_mention_volume": {
+    "message": "עוצמת צליל תיוג"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "עוצמת הצליל בתיוג. 0 = שקט. משתמש בטונים טהורים של WebAudio, בלי קובץ שמע."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "עקוב גם ב-kick"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "כשאתה עוקב ב-heatsync, עקוב גם ב-kick אם יש חשבון kick מקושר. דורש התחברות ל-kick.com; אחרת נכנס לתור"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "עקוב גם ב-twitch"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "כשאתה עוקב ב-heatsync, עקוב גם ב-twitch אם יש חשבון twitch מקושר. דורש לשונית twitch.tv פתוחה; אחרת נכנס לתור"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "מעקב twitch עם התראות"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "מעקבי twitch בין פלטפורמות מפעילים גם התראות לייב של הערוץ"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "כפתורי סרגל mod"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "פעולות במעבר עכבר על שורות צ'אט כשאתה mod בערוץ — הכול כבוי כברירת מחדל"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "מחק את ההודעה הזו"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout דקה"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 דקות"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout שעה"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 שעות"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 ימים"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (ניקוי הודעות, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "באן קבוע"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "בטל באן למשתמש"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "אשר לפני באן"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "הצג חלון אישור לפני באן קבוע — מגן מפני לחיצה בטעות"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "סיבות באן"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "אחת בכל שורה — מוצגות כצ'יפים לבחירה בחלון הבאן; הבחירה נשלחת עם הבאן"
+  },
+  "mc_settings_automod_caps": {
+    "message": "הסתר ספאם באותיות גדולות"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "הסתר הודעות של יותר מ-10 תווים שרובן באותיות גדולות"
+  },
+  "mc_settings_automod_regex": {
+    "message": "פילטר regex"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "תבנית אחת בכל שורה, ללא הבחנה בין אותיות גדולות לקטנות — הודעות תואמות יוסתרו"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "הצג אימוטים מיניים"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "אימוטים שסומנו כתוכן מיני (≥ 70%) מוסתרים כברירת מחדל. מוצגים עם מסגרת מקווקוות כשפעיל."
+  },
+  "mc_settings_show_gore": {
+    "message": "הצג אימוטי gore"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "אימוטים שסומנו כאלימות/gore (≥ 70%) מוסתרים כברירת מחדל. מוצגים עם מסגרת מקווקוות כשפעיל."
+  },
+  "mc_settings_show_weapon": {
+    "message": "הצג אימוטים של נשק"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "אימוטים שסומנו כדימויי נשק. פעיל כברירת מחדל."
+  },
+  "mc_settings_show_drug": {
+    "message": "הצג אימוטים של סמים"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "אימוטים שסומנו כדימויי סמים. פעיל כברירת מחדל."
+  },
+  "mc_settings_show_hate": {
+    "message": "הצג אימוטים של שנאה"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "אימוטים שסומנו כדימויי שנאה. פעיל כברירת מחדל."
+  },
+  "mc_settings_hide_bots": {
+    "message": "הסתר בוטים"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "הסתר הודעות מבוטים מוכרים בצ'אט (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "הסתר !פקודות"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "הסתר הודעות שמתחילות ב-!"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "הסתר כפילויות"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "כווץ הודעות זהות רצופות (גלי ספאם) להודעה הראשונה"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "השתק מילות מפתח"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "מונח אחד בכל שורה — הודעות שמכילות אחד מהם מוסתרות. נפרד מהדגשות מילות מפתח."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "כללי סינון"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "פילטרי הדגשה/הסתרה לפי כלל — מילת מפתח, regex, משתמש, תג או msgtype; מנוהלים בעורך הכללים"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "ערוצים מומלצים"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "מקטע \"ערוצים מומלצים\" בסרגל הצד"
+  },
+  "mc_settings_hide_stories": {
+    "message": "מדף סטוריז"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "פס סטוריז בצד / למעלה"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "פרסומת prime gaming loot"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "כפתור prime loot עם אייקון כתר"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "פרסומת twitch turbo"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "קישורי קריאה לפעולה של turbo"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / באנרים עונתיים"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "באנרים עונתיים של מנוי עם גרדיאנט"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "כפתור התראות לייב"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "כפתור פעמון הרשמה להתראות"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "כפתור הפסקת מעקב"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "כפתור הפסקת מעקב (מונע לחיצות בטעות)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "כפתור הרשמה"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "כפתור הרשמה לערוץ"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "חגיגות על המסך"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "קונפטי / שכבות חגיגה על הווידאו"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "תוספים של הנגן"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "תוספי overlay שמכסים את הווידאו"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "עוצמה עם גלגלת"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "גלול מעל הנגן כדי לשנות עוצמה"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "כותרת הסטרים"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "הסתר את בלוק הכותרת מתחת לנגן"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "מספר צופים"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "הסתר את מונה הצופים החי"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "לשוניות גלויות"
+  },
+  "mc_settings_ui_locale": {
+    "message": "שפת הממשק"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "שפת הממשק של multichat — מתעדכן במלואו אחרי טעינה מחדש"
+  },
+  "mc_settings_subsystems": {
+    "message": "תתי-מערכות"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "הזנת צ'אט twitch"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "חיבור irc של twitch + הצטרפות לערוצים בתוך ה-overlay"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "הזנת צ'אט kick"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "חיבור websocket של kick + הצטרפות לערוצים בתוך ה-overlay"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "הזנת צ'אט youtube"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "מינויים לצ'אט החי של youtube בתוך ה-overlay"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "קוסמטיקה של צד שלישי"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "paints של 7tv + תגי bttv/ffz/chatterino. כבוי חוסך ram בערוצים עמוסים."
+  },
+  "mc_settings_sub_feed": {
+    "message": "פיד"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "לשונית הפיד החברתי של heatsync + זרם האירועים שלה"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whispers"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "סוקט eventsub של whispers ב-twitch + לשונית whispers"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "תיוגים"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "זיהוי תיוגים, לשונית תיוגים והתראות"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "סטטיסטיקות סטרים"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "סטטיסטיקות קצב הודעות לכל ערוץ שמזינות את דירוג ה-heat"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "כרטיסי פרופיל"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "לחץ על שם משתמש לפתיחת כרטיס הפרופיל"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "אימוטים בצ'אט המקורי"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "הצג אימוטי heatsync בתוך הצ'אט של הפלטפורמה עצמה"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "השלמת tab בצ'אט המקורי"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "השלמת אימוטים + שמות בשדה ההקלדה של הפלטפורמה עצמה"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "כפתור בורר אימוטים"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "כפתור הבורר של heatsync ליד שדה הצ'אט המקורי"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "השתלטות על הצ'אט המקורי"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "כל עוד ה-overlay מכסה את הצ'אט של twitch, מונע מ-twitch לצייר את העותק המוסתר שלו — חיסכון גדול ב-ram בערוצים עמוסים. נכשל פתוח: ה-overlay נופל → הצ'אט של twitch חוזר לבד."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "האזנת גיבוי לצ'אט kick"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "קורא את זרם הצ'אט של דף kick הנוכחי כגיבוי. לא פעיל כל עוד התעבורות הרגילות תקינות — נכנס לפעולה רק אם הן משתתקות."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "האזנת גיבוי ל-yt"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "שואל את youtube ישירות אם שתי ההזנות הרגילות שותקות 5 דקות — רשת ביטחון אחרונה, לא תעבורה חלופית."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "תור החזקות automod"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "מציג החזקות automod של twitch בתוך הצ'אט בערוצים שאתה mod בהם, עם כפתורי allow/deny — משקף את תור הבדיקה של twitch עצמו."
+  },
+  "mc_automod_label": {
+    "message": "החזקת automod"
+  },
+  "mc_automod_allow": {
+    "message": "אשר"
+  },
+  "mc_automod_deny": {
+    "message": "דחה"
+  },
+  "mc_automod_resolving": {
+    "message": "מטפל…"
+  },
+  "mc_automod_error": {
+    "message": "הפעולה נכשלה"
+  },
+  "mc_automod_relink_toast": {
+    "message": "תור automod צריך קישור מחדש ל-twitch"
+  },
+  "mc_automod_signin": {
+    "message": "התחבר ל-heatsync שוב"
+  },
+  "mc_automod_relink_action": {
+    "message": "קשר מחדש"
+  },
+  "mc_settings_diag_errors": {
+    "message": "הצג שגיאות אבחון"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "שגיאות נשמרות מקומית בלבד — אף פעם לא מועלות. המתג הזה רק מציג את פאנל האבחון למטה."
+  },
+  "mc_settings_debug_logging": {
+    "message": "לוג דיבאג"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "לוג מפורט בקונסולה מכל סקריפטי heatsync — נכנס לתוקף בטעינת הדף הבאה"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "מינימלי"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "מנחה"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "ram נמוך"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "ההעתקה נכשלה"
+  },
+  "mc_common_unknown": {
+    "message": "לא ידוע"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "מעקב twitch נחסם: נדרש 2FA — השלם ב-twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "הפסקת מעקב twitch נחסמה: נדרש 2FA — השלם ב-twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "עוקב אחרי $USER$ ב-$PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "הפסקת לעקוב אחרי $USER$ ב-$PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "סונכרנו $COUNT$ מעקבי $PLATFORM$ ממתינים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "מעקב kick בתור — יסונכרן כשתתחבר ל-kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "הפסקת מעקב kick בתור — תסונכרן כשתתחבר ל-kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "מעקב twitch בתור — יסונכרן בפעם הבאה שתפתח את twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "הפסקת מעקב twitch בתור — תסונכרן בפעם הבאה שתפתח את twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "שגיאה בהוספה: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "ההוספה נכשלה: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "התחבר ל-heatsync.org כדי להוסיף אימוטים"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "אי אפשר להוסיף את $NAME$ — התמונה לא זמינה",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "נוסף: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "החסימה נכשלה — נסה שוב"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "ביטול החסימה נכשל — נסה שוב"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "החסימה לא נשמרה בחשבון שלך — תהיה שונה במכשירים אחרים"
+  },
+  "mc_emote_blocked_count": {
+    "message": "נחסמו $COUNT$ אימוטים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "שגיאה בהסרה: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "ההסרה נכשלה: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "הוסר: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "ביטול החסימה לא נשמר בחשבון שלך — יהיה שונה במכשירים אחרים"
+  },
+  "mc_emote_unblocked": {
+    "message": "החסימה בוטלה: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "כבר עוקב אחרי $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ כבר מושתק",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "$USER$ נחסם",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "המאגר המקומי נוקה"
+  },
+  "mc_input_copied": {
+    "message": "הועתק"
+  },
+  "mc_input_delete_failed": {
+    "message": "המחיקה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete דורש לשונית ערוץ"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete דורש ערוץ twitch או kick"
+  },
+  "mc_input_emoji_copied": {
+    "message": "האמוג'י הועתק"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "followers-only כבוי"
+  },
+  "mc_input_followers_on": {
+    "message": "followers-only פעיל"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "followers-only פעיל ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers קיים רק ב-twitch — פתח ערוץ twitch"
+  },
+  "mc_input_login_first_op": {
+    "message": "התחבר קודם ל-heatsync.org כדי להשתמש ב-/op"
+  },
+  "mc_input_message_copied": {
+    "message": "ההודעה הועתקה"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ דורש לשונית ערוץ (לא live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ דורש ערוץ twitch, kick או youtube",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: אין הודעה אחרונה מ-$TARGET$ — השתמש בתפריט ההודעה",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ עדיין לא מחובר — כרגע רק /followers עובד",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ הושתק (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "השם הועתק"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "אין למי להגיב"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "ל-$USER$ אין twitch — נסה /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "אתה לא עוקב אחרי $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ לא מושתק",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ לא ב-heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "לא מוכן"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — לא sub בערוץ הזה",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "אין מה לפרסם בערימה"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "אין מה לנקות כאן"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "אין מה לפרסם"
+  },
+  "mc_input_nuke_done": {
+    "message": "נוקו $OK$/$TOTAL$ הודעות שתואמות \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke דורש לשונית ערוץ"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke דורש ערוץ twitch או kick"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: אין הודעות שתואמות \"$TERM$\" ב-$SEC$ השניות האחרונות",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "הפרסום נכשל"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "פורסם בפיד"
+  },
+  "mc_input_rate_limited": {
+    "message": "הגבלת קצב — נסה בעוד רגע"
+  },
+  "mc_input_server_unreachable": {
+    "message": "לא הצלחתי להגיע לשרת ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status דורש לשונית ערוץ (או /status <שם>)"
+  },
+  "mc_input_success": {
+    "message": "הצלחה"
+  },
+  "mc_input_thread_copied": {
+    "message": "השרשור הועתק"
+  },
+  "mc_input_unblocked": {
+    "message": "החסימה של $USER$ בוטלה",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "פקודה לא מוכרת"
+  },
+  "mc_input_unmuted": {
+    "message": "ההשתקה של $USER$ בוטלה",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "הכתובת הועתקה"
+  },
+  "mc_input_usage_ban": {
+    "message": "שימוש: /ban <משתמש> [סיבה]"
+  },
+  "mc_input_usage_delete": {
+    "message": "שימוש: /delete <מזהה-הודעה> (קליק ימני על הודעה)"
+  },
+  "mc_input_usage_dm": {
+    "message": "שימוש: /dm <משתמש> <הודעה>"
+  },
+  "mc_input_usage_follow": {
+    "message": "שימוש: /$CMD$ <משתמש>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "שימוש: /followers [דקות] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "שימוש: /mute <משתמש>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "שימוש: /nuke <מונח> [שניות] — המונח חייב 2+ תווים"
+  },
+  "mc_input_usage_op": {
+    "message": "שימוש: /op <טקסט>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight דורש לשונית ערוץ twitch"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <הודעה>"
+  },
+  "mc_input_highlight_login": {
+    "message": "התחבר קודם ל-twitch.tv"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch לא זמין — נסה שוב"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "זה דורש לשונית ערוץ twitch"
+  },
+  "mc_input_pp_login": {
+    "message": "התחבר קודם ל-twitch.tv"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "לא הצלחתי לזהות את הערוץ"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll שאלה | אפשרות1 | אפשרות2 [| … עד 5] [| שניות]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction כותרת | תוצאה1 | תוצאה2 [| … עד 10] [| שניות]"
+  },
+  "mc_input_poll_created": {
+    "message": "הסקר נוצר"
+  },
+  "mc_input_prediction_created": {
+    "message": "התחזית התחילה"
+  },
+  "mc_input_poll_ended": {
+    "message": "הסקר הסתיים"
+  },
+  "mc_input_no_active_poll": {
+    "message": "אין סקר פעיל"
+  },
+  "mc_input_no_active_pred": {
+    "message": "אין תחזית פעילה"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <נקודות>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "התחזית ננעלה"
+  },
+  "mc_input_pred_canceled": {
+    "message": "התחזית בוטלה"
+  },
+  "mc_input_voted": {
+    "message": "הצבעת: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "הימרת $POINTS$ על $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "הוכרע: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <משתמש> <טקסט>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <משתמש>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <משתמש> — מחליף חסימה"
+  },
+  "mc_input_note_failed": {
+    "message": "לא הצלחתי לשמור את ההערה"
+  },
+  "mc_input_note_saved": {
+    "message": "ההערה על $USER$ נשמרה",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "ההערה על $USER$ הוסרה",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "אין הערה על $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <הגדרה> <ערך>"
+  },
+  "mc_input_set_complex": {
+    "message": "את זו משנים בפאנל ההגדרות"
+  },
+  "mc_input_set_unknown": {
+    "message": "הגדרה לא מוכרת: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "השתמש ב-on/off עבור $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "ערך לא תקין עבור $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|ערוץ>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "הלשוניות לא זמינות"
+  },
+  "mc_input_tab_unknown": {
+    "message": "אין לשונית: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <משתמש>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <משתמש>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ קיבל vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "ה-vip של $USER$ הוסר",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <משתמש>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <משתמש>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ קיבל mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "ה-mod של $USER$ הוסר",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "ל-twitch אין api עבור $LABEL$ — kick בלבד",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch הסיר את /$CMD$ מהצ'אט — השתמש בכלי ה-mod שלו",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "ל-kick אין מצב $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ פעיל",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ כבוי",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ פעיל ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ נכשל: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "שימוש: /$LABEL$ [משך|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "לא הצלחתי לזהות את הערוץ"
+  },
+  "mc_input_highlight_sent": {
+    "message": "הודגש · נשארו $BALANCE$ bits",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "ההדגשה לא אושרה — אפשר לשלוח שוב, ה-bits יחויבו פעם אחת"
+  },
+  "mc_input_highlight_failed": {
+    "message": "ההדגשה נכשלה: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "הפקודה נכשלה: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "שימוש: /r <הודעה>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "שימוש: /timeout <משתמש> [שניות] [סיבה]"
+  },
+  "mc_input_usage_unban": {
+    "message": "שימוש: /unban <משתמש>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "שימוש: /unmute <משתמש>"
+  },
+  "mc_input_usage_w": {
+    "message": "שימוש: /w <משתמש> <הודעה>"
+  },
+  "mc_irc_join_queued": {
+    "message": "לא הצלחתי להצטרף לצ'אט של #$CHANNEL$ — בתור",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "אתה מבונן בערוץ הזה"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "הערוץ חוסם הודעות"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "הערוץ מושעה"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "הודעה כפולה — twitch דחה אותה"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "מצב emote-only — ההודעה חייבת להיות אימוטים בלבד"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "מצב followers-only — עקוב אחרי הערוץ כדי לצ'וטט"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "עקוב אחרי הערוץ קצת יותר זמן כדי לצ'וטט"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "followers-only — קודם צריך לעקוב"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "אין הרשאה לעשות את זה כאן"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "מצב צ'אט ייחודי — ההודעה חייבת להיות ייחודית"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod בודק את ההודעה שלך"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod חסם את ההודעה שלך"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — חכה רגע"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "למנויים בלבד — היה sub כדי לצ'וטט כאן"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "אתה ב-timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "אתה מבונן מ-twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch לא זיהה את הפקודה הזו"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "הערוץ דורש אימייל מאומת כדי לצ'וטט"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "הערוץ דורש טלפון מאומת כדי לצ'וטט"
+  },
+  "mc_main_age_confirm": {
+    "message": "אשר שאתה בן 18+ כדי להפעיל תוכן למבוגרים"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "אני בן 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "שיתוף החגיגה נכשל — ההודעה שלך נשלחת לצ'אט"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "שמירת $NOUN$ נכשלה — נסה שוב",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "אי אפשר היה לשלוח את ההודעה — היא עדיין מוצגת בשורת החגיגה שלך"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ לא נשמר במלאי שלך — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "הערוץ לא נשמר — שגיאת אחסון"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "רשימת ההשתקות לא נשמרה — שגיאת אחסון"
+  },
+  "mc_main_no_share_token": {
+    "message": "אין טוקן שיתוף — החגיגה נשלחה בלי טקסט, ההודעה שלך נשלחת לצ'אט"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "אין סטרים חי של youtube לניתוק"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "אחסון ההגדרות כמעט מלא — ייתכן שחלק מההעדפות לא יישמרו בין מכשירים"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "ההגדרות לא נשמרו — חריגה ממכסת האחסון"
+  },
+  "mc_main_share_unavailable": {
+    "message": "השיתוף לא זמין — ההודעה שלך נשלחת לצ'אט"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "טוקן שיתוף חסר — השתמש בצ'אט של twitch עצמו כדי לשתף"
+  },
+  "mc_mod_label_banned": {
+    "message": "באן"
+  },
+  "mc_mod_label_deleted": {
+    "message": "נמחקה"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "בוטל באן"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "אתה לא mod ב-youtube כאן"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ נכשל: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ ב-kick — twitch נכשל: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ נכשל: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ ב-twitch — kick נכשל: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "החסימה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "$USER$ נחסם",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "עוקב ב-heatsync — סנכרון בין פלטפורמות לא זמין"
+  },
+  "mc_profile_delete_failed": {
+    "message": "המחיקה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "הודעה שנמחקה"
+  },
+  "mc_profile_follow_failed": {
+    "message": "המעקב נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "עוקב אחרי $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "לא נמצאו ערוצים מקושרים עבור $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "לא רשום ב-heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "החסימה של $USER$ בוטלה",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "הפסקת לעקוב אחרי $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "הייצוא נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "ההגדרות יוצאו"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "הקובץ גדול מדי (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "הייבוא נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "ההגדרות יובאו — טוען מחדש…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "ביטוי לא תקין"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "זה לא קובץ הגדרות של heatsync"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "שגיאת פענוח"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "כבר תואם ל-$LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "הוחל $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "ה-preset נמחק"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "ל-preset צריך שם"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "preset נשמר: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "אחסון ה-presets מלא — מחק אחד קודם"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "כל ההגדרות שוחזרו לברירת מחדל"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ שוחזר לברירת מחדל",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "ערך הכלל ריק"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "כללי הסינון פגומים — העריכה מושבתת עד טעינה מחדש"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "כללי הסינון פגומים — טען מחדש את הדף לפני עריכה"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "חלון cheer נפתח"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "ערוץ לא תקין"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "אין ערוץ twitch"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "החלון הקופץ נחסם — אפשר חלונות קופצים ל-twitch.tv כדי לעשות cheer"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "ההערה לא נשמרה — שגיאת אחסון"
+  },
+  "mc_whisper_failed": {
+    "message": "ה-whisper נכשל: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "whispers של twitch לא מופעלים — קשר מחדש ב-heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "משתמש לא מוכר — שלח קודם whisper למישהו"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube חסם את השליחה (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "לא הצלחתי להגיע לצ'אט של youtube — נסה שוב"
+  },
+  "mc_yt_send_failed": {
+    "message": "השליחה ל-youtube נכשלה"
+  },
+  "mc_yt_send_loading": {
+    "message": "הצ'אט של youtube עדיין נטען — נסה שוב"
+  },
+  "mc_yt_send_login": {
+    "message": "התחבר ל-youtube כדי לשלוח"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "ל-youtube אין פעולה כזו להודעה הזו"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "ההודעה הזו כבר לא על המסך"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube לא הציע פעולות mod על ההודעה הזו"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "לא נבחרה הודעה"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "אתה לא מנחה בסטרים הזה"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "התחבר ל-youtube כדי לנהל"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube דחה את הפעולה"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube לא אישר את השליחה"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "פתח את הסטרים ב-youtube כדי לשלוח"
+  },
+  "mc_yt_send_restricted": {
+    "message": "הצ'אט ב-yt מוגבל בסטרים הזה"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — אי אפשר לצ'וטט כאן",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "ציטוט לשרשור"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "הוסף את דעתך — enter מפרסם שרשור"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "בטל ציטוט"
+  },
+  "mc_msg_quote_posted": {
+    "message": "השרשור פורסם"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "השרשור פורסם · הקישור הועתק"
+  },
+  "mc_fill_cockpit": {
+    "message": "מלא את ה-cockpit שלי"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "הוסף את הערוצים שאתה כבר עוקב אחריהם ב-twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "קורא את המעקבים שלך ב-twitch…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "התחבר עם twitch כדי לייבא את המעקבים שלך, ממוינים לפי מי בלייב"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "הקישור שלך ל-twitch פג — חבר מחדש כדי לייבא מעקבים"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "הקישור שלך ל-twitch לא כולל מעקבים — חבר מחדש כדי לייבא אותם"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "לא הצלחתי להגיע ל-twitch — נסה שוב בעוד דקה"
+  },
+  "mc_sign_in": {
+    "message": "התחבר"
+  },
+  "mc_reconnect_twitch": {
+    "message": "חבר מחדש את twitch"
+  },
+  "mc_import_from_twitch": {
+    "message": "ייבא מ-twitch"
+  },
+  "mc_add_manually": {
+    "message": "הוסף אחד ידנית"
+  },
+  "mc_no_twitch_follows": {
+    "message": "אתה עדיין לא עוקב אחרי אף אחד ב-twitch"
+  },
+  "mc_all_follows_added": {
+    "message": "כל ערוץ שאתה עוקב אחריו כבר כאן"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ להוספה · $LIVE$ בלייב עכשיו",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "מוצגים $COUNT$ הראשונים — לייב קודם",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "בחר את אלה שבלייב"
+  },
+  "mc_add_selected": {
+    "message": "הוסף נבחרים"
+  },
+  "mc_select_at_least_one": {
+    "message": "בחר לפחות ערוץ אחד"
+  },
+  "mc_nothing_added": {
+    "message": "לא נוסף כלום — הם כבר ב-cockpit שלך"
+  },
+  "mc_paste_list": {
+    "message": "הדבק רשימה"
+  },
+  "mc_paste_list_desc": {
+    "message": "שם אחד בכל שורה, או מופרדים בפסיקים"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "נוספו $ADDED$ · דולגו $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "חפש gifs..."
+  },
+  "mc_gif_searching": {
+    "message": "מחפש..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifs · hjkl לזוז · enter להוסיף",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "הגבלת קצב - חכה $SECONDS$s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "החיפוש נכשל - הקלד כדי לנסות שוב"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync בונה את ספריית ה-gifs מה שאנשים באמת מפרסמים בצ'אט. עדיין לא נאסף כלום."
+  },
+  "mc_gif_library_building": {
+    "message": "עדיין אין התאמה - הספרייה עוד מתמלאת ($COUNT$ gifs עד כה)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "לא נמצאו gifs"
+  },
+  "mc_gif_type_to_search": {
+    "message": "הקלד כדי לחפש gifs"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a חיפוש  esc סגירה"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "מונחים חסומים"

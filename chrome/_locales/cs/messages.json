@@ -29,8 +29,89 @@
   "popup_btn_popout": {
     "message": "samostatné okno"
   },
+  "popup_not_signed_in": {
+    "message": "nepřihlášen — "
+  },
+  "popup_setup_link": {
+    "message": "nastavit heatsync →"
+  },
+  "popup_errors_title": {
+    "message": "levé kliknutí: zkopírovat posledních 50 chyb / pravé: vymazat"
+  },
+  "popup_errors_count": {
+    "message": "chyby ($COUNT$)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_no_errors": {
+    "message": "žádné chyby"
+  },
+  "popup_copied": {
+    "message": "zkopírováno $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_copy_failed": {
+    "message": "kopírování selhalo"
+  },
+  "popup_cleared": {
+    "message": "vymazáno"
+  },
+  "popup_detected_prefix": {
+    "message": "na "
+  },
+  "popup_privacy_link": {
+    "message": "žádné sledování třetími stranami"
+  },
   "welcome_title": {
     "message": "vítej v heatsync"
+  },
+  "welcome_cta": {
+    "message": "otevřít twitch →"
+  },
+  "welcome_cta_fallback": {
+    "message": "otevřít twitch →"
+  },
+  "welcome_cta_kick": {
+    "message": "přihlásit se →"
+  },
+  "welcome_done_title": {
+    "message": "jsi uvnitř"
+  },
+  "welcome_import_title": {
+    "message": "přines si své emotes"
+  },
+  "welcome_import_sub": {
+    "message": "import jedním klikem z 7tv, bttv a ffz"
+  },
+  "welcome_import_locked": {
+    "message": "přihlas se níže a importuj své stávající emotes z 7tv/bttv/ffz"
+  },
+  "welcome_import_cta": {
+    "message": "importovat mé emotes →"
+  },
+  "welcome_import_importing": {
+    "message": "importuji…"
+  },
+  "welcome_import_done": {
+    "message": "importováno emotes: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "welcome_import_failed": {
+    "message": "import selhal — zkus to znovu"
+  },
+  "welcome_import_no_platform": {
+    "message": "nejdřív propoj účet twitch, kick nebo youtube →"
   },
   "welcome_privacy": {
     "message": "soukromí"
@@ -55,6 +136,9 @@
   },
   "btn_tab_emoji": {
     "message": "emoji"
+  },
+  "btn_tab_sets": {
+    "message": "sety"
   },
   "btn_rotate_title": {
     "message": "otočit pozici lišty záložek"
@@ -92,11 +176,17 @@
   "btn_toast_unblocked": {
     "message": "odblokováno"
   },
+  "btn_toast_block_failed": {
+    "message": "nepodařilo se zablokovat — zkus to znovu"
+  },
   "btn_toast_blocked": {
     "message": "zablokováno"
   },
   "btn_toast_removed": {
     "message": "odebráno"
+  },
+  "btn_toast_remove_failed": {
+    "message": "odebrání selhalo"
   },
   "btn_toast_added": {
     "message": "přidáno"
@@ -205,6 +295,31 @@
       }
     }
   },
+  "content_toast_block_failed": {
+    "message": "nepodařilo se zablokovat $NAME$ — zkus to znovu",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_unblock_failed": {
+    "message": "nepodařilo se odblokovat $NAME$ — zkus to znovu",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_toast_follow_failed": {
+    "message": "nepodařilo se sledovat — zkus to znovu"
+  },
+  "content_toast_unfollow_failed": {
+    "message": "nepodařilo se přestat sledovat — zkus to znovu"
+  },
+  "content_toast_no_chat_input": {
+    "message": "otevři twitch chat a použij mod akce"
+  },
   "content_toast_blocked": {
     "message": "$NAME$ zablokován",
     "placeholders": {
@@ -298,6 +413,111 @@
   "content_card_partner": {
     "message": "partner"
   },
+  "content_card_mutual": {
+    "message": "vzájemně"
+  },
+  "content_card_mutual_sub": {
+    "message": "vzájemný sub"
+  },
+  "content_card_sub_badge": {
+    "message": "sub"
+  },
+  "content_card_sub_badge_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_ban": {
+    "message": "ban"
+  },
+  "content_card_unban": {
+    "message": "unban"
+  },
+  "content_card_block": {
+    "message": "zablokovat"
+  },
+  "content_card_mod": {
+    "message": "mod"
+  },
+  "content_card_unmod": {
+    "message": "unmod"
+  },
+  "content_card_vip": {
+    "message": "vip"
+  },
+  "content_card_unvip": {
+    "message": "unvip"
+  },
+  "content_card_mod_tools": {
+    "message": "mod nástroje"
+  },
+  "content_card_mod_tools_no_perm": {
+    "message": "mod nástroje (bez oprávnění)"
+  },
+  "content_card_note_title": {
+    "message": "poznámka"
+  },
+  "content_card_note_placeholder": {
+    "message": "soukromá poznámka — vidíš ji jen ty"
+  },
+  "content_card_history_title": {
+    "message": "historie zpráv"
+  },
+  "content_card_loading": {
+    "message": "načítám…"
+  },
+  "content_card_history_empty": {
+    "message": "žádná historie zpráv"
+  },
+  "content_card_history_empty_channel": {
+    "message": "žádné zprávy od tohoto uživatele v $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "content_card_view_profile": {
+    "message": "zobrazit profil"
+  },
+  "content_card_follow": {
+    "message": "sledovat"
+  },
+  "content_card_unfollow": {
+    "message": "nesledovat"
+  },
+  "content_card_twitch_profile": {
+    "message": "twitch profil"
+  },
+  "content_card_clip": {
+    "message": "clip"
+  },
+  "content_card_clipping": {
+    "message": "vytvářím clip…"
+  },
+  "content_card_clip_url_copied": {
+    "message": "✓ url zkopírováno"
+  },
+  "content_card_clip_created": {
+    "message": "✓ clip vytvořen"
+  },
+  "content_card_copy_name": {
+    "message": "kopírovat jméno"
+  },
+  "content_card_mention": {
+    "message": "zmínit"
+  },
+  "content_card_dialog_label": {
+    "message": "profilová karta $USERNAME$",
+    "placeholders": {
+      "username": {
+        "content": "$1"
+      }
+    }
+  },
   "content_card_affiliate": {
     "message": "affiliate"
   },
@@ -333,6 +553,9 @@
   "mc_tab_pinned": {
     "message": "uložené"
   },
+  "mc_tab_modlog": {
+    "message": "mod log"
+  },
   "mc_tab_live_channel": {
     "message": "sleduji · $CHANNEL$",
     "placeholders": {
@@ -355,6 +578,9 @@
   "mc_resume": {
     "message": "pokračovat"
   },
+  "mc_connecting": {
+    "message": "připojuji…"
+  },
   "mc_no_messages": {
     "message": "zatím žádné zprávy"
   },
@@ -363,6 +589,9 @@
   },
   "mc_enter_platform": {
     "message": "zadej alespoň jednu platformu"
+  },
+  "mc_invalid_name": {
+    "message": "neplatný název kanálu — zkontroluj překlepy nebo mezery"
   },
   "mc_username_placeholder": {
     "message": "uživatel"
@@ -399,6 +628,24 @@
   "mc_settings_clickable_links": {
     "message": "klikatelné odkazy"
   },
+  "mc_settings_partial_links": {
+    "message": "částečné odkazy"
+  },
+  "mc_settings_partial_links_desc": {
+    "message": "odkazy i z částečných a rozbitých odkazů — holé youtube odkazy watch?v= a domény ve stylu \"site (dot) com\", kterými chaty obcházejí filtry odkazů."
+  },
+  "mc_settings_link_previews": {
+    "message": "náhledy odkazů"
+  },
+  "mc_settings_link_previews_desc": {
+    "message": "při najetí zobrazit tooltip og:title/description"
+  },
+  "mc_settings_media_embeds": {
+    "message": "média v řádku"
+  },
+  "mc_settings_media_embeds_desc": {
+    "message": "zobrazí obrázky, gify, videa a karty odkazů přímo v chatu (žádné automaticky spouštěné iframy)"
+  },
   "mc_settings_vi_mode": {
     "message": "vi režim"
   },
@@ -434,6 +681,9 @@
   },
   "mc_settings_timestamps_desc": {
     "message": "časové razítko na každé zprávě"
+  },
+  "mc_settings_show_avatars": {
+    "message": "pfps"
   },
   "mc_settings_avatars_desc": {
     "message": "avatary vedle uživatelských jmen"
@@ -504,6 +754,36 @@
   "mc_settings_poll_banner_desc": {
     "message": "banner aktivního hlasování, hlasujte přímo"
   },
+  "mc_settings_yt_superchat": {
+    "message": "super chaty"
+  },
+  "mc_settings_yt_superchat_desc": {
+    "message": "banner pro youtube super chaty s částkou"
+  },
+  "mc_settings_yt_supersticker": {
+    "message": "super stickery"
+  },
+  "mc_settings_yt_supersticker_desc": {
+    "message": "banner pro youtube super stickery s částkou"
+  },
+  "mc_settings_yt_membership": {
+    "message": "noví členové"
+  },
+  "mc_settings_yt_membership_desc": {
+    "message": "banner, když se někdo připojí jako člen kanálu"
+  },
+  "mc_settings_yt_milestone": {
+    "message": "milníky členství"
+  },
+  "mc_settings_yt_milestone_desc": {
+    "message": "banner pro milníky měsíců členství"
+  },
+  "mc_settings_yt_gift_memberships": {
+    "message": "darovaná členství"
+  },
+  "mc_settings_yt_gift_memberships_desc": {
+    "message": "banner pro darovaná členství s počtem"
+  },
   "mc_settings_dim_timeouts": {
     "message": "ztlumit timeoutnuté zprávy"
   },
@@ -548,6 +828,30 @@
   },
   "mc_pred_title_placeholder": {
     "message": "název predikce"
+  },
+  "mc_pred_pick_winner_bet": {
+    "message": "vybrat vítěze"
+  },
+  "mc_pred_cancel_form": {
+    "message": "zrušit"
+  },
+  "mc_pred_load_failed": {
+    "message": "predikce se nepodařilo načíst"
+  },
+  "mc_poll_ended": {
+    "message": "skončila"
+  },
+  "mc_poll_optional": {
+    "message": "volitelné"
+  },
+  "mc_error_no_permission": {
+    "message": "bez oprávnění"
+  },
+  "mc_error_not_logged_in": {
+    "message": "nepřihlášen"
+  },
+  "mc_error_poll_active": {
+    "message": "anketa už běží"
   },
   "mc_pred_option1": {
     "message": "možnost 1 (modrá)"
@@ -634,6 +938,28 @@
   "mc_input_send_message": {
     "message": "pošli zprávu..."
   },
+  "mc_input_attach": {
+    "message": "připojit obrázek nebo video"
+  },
+  "mc_input_emote_picker": {
+    "message": "výběr emotes"
+  },
+  "mc_input_tab_hidden": {
+    "message": "skryto v tomto tabu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_tab_unhidden": {
+    "message": "znovu zobrazeno v tomto tabu: $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_post_heatsync": {
     "message": "publikuj na heatsync..."
   },
@@ -674,6 +1000,9 @@
   "mc_social_no_replies": {
     "message": "zatím žádné odpovědi"
   },
+  "mc_social_thread_unavailable": {
+    "message": "vlákno nedostupné — příspěvek mohl být odstraněn"
+  },
   "mc_social_login_first": {
     "message": "nejdřív se přihlas na heatsync.org"
   },
@@ -712,8 +1041,36 @@
       }
     }
   },
+  "mc_whisper_sent": {
+    "message": "odesláno uživateli $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_resolve_failed": {
     "message": "nepodařilo se najít Twitch uživatele"
+  },
+  "mc_whisper_hs_unreachable": {
+    "message": "heatsync nedostupný — zkus to znovu"
+  },
+  "mc_irc_queue_full": {
+    "message": "fronta odesílání je plná — zpráva neuložena"
+  },
+  "mc_input_mentions_readonly": {
+    "message": "zmínky — pro odeslání přepni na tab kanálu"
+  },
+  "mc_input_no_channel": {
+    "message": "žádný kanál — vyber tab nahoře"
+  },
+  "mc_whisper_follow_to_dm": {
+    "message": "sleduj $USER$ a napiš mu — sledovat + odeslat",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   },
   "mc_whisper_hs_not_found": {
     "message": "heatsync uživatel \"$USER$\" nenalezen",
@@ -730,6 +1087,14 @@
     "message": "zpráva od $USER$ smazána",
     "placeholders": {
       "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_join_failed": {
+    "message": "nepodařilo se připojit k $CHANNEL$ — znovu otevři tab",
+    "placeholders": {
+      "channel": {
         "content": "$1"
       }
     }
@@ -754,11 +1119,2035 @@
   "mc_emote_no_loaded": {
     "message": "žádné načtené emotky"
   },
+  "mc_emote_cold_start_title": {
+    "message": "tvoje emotes v každém chatu"
+  },
+  "mc_emote_cold_start_sub": {
+    "message": "stáhni všechny emotes z 7tv, bttv a ffz z $CHANNEL$ do svého inventáře — jeden klik, zobrazí se v každém chatu.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_import": {
+    "message": "importovat všechny emotes z $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_importing": {
+    "message": "importuji…"
+  },
+  "mc_emote_cold_start_imported": {
+    "message": "importováno $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_cold_start_failed": {
+    "message": "import selhal"
+  },
+  "mc_emote_load_more": {
+    "message": "načíst další"
+  },
+  "mc_emote_exact": {
+    "message": "přesně"
+  },
   "mc_emote_in_set": {
     "message": "v tvém setu"
   },
+  "mc_feed_delete_failed": {
+    "message": "smazání selhalo — zkus to znovu"
+  },
+  "mc_emote_blocked_toast": {
+    "message": "zablokováno: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_blocked": {
     "message": "zablokováno (klikni pro odblokování)"
+  },
+  "welcome_cta_live": {
+    "message": "sledovat živě"
+  },
+  "mc_settings_font_family": {
+    "message": "písmo"
+  },
+  "mc_settings_font_family_desc": {
+    "message": "písmo multichatu"
+  },
+  "mc_settings_custom_font_name": {
+    "message": "název vlastního písma"
+  },
+  "mc_settings_font_size": {
+    "message": "velikost písma"
+  },
+  "mc_settings_font_size_desc": {
+    "message": "velikost písma chatu v px — táhni podle chuti (nahrazuje staré tlačítka F-/F+)"
+  },
+  "mc_settings_emoji_size": {
+    "message": "velikost emoji"
+  },
+  "mc_settings_emoji_size_desc": {
+    "message": "velikost emoji — 1x nativní, 2x (výchozí)/4x škáluje unicode emoji"
+  },
+  "mc_settings_timestamp_format": {
+    "message": "formát času"
+  },
+  "mc_settings_timestamp_format_desc": {
+    "message": "formát hodin pro časové značky řádků chatu"
+  },
+  "mc_settings_readable_names": {
+    "message": "opravit tmavá jména"
+  },
+  "mc_settings_readable_names_desc": {
+    "message": "zesvětlí tmavé barvy jmen, aby byly čitelné na černém pozadí"
+  },
+  "mc_settings_platform_badges": {
+    "message": "odznaky platforem"
+  },
+  "mc_settings_platform_badges_desc": {
+    "message": "štítky [T] [K] [Y] u zpráv. vypnuto je ponechá u platforem, na kterých nejsi."
+  },
+  "mc_settings_text_badges": {
+    "message": "textové odznaky"
+  },
+  "mc_settings_text_badges_desc": {
+    "message": "zobrazí mod/vip/sub odznaky jako stručné textové čipy místo obrázků"
+  },
+  "mc_settings_tab_counter": {
+    "message": "číslo tabu"
+  },
+  "mc_settings_tab_counter_desc": {
+    "message": "číslo vpravo u každého tabu chatu. unread = zprávy, které jsi neviděl. heat = zprávy za poslední minutu, takže rušný kanál vypadá rušně, i když v něm jsi"
+  },
+  "mc_settings_tab_position": {
+    "message": "pozice lišty tabů"
+  },
+  "mc_settings_tab_position_desc": {
+    "message": "ke které straně se lišta tabů multichatu přichytí"
+  },
+  "mc_settings_chat_position": {
+    "message": "strana ukotvení chatu"
+  },
+  "mc_settings_chat_position_desc": {
+    "message": "ke které straně přehrávače se panel chatu přichytí — hidden ho schová (klávesa \\ přepíná)"
+  },
+  "mc_settings_yt_suggestions": {
+    "message": "youtube: pruh návrhů"
+  },
+  "mc_settings_yt_suggestions_desc": {
+    "message": "zobrazí navrhovaná videa ve svislém pruhu vedle názvu (youtube, jen ukotvení vlevo/vpravo) — ve výchozím stavu vypnuto, protože chat to místo zabere zpět"
+  },
+  "mc_settings_yt_chat_non_live": {
+    "message": "youtube: chat na stránkách mimo živé"
+  },
+  "mc_settings_yt_chat_non_live_desc": {
+    "message": "zobrazí panel multichatu i na youtube VOD, hlavní stránce a ve vyhledávání — ve výchozím stavu vypnuto, panel se tak objeví jen u livestreamů (kde je živý chat)"
+  },
+  "mc_settings_message_density": {
+    "message": "hustota zpráv"
+  },
+  "mc_settings_message_density_desc": {
+    "message": "odsazení řádků — compact je klasický těsný vzhled"
+  },
+  "mc_settings_line_height": {
+    "message": "výška řádku"
+  },
+  "mc_settings_line_height_desc": {
+    "message": "výška řádku chatu v px — 18 drží bitmapová písma na pixelové mřížce"
+  },
+  "mc_settings_max_visible_messages": {
+    "message": "max. viditelných zpráv"
+  },
+  "mc_settings_max_visible_messages_desc": {
+    "message": "max. řádků chatu držených jako živé DOM (datový buffer zůstává 1500). méně = méně ram na rušných kanálech."
+  },
+  "mc_settings_name_paints": {
+    "message": "heatsync barvy jmen"
+  },
+  "mc_settings_name_paints_desc": {
+    "message": "animované barvy jmen z heatsync — mají přednost před 7tv paintem, když má chatter oboje"
+  },
+  "mc_settings_seventv_paints": {
+    "message": "7tv paints + odznaky"
+  },
+  "mc_settings_seventv_paints_desc": {
+    "message": "barvy jmen a 7tv odznaky u chatterů"
+  },
+  "mc_settings_bttv_badges": {
+    "message": "bttv odznaky"
+  },
+  "mc_settings_bttv_badges_desc": {
+    "message": "betterttv odznaky u chatterů"
+  },
+  "mc_settings_ffz_badges": {
+    "message": "ffz odznaky"
+  },
+  "mc_settings_ffz_badges_desc": {
+    "message": "frankerfacez odznaky u chatterů"
+  },
+  "mc_settings_animate_emotes": {
+    "message": "animovat emotes"
+  },
+  "mc_settings_animate_emotes_desc": {
+    "message": "always přehrává animované emotes pořád. hover ukazuje statické snímky, dokud kurzor není na zprávě — velká úspora cpu/ram na rušných kanálech. never je úplně statické. týká se zpráv multichatu; výběr zůstává animovaný."
+  },
+  "mc_settings_animate_paints": {
+    "message": "animovat paints"
+  },
+  "mc_settings_animate_paints_desc": {
+    "message": "always přehrává pohyb v barvách jmen pořád — tvých i všech ostatních. never je zmrazí. řídí se tímto nastavením, ne příznakem reduced-motion tvého prohlížeče."
+  },
+  "mc_predview_title": {
+    "message": "predikce a ankety"
+  },
+  "mc_settings_chatterino_badges": {
+    "message": "chatterino odznaky"
+  },
+  "mc_settings_chatterino_badges_desc": {
+    "message": "chatterino odznaky u chatterů"
+  },
+  "mc_settings_emote_provider_priority": {
+    "message": "priorita zdrojů emotes"
+  },
+  "mc_settings_emote_provider_priority_desc": {
+    "message": "když mají 7tv/bttv/ffz emote se stejným názvem, vyhraje tento zdroj"
+  },
+  "mc_settings_render_inventory_emotes": {
+    "message": "zobrazovat emotes z inventáře"
+  },
+  "mc_settings_render_inventory_emotes_desc": {
+    "message": "vykreslí emotes z heatsync inventáře — tvého nebo jiného chattera. vypnuto místo toho ukáže holé slovo. kanálové a globální emotes se nemění"
+  },
+  "mc_settings_suggest_inventory_emotes": {
+    "message": "navrhovat emotes z inventáře"
+  },
+  "mc_settings_suggest_inventory_emotes_desc": {
+    "message": "nabídne tvůj inventář v tab-doplňování a návrzích při psaní. vypnuto nechá jen kanálové a globální emotes"
+  },
+  "mc_settings_show_pronouns": {
+    "message": "zájmena"
+  },
+  "mc_settings_show_pronouns_desc": {
+    "message": "zájmena z pronoundb.org na profilové kartě + v tooltipu (jen twitch)"
+  },
+  "mc_settings_anon_chat": {
+    "message": "anonymní přítomnost"
+  },
+  "mc_settings_anon_chat_desc": {
+    "message": "nevysílej platformě signály psaní/přítomnosti"
+  },
+  "mc_settings_whisper_toast": {
+    "message": "toast pro whisper"
+  },
+  "mc_settings_whisper_toast_desc": {
+    "message": "vyskakovací toast, když přijde whisper nebo dm a jsi na jiném tabu — kliknutím skočíš na whispery"
+  },
+  "mc_settings_notif_moment": {
+    "message": "upozornění na momenty"
+  },
+  "mc_settings_notif_moment_desc": {
+    "message": "chat kanálu se náhle rozjede — heat spike zjištěný na serveru; kliknutím na řádek otevřeš stream"
+  },
+  "mc_settings_evt_online": {
+    "message": "šel živě"
+  },
+  "mc_settings_evt_online_desc": {
+    "message": "banner, když kanál začne vysílat živě"
+  },
+  "mc_settings_evt_offline": {
+    "message": "šel offline"
+  },
+  "mc_settings_evt_offline_desc": {
+    "message": "banner, když kanál skončí (ve výchozím stavu vypnuto — hlučné)"
+  },
+  "mc_settings_evt_game_switch": {
+    "message": "změny hry"
+  },
+  "mc_settings_evt_game_switch_desc": {
+    "message": "banner, když streamer změní hru"
+  },
+  "mc_settings_browser_notification": {
+    "message": "oznámení prohlížeče"
+  },
+  "mc_settings_browser_notification_desc": {
+    "message": "zobrazí oznámení na ploše, když tě někdo @zmíní"
+  },
+  "mc_settings_tab_title_flash": {
+    "message": "blikání názvu tabu"
+  },
+  "mc_settings_tab_title_flash_desc": {
+    "message": "pulzuje název tabu prohlížeče se jménem zmiňujícího, dokud tab nezaměříš"
+  },
+  "mc_settings_mention_volume": {
+    "message": "hlasitost zmínky"
+  },
+  "mc_settings_mention_volume_desc": {
+    "message": "hlasitost zvukového pingu při zmínce. 0 = ticho. používá čisté tóny WebAudio, žádný soubor v balíčku."
+  },
+  "mc_settings_cross_follow_kick": {
+    "message": "sledovat i na kick"
+  },
+  "mc_settings_cross_follow_kick_desc": {
+    "message": "když začneš sledovat na heatsync, sleduj i na kick, pokud má propojený kick účet. potřebuje přihlášení na kick.com; jinak se zařadí do fronty"
+  },
+  "mc_settings_cross_follow_twitch": {
+    "message": "sledovat i na twitch"
+  },
+  "mc_settings_cross_follow_twitch_desc": {
+    "message": "když začneš sledovat na heatsync, sleduj i na twitch, pokud má propojený twitch účet. potřebuje otevřený tab twitch.tv; jinak se zařadí do fronty"
+  },
+  "mc_settings_cross_follow_twitch_notify": {
+    "message": "twitch sledování s oznámeními"
+  },
+  "mc_settings_cross_follow_twitch_notify_desc": {
+    "message": "sledování na twitch napříč platformami zapne i oznámení o živém vysílání kanálu"
+  },
+  "mc_settings_mod_toolbar_buttons": {
+    "message": "tlačítka mod lišty"
+  },
+  "mc_settings_mod_toolbar_buttons_desc": {
+    "message": "akce při najetí na řádky chatu, když kanál modeuješ — ve výchozím stavu vše vypnuto"
+  },
+  "mc_settings_mod_btn_delete": {
+    "message": "smazat tuto zprávu"
+  },
+  "mc_settings_mod_btn_timeout_1m": {
+    "message": "timeout 1 minuta"
+  },
+  "mc_settings_mod_btn_timeout_10m": {
+    "message": "timeout 10 minut"
+  },
+  "mc_settings_mod_btn_timeout_1h": {
+    "message": "timeout 1 hodina"
+  },
+  "mc_settings_mod_btn_timeout_24h": {
+    "message": "timeout 24 hodin"
+  },
+  "mc_settings_mod_btn_timeout_7d": {
+    "message": "timeout 7 dní"
+  },
+  "mc_settings_mod_btn_purge": {
+    "message": "purge (smazat zprávy, 1s)"
+  },
+  "mc_settings_mod_btn_ban": {
+    "message": "trvalý ban"
+  },
+  "mc_settings_mod_btn_unban": {
+    "message": "unban uživatele"
+  },
+  "mc_settings_confirm_ban": {
+    "message": "potvrdit před banem"
+  },
+  "mc_settings_confirm_ban_desc": {
+    "message": "zobrazí potvrzovací dialog před trvalým banem — chrání před překlikem"
+  },
+  "mc_settings_ban_reasons": {
+    "message": "důvody banu"
+  },
+  "mc_settings_ban_reasons_desc": {
+    "message": "jeden na řádek — zobrazí se jako volitelné čipy v dialogu banu; volba se odešle s banem"
+  },
+  "mc_settings_automod_caps": {
+    "message": "skrýt spam velkými písmeny"
+  },
+  "mc_settings_automod_caps_desc": {
+    "message": "skryje zprávy delší než 10 znaků, které jsou většinou velkými písmeny"
+  },
+  "mc_settings_automod_regex": {
+    "message": "regex filtr"
+  },
+  "mc_settings_automod_regex_desc": {
+    "message": "jeden vzor na řádek, bez ohledu na velikost písmen — odpovídající zprávy se skryjí"
+  },
+  "mc_settings_automod_regex_placeholder": {
+    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
+  },
+  "mc_settings_show_sexual": {
+    "message": "zobrazit sexuální emotes"
+  },
+  "mc_settings_show_sexual_desc": {
+    "message": "emotes označené jako sexuální obsah (≥ 70%) jsou ve výchozím stavu skryté. po zapnutí se ukážou s čárkovaným okrajem."
+  },
+  "mc_settings_show_gore": {
+    "message": "zobrazit gore emotes"
+  },
+  "mc_settings_show_gore_desc": {
+    "message": "emotes označené jako násilí/gore (≥ 70%) jsou ve výchozím stavu skryté. po zapnutí se ukážou s čárkovaným okrajem."
+  },
+  "mc_settings_show_weapon": {
+    "message": "zobrazit emotes se zbraněmi"
+  },
+  "mc_settings_show_weapon_desc": {
+    "message": "emotes označené jako zbraně. ve výchozím stavu zapnuto."
+  },
+  "mc_settings_show_drug": {
+    "message": "zobrazit emotes s drogami"
+  },
+  "mc_settings_show_drug_desc": {
+    "message": "emotes označené jako drogy. ve výchozím stavu zapnuto."
+  },
+  "mc_settings_show_hate": {
+    "message": "zobrazit emotes s nenávistí"
+  },
+  "mc_settings_show_hate_desc": {
+    "message": "emotes označené jako nenávist. ve výchozím stavu zapnuto."
+  },
+  "mc_settings_hide_bots": {
+    "message": "skrýt boty"
+  },
+  "mc_settings_hide_bots_desc": {
+    "message": "skryje zprávy známých chat botů (nightbot, streamelements, fossabot…)"
+  },
+  "mc_settings_hide_commands": {
+    "message": "skrýt !commands"
+  },
+  "mc_settings_hide_commands_desc": {
+    "message": "skryje zprávy začínající !"
+  },
+  "mc_settings_hide_duplicates": {
+    "message": "skrýt duplicity"
+  },
+  "mc_settings_hide_duplicates_desc": {
+    "message": "sloučí stejné po sobě jdoucí zprávy (spamové vlny) na první"
+  },
+  "mc_settings_mute_keywords": {
+    "message": "ztlumit klíčová slova"
+  },
+  "mc_settings_mute_keywords_desc": {
+    "message": "jeden výraz na řádek — zprávy, které nějaký obsahují, se skryjí. odlišné od zvýraznění klíčových slov."
+  },
+  "mc_settings_mute_keywords_placeholder": {
+    "message": "spoiler\n!drops"
+  },
+  "mc_settings_filter_rules": {
+    "message": "pravidla filtrů"
+  },
+  "mc_settings_filter_rules_desc": {
+    "message": "zvýraznění/skrytí podle pravidel — keyword, regex, user, badge nebo msgtype; spravuje se v editoru pravidel"
+  },
+  "mc_settings_hide_recommended": {
+    "message": "doporučené kanály"
+  },
+  "mc_settings_hide_recommended_desc": {
+    "message": "sekce \"Recommended Channels\" v postranním panelu"
+  },
+  "mc_settings_hide_stories": {
+    "message": "pás stories"
+  },
+  "mc_settings_hide_stories_desc": {
+    "message": "pás stories v postranním panelu / nahoře"
+  },
+  "mc_settings_hide_prime_loot": {
+    "message": "reklama na prime gaming loot"
+  },
+  "mc_settings_hide_prime_loot_desc": {
+    "message": "tlačítko prime loot s ikonou koruny"
+  },
+  "mc_settings_hide_turbo": {
+    "message": "reklama na twitch turbo"
+  },
+  "mc_settings_hide_turbo_desc": {
+    "message": "odkazy cta na turbo"
+  },
+  "mc_settings_hide_subtember": {
+    "message": "subtember / sezónní bannery"
+  },
+  "mc_settings_hide_subtember_desc": {
+    "message": "sezónní bannery předplatného s přechodem"
+  },
+  "mc_settings_hide_live_notif_btn": {
+    "message": "přepínač oznámení o živém vysílání"
+  },
+  "mc_settings_hide_live_notif_btn_desc": {
+    "message": "tlačítko zvonku pro odběr oznámení"
+  },
+  "mc_settings_hide_unfollow_btn": {
+    "message": "tlačítko nesledovat"
+  },
+  "mc_settings_hide_unfollow_btn_desc": {
+    "message": "tlačítko nesledovat (brání překlikům)"
+  },
+  "mc_settings_hide_subscribe_btn": {
+    "message": "tlačítko odebírat"
+  },
+  "mc_settings_hide_subscribe_btn_desc": {
+    "message": "tlačítko odběru kanálu"
+  },
+  "mc_settings_hide_celebrations": {
+    "message": "oslavy na obrazovce"
+  },
+  "mc_settings_hide_celebrations_desc": {
+    "message": "konfety / oslavné překryvy přes video"
+  },
+  "mc_settings_hide_player_ext": {
+    "message": "rozšíření přehrávače"
+  },
+  "mc_settings_hide_player_ext_desc": {
+    "message": "překryvná rozšíření zakrývající video"
+  },
+  "mc_settings_scroll_wheel_volume": {
+    "message": "hlasitost kolečkem"
+  },
+  "mc_settings_scroll_wheel_volume_desc": {
+    "message": "točením nad přehrávačem upravíš hlasitost"
+  },
+  "mc_settings_hide_stream_title": {
+    "message": "název streamu"
+  },
+  "mc_settings_hide_stream_title_desc": {
+    "message": "skryje blok s názvem streamu pod přehrávačem"
+  },
+  "mc_settings_hide_viewer_count": {
+    "message": "počet diváků"
+  },
+  "mc_settings_hide_viewer_count_desc": {
+    "message": "skryje živý počítadlo diváků"
+  },
+  "mc_settings_visible_tabs": {
+    "message": "viditelné taby"
+  },
+  "mc_settings_ui_locale": {
+    "message": "jazyk rozhraní"
+  },
+  "mc_settings_ui_locale_desc": {
+    "message": "jazyk ui multichatu — po načtení se přepíše celé"
+  },
+  "mc_settings_subsystems": {
+    "message": "subsystémy"
+  },
+  "mc_settings_sub_irc_twitch": {
+    "message": "twitch chat feed"
+  },
+  "mc_settings_sub_irc_twitch_desc": {
+    "message": "twitch irc připojení + vstupy do kanálů uvnitř overlaye"
+  },
+  "mc_settings_sub_chat_kick": {
+    "message": "kick chat feed"
+  },
+  "mc_settings_sub_chat_kick_desc": {
+    "message": "kick websocket připojení + vstupy do kanálů uvnitř overlaye"
+  },
+  "mc_settings_sub_chat_youtube": {
+    "message": "youtube chat feed"
+  },
+  "mc_settings_sub_chat_youtube_desc": {
+    "message": "odběry youtube živého chatu uvnitř overlaye"
+  },
+  "mc_settings_sub_cosmetics": {
+    "message": "kosmetika třetích stran"
+  },
+  "mc_settings_sub_cosmetics_desc": {
+    "message": "7tv paints + bttv/ffz/chatterino odznaky. vypnuto šetří ram na rušných kanálech."
+  },
+  "mc_settings_sub_feed": {
+    "message": "feed"
+  },
+  "mc_settings_sub_feed_desc": {
+    "message": "tab sociálního feedu heatsync + jeho stream událostí"
+  },
+  "mc_settings_sub_whispers": {
+    "message": "whispery"
+  },
+  "mc_settings_sub_whispers_desc": {
+    "message": "twitch whisper eventsub socket + tab whisperů"
+  },
+  "mc_settings_sub_mentions": {
+    "message": "zmínky"
+  },
+  "mc_settings_sub_mentions_desc": {
+    "message": "detekce zmínek, tab zmínek a pingy"
+  },
+  "mc_settings_sub_stream_stats": {
+    "message": "statistiky streamu"
+  },
+  "mc_settings_sub_stream_stats_desc": {
+    "message": "statistiky rychlosti zpráv po kanálech pro heat žebříček"
+  },
+  "mc_settings_sub_profile_cards": {
+    "message": "profilové karty"
+  },
+  "mc_settings_sub_profile_cards_desc": {
+    "message": "kliknutí na uživatelské jméno otevře popup profilové karty"
+  },
+  "mc_settings_sub_emote_render": {
+    "message": "emotes v nativním chatu"
+  },
+  "mc_settings_sub_emote_render_desc": {
+    "message": "vykreslí heatsync emotes v chatu samotné platformy"
+  },
+  "mc_settings_sub_tab_complete": {
+    "message": "tab-doplňování v nativním chatu"
+  },
+  "mc_settings_sub_tab_complete_desc": {
+    "message": "doplňování emotes + jmen ve vstupu samotné platformy"
+  },
+  "mc_settings_sub_picker_button": {
+    "message": "tlačítko výběru emotes"
+  },
+  "mc_settings_sub_picker_button_desc": {
+    "message": "tlačítko výběru heatsync vedle nativního vstupu chatu"
+  },
+  "mc_settings_sub_native_takeover": {
+    "message": "převzetí nativního chatu"
+  },
+  "mc_settings_sub_native_takeover_desc": {
+    "message": "zatímco overlay zakrývá twitch chat, twitch přestane vykreslovat svou skrytou kopii — velká úspora ram na rušných kanálech. selže bezpečně: overlay padne → twitch chat se vrátí sám."
+  },
+  "mc_settings_sub_kick_native_tap": {
+    "message": "záložní odposlech kick chatu"
+  },
+  "mc_settings_sub_kick_native_tap_desc": {
+    "message": "čte jako zálohu vlastní chat stream aktuální stránky kick. nečinné, dokud jsou běžné přenosy zdravé — zasáhne, jen když ztichnou."
+  },
+  "mc_settings_sub_yt_innertube_tap": {
+    "message": "záložní odposlech yt"
+  },
+  "mc_settings_sub_yt_innertube_tap_desc": {
+    "message": "dotazuje youtube přímo, pokud oba běžné feedy 5 minut mlčí — poslední záchrana, ne náhradní přenos."
+  },
+  "mc_settings_sub_automod_queue": {
+    "message": "fronta zadržených automod"
+  },
+  "mc_settings_sub_automod_queue_desc": {
+    "message": "zobrazí zadržené zprávy twitch automodu přímo v kanálech, které modeuješ, s tlačítky allow/deny — zrcadlí vlastní frontu twitch."
+  },
+  "mc_automod_label": {
+    "message": "automod hold"
+  },
+  "mc_automod_allow": {
+    "message": "povolit"
+  },
+  "mc_automod_deny": {
+    "message": "zamítnout"
+  },
+  "mc_automod_resolving": {
+    "message": "řeším…"
+  },
+  "mc_automod_error": {
+    "message": "akce selhala"
+  },
+  "mc_automod_relink_toast": {
+    "message": "fronta automodu potřebuje nové propojení twitch"
+  },
+  "mc_automod_signin": {
+    "message": "přihlas se znovu k heatsync"
+  },
+  "mc_automod_relink_action": {
+    "message": "propojit znovu"
+  },
+  "mc_settings_diag_errors": {
+    "message": "zobrazit diagnostické chyby"
+  },
+  "mc_settings_diag_errors_desc": {
+    "message": "chyby se zachytávají jen lokálně — nikdy se nenahrávají. tento přepínač jen zobrazí diagnostický panel níže."
+  },
+  "mc_settings_debug_logging": {
+    "message": "debug logování"
+  },
+  "mc_settings_debug_logging_desc": {
+    "message": "podrobné logování do konzole ze všech skriptů heatsync — projeví se při dalším načtení stránky"
+  },
+  "mc_settings_preset_minimal": {
+    "message": "minimal"
+  },
+  "mc_settings_preset_power_user": {
+    "message": "power user"
+  },
+  "mc_settings_preset_moderator": {
+    "message": "moderátor"
+  },
+  "mc_settings_preset_low_ram": {
+    "message": "málo ram"
+  },
+  "mc_chatlogs_copy_failed": {
+    "message": "kopírování selhalo"
+  },
+  "mc_common_unknown": {
+    "message": "neznámé"
+  },
+  "mc_crossfollow_2fa_follow": {
+    "message": "sledování na twitch zablokováno: vyžaduje 2FA — dokonči na twitch.tv"
+  },
+  "mc_crossfollow_2fa_unfollow": {
+    "message": "zrušení sledování na twitch zablokováno: vyžaduje 2FA — dokonči na twitch.tv"
+  },
+  "mc_crossfollow_drain_one_follow": {
+    "message": "sleduješ $USER$ na $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_one_unfollow": {
+    "message": "přestal jsi sledovat $USER$ na $PLATFORM$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_drain_synced": {
+    "message": "synchronizováno čekajících sledování na $PLATFORM$: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "platform": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_crossfollow_kick_queued_follow": {
+    "message": "sledování na kick ve frontě — synchronizuje se po přihlášení na kick.com"
+  },
+  "mc_crossfollow_kick_queued_unfollow": {
+    "message": "zrušení sledování na kick ve frontě — synchronizuje se po přihlášení na kick.com"
+  },
+  "mc_crossfollow_twitch_queued_follow": {
+    "message": "sledování na twitch ve frontě — synchronizuje se při příštím otevření twitch.tv"
+  },
+  "mc_crossfollow_twitch_queued_unfollow": {
+    "message": "zrušení sledování na twitch ve frontě — synchronizuje se při příštím otevření twitch.tv"
+  },
+  "mc_emote_add_error": {
+    "message": "chyba při přidání: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_failed": {
+    "message": "přidání selhalo: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_login": {
+    "message": "přihlas se na heatsync.org a přidávej emotes"
+  },
+  "mc_emote_add_unavailable": {
+    "message": "nelze přidat $NAME$ — obrázek nedostupný",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_added": {
+    "message": "přidáno: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_block_failed": {
+    "message": "nepodařilo se zablokovat — zkus to znovu"
+  },
+  "mc_emote_unblock_failed": {
+    "message": "nepodařilo se odblokovat — zkus to znovu"
+  },
+  "mc_emote_block_sync_failed": {
+    "message": "blok se neuložil do účtu — na jiných zařízeních bude jiný"
+  },
+  "mc_emote_blocked_count": {
+    "message": "zablokováno emotes: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_error": {
+    "message": "chyba při odebrání: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_remove_failed": {
+    "message": "odebrání selhalo: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_removed": {
+    "message": "odebráno: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_unblock_sync_failed": {
+    "message": "odblokování se neuložilo do účtu — na jiných zařízeních bude jiné"
+  },
+  "mc_emote_unblocked": {
+    "message": "odblokováno: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_following": {
+    "message": "$USER$ už sleduješ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_already_muted": {
+    "message": "$USER$ už je ztlumen",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_blocked": {
+    "message": "zablokován $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_buffer_cleared": {
+    "message": "lokální buffer vymazán"
+  },
+  "mc_input_copied": {
+    "message": "zkopírováno"
+  },
+  "mc_input_delete_failed": {
+    "message": "smazání selhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_delete_needs_channel_tab": {
+    "message": "/delete potřebuje tab kanálu"
+  },
+  "mc_input_delete_needs_platform_channel": {
+    "message": "/delete potřebuje kanál twitch nebo kick"
+  },
+  "mc_input_emoji_copied": {
+    "message": "emoji zkopírováno"
+  },
+  "mc_input_followers_failed": {
+    "message": "/followers selhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_off": {
+    "message": "followers-only vypnuto"
+  },
+  "mc_input_followers_on": {
+    "message": "followers-only zapnuto"
+  },
+  "mc_input_followers_on_mins": {
+    "message": "followers-only zapnuto ($MINS$m)",
+    "placeholders": {
+      "mins": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_followers_twitch_only": {
+    "message": "/followers je jen pro twitch — otevři kanál na twitch"
+  },
+  "mc_input_login_first_op": {
+    "message": "nejdřív se přihlas na heatsync.org, abys mohl použít /op"
+  },
+  "mc_input_message_copied": {
+    "message": "zpráva zkopírována"
+  },
+  "mc_input_mod_needs_channel_tab": {
+    "message": "/$CMD$ potřebuje tab kanálu (ne live/mentions/posts)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mod_needs_platform_channel": {
+    "message": "/$CMD$ potřebuje kanál twitch, kick nebo youtube",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_yt_mod_no_recent_msg": {
+    "message": "youtube: žádná nedávná zpráva od $TARGET$ — použij menu zprávy",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_not_wired": {
+    "message": "/$CMD$ ještě není zapojeno — zatím funguje jen /followers",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_muted": {
+    "message": "$USER$ ztlumen (24h)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_name_copied": {
+    "message": "jméno zkopírováno"
+  },
+  "mc_input_no_one_to_reply": {
+    "message": "není komu odpovědět"
+  },
+  "mc_input_no_twitch_try_dm": {
+    "message": "$USER$ nemá twitch — zkus /dm",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_following": {
+    "message": "$USER$ nesleduješ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_muted": {
+    "message": "$USER$ není ztlumen",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_on_heatsync": {
+    "message": "$USER$ není na heatsync",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_not_ready": {
+    "message": "nepřipraveno"
+  },
+  "mc_input_not_subbed": {
+    "message": "$NAME$ — není sub tohoto kanálu",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_nothing_postable": {
+    "message": "v zásobníku není nic k odeslání"
+  },
+  "mc_input_nothing_to_clear": {
+    "message": "tady není co mazat"
+  },
+  "mc_input_nothing_to_post": {
+    "message": "není co odeslat"
+  },
+  "mc_input_nuke_done": {
+    "message": "nuke $OK$/$TOTAL$ shod pro \"$TERM$\"",
+    "placeholders": {
+      "ok": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "term": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_input_nuke_needs_channel_tab": {
+    "message": "/nuke potřebuje tab kanálu"
+  },
+  "mc_input_nuke_needs_platform_channel": {
+    "message": "/nuke potřebuje kanál twitch nebo kick"
+  },
+  "mc_input_nuke_no_matches": {
+    "message": "/nuke: žádné zprávy s \"$TERM$\" za posledních $SEC$ s",
+    "placeholders": {
+      "term": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_post_failed": {
+    "message": "odeslání selhalo"
+  },
+  "mc_input_posted_to_feed": {
+    "message": "odesláno do feedu"
+  },
+  "mc_input_rate_limited": {
+    "message": "omezení rychlosti — zkus to za chvíli"
+  },
+  "mc_input_server_unreachable": {
+    "message": "server nedostupný ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_status_needs_channel": {
+    "message": "/status potřebuje tab kanálu (nebo /status <jméno>)"
+  },
+  "mc_input_success": {
+    "message": "hotovo"
+  },
+  "mc_input_thread_copied": {
+    "message": "vlákno zkopírováno"
+  },
+  "mc_input_unblocked": {
+    "message": "odblokován $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unknown_command": {
+    "message": "neznámý příkaz"
+  },
+  "mc_input_unmuted": {
+    "message": "$USER$ už není ztlumen",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_url_copied": {
+    "message": "url zkopírováno"
+  },
+  "mc_input_usage_ban": {
+    "message": "použití: /ban <user> [důvod]"
+  },
+  "mc_input_usage_delete": {
+    "message": "použití: /delete <message-id> (pravé kliknutí na zprávu)"
+  },
+  "mc_input_usage_dm": {
+    "message": "použití: /dm <user> <zpráva>"
+  },
+  "mc_input_usage_follow": {
+    "message": "použití: /$CMD$ <user>",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_followers": {
+    "message": "použití: /followers [min] | off"
+  },
+  "mc_input_usage_mute": {
+    "message": "použití: /mute <user>"
+  },
+  "mc_input_usage_nuke": {
+    "message": "použití: /nuke <výraz> [sekundy] — výraz musí mít 2+ znaky"
+  },
+  "mc_input_usage_op": {
+    "message": "použití: /op <text>"
+  },
+  "mc_input_highlight_needs_twitch": {
+    "message": "/highlight potřebuje tab kanálu twitch"
+  },
+  "mc_input_usage_highlight": {
+    "message": "/highlight <zpráva>"
+  },
+  "mc_input_highlight_login": {
+    "message": "nejdřív se přihlas na twitch.tv"
+  },
+  "mc_input_twitch_unreachable": {
+    "message": "twitch nedostupný — zkus to znovu"
+  },
+  "mc_input_pp_needs_twitch": {
+    "message": "tohle potřebuje tab kanálu twitch"
+  },
+  "mc_input_pp_login": {
+    "message": "nejdřív se přihlas na twitch.tv"
+  },
+  "mc_input_pp_no_channel": {
+    "message": "kanál se nepodařilo určit"
+  },
+  "mc_input_usage_poll": {
+    "message": "/poll otázka | volba1 | volba2 [| … až 5] [| sek]"
+  },
+  "mc_input_usage_prediction": {
+    "message": "/prediction název | výsledek1 | výsledek2 [| … až 10] [| sek]"
+  },
+  "mc_input_poll_created": {
+    "message": "anketa vytvořena"
+  },
+  "mc_input_prediction_created": {
+    "message": "predikce zahájena"
+  },
+  "mc_input_poll_ended": {
+    "message": "anketa skončila"
+  },
+  "mc_input_no_active_poll": {
+    "message": "žádná aktivní anketa"
+  },
+  "mc_input_no_active_pred": {
+    "message": "žádná aktivní predikce"
+  },
+  "mc_input_usage_vote": {
+    "message": "/vote <n>"
+  },
+  "mc_input_usage_bet": {
+    "message": "/bet <n> <body>"
+  },
+  "mc_input_usage_resolvepred": {
+    "message": "/resolvepred <n>"
+  },
+  "mc_input_pred_locked": {
+    "message": "predikce uzamčena"
+  },
+  "mc_input_pred_canceled": {
+    "message": "predikce zrušena"
+  },
+  "mc_input_voted": {
+    "message": "hlasováno: $CHOICE$",
+    "placeholders": {
+      "choice": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_placed": {
+    "message": "vsazeno $POINTS$ na $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_pred_resolved": {
+    "message": "vyhodnoceno: $OUTCOME$",
+    "placeholders": {
+      "outcome": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_note": {
+    "message": "/note <user> <text>"
+  },
+  "mc_input_usage_delnote": {
+    "message": "/delnote <user>"
+  },
+  "mc_input_usage_block": {
+    "message": "/block <user> — přepíná blok"
+  },
+  "mc_input_note_failed": {
+    "message": "poznámku se nepodařilo uložit"
+  },
+  "mc_input_note_saved": {
+    "message": "poznámka pro $USER$ uložena",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_deleted": {
+    "message": "poznámka pro $USER$ odstraněna",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_note_none": {
+    "message": "žádná poznámka pro $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_set": {
+    "message": "/set <nastavení> <hodnota>"
+  },
+  "mc_input_set_complex": {
+    "message": "tohle změň v panelu nastavení"
+  },
+  "mc_input_set_unknown": {
+    "message": "neznámé nastavení: $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_bool": {
+    "message": "pro $KEY$ použij on/off",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_set_done": {
+    "message": "$KEY$ = $VAL$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "val": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_set_invalid": {
+    "message": "neplatná hodnota pro $KEY$",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_tab": {
+    "message": "/tab <live|feed|mentions|whispers|settings|kanál>"
+  },
+  "mc_input_tab_unavailable": {
+    "message": "taby nedostupné"
+  },
+  "mc_input_tab_unknown": {
+    "message": "žádný tab: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_vip": {
+    "message": "/vip <user>"
+  },
+  "mc_input_usage_unvip": {
+    "message": "/unvip <user>"
+  },
+  "mc_input_vip_done": {
+    "message": "$USER$ je nově vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unvip_done": {
+    "message": "$USER$ už není vip",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_mod": {
+    "message": "/mod <user>"
+  },
+  "mc_input_usage_unmod": {
+    "message": "/unmod <user>"
+  },
+  "mc_input_mod_done": {
+    "message": "$USER$ je nově mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_unmod_done": {
+    "message": "$USER$ už není mod",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_twitch_unsupported": {
+    "message": "twitch nemá api pro $LABEL$ — jen kick",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_twitch_removed": {
+    "message": "twitch odebral /$CMD$ z chatu — použij jeho vlastní mod nástroje",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_kick_unsupported": {
+    "message": "kick nemá režim $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on": {
+    "message": "$LABEL$ zapnuto",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_off": {
+    "message": "$LABEL$ vypnuto",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_mode_on_dur": {
+    "message": "$LABEL$ zapnuto ($DETAIL$)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_mode_failed": {
+    "message": "$LABEL$ selhalo: $DETAIL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "detail": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_usage_mode": {
+    "message": "použití: /$LABEL$ [doba|off]",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_no_channel": {
+    "message": "kanál se nepodařilo určit"
+  },
+  "mc_input_highlight_sent": {
+    "message": "zvýrazněno · zbývá $BALANCE$ bits",
+    "placeholders": {
+      "balance": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_highlight_unconfirmed": {
+    "message": "highlight nepotvrzen — opětovné odeslání je bezpečné, bits se strhnou jednou"
+  },
+  "mc_input_highlight_failed": {
+    "message": "highlight selhal: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_command_failed": {
+    "message": "příkaz selhal: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_r": {
+    "message": "použití: /r <zpráva>"
+  },
+  "mc_input_usage_timeout": {
+    "message": "použití: /timeout <user> [sekundy] [důvod]"
+  },
+  "mc_input_usage_unban": {
+    "message": "použití: /unban <user>"
+  },
+  "mc_input_usage_unmute": {
+    "message": "použití: /unmute <user>"
+  },
+  "mc_input_usage_w": {
+    "message": "použití: /w <user> <zpráva>"
+  },
+  "mc_irc_join_queued": {
+    "message": "nepodařilo se připojit k chatu #$CHANNEL$ — ve frontě",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_irc_notice_banned": {
+    "message": "v tomto kanálu máš ban"
+  },
+  "mc_irc_notice_channel_blocked": {
+    "message": "kanál blokuje zprávy"
+  },
+  "mc_irc_notice_channel_suspended": {
+    "message": "kanál je pozastaven"
+  },
+  "mc_irc_notice_duplicate": {
+    "message": "duplicitní zpráva — twitch ji odmítl"
+  },
+  "mc_irc_notice_emoteonly": {
+    "message": "režim jen emotes — zpráva musí být jen z emotes"
+  },
+  "mc_irc_notice_followersonly": {
+    "message": "režim followers-only — sleduj kanál, abys mohl psát"
+  },
+  "mc_irc_notice_followersonly_followed": {
+    "message": "sleduj kanál o něco déle, abys mohl psát"
+  },
+  "mc_irc_notice_followersonly_zero": {
+    "message": "followers-only — nejdřív musíš sledovat"
+  },
+  "mc_irc_notice_no_permission": {
+    "message": "tady na to nemáš oprávnění"
+  },
+  "mc_irc_notice_r9k": {
+    "message": "režim unikátního chatu — zpráva musí být unikátní"
+  },
+  "mc_irc_notice_rejected": {
+    "message": "AutoMod kontroluje tvou zprávu"
+  },
+  "mc_irc_notice_rejected_mandatory": {
+    "message": "AutoMod zablokoval tvou zprávu"
+  },
+  "mc_irc_notice_slowmode": {
+    "message": "slow mode — chvilku počkej"
+  },
+  "mc_irc_notice_subsonly": {
+    "message": "jen pro subscribery — staň se subem a piš tady"
+  },
+  "mc_irc_notice_timedout": {
+    "message": "máš timeout"
+  },
+  "mc_irc_notice_tos_ban": {
+    "message": "máš ban na twitch"
+  },
+  "mc_irc_notice_unrecognized_cmd": {
+    "message": "twitch ten příkaz nepoznal"
+  },
+  "mc_irc_notice_verified_email": {
+    "message": "kanál vyžaduje ověřený e-mail pro chat"
+  },
+  "mc_irc_notice_verified_phone": {
+    "message": "kanál vyžaduje ověřený telefon pro chat"
+  },
+  "mc_main_age_confirm": {
+    "message": "potvrď, že ti je 18+, a zapni obsah pro dospělé"
+  },
+  "mc_main_age_confirm_ok": {
+    "message": "je mi 18+"
+  },
+  "mc_main_celebration_share_failed": {
+    "message": "sdílení oslavy selhalo — posílám tvou zprávu do chatu"
+  },
+  "mc_main_cw_save_failed": {
+    "message": "nepodařilo se uložit $NOUN$ — zkus to znovu",
+    "placeholders": {
+      "noun": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_message_not_sent": {
+    "message": "zprávu se nepodařilo odeslat — pořád je vidět v řádku oslavy"
+  },
+  "mc_main_emote_add_failed": {
+    "message": "$EMOTE$ se neuložil do tvého inventáře — $REASON$",
+    "placeholders": {
+      "emote": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_config_save_failed": {
+    "message": "kanál neuložen — chyba úložiště"
+  },
+  "mc_main_mute_save_failed": {
+    "message": "seznam ztlumených neuložen — chyba úložiště"
+  },
+  "mc_main_no_share_token": {
+    "message": "žádný sdílecí token — oslava odeslána bez textu, tvá zpráva jde do chatu"
+  },
+  "mc_main_no_yt_stream": {
+    "message": "žádný živý youtube stream k odpojení"
+  },
+  "mc_main_quota_near_limit": {
+    "message": "úložiště nastavení je skoro plné — některé předvolby se nemusí uložit napříč zařízeními"
+  },
+  "mc_main_settings_save_failed": {
+    "message": "nastavení se nepodařilo uložit — překročena kvóta úložiště"
+  },
+  "mc_main_share_unavailable": {
+    "message": "sdílení nedostupné — posílám tvou zprávu do chatu"
+  },
+  "mc_notifs_share_token_missing": {
+    "message": "chybí sdílecí token — sdílej přes vlastní chat twitch"
+  },
+  "mc_mod_label_banned": {
+    "message": "zabanován"
+  },
+  "mc_mod_label_deleted": {
+    "message": "smazáno"
+  },
+  "mc_mod_label_timed_out": {
+    "message": "timeout $SEC$ s",
+    "placeholders": {
+      "sec": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mod_label_unbanned": {
+    "message": "unban"
+  },
+  "mc_modtoolbar_not_youtube_mod": {
+    "message": "tady nejsi youtube mod"
+  },
+  "mc_modtoolbar_result_both": {
+    "message": "$LABEL$ $TARGET$ (twitch+kick)",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_both_failed": {
+    "message": "$LABEL$ selhalo: twitch $TERR$ / kick $KERR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "terr": {
+        "content": "$2"
+      },
+      "kerr": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_kick_twitch_failed": {
+    "message": "$LABEL$ $TARGET$ na kick — twitch selhal: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_failed": {
+    "message": "$LABEL$ selhalo: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_single_ok": {
+    "message": "$LABEL$ $TARGET$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modtoolbar_result_twitch_kick_failed": {
+    "message": "$LABEL$ $TARGET$ na twitch — kick selhal: $ERROR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "error": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_profile_block_failed": {
+    "message": "blokování selhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_blocked": {
+    "message": "zablokován $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_cross_sync_unavailable": {
+    "message": "sleduješ na heatsync — synchronizace napříč platformami nedostupná"
+  },
+  "mc_profile_delete_failed": {
+    "message": "smazání selhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_deleted_message": {
+    "message": "smazaná zpráva"
+  },
+  "mc_profile_follow_failed": {
+    "message": "sledování selhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_following": {
+    "message": "sleduješ $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_no_linked_channels": {
+    "message": "pro $USER$ nenalezeny žádné propojené kanály",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_not_registered": {
+    "message": "není registrován na heatsync"
+  },
+  "mc_profile_unblocked": {
+    "message": "odblokován $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_profile_unfollowed": {
+    "message": "přestal jsi sledovat $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_failed": {
+    "message": "export selhal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_export_ok": {
+    "message": "nastavení exportováno"
+  },
+  "mc_settingsui_file_too_large": {
+    "message": "soubor je příliš velký (>2MB)"
+  },
+  "mc_settingsui_import_failed": {
+    "message": "import selhal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_import_ok": {
+    "message": "nastavení importováno — načítám znovu…"
+  },
+  "mc_settingsui_invalid_expression": {
+    "message": "neplatný výraz"
+  },
+  "mc_settingsui_not_heatsync_file": {
+    "message": "není to soubor nastavení heatsync"
+  },
+  "mc_settingsui_parse_error": {
+    "message": "chyba parsování"
+  },
+  "mc_settingsui_preset_already_matching": {
+    "message": "už odpovídá $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_preset_applied": {
+    "message": "použito $LABEL$ — $CHANGES$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "changes": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_settingsui_preset_deleted": {
+    "message": "preset smazán"
+  },
+  "mc_settingsui_preset_needs_name": {
+    "message": "preset potřebuje jméno"
+  },
+  "mc_settingsui_preset_saved": {
+    "message": "preset uložen: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_presets_storage_full": {
+    "message": "úložiště presetů je plné — nejdřív jeden smaž"
+  },
+  "mc_settingsui_reset_all": {
+    "message": "všechna nastavení vrácena na výchozí"
+  },
+  "mc_settingsui_reset_category": {
+    "message": "$CAT$ vráceno na výchozí",
+    "placeholders": {
+      "cat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settingsui_rule_value_empty": {
+    "message": "hodnota pravidla je prázdná"
+  },
+  "mc_settingsui_rules_corrupted": {
+    "message": "pravidla filtrů poškozena — úpravy vypnuty do znovunačtení"
+  },
+  "mc_settingsui_rules_corrupted_reload": {
+    "message": "pravidla filtrů poškozena — před úpravou načti stránku znovu"
+  },
+  "mc_twitchapi_cheer_opened": {
+    "message": "okno cheer otevřeno"
+  },
+  "mc_twitchapi_invalid_channel": {
+    "message": "neplatný kanál"
+  },
+  "mc_twitchapi_no_channel": {
+    "message": "žádný kanál twitch"
+  },
+  "mc_twitchapi_popup_blocked": {
+    "message": "popup zablokován — povol popupy pro twitch.tv a cheeruj"
+  },
+  "mc_usernotes_save_failed": {
+    "message": "poznámka neuložena — chyba úložiště"
+  },
+  "mc_whisper_failed": {
+    "message": "whisper selhal: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_whisper_not_enabled": {
+    "message": "twitch whispery nejsou zapnuté — propoj znovu na heatsync.org"
+  },
+  "mc_whisper_unknown_user": {
+    "message": "neznámý uživatel — nejdřív někomu pošli whisper"
+  },
+  "mc_yt_send_blocked": {
+    "message": "youtube zablokoval odeslání (slow mode?)"
+  },
+  "mc_yt_send_bridge_timeout": {
+    "message": "nepodařilo se spojit s youtube chatem — zkus to znovu"
+  },
+  "mc_yt_send_failed": {
+    "message": "odeslání na youtube selhalo"
+  },
+  "mc_yt_send_loading": {
+    "message": "youtube chat se ještě načítá — zkus to znovu"
+  },
+  "mc_yt_send_login": {
+    "message": "pro odeslání se přihlas na youtube"
+  },
+  "mc_yt_mod_action_unmapped": {
+    "message": "youtube pro tuto zprávu takovou akci nemá"
+  },
+  "mc_yt_mod_message_not_found": {
+    "message": "ta zpráva už není na obrazovce"
+  },
+  "mc_yt_mod_no_context_menu": {
+    "message": "youtube u té zprávy nenabídl mod akce"
+  },
+  "mc_yt_mod_no_message": {
+    "message": "není vybrána zpráva"
+  },
+  "mc_yt_mod_not_moderator": {
+    "message": "nejsi moderátor tohoto streamu"
+  },
+  "mc_yt_mod_not_signed_in": {
+    "message": "pro moderování se přihlas na youtube"
+  },
+  "mc_yt_mod_rejected": {
+    "message": "youtube akci odmítl"
+  },
+  "mc_yt_send_not_confirmed": {
+    "message": "youtube odeslání nepotvrdil"
+  },
+  "mc_yt_send_open_stream": {
+    "message": "pro odeslání otevři youtube stream"
+  },
+  "mc_yt_send_restricted": {
+    "message": "yt chat je pro tento stream omezený"
+  },
+  "mc_yt_send_restricted_reason": {
+    "message": "yt: $REASON$ — tady nelze chatovat",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_msg_quote_thread": {
+    "message": "citovat do vlákna"
+  },
+  "mc_msg_quote_placeholder": {
+    "message": "přidej svůj názor — enter odešle vlákno"
+  },
+  "mc_msg_quote_cancel": {
+    "message": "zrušit citaci"
+  },
+  "mc_msg_quote_posted": {
+    "message": "vlákno odesláno"
+  },
+  "mc_msg_quote_posted_copied": {
+    "message": "vlákno odesláno · odkaz zkopírován"
+  },
+  "mc_fill_cockpit": {
+    "message": "naplnit můj cockpit"
+  },
+  "mc_fill_cockpit_desc": {
+    "message": "přidej kanály, které už sleduješ na twitch"
+  },
+  "mc_fill_cockpit_loading": {
+    "message": "čtu tvá sledování na twitch…"
+  },
+  "mc_fill_cockpit_login": {
+    "message": "přihlas se přes twitch a importuj sledování, seřazená podle toho, kdo je živě"
+  },
+  "mc_fill_cockpit_relink": {
+    "message": "propojení s twitch vypršelo — připoj znovu a importuj sledování"
+  },
+  "mc_fill_cockpit_relink_scope": {
+    "message": "tvé propojení s twitch nezahrnuje sledování — připoj znovu a importuj je"
+  },
+  "mc_fill_cockpit_unavailable": {
+    "message": "twitch nedostupný — zkus to za minutu"
+  },
+  "mc_sign_in": {
+    "message": "přihlásit se"
+  },
+  "mc_reconnect_twitch": {
+    "message": "znovu připojit twitch"
+  },
+  "mc_import_from_twitch": {
+    "message": "importovat z twitch"
+  },
+  "mc_add_manually": {
+    "message": "přidat ručně"
+  },
+  "mc_no_twitch_follows": {
+    "message": "na twitch zatím nikoho nesleduješ"
+  },
+  "mc_all_follows_added": {
+    "message": "každý kanál, který sleduješ, už tu je"
+  },
+  "mc_follows_found": {
+    "message": "$COUNT$ k přidání · $LIVE$ právě živě",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      },
+      "live": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "mc_channels_truncated": {
+    "message": "zobrazeno prvních $COUNT$ — živé první",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2000"
+      }
+    }
+  },
+  "mc_select_all_live": {
+    "message": "vybrat živé"
+  },
+  "mc_add_selected": {
+    "message": "přidat vybrané"
+  },
+  "mc_select_at_least_one": {
+    "message": "vyber aspoň jeden kanál"
+  },
+  "mc_nothing_added": {
+    "message": "nic nepřidáno — ty už jsou v tvém cockpitu"
+  },
+  "mc_paste_list": {
+    "message": "vložit seznam"
+  },
+  "mc_paste_list_desc": {
+    "message": "jedno jméno na řádek, nebo oddělená čárkami"
+  },
+  "mc_paste_list_ph": {
+    "message": "xqc\nforsen\nsodapoppin"
+  },
+  "mc_paste_list_result": {
+    "message": "přidáno $ADDED$ · přeskočeno $SKIPPED$",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "9"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "2"
+      }
+    }
+  },
+  "mc_gif_search_placeholder": {
+    "message": "hledat gify..."
+  },
+  "mc_gif_searching": {
+    "message": "hledám..."
+  },
+  "mc_gif_status": {
+    "message": "$COUNT$ gifů · hjkl pohyb · enter vložit",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_rate_limited": {
+    "message": "omezení rychlosti - počkej $SECONDS$ s",
+    "placeholders": {
+      "seconds": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_failed": {
+    "message": "hledání selhalo - piš a zkus znovu"
+  },
+  "mc_gif_library_empty": {
+    "message": "heatsync staví knihovnu gifů z toho, co lidé opravdu posílají do chatu. zatím nic nesebráno."
+  },
+  "mc_gif_library_building": {
+    "message": "zatím žádná shoda - knihovna se ještě plní (zatím $COUNT$ gifů)",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_gif_no_results": {
+    "message": "žádné gify nenalezeny"
+  },
+  "mc_gif_type_to_search": {
+    "message": "piš a hledej gify"
+  },
+  "mc_gif_mode_normal": {
+    "message": "-- normal --  i/a hledat  esc zavřít"
+  },
+  "mc_gif_mode_insert": {
+    "message": "-- insert --  esc normal"
   },
   "mc_bt_title": {
     "message": "blokované výrazy"

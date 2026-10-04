@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "hindi umubra — subukan ulit"
+  },
+  "mc_paint_hide": {
+    "message": "itago ang paint ni $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "ipakita ang paint ni $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

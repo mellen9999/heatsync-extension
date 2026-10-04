@@ -1863,6 +1863,20 @@ const SETTINGS = [
     noReset: true,
   },
   {
+    // Paint uids whose name paint this viewer hides. Same key + shape as
+    // heatsync.org, managed from the row menu (hide/show <user>'s paint).
+    key: 'hiddenPaintUsers',
+    type: 'json',
+    default: [],
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    label: 'hidden paint users',
+    tip: 'users whose name paint you have hidden — toggle via right-click on their name',
+    control: 'custom',
+    maxLen: 3000,
+  },
+  {
     key: 'customPresets',
     type: 'json',
     default: [],

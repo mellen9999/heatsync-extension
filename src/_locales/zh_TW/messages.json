@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "沒成功 — 請重試"
+  },
+  "mc_paint_hide": {
+    "message": "隱藏 $USER$ 的名字塗色",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "顯示 $USER$ 的名字塗色",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

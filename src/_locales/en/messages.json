@@ -3622,5 +3622,21 @@
   },
   "mc_feed_action_failed": {
     "message": "that didn’t work — try again"
+  },
+  "mc_paint_hide": {
+    "message": "hide $USER$’s paint",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "show $USER$’s paint",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

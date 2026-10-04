@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "لم ينجح ذلك — حاول مجددًا"
+  },
+  "mc_paint_hide": {
+    "message": "إخفاء لون اسم $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "إظهار لون اسم $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

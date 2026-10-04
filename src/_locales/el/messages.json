@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "δεν λειτούργησε — δοκίμασε ξανά"
+  },
+  "mc_paint_hide": {
+    "message": "απόκρυψη χρώματος του $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "εμφάνιση χρώματος του $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

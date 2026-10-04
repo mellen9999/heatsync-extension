@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "не стана — опитай пак"
+  },
+  "mc_paint_hide": {
+    "message": "скрий боята на $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "покажи боята на $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

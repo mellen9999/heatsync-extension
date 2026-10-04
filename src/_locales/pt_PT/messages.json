@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "não resultou — tenta de novo"
+  },
+  "mc_paint_hide": {
+    "message": "ocultar a cor de $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "mostrar a cor de $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

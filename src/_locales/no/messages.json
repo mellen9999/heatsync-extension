@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "det virket ikke — prøv igjen"
+  },
+  "mc_paint_hide": {
+    "message": "skjul $USER$s farge",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "vis $USER$s farge",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

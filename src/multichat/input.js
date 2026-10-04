@@ -2609,6 +2609,16 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (gateAtBoot('profile-cards') !== false) {
     items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
   }
+  // Hide / show this chatter's heatsync name paint — only for a row whose name
+  // actually has one (a hidden paint stays in the cache, so "show" survives).
+  const paintUid = typeof hsPaintUidOfMsg === 'function' ? hsPaintUidOfMsg(msg?._hsMsg) : null
+  if (paintUid) {
+    const hidden = isHsPaintHiddenForUser(paintUid)
+    items.push({
+      label: t(hidden ? 'mc_paint_show' : 'mc_paint_hide', [username]),
+      fn: () => toggleHsPaintHidden(paintUid),
+    })
+  }
   items.push({
     label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
     fn: () => hsNoteOpenEditor(username, platform, x, y),

@@ -1230,5 +1230,21 @@
   },
   "mc_feed_action_failed": {
     "message": "यह नहीं हुआ — फिर कोशिश करें"
+  },
+  "mc_paint_hide": {
+    "message": "$USER$ का पेंट छुपाएँ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "$USER$ का पेंट दिखाएँ",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
   }
 }

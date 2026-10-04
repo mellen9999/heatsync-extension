@@ -513,9 +513,49 @@ function reinjectHsPaintSheet() {
 
 // ── public cache API ─────────────────────────────────────────────────────────
 
+// ── per-user paint hide (viewer-side) ───────────────────────────────────────
+// Same key + shape as heatsync.org's hiddenPaintUsers (synced array of paint
+// uids — twitch/heatsync ids as-is, kick_/yt_ namespaced), so the list
+// follows the account through the ui-state channel. Gated inside
+// getHsPaintClass/getHsPaintSpec — the only two reads any renderer makes — so
+// a hidden user's name falls back to its platform colour everywhere at once.
+
+function isHsPaintHiddenForUser(userId) {
+  if (!userId || typeof getSetting !== 'function') return false
+  const hidden = getSetting('hiddenPaintUsers')
+  return Array.isArray(hidden) && hidden.includes(userId)
+}
+
+/** Flip the hide for `userId`; returns the new hidden state. */
+function toggleHsPaintHidden(userId) {
+  if (!userId || typeof getSetting !== 'function') return false
+  const stored = getSetting('hiddenPaintUsers')
+  const list = Array.isArray(stored) ? [...stored] : []
+  const at = list.indexOf(userId)
+  if (at === -1) list.push(userId)
+  else list.splice(at, 1)
+  setSetting('hiddenPaintUsers', list)
+  // Strip or re-apply on the rows already on screen (a uid with no readable
+  // paint is stripped by the in-place pass), instead of waiting for new rows.
+  if (typeof updateHsPaintsInPlace === 'function') updateHsPaintsInPlace([userId])
+  return at === -1
+}
+
+/** The paint uid a chat row's name is (or would be) painted with: the
+ * twitch-space uid first, the kick_/yt_ namespaced one as fallback — the same
+ * precedence buildMessageDiv renders with. Only uids that have a paint. */
+function hsPaintUidOfMsg(m) {
+  if (!m) return null
+  const own = (m.platform === 'kick' ? m._uidTwitch : m.userId) || ''
+  for (const uid of [own, m.hsPaintUid]) {
+    if (uid && hsPaintCache.get(uid)?.spec) return uid
+  }
+  return null
+}
+
 /** @returns {string} the `hsp-<hash>` class to add to the element, or '' if none. */
 function getHsPaintClass(userId) {
-  if (!hsPaintsEnabled()) return ''
+  if (!hsPaintsEnabled() || isHsPaintHiddenForUser(userId)) return ''
   const entry = hsPaintCache.get(userId)
   if (!entry?.hash) return ''
   return `hsp-${entry.hash}`
@@ -523,7 +563,7 @@ function getHsPaintClass(userId) {
 
 /** @returns {object|null} the raw validated spec (for paintNeedsSpans checks). */
 function getHsPaintSpec(userId) {
-  if (!hsPaintsEnabled()) return null
+  if (!hsPaintsEnabled() || isHsPaintHiddenForUser(userId)) return null
   return hsPaintCache.get(userId)?.spec ?? null
 }
 
@@ -1335,4 +1375,7 @@ export {
   setHsPlusEntry,
   sweepHsPaintedNames,
   unmountAllHsFillLayers,
+  hsPaintUidOfMsg,
+  isHsPaintHiddenForUser,
+  toggleHsPaintHidden,
 }

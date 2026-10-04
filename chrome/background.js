@@ -2992,6 +2992,7 @@ async function fetchBTTVChannelEmotes(channelName, channelId = null, platform = 
         ytEmotes.map((e) => ({
           name: e.code,
           url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+          animated: e.animated === true,
           source: 'bttv',
           os: bttvOversize(e),
           hash: e.id,
@@ -3025,6 +3026,7 @@ async function fetchBTTVChannelEmotes(channelName, channelId = null, platform = 
       emotes.map((e) => ({
         name: e.code,
         url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+        animated: e.animated === true,
         source: 'bttv',
         hash: e.id,
         os: bttvOversize(e),
@@ -4322,6 +4324,7 @@ async function fetchBTTVEmotes() {
       emotes.map((e) => ({
         name: e.code,
         url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+        animated: e.animated === true,
         source: 'bttv',
         hash: e.id,
         os: bttvOversize(e),
@@ -5337,6 +5340,7 @@ function handleBTTVSocketEvent(name, data) {
       const newEmote = {
         name: String(e.code).slice(0, 100),
         url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+        animated: e.animated === true,
         source: 'bttv',
         hash: e.id,
         os: bttvOversize(e),
@@ -11335,6 +11339,7 @@ async function handleMessage(message, sender, sendResponse) {
               if (collected[e.code]) continue // 7TV wins on collision
               collected[e.code] = {
                 url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+                animated: e.animated === true,
                 source: 'bttv',
                 state: 'global',
                 zeroWidth: false,

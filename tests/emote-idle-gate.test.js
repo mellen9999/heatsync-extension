@@ -100,10 +100,18 @@ describe('deriveStaticEmoteSrc — mode-independent static-url derivation', () =
     )
   })
 
-  test('BTTV: /emote/{id}/{size} → /emote/{id}/static/{size}', () => {
-    expect(mod.deriveStaticEmoteSrc('https://cdn.betterttv.net/emote/abc123/3x.webp')).toBe(
+  test('BTTV: an animated emote → /emote/{id}/static/{size}', () => {
+    expect(mod.deriveStaticEmoteSrc('https://cdn.betterttv.net/emote/abc123/3x.webp', true)).toBe(
       'https://cdn.betterttv.net/emote/abc123/static/3x.webp',
     )
+  })
+
+  // Same trap as 7TV: bttv serves /static/ only for animated emotes, and the
+  // heatsync.org retry of a static one 404s too — a broken img, not just traffic.
+  test('BTTV: a static or unflagged emote keeps its own url (no 404 /static/)', () => {
+    const url = 'https://cdn.betterttv.net/emote/abc123/3x.webp'
+    expect(mod.deriveStaticEmoteSrc(url, false)).toBe(url)
+    expect(mod.deriveStaticEmoteSrc(url)).toBe(url)
   })
 
   test('Kick: routes through the emote proxy with static=1', () => {

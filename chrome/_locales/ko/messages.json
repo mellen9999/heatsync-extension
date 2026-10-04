@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "고정"
+  },
+  "mc_pin_menu_pin": {
+    "message": "메시지 고정"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "고정 해제"
+  },
+  "mc_pin_unpin_all": {
+    "message": "모두에게서 고정 해제"
+  },
+  "mc_pin_dismiss": {
+    "message": "이 고정 숨기기"
+  },
+  "mc_pin_confirm": {
+    "message": "모두에게서 고정을 해제할까요? y / enter, esc 취소"
+  },
+  "mc_pin_done": {
+    "message": "고정됨"
+  },
+  "mc_pin_gone": {
+    "message": "고정 해제됨"
+  },
+  "mc_pin_failed": {
+    "message": "고정하지 못했어요"
+  },
+  "mc_pin_denied": {
+    "message": "여기선 mods만 고정할 수 있어요"
+  },
+  "mc_pin_retry": {
+    "message": "아직 보관소에 없습니다 — 잠시 후 다시 시도하세요"
   }
 }

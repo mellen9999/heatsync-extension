@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "置頂"
+  },
+  "mc_pin_menu_pin": {
+    "message": "置頂訊息"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "取消置頂"
+  },
+  "mc_pin_unpin_all": {
+    "message": "為所有人取消置頂"
+  },
+  "mc_pin_dismiss": {
+    "message": "隱藏此置頂"
+  },
+  "mc_pin_confirm": {
+    "message": "為所有人取消置頂？y / enter 確認，esc 取消"
+  },
+  "mc_pin_done": {
+    "message": "已置頂"
+  },
+  "mc_pin_gone": {
+    "message": "已取消置頂"
+  },
+  "mc_pin_failed": {
+    "message": "置頂失敗"
+  },
+  "mc_pin_denied": {
+    "message": "這裡只有 mods 可以置頂"
+  },
+  "mc_pin_retry": {
+    "message": "尚未存檔 — 請稍後再試"
   }
 }

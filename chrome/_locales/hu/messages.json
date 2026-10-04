@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "kitűzve"
+  },
+  "mc_pin_menu_pin": {
+    "message": "üzenet kitűzése"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "levétel"
+  },
+  "mc_pin_unpin_all": {
+    "message": "levétel mindenkinek"
+  },
+  "mc_pin_dismiss": {
+    "message": "kitűzés elrejtése"
+  },
+  "mc_pin_confirm": {
+    "message": "levétel mindenkinek? y / enter, esc megszakítja"
+  },
+  "mc_pin_done": {
+    "message": "kitűzve"
+  },
+  "mc_pin_gone": {
+    "message": "levéve"
+  },
+  "mc_pin_failed": {
+    "message": "a kitűzés nem sikerült"
+  },
+  "mc_pin_denied": {
+    "message": "itt csak mods tűzhet ki"
+  },
+  "mc_pin_retry": {
+    "message": "még nincs az archívumban — próbáld újra egy perc múlva"
   }
 }

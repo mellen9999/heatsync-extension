@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "पिन"
+  },
+  "mc_pin_menu_pin": {
+    "message": "संदेश पिन करें"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "अनपिन"
+  },
+  "mc_pin_unpin_all": {
+    "message": "सबके लिए अनपिन"
+  },
+  "mc_pin_dismiss": {
+    "message": "यह पिन छिपाएँ"
+  },
+  "mc_pin_confirm": {
+    "message": "सबके लिए अनपिन करें? y / enter, esc रद्द"
+  },
+  "mc_pin_done": {
+    "message": "पिन हो गया"
+  },
+  "mc_pin_gone": {
+    "message": "अनपिन हो गया"
+  },
+  "mc_pin_failed": {
+    "message": "पिन नहीं हो सका"
+  },
+  "mc_pin_denied": {
+    "message": "यहाँ सिर्फ़ mods पिन कर सकते हैं"
+  },
+  "mc_pin_retry": {
+    "message": "अभी आर्काइव में नहीं है — थोड़ी देर में फिर कोशिश करें"
   }
 }

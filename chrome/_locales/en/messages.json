@@ -3568,5 +3568,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "pin"
+  },
+  "mc_pin_menu_pin": {
+    "message": "pin message"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "unpin"
+  },
+  "mc_pin_unpin_all": {
+    "message": "unpin for everyone"
+  },
+  "mc_pin_dismiss": {
+    "message": "hide this pin"
+  },
+  "mc_pin_confirm": {
+    "message": "unpin for everyone? y / enter, esc to cancel"
+  },
+  "mc_pin_done": {
+    "message": "pinned"
+  },
+  "mc_pin_gone": {
+    "message": "unpinned"
+  },
+  "mc_pin_failed": {
+    "message": "couldn't pin"
+  },
+  "mc_pin_denied": {
+    "message": "only mods can pin here"
+  },
+  "mc_pin_retry": {
+    "message": "not in the archive yet — try again in a moment"
   }
 }

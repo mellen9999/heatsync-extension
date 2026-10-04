@@ -807,6 +807,7 @@ const MULTICHAT_MODULES = [
   'blocked-terms.js',
   'mod-suite-calls.js',
   'mod-suite.js',
+  'pin-bar.js',
   'chat-modes.js',
   'resize.js',
   'settings-ui.js',

@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "pripnuté"
+  },
+  "mc_pin_menu_pin": {
+    "message": "pripnúť správu"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "odopnúť"
+  },
+  "mc_pin_unpin_all": {
+    "message": "odopnúť pre všetkých"
+  },
+  "mc_pin_dismiss": {
+    "message": "skryť toto pripnutie"
+  },
+  "mc_pin_confirm": {
+    "message": "odopnúť pre všetkých? y / enter, esc zruší"
+  },
+  "mc_pin_done": {
+    "message": "pripnuté"
+  },
+  "mc_pin_gone": {
+    "message": "odopnuté"
+  },
+  "mc_pin_failed": {
+    "message": "nepodarilo sa pripnúť"
+  },
+  "mc_pin_denied": {
+    "message": "pripínať tu môžu iba mods"
+  },
+  "mc_pin_retry": {
+    "message": "v archíve ešte nie je — skús to o chvíľu"
   }
 }

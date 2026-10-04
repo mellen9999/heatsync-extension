@@ -3998,6 +3998,7 @@
         <div id="hs-notif-layer-statusbar" class="hs-notif-layer hs-notif-layer-statusbar"></div>
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
+      <div id="hs-mc-pinbar" hidden></div>
       <div id="hs-mc-messages" role="log" aria-label="chat messages">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
@@ -10266,6 +10267,8 @@
 
   function renderMessages(id, opts) {
     if (editingChannel) return
+    // The pinned bar follows the tab on screen (same rooms inside 30s: a repaint only)
+    if (typeof pinSync === 'function') pinSync(id)
     // Idempotent — ensures mod toolbar hover works even when extension reloads
     // mid-session (the overlay-init setTimeout doesn't re-fire).
     const _msgsForMod = document.getElementById('hs-mc-messages')
@@ -15033,6 +15036,7 @@
         if (typeof __HS_DEV_BUILD__ !== 'undefined' && __HS_DEV_BUILD__)
           document.documentElement.dataset.hsAutomodInit = 'reached'
         if (typeof initAutomodQueue === 'function') initAutomodQueue()
+        if (typeof initPinBar === 'function') initPinBar()
         if (typeof __HS_DEV_BUILD__ !== 'undefined' && __HS_DEV_BUILD__)
           document.documentElement.dataset.hsAutomodInit = 'done'
       } catch (e) {

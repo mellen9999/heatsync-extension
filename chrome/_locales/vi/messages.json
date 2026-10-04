@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "ghim"
+  },
+  "mc_pin_menu_pin": {
+    "message": "ghim tin nhắn"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "bỏ ghim"
+  },
+  "mc_pin_unpin_all": {
+    "message": "bỏ ghim cho mọi người"
+  },
+  "mc_pin_dismiss": {
+    "message": "ẩn ghim này"
+  },
+  "mc_pin_confirm": {
+    "message": "bỏ ghim cho mọi người? y / enter, esc để huỷ"
+  },
+  "mc_pin_done": {
+    "message": "đã ghim"
+  },
+  "mc_pin_gone": {
+    "message": "đã bỏ ghim"
+  },
+  "mc_pin_failed": {
+    "message": "không ghim được"
+  },
+  "mc_pin_denied": {
+    "message": "ở đây chỉ mods mới ghim được"
+  },
+  "mc_pin_retry": {
+    "message": "chưa có trong kho lưu — thử lại sau giây lát"
   }
 }

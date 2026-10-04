@@ -1,0 +1,33 @@
+
+    /* Pinned bar (pin-bar.js) — ONE row above the pane, a sibling of the scroller
+       (never inside it, so bottom-follow is untouched). Square, no motion;
+       the x is the shared .hs-x glyph (reverse video on hover/active/focus). */
+    #hs-mc-pinbar {
+      flex: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 2px 6px;
+      background: #000;
+      border-bottom: 1px solid var(--hs-border);
+      font-size: 13px;
+      line-height: 18px;
+      outline: none;
+    }
+    #hs-mc-pinbar[hidden] { display: none; }
+    .hs-mc-pin-label { flex: none; color: var(--hs-brand); }
+    .hs-mc-pin-body {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .hs-mc-pin-body .hs-mc-msg { display: inline; padding: 0; margin: 0; background: none; border: 0; }
+    #hs-mc-pinbar.open .hs-mc-pin-body { white-space: normal; overflow-wrap: anywhere; max-height: 40vh; overflow-y: auto; }
+    #hs-mc-pinbar.open .hs-mc-pin-body .hs-mc-msg { display: block; }
+    .hs-mc-pin-ask { display: none; flex: 1 1 0; min-width: 0; color: var(--hs-danger); }
+    #hs-mc-pinbar[data-confirm] .hs-mc-pin-ask { display: block; }
+    #hs-mc-pinbar[data-confirm] .hs-mc-pin-body { display: none; }
+    .hs-mc-pin-x { flex: none; }

@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "vastgezet"
+  },
+  "mc_pin_menu_pin": {
+    "message": "bericht vastzetten"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "losmaken"
+  },
+  "mc_pin_unpin_all": {
+    "message": "voor iedereen losmaken"
+  },
+  "mc_pin_dismiss": {
+    "message": "deze pin verbergen"
+  },
+  "mc_pin_confirm": {
+    "message": "voor iedereen losmaken? y / enter, esc breekt af"
+  },
+  "mc_pin_done": {
+    "message": "vastgezet"
+  },
+  "mc_pin_gone": {
+    "message": "losgemaakt"
+  },
+  "mc_pin_failed": {
+    "message": "vastzetten mislukt"
+  },
+  "mc_pin_denied": {
+    "message": "alleen mods kunnen hier vastzetten"
+  },
+  "mc_pin_retry": {
+    "message": "nog niet in het archief — probeer het zo opnieuw"
   }
 }

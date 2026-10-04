@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "disemat"
+  },
+  "mc_pin_menu_pin": {
+    "message": "semat mesej"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "nyahsemat"
+  },
+  "mc_pin_unpin_all": {
+    "message": "nyahsemat untuk semua"
+  },
+  "mc_pin_dismiss": {
+    "message": "sembunyikan semat ini"
+  },
+  "mc_pin_confirm": {
+    "message": "nyahsemat untuk semua? y / enter, esc batal"
+  },
+  "mc_pin_done": {
+    "message": "disemat"
+  },
+  "mc_pin_gone": {
+    "message": "dinyahsemat"
+  },
+  "mc_pin_failed": {
+    "message": "gagal menyemat"
+  },
+  "mc_pin_denied": {
+    "message": "hanya mods boleh menyemat di sini"
+  },
+  "mc_pin_retry": {
+    "message": "belum ada dalam arkib — cuba lagi sebentar"
   }
 }

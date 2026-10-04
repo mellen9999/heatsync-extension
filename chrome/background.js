@@ -7516,6 +7516,18 @@ function handleWSMessage(msg) {
         break
       }
 
+      // A mod pinned / unpinned a message in a room this socket joined. Only the
+      // room and the pin ride on; the pane matches it to the tab on screen.
+      case 'pin:set':
+      case 'pin:clear':
+        broadcastToTabs({
+          type: msg.type === 'pin:set' ? 'pin_set' : 'pin_clear',
+          platform: String(msg.platform || ''),
+          channel: String(msg.channel || '').toLowerCase(),
+          pin: msg.type === 'pin:set' && msg.pin && typeof msg.pin === 'object' ? msg.pin : null,
+        })
+        break
+
       // Coalesced fan-out (server ws-coalesce.ts): one frame per tick carrying
       // several messages. Unwrap in order — each is a frame handled above.
       case 'batch':
@@ -8209,6 +8221,66 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ ok: false, error: 'not_moderator' })
         } else if (res.status === 404) {
           sendResponse({ ok: false, error: 'gone' })
+        } else if (res.status === 429) {
+          sendResponse({ ok: false, error: 'rate_limited' })
+        } else {
+          sendResponse({ ok: false, error: data?.error || `http ${res.status}` })
+        }
+      } catch (e) {
+        sendResponse({ ok: false, error: e?.message || 'network error' })
+      }
+    })()
+    return true
+  }
+  if (message.type === 'pin') {
+    // The pinned message of a twitch/kick room (pin-bar in multichat).
+    // op: get (public) | set | clear (mod). The server resolves the pinned line
+    // from its own archive, so set carries only the message id. Same bearer +
+    // error vocabulary as blocked_terms; 409 = the line is not archived yet.
+    ;(async () => {
+      try {
+        const platform = message.platform === 'kick' ? 'kick' : message.platform === 'twitch' ? 'twitch' : ''
+        const channel = String(message.channel || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, '')
+        const op = message.op === 'set' || message.op === 'clear' ? message.op : message.op === 'get' ? 'get' : ''
+        const messageId = String(message.messageId || '').slice(0, 100)
+        if (!platform || !channel || !op || (op === 'set' && !messageId)) {
+          sendResponse({ ok: false, error: 'missing params' })
+          return
+        }
+        let res
+        if (op === 'get') {
+          res = await fetchWithTimeout(
+            `${API_URL}/api/pin?platform=${platform}&channel=${encodeURIComponent(channel)}`,
+            { credentials: 'omit' },
+          )
+        } else {
+          const authToken = await getAuthCookie()
+          if (!authToken) {
+            sendResponse({ ok: false, error: 'auth_required' })
+            return
+          }
+          res = await fetchWithTimeout(`${API_URL}/api/mod/pin`, {
+            method: op === 'set' ? 'POST' : 'DELETE',
+            credentials: 'omit',
+            headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(op === 'set' ? { platform, channel, message_id: messageId } : { platform, channel }),
+          })
+        }
+        const data = await res.json().catch(() => null)
+        if (res.ok) {
+          sendResponse({ ok: true, pin: data?.pin && typeof data.pin === 'object' ? data.pin : null })
+        } else if (res.status === 401) {
+          sendResponse({
+            ok: false,
+            error:
+              data?.error === 'relink_required' || data?.relink_required === true ? 'relink_required' : 'auth_required',
+          })
+        } else if (res.status === 403) {
+          sendResponse({ ok: false, error: 'not_moderator' })
+        } else if (res.status === 409) {
+          sendResponse({ ok: false, error: 'not_archived' })
         } else if (res.status === 429) {
           sendResponse({ ok: false, error: 'rate_limited' })
         } else {

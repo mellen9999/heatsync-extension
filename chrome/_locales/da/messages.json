@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "fastgjort"
+  },
+  "mc_pin_menu_pin": {
+    "message": "fastgør besked"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "fjern fastgørelse"
+  },
+  "mc_pin_unpin_all": {
+    "message": "fjern for alle"
+  },
+  "mc_pin_dismiss": {
+    "message": "skjul denne fastgørelse"
+  },
+  "mc_pin_confirm": {
+    "message": "fjern fastgørelsen for alle? y / enter, esc fortryder"
+  },
+  "mc_pin_done": {
+    "message": "fastgjort"
+  },
+  "mc_pin_gone": {
+    "message": "fastgørelse fjernet"
+  },
+  "mc_pin_failed": {
+    "message": "kunne ikke fastgøre"
+  },
+  "mc_pin_denied": {
+    "message": "kun mods kan fastgøre her"
+  },
+  "mc_pin_retry": {
+    "message": "er ikke i arkivet endnu — prøv igen om lidt"
   }
 }

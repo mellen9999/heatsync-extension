@@ -2551,6 +2551,19 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       }
     }
   }
+  // Pin — its own gate: a broadcaster pins their own channel without being a mod
+  // there. Only on a row of the channel tab on screen (the pin lives on its room).
+  if (msg?.dataset?.msgId && typeof pinRoomOfRow === 'function') {
+    const pr = pinRoomOfRow(msg)
+    if (pr && pinCanAct(pr.platform, pr.channel)) {
+      items.push({
+        label: t(
+          pinState.pins.get(pr.room)?.message_id === msg.dataset.msgId ? 'mc_pin_menu_unpin' : 'mc_pin_menu_pin',
+        ),
+        fn: () => pinToggleRow(msg),
+      })
+    }
+  }
   // Reply — only when right-clicked on a real chat message with an id (Twitch
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {

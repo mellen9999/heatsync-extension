@@ -1176,5 +1176,38 @@
         "content": "$1"
       }
     }
+  },
+  "mc_pin_label": {
+    "message": "ปักหมุด"
+  },
+  "mc_pin_menu_pin": {
+    "message": "ปักหมุดข้อความ"
+  },
+  "mc_pin_menu_unpin": {
+    "message": "เลิกปักหมุด"
+  },
+  "mc_pin_unpin_all": {
+    "message": "เลิกปักหมุดให้ทุกคน"
+  },
+  "mc_pin_dismiss": {
+    "message": "ซ่อนหมุดนี้"
+  },
+  "mc_pin_confirm": {
+    "message": "เลิกปักหมุดให้ทุกคน? y / enter, esc ยกเลิก"
+  },
+  "mc_pin_done": {
+    "message": "ปักหมุดแล้ว"
+  },
+  "mc_pin_gone": {
+    "message": "เลิกปักหมุดแล้ว"
+  },
+  "mc_pin_failed": {
+    "message": "ปักหมุดไม่สำเร็จ"
+  },
+  "mc_pin_denied": {
+    "message": "ที่นี่เฉพาะ mods ที่ปักหมุดได้"
+  },
+  "mc_pin_retry": {
+    "message": "ยังไม่อยู่ในที่เก็บ — ลองใหม่อีกครู่"
   }
 }

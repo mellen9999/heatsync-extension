@@ -158,7 +158,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 'tab',
     args: '<name>',
-    desc: 'switch tab: live, feed, mentions, whispers, settings, or a channel',
+    desc: 'switch tab: a channel, or a named tab like live or mentions',
     on: 'both',
     needs: 'none',
     does: 'local',

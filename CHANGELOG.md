@@ -1,5 +1,16 @@
 # changelog
 
+## [1.7.84] — 2026-10-04
+
+### added
+- **feed votes, bookmarks and reactions** — upvote, bookmark and react on feed posts from the extension; an open thread updates live as others react and vote.
+- **mention rules editor** — settings → mention rules: list, add, edit, toggle and test your rules, with recent hits.
+- **hide a name paint** — row menu "hide <user>’s paint" turns off one user's name paint; shared with the site.
+- **`/user`** — opens that user's profile card.
+
+### fixed
+- **`/tab`** — its description now says what it does.
+
 ## [1.7.83] — 2026-10-03
 
 ### added

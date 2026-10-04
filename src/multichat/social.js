@@ -10,7 +10,22 @@ let _autoYtVideoId = null // videoId for this tab's __live_yt_auto__ subscriptio
 // The heatsync-feed half of listenForSocialEvents' dispatch — the events the
 // `feed` subsystem actually owns. Kept as a set so the gate is one lookup and
 // a new feed event has one obvious place to be declared.
-const _FEED_EVENTS = new Set(['new-message', 'message-edited', 'message-deleted', 'message-updated'])
+const _FEED_EVENTS = new Set([
+  'new-message',
+  'message-edited',
+  'message-deleted',
+  'message-updated',
+  'reaction:added',
+  'reaction:removed',
+  'vote:updated',
+])
+
+// A cached post by id: the open thread's OP / replies first, then the feed.
+function feedFindMsg(id) {
+  if (!id) return null
+  if (activeThread?.op?.base36_id === id) return activeThread.op
+  return activeThread?.replies?.find((r) => r.base36_id === id) || feedMessages.find((m) => m.base36_id === id) || null
+}
 
 // The one place a youtube stream gets subscribed. Eight call sites across four
 // modules sent this message raw and only three of them checked the switch, so
@@ -408,6 +423,7 @@ let replyState = null // { msgId, user, channel } when replying to a message
 let quoteState = null // { permalink, user, text, channel, platform } when quoting a live row into a new thread
 let hsAuthToken = null // Heatsync auth state (loaded from storage)
 let hsCurrentUsername = null // Heatsync username (loaded from storage user_info)
+let hsCurrentUserId = null // Heatsync account id (same source) — tells my own live frames from others'
 // Batch keys the signed-in HS account resolves as (server-computed, from
 // /api/auth/me via user_info). null = unknown (old server / logged out) —
 // consumers must fail open. [] = account has no resolvable platform identity.
@@ -419,6 +435,7 @@ async function loadHsUsername() {
     const data = await api.storage.local.get('user_info')
     const ui = data?.user_info
     hsCurrentUsername = ui?.username?.toLowerCase() || null
+    hsCurrentUserId = ui?.id ? String(ui.id) : null
     hsSenderKeys = Array.isArray(ui?.sender_keys) ? ui.sender_keys : null
     // Cross-platform mention aliases: any name across Twitch/Kick/YT counts as
     // a mention of the user, even if the chat is on a different platform.
@@ -435,6 +452,7 @@ async function loadHsUsername() {
     primeSelfHsCosmetics(ui)
   } catch (_) {
     hsCurrentUsername = null
+    hsCurrentUserId = null
     hsSenderKeys = null
   }
 }
@@ -1382,6 +1400,7 @@ function listenForSocialEvents() {
       if (activeThread) {
         if (activeThread.op?.base36_id === id) {
           activeThread = null
+          feedThreadSync(null)
         } else if (activeThread.replies) {
           const ri = activeThread.replies.findIndex((r) => r.base36_id === id)
           if (ri >= 0) activeThread.replies.splice(ri, 1)
@@ -1584,6 +1603,10 @@ function listenForSocialEvents() {
           }
         }
       }
+    }
+    if (msg.type === 'reaction:added' || msg.type === 'reaction:removed' || msg.type === 'vote:updated') {
+      if (msg.data) feedOnFrame(msg.data)
+      return
     }
     if (msg.type === 'message-updated' && msg.data) {
       const uid = msg.data.base36_id
@@ -2481,6 +2504,7 @@ async function openThread(msgId, highlightId) {
   const op = feedMessages.find((m) => m.base36_id === msgId)
   const thread = { id: msgId, op: op || null, replies: [], loading: true, highlightId: highlightId || null }
   activeThread = thread
+  feedThreadSync(msgId)
   renderFeed()
   _renderFeedReplyChip(thread)
   if (typeof showInputBar === 'function') showInputBar()
@@ -2533,6 +2557,7 @@ async function openThread(msgId, highlightId) {
 
 function closeThread() {
   activeThread = null
+  feedThreadSync(null)
   _clearFeedReplyChip()
   renderFeed()
 }

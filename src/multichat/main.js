@@ -7326,6 +7326,7 @@
     // Close thread view when leaving feed
     if (currentTab === 'feed' && id !== 'feed') {
       activeThread = null
+      feedThreadSync(null)
       _clearFeedReplyChip()
       const feedTabBtn = tabBarElement?.querySelector('[data-tab="feed"]')
       if (feedTabBtn) feedTabBtn.textContent = t('mc_tab_feed')

@@ -1149,6 +1149,22 @@ const tabChannels = new Map() // tabId → { channel, channelOwner }
 // On WS reconnect (incl. server restart) these must be re-joined or messages drop silently.
 const joinedExtraChannels = new Set() // "platform/channel" keys
 
+// Feed thread rooms (feed:join `thread:<id>`) — one per tab, the thread that tab
+// is showing. The server fans reaction/vote frames for it to this socket only
+// while joined. The room is held while any tab shows it and re-joined on
+// reconnect (the connect burst reads this map). Sent direct, never queued: a
+// closed socket has nothing to leave, and the burst re-joins what is still open.
+const feedThreadTabs = new Map() // tabId → 'thread:<id>'
+const FEED_THREAD_ROOM_RE = /^thread:[a-z0-9]{1,8}$/
+function feedThreadSet(tabId, room) {
+  const before = new Set(feedThreadTabs.values())
+  if (room) feedThreadTabs.set(tabId, room)
+  else feedThreadTabs.delete(tabId)
+  const after = new Set(feedThreadTabs.values())
+  for (const r of before) if (!after.has(r)) wsSendDirect({ type: 'feed:leave', feed: r })
+  for (const r of after) if (!before.has(r)) wsSendDirect({ type: 'feed:join', feed: r })
+}
+
 // Reserved site paths that must never become channels. BG needs its own
 // literal copy — this is the MV3 service worker, a separate JS context from
 // the content-script lib bundle, so it can't `import` src/lib/reserved-paths.js.
@@ -1278,6 +1294,7 @@ function saveJoinedExtraChannels() {
 
 // Clean up tab tracking on close
 browser.tabs.onRemoved.addListener((tabId) => {
+  feedThreadSet(tabId, null)
   tabChannels.delete(tabId)
   saveTabChannels()
   _cachedTabs = null // Invalidate tab cache
@@ -6440,6 +6457,7 @@ async function connectWebSocket() {
           log('irc:resume replay err:', e?.message)
         }
         burst.push({ type: 'feed:join', feed: 'new' })
+        for (const room of new Set(feedThreadTabs.values())) burst.push({ type: 'feed:join', feed: room })
 
         log(` 🌊 Connect burst queued: ${burst.length} msgs over ~${burst.length * 80}ms`)
         burst.forEach((msg, i) => {
@@ -6861,6 +6879,13 @@ function handleWSMessage(msg) {
 
       case 'message-deleted':
         broadcastToTabs({ type: 'message-deleted', data: msg })
+        break
+
+      // Live engagement on the thread a tab has open (see feedThreadSet).
+      case 'reaction:added':
+      case 'reaction:removed':
+      case 'vote:updated':
+        broadcastToTabs({ type: msg.type, data: msg })
         break
 
       case 'notification:new':
@@ -9697,6 +9722,12 @@ async function handleMessage(message, sender, sendResponse) {
     // canonical list from server and re-runs live poll so badge/notifications
     // reflect the change immediately.
     fetchFollowedUsers().catch(() => {})
+    sendResponse({ ok: true })
+    return true
+  } else if (message.type === 'feed_thread') {
+    // The tab's open thread changed: one room at a time per tab, null leaves.
+    const room = typeof message.room === 'string' ? message.room.toLowerCase() : null
+    if (sender.tab?.id != null && (room === null || FEED_THREAD_ROOM_RE.test(room))) feedThreadSet(sender.tab.id, room)
     sendResponse({ ok: true })
     return true
   } else if (message.type === 'join_channel') {

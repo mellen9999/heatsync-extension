@@ -182,3 +182,66 @@ function feedEngageWire(div, m) {
     }
   })
 }
+
+// ── live thread frames ──────────────────────────────────────────────────────
+// The server fans reaction:added / reaction:removed / vote:updated to the room
+// `feed:thread:<id>`; a socket joins it with feed:join `thread:<id>`. The
+// background owns the socket, so the thread view only tells it which room this
+// tab is looking at (one at a time — naming a new one swaps, null leaves) and
+// it re-joins on reconnect. Frames arrive as broadcasts and are applied here.
+
+const FEED_THREAD_ROOM_RE = /^[a-z0-9]{1,8}$/i
+let feedThreadRoom = null
+
+function feedThreadRoomFor(id) {
+  return typeof id === 'string' && FEED_THREAD_ROOM_RE.test(id) ? `thread:${id.toLowerCase()}` : null
+}
+
+// Called when the thread on screen changes (open / switch / close).
+function feedThreadSync(id) {
+  const room = id ? feedThreadRoomFor(id) : null
+  if (room === feedThreadRoom) return
+  feedThreadRoom = room
+  safeSendMessage({ type: 'feed_thread', room })
+}
+
+// Apply one frame to a cached post. Returns 'reactions' | 'vote' | null (what
+// changed). My own reaction frames are skipped — the click already applied it
+// optimistically; votes carry absolute numbers, so re-applying is harmless.
+function feedFrameApply(m, frame, selfId) {
+  if (!m || !frame) return null
+  if (frame.type === 'vote:updated') {
+    if (Number.isFinite(frame.score)) m.vote_score = frame.score
+    if (Number.isFinite(frame.heat)) m.heat = frame.heat
+    return 'vote'
+  }
+  if (frame.type !== 'reaction:added' && frame.type !== 'reaction:removed') return null
+  if (selfId != null && String(frame.user_id) === String(selfId)) return null
+  const emoteId = Number(frame.emote_id)
+  if (!emoteId) return null
+  const list = (m.reactions || []).map((r) => ({ ...r }))
+  const hit = list.find((r) => r.emote_id === emoteId)
+  if (frame.type === 'reaction:added') {
+    if (hit) hit.count = (Number(hit.count) || 0) + 1
+    else {
+      // an image the server stamped nsfw / content-warned is shown as a name only
+      const gated = frame.nsfw || (frame.cw_cats && frame.cw_cats.length)
+      list.push({
+        emote_id: emoteId,
+        emote_name: frame.emote_name || '',
+        emote_url: gated ? '' : frame.emote_url || '',
+        count: 1,
+        reacted: false,
+      })
+    }
+  } else if (hit) hit.count = Math.max(0, (Number(hit.count) || 0) - 1)
+  m.reactions = list.filter((r) => r.count > 0)
+  return 'reactions'
+}
+
+function feedOnFrame(frame) {
+  const m = feedFindMsg(frame?.message_id)
+  const changed = feedFrameApply(m, frame, hsCurrentUserId)
+  if (changed === 'reactions') feedPaintReactions(m)
+  else if (changed === 'vote') feedPaintVote(m)
+}

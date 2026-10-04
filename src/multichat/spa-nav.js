@@ -293,6 +293,7 @@ function fullSpaReinit() {
   feedHasMore = true
   feedLastFetch = 0
   activeThread = null
+  feedThreadSync(null)
   _autoYtVideoId = null
   // Reset feed scroll listener flag (new DOM element)
   const oldMsgs = document.getElementById('hs-mc-messages')

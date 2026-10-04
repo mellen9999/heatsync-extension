@@ -14130,7 +14130,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8d0dec7616b9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '03362a134a5b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35127,6 +35127,15 @@ document.addEventListener(
 // without a DOM.
 
 const feedBookmarks = new Map() // base36_id → bookmarked?
+const FEED_BOOKMARKS_MAX = 2000
+const feedVoting = new Set() // post ids with a vote request in flight
+
+// Insertion-ordered cap: re-setting an id moves it to the newest end.
+function feedBookmarkSet(id, on) {
+  feedBookmarks.delete(id)
+  feedBookmarks.set(id, on)
+  while (feedBookmarks.size > FEED_BOOKMARKS_MAX) feedBookmarks.delete(feedBookmarks.keys().next().value)
+}
 
 function feedVoteOptimistic(m) {
   const snap = { user_vote: m.user_vote ?? null, vote_score: Number(m.vote_score) || 0 }
@@ -35181,7 +35190,7 @@ async function feedBookmarksLoad(msgs) {
     const r = await apiFetch('/api/bookmarks/check', { method: 'POST', body: { message_ids: chunk } })
     const map = r?.ok ? r.data?.bookmarked : null
     if (!map) return
-    for (const id of chunk) feedBookmarks.set(id, map[id] === true)
+    for (const id of chunk) feedBookmarkSet(id, map[id] === true)
   }
 }
 
@@ -35216,18 +35225,26 @@ function feedPaintVote(m) {
 
 async function feedUpvote(m) {
   if (!hsAuthToken) return showToast(t('mc_social_login_first'), 'error')
-  const snap = feedVoteOptimistic(m)
-  feedPaintVote(m)
-  const r = await apiFetch(`/api/messages/${encodeURIComponent(m.base36_id)}/vote`, {
-    method: 'POST',
-    body: { vote_type: 1 },
-  })
-  if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
-  else {
-    feedVoteRollback(m, snap)
-    feedFail(r)
+  // One request per post at a time — two fast clicks would stack stale rollback
+  // snapshots and the server toggle would land the opposite of what's shown.
+  if (feedVoting.has(m.base36_id)) return
+  feedVoting.add(m.base36_id)
+  try {
+    const snap = feedVoteOptimistic(m)
+    feedPaintVote(m)
+    const r = await apiFetch(`/api/messages/${encodeURIComponent(m.base36_id)}/vote`, {
+      method: 'POST',
+      body: { vote_type: 1 },
+    })
+    if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
+    else {
+      feedVoteRollback(m, snap)
+      feedFail(r)
+    }
+    feedPaintVote(m)
+  } finally {
+    feedVoting.delete(m.base36_id)
   }
-  feedPaintVote(m)
 }
 
 async function feedBookmarkToggle(id) {
@@ -35235,7 +35252,7 @@ async function feedBookmarkToggle(id) {
   const was = feedBookmarks.get(id) === true
   const r = await apiFetch(`/api/bookmarks/${encodeURIComponent(id)}`, { method: was ? 'DELETE' : 'POST' })
   if (!r?.ok) return feedFail(r)
-  feedBookmarks.set(id, !was)
+  feedBookmarkSet(id, !was)
   showToast(t(was ? 'mc_feed_bookmark_removed' : 'mc_feed_bookmarked'), 'success')
 }
 
@@ -35245,7 +35262,7 @@ function feedReactionsHtml(m) {
   const chips = rs
     .map((r) => {
       const name = escapeHtml(r.emote_name || '')
-      const url = r.emote_url ? safeUrl(r.emote_url) : ''
+      const url = r.emote_url && clEmoteUrlAllowed(r.emote_url) ? r.emote_url : ''
       const img = url ? `<img class="hs-feed-chip-img" src="${escapeHtml(url)}" alt="${name}" loading="lazy">` : ''
       const on = !!r.reacted
       return `<span class="hs-feed-chip${on ? ' on' : ''}" role="button" aria-pressed="${on}" data-emote-id="${Number(r.emote_id) || 0}" title="${name} (${Number(r.count) || 0})">${img}<span class="hs-feed-chip-n">${Number(r.count) || 0}</span></span>`
@@ -35304,6 +35321,8 @@ function feedEngageWire(div, m) {
 
 const FEED_THREAD_ROOM_RE = /^[a-z0-9]{1,8}$/i
 let feedThreadRoom = null
+let feedThreadKeep = null
+const FEED_THREAD_KEEP_MS = 30000
 
 function feedThreadRoomFor(id) {
   return typeof id === 'string' && FEED_THREAD_ROOM_RE.test(id) ? `thread:${id.toLowerCase()}` : null
@@ -35315,6 +35334,17 @@ function feedThreadSync(id) {
   if (room === feedThreadRoom) return
   feedThreadRoom = room
   safeSendMessage({ type: 'feed_thread', room })
+  // The background dedupes, so re-announcing the open room is free — and it is
+  // what re-registers it after the service worker restarted with an empty map.
+  if (feedThreadKeep) {
+    cleanup.clearInterval(feedThreadKeep)
+    feedThreadKeep = null
+  }
+  if (room) {
+    feedThreadKeep = cleanup.setIntervalIfVisible(() => {
+      if (feedThreadRoom) safeSendMessage({ type: 'feed_thread', room: feedThreadRoom })
+    }, FEED_THREAD_KEEP_MS)
+  }
 }
 
 // Apply one frame to a cached post. Returns 'reactions' | 'vote' | null (what
@@ -35341,7 +35371,7 @@ function feedFrameApply(m, frame, selfId) {
       list.push({
         emote_id: emoteId,
         emote_name: frame.emote_name || '',
-        emote_url: gated ? '' : frame.emote_url || '',
+        emote_url: gated || !clEmoteUrlAllowed(frame.emote_url) ? '' : frame.emote_url,
         count: 1,
         reacted: false,
       })
@@ -36622,6 +36652,9 @@ function listenForSocialEvents() {
   // Guard: only register once (survives SPA reinit via chrome listener persistence)
   if (_onceGuardsSocial.socialListener) return
   _onceGuardsSocial.socialListener = true
+  // A fresh content script has no thread view: clear any room a previous page
+  // life left registered for this tab (reload, extension update).
+  safeSendMessage({ type: 'feed_thread', room: null })
 
   cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
     // One listener, three subsystems — so each family checks its OWN switch
@@ -43305,18 +43338,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       })
     }
   }
-  // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
-  if (feedMsg?.base36_id && hsAuthToken) {
-    if (!isOwnFeedPost(feedMsg)) {
-      const up = feedMsg.user_vote === 1
-      items.push({ label: t(up ? 'mc_feed_upvote_remove' : 'mc_feed_upvote'), fn: () => feedUpvote(feedMsg) })
-    }
-    const bm = feedBookmarks.get(feedMsg.base36_id) === true
-    items.push({
-      label: t(bm ? 'mc_feed_bookmark_remove' : 'mc_feed_bookmark'),
-      fn: () => feedBookmarkToggle(feedMsg.base36_id),
-    })
-  }
   // Reply — only when right-clicked on a real chat message with an id (Twitch
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {
@@ -43350,6 +43371,24 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (gateAtBoot('profile-cards') !== false) {
     items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
   }
+  items.push({
+    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    fn: () => hsNoteOpenEditor(username, platform, x, y),
+  })
+  // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
+  // Placed after the core rows — the numbered menu caps at 9 keys, and the
+  // optional rows below must not push reply/profile/note off their numbers.
+  if (feedMsg?.base36_id && hsAuthToken) {
+    if (!isOwnFeedPost(feedMsg)) {
+      const up = feedMsg.user_vote === 1
+      items.push({ label: t(up ? 'mc_feed_upvote_remove' : 'mc_feed_upvote'), fn: () => feedUpvote(feedMsg) })
+    }
+    const bm = feedBookmarks.get(feedMsg.base36_id) === true
+    items.push({
+      label: t(bm ? 'mc_feed_bookmark_remove' : 'mc_feed_bookmark'),
+      fn: () => feedBookmarkToggle(feedMsg.base36_id),
+    })
+  }
   // Hide / show this chatter's heatsync name paint — only for a row whose name
   // actually has one (a hidden paint stays in the cache, so "show" survives).
   const paintUid = typeof hsPaintUidOfMsg === 'function' ? hsPaintUidOfMsg(msg?._hsMsg) : null
@@ -43360,10 +43399,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       fn: () => toggleHsPaintHidden(paintUid),
     })
   }
-  items.push({
-    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
-    fn: () => hsNoteOpenEditor(username, platform, x, y),
-  })
   // Twitch-native actions we don't reimplement (report, gift sub) — the
   // official viewer-card popout carries both. Twitch rows with a known
   // channel only; window.open keeps twitch's own auth/session context.
@@ -60736,6 +60771,7 @@ const MR_TYPES = ['word', 'phrase', 'regex']
 const MR_PLATFORMS = ['twitch', 'kick', 'youtube']
 const MR_PLAT_TAG = { twitch: 'T', kick: 'K', youtube: 'Y' }
 const MR_NOTIFY_VIA = ['web', 'push']
+const MR_RETRY_MS = 15000
 
 const mrState = {
   rules: [],
@@ -60748,6 +60784,8 @@ const mrState = {
   testMsg: '',
   testResult: null, // true | false | null
   error: '',
+  failedAt: 0,
+  unauthed: false,
 }
 
 function mrBlankDraft() {
@@ -60825,7 +60863,9 @@ function mrDraftToBody(d) {
 }
 
 function mrHitUrl(h) {
-  const day = new Date(h.matched_at).toISOString().slice(0, 10)
+  const when = new Date(h.matched_at)
+  if (Number.isNaN(+when)) return ''
+  const day = when.toISOString().slice(0, 10)
   const anchor = h.message_id ? `?m=${encodeURIComponent(h.message_id)}` : ''
   return `https://heatsync.org/search/logs/${encodeURIComponent(h.platform || '')}/${encodeURIComponent(h.channel || '')}/${day}${anchor}`
 }
@@ -60838,10 +60878,14 @@ function mrHitsHtml(hits) {
       const tag = MR_PLAT_TAG[h.platform] || '?'
       const who = escapeHtml(h.display_name || h.username || '')
       const when = Number.isNaN(new Date(h.matched_at).getTime()) ? '' : escapeHtml(formatRelativeTime(h.matched_at))
+      const url = mrHitUrl(h) // '' for a hit with no usable date: shown, just not linked
+      const open = url
+        ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">`
+        : '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
       return (
         '<div class="hs-mc-setting-row" style="gap:4px;font-size:13px;overflow:hidden">' +
-        `<a href="${escapeHtml(mrHitUrl(h))}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">` +
-        `<span style="color:#808080">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}</a>` +
+        open +
+        `<span style="color:#808080">[${tag}] #${escapeHtml(h.channel || '')}</span> ${who}: ${escapeHtml(h.snippet || '')}${url ? '</a>' : '</span>'}` +
         `<span style="color:#666;flex-shrink:0">${when}</span></div>`
       )
     })
@@ -60942,7 +60986,11 @@ function mrGroupHtml() {
     mrState.hits = []
     return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
   }
-  if (!mrState.loaded && !mrState.loading) mrLoad()
+  if (!mrState.loaded && !mrState.loading && Date.now() - mrState.failedAt > MR_RETRY_MS) mrLoad()
+  if (!mrState.loaded && mrState.failedAt) {
+    const line = mrState.unauthed ? t('mc_mr_signin') : mrState.error
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(line)}</div></div>`
+  }
   const rows = mrState.rules.length
     ? mrState.rules.map(mrRuleRowHtml).join('')
     : `<div class="hs-mc-setting-row" style="color:#808080;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
@@ -60965,11 +61013,21 @@ async function mrLoad() {
     apiFetch('/api/mention-rules/hits?limit=25'),
   ])
   mrState.loading = false
-  mrState.loaded = true
-  if (rules?.ok) {
-    mrState.rules = Array.isArray(rules.data?.rules) ? rules.data.rules : []
-    mrState.limit = Number(rules.data?.limit) || 0
+  if (!rules?.ok) {
+    // Not loaded: a 401 keeps the sign-in line up, anything else shows its error,
+    // and a later open (after MR_RETRY_MS) tries again instead of showing "none".
+    mrState.loaded = false
+    mrState.failedAt = Date.now()
+    mrState.unauthed = rules?.status === 401
+    mrState.error = mrState.unauthed ? '' : mrServerError(rules)
+    if (currentTab === 'settings') renderSettingsTab()
+    return
   }
+  mrState.loaded = true
+  mrState.failedAt = 0
+  mrState.unauthed = false
+  mrState.rules = Array.isArray(rules.data?.rules) ? rules.data.rules : []
+  mrState.limit = Number(rules.data?.limit) || 0
   mrState.hits = hits?.ok && Array.isArray(hits.data?.hits) ? hits.data.hits : []
   if (currentTab === 'settings') renderSettingsTab()
 }
@@ -61066,6 +61124,8 @@ async function mrHandleAction(el) {
   }
   const rule = mrState.rules.find((r) => String(r.id) === id)
   if (!rule) return
+  // keep a half-typed new rule across the reload that follows toggle / delete
+  if (act === 'toggle' || act === 'delete') mrReadForm(form)
   if (act === 'edit') {
     mrState.editId = rule.id
     mrState.draft = mrRuleToDraft(rule)
@@ -62428,6 +62488,7 @@ function fullSpaReinit() {
   feedLoaded = false
   feedLoading = false
   feedMessages = []
+  feedBookmarks.clear()
   feedPage = 1
   feedHasMore = true
   feedLastFetch = 0

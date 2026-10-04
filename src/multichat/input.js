@@ -2537,6 +2537,10 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
         )
         if (!isKick && !isYt) mod.push({ label: 'blocked terms', fn: () => openBlockedTerms(modCh) })
+        if (!isKick && !isYt) {
+          mod.push({ label: 'mod tools', fn: () => openModSuite(modCh, 'shield') })
+          if (msgLogin) mod.push({ label: 'warn', fn: () => msWarnPrompt(modCh, msgLogin) })
+        }
         mod.push('sep')
         items.push(...mod)
       } else {
@@ -6711,6 +6715,11 @@ const COMMAND_RECEIPT_SCOPE = {
   tab: 'none',
   testnotices: 'none',
   blocked: 'none', // opens a panel — the panel is the confirmation
+  modtools: 'none', // opens a panel
+  unbanrequests: 'none', // opens a panel
+  shield: 'channel',
+  warn: 'channel',
+  shoutout: 'channel',
   lclear: 'none',
   shrug: 'none',
   tableflip: 'none',
@@ -8031,6 +8040,75 @@ async function handleSlashCommand(text, input) {
       return { ok: false, error: t('mc_bt_not_mod_slash') }
     }
     if (!(await openBlockedTerms(login))) return { ok: false, error: t('mc_bt_err') }
+    clearInput(input)
+    return true
+  }
+
+  // ─── Mod suite (mod) ─── /modtools /shield /warn /shoutout /unbanrequests.
+  // Thin calls to heatsync.org's /api/mod/* (mod-suite-calls.js); the server is
+  // the helix caller and the real mod check, this one only keeps the command
+  // off a channel the user plainly doesn't mod. Resolves the twitch login, or a
+  // failure result (already toasted) to return as is.
+  const _msGate = async () => {
+    if (!_twitchModName) {
+      showToast(t('mc_ms_no_channel'), 'error')
+      return { ok: false, error: t('mc_ms_no_channel') }
+    }
+    if (!(await _twitchModAuthOk())) return _notLoggedIn()
+    const login = _twitchModName.toLowerCase()
+    if (login !== (await automodSelfLogin()) && !(await isModFor(login))) {
+      showToast(t('mc_ms_not_mod'), 'error')
+      return { ok: false, error: t('mc_ms_not_mod') }
+    }
+    return login
+  }
+  if (cmd === 'modtools' || cmd === 'unbanrequests') {
+    const login = await _msGate()
+    if (typeof login !== 'string') return login
+    if (!(await openModSuite(login, cmd === 'modtools' ? 'shield' : 'unban')))
+      return { ok: false, error: t('mc_ms_err') }
+    clearInput(input)
+    return true
+  }
+  if (cmd === 'shield') {
+    const word = rest.trim().toLowerCase()
+    if (word && word !== 'on' && word !== 'off') {
+      showToast(t('mc_ms_usage_shield'), 'error')
+      return { ok: false, error: t('mc_ms_usage_shield') }
+    }
+    const login = await _msGate()
+    if (typeof login !== 'string') return login
+    let on = word === 'on'
+    if (!word) {
+      const cur = await msCall(login, 'shield_get')
+      if (!cur.ok) {
+        msToastFail(cur, login)
+        return { ok: false, error: msWords(cur) }
+      }
+      on = !cur.data.is_active
+    }
+    const res = await msCall(login, 'shield_set', { active: on })
+    if (!res.ok) {
+      msToastFail(res, login)
+      return { ok: false, error: msWords(res) }
+    }
+    showToast(t(on ? 'mc_ms_shield_now_on' : 'mc_ms_shield_now_off'), 'success')
+    clearInput(input)
+    return true
+  }
+  if (cmd === 'warn' || cmd === 'shoutout') {
+    const isWarn = cmd === 'warn'
+    const m = isWarn ? rest.match(/^@?(\S+)\s+([\s\S]*\S)\s*$/) : rest.match(/^@?(\S+)\s*$/)
+    const usage = t(isWarn ? 'mc_ms_usage_warn' : 'mc_ms_usage_shoutout')
+    if (!m) {
+      showToast(usage, 'error')
+      return { ok: false, error: usage }
+    }
+    const channel = await _msGate()
+    if (typeof channel !== 'string') return channel
+    const who = m[1].toLowerCase()
+    const res = isWarn ? await msWarn(channel, who, m[2].trim().slice(0, 500)) : await msShoutout(channel, who)
+    if (!res.ok) return { ok: false, error: msWords(res) }
     clearInput(input)
     return true
   }

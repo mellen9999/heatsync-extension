@@ -69,6 +69,15 @@ const MOD_BUTTON_CATALOG = {
     needsMsgId: false,
     twitchOnly: true,
   },
+  // opens the channel's mod tools panel (shield, unban requests, automod, chatters)
+  mod_tools: {
+    label: 'mt',
+    title: 'mod tools',
+    action: 'mod_tools',
+    durationSec: null,
+    needsMsgId: false,
+    twitchOnly: true,
+  },
 }
 // Hover toolbar is fully opt-in: NO buttons default-on. Even the X
 // (delete-this-message) is hidden until the user enables it in settings →
@@ -609,6 +618,11 @@ async function runModAction(id) {
   if (def.action === 'blocked_terms') {
     detachModToolbar()
     openBlockedTerms(channel)
+    return
+  }
+  if (def.action === 'mod_tools') {
+    detachModToolbar()
+    openModSuite(channel, 'shield')
     return
   }
   const target = login || user

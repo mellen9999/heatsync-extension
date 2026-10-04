@@ -5642,11 +5642,12 @@
 
     // Every add/remove-channel path calls updateTabBar() right after mutating
     // config.channels — single chokepoint to keep hs-twitch-no-channel-empty
-    // (empty-panel hide, see updateTwitchNoChannelClass) in sync without
-    // threading a call through every one of those call sites individually.
-    if (hostPlatform === 'twitch' && typeof updateTwitchNoChannelClass === 'function') {
+    // (empty-panel hide) in sync without threading a call through every one of
+    // those call sites. Only the empty flag: see syncTwitchNoChannelEmpty for
+    // why this must never re-run the layout probe.
+    if (hostPlatform === 'twitch' && typeof syncTwitchNoChannelEmpty === 'function') {
       try {
-        updateTwitchNoChannelClass()
+        syncTwitchNoChannelEmpty()
       } catch (_) {}
     }
 

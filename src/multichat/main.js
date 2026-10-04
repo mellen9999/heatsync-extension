@@ -3609,7 +3609,7 @@
   let pronounsEnabled = true
 
   // Zebra striping — alternate row backgrounds (default on)
-  let zebraEnabled = true
+  let zebraEnabled = false
 
   // Toast on incoming whisper/DM while not on the whispers tab (default on) —
   // the has-whispers tab badge alone was easy to miss (wollip kept missing
@@ -7594,8 +7594,8 @@
           }
           // Text fallback for owner/mod without image
           const ytBadgeStyles = {
-            owner: { bg: '#ffff00', fg: '#000', label: '\u2606' },
-            moderator: { bg: '#000080', fg: '#fff', label: '\u2694' },
+            owner: { bg: '#000000', fg: '#ffff00', label: '\u2606' },
+            moderator: { bg: '#000000', fg: '#8888ff', label: '\u2694' },
           }
           const style = ytBadgeStyles[b.type]
           if (style)

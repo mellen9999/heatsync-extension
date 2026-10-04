@@ -1,6 +1,6 @@
 
     /* Color doctrine — VT320: eight colours and nothing else —
-       #000000 #ff0000 #00ff00 #ffff00 #000080 #ff00ff #00ffff #ffffff.
+       #000000 #ff0000 #00ff00 #ffff00 #8888ff #ff00ff #00ffff #ffffff.
        Emphasis is bold, underline, reverse video (#fff bg / #000 text) and
        blink for urgency. No grays, no shades, no partial opacity, no shadows,
        no gradients. Hierarchy is weight, not tone: primary text is bold,
@@ -32,7 +32,7 @@
       --hs-danger-dim: #ff0000;
       --hs-ok-dim: #00ff00;
       --hs-warn-dim: #ffff00;
-      --hs-info-dim: #000080;
+      --hs-info-dim: #8888ff;
       --hs-thread-dim: #ff00ff;
       --hs-reply-dim: #00ffff;
       /* tints — rows are not tinted; the border strip carries the hue */
@@ -44,6 +44,7 @@
       --hs-reply-tint: #000000;
       --hs-gold-tint: #000000;
       --hs-warn-bg: #000000;
+      --hs-zebra: transparent; /* alternating-row stripe — off by default, one knob */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).
          --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the

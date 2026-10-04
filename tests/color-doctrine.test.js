@@ -5,7 +5,7 @@ import { join, relative } from 'node:path'
 /**
  * VT320 doctrine: eight colours and nothing else.
  *
- *   #000000 #ff0000 #00ff00 #ffff00 #000080 #ff00ff #00ffff #ffffff
+ *   #000000 #ff0000 #00ff00 #ffff00 #8888ff #ff00ff #00ffff #ffffff
  *
  * Emphasis is bold / underline / reverse video / blink — never a grey, a shade,
  * a partial alpha or a glow. Mirrors heatsync.org (css/core/variables.css,
@@ -23,7 +23,7 @@ import { join, relative } from 'node:path'
 const ROOT = join(import.meta.dir, '..')
 const STYLES = join(ROOT, 'src', 'multichat', 'styles')
 
-const PALETTE = new Set(['000000', 'ff0000', '00ff00', 'ffff00', '000080', 'ff00ff', '00ffff', 'ffffff'])
+const PALETTE = new Set(['000000', 'ff0000', '00ff00', 'ffff00', '8888ff', 'ff00ff', '00ffff', 'ffffff'])
 const ORANGE = 'ff8700'
 
 /** Whole files that are not ours to recolour. */

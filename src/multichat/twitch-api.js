@@ -2211,25 +2211,25 @@ function getOwnTwitchLogin() {
 
 // Twitch IRC badge rendering
 const BADGE_STYLES = {
-  broadcaster: { label: 'LIVE', bg: '#ff0000', fg: '#fff' },
+  broadcaster: { label: 'LIVE', bg: '#000000', fg: '#ff0000' },
   moderator: { label: 'MOD', bg: '#000000', fg: '#fff' },
-  vip: { label: 'VIP', bg: '#ff00ff', fg: '#fff' },
-  subscriber: { label: 'SUB', bg: '#ff00ff', fg: '#fff' },
-  predictions: { label: 'PRED', bg: '#000080', fg: '#fff' },
-  premium: { label: 'PRIME', bg: '#000080', fg: '#fff' },
-  admin: { label: 'ADMIN', bg: '#ffff00', fg: '#000' },
-  staff: { label: 'STAFF', bg: '#ffff00', fg: '#000' },
+  vip: { label: 'VIP', bg: '#000000', fg: '#ff00ff' },
+  subscriber: { label: 'SUB', bg: '#000000', fg: '#ff00ff' },
+  predictions: { label: 'PRED', bg: '#000000', fg: '#8888ff' },
+  premium: { label: 'PRIME', bg: '#000000', fg: '#8888ff' },
+  admin: { label: 'ADMIN', bg: '#000000', fg: '#ffff00' },
+  staff: { label: 'STAFF', bg: '#000000', fg: '#ffff00' },
   global_mod: { label: 'GMOD', bg: '#000000', fg: '#fff' },
-  partner: { label: '✓', bg: '#ff00ff', fg: '#fff' },
-  'bits-leader': { label: 'BITS', bg: '#ffff00', fg: '#000' },
-  'sub-gifter': { label: 'GIFT', bg: '#ff00ff', fg: '#fff' },
-  artist: { label: 'ART', bg: '#ffff00', fg: '#fff' },
-  turbo: { label: 'T+', bg: '#ff00ff', fg: '#fff' },
-  founder: { label: 'FND', bg: '#ff00ff', fg: '#fff' },
+  partner: { label: '✓', bg: '#000000', fg: '#ff00ff' },
+  'bits-leader': { label: 'BITS', bg: '#000000', fg: '#ffff00' },
+  'sub-gifter': { label: 'GIFT', bg: '#000000', fg: '#ff00ff' },
+  artist: { label: 'ART', bg: '#000000', fg: '#ffff00' },
+  turbo: { label: 'T+', bg: '#000000', fg: '#ff00ff' },
+  founder: { label: 'FND', bg: '#000000', fg: '#ff00ff' },
   // Kick badges (underscore variants)
-  sub_gifter: { label: 'GIFT', bg: '#ff00ff', fg: '#fff' },
-  og: { label: 'OG', bg: '#00ff00', fg: '#000' },
-  verified: { label: '✓', bg: '#00ff00', fg: '#000' },
+  sub_gifter: { label: 'GIFT', bg: '#000000', fg: '#ff00ff' },
+  og: { label: 'OG', bg: '#000000', fg: '#00ff00' },
+  verified: { label: '✓', bg: '#000000', fg: '#00ff00' },
 }
 
 // Terse chip text for the `textBadges` setting, and for the involuntary text

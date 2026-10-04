@@ -96,7 +96,9 @@ describe('no divergent reserved-path list grew back', () => {
   test('build.js embeds reserved-paths.js into the content scripts that reference it', () => {
     const build = read('build.js')
     expect(build).toMatch(/LIB_ORDER = \[[\s\S]*?'reserved-paths\.js'[\s\S]*?\]/)
-    expect(build).toContain("'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js']")
+    expect(build).toContain(
+      "'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js']",
+    )
     expect(build).toContain("'heatsync-button.js': ['reserved-paths.js', 'palette.js']")
   })
 })

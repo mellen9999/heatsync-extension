@@ -813,6 +813,7 @@ const MULTICHAT_MODULES = [
   'share-callouts.js',
   'resize.js',
   'chat-position.js',
+  'panel-actions.js',
   'settings-ui.js',
   'mention-rules.js',
   'channel-mgmt.js',

@@ -727,11 +727,6 @@
     .hs-mc-summary-stats, .hs-mc-summary-row { color: #ffffff; }
     .hs-mc-summary-dim { color: var(--hs-muted); }
 
-    /* ═══ /status panel ═══
-       All text 13px CozetteVector — anything else looks jank in Chrome's
-       renderer (see memory: feedback_browser_text_cozette_13). The crisp
-       block on body.hs-font-bitmap covers descendants so we don't repeat
-       it here; just lock the family + size. */
     /* a non-home cell's pane: a layer over the overlay, chat untouched below */
     #hs-mc-subpane {
       position: absolute; inset: 0; z-index: 30;
@@ -1105,9 +1100,6 @@
       padding: 2px;
     }
     .hs-mc-size-btn {
-      /* buttons do not inherit font-family — without this the size labels
-         render in the UA's Arial inside an otherwise all-Cozette panel, on
-         fractional advances. Same defect as .hs-mc-reply-btn. */
       font-family: inherit;
       white-space: nowrap !important;
       padding: 4px 10px !important;

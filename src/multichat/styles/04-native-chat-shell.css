@@ -56,7 +56,7 @@
     /* HeatSync container — sibling of React's chat-room__content, outside React's tree.
        font-family + size driven by ui_settings.fontFamily / ui_settings.fontSize
        via CSS vars set on the container element in applyFontSettings() (main.js).
-       Defaults: CozetteVector @ 13px to match heatsync.org's bitmap aesthetic. */
+       Defaults: system monospace at 15px, matching heatsync.org. */
     #hs-mc-container {
       position: relative;
       display: flex;
@@ -76,9 +76,6 @@
          system emoji font and the per-glyph advance can be fractional. */
       font-family: var(--hs-mc-font, monospace), 'Noto Color Emoji';
       font-size: var(--hs-mc-base-size, 15px);
-      /* Integer line-height (mirrors heatsync.org body 17px). Unitless lh
-         multiplied by 13px = 18.2px = fractional baseline = bitmap blur on
-         every line. Anything that inherits this stays on the pixel grid. */
       line-height: 17px;
       /* Cross-fade with the document_start prepaint pseudo-element. Container
          starts invisible; main.js sets opacity:1 after the overlay mounts +

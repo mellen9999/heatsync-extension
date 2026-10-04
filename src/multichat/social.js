@@ -1954,10 +1954,6 @@ function renderFeed() {
   if (feedFromHotFallback) {
     const banner = document.createElement('div')
     banner.className = 'hs-mc-feed-fallback-banner'
-    // 13px + integer line-height: Cozette is bitmap-native at 13px — 12px
-    // rescales the glyphs (blurry), and 1.5 leading lands rows off the pixel
-    // grid. No faux-bold either (synthetic bold double-strikes bitmap glyphs);
-    // the #fff vs #bbb contrast carries the hierarchy.
     banner.style.cssText =
       'padding:8px 10px;background:#000000;border-left:2px solid #ffffff;color:#ffffff;font-size:13px;margin-bottom:4px;line-height:18px'
     const head = document.createElement('div')
@@ -2924,10 +2920,6 @@ function applyDiscoverHeatRowEffects(row, heat) {
   if (hd.bg) row.style.background = hd.bg
 }
 
-// Canonical heat number — formatHeat + ° suffix at ≥ 10 + tier color/glow/breathe inline style.
-// The number and degree symbol render in separate sub-spans (.hs-heat-n and
-// .hs-heat-deg) so surfaces using a bitmap font can keep the digits crisp
-// while letting the ° fall back to a vector font that has a clean glyph.
 function heatSpanHtml(heat) {
   const h = Number(heat) || 0
   if (h <= 0) return ''
@@ -3044,9 +3036,6 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   bar.appendChild(fill)
   row.appendChild(bar)
 
-  // Canonical heat number — matches website / feed posts (formatHeat + ° suffix, tiered glow).
-  // Digits and ° are split into sub-spans so bitmap-font surfaces can render digits crisp
-  // while keeping the degree symbol on a vector font with a clean glyph.
   const heatEl = document.createElement('span')
   heatEl.className = 'hs-discover-heat'
   heatEl.title = `${heat.toLocaleString()} heat`

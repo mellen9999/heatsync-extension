@@ -22,10 +22,6 @@
       cursor: pointer;
       box-sizing: content-box;
     }
-    /* Feed content is rendered in CozetteVector (a pixel font). A bare inline
-       emote with vertical-align:middle recenters the line box and lands adjacent
-       text on a half-pixel Y, blurring the glyphs. bottom keeps text on an
-       integer baseline. Chat uses .hs-mc-emote-wrapper, so this is feed-only. */
     .hs-feed-body .hs-mc-emote { vertical-align: bottom; }
     /* Tighten gap between consecutive emotes so "eel1 eel2 eel3"
        reads as one continuous run instead of three spaced-out images.
@@ -112,13 +108,6 @@
       visibility: hidden !important;
     }
 
-    /* Emojis — scale driven by --hs-emoji-scale (1|2|4). Default 2x.
-       line-height MUST match the parent message's integer line-height
-       (18px) so a tall color-emoji glyph does NOT grow the inline line-box.
-       If the line-box grows from emoji metrics, half-leading for 13px text
-       becomes fractional and every character that follows the emoji on
-       the same row renders at a sub-integer baseline (= bitmap smear).
-       Emoji visual overflows the 18px box vertically — intentional. */
     .hs-mc-emoji {
       font-size: calc(1em * var(--hs-emoji-scale, 2));
       /* line-height matches --hs-emote-size so the inline-block reports the
@@ -129,13 +118,6 @@
          and below the glyph, matches emote-row visual height, keeps mixed
          emoji+text rows visually consistent with emote+text rows. */
       line-height: var(--hs-emote-size, 32px);
-      /* text-bottom, NOT middle/bottom: middle anchors the box at baseline +
-         xHeight/2, and Cozette's 13px x-height is fractional (3.546875px
-         half) — the grown line-box lands every adjacent glyph on a half-pixel
-         baseline (= bitmap smear). Plain bottom anchors to the LINE-BOX
-         bottom, which middle-aligned badge imgs also place fractionally.
-         text-bottom anchors to the parent font's strut — integer growth,
-         immune to sibling boxes. */
       vertical-align: text-bottom;
       display: inline-block;
     }
@@ -144,9 +126,6 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      /* text-bottom for integer line-box growth — same bitmap-smear rationale
-         as .hs-mc-emoji above. middle shifted every mixed emote+text row's
-         glyphs onto a .546875px baseline. */
       vertical-align: text-bottom;
       /* Lock height so collapsed↔expanded toggle doesn't shift line height
          (expanded adds 2px vertical padding via pseudo-element). */
@@ -266,19 +245,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      /* Reserve the emote's full box height from first paint so a lazy-loading
-         emote can't grow its row on arrival and shove every row below it down
-         (the measured layout-shift jank). A bare wrapper holds a 0-height img
-         until load, collapsing the line to text height (~19px) then snapping to
-         ~36px — a per-row vertical jolt on scroll / slow load / cache miss.
-         min-height (not a fixed img height) keeps aspect intact and never
-         upscales a small emote, so bitmap crispness is untouched. +4px covers
-         the img's 2px content-box padding (matches .hs-mc-emote-stack's 36px
-         lock). Width stays auto — width-pop is within-row and negligible.
-         Excluded from stacked overlays: overlay wrappers live inside the
-         stack's fixed-height grid, so the reservation is redundant and the
-         min-height inflates the grid row to 36px, stretching the overlay img
-         beyond its natural size and pushing it off-center over the base. */
       min-height: calc(var(--hs-emote-size, 32px) + 4px);
     }
     .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(:first-child) {
@@ -291,11 +257,6 @@
          them — pin it to 0 so the overlay centres exactly on the widest emote. */
       margin-left: 0;
     }
-    /* same bitmap-smear math for the badge family — any middle-aligned
-       inline box taller than the strut grows the row's line box by a
-       fractional amount and lands every glyph (the reported blurry
-       "mellen") on a half-pixel baseline. row-scoped: cards/pickers
-       keep middle. */
     .hs-mc-msg .hs-mc-platform-badge,
     .hs-mc-msg .hs-mc-badge,
     .hs-mc-msg .hs-mc-bits-badge,

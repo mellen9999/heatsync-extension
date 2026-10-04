@@ -149,11 +149,6 @@
       height: var(--hs-emote-size, 32px);
       width: auto;
       max-width: 192px;
-      /* NOT middle: middle anchors at baseline + xHeight/2, and Cozette's 13px
-         x-height is fractional (half = 3.546875px), which puts every adjacent
-         glyph on a half-pixel baseline and smears the bitmap font. text-bottom
-         anchors to the font strut, immune to sibling heights — the same fix the
-         chat rows already carry for .hs-mc-emote-wrapper. */
       vertical-align: text-bottom;
       margin: 0 2px;
       object-fit: contain;

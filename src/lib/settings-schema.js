@@ -124,7 +124,6 @@ const SETTINGS = [
     key: 'fontFamily',
     type: 'enum',
     default: 'monospace',
-    // retired faces (bitmap fonts no longer shipped) fall back to the system monospace
     coerce: (v) => (v === 'CozetteVector' || v === 'GohuFont' || v === 'DepartureMono' ? 'monospace' : undefined),
     scope: 'sync',
     category: 'display',

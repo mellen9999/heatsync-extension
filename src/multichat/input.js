@@ -9198,16 +9198,6 @@ async function uploadMediaFile(file) {
   }
 }
 
-// The original source URL behind a pasted/dropped image, when the clipboard
-// carries one. Chromium's "copy image" writes TWO flavors: a bitmap — which for
-// an animated gif is a single flattened frame, the animation already gone — and
-// a text/html fragment holding the original <img src>, which still points at the
-// live animated file. Reading that flavor is how gmail/docs paste a gif and keep
-// it moving; without it there is no path back to the frames.
-//
-// Exactly one <img> or nothing: a copy of page CONTENT (a paragraph with images
-// in it) also produces html, and guessing which of several images was meant is
-// how you post the wrong picture. One image means the copy WAS that image.
 function clipboardImageSourceUrl(dt) {
   try {
     const html = dt?.getData?.('text/html')

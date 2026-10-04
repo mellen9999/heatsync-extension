@@ -72,17 +72,6 @@
        shields the whole overlay regardless of host theme or meta timing.
        Verified live: inverted strips + white emotes reverted instantly when
        this rule was applied. */
-    /* html/body excluded — they carry hs- state classes (hs-font-bitmap,
-       hs-platform-*, hs-tabs-*) and matching them would force the entire
-       HOST page out of auto-darkening.
-       .hs-native-hidden excluded for the same reason one level down: it is a
-       class we put on the HOST's own nodes (twitch chat-shell +
-       chat-room__content, kick #channel-chatroom) to hide native chat, not on
-       anything we own. Stamping those opted a host subtree out of force-dark
-       while the rest of the page stayed inverted — on a light-themed host that
-       paints the subtree white. Verified live on twitch: chat-shell was
-       resolving color-scheme:dark purely because of hs-native-hidden. Only
-       stamp what we actually render. */
     [id^="hs-"]:not(html):not(body):not(.hs-native-hidden),
     [class^="hs-"]:not(html):not(body):not(.hs-native-hidden),
     [class*=" hs-"]:not(html):not(body):not(.hs-native-hidden) {

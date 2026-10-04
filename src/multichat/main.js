@@ -5431,7 +5431,6 @@
     return 'monospace'
   }
   function applyFontSettings(fontFamily, fontSize, customFontName) {
-    // Retired bitmap faces (CozetteVector / GohuFont / DepartureMono) → system monospace.
     if (fontFamily === 'GohuFont' || fontFamily === 'CozetteVector' || fontFamily === 'DepartureMono') {
       fontFamily = 'monospace'
     }

@@ -15,11 +15,6 @@
       margin-left: 0;
     }
     #hs-mc-platfilter:empty { display: none; margin: 0; }
-    /* Inside platfilter (horizontal strip): fixed 18x18, same box as the
-       composer send chips. These used to divide the cluster width with
-       flex:1 1 0, which lands the buttons on fractional x (measured .66/.33)
-       — and bitmap text on a sub-pixel x is exactly what smears. Vertical
-       (side-tab) mode below still fills the column on purpose. */
     #hs-mc-platfilter .hs-mc-pf-btn {
       flex: 0 0 18px !important;
       width: 18px !important;
@@ -128,11 +123,6 @@
       border: 1px solid;
       font-size: 13px;
       font-weight: 700;
-      /* INTEGER 18x18, identical to the tab-strip filter buttons. Padding-sized
-         boxes measured 17.81px wide and landed the glyphs on fractional x —
-         which is exactly what makes a bitmap font smear (same trap as the
-         whisper arrow's integer-width note). Fixed box, centred glyph, whole
-         pixels. */
       width: 18px;
       height: 18px;
       padding: 0;
@@ -161,17 +151,6 @@
       color: var(--hs-border) !important;
       border-color: var(--hs-border) !important;
     }
-    /* The send cluster's "where it goes" marker. Not a button — a one-glyph
-       label, dim so it never competes with the letters.
-
-       Sized and boxed exactly like .hs-whisper-arrow (02-tab-bar.css): pulled
-       OUT of the Cozette stack into a scalable mono face, because Cozette is
-       a bitmap font and only renders sharp at its native grid — scaling it up
-       just smears. The box is pinned to an integer height/width so a
-       fractional glyph advance can't push the chips next to it onto a
-       half-pixel and smear THEM (the same trap that hit "you" after the
-       whisper arrow). Flex handles the vertical centring here, so no
-       vertical-align hack is needed. */
     .hs-mc-st-arrow {
       color: var(--hs-muted);
       font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;

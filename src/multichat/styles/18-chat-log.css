@@ -1,8 +1,4 @@
     /* === Chat-log viewer (chat-logs.js) === */
-    /* All children inherit 13px var(--hs-mc-font) to match the rest of the
-       overlay — Cozette is a bitmap font keyed to 13px; smaller sizes look
-       blurry. Explicit overrides only where information density demands a
-       lighter weight (timestamp on its own line vs inline). */
     .hs-cl-wrap {
       display: flex; flex-direction: column;
       height: 100%; width: 100%;

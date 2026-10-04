@@ -65,8 +65,6 @@
       min-width: 0 !important;
       max-width: none !important;
       width: 100% !important;
-      /* Left-align (not center) — see .hs-mc-tab base for the bitmap-snap
-         reasoning. Util buttons override this back to center below. */
       text-align: left !important;
       box-sizing: border-box !important;
       flex: 0 0 auto !important;
@@ -88,11 +86,6 @@
        right edge (no 18px gap from fixed-size squares + left-aligned row). */
     .hs-tabs-right .hs-mc-util-btn,
     .hs-tabs-left .hs-mc-util-btn {
-      /* Fixed 14px (12px content after 1px borders) -- even content width
-         integer-centers CozetteVector's 6px glyph advance for both 1-glyph
-         (C/T) and 2-glyph (F-/F+) labels. Growing to fill (flex:1) produced
-         odd 15px widths, landing glyphs on a half-pixel and smearing the
-         bitmap. 6x14=84 fits the 90px column without wrapping. */
       width: 14px !important;
       min-width: 14px !important;
       max-width: 14px !important;

@@ -1818,12 +1818,6 @@ function createInputEmoteImg(emoteName) {
     blockedEmoteNames.has(emoteName.slice(0, -1))
   const _chipBlockedByHash = !!(emote.hash && blockedEmoteHashes.has(String(emote.hash)))
   if (blockedEmoteNames.has(emoteName) || _chipBlockedByBase || _chipBlockedByHash) markInputEmoteBlocked(img, true)
-  // Snap the chip to an integer width once decoded. A non-square emote scaled
-  // to the row height lands on a fractional width, so every character typed
-  // AFTER it starts at a fractional x and the bitmap font smears — the same
-  // horizontal fault chat rows fix via the load listener on #hs-mc-messages,
-  // which never covered the composer. Hook the chip directly (it's created in
-  // code) and cover the already-cached case, where load never fires.
   if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
   return img
 }
@@ -3614,31 +3608,10 @@ function _hsMcApplyMods(html, mods, hue) {
   return out
 }
 
-// ── Bitmap crispness: snap each emote box to an integer outer width ──────
-// A non-integer-width inline emote shifts every following glyph on the row
-// onto a fractional x. On Linux (where -webkit-font-smoothing:none is a
-// no-op) Chrome grayscale-AAs text at sub-pixel origins, so the text AFTER
-// an emote renders blurry while text before it stays crisp — the reported
-// "emote at start / after punctuation blurs the rest of the line" (position
-// is a perception artifact: any emote blurs the text that follows it).
-// Rounding the emote box's outer width UP to the next pixel puts the
-// post-emote pen back on the same integer-phase grid as ordinary text, so
-// the run renders crisp again (measured: post-emote text returns to the
-// native text phase in every position). Width is cached by url and
-// re-emitted inline by the HTML builders below, so re-sightings paint
-// snapped from the first frame — no reflow, no flash. Lazy emojis carry the
-// same fractional-advance issue but have no load event to hook — separate.
 const _hsEmoteBoxW = new Map() // chat url -> integer px (ceil of natural box width)
 const _hsSnapQueue = new Set()
 let _hsSnapScheduled = false
 const HS_SNAP_QUEUE_CAP = 200
-// Attach the integer-width snap to a composer chip. Every chip-creation site
-// must call this: a chip with a fractional width puts every character typed
-// AFTER it on a fractional x, and the bitmap font smears. Measured live on a
-// 51x32 emote at 28px height — box 44.625px, following text at x-fraction
-// 0.625; pinned to 45px, the text returns to 0.
-// There are FOUR creation paths (paste, typing-imagify, and two emote-cycling
-// ones) and hooking only one is exactly how this shipped half-fixed.
 function hsAttachInputEmoteSnap(img) {
   if (!img || typeof hsSnapEmoteBox !== 'function') return
   img.addEventListener('load', () => hsSnapEmoteBox(img), { once: true })

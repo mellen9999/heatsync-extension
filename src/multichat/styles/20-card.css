@@ -5,8 +5,8 @@
  * block in messages.css, and the card overrides in mobile.css.
  *
  * Doctrine: square (no border-radius — status dots are the only round
- * exception), 1px #808080 border, dense 20px sheet rows, dt dim/dd fg,
- * links #5f87ff, live green, mod/vip gold, danger red, ZERO orange, hover
+ * exception), 1px #ffffff border, dense 20px sheet rows, dt dim/dd fg,
+ * links white, live green, mod/vip gold, danger red, ZERO orange, hover
  * AND :active AND :focus-visible = white bg/black text, text >=13px (meta
  * <=11px only), zero gradients/glow/motion. !important only where noted —
  * beating a host rule that predates this file.
@@ -14,12 +14,12 @@
 
 .hs-card {
   --hs-card-fg: #ffffff;
-  --hs-card-dim: #a8a8a8;
-  --hs-card-border: #808080;
-  --hs-card-link: #5f87ff;
-  --hs-card-live: #00d700;
-  --hs-card-gold: #d7af00;
-  --hs-card-magenta: #d700d7;
+  --hs-card-dim: #ffffff;
+  --hs-card-border: #ffffff;
+  --hs-card-link: #ffffff;
+  --hs-card-live: #00ff00;
+  --hs-card-gold: #ffff00;
+  --hs-card-magenta: #ff00ff;
   --hs-card-danger: #ff0000;
   --hs-card-bg: #000000;
 
@@ -29,8 +29,8 @@
   color: var(--hs-card-fg);
   border: 1px solid var(--hs-card-border);
   border-radius: 0;
-  font-size: 13px;
-  line-height: 17px; /* 13px bitmap font, integer px — ratio smears the glyph */
+  font-size: 15px;
+  line-height: 20px; /* 15px monospace, integer px */
   width: 320px;
   max-width: 92vw;
   animation: none;
@@ -81,7 +81,7 @@
 @media (min-width: 769px) {
   /* 2px to match the visual weight of a fit-content card. */
   .profile-header .hs-card-page {
-    border: 2px solid #444444 !important;
+    border: 2px solid #ffffff !important;
   }
   /* This is the profile HEADER, not a popover — it belongs at the content
    * column's width (its own .profile-header wrapper is already width:100%,
@@ -125,7 +125,7 @@
     overflow: visible !important;
   }
   .profile-header .hs-card-page {
-    border: 2px solid #444444 !important;
+    border: 2px solid #ffffff !important;
   }
   /* Search/trending result rows keep their rank gutter — the header-card
    * min-width:100% treatment above is meant for the profile PAGE card only;
@@ -144,7 +144,7 @@
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
-    background: #a8a8a8 !important;
+    background: #000000 !important;
     order: unset !important;
     flex-shrink: 0 !important;
   }
@@ -156,24 +156,24 @@
   min-width: 200px;
 }
 .hs-card-chatter .hs-card-name {
-  font-size: 13px;
+  font-size: 15px;
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
 .hs-card-plat {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-dim);
 }
 .hs-card-meta {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-dim);
   margin-top: 2px;
 }
 
 /* ── hero banner ──────────────────────────────────────────────────────── */
 /* Collapsed until a banner actually resolves — most accounts have none, and
- * a permanent 48px #121212 strip with nothing in it read as a dead/broken
+ * a permanent 48px black strip with nothing in it read as a dead/broken
  * element, not a banner slot. profile-renderer.js's applyBannersIn only adds
  * .hs-card-hero-loaded once the image has actually finished loading (a real
  * <img> onload, not just a resolved URL), so this never flashes an empty
@@ -185,7 +185,7 @@
   width: 100%;
   height: 0;
   overflow: hidden;
-  background: #121212;
+  background: #000000;
   flex-shrink: 0;
 }
 .hs-card-hero.hs-card-hero-loaded {
@@ -196,8 +196,6 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(6px) brightness(0.55);
-  transform: scale(1.08); /* hide the blur's edge feather */
 }
 .hs-card-hero-scrim {
   /* Flat, not a gradient — doctrine bans gradients even here. A single
@@ -205,7 +203,7 @@
    * row without a blend. */
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: transparent;
 }
 
 /* ── body ─────────────────────────────────────────────────────────────── */
@@ -254,13 +252,13 @@
   gap: 3px;
 }
 .hs-card-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--hs-card-fg); /* host overwrites via CSSOM from data-color */
 }
 .hs-card-pronouns,
 .hs-card-plus {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-dim);
 }
 /* core/reset.css's blanket `img { height: auto }` beats the <img width=16
@@ -281,7 +279,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0 4px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #000000;
   background: var(--hs-card-gold);
@@ -290,7 +288,7 @@
 }
 
 .hs-card-bio {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-fg);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -332,7 +330,7 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 15px;
 }
 .hs-card-socials span {
   color: var(--hs-card-dim);
@@ -345,7 +343,7 @@
 .hs-card-nav {
   display: flex;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 15px;
   border-top: 1px solid var(--hs-card-border);
 }
 .hs-card-nav-cell {
@@ -359,7 +357,7 @@
   color: var(--hs-card-link);
   text-decoration: none;
   border-radius: 0;
-  box-shadow: 0 0 0 1px var(--hs-card-border);
+  box-shadow: inset 0 0 0 1px var(--hs-card-border);
 }
 .hs-card-nav-cell:hover,
 .hs-card-nav-cell:active,
@@ -371,17 +369,17 @@
   color: #000000;
   outline: none;
 }
-.hs-card-nav-cell[data-tone="ttv"] { color: #9146ff; }
-.hs-card-nav-cell[data-tone="kick"] { color: #53fc18; }
+.hs-card-nav-cell[data-tone="ttv"] { color: #ff00ff; }
+.hs-card-nav-cell[data-tone="kick"] { color: #00ff00; }
 .hs-card-nav-cell[data-tone="yt"] { color: #ff0000; }
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */
 .hs-card-label { display: inline; }
 .hs-card-hk { text-decoration: underline; }
 .hs-card-live {
   color: var(--hs-card-live);
-  font-size: 13px;
+  font-size: 15px;
 }
-.hs-card-verified { color: var(--hs-card-link); font-size: 13px; }
+.hs-card-verified { color: var(--hs-card-link); font-size: 15px; }
 
 /* ── property sheet ───────────────────────────────────────────────────── */
 .hs-card-sheet {
@@ -400,33 +398,33 @@
 }
 .hs-card-sheet-row dt {
   color: var(--hs-card-dim);
-  font-size: 13px;
+  font-size: 15px;
 }
 .hs-card-sheet-row dd {
   margin: 0;
   color: var(--hs-card-fg);
-  font-size: 13px;
+  font-size: 15px;
 }
 .hs-card-channel-sheet {
   border-top: 1px solid var(--hs-card-border);
   padding-top: 4px;
 }
 
-/* tone → color. Heat uses a red ramp on purpose — never orange. */
+/* tone → color. Heat steps white → yellow → red (the site ladder) — never orange. */
 .hs-card-sheet-row[data-tone="partner"] dd,
 .hs-card-sheet-row[data-tone="admin"] dd { color: var(--hs-card-magenta); }
 .hs-card-sheet-row[data-tone="affiliate"] dd,
 .hs-card-sheet-row[data-tone="staff"] dd { color: var(--hs-card-gold); }
-.hs-card-sheet-row[data-tone="heat-cold"] dd { color: #767676; }
-.hs-card-sheet-row[data-tone="heat-spark"] dd { color: #870000; }
-.hs-card-sheet-row[data-tone="heat-warm"] dd { color: #af0000; }
-.hs-card-sheet-row[data-tone="heat-hot"] dd { color: #d70000; }
-.hs-card-sheet-row[data-tone="heat-erupting"] dd { color: #ff0000; font-weight: 600; }
-.hs-card-sheet-row[data-tone="heat-mythic"] dd { color: var(--hs-card-magenta); font-weight: 600; }
+.hs-card-sheet-row[data-tone="heat-cold"] dd { color: #ffffff; }
+.hs-card-sheet-row[data-tone="heat-spark"] dd { color: #ffffff; font-weight: 700; }
+.hs-card-sheet-row[data-tone="heat-warm"] dd { color: #ffff00; }
+.hs-card-sheet-row[data-tone="heat-hot"] dd { color: #ffff00; font-weight: 700; }
+.hs-card-sheet-row[data-tone="heat-erupting"] dd { color: #ff0000; font-weight: 700; }
+.hs-card-sheet-row[data-tone="heat-mythic"] dd { background: #ff0000; color: #000000; font-weight: 700; }
 .hs-card-sheet-row[data-tone="you-follow"] dd,
-.hs-card-sheet-row[data-tone="you-sub"] dd { color: #5fd7ff; }
+.hs-card-sheet-row[data-tone="you-sub"] dd { color: #00ffff; }
 .hs-card-sheet-row[data-tone="they-follow"] dd,
-.hs-card-sheet-row[data-tone="they-sub"] dd { color: #d787d7; }
+.hs-card-sheet-row[data-tone="they-sub"] dd { color: #ff00ff; }
 .hs-card-sheet-row[data-tone="mutual"] dd,
 .hs-card-sheet-row[data-tone="mutual-sub"] dd { color: var(--hs-card-gold); }
 .hs-card-sheet-row[data-tone="ch"] dd { color: var(--hs-card-fg); }
@@ -440,7 +438,7 @@
   margin-right: -4px;
   vertical-align: middle;
 }
-.hs-card-mutual-n { font-size: 13px; color: var(--hs-card-dim); margin-left: 6px; }
+.hs-card-mutual-n { font-size: 15px; color: var(--hs-card-dim); margin-left: 6px; }
 
 /* ── note ─────────────────────────────────────────────────────────────── */
 .hs-card-note-text { color: var(--hs-card-fg); }
@@ -450,7 +448,7 @@
   margin: 2px 0;
   padding: 4px 6px;
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   resize: vertical;
   appearance: none;
   border-radius: 0;
@@ -505,7 +503,7 @@
   bottom: 0;
   font-size: 9px;
   color: var(--hs-card-dim);
-  background: rgba(0, 0, 0, 0.7);
+  background: #000000;
   padding: 0 2px;
 }
 
@@ -517,7 +515,7 @@
 .hs-card-recent-head {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-dim);
   margin-bottom: 2px;
 }
@@ -525,12 +523,12 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 13px;
+  font-size: 15px;
   height: 20px; /* same dense rhythm as .hs-card-sheet-row */
   line-height: 20px;
 }
-.hs-card-log-ts { flex-shrink: 0; font-size: 13px; color: var(--hs-card-dim); }
-.hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 13px; }
+.hs-card-log-ts { flex-shrink: 0; font-size: 15px; color: var(--hs-card-dim); }
+.hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 15px; }
 /* Single line, ellipsis on overflow — was `white-space: normal` +
  * word-break, which let a full-size (unbounded) emote wrap the row onto a
  * second line and made every row a different height. min-width: 0 is load-
@@ -593,14 +591,14 @@
   border-radius: 0;
   padding: 2px 5px;
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   outline: none;
 }
 .hs-card-mod-reason:focus-visible {
   border-color: var(--hs-card-fg);
 }
 .hs-card-mod-ch {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--hs-card-dim);
 }
 .hs-card-mod-row {
@@ -610,7 +608,7 @@
 }
 .hs-card-mod-btn {
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   background: transparent;
   color: var(--hs-card-fg);
   border: 1px solid var(--hs-card-border);
@@ -649,7 +647,7 @@
   min-height: 24px;
   padding: 4px 8px;
   text-align: center;
-  font-size: 13px;
+  font-size: 15px;
   appearance: none; /* iOS/older Safari rounds+shades a bare <button> */
   border-radius: 0;
 }
@@ -704,7 +702,7 @@
   border-radius: 0;
   background: var(--hs-card-bg);
   color: var(--hs-card-fg);
-  font-size: 13px; /* bitmap grid — 13px/26px only, see tests/unit/bitmap-grid-client.test.ts */
+  font-size: 15px; /* bitmap grid — 13px/26px only, see tests/unit/bitmap-grid-client.test.ts */
   line-height: 1;
   padding: 0;
   appearance: none; /* iOS/older Safari rounds+shades a bare <button> */

@@ -1,11 +1,4 @@
     /* Username hover tooltip - profile preview */
-    /* Body-appended popovers — pull font from :root vars so they render in
-       Cozette/user-chosen face instead of inheriting Twitch's Inter. This is
-       what makes the shared card (20-card.css's .hs-card, mounted inside
-       #hs-user-tooltip — see tooltips.js) render in bitmap font at all: that
-       file never declares its own font-family, by design, since the site
-       host establishes it differently. .hs-notif sets its own font-family
-       intentionally (ui-monospace) — leave that alone. */
     #hs-user-tooltip,
     #hs-badge-tooltip,
     #hs-emote-tooltip,

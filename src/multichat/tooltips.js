@@ -920,17 +920,6 @@ let _userTooltipTarget = null
 let _userTooltipResizeObs = null
 let _userTooltipMutObs = null
 
-// CozetteVector's OTF advance widths aren't integer multiples at 13px
-// (~5.984px per glyph), so any flex row of badges accumulates fractional
-// X positions on every child after the first. Bitmap glyphs rendered at
-// fractional X get sampled at sub-pixel offsets and smear — the "blurry"
-// tooltip badges. Rounding each badge's width UP to the next integer
-// resets the X of the next sibling to integer, killing the cascade.
-// BADGE_LEAFS lists the specific badge classes (visible chips, never
-// layout wrappers). Compound stat parents like .hs-pc-stat.op are rounded
-// because their .hs-pc-num child has fractional width that pushes the
-// sibling text node off integer; rounding the parent fixes the next
-// sibling-row badge.
 const TOOLTIP_BADGE_LEAFS = new Set([
   'hs-pc-platform',
   'hs-pc-name',

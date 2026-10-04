@@ -47,12 +47,6 @@
       font-weight: 400 !important;
       white-space: nowrap !important;
       transition: none;
-      /* flex-start, not center: centering a variable-width text run inside
-         a fixed-width container produces a fractional X origin half the
-         time, and Chrome with -webkit-font-smoothing:none does NOT snap the
-         text run to integer pixels — so every glyph renders at a sub-pixel
-         X and the bitmap font smears. Util buttons override this back to
-         center (their single-glyph squares have integer math). */
       text-align: left;
       display: inline-flex;
       align-items: center;
@@ -133,11 +127,6 @@
       background: #fff !important;
       color: #00ffff !important;
     }
-    /* Active — focused tab. Weight stays at 400: Cozette ships only the
-       regular face, and font-synthesis:none in the bitmap block tells the
-       browser not to fake-bold — but requesting 600 against a single-weight
-       bitmap font still nudges Chrome's text path off the crisp bitmap
-       route in practice. White-on-black background already conveys focus. */
     .hs-mc-tab-auto { color: var(--hs-muted); }
 .hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
 .hs-mc-tab.active {
@@ -299,10 +288,6 @@
       flex: 0 0 18px !important;
       box-sizing: border-box !important;
       font-size: 13px !important;
-      /* line-height = box height keeps the glyph baseline on an integer
-         pixel inside the 18px box. flex align-items:center placed the
-         13px glyph at (18-13)/2 = 2.5px → half-pixel offset → Cozette
-         bitmap glyphs rendered blurry. */
       line-height: 18px !important;
       letter-spacing: 0 !important;
       /* inline-block (not inline-flex) so the line-height anchors text
@@ -312,9 +297,6 @@
       vertical-align: top !important;
       border-width: 1px !important;
       font-family: inherit !important;
-      /* Cozette bitmap font needs the full crisp render block — without
-         these, the browser anti-aliases the glyph and the buttons read
-         as blurry-soft. mirrors heatsync.org base.css text rules. */
       font-kerning: normal !important;
       font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
     }
@@ -344,11 +326,6 @@
     .hs-mc-dm-inline.hs-whisper-failed { border-left-color: var(--hs-danger) !important; text-decoration: line-through; }
     .hs-mc-dm-inline.hs-whisper-failed .hs-cmd-mark { text-decoration: none; }
     .hs-whisper-msg.hs-whisper-in { border-left: 3px solid var(--hs-reply); }
-    /* The arrow is a SYMBOL, not text — pull it out of the bitmap font stack so
-       it can scale crisply. Cozette only renders sharp at its native grid, so
-       sizing this up while inheriting the panel font would just smear it (see
-       the bitmap-smear trap). A scalable mono face + line-height:1 keeps the row
-       height pinned at 18px, so it reads bigger without costing any density. */
     .hs-whisper-arrow {
       font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
       font-size: 19px;
@@ -361,22 +338,9 @@
       display: inline-block;
       height: 18px;
       line-height: 18px;
-      /* INTEGER width is mandatory, not cosmetic. This glyph comes from a
-         scalable font, so its natural advance is fractional (measured 11.4531px)
-         — which put every glyph AFTER the arrow on a half-pixel X and smeared it
-         (the "you" in "mellen9 → you"). Bitmap text can't survive subpixel
-         positioning. Ceil to a whole pixel and centre the glyph inside it; with
-         integer margins the whole run stays on the pixel grid. */
       width: 12px;
       text-align: center;
       overflow: visible;
-      /* An INTEGER px offset — never 'middle' (anchors at baseline + xHeight/2,
-         and Cozette's 13px x-height halves to 3.546875px = fractional baseline)
-         and not 'text-bottom' here either: text-bottom is right for tall emote
-         boxes, but against this 18px row it grew every whisper row to 25px.
-         A whole-pixel offset keeps the baseline on the grid AND leaves row
-         height untouched. Measured: row 22px (same as a plain row), frac(x)=0,
-         frac(y)=0 on the adjacent text node. */
       vertical-align: -4px;
       margin: 0 5px;
     }

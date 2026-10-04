@@ -40,9 +40,6 @@
       padding: var(--hs-mc-row-pad, 2px 4px);
       border-radius: 0;
       font-size: var(--hs-chat-font, 15px) !important;
-      /* 18px integer (mirrors heatsync.org main.css:629) — keep baseline on
-         the pixel grid. 1.4 × 13px = 18.2px fractional half-leading makes
-         every bitmap glyph render off-grid. */
       line-height: var(--hs-mc-row-lh, 18px) !important;
       word-wrap: break-word;
       word-break: break-word;
@@ -88,9 +85,6 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      /* Overlay lives on <body>, outside #hs-mc-container — pull font from
-         :root vars so rows render in Cozette at the panel size, not the
-         host page's font (Inter/Roobert on Twitch). */
       font-family: var(--hs-mc-font, monospace);
       font-size: var(--hs-mc-base-size, 15px);
     }
@@ -222,15 +216,6 @@
     .hs-mc-msg[data-msg-id] {
       position: relative;
     }
-    /* font-family is LOAD-BEARING: a <button> does not inherit it, so without
-       this the chip renders its glyph in the UA's Arial. That is not just the
-       wrong face — Arial's advance for ↩ is 10.9063px, so the chip's width was
-       fractional, and a right-anchored box of fractional width starts on a
-       fractional X. Every glyph inside it then smears, which is what a bitmap
-       face cannot survive. Cozette carries both ↩ (U+21A9) and » at a 6px
-       advance, so following the single font setting makes the chip exactly
-       16px and lands the glyph on the pixel grid. The right: offsets below
-       were always written for that 16px chip. */
     .hs-mc-reply-btn {
       display: none;
       position: absolute;
@@ -253,13 +238,6 @@
     .hs-mc-msg[data-msg-id]:hover .hs-mc-reply-btn {
       display: block;
     }
-    /* Thread button — its own complete chip to the left of reply, with the same
-       4px gutter the mod toolbar already sits on. Deliberately NOT a merged
-       border-right:0 join: chip widths follow the font (Cozette vs fallback
-       measured 16px and 15px here), so a join that assumes an exact width
-       renders as a chip missing one edge the moment the font differs. Both
-       chips are built together in the data-msg-id block, so the mod toolbar
-       offset below can count on both being present. */
     .hs-mc-thread-btn {
       display: none;
       position: absolute;
@@ -312,8 +290,6 @@
       color: #fff;
       border: 1px solid var(--hs-border);
       border-right: 0;
-      /* follows the single font setting like every other chip in a row, rather
-         than pinning Cozette behind the user's back */
       font: 13px/18px var(--hs-mc-font, monospace);
       user-select: none;
       height: 20px;
@@ -322,12 +298,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      /* content-box, and an EVEN runway. Centring only lands on the pixel grid
-         when (runway - text width) is even, and a monospace cell is always
-         even (6px in Cozette) whatever the label length. The old border-box
-         22px subtracted 10px of padding and the 1px divider, leaving an 11px
-         runway — so every button but the last (which has no divider) centred
-         its glyph on a half pixel and smeared it. */
       box-sizing: content-box;
       min-width: 12px;
       padding: 0 5px;
@@ -612,14 +582,6 @@
       font-style: normal;
       font-weight: 600;
     }
-    /* Inline, matching the site (.chat-reply-ctx in live-chat.css): just the
-       arrow, the name, and a snippet of the quoted message, on its OWN line
-       above the message content. The line is hard-capped at exactly one line:
-       nowrap + hidden overflow + ellipsis, so a long quote clips instead of
-       ever wrapping the row taller. display:block starts every glyph at
-       integer x from the row's left edge — no inline-block width to land on a
-       fractional pixel, so the bitmap face stays crisp (the old inline pill
-       needed a ch-based cap for exactly that reason). */
     .hs-mc-reply-ctx {
       display: block;
       max-width: 100%;
@@ -644,9 +606,6 @@
     }
     .hs-mc-reply-user {
       color: var(--hs-muted);
-      /* 400: CozetteVector has a single 400 master. 600 renders identically
-         when font-synthesis:none applies and faux-bolds (blurs) the instant it
-         does not — so it only ever buys risk. */
       font-weight: 400;
     }
     /* xterm 88 — saturated enough to read as "you got mentioned" but dark
@@ -758,9 +717,6 @@
       border-radius: 0;
     }
     .hs-mc-platform-badge {
-      /* Text badges follow the single font setting (family + size), not the
-         emote-size scale — one appearance control drives every badge glyph.
-         Crispness on Cozette comes from the .hs-font-bitmap block. */
       font-family: var(--hs-mc-font, monospace);
       font-size: 13px;
       margin-right: 3px;
@@ -1111,18 +1067,6 @@
       cursor: pointer;
     }
     .hs-mc-reply-caret {
-      /* font-size, NOT 10px. Cozette is a bitmap face: its cell advance is 6px
-         at 13px, and 10px scales that to 4.625 — a fractional advance. The
-         caret sits inside .hs-mc-reply-ctx, which is an inline-block, so a
-         fractional child made the whole pill 70.625px wide and started every
-         glyph of the message AFTER it on a sub-pixel x. Measured: message text
-         with a reply context sat at x-fraction 0.625, the same text without one
-         at 0. That is the whole "the reply ui makes the text blurry" report.
-         Inheriting 13px also renders the caret from Cozette's native cell
-         instead of a downscaled bitmap, so the glyph itself stops being fuzzy —
-         pinning an integer width would have fixed the tail and left the caret
-         soft. Subtlety comes from opacity, which costs no geometry.
-         Guarded by the smear assertion in scripts/render-extension.ts. */
       font-size: inherit;
        margin-left: 2px;
     }

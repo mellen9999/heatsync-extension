@@ -135,10 +135,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    /* Canonical heat number — used everywhere via heatSpanHtml/heatSpanEl. Tier color/glow is set inline.
-       Structure: <span.hs-heat-num><span.hs-heat-n>{digits}</span><span.hs-heat-deg>°</span></span>
-       The two sub-spans let surfaces using a bitmap font keep the digits crisp
-       while the degree symbol falls back to a vector font that has a clean glyph. */
     .hs-heat-num {
       font-variant-numeric: tabular-nums;
       font-weight: 900;

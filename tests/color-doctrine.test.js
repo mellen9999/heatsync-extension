@@ -36,7 +36,6 @@ const EXEMPT_FILES = new Map([
   ['src/lib/fill-layers.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/glyph-mask.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/plus-tenure.js', 'byte-synced from the site (sync-paint-compiler.sh)'],
-  ['src/multichat/styles/20-card.css', 'shared card stylesheet, byte-synced from the site (sync-site-copies.sh)'],
   ['src/multichat/paints.js', 'HS_USERNAME_PALETTE — user name colours, byte-identical with the site'],
   ['src/multichat/cosmetics.js', '7TV/BTTV/FFZ cosmetics — paid/user content'],
   ['src/multichat/irc.js', 'platform default name colours — user-name content'],

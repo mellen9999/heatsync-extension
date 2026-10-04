@@ -14130,7 +14130,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6bd64a478732' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c97d7c982da8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35295,6 +35295,69 @@ function feedEngageWire(div, m) {
   })
 }
 
+// ── live thread frames ──────────────────────────────────────────────────────
+// The server fans reaction:added / reaction:removed / vote:updated to the room
+// `feed:thread:<id>`; a socket joins it with feed:join `thread:<id>`. The
+// background owns the socket, so the thread view only tells it which room this
+// tab is looking at (one at a time — naming a new one swaps, null leaves) and
+// it re-joins on reconnect. Frames arrive as broadcasts and are applied here.
+
+const FEED_THREAD_ROOM_RE = /^[a-z0-9]{1,8}$/i
+let feedThreadRoom = null
+
+function feedThreadRoomFor(id) {
+  return typeof id === 'string' && FEED_THREAD_ROOM_RE.test(id) ? `thread:${id.toLowerCase()}` : null
+}
+
+// Called when the thread on screen changes (open / switch / close).
+function feedThreadSync(id) {
+  const room = id ? feedThreadRoomFor(id) : null
+  if (room === feedThreadRoom) return
+  feedThreadRoom = room
+  safeSendMessage({ type: 'feed_thread', room })
+}
+
+// Apply one frame to a cached post. Returns 'reactions' | 'vote' | null (what
+// changed). My own reaction frames are skipped — the click already applied it
+// optimistically; votes carry absolute numbers, so re-applying is harmless.
+function feedFrameApply(m, frame, selfId) {
+  if (!m || !frame) return null
+  if (frame.type === 'vote:updated') {
+    if (Number.isFinite(frame.score)) m.vote_score = frame.score
+    if (Number.isFinite(frame.heat)) m.heat = frame.heat
+    return 'vote'
+  }
+  if (frame.type !== 'reaction:added' && frame.type !== 'reaction:removed') return null
+  if (selfId != null && String(frame.user_id) === String(selfId)) return null
+  const emoteId = Number(frame.emote_id)
+  if (!emoteId) return null
+  const list = (m.reactions || []).map((r) => ({ ...r }))
+  const hit = list.find((r) => r.emote_id === emoteId)
+  if (frame.type === 'reaction:added') {
+    if (hit) hit.count = (Number(hit.count) || 0) + 1
+    else {
+      // an image the server stamped nsfw / content-warned is shown as a name only
+      const gated = frame.nsfw || (frame.cw_cats && frame.cw_cats.length)
+      list.push({
+        emote_id: emoteId,
+        emote_name: frame.emote_name || '',
+        emote_url: gated ? '' : frame.emote_url || '',
+        count: 1,
+        reacted: false,
+      })
+    }
+  } else if (hit) hit.count = Math.max(0, (Number(hit.count) || 0) - 1)
+  m.reactions = list.filter((r) => r.count > 0)
+  return 'reactions'
+}
+
+function feedOnFrame(frame) {
+  const m = feedFindMsg(frame?.message_id)
+  const changed = feedFrameApply(m, frame, hsCurrentUserId)
+  if (changed === 'reactions') feedPaintReactions(m)
+  else if (changed === 'vote') feedPaintVote(m)
+}
+
 
 // --- multichat/social.js ---
 // Social - feed, notifications, activity, heatsync API
@@ -35309,7 +35372,22 @@ let _autoYtVideoId = null // videoId for this tab's __live_yt_auto__ subscriptio
 // The heatsync-feed half of listenForSocialEvents' dispatch — the events the
 // `feed` subsystem actually owns. Kept as a set so the gate is one lookup and
 // a new feed event has one obvious place to be declared.
-const _FEED_EVENTS = new Set(['new-message', 'message-edited', 'message-deleted', 'message-updated'])
+const _FEED_EVENTS = new Set([
+  'new-message',
+  'message-edited',
+  'message-deleted',
+  'message-updated',
+  'reaction:added',
+  'reaction:removed',
+  'vote:updated',
+])
+
+// A cached post by id: the open thread's OP / replies first, then the feed.
+function feedFindMsg(id) {
+  if (!id) return null
+  if (activeThread?.op?.base36_id === id) return activeThread.op
+  return activeThread?.replies?.find((r) => r.base36_id === id) || feedMessages.find((m) => m.base36_id === id) || null
+}
 
 // The one place a youtube stream gets subscribed. Eight call sites across four
 // modules sent this message raw and only three of them checked the switch, so
@@ -35707,6 +35785,7 @@ let replyState = null // { msgId, user, channel } when replying to a message
 let quoteState = null // { permalink, user, text, channel, platform } when quoting a live row into a new thread
 let hsAuthToken = null // Heatsync auth state (loaded from storage)
 let hsCurrentUsername = null // Heatsync username (loaded from storage user_info)
+let hsCurrentUserId = null // Heatsync account id (same source) — tells my own live frames from others'
 // Batch keys the signed-in HS account resolves as (server-computed, from
 // /api/auth/me via user_info). null = unknown (old server / logged out) —
 // consumers must fail open. [] = account has no resolvable platform identity.
@@ -35718,6 +35797,7 @@ async function loadHsUsername() {
     const data = await api.storage.local.get('user_info')
     const ui = data?.user_info
     hsCurrentUsername = ui?.username?.toLowerCase() || null
+    hsCurrentUserId = ui?.id ? String(ui.id) : null
     hsSenderKeys = Array.isArray(ui?.sender_keys) ? ui.sender_keys : null
     // Cross-platform mention aliases: any name across Twitch/Kick/YT counts as
     // a mention of the user, even if the chat is on a different platform.
@@ -35734,6 +35814,7 @@ async function loadHsUsername() {
     primeSelfHsCosmetics(ui)
   } catch (_) {
     hsCurrentUsername = null
+    hsCurrentUserId = null
     hsSenderKeys = null
   }
 }
@@ -36681,6 +36762,7 @@ function listenForSocialEvents() {
       if (activeThread) {
         if (activeThread.op?.base36_id === id) {
           activeThread = null
+          feedThreadSync(null)
         } else if (activeThread.replies) {
           const ri = activeThread.replies.findIndex((r) => r.base36_id === id)
           if (ri >= 0) activeThread.replies.splice(ri, 1)
@@ -36883,6 +36965,10 @@ function listenForSocialEvents() {
           }
         }
       }
+    }
+    if (msg.type === 'reaction:added' || msg.type === 'reaction:removed' || msg.type === 'vote:updated') {
+      if (msg.data) feedOnFrame(msg.data)
+      return
     }
     if (msg.type === 'message-updated' && msg.data) {
       const uid = msg.data.base36_id
@@ -37780,6 +37866,7 @@ async function openThread(msgId, highlightId) {
   const op = feedMessages.find((m) => m.base36_id === msgId)
   const thread = { id: msgId, op: op || null, replies: [], loading: true, highlightId: highlightId || null }
   activeThread = thread
+  feedThreadSync(msgId)
   renderFeed()
   _renderFeedReplyChip(thread)
   if (typeof showInputBar === 'function') showInputBar()
@@ -37832,6 +37919,7 @@ async function openThread(msgId, highlightId) {
 
 function closeThread() {
   activeThread = null
+  feedThreadSync(null)
   _clearFeedReplyChip()
   renderFeed()
 }
@@ -62344,6 +62432,7 @@ function fullSpaReinit() {
   feedHasMore = true
   feedLastFetch = 0
   activeThread = null
+  feedThreadSync(null)
   _autoYtVideoId = null
   // Reset feed scroll listener flag (new DOM element)
   const oldMsgs = document.getElementById('hs-mc-messages')
@@ -70940,6 +71029,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Close thread view when leaving feed
     if (currentTab === 'feed' && id !== 'feed') {
       activeThread = null
+      feedThreadSync(null)
       _clearFeedReplyChip()
       const feedTabBtn = tabBarElement?.querySelector('[data-tab="feed"]')
       if (feedTabBtn) feedTabBtn.textContent = t('mc_tab_feed')

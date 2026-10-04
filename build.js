@@ -805,6 +805,8 @@ const MULTICHAT_MODULES = [
   'mod-toolbar.js',
   'automod-queue.js',
   'blocked-terms.js',
+  'mod-suite-calls.js',
+  'mod-suite.js',
   'chat-modes.js',
   'resize.js',
   'settings-ui.js',

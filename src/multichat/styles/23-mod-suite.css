@@ -1,0 +1,63 @@
+    /* Mod suite panel (mod-suite.js) — rides .hs-pane-panel. Square, terminal,
+       hover/active/focus = reverse video, no motion. */
+    .hs-ms { outline: none; font-size: 13px; }
+    .hs-ms-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .hs-ms-title { color: var(--hs-brand); }
+    .hs-ms-count { color: var(--hs-muted); }
+    .hs-ms-cells, .hs-ms-subs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+    .hs-ms-input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      padding: 4px 6px;
+      margin-bottom: 6px;
+      font: inherit;
+    }
+    .hs-ms-input[hidden] { display: none; }
+    .hs-ms-input::placeholder { color: var(--hs-muted); }
+    .hs-ms-input:focus { border-color: #fff; outline: none; }
+    .hs-ms-row .hs-ms-input { flex: 1 1 8em; width: auto; min-width: 0; margin-bottom: 0; }
+    .hs-ms-btn {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      padding: 2px 10px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .hs-ms-btn:hover, .hs-ms-btn:active, .hs-ms-btn:focus-visible { background: #fff; color: #000; outline: none; }
+    .hs-ms-on { border-color: var(--hs-brand); color: var(--hs-brand); }
+    .hs-ms-on:hover, .hs-ms-on:active, .hs-ms-on:focus-visible { background: var(--hs-brand); color: #000; }
+    .hs-ms-primary { border-color: var(--hs-brand); color: var(--hs-brand); }
+    .hs-ms-danger { border-color: var(--hs-danger); color: var(--hs-danger); }
+    .hs-ms-danger:hover, .hs-ms-danger:active, .hs-ms-danger:focus-visible { background: var(--hs-danger); color: #000; }
+    .hs-ms-msg { min-height: 17px; margin-bottom: 6px; color: var(--hs-ok); }
+    .hs-ms-msg.hs-ms-bad { color: var(--hs-danger); }
+    .hs-ms-row, .hs-ms-state {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 6px;
+      border: 1px solid transparent;
+    }
+    .hs-ms-row { cursor: pointer; }
+    .hs-ms-row:hover, .hs-ms-row:active { background: #fff; color: #000; }
+    .hs-ms-sel { border-color: #fff; }
+    .hs-ms-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+    .hs-ms-sub { color: var(--hs-muted); }
+    .hs-ms-row:hover .hs-ms-sub, .hs-ms-row:active .hs-ms-sub { color: #000; }
+    .hs-ms-live .hs-ms-text { color: var(--hs-danger); }
+    .hs-ms-calm .hs-ms-text { color: var(--hs-ok); }
+    .hs-ms-confirm .hs-ms-text { color: var(--hs-danger); }
+    .hs-ms-confirm:hover .hs-ms-text, .hs-ms-confirm:active .hs-ms-text { color: #000; }
+    .hs-ms-levels { display: flex; gap: 2px; }
+    .hs-ms-lvl { padding: 2px 8px; }
+    .hs-ms-fold { margin: 6px 0; }
+    .hs-ms-note { color: var(--hs-muted); padding: 4px 0; line-height: 1.6; }
+    .hs-ms-hint { margin-top: 8px; color: var(--hs-muted); white-space: pre-line; }

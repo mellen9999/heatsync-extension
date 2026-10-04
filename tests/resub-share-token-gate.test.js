@@ -23,7 +23,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const MAIN_SRC = ['main.js', 'share-callouts.js'].map((f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')).join('\n')
+const MAIN_SRC = ['main.js', 'share-callouts.js']
+  .map((f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8'))
+  .join('\n')
 const NOTIFS_SRC = readFileSync(new URL('../src/multichat/notifs.js', import.meta.url), 'utf8')
 
 describe('the resub click is only intercepted with a real token', () => {

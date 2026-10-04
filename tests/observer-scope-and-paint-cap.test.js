@@ -18,7 +18,9 @@ import { join } from 'node:path'
 const ROOT = new URL('..', import.meta.url).pathname
 const TWITCH_HOST = readFileSync(join(ROOT, 'src', 'multichat', 'twitch-host.js'), 'utf8')
 const KICK_HOST = readFileSync(join(ROOT, 'src', 'multichat', 'kick-host.js'), 'utf8')
-const MAIN = ['main.js', 'share-callouts.js'].map((f) => readFileSync(join(ROOT, 'src', 'multichat', f), 'utf8')).join('\n')
+const MAIN = ['main.js', 'share-callouts.js']
+  .map((f) => readFileSync(join(ROOT, 'src', 'multichat', f), 'utf8'))
+  .join('\n')
 const YT_CONTENT = readFileSync(join(ROOT, 'chrome', 'youtube-content.js'), 'utf8')
 
 describe('F11-1: one-shot wait-for-element observers scope off document root, not documentElement/body', () => {

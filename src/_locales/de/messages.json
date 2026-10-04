@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modi unbekannt — kanal noch nicht beigetreten"
+  },
+  "mc_ms_title": {
+    "message": "mod-tools"
+  },
+  "mc_ms_cell_shield": {
+    "message": "shield"
+  },
+  "mc_ms_cell_unban": {
+    "message": "entbannungsanfragen"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatter"
+  },
+  "mc_ms_hint": {
+    "message": "h/l zelle · j/k bewegen · ? tasten · esc schließen"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s an- oder ausschalten"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a genehmigen · d ablehnen · f nächster status · enter sendet"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k zeile wählen · 0-4 stufe setzen · a erweitert"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtern · enter öffnet die karte"
+  },
+  "mc_ms_loading": {
+    "message": "lädt…"
+  },
+  "mc_ms_need_perm": {
+    "message": "mod-tools brauchen eine weitere twitch-berechtigung"
+  },
+  "mc_ms_allow": {
+    "message": "mod-tools erlauben"
+  },
+  "mc_ms_not_mod": {
+    "message": "du bist kein mod dieses kanals"
+  },
+  "mc_ms_err": {
+    "message": "twitch nicht erreichbar — nochmal versuchen"
+  },
+  "mc_ms_retry": {
+    "message": "erneut"
+  },
+  "mc_ms_yes": {
+    "message": "ja"
+  },
+  "mc_ms_no": {
+    "message": "nein"
+  },
+  "mc_ms_cancel": {
+    "message": "abbrechen"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "keine treffer"
+  },
+  "mc_ms_no_channel": {
+    "message": "öffne zuerst einen twitch-kanal-tab"
+  },
+  "mc_ms_usage_shield": {
+    "message": "nutzung: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "nutzung: /warn <nutzer> <grund>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "nutzung: /shoutout <nutzer>"
+  },
+  "mc_ms_shield_on": {
+    "message": "shield-modus ist an"
+  },
+  "mc_ms_shield_off": {
+    "message": "shield-modus ist aus"
+  },
+  "mc_ms_shield_since": {
+    "message": "an seit $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "shield-modus einschalten? der chat wird gesperrt."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "einschalten"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "ausschalten"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "shield-modus an"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "shield-modus aus"
+  },
+  "mc_ms_st_pending": {
+    "message": "offen"
+  },
+  "mc_ms_st_approved": {
+    "message": "genehmigt"
+  },
+  "mc_ms_st_denied": {
+    "message": "abgelehnt"
+  },
+  "mc_ms_ub_count": {
+    "message": "anfragen: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "keine anfragen · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "genehmigen"
+  },
+  "mc_ms_ub_deny": {
+    "message": "ablehnen"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "grund (optional)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ genehmigen?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ ablehnen?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ genehmigt",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ abgelehnt",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "gesamt"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 aus · 4 am strengsten"
+  },
+  "mc_ms_am_advanced": {
+    "message": "erweitert"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod gespeichert"
+  },
+  "mc_ms_cat_disability": {
+    "message": "behinderung"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggression"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexualität, geschlecht oder gender"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "frauenfeindlichkeit"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "mobbing"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "fluchen"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "hautfarbe, herkunft oder religion"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "sexuelle begriffe"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatter: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatter: $P1$ von $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatter: $P1$ von $P2$ angezeigt",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "niemand im chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "verwarnungsgrund"
+  },
+  "mc_ms_warn_to": {
+    "message": "$P1$ verwarnen",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "verwarnung senden"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ verwarnt",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout an $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

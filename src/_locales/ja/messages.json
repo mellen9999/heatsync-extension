@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "モード不明 — まだチャンネルに参加していません"
+  },
+  "mc_ms_title": {
+    "message": "モツール"
+  },
+  "mc_ms_cell_shield": {
+    "message": "シールド"
+  },
+  "mc_ms_cell_unban": {
+    "message": "解除リクエスト"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "チャッター"
+  },
+  "mc_ms_hint": {
+    "message": "h/l セル · j/k 移動 · ? キー · esc 閉じる"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s オン/オフ"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a 承認 · d 却下 · f 次の状態 · enter 送信"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k 行を選択 · 0-4 レベル設定 · a 詳細"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ 絞り込み · enter カードを開く"
+  },
+  "mc_ms_loading": {
+    "message": "読み込み中…"
+  },
+  "mc_ms_need_perm": {
+    "message": "モツールには twitch の権限がもう1つ必要です"
+  },
+  "mc_ms_allow": {
+    "message": "モツールを許可"
+  },
+  "mc_ms_not_mod": {
+    "message": "このチャンネルのモデレーターではありません"
+  },
+  "mc_ms_err": {
+    "message": "twitch に接続できません — もう一度試してください"
+  },
+  "mc_ms_retry": {
+    "message": "再試行"
+  },
+  "mc_ms_yes": {
+    "message": "はい"
+  },
+  "mc_ms_no": {
+    "message": "いいえ"
+  },
+  "mc_ms_cancel": {
+    "message": "キャンセル"
+  },
+  "mc_ms_filter_ph": {
+    "message": "絞り込み"
+  },
+  "mc_ms_no_match": {
+    "message": "一致なし"
+  },
+  "mc_ms_no_channel": {
+    "message": "先に twitch チャンネルのタブを開いてください"
+  },
+  "mc_ms_usage_shield": {
+    "message": "使い方: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "使い方: /warn <ユーザー> <理由>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "使い方: /shoutout <ユーザー>"
+  },
+  "mc_ms_shield_on": {
+    "message": "シールドモードはオンです"
+  },
+  "mc_ms_shield_off": {
+    "message": "シールドモードはオフです"
+  },
+  "mc_ms_shield_since": {
+    "message": "$P1$ からオン",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "シールドモードをオンにしますか？チャットが制限されます"
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "オンにする"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "オフにする"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "シールドモード オン"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "シールドモード オフ"
+  },
+  "mc_ms_st_pending": {
+    "message": "保留中"
+  },
+  "mc_ms_st_approved": {
+    "message": "承認済み"
+  },
+  "mc_ms_st_denied": {
+    "message": "却下済み"
+  },
+  "mc_ms_ub_count": {
+    "message": "リクエスト: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "$P1$のリクエストはありません",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "承認"
+  },
+  "mc_ms_ub_deny": {
+    "message": "却下"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "理由（任意）"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ を承認しますか？",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ を却下しますか？",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ を承認しました",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ を却下しました",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "全体"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 オフ · 4 最も厳しい"
+  },
+  "mc_ms_am_advanced": {
+    "message": "詳細"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod を保存しました"
+  },
+  "mc_ms_cat_disability": {
+    "message": "障害"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "攻撃性"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "性的指向、性別、ジェンダー"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "女性蔑視"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "いじめ"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "暴言"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "人種、民族、宗教"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "性的な用語"
+  },
+  "mc_ms_ch_count": {
+    "message": "チャッター: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "チャッター: $P2$ 中 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "チャッター: $P2$ 中 $P1$ を表示",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "チャットに誰もいません"
+  },
+  "mc_ms_reason_ph": {
+    "message": "警告の理由"
+  },
+  "mc_ms_warn_to": {
+    "message": "$P1$ に警告",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "警告を送信"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ に警告しました",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "$P1$ をシャウトアウトしました",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

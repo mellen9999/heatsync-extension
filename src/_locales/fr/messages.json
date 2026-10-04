@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modes inconnus — canal pas encore rejoint"
+  },
+  "mc_ms_title": {
+    "message": "outils de modération"
+  },
+  "mc_ms_cell_shield": {
+    "message": "bouclier"
+  },
+  "mc_ms_cell_unban": {
+    "message": "demandes de débannissement"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatteurs"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cellule · j/k déplacer · ? touches · esc fermer"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s activer ou désactiver"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a approuver · d refuser · f statut suivant · enter envoie"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k choisir une ligne · 0-4 définir le niveau · a avancé"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtrer · enter ouvre la fiche"
+  },
+  "mc_ms_loading": {
+    "message": "chargement…"
+  },
+  "mc_ms_need_perm": {
+    "message": "les outils de modération demandent une autorisation twitch de plus"
+  },
+  "mc_ms_allow": {
+    "message": "autoriser les outils de modération"
+  },
+  "mc_ms_not_mod": {
+    "message": "tu n'es pas modérateur de cette chaîne"
+  },
+  "mc_ms_err": {
+    "message": "impossible de joindre twitch — réessaie"
+  },
+  "mc_ms_retry": {
+    "message": "réessayer"
+  },
+  "mc_ms_yes": {
+    "message": "oui"
+  },
+  "mc_ms_no": {
+    "message": "non"
+  },
+  "mc_ms_cancel": {
+    "message": "annuler"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtrer"
+  },
+  "mc_ms_no_match": {
+    "message": "aucun résultat"
+  },
+  "mc_ms_no_channel": {
+    "message": "ouvre d'abord un onglet de chaîne twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "usage : /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "usage : /warn <utilisateur> <raison>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "usage : /shoutout <utilisateur>"
+  },
+  "mc_ms_shield_on": {
+    "message": "le mode bouclier est activé"
+  },
+  "mc_ms_shield_off": {
+    "message": "le mode bouclier est désactivé"
+  },
+  "mc_ms_shield_since": {
+    "message": "activé depuis $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "activer le mode bouclier ? le chat est verrouillé."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "activer"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "désactiver"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "mode bouclier activé"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "mode bouclier désactivé"
+  },
+  "mc_ms_st_pending": {
+    "message": "en attente"
+  },
+  "mc_ms_st_approved": {
+    "message": "approuvée"
+  },
+  "mc_ms_st_denied": {
+    "message": "refusée"
+  },
+  "mc_ms_ub_count": {
+    "message": "demandes : $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "aucune demande $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "approuver"
+  },
+  "mc_ms_ub_deny": {
+    "message": "refuser"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "raison (facultatif)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "approuver $P1$ ?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "refuser $P1$ ?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ approuvé",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ refusé",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "global"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 désactivé · 4 le plus strict"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avancé"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod enregistré"
+  },
+  "mc_ms_cat_disability": {
+    "message": "handicap"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agressivité"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexualité, sexe ou genre"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misogynie"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "harcèlement"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "grossièretés"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "origine, ethnie ou religion"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "termes à caractère sexuel"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatteurs : $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatteurs : $P1$ sur $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatteurs : $P1$ sur $P2$ affichés",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "personne dans le chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "raison de l'avertissement"
+  },
+  "mc_ms_warn_to": {
+    "message": "avertir $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "envoyer l'avertissement"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ averti",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "dédicace à $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

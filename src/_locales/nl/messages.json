@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modi onbekend — kanaal nog niet betreden"
+  },
+  "mc_ms_title": {
+    "message": "modtools"
+  },
+  "mc_ms_cell_shield": {
+    "message": "shield"
+  },
+  "mc_ms_cell_unban": {
+    "message": "unban-verzoeken"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatters"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cel · j/k bewegen · ? toetsen · esc sluiten"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s aan of uit"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a goedkeuren · d afwijzen · f volgende status · enter verstuurt"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k kies een rij · 0-4 stel het niveau in · a geavanceerd"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filter · enter opent de kaart"
+  },
+  "mc_ms_loading": {
+    "message": "laden…"
+  },
+  "mc_ms_need_perm": {
+    "message": "modtools hebben nog één twitch-toestemming nodig"
+  },
+  "mc_ms_allow": {
+    "message": "modtools toestaan"
+  },
+  "mc_ms_not_mod": {
+    "message": "je bent geen moderator van dit kanaal"
+  },
+  "mc_ms_err": {
+    "message": "kan twitch niet bereiken — probeer opnieuw"
+  },
+  "mc_ms_retry": {
+    "message": "opnieuw"
+  },
+  "mc_ms_yes": {
+    "message": "ja"
+  },
+  "mc_ms_no": {
+    "message": "nee"
+  },
+  "mc_ms_cancel": {
+    "message": "annuleren"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "niets gevonden"
+  },
+  "mc_ms_no_channel": {
+    "message": "open eerst een twitch-kanaaltab"
+  },
+  "mc_ms_usage_shield": {
+    "message": "gebruik: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "gebruik: /warn <gebruiker> <reden>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "gebruik: /shoutout <gebruiker>"
+  },
+  "mc_ms_shield_on": {
+    "message": "shield-modus staat aan"
+  },
+  "mc_ms_shield_off": {
+    "message": "shield-modus staat uit"
+  },
+  "mc_ms_shield_since": {
+    "message": "aan sinds $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "shield-modus aanzetten? chat gaat op slot."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "aanzetten"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "uitzetten"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "shield-modus aan"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "shield-modus uit"
+  },
+  "mc_ms_st_pending": {
+    "message": "in behandeling"
+  },
+  "mc_ms_st_approved": {
+    "message": "goedgekeurd"
+  },
+  "mc_ms_st_denied": {
+    "message": "afgewezen"
+  },
+  "mc_ms_ub_count": {
+    "message": "verzoeken: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "geen verzoeken: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "goedkeuren"
+  },
+  "mc_ms_ub_deny": {
+    "message": "afwijzen"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "reden (optioneel)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ goedkeuren?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ afwijzen?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ goedgekeurd",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ afgewezen",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "totaal"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 uit · 4 strengst"
+  },
+  "mc_ms_am_advanced": {
+    "message": "geavanceerd"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod opgeslagen"
+  },
+  "mc_ms_cat_disability": {
+    "message": "handicap"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agressie"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksualiteit, geslacht of gender"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "vrouwenhaat"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "pesten"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "schelden"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "ras, etniciteit of religie"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "seksuele termen"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatters: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatters: $P1$ van $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatters: $P1$ van $P2$ getoond",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "niemand in de chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "reden van waarschuwing"
+  },
+  "mc_ms_warn_to": {
+    "message": "$P1$ waarschuwen",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "waarschuwing sturen"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ gewaarschuwd",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "$P1$ een shoutout gegeven",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

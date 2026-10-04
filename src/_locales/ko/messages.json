@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "모드를 알 수 없음 — 아직 채널에 참여하지 않음"
+  },
+  "mc_ms_title": {
+    "message": "관리 도구"
+  },
+  "mc_ms_cell_shield": {
+    "message": "실드"
+  },
+  "mc_ms_cell_unban": {
+    "message": "차단 해제 요청"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "채팅 참여자"
+  },
+  "mc_ms_hint": {
+    "message": "h/l 칸 · j/k 이동 · ? 단축키 · esc 닫기"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s 켜기/끄기"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a 승인 · d 거부 · f 다음 상태 · enter 전송"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k 행 선택 · 0-4 단계 설정 · a 고급"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ 필터 · enter 카드 열기"
+  },
+  "mc_ms_loading": {
+    "message": "불러오는 중…"
+  },
+  "mc_ms_need_perm": {
+    "message": "관리 도구에는 twitch 권한이 하나 더 필요해요"
+  },
+  "mc_ms_allow": {
+    "message": "관리 도구 허용"
+  },
+  "mc_ms_not_mod": {
+    "message": "이 채널의 관리자가 아니에요"
+  },
+  "mc_ms_err": {
+    "message": "twitch에 연결할 수 없어요 — 다시 시도하세요"
+  },
+  "mc_ms_retry": {
+    "message": "다시 시도"
+  },
+  "mc_ms_yes": {
+    "message": "예"
+  },
+  "mc_ms_no": {
+    "message": "아니요"
+  },
+  "mc_ms_cancel": {
+    "message": "취소"
+  },
+  "mc_ms_filter_ph": {
+    "message": "필터"
+  },
+  "mc_ms_no_match": {
+    "message": "일치하는 항목 없음"
+  },
+  "mc_ms_no_channel": {
+    "message": "먼저 twitch 채널 탭을 여세요"
+  },
+  "mc_ms_usage_shield": {
+    "message": "사용법: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "사용법: /warn <사용자> <사유>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "사용법: /shoutout <사용자>"
+  },
+  "mc_ms_shield_on": {
+    "message": "실드 모드 켜짐"
+  },
+  "mc_ms_shield_off": {
+    "message": "실드 모드 꺼짐"
+  },
+  "mc_ms_shield_since": {
+    "message": "$P1$부터 켜짐",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "실드 모드를 켤까요? 채팅이 잠겨요."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "켜기"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "끄기"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "실드 모드 켜짐"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "실드 모드 꺼짐"
+  },
+  "mc_ms_st_pending": {
+    "message": "대기 중"
+  },
+  "mc_ms_st_approved": {
+    "message": "승인됨"
+  },
+  "mc_ms_st_denied": {
+    "message": "거부됨"
+  },
+  "mc_ms_ub_count": {
+    "message": "요청: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "$P1$ 요청 없음",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "승인"
+  },
+  "mc_ms_ub_deny": {
+    "message": "거부"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "사유 (선택)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ 승인할까요?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ 거부할까요?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ 승인함",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ 거부함",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "전체"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 꺼짐 · 4 가장 엄격"
+  },
+  "mc_ms_am_advanced": {
+    "message": "고급"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod 저장됨"
+  },
+  "mc_ms_cat_disability": {
+    "message": "장애"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "공격성"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "성적 지향, 성별 또는 젠더"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "여성 혐오"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "괴롭힘"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "욕설"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "인종, 민족 또는 종교"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "성적인 표현"
+  },
+  "mc_ms_ch_count": {
+    "message": "채팅 참여자: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "채팅 참여자: $P2$명 중 $P1$명",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "채팅 참여자: $P2$명 중 $P1$명 표시",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "채팅에 아무도 없음"
+  },
+  "mc_ms_reason_ph": {
+    "message": "경고 사유"
+  },
+  "mc_ms_warn_to": {
+    "message": "$P1$ 경고",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "경고 보내기"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ 경고함",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "$P1$ 샤라웃함",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "moduser ukjente — kanalen er ikke koblet til ennå"
+  },
+  "mc_ms_title": {
+    "message": "modverktøy"
+  },
+  "mc_ms_cell_shield": {
+    "message": "skjold"
+  },
+  "mc_ms_cell_unban": {
+    "message": "opphevingsforespørsler"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chattere"
+  },
+  "mc_ms_hint": {
+    "message": "h/l celle · j/k flytt · ? taster · esc lukk"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s av eller på"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a godkjenn · d avslå · f neste status · enter sender"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k velg en rad · 0-4 sett nivå · a avansert"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filter · enter åpner kortet"
+  },
+  "mc_ms_loading": {
+    "message": "laster…"
+  },
+  "mc_ms_need_perm": {
+    "message": "modverktøy trenger én tilgang til på twitch"
+  },
+  "mc_ms_allow": {
+    "message": "tillat modverktøy"
+  },
+  "mc_ms_not_mod": {
+    "message": "du er ikke moderator i denne kanalen"
+  },
+  "mc_ms_err": {
+    "message": "fikk ikke kontakt med twitch — prøv igjen"
+  },
+  "mc_ms_retry": {
+    "message": "prøv igjen"
+  },
+  "mc_ms_yes": {
+    "message": "ja"
+  },
+  "mc_ms_no": {
+    "message": "nei"
+  },
+  "mc_ms_cancel": {
+    "message": "avbryt"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "ingen treff"
+  },
+  "mc_ms_no_channel": {
+    "message": "åpne en twitch-kanalfane først"
+  },
+  "mc_ms_usage_shield": {
+    "message": "bruk: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "bruk: /warn <bruker> <årsak>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "bruk: /shoutout <bruker>"
+  },
+  "mc_ms_shield_on": {
+    "message": "skjoldmodus er på"
+  },
+  "mc_ms_shield_off": {
+    "message": "skjoldmodus er av"
+  },
+  "mc_ms_shield_since": {
+    "message": "på siden $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "slå på skjoldmodus? chatten låses."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "slå på"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "slå av"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "skjoldmodus på"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "skjoldmodus av"
+  },
+  "mc_ms_st_pending": {
+    "message": "venter"
+  },
+  "mc_ms_st_approved": {
+    "message": "godkjent"
+  },
+  "mc_ms_st_denied": {
+    "message": "avslått"
+  },
+  "mc_ms_ub_count": {
+    "message": "forespørsler: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "ingen forespørsler: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "godkjenn"
+  },
+  "mc_ms_ub_deny": {
+    "message": "avslå"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "årsak (valgfritt)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "godkjenne $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "avslå $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "godkjente $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "avslo $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "samlet"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 av · 4 strengest"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avansert"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod lagret"
+  },
+  "mc_ms_cat_disability": {
+    "message": "funksjonsnedsettelse"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggresjon"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "seksualitet, kjønn eller kjønnsidentitet"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "kvinnehat"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "mobbing"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "banning"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rase, etnisitet eller religion"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "seksuelle uttrykk"
+  },
+  "mc_ms_ch_count": {
+    "message": "chattere: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chattere: $P1$ av $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chattere: $P1$ av $P2$ vist",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "ingen i chatten"
+  },
+  "mc_ms_reason_ph": {
+    "message": "årsak til advarsel"
+  },
+  "mc_ms_warn_to": {
+    "message": "advar $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "send advarsel"
+  },
+  "mc_ms_warned": {
+    "message": "advarte $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "ga $P1$ en shoutout",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

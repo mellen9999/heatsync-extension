@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "मोड अज्ञात — चैनल अभी जुड़ा नहीं"
+  },
+  "mc_ms_title": {
+    "message": "मॉड टूल्स"
+  },
+  "mc_ms_cell_shield": {
+    "message": "शील्ड"
+  },
+  "mc_ms_cell_unban": {
+    "message": "अनबैन अनुरोध"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "चैटर्स"
+  },
+  "mc_ms_hint": {
+    "message": "h/l सेल · j/k चलें · ? कुंजियाँ · esc बंद"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s चालू या बंद"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a मंज़ूर · d अस्वीकार · f अगला स्टेटस · enter भेजता है"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k पंक्ति चुनें · 0-4 स्तर सेट करें · a एडवांस्ड"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ फ़िल्टर · enter कार्ड खोलता है"
+  },
+  "mc_ms_loading": {
+    "message": "लोड हो रहा है…"
+  },
+  "mc_ms_need_perm": {
+    "message": "मॉड टूल्स के लिए twitch की एक और अनुमति चाहिए"
+  },
+  "mc_ms_allow": {
+    "message": "मॉड टूल्स की अनुमति दें"
+  },
+  "mc_ms_not_mod": {
+    "message": "आप इस चैनल के मॉडरेटर नहीं हैं"
+  },
+  "mc_ms_err": {
+    "message": "twitch से संपर्क नहीं हो सका — फिर कोशिश करें"
+  },
+  "mc_ms_retry": {
+    "message": "फिर कोशिश करें"
+  },
+  "mc_ms_yes": {
+    "message": "हाँ"
+  },
+  "mc_ms_no": {
+    "message": "नहीं"
+  },
+  "mc_ms_cancel": {
+    "message": "रद्द करें"
+  },
+  "mc_ms_filter_ph": {
+    "message": "फ़िल्टर"
+  },
+  "mc_ms_no_match": {
+    "message": "कोई मेल नहीं"
+  },
+  "mc_ms_no_channel": {
+    "message": "पहले कोई twitch चैनल टैब खोलें"
+  },
+  "mc_ms_usage_shield": {
+    "message": "उपयोग: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "उपयोग: /warn <यूज़र> <कारण>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "उपयोग: /shoutout <यूज़र>"
+  },
+  "mc_ms_shield_on": {
+    "message": "शील्ड मोड चालू है"
+  },
+  "mc_ms_shield_off": {
+    "message": "शील्ड मोड बंद है"
+  },
+  "mc_ms_shield_since": {
+    "message": "$P1$ से चालू",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "शील्ड मोड चालू करें? चैट लॉक हो जाएगी."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "चालू करें"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "बंद करें"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "शील्ड मोड चालू"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "शील्ड मोड बंद"
+  },
+  "mc_ms_st_pending": {
+    "message": "लंबित"
+  },
+  "mc_ms_st_approved": {
+    "message": "स्वीकृत"
+  },
+  "mc_ms_st_denied": {
+    "message": "अस्वीकृत"
+  },
+  "mc_ms_ub_count": {
+    "message": "अनुरोध: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "कोई $P1$ अनुरोध नहीं",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "मंज़ूर करें"
+  },
+  "mc_ms_ub_deny": {
+    "message": "अस्वीकार करें"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "कारण (वैकल्पिक)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ को मंज़ूर करें?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ को अस्वीकार करें?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ मंज़ूर",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ अस्वीकृत",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "कुल मिलाकर"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 बंद · 4 सबसे सख़्त"
+  },
+  "mc_ms_am_advanced": {
+    "message": "एडवांस्ड"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod सेव हुआ"
+  },
+  "mc_ms_cat_disability": {
+    "message": "विकलांगता"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "आक्रामकता"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "कामुकता, लिंग या जेंडर"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "स्त्री-द्वेष"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "बदमाशी"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "गाली-गलौज"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "नस्ल, जातीयता या धर्म"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "सेक्स से जुड़े शब्द"
+  },
+  "mc_ms_ch_count": {
+    "message": "चैटर्स: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "चैटर्स: $P2$ में से $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "चैटर्स: $P2$ में से $P1$ दिख रहे",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "चैट में कोई नहीं"
+  },
+  "mc_ms_reason_ph": {
+    "message": "चेतावनी का कारण"
+  },
+  "mc_ms_warn_to": {
+    "message": "$P1$ को चेतावनी",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "चेतावनी भेजें"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ को चेतावनी दी",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "$P1$ को शाउटआउट दिया",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

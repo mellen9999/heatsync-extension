@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "modlar bilinmiyor — kanala henüz katılınmadı"
+  },
+  "mc_ms_title": {
+    "message": "mod araçları"
+  },
+  "mc_ms_cell_shield": {
+    "message": "kalkan"
+  },
+  "mc_ms_cell_unban": {
+    "message": "ban itirazları"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "sohbettekiler"
+  },
+  "mc_ms_hint": {
+    "message": "h/l hücre · j/k git · ? tuşlar · esc kapat"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s aç/kapat"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a onayla · d reddet · f sonraki durum · enter gönderir"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k satır seç · 0-4 seviye ayarla · a gelişmiş"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtre · enter kartı açar"
+  },
+  "mc_ms_loading": {
+    "message": "yükleniyor…"
+  },
+  "mc_ms_need_perm": {
+    "message": "mod araçları için bir twitch izni daha gerekli"
+  },
+  "mc_ms_allow": {
+    "message": "mod araçlarına izin ver"
+  },
+  "mc_ms_not_mod": {
+    "message": "bu kanalda mod değilsin"
+  },
+  "mc_ms_err": {
+    "message": "twitch'e ulaşılamadı — tekrar dene"
+  },
+  "mc_ms_retry": {
+    "message": "tekrar dene"
+  },
+  "mc_ms_yes": {
+    "message": "evet"
+  },
+  "mc_ms_no": {
+    "message": "hayır"
+  },
+  "mc_ms_cancel": {
+    "message": "iptal"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtre"
+  },
+  "mc_ms_no_match": {
+    "message": "eşleşme yok"
+  },
+  "mc_ms_no_channel": {
+    "message": "önce bir twitch kanalı sekmesi aç"
+  },
+  "mc_ms_usage_shield": {
+    "message": "kullanım: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "kullanım: /warn <kullanıcı> <sebep>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "kullanım: /shoutout <kullanıcı>"
+  },
+  "mc_ms_shield_on": {
+    "message": "kalkan modu açık"
+  },
+  "mc_ms_shield_off": {
+    "message": "kalkan modu kapalı"
+  },
+  "mc_ms_shield_since": {
+    "message": "açılış: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "kalkan modu açılsın mı? sohbet kilitlenir."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "aç"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "kapat"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "kalkan modu açıldı"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "kalkan modu kapandı"
+  },
+  "mc_ms_st_pending": {
+    "message": "bekleyen"
+  },
+  "mc_ms_st_approved": {
+    "message": "onaylanan"
+  },
+  "mc_ms_st_denied": {
+    "message": "reddedilen"
+  },
+  "mc_ms_ub_count": {
+    "message": "istekler: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "$P1$ istek yok",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "onayla"
+  },
+  "mc_ms_ub_deny": {
+    "message": "reddet"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "sebep (isteğe bağlı)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "$P1$ onaylansın mı?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "$P1$ reddedilsin mi?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ onaylandı",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ reddedildi",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "genel"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 kapalı · 4 en sıkı"
+  },
+  "mc_ms_am_advanced": {
+    "message": "gelişmiş"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod kaydedildi"
+  },
+  "mc_ms_cat_disability": {
+    "message": "engellilik"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "saldırganlık"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "cinsel yönelim, cinsiyet veya toplumsal cinsiyet"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "kadın düşmanlığı"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "zorbalık"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "küfür"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "ırk, etnik köken veya din"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "cinsellik içeren terimler"
+  },
+  "mc_ms_ch_count": {
+    "message": "sohbettekiler: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "sohbettekiler: $P1$ / $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "sohbettekiler: $P2$ içinden $P1$ gösteriliyor",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "sohbette kimse yok"
+  },
+  "mc_ms_reason_ph": {
+    "message": "uyarı sebebi"
+  },
+  "mc_ms_warn_to": {
+    "message": "uyar: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "uyarıyı gönder"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ uyarıldı",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "$P1$ tanıtıldı",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

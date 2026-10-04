@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "الأوضاع غير معروفة — لم تتم عضوية القناة بعد"
+  },
+  "mc_ms_title": {
+    "message": "أدوات المشرف"
+  },
+  "mc_ms_cell_shield": {
+    "message": "الدرع"
+  },
+  "mc_ms_cell_unban": {
+    "message": "طلبات رفع الحظر"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "المتحدثون"
+  },
+  "mc_ms_hint": {
+    "message": "h/l الخلية · j/k تنقّل · ? المفاتيح · esc إغلاق"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s تشغيل أو إيقاف"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a قبول · d رفض · f الحالة التالية · enter يرسل"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k اختر صفًا · 0-4 اضبط المستوى · a متقدم"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ تصفية · enter يفتح البطاقة"
+  },
+  "mc_ms_loading": {
+    "message": "جارٍ التحميل…"
+  },
+  "mc_ms_need_perm": {
+    "message": "أدوات المشرف تحتاج إذنًا إضافيًا من twitch"
+  },
+  "mc_ms_allow": {
+    "message": "السماح بأدوات المشرف"
+  },
+  "mc_ms_not_mod": {
+    "message": "لست مشرفًا في هذه القناة"
+  },
+  "mc_ms_err": {
+    "message": "تعذّر الوصول إلى twitch — حاول مجددًا"
+  },
+  "mc_ms_retry": {
+    "message": "إعادة المحاولة"
+  },
+  "mc_ms_yes": {
+    "message": "نعم"
+  },
+  "mc_ms_no": {
+    "message": "لا"
+  },
+  "mc_ms_cancel": {
+    "message": "إلغاء"
+  },
+  "mc_ms_filter_ph": {
+    "message": "تصفية"
+  },
+  "mc_ms_no_match": {
+    "message": "لا نتائج"
+  },
+  "mc_ms_no_channel": {
+    "message": "افتح تبويب قناة twitch أولًا"
+  },
+  "mc_ms_usage_shield": {
+    "message": "الاستخدام: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "الاستخدام: /warn <المستخدم> <السبب>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "الاستخدام: /shoutout <المستخدم>"
+  },
+  "mc_ms_shield_on": {
+    "message": "وضع الدرع مفعّل"
+  },
+  "mc_ms_shield_off": {
+    "message": "وضع الدرع متوقف"
+  },
+  "mc_ms_shield_since": {
+    "message": "مفعّل منذ $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "تفعيل وضع الدرع؟ سيُقفل الدردشة."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "تفعيل"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "إيقاف"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "تم تفعيل وضع الدرع"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "تم إيقاف وضع الدرع"
+  },
+  "mc_ms_st_pending": {
+    "message": "معلّقة"
+  },
+  "mc_ms_st_approved": {
+    "message": "مقبولة"
+  },
+  "mc_ms_st_denied": {
+    "message": "مرفوضة"
+  },
+  "mc_ms_ub_count": {
+    "message": "الطلبات: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "لا طلبات · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "قبول"
+  },
+  "mc_ms_ub_deny": {
+    "message": "رفض"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "السبب (اختياري)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "قبول $P1$؟",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "رفض $P1$؟",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "تم قبول $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "تم رفض $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "الإجمالي"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 متوقف · 4 الأشدّ"
+  },
+  "mc_ms_am_advanced": {
+    "message": "متقدم"
+  },
+  "mc_ms_am_saved": {
+    "message": "تم حفظ automod"
+  },
+  "mc_ms_cat_disability": {
+    "message": "الإعاقة"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "العدوانية"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "الميول أو الجنس أو الهوية الجندرية"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "كراهية النساء"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "التنمّر"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "الشتائم"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "العرق أو الإثنية أو الدين"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "ألفاظ جنسية"
+  },
+  "mc_ms_ch_count": {
+    "message": "المتحدثون: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "المتحدثون: $P1$ من $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "المتحدثون: معروض $P1$ من $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "لا أحد في الدردشة"
+  },
+  "mc_ms_reason_ph": {
+    "message": "سبب التحذير"
+  },
+  "mc_ms_warn_to": {
+    "message": "تحذير $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "إرسال التحذير"
+  },
+  "mc_ms_warned": {
+    "message": "تم تحذير $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "تمت الإشادة بـ $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

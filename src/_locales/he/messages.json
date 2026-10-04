@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "המצבים לא ידועים — עוד לא הצטרפת לערוץ"
+  },
+  "mc_ms_title": {
+    "message": "כלי ניהול"
+  },
+  "mc_ms_cell_shield": {
+    "message": "מגן"
+  },
+  "mc_ms_cell_unban": {
+    "message": "בקשות ביטול חסימה"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "צ'אטרים"
+  },
+  "mc_ms_hint": {
+    "message": "h/l תא · j/k הזזה · ? מקשים · esc סגירה"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s הפעלה או כיבוי"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a אישור · d דחייה · f סטטוס הבא · enter שולח"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k בחירת שורה · 0-4 קביעת רמה · a מתקדם"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ סינון · enter פותח כרטיס"
+  },
+  "mc_ms_loading": {
+    "message": "טוען…"
+  },
+  "mc_ms_need_perm": {
+    "message": "כלי הניהול דורשים עוד הרשאה אחת מ-twitch"
+  },
+  "mc_ms_allow": {
+    "message": "אפשר כלי ניהול"
+  },
+  "mc_ms_not_mod": {
+    "message": "אינך מודרטור בערוץ הזה"
+  },
+  "mc_ms_err": {
+    "message": "אין חיבור ל-twitch — נסה שוב"
+  },
+  "mc_ms_retry": {
+    "message": "נסה שוב"
+  },
+  "mc_ms_yes": {
+    "message": "כן"
+  },
+  "mc_ms_no": {
+    "message": "לא"
+  },
+  "mc_ms_cancel": {
+    "message": "ביטול"
+  },
+  "mc_ms_filter_ph": {
+    "message": "סינון"
+  },
+  "mc_ms_no_match": {
+    "message": "אין התאמה"
+  },
+  "mc_ms_no_channel": {
+    "message": "פתח קודם לשונית של ערוץ twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "שימוש: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "שימוש: /warn <משתמש> <סיבה>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "שימוש: /shoutout <משתמש>"
+  },
+  "mc_ms_shield_on": {
+    "message": "מצב מגן פעיל"
+  },
+  "mc_ms_shield_off": {
+    "message": "מצב מגן כבוי"
+  },
+  "mc_ms_shield_since": {
+    "message": "פעיל מאז $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "להפעיל מצב מגן? הצ'אט ננעל."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "הפעל"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "כבה"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "מצב מגן פעיל"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "מצב מגן כבוי"
+  },
+  "mc_ms_st_pending": {
+    "message": "ממתינות"
+  },
+  "mc_ms_st_approved": {
+    "message": "מאושרות"
+  },
+  "mc_ms_st_denied": {
+    "message": "נדחות"
+  },
+  "mc_ms_ub_count": {
+    "message": "בקשות: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "אין בקשות $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "אשר"
+  },
+  "mc_ms_ub_deny": {
+    "message": "דחה"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "סיבה (אופציונלי)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "לאשר את $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "לדחות את $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "$P1$ אושר",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "$P1$ נדחה",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "כללי"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 כבוי · 4 מחמיר ביותר"
+  },
+  "mc_ms_am_advanced": {
+    "message": "מתקדם"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod נשמר"
+  },
+  "mc_ms_cat_disability": {
+    "message": "מוגבלות"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "תוקפנות"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "נטייה מינית, מין או מגדר"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "שנאת נשים"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "בריונות"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "קללות"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "גזע, מוצא או דת"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "מונחים מיניים"
+  },
+  "mc_ms_ch_count": {
+    "message": "צ'אטרים: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "צ'אטרים: $P1$ מתוך $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "צ'אטרים: $P1$ מתוך $P2$ מוצגים",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "אף אחד לא בצ'אט"
+  },
+  "mc_ms_reason_ph": {
+    "message": "סיבת האזהרה"
+  },
+  "mc_ms_warn_to": {
+    "message": "אזהרה ל-$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "שלח אזהרה"
+  },
+  "mc_ms_warned": {
+    "message": "$P1$ הוזהר",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "שאוטאאוט ל-$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

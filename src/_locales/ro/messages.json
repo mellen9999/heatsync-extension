@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "moduri necunoscute — canalul nu e încă alăturat"
+  },
+  "mc_ms_title": {
+    "message": "unelte de mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "scut"
+  },
+  "mc_ms_cell_unban": {
+    "message": "cereri de unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "participanți"
+  },
+  "mc_ms_hint": {
+    "message": "h/l celulă · j/k mută · ? taste · esc închide"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s pornește sau oprește"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a aprobă · d respinge · f următorul status · enter trimite"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k alege rândul · 0-4 setează nivelul · a avansat"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filtru · enter deschide cardul"
+  },
+  "mc_ms_loading": {
+    "message": "se încarcă…"
+  },
+  "mc_ms_need_perm": {
+    "message": "uneltele de mod mai au nevoie de o permisiune twitch"
+  },
+  "mc_ms_allow": {
+    "message": "permite uneltele de mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "nu ești moderator pe acest canal"
+  },
+  "mc_ms_err": {
+    "message": "nu am putut contacta twitch — încearcă din nou"
+  },
+  "mc_ms_retry": {
+    "message": "reîncearcă"
+  },
+  "mc_ms_yes": {
+    "message": "da"
+  },
+  "mc_ms_no": {
+    "message": "nu"
+  },
+  "mc_ms_cancel": {
+    "message": "anulează"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filtru"
+  },
+  "mc_ms_no_match": {
+    "message": "niciun rezultat"
+  },
+  "mc_ms_no_channel": {
+    "message": "deschide întâi o filă cu un canal twitch"
+  },
+  "mc_ms_usage_shield": {
+    "message": "utilizare: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "utilizare: /warn <utilizator> <motiv>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "utilizare: /shoutout <utilizator>"
+  },
+  "mc_ms_shield_on": {
+    "message": "modul scut este pornit"
+  },
+  "mc_ms_shield_off": {
+    "message": "modul scut este oprit"
+  },
+  "mc_ms_shield_since": {
+    "message": "pornit din $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "pornești modul scut? chatul se blochează."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "pornește"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "oprește"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "mod scut pornit"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "mod scut oprit"
+  },
+  "mc_ms_st_pending": {
+    "message": "în așteptare"
+  },
+  "mc_ms_st_approved": {
+    "message": "aprobate"
+  },
+  "mc_ms_st_denied": {
+    "message": "respinse"
+  },
+  "mc_ms_ub_count": {
+    "message": "cereri: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "nicio cerere ($P1$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "aprobă"
+  },
+  "mc_ms_ub_deny": {
+    "message": "respinge"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "motiv (opțional)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "aprobi $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "respingi $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "aprobat $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "respins $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "general"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 oprit · 4 cel mai strict"
+  },
+  "mc_ms_am_advanced": {
+    "message": "avansat"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod salvat"
+  },
+  "mc_ms_cat_disability": {
+    "message": "dizabilitate"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "agresivitate"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexualitate, sex sau gen"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misoginie"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "bullying"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "înjurături"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "rasă, etnie sau religie"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "termeni sexuali"
+  },
+  "mc_ms_ch_count": {
+    "message": "participanți: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "participanți: $P1$ din $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "participanți: $P1$ din $P2$ afișați",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "nimeni în chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "motivul avertismentului"
+  },
+  "mc_ms_warn_to": {
+    "message": "avertizează $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "trimite avertisment"
+  },
+  "mc_ms_warned": {
+    "message": "avertizat $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shoutout pentru $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

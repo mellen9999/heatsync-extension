@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "chưa rõ chế độ — chưa vào kênh"
+  },
+  "mc_ms_title": {
+    "message": "công cụ mod"
+  },
+  "mc_ms_cell_shield": {
+    "message": "khiên"
+  },
+  "mc_ms_cell_unban": {
+    "message": "yêu cầu gỡ ban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "người trong chat"
+  },
+  "mc_ms_hint": {
+    "message": "h/l ô · j/k di chuyển · ? phím · esc đóng"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s bật/tắt"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a duyệt · d từ chối · f trạng thái kế · enter gửi"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k chọn dòng · 0-4 đặt mức · a nâng cao"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ lọc · enter mở thẻ"
+  },
+  "mc_ms_loading": {
+    "message": "đang tải…"
+  },
+  "mc_ms_need_perm": {
+    "message": "công cụ mod cần thêm một quyền twitch"
+  },
+  "mc_ms_allow": {
+    "message": "cho phép công cụ mod"
+  },
+  "mc_ms_not_mod": {
+    "message": "bạn không phải mod của kênh này"
+  },
+  "mc_ms_err": {
+    "message": "không kết nối được twitch — thử lại"
+  },
+  "mc_ms_retry": {
+    "message": "thử lại"
+  },
+  "mc_ms_yes": {
+    "message": "có"
+  },
+  "mc_ms_no": {
+    "message": "không"
+  },
+  "mc_ms_cancel": {
+    "message": "hủy"
+  },
+  "mc_ms_filter_ph": {
+    "message": "lọc"
+  },
+  "mc_ms_no_match": {
+    "message": "không khớp"
+  },
+  "mc_ms_no_channel": {
+    "message": "hãy mở một tab kênh twitch trước"
+  },
+  "mc_ms_usage_shield": {
+    "message": "cách dùng: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "cách dùng: /warn <người dùng> <lý do>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "cách dùng: /shoutout <người dùng>"
+  },
+  "mc_ms_shield_on": {
+    "message": "chế độ khiên đang bật"
+  },
+  "mc_ms_shield_off": {
+    "message": "chế độ khiên đang tắt"
+  },
+  "mc_ms_shield_since": {
+    "message": "bật từ $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "bật chế độ khiên? chat sẽ bị khóa."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "bật"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "tắt"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "đã bật chế độ khiên"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "đã tắt chế độ khiên"
+  },
+  "mc_ms_st_pending": {
+    "message": "đang chờ"
+  },
+  "mc_ms_st_approved": {
+    "message": "đã duyệt"
+  },
+  "mc_ms_st_denied": {
+    "message": "đã từ chối"
+  },
+  "mc_ms_ub_count": {
+    "message": "yêu cầu: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "không có yêu cầu $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "duyệt"
+  },
+  "mc_ms_ub_deny": {
+    "message": "từ chối"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "lý do (tùy chọn)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "duyệt $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "từ chối $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "đã duyệt $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "đã từ chối $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "tổng thể"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 tắt · 4 nghiêm nhất"
+  },
+  "mc_ms_am_advanced": {
+    "message": "nâng cao"
+  },
+  "mc_ms_am_saved": {
+    "message": "đã lưu automod"
+  },
+  "mc_ms_cat_disability": {
+    "message": "khuyết tật"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "hung hăng"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "xu hướng tính dục, giới tính"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "kỳ thị phụ nữ"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "bắt nạt"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "chửi thề"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "chủng tộc, sắc tộc hoặc tôn giáo"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "từ ngữ tình dục"
+  },
+  "mc_ms_ch_count": {
+    "message": "người trong chat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "người trong chat: $P1$ trên $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "người trong chat: hiện $P1$ trên $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "chat không có ai"
+  },
+  "mc_ms_reason_ph": {
+    "message": "lý do cảnh báo"
+  },
+  "mc_ms_warn_to": {
+    "message": "cảnh báo $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "gửi cảnh báo"
+  },
+  "mc_ms_warned": {
+    "message": "đã cảnh báo $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "đã shoutout $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

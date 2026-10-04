@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "режимите са неизвестни — каналът още не е присъединен"
+  },
+  "mc_ms_title": {
+    "message": "мод инструменти"
+  },
+  "mc_ms_cell_shield": {
+    "message": "щит"
+  },
+  "mc_ms_cell_unban": {
+    "message": "заявки за отбан"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "чатъри"
+  },
+  "mc_ms_hint": {
+    "message": "h/l клетка · j/k движение · ? клавиши · esc затвори"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s включи или изключи"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a одобри · d откажи · f следващ статус · enter изпраща"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k избери ред · 0-4 задай ниво · a разширени"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ филтър · enter отваря картата"
+  },
+  "mc_ms_loading": {
+    "message": "зарежда…"
+  },
+  "mc_ms_need_perm": {
+    "message": "мод инструментите изискват още едно разрешение от twitch"
+  },
+  "mc_ms_allow": {
+    "message": "разреши мод инструментите"
+  },
+  "mc_ms_not_mod": {
+    "message": "не си модератор на този канал"
+  },
+  "mc_ms_err": {
+    "message": "twitch не отговаря — опитай пак"
+  },
+  "mc_ms_retry": {
+    "message": "опитай пак"
+  },
+  "mc_ms_yes": {
+    "message": "да"
+  },
+  "mc_ms_no": {
+    "message": "не"
+  },
+  "mc_ms_cancel": {
+    "message": "отказ"
+  },
+  "mc_ms_filter_ph": {
+    "message": "филтър"
+  },
+  "mc_ms_no_match": {
+    "message": "няма съвпадения"
+  },
+  "mc_ms_no_channel": {
+    "message": "първо отвори таб с twitch канал"
+  },
+  "mc_ms_usage_shield": {
+    "message": "употреба: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "употреба: /warn <потребител> <причина>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "употреба: /shoutout <потребител>"
+  },
+  "mc_ms_shield_on": {
+    "message": "щит режимът е включен"
+  },
+  "mc_ms_shield_off": {
+    "message": "щит режимът е изключен"
+  },
+  "mc_ms_shield_since": {
+    "message": "включен от $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "да включа ли щит режима? чатът се заключва."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "включи"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "изключи"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "щит режим включен"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "щит режим изключен"
+  },
+  "mc_ms_st_pending": {
+    "message": "чакащи"
+  },
+  "mc_ms_st_approved": {
+    "message": "одобрени"
+  },
+  "mc_ms_st_denied": {
+    "message": "отказани"
+  },
+  "mc_ms_ub_count": {
+    "message": "заявки: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "няма заявки · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "одобри"
+  },
+  "mc_ms_ub_deny": {
+    "message": "откажи"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "причина (по избор)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "одобри $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "откажи $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "одобрен: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "отказан: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "общо"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 изкл. · 4 най-строго"
+  },
+  "mc_ms_am_advanced": {
+    "message": "разширени"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod запазен"
+  },
+  "mc_ms_cat_disability": {
+    "message": "увреждане"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "агресия"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "сексуалност, пол или джендър"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "мизогиния"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "тормоз"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "псувни"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "раса, етнос или религия"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "сексуални изрази"
+  },
+  "mc_ms_ch_count": {
+    "message": "чатъри: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "чатъри: $P1$ от $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "чатъри: показани $P1$ от $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "няма никого в чата"
+  },
+  "mc_ms_reason_ph": {
+    "message": "причина за предупреждението"
+  },
+  "mc_ms_warn_to": {
+    "message": "предупреди $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "изпрати предупреждение"
+  },
+  "mc_ms_warned": {
+    "message": "предупреден: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "шаутаут за $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

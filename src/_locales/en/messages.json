@@ -3299,5 +3299,274 @@
   },
   "mc_cm_unknown": {
     "message": "modes unknown — channel not joined yet"
+  },
+  "mc_ms_title": {
+    "message": "mod tools"
+  },
+  "mc_ms_cell_shield": {
+    "message": "shield"
+  },
+  "mc_ms_cell_unban": {
+    "message": "unban requests"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "chatters"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cell · j/k move · ? keys · esc close"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s turn on or off"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a approve · d deny · f next status · enter sends"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k pick a row · 0-4 set the level · a advanced"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ filter · enter opens the card"
+  },
+  "mc_ms_loading": {
+    "message": "loading…"
+  },
+  "mc_ms_need_perm": {
+    "message": "mod tools need one more twitch permission"
+  },
+  "mc_ms_allow": {
+    "message": "allow mod tools"
+  },
+  "mc_ms_not_mod": {
+    "message": "you are not a moderator of this channel"
+  },
+  "mc_ms_err": {
+    "message": "couldn't reach twitch — try again"
+  },
+  "mc_ms_retry": {
+    "message": "retry"
+  },
+  "mc_ms_yes": {
+    "message": "yes"
+  },
+  "mc_ms_no": {
+    "message": "no"
+  },
+  "mc_ms_cancel": {
+    "message": "cancel"
+  },
+  "mc_ms_filter_ph": {
+    "message": "filter"
+  },
+  "mc_ms_no_match": {
+    "message": "no match"
+  },
+  "mc_ms_no_channel": {
+    "message": "open a twitch channel tab first"
+  },
+  "mc_ms_usage_shield": {
+    "message": "usage: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "usage: /warn <user> <reason>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "usage: /shoutout <user>"
+  },
+  "mc_ms_shield_on": {
+    "message": "shield mode is on"
+  },
+  "mc_ms_shield_off": {
+    "message": "shield mode is off"
+  },
+  "mc_ms_shield_since": {
+    "message": "on since $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "turn on shield mode? chat locks down."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "turn on"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "turn off"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "shield mode on"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "shield mode off"
+  },
+  "mc_ms_st_pending": {
+    "message": "pending"
+  },
+  "mc_ms_st_approved": {
+    "message": "approved"
+  },
+  "mc_ms_st_denied": {
+    "message": "denied"
+  },
+  "mc_ms_ub_count": {
+    "message": "requests: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "no requests · $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "approve"
+  },
+  "mc_ms_ub_deny": {
+    "message": "deny"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "reason (optional)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "approve $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "deny $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "approved $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "denied $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "overall"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 off · 4 strictest"
+  },
+  "mc_ms_am_advanced": {
+    "message": "advanced"
+  },
+  "mc_ms_am_saved": {
+    "message": "automod saved"
+  },
+  "mc_ms_cat_disability": {
+    "message": "disability"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "aggression"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sexuality, sex or gender"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misogyny"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "bullying"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "swearing"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "race, ethnicity or religion"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "sex-based terms"
+  },
+  "mc_ms_ch_count": {
+    "message": "chatters: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "chatters: $P1$ of $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "chatters: $P1$ of $P2$ shown",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "nobody in chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "warning reason"
+  },
+  "mc_ms_warn_to": {
+    "message": "warn $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "send warning"
+  },
+  "mc_ms_warned": {
+    "message": "warned $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "shouted out $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

@@ -907,5 +907,274 @@
   },
   "mc_cm_unknown": {
     "message": "hindi alam ang mga mode — hindi pa nakasali sa channel"
+  },
+  "mc_ms_title": {
+    "message": "mga mod tool"
+  },
+  "mc_ms_cell_shield": {
+    "message": "shield"
+  },
+  "mc_ms_cell_unban": {
+    "message": "mga hiling na i-unban"
+  },
+  "mc_ms_cell_automod": {
+    "message": "automod"
+  },
+  "mc_ms_cell_chatters": {
+    "message": "mga chatter"
+  },
+  "mc_ms_hint": {
+    "message": "h/l cell · j/k galaw · ? mga key · esc isara"
+  },
+  "mc_ms_keys_shield": {
+    "message": "s i-on o i-off"
+  },
+  "mc_ms_keys_unban": {
+    "message": "a aprubahan · d tanggihan · f susunod na status · enter magpapadala"
+  },
+  "mc_ms_keys_automod": {
+    "message": "j/k pumili ng row · 0-4 itakda ang level · a advanced"
+  },
+  "mc_ms_keys_chatters": {
+    "message": "/ salain · enter bubukas ang card"
+  },
+  "mc_ms_loading": {
+    "message": "naglo-load…"
+  },
+  "mc_ms_need_perm": {
+    "message": "kailangan pa ng mga mod tool ng isa pang pahintulot sa twitch"
+  },
+  "mc_ms_allow": {
+    "message": "payagan ang mga mod tool"
+  },
+  "mc_ms_not_mod": {
+    "message": "hindi ka moderator ng channel na ito"
+  },
+  "mc_ms_err": {
+    "message": "hindi maabot ang twitch — subukan ulit"
+  },
+  "mc_ms_retry": {
+    "message": "subukan ulit"
+  },
+  "mc_ms_yes": {
+    "message": "oo"
+  },
+  "mc_ms_no": {
+    "message": "hindi"
+  },
+  "mc_ms_cancel": {
+    "message": "kanselahin"
+  },
+  "mc_ms_filter_ph": {
+    "message": "salain"
+  },
+  "mc_ms_no_match": {
+    "message": "walang tugma"
+  },
+  "mc_ms_no_channel": {
+    "message": "magbukas muna ng tab ng twitch channel"
+  },
+  "mc_ms_usage_shield": {
+    "message": "gamit: /shield [on|off]"
+  },
+  "mc_ms_usage_warn": {
+    "message": "gamit: /warn <user> <dahilan>"
+  },
+  "mc_ms_usage_shoutout": {
+    "message": "gamit: /shoutout <user>"
+  },
+  "mc_ms_shield_on": {
+    "message": "naka-on ang shield mode"
+  },
+  "mc_ms_shield_off": {
+    "message": "naka-off ang shield mode"
+  },
+  "mc_ms_shield_since": {
+    "message": "naka-on mula $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shield_confirm": {
+    "message": "i-on ang shield mode? magla-lock ang chat."
+  },
+  "mc_ms_shield_turn_on": {
+    "message": "i-on"
+  },
+  "mc_ms_shield_turn_off": {
+    "message": "i-off"
+  },
+  "mc_ms_shield_now_on": {
+    "message": "naka-on na ang shield mode"
+  },
+  "mc_ms_shield_now_off": {
+    "message": "naka-off na ang shield mode"
+  },
+  "mc_ms_st_pending": {
+    "message": "nakabinbin"
+  },
+  "mc_ms_st_approved": {
+    "message": "inaprubahan"
+  },
+  "mc_ms_st_denied": {
+    "message": "tinanggihan"
+  },
+  "mc_ms_ub_count": {
+    "message": "mga hiling: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_empty": {
+    "message": "walang hiling ($P1$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approve": {
+    "message": "aprubahan"
+  },
+  "mc_ms_ub_deny": {
+    "message": "tanggihan"
+  },
+  "mc_ms_ub_reason_ph": {
+    "message": "dahilan (opsyonal)"
+  },
+  "mc_ms_ub_confirm_approve": {
+    "message": "aprubahan si $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_confirm_deny": {
+    "message": "tanggihan si $P1$?",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_approved": {
+    "message": "inaprubahan si $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ub_denied": {
+    "message": "tinanggihan si $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_am_overall": {
+    "message": "pangkalahatan"
+  },
+  "mc_ms_am_scale": {
+    "message": "0 patay · 4 pinakamahigpit"
+  },
+  "mc_ms_am_advanced": {
+    "message": "karagdagan"
+  },
+  "mc_ms_am_saved": {
+    "message": "na-save ang automod"
+  },
+  "mc_ms_cat_disability": {
+    "message": "kapansanan"
+  },
+  "mc_ms_cat_aggression": {
+    "message": "pagiging agresibo"
+  },
+  "mc_ms_cat_sexuality_sex_or_gender": {
+    "message": "sekswalidad, kasarian o gender"
+  },
+  "mc_ms_cat_misogyny": {
+    "message": "misogynya"
+  },
+  "mc_ms_cat_bullying": {
+    "message": "pambu-bully"
+  },
+  "mc_ms_cat_swearing": {
+    "message": "pagmumura"
+  },
+  "mc_ms_cat_race_ethnicity_or_religion": {
+    "message": "lahi, etnisidad o relihiyon"
+  },
+  "mc_ms_cat_sex_based_terms": {
+    "message": "mga terminong sekswal"
+  },
+  "mc_ms_ch_count": {
+    "message": "mga chatter: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_ch_count_of": {
+    "message": "mga chatter: $P1$ sa $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_count_part": {
+    "message": "mga chatter: $P1$ sa $P2$ ang ipinapakita",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ms_ch_empty": {
+    "message": "walang tao sa chat"
+  },
+  "mc_ms_reason_ph": {
+    "message": "dahilan ng babala"
+  },
+  "mc_ms_warn_to": {
+    "message": "balaan si $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_warn_send": {
+    "message": "ipadala ang babala"
+  },
+  "mc_ms_warned": {
+    "message": "binalaan si $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ms_shouted": {
+    "message": "na-shoutout si $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
   }
 }

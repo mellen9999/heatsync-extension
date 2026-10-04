@@ -792,6 +792,7 @@ const MULTICHAT_MODULES = [
   'tooltips.js',
   'twitch-api.js',
   'feed-embed.js',
+  'feed-engage.js',
   'social.js',
   'whispers.js',
   'eventsub-whispers.js',

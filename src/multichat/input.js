@@ -2564,6 +2564,18 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       })
     }
   }
+  // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
+  if (feedMsg?.base36_id && hsAuthToken) {
+    if (!isOwnFeedPost(feedMsg)) {
+      const up = feedMsg.user_vote === 1
+      items.push({ label: t(up ? 'mc_feed_upvote_remove' : 'mc_feed_upvote'), fn: () => feedUpvote(feedMsg) })
+    }
+    const bm = feedBookmarks.get(feedMsg.base36_id) === true
+    items.push({
+      label: t(bm ? 'mc_feed_bookmark_remove' : 'mc_feed_bookmark'),
+      fn: () => feedBookmarkToggle(feedMsg.base36_id),
+    })
+  }
   // Reply — only when right-clicked on a real chat message with an id (Twitch
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {

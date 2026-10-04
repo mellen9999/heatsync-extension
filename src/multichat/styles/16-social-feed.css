@@ -40,6 +40,45 @@
     .hs-feed-replies {
       cursor: pointer !important;
     }
+    .hs-feed-up {
+      cursor: pointer;
+      color: var(--hs-muted);
+    }
+    .hs-feed-up.on {
+      color: var(--hs-ok);
+    }
+    .hs-feed-up:hover {
+      background: #fff;
+      color: #000;
+    }
+    .hs-feed-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 1px 0 1px 6px;
+    }
+    .hs-feed-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 5px;
+      background: #000;
+      color: var(--hs-muted);
+      border: 1px solid var(--hs-muted);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .hs-feed-chip-img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+    .hs-feed-chip:hover,
+    .hs-feed-chip.on {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
     .hs-feed-thread-link {
       color: var(--hs-mention);
       font-size: 13px;

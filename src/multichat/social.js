@@ -614,6 +614,7 @@ async function loadHsAuth() {
           // tab open re-fetches with new auth.
           feedLoaded = false
           feedMessages = []
+          feedBookmarks.clear()
           discoverLoaded = false
           discoverLoading = false
           discoverTags = []
@@ -1778,6 +1779,7 @@ async function fetchFeed(append = false) {
     }, 0)
     if (newestTs > 0) noteSeenEvent('live', newestTs)
   }
+  feedBookmarksLoad(msgs)
   if (currentTab === 'feed') {
     if (append) renderFeedAppend(appendStart)
     else renderFeed()
@@ -2118,7 +2120,7 @@ function buildFeedMessageDiv(m, opUsername) {
     : ''
   const repliesSpan =
     replies > 0 ? `<span class="hs-feed-stat hs-feed-replies" title="replies">💬${replies}</span>` : ''
-  const stats = [heatSpan, repliesSpan].filter(Boolean).join(' ')
+  const stats = [heatSpan, feedUpvoteHtml(m), repliesSpan].filter(Boolean).join(' ')
   const statsHtml = stats ? ` ${stats}` : ''
 
   const anonAvatar = avatarsEnabled
@@ -2139,7 +2141,8 @@ function buildFeedMessageDiv(m, opUsername) {
   // All interpolated parts are pre-sanitized: the meta fields via escapeHtml/safeUrl/
   // sanitizeColor/sanitizeEmbedId, and `content` via renderFeedContent (which neutralizes
   // literal '<' in the server payload, closing the server-HTML-trust vector).
-  div.innerHTML = `${timeHtml}${threadLink}${typeTag}${platBadge}${userHtml}${statsHtml}: <span class="hs-feed-body">${content}</span>${mediaHtml}`
+  div.innerHTML = `${timeHtml}${threadLink}${typeTag}${platBadge}${userHtml}${statsHtml}: <span class="hs-feed-body">${content}</span>${mediaHtml}${feedReactionsHtml(m)}`
+  feedEngageWire(div, m)
 
   // Wire host-CSP-safe fallbacks for avatar/media error handlers (no inline onerror=).
   attachFeedFallbacks(div)
@@ -2510,6 +2513,7 @@ async function openThread(msgId, highlightId) {
   }
   thread.loading = false
 
+  if (thread.op) feedBookmarksLoad([thread.op, ...thread.replies])
   renderFeed()
   // Re-render the chip: the fetched OP corrects [OP]/[RE] state for threads
   // that weren't in the feed cache when the chip first painted.

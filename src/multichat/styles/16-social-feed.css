@@ -1020,7 +1020,7 @@
     .hs-discover-chip-btn.hs-chip-plat-t.hs-active {
       background: var(--hs-plat-twitch);
       border-color: var(--hs-plat-twitch);
-      color: #fff;
+      color: #000;
     }
     .hs-discover-chip-btn.hs-chip-plat-k.hs-active {
       background: var(--hs-plat-kick);
@@ -1030,7 +1030,7 @@
     .hs-discover-chip-btn.hs-chip-plat-yt.hs-active {
       background: var(--hs-plat-youtube);
       border-color: var(--hs-plat-youtube);
-      color: #fff;
+      color: #000;
     }
     .hs-discover-chip-btn:hover,
     .hs-discover-chip-btn.hs-active:hover,

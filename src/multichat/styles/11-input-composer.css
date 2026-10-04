@@ -352,7 +352,7 @@
     #hs-mc-send {
       padding: 8px 12px;
       background: var(--hs-plat-twitch);
-      color: #fff;
+      color: #000;
       border: none;
       border-radius: 0;
       cursor: pointer;

@@ -577,13 +577,13 @@
     #hs-emote-tooltip .tooltip-source.unadded,
     #hs-emote-tooltip .tooltip-source.global,
     #hs-emote-tooltip .tooltip-source.channel { background: #fff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #fff; }
-    #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #fff; }
+    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #000; }
+    #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #000; }
     /* Per-provider source label colors (override .global/.channel) */
     #hs-emote-tooltip .tooltip-source.src-7tv { background: #00ffff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-bttv { background: #ff0000; color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-bttv { background: #ff0000; color: #000; }
     #hs-emote-tooltip .tooltip-source.src-ffz { background: #ffffff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-twitch { background: var(--hs-plat-twitch); color: #fff; }
+    #hs-emote-tooltip .tooltip-source.src-twitch { background: var(--hs-plat-twitch); color: #000; }
     #hs-emote-tooltip .tooltip-source.src-kick { background: var(--hs-plat-kick); color: #000; }
     #hs-emote-tooltip .tooltip-source.src-heatsync,
     #hs-emote-tooltip .tooltip-source.src-hs { background: var(--hs-plat-hs); color: #000; }

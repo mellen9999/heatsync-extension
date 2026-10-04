@@ -83,6 +83,7 @@
     }
     .heatsync-injected-message .heatsync-clickable {
       background: #ff0000 !important;
+      color: #000 !important;
       cursor: pointer !important;
     }
     .heatsync-injected-message .heatsync-clickable:hover:not(.emote-hovered) {
@@ -128,6 +129,7 @@
     .heatsync-injected-message .heatsync-op-badge,
     .heatsync-injected-message .heatsync-op-badge:hover {
       background: #ff0000 !important;
+      color: #000 !important;
     }
   `
     document.head.appendChild(style)
@@ -401,12 +403,12 @@
       div.innerHTML = `
       <div class="chat-line__no-background" style="padding: 0 8px; transition: none !important; opacity: 1 !important; filter: none !important; background: transparent !important; min-height: 32px;">
         <div class="chat-line__message" style="transition: none !important; background: transparent !important;">
-          <span class="heatsync-op-badge" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #ff0000; color: #ffffff; border-radius: 0 !important; font-size: 10px; font-weight: 400; font-family: monospace; margin: 0 1px; margin-right: 6px; vertical-align: middle; padding: 0; white-space: nowrap; box-sizing: border-box; line-height: 1;">OP</span>
+          <span class="heatsync-op-badge" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #ff0000; color: #000; border-radius: 0 !important; font-size: 10px; font-weight: 400; font-family: monospace; margin: 0 1px; margin-right: 6px; vertical-align: middle; padding: 0; white-space: nowrap; box-sizing: border-box; line-height: 1;">OP</span>
           <span class="chat-author__display-name" style="font-weight: 700; color: ${sanitizeColor(message.user_color)}; transition: none !important;">
             ${escapeHtml(message.display_name || message.username)}
           </span>
           <span style="margin: 0 4px; transition: none !important;">:</span>
-          <span class="text-fragment heatsync-clickable" style="background: #ff0000; color: #ffffff; padding: 2px 4px; font-weight: bold; transition: none !important; cursor: pointer;">${parseTwitchEmotes(message.content)}</span>
+          <span class="text-fragment heatsync-clickable" style="background: #ff0000; color: #000; padding: 2px 4px; font-weight: bold; transition: none !important; cursor: pointer;">${parseTwitchEmotes(message.content)}</span>
         </div>
       </div>
     `
@@ -416,12 +418,12 @@
       // Safe: sanitizeColor validates hex, escapeHtml escapes all HTML entities, parseTwitchEmotes only inserts img tags with known CDN URLs
       div.innerHTML = `
       <div style="padding: 8px; margin: 4px 0; min-height: 32px;">
-        <span class="heatsync-op-badge" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #ff0000; color: #ffffff; border-radius: 0; font-size: 10px; font-weight: 400; font-family: monospace; margin-right: 6px;">OP</span>
+        <span class="heatsync-op-badge" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #ff0000; color: #000; border-radius: 0; font-size: 10px; font-weight: 400; font-family: monospace; margin-right: 6px;">OP</span>
         <button class="inline font-bold" style="font-weight: 700; color: ${sanitizeColor(message.user_color) || '#00ff00'}; background: none; border: none; cursor: pointer;">
           ${escapeHtml(message.display_name || message.username)}
         </button>
         <span style="margin: 0 4px;">:</span>
-        <span class="font-normal heatsync-clickable" style="background: #ff0000; color: #ffffff; padding: 2px 4px; font-weight: bold; cursor: pointer;">${parseTwitchEmotes(message.content)}</span>
+        <span class="font-normal heatsync-clickable" style="background: #ff0000; color: #000; padding: 2px 4px; font-weight: bold; cursor: pointer;">${parseTwitchEmotes(message.content)}</span>
       </div>
     `
     }

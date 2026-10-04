@@ -1788,7 +1788,7 @@
   }
   .heatsync-emote-stack.expanded .heatsync-stack-block-all:hover {
     background: #ff0000 !important;
-    color: #fff !important;
+    color: #000 !important;
   }
 
   /* Username mention links — hover underline */

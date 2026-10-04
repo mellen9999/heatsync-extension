@@ -1069,7 +1069,7 @@
       }
       .heatsync-set-apply-btn.failed {
         background: #ff0000;
-        color: #fff;
+        color: #000;
         border-color: #ff0000;
       }
 
@@ -1157,7 +1157,7 @@
       }
       .heatsync-restore-btn.failed {
         background: #ff0000;
-        color: #fff;
+        color: #000;
         border-color: #ff0000;
       }
 
@@ -1312,7 +1312,7 @@
       }
 
       .heatsync-provider.seventv { background: #00ffff; color: #000; }
-      .heatsync-provider.bttv { background: #ff0000; color: #fff; }
+      .heatsync-provider.bttv { background: #ff0000; color: #000; }
       .heatsync-provider.ffz { background: #ffffff; color: #000; }
 
       /* Section titles */
@@ -1661,7 +1661,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      .hs-discover-item.blocked:hover { background: #ff0000; color: #fff; opacity: 1; }
+      .hs-discover-item.blocked:hover { background: #ff0000; color: #000; opacity: 1; }
       .hs-discover-item:hover { background: #fff; color: #000; }
       .hs-discover-item:hover * { color: #000 !important; }
       .hs-discover-thumb {
@@ -4115,7 +4115,7 @@
           const toast = document.createElement('div')
           toast.textContent = t('common_extension_updated')
           toast.style.cssText =
-            'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#fff;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+            'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
           document.body.appendChild(toast)
           setTimeout(() => toast.remove(), 5000)
         }
@@ -4299,7 +4299,7 @@
                 const toast = document.createElement('div')
                 toast.textContent = t('common_extension_updated')
                 toast.style.cssText =
-                  'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#fff;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+                  'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
                 document.body.appendChild(toast)
                 setTimeout(() => toast.remove(), 5000)
               }
@@ -4358,7 +4358,7 @@
               const toast = document.createElement('div')
               toast.textContent = t('common_extension_updated')
               toast.style.cssText =
-                'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#fff;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+                'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
               document.body.appendChild(toast)
               setTimeout(() => toast.remove(), 5000)
             }

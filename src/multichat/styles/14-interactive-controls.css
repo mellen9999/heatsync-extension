@@ -867,7 +867,7 @@
     .hs-mc-reward-submit {
       background: var(--hs-plat-twitch);
       border: none;
-      color: #fff;
+      color: #000;
       font-size: 13px;
       font-weight: 600;
       padding: 4px 10px;
@@ -936,7 +936,7 @@
     .hs-mc-color-apply {
       background: var(--hs-plat-twitch);
       border: none;
-      color: #fff;
+      color: #000;
       font-size: 13px;
       font-weight: 600;
       padding: 3px 10px;

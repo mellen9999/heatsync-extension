@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "hindi umubra — subukan ulit"
+  },
+  "mc_paint_hide": {
+    "message": "itago ang paint ni $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "ipakita ang paint ni $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "mga patakaran sa mention (server)"
+  },
+  "mc_mr_signin": {
+    "message": "mag-sign in sa heatsync para pamahalaan ang mga patakaran"
+  },
+  "mc_mr_none": {
+    "message": "walang patakaran — magdagdag sa ibaba"
+  },
+  "mc_mr_add": {
+    "message": "magdagdag ng patakaran"
+  },
+  "mc_mr_edit": {
+    "message": "i-edit ang patakaran"
+  },
+  "mc_mr_delete": {
+    "message": "burahin ang patakaran"
+  },
+  "mc_mr_save": {
+    "message": "i-save"
+  },
+  "mc_mr_cancel": {
+    "message": "kanselahin"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "pattern..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "mga channel, pinaghihiwalay ng kuwit (blangko = lahat)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "cooldown s"
+  },
+  "mc_mr_case": {
+    "message": "case-sensitive"
+  },
+  "mc_mr_test_ph": {
+    "message": "subukan ang isang mensahe..."
+  },
+  "mc_mr_test": {
+    "message": "subukan"
+  },
+  "mc_mr_match": {
+    "message": "tugma"
+  },
+  "mc_mr_nomatch": {
+    "message": "hindi tugma"
+  },
+  "mc_mr_hits": {
+    "message": "mga kamakailang hit"
+  },
+  "mc_mr_hits_none": {
+    "message": "wala pang hit"
+  },
+  "mc_mr_dormant": {
+    "message": "naka-pause (lampas sa limitasyon)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "ang pattern ay dapat 1–200 character"
+  },
+  "mc_mr_err_regex": {
+    "message": "hindi valid ang regex na iyon"
+  },
+  "mc_mr_err_channels": {
+    "message": "mga channel: hanggang 50, bawat isa hanggang 60 character"
+  },
+  "mc_mr_err_notify": {
+    "message": "pumili ng kahit isa: web o push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "ang cooldown ay dapat 5–3600 segundo"
   }
 }

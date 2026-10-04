@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "не вийшло — спробуй ще раз"
+  },
+  "mc_paint_hide": {
+    "message": "сховати забарвлення $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "показати забарвлення $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "правила згадок (сервер)"
+  },
+  "mc_mr_signin": {
+    "message": "увійди в heatsync, щоб керувати правилами"
+  },
+  "mc_mr_none": {
+    "message": "правил немає — додай нижче"
+  },
+  "mc_mr_add": {
+    "message": "додати правило"
+  },
+  "mc_mr_edit": {
+    "message": "змінити правило"
+  },
+  "mc_mr_delete": {
+    "message": "видалити правило"
+  },
+  "mc_mr_save": {
+    "message": "зберегти"
+  },
+  "mc_mr_cancel": {
+    "message": "скасувати"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "шаблон..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "канали через кому (порожньо = усі)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "пауза, с"
+  },
+  "mc_mr_case": {
+    "message": "враховувати регістр"
+  },
+  "mc_mr_test_ph": {
+    "message": "перевір повідомлення..."
+  },
+  "mc_mr_test": {
+    "message": "перевірити"
+  },
+  "mc_mr_match": {
+    "message": "збігається"
+  },
+  "mc_mr_nomatch": {
+    "message": "не збігається"
+  },
+  "mc_mr_hits": {
+    "message": "останні спрацювання"
+  },
+  "mc_mr_hits_none": {
+    "message": "спрацювань поки немає"
+  },
+  "mc_mr_dormant": {
+    "message": "призупинено (понад ліміт)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "шаблон має бути довжиною 1–200 символів"
+  },
+  "mc_mr_err_regex": {
+    "message": "цей регулярний вираз недійсний"
+  },
+  "mc_mr_err_channels": {
+    "message": "канали: до 50, кожен до 60 символів"
+  },
+  "mc_mr_err_notify": {
+    "message": "обери принаймні одне: web або push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "пауза має бути 5–3600 секунд"
   }
 }

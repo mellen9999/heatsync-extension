@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "沒成功 — 請重試"
+  },
+  "mc_paint_hide": {
+    "message": "隱藏 $USER$ 的名字塗色",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "顯示 $USER$ 的名字塗色",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "提及規則（伺服器）"
+  },
+  "mc_mr_signin": {
+    "message": "登入 heatsync 以管理提及規則"
+  },
+  "mc_mr_none": {
+    "message": "沒有規則 — 在下方新增"
+  },
+  "mc_mr_add": {
+    "message": "新增規則"
+  },
+  "mc_mr_edit": {
+    "message": "編輯規則"
+  },
+  "mc_mr_delete": {
+    "message": "刪除規則"
+  },
+  "mc_mr_save": {
+    "message": "儲存"
+  },
+  "mc_mr_cancel": {
+    "message": "取消"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "比對模式..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "頻道，以逗號分隔（留空 = 全部）"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "冷卻秒數"
+  },
+  "mc_mr_case": {
+    "message": "區分大小寫"
+  },
+  "mc_mr_test_ph": {
+    "message": "測試一則訊息..."
+  },
+  "mc_mr_test": {
+    "message": "測試"
+  },
+  "mc_mr_match": {
+    "message": "符合"
+  },
+  "mc_mr_nomatch": {
+    "message": "不符合"
+  },
+  "mc_mr_hits": {
+    "message": "最近命中"
+  },
+  "mc_mr_hits_none": {
+    "message": "尚無命中"
+  },
+  "mc_mr_dormant": {
+    "message": "已暫停（超出上限）"
+  },
+  "mc_mr_err_pattern": {
+    "message": "模式長度須為 1–200 個字元"
+  },
+  "mc_mr_err_regex": {
+    "message": "此正規表示式無效"
+  },
+  "mc_mr_err_channels": {
+    "message": "頻道：最多 50 個，每個最多 60 個字元"
+  },
+  "mc_mr_err_notify": {
+    "message": "web 或 push 至少選一個"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "冷卻時間須為 5–3600 秒"
   }
 }

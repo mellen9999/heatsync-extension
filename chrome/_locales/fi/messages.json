@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "ei onnistunut — yritä uudelleen"
+  },
+  "mc_paint_hide": {
+    "message": "piilota käyttäjän $USER$ väri",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "näytä käyttäjän $USER$ väri",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "mainintasäännöt (palvelin)"
+  },
+  "mc_mr_signin": {
+    "message": "kirjaudu heatsynciin hallitaksesi sääntöjä"
+  },
+  "mc_mr_none": {
+    "message": "ei sääntöjä — lisää alla"
+  },
+  "mc_mr_add": {
+    "message": "lisää sääntö"
+  },
+  "mc_mr_edit": {
+    "message": "muokkaa sääntöä"
+  },
+  "mc_mr_delete": {
+    "message": "poista sääntö"
+  },
+  "mc_mr_save": {
+    "message": "tallenna"
+  },
+  "mc_mr_cancel": {
+    "message": "peruuta"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "kuvio..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanavat, pilkulla erotettuna (tyhjä = kaikki)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "odotus s"
+  },
+  "mc_mr_case": {
+    "message": "isot/pienet kirjaimet erotetaan"
+  },
+  "mc_mr_test_ph": {
+    "message": "testaa viesti..."
+  },
+  "mc_mr_test": {
+    "message": "testaa"
+  },
+  "mc_mr_match": {
+    "message": "osuu"
+  },
+  "mc_mr_nomatch": {
+    "message": "ei osu"
+  },
+  "mc_mr_hits": {
+    "message": "viimeisimmät osumat"
+  },
+  "mc_mr_hits_none": {
+    "message": "ei vielä osumia"
+  },
+  "mc_mr_dormant": {
+    "message": "tauolla (yli rajan)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "kuvion pituus 1–200 merkkiä"
+  },
+  "mc_mr_err_regex": {
+    "message": "tämä regex ei kelpaa"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanavat: enintään 50, kukin enintään 60 merkkiä"
+  },
+  "mc_mr_err_notify": {
+    "message": "valitse vähintään yksi: web tai push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "odotuksen on oltava 5–3600 sekuntia"
   }
 }

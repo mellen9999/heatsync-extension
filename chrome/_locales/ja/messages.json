@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "うまくいきませんでした — もう一度"
+  },
+  "mc_paint_hide": {
+    "message": "$USER$ のペイントを隠す",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "$USER$ のペイントを表示",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "メンションルール（サーバー）"
+  },
+  "mc_mr_signin": {
+    "message": "ルールを管理するには heatsync にサインイン"
+  },
+  "mc_mr_none": {
+    "message": "ルールなし — 下で追加"
+  },
+  "mc_mr_add": {
+    "message": "ルールを追加"
+  },
+  "mc_mr_edit": {
+    "message": "ルールを編集"
+  },
+  "mc_mr_delete": {
+    "message": "ルールを削除"
+  },
+  "mc_mr_save": {
+    "message": "保存"
+  },
+  "mc_mr_cancel": {
+    "message": "キャンセル"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "パターン..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "チャンネル（カンマ区切り、空欄＝すべて）"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "クールダウン秒"
+  },
+  "mc_mr_case": {
+    "message": "大文字小文字を区別"
+  },
+  "mc_mr_test_ph": {
+    "message": "メッセージを試す..."
+  },
+  "mc_mr_test": {
+    "message": "テスト"
+  },
+  "mc_mr_match": {
+    "message": "一致"
+  },
+  "mc_mr_nomatch": {
+    "message": "不一致"
+  },
+  "mc_mr_hits": {
+    "message": "最近のヒット"
+  },
+  "mc_mr_hits_none": {
+    "message": "まだヒットなし"
+  },
+  "mc_mr_dormant": {
+    "message": "一時停止中（上限超過）"
+  },
+  "mc_mr_err_pattern": {
+    "message": "パターンは1〜200文字"
+  },
+  "mc_mr_err_regex": {
+    "message": "この正規表現は無効です"
+  },
+  "mc_mr_err_channels": {
+    "message": "チャンネル: 最大50件、各60文字まで"
+  },
+  "mc_mr_err_notify": {
+    "message": "web か push を1つ以上選択"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "クールダウンは5〜3600秒"
   }
 }

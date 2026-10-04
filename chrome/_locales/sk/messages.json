@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "nepodarilo sa — skús znova"
+  },
+  "mc_paint_hide": {
+    "message": "skryť farbu mena $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "zobraziť farbu mena $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "pravidlá zmienok (server)"
+  },
+  "mc_mr_signin": {
+    "message": "prihlás sa do heatsync a spravuj pravidlá"
+  },
+  "mc_mr_none": {
+    "message": "žiadne pravidlá — pridaj nižšie"
+  },
+  "mc_mr_add": {
+    "message": "pridať pravidlo"
+  },
+  "mc_mr_edit": {
+    "message": "upraviť pravidlo"
+  },
+  "mc_mr_delete": {
+    "message": "zmazať pravidlo"
+  },
+  "mc_mr_save": {
+    "message": "uložiť"
+  },
+  "mc_mr_cancel": {
+    "message": "zrušiť"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "vzor..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanály, oddelené čiarkou (prázdne = všetky)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "oneskorenie s"
+  },
+  "mc_mr_case": {
+    "message": "rozlišovať veľkosť písmen"
+  },
+  "mc_mr_test_ph": {
+    "message": "otestuj správu..."
+  },
+  "mc_mr_test": {
+    "message": "test"
+  },
+  "mc_mr_match": {
+    "message": "zhoda"
+  },
+  "mc_mr_nomatch": {
+    "message": "žiadna zhoda"
+  },
+  "mc_mr_hits": {
+    "message": "posledné zásahy"
+  },
+  "mc_mr_hits_none": {
+    "message": "zatiaľ žiadne zásahy"
+  },
+  "mc_mr_dormant": {
+    "message": "pozastavené (nad limitom)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "vzor musí mať 1–200 znakov"
+  },
+  "mc_mr_err_regex": {
+    "message": "tento regex nie je platný"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanály: max 50, každý max 60 znakov"
+  },
+  "mc_mr_err_notify": {
+    "message": "vyber aspoň jedno: web alebo push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "oneskorenie musí byť 5–3600 sekúnd"
   }
 }

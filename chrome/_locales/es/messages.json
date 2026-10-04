@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "no funcionó — inténtalo de nuevo"
+  },
+  "mc_paint_hide": {
+    "message": "ocultar el color de $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "mostrar el color de $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "reglas de mención (servidor)"
+  },
+  "mc_mr_signin": {
+    "message": "inicia sesión en heatsync para gestionar las reglas"
+  },
+  "mc_mr_none": {
+    "message": "sin reglas — añade una abajo"
+  },
+  "mc_mr_add": {
+    "message": "añadir regla"
+  },
+  "mc_mr_edit": {
+    "message": "editar regla"
+  },
+  "mc_mr_delete": {
+    "message": "eliminar regla"
+  },
+  "mc_mr_save": {
+    "message": "guardar"
+  },
+  "mc_mr_cancel": {
+    "message": "cancelar"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "patrón..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "canales, separados por comas (vacío = todos)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "espera s"
+  },
+  "mc_mr_case": {
+    "message": "distinguir mayúsculas"
+  },
+  "mc_mr_test_ph": {
+    "message": "prueba un mensaje..."
+  },
+  "mc_mr_test": {
+    "message": "probar"
+  },
+  "mc_mr_match": {
+    "message": "coincide"
+  },
+  "mc_mr_nomatch": {
+    "message": "no coincide"
+  },
+  "mc_mr_hits": {
+    "message": "aciertos recientes"
+  },
+  "mc_mr_hits_none": {
+    "message": "aún no hay aciertos"
+  },
+  "mc_mr_dormant": {
+    "message": "en pausa (sobre el límite)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "el patrón debe tener 1–200 caracteres"
+  },
+  "mc_mr_err_regex": {
+    "message": "ese regex no es válido"
+  },
+  "mc_mr_err_channels": {
+    "message": "canales: hasta 50, de hasta 60 caracteres"
+  },
+  "mc_mr_err_notify": {
+    "message": "elige al menos uno: web o push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "la espera debe ser de 5–3600 segundos"
   }
 }

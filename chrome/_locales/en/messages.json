@@ -3622,5 +3622,93 @@
   },
   "mc_feed_action_failed": {
     "message": "that didn’t work — try again"
+  },
+  "mc_paint_hide": {
+    "message": "hide $USER$’s paint",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "show $USER$’s paint",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "mention rules (server)"
+  },
+  "mc_mr_signin": {
+    "message": "sign in to heatsync to manage mention rules"
+  },
+  "mc_mr_none": {
+    "message": "no rules — add one below"
+  },
+  "mc_mr_add": {
+    "message": "add rule"
+  },
+  "mc_mr_edit": {
+    "message": "edit rule"
+  },
+  "mc_mr_delete": {
+    "message": "delete rule"
+  },
+  "mc_mr_save": {
+    "message": "save"
+  },
+  "mc_mr_cancel": {
+    "message": "cancel"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "pattern..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "channels, comma separated (blank = all)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "cooldown s"
+  },
+  "mc_mr_case": {
+    "message": "case-sensitive"
+  },
+  "mc_mr_test_ph": {
+    "message": "test a message..."
+  },
+  "mc_mr_test": {
+    "message": "test"
+  },
+  "mc_mr_match": {
+    "message": "match"
+  },
+  "mc_mr_nomatch": {
+    "message": "no match"
+  },
+  "mc_mr_hits": {
+    "message": "recent hits"
+  },
+  "mc_mr_hits_none": {
+    "message": "no hits yet"
+  },
+  "mc_mr_dormant": {
+    "message": "paused (over the limit)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "pattern must be 1–200 characters"
+  },
+  "mc_mr_err_regex": {
+    "message": "that regex is not valid"
+  },
+  "mc_mr_err_channels": {
+    "message": "channels: up to 50, each up to 60 characters"
+  },
+  "mc_mr_err_notify": {
+    "message": "pick at least one of web or push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "cooldown must be 5–3600 seconds"
   }
 }

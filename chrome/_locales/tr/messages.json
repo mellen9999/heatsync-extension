@@ -1230,5 +1230,93 @@
   },
   "mc_feed_action_failed": {
     "message": "olmadı — tekrar dene"
+  },
+  "mc_paint_hide": {
+    "message": "$USER$ boyasını gizle",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_paint_show": {
+    "message": "$USER$ boyasını göster",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mr_title": {
+    "message": "bahsetme kuralları (sunucu)"
+  },
+  "mc_mr_signin": {
+    "message": "kuralları yönetmek için heatsync'e giriş yap"
+  },
+  "mc_mr_none": {
+    "message": "kural yok — aşağıdan ekle"
+  },
+  "mc_mr_add": {
+    "message": "kural ekle"
+  },
+  "mc_mr_edit": {
+    "message": "kuralı düzenle"
+  },
+  "mc_mr_delete": {
+    "message": "kuralı sil"
+  },
+  "mc_mr_save": {
+    "message": "kaydet"
+  },
+  "mc_mr_cancel": {
+    "message": "iptal"
+  },
+  "mc_mr_pattern_ph": {
+    "message": "kalıp..."
+  },
+  "mc_mr_channels_ph": {
+    "message": "kanallar, virgülle ayır (boş = hepsi)"
+  },
+  "mc_mr_cooldown_ph": {
+    "message": "bekleme sn"
+  },
+  "mc_mr_case": {
+    "message": "büyük/küçük harf duyarlı"
+  },
+  "mc_mr_test_ph": {
+    "message": "bir mesaj dene..."
+  },
+  "mc_mr_test": {
+    "message": "dene"
+  },
+  "mc_mr_match": {
+    "message": "eşleşti"
+  },
+  "mc_mr_nomatch": {
+    "message": "eşleşmedi"
+  },
+  "mc_mr_hits": {
+    "message": "son eşleşmeler"
+  },
+  "mc_mr_hits_none": {
+    "message": "henüz eşleşme yok"
+  },
+  "mc_mr_dormant": {
+    "message": "duraklatıldı (sınırı aştı)"
+  },
+  "mc_mr_err_pattern": {
+    "message": "kalıp 1–200 karakter olmalı"
+  },
+  "mc_mr_err_regex": {
+    "message": "bu regex geçerli değil"
+  },
+  "mc_mr_err_channels": {
+    "message": "kanallar: en fazla 50, her biri en fazla 60 karakter"
+  },
+  "mc_mr_err_notify": {
+    "message": "en az birini seç: web veya push"
+  },
+  "mc_mr_err_cooldown": {
+    "message": "bekleme 5–3600 saniye olmalı"
   }
 }

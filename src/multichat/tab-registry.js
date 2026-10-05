@@ -11,8 +11,8 @@
  * TO a cell (switchTab(tab, sub)), never the only door.
  */
 // Cells of a channel tab (and live): the first is home. summary / logs /
-// status are full surfaces that used to be a links item, a message right-click
-// and a slash overlay; each is now a cell, the old entries are shortcuts to it.
+// status are full surfaces reached by switchTab(tab, sub); no strip draws them
+// on live or channel tabs (mcShowsRow), /status is the hub that links to them.
 const MC_CHANNEL_SUB = [
   { id: 'chat', label: 'chat' },
   { id: 'summary', label: 'summary' },
@@ -86,6 +86,16 @@ function mcSubCells(tabId) {
   if (tab?.cellOf) return mcSubCells(tab.cellOf)
   if (tab) return tab.sub || []
   return tabId ? MC_CHANNEL_SUB : []
+}
+
+/**
+ * Only feed (feed › discover) shows the shared 2nd row. live and channel tabs
+ * keep their cells as routes and panes, but /status is the hub that reaches them.
+ */
+function mcShowsRow(tabId) {
+  const tab = MC_TABS.find((t) => t.id === tabId)
+  if (tab?.cellOf) return mcShowsRow(tab.cellOf)
+  return !!tab?.sub?.length && tab.id !== 'live'
 }
 
 /**

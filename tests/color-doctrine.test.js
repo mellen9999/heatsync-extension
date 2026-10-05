@@ -328,8 +328,6 @@ describe('colour doctrine — 8 colours', () => {
           if (!SINGLE.get(hex).has(rel)) offenders.push(`${rel}: ${lit} (single-definition colour outside its token)`)
           continue
         }
-        // TEMP: the synced card still spells the old twitch purple until the site's card.css lands + is re-synced
-        if (rel === 'src/multichat/styles/20-card.css' && hex === 'a970ff') continue
         if (hex === TWITCH && !partial) {
           if (!TWITCH_FILES.has(rel)) offenders.push(`${rel}: ${lit} (twitch purple outside its scopes)`)
           continue

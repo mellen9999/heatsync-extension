@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.87] — 2026-10-04
+
+### fixed
+- **kick video size** — the stream is no longer cut off on the right or squeezed beside kick's own chat; it fills the space next to the chat panel.
+
 ## [1.7.86] — 2026-10-04
 
 ### fixed

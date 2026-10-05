@@ -120,7 +120,7 @@ const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
 /** Drop inline `hs-exempt-start … hs-exempt-end` regions (user-chosen colour pickers), then comments. */
 function code(text, rel) {
   // the zebra stripe is the single allowed off-palette value, and only as this token
-  let t = text.replace(/--hs-zebra:\s*#161616;/g, '').replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
+  let t = text.replace(/--hs-zebra:\s*#444444;/g, '').replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
   if (rel.endsWith('.html')) t = t.replace(/<!--[\s\S]*?-->/g, '')
@@ -374,7 +374,7 @@ describe('colour doctrine — 8 colours', () => {
       const h = expand(m[2].slice(1))
       const ONE = {
         '--hs-plat-twitch': TWITCH,
-        '--hs-zebra': '161616',
+        '--hs-zebra': '444444',
         '--hs-plat-hs': ORANGE,
         '--hs-mod': '00ad03',
         '--hs-dim': '808080',

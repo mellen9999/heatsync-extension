@@ -52,7 +52,7 @@
          carry the signal instead. This renderer never got one, so an @-mention
          of you in multichat went pixel-identical to every other row. */
       --hs-mention-edge: #ff0000;
-      --hs-zebra: #161616; /* alternating-row stripe — the ONE off-palette value: the lightest gray every palette colour still passes 4.5:1 on */
+      --hs-zebra: #444444; /* alternating-row stripe — owner pick for visible stripes; red/dim text on it is ~2.4:1 by choice */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).
          --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the

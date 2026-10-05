@@ -61,7 +61,7 @@
       --hs-sel: #00ffff;
       --hs-sel-fg: #000;
       /* platform tags — scope: adjacent to a platform glyph only */
-      --hs-plat-twitch: #a970ff;
+      --hs-plat-twitch: #c8a8ff;
       --hs-plat-kick: #00ff00;
       --hs-plat-youtube: #ff0000;
       --hs-plat-hs: #ff8700;
@@ -70,6 +70,8 @@
       /* dim gray: exactly two roles — the reply-context line above a threaded message,
          and a chat tab with nothing unread */
       --hs-dim: #808080;
+      /* the reply-context line inside a zebra stripe row: this light gray is 5.1:1 on the stripe (the plain dim is not) */
+      --hs-dim-stripe: #bcbcbc;
       /* structural */
       --hs-fg: #fff;
       --hs-bg: #000;

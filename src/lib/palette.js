@@ -11,7 +11,7 @@
 export const HS_MOD_GREEN = '#00ad03'
 
 export const HS_PLAT_COLORS = {
-  twitch: '#a970ff',
+  twitch: '#c8a8ff',
   kick: '#00ff00',
   yt: '#ff0000',
   youtube: '#ff0000',

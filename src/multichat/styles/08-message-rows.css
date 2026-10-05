@@ -58,6 +58,9 @@
     .hs-mc-msg.hs-mc-zebra, .hs-feed-msg.hs-mc-zebra {
       background: var(--hs-zebra);
     }
+    .hs-mc-msg.hs-mc-zebra .hs-mc-reply-ctx, .hs-feed-msg.hs-mc-zebra .hs-mc-reply-ctx {
+      color: var(--hs-dim-stripe);
+    }
     /* Hovered-row tint while the reply stack is shown — same dark olive as stack rows.
        Critical: ONLY change the background. Changing padding/line-height shrinks the
        row, which triggers chat auto-scroll-to-bottom adjustment AFTER showStack has

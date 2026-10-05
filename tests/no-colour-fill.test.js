@@ -20,7 +20,7 @@ import { join, relative } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 const COLORED_TOK = /^var\(--hs-(plat-[a-z]+|ok|warn|danger|live|reply|thread|info|gold|mention|heat|mod|[a-z]+-dim)\)$/
-const COLORED_HEX = /^#(ff0000|00ff00|ffff00|8888ff|ff00ff|00ffff|ff8700|a970ff|00ad03|f00|0f0|ff0|f0f|0ff)$/i
+const COLORED_HEX = /^#(ff0000|00ff00|ffff00|8888ff|ff00ff|00ffff|ff8700|c8a8ff|00ad03|f00|0f0|ff0|f0f|0ff)$/i
 
 /** [pattern on the group text, reason] */
 const EXEMPT = [

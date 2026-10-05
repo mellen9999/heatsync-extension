@@ -29,13 +29,14 @@ const ORANGE = 'ff8700'
 // place — lib/palette.js (HS_PLAT_COLORS) and the 00-palette.css token. Everything else
 // (content scripts, the schema, the tooltip map) reads HS_PLAT_COLORS. 20-card.css is the
 // single exception: a byte-synced site copy, covered by the site's own token.
-const TWITCH = 'a970ff'
+const TWITCH = 'c8a8ff'
 // Single-definition hexes. Moderator green is Twitch's real mod badge colour; dim gray is for exactly
 // two roles (the reply-context line, and a fully-read chat tab) and nothing else. Each is spelled once
 // per layer: the CSS token, and (mod green) the JS constant.
 const SINGLE = new Map([
   ['00ad03', new Set(['src/multichat/styles/00-palette.css', 'src/lib/palette.js'])],
   ['808080', new Set(['src/multichat/styles/00-palette.css'])],
+  ['bcbcbc', new Set(['src/multichat/styles/00-palette.css'])],
 ])
 const TWITCH_FILES = new Set([
   'src/multichat/styles/00-palette.css',
@@ -327,6 +328,8 @@ describe('colour doctrine — 8 colours', () => {
           if (!SINGLE.get(hex).has(rel)) offenders.push(`${rel}: ${lit} (single-definition colour outside its token)`)
           continue
         }
+        // TEMP: the synced card still spells the old twitch purple until the site's card.css lands + is re-synced
+        if (rel === 'src/multichat/styles/20-card.css' && hex === 'a970ff') continue
         if (hex === TWITCH && !partial) {
           if (!TWITCH_FILES.has(rel)) offenders.push(`${rel}: ${lit} (twitch purple outside its scopes)`)
           continue
@@ -378,6 +381,7 @@ describe('colour doctrine — 8 colours', () => {
         '--hs-plat-hs': ORANGE,
         '--hs-mod': '00ad03',
         '--hs-dim': '808080',
+        '--hs-dim-stripe': 'bcbcbc',
       }
       if (m[1] in ONE ? h !== ONE[m[1]] : !PALETTE.has(h)) bad.push(`${m[1]}: ${m[2]}`)
     }
@@ -387,13 +391,13 @@ describe('colour doctrine — 8 colours', () => {
   test('platform tags: [T] twitch purple, [K] green, [Y] red, [H] orange', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     const tok = (n) => css.match(new RegExp(`${n}:\\s*(#[0-9a-fA-F]+)`))?.[1].toLowerCase()
-    expect(tok('--hs-plat-twitch')).toBe('#a970ff')
+    expect(tok('--hs-plat-twitch')).toBe('#c8a8ff')
     expect(tok('--hs-plat-kick')).toBe('#00ff00')
     expect(tok('--hs-plat-youtube')).toBe('#ff0000')
     expect(tok('--hs-plat-hs')).toBe('#ff8700')
     const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     for (const [k, v] of [
-      ['twitch', '#a970ff'],
+      ['twitch', '#c8a8ff'],
       ['kick', '#00ff00'],
       ['youtube', '#ff0000'],
       ['heatsync', '#ff8700'],
@@ -415,6 +419,7 @@ describe('single-definition colours', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     expect(css.match(/#00ad03/gi)).toHaveLength(1)
     expect(css.match(/#808080/gi)).toHaveLength(1)
+    expect(css.match(/#bcbcbc/gi)).toHaveLength(1)
     const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
@@ -427,5 +432,8 @@ describe('single-definition colours', () => {
         users.push(m[1].trim().replace(/\s+/g, ' '))
     }
     expect(users).toEqual(['.hs-mc-tab', '.hs-mc-reply-ctx'])
+    expect(readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')).toMatch(
+      /\.hs-mc-zebra \.hs-mc-reply-ctx[^{]*\{\s*color: var\(--hs-dim-stripe\)/,
+    )
   })
 })

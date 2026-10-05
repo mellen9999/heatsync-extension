@@ -429,7 +429,8 @@ describe('single-definition colours', () => {
       for (const m of css.matchAll(/([^{}]+)\{([^{}]*var\(--hs-dim\)[^{}]*)\}/g))
         users.push(m[1].trim().replace(/\s+/g, ' '))
     }
-    expect(users).toEqual(['.hs-mc-tab', '.hs-mc-reply-ctx'])
+    // readdirSync order is filesystem-defined (tmpfs ≠ btrfs) — compare as a set
+    expect(users.sort()).toEqual(['.hs-mc-reply-ctx', '.hs-mc-tab'])
     expect(readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')).toMatch(
       /\.hs-mc-zebra \.hs-mc-reply-ctx[^{]*\{\s*color: var\(--hs-dim-stripe\)/,
     )

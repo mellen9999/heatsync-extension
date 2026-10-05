@@ -1,14 +1,15 @@
 /**
- * Every full surface in the multichat is a navbar cell.
+ * Every full surface in the multichat is a pane with an address.
  *
- * mellen's ruling: a surface is either a cell (the tab bar is the primary row,
- * the 2nd row holds sub cells) or a transient item. Slash commands, hotkeys,
- * right-click items and event handlers may be shortcuts TO a cell, never the
- * only door. This gate keeps that true:
+ * mellen's ruling: channel tabs and live show no sub-strip. Summary, logs,
+ * status and platforms stay addressable cells (switchTab(tab, sub)) that mount
+ * as panes; /status is the hub that links to the rest. Slash commands, hotkeys
+ * and right-click items route there, never mount a surface themselves. This
+ * gate keeps that true:
  *   1. SURFACES is the closed list of full surfaces; each maps to an MC_TABS cell.
- *   2. Every opener routes through switchTab(tab, sub) / mcOpenChannelCell —
- *      none mounts a surface itself.
+ *   2. Every opener routes through switchTab(tab, sub) / mcOpenChannelCell.
  *   3. Every cell that is not a tab's home has a pane to land on.
+ *   4. Only feed draws the shared row; the status pane carries the hub links.
  * Adding a surface means adding it here AND to tab-registry.js; the test fails
  * until both agree. Source-text checks, same as the other gates (the bundle
  * shares one scope, so there is nothing to import).
@@ -21,7 +22,7 @@ const MC = join(import.meta.dir, '..', 'src', 'multichat')
 const read = (f) => readFileSync(join(MC, f), 'utf8')
 const files = readdirSync(MC).filter((f) => f.endsWith('.js'))
 const REG = read('tab-registry.js')
-const api = new Function(`${REG}\nreturn { MC_TABS, mcSubCells, mcCellAddress }`)()
+const api = new Function(`${REG}\nreturn { MC_TABS, mcSubCells, mcCellAddress, mcShowsRow }`)()
 
 // id → [tab, cell] (cell omitted for a tab with no 2nd row). A channel tab
 // stands in as 'live' — they share one set of cells.
@@ -42,7 +43,7 @@ const SURFACES = {
   'edit live platforms': ['live', 'platforms'],
 }
 
-describe('every full surface is a cell', () => {
+describe('every full surface is an addressable cell', () => {
   for (const [name, [tab, cell]] of Object.entries(SURFACES)) {
     test(name, () => {
       expect(
@@ -152,5 +153,31 @@ describe('every cell has somewhere to land', () => {
   test('opening a pane never tears down the chat underneath it', () => {
     expect(MAIN).toMatch(/pane\.id = 'hs-mc-subpane'/)
     expect(read('chat-logs.js')).toMatch(/getElementById\('hs-mc-subpane'\)/)
+  })
+})
+
+describe('no sub-strip on channel tabs, /status is the hub', () => {
+  test('mcShowsRow: feed yes, live and channel tabs no', () => {
+    expect(api.mcShowsRow('feed')).toBe(true)
+    expect(api.mcShowsRow('discover')).toBe(true)
+    expect(api.mcShowsRow('live')).toBe(false)
+    expect(api.mcShowsRow('xqc')).toBe(false)
+  })
+
+  test('renderSubRow hides the row when the tab does not show it', () => {
+    expect(read('main.js')).toMatch(/!mcShowsRow\(currentTab\)/)
+  })
+
+  test('the status pane has a x and links to summary, my logs and platforms', () => {
+    const m = read('main.js')
+    const hub = m.match(/function _paneHub\(ctx\) \{([\s\S]*?)\n {2}\}\n/)?.[1] || ''
+    expect(hub).toMatch(/hsXButton\([^)]*mcLeaveSubPane\)/)
+    expect(hub).toMatch(/link\('summary', ctx\.tab, 'summary'\)/)
+    expect(hub).toMatch(/link\('my logs', ctx\.tab, 'logs'\)/)
+    expect(hub).toMatch(/ctx\.tab === 'live'\) link\('platforms', 'live', 'platforms'\)/)
+    const status = m.match(/status: async \(pane, ctx\) => \{([\s\S]*?)\n {4}\},/)?.[1] || ''
+    expect(status).toMatch(/_paneHub\(ctx\)/)
+    expect(status).toMatch(/pane\.prepend\(hub\)/) // the error state keeps the hub
+    expect(status).toMatch(/replaceChildren\(hub, panel\)/)
   })
 })

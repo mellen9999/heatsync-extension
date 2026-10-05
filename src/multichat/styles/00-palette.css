@@ -65,6 +65,11 @@
       --hs-plat-kick: #00ff00;
       --hs-plat-youtube: #ff0000;
       --hs-plat-hs: #ff8700;
+      /* moderator green: Twitch's real mod badge colour (twin of HS_MOD_GREEN in lib/palette.js) */
+      --hs-mod: #00ad03;
+      /* dim gray: exactly two roles — the reply-context line above a threaded message,
+         and a chat tab with nothing unread */
+      --hs-dim: #808080;
       /* structural */
       --hs-fg: #fff;
       --hs-bg: #000;

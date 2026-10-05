@@ -3186,7 +3186,7 @@
   function renderSubRow() {
     const row = tabBarElement?.querySelector('#hs-mc-subrow')
     if (!row) return
-    const cells = mcHasOwnRow(currentTab) ? [] : mcSubCells(currentTab)
+    const cells = mcHasOwnRow(currentTab) || !mcShowsRow(currentTab) ? [] : mcSubCells(currentTab)
     row.hidden = cells.length === 0
     row.replaceChildren(
       ...cells.map((c) => {
@@ -3197,7 +3197,6 @@
         b.setAttribute('role', 'tab')
         b.setAttribute('aria-selected', String(c.id === currentSub))
         b.classList.toggle('active', c.id === currentSub)
-        b.classList.toggle('has-dot', subDots.has(`${currentTab}:${c.id}`))
         b.textContent = c.label
         return b
       }),
@@ -3207,10 +3206,8 @@
   // Land on a cell: remember it for the tab, repaint the row, mount its pane.
   function applySub(tabId, sub, opts) {
     currentSub = sub
-    if (sub) {
-      lastSubByTab[tabId] = sub
-      subDots.delete(`${tabId}:${sub}`)
-    }
+    // no visible row, no memory: coming back to a channel tab lands on chat
+    if (sub && mcShowsRow(tabId)) lastSubByTab[tabId] = sub
     // settings draws its own row; landing on one of its cells swaps the pane
     if (tabId === 'settings' && sub && _setSettingsSubtab(sub) && currentTab === 'settings') renderSettingsTab()
     renderSubRow()
@@ -3222,7 +3219,6 @@
   // chat rows underneath are never touched, so coming back to `chat` is free.
   // Panes are rebuilt on every mount, which makes a stale async fill harmless
   // (its pane is gone, `isConnected` says so).
-  const subDots = new Set() // `${tab}:${cell}` with something not yet seen
   let _paneHidInput = false
 
   // The channel a channel tab (or live) is about.
@@ -3241,16 +3237,6 @@
       .map((ch) => ch.id)
     if (String(getLiveChannel() || '').toLowerCase() === c) ids.push('live')
     return ids
-  }
-
-  function setSummaryDot(channel) {
-    for (const id of channelTabIdsFor(channel)) subDots.add(`${id}:summary`)
-    renderSubRow()
-  }
-
-  function clearSummaryDots(channel) {
-    for (const id of channelTabIdsFor(channel)) subDots.delete(`${id}:summary`)
-    renderSubRow()
   }
 
   // Shortcut target for slash commands and right-click items: open `sub` on the
@@ -3275,6 +3261,29 @@
     pane.replaceChildren(d)
   }
 
+  // The status pane is the hub: links to the panes that have no strip cell, and
+  // a × back to chat. Shown for the loaded panel and for a failed fetch alike.
+  function _paneHub(ctx) {
+    const row = document.createElement('div')
+    row.className = 'hs-cl-ctrls'
+    const link = (label, tab, sub) => {
+      const b = document.createElement('button')
+      b.className = 'hs-cl-export'
+      b.type = 'button'
+      b.textContent = label
+      b.addEventListener('click', () => switchTab(tab, sub))
+      row.appendChild(b)
+    }
+    link('summary', ctx.tab, 'summary')
+    link('my logs', ctx.tab, 'logs')
+    if (ctx.tab === 'live') link('platforms', 'live', 'platforms')
+    const x = hsXButton('hs-x-inline', 'back to chat', mcLeaveSubPane)
+    x.title = 'back to chat (Esc)'
+    x.style.marginLeft = 'auto'
+    row.appendChild(x)
+    return row
+  }
+
   const MC_SUB_PANES = {
     summary: (pane, ctx) => {
       pane.classList.add('hs-mc-subpane-pad')
@@ -3282,15 +3291,20 @@
     },
     status: async (pane, ctx) => {
       const ch = String(ctx.channel || '').toLowerCase()
-      _paneNote(pane, `fetching #${ch}…`)
+      const hub = _paneHub(ctx)
+      const note = (text) => {
+        _paneNote(pane, text)
+        pane.prepend(hub)
+      }
+      note(`fetching #${ch}…`)
       let panel = null
       try {
         panel = await buildChatStatusPanel(ch)
       } catch (_) {}
       if (!pane.isConnected) return
-      if (!panel) return _paneNote(pane, `could not fetch #${ch} (offline or not on twitch?)`)
+      if (!panel) return note(`could not fetch #${ch} (offline or not on twitch?)`)
       panel.classList.add('hs-mc-subpane-pad')
-      pane.replaceChildren(panel)
+      pane.replaceChildren(hub, panel)
     },
     platforms: (pane) => renderLivePlatformsPane(pane),
     // Your own messages in this channel, or the user a right-click named.
@@ -5642,11 +5656,12 @@
 
     // Every add/remove-channel path calls updateTabBar() right after mutating
     // config.channels — single chokepoint to keep hs-twitch-no-channel-empty
-    // (empty-panel hide, see updateTwitchNoChannelClass) in sync without
-    // threading a call through every one of those call sites individually.
-    if (hostPlatform === 'twitch' && typeof updateTwitchNoChannelClass === 'function') {
+    // (empty-panel hide) in sync without threading a call through every one of
+    // those call sites. Only the empty flag: see syncTwitchNoChannelEmpty for
+    // why this must never re-run the layout probe.
+    if (hostPlatform === 'twitch' && typeof syncTwitchNoChannelEmpty === 'function') {
       try {
-        updateTwitchNoChannelClass()
+        syncTwitchNoChannelEmpty()
       } catch (_) {}
     }
 
@@ -13468,7 +13483,6 @@
         } else if (msg.eventType === 'stream:online') {
           try {
             streamStats.delete((channel || '').toLowerCase())
-            clearSummaryDots(channel)
           } catch (_) {}
           if (!hermesToggles?.online) return
           // Same gate as the follow_stream_event listener: if the authoritative
@@ -13503,8 +13517,7 @@
         } else if (msg.eventType === 'stream:offline') {
           sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
           try {
-            // no card pinned over chat: the channel tab's summary cell gets a dot
-            if (markStreamEnded(channel)) setSummaryDot(channel)
+            markStreamEnded(channel)
           } catch (_) {}
           if (!hermesToggles?.offline) return
           text = `[${channel}] \u25C6 went offline`

@@ -472,7 +472,7 @@ const SETTINGS = [
   {
     key: 'lineHeight',
     type: 'enum',
-    default: '18',
+    default: '20',
     scope: 'sync',
     category: 'display',
     section: 'density',
@@ -482,7 +482,7 @@ const SETTINGS = [
     apply: 'density',
     applyOnLoad: true,
     options: [
-      { value: '18', label: '18' },
+      { value: '20', label: '20' },
       { value: '22', label: '22' },
       { value: '26', label: '26' },
     ],

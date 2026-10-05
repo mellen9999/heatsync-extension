@@ -190,7 +190,6 @@ function markStreamEnded(channel) {
     () => {
       if (streamStats.get(key) === s) {
         streamStats.delete(key)
-        if (typeof clearSummaryDots === 'function') clearSummaryDots(key)
       }
     },
     60 * 60 * 1000,

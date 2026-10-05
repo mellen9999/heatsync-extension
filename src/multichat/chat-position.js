@@ -105,13 +105,7 @@ function updateTwitchNoChannelClass() {
   }
   const prev = document.body.classList.contains('hs-twitch-no-channel')
   document.body.classList.toggle('hs-twitch-no-channel', noChannel)
-  // A no-channel page (directory/settings/search/…) with ZERO configured
-  // chat tabs (no saved channels, no ephemeral auto-tabs from other open
-  // browser tabs) has nothing to show — an empty 340px panel floating over
-  // pure browsing, which is exactly the audit-1.7.75 finding. A user WITH
-  // tabs keeps the real feature (watch your chats while browsing away from
-  // them); only the genuinely-empty case hides.
-  document.body.classList.toggle('hs-twitch-no-channel-empty', noChannel && config.channels.length === 0)
+  syncTwitchNoChannelEmpty()
   // State flip: re-run width so the right-column slot zeros (entering
   // no-channel) or reclaims its size (returning to a channel page).
   if (prev !== noChannel) {
@@ -119,6 +113,25 @@ function updateTwitchNoChannelClass() {
       applyChatWidth()
     } catch (_) {}
   }
+}
+
+// A no-channel page (directory/settings/search/…) with ZERO configured chat
+// tabs (no saved channels, no ephemeral auto-tabs from other open browser
+// tabs) has nothing to show — an empty 340px panel floating over pure
+// browsing, which is exactly the audit-1.7.75 finding. A user WITH tabs keeps
+// the real feature (watch your chats while browsing away from them); only the
+// genuinely-empty case hides.
+//
+// Reads the no-channel verdict, never re-derives it. updateTabBar runs this on
+// every tab change; it used to run the full updateTwitchNoChannelClass, whose
+// layout probe fires mid-boot in the beat after native chat is zeroed but
+// before the shell is tagged hs-native-hidden — it read a live channel page as
+// "no channel", body-mounted the panel and squeezed the player to 680px
+// (1.7.75–1.7.85, every fresh install). Nothing re-ran it, so it stuck.
+function syncTwitchNoChannelEmpty() {
+  if (hostPlatform !== 'twitch') return
+  const noChannel = document.body.classList.contains('hs-twitch-no-channel')
+  document.body.classList.toggle('hs-twitch-no-channel-empty', noChannel && config.channels.length === 0)
 }
 
 // updateKickNoChannelClass moved to kick-host.js (platform module)

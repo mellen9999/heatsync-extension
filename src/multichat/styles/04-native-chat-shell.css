@@ -76,7 +76,7 @@
          system emoji font and the per-glyph advance can be fractional. */
       font-family: var(--hs-mc-font, monospace), 'Noto Color Emoji';
       font-size: var(--hs-mc-base-size, 15px);
-      line-height: 17px;
+      line-height: 20px;
       /* Cross-fade with the document_start prepaint pseudo-element. Container
          starts invisible; main.js sets opacity:1 after the overlay mounts +
          renders, so prepaint (fading out) and container (fading in) overlap

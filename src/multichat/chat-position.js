@@ -804,9 +804,18 @@ function applyPlatformPositionOverrides() {
       // CSS var) because Kick drops the sidebar from the DOM at narrow
       // viewports, where subtracting 56 would shrink the player needlessly.
       const sidebarW = getKickSidebarWidth()
+      // <main> is the column the player actually gets: its width already nets
+      // out the sidebar and a right-docked chatroom, whatever kick's markup
+      // calls them this week. Measured, not derived — a wrong sidebar guess
+      // sized the player 256px past main, and main's overflow:hidden cut the
+      // stream's right side off. We never size main itself, so this can't
+      // feed back into its own measurement.
+      const kickMain = injected?.closest('main')
+      const mainW = kickMain ? Math.round(kickMain.getBoundingClientRect().width) : 0
+      watchKickMainWidth(kickMain)
       let availH, availW
       if (chatPosition === 'right') {
-        availW = Math.max(200, innerWidth - chatWidth - sidebarW)
+        availW = Math.max(200, mainW || innerWidth - chatWidth - sidebarW)
         availH = Math.max(200, innerHeight - navH)
       } else if (chatPosition === 'left') {
         // chat panel is fixed at left:0 width:chatW — it covers the sidebar.
@@ -816,7 +825,7 @@ function applyPlatformPositionOverrides() {
         availH = Math.max(200, innerHeight - navH)
       } else {
         availH = Math.max(200, innerHeight - chatHeight - navH)
-        availW = Math.max(200, innerWidth - sidebarW)
+        availW = Math.max(200, mainW || innerWidth - sidebarW)
       }
       const aspectW = (availH * 16) / 9
       const aspectH = (availW * 9) / 16

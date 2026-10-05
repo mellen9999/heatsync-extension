@@ -246,22 +246,50 @@ try {
       else fail('twitch live: no chat lines rendered at all in 30s')
     }
 
-    // ── 4. the video fills its column (twitch live) ─────────────────────
-    // 1.7.75–1.7.85 shipped a player squeezed to 680px in a 1020px column on
-    // every fresh install: a mid-boot probe read the channel page as "no
-    // channel" and stuck. No DOM test noticed; a screenshot did.
-    if (label === 'twitch live' && visible) {
+    // ── 4. the video is whole, fills its space, and stays clear of the panel ──
+    // 1.7.75–1.7.85 shipped two of these: twitch squeezed to 680px of a 1020px
+    // column (a mid-boot probe stuck on "no channel"), and kick sized 256px past
+    // its column so main's overflow:hidden cut the stream's right side off (a
+    // stale sidebar selector). No DOM test noticed either; screenshots did.
+    if (visible && (label === 'twitch live' || label === 'kick live' || label === 'youtube live')) {
       const geo = await withTimeout(
         p.evaluate(() => {
-          const w = (s: string) => document.querySelector(s)?.getBoundingClientRect().width ?? 0
-          return { video: Math.round(w('video')), main: Math.round(w('main')) }
+          const v = document.querySelector('video')
+          const panel = document.getElementById('hs-mc-container')
+          if (!v || !panel) return null
+          const vr = v.getBoundingClientRect()
+          // the area the site gives its player: <main> on twitch and kick (kick's
+          // main is overflow:hidden, so anything past it is cut off), the player
+          // box on youtube. Walking overflow ancestors misfires on positioned
+          // descendants, so name the box.
+          const box = v.closest('#movie_player') || v.closest('main')
+          const br = box ? box.getBoundingClientRect() : vr
+          const clipL = br.left
+          const clipR = br.right
+          return {
+            left: Math.round(vr.left),
+            right: Math.round(vr.right),
+            clipL: Math.round(clipL),
+            clipR: Math.round(clipR),
+            panelL: Math.round(panel.getBoundingClientRect().left),
+          }
         }),
         20_000,
         'player geometry',
       ).catch(() => null)
-      if (!geo || !geo.video || !geo.main) fail(`twitch live: couldn't measure the player (${JSON.stringify(geo)})`)
-      else if (geo.video >= geo.main - 24) ok(`twitch live: video fills its column (${geo.video}/${geo.main}px)`)
-      else fail(`twitch live: video squeezed to ${geo.video}px in a ${geo.main}px column`)
+      if (!geo) fail(`${label}: couldn't measure the player`)
+      else {
+        const room = Math.min(geo.clipR, geo.panelL) - Math.max(geo.clipL, geo.left)
+        const shown = Math.min(geo.right, geo.clipR, geo.panelL) - Math.max(geo.left, geo.clipL)
+        const cropped = geo.right > geo.clipR + 2 || geo.left < geo.clipL - 2
+        const underPanel = Math.min(geo.right, geo.clipR) > geo.panelL + 2
+        const squeezed = geo.right - geo.left < room - 24
+        const at = JSON.stringify(geo)
+        if (cropped) fail(`${label}: video cropped by its container ${at}`)
+        else if (underPanel) fail(`${label}: video runs under the panel ${at}`)
+        else if (squeezed) fail(`${label}: video squeezed, ${geo.right - geo.left}px in ${room}px of room ${at}`)
+        else ok(`${label}: video whole and fills its space (${shown}/${room}px)`)
+      }
     }
 
     // ── 5. no kick.com 429s over 60s on the kick live page ──────────────

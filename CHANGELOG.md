@@ -1,5 +1,23 @@
 # changelog
 
+## [1.7.88] — 2026-10-05
+
+### changed
+- **look** — eight colors on black, buttons and tags are outlined instead of filled, stripes on alternating lines, twitch tags in light purple, mod green, a dim reply line.
+- **font** — system monospace everywhere; no font download bundled.
+- **rows** — tall enough that p, g and y are no longer cut off.
+- **channel tabs** — the summary, logs and status row is gone from channel tabs; `/status` opens them.
+
+## [1.7.87] — 2026-10-04
+
+### fixed
+- **kick video size** — the stream is no longer cut off on the right or squeezed beside kick's own chat; it fills the space next to the chat panel.
+
+## [1.7.86] — 2026-10-04
+
+### fixed
+- **twitch video size** — the stream no longer shrinks to two-thirds of its space next to the chat panel on a fresh install.
+
 ## [1.7.85] — 2026-10-04
 
 ### fixed

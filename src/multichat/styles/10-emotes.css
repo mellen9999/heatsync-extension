@@ -577,16 +577,16 @@
     #hs-emote-tooltip .tooltip-source.unadded,
     #hs-emote-tooltip .tooltip-source.global,
     #hs-emote-tooltip .tooltip-source.channel { background: #fff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.sub { background: var(--hs-plat-twitch); color: #000; }
-    #hs-emote-tooltip .tooltip-source.blocked { background: var(--hs-danger); color: #000; }
+    #hs-emote-tooltip .tooltip-source.sub { background: #000000; border: 1px solid var(--hs-plat-twitch); color: var(--hs-plat-twitch); }
+    #hs-emote-tooltip .tooltip-source.blocked { background: #000000; border: 1px solid var(--hs-danger); color: var(--hs-danger); }
     /* Per-provider source label colors (override .global/.channel) */
-    #hs-emote-tooltip .tooltip-source.src-7tv { background: #00ffff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-bttv { background: #ff0000; color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-7tv { background: #000000; border: 1px solid #00ffff; color: #00ffff; }
+    #hs-emote-tooltip .tooltip-source.src-bttv { background: #000000; border: 1px solid #ff0000; color: #ff0000; }
     #hs-emote-tooltip .tooltip-source.src-ffz { background: #ffffff; color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-twitch { background: var(--hs-plat-twitch); color: #000; }
-    #hs-emote-tooltip .tooltip-source.src-kick { background: var(--hs-plat-kick); color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-twitch { background: #000000; border: 1px solid var(--hs-plat-twitch); color: var(--hs-plat-twitch); }
+    #hs-emote-tooltip .tooltip-source.src-kick { background: #000000; border: 1px solid var(--hs-plat-kick); color: var(--hs-plat-kick); }
     #hs-emote-tooltip .tooltip-source.src-heatsync,
-    #hs-emote-tooltip .tooltip-source.src-hs { background: var(--hs-plat-hs); color: #000; }
+    #hs-emote-tooltip .tooltip-source.src-hs { background: #000000; border: 1px solid var(--hs-plat-hs); color: var(--hs-plat-hs); }
 
     /* Max z-index + showLinkTooltip re-appends to body — beats reply-stack overlay. */
     #hs-link-tooltip {

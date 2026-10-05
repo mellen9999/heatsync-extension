@@ -388,10 +388,10 @@
     .hs-mc-src-chip[data-src="bttv"] { color: #ff0000; border-color: #ff0000; }
     .hs-mc-src-chip[data-src="ffz"]  { color: #ffffff; border-color: #ffffff; }
     .hs-mc-src-chip[data-src="hs"]   { color: var(--hs-plat-hs); border-color: var(--hs-plat-hs); }
-    .hs-mc-src-chip.active[data-src="7tv"]  { background: #00ffff; color: #000; border-color: #00ffff; }
-    .hs-mc-src-chip.active[data-src="bttv"] { background: #ff0000; color: #000; border-color: #ff0000; }
+    .hs-mc-src-chip.active[data-src="7tv"]  { background: #ffffff; color: #000000; border-color: #00ffff; }
+    .hs-mc-src-chip.active[data-src="bttv"] { background: #ffffff; color: #000000; border-color: #ff0000; }
     .hs-mc-src-chip.active[data-src="ffz"]  { background: #ffffff; color: #000; border-color: #ffffff; }
-    .hs-mc-src-chip.active[data-src="hs"]   { background: var(--hs-plat-hs); color: #000; border-color: var(--hs-plat-hs); }
+    .hs-mc-src-chip.active[data-src="hs"]   { background: #ffffff; color: #000000; border-color: var(--hs-plat-hs); }
     .hs-mc-src-chip:hover { background: #fff !important; color: #000 !important; border-color: #fff !important; }
     /* Exact-match filter chip — orange (HeatSync) accent, distinct from the
        brand-colored provider chips. Same square metrics. */

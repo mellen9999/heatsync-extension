@@ -254,9 +254,9 @@
       display: none;
       align-items: center;
       gap: 4px;
-      background: var(--hs-mention);
-      color: #000;
-      border: none;
+      background: #000000;
+      color: var(--hs-mention);
+      border: 1px solid var(--hs-mention);
       border-radius: 0;
       padding: 4px 12px;
       font-size: 13px;

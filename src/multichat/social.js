@@ -301,10 +301,10 @@ function clearYtPace(channelId) {
 
 // Heat ladder — the site's VT320 ramp (client/config/colors.js): white plain →
 // white bold (10+) → yellow (50+) → yellow bold (250+) → red bold (1000+) →
-// reverse red + blink (5000+, the only tier that blinks). Hue steps, never
+// outlined red + blink (5000+, the only tier that blinks). Hue steps, never
 // fades; no glow, no shadow.
 function heatLadder(heat) {
-  if (heat >= 5000) return { color: '#000000', bg: '#ff0000', bold: true, blink: true }
+  if (heat >= 5000) return { color: '#ff0000', box: true, bold: true, blink: true }
   if (heat >= 1000) return { color: '#ff0000', bold: true }
   if (heat >= 250) return { color: '#ffff00', bold: true }
   if (heat >= 50) return { color: '#ffff00', bold: false }
@@ -325,7 +325,7 @@ function formatHeat(heat) {
 function heatLadderStyle(heat, size) {
   const t = heatLadder(heat)
   let style = `color:${t.color};font-weight:${t.bold ? 700 : 400};`
-  if (t.bg) style += `background:${t.bg};padding:0 2px;`
+  if (t.box) style += `outline:1px solid ${t.color};outline-offset:1px;`
   if (t.blink) style += 'animation:hs-blink 1s steps(1) infinite;'
   if (size) style += `font-size:${size}px;line-height:1;`
   return style
@@ -353,7 +353,7 @@ function getHeatNumberStyle(heat, isReply) {
 function getHeatDisplay(heat) {
   if (!heat || heat <= 0) return null
   const t = heatLadder(heat)
-  const border = t.bg || t.color
+  const border = t.color
   const borderWidth = heat >= 500 ? 4 : heat >= 100 ? 3 : 2
   const suffix = heat >= 10 ? '°' : ''
   return { suffix, border, borderWidth, bg: '' }

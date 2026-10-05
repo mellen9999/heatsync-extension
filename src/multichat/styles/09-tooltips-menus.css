@@ -60,7 +60,7 @@
       background: transparent; color: var(--hs-border); border: 1px solid #ffffff;
       padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 13px;
     }
-    .hs-note-editor-del:hover { background: var(--hs-danger); color: #000; border-color: var(--hs-danger); }
+    .hs-note-editor-del:hover { background: #ffffff; color: #000000; border-color: var(--hs-danger); }
     .hs-mc-ctx .hs-mc-em-header {
       padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
       background: #000000;
@@ -73,7 +73,7 @@
     .hs-mc-ctx .hs-mc-em-item:hover { background: #fff; color: #000; }
     .hs-mc-ctx .hs-mc-em-item:hover .hs-mc-em-kbd { background: #000; color: #fff; border-color: #000; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger { color: var(--hs-danger); }
-    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover { background: var(--hs-danger); color: #000; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover { background: #ffffff; color: #000000; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good { color: var(--hs-ok); }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover { background: #fff; color: #000; }
     .hs-mc-ctx .hs-mc-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

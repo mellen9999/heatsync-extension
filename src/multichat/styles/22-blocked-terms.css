@@ -32,7 +32,7 @@
     .hs-bt-btn:hover, .hs-bt-btn:active, .hs-bt-btn:focus-visible { background: #fff; color: #000; outline: none; }
     .hs-bt-primary { border-color: var(--hs-brand); color: var(--hs-brand); }
     .hs-bt-danger { border-color: var(--hs-danger); color: var(--hs-danger); }
-    .hs-bt-danger:hover, .hs-bt-danger:active, .hs-bt-danger:focus-visible { background: var(--hs-danger); color: #000; }
+    .hs-bt-danger:hover, .hs-bt-danger:active, .hs-bt-danger:focus-visible { background: #ffffff; color: #000000; }
     .hs-bt-msg { min-height: 17px; margin-bottom: 6px; color: var(--hs-ok); }
     .hs-bt-msg.hs-bt-bad { color: var(--hs-danger); }
     .hs-bt-row {

@@ -35,7 +35,7 @@
     .hs-ms-on:hover, .hs-ms-on:active, .hs-ms-on:focus-visible { background: var(--hs-brand); color: #000; }
     .hs-ms-primary { border-color: var(--hs-brand); color: var(--hs-brand); }
     .hs-ms-danger { border-color: var(--hs-danger); color: var(--hs-danger); }
-    .hs-ms-danger:hover, .hs-ms-danger:active, .hs-ms-danger:focus-visible { background: var(--hs-danger); color: #000; }
+    .hs-ms-danger:hover, .hs-ms-danger:active, .hs-ms-danger:focus-visible { background: #ffffff; color: #000000; }
     .hs-ms-msg { min-height: 17px; margin-bottom: 6px; color: var(--hs-ok); }
     .hs-ms-msg.hs-ms-bad { color: var(--hs-danger); }
     .hs-ms-row, .hs-ms-state {

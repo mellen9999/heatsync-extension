@@ -327,8 +327,8 @@
     .hs-mc-pred-winner-badge {
       font-size: 13px;
       padding: 1px 5px;
-      background: var(--hs-ok);
-      color: #000;
+      background: #000000; border: 1px solid var(--hs-ok);
+      color: var(--hs-ok);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -865,9 +865,9 @@
       border-color: var(--hs-plat-twitch);
     }
     .hs-mc-reward-submit {
-      background: var(--hs-plat-twitch);
-      border: none;
-      color: #000;
+      background: #000000;
+      border: 1px solid var(--hs-plat-twitch);
+      color: var(--hs-plat-twitch);
       font-size: 13px;
       font-weight: 600;
       padding: 4px 10px;
@@ -934,9 +934,9 @@
       outline: none;
     }
     .hs-mc-color-apply {
-      background: var(--hs-plat-twitch);
-      border: none;
-      color: #000;
+      background: #000000;
+      border: 1px solid var(--hs-plat-twitch);
+      color: var(--hs-plat-twitch);
       font-size: 13px;
       font-weight: 600;
       padding: 3px 10px;
@@ -1444,7 +1444,7 @@
     }
     .hs-mc-confirm-cancel:hover { background: #fff; color: #000; }
     .hs-mc-confirm-ok { border-color: #ff0000; color: #ff0000; }
-    .hs-mc-confirm-ok:hover { background: #ff0000; color: #000; }
+    .hs-mc-confirm-ok:hover { background: #ffffff; color: #000000; }
     .hs-mc-confirm-reasons { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
     .hs-mc-confirm-reason {
       background: #000;

@@ -282,8 +282,9 @@
   padding: 0 4px;
   font-size: 15px;
   font-weight: 700;
-  color: #000000;
-  background: var(--hs-card-gold);
+  color: var(--hs-card-gold);
+  background: #000000;
+  border: 1px solid var(--hs-card-gold);
   vertical-align: middle;
   cursor: default;
 }
@@ -421,7 +422,7 @@
 .hs-card-sheet-row[data-tone="heat-warm"] dd { color: #ffff00; }
 .hs-card-sheet-row[data-tone="heat-hot"] dd { color: #ffff00; font-weight: 700; }
 .hs-card-sheet-row[data-tone="heat-erupting"] dd { color: #ff0000; font-weight: 700; }
-.hs-card-sheet-row[data-tone="heat-mythic"] dd { background: #ff0000; color: #000000; font-weight: 700; }
+.hs-card-sheet-row[data-tone="heat-mythic"] dd { color: #ff0000; font-weight: 700; outline: 1px solid #ff0000; outline-offset: -1px; }
 .hs-card-sheet-row[data-tone="you-follow"] dd,
 .hs-card-sheet-row[data-tone="you-sub"] dd { color: #00ffff; }
 .hs-card-sheet-row[data-tone="they-follow"] dd,

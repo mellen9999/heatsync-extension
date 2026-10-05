@@ -12351,7 +12351,7 @@
       const banner = document.createElement('div')
       banner.id = 'hs-mc-killswitch-banner'
       banner.style.cssText =
-        'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#ffff00;color:#000;' +
+        'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#000000; border: 1px solid #ffff00;color:#ffff00;' +
         'font:600 12px/1.4 monospace;padding:6px 10px;text-align:center;'
       banner.textContent = msg ? `heatsync: ${reason} — ${msg}` : `heatsync: ${reason}`
       ;(document.body || document.documentElement).appendChild(banner)

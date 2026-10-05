@@ -386,8 +386,8 @@
       display: inline-block;
       padding: 0 4px;
       margin-right: 3px;
-      background: var(--hs-plat-twitch);
-      color: #000;
+      background: #000000; border: 1px solid var(--hs-plat-twitch);
+      color: var(--hs-plat-twitch);
       font-size: 13px;
       font-weight: 700;
       vertical-align: middle;

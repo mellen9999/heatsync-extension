@@ -1018,19 +1018,19 @@
       color: #000;
     }
     .hs-discover-chip-btn.hs-chip-plat-t.hs-active {
-      background: var(--hs-plat-twitch);
+      background: #ffffff;
       border-color: var(--hs-plat-twitch);
-      color: #000;
+      color: #000000;
     }
     .hs-discover-chip-btn.hs-chip-plat-k.hs-active {
-      background: var(--hs-plat-kick);
+      background: #ffffff;
       border-color: var(--hs-plat-kick);
-      color: #000;
+      color: #000000;
     }
     .hs-discover-chip-btn.hs-chip-plat-yt.hs-active {
-      background: var(--hs-plat-youtube);
+      background: #ffffff;
       border-color: var(--hs-plat-youtube);
-      color: #000;
+      color: #000000;
     }
     .hs-discover-chip-btn:hover,
     .hs-discover-chip-btn.hs-active:hover,

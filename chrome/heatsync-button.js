@@ -1063,13 +1063,13 @@
         cursor: wait;
       }
       .heatsync-set-apply-btn.applied {
-        background: #00ff00;
-        color: #000;
+        background: #000000;
+        color: #00ff00;
         border-color: #00ff00;
       }
       .heatsync-set-apply-btn.failed {
-        background: #ff0000;
-        color: #000;
+        background: #000000;
+        color: #ff0000;
         border-color: #ff0000;
       }
 
@@ -1151,13 +1151,13 @@
         cursor: wait;
       }
       .heatsync-restore-btn.restored {
-        background: #00ff00;
-        color: #000;
+        background: #000000;
+        color: #00ff00;
         border-color: #00ff00;
       }
       .heatsync-restore-btn.failed {
-        background: #ff0000;
-        color: #000;
+        background: #000000;
+        color: #ff0000;
         border-color: #ff0000;
       }
 
@@ -1311,8 +1311,8 @@
         margin-right: 4px;
       }
 
-      .heatsync-provider.seventv { background: #00ffff; color: #000; }
-      .heatsync-provider.bttv { background: #ff0000; color: #000; }
+      .heatsync-provider.seventv { background: #000000; border: 1px solid #00ffff; color: #00ffff; }
+      .heatsync-provider.bttv { background: #000000; border: 1px solid #ff0000; color: #ff0000; }
       .heatsync-provider.ffz { background: #ffffff; color: #000; }
 
       /* Section titles */
@@ -1661,7 +1661,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      .hs-discover-item.blocked:hover { background: #ff0000; color: #000; opacity: 1; }
+      .hs-discover-item.blocked:hover { background: #ffffff; color: #000000; opacity: 1; }
       .hs-discover-item:hover { background: #fff; color: #000; }
       .hs-discover-item:hover * { color: #000 !important; }
       .hs-discover-thumb {
@@ -4115,7 +4115,7 @@
           const toast = document.createElement('div')
           toast.textContent = t('common_extension_updated')
           toast.style.cssText =
-            'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+            'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
           document.body.appendChild(toast)
           setTimeout(() => toast.remove(), 5000)
         }
@@ -4299,7 +4299,7 @@
                 const toast = document.createElement('div')
                 toast.textContent = t('common_extension_updated')
                 toast.style.cssText =
-                  'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+                  'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
                 document.body.appendChild(toast)
                 setTimeout(() => toast.remove(), 5000)
               }
@@ -4358,7 +4358,7 @@
               const toast = document.createElement('div')
               toast.textContent = t('common_extension_updated')
               toast.style.cssText =
-                'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff0000;color:#000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+                'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
               document.body.appendChild(toast)
               setTimeout(() => toast.remove(), 5000)
             }

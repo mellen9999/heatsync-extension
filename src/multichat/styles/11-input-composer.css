@@ -351,9 +351,9 @@
     #hs-mc-input-highlight .hl-over { color: var(--hs-danger); }
     #hs-mc-send {
       padding: 8px 12px;
-      background: var(--hs-plat-twitch);
-      color: #000;
-      border: none;
+      background: #000000;
+      color: var(--hs-plat-twitch);
+      border: 1px solid var(--hs-plat-twitch);
       border-radius: 0;
       cursor: pointer;
       font-size: 14px;

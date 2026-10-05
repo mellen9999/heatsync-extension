@@ -167,5 +167,5 @@
       border-color: #000;
     }
     .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action:hover { background: #000; color: #fff; }
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action-dismiss:hover { background: var(--hs-danger); color: #000; }
+    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action-dismiss:hover { background: #ffffff; color: #000000; }
 

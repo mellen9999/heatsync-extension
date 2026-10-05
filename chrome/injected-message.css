@@ -16,8 +16,8 @@
 
 /* OP Badge - UNIFIED with site style (bulletproof) */
 .heatsync-op-badge {
-  background: #ff0000 !important;
-  color: #000 !important;
+  background: #000000 !important;
+  color: #ff0000 !important;
   width: 18px !important;
   height: 18px !important;
   padding: 0 !important;
@@ -31,7 +31,7 @@
   align-items: center !important;
   justify-content: center !important;
   vertical-align: middle !important;
-  border: none !important;
+  border: 1px solid #ff0000 !important;
   box-sizing: border-box !important;
   line-height: 1 !important;
 }

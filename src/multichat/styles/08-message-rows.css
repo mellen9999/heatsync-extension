@@ -410,8 +410,8 @@
     }
     .hs-mc-msg.hs-mc-notice-announce::before {
       content: 'announce';
-      color: #000;
-      background: var(--hs-warn);
+      color: var(--hs-warn);
+      background: #000000; border: 1px solid var(--hs-warn);
       font-weight: 700;
       padding: 0 4px;
       margin-right: 6px;
@@ -437,8 +437,8 @@
     .hs-mc-msg.hs-mc-user-intro { border-left: 3px solid var(--hs-thread) !important; background: var(--hs-thread-tint); }
     .hs-mc-msg.hs-mc-user-intro::before {
       content: 'new here';
-      color: #000;
-      background: var(--hs-thread);
+      color: var(--hs-thread);
+      background: #000000; border: 1px solid var(--hs-thread);
       font-weight: 700;
       padding: 0 4px;
       margin-right: 6px;
@@ -514,8 +514,8 @@
     .hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved { }
     .hs-mc-automod-badge {
       display: inline-block;
-      background: var(--hs-gold);
-      color: #000;
+      background: #000000; border: 1px solid var(--hs-gold);
+      color: var(--hs-gold);
       font-weight: 700;
       font-size: 13px;
       padding: 0 4px;

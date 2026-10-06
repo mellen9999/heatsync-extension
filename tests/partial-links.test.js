@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'bun:test'
 import utils from '../src/lib/utils.js'
 
-const { linkifyPartialLinks, defangedToHost } = utils
+const { linkifyPartialLinks, defangedToHost, firstPartialTweetUrl } = utils
 
 const A = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mc-link">${text}</a>`
 
@@ -100,6 +100,13 @@ describe('linkifyPartialLinks — host-less tweets', () => {
       .toBe(A('https://x.com/GripAshford/status/2107279328723484841', 'GripAshford/status/2107279328723484841'))
     expect(linkifyPartialLinks('my status/12345678 order')).toBe('my status/12345678 order')
     expect(linkifyPartialLinks('build/status/42')).toBe('build/status/42')
+  })
+
+  test('firstPartialTweetUrl reads the same fragment chat embeds from', () => {
+    expect(firstPartialTweetUrl('lol GripAshford/status/2107279328723484841?s=20')).toBe('https://x.com/GripAshford/status/2107279328723484841')
+    expect(firstPartialTweetUrl('lol GripAshford/status/2107279328723484841')).toBe('https://x.com/GripAshford/status/2107279328723484841')
+    expect(firstPartialTweetUrl('https://x.com/a/status/2107279328723484841')).toBe('')
+    expect(firstPartialTweetUrl('my status/12345678')).toBe('')
   })
 })
 

@@ -445,8 +445,11 @@ function extractChatEmbed(text, opts) {
   // so an explicit link in the same message still wins. Rides the same
   // partialLinksEnabled toggle — off means "don't guess at bare fragments".
   if (opts?.partialLinks === false) return ''
-  const partial = typeof firstPartialYtUrl === 'function' ? firstPartialYtUrl(text) : ''
-  return partial ? chatEmbedForUrl(partial) : ''
+  const yt = typeof firstPartialYtUrl === 'function' ? firstPartialYtUrl(text) : ''
+  const ytHtml = yt ? chatEmbedForUrl(yt) : ''
+  if (ytHtml) return ytHtml
+  const tweet = typeof firstPartialTweetUrl === 'function' ? firstPartialTweetUrl(text) : ''
+  return tweet ? chatEmbedForUrl(tweet) : ''
 }
 
 function chatEmbedForUrl(rawUrl) {

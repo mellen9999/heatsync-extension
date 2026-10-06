@@ -978,6 +978,17 @@ function firstPartialYtUrl(text) {
   return `https://www.youtube.com/watch?v=${m[2]}`
 }
 
+/** First host-less tweet (`name/status/id`) in RAW message text as its x.com
+ * url — the tweet twin of firstPartialYtUrl, same regex the linkifier reads.
+ */
+function firstPartialTweetUrl(text) {
+  if (!text || typeof text !== 'string') return ''
+  PARTIAL_TWEET_RE.lastIndex = 0
+  const m = PARTIAL_TWEET_RE.exec(text)
+  PARTIAL_TWEET_RE.lastIndex = 0
+  return m ? `https://x.com/${m[1]}/status/${m[2]}` : ''
+}
+
 // ============================================
 // CROSS-PLATFORM MESSAGE ORDERING
 // ============================================
@@ -1123,6 +1134,7 @@ const utils = {
   // Links
   linkifyPartialLinks,
   firstPartialYtUrl,
+  firstPartialTweetUrl,
   defangedToHost,
   outsideTags,
 
@@ -1213,6 +1225,7 @@ export {
   estimateSettingSize,
   findComponent,
   findOrdInsertIndex,
+  firstPartialTweetUrl,
   firstPartialYtUrl,
   getFiber,
   identityYtLiveUrl,

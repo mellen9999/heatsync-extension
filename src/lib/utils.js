@@ -943,9 +943,7 @@ function linkifyPartialLinks(html) {
   out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
     anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
   )
-  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) =>
-    anchor(`https://x.com/${handle}/status/${id}`, m0),
-  )
+  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) => anchor(`https://x.com/${handle}/status/${id}`, m0))
   out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
     const host = defangedToHost(core)
     if (!host) return m0

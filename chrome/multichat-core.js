@@ -2084,9 +2084,7 @@ function linkifyPartialLinks(html) {
   out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
     anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
   )
-  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) =>
-    anchor(`https://x.com/${handle}/status/${id}`, m0),
-  )
+  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) => anchor(`https://x.com/${handle}/status/${id}`, m0))
   out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
     const host = defangedToHost(core)
     if (!host) return m0
@@ -14154,7 +14152,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7fd77ed68a74' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '59270d919694' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

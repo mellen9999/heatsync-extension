@@ -867,6 +867,10 @@ const PARTIAL_YT_LIST_RE = /(?<![\w/.=-])\/?(playlist\?list=|channel\/UC)([A-Za-
 // reddit's own limits: 3-21 chars, letters/digits/underscore (leading dash never
 // valid), which is why "w/e" and "24/7" can't reach this.
 const PARTIAL_REDDIT_RE = /(?<![\w/.-])\/?(r|u|user)\/([A-Za-z0-9][A-Za-z0-9_]{2,20})(?![\w/-])/g
+// A tweet with its host cut off — `name/status/2107279328723484841`. The
+// `status/` word plus a long numeric id is what makes it a tweet and not prose;
+// handles are x's own 1-15 word chars. A `?s=20` share query is dropped.
+const PARTIAL_TWEET_RE = /(?<![\w/.@-])@?([A-Za-z0-9_]{1,15})\/status\/(\d{8,25})(?:\?[\w=&;%-]*)?(?![\w/])/g
 // Bare host with NO path — "go to heatsync.org". LINK_RE already covers the
 // with-path form, so only this one is missing, and only this one is dangerous:
 // chat runs sentences together ("lol.im dead"), so an open TLD rule would
@@ -938,6 +942,9 @@ function linkifyPartialLinks(html) {
   )
   out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
     anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
+  )
+  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) =>
+    anchor(`https://x.com/${handle}/status/${id}`, m0),
   )
   out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
     const host = defangedToHost(core)

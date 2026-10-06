@@ -94,6 +94,15 @@ describe('linkifyPartialLinks — bare youtube path fragments', () => {
   })
 })
 
+describe('linkifyPartialLinks — host-less tweets', () => {
+  test('links name/status/id to x.com, not prose', () => {
+    expect(linkifyPartialLinks('GripAshford/status/2107279328723484841'))
+      .toBe(A('https://x.com/GripAshford/status/2107279328723484841', 'GripAshford/status/2107279328723484841'))
+    expect(linkifyPartialLinks('my status/12345678 order')).toBe('my status/12345678 order')
+    expect(linkifyPartialLinks('build/status/42')).toBe('build/status/42')
+  })
+})
+
 describe('linkifyPartialLinks — reddit refs', () => {
   test('r/ and u/ and /user/', () => {
     expect(linkifyPartialLinks('see r/place')).toBe(`see ${A('https://www.reddit.com/r/place', 'r/place')}`)

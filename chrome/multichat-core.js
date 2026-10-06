@@ -2008,6 +2008,10 @@ const PARTIAL_YT_LIST_RE = /(?<![\w/.=-])\/?(playlist\?list=|channel\/UC)([A-Za-
 // reddit's own limits: 3-21 chars, letters/digits/underscore (leading dash never
 // valid), which is why "w/e" and "24/7" can't reach this.
 const PARTIAL_REDDIT_RE = /(?<![\w/.-])\/?(r|u|user)\/([A-Za-z0-9][A-Za-z0-9_]{2,20})(?![\w/-])/g
+// A tweet with its host cut off — `name/status/2107279328723484841`. The
+// `status/` word plus a long numeric id is what makes it a tweet and not prose;
+// handles are x's own 1-15 word chars. A `?s=20` share query is dropped.
+const PARTIAL_TWEET_RE = /(?<![\w/.@-])@?([A-Za-z0-9_]{1,15})\/status\/(\d{8,25})(?:\?[\w=&;%-]*)?(?![\w/])/g
 // Bare host with NO path — "go to heatsync.org". LINK_RE already covers the
 // with-path form, so only this one is missing, and only this one is dangerous:
 // chat runs sentences together ("lol.im dead"), so an open TLD rule would
@@ -2080,6 +2084,9 @@ function linkifyPartialLinks(html) {
   out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
     anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
   )
+  out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) =>
+    anchor(`https://x.com/${handle}/status/${id}`, m0),
+  )
   out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
     const host = defangedToHost(core)
     if (!host) return m0
@@ -2110,6 +2117,17 @@ function firstPartialYtUrl(text) {
   // query tail is dropped — it only carries playback params the builders
   // re-derive, and keeping it would widen the sanitize surface on the id.
   return `https://www.youtube.com/watch?v=${m[2]}`
+}
+
+/** First host-less tweet (`name/status/id`) in RAW message text as its x.com
+ * url — the tweet twin of firstPartialYtUrl, same regex the linkifier reads.
+ */
+function firstPartialTweetUrl(text) {
+  if (!text || typeof text !== 'string') return ''
+  PARTIAL_TWEET_RE.lastIndex = 0
+  const m = PARTIAL_TWEET_RE.exec(text)
+  PARTIAL_TWEET_RE.lastIndex = 0
+  return m ? `https://x.com/${m[1]}/status/${m[2]}` : ''
 }
 
 // ============================================
@@ -2257,6 +2275,7 @@ const utils = {
   // Links
   linkifyPartialLinks,
   firstPartialYtUrl,
+  firstPartialTweetUrl,
   defangedToHost,
   outsideTags,
 
@@ -14135,7 +14154,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '64e131da5d0a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7fd77ed68a74' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -34265,8 +34284,11 @@ function extractChatEmbed(text, opts) {
   // so an explicit link in the same message still wins. Rides the same
   // partialLinksEnabled toggle — off means "don't guess at bare fragments".
   if (opts?.partialLinks === false) return ''
-  const partial = typeof firstPartialYtUrl === 'function' ? firstPartialYtUrl(text) : ''
-  return partial ? chatEmbedForUrl(partial) : ''
+  const yt = typeof firstPartialYtUrl === 'function' ? firstPartialYtUrl(text) : ''
+  const ytHtml = yt ? chatEmbedForUrl(yt) : ''
+  if (ytHtml) return ytHtml
+  const tweet = typeof firstPartialTweetUrl === 'function' ? firstPartialTweetUrl(text) : ''
+  return tweet ? chatEmbedForUrl(tweet) : ''
 }
 
 function chatEmbedForUrl(rawUrl) {

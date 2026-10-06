@@ -14152,7 +14152,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '59270d919694' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0b300bf9b529' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -74244,6 +74244,28 @@ const STORAGE_KEY = 'heatsync_multichat'
       .filter(Boolean),
   )
 
+  // The chatter a typed @name means: itself when that name has spoken (or is a
+  // known heatsync account), else the one chatter it differs from only by underscores.
+  // `@sleepyshaman` for `sleepyshaman___` is the same person to everyone
+  // reading, and drawing it in another color said otherwise. A key two chatters
+  // share maps to null, so an ambiguous tag stays exactly what was typed.
+  let _looseNames = null
+  let _looseNamesSize = -1
+  function taggedName(lower) {
+    // Not knownColors: mentionColor writes a hash color there for every @word,
+    // so the typed name would count as known after its first render.
+    if (_ucDisplay.has(lower) || (typeof _hsUserIdCache !== 'undefined' && _hsUserIdCache.get(lower))) return lower
+    if (!_looseNames || _looseNamesSize !== _ucDisplay.size) {
+      _looseNames = new Map()
+      _looseNamesSize = _ucDisplay.size
+      for (const name of _ucDisplay.keys()) {
+        const k = name.replace(/_/g, '')
+        _looseNames.set(k, _looseNames.has(k) ? null : name)
+      }
+    }
+    return _looseNames.get(lower.replace(/_/g, '')) || lower
+  }
+
   // Highlight @mentions and bare known usernames in rendered chat HTML.
   // Splits on tags so substitution only happens in text segments.
   // Applies 7TV paint cosmetics if the mentioned user's userId + paint are cached.
@@ -74262,7 +74284,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       html,
       /(^|[\s.,!?;:()[\]"'])(@?)([A-Za-z0-9_]{3,25})(?=$|[\s.,!?;:()[\]"'])/g,
       (m, lead, at, name) => {
-        const lower = name.toLowerCase()
+        const lower = at ? taggedName(name.toLowerCase()) : name.toLowerCase()
         // A bare word only becomes a mention when the name belongs to someone
         // we've actually HEARD SPEAK. knownColors answers "what color", not
         // "is this a person": every @word in chat runs through mentionColor →

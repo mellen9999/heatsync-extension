@@ -163,3 +163,23 @@ describe('bare-word mentions — everyday words are never a mention', () => {
     expect(anchorsFor(fn('What is that', 'twitch'), 'what')).toHaveLength(0)
   })
 })
+
+describe('a tag that drops the underscores is still the person', () => {
+  test('@sleepyshaman draws as sleepyshaman___ in his color', () => {
+    const { fn } = makeHighlighter({ colors: [['sleepyshaman___', '#f54e00']], spoke: ['sleepyshaman___'] })
+    const out = fn('hi @SleepyShaman', 'twitch')
+    expect(anchorsFor(out, 'sleepyshaman___')).toHaveLength(1)
+    expect(out).toContain('color:#f54e00')
+    expect(out).toContain('>@SleepyShaman<')
+  })
+
+  test('a tag two chatters could mean stays as typed', () => {
+    const { fn } = makeHighlighter({ spoke: ['twin_name', 'twinname_'] })
+    expect(anchorsFor(fn('@twinname', 'twitch'), 'twinname')).toHaveLength(1)
+  })
+
+  test('a name that spoke exactly as typed is never redirected', () => {
+    const { fn } = makeHighlighter({ spoke: ['bob', 'bob_'] })
+    expect(anchorsFor(fn('@bob', 'twitch'), 'bob')).toHaveLength(1)
+  })
+})

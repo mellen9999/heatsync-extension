@@ -100,6 +100,8 @@ const { highlightMentionsInHtml } = new Function(
 )()
 
 globalThis.knownUserIds = new Map()
+// taggedName is its own unit (bare-mention-gating.test.js); identity here
+globalThis.taggedName = (n) => n
 globalThis.userKey = userKey
 globalThis.mcUserCosmetics = new Map()
 globalThis.queueMcCosmeticsLookup = () => {}

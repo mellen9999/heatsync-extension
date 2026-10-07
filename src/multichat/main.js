@@ -8842,21 +8842,8 @@
     // multi-platform view can prefix-match this DOM and avoid a one-shot rebuild.
     div.dataset.msgKey = msgKeyStr
     div.dataset.hsEpoch = String(_renderEpoch)
-    // Strict alternation: append flips from last sibling's zebra. Append-only path
-    // always alternates cleanly. Bigger-tier than hash (which only ~50% alternates).
-    if (
-      zebraEnabled &&
-      msg.type !== 'stream-event' &&
-      msg.type !== 'feed-post' &&
-      msg.type !== 'inline-dm' &&
-      msg.type !== 'moment' &&
-      msg.type !== 'cmd-receipt' &&
-      msg.type !== 'automod-hold'
-    ) {
-      const prev = msgsEl.lastElementChild
-      const prevZ = prev?.classList.contains('hs-mc-zebra') === true
-      if (!prevZ) div.classList.add('hs-mc-zebra')
-    }
+    // Same rule as every render path, so an epoch rebuild recomputes the same stripes.
+    if (zebraOfInsert(msg, msgsEl.lastElementChild)) div.classList.add('hs-mc-zebra')
     msgsEl.appendChild(div)
     _indexMessageDiv(div, msgKeyStr)
     _snapCompleteEmotes(div)

@@ -39,6 +39,11 @@ function playerEl() {
     document.querySelector('.persistent-player') ||
     document.querySelector('[data-a-target="video-player"]') ||
     document.querySelector('#video-player') ||
+    // YouTube: the <video>'s nearest div is .html5-video-container, which is
+    // 0px tall by design (the video is absolutely positioned inside it), so
+    // falling through to the generic <video> lookup flagged every healthy
+    // watch page as collapsed and handed it back to native layout.
+    document.querySelector('#movie_player') ||
     document.querySelector('video')?.closest('div')
   )
 }

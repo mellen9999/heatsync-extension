@@ -95,10 +95,19 @@ function watchYtViewportClamp() {
 /**
  * Setup resize handle for YouTube — left edge of #secondary sidebar
  */
-function setupYouTubeResizeHandle() {
+function setupYouTubeResizeHandle(_tries) {
+  if (document.getElementById('hs-yt-resize-handle')) return
   const secondary = hsQuery('yt:secondary', '#secondary, ytd-watch-flexy #secondary')
   const mcContainer = document.getElementById('hs-mc-container')
-  if (!secondary || !mcContainer || document.getElementById('hs-yt-resize-handle')) return
+  // YT mounts #secondary after our first pass on a cold load. Bailing for good
+  // here skipped the viewport/layout/mount watchers at the bottom, so the panel
+  // flipping live never re-ran the layout, --hs-yt-below-top stayed unset and
+  // #below sat pinned over the video (black page, no player). Self-retry until
+  // both exist — same ~12s ceiling as _hsEnsureYtBelowObserver.
+  if (!secondary || !mcContainer) {
+    if ((_tries || 0) < 30) cleanup.setTimeout(() => setupYouTubeResizeHandle((_tries || 0) + 1), 400)
+    return
+  }
 
   const handle = document.createElement('div')
   handle.id = 'hs-yt-resize-handle'

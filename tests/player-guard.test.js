@@ -24,7 +24,15 @@ const SRC = readFileSync(join(ROOT, 'src', 'multichat', 'player-guard.js'), 'utf
  * Stand the guard up against a fake DOM. Non-module content-script globals in
  * one bundled scope, same approach as highlight-idempotent.test.js.
  */
-function makeGuard({ width, height, hidden = false, fullscreen = false, pip = false, bodyClasses = [] }) {
+function makeGuard({
+  width,
+  height,
+  hidden = false,
+  fullscreen = false,
+  pip = false,
+  bodyClasses = [],
+  selector = '.persistent-player',
+}) {
   const rect = { width, height }
   const classes = new Set(bodyClasses)
   const removedProps = []
@@ -40,7 +48,7 @@ function makeGuard({ width, height, hidden = false, fullscreen = false, pip = fa
     hidden,
     fullscreenElement: fullscreen ? {} : null,
     pictureInPictureElement: pip ? {} : null,
-    querySelector: (sel) => (sel === '.persistent-player' ? player : null),
+    querySelector: (sel) => (sel === selector ? player : null),
     body: {
       classList: {
         add: (c) => classes.add(c),
@@ -87,6 +95,22 @@ function makeGuard({ width, height, hidden = false, fullscreen = false, pip = fa
     },
   }
 }
+
+describe('player-guard — youtube', () => {
+  test('measures #movie_player, so a healthy watch page is never flagged', () => {
+    const g = makeGuard({ width: 925, height: 520, selector: '#movie_player' })
+    g.check()
+    g.fireConfirm()
+    expect(g.playerGuardDisengaged()).toBe(false)
+  })
+
+  test('a collapsed #movie_player still releases our geometry', () => {
+    const g = makeGuard({ width: 0, height: 0, selector: '#movie_player' })
+    g.check()
+    g.fireConfirm()
+    expect(g.playerGuardDisengaged()).toBe(true)
+  })
+})
 
 describe('player-guard — fires when the player is actually broken', () => {
   test('a collapsed player releases our geometry', () => {

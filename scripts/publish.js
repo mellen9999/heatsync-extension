@@ -567,8 +567,8 @@ async function amoAttachSource(creds, versionId, sourceZipPath) {
 // never touched again — a stale summary (old "unlimited emotes" pitch, wrong
 // product name) can sit live for months after the real copy moved on. Source
 // of truth for what the product actually says is src/_locales/*/messages.json
-// manifest_description — push it to AMO on every listed release so the two
-// can never drift again.
+// manifest_description — push it with --sync-summaries after a release that
+// changes the copy (not during one: it shares AMO's write throttle).
 //
 // Chrome's _locales directory names mostly match AMO's locale codes 1:1
 // (ru, uk, ko, pl, fi, hu, sk, cs, el, he, …). The few that don't: Chrome
@@ -581,6 +581,8 @@ const AMO_LOCALE_OVERRIDES = {
   zh_CN: 'zh-CN',
   zh_TW: 'zh-TW',
   no: 'nb-NO',
+  es: 'es-ES',
+  sv: 'sv-SE',
 }
 
 function readLocaleSummaries() {
@@ -658,11 +660,9 @@ async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
   if (!existsSync(zipPath)) throw new Error(`missing ${zipPath} — build failed?`)
   if (!existsSync(sourceZipPath)) throw new Error(`missing ${sourceZipPath} — build failed?`)
   if (!willPublish) {
-    const localeCount = Object.keys(readLocaleSummaries()).length
     console.log(
       `  [dry-run] firefox: would upload ${basename(zipPath)} (channel=listed), poll validation, ` +
-        `create a version on "${AMO_SLUG}", attach ${basename(sourceZipPath)} as source, ` +
-        `sync ${localeCount} locale summaries from src/_locales`,
+        `create a version on "${AMO_SLUG}", attach ${basename(sourceZipPath)} as source`,
     )
     return { status: 'dry-run' }
   }
@@ -677,7 +677,10 @@ async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
     )
   }
 
-  await amoUpdateLocaleSummaries(creds)
+  // no summary sync here: AMO's write throttle (3/min, 10/hour per user) is
+  // shared by addon PATCH and version create, and the summary sync's
+  // drop-a-bad-locale retries burned it before the version could be created.
+  // listing copy goes out on its own: publish.js --sync-summaries
 
   console.log(`  firefox: uploading ${basename(zipPath)} to amo (channel=listed)…`)
   const uuid = await amoUploadZip(creds, zipPath)

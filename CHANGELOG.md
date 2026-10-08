@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.89] — 2026-10-08
+
+### added
+- **tweet links** — a tweet pasted without `x.com` or `twitter.com` in front still links to x.com and gets the tweet preview card.
+
+### fixed
+- **youtube video** — the stream no longer hides behind the title and description on a fresh page load, leaving a black page.
+- **name tags** — a tag that leaves out a name's underscores still points to that person.
+- **zebra stripes** — alternating line stripes no longer flip a second after chat opens.
+
 ## [1.7.88] — 2026-10-05
 
 ### changed

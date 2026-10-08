@@ -14152,7 +14152,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'be3e4160de07' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3b0fbfd61cc4' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -19134,6 +19134,11 @@ function playerEl() {
     document.querySelector('.persistent-player') ||
     document.querySelector('[data-a-target="video-player"]') ||
     document.querySelector('#video-player') ||
+    // YouTube: the <video>'s nearest div is .html5-video-container, which is
+    // 0px tall by design (the video is absolutely positioned inside it), so
+    // falling through to the generic <video> lookup flagged every healthy
+    // watch page as collapsed and handed it back to native layout.
+    document.querySelector('#movie_player') ||
     document.querySelector('video')?.closest('div')
   )
 }
@@ -65741,10 +65746,19 @@ function watchYtViewportClamp() {
 /**
  * Setup resize handle for YouTube — left edge of #secondary sidebar
  */
-function setupYouTubeResizeHandle() {
+function setupYouTubeResizeHandle(_tries) {
+  if (document.getElementById('hs-yt-resize-handle')) return
   const secondary = hsQuery('yt:secondary', '#secondary, ytd-watch-flexy #secondary')
   const mcContainer = document.getElementById('hs-mc-container')
-  if (!secondary || !mcContainer || document.getElementById('hs-yt-resize-handle')) return
+  // YT mounts #secondary after our first pass on a cold load. Bailing for good
+  // here skipped the viewport/layout/mount watchers at the bottom, so the panel
+  // flipping live never re-ran the layout, --hs-yt-below-top stayed unset and
+  // #below sat pinned over the video (black page, no player). Self-retry until
+  // both exist — same ~12s ceiling as _hsEnsureYtBelowObserver.
+  if (!secondary || !mcContainer) {
+    if ((_tries || 0) < 30) cleanup.setTimeout(() => setupYouTubeResizeHandle((_tries || 0) + 1), 400)
+    return
+  }
 
   const handle = document.createElement('div')
   handle.id = 'hs-yt-resize-handle'

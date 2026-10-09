@@ -8713,6 +8713,13 @@ const MAX_FILL_TILE_NAME = 10
 const MIN_FILL_TILE_PX = 1
 const MAX_FILL_TILE_PX = 200
 
+/** `outline.width`, in px of centred stroke: 0.25 steps, 0.25..2. A text
+ *  stroke is centred on the glyph edge, so a width w draws w/2 outside it and
+ *  eats w/2 of the glyph — 2px at most keeps a 13px name's stems readable. */
+const MIN_OUTLINE_WIDTH = 0.25
+const MAX_OUTLINE_WIDTH = 2
+const OUTLINE_WIDTH_STEP = 0.25
+
 
 // ── fill colour + contrast (alpha-aware) ────────────────────────────────────
 
@@ -8821,6 +8828,9 @@ function normalizeForHash(spec) {
     glow: spec?.glow ? { color: spec.glow.color, strength: spec.glow.strength } : null,
     scene: normalizeSceneForHash(spec?.scene),
     fill: normalizeFillForHash(spec?.fill),
+    // Absent stays undefined, so a paint without them keeps its hash.
+    underlay: spec?.underlay === 'name' ? 'name' : undefined,
+    outline: isPlainObject(spec?.outline) ? { width: spec.outline.width, color: spec.outline.color } : undefined,
   }
 }
 
@@ -9643,6 +9653,20 @@ function fillLayerCss(layer, globalAngle) {
   return { image: `linear-gradient(${direction}deg, ${stopsCss})`, size: null, position: null }
 }
 
+/** `underlay:'name'` — only meaningful over a fill (the validator enforces it;
+ *  the compiler re-checks, since it also renders stored specs). */
+function hasUnderlay(spec) {
+  return spec?.underlay === 'name' && isPlainObject(spec.fill)
+}
+
+/** The outline's declarations, re-clamped like every other knob, or ''. */
+function outlineCss(outline) {
+  if (!isPlainObject(outline) || !isFillColor(outline.color)) return ''
+  const w = Math.round(Number(outline.width) / OUTLINE_WIDTH_STEP) * OUTLINE_WIDTH_STEP
+  if (!Number.isFinite(w) || w < MIN_OUTLINE_WIDTH || w > MAX_OUTLINE_WIDTH) return ''
+  return `-webkit-text-stroke:${fnum(w)}px ${outline.color.toLowerCase()};paint-order:stroke fill;`
+}
+
 /**
  * Build the CSS for a `fill` block's rest frame — a static, multi-layer
  * clip-text paint. Layers are stored bottom-to-top (the plan's own order,
@@ -9651,7 +9675,7 @@ function fillLayerCss(layer, globalAngle) {
  * Returns { decl, isClipText: true } — the same shape buildBaseCss returns,
  * so it drops into the exact spot `baseCss` already occupies.
  */
-function buildFillBaseCss(fill) {
+function buildFillBaseCss(fill, underlay = false) {
   const angle = safeFillAngle(fill?.angle)
   const layers = (Array.isArray(fill?.layers) ? fill.layers : [])
     .filter(isPlainObject)
@@ -9663,7 +9687,13 @@ function buildFillBaseCss(fill) {
   const sizes = built.map(b => b.size || 'auto').join(', ')
   const positions = built.map(b => b.position || '0% 0%').join(', ')
   return {
+    // The underlay is the name's own colour under every layer, clipped to the
+    // glyphs with them, so a transparent stop shows the chatter's colour the
+    // way 7TV's does. `--hs-name-c` and not currentColor: this rule makes the
+    // text transparent, and a painted name carries no inline colour of its own
+    // (names/name-el.js NAME_COLOUR_VAR). Without the property it paints nothing.
     decl: `background-image:${images};background-size:${sizes};background-position:${positions};`
+      + (underlay ? `background-color:${NAME_COLOUR};` : '')
       + `-webkit-background-clip:text;background-clip:text;color:transparent;`,
     isClipText: true,
   }
@@ -9721,6 +9751,9 @@ const FILL_BREATHE_PERIOD = 2.4
  *  holds them — the one definition; cosmetics/fill-layers.js imports these. */
 const FILL_LAYER_CLASS = 'hs-fl'
 const FILL_WRAP_CLASS = 'hs-fw'
+
+/** The chatter's colour as the underlay reads it (see buildFillBaseCss). */
+const NAME_COLOUR = 'var(--hs-name-c,currentColor)'
 
 /** 4dp, no float noise, no trailing zeros. */
 const fnum = (n) => String(Math.round(n * 1e4) / 1e4)
@@ -9807,7 +9840,7 @@ function fillBoxOf(layer, angle) {
  * The composited plan for a fill, or null when nothing in it moves.
  * @returns {{angle:number, hostLayers:object[], boxes:object[], hue:object|null, breathe:object|null}|null}
  */
-function planCompositedFill(fill) {
+function planCompositedFill(fill, underlay = false) {
   if (!isPlainObject(fill)) return null
   const angle = safeFillAngle(fill.angle)
   const layers = (Array.isArray(fill.layers) ? fill.layers : []).filter(isPlainObject).slice(0, MAX_FILL_LAYERS)
@@ -9820,8 +9853,11 @@ function planCompositedFill(fill) {
   if (firstMoving < 0 && !hue && !breathe) return null
   // A modulator has to reach EVERY layer, so under one nothing can stay on the
   // name; otherwise the layers below the lowest mover are painted once, on the
-  // name itself, and cost nothing.
-  const split = hue || breathe ? 0 : firstMoving
+  // name itself, and cost nothing. An underlay puts an OPAQUE glyph on the name
+  // (its colour), which would cover a clip-text layer left there — so with one
+  // the static layers go into the wrap too, as the one static box adjacent
+  // static layers already share, rastered once.
+  const split = hue || breathe || underlay ? 0 : firstMoving
   const boxes = []
   for (const layer of layers.slice(split)) {
     const b = fillBoxOf(layer, angle)
@@ -9839,7 +9875,7 @@ function planCompositedFill(fill) {
  *  Null when the spec has no composited fill to mount. */
 function compositedFillPlan(spec, opts = {}) {
   if (opts.static || !isPlainObject(spec?.fill)) return null
-  const plan = planCompositedFill(spec.fill)
+  const plan = planCompositedFill(spec.fill, hasUnderlay(spec))
   if (!plan) return null
   return { mode: paintNeedsPerLetter(spec) ? 'glyph' : 'name', layers: plan.boxes.length }
 }
@@ -9996,7 +10032,8 @@ function fillBoxCss(b, k, angle, hash) {
  * @param {boolean} perLetter the name is split into one `>span` per glyph
  */
 function buildFillLayersCss(spec, nameBox, hash, perLetter) {
-  const plan = planCompositedFill(spec.fill)
+  const underlay = hasUnderlay(spec)
+  const plan = planCompositedFill(spec.fill, underlay)
   if (!plan) return ''
   const gate = `${nameBox}.${MASKED_CLASS}`
   const host = perLetter ? `${gate}>span` : gate
@@ -10008,7 +10045,21 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter) {
   const hostBg = statics.length
     ? `${fillBackgroundDecl(statics)}-webkit-background-clip:text;background-clip:text;`
     : 'background:none;'
-  let css = `${host}{position:relative;${hostBg}color:transparent;}`
+  // With an underlay the glyph under the moving wrap is the name's colour, so
+  // wherever the layers are transparent that colour is what shows — the same
+  // pixels the rest frame's background-color gives.
+  //
+  // WITH AN OUTLINE the host text must stay transparent and draw ABOVE the
+  // wrap: the stroke is centred on the glyph edge, and the rest frame shows all
+  // of it over the fill, so the mask must too or the name changes thickness the
+  // moment it mounts. So the host becomes its own stacking context, the wrap
+  // sinks behind its text (z-index:-1 — above the host's background, below its
+  // glyphs), and the underlay moves back where the rest frame has it: a
+  // clip-text background-color rather than the glyph's own fill.
+  const outlined = !!outlineCss(spec.outline)
+  let css = outlined && underlay
+    ? `${host}{position:relative;isolation:isolate;background:none;background-color:${NAME_COLOUR};-webkit-background-clip:text;background-clip:text;color:transparent;}`
+    : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? 'var(--hs-name-c,transparent)' : 'transparent'};}`
 
   // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws
   // outside its letterform — a glow's text-shadow, a scene's rim drop-shadow,
@@ -10018,7 +10069,7 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter) {
   // filter on the name still sees the masked fill as the name's own pixels.
   // `overflow:clip` keeps a strip longer than the name from widening anything's
   // scrollable area — it paints nothing out there anyway.
-  const wrapDecl = 'position:absolute;left:0;top:0;width:100%;height:100%;overflow:clip;'
+  const wrapDecl = `position:absolute;${outlined ? 'z-index:-1;' : ''}left:0;top:0;width:100%;height:100%;overflow:clip;`
     + '-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;'
 
   let keyframes = ''
@@ -11192,7 +11243,7 @@ function compilePaintCss(spec, selector, opts = {}) {
   // occupies — every downstream branch (letter-split spans, the scene rim,
   // glow) treats it exactly like any other clip-text base. Its motion is
   // compiled separately, behind the mask (buildFillLayersCss, below).
-  const baseCss = hasFill ? buildFillBaseCss(spec.fill) : (paintEffect ? null : buildBaseCss(base, stops))
+  const baseCss = hasFill ? buildFillBaseCss(spec.fill, hasUnderlay(spec)) : (paintEffect ? null : buildBaseCss(base, stops))
 
   // display:inline-block on BOTH: the host so the planes have a box to be
   // absolute against, the name box so a motion transform has something with
@@ -11362,6 +11413,17 @@ function compilePaintCss(spec, selector, opts = {}) {
   // frame just compiled. Static mode moves nothing and emits none of it.
   if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter)
 
+  // Outline — one inherited stroke on the element that holds the glyphs, in
+  // BOTH renders, so static, paused and masked all keep it (it is raster-once,
+  // weight 0). Centred on the glyph edge, not outside-only: `paint-order:stroke
+  // fill` would put the fill over the inner half, but a clip-text fill IS
+  // transparent, so the inner half shows regardless (probed in chromium and
+  // firefox, 2026-10-09). Under the mask the wrap sinks behind the host's text
+  // so the same band is drawn there (buildFillLayersCss). `paint-order` stays
+  // for the opaque-fill cases — a solid paint — where it does what it says.
+  const outline = outlineCss(spec.outline)
+  if (outline) css += `${paintTarget}{${outline}}`
+
   // Static glow — skip if neon is active and sourced the same color (neon's
   // own keyframes already carry a shadow on every frame); otherwise layer
   // the constant shadow on so it doesn't require an active effect to show.
@@ -11399,7 +11461,7 @@ function compilePaintCss(spec, selector, opts = {}) {
     // garnish; the frames are not. Static mode keeps it (nothing animates).
     // A moving fill is a moving fill whether it composites or not: a filter
     // over it re-runs every frame it changes, on every copy of the name.
-    const animatedFill = (!!paintEffect || (hasFill && !!planCompositedFill(spec.fill))) && !opts.static
+    const animatedFill = (!!paintEffect || (hasFill && !!planCompositedFill(spec.fill, hasUnderlay(spec)))) && !opts.static
     if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
       if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
       else if (!filterHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
@@ -14273,7 +14335,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b25007759be1' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '44c75dd2e2e0' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -28978,7 +29040,7 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
   const nameHsPaint = fbUid ? hsPaintRender(fbUid, username) : null
   const header = nativeBadges
     ? nativeBadges
-    : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? '' : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
+    : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? hsNameColourDecl(safeColor) : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
   // NOTE: innerHTML XSS-safe — username via escapeHtml, color via sanitizeColor (hex-only),
   // nativeBadges from renderBadges which emits escaped <img> markup
   tooltip.innerHTML = `<div class="hs-card hs-card-peek"><div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div></div>`
@@ -40100,7 +40162,7 @@ function renderWhispersTab() {
       // rule as the live sender row (see hsPaintRender in paints.js).
       const hsPaint = m.platform === 'heatsync' || !uid ? null : hsPaintRender(uid, name)
       const cls = `hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
-      const style = hsPaint ? '' : paint || `color:${color};font-weight:600`
+      const style = hsPaint ? hsNameColourDecl(color) : paint || `color:${color};font-weight:600`
       const inner = hsPaint ? hsPaint.html : safe
       const splitAttr = hsPaint ? hsPaint.splitAttr : ''
       return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${safeUser}"${splitAttr} style="${style}">${inner}</a>`
@@ -53629,6 +53691,23 @@ function hsPaintRender(userId, rawText) {
   }
 }
 
+/**
+ * The chatter's own name colour as a custom property declaration, for a
+ * painted name. A paint owns the fill, so a painted name carries no inline
+ * `color` (it would beat the class's `color:transparent`); a paint with an
+ * underlay still shows the chatter's colour through its transparent stops,
+ * reading `var(--hs-name-c,currentColor)`. Accepts a hex colour or the
+ * `rgb()` form a browser serialises an inline colour back as; anything else
+ * yields '' so nothing can ride into the style attribute.
+ * Mirrors names/name-el.js NAME_COLOUR_VAR on the site.
+ */
+const HS_NAME_COLOUR_RE =
+  /^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))$/i
+function hsNameColourDecl(colour) {
+  const c = typeof colour === 'string' ? colour.trim() : ''
+  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${c};` : ''
+}
+
 /** In-place DOM application shared by updateHsPaintsInPlace (main.js) — adds
  * the hsp-<hash> class (dropping any stale one), clears the element's inline
  * style attribute (precedence: a HeatSync paint always wins over whatever
@@ -53658,6 +53737,12 @@ function applyHsPaintToElement(el, userId) {
   // already-mounted copy out of sync with its siblings (lib/paint-spec.js
   // syncDelayCalc folds --hsp-t onto every compiled animation's cycle).
   const existingPhase = el.style ? el.style.getPropertyValue('--hsp-t') : ''
+  // Same for the name colour: the style clear below would take it, and an
+  // underlay needs it. Read from the inline colour a prior render or a 7TV
+  // paint wrote, or the property an earlier paint pass already kept.
+  const keptColour = el.style
+    ? el.style.color || el.style.getPropertyValue('color') || el.style.getPropertyValue('--hs-name-c')
+    : ''
   if (el.hasAttribute('style')) el.removeAttribute('style')
   // Belt-and-suspenders against any future race that hands us an element
   // whose text was already cleared/moved by something else (e.g. a nested-
@@ -53690,6 +53775,8 @@ function applyHsPaintToElement(el, userId) {
   // idempotent for it too).
   if (el.style) {
     el.style.setProperty('--hsp-t', existingPhase || paintPhaseNow())
+    const kept = hsNameColourDecl(keptColour)
+    if (kept) el.style.setProperty('--hs-name-c', kept.slice('--hs-name-c:'.length, -1))
   }
   // The class swap and the letter-split above both change how many animations
   // this name runs, which is the dial's unit.
@@ -54072,7 +54159,10 @@ function clearHsPaintFromElement(el) {
     el.textContent = plain
     delete el.dataset.hsPaintSplit
   }
-  if (el.style) el.style.removeProperty('--hsp-t')
+  if (el.style) {
+    el.style.removeProperty('--hsp-t')
+    el.style.removeProperty('--hs-name-c')
+  }
 }
 
 /**
@@ -54819,6 +54909,8 @@ function updateHsColorsInPlace(userIds) {
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
       // paint class (hsp-) owns the fill via CSS — don't overwrite with a colour.
       if (userLink && !userLink.className.includes('hsp-')) userLink.style.color = colour
+      // a painted name keeps no inline colour, but its underlay shows this one
+      else if (userLink) userLink.style.setProperty('--hs-name-c', colour)
     }
   }
 }
@@ -73097,7 +73189,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     const splitAttr = hsPaint ? hsPaint.splitAttr : ''
     // Mount stamp (not a color decl) when painted — phase-locks this copy to
     // the same wall-clock frame as every other copy of the paint.
-    const style = hsPaint ? `--hsp-t:${paintPhaseNow()};` : paintStyle || `color:${sanitizeColor(color || '#fff')}`
+    const style = hsPaint
+      ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(sanitizeColor(color || '#fff'))}`
+      : paintStyle || `color:${sanitizeColor(color || '#fff')}`
     const inner = hsPaint ? hsPaint.html : escapeHtml(name)
     // feedUid above is always resolved twitch-space (userKey(..., 'twitch')) —
     // an inline feed quote only ever names a twitch chatter, same convention
@@ -73788,7 +73882,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // When painted, drop the inline color decl (the class owns the paint
     // fill) and carry the mount stamp instead so every copy of the paint
     // phase-locks to the wall clock (lib/paint-spec.js syncDelayCalc).
-    const userLink = `<a href="${userHref}" target="_blank" rel="noopener noreferrer" class="hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}" data-username="${escapeHtml(m.user.toLowerCase())}" data-platform="${plat}"${hsPaint ? hsPaint.splitAttr : ''} style="${hsPaint ? `--hsp-t:${paintPhaseNow()};` : `color:${sanitizeColor(hsNameColor || '#fff')}${paintStyle ? `;${paintStyle}` : ''}`}">${hsPaint ? hsPaint.html : escapeHtml(m.user)}</a>`
+    const userLink = `<a href="${userHref}" target="_blank" rel="noopener noreferrer" class="hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}" data-username="${escapeHtml(m.user.toLowerCase())}" data-platform="${plat}"${hsPaint ? hsPaint.splitAttr : ''} style="${hsPaint ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(sanitizeColor(hsNameColor || '#fff'))}` : `color:${sanitizeColor(hsNameColor || '#fff')}${paintStyle ? `;${paintStyle}` : ''}`}">${hsPaint ? hsPaint.html : escapeHtml(m.user)}</a>`
     let avatarHtml = ''
     if (avatarsEnabled) {
       const userKey = m.user.toLowerCase()
@@ -73936,7 +74030,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     const replyPaint = replyHsPaint ? '' : replyUid ? userPaintStyle(replyUid, replyLower, m.platform) : ''
     // Mount stamp (not a color decl) when painted — phase-locks this copy to
     // the same wall-clock frame as every other copy of the paint.
-    const replyStyle = replyHsPaint ? `--hsp-t:${paintPhaseNow()};` : replyPaint || `color:${mentionColor(replyLower)}`
+    const replyStyle = replyHsPaint
+      ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(mentionColor(replyLower))}`
+      : replyPaint || `color:${mentionColor(replyLower)}`
     const replyUidAttr = replyUid ? ` data-uid="${escapeHtml(replyUid)}"` : ''
     const replyUserCls = `hs-mc-user hs-mc-reply-user${replyHsPaint ? ` ${replyHsPaint.cls}` : ''}`
     const replyUserSplitAttr = replyHsPaint ? replyHsPaint.splitAttr : ''
@@ -74410,7 +74506,7 @@ const STORAGE_KEY = 'heatsync_multichat'
             inner = hsPaint.html
             // Mount stamp instead of a color decl — phase-locks this copy
             // to the same wall-clock frame as every other copy of the paint.
-            style = `--hsp-t:${paintPhaseNow()};`
+            style = `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(color)}`
           } else {
             const paint = getMcPaintStyle(uid)
             if (paint) style = paint

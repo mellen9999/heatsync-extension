@@ -7057,7 +7057,9 @@
     const splitAttr = hsPaint ? hsPaint.splitAttr : ''
     // Mount stamp (not a color decl) when painted — phase-locks this copy to
     // the same wall-clock frame as every other copy of the paint.
-    const style = hsPaint ? `--hsp-t:${paintPhaseNow()};` : paintStyle || `color:${sanitizeColor(color || '#fff')}`
+    const style = hsPaint
+      ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(sanitizeColor(color || '#fff'))}`
+      : paintStyle || `color:${sanitizeColor(color || '#fff')}`
     const inner = hsPaint ? hsPaint.html : escapeHtml(name)
     // feedUid above is always resolved twitch-space (userKey(..., 'twitch')) —
     // an inline feed quote only ever names a twitch chatter, same convention
@@ -7748,7 +7750,7 @@
     // When painted, drop the inline color decl (the class owns the paint
     // fill) and carry the mount stamp instead so every copy of the paint
     // phase-locks to the wall clock (lib/paint-spec.js syncDelayCalc).
-    const userLink = `<a href="${userHref}" target="_blank" rel="noopener noreferrer" class="hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}" data-username="${escapeHtml(m.user.toLowerCase())}" data-platform="${plat}"${hsPaint ? hsPaint.splitAttr : ''} style="${hsPaint ? `--hsp-t:${paintPhaseNow()};` : `color:${sanitizeColor(hsNameColor || '#fff')}${paintStyle ? `;${paintStyle}` : ''}`}">${hsPaint ? hsPaint.html : escapeHtml(m.user)}</a>`
+    const userLink = `<a href="${userHref}" target="_blank" rel="noopener noreferrer" class="hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}" data-username="${escapeHtml(m.user.toLowerCase())}" data-platform="${plat}"${hsPaint ? hsPaint.splitAttr : ''} style="${hsPaint ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(sanitizeColor(hsNameColor || '#fff'))}` : `color:${sanitizeColor(hsNameColor || '#fff')}${paintStyle ? `;${paintStyle}` : ''}`}">${hsPaint ? hsPaint.html : escapeHtml(m.user)}</a>`
     let avatarHtml = ''
     if (avatarsEnabled) {
       const userKey = m.user.toLowerCase()
@@ -7896,7 +7898,9 @@
     const replyPaint = replyHsPaint ? '' : replyUid ? userPaintStyle(replyUid, replyLower, m.platform) : ''
     // Mount stamp (not a color decl) when painted — phase-locks this copy to
     // the same wall-clock frame as every other copy of the paint.
-    const replyStyle = replyHsPaint ? `--hsp-t:${paintPhaseNow()};` : replyPaint || `color:${mentionColor(replyLower)}`
+    const replyStyle = replyHsPaint
+      ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(mentionColor(replyLower))}`
+      : replyPaint || `color:${mentionColor(replyLower)}`
     const replyUidAttr = replyUid ? ` data-uid="${escapeHtml(replyUid)}"` : ''
     const replyUserCls = `hs-mc-user hs-mc-reply-user${replyHsPaint ? ` ${replyHsPaint.cls}` : ''}`
     const replyUserSplitAttr = replyHsPaint ? replyHsPaint.splitAttr : ''
@@ -8370,7 +8374,7 @@
             inner = hsPaint.html
             // Mount stamp instead of a color decl — phase-locks this copy
             // to the same wall-clock frame as every other copy of the paint.
-            style = `--hsp-t:${paintPhaseNow()};`
+            style = `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(color)}`
           } else {
             const paint = getMcPaintStyle(uid)
             if (paint) style = paint

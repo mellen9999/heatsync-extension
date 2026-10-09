@@ -37,6 +37,7 @@ import {
   MIN_TILE_WIDTH, MAX_TILE_WIDTH, PAN_MIN_SCALE, PAN_MAX_SCALE,
   MIN_FILL_LAYERS, MAX_FILL_LAYERS, MIN_FILL_STOPS, MAX_FILL_STOPS, MAX_FILL_TOTAL_STOPS,
   MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX,
+  MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, OUTLINE_WIDTH_STEP,
   FILL_LAYER_KINDS, FILL_TILE_UNITS, FILL_MOTION_TYPES,
   isFillColor, repairStopCollisions, upgradeSpec, motionGroupKey,
   safeAngle, upgradePan, baseAsFillLayer,
@@ -423,6 +424,15 @@ export function fillEffectCount(fill) {
 
 // ── validation ───────────────────────────────────────────────────────────
 
+function validateOutline(outline, errors) {
+  if (!isPlainObject(outline)) { errors.push('outline must be an object'); return }
+  for (const k of Object.keys(outline)) if (k !== 'width' && k !== 'color') errors.push(`outline: unknown key "${k}"`)
+  if (!isStepInRange(outline.width, MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, OUTLINE_WIDTH_STEP)) {
+    errors.push(`outline.width must be ${MIN_OUTLINE_WIDTH}-${MAX_OUTLINE_WIDTH} in ${OUTLINE_WIDTH_STEP} steps`)
+  }
+  if (!isFillColor(outline.color)) errors.push('outline.color must match #rrggbb or #rrggbbaa')
+}
+
 /**
  * Validate a paint spec against v1 schema + safety rules.
  * @param {*} spec
@@ -596,6 +606,14 @@ export function validatePaintSpec(spec, opts = {}) {
     const fillResult = validateFill(spec.fill)
     errors.push(...fillResult.errors)
   }
+
+  // ── underlay + outline (additive, both optional; an old compiler ignores
+  // them and the paint looks as it did) ──
+  if (spec.underlay !== null && spec.underlay !== undefined) {
+    if (spec.underlay !== 'name') errors.push('underlay must be "name"')
+    else if (!isPlainObject(spec.fill)) errors.push('underlay requires fill')
+  }
+  if (spec.outline !== null && spec.outline !== undefined) validateOutline(spec.outline, errors)
 
   // ── glow ──
   if (spec.glow !== null && spec.glow !== undefined) {

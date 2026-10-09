@@ -35,6 +35,8 @@ globalThis.sanitizeColor = (c) => (typeof c === 'string' && /^#[0-9a-fA-F]{3,8}$
 // Deterministic stub — real paintPhaseNow (lib/paint-spec.js) is Date.now()-based,
 // which this file doesn't test (see tests/paint-spec.test.js for that).
 globalThis.paintPhaseNow = () => '1720000000.000s'
+// The real one: it is a pure validator, and the painted-name styles below embed its output.
+globalThis.hsNameColourDecl = (await import('../src/multichat/paints.js')).hsNameColourDecl
 
 const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
 
@@ -82,7 +84,7 @@ describe('buildFeedQuoteUserLink — inline feed-post quote row username anchor'
     expect(html).toContain('class="hs-mc-user hs-mc-mention hsp-abc123"')
     expect(html).toContain('data-uid="73266147"')
     expect(html).toContain(' data-hs-paint-split="1"')
-    expect(html).toContain('style="--hsp-t:1720000000.000s;"')
+    expect(html).toContain('style="--hsp-t:1720000000.000s;--hs-name-c:#ff8700;"')
     expect(html).toContain('<span>@</span><span>m</span>')
   })
 
@@ -94,7 +96,7 @@ describe('buildFeedQuoteUserLink — inline feed-post quote row username anchor'
 
   test('HeatSync paint still wins even when a 7TV paintStyle is also present (precedence)', () => {
     const html = buildFeedQuoteUserLink('mellen', '73266147', SOME_HS_PAINT, 'color:#ff0000', '#ff8700')
-    expect(html).toContain('style="--hsp-t:1720000000.000s;"')
+    expect(html).toContain('style="--hsp-t:1720000000.000s;--hs-name-c:#ff8700;"')
     expect(html).not.toContain('#ff0000')
   })
 

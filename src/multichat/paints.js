@@ -770,6 +770,23 @@ function hsPaintRender(userId, rawText) {
   }
 }
 
+/**
+ * The chatter's own name colour as a custom property declaration, for a
+ * painted name. A paint owns the fill, so a painted name carries no inline
+ * `color` (it would beat the class's `color:transparent`); a paint with an
+ * underlay still shows the chatter's colour through its transparent stops,
+ * reading `var(--hs-name-c,currentColor)`. Accepts a hex colour or the
+ * `rgb()` form a browser serialises an inline colour back as; anything else
+ * yields '' so nothing can ride into the style attribute.
+ * Mirrors names/name-el.js NAME_COLOUR_VAR on the site.
+ */
+const HS_NAME_COLOUR_RE =
+  /^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))$/i
+function hsNameColourDecl(colour) {
+  const c = typeof colour === 'string' ? colour.trim() : ''
+  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${c};` : ''
+}
+
 /** In-place DOM application shared by updateHsPaintsInPlace (main.js) — adds
  * the hsp-<hash> class (dropping any stale one), clears the element's inline
  * style attribute (precedence: a HeatSync paint always wins over whatever
@@ -799,6 +816,12 @@ function applyHsPaintToElement(el, userId) {
   // already-mounted copy out of sync with its siblings (lib/paint-spec.js
   // syncDelayCalc folds --hsp-t onto every compiled animation's cycle).
   const existingPhase = el.style ? el.style.getPropertyValue('--hsp-t') : ''
+  // Same for the name colour: the style clear below would take it, and an
+  // underlay needs it. Read from the inline colour a prior render or a 7TV
+  // paint wrote, or the property an earlier paint pass already kept.
+  const keptColour = el.style
+    ? el.style.color || el.style.getPropertyValue('color') || el.style.getPropertyValue('--hs-name-c')
+    : ''
   if (el.hasAttribute('style')) el.removeAttribute('style')
   // Belt-and-suspenders against any future race that hands us an element
   // whose text was already cleared/moved by something else (e.g. a nested-
@@ -831,6 +854,8 @@ function applyHsPaintToElement(el, userId) {
   // idempotent for it too).
   if (el.style) {
     el.style.setProperty('--hsp-t', existingPhase || paintPhaseNow())
+    const kept = hsNameColourDecl(keptColour)
+    if (kept) el.style.setProperty('--hs-name-c', kept.slice('--hs-name-c:'.length, -1))
   }
   // The class swap and the letter-split above both change how many animations
   // this name runs, which is the dial's unit.
@@ -1213,7 +1238,10 @@ function clearHsPaintFromElement(el) {
     el.textContent = plain
     delete el.dataset.hsPaintSplit
   }
-  if (el.style) el.style.removeProperty('--hsp-t')
+  if (el.style) {
+    el.style.removeProperty('--hsp-t')
+    el.style.removeProperty('--hs-name-c')
+  }
 }
 
 /**
@@ -1357,6 +1385,7 @@ export {
   getHsPickedColor,
   getHsPlusTenureSince,
   hasResolvedHsPaint,
+  hsNameColourDecl,
   hsPaintRender,
   hsPaintUidOfMsg,
   hsUsernameColor,

@@ -704,7 +704,7 @@ function renderWhispersTab() {
       // rule as the live sender row (see hsPaintRender in paints.js).
       const hsPaint = m.platform === 'heatsync' || !uid ? null : hsPaintRender(uid, name)
       const cls = `hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
-      const style = hsPaint ? '' : paint || `color:${color};font-weight:600`
+      const style = hsPaint ? hsNameColourDecl(color) : paint || `color:${color};font-weight:600`
       const inner = hsPaint ? hsPaint.html : safe
       const splitAttr = hsPaint ? hsPaint.splitAttr : ''
       return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${safeUser}"${splitAttr} style="${style}">${inner}</a>`

@@ -13,10 +13,12 @@ import {
 import { escapeHtml } from '../src/lib/utils.js'
 import {
   applyHsPaintToElement,
+  clearHsPaintFromElement,
   clearHsPaintSheet,
   evictOldestPaintEntry,
   getHsPaintClass,
   getHsPickedColor,
+  hsNameColourDecl,
   hsUsernameColor,
   partitionPaintBatch,
   primeSelfHsCosmetics,
@@ -613,5 +615,66 @@ describe('a compiled paint can select the markup the extension emits', () => {
       /paintNeedsSpans\(spec\)[^\n]*!el\.dataset\.hsPaintSplit/.test(fn),
       'the shaping guard must not be keyed on per-letter need',
     ).toBe(false)
+  })
+})
+
+describe('--hs-name-c — a painted name keeps the colour it would have worn, for an underlay', () => {
+  test('hsNameColourDecl takes hex and the rgb() a browser reads back, and nothing else', () => {
+    expect(hsNameColourDecl('#ff8700')).toBe('--hs-name-c:#ff8700;')
+    expect(hsNameColourDecl('#F80')).toBe('--hs-name-c:#F80;')
+    expect(hsNameColourDecl('#ff870080')).toBe('--hs-name-c:#ff870080;')
+    expect(hsNameColourDecl('rgb(255, 135, 0)')).toBe('--hs-name-c:rgb(255, 135, 0);')
+    for (const bad of [
+      '',
+      undefined,
+      null,
+      'red',
+      'url(x)',
+      '#ff8700;color:red',
+      'var(--x)',
+      '#12345',
+      'rgb(1,2,3);x',
+    ]) {
+      expect(hsNameColourDecl(bad), String(bad)).toBe('')
+    }
+  })
+
+  test('the in-place applier clears the inline style but keeps the colour as the property', () => {
+    setHsPaintEntry('c1', SOLID_SPEC)
+    const el = fakeAnchor('@mellen', { style: 'color:#00afff' })
+    applyHsPaintToElement(el, 'c1')
+    expect(el.style.getPropertyValue('color')).toBe('')
+    expect(el.style.getPropertyValue('--hs-name-c')).toBe('#00afff')
+  })
+
+  test('a colour an earlier pass already kept survives a second application', () => {
+    setHsPaintEntry('c2', SOLID_SPEC)
+    const el = fakeAnchor('@mellen', { style: '--hs-name-c:#123456' })
+    applyHsPaintToElement(el, 'c2')
+    expect(el.style.getPropertyValue('--hs-name-c')).toBe('#123456')
+  })
+
+  test('clearing a paint takes the property with it', () => {
+    setHsPaintEntry('c3', SOLID_SPEC)
+    const el = fakeAnchor('@mellen', { style: 'color:#00afff' })
+    applyHsPaintToElement(el, 'c3')
+    clearHsPaintFromElement(el)
+    expect(el.style.getPropertyValue('--hs-name-c')).toBe('')
+  })
+
+  test('every overlay surface that writes a paint stamp writes the colour beside it', () => {
+    const dir = join(import.meta.dir, '../src/multichat')
+    let stamps = 0
+    for (const f of ['main.js', 'whispers.js', 'tooltips.js']) {
+      const src = readFileSync(join(dir, f), 'utf8')
+      for (const m of src.matchAll(/--hsp-t:\$\{paintPhaseNow\(\)\};(\$\{hsNameColourDecl\()?/g)) {
+        stamps++
+        expect(m[1], `${f}: a painted name's style stamps --hsp-t with no --hs-name-c`).toBeDefined()
+      }
+    }
+    expect(stamps).toBeGreaterThanOrEqual(4) // author, feed quote, reply bar, mention
+    // whispers and the card peek carry no stamp (the compiled phase default applies) but still the colour
+    expect(readFileSync(join(dir, 'whispers.js'), 'utf8')).toContain('hsNameColourDecl(color)')
+    expect(readFileSync(join(dir, 'tooltips.js'), 'utf8')).toContain('hsNameColourDecl(safeColor)')
   })
 })

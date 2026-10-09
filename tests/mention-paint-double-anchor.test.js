@@ -71,6 +71,8 @@ globalThis.mentionColor = () => '#fff' // shared stub — both processEmotes' fa
 // Deterministic stub — real paintPhaseNow (lib/paint-spec.js) is Date.now()-based,
 // which this file doesn't test (see tests/paint-spec.test.js for that).
 globalThis.paintPhaseNow = () => '1720000000.000s'
+// The real one: it is a pure validator, and the painted-name styles below embed its output.
+globalThis.hsNameColourDecl = (await import('../src/multichat/paints.js')).hsNameColourDecl
 
 // ── processEmotes (real import — emotes.js is already ESM-importable) ───────
 const { channelEmoteCaches, emoteCache, processEmotes } = await import('../src/multichat/emotes.js')

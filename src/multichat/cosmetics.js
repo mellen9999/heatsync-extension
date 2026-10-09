@@ -615,6 +615,8 @@ function updateHsColorsInPlace(userIds) {
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
       // paint class (hsp-) owns the fill via CSS — don't overwrite with a colour.
       if (userLink && !userLink.className.includes('hsp-')) userLink.style.color = colour
+      // a painted name keeps no inline colour, but its underlay shows this one
+      else if (userLink) userLink.style.setProperty('--hs-name-c', colour)
     }
   }
 }

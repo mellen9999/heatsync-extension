@@ -1427,7 +1427,7 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
   const nameHsPaint = fbUid ? hsPaintRender(fbUid, username) : null
   const header = nativeBadges
     ? nativeBadges
-    : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? '' : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
+    : `<strong class="hs-card-name${nameHsPaint ? ` ${nameHsPaint.cls}` : ''}"${nameHsPaint ? nameHsPaint.splitAttr : ''} style="${nameHsPaint ? hsNameColourDecl(safeColor) : namePaint || `color:${safeColor}`}">${nameHsPaint ? nameHsPaint.html : safeName}</strong>`
   // NOTE: innerHTML XSS-safe — username via escapeHtml, color via sanitizeColor (hex-only),
   // nativeBadges from renderBadges which emits escaped <img> markup
   tooltip.innerHTML = `<div class="hs-card hs-card-peek"><div class="hs-card-hero"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div><div class="hs-card-body"><div class="hs-card-identity"><img class="hs-card-avatar" src="https://heatsync.org/anon.webp" alt="">${header}</div><dl class="hs-card-sheet">${platRow}</dl></div></div>`

@@ -8720,6 +8720,16 @@ const MIN_OUTLINE_WIDTH = 0.25
 const MAX_OUTLINE_WIDTH = 2
 const OUTLINE_WIDTH_STEP = 0.25
 
+/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px in 0.5
+ *  steps, blur 0..8px in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
+ *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. */
+const MIN_SHADOWS = 1
+const MAX_SHADOWS = 10
+const SHADOW_POS_LIMIT = 60
+const SHADOW_POS_STEP = 0.5
+const MAX_SHADOW_BLUR = 8
+const SHADOW_BLUR_STEP = 0.1
+
 
 // ── fill colour + contrast (alpha-aware) ────────────────────────────────────
 
@@ -8831,6 +8841,9 @@ function normalizeForHash(spec) {
     // Absent stays undefined, so a paint without them keeps its hash.
     underlay: spec?.underlay === 'name' ? 'name' : undefined,
     outline: isPlainObject(spec?.outline) ? { width: spec.outline.width, color: spec.outline.color } : undefined,
+    shadows: Array.isArray(spec?.shadows) && spec.shadows.length
+      ? spec.shadows.map(h => ({ x: h?.x, y: h?.y, blur: h?.blur, color: h?.color }))
+      : undefined,
   }
 }
 
@@ -9667,6 +9680,62 @@ function outlineCss(outline) {
   return `-webkit-text-stroke:${fnum(w)}px ${outline.color.toLowerCase()};paint-order:stroke fill;`
 }
 
+/** The effects a `filter` on the name cannot live with: ripple ANIMATES
+ *  `filter` on the glyph spans (a static one would be clobbered every frame) and
+ *  tumble needs `transform-style: preserve-3d`, which a filter flattens. The
+ *  scene rim and `shadows` both put a filter on the name, so both ask here.
+ *  (`hue` also animates `filter`, but it is a paint-slot effect a fill replaces,
+ *  and the stored legacy copy of one never compiles under a fill.)
+ *  @param {object[]} effects a spec's effects, or a compile's motion list */
+function filterHostile(effects) {
+  return Array.isArray(effects) && effects.some(e => e?.id === 'ripple' || e?.id === 'tumble')
+}
+
+const clampStep = (v, lo, hi, step) => {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return null
+  const c = Math.min(hi, Math.max(lo, Math.round(n / step) * step))
+  return Math.round(c * 10) / 10
+}
+
+/** A spec's shadows as the compiler will draw them: re-clamped like every other
+ *  knob, entries with a bad colour dropped, at most MAX_SHADOWS. [] for none. */
+function shadowsOf(spec) {
+  if (!isPlainObject(spec?.fill) || !Array.isArray(spec.shadows)) return []
+  const out = []
+  for (const h of spec.shadows.slice(0, MAX_SHADOWS)) {
+    if (!isPlainObject(h) || !isFillColor(h.color)) continue
+    const x = clampStep(h.x, -SHADOW_POS_LIMIT, SHADOW_POS_LIMIT, SHADOW_POS_STEP)
+    const y = clampStep(h.y, -SHADOW_POS_LIMIT, SHADOW_POS_LIMIT, SHADOW_POS_STEP)
+    const blur = clampStep(h.blur, 0, MAX_SHADOW_BLUR, SHADOW_BLUR_STEP)
+    if (x === null || y === null || blur === null) continue
+    out.push({ x, y, blur, color: h.color.toLowerCase() })
+  }
+  return out
+}
+
+/** Motion effects whose keyframes force the filter under them to re-run every
+ *  frame: a transform on the name or its letters, or a text-shadow animation. */
+const SHADOW_REPAINT_SIGS = /:(transform|shadow)$/
+
+/**
+ * Extra budget weight a paint's shadows cost, on top of what its animations
+ * measure: 1 when the shadows are a `filter` (the rest-frame form, used whenever
+ * the fill does not move) sitting under a running self/letter motion, which
+ * makes the browser re-rasterise the filtered name each frame; else 0. A moving
+ * fill puts its shadows in a static text-shadow on the host instead, and a
+ * static paint runs nothing, so both are free. Read once per paint hash at
+ * compile time (paint-cosmetics), never per element.
+ * @param {object} spec
+ * @returns {0|1}
+ */
+function paintExtraWeight(spec) {
+  if (!shadowsOf(spec).length || planCompositedFill(spec.fill, hasUnderlay(spec))) return 0
+  const effects = Array.isArray(spec.effects) ? spec.effects : []
+  if (filterHostile(effects)) return 0 // compiles without the shadows
+  return effects.some(e => SHADOW_REPAINT_SIGS.test(EFFECTS[e?.id]?.sig || '')) ? 1 : 0
+}
+
 /**
  * Build the CSS for a `fill` block's rest frame — a static, multi-layer
  * clip-text paint. Layers are stored bottom-to-top (the plan's own order,
@@ -9752,8 +9821,14 @@ const FILL_BREATHE_PERIOD = 2.4
 const FILL_LAYER_CLASS = 'hs-fl'
 const FILL_WRAP_CLASS = 'hs-fw'
 
-/** The chatter's colour as the underlay reads it (see buildFillBaseCss). */
-const NAME_COLOUR = 'var(--hs-name-c,currentColor)'
+/** The chatter's colour as the underlay reads it (see buildFillBaseCss). The
+ *  fallback is the default name colour, white, and never `currentColor` or
+ *  `transparent`: a painted name carries no inline colour (the class makes its
+ *  text transparent), so a name nobody stamped a colour on (a feed name without
+ *  a userColor, a helper's mention) would resolve either to transparent and the
+ *  underlay's whole point, showing through, would draw nothing at all. */
+const NAME_COLOUR_FALLBACK = '#ffffff'
+const NAME_COLOUR = `var(--hs-name-c,${NAME_COLOUR_FALLBACK})`
 
 /** 4dp, no float noise, no trailing zeros. */
 const fnum = (n) => String(Math.round(n * 1e4) / 1e4)
@@ -10030,8 +10105,9 @@ function fillBoxCss(b, k, angle, hash) {
  * @param {string} nameBox the compiled `${selector}>.hs-name`
  * @param {string} hash
  * @param {boolean} perLetter the name is split into one `>span` per glyph
+ * @param {object[]} shadows the paint's resolved shadows (shadowsOf), or []
  */
-function buildFillLayersCss(spec, nameBox, hash, perLetter) {
+function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   const underlay = hasUnderlay(spec)
   const plan = planCompositedFill(spec.fill, underlay)
   if (!plan) return ''
@@ -10059,7 +10135,29 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter) {
   const outlined = !!outlineCss(spec.outline)
   let css = outlined && underlay
     ? `${host}{position:relative;isolation:isolate;background:none;background-color:${NAME_COLOUR};-webkit-background-clip:text;background-clip:text;color:transparent;}`
-    : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? 'var(--hs-name-c,transparent)' : 'transparent'};}`
+    : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? NAME_COLOUR : 'transparent'};}`
+
+  // SHADOWS UNDER A MOVING FILL. The rest frame draws them as a `filter`
+  // (drop-shadow) on the name, which would re-run on every frame the wrap moves,
+  // on every copy of the name. The host's own text is STATIC under the
+  // compositor-moved layers, so the same list as a `text-shadow` on the host
+  // costs nothing per frame: the wrap paints above it, and where the mask
+  // leaves the glyph the shadow is what shows, like the drop-shadow.
+  //
+  // THE BLUR IS DOUBLED. drop-shadow()'s length is the Gaussian's standard
+  // deviation (Filter Effects), text-shadow's is a box-shadow radius, which is
+  // twice that. Measured in chromium (scripts/paint-perf.mjs --shadows): the same
+  // number in both draws a text-shadow half as soft; 2x it matches the filter to
+  // the pixel at every blur 2..8. The validator makes the host's text invisible
+  // under the fill (an opaque fill or an underlay), the one place the two forms
+  // differ.
+  //
+  // NOT WITH AN OUTLINE: there the wrap sinks BEHIND the host text (z-index:-1,
+  // above), so a text-shadow on it would land on top of the fill. The filter is
+  // simply dropped for the mounted name; save refuses the pair.
+  if (shadows.length) {
+    css += `${host}{filter:none;${outlined ? '' : `text-shadow:${stvShadowList(shadows.map(h => ({ ...h, blur: Math.round(h.blur * 20) / 10 })), 'text')};`}}`
+  }
 
   // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws
   // outside its letterform — a glow's text-shadow, a scene's rim drop-shadow,
@@ -11197,6 +11295,10 @@ function compilePaintCss(spec, selector, opts = {}) {
     layerBudget -= 1
   }
 
+  // A name wearing shadows takes them as its one filter; ripple and tumble cannot
+  // live under one (filterHostile), so they win and the shadows are not drawn.
+  const shadows = filterHostile(motionEffects) ? [] : shadowsOf(spec)
+
   // ── THE SCENE IS RATE-LIMITED, NOT SLOT-LIMITED ──────────────────────────
   //
   // Scene planes no longer spend the cap, because they no longer cost what a cap
@@ -11411,7 +11513,7 @@ function compilePaintCss(spec, selector, opts = {}) {
   // The composited fill — gated on the runtime's mask, so this is additive to
   // everything above: without the class the name renders the clip-text rest
   // frame just compiled. Static mode moves nothing and emits none of it.
-  if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter)
+  if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter, shadows)
 
   // Outline — one inherited stroke on the element that holds the glyphs, in
   // BOTH renders, so static, paused and masked all keep it (it is raster-once,
@@ -11424,11 +11526,19 @@ function compilePaintCss(spec, selector, opts = {}) {
   const outline = outlineCss(spec.outline)
   if (outline) css += `${paintTarget}{${outline}}`
 
+  // Shadows — a `filter` on the glyph holder, painted once (the rest frame is
+  // static in every mode; a moving fill swaps it for a text-shadow on the
+  // mounted host, above). drop-shadow() is built from rendered alpha, so it
+  // traces a clipped glyph and paints behind it. They replace the glow and the
+  // scene rim, which would be a second text-shadow / second filter on the same
+  // name.
+  if (shadows.length) css += `${paintTarget}{filter:${stvShadowList(shadows, 'drop')};}`
+
   // Static glow — skip if neon is active and sourced the same color (neon's
   // own keyframes already carry a shadow on every frame); otherwise layer
   // the constant shadow on so it doesn't require an active effect to show.
   const hasNeon = motionEffects.some(e => e.id === 'neon')
-  if (spec.glow && !hasNeon) {
+  if (spec.glow && !hasNeon && !shadows.length) {
     css += buildGlowCss(spec.glow, selector)
   }
 
@@ -11453,7 +11563,7 @@ function compilePaintCss(spec, selector, opts = {}) {
   if (sceneOn) {
     css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather, stillBackdrop })
     const clipTextFill = !!paintEffect || hasFill || base.type !== 'solid'
-    const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
+    const rimHostile = filterHostile(motionEffects)
     // An ANIMATED clip-text fill under the rim filter is the worst render
     // cell in the matrix: the gradient moves every frame beneath two stacked
     // drop-shadows, so the browser re-filters every visible copy of the name
@@ -11462,9 +11572,9 @@ function compilePaintCss(spec, selector, opts = {}) {
     // A moving fill is a moving fill whether it composites or not: a filter
     // over it re-runs every frame it changes, on every copy of the name.
     const animatedFill = (!!paintEffect || (hasFill && !!planCompositedFill(spec.fill, hasUnderlay(spec)))) && !opts.static
-    if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
+    if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon && !shadows.length) {
       if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
-      else if (!filterHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
+      else if (!rimHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
     }
   }
 
@@ -14335,7 +14445,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '44c75dd2e2e0' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7601b6f61adf' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -53696,16 +53806,53 @@ function hsPaintRender(userId, rawText) {
  * painted name. A paint owns the fill, so a painted name carries no inline
  * `color` (it would beat the class's `color:transparent`); a paint with an
  * underlay still shows the chatter's colour through its transparent stops,
- * reading `var(--hs-name-c,currentColor)`. Accepts a hex colour or the
+ * reading `var(--hs-name-c,#ffffff)`. Accepts a hex colour or the
  * `rgb()` form a browser serialises an inline colour back as; anything else
  * yields '' so nothing can ride into the style attribute.
- * Mirrors names/name-el.js NAME_COLOUR_VAR on the site.
+ * Mirrors names/name-el.js NAME_COLOUR_VAR on the site, including its floor: a
+ * colour darker than WCAG 3:1 against black (relative luminance 0.1) is lifted
+ * to it, because the site's paint validator scores an underlay against exactly
+ * that (PAINT_NAME_FLOOR_GREY). This file's own readableNames boost is not
+ * enough: it measures gamma-space luminance, which lets #404040 through.
  */
 const HS_NAME_COLOUR_RE =
   /^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))$/i
+const HS_UNDERLAY_MIN_LUM = 0.1
+const hsLinear = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+const hsLum = ([r, g, b]) => 0.2126 * hsLinear(r) + 0.7152 * hsLinear(g) + 0.0722 * hsLinear(b)
+/** `c` (already shape-checked) as [r,g,b], alpha dropped. */
+function hsRgbOf(c) {
+  if (c[0] !== '#')
+    return c
+      .match(/\d+/g)
+      .slice(0, 3)
+      .map((n) => Math.min(255, Number(n)))
+  const h = c.length <= 5 ? c.slice(1, 4).replace(/./g, '$&$&') : c.slice(1, 7)
+  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
+}
+/** Mix toward white until the colour clears the floor; the colour itself, in
+ *  the spelling it came in, when it already does. */
+function hsLiftToFloor(c) {
+  const rgb = hsRgbOf(c)
+  if (hsLum(rgb) >= HS_UNDERLAY_MIN_LUM) return c
+  let lo = 0
+  let hi = 1
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2
+    if (hsLum(rgb.map((v) => v + (255 - v) * mid)) >= HS_UNDERLAY_MIN_LUM) hi = mid
+    else lo = mid
+  }
+  return `#${rgb
+    .map((v) =>
+      Math.ceil(v + (255 - v) * hi)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`
+}
 function hsNameColourDecl(colour) {
   const c = typeof colour === 'string' ? colour.trim() : ''
-  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${c};` : ''
+  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${hsLiftToFloor(c)};` : ''
 }
 
 /** In-place DOM application shared by updateHsPaintsInPlace (main.js) — adds
@@ -54910,7 +55057,10 @@ function updateHsColorsInPlace(userIds) {
       // paint class (hsp-) owns the fill via CSS — don't overwrite with a colour.
       if (userLink && !userLink.className.includes('hsp-')) userLink.style.color = colour
       // a painted name keeps no inline colour, but its underlay shows this one
-      else if (userLink) userLink.style.setProperty('--hs-name-c', colour)
+      else if (userLink) {
+        const decl = hsNameColourDecl(colour)
+        if (decl) userLink.style.setProperty('--hs-name-c', decl.slice('--hs-name-c:'.length, -1))
+      }
     }
   }
 }

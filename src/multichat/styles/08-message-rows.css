@@ -611,22 +611,12 @@
       color: var(--hs-muted);
       font-weight: 400;
     }
-    /* The row is black because black is the surface; the red EDGE is the whole
-       "you got mentioned" signal, same as the site's --mention-edge. A fill
-       alone was invisible here — see --hs-mention-edge in 00-palette.css. */
+    /* The dark red fill is the whole "you got mentioned" signal, same as the
+       site's --mention-bg. It beats the zebra stripe too — a stripe would
+       erase the signal on every other row. */
     .hs-mc-msg.mention,
     .hs-feed-msg.mention {
-      background: #000000;
-      box-shadow: inset 0 0 0 1px var(--hs-mention-edge);
-    }
-    /* Zebra striping for consecutive mentions — leverages the existing
-       neighbor-flip .hs-mc-zebra cadence so adjacent mention rows stay
-       separable instead of reading as one block. The edge still marks each
-       one; only the fill alternates. */
-    .hs-mc-msg.mention.hs-mc-zebra,
-    .hs-feed-msg.mention.hs-mc-zebra {
-      background: var(--hs-zebra);
-      box-shadow: inset 0 0 0 1px var(--hs-mention-edge);
+      background: var(--hs-mention-bg);
     }
     /* Row base color white for non-colored text (gray timestamps, plain
        message body) — inline user colors override naturally. No star-cascade
@@ -656,16 +646,12 @@
       box-shadow: inset 0 0 0 1px var(--hs-mention);
     }
     /* Mention red wins over keyword-yellow when a row is both — "you got pinged"
-       is the stronger signal. Later + higher specificity guarantees the override
+       is the stronger signal. Higher specificity guarantees the override
        regardless of source order; drops the keyword's yellow inset border too. */
     .hs-mc-msg.mention.hs-kw-match,
     .hs-feed-msg.mention.hs-kw-match {
-      background: #000000;
+      background: var(--hs-mention-bg);
       box-shadow: none;
-    }
-    .hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,
-    .hs-feed-msg.mention.hs-kw-match.hs-mc-zebra {
-      background: #000000;
     }
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
        Monochrome by intent: a low-key gray bar (familiar, seen before). */

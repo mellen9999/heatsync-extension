@@ -27,7 +27,8 @@
  */
 
 import {
-  HEX_RE, MIN_SPEED, MAX_SPEED,
+  HEX_RE, MIN_SPEED, MAX_SPEED, PAINT_BG, PAINT_MIN_CONTRAST, CONTRAST_EPS,
+  UNDERLAY_NAME_FLOOR_GREY, paintHexLuminance,
   isPlainObject, isIntInRange, isNumInRange, safeSpeed,
 } from './paint-core.js'
 import { validateSceneSpec } from './scene-spec.js'
@@ -70,8 +71,7 @@ export const PLUS_MAX_EFFECTS = MAX_EFFECTS
 //
 // 3.0 rather than WCAG's 4.5 for body copy: names render bold, and this is a
 // nickname, not prose. It is still a floor, not a suggestion.
-export const PAINT_BG = '#0a0a0a'
-export const PAINT_MIN_CONTRAST = 3
+export { PAINT_BG, PAINT_MIN_CONTRAST }
 
 // THE DARKEST NAME COLOUR AN UNDERLAY CAN SHOW. `underlay:'name'` lets a fill's
 // transparent areas show the chatter's own colour, which the fill's author does
@@ -80,33 +80,23 @@ export const PAINT_MIN_CONTRAST = 3
 // leaves any colour with a channel over 50 alone (#000033 is legal, 1.0:1), the
 // readableNames lift is a setting, and the ext has its own copy of it. So the
 // bound is made at the one place a painted name's colour is kept for the
-// underlay, `--hs-name-c` (color-utils underlayNameColour): it lifts anything
-// below WCAG 3:1 against BLACK, i.e. relative luminance 0.1, and white is
-// the fallback when it cannot. A neutral grey just under that luminance is the
-// stand-in for the whole set: sRGB 89 is 0.0999, which is 2.8:1 against
-// PAINT_BG, and the test pins the two numbers together.
-export const PAINT_NAME_FLOOR_GREY = '#595959'
-
-/** WCAG 2.x relative luminance of an #rrggbb string. Internal — contrastRatio
- * is the one everything else wants. */
-function relativeLuminance(hex) {
-  const n = parseInt(hex.slice(1), 16)
-  const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
-    .map(v => v / 255)
-    .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)))
-  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
-}
+// underlay, `--hs-name-c` (color-utils underlayNameColour, the ext's
+// hsNameColourDecl): it lifts anything below PAINT_MIN_CONTRAST against
+// PAINT_BG, and white is the fallback when it cannot. paint-core derives that
+// luminance and the neutral grey standing in for the whole set from those two
+// constants; nothing here is a second hand-picked number.
+export const PAINT_NAME_FLOOR_GREY = UNDERLAY_NAME_FLOOR_GREY
 
 /** WCAG contrast ratio between two #rrggbb strings. Order-independent. */
 export function contrastRatio(hexA, hexB) {
-  const a = relativeLuminance(hexA)
-  const b = relativeLuminance(hexB)
+  const a = paintHexLuminance(hexA)
+  const b = paintHexLuminance(hexB)
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
 }
 
 /** True when a single colour clears the floor against the chat background. */
 export function isLegiblePaintColor(hex, bg = PAINT_BG) {
-  return HEX_RE.test(hex) && contrastRatio(hex, bg) >= PAINT_MIN_CONTRAST
+  return HEX_RE.test(hex) && contrastRatio(hex, bg) >= PAINT_MIN_CONTRAST - CONTRAST_EPS
 }
 
 /**
@@ -412,7 +402,7 @@ export function validateFill(fill, opts = {}) {
   // unreadable off garbage stops.
   if (layersOk) {
     const weakest = opts.underlay ? fillContrast(fill.layers, PAINT_BG, PAINT_NAME_FLOOR_GREY) : fillContrast(fill.layers)
-    if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
+    if (weakest !== null && weakest < PAINT_MIN_CONTRAST - CONTRAST_EPS) {
       errors.push(
         `fill contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest composited point is unreadable at name size`
       )
@@ -584,7 +574,7 @@ export function validatePaintSpec(spec, opts = {}) {
       // stack (validateFill) — a dark stop beneath an opaque upper layer is
       // legible there and would be refused here for a picture nobody sees.
       const weakest = isPlainObject(spec.fill) ? null : paintContrast(stops)
-      if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
+      if (weakest !== null && weakest < PAINT_MIN_CONTRAST - CONTRAST_EPS) {
         errors.push(
           `base.stops contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest stop is unreadable at name size`
         )

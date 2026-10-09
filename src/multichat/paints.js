@@ -779,14 +779,15 @@ function hsPaintRender(userId, rawText) {
  * `rgb()` form a browser serialises an inline colour back as; anything else
  * yields '' so nothing can ride into the style attribute.
  * Mirrors names/name-el.js NAME_COLOUR_VAR on the site, including its floor: a
- * colour darker than WCAG 3:1 against black (relative luminance 0.1) is lifted
- * to it, because the site's paint validator scores an underlay against exactly
- * that (PAINT_NAME_FLOOR_GREY). This file's own readableNames boost is not
- * enough: it measures gamma-space luminance, which lets #404040 through.
+ * colour under 3:1 against the chat background is lifted to it, because the
+ * site's paint validator scores an underlay against exactly that. The bound is
+ * UNDERLAY_NAME_MIN_LUM from lib/paint-core.js (PAINT_MIN_CONTRAST over
+ * PAINT_BG), the one the validator derives its scoring grey from. This file's
+ * own readableNames boost is not enough: it measures gamma-space luminance,
+ * which lets #404040 through.
  */
 const HS_NAME_COLOUR_RE =
   /^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))$/i
-const HS_UNDERLAY_MIN_LUM = 0.1
 const hsLinear = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
 const hsLum = ([r, g, b]) => 0.2126 * hsLinear(r) + 0.7152 * hsLinear(g) + 0.0722 * hsLinear(b)
 /** `c` (already shape-checked) as [r,g,b], alpha dropped. */
@@ -803,12 +804,12 @@ function hsRgbOf(c) {
  *  the spelling it came in, when it already does. */
 function hsLiftToFloor(c) {
   const rgb = hsRgbOf(c)
-  if (hsLum(rgb) >= HS_UNDERLAY_MIN_LUM) return c
+  if (hsLum(rgb) >= UNDERLAY_NAME_MIN_LUM - CONTRAST_EPS) return c
   let lo = 0
   let hi = 1
   for (let i = 0; i < 16; i++) {
     const mid = (lo + hi) / 2
-    if (hsLum(rgb.map((v) => v + (255 - v) * mid)) >= HS_UNDERLAY_MIN_LUM) hi = mid
+    if (hsLum(rgb.map((v) => v + (255 - v) * mid)) >= UNDERLAY_NAME_MIN_LUM - CONTRAST_EPS) hi = mid
     else lo = mid
   }
   return `#${rgb

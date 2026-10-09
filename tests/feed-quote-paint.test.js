@@ -36,6 +36,10 @@ globalThis.sanitizeColor = (c) => (typeof c === 'string' && /^#[0-9a-fA-F]{3,8}$
 // which this file doesn't test (see tests/paint-spec.test.js for that).
 globalThis.paintPhaseNow = () => '1720000000.000s'
 // The real one: it is a pure validator, and the painted-name styles below embed its output.
+// the bundle hands paints.js these as free variables (lib/paint-core.js)
+const paintCore = await import('../src/lib/paint-core.js')
+globalThis.UNDERLAY_NAME_MIN_LUM = paintCore.UNDERLAY_NAME_MIN_LUM
+globalThis.CONTRAST_EPS = paintCore.CONTRAST_EPS
 globalThis.hsNameColourDecl = (await import('../src/multichat/paints.js')).hsNameColourDecl
 
 const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')

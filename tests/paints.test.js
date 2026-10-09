@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { CONTRAST_EPS, PAINT_BG, PAINT_MIN_CONTRAST, UNDERLAY_NAME_MIN_LUM } from '../src/lib/paint-core.js'
 import {
   compilePaintCss,
   hashPaintSpec,
@@ -89,6 +90,8 @@ beforeEach(() => {
   globalThis.paintNameHtmlFor = paintNameHtmlFor
   globalThis.NAME_BOX_CLASS = NAME_BOX_CLASS
   globalThis.paintPhaseNow = paintPhaseNow
+  globalThis.UNDERLAY_NAME_MIN_LUM = UNDERLAY_NAME_MIN_LUM
+  globalThis.CONTRAST_EPS = CONTRAST_EPS
   // Records appended nodes so the per-paint rule lifecycle (one <style> per
   // hash, removed when the LRU drops its last user) is observable.
   fakeHead = []
@@ -128,6 +131,8 @@ afterEach(() => {
   globalThis.paintNameHtmlFor = undefined
   globalThis.NAME_BOX_CLASS = undefined
   globalThis.paintPhaseNow = undefined
+  globalThis.UNDERLAY_NAME_MIN_LUM = undefined
+  globalThis.CONTRAST_EPS = undefined
   globalThis.document = undefined
 })
 
@@ -619,7 +624,7 @@ describe('a compiled paint can select the markup the extension emits', () => {
 })
 
 describe('--hs-name-c — a painted name keeps the colour it would have worn, for an underlay', () => {
-  test('hsNameColourDecl lifts a colour under the underlay floor (luminance 0.1) and keeps a readable one as written', () => {
+  test('hsNameColourDecl lifts a colour under the underlay floor (3:1 against the chat background) and keeps a readable one as written', () => {
     const lum = (hex) => {
       const lin = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
       const n = parseInt(hex.slice(1), 16)
@@ -628,8 +633,10 @@ describe('--hs-name-c — a painted name keeps the colour it would have worn, fo
     for (const dark of ['#000033', '#404040', '#000', '#330000', 'rgb(0, 0, 40)', '#00003380']) {
       const out = hsNameColourDecl(dark).slice('--hs-name-c:'.length, -1)
       expect(out, dark).toMatch(/^#[0-9a-f]{6}$/)
-      expect(lum(out), dark).toBeGreaterThanOrEqual(0.0999)
+      expect((lum(out) + 0.05) / (lum(PAINT_BG) + 0.05), dark).toBeGreaterThanOrEqual(PAINT_MIN_CONTRAST - 1e-9)
     }
+    // the floor is the lib's, not a number kept here: PAINT_MIN_CONTRAST over PAINT_BG
+    expect(UNDERLAY_NAME_MIN_LUM).toBeCloseTo(PAINT_MIN_CONTRAST * (lum(PAINT_BG) + 0.05) - 0.05, 9)
     expect(hsNameColourDecl('#ffffff')).toBe('--hs-name-c:#ffffff;')
     expect(hsNameColourDecl('#56a0ee')).toBe('--hs-name-c:#56a0ee;')
   })

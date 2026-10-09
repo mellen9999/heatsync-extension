@@ -18,6 +18,41 @@ export const MAX_SPEED = 3
 // at least 1s AFTER the user's speed multiplier is applied.
 export const MIN_LUMINANCE_PERIOD_S = 1
 
+// ── legibility floor constants ────────────────────────────────────────────
+// The chat background a painted name is read on, and the least WCAG contrast it
+// may have there. Authoring scores against them; the name-colour underlay lift
+// (color-utils underlayNameColour, the ext's hsNameColourDecl) derives its bound
+// from the SAME two values below, so the scorer and the stamper cannot drift.
+export const PAINT_BG = '#0a0a0a'
+export const PAINT_MIN_CONTRAST = 3
+// Slack on every "at least the floor" comparison: a colour lifted to exactly 3:1
+// lands on the boundary, where float error alone would fail it.
+export const CONTRAST_EPS = 1e-9
+
+/** WCAG 2.x relative luminance of an #rrggbb string. */
+export function paintHexLuminance(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  const lin = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+    .map(v => v / 255)
+    .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+// The dimmest a painted name's own colour may be where an underlay shows it:
+// the luminance that has PAINT_MIN_CONTRAST against PAINT_BG exactly.
+export const UNDERLAY_NAME_MIN_LUM = PAINT_MIN_CONTRAST * (paintHexLuminance(PAINT_BG) + 0.05) - 0.05
+
+// The scorer's stand-in for the darkest name colour an underlay can show: the
+// smallest neutral grey at or above that luminance (an 8-bit grey cannot sit on
+// it exactly, so this errs bright by under 0.1:1 rather than dark).
+export const UNDERLAY_NAME_FLOOR_GREY = (() => {
+  for (let v = 0; v < 256; v++) {
+    const hex = '#' + v.toString(16).padStart(2, '0').repeat(3)
+    if (paintHexLuminance(hex) >= UNDERLAY_NAME_MIN_LUM - CONTRAST_EPS) return hex
+  }
+  return '#ffffff'
+})()
+
 export function isPlainObject(v) {
   return v !== null && typeof v === 'object' && !Array.isArray(v)
 }

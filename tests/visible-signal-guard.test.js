@@ -51,12 +51,16 @@ describe('a signal must differ from the surface it sits on', () => {
     test(`${sel.replace(/,$/, '')} is filled with the mention red`, () => {
       const body = block(rows, sel)
       expect(body, `${sel} is gone — the mention row stopped being styled at all`).toBeTruthy()
-      expect(body, 'an @-mention of you is pixel-identical to every other row').toMatch(/background:\s*var\(--hs-mention-bg\)/)
+      expect(body, 'an @-mention of you is pixel-identical to every other row').toMatch(
+        /background:\s*var\(--hs-mention-bg\)/,
+      )
     })
   }
 
   test('no zebra rule paints over a mention', () => {
-    expect(strip(rows), 'a stripe on .mention erases the signal on every other row').not.toMatch(/\.mention[^{]*\.hs-mc-zebra/)
+    expect(strip(rows), 'a stripe on .mention erases the signal on every other row').not.toMatch(
+      /\.mention[^{]*\.hs-mc-zebra/,
+    )
   })
 
   test('--hs-zebra is declared and is not the surface', () => {

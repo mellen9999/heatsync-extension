@@ -121,7 +121,10 @@ const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
 /** Drop inline `hs-exempt-start … hs-exempt-end` regions (user-chosen colour pickers), then comments. */
 function code(text, rel) {
   // the zebra stripe and the mention fill are the allowed off-palette values, and only as these tokens
-  let t = text.replace(/--hs-zebra:\s*#444444;/g, '').replace(/--hs-mention-bg:\s*#5f0000;/g, '').replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
+  let t = text
+    .replace(/--hs-zebra:\s*#444444;/g, '')
+    .replace(/--hs-mention-bg:\s*#5f0000;/g, '')
+    .replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
   if (rel.endsWith('.html')) t = t.replace(/<!--[\s\S]*?-->/g, '')

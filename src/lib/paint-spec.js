@@ -1223,8 +1223,14 @@ const FILL_BREATHE_PERIOD = 2.4
 export const FILL_LAYER_CLASS = 'hs-fl'
 export const FILL_WRAP_CLASS = 'hs-fw'
 
-/** The chatter's colour as the underlay reads it (see buildFillBaseCss). */
-const NAME_COLOUR = 'var(--hs-name-c,currentColor)'
+/** The chatter's colour as the underlay reads it (see buildFillBaseCss). The
+ *  fallback is the default name colour, white, and never `currentColor` or
+ *  `transparent`: a painted name carries no inline colour (the class makes its
+ *  text transparent), so a name nobody stamped a colour on (a feed name without
+ *  a userColor, a helper's mention) would resolve either to transparent and the
+ *  underlay's whole point, showing through, would draw nothing at all. */
+const NAME_COLOUR_FALLBACK = '#ffffff'
+const NAME_COLOUR = `var(--hs-name-c,${NAME_COLOUR_FALLBACK})`
 
 /** 4dp, no float noise, no trailing zeros. */
 const fnum = (n) => String(Math.round(n * 1e4) / 1e4)
@@ -1530,7 +1536,7 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter) {
   const outlined = !!outlineCss(spec.outline)
   let css = outlined && underlay
     ? `${host}{position:relative;isolation:isolate;background:none;background-color:${NAME_COLOUR};-webkit-background-clip:text;background-clip:text;color:transparent;}`
-    : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? 'var(--hs-name-c,transparent)' : 'transparent'};}`
+    : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? NAME_COLOUR : 'transparent'};}`
 
   // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws
   // outside its letterform — a glow's text-shadow, a scene's rim drop-shadow,

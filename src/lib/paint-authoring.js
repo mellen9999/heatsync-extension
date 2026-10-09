@@ -71,6 +71,20 @@ export const PLUS_MAX_EFFECTS = MAX_EFFECTS
 export const PAINT_BG = '#0a0a0a'
 export const PAINT_MIN_CONTRAST = 3
 
+// THE DARKEST NAME COLOUR AN UNDERLAY CAN SHOW. `underlay:'name'` lets a fill's
+// transparent areas show the chatter's own colour, which the fill's author does
+// not control, so the floor has to be scored against the worst one. What the
+// name-colour pipeline guarantees on its own is nothing useful: fixDarkColors
+// leaves any colour with a channel over 50 alone (#000033 is legal, 1.0:1), the
+// readableNames lift is a setting, and the ext has its own copy of it. So the
+// bound is made at the one place a painted name's colour is kept for the
+// underlay, `--hs-name-c` (color-utils underlayNameColour): it lifts anything
+// below WCAG 3:1 against BLACK, i.e. relative luminance 0.1, and white is
+// the fallback when it cannot. A neutral grey just under that luminance is the
+// stand-in for the whole set: sRGB 89 is 0.0999, which is 2.8:1 against
+// PAINT_BG, and the test pins the two numbers together.
+export const PAINT_NAME_FLOOR_GREY = '#595959'
+
 /** WCAG 2.x relative luminance of an #rrggbb string. Internal — contrastRatio
  * is the one everything else wants. */
 function relativeLuminance(hex) {
@@ -169,9 +183,12 @@ function layerColorAt(stops, pos) {
  * samples can't introduce a new local extreme a stop position didn't already
  * bracket. Returns null if there is nothing valid to score.
  */
-export function fillContrast(layers, bg = PAINT_BG) {
+export function fillContrast(layers, bg = PAINT_BG, under = bg) {
   if (!Array.isArray(layers) || !layers.length) return null
-  const bgRgb = parseFillColor(bg)
+  // `under` is what the stack is composited onto, `bg` what the result is judged
+  // against: they differ only for an underlay, where the layers sit on the
+  // chatter's name colour and the name colour sits on the chat background.
+  const bgRgb = parseFillColor(under)
   const positions = new Set([0, 100])
   for (const layer of layers) {
     if (!isPlainObject(layer) || !Array.isArray(layer.stops)) continue
@@ -366,7 +383,7 @@ function validateFillModulator(mod, path, errors, hasDepth) {
  * the FLATTENED, alpha-composited layer stack (fillContrast), not per stop.
  * @returns {{ ok: boolean, errors: string[] }}
  */
-export function validateFill(fill) {
+export function validateFill(fill, opts = {}) {
   const errors = []
   if (!isPlainObject(fill)) return { ok: false, errors: ['fill must be an object'] }
 
@@ -392,7 +409,7 @@ export function validateFill(fill) {
   // malformed fill reports its real problem instead of also being called
   // unreadable off garbage stops.
   if (layersOk) {
-    const weakest = fillContrast(fill.layers)
+    const weakest = opts.underlay ? fillContrast(fill.layers, PAINT_BG, PAINT_NAME_FLOOR_GREY) : fillContrast(fill.layers)
     if (weakest !== null && weakest < PAINT_MIN_CONTRAST) {
       errors.push(
         `fill contrast ${weakest.toFixed(1)}:1 is below the ${PAINT_MIN_CONTRAST}:1 legibility floor against chat background — the darkest composited point is unreadable at name size`
@@ -603,7 +620,7 @@ export function validatePaintSpec(spec, opts = {}) {
 
   // ── fill (additive v1/v2 block) ──
   if (spec.fill !== null && spec.fill !== undefined) {
-    const fillResult = validateFill(spec.fill)
+    const fillResult = validateFill(spec.fill, { underlay: spec.underlay === 'name' })
     errors.push(...fillResult.errors)
   }
 

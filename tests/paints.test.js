@@ -619,6 +619,21 @@ describe('a compiled paint can select the markup the extension emits', () => {
 })
 
 describe('--hs-name-c — a painted name keeps the colour it would have worn, for an underlay', () => {
+  test('hsNameColourDecl lifts a colour under the underlay floor (luminance 0.1) and keeps a readable one as written', () => {
+    const lum = (hex) => {
+      const lin = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+      const n = parseInt(hex.slice(1), 16)
+      return 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255)
+    }
+    for (const dark of ['#000033', '#404040', '#000', '#330000', 'rgb(0, 0, 40)', '#00003380']) {
+      const out = hsNameColourDecl(dark).slice('--hs-name-c:'.length, -1)
+      expect(out, dark).toMatch(/^#[0-9a-f]{6}$/)
+      expect(lum(out), dark).toBeGreaterThanOrEqual(0.0999)
+    }
+    expect(hsNameColourDecl('#ffffff')).toBe('--hs-name-c:#ffffff;')
+    expect(hsNameColourDecl('#56a0ee')).toBe('--hs-name-c:#56a0ee;')
+  })
+
   test('hsNameColourDecl takes hex and the rgb() a browser reads back, and nothing else', () => {
     expect(hsNameColourDecl('#ff8700')).toBe('--hs-name-c:#ff8700;')
     expect(hsNameColourDecl('#F80')).toBe('--hs-name-c:#F80;')
@@ -649,9 +664,9 @@ describe('--hs-name-c — a painted name keeps the colour it would have worn, fo
 
   test('a colour an earlier pass already kept survives a second application', () => {
     setHsPaintEntry('c2', SOLID_SPEC)
-    const el = fakeAnchor('@mellen', { style: '--hs-name-c:#123456' })
+    const el = fakeAnchor('@mellen', { style: '--hs-name-c:#56a0ee' })
     applyHsPaintToElement(el, 'c2')
-    expect(el.style.getPropertyValue('--hs-name-c')).toBe('#123456')
+    expect(el.style.getPropertyValue('--hs-name-c')).toBe('#56a0ee')
   })
 
   test('clearing a paint takes the property with it', () => {

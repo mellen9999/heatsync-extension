@@ -775,16 +775,53 @@ function hsPaintRender(userId, rawText) {
  * painted name. A paint owns the fill, so a painted name carries no inline
  * `color` (it would beat the class's `color:transparent`); a paint with an
  * underlay still shows the chatter's colour through its transparent stops,
- * reading `var(--hs-name-c,currentColor)`. Accepts a hex colour or the
+ * reading `var(--hs-name-c,#ffffff)`. Accepts a hex colour or the
  * `rgb()` form a browser serialises an inline colour back as; anything else
  * yields '' so nothing can ride into the style attribute.
- * Mirrors names/name-el.js NAME_COLOUR_VAR on the site.
+ * Mirrors names/name-el.js NAME_COLOUR_VAR on the site, including its floor: a
+ * colour darker than WCAG 3:1 against black (relative luminance 0.1) is lifted
+ * to it, because the site's paint validator scores an underlay against exactly
+ * that (PAINT_NAME_FLOOR_GREY). This file's own readableNames boost is not
+ * enough: it measures gamma-space luminance, which lets #404040 through.
  */
 const HS_NAME_COLOUR_RE =
   /^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))$/i
+const HS_UNDERLAY_MIN_LUM = 0.1
+const hsLinear = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+const hsLum = ([r, g, b]) => 0.2126 * hsLinear(r) + 0.7152 * hsLinear(g) + 0.0722 * hsLinear(b)
+/** `c` (already shape-checked) as [r,g,b], alpha dropped. */
+function hsRgbOf(c) {
+  if (c[0] !== '#')
+    return c
+      .match(/\d+/g)
+      .slice(0, 3)
+      .map((n) => Math.min(255, Number(n)))
+  const h = c.length <= 5 ? c.slice(1, 4).replace(/./g, '$&$&') : c.slice(1, 7)
+  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
+}
+/** Mix toward white until the colour clears the floor; the colour itself, in
+ *  the spelling it came in, when it already does. */
+function hsLiftToFloor(c) {
+  const rgb = hsRgbOf(c)
+  if (hsLum(rgb) >= HS_UNDERLAY_MIN_LUM) return c
+  let lo = 0
+  let hi = 1
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2
+    if (hsLum(rgb.map((v) => v + (255 - v) * mid)) >= HS_UNDERLAY_MIN_LUM) hi = mid
+    else lo = mid
+  }
+  return `#${rgb
+    .map((v) =>
+      Math.ceil(v + (255 - v) * hi)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`
+}
 function hsNameColourDecl(colour) {
   const c = typeof colour === 'string' ? colour.trim() : ''
-  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${c};` : ''
+  return HS_NAME_COLOUR_RE.test(c) ? `--hs-name-c:${hsLiftToFloor(c)};` : ''
 }
 
 /** In-place DOM application shared by updateHsPaintsInPlace (main.js) — adds

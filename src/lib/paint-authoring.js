@@ -32,6 +32,7 @@ import {
   isPlainObject, isIntInRange, isNumInRange, safeSpeed,
 } from './paint-core.js'
 import { validateSceneSpec } from './scene-spec.js'
+import { STV_PAINT_IMG } from '../chat/stv-paint-css.js'
 import {
   MAX_EFFECTS, EFFECTS, EFFECT_IDS,
   BASE_TYPES, GLOW_STRENGTHS, MIN_STOPS, MAX_STOPS,
@@ -311,12 +312,34 @@ function validateFillStop(s, layerPath, j, errors) {
   if (s.hint !== undefined && !isStepInRange(s.hint, 0, 100, 0.1)) errors.push(`${path}.hint must be a number 0-100 (0.1 step)`)
 }
 
+// An image layer is a 7TV paint picture with its fallback stops (1-4): the stops
+// are what an old compiler draws for the unknown kind and what the contrast
+// floor scores. Nothing else about a layer applies to a picture.
+const IMAGE_LAYER_KEYS = new Set(['kind', 'src', 'anim', 'stops', 'motion'])
+const IMAGE_MAX_STOPS = 4
+
+function validateImageLayer(layer, path, errors) {
+  for (const k of Object.keys(layer)) {
+    if (IMAGE_LAYER_KEYS.has(k)) continue
+    errors.push(['tilt', 'repeat', 'tile', 'shape', 'center'].includes(k) ? `${path}: an image layer takes no ${k}` : `${path}: unknown key "${k}"`)
+  }
+  if (typeof layer.src !== 'string' || !STV_PAINT_IMG.test(layer.src)) errors.push(`${path}.src must be a 7tv paint image (https://cdn.7tv.app/paint/...)`)
+  if (typeof layer.anim !== 'boolean') errors.push(`${path}.anim must be a boolean`)
+  if (layer.motion !== null && layer.motion !== undefined) errors.push(`${path}: an image layer cannot move`)
+  if (!Array.isArray(layer.stops) || layer.stops.length < MIN_FILL_STOPS || layer.stops.length > IMAGE_MAX_STOPS) {
+    errors.push(`${path}.stops must be an array of ${MIN_FILL_STOPS}-${IMAGE_MAX_STOPS} fallback stops`)
+  } else {
+    layer.stops.forEach((s, j) => validateFillStop(s, path, j, errors))
+  }
+}
+
 function validateFillLayer(layer, i, errors) {
   const path = `fill.layers[${i}]`
   if (!isPlainObject(layer)) { errors.push(`${path} must be an object`); return }
+  if (layer.kind === 'image') { validateImageLayer(layer, path, errors); return }
   const allowed = new Set(['kind', 'tilt', 'stops', 'repeat', 'tile', 'shape', 'center', 'motion'])
   for (const k of Object.keys(layer)) if (!allowed.has(k)) errors.push(`${path}: unknown key "${k}"`)
-  if (!FILL_LAYER_KINDS.has(layer.kind)) errors.push(`${path}.kind must be one of linear|radial|conic`)
+  if (!FILL_LAYER_KINDS.has(layer.kind)) errors.push(`${path}.kind must be one of linear|radial|conic|image`)
   if (layer.tilt !== undefined && !isStepInRange(layer.tilt, -180, 180, 0.5)) errors.push(`${path}.tilt must be a number -180..180 (0.5 step)`)
 
   if (!Array.isArray(layer.stops) || layer.stops.length < MIN_FILL_STOPS || layer.stops.length > MAX_FILL_STOPS) {
@@ -389,6 +412,7 @@ export function validateFill(fill, opts = {}) {
   } else {
     const before = errors.length
     fill.layers.forEach((layer, i) => validateFillLayer(layer, i, errors))
+    if (fill.layers.filter(l => l?.kind === 'image').length > 1) errors.push('fill has more than one image layer, at most 1')
     const total = fill.layers.reduce((n, l) => n + (Array.isArray(l?.stops) ? l.stops.length : 0), 0)
     if (total > MAX_FILL_TOTAL_STOPS) errors.push(`fill has ${total} stops across its layers, at most ${MAX_FILL_TOTAL_STOPS}`)
     layersOk = errors.length === before
@@ -450,7 +474,8 @@ function validateOutline(outline, errors) {
  *  let the shadow show over the fill instead of under it. */
 function fillIsOpaque(fill) {
   if (fill.breathe) return false
-  return fill.layers.every(l => Array.isArray(l?.stops) && !(l.tile && !l.repeat) && l.stops.every(s => {
+  // an image can be transparent anywhere, whatever its fallback stops say
+  return fill.layers.every(l => l?.kind !== 'image' && Array.isArray(l?.stops) && !(l.tile && !l.repeat) && l.stops.every(s => {
     const c = typeof s?.color === 'string' ? s.color.toLowerCase() : ''
     return c.length === 7 || (c.length === 9 && c.endsWith('ff'))
   }))

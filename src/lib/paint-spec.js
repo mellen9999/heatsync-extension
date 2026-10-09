@@ -86,7 +86,7 @@ import {
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
   crowdTierRules, tierTimings, sceneBoxCounts, COMPOSITED_ANIM_PREFIX,
 } from './scene-spec.js'
-import { stvShadowList } from '../chat/stv-paint-css.js'
+import { stvShadowList, stvStillOf, STV_PAINT_IMG } from '../chat/stv-paint-css.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
 
@@ -342,6 +342,9 @@ function normalizeFillForHash(fill) {
       shape: l?.shape,
       center: l?.center ? { x: l.center.x, y: l.center.y } : null,
       motion: l?.motion ? { type: l.motion.type, speed: l.motion.speed, reverse: !!l.motion.reverse, loop: l.motion.loop } : null,
+      // image fills only; undefined drops out, so no other layer's hash moves
+      src: l?.kind === 'image' ? l.src : undefined,
+      anim: l?.kind === 'image' ? !!l.anim : undefined,
     })) : [],
     hue: fill.hue ? { speed: fill.hue.speed } : null,
     breathe: fill.breathe ? { speed: fill.breathe.speed, depth: fill.breathe.depth } : null,
@@ -350,7 +353,7 @@ function normalizeFillForHash(fill) {
 
 // ── fill validation ──────────────────────────────────────────────────────
 
-const FILL_LAYER_KINDS = new Set(['linear', 'radial', 'conic'])
+const FILL_LAYER_KINDS = new Set(['linear', 'radial', 'conic', 'image'])
 const FILL_TILE_UNITS = new Set(['name', 'px'])
 const FILL_MOTION_TYPES = new Set(['flow', 'spin'])
 
@@ -1103,8 +1106,12 @@ function fillCenter(layer) {
  *    angular tile period has no rest-frame form. Renders as a plain
  *    (non-tiled) gradient, and flows by the box (fillBoxOf).
  */
-function fillLayerCss(layer, globalAngle) {
-  const kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
+function fillLayerCss(layer, globalAngle, useStill = false) {
+  let kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
+  // The allowlist is re-checked here, not just at save: the compiler also draws
+  // stored specs. A src that fails it draws the layer's fallback stops instead.
+  const src = kind === 'image' ? fillImageSrc(layer) : null
+  if (kind === 'image' && !src) kind = 'linear'
   const stops = sortedFillStops(layer?.stops)
   const stopsCss = stops.length ? fillStopsCss(stops) : '#e4e4e4 0%, #e4e4e4 100%'
   const direction = safeFillAngle(Number(globalAngle) + safeFillTilt(layer?.tilt))
@@ -1113,6 +1120,20 @@ function fillLayerCss(layer, globalAngle) {
   const unit = tile && FILL_TILE_UNITS.has(tile.unit) ? tile.unit : null
   const tileBounds = unit === 'px' ? [MIN_FILL_TILE_PX, MAX_FILL_TILE_PX] : [MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME]
   const size = unit && isNumInRange(tile.size, tileBounds[0], tileBounds[1]) ? tile.size : null
+
+  if (kind === 'image') {
+    // The url sits in the CLASS rule, so every name wearing this paint shares one
+    // decoded image. An animated one has a first frame beside it (stvStillOf);
+    // an image 7TV serves static has none, so only `anim` ever asks for it. A
+    // paint with no still on file falls back to its stops, which is also what an
+    // old compiler draws for the whole layer.
+    let over
+    if (layer.anim === true) {
+      const still = stvStillOf(src)
+      over = still ? `url("${still}")` : `linear-gradient(${direction}deg, ${stopsCss})`
+    }
+    return { image: useStill && over ? over : `url("${src}")`, size: '100% 100%', position: '0% 0%', repeat: 'no-repeat', over }
+  }
 
   if (kind === 'conic') {
     const { x, y } = fillCenter(layer)
@@ -1142,6 +1163,11 @@ function fillLayerCss(layer, globalAngle) {
     return { image: `repeating-linear-gradient(${direction}deg, ${fillNameStopsCss(stops, size)})`, size: null, position: null }
   }
   return { image: `linear-gradient(${direction}deg, ${stopsCss})`, size: null, position: null }
+}
+
+/** An image layer's src when it is a 7TV paint image, else null. */
+function fillImageSrc(layer) {
+  return typeof layer?.src === 'string' && STV_PAINT_IMG.test(layer.src) ? layer.src : null
 }
 
 /** `underlay:'name'` — only meaningful over a fill (the validator enforces it;
@@ -1248,8 +1274,8 @@ export function chainedTextShadows(shadows) {
 const SHADOW_REPAINT_SIGS = /:(transform|shadow)$/
 
 /**
- * Extra budget weight a paint's shadows cost, on top of what its animations
- * measure: when the shadows are a `filter` (the rest-frame form, used whenever
+ * Extra budget weight a paint costs on top of what its animations measure.
+ * Its shadows: when the shadows are a `filter` (the rest-frame form, used whenever
  * the fill does not move) sitting under a running self/letter motion, the
  * browser re-runs the filtered name each frame; else 0. A moving fill puts its
  * shadows in a static text-shadow on the host instead, and a static paint runs
@@ -1260,11 +1286,24 @@ const SHADOW_REPAINT_SIGS = /:(transform|shadow)$/
  * shadow every frame. Measured (scripts/paint-perf.mjs --shadows, letter wave,
  * compositor draw per 3s): 10 shadows = 2408 vs 185 with one, so a flat +1 priced
  * ten like one. ceil(n / 3), capped at MAX_ANIMATED_LAYERS: 1-3 shadows 1,
- * 4-6 2, 7-10 3.
+ * 4-6 2, 7-10 3. An animated image fill adds IMAGE_PAINT_WEIGHT, and the sum is
+ * capped the same way (the image alone already spends the cap).
  * @param {object} spec
  * @returns {0|1|2|3}
  */
 export function paintExtraWeight(spec) {
+  return Math.min(MAX_ANIMATED_LAYERS, animatedImageWeight(spec) + shadowFilterWeight(spec))
+}
+
+/** IMAGE_PAINT_WEIGHT when the fill carries an animated image (decoded and
+ *  composited through the glyph mask every frame, whatever else it does), else
+ *  0: a still image is painted once, like any other static fill. */
+function animatedImageWeight(spec) {
+  const layers = isPlainObject(spec?.fill) && Array.isArray(spec.fill.layers) ? spec.fill.layers : []
+  return layers.some(l => l?.kind === 'image' && l.anim === true && fillImageSrc(l)) ? IMAGE_PAINT_WEIGHT : 0
+}
+
+function shadowFilterWeight(spec) {
   if (!shadowsOf(spec).length || planCompositedFill(spec.fill, hasUnderlay(spec))) return 0
   const effects = Array.isArray(spec.effects) ? spec.effects : []
   if (filterHostile(effects)) return 0 // compiles without the shadows
@@ -1280,24 +1319,30 @@ export function paintExtraWeight(spec) {
  * Returns { decl, isClipText: true } — the same shape buildBaseCss returns,
  * so it drops into the exact spot `baseCss` already occupies.
  */
-function buildFillBaseCss(fill, underlay = false) {
+function buildFillBaseCss(fill, underlay = false, useStill = false) {
   const angle = safeFillAngle(fill?.angle)
   const layers = (Array.isArray(fill?.layers) ? fill.layers : [])
     .filter(isPlainObject)
     .slice(0, MAX_FILL_LAYERS)
   if (!layers.length) return { decl: 'color:#e4e4e4;', isClipText: false }
 
-  const built = [...layers].reverse().map(l => fillLayerCss(l, angle))
+  const built = [...layers].reverse().map(l => fillLayerCss(l, angle, useStill))
   const images = built.map(b => b.image).join(', ')
   const sizes = built.map(b => b.size || 'auto').join(', ')
   const positions = built.map(b => b.position || '0% 0%').join(', ')
+  // Only an image layer asks for a repeat (no-repeat), so a gradient-only fill
+  // keeps the rule it always had.
+  const repeats = built.some(b => b.repeat) ? `background-repeat:${built.map(b => b.repeat || 'repeat').join(', ')};` : ''
   return {
+    // Same list with each animated image swapped for its first frame, for the
+    // mobile budget's `.hs-paint-over-budget` rule; null when nothing animates.
+    overImages: !useStill && built.some(b => b.over) ? built.map(b => b.over || b.image).join(', ') : null,
     // The underlay is the name's own colour under every layer, clipped to the
     // glyphs with them, so a transparent stop shows the chatter's colour the
     // way 7TV's does. `--hs-name-c` and not currentColor: this rule makes the
     // text transparent, and a painted name carries no inline colour of its own
     // (names/name-el.js NAME_COLOUR_VAR). Without the property it paints nothing.
-    decl: `background-image:${images};background-size:${sizes};background-position:${positions};`
+    decl: `background-image:${images};background-size:${sizes};background-position:${positions};${repeats}`
       + (underlay ? `background-color:${NAME_COLOUR};` : '')
       + `-webkit-background-clip:text;background-clip:text;color:transparent;`,
     isClipText: true,
@@ -1387,6 +1432,11 @@ function fillMotion(m) {
   return { type: m.type, speed: safeSpeed(m.speed), reverse: m.reverse === true, loop: m.loop === 'bounce' ? 'bounce' : 'wrap' }
 }
 
+/** A layer's motion as the compiler will move it: an image layer never moves. */
+function fillLayerMotion(layer) {
+  return layer?.kind === 'image' ? null : fillMotion(layer?.motion)
+}
+
 /** A layer's tile, re-clamped: `{unit:'name'|'px', size}` or null. */
 function fillTile(layer) {
   if (layer?.repeat !== true || !isPlainObject(layer.tile)) return null
@@ -1418,7 +1468,7 @@ export function motionGroupKey(m) {
  */
 function fillBoxOf(layer, angle) {
   const kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
-  const motion = fillMotion(layer?.motion)
+  const motion = fillLayerMotion(layer)
   if (!motion) return { key: 'static', type: 'static', motion: null }
   const mk = motionGroupKey(motion)
   const theta = safeFillAngle(angle + safeFillTilt(layer?.tilt))
@@ -1460,7 +1510,7 @@ function planCompositedFill(fill, underlay = false) {
   const breathe = isPlainObject(fill.breathe)
     ? { speed: safeSpeed(fill.breathe.speed), depth: isNumInRange(fill.breathe.depth, 0.1, 0.9) ? fill.breathe.depth : 0.5 }
     : null
-  const firstMoving = layers.findIndex(l => fillMotion(l.motion))
+  const firstMoving = layers.findIndex(l => fillLayerMotion(l))
   if (firstMoving < 0 && !hue && !breathe) return null
   // A modulator has to reach EVERY layer, so under one nothing can stay on the
   // name; otherwise the layers below the lowest mover are painted once, on the
@@ -1500,6 +1550,13 @@ function fillBackgroundDecl(parts) {
     + `background-repeat:${top.map(p => p.repeat || 'repeat').join(', ')};`
 }
 
+/** The `background-image` list of a set of layers with each animated image
+ *  swapped for its first frame, for the over-budget rule; null when none is. */
+function fillOverImages(parts) {
+  if (!parts.some(p => p.over)) return null
+  return [...parts].reverse().map(p => p.over || p.image).join(', ')
+}
+
 /** One linear layer in a flow strip's own frame: the strip is already rotated
  *  onto the angle, so the gradient runs along local x at 90deg, one tile wide. */
 function stripLayerCss(layer, tile) {
@@ -1520,6 +1577,7 @@ function stripLayerCss(layer, tile) {
  *  the clip-text frame's, whatever the box around them is doing. */
 function placedLayerCss(layer, angle, ox, oy, repeat = 'repeat') {
   const b = fillLayerCss(layer, angle)
+  if (b.repeat) return { image: b.image, size: `${FW} ${FH}`, position: `${ox} ${oy}`, repeat: b.repeat, over: b.over }
   if (b.size) {
     // A px tile (radial dots): the rest frame puts it at `x% y%` of the NAME,
     // which is (box - tile) * x%, resolved here against the name's own size.
@@ -1630,7 +1688,7 @@ function fillBoxCss(b, k, angle, hash) {
       + `animation-delay:${syncDelayCalc(period)};`
       + `transform:${a};`
   }
-  return { decl: `position:absolute;${geom}${fillBackgroundDecl(parts)}${anim}`, keyframes }
+  return { decl: `position:absolute;${geom}${fillBackgroundDecl(parts)}${anim}`, keyframes, over: fillOverImages(parts) }
 }
 
 /**
@@ -1657,6 +1715,9 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   const hostBg = statics.length
     ? `${fillBackgroundDecl(statics)}-webkit-background-clip:text;background-clip:text;`
     : 'background:none;'
+  // Animated images the mobile budget has stopped draw their first frame. The
+  // rule exists once per class, so no name carries one.
+  const hostOver = fillOverImages(statics)
   // With an underlay the glyph under the moving wrap is the name's colour, so
   // wherever the layers are transparent that colour is what shows — the same
   // pixels the rest frame's background-color gives.
@@ -1669,7 +1730,8 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   // glyphs), and the underlay moves back where the rest frame has it: a
   // clip-text background-color rather than the glyph's own fill.
   const outlined = !!outlineCss(spec.outline)
-  let css = outlined && underlay
+  let css = hostOver ? `.hs-paint-over-budget${host}{background-image:${hostOver};}` : ''
+  css += outlined && underlay
     ? `${host}{position:relative;isolation:isolate;background:none;background-color:${NAME_COLOUR};-webkit-background-clip:text;background-clip:text;color:transparent;}`
     : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? NAME_COLOUR : 'transparent'};}`
 
@@ -1714,6 +1776,7 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   plan.boxes.forEach((b, k) => {
     const out = fillBoxCss(b, k, plan.angle, hash)
     css += `${gate} i.${FILL_LAYER_CLASS}${k}{${out.decl}}`
+    if (out.over) css += `.hs-paint-over-budget${gate} i.${FILL_LAYER_CLASS}${k}{background-image:${out.over};}`
     keyframes += out.keyframes
   })
 
@@ -2885,7 +2948,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // occupies — every downstream branch (letter-split spans, the scene rim,
   // glow) treats it exactly like any other clip-text base. Its motion is
   // compiled separately, behind the mask (buildFillLayersCss, below).
-  const baseCss = hasFill ? buildFillBaseCss(spec.fill, hasUnderlay(spec)) : (paintEffect ? null : buildBaseCss(base, stops))
+  const baseCss = hasFill ? buildFillBaseCss(spec.fill, hasUnderlay(spec), !!opts.static) : (paintEffect ? null : buildBaseCss(base, stops))
 
   // display:inline-block on BOTH: the host so the planes have a box to be
   // absolute against, the name box so a motion transform has something with
@@ -3054,6 +3117,11 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // everything above: without the class the name renders the clip-text rest
   // frame just compiled. Static mode moves nothing and emits none of it.
   if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter, shadows)
+
+  // An animated image fill, once the mobile budget has stopped the name: the
+  // first frame, from one rule per class (see fillLayerCss). Later in the sheet
+  // and one class more specific than the rest frame it overrides.
+  if (baseCss?.overImages) css += `.hs-paint-over-budget${paintTarget}{background-image:${baseCss.overImages};}`
 
   // Outline — one inherited stroke on the element that holds the glyphs, in
   // BOTH renders, so static, paused and masked all keep it (it is raster-once,

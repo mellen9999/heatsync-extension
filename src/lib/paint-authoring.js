@@ -38,6 +38,8 @@ import {
   MIN_FILL_LAYERS, MAX_FILL_LAYERS, MIN_FILL_STOPS, MAX_FILL_STOPS, MAX_FILL_TOTAL_STOPS,
   MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX,
   MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, OUTLINE_WIDTH_STEP,
+  MIN_SHADOWS, MAX_SHADOWS, SHADOW_POS_LIMIT, SHADOW_POS_STEP, MAX_SHADOW_BLUR, SHADOW_BLUR_STEP,
+  filterHostile, compositedFillPlan,
   FILL_LAYER_KINDS, FILL_TILE_UNITS, FILL_MOTION_TYPES,
   isFillColor, repairStopCollisions, upgradeSpec, motionGroupKey,
   safeAngle, upgradePan, baseAsFillLayer,
@@ -450,6 +452,50 @@ function validateOutline(outline, errors) {
   if (!isFillColor(outline.color)) errors.push('outline.color must match #rrggbb or #rrggbbaa')
 }
 
+/** Every stop of every layer is fully opaque, every layer covers the whole name
+ *  (a tile that does not repeat leaves the rest bare), and nothing modulates
+ *  the fill's opacity: no glyph pixel is ever seen through the fill. A moving
+ *  fill's shadows are a text-shadow on the host, which paints IN FRONT of a
+ *  clip-text layer left on the host, so one see-through layer anywhere would
+ *  let the shadow show over the fill instead of under it. */
+function fillIsOpaque(fill) {
+  if (fill.breathe) return false
+  return fill.layers.every(l => Array.isArray(l?.stops) && !(l.tile && !l.repeat) && l.stops.every(s => {
+    const c = typeof s?.color === 'string' ? s.color.toLowerCase() : ''
+    return c.length === 7 || (c.length === 9 && c.endsWith('ff'))
+  }))
+}
+
+function validateShadows(spec, errors) {
+  const list = spec.shadows
+  if (!Array.isArray(list) || list.length < MIN_SHADOWS || list.length > MAX_SHADOWS) {
+    errors.push(`shadows must be an array of ${MIN_SHADOWS}-${MAX_SHADOWS} shadows`)
+    return
+  }
+  list.forEach((h, i) => {
+    const at = `shadows[${i}]`
+    if (!isPlainObject(h)) { errors.push(`${at} must be an object`); return }
+    for (const k of Object.keys(h)) if (!['x', 'y', 'blur', 'color'].includes(k)) errors.push(`${at}: unknown key "${k}"`)
+    for (const k of ['x', 'y']) {
+      if (!isStepInRange(h[k], -SHADOW_POS_LIMIT, SHADOW_POS_LIMIT, SHADOW_POS_STEP)) {
+        errors.push(`${at}.${k} must be ${-SHADOW_POS_LIMIT}..${SHADOW_POS_LIMIT} in ${SHADOW_POS_STEP} steps`)
+      }
+    }
+    if (!isStepInRange(h.blur, 0, MAX_SHADOW_BLUR, SHADOW_BLUR_STEP)) errors.push(`${at}.blur must be 0-${MAX_SHADOW_BLUR} in ${SHADOW_BLUR_STEP} steps`)
+    if (!isFillColor(h.color)) errors.push(`${at}.color must match #rrggbb or #rrggbbaa`)
+  })
+  if (!isPlainObject(spec.fill)) { errors.push('shadows require fill'); return }
+  if (filterHostile(spec.effects)) errors.push('shadows cannot be combined with ripple or tumble (they need the name\'s filter)')
+  // Under a moving fill the shadows are a text-shadow on the host glyphs, which
+  // shows through any transparent part of the fill (a filter would not).
+  if (spec.underlay !== 'name' && !fillIsOpaque(spec.fill)) {
+    errors.push('shadows over a transparent fill need underlay: name, or make every stop opaque')
+  }
+  // With an outline the mounted fill sits behind the host text (see
+  // buildFillLayersCss), where a text-shadow would land on top of it.
+  if (isPlainObject(spec.outline) && compositedFillPlan(spec)) errors.push('shadows with an outline need a fill that does not move')
+}
+
 /**
  * Validate a paint spec against v1 schema + safety rules.
  * @param {*} spec
@@ -631,6 +677,7 @@ export function validatePaintSpec(spec, opts = {}) {
     else if (!isPlainObject(spec.fill)) errors.push('underlay requires fill')
   }
   if (spec.outline !== null && spec.outline !== undefined) validateOutline(spec.outline, errors)
+  if (spec.shadows !== null && spec.shadows !== undefined) validateShadows(spec, errors)
 
   // ── glow ──
   if (spec.glow !== null && spec.glow !== undefined) {
@@ -847,7 +894,20 @@ export function withLegacyShadow(spec) {
  * projection lying about its fill.
  */
 export function withLegacyProjections(spec) {
-  return withLegacyShadow(canonicalFillSpec(spec))
+  return withLegacyGlow(withLegacyShadow(canonicalFillSpec(spec)))
+}
+
+/**
+ * An old extension has never heard of `shadows`, so a spec that has them also
+ * stores a `glow` in the first shadow's colour — the nearest thing it can draw.
+ * The current compiler ignores `glow` whenever shadows exist, so this never
+ * shows twice. Re-derived on every save, like the legacy shadow, so it cannot
+ * go stale; a spec without usable shadows is returned untouched.
+ */
+export function withLegacyGlow(spec) {
+  const first = Array.isArray(spec?.shadows) ? spec.shadows[0] : null
+  if (!isPlainObject(spec) || !isPlainObject(first) || !isFillColor(first.color)) return spec
+  return { ...spec, glow: { color: first.color.slice(0, 7).toLowerCase(), strength: Number(first.blur) > 4 ? 2 : 1 } }
 }
 
 /**

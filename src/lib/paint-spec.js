@@ -191,6 +191,16 @@ export const MIN_OUTLINE_WIDTH = 0.25
 export const MAX_OUTLINE_WIDTH = 2
 export const OUTLINE_WIDTH_STEP = 0.25
 
+/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px in 0.5
+ *  steps, blur 0..8px in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
+ *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. */
+export const MIN_SHADOWS = 1
+export const MAX_SHADOWS = 10
+export const SHADOW_POS_LIMIT = 60
+export const SHADOW_POS_STEP = 0.5
+export const MAX_SHADOW_BLUR = 8
+export const SHADOW_BLUR_STEP = 0.1
+
 
 // ── fill colour + contrast (alpha-aware) ────────────────────────────────────
 
@@ -302,6 +312,9 @@ function normalizeForHash(spec) {
     // Absent stays undefined, so a paint without them keeps its hash.
     underlay: spec?.underlay === 'name' ? 'name' : undefined,
     outline: isPlainObject(spec?.outline) ? { width: spec.outline.width, color: spec.outline.color } : undefined,
+    shadows: Array.isArray(spec?.shadows) && spec.shadows.length
+      ? spec.shadows.map(h => ({ x: h?.x, y: h?.y, blur: h?.blur, color: h?.color }))
+      : undefined,
   }
 }
 
@@ -1138,6 +1151,62 @@ function outlineCss(outline) {
   return `-webkit-text-stroke:${fnum(w)}px ${outline.color.toLowerCase()};paint-order:stroke fill;`
 }
 
+/** The effects a `filter` on the name cannot live with: ripple ANIMATES
+ *  `filter` on the glyph spans (a static one would be clobbered every frame) and
+ *  tumble needs `transform-style: preserve-3d`, which a filter flattens. The
+ *  scene rim and `shadows` both put a filter on the name, so both ask here.
+ *  (`hue` also animates `filter`, but it is a paint-slot effect a fill replaces,
+ *  and the stored legacy copy of one never compiles under a fill.)
+ *  @param {object[]} effects a spec's effects, or a compile's motion list */
+export function filterHostile(effects) {
+  return Array.isArray(effects) && effects.some(e => e?.id === 'ripple' || e?.id === 'tumble')
+}
+
+const clampStep = (v, lo, hi, step) => {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return null
+  const c = Math.min(hi, Math.max(lo, Math.round(n / step) * step))
+  return Math.round(c * 10) / 10
+}
+
+/** A spec's shadows as the compiler will draw them: re-clamped like every other
+ *  knob, entries with a bad colour dropped, at most MAX_SHADOWS. [] for none. */
+function shadowsOf(spec) {
+  if (!isPlainObject(spec?.fill) || !Array.isArray(spec.shadows)) return []
+  const out = []
+  for (const h of spec.shadows.slice(0, MAX_SHADOWS)) {
+    if (!isPlainObject(h) || !isFillColor(h.color)) continue
+    const x = clampStep(h.x, -SHADOW_POS_LIMIT, SHADOW_POS_LIMIT, SHADOW_POS_STEP)
+    const y = clampStep(h.y, -SHADOW_POS_LIMIT, SHADOW_POS_LIMIT, SHADOW_POS_STEP)
+    const blur = clampStep(h.blur, 0, MAX_SHADOW_BLUR, SHADOW_BLUR_STEP)
+    if (x === null || y === null || blur === null) continue
+    out.push({ x, y, blur, color: h.color.toLowerCase() })
+  }
+  return out
+}
+
+/** Motion effects whose keyframes force the filter under them to re-run every
+ *  frame: a transform on the name or its letters, or a text-shadow animation. */
+const SHADOW_REPAINT_SIGS = /:(transform|shadow)$/
+
+/**
+ * Extra budget weight a paint's shadows cost, on top of what its animations
+ * measure: 1 when the shadows are a `filter` (the rest-frame form, used whenever
+ * the fill does not move) sitting under a running self/letter motion, which
+ * makes the browser re-rasterise the filtered name each frame; else 0. A moving
+ * fill puts its shadows in a static text-shadow on the host instead, and a
+ * static paint runs nothing, so both are free. Read once per paint hash at
+ * compile time (paint-cosmetics), never per element.
+ * @param {object} spec
+ * @returns {0|1}
+ */
+export function paintExtraWeight(spec) {
+  if (!shadowsOf(spec).length || planCompositedFill(spec.fill, hasUnderlay(spec))) return 0
+  const effects = Array.isArray(spec.effects) ? spec.effects : []
+  if (filterHostile(effects)) return 0 // compiles without the shadows
+  return effects.some(e => SHADOW_REPAINT_SIGS.test(EFFECTS[e?.id]?.sig || '')) ? 1 : 0
+}
+
 /**
  * Build the CSS for a `fill` block's rest frame — a static, multi-layer
  * clip-text paint. Layers are stored bottom-to-top (the plan's own order,
@@ -1507,8 +1576,9 @@ function fillBoxCss(b, k, angle, hash) {
  * @param {string} nameBox the compiled `${selector}>.hs-name`
  * @param {string} hash
  * @param {boolean} perLetter the name is split into one `>span` per glyph
+ * @param {object[]} shadows the paint's resolved shadows (shadowsOf), or []
  */
-function buildFillLayersCss(spec, nameBox, hash, perLetter) {
+function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   const underlay = hasUnderlay(spec)
   const plan = planCompositedFill(spec.fill, underlay)
   if (!plan) return ''
@@ -1537,6 +1607,28 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter) {
   let css = outlined && underlay
     ? `${host}{position:relative;isolation:isolate;background:none;background-color:${NAME_COLOUR};-webkit-background-clip:text;background-clip:text;color:transparent;}`
     : `${host}{position:relative;${outlined ? 'isolation:isolate;' : ''}${hostBg}color:${underlay ? NAME_COLOUR : 'transparent'};}`
+
+  // SHADOWS UNDER A MOVING FILL. The rest frame draws them as a `filter`
+  // (drop-shadow) on the name, which would re-run on every frame the wrap moves,
+  // on every copy of the name. The host's own text is STATIC under the
+  // compositor-moved layers, so the same list as a `text-shadow` on the host
+  // costs nothing per frame: the wrap paints above it, and where the mask
+  // leaves the glyph the shadow is what shows, like the drop-shadow.
+  //
+  // THE BLUR IS DOUBLED. drop-shadow()'s length is the Gaussian's standard
+  // deviation (Filter Effects), text-shadow's is a box-shadow radius, which is
+  // twice that. Measured in chromium (scripts/paint-perf.mjs --shadows): the same
+  // number in both draws a text-shadow half as soft; 2x it matches the filter to
+  // the pixel at every blur 2..8. The validator makes the host's text invisible
+  // under the fill (an opaque fill or an underlay), the one place the two forms
+  // differ.
+  //
+  // NOT WITH AN OUTLINE: there the wrap sinks BEHIND the host text (z-index:-1,
+  // above), so a text-shadow on it would land on top of the fill. The filter is
+  // simply dropped for the mounted name; save refuses the pair.
+  if (shadows.length) {
+    css += `${host}{filter:none;${outlined ? '' : `text-shadow:${stvShadowList(shadows.map(h => ({ ...h, blur: Math.round(h.blur * 20) / 10 })), 'text')};`}}`
+  }
 
   // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws
   // outside its letterform — a glow's text-shadow, a scene's rim drop-shadow,
@@ -2674,6 +2766,10 @@ export function compilePaintCss(spec, selector, opts = {}) {
     layerBudget -= 1
   }
 
+  // A name wearing shadows takes them as its one filter; ripple and tumble cannot
+  // live under one (filterHostile), so they win and the shadows are not drawn.
+  const shadows = filterHostile(motionEffects) ? [] : shadowsOf(spec)
+
   // ── THE SCENE IS RATE-LIMITED, NOT SLOT-LIMITED ──────────────────────────
   //
   // Scene planes no longer spend the cap, because they no longer cost what a cap
@@ -2888,7 +2984,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
   // The composited fill — gated on the runtime's mask, so this is additive to
   // everything above: without the class the name renders the clip-text rest
   // frame just compiled. Static mode moves nothing and emits none of it.
-  if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter)
+  if (hasFill && !opts.static) css += buildFillLayersCss(spec, nameBox, hash, perLetter, shadows)
 
   // Outline — one inherited stroke on the element that holds the glyphs, in
   // BOTH renders, so static, paused and masked all keep it (it is raster-once,
@@ -2901,11 +2997,19 @@ export function compilePaintCss(spec, selector, opts = {}) {
   const outline = outlineCss(spec.outline)
   if (outline) css += `${paintTarget}{${outline}}`
 
+  // Shadows — a `filter` on the glyph holder, painted once (the rest frame is
+  // static in every mode; a moving fill swaps it for a text-shadow on the
+  // mounted host, above). drop-shadow() is built from rendered alpha, so it
+  // traces a clipped glyph and paints behind it. They replace the glow and the
+  // scene rim, which would be a second text-shadow / second filter on the same
+  // name.
+  if (shadows.length) css += `${paintTarget}{filter:${stvShadowList(shadows, 'drop')};}`
+
   // Static glow — skip if neon is active and sourced the same color (neon's
   // own keyframes already carry a shadow on every frame); otherwise layer
   // the constant shadow on so it doesn't require an active effect to show.
   const hasNeon = motionEffects.some(e => e.id === 'neon')
-  if (spec.glow && !hasNeon) {
+  if (spec.glow && !hasNeon && !shadows.length) {
     css += buildGlowCss(spec.glow, selector)
   }
 
@@ -2930,7 +3034,7 @@ export function compilePaintCss(spec, selector, opts = {}) {
   if (sceneOn) {
     css += buildSceneCss(spec.scene, selector, hash, { static: !!opts.static, stillWeather, stillBackdrop })
     const clipTextFill = !!paintEffect || hasFill || base.type !== 'solid'
-    const filterHostile = motionEffects.some(e => e.id === 'ripple' || e.id === 'tumble')
+    const rimHostile = filterHostile(motionEffects)
     // An ANIMATED clip-text fill under the rim filter is the worst render
     // cell in the matrix: the gradient moves every frame beneath two stacked
     // drop-shadows, so the browser re-filters every visible copy of the name
@@ -2939,9 +3043,9 @@ export function compilePaintCss(spec, selector, opts = {}) {
     // A moving fill is a moving fill whether it composites or not: a filter
     // over it re-runs every frame it changes, on every copy of the name.
     const animatedFill = (!!paintEffect || (hasFill && !!planCompositedFill(spec.fill, hasUnderlay(spec)))) && !opts.static
-    if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon) {
+    if (sceneHasBackdrop(spec.scene) && !spec.glow && !hasNeon && !shadows.length) {
       if (!clipTextFill) css += `${selector}{${SCENE_RIM_CSS}}`
-      else if (!filterHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
+      else if (!rimHostile && !animatedFill) css += `${paintTarget}{${SCENE_RIM_FILTER_CSS}}`
     }
   }
 

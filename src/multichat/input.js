@@ -6848,7 +6848,8 @@ async function runSlashCommandWithReceipt(text, execute) {
 // parser drifting from this one is exactly how a receipt ends up keyed to
 // the wrong scope. Returns null for non-commands and explicit pass-through.
 function resolveSlashCmd(text) {
-  const parts = text.match(/^\/(\w+|\?)\s*(.*)$/)
+  // [\s\S], not `.`: a pasted multi-line post is one command, not an orphan slash.
+  const parts = text.match(/^\/(\w+|\?)\s*([\s\S]*)$/)
   if (!parts) return null
   let [, cmd, rest] = parts
   cmd = cmd.toLowerCase()

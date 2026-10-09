@@ -86,6 +86,7 @@ import {
   sceneHasBackdrop, SCENE_RIM_CSS, SCENE_RIM_FILTER_CSS, sceneAnimationCost,
   crowdTierRules, tierTimings, sceneBoxCounts, COMPOSITED_ANIM_PREFIX,
 } from './scene-spec.js'
+import { stvShadowList } from '../chat/stv-paint-css.js'
 
 // ── enums ──────────────────────────────────────────────────────────────────
 
@@ -102,6 +103,9 @@ const MAX_EFFECTS = 3
 // animation budget in chat/paint-cosmetics.js be a constant again: that
 // constant went stale twice because the unit kept moving underneath it.
 export const MAX_ANIMATED_LAYERS = 3
+// what one animated image paint charges the mobile budget: the whole cap, since
+// it decodes and composites like a paint that spent every layer
+export const IMAGE_PAINT_WEIGHT = MAX_ANIMATED_LAYERS
 
 /**
  * Hard ceiling on plane boxes in one painted name.
@@ -2511,7 +2515,7 @@ function glowShadowValue(glow) {
   if (!glow || !HEX_RE.test(glow.color)) return ''
   const color = safeHex(glow.color)
   const [r1, r2] = glow.strength === 2 ? [10, 26] : [6, 14]
-  return `0 0 ${r1}px ${color}cc, 0 0 ${r2}px ${color}66`
+  return stvShadowList([{ x: 0, y: 0, blur: r1, color: `${color}cc` }, { x: 0, y: 0, blur: r2, color: `${color}66` }], 'text')
 }
 
 function buildGlowCss(glow, selector) {

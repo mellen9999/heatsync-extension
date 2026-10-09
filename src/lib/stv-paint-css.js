@@ -23,7 +23,7 @@
  */
 
 // every real image paint lives here; anything else never reaches url()
-const STV_PAINT_IMG = /^https:\/\/cdn\.7tv\.app\/paint\/[\w/.-]+$/
+export const STV_PAINT_IMG = /^https:\/\/cdn\.7tv\.app\/paint\/[\w/.-]+$/
 
 /** 7TV packs RGBA into a signed int32: (r<<24)|(g<<16)|(b<<8)|a. */
 export function stvRgba(n) {
@@ -31,9 +31,36 @@ export function stvRgba(n) {
   return `rgba(${(v >>> 24) & 255}, ${(v >>> 16) & 255}, ${(v >>> 8) & 255}, ${((v & 255) / 255).toFixed(3)})`
 }
 
+/** A 7TV int → `#rrggbbaa`, lowercase. */
+export function stvHex(n) {
+  return `#${((Number(n) | 0) >>> 0).toString(16).padStart(8, '0')}`
+}
+
 const stvNum = v => (Number.isFinite(Number(v)) ? Number(v) : 0)
 // 7TV's own arithmetic, float noise included (0.07*100 is 7.000000000000001 —
 // valid CSS, and the same string 7TV emits)
+
+/**
+ * One shadow list, two spellings: 'drop' is a `filter` value (shadows the
+ * painted pixels, glyph + gradient), 'text' a `text-shadow` value (glyph only,
+ * free per frame; a zero length drops its unit, the spelling the glow goldens
+ * pin). Items are {x, y, blur, color}, color any css colour string.
+ */
+export function stvShadowList(list, mode) {
+  const parts = (Array.isArray(list) ? list : []).map(s => {
+    const len = n => (mode === 'text' && stvNum(n) === 0 ? '0' : `${stvNum(n)}px`)
+    const v = `${len(s?.x)} ${len(s?.y)} ${len(s?.blur)} ${s?.color}`
+    return mode === 'drop' ? `drop-shadow(${v})` : v
+  })
+  return parts.join(mode === 'drop' ? ' ' : ', ')
+}
+
+/** The first frame of an animated paint image (`1x_static.webp` sits beside `1x.webp`), else null. */
+export function stvStillOf(url) {
+  const u = String(url || '')
+  return u.endsWith('/1x.webp') ? `${u.slice(0, -'1x.webp'.length)}1x_static.webp` : null
+}
+
 const stvPct = at => `${stvNum(at) * 100}%`
 
 function stvGradient(paint, fn) {
@@ -62,17 +89,17 @@ export function stvPaintCss(paint) {
     const url = String(paint.image_url || '')
     if (STV_PAINT_IMG.test(url)) {
       image = `url("${url}")`
-      if (url.endsWith('/1x.webp')) still = `${url.slice(0, -'1x.webp'.length)}1x_static.webp`
+      still = stvStillOf(url)
     }
   } else {
     return { style: paint?.color ? `color:${stvRgba(paint.color)}` : '', still: null }
   }
-  const shadows = (Array.isArray(paint.shadows) ? paint.shadows : [])
-    .map(s => `drop-shadow(${stvNum(s?.x_offset)}px ${stvNum(s?.y_offset)}px ${stvNum(s?.radius)}px ${stvRgba(s?.color)})`)
+  const shadows = stvShadowList((Array.isArray(paint.shadows) ? paint.shadows : [])
+    .map(s => ({ x: s?.x_offset, y: s?.y_offset, blur: s?.radius, color: stvRgba(s?.color) })), 'drop')
   // nothing to paint at all — leave the name as it is
-  if (!image && !shadows.length) return { style: '', still: null }
+  if (!image && !shadows) return { style: '', still: null }
   let style = image ? `background-image:${image};` : ''
   style += 'background-color:currentColor;background-size:100% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent'
-  if (shadows.length) style += `;filter:${shadows.join(' ')}`
+  if (shadows) style += `;filter:${shadows}`
   return { style, still }
 }

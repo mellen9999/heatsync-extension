@@ -261,6 +261,7 @@ function checkScopeCollisions() {
     // outer scope as the lib files there, so they're checked here too.
     'paint-core.js',
     'scene-spec.js',
+    'stv-paint-css.js',
     'paint-spec.js',
     'animation-phase.js',
     // Same story: the site's gifs-tab fetch layer, multichat-only, landing in
@@ -879,16 +880,17 @@ function readMultichatModules() {
   // fill-layers.js now imports the two consts from paint-spec.js (stripExports
   // drops that import line, same as paint-spec.js's own imports of
   // paint-core.js/scene-spec.js), and glyph-mask.js's logger is `maskLog`.
+  // stv-paint-css.js (7TV paint → CSS for cosmetics.js getMcPaintStyle, and the
+  // colour/shadow helpers paint-spec builds glow on) must precede paint-spec.
+  // Every top-level name in it starts with stv, so it cannot collide here.
   for (const mod of [
     'paint-core.js',
     'scene-spec.js',
+    'stv-paint-css.js',
     'paint-spec.js',
     'animation-phase.js',
     'fill-layers.js',
     'glyph-mask.js',
-    // 7TV paint → CSS (cosmetics.js getMcPaintStyle); every top-level name
-    // in it starts with stv, so it cannot collide in this shared scope
-    'stv-paint-css.js',
   ]) {
     const p = join(SRC_DIR, 'lib', mod)
     if (existsSync(p)) {
@@ -1113,7 +1115,7 @@ function build(browser) {
     // and throws is exactly what a typeof guard cannot see.
     let libFor = readLib(extras)
     if (file === 'youtube-content.js') {
-      for (const mod of ['paint-core.js', 'scene-spec.js', 'paint-spec.js']) {
+      for (const mod of ['paint-core.js', 'scene-spec.js', 'stv-paint-css.js', 'paint-spec.js']) {
         const p = join(SRC_DIR, 'lib', mod)
         if (existsSync(p)) {
           libFor = `${libFor}\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`

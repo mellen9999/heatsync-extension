@@ -249,7 +249,7 @@ describe('the dial resolves its unit in the SHIPPED bundle', () => {
     // literal onto multiple lines (it did, once this grew past 6 entries),
     // and a plain indexOf broke on exactly that reflow.
     const libLoopRe =
-      /for \(const mod of \[\s*'paint-core\.js',\s*'scene-spec\.js',\s*'paint-spec\.js',\s*'animation-phase\.js',\s*'fill-layers\.js',\s*'glyph-mask\.js',?[\s\S]*?\]\)/
+      /for \(const mod of \[\s*'paint-core\.js',\s*'scene-spec\.js',\s*'stv-paint-css\.js',\s*'paint-spec\.js',\s*'animation-phase\.js',\s*'fill-layers\.js',\s*'glyph-mask\.js',?[\s\S]*?\]\)/
     const libLoop = BUILD.search(libLoopRe)
     expect(libLoop, 'the paint compiler lib loop moved or was renamed in build.js').toBeGreaterThan(-1)
     const mcLoop = BUILD.indexOf('const modules = CORE_MODULES')

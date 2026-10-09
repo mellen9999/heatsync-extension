@@ -8428,6 +8428,114 @@ const SCENE_WEATHERS_META = Object.fromEntries(
 
 
 
+// --- lib/stv-paint-css.js ---
+/**
+ * A 7TV paint → the inline CSS that draws it, exactly the way 7TV's own
+ * extension does (SevenTV/Extension src/composable/useCosmetics.ts +
+ * src/assets/style/global.scss), so a name looks the same in heatsync as in
+ * 7TV's chat.
+ *
+ * Measured against the whole live catalogue (1043 paints, 2026-10-09): every
+ * paint is ONE layer — a linear gradient, a radial gradient or an image — with
+ * up to 10 drop-shadows. 7TV animates nothing in CSS; a moving paint is an
+ * animated webp under url(). What had drifted from 7TV's output:
+ *   - `repeat` was dropped, so 302 paints drew one smooth fade where 7TV draws
+ *     repeating-linear/radial-gradient stripes and rings
+ *   - stops were rounded to whole percents, smearing 247 hard-stop paints
+ *   - image paints were `cover`-cropped; 7TV stretches them `100% 100%`
+ *   - no `background-color:currentColor` under the clip, so a stop range that
+ *     does not cover the name (or a paint with no stops) lost the chatter's own
+ *     colour, and a stop-less paint lost its shadows with it
+ *
+ * Pure and import-free: the extension ships this file byte for byte
+ * (src/lib/stv-paint-css.js, scripts/sync-paint-compiler.sh), pinned by
+ * tests/client/ext-paint-compiler-parity.test.js. It is concatenated into one
+ * shared scope there, so every top-level name starts with stv.
+ */
+
+// every real image paint lives here; anything else never reaches url()
+const STV_PAINT_IMG = /^https:\/\/cdn\.7tv\.app\/paint\/[\w/.-]+$/
+
+/** 7TV packs RGBA into a signed int32: (r<<24)|(g<<16)|(b<<8)|a. */
+function stvRgba(n) {
+  const v = Number(n) | 0
+  return `rgba(${(v >>> 24) & 255}, ${(v >>> 16) & 255}, ${(v >>> 8) & 255}, ${((v & 255) / 255).toFixed(3)})`
+}
+
+/** A 7TV int → `#rrggbbaa`, lowercase. */
+function stvHex(n) {
+  return `#${((Number(n) | 0) >>> 0).toString(16).padStart(8, '0')}`
+}
+
+const stvNum = v => (Number.isFinite(Number(v)) ? Number(v) : 0)
+// 7TV's own arithmetic, float noise included (0.07*100 is 7.000000000000001 —
+// valid CSS, and the same string 7TV emits)
+
+/**
+ * One shadow list, two spellings: 'drop' is a `filter` value (shadows the
+ * painted pixels, glyph + gradient), 'text' a `text-shadow` value (glyph only,
+ * free per frame; a zero length drops its unit, the spelling the glow goldens
+ * pin). Items are {x, y, blur, color}, color any css colour string.
+ */
+function stvShadowList(list, mode) {
+  const parts = (Array.isArray(list) ? list : []).map(s => {
+    const len = n => (mode === 'text' && stvNum(n) === 0 ? '0' : `${stvNum(n)}px`)
+    const v = `${len(s?.x)} ${len(s?.y)} ${len(s?.blur)} ${s?.color}`
+    return mode === 'drop' ? `drop-shadow(${v})` : v
+  })
+  return parts.join(mode === 'drop' ? ' ' : ', ')
+}
+
+/** The first frame of an animated paint image (`1x_static.webp` sits beside `1x.webp`), else null. */
+function stvStillOf(url) {
+  const u = String(url || '')
+  return u.endsWith('/1x.webp') ? `${u.slice(0, -'1x.webp'.length)}1x_static.webp` : null
+}
+
+const stvPct = at => `${stvNum(at) * 100}%`
+
+function stvGradient(paint, fn) {
+  const stops = Array.isArray(paint.stops) ? paint.stops : []
+  if (!stops.length) return ''
+  const head = fn === 'linear' ? `${stvNum(paint.angle)}deg` : (paint.shape === 'ellipse' ? 'ellipse' : 'circle')
+  const body = stops.map(s => `${stvRgba(s?.color)} ${stvPct(s?.at)}`).join(', ')
+  return `${paint.repeat ? 'repeating-' : ''}${fn}-gradient(${head}, ${body})`
+}
+
+/**
+ * @param {object|null|undefined} paint a v3 paint: {function, angle, shape,
+ *   repeat, stops[{at,color}], image_url, color, shadows[{x_offset,y_offset,radius,color}]}
+ * @returns {{style: string, still: string|null}} `style` is '' when there is
+ *   nothing to draw; `still` is the first frame of an animated image paint
+ *   (7TV publishes `1x_static.webp` beside `1x.webp`), for surfaces that
+ *   cannot afford to decode every animation at once.
+ */
+function stvPaintCss(paint) {
+  const fn = String(paint?.function || '').toLowerCase().replace('_', '-')
+  let image = ''
+  let still = null
+  if (fn === 'linear-gradient' || fn === 'radial-gradient') {
+    image = stvGradient(paint, fn.slice(0, fn.indexOf('-')))
+  } else if (fn === 'url') {
+    const url = String(paint.image_url || '')
+    if (STV_PAINT_IMG.test(url)) {
+      image = `url("${url}")`
+      still = stvStillOf(url)
+    }
+  } else {
+    return { style: paint?.color ? `color:${stvRgba(paint.color)}` : '', still: null }
+  }
+  const shadows = stvShadowList((Array.isArray(paint.shadows) ? paint.shadows : [])
+    .map(s => ({ x: s?.x_offset, y: s?.y_offset, blur: s?.radius, color: stvRgba(s?.color) })), 'drop')
+  // nothing to paint at all — leave the name as it is
+  if (!image && !shadows) return { style: '', still: null }
+  let style = image ? `background-image:${image};` : ''
+  style += 'background-color:currentColor;background-size:100% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent'
+  if (shadows) style += `;filter:${shadows}`
+  return { style, still }
+}
+
+
 // --- lib/paint-spec.js ---
 /**
  * Paint spec — structured JSON schema + compiler for animated username paints.
@@ -8508,6 +8616,7 @@ const SCENE_WEATHERS_META = Object.fromEntries(
 
 
 
+
 // ── enums ──────────────────────────────────────────────────────────────────
 
 const BASE_TYPES = new Set(['solid', 'linear', 'conic', 'repeating-linear'])
@@ -8523,6 +8632,9 @@ const MAX_EFFECTS = 3
 // animation budget in chat/paint-cosmetics.js be a constant again: that
 // constant went stale twice because the unit kept moving underneath it.
 const MAX_ANIMATED_LAYERS = 3
+// what one animated image paint charges the mobile budget: the whole cap, since
+// it decodes and composites like a paint that spent every layer
+const IMAGE_PAINT_WEIGHT = MAX_ANIMATED_LAYERS
 
 /**
  * Hard ceiling on plane boxes in one painted name.
@@ -10932,7 +11044,7 @@ function glowShadowValue(glow) {
   if (!glow || !HEX_RE.test(glow.color)) return ''
   const color = safeHex(glow.color)
   const [r1, r2] = glow.strength === 2 ? [10, 26] : [6, 14]
-  return `0 0 ${r1}px ${color}cc, 0 0 ${r2}px ${color}66`
+  return stvShadowList([{ x: 0, y: 0, blur: r1, color: `${color}cc` }, { x: 0, y: 0, blur: r2, color: `${color}66` }], 'text')
 }
 
 function buildGlowCss(glow, selector) {
@@ -12300,87 +12412,6 @@ function _resetForTests() {
     sheet?.remove?.()
     sheet = null
     nextId = 0
-}
-
-
-// --- lib/stv-paint-css.js ---
-/**
- * A 7TV paint → the inline CSS that draws it, exactly the way 7TV's own
- * extension does (SevenTV/Extension src/composable/useCosmetics.ts +
- * src/assets/style/global.scss), so a name looks the same in heatsync as in
- * 7TV's chat.
- *
- * Measured against the whole live catalogue (1043 paints, 2026-10-09): every
- * paint is ONE layer — a linear gradient, a radial gradient or an image — with
- * up to 10 drop-shadows. 7TV animates nothing in CSS; a moving paint is an
- * animated webp under url(). What had drifted from 7TV's output:
- *   - `repeat` was dropped, so 302 paints drew one smooth fade where 7TV draws
- *     repeating-linear/radial-gradient stripes and rings
- *   - stops were rounded to whole percents, smearing 247 hard-stop paints
- *   - image paints were `cover`-cropped; 7TV stretches them `100% 100%`
- *   - no `background-color:currentColor` under the clip, so a stop range that
- *     does not cover the name (or a paint with no stops) lost the chatter's own
- *     colour, and a stop-less paint lost its shadows with it
- *
- * Pure and import-free: the extension ships this file byte for byte
- * (src/lib/stv-paint-css.js, scripts/sync-paint-compiler.sh), pinned by
- * tests/client/ext-paint-compiler-parity.test.js. It is concatenated into one
- * shared scope there, so every top-level name starts with stv.
- */
-
-// every real image paint lives here; anything else never reaches url()
-const STV_PAINT_IMG = /^https:\/\/cdn\.7tv\.app\/paint\/[\w/.-]+$/
-
-/** 7TV packs RGBA into a signed int32: (r<<24)|(g<<16)|(b<<8)|a. */
-function stvRgba(n) {
-  const v = Number(n) | 0
-  return `rgba(${(v >>> 24) & 255}, ${(v >>> 16) & 255}, ${(v >>> 8) & 255}, ${((v & 255) / 255).toFixed(3)})`
-}
-
-const stvNum = v => (Number.isFinite(Number(v)) ? Number(v) : 0)
-// 7TV's own arithmetic, float noise included (0.07*100 is 7.000000000000001 —
-// valid CSS, and the same string 7TV emits)
-const stvPct = at => `${stvNum(at) * 100}%`
-
-function stvGradient(paint, fn) {
-  const stops = Array.isArray(paint.stops) ? paint.stops : []
-  if (!stops.length) return ''
-  const head = fn === 'linear' ? `${stvNum(paint.angle)}deg` : (paint.shape === 'ellipse' ? 'ellipse' : 'circle')
-  const body = stops.map(s => `${stvRgba(s?.color)} ${stvPct(s?.at)}`).join(', ')
-  return `${paint.repeat ? 'repeating-' : ''}${fn}-gradient(${head}, ${body})`
-}
-
-/**
- * @param {object|null|undefined} paint a v3 paint: {function, angle, shape,
- *   repeat, stops[{at,color}], image_url, color, shadows[{x_offset,y_offset,radius,color}]}
- * @returns {{style: string, still: string|null}} `style` is '' when there is
- *   nothing to draw; `still` is the first frame of an animated image paint
- *   (7TV publishes `1x_static.webp` beside `1x.webp`), for surfaces that
- *   cannot afford to decode every animation at once.
- */
-function stvPaintCss(paint) {
-  const fn = String(paint?.function || '').toLowerCase().replace('_', '-')
-  let image = ''
-  let still = null
-  if (fn === 'linear-gradient' || fn === 'radial-gradient') {
-    image = stvGradient(paint, fn.slice(0, fn.indexOf('-')))
-  } else if (fn === 'url') {
-    const url = String(paint.image_url || '')
-    if (STV_PAINT_IMG.test(url)) {
-      image = `url("${url}")`
-      if (url.endsWith('/1x.webp')) still = `${url.slice(0, -'1x.webp'.length)}1x_static.webp`
-    }
-  } else {
-    return { style: paint?.color ? `color:${stvRgba(paint.color)}` : '', still: null }
-  }
-  const shadows = (Array.isArray(paint.shadows) ? paint.shadows : [])
-    .map(s => `drop-shadow(${stvNum(s?.x_offset)}px ${stvNum(s?.y_offset)}px ${stvNum(s?.radius)}px ${stvRgba(s?.color)})`)
-  // nothing to paint at all — leave the name as it is
-  if (!image && !shadows.length) return { style: '', still: null }
-  let style = image ? `background-image:${image};` : ''
-  style += 'background-color:currentColor;background-size:100% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent'
-  if (shadows.length) style += `;filter:${shadows.join(' ')}`
-  return { style, still }
 }
 
 
@@ -14233,7 +14264,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0afd24c74cda' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '74e43beb6820' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

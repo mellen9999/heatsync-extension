@@ -35,7 +35,7 @@ import {
   MAX_EFFECTS, EFFECTS, EFFECT_IDS,
   BASE_TYPES, GLOW_STRENGTHS, MIN_STOPS, MAX_STOPS,
   MIN_TILE_WIDTH, MAX_TILE_WIDTH, PAN_MIN_SCALE, PAN_MAX_SCALE,
-  MIN_FILL_LAYERS, MAX_FILL_LAYERS, MIN_FILL_STOPS, MAX_FILL_STOPS,
+  MIN_FILL_LAYERS, MAX_FILL_LAYERS, MIN_FILL_STOPS, MAX_FILL_STOPS, MAX_FILL_TOTAL_STOPS,
   MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX,
   FILL_LAYER_KINDS, FILL_TILE_UNITS, FILL_MOTION_TYPES,
   isFillColor, repairStopCollisions, upgradeSpec, motionGroupKey,
@@ -379,6 +379,8 @@ export function validateFill(fill) {
   } else {
     const before = errors.length
     fill.layers.forEach((layer, i) => validateFillLayer(layer, i, errors))
+    const total = fill.layers.reduce((n, l) => n + (Array.isArray(l?.stops) ? l.stops.length : 0), 0)
+    if (total > MAX_FILL_TOTAL_STOPS) errors.push(`fill has ${total} stops across its layers, at most ${MAX_FILL_TOTAL_STOPS}`)
     layersOk = errors.length === before
   }
 
@@ -666,6 +668,126 @@ export function legacyShadowOf(fill) {
   return { base, effects, glow: null }
 }
 
+// ── stops beyond the edges ─────────────────────────────────────────────────
+// 7tv gradients routinely carry stops before 0 or after 100 (the part of the
+// ramp the name never shows). Authoring accepts them; what is STORED is the
+// equivalent list clipped to [0,100], so every compiler, old or new, draws the
+// same paint and the validator's 0..100 rule stays the one rule.
+
+const CLIP_HINT_SAMPLES = 4
+
+const fillHex2 = n => Math.round(Math.max(0, Math.min(255, n))).toString(16).padStart(2, '0')
+
+/** Colour between two fill colours at t, the way a css gradient mixes them:
+ * premultiplied by alpha, so a fade to transparent does not drag through grey. */
+function mixFillColors(c1, c2, t) {
+  const p = parseFillColor(c1)
+  const q = parseFillColor(c2)
+  const a = p.a * (1 - t) + q.a * t
+  const ch = (u, v) => (a > 0 ? (u * p.a * (1 - t) + v * q.a * t) / a : 0)
+  const alpha = Math.round(a * 255)
+  const rgb = `#${fillHex2(ch(p.r, q.r))}${fillHex2(ch(p.g, q.g))}${fillHex2(ch(p.b, q.b))}`
+  return alpha === 255 ? rgb : `${rgb}${fillHex2(alpha)}`
+}
+
+/** t after css's colour hint (h = 0..1 of the gap; 0.5 is the plain blend). */
+function hintCurve(t, h) {
+  if (h <= 0) return t >= 1 ? 1 : 0
+  if (h >= 1) return t <= 0 ? 0 : 1
+  return t ** (Math.log(0.5) / Math.log(h))
+}
+
+/** The colour of the gap a -> b at absolute position `at`. */
+function colorInGap(a, b, at) {
+  const gap = b.pos - a.pos
+  if (gap <= 0) return b.color
+  let t = (at - a.pos) / gap
+  if (a.hint !== undefined && a.hint !== 50) t = hintCurve(t, a.hint / 100)
+  return mixFillColors(a.color, b.color, t)
+}
+
+const r1p = n => Math.round(n * 10) / 10
+
+/** Exact samples of the gap a -> b between positions lo..hi, strictly inside
+ * it. A hint bends the gap into a power curve; clipped, the rest is no longer
+ * one, so it is rebuilt from a few points of the original instead. */
+function sampleGap(a, b, lo, hi) {
+  const out = []
+  for (let k = 1; k <= CLIP_HINT_SAMPLES; k++) {
+    const at = r1p(lo + (hi - lo) * k / (CLIP_HINT_SAMPLES + 1))
+    if (at > lo && at < hi && (!out.length || at > out.at(-1).pos)) out.push({ color: colorInGap(a, b, at), pos: at })
+  }
+  return out
+}
+
+const hinted = s => s.hint !== undefined && s.hint !== 50
+
+/** Everything left of 0 folded into one stop at 0. */
+function clipLeft(stops) {
+  const k = stops.findIndex(s => s.pos >= 0)
+  if (k === -1) return [{ color: stops.at(-1).color, pos: 0 }]
+  if (k === 0 || stops[k].pos === 0) return stops.slice(k)
+  const a = stops[k - 1]
+  const b = stops[k]
+  const edge = { color: colorInGap(a, b, 0), pos: 0 }
+  return [edge, ...(hinted(a) ? sampleGap(a, b, 0, b.pos) : []), ...stops.slice(k)]
+}
+
+/** Everything right of 100 folded into one stop at 100. */
+function clipRight(stops) {
+  const k = stops.findLastIndex(s => s.pos <= 100)
+  if (k === -1) return [{ color: stops[0].color, pos: 100 }]
+  const kept = stops.slice(0, k + 1)
+  if (k === stops.length - 1) return kept
+  const a = stops[k]
+  const b = stops[k + 1]
+  if (a.pos === 100) {
+    delete kept[k].hint
+    return kept
+  }
+  const edge = { color: colorInGap(a, b, 100), pos: 100 }
+  if (!hinted(a)) return [...kept, edge]
+  const { hint, ...plain } = a
+  return [...kept.slice(0, k), plain, ...sampleGap(a, b, a.pos, 100), edge]
+}
+
+/**
+ * A non-repeating layer's stops with everything outside 0..100 folded away.
+ * Colours at 0 and 100 are the css-interpolated ones (premultiplied alpha,
+ * hints honoured), hard stops (equal positions) survive, and a list already
+ * inside 0..100 comes back as the same array, untouched. Positions are first
+ * clamped to the running maximum, which is what css does to an out-of-order
+ * list; the compiler's sort-by-pos is only the same thing for sorted input.
+ * @param {object[]} stops [{color, pos, hint?}]
+ * @returns {object[]}
+ */
+export function canonicalFillStops(stops) {
+  if (!Array.isArray(stops) || !stops.length) return stops
+  if (!stops.every(s => isPlainObject(s) && isFillColor(s.color) && Number.isFinite(s.pos))) return stops
+  if (stops.every(s => s.pos >= 0 && s.pos <= 100)) return stops
+  let top = -Infinity
+  const list = stops.map(s => {
+    top = Math.max(top, s.pos)
+    return { ...s, color: s.color.toLowerCase(), pos: top }
+  })
+  return clipRight(clipLeft(list))
+}
+
+/** spec with every non-repeating fill layer's stops canonicalised; as-is when
+ * nothing needed it. */
+export function canonicalFillSpec(spec) {
+  if (!isPlainObject(spec) || !isPlainObject(spec.fill) || !Array.isArray(spec.fill.layers)) return spec
+  let changed = false
+  const layers = spec.fill.layers.map(l => {
+    if (!isPlainObject(l) || l.repeat === true) return l
+    const stops = canonicalFillStops(l.stops)
+    if (stops === l.stops) return l
+    changed = true
+    return { ...l, stops }
+  })
+  return changed ? { ...spec, fill: { ...spec.fill, layers } } : spec
+}
+
 /**
  * A fill spec with its legacy `base` + paint-slot effect derived from the fill
  * (legacyShadowOf) — what gets STORED, so an old extension that has never heard
@@ -681,6 +803,16 @@ export function withLegacyShadow(spec) {
   const shadow = legacyShadowOf(spec.fill)
   const effects = (Array.isArray(spec.effects) ? spec.effects : []).filter(e => !(isPlainObject(e) && EFFECTS[e.id]?.slot === 'paint'))
   return { ...spec, base: shadow.base, effects: [...effects, ...shadow.effects] }
+}
+
+/**
+ * Everything derived from a fill at save time, in order: stops folded into
+ * 0..100 (canonicalFillSpec), then the legacy shadow. The builder validates and
+ * sends this; the save route re-derives it, so a client can never store either
+ * projection lying about its fill.
+ */
+export function withLegacyProjections(spec) {
+  return withLegacyShadow(canonicalFillSpec(spec))
 }
 
 /**

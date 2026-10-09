@@ -8720,13 +8720,16 @@ const MIN_OUTLINE_WIDTH = 0.25
 const MAX_OUTLINE_WIDTH = 2
 const OUTLINE_WIDTH_STEP = 0.25
 
-/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px in 0.5
- *  steps, blur 0..8px in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
- *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. */
+/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px and
+ *  blur 0..8px, both in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
+ *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. The
+ *  offsets were 0.5 steps until the importer: 7TV's hairline outlines are built
+ *  from 0.1-0.9px offsets (Hot Pursuit's -0.2/0.8), which a 0.5 grid redraws as
+ *  something else. */
 const MIN_SHADOWS = 1
 const MAX_SHADOWS = 10
 const SHADOW_POS_LIMIT = 60
-const SHADOW_POS_STEP = 0.5
+const SHADOW_POS_STEP = 0.1
 const MAX_SHADOW_BLUR = 8
 const SHADOW_BLUR_STEP = 0.1
 /** Under a MOVING fill the chain is expanded into one text-shadow term per
@@ -14511,7 +14514,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '30ae8de84181' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e5b113ecf8f1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

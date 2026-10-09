@@ -8695,7 +8695,10 @@ const PAN_DEFAULT_SCALE = 300
 const MIN_FILL_LAYERS = 1
 const MAX_FILL_LAYERS = 4
 const MIN_FILL_STOPS = 1
-const MAX_FILL_STOPS = 8
+// 28 is what 7tv's tightest rings and rainbows use (measured on the live
+// catalogue); 64 across a whole fill bounds the css a four-layer paint can cost.
+const MAX_FILL_STOPS = 28
+const MAX_FILL_TOTAL_STOPS = 64
 // A repeating layer's tile is either a fraction of the NAME's own box (the
 // same knob `pan.scale` already exposed, renamed and rescaled to a plain
 // multiplier — 1.5-3.4 covers everything the deleted themed presets used) or
@@ -8704,7 +8707,8 @@ const MAX_FILL_STOPS = 8
 // differently: a `flow` sweeping the user's own gradient wants "how many
 // name-widths is one loop", a hard-banded barber-pole wants "how many
 // pixels is one stripe" regardless of how long the name is.
-const MIN_FILL_TILE_NAME = 0.1
+// 0.02: 7tv rings are tight (a 28-stop ring paint repeats every few percent)
+const MIN_FILL_TILE_NAME = 0.02
 const MAX_FILL_TILE_NAME = 10
 const MIN_FILL_TILE_PX = 1
 const MAX_FILL_TILE_PX = 200
@@ -9591,10 +9595,12 @@ function fillCenter(layer) {
  *    flow shows at phase 0 (see fillBoxCss).
  *  - radial + px tile   -> a small dot painted once, then left to
  *    `background-repeat`'s own default — stardust's old sparkle-field trick.
- *  - conic repeat, radial name-tile -> accepted and stored (validated), not
- *    yet expressed: an angular tile period has no rest-frame form, and a
- *    radial layer has no axis a name-length tile could run along. Renders
- *    as a plain (non-tiled) gradient, and flows by the box (fillBoxOf).
+ *  - radial + name tile -> a `repeating-radial-gradient` whose period is
+ *    `size` of the gradient radius, the rings 7tv draws. An old compiler that
+ *    has never heard of this draws the plain radial instead.
+ *  - conic repeat -> accepted and stored (validated), not yet expressed: an
+ *    angular tile period has no rest-frame form. Renders as a plain
+ *    (non-tiled) gradient, and flows by the box (fillBoxOf).
  */
 function fillLayerCss(layer, globalAngle) {
   const kind = FILL_LAYER_KINDS.has(layer?.kind) ? layer.kind : 'linear'
@@ -9618,6 +9624,9 @@ function fillLayerCss(layer, globalAngle) {
     if (unit === 'px' && size) {
       const px = Math.max(1, Math.round(size))
       return { image: `radial-gradient(${shape} at 50% 50%, ${stopsCss})`, size: `${px}px ${px}px`, position: `${x}% ${y}%` }
+    }
+    if (unit === 'name' && size && stops.length) {
+      return { image: `repeating-radial-gradient(${shape} at ${x}% ${y}%, ${fillNameStopsCss(stops, size)})`, size: null, position: null }
     }
     return { image: `radial-gradient(${shape} at ${x}% ${y}%, ${stopsCss})`, size: null, position: null }
   }
@@ -14264,7 +14273,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '74e43beb6820' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b25007759be1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

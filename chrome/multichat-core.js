@@ -14631,7 +14631,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'afb8bffababe' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0c04d97ab528' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -48046,7 +48046,8 @@ async function runSlashCommandWithReceipt(text, execute) {
 // parser drifting from this one is exactly how a receipt ends up keyed to
 // the wrong scope. Returns null for non-commands and explicit pass-through.
 function resolveSlashCmd(text) {
-  const parts = text.match(/^\/(\w+|\?)\s*(.*)$/)
+  // [\s\S], not `.`: a pasted multi-line post is one command, not an orphan slash.
+  const parts = text.match(/^\/(\w+|\?)\s*([\s\S]*)$/)
   if (!parts) return null
   let [, cmd, rest] = parts
   cmd = cmd.toLowerCase()

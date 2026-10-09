@@ -39,7 +39,7 @@ import {
   MIN_FILL_TILE_NAME, MAX_FILL_TILE_NAME, MIN_FILL_TILE_PX, MAX_FILL_TILE_PX,
   MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, OUTLINE_WIDTH_STEP,
   MIN_SHADOWS, MAX_SHADOWS, SHADOW_POS_LIMIT, SHADOW_POS_STEP, MAX_SHADOW_BLUR, SHADOW_BLUR_STEP,
-  filterHostile, compositedFillPlan,
+  filterHostile, compositedFillPlan, MAX_MOVING_SHADOWS,
   FILL_LAYER_KINDS, FILL_TILE_UNITS, FILL_MOTION_TYPES,
   isFillColor, repairStopCollisions, upgradeSpec, motionGroupKey,
   safeAngle, upgradePan, baseAsFillLayer,
@@ -485,6 +485,8 @@ function validateShadows(spec, errors) {
     if (!isFillColor(h.color)) errors.push(`${at}.color must match #rrggbb or #rrggbbaa`)
   })
   if (!isPlainObject(spec.fill)) { errors.push('shadows require fill'); return }
+  // A moving fill expands the chain into 2^n - 1 text-shadow terms (chainedTextShadows).
+  if (list.length > MAX_MOVING_SHADOWS && compositedFillPlan(spec)) errors.push(`a moving fill takes at most ${MAX_MOVING_SHADOWS} shadows`)
   if (filterHostile(spec.effects)) errors.push('shadows cannot be combined with ripple or tumble (they need the name\'s filter)')
   // Under a moving fill the shadows are a text-shadow on the host glyphs, which
   // shows through any transparent part of the fill (a filter would not).

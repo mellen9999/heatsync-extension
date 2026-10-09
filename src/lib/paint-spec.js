@@ -200,6 +200,10 @@ export const SHADOW_POS_LIMIT = 60
 export const SHADOW_POS_STEP = 0.5
 export const MAX_SHADOW_BLUR = 8
 export const SHADOW_BLUR_STEP = 0.1
+/** Under a MOVING fill the chain is expanded into one text-shadow term per
+ *  non-empty subset of the stack (chainedTextShadows): 2^n - 1 terms, so 3
+ *  shadows = 7 and 10 would be 1023. Static fills keep the exact filter chain. */
+export const MAX_MOVING_SHADOWS = 3
 
 
 // ── fill colour + contrast (alpha-aware) ────────────────────────────────────
@@ -1185,26 +1189,84 @@ function shadowsOf(spec) {
   return out
 }
 
+/**
+ * A drop-shadow CHAIN spelled as independent text-shadows, exactly.
+ *
+ * `filter: drop-shadow(S1) drop-shadow(S2) ...` (7TV's model, and the rest
+ * frame's) applies them in order and each one casts the WHOLE result so far, so
+ * S2 shadows the glyph AND S1's shadow. text-shadows are independent: they only
+ * ever cast the glyph. Measured (scripts/paint-perf.mjs --shadows, before this):
+ * 5.3% of pixels differ from the rest frame at 2 shadows, 31% at 10.
+ *
+ * Unrolling the chain: R0 = glyph, Rk = Rk-1 + shadow_k(Rk-1). So the result is
+ * the glyph plus one term for every non-empty ordered subset i1 < i2 < .. < im of
+ * the stack, a glyph shadow pushed through those shadows in turn. The shadow of a
+ * shadow is again a shadow of the glyph, with
+ *   offset = the sum of the offsets
+ *   blur   = sqrt(sum of squares): gaussians convolve, variances add. drop-shadow
+ *            lengths are std-devs, so the sigmas combine and the DOUBLING to a
+ *            text-shadow radius (see buildFillLayersCss) is done once, on the sum
+ *   colour = the LAST shadow's colour, drop-shadow repaints the silhouette
+ *   alpha  = the product of the alphas along the path (each hop scales it)
+ * Paint order: Rk puts shadow_k BENEATH Rk-1, and text-shadow paints its first
+ * item on top, so the list is Lk = Lk-1 then (each term of Lk-1, in order,
+ * extended by k): the last-applied shadow's terms sit lowest, and inside one
+ * group the order repeats the group below it.
+ *
+ * Where terms overlap with alpha < 1 text-shadow composites them "over" and the
+ * filter takes their union, so translucent overlaps can differ by a few levels;
+ * opaque stacks are exact. Terms whose alpha rounds to 0 are dropped.
+ * @param {{x:number,y:number,blur:number,color:string}[]} shadows shadowsOf output, at most MAX_MOVING_SHADOWS
+ * @returns {{x:number,y:number,blur:number,color:string}[]} text-shadow items (blur already doubled), top first
+ */
+export function chainedTextShadows(shadows) {
+  const list = shadows.slice(0, MAX_MOVING_SHADOWS)
+  const alphaOf = c => (c.length === 9 ? parseInt(c.slice(7), 16) / 255 : 1)
+  const round = (v, k) => Math.round(v * k) / k
+  // a term: {x, y, var (sum of sigma^2), a (alpha product), c (last colour rgb)}
+  let terms = []
+  for (const sh of list) {
+    const own = { x: sh.x, y: sh.y, var: sh.blur * sh.blur, a: alphaOf(sh.color), c: sh.color.slice(0, 7) }
+    // the new group, each earlier term pushed through this shadow, in order
+    const group = [own, ...terms.map(t => ({ x: t.x + sh.x, y: t.y + sh.y, var: t.var + own.var, a: t.a * own.a, c: own.c }))]
+    terms = terms.concat(group)
+  }
+  const out = []
+  for (const t of terms) {
+    const byte = Math.round(t.a * 255)
+    if (!byte) continue
+    out.push({ x: round(t.x, 10), y: round(t.y, 10), blur: round(Math.sqrt(t.var) * 2, 10), color: byte === 255 ? t.c : t.c + byte.toString(16).padStart(2, '0') })
+  }
+  return out
+}
+
 /** Motion effects whose keyframes force the filter under them to re-run every
  *  frame: a transform on the name or its letters, or a text-shadow animation. */
 const SHADOW_REPAINT_SIGS = /:(transform|shadow)$/
 
 /**
  * Extra budget weight a paint's shadows cost, on top of what its animations
- * measure: 1 when the shadows are a `filter` (the rest-frame form, used whenever
- * the fill does not move) sitting under a running self/letter motion, which
- * makes the browser re-rasterise the filtered name each frame; else 0. A moving
- * fill puts its shadows in a static text-shadow on the host instead, and a
- * static paint runs nothing, so both are free. Read once per paint hash at
- * compile time (paint-cosmetics), never per element.
+ * measure: when the shadows are a `filter` (the rest-frame form, used whenever
+ * the fill does not move) sitting under a running self/letter motion, the
+ * browser re-runs the filtered name each frame; else 0. A moving fill puts its
+ * shadows in a static text-shadow on the host instead, and a static paint runs
+ * nothing, so both are free. Read once per paint hash at compile time
+ * (paint-cosmetics), never per element.
+ *
+ * The cost grows with the chain: the compositor re-draws one filter pass per
+ * shadow every frame. Measured (scripts/paint-perf.mjs --shadows, letter wave,
+ * compositor draw per 3s): 10 shadows = 2408 vs 185 with one, so a flat +1 priced
+ * ten like one. ceil(n / 3), capped at MAX_ANIMATED_LAYERS: 1-3 shadows 1,
+ * 4-6 2, 7-10 3.
  * @param {object} spec
- * @returns {0|1}
+ * @returns {0|1|2|3}
  */
 export function paintExtraWeight(spec) {
   if (!shadowsOf(spec).length || planCompositedFill(spec.fill, hasUnderlay(spec))) return 0
   const effects = Array.isArray(spec.effects) ? spec.effects : []
   if (filterHostile(effects)) return 0 // compiles without the shadows
-  return effects.some(e => SHADOW_REPAINT_SIGS.test(EFFECTS[e?.id]?.sig || '')) ? 1 : 0
+  if (!effects.some(e => SHADOW_REPAINT_SIGS.test(EFFECTS[e?.id]?.sig || ''))) return 0
+  return Math.min(MAX_ANIMATED_LAYERS, Math.ceil(shadowsOf(spec).length / 3))
 }
 
 /**
@@ -1615,6 +1677,10 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   // costs nothing per frame: the wrap paints above it, and where the mask
   // leaves the glyph the shadow is what shows, like the drop-shadow.
   //
+  // A STACK IS EXPANDED, NOT LISTED: drop-shadow()s chain (each casts the result
+  // so far), text-shadows do not, so the list is the chain unrolled into one
+  // term per subset of the stack (chainedTextShadows, which has the math).
+  //
   // THE BLUR IS DOUBLED. drop-shadow()'s length is the Gaussian's standard
   // deviation (Filter Effects), text-shadow's is a box-shadow radius, which is
   // twice that. Measured in chromium (scripts/paint-perf.mjs --shadows): the same
@@ -1627,7 +1693,7 @@ function buildFillLayersCss(spec, nameBox, hash, perLetter, shadows = []) {
   // above), so a text-shadow on it would land on top of the fill. The filter is
   // simply dropped for the mounted name; save refuses the pair.
   if (shadows.length) {
-    css += `${host}{filter:none;${outlined ? '' : `text-shadow:${stvShadowList(shadows.map(h => ({ ...h, blur: Math.round(h.blur * 20) / 10 })), 'text')};`}}`
+    css += `${host}{filter:none;${outlined ? '' : `text-shadow:${stvShadowList(chainedTextShadows(shadows), 'text')};`}}`
   }
 
   // THE MASK IS ON THE CONTAINER, NOT THE NAME. Everything a name draws

@@ -764,7 +764,7 @@ const fillHex2 = n => Math.round(Math.max(0, Math.min(255, n))).toString(16).pad
 
 /** Colour between two fill colours at t, the way a css gradient mixes them:
  * premultiplied by alpha, so a fade to transparent does not drag through grey. */
-function mixFillColors(c1, c2, t) {
+export function mixFillColors(c1, c2, t) {
   const p = parseFillColor(c1)
   const q = parseFillColor(c2)
   const a = p.a * (1 - t) + q.a * t

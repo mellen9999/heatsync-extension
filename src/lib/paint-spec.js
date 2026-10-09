@@ -191,13 +191,16 @@ export const MIN_OUTLINE_WIDTH = 0.25
 export const MAX_OUTLINE_WIDTH = 2
 export const OUTLINE_WIDTH_STEP = 0.25
 
-/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px in 0.5
- *  steps, blur 0..8px in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
- *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. */
+/** `shadows`: 1..10 stacked shadows (7TV's own ceiling), offsets +-60px and
+ *  blur 0..8px, both in 0.1 steps. 7TV's catalogue tops out at 10 shadows and
+ *  a 2px-ish blur; 8 is generous and keeps a filter's raster area bounded. The
+ *  offsets were 0.5 steps until the importer: 7TV's hairline outlines are built
+ *  from 0.1-0.9px offsets (Hot Pursuit's -0.2/0.8), which a 0.5 grid redraws as
+ *  something else. */
 export const MIN_SHADOWS = 1
 export const MAX_SHADOWS = 10
 export const SHADOW_POS_LIMIT = 60
-export const SHADOW_POS_STEP = 0.5
+export const SHADOW_POS_STEP = 0.1
 export const MAX_SHADOW_BLUR = 8
 export const SHADOW_BLUR_STEP = 0.1
 /** Under a MOVING fill the chain is expanded into one text-shadow term per

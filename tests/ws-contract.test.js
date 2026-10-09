@@ -59,7 +59,9 @@ function serverSentTypes(root) {
   const walk = (d) => {
     for (const e of readdirSync(d, { withFileTypes: true })) {
       if (e.isDirectory()) {
-        if (e.name !== 'node_modules') walk(join(d, e.name))
+        // api-catalog is the http api's docs: `type: 'string'` there is a param
+        // table, and 'send a message' prose sits within the context window
+        if (e.name !== 'node_modules' && e.name !== 'api-catalog') walk(join(d, e.name))
       } else if (e.name.endsWith('.ts')) files.push(join(d, e.name))
     }
   }

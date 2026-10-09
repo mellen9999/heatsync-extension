@@ -44,7 +44,7 @@ import {
   filterHostile, compositedFillPlan, MAX_MOVING_SHADOWS,
   FILL_LAYER_KINDS, FILL_TILE_UNITS, FILL_MOTION_TYPES,
   isFillColor, repairStopCollisions, upgradeSpec, motionGroupKey,
-  safeAngle, upgradePan, baseAsFillLayer,
+  safeAngle, upgradePan, baseAsFillLayer, isLegacyFillLayer,
 } from './paint-spec.js'
 
 // ── plus tier caps (single source — server save gate + builder UI) ────────
@@ -416,6 +416,10 @@ export function validateFill(fill, opts = {}) {
     const total = fill.layers.reduce((n, l) => n + (Array.isArray(l?.stops) ? l.stops.length : 0), 0)
     if (total > MAX_FILL_TOTAL_STOPS) errors.push(`fill has ${total} stops across its layers, at most ${MAX_FILL_TOTAL_STOPS}`)
     layersOk = errors.length === before
+    // The floor scores an image by its fallback stops only; its own pixels can
+    // be clear anywhere, and without the underlay those are holes in the name.
+    // After layersOk, so the floor still reports alongside it.
+    if (!opts.underlay && fill.layers.some(l => l?.kind === 'image')) errors.push('an image layer needs underlay: name (clear pixels in the picture would leave holes in the name)')
   }
 
   validateFillModulator(fill.hue, 'fill.hue', errors, false)
@@ -521,6 +525,20 @@ function validateShadows(spec, errors) {
  *   save gate (0 free / 3 plus) and the builder so both share one cap check.
  * @returns {{ ok: boolean, errors: string[] }}
  */
+/** `spec` minus its legacy fallback layer; a legacy layer that is not exactly
+ *  the one withLegacyFallback derives (or that sits anywhere but the bottom,
+ *  twice, or without the underlay it exists for) is an error pushed on `errors`. */
+function withoutLegacyLayer(spec, errors) {
+  if (!isPlainObject(spec.fill) || !Array.isArray(spec.fill.layers) || !spec.fill.layers.some(isLegacyFillLayer)) return spec
+  const { layers } = spec.fill
+  if (layers.filter(isLegacyFillLayer).length > 1 || !isLegacyFillLayer(layers[0]) || JSON.stringify(layers[0]) !== JSON.stringify(legacyFillLayer())) {
+    errors.push('fill: the legacy fallback layer must be the one derived layer at the bottom')
+  } else if (spec.underlay !== 'name') {
+    errors.push('fill: a legacy fallback layer needs underlay: name')
+  }
+  return { ...spec, fill: { ...spec.fill, layers: layers.filter(l => !isLegacyFillLayer(l)) } }
+}
+
 export function validatePaintSpec(spec, opts = {}) {
   const errors = []
   const maxEffects = Number.isInteger(opts.maxEffects) && opts.maxEffects >= 0
@@ -533,6 +551,10 @@ export function validatePaintSpec(spec, opts = {}) {
   if (spec.v !== 1 && spec.v !== 2) {
     errors.push('v must be 1 or 2')
   }
+  // The stored spec carries a derived fallback layer (withLegacyFallback); it is
+  // checked against the one shape the save derives and then judged without it,
+  // so it never counts against the layer / stop limits or the contrast floor.
+  spec = withoutLegacyLayer(spec, errors)
 
   // ── scene (v2 diorama block — see scene-spec.js) ──
   if (spec.scene !== null && spec.scene !== undefined) {
@@ -911,7 +933,40 @@ export function withLegacyShadow(spec) {
  * projection lying about its fill.
  */
 export function withLegacyProjections(spec) {
-  return withLegacyGlow(withLegacyShadow(canonicalFillSpec(spec)))
+  return withLegacyFallback(withLegacyGlow(withLegacyShadow(canonicalFillSpec(withoutStoredLegacyLayer(spec)))))
+}
+
+/** The bottom layer an old compiler draws in place of the underlay it has never
+ *  heard of: opaque white, the default name colour, which clears the floor.
+ *  Two stops, not one: a one-stop CSS gradient is not valid in every browser. */
+function legacyFillLayer() {
+  return { kind: 'linear', stops: [{ color: '#ffffff', pos: 0 }, { color: '#ffffff', pos: 100 }], legacy: true }
+}
+
+/** `spec` with any stored legacy fallback layer dropped: it is derived, so every
+ *  save starts from the authored layers and re-derives, and it cannot pile up. */
+function withoutStoredLegacyLayer(spec) {
+  if (!isPlainObject(spec?.fill) || !Array.isArray(spec.fill.layers) || !spec.fill.layers.some(isLegacyFillLayer)) return spec
+  return { ...spec, fill: { ...spec.fill, layers: spec.fill.layers.filter(l => !isLegacyFillLayer(l)) } }
+}
+
+/**
+ * An extension that predates `underlay` compiles a fill straight to
+ * clip-text with `color:transparent`, so a fill with any see-through stop
+ * (every 7TV import with clear areas, every underlay fill) draws nothing there
+ * and an invisible name where it is clear all over. When the underlay is what
+ * makes such a fill legible, store an opaque white layer at index 0: the old
+ * compiler paints layers bottom-first, in the first MAX_FILL_LAYERS, and
+ * ignores keys it does not know, so it draws white beneath the fill. The
+ * current compiler skips it (fillDrawLayers) since its underlay is already
+ * there. Costs a 4-layer fill its top layer in the oldest builds, which is
+ * still a visible name. Re-derived every save; a spec that needs none, or has
+ * no usable fill, comes back as-is.
+ */
+export function withLegacyFallback(spec) {
+  if (!isPlainObject(spec) || spec.underlay !== 'name' || !isPlainObject(spec.fill) || !Array.isArray(spec.fill.layers)) return spec
+  if (!spec.fill.layers.length || fillIsOpaque(spec.fill)) return spec
+  return { ...spec, fill: { ...spec.fill, layers: [legacyFillLayer(), ...spec.fill.layers] } }
 }
 
 /**
@@ -937,6 +992,7 @@ export function withLegacyGlow(spec) {
  * @returns {{ spec: object, dropped: string|null }}
  */
 export function editableFillSpec(spec) {
+  spec = withoutStoredLegacyLayer(spec)
   if (!isPlainObject(spec) || isPlainObject(spec.fill)) return { spec, dropped: null }
   const base = isPlainObject(spec.base) ? spec.base : { type: 'solid', angle: 0, stops: [{ color: '#e4e4e4', pos: 0 }] }
   const effects = Array.isArray(spec.effects) ? spec.effects : []

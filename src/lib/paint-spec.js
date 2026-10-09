@@ -333,7 +333,7 @@ function normalizeFillForHash(fill) {
   if (!isPlainObject(fill)) return undefined
   return {
     angle: fill.angle,
-    layers: Array.isArray(fill.layers) ? fill.layers.map(l => ({
+    layers: Array.isArray(fill.layers) ? fill.layers.filter(l => !isLegacyFillLayer(l)).map(l => ({
       kind: l?.kind,
       tilt: l?.tilt,
       stops: Array.isArray(l?.stops) ? l.stops.map(s => ({ color: s?.color, pos: s?.pos, hint: s?.hint })) : [],
@@ -1170,6 +1170,22 @@ function fillImageSrc(layer) {
   return typeof layer?.src === 'string' && STV_PAINT_IMG.test(layer.src) ? layer.src : null
 }
 
+/** A stored fill may carry one `legacy:true` layer at the bottom: the opaque
+ *  fallback an OLD compiler (no underlay) draws so a transparent fill is not an
+ *  invisible name (paint-authoring withLegacyFallback writes it). The underlay
+ *  already sits there for this compiler, so it is never drawn, counted, or
+ *  hashed. Every reader of fill.layers goes through fillDrawLayers. */
+export function isLegacyFillLayer(layer) {
+  return isPlainObject(layer) && layer.legacy === true
+}
+
+/** The layers this compiler draws: plain objects, no legacy fallback, the first
+ *  MAX_FILL_LAYERS (what the old compiler's own slice kept). */
+export function fillDrawLayers(fill) {
+  const all = isPlainObject(fill) && Array.isArray(fill.layers) ? fill.layers : []
+  return all.filter(l => isPlainObject(l) && !isLegacyFillLayer(l)).slice(0, MAX_FILL_LAYERS)
+}
+
 /** `underlay:'name'` — only meaningful over a fill (the validator enforces it;
  *  the compiler re-checks, since it also renders stored specs). */
 function hasUnderlay(spec) {
@@ -1299,7 +1315,7 @@ export function paintExtraWeight(spec) {
  *  composited through the glyph mask every frame, whatever else it does), else
  *  0: a still image is painted once, like any other static fill. */
 function animatedImageWeight(spec) {
-  const layers = isPlainObject(spec?.fill) && Array.isArray(spec.fill.layers) ? spec.fill.layers : []
+  const layers = isPlainObject(spec?.fill) ? fillDrawLayers(spec.fill) : []
   return layers.some(l => l?.kind === 'image' && l.anim === true && fillImageSrc(l)) ? IMAGE_PAINT_WEIGHT : 0
 }
 
@@ -1321,9 +1337,7 @@ function shadowFilterWeight(spec) {
  */
 function buildFillBaseCss(fill, underlay = false, useStill = false) {
   const angle = safeFillAngle(fill?.angle)
-  const layers = (Array.isArray(fill?.layers) ? fill.layers : [])
-    .filter(isPlainObject)
-    .slice(0, MAX_FILL_LAYERS)
+  const layers = fillDrawLayers(fill)
   if (!layers.length) return { decl: 'color:#e4e4e4;', isClipText: false }
 
   const built = [...layers].reverse().map(l => fillLayerCss(l, angle, useStill))
@@ -1504,7 +1518,7 @@ function fillBoxOf(layer, angle) {
 function planCompositedFill(fill, underlay = false) {
   if (!isPlainObject(fill)) return null
   const angle = safeFillAngle(fill.angle)
-  const layers = (Array.isArray(fill.layers) ? fill.layers : []).filter(isPlainObject).slice(0, MAX_FILL_LAYERS)
+  const layers = fillDrawLayers(fill)
   if (!layers.length) return null
   const hue = isPlainObject(fill.hue) ? { speed: safeSpeed(fill.hue.speed) } : null
   const breathe = isPlainObject(fill.breathe)

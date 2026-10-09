@@ -886,6 +886,9 @@ function readMultichatModules() {
     'animation-phase.js',
     'fill-layers.js',
     'glyph-mask.js',
+    // 7TV paint → CSS (cosmetics.js getMcPaintStyle); every top-level name
+    // in it starts with stv, so it cannot collide in this shared scope
+    'stv-paint-css.js',
   ]) {
     const p = join(SRC_DIR, 'lib', mod)
     if (existsSync(p)) {

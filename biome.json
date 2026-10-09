@@ -70,6 +70,7 @@
         "src/lib/plus-tenure.js",
         "src/lib/fill-layers.js",
         "src/lib/glyph-mask.js",
+        "src/lib/stv-paint-css.js",
         "src/lib/gif-search-remote.js",
         "src/lib/card-time.js",
         "src/lib/card-model.js",

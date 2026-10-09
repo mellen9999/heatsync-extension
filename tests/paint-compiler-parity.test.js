@@ -50,6 +50,8 @@ const FILES = [
   // for months with no script and no gate, and had drifted — only by a line
   // wrap biome introduced, but nothing would have said so if it had been more.
   'client/utils/plus-tenure.js',
+  // 7TV paint → CSS, 7TV's own algorithm (joined 2026-10-09)
+  'client/chat/stv-paint-css.js',
 ]
 
 describe('paint compiler parity with the site', () => {

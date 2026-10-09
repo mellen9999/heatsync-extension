@@ -719,7 +719,9 @@ function updateCosmeticsInPlace(userIds) {
       const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
       if (userLink) {
         if (paintStyle) {
-          userLink.setAttribute('style', paintStyle)
+          // the name's own colour stays: it is the paint's currentColor underlay
+          const colour = userLink.style.color
+          userLink.setAttribute('style', colour ? `color:${colour};${paintStyle}` : paintStyle)
         }
       }
       // Add 7TV badge if not already present and cosmetic has one
@@ -934,81 +936,20 @@ function updateNativeBadgesInPlace(channelLogin) {
 // paint object: a WeakMap auto-evicts when the cosmetic is dropped, and keying
 // on identity means a replaced paint recomputes with no manual invalidation.
 const _mcPaintStyleCache = new WeakMap()
-function getMcPaintStyle(userId) {
+// The CSS is lib/stv-paint-css.js — 7TV's own algorithm, the site's file byte
+// for byte. It draws over `background-color:currentColor`, so the name's own
+// colour shows wherever the paint is transparent; callers that know it pass it.
+function getMcPaintStyle(userId, colour = '') {
   if (!getSetting('sevenTvPaints')) return ''
   const cosmetic = mcUserCosmetics.get(userId)
   const paint = cosmetic?.paint
   if (!paint?.function) return ''
-  const cached = _mcPaintStyleCache.get(paint)
-  if (cached !== undefined) return cached
-  const style = _computeMcPaintStyle(paint)
-  _mcPaintStyleCache.set(paint, style)
-  return style
-}
-function _computeMcPaintStyle(paint) {
-  const fn = paint.function.toLowerCase()
-  if (fn === 'url' && paint.image_url) {
-    if (!/^https:\/\//.test(paint.image_url)) return ''
-    const safeCssUrl = paint.image_url.replace(/[()'"\\;{}]/g, encodeURIComponent)
-    let style = `background-image:url(${safeCssUrl});background-size:cover;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text`
-    if (paint.shadows?.length) {
-      style +=
-        ';filter:' +
-        paint.shadows
-          .map((s) => {
-            const r = (s.color >>> 24) & 0xff
-            const g = (s.color >>> 16) & 0xff
-            const b = (s.color >>> 8) & 0xff
-            const a = (s.color & 0xff) / 255
-            return `drop-shadow(${Number(s.x_offset) || 0}px ${Number(s.y_offset) || 0}px ${Number(s.radius) || 0}px rgba(${r},${g},${b},${a.toFixed(2)}))`
-          })
-          .join(' ')
-    }
-    return style
+  let style = _mcPaintStyleCache.get(paint)
+  if (style === undefined) {
+    style = stvPaintCss(paint).style
+    _mcPaintStyleCache.set(paint, style)
   }
-  if (
-    (fn === 'linear-gradient' || fn === 'radial-gradient' || fn === 'linear_gradient' || fn === 'radial_gradient') &&
-    paint.stops?.length
-  ) {
-    const stops = paint.stops
-      .map((s) => {
-        const r = (s.color >>> 24) & 0xff
-        const g = (s.color >>> 16) & 0xff
-        const b = (s.color >>> 8) & 0xff
-        const a = (s.color & 0xff) / 255
-        return `rgba(${r},${g},${b},${a.toFixed(2)}) ${Math.round(s.at * 100)}%`
-      })
-      .join(', ')
-    const safeAngle = Number.isFinite(Number(paint.angle)) ? Number(paint.angle) : 0
-    const safeShape = /^(circle|ellipse)$/.test(paint.shape) ? paint.shape : 'circle'
-    const grad =
-      fn === 'linear-gradient' || fn === 'linear_gradient'
-        ? `linear-gradient(${safeAngle}deg, ${stops})`
-        : `radial-gradient(${safeShape}, ${stops})`
-    let style = `background:${grad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text`
-    if (paint.shadows?.length) {
-      style +=
-        ';filter:' +
-        paint.shadows
-          .map((s) => {
-            const r = (s.color >>> 24) & 0xff
-            const g = (s.color >>> 16) & 0xff
-            const b = (s.color >>> 8) & 0xff
-            const a = (s.color & 0xff) / 255
-            return `drop-shadow(${Number(s.x_offset) || 0}px ${Number(s.y_offset) || 0}px ${Number(s.radius) || 0}px rgba(${r},${g},${b},${a.toFixed(2)}))`
-          })
-          .join(' ')
-    }
-    return style
-  }
-  if (paint.color) {
-    const r = (paint.color >>> 24) & 0xff
-    const g = (paint.color >>> 16) & 0xff
-    const b = (paint.color >>> 8) & 0xff
-    const a = (paint.color & 0xff) / 255
-    return `color:rgba(${r},${g},${b},${a.toFixed(2)})`
-  }
-  return ''
+  return style && colour ? `color:${colour};${style}` : style
 }
 
 // Resolve a 7TV paint CSS string for any username surface (reply context,

@@ -47,8 +47,10 @@
       /* THE MENTION SIGNAL — mirrors the site's --mention-bg (messages.css).
          A dark red FILL, no edge (mellen, 2026-10-09: "red bg and not red
          outline"). #ff0000 itself drowns red names and red text, so the fill
-         is the one dark red every colour still reads on. */
+         is the one dark red every colour still reads on. On a zebra stripe row
+         it is the lighter #870000 instead of the gray stripe. */
       --hs-mention-bg: #5f0000;
+      --hs-mention-bg-stripe: #870000;
       --hs-zebra: #444444; /* alternating-row stripe — owner pick for visible stripes; red/dim text on it is ~2.4:1 by choice */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).

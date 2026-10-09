@@ -57,9 +57,19 @@ describe('a signal must differ from the surface it sits on', () => {
     })
   }
 
-  test('no zebra rule paints over a mention', () => {
-    expect(strip(rows), 'a stripe on .mention erases the signal on every other row').not.toMatch(
-      /\.mention[^{]*\.hs-mc-zebra/,
+  test('a mention on a zebra row is the lighter mention red, never the gray stripe', () => {
+    const stripe = palette.match(/--hs-mention-bg-stripe:\s*([^;]+);/)?.[1].trim()
+    const fill = palette.match(/--hs-mention-bg:\s*([^;]+);/)?.[1].trim()
+    expect(stripe, '--hs-mention-bg-stripe is gone').toBeTruthy()
+    expect(stripe, 'a run of mentions would read as one block').not.toBe(fill)
+    expect(stripe).not.toBe(SURFACE)
+    for (const sel of ['.hs-mc-msg.mention.hs-mc-zebra,', '.hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,']) {
+      expect(block(rows, sel), `${sel} must fill with --hs-mention-bg-stripe`).toMatch(
+        /background:\s*var\(--hs-mention-bg-stripe\)/,
+      )
+    }
+    expect(strip(rows), 'a gray stripe on .mention erases the signal').not.toMatch(
+      /\.mention[^{]*\{[^}]*var\(--hs-zebra\)/,
     )
   })
 

@@ -612,11 +612,15 @@
       font-weight: 400;
     }
     /* The dark red fill is the whole "you got mentioned" signal, same as the
-       site's --mention-bg. It beats the zebra stripe too — a stripe would
-       erase the signal on every other row. */
+       site's --mention-bg. On a zebra row it takes the lighter red instead of
+       the gray stripe, so a run of mentions alternates and never goes gray. */
     .hs-mc-msg.mention,
     .hs-feed-msg.mention {
       background: var(--hs-mention-bg);
+    }
+    .hs-mc-msg.mention.hs-mc-zebra,
+    .hs-feed-msg.mention.hs-mc-zebra {
+      background: var(--hs-mention-bg-stripe);
     }
     /* Row base color white for non-colored text (gray timestamps, plain
        message body) — inline user colors override naturally. No star-cascade
@@ -652,6 +656,10 @@
     .hs-feed-msg.mention.hs-kw-match {
       background: var(--hs-mention-bg);
       box-shadow: none;
+    }
+    .hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,
+    .hs-feed-msg.mention.hs-kw-match.hs-mc-zebra {
+      background: var(--hs-mention-bg-stripe);
     }
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
        Monochrome by intent: a low-key gray bar (familiar, seen before). */

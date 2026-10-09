@@ -13,6 +13,10 @@
 # and one of them would go stale the first time the payload gained a field.
 # The only seam is `base` — '' on the site, https://heatsync.org here.
 #
+# client/utils/emote-refs.js is the one builder of a message's `emote_refs` (the
+# vouch that lets viewers who do not own an emote still see it). Feed posts from
+# the extension use it so they carry the same refs a site post does.
+#
 # client/card/{card-time,card-model,card-render}.js + public/css/modules/card.css
 # are the one user-card model/renderer/formatter/stylesheet, shared by every
 # card surface on both the site and the extension (hover tooltip, overlay full
@@ -34,6 +38,7 @@ site=${HS_SITE_DIR:-$(cd "$here/../.." 2>/dev/null && pwd)/heatsync}
 [ -f "$site/client/utils/gif-search-remote.js" ] || { echo "sync-site-copies: site repo not found at $site (set HS_SITE_DIR)" >&2; exit 1; }
 for pair in \
   client/utils/gif-search-remote.js:src/lib/gif-search-remote.js \
+  client/utils/emote-refs.js:src/lib/emote-refs.js \
   client/card/card-time.js:src/lib/card-time.js \
   client/card/card-model.js:src/lib/card-model.js \
   client/card/card-render.js:src/lib/card-render.js \

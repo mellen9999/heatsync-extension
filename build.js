@@ -267,6 +267,8 @@ function checkScopeCollisions() {
     // Same story: the site's gifs-tab fetch layer, multichat-only, landing in
     // this scope (see readMultichatModules).
     'gif-search-remote.js',
+    // The site's emote_refs builder (verbatim copy) — feed posts vouch their emotes.
+    'emote-refs.js',
     // The one user-card model/renderer/formatter (client/card/*.js on the
     // site) — multichat-only for now (tooltips.js/profile-card.js consume
     // hsCardModel/hsCardHtml), same embed point as gif-search-remote.js above.
@@ -914,6 +916,13 @@ function readMultichatModules() {
   const gifSearchPath = join(SRC_DIR, 'lib', 'gif-search-remote.js')
   if (existsSync(gifSearchPath)) {
     combined += `\n// --- lib/gif-search-remote.js ---\n${stripExports(readFileSync(gifSearchPath, 'utf8'))}\n`
+  }
+
+  // The site's emote_refs builder — verbatim copy; social.js's feed post path
+  // calls buildEmoteRefs/registerRemoteEmoteRef, so it lands before the modules.
+  const emoteRefsPath = join(SRC_DIR, 'lib', 'emote-refs.js')
+  if (existsSync(emoteRefsPath)) {
+    combined += `\n// --- lib/emote-refs.js ---\n${stripExports(readFileSync(emoteRefsPath, 'utf8'))}\n`
   }
 
   // The one user-card model/renderer/formatter (scripts/sync-site-copies.sh

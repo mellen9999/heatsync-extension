@@ -3083,7 +3083,10 @@ async function _quickOpToFeed(username, msg) {
   }
   const content = truncateSafe(`@${username}: ${raw}`, 500)
   try {
-    const resp = await apiFetch('/api/messages', { method: 'POST', auth: true, body: { content } })
+    const body = { content }
+    const emoteRefs = buildFeedEmoteRefs(content)
+    if (emoteRefs) body.emote_refs = emoteRefs
+    const resp = await apiFetch('/api/messages', { method: 'POST', auth: true, body })
     showToast(resp?.ok ? t('mc_input_posted_to_feed') : t('mc_input_post_failed'), resp?.ok ? 'success' : 'error')
   } catch {
     showToast(t('mc_input_post_failed'), 'error')
@@ -8501,6 +8504,9 @@ async function sendQuoteThread(words) {
     showToast(t('mc_input_login_first_op'), 'error')
     return
   }
+  // sendMessage's auto-add runs after the quote branch, so a quote post would
+  // vouch a remote pick (postFeedMessage below) without ever adding it.
+  autoAddInputEmotes(words)
   const content = buildQuoteContent(state, words)
   if (!content) {
     // Nothing left to cite (should not happen — startQuoteFromRow refuses

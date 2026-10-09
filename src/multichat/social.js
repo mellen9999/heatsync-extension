@@ -2698,6 +2698,49 @@ function _extractFeedBodyText(root) {
     .trim()
 }
 
+// ── feed emote vouching ──
+// A feed post is read by people who do not own the sender's emotes, and the
+// server stores only what the body says. Without emote_refs every 7TV/FFZ/BTTV
+// word in a post (an FFZ pick from the composer's search, say) rendered as
+// plain text for everyone but the sender. buildEmoteRefs is the site's own
+// builder (src/lib/emote-refs.js, byte copy), so a post from here vouches the
+// same way a post from heatsync.org does.
+//
+// Sources, in the order the composer itself resolves a word: an emote picked
+// from remote search this session (recentRemoteCompletions — url-only ref, no
+// hash yet), then whatever the composer knows (channel > owned > global). A
+// known emote with a real inventory hash goes through emotesMap so it keeps the
+// hash; anything else is registered as a url-only catalog ref. The server drops
+// a ref it dislikes, never the post, and the sanitizer re-checks every url.
+const FEED_REF_HASH_RE = /^[a-f0-9]{8,64}$/i
+function buildFeedEmoteRefs(text) {
+  if (!text) return null
+  const owned = new Map()
+  const names = new Set()
+  for (const word of String(text).split(/\s+/)) {
+    if (!word) continue
+    names.add(word)
+    if (word.length > 1 && word.endsWith('0')) names.add(word.slice(0, -1))
+  }
+  for (const name of names) {
+    const pick = typeof recentRemoteCompletions !== 'undefined' ? recentRemoteCompletions.get(name) : null
+    if (pick?.url && /^https:/i.test(pick.url)) {
+      registerRemoteEmoteRef({ name, url: pick.url, provider: pick.source, zeroWidth: !!pick.zeroWidth })
+      continue
+    }
+    const e = typeof lookupEmoteRenderOrder === 'function' ? lookupEmoteRenderOrder(name) : null
+    if (!e?.url || !/^https:/i.test(e.url)) continue
+    const provider = e.source || e.provider
+    if (typeof e.hash === 'string' && FEED_REF_HASH_RE.test(e.hash)) {
+      owned.set(name, { ...e, name, provider })
+    } else {
+      registerRemoteEmoteRef({ name, url: e.url, provider, zeroWidth: !!e.zeroWidth, width: e.width, height: e.height })
+    }
+  }
+  const refs = buildEmoteRefs(text, owned)
+  return Object.keys(refs).length ? refs : null
+}
+
 async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) {
   const input = document.getElementById('hs-mc-input')
   if (!input) return false
@@ -2729,6 +2772,8 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
   }
 
   const body = { content: text }
+  const emoteRefs = buildFeedEmoteRefs(text)
+  if (emoteRefs) body.emote_refs = emoteRefs
   if (mediaUrl) {
     body.media_url = mediaUrl
     body.media_type = mediaType

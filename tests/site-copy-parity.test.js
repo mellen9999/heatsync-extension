@@ -41,6 +41,7 @@ const SITE =
 // of the site path, but card.css lands as a renamed styles/ fragment instead.
 const FILES = [
   ['client/utils/gif-search-remote.js', 'src/lib/gif-search-remote.js'],
+  ['client/utils/emote-refs.js', 'src/lib/emote-refs.js'],
   ['client/card/card-time.js', 'src/lib/card-time.js'],
   ['client/card/card-model.js', 'src/lib/card-model.js'],
   ['client/card/card-render.js', 'src/lib/card-render.js'],

@@ -146,7 +146,11 @@ function stampOf(el) {
         try { raw = getComputedStyle(el).getPropertyValue('--hsp-t') || '' } catch (_) { raw = '' }
     }
     const s = parseFloat(String(raw).trim())
-    return Number.isFinite(s) && s > 0 ? s * 1000 : null
+    // Zero is a stamp, not its absence: `var(--hsp-t, 0s)` is the delay's own
+    // fallback, so a name rendered with no stamp (every server-rendered page)
+    // runs exactly as if stamped `0s`, and saying so out loud is what lets it
+    // be anchored at all.
+    return Number.isFinite(s) && s >= 0 ? s * 1000 : null
 }
 
 let frameStamp = 0

@@ -408,13 +408,18 @@ function installHsPaintHoverSync() {
     document,
     'mouseout',
     (e) => {
-      if (!_hsPaintHoverEls) return
       const t = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
       if (!t) return
       // still inside the same painted element (moving across its letter
       // spans) — keep the sync alive
       if (e.relatedTarget instanceof Element && e.relatedTarget.closest('[class*="hsp-"]') === t) return
-      clearAll()
+      // The freeze PAUSES every copy and deletes its scene plates; release
+      // resumes them where they froze and restarts the plates, so a hovered
+      // name ran behind every row mounted after it. Back on the clock a frame
+      // later, once the freeze has dropped and the plates exist again.
+      const els = _hsPaintHoverEls ? [t, ..._hsPaintHoverEls] : [t]
+      if (_hsPaintHoverEls) clearAll()
+      requestAnimationFrame(() => anchorWhenStarted(els))
     },
     { passive: true },
   )

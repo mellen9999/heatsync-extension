@@ -304,6 +304,43 @@ export function regateInPhase({ pause = [], resume = [] }, { onPause, onResume }
     for (const el of toResume) onResume?.(el)
     // Held back until they have a phase worth remembering.
     for (const [el, anims] of deferred) pauseWhenStarted(el, onPause, anims)
+    if (toResume.length) anchorReleased(toResume)
+}
+
+/**
+ * Seek the released names again once they are really running.
+ *
+ * ── THE SEEK ABOVE LANDS A FRAME EARLY ──────────────────────────────────────
+ *
+ * The re-anchor in regateInPhase writes `currentTime` while the animation is
+ * still PAUSED, which only sets its held time. Dropping the pause class then
+ * makes it play-pending, and it is handed a startTime when the next commit
+ * lands — keeping the held time, so it comes back late by however long that
+ * frame took. Measured on prod, phone emulation, after scrolling a room up and
+ * down: the one copy never gated sat 0.4% into its loop, the nine that came
+ * back sat 50-75ms behind it on every layer. A tab switch put them right
+ * (mellen, 2026-10-12, on the phone app), which is how it read as "not fully
+ * deduped" rather than broken.
+ *
+ * The budget's release is worse: over budget the name box drops its animation
+ * outright (BUDGET_RULE's `animation-name:none`), so the release creates new
+ * ones, which the pre-release seek never saw.
+ *
+ * Both are anchorWhenStarted's job: wait on `ready`, then seek a RUNNING
+ * animation, which sets its startTime directly. The early seek stays, so the
+ * name resumes already within a frame rather than stepping a whole pause.
+ *
+ * Stamped names only — an unstamped animation's restore is its exact past
+ * (resyncAnimationPhase), and the fold would overwrite it. A microtask, so the
+ * read lands after every class write of this crossing and the gate still costs
+ * one style flush rather than two interleaved.
+ */
+function anchorReleased(els) {
+    queueMicrotask(() => {
+        const stamped = []
+        for (const el of els) { if (stampOf(el) !== null) stamped.push(el) }
+        if (stamped.length) anchorWhenStarted(stamped)
+    })
 }
 
 /**

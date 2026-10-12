@@ -11923,7 +11923,11 @@ function stampOf(el) {
         try { raw = getComputedStyle(el).getPropertyValue('--hsp-t') || '' } catch (_) { raw = '' }
     }
     const s = parseFloat(String(raw).trim())
-    return Number.isFinite(s) && s > 0 ? s * 1000 : null
+    // Zero is a stamp, not its absence: `var(--hsp-t, 0s)` is the delay's own
+    // fallback, so a name rendered with no stamp (every server-rendered page)
+    // runs exactly as if stamped `0s`, and saying so out loud is what lets it
+    // be anchored at all.
+    return Number.isFinite(s) && s >= 0 ? s * 1000 : null
 }
 
 let frameStamp = 0
@@ -12077,6 +12081,43 @@ function regateInPhase({ pause = [], resume = [] }, { onPause, onResume } = {}) 
     for (const el of toResume) onResume?.(el)
     // Held back until they have a phase worth remembering.
     for (const [el, anims] of deferred) pauseWhenStarted(el, onPause, anims)
+    if (toResume.length) anchorReleased(toResume)
+}
+
+/**
+ * Seek the released names again once they are really running.
+ *
+ * ── THE SEEK ABOVE LANDS A FRAME EARLY ──────────────────────────────────────
+ *
+ * The re-anchor in regateInPhase writes `currentTime` while the animation is
+ * still PAUSED, which only sets its held time. Dropping the pause class then
+ * makes it play-pending, and it is handed a startTime when the next commit
+ * lands — keeping the held time, so it comes back late by however long that
+ * frame took. Measured on prod, phone emulation, after scrolling a room up and
+ * down: the one copy never gated sat 0.4% into its loop, the nine that came
+ * back sat 50-75ms behind it on every layer. A tab switch put them right
+ * (mellen, 2026-10-12, on the phone app), which is how it read as "not fully
+ * deduped" rather than broken.
+ *
+ * The budget's release is worse: over budget the name box drops its animation
+ * outright (BUDGET_RULE's `animation-name:none`), so the release creates new
+ * ones, which the pre-release seek never saw.
+ *
+ * Both are anchorWhenStarted's job: wait on `ready`, then seek a RUNNING
+ * animation, which sets its startTime directly. The early seek stays, so the
+ * name resumes already within a frame rather than stepping a whole pause.
+ *
+ * Stamped names only — an unstamped animation's restore is its exact past
+ * (resyncAnimationPhase), and the fold would overwrite it. A microtask, so the
+ * read lands after every class write of this crossing and the gate still costs
+ * one style flush rather than two interleaved.
+ */
+function anchorReleased(els) {
+    queueMicrotask(() => {
+        const stamped = []
+        for (const el of els) { if (stampOf(el) !== null) stamped.push(el) }
+        if (stamped.length) anchorWhenStarted(stamped)
+    })
 }
 
 /**
@@ -14863,7 +14904,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9e47a1e88d95' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e48c46c7e67e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -53909,13 +53950,18 @@ function installHsPaintHoverSync() {
     document,
     'mouseout',
     (e) => {
-      if (!_hsPaintHoverEls) return
       const t = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
       if (!t) return
       // still inside the same painted element (moving across its letter
       // spans) — keep the sync alive
       if (e.relatedTarget instanceof Element && e.relatedTarget.closest('[class*="hsp-"]') === t) return
-      clearAll()
+      // The freeze PAUSES every copy and deletes its scene plates; release
+      // resumes them where they froze and restarts the plates, so a hovered
+      // name ran behind every row mounted after it. Back on the clock a frame
+      // later, once the freeze has dropped and the plates exist again.
+      const els = _hsPaintHoverEls ? [t, ..._hsPaintHoverEls] : [t]
+      if (_hsPaintHoverEls) clearAll()
+      requestAnimationFrame(() => anchorWhenStarted(els))
     },
     { passive: true },
   )

@@ -498,7 +498,7 @@ function findPendingByEchoText(text) {
   }
   const norm = (s) =>
     _unkickEmotes(s)
-      .replace(/[ \s]+/g, ' ')
+      .replace(/[\u00a0\s]+/g, ' ')
       .trim()
   const wantN = norm(text)
   if (!wantN) return null
@@ -4280,7 +4280,7 @@ function handleInputChange(_e) {
               }
               // Only whitespace may sit between the anchor chip and the
               // modifier — "Kappa lol w!" is three words, not a wide Kappa.
-              const targetImg = /^[\s ]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
+              const targetImg = /^[\s\u00a0]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
               if (targetImg) {
                 {
                   hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)

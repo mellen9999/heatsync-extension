@@ -64,7 +64,7 @@ function unescapeHtml(str) {
 // U+2060 word joiner, U+FEFF BOM/zero-width no-break space, U+00AD soft hyphen.
 // ASCII controls (0x00–0x1F and 0x7F) are also stripped — trim() only removes
 // whitespace (0x09–0x0D, 0x20), leaving null bytes and other controls intact.
-const _INVISIBLE_RE = /[\x00-\x1F\x7F­​‌‍⁠﻿]/g
+const _INVISIBLE_RE = /[\x00-\x1F\x7F\u00ad\u200b\u200c\u200d\u2060\ufeff]/g
 
 function safeUrl(url) {
   if (typeof url !== 'string' || !url) return ''

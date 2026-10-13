@@ -1320,7 +1320,9 @@ function minifyDistFile(outDir, file, extraDefines) {
 }
 
 function minifyDist(outDir) {
-  const targets = [...CONTENT_SCRIPTS, ...COPY_FILES.filter((f) => f.endsWith('.js'))]
+  // emoji-data.iso.js is copied from emoji-data.js before this runs; minify it
+  // too so the two stay byte-identical (and both ASCII, see the guard below)
+  const targets = [...CONTENT_SCRIPTS, ...COPY_FILES.filter((f) => f.endsWith('.js')), 'emoji-data.iso.js']
   let bytesBefore = 0,
     bytesAfter = 0
   for (const f of targets) {
@@ -1337,6 +1339,21 @@ function minifyDist(outDir) {
     // three platforms, so platform branches must survive to runtime.)
     minifyDistFile(outDir, f, { __HS_DEV_BUILD__: 'false' })
     bytesAfter += readFileSync(p).length
+  }
+  // Fail-closed: every shipped script is pure ASCII. One non-ASCII char makes
+  // Chrome hold the WHOLE source as UTF-16 — multichat-core.js's 1.4MB became
+  // 2.9MB in every tab, for four regex literals. esbuild escapes strings and
+  // templates but leaves regex literals raw, so write those with \u escapes.
+  for (const f of targets) {
+    const p = join(outDir, f)
+    if (!existsSync(p)) continue
+    const at = readFileSync(p, 'utf8').search(/[^\x00-\x7f]/)
+    if (at !== -1) {
+      const src = readFileSync(p, 'utf8')
+      throw new Error(
+        `build: ${f} has a non-ASCII char after minify (…${src.slice(Math.max(0, at - 40), at + 10)}…) — escape it as \\uXXXX in the source regex`,
+      )
+    }
   }
   // Fail-closed: the nonce-less dev-reload relaxation MUST be compiled out of
   // every minified (packaged/store) build. minifyDistFile swallows esbuild

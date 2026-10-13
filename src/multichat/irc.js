@@ -1617,7 +1617,7 @@ class KickChat extends ChatClient {
       if (isStreamEvent && m.text) {
         if (!m.type) m.type = 'stream-event'
         if (!m.text.startsWith('[')) {
-          const em = m.text.match(/^([a-zA-Z0-9_]+) ◆/)
+          const em = m.text.match(/^([a-zA-Z0-9_]+) \u25c6/)
           if (em) m.text = `[${em[1]}]${m.text.slice(em[1].length)}`
         }
         if (seenEventTexts.has(m.text)) return false

@@ -11152,7 +11152,7 @@ async function handleMessage(message, sender, sendResponse) {
     })()
     return true
   } else if (message.type === 'get_sender_emotes') {
-    // Per-sender 7TV + BTTV personal-set fetch. Used by content script to lazy-resolve
+    // Per-sender heatsync + 7TV personal-set resolve. Used by content script to lazy-resolve
     // each unseen sender's emotes once and cache write-once-per-(sender, name) forever.
     // Input:  senderKeys: ["twitch:12345", "kick:somebody", "yt:abcd", ...]
     // Output: { emotes: { "twitch:12345": { "67": {url, source, zeroWidth, hash}, ... }, ... } }
@@ -11229,148 +11229,20 @@ async function handleMessage(message, sender, sendResponse) {
             result[key] = {}
             return
           }
-          const platform = key.slice(0, colon)
-          const id = key.slice(colon + 1)
-          if (!id) {
+          if (!key.slice(colon + 1)) {
             result[key] = {}
             return
           }
+          // A sender's emotes = their heatsync set + their 7TV paid personal set
+          // (captured live from EventAPI entitlements). Not their CHANNEL's
+          // 7TV/BTTV set: that isn't theirs to post elsewhere — 7TV, BTTV and the
+          // site all render it as text — and fetching it cost two third-party
+          // calls per new chatter, ~1,500 a minute in a busy chat, mostly 404s.
           const collected = {}
-          // 7TV — twitch by id; kick by NUMERIC kick user_id (NOT the username:
-          // /users/kick/{username} 404s user_not_found). content.js queues
-          // kick:<username>, so resolve username→id via kick.com/api/v1/users
-          // (cached, same resolver get_kick_user_cosmetics uses) before the
-          // fetch; no id → skip the 7TV leg (hs personal set still resolves).
-          let sevenTvPath
-          if (platform === 'kick') {
-            let kid = kickUsernameToIdCache.get(id)
-            if (kid === undefined) {
-              try {
-                const ur = await fetchKickCom(`https://kick.com/api/v1/users/${encodeURIComponent(id)}`)
-                if (ur.ok) {
-                  const uj = await ur.json()
-                  kid = uj?.id != null ? String(uj.id) : null
-                } else {
-                  ur.body?.cancel?.()
-                  kid = null
-                }
-              } catch {
-                kid = null
-              }
-              if (kid) {
-                if (kickUsernameToIdCache.size >= 1000)
-                  kickUsernameToIdCache.delete(kickUsernameToIdCache.keys().next().value)
-                kickUsernameToIdCache.set(id, kid)
-              }
-            }
-            sevenTvPath = kid ? `kick/${encodeURIComponent(kid)}` : null
-          } else {
-            sevenTvPath = `twitch/${encodeURIComponent(id)}`
-          }
-          const isNumericId = /^\d+$/.test(id)
-          // Per-id inflight dedup for 7TV/BTTV — chat rebuild can flush 30 keys in
-          // <1s; without this each one fires its own pair. Shared promise per
-          // (provider, path) collapses duplicate concurrent fetches into one. The
-          // 5min cache below handles the longer-window case.
-          const stv7tvInflight = (globalThis.__stv7tvInflight ??= new Map())
-          const bttvInflight = (globalThis.__bttvInflight ??= new Map())
-          let stvP = null
-          if (sevenTvPath) {
-            stvP = stv7tvInflight.get(sevenTvPath)
-            if (!stvP) {
-              stvP = fetchWithTimeout(`https://7tv.io/v3/users/${sevenTvPath}`)
-                // 404 = user genuinely has no 7TV set (cache the empty); a 5xx /
-                // 429 must NOT read as empty — that caches the sender's real
-                // emotes away as raw text for the negative TTL. Flag it errored.
-                .then((r) => (r.ok ? r.json() : r.status === 404 ? null : SENDER_FETCH_ERR))
-                .catch(() => SENDER_FETCH_ERR)
-              stv7tvInflight.set(sevenTvPath, stvP)
-              stvP.finally(() => stv7tvInflight.delete(sevenTvPath))
-            }
-          }
-          // BTTV — only twitch-id endpoint. Skip for kick/yt.
-          let bttvP
-          if (platform === 'twitch' && isNumericId) {
-            bttvP = bttvInflight.get(id)
-            if (!bttvP) {
-              bttvP = fetchWithTimeout(`https://api.betterttv.net/3/cached/users/twitch/${id}`)
-                // 404 = no BTTV user (empty); 5xx/429 = transient, flag errored
-                // so it isn't cached as "no emotes". See the 7TV leg above.
-                .then((r) => (r.ok ? r.json() : r.status === 404 ? null : SENDER_FETCH_ERR))
-                .catch(() => SENDER_FETCH_ERR)
-              bttvInflight.set(id, bttvP)
-              bttvP.finally(() => bttvInflight.delete(id))
-            }
-          } else {
-            bttvP = Promise.resolve(null)
-          }
-          // HeatSync personal set — the sender's added/custom emotes (public endpoint,
-          // users.id == platform id). This is the ONLY source for an emote a user
-          // added to heatsync that isn't in their 7TV/BTTV provider set (e.g. a 7TV
-          // catalog emote added via the picker, or a self-hosted upload). Without it,
-          // those emotes render only for the sender themselves and as raw text for
-          // everyone else. Numeric ids only (twitch/kick; yt once twitch-resolved).
-          // credentials:'omit' is REQUIRED: this public endpoint sends
-          // Access-Control-Allow-Origin:* (for cross-origin extension reads), and a
-          // CREDENTIALED request (the heatsync.org default in fetchWithTimeout) makes
-          // the browser reject `*`+credentials — Firefox then drops the response and
-          // the sender's heatsync emotes never load. No cookie is needed here anyway.
-          // HeatSync set comes from the single batched fetch above (hsBatch), keyed by
-          // platform-prefixed key (e.g. twitch:12345, kick:username).
           const hs = { emotes: hsBatch[key] || [] }
-          const [stvRaw, bttvRaw] = await Promise.all([stvP, bttvP])
-          const stvErrored = stvRaw === SENDER_FETCH_ERR
-          const bttvErrored = bttvRaw === SENDER_FETCH_ERR
-          const stv = stvErrored ? null : stvRaw
-          const bttv = bttvErrored ? null : bttvRaw
-          // 7TV active channel set (a useful proxy; TRUE personal sets merge below).
-          // v3: inline emote_set can be null with the id still on emote_set_id
-          // (SevenTV/Extension#1253) — resolve it, but never let that follow-up
-          // fetch's failure reject this whole Promise.all(senderKeys...); treat
-          // it like any other errored leg via the anyErrored gate below instead.
-          let stvSetErrored = false
-          let stvEmoteSet = stv?.emote_set ?? null
-          if (!stvEmoteSet && stv?.emote_set_id) {
-            try {
-              stvEmoteSet = await resolve7TVEmoteSet(stv)
-            } catch {
-              stvSetErrored = true
-            }
-          }
-          const stvEmotes = stvEmoteSet?.emotes || []
-          for (const e of stvEmotes) {
-            if (!e?.name || !e?.id) continue
-            const flags = (e.flags || 0) | (e.data?.flags || 0)
-            collected[e.name] = {
-              url: `https://cdn.7tv.app/emote/${e.id}/1x.avif`,
-              source: '7tv',
-              state: 'global',
-              zeroWidth: !!(flags & 257),
-              hash: e.id,
-              animated: !!e.data?.animated,
-            }
-          }
-          // 7TV TRUE personal set — captured live from EventAPI entitlements
           const uid = key.startsWith('twitch:') ? key.slice(7) : null
           const personal = uid ? seventvPersonalSets.get(uid) : null
           if (personal) Object.assign(collected, personal)
-          // BTTV personal — channelEmotes + sharedEmotes
-          if (bttv) {
-            const all = [...(bttv.channelEmotes || []), ...(bttv.sharedEmotes || [])]
-            for (const e of all) {
-              if (!e?.code || !e?.id) continue
-              if (collected[e.code]) continue // 7TV wins on collision
-              collected[e.code] = {
-                url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
-                animated: e.animated === true,
-                source: 'bttv',
-                state: 'global',
-                zeroWidth: false,
-                hash: e.id,
-                os: bttvOversize(e),
-              }
-            }
-          }
           // HeatSync personal set — overrides provider entries because it's the
           // sender's curated set (and what they actually post via heatsync). URLs
           // are already absolute (server normalizes /uploads/ → CDN). zero_width
@@ -11426,16 +11298,11 @@ async function handleMessage(message, sender, sendResponse) {
           }
           // Only cache when the result is trustworthy: a transient fetch error
           // must NOT be cached — even the 90s negative TTL wrongly blanks this
-          // sender after the network recovers. A partial result (one provider
-          // errored, another delivered) is also not cached — next flush retries
-          // the failed leg. Error-free results (empty or not) cache normally;
-          // cacheFresh picks the 5min/90s TTL by emptiness.
-          const anyErrored = stvErrored || stvSetErrored || bttvErrored || _hsBatchErrored
-          if (!anyErrored) {
+          // sender after the network recovers. Error-free results (empty or
+          // not) cache normally; cacheFresh picks the TTL by emptiness.
+          if (!_hsBatchErrored) {
             cache.set(key, { emotes: collected, ts: Date.now() })
-            // LRU evict: keep most-recent 500. Each entry holds a sender's full
-            // 7TV+BTTV personal set (potentially 100+ emote objects) — 5000 was
-            // overkill for any realistic chatroom and bloated the SW heap.
+            // LRU evict: keep most-recent 500.
             if (cache.size > 500) cache.delete(cache.keys().next().value)
           } else {
             erroredKeys.push(key)

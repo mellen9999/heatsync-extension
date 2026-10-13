@@ -17,6 +17,7 @@
     "test:e2e-live": "bun run build.js chrome --minify && bun scripts/e2e-live.ts",
     "test:heap": "bun run build.js chrome --minify && bun scripts/heap-soak.ts",
     "test:heap-tabs": "bun run build.js chrome --minify && bun scripts/heap-tabs.ts",
+    "test:heap-budget": "bun run build.js chrome --minify && bun scripts/heap-budget.ts",
     "build": "bun run build.js",
     "build:chrome": "bun run build.js chrome",
     "build:firefox": "bun run build.js firefox",

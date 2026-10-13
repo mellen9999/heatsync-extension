@@ -560,6 +560,8 @@ class IRC extends ChatClient {
           this._handleMsg(message.msg)
         } else if (message.type === 'bg_irc_history_merged') {
           this._refreshFromBg(message.channel)
+        } else if (message.type === 'bg_irc_rejoin') {
+          this._rejoinBg()
         }
       }
       cleanup.addListener(chrome.runtime?.onMessage, this._listener)
@@ -570,6 +572,12 @@ class IRC extends ChatClient {
     try {
       fetchGlobalBadges()
     } catch {}
+  }
+
+  // A woken SW has no record of what this tab joined (it reads rings per
+  // join), so the tab re-asserts its channels; the buffers here are intact.
+  _rejoinBg() {
+    for (const ch of this.channels.keys()) safeSendMessage({ type: 'bg_irc_join', channel: ch })
   }
 
   _seenId(id) {

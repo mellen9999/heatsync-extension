@@ -51,7 +51,8 @@ describe('subsystem chokepoints', () => {
     expect(typeof ctor).toBe('string')
     const at = IRC.indexOf("if (gateAtBoot('irc-twitch'))")
     expect(at, 'the irc-twitch gate around listener registration is gone').toBeGreaterThan(-1)
-    const region = IRC.slice(at, at + 500)
+    // the whole gated block: up to its closing brace at the gate's indent
+    const region = IRC.slice(at, IRC.indexOf('\n    }\n', at))
     expect(region).toContain("message.type === 'bg_irc_msg'")
     expect(region).toContain('cleanup.addListener(chrome.runtime?.onMessage, this._listener)')
   })

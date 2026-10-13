@@ -12459,6 +12459,8 @@ const BG_IRC = {
   historyInFlight: new Map(), // ch -> Promise<void> (awaitable in-flight robotty fetch)
   lastRobottyAt: new Map(), // ch -> ts (last successful/attempted robotty fetch)
   persistTimers: new Map(),
+  releaseTimers: new Map(), // ch -> timeout (bgIrcScheduleRelease)
+  joining: new Map(), // ch -> Promise (bg_irc_join reading the persisted ring)
   storageRestored: false,
   // Tabs that have requested live broadcasts. Empty initially — we don't
   // broadcast until at least one tab has joined a channel, so a freshly
@@ -12500,7 +12502,9 @@ async function bgIrcRestoreFromStorage() {
       )
       return
     }
-    let n = 0
+    // Purge only. Buffers are read one channel at a time on join
+    // (bgIrcReadPersisted): restoring every ring here put every channel
+    // watched in the last day back in RAM and JOINed on each SW wake.
     const expired = []
     for (const [k, v] of Object.entries(all)) {
       if (!k.startsWith('hs_irc_') || k.startsWith('hs_irc_sync_') || k === 'hs_irc_parser_version') continue
@@ -12517,21 +12521,10 @@ async function bgIrcRestoreFromStorage() {
         // Skipped buffers were previously left in storage forever — every
         // channel ever watched kept its full ring in storage.local unbounded.
         expired.push(k)
-        continue
       }
-      const buf = new BGCircularBuffer(BG_IRC_PERSIST_MAX)
-      // Purge non-renderable types from legacy persisted buffers. Earlier
-      // backfill paths pushed ROOMSTATE/USERSTATE/WHISPER into the ring;
-      // they fill 500-msg toRender slots with null divs → chat appears empty.
-      for (const m of v.msgs) {
-        if (m?.type === 'roomstate' || m?.type === 'userstate' || m?.type === 'whisper') continue
-        buf.push(m)
-      }
-      BG_IRC.channels.set(ch, buf)
-      n++
     }
     if (expired.length) await browser.storage.local.remove(expired).catch(() => {})
-    log('BG IRC restored', n, 'channels from storage', expired.length ? `(purged ${expired.length} stale)` : '')
+    if (expired.length) log('BG IRC purged', expired.length, 'stale channel buffers')
   } catch (e) {
     log('BG IRC restore failed:', e.message)
   }
@@ -12594,6 +12587,75 @@ function bgIrcPersistChannel(ch) {
       } catch {}
     }, BG_IRC_PERSIST_DEBOUNCE_MS),
   )
+}
+
+// One channel's persisted ring (≤24h old), for its first join after a SW
+// wake or a release — so a reopened channel still paints history instantly.
+async function bgIrcReadPersisted(ch) {
+  const key = `hs_irc_${ch}`
+  let v = null
+  try {
+    v = (await browser.storage.local.get(key))[key]
+  } catch {}
+  if (!v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) return null
+  const buf = new BGCircularBuffer(BG_IRC_PERSIST_MAX)
+  // Purge non-renderable types from legacy persisted buffers. Earlier
+  // backfill paths pushed ROOMSTATE/USERSTATE/WHISPER into the ring;
+  // they fill 500-msg toRender slots with null divs → chat appears empty.
+  for (const m of v.msgs) {
+    if (m?.type === 'roomstate' || m?.type === 'userstate' || m?.type === 'whisper') continue
+    buf.push(m)
+  }
+  return buf
+}
+
+// A channel no tab wants any more is let go: PARTed, its ring flushed to disk
+// (bgIrcReadPersisted hydrates a reopen) and dropped from RAM. Dropping only
+// the interest used to leave the 3000-msg ring JOINed, persisting every 1.5s
+// and re-JOINed on every reconnect — the SW carried every channel watched
+// that day. The grace absorbs reloads and channel hops that part, then join.
+const BG_IRC_RELEASE_GRACE_MS = 60_000
+
+function bgIrcScheduleRelease(ch) {
+  if (BG_IRC.releaseTimers.has(ch)) return
+  BG_IRC.releaseTimers.set(
+    ch,
+    setTimeout(() => bgIrcReleaseChannel(ch), BG_IRC_RELEASE_GRACE_MS),
+  )
+}
+
+function bgIrcCancelRelease(ch) {
+  const t = BG_IRC.releaseTimers.get(ch)
+  if (!t) return
+  clearTimeout(t)
+  BG_IRC.releaseTimers.delete(ch)
+}
+
+function bgIrcReleaseChannel(ch) {
+  BG_IRC.releaseTimers.delete(ch)
+  if (BG_IRC.channelTabs.get(ch)?.size) return
+  const buf = BG_IRC.channels.get(ch)
+  if (!buf) return
+  const pending = BG_IRC.persistTimers.get(ch)
+  if (pending) {
+    clearTimeout(pending)
+    BG_IRC.persistTimers.delete(ch)
+  }
+  const msgs = buf.getAll()
+  if (msgs.length) browser.storage.local.set({ [`hs_irc_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
+  BG_IRC.channels.delete(ch)
+  BG_IRC.chanLastSeen.delete(ch)
+  BG_IRC.chanRejoinAttempts.delete(ch)
+  BG_IRC.roomstates.delete(ch)
+  if (BG_IRC.ws?.readyState === WebSocket.OPEN) {
+    try {
+      BG_IRC.ws.send(`PART #${ch}\r\n`)
+    } catch {}
+  }
+  try {
+    wsSend({ type: 'irc:part', channel: ch })
+  } catch {}
+  log('BG IRC released', ch)
 }
 
 function bgIrcConnect() {
@@ -13252,8 +13314,10 @@ function bgIrcRecordToExt(rec, channelHint) {
 function bgIrcMergeServerBacklog(ch, records) {
   ch = (ch || '').toLowerCase()
   if (!ch || !Array.isArray(records) || records.length === 0) return
-  if (!BG_IRC.channels.has(ch)) BG_IRC.channels.set(ch, new BGCircularBuffer(BG_IRC_PERSIST_MAX))
+  // Joins create the ring before asking for backlog; no ring = released
+  // (or never joined) — a late reply must not bring a dropped channel back.
   const buf = BG_IRC.channels.get(ch)
+  if (!buf) return
   const existing = buf.getAll()
   const existingIds = new Set(existing.filter((m) => m.id).map((m) => m.id))
   const fpKey = (m) => `${m.user}|${m.time}|${(m.text || '').slice(0, 60)}`
@@ -13320,21 +13384,54 @@ async function bgIrcBroadcast(payload) {
   } catch {}
 }
 
+// The twitch channel a tab's page shows, from its URL (the content side's
+// getCurrentChannel shape; it still filters reserved paths like /directory).
+function bgIrcPageChannel(url) {
+  try {
+    const u = new URL(url)
+    if (!/^(www\.)?twitch\.tv$/.test(u.hostname)) return null
+    const m = u.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_]+)/)
+    return m ? bgIrcSafeChannel(m[1]) || null : null
+  } catch {
+    return null
+  }
+}
+
+// Streams open across the browser = the channels twitch tabs are ON. Not
+// channelTabs: every tab joins every other open stream as an auto-tab, so a
+// closed stream stayed "open" as long as any other tab lived — its auto-tab
+// held its own interest, and nothing (tab, chat, ring) ever went away.
+async function bgIrcOpenChannels() {
+  const tabs = await browser.tabs.query({ url: ['*://*.twitch.tv/*'] })
+  return [...new Set(tabs.map((t) => bgIrcPageChannel(t.url || '')).filter(Boolean))]
+}
+
 // Every multichat instance learns which channels are open across the whole
 // browser — feeds the ephemeral auto-tabs (5 streams open = 5 tabs, no
 // manual adds). Debounced: interest churns in bursts during navigation.
+// Only changes are sent; a tab that loads later asks (bg_get_open_channels).
 let _openChBroadcastTimer = null
+let _openChLast = null
 function bgBroadcastOpenChannels() {
   if (_openChBroadcastTimer) return
-  _openChBroadcastTimer = setTimeout(() => {
+  _openChBroadcastTimer = setTimeout(async () => {
     _openChBroadcastTimer = null
     try {
-      bgIrcBroadcast({ type: 'open_channels', channels: [...BG_IRC.channelTabs.keys()] })
+      const channels = await bgIrcOpenChannels()
+      const key = channels.sort().join(',')
+      if (key === _openChLast) return
+      _openChLast = key
+      bgIrcBroadcast({ type: 'open_channels', channels })
     } catch {}
   }, 500)
 }
+// a tab hopping channels or leaving twitch changes the open set too
+browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
+  if (changeInfo.url) bgBroadcastOpenChannels()
+})
 
 function bgIrcRegisterTabInterest(tabId, ch) {
+  bgIrcCancelRelease(ch)
   if (!BG_IRC.tabInterest.has(tabId)) BG_IRC.tabInterest.set(tabId, new Set())
   BG_IRC.tabInterest.get(tabId).add(ch)
   if (!BG_IRC.channelTabs.has(ch)) BG_IRC.channelTabs.set(ch, new Set())
@@ -13346,7 +13443,10 @@ function bgIrcUnregisterTabInterest(tabId, ch) {
   const tabSet = BG_IRC.channelTabs.get(ch)
   if (tabSet) {
     tabSet.delete(tabId)
-    if (tabSet.size === 0) BG_IRC.channelTabs.delete(ch)
+    if (tabSet.size === 0) {
+      BG_IRC.channelTabs.delete(ch)
+      bgIrcScheduleRelease(ch)
+    }
   }
   const interest = BG_IRC.tabInterest.get(tabId)
   if (interest) interest.delete(ch)
@@ -13371,12 +13471,12 @@ function bgIrcSafeChannel(ch) {
     .slice(0, 25)
 }
 
-function bgIrcEnsureChannel(ch) {
+function bgIrcEnsureChannel(ch, restored = null) {
   ch = bgIrcSafeChannel(ch)
   if (!ch) return
   const isNew = !BG_IRC.channels.has(ch)
   if (isNew) {
-    BG_IRC.channels.set(ch, new BGCircularBuffer(BG_IRC_PERSIST_MAX))
+    BG_IRC.channels.set(ch, restored || new BGCircularBuffer(BG_IRC_PERSIST_MAX))
     BG_IRC.chanLastSeen.set(ch, Date.now())
     if (BG_IRC.channels.size > MAX_BG_IRC_CHANNELS) {
       const oldest = BG_IRC.channels.keys().next().value
@@ -13422,7 +13522,10 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     const tabSet = BG_IRC.channelTabs.get(ch)
     if (tabSet) {
       tabSet.delete(tabId)
-      if (tabSet.size === 0) BG_IRC.channelTabs.delete(ch)
+      if (tabSet.size === 0) {
+        BG_IRC.channelTabs.delete(ch)
+        bgIrcScheduleRelease(ch)
+      }
     }
   }
   BG_IRC.tabInterest.delete(tabId)
@@ -13484,7 +13587,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
   if (message.type === 'bg_get_open_channels') {
-    sendResponse({ channels: [...BG_IRC.channelTabs.keys()] })
+    bgIrcOpenChannels()
+      .then((channels) => sendResponse({ channels }))
+      .catch(() => sendResponse({ channels: [] }))
     return true
   }
   if (message.type === 'bg_submit_feedback') {
@@ -13533,11 +13638,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     ;(async () => {
       try {
         if (!BG_IRC.storageRestored) await bgIrcRestoreFromStorage()
-        bgIrcEnsureChannel(ch)
+        // Interest first: a release armed by a part moments ago must not
+        // fire while the persisted ring is being read.
+        if (tabId) bgIrcRegisterTabInterest(tabId, ch)
+        if (!BG_IRC.channels.has(ch)) {
+          let p = BG_IRC.joining.get(ch)
+          if (!p) {
+            p = bgIrcReadPersisted(ch)
+              .then((restored) => bgIrcEnsureChannel(ch, restored))
+              .finally(() => BG_IRC.joining.delete(ch))
+            BG_IRC.joining.set(ch, p)
+          }
+          await p
+        } else {
+          bgIrcEnsureChannel(ch)
+        }
         // Reader may be parked (SW booted with no platform tabs) — a join is
         // live interest, connect now; onopen re-JOINs every known channel.
         if (!BG_IRC.ws && !BG_IRC.reconnectTimer) bgIrcConnect()
-        if (tabId) bgIrcRegisterTabInterest(tabId, ch)
         BG_IRC.liveTabs.add(tabId)
         sendResponse({ ok: true })
       } catch (e) {
@@ -13559,6 +13677,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     ;(async () => {
       try {
         if (!BG_IRC.storageRestored) await bgIrcRestoreFromStorage()
+        const joining = BG_IRC.joining.get(ch)
+        if (joining) await joining.catch(() => {})
         // If a robotty backfill is in flight (cold SW / fresh channel), wait
         // for it so the tab's first paint already has full history instead of
         // depending on the later bg_irc_history_merged broadcast. Cap the wait
@@ -13596,6 +13716,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   await bgIrcRestoreFromStorage()
   bgIrcConnect()
+  // A woken SW has lost every tab's interest and holds no rings (they are
+  // read per join), so open tabs re-assert the channels they show.
+  for (const tab of tabs || (await getMatchingTabs().catch(() => []))) {
+    browser.tabs.sendMessage(tab.id, { type: 'bg_irc_rejoin' }).catch(() => {})
+  }
 })()
 
 // ============================================================================

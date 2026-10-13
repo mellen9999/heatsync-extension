@@ -5256,11 +5256,24 @@
     const here = (getCurrentChannel() || '').toLowerCase()
     openSet.delete(here) // this tab's own channel is already the live tab
     let changed = false
-    // drop ephemerals whose browser tab closed
+    // drop ephemerals whose browser tab closed — and their chat, as
+    // removeChannel does: the splice alone left the 3000-msg buffer joined
+    // and fed, and the BG kept the channel for this tab's sake
+    let droppedCurrent = false
     for (let i = config.channels.length - 1; i >= 0; i--) {
       const c = config.channels[i]
-      if (c?.ephemeral && !openSet.has((c.twitch || '').toLowerCase())) {
+      const ch = (c?.twitch || '').toLowerCase()
+      if (c?.ephemeral && !openSet.has(ch)) {
         config.channels.splice(i, 1)
+        _dropTabCache(c.id)
+        dropTabActivity(c.id)
+        subTenureMap.delete(ch)
+        if (ch !== (getLiveChannel() || '').toLowerCase()) {
+          try {
+            irc?.part?.(ch)
+          } catch (_) {}
+        }
+        if (currentTab === c.id) droppedCurrent = true
         changed = true
       }
     }
@@ -5300,6 +5313,7 @@
         updateTabBar()
       } catch (_) {}
     }
+    if (droppedCurrent) switchTab('live')
   }
 
   // Server-side heat spike (moment detector) → inline 🔥 row in all chats.

@@ -1205,7 +1205,7 @@ function unescapeHtml(str) {
 // U+2060 word joiner, U+FEFF BOM/zero-width no-break space, U+00AD soft hyphen.
 // ASCII controls (0x00–0x1F and 0x7F) are also stripped — trim() only removes
 // whitespace (0x09–0x0D, 0x20), leaving null bytes and other controls intact.
-const _INVISIBLE_RE = /[\x00-\x1F\x7F­​‌‍⁠﻿]/g
+const _INVISIBLE_RE = /[\x00-\x1F\x7F\u00ad\u200b\u200c\u200d\u2060\ufeff]/g
 
 function safeUrl(url) {
   if (typeof url !== 'string' || !url) return ''
@@ -14986,7 +14986,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '72c417df0783' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c59f9a701ef8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -22165,7 +22165,7 @@ class KickChat extends ChatClient {
       if (isStreamEvent && m.text) {
         if (!m.type) m.type = 'stream-event'
         if (!m.text.startsWith('[')) {
-          const em = m.text.match(/^([a-zA-Z0-9_]+) ◆/)
+          const em = m.text.match(/^([a-zA-Z0-9_]+) \u25c6/)
           if (em) m.text = `[${em[1]}]${m.text.slice(em[1].length)}`
         }
         if (seenEventTexts.has(m.text)) return false
@@ -42104,7 +42104,7 @@ function findPendingByEchoText(text) {
   }
   const norm = (s) =>
     _unkickEmotes(s)
-      .replace(/[ \s]+/g, ' ')
+      .replace(/[\u00a0\s]+/g, ' ')
       .trim()
   const wantN = norm(text)
   if (!wantN) return null
@@ -45886,7 +45886,7 @@ function handleInputChange(_e) {
               }
               // Only whitespace may sit between the anchor chip and the
               // modifier — "Kappa lol w!" is three words, not a wide Kappa.
-              const targetImg = /^[\s ]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
+              const targetImg = /^[\s\u00a0]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
               if (targetImg) {
                 {
                   hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)

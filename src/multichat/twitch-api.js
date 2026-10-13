@@ -4050,7 +4050,7 @@ function renderThirdPartyBadges(userId) {
       html += `<img class="hs-mc-badge-img hs-mc-ffz-badge" src="${escapeHtml(safeUrl(b.url) || '')}" alt="${escapeHtml(b.title)}" title="${escapeHtml(b.title)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${safeColor ? `background:${safeColor};` : ''}">`
     }
   }
-  const chat = getSetting('chatterinoBadges') ? mcChatterinoBadgeMap.get(userId) : null
+  const chat = getSetting('chatterinoBadges') ? mcChatterinoBadgeMap.get(userId)?.at(-1) : null
   if (chat) {
     html += `<img class="hs-mc-badge-img hs-mc-chatterino-badge" src="${escapeHtml(safeUrl(chat.url) || '')}" alt="Chatterino" title="${escapeHtml(chat.tooltip || 'Chatterino')}" decoding="async" width="18" height="18" style="width:18px;height:18px;">`
   }

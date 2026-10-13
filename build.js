@@ -255,6 +255,7 @@ function checkScopeCollisions() {
     'browser-api.js',
     'modifiers.js',
     'undo-manager.js',
+    'badge-index.js',
     // paint-spec.js (+ its synced-copy imports paint-core.js/scene-spec.js)
     // isn't part of readLib()'s universal bundle (only the multichat overlay
     // embeds them — see readMultichatModules), but they land in the same
@@ -705,6 +706,7 @@ const LIB_ORDER = [
   'browser-api.js',
   'modifiers.js',
   'undo-manager.js',
+  'badge-index.js',
 ]
 
 // Every content script gets the core: error-reporter/diag stay universal on
@@ -718,7 +720,7 @@ const LIB_CORE = new Set(['error-reporter.js', 'cleanup.js', 'utils.js', 'diag.j
 // Opt-in lib files per non-multichat content script (multichat bundles embed
 // the full lib). Derived from actual symbol use — keep in sync via the guard.
 const LIB_EXTRAS = {
-  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js'],
+  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js', 'badge-index.js'],
   'youtube-content.js': ['config.js'],
   'autocomplete-hook.js': ['modifiers.js'],
   'heatsync-button.js': ['reserved-paths.js', 'palette.js'],

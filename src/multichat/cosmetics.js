@@ -8,8 +8,8 @@
 
 // Third-party cosmetics state (BTTV/FFZ/Chatterino badges, 7TV paints+badges)
 let mcBttvBadgeMap = new Map()
-let mcFfzBadgeMap = new Map()
-let mcChatterinoBadgeMap = new Map()
+let mcFfzBadgeMap = new BadgeIndex([])
+let mcChatterinoBadgeMap = new BadgeIndex([])
 const mcUserCosmetics = new Map()
 // A channel buffer renders ~1500-2000 distinct users; caps below must clear
 // that or a full-buffer rebuild silently drops most cosmetic lookups. (500/100
@@ -797,7 +797,7 @@ function updateThirdPartyBadgesInPlace() {
   for (const [uid, divSet] of _uidIndex) {
     const bttv = wantBttv ? mcBttvBadgeMap.get(uid) : null
     const ffzList = wantFfz ? mcFfzBadgeMap.get(uid) : null
-    const chat = wantChat ? mcChatterinoBadgeMap.get(uid) : null
+    const chat = wantChat ? mcChatterinoBadgeMap.get(uid)?.at(-1) : null
     if (!bttv && !ffzList && !chat) continue
     for (const div of divSet) {
       const anchor = div.querySelector('.hs-mc-avatar') || div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')

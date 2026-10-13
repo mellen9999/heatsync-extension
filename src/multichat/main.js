@@ -11126,13 +11126,13 @@
       if (msg.type === 'cosmetics_update' && gateAtBoot('cosmetics') === false) return
       if (msg.type === 'cosmetics_update') {
         const bttv = Object.entries(msg.bttvBadges || {})
-        const ffz = Object.entries(msg.ffzBadges || {})
-        const chat = Object.entries(msg.chatterinoBadges || {})
+        const ffz = new BadgeIndex(msg.ffzBadges)
+        const chat = new BadgeIndex(msg.chatterinoBadges)
         // Never let an empty broadcast wipe populated maps.
-        if (bttv.length + ffz.length + chat.length > 0) {
+        if (bttv.length + ffz.size + chat.size > 0) {
           mcBttvBadgeMap = new Map(bttv)
-          mcFfzBadgeMap = new Map(ffz)
-          mcChatterinoBadgeMap = new Map(chat)
+          mcFfzBadgeMap = ffz
+          mcChatterinoBadgeMap = chat
           // In-place patch instead of bumpRenderEpoch()+rebuild (the flash).
           // Current tab's live rows get badges injected now; other tabs drop
           // their snapshot caches so they rebuild fresh on switch (mirrors
@@ -12668,15 +12668,15 @@
       safeSendMessage({ type: 'get_bulk_badges' })
         .then((resp) => {
           const bttv = resp?.bttvBadges ? Object.entries(resp.bttvBadges) : []
-          const ffz = resp?.ffzBadges ? Object.entries(resp.ffzBadges) : []
-          const chat = resp?.chatterinoBadges ? Object.entries(resp.chatterinoBadges) : []
-          if (bttv.length + ffz.length + chat.length === 0) {
+          const ffz = new BadgeIndex(resp?.ffzBadges)
+          const chat = new BadgeIndex(resp?.chatterinoBadges)
+          if (bttv.length + ffz.size + chat.size === 0) {
             if (attempt < 8) cleanup.setTimeout(() => loadBulkBadges(attempt + 1), Math.min(500 * (attempt + 1), 3000))
             return
           }
           mcBttvBadgeMap = new Map(bttv)
-          mcFfzBadgeMap = new Map(ffz)
-          mcChatterinoBadgeMap = new Map(chat)
+          mcFfzBadgeMap = ffz
+          mcChatterinoBadgeMap = chat
           // In-place patch instead of bumpRenderEpoch()+rebuild (the flash) —
           // see the cosmetics_update handler for the rationale.
           updateThirdPartyBadgesInPlace()

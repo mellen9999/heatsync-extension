@@ -3617,13 +3617,13 @@
 
         case 'cosmetics_update': {
           const bttv = Object.entries(message.bttvBadges || {})
-          const ffz = Object.entries(message.ffzBadges || {})
-          const chat = Object.entries(message.chatterinoBadges || {})
+          const ffz = new BadgeIndex(message.ffzBadges)
+          const chat = new BadgeIndex(message.chatterinoBadges)
           // Never let an empty broadcast wipe populated maps.
-          if (bttv.length + ffz.length + chat.length > 0) {
+          if (bttv.length + ffz.size + chat.size > 0) {
             bttvBadgeMap = new Map(bttv)
-            ffzBadgeMap = new Map(ffz)
-            chatterinoBadgeMap = new Map(chat)
+            ffzBadgeMap = ffz
+            chatterinoBadgeMap = chat
             reapplyBadgesToExistingMessages()
           }
           break
@@ -4491,8 +4491,8 @@
 
   // Third-party cosmetics
   let bttvBadgeMap = new Map()
-  let ffzBadgeMap = new Map()
-  let chatterinoBadgeMap = new Map()
+  let ffzBadgeMap = new BadgeIndex([])
+  let chatterinoBadgeMap = new BadgeIndex([])
   const heatsyncColorMap = new Map() // username → HeatSync API color (from follow:colors)
   const HEATSYNC_COLOR_MAP_MAX = 2000
   let cosmeticsEnabled = true // toggle for BTTV/FFZ/7TV cosmetics
@@ -7697,7 +7697,7 @@
 
     // Chatterino badge
     if (!el.dataset.hsChatterinoDone && chatterinoBadgeMap.has(userId)) {
-      const b = chatterinoBadgeMap.get(userId)
+      const b = chatterinoBadgeMap.get(userId)?.at(-1)
       const img = document.createElement('img')
       img.className = 'hs-chatterino-badge hs-cosmetic-badge'
       img.src = b.url
@@ -7983,16 +7983,16 @@
     safeSendMessage({ type: 'get_bulk_badges' })
       .then((resp) => {
         const bttv = resp?.bttvBadges ? Object.entries(resp.bttvBadges) : []
-        const ffz = resp?.ffzBadges ? Object.entries(resp.ffzBadges) : []
-        const chat = resp?.chatterinoBadges ? Object.entries(resp.chatterinoBadges) : []
-        if (bttv.length + ffz.length + chat.length === 0) {
+        const ffz = new BadgeIndex(resp?.ffzBadges)
+        const chat = new BadgeIndex(resp?.chatterinoBadges)
+        if (bttv.length + ffz.size + chat.size === 0) {
           if (attempt < 8)
             cleanup.setTimeout(() => fetchCosmeticBadges(attempt + 1), Math.min(500 * (attempt + 1), 3000))
           return
         }
         bttvBadgeMap = new Map(bttv)
-        ffzBadgeMap = new Map(ffz)
-        chatterinoBadgeMap = new Map(chat)
+        ffzBadgeMap = ffz
+        chatterinoBadgeMap = chat
         log(
           ' Initial cosmetics: BTTV',
           bttvBadgeMap.size,

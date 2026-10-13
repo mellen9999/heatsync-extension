@@ -1360,8 +1360,11 @@ let blockedUsers = new Set()
 
 // Third-party cosmetics (BTTV/FFZ badges, 7TV paints+badges)
 let bttvBadgeMap = new Map() // twitchUserId → { description, url }
-let ffzBadgeMap = new Map() // twitchUserId → [{ title, color, url }]
-let chatterinoBadgeMap = new Map() // twitchUserId → { tooltip, url }
+// Badge-centric, not per user: [{ title, color, url, ids: [twitchUserId] }].
+// Tabs index it with src/lib/badge-index.js. A per-user Map cost ~8MB in the
+// SW and again in every tab (messaging copies every user's badge object).
+let ffzBadgeList = []
+let chatterinoBadgeList = [] // [{ tooltip, url, ids }]
 const userCosmeticsCache = new Map() // twitchUserId → { paint, badge, fetchedAt }
 let badgesFetchedAt = 0 // persisted to storage in fetchBulkBadges, restored in initialize()
 const BADGES_TTL = 24 * 60 * 60 * 1000
@@ -3881,7 +3884,7 @@ function setPaintCache(twitchId, spec, color = null, plus = null) {
 }
 
 async function fetchBulkBadges() {
-  const mapsPopulated = ffzBadgeMap.size > 0 || bttvBadgeMap.size > 0 || chatterinoBadgeMap.size > 0
+  const mapsPopulated = ffzBadgeList.length > 0 || bttvBadgeMap.size > 0 || chatterinoBadgeList.length > 0
   if (mapsPopulated && Date.now() - badgesFetchedAt < BADGES_TTL) return
   badgesFetchedAt = Date.now()
   try {
@@ -3904,52 +3907,42 @@ async function fetchBulkBadges() {
     }
     if (ffzResp.status === 'fulfilled' && ffzResp.value.ok) {
       const data = await ffzResp.value.json()
-      ffzBadgeMap.clear()
       const badgeById = {}
       for (const b of data.badges || []) badgeById[b.id] = b
-      const users = data.users || {}
-      for (const [badgeId, userIds] of Object.entries(users)) {
+      const list = []
+      for (const [badgeId, userIds] of Object.entries(data.users || {})) {
         const badge = badgeById[badgeId]
-        if (!badge) continue
+        if (!badge || !Array.isArray(userIds)) continue
         const url = badge.urls?.['2'] || badge.urls?.['1'] || badge.urls?.['4']
         if (!url) continue
         const normalizedUrl = url.startsWith('//') ? `https:${url}` : url
         if (!/^https:\/\//.test(normalizedUrl)) continue
-        const normalized = { title: badge.title || 'FFZ', color: badge.color || null, url: normalizedUrl }
-        for (const uid of userIds) {
-          const uidStr = String(uid)
-          if (!ffzBadgeMap.has(uidStr)) ffzBadgeMap.set(uidStr, [])
-          ffzBadgeMap.get(uidStr).push(normalized)
-        }
+        list.push({ title: badge.title || 'FFZ', color: badge.color || null, url: normalizedUrl, ids: userIds })
       }
-      log(' FFZ badges loaded:', ffzBadgeMap.size, 'users')
+      ffzBadgeList = list
+      log(' FFZ badges loaded:', list.length, 'badges')
     }
     if (chatterinoResp.status === 'fulfilled' && chatterinoResp.value.ok) {
       const data = await chatterinoResp.value.json()
-      chatterinoBadgeMap.clear()
+      const list = []
       for (const badge of data.badges || []) {
         const url = badge.image2 || badge.image1
-        if (!url || !badge.users || !/^https:\/\//.test(url)) continue
-        for (const uid of badge.users) {
-          chatterinoBadgeMap.set(String(uid), { tooltip: badge.tooltip || 'Chatterino', url })
-        }
+        if (!url || !Array.isArray(badge.users) || !/^https:\/\//.test(url)) continue
+        list.push({ tooltip: badge.tooltip || 'Chatterino', url, ids: badge.users })
       }
-      log(' Chatterino badges loaded:', chatterinoBadgeMap.size, 'users')
+      chatterinoBadgeList = list
+      log(' Chatterino badges loaded:', list.length, 'badges')
     }
     broadcastBadgeMaps()
     // Persist badge maps + timestamp so they survive MV3 service worker restarts
     const bttvObj = {}
     for (const [k, v] of bttvBadgeMap) bttvObj[k] = v
-    const ffzObj = {}
-    for (const [k, v] of ffzBadgeMap) ffzObj[k] = v
-    const chatterinoObj = {}
-    for (const [k, v] of chatterinoBadgeMap) chatterinoObj[k] = v
     browser.storage.local
       .set({
         badges_fetched_at: badgesFetchedAt,
         bttv_badge_map: bttvObj,
-        ffz_badge_map: ffzObj,
-        chatterino_badge_map: chatterinoObj,
+        ffz_badges: ffzBadgeList,
+        chatterino_badges: chatterinoBadgeList,
       })
       .catch(() => {})
   } catch (e) {
@@ -3958,14 +3951,14 @@ async function fetchBulkBadges() {
   }
 }
 
-function broadcastBadgeMaps() {
+function badgeMapsPayload() {
   const bttvObj = {}
   for (const [k, v] of bttvBadgeMap) bttvObj[k] = v
-  const ffzObj = {}
-  for (const [k, v] of ffzBadgeMap) ffzObj[k] = v
-  const chatterinoObj = {}
-  for (const [k, v] of chatterinoBadgeMap) chatterinoObj[k] = v
-  broadcastToTabs({ type: 'cosmetics_update', bttvBadges: bttvObj, ffzBadges: ffzObj, chatterinoBadges: chatterinoObj })
+  return { bttvBadges: bttvObj, ffzBadges: ffzBadgeList, chatterinoBadges: chatterinoBadgeList }
+}
+
+function broadcastBadgeMaps() {
+  broadcastToTabs({ type: 'cosmetics_update', ...badgeMapsPayload() })
 }
 
 // Fetch channel owner's emotes (public API) + third-party channel emotes
@@ -11429,13 +11422,7 @@ async function handleMessage(message, sender, sendResponse) {
     // The cold-start "maps not loaded yet" race is handled on the client side:
     // the multichat retry-loader re-requests until non-empty, and initialize()
     // broadcasts a cosmetics_update once the storage restore lands.
-    const bttvObj = {}
-    for (const [k, v] of bttvBadgeMap) bttvObj[k] = v
-    const ffzObj = {}
-    for (const [k, v] of ffzBadgeMap) ffzObj[k] = v
-    const chatterinoObj = {}
-    for (const [k, v] of chatterinoBadgeMap) chatterinoObj[k] = v
-    sendResponse({ bttvBadges: bttvObj, ffzBadges: ffzObj, chatterinoBadges: chatterinoObj })
+    sendResponse(badgeMapsPayload())
     return
   } else if (message.type === 'mention_detected') {
     // Defense-in-depth: blocked users never trigger a mention notification,
@@ -11530,8 +11517,8 @@ async function initialize() {
       'heatsync_multichat',
       'badges_fetched_at',
       'bttv_badge_map',
-      'ffz_badge_map',
-      'chatterino_badge_map',
+      'ffz_badges',
+      'chatterino_badges',
       'user_cosmetics_cache',
       'twitch_id_cache',
     ])
@@ -11782,21 +11769,17 @@ async function initialize() {
       bttvBadgeMap = new Map(Object.entries(stored.bttv_badge_map))
       log(' ✓ Warm cache:', bttvBadgeMap.size, 'BTTV badge entries from storage')
     }
-    if (stored.ffz_badge_map && typeof stored.ffz_badge_map === 'object') {
-      ffzBadgeMap = new Map(Object.entries(stored.ffz_badge_map))
-      log(' ✓ Warm cache:', ffzBadgeMap.size, 'FFZ badge entries from storage')
-    }
-    if (stored.chatterino_badge_map && typeof stored.chatterino_badge_map === 'object') {
-      chatterinoBadgeMap = new Map(Object.entries(stored.chatterino_badge_map))
-      log(' ✓ Warm cache:', chatterinoBadgeMap.size, 'Chatterino badge entries from storage')
-    }
+    if (Array.isArray(stored.ffz_badges)) ffzBadgeList = stored.ffz_badges
+    if (Array.isArray(stored.chatterino_badges)) chatterinoBadgeList = stored.chatterino_badges
+    // the per-user maps these replaced (~8MB on disk, never read again)
+    browser.storage.local.remove(['ffz_badge_map', 'chatterino_badge_map']).catch(() => {})
     // Push restored maps to tabs that loaded before this cold-wake restore landed.
     // Content scripts request get_bulk_badges during their own init; one of them
     // can arrive before the async restore completes and the multichat overlay,
     // which inits early, may receive an empty response with no later recovery
     // (cosmetics_update only re-broadcasts on a fresh fetch). A warm-cache push
     // here gives every already-listening surface the maps regardless of timing.
-    if (ffzBadgeMap.size || bttvBadgeMap.size || chatterinoBadgeMap.size) {
+    if (ffzBadgeList.length || bttvBadgeMap.size || chatterinoBadgeList.length) {
       broadcastBadgeMaps()
     }
   } catch (err) {
@@ -11843,7 +11826,7 @@ async function initialize() {
   }
 
   // Broadcast warm-cached badges immediately (before fresh fetch)
-  if (bttvBadgeMap.size > 0 || ffzBadgeMap.size > 0 || chatterinoBadgeMap.size > 0) {
+  if (bttvBadgeMap.size > 0 || ffzBadgeList.length > 0 || chatterinoBadgeList.length > 0) {
     broadcastBadgeMaps()
   }
 

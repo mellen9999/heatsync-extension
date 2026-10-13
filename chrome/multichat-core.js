@@ -14904,7 +14904,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e48c46c7e67e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bd7e6ebc8c95' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -21026,6 +21026,8 @@ class IRC extends ChatClient {
           this._handleMsg(message.msg)
         } else if (message.type === 'bg_irc_history_merged') {
           this._refreshFromBg(message.channel)
+        } else if (message.type === 'bg_irc_rejoin') {
+          this._rejoinBg()
         }
       }
       cleanup.addListener(chrome.runtime?.onMessage, this._listener)
@@ -21036,6 +21038,12 @@ class IRC extends ChatClient {
     try {
       fetchGlobalBadges()
     } catch {}
+  }
+
+  // A woken SW has no record of what this tab joined (it reads rings per
+  // join), so the tab re-asserts its channels; the buffers here are intact.
+  _rejoinBg() {
+    for (const ch of this.channels.keys()) safeSendMessage({ type: 'bg_irc_join', channel: ch })
   }
 
   _seenId(id) {
@@ -72055,11 +72063,24 @@ const STORAGE_KEY = 'heatsync_multichat'
     const here = (getCurrentChannel() || '').toLowerCase()
     openSet.delete(here) // this tab's own channel is already the live tab
     let changed = false
-    // drop ephemerals whose browser tab closed
+    // drop ephemerals whose browser tab closed — and their chat, as
+    // removeChannel does: the splice alone left the 3000-msg buffer joined
+    // and fed, and the BG kept the channel for this tab's sake
+    let droppedCurrent = false
     for (let i = config.channels.length - 1; i >= 0; i--) {
       const c = config.channels[i]
-      if (c?.ephemeral && !openSet.has((c.twitch || '').toLowerCase())) {
+      const ch = (c?.twitch || '').toLowerCase()
+      if (c?.ephemeral && !openSet.has(ch)) {
         config.channels.splice(i, 1)
+        _dropTabCache(c.id)
+        dropTabActivity(c.id)
+        subTenureMap.delete(ch)
+        if (ch !== (getLiveChannel() || '').toLowerCase()) {
+          try {
+            irc?.part?.(ch)
+          } catch (_) {}
+        }
+        if (currentTab === c.id) droppedCurrent = true
         changed = true
       }
     }
@@ -72099,6 +72120,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         updateTabBar()
       } catch (_) {}
     }
+    if (droppedCurrent) switchTab('live')
   }
 
   // Server-side heat spike (moment detector) → inline 🔥 row in all chats.

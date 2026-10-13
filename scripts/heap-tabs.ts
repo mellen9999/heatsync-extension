@@ -17,7 +17,7 @@
  * Then it stops the service worker: the woken SW holds no rings (they are
  * read per join), so the surviving tab must re-assert its channel, or its
  * chat goes silent.
- * Exit 1 on any.
+ * Any renderer crash fails the run too. Exit 1 on any.
  */
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -48,6 +48,7 @@ if (channels.length < 2) throw new Error('need at least 2 live channels')
 const profile = mkdtempSync(join(tmpdir(), 'hs-heap-tabs-'))
 let ctx: any
 let code = 0
+let crashes = 0
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 const swState = async () => {
@@ -104,12 +105,11 @@ const report = async (label: string, pages: any[]) => {
 try {
   assertBuilt()
   ctx = await launchWithExtension(profile, ['--window-size=1600,900', '--mute-audio'])
-  // Two+ headless twitch tabs die on a renderer trap (SIGTRAP, off the main
-  // thread) within ~15s once both bttv/ffz AND 7tv emote images load; block
-  // either set and they live (ungoogled-chromium 153, bisected 2026-10-13).
-  // bttv/ffz images go, 7tv stays: what is measured here is chat buffers,
-  // not pixels. ttvnw.net is the video edge — no decoders either.
-  await ctx.route(/ttvnw\.net|betterttv\.net|frankerfacez\.com/, (r: any) => r.abort())
+  // No video: chat is what's measured. (ttvnw.net is the video edge only —
+  // emotes/avatars come from jtvnw.net.) Playwright passes
+  // --disable-dev-shm-usage, so chromium's shared memory lives in /tmp — a
+  // nearly-full /tmp quota kills every renderer's compositor at once.
+  await ctx.route(/ttvnw\.net/, (r: any) => r.abort())
   if (!ctx.serviceWorkers()[0]) await ctx.waitForEvent('serviceworker', { timeout: 20_000 })
   console.log(`heap-tabs: ${channels.map((c) => `#${c}`).join(' ')} — settle ${settleS}s`)
 
@@ -117,7 +117,10 @@ try {
   for (const ch of channels) {
     const p = await ctx.newPage()
     const t0 = Date.now()
-    p.on('crash', () => console.log(`! renderer for #${ch} crashed ${Math.round((Date.now() - t0) / 1000)}s after open`))
+    p.on('crash', () => {
+      crashes++
+      console.log(`✗ renderer for #${ch} crashed ${Math.round((Date.now() - t0) / 1000)}s after open`)
+    })
     await p.goto(`https://www.twitch.tv/${ch}`, { waitUntil: 'domcontentloaded', timeout: 30_000 })
     pages.push(p)
   }
@@ -149,6 +152,7 @@ try {
     console.log(`✗ restarted SW never got #${channels[0]} back — that tab's chat is silent`)
   } else console.log(`✓ restarted SW re-joined #${channels[0]}`)
   if (!woke?.restarted || !woke.buffers.includes(channels[0]) || !woke.interest.includes(channels[0])) code = 1
+  if (crashes) code = 1
 } catch (e) {
   console.error(`✗ ${(e as Error).message}`)
   code = 1

@@ -1747,6 +1747,26 @@ function fakeBackoffResponse() {
 // returns 7TV's native JSON unchanged. Once a failure is seen, skip the doomed
 // direct hit entirely so channel-emote loads never hang behind it.
 let sevenTVApiBlocked = false
+// A third-party host that 429s gets left alone until its Retry-After passes:
+// the per-chatter sender-emote lookups don't cache an errored reply (on
+// purpose — a 429 is not "no emotes"), so without this every message from
+// every unresolved chatter asked again — 1,600 BTTV 429s in 45s on three busy
+// tabs. heatsync.org and kick.com keep their own backoffs.
+const thirdPartyBackoffUntil = new Map() // host -> ts
+
+// A response nobody reads holds its network pipe — a 2MB shared-memory buffer —
+// until the SW happens to garbage-collect it, and a small SW heap almost never
+// does. Error replies are the ones callers drop (`r.ok ? r.json() : null`), so
+// they're read here while small, cancelled when not. Measured 2026-10-13: three
+// busy twitch tabs pinned 900+ of these (1.8GB) in under a minute; 300MB after.
+async function settleErrorBody(resp) {
+  if (resp.ok || resp.status < 200) return resp
+  let body = null
+  if (Number(resp.headers.get('content-length')) > 65536) resp.body?.cancel().catch(() => {})
+  else body = await resp.arrayBuffer().catch(() => null)
+  return new Response(body, { status: resp.status, statusText: resp.statusText, headers: resp.headers })
+}
+
 async function fetchWithTimeout(url, opts = {}, ms = 10000) {
   const is7tvGet =
     typeof url === 'string' && url.startsWith('https://7tv.io/') && (opts.method || 'GET').toUpperCase() === 'GET'
@@ -1786,6 +1806,12 @@ async function fetchWithTimeout(url, opts = {}, ms = 10000) {
   if (backoffManaged && Date.now() < heatsyncBackoffUntil) {
     return fakeBackoffResponse()
   }
+  let host = ''
+  try {
+    host = new URL(url).hostname
+  } catch {}
+  const thirdParty = host && !isHeatsync && host !== 'kick.com'
+  if (thirdParty && Date.now() < (thirdPartyBackoffUntil.get(host) || 0)) return fakeBackoffResponse()
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), ms)
   if (opts.signal) {
@@ -1797,10 +1823,14 @@ async function fetchWithTimeout(url, opts = {}, ms = 10000) {
   const credentials = opts.credentials ?? (isHeatsync ? 'include' : 'omit')
   let resp
   try {
-    resp = await fetch(url, { ...opts, credentials, signal: ctrl.signal })
+    resp = await settleErrorBody(await fetch(url, { ...opts, credentials, signal: ctrl.signal }))
   } finally {
     clearTimeout(timer)
     if (backoffManaged) heatsyncInflightAborts.delete(ctrl)
+  }
+  if (thirdParty && resp.status === 429) {
+    const n = parseInt(resp.headers.get('retry-after') || '', 10)
+    thirdPartyBackoffUntil.set(host, Date.now() + (n > 0 ? Math.min(300, n) * 1000 : 30_000))
   }
   if (backoffManaged && resp.status === 429) {
     const retryAfter = resp.headers.get('retry-after')

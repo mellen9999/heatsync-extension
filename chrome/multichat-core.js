@@ -6069,6 +6069,88 @@ function _signatureMatch(a, b) {
   return true
 }
 
+
+// --- badge-index.js ---
+// @ts-check
+// Third-party badge maps (ffz ~83k users, chatterino ~9k) as a sorted id
+// column + a badge column instead of a Map of per-user objects.
+//
+// The Map form cost ~8MB in every tab: extension messaging deep-copies, so
+// each user arrived with its own { title, color, url } and its own copy of
+// the url string — once per script holding it, in every open tab, and again
+// in the SW. Here each badge exists once and a user costs 6 bytes (u32 id +
+// u16 badge). Lookup is a binary search; get/has/size keep the Map surface
+// the call sites already use, with get() always returning a list.
+//
+// Wire + storage shape (the SW builds it): [{ ...badge, ids: [twitchUserId] }]
+
+class BadgeIndex {
+  /** @param {unknown} list */
+  constructor(list) {
+    /** @type {object[]} */
+    this.badges = []
+    /** @type {number[]} */
+    const keys = []
+    for (const entry of Array.isArray(list) ? list : []) {
+      if (!entry || typeof entry !== 'object' || !Array.isArray(entry.ids)) continue
+      if (this.badges.length >= 0xffff) break
+      const { ids, ...badge } = entry
+      const b = this.badges.push(badge) - 1
+      for (const raw of ids) {
+        const id = Number(raw)
+        // twitch user ids are positive integers; the key packs id·2^16 + badge
+        // (< 2^48, exact in a double) so one numeric sort orders both columns
+        if (Number.isInteger(id) && id > 0 && id <= 0xffffffff) keys.push(id * 0x10000 + b)
+      }
+    }
+    const sorted = Float64Array.from(keys).sort()
+    this.ids = new Uint32Array(sorted.length)
+    this.badgeOf = new Uint16Array(sorted.length)
+    let users = 0
+    for (let i = 0; i < sorted.length; i++) {
+      const id = Math.floor(sorted[i] / 0x10000)
+      this.ids[i] = id
+      this.badgeOf[i] = sorted[i] - id * 0x10000
+      if (i === 0 || this.ids[i - 1] !== id) users++
+    }
+    this.size = users
+  }
+
+  /** first row for `id`, or -1 */
+  _find(uid) {
+    const id = Number(uid)
+    if (!(id > 0)) return -1
+    const ids = this.ids
+    let lo = 0
+    let hi = ids.length
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1
+      if (ids[mid] < id) lo = mid + 1
+      else hi = mid
+    }
+    return lo < ids.length && ids[lo] === id ? lo : -1
+  }
+
+  /** @param {string|number} uid */
+  has(uid) {
+    return this._find(uid) !== -1
+  }
+
+  /**
+   * Every badge the user has, in the order the SW listed the badges.
+   * @param {string|number} uid
+   * @returns {any[]|undefined}
+   */
+  get(uid) {
+    let i = this._find(uid)
+    if (i === -1) return undefined
+    const id = this.ids[i]
+    const out = []
+    for (; i < this.ids.length && this.ids[i] === id; i++) out.push(this.badges[this.badgeOf[i]])
+    return out
+  }
+}
+
 // === END HEATSYNC LIB ===
 
 
@@ -14904,7 +14986,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bd7e6ebc8c95' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '72c417df0783' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -34156,7 +34238,7 @@ function renderThirdPartyBadges(userId) {
       html += `<img class="hs-mc-badge-img hs-mc-ffz-badge" src="${escapeHtml(safeUrl(b.url) || '')}" alt="${escapeHtml(b.title)}" title="${escapeHtml(b.title)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${safeColor ? `background:${safeColor};` : ''}">`
     }
   }
-  const chat = getSetting('chatterinoBadges') ? mcChatterinoBadgeMap.get(userId) : null
+  const chat = getSetting('chatterinoBadges') ? mcChatterinoBadgeMap.get(userId)?.at(-1) : null
   if (chat) {
     html += `<img class="hs-mc-badge-img hs-mc-chatterino-badge" src="${escapeHtml(safeUrl(chat.url) || '')}" alt="Chatterino" title="${escapeHtml(chat.tooltip || 'Chatterino')}" decoding="async" width="18" height="18" style="width:18px;height:18px;">`
   }
@@ -54974,8 +55056,8 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 
 // Third-party cosmetics state (BTTV/FFZ/Chatterino badges, 7TV paints+badges)
 let mcBttvBadgeMap = new Map()
-let mcFfzBadgeMap = new Map()
-let mcChatterinoBadgeMap = new Map()
+let mcFfzBadgeMap = new BadgeIndex([])
+let mcChatterinoBadgeMap = new BadgeIndex([])
 const mcUserCosmetics = new Map()
 // A channel buffer renders ~1500-2000 distinct users; caps below must clear
 // that or a full-buffer rebuild silently drops most cosmetic lookups. (500/100
@@ -55763,7 +55845,7 @@ function updateThirdPartyBadgesInPlace() {
   for (const [uid, divSet] of _uidIndex) {
     const bttv = wantBttv ? mcBttvBadgeMap.get(uid) : null
     const ffzList = wantFfz ? mcFfzBadgeMap.get(uid) : null
-    const chat = wantChat ? mcChatterinoBadgeMap.get(uid) : null
+    const chat = wantChat ? mcChatterinoBadgeMap.get(uid)?.at(-1) : null
     if (!bttv && !ffzList && !chat) continue
     for (const div of divSet) {
       const anchor = div.querySelector('.hs-mc-avatar') || div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
@@ -77933,13 +78015,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (msg.type === 'cosmetics_update' && gateAtBoot('cosmetics') === false) return
       if (msg.type === 'cosmetics_update') {
         const bttv = Object.entries(msg.bttvBadges || {})
-        const ffz = Object.entries(msg.ffzBadges || {})
-        const chat = Object.entries(msg.chatterinoBadges || {})
+        const ffz = new BadgeIndex(msg.ffzBadges)
+        const chat = new BadgeIndex(msg.chatterinoBadges)
         // Never let an empty broadcast wipe populated maps.
-        if (bttv.length + ffz.length + chat.length > 0) {
+        if (bttv.length + ffz.size + chat.size > 0) {
           mcBttvBadgeMap = new Map(bttv)
-          mcFfzBadgeMap = new Map(ffz)
-          mcChatterinoBadgeMap = new Map(chat)
+          mcFfzBadgeMap = ffz
+          mcChatterinoBadgeMap = chat
           // In-place patch instead of bumpRenderEpoch()+rebuild (the flash).
           // Current tab's live rows get badges injected now; other tabs drop
           // their snapshot caches so they rebuild fresh on switch (mirrors
@@ -79475,15 +79557,15 @@ const STORAGE_KEY = 'heatsync_multichat'
       safeSendMessage({ type: 'get_bulk_badges' })
         .then((resp) => {
           const bttv = resp?.bttvBadges ? Object.entries(resp.bttvBadges) : []
-          const ffz = resp?.ffzBadges ? Object.entries(resp.ffzBadges) : []
-          const chat = resp?.chatterinoBadges ? Object.entries(resp.chatterinoBadges) : []
-          if (bttv.length + ffz.length + chat.length === 0) {
+          const ffz = new BadgeIndex(resp?.ffzBadges)
+          const chat = new BadgeIndex(resp?.chatterinoBadges)
+          if (bttv.length + ffz.size + chat.size === 0) {
             if (attempt < 8) cleanup.setTimeout(() => loadBulkBadges(attempt + 1), Math.min(500 * (attempt + 1), 3000))
             return
           }
           mcBttvBadgeMap = new Map(bttv)
-          mcFfzBadgeMap = new Map(ffz)
-          mcChatterinoBadgeMap = new Map(chat)
+          mcFfzBadgeMap = ffz
+          mcChatterinoBadgeMap = chat
           // In-place patch instead of bumpRenderEpoch()+rebuild (the flash) —
           // see the cosmetics_update handler for the rationale.
           updateThirdPartyBadgesInPlace()

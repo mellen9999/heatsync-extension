@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.90] — 2026-10-13
+
+### fixed
+- **memory** — the extension no longer piles up memory in the background: a busy chat used to pin up to a couple of gigabytes within minutes, now it stays flat around 10MB. tabs carry about 15MB less each.
+- **crashes** — tabs no longer crash ("aw, snap") with several twitch streams open.
+- **closed streams** — closing a stream tab now lets go of its chat; it used to keep downloading in the background, and other tabs kept showing it.
+
+### changed
+- **emotes in other chats** — someone's own channel emotes show as text when they type them in a different channel, the same as 7tv and bttv do. heatsync emotes and 7tv personal emotes still show everywhere.
+
 ## [1.7.89] — 2026-10-08
 
 ### added

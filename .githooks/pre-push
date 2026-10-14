@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # pre-push gate — catches the exact drift that silently reddened CI (lint/tsc/version).
-# fast checks only (no build — that's release.yml's job + hangs headless). bypass: git push --no-verify
+# fast checks only (no smoke — that's release.yml's job + hangs headless). bypass: git push --no-verify
 set -euo pipefail
 root="$(git rev-parse --show-toplevel)"
 cd "$root"
@@ -12,6 +12,7 @@ echo "pre-push gate:"
 run lint      "bunx @biomejs/biome check src/ chrome/ tests/ build.js"
 run typecheck "bun run typecheck"
 run version   "bun tests/check-versions.js"
+run bundle    "bun run build.js chrome --minify && bun run build.js firefox --minify && bun scripts/check-bundle-budget.ts"
 run test      "bun test"
 
 if [ "$fail" -ne 0 ]; then

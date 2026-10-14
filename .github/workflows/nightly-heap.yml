@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      CHROMIUM_BIN: /usr/bin/google-chrome
       # The build runs the test suite first, and its paint-compiler parity gate
       # needs the private site repo beside this checkout — same as ci.yml. The
       # first dispatched run (2026-10-14) died on exactly this before measuring.
@@ -28,6 +27,15 @@ jobs:
 
       - name: install dependencies
         run: bun install --frozen-lockfile
+
+      # Branded google-chrome ignores --load-extension (since chrome 137), so the
+      # MV3 service worker never starts and every launch times out waiting for
+      # it (first nightly, 2026-10-14). Playwright's own chromium still honours
+      # the flag; install the build matching the pinned playwright-core.
+      - name: install chromium
+        run: |
+          bunx playwright-core install chromium
+          echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
 
       - name: non-chat heap budget
         run: bun run test:heap-budget:quick

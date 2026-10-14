@@ -70,9 +70,16 @@ jobs:
       # Load the built extension in a real browser and prove it starts: a
       # bundle that throws on evaluation, a manifest the browser rejects, a
       # service worker that dies on registration — nothing above sees those.
+      # Branded google-chrome ignores --load-extension (since chrome 137), so the
+      # MV3 service worker never starts and every launch times out waiting for
+      # it (first nightly, 2026-10-14). Playwright's own chromium still honours
+      # the flag; install the build matching the pinned playwright-core.
+      - name: install chromium
+        run: |
+          bunx playwright-core install chromium
+          echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
+
       - name: smoke (built extension boots in chrome)
-        env:
-          CHROMIUM_BIN: /usr/bin/google-chrome
         run: bun scripts/smoke-extension.ts
 
   notify-failure:

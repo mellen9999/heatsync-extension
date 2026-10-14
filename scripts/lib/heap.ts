@@ -110,6 +110,37 @@ export function shmByRole(profile: string): Record<string, number> {
   return out
 }
 
+/**
+ * Which chromium process is burning cpu, by role: cumulative cpu seconds and
+ * RSS per process of this profile, read from /proc (no CDP — it still answers
+ * when the renderer does not). Two samples a few seconds apart say who is busy.
+ */
+export function procCpu(profile: string): { pid: string; role: string; cpuS: number; rssMB: number; state: string; threads: number }[] {
+  const hz = 100 // USER_HZ on linux
+  const out: { pid: string; role: string; cpuS: number; rssMB: number; state: string; threads: number }[] = []
+  for (const pid of readdirSync('/proc')) {
+    if (!/^\d+$/.test(pid)) continue
+    try {
+      const cmd = readFileSync(`/proc/${pid}/cmdline`, 'utf8')
+      if (!cmd.includes(profile)) continue
+      const role = cmd.includes('--extension-process')
+        ? 'ext-renderer'
+        : (cmd.match(/--type=([a-z-]+)/)?.[1] ?? 'browser')
+      const f = readFileSync(`/proc/${pid}/stat`, 'utf8').split(') ')[1].split(' ')
+      const rss = Number(readFileSync(`/proc/${pid}/statm`, 'utf8').split(' ')[1]) * 4096
+      out.push({
+        pid,
+        role,
+        cpuS: (Number(f[11]) + Number(f[12])) / hz,
+        rssMB: rss / 1e6,
+        state: f[0],
+        threads: Number(f[17]),
+      })
+    } catch {}
+  }
+  return out
+}
+
 /** Least-squares slope of y over t (seconds), per minute — one late GC can't decide it. */
 export function slopePerMin(rows: { t: number; y: number }[]): number {
   const n = rows.length

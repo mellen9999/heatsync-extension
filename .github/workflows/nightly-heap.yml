@@ -47,7 +47,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: heap-quick
-    if: ${{ failure() }}
+    # Only the SCHEDULED run pages. A workflow_dispatch is somebody at a
+    # terminal asking a question — they are reading the answer already, and a
+    # red is their experiment's RESULT, not an incident. On 2026-10-14 this job
+    # spooled five pages between 04:11 and 04:36, every one an A/B iteration of
+    # one investigation on `claude/yt-hang`, while nothing in the extension had
+    # changed. ci.yml in this repo has always carried the equivalent guard
+    # (`github.ref == 'refs/heads/main'`); this job shipped without one.
+    #
+    # Nothing is lost: whoever dispatched it sees the red, and a nightly that
+    # stops firing at all is caught by the site's heatsync-sentinel-ci.sh 26h
+    # staleness window, which keys on the run's event being `schedule` — the
+    # same discriminator used here.
+    # `cancelled()` as well as `failure()`: a job killed by its own
+    # timeout-minutes concludes `cancelled`, so `failure()` alone SKIPS this
+    # job and a run that HANGS pages nobody — run 38505736893 burned 15m23s in
+    # exactly that silence on 2026-10-13. The step timeout above is the first
+    # answer to that and this is the second, because only a step that RUNS can
+    # time out: a wedge in install or the chromium download has nothing but the
+    # job ceiling. Safe because this workflow declares no concurrency group, so
+    # nothing supersedes it and `cancelled` can only be its own ceiling or a
+    # hand cancel.
+    if: ${{ (failure() || cancelled()) && github.event_name == 'schedule' }}
     steps:
       - name: spool alert
         run: |

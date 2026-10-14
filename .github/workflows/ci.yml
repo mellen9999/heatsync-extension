@@ -86,7 +86,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: build-and-test
-    if: ${{ failure() && github.ref == 'refs/heads/main' }}
+    # A PR check is attended work — its author is looking at the red tick — so
+    # the only run worth ringing a phone about is a merge that broke main.
+    #
+    # `github.ref` alone could not express that, and quietly expressed the
+    # inverse: on a `pull_request` event the ref is `refs/pull/<n>/merge`, never
+    # `refs/heads/main`, so the old gate was false for every PR and true only
+    # for a HAND DISPATCH off main — the one run nobody needs telling about
+    # (2026-10-14: that is what the `ext ci FAILED branch main` page was).
+    # Naming the event as well as the ref is what makes it mean what it says.
+    #
+    # Push triggers are off in this repo to conserve Actions minutes (see the
+    # note on `on:`), so this job cannot fire at all today, and a red main here
+    # is invisible by that deliberate choice rather than by this gate. Written
+    # for the day pushes come back, so it does not have to be remembered then.
+    #
+    # `cancelled()` too: a job killed by its own timeout-minutes concludes
+    # `cancelled`, so a bare `failure()` is skipped and a HANG pages nobody
+    # (nightly-heap run 38505736893, 15m23s, silent). No concurrency group
+    # here, so nothing supersedes a run and `cancelled` can only be its own
+    # ceiling or a hand cancel.
+    if: ${{ (failure() || cancelled()) && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: spool alert
         run: |

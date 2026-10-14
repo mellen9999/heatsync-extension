@@ -3,6 +3,7 @@
  * browser, on real busy channels.
  *
  *   bun run test:heap-budget [--minutes 60] [--warmup 15] [--seed 12]
+ *   bun run test:heap-budget:quick     # non-chat pages only, ~3min, no live channels
  *
  * 1. non-chat pages (twitch /directory, youtube /): the ext's JS heap cost,
  *    ext-on minus ext-off on the same page.
@@ -31,6 +32,7 @@ const BUDGET = {
 
 const args = process.argv.slice(2)
 const opt = (name: string, dflt: number) => (args.includes(name) ? Number(args[args.indexOf(name) + 1]) : dflt)
+const quick = args.includes('--quick')
 const minutes = opt('--minutes', 60)
 // growth is judged after this: a busy channel's chat buffer (3000 msgs) fills
 // for its first minutes — that rise is the cap being reached, not a leak
@@ -45,10 +47,12 @@ const check = (label: string, value: number, max: number, unit = 'MB') => {
   if (!ok) fails.push(label)
 }
 
-const top = ((await (await fetch('https://heatsync.org/api/live/top?platform=twitch&limit=40')).json()) as any).streams.map(
-  (s: any) => String(s.username).toLowerCase(),
-) as string[]
-if (top.length < seedN + 2) throw new Error(`need ${seedN + 2} live channels, got ${top.length}`)
+const top = quick
+  ? []
+  : (((await (await fetch('https://heatsync.org/api/live/top?platform=twitch&limit=40')).json()) as any).streams.map(
+      (s: any) => String(s.username).toLowerCase(),
+    ) as string[])
+if (!quick && top.length < seedN + 2) throw new Error(`need ${seedN + 2} live channels, got ${top.length}`)
 
 let crashes = 0
 const watch = (p: any, label: string) =>
@@ -99,6 +103,17 @@ try {
   const on = await nonChatHeaps(true)
   for (const url of Object.keys(off)) check(`ext heap on ${url}`, on[url] - off[url], BUDGET.nonChatMB)
 
+  if (!quick) await livedIn()
+  if (crashes) fails.push(`${crashes} renderer crash(es)`)
+  console.log(fails.length ? `\n✗ over budget: ${fails.join(', ')}` : quick ? '\n✓ non-chat quick check' : '\n✓ featherweight')
+  if (fails.length) code = 1
+} catch (e) {
+  console.error(`✗ ${(e as Error).message}`)
+  code = 1
+}
+process.exit(code)
+
+async function livedIn() {
   console.log(`── lived-in: walk ${seedN} channels, then soak 2 for ${minutes}min`)
   const profile = mkdtempSync(join(tmpdir(), 'hs-budget-'))
   const ctx = await launch(true, profile)
@@ -147,11 +162,4 @@ try {
     await ctx.close().catch(() => {})
     rmSync(profile, { recursive: true, force: true })
   }
-  if (crashes) fails.push(`${crashes} renderer crash(es)`)
-  console.log(fails.length ? `\n✗ over budget: ${fails.join(', ')}` : '\n✓ featherweight')
-  if (fails.length) code = 1
-} catch (e) {
-  console.error(`✗ ${(e as Error).message}`)
-  code = 1
 }
-process.exit(code)

@@ -1,0 +1,29 @@
+name: nightly-heap
+
+# The extension's memory on a page with no chat (ext-on minus ext-off, budget in
+# scripts/heap-budget.ts). ~3 min, no live channels. The lived-in soak stays a
+# manual run: it needs busy channels and an hour. Daily so the sentinel's 26h
+# staleness window sees a fresh run.
+on:
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  heap-quick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CHROMIUM_BIN: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: non-chat heap budget
+        run: bun run test:heap-budget:quick

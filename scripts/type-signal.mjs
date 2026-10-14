@@ -61,7 +61,13 @@ if (!existsSync(DIST) || readdirSync(DIST).filter((f) => f.endsWith('.js')).leng
   process.exit(2)
 }
 
+// tsc's checker recurses per nesting level, and the one shared
+// multichat-core.js bundle (~1.4MB since 5a3e0926) overflows node's default
+// stack: `RangeError: Maximum call stack size exceeded`, zero diagnostics, and
+// this gate read the crash as "tsc did not check the tree" for months while ci
+// sat unrun. 8000 is ~8x the default and clears it with room.
 const CANDIDATES = [
+  ['node', ['--stack-size=8000', 'node_modules/typescript/lib/tsc.js', '-p', 'tsconfig.signal.json', '--noEmit']],
   ['node_modules/.bin/tsc', ['-p', 'tsconfig.signal.json', '--noEmit']],
   ['bunx', ['tsc', '-p', 'tsconfig.signal.json', '--noEmit']],
   ['npx', ['tsc', '-p', 'tsconfig.signal.json', '--noEmit']],
@@ -89,6 +95,10 @@ const lines = raw.split('\n')
 const diagnostics = lines.filter((l) => /error TS\d+:/.test(l))
 // A pass with no diagnostics at all almost certainly means tsc never saw the
 // tree. ~5,500 is the steady-state number; anything near zero is a non-run.
+if (/Maximum call stack size exceeded/.test(raw)) {
+  console.error('type-signal: tsc crashed (stack overflow) before checking anything — raise --stack-size above')
+  process.exit(2)
+}
 if (diagnostics.length < 100) {
   console.error(`type-signal: only ${diagnostics.length} diagnostics — tsc did not check the built tree`)
   process.exit(2)

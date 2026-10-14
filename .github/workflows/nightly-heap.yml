@@ -27,3 +27,23 @@ jobs:
 
       - name: non-chat heap budget
         run: bun run test:heap-budget:quick
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: heap-quick
+    if: ${{ failure() }}
+    steps:
+      - name: spool alert
+        run: |
+          code=$(curl -sS -m 10 -o /dev/null -w '%{http_code}' -X POST \
+            "https://heatsync.org/api/ops/intake/ci" \
+            -H "Authorization: Bearer ${{ secrets.OPS_INTAKE_KEY }}" \
+            -H 'content-type: application/json' \
+            -d "{\"workflow\":\"ext ${{ github.workflow }}\",\"run_id\":\"${{ github.run_id }}\",\"attempt\":\"${{ github.run_attempt }}\",\"branch\":\"${{ github.ref_name }}\",\"sha\":\"${{ github.sha }}\"}" \
+            || echo 000)
+          if [ "$code" = 204 ]; then
+            echo "::notice::ops-intake accepted the ext alert"
+          else
+            echo "::error::ops-intake refused the ext alert (HTTP $code) — check that secrets.OPS_INTAKE_KEY matches OPS_INTAKE_KEY in prod's .env"
+          fi

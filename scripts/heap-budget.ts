@@ -19,7 +19,7 @@
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { assertBuilt, CHROME_BIN, launchWithExtension, loadChromium } from './lib/chromium'
+import { assertBuilt, CHROME_BIN, launchWithExtension, loadChromium, withTimeout } from './lib/chromium'
 import { shmByRole, slopePerMin, swHeapMB, tabHeapMB } from './lib/heap'
 
 const BUDGET = {
@@ -81,15 +81,16 @@ async function nonChatHeaps(ext: boolean) {
   const out: Record<string, number> = {}
   try {
     for (const url of ['https://www.twitch.tv/directory', 'https://www.youtube.com/']) {
-      const p = await ctx.newPage()
+      const p = await withTimeout(ctx.newPage(), 30_000, 'newPage')
       watch(p, url)
       await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 })
       await sleep(30_000)
       out[url] = await tabHeapMB(ctx, p)
-      await p.close()
+      await withTimeout(p.close(), 30_000, 'page.close')
+      console.log(`  ${ext ? 'ext on ' : 'ext off'}  ${url}  ${out[url].toFixed(2)}MB`)
     }
   } finally {
-    await ctx.close().catch(() => {})
+    await withTimeout(ctx.close(), 30_000, 'ctx.close').catch(() => {})
     rmSync(profile, { recursive: true, force: true })
   }
   return out
@@ -99,8 +100,11 @@ let code = 0
 try {
   assertBuilt()
   console.log('── non-chat pages')
-  const off = await nonChatHeaps(false)
-  const on = await nonChatHeaps(true)
+  // each leg is ~90s healthy; the bound turns a hang into a ✗ and exit 1. A
+  // hang left to the job timeout reports `cancelled`, which pages nobody.
+  const LEG_MS = 5 * 60_000
+  const off = await withTimeout(nonChatHeaps(false), LEG_MS, 'non-chat leg (ext off)')
+  const on = await withTimeout(nonChatHeaps(true), LEG_MS, 'non-chat leg (ext on)')
   for (const url of Object.keys(off)) check(`ext heap on ${url}`, on[url] - off[url], BUDGET.nonChatMB)
 
   if (!quick) await livedIn()

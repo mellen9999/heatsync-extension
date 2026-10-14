@@ -20,12 +20,14 @@ const CDP_TIMEOUT_MS = 60_000
 
 /** A tab's retained JS heap, MB (forces a GC first). */
 export async function tabHeapMB(ctx: any, page: any): Promise<number> {
-  await page.bringToFront()
-  const cdp = await ctx.newCDPSession(page)
+  // every call bounded: the first ci nightly (2026-10-14) hung 14min inside
+  // this function with no output — the one unbounded send was the stall
+  await withTimeout(page.bringToFront(), CDP_TIMEOUT_MS, 'bringToFront')
+  const cdp = await withTimeout(ctx.newCDPSession(page), CDP_TIMEOUT_MS, 'newCDPSession')
   try {
     await withTimeout(cdp.send('HeapProfiler.enable'), CDP_TIMEOUT_MS, 'HeapProfiler.enable')
     await withTimeout(cdp.send('HeapProfiler.collectGarbage'), CDP_TIMEOUT_MS, 'collectGarbage')
-    await cdp.send('Performance.enable')
+    await withTimeout(cdp.send('Performance.enable'), CDP_TIMEOUT_MS, 'Performance.enable')
     const { metrics } = await withTimeout(cdp.send('Performance.getMetrics'), CDP_TIMEOUT_MS, 'getMetrics')
     return (metrics.find((m: any) => m.name === 'JSHeapUsedSize')?.value ?? 0) / 1e6
   } finally {

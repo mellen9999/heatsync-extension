@@ -38,6 +38,9 @@ jobs:
           echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
 
       - name: non-chat heap budget
+        # below the job's 15: a step that times out fails the job (and pages);
+        # a job that times out is `cancelled`, which pages nobody
+        timeout-minutes: 12
         run: bun run test:heap-budget:quick
 
   notify-failure:

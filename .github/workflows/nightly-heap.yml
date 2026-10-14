@@ -15,6 +15,10 @@ jobs:
     timeout-minutes: 15
     env:
       CHROMIUM_BIN: /usr/bin/google-chrome
+      # The build runs the test suite first, and its paint-compiler parity gate
+      # needs the private site repo beside this checkout — same as ci.yml. The
+      # first dispatched run (2026-10-14) died on exactly this before measuring.
+      HS_PARITY_SKIP_OK: "1"
     steps:
       - uses: actions/checkout@v4
 

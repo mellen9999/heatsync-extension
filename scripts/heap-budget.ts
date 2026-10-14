@@ -85,20 +85,28 @@ const NON_CHAT_URLS = ['https://www.twitch.tv/directory', 'https://www.youtube.c
 async function probe(ext: boolean, url: string) {
   const profile = mkdtempSync(join(tmpdir(), 'hs-budget-'))
   const ctx = await launch(ext, profile)
+  // a browser that exits on its own must fail the probe as that, now — not as
+  // "renderer unresponsive" a minute later, from calls to a corpse
+  const exited = new Promise<never>((_, rej) => ctx.on('close', () => rej(new Error('chromium exited unexpectedly'))))
+  exited.catch(() => {})
   try {
-    const p = await withTimeout(ctx.newPage(), 30_000, 'newPage')
-    watch(p, url)
-    await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 })
-    await sleep(30_000)
-    try {
-      return await tabHeapMB(ctx, p)
-    } catch (e) {
-      await hangReport(profile, p, url, ctx)
-      throw e
-    }
+    return await Promise.race([measure(ctx, profile, url), exited])
   } finally {
     await withTimeout(ctx.close(), 30_000, 'ctx.close').catch(() => {})
     rmSync(profile, { recursive: true, force: true })
+  }
+}
+
+async function measure(ctx: any, profile: string, url: string) {
+  const p = await withTimeout(ctx.newPage(), 30_000, 'newPage')
+  watch(p, url)
+  await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 })
+  await sleep(30_000)
+  try {
+    return await tabHeapMB(ctx, p)
+  } catch (e) {
+    await hangReport(profile, p, url, ctx)
+    throw e
   }
 }
 

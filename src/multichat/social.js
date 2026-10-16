@@ -2043,6 +2043,33 @@ function renderFeedAppend(startIndex) {
   if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(msgsEl)
 }
 
+// A feed post's author link. A twitch author whose id chat has already
+// resolved gets the same paint (HeatSync first, then 7TV) their name wears in
+// chat and in a quoted post — one precedence everywhere, so a name never looks
+// different on his own post than when he is tagged. Anyone else, or an id not
+// resolved yet, keeps the plain colour; the lookup is queued so the next render
+// has it. Native (no-platform) and kick/yt authors stay plain: knownUserIds is
+// twitch-space only, and a bare name could belong to a different chatter.
+function feedAuthorLink(m) {
+  const name = m.username || 'anon'
+  const lower = name.toLowerCase()
+  const colour = sanitizeColor(m.user_color || '#fff')
+  const uid =
+    m.platform === 'twitch' && typeof knownUserIds !== 'undefined' && typeof userKey === 'function'
+      ? knownUserIds.get(userKey(lower, 'twitch')) || ''
+      : ''
+  const hsPaint = uid ? hsPaintRender(uid, name) : null
+  if (uid && !hsPaint && !mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+  const paintStyle = hsPaint || !uid ? '' : getMcPaintStyle(uid)
+  const cls = `hs-feed-user hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
+  const style = hsPaint
+    ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(colour)}`
+    : `color:${colour}${paintStyle ? `;${paintStyle}` : ''}`
+  const uidAttr = uid ? ` data-uid="${escapeHtml(uid)}"` : ''
+  const splitAttr = hsPaint ? hsPaint.splitAttr : ''
+  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${splitAttr} style="${style}">${hsPaint ? hsPaint.html : escapeHtml(name)}</a>`
+}
+
 function buildFeedMessageDiv(m, opUsername) {
   const div = document.createElement('div')
   div.className = 'hs-feed-msg'
@@ -2135,7 +2162,7 @@ function buildFeedMessageDiv(m, opUsername) {
   const tripcodeHtml = m.tripcode ? `<span class="hs-tripcode">${escapeHtml(m.tripcode)}</span>` : ''
   const userHtml = isAnon
     ? `${anonAvatar}<span class="hs-feed-user" style="color:#ffffff">Anonymous</span>${tripcodeHtml}`
-    : `${userAvatar}<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="hs-feed-user hs-mc-user" data-username="${escapeHtml((m.username || 'anon').toLowerCase())}" data-platform="${escapeHtml(m.platform || '')}" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>${tripcodeHtml}`
+    : `${userAvatar}${feedAuthorLink(m)}${tripcodeHtml}`
 
   // Media/embeds (img, video, iframe) — values inside are pre-sanitized via escapeHtml/safeUrl/sanitizeEmbedId
   const mediaHtml = buildFeedMediaHtml(m)

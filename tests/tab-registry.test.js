@@ -28,26 +28,26 @@ describe('tab registry', () => {
 
   test('fresh installs hide the login-walled tabs, feed stays', () => {
     expect(api.mcDefaultHiddenTabs().sort()).toEqual(['mentions', 'modlog', 'pinned', 'whispers'])
-    expect(api.mcRestorableTabs()).toContain('discover') // feed's 2nd cell restores on reload
+    expect(api.mcRestorableTabs()).toContain('discover') // its own tab, restores on reload
     expect(api.mcRestorableTabs()).not.toContain('settings')
   })
 })
 
-describe('feed › discover', () => {
-  test('feed has feed · discover, and the two spellings land on one place', () => {
-    expect(api.mcSubCells('feed').map((c) => c.id)).toEqual(['feed', 'discover'])
-    expect(api.mcSubCells('discover').map((c) => c.id)).toEqual(['feed', 'discover'])
-    expect(api.mcCanonTab('feed', 'discover')).toEqual({ id: 'discover', sub: undefined })
-    expect(api.mcCanonTab('discover', 'feed')).toEqual({ id: 'feed', sub: undefined })
+describe('feed and discover', () => {
+  test('two plain tabs, no second row on either', () => {
+    expect(api.mcSubCells('feed')).toEqual([])
+    expect(api.mcSubCells('discover')).toEqual([])
+    expect(api.mcCellAddress('discover')).toEqual({ tab: 'discover', sub: undefined })
+    expect(api.mcCellAddress('feed')).toEqual({ tab: 'feed', sub: undefined })
     expect(api.mcCanonTab('xqc', 'logs')).toEqual({ id: 'xqc', sub: 'logs' })
-    expect(api.mcCellAddress('discover')).toEqual({ tab: 'feed', sub: 'discover' })
-    expect(api.mcCellAddress('live')).toEqual({ tab: 'live', sub: undefined })
   })
 
-  test('the feed button owns discover, and discover is always on its own cell', () => {
-    expect(api.mcRowOwner('discover')).toBe('feed')
-    expect(api.mcResolveSub('discover', undefined, {})).toBe('discover')
-    expect(api.mcResolveSub('feed', undefined, {})).toBe('feed')
+  test('each owns its own button, and both sit in the strip feed first', () => {
+    expect(api.mcRowOwner('discover')).toBe('discover')
+    expect(api.mcResolveSub('discover', undefined, {})).toBeNull()
+    expect(api.mcResolveSub('feed', undefined, {})).toBeNull()
+    const strip = api.MC_TABS.filter((t) => t.bar === 'scroll').map((t) => t.id)
+    expect(strip.slice(0, 2)).toEqual(['feed', 'discover'])
   })
 })
 

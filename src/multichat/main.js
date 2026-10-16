@@ -3642,7 +3642,7 @@
   // Util row collapsed — hides C/T/F-/F+/⚙ for clean single-line tabs
 
   // User-hidable tabs — persisted in ui_settings.hiddenTabs (auto-syncs cross-device)
-  const HIDABLE_TABS = ['feed', 'whispers', 'mentions', 'pinned', 'modlog']
+  const HIDABLE_TABS = ['feed', 'discover', 'whispers', 'mentions', 'pinned', 'modlog']
   // Real steady-state default is STEADY_HIDDEN_TABS (see hiddenTabs registry entry
   // in settings-schema.js) — this wider set is the fresh-install-only target:
   // whispers/mentions/modlog are genuinely login-walled for a signed-out

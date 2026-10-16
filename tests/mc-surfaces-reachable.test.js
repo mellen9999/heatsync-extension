@@ -27,8 +27,8 @@ const api = new Function(`${REG}\nreturn { MC_TABS, mcSubCells, mcCellAddress, m
 // id → [tab, cell] (cell omitted for a tab with no 2nd row). A channel tab
 // stands in as 'live' — they share one set of cells.
 const SURFACES = {
-  feed: ['feed', 'feed'],
-  discover: ['feed', 'discover'],
+  feed: ['feed'],
+  discover: ['discover'],
   whispers: ['whispers'],
   mentions: ['mentions'],
   pinned: ['pinned'],
@@ -79,9 +79,9 @@ describe('openers are shortcuts to a cell, never the door', () => {
     expect(INPUT).toMatch(/label: 'chat logs',\s*fn: \(\) => mcOpenChannelCell\('logs'/)
   })
 
-  test('/tab resolves through the cell address, so /tab discover lands on feed › discover', () => {
+  test('/tab resolves through the cell address, so /tab discover lands on the discover tab', () => {
     expect(INPUT).toMatch(/mcCellAddress\(target\)\s*switchTab\(addr\.tab, addr\.sub\)/)
-    expect(api.mcCellAddress('discover')).toEqual({ tab: 'feed', sub: 'discover' })
+    expect(api.mcCellAddress('discover')).toEqual({ tab: 'discover', sub: undefined })
   })
 
   test('edit live platforms is a shortcut to live › platforms (dropdown + right-click call it)', () => {
@@ -91,8 +91,8 @@ describe('openers are shortcuts to a cell, never the door', () => {
     expect(read('main.js').match(/showEditLivePlatforms\(\)/g).length).toBeGreaterThanOrEqual(2)
   })
 
-  test('the empty-feed button switches to the discover cell', () => {
-    expect(read('social.js')).toMatch(/switchTab\('feed', 'discover'\)/)
+  test('the empty-feed button switches to the discover tab', () => {
+    expect(read('social.js')).toMatch(/switchTab\('discover'\)/)
   })
 
   test('no opener mounts a surface directly — only the pane table in main.js does', () => {
@@ -157,9 +157,9 @@ describe('every cell has somewhere to land', () => {
 })
 
 describe('no sub-strip on channel tabs, /status is the hub', () => {
-  test('mcShowsRow: feed yes, live and channel tabs no', () => {
-    expect(api.mcShowsRow('feed')).toBe(true)
-    expect(api.mcShowsRow('discover')).toBe(true)
+  test('mcShowsRow: nobody but a tab with cells of its own', () => {
+    expect(api.mcShowsRow('feed')).toBe(false)
+    expect(api.mcShowsRow('discover')).toBe(false)
     expect(api.mcShowsRow('live')).toBe(false)
     expect(api.mcShowsRow('xqc')).toBe(false)
   })

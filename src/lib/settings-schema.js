@@ -1552,6 +1552,7 @@ const SETTINGS = [
     invertDisplay: true,
     options: [
       { value: 'feed', labelKey: 'mc_tab_feed' },
+      { value: 'discover', labelKey: 'mc_tab_discover' },
       { value: 'whispers', labelKey: 'mc_tab_whispers' },
       { value: 'mentions', labelKey: 'mc_tab_mentions' },
       { value: 'pinned', labelKey: 'mc_tab_pinned' },

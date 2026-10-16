@@ -25,24 +25,14 @@ const MC_CHANNEL_SUB = [
 const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
 
 const MC_TABS = [
-  {
-    id: 'feed',
-    labelKey: 'mc_tab_feed',
-    bar: 'scroll',
-    restorable: true,
-    sub: [
-      { id: 'feed', label: 'feed' },
-      { id: 'discover', label: 'discover' },
-    ],
-  },
+  { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
+  { id: 'discover', labelKey: 'mc_tab_discover', bar: 'scroll', restorable: true },
   { id: 'whispers', labelKey: 'mc_tab_whispers', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_LIVE_SUB },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
-  // a cell of feed that keeps its own internal id (renderers key on it)
-  { id: 'discover', cellOf: 'feed', restorable: true },
   {
     id: 'settings',
     bar: 'util',
@@ -89,8 +79,9 @@ function mcSubCells(tabId) {
 }
 
 /**
- * Only feed (feed › discover) shows the shared 2nd row. live and channel tabs
- * keep their cells as routes and panes, but /status is the hub that reaches them.
+ * No tab draws the shared 2nd row now (feed and discover are plain tabs). live
+ * and channel tabs keep their cells as routes and panes, but /status is the hub
+ * that reaches them.
  */
 function mcShowsRow(tabId) {
   const tab = MC_TABS.find((t) => t.id === tabId)
@@ -112,14 +103,14 @@ function mcResolveSub(tabId, sub, lastByTab) {
   return cells[0].id
 }
 
-/** the tab whose button/row owns this id (discover lives under feed) */
+/** the tab whose button owns this id (a cell folds to its parent) */
 function mcRowOwner(tabId) {
   return MC_TABS.find((t) => t.id === tabId)?.cellOf || tabId
 }
 
 /**
- * A cell that has its own internal tab id is addressed two ways: feed › discover
- * and the id 'discover'. Fold both to the internal one, so every opener can
+ * A cell that has its own internal tab id (`cellOf`) is addressed two ways: parent › cell
+ * and its own id. Fold both to the internal one, so every opener can
  * say switchTab(tab, sub) and land on the same place.
  */
 function mcCanonTab(id, sub) {

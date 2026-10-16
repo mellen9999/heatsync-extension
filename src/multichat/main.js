@@ -9694,6 +9694,14 @@
         // Not wired up yet — say so rather than claiming an empty chat we
         // haven't actually connected to.
         empty.textContent = t('mc_connecting')
+      } else if (id === 'live' && currentTab === 'live' && !tabHasChatLegs('live')) {
+        // No channel on this page, so "watching" has nothing to show and can
+        // never fill — a blank column is never the answer. Land on following,
+        // which always has something. Tab-switch deferred: we're mid-render.
+        empty.textContent = t('mc_connecting')
+        cleanup.setTimeout(() => {
+          if (currentTab === 'live' && !tabHasChatLegs('live')) switchTab('feed')
+        }, 0)
       } else {
         empty.textContent = t('mc_no_messages')
       }

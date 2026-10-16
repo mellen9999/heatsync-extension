@@ -3638,7 +3638,7 @@
 
   // User-hidable tabs — persisted in ui_settings.hiddenTabs (auto-syncs cross-device)
   const HIDABLE_TABS = ['feed', 'whispers', 'mentions', 'pinned', 'modlog']
-  // Real steady-state default stays 'pinned' only (see hiddenTabs registry entry
+  // Real steady-state default is STEADY_HIDDEN_TABS (see hiddenTabs registry entry
   // in settings-schema.js) — this wider set is the fresh-install-only target:
   // whispers/mentions/modlog are genuinely login-walled for a signed-out
   // first-run user, so applyFreshInstallHiddenTabs() pushes new installs here
@@ -3659,7 +3659,10 @@
   // so those installs are treated as "never customised" rather than stranded
   // with a hidden feed forever.
   const LEGACY_FRESH_HIDDEN_TABS = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
-  let hiddenTabs = new Set(['pinned'])
+  // What a signed-in user who never touched Tabs sees hidden: pinned (opt-in)
+  // and modlog (mods only — blank noise for everyone else, so off until asked).
+  const STEADY_HIDDEN_TABS = ['pinned', 'modlog']
+  let hiddenTabs = new Set(STEADY_HIDDEN_TABS)
 
   // One-time fresh-install tab hiding: background.js stamps hs_fresh_install_hidden_tabs
   // on chrome.runtime.onInstalled(reason:'install') only — never on update, so
@@ -3676,7 +3679,11 @@
       if (!_settingsHydrated) return
       browser.storage.local.remove('hs_fresh_install_hidden_tabs').catch(() => {})
       const cur = getSetting('hiddenTabs')
-      if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') {
+      if (
+        Array.isArray(cur) &&
+        cur.length === STEADY_HIDDEN_TABS.length &&
+        STEADY_HIDDEN_TABS.every((id) => cur.includes(id))
+      ) {
         setSetting('hiddenTabs', DEFAULT_HIDDEN_TABS)
         saveUiSetting('hiddenTabsRevealPending', true)
       }
@@ -3697,7 +3704,8 @@
       // Either shape counts as untouched: an install stamped before feed came
       // off the list still carries the legacy set, and comparing only against
       // the current one would leave it hidden-forever instead of revealed.
-      if (matches(DEFAULT_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS)) setSetting('hiddenTabs', ['pinned'])
+      if (matches(DEFAULT_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS))
+        setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
     } catch (_) {}
   }
 

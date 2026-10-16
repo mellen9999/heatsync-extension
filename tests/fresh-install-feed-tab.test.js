@@ -83,12 +83,12 @@ const LEGACY = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
 
 describe('fresh-install hidden tabs', () => {
   test('feed is NOT hidden on a fresh install', () => {
-    const h = makeHarness({ hiddenTabs: ['pinned'] })
+    const h = makeHarness({ hiddenTabs: ['pinned', 'modlog'] })
     expect(h.DEFAULT_HIDDEN_TABS).not.toContain('feed')
   })
 
   test('the genuinely login-walled tabs stay hidden', () => {
-    const h = makeHarness({ hiddenTabs: ['pinned'] })
+    const h = makeHarness({ hiddenTabs: ['pinned', 'modlog'] })
     for (const id of ['whispers', 'mentions', 'modlog', 'pinned']) {
       expect(h.DEFAULT_HIDDEN_TABS).toContain(id)
     }
@@ -96,7 +96,7 @@ describe('fresh-install hidden tabs', () => {
 
   test('a fresh install is stamped without feed', async () => {
     const h = makeHarness({
-      hiddenTabs: ['pinned'],
+      hiddenTabs: ['pinned', 'modlog'],
       local: { hs_fresh_install_hidden_tabs: true },
     })
     await h.applyFreshInstallHiddenTabs()
@@ -133,9 +133,9 @@ describe('unhideFeedOnce', () => {
   })
 
   test('does nothing for an install that never had the legacy set', async () => {
-    const h = makeHarness({ hiddenTabs: ['pinned'] })
+    const h = makeHarness({ hiddenTabs: ['pinned', 'modlog'] })
     await h.unhideFeedOnce()
-    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+    expect(h.settings.hiddenTabs).toEqual(['pinned', 'modlog'])
   })
 })
 
@@ -146,7 +146,7 @@ describe('revealFreshInstallTabsOnce', () => {
       sync: { ui_settings: { hiddenTabsRevealPending: true } },
     })
     await h.revealFreshInstallTabsOnce()
-    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+    expect(h.settings.hiddenTabs).toEqual(['pinned', 'modlog'])
   })
 
   test('reveals an install stamped with the current set', async () => {
@@ -155,7 +155,7 @@ describe('revealFreshInstallTabsOnce', () => {
       sync: { ui_settings: { hiddenTabsRevealPending: true } },
     })
     await h.revealFreshInstallTabsOnce()
-    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+    expect(h.settings.hiddenTabs).toEqual(['pinned', 'modlog'])
   })
 
   test('leaves a customised set alone', async () => {
@@ -177,13 +177,13 @@ describe('revealFreshInstallTabsOnce', () => {
 // migration written to rescue it. These pin the retry.
 describe('one-shots vs an unhydrated settings cache', () => {
   test('unhideFeedOnce does not burn its guard when settings never loaded', async () => {
-    const h = makeHarness({ hiddenTabs: ['pinned'], hydrated: false })
+    const h = makeHarness({ hiddenTabs: ['pinned', 'modlog'], hydrated: false })
     await h.unhideFeedOnce()
     expect(h.localStore.hs_feed_unhidden_v2).toBeUndefined()
   })
 
   test('the retry actually restores feed on the next boot', async () => {
-    const stranded = makeHarness({ hiddenTabs: ['pinned'], hydrated: false })
+    const stranded = makeHarness({ hiddenTabs: ['pinned', 'modlog'], hydrated: false })
     await stranded.unhideFeedOnce()
     // next boot, settings hydrate and the real legacy set is visible
     const h = makeHarness({ hiddenTabs: [...LEGACY], local: stranded.localStore })
@@ -194,13 +194,13 @@ describe('one-shots vs an unhydrated settings cache', () => {
 
   test('applyFreshInstallHiddenTabs keeps its flag when settings never loaded', async () => {
     const h = makeHarness({
-      hiddenTabs: ['pinned'],
+      hiddenTabs: ['pinned', 'modlog'],
       local: { hs_fresh_install_hidden_tabs: true },
       hydrated: false,
     })
     await h.applyFreshInstallHiddenTabs()
     expect(h.localStore.hs_fresh_install_hidden_tabs).toBe(true)
-    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+    expect(h.settings.hiddenTabs).toEqual(['pinned', 'modlog'])
   })
 })
 

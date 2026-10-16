@@ -1541,7 +1541,7 @@ const SETTINGS = [
   {
     key: 'hiddenTabs',
     type: 'multiselect',
-    default: ['pinned'],
+    default: ['pinned', 'modlog'],
     scope: 'sync',
     category: 'system',
     section: 'tabs',

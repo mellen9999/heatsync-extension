@@ -88,6 +88,11 @@
   // paints a tab that isn't in the bar.
   let currentTab = 'live'
   let prevTab = 'live'
+  // Set when a channel-less page bounced the empty watching tab to following,
+  // so the next nav onto a channel can hand the panel back to its chat. Any
+  // tab the user picks themselves clears it (switchTab).
+  let _bouncedFromLive = false
+  let _autoSwitching = false
   // Tabs whose chat legs are still joining. A fresh install lands on a channel
   // and the first messages take ~15-25s (bg irc join + history hydration), and
   // an empty panel saying "no messages yet" for that long reads as broken —
@@ -6401,6 +6406,7 @@
   // last used there, else its first. Same tab + new cell only swaps the cell.
   function switchTab(id, sub, subOpts) {
     log('switchTab called:', id, sub || '')
+    if (!_autoSwitching) _bouncedFromLive = false
     ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
     if (id === currentTab && sub && nextSub === sub) {
@@ -6509,8 +6515,9 @@
       whisperSaveDebounced()
     }
 
-    // Persist active tab across refreshes/popouts (skip transient tabs)
-    if (id !== 'add') {
+    // Persist active tab across refreshes/popouts (skip transient tabs, and the
+    // auto-bounce off an empty watching tab — that is the page's doing, not a pick)
+    if (id !== 'add' && !_autoSwitching) {
       try {
         saveUiSetting('activeTab', id)
         // liveChannel override is popout-scoped — persisting it from regular
@@ -9708,7 +9715,14 @@
         // which always has something. Tab-switch deferred: we're mid-render.
         empty.textContent = t('mc_connecting')
         cleanup.setTimeout(() => {
-          if (currentTab === 'live' && !tabHasChatLegs('live')) switchTab('feed')
+          if (currentTab !== 'live' || tabHasChatLegs('live')) return
+          _autoSwitching = true
+          try {
+            switchTab('feed')
+            _bouncedFromLive = true
+          } finally {
+            _autoSwitching = false
+          }
         }, 0)
       } else {
         empty.textContent = t('mc_no_messages')

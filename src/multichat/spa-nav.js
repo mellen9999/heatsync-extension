@@ -47,6 +47,14 @@ function handleMcNav() {
   lastPath = location.pathname
   lastSearch = newSearch
   log('Navigation detected, reinitializing...')
+  // Landed on a channel after the panel was bounced off an empty watching tab
+  // (see renderMessages): give it back its chat. A tab the user chose is never
+  // touched — switchTab clears the flag on any manual pick.
+  if (_bouncedFromLive) {
+    cleanup.setTimeout(() => {
+      if (_bouncedFromLive && currentTab === 'feed' && tabHasChatLegs('live')) switchTab('live')
+    }, 300)
+  }
   // Re-evaluate body-mount overlay state for the new URL before teardown so
   // CSS rules flip ahead of the panel reappearing on the new page.
   try {

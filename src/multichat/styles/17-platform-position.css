@@ -797,6 +797,13 @@
       inset-inline-start: 0 !important;
       width: auto !important;
       max-width: none !important;
+      /* Theatre fills the viewport: top:0 + bottom:0. The right-dock pass
+         strips Twitch's inline height:100% (it must, windowed), and without
+         these the player collapses to its 16:9 content height and the left
+         nav shows underneath it instead of being covered. */
+      bottom: 0 !important;
+      height: auto !important;
+      max-height: none !important;
     }
 
     /* Twitch sizes .persistent-player by writing explicit pixel width/height

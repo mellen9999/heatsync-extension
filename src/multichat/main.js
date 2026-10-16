@@ -3755,6 +3755,22 @@
     } catch (_) {}
   }
 
+  // One-shot: mod log became off-by-default, so installs still sitting on the
+  // old default (hiddenTabs exactly ['pinned'] — what a first login stamps)
+  // get it hidden too. Exact match only: any list the user edited is left
+  // alone. Gated on _settingsHydrated and spent only after it, same as
+  // unhideFeedOnce, so a cache that never loaded can't burn the guard.
+  async function hideModlogOnce() {
+    try {
+      const { hs_modlog_hidden_v1 } = await browser.storage.local.get('hs_modlog_hidden_v1')
+      if (hs_modlog_hidden_v1) return
+      if (!_settingsHydrated) return
+      browser.storage.local.set({ hs_modlog_hidden_v1: true }).catch(() => {})
+      const cur = getSetting('hiddenTabs')
+      if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
+    } catch (_) {}
+  }
+
   // Timestamps on messages (default off)
   let timestampsEnabled = false
   window._hsTimestampsEnabled = false
@@ -12656,6 +12672,7 @@
     // Then hand the feed tab back to installs stamped while it was on that
     // list — must also land before the tab bar's first paint.
     await unhideFeedOnce()
+    await hideModlogOnce()
     // Init done — drop the cache so subsequent reads see fresh data.
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage

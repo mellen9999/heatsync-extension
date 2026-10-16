@@ -64,7 +64,7 @@ function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}
     'setSetting',
     'saveUiSetting',
     '_settingsHydrated',
-    `${TABS_SRC}\nreturn { DEFAULT_HIDDEN_TABS, LEGACY_FRESH_HIDDEN_TABS, applyFreshInstallHiddenTabs, revealFreshInstallTabsOnce, unhideFeedOnce }`,
+    `${TABS_SRC}\nreturn { DEFAULT_HIDDEN_TABS, LEGACY_FRESH_HIDDEN_TABS, applyFreshInstallHiddenTabs, revealFreshInstallTabsOnce, unhideFeedOnce, hideModlogOnce }`,
   )(
     browser,
     (k) => settings[k],
@@ -233,5 +233,29 @@ describe('v2 repair of installs stranded by the 1.7.66 bug', () => {
     const h = makeHarness({ hiddenTabs: [...LEGACY], local: { hs_feed_unhidden_v2: true } })
     await h.unhideFeedOnce()
     expect(h.settings.hiddenTabs).toContain('feed')
+  })
+})
+
+describe('hideModlogOnce', () => {
+  test('an install on the old default gets mod log hidden, once', async () => {
+    const h = makeHarness({ hiddenTabs: ['pinned'] })
+    await h.hideModlogOnce()
+    expect(h.settings.hiddenTabs).toEqual(['pinned', 'modlog'])
+    h.settings.hiddenTabs = ['pinned']
+    await h.hideModlogOnce()
+    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+  })
+
+  test('a list the user edited is never touched', async () => {
+    const h = makeHarness({ hiddenTabs: ['feed', 'pinned'] })
+    await h.hideModlogOnce()
+    expect(h.settings.hiddenTabs).toEqual(['feed', 'pinned'])
+  })
+
+  test('does not burn its guard when settings never loaded', async () => {
+    const h = makeHarness({ hiddenTabs: ['pinned'], hydrated: false })
+    await h.hideModlogOnce()
+    expect(h.settings.hiddenTabs).toEqual(['pinned'])
+    expect(h.localStore.hs_modlog_hidden_v1).toBeUndefined()
   })
 })

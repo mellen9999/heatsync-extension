@@ -2212,7 +2212,7 @@ function getOwnTwitchLogin() {
 // Twitch IRC badge rendering
 const BADGE_STYLES = {
   broadcaster: { label: 'LIVE', bg: '#000000', fg: '#ff0000' },
-  moderator: { label: 'MOD', bg: '#000000', fg: HS_MOD_GREEN },
+  moderator: { label: 'MOD', bg: HS_MOD_GREEN, fg: '#ffffff' },
   vip: { label: 'VIP', bg: '#000000', fg: '#ff00ff' },
   subscriber: { label: 'SUB', bg: '#000000', fg: '#ff00ff' },
   predictions: { label: 'PRED', bg: '#000000', fg: '#8888ff' },

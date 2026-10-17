@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f6e5f4a80abe' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c57c8129f68b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -68528,7 +68528,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       const m = c && /^rgb\((\d+), (\d+), (\d+)\)$/.exec(c)
       if (!m) return false
       const hex = `#${[m[1], m[2], m[3]].map((n) => Number(n).toString(16).padStart(2, '0')).join('')}`
-      if (_isUnsetWhite(hex)) return false
+      if (_ownColorFromTwitch === me || _isUnsetWhite(hex)) return _ownColorFromTwitch === me
       setKnownColor(me, hex, undefined, 'twitch', true)
       return true
     } catch {
@@ -68536,27 +68536,21 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
   }
 
+  // A color twitch's lookup reports is one the account really picked (/color,
+  // twitch settings): it beats the native page, which until your first message
+  // can still draw the random default it gave you before you chose one.
+  let _ownColorFromTwitch = ''
+
   async function seedOwnTwitchColor() {
     const me = currentUsername
     if (!me) return
     // The native chat list renders a beat after we mount: look a few times.
     let probes = 0
     const probe = () => {
-      if (probeNativeOwnColor(me) || ++probes >= 6) return
+      if (_ownColorFromTwitch === me || probeNativeOwnColor(me) || ++probes >= 6) return
       cleanup.setTimeout(probe, 2500)
     }
     cleanup.setTimeout(probe, 1000)
-    if (_nativeTwitchColor.has(me)) return
-    // Last color this browser heard you speak with: the answer on every reload
-    // after the first time you chat, and the only one for an account twitch's
-    // lookup reports no color for.
-    try {
-      const saved = (await browser.storage.local.get('hs_own_twitch_color')).hs_own_twitch_color
-      if (saved?.user === me && /^#[0-9a-f]{6}$/i.test(saved.color) && !_nativeTwitchColor.has(me)) {
-        setKnownColor(me, saved.color, undefined, 'twitch', true)
-        return
-      }
-    } catch {}
     try {
       const resp = await fetch('https://gql.twitch.tv/gql', {
         method: 'POST',
@@ -68567,10 +68561,22 @@ const STORAGE_KEY = 'heatsync_multichat'
           variables: { login: me },
         }),
       })
-      if (!resp.ok) return
-      const color = (await resp.json())?.data?.user?.chatColor
-      if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) && !_nativeTwitchColor.has(me)) {
-        setKnownColor(me, color, undefined, 'twitch', true)
+      if (resp.ok) {
+        const color = (await resp.json())?.data?.user?.chatColor
+        if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) {
+          _ownColorFromTwitch = me
+          setKnownColor(me, color.toLowerCase(), undefined, 'twitch', true)
+          return
+        }
+      }
+    } catch {}
+    if (_nativeTwitchColor.has(me)) return
+    // No color picked on twitch: the last one this browser heard you speak with
+    // is the answer on every reload after the first time you chat.
+    try {
+      const saved = (await browser.storage.local.get('hs_own_twitch_color')).hs_own_twitch_color
+      if (saved?.user === me && /^#[0-9a-f]{6}$/i.test(saved.color) && !_nativeTwitchColor.has(me)) {
+        setKnownColor(me, saved.color, undefined, 'twitch', true)
       }
     } catch {}
   }

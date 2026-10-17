@@ -426,9 +426,10 @@ function makeSynthId() {
 // for real means discovering each mutation and reading the result back, the
 // way setTwitchChatMode does.
 // Twitch killed these as IRC chat commands (Feb 2023); refused rather than sent
-// as literal text. vip/unvip left OFF this list — they're now wired via GQL
-// (VIPUser/UnVIPUser), so they must reach their handler instead of being refused.
-const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'color', 'raid', 'unraid', 'commercial', 'marker'])
+// as literal text. vip/unvip and color left OFF this list — they're now wired via
+// GQL (VIPUser/UnVIPUser, updateChatColor), so they must reach their handler
+// instead of being refused.
+const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'raid', 'unraid', 'commercial', 'marker'])
 
 function registerPendingSend({ text, channel, platforms, replyParentId, replyUser }) {
   const synthId = makeSynthId()
@@ -6723,6 +6724,7 @@ const COMMAND_RECEIPT_SCOPE = {
   opr: 'global',
   follow: 'global',
   unfollow: 'global',
+  color: 'global', // your twitch chat color follows you into every tab
   mute: 'global',
   unmute: 'global',
   block: 'global',
@@ -6844,6 +6846,28 @@ async function handleSlashCommand(text, input) {
   // Deliberately NOT wired to /re: that is an alias of /r, which sends a
   // WHISPER. Repointing it would turn a mistyped private reply into a public
   // post, and that is not a direction this should ever fail in.
+  // /color <name|#hex> — your twitch chat color, set through twitch itself and
+  // confirmed by reading it back (setTwitchChatColor).
+  if (cmd === 'color') {
+    const arg = rest.trim()
+    if (!arg) {
+      showToast('usage: /color <name|#hex> — e.g. /color orangered', 'error')
+      return true
+    }
+    const res = await setTwitchChatColor(arg, currentUsername)
+    if (!res.ok) {
+      showToast(`/color: ${res.error}`, 'error')
+      return true
+    }
+    // the panel learns it right away instead of waiting for your next message
+    try {
+      setKnownColor(String(currentUsername).toLowerCase(), res.hex, undefined, 'twitch', true)
+    } catch {}
+    showToast(`chat color set to ${res.hex.toLowerCase()}`, 'success')
+    clearInput(input)
+    return true
+  }
+
   if (cmd === 'opr') {
     if (!rest.trim()) {
       showToast('usage: /opr <text>', 'error')

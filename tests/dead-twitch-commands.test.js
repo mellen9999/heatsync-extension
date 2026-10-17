@@ -37,11 +37,12 @@ const { DEAD_TWITCH_CHAT_COMMANDS } = new Function(`${deadSrc}\nreturn { DEAD_TW
 
 describe('dead twitch chat commands', () => {
   test('the whole deprecated set is covered', () => {
-    for (const cmd of ['clear', 'color', 'raid', 'unraid', 'commercial', 'marker']) {
+    for (const cmd of ['clear', 'raid', 'unraid', 'commercial', 'marker']) {
       expect(DEAD_TWITCH_CHAT_COMMANDS.has(cmd)).toBe(true)
     }
-    // vip/unvip/mod/unmod are NOT dead anymore — implemented via GQL 2026-07-22.
-    for (const cmd of ['vip', 'unvip', 'mod', 'unmod']) {
+    // vip/unvip/mod/unmod are NOT dead anymore — implemented via GQL 2026-07-22,
+    // and color via updateChatColor 2026-10-17.
+    for (const cmd of ['vip', 'unvip', 'mod', 'unmod', 'color']) {
       expect(DEAD_TWITCH_CHAT_COMMANDS.has(cmd)).toBe(false)
     }
   })

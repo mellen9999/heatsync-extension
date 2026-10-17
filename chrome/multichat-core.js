@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6b8e460a6010' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f6e5f4a80abe' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15449,6 +15449,14 @@ const SLASH_REGISTRY = [
     alias: ['whisper'],
   },
   {
+    cmd: 'color',
+    args: '<name|#hex>',
+    desc: 'set your twitch chat color (a name like orangered, or #hex with turbo)',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+  },
+  {
     cmd: 'r',
     args: '<msg>',
     desc: 'reply to the last whisper you received',
@@ -15788,7 +15796,22 @@ const SLASH_SECTIONS = [
   {
     key: 'everyday',
     title: 'everyday',
-    cmds: ['op', 'opr', 'dm', 'w', 'r', 'user', 'follow', 'unfollow', 'me', 'shrug', 'tableflip', 'unflip', 'help'],
+    cmds: [
+      'op',
+      'opr',
+      'dm',
+      'w',
+      'r',
+      'color',
+      'user',
+      'follow',
+      'unfollow',
+      'me',
+      'shrug',
+      'tableflip',
+      'unflip',
+      'help',
+    ],
   },
   {
     key: 'local',
@@ -30573,6 +30596,83 @@ async function setTwitchChatMode(channelLogin, mode, value) {
   return { ok: false, error: 'twitch did not apply it (mod rights?)' }
 }
 
+// ─── Your chat color ────────────────────────────────────────────────────────
+// `/color` — GQL `updateChatColor(input: {color: String!})` (schema-probed
+// 2026-10-17: the mutation exists, takes `color`, and answers Unauthenticated
+// without a token). Like the chat modes, twitch's GQL accepts what it does not
+// understand, so success is only claimed after reading `user.chatColor` back.
+// The 15 colors every account can pick, and the hex twitch reads each back as.
+const TWITCH_NAMED_COLORS = {
+  blue: ['Blue', 0x0000ff],
+  blueviolet: ['BlueViolet', 0x8a2be2],
+  cadetblue: ['CadetBlue', 0x5f9ea0],
+  chocolate: ['Chocolate', 0xd2691e],
+  coral: ['Coral', 0xff7f50],
+  dodgerblue: ['DodgerBlue', 0x1e90ff],
+  firebrick: ['Firebrick', 0xb22222],
+  goldenrod: ['GoldenRod', 0xdaa520],
+  green: ['Green', 0x008000],
+  hotpink: ['HotPink', 0xff69b4],
+  orangered: ['OrangeRed', 0xff4500],
+  red: ['Red', 0xff0000],
+  seagreen: ['SeaGreen', 0x2e8b57],
+  springgreen: ['SpringGreen', 0x00ff7f],
+  yellowgreen: ['YellowGreen', 0x9acd32],
+}
+const _twHex = (n) => `#${n.toString(16).padStart(6, '0').toUpperCase()}`
+
+// arg: a color name (case and spacing ignored) or #rrggbb. Returns
+// { ok, hex } | { ok:false, error }. Hex needs Turbo/Prime — twitch refuses it
+// otherwise, which the read-back turns into an honest message.
+async function setTwitchChatColor(arg, login) {
+  const raw = String(arg || '').trim()
+  const hexIn = /^#?([0-9a-f]{6})$/i.exec(raw)
+  const named = TWITCH_NAMED_COLORS[raw.toLowerCase().replace(/[\s_-]/g, '')]
+  if (!hexIn && !named) {
+    return {
+      ok: false,
+      error: `unknown color — try one of: ${Object.values(TWITCH_NAMED_COLORS)
+        .map((c) => c[0].toLowerCase())
+        .join(' ')}`,
+    }
+  }
+  const want = hexIn ? `#${hexIn[1].toUpperCase()}` : _twHex(named[1])
+  const me = String(login || '').toLowerCase()
+  if (!me) return { ok: false, error: 'not logged into twitch' }
+  const readBack = async () => {
+    try {
+      const data = await twitchGql(`{ user(login: "${me}") { chatColor } }`)
+      return String(data?.data?.user?.chatColor || '').toUpperCase()
+    } catch {
+      return ''
+    }
+  }
+  // twitch's own client sends the name; a hex goes through as written.
+  for (const color of hexIn ? [want] : [named[0], want]) {
+    try {
+      const res = await gqlMutation(
+        'mutation($input: UpdateChatColorInput!) { updateChatColor(input: $input) { __typename } }',
+        { input: { color } },
+      )
+      const err = res?.errors?.[0]?.message || res?.data?.errors?.[0]?.message
+      if (err) {
+        if (/unauthenticated/i.test(err)) return { ok: false, error: 'not logged into twitch' }
+        continue
+      }
+    } catch (e) {
+      return { ok: false, error: e?.message || 'failed' }
+    }
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt) await new Promise((r) => setTimeout(r, 400))
+      if ((await readBack()) === want.toUpperCase()) return { ok: true, hex: want }
+    }
+  }
+  return {
+    ok: false,
+    error: hexIn ? 'twitch did not take it — custom hex colors need turbo or prime' : 'twitch did not apply it',
+  }
+}
+
 // Back-compat wrapper — followers-only was the one mode already wired.
 async function setTwitchFollowersMode(channelLogin, minutes) {
   return setTwitchChatMode(channelLogin, 'followers', minutes)
@@ -42085,9 +42185,10 @@ function makeSynthId() {
 // for real means discovering each mutation and reading the result back, the
 // way setTwitchChatMode does.
 // Twitch killed these as IRC chat commands (Feb 2023); refused rather than sent
-// as literal text. vip/unvip left OFF this list — they're now wired via GQL
-// (VIPUser/UnVIPUser), so they must reach their handler instead of being refused.
-const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'color', 'raid', 'unraid', 'commercial', 'marker'])
+// as literal text. vip/unvip and color left OFF this list — they're now wired via
+// GQL (VIPUser/UnVIPUser, updateChatColor), so they must reach their handler
+// instead of being refused.
+const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'raid', 'unraid', 'commercial', 'marker'])
 
 function registerPendingSend({ text, channel, platforms, replyParentId, replyUser }) {
   const synthId = makeSynthId()
@@ -48382,6 +48483,7 @@ const COMMAND_RECEIPT_SCOPE = {
   opr: 'global',
   follow: 'global',
   unfollow: 'global',
+  color: 'global', // your twitch chat color follows you into every tab
   mute: 'global',
   unmute: 'global',
   block: 'global',
@@ -48503,6 +48605,28 @@ async function handleSlashCommand(text, input) {
   // Deliberately NOT wired to /re: that is an alias of /r, which sends a
   // WHISPER. Repointing it would turn a mistyped private reply into a public
   // post, and that is not a direction this should ever fail in.
+  // /color <name|#hex> — your twitch chat color, set through twitch itself and
+  // confirmed by reading it back (setTwitchChatColor).
+  if (cmd === 'color') {
+    const arg = rest.trim()
+    if (!arg) {
+      showToast('usage: /color <name|#hex> — e.g. /color orangered', 'error')
+      return true
+    }
+    const res = await setTwitchChatColor(arg, currentUsername)
+    if (!res.ok) {
+      showToast(`/color: ${res.error}`, 'error')
+      return true
+    }
+    // the panel learns it right away instead of waiting for your next message
+    try {
+      setKnownColor(String(currentUsername).toLowerCase(), res.hex, undefined, 'twitch', true)
+    } catch {}
+    showToast(`chat color set to ${res.hex.toLowerCase()}`, 'success')
+    clearInput(input)
+    return true
+  }
+
   if (cmd === 'opr') {
     if (!rest.trim()) {
       showToast('usage: /opr <text>', 'error')

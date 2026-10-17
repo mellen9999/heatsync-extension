@@ -70,6 +70,14 @@ export const SLASH_REGISTRY = [
     alias: ['whisper'],
   },
   {
+    cmd: 'color',
+    args: '<name|#hex>',
+    desc: 'set your twitch chat color (a name like orangered, or #hex with turbo)',
+    on: 'ext',
+    needs: 'twitch',
+    does: 'twitch',
+  },
+  {
     cmd: 'r',
     args: '<msg>',
     desc: 'reply to the last whisper you received',
@@ -409,7 +417,22 @@ export const SLASH_SECTIONS = [
   {
     key: 'everyday',
     title: 'everyday',
-    cmds: ['op', 'opr', 'dm', 'w', 'r', 'user', 'follow', 'unfollow', 'me', 'shrug', 'tableflip', 'unflip', 'help'],
+    cmds: [
+      'op',
+      'opr',
+      'dm',
+      'w',
+      'r',
+      'color',
+      'user',
+      'follow',
+      'unfollow',
+      'me',
+      'shrug',
+      'tableflip',
+      'unflip',
+      'help',
+    ],
   },
   {
     key: 'local',

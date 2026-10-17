@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cf325257ba2d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7241823089e1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -25789,7 +25789,9 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
 
       // Update all wrappers in DOM (no full re-render)
       queryEmoteWrappers(emoteName).forEach((w) => {
-        w.classList.remove('hs-state-global', 'hs-state-unadded', 'hs-state-blocked')
+        // stale too: once it is in your set, the channel dropping its 7TV copy
+        // no longer matters, and a leftover ghost class kept the row dimmed
+        w.classList.remove('hs-state-global', 'hs-state-unadded', 'hs-state-blocked', 'hs-state-stale')
         w.classList.add('hs-state-owned')
         w.dataset.state = 'owned'
       })
@@ -78574,6 +78576,9 @@ const STORAGE_KEY = 'heatsync_multichat'
               for (const node of row.querySelectorAll(nameSel)) {
                 const w = node.classList.contains('hs-mc-emote-wrapper') ? node : node.closest('.hs-mc-emote-wrapper')
                 if (!w) continue
+                // Never ghost what you own or a heatsync copy: only the channel's
+                // own 7TV emote went away.
+                if (mode === 'mark' && (w.dataset.state === 'owned' || w.dataset.source === 'heatsync')) continue
                 // Identity guard: don't ghost a same-name emote of different art.
                 if (mode === 'mark' && meta?.hash && w.dataset.emoteHash && w.dataset.emoteHash !== meta.hash) continue
                 if (mode === 'mark') {

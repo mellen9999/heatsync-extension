@@ -11545,6 +11545,9 @@
               for (const node of row.querySelectorAll(nameSel)) {
                 const w = node.classList.contains('hs-mc-emote-wrapper') ? node : node.closest('.hs-mc-emote-wrapper')
                 if (!w) continue
+                // Never ghost what you own or a heatsync copy: only the channel's
+                // own 7TV emote went away.
+                if (mode === 'mark' && (w.dataset.state === 'owned' || w.dataset.source === 'heatsync')) continue
                 // Identity guard: don't ghost a same-name emote of different art.
                 if (mode === 'mark' && meta?.hash && w.dataset.emoteHash && w.dataset.emoteHash !== meta.hash) continue
                 if (mode === 'mark') {

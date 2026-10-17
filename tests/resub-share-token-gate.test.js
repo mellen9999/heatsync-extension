@@ -216,14 +216,14 @@ describe('an unreadable twitch key builds the token from ids we hold', () => {
   const derive = SHARE_SRC.slice(SHARE_SRC.indexOf('async function deriveResubToken'))
 
   test('the token is the exact shape twitch issues, and decodes back through the validator', () => {
-    expect(derive.slice(0, 700)).toContain('btoa(`${selfId}:${channelId}:${months}:cumulative`)')
+    expect(derive.slice(0, 1400)).toContain("btoa(`${selfId}:${channelId}:${months}:cumulative`)")
     const m = /^(\d+):(\d+):(\d+):([a-z_]+)$/i.exec(atob(btoa('123:456:109:cumulative')))
     expect(m?.slice(1)).toEqual(['123', '456', '109', 'cumulative'])
   })
 
   test('a missing id is a null, never a default', () => {
-    expect(derive.slice(0, 700)).toContain('if (!selfId || !channelId) return null')
-    expect(derive.slice(0, 700)).toContain('if (!(months > 0) || !channel) return null')
+    expect(derive.slice(0, 1400)).toContain("channel id unknown")
+    expect(derive.slice(0, 1400)).toContain("no channel/months")
   })
 
   test('the click derives before it falls back to twitch own button', () => {

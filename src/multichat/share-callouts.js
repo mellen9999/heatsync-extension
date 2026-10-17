@@ -284,15 +284,25 @@ async function _consumeCalloutToken(channel, token, text) {
 // signed-in user (helix /users) and the channel (resolveTwitchChannelId).
 // Null on any gap; never a guess, since an unknown id is a null, not a default.
 async function deriveResubToken(channel, months) {
-  try {
-    if (!(months > 0) || !channel) return null
-    const auth = getTwitchAuthToken()
-    if (!auth) return null
-    const [selfId, channelId] = await Promise.all([eswFetchSelfUserId(auth), resolveTwitchChannelId(channel)])
-    if (!selfId || !channelId) return null
-    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
-  } catch (_) {
+  const gap = (what) => {
+    console.warn('[heatsync-ext] resub token not derived —', what)
     return null
+  }
+  try {
+    if (!(months > 0) || !channel) return gap('no channel/months')
+    // The auth cookie is not readable from every window (a popout is not on
+    // twitch.tv) — the async getter falls back to the background's cookie API.
+    const { token } = await getTwitchAuthTokenAsync()
+    // Own id: helix when we hold a token, else the same GQL lookup any channel
+    // goes through (we know our own login).
+    let selfId = token ? await eswFetchSelfUserId(token) : null
+    if (!selfId && currentUsername) selfId = await resolveTwitchChannelId(currentUsername)
+    if (!selfId) return gap('own user id unknown')
+    const channelId = await resolveTwitchChannelId(channel)
+    if (!channelId) return gap('channel id unknown')
+    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
+  } catch (e) {
+    return gap(e?.message || 'threw')
   }
 }
 

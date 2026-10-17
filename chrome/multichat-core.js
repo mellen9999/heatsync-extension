@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '023b6fec4abc' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3ed49c0f7b9a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70078,15 +70078,25 @@ async function _consumeCalloutToken(channel, token, text) {
 // signed-in user (helix /users) and the channel (resolveTwitchChannelId).
 // Null on any gap; never a guess, since an unknown id is a null, not a default.
 async function deriveResubToken(channel, months) {
-  try {
-    if (!(months > 0) || !channel) return null
-    const auth = getTwitchAuthToken()
-    if (!auth) return null
-    const [selfId, channelId] = await Promise.all([eswFetchSelfUserId(auth), resolveTwitchChannelId(channel)])
-    if (!selfId || !channelId) return null
-    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
-  } catch (_) {
+  const gap = (what) => {
+    console.warn('[heatsync-ext] resub token not derived —', what)
     return null
+  }
+  try {
+    if (!(months > 0) || !channel) return gap('no channel/months')
+    // The auth cookie is not readable from every window (a popout is not on
+    // twitch.tv) — the async getter falls back to the background's cookie API.
+    const { token } = await getTwitchAuthTokenAsync()
+    // Own id: helix when we hold a token, else the same GQL lookup any channel
+    // goes through (we know our own login).
+    let selfId = token ? await eswFetchSelfUserId(token) : null
+    if (!selfId && currentUsername) selfId = await resolveTwitchChannelId(currentUsername)
+    if (!selfId) return gap('own user id unknown')
+    const channelId = await resolveTwitchChannelId(channel)
+    if (!channelId) return gap('channel id unknown')
+    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
+  } catch (e) {
+    return gap(e?.message || 'threw')
   }
 }
 

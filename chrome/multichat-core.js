@@ -15020,7 +15020,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '75990a85af5d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3a90f0845cb9' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -47063,8 +47063,8 @@ function hsPrefetchUserColors(usernames) {
   })
 }
 // Resolve a username's chat color, caching the result. Resolution order:
-//   1. heatsync custom color (set on heatsync.org)
-//   2. twitch chat color via unauthed GQL (no scope needed)
+//   1. twitch chat color via unauthed GQL, when the profile links a twitch account
+//   2. heatsync custom color (set on heatsync.org)
 //   3. twitch's 15 auto-assigned colors (deterministic hash of username)
 // So every user resolves to SOME color — never flat white — matching twitch.
 // Deduped via _hsUserColorInflight; persisted via _hsUserColorCache. Shared by
@@ -47090,10 +47090,11 @@ function hsResolveUserColor(lower) {
         const uid = profile?.twitch_user_id || profile?.twitch_id || null
         _hsUserIdCache.set(lower, uid ? String(uid) : null)
         if (_hsUserIdCache.size > 5000) _hsUserIdCache.delete(_hsUserIdCache.keys().next().value)
-        // 1. heatsync custom color (set on heatsync.org)
-        let c = profile?.color || profile?.user_color || profile?.userColor || null
-        // 2. fallback: fetch Twitch chat color via unauthed GQL (no scope needed)
-        if (!c && profile?.twitch_username) {
+        // 1. twitch's own chat color via unauthed GQL (no scope needed) — a
+        //    linked twitch account keeps its twitch color; the heatsync pick
+        //    must not repaint it a beat after the prefetch painted it.
+        let c = null
+        if (profile?.twitch_username) {
           try {
             const gqlResp = await fetch('https://gql.twitch.tv/gql', {
               method: 'POST',
@@ -47113,6 +47114,8 @@ function hsResolveUserColor(lower) {
             }
           } catch {}
         }
+        // 2. heatsync custom color (set on heatsync.org)
+        if (!c) c = profile?.color || profile?.user_color || profile?.userColor || null
         // 3. fallback: Twitch's 15 auto-assigned colors (hash of username)
         if (!c) {
           const palette = [

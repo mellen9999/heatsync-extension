@@ -16,3 +16,9 @@ test('a resolved mention repaints with the known color first', () => {
   expect(m).toContain('sanitizeColor(knownColors.get(lower) || c)')
   expect(m).toContain("setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')")
 })
+
+test('a linked twitch account resolves to its twitch color before the heatsync pick', () => {
+  const body = src('input.js').split('function hsResolveUserColor(lower) {')[1].split('\nfunction ')[0]
+  expect(body.indexOf('gql.twitch.tv')).toBeGreaterThan(-1)
+  expect(body.indexOf('gql.twitch.tv')).toBeLessThan(body.indexOf('profile?.color'))
+})

@@ -831,7 +831,12 @@
        own ".channel-root + .persistent-player { width:100% }" is the right
        target; assert it with !important so it survives the missing/stale
        inline write. Theatre and mini-player (no-channel) have their own rules. */
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+    /* hs-chat-hidden is the same layout: the panel is gone, so twitch's
+       column owns the page and the player must fill the slot. Without this the
+       offline page keeps the stale small px width twitch wrote while our panel
+       was open and the player sits in a corner of its area. */
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-hidden:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
       width: 100% !important;
     }
     /* chat-top / chat-bottom, windowed: the chat-top/bottom branch in

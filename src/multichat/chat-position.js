@@ -902,7 +902,8 @@ function applyPlatformPositionOverrides() {
         pp.style.removeProperty('width')
         pp.style.removeProperty('height')
         pp.style.removeProperty('max-height')
-      } else if (isRight) {
+      } else if (isRight || chatPosition === 'hidden') {
+        // (hidden = no panel, same page layout as right)
         // Twitch's persistent-player has position:absolute with no CSS
         // rule setting `top`. The previous code removed inline top expecting
         // Twitch's React effect to re-apply it — but on certain layouts

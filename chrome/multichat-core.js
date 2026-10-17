@@ -4313,7 +4313,7 @@ const SETTINGS = [
   {
     key: 'hiddenTabs',
     type: 'multiselect',
-    default: ['pinned'],
+    default: ['pinned', 'modlog', 'discover'],
     scope: 'sync',
     category: 'system',
     section: 'tabs',
@@ -4324,6 +4324,7 @@ const SETTINGS = [
     invertDisplay: true,
     options: [
       { value: 'feed', labelKey: 'mc_tab_feed' },
+      { value: 'discover', labelKey: 'mc_tab_discover' },
       { value: 'whispers', labelKey: 'mc_tab_whispers' },
       { value: 'mentions', labelKey: 'mc_tab_mentions' },
       { value: 'pinned', labelKey: 'mc_tab_pinned' },
@@ -15024,7 +15025,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3f0b7bd7198f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5021bd4ce749' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15878,24 +15879,14 @@ const MC_CHANNEL_SUB = [
 const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
 
 const MC_TABS = [
-  {
-    id: 'feed',
-    labelKey: 'mc_tab_feed',
-    bar: 'scroll',
-    restorable: true,
-    sub: [
-      { id: 'feed', label: 'feed' },
-      { id: 'discover', label: 'discover' },
-    ],
-  },
+  { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
+  { id: 'discover', labelKey: 'mc_tab_discover', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'whispers', labelKey: 'mc_tab_whispers', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_LIVE_SUB },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
-  // a cell of feed that keeps its own internal id (renderers key on it)
-  { id: 'discover', cellOf: 'feed', restorable: true },
   {
     id: 'settings',
     bar: 'util',
@@ -15942,8 +15933,9 @@ function mcSubCells(tabId) {
 }
 
 /**
- * Only feed (feed › discover) shows the shared 2nd row. live and channel tabs
- * keep their cells as routes and panes, but /status is the hub that reaches them.
+ * No tab draws the shared 2nd row now (feed and discover are plain tabs). live
+ * and channel tabs keep their cells as routes and panes, but /status is the hub
+ * that reaches them.
  */
 function mcShowsRow(tabId) {
   const tab = MC_TABS.find((t) => t.id === tabId)
@@ -15965,14 +15957,14 @@ function mcResolveSub(tabId, sub, lastByTab) {
   return cells[0].id
 }
 
-/** the tab whose button/row owns this id (discover lives under feed) */
+/** the tab whose button owns this id (a cell folds to its parent) */
 function mcRowOwner(tabId) {
   return MC_TABS.find((t) => t.id === tabId)?.cellOf || tabId
 }
 
 /**
- * A cell that has its own internal tab id is addressed two ways: feed › discover
- * and the id 'discover'. Fold both to the internal one, so every opener can
+ * A cell that has its own internal tab id (`cellOf`) is addressed two ways: parent › cell
+ * and its own id. Fold both to the internal one, so every opener can
  * say switchTab(tab, sub) and land on the same place.
  */
 function mcCanonTab(id, sub) {
@@ -26831,6 +26823,13 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       inset-inline-start: 0 !important;
       width: auto !important;
       max-width: none !important;
+      /* Theatre fills the viewport: top:0 + bottom:0. The right-dock pass
+         strips Twitch's inline height:100% (it must, windowed), and without
+         these the player collapses to its 16:9 content height and the left
+         nav shows underneath it instead of being covered. */
+      bottom: 0 !important;
+      height: auto !important;
+      max-height: none !important;
     }
 
     /* Twitch sizes .persistent-player by writing explicit pixel width/height
@@ -43407,7 +43406,7 @@ function getOwnTwitchLogin() {
 // Twitch IRC badge rendering
 const BADGE_STYLES = {
   broadcaster: { label: 'LIVE', bg: '#000000', fg: '#ff0000' },
-  moderator: { label: 'MOD', bg: '#000000', fg: HS_MOD_GREEN },
+  moderator: { label: 'MOD', bg: HS_MOD_GREEN, fg: '#ffffff' },
   vip: { label: 'VIP', bg: '#000000', fg: '#ff00ff' },
   subscriber: { label: 'SUB', bg: '#000000', fg: '#ff00ff' },
   predictions: { label: 'PRED', bg: '#000000', fg: '#8888ff' },
@@ -49107,7 +49106,15 @@ function _renderFeedEmptyCard() {
   discoverBtn.className = 'hs-mc-empty-btn'
   discoverBtn.textContent = 'discover people →'
   discoverBtn.addEventListener('click', () => {
-    if (typeof switchTab === 'function') switchTab('feed', 'discover')
+    // discover is hidden by default; a tab you land on must be on the bar, so
+    // asking for it brings it back first.
+    const hidden = getSetting('hiddenTabs')
+    if (Array.isArray(hidden) && hidden.includes('discover'))
+      setSetting(
+        'hiddenTabs',
+        hidden.filter((id) => id !== 'discover'),
+      )
+    if (typeof switchTab === 'function') switchTab('discover')
   })
   actions.appendChild(discoverBtn)
 
@@ -49285,6 +49292,33 @@ function renderFeedAppend(startIndex) {
   if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(msgsEl)
 }
 
+// A feed post's author link. A twitch author whose id chat has already
+// resolved gets the same paint (HeatSync first, then 7TV) their name wears in
+// chat and in a quoted post — one precedence everywhere, so a name never looks
+// different on his own post than when he is tagged. Anyone else, or an id not
+// resolved yet, keeps the plain colour; the lookup is queued so the next render
+// has it. Native (no-platform) and kick/yt authors stay plain: knownUserIds is
+// twitch-space only, and a bare name could belong to a different chatter.
+function feedAuthorLink(m) {
+  const name = m.username || 'anon'
+  const lower = name.toLowerCase()
+  const colour = sanitizeColor(m.user_color || '#fff')
+  const uid =
+    m.platform === 'twitch' && typeof knownUserIds !== 'undefined' && typeof userKey === 'function'
+      ? knownUserIds.get(userKey(lower, 'twitch')) || ''
+      : ''
+  const hsPaint = uid ? hsPaintRender(uid, name) : null
+  if (uid && !hsPaint && !mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+  const paintStyle = hsPaint || !uid ? '' : getMcPaintStyle(uid)
+  const cls = `hs-feed-user hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
+  const style = hsPaint
+    ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(colour)}`
+    : `color:${colour}${paintStyle ? `;${paintStyle}` : ''}`
+  const uidAttr = uid ? ` data-uid="${escapeHtml(uid)}"` : ''
+  const splitAttr = hsPaint ? hsPaint.splitAttr : ''
+  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${splitAttr} style="${style}">${hsPaint ? hsPaint.html : escapeHtml(name)}</a>`
+}
+
 function buildFeedMessageDiv(m, opUsername) {
   const div = document.createElement('div')
   div.className = 'hs-feed-msg'
@@ -49377,7 +49411,7 @@ function buildFeedMessageDiv(m, opUsername) {
   const tripcodeHtml = m.tripcode ? `<span class="hs-tripcode">${escapeHtml(m.tripcode)}</span>` : ''
   const userHtml = isAnon
     ? `${anonAvatar}<span class="hs-feed-user" style="color:#ffffff">Anonymous</span>${tripcodeHtml}`
-    : `${userAvatar}<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="hs-feed-user hs-mc-user" data-username="${escapeHtml((m.username || 'anon').toLowerCase())}" data-platform="${escapeHtml(m.platform || '')}" style="color:${sanitizeColor(m.user_color || '#fff')}">${escapeHtml(m.username || 'anon')}</a>${tripcodeHtml}`
+    : `${userAvatar}${feedAuthorLink(m)}${tripcodeHtml}`
 
   // Media/embeds (img, video, iframe) — values inside are pre-sanitized via escapeHtml/safeUrl/sanitizeEmbedId
   const mediaHtml = buildFeedMediaHtml(m)
@@ -76420,6 +76454,14 @@ function handleMcNav() {
   lastPath = location.pathname
   lastSearch = newSearch
   log('Navigation detected, reinitializing...')
+  // Landed on a channel after the panel was bounced off an empty watching tab
+  // (see renderMessages): give it back its chat. A tab the user chose is never
+  // touched — switchTab clears the flag on any manual pick.
+  if (_bouncedFromLive) {
+    cleanup.setTimeout(() => {
+      if (_bouncedFromLive && currentTab === 'feed' && tabHasChatLegs('live')) switchTab('live')
+    }, 300)
+  }
   // Re-evaluate body-mount overlay state for the new URL before teardown so
   // CSS rules flip ahead of the panel reappearing on the new page.
   try {
@@ -78095,6 +78137,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   // paints a tab that isn't in the bar.
   let currentTab = 'live'
   let prevTab = 'live'
+  // Set when a channel-less page bounced the empty watching tab to following,
+  // so the next nav onto a channel can hand the panel back to its chat. Any
+  // tab the user picks themselves clears it (switchTab).
+  let _bouncedFromLive = false
+  let _autoSwitching = false
   // Tabs whose chat legs are still joining. A fresh install lands on a channel
   // and the first messages take ~15-25s (bg irc join + history hydration), and
   // an empty panel saying "no messages yet" for that long reads as broken —
@@ -81644,8 +81691,8 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Util row collapsed — hides C/T/F-/F+/⚙ for clean single-line tabs
 
   // User-hidable tabs — persisted in ui_settings.hiddenTabs (auto-syncs cross-device)
-  const HIDABLE_TABS = ['feed', 'whispers', 'mentions', 'pinned', 'modlog']
-  // Real steady-state default stays 'pinned' only (see hiddenTabs registry entry
+  const HIDABLE_TABS = ['feed', 'discover', 'whispers', 'mentions', 'pinned', 'modlog']
+  // Real steady-state default is STEADY_HIDDEN_TABS (see hiddenTabs registry entry
   // in settings-schema.js) — this wider set is the fresh-install-only target:
   // whispers/mentions/modlog are genuinely login-walled for a signed-out
   // first-run user, so applyFreshInstallHiddenTabs() pushes new installs here
@@ -81666,7 +81713,14 @@ const STORAGE_KEY = 'heatsync_multichat'
   // so those installs are treated as "never customised" rather than stranded
   // with a hidden feed forever.
   const LEGACY_FRESH_HIDDEN_TABS = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
-  let hiddenTabs = new Set(['pinned'])
+  // The set stamped by the release before discover joined the list — still untouched
+  // until first login, so it must still count as "never customised".
+  const PREV_FRESH_HIDDEN_TABS = ['pinned', 'whispers', 'mentions', 'modlog']
+  // What a signed-in user who never touched Tabs sees hidden: pinned (opt-in),
+  // modlog (mods only) and discover (a destination, not a daily surface) — all
+  // off until asked, so the strip stays short.
+  const STEADY_HIDDEN_TABS = ['pinned', 'modlog', 'discover']
+  let hiddenTabs = new Set(STEADY_HIDDEN_TABS)
 
   // One-time fresh-install tab hiding: background.js stamps hs_fresh_install_hidden_tabs
   // on chrome.runtime.onInstalled(reason:'install') only — never on update, so
@@ -81683,7 +81737,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (!_settingsHydrated) return
       browser.storage.local.remove('hs_fresh_install_hidden_tabs').catch(() => {})
       const cur = getSetting('hiddenTabs')
-      if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') {
+      if (
+        Array.isArray(cur) &&
+        cur.length === STEADY_HIDDEN_TABS.length &&
+        STEADY_HIDDEN_TABS.every((id) => cur.includes(id))
+      ) {
         setSetting('hiddenTabs', DEFAULT_HIDDEN_TABS)
         saveUiSetting('hiddenTabsRevealPending', true)
       }
@@ -81704,7 +81762,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Either shape counts as untouched: an install stamped before feed came
       // off the list still carries the legacy set, and comparing only against
       // the current one would leave it hidden-forever instead of revealed.
-      if (matches(DEFAULT_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS)) setSetting('hiddenTabs', ['pinned'])
+      if (matches(DEFAULT_HIDDEN_TABS) || matches(PREV_FRESH_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS))
+        setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
     } catch (_) {}
   }
 
@@ -81746,6 +81805,25 @@ const STORAGE_KEY = 'heatsync_multichat'
         cur.length === LEGACY_FRESH_HIDDEN_TABS.length &&
         LEGACY_FRESH_HIDDEN_TABS.every((id) => cur.includes(id))
       if (isLegacy) setSetting('hiddenTabs', DEFAULT_HIDDEN_TABS)
+    } catch (_) {}
+  }
+
+  // One-shot: mod log and discover became off-by-default, so installs still
+  // sitting on an older default (hiddenTabs exactly ['pinned'] — what a first
+  // login stamps — or ['pinned', 'modlog'] — the previous release) get them
+  // hidden too. Exact match only: any list the user edited is left alone. Gated
+  // on _settingsHydrated and spent only after it, same as unhideFeedOnce, so a
+  // cache that never loaded can't burn the guard. v2 on purpose: v1 already ran
+  // for the ['pinned'] → ['pinned', 'modlog'] step.
+  async function hideSecondaryTabsOnce() {
+    try {
+      const { hs_secondary_tabs_hidden_v2 } = await browser.storage.local.get('hs_secondary_tabs_hidden_v2')
+      if (hs_secondary_tabs_hidden_v2) return
+      if (!_settingsHydrated) return
+      browser.storage.local.set({ hs_secondary_tabs_hidden_v2: true }).catch(() => {})
+      const cur = getSetting('hiddenTabs')
+      const is = (set) => Array.isArray(cur) && cur.length === set.length && set.every((id) => cur.includes(id))
+      if (is(['pinned']) || is(['pinned', 'modlog'])) setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
     } catch (_) {}
   }
 
@@ -84400,6 +84478,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   // last used there, else its first. Same tab + new cell only swaps the cell.
   function switchTab(id, sub, subOpts) {
     log('switchTab called:', id, sub || '')
+    if (!_autoSwitching) _bouncedFromLive = false
     ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
     if (id === currentTab && sub && nextSub === sub) {
@@ -84508,8 +84587,9 @@ const STORAGE_KEY = 'heatsync_multichat'
       whisperSaveDebounced()
     }
 
-    // Persist active tab across refreshes/popouts (skip transient tabs)
-    if (id !== 'add') {
+    // Persist active tab across refreshes/popouts (skip transient tabs, and the
+    // auto-bounce off an empty watching tab — that is the page's doing, not a pick)
+    if (id !== 'add' && !_autoSwitching) {
       try {
         saveUiSetting('activeTab', id)
         // liveChannel override is popout-scoped — persisting it from regular
@@ -87701,6 +87781,21 @@ const STORAGE_KEY = 'heatsync_multichat'
         // Not wired up yet — say so rather than claiming an empty chat we
         // haven't actually connected to.
         empty.textContent = t('mc_connecting')
+      } else if (id === 'live' && currentTab === 'live' && !tabHasChatLegs('live')) {
+        // No channel on this page, so "watching" has nothing to show and can
+        // never fill — a blank column is never the answer. Land on following,
+        // which always has something. Tab-switch deferred: we're mid-render.
+        empty.textContent = t('mc_connecting')
+        cleanup.setTimeout(() => {
+          if (currentTab !== 'live' || tabHasChatLegs('live')) return
+          _autoSwitching = true
+          try {
+            switchTab('feed')
+            _bouncedFromLive = true
+          } finally {
+            _autoSwitching = false
+          }
+        }, 0)
       } else {
         empty.textContent = t('mc_no_messages')
       }
@@ -90633,6 +90728,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Then hand the feed tab back to installs stamped while it was on that
     // list — must also land before the tab bar's first paint.
     await unhideFeedOnce()
+    await hideSecondaryTabsOnce()
     // Init done — drop the cache so subsequent reads see fresh data.
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage

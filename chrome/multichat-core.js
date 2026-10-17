@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6eb3a2f9e0a4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '03266cc88dfa' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -67956,11 +67956,15 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
   }
 
+  // Heatsync account the saved mentions belong to — a mention of the previous
+  // account must never be restored under the next one.
+  let mentionsOwner = ''
+
   function _writeMentionsNow() {
     try {
       if (!chrome?.runtime?.id) return
       const msgs = mentionsBuffer.slice(-PERSIST_MAX_MENTIONS).map(_serializePersistMsg)
-      const p = chrome.storage.local.set({ hs_mentions_v2: { msgs, ts: Date.now() } })
+      const p = chrome.storage.local.set({ hs_mentions_v2: { msgs, ts: Date.now(), owner: mentionsOwner } })
       if (p && typeof p.catch === 'function') p.catch(() => {})
     } catch {}
   }
@@ -68067,28 +68071,27 @@ const STORAGE_KEY = 'heatsync_multichat'
         }
       } catch {}
 
-      let mChrome = null,
-        mSync = null
+      let mChrome = null
       try {
-        const r = await browser.storage.local.get('hs_mentions_v2')
-        if (r.hs_mentions_v2?.msgs?.length > 0 && Date.now() - r.hs_mentions_v2.ts < 86400000) {
+        const r = await browser.storage.local.get(['hs_mentions_v2', 'user_info'])
+        mentionsOwner = String(r.user_info?.username || '').toLowerCase()
+        if (
+          r.hs_mentions_v2?.msgs?.length > 0 &&
+          Date.now() - r.hs_mentions_v2.ts < 86400000 &&
+          (r.hs_mentions_v2.owner || '') === mentionsOwner
+        ) {
           mChrome = r.hs_mentions_v2.msgs
         }
       } catch {}
+      // Legacy residue: older builds mirrored cross-platform mentions to
+      // host-page localStorage (readable by the host site + co-resident
+      // extensions). chrome.storage.local (hs_mentions_v2) is authoritative, so
+      // purge the old copy for good. It carries no owner, so it is never
+      // restored — it could belong to another account.
       try {
-        const raw = localStorage.getItem('hs_mentions_sync')
-        if (raw) {
-          const data = JSON.parse(raw)
-          if (data?.msgs?.length > 0 && Date.now() - data.ts < 86400000) mSync = data.msgs
-          // Legacy residue: older builds mirrored cross-platform mentions to
-          // host-page localStorage (readable by the host site + co-resident
-          // extensions). We no longer write it — chrome.storage.local
-          // (hs_mentions_v2) is authoritative — so migrate any remaining copy
-          // via the merge below, then purge it from the host origin for good.
-          localStorage.removeItem('hs_mentions_sync')
-        }
+        localStorage.removeItem('hs_mentions_sync')
       } catch {}
-      if (mChrome || mSync) {
+      if (mChrome) {
         const byId = new Map()
         const noId = []
         const ingest = (a) => {
@@ -68099,7 +68102,6 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
         }
         ingest(mChrome)
-        ingest(mSync)
         const merged = [...byId.values(), ...noId].sort((a, b) => (a.time || 0) - (b.time || 0))
         for (const m of merged) {
           m.isHistory = true
@@ -68108,7 +68110,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (mentionsBuffer.length > PERSIST_MAX_MENTIONS) {
           mentionsBuffer.splice(0, mentionsBuffer.length - PERSIST_MAX_MENTIONS)
         }
-        log('Restored mentions:', mentionsBuffer.length, `chrome:${mChrome?.length || 0}`, `sync:${mSync?.length || 0}`)
+        log('Restored mentions:', mentionsBuffer.length)
       }
 
       try {
@@ -78766,6 +78768,12 @@ const STORAGE_KEY = 'heatsync_multichat'
         const _identityOf = (v) => `${JSON.stringify(v?.sender_keys ?? null)}|${v?.username ?? ''}`
         if (_identityOf(changes.user_info.oldValue) !== _identityOf(changes.user_info.newValue)) {
           log('identity changed — repainting rows for the new account')
+          const _owner = String(changes.user_info.newValue?.username || '').toLowerCase()
+          if (_owner !== mentionsOwner) {
+            mentionsOwner = _owner
+            mentionsBuffer.length = 0
+            _writeMentionsNow()
+          }
           repaintForIdentityChange()
         }
       }

@@ -29,11 +29,18 @@ const MAIN_SRC = ['main.js', 'share-callouts.js']
 const NOTIFS_SRC = readFileSync(new URL('../src/multichat/notifs.js', import.meta.url), 'utf8')
 
 describe('the resub click is only intercepted with a real token', () => {
-  test('no reconstructed token exists anywhere in the flow', () => {
-    // The strongest form of the old ordering guarantee: there is nothing to
-    // order, because nothing builds a token out of ids and a month count.
+  test('a token is only ever built in deriveResubToken, from verified ids', () => {
+    // 2026-08-20 removed the guessed `fallbackToken`: a wrong one failed the
+    // mutation and the failure read as success. Rebuilt 2026-10-16 as
+    // deriveResubToken, and only because the failure can no longer hide — the
+    // mutation's real result field is read (a null field throws) and a failed
+    // share toasts and rescues the typed text. Nothing else may build one.
     expect(MAIN_SRC).not.toContain('fallbackToken')
-    expect(MAIN_SRC).not.toMatch(/btoa\(`\$\{[^`]*\}:\$\{[^`]*\}:/)
+    const a = MAIN_SRC.indexOf('async function deriveResubToken')
+    expect(a).toBeGreaterThan(-1)
+    const rest = MAIN_SRC.slice(0, a) + MAIN_SRC.slice(MAIN_SRC.indexOf('\nwindow.__hsResubShare', a))
+    expect(rest).not.toMatch(/btoa\(`\$\{[^`]*\}:\$\{[^`]*\}:/)
+    expect(MAIN_SRC).toContain("data?.data && data.data.useChatNotificationToken === null")
   })
 
   test('the token must belong to THIS callout', () => {
@@ -114,15 +121,15 @@ describe('without a token the prompt defers to twitch', () => {
   })
 
   test('otherwise clicks twitch own button', () => {
-    expect(handler).toMatch(/clickNative/)
+    expect(NOTIFS_SRC).toMatch(/function nativeFallback[\s\S]{0,700}clickNative/)
   })
 
   test('and says so — the no-token path never fails silently', () => {
     // Clicking twitch's button only puts TWITCH's composer into share-mode, and
     // heatsync replaces that composer, so the user is left with a closed prompt
     // and nothing sent. Silence here is what hid the broken share for months.
-    const i = handler.indexOf('clickNative')
-    const block = handler.slice(i, i + 300)
+    const i = NOTIFS_SRC.indexOf('clickNative', NOTIFS_SRC.indexOf('function nativeFallback'))
+    const block = NOTIFS_SRC.slice(i, i + 300)
     expect(block).toContain("emit('toast'")
     expect(block).toContain('mc_notifs_share_token_missing')
     expect(block).toContain("level: 'error'")
@@ -203,3 +210,28 @@ describe('the watch-streak callout shares the same way', () => {
     expect(MAIN_SRC.slice(i, i + 160)).toContain('calloutTokenMatches(scan, { count: streakCount })')
   })
 })
+
+describe('an unreadable twitch key builds the token from ids we hold', () => {
+  const SHARE_SRC = readFileSync(new URL('../src/multichat/share-callouts.js', import.meta.url), 'utf8')
+  const derive = SHARE_SRC.slice(SHARE_SRC.indexOf('async function deriveResubToken'))
+
+  test('the token is the exact shape twitch issues, and decodes back through the validator', () => {
+    expect(derive.slice(0, 700)).toContain('btoa(`${selfId}:${channelId}:${months}:cumulative`)')
+    const m = /^(\d+):(\d+):(\d+):([a-z_]+)$/i.exec(atob(btoa('123:456:109:cumulative')))
+    expect(m?.slice(1)).toEqual(['123', '456', '109', 'cumulative'])
+  })
+
+  test('a missing id is a null, never a default', () => {
+    expect(derive.slice(0, 700)).toContain('if (!selfId || !channelId) return null')
+    expect(derive.slice(0, 700)).toContain('if (!(months > 0) || !channel) return null')
+  })
+
+  test('the click derives before it falls back to twitch own button', () => {
+    const resub = NOTIFS_SRC.slice(NOTIFS_SRC.indexOf("registerType('twitch-resub-share'"))
+    const h = resub.slice(0, resub.indexOf('registerType(', 10))
+    expect(h.indexOf('deriveToken')).toBeGreaterThan(h.indexOf('rescanToken'))
+    expect(h).toMatch(/derive\(data\.channel, data\.months\)\.then/)
+    expect(NOTIFS_SRC).toContain('function nativeFallback(data)')
+  })
+})
+

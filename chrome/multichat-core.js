@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '650277ce760f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2e802ac0c94a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17383,6 +17383,20 @@ const HsNotifs = (() => {
   // shows month count + Share button (clicks the native Twitch share so the
   // existing _enterResubShareMode flow runs) and X to dismiss. Native DOM is
   // hidden via CSS; we render our own controlled version.
+  // No token anywhere: we cannot finish the share, and neither can twitch's
+  // own button on its own — clicking it only puts TWITCH's composer into
+  // share-mode, and heatsync has replaced that composer, so the user would be
+  // left with a closed prompt and nothing sent. Fire it anyway (it is the only
+  // thing that can consume the resub, and it does work when twitch's native
+  // chat is visible) but say so out loud. Failing silently here is what hid
+  // this bug for months. Returns true when twitch owns the flow now.
+  function nativeFallback(data) {
+    const btn = data._nativeShareBtn
+    if (!btn) return false
+    window.__hsResubShare?.clickNative?.(btn)
+    emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
+    return true
+  }
   registerType('twitch-resub-share', {
     layer: 'chat-docked-bottom',
     channelScoped: true,
@@ -17422,7 +17436,7 @@ const HsNotifs = (() => {
     actions: {
       primary: {
         label: 'share',
-        onClick: (data) => {
+        onClick: (data, dismiss) => {
           // Bypass the native Twitch share button — its native onClick auto-
           // sends a default "<user> is celebrating Nmo as a subscriber!"
           // message to chat, robbing the user of the custom-message window.
@@ -17454,19 +17468,19 @@ const HsNotifs = (() => {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
-            // No token: we cannot finish the share, and neither can twitch's
-            // own button on its own — clicking it only puts TWITCH's composer
-            // into share-mode, and heatsync has replaced that composer, so the
-            // user would be left with a closed prompt and nothing sent. Fire it
-            // anyway (it is the only thing that can consume the resub, and it
-            // does work when twitch's native chat is visible) but say so out
-            // loud. Failing silently here is what hid this bug for months.
-            const btn = data._nativeShareBtn
-            if (btn) {
-              window.__hsResubShare?.clickNative?.(btn)
-              emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
-              return true // twitch owns the flow now — close our prompt
-            }
+            // Twitch's key was unreadable (its React tree moved, or is not
+            // mounted in this window — a popout has no native chat at all).
+            // The token is only ever base64 of ids we hold ourselves, so build
+            // it and let the mutation be the judge: a wrong one is rejected
+            // loudly and the typed words are rescued into chat. Twitch's own
+            // button is the last resort, and stays one.
+            const derive = window.__hsResubShare?.deriveToken
+            if (!derive) return nativeFallback(data)
+            derive(data.channel, data.months).then((tok) => {
+              if (tok) window.__hsResubShare?.enter?.(data.months, data.user, data.channel, tok)
+              else if (nativeFallback(data)) dismiss?.()
+            })
+            return false // resub-share mode (or the fallback) controls dismissal
           } catch (_) {}
           return false
         },
@@ -70051,8 +70065,27 @@ async function _consumeCalloutToken(channel, token, text) {
   if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
 }
 
+// Twitch's token is exactly base64("<userId>:<channelId>:<count>:cumulative")
+// — decodeCalloutToken's shape is that contract, read off a live callout. When
+// the callout's React key cannot be read, both ids are ours to know: the
+// signed-in user (helix /users) and the channel (resolveTwitchChannelId).
+// Null on any gap; never a guess, since an unknown id is a null, not a default.
+async function deriveResubToken(channel, months) {
+  try {
+    if (!(months > 0) || !channel) return null
+    const auth = getTwitchAuthToken()
+    if (!auth) return null
+    const [selfId, channelId] = await Promise.all([eswFetchSelfUserId(auth), resolveTwitchChannelId(channel)])
+    if (!selfId || !channelId) return null
+    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
+  } catch (_) {
+    return null
+  }
+}
+
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
+  deriveToken: deriveResubToken,
   // Returns false so input.js sendMessage CONTINUES into the regular IRC
   // send path — the typed text needs to actually go to Twitch chat so other
   // viewers see it and it persists across refresh. We also inject a local

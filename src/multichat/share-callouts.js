@@ -271,8 +271,27 @@ async function _consumeCalloutToken(channel, token, text) {
   if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
 }
 
+// Twitch's token is exactly base64("<userId>:<channelId>:<count>:cumulative")
+// — decodeCalloutToken's shape is that contract, read off a live callout. When
+// the callout's React key cannot be read, both ids are ours to know: the
+// signed-in user (helix /users) and the channel (resolveTwitchChannelId).
+// Null on any gap; never a guess, since an unknown id is a null, not a default.
+async function deriveResubToken(channel, months) {
+  try {
+    if (!(months > 0) || !channel) return null
+    const auth = getTwitchAuthToken()
+    if (!auth) return null
+    const [selfId, channelId] = await Promise.all([eswFetchSelfUserId(auth), resolveTwitchChannelId(channel)])
+    if (!selfId || !channelId) return null
+    return btoa(`${selfId}:${channelId}:${months}:cumulative`)
+  } catch (_) {
+    return null
+  }
+}
+
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
+  deriveToken: deriveResubToken,
   // Returns false so input.js sendMessage CONTINUES into the regular IRC
   // send path — the typed text needs to actually go to Twitch chat so other
   // viewers see it and it persists across refresh. We also inject a local

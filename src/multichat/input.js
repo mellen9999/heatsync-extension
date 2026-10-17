@@ -1108,7 +1108,6 @@ function createInputBar() {
 
   bar.innerHTML = `
     ${inputHtml}
-    <span id="hs-mc-sendtargets"></span>
     <input type="file" id="hs-mc-attach-input" accept="image/*,video/*" hidden>
     <button id="hs-mc-attach-btn" type="button" title="${t('mc_input_attach')}" aria-label="${t('mc_input_attach')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor" stroke="none"></circle><path d="M21 15l-5-5L4 21"></path></svg></button>
     <button id="hs-mc-emote-btn" title="${t('mc_input_emote_picker')}" aria-label="${t('mc_input_emote_picker')}"><img src="${iconUrl}" data-src="${iconUrl}" data-src-black="${iconBlackUrl}" alt="hs"></button>
@@ -1118,63 +1117,8 @@ function createInputBar() {
   // emote-btn block (single wiring source — survives rebuild/rewire paths).
   setTimeout(() => {
     initInput()
-    renderSendTargetChips()
   }, 0)
   return bar
-}
-
-/**
- * Render the composer's per-platform send-target toggle chips for the
- * active channel tab. Empty (no chips) on 0/1-linked-platform tabs and on
- * non-channel tabs (live/feed/whispers/mentions/settings/add) — those have
- * no persisted per-channel sendTargets config to toggle. Mirrors
- * renderPlatformFilterButtons' shape (main.js) but drives SEND routing
- * rather than a view-side message filter.
- */
-function renderSendTargetChips() {
-  const group = document.getElementById('hs-mc-sendtargets')
-  if (!group) return
-  while (group.firstChild) group.removeChild(group.firstChild)
-  const ch = config.channels.find((c) => c.id === currentTab)
-  if (!ch) return
-  const linked = { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube }
-  if (Object.values(linked).filter(Boolean).length < 2) return
-  const resolved = resolveSendTargets(ch.sendTargets, linked)
-  const meta = [
-    { key: 'twitch', label: 'T' },
-    { key: 'kick', label: 'K' },
-    { key: 'youtube', label: 'Y' },
-  ]
-  // No text label — composer width is precious (side-tab layouts). Both T K Y
-  // clusters now share ONE style (outline); they're told apart by place and
-  // by this one-glyph marker: → means "where it goes". Tooltips carry the
-  // words.
-  const arrow = document.createElement('span')
-  arrow.className = 'hs-mc-st-arrow'
-  arrow.textContent = '\u2192'
-  arrow.title = 'send targets'
-  group.appendChild(arrow)
-  for (const p of meta) {
-    if (!linked[p.key]) continue
-    const on = resolved[p.key]
-    const btn = document.createElement('button')
-    btn.type = 'button'
-    btn.className = `hs-mc-st-btn hs-mc-st-${p.key}`
-    btn.classList.toggle('off', !on)
-    btn.textContent = p.label
-    btn.title = `send to ${p.key}: ${on ? 'on' : 'off'}`
-    // Chip click must never steal focus from the composer input.
-    btn.addEventListener('mousedown', (e) => e.preventDefault())
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      const next = nextSendTargets(ch.sendTargets, linked, p.key, !on)
-      if (!next) return // refuse to disable the last active target
-      ch.sendTargets = next
-      saveConfig()
-      renderSendTargetChips()
-    })
-    group.appendChild(btn)
-  }
 }
 
 // Get text from input (handles both input and contenteditable)
@@ -8686,7 +8630,7 @@ async function sendMessage() {
   const ytUrl = ch?.youtube
   const isLiveYt = currentTab === 'live' && hostPlatform === 'yt'
 
-  // Per-channel sendTargets override (composer chips). Only applies to
+  // Per-channel sendTargets override (edit-channel form toggles). Only applies to
   // configured channels — anonLive has no persisted config to read, so it
   // keeps the unconditional host-platform-only behavior above untouched.
   // Absent ch.sendTargets resolves every linked platform ON, so an

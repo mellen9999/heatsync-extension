@@ -6553,7 +6553,6 @@
 
     // Refresh platform filter buttons for the new tab
     renderPlatformFilterButtons()
-    renderSendTargetChips()
 
     // Update tab bar active state
     if (tabBarElement) {

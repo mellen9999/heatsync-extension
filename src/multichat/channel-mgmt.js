@@ -842,6 +842,51 @@ function renderLivePlatformsPane(pane) {
   twitch.input.focus()
 }
 
+// One T/K/Y toggle per linked platform: where a message typed in this
+// channel's tab gets sent. Only shown with 2+ linked platforms (nothing to
+// choose otherwise). Persists on click, like every other chat toggle.
+function makeSendTargetsRow(ch) {
+  const linked = { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube }
+  if (Object.values(linked).filter(Boolean).length < 2) return null
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
+  const lbl = document.createElement('span')
+  lbl.textContent = 'send to'
+  lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  row.appendChild(lbl)
+  const group = document.createElement('span')
+  group.style.cssText = 'display:flex;gap:2px;'
+  row.appendChild(group)
+  const render = () => {
+    group.textContent = ''
+    const resolved = resolveSendTargets(ch.sendTargets, linked)
+    for (const [key, label] of [
+      ['twitch', 'T'],
+      ['kick', 'K'],
+      ['youtube', 'Y'],
+    ]) {
+      if (!linked[key]) continue
+      const on = resolved[key]
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = `hs-mc-st-btn hs-mc-st-${key}`
+      btn.classList.toggle('off', !on)
+      btn.textContent = label
+      btn.title = `send to ${key}: ${on ? 'on' : 'off'}`
+      btn.addEventListener('click', () => {
+        const next = nextSendTargets(ch.sendTargets, linked, key, !on)
+        if (!next) return // refuse to disable the last active target
+        ch.sendTargets = next
+        saveConfig()
+        render()
+      })
+      group.appendChild(btn)
+    }
+  }
+  render()
+  return row
+}
+
 function showEditChannelForm(tabId) {
   const ch = getChannelById(tabId)
   if (!ch) return
@@ -887,6 +932,8 @@ function showEditChannelForm(tabId) {
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
+  const sendRow = makeSendTargetsRow(ch)
+  if (sendRow) wrapper.appendChild(sendRow)
 
   const errEl = document.createElement('div')
   errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);display:none;'

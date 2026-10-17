@@ -102,22 +102,8 @@
       border-color: #fff !important;
     }
 
-    /* Composer send-target chips — one small pill per linked platform,
-       shown only when the active channel tab has >1 linked platform (see
-       renderSendTargetChips, input.js). Sits between the input and the
-       emote button. FILLED when on — deliberately distinct from the
-       OUTLINE view-filter buttons in the tab strip (fill = where you
-       SEND, outline = what you SEE). */
-    #hs-mc-sendtargets {
-      display: flex;
-      flex: 0 0 auto;
-      align-items: center;
-      gap: 2px;
-      /* margin-left auto: no-op inline (input flex:1 absorbs slack), but
-         right-aligns the chips+emote cluster if the bar ever wraps. */
-      margin: 0 4px 0 auto;
-    }
-    #hs-mc-sendtargets:empty { display: none; margin: 0; }
+    /* Send-target toggles — one square per linked platform, in the edit-channel
+       form (showEditChannelForm). Same outline look as the tab-strip filter. */
     .hs-mc-st-btn {
       background: transparent;
       border: 1px solid;
@@ -150,20 +136,6 @@
       background: transparent !important;
       color: var(--hs-border) !important;
       border-color: var(--hs-border) !important;
-    }
-    .hs-mc-st-arrow {
-      color: var(--hs-muted);
-      font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
-      font-size: 19px;
-      font-weight: 700;
-      display: inline-block;
-      height: 18px;
-      line-height: 18px;
-      width: 12px;
-      text-align: center;
-      overflow: visible;
-      align-self: center;
-      user-select: none;
     }
     .hs-mc-st-btn:hover,
     .hs-mc-st-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }

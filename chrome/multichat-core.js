@@ -15025,7 +15025,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2c208c8b6758' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3c4b4265de43' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -22424,22 +22424,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       border-color: #fff !important;
     }
 
-    /* Composer send-target chips — one small pill per linked platform,
-       shown only when the active channel tab has >1 linked platform (see
-       renderSendTargetChips, input.js). Sits between the input and the
-       emote button. FILLED when on — deliberately distinct from the
-       OUTLINE view-filter buttons in the tab strip (fill = where you
-       SEND, outline = what you SEE). */
-    #hs-mc-sendtargets {
-      display: flex;
-      flex: 0 0 auto;
-      align-items: center;
-      gap: 2px;
-      /* margin-left auto: no-op inline (input flex:1 absorbs slack), but
-         right-aligns the chips+emote cluster if the bar ever wraps. */
-      margin: 0 4px 0 auto;
-    }
-    #hs-mc-sendtargets:empty { display: none; margin: 0; }
+    /* Send-target toggles — one square per linked platform, in the edit-channel
+       form (showEditChannelForm). Same outline look as the tab-strip filter. */
     .hs-mc-st-btn {
       background: transparent;
       border: 1px solid;
@@ -22472,20 +22458,6 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       background: transparent !important;
       color: var(--hs-border) !important;
       border-color: var(--hs-border) !important;
-    }
-    .hs-mc-st-arrow {
-      color: var(--hs-muted);
-      font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
-      font-size: 19px;
-      font-weight: 700;
-      display: inline-block;
-      height: 18px;
-      line-height: 18px;
-      width: 12px;
-      text-align: center;
-      overflow: visible;
-      align-self: center;
-      user-select: none;
     }
     .hs-mc-st-btn:hover,
     .hs-mc-st-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
@@ -53755,7 +53727,6 @@ function createInputBar() {
 
   bar.innerHTML = `
     ${inputHtml}
-    <span id="hs-mc-sendtargets"></span>
     <input type="file" id="hs-mc-attach-input" accept="image/*,video/*" hidden>
     <button id="hs-mc-attach-btn" type="button" title="${t('mc_input_attach')}" aria-label="${t('mc_input_attach')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor" stroke="none"></circle><path d="M21 15l-5-5L4 21"></path></svg></button>
     <button id="hs-mc-emote-btn" title="${t('mc_input_emote_picker')}" aria-label="${t('mc_input_emote_picker')}"><img src="${iconUrl}" data-src="${iconUrl}" data-src-black="${iconBlackUrl}" alt="hs"></button>
@@ -53765,63 +53736,8 @@ function createInputBar() {
   // emote-btn block (single wiring source — survives rebuild/rewire paths).
   setTimeout(() => {
     initInput()
-    renderSendTargetChips()
   }, 0)
   return bar
-}
-
-/**
- * Render the composer's per-platform send-target toggle chips for the
- * active channel tab. Empty (no chips) on 0/1-linked-platform tabs and on
- * non-channel tabs (live/feed/whispers/mentions/settings/add) — those have
- * no persisted per-channel sendTargets config to toggle. Mirrors
- * renderPlatformFilterButtons' shape (main.js) but drives SEND routing
- * rather than a view-side message filter.
- */
-function renderSendTargetChips() {
-  const group = document.getElementById('hs-mc-sendtargets')
-  if (!group) return
-  while (group.firstChild) group.removeChild(group.firstChild)
-  const ch = config.channels.find((c) => c.id === currentTab)
-  if (!ch) return
-  const linked = { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube }
-  if (Object.values(linked).filter(Boolean).length < 2) return
-  const resolved = resolveSendTargets(ch.sendTargets, linked)
-  const meta = [
-    { key: 'twitch', label: 'T' },
-    { key: 'kick', label: 'K' },
-    { key: 'youtube', label: 'Y' },
-  ]
-  // No text label — composer width is precious (side-tab layouts). Both T K Y
-  // clusters now share ONE style (outline); they're told apart by place and
-  // by this one-glyph marker: → means "where it goes". Tooltips carry the
-  // words.
-  const arrow = document.createElement('span')
-  arrow.className = 'hs-mc-st-arrow'
-  arrow.textContent = '\u2192'
-  arrow.title = 'send targets'
-  group.appendChild(arrow)
-  for (const p of meta) {
-    if (!linked[p.key]) continue
-    const on = resolved[p.key]
-    const btn = document.createElement('button')
-    btn.type = 'button'
-    btn.className = `hs-mc-st-btn hs-mc-st-${p.key}`
-    btn.classList.toggle('off', !on)
-    btn.textContent = p.label
-    btn.title = `send to ${p.key}: ${on ? 'on' : 'off'}`
-    // Chip click must never steal focus from the composer input.
-    btn.addEventListener('mousedown', (e) => e.preventDefault())
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      const next = nextSendTargets(ch.sendTargets, linked, p.key, !on)
-      if (!next) return // refuse to disable the last active target
-      ch.sendTargets = next
-      saveConfig()
-      renderSendTargetChips()
-    })
-    group.appendChild(btn)
-  }
 }
 
 // Get text from input (handles both input and contenteditable)
@@ -61333,7 +61249,7 @@ async function sendMessage() {
   const ytUrl = ch?.youtube
   const isLiveYt = currentTab === 'live' && hostPlatform === 'yt'
 
-  // Per-channel sendTargets override (composer chips). Only applies to
+  // Per-channel sendTargets override (edit-channel form toggles). Only applies to
   // configured channels — anonLive has no persisted config to read, so it
   // keeps the unconditional host-platform-only behavior above untouched.
   // Absent ch.sendTargets resolves every linked platform ON, so an
@@ -76207,6 +76123,51 @@ function renderLivePlatformsPane(pane) {
   twitch.input.focus()
 }
 
+// One T/K/Y toggle per linked platform: where a message typed in this
+// channel's tab gets sent. Only shown with 2+ linked platforms (nothing to
+// choose otherwise). Persists on click, like every other chat toggle.
+function makeSendTargetsRow(ch) {
+  const linked = { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube }
+  if (Object.values(linked).filter(Boolean).length < 2) return null
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
+  const lbl = document.createElement('span')
+  lbl.textContent = 'send to'
+  lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  row.appendChild(lbl)
+  const group = document.createElement('span')
+  group.style.cssText = 'display:flex;gap:2px;'
+  row.appendChild(group)
+  const render = () => {
+    group.textContent = ''
+    const resolved = resolveSendTargets(ch.sendTargets, linked)
+    for (const [key, label] of [
+      ['twitch', 'T'],
+      ['kick', 'K'],
+      ['youtube', 'Y'],
+    ]) {
+      if (!linked[key]) continue
+      const on = resolved[key]
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = `hs-mc-st-btn hs-mc-st-${key}`
+      btn.classList.toggle('off', !on)
+      btn.textContent = label
+      btn.title = `send to ${key}: ${on ? 'on' : 'off'}`
+      btn.addEventListener('click', () => {
+        const next = nextSendTargets(ch.sendTargets, linked, key, !on)
+        if (!next) return // refuse to disable the last active target
+        ch.sendTargets = next
+        saveConfig()
+        render()
+      })
+      group.appendChild(btn)
+    }
+  }
+  render()
+  return row
+}
+
 function showEditChannelForm(tabId) {
   const ch = getChannelById(tabId)
   if (!ch) return
@@ -76252,6 +76213,8 @@ function showEditChannelForm(tabId) {
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
+  const sendRow = makeSendTargetsRow(ch)
+  if (sendRow) wrapper.appendChild(sendRow)
 
   const errEl = document.createElement('div')
   errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);display:none;'
@@ -84602,7 +84565,6 @@ const STORAGE_KEY = 'heatsync_multichat'
 
     // Refresh platform filter buttons for the new tab
     renderPlatformFilterButtons()
-    renderSendTargetChips()
 
     // Update tab bar active state
     if (tabBarElement) {

@@ -4285,9 +4285,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       try {
         const chKey = (channel || '').toLowerCase()
         // A heatsync or inventory copy of the name is still usable by the viewer
-        // after the channel drops its 7TV one, so it is never a ghost.
+        // after the channel drops its 7TV one, so it is never a ghost: not when
+        // the sender's own set supplied it, and not when it is in YOUR set.
+        const ownedByViewer = inventoryEmotes.has(rawWord) || viewerPersonalEmotes.has(rawWord)
         const meta =
-          chKey && window._hsStaleEmotes && emote.source !== 'heatsync' && !emoteFromInv
+          chKey && window._hsStaleEmotes && emote.source !== 'heatsync' && !emoteFromInv && !ownedByViewer
             ? window._hsStaleEmotes.get(chKey)?.get(word)
             : null
         if (meta) {

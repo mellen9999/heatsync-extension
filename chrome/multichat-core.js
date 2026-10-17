@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bb57d9712963' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '02390b5141b8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27634,9 +27634,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       try {
         const chKey = (channel || '').toLowerCase()
         // A heatsync or inventory copy of the name is still usable by the viewer
-        // after the channel drops its 7TV one, so it is never a ghost.
+        // after the channel drops its 7TV one, so it is never a ghost: not when
+        // the sender's own set supplied it, and not when it is in YOUR set.
+        const ownedByViewer = inventoryEmotes.has(rawWord) || viewerPersonalEmotes.has(rawWord)
         const meta =
-          chKey && window._hsStaleEmotes && emote.source !== 'heatsync' && !emoteFromInv
+          chKey && window._hsStaleEmotes && emote.source !== 'heatsync' && !emoteFromInv && !ownedByViewer
             ? window._hsStaleEmotes.get(chKey)?.get(word)
             : null
         if (meta) {

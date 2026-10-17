@@ -1272,8 +1272,12 @@
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
     if (native || !_nativeTwitchColor.has(user)) {
+      const learned = native && !_nativeTwitchColor.has(user)
       knownColors.set(user, color)
       if (native) _nativeTwitchColor.add(user)
+      // Your own earlier lines were drawn before this color was known; redraw
+      // just those. Other names carry their color tag, so only you need this.
+      if (learned && user === currentUsername) recolorOwnLines(user)
     }
     if (knownColors.size > 2000) {
       const iter = knownColors.keys()
@@ -1326,6 +1330,22 @@
       if ([...el.classList].some((c) => c.startsWith('hsp-'))) continue
       el.style.color = color
     }
+  }
+
+  // Redraw the viewer's own unset-color twitch lines once their real color is known.
+  function recolorOwnLines(lower) {
+    const reset = (buf) => {
+      if (!buf || typeof buf[Symbol.iterator] !== 'function') return
+      for (const x of buf) {
+        if (x && x.user?.toLowerCase() === lower && (!x.color || _isUnsetWhite(x.color))) x._renderedHtml = null
+      }
+    }
+    if (irc?.channels) for (const ch of irc.channels.keys()) reset(irc.getMessages(ch))
+    cleanup.setTimeout(() => {
+      try {
+        renderMessages(currentTab)
+      } catch {}
+    }, 0)
   }
   if (!_onceGuardsMain.profileColorListener) {
     _onceGuardsMain.profileColorListener = true
@@ -7700,6 +7720,13 @@
     // heatsync.org) instead of a flat red. Picked colour resolves async via the
     // same batch as paints (updateHsColorsInPlace repaints in place).
     let hsNameColor = m.color
+    // A twitch line with no color tag (history replay, a message sent from this
+    // panel) is "unset", not a pick. Once the name has been heard with its real
+    // twitch color, every line of that name uses it — one username, one color.
+    if (plat === 'twitch' && (!hsNameColor || _isUnsetWhite(hsNameColor))) {
+      const lc = m.user.toLowerCase()
+      if (_nativeTwitchColor.has(lc)) hsNameColor = knownColors.get(lc) || hsNameColor
+    }
     if (plat === 'yt' || plat === 'kick') {
       if (m.hsPaintUid) queueNameColorLookup(m.hsPaintUid)
       const picked = m.hsPaintUid ? getHsPickedColor(m.hsPaintUid) : null

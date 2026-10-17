@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5157eada7a5f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8b82e5625299' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -68323,8 +68323,12 @@ const STORAGE_KEY = 'heatsync_multichat'
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
     if (native || !_nativeTwitchColor.has(user)) {
+      const learned = native && !_nativeTwitchColor.has(user)
       knownColors.set(user, color)
       if (native) _nativeTwitchColor.add(user)
+      // Your own earlier lines were drawn before this color was known; redraw
+      // just those. Other names carry their color tag, so only you need this.
+      if (learned && user === currentUsername) recolorOwnLines(user)
     }
     if (knownColors.size > 2000) {
       const iter = knownColors.keys()
@@ -68377,6 +68381,22 @@ const STORAGE_KEY = 'heatsync_multichat'
       if ([...el.classList].some((c) => c.startsWith('hsp-'))) continue
       el.style.color = color
     }
+  }
+
+  // Redraw the viewer's own unset-color twitch lines once their real color is known.
+  function recolorOwnLines(lower) {
+    const reset = (buf) => {
+      if (!buf || typeof buf[Symbol.iterator] !== 'function') return
+      for (const x of buf) {
+        if (x && x.user?.toLowerCase() === lower && (!x.color || _isUnsetWhite(x.color))) x._renderedHtml = null
+      }
+    }
+    if (irc?.channels) for (const ch of irc.channels.keys()) reset(irc.getMessages(ch))
+    cleanup.setTimeout(() => {
+      try {
+        renderMessages(currentTab)
+      } catch {}
+    }, 0)
   }
   if (!_onceGuardsMain.profileColorListener) {
     _onceGuardsMain.profileColorListener = true
@@ -74751,6 +74771,13 @@ const STORAGE_KEY = 'heatsync_multichat'
     // heatsync.org) instead of a flat red. Picked colour resolves async via the
     // same batch as paints (updateHsColorsInPlace repaints in place).
     let hsNameColor = m.color
+    // A twitch line with no color tag (history replay, a message sent from this
+    // panel) is "unset", not a pick. Once the name has been heard with its real
+    // twitch color, every line of that name uses it — one username, one color.
+    if (plat === 'twitch' && (!hsNameColor || _isUnsetWhite(hsNameColor))) {
+      const lc = m.user.toLowerCase()
+      if (_nativeTwitchColor.has(lc)) hsNameColor = knownColors.get(lc) || hsNameColor
+    }
     if (plat === 'yt' || plat === 'kick') {
       if (m.hsPaintUid) queueNameColorLookup(m.hsPaintUid)
       const picked = m.hsPaintUid ? getHsPickedColor(m.hsPaintUid) : null

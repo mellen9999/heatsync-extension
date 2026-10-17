@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c57c8129f68b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5688ff5c8da8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69891,6 +69891,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       }).catch(() => null)
       if (av?.ok) {
         _cwPatch(def, v, true)
+        return
+      }
+      // the server checks the birth year on file: an under-18 account (or one
+      // with none) is refused, and its own words say which — not "try again"
+      if (av?.code === 'AGE_REQUIRED' && av.error) {
+        _cwRollback(def, v, true)
+        showToast(av.error, 'error')
         return
       }
     }

@@ -2718,6 +2718,13 @@
         _cwPatch(def, v, true)
         return
       }
+      // the server checks the birth year on file: an under-18 account (or one
+      // with none) is refused, and its own words say which — not "try again"
+      if (av?.code === 'AGE_REQUIRED' && av.error) {
+        _cwRollback(def, v, true)
+        showToast(av.error, 'error')
+        return
+      }
     }
     _cwRollback(def, v, false)
   }

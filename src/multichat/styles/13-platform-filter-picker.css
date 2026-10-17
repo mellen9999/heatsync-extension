@@ -179,13 +179,24 @@
       padding: 1px 5px;
       border-radius: 0;
     }
-    .hs-mc-picker-section-grid {
+    /* A section is ONE flex-wrap flow. Its emotes arrive in lazy chunks, and a
+       chunk that was its own flex box ended every 96 emotes on a short row and
+       started the next on a new line — gaps for no reason. A filled chunk is
+       display:contents so its emotes flow straight into the section; an unfilled
+       one is a full-width placeholder holding the scroll height until it fills. */
+    .hs-mc-picker-section {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 2px;
       padding: 6px;
     }
+    .hs-mc-picker-section > .hs-mc-picker-section-header {
+      flex: 0 0 100%;
+      box-sizing: border-box;
+    }
+    .hs-mc-picker-chunk.hs-mc-chunk-ready { display: contents; }
+    .hs-mc-picker-chunk:not(.hs-mc-chunk-ready) { flex: 0 0 100%; }
     .hs-mc-picker-header {
       padding: 8px !important;
       border-bottom: none !important;

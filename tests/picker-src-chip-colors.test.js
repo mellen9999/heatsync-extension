@@ -26,3 +26,9 @@ test('the popout opts out of page-recolouring dark-mode extensions', () => {
     /if \(isPopout\) \{\s*const lock = document\.createElement\('meta'\)\s*lock\.name = 'darkreader-lock'/,
   )
 })
+
+test('picker chunks flow as one section, never one flex box per chunk', () => {
+  expect(css).toMatch(/\.hs-mc-picker-section \{\s*display: flex;\s*flex-wrap: wrap;/)
+  expect(css).toMatch(/\.hs-mc-picker-chunk\.hs-mc-chunk-ready \{ display: contents; \}/)
+  expect(css).not.toMatch(/\.hs-mc-picker-section-grid \{/)
+})

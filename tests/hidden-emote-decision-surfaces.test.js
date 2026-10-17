@@ -28,7 +28,9 @@ describe('hsEmoteHiddenForViewer', () => {
     expect(make({ viewer_show_sexual: false })({})).toBe('')
   })
   test('the picker and chip builders ask the same question', () => {
-    expect(/function emoteImgHtml[\s\S]*?hsEmoteHiddenForViewer\(emote\)\) return ''/.test(SRC)).toBe(true)
+    expect(
+      /function emoteImgHtml[\s\S]*?hsEmoteHiddenForViewer\(emote\)\n\s*if \(hiddenCat\) return _hsCwBoxHtml/.test(SRC),
+    ).toBe(true)
     expect(/function createInputEmoteImg[\s\S]*?hsEmoteHiddenForViewer\(emote\)\) return null/.test(SRC)).toBe(true)
   })
 })

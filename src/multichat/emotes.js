@@ -1061,7 +1061,10 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 function emoteImgHtml([name, emote]) {
-  if (hsEmoteHiddenForViewer(emote)) return ''
+  // Filtered out for this viewer: the same labeled dashed box chat draws, no
+  // image — you still see that the emote is in your set, just not what it is.
+  const hiddenCat = hsEmoteHiddenForViewer(emote)
+  if (hiddenCat) return _hsCwBoxHtml(escapeHtml(hiddenCat), escapeHtml(name))
   const isBlocked = blockedEmoteNames.has(name)
   // 2-state picker: normal or blocked. `state` is still tracked on the img
   // dataset so findEmoteTarget can route blocked→unblock and the chat-row /

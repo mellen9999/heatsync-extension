@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'fd6e07762bc6' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5157eada7a5f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -24410,7 +24410,10 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 function emoteImgHtml([name, emote]) {
-  if (hsEmoteHiddenForViewer(emote)) return ''
+  // Filtered out for this viewer: the same labeled dashed box chat draws, no
+  // image — you still see that the emote is in your set, just not what it is.
+  const hiddenCat = hsEmoteHiddenForViewer(emote)
+  if (hiddenCat) return _hsCwBoxHtml(escapeHtml(hiddenCat), escapeHtml(name))
   const isBlocked = blockedEmoteNames.has(name)
   // 2-state picker: normal or blocked. `state` is still tracked on the img
   // dataset so findEmoteTarget can route blocked→unblock and the chat-row /

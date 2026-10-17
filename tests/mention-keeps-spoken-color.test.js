@@ -30,7 +30,7 @@ test('setKnownColor: a real twitch color is never overwritten by a non-native on
   const start = m.indexOf('const _nativeTwitchColor = new Set()')
   const body = m.slice(start, m.indexOf('// Live username-color sync', start))
   const run = new Function(
-    `const knownColors = new Map(), knownUserIds = new Map(); let currentUsername = 'mellen'; const recolored = []; const recolorOwnLines = (u) => recolored.push(u); ${body}; return { set: setKnownColor, knownColors, recolored }`,
+    `const knownColors = new Map(), knownUserIds = new Map(); let currentUsername = 'mellen'; const recolored = []; const recolorOwnLines = (u) => recolored.push(u); const persistOwnColor = (u, c) => persisted.push([u, c]); const persisted = []; ${body}; return { set: setKnownColor, knownColors, recolored, persisted }`,
   )()
   run.set('mellen', '#ff8700', null, 'twitch')
   run.set('mellen', '#53fc18', null, 'kick') // kick speaker, same name
@@ -45,4 +45,6 @@ test('setKnownColor: a real twitch color is never overwritten by a non-native on
   expect(run.recolored).toEqual(['mellen'])
   run.set('mellen', '#00ff00', null, 'twitch') // you changed color: redraw again
   expect(run.recolored).toEqual(['mellen', 'mellen'])
+  // and the last color heard is remembered for the next page load
+  expect(run.persisted.at(-1)).toEqual(['mellen', '#00ff00'])
 })

@@ -58,6 +58,38 @@ export function registerRemoteEmoteRef(emote) {
   })
 }
 
+// Explicit picks. A name can mean several emotes at once (the channel's own,
+// an inventory one, a global); the composer chip shows the one the sender
+// chose, but a send rebuilt refs from the name alone and the owned entry won,
+// so the post carried a different emote than the preview. A chip insert pins
+// the exact record it drew; buildEmoteRefs honours the pin before any map.
+// Keyed lowercase, last pick wins, capped FIFO like remoteCompleted.
+const pickedEmotes = new Map()
+
+/**
+ * @param {{name?:string,url?:string,hash?:string,provider?:string,id?:string,animated?:boolean,zeroWidth?:boolean,width?:number,height?:number}} emote
+ *        the record a composer chip was drawn from (Tab, cycle or picker)
+ */
+export function pinPickedEmote(emote) {
+  if (!emote?.name || !emote?.url) return
+  // a synthesized "name0" overlay variant resolves through its base word
+  if (emote.zeroWidth && emote.name.length > 1 && emote.name.endsWith('0')) return
+  const key = emote.name.toLowerCase()
+  if (!pickedEmotes.has(key) && pickedEmotes.size >= REMOTE_COMPLETED_MAX) {
+    pickedEmotes.delete(pickedEmotes.keys().next().value)
+  }
+  pickedEmotes.set(key, {
+    name: emote.name,
+    url: emote.url,
+    ...(emote.hash ? { hash: emote.hash } : {}),
+    provider: emote.provider,
+    zeroWidth: !!emote.zeroWidth,
+    ...(typeof emote.id === 'string' && emote.id ? { id: emote.id } : {}),
+    ...(typeof emote.animated === 'boolean' ? { animated: emote.animated } : {}),
+    ...naturalSize(emote),
+  })
+}
+
 /**
  * The natural box of an emote, as the two fields a ref carries — or nothing
  * when the source doesn't know it. Both or neither: helpers.js reserves a box
@@ -113,6 +145,12 @@ export function buildEmoteRefs(content, emotesMap) {
     // emote's real name. Only strip a trailing 0 (the overlay convention) when
     // the full word is NOT itself a real emote, so an emote literally named
     // "lerolero0" keeps its own ref and the renderer resolves it identically.
+    // an explicit pick beats whatever the maps say the name means
+    const pick = pickedEmotes.get(word.toLowerCase())
+    if (pick) {
+      emote_refs[pick.name] = { ...pick }
+      continue
+    }
     let clean = word
     let ed = emotesMap?.get(word) || emotesMap?.get(word.toLowerCase())
     if (!ed && word.endsWith('0') && word.length > 1) {

@@ -689,10 +689,7 @@ function trackCompletionForAutoAdd(match) {
   // slot. The base emote is tracked on its own; the "0" is a render convention.
   if (match._synthOverlay) return
   const src = match.source
-  // 'heatsync' = another user's personal emote clicked out of a chat row: the
-  // server dedups it onto the existing row, and without this it pasted and
-  // rendered for you only until the next reload, then fell back to raw text.
-  if (src !== '7tv' && src !== 'bttv' && src !== 'ffz' && src !== 'heatsync') return
+  if (src !== '7tv' && src !== 'bttv' && src !== 'ffz') return
   recentRemoteCompletions.delete(match.name)
   // Carry zeroWidth so optimistic viewerPersonalEmotes.set and the server add
   // both inherit the overlay flag — without it, a tab-completed 7TV overlay

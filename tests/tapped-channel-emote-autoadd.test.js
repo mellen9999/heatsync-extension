@@ -60,15 +60,6 @@ describe('a tapped channel emote joins the inventory on send', () => {
     expect(viewerPersonalEmotes.get('GoodLuck')).toMatchObject({ url: FFZ, source: 'ffz', state: 'owned' })
   })
 
-  test("another user's heatsync emote is added too, so it survives a reload", () => {
-    const HS = 'https://heatsync.org/uploads/emotes/x.webp'
-    const { registerClickPasteForAutoAdd, autoAddInputEmotes, added } = rig()
-    registerClickPasteForAutoAdd('feelshighman', HS, 'heatsync')
-    autoAddInputEmotes('feelshighman')
-    expect(added.length).toBe(1)
-    expect(added[0].slice(0, 3)).toEqual(['feelshighman', HS, 'heatsync'])
-  })
-
   test('a failed add rolls the optimistic entry back', async () => {
     const { registerClickPasteForAutoAdd, autoAddInputEmotes, viewerPersonalEmotes } = rig({ ok: false })
     registerClickPasteForAutoAdd('GoodLuck', FFZ, 'ffz')

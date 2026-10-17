@@ -278,6 +278,45 @@ async function _consumeCalloutToken(channel, token, text) {
   if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
 }
 
+// The overlay is an isolated-world script, and React's fiber pointers are
+// expandos on the page's own world — fiberTokenScan sees nothing from here in
+// a real browser (it only works where the worlds are one: tests, devtools).
+// chrome/twitch-callout-token.js runs in the page's world, reads every
+// callout's key there and answers over window events. Resolves [] on silence.
+function readCalloutTokens(timeoutMs = 1500) {
+  return new Promise((resolve) => {
+    const id = Math.random().toString(36).slice(2)
+    let done = false
+    const finish = (tokens) => {
+      if (done) return
+      done = true
+      window.removeEventListener('hs-callout-token-res', onRes)
+      resolve(tokens)
+    }
+    const onRes = (e) => {
+      try {
+        const d = JSON.parse(e.detail)
+        if (d?.id === id) finish(Array.isArray(d.tokens) ? d.tokens : [])
+      } catch (_) {}
+    }
+    window.addEventListener('hs-callout-token-res', onRes)
+    window.dispatchEvent(new CustomEvent('hs-callout-token-req', { detail: JSON.stringify({ id }) }))
+    cleanup.setTimeout(() => finish([]), timeoutMs)
+  })
+}
+// The queue's token that is THIS callout's: kind/count must match what the
+// callout announces (a sub anniversary and a watch streak can queue together).
+async function findCalloutToken(expect) {
+  const tokens = await readCalloutTokens()
+  const hit = tokens.find(
+    (t) =>
+      (expect.kind === undefined || t.kind === expect.kind) &&
+      (expect.notKind === undefined || t.kind !== expect.notKind) &&
+      (expect.count === undefined || t.count === expect.count),
+  )
+  return hit ? hit.raw : null
+}
+
 // Twitch's token is exactly base64("<userId>:<channelId>:<count>:cumulative")
 // — decodeCalloutToken's shape is that contract, read off a live callout. When
 // the callout's React key cannot be read, both ids are ours to know: the
@@ -309,6 +348,7 @@ async function deriveResubToken(channel, months) {
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
   deriveToken: deriveResubToken,
+  findToken: findCalloutToken,
   // Returns false so input.js sendMessage CONTINUES into the regular IRC
   // send path — the typed text needs to actually go to Twitch chat so other
   // viewers see it and it persists across refresh. We also inject a local

@@ -40,7 +40,7 @@ describe('the resub click is only intercepted with a real token', () => {
     expect(a).toBeGreaterThan(-1)
     const rest = MAIN_SRC.slice(0, a) + MAIN_SRC.slice(MAIN_SRC.indexOf('\nwindow.__hsResubShare', a))
     expect(rest).not.toMatch(/btoa\(`\$\{[^`]*\}:\$\{[^`]*\}:/)
-    expect(MAIN_SRC).toContain("data?.data && data.data.useChatNotificationToken === null")
+    expect(MAIN_SRC).toContain('data?.data && data.data.useChatNotificationToken === null')
   })
 
   test('the token must belong to THIS callout', () => {
@@ -216,22 +216,93 @@ describe('an unreadable twitch key builds the token from ids we hold', () => {
   const derive = SHARE_SRC.slice(SHARE_SRC.indexOf('async function deriveResubToken'))
 
   test('the token is the exact shape twitch issues, and decodes back through the validator', () => {
-    expect(derive.slice(0, 1400)).toContain("btoa(`${selfId}:${channelId}:${months}:cumulative`)")
+    expect(derive.slice(0, 1400)).toContain('btoa(`${selfId}:${channelId}:${months}:cumulative`)')
     const m = /^(\d+):(\d+):(\d+):([a-z_]+)$/i.exec(atob(btoa('123:456:109:cumulative')))
     expect(m?.slice(1)).toEqual(['123', '456', '109', 'cumulative'])
   })
 
   test('a missing id is a null, never a default', () => {
-    expect(derive.slice(0, 1400)).toContain("channel id unknown")
-    expect(derive.slice(0, 1400)).toContain("no channel/months")
+    expect(derive.slice(0, 1400)).toContain('channel id unknown')
+    expect(derive.slice(0, 1400)).toContain('no channel/months')
   })
 
-  test('the click derives before it falls back to twitch own button', () => {
+  test('the click asks the page world, then derives, then falls back to twitch own button', () => {
     const resub = NOTIFS_SRC.slice(NOTIFS_SRC.indexOf("registerType('twitch-resub-share'"))
     const h = resub.slice(0, resub.indexOf('registerType(', 10))
-    expect(h.indexOf('deriveToken')).toBeGreaterThan(h.indexOf('rescanToken'))
-    expect(h).toMatch(/derive\(data\.channel, data\.months\)\.then/)
+    expect(h.indexOf('findToken')).toBeGreaterThan(h.indexOf('rescanToken'))
+    expect(h.indexOf('deriveToken')).toBeGreaterThan(h.indexOf('findToken'))
+    expect(h).toMatch(/\.findToken\(\{ kind: 'cumulative', count: data\.months \}\)/)
     expect(NOTIFS_SRC).toContain('function nativeFallback(data)')
   })
 })
 
+describe('the page-world token reader (chrome/twitch-callout-token.js)', () => {
+  const SRC = readFileSync(new URL('../chrome/twitch-callout-token.js', import.meta.url), 'utf8')
+  const tok = (u, c, n, k) => btoa(`${u}:${c}:${n}:${k}`)
+
+  // a window/document just big enough to run the script for real
+  function boot(callouts) {
+    const ls = {}
+    const win = {
+      addEventListener: (t, f) => {
+        ;(ls[t] ||= []).push(f)
+      },
+      removeEventListener: () => {},
+      dispatchEvent: (e) => {
+        for (const f of ls[e.type] || []) f(e)
+      },
+    }
+    const replies = []
+    ls['hs-callout-token-res'] = [(e) => replies.push(JSON.parse(e.detail))]
+    const doc = { querySelectorAll: () => callouts }
+    class CE {
+      constructor(type, init) {
+        this.type = type
+        this.detail = init?.detail
+      }
+    }
+    new Function('window', 'document', 'CustomEvent', 'atob', SRC)(win, doc, CE, atob)
+    const ask = (id) => win.dispatchEvent(new CE('hs-callout-token-req', { detail: JSON.stringify({ id }) }))
+    return { ask, replies, win }
+  }
+  // twitch's shape: the token is the key of a fiber two levels under the container
+  const el = (key) => ({ __reactFiber$x: { key: null, child: { key: null, child: { key, child: null } } } })
+
+  test('reads the token from the key two fibers down and answers the asker by id', () => {
+    const t = tok('1', '2', 109, 'cumulative')
+    const { ask, replies } = boot([el(t)])
+    ask('abc')
+    expect(replies).toEqual([{ id: 'abc', tokens: [{ raw: t, channelId: '2', count: 109, kind: 'cumulative' }] }])
+  })
+
+  test('lists every callout in the queue, so the overlay can pick its own', () => {
+    const a = tok('1', '2', 109, 'cumulative')
+    const b = tok('1', '2', 4, 'watch_streak')
+    const { ask, replies } = boot([el(a), el(b)])
+    ask('q')
+    expect(replies[0].tokens.map((t) => t.kind)).toEqual(['cumulative', 'watch_streak'])
+  })
+
+  test('answers with nothing for a callout without a readable key, and ignores malformed requests', () => {
+    const { ask, replies, win } = boot([el('chat-line-1'), {}])
+    ask('z')
+    expect(replies).toEqual([{ id: 'z', tokens: [] }])
+    win.dispatchEvent({ type: 'hs-callout-token-req', detail: 'not json' })
+    expect(replies.length).toBe(1)
+  })
+
+  test('the isolated side asks for it and matches on kind and count', () => {
+    const SHARE_SRC = readFileSync(new URL('../src/multichat/share-callouts.js', import.meta.url), 'utf8')
+    expect(SHARE_SRC).toContain("new CustomEvent('hs-callout-token-req'")
+    expect(SHARE_SRC).toContain('findToken: findCalloutToken')
+    expect(SHARE_SRC).toContain('expect.notKind')
+  })
+
+  test('both manifests load it in the page world beside the chat intercept', () => {
+    for (const f of ['chrome', 'firefox']) {
+      const m = JSON.parse(readFileSync(new URL(`../src/manifests/${f}.json`, import.meta.url), 'utf8'))
+      const entry = m.content_scripts.find((c) => c.js.includes('twitch-callout-token.js'))
+      expect(entry?.world).toBe('MAIN')
+    }
+  })
+})

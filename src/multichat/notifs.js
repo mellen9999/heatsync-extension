@@ -678,18 +678,21 @@ const HsNotifs = (() => {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
-            // Twitch's key was unreadable (its React tree moved, or is not
-            // mounted in this window — a popout has no native chat at all).
-            // The token is only ever base64 of ids we hold ourselves, so build
-            // it and let the mutation be the judge: a wrong one is rejected
-            // loudly and the typed words are rescued into chat. Twitch's own
-            // button is the last resort, and stays one.
-            const derive = window.__hsResubShare?.deriveToken
-            if (!derive) return nativeFallback(data)
-            derive(data.channel, data.months).then((tok) => {
-              if (tok) window.__hsResubShare?.enter?.(data.months, data.user, data.channel, tok)
-              else if (nativeFallback(data)) dismiss?.()
-            })
+            // Not readable from this world (see readCalloutTokens): ask the
+            // page's own world for the callout's key — that IS twitch's token.
+            // Failing that, build it: it is only ever base64 of ids we hold
+            // ourselves, and the mutation is the judge (a wrong one is
+            // rejected loudly and the typed words are rescued into chat).
+            // Twitch's own button is the last resort, and stays one.
+            const api = window.__hsResubShare
+            if (!api?.findToken) return nativeFallback(data)
+            api
+              .findToken({ kind: 'cumulative', count: data.months })
+              .then((tok) => tok || api.deriveToken?.(data.channel, data.months))
+              .then((tok) => {
+                if (tok) api.enter?.(data.months, data.user, data.channel, tok)
+                else if (nativeFallback(data)) dismiss?.()
+              })
             return false // resub-share mode (or the fallback) controls dismissal
           } catch (_) {}
           return false
@@ -745,7 +748,16 @@ const HsNotifs = (() => {
               data._streakToken ||
               window.__hsResubShare?.rescanToken?.(data._nativeCallout, { count: data.streakCount }) ||
               null
-            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
+            if (token) {
+              window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
+            } else {
+              // same isolated-world blind spot as the resub prompt; a sub
+              // anniversary can share the count, so it must not be the kind
+              ;(
+                window.__hsResubShare?.findToken?.({ count: data.streakCount, notKind: 'cumulative' }) ??
+                Promise.resolve(null)
+              ).then((tok) => window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, tok))
+            }
           } catch (_) {}
           return false
         },

@@ -96,7 +96,8 @@
       "js": [
         "emoji-data.js",
         "autocomplete-hook.js",
-        "twitch-chat-intercept.js"
+        "twitch-chat-intercept.js",
+        "twitch-callout-token.js"
       ],
       "run_at": "document_end",
       "world": "MAIN"

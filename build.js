@@ -649,6 +649,7 @@ const COPY_FILES = [
   'popup.html',
   'early-inject-main.js',
   'twitch-chat-intercept.js',
+  'twitch-callout-token.js',
   'kick-nav-watcher.js',
   'kick-chat-intercept.js',
   'youtube-keyboard-guard.js',

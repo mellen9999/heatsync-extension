@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3ed49c0f7b9a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8e9a9e3afc6e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17468,18 +17468,21 @@ const HsNotifs = (() => {
               window.__hsResubShare?.enter?.(data.months, data.user, data.channel, token)
               return false // resub-share mode controls dismissal
             }
-            // Twitch's key was unreadable (its React tree moved, or is not
-            // mounted in this window — a popout has no native chat at all).
-            // The token is only ever base64 of ids we hold ourselves, so build
-            // it and let the mutation be the judge: a wrong one is rejected
-            // loudly and the typed words are rescued into chat. Twitch's own
-            // button is the last resort, and stays one.
-            const derive = window.__hsResubShare?.deriveToken
-            if (!derive) return nativeFallback(data)
-            derive(data.channel, data.months).then((tok) => {
-              if (tok) window.__hsResubShare?.enter?.(data.months, data.user, data.channel, tok)
-              else if (nativeFallback(data)) dismiss?.()
-            })
+            // Not readable from this world (see readCalloutTokens): ask the
+            // page's own world for the callout's key — that IS twitch's token.
+            // Failing that, build it: it is only ever base64 of ids we hold
+            // ourselves, and the mutation is the judge (a wrong one is
+            // rejected loudly and the typed words are rescued into chat).
+            // Twitch's own button is the last resort, and stays one.
+            const api = window.__hsResubShare
+            if (!api?.findToken) return nativeFallback(data)
+            api
+              .findToken({ kind: 'cumulative', count: data.months })
+              .then((tok) => tok || api.deriveToken?.(data.channel, data.months))
+              .then((tok) => {
+                if (tok) api.enter?.(data.months, data.user, data.channel, tok)
+                else if (nativeFallback(data)) dismiss?.()
+              })
             return false // resub-share mode (or the fallback) controls dismissal
           } catch (_) {}
           return false
@@ -17535,7 +17538,16 @@ const HsNotifs = (() => {
               data._streakToken ||
               window.__hsResubShare?.rescanToken?.(data._nativeCallout, { count: data.streakCount }) ||
               null
-            window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
+            if (token) {
+              window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, token)
+            } else {
+              // same isolated-world blind spot as the resub prompt; a sub
+              // anniversary can share the count, so it must not be the kind
+              ;(
+                window.__hsResubShare?.findToken?.({ count: data.streakCount, notKind: 'cumulative' }) ??
+                Promise.resolve(null)
+              ).then((tok) => window.__hsWatchstreakShare?.enter?.(data.streakCount, data.user, data.channel, tok))
+            }
           } catch (_) {}
           return false
         },
@@ -70072,6 +70084,45 @@ async function _consumeCalloutToken(channel, token, text) {
   if (errs) throw new Error(JSON.stringify(errs).slice(0, 200))
 }
 
+// The overlay is an isolated-world script, and React's fiber pointers are
+// expandos on the page's own world — fiberTokenScan sees nothing from here in
+// a real browser (it only works where the worlds are one: tests, devtools).
+// chrome/twitch-callout-token.js runs in the page's world, reads every
+// callout's key there and answers over window events. Resolves [] on silence.
+function readCalloutTokens(timeoutMs = 1500) {
+  return new Promise((resolve) => {
+    const id = Math.random().toString(36).slice(2)
+    let done = false
+    const finish = (tokens) => {
+      if (done) return
+      done = true
+      window.removeEventListener('hs-callout-token-res', onRes)
+      resolve(tokens)
+    }
+    const onRes = (e) => {
+      try {
+        const d = JSON.parse(e.detail)
+        if (d?.id === id) finish(Array.isArray(d.tokens) ? d.tokens : [])
+      } catch (_) {}
+    }
+    window.addEventListener('hs-callout-token-res', onRes)
+    window.dispatchEvent(new CustomEvent('hs-callout-token-req', { detail: JSON.stringify({ id }) }))
+    cleanup.setTimeout(() => finish([]), timeoutMs)
+  })
+}
+// The queue's token that is THIS callout's: kind/count must match what the
+// callout announces (a sub anniversary and a watch streak can queue together).
+async function findCalloutToken(expect) {
+  const tokens = await readCalloutTokens()
+  const hit = tokens.find(
+    (t) =>
+      (expect.kind === undefined || t.kind === expect.kind) &&
+      (expect.notKind === undefined || t.kind !== expect.notKind) &&
+      (expect.count === undefined || t.count === expect.count),
+  )
+  return hit ? hit.raw : null
+}
+
 // Twitch's token is exactly base64("<userId>:<channelId>:<count>:cumulative")
 // — decodeCalloutToken's shape is that contract, read off a live callout. When
 // the callout's React key cannot be read, both ids are ours to know: the
@@ -70103,6 +70154,7 @@ async function deriveResubToken(channel, months) {
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
   deriveToken: deriveResubToken,
+  findToken: findCalloutToken,
   // Returns false so input.js sendMessage CONTINUES into the regular IRC
   // send path — the typed text needs to actually go to Twitch chat so other
   // viewers see it and it persists across refresh. We also inject a local

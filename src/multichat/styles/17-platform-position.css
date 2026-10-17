@@ -671,6 +671,13 @@
     body.hs-platform-yt #page-manager ytd-rich-grid-row {
       display: contents !important;
     }
+    /* Shelves, promos and the continuation spinner are not tiles: one cell
+       squeezed a whole Shorts shelf into a single column (2900px tall, its
+       neighbours stretched to match). They take the full row; their own items
+       keep YouTube's sizing, so the width clamps below stay on tiles only. */
+    body.hs-platform-yt #page-manager ytd-rich-grid-renderer > #contents > :not(ytd-rich-item-renderer) {
+      grid-column: 1 / -1 !important;
+    }
     /* Defense-in-depth: every level inside the grid cell must respect
        parent width. YT inline-styles widths on ytd-rich-grid-media (and
        sometimes on the thumbnail anchor) using its own items-per-row
@@ -680,14 +687,14 @@
        thumbnail. #page-manager ID prefix bumps specificity above YT's
        attribute-keyed width rules on ytd-rich-grid-media which would
        otherwise win on attribute-selector count. */
-    body.hs-platform-yt #page-manager ytd-rich-item-renderer,
-    body.hs-platform-yt #page-manager ytd-rich-item-renderer > #content,
-    body.hs-platform-yt #page-manager ytd-rich-grid-media,
-    body.hs-platform-yt #page-manager ytd-rich-grid-media > #thumbnail,
-    body.hs-platform-yt #page-manager ytd-rich-grid-media a#thumbnail,
-    body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image,
-    body.hs-platform-yt #page-manager ytd-rich-grid-media yt-image img,
-    body.hs-platform-yt #page-manager ytd-rich-item-renderer ytd-thumbnail {
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *),
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) > #content,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-rich-grid-media,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-rich-grid-media > #thumbnail,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-rich-grid-media a#thumbnail,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-rich-grid-media yt-image,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-rich-grid-media yt-image img,
+    body.hs-platform-yt #page-manager ytd-rich-item-renderer:not(ytd-rich-section-renderer *) ytd-thumbnail {
       width: 100% !important;
       max-width: 100% !important;
       min-width: 0 !important;

@@ -2703,10 +2703,18 @@
       return
     }
     if (!retried && v === true && resp?.code === 'AGE_REQUIRED') {
-      const { ok } = await hsConfirm(t('mc_main_age_confirm'), t('mc_main_age_confirm_ok'))
-      if (!ok) {
-        _cwRollback(def, v, true)
-        return
+      // an account the server already knows can't verify (under 18, or no birth
+      // year) is never asked "are you 18?" — the refusal is the answer
+      let blocked = false
+      try {
+        blocked = (await browser.storage.local.get('hs_age_blocked')).hs_age_blocked === true
+      } catch {}
+      if (!blocked) {
+        const { ok } = await hsConfirm(t('mc_main_age_confirm'), t('mc_main_age_confirm_ok'))
+        if (!ok) {
+          _cwRollback(def, v, true)
+          return
+        }
       }
       const av = await safeSendMessage({
         type: 'api_fetch',

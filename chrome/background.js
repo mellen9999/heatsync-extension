@@ -2927,7 +2927,7 @@ async function fetchViewerSettings() {
     if (!authToken) {
       viewerShowSexual = false
       viewerShowGore = false
-      browser.storage.local.set({ viewer_show_sexual: false, viewer_show_gore: false })
+      browser.storage.local.set({ viewer_show_sexual: false, viewer_show_gore: false, hs_age_blocked: false })
       return
     }
     const resp = await fetchWithTimeout(`${API_URL}/api/user/settings`, {
@@ -2942,6 +2942,9 @@ async function fetchViewerSettings() {
     if (data && typeof data.show_sexual_emotes === 'boolean') {
       viewerShowSexual = data.show_sexual_emotes
       browser.storage.local.set({ viewer_show_sexual: viewerShowSexual })
+    }
+    if (data && typeof data.age_blocked === 'boolean') {
+      browser.storage.local.set({ hs_age_blocked: data.age_blocked })
     }
     if (data && typeof data.show_gore_emotes === 'boolean') {
       viewerShowGore = data.show_gore_emotes

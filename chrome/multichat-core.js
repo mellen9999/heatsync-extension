@@ -14887,7 +14887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8aaf9fa38e0d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '066af34f2d4a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69719,10 +69719,18 @@ const STORAGE_KEY = 'heatsync_multichat'
       return
     }
     if (!retried && v === true && resp?.code === 'AGE_REQUIRED') {
-      const { ok } = await hsConfirm(t('mc_main_age_confirm'), t('mc_main_age_confirm_ok'))
-      if (!ok) {
-        _cwRollback(def, v, true)
-        return
+      // an account the server already knows can't verify (under 18, or no birth
+      // year) is never asked "are you 18?" — the refusal is the answer
+      let blocked = false
+      try {
+        blocked = (await browser.storage.local.get('hs_age_blocked')).hs_age_blocked === true
+      } catch {}
+      if (!blocked) {
+        const { ok } = await hsConfirm(t('mc_main_age_confirm'), t('mc_main_age_confirm_ok'))
+        if (!ok) {
+          _cwRollback(def, v, true)
+          return
+        }
       }
       const av = await safeSendMessage({
         type: 'api_fetch',

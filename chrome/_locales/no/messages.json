@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "mod-logg"
   },
-  "mc_tab_live_channel": {
-    "message": "ser på · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "innstillinger"
   },

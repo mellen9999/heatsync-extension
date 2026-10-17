@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "לוג mod"
   },
-  "mc_tab_live_channel": {
-    "message": "צופה · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "הגדרות"
   },

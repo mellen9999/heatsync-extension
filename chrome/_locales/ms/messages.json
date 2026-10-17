@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "log mod"
   },
-  "mc_tab_live_channel": {
-    "message": "menonton · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "tetapan"
   },

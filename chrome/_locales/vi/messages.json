@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "nhật ký mod"
   },
-  "mc_tab_live_channel": {
-    "message": "đang xem · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "cài đặt"
   },

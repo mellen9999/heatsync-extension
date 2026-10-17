@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "registro de mod"
   },
-  "mc_tab_live_channel": {
-    "message": "viendo · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "ajustes"
   },

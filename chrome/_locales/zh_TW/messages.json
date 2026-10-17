@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "mod 日誌"
   },
-  "mc_tab_live_channel": {
-    "message": "觀看中 · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "設定"
   },

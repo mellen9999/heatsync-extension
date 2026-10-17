@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "บันทึก mod"
   },
-  "mc_tab_live_channel": {
-    "message": "กำลังดู · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "ตั้งค่า"
   },

@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd28863b43f88' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '72f636b962b8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -88444,7 +88444,10 @@ const STORAGE_KEY = 'heatsync_multichat'
         name = cur
       }
     }
-    liveTab.textContent = name ? t('mc_tab_live_channel', [name]) : t('mc_tab_live')
+    // the channel tab beside it already names the channel; the name rides the
+    // tooltip so a picked-away channel is still one hover from visible
+    liveTab.textContent = t('mc_tab_live')
+    liveTab.title = name
   }
 
   /** Query background script for all channels the user has open tabs for */

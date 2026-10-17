@@ -10437,7 +10437,10 @@
         name = cur
       }
     }
-    liveTab.textContent = name ? t('mc_tab_live_channel', [name]) : t('mc_tab_live')
+    // the channel tab beside it already names the channel; the name rides the
+    // tooltip so a picked-away channel is still one hover from visible
+    liveTab.textContent = t('mc_tab_live')
+    liveTab.title = name
   }
 
   /** Query background script for all channels the user has open tabs for */

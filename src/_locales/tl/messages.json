@@ -556,14 +556,6 @@
   "mc_tab_modlog": {
     "message": "mod log"
   },
-  "mc_tab_live_channel": {
-    "message": "pinapanood · $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_btn_settings": {
     "message": "settings"
   },

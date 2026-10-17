@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c993b7de1af1' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '29aaa27c91dc' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69975,7 +69975,28 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Stream events persistence — survives tab switches AND page refresh
   const STREAM_EVENTS_KEY = 'hs_stream_events'
   const STREAM_EVENTS_MAX = 200
+  // 7TV emote add/remove notices are the channel's own history, not a go-live
+  // ping: they stay at their timestamp for a week and survive every reload.
+  const EMOTE_EVENT_TTL_MS = 7 * 86400000
+  const EMOTE_EVENT_DUP_MS = 60000
   let streamEventsLoaded = false
+  const isEmoteEvent = (e) => !!e?.eventClass?.includes('event-emote')
+  // Same notice twice: identical text AND (for emote notices) within a minute.
+  // Text alone made a second removal of the same emote, days later, vanish.
+  const sameStreamEvent = (a, b) =>
+    a.text === b.text && (!isEmoteEvent(a) || Math.abs((a.time || 0) - (b.time || 0)) < EMOTE_EVENT_DUP_MS)
+  // Over the cap, shed the oldest ordinary events first so a burst of go-live
+  // pings can't push emote notices out of storage.
+  function pruneStreamEvents(events) {
+    let over = events.length - STREAM_EVENTS_MAX
+    if (over <= 0) return events
+    const out = []
+    for (const e of events) {
+      if (over > 0 && !isEmoteEvent(e)) over--
+      else out.push(e)
+    }
+    return over > 0 ? out.slice(over) : out
+  }
 
   // Inject stream events into IRC buffers + activityEvents (deduped)
   // recentOnly: only inject events <15min old into chat buffers (on reload)
@@ -69998,7 +70019,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // fine (low volume, useful context).
       if (recentOnly && evt.eventClass?.includes('event-online')) continue
 
-      const injectToChat = !recentOnly || (evt.time && evt.time > chatCutoff)
+      const injectToChat = !recentOnly || isEmoteEvent(evt) || (evt.time && evt.time > chatCutoff)
       const isFollowEvent = evt.eventClass?.includes('event-follow')
 
       // Inject into the channel's own buffer
@@ -70006,7 +70027,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         const buffer = irc?.channels?.get(ch)
         if (buffer) {
           const existing = buffer.getAll()
-          const isDupe = existing.some((m) => m.type === 'stream-event' && m.text === evt.text)
+          const isDupe = existing.some((m) => m.type === 'stream-event' && sameStreamEvent(m, evt))
           if (!isDupe) {
             // insertOrdered, not push: unlike the realtime stream-event
             // dispatchers (which always stamp time: Date.now()), evt.time
@@ -70028,7 +70049,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const chBuffer = irc?.channels?.get(ch)
           if (liveBuffer !== chBuffer) {
             const existing = liveBuffer.getAll()
-            const isDupe = existing.some((m) => m.type === 'stream-event' && m.text === evt.text)
+            const isDupe = existing.some((m) => m.type === 'stream-event' && sameStreamEvent(m, evt))
             if (!isDupe) {
               liveBuffer.insertOrdered(evt)
               added++
@@ -70048,14 +70069,12 @@ const STORAGE_KEY = 'heatsync_multichat'
       const data = await api.storage.local.get(STREAM_EVENTS_KEY)
       const events = data[STREAM_EVENTS_KEY]
       if (!Array.isArray(events) || events.length === 0) return
-      const cutoff = Date.now() - 86400000 // 24h expiry
-      // Dedup by text (multi-tab race can create duplicate entries in storage)
-      const seenTexts = new Set()
+      const now = Date.now()
+      // Dedup (multi-tab race can create duplicate entries in storage)
       const valid = []
       for (const e of events) {
-        if (e.time <= cutoff) continue
-        if (e.text && seenTexts.has(e.text)) continue
-        seenTexts.add(e.text)
+        if (e.time <= now - (isEmoteEvent(e) ? EMOTE_EVENT_TTL_MS : 86400000)) continue
+        if (e.text && valid.some((v) => sameStreamEvent(v, e))) continue
         valid.push(e)
       }
 
@@ -70088,12 +70107,10 @@ const STORAGE_KEY = 'heatsync_multichat'
         const data = await api.storage.local.get(STREAM_EVENTS_KEY)
         const events = data[STREAM_EVENTS_KEY] || []
         // Dedup by text before saving
-        if (!events.some((e) => e.text === evt.text)) {
+        if (!events.some((e) => sameStreamEvent(e, evt))) {
           events.push(evt)
         }
-        // Prune old events (keep last STREAM_EVENTS_MAX)
-        if (events.length > STREAM_EVENTS_MAX) events.splice(0, events.length - STREAM_EVENTS_MAX)
-        await api.storage.local.set({ [STREAM_EVENTS_KEY]: events })
+        await api.storage.local.set({ [STREAM_EVENTS_KEY]: pruneStreamEvents(events) })
       } catch {}
     })
     return saveQueue
@@ -78611,7 +78628,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         const chBuffer = irc?.channels?.get(channel)
         if (chBuffer) {
           const existing = chBuffer.getAll()
-          if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+          if (!existing.some((m) => m.type === 'stream-event' && sameStreamEvent(m, evt))) {
             chBuffer.push(evt)
             saveStreamEvent(evt)
           }
@@ -78620,7 +78637,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const liveBuffer = irc?.channels?.get(liveChannel)
           if (liveBuffer && liveBuffer !== chBuffer) {
             const existing = liveBuffer.getAll()
-            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+            if (!existing.some((m) => m.type === 'stream-event' && sameStreamEvent(m, evt))) {
               liveBuffer.push(evt)
               if (!chBuffer) saveStreamEvent(evt)
             }

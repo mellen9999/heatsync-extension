@@ -8135,7 +8135,7 @@
           `a.hs-mc-mention[data-username="${esc}"], a.hs-mc-reply-user[data-username="${esc}"]`,
         )
         if (c) {
-          const safe = sanitizeColor(c)
+          const safe = sanitizeColor(knownColors.get(lower) || c)
           anchors.forEach((a) => {
             // A HeatSync paint or a 7TV paint cosmetic outranks a flat color —
             // never overwrite either. hasResolvedHsPaint MUST be checked here
@@ -8182,7 +8182,7 @@
           }
         }
         try {
-          setKnownColor(lower, c || knownColors.get(lower) || '#fff', resolvedUid, 'twitch')
+          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')
         } catch {}
         queueMcCosmeticsLookup(resolvedUid)
       })

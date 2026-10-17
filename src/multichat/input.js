@@ -5514,7 +5514,10 @@ function hsResolveUserColor(lower) {
         _hsUserColorCache.set(lower, c || null)
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         _hsPersistUserColorCache()
-        if (c) {
+        // A chatter we have heard speak already wears their real platform color;
+        // a looked-up heatsync pick must never repaint them (a twitch line keeps
+        // twitch's color — same rule as the site's resolveNameColor).
+        if (c && !knownColors.has(lower)) {
           try {
             setKnownColor(lower, c)
           } catch {}

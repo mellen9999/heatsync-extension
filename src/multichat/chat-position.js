@@ -902,6 +902,13 @@ function applyPlatformPositionOverrides() {
         pp.style.removeProperty('width')
         pp.style.removeProperty('height')
         pp.style.removeProperty('max-height')
+      } else if (document.body.classList.contains('hs-offline') && (isRight || chatPosition === 'hidden')) {
+        // Offline channel page: twitch places the hero player itself. Pinning
+        // it to the corner or clearing its size throws it off its area, so
+        // all that is ours to do is take back what we set earlier.
+        for (const p of ['top', 'left', 'bottom', 'right', 'inset-inline-start', 'inset-inline-end']) {
+          if (pp.style.getPropertyPriority(p) === 'important') pp.style.removeProperty(p)
+        }
       } else if (isRight || chatPosition === 'hidden') {
         // (hidden = no panel, same page layout as right)
         // Twitch's persistent-player has position:absolute with no CSS

@@ -835,10 +835,14 @@
        column owns the page and the player must fill the slot. Without this the
        offline page keeps the stale small px width twitch wrote while our panel
        was open and the player sits in a corner of its area. */
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-hidden:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel):not(.hs-offline) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-hidden:not(.hs-mode-theatre):not(.hs-twitch-no-channel):not(.hs-offline) .persistent-player {
       width: 100% !important;
     }
+    /* Offline channel page: the player is not the page's 16:9 slot, it is the
+       small hero beside the "offline" card, and twitch sizes AND places it
+       itself (inline width/height/top/left). Forcing it to 100% pushes it off
+       the right of its area and its controls with it. Twitch owns it here. */
     /* chat-top / chat-bottom, windowed: the chat-top/bottom branch in
        applyPlatformPositionOverrides writes all four insets inline with
        !important, but Twitch's React effect later does el.style.top = X

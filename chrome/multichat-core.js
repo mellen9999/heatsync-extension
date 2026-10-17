@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3fcc4cfc6fca' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd28863b43f88' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26869,10 +26869,14 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
        column owns the page and the player must fill the slot. Without this the
        offline page keeps the stale small px width twitch wrote while our panel
        was open and the player sits in a corner of its area. */
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-hidden:not(.hs-mode-theatre):not(.hs-twitch-no-channel) .persistent-player {
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:not(.hs-mode-theatre):not(.hs-twitch-no-channel):not(.hs-offline) .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-hidden:not(.hs-mode-theatre):not(.hs-twitch-no-channel):not(.hs-offline) .persistent-player {
       width: 100% !important;
     }
+    /* Offline channel page: the player is not the page's 16:9 slot, it is the
+       small hero beside the "offline" card, and twitch sizes AND places it
+       itself (inline width/height/top/left). Forcing it to 100% pushes it off
+       the right of its area and its controls with it. Twitch owns it here. */
     /* chat-top / chat-bottom, windowed: the chat-top/bottom branch in
        applyPlatformPositionOverrides writes all four insets inline with
        !important, but Twitch's React effect later does el.style.top = X
@@ -72540,6 +72544,13 @@ function applyPlatformPositionOverrides() {
         pp.style.removeProperty('width')
         pp.style.removeProperty('height')
         pp.style.removeProperty('max-height')
+      } else if (document.body.classList.contains('hs-offline') && (isRight || chatPosition === 'hidden')) {
+        // Offline channel page: twitch places the hero player itself. Pinning
+        // it to the corner or clearing its size throws it off its area, so
+        // all that is ours to do is take back what we set earlier.
+        for (const p of ['top', 'left', 'bottom', 'right', 'inset-inline-start', 'inset-inline-end']) {
+          if (pp.style.getPropertyPriority(p) === 'important') pp.style.removeProperty(p)
+        }
       } else if (isRight || chatPosition === 'hidden') {
         // (hidden = no panel, same page layout as right)
         // Twitch's persistent-player has position:absolute with no CSS

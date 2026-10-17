@@ -1203,11 +1203,13 @@
     }
     /* Kill the masthead reservation — chat clutter is hidden, no need to
        reserve top-bar space below it. Applies to ALL chat positions on YT
-       so the player floats flush in every layout. Live-only. */
-    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-top #page-manager,
-    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-bottom #page-manager,
-    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-left #page-manager,
-    body.hs-platform-yt:not(.hs-yt-watch).hs-chat-right #page-manager {
+       so the player floats flush in every layout. Live-only: on an offline
+       page (home, search) the masthead is still there and the reservation is
+       what keeps the first row of tiles from sliding under it. */
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline).hs-chat-top #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline).hs-chat-bottom #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline).hs-chat-left #page-manager,
+    body.hs-platform-yt:not(.hs-yt-watch):not(.hs-offline).hs-chat-right #page-manager {
       margin-top: 0 !important;
     }
     /* primary clips to viewport height; primary-inner scrolls so video info

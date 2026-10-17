@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6807bc981326' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'fd6e07762bc6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -24410,6 +24410,7 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 function emoteImgHtml([name, emote]) {
+  if (hsEmoteHiddenForViewer(emote)) return ''
   const isBlocked = blockedEmoteNames.has(name)
   // 2-state picker: normal or blocked. `state` is still tracked on the img
   // dataset so findEmoteTarget can route blocked→unblock and the chat-row /
@@ -25125,6 +25126,7 @@ function createInputEmoteImg(emoteName) {
   const resolved = lookupEmoteWithOverlay(emoteName)
   if (!resolved) return null
   const { emote, isOverlay } = resolved
+  if (hsEmoteHiddenForViewer(emote)) return null
   const img = document.createElement('img')
   img.className = 'hs-input-emote'
   img.src = getChatResUrl(emote.url)
@@ -27165,6 +27167,14 @@ function hsOwnCwHiddenCat(emote) {
 function hsChannelNsfwHidden(emote) {
   if (!emote?.nsfw) return false
   return typeof getSetting === 'function' && getSetting('viewer_show_sexual') === false
+}
+
+// A flagged emote the viewer's own filters hide (underage / unverified / the
+// category toggled off). Decision surfaces — picker cell, composer chip,
+// tab-complete — must not draw its image either: a border "tell" around a
+// visible image still puts the image on screen. One answer for all of them.
+function hsEmoteHiddenForViewer(emote) {
+  return hsOwnCwHiddenCat(emote) || (hsChannelNsfwHidden(emote) ? 'sexual' : '')
 }
 
 // cw stub markup shared by every render branch that can hit a filter-hidden
@@ -46692,6 +46702,7 @@ function _getMergedAcEmotes() {
 // is unfiltered (see emotes.js _buildChannelEmoteCache).
 function _hsAcEmoteBlocked(name, emote) {
   if (!name) return false
+  if (typeof hsEmoteHiddenForViewer === 'function' && hsEmoteHiddenForViewer(emote)) return true
   if (typeof hsChannelNsfwHidden === 'function' && hsChannelNsfwHidden(emote)) return true
   if (typeof blockedEmoteNames === 'undefined') return false
   if (blockedEmoteNames.has(name)) return true

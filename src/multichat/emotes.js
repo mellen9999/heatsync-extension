@@ -1061,6 +1061,7 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 function emoteImgHtml([name, emote]) {
+  if (hsEmoteHiddenForViewer(emote)) return ''
   const isBlocked = blockedEmoteNames.has(name)
   // 2-state picker: normal or blocked. `state` is still tracked on the img
   // dataset so findEmoteTarget can route blocked→unblock and the chat-row /
@@ -1776,6 +1777,7 @@ function createInputEmoteImg(emoteName) {
   const resolved = lookupEmoteWithOverlay(emoteName)
   if (!resolved) return null
   const { emote, isOverlay } = resolved
+  if (hsEmoteHiddenForViewer(emote)) return null
   const img = document.createElement('img')
   img.className = 'hs-input-emote'
   img.src = getChatResUrl(emote.url)
@@ -3816,6 +3818,14 @@ function hsOwnCwHiddenCat(emote) {
 function hsChannelNsfwHidden(emote) {
   if (!emote?.nsfw) return false
   return typeof getSetting === 'function' && getSetting('viewer_show_sexual') === false
+}
+
+// A flagged emote the viewer's own filters hide (underage / unverified / the
+// category toggled off). Decision surfaces — picker cell, composer chip,
+// tab-complete — must not draw its image either: a border "tell" around a
+// visible image still puts the image on screen. One answer for all of them.
+function hsEmoteHiddenForViewer(emote) {
+  return hsOwnCwHiddenCat(emote) || (hsChannelNsfwHidden(emote) ? 'sexual' : '')
 }
 
 // cw stub markup shared by every render branch that can hit a filter-hidden

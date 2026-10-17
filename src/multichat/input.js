@@ -5046,6 +5046,7 @@ function _getMergedAcEmotes() {
 // is unfiltered (see emotes.js _buildChannelEmoteCache).
 function _hsAcEmoteBlocked(name, emote) {
   if (!name) return false
+  if (typeof hsEmoteHiddenForViewer === 'function' && hsEmoteHiddenForViewer(emote)) return true
   if (typeof hsChannelNsfwHidden === 'function' && hsChannelNsfwHidden(emote)) return true
   if (typeof blockedEmoteNames === 'undefined') return false
   if (blockedEmoteNames.has(name)) return true

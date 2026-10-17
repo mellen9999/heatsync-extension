@@ -40,7 +40,11 @@ test('feed shelves are hidden by default and a setting brings them back', () => 
 test('the masthead reservation is only killed on a live page, never on an offline one', () => {
   const m = css.match(/(body\.hs-platform-yt[^{]*#page-manager,?\s*)+\{\s*margin-top: 0 !important/)
   expect(m).not.toBeNull()
-  for (const sel of m[0].split('{')[0].split(',').map((x) => x.trim()).filter(Boolean)) {
+  for (const sel of m[0]
+    .split('{')[0]
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean)) {
     expect(sel).toContain(':not(.hs-offline)')
   }
 })

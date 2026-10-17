@@ -20,8 +20,6 @@ const _SET_SUBTAB_ICONS = {
   help: '<span style="font-size:16px;line-height:1">?</span>',
   filters:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>',
-  tweaks:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h3l1-2h4l1 2h3M2 8h12M2 12h3l1 2h4l1-2h3"/></svg>',
   system:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/></svg>',
 }
@@ -44,8 +42,6 @@ function _gotoSetSubtab(id) {
   else if (_setSettingsSubtab(id)) renderSettingsTab()
 }
 
-// Tweaks (twitch ui noise toggles) render straight from the registry
-// (`tweak: true` entries); content.js applyUiSettings owns the CSS rules.
 function _renderSetSubtabBar() {
   return (
     '<div class="hs-mc-set-subtabs">' +
@@ -955,13 +951,6 @@ function _renderCategoryPaneInner(cat) {
   }
   if (cat === 'notifs') {
     return _renderPageDefaultsRow(cat) + _regSections(cat) + mrGroupHtml()
-  }
-  if (cat === 'tweaks') {
-    return (
-      _renderPageDefaultsRow(cat) +
-      '<div class="hs-mc-set-keyhint" style="padding-top:8px">twitch.tv only — kick/youtube unaffected</div>' +
-      _regSections(cat)
-    )
   }
   if (cat === 'system') {
     // crash log block nests inside the advanced section, after its pill

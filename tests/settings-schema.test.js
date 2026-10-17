@@ -156,19 +156,8 @@ test('cw entries carry complete server-patch sub-shapes', () => {
   }
 })
 
-test('tweak entries: 12 sync bools, all default-off (chat-column tweaks removed)', () => {
-  const tweaks = SETTINGS.filter((d) => d.tweak)
-  // 12 after hideDiscoverLuna removal — twitch dropped the luna promo entirely,
-  // a toggle with no matching element is dead UI
-  expect(tweaks.length).toBe(12)
-  for (const def of tweaks) {
-    expect(def.type).toBe('bool')
-    expect(def.scope).toBe('sync')
-    // the 14 native-chat-column tweaks (incl. the only default-on hideChatHeader)
-    // were removed + forced always-on in content.js; every remaining page/player
-    // tweak shows its target by default and hides it only when toggled on.
-    expect(def.default).toBe(false)
-  }
+test('no tweaks tab: the twitch ui hide toggles are gone', () => {
+  expect(SETTINGS.some((d) => d.tweak || d.category === 'tweaks')).toBe(false)
 })
 
 // ── lint catches real mistakes ───────────────────────────────────────────────

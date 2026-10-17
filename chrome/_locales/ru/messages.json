@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "правила подсветки/скрытия по ключевому слову, regex, юзеру, значку или типу сообщения; управляются в редакторе правил"
   },
-  "mc_settings_hide_recommended": {
-    "message": "рекомендованные каналы"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "раздел «Recommended Channels» в боковой панели"
-  },
-  "mc_settings_hide_stories": {
-    "message": "полка stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "лента stories сбоку / сверху"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "реклама prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "кнопка prime loot с короной"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "реклама twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "ссылки с призывом turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / сезонные баннеры"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "сезонные градиентные баннеры подписки"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "переключатель уведомлений о эфире"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "кнопка-колокольчик подписки на уведомления"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "кнопка отписки"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "кнопка отписки (против случайных кликов)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "кнопка подписки"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "кнопка подписки на канал"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "праздничные эффекты"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "конфетти / праздничные оверлеи поверх видео"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "расширения плеера"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "расширения-оверлеи, закрывающие видео"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "громкость колесом"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "прокрутка над плеером меняет громкость"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "название стрима"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "скрыть блок с названием стрима под плеером"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "число зрителей"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "скрыть счётчик живых зрителей"
   },
   "mc_settings_visible_tabs": {
     "message": "видимые вкладки"

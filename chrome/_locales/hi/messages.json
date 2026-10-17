@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "नियम-वार हाइलाइट/छिपाने वाले फ़िल्टर — कीवर्ड, regex, यूज़र, बैज या msgtype; नियम एडिटर से संभालो"
   },
-  "mc_settings_hide_recommended": {
-    "message": "सुझाए गए चैनल"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "साइडबार का \"सुझाए गए चैनल\" सेक्शन"
-  },
-  "mc_settings_hide_stories": {
-    "message": "स्टोरीज़ शेल्फ़"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "साइडबार / ऊपर की स्टोरीज़ पट्टी"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot का विज्ञापन"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "क्राउन आइकन वाला prime loot बटन"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo का विज्ञापन"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo के cta लिंक"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / मौसमी बैनर"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "मौसमी सब्सक्रिप्शन के ग्रेडिएंट बैनर"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "लाइव नोटिफ़िकेशन टॉगल"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "नोटिफ़िकेशन सब्सक्राइब वाला घंटी बटन"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "अनफ़ॉलो बटन"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "अनफ़ॉलो बटन (गलत क्लिक से बचाता है)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "सब्सक्राइब बटन"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "चैनल का सब्सक्राइब बटन"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "स्क्रीन पर सेलिब्रेशन"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "वीडियो पर कंफ़ेटी / सेलिब्रेशन ओवरले"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "प्लेयर एक्सटेंशन"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "वीडियो को ढकने वाले ओवरले एक्सटेंशन"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "स्क्रॉल-व्हील वॉल्यूम"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "वॉल्यूम बदलने के लिए प्लेयर पर स्क्रॉल करो"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "स्ट्रीम टाइटल"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "प्लेयर के नीचे का स्ट्रीम टाइटल ब्लॉक छिपाओ"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "व्यूअर गिनती"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "लाइव व्यूअर काउंटर छिपाओ"
   },
   "mc_settings_visible_tabs": {
     "message": "दिखने वाले टैब"

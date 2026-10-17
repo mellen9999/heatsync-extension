@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "fremhævnings-/skjulfiltre pr. regel — keyword, regex, user, badge eller msgtype; styres i regeleditoren"
   },
-  "mc_settings_hide_recommended": {
-    "message": "anbefalede kanaler"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sidebjælkens \"Recommended Channels\"-sektion"
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-hylde"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "sidebjælke-/top-stories-bånd"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot-reklame"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime loot-knap med kroneikon"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo-reklame"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta-links"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember- / sæsonbannere"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "sæsonbetonede abonnementsbannere med farveovergang"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-notifikationsknap"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "klokkeknap til at abonnere på notifikationer"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "følg ikke-knap"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "følg ikke-knap (forhindrer fejlklik)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "abonnér-knap"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanalens abonnér-knap"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "fejringer på skærmen"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti-/fejringsoverlays over videoen"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "afspillerudvidelser"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlay-udvidelser der dækker videoen"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "lydstyrke med musehjul"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over afspilleren for at justere lydstyrken"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "stream-titel"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "skjul stream-titelblokken under afspilleren"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "seertal"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "skjul den levende seertæller"
   },
   "mc_settings_visible_tabs": {
     "message": "synlige faner"

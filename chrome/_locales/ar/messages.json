@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "فلاتر تمييز/إخفاء لكل قاعدة — keyword أو regex أو user أو badge أو msgtype؛ تُدار من محرّر القواعد"
   },
-  "mc_settings_hide_recommended": {
-    "message": "القنوات الموصى بها"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "قسم \"Recommended Channels\" في الشريط الجانبي"
-  },
-  "mc_settings_hide_stories": {
-    "message": "شريط stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "شريط stories الجانبي / العلوي"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "إعلان prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "زر prime loot بأيقونة التاج"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "إعلان twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "روابط cta الخاصة بـ turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "لافتات subtember / الموسمية"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "لافتات الاشتراك الموسمية المتدرجة"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "مفتاح إشعارات البث"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "زر الجرس للاشتراك في الإشعارات"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "زر إلغاء المتابعة"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "زر إلغاء المتابعة (يمنع النقرات الخاطئة)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "زر الاشتراك"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "زر الاشتراك في القناة"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "احتفالات الشاشة"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "طبقات confetti / الاحتفال فوق الفيديو"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "إضافات المشغّل"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "إضافات الطبقات التي تغطي الفيديو"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "الصوت بعجلة التمرير"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "مرّر فوق المشغّل لضبط الصوت"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "عنوان البث"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "إخفاء كتلة عنوان البث تحت المشغّل"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "عدد المشاهدين"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "إخفاء عدّاد المشاهدين المباشر"
   },
   "mc_settings_visible_tabs": {
     "message": "التبويبات الظاهرة"

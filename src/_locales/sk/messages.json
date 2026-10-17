@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "zvýraznenie/skrytie podľa pravidla — kľúčové slovo, regex, používateľ, odznak alebo typ správy; spravuje sa v editore pravidiel"
   },
-  "mc_settings_hide_recommended": {
-    "message": "odporúčané kanály"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sekcia „Recommended Channels“ v bočnom paneli"
-  },
-  "mc_settings_hide_stories": {
-    "message": "polica stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "lišta stories na boku / hore"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "reklama prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "tlačidlo prime loot s korunkou"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "reklama twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "odkazy turbo cta"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / sezónne bannery"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "sezónne gradientné bannery predplatného"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "prepínač upozornení na živé"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "tlačidlo zvončeka na upozornenia"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "tlačidlo zrušenia sledovania"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "tlačidlo zrušenia sledovania (proti preklikom)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "tlačidlo odberu"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "tlačidlo odberu kanála"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "oslavy na obrazovke"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfety / oslavné overlaye na videu"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "rozšírenia prehrávača"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlay rozšírenia zakrývajúce video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "hlasitosť kolieskom"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "rolovanie nad prehrávačom mení hlasitosť"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "názov streamu"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "skry blok s názvom streamu pod prehrávačom"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "počet divákov"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "skry počítadlo živých divákov"
   },
   "mc_settings_visible_tabs": {
     "message": "viditeľné karty"

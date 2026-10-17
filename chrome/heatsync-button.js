@@ -1762,8 +1762,6 @@
       // hideChatHeader is handled by content.js - don't duplicate here
       // This prevents CSS conflicts and layout bugs
 
-      // hideStreamTitle and hideViewerCount are handled by content.js:applyUiSettings()
-
       if (settings.compactChatInput) {
         // Compact chat input - inline useful buttons, hide useless ones
         const nuke =
@@ -1846,8 +1844,6 @@
       emoteWysiwyg: true,
       emoteSpaceAfter: true,
       hideChatHeader: true,
-      hideStreamTitle: false,
-      hideViewerCount: false,
       compactChatInput: true,
       highlightMentions: true,
       viMode: false, // Vim keybindings for chat input

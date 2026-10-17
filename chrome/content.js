@@ -2477,22 +2477,6 @@
       disableHeaderHiding()
     }
 
-    if (settings.hideStreamTitle) {
-      // Twitch stream title only — NOT .channel-info-content (that container
-      // holds subscribe/share/viewer-count/about too; hiding it nukes the bar)
-      rules.push('[data-a-target="stream-title"] { display: none !important; }')
-      // Kick
-      rules.push('.stream-username-wrapper { display: none !important; }')
-    }
-
-    if (settings.hideViewerCount) {
-      // Twitch viewer count
-      rules.push('[data-a-target="animated-channel-viewers-count"] { display: none !important; }')
-      rules.push('.tw-animated-number { display: none !important; }')
-      // Kick
-      rules.push('.viewer-count { display: none !important; }')
-    }
-
     // ─── anti-features pack — Twitch UI noise toggles ─────────────────────────
     // Each toggle adds one or more selectors to the hide rules block. Pure CSS,
     // no JS observer — Twitch DOM regenerates and our display:none re-matches.
@@ -2543,52 +2527,8 @@
         '.community-highlight-stack__top, .community-highlight-stack__backlog, [class*="community-highlight"] { display: none !important; }',
       )
     }
-    if (settings.hidePrimeLoot) {
-      rules.push(
-        '[class*="prime-offers"], [aria-label*="Prime Gaming"i], [aria-label*="Prime Loot"i] { display: none !important; }',
-      )
-    }
-    if (settings.hideRecommendedChannels) {
-      // 2026 twitch renamed the shelves: "Live Channels" + "<name> Viewers Also
-      // Watch" — the section div's aria-label is the only stable hook (no
-      // data-a-target / data-test-selector on it). English-locale only, like
-      // every aria selector in this block. Legacy selectors kept for
-      // logged-out / older DOM.
-      rules.push(
-        '.side-nav-section[aria-label="Live Channels"], .side-nav-section[aria-label*="Viewers Also Watch"i], [aria-label*="Recommended Channels"i], [data-a-target="recommended-channels"], [data-test-selector="recommended-channels"] { display: none !important; }',
-      )
-    }
-    if (settings.hideStories) {
-      // storiesLeftNavSection* covers collapsed + expanded left-nav entries
-      rules.push(
-        '[aria-label*="Stories"i], [class*="storiesLeftNavSection"], [class*="stories-rail"], [class*="story-rail"] { display: none !important; }',
-      )
-    }
-    if (settings.hideLiveNotifBtn) {
-      // channel bell has no data-a-target in 2026 DOM — aria-label
-      // "Modify channel notification preferences" is the only hook
-      rules.push(
-        'button[aria-label*="channel notification"i], [data-a-target="live-notifications-toggle"], button[aria-label*="Subscribe to notifications"i] { display: none !important; }',
-      )
-    }
-    if (settings.hideUnfollowBtn) {
-      rules.push('[data-a-target="unfollow-button"], button[aria-label*="Unfollow"i] { display: none !important; }')
-    }
-    if (settings.hideSubscribeBtn) {
-      rules.push(
-        '[data-a-target="subscribe-button"], [data-test-selector="subscribe-button"] { display: none !important; }',
-      )
-    }
     if (settings.hideSharedChatBanner) {
       rules.push('[class*="shared-chat-banner"], [data-test-selector*="shared-chat"i] { display: none !important; }')
-    }
-    if (settings.hideSubtember) {
-      rules.push('[class*="subtember"], [aria-label*="Subtember"i] { display: none !important; }')
-    }
-    if (settings.hideTwitchTurbo) {
-      rules.push(
-        '[class*="turbo-upsell"], [class*="turbo-cta"], [aria-label*="Twitch Turbo"i] { display: none !important; }',
-      )
     }
     if (settings.hideCombos) {
       rules.push(
@@ -2598,16 +2538,6 @@
     if (settings.hideBitsBtns) {
       rules.push(
         '[data-a-target="bits-button"], [aria-label*="Cheer with Bits"i], [aria-label*="Get Bits"i] { display: none !important; }',
-      )
-    }
-    if (settings.hideOnscreenCelebrations) {
-      rules.push(
-        '[class*="celebration-pane"], [class*="celebration-stack"], [class*="onscreen-celebration"], [class*="celebration-overlay"] { pointer-events: none !important; display: none !important; }',
-      )
-    }
-    if (settings.hidePlayerExtensions) {
-      rules.push(
-        '.extension-taskbar, [class*="extension-overlay"], [class*="extensions-dock"], .video-player__overlay [class*="extension"] { display: none !important; }',
       )
     }
 

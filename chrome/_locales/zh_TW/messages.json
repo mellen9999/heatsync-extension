@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "依規則醒目提示/隱藏 — 關鍵字、正規表示式、使用者、徽章或訊息類型；在規則編輯器中管理"
   },
-  "mc_settings_hide_recommended": {
-    "message": "推薦頻道"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "側邊欄的 \"Recommended Channels\" 區塊"
-  },
-  "mc_settings_hide_stories": {
-    "message": "限時動態欄"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "側邊欄/頂部的限時動態欄"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming 戰利品推廣"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "帶皇冠圖示的 prime 戰利品按鈕"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo 推廣"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo 行動號召連結"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / 季節性橫幅"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "季節性訂閱漸層橫幅"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "開播通知開關"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "訂閱通知的鈴鐺按鈕"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "取消追蹤按鈕"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "取消追蹤按鈕（防止誤點）"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "訂閱按鈕"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "頻道訂閱按鈕"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "螢幕慶祝特效"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "影片上的彩帶/慶祝覆蓋層"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "播放器擴充功能"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "遮擋影片的覆蓋層擴充功能"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "滾輪調音量"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "在播放器上滾動以調整音量"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "直播標題"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "隱藏播放器下方的直播標題區塊"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "觀眾數"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "隱藏即時觀眾計數"
   },
   "mc_settings_visible_tabs": {
     "message": "可見分頁"

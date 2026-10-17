@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "filtres de mise en évidence/masquage par règle — mot-clé, regex, utilisateur, badge ou msgtype ; gérés dans l'éditeur de règles"
   },
-  "mc_settings_hide_recommended": {
-    "message": "chaînes recommandées"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "section \"Chaînes recommandées\" de la barre latérale"
-  },
-  "mc_settings_hide_stories": {
-    "message": "étagère de stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "rail de stories latéral / du haut"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "pub prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "bouton prime loot à icône de couronne"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "pub twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "liens d'appel turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "bannières subtember / saisonnières"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "bannières dégradées d'abonnement saisonnier"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "bouton de notif de direct"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "bouton cloche d'abonnement aux notifications"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "bouton ne plus suivre"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "bouton ne plus suivre (évite les mauvais clics)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "bouton s'abonner"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "bouton d'abonnement à la chaîne"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "célébrations à l'écran"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confettis / overlays de célébration sur la vidéo"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "extensions du lecteur"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "extensions en overlay qui couvrent la vidéo"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume à la molette"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "molette sur le lecteur pour régler le volume"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "titre du stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "masque le bloc de titre sous le lecteur"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "nombre de viewers"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "masque le compteur de viewers en direct"
   },
   "mc_settings_visible_tabs": {
     "message": "onglets visibles"

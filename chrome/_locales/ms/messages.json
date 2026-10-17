@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "penapis sorot/sorok setiap peraturan — kata kunci, regex, pengguna, lencana atau jenis mesej; diurus melalui editor peraturan"
   },
-  "mc_settings_hide_recommended": {
-    "message": "saluran disyorkan"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "bahagian \"Recommended Channels\" di bar sisi"
-  },
-  "mc_settings_hide_stories": {
-    "message": "rak stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "landasan stories di bar sisi / atas"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "promosi prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "butang prime loot ikon mahkota"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "promosi twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "pautan cta turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / sepanduk bermusim"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "sepanduk langganan bermusim berkecerunan"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "togol notifikasi langsung"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "butang loceng langgan notifikasi"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "butang nyahikut"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "butang nyahikut (elak tersalah klik)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "butang langgan"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "butang langgan saluran"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "perayaan atas skrin"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / tindihan perayaan pada video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "sambungan pemain"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "sambungan tindihan yang menutup video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "kelantangan roda tatal"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "tatal di atas pemain untuk laras kelantangan"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "tajuk strim"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "sorok blok tajuk strim di bawah pemain"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "bilangan penonton"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "sorok kaunter penonton langsung"
   },
   "mc_settings_visible_tabs": {
     "message": "tab kelihatan"

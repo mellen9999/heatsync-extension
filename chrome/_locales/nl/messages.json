@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "highlight/verberg-filters per regel — keyword, regex, gebruiker, badge of berichttype; beheer via de regeleditor"
   },
-  "mc_settings_hide_recommended": {
-    "message": "aanbevolen kanalen"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "zijbalksectie \"Recommended Channels\""
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-balk"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "stories-rail in zijbalk / bovenaan"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot-upsell"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime loot-knop met kroon-icoon"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo-upsell"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta-links"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / seizoensbanners"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "seizoensgebonden abonnementsbanners met kleurverloop"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-meldingsknop"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "belknop om meldingen te ontvangen"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "ontvolg-knop"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "ontvolg-knop (voorkomt misklikken)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "abonneer-knop"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "abonneer-knop van het kanaal"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "viering op scherm"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / viering-overlays op de video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "speler-extensies"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlay-extensies die de video bedekken"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "scrollwiel-volume"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over de speler om het volume aan te passen"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "streamtitel"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "verberg het streamtitel-blok onder de speler"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "kijkersaantal"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "verberg de live kijkersteller"
   },
   "mc_settings_visible_tabs": {
     "message": "zichtbare tabs"

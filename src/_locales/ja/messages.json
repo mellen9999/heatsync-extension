@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "ルールごとのハイライト/非表示フィルタ — キーワード、regex、ユーザー、バッジ、メッセージ種別。ルールエディタで管理"
   },
-  "mc_settings_hide_recommended": {
-    "message": "おすすめチャンネル"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "サイドバーの「おすすめチャンネル」欄"
-  },
-  "mc_settings_hide_stories": {
-    "message": "ストーリーズの棚"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "サイドバー/上部のストーリーズ帯"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot の宣伝"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "王冠アイコンの prime loot ボタン"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo の宣伝"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo の cta リンク"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / 季節バナー"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "季節限定の subscribe グラデーションバナー"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "ライブ通知トグル"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "通知登録のベルボタン"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "フォロー解除ボタン"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "フォロー解除ボタン (誤クリック防止)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "subscribe ボタン"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "チャンネルの subscribe ボタン"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "画面上のお祝い"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "動画上の紙吹雪/お祝いオーバーレイ"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "プレーヤー拡張"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "動画を覆うオーバーレイ拡張"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "スクロールで音量"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "プレーヤー上でスクロールして音量調整"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "配信タイトル"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "プレーヤー下の配信タイトル欄を隠す"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "視聴者数"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ライブ視聴者数カウンターを隠す"
   },
   "mc_settings_visible_tabs": {
     "message": "表示するタブ"

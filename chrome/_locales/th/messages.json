@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "ตัวกรองไฮไลต์/ซ่อนทีละกฎ — คำสำคัญ, regex, ผู้ใช้, ป้าย หรือชนิดข้อความ จัดการผ่านตัวแก้ไขกฎ"
   },
-  "mc_settings_hide_recommended": {
-    "message": "ช่องแนะนำ"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "ส่วน \"Recommended Channels\" ในแถบข้าง"
-  },
-  "mc_settings_hide_stories": {
-    "message": "แถบ stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "แถบ stories ด้านข้าง / ด้านบน"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "โฆษณา prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "ปุ่ม prime loot รูปมงกุฎ"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "โฆษณา twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "ลิงก์ชวน turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / แบนเนอร์ตามฤดูกาล"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "แบนเนอร์ไล่สีชวนสมัครตามฤดูกาล"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "ปุ่มสลับแจ้งเตือนสด"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "ปุ่มกระดิ่งสมัครรับแจ้งเตือน"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "ปุ่มเลิกติดตาม"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "ปุ่มเลิกติดตาม (กันกดพลาด)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "ปุ่มสมัครสมาชิก"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "ปุ่มสมัครสมาชิกช่อง"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "เอฟเฟกต์ฉลองบนจอ"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / โอเวอร์เลย์ฉลองบนวิดีโอ"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "ส่วนขยายเพลเยอร์"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "ส่วนขยายโอเวอร์เลย์ที่บังวิดีโอ"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "ปรับเสียงด้วยลูกกลิ้ง"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "เลื่อนเมาส์บนเพลเยอร์เพื่อปรับเสียง"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "ชื่อสตรีม"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "ซ่อนกล่องชื่อสตรีมใต้เพลเยอร์"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "จำนวนคนดู"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ซ่อนตัวนับคนดูสด"
   },
   "mc_settings_visible_tabs": {
     "message": "แท็บที่แสดง"

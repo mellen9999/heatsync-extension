@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "filtry podświetlania/ukrywania per reguła — słowo kluczowe, regex, użytkownik, odznaka lub typ wiadomości; zarządzane w edytorze reguł"
   },
-  "mc_settings_hide_recommended": {
-    "message": "polecane kanały"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sekcja \"Recommended Channels\" na pasku bocznym"
-  },
-  "mc_settings_hide_stories": {
-    "message": "półka ze stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "pasek stories z boku / u góry"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "reklama prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "przycisk prime loot z ikoną korony"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "reklama twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "linki cta do turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / banery sezonowe"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "sezonowe banery subskrypcji z gradientem"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "przełącznik powiadomień live"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "przycisk dzwonka do powiadomień"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "przycisk przestań obserwować"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "przycisk przestań obserwować (chroni przed pomyłkami)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "przycisk subskrybuj"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "przycisk subskrypcji kanału"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "celebracje na ekranie"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti / nakładki celebracji na wideo"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "rozszerzenia odtwarzacza"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "rozszerzenia-nakładki zasłaniające wideo"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "głośność kółkiem"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "przewijaj nad odtwarzaczem, żeby zmienić głośność"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "tytuł streamu"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "ukryj blok z tytułem streamu pod odtwarzaczem"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "liczba widzów"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ukryj licznik widzów na żywo"
   },
   "mc_settings_visible_tabs": {
     "message": "widoczne karty"

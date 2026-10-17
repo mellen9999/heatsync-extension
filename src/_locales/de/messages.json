@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "highlight-/Ausblend-Filter pro Regel — keyword, regex, user, badge oder msgtype; verwaltet im Regel-Editor"
   },
-  "mc_settings_hide_recommended": {
-    "message": "empfohlene Kanäle"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sidebar-Bereich \"Recommended Channels\""
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-Leiste"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "sidebar-/Top-Stories-Leiste"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime-Gaming-Loot-Werbung"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime-Loot-Button mit Kronen-Icon"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch-Turbo-Werbung"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo-cta-Links"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember- / Saison-Banner"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "saisonale Abo-Banner mit Farbverlauf"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-Benachrichtigungs-Schalter"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "glocken-Button für Benachrichtigungen abonnieren"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "entfolgen-Button"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "entfolgen-Button (verhindert Fehlklicks)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "abonnieren-Button"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanal-Abonnieren-Button"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "feier-Effekte auf dem Bildschirm"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti-/Feier-Overlays über dem Video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "player-Erweiterungen"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlay-Erweiterungen, die das Video verdecken"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "scrollrad-Lautstärke"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "über dem Player scrollen, um die Lautstärke zu ändern"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "stream-Titel"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "blendet den Stream-Titel-Block unter dem Player aus"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "zuschauerzahl"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "blendet den Live-Zuschauerzähler aus"
   },
   "mc_settings_visible_tabs": {
     "message": "sichtbare Tabs"

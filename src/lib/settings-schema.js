@@ -27,7 +27,7 @@ import { HS_PLAT_COLORS } from './palette.js'
 //              'local-mirror' → saveUiSetting() splits to local via
 //                               UI_SYNC_BLOCKLIST; mirrorKey names the
 //                               actual local storage key
-//   category   settings subtab id (display|chat|notifs|mod|filters|tweaks|system)
+//   category   settings subtab id (display|chat|notifs|mod|filters|system)
 //   section    group title within the subtab (sectionKey when i18n'd)
 //   label/tip  literal lowercase strings — or labelKey/tipKey when the
 //              string is i18n'd (renderer resolves via t(); not available here)
@@ -1387,128 +1387,6 @@ const SETTINGS = [
     maxLen: 524288,
   },
 
-  // ── tweaks — twitch ui noise toggles (content.js CSS-hide flags) ──────
-  // order defines section ordering in the tweaks subtab
-  {
-    key: 'hideRecommendedChannels',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_recommended',
-    tipKey: 'mc_settings_hide_recommended_desc',
-  },
-  {
-    key: 'hideStories',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_stories',
-    tipKey: 'mc_settings_hide_stories_desc',
-  },
-  {
-    key: 'hidePrimeLoot',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_prime_loot',
-    tipKey: 'mc_settings_hide_prime_loot_desc',
-  },
-  {
-    key: 'hideTwitchTurbo',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_turbo',
-    tipKey: 'mc_settings_hide_turbo_desc',
-  },
-  {
-    key: 'hideSubtember',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_subtember',
-    tipKey: 'mc_settings_hide_subtember_desc',
-  },
-  {
-    key: 'hideLiveNotifBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_live_notif_btn',
-    tipKey: 'mc_settings_hide_live_notif_btn_desc',
-  },
-  {
-    key: 'hideUnfollowBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_unfollow_btn',
-    tipKey: 'mc_settings_hide_unfollow_btn_desc',
-  },
-  {
-    key: 'hideSubscribeBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_subscribe_btn',
-    tipKey: 'mc_settings_hide_subscribe_btn_desc',
-  },
-  {
-    key: 'hideOnscreenCelebrations',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_celebrations',
-    tipKey: 'mc_settings_hide_celebrations_desc',
-  },
-  {
-    key: 'hidePlayerExtensions',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_player_ext',
-    tipKey: 'mc_settings_hide_player_ext_desc',
-  },
   {
     // BTTV-style scroll-wheel volume — not a CSS-hide flag (no `tweak: true`),
     // gated live by the wheel listener reading scrollWheelVolumeEnabled.
@@ -1516,8 +1394,8 @@ const SETTINGS = [
     type: 'bool',
     default: false,
     scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
+    category: 'display',
+    section: 'player',
     control: 'pill',
     runtimeVar: 'scrollWheelVolumeEnabled',
     labelKey: 'mc_settings_scroll_wheel_volume',
@@ -1525,32 +1403,6 @@ const SETTINGS = [
   },
 
   // ── mod / native chat ─────────────────────────────────────────────────
-
-  // ── tweaks / native chat chrome ───────────────────────────────────────
-  {
-    key: 'hideStreamTitle',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_stream_title',
-    tipKey: 'mc_settings_hide_stream_title_desc',
-  },
-  {
-    key: 'hideViewerCount',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_viewer_count',
-    tipKey: 'mc_settings_hide_viewer_count_desc',
-  },
 
   // ── system / tabs ─────────────────────────────────────────────────────
   {

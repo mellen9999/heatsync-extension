@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "kural başına vurgula/gizle filtreleri — anahtar kelime, regex, kullanıcı, rozet veya mesaj türü; kural düzenleyiciden yönetilir"
   },
-  "mc_settings_hide_recommended": {
-    "message": "önerilen kanallar"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "kenar çubuğundaki \"Recommended Channels\" bölümü"
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories rafı"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "kenar / üst stories şeridi"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot reklamı"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "taç simgeli prime loot düğmesi"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo reklamı"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta bağlantıları"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / mevsimlik bannerlar"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "mevsimlik abonelik gradyan bannerları"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "canlı bildirim düğmesi"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "bildirime abone ol çan düğmesi"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "takibi bırak düğmesi"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "takibi bırak düğmesi (yanlış tıkı önler)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "abone ol düğmesi"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanala abone ol düğmesi"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "ekrandaki kutlamalar"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "videonun üstünde konfeti / kutlama katmanları"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "oynatıcı uzantıları"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "videoyu kaplayan katman uzantıları"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "tekerlekle ses"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "sesi ayarlamak için oynatıcının üstünde kaydır"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "yayın başlığı"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "oynatıcının altındaki yayın başlığı bloğunu gizle"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "izleyici sayısı"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "canlı izleyici sayacını gizle"
   },
   "mc_settings_visible_tabs": {
     "message": "görünür sekmeler"

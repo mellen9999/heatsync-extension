@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "규칙별 하이라이트/숨김 필터 — 키워드, regex, 사용자, 배지, 메시지 유형; 규칙 편집기에서 관리"
   },
-  "mc_settings_hide_recommended": {
-    "message": "추천 채널"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "사이드바의 \"추천 채널\" 섹션"
-  },
-  "mc_settings_hide_stories": {
-    "message": "스토리 선반"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "사이드바 / 상단 스토리 줄"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot 홍보"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "왕관 아이콘 prime loot 버튼"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo 홍보"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta 링크"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / 시즌 배너"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "시즌 구독 그라데이션 배너"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "라이브 알림 토글"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "알림 구독 종 버튼"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "팔로우 취소 버튼"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "팔로우 취소 버튼 (잘못 누름 방지)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "구독 버튼"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "채널 구독 버튼"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "화면 축하 효과"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "영상 위 색종이 / 축하 오버레이"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "플레이어 확장"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "영상을 덮는 오버레이 확장"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "스크롤 볼륨"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "플레이어 위에서 스크롤해 볼륨 조절"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "방송 제목"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "플레이어 아래 방송 제목 영역 숨김"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "시청자 수"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "라이브 시청자 수 표시 숨김"
   },
   "mc_settings_visible_tabs": {
     "message": "표시할 탭"

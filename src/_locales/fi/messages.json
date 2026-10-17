@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "sääntökohtaiset korosta/piilota-suodattimet — avainsana, regex, käyttäjä, badge tai msgtype; hallitaan sääntöeditorissa"
   },
-  "mc_settings_hide_recommended": {
-    "message": "suositellut kanavat"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sivupalkin \"Suositellut kanavat\" -osio"
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-hylly"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "sivupalkin / ylälaidan stories-kaista"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot -mainos"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "kruunukuvakkeinen prime loot -nappi"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo -mainos"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo-kehotelinkit"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / kausibannerit"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "kausitilausten liukuvärisbannerit"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-ilmoitusnappi"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "ilmoitusten tilauskellonappi"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "seurannan lopetus -nappi"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "seurannan lopetus -nappi (estää vahinkoklikkaukset)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "tilaa-nappi"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanavan tilausnappi"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "ruudun juhlinnat"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti- / juhlaoverlayt videon päällä"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "soittimen laajennukset"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "videon peittävät overlay-laajennukset"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "äänenvoimakkuus rullalla"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "rullaa soittimen päällä säätääksesi äänenvoimakkuutta"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "streamin otsikko"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "piilota otsikkolohko soittimen alta"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "katsojamäärä"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "piilota live-katsojalaskuri"
   },
   "mc_settings_visible_tabs": {
     "message": "näkyvät välilehdet"

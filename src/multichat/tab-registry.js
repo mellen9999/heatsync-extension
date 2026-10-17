@@ -39,7 +39,7 @@ const MC_TABS = [
     // settings draws its own row inside the pane (settings-ui.js); the cells
     // are still addressable: switchTab('settings', 'help')
     ownRow: true,
-    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'tweaks', 'system', 'help'].map((id) => ({ id, label: id })),
+    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'system', 'help'].map((id) => ({ id, label: id })),
   },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },

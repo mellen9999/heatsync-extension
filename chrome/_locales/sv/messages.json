@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "markera/dölj-filter per regel — nyckelord, regex, användare, märke eller meddelandetyp; hanteras i regelredigeraren"
   },
-  "mc_settings_hide_recommended": {
-    "message": "rekommenderade kanaler"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sidofältets sektion \"Recommended Channels\""
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-hylla"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "stories-lista i sidofält / överst"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot-reklam"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime loot-knapp med krona"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo-reklam"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta-länkar"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / säsongsbanners"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "säsongsbanners med gradient för prenumeration"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-notisknapp"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "klockknapp för att prenumerera på notiser"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "knapp för att sluta följa"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "knapp för att sluta följa (förhindrar felklick)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "prenumerationsknapp"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanalens prenumerationsknapp"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "firande på skärmen"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti / firande-overlays på videon"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "spelartillägg"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlay-tillägg som täcker videon"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volym med mushjul"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scrolla över spelaren för att ändra volymen"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "streamtitel"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "dölj streamtiteln under spelaren"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "tittarantal"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "dölj räknaren för live-tittare"
   },
   "mc_settings_visible_tabs": {
     "message": "synliga flikar"

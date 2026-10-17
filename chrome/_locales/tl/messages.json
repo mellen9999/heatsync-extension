@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "highlight/hide na filter kada rule — keyword, regex, user, badge, o uri ng mensahe; pinamamahalaan sa rules editor"
   },
-  "mc_settings_hide_recommended": {
-    "message": "mga inirerekomendang channel"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "seksyong \"Recommended Channels\" sa sidebar"
-  },
-  "mc_settings_hide_stories": {
-    "message": "shelf ng stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "stories rail sa gilid / itaas"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "upsell ng prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime loot button na may korona"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "upsell ng twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "mga turbo cta link"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / mga pana-panahong banner"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "pana-panahong gradient na banner ng subscription"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "toggle ng live notification"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "bell button para mag-subscribe sa notification"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "unfollow button"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "unfollow button (iwas maling click)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "subscribe button"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "subscribe button ng channel"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "mga selebrasyon sa screen"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / mga celebration overlay sa video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "mga extension ng player"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "mga overlay extension na tumatakip sa video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume gamit ang scroll-wheel"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "mag-scroll sa ibabaw ng player para ayusin ang volume"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "pamagat ng stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "itago ang bloke ng pamagat ng stream sa ilalim ng player"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "bilang ng viewer"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "itago ang live viewer counter"
   },
   "mc_settings_visible_tabs": {
     "message": "mga nakikitang tab"

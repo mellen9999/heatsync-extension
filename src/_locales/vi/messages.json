@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "bộ lọc làm nổi bật/ẩn theo quy tắc — từ khóa, regex, người dùng, huy hiệu hoặc loại tin nhắn; quản lý trong trình soạn quy tắc"
   },
-  "mc_settings_hide_recommended": {
-    "message": "kênh đề xuất"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "mục \"Recommended Channels\" ở thanh bên"
-  },
-  "mc_settings_hide_stories": {
-    "message": "dải stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "dải stories ở thanh bên / trên cùng"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "quảng cáo loot prime gaming"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "nút loot prime có biểu tượng vương miện"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "quảng cáo twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "liên kết kêu gọi dùng turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "banner subtember / theo mùa"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "banner gradient đăng ký theo mùa"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "nút thông báo trực tiếp"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "nút chuông bật thông báo"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "nút bỏ theo dõi"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "nút bỏ theo dõi (tránh bấm nhầm)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "nút đăng ký sub"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "nút đăng ký kênh"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "hiệu ứng ăn mừng trên màn hình"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / lớp phủ ăn mừng trên video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "tiện ích mở rộng của trình phát"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "tiện ích dạng lớp phủ che video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "âm lượng bằng con lăn"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "cuộn trên trình phát để chỉnh âm lượng"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "tiêu đề stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "ẩn khối tiêu đề stream bên dưới trình phát"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "số người xem"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ẩn bộ đếm người xem trực tiếp"
   },
   "mc_settings_visible_tabs": {
     "message": "tab hiển thị"

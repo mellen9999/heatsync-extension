@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "фільтри підсвічування/приховування за правилами — ключове слово, regex, користувач, бейдж чи тип повідомлення; керуються в редакторі правил"
   },
-  "mc_settings_hide_recommended": {
-    "message": "рекомендовані канали"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "розділ \"Recommended Channels\" у бічній панелі"
-  },
-  "mc_settings_hide_stories": {
-    "message": "стрічка stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "смуга stories збоку / вгорі"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "реклама loot prime gaming"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "кнопка loot prime з іконкою корони"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "реклама twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "посилання-заклики turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "банери subtember / сезонні"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "сезонні банери підписки з градієнтом"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "перемикач сповіщень про ефір"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "кнопка-дзвіночок для сповіщень"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "кнопка відписки"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "кнопка відписки (захист від випадкових кліків)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "кнопка підписки sub"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "кнопка підписки на канал"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "святкування на екрані"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "конфеті / святкові оверлеї поверх відео"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "розширення плеєра"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "розширення-оверлеї, що закривають відео"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "гучність колесом миші"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "прокручуй над плеєром, щоб змінити гучність"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "назва стріму"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "ховає блок із назвою стріму під плеєром"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "лічильник глядачів"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ховає лічильник глядачів наживо"
   },
   "mc_settings_visible_tabs": {
     "message": "видимі вкладки"

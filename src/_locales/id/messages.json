@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "filter sorot/sembunyikan per aturan — kata kunci, regex, pengguna, lencana, atau tipe pesan; diatur lewat editor aturan"
   },
-  "mc_settings_hide_recommended": {
-    "message": "channel rekomendasi"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "bagian \"channel rekomendasi\" di sidebar"
-  },
-  "mc_settings_hide_stories": {
-    "message": "rak stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "rel stories di sidebar / atas"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "promo prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "tombol prime loot berikon mahkota"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "promo twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "tautan cta turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / banner musiman"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "banner gradasi langganan musiman"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "tombol notifikasi live"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "tombol lonceng langganan notifikasi"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "tombol berhenti ikuti"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "tombol berhenti ikuti (mencegah salah klik)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "tombol subscribe"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "tombol subscribe channel"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "perayaan di layar"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "overlay konfeti / perayaan di atas video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "ekstensi player"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "ekstensi overlay yang menutupi video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume scroll"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll di atas player untuk mengatur volume"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "judul stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "sembunyikan blok judul stream di bawah player"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "jumlah penonton"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "sembunyikan penghitung penonton live"
   },
   "mc_settings_visible_tabs": {
     "message": "tab terlihat"

@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "filtri evidenzia/nascondi per regola — parola chiave, regex, utente, badge o tipo di messaggio; si gestiscono dall'editor regole"
   },
-  "mc_settings_hide_recommended": {
-    "message": "canali consigliati"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sezione \"canali consigliati\" della barra laterale"
-  },
-  "mc_settings_hide_stories": {
-    "message": "scaffale stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "barra stories laterale / in alto"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "promo prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "pulsante prime loot con la corona"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "promo twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "link cta di turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / banner stagionali"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "banner stagionali con gradiente per gli abbonamenti"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "interruttore notifiche live"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "pulsante campanella per le notifiche"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "pulsante smetti di seguire"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "pulsante smetti di seguire (evita i clic sbagliati)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "pulsante sub"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "pulsante sub del canale"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "festeggiamenti a schermo"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "overlay di coriandoli / festeggiamenti sul video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "estensioni del player"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "estensioni overlay che coprono il video"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume con la rotella"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scorri sul player per regolare il volume"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "titolo dello stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "nasconde il blocco del titolo sotto il player"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "numero spettatori"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "nasconde il contatore degli spettatori live"
   },
   "mc_settings_visible_tabs": {
     "message": "schede visibili"

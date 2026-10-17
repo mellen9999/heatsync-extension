@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "филтри за подчертаване/скриване по правило — keyword, regex, user, badge или msgtype; управляват се в редактора на правила"
   },
-  "mc_settings_hide_recommended": {
-    "message": "препоръчани канали"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "секцията \"Recommended Channels\" в страничната лента"
-  },
-  "mc_settings_hide_stories": {
-    "message": "лента със stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "лента със stories отстрани / горе"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "реклама за prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "бутон prime loot с икона корона"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "реклама за twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta линкове"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / сезонни банери"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "сезонни банери за абонамент с градиент"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "превключвател за live известия"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "бутон със звънец за абониране за известия"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "бутон за спиране на следването"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "бутон за спиране на следването (пази от случайни кликове)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "бутон за абониране"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "бутон за абониране за канала"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "празненства на екрана"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "конфети / празнични наслагвания върху видеото"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "разширения на плейъра"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "разширения-наслагвания, които покриват видеото"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "звук с колелото"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "превърти над плейъра, за да смениш звука"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "заглавие на стрийма"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "скрива блока със заглавието на стрийма под плейъра"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "брой зрители"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "скрива брояча на зрителите на живо"
   },
   "mc_settings_visible_tabs": {
     "message": "видими табове"

@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "highlight/skjul-filtre per regel — nøkkelord, regex, bruker, merke eller meldingstype; styres i regelredigereren"
   },
-  "mc_settings_hide_recommended": {
-    "message": "anbefalte kanaler"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "sidefeltseksjonen \"Recommended Channels\""
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories-hylle"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "stories-rail i sidefeltet / øverst"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot-salgspitch"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "prime loot-knapp med kroneikon"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo-salgspitch"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta-lenker"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / sesongbannere"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "sesongbaserte abonnementsbannere med fargeovergang"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "live-varselknapp"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "bjelleknappen for å abonnere på varsler"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "slutt å følge-knapp"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "slutt å følge-knapp (hindrer feilklikk)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "abonner-knapp"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "kanalens abonner-knapp"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "feiring på skjermen"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti / feiringsoverlegg på videoen"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "spillerutvidelser"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "overlegg-utvidelser som dekker videoen"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volum med musehjul"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over spilleren for å justere volumet"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "streamtittel"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "skjul streamtittel-blokken under spilleren"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "seertall"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "skjul den levende seertelleren"
   },
   "mc_settings_visible_tabs": {
     "message": "synlige faner"

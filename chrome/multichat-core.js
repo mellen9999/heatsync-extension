@@ -2799,7 +2799,7 @@ function nativeSize(family) {
 //              'local-mirror' → saveUiSetting() splits to local via
 //                               UI_SYNC_BLOCKLIST; mirrorKey names the
 //                               actual local storage key
-//   category   settings subtab id (display|chat|notifs|mod|filters|tweaks|system)
+//   category   settings subtab id (display|chat|notifs|mod|filters|system)
 //   section    group title within the subtab (sectionKey when i18n'd)
 //   label/tip  literal lowercase strings — or labelKey/tipKey when the
 //              string is i18n'd (renderer resolves via t(); not available here)
@@ -4159,128 +4159,6 @@ const SETTINGS = [
     maxLen: 524288,
   },
 
-  // ── tweaks — twitch ui noise toggles (content.js CSS-hide flags) ──────
-  // order defines section ordering in the tweaks subtab
-  {
-    key: 'hideRecommendedChannels',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_recommended',
-    tipKey: 'mc_settings_hide_recommended_desc',
-  },
-  {
-    key: 'hideStories',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_stories',
-    tipKey: 'mc_settings_hide_stories_desc',
-  },
-  {
-    key: 'hidePrimeLoot',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_prime_loot',
-    tipKey: 'mc_settings_hide_prime_loot_desc',
-  },
-  {
-    key: 'hideTwitchTurbo',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_turbo',
-    tipKey: 'mc_settings_hide_turbo_desc',
-  },
-  {
-    key: 'hideSubtember',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_subtember',
-    tipKey: 'mc_settings_hide_subtember_desc',
-  },
-  {
-    key: 'hideLiveNotifBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_live_notif_btn',
-    tipKey: 'mc_settings_hide_live_notif_btn_desc',
-  },
-  {
-    key: 'hideUnfollowBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_unfollow_btn',
-    tipKey: 'mc_settings_hide_unfollow_btn_desc',
-  },
-  {
-    key: 'hideSubscribeBtn',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_subscribe_btn',
-    tipKey: 'mc_settings_hide_subscribe_btn_desc',
-  },
-  {
-    key: 'hideOnscreenCelebrations',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_celebrations',
-    tipKey: 'mc_settings_hide_celebrations_desc',
-  },
-  {
-    key: 'hidePlayerExtensions',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_player_ext',
-    tipKey: 'mc_settings_hide_player_ext_desc',
-  },
   {
     // BTTV-style scroll-wheel volume — not a CSS-hide flag (no `tweak: true`),
     // gated live by the wheel listener reading scrollWheelVolumeEnabled.
@@ -4288,8 +4166,8 @@ const SETTINGS = [
     type: 'bool',
     default: false,
     scope: 'sync',
-    category: 'tweaks',
-    section: 'player overlay',
+    category: 'display',
+    section: 'player',
     control: 'pill',
     runtimeVar: 'scrollWheelVolumeEnabled',
     labelKey: 'mc_settings_scroll_wheel_volume',
@@ -4297,32 +4175,6 @@ const SETTINGS = [
   },
 
   // ── mod / native chat ─────────────────────────────────────────────────
-
-  // ── tweaks / native chat chrome ───────────────────────────────────────
-  {
-    key: 'hideStreamTitle',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_stream_title',
-    tipKey: 'mc_settings_hide_stream_title_desc',
-  },
-  {
-    key: 'hideViewerCount',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'tweaks',
-    section: 'sidebar / chrome',
-    tweak: true,
-    control: 'pill',
-    labelKey: 'mc_settings_hide_viewer_count',
-    tipKey: 'mc_settings_hide_viewer_count_desc',
-  },
 
   // ── system / tabs ─────────────────────────────────────────────────────
   {
@@ -15035,7 +14887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5688ff5c8da8' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8aaf9fa38e0d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15926,7 +15778,7 @@ const MC_TABS = [
     // settings draws its own row inside the pane (settings-ui.js); the cells
     // are still addressable: switchTab('settings', 'help')
     ownRow: true,
-    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'tweaks', 'system', 'help'].map((id) => ({ id, label: id })),
+    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'system', 'help'].map((id) => ({ id, label: id })),
   },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },
@@ -62120,8 +61972,6 @@ const _SET_SUBTAB_ICONS = {
   help: '<span style="font-size:16px;line-height:1">?</span>',
   filters:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>',
-  tweaks:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h3l1-2h4l1 2h3M2 8h12M2 12h3l1 2h4l1-2h3"/></svg>',
   system:
     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/></svg>',
 }
@@ -62144,8 +61994,6 @@ function _gotoSetSubtab(id) {
   else if (_setSettingsSubtab(id)) renderSettingsTab()
 }
 
-// Tweaks (twitch ui noise toggles) render straight from the registry
-// (`tweak: true` entries); content.js applyUiSettings owns the CSS rules.
 function _renderSetSubtabBar() {
   return (
     '<div class="hs-mc-set-subtabs">' +
@@ -63055,13 +62903,6 @@ function _renderCategoryPaneInner(cat) {
   }
   if (cat === 'notifs') {
     return _renderPageDefaultsRow(cat) + _regSections(cat) + mrGroupHtml()
-  }
-  if (cat === 'tweaks') {
-    return (
-      _renderPageDefaultsRow(cat) +
-      '<div class="hs-mc-set-keyhint" style="padding-top:8px">twitch.tv only — kick/youtube unaffected</div>' +
-      _regSections(cat)
-    )
   }
   if (cat === 'system') {
     // crash log block nests inside the advanced section, after its pill

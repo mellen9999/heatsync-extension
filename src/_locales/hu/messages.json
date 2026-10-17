@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "szabályonkénti kiemelő/rejtő szűrők — kulcsszó, regex, felhasználó, jelvény vagy üzenettípus; a szabályszerkesztőben kezelhető"
   },
-  "mc_settings_hide_recommended": {
-    "message": "ajánlott csatornák"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "oldalsáv \"ajánlott csatornák\" rész"
-  },
-  "mc_settings_hide_stories": {
-    "message": "stories polc"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "oldalsáv / felső stories sáv"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming loot reklám"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "koronás prime loot gomb"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo reklám"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo cta linkek"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / szezonális bannerek"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "szezonális előfizetős színátmenetes bannerek"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "élő értesítés kapcsoló"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "értesítésre feliratkozó csengő gomb"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "követés megszüntetése gomb"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "követés megszüntetése gomb (megelőzi a félrekattintást)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "feliratkozás gomb"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "csatorna feliratkozás gomb"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "képernyős ünneplések"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "konfetti / ünneplő overlayek a videón"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "lejátszó bővítmények"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "a videót takaró overlay bővítmények"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "görgetős hangerő"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "görgess a lejátszón a hangerő állításához"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "stream cím"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "a lejátszó alatti stream cím blokk elrejtése"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "nézőszám"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "az élő nézőszámláló elrejtése"
   },
   "mc_settings_visible_tabs": {
     "message": "látható lapok"

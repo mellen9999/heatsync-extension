@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "φίλτρα highlight/απόκρυψης ανά κανόνα — λέξη-κλειδί, regex, χρήστης, badge ή msgtype· διαχείριση από τον επεξεργαστή κανόνων"
   },
-  "mc_settings_hide_recommended": {
-    "message": "προτεινόμενα κανάλια"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "ενότητα \"Προτεινόμενα κανάλια\" της πλαϊνής μπάρας"
-  },
-  "mc_settings_hide_stories": {
-    "message": "ράφι stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "ράγα stories πλαϊνή / πάνω"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "διαφήμιση prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "κουμπί prime loot με εικονίδιο κορώνας"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "διαφήμιση twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "links cta του turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / εποχιακά banners"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "εποχιακά banners συνδρομής με gradient"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "κουμπί live ειδοποιήσεων"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "κουμπί καμπανάκι εγγραφής σε ειδοποιήσεις"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "κουμπί unfollow"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "κουμπί unfollow (αποτρέπει λάθος κλικ)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "κουμπί subscribe"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "κουμπί subscribe του καναλιού"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "γιορτές στην οθόνη"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "overlays κομφετί / γιορτής πάνω στο βίντεο"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "extensions του player"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "extensions overlay που καλύπτουν το βίντεο"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "ένταση με τη ροδέλα"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "κύλιση πάνω στον player για ρύθμιση έντασης"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "τίτλος stream"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "κρύβει το μπλοκ τίτλου κάτω από τον player"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "αριθμός θεατών"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "κρύβει τον live μετρητή θεατών"
   },
   "mc_settings_visible_tabs": {
     "message": "ορατές καρτέλες"

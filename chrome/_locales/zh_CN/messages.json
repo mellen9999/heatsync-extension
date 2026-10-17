@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "按规则高亮/隐藏 — 关键词、正则、用户、徽章或消息类型；在规则编辑器中管理"
   },
-  "mc_settings_hide_recommended": {
-    "message": "推荐频道"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "侧边栏的 \"Recommended Channels\" 区块"
-  },
-  "mc_settings_hide_stories": {
-    "message": "快拍栏"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "侧边栏/顶部的快拍栏"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "prime gaming 战利品推广"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "带皇冠图标的 prime 战利品按钮"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "twitch turbo 推广"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "turbo 行动号召链接"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / 季节性横幅"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "季节性订阅渐变横幅"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "开播通知开关"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "订阅通知的铃铛按钮"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "取消关注按钮"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "取消关注按钮（防止误点）"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "订阅按钮"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "频道订阅按钮"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "屏幕庆祝特效"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "视频上的彩纸/庆祝覆盖层"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "播放器扩展"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "遮挡视频的覆盖层扩展"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "滚轮调音量"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "在播放器上滚动以调整音量"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "直播标题"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "隐藏播放器下方的直播标题区块"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "观众数"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "隐藏实时观众计数"
   },
   "mc_settings_visible_tabs": {
     "message": "可见标签页"

@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "filtre de evidențiere/ascundere pe regulă — cuvânt-cheie, regex, utilizator, insignă sau tip de mesaj; se gestionează din editorul de reguli"
   },
-  "mc_settings_hide_recommended": {
-    "message": "canale recomandate"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "secțiunea \"Recommended Channels\" din bara laterală"
-  },
-  "mc_settings_hide_stories": {
-    "message": "raftul de stories"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "banda de stories din bara laterală / de sus"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "reclama prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "butonul prime loot cu coroană"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "reclama twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "linkuri cta turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / bannere de sezon"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "bannere de abonament de sezon cu gradient"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "comutator notificări live"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "butonul cu clopoțel pentru notificări"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "buton nu mai urmări"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "butonul nu mai urmări (previne click-urile greșite)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "buton abonare"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "butonul de abonare la canal"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "celebrări pe ecran"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "confetti / suprapuneri de celebrare peste video"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "extensii player"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "extensii de tip overlay care acoperă video-ul"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "volum cu rotița"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "dă scroll peste player ca să reglezi volumul"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "titlul streamului"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "ascunde blocul cu titlul streamului de sub player"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "număr de spectatori"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "ascunde contorul de spectatori live"
   },
   "mc_settings_visible_tabs": {
     "message": "taburi vizibile"

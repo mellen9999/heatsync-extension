@@ -1536,83 +1536,11 @@
   "mc_settings_filter_rules_desc": {
     "message": "פילטרי הדגשה/הסתרה לפי כלל — מילת מפתח, regex, משתמש, תג או msgtype; מנוהלים בעורך הכללים"
   },
-  "mc_settings_hide_recommended": {
-    "message": "ערוצים מומלצים"
-  },
-  "mc_settings_hide_recommended_desc": {
-    "message": "מקטע \"ערוצים מומלצים\" בסרגל הצד"
-  },
-  "mc_settings_hide_stories": {
-    "message": "מדף סטוריז"
-  },
-  "mc_settings_hide_stories_desc": {
-    "message": "פס סטוריז בצד / למעלה"
-  },
-  "mc_settings_hide_prime_loot": {
-    "message": "פרסומת prime gaming loot"
-  },
-  "mc_settings_hide_prime_loot_desc": {
-    "message": "כפתור prime loot עם אייקון כתר"
-  },
-  "mc_settings_hide_turbo": {
-    "message": "פרסומת twitch turbo"
-  },
-  "mc_settings_hide_turbo_desc": {
-    "message": "קישורי קריאה לפעולה של turbo"
-  },
-  "mc_settings_hide_subtember": {
-    "message": "subtember / באנרים עונתיים"
-  },
-  "mc_settings_hide_subtember_desc": {
-    "message": "באנרים עונתיים של מנוי עם גרדיאנט"
-  },
-  "mc_settings_hide_live_notif_btn": {
-    "message": "כפתור התראות לייב"
-  },
-  "mc_settings_hide_live_notif_btn_desc": {
-    "message": "כפתור פעמון הרשמה להתראות"
-  },
-  "mc_settings_hide_unfollow_btn": {
-    "message": "כפתור הפסקת מעקב"
-  },
-  "mc_settings_hide_unfollow_btn_desc": {
-    "message": "כפתור הפסקת מעקב (מונע לחיצות בטעות)"
-  },
-  "mc_settings_hide_subscribe_btn": {
-    "message": "כפתור הרשמה"
-  },
-  "mc_settings_hide_subscribe_btn_desc": {
-    "message": "כפתור הרשמה לערוץ"
-  },
-  "mc_settings_hide_celebrations": {
-    "message": "חגיגות על המסך"
-  },
-  "mc_settings_hide_celebrations_desc": {
-    "message": "קונפטי / שכבות חגיגה על הווידאו"
-  },
-  "mc_settings_hide_player_ext": {
-    "message": "תוספים של הנגן"
-  },
-  "mc_settings_hide_player_ext_desc": {
-    "message": "תוספי overlay שמכסים את הווידאו"
-  },
   "mc_settings_scroll_wheel_volume": {
     "message": "עוצמה עם גלגלת"
   },
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "גלול מעל הנגן כדי לשנות עוצמה"
-  },
-  "mc_settings_hide_stream_title": {
-    "message": "כותרת הסטרים"
-  },
-  "mc_settings_hide_stream_title_desc": {
-    "message": "הסתר את בלוק הכותרת מתחת לנגן"
-  },
-  "mc_settings_hide_viewer_count": {
-    "message": "מספר צופים"
-  },
-  "mc_settings_hide_viewer_count_desc": {
-    "message": "הסתר את מונה הצופים החי"
   },
   "mc_settings_visible_tabs": {
     "message": "לשוניות גלויות"

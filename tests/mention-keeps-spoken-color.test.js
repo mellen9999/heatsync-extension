@@ -39,6 +39,10 @@ test('setKnownColor: a real twitch color is never overwritten by a non-native on
   run.set('bob', '#ffffff', null, 'twitch') // unset white is not native
   run.set('bob', '#d7ff00', null, 'twitch', false)
   expect(run.knownColors.get('bob')).toBe('#d7ff00')
-  // learning YOUR real twitch color redraws your earlier unset lines, once
+  // learning YOUR real twitch color, or it changing, redraws your earlier lines
   expect(run.recolored).toEqual(['mellen'])
+  run.set('mellen', '#ff8700', null, 'twitch') // same color again: nothing to redraw
+  expect(run.recolored).toEqual(['mellen'])
+  run.set('mellen', '#00ff00', null, 'twitch') // you changed color: redraw again
+  expect(run.recolored).toEqual(['mellen', 'mellen'])
 })

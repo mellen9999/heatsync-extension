@@ -1272,12 +1272,13 @@
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
     if (native || !_nativeTwitchColor.has(user)) {
-      const learned = native && !_nativeTwitchColor.has(user)
+      const changed = native && knownColors.get(user) !== color
       knownColors.set(user, color)
       if (native) _nativeTwitchColor.add(user)
-      // Your own earlier lines were drawn before this color was known; redraw
-      // just those. Other names carry their color tag, so only you need this.
-      if (learned && user === currentUsername) recolorOwnLines(user)
+      // Your own earlier lines were drawn before this color was known (or in the
+      // color you used to have); redraw just those. History replays oldest to
+      // newest, so the last color heard is the current one.
+      if (changed && user === currentUsername) recolorOwnLines(user)
     }
     if (knownColors.size > 2000) {
       const iter = knownColors.keys()
@@ -1357,21 +1358,32 @@
     } catch {}
   }
 
-  // Redraw the viewer's own unset-color twitch lines once their real color is known.
+  // Redraw the viewer's own twitch lines once their real color is known.
   function recolorOwnLines(lower) {
     const reset = (buf) => {
       if (!buf || typeof buf[Symbol.iterator] !== 'function') return
       for (const x of buf) {
-        if (x && x.user?.toLowerCase() === lower && (!x.color || _isUnsetWhite(x.color))) x._renderedHtml = null
+        if (x && x.user?.toLowerCase() === lower) x._renderedHtml = null
       }
     }
     if (irc?.channels) for (const ch of irc.channels.keys()) reset(irc.getMessages(ch))
+    // Rows already on screen are kept, not rebuilt: repaint the name in place.
+    // A painted name (extra class) owns its own fill and is left alone.
+    const color = sanitizeColor(knownColors.get(lower) || '#fff')
+    for (const a of document.querySelectorAll(`#hs-mc-messages .hs-mc-user[data-platform="twitch"]`)) {
+      if (a.dataset.username === lower && a.className === 'hs-mc-user') a.style.color = color
+    }
+    // one redraw per burst: a history replay can change the color several times
+    if (_ownRecolorQueued) return
+    _ownRecolorQueued = true
     cleanup.setTimeout(() => {
+      _ownRecolorQueued = false
       try {
         renderMessages(currentTab)
       } catch {}
     }, 0)
   }
+  let _ownRecolorQueued = false
   if (!_onceGuardsMain.profileColorListener) {
     _onceGuardsMain.profileColorListener = true
     try {
@@ -7745,10 +7757,11 @@
     // heatsync.org) instead of a flat red. Picked colour resolves async via the
     // same batch as paints (updateHsColorsInPlace repaints in place).
     let hsNameColor = m.color
-    // A twitch line with no color tag (history replay, a message sent from this
-    // panel) is "unset", not a pick. Once the name has been heard with its real
-    // twitch color, every line of that name uses it — one username, one color.
-    if (plat === 'twitch' && (!hsNameColor || _isUnsetWhite(hsNameColor))) {
+    // One username, one color: once a twitch name has been heard with its real
+    // color, every line of it draws that color. Old lines carry the color the
+    // name had when it was sent (or none at all, for history replay and panel
+    // echoes), so a chatter who changed color showed a different one per line.
+    if (plat === 'twitch') {
       const lc = m.user.toLowerCase()
       if (_nativeTwitchColor.has(lc)) hsNameColor = knownColors.get(lc) || hsNameColor
     }

@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8e9a9e3afc6e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3fcc4cfc6fca' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70151,6 +70151,28 @@ async function deriveResubToken(channel, months) {
   }
 }
 
+// A share spends the callout everywhere: another window on the same channel (a
+// popout) holds the same prompt, and twitch only drops its own callout when
+// that page next refreshes. The sharer tells the others once it landed. A
+// BroadcastChannel never delivers to the instance that posted, so the window
+// that shared does not hear itself.
+const _calloutShared = typeof BroadcastChannel === 'function' ? new BroadcastChannel('hs-callout-shared') : null
+function _announceCalloutShared(msg) {
+  try {
+    _calloutShared?.postMessage(msg)
+  } catch (_) {}
+}
+if (_calloutShared) {
+  cleanup.addEventListener(_calloutShared, 'message', (e) => {
+    const d = e.data
+    if (!d || typeof d.channel !== 'string') return
+    if (d.kind === 'resub') window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${d.channel}:${d.months}`)
+    else if (d.kind === 'streak')
+      window.HsNotifs?.dismissByKey?.('twitch-watchstreak-share', `watchstreak:${d.channel}:${d.count}`)
+  })
+  mcSignal.addEventListener('abort', () => _calloutShared.close(), { once: true })
+}
+
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
   deriveToken: deriveResubToken,
@@ -70232,6 +70254,7 @@ window.__hsResubShare = {
       try {
         await _consumeCalloutToken(claim.channel, claim.resubToken, text)
         log('resub-share: GQL fired ok')
+        _announceCalloutShared({ kind: 'resub', channel: claim.channel, months: claim.months })
       } catch (e) {
         console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
         await _resubShareTextRescue(claim.channel, text)
@@ -70508,6 +70531,7 @@ window.__hsWatchstreakShare = {
           // the token, so the callout is still there to offer.
           _markWatchstreakSharedToday(claim.channel)
           log('watchstreak-share: GQL fired ok')
+          _announceCalloutShared({ kind: 'streak', channel: claim.channel, count: claim.streakCount })
         } catch (e) {
           console.warn('[heatsync-ext] watchstreak-share GQL failed:', e?.message || e)
           await _resubShareTextRescue(claim.channel, text)

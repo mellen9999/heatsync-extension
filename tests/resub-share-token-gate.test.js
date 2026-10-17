@@ -306,3 +306,23 @@ describe('the page-world token reader (chrome/twitch-callout-token.js)', () => {
     }
   })
 })
+
+describe('a share clears the prompt in the other open windows', () => {
+  const SHARE_SRC = readFileSync(new URL('../src/multichat/share-callouts.js', import.meta.url), 'utf8')
+
+  test('announced only after the mutation landed, for both callout kinds', () => {
+    const resub = SHARE_SRC.indexOf("log('resub-share: GQL fired ok')")
+    expect(SHARE_SRC.slice(resub, resub + 160)).toContain("_announceCalloutShared({ kind: 'resub'")
+    const streak = SHARE_SRC.indexOf("log('watchstreak-share: GQL fired ok')")
+    expect(SHARE_SRC.slice(streak, streak + 160)).toContain("_announceCalloutShared({ kind: 'streak'")
+  })
+
+  test('the listener dismisses the exact key the banner was emitted under', () => {
+    expect(SHARE_SRC).toContain("dismissByKey?.('twitch-resub-share', `resub:${d.channel}:${d.months}`)")
+    expect(SHARE_SRC).toContain("dismissByKey?.('twitch-watchstreak-share', `watchstreak:${d.channel}:${d.count}`)")
+    // the keys are the notif types' own dedupeKey shapes
+    const NOTIFS_SRC = readFileSync(new URL('../src/multichat/notifs.js', import.meta.url), 'utf8')
+    expect(NOTIFS_SRC).toContain('`resub:${channel}:${months}`')
+    expect(NOTIFS_SRC).toContain('`watchstreak:${channel}:${streakCount}`')
+  })
+})

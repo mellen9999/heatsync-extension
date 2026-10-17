@@ -95,7 +95,7 @@ describe('resolveMentionColor (main.js) — stamp + index + queue on resolve', (
     expect(body).toContain('row._hsMentionEls.push(a)')
   })
   test('populates knownUserIds via the existing platform-keyed setKnownColor, not a bespoke write', () => {
-    expect(body).toContain("setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')")
+    expect(body).toContain("setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch', false)")
   })
   test('queues the paint/cosmetics batch via the sole choke point (queueMcCosmeticsLookup), never queuePaintLookup directly', () => {
     expect(body).toContain('queueMcCosmeticsLookup(resolvedUid)')

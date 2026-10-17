@@ -5425,7 +5425,7 @@ function hsPrefetchUserColors(usernames) {
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         if (c) {
           try {
-            setKnownColor(u, c)
+            setKnownColor(u, c, undefined, 'twitch')
           } catch {}
         }
       }
@@ -5469,6 +5469,7 @@ function hsResolveUserColor(lower) {
         //    linked twitch account keeps its twitch color; the heatsync pick
         //    must not repaint it a beat after the prefetch painted it.
         let c = null
+        let native = false
         if (profile?.twitch_username) {
           try {
             const gqlResp = await fetch('https://gql.twitch.tv/gql', {
@@ -5486,6 +5487,7 @@ function hsResolveUserColor(lower) {
             if (gqlResp.ok) {
               const j = await gqlResp.json()
               c = j?.data?.user?.chatColor || null
+              native = !!c
             }
           } catch {}
         }
@@ -5517,12 +5519,10 @@ function hsResolveUserColor(lower) {
         _hsUserColorCache.set(lower, c || null)
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         _hsPersistUserColorCache()
-        // A chatter we have heard speak already wears their real platform color;
-        // a looked-up heatsync pick must never repaint them (a twitch line keeps
-        // twitch's color — same rule as the site's resolveNameColor).
-        if (c && !knownColors.has(lower)) {
+        // setKnownColor refuses to overwrite a real twitch color with a pick/hash.
+        if (c) {
           try {
-            setKnownColor(lower, c)
+            setKnownColor(lower, c, undefined, 'twitch', native)
           } catch {}
         }
         return c

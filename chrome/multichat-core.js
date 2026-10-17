@@ -15020,7 +15020,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3a90f0845cb9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8f667e77e83f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -47050,7 +47050,7 @@ function hsPrefetchUserColors(usernames) {
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         if (c) {
           try {
-            setKnownColor(u, c)
+            setKnownColor(u, c, undefined, 'twitch')
           } catch {}
         }
       }
@@ -47094,6 +47094,7 @@ function hsResolveUserColor(lower) {
         //    linked twitch account keeps its twitch color; the heatsync pick
         //    must not repaint it a beat after the prefetch painted it.
         let c = null
+        let native = false
         if (profile?.twitch_username) {
           try {
             const gqlResp = await fetch('https://gql.twitch.tv/gql', {
@@ -47111,6 +47112,7 @@ function hsResolveUserColor(lower) {
             if (gqlResp.ok) {
               const j = await gqlResp.json()
               c = j?.data?.user?.chatColor || null
+              native = !!c
             }
           } catch {}
         }
@@ -47142,12 +47144,10 @@ function hsResolveUserColor(lower) {
         _hsUserColorCache.set(lower, c || null)
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         _hsPersistUserColorCache()
-        // A chatter we have heard speak already wears their real platform color;
-        // a looked-up heatsync pick must never repaint them (a twitch line keeps
-        // twitch's color — same rule as the site's resolveNameColor).
-        if (c && !knownColors.has(lower)) {
+        // setKnownColor refuses to overwrite a real twitch color with a pick/hash.
+        if (c) {
           try {
-            setKnownColor(lower, c)
+            setKnownColor(lower, c, undefined, 'twitch', native)
           } catch {}
         }
         return c
@@ -68274,11 +68274,25 @@ const STORAGE_KEY = 'heatsync_multichat'
   // name. Values are always a resolved TWITCH id (see resolveSenderEmoteKey /
   // flushKickNameLookups) — only the KEY needs the platform tag.
   const knownUserIds = new Map()
-  function setKnownColor(user, color, userId, platform) {
-    knownColors.set(user, color)
+  // Names whose knownColors entry is their real TWITCH color (heard speaking on
+  // twitch, or twitch's own chat color). A kick color, a heatsync pick or a
+  // hash fallback never overwrites it: one username, one color, and a twitch
+  // line keeps twitch's color (same rule as the site's resolveNameColor).
+  const _nativeTwitchColor = new Set()
+  // A twitch line with no color tag arrives as white; that is "unset", not a pick.
+  const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
+  function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
+    if (native || !_nativeTwitchColor.has(user)) {
+      knownColors.set(user, color)
+      if (native) _nativeTwitchColor.add(user)
+    }
     if (knownColors.size > 2000) {
       const iter = knownColors.keys()
-      for (let i = 0; i < 500; i++) knownColors.delete(iter.next().value)
+      for (let i = 0; i < 500; i++) {
+        const k = iter.next().value
+        knownColors.delete(k)
+        _nativeTwitchColor.delete(k)
+      }
     }
     if (userId) {
       const uidKey = typeof userKey === 'function' ? userKey(user, platform) : user
@@ -75195,7 +75209,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
         }
         try {
-          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')
+          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch', false)
         } catch {}
         queueMcCosmeticsLookup(resolvedUid)
       })

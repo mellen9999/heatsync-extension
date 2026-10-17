@@ -1261,11 +1261,25 @@
   // name. Values are always a resolved TWITCH id (see resolveSenderEmoteKey /
   // flushKickNameLookups) — only the KEY needs the platform tag.
   const knownUserIds = new Map()
-  function setKnownColor(user, color, userId, platform) {
-    knownColors.set(user, color)
+  // Names whose knownColors entry is their real TWITCH color (heard speaking on
+  // twitch, or twitch's own chat color). A kick color, a heatsync pick or a
+  // hash fallback never overwrites it: one username, one color, and a twitch
+  // line keeps twitch's color (same rule as the site's resolveNameColor).
+  const _nativeTwitchColor = new Set()
+  // A twitch line with no color tag arrives as white; that is "unset", not a pick.
+  const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
+  function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
+    if (native || !_nativeTwitchColor.has(user)) {
+      knownColors.set(user, color)
+      if (native) _nativeTwitchColor.add(user)
+    }
     if (knownColors.size > 2000) {
       const iter = knownColors.keys()
-      for (let i = 0; i < 500; i++) knownColors.delete(iter.next().value)
+      for (let i = 0; i < 500; i++) {
+        const k = iter.next().value
+        knownColors.delete(k)
+        _nativeTwitchColor.delete(k)
+      }
     }
     if (userId) {
       const uidKey = typeof userKey === 'function' ? userKey(user, platform) : user
@@ -8182,7 +8196,7 @@
           }
         }
         try {
-          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')
+          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch', false)
         } catch {}
         queueMcCosmeticsLookup(resolvedUid)
       })

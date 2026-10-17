@@ -29,7 +29,7 @@ const ORANGE = 'ff8700'
 // place — lib/palette.js (HS_PLAT_COLORS) and the 00-palette.css token. Everything else
 // (content scripts, the schema, the tooltip map) reads HS_PLAT_COLORS. 20-card.css is the
 // single exception: a byte-synced site copy, covered by the site's own token.
-const TWITCH = 'c8a8ff'
+const TWITCH = 'dcc8ff'
 // Single-definition hexes. Moderator green is Twitch's real mod badge colour; dim gray is for exactly
 // two roles (the reply-context line, and a fully-read chat tab) and nothing else. Each is spelled once
 // per layer: the CSS token, and (mod green) the JS constant.
@@ -396,13 +396,13 @@ describe('colour doctrine — 8 colours', () => {
   test('platform tags: [T] twitch purple, [K] green, [Y] red, [H] orange', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     const tok = (n) => css.match(new RegExp(`${n}:\\s*(#[0-9a-fA-F]+)`))?.[1].toLowerCase()
-    expect(tok('--hs-plat-twitch')).toBe('#c8a8ff')
+    expect(tok('--hs-plat-twitch')).toBe('#dcc8ff')
     expect(tok('--hs-plat-kick')).toBe('#00ff00')
     expect(tok('--hs-plat-youtube')).toBe('#ff0000')
     expect(tok('--hs-plat-hs')).toBe('#ff8700')
     const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     for (const [k, v] of [
-      ['twitch', '#c8a8ff'],
+      ['twitch', '#dcc8ff'],
       ['kick', '#00ff00'],
       ['youtube', '#ff0000'],
       ['heatsync', '#ff8700'],

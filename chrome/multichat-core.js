@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '73447292918c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6eb3a2f9e0a4' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -38194,26 +38194,17 @@ function renderFeed() {
   // DOM construction (no innerHTML) — both strings are static, the hook flags
   // any innerHTML anyway.
   if (feedFromHotFallback) {
+    // One reverse-video line: reads as a section header, not a post, and the
+    // login ask rides along when there is no account to have follows on.
     const banner = document.createElement('div')
     banner.className = 'hs-mc-feed-fallback-banner'
     banner.style.cssText =
-      'padding:8px 10px;background:#000000;border-left:2px solid #ffffff;color:#ffffff;font-size:13px;margin-bottom:4px;line-height:18px'
-    const head = document.createElement('div')
-    head.style.cssText = 'color:#fff;margin-bottom:2px'
-    // Logged out, "no posts from your follows" is nonsense — there is no account
-    // to have follows on. This banner is also where the login ask lives for that
-    // session now that the fallback runs without auth and the empty card (which
-    // used to carry the CTA) no longer renders once there are rows.
-    head.textContent = hsAuthToken ? 'no posts from your follows' : 'what is hot on heatsync'
-    const sub = document.createElement('div')
-    sub.style.cssText = 'color:#ffffff'
-    sub.textContent = !hsAuthToken
-      ? 'log in at heatsync.org to follow people and fill this with their posts'
+      'padding:2px 10px;background:#ffffff;color:#000000;font-size:13px;margin-bottom:4px;line-height:18px'
+    banner.textContent = !hsAuthToken
+      ? 'hot posts · log in at heatsync.org to follow people'
       : feedFallbackIsCold
-        ? 'showing the newest posts — follow people to fill this with their posts'
-        : 'showing what is hot from the past 30 days — follow people to fill this with their posts'
-    banner.appendChild(head)
-    banner.appendChild(sub)
+        ? 'newest posts · follow people to fill your feed'
+        : 'hot this month · follow people to fill your feed'
     frag.appendChild(banner)
   }
   let zebraCount = 0

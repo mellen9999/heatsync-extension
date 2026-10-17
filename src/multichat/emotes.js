@@ -4264,10 +4264,16 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
             (overlayBaseName.indexOf('&') !== -1 && blockedEmoteNames.has(unescapeHtml(overlayBaseName))))) ||
         (emote.hash && blockedEmoteHashes.has(String(emote.hash)))
       let state = isBlocked ? 'blocked' : emote.state || 'global'
-      // Upgrade 'unadded' → 'owned' when the viewer actually has this name
-      // in their inventory. Visually identical under 2-state, but downstream
-      // auto-add-on-send + cross-user rendering gates read dataset.state.
-      if (state === 'unadded' && (inventoryEmotes.has(word) || inventoryEmotes.has(rawWord))) state = 'owned'
+      // Upgrade to 'owned' when the viewer actually has this name in their
+      // inventory — whoever posted it and however it resolved (a sender's set
+      // resolves as 'global'). Visually identical under 2-state, but downstream
+      // auto-add-on-send + cross-user rendering gates read dataset.state, and
+      // the tooltip says "in your set" instead of a sender's provider.
+      if (
+        (state === 'unadded' || state === 'global' || state === 'channel') &&
+        (inventoryEmotes.has(word) || inventoryEmotes.has(rawWord))
+      )
+        state = 'owned'
       const source = escapeHtml(emote.source || 'unknown')
       const rawChatUrl = getChatResUrl(emote.url)
       const imgSrc = escapeHtml(rawChatUrl)

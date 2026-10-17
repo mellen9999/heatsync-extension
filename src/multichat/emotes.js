@@ -4284,7 +4284,12 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
         staleAttr = ''
       try {
         const chKey = (channel || '').toLowerCase()
-        const meta = chKey && window._hsStaleEmotes ? window._hsStaleEmotes.get(chKey)?.get(word) : null
+        // A heatsync or inventory copy of the name is still usable by the viewer
+        // after the channel drops its 7TV one, so it is never a ghost.
+        const meta =
+          chKey && window._hsStaleEmotes && emote.source !== 'heatsync' && !emoteFromInv
+            ? window._hsStaleEmotes.get(chKey)?.get(word)
+            : null
         if (meta) {
           const liveSet = channelEmoteCaches[chKey] || channelEmoteCaches[channel]
           const liveNow = !!liveSet?.has(word)

@@ -15020,7 +15020,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '92a79c8fac67' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '75990a85af5d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -47139,7 +47139,10 @@ function hsResolveUserColor(lower) {
         _hsUserColorCache.set(lower, c || null)
         if (_hsUserColorCache.size > 5000) _hsUserColorCache.delete(_hsUserColorCache.keys().next().value)
         _hsPersistUserColorCache()
-        if (c) {
+        // A chatter we have heard speak already wears their real platform color;
+        // a looked-up heatsync pick must never repaint them (a twitch line keeps
+        // twitch's color — same rule as the site's resolveNameColor).
+        if (c && !knownColors.has(lower)) {
           try {
             setKnownColor(lower, c)
           } catch {}
@@ -75142,7 +75145,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           `a.hs-mc-mention[data-username="${esc}"], a.hs-mc-reply-user[data-username="${esc}"]`,
         )
         if (c) {
-          const safe = sanitizeColor(c)
+          const safe = sanitizeColor(knownColors.get(lower) || c)
           anchors.forEach((a) => {
             // A HeatSync paint or a 7TV paint cosmetic outranks a flat color —
             // never overwrite either. hasResolvedHsPaint MUST be checked here
@@ -75189,7 +75192,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
         }
         try {
-          setKnownColor(lower, c || knownColors.get(lower) || '#fff', resolvedUid, 'twitch')
+          setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch')
         } catch {}
         queueMcCosmeticsLookup(resolvedUid)
       })

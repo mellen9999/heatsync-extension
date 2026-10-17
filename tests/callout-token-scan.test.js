@@ -87,11 +87,14 @@ describe('fiberTokenScan', () => {
 
   test('finds the token twitch hides in a react key', () => {
     const t = tok('73266147', '29795919', 107, 'cumulative')
-    expect(fiberTokenScan(tree(t))).toEqual({ token: t, channelId: '29795919', count: 107, kind: 'cumulative' })
+    expect(fiberTokenScan(tree(t))).toMatchObject({ token: t, channelId: '29795919', count: 107, kind: 'cumulative' })
   })
 
   test('reports nothing rather than guessing when the tree has no token', () => {
-    expect(fiberTokenScan(tree('chat-line-1'))).toEqual({ token: null, channelId: null, count: 0, kind: null })
+    const none = fiberTokenScan(tree('chat-line-1'))
+    expect(none).toMatchObject({ token: null, channelId: null, count: 0, kind: null })
+    // the trace names shapes only, so the failed-scan warning cannot leak a key
+    expect(none.trace.join(' ')).not.toContain('chat-line-1')
   })
 
   test('walks siblings — the queue renders callouts side by side', () => {

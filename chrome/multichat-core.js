@@ -15024,7 +15024,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2e802ac0c94a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '023b6fec4abc' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70002,7 +70002,9 @@ function calloutTokenMatches(scan, expect) {
 
 function fiberTokenScan(rootEl) {
   if (typeof getFiber !== 'function' || !rootEl) return null
-  const out = { token: null, channelId: null, count: 0, kind: null }
+  // trace = what the walk saw, for the one warning a failed scan emits. Shapes
+  // only (type, key length, key looks base64) — a key can carry user ids.
+  const out = { token: null, channelId: null, count: 0, kind: null, trace: [] }
   const root = getFiber(rootEl)
   if (!root) return out
   // Breadth-first over the callout's own subtree. Twitch carries the token as
@@ -70029,6 +70031,11 @@ function fiberTokenScan(rootEl) {
     if (!f || seen.has(f)) continue
     seen.add(f)
     steps++
+    if (out.trace.length < 12) {
+      const k = typeof f.key === 'string' ? f.key : ''
+      const type = typeof f.type === 'string' ? f.type : f.type?.displayName || f.type?.name || '?'
+      out.trace.push(`${type}:${k.length}${/^[A-Za-z0-9+/]+={0,2}$/.test(k) ? 'b' : ''}`)
+    }
     const tok = decodeCalloutToken(f.key)
     if (tok) {
       out.token = tok.raw
@@ -70500,6 +70507,9 @@ function setupHsCalloutCloseButton() {
     // button the same breadth-first walk fans out across the chat tree
     // without ever reaching it.
     const scan = fiberTokenScan(calloutEl) || {}
+    if (!scan.token) {
+      console.warn('[heatsync-ext] resub token scan found nothing — fibers:', (scan.trace || []).join(' '))
+    }
 
     // Watch-streak first (text mentions "watch streak"); resub fallback (only
     // "N month" — without "watch streak"). Order matters: a watch-streak

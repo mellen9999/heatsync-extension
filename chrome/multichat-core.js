@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '02390b5141b8' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cf325257ba2d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -25799,17 +25799,17 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
         showToast(t('mc_emote_added', [emoteName]), 'success')
         flashAllEmotes(emoteName, 'hs-flash-add')
       }
-    } else if (!silent) {
-      // Logged-out is the common case, not a failure — one gentle nudge
-      // (statusbar dedupes to ×N) instead of a red per-emote error.
+    } else {
+      // A failed add is loud even for the silent auto-add on send: only the
+      // success toast is skipped. Staying quiet left "my emote is text" with no
+      // clue why. Logged-out is the common case, not a failure — one gentle
+      // nudge (statusbar dedupes to ×N) instead of a red per-emote error.
       const addErr = String(response?.error || '')
       if (/not logged in/i.test(addErr)) {
         showToast(t('mc_emote_add_login'), 'info')
       } else {
         showToast(addErr || t('mc_emote_add_failed', [emoteName]), 'error')
       }
-    } else {
-      log('Auto-add failed silently:', emoteName, response?.error || '(no error)')
     }
   } catch (e) {
     log('Add emote error:', e)

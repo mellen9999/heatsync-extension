@@ -2450,17 +2450,17 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
         showToast(t('mc_emote_added', [emoteName]), 'success')
         flashAllEmotes(emoteName, 'hs-flash-add')
       }
-    } else if (!silent) {
-      // Logged-out is the common case, not a failure — one gentle nudge
-      // (statusbar dedupes to ×N) instead of a red per-emote error.
+    } else {
+      // A failed add is loud even for the silent auto-add on send: only the
+      // success toast is skipped. Staying quiet left "my emote is text" with no
+      // clue why. Logged-out is the common case, not a failure — one gentle
+      // nudge (statusbar dedupes to ×N) instead of a red per-emote error.
       const addErr = String(response?.error || '')
       if (/not logged in/i.test(addErr)) {
         showToast(t('mc_emote_add_login'), 'info')
       } else {
         showToast(addErr || t('mc_emote_add_failed', [emoteName]), 'error')
       }
-    } else {
-      log('Auto-add failed silently:', emoteName, response?.error || '(no error)')
     }
   } catch (e) {
     log('Add emote error:', e)

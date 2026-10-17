@@ -1332,6 +1332,31 @@
     }
   }
 
+  // Your own twitch color, from twitch itself, once per page. History replay and
+  // lines sent from this panel carry no color tag, so without this your name
+  // stays white until you happen to chat live. Same unauthed GQL lookup the
+  // @mention colors use; anything unexpected leaves the name as it was.
+  async function seedOwnTwitchColor() {
+    const me = currentUsername
+    if (!me || _nativeTwitchColor.has(me)) return
+    try {
+      const resp = await fetch('https://gql.twitch.tv/gql', {
+        method: 'POST',
+        credentials: 'omit',
+        headers: { 'Content-Type': 'application/json', 'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko' },
+        body: JSON.stringify({
+          query: 'query($login:String!){user(login:$login){chatColor}}',
+          variables: { login: me },
+        }),
+      })
+      if (!resp.ok) return
+      const color = (await resp.json())?.data?.user?.chatColor
+      if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) && !_nativeTwitchColor.has(me)) {
+        setKnownColor(me, color, undefined, 'twitch', true)
+      }
+    } catch {}
+  }
+
   // Redraw the viewer's own unset-color twitch lines once their real color is known.
   function recolorOwnLines(lower) {
     const reset = (buf) => {
@@ -12490,6 +12515,7 @@
     if (!config.enabled) return
     // Lite / emotes-only mode is fully removed — overlay always boots.
     log('Initializing...')
+    if (hostPlatform === 'twitch') seedOwnTwitchColor()
 
     // ── PHASE 2: hydrate username + muted users from prefetched local ─────
     try {

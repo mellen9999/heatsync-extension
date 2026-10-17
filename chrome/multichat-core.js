@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8b82e5625299' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9d53c981bd3b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -68383,6 +68383,31 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
   }
 
+  // Your own twitch color, from twitch itself, once per page. History replay and
+  // lines sent from this panel carry no color tag, so without this your name
+  // stays white until you happen to chat live. Same unauthed GQL lookup the
+  // @mention colors use; anything unexpected leaves the name as it was.
+  async function seedOwnTwitchColor() {
+    const me = currentUsername
+    if (!me || _nativeTwitchColor.has(me)) return
+    try {
+      const resp = await fetch('https://gql.twitch.tv/gql', {
+        method: 'POST',
+        credentials: 'omit',
+        headers: { 'Content-Type': 'application/json', 'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko' },
+        body: JSON.stringify({
+          query: 'query($login:String!){user(login:$login){chatColor}}',
+          variables: { login: me },
+        }),
+      })
+      if (!resp.ok) return
+      const color = (await resp.json())?.data?.user?.chatColor
+      if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) && !_nativeTwitchColor.has(me)) {
+        setKnownColor(me, color, undefined, 'twitch', true)
+      }
+    } catch {}
+  }
+
   // Redraw the viewer's own unset-color twitch lines once their real color is known.
   function recolorOwnLines(lower) {
     const reset = (buf) => {
@@ -79541,6 +79566,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!config.enabled) return
     // Lite / emotes-only mode is fully removed — overlay always boots.
     log('Initializing...')
+    if (hostPlatform === 'twitch') seedOwnTwitchColor()
 
     // ── PHASE 2: hydrate username + muted users from prefetched local ─────
     try {

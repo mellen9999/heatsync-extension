@@ -1700,7 +1700,7 @@ const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chat
 
 // Subset of UI_SYNC_BLOCKLIST that is genuinely per-device UI state, not a
 // preference — platformFilters is keyed by this device's own multichat tab
-// ids (§ src/multichat/main.js loadPlatformFilters) and would be meaningless
+// ids (the retired T/K/Y view filter; stale copies must never be adopted) and would be meaningless
 // (or actively wrong) replayed onto a different device's tab layout. Never
 // sent to, or adopted from, the server ui-state channel.
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
@@ -14470,7 +14470,6 @@ function _hsBuildDbg() {
       typeof config !== 'undefined' && Array.isArray(config?.channels)
         ? config.channels.map((c) => ({ id: c.id, twitch: c.twitch, kick: c.kick, youtube: c.youtube }))
         : 'no config.channels',
-    platformFilters: typeof platformFilters !== 'undefined' ? platformFilters : null,
     kickResolved: kickResolvedSample,
     kickPendingLookups: kickPending,
   }
@@ -14834,7 +14833,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         const ircMsgs = tw && typeof irc !== 'undefined' ? irc?.getMessages(tw) || [] : []
         const kickMsgs = kk && typeof kickChat !== 'undefined' ? kickChat?.getMessages(kk) || [] : []
         const ytMsgs = typeof channelYtMessages !== 'undefined' ? channelYtMessages.get(id) || [] : []
-        const filt = typeof getPlatformFilter === 'function' ? getPlatformFilter(id) : null
         const out = {
           id,
           ch_twitch: tw,
@@ -14842,7 +14840,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
           ircMsgs_len: ircMsgs.length,
           kickMsgs_len: kickMsgs.length,
           ytMsgs_len: ytMsgs.length,
-          filt,
           ircTimes: ircMsgs.slice(-3).map((m) => ({ u: m.user, t: m.time, txt: (m.text || '').slice(0, 30) })),
           ytTimes: ytMsgs.slice(-3).map((m) => ({ u: m.user, t: m.time, txt: (m.text || '').slice(0, 30) })),
           ircHidden: ircMsgs.filter((m) => m?.hidden).length,
@@ -14935,8 +14932,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         const autoYt = typeof channelYtMessages !== 'undefined' ? channelYtMessages.get('__live_yt_auto__') || [] : []
         // per-channel tabs no longer merge __live_yt_auto__ (mirrors renderMessages — bleed fix)
         const ytAutoMerged = false
-        const filt = typeof getPlatformFilter === 'function' ? getPlatformFilter(id) : null
-        const fmInput = [filt?.twitch ? ircMsgs : [], filt?.kick ? kickMsgs : [], filt?.youtube ? ytMsgs : []]
+        const fmInput = [ircMsgs, kickMsgs, ytMsgs]
         const merged = typeof fairMerge === 'function' ? fairMerge(fmInput) : []
         const out = {
           id,
@@ -14947,7 +14943,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
           ytMsgs_len: ytMsgs.length,
           autoYt_len: autoYt.length,
           ytAutoMerged,
-          filt,
           fmInputLens: fmInput.map((s) => s.length),
           merged_len: merged.length,
           mergedSampleTop: merged
@@ -15025,7 +15020,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3c4b4265de43' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '92a79c8fac67' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16518,73 +16513,6 @@ function youtubeModErrorMessage(err) {
 }
 
 
-// --- multichat/tab-messages.js ---
-// tab-messages.js — the single source of truth for WHICH platform message
-// arrays a chat tab renders, given the per-tab T/K/Y source filter.
-//
-// No import/export: concatenated into the multichat-<platform>.js bundle (see
-// build.js MULTICHAT_MODULES) as plain top-level functions, same as
-// send-targets.js. Tested in isolation via tests/tab-messages.test.js.
-//
-// Why this exists: the live/channel tabs used to inline
-// `fairMerge([filt.twitch?a:[], filt.kick?b:[], filt.youtube?c:[]])`. On a page
-// where a tab's ONLY populated source is filtered off (e.g. a bare youtube.com
-// watch page with the Y filter hidden), that silently produced an EMPTY merge —
-// a dead, blank panel with no hint why. That exact failure mode swallowed a full
-// debugging night. Routing every tab through selectTabSources() makes the
-// distinction explicit: `hiddenByFilter` lets callers show an honest, actionable
-// empty state ("N messages hidden — show all") instead of a silent blank, and a
-// filter can never make a tab look broken.
-
-/**
- * @param {{twitch?: any[], kick?: any[], youtube?: any[]}} sources
- *   The three platform message arrays for a tab (any may be empty/absent).
- * @param {{twitch?: boolean, kick?: boolean, youtube?: boolean}|null|undefined} filter
- *   The tab's platform filter; a key that is absent/undefined counts as ON
- *   (matches getPlatformFilter's `!== false` default), so a tab with no filter
- *   config behaves exactly as before this module existed.
- * @returns {{
- *   included: any[][],           // arrays to hand to fairMerge (filtered)
- *   hiddenByFilter: boolean,     // messages exist but the filter excluded ALL of them
- *   hiddenCount: number,         // how many messages the filter is hiding
- *   filter: {twitch: boolean, kick: boolean, youtube: boolean}, // resolved (defaults applied)
- *   availablePlatforms: Array<'twitch'|'kick'|'youtube'>,  // platforms that HAVE messages
- * }}
- */
-function selectTabSources(sources, filter) {
-  const twitch = Array.isArray(sources?.twitch) ? sources.twitch : []
-  const kick = Array.isArray(sources?.kick) ? sources.kick : []
-  const youtube = Array.isArray(sources?.youtube) ? sources.youtube : []
-
-  const f = {
-    twitch: filter?.twitch !== false,
-    kick: filter?.kick !== false,
-    youtube: filter?.youtube !== false,
-  }
-
-  const included = [f.twitch ? twitch : [], f.kick ? kick : [], f.youtube ? youtube : []]
-
-  const total = twitch.length + kick.length + youtube.length
-  const shown = (f.twitch ? twitch.length : 0) + (f.kick ? kick.length : 0) + (f.youtube ? youtube.length : 0)
-  const hiddenCount = total - shown
-
-  const availablePlatforms = []
-  if (twitch.length) availablePlatforms.push('twitch')
-  if (kick.length) availablePlatforms.push('kick')
-  if (youtube.length) availablePlatforms.push('youtube')
-
-  return {
-    included,
-    // There ARE messages for this tab, but the active filter excluded every one
-    // of them — the caller must render an actionable notice, never a blank panel.
-    hiddenByFilter: total > 0 && shown === 0,
-    hiddenCount,
-    filter: f,
-    availablePlatforms,
-  }
-}
-
-
 // --- multichat/x-glyph.js ---
 // x-glyph.js — THE close glyph. Every dismiss × in the overlay is this one thick
 // svg cross (white on black, reverse on hover/active — the .hs-x rule in
@@ -17839,8 +17767,7 @@ function injectStyles() {
       --hs-resize-grab: 4px;
     }
     /* Tab bar - positioned at top of chat via render injection.
-       Three flex sections (no-wrap outer): channel tabs fill left, platfilter
-       sits center, util buttons pinned right. Channel-tabs section wraps
+       Two flex sections (no-wrap outer): channel tabs fill left, util buttons pinned right. Channel-tabs section wraps
        INTERNALLY when overflowing — no orphan util-only row, no right-side
        gap. align-items:flex-start so right cluster sticks to first tab row
        when channels wrap to multiple rows. */
@@ -18036,8 +17963,8 @@ function injectStyles() {
       gap: 0;
       align-items: stretch;
     }
-    /* Right-side cluster — wraps util-row + platfilter into a column.
-       Horizontal mode: util on top, pf below (under util). Pinned to right
+    /* Right-side cluster — wraps the util-row.
+       Horizontal mode: pinned to right
        of channel tabs. Vertical mode (left/right) override below. */
     .hs-mc-right-cluster {
       display: flex;
@@ -18050,7 +17977,7 @@ function injectStyles() {
        so all 14+ buttons (channel tabs + util + pf) flow as one wrapping
        stream and pack into the minimum number of rows. With the outer
        tabbar set to flex-wrap:wrap and the four wrappers (.hs-mc-tabs-
-       scroll, .hs-mc-right-cluster, .hs-mc-util-row, #hs-mc-platfilter)
+       scroll, .hs-mc-right-cluster, .hs-mc-util-row)
        on display:contents, every button becomes a direct flex child of
        #hs-mc-tabbar in DOM order. No more orphan empty space next to
        channel-tab rows that wrapped past the right cluster's height —
@@ -18083,23 +18010,11 @@ function injectStyles() {
     body.hs-tabs-top .hs-mc-right-cluster,
     body.hs-tabs-bottom .hs-mc-right-cluster,
     body.hs-tabs-top .hs-mc-util-row,
-    body.hs-tabs-bottom .hs-mc-util-row,
-    body.hs-tabs-top #hs-mc-platfilter,
-    body.hs-tabs-bottom #hs-mc-platfilter {
+    body.hs-tabs-bottom .hs-mc-util-row {
       display: contents;
     }
-    /* Once dissolved, pf buttons are inline siblings of channel tabs +
-       util buttons. Default flex:1 1 0 (sized within the pf cluster)
-       would let them grow absurdly here, so pin to fixed 18px squares
-       like every other util button. */
-    body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,
-    body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn {
-      flex: 0 0 18px !important;
-      width: 18px !important;
-      max-width: 18px !important;
-    }
     /* Vertical mode: util-row becomes a real wrapping row of squares pinned
-       to the bottom of the column, just below the platfilter — no vertical
+       to the bottom of the column, no vertical
        stacking, takes only the height it needs. */
     .hs-tabs-left .hs-mc-util-row,
     .hs-tabs-right .hs-mc-util-row {
@@ -18112,11 +18027,10 @@ function injectStyles() {
       justify-content: center !important;
       flex: 0 0 auto !important;
     }
-    /* Util buttons (C, T, F-, F+, ⚙) AND platfilter buttons (T, K, Y) —
+    /* Util buttons (C, T, F-, F+, ⚙) —
        btop-style packed squares: 18×18, tight border, share borders with the
        -1px right margin so the strip reads as a single segmented control. */
-    .hs-mc-util-btn,
-    .hs-mc-pf-btn {
+    .hs-mc-util-btn {
       width: 18px !important;
       height: 18px !important;
       min-width: 18px !important;
@@ -18141,8 +18055,7 @@ function injectStyles() {
       font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
     }
     /* Last button in each cluster keeps its own right border (no overlap target) */
-    .hs-mc-util-btn:last-child,
-    .hs-mc-pf-btn:last-child {
+    .hs-mc-util-btn:last-child {
       margin-right: 0 !important;
     }
     .hs-mc-util-btn {
@@ -22320,112 +22233,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       color: #000000;
       outline: none;
     }
-    /* Per-tab platform filter toggles (T/K/Y). Sits AFTER the util cluster
-       (DOM order). Horizontal mode: tight content-sized strip on far right.
-       Vertical mode: full column width row below util. */
-    #hs-mc-platfilter {
-      display: flex;
-      flex: 0 0 auto;
-      /* Each button owns a COMPLETE box, same as the composer send chips.
-         This used to be a segmented control (gap:0, margin-left:-1px,
-         align-items:stretch) so neighbours shared one border line — which
-         reads as T and K missing their right edge, and stretch merged the
-         top edge into the row above. Two clusters of the same control now
-         look the same in both places. */
-      gap: 2px;
-      align-items: center;
-      margin-left: 0;
-    }
-    #hs-mc-platfilter:empty { display: none; margin: 0; }
-    #hs-mc-platfilter .hs-mc-pf-btn {
-      flex: 0 0 18px !important;
-      width: 18px !important;
-      min-width: 18px !important;
-      max-width: 18px !important;
-    }
-    /* Keep every T/K/Y a COMPLETE colored box in the dissolved horizontal layout.
-       In top/bottom tabs #hs-mc-platfilter becomes display:contents (02-tab-bar),
-       which drops this container's gap and re-exposes the util cluster's
-       margin:-1px — that collapses adjacent platform-colored borders into one
-       shared line, so T/K read as missing their right edge (grey util buttons
-       hide it; colored ones can't). Pin a real right-gap on the button itself so
-       the separation survives the dropped container gap. */
-    body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,
-    body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn {
-      margin: 0 2px 0 0 !important;
-    }
-    /* Vertical mode: platfilter spans full column width, buttons share row */
-    .hs-tabs-right #hs-mc-platfilter,
-    .hs-tabs-left #hs-mc-platfilter {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      gap: 2px;
-      width: 100%;
-      box-sizing: border-box;
-      margin-left: 0;
-      flex: 0 0 auto;
-    }
-    .hs-tabs-right #hs-mc-platfilter .hs-mc-pf-btn,
-    .hs-tabs-left #hs-mc-platfilter .hs-mc-pf-btn {
-      flex: 1 1 0 !important;
-      width: auto !important;
-      min-width: 0 !important;
-      max-width: none !important;
-      height: 18px !important;
-      font-size: 13px !important;
-    }
-    .hs-mc-pf-btn {
-      background: transparent;
-      border: 1px solid;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      /* Explicit height: with align-items:center the button no longer takes
-         its height from the row, so it needs its own. 18px matches the
-         whisper-row grid and the vertical-mode override below. */
-      height: 18px;
-      padding: 0 4px;
-      cursor: pointer;
-      font-family: inherit;
-      line-height: 1;
-      box-sizing: border-box;
-      min-width: 0;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    /* ON state — OUTLINE: platform-colored border + letter on transparent.
-       Deliberately distinct from the composer's FILLED send chips — outline
-       = what you SEE, fill = where you SEND. This styling split (plus
-       location) is what disambiguates the twin T K Y clusters now that the
-       'show:'/'send:' text labels are gone. */
-    .hs-mc-pf-btn.hs-mc-pf-twitch { border-color: var(--hs-plat-twitch) !important; background: transparent !important; color: var(--hs-plat-twitch) !important; }
-    .hs-mc-pf-btn.hs-mc-pf-kick { border-color: var(--hs-plat-kick) !important; background: transparent !important; color: var(--hs-plat-kick) !important; }
-    .hs-mc-pf-btn.hs-mc-pf-youtube {
-      border-color: var(--hs-plat-youtube) !important;
-      background: transparent !important;
-      color: var(--hs-plat-youtube) !important;
-    }
-    /* OFF state — dim border + dim letter; the cue is losing the platform
-       color entirely. */
-    .hs-mc-pf-btn.off {
-      background: transparent !important;
-      color: var(--hs-border) !important;
-      border-color: var(--hs-border) !important;
-    }
-    .hs-mc-pf-btn:hover,
-    .hs-mc-pf-btn:active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
-    .hs-mc-pf-btn.off:hover,
-    .hs-mc-pf-btn.off:active {
-      background: #fff !important;
-      color: #000 !important;
-      border-color: #fff !important;
-    }
-
     /* Send-target toggles — one square per linked platform, in the edit-channel
-       form (showEditChannelForm). Same outline look as the tab-strip filter. */
+       form (showEditChannelForm). Outline look: platform color on black. */
     .hs-mc-st-btn {
       background: transparent;
       border: 1px solid;
@@ -24446,9 +24255,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
        centered. Their text origin math always lands on an integer pixel
        because both inner width and glyph width are even. */
     .hs-tabs-right .hs-mc-util-btn,
-    .hs-tabs-right .hs-mc-pf-btn,
-    .hs-tabs-left .hs-mc-util-btn,
-    .hs-tabs-left .hs-mc-pf-btn {
+    .hs-tabs-left .hs-mc-util-btn {
       text-align: center !important;
     }
     /* Vertical-tabs override for util buttons (C/T/F-/F+/⚙): the .hs-tabs-
@@ -24465,31 +24272,13 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       flex: 0 0 14px !important;
       margin: 0 -1px 0 0 !important;
     }
-    /* Right-cluster (util-row + platfilter) wraps both rows. In vertical mode
+    /* Right-cluster (util-row) wraps its rows. In vertical mode
        the tabbar's align-items:flex-start collapses it to content width, so
        force full tabbar width so the rows themselves can stretch to the edge. */
     .hs-tabs-right .hs-mc-right-cluster,
     .hs-tabs-left .hs-mc-right-cluster {
       width: 100% !important;
       align-self: stretch !important;
-    }
-    /* Platfilter (T/K/Y) in vertical mode: stretch each button to fill its
-       row (3 buttons share the 90px column width). */
-    .hs-tabs-right .hs-mc-pf-btn,
-    .hs-tabs-left .hs-mc-pf-btn {
-      flex: 1 1 0 !important;
-      width: auto !important;
-      min-width: 0 !important;
-      max-width: none !important;
-      padding: 0 !important;
-      margin: 0 -1px 0 0 !important;
-    }
-    .hs-tabs-right #hs-mc-platfilter,
-    .hs-tabs-left #hs-mc-platfilter {
-      display: flex !important;
-      flex-direction: row !important;
-      width: 100% !important;
-      flex: 0 0 auto !important;
     }
     .hs-tabs-right .hs-mc-tabs-scroll {
       display: flex;
@@ -76005,12 +75794,6 @@ function removeChannel(tabId) {
     ytSubscribedUrls.delete(tabId)
   }
 
-  // Drop per-tab platform filter state so it can't leak across channel adds/removes
-  if (platformFilters?.[tabId]) {
-    delete platformFilters[tabId]
-    saveUiSetting('platformFilters', platformFilters)
-  }
-
   updateTabBar()
   if (currentTab === tabId) switchTab('live')
 }
@@ -76323,11 +76106,6 @@ function showEditChannelForm(tabId) {
         // id migration, so its queued drip would never flush.
         clearYtPace(tabId)
         ytSubscribe(newId, ytVal)
-      }
-      if (platformFilters?.[tabId]) {
-        platformFilters[newId] = platformFilters[tabId]
-        delete platformFilters[tabId]
-        saveUiSetting('platformFilters', platformFilters)
       }
       _dropTabCache(tabId)
       ch.id = newId
@@ -78516,9 +78294,6 @@ const STORAGE_KEY = 'heatsync_multichat'
   // entries with a `cw` sub-shape); _mcStorageListener's generic local-key
   // loop keeps the cache + visible pills coherent cross-tab.
 
-  // Per-tab platform filters: { [tabId]: { twitch, kick, youtube } }, defaults all true
-  let platformFilters = {}
-
   // Channel point redeem title cache: rewardId → { title, cost }
   const redeemTitleMap = new Map()
 
@@ -79843,20 +79618,6 @@ const STORAGE_KEY = 'heatsync_multichat'
       const synced = await browser.storage.sync.get('ui_settings')
       const dirty = synced.ui_settings || {}
       const overflow = {}
-      if (dirty.platformFilters && typeof dirty.platformFilters === 'object' && !Array.isArray(dirty.platformFilters)) {
-        // Shape-validate each entry: { twitch?: bool, kick?: bool, youtube?: bool }
-        const safe = {}
-        for (const [id, val] of Object.entries(dirty.platformFilters)) {
-          if (!id || typeof id !== 'string' || id.length > 128) continue
-          if (!val || typeof val !== 'object' || Array.isArray(val)) continue
-          const e = {}
-          if (typeof val.twitch === 'boolean') e.twitch = val.twitch
-          if (typeof val.kick === 'boolean') e.kick = val.kick
-          if (typeof val.youtube === 'boolean') e.youtube = val.youtube
-          if (Object.keys(e).length) safe[id] = e
-        }
-        if (Object.keys(safe).length) overflow.platform_filters = safe
-      }
       if (typeof dirty.keywordHighlights === 'string' && dirty.keywordHighlights.length <= 65536) {
         overflow.keyword_highlights = dirty.keywordHighlights
       }
@@ -81399,7 +81160,6 @@ const STORAGE_KEY = 'heatsync_multichat'
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="pop out chat to standalone window" style="display:none">\u26f6</button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="subscribe \u2014 support this channel" style="display:none">$</button>
         </div>
-        <div id="hs-mc-platfilter"></div>
       </div>
       <div id="hs-mc-subrow" role="tablist" aria-label="views" hidden></div>
     `
@@ -83538,103 +83298,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
   }
 
-  // Platform filters — per-tab toggle to mute Twitch/Kick/YT messages.
-  // Persisted to chrome.storage.local (overflow bucket); never enters sync.
-  // Self-prunes here: only keep entries for tabs this user actually has now.
-  async function loadPlatformFilters() {
-    try {
-      const overflow = await cachedUiOverflow()
-      let stored = overflow.platform_filters
-      if (!stored || typeof stored !== 'object' || Array.isArray(stored)) {
-        // One-shot migration: pull from sync if a legacy install still has it.
-        const legacy = await cachedUiSettings()
-        if (legacy.ui_settings?.platformFilters && typeof legacy.ui_settings.platformFilters === 'object') {
-          stored = legacy.ui_settings.platformFilters
-          browser.storage.local.set({ platform_filters: stored }).catch(() => {})
-        }
-      }
-      if (stored && typeof stored === 'object') {
-        // Drop entries for tab IDs we no longer have — bounded growth.
-        const knownIds = new Set((config.channels || []).map((c) => c.id))
-        const pruned = {}
-        for (const [id, val] of Object.entries(stored)) {
-          if (knownIds.has(id) && val && typeof val === 'object') pruned[id] = val
-        }
-        platformFilters = pruned
-      }
-    } catch {}
-  }
-
-  function getPlatformFilter(tabId) {
-    const f = platformFilters[tabId] || {}
-    return { twitch: f.twitch !== false, kick: f.kick !== false, youtube: f.youtube !== false }
-  }
-
-  function togglePlatformFilter(tabId, plat) {
-    const f = getPlatformFilter(tabId)
-    f[plat] = !f[plat]
-    platformFilters[tabId] = f
-    saveUiSetting('platformFilters', platformFilters)
-  }
-
-  function isPlatformFilterTab(tabId) {
-    return tabId === 'live' || config.channels.some((c) => c.id === tabId)
-  }
-
-  function renderPlatformFilterButtons() {
-    const group = document.getElementById('hs-mc-platfilter')
-    if (!group) return
-    while (group.firstChild) group.removeChild(group.firstChild)
-    const tab = currentTab
-    if (!isPlatformFilterTab(tab)) return // empty container hides via :empty CSS
-
-    // Determine which platforms apply to this tab. Read config.channels
-    // directly (cached lookup can lag a beat behind mutations) and treat an
-    // unknown tab as no-platforms — never offer filters a tab can't use.
-    let hasTwitch = true,
-      hasKick = true,
-      hasYt = true
-    if (tab !== 'live') {
-      const ch = config.channels.find((c) => c.id === tab)
-      if (!ch) return
-      hasTwitch = !!ch.twitch
-      hasKick = !!ch.kick
-      hasYt = !!ch.youtube
-    }
-
-    // Single-platform tab — filter is degenerate, leave container empty
-    const activePlatforms = [hasTwitch, hasKick, hasYt].filter(Boolean).length
-    if (activePlatforms < 2) return
-
-    const filt = getPlatformFilter(tab)
-    const meta = [
-      { key: 'twitch', label: 'T', show: hasTwitch },
-      { key: 'kick', label: 'K', show: hasKick },
-      { key: 'youtube', label: 'Y', show: hasYt },
-    ]
-
-    // No text label — the twin T K Y clusters are told apart by style +
-    // place: this view filter is OUTLINE and lives in the tab strip; send
-    // chips are FILLED and sit at the composer. Tooltips carry the words.
-    for (const p of meta) {
-      if (!p.show) continue
-      const btn = document.createElement('button')
-      btn.className = `hs-mc-pf-btn hs-mc-pf-${p.key}`
-      btn.dataset.platform = p.key
-      btn.classList.toggle('off', !filt[p.key])
-      btn.textContent = p.label
-      btn.title = `${(filt[p.key] ? 'Hide ' : 'Show ') + p.key} messages`
-      btn.addEventListener('click', () => {
-        togglePlatformFilter(currentTab, p.key)
-        const on = getPlatformFilter(currentTab)[p.key]
-        btn.classList.toggle('off', !on)
-        btn.title = `${(on ? 'Hide ' : 'Show ') + p.key} messages`
-        renderMessages(currentTab)
-      })
-      group.appendChild(btn)
-    }
-  }
-
   // Tab subsystems — a disabled subsystem hides its tab affordance too
   const _TAB_SUBSYSTEM = { feed: 'feed', whispers: 'whispers', mentions: 'mentions' }
   function applyHiddenTabs() {
@@ -84562,9 +84225,6 @@ const STORAGE_KEY = 'heatsync_multichat'
         /* context invalidated */
       }
     }
-
-    // Refresh platform filter buttons for the new tab
-    renderPlatformFilterButtons()
 
     // Update tab bar active state
     if (tabBarElement) {
@@ -86845,12 +86505,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (typeof predViewOpen === 'function' && predViewOpen()) return true
     if (isScrolledUp || currentTab !== tabId) return false
 
-    // Platform filter: skip messages for muted platforms (single-platform tab path)
-    if (msg.platform && isPlatformFilterTab(tabId)) {
-      const k = msg.platform === 'youtube' ? 'youtube' : msg.platform
-      if (getPlatformFilter(tabId)[k] === false) return true
-    }
-
     // Content filters — hidden at render, buffers keep the message
     const _ff = _filterFlags()
     if (isMsgFiltered(msg, _ff)) return true
@@ -87561,11 +87215,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
 
     let msgs = []
-    // Set when a tab has messages but its T/K/Y filter hides ALL of them, so the
-    // empty state can say so + offer a one-click reveal instead of a dead blank
-    // panel (a filter must never make a tab look broken). See tab-messages.js.
-    let _tabFilterHidden = null
-
     if (id === 'mentions') {
       msgs = mentionsBuffer
     } else if (id === 'add') {
@@ -87606,9 +87255,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         const linkedYt = config.channels.find((ch) => (ch.twitch === curCh || ch.kick === curCh) && ch.youtube)
         if (linkedYt) ytMsgs = channelYtMessages.get(linkedYt.id) || []
       }
-      const sel = selectTabSources({ twitch: ircMsgs, kick: kickMsgs, youtube: ytMsgs }, getPlatformFilter('live'))
-      _tabFilterHidden = sel.hiddenByFilter ? sel : null
-      msgs = fairMerge(sel.included)
+      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
     } else {
       // Channel tab — merge IRC + Kick + per-channel YouTube messages
       const ch = getChannelById(id)
@@ -87624,9 +87271,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // alone. Explicitly-linked channels already get their YT via
       // channelYtMessages[id]. See [[heatsync_yt_handle_guess_bleed]].
       const ytMsgs = channelYtMessages.get(id) || []
-      const sel = selectTabSources({ twitch: ircMsgs, kick: kickMsgs, youtube: ytMsgs }, getPlatformFilter(id))
-      _tabFilterHidden = sel.hiddenByFilter ? sel : null
-      msgs = fairMerge(sel.included)
+      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
     }
 
     // Merge follow stream events into channel + live tabs (went live,
@@ -87712,32 +87357,6 @@ const STORAGE_KEY = 'heatsync_multichat'
         empty.appendChild(sub)
         empty.appendChild(fillBtn)
         // (falls through to the add-channel button appended below)
-        empty.appendChild(btn)
-      } else if (_tabFilterHidden) {
-        // Messages exist but the tab's T/K/Y filter is hiding every one of them.
-        // Say so + offer a one-click reveal — NEVER a silent blank that reads as
-        // "no chat" (that exact failure swallowed a debugging night).
-        const plats = _tabFilterHidden.availablePlatforms.map((p) => p.toUpperCase()).join('/')
-        const n = _tabFilterHidden.hiddenCount
-        const line = document.createElement('div')
-        line.style.cssText = 'opacity:.75;margin-bottom:10px'
-        line.textContent = `${n} ${plats} message${n === 1 ? '' : 's'} hidden by filter`
-        const btn = document.createElement('button')
-        btn.style.cssText =
-          'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
-        btn.textContent = 'show all'
-        try {
-          cleanup.addEventListener(btn, 'click', () => {
-            try {
-              for (const p of _tabFilterHidden.availablePlatforms) {
-                if (!getPlatformFilter(id)[p]) togglePlatformFilter(id, p)
-              }
-              renderPlatformFilterButtons()
-              renderMessages(id)
-            } catch (_) {}
-          })
-        } catch (_) {}
-        empty.appendChild(line)
         empty.appendChild(btn)
       } else if (isTabConnecting(id)) {
         // Not wired up yet — say so rather than claiming an empty chat we
@@ -89878,13 +89497,6 @@ const STORAGE_KEY = 'heatsync_multichat'
           if (currentTab === 'settings') renderSettingsTab()
         }
       }
-      if (changes.platform_filters) {
-        const v = changes.platform_filters.newValue
-        if (v && typeof v === 'object' && !Array.isArray(v)) {
-          platformFilters = v
-          renderMessages(currentTab)
-        }
-      }
       if (changes.chat_filter_rules) {
         const v = changes.chat_filter_rules.newValue
         if (typeof v === 'string') {
@@ -90656,7 +90268,6 @@ const STORAGE_KEY = 'heatsync_multichat'
         loadChatPosition(),
         loadLivePlatformMap(),
         loadAllSettings(),
-        loadPlatformFilters(),
         _blockedEmotesP,
         _emotesP,
         loadSenderEmoteSets(),

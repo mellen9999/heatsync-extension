@@ -724,12 +724,6 @@ function removeChannel(tabId) {
     ytSubscribedUrls.delete(tabId)
   }
 
-  // Drop per-tab platform filter state so it can't leak across channel adds/removes
-  if (platformFilters?.[tabId]) {
-    delete platformFilters[tabId]
-    saveUiSetting('platformFilters', platformFilters)
-  }
-
   updateTabBar()
   if (currentTab === tabId) switchTab('live')
 }
@@ -1042,11 +1036,6 @@ function showEditChannelForm(tabId) {
         // id migration, so its queued drip would never flush.
         clearYtPace(tabId)
         ytSubscribe(newId, ytVal)
-      }
-      if (platformFilters?.[tabId]) {
-        platformFilters[newId] = platformFilters[tabId]
-        delete platformFilters[tabId]
-        saveUiSetting('platformFilters', platformFilters)
       }
       _dropTabCache(tabId)
       ch.id = newId

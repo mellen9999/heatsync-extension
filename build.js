@@ -772,7 +772,6 @@ const MULTICHAT_MODULES = [
   'tab-registry.js',
   'kick-native-tap.js',
   'send-targets.js',
-  'tab-messages.js',
   'x-glyph.js',
   'pane-panel.js',
   'notifs.js',

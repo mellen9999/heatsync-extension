@@ -504,9 +504,6 @@
   // entries with a `cw` sub-shape); _mcStorageListener's generic local-key
   // loop keeps the cache + visible pills coherent cross-tab.
 
-  // Per-tab platform filters: { [tabId]: { twitch, kick, youtube } }, defaults all true
-  let platformFilters = {}
-
   // Channel point redeem title cache: rewardId → { title, cost }
   const redeemTitleMap = new Map()
 
@@ -1831,20 +1828,6 @@
       const synced = await browser.storage.sync.get('ui_settings')
       const dirty = synced.ui_settings || {}
       const overflow = {}
-      if (dirty.platformFilters && typeof dirty.platformFilters === 'object' && !Array.isArray(dirty.platformFilters)) {
-        // Shape-validate each entry: { twitch?: bool, kick?: bool, youtube?: bool }
-        const safe = {}
-        for (const [id, val] of Object.entries(dirty.platformFilters)) {
-          if (!id || typeof id !== 'string' || id.length > 128) continue
-          if (!val || typeof val !== 'object' || Array.isArray(val)) continue
-          const e = {}
-          if (typeof val.twitch === 'boolean') e.twitch = val.twitch
-          if (typeof val.kick === 'boolean') e.kick = val.kick
-          if (typeof val.youtube === 'boolean') e.youtube = val.youtube
-          if (Object.keys(e).length) safe[id] = e
-        }
-        if (Object.keys(safe).length) overflow.platform_filters = safe
-      }
       if (typeof dirty.keywordHighlights === 'string' && dirty.keywordHighlights.length <= 65536) {
         overflow.keyword_highlights = dirty.keywordHighlights
       }
@@ -3387,7 +3370,6 @@
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="pop out chat to standalone window" style="display:none">\u26f6</button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="subscribe \u2014 support this channel" style="display:none">$</button>
         </div>
-        <div id="hs-mc-platfilter"></div>
       </div>
       <div id="hs-mc-subrow" role="tablist" aria-label="views" hidden></div>
     `
@@ -5526,103 +5508,6 @@
     }
   }
 
-  // Platform filters — per-tab toggle to mute Twitch/Kick/YT messages.
-  // Persisted to chrome.storage.local (overflow bucket); never enters sync.
-  // Self-prunes here: only keep entries for tabs this user actually has now.
-  async function loadPlatformFilters() {
-    try {
-      const overflow = await cachedUiOverflow()
-      let stored = overflow.platform_filters
-      if (!stored || typeof stored !== 'object' || Array.isArray(stored)) {
-        // One-shot migration: pull from sync if a legacy install still has it.
-        const legacy = await cachedUiSettings()
-        if (legacy.ui_settings?.platformFilters && typeof legacy.ui_settings.platformFilters === 'object') {
-          stored = legacy.ui_settings.platformFilters
-          browser.storage.local.set({ platform_filters: stored }).catch(() => {})
-        }
-      }
-      if (stored && typeof stored === 'object') {
-        // Drop entries for tab IDs we no longer have — bounded growth.
-        const knownIds = new Set((config.channels || []).map((c) => c.id))
-        const pruned = {}
-        for (const [id, val] of Object.entries(stored)) {
-          if (knownIds.has(id) && val && typeof val === 'object') pruned[id] = val
-        }
-        platformFilters = pruned
-      }
-    } catch {}
-  }
-
-  function getPlatformFilter(tabId) {
-    const f = platformFilters[tabId] || {}
-    return { twitch: f.twitch !== false, kick: f.kick !== false, youtube: f.youtube !== false }
-  }
-
-  function togglePlatformFilter(tabId, plat) {
-    const f = getPlatformFilter(tabId)
-    f[plat] = !f[plat]
-    platformFilters[tabId] = f
-    saveUiSetting('platformFilters', platformFilters)
-  }
-
-  function isPlatformFilterTab(tabId) {
-    return tabId === 'live' || config.channels.some((c) => c.id === tabId)
-  }
-
-  function renderPlatformFilterButtons() {
-    const group = document.getElementById('hs-mc-platfilter')
-    if (!group) return
-    while (group.firstChild) group.removeChild(group.firstChild)
-    const tab = currentTab
-    if (!isPlatformFilterTab(tab)) return // empty container hides via :empty CSS
-
-    // Determine which platforms apply to this tab. Read config.channels
-    // directly (cached lookup can lag a beat behind mutations) and treat an
-    // unknown tab as no-platforms — never offer filters a tab can't use.
-    let hasTwitch = true,
-      hasKick = true,
-      hasYt = true
-    if (tab !== 'live') {
-      const ch = config.channels.find((c) => c.id === tab)
-      if (!ch) return
-      hasTwitch = !!ch.twitch
-      hasKick = !!ch.kick
-      hasYt = !!ch.youtube
-    }
-
-    // Single-platform tab — filter is degenerate, leave container empty
-    const activePlatforms = [hasTwitch, hasKick, hasYt].filter(Boolean).length
-    if (activePlatforms < 2) return
-
-    const filt = getPlatformFilter(tab)
-    const meta = [
-      { key: 'twitch', label: 'T', show: hasTwitch },
-      { key: 'kick', label: 'K', show: hasKick },
-      { key: 'youtube', label: 'Y', show: hasYt },
-    ]
-
-    // No text label — the twin T K Y clusters are told apart by style +
-    // place: this view filter is OUTLINE and lives in the tab strip; send
-    // chips are FILLED and sit at the composer. Tooltips carry the words.
-    for (const p of meta) {
-      if (!p.show) continue
-      const btn = document.createElement('button')
-      btn.className = `hs-mc-pf-btn hs-mc-pf-${p.key}`
-      btn.dataset.platform = p.key
-      btn.classList.toggle('off', !filt[p.key])
-      btn.textContent = p.label
-      btn.title = `${(filt[p.key] ? 'Hide ' : 'Show ') + p.key} messages`
-      btn.addEventListener('click', () => {
-        togglePlatformFilter(currentTab, p.key)
-        const on = getPlatformFilter(currentTab)[p.key]
-        btn.classList.toggle('off', !on)
-        btn.title = `${(on ? 'Hide ' : 'Show ') + p.key} messages`
-        renderMessages(currentTab)
-      })
-      group.appendChild(btn)
-    }
-  }
-
   // Tab subsystems — a disabled subsystem hides its tab affordance too
   const _TAB_SUBSYSTEM = { feed: 'feed', whispers: 'whispers', mentions: 'mentions' }
   function applyHiddenTabs() {
@@ -6550,9 +6435,6 @@
         /* context invalidated */
       }
     }
-
-    // Refresh platform filter buttons for the new tab
-    renderPlatformFilterButtons()
 
     // Update tab bar active state
     if (tabBarElement) {
@@ -8833,12 +8715,6 @@
     if (typeof predViewOpen === 'function' && predViewOpen()) return true
     if (isScrolledUp || currentTab !== tabId) return false
 
-    // Platform filter: skip messages for muted platforms (single-platform tab path)
-    if (msg.platform && isPlatformFilterTab(tabId)) {
-      const k = msg.platform === 'youtube' ? 'youtube' : msg.platform
-      if (getPlatformFilter(tabId)[k] === false) return true
-    }
-
     // Content filters — hidden at render, buffers keep the message
     const _ff = _filterFlags()
     if (isMsgFiltered(msg, _ff)) return true
@@ -9549,11 +9425,6 @@
     }
 
     let msgs = []
-    // Set when a tab has messages but its T/K/Y filter hides ALL of them, so the
-    // empty state can say so + offer a one-click reveal instead of a dead blank
-    // panel (a filter must never make a tab look broken). See tab-messages.js.
-    let _tabFilterHidden = null
-
     if (id === 'mentions') {
       msgs = mentionsBuffer
     } else if (id === 'add') {
@@ -9594,9 +9465,7 @@
         const linkedYt = config.channels.find((ch) => (ch.twitch === curCh || ch.kick === curCh) && ch.youtube)
         if (linkedYt) ytMsgs = channelYtMessages.get(linkedYt.id) || []
       }
-      const sel = selectTabSources({ twitch: ircMsgs, kick: kickMsgs, youtube: ytMsgs }, getPlatformFilter('live'))
-      _tabFilterHidden = sel.hiddenByFilter ? sel : null
-      msgs = fairMerge(sel.included)
+      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
     } else {
       // Channel tab — merge IRC + Kick + per-channel YouTube messages
       const ch = getChannelById(id)
@@ -9612,9 +9481,7 @@
       // alone. Explicitly-linked channels already get their YT via
       // channelYtMessages[id]. See [[heatsync_yt_handle_guess_bleed]].
       const ytMsgs = channelYtMessages.get(id) || []
-      const sel = selectTabSources({ twitch: ircMsgs, kick: kickMsgs, youtube: ytMsgs }, getPlatformFilter(id))
-      _tabFilterHidden = sel.hiddenByFilter ? sel : null
-      msgs = fairMerge(sel.included)
+      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
     }
 
     // Merge follow stream events into channel + live tabs (went live,
@@ -9700,32 +9567,6 @@
         empty.appendChild(sub)
         empty.appendChild(fillBtn)
         // (falls through to the add-channel button appended below)
-        empty.appendChild(btn)
-      } else if (_tabFilterHidden) {
-        // Messages exist but the tab's T/K/Y filter is hiding every one of them.
-        // Say so + offer a one-click reveal — NEVER a silent blank that reads as
-        // "no chat" (that exact failure swallowed a debugging night).
-        const plats = _tabFilterHidden.availablePlatforms.map((p) => p.toUpperCase()).join('/')
-        const n = _tabFilterHidden.hiddenCount
-        const line = document.createElement('div')
-        line.style.cssText = 'opacity:.75;margin-bottom:10px'
-        line.textContent = `${n} ${plats} message${n === 1 ? '' : 's'} hidden by filter`
-        const btn = document.createElement('button')
-        btn.style.cssText =
-          'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
-        btn.textContent = 'show all'
-        try {
-          cleanup.addEventListener(btn, 'click', () => {
-            try {
-              for (const p of _tabFilterHidden.availablePlatforms) {
-                if (!getPlatformFilter(id)[p]) togglePlatformFilter(id, p)
-              }
-              renderPlatformFilterButtons()
-              renderMessages(id)
-            } catch (_) {}
-          })
-        } catch (_) {}
-        empty.appendChild(line)
         empty.appendChild(btn)
       } else if (isTabConnecting(id)) {
         // Not wired up yet — say so rather than claiming an empty chat we
@@ -11866,13 +11707,6 @@
           if (currentTab === 'settings') renderSettingsTab()
         }
       }
-      if (changes.platform_filters) {
-        const v = changes.platform_filters.newValue
-        if (v && typeof v === 'object' && !Array.isArray(v)) {
-          platformFilters = v
-          renderMessages(currentTab)
-        }
-      }
       if (changes.chat_filter_rules) {
         const v = changes.chat_filter_rules.newValue
         if (typeof v === 'string') {
@@ -12644,7 +12478,6 @@
         loadChatPosition(),
         loadLivePlatformMap(),
         loadAllSettings(),
-        loadPlatformFilters(),
         _blockedEmotesP,
         _emotesP,
         loadSenderEmoteSets(),

@@ -74,9 +74,7 @@
        centered. Their text origin math always lands on an integer pixel
        because both inner width and glyph width are even. */
     .hs-tabs-right .hs-mc-util-btn,
-    .hs-tabs-right .hs-mc-pf-btn,
-    .hs-tabs-left .hs-mc-util-btn,
-    .hs-tabs-left .hs-mc-pf-btn {
+    .hs-tabs-left .hs-mc-util-btn {
       text-align: center !important;
     }
     /* Vertical-tabs override for util buttons (C/T/F-/F+/⚙): the .hs-tabs-
@@ -93,31 +91,13 @@
       flex: 0 0 14px !important;
       margin: 0 -1px 0 0 !important;
     }
-    /* Right-cluster (util-row + platfilter) wraps both rows. In vertical mode
+    /* Right-cluster (util-row) wraps its rows. In vertical mode
        the tabbar's align-items:flex-start collapses it to content width, so
        force full tabbar width so the rows themselves can stretch to the edge. */
     .hs-tabs-right .hs-mc-right-cluster,
     .hs-tabs-left .hs-mc-right-cluster {
       width: 100% !important;
       align-self: stretch !important;
-    }
-    /* Platfilter (T/K/Y) in vertical mode: stretch each button to fill its
-       row (3 buttons share the 90px column width). */
-    .hs-tabs-right .hs-mc-pf-btn,
-    .hs-tabs-left .hs-mc-pf-btn {
-      flex: 1 1 0 !important;
-      width: auto !important;
-      min-width: 0 !important;
-      max-width: none !important;
-      padding: 0 !important;
-      margin: 0 -1px 0 0 !important;
-    }
-    .hs-tabs-right #hs-mc-platfilter,
-    .hs-tabs-left #hs-mc-platfilter {
-      display: flex !important;
-      flex-direction: row !important;
-      width: 100% !important;
-      flex: 0 0 auto !important;
     }
     .hs-tabs-right .hs-mc-tabs-scroll {
       display: flex;

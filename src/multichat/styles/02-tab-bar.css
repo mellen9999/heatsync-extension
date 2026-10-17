@@ -1,6 +1,5 @@
     /* Tab bar - positioned at top of chat via render injection.
-       Three flex sections (no-wrap outer): channel tabs fill left, platfilter
-       sits center, util buttons pinned right. Channel-tabs section wraps
+       Two flex sections (no-wrap outer): channel tabs fill left, util buttons pinned right. Channel-tabs section wraps
        INTERNALLY when overflowing — no orphan util-only row, no right-side
        gap. align-items:flex-start so right cluster sticks to first tab row
        when channels wrap to multiple rows. */
@@ -196,8 +195,8 @@
       gap: 0;
       align-items: stretch;
     }
-    /* Right-side cluster — wraps util-row + platfilter into a column.
-       Horizontal mode: util on top, pf below (under util). Pinned to right
+    /* Right-side cluster — wraps the util-row.
+       Horizontal mode: pinned to right
        of channel tabs. Vertical mode (left/right) override below. */
     .hs-mc-right-cluster {
       display: flex;
@@ -210,7 +209,7 @@
        so all 14+ buttons (channel tabs + util + pf) flow as one wrapping
        stream and pack into the minimum number of rows. With the outer
        tabbar set to flex-wrap:wrap and the four wrappers (.hs-mc-tabs-
-       scroll, .hs-mc-right-cluster, .hs-mc-util-row, #hs-mc-platfilter)
+       scroll, .hs-mc-right-cluster, .hs-mc-util-row)
        on display:contents, every button becomes a direct flex child of
        #hs-mc-tabbar in DOM order. No more orphan empty space next to
        channel-tab rows that wrapped past the right cluster's height —
@@ -243,23 +242,11 @@
     body.hs-tabs-top .hs-mc-right-cluster,
     body.hs-tabs-bottom .hs-mc-right-cluster,
     body.hs-tabs-top .hs-mc-util-row,
-    body.hs-tabs-bottom .hs-mc-util-row,
-    body.hs-tabs-top #hs-mc-platfilter,
-    body.hs-tabs-bottom #hs-mc-platfilter {
+    body.hs-tabs-bottom .hs-mc-util-row {
       display: contents;
     }
-    /* Once dissolved, pf buttons are inline siblings of channel tabs +
-       util buttons. Default flex:1 1 0 (sized within the pf cluster)
-       would let them grow absurdly here, so pin to fixed 18px squares
-       like every other util button. */
-    body.hs-tabs-top #hs-mc-platfilter .hs-mc-pf-btn,
-    body.hs-tabs-bottom #hs-mc-platfilter .hs-mc-pf-btn {
-      flex: 0 0 18px !important;
-      width: 18px !important;
-      max-width: 18px !important;
-    }
     /* Vertical mode: util-row becomes a real wrapping row of squares pinned
-       to the bottom of the column, just below the platfilter — no vertical
+       to the bottom of the column, no vertical
        stacking, takes only the height it needs. */
     .hs-tabs-left .hs-mc-util-row,
     .hs-tabs-right .hs-mc-util-row {
@@ -272,11 +259,10 @@
       justify-content: center !important;
       flex: 0 0 auto !important;
     }
-    /* Util buttons (C, T, F-, F+, ⚙) AND platfilter buttons (T, K, Y) —
+    /* Util buttons (C, T, F-, F+, ⚙) —
        btop-style packed squares: 18×18, tight border, share borders with the
        -1px right margin so the strip reads as a single segmented control. */
-    .hs-mc-util-btn,
-    .hs-mc-pf-btn {
+    .hs-mc-util-btn {
       width: 18px !important;
       height: 18px !important;
       min-width: 18px !important;
@@ -301,8 +287,7 @@
       font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
     }
     /* Last button in each cluster keeps its own right border (no overlap target) */
-    .hs-mc-util-btn:last-child,
-    .hs-mc-pf-btn:last-child {
+    .hs-mc-util-btn:last-child {
       margin-right: 0 !important;
     }
     .hs-mc-util-btn {

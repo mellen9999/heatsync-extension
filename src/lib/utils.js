@@ -559,7 +559,7 @@ const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chat
 
 // Subset of UI_SYNC_BLOCKLIST that is genuinely per-device UI state, not a
 // preference — platformFilters is keyed by this device's own multichat tab
-// ids (§ src/multichat/main.js loadPlatformFilters) and would be meaningless
+// ids (the retired T/K/Y view filter; stale copies must never be adopted) and would be meaningless
 // (or actively wrong) replayed onto a different device's tab layout. Never
 // sent to, or adopted from, the server ui-state channel.
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])

@@ -194,7 +194,6 @@ function _hsBuildDbg() {
       typeof config !== 'undefined' && Array.isArray(config?.channels)
         ? config.channels.map((c) => ({ id: c.id, twitch: c.twitch, kick: c.kick, youtube: c.youtube }))
         : 'no config.channels',
-    platformFilters: typeof platformFilters !== 'undefined' ? platformFilters : null,
     kickResolved: kickResolvedSample,
     kickPendingLookups: kickPending,
   }
@@ -558,7 +557,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         const ircMsgs = tw && typeof irc !== 'undefined' ? irc?.getMessages(tw) || [] : []
         const kickMsgs = kk && typeof kickChat !== 'undefined' ? kickChat?.getMessages(kk) || [] : []
         const ytMsgs = typeof channelYtMessages !== 'undefined' ? channelYtMessages.get(id) || [] : []
-        const filt = typeof getPlatformFilter === 'function' ? getPlatformFilter(id) : null
         const out = {
           id,
           ch_twitch: tw,
@@ -566,7 +564,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
           ircMsgs_len: ircMsgs.length,
           kickMsgs_len: kickMsgs.length,
           ytMsgs_len: ytMsgs.length,
-          filt,
           ircTimes: ircMsgs.slice(-3).map((m) => ({ u: m.user, t: m.time, txt: (m.text || '').slice(0, 30) })),
           ytTimes: ytMsgs.slice(-3).map((m) => ({ u: m.user, t: m.time, txt: (m.text || '').slice(0, 30) })),
           ircHidden: ircMsgs.filter((m) => m?.hidden).length,
@@ -659,8 +656,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         const autoYt = typeof channelYtMessages !== 'undefined' ? channelYtMessages.get('__live_yt_auto__') || [] : []
         // per-channel tabs no longer merge __live_yt_auto__ (mirrors renderMessages — bleed fix)
         const ytAutoMerged = false
-        const filt = typeof getPlatformFilter === 'function' ? getPlatformFilter(id) : null
-        const fmInput = [filt?.twitch ? ircMsgs : [], filt?.kick ? kickMsgs : [], filt?.youtube ? ytMsgs : []]
+        const fmInput = [ircMsgs, kickMsgs, ytMsgs]
         const merged = typeof fairMerge === 'function' ? fairMerge(fmInput) : []
         const out = {
           id,
@@ -671,7 +667,6 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
           ytMsgs_len: ytMsgs.length,
           autoYt_len: autoYt.length,
           ytAutoMerged,
-          filt,
           fmInputLens: fmInput.map((s) => s.length),
           merged_len: merged.length,
           mergedSampleTop: merged

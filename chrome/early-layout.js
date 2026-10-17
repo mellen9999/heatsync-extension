@@ -267,6 +267,17 @@ ${
   // documentElement is always present at document_start; head/body may not be.
   ;(document.head || document.documentElement).appendChild(style)
 
+  // The popout is already dark by design (black, ansi palette, white-on-black
+  // highlights). A page-recolouring dark-mode extension reads the popout's
+  // light default document as "needs darkening" and washes every chip, tab and
+  // highlight into its own greys; the lock opts the page out. The docked chat
+  // never needed it because twitch itself is dark there.
+  if (isPopout) {
+    const lock = document.createElement('meta')
+    lock.name = 'darkreader-lock'
+    ;(document.head || document.documentElement).appendChild(lock)
+  }
+
   // Apply body classes as soon as <body> exists so styles.js's body-scoped
   // rules are correct from the first frame.
   function applyBodyClasses() {

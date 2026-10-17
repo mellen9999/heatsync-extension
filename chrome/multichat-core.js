@@ -15035,7 +15035,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1d19df31c601' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6b8e460a6010' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -68391,9 +68391,38 @@ const STORAGE_KEY = 'heatsync_multichat'
   // lines sent from this panel carry no color tag, so without this your name
   // stays white until you happen to chat live. Same unauthed GQL lookup the
   // @mention colors use; anything unexpected leaves the name as it was.
+  // Twitch's own page already knows how it draws your name — including the
+  // default color it gives an account that never picked one, which no API
+  // reports. Copy what the native chat actually shows; it wins over everything
+  // else we could learn, so the panel and Twitch agree.
+  function probeNativeOwnColor(me) {
+    try {
+      const el = document.querySelector(
+        `.chat-line__message .chat-author__display-name[data-a-user="${CSS.escape(me)}"]`,
+      )
+      const c = el && getComputedStyle(el).color
+      const m = c && /^rgb\((\d+), (\d+), (\d+)\)$/.exec(c)
+      if (!m) return false
+      const hex = `#${[m[1], m[2], m[3]].map((n) => Number(n).toString(16).padStart(2, '0')).join('')}`
+      if (_isUnsetWhite(hex)) return false
+      setKnownColor(me, hex, undefined, 'twitch', true)
+      return true
+    } catch {
+      return false
+    }
+  }
+
   async function seedOwnTwitchColor() {
     const me = currentUsername
-    if (!me || _nativeTwitchColor.has(me)) return
+    if (!me) return
+    // The native chat list renders a beat after we mount: look a few times.
+    let probes = 0
+    const probe = () => {
+      if (probeNativeOwnColor(me) || ++probes >= 6) return
+      cleanup.setTimeout(probe, 2500)
+    }
+    cleanup.setTimeout(probe, 1000)
+    if (_nativeTwitchColor.has(me)) return
     // Last color this browser heard you speak with: the answer on every reload
     // after the first time you chat, and the only one for an account twitch's
     // lookup reports no color for.

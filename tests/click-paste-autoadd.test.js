@@ -45,10 +45,11 @@ describe('click-paste registers for auto-add-on-send', () => {
     expect(recentRemoteCompletions.get('GODNO')).toEqual({ url: URL_7TV, source: '7tv', zeroWidth: false })
   })
 
-  test('heatsync-source emotes stay unregistered (provider gate)', () => {
+  test("another user's heatsync emote registers, so it survives a reload", () => {
     const { recentRemoteCompletions, registerClickPasteForAutoAdd } = build()
-    registerClickPasteForAutoAdd('UploadedEmote', 'https://heatsync.org/uploads/abc.webp', 'heatsync')
-    expect(recentRemoteCompletions.size).toBe(0)
+    const url = 'https://heatsync.org/uploads/abc.webp'
+    registerClickPasteForAutoAdd('UploadedEmote', url, 'heatsync')
+    expect(recentRemoteCompletions.get('UploadedEmote')).toEqual({ url, source: 'heatsync', zeroWidth: false })
   })
 
   test('synthetic name0 overlay (no literal entry anywhere) is never registered', () => {

@@ -541,6 +541,9 @@
   "mc_tab_feed": {
     "message": "פיד"
   },
+  "mc_tab_discover": {
+    "message": "discover"
+  },
   "mc_tab_whispers": {
     "message": "whispers"
   },

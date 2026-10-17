@@ -27,7 +27,7 @@ describe('tab registry', () => {
   })
 
   test('fresh installs hide the login-walled tabs, feed stays', () => {
-    expect(api.mcDefaultHiddenTabs().sort()).toEqual(['mentions', 'modlog', 'pinned', 'whispers'])
+    expect(api.mcDefaultHiddenTabs().sort()).toEqual(['discover', 'mentions', 'modlog', 'pinned', 'whispers'])
     expect(api.mcRestorableTabs()).toContain('discover') // its own tab, restores on reload
     expect(api.mcRestorableTabs()).not.toContain('settings')
   })

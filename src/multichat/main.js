@@ -3664,9 +3664,13 @@
   // so those installs are treated as "never customised" rather than stranded
   // with a hidden feed forever.
   const LEGACY_FRESH_HIDDEN_TABS = ['pinned', 'feed', 'whispers', 'mentions', 'modlog']
-  // What a signed-in user who never touched Tabs sees hidden: pinned (opt-in)
-  // and modlog (mods only — blank noise for everyone else, so off until asked).
-  const STEADY_HIDDEN_TABS = ['pinned', 'modlog']
+  // The set stamped by the release before discover joined the list — still untouched
+  // until first login, so it must still count as "never customised".
+  const PREV_FRESH_HIDDEN_TABS = ['pinned', 'whispers', 'mentions', 'modlog']
+  // What a signed-in user who never touched Tabs sees hidden: pinned (opt-in),
+  // modlog (mods only) and discover (a destination, not a daily surface) — all
+  // off until asked, so the strip stays short.
+  const STEADY_HIDDEN_TABS = ['pinned', 'modlog', 'discover']
   let hiddenTabs = new Set(STEADY_HIDDEN_TABS)
 
   // One-time fresh-install tab hiding: background.js stamps hs_fresh_install_hidden_tabs
@@ -3709,7 +3713,7 @@
       // Either shape counts as untouched: an install stamped before feed came
       // off the list still carries the legacy set, and comparing only against
       // the current one would leave it hidden-forever instead of revealed.
-      if (matches(DEFAULT_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS))
+      if (matches(DEFAULT_HIDDEN_TABS) || matches(PREV_FRESH_HIDDEN_TABS) || matches(LEGACY_FRESH_HIDDEN_TABS))
         setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
     } catch (_) {}
   }
@@ -3755,19 +3759,22 @@
     } catch (_) {}
   }
 
-  // One-shot: mod log became off-by-default, so installs still sitting on the
-  // old default (hiddenTabs exactly ['pinned'] — what a first login stamps)
-  // get it hidden too. Exact match only: any list the user edited is left
-  // alone. Gated on _settingsHydrated and spent only after it, same as
-  // unhideFeedOnce, so a cache that never loaded can't burn the guard.
-  async function hideModlogOnce() {
+  // One-shot: mod log and discover became off-by-default, so installs still
+  // sitting on an older default (hiddenTabs exactly ['pinned'] — what a first
+  // login stamps — or ['pinned', 'modlog'] — the previous release) get them
+  // hidden too. Exact match only: any list the user edited is left alone. Gated
+  // on _settingsHydrated and spent only after it, same as unhideFeedOnce, so a
+  // cache that never loaded can't burn the guard. v2 on purpose: v1 already ran
+  // for the ['pinned'] → ['pinned', 'modlog'] step.
+  async function hideSecondaryTabsOnce() {
     try {
-      const { hs_modlog_hidden_v1 } = await browser.storage.local.get('hs_modlog_hidden_v1')
-      if (hs_modlog_hidden_v1) return
+      const { hs_secondary_tabs_hidden_v2 } = await browser.storage.local.get('hs_secondary_tabs_hidden_v2')
+      if (hs_secondary_tabs_hidden_v2) return
       if (!_settingsHydrated) return
-      browser.storage.local.set({ hs_modlog_hidden_v1: true }).catch(() => {})
+      browser.storage.local.set({ hs_secondary_tabs_hidden_v2: true }).catch(() => {})
       const cur = getSetting('hiddenTabs')
-      if (Array.isArray(cur) && cur.length === 1 && cur[0] === 'pinned') setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
+      const is = (set) => Array.isArray(cur) && cur.length === set.length && set.every((id) => cur.includes(id))
+      if (is(['pinned']) || is(['pinned', 'modlog'])) setSetting('hiddenTabs', STEADY_HIDDEN_TABS)
     } catch (_) {}
   }
 
@@ -12672,7 +12679,7 @@
     // Then hand the feed tab back to installs stamped while it was on that
     // list — must also land before the tab bar's first paint.
     await unhideFeedOnce()
-    await hideModlogOnce()
+    await hideSecondaryTabsOnce()
     // Init done — drop the cache so subsequent reads see fresh data.
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage

@@ -1865,6 +1865,14 @@ function _renderFeedEmptyCard() {
   discoverBtn.className = 'hs-mc-empty-btn'
   discoverBtn.textContent = 'discover people →'
   discoverBtn.addEventListener('click', () => {
+    // discover is hidden by default; a tab you land on must be on the bar, so
+    // asking for it brings it back first.
+    const hidden = getSetting('hiddenTabs')
+    if (Array.isArray(hidden) && hidden.includes('discover'))
+      setSetting(
+        'hiddenTabs',
+        hidden.filter((id) => id !== 'discover'),
+      )
     if (typeof switchTab === 'function') switchTab('discover')
   })
   actions.appendChild(discoverBtn)

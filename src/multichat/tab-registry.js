@@ -26,7 +26,7 @@ const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
 
 const MC_TABS = [
   { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
-  { id: 'discover', labelKey: 'mc_tab_discover', bar: 'scroll', restorable: true },
+  { id: 'discover', labelKey: 'mc_tab_discover', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'whispers', labelKey: 'mc_tab_whispers', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'mentions', labelKey: 'mc_tab_mentions', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },

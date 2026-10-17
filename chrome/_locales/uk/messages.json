@@ -541,6 +541,9 @@
   "mc_tab_feed": {
     "message": "стрічка"
   },
+  "mc_tab_discover": {
+    "message": "discover"
+  },
   "mc_tab_whispers": {
     "message": "шепіт"
   },

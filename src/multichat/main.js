@@ -2378,6 +2378,13 @@
         localStorage.setItem('hs_layout_ytNonLiveChat', v ? '1' : '0')
       } catch (_) {}
     },
+    ytFeedShelves: (v) => {
+      // YT-only: body class lifts the CSS that hides the non-video shelves
+      // (shorts, playables, promos) from the home grid. Harmless off-YT.
+      try {
+        document.body.classList.toggle('hs-yt-shelves', !!v)
+      } catch (_) {}
+    },
     keywordRegex: () => {
       rebuildKeywordRegex()
     },

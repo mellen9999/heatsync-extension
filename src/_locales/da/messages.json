@@ -1248,6 +1248,12 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "vis multichat-panelet også på youtube-VODs, forsiden og søgning — slået fra som standard, så panelet kun vises ved livestreams (hvor der er livechat)"
   },
+  "mc_settings_yt_feed_shelves": {
+    "message": "youtube: show feed shelves"
+  },
+  "mc_settings_yt_feed_shelves_desc": {
+    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+  },
   "mc_settings_message_density": {
     "message": "beskedtæthed"
   },

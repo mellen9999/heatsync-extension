@@ -449,6 +449,21 @@ const SETTINGS = [
     apply: 'ytNonLiveChat',
     applyOnLoad: true,
   },
+  {
+    key: 'ytFeedShelves',
+    type: 'bool',
+    default: false,
+    // default OFF: shelves (shorts, playables, news, promos) are not videos and
+    // break the tile grid into short rows; the feed stays pure thumbnails.
+    scope: 'sync',
+    category: 'display',
+    section: 'layout',
+    labelKey: 'mc_settings_yt_feed_shelves',
+    tipKey: 'mc_settings_yt_feed_shelves_desc',
+    control: 'pill',
+    apply: 'ytFeedShelves',
+    applyOnLoad: true,
+  },
 
   // ── display / density ─────────────────────────────────────────────────
   {

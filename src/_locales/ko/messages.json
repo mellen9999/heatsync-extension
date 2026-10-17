@@ -1248,6 +1248,12 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "youtube VOD, 홈, 검색에서도 multichat 패널 표시 — 기본은 꺼짐이라 패널은 라이브 방송(라이브 채팅이 있는 곳)에만 나와"
   },
+  "mc_settings_yt_feed_shelves": {
+    "message": "youtube: show feed shelves"
+  },
+  "mc_settings_yt_feed_shelves_desc": {
+    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+  },
   "mc_settings_message_density": {
     "message": "메시지 밀도"
   },

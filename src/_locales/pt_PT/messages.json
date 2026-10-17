@@ -1248,6 +1248,12 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "mostrar o painel multichat também em VODs do youtube, início e pesquisa — desligado por defeito, por isso o painel só aparece em diretos (onde há chat em direto)"
   },
+  "mc_settings_yt_feed_shelves": {
+    "message": "youtube: show feed shelves"
+  },
+  "mc_settings_yt_feed_shelves_desc": {
+    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+  },
   "mc_settings_message_density": {
     "message": "densidade das mensagens"
   },

@@ -1249,6 +1249,12 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "show the multichat panel on youtube VODs, home and search too — off by default, so the panel only appears on livestreams (where there is live chat)"
   },
+  "mc_settings_yt_feed_shelves": {
+    "message": "youtube: show feed shelves"
+  },
+  "mc_settings_yt_feed_shelves_desc": {
+    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+  },
   "mc_settings_message_density": {
     "message": "message density"
   },

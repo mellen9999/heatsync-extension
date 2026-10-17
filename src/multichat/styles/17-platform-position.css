@@ -714,6 +714,14 @@
       margin: 0 !important;
     }
 
+    /* The home feed is thumbnails only: every non-tile section (shorts,
+       playables, news, promos) is hidden unless the viewer turns "show feed
+       shelves" on (hs-yt-shelves). They are not videos, and each one cuts the
+       tile grid into short rows. */
+    body.hs-platform-yt:not(.hs-yt-shelves) #page-manager ytd-rich-grid-renderer > #contents > ytd-rich-section-renderer {
+      display: none !important;
+    }
+
     /* Shorts shelf: hidden only while the HeatSync takeover UI is active
        (hs-yt-nonlive-chat). Aspect ratio breaks grid uniformity and the
        vertical-only feed doesn't fit the streamer-centric HeatSync UX —

@@ -9,3 +9,9 @@ test('no hover fill on the filter-rules add form or rule rows', () => {
   expect(css).not.toMatch(/\.hs-mc-fr-addform:hover/)
   expect(css).not.toMatch(/\[data-fr-row\]:hover\s*[,{]/)
 })
+
+test('plain note rows ("no rules", "no matches"…) never get the clickable-row hover', () => {
+  expect(css).toContain(':not(.hs-mc-setting-note):hover')
+  const ui = readFileSync(new URL('../src/multichat/settings-ui.js', import.meta.url), 'utf8')
+  expect(ui).toContain('hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">no rules')
+})

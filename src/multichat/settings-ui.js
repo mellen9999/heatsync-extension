@@ -526,7 +526,7 @@ function _renderSearchResults() {
       actions.map((a) => a.html).join('') +
       '</div>'
   }
-  if (!count) html = '<div class="hs-mc-setting-row" style="color:#ffffff">no matches</div>'
+  if (!count) html = '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">no matches</div>'
   return { html: html, count: count, total: total }
 }
 
@@ -539,7 +539,7 @@ function _renderMutedGroup() {
     t('mc_settings_muted_users') +
     '</div>' +
     (mutedUsers.size === 0
-      ? `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${t('mc_settings_no_muted')}</div>`
+      ? `<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">${t('mc_settings_no_muted')}</div>`
       : Array.from(mutedUsers)
           .sort()
           .map((u) => {
@@ -807,7 +807,7 @@ function _renderFilterRulesGroup() {
   var rules = _getRawFilterRules()
   var ruleRows =
     rules.length === 0
-      ? '<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">no rules — add one below</div>'
+      ? '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">no rules — add one below</div>'
       : rules.map(_renderFilterRuleRow).join('')
   return (
     '<div class="hs-mc-settings-group">' +
@@ -1284,7 +1284,8 @@ function _renderPresetPanel() {
   const changes = _presetChanges(_presetPending.diff)
   let rows = ''
   if (!changes.length) {
-    rows = '<div class="hs-mc-setting-row" style="color:#ffffff">already matching — nothing to change</div>'
+    rows =
+      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">already matching — nothing to change</div>'
   }
   for (const c of changes) {
     rows +=

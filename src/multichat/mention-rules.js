@@ -120,7 +120,7 @@ function mrHitUrl(h) {
 
 function mrHitsHtml(hits) {
   if (!hits.length)
-    return `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_hits_none'))}</div>`
+    return `<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_hits_none'))}</div>`
   return hits
     .map((h) => {
       const tag = MR_PLAT_TAG[h.platform] || '?'
@@ -232,16 +232,16 @@ function mrGroupHtml() {
     mrState.loaded = false
     mrState.rules = []
     mrState.hits = []
-    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_signin'))}</div></div>`
   }
   if (!mrState.loaded && !mrState.loading && Date.now() - mrState.failedAt > MR_RETRY_MS) mrLoad()
   if (!mrState.loaded && mrState.failedAt) {
     const line = mrState.unauthed ? t('mc_mr_signin') : mrState.error
-    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(line)}</div></div>`
+    return `<div class="hs-mc-settings-group">${title}<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">${escapeHtml(line)}</div></div>`
   }
   const rows = mrState.rules.length
     ? mrState.rules.map(mrRuleRowHtml).join('')
-    : `<div class="hs-mc-setting-row" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
+    : `<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">${escapeHtml(t('mc_mr_none'))}</div>`
   const editing = mrState.editId !== null
   return (
     `<div class="hs-mc-settings-group">${title}${rows}` +

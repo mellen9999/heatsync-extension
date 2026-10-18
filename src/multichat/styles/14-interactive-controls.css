@@ -1018,11 +1018,11 @@
        filter-rules editor (the add-form + each rule row): those are a multi-field
        form + info, not a single clickable row, so the white bg turned their
        black-bg inputs and light help text unreadable. */
-    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover {
+    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):not(.hs-mc-setting-note):hover {
       background: #fff;
       color: #000;
     }
-    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover * {
+    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):not(.hs-mc-setting-note):hover * {
       color: #000 !important;
     }
     /* Filter-rules rows (and the add form + its help text) are not one

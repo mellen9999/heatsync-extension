@@ -148,6 +148,16 @@
       -webkit-text-fill-color: #ffffff !important;
       border-left-color: #ffffff !important;
     }
+    /* A reply chip inside the stack is a clickable row too, and it gets the same
+       white-bg hover as any other (the :not(...-active) rule above). The forced
+       white text just above would then be white on white — invert it. */
+    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover,
+    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover *,
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover,
+    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover * {
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+    }
     .hs-mc-reply-stack-chip {
       flex: 0 0 auto;
       padding: 2px 6px;

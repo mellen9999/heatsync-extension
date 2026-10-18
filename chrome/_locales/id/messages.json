@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "tautkan ulang"
   },
+  "mc_signed_out_notice": {
+    "message": "keluar dari heatsync — emote kamu disembunyikan"
+  },
+  "mc_signed_out_action": {
+    "message": "masuk"
+  },
   "mc_settings_diag_errors": {
     "message": "tampilkan error diagnostik"
   },

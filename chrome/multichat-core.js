@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '00c8f8f3e230' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0d9a1be36dbf' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17426,6 +17426,32 @@ const HsNotifs = (() => {
         onClick: () => {
           try {
             window.open('https://heatsync.org/api/auth/login?scopes=automod', '_blank', 'noopener')
+          } catch (_) {}
+          return true
+        },
+      },
+      dismiss: {},
+    },
+  })
+
+  // Signed out of heatsync.org (login lapsed): own emotes render as plain text
+  // with no hint why. Background sends 'signed_out_notice' once per browser
+  // session until the next sign-in. Persistent until dismissed.
+  registerType('signed-out', {
+    layer: 'toast-stack',
+    dedupeKey: () => 'signed-out',
+    render: () => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-notif-toast-warn'
+      el.textContent = t('mc_signed_out_notice')
+      return el
+    },
+    actions: {
+      primary: {
+        label: t('mc_signed_out_action'),
+        onClick: () => {
+          try {
+            window.open('https://heatsync.org/api/auth/login', '_blank', 'noopener')
           } catch (_) {}
           return true
         },
@@ -78167,10 +78193,17 @@ const STORAGE_KEY = 'heatsync_multichat'
           }
         } catch (_) {}
       }
+      if (msg.type === 'signed_out_notice') {
+        try {
+          HsNotifs.emit('signed-out', {})
+        } catch (_) {}
+        return
+      }
       if (msg.type === 'auth_changed') {
         try {
           showAuthLoginBanner(!!msg.loggedIn)
           if (msg.loggedIn) {
+            HsNotifs.dismissByKey?.('signed-out', 'signed-out')
             dismissEmoteLoginNudge()
             revealFreshInstallTabsOnce()
           }

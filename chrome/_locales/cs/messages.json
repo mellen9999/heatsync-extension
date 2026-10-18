@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "propojit znovu"
   },
+  "mc_signed_out_notice": {
+    "message": "odhlášen z heatsync — tvoje emoty jsou skryté"
+  },
+  "mc_signed_out_action": {
+    "message": "přihlásit"
+  },
   "mc_settings_diag_errors": {
     "message": "zobrazit diagnostické chyby"
   },

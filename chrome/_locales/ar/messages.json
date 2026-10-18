@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "أعد الربط"
   },
+  "mc_signed_out_notice": {
+    "message": "تم تسجيل خروجك من heatsync — إيموتاتك مخفية"
+  },
+  "mc_signed_out_action": {
+    "message": "تسجيل الدخول"
+  },
   "mc_settings_diag_errors": {
     "message": "عرض أخطاء التشخيص"
   },

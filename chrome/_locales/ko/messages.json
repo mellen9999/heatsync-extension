@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "재연결"
   },
+  "mc_signed_out_notice": {
+    "message": "heatsync에서 로그아웃됨 — 내 이모트가 숨겨져 있음"
+  },
+  "mc_signed_out_action": {
+    "message": "로그인"
+  },
   "mc_settings_diag_errors": {
     "message": "진단 오류 표시"
   },

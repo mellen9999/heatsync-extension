@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "yeniden bağla"
   },
+  "mc_signed_out_notice": {
+    "message": "heatsync oturumu kapalı — kendi emotelerin gizli"
+  },
+  "mc_signed_out_action": {
+    "message": "giriş yap"
+  },
   "mc_settings_diag_errors": {
     "message": "tanılama hatalarını göster"
   },

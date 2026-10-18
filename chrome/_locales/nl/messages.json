@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "opnieuw koppelen"
   },
+  "mc_signed_out_notice": {
+    "message": "uitgelogd bij heatsync — je eigen emotes zijn verborgen"
+  },
+  "mc_signed_out_action": {
+    "message": "inloggen"
+  },
   "mc_settings_diag_errors": {
     "message": "toon diagnosefouten"
   },

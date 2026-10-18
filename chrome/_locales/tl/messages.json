@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "i-link ulit"
   },
+  "mc_signed_out_notice": {
+    "message": "naka-sign out sa heatsync — nakatago ang sarili mong emotes"
+  },
+  "mc_signed_out_action": {
+    "message": "mag-log in"
+  },
   "mc_settings_diag_errors": {
     "message": "ipakita ang mga diagnostic error"
   },

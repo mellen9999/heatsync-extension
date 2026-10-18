@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "újrakötés"
   },
+  "mc_signed_out_notice": {
+    "message": "kijelentkeztél a heatsyncről — a saját emote-jaid rejtve vannak"
+  },
+  "mc_signed_out_action": {
+    "message": "belépés"
+  },
   "mc_settings_diag_errors": {
     "message": "diagnosztikai hibák mutatása"
   },

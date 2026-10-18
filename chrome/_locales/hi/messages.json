@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "फिर लिंक करो"
   },
+  "mc_signed_out_notice": {
+    "message": "heatsync से साइन आउट — आपके इमोट छिपे हैं"
+  },
+  "mc_signed_out_action": {
+    "message": "लॉग इन"
+  },
   "mc_settings_diag_errors": {
     "message": "डायग्नोस्टिक एरर दिखाओ"
   },

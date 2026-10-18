@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "重新绑定"
   },
+  "mc_signed_out_notice": {
+    "message": "已退出 heatsync — 你的表情已隐藏"
+  },
+  "mc_signed_out_action": {
+    "message": "登录"
+  },
   "mc_settings_diag_errors": {
     "message": "显示诊断错误"
   },

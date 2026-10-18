@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "再連携"
   },
+  "mc_signed_out_notice": {
+    "message": "heatsync からログアウト中 — 自分のエモートが非表示"
+  },
+  "mc_signed_out_action": {
+    "message": "ログイン"
+  },
   "mc_settings_diag_errors": {
     "message": "診断エラーを表示"
   },

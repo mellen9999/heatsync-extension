@@ -8081,13 +8081,31 @@ async function handleSlashCommand(text, input) {
   // the helix caller and the real mod check, this one only keeps the command
   // off a channel the user plainly doesn't mod. Resolves the twitch login, or a
   // failure result (already toasted) to return as is.
+  const _MS_NON_CHANNEL_TABS = new Set([
+    'live',
+    'watching',
+    'feed',
+    'whispers',
+    'mentions',
+    'add',
+    'settings',
+    'discover',
+    'pinned',
+    'modlog',
+  ])
   const _msGate = async () => {
-    if (!_twitchModName) {
+    // currentTab is a twitch login only on a per-channel tab; on live / watching
+    // / feed … it is the tab's own name ("watching" is not a channel), so those
+    // fall to the channel page the user is on — same as /highlight above.
+    const _msTab =
+      _modCh?.twitch || (modChannel && !_MS_NON_CHANNEL_TABS.has(modChannel) && !_modCh ? modChannel : null)
+    const _msChannel = _msTab || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
+    if (!_msChannel) {
       showToast(t('mc_ms_no_channel'), 'error')
       return { ok: false, error: t('mc_ms_no_channel') }
     }
     if (!(await _twitchModAuthOk())) return _notLoggedIn()
-    const login = _twitchModName.toLowerCase()
+    const login = String(_msChannel).toLowerCase()
     if (login !== (await automodSelfLogin()) && !(await isModFor(login, { fresh: true }))) {
       showToast(t('mc_ms_not_mod'), 'error')
       return { ok: false, error: t('mc_ms_not_mod') }

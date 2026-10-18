@@ -21,8 +21,24 @@
      * 2nd row): absolute over the scroller's padding box, own scroll, black
      * ground, square. The shared .hs-card-panel caps at 460px for the site's
      * inline page card; here it is the surface. */
-    #hs-mc-messages > .hs-card-panel,
+    /* The pane panel keeps the chat rows under it (they are not repainted away
+     * like the card's), so it can't be absolute at inset 0 — that is the TOP of a
+     * scroller that sits pinned to the bottom. Sticky + full height is the same
+     * box, wherever the scroller is. */
     #hs-mc-messages > .hs-pane-panel {
+      position: sticky;
+      top: 0;
+      height: 100%;
+      width: auto;
+      max-width: none;
+      box-sizing: border-box;
+      overflow-y: auto;
+      background: #000;
+      border: 0;
+      border-radius: 0;
+      z-index: 2;
+    }
+    #hs-mc-messages > .hs-card-panel {
       position: absolute;
       inset: 0;
       width: auto;

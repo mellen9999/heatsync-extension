@@ -118,14 +118,19 @@ suite('hsConfirm full-pane panel', () => {
   })
 })
 
-// The panel is absolutely positioned in the scroller's content box (inset: 0).
-// Opened over chat that is scrolled to the bottom it landed ~23000px above the
-// viewport — /modtools "did nothing" and the pane just flashed.
+// The pane panel is the scroller's last child and sticks to its top at full
+// height. Absolute inset: 0 opened it ~15000px above the viewport over chat that
+// is pinned to the bottom — /modtools "did nothing" and the pane just flashed.
 describe('pane panel opens on screen', () => {
-  test('the scroller is parked at the top when a panel mounts', () => {
+  test('mounts at the bottom and is sticky, not absolute', () => {
     const src = readFileSync(join(dir, 'pane-panel.js'), 'utf8')
     const open = src.slice(src.indexOf('function hsPanePanelOpenWith'))
-    expect(open.indexOf('msgsEl.appendChild(el)')).toBeGreaterThan(0)
-    expect(open.indexOf('msgsEl.scrollTop = 0')).toBeGreaterThan(open.indexOf('msgsEl.appendChild(el)'))
+    expect(open.indexOf('msgsEl.scrollTop = msgsEl.scrollHeight')).toBeGreaterThan(
+      open.indexOf('msgsEl.appendChild(el)'),
+    )
+    const css = readFileSync(join(dir, 'styles', '12-profile-card.css'), 'utf8')
+    const rule = css.match(/#hs-mc-messages > \.hs-pane-panel \{[^}]*\}/)[0]
+    expect(rule).toContain('position: sticky')
+    expect(rule).toContain('height: 100%')
   })
 })

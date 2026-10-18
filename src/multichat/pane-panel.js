@@ -91,11 +91,11 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
   document.addEventListener('keydown', keyHandler, true)
   hsPaneMountRow([], () => finish(false, true))
   msgsEl.appendChild(el)
-  // The panel is absolutely positioned in the scroller's CONTENT box (inset: 0),
-  // and chat sits scrolled to the bottom — so it opened ~23000px above the
-  // viewport: the command "did nothing" and the chat just flashed. Park the
-  // scroller at the top so the box the panel fills is the one on screen.
-  msgsEl.scrollTop = 0
+  // The panel is the scroller's LAST child (rows stay, a repaint is held off) and
+  // sticks to its top at full height — chat sits pinned to the bottom, so the
+  // bottom is the one place a panel is on screen. Absolute inset: 0 put it
+  // ~15000px above the viewport: /modtools "did nothing", the pane just flashed.
+  msgsEl.scrollTop = msgsEl.scrollHeight
   activePanePanel = { el, finish }
   return el
 }

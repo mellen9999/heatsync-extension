@@ -245,3 +245,12 @@ test('_tapToMsg: matching room ids is not shared chat', () => {
   expect(msg.sharedChat).toBeUndefined()
   expect(msg.sourceRoomId).toBeUndefined()
 })
+
+test('_tapToMsg: tier 2 and 3 sub badge versions are 2000/3000 + months, not months', () => {
+  const base = { id: 'm1', user: { userDisplayName: 'Alice' }, messageParts: [{ content: 'hi' }] }
+  const months = (version) => _tapToMsg({ ...base, badges: [{ setID: 'subscriber', version }] }, 'chan').subMonths
+  expect(months('2040')).toBe(40)
+  expect(months('3012')).toBe(12)
+  expect(months('1')).toBe(1)
+  expect(months('0')).toBe(0)
+})

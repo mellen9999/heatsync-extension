@@ -149,8 +149,14 @@ function _tapToMsg(m, channel) {
     msg.sharedChat = true
     msg.sourceRoomId = String(srcRoomID)
   }
+  // The page's badge version is tier-prefixed: tier 1 is plain months ("14"),
+  // tier 2 is 2000 + months ("2040"), tier 3 is 3000 + months. Read raw, a
+  // tier 2 sub of 40 months drew as 2040 months — "170y" on the hover card.
   const subMatch = badgeStr.match(/subscriber\/(\d+)/)
-  if (subMatch) msg.subMonths = parseInt(subMatch[1], 10)
+  if (subMatch) {
+    const v = parseInt(subMatch[1], 10)
+    msg.subMonths = v >= 1000 ? v % 1000 : v
+  }
   return msg
 }
 

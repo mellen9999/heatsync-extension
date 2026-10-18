@@ -2888,7 +2888,7 @@
     "message": "thread gepostet · Link kopiert"
   },
   "mc_fill_cockpit": {
-    "message": "cockpit füllen"
+    "message": "twitch-follows importieren"
   },
   "mc_fill_cockpit_desc": {
     "message": "füge die Kanäle hinzu, denen du schon auf twitch folgst"

@@ -2888,7 +2888,7 @@
     "message": "тред запощен · ссылка скопирована"
   },
   "mc_fill_cockpit": {
-    "message": "заполнить мой кокпит"
+    "message": "импортировать подписки twitch"
   },
   "mc_fill_cockpit_desc": {
     "message": "добавь каналы, на которые уже подписан в twitch"

@@ -2888,7 +2888,7 @@
     "message": "нишката е публикувана · линкът е копиран"
   },
   "mc_fill_cockpit": {
-    "message": "напълни моя cockpit"
+    "message": "импортирай следвания от twitch"
   },
   "mc_fill_cockpit_desc": {
     "message": "добави каналите, които вече следваш в twitch"

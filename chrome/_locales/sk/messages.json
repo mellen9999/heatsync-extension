@@ -2888,7 +2888,7 @@
     "message": "vlákno odoslané · odkaz skopírovaný"
   },
   "mc_fill_cockpit": {
-    "message": "naplniť môj kokpit"
+    "message": "importovať sledovania z twitchu"
   },
   "mc_fill_cockpit_desc": {
     "message": "pridaj kanály, ktoré už nasleduješ na twitchi"

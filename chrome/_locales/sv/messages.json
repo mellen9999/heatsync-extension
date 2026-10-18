@@ -2888,7 +2888,7 @@
     "message": "tråd postad · länk kopierad"
   },
   "mc_fill_cockpit": {
-    "message": "fyll min cockpit"
+    "message": "importera twitch-följningar"
   },
   "mc_fill_cockpit_desc": {
     "message": "lägg till kanalerna du redan följer på twitch"

@@ -2888,7 +2888,7 @@
     "message": "โพสต์เธรดแล้ว · คัดลอกลิงก์แล้ว"
   },
   "mc_fill_cockpit": {
-    "message": "เติม cockpit ของฉัน"
+    "message": "นำเข้าการติดตามจาก twitch"
   },
   "mc_fill_cockpit_desc": {
     "message": "เพิ่มช่องที่คุณติดตามอยู่แล้วบน twitch"

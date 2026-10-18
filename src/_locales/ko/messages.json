@@ -2888,7 +2888,7 @@
     "message": "스레드 게시됨 · 링크 복사됨"
   },
   "mc_fill_cockpit": {
-    "message": "내 콕핏 채우기"
+    "message": "twitch 팔로우 가져오기"
   },
   "mc_fill_cockpit_desc": {
     "message": "twitch에서 이미 팔로우한 채널 추가"

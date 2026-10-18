@@ -2888,7 +2888,7 @@
     "message": "貼文串已發佈 · 連結已複製"
   },
   "mc_fill_cockpit": {
-    "message": "填入我的 cockpit"
+    "message": "匯入 twitch 追蹤"
   },
   "mc_fill_cockpit_desc": {
     "message": "新增你在 twitch 上已追蹤的頻道"

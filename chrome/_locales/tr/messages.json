@@ -2888,7 +2888,7 @@
     "message": "konu paylaşıldı · bağlantı kopyalandı"
   },
   "mc_fill_cockpit": {
-    "message": "kokpitimi doldur"
+    "message": "twitch takiplerini içe aktar"
   },
   "mc_fill_cockpit_desc": {
     "message": "twitch'te zaten takip ettiğin kanalları ekle"

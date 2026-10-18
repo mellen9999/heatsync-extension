@@ -2888,7 +2888,7 @@
     "message": "гілку опубліковано · посилання скопійовано"
   },
   "mc_fill_cockpit": {
-    "message": "заповнити мій cockpit"
+    "message": "імпортувати підписки twitch"
   },
   "mc_fill_cockpit_desc": {
     "message": "додай канали, на які ти вже підписаний у twitch"

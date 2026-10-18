@@ -2888,7 +2888,7 @@
     "message": "wątek opublikowany · link skopiowany"
   },
   "mc_fill_cockpit": {
-    "message": "wypełnij mój cockpit"
+    "message": "importuj obserwowanych z twitcha"
   },
   "mc_fill_cockpit_desc": {
     "message": "dodaj kanały, które już obserwujesz na twitchu"

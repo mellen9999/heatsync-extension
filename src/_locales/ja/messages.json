@@ -2888,7 +2888,7 @@
     "message": "スレッドを投稿した · リンクをコピー"
   },
   "mc_fill_cockpit": {
-    "message": "コックピットを埋める"
+    "message": "twitch のフォローをインポート"
   },
   "mc_fill_cockpit_desc": {
     "message": "twitch で既にフォローしているチャンネルを追加"

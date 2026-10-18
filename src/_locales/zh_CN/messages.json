@@ -2888,7 +2888,7 @@
     "message": "帖子串已发布 · 链接已复制"
   },
   "mc_fill_cockpit": {
-    "message": "填充我的 cockpit"
+    "message": "导入 twitch 关注"
   },
   "mc_fill_cockpit_desc": {
     "message": "添加你在 twitch 上已关注的频道"

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "паузата трябва да е 5–3600 секунди"
+  },
+  "mc_tagcard_posts": {
+    "message": "публикации"
+  },
+  "mc_tagcard_followers": {
+    "message": "последователи"
+  },
+  "mc_tagcard_last": {
+    "message": "последно"
+  },
+  "mc_tagcard_you": {
+    "message": "ти"
+  },
+  "mc_tagcard_following": {
+    "message": "следваш"
+  },
+  "mc_tagcard_not_following": {
+    "message": "не следваш"
   }
 }

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "a várakozás 5–3600 másodperc lehet"
+  },
+  "mc_tagcard_posts": {
+    "message": "bejegyzések"
+  },
+  "mc_tagcard_followers": {
+    "message": "követők"
+  },
+  "mc_tagcard_last": {
+    "message": "utoljára"
+  },
+  "mc_tagcard_you": {
+    "message": "te"
+  },
+  "mc_tagcard_following": {
+    "message": "követed"
+  },
+  "mc_tagcard_not_following": {
+    "message": "nem követed"
   }
 }

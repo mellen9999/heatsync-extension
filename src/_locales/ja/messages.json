@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "クールダウンは5〜3600秒"
+  },
+  "mc_tagcard_posts": {
+    "message": "投稿"
+  },
+  "mc_tagcard_followers": {
+    "message": "フォロワー"
+  },
+  "mc_tagcard_last": {
+    "message": "最終"
+  },
+  "mc_tagcard_you": {
+    "message": "あなた"
+  },
+  "mc_tagcard_following": {
+    "message": "フォロー中"
+  },
+  "mc_tagcard_not_following": {
+    "message": "未フォロー"
   }
 }

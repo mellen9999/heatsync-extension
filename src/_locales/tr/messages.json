@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "bekleme 5–3600 saniye olmalı"
+  },
+  "mc_tagcard_posts": {
+    "message": "gönderi"
+  },
+  "mc_tagcard_followers": {
+    "message": "takipçi"
+  },
+  "mc_tagcard_last": {
+    "message": "son"
+  },
+  "mc_tagcard_you": {
+    "message": "sen"
+  },
+  "mc_tagcard_following": {
+    "message": "takiptesin"
+  },
+  "mc_tagcard_not_following": {
+    "message": "takip etmiyorsun"
   }
 }

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "jeda harus 5–3600 detik"
+  },
+  "mc_tagcard_posts": {
+    "message": "postingan"
+  },
+  "mc_tagcard_followers": {
+    "message": "pengikut"
+  },
+  "mc_tagcard_last": {
+    "message": "terakhir"
+  },
+  "mc_tagcard_you": {
+    "message": "kamu"
+  },
+  "mc_tagcard_following": {
+    "message": "mengikuti"
+  },
+  "mc_tagcard_not_following": {
+    "message": "tidak mengikuti"
   }
 }

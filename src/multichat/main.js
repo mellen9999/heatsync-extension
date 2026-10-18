@@ -12724,6 +12724,7 @@
 
     setupEmoteTooltipHandlers()
     setupUserTooltipHandlers()
+    setupTagCardHandlers()
     setupLinkTooltipHandlers()
     if (gateAtBoot('profile-cards')) setupProfileCardHandlers()
     listenForSettingsChanges()

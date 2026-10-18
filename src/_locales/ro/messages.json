@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "pauza trebuie să fie de 5–3600 secunde"
+  },
+  "mc_tagcard_posts": {
+    "message": "postări"
+  },
+  "mc_tagcard_followers": {
+    "message": "urmăritori"
+  },
+  "mc_tagcard_last": {
+    "message": "ultima"
+  },
+  "mc_tagcard_you": {
+    "message": "tu"
+  },
+  "mc_tagcard_following": {
+    "message": "urmărești"
+  },
+  "mc_tagcard_not_following": {
+    "message": "nu urmărești"
   }
 }

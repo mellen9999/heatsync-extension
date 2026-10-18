@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "쿨다운은 5–3600초여야 합니다"
+  },
+  "mc_tagcard_posts": {
+    "message": "게시물"
+  },
+  "mc_tagcard_followers": {
+    "message": "팔로워"
+  },
+  "mc_tagcard_last": {
+    "message": "최근"
+  },
+  "mc_tagcard_you": {
+    "message": "나"
+  },
+  "mc_tagcard_following": {
+    "message": "팔로우 중"
+  },
+  "mc_tagcard_not_following": {
+    "message": "팔로우 안 함"
   }
 }

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "odotuksen on oltava 5–3600 sekuntia"
+  },
+  "mc_tagcard_posts": {
+    "message": "viestit"
+  },
+  "mc_tagcard_followers": {
+    "message": "seuraajat"
+  },
+  "mc_tagcard_last": {
+    "message": "viimeksi"
+  },
+  "mc_tagcard_you": {
+    "message": "sinä"
+  },
+  "mc_tagcard_following": {
+    "message": "seuraat"
+  },
+  "mc_tagcard_not_following": {
+    "message": "et seuraa"
   }
 }

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "pause skal være 5–3600 sekunder"
+  },
+  "mc_tagcard_posts": {
+    "message": "opslag"
+  },
+  "mc_tagcard_followers": {
+    "message": "følgere"
+  },
+  "mc_tagcard_last": {
+    "message": "sidst"
+  },
+  "mc_tagcard_you": {
+    "message": "dig"
+  },
+  "mc_tagcard_following": {
+    "message": "følger"
+  },
+  "mc_tagcard_not_following": {
+    "message": "følger ikke"
   }
 }

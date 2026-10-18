@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "wachttijd moet 5–3600 seconden zijn"
+  },
+  "mc_tagcard_posts": {
+    "message": "berichten"
+  },
+  "mc_tagcard_followers": {
+    "message": "volgers"
+  },
+  "mc_tagcard_last": {
+    "message": "laatst"
+  },
+  "mc_tagcard_you": {
+    "message": "jij"
+  },
+  "mc_tagcard_following": {
+    "message": "volgt"
+  },
+  "mc_tagcard_not_following": {
+    "message": "volgt niet"
   }
 }

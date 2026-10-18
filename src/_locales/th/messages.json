@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "คูลดาวน์ต้องอยู่ระหว่าง 5–3600 วินาที"
+  },
+  "mc_tagcard_posts": {
+    "message": "โพสต์"
+  },
+  "mc_tagcard_followers": {
+    "message": "ผู้ติดตาม"
+  },
+  "mc_tagcard_last": {
+    "message": "ล่าสุด"
+  },
+  "mc_tagcard_you": {
+    "message": "คุณ"
+  },
+  "mc_tagcard_following": {
+    "message": "ติดตามอยู่"
+  },
+  "mc_tagcard_not_following": {
+    "message": "ไม่ได้ติดตาม"
   }
 }

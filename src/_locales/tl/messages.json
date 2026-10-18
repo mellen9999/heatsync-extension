@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "ang cooldown ay dapat 5–3600 segundo"
+  },
+  "mc_tagcard_posts": {
+    "message": "mga post"
+  },
+  "mc_tagcard_followers": {
+    "message": "mga tagasunod"
+  },
+  "mc_tagcard_last": {
+    "message": "huli"
+  },
+  "mc_tagcard_you": {
+    "message": "ikaw"
+  },
+  "mc_tagcard_following": {
+    "message": "sinusundan"
+  },
+  "mc_tagcard_not_following": {
+    "message": "hindi sinusundan"
   }
 }

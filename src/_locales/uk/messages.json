@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "пауза має бути 5–3600 секунд"
+  },
+  "mc_tagcard_posts": {
+    "message": "дописи"
+  },
+  "mc_tagcard_followers": {
+    "message": "підписники"
+  },
+  "mc_tagcard_last": {
+    "message": "останній"
+  },
+  "mc_tagcard_you": {
+    "message": "ти"
+  },
+  "mc_tagcard_following": {
+    "message": "підписаний"
+  },
+  "mc_tagcard_not_following": {
+    "message": "не підписаний"
   }
 }

@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "abklingzeit muss 5–3600 sekunden betragen"
+  },
+  "mc_tagcard_posts": {
+    "message": "beiträge"
+  },
+  "mc_tagcard_followers": {
+    "message": "follower"
+  },
+  "mc_tagcard_last": {
+    "message": "zuletzt"
+  },
+  "mc_tagcard_you": {
+    "message": "du"
+  },
+  "mc_tagcard_following": {
+    "message": "folgst"
+  },
+  "mc_tagcard_not_following": {
+    "message": "folgst nicht"
   }
 }

@@ -774,7 +774,7 @@ function setupEmoteTooltipHandlers() {
               target.classList?.contains('hs-mc-picker-emote') ||
               target.classList?.contains('hs-input-emote') ||
               target.classList?.contains('hs-discover-thumb')))
-        const onUser = target?.closest?.('.hs-mc-user')
+        const onUser = target?.closest?.('.hs-mc-user') || target?.closest?.('.hs-hashtag')
         const onBadge = target?.tagName === 'IMG' && target.classList?.contains('hs-mc-badge-img')
 
         // Kill badge tooltip if not on a badge (or the tooltip itself).

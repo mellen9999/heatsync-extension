@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'dd3f24f698ee' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a775ebba432c' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -42315,6 +42315,11 @@ if (/(^|\.)twitch\.tv$/.test(location.hostname)) {
 // Prefix-only on purpose: catalog substring hits (NotSad, KekSadge) are noise.
 // Local substring matches still surface via findEmoteMatches.
 let _acRemoteAbort = null
+// 7TV emote id out of a cdn url (…/emote/<id>/1x.avif); null for other hosts.
+function _acEmoteId(url) {
+  const m = /\/emote\/([0-9A-Z]{26})\//i.exec(url || '')
+  return m ? m[1] : null
+}
 let _acRemoteToken = 0
 // Searches the remote catalog will never serve: @user, :emoji, modifier
 // tokens, short fragments. Shared with the Tab-cycle hold-at-end check —
@@ -42420,11 +42425,17 @@ async function fetchRemoteEmoteMatches(search) {
     // case-insensitive in practice; first-seen wins so 7TV's top result holds).
     // Also dedupes against existing locals (already lowercased below).
     const have = new Set(acState.matches.map((m) => (m.name || '').toLowerCase()))
+    // Same-name uploads (7TV has nine "shrujj"): collapsing them to the most-used
+    // one hid the art you actually meant. Once the name is typed in full, every
+    // upload stays its own cycle entry, told apart by its 7TV id.
+    const haveIds = new Set(acState.matches.map((m) => m.id || _acEmoteId(m.url)).filter(Boolean))
+    let exactRegistered = false
     const add = []
     for (const it of items) {
       if (!it.name) continue
       const lower = it.name.toLowerCase()
-      if (have.has(lower)) continue
+      const variant = lower === searchLower && !!it.id
+      if (variant ? haveIds.has(it.id) : have.has(lower)) continue
       // Substring is fine — the providers already relevance-matched the query;
       // requiring a literal prefix dropped the suffix-named families users
       // actually mean. Drop only fuzzy hits that don't contain the query.
@@ -42433,10 +42444,12 @@ async function fetchRemoteEmoteMatches(search) {
       // same leak as the local pool, just a different source.
       if (typeof _hsAcEmoteBlocked === 'function' && _hsAcEmoteBlocked(it.name, null)) continue
       have.add(lower)
+      if (it.id) haveIds.add(it.id)
       const src = it.provider || '7tv'
       add.push({
         name: it.name,
         url: it.url,
+        id: it.id,
         source: src,
         priority: 0,
         type: 'emote',
@@ -42457,7 +42470,8 @@ async function fetchRemoteEmoteMatches(search) {
       // search this session got silently added to the viewer's inventory —
       // hundreds of names the user never saw, burning finite slots. Harmless
       // while the fetch was lazy; not once it fires on the first Tab.
-      if (lower === searchLower) {
+      if (lower === searchLower && !exactRegistered) {
+        exactRegistered = true
         recentRemoteCompletions.delete(it.name)
         recentRemoteCompletions.set(it.name, { url: it.url, source: src, zeroWidth: !!it.zeroWidth })
         while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {

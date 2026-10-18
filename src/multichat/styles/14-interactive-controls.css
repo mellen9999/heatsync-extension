@@ -1025,11 +1025,8 @@
     .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):hover * {
       color: #000 !important;
     }
-    /* Filter-rules rows keep their own colours; just a subtle dark row-hint. */
-    .hs-mc-setting-row.hs-mc-fr-addform:hover,
-    .hs-mc-setting-row[data-fr-row]:hover {
-      background: #ffffff; color: #000000;
-    }
+    /* Filter-rules rows (and the add form + its help text) are not one
+       clickable thing: no row hover. Their own buttons carry the hover. */
     .hs-mc-setting-label {
       color: #fff !important;
       font-size: 13px !important;

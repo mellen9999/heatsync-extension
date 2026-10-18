@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ea864ac198a9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'dd3f24f698ee' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -43298,9 +43298,9 @@ function initInput() {
     const hi = getHighResUrl(emoteUrl)
     const items = []
     // Block/unblock + remove-from-set live here so the shift menu is the
-    // complete per-emote surface. Plain right-click is the block/unblock fast
-    // path; removal is menu-only — it mutates your set server-side and lost
-    // its fast-path slot when right-click became always-block.
+    // complete per-emote surface. Plain right-click is the fast path: unblock a
+    // blocked emote, remove an inventory one, block anything else — so for an
+    // inventory emote this menu is where 'block' (keeps the set) lives.
     if (state === 'blocked') {
       items.push({ label: 'unblock', fn: () => unblockEmote(emoteName) })
     } else {
@@ -43442,17 +43442,14 @@ function initInput() {
         // Race-guard against rapid clicking
         if (pendingEmoteOps.has(emoteName)) return
 
-        // 2-state right-click: blocked → unblock, everything else → block —
-        // including your own inventory emotes. Block is NOT an inventory
-        // mutation (caches + server user_emotes row preserved; unblock returns
-        // the emote to "in set"), so one gesture = one meaning with nothing
-        // destructive on the common path. The old 3rd branch routed owned
-        // emotes to remove-from-inventory, which silently mutated the set
-        // server-side and made blocking an owned emote take two right-clicks
-        // (or zero, when the removed name stopped resolving). Removal lives in
-        // the shift menu now (openEmoteCtxMenu).
+        // Right-click acts on what the emote IS to you: blocked → unblock, in
+        // your inventory → remove it from the inventory (what "inventory" on the
+        // emote promises), anything else → block. Blocking an owned emote is the
+        // shift menu's 'block' — it keeps the server row, removal does not.
         if (state === 'blocked') {
           unblockEmote(emoteName)
+        } else if (state === 'owned' && inventoryEmotes.has(emoteName)) {
+          removeEmoteFromInventory(emoteName, e.target)
         } else {
           blockEmote(emoteName, emoteUrl, source)
         }

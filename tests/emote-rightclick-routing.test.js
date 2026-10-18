@@ -1,15 +1,14 @@
 /**
- * Emote right-click routing — plain right-click is ALWAYS block/unblock;
- * remove-from-inventory lives ONLY in the shift menu.
+ * Emote right-click routing — plain right-click acts on what the emote is to
+ * you: blocked → unblock, in your inventory → remove from the inventory,
+ * anything else → block. The shift menu keeps all three (block included, for an
+ * inventory emote you want to hide but keep).
  *
- * Regression anchor (2026-08-03): the old 3-way routing sent owned emotes to
- * removeEmoteFromInventory on plain right-click — a silent server-side set
- * mutation on the most common gesture, and blocking an owned emote took two
- * right-clicks (or zero, when the removed name stopped resolving anywhere).
- * Block is deliberately NOT an inventory mutation (unblock returns the emote
- * to "in set"), so always-block loses nothing. The handler is a document-level
- * capture listener wired into the bundle — pinned at source level like the
- * other reader-loop wiring tests.
+ * History: 2026-08-03 plain right-click became always-block (removal was a
+ * silent server-side mutation). 2026-10-18 mellen reversed it for owned emotes:
+ * an emote that says "inventory" must remove itself from the inventory, not
+ * block. The handler is a document-level capture listener wired into the
+ * bundle — pinned at source level like the other reader-loop wiring tests.
  */
 
 import { describe, expect, test } from 'bun:test'
@@ -30,7 +29,7 @@ const menuStart = INPUT_SRC.indexOf('function openEmoteCtxMenu(')
 const menuEnd = INPUT_SRC.indexOf('function openEmojiCtxMenu(', menuStart)
 const MENU = INPUT_SRC.slice(menuStart, menuEnd)
 
-describe('plain right-click: 2-way block/unblock only', () => {
+describe('plain right-click: unblock / remove from inventory / block', () => {
   test('carve markers found', () => {
     expect(handlerStart).toBeGreaterThan(-1)
     expect(handlerEnd).toBeGreaterThan(handlerStart)
@@ -38,14 +37,16 @@ describe('plain right-click: 2-way block/unblock only', () => {
     expect(menuEnd).toBeGreaterThan(menuStart)
   })
 
-  test('blocked → unblock, everything else → block', () => {
+  test('blocked → unblock, inventory → remove, everything else → block', () => {
     expect(HANDLER).toContain("if (state === 'blocked')")
     expect(HANDLER).toContain('unblockEmote(emoteName)')
+    expect(HANDLER).toContain("state === 'owned' && inventoryEmotes.has(emoteName)")
+    expect(HANDLER).toContain('removeEmoteFromInventory(emoteName, e.target)')
     expect(HANDLER).toContain('blockEmote(emoteName, emoteUrl, source)')
   })
 
-  test('no inventory mutation on plain right-click', () => {
-    expect(HANDLER).not.toContain('removeEmoteFromInventory')
+  test('the inventory branch comes before the block fallback', () => {
+    expect(HANDLER.indexOf('removeEmoteFromInventory')).toBeLessThan(HANDLER.indexOf('blockEmote(emoteName, emoteUrl'))
   })
 
   test('load-bearing guards survived: stack expand, emoji menu, race guard, shift menu', () => {

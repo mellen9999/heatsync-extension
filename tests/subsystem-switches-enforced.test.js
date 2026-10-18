@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { SUBSYSTEMS_ALWAYS_ON } from '../src/lib/settings-schema.js'
 
 /**
  * Every subsystem switch in the kill panel must actually switch something off.
@@ -59,7 +60,7 @@ describe('subsystem switches', () => {
   const corpus = enforcementCorpus()
 
   test('the panel declares the expected set', () => {
-    expect(keys.length).toBeGreaterThanOrEqual(16)
+    expect(keys.length).toBeGreaterThanOrEqual(8)
     expect(keys).toContain('feed')
     expect(keys).toContain('chat-youtube')
   })
@@ -81,8 +82,17 @@ describe('subsystem switches', () => {
       ...new Set([...corpus.matchAll(/(?:gateAtBoot|isEnabled|hsGateOn)\('([a-z][a-z-]+)'\)/g)].map((m) => m[1])),
     ]
     expect(used.length, 'no gate calls found — the extraction broke, not the code').toBeGreaterThan(8)
-    const phantom = used.filter((k) => !keys.includes(k) && !KNOWN_UNDECLARED.includes(k))
+    const phantom = used.filter(
+      (k) => !keys.includes(k) && !KNOWN_UNDECLARED.includes(k) && !SUBSYSTEMS_ALWAYS_ON.includes(k),
+    )
     expect(phantom, 'gated on a subsystem the settings panel never declares — the branch is unreachable').toEqual([])
+  })
+
+  test('always-on plumbing has no panel switch, and its gates still exist in code', () => {
+    for (const k of SUBSYSTEMS_ALWAYS_ON) {
+      expect(keys, `${k} is always on — it must not be a panel toggle`).not.toContain(k)
+      expect(corpus.includes(`'${k}'`), `${k} is listed always-on but nothing references it`).toBe(true)
+    }
   })
 
   test('the known-undeclared list stays honest', () => {

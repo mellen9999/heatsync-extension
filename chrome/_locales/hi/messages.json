@@ -1602,54 +1602,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "हर चैनल की मैसेज-रेट स्टैट्स, जिनसे heat रैंकिंग बनती है"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "प्रोफ़ाइल कार्ड"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "प्रोफ़ाइल कार्ड पॉपअप के लिए यूज़रनेम पर क्लिक करो"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "नेटिव चैट में emotes"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "प्लेटफ़ॉर्म की अपनी चैट में heatsync emotes दिखाओ"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "नेटिव चैट में tab-complete"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "प्लेटफ़ॉर्म के अपने इनपुट में emote + यूज़रनेम कम्प्लीशन"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "emote पिकर बटन"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "नेटिव चैट इनपुट के बगल में heatsync पिकर बटन"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "नेटिव चैट टेकओवर"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "जब ओवरले twitch चैट को ढके हो, तब twitch को उसकी छिपी कॉपी बनाने से रोको — व्यस्त चैनल पर ram की बड़ी बचत। फ़ेल-ओपन: ओवरले गिरा → twitch चैट अपने-आप लौट आती है।"
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "kick चैट फ़ॉलबैक टैप"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "बैकअप के तौर पर मौजूदा kick पेज की अपनी चैट स्ट्रीम पढ़ता है। सामान्य ट्रांसपोर्ट ठीक हों तो निष्क्रिय — सिर्फ़ तब चलता है जब वे शांत हो जाएँ।"
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "yt फ़ॉलबैक टैप"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "अगर दोनों सामान्य फ़ीड 5 मिनट चुप रहें तो youtube को सीधे पोल करता है — आखिरी सहारा, ट्रांसपोर्ट का विकल्प नहीं।"
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "automod होल्ड कतार"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "जिन चैनलों में तुम mod हो वहाँ twitch automod होल्ड allow/deny बटन के साथ इनलाइन दिखाता है — twitch की अपनी रिव्यू कतार जैसा।"
-  },
   "mc_automod_label": {
     "message": "automod होल्ड"
   },

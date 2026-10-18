@@ -2843,6 +2843,7 @@
     try {
       if (window.__hsHealth?.disabled?.includes(id)) return false
     } catch (_) {}
+    if (SUBSYSTEMS_ALWAYS_ON.includes(id)) return true
     return getSetting('subsystems')[id] !== false
   }
   // Taken BEFORE the first consumer, which is loadConfig() — it subscribes a
@@ -2860,6 +2861,8 @@
       stored = (await cachedUiSettings())?.ui_settings?.subsystems || null
     } catch (_) {}
     _gatesAtBoot = Object.assign({}, _SETTINGS_BY_KEY.get('subsystems')?.default, stored)
+    // Plumbing with no toggle any more is always on, whatever an older panel stored.
+    for (const k of SUBSYSTEMS_ALWAYS_ON) delete _gatesAtBoot[k]
     // Mirror to localStorage — pcard-early.js runs at document_start, before
     // this async snapshot resolves, and needs a synchronously-readable copy
     // to decide whether to swallow the native user-card click at all (a
@@ -2868,6 +2871,14 @@
     try {
       localStorage.setItem('hs_gate_profile-cards', _gatesAtBoot['profile-cards'] !== false ? '1' : '0')
     } catch (_) {}
+    // A `false` left in storage would still switch that plumbing off for content.js
+    // and the background, which read their gates from there — drop it.
+    const _stuckOff = SUBSYSTEMS_ALWAYS_ON.filter((k) => stored && k in stored)
+    if (_stuckOff.length) {
+      const cleaned = Object.assign({}, stored)
+      for (const k of _stuckOff) delete cleaned[k]
+      saveUiSetting('subsystems', cleaned)
+    }
   }
   function gateAtBoot(id) {
     try {
@@ -2876,6 +2887,7 @@
     // Snapshot missing means someone moved a consumer above snapshotGates().
     // Defer to the live read rather than inventing a yes.
     if (_gatesAtBoot == null) return isEnabled(id)
+    if (SUBSYSTEMS_ALWAYS_ON.includes(id)) return true
     return _gatesAtBoot[id] !== false
   }
 

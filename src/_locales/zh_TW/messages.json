@@ -1602,54 +1602,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "各頻道的訊息速率統計，用於 heat 排名"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "資料卡"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "點擊使用者名稱開啟資料卡彈窗"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "原生聊天中的 emote"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "在平台原生聊天中渲染 heatsync emote"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "原生聊天中的 tab 補全"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "在平台原生輸入框中補全 emote 和使用者名稱"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "emote 選擇器按鈕"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "原生聊天輸入框旁的 heatsync 選擇器按鈕"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "接管原生聊天"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "當覆蓋層蓋住 twitch 聊天時，阻止 twitch 渲染其隱藏副本 — 繁忙頻道可大幅節省 ram。失敗時放行：覆蓋層掛掉 → twitch 聊天自動恢復。"
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "kick 聊天備用擷取"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "讀取目前 kick 頁面原生的聊天串流作為備份。一般通道正常時不運作 — 僅在它們沉默時才介入。"
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "youtube 備用擷取"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "如果兩個一般來源都沉默 5 分鐘，則直接輪詢 youtube — 最後的兜底，不是替代通道。"
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "automod 待審佇列"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "在你擔任 mod 的頻道內嵌顯示 twitch automod 攔截的訊息，附允許/拒絕按鈕 — 與 twitch 原生的審核佇列同步。"
-  },
   "mc_automod_label": {
     "message": "automod 攔截"
   },

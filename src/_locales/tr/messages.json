@@ -1602,54 +1602,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "heat sıralamasını besleyen kanal başına mesaj hızı istatistikleri"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "profil kartları"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "profil kartı açılır penceresi için bir kullanıcı adına tıkla"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "yerel sohbette emotes"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "heatsync emotes'larını platformun kendi sohbetinde çiz"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "yerel sohbette tab ile tamamlama"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "platformun kendi giriş alanında emote + kullanıcı adı tamamlama"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "emote seçici düğmesi"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "yerel sohbet girişinin yanındaki heatsync seçici düğmesi"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "yerel sohbeti devralma"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "katman twitch sohbetini kaplarken twitch'in gizli kopyasını çizmesini durdur — yoğun kanallarda büyük ram tasarrufu. güvenli düşer: katman ölürse → twitch sohbeti kendiliğinden geri gelir."
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "kick sohbet yedek dinleyici"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "yedek olarak mevcut kick sayfasının kendi sohbet akışını okur. normal taşıyıcılar sağlıklıyken boşta; sadece onlar sessizleşirse devreye girer."
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "yt yedek dinleyici"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "iki normal akış da 5 dakika sessiz kalırsa youtube'u doğrudan sorgular — son çare, yedek taşıyıcı değil."
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "automod bekletme kuyruğu"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "twitch automod bekletmelerini mod olduğun kanallarda allow/deny düğmeleriyle satır içinde gösterir — twitch'in kendi inceleme kuyruğunu yansıtır."
-  },
   "mc_automod_label": {
     "message": "automod beklemede"
   },

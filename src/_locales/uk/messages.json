@@ -1602,54 +1602,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "статистика частоти повідомлень по каналах для рейтингу heat"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "картки профілю"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "клікни на ім’я користувача, щоб відкрити картку профілю"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "emotes у рідному чаті"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "показує emotes heatsync у власному чаті платформи"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "автодоповнення tab у рідному чаті"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "доповнення emotes + імен у власному полі введення платформи"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "кнопка вибору emotes"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "кнопка вибору heatsync поруч із полем введення рідного чату"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "перехоплення рідного чату"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "поки оверлей закриває чат twitch, twitch не малює свою приховану копію — велика економія ram на жвавих каналах. безпечний збій: оверлей помирає → чат twitch повертається сам."
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "резервний канал чату kick"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "читає власний потік чату поточної сторінки kick як запасний. неактивний, поки звичайні канали здорові — вмикається, лише якщо вони замовкнуть."
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "резерв youtube"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "опитує youtube напряму, якщо обидва звичайні потоки мовчать 5 хвилин — крайній запас, а не заміна транспорту."
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "черга утримання automod"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "показує утримані automod twitch прямо в каналах, де ти mod, з кнопками дозволити/відхилити — дзеркалить власну чергу перевірки twitch."
-  },
   "mc_automod_label": {
     "message": "automod утримує"
   },

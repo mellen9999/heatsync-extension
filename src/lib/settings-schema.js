@@ -1483,6 +1483,9 @@ const SETTINGS = [
     ],
   },
 
+  // Plumbing that stays on: no panel toggle (nobody wants chat without tab-complete
+  // or the native-chat tap), but the gates still exist in code. Anything stored
+  // `false` for these from an older panel is reset on boot (main.js snapshotGates).
   // ── system / subsystems — compose your own chat ───────────────────────
   // Whole features OFF for real: gated at init so a disabled subsystem
   // never creates its sockets/listeners/DOM (RAM + CPU reclaim). Most
@@ -1506,14 +1509,6 @@ const SETTINGS = [
       whispers: true,
       mentions: true,
       'stream-stats': true,
-      'profile-cards': true,
-      'emote-render': true,
-      'tab-complete': true,
-      'picker-button': true,
-      'native-takeover': true,
-      'kick-native-tap': true,
-      'yt-innertube-tap': true,
-      'automod-queue': true,
     },
     options: [
       {
@@ -1579,70 +1574,6 @@ const SETTINGS = [
         applies: 'live',
         labelKey: 'mc_settings_sub_stream_stats',
         tipKey: 'mc_settings_sub_stream_stats_desc',
-      },
-      {
-        value: 'profile-cards',
-        default: true,
-        color: '#00ff00',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_profile_cards',
-        tipKey: 'mc_settings_sub_profile_cards_desc',
-      },
-      {
-        value: 'emote-render',
-        default: true,
-        color: '#fff',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_emote_render',
-        tipKey: 'mc_settings_sub_emote_render_desc',
-      },
-      {
-        value: 'tab-complete',
-        default: true,
-        color: '#fff',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_tab_complete',
-        tipKey: 'mc_settings_sub_tab_complete_desc',
-      },
-      {
-        value: 'picker-button',
-        default: true,
-        color: '#fff',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_picker_button',
-        tipKey: 'mc_settings_sub_picker_button_desc',
-      },
-      {
-        value: 'native-takeover',
-        default: true,
-        color: HS_PLAT_COLORS.twitch,
-        applies: 'live',
-        labelKey: 'mc_settings_sub_native_takeover',
-        tipKey: 'mc_settings_sub_native_takeover_desc',
-      },
-      {
-        value: 'kick-native-tap',
-        default: true,
-        color: '#00ff00',
-        applies: 'live',
-        labelKey: 'mc_settings_sub_kick_native_tap',
-        tipKey: 'mc_settings_sub_kick_native_tap_desc',
-      },
-      {
-        value: 'yt-innertube-tap',
-        default: true,
-        color: '#ff0000',
-        applies: 'live',
-        labelKey: 'mc_settings_sub_yt_innertube_tap',
-        tipKey: 'mc_settings_sub_yt_innertube_tap_desc',
-      },
-      {
-        value: 'automod-queue',
-        default: true,
-        color: '#ffff00',
-        applies: 'live',
-        labelKey: 'mc_settings_sub_automod_queue',
-        tipKey: 'mc_settings_sub_automod_queue_desc',
       },
     ],
   },
@@ -1785,14 +1716,6 @@ const SETTINGS_PRESETS = [
         whispers: false,
         mentions: false,
         'stream-stats': false,
-        'profile-cards': true,
-        'emote-render': true,
-        'tab-complete': true,
-        'picker-button': true,
-        'native-takeover': true,
-        'kick-native-tap': true,
-        'yt-innertube-tap': true,
-        'automod-queue': true,
       },
     },
   },
@@ -1837,14 +1760,6 @@ const SETTINGS_PRESETS = [
         whispers: false,
         mentions: true,
         'stream-stats': false,
-        'profile-cards': false,
-        'emote-render': true,
-        'tab-complete': true,
-        'picker-button': true,
-        'native-takeover': true,
-        'kick-native-tap': true,
-        'yt-innertube-tap': true,
-        'automod-queue': true,
       },
     },
   },
@@ -2084,4 +1999,15 @@ if (typeof window !== 'undefined') {
   window.heatsyncSettingsSchema = { SETTINGS, SETTINGS_PRESETS, validateSettingValue, coerceSettingValue, lintSettings }
 }
 
-export { coerceSettingValue, lintSettings, SETTINGS, SETTINGS_PRESETS, validateSettingValue }
+const SUBSYSTEMS_ALWAYS_ON = [
+  'profile-cards',
+  'emote-render',
+  'tab-complete',
+  'picker-button',
+  'native-takeover',
+  'kick-native-tap',
+  'yt-innertube-tap',
+  'automod-queue',
+]
+
+export { coerceSettingValue, lintSettings, SETTINGS, SETTINGS_PRESETS, SUBSYSTEMS_ALWAYS_ON, validateSettingValue }

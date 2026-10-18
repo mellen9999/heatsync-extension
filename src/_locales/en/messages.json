@@ -1603,54 +1603,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "per-channel message-rate stats powering heat ranking"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "profile cards"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "click a username for the profile card popup"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "emotes in native chat"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "render heatsync emotes inside the platform’s own chat"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "tab-complete in native chat"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "emote + username completion in the platform’s own input"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "emote picker button"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "the heatsync picker button beside the native chat input"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "native chat takeover"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "while the overlay covers twitch chat, stop twitch rendering its hidden copy — big ram save on busy channels. fails open: overlay dies → twitch chat comes back on its own."
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "kick chat fallback tap"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "reads the current kick page's own chat stream as a backup. inert while the normal transports are healthy — only kicks in if they go quiet."
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "yt fallback tap"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "polls youtube directly if both normal feeds go silent for 5 minutes — a last-resort backstop, not a replacement transport."
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "automod hold queue"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "shows twitch automod holds inline in channels you mod, with allow/deny buttons — mirrors twitch's own review queue."
-  },
   "mc_automod_label": {
     "message": "automod hold"
   },

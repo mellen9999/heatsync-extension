@@ -1602,54 +1602,6 @@
   "mc_settings_sub_stream_stats_desc": {
     "message": "heat 순위를 만드는 채널별 메시지 속도 통계"
   },
-  "mc_settings_sub_profile_cards": {
-    "message": "프로필 카드"
-  },
-  "mc_settings_sub_profile_cards_desc": {
-    "message": "사용자 이름을 누르면 프로필 카드 팝업"
-  },
-  "mc_settings_sub_emote_render": {
-    "message": "기본 채팅의 emote"
-  },
-  "mc_settings_sub_emote_render_desc": {
-    "message": "플랫폼 자체 채팅 안에 heatsync emote 표시"
-  },
-  "mc_settings_sub_tab_complete": {
-    "message": "기본 채팅의 tab 완성"
-  },
-  "mc_settings_sub_tab_complete_desc": {
-    "message": "플랫폼 자체 입력창에서 emote + 사용자 이름 자동완성"
-  },
-  "mc_settings_sub_picker_button": {
-    "message": "emote 선택기 버튼"
-  },
-  "mc_settings_sub_picker_button_desc": {
-    "message": "기본 채팅 입력창 옆의 heatsync 선택기 버튼"
-  },
-  "mc_settings_sub_native_takeover": {
-    "message": "기본 채팅 대체"
-  },
-  "mc_settings_sub_native_takeover_desc": {
-    "message": "오버레이가 twitch 채팅을 덮는 동안 twitch가 숨은 사본을 그리지 않게 함 — 바쁜 채널에서 ram 크게 절약. 안전하게 실패: 오버레이가 죽으면 twitch 채팅이 저절로 돌아와."
-  },
-  "mc_settings_sub_kick_native_tap": {
-    "message": "kick 채팅 대체 탭"
-  },
-  "mc_settings_sub_kick_native_tap_desc": {
-    "message": "현재 kick 페이지 자체 채팅 스트림을 백업으로 읽어. 평소 경로가 멀쩡하면 가만히 있고 — 조용해질 때만 동작."
-  },
-  "mc_settings_sub_yt_innertube_tap": {
-    "message": "yt 대체 탭"
-  },
-  "mc_settings_sub_yt_innertube_tap_desc": {
-    "message": "평소 피드 둘 다 5분간 조용하면 youtube를 직접 폴링 — 마지막 안전망이지 대체 경로가 아니야."
-  },
-  "mc_settings_sub_automod_queue": {
-    "message": "automod 보류 대기열"
-  },
-  "mc_settings_sub_automod_queue_desc": {
-    "message": "mod 중인 채널에서 twitch automod 보류를 줄 안에 표시, allow/deny 버튼 포함 — twitch 자체 검토 대기열을 그대로 보여줘."
-  },
   "mc_automod_label": {
     "message": "automod 보류"
   },

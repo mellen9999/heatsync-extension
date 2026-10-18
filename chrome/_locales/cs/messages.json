@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "prodleva musí být 5–3600 sekund"
+  },
+  "mc_tagcard_posts": {
+    "message": "příspěvky"
+  },
+  "mc_tagcard_followers": {
+    "message": "sledující"
+  },
+  "mc_tagcard_last": {
+    "message": "naposledy"
+  },
+  "mc_tagcard_you": {
+    "message": "ty"
+  },
+  "mc_tagcard_following": {
+    "message": "sleduješ"
+  },
+  "mc_tagcard_not_following": {
+    "message": "nesleduješ"
   }
 }

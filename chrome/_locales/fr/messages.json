@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "le délai doit être de 5–3600 secondes"
+  },
+  "mc_tagcard_posts": {
+    "message": "posts"
+  },
+  "mc_tagcard_followers": {
+    "message": "abonnés"
+  },
+  "mc_tagcard_last": {
+    "message": "dernier"
+  },
+  "mc_tagcard_you": {
+    "message": "toi"
+  },
+  "mc_tagcard_following": {
+    "message": "suivi"
+  },
+  "mc_tagcard_not_following": {
+    "message": "non suivi"
   }
 }

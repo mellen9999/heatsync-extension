@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "冷卻時間須為 5–3600 秒"
+  },
+  "mc_tagcard_posts": {
+    "message": "貼文"
+  },
+  "mc_tagcard_followers": {
+    "message": "追蹤者"
+  },
+  "mc_tagcard_last": {
+    "message": "最近"
+  },
+  "mc_tagcard_you": {
+    "message": "你"
+  },
+  "mc_tagcard_following": {
+    "message": "已追蹤"
+  },
+  "mc_tagcard_not_following": {
+    "message": "未追蹤"
   }
 }

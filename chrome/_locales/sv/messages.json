@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "pausen måste vara 5–3600 sekunder"
+  },
+  "mc_tagcard_posts": {
+    "message": "inlägg"
+  },
+  "mc_tagcard_followers": {
+    "message": "följare"
+  },
+  "mc_tagcard_last": {
+    "message": "senast"
+  },
+  "mc_tagcard_you": {
+    "message": "du"
+  },
+  "mc_tagcard_following": {
+    "message": "följer"
+  },
+  "mc_tagcard_not_following": {
+    "message": "följer inte"
   }
 }

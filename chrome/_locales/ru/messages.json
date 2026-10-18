@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "пауза должна быть 5–3600 секунд"
+  },
+  "mc_tagcard_posts": {
+    "message": "посты"
+  },
+  "mc_tagcard_followers": {
+    "message": "подписчики"
+  },
+  "mc_tagcard_last": {
+    "message": "последний"
+  },
+  "mc_tagcard_you": {
+    "message": "ты"
+  },
+  "mc_tagcard_following": {
+    "message": "подписан"
+  },
+  "mc_tagcard_not_following": {
+    "message": "не подписан"
   }
 }

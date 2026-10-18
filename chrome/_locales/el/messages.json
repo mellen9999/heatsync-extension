@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "η αναμονή πρέπει να είναι 5–3600 δευτερόλεπτα"
+  },
+  "mc_tagcard_posts": {
+    "message": "αναρτήσεις"
+  },
+  "mc_tagcard_followers": {
+    "message": "ακόλουθοι"
+  },
+  "mc_tagcard_last": {
+    "message": "τελευταία"
+  },
+  "mc_tagcard_you": {
+    "message": "εσύ"
+  },
+  "mc_tagcard_following": {
+    "message": "ακολουθείς"
+  },
+  "mc_tagcard_not_following": {
+    "message": "δεν ακολουθείς"
   }
 }

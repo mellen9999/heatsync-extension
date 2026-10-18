@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "ההשהיה חייבת להיות 5–3600 שניות"
+  },
+  "mc_tagcard_posts": {
+    "message": "פוסטים"
+  },
+  "mc_tagcard_followers": {
+    "message": "עוקבים"
+  },
+  "mc_tagcard_last": {
+    "message": "אחרון"
+  },
+  "mc_tagcard_you": {
+    "message": "אתה"
+  },
+  "mc_tagcard_following": {
+    "message": "עוקב"
+  },
+  "mc_tagcard_not_following": {
+    "message": "לא עוקב"
   }
 }

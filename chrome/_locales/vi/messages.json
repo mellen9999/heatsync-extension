@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "thời gian chờ phải từ 5–3600 giây"
+  },
+  "mc_tagcard_posts": {
+    "message": "bài đăng"
+  },
+  "mc_tagcard_followers": {
+    "message": "người theo dõi"
+  },
+  "mc_tagcard_last": {
+    "message": "gần nhất"
+  },
+  "mc_tagcard_you": {
+    "message": "bạn"
+  },
+  "mc_tagcard_following": {
+    "message": "đang theo dõi"
+  },
+  "mc_tagcard_not_following": {
+    "message": "chưa theo dõi"
   }
 }

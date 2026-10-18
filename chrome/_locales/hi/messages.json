@@ -3594,5 +3594,23 @@
   },
   "mc_mr_err_cooldown": {
     "message": "कूलडाउन 5–3600 सेकंड होना चाहिए"
+  },
+  "mc_tagcard_posts": {
+    "message": "पोस्ट"
+  },
+  "mc_tagcard_followers": {
+    "message": "फ़ॉलोअर्स"
+  },
+  "mc_tagcard_last": {
+    "message": "आख़िरी"
+  },
+  "mc_tagcard_you": {
+    "message": "आप"
+  },
+  "mc_tagcard_following": {
+    "message": "फ़ॉलो कर रहे हैं"
+  },
+  "mc_tagcard_not_following": {
+    "message": "फ़ॉलो नहीं कर रहे"
   }
 }

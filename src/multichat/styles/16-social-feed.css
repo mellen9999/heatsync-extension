@@ -43,6 +43,13 @@
     .hs-feed-up {
       cursor: pointer;
       color: var(--hs-muted);
+      /* a deliberate hit box: the bare 8px glyph made the hover invert a thin
+         sliver that read as the arrow resizing. Padding is paid for out of the
+         margin, so nothing in the row moves. */
+      display: inline-block;
+      padding: 0 3px;
+      margin: 0 -1px;
+      line-height: 18px;
     }
     .hs-feed-up.on {
       color: var(--hs-ok);

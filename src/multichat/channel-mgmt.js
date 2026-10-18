@@ -254,7 +254,9 @@ async function renderFollowImportPicker(msgsEl) {
     box.setAttribute('aria-label', f.login)
     const dot = document.createElement('span')
     // The one round thing in here, deliberately — a status dot reads as a dot.
-    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : '#000000'};`
+    // Offline rows keep the slot (so names line up) but paint nothing: the old
+    // black fill was invisible on the black list and showed up only on hover.
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : 'transparent'};`
     const name = document.createElement('span')
     name.textContent =
       f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login

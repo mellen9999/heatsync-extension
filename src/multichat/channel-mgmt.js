@@ -21,7 +21,7 @@ function makeMcBtn(text, primary) {
   })
   btn.addEventListener('mouseleave', () => {
     btn.style.background = 'transparent'
-    btn.style.color = primary ? '#ffffff' : '#000000'
+    btn.style.color = '#ffffff'
   })
   return btn
 }
@@ -122,7 +122,7 @@ function makeAddViewShell(msgsEl, titleText, descText) {
 }
 
 /**
- * "fill my cockpit" — pick from the channels you already follow on twitch,
+ * "import twitch follows" — pick from the channels you already follow on twitch,
  * instead of typing them in one at a time.
  *
  * Twitch only, and the copy says so rather than implying otherwise: kick's
@@ -244,7 +244,7 @@ async function renderFollowImportPicker(msgsEl) {
     })
     row.addEventListener('mouseleave', () => {
       row.style.background = 'transparent'
-      row.style.color = '#000000'
+      row.style.color = '#ffffff'
     })
     const box = document.createElement('input')
     box.type = 'checkbox'

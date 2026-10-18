@@ -56,6 +56,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* the + tab: a bigger glyph in the same box. line-height stays at the other
+       tabs' 13px so the row does not grow; only the plus itself is larger. */
+    .hs-mc-tab[data-tab="add"] {
+      font-size: 22px !important;
+      line-height: 13px !important;
+      font-weight: 700 !important;
+      justify-content: center;
+    }
     /* Unread / heat count (settings: tab number). Colour is inherited and
        dimmed by opacity only, so it composes with every tab state — idle grey,
        has-new white, has-mentions, active, hover invert — without a rule per

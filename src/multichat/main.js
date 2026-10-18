@@ -9734,7 +9734,7 @@
         const fillBtn = document.createElement('button')
         fillBtn.style.cssText =
           'cursor:pointer;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;font:inherit;margin-bottom:6px'
-        fillBtn.textContent = 'fill my cockpit'
+        fillBtn.textContent = t('mc_fill_cockpit')
         try {
           cleanup.addEventListener(fillBtn, 'click', () => {
             try {

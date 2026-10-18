@@ -2145,8 +2145,10 @@ function buildFeedMessageDiv(m, opUsername) {
   const heatSpan = hd
     ? `<span class="hs-feed-stat hs-feed-heat" style="${heatStyle}"><span class="hs-heat-n">${formatHeat(heat)}</span>${heatDeg}</span>`
     : ''
+  // Not inside a thread: there the >>id is the way in, and a 💬N that
+  // toggled the thread closed just dumped you back on the feed.
   const repliesSpan =
-    replies > 0 ? `<span class="hs-feed-stat hs-feed-replies" title="replies">💬${replies}</span>` : ''
+    replies > 0 && !inThread ? `<span class="hs-feed-stat hs-feed-replies" title="replies">💬${replies}</span>` : ''
   const stats = [heatSpan, feedUpvoteHtml(m), repliesSpan].filter(Boolean).join(' ')
   const statsHtml = stats ? ` ${stats}` : ''
 

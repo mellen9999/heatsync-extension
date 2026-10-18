@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6c711a0fb5f0' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '15ad58da33e3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29357,28 +29357,11 @@ async function applyTooltipBanner(tooltip, profile, platform, username, gen) {
   const banner = await fetchBannerChain(chain)
   if (!banner) return
   if (gen !== _profileGen) return
-  const hero = tooltip.querySelector('.hs-card-hero')
-  if (!hero) return
-  const heroImg = hero.querySelector('.hs-card-hero-img')
-  // safeUrl gates protocol + escape quote/backslash so a crafted banner URL
-  // can't break out of url("…") and inject CSS.
-  const safe = safeUrl(banner.bannerUrl || banner.offlineUrl)
-  if (safe && heroImg) {
-    // card.css's .hs-card-hero starts at height:0 — it only expands once
-    // .hs-card-hero-loaded lands, and that only happens on a REAL <img>
-    // onload (not just a resolved URL), same as the site's own
-    // profile-renderer.js applyBannersIn. Skipping the preload here would
-    // mean the hero never shows at all on the extension.
-    const probe = new Image()
-    probe.onload = () => {
-      if (gen !== _profileGen || !hero.isConnected) return
-      heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
-      hero.classList.add('hs-card-hero-loaded')
-      if (_userTooltipTarget) positionTooltipAtElement(hsExtTooltipPositionTarget(tooltip), _userTooltipTarget)
-    }
-    probe.referrerPolicy = 'no-referrer'
-    probe.src = safe
-  }
+  // The hover card does NOT paint the banner. It is a 48px crop of art made for
+  // a wide page header, so it showed a slice of whatever the streamer put there
+  // (often their own name in a logo, doubled over the name right under it). The
+  // hero stays collapsed (card.css: height 0 until .hs-card-hero-loaded); the
+  // full card keeps the banner. The accent colour below still comes from it.
   // Fallback path leaves the avatar as anon.webp — fill it from the banner
   // fetch's profile_pic (kick api hands this back next to the banner URL).
   // Skip if a real avatar is already in place (success path uses heatsync data).

@@ -148,9 +148,12 @@
       -webkit-text-fill-color: #ffffff !important;
       border-left-color: #ffffff !important;
     }
-    /* A reply chip inside the stack is a clickable row too, and it gets the same
-       white-bg hover as any other (the :not(...-active) rule above). The forced
-       white text just above would then be white on white — invert it. */
+    /* A reply chip is a clickable control, so the container-wide hover gives it a
+       white bg (#hs-mc-container :where([role="button"]…):hover). On the opened
+       row and inside the stack the forced white text just above would then be
+       white on white — invert it. */
+    .hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx:hover,
+    .hs-mc-msg.hs-mc-reply-stack-active .hs-mc-reply-ctx:hover *,
     #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover,
     #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover *,
     #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-ctx:hover,

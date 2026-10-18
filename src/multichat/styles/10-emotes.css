@@ -1,6 +1,10 @@
     .hs-mc-emote {
       width: auto;
-      height: auto;
+      /* Fill the line like the site does (messages.css: height: --emote-size)
+         instead of drawing at the asset's own pixel size, which left twitch's
+         28px emotes visibly smaller than heatsync.org's. Wide emotes keep their
+         aspect through width:auto; max-height below still caps oversize ones. */
+      height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1));
       /* --hs-os = oversize ratio for BTTV emotes whose declared 1x height
          exceeds the 28px baseline (NaM = 40/28). Raising the CLAMP (not
          forcing a height) lets the asset draw at its true pixel size at
@@ -22,6 +26,9 @@
       cursor: pointer;
       box-sizing: content-box;
     }
+    /* oversize BTTV emotes (--hs-os is stamped against a 28px baseline) keep
+       drawing at their own true height — forcing size*os would overshoot it. */
+    .hs-mc-emote[style*="--hs-os"] { height: auto; }
     .hs-feed-body .hs-mc-emote { vertical-align: bottom; }
     /* Tighten gap between consecutive emotes so "eel1 eel2 eel3"
        reads as one continuous run instead of three spaced-out images.

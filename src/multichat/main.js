@@ -5282,8 +5282,10 @@
 
   function applyEmoteSize() {
     const targets = [document.documentElement, document.getElementById('hs-mc-messages')].filter(Boolean)
-    // 28px = Twitch /1.0 native; /2.0 = 56; /3.0 = 112. Base matches URL res so 1x is truly native.
-    const baseEmote = 28
+    // 32px = the site's --emote-size, so a chat line reads the same here and on
+    // heatsync.org. Twitch /1.0 is 28px, so 1x draws it a touch upscaled; the
+    // denser rung (hsWantedRung) keeps it sharp on a retina screen.
+    const baseEmote = 32
     const vars = {
       '--hs-emote-size': `${baseEmote * emoteSize}px`,
       '--hs-time-font': `${10 * emoteSize}px`,

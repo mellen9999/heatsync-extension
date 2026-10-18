@@ -2147,9 +2147,20 @@ async function noteSignedOut() {
     const l = await browser.storage.local.get(['hs_was_signed_in', 'user_info'])
     const hadPrior = l.hs_was_signed_in || l.user_info || emoteInventory.length > 0
     if (!signedOutNoticeDue(hadPrior, false)) return
+    // Mark shown only once a tab actually received it. No tab (or a content
+    // script not up yet) = not shown; the next inventory poll retries.
+    const tabs = await getMatchingTabs()
+    const got = await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs.sendMessage(tab.id, { type: 'signed_out_notice' }).then(
+          () => true,
+          () => false,
+        ),
+      ),
+    )
+    if (!got.some(Boolean)) return
     _signedOutShown = true
     browser.storage.session?.set({ hs_signed_out_shown: true }).catch(() => {})
-    broadcastToTabs({ type: 'signed_out_notice' })
   } catch (_) {}
 }
 // Token works again: remember we were signed in, re-arm the notice.

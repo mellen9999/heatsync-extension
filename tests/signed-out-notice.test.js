@@ -13,9 +13,15 @@ const end = SRC.indexOf('function fetchEmoteInventory(')
 if (start === -1 || end === -1) throw new Error('signed-out block markers missing in chrome/background.js')
 const BLOCK = SRC.slice(start, end)
 
-function mk({ local = {}, session = {}, inventory = [] } = {}) {
+function mk({ local = {}, session = {}, inventory = [], tabs = [{ id: 1 }] } = {}) {
   const sent = []
   const browser = {
+    tabs: {
+      sendMessage: async (id, m) => {
+        if (!env.tabs.length) throw new Error('no receiver')
+        sent.push(m)
+      },
+    },
     storage: {
       local: {
         get: async () => ({ ...local }),
@@ -30,16 +36,16 @@ function mk({ local = {}, session = {}, inventory = [] } = {}) {
       },
     },
   }
-  const env = { browser, emoteInventory: inventory, broadcastToTabs: (m) => sent.push(m) }
+  const env = { emoteInventory: inventory, tabs }
   const api = new Function(
     'browser',
     'env',
-    `const broadcastToTabs = env.broadcastToTabs
+    `const getMatchingTabs = async () => env.tabs
      const emoteInventory = env.emoteInventory
      ${BLOCK}
      return { signedOutNoticeDue, noteSignedOut, noteSignedIn }`,
   )(browser, env)
-  return { api, sent, local, session }
+  return { api, sent, local, session, env }
 }
 
 describe('signedOutNoticeDue', () => {
@@ -73,6 +79,20 @@ describe('noteSignedOut', () => {
     const { api, sent } = mk({ local: { hs_was_signed_in: true }, session: { hs_signed_out_shown: true } })
     await api.noteSignedOut()
     expect(sent).toEqual([])
+  })
+})
+
+describe('no tab open at broadcast time', () => {
+  test('not marked shown; delivered on the next poll once a tab exists, then once only', async () => {
+    const { api, sent, session, env } = mk({ local: { hs_was_signed_in: true }, tabs: [] })
+    await api.noteSignedOut()
+    expect(sent).toEqual([])
+    expect(session.hs_signed_out_shown).toBeUndefined()
+    env.tabs.push({ id: 7 })
+    await api.noteSignedOut()
+    await api.noteSignedOut()
+    expect(sent).toEqual([{ type: 'signed_out_notice' }])
+    expect(session.hs_signed_out_shown).toBe(true)
   })
 })
 

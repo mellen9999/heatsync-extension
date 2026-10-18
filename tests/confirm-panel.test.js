@@ -117,3 +117,15 @@ suite('hsConfirm full-pane panel', () => {
     expect(await api.hsConfirm('x?')).toEqual({ ok: false, reason: '' })
   })
 })
+
+// The panel is absolutely positioned in the scroller's content box (inset: 0).
+// Opened over chat that is scrolled to the bottom it landed ~23000px above the
+// viewport — /modtools "did nothing" and the pane just flashed.
+describe('pane panel opens on screen', () => {
+  test('the scroller is parked at the top when a panel mounts', () => {
+    const src = readFileSync(join(dir, 'pane-panel.js'), 'utf8')
+    const open = src.slice(src.indexOf('function hsPanePanelOpenWith'))
+    expect(open.indexOf('msgsEl.appendChild(el)')).toBeGreaterThan(0)
+    expect(open.indexOf('msgsEl.scrollTop = 0')).toBeGreaterThan(open.indexOf('msgsEl.appendChild(el)'))
+  })
+})

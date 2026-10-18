@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'df7fb21489cc' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '641577755bfd' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16457,6 +16457,11 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
   document.addEventListener('keydown', keyHandler, true)
   hsPaneMountRow([], () => finish(false, true))
   msgsEl.appendChild(el)
+  // The panel is absolutely positioned in the scroller's CONTENT box (inset: 0),
+  // and chat sits scrolled to the bottom — so it opened ~23000px above the
+  // viewport: the command "did nothing" and the chat just flashed. Park the
+  // scroller at the top so the box the panel fills is the one on screen.
+  msgsEl.scrollTop = 0
   activePanePanel = { el, finish }
   return el
 }

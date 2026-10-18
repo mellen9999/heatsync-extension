@@ -8088,7 +8088,7 @@ async function handleSlashCommand(text, input) {
     }
     if (!(await _twitchModAuthOk())) return _notLoggedIn()
     const login = _twitchModName.toLowerCase()
-    if (login !== (await automodSelfLogin()) && !(await isModFor(login))) {
+    if (login !== (await automodSelfLogin()) && !(await isModFor(login, { fresh: true }))) {
       showToast(t('mc_ms_not_mod'), 'error')
       return { ok: false, error: t('mc_ms_not_mod') }
     }

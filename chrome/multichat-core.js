@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5824f8303857' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8bf76c8f4e03' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -49609,7 +49609,7 @@ async function handleSlashCommand(text, input) {
     }
     if (!(await _twitchModAuthOk())) return _notLoggedIn()
     const login = _twitchModName.toLowerCase()
-    if (login !== (await automodSelfLogin()) && !(await isModFor(login))) {
+    if (login !== (await automodSelfLogin()) && !(await isModFor(login, { fresh: true }))) {
       showToast(t('mc_ms_not_mod'), 'error')
       return { ok: false, error: t('mc_ms_not_mod') }
     }
@@ -56008,9 +56008,12 @@ let modToolbarButtons = [...DEFAULT_MOD_BUTTONS]
 // Per-channel mod state. Pre-fetch on tab/render so first hover doesn't lag.
 const _modStateCache = new Map()
 const _modStatePending = new Map()
-async function isModFor(channel) {
+async function isModFor(channel, { fresh = false } = {}) {
   if (!channel) return false
   channel = channel.toLowerCase()
+  // fresh: a typed command re-asks twitch instead of trusting a cached no, so a
+  // stale answer from before login/mod can't lock a real mod out.
+  if (fresh && _modStateCache.get(channel) === false) _modStateCache.delete(channel)
   if (_modStateCache.has(channel)) return _modStateCache.get(channel)
   if (_modStatePending.has(channel)) return _modStatePending.get(channel)
   const p = (async () => {
@@ -56018,8 +56021,10 @@ async function isModFor(channel) {
       const safe = channel.replace(/[^a-z0-9_]/g, '')
       if (!safe) return false
       const data = await twitchGql(`{ user(login: "${safe}") { self { isModerator } } }`)
-      const isMod = !!data?.data?.user?.self?.isModerator
-      _modStateCache.set(channel, isMod)
+      const self = data?.data?.user?.self
+      const isMod = !!self?.isModerator
+      // self is null until twitch knows who is asking — that is not a "no".
+      if (self) _modStateCache.set(channel, isMod)
       return isMod
     } catch (_) {
       return false

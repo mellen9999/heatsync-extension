@@ -89,9 +89,12 @@ let modToolbarButtons = [...DEFAULT_MOD_BUTTONS]
 // Per-channel mod state. Pre-fetch on tab/render so first hover doesn't lag.
 const _modStateCache = new Map()
 const _modStatePending = new Map()
-async function isModFor(channel) {
+async function isModFor(channel, { fresh = false } = {}) {
   if (!channel) return false
   channel = channel.toLowerCase()
+  // fresh: a typed command re-asks twitch instead of trusting a cached no, so a
+  // stale answer from before login/mod can't lock a real mod out.
+  if (fresh && _modStateCache.get(channel) === false) _modStateCache.delete(channel)
   if (_modStateCache.has(channel)) return _modStateCache.get(channel)
   if (_modStatePending.has(channel)) return _modStatePending.get(channel)
   const p = (async () => {
@@ -99,8 +102,10 @@ async function isModFor(channel) {
       const safe = channel.replace(/[^a-z0-9_]/g, '')
       if (!safe) return false
       const data = await twitchGql(`{ user(login: "${safe}") { self { isModerator } } }`)
-      const isMod = !!data?.data?.user?.self?.isModerator
-      _modStateCache.set(channel, isMod)
+      const self = data?.data?.user?.self
+      const isMod = !!self?.isModerator
+      // self is null until twitch knows who is asking — that is not a "no".
+      if (self) _modStateCache.set(channel, isMod)
       return isMod
     } catch (_) {
       return false

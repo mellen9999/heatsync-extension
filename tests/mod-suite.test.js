@@ -482,7 +482,7 @@ describe('mod suite wiring', () => {
     const gate = INPUT.slice(at, INPUT.indexOf('\n  }\n', at))
     expect(gate).toContain('return _notLoggedIn()')
     expect(gate).toContain('mc_ms_no_channel')
-    expect(gate).toContain('isModFor(login)')
+    expect(gate).toContain('isModFor(login, { fresh: true })')
     expect(INPUT).toContain("openModSuite(login, cmd === 'modtools' ? 'shield' : 'unban')")
     expect(INPUT).toContain("msCall(login, 'shield_set', { active: on })")
   })

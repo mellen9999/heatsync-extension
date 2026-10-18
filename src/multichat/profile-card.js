@@ -161,6 +161,10 @@ async function openProfileCard(username, platform, opts = {}) {
   // listening (no overlay mounted at all).
   document.dispatchEvent(new CustomEvent('hs-mc-close-overlays'))
 
+  // The hover card is a separate fixed layer; left up it sits over the card this
+  // click opens, looks like part of it, and has no way to close.
+  if (typeof hideUserTooltip === 'function') hideUserTooltip()
+
   // Hide input bar — typing makes no sense in card view. Flag must move with
   // the class: a class-only hide leaves inputBarVisible=true, which makes
   // every later showInputBar() early-return — composer unreachable until a

@@ -370,7 +370,6 @@ function renderProfile(
         ${bioHtml}
         ${renderSheet(model.sheet, esc, fmtTime)}
       </div>
-      ${navHtml}
     </div>`
   }
 

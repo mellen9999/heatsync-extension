@@ -169,3 +169,33 @@ describe('plain-text (wysiwyg off) still commits the emote at send', () => {
     expect(body.slice(textAt, addAt)).not.toContain('wysiwyg')
   })
 })
+
+describe('same-name uploads stay separate once the name is typed in full', () => {
+  const id = (n) => `01GPTQQTDR0001F90QP9X30T5${n}`.slice(0, 26)
+  const up = (n) => ({ name: 'shrujj', url: `https://cdn.7tv.app/emote/${id(n)}/1x.avif`, provider: '7tv', id: id(n) })
+
+  test('exact name keeps every upload, top one first', async () => {
+    const { acState, fetch } = build({ search: 'shrujj', stv: async () => [up('A'), up('B'), up('C')] })
+    await fetch('shrujj')
+    expect(acState.matches.map((m) => m.id)).toEqual([id('A'), id('B'), id('C')])
+  })
+
+  test('only the top upload registers for auto-add-on-send', async () => {
+    const { recentRemoteCompletions, fetch } = build({ search: 'shrujj', stv: async () => [up('A'), up('B')] })
+    await fetch('shrujj')
+    expect(recentRemoteCompletions.get('shrujj').url).toContain(id('A'))
+  })
+
+  test('an upload already in the cycle is not listed twice', async () => {
+    const owned = { name: 'shrujj', url: up('B').url, source: '7tv', type: 'emote' }
+    const { acState, fetch } = build({ search: 'shrujj', matches: [owned], stv: async () => [up('A'), up('B')] })
+    await fetch('shrujj')
+    expect(acState.matches.map((m) => m.url)).toEqual([owned.url, up('A').url])
+  })
+
+  test('a partial query still merges same-name uploads into one', async () => {
+    const { acState, fetch } = build({ search: 'shru', stv: async () => [up('A'), up('B')] })
+    await fetch('shru')
+    expect(acState.matches.length).toBe(1)
+  })
+})

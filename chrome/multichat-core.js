@@ -14813,7 +14813,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6b0cc85c7d00' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6b8e7860eac0' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -64475,7 +64475,9 @@ async function renderFollowImportPicker(msgsEl) {
     box.setAttribute('aria-label', f.login)
     const dot = document.createElement('span')
     // The one round thing in here, deliberately — a status dot reads as a dot.
-    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : '#000000'};`
+    // Offline rows keep the slot (so names line up) but paint nothing: the old
+    // black fill was invisible on the black list and showed up only on hover.
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : 'transparent'};`
     const name = document.createElement('span')
     name.textContent =
       f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login

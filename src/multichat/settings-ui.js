@@ -766,7 +766,7 @@ function _renderFilterRuleAddForm() {
     '<option value="user">user</option>' +
     '<option value="badge">badge</option>' +
     '<option value="msgtype">msgtype</option>' +
-    '<option value="expr">expr</option>' +
+    '<option value="expr" title="e.g. first &amp;&amp; !badge:subscriber — join with &amp;&amp; || ! ( ); fields user: badge: type: contains: regex:">expr</option>' +
     '</select>' +
     '<input type="text" data-fr-field="value" placeholder="value..." style="' +
     FR_INPUT +
@@ -797,10 +797,6 @@ function _renderFilterRuleAddForm() {
     '<button data-fr-action="add" style="' +
     FR_BTN +
     ';background:#000000">+ add</button>' +
-    '</div>' +
-    '<div style="font-size:13px;color:#ffffff;margin-top:4px;line-height:1.4">' +
-    'expr: compose with &amp;&amp; || ! and ( ). fields user: badge: type: contains: regex: · flags first action reply cheer · bits&gt;100. ' +
-    'e.g. <code style="color:#ffffff">first &amp;&amp; !badge:subscriber</code>' +
     '</div>' +
     '</div>'
   )

@@ -14887,7 +14887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '494c2e05d0cb' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c33ac9e3825d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -62718,7 +62718,7 @@ function _renderFilterRuleAddForm() {
     '<option value="user">user</option>' +
     '<option value="badge">badge</option>' +
     '<option value="msgtype">msgtype</option>' +
-    '<option value="expr">expr</option>' +
+    '<option value="expr" title="e.g. first &amp;&amp; !badge:subscriber — join with &amp;&amp; || ! ( ); fields user: badge: type: contains: regex:">expr</option>' +
     '</select>' +
     '<input type="text" data-fr-field="value" placeholder="value..." style="' +
     FR_INPUT +
@@ -62749,10 +62749,6 @@ function _renderFilterRuleAddForm() {
     '<button data-fr-action="add" style="' +
     FR_BTN +
     ';background:#000000">+ add</button>' +
-    '</div>' +
-    '<div style="font-size:13px;color:#ffffff;margin-top:4px;line-height:1.4">' +
-    'expr: compose with &amp;&amp; || ! and ( ). fields user: badge: type: contains: regex: · flags first action reply cheer · bits&gt;100. ' +
-    'e.g. <code style="color:#ffffff">first &amp;&amp; !badge:subscriber</code>' +
     '</div>' +
     '</div>'
   )

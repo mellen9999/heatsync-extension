@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "привязать заново"
   },
+  "mc_signed_out_notice": {
+    "message": "выход из heatsync — твои эмодзи скрыты"
+  },
+  "mc_signed_out_action": {
+    "message": "войти"
+  },
   "mc_settings_diag_errors": {
     "message": "показывать ошибки диагностики"
   },

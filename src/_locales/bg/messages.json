@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "свържи пак"
   },
+  "mc_signed_out_notice": {
+    "message": "излязъл си от heatsync — твоите емотикони са скрити"
+  },
+  "mc_signed_out_action": {
+    "message": "вход"
+  },
   "mc_settings_diag_errors": {
     "message": "показвай диагностични грешки"
   },

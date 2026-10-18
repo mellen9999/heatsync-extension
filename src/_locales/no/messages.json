@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "koble på nytt"
   },
+  "mc_signed_out_notice": {
+    "message": "logget ut av heatsync — dine egne emotes er skjult"
+  },
+  "mc_signed_out_action": {
+    "message": "logg inn"
+  },
   "mc_settings_diag_errors": {
     "message": "vis diagnosefeil"
   },

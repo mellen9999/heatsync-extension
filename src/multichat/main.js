@@ -11193,10 +11193,17 @@
           }
         } catch (_) {}
       }
+      if (msg.type === 'signed_out_notice') {
+        try {
+          HsNotifs.emit('signed-out', {})
+        } catch (_) {}
+        return
+      }
       if (msg.type === 'auth_changed') {
         try {
           showAuthLoginBanner(!!msg.loggedIn)
           if (msg.loggedIn) {
+            HsNotifs.dismissByKey?.('signed-out', 'signed-out')
             dismissEmoteLoginNudge()
             revealFreshInstallTabsOnce()
           }

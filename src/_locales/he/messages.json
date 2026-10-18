@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "קשר מחדש"
   },
+  "mc_signed_out_notice": {
+    "message": "התנתקת מ-heatsync — האימוטים שלך מוסתרים"
+  },
+  "mc_signed_out_action": {
+    "message": "התחברות"
+  },
   "mc_settings_diag_errors": {
     "message": "הצג שגיאות אבחון"
   },

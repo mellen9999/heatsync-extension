@@ -1627,6 +1627,12 @@
   "mc_automod_relink_action": {
     "message": "relink"
   },
+  "mc_signed_out_notice": {
+    "message": "signed out of heatsync — your own emotes are hidden"
+  },
+  "mc_signed_out_action": {
+    "message": "log in"
+  },
   "mc_settings_diag_errors": {
     "message": "show diagnostic errors"
   },

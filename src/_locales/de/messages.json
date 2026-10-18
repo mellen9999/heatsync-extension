@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "neu verknüpfen"
   },
+  "mc_signed_out_notice": {
+    "message": "von heatsync abgemeldet — deine eigenen Emotes sind ausgeblendet"
+  },
+  "mc_signed_out_action": {
+    "message": "anmelden"
+  },
   "mc_settings_diag_errors": {
     "message": "diagnosefehler anzeigen"
   },

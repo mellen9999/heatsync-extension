@@ -2127,6 +2127,40 @@ function emoteAddedAtMs(v) {
   return t
 }
 
+// Signed-out notice: a lapsed heatsync.org login hides the user's own emotes
+// with no hint why. Pure gate: only someone who WAS signed in (a fresh install
+// that never logged in stays quiet), and only once until the next sign-in.
+function signedOutNoticeDue(hadPrior, alreadyShown) {
+  return !!hadPrior && !alreadyShown
+}
+let _signedOutShown = false
+let _signInNoted = false
+async function noteSignedOut() {
+  _signInNoted = false
+  try {
+    if (_signedOutShown) return
+    const s = await browser.storage.session?.get('hs_signed_out_shown')
+    if (s?.hs_signed_out_shown) {
+      _signedOutShown = true
+      return
+    }
+    const l = await browser.storage.local.get(['hs_was_signed_in', 'user_info'])
+    const hadPrior = l.hs_was_signed_in || l.user_info || emoteInventory.length > 0
+    if (!signedOutNoticeDue(hadPrior, false)) return
+    _signedOutShown = true
+    browser.storage.session?.set({ hs_signed_out_shown: true }).catch(() => {})
+    broadcastToTabs({ type: 'signed_out_notice' })
+  } catch (_) {}
+}
+// Token works again: remember we were signed in, re-arm the notice.
+function noteSignedIn() {
+  if (_signInNoted) return
+  _signInNoted = true
+  _signedOutShown = false
+  browser.storage.local.set({ hs_was_signed_in: true }).catch(() => {})
+  browser.storage.session?.remove('hs_signed_out_shown').catch(() => {})
+}
+
 function fetchEmoteInventory() {
   // Skip if fetched within 10s (WS events already deliver fresh data)
   if (Date.now() - lastInventoryFetch < 10000) {
@@ -2145,6 +2179,7 @@ function fetchEmoteInventory() {
           return
         }
         log(' No auth token for inventory fetch (consecutive) — clearing')
+        await noteSignedOut() // before the clear: a warm cache proves a prior sign-in
         emoteInventory = []
         // Only broadcast empty once to prevent spam (every 60s poll was flooding console)
         if (!lastBroadcastWasEmpty) {
@@ -2174,6 +2209,7 @@ function fetchEmoteInventory() {
             log(` Inventory fetch ${response.status} — keeping warm cache (auth fail 1/2)`)
             return
           }
+          await noteSignedOut()
           emoteInventory = []
           if (!lastBroadcastWasEmpty) {
             broadcastToTabs({ type: 'inventory_update', emotes: emoteInventory })
@@ -2238,6 +2274,7 @@ function fetchEmoteInventory() {
       }
       lastBroadcastWasEmpty = false // Reset - we have real emotes now
       authConsecutiveFails = 0
+      noteSignedIn()
       lastInventoryFetch = Date.now()
       inventoryFetchOK = true
       broadcastToTabs({ type: 'inventory_update', emotes: emoteInventory })

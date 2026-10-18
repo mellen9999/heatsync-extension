@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "เชื่อมใหม่"
   },
+  "mc_signed_out_notice": {
+    "message": "ออกจากระบบ heatsync แล้ว — อีโมตของคุณถูกซ่อน"
+  },
+  "mc_signed_out_action": {
+    "message": "เข้าสู่ระบบ"
+  },
   "mc_settings_diag_errors": {
     "message": "แสดง error การวินิจฉัย"
   },

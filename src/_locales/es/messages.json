@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "revincular"
   },
+  "mc_signed_out_notice": {
+    "message": "sesión cerrada en heatsync — tus emotes están ocultos"
+  },
+  "mc_signed_out_action": {
+    "message": "iniciar sesión"
+  },
   "mc_settings_diag_errors": {
     "message": "mostrar errores de diagnóstico"
   },

@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "ricollega"
   },
+  "mc_signed_out_notice": {
+    "message": "disconnesso da heatsync — le tue emote sono nascoste"
+  },
+  "mc_signed_out_action": {
+    "message": "accedi"
+  },
   "mc_settings_diag_errors": {
     "message": "mostra errori diagnostici"
   },

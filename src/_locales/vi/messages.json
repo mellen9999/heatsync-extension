@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "liên kết lại"
   },
+  "mc_signed_out_notice": {
+    "message": "đã đăng xuất heatsync — emote của bạn bị ẩn"
+  },
+  "mc_signed_out_action": {
+    "message": "đăng nhập"
+  },
   "mc_settings_diag_errors": {
     "message": "hiện lỗi chẩn đoán"
   },

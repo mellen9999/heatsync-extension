@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "relegare"
   },
+  "mc_signed_out_notice": {
+    "message": "deconectat de la heatsync — emote-urile tale sunt ascunse"
+  },
+  "mc_signed_out_action": {
+    "message": "conectare"
+  },
   "mc_settings_diag_errors": {
     "message": "arată erorile de diagnostic"
   },

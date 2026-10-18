@@ -904,6 +904,32 @@ const HsNotifs = (() => {
     },
   })
 
+  // Signed out of heatsync.org (login lapsed): own emotes render as plain text
+  // with no hint why. Background sends 'signed_out_notice' once per browser
+  // session until the next sign-in. Persistent until dismissed.
+  registerType('signed-out', {
+    layer: 'toast-stack',
+    dedupeKey: () => 'signed-out',
+    render: () => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-notif-toast-warn'
+      el.textContent = t('mc_signed_out_notice')
+      return el
+    },
+    actions: {
+      primary: {
+        label: t('mc_signed_out_action'),
+        onClick: () => {
+          try {
+            window.open('https://heatsync.org/api/auth/login', '_blank', 'noopener')
+          } catch (_) {}
+          return true
+        },
+      },
+      dismiss: {},
+    },
+  })
+
   // Server-evaluated mention rule match — heatsync.org evaluated the user's
   // saved mention rules on the server and found a match in a channel message.
   // Shows as a toast; tap/click to dismiss. Deduplicated per channel+snippet

@@ -1626,6 +1626,12 @@
   "mc_automod_relink_action": {
     "message": "länka om"
   },
+  "mc_signed_out_notice": {
+    "message": "utloggad från heatsync — dina egna emotes är dolda"
+  },
+  "mc_signed_out_action": {
+    "message": "logga in"
+  },
   "mc_settings_diag_errors": {
     "message": "visa diagnostikfel"
   },

@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a775ebba432c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '00c8f8f3e230' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -22267,8 +22267,14 @@ function _tapToMsg(m, channel) {
     msg.sharedChat = true
     msg.sourceRoomId = String(srcRoomID)
   }
+  // The page's badge version is tier-prefixed: tier 1 is plain months ("14"),
+  // tier 2 is 2000 + months ("2040"), tier 3 is 3000 + months. Read raw, a
+  // tier 2 sub of 40 months drew as 2040 months — "170y" on the hover card.
   const subMatch = badgeStr.match(/subscriber\/(\d+)/)
-  if (subMatch) msg.subMonths = parseInt(subMatch[1], 10)
+  if (subMatch) {
+    const v = parseInt(subMatch[1], 10)
+    msg.subMonths = v >= 1000 ? v % 1000 : v
+  }
   return msg
 }
 

@@ -236,6 +236,9 @@ describe('vote across cached copies', () => {
     const feed = { base36_id: 'ab', user_vote: null, vote_score: 0, heat: 1 }
     const timers = []
     const real = globalThis.setTimeout
+    const realCleanup = globalThis.cleanup
+    // other files leak a cleanup stub; the vote path would use it instead of setTimeout
+    globalThis.cleanup = undefined
     globalThis.setTimeout = (fn) => timers.push(fn)
     try {
       const { feedUpvote } = load({
@@ -252,6 +255,7 @@ describe('vote across cached copies', () => {
       expect(feed.heat).toBe(2)
     } finally {
       globalThis.setTimeout = real
+      globalThis.cleanup = realCleanup
     }
   })
 })

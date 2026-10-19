@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '91ac2f16fa84' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1649c4d81771' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36124,6 +36124,23 @@ function feedVoteSyncCopies(m) {
   }
 }
 
+// The vote route answers with the heat from BEFORE its 10s batch recalc, and
+// the vote:updated frame carries the same number — so a fresh upvote painted
+// the old heat and nothing ever corrected it. Ask once, after the recalc.
+const FEED_HEAT_SETTLE_MS = 11000
+function feedRefreshHeatSoon(id) {
+  const later = typeof cleanup !== 'undefined' && cleanup?.setTimeout ? cleanup.setTimeout.bind(cleanup) : setTimeout
+  later(async () => {
+    const r = await apiFetch(`/api/messages/${encodeURIComponent(id)}`)
+    const heat = Number(r?.data?.heat)
+    if (!r?.ok || !Number.isFinite(heat)) return
+    for (const c of feedCachedCopies(id)) {
+      c.heat = heat
+      feedPaintVote(c)
+    }
+  }, FEED_HEAT_SETTLE_MS)
+}
+
 function feedVoteRollback(m, snap) {
   m.user_vote = snap.user_vote
   m.vote_score = snap.vote_score
@@ -36212,6 +36229,7 @@ async function feedUpvote(m) {
     if (r?.ok && r.data?.success) {
       feedVoteReconcile(m, r.data)
       feedVoteSyncCopies(m)
+      feedRefreshHeatSoon(m.base36_id)
     } else {
       feedVoteRollback(m, snap)
       feedFail(r)

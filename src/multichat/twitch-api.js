@@ -4072,7 +4072,27 @@ function noteBadgeMiss(channel, name, version) {
   badgeRefetcher.note(channel, `${name}/${version}`)
 }
 
+// The badges a row carries are a "name/version,name/version" string on the wire,
+// but a persisted or re-tapped row can hold an array, a Set or a list of
+// {setID, version} objects. One of those reaching renderBadges threw
+// ".split is not a function" out of renderMessages, which aborted the whole
+// panel mount (the popout stayed hidden at opacity 0). Take every shape; a
+// shape it cannot read draws no badges instead of no panel.
+function badgesToString(b) {
+  if (!b) return ''
+  if (typeof b === 'string') return b
+  const list = Array.isArray(b) ? b : b instanceof Set ? [...b] : null
+  if (!list) return ''
+  return list
+    .map((x) =>
+      typeof x === 'string' ? x : x && (x.setID || x.name) ? `${x.setID || x.name}/${x.version ?? '1'}` : '',
+    )
+    .filter(Boolean)
+    .join(',')
+}
+
 function renderBadges(badgesStr, channel, platform) {
+  badgesStr = badgesToString(badgesStr)
   if (!badgesStr) return ''
   const isKick = platform === 'kick'
   return badgesStr

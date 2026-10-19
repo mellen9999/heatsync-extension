@@ -1,5 +1,22 @@
 # changelog
 
+## [1.7.94] — 2026-10-18
+
+### added
+- **tag hover** — hover a #tag in chat to see how many posts and followers it has, when it was last used, and whether you follow it.
+- **signed-out notice** — if your heatsync login lapses, one quiet line says your own emotes are hidden, with a log-in link.
+- **same-name emotes** — type a full emote name and press tab to cycle every 7tv upload with that name, not just the most used one.
+
+### fixed
+- **popout** — the twitch popout chat no longer stays blank when a saved chat row carries its badges in an unexpected shape.
+- **sub tenure** — a tier 2 or tier 3 sub no longer shows a 170-year tenure on the user card.
+- **welcome page** — the "import my emotes" button is readable again.
+- **mod tools** — the mod panel no longer opens far off screen over scrolled chat, commands on live and feed tabs target the channel on the page, and the mod check asks twitch again instead of trusting an old no.
+
+### changed
+- **inventory emotes** — right-clicking an emote in your inventory removes it; blocking moved to the shift menu.
+- **import** — "fill my cockpit" reads "import twitch follows" in every language.
+
 ## [1.7.90] — 2026-10-13
 
 ### fixed

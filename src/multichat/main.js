@@ -6777,7 +6777,7 @@
       fn()
       _markOverlayRenderOk(true)
     } catch (e) {
-      console.warn('[heatsync-ext] overlay mount pass threw:', label, e?.message || e)
+      console.warn('[heatsync-ext] overlay mount pass threw:', label, e?.message || e, e?.stack)
       _markOverlayRenderOk(false)
       try {
         setNativeChatHidden(false)

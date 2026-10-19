@@ -2,11 +2,11 @@ name: nightly-heap
 
 # The extension's memory on a page with no chat (ext-on minus ext-off, budget in
 # scripts/heap-budget.ts). ~3 min, no live channels. The lived-in soak stays a
-# manual run: it needs busy channels and an hour. Daily so the sentinel's 26h
-# staleness window sees a fresh run.
+# manual run: it needs busy channels and an hour. Twice a day so the sentinel's
+# 26h staleness window survives GitHub dropping one cron fire (2026-10-19 did).
 on:
   schedule:
-    - cron: '17 9 * * *'
+    - cron: '17 9,21 * * *'
   workflow_dispatch:
 
 jobs:

@@ -133,9 +133,12 @@ export function matchEmoteWord(word, lookup) {
  * @param {string} content - the raw outgoing message text
  * @param {Map<string, {hash?:string,url?:string,name?:string,provider?:string,zeroWidth?:boolean,width?:number,height?:number}>} emotesMap
  *        the sender's own emote map (keyed by exact name, lowercase fallback)
+ * @param {Map<string, {url?:string,name?:string,provider?:string,zeroWidth?:boolean,id?:string,animated?:boolean,width?:number,height?:number}>} [channelMap]
+ *        the room's own emotes (7tv/bttv/ffz/twitch). Last resort after the
+ *        inventory and picks, so a name typed by heart ships its image too.
  * @returns {Object} emote_refs keyed by the emote's name (overlay suffix stripped)
  */
-export function buildEmoteRefs(content, emotesMap) {
+export function buildEmoteRefs(content, emotesMap, channelMap) {
   const emote_refs = {}
   if (!content) return emote_refs
   // Split on whitespace (not \b\w+\b) so non-word emotes like ")))" or "<3" are
@@ -198,6 +201,27 @@ export function buildEmoteRefs(content, emotesMap) {
         ...(r.id ? { id: r.id } : {}),
         ...(typeof r.animated === 'boolean' ? { animated: r.animated } : {}),
         ...naturalSize(r),
+      }
+      continue
+    }
+    // Room emotes typed by heart. Not in inventory or the catalog, so without
+    // this the post carried no image and only viewers whose own room set
+    // happened to load saw it.
+    let ch = channelMap?.get(word) || channelMap?.get(word.toLowerCase())
+    let chClean = word
+    if (!ch && word.endsWith('0') && word.length > 1) {
+      chClean = word.slice(0, -1)
+      ch = channelMap?.get(chClean) || channelMap?.get(chClean.toLowerCase())
+    }
+    if (ch?.url) {
+      emote_refs[chClean] = {
+        url: ch.url,
+        name: ch.name || chClean,
+        provider: ch.provider,
+        zeroWidth: !!ch.zeroWidth,
+        ...(ch.id ? { id: ch.id } : {}),
+        ...(typeof ch.animated === 'boolean' ? { animated: ch.animated } : {}),
+        ...naturalSize(ch),
       }
     }
   }

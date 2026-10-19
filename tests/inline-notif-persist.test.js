@@ -77,7 +77,9 @@ describe('inline notif persistence', () => {
   })
 
   test('rows older than a week are dropped, and a type that is toggled off stays out', async () => {
-    const { saveInlineNotif, restoreInlineNotifs, twitch, store } = load({ toggles: { op: false, re: true, mop: true } })
+    const { saveInlineNotif, restoreInlineNotifs, twitch, store } = load({
+      toggles: { op: false, re: true, mop: true },
+    })
     saveInlineNotif('re', post('00001a', Date.now() - 8 * 86400000))
     saveInlineNotif('op', post('00001b', Date.now() - 1000))
     await new Promise((r) => setTimeout(r, 5))

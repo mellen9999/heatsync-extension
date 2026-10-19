@@ -81,6 +81,12 @@ class ElementNode {
     this.parentNode = null
     this.dataset = {}
     this.attrs = {}
+    this.style = {
+      width: '',
+      removeProperty(k) {
+        this[k] = ''
+      },
+    }
     this._classes = new Set()
     this.classList = {
       add: (...c) => c.forEach((x) => this._classes.add(x)),
@@ -345,5 +351,16 @@ describe('Tab-cycle: overlay matches then a non-overlay match', () => {
     for (const n of input.childNodes) {
       if (n.nodeType === TEXT_NODE) expect(n.textContent.trim()).toBe('')
     }
+  })
+
+  test('a width pinned for the previous emote does not follow the cycle', () => {
+    // hsSnapEmoteBox pins the loaded emote's px width on the chip; a wide lift0
+    // left that box behind for every narrower emote Tab landed on after it.
+    const { input } = buildComposer()
+    api.insertCompletionWysiwyg(emote('lift0', true))
+    const cycling = input.querySelector('img.hs-cycling-emote')
+    cycling.style.width = '96px'
+    api.insertCompletionWysiwyg(emote('dankwave', false))
+    expect(cycling.style.width).toBe('')
   })
 })

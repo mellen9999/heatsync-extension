@@ -5672,9 +5672,15 @@ function insertCompletionWysiwyg(match) {
           stackInputEmote(prev, existingEmote)
         }
       }
+      // hsSnapEmoteBox pinned the PREVIOUS emote's width on this chip as an
+      // inline px value (wide lift0 → 96px). Swapping src alone kept that box,
+      // so every narrower emote Tab landed on sat in the wide one's blank space.
+      // Drop the pin and let the new image snap its own once it loads.
+      existingEmote.style.removeProperty('width')
       existingEmote.src = match.url
       existingEmote.alt = match.name
       existingEmote.dataset.emoteName = match.name
+      if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(existingEmote)
       _applyInputBlock(existingEmote)
     } else if (match.type === 'emoji') {
       // Replace emote img with emoji span

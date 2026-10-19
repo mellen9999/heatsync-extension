@@ -3249,6 +3249,89 @@
     return saveQueue
   }
 
+  // Inline [OP]/[RE] rows persistence — a feed post surfaced in chat stays at
+  // its timestamp across an ext reload, like stream events do. Only feed-post
+  // rows: the other inline kinds are receipts for things you just did.
+  const INLINE_NOTIF_KEY = 'hs_inline_notifs_v1'
+  const INLINE_NOTIF_MAX = 200
+  const INLINE_NOTIF_TTL_MS = 7 * 86400000
+  const _inlineNotifPick = (m) => ({
+    type: 'feed-post',
+    base36_id: m.base36_id,
+    feedUser: m.feedUser,
+    text: m.text,
+    color: m.color,
+    time: m.time,
+    heat: m.heat,
+    reply_to: m.reply_to,
+    emote_refs: m.emote_refs,
+    is_op: m.is_op,
+    is_thread_op: m.is_thread_op,
+  })
+
+  function saveInlineNotif(notifType, msg) {
+    if (!msg?.base36_id || !msg.time) return
+    saveQueue = saveQueue.then(async () => {
+      try {
+        const data = await api.storage.local.get(INLINE_NOTIF_KEY)
+        const rows = Array.isArray(data[INLINE_NOTIF_KEY]) ? data[INLINE_NOTIF_KEY] : []
+        if (rows.some((r) => r.msg?.base36_id === msg.base36_id && r.notifType === notifType)) return
+        rows.push({ notifType, msg: _inlineNotifPick(msg) })
+        if (rows.length > INLINE_NOTIF_MAX) rows.splice(0, rows.length - INLINE_NOTIF_MAX)
+        await api.storage.local.set({ [INLINE_NOTIF_KEY]: rows })
+      } catch {}
+    })
+    return saveQueue
+  }
+
+  // Put saved rows back into every channel buffer at their real time. Idempotent
+  // (skips ids a buffer already holds), so it can run again once slower
+  // buffers have joined. Returns how many rows were added.
+  async function restoreInlineNotifs() {
+    try {
+      const data = await api.storage.local.get(INLINE_NOTIF_KEY)
+      const rows = data[INLINE_NOTIF_KEY]
+      if (!Array.isArray(rows) || rows.length === 0) return 0
+      const cutoff = Date.now() - INLINE_NOTIF_TTL_MS
+      const fresh = rows.filter((r) => r?.msg?.time > cutoff && INLINE_NOTIF_TYPES[r.notifType])
+      if (fresh.length < rows.length) await api.storage.local.set({ [INLINE_NOTIF_KEY]: fresh })
+      const live = fresh.filter((r) => inlineNotifs[r.notifType])
+      let added = 0
+      for (const ch of config.channels) {
+        const buffer = (ch?.twitch && irc?.channels?.get(ch.twitch)) || (ch.kick && kickChat?.channels?.get(ch.kick))
+        const ytBuf = ch?.id && channelYtMessages.get(ch.id)
+        const seenIn = (list) => new Set(list.filter((m) => m.type === 'feed-post').map((m) => m.base36_id))
+        const bufSeen = buffer ? seenIn(buffer.getAll()) : null
+        const ytSeen = ytBuf ? seenIn(ytBuf) : null
+        for (const r of live) {
+          const typeDef = INLINE_NOTIF_TYPES[r.notifType]
+          const m = {
+            ...r.msg,
+            inlineNotifType: r.notifType,
+            inlineNotifColor: typeDef.color,
+            inlineNotifBorderColor: typeDef.borderColor,
+            inlineNotifLabel: typeDef.tag,
+          }
+          if (bufSeen && !bufSeen.has(m.base36_id)) {
+            buffer.insertOrdered(m)
+            bufSeen.add(m.base36_id)
+            added++
+          }
+          if (ytSeen && !ytSeen.has(m.base36_id)) {
+            const i = ytBuf.findIndex((x) => (x.time || 0) > m.time)
+            if (i === -1) ytBuf.push(m)
+            else ytBuf.splice(i, 0, m)
+            ytSeen.add(m.base36_id)
+            added++
+          }
+        }
+      }
+      return added
+    } catch {
+      return 0
+    }
+  }
+
   // Dedup: track recent server-sourced YouTube messages to skip content-script duplicates
 
   // Normalize YouTube URL — accepts full URLs or bare username
@@ -5563,6 +5646,7 @@
     msg.inlineNotifColor = typeDef.color
     msg.inlineNotifBorderColor = typeDef.borderColor
     msg.inlineNotifLabel = typeDef.tag
+    if (msg.type === 'feed-post' && !opts.onlyTab) saveInlineNotif(notifType, msg)
 
     // opts.onlyTab — scope persistence + live-append to ONE tab's buffer(s)
     // instead of broadcasting to every channel (channel-scoped command
@@ -13205,6 +13289,18 @@
         })
         .catch((e) => log('[heatsync-mc] loadStreamEvents error:', e))
     }, 300)
+
+    // Saved inline [OP]/[RE] rows go back after the channel buffers have
+    // joined; the second pass catches slower joins (restore skips what's there).
+    for (const delay of [1500, 8000]) {
+      cleanup.setTimeout(() => {
+        restoreInlineNotifs().then((added) => {
+          if (!added) return
+          const active = currentTab
+          if (active === 'live' || config.channels.some((ch) => ch.id === active)) renderMessages(active)
+        })
+      }, delay)
+    }
 
     // Scan existing chat for mentions (before IRC catches new ones)
     cleanup.setTimeout(() => {

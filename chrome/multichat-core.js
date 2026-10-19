@@ -13033,9 +13033,12 @@ function matchEmoteWord(word, lookup) {
  * @param {string} content - the raw outgoing message text
  * @param {Map<string, {hash?:string,url?:string,name?:string,provider?:string,zeroWidth?:boolean,width?:number,height?:number}>} emotesMap
  *        the sender's own emote map (keyed by exact name, lowercase fallback)
+ * @param {Map<string, {url?:string,name?:string,provider?:string,zeroWidth?:boolean,id?:string,animated?:boolean,width?:number,height?:number}>} [channelMap]
+ *        the room's own emotes (7tv/bttv/ffz/twitch). Last resort after the
+ *        inventory and picks, so a name typed by heart ships its image too.
  * @returns {Object} emote_refs keyed by the emote's name (overlay suffix stripped)
  */
-function buildEmoteRefs(content, emotesMap) {
+function buildEmoteRefs(content, emotesMap, channelMap) {
   const emote_refs = {}
   if (!content) return emote_refs
   // Split on whitespace (not \b\w+\b) so non-word emotes like ")))" or "<3" are
@@ -13098,6 +13101,27 @@ function buildEmoteRefs(content, emotesMap) {
         ...(r.id ? { id: r.id } : {}),
         ...(typeof r.animated === 'boolean' ? { animated: r.animated } : {}),
         ...naturalSize(r),
+      }
+      continue
+    }
+    // Room emotes typed by heart. Not in inventory or the catalog, so without
+    // this the post carried no image and only viewers whose own room set
+    // happened to load saw it.
+    let ch = channelMap?.get(word) || channelMap?.get(word.toLowerCase())
+    let chClean = word
+    if (!ch && word.endsWith('0') && word.length > 1) {
+      chClean = word.slice(0, -1)
+      ch = channelMap?.get(chClean) || channelMap?.get(chClean.toLowerCase())
+    }
+    if (ch?.url) {
+      emote_refs[chClean] = {
+        url: ch.url,
+        name: ch.name || chClean,
+        provider: ch.provider,
+        zeroWidth: !!ch.zeroWidth,
+        ...(ch.id ? { id: ch.id } : {}),
+        ...(typeof ch.animated === 'boolean' ? { animated: ch.animated } : {}),
+        ...naturalSize(ch),
       }
     }
   }
@@ -14812,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ae73886a9861' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1fe45362f016' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36089,6 +36113,17 @@ function feedVoteReconcile(m, data) {
   if (Number.isFinite(data.heat)) m.heat = data.heat
 }
 
+// Carry a settled vote onto every other cached copy of the post, so the feed
+// and an open thread agree when you switch between them.
+function feedVoteSyncCopies(m) {
+  for (const c of feedCachedCopies(m.base36_id)) {
+    if (c === m) continue
+    c.user_vote = m.user_vote
+    c.vote_score = m.vote_score
+    if (m.heat !== undefined) c.heat = m.heat
+  }
+}
+
 function feedVoteRollback(m, snap) {
   m.user_vote = snap.user_vote
   m.vote_score = snap.vote_score
@@ -36174,12 +36209,15 @@ async function feedUpvote(m) {
       method: 'POST',
       body: { vote_type: 1 },
     })
-    if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
-    else {
+    if (r?.ok && r.data?.success) {
+      feedVoteReconcile(m, r.data)
+      feedVoteSyncCopies(m)
+    } else {
       feedVoteRollback(m, snap)
       feedFail(r)
     }
     feedPaintVote(m)
+    for (const c of feedCachedCopies(m.base36_id)) if (c !== m) feedPaintVote(c)
   } finally {
     feedVoting.delete(m.base36_id)
   }
@@ -36320,10 +36358,13 @@ function feedFrameApply(m, frame, selfId) {
 }
 
 function feedOnFrame(frame) {
-  const m = feedFindMsg(frame?.message_id)
-  const changed = feedFrameApply(m, frame, hsCurrentUserId)
-  if (changed === 'reactions') feedPaintReactions(m)
-  else if (changed === 'vote') feedPaintVote(m)
+  // Every cached copy, not just the first: the open thread and the feed each
+  // hold their own object for the same post.
+  for (const m of feedCachedCopies(frame?.message_id)) {
+    const changed = feedFrameApply(m, frame, hsCurrentUserId)
+    if (changed === 'reactions') feedPaintReactions(m)
+    else if (changed === 'vote') feedPaintVote(m)
+  }
 }
 
 
@@ -36355,6 +36396,18 @@ function feedFindMsg(id) {
   if (!id) return null
   if (activeThread?.op?.base36_id === id) return activeThread.op
   return activeThread?.replies?.find((r) => r.base36_id === id) || feedMessages.find((m) => m.base36_id === id) || null
+}
+
+// Every cached object for a post id. The open thread and the feed list hold
+// separate copies of the same post, so a vote landed on one is invisible to
+// the other until it refetches.
+function feedCachedCopies(id) {
+  if (!id) return []
+  const out = []
+  if (activeThread?.op?.base36_id === id) out.push(activeThread.op)
+  for (const r of activeThread?.replies || []) if (r.base36_id === id) out.push(r)
+  for (const m of feedMessages) if (m.base36_id === id) out.push(m)
+  return out
 }
 
 // The one place a youtube stream gets subscribed. Eight call sites across four
@@ -47401,9 +47454,15 @@ function insertCompletionWysiwyg(match) {
           stackInputEmote(prev, existingEmote)
         }
       }
+      // hsSnapEmoteBox pinned the PREVIOUS emote's width on this chip as an
+      // inline px value (wide lift0 → 96px). Swapping src alone kept that box,
+      // so every narrower emote Tab landed on sat in the wide one's blank space.
+      // Drop the pin and let the new image snap its own once it loads.
+      existingEmote.style.removeProperty('width')
       existingEmote.src = match.url
       existingEmote.alt = match.name
       existingEmote.dataset.emoteName = match.name
+      if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(existingEmote)
       _applyInputBlock(existingEmote)
     } else if (match.type === 'emoji') {
       // Replace emote img with emoji span
@@ -74561,8 +74620,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         else if (feedSince) feedPlusHtml = renderPlusTenureToken(feedSince)
       }
       const content = renderFeedContent(m.text, m.emote_refs)
-      // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml
-      const heatHtml = (m.heat || 0) > 0 ? ` ${heatSpanHtml(m.heat)}` : ''
+      // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
+      const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
       // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)
       div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>`
       div.addEventListener('click', (e) => {

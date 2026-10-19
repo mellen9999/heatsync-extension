@@ -230,4 +230,28 @@ describe('vote across cached copies', () => {
     expect(feed.vote_score).toBe(1)
     expect(feed.heat).toBe(2)
   })
+
+  test('heat is refetched after the server recalc and lands on every copy', async () => {
+    const thread = { base36_id: 'ab', user_vote: null, vote_score: 0, heat: 1 }
+    const feed = { base36_id: 'ab', user_vote: null, vote_score: 0, heat: 1 }
+    const timers = []
+    const real = globalThis.setTimeout
+    globalThis.setTimeout = (fn) => timers.push(fn)
+    try {
+      const { feedUpvote } = load({
+        copies: () => [thread, feed],
+        replies: (path) =>
+          path.endsWith('/vote')
+            ? { ok: true, data: { success: true, user_vote: 1, score: 1, heat: 1 } }
+            : { ok: true, data: { heat: 2 } },
+      })
+      await feedUpvote(thread)
+      expect(feed.heat).toBe(1)
+      await timers[0]()
+      expect(thread.heat).toBe(2)
+      expect(feed.heat).toBe(2)
+    } finally {
+      globalThis.setTimeout = real
+    }
+  })
 })

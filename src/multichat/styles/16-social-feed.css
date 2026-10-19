@@ -37,9 +37,6 @@
       margin: 0 2px;
       cursor: default;
     }
-    .hs-feed-replies {
-      cursor: pointer !important;
-    }
     .hs-feed-up {
       cursor: pointer;
       color: var(--hs-muted);
@@ -97,10 +94,6 @@
       background: #fff;
       color: #000;
       text-decoration: none;
-    }
-    .hs-feed-replies:hover {
-      background: #fff;
-      color: #000 !important;
     }
     .hs-feed-tag {
       font-size: 13px;

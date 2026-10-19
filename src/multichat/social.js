@@ -2200,14 +2200,7 @@ function buildFeedMessageDiv(m, opUsername) {
       toggleThread(threadId, highlightId)
     })
   }
-  const repliesEl = div.querySelector('.hs-feed-replies')
-  if (repliesEl && replies > 0) {
-    repliesEl.style.cursor = 'pointer'
-    repliesEl.addEventListener('click', (e) => {
-      e.stopPropagation()
-      toggleThread(m.reply_to || m.base36_id)
-    })
-  }
+  // The reply count is a readout, not a door: >>id above is the one way in.
 
   // Click >>id post-links in message content
   div.querySelectorAll('.hs-post-link').forEach((link) => {

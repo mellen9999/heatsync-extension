@@ -7390,8 +7390,8 @@
         else if (feedSince) feedPlusHtml = renderPlusTenureToken(feedSince)
       }
       const content = renderFeedContent(m.text, m.emote_refs)
-      // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml
-      const heatHtml = (m.heat || 0) > 0 ? ` ${heatSpanHtml(m.heat)}` : ''
+      // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
+      const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
       // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)
       div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>`
       div.addEventListener('click', (e) => {

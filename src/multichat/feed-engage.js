@@ -39,6 +39,17 @@ function feedVoteReconcile(m, data) {
   if (Number.isFinite(data.heat)) m.heat = data.heat
 }
 
+// Carry a settled vote onto every other cached copy of the post, so the feed
+// and an open thread agree when you switch between them.
+function feedVoteSyncCopies(m) {
+  for (const c of feedCachedCopies(m.base36_id)) {
+    if (c === m) continue
+    c.user_vote = m.user_vote
+    c.vote_score = m.vote_score
+    if (m.heat !== undefined) c.heat = m.heat
+  }
+}
+
 function feedVoteRollback(m, snap) {
   m.user_vote = snap.user_vote
   m.vote_score = snap.vote_score
@@ -124,12 +135,15 @@ async function feedUpvote(m) {
       method: 'POST',
       body: { vote_type: 1 },
     })
-    if (r?.ok && r.data?.success) feedVoteReconcile(m, r.data)
-    else {
+    if (r?.ok && r.data?.success) {
+      feedVoteReconcile(m, r.data)
+      feedVoteSyncCopies(m)
+    } else {
       feedVoteRollback(m, snap)
       feedFail(r)
     }
     feedPaintVote(m)
+    for (const c of feedCachedCopies(m.base36_id)) if (c !== m) feedPaintVote(c)
   } finally {
     feedVoting.delete(m.base36_id)
   }
@@ -270,8 +284,11 @@ function feedFrameApply(m, frame, selfId) {
 }
 
 function feedOnFrame(frame) {
-  const m = feedFindMsg(frame?.message_id)
-  const changed = feedFrameApply(m, frame, hsCurrentUserId)
-  if (changed === 'reactions') feedPaintReactions(m)
-  else if (changed === 'vote') feedPaintVote(m)
+  // Every cached copy, not just the first: the open thread and the feed each
+  // hold their own object for the same post.
+  for (const m of feedCachedCopies(frame?.message_id)) {
+    const changed = feedFrameApply(m, frame, hsCurrentUserId)
+    if (changed === 'reactions') feedPaintReactions(m)
+    else if (changed === 'vote') feedPaintVote(m)
+  }
 }

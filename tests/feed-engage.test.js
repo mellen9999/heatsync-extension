@@ -10,7 +10,7 @@ import { join } from 'node:path'
 const ROOT = join(import.meta.dir, '..')
 const SRC = readFileSync(join(ROOT, 'src', 'multichat', 'feed-engage.js'), 'utf8')
 
-function load({ auth = true, replies = () => ({ ok: true, data: {} }) } = {}) {
+function load({ auth = true, replies = () => ({ ok: true, data: {} }), copies = () => [] } = {}) {
   const calls = []
   const toasts = []
   const g = {
@@ -24,6 +24,7 @@ function load({ auth = true, replies = () => ({ ok: true, data: {} }) } = {}) {
     escapeHtml: (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`),
     clEmoteUrlAllowed: (u) => /^https:\/\/(cdn\.7tv\.app|heatsync\.org)\//.test(u),
     isOwnFeedPost: (m) => !!m.own,
+    feedCachedCopies: copies,
     formatHeat: (h) => String(h),
     CSS: { escape: (s) => s },
     document: { querySelectorAll: () => [] },
@@ -213,5 +214,20 @@ describe('wiring', () => {
     expect(at("'edit note' : 'add note'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
     expect(at("'mc_paint_hide'")).toBeGreaterThan(at("'mc_feed_bookmark_remove'"))
     expect(at("label: 'reply'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+  })
+})
+
+describe('vote across cached copies', () => {
+  test('a settled vote lands on the feed copy too', async () => {
+    const thread = { base36_id: 'ab', user_vote: null, vote_score: 0, heat: 1 }
+    const feed = { base36_id: 'ab', user_vote: null, vote_score: 0, heat: 1 }
+    const { feedUpvote } = load({
+      copies: () => [thread, feed],
+      replies: () => ({ ok: true, data: { success: true, user_vote: 1, score: 1, heat: 2 } }),
+    })
+    await feedUpvote(thread)
+    expect(feed.user_vote).toBe(1)
+    expect(feed.vote_score).toBe(1)
+    expect(feed.heat).toBe(2)
   })
 })

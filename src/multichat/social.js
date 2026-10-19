@@ -27,6 +27,18 @@ function feedFindMsg(id) {
   return activeThread?.replies?.find((r) => r.base36_id === id) || feedMessages.find((m) => m.base36_id === id) || null
 }
 
+// Every cached object for a post id. The open thread and the feed list hold
+// separate copies of the same post, so a vote landed on one is invisible to
+// the other until it refetches.
+function feedCachedCopies(id) {
+  if (!id) return []
+  const out = []
+  if (activeThread?.op?.base36_id === id) out.push(activeThread.op)
+  for (const r of activeThread?.replies || []) if (r.base36_id === id) out.push(r)
+  for (const m of feedMessages) if (m.base36_id === id) out.push(m)
+  return out
+}
+
 // The one place a youtube stream gets subscribed. Eight call sites across four
 // modules sent this message raw and only three of them checked the switch, so
 // turning youtube chat off still opened a relay subscription for every saved

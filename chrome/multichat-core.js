@@ -14812,7 +14812,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '995cacb2542c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '436e3f40dc61' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -73928,7 +73928,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       fn()
       _markOverlayRenderOk(true)
     } catch (e) {
-      console.warn('[heatsync-ext] overlay mount pass threw:', label, e?.message || e)
+      console.warn('[heatsync-ext] overlay mount pass threw:', label, e?.message || e, e?.stack)
       _markOverlayRenderOk(false)
       try {
         setNativeChatHidden(false)

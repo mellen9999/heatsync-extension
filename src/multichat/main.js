@@ -3692,6 +3692,10 @@
         e.preventDefault()
         tab.classList.remove('has-mentions', 'has-new', 'has-stream-event', 'has-whispers')
         markTabRead(tabId)
+        // The red state is rebuilt on refresh from tabSeenAt (restore scan), so
+        // acknowledging it must stamp that too or the next reload relights it.
+        // Special tabs are server-backed via bumpSeen below.
+        if (!mcIsReservedTab(tabId)) markTabSeen(tabId)
         // Sync server-backed seen state so the dot doesn't reappear and
         // every other client clears via WS broadcast.
         if (tabId === 'mentions') bumpSeen('mentions')

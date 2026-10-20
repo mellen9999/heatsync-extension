@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7f0977d2d1ce' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e87804c65514' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70951,6 +70951,10 @@ const STORAGE_KEY = 'heatsync_multichat'
         e.preventDefault()
         tab.classList.remove('has-mentions', 'has-new', 'has-stream-event', 'has-whispers')
         markTabRead(tabId)
+        // The red state is rebuilt on refresh from tabSeenAt (restore scan), so
+        // acknowledging it must stamp that too or the next reload relights it.
+        // Special tabs are server-backed via bumpSeen below.
+        if (!mcIsReservedTab(tabId)) markTabSeen(tabId)
         // Sync server-backed seen state so the dot doesn't reappear and
         // every other client clears via WS broadcast.
         if (tabId === 'mentions') bumpSeen('mentions')

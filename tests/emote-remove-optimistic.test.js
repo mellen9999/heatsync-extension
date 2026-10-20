@@ -47,3 +47,12 @@ describe('a poll that raced the delete cannot put the emote back', () => {
     expect(inv.indexOf('isLocallyRemoved(e.name)')).toBeLessThan(inv.indexOf('inventoryEmotes.add(e.name)'))
   })
 })
+
+describe('the shared pool entry stops reading owned after a removal', () => {
+  test('removal demotes it before the re-render, rollback restores it', () => {
+    const i = SRC.indexOf('_pool.state = getEmoteState(emoteName, _pool.source)')
+    expect(i).toBeGreaterThan(-1)
+    expect(i).toBeLessThan(SRC.indexOf('reprocessEmoteTextInPlace()', i))
+    expect(SRC).toContain("_pool.state = 'owned'")
+  })
+})

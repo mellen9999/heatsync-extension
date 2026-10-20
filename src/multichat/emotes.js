@@ -1642,7 +1642,7 @@ function applyBlockedHashDelta(newHashesArr) {
     {
       const _be = lookupEmote(name)
       const _u = typeof _be?.url === 'string' && /^https?:\/\//i.test(_be.url) ? _be.url : ''
-      rememberBlockedEmote(name, _u, _be?.source || 'heatsync', _be?.zeroWidth)
+      rememberBlockedEmote(name, _u, _be?.source || 'heatsync', _be?.zeroWidth, hash)
     }
     queryEmoteWrappers(name).forEach((w) => {
       if (w.classList.contains('hs-state-blocked')) return
@@ -2191,7 +2191,10 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   // returns the global cache first and would otherwise capture the wrong image
   // for unblock/re-add.
   const capturedUrl = _httpOk(clickedUrl) ? clickedUrl : _httpOk(_be?.url) ? _be.url : ''
-  rememberBlockedEmote(emoteName, capturedUrl, _be?.source || clickedSource, _be?.zeroWidth)
+  // Hash for API - prefer known hash, then url-derived (capturedUrl covers
+  // the case lookupEmote misses), last resort the name.
+  const hash = opts?.hash || emoteHashes.get(emoteName) || (capturedUrl ? btoa(capturedUrl).slice(0, 32) : emoteName)
+  rememberBlockedEmote(emoteName, capturedUrl, _be?.source || clickedSource, _be?.zeroWidth, hash)
 
   // 2-state model: block is a render-preference, not an inventory mutation.
   // Preserve inventoryEmotes / inventoryHashes / viewerPersonalEmotes so an
@@ -2201,9 +2204,6 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   // tab restarts + inventory refetches.
   blockedEmoteNames.add(emoteName)
 
-  // Get hash for API - prefer known hash, then url-derived (capturedUrl covers
-  // the case lookupEmote misses), last resort the name.
-  const hash = emoteHashes.get(emoteName) || (capturedUrl ? btoa(capturedUrl).slice(0, 32) : emoteName)
   blockedEmoteHashes.add(hash)
 
   // Sync to heatsync.org API via background.js (it handles storage). The
@@ -2213,7 +2213,12 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   // undoes. Pass the captured url/source so a failed-unblock rollback can
   // restore the real image.
   if (!opts?.skipSync)
-    syncBlockToAPI(emoteName, true, { url: capturedUrl, source: _be?.source || clickedSource, silent: opts?.silent })
+    syncBlockToAPI(emoteName, true, {
+      url: capturedUrl,
+      source: _be?.source || clickedSource,
+      silent: opts?.silent,
+      hash,
+    })
 
   // Instant DOM update - CSS visibility:hidden hides the img, no src swap needed
   queryEmoteWrappers(emoteName).forEach((w) => {
@@ -2287,13 +2292,16 @@ function unblockEmote(emoteName, opts) {
 
   // Update local tracking
   blockedEmoteNames.delete(emoteName)
+  // The fallback remembers the hash the block was filed under; read it before
+  // the entry is dropped. After a refresh nothing else can name this emote.
+  const _bfEmote = blockedEmoteFallback.get(emoteName)
   const hash =
     emoteHashes.get(emoteName) ||
+    _bfEmote?.hash ||
     (lookupEmote(emoteName)?.url ? btoa(lookupEmote(emoteName).url).slice(0, 32) : emoteName)
   blockedEmoteHashes.delete(hash)
   // Drop the persisted block fallback so it can't re-seed blockedEmoteNames on
   // the next refresh (which would re-hide an emote the user just unblocked).
-  const _bfEmote = blockedEmoteFallback.get(emoteName)
   if (blockedEmoteFallback.delete(emoteName)) persistBlockedFallback()
 
   // Sync to heatsync.org API via background.js. Toast + optimistic-rollback
@@ -2301,7 +2309,7 @@ function unblockEmote(emoteName, opts) {
   // failed-block rollback (i.e. this unblock reversing a block) is redundant,
   // but a failed UNBLOCK rollback re-blocks and needs them.
   if (!opts?.skipSync)
-    syncBlockToAPI(emoteName, false, { url: _bfEmote?.url || '', source: _bfEmote?.source, silent: opts?.silent })
+    syncBlockToAPI(emoteName, false, { url: _bfEmote?.url || '', source: _bfEmote?.source, silent: opts?.silent, hash })
 
   // Instant DOM update - restore images. After refresh the emote is in no live
   // cache, so lookupEmote misses — fall back to the persisted block url.
@@ -2492,6 +2500,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
   try {
     // Background script expects message.hash - use emoteHashes (most complete mapping)
     const hash =
+      ctx?.hash ||
       emoteHashes.get(emoteName) ||
       (lookupEmote(emoteName)?.url ? btoa(lookupEmote(emoteName).url).slice(0, 32) : emoteName)
     resp = await browser.runtime.sendMessage({
@@ -2511,7 +2520,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
     // free op, so pass skipSync (don't re-hit the server) + silent (the error
     // toast below is the only message this failure gets).
     if (block) unblockEmote(emoteName, { skipSync: true, silent: true })
-    else blockEmote(emoteName, ctx?.url, ctx?.source, { skipSync: true, silent: true })
+    else blockEmote(emoteName, ctx?.url, ctx?.source, { skipSync: true, silent: true, hash: ctx?.hash })
     if (!silent) showToast(t(block ? 'mc_emote_block_failed' : 'mc_emote_unblock_failed'), 'error')
     return
   }
@@ -2596,7 +2605,7 @@ function rememberRemovedEmote(name, url, source, zeroWidth) {
 // the blocked-box render branch never fires and the token leaks as raw text. This
 // bounded, persisted map keeps the NAME (and url/source, for inline unblock-restore)
 // so the 2px dashed box survives refresh. Mirror of removedEmoteFallback.
-const blockedEmoteFallback = new Map() // Map<name, {url, source, zeroWidth}>
+const blockedEmoteFallback = new Map() // Map<name, {url, source, zeroWidth, hash}>
 const BLOCKED_FALLBACK_CAP = 1000
 let _blockedFallbackPersistTimer = null
 function persistBlockedFallback() {
@@ -2610,10 +2619,14 @@ function persistBlockedFallback() {
     } catch {}
   }, 1000)
 }
-function rememberBlockedEmote(name, url, source, zeroWidth) {
+function rememberBlockedEmote(name, url, source, zeroWidth, hash) {
   if (!name) return // url optional — a name with no resolvable url still needs the box
+  // hash: the exact id the server holds this block under. After a refresh the
+  // emote is in no live cache, so unblock can't re-derive it — without it the
+  // DELETE goes out under the bare name, the server refuses, and the block sticks.
+  const keep = hash || blockedEmoteFallback.get(name)?.hash || ''
   blockedEmoteFallback.delete(name) // re-insert to refresh LRU position
-  blockedEmoteFallback.set(name, { url: url || '', source: source || 'heatsync', zeroWidth: !!zeroWidth })
+  blockedEmoteFallback.set(name, { url: url || '', source: source || 'heatsync', zeroWidth: !!zeroWidth, hash: keep })
   while (blockedEmoteFallback.size > BLOCKED_FALLBACK_CAP) {
     blockedEmoteFallback.delete(blockedEmoteFallback.keys().next().value)
   }
@@ -3295,6 +3308,7 @@ async function loadEmotes() {
               url: e.url || '',
               source: e.source || 'heatsync',
               zeroWidth: !!e.zeroWidth,
+              hash: typeof e.hash === 'string' ? e.hash : '',
             })
         }
       }
@@ -4183,12 +4197,14 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       emote = _hit.e
       emoteFromInv = _hit.inv
     }
-    // blockedEmoteFallback last + ungated (block is viewer-wide, all senders):
-    // resolves a blocked emote to its real url+dims so it renders the dashed box
-    // at the emote's true rectangle via the normal path, instead of the square
-    // 1×1-placeholder branch below. Only when a real url is stored (url-less
-    // blocks — name-as-hash — still fall through to the square box).
-    if (!emote) {
+    // blockedEmoteFallback last, own messages only: resolves a blocked emote to
+    // its real url+dims so it renders the dashed box at the emote's true
+    // rectangle via the normal path, instead of the square 1×1-placeholder
+    // branch below. Only when a real url is stored (url-less blocks — name-as-
+    // hash — still fall through to the square box). Another sender who never
+    // had the emote typed plain text, and a block must not conjure the emote
+    // for them — the fallback knows the name, not who may use it.
+    if (!emote && senderEmotes === viewerPersonalEmotes) {
       // blockedEmoteFallback is keyed by RAW names (picker/server side); the
       // escaped `word` misses for specials (`>:3`) — try the raw form too.
       // Guard the unescape call: this runs for EVERY non-emote word (the
@@ -4436,8 +4452,10 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // Blocked emote whose URL didn't resolve in this context (removed from set,
       // wrong channel, foreign personal emote, etc.) — still render the blocked
       // box (2px dashed outline) instead of leaking the raw name as text. Matches
-      // by exact name, so only emotes the user actually blocked are boxed.
-      if (blockedEmoteNames.has(word)) {
+      // by exact name, so only emotes the user actually blocked are boxed. Own
+      // messages only: elsewhere the sender's access decides, and a sender with
+      // none wrote plain text.
+      if (senderEmotes === viewerPersonalEmotes && blockedEmoteNames.has(word)) {
         _flushStackToResult()
         pendingMods = []
         pendingHue = null
@@ -4549,6 +4567,7 @@ function renderEmoteStack(stack) {
 export {
   _buildChannelEmoteCache,
   blockedEmoteFallback,
+  blockedEmoteNames,
   bumpEmoteFrecency,
   channelEmoteCaches,
   deriveStaticEmoteSrc,
@@ -4569,6 +4588,7 @@ export {
   mergeSenderEmotes,
   processEmotes,
   reapHsIdleEmoteRows,
+  rememberBlockedEmote,
   removedEmoteFallback,
   replaceSenderEmotes,
   scheduleHsEmoteIdleSweep,

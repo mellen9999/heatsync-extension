@@ -2154,6 +2154,7 @@ function applyLocalRemoval(emoteName, pt) {
   inventoryEmotes.delete(emoteName)
   inventoryHashes.delete(emoteName)
   viewerPersonalEmotes.delete(emoteName)
+  localRemovals.set(emoteName, Date.now())
   // Drop from the tab-complete auto-add registry so re-posting doesn't silently re-add it.
   if (typeof recentRemoteCompletions !== 'undefined') recentRemoteCompletions.delete(emoteName)
   // Vanish the picker thumbnail(s) + keep section counts truthful; rebuild on reopen.
@@ -2185,6 +2186,7 @@ function applyLocalRemoval(emoteName, pt) {
   rehoverAt(pt, false)
   // Failure path: put every cache back exactly as it was and re-render.
   return (undoPt) => {
+    localRemovals.delete(emoteName)
     inventoryEmotes.add(emoteName)
     if (_hash) inventoryHashes.set(emoteName, _hash)
     if (_re) viewerPersonalEmotes.set(emoteName, _re)
@@ -2464,6 +2466,7 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
       // No longer "removed" or blocked — drop the stale render fallback entries.
       if (removedEmoteFallback.delete(emoteName)) persistRemovedFallback()
       if (blockedEmoteFallback.delete(emoteName)) persistBlockedFallback()
+      localRemovals.delete(emoteName)
       const serverHash = response.hash || emoteHash
       inventoryEmotes.add(emoteName)
       inventoryHashes.set(emoteName, serverHash)
@@ -2605,6 +2608,19 @@ function registerClickPastedRef(name, url, source, zeroWidth) {
 // the image (as unadded/orange — not owned). Gated to the viewer's own messages
 // in processEmotes so it never bleeds into other senders' rendering.
 const removedEmoteFallback = new Map() // Map<name, {url, source, zeroWidth}>
+// Names removed from the set a moment ago, while the server DELETE may still be
+// in flight. A background inventory poll that started before the delete lands
+// after it with the old list and would put the name straight back (label flips
+// to "inventory" again). inventory_update skips these until the server agrees.
+const LOCAL_REMOVAL_GRACE_MS = 20000
+const localRemovals = new Map() // Map<name, removedAtMs>
+function isLocallyRemoved(name) {
+  const at = localRemovals.get(name)
+  if (at === undefined) return false
+  if (Date.now() - at < LOCAL_REMOVAL_GRACE_MS) return true
+  localRemovals.delete(name)
+  return false
+}
 const REMOVED_FALLBACK_CAP = 1000
 let _removedFallbackPersistTimer = null
 function persistRemovedFallback() {

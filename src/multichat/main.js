@@ -11457,7 +11457,8 @@
         inventoryEmotes.clear()
         inventoryHashes.clear()
         ;(msg.emotes || []).forEach((e) => {
-          if (e.name) {
+          // a poll that raced the DELETE still lists it — the server catches up
+          if (e.name && !isLocallyRemoved(e.name)) {
             inventoryEmotes.add(e.name)
             if (e.hash) inventoryHashes.set(e.name, e.hash)
             // Flip state for emotes that are ALSO in the heatsync globals pool;

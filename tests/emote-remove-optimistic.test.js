@@ -32,3 +32,18 @@ describe('remove from set is optimistic', () => {
     expect(SRC).toContain('rehoverAt(undoPt, true)')
   })
 })
+
+describe('a poll that raced the delete cannot put the emote back', () => {
+  const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const inv = MAIN.slice(MAIN.indexOf("msg.type === 'inventory_update'"))
+
+  test('removal stamps the name, rollback and re-add clear it', () => {
+    expect(SRC).toContain('localRemovals.set(emoteName, Date.now())')
+    expect(SRC.match(/localRemovals\.delete\(emoteName\)/g)?.length).toBe(2)
+  })
+
+  test('inventory_update skips a name removed moments ago', () => {
+    expect(inv.indexOf('isLocallyRemoved(e.name)')).toBeGreaterThan(-1)
+    expect(inv.indexOf('isLocallyRemoved(e.name)')).toBeLessThan(inv.indexOf('inventoryEmotes.add(e.name)'))
+  })
+})

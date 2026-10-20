@@ -2099,6 +2099,9 @@ async function _removeEmoteFromInventory(emoteName, targetEl) {
     emoteHashes.get(emoteName) ||
     lookupEmote(emoteName)?.hash ||
     emoteName
+  // Optimistic: the server DELETE takes seconds, and the row/tooltip must flip
+  // the instant you right-click. Local state goes first; a failure puts it back.
+  const undo = applyLocalRemoval(emoteName, pt)
   try {
     const response = await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: 'remove_from_inventory', emoteHash, emoteName }, (resp) => {
@@ -2109,16 +2112,36 @@ async function _removeEmoteFromInventory(emoteName, targetEl) {
     // Server is authoritative: treat "not found in your set" as already-removed so a
     // stale 'owned' state can't trap the user looping on a failing remove.
     if (response?.success || (response?.error && /not found in your set/i.test(response.error))) {
-      handleRemoveSuccess(emoteName, pt)
+      showToast(t('mc_emote_removed', [emoteName]), 'success')
     } else {
+      undo(pt)
       showToast(response?.error || t('mc_emote_remove_failed', [emoteName]), 'error')
     }
   } catch (_) {
+    undo(pt)
     showToast(t('mc_emote_remove_error', [emoteName]), 'error')
   }
 }
 
-function handleRemoveSuccess(emoteName, pt) {
+// Re-run the hover on whatever a re-render left under the cursor, so an open
+// tooltip relabels (inventory → 7TV/channel) without a rehover. The row swap runs
+// 50 rows per frame, so the hovered row may not be rewritten yet: wait (bounded)
+// while the emote under the cursor still reads the OLD state — owned after a
+// removal, not-owned after a rollback.
+function rehoverAt(pt, ownedNow) {
+  if (!pt || !emoteTooltip?.classList.contains('visible')) return
+  let frames = 0
+  const rehover = () => {
+    const under = document.elementFromPoint(pt.x, pt.y)
+    if (!under) return hideEmoteTooltip()
+    const stale = (under.closest?.('.hs-mc-emote-wrapper')?.dataset.state === 'owned') !== ownedNow
+    if (stale && frames++ < 12) return requestAnimationFrame(rehover)
+    under.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: pt.x, clientY: pt.y }))
+  }
+  requestAnimationFrame(rehover)
+}
+
+function applyLocalRemoval(emoteName, pt) {
   // Capture BEFORE the delete below strips the entry — keeps this emote's
   // history resolvable so the viewer's own past messages that used it still
   // render the image (as unadded, not owned) instead of raw text after a
@@ -2126,6 +2149,7 @@ function handleRemoveSuccess(emoteName, pt) {
   // is guaranteed present here since the only caller (input.js) gates the
   // remove path on inventoryEmotes.has(emoteName).
   const _re = viewerPersonalEmotes.get(emoteName)
+  const _hash = inventoryHashes.get(emoteName)
   if (_re?.url) rememberRemovedEmote(emoteName, _re.url, _re.source, _re.zeroWidth)
   inventoryEmotes.delete(emoteName)
   inventoryHashes.delete(emoteName)
@@ -2158,22 +2182,18 @@ function handleRemoveSuccess(emoteName, pt) {
   // removed image. (typeof guards: these live in main.js, loaded after this module.)
   if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
   if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
-  // Re-run the hover on whatever the re-render left under the cursor, so an
-  // open tooltip relabels (inventory → 7TV/channel) without a rehover. The row
-  // swap runs 50 rows per frame, so the hovered row may not be rewritten yet:
-  // wait (bounded) until the emote under the cursor stops reading 'owned'.
-  if (pt && emoteTooltip?.classList.contains('visible')) {
-    let frames = 0
-    const rehover = () => {
-      const under = document.elementFromPoint(pt.x, pt.y)
-      if (!under) return hideEmoteTooltip()
-      const w = under.closest?.('.hs-mc-emote-wrapper')
-      if (w?.dataset.state === 'owned' && frames++ < 12) return requestAnimationFrame(rehover)
-      under.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: pt.x, clientY: pt.y }))
-    }
-    requestAnimationFrame(rehover)
+  rehoverAt(pt, false)
+  // Failure path: put every cache back exactly as it was and re-render.
+  return (undoPt) => {
+    inventoryEmotes.add(emoteName)
+    if (_hash) inventoryHashes.set(emoteName, _hash)
+    if (_re) viewerPersonalEmotes.set(emoteName, _re)
+    if (removedEmoteFallback.delete(emoteName)) persistRemovedFallback()
+    markPickerDirty()
+    if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
+    if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
+    rehoverAt(undoPt, true)
   }
-  showToast(t('mc_emote_removed', [emoteName]), 'success')
 }
 
 function blockAllEmotesInStack(stack) {

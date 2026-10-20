@@ -2159,13 +2159,19 @@ function handleRemoveSuccess(emoteName, pt) {
   if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
   if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
   // Re-run the hover on whatever the re-render left under the cursor, so an
-  // open tooltip relabels (inventory → 7TV/channel) without a rehover.
+  // open tooltip relabels (inventory → 7TV/channel) without a rehover. The row
+  // swap runs 50 rows per frame, so the hovered row may not be rewritten yet:
+  // wait (bounded) until the emote under the cursor stops reading 'owned'.
   if (pt && emoteTooltip?.classList.contains('visible')) {
-    requestAnimationFrame(() => {
+    let frames = 0
+    const rehover = () => {
       const under = document.elementFromPoint(pt.x, pt.y)
-      if (under) under.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: pt.x, clientY: pt.y }))
-      else hideEmoteTooltip()
-    })
+      if (!under) return hideEmoteTooltip()
+      const w = under.closest?.('.hs-mc-emote-wrapper')
+      if (w?.dataset.state === 'owned' && frames++ < 12) return requestAnimationFrame(rehover)
+      under.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: pt.x, clientY: pt.y }))
+    }
+    requestAnimationFrame(rehover)
   }
   showToast(t('mc_emote_removed', [emoteName]), 'success')
 }

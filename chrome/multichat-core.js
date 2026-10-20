@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '56f6eb3b100c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd438e7804dfa' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -25433,6 +25433,12 @@ function applyLocalRemoval(emoteName, pt) {
   inventoryHashes.delete(emoteName)
   viewerPersonalEmotes.delete(emoteName)
   localRemovals.set(emoteName, Date.now())
+  // The shared heatsync pool entry was stamped 'owned' when the emote joined the
+  // set (inventory_update / add). Your own rows resolve to it once the personal
+  // entry is gone, so left alone they keep rendering — and labelling — 'owned'.
+  const _pool = emoteCache.get(emoteName)
+  const _poolWasOwned = _pool?.state === 'owned'
+  if (_poolWasOwned) _pool.state = getEmoteState(emoteName, _pool.source)
   // Drop from the tab-complete auto-add registry so re-posting doesn't silently re-add it.
   if (typeof recentRemoteCompletions !== 'undefined') recentRemoteCompletions.delete(emoteName)
   // Vanish the picker thumbnail(s) + keep section counts truthful; rebuild on reopen.
@@ -25466,6 +25472,7 @@ function applyLocalRemoval(emoteName, pt) {
   return (undoPt) => {
     localRemovals.delete(emoteName)
     inventoryEmotes.add(emoteName)
+    if (_poolWasOwned && emoteCache.get(emoteName) === _pool) _pool.state = 'owned'
     if (_hash) inventoryHashes.set(emoteName, _hash)
     if (_re) viewerPersonalEmotes.set(emoteName, _re)
     if (removedEmoteFallback.delete(emoteName)) persistRemovedFallback()

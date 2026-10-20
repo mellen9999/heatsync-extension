@@ -6828,7 +6828,15 @@
             const result = await safeSendMessage({ type: 'block_emote', hash })
             if (result?.success) {
               log(' 🚫 Blocked:', emoteName)
-              showToast(t('content_toast_blocked', [emoteName]), 'info')
+              // A blocked inventory variant hands the wrapper to its channel/global
+              // twin, which is the same picture — without naming the swap the click
+              // looks like it did nothing and the next one blocks the twin.
+              const now = wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
+              const swapped = now && now.dataset.emoteHash !== hash && !blockedEmotes.has(now.dataset.emoteHash)
+              showToast(
+                t('content_toast_blocked', [emoteName]) + (swapped ? ` · now ${now.dataset.variantClass}` : ''),
+                'info',
+              )
             } else {
               // Rollback on failure
               blockedEmotes.delete(hash)

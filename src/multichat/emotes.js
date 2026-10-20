@@ -2088,6 +2088,11 @@ async function removeEmoteFromInventory(emoteName, targetEl) {
 
 async function _removeEmoteFromInventory(emoteName, targetEl) {
   const wrapper = targetEl?.closest?.('.hs-mc-emote-wrapper') || targetEl
+  // Where the cursor sits, taken before the row re-renders: the hovered node is
+  // replaced, and the open tooltip would keep the old "inventory" label until
+  // the pointer moved off and back.
+  const r = wrapper?.getBoundingClientRect?.()
+  const pt = r && r.width ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null
   const emoteHash =
     inventoryHashes.get(emoteName) ||
     wrapper?.dataset?.emoteHash ||
@@ -2104,7 +2109,7 @@ async function _removeEmoteFromInventory(emoteName, targetEl) {
     // Server is authoritative: treat "not found in your set" as already-removed so a
     // stale 'owned' state can't trap the user looping on a failing remove.
     if (response?.success || (response?.error && /not found in your set/i.test(response.error))) {
-      handleRemoveSuccess(emoteName)
+      handleRemoveSuccess(emoteName, pt)
     } else {
       showToast(response?.error || t('mc_emote_remove_failed', [emoteName]), 'error')
     }
@@ -2113,7 +2118,7 @@ async function _removeEmoteFromInventory(emoteName, targetEl) {
   }
 }
 
-function handleRemoveSuccess(emoteName) {
+function handleRemoveSuccess(emoteName, pt) {
   // Capture BEFORE the delete below strips the entry — keeps this emote's
   // history resolvable so the viewer's own past messages that used it still
   // render the image (as unadded, not owned) instead of raw text after a
@@ -2153,6 +2158,15 @@ function handleRemoveSuccess(emoteName) {
   // removed image. (typeof guards: these live in main.js, loaded after this module.)
   if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
   if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
+  // Re-run the hover on whatever the re-render left under the cursor, so an
+  // open tooltip relabels (inventory → 7TV/channel) without a rehover.
+  if (pt && emoteTooltip?.classList.contains('visible')) {
+    requestAnimationFrame(() => {
+      const under = document.elementFromPoint(pt.x, pt.y)
+      if (under) under.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: pt.x, clientY: pt.y }))
+      else hideEmoteTooltip()
+    })
+  }
   showToast(t('mc_emote_removed', [emoteName]), 'success')
 }
 

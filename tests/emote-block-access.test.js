@@ -83,3 +83,85 @@ describe('the fallback carries the hash the block was filed under', () => {
     expect(blockedEmoteFallback.get('Other').hash).toBe('')
   })
 })
+
+// ── access × block matrix ────────────────────────────────────────────────────
+// who may use the name (viewer/sender/channel/global) × is it blocked × whose
+// message. Expected: rendered = the sender (or channel/global) had it; a block
+// changes the look to the dashed box, never the access.
+describe('access × block matrix', () => {
+  const E = { url: URL, source: 'heatsync', state: 'global' }
+  const html = (map, { own = false, channel = null } = {}) =>
+    processEmotes('Lash', channel || 'chan-x', null, own ? viewerPersonalEmotes : map, Date.now())
+  const img = (out) => out.includes('<img')
+  const box = (out) => out.includes('hs-state-blocked')
+
+  const cases = [
+    // [label, setup, expect {img, box}]
+    [
+      'sender owns, not blocked → image',
+      () => {},
+      { own: false, sender: new Map([['Lash', E]]) },
+      { img: true, box: false },
+    ],
+    [
+      'sender owns, viewer blocked → dashed box',
+      () => blockedEmoteNames.add('Lash'),
+      { own: false, sender: new Map([['Lash', E]]) },
+      { img: true, box: true },
+    ],
+    ['sender lacks, not blocked → plain text', () => {}, { own: false, sender: new Map() }, { img: false, box: false }],
+    [
+      'sender lacks, viewer blocked → still plain text',
+      () => {
+        rememberBlockedEmote('Lash', URL, 'heatsync', false, 'h'.repeat(64))
+        blockedEmoteNames.add('Lash')
+      },
+      { own: false, sender: new Map() },
+      { img: false, box: false },
+    ],
+    [
+      'viewer owns, own message → image',
+      () => viewerPersonalEmotes.set('Lash', E),
+      { own: true },
+      { img: true, box: false },
+    ],
+    [
+      'viewer owns, blocked, own message → dashed box',
+      () => {
+        viewerPersonalEmotes.set('Lash', E)
+        blockedEmoteNames.add('Lash')
+      },
+      { own: true },
+      { img: true, box: true },
+    ],
+    [
+      'viewer owns, stranger without it → plain text (own set never leaks)',
+      () => viewerPersonalEmotes.set('Lash', E),
+      { own: false, sender: new Map() },
+      { img: false, box: false },
+    ],
+    [
+      'global emote, stranger → image',
+      () => emoteCache.set('Lash', E),
+      { own: false, sender: new Map() },
+      { img: true, box: false },
+    ],
+    [
+      'global emote, viewer blocked, stranger → dashed box',
+      () => {
+        emoteCache.set('Lash', E)
+        blockedEmoteNames.add('Lash')
+      },
+      { own: false, sender: new Map() },
+      { img: true, box: true },
+    ],
+  ]
+
+  for (const [label, setup, args, want] of cases) {
+    test(label, () => {
+      setup()
+      const out = html(args.sender, { own: args.own })
+      expect({ img: img(out), box: box(out) }).toEqual(want)
+    })
+  }
+})

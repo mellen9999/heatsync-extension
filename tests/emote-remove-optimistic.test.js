@@ -56,3 +56,10 @@ describe('the shared pool entry stops reading owned after a removal', () => {
     expect(SRC).toContain("_pool.state = 'owned'")
   })
 })
+
+describe('a stale owned stamp on a cached entry does not render as owned', () => {
+  test('render recomputes the state when the viewer no longer owns the name', () => {
+    expect(SRC).toContain("state === 'owned' && !emote.subscription && !inventoryEmotes.has(word)")
+    expect(SRC).toContain("state = emote.source === 'heatsync' ? 'unadded' : 'global'")
+  })
+})

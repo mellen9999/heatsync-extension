@@ -4356,6 +4356,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
             (overlayBaseName.indexOf('&') !== -1 && blockedEmoteNames.has(unescapeHtml(overlayBaseName))))) ||
         (emote.hash && blockedEmoteHashes.has(String(emote.hash)))
       let state = isBlocked ? 'blocked' : emote.state || 'global'
+      // A cached entry (channel / global pool) can carry a stale 'owned' stamped
+      // while the name was in the set. Owned is your inventory (or a sub emote)
+      // right now — anything else resolves from its source, as getEmoteState does.
+      if (state === 'owned' && !emote.subscription && !inventoryEmotes.has(word) && !inventoryEmotes.has(rawWord))
+        state = emote.source === 'heatsync' ? 'unadded' : 'global'
       // Upgrade to 'owned' when the viewer actually has this name in their
       // inventory — whoever posted it and however it resolved (a sender's set
       // resolves as 'global'). Visually identical under 2-state, but downstream

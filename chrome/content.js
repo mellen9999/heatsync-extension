@@ -3383,8 +3383,8 @@
           }
           // 2-state model: no `add:` pendingOperations keys exist anymore;
           // stack-click + auto-add-on-send register under different keys.
-          // No emote_remove_failed handler — chat-row right-click is block-only
-          // now, so the background never emits emote_remove_failed to content.js.
+          // No emote_remove_failed handler — removal failures come back as
+          // { success:false, error } from remove_from_inventory and toast there.
           break
         }
 
@@ -5258,6 +5258,8 @@
               }
               stack.classList.add('expanded')
             })
+          } else if (removeOwnedEmote(wrapper, hash, emoteName)) {
+            stack.classList.add('expanded')
           } else {
             blockedEmotes.add(hash)
             markLocalBlockToggle(hash, 'blocked')
@@ -6807,14 +6809,9 @@
             pendingOperations.delete(operationKey)
           }
         } else {
-          // 2-state model: chat-row right-click only toggles block↔unblock.
-          // The old "tier-drop on right-click" (DELETE the inventory variant so
-          // the wrapper falls to its lower-tier sibling) was the same accidental-
-          // remove footgun the overlay picker had — destructive intent inferred
-          // from a casual right-click, no way to recover without a manual re-add.
-          // Block is the right operation: hides the inventory variant, the
-          // existing lower-tier sibling (channel/global) renders in its place,
-          // and an unblock restores the inventory pick. No DELETE round-trip.
+          // blocked → unblock · in your set → remove (the channel/global twin takes
+          // over) · else → block. Same rule as the web.
+          if (removeOwnedEmote(wrapper, hash, emoteName)) return
 
           // NEUTRAL/LAST-TIER → BLOCKED
           pendingOperations.add(operationKey)
@@ -6828,15 +6825,7 @@
             const result = await safeSendMessage({ type: 'block_emote', hash })
             if (result?.success) {
               log(' 🚫 Blocked:', emoteName)
-              // A blocked inventory variant hands the wrapper to its channel/global
-              // twin, which is the same picture — without naming the swap the click
-              // looks like it did nothing and the next one blocks the twin.
-              const now = wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
-              const swapped = now && now.dataset.emoteHash !== hash && !blockedEmotes.has(now.dataset.emoteHash)
-              showToast(
-                t('content_toast_blocked', [emoteName]) + (swapped ? ` · now ${now.dataset.variantClass}` : ''),
-                'info',
-              )
+              showToast(t('content_toast_blocked', [emoteName]), 'info')
             } else {
               // Rollback on failure
               blockedEmotes.delete(hash)
@@ -6862,6 +6851,33 @@
     )
 
     log(' ✅ Event delegation setup for emote clicks')
+  }
+
+  // Right-click on an emote in your own set removes it (web parity); the
+  // channel/global twin takes over via emote_removing → updateEmoteState. Returns
+  // true when it handled the click, false to let the caller block instead.
+  function removeOwnedEmote(wrapper, hash, emoteName) {
+    if (!inventoryHashSet.has(hash)) return false
+    const operationKey = `rightclick:${hash}`
+    if (pendingOperations.has(operationKey)) return true
+    pendingOperations.add(operationKey)
+    safeSendMessage({ type: 'remove_from_inventory', emoteHash: hash, emoteName })
+      .then((result) => {
+        if (result?.success) {
+          const now = wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
+          const twin = now && now.dataset.emoteHash !== hash ? ` · now ${now.dataset.variantClass}` : ''
+          showToast(`removed ${emoteName}${twin}`, 'info')
+        } else if (/not logged in/i.test(String(result?.error || ''))) {
+          showToast('log in to heatsync.org to manage emotes', 'info')
+        } else {
+          showToast(`couldn't remove ${emoteName}: ${String(result?.error || 'unknown error')}`, 'error')
+        }
+      })
+      .catch((err) => {
+        if (extensionContextValid) showToast(`couldn't remove ${emoteName}: ${String(err.message)}`, 'error')
+      })
+      .finally(() => pendingOperations.delete(operationKey))
+    return true
   }
 
   // Multi-variant fallback: when an emote name has variants from different sources

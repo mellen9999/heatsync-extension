@@ -1000,7 +1000,35 @@
     if (!tabId) return
     tabSeenAt[tabId] = Date.now()
     _persistTabSeenSoon()
+    // Server-backed like mentions/whispers: every other tab and device clears too.
+    if (!mcIsReservedTab(tabId)) pushTabSeen(tabId, tabSeenAt[tabId])
   }
+
+  // Remote read marks (boot GET, tabseen:update frame). Max-merge into
+  // tabSeenAt, then re-derive each advanced tab's red state from its buffer —
+  // not a blind clear, so a message that landed here after the read elsewhere
+  // keeps the tab lit. After a boot GET, anything we hold NEWER than the server
+  // (a POST that never landed) is sent up, so a lost write heals itself.
+  function applyRemoteTabSeenMarks(remote, reconcile) {
+    let advanced = false
+    for (const [k, v] of Object.entries(remote)) {
+      if (typeof v !== 'number' || !(v > (tabSeenAt[k] || 0))) continue
+      tabSeenAt[k] = v
+      advanced = true
+      const tabEl = tabBarElement?.querySelector(`.hs-mc-tab[data-tab="${CSS.escape(k)}"]`)
+      if (!tabEl) continue
+      tabEl.classList.remove('has-mentions', 'has-new', 'has-stream-event')
+      clearTabUnread(k)
+      refreshTabCounter(k)
+      applyUnreadIndicatorForTab(tabEl)
+    }
+    if (advanced) _persistTabSeenSoon()
+    if (!reconcile) return
+    for (const [k, v] of Object.entries(tabSeenAt)) {
+      if (typeof v === 'number' && v > (Number(remote[k]) || 0) && !mcIsReservedTab(k)) pushTabSeen(k, v)
+    }
+  }
+  setTabSeenSink(applyRemoteTabSeenMarks)
 
   function _flushPersistenceSync() {
     try {
@@ -1181,16 +1209,18 @@
   // they're skipped here.
   function applyUnreadIndicatorsFromPersist() {
     if (!tabBarElement) return
-    const tabs = tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')
-    const SPECIAL = new Set(mcReservedTabIds())
-    for (const tabEl of tabs) {
+    for (const tabEl of tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')) applyUnreadIndicatorForTab(tabEl)
+  }
+
+  function applyUnreadIndicatorForTab(tabEl) {
+    {
       const tabId = tabEl.dataset.tab
-      if (!tabId || tabId === currentTab) continue
-      if (SPECIAL.has(tabId)) continue
+      if (!tabId || tabId === currentTab) return
+      if (new Set(mcReservedTabIds()).has(tabId)) return
       const seen = tabSeenAt[tabId] || 0
-      if (!seen) continue // first-time view of this tab — don't spuriously light up
+      if (!seen) return // first-time view of this tab — don't spuriously light up
       const ch = getChannelById(tabId)
-      if (!ch) continue
+      if (!ch) return
       let maxTime = 0
       let hasMention = false
       const scan = (arr) => {

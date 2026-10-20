@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e87804c65514' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '95af8ab98065' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17664,6 +17664,9 @@ async function loadSeenState() {
         if (typeof resp.data[k] === 'number') seenAt[k] = resp.data[k]
       }
       _seenSynced = true
+      // Channel-tab marks ride the same response. Hand them over after the
+      // surfaces so one failed sink can't cost the mentions/whispers sync.
+      if (resp.data.tabs) applyRemoteTabSeen(resp.data.tabs, true)
     }
   } catch (e) {
     warn('seen-state GET failed:', e?.message)
@@ -17729,6 +17732,68 @@ if (!_onceGuardsSeenState.seenRetryInstalled) {
   } catch {}
 }
 
+// ── channel tabs ────────────────────────────────────────────────────────────
+// Per-channel read marks (tab id → ms epoch). The red channel tab is rebuilt on
+// every refresh from these, so they sync like the surfaces above: POST on read,
+// GET on boot, a tabseen:update frame to every other client. main.js owns the
+// live map (tabSeenAt, in its closure) and registers a sink to receive remote
+// values.
+let _tabSeenSink = null
+let _tabSeenUnclaimed = null // a boot GET that landed before main.js registered
+function setTabSeenSink(fn) {
+  _tabSeenSink = fn
+  if (_tabSeenUnclaimed) {
+    const { map, reconcile } = _tabSeenUnclaimed
+    _tabSeenUnclaimed = null
+    applyRemoteTabSeen(map, reconcile)
+  }
+}
+function applyRemoteTabSeen(map, reconcile = false) {
+  if (!map || typeof map !== 'object') return
+  if (!_tabSeenSink) {
+    _tabSeenUnclaimed = {
+      map: { ..._tabSeenUnclaimed?.map, ...map },
+      reconcile: reconcile || !!_tabSeenUnclaimed?.reconcile,
+    }
+    return
+  }
+  try {
+    _tabSeenSink(map, reconcile)
+  } catch (e) {
+    warn('tab-seen sink failed:', e?.message)
+  }
+}
+
+// Tabs whose POST the server didn't ack — replayed on visibility, and the boot
+// reconcile in main.js re-sends anything newer than what the server holds.
+const _pendingTabSeen = new Map()
+async function pushTabSeen(tab, at) {
+  if (!tab) return
+  const ts = typeof at === 'number' ? at : Date.now()
+  if (typeof hsAuthToken !== 'undefined' && !hsAuthToken) return
+  try {
+    const resp = await apiFetch('/api/user/tab-seen', { method: 'POST', body: { tab, at: ts } })
+    if (resp?.ok) {
+      if (_pendingTabSeen.get(tab) <= ts) _pendingTabSeen.delete(tab)
+    } else _pendingTabSeen.set(tab, Math.max(ts, _pendingTabSeen.get(tab) || 0))
+  } catch (e) {
+    warn('tab-seen POST failed:', e?.message)
+    _pendingTabSeen.set(tab, Math.max(ts, _pendingTabSeen.get(tab) || 0))
+  }
+}
+if (!_onceGuardsSeenState.tabSeenRetryInstalled) {
+  _onceGuardsSeenState.tabSeenRetryInstalled = true
+  try {
+    cleanup.addEventListener(document, 'visibilitychange', () => {
+      if (document.visibilityState !== 'visible' || _pendingTabSeen.size === 0) return
+      for (const [tab, ts] of [..._pendingTabSeen]) {
+        _pendingTabSeen.delete(tab)
+        pushTabSeen(tab, ts)
+      }
+    })
+  } catch {}
+}
+
 // Apply a WS-pushed seen:update from another client.
 function applySeenUpdate(surface, at) {
   if (!SEEN_SURFACES.includes(surface)) return
@@ -17751,6 +17816,9 @@ if (!_onceGuardsSeenState.seenUpdateListener) {
   try {
     cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
       if (msg?.type === 'seen_update') applySeenUpdate(msg.surface, msg.at)
+      else if (msg?.type === 'tabseen_update' && typeof msg.tab === 'string' && typeof msg.at === 'number') {
+        applyRemoteTabSeen({ [msg.tab]: msg.at })
+      }
     })
   } catch {}
 }
@@ -68259,7 +68327,35 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!tabId) return
     tabSeenAt[tabId] = Date.now()
     _persistTabSeenSoon()
+    // Server-backed like mentions/whispers: every other tab and device clears too.
+    if (!mcIsReservedTab(tabId)) pushTabSeen(tabId, tabSeenAt[tabId])
   }
+
+  // Remote read marks (boot GET, tabseen:update frame). Max-merge into
+  // tabSeenAt, then re-derive each advanced tab's red state from its buffer —
+  // not a blind clear, so a message that landed here after the read elsewhere
+  // keeps the tab lit. After a boot GET, anything we hold NEWER than the server
+  // (a POST that never landed) is sent up, so a lost write heals itself.
+  function applyRemoteTabSeenMarks(remote, reconcile) {
+    let advanced = false
+    for (const [k, v] of Object.entries(remote)) {
+      if (typeof v !== 'number' || !(v > (tabSeenAt[k] || 0))) continue
+      tabSeenAt[k] = v
+      advanced = true
+      const tabEl = tabBarElement?.querySelector(`.hs-mc-tab[data-tab="${CSS.escape(k)}"]`)
+      if (!tabEl) continue
+      tabEl.classList.remove('has-mentions', 'has-new', 'has-stream-event')
+      clearTabUnread(k)
+      refreshTabCounter(k)
+      applyUnreadIndicatorForTab(tabEl)
+    }
+    if (advanced) _persistTabSeenSoon()
+    if (!reconcile) return
+    for (const [k, v] of Object.entries(tabSeenAt)) {
+      if (typeof v === 'number' && v > (Number(remote[k]) || 0) && !mcIsReservedTab(k)) pushTabSeen(k, v)
+    }
+  }
+  setTabSeenSink(applyRemoteTabSeenMarks)
 
   function _flushPersistenceSync() {
     try {
@@ -68440,16 +68536,18 @@ const STORAGE_KEY = 'heatsync_multichat'
   // they're skipped here.
   function applyUnreadIndicatorsFromPersist() {
     if (!tabBarElement) return
-    const tabs = tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')
-    const SPECIAL = new Set(mcReservedTabIds())
-    for (const tabEl of tabs) {
+    for (const tabEl of tabBarElement.querySelectorAll('.hs-mc-tab[data-tab]')) applyUnreadIndicatorForTab(tabEl)
+  }
+
+  function applyUnreadIndicatorForTab(tabEl) {
+    {
       const tabId = tabEl.dataset.tab
-      if (!tabId || tabId === currentTab) continue
-      if (SPECIAL.has(tabId)) continue
+      if (!tabId || tabId === currentTab) return
+      if (new Set(mcReservedTabIds()).has(tabId)) return
       const seen = tabSeenAt[tabId] || 0
-      if (!seen) continue // first-time view of this tab — don't spuriously light up
+      if (!seen) return // first-time view of this tab — don't spuriously light up
       const ch = getChannelById(tabId)
-      if (!ch) continue
+      if (!ch) return
       let maxTime = 0
       let hasMention = false
       const scan = (arr) => {

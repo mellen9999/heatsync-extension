@@ -96,6 +96,9 @@ async function loadSeenState() {
         if (typeof resp.data[k] === 'number') seenAt[k] = resp.data[k]
       }
       _seenSynced = true
+      // Channel-tab marks ride the same response. Hand them over after the
+      // surfaces so one failed sink can't cost the mentions/whispers sync.
+      if (resp.data.tabs) applyRemoteTabSeen(resp.data.tabs, true)
     }
   } catch (e) {
     warn('seen-state GET failed:', e?.message)
@@ -161,6 +164,68 @@ if (!_onceGuardsSeenState.seenRetryInstalled) {
   } catch {}
 }
 
+// ── channel tabs ────────────────────────────────────────────────────────────
+// Per-channel read marks (tab id → ms epoch). The red channel tab is rebuilt on
+// every refresh from these, so they sync like the surfaces above: POST on read,
+// GET on boot, a tabseen:update frame to every other client. main.js owns the
+// live map (tabSeenAt, in its closure) and registers a sink to receive remote
+// values.
+let _tabSeenSink = null
+let _tabSeenUnclaimed = null // a boot GET that landed before main.js registered
+function setTabSeenSink(fn) {
+  _tabSeenSink = fn
+  if (_tabSeenUnclaimed) {
+    const { map, reconcile } = _tabSeenUnclaimed
+    _tabSeenUnclaimed = null
+    applyRemoteTabSeen(map, reconcile)
+  }
+}
+function applyRemoteTabSeen(map, reconcile = false) {
+  if (!map || typeof map !== 'object') return
+  if (!_tabSeenSink) {
+    _tabSeenUnclaimed = {
+      map: { ..._tabSeenUnclaimed?.map, ...map },
+      reconcile: reconcile || !!_tabSeenUnclaimed?.reconcile,
+    }
+    return
+  }
+  try {
+    _tabSeenSink(map, reconcile)
+  } catch (e) {
+    warn('tab-seen sink failed:', e?.message)
+  }
+}
+
+// Tabs whose POST the server didn't ack — replayed on visibility, and the boot
+// reconcile in main.js re-sends anything newer than what the server holds.
+const _pendingTabSeen = new Map()
+async function pushTabSeen(tab, at) {
+  if (!tab) return
+  const ts = typeof at === 'number' ? at : Date.now()
+  if (typeof hsAuthToken !== 'undefined' && !hsAuthToken) return
+  try {
+    const resp = await apiFetch('/api/user/tab-seen', { method: 'POST', body: { tab, at: ts } })
+    if (resp?.ok) {
+      if (_pendingTabSeen.get(tab) <= ts) _pendingTabSeen.delete(tab)
+    } else _pendingTabSeen.set(tab, Math.max(ts, _pendingTabSeen.get(tab) || 0))
+  } catch (e) {
+    warn('tab-seen POST failed:', e?.message)
+    _pendingTabSeen.set(tab, Math.max(ts, _pendingTabSeen.get(tab) || 0))
+  }
+}
+if (!_onceGuardsSeenState.tabSeenRetryInstalled) {
+  _onceGuardsSeenState.tabSeenRetryInstalled = true
+  try {
+    cleanup.addEventListener(document, 'visibilitychange', () => {
+      if (document.visibilityState !== 'visible' || _pendingTabSeen.size === 0) return
+      for (const [tab, ts] of [..._pendingTabSeen]) {
+        _pendingTabSeen.delete(tab)
+        pushTabSeen(tab, ts)
+      }
+    })
+  } catch {}
+}
+
 // Apply a WS-pushed seen:update from another client.
 function applySeenUpdate(surface, at) {
   if (!SEEN_SURFACES.includes(surface)) return
@@ -183,6 +248,9 @@ if (!_onceGuardsSeenState.seenUpdateListener) {
   try {
     cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
       if (msg?.type === 'seen_update') applySeenUpdate(msg.surface, msg.at)
+      else if (msg?.type === 'tabseen_update' && typeof msg.tab === 'string' && typeof msg.at === 'number') {
+        applyRemoteTabSeen({ [msg.tab]: msg.at })
+      }
     })
   } catch {}
 }

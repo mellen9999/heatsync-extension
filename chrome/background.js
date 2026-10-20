@@ -7056,6 +7056,11 @@ function handleWSMessage(msg) {
         })
         break
 
+      case 'tabseen:update':
+        // A channel tab was read on another client — clear its red state here.
+        broadcastToTabs({ type: 'tabseen_update', tab: msg.tab, at: msg.at })
+        break
+
       case 'kick-chat-message':
         // Tee into BG buffer first so reload-history is instant
         try {

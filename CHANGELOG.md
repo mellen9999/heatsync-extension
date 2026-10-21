@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.96] — 2026-10-21
+
+### added
+- **tab read marks** — a channel tab's read mark syncs across your tabs and devices; right-click clear sticks after a refresh.
+- **remove an emote** — right-click an emote in your set to remove it; the same-name twin takes over at once.
+
+### fixed
+- **removed emotes** — a removed emote leaves the hover label and stays gone, even if a slow inventory refresh lands after.
+- **feed** — an upvote shows in both the thread and feed copy, and heat refreshes once after the server recalculates.
+
 ## [1.7.94] — 2026-10-18
 
 ### added

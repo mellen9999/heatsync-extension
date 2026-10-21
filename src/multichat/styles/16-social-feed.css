@@ -1208,7 +1208,6 @@
       line-height: 18px;
       font-size: 13px;
     }
-    .hs-modlog-row:hover { background: #ffffff; color: #000000; }
     .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
     .hs-modlog-channel { color: #fff; font-weight: 600; }
     .hs-modlog-body { color: #ffffff; word-break: break-word; }

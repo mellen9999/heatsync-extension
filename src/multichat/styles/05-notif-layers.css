@@ -155,17 +155,5 @@
     .hs-notif:has(.hs-notif-toast-warn)    { --hs-notif-accent: var(--hs-warn); }
     .hs-notif:has(.hs-notif-toast-info)    { --hs-notif-accent: var(--hs-info); }
     .hs-notif:has(.hs-notif-toast-mention) { --hs-notif-accent: var(--hs-mention); }
-    .hs-notif-layer-toast-stack > .hs-notif:hover { background: #fff; }
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-toast-text,
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-toast-text::before {
-      color: #000 !important;
-    }
-    /* Keep action buttons readable on the inverted row (white text/border on
-       white bg otherwise disappears). Their own :hover still wins after. */
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action {
-      color: #000;
-      border-color: #000;
-    }
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action:hover { background: #000; color: #fff; }
-    .hs-notif-layer-toast-stack > .hs-notif:hover .hs-notif-action-dismiss:hover { background: #ffffff; color: #000000; }
+    .hs-notif-layer-toast-stack > .hs-notif .hs-notif-action-dismiss:hover { background: #ffffff; color: #000000; }
 

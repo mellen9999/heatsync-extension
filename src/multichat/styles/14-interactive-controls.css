@@ -818,9 +818,6 @@
     .hs-mc-reward-unavailable {
        cursor: default;
     }
-    .hs-mc-reward-unavailable:hover {
-      background: #ffffff; color: #000000;
-    }
     .hs-mc-reward-img {
       flex-shrink: 0;
       object-fit: contain;
@@ -1014,17 +1011,6 @@
     .hs-mc-setting-row:nth-child(even) {
       background: #000000;
     }
-    /* White-bg/black-text hover is for CLICKABLE toggle rows. Exclude the
-       filter-rules editor (the add-form + each rule row): those are a multi-field
-       form + info, not a single clickable row, so the white bg turned their
-       black-bg inputs and light help text unreadable. */
-    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):not(.hs-mc-setting-note):hover {
-      background: #fff;
-      color: #000;
-    }
-    .hs-mc-setting-row:not(.hs-mc-fr-addform):not([data-fr-row]):not(.hs-mc-setting-note):hover * {
-      color: #000 !important;
-    }
     /* Filter-rules rows (and the add form + its help text) are not one
        clickable thing: no row hover. Their own buttons carry the hover. */
     .hs-mc-setting-label {
@@ -1202,13 +1188,10 @@
        (hover OR focus), keep inactive labels gray-on-black and the active
        chip white-with-black-text, instead of the row's forced black text
        vanishing into the strip. */
-    .hs-mc-setting-row:hover .hs-mc-size-btn,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn {
       color: var(--hs-muted) !important;
     }
-    .hs-mc-setting-row:hover .hs-mc-size-btn.active,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,
-    .hs-mc-setting-row:hover .hs-mc-size-btn:hover,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn:hover {
       color: #000 !important;
     }

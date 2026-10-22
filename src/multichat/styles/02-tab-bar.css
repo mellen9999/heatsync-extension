@@ -137,14 +137,14 @@
     .hs-mc-tab-auto { color: var(--hs-muted); }
 .hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
 .hs-mc-fill-on .hs-mc-tab.active {
-  font-size: 0;
+  font-size: 0 !important;
 }
 .hs-mc-fill-on .hs-mc-tab.active > * {
   display: none;
 }
 .hs-mc-fill-on .hs-mc-tab.active::before {
   content: '← back';
-  font-size: 13px;
+  font-size: 13px !important;
 }
 .hs-mc-tab.active {
       background: #fff !important;

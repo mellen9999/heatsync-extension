@@ -876,6 +876,67 @@
       height: 100%;
       border: 0;
     }
+    /* filled: the player takes the whole chat pane. back bar on top, iframe in
+       the middle, transport at the bottom. chat underneath is scroll-locked. */
+    #hs-mc-messages.hs-mc-filled {
+      overflow-y: hidden;
+    }
+    #hs-mc-embed-player .hs-mc-fill-back,
+    #hs-mc-embed-player .hs-mc-transport-fill {
+      display: none;
+    }
+    #hs-mc-embed-player.hs-fill {
+      display: flex;
+      flex-direction: column;
+      z-index: 5;
+    }
+    #hs-mc-embed-player.hs-fill iframe {
+      flex: 1;
+      min-height: 0;
+    }
+    #hs-mc-embed-player.hs-fill .hs-mc-fill-back {
+      display: block;
+      flex: none;
+      height: 22px;
+      margin: 0;
+      padding: 0 8px;
+      font: inherit;
+      font-size: 13px;
+      text-align: left;
+      color: var(--hs-brand);
+      background: #000;
+      border: 0;
+      border-bottom: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    #hs-mc-embed-player.hs-fill .hs-mc-fill-back:hover,
+    #hs-mc-embed-player.hs-fill .hs-mc-fill-back:active {
+      color: #000;
+      background: #fff;
+    }
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill {
+      display: block;
+      flex: none;
+      width: 18px;
+      height: 16px;
+      margin: 0 0 0 auto;
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      line-height: 14px;
+      text-align: center;
+      color: var(--hs-brand);
+      background: #000;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill:hover,
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill:active {
+      color: #000;
+      background: #fff;
+    }
     /* transport: pause + volume. On the player for video, on the card for
        audio. 18px like every other hs control strip. */
     .hs-mc-transport {
@@ -887,11 +948,15 @@
       background: #000;
     }
     #hs-mc-embed-player .hs-mc-transport {
+      flex: none;
       position: absolute;
       right: 0;
       bottom: 0;
       left: 0;
       border-top: 1px solid var(--hs-border);
+    }
+    #hs-mc-embed-player.hs-fill .hs-mc-transport {
+      position: static;
     }
     .hs-mc-media.hs-mc-playable > .hs-mc-transport {
       margin-top: 2px;

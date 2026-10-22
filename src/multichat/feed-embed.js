@@ -1028,6 +1028,15 @@ function _hsTransportEl(provider) {
     vol.addEventListener('input', () => setEmbedVolume(Number(vol.value) / 100))
     bar.appendChild(vol)
   }
+  // Video can be shrunk back to its card; this puts it back to chat-sized.
+  if (provider.video) {
+    const fill = document.createElement('button')
+    fill.type = 'button'
+    fill.className = 'hs-mc-transport-fill'
+    fill.textContent = '⤢'
+    fill.title = 'fill chat'
+    bar.appendChild(fill)
+  }
   // The card underneath is one big play/pause target — a drag on the slider
   // must not read as a press on the card.
   for (const ev of ['click', 'pointerdown', 'mousedown']) {
@@ -1066,7 +1075,9 @@ function _hsAudioStop() {
     _hsAudio.ro?.disconnect()
   } catch (_) {}
   _hsAudio.frame?.remove()
+  _hsAudio.host?.remove()
   _hsAudio = null
+  document.getElementById('hs-mc-messages')?.classList.remove('hs-mc-filled')
   document.getElementById('hs-mc-audio-host')?.remove()
   markNowPlaying(document)
 }
@@ -1078,8 +1089,21 @@ function _hsAudioStop() {
 // judder. Only real layout changes move it, which is what the observer is for.
 function _hsPlacePlayer() {
   const a = _hsAudio
-  if (!a?.host || !a.card) return
+  if (!a?.host) return
   const scroller = document.getElementById('hs-mc-messages')
+  // Filled: the player IS the chat pane. Pinned to the visible window of the
+  // scroller (scrollTop, not 0) and the scroller is locked so it stays there.
+  const filled = !!(a.fill && a.provider.video && scroller)
+  a.host.classList.toggle('hs-fill', filled)
+  scroller?.classList.toggle('hs-mc-filled', filled)
+  if (filled) {
+    a.host.style.top = `${scroller.scrollTop}px`
+    a.host.style.left = '0px'
+    a.host.style.width = `${scroller.clientWidth}px`
+    a.host.style.height = `${scroller.clientHeight}px`
+    return
+  }
+  if (!a.card) return
   if (!scroller || !a.card.isConnected) {
     // The anchor row aged out of the DOM cap. Orphan audio you can't reach a
     // stop button for is worse than silence.
@@ -1129,9 +1153,26 @@ function chatEmbedToggle(url, card) {
   frame.setAttribute('sandbox', EMBED_SANDBOX)
   frame.setAttribute('allow', 'autoplay; encrypted-media; fullscreen; picture-in-picture')
   host.appendChild(frame)
-  if (provider.video) host.appendChild(_hsTransportEl(provider))
+  if (provider.video) {
+    host.appendChild(_hsTransportEl(provider))
+    const back = document.createElement('button')
+    back.type = 'button'
+    back.className = 'hs-mc-fill-back'
+    back.textContent = '← back'
+    back.title = 'back to chat (esc)'
+    host.insertBefore(back, frame)
+  }
   parent.appendChild(host)
-  _hsAudio = { url, provider, frame, host, card: provider.video ? card || null : null, ready: false, playing: true }
+  _hsAudio = {
+    url,
+    provider,
+    frame,
+    host,
+    card: provider.video ? card || null : null,
+    ready: false,
+    playing: true,
+    fill: !!provider.video,
+  }
   if (provider.video) {
     _hsPlacePlayer()
     // Layout, not scroll: the player and its card scroll together for free, so
@@ -1192,6 +1233,31 @@ window.addEventListener(
   { signal: mcSignal },
 )
 
+function _hsSetFill(on) {
+  if (!_hsAudio?.provider.video) return
+  _hsAudio.fill = on
+  _hsPlacePlayer()
+}
+
+// A programmatic autoscroll (new message) moves scrollTop under the locked
+// scroller; follow it so the filled player stays on the visible window.
+// Scroll doesn't bubble, so one capture listener covers every mount.
+document.addEventListener(
+  'scroll',
+  (e) => {
+    if (_hsAudio?.fill && e.target?.id === 'hs-mc-messages') _hsPlacePlayer()
+  },
+  { signal: mcSignal, capture: true, passive: true },
+)
+
+document.addEventListener(
+  'keydown',
+  (e) => {
+    if (e.key === 'Escape' && _hsAudio?.fill) _hsSetFill(false)
+  },
+  { signal: mcSignal },
+)
+
 function _hsPlayerDockClose() {
   document.getElementById('hs-mc-player-dock')?.remove()
 }
@@ -1226,6 +1292,13 @@ document.addEventListener(
       e.preventDefault()
       e.stopPropagation()
       _hsPlayerDockClose()
+      return
+    }
+    const fillBtn = e.target?.closest?.('.hs-mc-fill-back, .hs-mc-transport-fill')
+    if (fillBtn) {
+      e.preventDefault()
+      e.stopPropagation()
+      _hsSetFill(fillBtn.classList.contains('hs-mc-transport-fill'))
       return
     }
     // Modified clicks keep native browser behaviour (new tab / window).

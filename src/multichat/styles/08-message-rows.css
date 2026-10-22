@@ -904,6 +904,10 @@
       border-radius: 0;
       cursor: pointer;
     }
+    /* filled: the active tab is the way back, not a second button down here */
+    #hs-mc-embed-player.hs-fill .hs-mc-transport-fill {
+      display: none;
+    }
     .hs-mc-transport-fill:hover,
     .hs-mc-transport-fill:active {
       color: #000;

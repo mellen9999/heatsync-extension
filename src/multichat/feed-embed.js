@@ -1235,6 +1235,8 @@ window.addEventListener(
 
 function _hsSetFill(on) {
   if (!_hsAudio?.provider.video) return
+  // Going back pauses: the small player is a parked video, not a second screen.
+  if (!on && _hsAudio.fill && _hsAudio.playing) chatEmbedToggle(_hsAudio.url)
   _hsAudio.fill = on
   _hsPlacePlayer()
 }

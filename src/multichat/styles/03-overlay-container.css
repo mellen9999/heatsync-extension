@@ -265,6 +265,10 @@
       z-index: 1005;
       transition: none;
     }
+    /* the player owns the pane; a jump-to-bottom pill over it is noise */
+    .hs-mc-fill-on #hs-mc-new-msgs {
+      display: none !important;
+    }
     #hs-mc-new-msgs:hover {
       background: #fff;
       color: #000;

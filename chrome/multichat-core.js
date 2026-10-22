@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7ff21803d1fb' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8a01a7a81938' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36237,6 +36237,8 @@ window.addEventListener(
 
 function _hsSetFill(on) {
   if (!_hsAudio?.provider.video) return
+  // Going back pauses: the small player is a parked video, not a second screen.
+  if (!on && _hsAudio.fill && _hsAudio.playing) chatEmbedToggle(_hsAudio.url)
   _hsAudio.fill = on
   _hsPlacePlayer()
 }

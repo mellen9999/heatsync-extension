@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "chào mừng đến với heatsync"
   },
-  "welcome_cta": {
-    "message": "mở twitch →"
-  },
   "welcome_cta_kick": {
     "message": "đăng nhập →"
   },
   "welcome_done_title": {
     "message": "bạn đã vào rồi"
   },
-  "welcome_import_title": {
-    "message": "mang emote của bạn sang"
+  "welcome_explain": {
+    "message": "đăng nhập heatsync.org để dùng emote và cài đặt của bạn ở mọi chat"
   },
-  "welcome_import_sub": {
-    "message": "nhập bằng một cú nhấp từ 7tv, bttv và ffz"
-  },
-  "welcome_import_locked": {
-    "message": "đăng nhập bên dưới để nhập emote 7tv/bttv/ffz của bạn"
-  },
-  "welcome_import_cta": {
-    "message": "nhập emote của tôi →"
-  },
-  "welcome_import_importing": {
-    "message": "đang nhập…"
-  },
-  "welcome_import_done": {
-    "message": "đã nhập $COUNT$ emote",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "nhập thất bại — thử lại nhé"
-  },
-  "welcome_import_no_platform": {
-    "message": "hãy liên kết tài khoản twitch, kick hoặc youtube trước →"
+  "welcome_close": {
+    "message": "đóng"
   },
   "welcome_privacy": {
     "message": "quyền riêng tư"

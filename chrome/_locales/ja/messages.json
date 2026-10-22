@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "heatsyncへようこそ"
   },
-  "welcome_cta": {
-    "message": "twitch を開く →"
-  },
   "welcome_cta_kick": {
     "message": "ログイン →"
   },
   "welcome_done_title": {
     "message": "準備完了"
   },
-  "welcome_import_title": {
-    "message": "emote を持ち込もう"
+  "welcome_explain": {
+    "message": "heatsync.org にログインすると、すべてのチャットでエモートと設定を使えます"
   },
-  "welcome_import_sub": {
-    "message": "7tv・bttv・ffz からワンクリックでインポート"
-  },
-  "welcome_import_locked": {
-    "message": "下でログインすると、既存の 7tv/bttv/ffz emote をインポートできる"
-  },
-  "welcome_import_cta": {
-    "message": "自分の emote をインポート →"
-  },
-  "welcome_import_importing": {
-    "message": "インポート中…"
-  },
-  "welcome_import_done": {
-    "message": "emote を $COUNT$ 件インポートした",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "インポート失敗 — もう一度試して"
-  },
-  "welcome_import_no_platform": {
-    "message": "先に twitch・kick・youtube のアカウントを連携して →"
+  "welcome_close": {
+    "message": "閉じる"
   },
   "welcome_privacy": {
     "message": "プライバシー"

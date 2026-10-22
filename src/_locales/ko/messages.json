@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "heatsync에 오신 걸 환영합니다"
   },
-  "welcome_cta": {
-    "message": "twitch 열기 →"
-  },
   "welcome_cta_kick": {
     "message": "로그인 →"
   },
   "welcome_done_title": {
     "message": "준비 완료"
   },
-  "welcome_import_title": {
-    "message": "내 emote 가져오기"
+  "welcome_explain": {
+    "message": "heatsync.org에 로그인하면 모든 채팅에서 이모트와 설정을 사용할 수 있어요"
   },
-  "welcome_import_sub": {
-    "message": "7tv, bttv, ffz에서 한 번에 가져오기"
-  },
-  "welcome_import_locked": {
-    "message": "아래에서 로그인하면 기존 7tv/bttv/ffz emote를 가져올 수 있어"
-  },
-  "welcome_import_cta": {
-    "message": "내 emote 가져오기 →"
-  },
-  "welcome_import_importing": {
-    "message": "가져오는 중…"
-  },
-  "welcome_import_done": {
-    "message": "emote $COUNT$개 가져옴",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "가져오기 실패 — 다시 시도해"
-  },
-  "welcome_import_no_platform": {
-    "message": "먼저 twitch, kick, youtube 계정을 연결해 →"
+  "welcome_close": {
+    "message": "닫기"
   },
   "welcome_privacy": {
     "message": "개인정보처리방침"

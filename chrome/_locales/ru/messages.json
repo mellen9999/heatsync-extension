@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "добро пожаловать в heatsync"
   },
-  "welcome_cta": {
-    "message": "открыть twitch →"
-  },
   "welcome_cta_kick": {
     "message": "войти →"
   },
   "welcome_done_title": {
     "message": "ты в деле"
   },
-  "welcome_import_title": {
-    "message": "перенеси свои emotes"
+  "welcome_explain": {
+    "message": "войди на heatsync.org, чтобы использовать свои эмоуты и настройки в каждом чате"
   },
-  "welcome_import_sub": {
-    "message": "импорт в один клик из 7tv, bttv и ffz"
-  },
-  "welcome_import_locked": {
-    "message": "войди ниже, чтобы импортировать свои emotes из 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "импортировать мои emotes →"
-  },
-  "welcome_import_importing": {
-    "message": "импортирую…"
-  },
-  "welcome_import_done": {
-    "message": "импортировано emotes: $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "не удалось импортировать — попробуй ещё раз"
-  },
-  "welcome_import_no_platform": {
-    "message": "сначала привяжи аккаунт twitch, kick или youtube →"
+  "welcome_close": {
+    "message": "закрыть"
   },
   "welcome_privacy": {
     "message": "конфиденциальность"

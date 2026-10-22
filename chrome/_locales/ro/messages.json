@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "bun venit la heatsync"
   },
-  "welcome_cta": {
-    "message": "deschide twitch →"
-  },
   "welcome_cta_kick": {
     "message": "conectează-te →"
   },
   "welcome_done_title": {
     "message": "ești înăuntru"
   },
-  "welcome_import_title": {
-    "message": "adu-ți emote-urile"
+  "welcome_explain": {
+    "message": "conectează-te la heatsync.org ca să folosești emoturile și setările în fiecare chat"
   },
-  "welcome_import_sub": {
-    "message": "import dintr-un click din 7tv, bttv și ffz"
-  },
-  "welcome_import_locked": {
-    "message": "conectează-te mai jos ca să imporți emote-urile tale 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "importă emote-urile mele →"
-  },
-  "welcome_import_importing": {
-    "message": "import în curs…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emote-uri importate",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "importul a eșuat — încearcă din nou"
-  },
-  "welcome_import_no_platform": {
-    "message": "leagă mai întâi un cont twitch, kick sau youtube →"
+  "welcome_close": {
+    "message": "închide"
   },
   "welcome_privacy": {
     "message": "confidențialitate"

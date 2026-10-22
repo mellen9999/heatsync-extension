@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "مرحبًا بك في heatsync"
   },
-  "welcome_cta": {
-    "message": "افتح twitch →"
-  },
   "welcome_cta_kick": {
     "message": "سجّل الدخول →"
   },
   "welcome_done_title": {
     "message": "أنت جاهز"
   },
-  "welcome_import_title": {
-    "message": "احضر emotes الخاصة بك"
+  "welcome_explain": {
+    "message": "سجّل الدخول إلى heatsync.org لاستخدام إيموتاتك وإعداداتك في كل دردشة"
   },
-  "welcome_import_sub": {
-    "message": "استيراد بنقرة واحدة من 7tv وbttv وffz"
-  },
-  "welcome_import_locked": {
-    "message": "سجّل الدخول أدناه لاستيراد emotes الحالية من 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "استورد emotes الخاصة بي →"
-  },
-  "welcome_import_importing": {
-    "message": "جارٍ الاستيراد…"
-  },
-  "welcome_import_done": {
-    "message": "تم استيراد $COUNT$ emotes",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "فشل الاستيراد — حاول مرة أخرى"
-  },
-  "welcome_import_no_platform": {
-    "message": "اربط حساب twitch أو kick أو youtube أولاً →"
+  "welcome_close": {
+    "message": "إغلاق"
   },
   "welcome_privacy": {
     "message": "الخصوصية"

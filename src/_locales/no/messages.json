@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "velkommen til heatsync"
   },
-  "welcome_cta": {
-    "message": "åpne twitch →"
-  },
   "welcome_cta_kick": {
     "message": "logg inn →"
   },
   "welcome_done_title": {
     "message": "du er inne"
   },
-  "welcome_import_title": {
-    "message": "ta med emotene dine"
+  "welcome_explain": {
+    "message": "logg inn på heatsync.org for å bruke emotene og innstillingene dine i alle chatter"
   },
-  "welcome_import_sub": {
-    "message": "importer fra 7tv, bttv & ffz med ett klikk"
-  },
-  "welcome_import_locked": {
-    "message": "logg inn under for å importere dine eksisterende 7tv/bttv/ffz-emotes"
-  },
-  "welcome_import_cta": {
-    "message": "importer emotene mine →"
-  },
-  "welcome_import_importing": {
-    "message": "importerer…"
-  },
-  "welcome_import_done": {
-    "message": "importerte $COUNT$ emotes",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "import feilet — prøv igjen"
-  },
-  "welcome_import_no_platform": {
-    "message": "koble til en twitch-, kick- eller youtube-konto først →"
+  "welcome_close": {
+    "message": "lukk"
   },
   "welcome_privacy": {
     "message": "personvern"

@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "bem-vindo ao heatsync"
   },
-  "welcome_cta": {
-    "message": "abrir twitch →"
-  },
   "welcome_cta_kick": {
     "message": "iniciar sessão →"
   },
   "welcome_done_title": {
     "message": "já estás dentro"
   },
-  "welcome_import_title": {
-    "message": "traz as tuas emotes"
+  "welcome_explain": {
+    "message": "inicia sessão em heatsync.org para usar os teus emotes e definições em todos os chats"
   },
-  "welcome_import_sub": {
-    "message": "importa de 7tv, bttv e ffz com um clique"
-  },
-  "welcome_import_locked": {
-    "message": "inicia sessão abaixo para importar as tuas emotes de 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "importar as minhas emotes →"
-  },
-  "welcome_import_importing": {
-    "message": "a importar…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emotes importadas",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "falha ao importar — tenta de novo"
-  },
-  "welcome_import_no_platform": {
-    "message": "liga primeiro uma conta twitch, kick ou youtube →"
+  "welcome_close": {
+    "message": "fechar"
   },
   "welcome_privacy": {
     "message": "privacidade"

@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "tervetuloa heatsynciin"
   },
-  "welcome_cta": {
-    "message": "avaa twitch →"
-  },
   "welcome_cta_kick": {
     "message": "kirjaudu →"
   },
   "welcome_done_title": {
     "message": "olet sisällä"
   },
-  "welcome_import_title": {
-    "message": "tuo emotesi"
+  "welcome_explain": {
+    "message": "kirjaudu heatsync.orgiin käyttääksesi emojejasi ja asetuksiasi jokaisessa chatissa"
   },
-  "welcome_import_sub": {
-    "message": "tuo yhdellä klikkauksella 7tv:stä, bttv:stä ja ffz:stä"
-  },
-  "welcome_import_locked": {
-    "message": "kirjaudu alla tuodaksesi nykyiset 7tv/bttv/ffz-emotesi"
-  },
-  "welcome_import_cta": {
-    "message": "tuo emoteni →"
-  },
-  "welcome_import_importing": {
-    "message": "tuodaan…"
-  },
-  "welcome_import_done": {
-    "message": "tuotu $COUNT$ emotea",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "tuonti epäonnistui — yritä uudelleen"
-  },
-  "welcome_import_no_platform": {
-    "message": "yhdistä ensin twitch-, kick- tai youtube-tili →"
+  "welcome_close": {
+    "message": "sulje"
   },
   "welcome_privacy": {
     "message": "yksityisyys"

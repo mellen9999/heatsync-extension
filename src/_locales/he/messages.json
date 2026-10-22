@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "ברוך הבא ל-heatsync"
   },
-  "welcome_cta": {
-    "message": "פתח twitch →"
-  },
   "welcome_cta_kick": {
     "message": "התחבר →"
   },
   "welcome_done_title": {
     "message": "אתה בפנים"
   },
-  "welcome_import_title": {
-    "message": "תביא את האימוטים שלך"
+  "welcome_explain": {
+    "message": "התחבר ל-heatsync.org כדי להשתמש באימוטים ובהגדרות שלך בכל צ׳אט"
   },
-  "welcome_import_sub": {
-    "message": "ייבוא בקליק אחד מ-7tv, bttv ו-ffz"
-  },
-  "welcome_import_locked": {
-    "message": "התחבר למטה כדי לייבא את אימוטי 7tv/bttv/ffz הקיימים שלך"
-  },
-  "welcome_import_cta": {
-    "message": "ייבא את האימוטים שלי →"
-  },
-  "welcome_import_importing": {
-    "message": "מייבא…"
-  },
-  "welcome_import_done": {
-    "message": "יובאו $COUNT$ אימוטים",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "הייבוא נכשל — נסה שוב"
-  },
-  "welcome_import_no_platform": {
-    "message": "קשר קודם חשבון twitch, kick או youtube →"
+  "welcome_close": {
+    "message": "סגור"
   },
   "welcome_privacy": {
     "message": "פרטיות"

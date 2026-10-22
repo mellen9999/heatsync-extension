@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "welkom bij heatsync"
   },
-  "welcome_cta": {
-    "message": "open twitch →"
-  },
   "welcome_cta_kick": {
     "message": "inloggen →"
   },
   "welcome_done_title": {
     "message": "je bent binnen"
   },
-  "welcome_import_title": {
-    "message": "haal je emotes binnen"
+  "welcome_explain": {
+    "message": "log in op heatsync.org om je emotes en instellingen in elke chat te gebruiken"
   },
-  "welcome_import_sub": {
-    "message": "importeer met één klik uit 7tv, bttv & ffz"
-  },
-  "welcome_import_locked": {
-    "message": "log hieronder in om je bestaande 7tv/bttv/ffz emotes te importeren"
-  },
-  "welcome_import_cta": {
-    "message": "importeer mijn emotes →"
-  },
-  "welcome_import_importing": {
-    "message": "importeren…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emotes geïmporteerd",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "import mislukt — probeer opnieuw"
-  },
-  "welcome_import_no_platform": {
-    "message": "koppel eerst een twitch-, kick- of youtube-account →"
+  "welcome_close": {
+    "message": "sluiten"
   },
   "welcome_privacy": {
     "message": "privacy"

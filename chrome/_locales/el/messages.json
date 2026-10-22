@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "καλώς ήρθες στο heatsync"
   },
-  "welcome_cta": {
-    "message": "άνοιξε το twitch →"
-  },
   "welcome_cta_kick": {
     "message": "σύνδεση →"
   },
   "welcome_done_title": {
     "message": "μπήκες"
   },
-  "welcome_import_title": {
-    "message": "φέρε τα emotes σου"
+  "welcome_explain": {
+    "message": "συνδέσου στο heatsync.org για να χρησιμοποιείς τα emotes και τις ρυθμίσεις σου σε κάθε συνομιλία"
   },
-  "welcome_import_sub": {
-    "message": "εισαγωγή με ένα κλικ από 7tv, bttv και ffz"
-  },
-  "welcome_import_locked": {
-    "message": "συνδέσου παρακάτω για να εισαγάγεις τα υπάρχοντα emotes 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "εισαγωγή των emotes μου →"
-  },
-  "welcome_import_importing": {
-    "message": "εισαγωγή…"
-  },
-  "welcome_import_done": {
-    "message": "εισήχθησαν $COUNT$ emotes",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "η εισαγωγή απέτυχε — δοκίμασε ξανά"
-  },
-  "welcome_import_no_platform": {
-    "message": "σύνδεσε πρώτα λογαριασμό twitch, kick ή youtube →"
+  "welcome_close": {
+    "message": "κλείσιμο"
   },
   "welcome_privacy": {
     "message": "απόρρητο"

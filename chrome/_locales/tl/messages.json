@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "welcome sa heatsync"
   },
-  "welcome_cta": {
-    "message": "buksan ang twitch →"
-  },
   "welcome_cta_kick": {
     "message": "mag-sign in →"
   },
   "welcome_done_title": {
     "message": "nandito ka na"
   },
-  "welcome_import_title": {
-    "message": "dalhin ang mga emotes mo"
+  "welcome_explain": {
+    "message": "mag-sign in sa heatsync.org para magamit ang iyong mga emote at settings sa bawat chat"
   },
-  "welcome_import_sub": {
-    "message": "isang click na import mula sa 7tv, bttv at ffz"
-  },
-  "welcome_import_locked": {
-    "message": "mag-sign in sa ibaba para i-import ang mga emotes mo mula sa 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "i-import ang mga emotes ko →"
-  },
-  "welcome_import_importing": {
-    "message": "ini-import…"
-  },
-  "welcome_import_done": {
-    "message": "na-import ang $COUNT$ emotes",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "bigo ang import — subukan ulit"
-  },
-  "welcome_import_no_platform": {
-    "message": "mag-link muna ng twitch, kick o youtube account →"
+  "welcome_close": {
+    "message": "isara"
   },
   "welcome_privacy": {
     "message": "privacy"

@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "selamat datang di heatsync"
   },
-  "welcome_cta": {
-    "message": "buka twitch →"
-  },
   "welcome_cta_kick": {
     "message": "masuk →"
   },
   "welcome_done_title": {
     "message": "kamu sudah masuk"
   },
-  "welcome_import_title": {
-    "message": "bawa emote-mu"
+  "welcome_explain": {
+    "message": "masuk ke heatsync.org untuk memakai emote dan pengaturanmu di setiap chat"
   },
-  "welcome_import_sub": {
-    "message": "impor sekali klik dari 7tv, bttv & ffz"
-  },
-  "welcome_import_locked": {
-    "message": "masuk di bawah untuk mengimpor emote 7tv/bttv/ffz yang sudah ada"
-  },
-  "welcome_import_cta": {
-    "message": "impor emote-ku →"
-  },
-  "welcome_import_importing": {
-    "message": "mengimpor…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emote diimpor",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "impor gagal — coba lagi"
-  },
-  "welcome_import_no_platform": {
-    "message": "hubungkan akun twitch, kick, atau youtube dulu →"
+  "welcome_close": {
+    "message": "tutup"
   },
   "welcome_privacy": {
     "message": "privasi"

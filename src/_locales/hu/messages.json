@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "üdv a heatsync-en"
   },
-  "welcome_cta": {
-    "message": "nyisd meg a twitchet →"
-  },
   "welcome_cta_kick": {
     "message": "jelentkezz be →"
   },
   "welcome_done_title": {
     "message": "bent vagy"
   },
-  "welcome_import_title": {
-    "message": "hozd át az emote-jaidat"
+  "welcome_explain": {
+    "message": "jelentkezz be a heatsync.org-on, hogy minden chatben használhasd az emote-jaidat és a beállításaidat"
   },
-  "welcome_import_sub": {
-    "message": "egy kattintásos import 7tv-ből, bttv-ből és ffz-ből"
-  },
-  "welcome_import_locked": {
-    "message": "jelentkezz be lent, hogy behozd a meglévő 7tv/bttv/ffz emote-jaidat"
-  },
-  "welcome_import_cta": {
-    "message": "emote-jaim importálása →"
-  },
-  "welcome_import_importing": {
-    "message": "importálás…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emote importálva",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "az import nem sikerült — próbáld újra"
-  },
-  "welcome_import_no_platform": {
-    "message": "előbb kösd össze a twitch, kick vagy youtube fiókodat →"
+  "welcome_close": {
+    "message": "bezár"
   },
   "welcome_privacy": {
     "message": "adatvédelem"

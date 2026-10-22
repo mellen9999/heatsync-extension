@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "heatsync'e hoş geldin"
   },
-  "welcome_cta": {
-    "message": "twitch'i aç →"
-  },
   "welcome_cta_kick": {
     "message": "giriş yap →"
   },
   "welcome_done_title": {
     "message": "içerdesin"
   },
-  "welcome_import_title": {
-    "message": "emotes'larını getir"
+  "welcome_explain": {
+    "message": "emote ve ayarlarını her sohbette kullanmak için heatsync.org'a giriş yap"
   },
-  "welcome_import_sub": {
-    "message": "7tv, bttv ve ffz'den tek tıkla içe aktar"
-  },
-  "welcome_import_locked": {
-    "message": "mevcut 7tv/bttv/ffz emotes'larını içe aktarmak için aşağıdan giriş yap"
-  },
-  "welcome_import_cta": {
-    "message": "emotes'larımı içe aktar →"
-  },
-  "welcome_import_importing": {
-    "message": "içe aktarılıyor…"
-  },
-  "welcome_import_done": {
-    "message": "$COUNT$ emotes içe aktarıldı",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "içe aktarma başarısız — tekrar dene"
-  },
-  "welcome_import_no_platform": {
-    "message": "önce bir twitch, kick veya youtube hesabı bağla →"
+  "welcome_close": {
+    "message": "kapat"
   },
   "welcome_privacy": {
     "message": "gizlilik"

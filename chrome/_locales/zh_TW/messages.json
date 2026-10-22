@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "歡迎來到 heatsync"
   },
-  "welcome_cta": {
-    "message": "開啟 twitch →"
-  },
   "welcome_cta_kick": {
     "message": "登入 →"
   },
   "welcome_done_title": {
     "message": "你已就緒"
   },
-  "welcome_import_title": {
-    "message": "匯入你的 emote"
+  "welcome_explain": {
+    "message": "登入 heatsync.org，即可在每個聊天室使用你的表情和設定"
   },
-  "welcome_import_sub": {
-    "message": "一鍵從 7tv、bttv 和 ffz 匯入"
-  },
-  "welcome_import_locked": {
-    "message": "請在下方登入以匯入你現有的 7tv/bttv/ffz emote"
-  },
-  "welcome_import_cta": {
-    "message": "匯入我的 emote →"
-  },
-  "welcome_import_importing": {
-    "message": "匯入中…"
-  },
-  "welcome_import_done": {
-    "message": "已匯入 $COUNT$ 個 emote",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "匯入失敗 — 請重試"
-  },
-  "welcome_import_no_platform": {
-    "message": "請先綁定 twitch、kick 或 youtube 帳號 →"
+  "welcome_close": {
+    "message": "關閉"
   },
   "welcome_privacy": {
     "message": "隱私"

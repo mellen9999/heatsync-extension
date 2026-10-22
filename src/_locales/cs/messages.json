@@ -72,43 +72,17 @@
   "welcome_title": {
     "message": "vítej v heatsync"
   },
-  "welcome_cta": {
-    "message": "otevřít twitch →"
-  },
   "welcome_cta_kick": {
     "message": "přihlásit se →"
   },
   "welcome_done_title": {
     "message": "jsi uvnitř"
   },
-  "welcome_import_title": {
-    "message": "přines si své emotes"
+  "welcome_explain": {
+    "message": "přihlas se na heatsync.org a používej své emotes a nastavení v každém chatu"
   },
-  "welcome_import_sub": {
-    "message": "import jedním klikem z 7tv, bttv a ffz"
-  },
-  "welcome_import_locked": {
-    "message": "přihlas se níže a importuj své stávající emotes z 7tv/bttv/ffz"
-  },
-  "welcome_import_cta": {
-    "message": "importovat mé emotes →"
-  },
-  "welcome_import_importing": {
-    "message": "importuji…"
-  },
-  "welcome_import_done": {
-    "message": "importováno emotes: $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "welcome_import_failed": {
-    "message": "import selhal — zkus to znovu"
-  },
-  "welcome_import_no_platform": {
-    "message": "nejdřív propoj účet twitch, kick nebo youtube →"
+  "welcome_close": {
+    "message": "zavřít"
   },
   "welcome_privacy": {
     "message": "soukromí"

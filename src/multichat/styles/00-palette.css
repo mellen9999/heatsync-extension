@@ -25,7 +25,7 @@
       --hs-danger: #ff0000;   /* error, ban, delete, destructive */
       --hs-reply: #00ffff;    /* reply borders, quotes, whispers, mode */
       --hs-thread: #ff00ff;   /* OP/thread accents, raid/hype events */
-      --hs-link: #ffffff;     /* hyperlinks — white, underlined */
+      --hs-link: #8888ff;     /* hyperlinks — blue */
       --hs-info: #ffffff;     /* info toasts, polls, mod-grant */
       --hs-gold: #ffff00;     /* mod/VIP, automod, bits, pinned, premium */
       /* the dim variants ARE the full-saturation colour now */

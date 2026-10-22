@@ -1007,6 +1007,14 @@ function _hsAudioSend(msg) {
 function _hsTransportEl(provider) {
   const bar = document.createElement('div')
   bar.className = 'hs-mc-transport'
+  // Video only: ← back (shrink to the card) when filled, ⤢ (fill chat) when not.
+  // Lives in the transport — the bottom bar is the one strip nothing overlays.
+  if (provider.video) {
+    const fill = document.createElement('button')
+    fill.type = 'button'
+    fill.className = 'hs-mc-transport-fill'
+    bar.appendChild(fill)
+  }
   const pause = document.createElement('button')
   pause.type = 'button'
   pause.className = 'hs-mc-transport-toggle'
@@ -1027,15 +1035,6 @@ function _hsTransportEl(provider) {
     vol.title = 'volume'
     vol.addEventListener('input', () => setEmbedVolume(Number(vol.value) / 100))
     bar.appendChild(vol)
-  }
-  // Video can be shrunk back to its card; this puts it back to chat-sized.
-  if (provider.video) {
-    const fill = document.createElement('button')
-    fill.type = 'button'
-    fill.className = 'hs-mc-transport-fill'
-    fill.textContent = '⤢'
-    fill.title = 'fill chat'
-    bar.appendChild(fill)
   }
   // The card underneath is one big play/pause target — a drag on the slider
   // must not read as a press on the card.
@@ -1095,6 +1094,11 @@ function _hsPlacePlayer() {
   // scroller (scrollTop, not 0) and the scroller is locked so it stays there.
   const filled = !!(a.fill && a.provider.video && scroller)
   a.host.classList.toggle('hs-fill', filled)
+  const fillBtn = a.host.querySelector('.hs-mc-transport-fill')
+  if (fillBtn) {
+    fillBtn.textContent = filled ? '← back' : '⤢'
+    fillBtn.title = filled ? 'back to chat (esc)' : 'fill chat'
+  }
   scroller?.classList.toggle('hs-mc-filled', filled)
   if (filled) {
     a.host.style.top = `${scroller.scrollTop}px`
@@ -1155,12 +1159,6 @@ function chatEmbedToggle(url, card) {
   host.appendChild(frame)
   if (provider.video) {
     host.appendChild(_hsTransportEl(provider))
-    const back = document.createElement('button')
-    back.type = 'button'
-    back.className = 'hs-mc-fill-back'
-    back.textContent = '← back'
-    back.title = 'back to chat (esc)'
-    host.insertBefore(back, frame)
   }
   parent.appendChild(host)
   _hsAudio = {
@@ -1294,11 +1292,10 @@ document.addEventListener(
       _hsPlayerDockClose()
       return
     }
-    const fillBtn = e.target?.closest?.('.hs-mc-fill-back, .hs-mc-transport-fill')
-    if (fillBtn) {
+    if (e.target?.closest?.('.hs-mc-transport-fill')) {
       e.preventDefault()
       e.stopPropagation()
-      _hsSetFill(fillBtn.classList.contains('hs-mc-transport-fill'))
+      _hsSetFill(!_hsAudio?.fill)
       return
     }
     // Modified clicks keep native browser behaviour (new tab / window).

@@ -881,10 +881,6 @@
     #hs-mc-messages.hs-mc-filled {
       overflow-y: hidden;
     }
-    #hs-mc-embed-player .hs-mc-fill-back,
-    #hs-mc-embed-player .hs-mc-transport-fill {
-      display: none;
-    }
     #hs-mc-embed-player.hs-fill {
       display: flex;
       flex-direction: column;
@@ -894,46 +890,22 @@
       flex: 1;
       min-height: 0;
     }
-    #hs-mc-embed-player.hs-fill .hs-mc-fill-back {
-      display: block;
+    .hs-mc-transport-fill {
       flex: none;
-      height: 22px;
-      margin: 0;
-      padding: 0 8px;
-      font: inherit;
-      font-size: 13px;
-      text-align: left;
-      color: var(--hs-brand);
-      background: #000;
-      border: 0;
-      border-bottom: 1px solid var(--hs-border);
-      border-radius: 0;
-      cursor: pointer;
-    }
-    #hs-mc-embed-player.hs-fill .hs-mc-fill-back:hover,
-    #hs-mc-embed-player.hs-fill .hs-mc-fill-back:active {
-      color: #000;
-      background: #fff;
-    }
-    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill {
-      display: block;
-      flex: none;
-      width: 18px;
       height: 16px;
-      margin: 0 0 0 auto;
-      padding: 0;
+      margin: 0;
+      padding: 0 6px;
       font: inherit;
       font-size: 13px;
       line-height: 14px;
-      text-align: center;
       color: var(--hs-brand);
       background: #000;
       border: 1px solid var(--hs-border);
       border-radius: 0;
       cursor: pointer;
     }
-    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill:hover,
-    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-fill:active {
+    .hs-mc-transport-fill:hover,
+    .hs-mc-transport-fill:active {
       color: #000;
       background: #fff;
     }

@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '671b87a72742' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f2ed88195842' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16420,6 +16420,23 @@ function hsPanePanelOpen() {
   return !!activePanePanel
 }
 
+// ── takeover bookkeeping (see takeover.js) ──
+// Returns the closer for the topmost open takeover, or null. Computed from live
+// state each call so a missed close path can't leave the tab stuck on ← back.
+function hsTakeoverCloser() {
+  if (typeof _hsAudio !== 'undefined' && _hsAudio?.fill) return () => _hsSetFill(false)
+  if (hsPanePanelOpen()) return () => activePanePanel?.finish(false, true)
+  if (typeof activeProfileCard !== 'undefined' && activeProfileCard && !activeProfileCard.floating)
+    return closeProfileCard
+  if (typeof activeChatLogs !== 'undefined' && activeChatLogs) return closeChatLogsView
+  if (typeof predViewOpen === 'function' && predViewOpen()) return closePredView
+  return null
+}
+
+function hsTakeoverSync() {
+  document.documentElement.classList.toggle('hs-mc-fill-on', !!hsTakeoverCloser())
+}
+
 // A tab switch tears the panel down WITHOUT touching the row: the switch repaints
 // the row for the new tab itself. The pending promise resolves as a cancel.
 function hsPanePanelAbort() {
@@ -16455,6 +16472,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
     document.removeEventListener('keydown', keyHandler, true)
     el.remove()
     if (activePanePanel?.el === el) activePanePanel = null
+    hsTakeoverSync()
     if (restoreRow && row && savedRow) {
       row.replaceChildren(...savedRow.nodes)
       row.hidden = savedRow.hidden
@@ -16487,6 +16505,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
   // ~15000px above the viewport: /modtools "did nothing", the pane just flashed.
   msgsEl.scrollTop = msgsEl.scrollHeight
   activePanePanel = { el, finish }
+  hsTakeoverSync()
   return el
 }
 
@@ -16549,6 +16568,32 @@ function hsConfirm(message, confirmLabel = 'confirm', reasons = []) {
     okBtn.focus()
   })
 }
+
+
+// --- multichat/takeover.js ---
+// takeover.js — one rule for every surface that takes over the chat pane
+// (profile card, confirm / mod panels, chat logs, predictions, the filled video
+// player): while one is open the ACTIVE tab reads ← back and clicking it closes
+// the surface. The class drives the label + the hidden "N new" pill in CSS
+// (02-tab-bar.css, 03-overlay-container.css).
+//
+// (hsTakeoverCloser / hsTakeoverSync live in pane-panel.js, which the panels
+// themselves call on open and close.)
+
+// Capture: the tab's own switch handler never sees the click. With no takeover
+// open the class is stale by definition — drop it and let the click through.
+document.addEventListener(
+  'click',
+  (e) => {
+    if (!e.target?.closest?.('.hs-mc-tab.active')) return
+    const close = hsTakeoverCloser()
+    if (!close) return hsTakeoverSync()
+    e.preventDefault()
+    e.stopPropagation()
+    close()
+  },
+  { signal: mcSignal, capture: true },
+)
 
 
 // --- multichat/notifs.js ---
@@ -36034,7 +36079,7 @@ function _hsAudioStop() {
   _hsAudio.host?.remove()
   _hsAudio = null
   document.getElementById('hs-mc-messages')?.classList.remove('hs-mc-filled')
-  document.documentElement.classList.remove('hs-mc-fill-on')
+  hsTakeoverSync()
   document.getElementById('hs-mc-audio-host')?.remove()
   markNowPlaying(document)
 }
@@ -36058,8 +36103,7 @@ function _hsPlacePlayer() {
     fillBtn.title = filled ? 'back to chat (esc)' : 'fill chat'
   }
   scroller?.classList.toggle('hs-mc-filled', filled)
-  // Tab bar swaps the active tab for ← back (see 02-tab-bar.css).
-  document.documentElement.classList.toggle('hs-mc-fill-on', filled)
+  hsTakeoverSync()
   if (filled) {
     a.host.style.top = `${scroller.scrollTop}px`
     a.host.style.left = '0px'
@@ -36252,7 +36296,7 @@ document.addEventListener(
       _hsPlayerDockClose()
       return
     }
-    if (e.target?.closest?.('.hs-mc-transport-fill, .hs-mc-fill-on .hs-mc-tab.active')) {
+    if (e.target?.closest?.('.hs-mc-transport-fill')) {
       e.preventDefault()
       e.stopPropagation()
       _hsSetFill(!_hsAudio?.fill)
@@ -51613,6 +51657,7 @@ async function openProfileCard(username, platform, opts = {}) {
     floating: !document.getElementById('hs-mc-messages'),
     focusMoved: false,
   }
+  hsTakeoverSync()
   renderProfileCardView()
 
   try {
@@ -51848,6 +51893,7 @@ function closeProfileCard() {
   // showInputBar, which owns the "may this tab have a composer" call and keeps
   // the visible flag in step. (The local tab list this replaced was a copy
   // that never learned about modlog.)
+  hsTakeoverSync()
   showInputBar()
   renderMessages(currentTab)
   renderSubRow() // the 2nd row gets its own cells back
@@ -53363,6 +53409,7 @@ async function openChatLogsView(username, opts = {}) {
     query: '',
     scope: channel ? 'channel' : 'all',
   }
+  hsTakeoverSync()
   renderChatLogsView()
   await fetchChatLogsPage()
 }
@@ -53370,6 +53417,7 @@ async function openChatLogsView(username, opts = {}) {
 // Forget the open view without leaving its cell (a pane remount owns the rest).
 function dropChatLogsState() {
   activeChatLogs = null
+  hsTakeoverSync()
   if (_clLoadMoreObs) {
     cleanup.untrackObserver(_clLoadMoreObs)
     _clLoadMoreObs = null
@@ -53961,6 +54009,7 @@ async function openPredView(channel) {
   inputBarVisible = false
 
   activePredView = { channel: String(ch).toLowerCase() }
+  hsTakeoverSync()
   renderPredView()
   await refreshPredViewData()
 }
@@ -53968,6 +54017,7 @@ async function openPredView(channel) {
 function closePredView() {
   if (!activePredView) return
   activePredView = null
+  hsTakeoverSync()
   showInputBar()
   if (typeof renderMessages === 'function') renderMessages(currentTab)
 }
@@ -74107,6 +74157,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     } catch {}
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) activeProfileCard = null
+    hsTakeoverSync()
     // …and so does an open confirm panel (the switch repaints the 2nd row itself)
     hsPanePanelAbort()
 

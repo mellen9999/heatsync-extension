@@ -6639,6 +6639,7 @@
     } catch {}
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) activeProfileCard = null
+    hsTakeoverSync()
     // …and so does an open confirm panel (the switch repaints the 2nd row itself)
     hsPanePanelAbort()
 

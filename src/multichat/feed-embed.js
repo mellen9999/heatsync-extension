@@ -1077,7 +1077,7 @@ function _hsAudioStop() {
   _hsAudio.host?.remove()
   _hsAudio = null
   document.getElementById('hs-mc-messages')?.classList.remove('hs-mc-filled')
-  document.documentElement.classList.remove('hs-mc-fill-on')
+  hsTakeoverSync()
   document.getElementById('hs-mc-audio-host')?.remove()
   markNowPlaying(document)
 }
@@ -1101,8 +1101,7 @@ function _hsPlacePlayer() {
     fillBtn.title = filled ? 'back to chat (esc)' : 'fill chat'
   }
   scroller?.classList.toggle('hs-mc-filled', filled)
-  // Tab bar swaps the active tab for ← back (see 02-tab-bar.css).
-  document.documentElement.classList.toggle('hs-mc-fill-on', filled)
+  hsTakeoverSync()
   if (filled) {
     a.host.style.top = `${scroller.scrollTop}px`
     a.host.style.left = '0px'
@@ -1295,7 +1294,7 @@ document.addEventListener(
       _hsPlayerDockClose()
       return
     }
-    if (e.target?.closest?.('.hs-mc-transport-fill, .hs-mc-fill-on .hs-mc-tab.active')) {
+    if (e.target?.closest?.('.hs-mc-transport-fill')) {
       e.preventDefault()
       e.stopPropagation()
       _hsSetFill(!_hsAudio?.fill)

@@ -30,6 +30,23 @@ function hsPanePanelOpen() {
   return !!activePanePanel
 }
 
+// ── takeover bookkeeping (see takeover.js) ──
+// Returns the closer for the topmost open takeover, or null. Computed from live
+// state each call so a missed close path can't leave the tab stuck on ← back.
+function hsTakeoverCloser() {
+  if (typeof _hsAudio !== 'undefined' && _hsAudio?.fill) return () => _hsSetFill(false)
+  if (hsPanePanelOpen()) return () => activePanePanel?.finish(false, true)
+  if (typeof activeProfileCard !== 'undefined' && activeProfileCard && !activeProfileCard.floating)
+    return closeProfileCard
+  if (typeof activeChatLogs !== 'undefined' && activeChatLogs) return closeChatLogsView
+  if (typeof predViewOpen === 'function' && predViewOpen()) return closePredView
+  return null
+}
+
+function hsTakeoverSync() {
+  document.documentElement.classList.toggle('hs-mc-fill-on', !!hsTakeoverCloser())
+}
+
 // A tab switch tears the panel down WITHOUT touching the row: the switch repaints
 // the row for the new tab itself. The pending promise resolves as a cancel.
 function hsPanePanelAbort() {
@@ -65,6 +82,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
     document.removeEventListener('keydown', keyHandler, true)
     el.remove()
     if (activePanePanel?.el === el) activePanePanel = null
+    hsTakeoverSync()
     if (restoreRow && row && savedRow) {
       row.replaceChildren(...savedRow.nodes)
       row.hidden = savedRow.hidden
@@ -97,6 +115,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
   // ~15000px above the viewport: /modtools "did nothing", the pane just flashed.
   msgsEl.scrollTop = msgsEl.scrollHeight
   activePanePanel = { el, finish }
+  hsTakeoverSync()
   return el
 }
 

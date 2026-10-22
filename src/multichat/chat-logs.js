@@ -148,6 +148,7 @@ async function openChatLogsView(username, opts = {}) {
     query: '',
     scope: channel ? 'channel' : 'all',
   }
+  hsTakeoverSync()
   renderChatLogsView()
   await fetchChatLogsPage()
 }
@@ -155,6 +156,7 @@ async function openChatLogsView(username, opts = {}) {
 // Forget the open view without leaving its cell (a pane remount owns the rest).
 function dropChatLogsState() {
   activeChatLogs = null
+  hsTakeoverSync()
   if (_clLoadMoreObs) {
     cleanup.untrackObserver(_clLoadMoreObs)
     _clLoadMoreObs = null

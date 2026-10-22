@@ -197,6 +197,7 @@ async function openProfileCard(username, platform, opts = {}) {
     floating: !document.getElementById('hs-mc-messages'),
     focusMoved: false,
   }
+  hsTakeoverSync()
   renderProfileCardView()
 
   try {
@@ -432,6 +433,7 @@ function closeProfileCard() {
   // showInputBar, which owns the "may this tab have a composer" call and keeps
   // the visible flag in step. (The local tab list this replaced was a copy
   // that never learned about modlog.)
+  hsTakeoverSync()
   showInputBar()
   renderMessages(currentTab)
   renderSubRow() // the 2nd row gets its own cells back

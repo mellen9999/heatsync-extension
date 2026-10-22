@@ -774,6 +774,7 @@ const MULTICHAT_MODULES = [
   'send-targets.js',
   'x-glyph.js',
   'pane-panel.js',
+  'takeover.js',
   'notifs.js',
   'styles.js',
   'seen-state.js',

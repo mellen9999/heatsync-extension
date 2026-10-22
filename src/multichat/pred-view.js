@@ -30,6 +30,7 @@ async function openPredView(channel) {
   inputBarVisible = false
 
   activePredView = { channel: String(ch).toLowerCase() }
+  hsTakeoverSync()
   renderPredView()
   await refreshPredViewData()
 }
@@ -37,6 +38,7 @@ async function openPredView(channel) {
 function closePredView() {
   if (!activePredView) return
   activePredView = null
+  hsTakeoverSync()
   showInputBar()
   if (typeof renderMessages === 'function') renderMessages(currentTab)
 }

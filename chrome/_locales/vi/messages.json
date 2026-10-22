@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "mở twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "mở twitch →"
-  },
   "welcome_cta_kick": {
     "message": "đăng nhập →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "đã chặn (bấm để bỏ chặn)"
-  },
-  "welcome_cta_live": {
-    "message": "xem trực tiếp"
   },
   "mc_settings_font_family": {
     "message": "phông chữ"

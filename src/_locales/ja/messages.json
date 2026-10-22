@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "twitch を開く →"
   },
-  "welcome_cta_fallback": {
-    "message": "twitch を開く →"
-  },
   "welcome_cta_kick": {
     "message": "ログイン →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "ブロック済み (クリックで解除)"
-  },
-  "welcome_cta_live": {
-    "message": "ライブを見る"
   },
   "mc_settings_font_family": {
     "message": "フォントファミリー"

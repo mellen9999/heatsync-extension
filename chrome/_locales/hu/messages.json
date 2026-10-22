@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "nyisd meg a twitchet →"
   },
-  "welcome_cta_fallback": {
-    "message": "nyisd meg a twitchet →"
-  },
   "welcome_cta_kick": {
     "message": "jelentkezz be →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "letiltva (kattints a feloldáshoz)"
-  },
-  "welcome_cta_live": {
-    "message": "nézd élőben"
   },
   "mc_settings_font_family": {
     "message": "betűtípus"

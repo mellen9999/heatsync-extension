@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "отвори twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "отвори twitch →"
-  },
   "welcome_cta_kick": {
     "message": "влез →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "блокирано (натисни за отблокиране)"
-  },
-  "welcome_cta_live": {
-    "message": "гледай на живо"
   },
   "mc_settings_font_family": {
     "message": "шрифт"

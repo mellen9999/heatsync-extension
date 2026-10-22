@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "افتح twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "افتح twitch →"
-  },
   "welcome_cta_kick": {
     "message": "سجّل الدخول →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "محظور (اضغط لإلغاء الحظر)"
-  },
-  "welcome_cta_live": {
-    "message": "شاهد مباشرة"
   },
   "mc_settings_font_family": {
     "message": "الخط"

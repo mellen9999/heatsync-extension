@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "twitch खोलो →"
   },
-  "welcome_cta_fallback": {
-    "message": "twitch खोलो →"
-  },
   "welcome_cta_kick": {
     "message": "साइन इन करो →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "ब्लॉक (अनब्लॉक के लिए क्लिक)"
-  },
-  "welcome_cta_live": {
-    "message": "लाइव देखो"
   },
   "mc_settings_font_family": {
     "message": "फ़ॉन्ट"

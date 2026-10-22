@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "twitch 열기 →"
   },
-  "welcome_cta_fallback": {
-    "message": "twitch 열기 →"
-  },
   "welcome_cta_kick": {
     "message": "로그인 →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "차단됨 (클릭하여 해제)"
-  },
-  "welcome_cta_live": {
-    "message": "라이브 보기"
   },
   "mc_settings_font_family": {
     "message": "글꼴"

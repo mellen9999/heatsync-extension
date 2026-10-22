@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "otvor twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "otvor twitch →"
-  },
   "welcome_cta_kick": {
     "message": "prihlás sa →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "zablokované (klikni pre odblokovanie)"
-  },
-  "welcome_cta_live": {
-    "message": "pozerať naživo"
   },
   "mc_settings_font_family": {
     "message": "písmo"

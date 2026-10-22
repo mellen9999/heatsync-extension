@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "åbn twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "åbn twitch →"
-  },
   "welcome_cta_kick": {
     "message": "log ind →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "blokeret (klik for at fjerne blokering)"
-  },
-  "welcome_cta_live": {
-    "message": "se live"
   },
   "mc_settings_font_family": {
     "message": "skrifttype"

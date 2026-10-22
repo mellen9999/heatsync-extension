@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "打开 twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "打开 twitch →"
-  },
   "welcome_cta_kick": {
     "message": "登录 →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "已屏蔽 (点击解除)"
-  },
-  "welcome_cta_live": {
-    "message": "观看直播"
   },
   "mc_settings_font_family": {
     "message": "字体"

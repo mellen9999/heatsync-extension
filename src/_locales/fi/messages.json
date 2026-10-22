@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "avaa twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "avaa twitch →"
-  },
   "welcome_cta_kick": {
     "message": "kirjaudu →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "estetty (klikkaa poistaaksesi eston)"
-  },
-  "welcome_cta_live": {
-    "message": "katso livenä"
   },
   "mc_settings_font_family": {
     "message": "fontti"

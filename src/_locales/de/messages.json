@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "twitch öffnen →"
   },
-  "welcome_cta_fallback": {
-    "message": "twitch öffnen →"
-  },
   "welcome_cta_kick": {
     "message": "anmelden →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "blockiert (klicken zum Entsperren)"
-  },
-  "welcome_cta_live": {
-    "message": "live ansehen"
   },
   "mc_settings_font_family": {
     "message": "schriftart"

@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "buksan ang twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "buksan ang twitch →"
-  },
   "welcome_cta_kick": {
     "message": "mag-sign in →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "naka-block (i-click para i-unblock)"
-  },
-  "welcome_cta_live": {
-    "message": "manood nang live"
   },
   "mc_settings_font_family": {
     "message": "font"

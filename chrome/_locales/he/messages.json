@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "פתח twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "פתח twitch →"
-  },
   "welcome_cta_kick": {
     "message": "התחבר →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "חסום (לחץ לביטול)"
-  },
-  "welcome_cta_live": {
-    "message": "צפה בלייב"
   },
   "mc_settings_font_family": {
     "message": "גופן"

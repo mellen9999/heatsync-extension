@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "twitch'i aç →"
   },
-  "welcome_cta_fallback": {
-    "message": "twitch'i aç →"
-  },
   "welcome_cta_kick": {
     "message": "giriş yap →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "engellendi (kaldırmak için tıkla)"
-  },
-  "welcome_cta_live": {
-    "message": "canlı izle"
   },
   "mc_settings_font_family": {
     "message": "yazı tipi"

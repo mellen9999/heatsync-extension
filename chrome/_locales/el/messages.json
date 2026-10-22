@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "άνοιξε το twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "άνοιξε το twitch →"
-  },
   "welcome_cta_kick": {
     "message": "σύνδεση →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "μπλοκαρισμένο (πάτα για ξεμπλοκάρισμα)"
-  },
-  "welcome_cta_live": {
-    "message": "δες live"
   },
   "mc_settings_font_family": {
     "message": "γραμματοσειρά"

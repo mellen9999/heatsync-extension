@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "deschide twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "deschide twitch →"
-  },
   "welcome_cta_kick": {
     "message": "conectează-te →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "blocat (apasă pentru a debloca)"
-  },
-  "welcome_cta_live": {
-    "message": "vezi live"
   },
   "mc_settings_font_family": {
     "message": "familie de fonturi"

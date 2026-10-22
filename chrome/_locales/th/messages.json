@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "เปิด twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "เปิด twitch →"
-  },
   "welcome_cta_kick": {
     "message": "ล็อกอิน →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "ถูกบล็อก (คลิกเพื่อปลดบล็อก)"
-  },
-  "welcome_cta_live": {
-    "message": "ดูสด"
   },
   "mc_settings_font_family": {
     "message": "ฟอนต์"

@@ -75,9 +75,6 @@
   "welcome_cta": {
     "message": "buka twitch →"
   },
-  "welcome_cta_fallback": {
-    "message": "buka twitch →"
-  },
   "welcome_cta_kick": {
     "message": "masuk →"
   },
@@ -1169,9 +1166,6 @@
   },
   "mc_emote_blocked": {
     "message": "diblokir (klik untuk buka blokir)"
-  },
-  "welcome_cta_live": {
-    "message": "tonton live"
   },
   "mc_settings_font_family": {
     "message": "jenis font"

@@ -880,6 +880,10 @@ function applyPlatformPositionOverrides() {
         rc.style.removeProperty('min-width')
         rc.style.removeProperty('max-width')
         rc.style.removeProperty('flex-shrink')
+        // ...then re-assert the saved width right away. Waiting for the column
+        // watcher left the slot 0-wide after a cache-bypass reload, where no
+        // class/style mutation follows to re-run it (chat pushed off-screen).
+        applyChatWidth(rc)
       } else {
         rc.style.setProperty('width', '0', 'important')
         rc.style.setProperty('min-width', '0', 'important')

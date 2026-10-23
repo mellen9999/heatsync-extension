@@ -209,6 +209,53 @@ async function fetchChatLogsPage() {
   renderChatLogsView()
 }
 
+// A message the person sends WHILE their logs are open lands at the top of the
+// list as it arrives — the same chat line, in the archive's row shape — instead
+// of waiting for a reopen. Skipped while a search is showing (results are not a
+// timeline), and for anything that is not a plain chat line from this person on
+// this platform (and this channel, when the view is scoped to one).
+function chatLogsLive(msg) {
+  const st = activeChatLogs
+  if (!st || st.query || !msg || msg.hidden || msg.isHistory) return
+  if (msg.type && msg.type !== 'chat') return
+  const platform = String(msg.platform === 'yt' ? 'youtube' : msg.platform || 'twitch').toLowerCase()
+  if (platform !== st.platform) return
+  if (String(msg.login || msg.user || '').toLowerCase() !== st.username) return
+  const channel = String(msg.channel || '').toLowerCase()
+  if (st.channel && channel !== st.channel) return
+  if (typeof msg.text !== 'string' || !msg.text) return
+  const stamp = new Date(msg.time || Date.now()).toISOString()
+  // a refetch of the first page can hand back the line we already added live
+  if (st.rows.some((r) => r.live && r.timestamp === stamp && r.message === msg.text)) return
+
+  const r = {
+    id: msg.id,
+    live: true,
+    timestamp: stamp,
+    channel,
+    username: st.username,
+    display_name: msg.user,
+    message: msg.text,
+    platform,
+    user_id: msg.userId,
+    color: msg.color,
+  }
+  st.rows.unshift(r)
+  if (st.rows.length > 500) st.rows.pop()
+
+  const list = document.querySelector('#hs-mc-subpane .hs-cl-list')
+  if (!list || list.querySelector('.hs-cl-empty')) {
+    renderChatLogsView() // first row into an empty view needs the whole frame
+    return
+  }
+  // Keep the reader's place: at the top, new lines just appear; scrolled down
+  // into older lines, the view must not slide under them.
+  const row = renderChatLogRow(r)
+  const atTop = list.scrollTop < 4
+  list.insertBefore(row, list.firstChild)
+  if (!atTop) list.scrollTop += row.offsetHeight
+}
+
 async function refreshChatLogs() {
   if (!activeChatLogs) return
   activeChatLogs.rows = []

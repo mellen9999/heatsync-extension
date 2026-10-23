@@ -13448,6 +13448,7 @@
     })
 
     irc.on('message', (msg) => {
+      chatLogsLive(msg)
       // Share-claim dedupe: a real resub/milestone USERNOTICE from Twitch
       // matches a pending Share click. Pre-injection → cancel synthetic.
       // Post-injection → hide synthetic so real takes its place. Single
@@ -13633,6 +13634,7 @@
 
     // Handle incoming Kick messages
     kickChat.on('message', (msg) => {
+      chatLogsLive(msg)
       // Record Kick mod-action notices into the mod-action log (no-op otherwise).
       pushModLogEntry(modActionLog, modLogEntryFromNotice(msg))
       // Reflect kick ban/timeout/delete/unban notices in the live DOM (same

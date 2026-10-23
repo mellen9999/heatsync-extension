@@ -900,6 +900,7 @@ function commitPacedYtMsg(targetChannelId, ytMsg) {
     }
   }
   persistYt(targetChannelId)
+  if (typeof chatLogsLive === 'function') chatLogsLive(ytMsg)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
   // Count before the branch — see ingestReplayYtMsg above.
   bumpTabActivity(tabId, currentTab === tabId)

@@ -94,6 +94,24 @@
     /* Right-cluster (util-row) wraps its rows. In vertical mode
        the tabbar's align-items:flex-start collapses it to content width, so
        force full tabbar width so the rows themselves can stretch to the edge. */
+    /* The card/panel destinations (profile, logs, chatter, twitch) and their
+       × ride the 2nd row; in a side column they are tabs, so they run the full
+       width exactly like the chat tabs above. */
+    .hs-tabs-right #hs-mc-subrow .hs-mc-dest,
+    .hs-tabs-left #hs-mc-subrow .hs-mc-dest {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+      padding: 4px 14px 4px 6px;
+      margin: 0 0 -1px 0;
+    }
+    .hs-tabs-right #hs-mc-subrow .hs-x-cell,
+    .hs-tabs-left #hs-mc-subrow .hs-x-cell {
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: center;
+      margin: 0 0 -1px 0;
+    }
     .hs-tabs-right .hs-mc-right-cluster,
     .hs-tabs-left .hs-mc-right-cluster {
       width: 100% !important;

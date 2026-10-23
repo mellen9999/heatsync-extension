@@ -479,9 +479,12 @@ function getRecentMessagesFromUser(username) {
 // A line heard live in this tab, drawn by the chat's own text renderer (twitch
 // emote tags, 7TV/BTTV/FFZ, cheers) so it matches the row it came from. null =
 // plain text.
+// computeMessageText lives inside main.js's closure, so main.js hands it over
+// here once it is defined (pcLineHtmlHook = computeMessageText).
+let pcLineHtmlHook = null
 function pcLocalLineHtml(m) {
   try {
-    return typeof computeMessageText === 'function' ? computeMessageText(m) : null
+    return pcLineHtmlHook ? pcLineHtmlHook(m) : null
   } catch {
     return null
   }

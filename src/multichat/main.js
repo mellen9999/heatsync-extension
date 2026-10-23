@@ -7170,6 +7170,7 @@
     m._renderedHtml = processedText
     return processedText
   }
+  pcLineHtmlHook = computeMessageText // the profile card draws its live lines with it
 
   // Shared post-render reconcile of heatsync emote states (blocked vs pasteable)
   // against current inventory/blocked. Used by buildMessageDiv (root=div) and the

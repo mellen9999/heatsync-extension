@@ -9,7 +9,10 @@
 function hsPaneMountRow(items, onClose) {
   const row = document.getElementById('hs-mc-subrow')
   if (!row) return
+  // the × leads: it is the one cell that is always there, so it stays at the
+  // top where it can be found, and the destinations hang under it
   row.replaceChildren(
+    hsXButton('hs-x-cell', 'close', onClose),
     ...items.map((it) => {
       const a = document.createElement('a')
       a.className = 'hs-mc-dest'
@@ -20,7 +23,6 @@ function hsPaneMountRow(items, onClose) {
       return a
     }),
   )
-  row.append(hsXButton('hs-x-cell', 'close', onClose))
   row.hidden = false
 }
 

@@ -277,7 +277,9 @@ describe('pcMergeRecent — server /api/card recent + local buffer, deduped', ()
     expect(out).toHaveLength(1)
     expect(out[0].message).toBe('brand new')
     expect(out[0].permalink).toBeNull()
-    expect(out[0].messageHtml).toBeNull()
+    // hsCardModel reads `message_html` (the /api/card payload key) — a camelCase key is silently dropped
+    expect('message_html' in out[0]).toBe(true)
+    expect(out[0].message_html).toBeNull()
   })
 
   test('a local line already present on the server (same channel+text) is not duplicated', () => {

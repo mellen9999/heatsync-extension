@@ -499,7 +499,9 @@ function pcMergeRecent(serverRecent, username) {
       timestamp: new Date(m.time).toISOString(),
       channel: m.channel || null,
       message: m.text,
-      messageHtml: typeof pcLocalLineHtml === 'function' ? pcLocalLineHtml(m) : null,
+      // snake_case: this array is the /api/card payload shape, and hsCardModel
+      // maps message_html -> messageHtml (a camelCase key here was dropped)
+      message_html: typeof pcLocalLineHtml === 'function' ? pcLocalLineHtml(m) : null,
       permalink: null,
     }))
     .filter((r) => !seen.has(`${(r.channel || '').toLowerCase()}:${r.message}`))

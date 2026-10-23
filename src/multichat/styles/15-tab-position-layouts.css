@@ -97,6 +97,11 @@
     /* The card/panel destinations (profile, logs, chatter, twitch) and their
        × ride the 2nd row; in a side column they are tabs, so they run the full
        width exactly like the chat tabs above. */
+    .hs-tabs-right #hs-mc-subrow,
+    .hs-tabs-left #hs-mc-subrow {
+      width: 100%;
+      align-self: stretch;
+    }
     .hs-tabs-right #hs-mc-subrow .hs-mc-dest,
     .hs-tabs-left #hs-mc-subrow .hs-mc-dest {
       width: 100%;

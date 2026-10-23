@@ -24,3 +24,11 @@ describe('picker tile fallback', () => {
     expect(src).toContain('/api/emote-proxy?url=')
   })
 })
+
+describe('picker read-ahead', () => {
+  test('7tv reads the next page ahead and the click consumes it', () => {
+    expect(src).toContain("const MC_PREFETCH_AHEAD = new Set(['7tv'])")
+    expect(src).toContain('mcPrefetchAhead(p, q, page + 1)')
+    expect(src).toMatch(/ahead\.q === q && ahead\.page === page \? ahead\.promise/)
+  })
+})

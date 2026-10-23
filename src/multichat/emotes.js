@@ -52,6 +52,12 @@ const mcProviderSeenIds = { '7tv': new Set(), bttv: new Set(), ffz: new Set(), h
 const mcProviderSeenNames = { '7tv': new Set(), bttv: new Set(), ffz: new Set(), hs: new Set() }
 const mcProviderEmptyRun = { '7tv': 0, bttv: 0, ffz: 0, hs: 0 }
 const MC_EMPTY_PAGES_MAX = 6
+// 7tv serves a cold emote at ~1s, so 'load more' waited on a page's worth of
+// them. Read one page AHEAD instead: once a page lands, fetch the next page's
+// list and warm its images in the browser cache, so the click finds both ready.
+// { q, page, promise } per provider; only providers in MC_PREFETCH_AHEAD use it.
+const mcProviderAhead = { '7tv': null, bttv: null, ffz: null, hs: null }
+const MC_PREFETCH_AHEAD = new Set(['7tv'])
 // A page shorter than the provider's page size means we hit the tail. 'hs' is
 // single-page (the endpoint returns top-100 by popularity, no pagination).
 // 7tv: a small page. Its CDN serves a cold emote in ~1s and a page's worth of
@@ -317,6 +323,7 @@ function mcResetProvider(p) {
   mcProviderSeenIds[p].clear()
   mcProviderSeenNames[p].clear()
   mcProviderEmptyRun[p] = 0
+  mcProviderAhead[p] = null
   mcProviderPage[p] = 0
   mcProviderExhausted[p] = false
   mcProviderInFlight[p] = false
@@ -338,7 +345,11 @@ function mcFetchProviderPage(p, q) {
     mcProviderInFlight[p] = false
     return
   }
-  fn(q, ac.signal, { page })
+  // the page-ahead read, if it is for exactly this query and page
+  const ahead = mcProviderAhead[p]
+  mcProviderAhead[p] = null
+  const run = ahead && ahead.q === q && ahead.page === page ? ahead.promise : fn(q, ac.signal, { page })
+  run
     .then((items) => {
       if (ac.signal.aborted || mcCurrentQuery !== q) return
       mcProviderInFlight[p] = false
@@ -370,6 +381,7 @@ function mcFetchProviderPage(p, q) {
             if (mcCurrentQuery === q) mcFetchProviderPage(p, q)
           }, 0)
       }
+      if (newNames && !mcProviderExhausted[p]) mcPrefetchAhead(p, q, page + 1)
       document.dispatchEvent(new CustomEvent('hs-mc-search-results-ready', { detail: { query: q, provider: p } }))
     })
     .catch((err) => {
@@ -379,6 +391,30 @@ function mcFetchProviderPage(p, q) {
       mcProviderExhausted[p] = true
       document.dispatchEvent(new CustomEvent('hs-mc-search-results-ready', { detail: { query: q, provider: p } }))
     })
+}
+
+// Fetch page `page` for a slow provider ahead of the click and warm its images.
+// Never touches the accumulated results; a miss just means the click fetches it.
+function mcPrefetchAhead(p, q, page) {
+  if (!MC_PREFETCH_AHEAD.has(p) || mcProviderAhead[p]) return
+  const fn = MC_PROVIDER_FETCHERS[p]
+  if (!fn) return
+  const promise = fn(q, new AbortController().signal, { page })
+  promise
+    .then((items) => {
+      if (mcCurrentQuery !== q) return
+      for (const it of items || []) {
+        if (!it.url) continue
+        const im = new Image()
+        im.decoding = 'async'
+        im.src = it.url
+      }
+    })
+    .catch(() => {
+      // a failed read-ahead is not an error: the click fetches the page itself
+      if (mcProviderAhead[p] && mcProviderAhead[p].promise === promise) mcProviderAhead[p] = null
+    })
+  mcProviderAhead[p] = { q, page, promise }
 }
 
 // Initial search for a new query — reset pagination per provider (aborting any

@@ -2549,6 +2549,9 @@
       log(' Applied UI hiding CSS:', rules.length, 'rules')
     }
 
+    // heatsync name paints follow their own switch, not the third-party gate
+    hsPaintsEnabled = settings.showNamePaints !== false
+
     // Cosmetics toggle — legacy showCosmetics key OR the cosmetics subsystem gate
     if (settings.showCosmetics === false || settings.subsystems?.cosmetics === false) {
       cosmeticsEnabled = false
@@ -4441,6 +4444,16 @@
   const COSMETICS_PENDING_MAX = 500
   let cosmeticsBatchTimer = null
 
+  // HeatSync name paints on native rows — twitch id space; kick via kick_<id>
+  // (see the block above applyKickCosmeticsToMessage). State lives up here so
+  // no message handler can reach a const before it is initialised.
+  const hsPaintCache = new Map() // uid -> { spec: object|null, hash: string|null }
+  const hsPaintPending = new Set()
+  const hsPaintHashes = new Map() // hash -> compiled css rule
+  let hsPaintTimer = null
+  let hsPaintSheet = null
+  let hsPaintsEnabled = true // showNamePaints
+
   // Kick cosmetics (7TV paints/badges by username)
   const kickCosmeticsCache = new Map() // username → { paint, badge, fetchedAt }
   const kickCosmeticsPending = new Set()
@@ -5414,6 +5427,10 @@
       messageElement.dataset.hsCosmeticKickUser = lowerUser
       queueSenderEmotes(`kick:${lowerUser}`)
     }
+
+    // The user's own heatsync paint is not a third-party cosmetic: it rides
+    // outside the cosmetics gate, like the overlay's.
+    if (!isKick && twitchUid && usernameElement) stampHsNativePaint(usernameElement, twitchUid)
 
     // Apply third-party cosmetics (BTTV/FFZ badges + 7TV paints/badges)
     if (cosmeticsEnabled) {
@@ -7622,6 +7639,7 @@
     const nameEl =
       preQueriedNameEl || el.querySelector('.chat-author__display-name, [data-a-target="chat-message-username"]')
     if (!nameEl) return
+    stampHsNativePaint(nameEl, userId)
 
     // BTTV badge — dataset flag avoids querySelector
     if (!el.dataset.hsBttvDone && !_peerExts.includes('bttv') && bttvBadgeMap.has(userId)) {
@@ -8007,6 +8025,187 @@
   // BTTV/FFZ badges use Twitch user IDs — not available on Kick.
   // 7TV supports Kick natively via /v3/users/kick/{username}.
 
+  // ─── HeatSync name paints on native rows ─────────────────────────────────────
+  // The user's own saved paint, on the native twitch/kick row. Same pipeline as
+  // the overlay (src/multichat/paints.js) and native youtube: batch
+  // fetch_paints via the BG worker (content scripts never fetch heatsync.org —
+  // CF 503s them), compile each distinct spec once with the embedded
+  // lib/paint-spec.js (build.js appends it to this bundle), one <style> sheet,
+  // apply as an hsp-<hash> class. A heatsync paint outranks 7TV: applying
+  // clears the inline style 7TV set, and applyPaintToElement stands down for an
+  // hsp- class. ID SPACE: a twitch row passes its twitch id (users.id); a kick
+  // row passes `kick_<kickId>` — never a bare kick id, which collides with an
+  // unrelated twitch user's (see paints.js ID-SPACE SAFETY).
+  const HS_PAINT_BATCH = 50
+  const HS_PAINT_CACHE_MAX = 500
+  const HS_PAINT_HASH_MAX = 300
+  const HS_PAINT_SHEET_BASE =
+    'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *{animation-play-state:paused !important;}' +
+    '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
+  const HS_NAME_COLOUR_RE = /^(?:#[0-9a-f]{3,8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*[\d.]+\s*)?\))$/i
+
+  // typeof-guard every compiler entry point: a bundle built without the embed
+  // degrades to no heatsync paints instead of a ReferenceError.
+  function hsNativePaintReady() {
+    return (
+      typeof compilePaintCss === 'function' &&
+      typeof hashPaintSpec === 'function' &&
+      typeof paintNameHtmlFor === 'function' &&
+      typeof paintMarkupMode === 'function' &&
+      typeof paintPhaseNow === 'function'
+    )
+  }
+
+  function ensureHsNativePaintSheet() {
+    if (hsPaintSheet?.isConnected) return hsPaintSheet
+    hsPaintSheet = document.getElementById('hs-native-paints')
+    if (!hsPaintSheet) {
+      hsPaintSheet = document.createElement('style')
+      hsPaintSheet.id = 'hs-native-paints'
+      hsPaintSheet.textContent = HS_PAINT_SHEET_BASE
+      document.head.appendChild(cleanup.trackNode ? cleanup.trackNode(hsPaintSheet) : hsPaintSheet)
+    }
+    return hsPaintSheet
+  }
+
+  // A hash outlives the uids that referenced it; rebuild the sheet from only
+  // the hashes a surviving cache entry still points at once the cap is passed.
+  function trimHsNativePaintSheet() {
+    if (hsPaintHashes.size <= HS_PAINT_HASH_MAX) return
+    const live = new Set()
+    for (const e of hsPaintCache.values()) if (e.hash) live.add(e.hash)
+    let css = HS_PAINT_SHEET_BASE
+    for (const h of [...hsPaintHashes.keys()]) {
+      if (live.has(h)) css += hsPaintHashes.get(h)
+      else hsPaintHashes.delete(h)
+    }
+    if (hsPaintSheet) hsPaintSheet.textContent = css
+  }
+
+  function queueHsNativePaint(uid) {
+    if (!uid || !hsPaintsEnabled || !hsNativePaintReady()) return
+    if (hsPaintCache.has(uid) || hsPaintPending.has(uid)) return
+    hsPaintPending.add(uid)
+    if (hsPaintPending.size >= HS_PAINT_BATCH) {
+      if (hsPaintTimer) {
+        cleanup.clearTimeout(hsPaintTimer)
+        hsPaintTimer = null
+      }
+      flushHsNativePaintBatch()
+    } else if (!hsPaintTimer) {
+      hsPaintTimer = cleanup.setTimeout(() => {
+        hsPaintTimer = null
+        flushHsNativePaintBatch()
+      }, 400)
+    }
+  }
+
+  async function flushHsNativePaintBatch() {
+    if (!hsPaintPending.size) return
+    const batch = [...hsPaintPending].slice(0, HS_PAINT_BATCH)
+    for (const id of batch) hsPaintPending.delete(id)
+    let paints = null
+    try {
+      const resp = await safeSendMessage({ type: 'fetch_paints', userIds: batch })
+      if (resp?.paints && typeof resp.paints === 'object') paints = resp.paints
+    } catch (_) {}
+    const changed = new Set()
+    if (paints) {
+      for (const id of batch) {
+        // BG only answers ids it CONFIRMED (a spec or a confirmed none); an
+        // absent key is a transient miss — requeue, never cache a false negative.
+        if (!Object.hasOwn(paints, id)) {
+          hsPaintPending.add(id)
+          continue
+        }
+        const spec = paints[id]
+        let hash = null
+        if (spec) {
+          try {
+            hash = hashPaintSpec(spec)
+            if (hash && !hsPaintHashes.has(hash)) {
+              const css = compilePaintCss(spec, `.hsp-${hash}`, { hash })
+              if (css) {
+                ensureHsNativePaintSheet().textContent += css
+                hsPaintHashes.set(hash, css)
+              } else hash = null
+            }
+          } catch (_) {
+            hash = null
+          }
+        }
+        if (!hsPaintCache.has(id) && hsPaintCache.size >= HS_PAINT_CACHE_MAX) {
+          hsPaintCache.delete(hsPaintCache.keys().next().value)
+        }
+        hsPaintCache.set(id, { spec: hash ? spec : null, hash })
+        if (hash) changed.add(id)
+      }
+    } else {
+      for (const id of batch) hsPaintPending.add(id)
+    }
+    trimHsNativePaintSheet()
+    if (changed.size) {
+      for (const el of document.querySelectorAll('[data-hs-paint-uid]')) {
+        if (changed.has(el.dataset.hsPaintUid)) applyHsNativePaint(el, el.dataset.hsPaintUid)
+      }
+    }
+    if (hsPaintPending.size && !hsPaintTimer) {
+      hsPaintTimer = cleanup.setTimeout(() => {
+        hsPaintTimer = null
+        flushHsNativePaintBatch()
+      }, 2000)
+    }
+  }
+
+  /** Put a cached paint on the name element. True when a paint class is on it. */
+  function applyHsNativePaint(nameEl, uid) {
+    if (!nameEl || !uid || !hsPaintsEnabled || !hsNativePaintReady()) return false
+    const entry = hsPaintCache.get(uid)
+    if (!entry?.hash) return false
+    const cls = `hsp-${entry.hash}`
+    if (!nameEl.classList.contains(cls)) {
+      for (const c of [...nameEl.classList]) if (c.startsWith('hsp-')) nameEl.classList.remove(c)
+      nameEl.classList.add(cls)
+    }
+    // The row's own colour rides --hs-name-c so a paint with an underlay still
+    // shows it; the inline style itself must go (it outranks the class rule).
+    const kept = nameEl.style.color
+    if (nameEl.hasAttribute('style')) nameEl.removeAttribute('style')
+    // The compiled rules address `.hsp-<hash>>.hs-name`: the box is not optional.
+    const boxed = nameEl.firstElementChild?.classList.contains(NAME_BOX_CLASS)
+    if (!boxed && nameEl.textContent) {
+      try {
+        nameEl.innerHTML = paintNameHtmlFor(nameEl.textContent, paintMarkupMode(entry.spec))
+      } catch (_) {}
+    }
+    nameEl.style.setProperty('--hsp-t', paintPhaseNow())
+    if (kept && HS_NAME_COLOUR_RE.test(kept)) nameEl.style.setProperty('--hs-name-c', kept)
+    nameEl.dataset.hsPaintApplied = '1'
+    return true
+  }
+
+  function clearHsNativePaint(nameEl) {
+    if (!nameEl) return
+    const ours = [...nameEl.classList].filter((c) => c.startsWith('hsp-'))
+    if (!ours.length) return
+    for (const c of ours) nameEl.classList.remove(c)
+    // plain text back in place of the name box; the row's own colour is gone
+    // with the stripped style, so the native styling takes over again
+    const plain = nameEl.textContent
+    nameEl.textContent = plain
+    nameEl.removeAttribute('style')
+    delete nameEl.dataset.hsPaintApplied
+  }
+
+  /** Register a row's name for a paint id: paint now if cached, else queue. */
+  function stampHsNativePaint(nameEl, uid) {
+    if (!nameEl || !uid) return
+    if (nameEl.dataset.hsPaintUid && nameEl.dataset.hsPaintUid !== uid) clearHsNativePaint(nameEl)
+    nameEl.dataset.hsPaintUid = uid
+    if (hsPaintCache.has(uid)) applyHsNativePaint(nameEl, uid)
+    else queueHsNativePaint(uid)
+  }
+
   function applyKickCosmeticsToMessage(el, kickSlug) {
     if (!kickSlug) return
     const prevSlug = el.dataset.hsCosmeticAppliedFor
@@ -8032,6 +8231,10 @@
 
     const cosmetic = kickCosmeticsCache.get(kickSlug)
     if (!cosmetic) return
+
+    // heatsync paint, keyed kick_<id> — the numeric id only ever appears inside
+    // that namespaced string (ID-SPACE SAFETY, paints.js)
+    if (/^\d{1,12}$/.test(String(cosmetic.kickId ?? ''))) stampHsNativePaint(nameEl, `kick_${cosmetic.kickId}`)
 
     // 7TV badge (skip when the real 7TV ext is co-installed — duplicate render)
     if (cosmetic.badge && !_peerExts.includes('7tv') && !el.querySelector('.hs-7tv-badge')) {

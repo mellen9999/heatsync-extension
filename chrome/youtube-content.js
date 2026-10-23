@@ -458,6 +458,7 @@
         ytHsPaintTimer = null
       }
       ytHsPaintCache.clear()
+      ytHsColorCache.clear()
       ytHsPaintPending.clear()
       ytHsPaintHashes.clear()
       ytHsPaintSheet = null
@@ -570,6 +571,11 @@
   const YT_HSPAINT_HASH_MAX = 500
   const ytHsPaintCache = new Map() // uid -> { spec: object|null, hash: string|null }
   const ytHsPaintPending = new Set()
+  // uid -> picked name colour ("#RRGGBB" | null). Rides the same /api/paints
+  // response as the specs; youtube has no native chat colour to protect, so a
+  // viewer's picked colour is simply theirs (a paint still outranks it).
+  const ytHsColorCache = new Map()
+  const YT_HEX_RE = /^#[0-9a-fA-F]{6}$/
   const ytHsPaintHashes = new Map() // hash -> compiled css rule (Map, not Set, so a rebuild needn't recompile)
   let ytHsPaintTimer = null
   let ytHsPaintSheet = null
@@ -588,7 +594,10 @@
       // 2026-08-16 ("resync the compiler with the site") and this file never
       // followed, so the guard was false from that day on and HeatSync paints
       // stopped rendering on native youtube chat entirely.
-      typeof paintNeedsSpans === 'function'
+      typeof paintNeedsSpans === 'function' &&
+      typeof paintNameHtmlFor === 'function' &&
+      typeof paintMarkupMode === 'function' &&
+      typeof paintPhaseNow === 'function'
     )
   }
 
@@ -635,11 +644,23 @@
     const batch = [...ytHsPaintPending].slice(0, YT_HSPAINT_BATCH)
     batch.forEach((id) => ytHsPaintPending.delete(id))
     let paints = null
+    let colors = null
     try {
       const resp = await safeSendMessage({ type: 'fetch_paints', userIds: batch })
       if (resp?.paints && typeof resp.paints === 'object') paints = resp.paints
+      if (resp?.colors && typeof resp.colors === 'object') colors = resp.colors
     } catch (_) {}
     const changed = []
+    if (colors) {
+      for (const id of batch) {
+        const c = typeof colors[id] === 'string' && YT_HEX_RE.test(colors[id]) ? colors[id] : null
+        if (c !== (ytHsColorCache.get(id) ?? null)) changed.push(id)
+        if (!ytHsColorCache.has(id) && ytHsColorCache.size >= YT_HSPAINT_CACHE_MAX) {
+          ytHsColorCache.delete(ytHsColorCache.keys().next().value)
+        }
+        ytHsColorCache.set(id, c)
+      }
+    }
     if (paints) {
       // BG only includes CONFIRMED answers (spec or null). An absent key is a
       // transient failure — requeue it, never cache a false negative.
@@ -681,7 +702,7 @@
         const uidSet = new Set(changed)
         container.querySelectorAll('[data-hs-yt-paint-uid]').forEach((node) => {
           if (!uidSet.has(node.dataset.hsYtPaintUid)) return
-          applyYtHsPaint(node.querySelector('#author-name'), node.dataset.hsYtPaintUid)
+          applyYtHsName(node.querySelector('#author-name'), node.dataset.hsYtPaintUid)
         })
       }
     }
@@ -733,23 +754,31 @@
     // Inline style (yt's own color, or a 7TV paint applied earlier) has higher
     // specificity than any class rule — clear it or the paint silently loses.
     if (nameEl.hasAttribute('style')) nameEl.removeAttribute('style')
-    if (paintNeedsSpans(entry.spec) && !nameEl.dataset.hsPaintSplit && nameEl.textContent) {
-      // DOM-built per-glyph spans (--i/--mid drive the effect delays) — same
-      // output shape as the overlay's splitHsLettersHtml, no innerHTML.
-      const chars = [...nameEl.textContent]
-      const mid = (chars.length - 1) / 2
-      nameEl.textContent = ''
-      chars.forEach((ch, i) => {
-        const s = document.createElement('span')
-        s.style.setProperty('--i', i)
-        s.style.setProperty('--mid', mid)
-        s.textContent = ch
-        nameEl.appendChild(s)
-      })
-      nameEl.dataset.hsPaintSplit = '1'
+    // THE NAME BOX IS NOT OPTIONAL: every compiled rule addresses
+    // `.hsp-<hash>>.hs-name`, so a class with no box under it paints nothing.
+    // The markup comes from the same compiler that wrote the rules
+    // (paintNameHtmlFor, escaped), once — the box being there is the marker.
+    const boxed = nameEl.firstElementChild?.classList.contains(NAME_BOX_CLASS)
+    if (!boxed && nameEl.textContent) {
+      nameEl.innerHTML = paintNameHtmlFor(nameEl.textContent, paintMarkupMode(entry.spec))
     }
+    nameEl.style.setProperty('--hsp-t', paintPhaseNow())
     nameEl.dataset.hsPaintApplied = '1'
     return true
+  }
+
+  /** The row's name in full: a heatsync paint if there is one, else the
+   * viewer's picked colour (unless a 7TV paint already owns the fill). */
+  function applyYtHsName(nameEl, uid) {
+    if (!nameEl || !uid) return
+    const colour = ytHsColorCache.get(uid) || ''
+    const painted = applyYtHsPaint(nameEl, uid)
+    if (painted) {
+      // a paint owns the fill; the colour shows through an underlay as --hs-name-c
+      if (colour) nameEl.style.setProperty('--hs-name-c', colour)
+    } else if (colour && !nameEl.dataset.hsPaintApplied) {
+      nameEl.style.color = colour
+    }
   }
 
   function applyPendingYtCosmetics(usernames) {
@@ -992,7 +1021,7 @@
     const paintUid = `yt_${ucid}`
     node.dataset.hsYtPaintUid = paintUid
     if (ytHsPaintCache.has(paintUid)) {
-      applyYtHsPaint(node.querySelector('#author-name'), paintUid)
+      applyYtHsName(node.querySelector('#author-name'), paintUid)
     } else {
       queueYtHsPaint(paintUid)
     }

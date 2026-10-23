@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cfbe043b5c2b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e1b86051a3ac' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -54181,6 +54181,12 @@ function renderPredView() {
 //      keeps its existing 7TV/plain-color rendering), or { cls, html, splitAttr }
 //      when one is — callers add `cls` to the element's class list and skip
 //      any competing inline color/7TV-paint style (heatsync paint wins).
+
+// content.js (native twitch/kick rows) shares this isolated world and paints
+// with the same compiler instead of embedding its own ~90KB copy.
+try {
+  window.__hsPaintKit = { compilePaintCss, hashPaintSpec, paintNameHtmlFor, paintMarkupMode, paintPhaseNow }
+} catch (_) {}
 
 const HS_PAINT_CACHE_MAX = 500
 const HS_PAINT_BATCH_SIZE = 50

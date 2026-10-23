@@ -8044,16 +8044,16 @@
     '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
   const HS_NAME_COLOUR_RE = /^(?:#[0-9a-f]{3,8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*[\d.]+\s*)?\))$/i
 
-  // typeof-guard every compiler entry point: a bundle built without the embed
-  // degrades to no heatsync paints instead of a ReferenceError.
+  // The compiler is NOT embedded here: multichat-core (same isolated world,
+  // same page) already carries it and publishes window.__hsPaintKit, so this
+  // script stays ~90KB lighter on every twitch/kick page. Missing kit (core
+  // not loaded yet, or a build without it) = no heatsync paints, never a throw.
+  function hsPaintKit() {
+    const k = window.__hsPaintKit
+    return k && typeof k.compilePaintCss === 'function' && typeof k.paintNameHtmlFor === 'function' ? k : null
+  }
   function hsNativePaintReady() {
-    return (
-      typeof compilePaintCss === 'function' &&
-      typeof hashPaintSpec === 'function' &&
-      typeof paintNameHtmlFor === 'function' &&
-      typeof paintMarkupMode === 'function' &&
-      typeof paintPhaseNow === 'function'
-    )
+    return !!hsPaintKit()
   }
 
   function ensureHsNativePaintSheet() {
@@ -8122,9 +8122,9 @@
         let hash = null
         if (spec) {
           try {
-            hash = hashPaintSpec(spec)
+            hash = hsPaintKit().hashPaintSpec(spec)
             if (hash && !hsPaintHashes.has(hash)) {
-              const css = compilePaintCss(spec, `.hsp-${hash}`, { hash })
+              const css = hsPaintKit().compilePaintCss(spec, `.hsp-${hash}`, { hash })
               if (css) {
                 ensureHsNativePaintSheet().textContent += css
                 hsPaintHashes.set(hash, css)
@@ -8175,10 +8175,10 @@
     const boxed = nameEl.firstElementChild?.classList.contains(NAME_BOX_CLASS)
     if (!boxed && nameEl.textContent) {
       try {
-        nameEl.innerHTML = paintNameHtmlFor(nameEl.textContent, paintMarkupMode(entry.spec))
+        nameEl.innerHTML = hsPaintKit().paintNameHtmlFor(nameEl.textContent, hsPaintKit().paintMarkupMode(entry.spec))
       } catch (_) {}
     }
-    nameEl.style.setProperty('--hsp-t', paintPhaseNow())
+    nameEl.style.setProperty('--hsp-t', hsPaintKit().paintPhaseNow())
     if (kept && HS_NAME_COLOUR_RE.test(kept)) nameEl.style.setProperty('--hs-name-c', kept)
     nameEl.dataset.hsPaintApplied = '1'
     return true

@@ -1128,9 +1128,7 @@ function build(browser) {
     // relied on only covers the entry points, and an entry point that EXISTS
     // and throws is exactly what a typeof guard cannot see.
     let libFor = readLib(extras)
-    // content.js (native twitch/kick rows) paints the same way, so it gets the
-    // same embed for the same reason.
-    if (file === 'youtube-content.js' || file === 'content.js') {
+    if (file === 'youtube-content.js') {
       for (const mod of ['paint-core.js', 'scene-spec.js', 'stv-paint-css.js', 'paint-spec.js']) {
         const p = join(SRC_DIR, 'lib', mod)
         if (existsSync(p)) {

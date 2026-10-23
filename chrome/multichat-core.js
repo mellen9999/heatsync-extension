@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '52b6bcfbf2d4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2c4b8fedbd4e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -55502,9 +55502,11 @@ function reapHsObservedNames(io) {
  * time — they can only be discovered by query. */
 function discoverHsPaintedNames(io) {
   hsLastDiscoverAt = Date.now()
+  const fresh = []
   for (const el of document.querySelectorAll('[class*="hsp-"]')) {
     if (hsObservedNames.has(el)) continue
     hsObservedNames.add(el)
+    if (el.style.getPropertyValue('--hsp-t')) fresh.push(el)
     // A renderer that had the paint cached baked the class straight into its
     // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
     // first sight here is the only place such a row can be given its
@@ -55513,6 +55515,12 @@ function discoverHsPaintedNames(io) {
     if (plan) applyHsGlyphMasks(el, plan)
     io.observe(el)
   }
+  // The stamp lands a row within a frame of the clock; the frame that mounted
+  // it (a history hydrate is one long one) is its remaining error, which put
+  // an author's name and a mention of the same person on two phases. One
+  // batched seek per sweep puts every new copy on the wall clock — the same
+  // anchor the site's gate runs.
+  if (fresh.length && typeof anchorWhenStarted === 'function') anchorWhenStarted(fresh)
 }
 
 function sweepHsPaintedNames(force) {

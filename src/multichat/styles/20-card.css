@@ -393,7 +393,10 @@
 }
 .hs-card-sheet-row {
   display: flex;
-  align-items: baseline;
+  /* centre, not baseline: the mutuals value carries 14px avatars, and baseline
+     alignment let them pull the label 13px below the 20px row — under the
+     action buttons (profile/ennortix, 2026-10-23). */
+  align-items: center;
   gap: 5px;
   height: 20px;
   white-space: nowrap;
@@ -534,7 +537,9 @@
   line-height: 20px;
 }
 .hs-card-log-ts { flex-shrink: 0; font-size: 15px; color: var(--hs-card-dim); }
-.hs-card-log-ch { flex-shrink: 0; color: var(--hs-card-dim); font-size: 15px; }
+/* dim: the channel tag is a label for the line, not the line (--hs-dim in the
+ * extension, --dim-gray on the site — one #808080, defined in each palette) */
+.hs-card-log-ch { flex-shrink: 0; color: var(--hs-dim, var(--dim-gray)); font-size: 15px; }
 /* Single line, ellipsis on overflow — was `white-space: normal` +
  * word-break, which let a full-size (unbounded) emote wrap the row onto a
  * second line and made every row a different height. min-width: 0 is load-

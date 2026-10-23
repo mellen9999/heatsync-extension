@@ -58,7 +58,7 @@
        text-decoration: line-through;
     }
     .hs-cl-ch {
-      color: #fff; margin-right: 6px;
+      color: var(--hs-dim); margin-right: 6px;
     }
     .hs-cl-user {
       color: #fff; font-weight: 700; margin-right: 6px;

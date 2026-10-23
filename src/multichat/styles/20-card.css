@@ -207,27 +207,33 @@
   background: transparent;
 }
 
-/* A banner is the card's whole background on the inline variants (profile page,
- * extension panel): the 48px strip becomes the full card, the content sits over
- * it, and only the TEXT carries a black ground so it stays readable on any
- * image — the rest of the card shows the banner. Cards with no banner are
- * untouched (:has the loaded hero). */
-.hs-card-page:has(> .hs-card-hero-loaded) > .hs-card-hero,
-.hs-card-panel:has(> .hs-card-hero-loaded) > .hs-card-hero {
+/* On the inline variants (profile page, extension panel) the banner is the
+ * backdrop of the TOP section — identity, stats, the logs row — and nothing
+ * below it. card-render.js puts the hero inside .hs-card-top for exactly this.
+ * Only the text carries a black ground, so it reads on any image; the note,
+ * recent lines and buttons below sit on the card's own black. */
+.hs-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+.hs-card-top:has(> .hs-card-hero-loaded) {
+  /* full-bleed: out to the card edge over the body's own padding */
+  margin: -8px -10px 0;
+  padding: 8px 10px 4px;
+}
+.hs-card-top > .hs-card-hero.hs-card-hero-loaded {
   position: absolute;
   inset: 0;
   height: auto;
   z-index: 0;
 }
-.hs-card-page:has(> .hs-card-hero-loaded) > :not(.hs-card-hero),
-.hs-card-panel:has(> .hs-card-hero-loaded) > :not(.hs-card-hero) {
+.hs-card-top:has(> .hs-card-hero-loaded) > :not(.hs-card-hero) {
   position: relative;
   z-index: 1;
 }
-.hs-card-page:has(> .hs-card-hero-loaded) :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-recent-head > span, .hs-card-log-row > *, .hs-card-note-text, .hs-card-badges, .hs-card-nav),
-.hs-card-panel:has(> .hs-card-hero-loaded) :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-recent-head > span, .hs-card-log-row > *, .hs-card-note-text, .hs-card-badges, .hs-card-nav),
-.hs-card-page:has(> .hs-card-hero-loaded) > .hs-card-actions,
-.hs-card-panel:has(> .hs-card-hero-loaded) > .hs-card-actions {
+.hs-card-top:has(> .hs-card-hero-loaded) :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-badges, .hs-card-bio) {
   background: #000000;
 }
 
@@ -424,6 +430,8 @@
   gap: 5px;
   height: 20px;
   white-space: nowrap;
+  /* a row wraps whole to the next line; it never squeezes its own value */
+  flex-shrink: 0;
 }
 .hs-card-sheet-row dt {
   color: var(--hs-card-dim);
@@ -465,6 +473,8 @@
 .hs-card-sheet-row[data-tone="note"] { height: auto; flex-wrap: wrap; }
 
 .hs-card-mutual-av {
+  /* the site resets img to block, which stacked the count under the avatar */
+  display: inline-block;
   width: 14px;
   height: 14px;
   border: 1px solid var(--hs-card-border);

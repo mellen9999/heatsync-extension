@@ -373,17 +373,23 @@ function renderProfile(
     </div>`
   }
 
-  return `<div class="${cls}"${clickAttrs}${accentAttr}>
-    ${closeButtonHtml(variant)}
-    <div class="hs-card-hero" data-banner-pending="1" data-username="${esc(model.identity.login || '')}" data-platform="${esc(model.identity.platform || '')}"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div>
-    <div class="hs-card-body">
-      ${identityRow}
+  // On the inline variants the banner is the backdrop of the TOP section only
+  // (identity, bio, stats, logs row) — the hero lives inside that wrapper so it
+  // can cover exactly it. Floating cards keep the 48px strip above the body.
+  const heroHtml = `<div class="hs-card-hero" data-banner-pending="1" data-username="${esc(model.identity.login || '')}" data-platform="${esc(model.identity.platform || '')}"><div class="hs-card-hero-img"></div><div class="hs-card-hero-scrim"></div></div>`
+  const inline = variant === 'page' || variant === 'panel'
+  const topHtml = `${identityRow}
       ${badgesHtml}
       ${bioHtml}
       ${renderSocials(model.socials, esc)}
       ${renderSheet(model.sheet, esc, fmtTime)}
       ${renderChannel(model.channel, esc, fmtTime)}
-      ${model.corpus ? `<dl class="hs-card-sheet">${renderCorpusRow(model.corpus, esc)}</dl>` : ''}
+      ${model.corpus ? `<dl class="hs-card-sheet">${renderCorpusRow(model.corpus, esc)}</dl>` : ''}`
+  return `<div class="${cls}"${clickAttrs}${accentAttr}>
+    ${closeButtonHtml(variant)}
+    ${inline ? '' : heroHtml}
+    <div class="hs-card-body">
+      ${inline ? `<div class="hs-card-top">${heroHtml}${topHtml}</div>` : topHtml}
       ${renderNote(model.note, esc)}
       ${renderTopEmotes(model.topEmotes, esc)}
       ${renderRecent(model.recent, esc)}

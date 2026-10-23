@@ -7933,6 +7933,18 @@
     // all TWITCH id-space — a bare kick id collides with an unrelated twitch
     // user's entry, painting the wrong person. Kick rows resolve through the
     // name-keyed kick pipeline (kickNamePaintUid + queueKickNameToCosmetics).
+    // A twitch row can arrive with no user id (the page-tap path reads it from
+    // the native chat's props, and some rows carry none). Everything below —
+    // paint, 7TV cosmetics, the sender's personal emotes — is keyed by it, so
+    // that row rendered as a stranger. The same chatter's earlier rows told us
+    // the id; use it.
+    if (!m.userId && (m.platform === 'twitch' || !m.platform) && m.user) {
+      const lowerUser = m.user.toLowerCase()
+      m.userId =
+        knownUserIds.get(userKey(lowerUser, 'twitch')) ||
+        (typeof _hsUserIdCache !== 'undefined' ? _hsUserIdCache.get(lowerUser) : '') ||
+        ''
+    }
     const uidTwitch = (m.platform === 'kick' ? m._uidTwitch : m.userId) || ''
     if (uidTwitch) {
       badges += renderThirdPartyBadges(uidTwitch)

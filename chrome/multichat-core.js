@@ -14842,7 +14842,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2a99fdfaddbb' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '58f0f687bb64' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -75933,6 +75933,18 @@ const STORAGE_KEY = 'heatsync_multichat'
     // all TWITCH id-space — a bare kick id collides with an unrelated twitch
     // user's entry, painting the wrong person. Kick rows resolve through the
     // name-keyed kick pipeline (kickNamePaintUid + queueKickNameToCosmetics).
+    // A twitch row can arrive with no user id (the page-tap path reads it from
+    // the native chat's props, and some rows carry none). Everything below —
+    // paint, 7TV cosmetics, the sender's personal emotes — is keyed by it, so
+    // that row rendered as a stranger. The same chatter's earlier rows told us
+    // the id; use it.
+    if (!m.userId && (m.platform === 'twitch' || !m.platform) && m.user) {
+      const lowerUser = m.user.toLowerCase()
+      m.userId =
+        knownUserIds.get(userKey(lowerUser, 'twitch')) ||
+        (typeof _hsUserIdCache !== 'undefined' ? _hsUserIdCache.get(lowerUser) : '') ||
+        ''
+    }
     const uidTwitch = (m.platform === 'kick' ? m._uidTwitch : m.userId) || ''
     if (uidTwitch) {
       badges += renderThirdPartyBadges(uidTwitch)

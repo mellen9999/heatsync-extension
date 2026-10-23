@@ -5,14 +5,16 @@
 // (#hs-mc-subrow) carries the surface's actions and ONE thick × as its last
 // cell. Esc, ×, or a tab switch closes it and the row goes back to what it was.
 
-// Draw `items` ([{label,href,external?,live?}]) + the × into the 2nd row.
+// Draw `items` ([{label,href,external?,live?}]) into the 2nd row, led by a ×
+// when `onClose` is given. The card passes none: while it is open the active tab
+// reads ← back (takeover.js), which is its way out — a second close is noise.
 function hsPaneMountRow(items, onClose) {
   const row = document.getElementById('hs-mc-subrow')
   if (!row) return
   // the × leads: it is the one cell that is always there, so it stays at the
   // top where it can be found, and the destinations hang under it
   row.replaceChildren(
-    hsXButton('hs-x-cell', 'close', onClose),
+    ...(onClose ? [hsXButton('hs-x-cell', 'close', onClose)] : []),
     ...items.map((it) => {
       const a = document.createElement('a')
       a.className = 'hs-mc-dest'

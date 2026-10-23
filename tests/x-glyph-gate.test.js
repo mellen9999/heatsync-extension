@@ -81,7 +81,8 @@ describe('one close glyph', () => {
 
   test('every dismiss site builds through the shared helper', () => {
     const at = (f) => readFileSync(join(SRC, 'multichat', f), 'utf8')
-    expect(at('chat-logs.js')).toContain("hsXButton('hs-cl-close'")
+    // chat-logs.js has no × of its own: the ← back tab closes the logs view
+    expect(at('chat-logs.js')).not.toContain("hsXButton('hs-cl-close'")
     expect(at('pred-view.js')).toContain("hsXButton('hs-pv-close'")
     expect(at('feed-embed.js')).toContain("hsXButtonHtml('hs-mc-player-close'")
     expect(at('profile-card.js')).toContain("hsXButton('hs-pcard-close'")

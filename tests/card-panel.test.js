@@ -251,13 +251,14 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(handlers).toMatch(/closest\(['"]\.hs-card-action,\s*\.hs-card-close['"]\)/)
   })
 
-  test('the panel has no ×/links inside the card: its destinations + × are cells of the 2nd row (pcMountDestRow)', () => {
+  test('the panel has no ×/links inside the card: its destinations are cells of the 2nd row (pcMountDestRow), closed by the ← back tab', () => {
     const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
     expect(view).toContain('navInBar: !floating')
     expect(view).toMatch(/if\s*\(!floating\)\s*pcMountDestRow\(hsCardNavItems\(/)
     expect(view).not.toContain("closeBtn.className = 'hs-pcard-close'")
     const mount = slice(CARD, 'function pcMountDestRow(items) {', '\n}\n')
-    expect(mount).toContain('hsPaneMountRow(items, closeProfileCard)')
+    expect(mount).toContain('hsPaneMountRow(items)')
+    expect(mount).not.toContain('closeProfileCard')
     const pane = readFileSync(join(ROOT, 'src', 'multichat', 'pane-panel.js'), 'utf8')
     expect(pane).toContain("hsXButton('hs-x-cell'")
     expect(pane).toContain('hs-mc-subrow')

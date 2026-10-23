@@ -405,12 +405,12 @@ async function resolveFollowTargetId(platform, username, ids = {}) {
 }
 
 // The card panel's address row (profile · logs · chatter · platforms + the one
-// × cell) is drawn into the multichat 2nd row for as long as the card is open,
+// cells; no ×, the ← back tab closes it) is drawn into the multichat 2nd row for as long as the card is open,
 // by the shared pane-panel helper. renderSubRow() repaints it for the tab on
 // close/switch. heatsync.org cells open a tab (a different app), platform cells
 // open the platform.
 function pcMountDestRow(items) {
-  hsPaneMountRow(items, closeProfileCard)
+  hsPaneMountRow(items)
 }
 
 function closeProfileCard() {
@@ -1057,7 +1057,7 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
     closeBtn.title = 'close (Esc)'
     wrap.appendChild(closeBtn)
   } else {
-    pcMountDestRow([]) // the panel's × is the 2nd row's last cell
+    pcMountDestRow([]) // no ×: the ← back tab closes the panel
   }
   const name = document.createElement('div')
   name.className = 'hs-card-name'

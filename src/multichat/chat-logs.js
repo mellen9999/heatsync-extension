@@ -368,9 +368,6 @@ function renderChatLogsView() {
   title.appendChild(tSub)
   hdr.appendChild(title)
 
-  const closeBtn = hsXButton('hs-cl-close', 'close', closeChatLogsView)
-  closeBtn.title = 'close (Esc)'
-  hdr.appendChild(closeBtn)
   wrap.appendChild(hdr)
 
   // Controls
@@ -716,7 +713,7 @@ document.addEventListener(
   'pointerdown',
   (e) => {
     if (e.button !== 0) return
-    const x = e.target?.closest?.('.hs-cl-close, .hs-pcard-close, .hs-pv-close')
+    const x = e.target?.closest?.('.hs-pcard-close, .hs-pv-close')
     if (!x) return
     e.preventDefault()
     e.stopPropagation()
@@ -726,8 +723,7 @@ document.addEventListener(
     }
     document.addEventListener('click', swallow, { capture: true, once: true, signal: mcSignal })
     cleanup.setTimeout(() => document.removeEventListener('click', swallow, { capture: true }), 350)
-    if (x.classList.contains('hs-cl-close')) closeChatLogsView()
-    else if (x.classList.contains('hs-pv-close')) closePredView()
+    if (x.classList.contains('hs-pv-close')) closePredView()
     else if (typeof closeProfileCard === 'function') closeProfileCard()
   },
   { signal: mcSignal, capture: true },

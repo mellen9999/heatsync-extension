@@ -1,8 +1,9 @@
 # changelog
 
-## [1.7.99] — 2026-10-23
+## [1.7.100] — 2026-10-23
 
 ### fixed
+- **name paints** — a name and every mention of the same person animate on one clock; new and rebuilt painted names sync once their fill mounts.
 - **chat dock** — left, top and bottom docks keep the stream in place after a hard reload; the panel follows the dock side and the video no longer drops to the page bottom or goes dark.
 - **offline channels** — the hero video returns to its slot when chat rotates away and back.
 

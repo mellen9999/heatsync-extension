@@ -12202,6 +12202,51 @@ function resyncAnimationPhase(el, now = frameNow()) {
  * @param {Iterable<Element>} els
  * @param {(el: Element) => void} release — drops whatever pauses the element
  */
+/**
+ * The backstop for everything above: find running animations that have drifted
+ * off the wall clock — by whatever route, a frame that mounted late, a gate that
+ * restored a start, a rebuild in place — and put them back.
+ *
+ * The exact-restore and anchor paths each fix one way a name goes out of step,
+ * and each was a report of "two names of one person on different timings". This
+ * one does not care how. It compares what an animation is doing with what its
+ * stamp says it should be doing, and writes only where they disagree by more
+ * than `tolerance`, so a name already in step costs a read and no write. Reads
+ * first, writes after: one style flush for the pass.
+ *
+ * Paused animations are left to the gate, which seeks before releasing them.
+ *
+ * @param {Iterable<Element>} els painted names to check
+ * @param {number} [tolerance=24] ms of disagreement worth a write (about a frame and a half)
+ * @returns {number} animations moved
+ */
+function reanchorDrifted(els, tolerance = 24) {
+    const now = frameNow()
+    const moves = []
+    for (const el of els) {
+        const stamp = stampOf(el)
+        if (stamp === null || !el.isConnected) continue
+        for (const a of animationsOf(el)) {
+            if (a.playState !== 'running') continue
+            const t = a.effect?.getTiming?.()
+            const d = t?.duration
+            if (typeof d !== 'number' || !Number.isFinite(d) || d <= 0) continue
+            const want = phaseFor(t, d, now, stamp)
+            const have = a.currentTime
+            if (typeof have !== 'number' || !Number.isFinite(have)) continue
+            const cycle = visualCycle(t, d)
+            let off = (((have - want) % cycle) + cycle) % cycle
+            if (off > cycle / 2) off -= cycle
+            if (Math.abs(off) > tolerance) moves.push([a, want])
+        }
+    }
+    for (const [a, want] of moves) {
+        try { a.currentTime = want } catch (_) { /* not seekable */ }
+        pausedStartTimes.delete(a)
+    }
+    return moves.length
+}
+
 function resumeInPhase(els, release) {
     regateInPhase({ resume: els }, { onResume: release })
 }
@@ -14842,7 +14887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '58f0f687bb64' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8e33b38dece3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -55457,6 +55502,18 @@ let hsSweepScheduled = false
 
 function ensureHsVisibilityObserver() {
   if (hsVisibilityObserver || typeof IntersectionObserver !== 'function') return hsVisibilityObserver
+  // Backstop for every path that can leave a visible name off the shared clock
+  // (reanchorDrifted, lib/animation-phase.js): every few seconds, shown tab
+  // only, move the names that disagree with their stamp. A name already in step
+  // costs a read and no write.
+  if (typeof cleanup !== 'undefined' && typeof cleanup.setIntervalIfVisible === 'function') {
+    cleanup.setIntervalIfVisible(() => {
+      if (!hsVisiblePainted.size) return
+      const run = () => reanchorDrifted(hsVisiblePainted)
+      if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1000 })
+      else run()
+    }, 4000)
+  }
   // No root: the gate should hold for whichever pane is scrolling without this
   // module knowing which container a name lives in. The margin keeps a screen
   // of rows warm either side so a scroll never uncovers a frozen name.

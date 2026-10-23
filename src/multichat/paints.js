@@ -1224,6 +1224,18 @@ let hsSweepScheduled = false
 
 function ensureHsVisibilityObserver() {
   if (hsVisibilityObserver || typeof IntersectionObserver !== 'function') return hsVisibilityObserver
+  // Backstop for every path that can leave a visible name off the shared clock
+  // (reanchorDrifted, lib/animation-phase.js): every few seconds, shown tab
+  // only, move the names that disagree with their stamp. A name already in step
+  // costs a read and no write.
+  if (typeof cleanup !== 'undefined' && typeof cleanup.setIntervalIfVisible === 'function') {
+    cleanup.setIntervalIfVisible(() => {
+      if (!hsVisiblePainted.size) return
+      const run = () => reanchorDrifted(hsVisiblePainted)
+      if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1000 })
+      else run()
+    }, 4000)
+  }
   // No root: the gate should hold for whichever pane is scrolling without this
   // module knowing which container a name lives in. The margin keeps a screen
   // of rows warm either side so a scroll never uncovers a frozen name.

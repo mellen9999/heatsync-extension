@@ -6644,7 +6644,15 @@
       refreshLiveStatusSoon()
     } catch {}
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
-    if (typeof activeProfileCard !== 'undefined' && activeProfileCard) activeProfileCard = null
+    if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
+      activeProfileCard = null
+      // the card's DOM must not be snapshotted as the outgoing tab's rows: it
+      // would come back on a later switch with no card state behind it, and
+      // ← back (which reads that state) would have nothing to close
+      _dropTabCache(currentTab)
+      const _cardEl = document.getElementById('hs-mc-messages')
+      if (_cardEl) _cardEl.textContent = ''
+    }
     hsTakeoverSync()
     // …and so does an open confirm panel (the switch repaints the 2nd row itself)
     hsPanePanelAbort()

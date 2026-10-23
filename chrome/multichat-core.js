@@ -14842,7 +14842,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8399ff320e37' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'eecf8cbd03eb' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -74619,7 +74619,15 @@ const STORAGE_KEY = 'heatsync_multichat'
       refreshLiveStatusSoon()
     } catch {}
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
-    if (typeof activeProfileCard !== 'undefined' && activeProfileCard) activeProfileCard = null
+    if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
+      activeProfileCard = null
+      // the card's DOM must not be snapshotted as the outgoing tab's rows: it
+      // would come back on a later switch with no card state behind it, and
+      // ← back (which reads that state) would have nothing to close
+      _dropTabCache(currentTab)
+      const _cardEl = document.getElementById('hs-mc-messages')
+      if (_cardEl) _cardEl.textContent = ''
+    }
     hsTakeoverSync()
     // …and so does an open confirm panel (the switch repaints the 2nd row itself)
     hsPanePanelAbort()

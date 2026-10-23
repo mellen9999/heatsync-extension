@@ -150,7 +150,9 @@
      * they must flow with the text, so the 24px cap in card.css can size them. */
     #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper {
       display: inline !important;
-      position: static !important;
+      /* relative, not static: the hover highlight plate is an absolute ::before
+       * on this wrapper — static made it fill the whole card on hover. */
+      position: relative !important;
       line-height: inherit !important;
     }
     #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper img.hs-mc-emote {

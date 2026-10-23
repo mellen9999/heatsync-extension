@@ -502,7 +502,7 @@ function pcMergeRecent(serverRecent, username) {
       timestamp: new Date(m.time).toISOString(),
       channel: m.channel || null,
       message: m.text,
-      messageHtml: pcLocalLineHtml(m),
+      messageHtml: typeof pcLocalLineHtml === 'function' ? pcLocalLineHtml(m) : null,
       permalink: null,
     }))
     .filter((r) => !seen.has(`${(r.channel || '').toLowerCase()}:${r.message}`))

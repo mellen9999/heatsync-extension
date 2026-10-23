@@ -909,6 +909,7 @@ function applyHsPaintToElement(el, userId) {
   // The class swap and the letter-split above both change how many animations
   // this name runs, which is the dial's unit.
   invalidateHsPaintMeasurement(el)
+  anchorSoon(el)
   // Freshly painted, so gate it now instead of waiting for the next scroll.
   scheduleHsPaintSweep(true)
 }
@@ -1366,17 +1367,34 @@ function reapHsObservedNames(io) {
   }
 }
 
+// A name's `--hsp-t` stamp lands it within a frame of the shared clock; the frame
+// that actually starts its animations (a history hydrate is one long one, a
+// live message a short one) is its leftover error — and it is paid again every
+// time a name is rebuilt in place. That put an author and a mention of the same
+// person on different phases. Every new or rebuilt painted name goes through
+// here: one microtask batch, one style flush, then a seek to the wall clock.
+const hsPendingAnchor = new Set()
+function anchorSoon(el) {
+  if (!el?.style?.getPropertyValue('--hsp-t') || typeof anchorWhenStarted !== 'function') return
+  hsPendingAnchor.add(el)
+  if (hsPendingAnchor.size > 1) return
+  queueMicrotask(() => {
+    const els = [...hsPendingAnchor]
+    hsPendingAnchor.clear()
+    anchorWhenStarted(els.filter((e) => e.isConnected))
+  })
+}
+
 /** Find painted names we aren't watching yet. Rows built as HTML strings carry
  * their hsp- class inline (hsPaintRender) and never pass through
  * applyHsPaintToElement, so there is no element handle to observe at creation
  * time — they can only be discovered by query. */
 function discoverHsPaintedNames(io) {
   hsLastDiscoverAt = Date.now()
-  const fresh = []
   for (const el of document.querySelectorAll('[class*="hsp-"]')) {
     if (hsObservedNames.has(el)) continue
     hsObservedNames.add(el)
-    if (el.style.getPropertyValue('--hsp-t')) fresh.push(el)
+    anchorSoon(el)
     // A renderer that had the paint cached baked the class straight into its
     // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
     // first sight here is the only place such a row can be given its
@@ -1385,12 +1403,6 @@ function discoverHsPaintedNames(io) {
     if (plan) applyHsGlyphMasks(el, plan)
     io.observe(el)
   }
-  // The stamp lands a row within a frame of the clock; the frame that mounted
-  // it (a history hydrate is one long one) is its remaining error, which put
-  // an author's name and a mention of the same person on two phases. One
-  // batched seek per sweep puts every new copy on the wall clock — the same
-  // anchor the site's gate runs.
-  if (fresh.length && typeof anchorWhenStarted === 'function') anchorWhenStarted(fresh)
 }
 
 function sweepHsPaintedNames(force) {

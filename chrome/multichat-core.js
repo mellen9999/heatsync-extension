@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '79642e508e46' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '177ee4f99874' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16428,12 +16428,17 @@ function hsPanePanelOpen() {
 // Returns the closer for the topmost open takeover, or null. Computed from live
 // state each call so a missed close path can't leave the tab stuck on ← back.
 function hsTakeoverCloser() {
-  if (typeof _hsAudio !== 'undefined' && _hsAudio?.fill) return () => _hsSetFill(false)
+  // Panels first, the filled player last: a card opened over a playing video
+  // is the newer, shallower surface, and ← back has to close IT. With the fill
+  // checked first, a popout that held a video answered every ← back by
+  // un-filling the player behind the card and left the card on screen
+  // (reported 2026-10-23, popout, wollip's card).
   if (hsPanePanelOpen()) return () => activePanePanel?.finish(false, true)
   if (typeof activeProfileCard !== 'undefined' && activeProfileCard && !activeProfileCard.floating)
     return closeProfileCard
   if (typeof activeChatLogs !== 'undefined' && activeChatLogs) return closeChatLogsView
   if (typeof predViewOpen === 'function' && predViewOpen()) return closePredView
+  if (typeof _hsAudio !== 'undefined' && _hsAudio?.fill) return () => _hsSetFill(false)
   return null
 }
 

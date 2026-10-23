@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.99] — 2026-10-23
+
+### fixed
+- **chat dock** — left, top and bottom docks keep the stream in place after a hard reload; the panel follows the dock side and the video no longer drops to the page bottom or goes dark.
+- **offline channels** — the hero video returns to its slot when chat rotates away and back.
+
+### changed
+- **lighter twitch/kick pages** — the native-chat script shares the paint compiler instead of carrying its own copy (about 90kb less per page).
+
 ## [1.7.98] — 2026-10-23
 
 ### added

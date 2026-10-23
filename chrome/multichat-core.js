@@ -14888,7 +14888,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '513046c6d068' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd3d2baf81fae' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -23463,7 +23463,9 @@ const mcProviderEmptyRun = { '7tv': 0, bttv: 0, ffz: 0, hs: 0 }
 const MC_EMPTY_PAGES_MAX = 6
 // A page shorter than the provider's page size means we hit the tail. 'hs' is
 // single-page (the endpoint returns top-100 by popularity, no pagination).
-const MC_PAGE_SIZE = { '7tv': 60, bttv: 100, ffz: 200, hs: 100 }
+// 7tv: a small page. Its CDN serves a cold emote in ~1s and a page's worth of
+// images queues behind six connections, so 60 a click meant a 10-15s blank grid.
+const MC_PAGE_SIZE = { '7tv': 24, bttv: 100, ffz: 200, hs: 100 }
 const _mcProviderAborts = { '7tv': null, bttv: null, ffz: null, hs: null }
 let mcCurrentQuery = ''
 // Exact-match filter — when on, picker search shows only emotes whose name
@@ -23635,7 +23637,7 @@ const MC_SEVEN_TV_V4_GQL = `query SearchEmotes($query: String!, $page: Int!, $pe
   }`
 
 async function mcSearch7tvApi(q, signal, opts) {
-  const perPage = opts && Number.isFinite(opts.perPage) ? opts.perPage : 60
+  const perPage = opts && Number.isFinite(opts.perPage) ? opts.perPage : MC_PAGE_SIZE['7tv']
   const page = opts && Number.isFinite(opts.page) ? opts.page : 1
   const resp = await fetch('https://api.7tv.app/v4/gql', {
     method: 'POST',

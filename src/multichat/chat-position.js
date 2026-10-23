@@ -909,6 +909,21 @@ function applyPlatformPositionOverrides() {
       // On no-channel pages (directory, browse, following) .persistent-player
       // is Twitch's floating mini-player. Clear any stale overrides we applied
       // on the prior channel page and let Twitch own the mini-player geometry.
+      // Offline channel page: twitch writes the hero player's top/left/size ONCE
+      // and never again, so the docks below that strip them would lose the slot
+      // for good — back on right the video sat at the page's left edge. Keep
+      // twitch's own values aside the first time we leave right, hand them back
+      // on return.
+      const offlinePage = document.body.classList.contains('hs-offline')
+      const OWN_GEOM = ['top', 'left', 'width', 'height', 'max-height']
+      if (offlinePage && !(isRight || chatPosition === 'hidden') && !pp.dataset._hsOwnGeom) {
+        const own = {}
+        for (const p of OWN_GEOM) {
+          const v = pp.style.getPropertyValue(p)
+          if (v && pp.style.getPropertyPriority(p) !== 'important') own[p] = v
+        }
+        pp.dataset._hsOwnGeom = JSON.stringify(own)
+      }
       if (document.body.classList.contains('hs-twitch-no-channel')) {
         pp.style.removeProperty('top')
         pp.style.removeProperty('left')
@@ -923,6 +938,13 @@ function applyPlatformPositionOverrides() {
         // all that is ours to do is take back what we set earlier.
         for (const p of ['top', 'left', 'bottom', 'right', 'inset-inline-start', 'inset-inline-end']) {
           if (pp.style.getPropertyPriority(p) === 'important') pp.style.removeProperty(p)
+        }
+        if (pp.dataset._hsOwnGeom) {
+          try {
+            const own = JSON.parse(pp.dataset._hsOwnGeom)
+            for (const p of OWN_GEOM) if (own[p] && !pp.style.getPropertyValue(p)) pp.style.setProperty(p, own[p])
+          } catch (_) {}
+          delete pp.dataset._hsOwnGeom
         }
       } else if (isRight || chatPosition === 'hidden') {
         // (hidden = no panel, same page layout as right)

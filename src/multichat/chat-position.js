@@ -529,10 +529,6 @@ function applyPlatformPositionOverrides() {
   // is collapsed to its strip (handled in the nativeVisible reader); leave the
   // rest to Twitch.
   if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
-  // The guard already caught this page's player collapsing under our
-  // geometry and handed layout back to the platform. Re-asserting here would
-  // walk straight back into the race it just bailed out of.
-  if (typeof playerGuardDisengaged === 'function' && playerGuardDisengaged()) return
   const isRight = chatPosition === 'right'
   const w = `${chatWidth}px`
   const h = `${chatHeight}px`
@@ -618,6 +614,15 @@ function applyPlatformPositionOverrides() {
       }
     }
   }
+
+  // The guard already caught this page's player collapsing under our
+  // geometry and handed layout back to the platform. Re-asserting PLAYER
+  // geometry would walk straight back into the race it just bailed out of —
+  // but the chat container above is ours alone and must still follow the
+  // dock: returning before it left the panel on its old side (and the page
+  // shifted for the new one) whenever the guard had fired, e.g. after a hard
+  // reload on an offline channel.
+  if (typeof playerGuardDisengaged === 'function' && playerGuardDisengaged()) return
 
   if (hostPlatform === 'yt') {
     // Panel hidden on this YT page (non-live + no opt-in → hs-offline): don't

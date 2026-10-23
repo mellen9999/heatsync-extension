@@ -144,3 +144,21 @@
       color: #000000;
       outline: none;
     }
+
+    /* A line heard live is drawn by the chat renderer, whose emote boxes are
+     * block/relative with a 0 line-height for chat rows. Inside a card log line
+     * they must flow with the text, so the 24px cap in card.css can size them. */
+    #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper {
+      display: inline !important;
+      position: static !important;
+      line-height: inherit !important;
+    }
+    #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper img.hs-mc-emote {
+      display: inline !important;
+      position: static !important;
+      height: 24px !important;
+      max-height: 24px !important;
+      width: auto !important;
+      margin: 0 1px !important;
+      vertical-align: -7px !important;
+    }

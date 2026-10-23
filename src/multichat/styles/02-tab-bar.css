@@ -579,5 +579,11 @@
       border-color: #fff;
       outline: none;
     }
+    /* Side columns: the cells hug their content and sit ABOVE the ⚙ > :: $
+       strip, which stays pinned to the bottom. flex:1 here used to make the
+       subrow split the free space with the tab list and shove the strip into
+       the middle of the column whenever a card/logs panel mounted dests. */
     .hs-tabs-left #hs-mc-subrow,
-    .hs-tabs-right #hs-mc-subrow { flex-direction: column; flex-basis: auto; }
+    .hs-tabs-right #hs-mc-subrow { flex: 0 0 auto; flex-direction: column; }
+    .hs-tabs-left .hs-mc-right-cluster,
+    .hs-tabs-right .hs-mc-right-cluster { order: 1; }

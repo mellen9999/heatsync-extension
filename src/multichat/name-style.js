@@ -223,6 +223,11 @@ function hsNameSweepLogin(lower) {
 // marker set here). Idempotent: a name is handled once per mount.
 function hsNameCardsIn(root) {
   if (!root?.querySelectorAll) return 0
+  // the card's recent-logs lines come from the server with site-relative emote
+  // urls (/e/7tv/<id>); on twitch.tv that resolves to twitch.tv and breaks
+  for (const img of root.querySelectorAll('img[src^="/e/"]')) {
+    img.src = `https://heatsync.org${img.getAttribute('src')}`
+  }
   let n = 0
   for (const el of root.querySelectorAll('.hs-card-name[data-color]')) {
     if (el.dataset.hsNdone) continue

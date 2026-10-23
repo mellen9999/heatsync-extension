@@ -40,7 +40,7 @@ function closePredView() {
   activePredView = null
   hsTakeoverSync()
   showInputBar()
-  if (typeof renderMessages === 'function') renderMessages(currentTab)
+  if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
 }
 
 function predViewOpen() {

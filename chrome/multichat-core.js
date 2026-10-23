@@ -14842,7 +14842,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '458d07ff079d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2f4078fb4dcf' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16496,7 +16496,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
       else if (typeof activeChatLogs !== 'undefined' && activeChatLogs) {
         // chat-logs paints itself on its own data; nothing was skipped for it
       } else if (typeof predViewOpen === 'function' && predViewOpen()) renderPredView()
-      else if (typeof renderMessages === 'function') renderMessages(currentTab)
+      else if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
     }
     onDone?.(value)
   }
@@ -51982,7 +51982,7 @@ function closeProfileCard() {
   // that never learned about modlog.)
   hsTakeoverSync()
   showInputBar()
-  renderMessages(currentTab)
+  renderMessages(currentTab, { bypassScrollPause: true })
   renderSubRow() // the 2nd row gets its own cells back
 }
 
@@ -54139,7 +54139,7 @@ function closePredView() {
   activePredView = null
   hsTakeoverSync()
   showInputBar()
-  if (typeof renderMessages === 'function') renderMessages(currentTab)
+  if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
 }
 
 function predViewOpen() {

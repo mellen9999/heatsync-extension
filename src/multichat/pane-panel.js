@@ -100,7 +100,7 @@ function hsPanePanelOpenWith({ label, body, buttons, onKey, onDone }) {
       else if (typeof activeChatLogs !== 'undefined' && activeChatLogs) {
         // chat-logs paints itself on its own data; nothing was skipped for it
       } else if (typeof predViewOpen === 'function' && predViewOpen()) renderPredView()
-      else if (typeof renderMessages === 'function') renderMessages(currentTab)
+      else if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
     }
     onDone?.(value)
   }

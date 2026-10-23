@@ -54,3 +54,10 @@ describe('← back survives a tab-bar repaint mid-click', () => {
     expect(t).toContain('hsTakeoverSwallow')
   })
 })
+
+describe('closing a takeover repaints even when scrolled up', () => {
+  test.each(['profile-card.js', 'pane-panel.js', 'pred-view.js'])('%s bypasses the scroll pause', (f) => {
+    const s = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
+    expect(s).toContain('renderMessages(currentTab, { bypassScrollPause: true })')
+  })
+})

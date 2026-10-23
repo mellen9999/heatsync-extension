@@ -562,6 +562,7 @@
  * confirming a length is independent of line-height and only depends on
  * font metrics, which do not change here. */
 .hs-card-log-body img.emote,
+.hs-card-log-body img.hs-mc-emote,
 .hs-card-log-body .hs-archive-emote {
   max-height: 24px !important;
   height: 24px !important;
@@ -569,6 +570,16 @@
   margin: 0 1px !important;
   vertical-align: -7px !important;
 }
+/* A line heard live (extension) comes from the chat renderer, which wraps each
+ * emote in a fixed-width box sized for chat — flatten it so the 24px cap above
+ * is what sizes the emote. */
+.hs-card-log-body .hs-mc-emote-wrapper {
+  display: inline;
+  width: auto !important;
+  height: auto !important;
+}
+/* an emote line gets the 24px it needs, so it never crowds its neighbours */
+.hs-card-log-row:has(.hs-card-log-body img) { height: 24px; }
 /* Zero-width overlay emotes (server-rendered message_html, e.g. a modifier
  * stacked on a base emote) stack via a negative margin sized to the emote's
  * own width — chat-logs.css's -28px assumes its 28px height; this row's

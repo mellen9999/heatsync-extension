@@ -7,17 +7,42 @@
 // (hsTakeoverCloser / hsTakeoverSync live in pane-panel.js, which the panels
 // themselves call on open and close.)
 
-// Capture: the tab's own switch handler never sees the click. With no takeover
-// open the class is stale by definition — drop it and let the click through.
+// Capture, on pointerdown: the tab bar repaints whenever a chat line lands, and
+// a repaint between press and release detaches the pressed tab, so the browser
+// never fires the click (reported 2026-10-23, popout, a busy chatter's card).
+// The press itself is what closes; the click that may follow is swallowed.
+// With no takeover open the class is stale by definition — drop it and let the
+// press through.
+let hsTakeoverSwallow = 0
+function hsTakeoverHit(e) {
+  if (e.button > 0 || !e.target?.closest?.('.hs-mc-tab.active')) return false
+  const close = hsTakeoverCloser()
+  if (!close) {
+    hsTakeoverSync()
+    return false
+  }
+  e.preventDefault()
+  e.stopPropagation()
+  close()
+  return true
+}
+document.addEventListener(
+  'pointerdown',
+  (e) => {
+    if (hsTakeoverHit(e)) hsTakeoverSwallow = Date.now() + 600
+  },
+  { signal: mcSignal, capture: true },
+)
 document.addEventListener(
   'click',
   (e) => {
-    if (!e.target?.closest?.('.hs-mc-tab.active')) return
-    const close = hsTakeoverCloser()
-    if (!close) return hsTakeoverSync()
-    e.preventDefault()
-    e.stopPropagation()
-    close()
+    if (Date.now() < hsTakeoverSwallow && e.target?.closest?.('.hs-mc-tab')) {
+      e.preventDefault()
+      e.stopPropagation()
+      hsTakeoverSwallow = 0
+      return
+    }
+    hsTakeoverHit(e)
   },
   { signal: mcSignal, capture: true },
 )

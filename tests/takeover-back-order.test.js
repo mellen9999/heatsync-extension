@@ -46,3 +46,11 @@ describe('hsTakeoverCloser order', () => {
     expect(closerFor({})).toEqual([])
   })
 })
+
+describe('← back survives a tab-bar repaint mid-click', () => {
+  const t = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'takeover.js'), 'utf8')
+  test('closes on pointerdown, not only click', () => {
+    expect(t).toContain("'pointerdown'")
+    expect(t).toContain('hsTakeoverSwallow')
+  })
+})

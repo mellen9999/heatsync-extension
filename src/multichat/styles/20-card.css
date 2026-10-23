@@ -287,6 +287,8 @@
   font-weight: 600;
   color: var(--hs-card-fg); /* host overwrites via CSSOM from data-color */
 }
+/* a #tag is magenta on every surface — its card title too */
+.hs-card-tag .hs-card-name { color: var(--hs-card-magenta); }
 .hs-card-pronouns,
 .hs-card-plus {
   font-size: 15px;

@@ -112,7 +112,7 @@ describe('fetchCardPayload — one POST /api/card, 60s LRU + in-flight dedupe', 
     expect(second.profile).toEqual({ id: 1 })
   })
 
-  test('a non-ok response resolves to the empty-payload shape, not a throw', async () => {
+  test('a non-ok response resolves to the empty-payload shape (flagged failed), not a throw', async () => {
     const calls = []
     const apiFetch = () => {
       calls.push(1)
@@ -120,7 +120,23 @@ describe('fetchCardPayload — one POST /api/card, 60s LRU + in-flight dedupe', 
     }
     const fetchCardPayload = makeFn(apiFetch)
     const payload = await fetchCardPayload('twitch', 'someone', null)
-    expect(payload).toEqual({ profile: null, followage: null, corpus: null, note: null, recent: null })
+    expect(payload).toEqual({ profile: null, followage: null, corpus: null, note: null, recent: null, failed: true })
+  })
+
+  test('a failed fetch is not cached — the next open asks again', async () => {
+    let n = 0
+    const apiFetch = () => {
+      n++
+      return Promise.resolve(
+        n === 1 ? { ok: false, error: 'timeout' } : { ok: true, data: { profile: { username: 'someone' } } },
+      )
+    }
+    const fetchCardPayload = makeFn(apiFetch)
+    const first = await fetchCardPayload('twitch', 'someone', null)
+    const second = await fetchCardPayload('twitch', 'someone', null)
+    expect(first.failed).toBe(true)
+    expect(second.profile).toEqual({ username: 'someone' })
+    expect(n).toBe(2)
   })
 
   test('openChannels dedupes twitch+kick per channel entry, in `platform:login` form', async () => {

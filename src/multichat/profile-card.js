@@ -245,7 +245,9 @@ async function openProfileCard(username, platform, opts = {}) {
       const ucId = pcFindYtChannelId(username)
       activeProfileCard.data = ucId ? pcSynthFromYtContext(username, ucId) : { error: true, username }
     } else {
-      activeProfileCard.data = { error: true, username }
+      // payload.failed = the request itself failed, not "no profile" — same
+      // transient state the catch below uses, so it reads as a retryable hiccup
+      activeProfileCard.data = payload.failed ? { error: true, transient: true, username } : { error: true, username }
     }
     renderProfileCardView()
   } catch {

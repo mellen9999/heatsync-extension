@@ -1085,8 +1085,13 @@ async function fetchCardPayload(platform, login, channel) {
     body: { platform: platform || 'twitch', login, channel: channel || undefined, openChannels: cardOpenChannels() },
   })
     .then((resp) => {
-      const payload =
-        resp?.ok && resp.data ? resp.data : { profile: null, followage: null, corpus: null, note: null, recent: null }
+      if (!(resp?.ok && resp.data)) {
+        // A failed request (timeout, 5xx, rate limit) is not "no such person".
+        // Flag it and keep it OUT of the 60s cache, so the next open asks again
+        // instead of replaying an empty card for a minute.
+        return { profile: null, followage: null, corpus: null, note: null, recent: null, failed: true }
+      }
+      const payload = resp.data
       _cardCache.set(key, { payload, ts: Date.now() })
       if (_cardCache.size > 300) _cardCache.delete(_cardCache.keys().next().value)
       return payload

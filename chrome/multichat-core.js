@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bdbce4e2c2e5' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '080f464c5404' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29446,8 +29446,13 @@ async function fetchCardPayload(platform, login, channel) {
     body: { platform: platform || 'twitch', login, channel: channel || undefined, openChannels: cardOpenChannels() },
   })
     .then((resp) => {
-      const payload =
-        resp?.ok && resp.data ? resp.data : { profile: null, followage: null, corpus: null, note: null, recent: null }
+      if (!(resp?.ok && resp.data)) {
+        // A failed request (timeout, 5xx, rate limit) is not "no such person".
+        // Flag it and keep it OUT of the 60s cache, so the next open asks again
+        // instead of replaying an empty card for a minute.
+        return { profile: null, followage: null, corpus: null, note: null, recent: null, failed: true }
+      }
+      const payload = resp.data
       _cardCache.set(key, { payload, ts: Date.now() })
       if (_cardCache.size > 300) _cardCache.delete(_cardCache.keys().next().value)
       return payload
@@ -51732,7 +51737,9 @@ async function openProfileCard(username, platform, opts = {}) {
       const ucId = pcFindYtChannelId(username)
       activeProfileCard.data = ucId ? pcSynthFromYtContext(username, ucId) : { error: true, username }
     } else {
-      activeProfileCard.data = { error: true, username }
+      // payload.failed = the request itself failed, not "no profile" — same
+      // transient state the catch below uses, so it reads as a retryable hiccup
+      activeProfileCard.data = payload.failed ? { error: true, transient: true, username } : { error: true, username }
     }
     renderProfileCardView()
   } catch {

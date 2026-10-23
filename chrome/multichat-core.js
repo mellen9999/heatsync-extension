@@ -14888,7 +14888,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8ba1d7c37fd9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '513046c6d068' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -24834,6 +24834,20 @@ function showEmotePicker(tab = null) {
   // double-attaches — robust regardless of expando/world visibility quirks.
   if (picker._hsClickCtx !== _HS_PICKER_CLICK_CTX) {
     picker._hsClickCtx = _HS_PICKER_CLICK_CTX
+    // A 7TV tile that fails (the CDN throttles a burst, or an edge node is
+    // cold) is retried once through heatsync's proxy, which fetches from the
+    // server's own connection. Error events do not bubble, hence capture.
+    picker.addEventListener(
+      'error',
+      (e) => {
+        const im = e.target
+        if (!im || !im.classList || !im.classList.contains('hs-mc-picker-emote')) return
+        if (im.dataset.hsFb || !/^https:\/\/cdn\.7tv\.app\//.test(im.src)) return
+        im.dataset.hsFb = '1'
+        im.src = `https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(im.src)}`
+      },
+      true,
+    )
     picker.addEventListener('click', (e) => {
       // Cold-start import CTA (empty inventory) — one-click channel import.
       const coldBtn = e.target.closest('.hs-mc-cold-start-import')

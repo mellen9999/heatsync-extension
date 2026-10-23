@@ -1425,6 +1425,20 @@ function showEmotePicker(tab = null) {
   // double-attaches — robust regardless of expando/world visibility quirks.
   if (picker._hsClickCtx !== _HS_PICKER_CLICK_CTX) {
     picker._hsClickCtx = _HS_PICKER_CLICK_CTX
+    // A 7TV tile that fails (the CDN throttles a burst, or an edge node is
+    // cold) is retried once through heatsync's proxy, which fetches from the
+    // server's own connection. Error events do not bubble, hence capture.
+    picker.addEventListener(
+      'error',
+      (e) => {
+        const im = e.target
+        if (!im || !im.classList || !im.classList.contains('hs-mc-picker-emote')) return
+        if (im.dataset.hsFb || !/^https:\/\/cdn\.7tv\.app\//.test(im.src)) return
+        im.dataset.hsFb = '1'
+        im.src = `https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(im.src)}`
+      },
+      true,
+    )
     picker.addEventListener('click', (e) => {
       // Cold-start import CTA (empty inventory) — one-click channel import.
       const coldBtn = e.target.closest('.hs-mc-cold-start-import')

@@ -17,3 +17,10 @@ describe('emote picker search', () => {
     expect(src).toMatch(/if \(!newNames && page > 1 && !mcProviderExhausted\[p\]\)/)
   })
 })
+
+describe('picker tile fallback', () => {
+  test('a failed 7tv tile retries once through the heatsync proxy', () => {
+    expect(src).toContain("im.dataset.hsFb = '1'")
+    expect(src).toContain('/api/emote-proxy?url=')
+  })
+})

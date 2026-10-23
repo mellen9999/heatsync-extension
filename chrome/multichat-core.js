@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4e0b9ec90eef' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f73331894585' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -55138,7 +55138,10 @@ function applyHsGlyphMasks(el, plan) {
   // A CLASS, not an inline url() — the bytes live once in the mask sheet
   // (lib/glyph-mask.js); a copy per span would move the cost into style
   // recalc instead of removing the repaint this exists to remove.
-  mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })
+  if (!mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })) return
+  // The fill layers' animations start HERE, not with the row — anchor the host
+  // so the name, its glyphs and these fills run on one clock (as the site does).
+  anchorSoon(el)
 }
 
 /** Test seam — the real call sites (discoverHsPaintedNames, applyHsPaintToElement)

@@ -1008,7 +1008,10 @@ function applyHsGlyphMasks(el, plan) {
   // A CLASS, not an inline url() — the bytes live once in the mask sheet
   // (lib/glyph-mask.js); a copy per span would move the cost into style
   // recalc instead of removing the repaint this exists to remove.
-  mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })
+  if (!mountFillLayers(box, plan, { maskedClass: MASKED_CLASS, ...geom, maskFor, maskForText })) return
+  // The fill layers' animations start HERE, not with the row — anchor the host
+  // so the name, its glyphs and these fills run on one clock (as the site does).
+  anchorSoon(el)
 }
 
 /** Test seam — the real call sites (discoverHsPaintedNames, applyHsPaintToElement)

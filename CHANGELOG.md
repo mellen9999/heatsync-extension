@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.98] — 2026-10-23
+
+### added
+- **painted names everywhere** — profile cards and their logs show the platform colour plus 7tv and heatsync paints.
+
+### fixed
+- **profile logs** — emotes render in logged lines, sit on the text line at 24px, and rows no longer crowd.
+- **profile tabs** — the × sits on top and the tab row spans the full width, like chat tabs.
+
 ## [1.7.96] — 2026-10-21
 
 ### added

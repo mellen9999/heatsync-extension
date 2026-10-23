@@ -14887,7 +14887,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8e33b38dece3' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5d18bb45b30f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -23454,6 +23454,12 @@ const mcProviderInFlight = { '7tv': false, bttv: false, ffz: false, hs: false }
 const mcProviderPage = { '7tv': 0, bttv: 0, ffz: 0, hs: 0 } // pages loaded so far (0 = none)
 const mcProviderExhausted = { '7tv': false, bttv: false, ffz: false, hs: false }
 const mcProviderSeenIds = { '7tv': new Set(), bttv: new Set(), ffz: new Set(), hs: new Set() }
+// The picker shows one tile per NAME, so a page of 60 'dance' emotes can be 60
+// copies of the five names already shown. Per provider: the names seen, and how
+// many pages in a row have been fetched on a user's behalf without adding one.
+const mcProviderSeenNames = { '7tv': new Set(), bttv: new Set(), ffz: new Set(), hs: new Set() }
+const mcProviderEmptyRun = { '7tv': 0, bttv: 0, ffz: 0, hs: 0 }
+const MC_EMPTY_PAGES_MAX = 6
 // A page shorter than the provider's page size means we hit the tail. 'hs' is
 // single-page (the endpoint returns top-100 by popularity, no pagination).
 const MC_PAGE_SIZE = { '7tv': 60, bttv: 100, ffz: 200, hs: 100 }
@@ -23630,7 +23636,7 @@ async function mcSearch7tvApi(q, signal, opts) {
   const items = data?.data?.emotes?.search?.items || []
   return items.map((e) => ({
     name: e.defaultName,
-    url: `https://cdn.7tv.app/emote/${e.id}/1x.avif`,
+    url: `https://cdn.7tv.app/emote/${e.id}/1x.webp`, // webp like every other 7TV url here: avif is slower to decode and missing for older emotes
     provider: '7tv',
     id: e.id,
     animated: !!e.flags?.animated,
@@ -23700,6 +23706,8 @@ const MC_PROVIDER_FETCHERS = {
 function mcResetProvider(p) {
   mcProviderResults[p] = []
   mcProviderSeenIds[p].clear()
+  mcProviderSeenNames[p].clear()
+  mcProviderEmptyRun[p] = 0
   mcProviderPage[p] = 0
   mcProviderExhausted[p] = false
   mcProviderInFlight[p] = false
@@ -23730,11 +23738,24 @@ function mcFetchProviderPage(p, q) {
       // A short page means the tail — stop offering more for this provider.
       if (!Array.isArray(items) || items.length < MC_PAGE_SIZE[p]) mcProviderExhausted[p] = true
       const seen = mcProviderSeenIds[p]
+      let newNames = 0
       for (const it of items || []) {
         const key = it.id || it.name
         if (key && seen.has(key)) continue
         if (key) seen.add(key)
         mcProviderResults[p].push(it)
+        if (it.name) newNames += mcProviderSeenNames[p].has(it.name) ? 0 : 1
+        if (it.name) mcProviderSeenNames[p].add(it.name)
+      }
+      // A page of repeats shows the reader nothing, and 'load more' looks dead.
+      // Keep going (bounded) until a page adds a name or the provider runs out.
+      mcProviderEmptyRun[p] = newNames ? 0 : mcProviderEmptyRun[p] + 1
+      if (!newNames && page > 1 && !mcProviderExhausted[p]) {
+        if (mcProviderEmptyRun[p] >= MC_EMPTY_PAGES_MAX) mcProviderExhausted[p] = true
+        else
+          setTimeout(() => {
+            if (mcCurrentQuery === q) mcFetchProviderPage(p, q)
+          }, 0)
       }
       document.dispatchEvent(new CustomEvent('hs-mc-search-results-ready', { detail: { query: q, provider: p } }))
     })

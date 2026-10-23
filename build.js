@@ -808,6 +808,7 @@ const MULTICHAT_MODULES = [
   'profile-card.js',
   'chat-logs.js',
   'pred-view.js',
+  'img-view.js',
   'paints.js',
   'cosmetics.js',
   'name-style.js',

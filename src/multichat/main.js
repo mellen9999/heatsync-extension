@@ -6643,6 +6643,8 @@
     try {
       refreshLiveStatusSoon()
     } catch {}
+    // …and a full-size picture: the switch repaints the pane itself
+    if (typeof imgViewDrop === 'function') imgViewDrop()
     // Tab switch closes profile card without re-rendering (we'll render the tab below)
     if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
       activeProfileCard = null
@@ -9062,6 +9064,7 @@
     if (hsPanePanelOpen()) return true // a confirm panel covers the pane; close repaints
     // Same for the predictions/polls view — it owns the chat area while open.
     if (typeof predViewOpen === 'function' && predViewOpen()) return true
+    if (typeof imgViewOpen === 'function' && imgViewOpen()) return true // a picture owns the pane
     if (isScrolledUp || currentTab !== tabId) return false
 
     // Content filters — hidden at render, buffers keep the message
@@ -9683,6 +9686,8 @@
       renderPredView()
       return
     }
+    // A full-size picture stays put; nothing repaints over it (← back closes it)
+    if (typeof imgViewOpen === 'function' && imgViewOpen()) return
     // Social tabs have their own renderers — banner doesn't apply there
     if (id === 'feed') {
       hideMultistreamBanner()

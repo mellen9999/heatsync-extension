@@ -1915,6 +1915,7 @@ function _feedVirtualTeardown(msgsEl) {
 }
 
 function renderFeed() {
+  if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
@@ -2030,6 +2031,7 @@ function renderFeed() {
 // scrollTop to 0 — yanking the reader to the top on every "load more". Only
 // the newly-fetched rows get built; scroll position is never touched.
 function renderFeedAppend(startIndex) {
+  if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   if (activeThread) return
   const msgsEl = document.getElementById('hs-mc-messages')

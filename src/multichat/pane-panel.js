@@ -48,6 +48,7 @@ function hsTakeoverCloser() {
     return closeProfileCard
   if (typeof activeChatLogs !== 'undefined' && activeChatLogs) return closeChatLogsView
   if (typeof predViewOpen === 'function' && predViewOpen()) return closePredView
+  if (typeof imgViewOpen === 'function' && imgViewOpen()) return closeImgView
   if (typeof _hsAudio !== 'undefined' && _hsAudio?.fill) return () => _hsSetFill(false)
   return null
 }

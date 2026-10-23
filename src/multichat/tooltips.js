@@ -581,6 +581,18 @@ function hideEmoteTooltip() {
   }
 }
 
+// Emotes a logs surface draws itself (server-rendered archive lines, the chat
+// logs panel, a card's recent lines) are bare <img>s with no .hs-mc-emote class
+// and no wrapper, so the hover preview never saw them.
+function isLogEmoteImg(el) {
+  return (
+    el?.tagName === 'IMG' &&
+    (el.classList.contains('hs-archive-emote') ||
+      el.classList.contains('hs-cl-emote') ||
+      (el.classList.contains('emote') && !!el.closest('.hs-card-log-body')))
+  )
+}
+
 function setupEmoteTooltipHandlers() {
   if (_onceGuardsTooltips.emoteTooltipSetup) return
   _onceGuardsTooltips.emoteTooltipSetup = true
@@ -633,7 +645,8 @@ function setupEmoteTooltipHandlers() {
                 (target.classList.contains('hs-mc-emote') ||
                   target.classList.contains('hs-mc-picker-emote') ||
                   target.classList.contains('hs-input-emote') ||
-                  target.classList.contains('hs-discover-thumb'))
+                  target.classList.contains('hs-discover-thumb') ||
+                  isLogEmoteImg(target))
               ? target
               : null
       if (!img && !wrapper && !pickerWrap && !discoverItem) return
@@ -697,7 +710,8 @@ function setupEmoteTooltipHandlers() {
           : target.tagName === 'IMG' &&
               (target.classList.contains('hs-mc-emote') ||
                 target.classList.contains('hs-mc-picker-emote') ||
-                target.classList.contains('hs-input-emote'))
+                target.classList.contains('hs-input-emote') ||
+                isLogEmoteImg(target))
             ? target
             : null
       if (!img && !wrapper && !pickerWrap) return

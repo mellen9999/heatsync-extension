@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '080f464c5404' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '286467349555' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -28942,6 +28942,18 @@ function hideEmoteTooltip() {
   }
 }
 
+// Emotes a logs surface draws itself (server-rendered archive lines, the chat
+// logs panel, a card's recent lines) are bare <img>s with no .hs-mc-emote class
+// and no wrapper, so the hover preview never saw them.
+function isLogEmoteImg(el) {
+  return (
+    el?.tagName === 'IMG' &&
+    (el.classList.contains('hs-archive-emote') ||
+      el.classList.contains('hs-cl-emote') ||
+      (el.classList.contains('emote') && !!el.closest('.hs-card-log-body')))
+  )
+}
+
 function setupEmoteTooltipHandlers() {
   if (_onceGuardsTooltips.emoteTooltipSetup) return
   _onceGuardsTooltips.emoteTooltipSetup = true
@@ -28994,7 +29006,8 @@ function setupEmoteTooltipHandlers() {
                 (target.classList.contains('hs-mc-emote') ||
                   target.classList.contains('hs-mc-picker-emote') ||
                   target.classList.contains('hs-input-emote') ||
-                  target.classList.contains('hs-discover-thumb'))
+                  target.classList.contains('hs-discover-thumb') ||
+                  isLogEmoteImg(target))
               ? target
               : null
       if (!img && !wrapper && !pickerWrap && !discoverItem) return
@@ -29058,7 +29071,8 @@ function setupEmoteTooltipHandlers() {
           : target.tagName === 'IMG' &&
               (target.classList.contains('hs-mc-emote') ||
                 target.classList.contains('hs-mc-picker-emote') ||
-                target.classList.contains('hs-input-emote'))
+                target.classList.contains('hs-input-emote') ||
+                isLogEmoteImg(target))
             ? target
             : null
       if (!img && !wrapper && !pickerWrap) return

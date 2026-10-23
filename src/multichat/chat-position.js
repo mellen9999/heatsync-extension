@@ -95,7 +95,13 @@ function updateTwitchNoChannelClass() {
       const selfHidden = chatShell.classList.contains('hs-native-hidden')
       const collapsed = !!document.querySelector('.right-column--collapsed, [class*="right-column--collapsed"]')
       const overflowsOffScreen = r.right > window.innerWidth + 1
-      const unexplainedZeroWidth = r.width === 0 && !selfHidden && !collapsed
+      // Docking chat left/top/bottom zeroes .right-column itself (17-platform-
+      // position.css), so a zero-width shell there is our own doing too —
+      // reading it as the layout bug flagged every channel page no-channel
+      // and, after any reload, left the video at the page bottom + a doubled
+      // content offset.
+      const dockZeroes = chatPosition === 'left' || chatPosition === 'top' || chatPosition === 'bottom'
+      const unexplainedZeroWidth = r.width === 0 && !selfHidden && !collapsed && !dockZeroes
       if (overflowsOffScreen || unexplainedZeroWidth) {
         noChannel = true
         const c = document.getElementById('hs-mc-container')

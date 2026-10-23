@@ -889,12 +889,18 @@ async function fetchRemoteEmoteMatches(search) {
     // FFZ's `uses` is real popularity — sort descending so the merged stream
     // leads with highest-use FFZ emotes first.
     rf.sort((a, b) => (b.uses || 0) - (a.uses || 0))
-    // 7TV leads — its relevance ranking IS the culture ("pls" → the dancing
-    // XxxPls family), then BTTV, then FFZ-by-uses (the oldest catalog trails).
-    // The old FFZ-first + prefix-only combo made catalog cycling feel dead:
-    // every "…Pls"/"…JAM" suffix-named emote was filtered out and FFZ prefix
-    // junk led whatever survived.
-    const items = [...r7, ...rb, ...rf]
+    // Order follows the provider setting. 7TV led here for its relevance
+    // ranking ("pls" → the dancing XxxPls family), and the old FFZ-first combo
+    // felt dead because it was prefix-only; substring matching (below) fixed
+    // that, so the fast provider can lead again.
+    // The emoteProviderPriority setting leads (default ffz — fast and reliable);
+    // the other two keep their old relative order.
+    const byProvider = { '7tv': r7, bttv: rb, ffz: rf }
+    const order =
+      typeof emoteProviderOrder === 'function' && typeof emoteProviderPriority === 'string'
+        ? emoteProviderOrder(emoteProviderPriority)
+        : ['7tv', 'bttv', 'ffz']
+    const items = order.flatMap((k) => byProvider[k] || [])
     // Lowercase dedupe (collapses 10x "Sadge" uploads to one — emote names are
     // case-insensitive in practice; first-seen wins so 7TV's top result holds).
     // Also dedupes against existing locals (already lowercased below).

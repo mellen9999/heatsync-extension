@@ -35,7 +35,7 @@ function mcHasExternalSource() {
 // (emoteProviderPriority, default '7tv' — matches the pre-existing hardcoded
 // winner) via _RUNTIME_BRIDGE in main.js. Read live by _buildChannelEmoteCache
 // and the global-emotes loader in loadEmotes() below.
-let emoteProviderPriority = '7tv'
+let emoteProviderPriority = 'ffz'
 
 // Per-provider result caches keyed per-query. AbortController cancels stale
 // in-flight requests on each keystroke. Results ACCUMULATE across pages
@@ -101,6 +101,7 @@ function mcRerenderSearch(query) {
   // `pop` is a monotonic insertion counter, so already-shown tiles keep a
   // stable order when load-more appends new pages.
   const seenNames = new Set()
+  const seenVariantIds = new Set()
   const entries = []
   let pop = 0
   const matchQuality = (nl) => (nl === query ? 0 : nl.startsWith(query) ? 1 : nl.includes(query) ? 2 : 3)
@@ -141,23 +142,37 @@ function mcRerenderSearch(query) {
     if (!mcPickerSources.has(p)) continue
     if (mcProviderLastQuery[p] !== query) continue
     for (const r of mcProviderResults[p]) {
-      if (!r.name || seenNames.has(r.name)) continue
+      if (!r.name) continue
+      // Once the name is typed in full, every upload of it is its own tile —
+      // 7TV holds hundreds of 'dance' and they are different art. Told apart by
+      // id; all paste the same name, and the one you click is the one added.
+      const exactName = r.name.toLowerCase() === query
+      const variant = seenNames.has(r.name) && exactName && !!r.id && !seenVariantIds.has(r.id)
+      if (seenNames.has(r.name) && !variant) continue
       const mq = matchQuality(r.name.toLowerCase())
       if (mcExactMatch && mq !== 0) continue
       seenNames.add(r.name)
       // state='remote' — unowned picker result, click handler routes through
       // addEmoteToInventory to persist. Auto-add-on-send also commits the slot.
+      if (r.id && exactName) seenVariantIds.add(r.id)
+      const vkey = variant ? `${r.name}#${r.id}` : r.name
       entries.push({
         name: r.name,
         // source tracks the emote's real provider (r.provider), which equals the
         // bucket key p for third-party but is 'heatsync' for the 'hs' directory —
         // keeps source/provider aligned for state + tooltip + re-add.
-        emote: { source: r.provider || p, state: 'remote', url: r.url, provider: r.provider },
+        emote: {
+          source: r.provider || p,
+          state: 'remote',
+          url: r.url,
+          provider: r.provider,
+          variant: variant ? r.id : '',
+        },
         mq,
         loc: 3,
         pop: pop++,
       })
-      mcRemoteEmoteIndex.set(r.name, { url: r.url, provider: r.provider, id: r.id, zeroWidth: !!r.zeroWidth })
+      mcRemoteEmoteIndex.set(vkey, { url: r.url, provider: r.provider, id: r.id, zeroWidth: !!r.zeroWidth })
     }
   }
   entries.sort((a, b) => a.mq - b.mq || a.loc - b.loc || a.pop - b.pop || a.name.localeCompare(b.name))
@@ -336,8 +351,12 @@ function mcFetchProviderPage(p, q) {
         if (key && seen.has(key)) continue
         if (key) seen.add(key)
         mcProviderResults[p].push(it)
-        if (it.name) newNames += mcProviderSeenNames[p].has(it.name) ? 0 : 1
-        if (it.name) mcProviderSeenNames[p].add(it.name)
+        // exact-name uploads each show (see mcRerenderSearch), so they count as new
+        const shown = it.name && it.name.toLowerCase() === q.toLowerCase() ? key : it.name
+        if (shown && !mcProviderSeenNames[p].has(shown)) {
+          newNames++
+          mcProviderSeenNames[p].add(shown)
+        }
       }
       // A page of repeats shows the reader nothing, and 'load more' looks dead.
       // Keep going (bounded) until a page adds a name or the provider runs out.
@@ -1109,7 +1128,7 @@ function emoteImgHtml([name, emote]) {
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
   // only shrinks, so a denser file changes the pixels and not the layout.
   const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
-  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}" data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
+  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
 }
 
 /**
@@ -1427,7 +1446,7 @@ function showEmotePicker(tab = null) {
       // the background; on success the state is reconciled, on failure the
       // user still sees the emote (server sync re-evaluates next load).
       if (img.dataset.state === 'remote') {
-        const remote = mcRemoteEmoteIndex.get(name)
+        const remote = mcRemoteEmoteIndex.get(img.dataset.variant ? `${name}#${img.dataset.variant}` : name)
         // Race-guard rapid double-clicks: addEmoteToInventory tracks in-flight adds
         // in pendingEmoteOps, so skip the optimistic-add + POST if one is already
         // running for this name — otherwise a fast second click fires a second

@@ -3409,11 +3409,12 @@ const SETTINGS = [
   {
     // Which third-party provider wins when the same emote NAME exists in
     // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.
-    // Default '7tv' matches the pre-existing hardcoded winner (BTTV < FFZ <
-    // 7TV last-write-wins in the merge) — picking it changes nothing.
+    // Default 'ffz': its API answers at once and its images load, so Tab and
+    // the picker lead with it (mellen, 2026-10-23); 7tv's search is slow and
+    // many of its tiles come back broken. Pick 7tv to restore the old winner.
     key: 'emoteProviderPriority',
     type: 'enum',
-    default: '7tv',
+    default: 'ffz',
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
@@ -14887,7 +14888,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5d18bb45b30f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8ba1d7c37fd9' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -23443,7 +23444,7 @@ function mcHasExternalSource() {
 // (emoteProviderPriority, default '7tv' — matches the pre-existing hardcoded
 // winner) via _RUNTIME_BRIDGE in main.js. Read live by _buildChannelEmoteCache
 // and the global-emotes loader in loadEmotes() below.
-let emoteProviderPriority = '7tv'
+let emoteProviderPriority = 'ffz'
 
 // Per-provider result caches keyed per-query. AbortController cancels stale
 // in-flight requests on each keystroke. Results ACCUMULATE across pages
@@ -23509,6 +23510,7 @@ function mcRerenderSearch(query) {
   // `pop` is a monotonic insertion counter, so already-shown tiles keep a
   // stable order when load-more appends new pages.
   const seenNames = new Set()
+  const seenVariantIds = new Set()
   const entries = []
   let pop = 0
   const matchQuality = (nl) => (nl === query ? 0 : nl.startsWith(query) ? 1 : nl.includes(query) ? 2 : 3)
@@ -23549,23 +23551,37 @@ function mcRerenderSearch(query) {
     if (!mcPickerSources.has(p)) continue
     if (mcProviderLastQuery[p] !== query) continue
     for (const r of mcProviderResults[p]) {
-      if (!r.name || seenNames.has(r.name)) continue
+      if (!r.name) continue
+      // Once the name is typed in full, every upload of it is its own tile —
+      // 7TV holds hundreds of 'dance' and they are different art. Told apart by
+      // id; all paste the same name, and the one you click is the one added.
+      const exactName = r.name.toLowerCase() === query
+      const variant = seenNames.has(r.name) && exactName && !!r.id && !seenVariantIds.has(r.id)
+      if (seenNames.has(r.name) && !variant) continue
       const mq = matchQuality(r.name.toLowerCase())
       if (mcExactMatch && mq !== 0) continue
       seenNames.add(r.name)
       // state='remote' — unowned picker result, click handler routes through
       // addEmoteToInventory to persist. Auto-add-on-send also commits the slot.
+      if (r.id && exactName) seenVariantIds.add(r.id)
+      const vkey = variant ? `${r.name}#${r.id}` : r.name
       entries.push({
         name: r.name,
         // source tracks the emote's real provider (r.provider), which equals the
         // bucket key p for third-party but is 'heatsync' for the 'hs' directory —
         // keeps source/provider aligned for state + tooltip + re-add.
-        emote: { source: r.provider || p, state: 'remote', url: r.url, provider: r.provider },
+        emote: {
+          source: r.provider || p,
+          state: 'remote',
+          url: r.url,
+          provider: r.provider,
+          variant: variant ? r.id : '',
+        },
         mq,
         loc: 3,
         pop: pop++,
       })
-      mcRemoteEmoteIndex.set(r.name, { url: r.url, provider: r.provider, id: r.id, zeroWidth: !!r.zeroWidth })
+      mcRemoteEmoteIndex.set(vkey, { url: r.url, provider: r.provider, id: r.id, zeroWidth: !!r.zeroWidth })
     }
   }
   entries.sort((a, b) => a.mq - b.mq || a.loc - b.loc || a.pop - b.pop || a.name.localeCompare(b.name))
@@ -23744,8 +23760,12 @@ function mcFetchProviderPage(p, q) {
         if (key && seen.has(key)) continue
         if (key) seen.add(key)
         mcProviderResults[p].push(it)
-        if (it.name) newNames += mcProviderSeenNames[p].has(it.name) ? 0 : 1
-        if (it.name) mcProviderSeenNames[p].add(it.name)
+        // exact-name uploads each show (see mcRerenderSearch), so they count as new
+        const shown = it.name && it.name.toLowerCase() === q.toLowerCase() ? key : it.name
+        if (shown && !mcProviderSeenNames[p].has(shown)) {
+          newNames++
+          mcProviderSeenNames[p].add(shown)
+        }
       }
       // A page of repeats shows the reader nothing, and 'load more' looks dead.
       // Keep going (bounded) until a page adds a name or the provider runs out.
@@ -24517,7 +24537,7 @@ function emoteImgHtml([name, emote]) {
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
   // only shrinks, so a denser file changes the pixels and not the layout.
   const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
-  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}" data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
+  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
 }
 
 /**
@@ -24835,7 +24855,7 @@ function showEmotePicker(tab = null) {
       // the background; on success the state is reconciled, on failure the
       // user still sees the emote (server sync re-evaluates next load).
       if (img.dataset.state === 'remote') {
-        const remote = mcRemoteEmoteIndex.get(name)
+        const remote = mcRemoteEmoteIndex.get(img.dataset.variant ? `${name}#${img.dataset.variant}` : name)
         // Race-guard rapid double-clicks: addEmoteToInventory tracks in-flight adds
         // in pendingEmoteOps, so skip the optimistic-add + POST if one is already
         // running for this name — otherwise a fast second click fires a second
@@ -43104,12 +43124,18 @@ async function fetchRemoteEmoteMatches(search) {
     // FFZ's `uses` is real popularity — sort descending so the merged stream
     // leads with highest-use FFZ emotes first.
     rf.sort((a, b) => (b.uses || 0) - (a.uses || 0))
-    // 7TV leads — its relevance ranking IS the culture ("pls" → the dancing
-    // XxxPls family), then BTTV, then FFZ-by-uses (the oldest catalog trails).
-    // The old FFZ-first + prefix-only combo made catalog cycling feel dead:
-    // every "…Pls"/"…JAM" suffix-named emote was filtered out and FFZ prefix
-    // junk led whatever survived.
-    const items = [...r7, ...rb, ...rf]
+    // Order follows the provider setting. 7TV led here for its relevance
+    // ranking ("pls" → the dancing XxxPls family), and the old FFZ-first combo
+    // felt dead because it was prefix-only; substring matching (below) fixed
+    // that, so the fast provider can lead again.
+    // The emoteProviderPriority setting leads (default ffz — fast and reliable);
+    // the other two keep their old relative order.
+    const byProvider = { '7tv': r7, bttv: rb, ffz: rf }
+    const order =
+      typeof emoteProviderOrder === 'function' && typeof emoteProviderPriority === 'string'
+        ? emoteProviderOrder(emoteProviderPriority)
+        : ['7tv', 'bttv', 'ffz']
+    const items = order.flatMap((k) => byProvider[k] || [])
     // Lowercase dedupe (collapses 10x "Sadge" uploads to one — emote names are
     // case-insensitive in practice; first-seen wins so 7TV's top result holds).
     // Also dedupes against existing locals (already lowercased below).

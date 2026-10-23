@@ -125,7 +125,7 @@ describe('resolveEmoteProviderWinner', () => {
 // ── _buildChannelEmoteCache integration — default behavior unchanged ───────
 
 describe('_buildChannelEmoteCache: provider-priority wiring', () => {
-  test('default priority: same-name bttv/ffz/7tv channel emotes resolve to 7tv (unchanged from pre-existing behavior)', () => {
+  test('default priority (ffz, 2026-10-23): same-name bttv/ffz/7tv channel emotes resolve to ffz', () => {
     const emotes = [
       { name: 'Cabge', url: 'https://cdn.betterttv.net/emote/1/1x.webp', source: 'bttv' },
       { name: 'Cabge', url: 'https://cdn.frankerfacez.com/emote/1/1', source: 'ffz' },
@@ -133,8 +133,8 @@ describe('_buildChannelEmoteCache: provider-priority wiring', () => {
     ]
     _buildChannelEmoteCache('chan-a', emotes, 'twitch')
     const entry = channelEmoteCaches['chan-a'].get('Cabge')
-    expect(entry.source).toBe('7tv')
-    expect(entry.url).toBe('https://cdn.7tv.app/emote/1/1x.webp')
+    expect(entry.source).toBe('ffz')
+    expect(entry.url).toBe('https://cdn.frankerfacez.com/emote/1/1')
   })
 
   test('non-colliding names all survive the merge', () => {

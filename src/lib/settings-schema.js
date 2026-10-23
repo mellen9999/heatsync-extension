@@ -637,11 +637,12 @@ const SETTINGS = [
   {
     // Which third-party provider wins when the same emote NAME exists in
     // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.
-    // Default '7tv' matches the pre-existing hardcoded winner (BTTV < FFZ <
-    // 7TV last-write-wins in the merge) — picking it changes nothing.
+    // Default 'ffz': its API answers at once and its images load, so Tab and
+    // the picker lead with it (mellen, 2026-10-23); 7tv's search is slow and
+    // many of its tiles come back broken. Pick 7tv to restore the old winner.
     key: 'emoteProviderPriority',
     type: 'enum',
-    default: '7tv',
+    default: 'ffz',
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',

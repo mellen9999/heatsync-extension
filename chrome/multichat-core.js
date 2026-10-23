@@ -14836,7 +14836,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0f04d1f6757a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bdbce4e2c2e5' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -54555,6 +54555,12 @@ function installHsPaintHoverSync() {
       // later, once the freeze has dropped and the plates exist again.
       const els = _hsPaintHoverEls ? [t, ..._hsPaintHoverEls] : [t]
       if (_hsPaintHoverEls) clearAll()
+      // Seek NOW, in the same task as the unhover: getAnimations() flushes the
+      // style change, so the recreated plates exist and land on the wall clock
+      // before the next paint instead of a frame (rAF) plus a commit (ready)
+      // later. The anchor below stays as the correction for plates whose
+      // animations only get a start time at that first commit.
+      if (typeof resyncAnimationPhase === 'function') for (const el of els) if (el.isConnected) resyncAnimationPhase(el)
       requestAnimationFrame(() => anchorWhenStarted(els))
     },
     { passive: true },

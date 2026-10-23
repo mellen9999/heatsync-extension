@@ -476,18 +476,12 @@ function getRecentMessagesFromUser(username) {
 // Deduped by channel+message text — the two sources share no message id, so
 // that's the only reliable join key. Server rows win the dedupe (they carry
 // a permalink and possibly emote-decorated messageHtml; local rows don't).
-// A line heard live in this tab, drawn with its emotes like the chat row it came
-// from (twitch's own emote tags + the 7TV/BTTV/FFZ caches). null = plain text.
+// A line heard live in this tab, drawn by the chat's own text renderer (twitch
+// emote tags, 7TV/BTTV/FFZ, cheers) so it matches the row it came from. null =
+// plain text.
 function pcLocalLineHtml(m) {
   try {
-    let twitchExtra = null
-    if (m.twitchEmotes) {
-      twitchExtra = new Map()
-      for (const [name, url] of Object.entries(m.twitchEmotes)) {
-        twitchExtra.set(escapeHtml(name), { url, source: 'twitch', state: 'global', zeroWidth: false })
-      }
-    }
-    return processEmotes(escapeHtml(m.text), m.emoteChannel || m.channel, twitchExtra, undefined, m.time, true)
+    return typeof computeMessageText === 'function' ? computeMessageText(m) : null
   } catch {
     return null
   }

@@ -231,7 +231,14 @@ function hsNameCardsIn(root) {
     delete el.dataset.paintPending
     const platform = el.dataset.platform || 'twitch'
     const uid = pending ? hsNameUid(el.dataset.paintUid, platform) : ''
-    if (el.dataset.color) el.dataset.hsNcol = hsNameColour({ colour: el.dataset.color })
+    // a card wears what chat shows: on twitch the colour heard from them (the
+    // native colour is the perk, a picked one never beats it), else the profile
+    // colour, else the shared palette — never plain white.
+    const login = String(el.dataset.username || el.textContent).toLowerCase()
+    const heard = platform === 'twitch' && typeof knownColors !== 'undefined' ? knownColors.get(login) : ''
+    el.dataset.hsNcol = heard
+      ? sanitizeColor(heard)
+      : hsNameColour({ colour: el.dataset.color || undefined, login, platform, name: el.textContent })
     if (!uid) {
       if (el.dataset.hsNcol) el.style.color = el.dataset.hsNcol
       continue

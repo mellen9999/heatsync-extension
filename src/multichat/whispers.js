@@ -296,6 +296,7 @@ function handleIncomingDm(data) {
     injectInlineNotif('dm', {
       type: 'inline-dm',
       user: data.from_display_name,
+      userId: data.from_user_id,
       text: data.content,
       color: data.from_color || '#fff',
       time,
@@ -690,24 +691,18 @@ function renderWhispersTab() {
     // Paint the name with the user's 7TV cosmetic when known (Twitch only —
     // heatsync ids aren't 7TV-keyed); falls back to their plain color.
     function userLink(name, color, username, uid) {
-      const safe = escapeHtml(name)
       const lower = username.toLowerCase()
-      const safeUser = escapeHtml(lower)
       const href =
         m.platform === 'heatsync'
           ? `https://heatsync.org/user/${encodeURIComponent(username)}`
           : `https://heatsync.org/twitch/${encodeURIComponent(username)}`
-      // 7TV paint (side-effect: queues the cosmetics + HS-paint lookup so a
-      // later reopen paints even when nothing was cached this render).
-      const paint = m.platform === 'heatsync' ? '' : userPaintStyle(uid, lower, 'twitch')
-      // HeatSync paint (own-platform cosmetic) wins over 7TV — same precedence
-      // rule as the live sender row (see hsPaintRender in paints.js).
-      const hsPaint = m.platform === 'heatsync' || !uid ? null : hsPaintRender(uid, name)
-      const cls = `hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
-      const style = hsPaint ? hsNameColourDecl(color) : paint || `color:${color};font-weight:600`
-      const inner = hsPaint ? hsPaint.html : safe
-      const splitAttr = hsPaint ? hsPaint.splitAttr : ''
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${safeUser}"${splitAttr} style="${style}">${inner}</a>`
+      // HeatSync paint (twitch whispers and native heatsync DMs alike) wins
+      // over 7TV (twitch ids only), then the flat colour — one decision for
+      // every surface (name-style.js); it also queues the lookups so a later
+      // reopen paints even when nothing was cached this render.
+      const p = hsNameParts({ name, userId: uid, platform: m.platform, colour: color, login: lower })
+      const cls = `hs-mc-user hs-dm-name${p.cls ? ` ${p.cls}` : ''}`
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${p.attrs} style="${p.style}">${p.inner}</a>`
     }
 
     // Self side is a plain "you" token (matches the inline-dm row) — in a mixed

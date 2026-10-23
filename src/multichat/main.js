@@ -5370,7 +5370,13 @@
       }
       const userSpan = document.createElement('span')
       userSpan.className = 'hs-mc-search-user'
-      userSpan.textContent = user
+      hsNameApply(userSpan, {
+        name: user,
+        userId: r.user_id,
+        platform: r.platform,
+        colour: r.user_color,
+        login: String(r.username || '').toLowerCase(),
+      })
       meta.appendChild(userSpan)
 
       const body = document.createElement('div')
@@ -7411,13 +7417,20 @@
         }
       }
       // Build structured HTML: [username] ◆ action game
-      if (!userColor) userColor = '#fff'
-      const colorStyle = `color:${sanitizeColor(userColor)}`
+      // No colour found above → the shared name-style fallback (chat-heard colour
+      // or the palette), plus the heatsync/7TV paint when chat knows the twitch id.
+      const evt = hsNameParts({
+        name: ch,
+        platform: isYtEvent ? 'youtube' : 'twitch',
+        colour: userColor,
+        login: isYtEvent ? '' : chLc,
+      })
+      const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
       // YT has no reliable channel URL from a display name alone — render plain
       // text instead of a (likely wrong) twitch.tv link.
       const userLink = isYtEvent
-        ? `<span class="hs-mc-user hs-evt-user" data-username="${escapeHtml(ch)}" style="${colorStyle}">${escapeHtml(ch)}</span>`
-        : `<a href="https://twitch.tv/${encodeURIComponent(ch)}" target="_blank" rel="noopener noreferrer" class="hs-mc-user hs-evt-user" data-username="${escapeHtml(ch)}" style="${colorStyle}">${escapeHtml(ch)}</a>`
+        ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</span>`
+        : `<a href="https://twitch.tv/${encodeURIComponent(ch)}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</a>`
       const textAfterChannel = escapeHtml(m.text).replace(/^\[[^\]]+\]\s*/, '')
       const actionHtml = textAfterChannel.replace(
         /(switched to |now playing |went live \u2014 )(.+)$/,
@@ -7553,12 +7566,20 @@
         m.platform === 'twitch'
           ? '<span style="color:var(--hs-plat-twitch);font-size:13px;font-weight:700;margin-right:3px">[T]</span>'
           : '<span style="color:#fff;font-size:13px;font-weight:700;margin-right:3px">[HS]</span>'
-      const dmPaint = m.platform === 'twitch' ? userPaintStyle(m.userId, (m.user || '').toLowerCase(), 'twitch') : ''
+      // Heatsync paint (twitch whispers AND native heatsync DMs), then 7TV on
+      // twitch ids, then the flat colour the row carries.
+      const dm = hsNameParts({
+        name: m.user || '',
+        userId: m.userId,
+        platform: m.platform,
+        colour: m.color,
+        login: String(m.user || '').toLowerCase(),
+      })
       // Always render the pair "who → who" (sender → recipient). m.user is the
       // OTHER party in both directions (recipient on outgoing, sender on
       // incoming), so the arrow flows away from you on sends, toward you on
       // receives — the same mental model as a chat client's whisper split.
-      const otherName = `<span style="${dmPaint || `color:${sanitizeColor(m.color)};font-weight:600`}">${escapeHtml(m.user)}</span>`
+      const otherName = `<span class="hs-dm-name${dm.cls ? ` ${dm.cls}` : ''}"${dm.attrs} style="${dm.style}">${dm.inner}</span>`
       const youTok = '<span class="hs-whisper-you">you</span>'
       const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
       const dirPair = m.outgoing ? `${youTok}${arrow}${otherName}` : `${otherName}${arrow}${youTok}`

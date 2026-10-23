@@ -6290,13 +6290,13 @@ function showMentionDropdown(matches, selectedIndex) {
 
     const nameSpan = document.createElement('span')
     nameSpan.className = 'hs-mc-emoji-name'
-    nameSpan.textContent = entry.name
-    // Sync-cache color only — zero per-row network fetch in the dropdown;
-    // the async color fetch (if still unknown) happens on actual insert via
-    // the same path bare-mention chips already use.
+    // Cached colour paints now; a cold entry resolves in the background
+    // (deduped, persisted — hsResolveUserColor) and repaints this very row,
+    // with the heatsync/7TV paint once the profile gives the id. The dropdown
+    // holds at most MENTION_DROPDOWN_MAX rows, so a cold one costs a few
+    // lookups once, not per keystroke.
     const lower = entry.name.replace(/^@/, '').toLowerCase()
-    const cached = (typeof knownColors !== 'undefined' && knownColors.get(lower)) || _hsUserColorCache.get(lower)
-    if (cached) nameSpan.style.color = typeof sanitizeColor === 'function' ? sanitizeColor(cached) : cached
+    hsNameApply(nameSpan, { name: entry.name, login: lower, resolve: true })
     row.appendChild(nameSpan)
 
     row.addEventListener('mousedown', (e) => {

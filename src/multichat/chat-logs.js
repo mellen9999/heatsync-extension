@@ -507,45 +507,17 @@ function renderChatLogRow(r) {
 
   const name = document.createElement('span')
   name.className = 'hs-cl-user'
-  name.textContent = r.display_name || r.username || '?'
-  // Color + paint cosmetics — match the live chat renderer so the viewer's
-  // username display is consistent with what the user sees in chat. Walk:
-  // 1) knownColors map (live chat color, captured from IRC tags / Helix users)
-  // 2) twitch user id from knownUserIds map for the paint lookup
-  // 3) getMcPaintStyle returns a complete CSS style string (background-clip
-  //    gradient for paints, plain color: rgba(…) for solid-color paints)
-  // If neither is available, fall back to plain white (default).
-  try {
-    const ulow = (r.username || '').toLowerCase()
-    let color = null
-    if (typeof knownColors !== 'undefined' && knownColors instanceof Map) {
-      color = knownColors.get(ulow) || null
-    }
-    let paintApplied = false
-    if (typeof knownUserIds !== 'undefined' && knownUserIds instanceof Map && typeof getMcPaintStyle === 'function') {
-      // Platform-scoped key — a twitch and kick chatter sharing this username
-      // must never trade 7TV paints in the archive view either.
-      const uidKey = typeof userKey === 'function' ? userKey(ulow, r.platform) : ulow
-      const uid = knownUserIds.get(uidKey)
-      if (uid) {
-        // HeatSync paint (own-platform cosmetic) wins over 7TV — same precedence
-        // as the live sender row. Twitch-keyed only (see paints.js ID-SPACE note):
-        // a kick/yt uid must never index the twitch-space HS paint cache.
-        const isTwitch = !r.platform || r.platform === 'twitch'
-        if (isTwitch && typeof hasResolvedHsPaint === 'function' && hasResolvedHsPaint(String(uid))) {
-          applyHsPaintToElement(name, String(uid))
-          paintApplied = true
-        } else {
-          const paintCss = getMcPaintStyle(String(uid))
-          if (paintCss) {
-            name.style.cssText = paintCss
-            paintApplied = true
-          }
-        }
-      }
-    }
-    if (!paintApplied && color) name.style.color = color
-  } catch {}
+  // The archive row names the chatter (user_id + platform when the server sent
+  // them, else the twitch id chat already resolved for that name), so the name
+  // wears the same colour + heatsync paint + 7TV paint as in live chat. The
+  // row's own colour wins; ids it lacks are queued and repaint on arrival.
+  hsNameApply(name, {
+    name: r.display_name || r.username || '?',
+    userId: r.user_id,
+    platform: r.platform,
+    colour: r.color || r.user_color,
+    login: String(r.username || '').toLowerCase(),
+  })
   row.appendChild(name)
 
   const body = document.createElement('span')

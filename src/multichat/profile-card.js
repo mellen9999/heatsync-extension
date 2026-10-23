@@ -915,6 +915,8 @@ function renderProfileCardView() {
   if (!floating) pcMountDestRow(hsCardNavItems(model, { variant: 'panel' }))
 
   msgsEl.appendChild(card)
+  // the card only stamps who the name is; this paints it (colour + paints)
+  hsNameCardsIn(card)
 
   // Move focus in once, the first time real content exists (see the
   // role="dialog" comment above — never on a later re-render).

@@ -137,6 +137,28 @@ function pinNodeEnsure() {
   return n
 }
 
+// The pin payload names the author by login only, and a paint needs the id. Use
+// the twitch id chat already resolved for that name, else the profile lookup
+// (the same one @mentions use); when it lands, redraw the bar once — unless
+// the viewer is mid-confirm or has it expanded.
+const pinUidTried = new Set()
+function pinTwitchUid(login, pinId) {
+  if (!login) return ''
+  if (typeof hsNameKnownTwitchUid !== 'function' || typeof _hsUserIdCache === 'undefined') return ''
+  const known = hsNameKnownTwitchUid(login, 'twitch') || _hsUserIdCache.get(login)
+  if (known) return known
+  if (pinUidTried.has(login) || typeof hsResolveUserColor !== 'function') return ''
+  pinUidTried.add(login)
+  hsResolveUserColor(login)
+    .then(() => {
+      const n = pinState.node
+      const idle = n && !n.dataset.confirm && !n.classList.contains('open')
+      if (idle && pinState.cur?.pin?.id === pinId && _hsUserIdCache.get(login)) pinRender()
+    })
+    .catch(() => {})
+  return ''
+}
+
 // the pin line through the live row renderer: paints, badges, emotes like any row
 function pinRowFor(pin, room) {
   const [platform, channel] = room.split('/')
@@ -146,10 +168,12 @@ function pinRowFor(pin, room) {
         .map((b) => `${b.name}/${b.version ?? '1'}`)
         .join(',')
     : ''
+  const login = String(pin.username || '').toLowerCase()
   const m = {
     id: `pin-${pin.id}`,
     user: pin.display_name || pin.username,
-    login: String(pin.username || '').toLowerCase(),
+    userId: platform === 'twitch' ? pinTwitchUid(login, pin.id) : '',
+    login,
     text: String(pin.content || ''),
     color: pin.color ? sanitizeColor(pin.color) : '#fff',
     badges,

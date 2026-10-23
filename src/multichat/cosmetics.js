@@ -554,6 +554,7 @@ function retryOrHideBadgeImg(img) {
 // flushKickNameLookups) and any inline @mention/reply-context anchors
 // (_mentionIndex) for this uid.
 function updateHsPaintsInPlace(userIds) {
+  hsNameSweep(userIds)
   const container = document.getElementById('hs-mc-messages')
   if (!container) return
   for (const uid of userIds) {
@@ -601,6 +602,7 @@ function updateHsPaintsInPlace(userIds) {
 // uses. NEVER twitch (its rows use data-uid and its colour is the prime perk).
 // A resolved HS paint owns the fill, so skip painted names.
 function updateHsColorsInPlace(userIds) {
+  hsNameSweep(userIds)
   const container = document.getElementById('hs-mc-messages')
   if (!container) return
   for (const uid of userIds) {
@@ -688,6 +690,7 @@ function applyHsPlusTenureToVisible(userIds) {
 // the full message container — at 25-user batches × 500 children that was
 // 50 full DOM scans per cosmetic flush.
 function updateCosmeticsInPlace(userIds) {
+  hsNameSweep(userIds)
   const container = document.getElementById('hs-mc-messages')
   if (!container) return
   for (const uid of userIds) {

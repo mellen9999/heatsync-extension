@@ -769,6 +769,15 @@ function resolvePendingFeedEmbeds(root) {
           if (data.type === 'chatlog') {
             const body = ph.querySelector('.hs-log-embed-body')
             if (body) appendChatLogBody(body, data)
+            const who = ph.querySelector('.hs-log-embed-user')
+            if (who)
+              hsNameApply(who, {
+                name: data.display_name || data.username || '',
+                userId: data.user_id,
+                platform: data.platform,
+                colour: data.color || data.user_color,
+                login: String(data.username || '').toLowerCase(),
+              })
           }
         } else _swapPlaceholder(ph, _buildFeedResolveFailedHtml(ph), 'hs-feed-embed-resolve-failed')
       } else {

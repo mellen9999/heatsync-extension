@@ -351,6 +351,9 @@
       color: #ffffff;
       font-weight: 700;
     }
+    .hs-dm-name {
+      font-weight: 600;
+    }
     .hs-whisper-pending {
      }
     .hs-whisper-pending .hs-whisper-status {

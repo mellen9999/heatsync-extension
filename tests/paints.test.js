@@ -687,7 +687,7 @@ describe('--hs-name-c — a painted name keeps the colour it would have worn, fo
   test('every overlay surface that writes a paint stamp writes the colour beside it', () => {
     const dir = join(import.meta.dir, '../src/multichat')
     let stamps = 0
-    for (const f of ['main.js', 'whispers.js', 'tooltips.js']) {
+    for (const f of ['main.js', 'whispers.js', 'tooltips.js', 'name-style.js']) {
       const src = readFileSync(join(dir, f), 'utf8')
       for (const m of src.matchAll(/--hsp-t:\$\{paintPhaseNow\(\)\};(\$\{hsNameColourDecl\()?/g)) {
         stamps++
@@ -695,8 +695,9 @@ describe('--hs-name-c — a painted name keeps the colour it would have worn, fo
       }
     }
     expect(stamps).toBeGreaterThanOrEqual(4) // author, feed quote, reply bar, mention
-    // whispers and the card peek carry no stamp (the compiled phase default applies) but still the colour
-    expect(readFileSync(join(dir, 'whispers.js'), 'utf8')).toContain('hsNameColourDecl(color)')
+    // whispers go through the shared name-style helper (its stamp is counted above);
+    // the card peek fallback carries no stamp (the compiled phase default applies) but still the colour
+    expect(readFileSync(join(dir, 'whispers.js'), 'utf8')).toContain('hsNameParts(')
     expect(readFileSync(join(dir, 'tooltips.js'), 'utf8')).toContain('hsNameColourDecl(safeColor)')
   })
 })

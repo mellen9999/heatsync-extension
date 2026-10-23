@@ -2064,21 +2064,14 @@ function renderFeedAppend(startIndex) {
 function feedAuthorLink(m) {
   const name = m.username || 'anon'
   const lower = name.toLowerCase()
-  const colour = sanitizeColor(m.user_color || '#fff')
-  const uid =
-    m.platform === 'twitch' && typeof knownUserIds !== 'undefined' && typeof userKey === 'function'
-      ? knownUserIds.get(userKey(lower, 'twitch')) || ''
-      : ''
-  const hsPaint = uid ? hsPaintRender(uid, name) : null
-  if (uid && !hsPaint && !mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
-  const paintStyle = hsPaint || !uid ? '' : getMcPaintStyle(uid)
-  const cls = `hs-feed-user hs-mc-user${hsPaint ? ` ${hsPaint.cls}` : ''}`
-  const style = hsPaint
-    ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(colour)}`
-    : `color:${colour}${paintStyle ? `;${paintStyle}` : ''}`
-  const uidAttr = uid ? ` data-uid="${escapeHtml(uid)}"` : ''
-  const splitAttr = hsPaint ? hsPaint.splitAttr : ''
-  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${splitAttr} style="${style}">${hsPaint ? hsPaint.html : escapeHtml(name)}</a>`
+  // user_id + platform from the post itself name the paint id; user_color is
+  // already the right colour for a feed row (null = none → the shared palette).
+  const p = hsNameParts({ name, userId: m.user_id, platform: m.platform, colour: m.user_color, login: lower })
+  const cls = `hs-feed-user hs-mc-user${p.cls ? ` ${p.cls}` : ''}`
+  // data-uid stays twitch-id-space only (ID-SPACE SAFETY, paints.js); the
+  // namespaced kick_/yt_ ids ride data-hs-nuid in p.attrs
+  const uidAttr = hsNameIsTwitchSpace(p.uid) ? ` data-uid="${escapeHtml(p.uid)}"` : ''
+  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${p.attrs} style="${p.style}">${p.inner}</a>`
 }
 
 function buildFeedMessageDiv(m, opUsername) {
@@ -2356,8 +2349,13 @@ function renderFeedContent(content, emoteRefs) {
         return part.replace(/@([\w]{1,25})\b/g, (_m, name) => {
           const lower = name.toLowerCase()
           const isSelf = hsCurrentUsername === lower
-          const cls = isSelf ? 'hs-mention self' : 'hs-mention'
-          return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}">@${escapeHtml(name)}</a>`
+          const href = `https://heatsync.org/user/${encodeURIComponent(name)}`
+          // your own mention keeps its inverted plate; everyone else's name
+          // wears the colour + paints they wear everywhere (looked up by name).
+          if (isSelf)
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mention self" data-username="${escapeHtml(lower)}">@${escapeHtml(name)}</a>`
+          const p = hsNameParts({ name: `@${name}`, login: lower, resolve: true })
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mention${p.cls ? ` ${p.cls}` : ''}" data-username="${escapeHtml(lower)}"${p.attrs} style="${p.style}">${p.inner}</a>`
         })
       })
       .join('')
@@ -3073,8 +3071,15 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
 
   const nameEl = document.createElement('span')
   nameEl.className = 'hs-discover-profile-name'
-  nameEl.style.color = sanitizeColor(profile.userColor || profile.user_color || '#fff')
-  nameEl.textContent = profile.displayName || profile.display_name || username
+  // users.id from the profile row is already in the paint id space (kick_/yt_
+  // prefixed for those platforms); hsNameUid keeps a namespaced id as is.
+  hsNameApply(nameEl, {
+    name: profile.displayName || profile.display_name || username,
+    userId: profile.id ?? profile.user_id,
+    platform: profile.platform,
+    colour: profile.userColor || profile.user_color,
+    login: String(username || '').toLowerCase(),
+  })
   row.appendChild(nameEl)
 
   const plats = document.createElement('span')
@@ -3262,8 +3267,13 @@ function renderDiscoverPostRow(m) {
 
   const user = document.createElement('span')
   user.className = 'hs-discover-post-user'
-  user.style.color = sanitizeColor(m.user_color || '#fff')
-  user.textContent = m.username
+  hsNameApply(user, {
+    name: m.username || '',
+    userId: m.user_id,
+    platform: m.platform,
+    colour: m.user_color,
+    login: String(m.username || '').toLowerCase(),
+  })
   meta.appendChild(user)
 
   const spacer = document.createElement('span')
@@ -3636,7 +3646,14 @@ function renderPinnedTab() {
     if (user) {
       const userSpan = document.createElement('span')
       userSpan.className = 'hs-pinned-user'
-      userSpan.textContent = user
+      const rawUser = String(m.user || m.username || m.display_name || '')
+      hsNameApply(userSpan, {
+        name: rawUser,
+        userId: m.user_id,
+        platform: m.platform,
+        colour: m.user_color,
+        login: String(m.username || m.user || '').toLowerCase(),
+      })
       meta.appendChild(userSpan)
     }
     if (timeStr) {

@@ -1490,6 +1490,8 @@ async function showUserTooltip(targetEl, username, color, platform) {
       pronouns,
       sheetRows: [subRow, ...followageRows].filter(Boolean),
     })
+    // the card only stamps who the name is; this paints it (colour + paints)
+    hsNameCardsIn(tooltip)
     positionTooltipAtElement(hsExtTooltipPositionTarget(tooltip), targetEl)
     applyTooltipBanner(tooltip, profile, platform, username, gen)
   }

@@ -9383,6 +9383,8 @@
   const _rmExistingByKey = new Map()
   const _rmInsertedKeys = new Set()
   function zebraOfInsert(m, prevDiv) {
+    // the video player sits in the list but is not a row — stripe off the row before it
+    while (prevDiv?.id === 'hs-mc-embed-player') prevDiv = prevDiv.previousElementSibling
     if (!zebraEnabled || !prevDiv) return false
     if (
       m.type === 'stream-event' ||

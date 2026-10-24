@@ -59,3 +59,8 @@ test('thread id click: the >>id quote always lands at the end of the input', () 
   expect(h).toMatch(/range\.collapse\(false\)[\s\S]*insertText/)
   expect(h).toMatch(/input\.value \+= quote/)
 })
+
+test("blocked card-line emote: the pinned size out-ranks the card's width:auto !important", () => {
+  const css = readFileSync(new URL('../src/multichat/styles/18-chat-log.css', import.meta.url), 'utf8')
+  expect(css).toMatch(/img\.hs-state-blocked:is\(\.emote[^{]*\{\s*width: var\(--hs-lock-w, 24px\) !important/)
+})

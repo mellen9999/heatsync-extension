@@ -81,6 +81,11 @@
     .hs-card-log-body img.hs-state-blocked {
       content: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"); width: var(--hs-lock-w, 18px); height: var(--hs-lock-h, 18px); outline: 2px dashed var(--hs-border); outline-offset: -2px; cursor: pointer;
     }
+    /* card lines size emotes with !important (20-card.css); the pinned size has to out-rank it
+       or the dashed box collapses to a square */
+    .hs-card-log-body img.hs-state-blocked:is(.emote, .hs-mc-emote, .hs-archive-emote) {
+      width: var(--hs-lock-w, 24px) !important; height: var(--hs-lock-h, 24px) !important;
+    }
     .hs-cl-emote.hs-state-blocked.hs-emote-highlight,
     .hs-card-log-body img.hs-state-blocked.hs-emote-highlight {
       background: var(--hs-danger); outline: none;

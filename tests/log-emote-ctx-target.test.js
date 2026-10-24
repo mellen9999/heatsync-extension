@@ -41,3 +41,7 @@ test('zebra: zebraOfInsert walks past the embed player to the real previous row'
   const fn = main.slice(main.indexOf('function zebraOfInsert'), main.indexOf('// ─── Multistream auto-detect'))
   expect(fn).toMatch(/while \(prevDiv\?\.id === 'hs-mc-embed-player'\) prevDiv = prevDiv\.previousElementSibling/)
 })
+
+test('tab-complete: empty cycle still shows searching / no match', () => {
+  expect(src).toMatch(/acState\.remotePending \? 'searching 7tv…' : 'no match'/)
+})

@@ -6066,7 +6066,12 @@ function showCycleTooltip() {
   }
   const m = acState.matches[acState.index]
   if (!m) {
-    tt.style.display = 'none'
+    // nothing to cycle yet: say so while the catalog search runs / after it comes back empty,
+    // otherwise a slow 7tv looks like a dead Tab
+    if (acState.active && (acState.remotePending || acState.remoteDone)) {
+      tt.textContent = acState.remotePending ? 'searching 7tv…' : 'no match'
+      tt.style.display = 'block'
+    } else tt.style.display = 'none'
     return
   }
   const meta = emoteCycleMeta(m)

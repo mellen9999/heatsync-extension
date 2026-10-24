@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '935a26bc2f8f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8c13acb1437c' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78480,6 +78480,15 @@ const STORAGE_KEY = 'heatsync_multichat'
   // log what was blocking it (hs_diag_ring, so a report carries the cause) and
   // repaint. Intentional pauses (scrolled up, a card/panel/editor open, tab
   // hidden) are recorded but never fought.
+  // Diagnosis switch: localStorage hs_noheal=1 keeps every watchdog logging but
+  // stops them repairing, so a break can be watched instead of masked.
+  const _noHeal = () => {
+    try {
+      return localStorage.getItem('hs_noheal') === '1'
+    } catch (_) {
+      return false
+    }
+  }
   let _stallLoggedAt = 0
   let _desyncLoggedAt = 0
   // The key index must mirror the rows on screen. One stray key (a row dropped
@@ -78511,6 +78520,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         })
       } catch (_) {}
     }
+    if (_noHeal()) return
     _msgKeyIndex.clear()
     for (const k of dom) _msgKeyIndex.add(k)
     scheduleRenderMessages()
@@ -78544,7 +78554,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         })
       } catch (_) {}
     }
-    if (!blockers.editing && !blockers.panel && !blockers.card && !blockers.scrolledUp) scheduleRenderMessages()
+    if (!blockers.editing && !blockers.panel && !blockers.card && !blockers.scrolledUp && !_noHeal())
+      scheduleRenderMessages()
   }
 
   // Same idea one step upstream: a busy channel (5 deliveries inside 20s) that
@@ -78623,6 +78634,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           })
         }
         _unpinnedStreak = 0
+        if (_noHeal()) return
         _scrollPinRaf = null
         isProgrammaticScroll = false
         scrollMsgsToBottom(msgsEl)
@@ -78651,6 +78663,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         })
       } catch (_) {}
     }
+    if (_noHeal()) return
     try {
       _dropAllTabCaches()
       msgsEl.textContent = ''
@@ -78698,6 +78711,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           })
           .catch(() => {})
       } catch (_) {}
+      if (_noHeal()) return
       irc._reassertInterest?.()
       irc._refreshFromBg?.(ch)
     }

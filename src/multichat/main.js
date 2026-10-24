@@ -9787,6 +9787,58 @@
   // (service-worker restart, interest lost, a throttled window). Re-register
   // interest and pull the BG's ring, which holds what the push dropped, and say
   // so in the diag ring. Pulling is idempotent: the sorted merge dedupes by id.
+  // Rows churning (added + removed) while the newest row never changes is the
+  // frozen-but-flashing signature: the renderer is busy, nothing new lands.
+  // Record it with the buffer's view, then rebuild the pane from scratch.
+  let _thrashObs = null
+  let _thrashEl = null
+  let _thrashCount = 0
+  let _thrashTail = null
+  let _thrashStreak = 0
+  let _thrashLoggedAt = 0
+  function domThrashCheck() {
+    const msgsEl = document.getElementById('hs-mc-messages')
+    if (!msgsEl || document.hidden) return
+    if (_thrashEl !== msgsEl) {
+      _thrashObs?.disconnect()
+      _thrashEl = msgsEl
+      _thrashObs = new MutationObserver((ms) => {
+        for (const m of ms) _thrashCount += m.addedNodes.length + m.removedNodes.length
+      })
+      _thrashObs.observe(msgsEl, { childList: true })
+      return
+    }
+    const tail = msgsEl.lastElementChild?.dataset?.msgKey || ''
+    const churn = _thrashCount
+    _thrashCount = 0
+    if (churn >= 4 && tail && tail === _thrashTail) _thrashStreak++
+    else _thrashStreak = 0
+    _thrashTail = tail
+    if (_thrashStreak < 3) return
+    _thrashStreak = 0
+    const nb = _tabNewestBuffered(currentTab)
+    const now = Date.now()
+    if (now - _thrashLoggedAt > 20000) {
+      _thrashLoggedAt = now
+      try {
+        window.__hsDiag?.('dom_thrash', {
+          tab: String(currentTab).slice(0, 24),
+          churn,
+          domN: msgsEl.children.length,
+          bufAgeS: nb ? Math.round((now - (nb.time || 0)) / 1000) : -1,
+          bufInDom: nb ? _msgKeyIndex.has(msgKeyOf(nb)) : null,
+          up: !!isScrolledUp,
+        })
+      } catch (_) {}
+    }
+    try {
+      _dropAllTabCaches()
+      msgsEl.textContent = ''
+      _clearMessageIndices()
+      scheduleRenderMessages()
+    } catch (_) {}
+  }
+
   let _gapLoggedAt = 0
   function ingestGapCheck() {
     if (!irc) return
@@ -12912,6 +12964,7 @@
     mcInitialized = true
     cleanup.setInterval(renderStallCheck, 2500)
     cleanup.setInterval(ingestGapCheck, 3000)
+    cleanup.setInterval(domThrashCheck, 2000)
 
     // Inject CSS before ANYTHING that awaits. injectStyles has zero settings
     // deps, and a <style> tag is inert until our DOM mounts — but the health

@@ -112,3 +112,10 @@ test('stall check heals the key index from the DOM and logs index_desync', () =>
   expect(main).toMatch(/_reconcileMsgKeyIndex\(msgsEl\)/)
   expect(main).toMatch(/'index_desync'/)
 })
+
+test('thrash detector logs dom_thrash and rebuilds the pane', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/function domThrashCheck\(/)
+  expect(main).toMatch(/cleanup\.setInterval\(domThrashCheck, 2000\)/)
+  expect(main).toMatch(/'dom_thrash'/)
+})

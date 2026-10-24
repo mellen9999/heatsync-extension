@@ -13954,7 +13954,9 @@ function renderRecent(recent, esc) {
     let body = unlink(r.messageHtml) || esc(r.message)
     // partial links ("watch?v=…") read as links here too — defused again below so
     // the row stays inert, but they carry the link class/colour
+    // @ts-ignore — extension-only globals, probed with typeof
     if (typeof linkifyPartialLinks === 'function' && (typeof partialLinksEnabled === 'undefined' || partialLinksEnabled)) {
+      // @ts-ignore
       body = unlink(linkifyPartialLinks(body))
     }
     return `<div class="hs-card-log-row">${tsEl}${ch}<span class="hs-card-log-body">${body}</span></div>`
@@ -14914,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '357b9dc60458' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c676d9bb348d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

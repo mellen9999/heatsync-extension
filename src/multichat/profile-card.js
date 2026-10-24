@@ -1198,6 +1198,8 @@ async function pcApplyBanner(card, chain) {
       if (!(probe.naturalWidth > 0 && probe.naturalHeight > 0)) return
       heroImg.style.backgroundImage = `url("${safe.replace(/\\/g, '%5C').replace(/"/g, '%22')}")`
       hero.classList.add('hs-card-hero-loaded')
+      // plain class on the parent: a :has(> .hs-card-hero-loaded) rule restyled the whole page on every DOM insertion
+      hero.parentElement?.classList.add('hs-card-has-hero')
     }
     probe.referrerPolicy = 'no-referrer'
     probe.src = safe

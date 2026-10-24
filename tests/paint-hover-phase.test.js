@@ -37,8 +37,12 @@ class El {
     this.parent = parent
     this.dataset = { username: name }
     this.textContent = name
+    this.rect = { top: 10, bottom: 30 }
     const set = new Set(['hsp-x'])
     this.classList = { add: (c) => set.add(c), remove: (c) => set.delete(c), has: (c) => set.has(c) }
+  }
+  getBoundingClientRect() {
+    return this.rect
   }
   closest() {
     let n = this
@@ -59,6 +63,7 @@ function install(names) {
   }
   const factory = new Function(
     'document',
+    'window',
     'Element',
     'requestAnimationFrame',
     'anchorWhenStarted',
@@ -70,12 +75,26 @@ function install(names) {
   )
   factory(
     document,
+    { innerHeight: 800 },
     El,
     (cb) => frames.push(cb),
     (els) => anchored.push(els),
   )
   return { listeners, frames, anchored }
 }
+
+describe('hover only freezes copies on screen', () => {
+  test('a copy scrolled out of view is left running', () => {
+    const a = new El('ennortix'),
+      seen = new El('ennortix'),
+      gone = new El('ennortix')
+    gone.rect = { top: 2000, bottom: 2020 }
+    const { listeners } = install([a, seen, gone])
+    listeners.mouseover({ target: a })
+    expect(seen.classList.has('hsp-hover')).toBe(true)
+    expect(gone.classList.has('hsp-hover')).toBe(false)
+  })
+})
 
 describe('hover release re-anchors', () => {
   test('the hovered name and every synced copy, a frame after the freeze drops', () => {

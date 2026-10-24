@@ -218,7 +218,7 @@
   gap: 4px;
   position: relative;
 }
-.hs-card-top:has(> .hs-card-hero-loaded) {
+.hs-card-top.hs-card-has-hero {
   /* full-bleed: out to the card edge over the body's own padding */
   margin: -8px -10px 0;
   padding: 8px 10px 4px;
@@ -229,11 +229,11 @@
   height: auto;
   z-index: 0;
 }
-.hs-card-top:has(> .hs-card-hero-loaded) > :not(.hs-card-hero) {
+.hs-card-top.hs-card-has-hero > :not(.hs-card-hero) {
   position: relative;
   z-index: 1;
 }
-.hs-card-top:has(> .hs-card-hero-loaded) :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-badges, .hs-card-bio) {
+.hs-card-top.hs-card-has-hero :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-badges, .hs-card-bio) {
   background: #000000;
 }
 

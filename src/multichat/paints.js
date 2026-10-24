@@ -400,12 +400,21 @@ function installHsPaintHoverSync() {
       const key = _hsPaintHoverKey(t)
       if (!key) return
       const hit = []
+      // Only copies on screen: freezing one costs a style recalc (about 1.5ms a
+      // copy, measured), and a chatter with a hundred rows in history paid 200ms
+      // per hover for names nobody could see. Copies scrolled into view later
+      // were never frozen, so they are already on the shared clock.
+      const vh = window.innerHeight
+      const copies = []
       for (const el of document.querySelectorAll('[class*="hsp-"]')) {
-        if (el !== t && _hsPaintHoverKey(el) === key) {
-          el.classList.add('hsp-hover')
-          hit.push(el)
-        }
+        if (el !== t && _hsPaintHoverKey(el) === key) copies.push(el)
       }
+      const rects = copies.map((el) => el.getBoundingClientRect())
+      copies.forEach((el, i) => {
+        if (rects[i].bottom < 0 || rects[i].top > vh) return
+        el.classList.add('hsp-hover')
+        hit.push(el)
+      })
       if (hit.length) _hsPaintHoverEls = hit
     },
     { passive: true },

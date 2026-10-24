@@ -14909,7 +14909,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '735a3d804101' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1e0fc56e7db0' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -44184,6 +44184,25 @@ function initInput() {
         state: img?.dataset.state || (pickerWrap.classList.contains('blocked') ? 'blocked' : 'global'),
         emoteUrl: img?.src || '',
         source: img?.dataset.source || 'unknown',
+      }
+    }
+    // Logs surfaces (card recent lines, chat-logs panel, archive html) draw bare
+    // <img>s whose src is heatsync's own /e/<source>/ mirror — no wrapper, no
+    // 7tv.app host — so the src sniff below never saw them.
+    if (
+      target.tagName === 'IMG' &&
+      (target.classList.contains('hs-cl-emote') ||
+        target.classList.contains('hs-archive-emote') ||
+        (target.classList.contains('emote') && target.closest('.hs-card-log-body')))
+    ) {
+      const name = target.alt || 'emote'
+      const source = target.src?.match(/\/e\/(7tv|bttv|ffz|hs|twitch|kick)\//)?.[1] || 'unknown'
+      return {
+        wrapper: null,
+        emoteName: name,
+        state: blockedEmoteNames.has(name) ? 'blocked' : getEmoteState(name, source),
+        emoteUrl: target.src || '',
+        source,
       }
     }
     // Fallback: direct IMG (Twitch/7TV/BTTV native emotes, picker emotes,

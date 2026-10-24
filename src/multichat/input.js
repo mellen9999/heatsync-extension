@@ -1760,6 +1760,25 @@ function initInput() {
         source: img?.dataset.source || 'unknown',
       }
     }
+    // Logs surfaces (card recent lines, chat-logs panel, archive html) draw bare
+    // <img>s whose src is heatsync's own /e/<source>/ mirror — no wrapper, no
+    // 7tv.app host — so the src sniff below never saw them.
+    if (
+      target.tagName === 'IMG' &&
+      (target.classList.contains('hs-cl-emote') ||
+        target.classList.contains('hs-archive-emote') ||
+        (target.classList.contains('emote') && target.closest('.hs-card-log-body')))
+    ) {
+      const name = target.alt || 'emote'
+      const source = target.src?.match(/\/e\/(7tv|bttv|ffz|hs|twitch|kick)\//)?.[1] || 'unknown'
+      return {
+        wrapper: null,
+        emoteName: name,
+        state: blockedEmoteNames.has(name) ? 'blocked' : getEmoteState(name, source),
+        emoteUrl: target.src || '',
+        source,
+      }
+    }
     // Fallback: direct IMG (Twitch/7TV/BTTV native emotes, picker emotes,
     // and multichat WYSIWYG input chips — class match catches blocked input
     // emotes whose src has been swapped to a transparent placeholder).

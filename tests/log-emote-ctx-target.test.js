@@ -91,3 +91,10 @@ test('live tabs reserve room for the live dot so the unread count never sits und
   const css = readFileSync(new URL('../src/multichat/styles/02-tab-bar.css', import.meta.url), 'utf8')
   expect(css).toMatch(/\.hs-mc-tab\[data-live="true"\] \{\s*padding-right: 16px !important/)
 })
+
+test('a row inserted mid-list restripes everything after it', () => {
+  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  expect(src).toMatch(/function zebraRepaint\(msgsEl, from\)/)
+  expect(src).toMatch(/if \(cur\) zebraFrom = zebraFrom \|\| div/)
+  expect(src).toMatch(/if \(zebraFrom\) zebraRepaint\(msgsEl, zebraFrom\)/)
+})

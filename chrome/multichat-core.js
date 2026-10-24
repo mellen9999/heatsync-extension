@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8c13acb1437c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8e0a9ded1812' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77656,6 +77656,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Returns true if handled, false if full rebuild needed
   // Check if a tab has multiple platform sources active (needs fair merge)
   let _multiPlatformRenderTimer = null
+  let _multiPlatformRenderAt = 0
   function isMultiPlatformTab(tabId) {
     if (tabId === 'live') {
       const curCh = getLiveChannel()
@@ -77850,11 +77851,21 @@ const STORAGE_KEY = 'heatsync_multichat'
     // and lets the fastest source push others out). Debounce to renderMessages
     // which has fair per-platform capping.
     if (isMultiPlatformTab(tabId)) {
-      if (!_multiPlatformRenderTimer) {
-        _multiPlatformRenderTimer = rafOrTimeout(() => {
+      // The pending handle is only trusted for 500ms: a window the browser
+      // calls hidden never runs its rAF, and a handle that never clears would
+      // swallow every later message here (frozen pane until a full repaint).
+      const nowMp = Date.now()
+      if (!_multiPlatformRenderTimer || nowMp - _multiPlatformRenderAt > 500) {
+        _multiPlatformRenderAt = nowMp
+        let ran = false
+        const run = () => {
+          if (ran) return
+          ran = true
           _multiPlatformRenderTimer = null
           renderMessages(currentTab)
-        })
+        }
+        _multiPlatformRenderTimer = rafOrTimeout(run)
+        cleanup.setTimeout(run, 500)
       }
       return true // tell caller we handled it
     }
@@ -77866,7 +77877,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     // the visibility flip got lost (popout/wayland occlusion) but the window
     // is focused or the BG proved it on-screen, the user IS looking — keep
     // appending instead of freezing the pane.
-    if (document.hidden && !document.hasFocus() && !_visWedged) {
+    // A popout chat window exists to be read: its visibility flag lies often
+    // enough (wayland occlusion, tiled windows) that skipping here froze the
+    // pane until a full repaint. Only a tab shares the screen with other work.
+    if (document.hidden && !document.hasFocus() && !_visWedged && !document.body.classList.contains('hs-popout')) {
       _hiddenSkippedAppend = true
       return true
     }

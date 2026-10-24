@@ -130,3 +130,10 @@ test('long animation frames are recorded with attribution', () => {
   expect(main).toMatch(/hsDiagLog\('long_frame'/)
   expect(main).toMatch(/watchLongFrames\(\)/)
 })
+
+test('multi-platform render debounce cannot be held forever by a frozen rAF', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/nowMp - _multiPlatformRenderAt > 500/)
+  expect(main).toMatch(/cleanup\.setTimeout\(run, 500\)/)
+  expect(main).toMatch(/hs-popout'\)\) \{\s*_hiddenSkippedAppend = true/)
+})

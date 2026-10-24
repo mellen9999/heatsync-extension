@@ -954,6 +954,10 @@
       border-radius: 0;
       cursor: pointer;
     }
+    .hs-mc-transport-out {
+      box-sizing: border-box;
+      text-decoration: none;
+    }
     .hs-mc-transport-toggle:hover,
     .hs-mc-transport-toggle:active {
       color: #000;

@@ -1024,6 +1024,26 @@ function _hsTransportEl(provider) {
     fill.className = 'hs-mc-transport-fill'
     bar.appendChild(fill)
   }
+  // Video: one click to the real site. An embed inside another site's page
+  // cannot see the viewer's sign-in on the video host, so a bot-check wall
+  // there never clears — this is the way out.
+  if (provider.video) {
+    const out = document.createElement('a')
+    out.className = 'hs-mc-transport-toggle hs-mc-transport-out'
+    out.textContent = '↗'
+    out.title = 'open in a new tab'
+    out.target = '_blank'
+    out.rel = 'noopener'
+    out.addEventListener('click', () => {
+      const u = safeUrl(_hsAudio?.url || '')
+      if (u) out.href = u
+    })
+    out.addEventListener('pointerdown', () => {
+      const u = safeUrl(_hsAudio?.url || '')
+      if (u) out.href = u
+    })
+    bar.appendChild(out)
+  }
   const pause = document.createElement('button')
   pause.type = 'button'
   pause.className = 'hs-mc-transport-toggle'

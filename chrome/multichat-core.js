@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '76e29fb5d22d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f9882b97b069' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -76138,7 +76138,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         div.title = `open ${ch} on twitch`
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
-          window.open(`https://twitch.tv/${encodeURIComponent(ch)}`, '_blank', 'noopener,noreferrer')
+          window.open(`https://twitch.tv/${encodeURIComponent(ch)}#hs-live`, '_blank', 'noopener,noreferrer')
         })
       }
       // Async fetch color if not cached — Twitch profile lookup only; YT color
@@ -79910,6 +79910,14 @@ const STORAGE_KEY = 'heatsync_multichat'
       // "live tab always opens quin69" bug) instead of the page's channel.
       if (stored.ui_settings?.liveChannel && document.body.classList.contains('hs-popout')) {
         liveChannel = stored.ui_settings.liveChannel
+      }
+      // Opened from an event row (#hs-live): the click meant "go to that
+      // channel", so land on its live tab, not whichever tab was last active.
+      if (location.hash === '#hs-live') {
+        _savedActiveTab = 'live'
+        try {
+          history.replaceState(null, '', location.pathname + location.search)
+        } catch (_) {}
       }
       // Popout window is locked to one channel by URL — ignore the parent
       // session's saved tab (which often points to a different channel and

@@ -9789,8 +9789,10 @@
   // so in the diag ring. Pulling is idempotent: the sorted merge dedupes by id.
   let _gapLoggedAt = 0
   function ingestGapCheck() {
-    if (!irc || currentTab !== 'live') return
-    const ch = String(getLivePlatformNames().twitch || getLiveChannel() || '').toLowerCase()
+    if (!irc) return
+    const tabCh = currentTab === 'live' ? null : getChannelById(currentTab)
+    if (currentTab !== 'live' && !tabCh) return
+    const ch = String(tabCh ? tabCh.twitch : getLivePlatformNames().twitch || getLiveChannel() || '').toLowerCase()
     const ts = ch ? irc._lastLiveAt?.get(ch) : null
     if (!Array.isArray(ts) || ts.length < 5) return
     const now = Date.now()
@@ -9805,7 +9807,24 @@
           rt: !!chrome.runtime?.id,
           hid: document.hidden,
           foc: document.hasFocus(),
+          tab: String(currentTab).slice(0, 24),
         })
+      } catch (_) {}
+      // does the BG hold newer lines than this tab's ring? yes = delivery
+      // died, no = nothing is arriving upstream either
+      try {
+        browser.runtime
+          .sendMessage({ type: 'bg_irc_history', channel: ch })
+          .then((resp) => {
+            const bgNewest = Math.max(0, ...(resp?.msgs || []).map((x) => x?.time || 0))
+            const ringNewest = irc.getTail(ch, 1)?.[0]?.time || 0
+            window.__hsDiag?.('ingest_gap_probe', {
+              ch,
+              bgAheadS: Math.round((bgNewest - ringNewest) / 1000),
+              bgAgeS: Math.round((Date.now() - bgNewest) / 1000),
+            })
+          })
+          .catch(() => {})
       } catch (_) {}
       irc._reassertInterest?.()
       irc._refreshFromBg?.(ch)

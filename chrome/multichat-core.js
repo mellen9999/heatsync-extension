@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '185510222690' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '8d4cf7632de2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78554,8 +78554,10 @@ const STORAGE_KEY = 'heatsync_multichat'
   // so in the diag ring. Pulling is idempotent: the sorted merge dedupes by id.
   let _gapLoggedAt = 0
   function ingestGapCheck() {
-    if (!irc || currentTab !== 'live') return
-    const ch = String(getLivePlatformNames().twitch || getLiveChannel() || '').toLowerCase()
+    if (!irc) return
+    const tabCh = currentTab === 'live' ? null : getChannelById(currentTab)
+    if (currentTab !== 'live' && !tabCh) return
+    const ch = String(tabCh ? tabCh.twitch : getLivePlatformNames().twitch || getLiveChannel() || '').toLowerCase()
     const ts = ch ? irc._lastLiveAt?.get(ch) : null
     if (!Array.isArray(ts) || ts.length < 5) return
     const now = Date.now()
@@ -78570,7 +78572,24 @@ const STORAGE_KEY = 'heatsync_multichat'
           rt: !!chrome.runtime?.id,
           hid: document.hidden,
           foc: document.hasFocus(),
+          tab: String(currentTab).slice(0, 24),
         })
+      } catch (_) {}
+      // does the BG hold newer lines than this tab's ring? yes = delivery
+      // died, no = nothing is arriving upstream either
+      try {
+        browser.runtime
+          .sendMessage({ type: 'bg_irc_history', channel: ch })
+          .then((resp) => {
+            const bgNewest = Math.max(0, ...(resp?.msgs || []).map((x) => x?.time || 0))
+            const ringNewest = irc.getTail(ch, 1)?.[0]?.time || 0
+            window.__hsDiag?.('ingest_gap_probe', {
+              ch,
+              bgAheadS: Math.round((bgNewest - ringNewest) / 1000),
+              bgAgeS: Math.round((Date.now() - bgNewest) / 1000),
+            })
+          })
+          .catch(() => {})
       } catch (_) {}
       irc._reassertInterest?.()
       irc._refreshFromBg?.(ch)

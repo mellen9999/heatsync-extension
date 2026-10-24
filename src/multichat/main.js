@@ -9690,6 +9690,63 @@
   // through here.
   let _renderCollapseTimer = null
   let _renderCollapseFirstAt = 0
+  // Newest buffered row for the tab on screen — what a render would put at the
+  // bottom. Mirrors renderMessages' source choice (live tab vs channel tab).
+  function _tabNewestBuffered(id) {
+    let names
+    if (id === 'live') {
+      const plat = getLivePlatformNames()
+      const cur = getLiveChannel()
+      names = { twitch: plat.twitch || cur, kick: plat.kick || cur }
+    } else {
+      const ch = getChannelById(id)
+      names = { twitch: ch?.twitch, kick: ch?.kick }
+    }
+    let best = null
+    const t = names.twitch ? irc?.getTail(String(names.twitch).toLowerCase(), 1)[0] : null
+    const k = names.kick ? kickChat?.getTail(String(names.kick).toLowerCase(), 1)[0] : null
+    for (const m of [t, k]) if (m && (!best || ordOf(m) > ordOf(best))) best = m
+    return best
+  }
+
+  // Last line of defence against a chat that stops painting. Every few seconds:
+  // is the newest live row the buffer holds actually on screen? If it has been
+  // sitting there for 4s+ and isn't, something upstream swallowed a render —
+  // log what was blocking it (hs_diag_ring, so a report carries the cause) and
+  // repaint. Intentional pauses (scrolled up, a card/panel/editor open, tab
+  // hidden) are recorded but never fought.
+  let _stallLoggedAt = 0
+  function renderStallCheck() {
+    if (document.hidden) return
+    if (currentTab !== 'live' && !getChannelById(currentTab)) return
+    const msgsEl = document.getElementById('hs-mc-messages')
+    if (!msgsEl) return
+    const m = _tabNewestBuffered(currentTab)
+    if (!m || m.isHistory || Date.now() - (m.time || 0) < 4000) return
+    if (Date.now() - (m.time || 0) > 120000) return // quiet channel, nothing newer to show
+    if (_msgKeyIndex.has(msgKeyOf(m))) return
+    const blockers = {
+      editing: !!editingChannel,
+      panel: !!hsPanePanelOpen(),
+      card: typeof activeProfileCard !== 'undefined' && !!activeProfileCard,
+      scrolledUp: !!isScrolledUp,
+    }
+    const now = Date.now()
+    if (now - _stallLoggedAt > 20000) {
+      _stallLoggedAt = now
+      try {
+        window.__hsDiag?.('render_stall', {
+          tab: String(currentTab).slice(0, 24),
+          ageS: Math.round((now - (m.time || 0)) / 1000),
+          domN: msgsEl.children.length,
+          plat: m.platform || 'twitch',
+          ...blockers,
+        })
+      } catch (_) {}
+    }
+    if (!blockers.editing && !blockers.panel && !blockers.card && !blockers.scrolledUp) scheduleRenderMessages()
+  }
+
   function scheduleRenderMessages() {
     const now = Date.now()
     if (_renderCollapseTimer === null) _renderCollapseFirstAt = now
@@ -12769,6 +12826,7 @@
     }
     if (mcInitialized) return
     mcInitialized = true
+    cleanup.setInterval(renderStallCheck, 2500)
 
     // Inject CSS before ANYTHING that awaits. injectStyles has zero settings
     // deps, and a <style> tag is inert until our DOM mounts — but the health

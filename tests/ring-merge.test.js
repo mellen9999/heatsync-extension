@@ -90,3 +90,10 @@ test('the render merge re-sorts any run that arrives out of order', () => {
   expect(sortRun(bad).map((m) => m.time)).toEqual([5, 7, 8, 9])
   expect(bad.map((m) => m.time)).toEqual([5, 9, 7, 8])
 })
+
+test('a render watchdog logs why chat stopped painting and repaints when nothing blocks it', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/function renderStallCheck\(\)/)
+  expect(main).toMatch(/__hsDiag\?\.\('render_stall'/)
+  expect(main).toMatch(/cleanup\.setInterval\(renderStallCheck, 2500\)/)
+})

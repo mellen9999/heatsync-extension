@@ -3789,8 +3789,24 @@ function setupFeedPostLinkHover() {
   let _currentLink = null
   const MAX_DEPTH = 50
   // Both inline >>id refs AND the leading thread-link (left of the OP) get the
-  // same hover preview — a >>id is hoverable wherever it appears.
-  const LINK_SEL = '.hs-post-link, .hs-feed-thread-link'
+  // same hover preview — a >>id is hoverable wherever it appears. The bare id
+  // inside a thread (no >>) is a quote-insert button, not a reference: no hover.
+  const LINK_SEL = '.hs-post-link, .hs-feed-thread-link:not(.hs-quote-insert)'
+  let _hlRow = null
+  const _clearHl = () => {
+    _hlRow?.classList.remove('hs-feed-link-hl')
+    _hlRow = null
+  }
+  // The referenced post, when it is already visible in the list (and is not the
+  // link's own row): highlight it in place instead of opening a second copy.
+  const _onScreenTarget = (link, id) => {
+    const msgsEl = document.getElementById('hs-mc-messages')
+    const row = msgsEl?.querySelector(`.hs-feed-msg[data-msg-id="${CSS.escape(id)}"]`)
+    if (!row || row === link.closest('.hs-feed-msg')) return null
+    const r = row.getBoundingClientRect()
+    const v = msgsEl.getBoundingClientRect()
+    return r.bottom > v.top && r.top < v.bottom ? row : null
+  }
 
   const getOverlay = () => {
     let el = document.getElementById('hs-feed-postlink-preview')
@@ -3810,6 +3826,7 @@ function setupFeedPostLinkHover() {
 
   const _hideOverlay = () => {
     _currentLink = null
+    _clearHl()
     const el = document.getElementById('hs-feed-postlink-preview')
     if (el) {
       el.style.display = 'none'
@@ -3842,12 +3859,16 @@ function setupFeedPostLinkHover() {
 
       const gen = ++_linkGen
 
-      ;(async () => {
-        // Always show on hover — even when the linked post is already on screen.
-        // Matches the chat reply-stack and Twitch reply-thread hover (the user's
-        // mental model): hovering >>id surfaces the thread context regardless of
-        // visibility. (The site skips-if-visible; the cramped panel does not.)
+      // already on screen → light that row up in place, no second copy
+      const onScreen = _onScreenTarget(link, linkedId)
+      if (onScreen) {
+        _clearHl()
+        _hlRow = onScreen
+        onScreen.classList.add('hs-feed-link-hl')
+        return
+      }
 
+      ;(async () => {
         // Fetch the linked message
         const msg = await _feedMsgFetch(linkedId)
         if (_linkGen !== gen) return

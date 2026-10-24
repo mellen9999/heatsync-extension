@@ -45,3 +45,9 @@ test('zebra: zebraOfInsert walks past the embed player to the real previous row'
 test('tab-complete: empty cycle still shows searching / no match', () => {
   expect(src).toMatch(/acState\.remotePending \? 'searching 7tv…' : 'no match'/)
 })
+
+test('feed >>id hover: bare ids never hover, an on-screen target highlights instead of popping up', () => {
+  const social = readFileSync(new URL('../src/multichat/social.js', import.meta.url), 'utf8')
+  expect(social).toMatch(/LINK_SEL = '\.hs-post-link, \.hs-feed-thread-link:not\(\.hs-quote-insert\)'/)
+  expect(social).toMatch(/_onScreenTarget\(link, linkedId\)[\s\S]{0,200}hs-feed-link-hl/)
+})

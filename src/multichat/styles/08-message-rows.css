@@ -215,6 +215,12 @@
       background: #000000 !important;
       border-left: 2px solid var(--hs-mention) !important;
     }
+    /* >>id hovered while its post is on screen: that row inverts instead of a popup */
+    .hs-feed-msg.hs-feed-link-hl,
+    .hs-feed-msg.hs-feed-link-hl * {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
     /* Brief flash on the message that the overflow chip scrolled to */
     .hs-mc-msg.hs-mc-thread-flash {
       animation: hs-mc-thread-flash 1.2s ease-out;

@@ -98,3 +98,11 @@ test('a row inserted mid-list restripes everything after it', () => {
   expect(src).toMatch(/if \(cur\) zebraFrom = zebraFrom \|\| div/)
   expect(src).toMatch(/if \(zebraFrom\) zebraRepaint\(msgsEl, zebraFrom\)/)
 })
+
+test('tabs re-assert channel interest so a restarted service worker cannot strand an older tab', () => {
+  const irc = readFileSync(new URL('../src/multichat/irc.js', import.meta.url), 'utf8')
+  const bg = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+  expect(irc).toMatch(/type: 'bg_irc_interest', channels: \[\.\.\.this\.channels\.keys\(\)\]/)
+  expect(irc).toMatch(/_interestTimer = cleanup\.setInterval\(\(\) => this\._reassertInterest\(\), 15000\)/)
+  expect(bg).toMatch(/message\.type === 'bg_irc_interest'[^]*?bgIrcRegisterTabInterest\(tabId, ch\)/)
+})

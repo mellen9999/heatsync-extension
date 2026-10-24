@@ -13608,6 +13608,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })()
     return true
   }
+  // A tab re-asserting which channels it still shows. The BG's per-tab interest
+  // map lives in memory, so a service-worker restart empties it — and the first
+  // tab to join afterwards then became the ONLY recipient of that channel
+  // (bgIrcBroadcast routes to the tracked tabs), starving every older tab and
+  // popout until it was refreshed. Tabs repeat this on a timer, so interest is
+  // rebuilt within seconds instead of never.
+  if (message.type === 'bg_irc_interest') {
+    const list = Array.isArray(message.channels) ? message.channels.slice(0, 60) : []
+    if (tabId) {
+      for (const raw of list) {
+        const ch = bgIrcSafeChannel(raw)
+        if (!ch) continue
+        bgIrcRegisterTabInterest(tabId, ch)
+        if (!BG_IRC.channels.has(ch) && BG_IRC.storageRestored) bgIrcEnsureChannel(ch)
+      }
+      BG_IRC.liveTabs.add(tabId)
+    }
+    sendResponse({ ok: true })
+    return true
+  }
   if (message.type === 'bg_irc_part') {
     const ch = (message.channel || '').toLowerCase()
     if (ch && tabId) bgIrcUnregisterTabInterest(tabId, ch)

@@ -9258,7 +9258,26 @@
     return out
   }
 
+  // A run that is not non-decreasing by ord would make mergeSortedRuns emit a
+  // scrambled window — new chat inserted above a stale tail, i.e. chat that looks
+  // frozen. Buffers are kept sorted at every write; this is the net under them:
+  // one cheap O(n) scan per render, and a (stable) sorted COPY only when a run
+  // is actually out of order, so no upstream bug can reach the screen.
+  function _ordSortedRun(run) {
+    for (let i = 1; i < run.length; i++) {
+      if (ordOf(run[i]) < ordOf(run[i - 1])) {
+        // loud in dev builds so the writer that broke the invariant gets found,
+        // silent (and repaired) in the packaged one
+        if (typeof __HS_DEV_BUILD__ !== 'undefined' && __HS_DEV_BUILD__)
+          console.error('[heatsync-ext] fairMerge input run not sorted at index', i, run[i - 1], run[i])
+        return run.slice().sort((a, b) => ordOf(a) - ordOf(b))
+      }
+    }
+    return run
+  }
+
   function fairMerge(sources) {
+    sources = sources.map(_ordSortedRun)
     if (MC_DEBUG)
       log(
         'fairMerge sources:',

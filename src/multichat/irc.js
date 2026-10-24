@@ -475,6 +475,32 @@ class CircularBuffer {
   }
 }
 
+// Fold a batch of history rows into a channel ring WITHOUT breaking its sort.
+// Every buffer must stay non-decreasing by ord (utils.js, invariant #1) —
+// mergeSortedRuns, sortedInsert and the render diff all rely on it. History
+// hydration and the 3s/8s/20s BG re-pulls used to push() straight onto the
+// ring: rows newer than a live message already in it landed BEFORE that
+// message, and the live ones after them. From then on every new arrival
+// binary-searched a lying array, landed mid-list, and the newest chat sat
+// above a stale tail — chat looked frozen until the bad rows aged out of the
+// window (~2 min). One sorted rewrite keeps the ring truthful.
+//   replaceHistory: drop the ring's old history rows first (a re-pull carries
+//   the same rows again, fresher); live rows always stay.
+// A history row whose id a live row already carries is dropped — the live copy
+// is the richer one.
+function mergeIntoRing(buf, incoming, replaceHistory = false) {
+  if (!buf || !incoming?.length) return
+  const have = buf.getAll()
+  const keep = replaceHistory ? have.filter((m) => !m.isHistory) : have
+  const liveIds = new Set()
+  for (const m of keep) if (m?.id) liveIds.add(m.id)
+  const fresh = incoming.filter((m) => !(m?.id && liveIds.has(m.id)))
+  const all = fresh.concat(keep)
+  all.sort((a, b) => ordOf(a) - ordOf(b))
+  buf.clear()
+  for (const m of all) buf.push(m)
+}
+
 // ============================================
 // TWITCH IRC CLIENT (READ-ONLY)
 // ============================================
@@ -848,13 +874,9 @@ class IRC extends ChatClient {
       )
       const buf = this.channels.get(ch)
       if (!buf) return // channel left during staging
-      // Snapshot live messages AFTER staging — anything that arrived while we
-      // yielded (or during the sendMessage await) stays newest, not buried
-      // behind history.
-      const liveSnap = buf.getAll().filter((m) => !m.isHistory)
-      buf.clear()
-      for (const m of staged) buf.push(m)
-      for (const m of liveSnap) buf.push(m)
+      // Merge AFTER staging — anything that arrived while we yielded (or
+      // during the sendMessage await) keeps its sorted place among the history.
+      mergeIntoRing(buf, staged, true)
       try {
         _dropAllTabCaches()
       } catch {}
@@ -950,6 +972,7 @@ class IRC extends ChatClient {
       const resp = await browser.runtime.sendMessage({ type: 'bg_irc_history', channel: ch })
       if (resp?.ok && Array.isArray(resp.msgs) && resp.msgs.length > 0) {
         const buf = this.channels.get(ch)
+        const hydrate = []
         for (const m of resp.msgs) {
           if (m?.type === 'roomstate' || m?.type === 'userstate' || m?.type === 'whisper') continue
           m.isHistory = true
@@ -977,8 +1000,9 @@ class IRC extends ChatClient {
               m.platform = sentHost === 'yt' ? 'youtube' : sentHost
             }
           } catch {}
-          buf.push(m)
+          hydrate.push(m)
         }
+        mergeIntoRing(buf, hydrate)
         log('BG history hydrated:', resp.msgs.length, 'msgs for', ch)
         try {
           _dropAllTabCaches()
@@ -1553,11 +1577,8 @@ class KickChat extends ChatClient {
       )
       const buf = this.channels.get(ch)
       if (!buf) return // channel left during staging
-      // Snapshot live messages AFTER staging so mid-ingest arrivals stay newest.
-      const liveSnap = buf.getAll().filter((m) => !m.isHistory)
-      buf.clear()
-      for (const m of staged) buf.push(m)
-      for (const m of liveSnap) buf.push(m)
+      // Merge AFTER staging; live rows that arrived mid-ingest stay, in sorted place.
+      mergeIntoRing(buf, staged, true)
       try {
         _dropAllTabCaches()
       } catch {}
@@ -1651,8 +1672,8 @@ class KickChat extends ChatClient {
         addUsername(msg.user)
         setKnownColor(msg.user.toLowerCase(), msg.color, msg.userId, 'kick')
       }
-      buffer.push(msg)
     }
+    mergeIntoRing(buffer, filtered)
     // Always render when history hydrates and panel is current — even if a
     // couple live msgs already painted, the buffer just grew and the DOM
     // must reflect it.
@@ -1714,6 +1735,7 @@ class KickChat extends ChatClient {
         try {
           if (typeof _recentSentHydrated !== 'undefined') await _recentSentHydrated
         } catch {}
+        const hydrate = []
         for (const m of resp.msgs) {
           m.isHistory = true
           if (m.user) {
@@ -1733,8 +1755,9 @@ class KickChat extends ChatClient {
               m.platform = sentHost === 'yt' ? 'youtube' : sentHost
             }
           } catch {}
-          buf.push(m)
+          hydrate.push(m)
         }
+        mergeIntoRing(buf, hydrate)
         hydrated = true
         log('Kick BG history hydrated:', resp.msgs.length, 'msgs for', kickUsername)
         try {

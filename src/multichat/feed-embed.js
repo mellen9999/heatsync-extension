@@ -1114,6 +1114,7 @@ function _hsAudioStop() {
   _hsAudioSend(_hsAudio.provider.pause)
   try {
     _hsAudio.ro?.disconnect()
+    _hsAudio.mo?.disconnect()
   } catch (_) {}
   _hsAudio.frame?.remove()
   _hsAudio.host?.remove()
@@ -1152,6 +1153,16 @@ function _hsPlacePlayer() {
     return
   }
   if (!a.card) return
+  if (scroller && !a.card.isConnected) {
+    // The row was re-rendered: same video, new element. Follow it, so the
+    // parked player never hangs where the old card used to be.
+    for (const c of scroller.querySelectorAll('.hs-mc-media.hs-mc-playable')) {
+      if ((c.dataset.resolveUrl || (c.tagName === 'A' ? c.href : '')) === a.url) {
+        a.card = c
+        break
+      }
+    }
+  }
   if (!scroller || !a.card.isConnected) {
     // The anchor row aged out of the DOM cap. Orphan audio you can't reach a
     // stop button for is worse than silence.
@@ -1232,6 +1243,23 @@ function chatEmbedToggle(url, card) {
       }
       _hsAudio.ro = ro
       cleanup.trackObserver(ro)
+    }
+    // Rows re-render without resizing anything the observer above watches; a
+    // parked player must still follow its card. One check per frame, and only
+    // while parked (filled players ignore the card).
+    if (typeof MutationObserver !== 'undefined') {
+      let queued = false
+      const mo = new MutationObserver(() => {
+        if (queued || !_hsAudio || _hsAudio.fill) return
+        queued = true
+        requestAnimationFrame(() => {
+          queued = false
+          if (_hsAudio && !_hsAudio.fill) _hsPlacePlayer()
+        })
+      })
+      mo.observe(parent, { childList: true })
+      _hsAudio.mo = mo
+      cleanup.trackObserver(mo)
     }
   }
   // youtube is the one provider that stays silent until greeted, and the greet

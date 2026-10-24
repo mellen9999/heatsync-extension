@@ -578,13 +578,17 @@
   // #hs-mc-overlay, so without these roots the hover-highlight never lands on
   // overlay-rendered emotes (and same-name cross-highlight misses overlay copies).
   function queryEmoteWrappers(emoteName) {
-    const sel = `.hs-mc-emote-wrapper[data-emote-name="${CSS.escape(emoteName)}"]`
+    const esc = CSS.escape(emoteName)
+    const sel = `.hs-mc-emote-wrapper[data-emote-name="${esc}"]`
+    // Emotes a logs surface draws (card recent lines, chat-logs panel) are bare
+    // <img>s with no wrapper; they take part in the same highlight/block/flash.
+    const logSel = `.hs-card-log-body img[alt="${esc}"], .hs-cl-list img.hs-cl-emote[alt="${esc}"]`
     const main = document.getElementById('hs-mc-overlay')
     const stackUp = document.getElementById('hs-mc-reply-stack')
     const stackDown = document.getElementById('hs-mc-reply-stack-down')
-    if (!main && !stackUp && !stackDown) return document.querySelectorAll(sel)
+    if (!main && !stackUp && !stackDown) return document.querySelectorAll(`${sel}, ${logSel}`)
     const out = []
-    if (main) for (const w of main.querySelectorAll(sel)) out.push(w)
+    if (main) for (const w of main.querySelectorAll(`${sel}, ${logSel}`)) out.push(w)
     if (stackUp) for (const w of stackUp.querySelectorAll(sel)) out.push(w)
     if (stackDown) for (const w of stackDown.querySelectorAll(sel)) out.push(w)
     return out

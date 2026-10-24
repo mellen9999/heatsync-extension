@@ -14,3 +14,10 @@ test('a lone zero-width log emote stays interactive (zw only on a real overlay)'
   const cl = readFileSync(new URL('../src/multichat/chat-logs.js', import.meta.url), 'utf8')
   expect(cl).toMatch(/prev\?\.tagName === 'IMG'/)
 })
+
+test('same-name log emotes join the cross-highlight / block / flash set', () => {
+  const m = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const q = m.slice(m.indexOf('function queryEmoteWrappers'), m.indexOf('function trimChildren'))
+  expect(q).toMatch(/hs-card-log-body img\[alt=/)
+  expect(q).toMatch(/hs-cl-emote\[alt=/)
+})

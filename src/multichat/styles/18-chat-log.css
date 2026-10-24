@@ -70,6 +70,21 @@
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;
     }
+    /* every copy of the hovered emote lights up together (tooltips.js sets the
+       class on all same-name log emotes); a blocked one reads as a dashed box
+       that still takes the right-click to unblock */
+    .hs-cl-emote.hs-emote-highlight:not(.zw),
+    .hs-card-log-body img.hs-emote-highlight:not(.zw) {
+      background: var(--hs-highlight-color, #fff); filter: brightness(0.2); cursor: pointer;
+    }
+    .hs-cl-emote.hs-state-blocked,
+    .hs-card-log-body img.hs-state-blocked {
+      filter: brightness(0); outline: 2px dashed var(--hs-border); outline-offset: -2px; cursor: pointer;
+    }
+    .hs-cl-emote.hs-state-blocked.hs-emote-highlight,
+    .hs-card-log-body img.hs-state-blocked.hs-emote-highlight {
+      background: var(--hs-danger); outline: none;
+    }
     .hs-cl-emote:not(.zw):hover { background: #fff; filter: brightness(0.2); cursor: pointer; }
     /* a zero-width overlay emote sits on the one before it */
     .hs-cl-emote.zw { margin-left: -18px; }

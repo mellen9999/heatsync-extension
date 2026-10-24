@@ -934,6 +934,19 @@
     #hs-mc-embed-player.hs-fill .hs-mc-transport {
       position: static;
     }
+    /* parked on a small card: only fill + pause + volume fit — ↗ and ↻ live in
+       the filled view, and nothing may spill past the card's edge */
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport {
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-out,
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-reload {
+      display: none;
+    }
+    #hs-mc-embed-player:not(.hs-fill) .hs-mc-transport-vol {
+      min-width: 0;
+    }
     .hs-mc-media.hs-mc-playable > .hs-mc-transport {
       margin-top: 2px;
     }

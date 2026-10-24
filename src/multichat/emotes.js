@@ -1745,6 +1745,7 @@ function applyBlockedHashDelta(newHashesArr) {
         'hs-state-unadded',
         'hs-emote-highlight',
       )
+      w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
       w.classList.add('hs-state-blocked')
       w.dataset.state = 'blocked'
       const img = w.querySelector('img')
@@ -1795,6 +1796,7 @@ function applyBlockedHashDelta(newHashesArr) {
         'hs-state-unadded',
         'hs-emote-highlight',
       )
+      w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
       w.classList.add(`hs-state-${newState}`)
       w.dataset.state = newState
       w.style.outline = ''
@@ -2370,6 +2372,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
       'hs-state-unadded',
       'hs-emote-highlight',
     )
+    w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
     w.classList.add('hs-state-blocked')
     w.dataset.state = 'blocked'
     const img = w.querySelector('img')
@@ -2417,6 +2420,7 @@ function refreshEmoteWrappersState(emoteName) {
   queryEmoteWrappers(emoteName).forEach((w) => {
     if (w.classList.contains('hs-state-blocked')) return
     w.classList.remove('hs-state-global', 'hs-state-channel', 'hs-state-owned', 'hs-state-unadded')
+    w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
     w.classList.add(`hs-state-${newState}`)
     w.dataset.state = newState
     const img = w.querySelector('img')
@@ -2473,6 +2477,7 @@ function unblockEmote(emoteName, opts) {
       'hs-state-unadded',
       'hs-emote-highlight',
     )
+    w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
     w.classList.add(`hs-state-${newState}`)
     w.dataset.state = newState
     w.style.outline = ''

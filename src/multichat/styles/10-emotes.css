@@ -317,7 +317,7 @@
       visibility: visible !important;
       filter: none !important;
     }
-    body.hs-tab-cycling .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight)::before {
+    body.hs-tab-cycling .hs-mc-emote-stack:not(.expanded).hs-stack-hl::before {
       opacity: 0 !important;
     }
 
@@ -442,7 +442,7 @@
     /* When the stack is hovered, hide ALL per-wrapper ::before indicators
        (incl. persistent blocked-dash on emotes that aren't the cross-highlight
        target) so only the unified stack rect shows. */
-    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight) .hs-mc-emote-wrapper::before {
+    .hs-mc-emote-stack:not(.expanded).hs-stack-hl .hs-mc-emote-wrapper::before {
       display: none !important;
     }
     .hs-mc-emote-stack:not(.expanded)::before {
@@ -456,7 +456,7 @@
          a flat filled rectangle covering the art. */
       z-index: 0;
     }
-    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight)::before {
+    .hs-mc-emote-stack:not(.expanded).hs-stack-hl::before {
       opacity: 1;
       /* White plate (clickable convention), matching the single-emote default;
          --hs-highlight-color stays the hook for the red blocked tint. */
@@ -466,7 +466,7 @@
     /* Darken the whole stacked composite to brightness 0.2 (base + overlays)
        instead of hiding it — dark-on-white, mirroring the single-emote hover.
        Full-color identity is carried by the 4x preview that fires alongside. */
-    .hs-mc-emote-stack:not(.expanded):has(.hs-mc-emote-wrapper.hs-emote-highlight) > .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(.hs-state-blocked) > img {
+    .hs-mc-emote-stack:not(.expanded).hs-stack-hl > .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(.hs-state-blocked) > img {
       filter: brightness(0.2);
     }
 

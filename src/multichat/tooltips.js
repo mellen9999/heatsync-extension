@@ -682,9 +682,7 @@ function setupEmoteTooltipHandlers() {
       }
       const sourceColor = effectiveState === 'blocked' ? 'var(--hs-danger)' : '#fff'
       document.body.style.setProperty('--hs-highlight-color', sourceColor)
-      queryEmoteWrappers(emoteName).forEach((w) => {
-        w.classList.add('hs-emote-highlight')
-      })
+      queryEmoteWrappers(emoteName).forEach((w) => hsSetEmoteHighlight(w, true))
     },
     'mc-emote-tooltip-mouseover',
   )
@@ -721,9 +719,7 @@ function setupEmoteTooltipHandlers() {
       // Remove cross-highlight from all wrappers
       const emoteName = wrapper?.dataset.emoteName || img?.alt || img?.dataset.emoteName
       if (emoteName) {
-        queryEmoteWrappers(emoteName).forEach((w) => {
-          w.classList.remove('hs-emote-highlight')
-        })
+        queryEmoteWrappers(emoteName).forEach((w) => hsSetEmoteHighlight(w, false))
       }
     },
     'mc-emote-tooltip-mouseout',
@@ -738,9 +734,7 @@ function setupEmoteTooltipHandlers() {
       _dismissRafPending = false
       if (emoteTooltip?.classList.contains('visible')) {
         hideEmoteTooltip()
-        document.querySelectorAll('.hs-emote-highlight').forEach((w) => {
-          w.classList.remove('hs-emote-highlight')
-        })
+        hsClearEmoteHighlights()
       }
       hideBadgeTooltip()
       // Skip link tooltip — mouse is still on the link, scroll-driven hides
@@ -805,9 +799,7 @@ function setupEmoteTooltipHandlers() {
         if (emoteTooltip?.classList.contains('visible')) {
           if (!onEmote && !target?.closest?.('#hs-emote-tooltip')) {
             hideEmoteTooltip()
-            document.querySelectorAll('.hs-emote-highlight').forEach((w) => {
-              w.classList.remove('hs-emote-highlight')
-            })
+            hsClearEmoteHighlights()
           }
           // Don't reposition — stays anchored to element
         }
@@ -1603,6 +1595,19 @@ function positionTooltipAtElement(tooltip, targetEl) {
 
   tooltip.style.left = `${Math.round(x)}px`
   tooltip.style.top = `${Math.round(y)}px`
+}
+
+// The cross-highlight lives on the wrapper AND on its stack. The stack's styling
+// used to key off `:has(.hs-emote-highlight)`, and a :has() rule makes the
+// browser re-check the whole page on every DOM insertion (~20ms with a busy
+// chat) — a plain class on the stack costs nothing.
+function hsSetEmoteHighlight(w, on) {
+  w.classList.toggle('hs-emote-highlight', on)
+  w.closest?.('.hs-mc-emote-stack')?.classList.toggle('hs-stack-hl', on)
+}
+function hsClearEmoteHighlights() {
+  for (const w of document.querySelectorAll('.hs-emote-highlight')) w.classList.remove('hs-emote-highlight')
+  for (const s of document.querySelectorAll('.hs-stack-hl')) s.classList.remove('hs-stack-hl')
 }
 
 function hideUserTooltip() {

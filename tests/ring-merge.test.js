@@ -119,3 +119,8 @@ test('thrash detector logs dom_thrash and rebuilds the pane', () => {
   expect(main).toMatch(/cleanup\.setInterval\(domThrashCheck, 2000\)/)
   expect(main).toMatch(/'dom_thrash'/)
 })
+
+test('unpinned view is logged and re-pinned', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/hsDiagLog\('unpinned'/)
+})

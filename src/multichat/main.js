@@ -9796,6 +9796,8 @@
   let _thrashTail = null
   let _thrashStreak = 0
   let _thrashLoggedAt = 0
+  let _unpinnedStreak = 0
+  let _unpinLoggedAt = 0
   function domThrashCheck() {
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl || document.hidden) return
@@ -9808,6 +9810,29 @@
       _thrashObs.observe(msgsEl, { childList: true })
       return
     }
+    // Rows land but the view sits above the tail: the pin never ran (a pending
+    // pin handle that never settles skips every later one). The user sees a
+    // frozen pane while rows append off-screen below.
+    const gap = msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight
+    if (!isScrolledUp && gap > 40 && currentTab !== 'settings' && msgsEl.children.length) {
+      if (++_unpinnedStreak >= 2) {
+        const now = Date.now()
+        if (now - _unpinLoggedAt > 20000) {
+          _unpinLoggedAt = now
+          hsDiagLog('unpinned', {
+            tab: String(currentTab).slice(0, 24),
+            gap: Math.round(gap),
+            pinPending: !!_scrollPinRaf,
+            prog: !!isProgrammaticScroll,
+            domN: msgsEl.children.length,
+          })
+        }
+        _unpinnedStreak = 0
+        _scrollPinRaf = null
+        isProgrammaticScroll = false
+        scrollMsgsToBottom(msgsEl)
+      }
+    } else _unpinnedStreak = 0
     const tail = msgsEl.lastElementChild?.dataset?.msgKey || ''
     const churn = _thrashCount
     _thrashCount = 0

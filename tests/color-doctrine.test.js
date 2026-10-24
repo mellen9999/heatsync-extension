@@ -429,7 +429,7 @@ describe('single-definition colours', () => {
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
 
-  test('dim gray is used for exactly three roles: reply-context, fully-read tabs, a log line\'s #channel tag', () => {
+  test("dim gray is used for exactly three roles: reply-context, fully-read tabs, a log line's #channel tag", () => {
     const users = []
     for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
       const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')

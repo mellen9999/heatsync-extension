@@ -610,6 +610,10 @@
   width: auto !important;
   margin: 0 1px !important;
   vertical-align: -7px !important;
+  /* positioned, so the emote sits above the next line's box: a 24px emote on a
+   * 20px line otherwise has its lower edge under the row below, which eats the
+   * hover (and the click) there */
+  position: relative;
 }
 /* A line heard live (extension) comes from the chat renderer, which wraps each
  * emote in a fixed-width box sized for chat — flatten it so the 24px cap above
@@ -628,6 +632,8 @@
 .hs-card-log-body img.emote.zw,
 .hs-card-log-body .hs-archive-emote.zw {
   margin-left: -24px !important;
+  /* an overlay lies over its base emote and would swallow its hover */
+  pointer-events: none;
 }
 
 /* ── mod actions (host-only — ctx.modGroups) ─────────────────────────────

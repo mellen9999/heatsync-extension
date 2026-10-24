@@ -14909,7 +14909,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '39f423c3adbd' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f8869e342a32' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -17141,6 +17141,10 @@ const HsNotifs = (() => {
         bottomY = bottomY !== null ? Math.min(bottomY, tbRect.top) : tbRect.top
       }
       const horRect = ovRect && ovRect.width > 0 ? ovRect : ibRect
+      // Input bar hidden (and no bottom tab strip): dock to the overlay's own
+      // bottom edge. Returning null left the layer unplaced, which draws it
+      // across the whole window instead of the chat column.
+      if (bottomY === null && ovRect && ovRect.height > 0) bottomY = ovRect.bottom
       if (!horRect || bottomY === null) return null
       const box = clampDockedBox(horRect.left, horRect.width)
       return {

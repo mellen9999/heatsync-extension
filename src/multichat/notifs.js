@@ -434,6 +434,10 @@ const HsNotifs = (() => {
         bottomY = bottomY !== null ? Math.min(bottomY, tbRect.top) : tbRect.top
       }
       const horRect = ovRect && ovRect.width > 0 ? ovRect : ibRect
+      // Input bar hidden (and no bottom tab strip): dock to the overlay's own
+      // bottom edge. Returning null left the layer unplaced, which draws it
+      // across the whole window instead of the chat column.
+      if (bottomY === null && ovRect && ovRect.height > 0) bottomY = ovRect.bottom
       if (!horRect || bottomY === null) return null
       const box = clampDockedBox(horRect.left, horRect.width)
       return {

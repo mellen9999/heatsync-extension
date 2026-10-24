@@ -509,6 +509,11 @@
     .hs-mc-tab {
       position: relative !important;
     }
+    /* the dot is absolute, so a long label or the unread count ran under it —
+       live tabs reserve its 8px + inset + a 4px gap on the right */
+    .hs-mc-tab[data-live="true"] {
+      padding-right: 16px !important;
+    }
     .hs-mc-tab[data-live="true"]::after {
       content: '';
       position: absolute;

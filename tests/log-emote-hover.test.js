@@ -42,3 +42,11 @@ describe('isLogEmoteImg', () => {
     expect(TIPS.split('isLogEmoteImg(target)').length - 1).toBe(2)
   })
 })
+
+describe('the dismiss-on-mousemove check', () => {
+  test('counts a log emote as "still on an emote", or the preview closes on the first move', () => {
+    const i = TIPS.indexOf('const onEmote =')
+    const j = TIPS.indexOf('const onUser', i)
+    expect(TIPS.slice(i, j)).toContain('isLogEmoteImg(target)')
+  })
+})

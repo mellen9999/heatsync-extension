@@ -781,7 +781,10 @@ function setupEmoteTooltipHandlers() {
             (target.classList?.contains('hs-mc-emote') ||
               target.classList?.contains('hs-mc-picker-emote') ||
               target.classList?.contains('hs-input-emote') ||
-              target.classList?.contains('hs-discover-thumb')))
+              target.classList?.contains('hs-discover-thumb') ||
+              // log-line emotes too: without this the first mousemove after the
+              // preview opened dismissed it, so they could never be hovered
+              isLogEmoteImg(target)))
         const onUser = target?.closest?.('.hs-mc-user') || target?.closest?.('.hs-hashtag')
         const onBadge = target?.tagName === 'IMG' && target.classList?.contains('hs-mc-badge-img')
 

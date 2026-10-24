@@ -10169,6 +10169,12 @@
         c.remove() // yt-status pins aren't tracked in indices
         continue
       }
+      // the docked/filled video player lives in the scroller but is not a row —
+      // sweeping it here killed it on the next full render (popout: instantly)
+      if (c.id === 'hs-mc-embed-player') {
+        i++
+        continue
+      }
       const k = c.dataset?.msgKey
       if (k && desiredSet.has(k)) {
         if (existingByKey.has(k)) {
@@ -10214,7 +10220,9 @@
       const key = desiredKeys[j]
       if (insertedKeys.has(key)) continue
       insertedKeys.add(key)
-      const cur = msgsEl.children[domIdx]
+      let cur = msgsEl.children[domIdx]
+      // step over the video player's slot — it is not a row and must not stall the walk
+      if (cur?.id === 'hs-mc-embed-player') cur = msgsEl.children[++domIdx]
       const existing = existingByKey.get(key)
       if (existing) {
         existingByKey.delete(key)
@@ -10257,7 +10265,8 @@
       if (!div) continue
       div.dataset.msgKey = key
       div.dataset.hsEpoch = String(_renderEpoch)
-      const prevDiv = msgsEl.children[domIdx - 1] || null
+      let prevDiv = msgsEl.children[domIdx - 1] || null
+      if (prevDiv?.id === 'hs-mc-embed-player') prevDiv = msgsEl.children[domIdx - 2] || null
       if (zebraOfInsert(m, prevDiv)) div.classList.add('hs-mc-zebra')
       msgsEl.insertBefore(div, cur || null)
       _indexMessageDiv(div, key)
@@ -10271,7 +10280,8 @@
     // toRender is already sliced to 500; anything beyond that + yt-status
     // pins is a leak. trimMessagesEl removes from the front (oldest first)
     // and keeps indices in sync.
-    const hardCap = toRender.length + detachedExtras.length
+    const hardCap =
+      toRender.length + detachedExtras.length + (msgsEl.querySelector(':scope > #hs-mc-embed-player') ? 1 : 0)
     if (msgsEl.children.length > hardCap) trimMessagesEl(msgsEl, hardCap)
 
     // Re-apply expanded stacks (only relevant when full rebuild fired).

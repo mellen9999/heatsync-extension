@@ -743,7 +743,7 @@ function appendLoggedText(host, text) {
   for (const n of tpl.content.childNodes) {
     if (n.nodeName === 'A' && /^https?:\/\//i.test(n.getAttribute('href') || '')) {
       const a = document.createElement('a')
-      a.className = 'hs-cl-link'
+      a.className = 'hs-mc-link hs-cl-link'
       a.href = n.getAttribute('href')
       a.target = '_blank'
       a.rel = 'noopener noreferrer'

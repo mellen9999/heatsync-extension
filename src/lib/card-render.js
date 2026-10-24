@@ -58,12 +58,12 @@ function hk(label, esc) {
 /**
  * Host-trusted fragments (bio mentions, log-line bodies, badge chips, the plus
  * badge) may carry their own <a>. The card body has no links — navigation is
- * the nav row — so anchors are defused to spans here, once (class/data-* kept, href/target/rel dropped), whatever the host
+ * the nav row — so anchors are defused to spans here, once (class/data-* kept, href kept inert as data-href, target/rel dropped), whatever the host
  * hands in. Escaped text never contains a literal `<a`, so only real markup matches.
  */
 function unlink(html) {
   return html ? String(html)
-        .replace(/<a(?=[\s>])[^>]*>/gi, (tag) => `<span${tag.slice(2).replace(/\s(?:href|target|rel|download)=(?:"[^"]*"|'[^']*')/gi, '')}`)
+        .replace(/<a(?=[\s>])[^>]*>/gi, (tag) => `<span${tag.slice(2).replace(/\s(?:target|rel|download)=(?:"[^"]*"|'[^']*')/gi, '').replace(/\shref=/gi, ' data-href=')}`)
         .replace(/<\/a>/gi, '</span>')
     : ''
 }

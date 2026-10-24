@@ -1891,7 +1891,7 @@ function setupLinkTooltipHandlers() {
       const link = e.target.closest('.hs-mc-link')
       if (link) {
         cancelLinkHide()
-        showLinkTooltip(e, link.href)
+        showLinkTooltip(e, link.href || link.dataset.href)
         return
       }
       // Hovering the tooltip itself keeps it open (lets user read/click image).
@@ -1918,8 +1918,24 @@ function setupLinkTooltipHandlers() {
     'mousedown',
     (e) => {
       const link = e.target.closest?.('.hs-mc-link')
-      if (link?.href) prefetchLinkPreview(link.href)
+      const href = link?.href || link?.dataset.href
+      if (href) prefetchLinkPreview(href)
     },
     'mc-link-prefetch-mousedown',
+  )
+
+  // A link inside a card's recent lines is an inert span (the card row is not a
+  // link) — it carries its url as data-href and opens it here.
+  cleanup.addEventListener(
+    document,
+    'click',
+    (e) => {
+      const span = e.target.closest?.('span.hs-mc-link[data-href]')
+      if (!span || !/^https?:\/\//i.test(span.dataset.href)) return
+      e.preventDefault()
+      e.stopPropagation()
+      window.open(span.dataset.href, '_blank', 'noopener,noreferrer')
+    },
+    'mc-link-span-click',
   )
 }

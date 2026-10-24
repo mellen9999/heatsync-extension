@@ -624,7 +624,7 @@
   height: auto !important;
 }
 /* links in a log line (defused to spans — the card row is not a link) read blue */
-.hs-card-log-body .hs-mc-link { color: #8888ff; }
+.hs-card-log-body .hs-mc-link { color: #8888ff; cursor: pointer; }
 /* clickable convention: white plate, art darkened (the emote menu acts on these) */
 .hs-card-log-body img.emote:not(.zw):hover,
 .hs-card-log-body .hs-archive-emote:not(.zw):hover,

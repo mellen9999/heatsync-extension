@@ -68,6 +68,8 @@
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;
     }
+    /* a zero-width overlay emote sits on the one before it */
+    .hs-cl-emote.zw { margin-left: -18px; }
     .hs-cl-empty {
       color: var(--hs-muted); text-align: center; padding: 40px 8px;
     }

@@ -625,7 +625,43 @@ function clEmoteUrlAllowed(url) {
   }
 }
 
+// The server's own render of the line (message_html) knows every provider's
+// emotes — 7TV, BTTV, FFZ, twitch, kick — where emote_refs only carries
+// twitch/kick, so a 7TV emote like `1984` came out as plain text that could not
+// be hovered. It is read here as DATA, never inserted as markup: parsed in an
+// inert <template>, then rebuilt node by node — text stays text, an <img> only
+// survives as one of our own emote paths on an allowed host.
+const CL_HS_EMOTE_PATH = /^\/e\/(?:7tv|bttv|ffz|hs|twitch|kick)\/[A-Za-z0-9_-]{1,64}$/
+function clArchiveEmoteSrc(src) {
+  if (typeof src !== 'string') return null
+  if (src.startsWith('/')) return CL_HS_EMOTE_PATH.test(src) ? `https://heatsync.org${src}` : null
+  return clEmoteUrlAllowed(src) ? src : null
+}
+
+/** True when the line was drawn from message_html (caller skips its own shapes). */
+function appendArchiveHtmlBody(host, html) {
+  if (typeof html !== 'string' || !html.includes('<img')) return false
+  const tpl = document.createElement('template')
+  tpl.innerHTML = html
+  const walk = (node) => {
+    for (const n of node.childNodes) {
+      if (n.nodeType === 3) appendTextWithHashtags(host, n.nodeValue || '')
+      else if (n.nodeName === 'IMG') {
+        const alt = n.getAttribute('alt') || ''
+        const src = clArchiveEmoteSrc(n.getAttribute('src'))
+        if (src && !clEmoteBlocked(alt)) {
+          clEmoteImg(host, src, alt)
+          if (n.classList.contains('zw')) host.lastChild.classList.add('zw')
+        } else host.appendChild(document.createTextNode(alt))
+      } else if (n.nodeType === 1) walk(n)
+    }
+  }
+  walk(tpl.content)
+  return true
+}
+
 function appendChatLogBody(host, r) {
+  if (appendArchiveHtmlBody(host, r.message_html)) return
   const text = String(r.message || '')
   const refs = r.emote_refs || null
 

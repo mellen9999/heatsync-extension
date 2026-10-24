@@ -142,3 +142,8 @@ test('a quiet pane on a busy channel logs which side went quiet', () => {
   const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
   expect(main).toMatch(/hsDiagLog\('dom_quiet'/)
 })
+
+test('stripe flicker is counted and logged with its mid-insert count', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/hsDiagLog\('zebra_flicker'/)
+})

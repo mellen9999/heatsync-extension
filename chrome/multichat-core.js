@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'be286eae564e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f5c76d382fd7' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78611,6 +78611,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     } catch (_) {}
   }
   let _thrashObs = null
+  let _zebraObs = null
+  let _zebraFlips = 0
+  let _midInserts = 0
+  let _flickerLoggedAt = 0
   let _domChangeAt = Date.now()
   let _quietLoggedAt = 0
   let _thrashEl = null
@@ -78631,6 +78635,28 @@ const STORAGE_KEY = 'heatsync_multichat'
         for (const m of ms) _thrashCount += m.addedNodes.length + m.removedNodes.length
       })
       _thrashObs.observe(msgsEl, { childList: true })
+      // Stripe flicker = rows flipping their shade while nothing new shows.
+      // Count real flips (zebra class toggled on a message row) and mid-list
+      // inserts so a flicker report says which one is driving it.
+      _zebraObs?.disconnect()
+      _zebraObs = new MutationObserver((ms) => {
+        for (const m of ms) {
+          if (m.type === 'attributes') {
+            if (m.target.parentElement !== msgsEl) continue
+            const was = (m.oldValue || '').includes('hs-mc-zebra')
+            if (was !== m.target.classList.contains('hs-mc-zebra')) _zebraFlips++
+          } else {
+            for (const n of m.addedNodes) if (n.nextSibling) _midInserts++
+          }
+        }
+      })
+      _zebraObs.observe(msgsEl, {
+        attributes: true,
+        attributeFilter: ['class'],
+        attributeOldValue: true,
+        subtree: true,
+        childList: true,
+      })
       return
     }
     // Rows land but the view sits above the tail: the pin never ran (a pending
@@ -78683,6 +78709,18 @@ const STORAGE_KEY = 'heatsync_multichat'
         })
       }
     }
+    if (_zebraFlips >= 30 && nowQ - _flickerLoggedAt > 20000) {
+      _flickerLoggedAt = nowQ
+      hsDiagLog('zebra_flicker', {
+        tab: String(currentTab).slice(0, 24),
+        flips: _zebraFlips,
+        mid: _midInserts,
+        domN: msgsEl.children.length,
+        ep: _renderEpoch,
+      })
+    }
+    _zebraFlips = 0
+    _midInserts = 0
     const tail = msgsEl.lastElementChild?.dataset?.msgKey || ''
     const churn = _thrashCount
     _thrashCount = 0

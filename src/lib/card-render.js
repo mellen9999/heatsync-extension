@@ -190,7 +190,12 @@ function renderRecent(recent, esc) {
     const ts = hsCardLogTime(r.timestamp)
     const tsEl = `<span class="hs-card-log-ts">${esc(ts)}</span>`
     const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channel)}</span>` : ''
-    const body = unlink(r.messageHtml) || esc(r.message)
+    let body = unlink(r.messageHtml) || esc(r.message)
+    // partial links ("watch?v=…") read as links here too — defused again below so
+    // the row stays inert, but they carry the link class/colour
+    if (typeof linkifyPartialLinks === 'function' && (typeof partialLinksEnabled === 'undefined' || partialLinksEnabled)) {
+      body = unlink(linkifyPartialLinks(body))
+    }
     return `<div class="hs-card-log-row">${tsEl}${ch}<span class="hs-card-log-body">${body}</span></div>`
   }).join('')
   return `<div class="hs-card-recent"><div class="hs-card-recent-head"><span>recent</span></div><div class="hs-card-recent-list">${rows}</div></div>`

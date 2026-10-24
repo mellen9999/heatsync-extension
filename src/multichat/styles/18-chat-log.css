@@ -64,6 +64,8 @@
       color: #fff; font-weight: 700; margin-right: 6px;
     }
     .hs-cl-body { color: #ffffff; word-break: break-word; }
+    .hs-cl-link { color: var(--hs-link); text-decoration: none; word-break: break-all; }
+    .hs-cl-link:hover { text-decoration: underline; }
     .hs-cl-emote {
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;

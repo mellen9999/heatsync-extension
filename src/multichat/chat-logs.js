@@ -728,6 +728,32 @@ function appendArchiveBadges(row, html) {
   if (wrap.childNodes.length) row.appendChild(wrap)
 }
 
+// Text of a logged line with the same link rules as live chat: full urls,
+// plus partial/defanged ones ("watch?v=…") when that setting is on. Linkified as
+// escaped html, then rebuilt node by node — only http(s) anchors survive.
+function appendLoggedText(host, text) {
+  const raw = String(text == null ? '' : text)
+  if (typeof linksEnabled === 'undefined' || !linksEnabled || !raw) return appendTextWithHashtags(host, raw)
+  let html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  html = html.replace(/https?:\/\/[^\s<]+/gi, (m) => `<a href="${m}" class="hs-mc-link">${m}</a>`)
+  if (typeof partialLinksEnabled !== 'undefined' && partialLinksEnabled) html = linkifyPartialLinks(html)
+  if (!html.includes('<a ')) return appendTextWithHashtags(host, raw)
+  const tpl = document.createElement('template')
+  tpl.innerHTML = html
+  for (const n of tpl.content.childNodes) {
+    if (n.nodeName === 'A' && /^https?:\/\//i.test(n.getAttribute('href') || '')) {
+      const a = document.createElement('a')
+      a.className = 'hs-cl-link'
+      a.href = n.getAttribute('href')
+      a.target = '_blank'
+      a.rel = 'noopener noreferrer'
+      a.textContent = n.textContent
+      a.addEventListener('click', (e) => e.stopPropagation())
+      host.appendChild(a)
+    } else appendTextWithHashtags(host, n.textContent || '')
+  }
+}
+
 /** True when the line was drawn from message_html (caller skips its own shapes). */
 function appendArchiveHtmlBody(host, html) {
   if (typeof html !== 'string' || !html.includes('<img')) return false
@@ -735,7 +761,7 @@ function appendArchiveHtmlBody(host, html) {
   tpl.innerHTML = html
   const walk = (node) => {
     for (const n of node.childNodes) {
-      if (n.nodeType === 3) appendTextWithHashtags(host, n.nodeValue || '')
+      if (n.nodeType === 3) appendLoggedText(host, n.nodeValue || '')
       else if (n.nodeName === 'IMG') {
         const alt = n.getAttribute('alt') || ''
         const src = clArchiveEmoteSrc(n.getAttribute('src'))
@@ -777,7 +803,7 @@ function appendChatLogBody(host, r) {
       let cursor = 0
       for (const span of spans) {
         if (span.s < cursor) continue
-        if (span.s > cursor) appendTextWithHashtags(host, text.slice(cursor, span.s))
+        if (span.s > cursor) appendLoggedText(host, text.slice(cursor, span.s))
         const slice = text.slice(span.s, span.e + 1)
         const altMatch = slice.match(/^\[emote:[^:]+:([^\]]+)\]$/)
         const altName = altMatch ? altMatch[1] : slice
@@ -787,7 +813,7 @@ function appendChatLogBody(host, r) {
         else host.appendChild(document.createTextNode(src ? altName : slice))
         cursor = span.e + 1
       }
-      if (cursor < text.length) appendTextWithHashtags(host, text.slice(cursor))
+      if (cursor < text.length) appendLoggedText(host, text.slice(cursor))
       return
     }
   }
@@ -795,7 +821,7 @@ function appendChatLogBody(host, r) {
   // Shape B — twitch name→url map (ext relay)
   const twitchEmotes = refs?.twitch || null
   if (!twitchEmotes) {
-    appendTextWithHashtags(host, text)
+    appendLoggedText(host, text)
     return
   }
   const parts = text.split(/(\s+)/)
@@ -804,7 +830,7 @@ function appendChatLogBody(host, r) {
     // blocked, OR the url fails the CDN allowlist (untrusted host) → plain
     // text; never set an unvalidated string straight into img.src.
     if (emoteUrl && !clEmoteBlocked(part) && clEmoteUrlAllowed(emoteUrl)) clEmoteImg(host, emoteUrl, part)
-    else appendTextWithHashtags(host, part)
+    else appendLoggedText(host, part)
   }
 }
 

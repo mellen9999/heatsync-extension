@@ -14914,7 +14914,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd3b2a3ae249b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '722d962eeca1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29682,10 +29682,17 @@ async function fetchCardPayload(platform, login, channel) {
   if (cached && Date.now() - cached.ts < CARD_CACHE_TTL) return cached.payload
   const flying = _cardInflight.get(key)
   if (flying) return flying
-  const p = apiFetch('/api/card', {
-    method: 'POST',
-    body: { platform: platform || 'twitch', login, channel: channel || undefined, openChannels: cardOpenChannels() },
-  })
+  const body = {
+    platform: platform || 'twitch',
+    login,
+    channel: channel || undefined,
+    openChannels: cardOpenChannels(),
+  }
+  const p = apiFetch('/api/card', { method: 'POST', body })
+    // A stale heatsync login (token the server no longer accepts, cookie as stale
+    // as the stored token) answers 401 — and a card is public data, so it is shown
+    // anonymously (minus the viewer's own note) instead of "couldn't load".
+    .then((resp) => (resp?.status === 401 ? apiFetch('/api/card', { method: 'POST', body, auth: false }) : resp))
     .then((resp) => {
       if (!(resp?.ok && resp.data)) {
         // A failed request (timeout, 5xx, rate limit) is not "no such person".

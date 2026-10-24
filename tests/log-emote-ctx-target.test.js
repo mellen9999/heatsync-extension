@@ -28,3 +28,10 @@ test('a blocked log emote keeps its exact size (pinned before the state flips)',
   expect((e.match(/hsPinLogEmoteSize\(w, true\)/g) || []).length).toBe(2)
   expect((e.match(/hsPinLogEmoteSize\(w, false\)/g) || []).length).toBe(2)
 })
+
+test('a card still opens anonymously when the stored heatsync token is rejected (401)', () => {
+  const t = readFileSync(new URL('../src/multichat/tooltips.js', import.meta.url), 'utf8')
+  const f = t.slice(t.indexOf('async function fetchCardPayload'), t.indexOf('The shared card model + renderer'))
+  expect(f).toMatch(/status === 401/)
+  expect(f).toMatch(/auth: false/)
+})

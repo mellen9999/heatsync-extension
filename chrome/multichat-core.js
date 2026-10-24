@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '51a0d69baf2c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '975b5ae17680' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78512,6 +78512,36 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!blockers.editing && !blockers.panel && !blockers.card && !blockers.scrolledUp) scheduleRenderMessages()
   }
 
+  // Same idea one step upstream: a busy channel (5 deliveries inside 20s) that
+  // then goes quiet for 10s+ is not quiet, it is cut off — the BG→tab push died
+  // (service-worker restart, interest lost, a throttled window). Re-register
+  // interest and pull the BG's ring, which holds what the push dropped, and say
+  // so in the diag ring. Pulling is idempotent: the sorted merge dedupes by id.
+  let _gapLoggedAt = 0
+  function ingestGapCheck() {
+    if (!irc || currentTab !== 'live') return
+    const ch = String(getLivePlatformNames().twitch || getLiveChannel() || '').toLowerCase()
+    const ts = ch ? irc._lastLiveAt?.get(ch) : null
+    if (!Array.isArray(ts) || ts.length < 5) return
+    const now = Date.now()
+    const gap = now - ts[ts.length - 1]
+    if (ts[ts.length - 1] - ts[0] > 20000 || gap < 10000 || gap > 120000) return
+    if (now - _gapLoggedAt > 20000) {
+      _gapLoggedAt = now
+      try {
+        window.__hsDiag?.('ingest_gap', {
+          ch,
+          gapS: Math.round(gap / 1000),
+          rt: !!chrome.runtime?.id,
+          hid: document.hidden,
+          foc: document.hasFocus(),
+        })
+      } catch (_) {}
+      irc._reassertInterest?.()
+      irc._refreshFromBg?.(ch)
+    }
+  }
+
   function scheduleRenderMessages() {
     const now = Date.now()
     if (_renderCollapseTimer === null) _renderCollapseFirstAt = now
@@ -81592,6 +81622,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (mcInitialized) return
     mcInitialized = true
     cleanup.setInterval(renderStallCheck, 2500)
+    cleanup.setInterval(ingestGapCheck, 3000)
 
     // Inject CSS before ANYTHING that awaits. injectStyles has zero settings
     // deps, and a <style> tag is inert until our DOM mounts — but the health

@@ -9716,11 +9716,46 @@
   // repaint. Intentional pauses (scrolled up, a card/panel/editor open, tab
   // hidden) are recorded but never fought.
   let _stallLoggedAt = 0
+  let _desyncLoggedAt = 0
+  // The key index must mirror the rows on screen. One stray key (a row dropped
+  // without unindexing) makes appendMessage and the diff skip that message as
+  // "already shown" forever — chat freezes while buffers keep filling. The DOM
+  // is the truth: rebuild the index from it and repaint.
+  function _reconcileMsgKeyIndex(msgsEl) {
+    const dom = new Set()
+    for (const el of msgsEl.children) {
+      const k = el.dataset?.msgKey
+      if (k) dom.add(k)
+    }
+    let drift = dom.size !== _msgKeyIndex.size
+    if (!drift)
+      for (const k of _msgKeyIndex)
+        if (!dom.has(k)) {
+          drift = true
+          break
+        }
+    if (!drift) return
+    const now = Date.now()
+    if (now - _desyncLoggedAt > 20000) {
+      _desyncLoggedAt = now
+      try {
+        window.__hsDiag?.('index_desync', {
+          tab: String(currentTab).slice(0, 24),
+          dom: dom.size,
+          idx: _msgKeyIndex.size,
+        })
+      } catch (_) {}
+    }
+    _msgKeyIndex.clear()
+    for (const k of dom) _msgKeyIndex.add(k)
+    scheduleRenderMessages()
+  }
   function renderStallCheck() {
     if (document.hidden) return
     if (currentTab !== 'live' && !getChannelById(currentTab)) return
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl) return
+    _reconcileMsgKeyIndex(msgsEl)
     const m = _tabNewestBuffered(currentTab)
     if (!m || m.isHistory || Date.now() - (m.time || 0) < 4000) return
     if (Date.now() - (m.time || 0) > 120000) return // quiet channel, nothing newer to show

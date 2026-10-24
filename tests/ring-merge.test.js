@@ -105,3 +105,10 @@ test('an ingest gap on a busy channel re-registers interest and re-pulls the BG 
   expect(main).toMatch(/irc\._refreshFromBg\?\.\(ch\)/)
   expect(main).toMatch(/cleanup\.setInterval\(ingestGapCheck, 3000\)/)
 })
+
+test('stall check heals the key index from the DOM and logs index_desync', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/function _reconcileMsgKeyIndex\(/)
+  expect(main).toMatch(/_reconcileMsgKeyIndex\(msgsEl\)/)
+  expect(main).toMatch(/'index_desync'/)
+})

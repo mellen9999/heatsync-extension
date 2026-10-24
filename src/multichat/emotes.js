@@ -1707,6 +1707,22 @@ async function loadBlockedEmotes() {
   }
 }
 
+// A blocked emote on a logs surface becomes a dashed box of EXACTLY the size the
+// emote had (wide or skinny), so nothing around it moves. The pixel swap in css
+// would collapse the width, so the size is pinned here before the state flips.
+function hsPinLogEmoteSize(el, on) {
+  const img = el.tagName === 'IMG' ? el : el.querySelector?.('img')
+  if (!img || !img.closest('.hs-card-log-body, .hs-cl-list')) return
+  if (!on) {
+    img.style.removeProperty('--hs-lock-w')
+    img.style.removeProperty('--hs-lock-h')
+    return
+  }
+  const r = img.getBoundingClientRect()
+  if (r.width > 2) img.style.setProperty('--hs-lock-w', `${r.width}px`)
+  if (r.height > 2) img.style.setProperty('--hs-lock-h', `${r.height}px`)
+}
+
 // Diff-apply blocked changes from storage WITHOUT re-rendering the whole tab.
 // The full-rerender path in the storage onChanged listener was the source of
 // the right-click flicker (only at scroll-bottom, since renderMessages was
@@ -1738,6 +1754,7 @@ function applyBlockedHashDelta(newHashesArr) {
     }
     queryEmoteWrappers(name).forEach((w) => {
       if (w.classList.contains('hs-state-blocked')) return
+      hsPinLogEmoteSize(w, true)
       w.classList.remove(
         'hs-state-global',
         'hs-state-channel',
@@ -1800,6 +1817,7 @@ function applyBlockedHashDelta(newHashesArr) {
       w.classList.add(`hs-state-${newState}`)
       w.dataset.state = newState
       w.style.outline = ''
+      hsPinLogEmoteSize(w, false)
       const img = w.querySelector('img')
       if (img && realUrl) {
         img.src = realUrl
@@ -2365,6 +2383,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
 
   // Instant DOM update - CSS visibility:hidden hides the img, no src swap needed
   queryEmoteWrappers(emoteName).forEach((w) => {
+    hsPinLogEmoteSize(w, true)
     w.classList.remove(
       'hs-state-global',
       'hs-state-channel',
@@ -2481,6 +2500,7 @@ function unblockEmote(emoteName, opts) {
     w.classList.add(`hs-state-${newState}`)
     w.dataset.state = newState
     w.style.outline = ''
+    hsPinLogEmoteSize(w, false)
     const img = w.querySelector('img')
     if (img && realUrl) {
       img.src = realUrl

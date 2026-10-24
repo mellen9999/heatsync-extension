@@ -21,3 +21,10 @@ test('same-name log emotes join the cross-highlight / block / flash set', () => 
   expect(q).toMatch(/hs-card-log-body img\[alt=/)
   expect(q).toMatch(/hs-cl-emote\[alt=/)
 })
+
+test('a blocked log emote keeps its exact size (pinned before the state flips)', () => {
+  const e = readFileSync(new URL('../src/multichat/emotes.js', import.meta.url), 'utf8')
+  expect(e).toMatch(/function hsPinLogEmoteSize/)
+  expect((e.match(/hsPinLogEmoteSize\(w, true\)/g) || []).length).toBe(2)
+  expect((e.match(/hsPinLogEmoteSize\(w, false\)/g) || []).length).toBe(2)
+})

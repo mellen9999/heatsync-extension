@@ -167,7 +167,8 @@
       visibility: visible !important;
       /* swapped for a clear pixel, not filtered: a filter would darken the outline too */
       content: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
-      width: 24px !important;
+      width: var(--hs-lock-w, 24px) !important;
+      height: var(--hs-lock-h, 24px) !important;
       outline: 2px dashed var(--hs-border);
       outline-offset: -2px;
       cursor: pointer;

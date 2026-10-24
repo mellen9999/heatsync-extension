@@ -39,8 +39,7 @@
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
     #hs-mc-inputbar.hs-mc-resub-share {
-      box-shadow: 0 0 0 2px var(--hs-plat-twitch) inset;
-      background: #000000;
+      background: var(--hs-plat-twitch);
     }
     #hs-mc-input.hs-mc-resub-share,
     #hs-mc-input.hs-mc-resub-share:focus {

@@ -102,6 +102,9 @@ function _enterResubShareMode(claim, user, months) {
   // silently (keep its banner up so user can come back to it).
   if (_watchstreakShareCtx) _exitWatchstreakShareMode(_watchstreakShareCtx.claim, false, true)
   _resubShareCtx = { claim, user, months }
+  // A hidden composer (auto-hide) made share mode invisible: nothing to type
+  // into, so the 30s fallback fired an empty share. Open it for the duration.
+  if (typeof showInputBar === 'function') showInputBar()
   const input = document.getElementById('hs-mc-input')
   const inputBar = document.getElementById('hs-mc-inputbar')
   if (!input) return
@@ -142,6 +145,8 @@ function _exitResubShareMode(claim, fireFallback, silent) {
   const inputBar = document.getElementById('hs-mc-inputbar')
   inputBar?.classList.remove('hs-mc-resub-share')
   input?.classList.remove('hs-mc-resub-share')
+  // hand the composer back to auto-hide (it no-ops unless the setting is on and the bar is empty)
+  if (typeof hideInputBar === 'function') cleanup.setTimeout(() => hideInputBar(), 0)
   if (input?.dataset.hsOrigPlaceholder !== undefined) {
     input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
     delete input.dataset.hsOrigPlaceholder

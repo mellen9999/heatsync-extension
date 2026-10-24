@@ -4263,6 +4263,8 @@
   function hideInputBar() {
     if (!autoHideEligible()) return
     if (!syncInputBarVisible()) return
+    // a share prompt (resub / watch streak) is waiting on this composer
+    if (typeof _resubShareCtx !== 'undefined' && (_resubShareCtx || _watchstreakShareCtx)) return
     const input = document.getElementById('hs-mc-input')
     const hasText = input ? (input.value || input.textContent || '').trim().length > 0 : false
     const hasContent = hasText || input?.querySelector('img, span.hs-mc-emoji')

@@ -11253,6 +11253,20 @@
       // channel", so land on its live tab, not whichever tab was last active.
       if (location.hash === '#hs-live') {
         _savedActiveTab = 'live'
+        // ...and keep it: a saved tab, so every open surface (storage
+        // onChanged) gets it and removing it anywhere removes it everywhere.
+        const cur = getCurrentChannel()
+        const plat = location.hostname.includes('kick.com') ? 'kick' : 'twitch'
+        if (cur && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
+          config.channels.push({
+            id: cur,
+            twitch: plat === 'twitch' ? cur : '',
+            kick: plat === 'kick' ? cur : '',
+            youtube: '',
+          })
+          saveConfig()
+        }
+        if (cur && config.channels.some((c) => c.id === cur)) _savedActiveTab = cur
         try {
           history.replaceState(null, '', location.pathname + location.search)
         } catch (_) {}

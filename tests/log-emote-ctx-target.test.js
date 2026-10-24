@@ -84,4 +84,5 @@ test('event row click opens the channel on its live tab, not the last active tab
   const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
   expect(src).toMatch(/twitch\.tv\/\$\{encodeURIComponent\(ch\)\}#hs-live/)
   expect(src).toMatch(/location\.hash === '#hs-live'\) \{\s*_savedActiveTab = 'live'/)
+  expect(src).toMatch(/config\.channels\.push\([^]*?id: cur,[^]*?saveConfig\(\)[^]*?_savedActiveTab = cur/)
 })

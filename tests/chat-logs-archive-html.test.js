@@ -41,3 +41,19 @@ describe('clArchiveEmoteSrc', () => {
     expect(SRC).toContain('if (appendArchiveHtmlBody(host, r.message_html)) return')
   })
 })
+
+describe('live logs room + badge art', () => {
+  const B = SRC.indexOf('const CL_BADGE_PATH')
+  const badgePath = new Function(`${SRC.slice(B, SRC.indexOf('\n', B))}\nreturn CL_BADGE_PATH`)()
+  test('only heatsync badge mirror paths pass', () => {
+    expect(badgePath.test('/b/twitch/3267646d-33f0-4b17-b3df-f923a41db1d0')).toBe(true)
+    expect(badgePath.test('/badges/kick/moderator.svg')).toBe(true)
+    expect(badgePath.test('//evil.example/x.png')).toBe(false)
+    expect(badgePath.test('/b/twitch/../../etc')).toBe(false)
+    expect(badgePath.test('https://evil.example/b/twitch/x')).toBe(false)
+  })
+  test('the view joins its ulog room and leaves on close', () => {
+    expect(SRC).toMatch(/`ulog:\$\{st\.platform\}:\$\{st\.username\}`/)
+    expect(SRC).toMatch(/function dropChatLogsState\(\) \{\s*activeChatLogs = null\s*clLiveRoomSync\(\)/)
+  })
+})

@@ -95,3 +95,6 @@
     a.hs-cl-time:hover { background: #fff; color: #000; }
     a.hs-cl-time.hs-cl-time-copied { color: #fff; }
 
+
+.hs-cl-badges { margin-right: 4px; }
+.hs-cl-badge-img { display: inline-block; width: 18px; height: 18px; margin-right: 2px; vertical-align: middle; }

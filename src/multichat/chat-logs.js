@@ -150,12 +150,42 @@ async function openChatLogsView(username, opts = {}) {
   }
   hsTakeoverSync()
   renderChatLogsView()
+  clLiveRoomSync()
   await fetchChatLogsPage()
+}
+
+// The server pushes this person's new archive lines (any channel the archive
+// hears, not just the ones this tab is in) to a socket that joined their
+// `ulog:` room. The background owns the socket; like a thread view, this tab
+// only names the room it is looking at (null leaves) and re-announces it so a
+// restarted service worker re-joins.
+const CL_ULOG_NAME_RE = /^[a-z0-9_]{1,40}$/
+let _clRoom = null
+let _clRoomKeep = null
+function clLiveRoomSync() {
+  const st = activeChatLogs
+  const room =
+    st && CL_ULOG_NAME_RE.test(st.username) && ['twitch', 'kick', 'youtube'].includes(st.platform)
+      ? `ulog:${st.platform}:${st.username}`
+      : null
+  if (room === _clRoom && (room === null || _clRoomKeep)) return
+  _clRoom = room
+  safeSendMessage({ type: 'feed_thread', room })
+  if (_clRoomKeep) {
+    cleanup.clearInterval(_clRoomKeep)
+    _clRoomKeep = null
+  }
+  if (room) {
+    _clRoomKeep = cleanup.setIntervalIfVisible(() => {
+      if (_clRoom) safeSendMessage({ type: 'feed_thread', room: _clRoom })
+    }, 30000)
+  }
 }
 
 // Forget the open view without leaving its cell (a pane remount owns the rest).
 function dropChatLogsState() {
   activeChatLogs = null
+  clLiveRoomSync()
   hsTakeoverSync()
   if (_clLoadMoreObs) {
     cleanup.untrackObserver(_clLoadMoreObs)
@@ -240,6 +270,40 @@ function chatLogsLive(msg) {
     user_id: msg.userId,
     color: msg.color,
   }
+  clInsertLive(r)
+}
+
+// A line the archive just heard (server push). The tab's own chat may already
+// have added the same line through chatLogsLive — that one stays; this is the
+// fallback for every channel the tab is NOT in.
+function chatLogsServerLive(row) {
+  const st = activeChatLogs
+  if (!st || st.query || !row || typeof row.message !== 'string' || !row.message) return
+  if (String(row.platform || '').toLowerCase() !== st.platform) return
+  if (String(row.username || '').toLowerCase() !== st.username) return
+  const channel = String(row.channel || '').toLowerCase()
+  if (st.channel && channel !== st.channel) return
+  const ts = new Date(row.timestamp).getTime()
+  if (Number.isNaN(ts)) return
+  for (const r of st.rows.slice(0, 40)) {
+    if (row.message_id && r.message_id === row.message_id) return
+    if (
+      r.live &&
+      r.message === row.message &&
+      r.channel === channel &&
+      Math.abs(new Date(r.timestamp).getTime() - ts) < 15000
+    ) {
+      // our own chat heard it first: keep that row, but adopt the archive's badges/ids
+      r.message_id = r.message_id || row.message_id
+      return
+    }
+  }
+  clInsertLive({ ...row, id: row.id || `srv-${row.message_id || ts}`, channel, username: st.username, srv: true })
+}
+
+function clInsertLive(r) {
+  const st = activeChatLogs
+  if (!st) return
   st.rows.unshift(r)
   if (st.rows.length > 500) st.rows.pop()
 
@@ -549,6 +613,8 @@ function renderChatLogRow(r) {
     row.appendChild(ch)
   }
 
+  if (r.badges_html) appendArchiveBadges(row, r.badges_html)
+
   const name = document.createElement('span')
   name.className = 'hs-cl-user'
   // The archive row names the chatter (user_id + platform when the server sent
@@ -636,6 +702,30 @@ function clArchiveEmoteSrc(src) {
   if (typeof src !== 'string') return null
   if (src.startsWith('/')) return CL_HS_EMOTE_PATH.test(src) ? `https://heatsync.org${src}` : null
   return clEmoteUrlAllowed(src) ? src : null
+}
+
+// Real badge art for the channel the line was posted in. badges_html is the
+// server's own render; read as DATA like message_html — only an <img> pointing
+// at heatsync's own badge mirror survives, rebuilt node by node.
+const CL_BADGE_PATH = /^\/(?:b\/(?:twitch|kick|youtube)\/[A-Za-z0-9_-]{1,64}|badges\/[a-z0-9_/-]{1,60}\.(?:svg|png))$/
+function appendArchiveBadges(row, html) {
+  if (typeof html !== 'string' || !html.includes('<img')) return
+  const tpl = document.createElement('template')
+  tpl.innerHTML = html
+  const wrap = document.createElement('span')
+  wrap.className = 'hs-cl-badges'
+  for (const n of tpl.content.querySelectorAll('img')) {
+    const src = n.getAttribute('src') || ''
+    if (!CL_BADGE_PATH.test(src)) continue
+    const img = document.createElement('img')
+    img.className = 'hs-cl-badge-img'
+    img.src = `https://heatsync.org${src}`
+    img.alt = (n.getAttribute('alt') || '').slice(0, 40)
+    img.title = img.alt
+    img.loading = 'lazy'
+    wrap.appendChild(img)
+  }
+  if (wrap.childNodes.length) row.appendChild(wrap)
 }
 
 /** True when the line was drawn from message_html (caller skips its own shapes). */

@@ -1155,7 +1155,8 @@ const joinedExtraChannels = new Set() // "platform/channel" keys
 // reconnect (the connect burst reads this map). Sent direct, never queued: a
 // closed socket has nothing to leave, and the burst re-joins what is still open.
 const feedThreadTabs = new Map() // tabId → 'thread:<id>'
-const FEED_THREAD_ROOM_RE = /^thread:[a-z0-9]{1,8}$/
+// thread:<id> (a thread view) or ulog:<platform>:<login> (a person's logs view — their new archive lines)
+const FEED_THREAD_ROOM_RE = /^(?:thread:[a-z0-9]{1,8}|ulog:(?:twitch|kick|youtube):[a-z0-9_]{1,40})$/
 function feedThreadSet(tabId, room) {
   const before = new Set(feedThreadTabs.values())
   if (room) feedThreadTabs.set(tabId, room)
@@ -6967,6 +6968,11 @@ function handleWSMessage(msg) {
       case 'reaction:removed':
       case 'vote:updated':
         broadcastToTabs({ type: msg.type, data: msg })
+        break
+
+      // A new archive line for the person whose logs a tab has open (ulog room).
+      case 'user-log':
+        if (msg.data) broadcastToTabs({ type: 'user-log', data: msg.data })
         break
 
       case 'notification:new':

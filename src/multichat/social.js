@@ -1600,6 +1600,10 @@ function listenForSocialEvents() {
         }
       }
     }
+    if (msg.type === 'user-log') {
+      chatLogsServerLive(msg.data)
+      return
+    }
     if (msg.type === 'reaction:added' || msg.type === 'reaction:removed' || msg.type === 'vote:updated') {
       if (msg.data) feedOnFrame(msg.data)
       return

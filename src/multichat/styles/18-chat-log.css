@@ -79,7 +79,7 @@
     }
     .hs-cl-emote.hs-state-blocked,
     .hs-card-log-body img.hs-state-blocked {
-      filter: brightness(0); outline: 2px dashed var(--hs-border); outline-offset: -2px; cursor: pointer;
+      content: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"); width: 18px; outline: 2px dashed var(--hs-border); outline-offset: -2px; cursor: pointer;
     }
     .hs-cl-emote.hs-state-blocked.hs-emote-highlight,
     .hs-card-log-body img.hs-state-blocked.hs-emote-highlight {

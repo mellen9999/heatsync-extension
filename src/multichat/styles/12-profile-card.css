@@ -159,6 +159,23 @@
       position: relative !important;
       line-height: inherit !important;
     }
+    /* a blocked emote on a card line: chat's dashed ::before sits on an inline
+     * wrapper and collapses to nothing here, so the image itself carries the
+     * dashed box (still the right-click target to unblock) */
+    #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper.hs-state-blocked::before { display: none; }
+    #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper.hs-state-blocked > img.hs-mc-emote {
+      visibility: visible !important;
+      /* swapped for a clear pixel, not filtered: a filter would darken the outline too */
+      content: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+      width: 24px !important;
+      outline: 2px dashed var(--hs-border);
+      outline-offset: -2px;
+      cursor: pointer;
+    }
+    #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper.hs-state-blocked.hs-emote-highlight > img.hs-mc-emote {
+      background: var(--hs-danger);
+      outline: none;
+    }
     #hs-mc-messages .hs-card-log-body .hs-mc-emote-wrapper img.hs-mc-emote {
       display: inline !important;
       position: static !important;

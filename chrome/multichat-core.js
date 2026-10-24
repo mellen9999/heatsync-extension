@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c676d9bb348d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '63f691279262' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -48542,7 +48542,12 @@ function showCycleTooltip() {
   }
   const m = acState.matches[acState.index]
   if (!m) {
-    tt.style.display = 'none'
+    // nothing to cycle yet: say so while the catalog search runs / after it comes back empty,
+    // otherwise a slow 7tv looks like a dead Tab
+    if (acState.active && (acState.remotePending || acState.remoteDone)) {
+      tt.textContent = acState.remotePending ? 'searching 7tv…' : 'no match'
+      tt.style.display = 'block'
+    } else tt.style.display = 'none'
     return
   }
   const meta = emoteCycleMeta(m)

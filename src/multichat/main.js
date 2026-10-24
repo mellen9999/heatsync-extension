@@ -9397,7 +9397,10 @@
     let prev = from ? from.previousElementSibling : null
     for (let el = from || msgsEl.firstElementChild; el; el = el.nextElementSibling) {
       if (el.id === 'hs-mc-embed-player') continue
-      const want = zebraEnabled && !!prev && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+      // the top row has no row above to alternate against — it keeps its stripe
+      const want = prev
+        ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+        : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
       prev = el
     }
@@ -10263,13 +10266,22 @@
           if (nd) {
             nd.dataset.msgKey = key
             nd.dataset.hsEpoch = String(_renderEpoch)
-            // Recompute (not copy) zebra from the actual previous sibling: the
-            // walk replaces in DOM order, so alternation stays consistent — and
-            // a zebra toggle-OFF bump actually strips stripes from old rows.
-            stampZebra(nd, _rm, existing.previousElementSibling)
+            // Recompute (not copy) zebra from the row above: the walk replaces
+            // in DOM order, so alternation stays consistent — and a zebra
+            // toggle-OFF bump actually strips stripes from old rows. The first
+            // row has nothing above and keeps its own stripe (the window
+            // slides, so the top row is not always a plain one).
+            const above = existing.previousElementSibling
+            if (above) stampZebra(nd, _rm, above)
+            else {
+              if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
+              nd.classList.toggle(
+                'hs-mc-zebra',
+                zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra'),
+              )
+            }
             _unindexMessageDiv(existing)
             msgsEl.replaceChild(nd, existing)
-            zebraFrom = zebraFrom || nd
             _indexMessageDiv(nd, key)
           } else {
             // Message no longer renderable under new state — keep the old row

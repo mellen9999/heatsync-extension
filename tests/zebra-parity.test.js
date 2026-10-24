@@ -86,4 +86,13 @@ describe('zebra parity', () => {
     zebraRepaint(msgsEl, null)
     expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, false, true, false])
   })
+
+  test('the top row keeps its stripe when the window has slid', () => {
+    const { els, msgsEl } = fakeList(['chat', 'chat', 'chat', 'chat'])
+    // window slid: top row is striped, rows below are out of phase with it
+    els[0].classList.toggle('hs-mc-zebra', true)
+    els[1].classList.toggle('hs-mc-zebra', true)
+    zebraRepaint(msgsEl, els[0])
+    expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([true, false, true, false])
+  })
 })

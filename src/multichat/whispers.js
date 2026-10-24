@@ -746,7 +746,7 @@ function renderWhispersTab() {
     // 7TV → color precedence + twitch-space id-guard are reused, not duplicated.
     const whisperBody = highlightHashtagsInHtml(
       highlightMentionsInHtml(
-        processEmotes(escapeHtml(m.text), null, undefined, undefined, undefined, true),
+        processEmotes(escapeHtml(m.text), null, hsAnyChannelEmotes(), undefined, undefined, true),
         m.platform,
       ),
     )
@@ -756,7 +756,7 @@ function renderWhispersTab() {
     const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="reply (${escapeHtml(them)})">↩</button>`
     const dirColor = m.self ? 'var(--hs-brand)' : 'var(--hs-reply)'
     const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
-    div.innerHTML = `${tsHtml}<span style="color:${platColor};font-size:13px;font-weight:700">[${platTag}]</span> ${senderLink} ${arrow} ${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`
+    div.innerHTML = `${tsHtml}<span style="color:${platColor};font-size:13px;font-weight:700">[${platTag}]</span> ${senderLink}${arrow}${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`
     frag.appendChild(div)
   }
 

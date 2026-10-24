@@ -4042,6 +4042,28 @@ function _hsCwBoxHtml(cwCat, displayName, boxW) {
   return `<span class="hs-mc-emote-wrapper hs-mc-emote-cw${sizedClass}" data-emote-name="${displayName}" data-cw="${cwCat}" data-state="cw"${wAttr} title="${displayName}">${cwCat}</span>`
 }
 
+// A whisper / DM belongs to no channel, so a channel-only emote ("BillyLift" from
+// the channel you typed it in) found nothing to resolve against and stayed plain
+// text. This is every loaded channel's set in one map (names escaped, the form
+// processEmotes' extraCache is keyed by), rebuilt only when a set changes size.
+let _anyChanEmotes = null
+let _anyChanSig = ''
+function hsAnyChannelEmotes() {
+  let sig = ''
+  for (const k in channelEmoteCaches) sig += `${k}:${channelEmoteCaches[k]?.size || 0};`
+  if (_anyChanEmotes && sig === _anyChanSig) return _anyChanEmotes
+  const all = new Map()
+  for (const k in channelEmoteCaches) {
+    for (const [name, e] of channelEmoteCaches[k] || []) {
+      const key = escapeHtml(name)
+      if (!all.has(key)) all.set(key, e)
+    }
+  }
+  _anyChanEmotes = all
+  _anyChanSig = sig
+  return all
+}
+
 function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMentions = false, msgRefs = null) {
   if (
     emoteCache.size === 0 &&

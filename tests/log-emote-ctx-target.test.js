@@ -64,3 +64,10 @@ test("blocked card-line emote: the pinned size out-ranks the card's width:auto !
   const css = readFileSync(new URL('../src/multichat/styles/18-chat-log.css', import.meta.url), 'utf8')
   expect(css).toMatch(/img\.hs-state-blocked:is\(\.emote[^{]*\{\s*width: var\(--hs-lock-w, 24px\) !important/)
 })
+
+test('whispers and inline dms resolve channel emotes via the all-channels map', () => {
+  for (const f of ['whispers.js', 'main.js']) {
+    const t = readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
+    expect(t).toMatch(/processEmotes\(escapeHtml\(m\.text\), null, hsAnyChannelEmotes\(\)/)
+  }
+})

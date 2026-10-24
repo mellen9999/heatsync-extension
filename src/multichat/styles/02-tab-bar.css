@@ -330,22 +330,23 @@
     .hs-mc-dm-inline.hs-whisper-failed .hs-cmd-mark { text-decoration: none; }
     .hs-whisper-msg.hs-whisper-in { border-left: 3px solid var(--hs-reply); }
     .hs-whisper-arrow {
-      font-family: monospace"DejaVu Sans Mono", "Liberation Mono", monospace;
-      font-size: 19px;
+      font-family: monospace;
+      font-size: 24px;
       font-weight: 700;
-      /* Pin the box to the row's own line-height. A 19px glyph in an auto-height
-         inline box grew the line box by 1px, so whisper rows sat a pixel taller
-         than every other row — uniform row height is the whole point of the
-         density grid. Fixed height + middle alignment lets the glyph render at
-         full size (overflow is visible) without touching layout. */
+      /* The box is pinned to the row's own line-height (a taller glyph box grew
+         the line by 1px, and uniform row height is the point of the density
+         grid) and middle-aligned, so it centres on the text's x-height. The arrow
+         ink sits low inside its own box (measured: 10.6-16.6 of 18px), so the
+         glyph is lifted by 0.19em to land its centre on the box centre. */
       display: inline-block;
       height: 18px;
       line-height: 18px;
-      width: 12px;
       text-align: center;
       overflow: visible;
-      vertical-align: -4px;
-      margin: 0 5px;
+      vertical-align: middle;
+      position: relative;
+      top: -0.19em;
+      margin: 0 3px;
     }
     .hs-whisper-you {
       color: #ffffff;

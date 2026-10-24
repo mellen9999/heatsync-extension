@@ -137,3 +137,8 @@ test('multi-platform render debounce cannot be held forever by a frozen rAF', ()
   expect(main).toMatch(/cleanup\.setTimeout\(run, 500\)/)
   expect(main).toMatch(/hs-popout'\)\) \{\s*_hiddenSkippedAppend = true/)
 })
+
+test('a quiet pane on a busy channel logs which side went quiet', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/hsDiagLog\('dom_quiet'/)
+})

@@ -9846,6 +9846,8 @@
     } catch (_) {}
   }
   let _thrashObs = null
+  let _domChangeAt = Date.now()
+  let _quietLoggedAt = 0
   let _thrashEl = null
   let _thrashCount = 0
   let _thrashTail = null
@@ -9855,11 +9857,12 @@
   let _unpinLoggedAt = 0
   function domThrashCheck() {
     const msgsEl = document.getElementById('hs-mc-messages')
-    if (!msgsEl || document.hidden) return
+    if (!msgsEl || (document.hidden && !document.body.classList.contains('hs-popout'))) return
     if (_thrashEl !== msgsEl) {
       _thrashObs?.disconnect()
       _thrashEl = msgsEl
       _thrashObs = new MutationObserver((ms) => {
+        _domChangeAt = Date.now()
         for (const m of ms) _thrashCount += m.addedNodes.length + m.removedNodes.length
       })
       _thrashObs.observe(msgsEl, { childList: true })
@@ -9889,6 +9892,32 @@
         scrollMsgsToBottom(msgsEl)
       }
     } else _unpinnedStreak = 0
+    // Busy channel, silent pane: say which side went quiet. A fresh buffer with
+    // a still DOM is the render path; a stale buffer is delivery.
+    const nowQ = Date.now()
+    const quietMs = nowQ - _domChangeAt
+    if (quietMs > 4000 && nowQ - _quietLoggedAt > 20000 && (currentTab === 'live' || getChannelById(currentTab))) {
+      const nbq = _tabNewestBuffered(currentTab)
+      const bufAgeMs = nbq ? nowQ - (nbq.time || 0) : -1
+      if (bufAgeMs >= 0 && bufAgeMs < 2500) {
+        _quietLoggedAt = nowQ
+        hsDiagLog('dom_quiet', {
+          tab: String(currentTab).slice(0, 24),
+          quietS: Math.round(quietMs / 1000),
+          bufAgeMs: Math.round(bufAgeMs),
+          mpTimer: !!_multiPlatformRenderTimer,
+          collapse: _renderCollapseTimer !== null,
+          starved: _rafStarved,
+          hid: document.hidden,
+          foc: document.hasFocus(),
+          up: !!isScrolledUp,
+          card: typeof activeProfileCard !== 'undefined' && !!activeProfileCard,
+          panel: !!hsPanePanelOpen(),
+          edit: !!editingChannel,
+          calls: _renderCalls,
+        })
+      }
+    }
     const tail = msgsEl.lastElementChild?.dataset?.msgKey || ''
     const churn = _thrashCount
     _thrashCount = 0

@@ -97,3 +97,11 @@ test('a render watchdog logs why chat stopped painting and repaints when nothing
   expect(main).toMatch(/__hsDiag\?\.\('render_stall'/)
   expect(main).toMatch(/cleanup\.setInterval\(renderStallCheck, 2500\)/)
 })
+
+test('an ingest gap on a busy channel re-registers interest and re-pulls the BG ring', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/function ingestGapCheck\(\)/)
+  expect(main).toMatch(/__hsDiag\?\.\('ingest_gap'/)
+  expect(main).toMatch(/irc\._refreshFromBg\?\.\(ch\)/)
+  expect(main).toMatch(/cleanup\.setInterval\(ingestGapCheck, 3000\)/)
+})

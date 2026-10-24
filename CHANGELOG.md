@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.103] — 2026-10-24
+
+### fixed
+- **chat freezing** — a popout the browser calls hidden can no longer stall new messages on a twitch + kick tab; the pane keeps drawing until you look.
+- **saved channel tabs** — opening a channel from an event row saves it as a tab on every surface and lands on it.
+- **chat order** — history merges keep each channel sorted, so new lines never land above a stale tail.
+- **zebra stripes** — a line inserted mid-list restripes the rows after it, so stripes never double or flip.
+- **tab dots** — the live dot no longer overlaps the unread count.
+- **kick wide emotes** — they draw at full height instead of a strip in a square.
+
+### added
+- **self-checks** — the pane logs and repairs a stalled repaint, a desynced row index or a silent channel, and records long frames, so a freeze shows up in diagnostics.
+
 ## [1.7.100] — 2026-10-23
 
 ### fixed

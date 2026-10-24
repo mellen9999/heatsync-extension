@@ -106,3 +106,12 @@ test('tabs re-assert channel interest so a restarted service worker cannot stran
   expect(irc).toMatch(/_interestTimer = cleanup\.setInterval\(\(\) => this\._reassertInterest\(\), 15000\)/)
   expect(bg).toMatch(/message\.type === 'bg_irc_interest'[^]*?bgIrcRegisterTabInterest\(tabId, ch\)/)
 })
+
+test('kick wide emotes crop to their art instead of drawing as a strip in a square', () => {
+  const src = readFileSync(new URL('../src/multichat/emotes.js', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../src/multichat/styles/10-emotes.css', import.meta.url), 'utf8')
+  expect(src).toMatch(/KICK_CROP_MIN_ASPECT = 1\.5/)
+  expect(src).toMatch(/_kickCropRequest\(emoteId\)/)
+  expect(src).toMatch(/data-kick-id="\$\{emoteId\}"/)
+  expect(css).toMatch(/\.hs-mc-emote-wrapper\.hs-kick-crop > img\.hs-mc-emote/)
+})

@@ -760,3 +760,22 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       font-weight: 700;
       letter-spacing: 0.02em;
     }
+
+    /* Kick wide emote: the wrapper is cropped to the art inside Kick's square
+       canvas (vars from _kickCropStyle) so it draws at full height like any
+       other wide emote instead of a thin strip in a square. */
+    .hs-mc-emote-wrapper.hs-kick-crop {
+      position: relative;
+      overflow: hidden;
+      height: var(--hs-emote-size, 32px) !important;
+      width: calc(var(--hs-emote-size, 32px) * var(--kc-ar)) !important;
+    }
+    .hs-mc-emote-wrapper.hs-kick-crop > img.hs-mc-emote {
+      position: absolute;
+      padding: 0;
+      max-height: none;
+      width: auto;
+      height: calc(100% * var(--kc-sh));
+      left: calc(-100% * var(--kc-x));
+      top: calc(-100% * var(--kc-y));
+    }

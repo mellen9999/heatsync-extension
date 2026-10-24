@@ -3810,6 +3810,70 @@ function _hsMcApplyMods(html, mods, hue) {
 }
 
 const _hsEmoteBoxW = new Map() // chat url -> integer px (ceil of natural box width)
+
+// Kick serves every emote on a square canvas, so a wide one (…KEKWIDE) arrives
+// as a strip of art in the middle of transparent padding and drew at a third of
+// the size of any other wide emote. Measure where the art actually is (one
+// fetch per emote id, files.kick.com allows CORS) and, for clearly wide art,
+// crop the wrapper to it. Tall or squarish art stays as Kick drew it.
+const _kickCrop = new Map() // emote id -> { w, h, x, y, sw, sh } | null (no crop)
+const _kickCropPending = new Set()
+const KICK_CROP_MIN_ASPECT = 1.5
+
+async function _measureKickEmote(id) {
+  const res = await fetch(`https://files.kick.com/emotes/${id}/fullsize`)
+  if (!res.ok) return null
+  const bmp = await createImageBitmap(await res.blob())
+  const sw = bmp.width
+  const sh = bmp.height
+  const cv = new OffscreenCanvas(sw, sh)
+  const cx = cv.getContext('2d', { willReadFrequently: true })
+  cx.drawImage(bmp, 0, 0)
+  bmp.close?.()
+  const d = cx.getImageData(0, 0, sw, sh).data
+  let x0 = sw
+  let x1 = -1
+  let y0 = sh
+  let y1 = -1
+  for (let y = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++) {
+      if (d[(y * sw + x) * 4 + 3] > 16) {
+        if (x < x0) x0 = x
+        if (x > x1) x1 = x
+        if (y < y0) y0 = y
+        if (y > y1) y1 = y
+      }
+    }
+  }
+  if (x1 < 0) return null
+  const w = x1 - x0 + 1
+  const h = y1 - y0 + 1
+  if (w / h < KICK_CROP_MIN_ASPECT) return null
+  return { w, h, x: x0, y: y0, sw, sh }
+}
+
+function _kickCropStyle(c) {
+  return `--kc-ar:${(c.w / c.h).toFixed(4)};--kc-x:${(c.x / c.w).toFixed(4)};--kc-y:${(c.y / c.h).toFixed(4)};--kc-sh:${(c.sh / c.h).toFixed(4)}`
+}
+
+// Measure once per id, then restyle every wrapper of it already on screen;
+// later renders read the cache and come out cropped from the start.
+function _kickCropRequest(id) {
+  if (_kickCrop.has(id) || _kickCropPending.has(id)) return
+  _kickCropPending.add(id)
+  _measureKickEmote(id)
+    .catch(() => null)
+    .then((c) => {
+      _kickCropPending.delete(id)
+      _kickCrop.set(id, c)
+      if (_kickCrop.size > 1500) _kickCrop.delete(_kickCrop.keys().next().value)
+      if (!c) return
+      for (const w of document.querySelectorAll(`.hs-mc-emote-wrapper[data-kick-id="${id}"]`)) {
+        w.classList.add('hs-kick-crop')
+        w.setAttribute('style', _kickCropStyle(c))
+      }
+    })
+}
 const _hsSnapQueue = new Set()
 let _hsSnapScheduled = false
 const HS_SNAP_QUEUE_CAP = 200
@@ -4339,7 +4403,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const titleAttr = useCachedUrl ? safeName : `${safeName} (${safeProvider} via kick)`
       const nsfwClass = cached?.nsfw ? ' hs-state-nsfw' : ''
       const _boxW = _hsEmoteBoxW.get(chatUrl)
-      const wAttr = _boxW ? ` style="width:${_boxW}px"` : ''
+      // a kick-CDN emote with wide art crops to it (see _kickCrop); a 7TV copy has its own aspect
+      const _crop = useCachedUrl ? null : _kickCrop.get(emoteId)
+      if (!useCachedUrl && _crop === undefined) _kickCropRequest(emoteId)
+      const wAttr = _crop ? ` style="${_kickCropStyle(_crop)}"` : _boxW ? ` style="width:${_boxW}px"` : ''
+      const cropClass = _crop ? ' hs-kick-crop' : ''
       const _os = useCachedUrl ? _hsEmoteOversize(cached) : 0
       const osAttr = _os ? ` style="--hs-os:${_os}"` : ''
       // Only inventory-attributed when the inventory URL actually renders.
@@ -4354,7 +4422,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const kickCwCat = _kickCwRaw ? escapeHtml(_kickCwRaw) : ''
       const imgHtmlRaw = kickCwCat
         ? _hsCwBoxHtml(kickCwCat, safeName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" title="${titleAttr}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" title="${titleAttr}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
       if (isOverlay && pendingStack) {
         const itemMods = pendingMods.slice()
         const itemHue = pendingHue

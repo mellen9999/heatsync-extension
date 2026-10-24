@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f19f9031eafc' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '935a26bc2f8f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78555,6 +78555,36 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Rows churning (added + removed) while the newest row never changes is the
   // frozen-but-flashing signature: the renderer is busy, nothing new lands.
   // Record it with the buffer's view, then rebuild the pane from scratch.
+  // Frames that hold the main thread for 400ms+ are what a frozen, flashing
+  // pane looks like from outside. Chrome says what ran (script sources, forced
+  // layout) — keep the worst one per 20s in the diag ring.
+  let _loafLoggedAt = 0
+  function watchLongFrames() {
+    try {
+      const po = new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) {
+          const now = Date.now()
+          if (e.duration < 400 || now - _loafLoggedAt < 20000) continue
+          _loafLoggedAt = now
+          hsDiagLog('long_frame', {
+            ms: Math.round(e.duration),
+            block: Math.round(e.blockingDuration || 0),
+            style: Math.round(e.styleAndLayoutStart ? e.startTime + e.duration - e.styleAndLayoutStart : 0),
+            tab: String(currentTab).slice(0, 24),
+            rows: document.getElementById('hs-mc-messages')?.children.length || 0,
+            scripts: (e.scripts || []).slice(0, 3).map(
+              (x) =>
+                `${Math.round(x.duration)}ms ${x.invokerType || ''} ${String(x.sourceURL || '')
+                  .split('/')
+                  .pop()
+                  .slice(0, 30)}:${x.sourceFunctionName || ''}`,
+            ),
+          })
+        }
+      })
+      po.observe({ type: 'long-animation-frame', buffered: false })
+    } catch (_) {}
+  }
   let _thrashObs = null
   let _thrashEl = null
   let _thrashCount = 0
@@ -81772,6 +81802,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     cleanup.setInterval(renderStallCheck, 2500)
     cleanup.setInterval(ingestGapCheck, 3000)
     cleanup.setInterval(domThrashCheck, 2000)
+    watchLongFrames()
 
     // Inject CSS before ANYTHING that awaits. injectStyles has zero settings
     // deps, and a <style> tag is inert until our DOM mounts — but the health

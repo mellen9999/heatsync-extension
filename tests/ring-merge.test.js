@@ -124,3 +124,9 @@ test('unpinned view is logged and re-pinned', () => {
   const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
   expect(main).toMatch(/hsDiagLog\('unpinned'/)
 })
+
+test('long animation frames are recorded with attribution', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/hsDiagLog\('long_frame'/)
+  expect(main).toMatch(/watchLongFrames\(\)/)
+})

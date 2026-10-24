@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '034a42402a06' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '03dfc26911b5' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77794,7 +77794,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     div.dataset.msgKey = msgKeyStr
     div.dataset.hsEpoch = String(_renderEpoch)
     // Same rule as every render path, so an epoch rebuild recomputes the same stripes.
-    if (zebraOfInsert(msg, msgsEl.lastElementChild)) div.classList.add('hs-mc-zebra')
+    stampZebra(div, msg, msgsEl.lastElementChild)
     msgsEl.appendChild(div)
     _indexMessageDiv(div, msgKeyStr)
     _snapCompleteEmotes(div)
@@ -78044,19 +78044,31 @@ const STORAGE_KEY = 'heatsync_multichat'
   const _rmDesiredSet = new Set()
   const _rmExistingByKey = new Map()
   const _rmInsertedKeys = new Set()
+  // Row types that never take a stripe. Stamped on the node too, so a repaint
+  // can tell them apart without the message object.
+  const _NO_ZEBRA_TYPES = new Set(['stream-event', 'feed-post', 'inline-dm', 'moment', 'cmd-receipt', 'automod-hold'])
+  function stampZebra(div, m, prevDiv) {
+    if (_NO_ZEBRA_TYPES.has(m.type)) div.dataset.hsNz = '1'
+    div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))
+  }
+  // Re-derive every stripe from `from` onward. A row inserted mid-list (a kick
+  // line landing between twitch lines by timestamp) used to leave everything
+  // after it a beat out of phase — two grey rows or two black ones in a row —
+  // because each stripe was only computed against the row above at insert time.
+  function zebraRepaint(msgsEl, from) {
+    let prev = from ? from.previousElementSibling : null
+    for (let el = from || msgsEl.firstElementChild; el; el = el.nextElementSibling) {
+      if (el.id === 'hs-mc-embed-player') continue
+      const want = zebraEnabled && !!prev && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+      if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
+      prev = el
+    }
+  }
   function zebraOfInsert(m, prevDiv) {
     // the video player sits in the list but is not a row — stripe off the row before it
     while (prevDiv?.id === 'hs-mc-embed-player') prevDiv = prevDiv.previousElementSibling
     if (!zebraEnabled || !prevDiv) return false
-    if (
-      m.type === 'stream-event' ||
-      m.type === 'feed-post' ||
-      m.type === 'inline-dm' ||
-      m.type === 'moment' ||
-      m.type === 'cmd-receipt' ||
-      m.type === 'automod-hold'
-    )
-      return false
+    if (_NO_ZEBRA_TYPES.has(m.type)) return false
     return !prevDiv.classList.contains('hs-mc-zebra')
   }
 
@@ -78752,7 +78764,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         div.dataset.msgKey = key
         div.dataset.hsEpoch = String(_renderEpoch)
         const prev = msgsEl.lastElementChild
-        if (zebraOfInsert(m, prev)) div.classList.add('hs-mc-zebra')
+        stampZebra(div, m, prev)
         msgsEl.appendChild(div)
         _indexMessageDiv(div, key)
         _snapCompleteEmotes(div)
@@ -78886,6 +78898,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     const insertedKeys = _rmInsertedKeys
     insertedKeys.clear()
     let domIdx = 0
+    let zebraFrom = null // first row whose stripe may now be out of phase
     for (let j = 0; j < toRender.length; j++) {
       const key = desiredKeys[j]
       if (insertedKeys.has(key)) continue
@@ -78915,9 +78928,10 @@ const STORAGE_KEY = 'heatsync_multichat'
             // Recompute (not copy) zebra from the actual previous sibling: the
             // walk replaces in DOM order, so alternation stays consistent — and
             // a zebra toggle-OFF bump actually strips stripes from old rows.
-            if (zebraOfInsert(_rm, existing.previousElementSibling)) nd.classList.add('hs-mc-zebra')
+            stampZebra(nd, _rm, existing.previousElementSibling)
             _unindexMessageDiv(existing)
             msgsEl.replaceChild(nd, existing)
+            zebraFrom = zebraFrom || nd
             _indexMessageDiv(nd, key)
           } else {
             // Message no longer renderable under new state — keep the old row
@@ -78937,7 +78951,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       div.dataset.hsEpoch = String(_renderEpoch)
       let prevDiv = msgsEl.children[domIdx - 1] || null
       if (prevDiv?.id === 'hs-mc-embed-player') prevDiv = msgsEl.children[domIdx - 2] || null
-      if (zebraOfInsert(m, prevDiv)) div.classList.add('hs-mc-zebra')
+      stampZebra(div, m, prevDiv)
+      if (cur) zebraFrom = zebraFrom || div
       msgsEl.insertBefore(div, cur || null)
       _indexMessageDiv(div, key)
       domIdx++
@@ -78945,6 +78960,7 @@ const STORAGE_KEY = 'heatsync_multichat'
 
     // Re-pin yt-status notices to the very end.
     for (const ex of detachedExtras) msgsEl.appendChild(ex)
+    if (zebraFrom) zebraRepaint(msgsEl, zebraFrom)
 
     // Final safety net: hard-cap DOM so no future regression can OOM the tab.
     // toRender is already sliced to 500; anything beyond that + yt-status

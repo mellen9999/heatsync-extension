@@ -71,3 +71,11 @@ test('whispers and inline dms resolve channel emotes via the all-channels map', 
     expect(t).toMatch(/processEmotes\(escapeHtml\(m\.text\), null, hsAnyChannelEmotes\(\)/)
   }
 })
+
+test('kick no-channel pages lift the top bar out of the squeezed body', () => {
+  const css = readFileSync(new URL('../src/multichat/styles/17-platform-position.css', import.meta.url), 'utf8')
+  expect(css).toMatch(
+    /hs-kick-no-channel\.hs-chat-right nav\[class\*="navbar-height"\][\s\S]{0,400}position: fixed !important/,
+  )
+  expect(css).toMatch(/\[class\*="group\/main"\][\s\S]{0,120}padding-top: var\(--hs-kick-topnav-h, 60px\)/)
+})

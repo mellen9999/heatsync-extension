@@ -3804,12 +3804,12 @@ function setupFeedPostLinkHover() {
     _hlRow?.classList.remove('hs-feed-link-hl')
     _hlRow = null
   }
-  // The referenced post, when it is already visible in the list (and is not the
-  // link's own row): highlight it in place instead of opening a second copy.
-  const _onScreenTarget = (link, id) => {
+  // The referenced post, when it is already visible in the list (its own row
+  // included — the leading >>id): outline it in place instead of opening a copy.
+  const _onScreenTarget = (_link, id) => {
     const msgsEl = document.getElementById('hs-mc-messages')
     const row = msgsEl?.querySelector(`.hs-feed-msg[data-msg-id="${CSS.escape(id)}"]`)
-    if (!row || row === link.closest('.hs-feed-msg')) return null
+    if (!row) return null
     const r = row.getBoundingClientRect()
     const v = msgsEl.getBoundingClientRect()
     return r.bottom > v.top && r.top < v.bottom ? row : null

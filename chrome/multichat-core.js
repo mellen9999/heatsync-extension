@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '03dfc26911b5' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '846328cc1649' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78059,7 +78059,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     let prev = from ? from.previousElementSibling : null
     for (let el = from || msgsEl.firstElementChild; el; el = el.nextElementSibling) {
       if (el.id === 'hs-mc-embed-player') continue
-      const want = zebraEnabled && !!prev && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+      // the top row has no row above to alternate against — it keeps its stripe
+      const want = prev
+        ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+        : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
       prev = el
     }
@@ -78925,13 +78928,22 @@ const STORAGE_KEY = 'heatsync_multichat'
           if (nd) {
             nd.dataset.msgKey = key
             nd.dataset.hsEpoch = String(_renderEpoch)
-            // Recompute (not copy) zebra from the actual previous sibling: the
-            // walk replaces in DOM order, so alternation stays consistent — and
-            // a zebra toggle-OFF bump actually strips stripes from old rows.
-            stampZebra(nd, _rm, existing.previousElementSibling)
+            // Recompute (not copy) zebra from the row above: the walk replaces
+            // in DOM order, so alternation stays consistent — and a zebra
+            // toggle-OFF bump actually strips stripes from old rows. The first
+            // row has nothing above and keeps its own stripe (the window
+            // slides, so the top row is not always a plain one).
+            const above = existing.previousElementSibling
+            if (above) stampZebra(nd, _rm, above)
+            else {
+              if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
+              nd.classList.toggle(
+                'hs-mc-zebra',
+                zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra'),
+              )
+            }
             _unindexMessageDiv(existing)
             msgsEl.replaceChild(nd, existing)
-            zebraFrom = zebraFrom || nd
             _indexMessageDiv(nd, key)
           } else {
             // Message no longer renderable under new state — keep the old row

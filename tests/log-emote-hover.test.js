@@ -38,8 +38,8 @@ describe('isLogEmoteImg', () => {
     expect(isLogEmoteImg(null)).toBe(false)
   })
 
-  test('both the hover and the leave handler use it', () => {
-    expect(TIPS.split('isLogEmoteImg(target)').length - 1).toBe(2)
+  test('the hover, leave and mousemove-dismiss handlers all use it', () => {
+    expect(TIPS.split('isLogEmoteImg(target)').length - 1).toBe(3)
   })
 })
 

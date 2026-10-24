@@ -14909,7 +14909,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0b472cf44cc9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'edf00fced591' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36280,6 +36280,19 @@ function _hsTransportEl(provider) {
     })
     bar.appendChild(out)
   }
+  if (provider.video) {
+    const re = document.createElement('button')
+    re.type = 'button'
+    re.className = 'hs-mc-transport-toggle hs-mc-transport-reload'
+    re.textContent = '↻'
+    re.title = 'reload the player (after signing in)'
+    re.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      _hsPlayerReload()
+    })
+    bar.appendChild(re)
+  }
   const pause = document.createElement('button')
   pause.type = 'button'
   pause.className = 'hs-mc-transport-toggle'
@@ -36437,6 +36450,7 @@ function chatEmbedToggle(url, card) {
     ready: false,
     playing: true,
     fill: !!provider.video,
+    loadedAt: Date.now(),
   }
   if (provider.video) {
     _hsPlacePlayer()
@@ -36494,6 +36508,38 @@ window.addEventListener(
     const setVol = _hsAudio.provider.setVolume
     if (setVol) _hsAudioSend(setVol(embedVolume()))
     if (_hsAudio.playing) _hsAudioSend(_hsAudio.provider.play)
+  },
+  { signal: mcSignal },
+)
+
+// Remount the playing video from scratch. After a sign-in detour the old frame
+// still shows the bot wall; a fresh load picks the login up.
+function _hsPlayerReload() {
+  const a = _hsAudio
+  if (!a?.provider.video) return
+  const { url, card, fill } = a
+  _hsAudioStop()
+  if (chatEmbedToggle(url, card) && _hsAudio) {
+    _hsAudio.fill = fill
+    _hsPlacePlayer()
+  }
+}
+
+// Leaving the window soon after a video loads and coming back reads as "went to
+// sign in": reload once so it picks the login up (the site player does the
+// same). visibilitychange only — clicking inside the frame blurs the window too.
+const _HS_SIGNIN_DETOUR_MS = 3 * 60_000
+let _hsSignInDetour = false
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (document.hidden) {
+      if (_hsAudio?.provider.video && Date.now() - _hsAudio.loadedAt < _HS_SIGNIN_DETOUR_MS) _hsSignInDetour = true
+      return
+    }
+    if (!_hsSignInDetour) return
+    _hsSignInDetour = false
+    _hsPlayerReload()
   },
   { signal: mcSignal },
 )

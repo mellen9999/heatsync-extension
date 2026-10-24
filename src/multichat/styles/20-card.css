@@ -636,6 +636,21 @@
   pointer-events: none;
 }
 
+/* base emote + zero-width overlays share one grid cell (see chat-logs.css) */
+.hs-card-log-body .hs-emote-nest {
+  display: inline-grid;
+  line-height: 0;
+  margin: 0 1px;
+  vertical-align: -7px;
+}
+.hs-card-log-body .hs-emote-nest > .hs-archive-emote {
+  grid-area: 1 / 1;
+  place-self: center;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+.hs-card-log-body .hs-emote-nest > .zwo { pointer-events: none; }
+
 /* ── mod actions (host-only — ctx.modGroups) ─────────────────────────────
  * Danger stays red (ban), everything else the same reverse-video hover as
  * every other button in this file. Not shown in peek (see card-render.js). */

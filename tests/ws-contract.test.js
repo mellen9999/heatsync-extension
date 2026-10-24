@@ -99,6 +99,7 @@ const NOT_FOR_EXTENSION = new Map([
   ['dm:message', 'full DM thread UI is site-only; the ext handles dm:new for the badge'],
   ['dm:sent', 'site DM compose echo'],
   ['presence:count', 'site presence counter'],
+  ['user-log', 'site profile logs tab live rows; the ext logs panel fetches its own'],
   ['emote:inventory', 'site inventory page; the ext syncs over http'],
   ['user:blocked', 'site block UI; the ext uses mute:added/removed'],
   ['user:unblocked', 'site block UI'],

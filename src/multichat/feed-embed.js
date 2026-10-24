@@ -66,7 +66,7 @@ function ytEmbed(videoId) {
     </a>`
   }
   return `<div class="hs-feed-embed-container hs-feed-embed-youtube">
-    <iframe src="https://www.youtube-nocookie.com/embed/${id}?modestbranding=1&playsinline=1&rel=0&enablejsapi=1"
+    <iframe src="https://www.youtube.com/embed/${id}?modestbranding=1&playsinline=1&rel=0&enablejsapi=1"
       sandbox="${EMBED_SANDBOX}"
       allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
       loading="lazy"
@@ -877,13 +877,13 @@ const _AUDIO_PROVIDERS = [
   {
     id: 'youtube',
     test: /youtu\.be\/|youtube\.com\/(watch\?v=|shorts\/)/i,
-    origin: 'https://www.youtube-nocookie.com',
+    origin: 'https://www.youtube.com',
     video: true,
     volume: true,
     frameUrl: (u) => {
       const id = sanitizeEmbedId((String(u).match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/) || [])[1] || '')
       return id
-        ? `https://www.youtube-nocookie.com/embed/${id}?enablejsapi=1&modestbranding=1&playsinline=1&rel=0&autoplay=1`
+        ? `https://www.youtube.com/embed/${id}?enablejsapi=1&modestbranding=1&playsinline=1&rel=0&autoplay=1`
         : ''
     },
     // youtube answers nothing until it's been told someone is listening; the

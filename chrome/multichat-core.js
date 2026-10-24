@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '846328cc1649' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '52d4a22dbe85' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -21512,6 +21512,15 @@ class IRC extends ChatClient {
     /* BG owns the WebSocket */
   }
 
+  // Tell the BG which channels this tab still shows. See bg_irc_interest in
+  // background.js: its interest map dies with the service worker.
+  _reassertInterest() {
+    if (this._destroyed || !this.channels.size) return
+    try {
+      browser.runtime.sendMessage({ type: 'bg_irc_interest', channels: [...this.channels.keys()] }).catch(() => {})
+    } catch {}
+  }
+
   async join(ch) {
     // 13 of the 17 join call sites carry no subsystem gate — a switch that
     // depends on every caller remembering it is not a switch. It lives at the
@@ -21523,6 +21532,9 @@ class IRC extends ChatClient {
     if (this.channels.has(ch)) return
     this.channels.set(ch, new CircularBuffer(3000))
     log('Joined', ch)
+    if (!this._interestTimer) {
+      this._interestTimer = cleanup.setInterval(() => this._reassertInterest(), 15000)
+    }
     // Pre-warm channel badges (sub tiers, FFZ custom mod/vip overrides) so
     // restored history from BG renders with proper images on first paint.
     try {

@@ -651,7 +651,7 @@ function appendArchiveHtmlBody(host, html) {
         const src = clArchiveEmoteSrc(n.getAttribute('src'))
         if (src && !clEmoteBlocked(alt)) {
           clEmoteImg(host, src, alt)
-          if (n.classList.contains('zw')) host.lastChild.classList.add('zw')
+          if (n.classList.contains('zw') || n.classList.contains('zwo')) host.lastChild.classList.add('zw')
         } else host.appendChild(document.createTextNode(alt))
       } else if (n.nodeType === 1) walk(n)
     }

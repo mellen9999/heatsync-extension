@@ -64,7 +64,7 @@ const HOST_PAGE = [
  * delegated handlers fire — an ext-only concept with no site equivalent
  * (the extension dispatches its own actions via data-hs-card-action).
  */
-const SITE_ONLY_PAGE = ['trending-profile-row', 'block-btn', 'report-btn']
+const SITE_ONLY_PAGE = ['trending-profile-row', 'block-btn', 'report-btn', 'zwo']
 
 function definedClasses() {
   let css = ''

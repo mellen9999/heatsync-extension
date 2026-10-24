@@ -2243,14 +2243,21 @@ function buildFeedMessageDiv(m, opUsername) {
       const input = document.getElementById('hs-mc-input')
       if (!input) return
       const quote = `>>${qid} `
+      // always at the END: focus() restores the old caret (often mid-line), and
+      // repeated clicks would otherwise stack quotes at that spot
       if (wysiwygEnabled) {
         input.focus()
+        const range = document.createRange()
+        range.selectNodeContents(input)
+        range.collapse(false)
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
         document.execCommand('insertText', false, quote)
       } else {
-        const pos = input.selectionStart || input.value.length
-        input.value = input.value.slice(0, pos) + quote + input.value.slice(pos)
+        input.value += quote
         input.focus()
-        input.selectionStart = input.selectionEnd = pos + quote.length
+        input.selectionStart = input.selectionEnd = input.value.length
       }
     })
   }

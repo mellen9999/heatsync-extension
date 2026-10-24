@@ -7476,7 +7476,7 @@
         div.title = `open ${ch} on twitch`
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
-          window.open(`https://twitch.tv/${encodeURIComponent(ch)}`, '_blank', 'noopener,noreferrer')
+          window.open(`https://twitch.tv/${encodeURIComponent(ch)}#hs-live`, '_blank', 'noopener,noreferrer')
         })
       }
       // Async fetch color if not cached — Twitch profile lookup only; YT color
@@ -11248,6 +11248,14 @@
       // "live tab always opens quin69" bug) instead of the page's channel.
       if (stored.ui_settings?.liveChannel && document.body.classList.contains('hs-popout')) {
         liveChannel = stored.ui_settings.liveChannel
+      }
+      // Opened from an event row (#hs-live): the click meant "go to that
+      // channel", so land on its live tab, not whichever tab was last active.
+      if (location.hash === '#hs-live') {
+        _savedActiveTab = 'live'
+        try {
+          history.replaceState(null, '', location.pathname + location.search)
+        } catch (_) {}
       }
       // Popout window is locked to one channel by URL — ignore the parent
       // session's saved tab (which often points to a different channel and

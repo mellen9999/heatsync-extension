@@ -79,3 +79,9 @@ test('kick no-channel pages lift the top bar out of the squeezed body', () => {
   )
   expect(css).toMatch(/\[class\*="group\/main"\][\s\S]{0,120}padding-top: var\(--hs-kick-topnav-h, 60px\)/)
 })
+
+test('event row click opens the channel on its live tab, not the last active tab', () => {
+  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  expect(src).toMatch(/twitch\.tv\/\$\{encodeURIComponent\(ch\)\}#hs-live/)
+  expect(src).toMatch(/location\.hash === '#hs-live'\) \{\s*_savedActiveTab = 'live'/)
+})

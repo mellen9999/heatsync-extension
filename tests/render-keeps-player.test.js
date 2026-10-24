@@ -17,6 +17,6 @@ describe('render reconcile and the video player', () => {
   })
   test('PASS B steps over the player slot and the hard cap counts it', () => {
     expect(SRC).toMatch(/cur\?\.id === 'hs-mc-embed-player'\) cur = msgsEl\.children\[\+\+domIdx\]/)
-    expect(SRC).toMatch(/hardCap = [^\n]*#hs-mc-embed-player/)
+    expect(SRC).toMatch(/hardCap =[\s\S]{0,160}#hs-mc-embed-player/)
   })
 })

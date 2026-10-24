@@ -623,6 +623,14 @@
   width: auto !important;
   height: auto !important;
 }
+/* clickable convention: white plate, art darkened (the emote menu acts on these) */
+.hs-card-log-body img.emote:not(.zw):hover,
+.hs-card-log-body .hs-archive-emote:not(.zw):hover,
+.hs-card-log-body img.hs-cl-emote:not(.zw):hover {
+  background: #fff;
+  filter: brightness(0.2);
+  cursor: pointer;
+}
 /* an emote line gets the 24px it needs, so it never crowds its neighbours */
 .hs-card-log-row:has(.hs-card-log-body img) { height: 24px; }
 /* Zero-width overlay emotes (server-rendered message_html, e.g. a modifier

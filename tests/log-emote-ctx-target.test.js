@@ -9,3 +9,8 @@ test('findEmoteTarget resolves bare log-surface emote imgs (right-click block / 
   expect(body).toMatch(/hs-archive-emote/)
   expect(body).toMatch(/hs-card-log-body/)
 })
+
+test('a lone zero-width log emote stays interactive (zw only on a real overlay)', () => {
+  const cl = readFileSync(new URL('../src/multichat/chat-logs.js', import.meta.url), 'utf8')
+  expect(cl).toMatch(/prev\?\.tagName === 'IMG'/)
+})

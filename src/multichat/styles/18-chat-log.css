@@ -68,6 +68,7 @@
       height: 18px; width: auto; vertical-align: middle;
       display: inline-block;
     }
+    .hs-cl-emote:not(.zw):hover { background: #fff; filter: brightness(0.2); cursor: pointer; }
     /* a zero-width overlay emote sits on the one before it */
     .hs-cl-emote.zw { margin-left: -18px; }
     .hs-cl-empty {

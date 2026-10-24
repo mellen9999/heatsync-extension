@@ -740,8 +740,12 @@ function appendArchiveHtmlBody(host, html) {
         const alt = n.getAttribute('alt') || ''
         const src = clArchiveEmoteSrc(n.getAttribute('src'))
         if (src && !clEmoteBlocked(alt)) {
+          const prev = host.lastChild
           clEmoteImg(host, src, alt)
-          if (n.classList.contains('zw') || n.classList.contains('zwo')) host.lastChild.classList.add('zw')
+          // only a real overlay (something to sit on) goes zero-width + click-through;
+          // a lone zero-width emote is just an emote and must stay interactive
+          if ((n.classList.contains('zw') || n.classList.contains('zwo')) && prev?.tagName === 'IMG')
+            host.lastChild.classList.add('zw')
         } else host.appendChild(document.createTextNode(alt))
       } else if (n.nodeType === 1) walk(n)
     }

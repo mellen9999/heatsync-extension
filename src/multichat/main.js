@@ -9919,7 +9919,24 @@
     }, wait)
   }
 
+  // Timing wrapper: a render that eats the main thread starves everything
+  // (input, appends, scroll pins) and reads as a frozen, flashing pane.
+  let _slowRenderLoggedAt = 0
+  let _renderCalls = 0
   function renderMessages(id, opts) {
+    const t0 = performance.now()
+    _renderCalls++
+    try {
+      return _renderMessagesImpl(id, opts)
+    } finally {
+      const ms = performance.now() - t0
+      if (ms > 100 && Date.now() - _slowRenderLoggedAt > 15000) {
+        _slowRenderLoggedAt = Date.now()
+        hsDiagLog('slow_render', { ms: Math.round(ms), tab: String(id).slice(0, 24), calls: _renderCalls })
+      }
+    }
+  }
+  function _renderMessagesImpl(id, opts) {
     if (editingChannel) return
     // The pinned bar follows the tab on screen (same rooms inside 30s: a repaint only)
     if (typeof pinSync === 'function') pinSync(id)

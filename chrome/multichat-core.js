@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3b6489303735' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f19f9031eafc' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78684,7 +78684,24 @@ const STORAGE_KEY = 'heatsync_multichat'
     }, wait)
   }
 
+  // Timing wrapper: a render that eats the main thread starves everything
+  // (input, appends, scroll pins) and reads as a frozen, flashing pane.
+  let _slowRenderLoggedAt = 0
+  let _renderCalls = 0
   function renderMessages(id, opts) {
+    const t0 = performance.now()
+    _renderCalls++
+    try {
+      return _renderMessagesImpl(id, opts)
+    } finally {
+      const ms = performance.now() - t0
+      if (ms > 100 && Date.now() - _slowRenderLoggedAt > 15000) {
+        _slowRenderLoggedAt = Date.now()
+        hsDiagLog('slow_render', { ms: Math.round(ms), tab: String(id).slice(0, 24), calls: _renderCalls })
+      }
+    }
+  }
+  function _renderMessagesImpl(id, opts) {
     if (editingChannel) return
     // The pinned bar follows the tab on screen (same rooms inside 30s: a repaint only)
     if (typeof pinSync === 'function') pinSync(id)

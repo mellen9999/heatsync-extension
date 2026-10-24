@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9956cf3ad08b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f5e6be9a45d2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39296,14 +39296,21 @@ function buildFeedMessageDiv(m, opUsername) {
       const input = document.getElementById('hs-mc-input')
       if (!input) return
       const quote = `>>${qid} `
+      // always at the END: focus() restores the old caret (often mid-line), and
+      // repeated clicks would otherwise stack quotes at that spot
       if (wysiwygEnabled) {
         input.focus()
+        const range = document.createRange()
+        range.selectNodeContents(input)
+        range.collapse(false)
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
         document.execCommand('insertText', false, quote)
       } else {
-        const pos = input.selectionStart || input.value.length
-        input.value = input.value.slice(0, pos) + quote + input.value.slice(pos)
+        input.value += quote
         input.focus()
-        input.selectionStart = input.selectionEnd = pos + quote.length
+        input.selectionStart = input.selectionEnd = input.value.length
       }
     })
   }

@@ -430,7 +430,7 @@ function installHsPaintHoverSync() {
       // before the next paint instead of a frame (rAF) plus a commit (ready)
       // later. The anchor below stays as the correction for plates whose
       // animations only get a start time at that first commit.
-      if (typeof resyncAnimationPhase === 'function') for (const el of els) if (el.isConnected) resyncAnimationPhase(el)
+      if (typeof resyncAnimationPhases === 'function') resyncAnimationPhases(els)
       requestAnimationFrame(() => anchorWhenStarted(els))
     },
     { passive: true },

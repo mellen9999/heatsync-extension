@@ -480,10 +480,31 @@ export function anchorWhenStarted(els) {
     if (!ready.length) land(); else Promise.all(ready).then(land)
 }
 
+/**
+ * Several names at once. `getAnimations()` flushes pending style, and every
+ * seek below dirties it again, so resyncing a name at a time flushed once per
+ * name — an unhover over a name with twenty copies on screen cost half a
+ * second. Reading every name's animations first costs one flush for the lot.
+ *
+ * @param {Iterable<Element>} els
+ */
+export function resyncAnimationPhases(els, now = frameNow()) {
+    const jobs = []
+    for (const el of els) {
+        if (!el?.isConnected) continue
+        const anims = animationsOf(el)
+        if (anims.length) jobs.push([anims, stampOf(el)])
+    }
+    for (const [anims, stamp] of jobs) seekResync(anims, stamp, now)
+}
+
 export function resyncAnimationPhase(el, now = frameNow()) {
     const anims = animationsOf(el)
     if (!anims.length) return
-    const stamp = stampOf(el)
+    seekResync(anims, stampOf(el), now)
+}
+
+function seekResync(anims, stamp, now) {
     for (const a of anims) {
         const t = a?.effect?.getTiming?.()
         const d = t?.duration

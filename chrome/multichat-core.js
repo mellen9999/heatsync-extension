@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '49e01a7dbf1a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'be286eae564e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78716,6 +78716,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   }
 
   let _gapLoggedAt = 0
+  let _gapHealAt = 0
   function ingestGapCheck() {
     if (!irc) return
     const tabCh = currentTab === 'live' ? null : getChannelById(currentTab)
@@ -78725,7 +78726,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!Array.isArray(ts) || ts.length < 5) return
     const now = Date.now()
     const gap = now - ts[ts.length - 1]
-    if (ts[ts.length - 1] - ts[0] > 20000 || gap < 10000 || gap > 120000) return
+    if (ts[ts.length - 1] - ts[0] > 20000 || gap < 3000 || gap > 120000) return
     if (now - _gapLoggedAt > 20000) {
       _gapLoggedAt = now
       try {
@@ -78754,7 +78755,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           })
           .catch(() => {})
       } catch (_) {}
-      if (_noHeal()) return
+    }
+    // a 3-10s hitch is recorded above; only a real outage is repaired
+    if (gap >= 10000 && now - _gapHealAt > 20000 && !_noHeal()) {
+      _gapHealAt = now
       irc._reassertInterest?.()
       irc._refreshFromBg?.(ch)
     }
@@ -81857,7 +81861,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (mcInitialized) return
     mcInitialized = true
     cleanup.setInterval(renderStallCheck, 2500)
-    cleanup.setInterval(ingestGapCheck, 3000)
+    cleanup.setInterval(ingestGapCheck, 1000)
     cleanup.setInterval(domThrashCheck, 2000)
     watchLongFrames()
 

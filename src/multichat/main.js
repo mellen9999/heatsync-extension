@@ -9951,6 +9951,7 @@
   }
 
   let _gapLoggedAt = 0
+  let _gapHealAt = 0
   function ingestGapCheck() {
     if (!irc) return
     const tabCh = currentTab === 'live' ? null : getChannelById(currentTab)
@@ -9960,7 +9961,7 @@
     if (!Array.isArray(ts) || ts.length < 5) return
     const now = Date.now()
     const gap = now - ts[ts.length - 1]
-    if (ts[ts.length - 1] - ts[0] > 20000 || gap < 10000 || gap > 120000) return
+    if (ts[ts.length - 1] - ts[0] > 20000 || gap < 3000 || gap > 120000) return
     if (now - _gapLoggedAt > 20000) {
       _gapLoggedAt = now
       try {
@@ -9989,7 +9990,10 @@
           })
           .catch(() => {})
       } catch (_) {}
-      if (_noHeal()) return
+    }
+    // a 3-10s hitch is recorded above; only a real outage is repaired
+    if (gap >= 10000 && now - _gapHealAt > 20000 && !_noHeal()) {
+      _gapHealAt = now
       irc._reassertInterest?.()
       irc._refreshFromBg?.(ch)
     }
@@ -13092,7 +13096,7 @@
     if (mcInitialized) return
     mcInitialized = true
     cleanup.setInterval(renderStallCheck, 2500)
-    cleanup.setInterval(ingestGapCheck, 3000)
+    cleanup.setInterval(ingestGapCheck, 1000)
     cleanup.setInterval(domThrashCheck, 2000)
     watchLongFrames()
 

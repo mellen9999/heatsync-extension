@@ -103,7 +103,7 @@ test('an ingest gap on a busy channel re-registers interest and re-pulls the BG 
   expect(main).toMatch(/function ingestGapCheck\(\)/)
   expect(main).toMatch(/__hsDiag\?\.\('ingest_gap'/)
   expect(main).toMatch(/irc\._refreshFromBg\?\.\(ch\)/)
-  expect(main).toMatch(/cleanup\.setInterval\(ingestGapCheck, 3000\)/)
+  expect(main).toMatch(/cleanup\.setInterval\(ingestGapCheck, 1000\)/)
 })
 
 test('stall check heals the key index from the DOM and logs index_desync', () => {

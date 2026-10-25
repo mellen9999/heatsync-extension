@@ -1457,6 +1457,10 @@
     }
 
     /* youtube's own chat, brought up over the pane from the youtube tab (platform-tabs.js) until "back" */
+    /* the sidebar sweep above hides #chat-container with the rest of #secondary-inner; the frame sits inside it */
+    body.hs-yt-peek.hs-platform-yt:not(.hs-offline) ytd-watch-flexy #secondary-inner > #chat-container {
+      display: block !important;
+    }
     body.hs-yt-peek ytd-live-chat-frame#chat {
       display: block !important;
       position: fixed !important;

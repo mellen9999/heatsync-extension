@@ -104,7 +104,10 @@ function ytPeekNative() {
   const pane = document.getElementById('hs-mc-container')
   if (!frame || !pane) return
   if (ytPeeking()) return
-  const r = pane.getBoundingClientRect()
+  // below the tab bar (it stays usable), over the messages and composer
+  const paneR = pane.getBoundingClientRect()
+  const top = document.getElementById('hs-mc-messages')?.getBoundingClientRect().top ?? paneR.top
+  const r = { top, left: paneR.left, width: paneR.width, height: paneR.bottom - top }
   const BAR = 28
   const root = document.body.style
   root.setProperty('--hs-peek-top', `${Math.round(r.top + BAR)}px`)

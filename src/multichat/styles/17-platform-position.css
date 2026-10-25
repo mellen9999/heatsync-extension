@@ -1456,6 +1456,19 @@
       -webkit-text-fill-color: #fff !important;
     }
 
+    /* the description box lights up on hover from a colour youtube bakes into the page when it renders
+       (light in a light theme), under the white text above: hover is white with black text, like every
+       other hovered control here */
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline):is(.hs-chat-left, .hs-chat-right) ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description:hover {
+      background: #ffffff !important;
+    }
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline):is(.hs-chat-left, .hs-chat-right) ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description:hover,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline):is(.hs-chat-left, .hs-chat-right) ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description:hover *,
+    body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline):is(.hs-chat-left, .hs-chat-right) ytd-watch-flexy:not([theater]):not([fullscreen]) #below #description:hover a {
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+    }
+
     /* ============================================
        SUGGESTIONS STRIP — opt-in (ytShowSuggestions → body.hs-yt-suggestions)
        Un-collapse #secondary into a vertical strip beside the title column so

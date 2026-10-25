@@ -13856,7 +13856,7 @@
           // the channel-mirror case (autoYtUrl = ytUrl, no id yet) still defers to
           // the status echo. spa-nav resets it to null on navigation.
           if (onYtVideoPage && currentChannel) _autoYtVideoId = currentChannel
-          ytSubscribe('__live_yt_auto__', autoYtUrl)
+          trackJoin('live', ytSubscribe('__live_yt_auto__', autoYtUrl))
           // Emote join stays separate here (the block is already gated on gYt):
           // its channelId hint is the CHANNEL url, not the video url we just
           // subscribed with, so it can't ride ytSubscribe's third argument.

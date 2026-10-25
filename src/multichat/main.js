@@ -8209,7 +8209,7 @@
     // Cleared by mod (timeout/ban/delete) — Twitch-native dim + strikethrough on offending content
     if (m.cleared && dimTimeouts) {
       div.classList.add('hs-mc-msg-cleared')
-      if (m.clearedReason) div.title = m.clearedReason
+      if (m.clearedReason) div.dataset.clearedReason = m.clearedReason
     }
     // Keyword highlight — message text matches a user-defined term
     if (keywordHighlightsRegex && m.text && keywordHighlightsRegex.test(m.text)) {
@@ -9031,7 +9031,7 @@
       return
     }
     row.classList.add('hs-mc-msg-cleared')
-    if (title) row.title = title
+    if (title) row.dataset.clearedReason = title
   }
   function isMsgFiltered(m, f) {
     if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
@@ -10695,7 +10695,7 @@
           const cm = keyToMsg.get(k)
           if (cm?.cleared) {
             child.classList.add('hs-mc-msg-cleared')
-            if (cm.clearedReason && !child.title) child.title = cm.clearedReason
+            if (cm.clearedReason) child.dataset.clearedReason = cm.clearedReason
           }
         }
       }
@@ -14130,9 +14130,10 @@
         const targetLc = msg.targetUser.toLowerCase()
         for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
           if ((row.dataset.msgUser || '').toLowerCase() !== targetLc || !samePlat(row)) continue
-          if (row.title === 'banned' || /timed out/.test(row.title || '')) {
+          const why = row.dataset.clearedReason || ''
+          if (why === 'banned' || /timed out/.test(why)) {
             row.classList.remove('hs-mc-msg-cleared')
-            row.removeAttribute('title')
+            delete row.dataset.clearedReason
           }
         }
       }

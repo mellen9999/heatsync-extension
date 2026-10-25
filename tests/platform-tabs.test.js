@@ -142,3 +142,12 @@ describe('native title tooltip', () => {
     expect(e).toContain('class="hs-mc-emote hs-emote-${state}"')
   })
 })
+
+describe('cleared row title', () => {
+  test('a mod-cleared row keeps its reason in a data attribute, not a title: the native tooltip came up over every emote in it', () => {
+    const main = src('main.js')
+    expect(main).toContain('div.dataset.clearedReason = m.clearedReason')
+    expect(main).toContain('row.dataset.clearedReason = title')
+    expect(main).not.toMatch(/(div|child|row)\.title = (m\.|cm\.)?(clearedReason|title)/)
+  })
+})

@@ -13250,8 +13250,10 @@
     // BUILTIN_TABS + channels but runs before hiddenTabs is known, and
     // applyHiddenTabs' own correction only fires if it runs AFTER this restore
     // — on a cold boot it doesn't.
+    // "watching" is never restored over channel tabs of your own: it is a click away, not a default.
     const restorable =
       _savedActiveTab &&
+      !(_savedActiveTab === 'live' && config.channels?.length) &&
       !hiddenTabs.has(mcRowOwner(_savedActiveTab)) &&
       !(_TAB_SUBSYSTEM[_savedActiveTab] && !isEnabled(_TAB_SUBSYSTEM[_savedActiveTab]))
     if (isYtPopout) return 'live'

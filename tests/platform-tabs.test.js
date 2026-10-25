@@ -60,3 +60,14 @@ describe('platform picker tabs', () => {
     expect(btn).toContain('window.HS.setSiteOverlay(siteGate, true)')
   })
 })
+
+describe('kick native chat hide', () => {
+  test("is a body class the css keys on, not a class on kick's own react-managed node", () => {
+    const main = src('main.js')
+    const feed = src('styles/16-social-feed.css')
+    expect(main).toContain("document.body.classList.toggle('hs-kick-native-hidden', hidden)")
+    expect(feed).not.toMatch(/#channel-chatroom:not\(\.hs-native-hidden\)/)
+    expect(feed).not.toMatch(/\.hs-native-hidden#channel-chatroom/)
+    expect(feed).toContain('body.hs-kick-native-hidden #channel-chatroom {')
+  })
+})

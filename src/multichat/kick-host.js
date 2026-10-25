@@ -81,7 +81,9 @@ function setupKickResizeHandle() {
       } catch (_) {}
       startX = e.clientX
       startWidth = chatWidth
-      const rect = (chatroom.classList.contains('hs-native-hidden') ? mcContainer : chatroom).getBoundingClientRect()
+      const rect = (
+        document.body.classList.contains('hs-kick-native-hidden') ? mcContainer : chatroom
+      ).getBoundingClientRect()
       const w0 = Math.round(rect.width)
       pendingWidth = chatWidth
       lastGhostWidth = w0
@@ -371,25 +373,8 @@ function softKickNav(prevLiveCh) {
       if (newCh && kickChat && !kickChat.channels.has(newCh)) kickChat.join(newCh)
       renderMessages('live')
     } catch (_) {}
-    const reHide = new MutationObserver(() => {
-      if (!nativeVisible)
-        try {
-          setNativeChatHidden(true)
-        } catch (e) {
-          // Kick re-mounts its chatroom; this is what re-hides it. A throw
-          // leaves the user looking at BOTH chats stacked. Fires per mutation,
-          // so the count is the useful part, not any one occurrence.
-          swallow(e, 'kick-native-rehide')
-        }
-    })
-    const target = document.getElementById('channel-chatroom')
-    if (target) {
-      reHide.observe(target, { childList: true })
-      cleanup.trackObserver(reHide)
-    }
     cleanup.setTimeout(
       () => {
-        cleanup.untrackObserver(reHide)
         document.body.classList.remove('hs-mc-navigating')
       },
       300,

@@ -6928,23 +6928,9 @@
    */
   function setNativeChatHidden(hidden) {
     if (isKick) {
-      // Kick selectors
-      const chatroom = document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]')
-      if (chatroom) chatroom.classList.toggle('hs-native-hidden', hidden)
-      hsDiag('kick_native_hide', {
-        hidden,
-        found: !!chatroom,
-        id: chatroom?.id || '',
-        on: chatroom?.isConnected,
-        t: Math.round(performance.now()),
-      })
-      if (chatroom && hidden && !chatroom._hsWatch) {
-        chatroom._hsWatch = new MutationObserver(() => {
-          if (!chatroom.classList.contains('hs-native-hidden'))
-            hsDiag('kick_native_class_lost', { connected: chatroom.isConnected, t: Math.round(performance.now()) })
-        })
-        chatroom._hsWatch.observe(chatroom, { attributes: true, attributeFilter: ['class'] })
-      }
+      // A body class, not a class on #channel-chatroom: kick's React rewrites that node's className on its
+      // own schedule (seen ~4s after our hide), which silently brought native chat back under the strip.
+      document.body.classList.toggle('hs-kick-native-hidden', hidden)
       return
     }
 

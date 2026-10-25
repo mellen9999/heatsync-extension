@@ -530,11 +530,11 @@
     .hs-native-hidden div.editor-input {
       display: none !important;
     }
-    .hs-native-hidden#channel-chatroom > * {
+    body.hs-kick-native-hidden #channel-chatroom > * {
       display: none !important;
     }
     /* Force Kick chatroom hidden — container (sibling) becomes the panel */
-    .hs-native-hidden#channel-chatroom {
+    body.hs-kick-native-hidden #channel-chatroom {
       display: none !important;
     }
     /* Container becomes the fixed side panel when native is hidden.
@@ -543,7 +543,7 @@
        panel to the docked 340px column and left kick's 60px top-nav gap above
        it, in a window that has no top nav. A pop-out has no side panel: chat is
        the whole window. Same specificity trap the collapse rule below documents. */
-    body:not(.hs-popout) .hs-native-hidden#channel-chatroom ~ #hs-mc-container {
+    body:not(.hs-popout).hs-kick-native-hidden #channel-chatroom ~ #hs-mc-container {
       position: fixed !important;
       right: 0 !important;
       /* clear Kick's fixed 60px top nav so the panel doesn't bury search + login/profile */
@@ -559,7 +559,7 @@
     /* Collapsed (\\ / > button): the kick side-panel rule above is (2,1,0) and
        outranks the generic body.hs-chat-hidden hide at (1,1,1). Re-hide the
        container with a higher-specificity rule so collapse works on Kick too. */
-    body.hs-chat-hidden .hs-native-hidden#channel-chatroom ~ #hs-mc-container {
+    body.hs-chat-hidden.hs-kick-native-hidden #channel-chatroom ~ #hs-mc-container {
       display: none !important;
     }
     /* Shrink Kick's main content to make room for HeatSync panel.
@@ -568,18 +568,18 @@
        elsewhere in this file handle the offset; applying margin-right
        here too would carve 340px off the wrong side and shrink main
        (e.g., chat-left → empty right gutter, video clipped). */
-    body:has(.hs-native-hidden#channel-chatroom):not(.hs-popout):not(.hs-chat-left):not(.hs-chat-top):not(.hs-chat-bottom):not(.hs-chat-hidden) main {
+    body.hs-kick-native-hidden:not(.hs-popout):not(.hs-chat-left):not(.hs-chat-top):not(.hs-chat-bottom):not(.hs-chat-hidden) main {
       margin-right: var(--hs-kick-chat-width, 340px) !important;
       transition: none !important;
     }
     /* On live tab (native chat showing), hide overlay + input but keep tabs visible */
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-overlay,
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-emote-picker,
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > .hs-mc-inputbar {
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container > #hs-mc-overlay,
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container > #hs-mc-emote-picker,
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container > .hs-mc-inputbar {
       display: none !important;
     }
     /* Keep tabbar visible over native chat — fixed panel, respects tab position */
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container {
       position: fixed !important;
       /* clear Kick's fixed 60px top nav — same as the native-hidden panel above.
          without this the fixed container defaults to top:0 and the collapsed HS
@@ -590,46 +590,46 @@
       pointer-events: none;
       overflow: visible !important;
     }
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container > #hs-mc-tabbar {
       pointer-events: auto;
       background: var(--hs-bg, #000) !important;
       position: relative !important;
     }
-    #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-kick-resize-handle {
+    body:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container > #hs-kick-resize-handle {
       pointer-events: auto;
     }
     /* Top tabs (default) — horizontal bar at top of chat */
-    .hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body:not(.hs-kick-native-hidden).hs-tabs-top #channel-chatroom ~ #hs-mc-container {
       top: var(--hs-kick-topnav-h, 60px) !important; right: 0 !important;
       width: var(--hs-kick-chat-width, 340px) !important;
       height: auto !important;
       flex-direction: column !important;
     }
-    .hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+    body:not(.hs-kick-native-hidden).hs-tabs-top #channel-chatroom ~ #hs-mc-container > #hs-mc-tabbar {
       flex-direction: row !important;
       flex-wrap: nowrap !important;
       width: 100% !important;
     }
     /* Bottom tabs — horizontal bar at bottom of chat */
-    .hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body:not(.hs-kick-native-hidden).hs-tabs-bottom #channel-chatroom ~ #hs-mc-container {
       bottom: 0 !important; right: 0 !important;
       width: var(--hs-kick-chat-width, 340px) !important;
       height: auto !important;
       flex-direction: column-reverse !important;
     }
-    .hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+    body:not(.hs-kick-native-hidden).hs-tabs-bottom #channel-chatroom ~ #hs-mc-container > #hs-mc-tabbar {
       flex-direction: row !important;
       flex-wrap: nowrap !important;
       width: 100% !important;
     }
     /* Right tabs — vertical bar on right edge */
-    .hs-tabs-right #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body:not(.hs-kick-native-hidden).hs-tabs-right #channel-chatroom ~ #hs-mc-container {
       top: var(--hs-kick-topnav-h, 60px) !important; right: 0 !important; bottom: 0 !important;
       width: auto !important;
       height: 100% !important;
       flex-direction: row !important;
     }
-    .hs-tabs-right #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+    body:not(.hs-kick-native-hidden).hs-tabs-right #channel-chatroom ~ #hs-mc-container > #hs-mc-tabbar {
       flex-direction: column !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
@@ -639,14 +639,14 @@
       border-left: 1px solid #fff;
     }
     /* Left tabs — vertical bar on left edge of chat area */
-    .hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body:not(.hs-kick-native-hidden).hs-tabs-left #channel-chatroom ~ #hs-mc-container {
       top: var(--hs-kick-topnav-h, 60px) !important; right: auto !important; bottom: 0 !important;
       left: calc(100vw - var(--hs-kick-chat-width, 340px)) !important;
       width: auto !important;
       height: 100% !important;
       flex-direction: row-reverse !important;
     }
-    .hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container > #hs-mc-tabbar {
+    body:not(.hs-kick-native-hidden).hs-tabs-left #channel-chatroom ~ #hs-mc-container > #hs-mc-tabbar {
       flex-direction: column !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
@@ -661,15 +661,15 @@
        width). Chat IS the window there; pin the strip to the window edges.
        Same specificity trap as the fill-window rule: these are (0,2,2)+,
        placed after every variant so source order settles the ties. */
-    body.hs-popout #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body.hs-popout:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container {
       top: 0 !important;
     }
-    body.hs-popout.hs-tabs-top #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container,
-    body.hs-popout.hs-tabs-bottom #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body.hs-popout.hs-tabs-top:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container,
+    body.hs-popout.hs-tabs-bottom:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container {
       left: 0 !important;
       width: auto !important;
     }
-    body.hs-popout.hs-tabs-left #channel-chatroom:not(.hs-native-hidden) ~ #hs-mc-container {
+    body.hs-popout.hs-tabs-left:not(.hs-kick-native-hidden) #channel-chatroom ~ #hs-mc-container {
       left: 0 !important;
     }
 

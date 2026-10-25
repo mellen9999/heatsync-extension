@@ -297,8 +297,7 @@ describe('diag is actually wired, not just shipped', () => {
     }
     // Each tag names one failure whose only symptom would otherwise be a
     // feature quietly not working.
-    expect(tags.size).toBeGreaterThanOrEqual(4)
-    expect(tags).toContain('kick-native-rehide')
+    expect(tags.size).toBeGreaterThanOrEqual(3)
     expect(tags).toContain('feed-player-observe')
   })
 

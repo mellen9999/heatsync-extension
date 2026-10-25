@@ -1,7 +1,7 @@
-// YouTube's own chat stays visible whenever it is the one that should be: a premiere or scheduled
-// stream (only YouTube's chat exists there), or the user switching hs chat off for youtube. One
-// decision feeds the panel, the frame hide and the css, so they cannot disagree. These paths run
-// inside the host page and can't be imported, so they are guarded at the source level.
+// YouTube's own chat stays visible when the user switched hs chat off for youtube — and ONLY then. A
+// premiere or scheduled stream goes through the overlay like a live one (its chat frame relays the
+// same way). One decision feeds the panel, the frame hide and the css, so they cannot disagree. These
+// paths run inside the host page and can't be imported, so they are guarded at the source level.
 
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
@@ -12,9 +12,9 @@ const main = src('multichat/main.js')
 const css = src('multichat/styles/17-platform-position.css')
 
 describe('youtube owns the chat', () => {
-  test('one decision: the offline slate, or the user switched youtube chat off', () => {
-    expect(main).toContain("if (gateAtBoot('chat-youtube') === false) return true")
-    expect(main).toContain("'#movie_player .ytp-offline-slate'")
+  test('one decision: the user switched youtube chat off — a premiere is not a reason', () => {
+    expect(main).toContain("const ytOwnsChat = () => gateAtBoot('chat-youtube') === false")
+    expect(main).not.toContain('ytp-offline-slate')
   })
 
   test('the panel, the frame hide and the css all follow it', () => {

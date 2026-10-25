@@ -3389,6 +3389,7 @@ function updateInputPlaceholder() {
         isYtVideoPage: /\/watch|\/live\/|\/live_chat/.test(location.pathname + location.search),
         autoVideoId: typeof _autoYtVideoId !== 'undefined' ? _autoYtVideoId : null,
         resolvedName: (typeof youtubeLinks !== 'undefined' && youtubeLinks.get('__live_yt_auto__')?.channelName) || '',
+        pageName: document.querySelector('ytd-watch-metadata ytd-channel-name a')?.textContent?.trim() || '',
       })
     }
     // No resolvable channel (e.g. /directory, /settings — the panel still streams

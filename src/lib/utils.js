@@ -710,13 +710,15 @@ function resolveEmoteProviderWinner(existing, incoming, preferred) {
  * @param {boolean}     opts.isYtVideoPage  URL is /watch, /live/<id> or /live_chat
  * @param {string|null} opts.autoVideoId    _autoYtVideoId gate value
  * @param {string}      opts.resolvedName   channelName from youtube_status
+ * @param {string}      [opts.pageName]     the uploader the watch page itself shows (a premiere or a
+ *                                          waiting room never gets a youtube_status echo)
  * @returns {string}
  */
-function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName }) {
+function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName, pageName }) {
   if (!channel) return ''
   if (!/^[a-zA-Z0-9_-]{11}$/.test(channel)) return channel
   if (channel !== autoVideoId && !isYtVideoPage) return channel
-  return resolvedName || ''
+  return resolvedName || pageName || ''
 }
 
 /**

@@ -42,6 +42,21 @@ test('resolveYtLiveLabel: videoId swaps to resolved channel name', () => {
   ).toBe('Lofi Girl')
 })
 
+test('resolveYtLiveLabel: a premiere never gets a status echo, so the uploader on the page names it', () => {
+  expect(
+    resolveYtLiveLabel('zpBEomubNSs', {
+      isYtVideoPage: true,
+      autoVideoId: 'zpBEomubNSs',
+      resolvedName: '',
+      pageName: 'Control Players Unite',
+    }),
+  ).toBe('Control Players Unite')
+  // the server's own name still wins when it is there
+  expect(
+    resolveYtLiveLabel('zpBEomubNSs', { isYtVideoPage: true, autoVideoId: null, resolvedName: 'CPU', pageName: 'x' }),
+  ).toBe('CPU')
+})
+
 test('resolveYtLiveLabel: unresolved videoId yields empty (generic prompt), never the raw id', () => {
   expect(resolveYtLiveLabel('jfKfPfyJRdk', { isYtVideoPage: true, autoVideoId: 'jfKfPfyJRdk', resolvedName: '' })).toBe(
     '',

@@ -1851,13 +1851,15 @@ function resolveEmoteProviderWinner(existing, incoming, preferred) {
  * @param {boolean}     opts.isYtVideoPage  URL is /watch, /live/<id> or /live_chat
  * @param {string|null} opts.autoVideoId    _autoYtVideoId gate value
  * @param {string}      opts.resolvedName   channelName from youtube_status
+ * @param {string}      [opts.pageName]     the uploader the watch page itself shows (a premiere or a
+ *                                          waiting room never gets a youtube_status echo)
  * @returns {string}
  */
-function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName }) {
+function resolveYtLiveLabel(channel, { isYtVideoPage, autoVideoId, resolvedName, pageName }) {
   if (!channel) return ''
   if (!/^[a-zA-Z0-9_-]{11}$/.test(channel)) return channel
   if (channel !== autoVideoId && !isYtVideoPage) return channel
-  return resolvedName || ''
+  return resolvedName || pageName || ''
 }
 
 /**
@@ -14960,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd770dd50f3e2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f654402d00e2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -46103,6 +46105,7 @@ function updateInputPlaceholder() {
         isYtVideoPage: /\/watch|\/live\/|\/live_chat/.test(location.pathname + location.search),
         autoVideoId: typeof _autoYtVideoId !== 'undefined' ? _autoYtVideoId : null,
         resolvedName: (typeof youtubeLinks !== 'undefined' && youtubeLinks.get('__live_yt_auto__')?.channelName) || '',
+        pageName: document.querySelector('ytd-watch-metadata ytd-channel-name a')?.textContent?.trim() || '',
       })
     }
     // No resolvable channel (e.g. /directory, /settings — the panel still streams
@@ -69473,15 +69476,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   // chat-on-all-pages on: the page IS a chat surface, the panel would dock
   // over the replay it exists to show.
   const isYtReplayPopout = hostPlatform === 'yt' && /^\/live_chat_replay/.test(location.pathname)
-  // YouTube's own chat is the one on screen: when the user switched hs chat off for youtube, or on a
-  // premiere or scheduled stream (the player shows YouTube's offline slate and the only chat that
-  // exists is YouTube's, with no channel feed to overlay). The one place this is decided — the
-  // panel, the frame hide and the css all follow it, so they cannot disagree.
-  const ytOwnsChat = () => {
-    if (gateAtBoot('chat-youtube') === false) return true
-    const slate = document.querySelector('#movie_player .ytp-offline-slate')
-    return !!slate && slate.getClientRects().length > 0
-  }
+  // YouTube's own chat stays the one on screen only when the user switched hs chat off for youtube.
+  // A premiere or scheduled stream is NOT a case: its chat frame relays into the overlay exactly like a
+  // live stream's (verified on a real premiere), so it gets the full multichat. The one place this is
+  // decided — the panel, the frame hide and the css all follow it, so they cannot disagree.
+  const ytOwnsChat = () => gateAtBoot('chat-youtube') === false
 
   // Whether the user has chosen to show native platform chat alongside HS.
   // Persisted via settings registry (key: nativeVisible). Default false = same

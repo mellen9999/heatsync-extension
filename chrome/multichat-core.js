@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '43784dc0519e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cc3c1437b8c2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -73564,8 +73564,16 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Resumes ONLY when user lands within 2px of true bottom OR clicks "new" button.
       // Prior 50px slop let small wheels/drags re-trigger auto-scroll, breaking pause.
       const ATBOTTOM_PX = 2
+      // Hover hold (below) rides the same pause. A real scroll-up while one is
+      // active makes it a real pause: the button stays until the user resumes.
+      let _hoverHeld = false
+      let _hoverRelease = null
       const setPaused = (paused) => {
         if (paused) {
+          if (_hoverHeld) {
+            _hoverHeld = false
+            isScrolledUp = false
+          }
           if (!isScrolledUp) {
             isScrolledUp = true
             newBtn.innerHTML =
@@ -73615,6 +73623,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (!_userInputScroll) return
         if (!isScrolledUp) return
         if (checkAtBottom()) {
+          _hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -73723,6 +73732,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       newBtn.addEventListener(
         'click',
         () => {
+          _hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -73741,6 +73751,47 @@ const STORAGE_KEY = 'heatsync_multichat'
         },
         { signal: mcSignal },
       )
+
+      // Hover hold: while the pointer rests on an emote, name or badge the feed
+      // stops sliding, so the thing under the cursor stays under it (a new
+      // message every second moved it away and the cursor fell back to an
+      // arrow) and its tooltip stays on what you are pointing at. Messages keep
+      // arriving into the buffer and show up the moment the pointer leaves.
+      const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')
+      const releaseHold = () => {
+        _hoverRelease = null
+        if (!_hoverHeld) return
+        _hoverHeld = false
+        isScrolledUp = false
+        newMessageCount = 0
+        newBtn.style.display = 'none'
+        if (isStaticTab()) return
+        renderMessages(currentTab)
+        scrollMsgsToBottom(msgsEl)
+      }
+      msgsEl.addEventListener(
+        'mouseover',
+        (e) => {
+          if (!(e.target instanceof Element)) return
+          if (!holdTarget(e.target)) {
+            // Pointer moved onto something else (or the held thing is gone):
+            // let go after a beat so sweeping across emotes does not stutter.
+            if (_hoverHeld && !_hoverRelease) _hoverRelease = cleanup.setTimeout(releaseHold, 120)
+            return
+          }
+          if (_hoverRelease) {
+            cleanup.clearTimeout(_hoverRelease)
+            _hoverRelease = null
+          }
+          if (_hoverHeld && !isScrolledUp) _hoverHeld = false // resumed by other means
+          if (_hoverHeld || isScrolledUp || isStaticTab()) return
+          _hoverHeld = true
+          isScrolledUp = true
+        },
+        { passive: true, signal: mcSignal },
+      )
+      msgsEl.addEventListener('mouseleave', releaseHold, { passive: true, signal: mcSignal })
+      window.addEventListener('blur', releaseHold, { passive: true, signal: mcSignal })
 
       // Bulletproof sticky-bottom: any change to msgsEl's box (panel resize,
       // window resize, tab/input bar height shift, font-size change) re-pins

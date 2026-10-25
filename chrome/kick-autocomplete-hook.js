@@ -103,12 +103,12 @@
   function refreshEmotes(channel) {
     const now = Date.now()
     if (now - hsEmotesLastFetch < HS_EMOTE_TTL) return
-    hsEmotesLastFetch = now
     try {
       chrome.runtime.sendMessage(
         { type: 'get_picker_emotes', channel: channel || getCurrentChannel(), platform: 'kick' },
         (data) => {
           if (chrome.runtime.lastError || !data) return
+          hsEmotesLastFetch = now
           hsEmoteList = buildEmoteList(data)
           log('emote list refreshed:', hsEmoteList.length)
         },
@@ -791,65 +791,34 @@
     }
   }
 
-  function findAndHook() {
-    const input = document.querySelector('div.editor-input')
-    if (!input) return false
-
-    if (input._hsEmojiHooked) return true
-    input._hsEmojiHooked = true
-
-    input.addEventListener('input', handleInput, { signal: sig })
-    input.addEventListener('keydown', handleKeydown, { capture: true, signal: sig })
-    input.addEventListener(
-      'blur',
-      () => {
-        setTimeout(() => hideAll(), 150)
-      },
-      { signal: sig },
-    )
-    input.addEventListener('paste', handleMediaPaste, { signal: sig })
-    input.addEventListener('drop', handleMediaDrop, { signal: sig })
-
-    // Trigger initial emote fetch for the current channel
-    refreshEmotes(getCurrentChannel())
-
-    log('hooked Kick chat input')
-    return true
+  // Listeners sit on the document, not on the editor: kick swaps the editor node (chat reopened, channel
+  // switched, the heatsync toggle), and listeners on the old node would be listening to nothing.
+  const inEditor = (e) => e.target instanceof Element && e.target.closest('div.editor-input')
+  const onEditor = (handler) => (e) => {
+    if (inEditor(e)) handler(e)
   }
+  document.addEventListener('input', onEditor(handleInput), { signal: sig, capture: true })
+  document.addEventListener('keydown', onEditor(handleKeydown), { capture: true, signal: sig })
+  document.addEventListener(
+    'focusout',
+    onEditor(() => {
+      setTimeout(() => hideAll(), 150)
+    }),
+    { signal: sig },
+  )
+  document.addEventListener('paste', onEditor(handleMediaPaste), { signal: sig, capture: true })
+  document.addEventListener('drop', onEditor(handleMediaDrop), { signal: sig, capture: true })
 
-  // Init
   injectStyles()
-
-  let attempts = 0
-  function tryInit() {
-    if (sig?.aborted) return
-    attempts++
-    if (findAndHook()) {
-      log('ready')
-      return
-    }
-    if (attempts < 20) {
-      if (sig?.aborted) return
-      const _t = setTimeout(tryInit, 1000)
-      sig?.addEventListener('abort', () => clearTimeout(_t), { once: true })
-    }
-  }
-
-  // Retry on navigation (Kick is an SPA)
-  let lastUrl = location.href
-  const urlCheckInterval = setInterval(() => {
-    if (location.href !== lastUrl) {
-      lastUrl = location.href
-      const _nt = setTimeout(() => {
-        if (sig?.aborted) return
-        const input = document.querySelector('div.editor-input')
-        if (input && !input._hsEmojiHooked) findAndHook()
-      }, 1500)
-      sig?.addEventListener('abort', () => clearTimeout(_nt), { once: true })
-    }
+  refreshEmotes(getCurrentChannel())
+  // the channel changes under the SPA without a reload: the list follows it
+  let lastChannel = getCurrentChannel()
+  const channelWatch = setInterval(() => {
+    const now = getCurrentChannel()
+    if (now === lastChannel) return
+    lastChannel = now
+    hsEmotesLastFetch = 0
+    refreshEmotes(now)
   }, 2000)
-  sig.addEventListener('abort', () => clearInterval(urlCheckInterval))
-
-  const _initT = setTimeout(tryInit, 500)
-  sig?.addEventListener('abort', () => clearTimeout(_initT), { once: true })
+  sig.addEventListener('abort', () => clearInterval(channelWatch))
 })()

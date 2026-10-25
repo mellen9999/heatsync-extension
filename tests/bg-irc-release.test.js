@@ -61,7 +61,6 @@ function harness() {
     'clearTimeout',
     'WebSocket',
     'log',
-    'bgBroadcastOpenChannels',
     `const BG_IRC_RELEASE_GRACE_MS = 60000\n${FNS.map((f) => extractFn(f)).join('\n')}\nreturn { ${FNS.join(', ')} }`,
   )(
     BG_IRC,
@@ -74,7 +73,6 @@ function harness() {
     },
     (id) => timers.delete(id),
     { OPEN: 1 },
-    () => {},
     () => {},
   )
   const fireTimers = () => {
@@ -165,45 +163,5 @@ describe('rings are read per join, not all at SW wake', () => {
   test('late server backlog does not resurrect a released channel', () => {
     const merge = extractFn('bgIrcMergeServerBacklog')
     expect(merge).not.toContain('BG_IRC.channels.set')
-  })
-})
-
-describe('open streams come from tab URLs, not interest', () => {
-  const { bgIrcPageChannel } = new Function(
-    `${extractFn('bgIrcSafeChannel')}\n${extractFn('bgIrcPageChannel')}\nreturn { bgIrcPageChannel }`,
-  )()
-
-  test.each([
-    ['https://www.twitch.tv/Foo_Bar', 'foo_bar'],
-    ['https://twitch.tv/foo?x=1', 'foo'],
-    ['https://www.twitch.tv/popout/foo/chat', 'foo'],
-    ['https://www.twitch.tv/embed/foo/chat?parent=x', 'foo'],
-    ['https://dashboard.twitch.tv/u/foo', null],
-    ['https://m.twitch.tv/foo', null],
-    ['https://www.twitch.tv/', null],
-    ['https://kick.com/foo', null],
-    ['not a url', null],
-  ])('%s → %s', (url, want) => {
-    expect(bgIrcPageChannel(url)).toBe(want)
-  })
-
-  test('neither the broadcast nor the boot pull reads channelTabs', () => {
-    const at = BG_SRC.indexOf('function bgBroadcastOpenChannels()')
-    const bcast = BG_SRC.slice(at, BG_SRC.indexOf('\n}', at))
-    expect(bcast).toContain('bgIrcOpenChannels()')
-    expect(bcast).not.toContain('channelTabs')
-    const pull = BG_SRC.slice(BG_SRC.indexOf("message.type === 'bg_get_open_channels'"))
-    expect(pull.slice(0, 300)).toContain('bgIrcOpenChannels()')
-  })
-})
-
-describe('a dropped auto-tab parts its chat (content side)', () => {
-  test('reconcileAutoTabs parts + drops caches like removeChannel', () => {
-    const at = MAIN_SRC.indexOf('function reconcileAutoTabs(')
-    expect(at).toBeGreaterThan(-1)
-    const dropLoop = MAIN_SRC.slice(at, MAIN_SRC.indexOf('const MAX_EPHEMERAL_TABS', at))
-    expect(dropLoop).toContain('irc?.part?.(ch)')
-    expect(dropLoop).toContain('_dropTabCache(c.id)')
-    expect(dropLoop).toContain('dropTabActivity(c.id)')
   })
 })

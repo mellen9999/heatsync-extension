@@ -640,21 +640,6 @@ function sanitizeUiSettings(obj) {
 }
 
 /**
- * Whether a string is a plausible (lowercased) twitch login: 1-25 chars of
- * [a-z0-9_]. Yt videoIds (11 chars, may carry '-' / uppercase) and other
- * junk that leaks into channel sets must never be treated as twitch
- * channels — reconcileAutoTabs uses this to refuse ghost `auto_<videoId>`
- * tabs from stale open-channel state. NOTE: a hyphen-free videoId still
- * passes (indistinguishable from a login) — the real guard is upstream:
- * yt URL channels are never IRC-joined.
- * @param {*} ch
- * @returns {boolean}
- */
-function isValidTwitchLogin(ch) {
-  return typeof ch === 'string' && /^[a-z0-9_]{1,25}$/.test(ch)
-}
-
-/**
  * Third-party emote providers, in the pre-existing hardcoded merge order
  * (chrome/background.js concatenates channel/global emote arrays as
  * ...bttv, ...ffz, ...sevenTV — last-write-wins gives 7tv top priority,
@@ -1177,7 +1162,6 @@ const utils = {
   DEBUG,
 
   // Identity validation
-  isValidTwitchLogin,
   resolveYtLiveLabel,
   composerNeedsLogin,
   identityYtLiveUrl,
@@ -1239,7 +1223,6 @@ export {
   getFiber,
   identityYtLiveUrl,
   isLargeKeySyncEligible,
-  isValidTwitchLogin,
   LARGE_KEY_SYNC_MAX,
   LIVE_WEAVE_SKEW_MS,
   liveIdentityCounterpart,

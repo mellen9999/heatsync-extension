@@ -122,8 +122,7 @@ function updateTwitchNoChannelClass() {
 }
 
 // A no-channel page (directory/settings/search/…) with ZERO configured chat
-// tabs (no saved channels, no ephemeral auto-tabs from other open browser
-// tabs) has nothing to show — an empty 340px panel floating over pure
+// tabs (no saved channels) has nothing to show — an empty 340px panel floating over pure
 // browsing, which is exactly the audit-1.7.75 finding. A user WITH tabs keeps
 // the real feature (watch your chats while browsing away from them); only the
 // genuinely-empty case hides.

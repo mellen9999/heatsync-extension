@@ -5582,75 +5582,6 @@
 
   // (automod moved to automod.js)
 
-  // Ephemeral auto-tabs — every stream open ANYWHERE in the browser shows
-  // up as a tab here (dimmed, unsaved, vanishes when its window closes).
-  // BG broadcasts the open-channel set; entries are runtime-only:
-  // saveConfig/server-sync filter `ephemeral`, so nothing persists.
-  function reconcileAutoTabs(openChannels) {
-    const openSet = new Set(openChannels.map((c) => String(c).toLowerCase()))
-    const here = (getCurrentChannel() || '').toLowerCase()
-    openSet.delete(here) // this tab's own channel is already the live tab
-    let changed = false
-    // drop ephemerals whose browser tab closed — and their chat, as
-    // removeChannel does: the splice alone left the 3000-msg buffer joined
-    // and fed, and the BG kept the channel for this tab's sake
-    let droppedCurrent = false
-    for (let i = config.channels.length - 1; i >= 0; i--) {
-      const c = config.channels[i]
-      const ch = (c?.twitch || '').toLowerCase()
-      if (c?.ephemeral && !openSet.has(ch)) {
-        config.channels.splice(i, 1)
-        _dropTabCache(c.id)
-        dropTabActivity(c.id)
-        subTenureMap.delete(ch)
-        if (ch !== (getLiveChannel() || '').toLowerCase()) {
-          try {
-            irc?.part?.(ch)
-          } catch (_) {}
-        }
-        if (currentTab === c.id) droppedCurrent = true
-        changed = true
-      }
-    }
-    // add ephemerals for newly opened streams not already configured.
-    // HARD CAP: never let auto-tabs run away — a stale/buggy open-channel set
-    // (e.g. the 22-tab report: a long idle session accumulating entries) must not
-    // spawn a wall of tabs. 8 is well past any real "streams open at once".
-    const MAX_EPHEMERAL_TABS = 8
-    let ephemeralCount = config.channels.filter((c) => c?.ephemeral).length
-    for (const ch of openSet) {
-      // BG's open-channel set is twitch IRC interest — anything that isn't a
-      // plausible twitch login (yt videoIds leaked in here pre-fix; they can
-      // carry '-' and are meaningless as twitch channels) must never become
-      // a tab. Guards against stale BG SW state from before the yt-join fix.
-      if (!isValidTwitchLogin(ch)) continue
-      // Reserved URL slugs are shape-valid logins ('login', 'oauth2') — the
-      // oauth redirect pages leaked them into BG open-channel state.
-      if (NON_CHANNEL_PATHS.has(ch)) continue
-      const exists = config.channels.some((c) => c?.twitch && c.twitch.toLowerCase() === ch)
-      if (exists) continue
-      if (ephemeralCount >= MAX_EPHEMERAL_TABS) break
-      ephemeralCount++
-      config.channels.push({ id: `auto_${ch}`, twitch: ch, ephemeral: true })
-      try {
-        irc?.join?.(ch)
-      } catch (_) {}
-      // load the channel's third-party emote sets (bttv/ffz/7tv) — without
-      // this, everyone else's channel emotes render as raw text on auto-tabs
-      // (own emotes still worked: inventory is global). same call the
-      // manual add-channel path makes; bg caches+TTLs duplicates.
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: ch })
-      changed = true
-    }
-    if (changed) {
-      _channelLookup = null
-      try {
-        updateTabBar()
-      } catch (_) {}
-    }
-    if (droppedCurrent) switchTab('live')
-  }
-
   // Server-side heat spike (moment detector) → inline 🔥 row in all chats.
   // Dedupe per channel per 10min mirrors the server cooldown so multi-source
   // delivery (reconnects) can't double-post.
@@ -5937,10 +5868,9 @@
     const addBtn = scrollSection.querySelector('[data-tab="add"]')
     config.channels.forEach((ch) => {
       const tab = document.createElement('button')
-      tab.className = ch?.ephemeral ? 'hs-mc-tab hs-mc-tab-auto' : 'hs-mc-tab'
+      tab.className = 'hs-mc-tab'
       tab.setAttribute('role', 'tab')
       tab.setAttribute('aria-selected', 'false')
-      if (ch?.ephemeral) tab.title = 'open in another window — tab disappears when that window closes'
       const id = ch.id
       tab.dataset.tab = id
       // Show best human-readable name. Order:
@@ -11765,8 +11695,7 @@
   async function _saveConfigNow() {
     try {
       _skipNextConfigSync = true
-      // ephemeral auto-tabs (open browser streams) never persist
-      const persistable = { ...config, channels: (config.channels || []).filter((c) => !c?.ephemeral) }
+      const persistable = { ...config, channels: config.channels || [] }
       // Union the channel list with what's in storage before writing. A blind
       // full-object set makes two tabs (twitch + kick, the normal setup) race:
       // whoever writes last wins, and the loser's just-added channel is both
@@ -11796,7 +11725,7 @@
       // Sync to server for cross-device sync
       safeSendMessage({
         type: 'ws_send',
-        data: { type: 'multichat:sync', channels: (config.channels || []).filter((c) => !c?.ephemeral) },
+        data: { type: 'multichat:sync', channels: config.channels || [] },
       })
     } catch (e) {
       // A swallowed failure here looks like a saved channel — it isn't. See
@@ -12119,12 +12048,6 @@
       // completion / picker use lookupEmote() which checks viewerPersonalEmotes
       // first. emoteCache only needs the state flipped when the same name is
       // ALSO a heatsync global.
-      if (msg.type === 'open_channels') {
-        try {
-          reconcileAutoTabs(Array.isArray(msg.channels) ? msg.channels : [])
-        } catch (_) {}
-        return
-      }
       if (msg.type === 'hs_moment') {
         try {
           handleMomentSpike(msg.data)
@@ -13777,17 +13700,6 @@
           initKickNativeTap()
         } catch (_) {}
       }
-      // Auto-tabs: pull the current open-stream set once at boot — the bg
-      // broadcast only fires on CHANGES, so a fresh tab would otherwise not
-      // see streams that were already open before it loaded.
-      try {
-        safeSendMessage({ type: 'bg_get_open_channels' })
-          .then((r) => {
-            if (r?.channels) reconcileAutoTabs(r.channels)
-          })
-          .catch(() => {})
-      } catch (_) {}
-
       // Twitch deprecated WHISPER over IRC in Feb 2023 — receive via EventSub instead.
       // Works on any host (the ESW socket is independent of the chat IRC).
       // Guarded: a sync throw here used to kill every init below it silently.

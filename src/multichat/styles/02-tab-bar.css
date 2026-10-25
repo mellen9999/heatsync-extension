@@ -134,8 +134,6 @@
       background: #fff !important;
       color: #00ffff !important;
     }
-    .hs-mc-tab-auto { color: var(--hs-muted); }
-.hs-mc-tab-auto::before { content: '·'; color: #fff; margin-right: 3px; }
 .hs-mc-fill-on .hs-mc-tab.active {
   font-size: 0 !important;
 }

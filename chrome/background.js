@@ -13332,59 +13332,12 @@ async function bgIrcBroadcast(payload) {
   } catch {}
 }
 
-// The twitch channel a tab's page shows, from its URL (the content side's
-// getCurrentChannel shape; it still filters reserved paths like /directory).
-function bgIrcPageChannel(url) {
-  try {
-    const u = new URL(url)
-    if (!/^(www\.)?twitch\.tv$/.test(u.hostname)) return null
-    const m = u.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_]+)/)
-    return m ? bgIrcSafeChannel(m[1]) || null : null
-  } catch {
-    return null
-  }
-}
-
-// Streams open across the browser = the channels twitch tabs are ON. Not
-// channelTabs: every tab joins every other open stream as an auto-tab, so a
-// closed stream stayed "open" as long as any other tab lived — its auto-tab
-// held its own interest, and nothing (tab, chat, ring) ever went away.
-async function bgIrcOpenChannels() {
-  const tabs = await browser.tabs.query({ url: ['*://*.twitch.tv/*'] })
-  return [...new Set(tabs.map((t) => bgIrcPageChannel(t.url || '')).filter(Boolean))]
-}
-
-// Every multichat instance learns which channels are open across the whole
-// browser — feeds the ephemeral auto-tabs (5 streams open = 5 tabs, no
-// manual adds). Debounced: interest churns in bursts during navigation.
-// Only changes are sent; a tab that loads later asks (bg_get_open_channels).
-let _openChBroadcastTimer = null
-let _openChLast = null
-function bgBroadcastOpenChannels() {
-  if (_openChBroadcastTimer) return
-  _openChBroadcastTimer = setTimeout(async () => {
-    _openChBroadcastTimer = null
-    try {
-      const channels = await bgIrcOpenChannels()
-      const key = channels.sort().join(',')
-      if (key === _openChLast) return
-      _openChLast = key
-      bgIrcBroadcast({ type: 'open_channels', channels })
-    } catch {}
-  }, 500)
-}
-// a tab hopping channels or leaving twitch changes the open set too
-browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
-  if (changeInfo.url) bgBroadcastOpenChannels()
-})
-
 function bgIrcRegisterTabInterest(tabId, ch) {
   bgIrcCancelRelease(ch)
   if (!BG_IRC.tabInterest.has(tabId)) BG_IRC.tabInterest.set(tabId, new Set())
   BG_IRC.tabInterest.get(tabId).add(ch)
   if (!BG_IRC.channelTabs.has(ch)) BG_IRC.channelTabs.set(ch, new Set())
   BG_IRC.channelTabs.get(ch).add(tabId)
-  bgBroadcastOpenChannels()
 }
 
 function bgIrcUnregisterTabInterest(tabId, ch) {
@@ -13398,7 +13351,6 @@ function bgIrcUnregisterTabInterest(tabId, ch) {
   }
   const interest = BG_IRC.tabInterest.get(tabId)
   if (interest) interest.delete(ch)
-  bgBroadcastOpenChannels()
 }
 
 // Twitch logins are [a-z0-9_]{1,25}. Every JOIN/PART below interpolates the
@@ -13477,7 +13429,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     }
   }
   BG_IRC.tabInterest.delete(tabId)
-  bgBroadcastOpenChannels()
 })
 
 // Ctx-death detector port (companion to content.js + multichat bootstrap).
@@ -13532,12 +13483,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     }
     sendResponse({ ok: true })
-    return true
-  }
-  if (message.type === 'bg_get_open_channels') {
-    bgIrcOpenChannels()
-      .then((channels) => sendResponse({ channels }))
-      .catch(() => sendResponse({ channels: [] }))
     return true
   }
   if (message.type === 'bg_submit_feedback') {

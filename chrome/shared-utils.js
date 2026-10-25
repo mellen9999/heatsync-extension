@@ -369,6 +369,9 @@ const browser = globalThis.browser || chrome
         return
       }
       if (!HS_EC_HOSTS.has(host)) return
+      // a tab-completed emote rides a placeholder jtvnw url until the page-world fixer swaps in the real
+      // one: wrapping the placeholder in the proxy hides it from that fixer and the image stays broken
+      if (src.includes('__FFZ__')) return
       img.dataset.hsEcFb = '1'
       img.removeAttribute('srcset')
       img.src = 'https://heatsync.org/api/emotes/cdn?u=' + encodeURIComponent(src)

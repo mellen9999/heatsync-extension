@@ -9083,6 +9083,75 @@
     }
   }
 
+  // ── optimistic youtube send ──────────────────────────────────────────────────
+  // YouTube takes ~2s to accept a post and echo it back, so your own line would sit unseen that long.
+  // The "sending" row is DOM only — never in a buffer, never counted, never through the echo dedup — so
+  // it cannot be the second copy of anything. It leaves the instant the real echo is about to render,
+  // the send fails, ten seconds pass, or the pane repaints (a rebuild comes from the buffers, which
+  // never held it). Every exit removes it; none depends on another.
+  const _ytSendingRows = [] // oldest first: { id, text, div, timer }
+  // The signed-in account's name: the chip beside YouTube's own input, in its chat frame (same origin).
+  const ytSelfName = () => {
+    try {
+      const doc = document.querySelector('ytd-live-chat-frame#chat iframe')?.contentDocument
+      return (
+        doc?.querySelector('yt-live-chat-message-input-renderer yt-live-chat-author-chip')?.textContent?.trim() || ''
+      )
+    } catch (_) {
+      return ''
+    }
+  }
+  const _ytEchoKey = (t) =>
+    String(t ?? '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  function showYtSendingRow(id, text) {
+    try {
+      const msgsEl = document.getElementById('hs-mc-messages')
+      const name = ytSelfName()
+      if (!name || !msgsEl || isScrolledUp || editingChannel || document.hidden) return
+      const msg = {
+        user: name,
+        text,
+        color: '#ff0000',
+        time: Date.now(),
+        ord: visualNowOrd(),
+        platform: 'youtube',
+        channel: 'youtube',
+        msgType: 'text',
+        emotes: [],
+      }
+      const div = buildMessageDiv(msg, currentTab)
+      if (!div) return
+      div.dataset.hsSending = id
+      stampZebra(div, msg, msgsEl.lastElementChild)
+      msgsEl.querySelector('.hs-mc-empty')?.remove()
+      msgsEl.appendChild(div)
+      scheduleScrollPin(msgsEl)
+      const row = { id, text: _ytEchoKey(text), div, timer: null }
+      row.timer = cleanup.setTimeout(() => clearYtSendingRow(id), 10000)
+      _ytSendingRows.push(row)
+    } catch (_) {}
+  }
+
+  function clearYtSendingRow(id) {
+    const i = _ytSendingRows.findIndex((r) => r.id === id)
+    if (i < 0) return
+    const [row] = _ytSendingRows.splice(i, 1)
+    if (row.timer) cleanup.clearTimeout(row.timer)
+    row.div.remove()
+  }
+
+  // The real echo of a line is about to render: its "sending" twin goes first (oldest match, so two
+  // identical sends take one each).
+  function claimYtSendingRow(text) {
+    if (!_ytSendingRows.length) return
+    const key = _ytEchoKey(text)
+    const row = _ytSendingRows.find((r) => r.text === key)
+    if (row) clearYtSendingRow(row.id)
+  }
+
   function appendMessage(msg, tabId) {
     if (editingChannel) return false
     // Hidden by share-dedupe (real USERNOTICE replaced our synthetic)

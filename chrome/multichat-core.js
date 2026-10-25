@@ -14962,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9705f1294996' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '375b5c11b97e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -38349,6 +38349,10 @@ function handleYoutubeChatMsg(msg) {
   // can be missed (which left it shut and the 'live' tab empty). Falls back
   // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
   if (targetChannelId === '__live_yt_auto__') {
+    // The background fans a youtube stream's chat out to every open tab. Only a page that asked for
+    // this stream (it subscribed its own watching tab to it) takes it in: a twitch popout of a
+    // channel with no youtube link never did, and must not mix another tab's premiere into its chat.
+    if (!ytSubscribedUrls.get('__live_yt_auto__')) return
     const pageVid =
       (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] ||
       _autoYtVideoId
@@ -38448,6 +38452,7 @@ function handleYoutubeChatMsg(msg) {
   // PLUS the unfiltered YT echo. peekSentHost ensures the badge
   // reflects where the user actually typed FROM.
   if (isSentEcho(ytMsg.text, 'youtube')) return
+  claimYtSendingRow(ytMsg.text) // the real line is about to render: its optimistic twin leaves
   // Gated on peekSentHost alone — currentUsername is null on cross-origin
   // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
   {
@@ -51781,8 +51786,10 @@ async function sendMessage() {
 
   // --- YouTube-only send path (no Twitch, no Kick) ---
   if (sendToYoutube && !sendToKick && !sendToTwitch) {
+    showYtSendingRow(_synthId, restText)
     sendYoutubeMessage(ytText, ytVideoId)
       .then((result) => {
+        if (result !== true) clearYtSendingRow(_synthId)
         if (result === true) {
           // YT echoes don't loop back through our IRC handlers, so the timer
           // would always fire "no_echo" for pure-YT sends. Confirm here, with
@@ -51799,6 +51806,7 @@ async function sendMessage() {
       })
       .catch((err) => {
         log(`yt-only send rejected: ${err?.message || err}`)
+        clearYtSendingRow(_synthId)
         markPendingFailed(_synthId, 'send_failed')
       })
     return
@@ -78017,6 +78025,75 @@ const STORAGE_KEY = 'heatsync_multichat'
       _reserveModWrapSized(wrap, w, h) // immediate if already sized
       if (_hsModReserveRO) _hsModReserveRO.observe(wrap) // and again once it is
     }
+  }
+
+  // ── optimistic youtube send ──────────────────────────────────────────────────
+  // YouTube takes ~2s to accept a post and echo it back, so your own line would sit unseen that long.
+  // The "sending" row is DOM only — never in a buffer, never counted, never through the echo dedup — so
+  // it cannot be the second copy of anything. It leaves the instant the real echo is about to render,
+  // the send fails, ten seconds pass, or the pane repaints (a rebuild comes from the buffers, which
+  // never held it). Every exit removes it; none depends on another.
+  const _ytSendingRows = [] // oldest first: { id, text, div, timer }
+  // The signed-in account's name: the chip beside YouTube's own input, in its chat frame (same origin).
+  const ytSelfName = () => {
+    try {
+      const doc = document.querySelector('ytd-live-chat-frame#chat iframe')?.contentDocument
+      return (
+        doc?.querySelector('yt-live-chat-message-input-renderer yt-live-chat-author-chip')?.textContent?.trim() || ''
+      )
+    } catch (_) {
+      return ''
+    }
+  }
+  const _ytEchoKey = (t) =>
+    String(t ?? '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  function showYtSendingRow(id, text) {
+    try {
+      const msgsEl = document.getElementById('hs-mc-messages')
+      const name = ytSelfName()
+      if (!name || !msgsEl || isScrolledUp || editingChannel || document.hidden) return
+      const msg = {
+        user: name,
+        text,
+        color: '#ff0000',
+        time: Date.now(),
+        ord: visualNowOrd(),
+        platform: 'youtube',
+        channel: 'youtube',
+        msgType: 'text',
+        emotes: [],
+      }
+      const div = buildMessageDiv(msg, currentTab)
+      if (!div) return
+      div.dataset.hsSending = id
+      stampZebra(div, msg, msgsEl.lastElementChild)
+      msgsEl.querySelector('.hs-mc-empty')?.remove()
+      msgsEl.appendChild(div)
+      scheduleScrollPin(msgsEl)
+      const row = { id, text: _ytEchoKey(text), div, timer: null }
+      row.timer = cleanup.setTimeout(() => clearYtSendingRow(id), 10000)
+      _ytSendingRows.push(row)
+    } catch (_) {}
+  }
+
+  function clearYtSendingRow(id) {
+    const i = _ytSendingRows.findIndex((r) => r.id === id)
+    if (i < 0) return
+    const [row] = _ytSendingRows.splice(i, 1)
+    if (row.timer) cleanup.clearTimeout(row.timer)
+    row.div.remove()
+  }
+
+  // The real echo of a line is about to render: its "sending" twin goes first (oldest match, so two
+  // identical sends take one each).
+  function claimYtSendingRow(text) {
+    if (!_ytSendingRows.length) return
+    const key = _ytEchoKey(text)
+    const row = _ytSendingRows.find((r) => r.text === key)
+    if (row) clearYtSendingRow(row.id)
   }
 
   function appendMessage(msg, tabId) {

@@ -1084,6 +1084,10 @@ function handleYoutubeChatMsg(msg) {
   // can be missed (which left it shut and the 'live' tab empty). Falls back
   // to _autoYtVideoId off-page. The videoId-match still blocks other streams.
   if (targetChannelId === '__live_yt_auto__') {
+    // The background fans a youtube stream's chat out to every open tab. Only a page that asked for
+    // this stream (it subscribed its own watching tab to it) takes it in: a twitch popout of a
+    // channel with no youtube link never did, and must not mix another tab's premiere into its chat.
+    if (!ytSubscribedUrls.get('__live_yt_auto__')) return
     const pageVid =
       (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1] ||
       _autoYtVideoId
@@ -1183,6 +1187,7 @@ function handleYoutubeChatMsg(msg) {
   // PLUS the unfiltered YT echo. peekSentHost ensures the badge
   // reflects where the user actually typed FROM.
   if (isSentEcho(ytMsg.text, 'youtube')) return
+  claimYtSendingRow(ytMsg.text) // the real line is about to render: its optimistic twin leaves
   // Gated on peekSentHost alone — currentUsername is null on cross-origin
   // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
   {

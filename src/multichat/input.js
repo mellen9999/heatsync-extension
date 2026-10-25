@@ -9054,8 +9054,10 @@ async function sendMessage() {
 
   // --- YouTube-only send path (no Twitch, no Kick) ---
   if (sendToYoutube && !sendToKick && !sendToTwitch) {
+    showYtSendingRow(_synthId, restText)
     sendYoutubeMessage(ytText, ytVideoId)
       .then((result) => {
+        if (result !== true) clearYtSendingRow(_synthId)
         if (result === true) {
           // YT echoes don't loop back through our IRC handlers, so the timer
           // would always fire "no_echo" for pure-YT sends. Confirm here, with
@@ -9072,6 +9074,7 @@ async function sendMessage() {
       })
       .catch((err) => {
         log(`yt-only send rejected: ${err?.message || err}`)
+        clearYtSendingRow(_synthId)
         markPendingFailed(_synthId, 'send_failed')
       })
     return

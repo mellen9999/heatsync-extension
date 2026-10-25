@@ -8993,6 +8993,21 @@ async function handleMessage(message, sender, sendResponse) {
   // Proxy recent-messages backfill through SW — cross-origin content-script
   // fetches trip Cloudflare bot heuristics (edge 503 before the origin ever
   // sees them); SW requests pass clean.
+  // Kick's stylesheet text for kick-css-fix.js: the page can't read it
+  // cross-origin and a content-script fetch is CORS-blocked, the worker is not.
+  if (message.type === 'kick_css_text') {
+    const url = String(message.url || '')
+    if (!/^https:\/\/assets\.kick\.com\/[\w./%-]+\.css(\?[\w=&.%-]*)?$/.test(url)) {
+      sendResponse(null)
+      return true
+    }
+    fetch(url, { signal: AbortSignal.timeout(15000), credentials: 'omit' })
+      .then((r) => (r.ok ? r.text() : null))
+      .then((css) => sendResponse(css && css.length < 4e6 ? css : null))
+      .catch(() => sendResponse(null))
+    return true
+  }
+
   if (message.type === 'fetch_recent_messages') {
     const ch = String(message.channel || '').toLowerCase()
     if (!/^[a-z0-9_]{1,25}$/.test(ch)) {

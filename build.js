@@ -664,6 +664,7 @@ const COPY_FILES = [
   'kick-autocomplete-hook.js',
   'pcard-early.js',
   'early-layout.js',
+  'kick-css-fix.js',
 ]
 
 // Assets (images, etc)

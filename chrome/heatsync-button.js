@@ -5220,7 +5220,7 @@
       const style = document.createElement('style')
       style.id = 'heatsync-native-back-style'
       style.textContent =
-        '#heatsync-native-back{position:fixed;z-index:2147483000;box-sizing:border-box;height:28px;display:flex;align-items:center;' +
+        '#heatsync-native-back{position:fixed;top:0;left:0;visibility:hidden;z-index:2147483000;box-sizing:border-box;height:28px;display:flex;align-items:center;' +
         'background:#000;color:#fff;border:0;border-bottom:1px solid #fff;border-radius:0;font:13px monospace;padding:0 8px;cursor:pointer;text-align:left}' +
         '#heatsync-native-back:hover,#heatsync-native-back:active{background:#fff;color:#000}' +
         '#heatsync-native-back .hs-nb-arrow{font-size:24px;font-weight:700;line-height:1;margin-right:8px}'
@@ -5239,8 +5239,10 @@
         document.querySelector(
           location.hostname.endsWith('kick.com')
             ? '#channel-chatroom'
-            : '.stream-chat, .chat-shell, [data-a-target="chat-room-component"]',
-        )
+            : '.stream-chat, .chat-shell, [data-a-target="chat-room-component"], [data-test-selector="chat-room-component-layout"], .chat-room',
+        ) ||
+        // a popout is nothing but the chat: the whole page is the column
+        (/^\/popout\//.test(location.pathname) ? document.body : null)
       const place = () => {
         const el = column()
         if (!el) return false
@@ -5249,6 +5251,7 @@
         bar.style.top = `${Math.round(r.top)}px`
         bar.style.left = `${Math.round(r.left)}px`
         bar.style.width = `${Math.round(r.width)}px`
+        bar.style.visibility = 'visible'
         return true
       }
       document.head.append(style)

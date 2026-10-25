@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7fec2e498a81' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4aed0733c90e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -79454,13 +79454,14 @@ const STORAGE_KEY = 'heatsync_multichat'
     // prefix), the second occurrence is skipped so DOM stays one-per-key.
     const insertedKeys = _rmInsertedKeys
     insertedKeys.clear()
-    // The node standing for the previous desired row. A NEW row goes right after
-    // it — never "before whatever DOM row a shared cursor points at". The cursor
+    // The lowest-in-the-DOM row placed so far. A NEW row goes right after it —
+    // never "before whatever DOM row a shared cursor points at". The cursor
     // version stalled forever once one existing row sat out of desired order
     // (it was deferred, the cursor stopped on it, and every later new row was
     // inserted above it: a frozen bottom until that row aged out, ~2 min).
-    // Anchored on its own predecessor, a new row lands where it belongs even
-    // when older rows sit out of order below it.
+    // Anchored on the low-water mark, a new row lands after everything already
+    // placed, however many older rows sit out of order below it. In the sorted
+    // case this is exactly "after the previous desired row" (the O(1) path).
     let prevNode = null
     let zebraFrom = null // first row whose stripe may now be out of phase
     for (let j = 0; j < toRender.length; j++) {
@@ -79511,7 +79512,14 @@ const STORAGE_KEY = 'heatsync_multichat'
             existing.dataset.hsEpoch = String(_renderEpoch)
           }
         }
-        prevNode = placed // an existing row never moves; later new rows anchor on it
+        // an existing row never moves; it only advances the mark when it is
+        // lower in the DOM than everything placed so far
+        if (
+          !prevNode ||
+          placed === prevNode.nextSibling ||
+          prevNode.compareDocumentPosition(placed) & Node.DOCUMENT_POSITION_FOLLOWING
+        )
+          prevNode = placed
         continue
       }
       // Build new msg div at correct position.

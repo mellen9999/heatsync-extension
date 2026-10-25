@@ -10680,13 +10680,14 @@
     // prefix), the second occurrence is skipped so DOM stays one-per-key.
     const insertedKeys = _rmInsertedKeys
     insertedKeys.clear()
-    // The node standing for the previous desired row. A NEW row goes right after
-    // it — never "before whatever DOM row a shared cursor points at". The cursor
+    // The lowest-in-the-DOM row placed so far. A NEW row goes right after it —
+    // never "before whatever DOM row a shared cursor points at". The cursor
     // version stalled forever once one existing row sat out of desired order
     // (it was deferred, the cursor stopped on it, and every later new row was
     // inserted above it: a frozen bottom until that row aged out, ~2 min).
-    // Anchored on its own predecessor, a new row lands where it belongs even
-    // when older rows sit out of order below it.
+    // Anchored on the low-water mark, a new row lands after everything already
+    // placed, however many older rows sit out of order below it. In the sorted
+    // case this is exactly "after the previous desired row" (the O(1) path).
     let prevNode = null
     let zebraFrom = null // first row whose stripe may now be out of phase
     for (let j = 0; j < toRender.length; j++) {
@@ -10737,7 +10738,14 @@
             existing.dataset.hsEpoch = String(_renderEpoch)
           }
         }
-        prevNode = placed // an existing row never moves; later new rows anchor on it
+        // an existing row never moves; it only advances the mark when it is
+        // lower in the DOM than everything placed so far
+        if (
+          !prevNode ||
+          placed === prevNode.nextSibling ||
+          prevNode.compareDocumentPosition(placed) & Node.DOCUMENT_POSITION_FOLLOWING
+        )
+          prevNode = placed
         continue
       }
       // Build new msg div at correct position.

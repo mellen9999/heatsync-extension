@@ -159,7 +159,7 @@ test('a popout never waits on rAF or the 1s starved timer', () => {
   expect(main).toMatch(/function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setTimeout\(fn, 16\)/)
 })
 
-test('a new row anchors on its desired predecessor, never on a shared cursor', () => {
+test('a new row anchors on the lowest placed row, never on a shared cursor', () => {
   const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
   expect(main).toMatch(/if \(prevNode\) after = prevNode\.nextSibling/)
   expect(main).not.toMatch(/domIdx/)

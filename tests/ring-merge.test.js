@@ -147,3 +147,9 @@ test('stripe flicker is counted and logged with its mid-insert count', () => {
   const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
   expect(main).toMatch(/hsDiagLog\('zebra_flicker'/)
 })
+
+test('alt+shift+d dumps the pane state to the diag ring', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/hsDiagLog\('manual_dump'/)
+  expect(main).toMatch(/e\.code === 'KeyD'/)
+})

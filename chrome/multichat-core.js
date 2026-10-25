@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f5c76d382fd7' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f20df78d6b8f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78610,6 +78610,52 @@ const STORAGE_KEY = 'heatsync_multichat'
       po.observe({ type: 'long-animation-frame', buffered: false })
     } catch (_) {}
   }
+  // Alt+Shift+D: write the pane's whole state to the diag ring right now. For a
+  // freeze no watchdog caught — press it while the chat is stuck, then read the
+  // `manual_dump` entry.
+  function dumpPaneState() {
+    const now = Date.now()
+    const age = (m) => (m ? Math.round((now - (m.time || 0)) / 1000) : -1)
+    const msgsEl = document.getElementById('hs-mc-messages')
+    const rows = msgsEl ? [...msgsEl.children] : []
+    const last = rows[rows.length - 1]
+    const ch = currentTab === 'live' ? null : getChannelById(currentTab)
+    const tw = String((ch ? ch.twitch : getLivePlatformNames().twitch) || '').toLowerCase()
+    const kk = String((ch ? ch.kick : getLivePlatformNames().kick) || '').toLowerCase()
+    const nb = _tabNewestBuffered(currentTab)
+    hsDiagLog('manual_dump', {
+      tab: String(currentTab).slice(0, 24),
+      rows: rows.length,
+      domTailAgeS: last ? Math.round((now - (+last.dataset.msgTime || 0)) / 1000) : -1,
+      domQuietS: Math.round((now - _domChangeAt) / 1000),
+      lastRenderS: _lastRenderAt ? Math.round((now - _lastRenderAt) / 1000) : -1,
+      renderCalls: _renderCalls,
+      twTailAgeS: tw ? age(irc?.getTail(tw, 1)?.[0]) : -2,
+      kickTailAgeS: kk ? age(kickChat?.getTail(kk, 1)?.[0]) : -2,
+      bufNewestAgeS: age(nb),
+      bufInIndex: nb ? _msgKeyIndex.has(msgKeyOf(nb)) : null,
+      bufInDom: nb ? !!msgsEl?.querySelector(`[data-msg-key="${CSS.escape(msgKeyOf(nb))}"]`) : null,
+      idx: _msgKeyIndex.size,
+      multi: isMultiPlatformTab(currentTab),
+      mpTimer: !!_multiPlatformRenderTimer,
+      collapse: _renderCollapseTimer !== null,
+      hid: document.hidden,
+      foc: document.hasFocus(),
+      wedged: _visWedged,
+      starved: _rafStarved,
+      skipped: _hiddenSkippedAppend,
+      up: !!isScrolledUp,
+      edit: !!editingChannel,
+      card: typeof activeProfileCard !== 'undefined' && !!activeProfileCard,
+      panel: !!hsPanePanelOpen(),
+      pred: typeof predViewOpen === 'function' && !!predViewOpen(),
+      img: typeof imgViewOpen === 'function' && !!imgViewOpen(),
+      prog: !!isProgrammaticScroll,
+      pin: !!_scrollPinRaf,
+      epoch: _renderEpoch,
+      gap: msgsEl ? Math.round(msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight) : -1,
+    })
+  }
   let _thrashObs = null
   let _zebraObs = null
   let _zebraFlips = 0
@@ -78817,9 +78863,11 @@ const STORAGE_KEY = 'heatsync_multichat'
   // (input, appends, scroll pins) and reads as a frozen, flashing pane.
   let _slowRenderLoggedAt = 0
   let _renderCalls = 0
+  let _lastRenderAt = 0
   function renderMessages(id, opts) {
     const t0 = performance.now()
     _renderCalls++
+    _lastRenderAt = Date.now()
     try {
       return _renderMessagesImpl(id, opts)
     } finally {
@@ -81901,6 +81949,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     cleanup.setInterval(renderStallCheck, 2500)
     cleanup.setInterval(ingestGapCheck, 1000)
     cleanup.setInterval(domThrashCheck, 2000)
+    cleanup.addEventListener(document, 'keydown', (e) => {
+      if (e.altKey && e.shiftKey && e.code === 'KeyD') dumpPaneState()
+    })
     watchLongFrames()
 
     // Inject CSS before ANYTHING that awaits. injectStyles has zero settings

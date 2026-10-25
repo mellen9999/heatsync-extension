@@ -2167,6 +2167,13 @@ const LIVE_WEAVE_SKEW_MS = 2000
 // Comparing message time against message time is skew-proof. Monotonic, so a
 // clamped row can never land above one already committed.
 let _visualNow = 0
+// The newest REAL message time seen (fresh ones only). The visual clock may
+// run ahead of it by at most DRIFT_CAP_MS: every stale arrival spends a tick,
+// and a backlog flood (kick relay catching up, a held-back tab flushing) could
+// otherwise push the visual now seconds past reality — every fresh line then
+// sorted ABOVE the flood and the pane looked frozen until real time caught up.
+let _realNow = 0
+const VISUAL_DRIFT_CAP_MS = 1000
 
 /**
  * Display ord for a LIVE message, assigned ONCE at insert and never
@@ -2186,6 +2193,7 @@ let _visualNow = 0
 function liveOrd(time) {
   if (Number.isFinite(time) && time > 0 && !(_visualNow && _visualNow - time > LIVE_WEAVE_SKEW_MS)) {
     if (time > _visualNow) _visualNow = time
+    if (time > _realNow) _realNow = time
     return time
   }
   return visualNowOrd()
@@ -2214,14 +2222,15 @@ function visualNowOrd() {
   // Cold start has no message time to anchor to yet — a YouTube-only channel
   // can commit before any platform has spoken. The wall clock is the only
   // reference available, and it is what the YT pacer always used.
-  if (!_visualNow) _visualNow = Date.now()
-  else _visualNow++
+  if (!_visualNow) _visualNow = _realNow = Date.now()
+  else if (_visualNow < _realNow + VISUAL_DRIFT_CAP_MS) _visualNow++ // at the cap: hold, ties keep arrival order
   return _visualNow
 }
 
 /** Test seam — the visual clock is module state and each case needs it cold. */
 function _resetVisualNow(v = 0) {
   _visualNow = v
+  _realNow = v
 }
 
 // Index of the first element whose ordOf is > `ord` — i.e. where `ord`
@@ -14916,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2f276afa09c4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ec5a02577051' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77080,6 +77089,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // it picks the UTC day in a /search/logs permalink, and the archive stores the
       // same value. Without it a row can be identified but not cited.
       if (m.time) div.dataset.msgTime = String(m.time)
+      if (m.ord != null) div.dataset.hsOrd = String(m.ord) // diagnosis: what the row sorted by
       // Mark self-messages so the mod hover toolbar can skip them without
       // re-deriving currentUsername (which may be null pre-auth). Inlined
       // compare — the `isOwn` const above is scoped to the !_renderedHtml

@@ -8315,6 +8315,7 @@
       // it picks the UTC day in a /search/logs permalink, and the archive stores the
       // same value. Without it a row can be identified but not cited.
       if (m.time) div.dataset.msgTime = String(m.time)
+      if (m.ord != null) div.dataset.hsOrd = String(m.ord) // diagnosis: what the row sorted by
       // Mark self-messages so the mod hover toolbar can skip them without
       // re-deriving currentUsername (which may be null pre-auth). Inlined
       // compare — the `isOwn` const above is scoped to the !_renderedHtml

@@ -693,3 +693,32 @@ describe('live insert sites stamp an ord (src/multichat/irc.js, real source)', (
     expect(IRC_SRC).not.toMatch(/isHistory\s*=\s*true[\s\S]{0,400}?liveOrd\(/)
   })
 })
+
+describe('visual clock drift cap', () => {
+  beforeEach(() => _resetVisualNow(0))
+
+  test('a flood of stale arrivals cannot push the visual now more than 1s past real time', () => {
+    const t = 1_000_000_000_000
+    expect(liveOrd(t)).toBe(t)
+    for (let i = 0; i < 5000; i++) liveOrd(t - 5000) // stale: each takes a tick
+    const fresh = liveOrd(t + 100)
+    expect(fresh).toBe(t + 100)
+    expect(liveOrd(t - 5000)).toBeLessThanOrEqual(t + 1100)
+  })
+
+  test('a fresh line right after a flood still lands at or below the flood, never seconds under it', () => {
+    const t = 1_000_000_000_000
+    liveOrd(t)
+    let last = 0
+    for (let i = 0; i < 5000; i++) last = liveOrd(t - 5000)
+    expect(last - t).toBeLessThanOrEqual(1000)
+  })
+
+  test('below the cap every stale arrival still gets its own tick', () => {
+    const t = 1_000_000_000_000
+    liveOrd(t)
+    const a = liveOrd(t - 5000)
+    const b = liveOrd(t - 5000)
+    expect(b).toBe(a + 1)
+  })
+})

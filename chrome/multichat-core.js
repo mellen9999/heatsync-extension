@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6822283fc259' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b31d63817748' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77345,7 +77345,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Cleared by mod (timeout/ban/delete) — Twitch-native dim + strikethrough on offending content
     if (m.cleared && dimTimeouts) {
       div.classList.add('hs-mc-msg-cleared')
-      if (m.clearedReason) div.title = m.clearedReason
+      if (m.clearedReason) div.dataset.clearedReason = m.clearedReason
     }
     // Keyword highlight — message text matches a user-defined term
     if (keywordHighlightsRegex && m.text && keywordHighlightsRegex.test(m.text)) {
@@ -78167,7 +78167,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       return
     }
     row.classList.add('hs-mc-msg-cleared')
-    if (title) row.title = title
+    if (title) row.dataset.clearedReason = title
   }
   function isMsgFiltered(m, f) {
     if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
@@ -79831,7 +79831,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const cm = keyToMsg.get(k)
           if (cm?.cleared) {
             child.classList.add('hs-mc-msg-cleared')
-            if (cm.clearedReason && !child.title) child.title = cm.clearedReason
+            if (cm.clearedReason) child.dataset.clearedReason = cm.clearedReason
           }
         }
       }
@@ -83266,9 +83266,10 @@ const STORAGE_KEY = 'heatsync_multichat'
         const targetLc = msg.targetUser.toLowerCase()
         for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
           if ((row.dataset.msgUser || '').toLowerCase() !== targetLc || !samePlat(row)) continue
-          if (row.title === 'banned' || /timed out/.test(row.title || '')) {
+          const why = row.dataset.clearedReason || ''
+          if (why === 'banned' || /timed out/.test(why)) {
             row.classList.remove('hs-mc-msg-cleared')
-            row.removeAttribute('title')
+            delete row.dataset.clearedReason
           }
         }
       }

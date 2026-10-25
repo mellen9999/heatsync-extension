@@ -1680,6 +1680,70 @@
   /* ============================================ */
   /* HEAT MESSAGE BORDERS (by heat tier)          */
   /* ============================================ */
+  /* Emojis — scaled by --hs-emoji-scale (1/2/4x) from hs_emoji_size storage. */
+  .heatsync-emoji {
+    font-size: calc(1em * var(--hs-emoji-scale, 1)) !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    display: inline-block !important;
+  }
+
+  /* Emote overlay stacking (7TV zero-width emotes) */
+  .heatsync-emote-stack {
+    display: inline-flex !important;
+    position: relative !important;
+    vertical-align: middle !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    transition: gap 0.12s ease, padding 0.12s ease, background 0.12s ease !important;
+  }
+
+  /* Force overflow visible on Twitch emote containers inside stacks */
+  .heatsync-emote-stack .chat-line__message--emote-button,
+  .heatsync-emote-stack .chat-line__message--emote-button *,
+  .heatsync-emote-stack [class*="emote-button"],
+  .heatsync-emote-stack [class*="emote-button"] * {
+    overflow: visible !important;
+  }
+
+  /* Base emote in stack - sets the size */
+  /* Note: collapse button (×) is first-child, so use :not(.heatsync-overlay) for base */
+  .heatsync-emote-stack > .heatsync-emote-wrapper:not(.heatsync-overlay) {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  /* Overlay emotes - absolute positioned, centered on base */
+  .heatsync-emote-stack > .heatsync-overlay,
+  .heatsync-emote-stack > .heatsync-emote-wrapper.heatsync-overlay {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: auto !important;
+    height: auto !important;
+    z-index: 2 !important;
+    /* Cancel the adjacent-emote -3px gap-pull above: the overlay is a
+       .heatsync-emote-wrapper sibling of the base, so that rule matched it and
+       shifted it 3px left of centre (on an absolutely-positioned box the margin
+       applies as a full-px offset, not halved). Centring is done by left:50% +
+       translate, so any margin just de-centres it. */
+    margin-left: 0 !important;
+    /* pointer-events: auto so wide overlays can be hovered directly */
+    pointer-events: auto !important;
+  }
+
+  /* Overlay images keep native 1x size, no constraints */
+  .heatsync-emote-stack > .heatsync-overlay img,
+  .heatsync-emote-stack > .heatsync-emote-wrapper.heatsync-overlay img {
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: none !important;
+  }
+
   /* ============================================ */
   /* EMOTE STACK EXPAND/COLLAPSE (website parity) */
   /* ============================================ */

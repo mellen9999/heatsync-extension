@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd9ebf24da552' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '24a4560728f2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69066,6 +69066,8 @@ const STORAGE_KEY = 'heatsync_multichat'
   // hidden (buffers stay the source of truth); this flag marks that at least
   // one message was skipped so the visible transition rebuilds once.
   let _hiddenSkippedAppend = false
+  // The hide handler trimmed the pane (so its own scroll shift is not the reader's)
+  let _shedWhileHidden = false
   // Wedge flag: true when the BG oracle proved this tab is on screen while
   // document.hidden still reads true (lost occlusion flip — popout windows).
   // A real visibilitychange event proves the tracking is live again.
@@ -69105,6 +69107,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (msgsEl && msgsEl.childElementCount > 100 && !staticTabs.has(currentTab) && !cardOpen && !isScrolledUp) {
           trimMessagesEl(msgsEl, 100)
           _hiddenSkippedAppend = true
+          _shedWhileHidden = true
         }
       } catch (_) {}
     }
@@ -69114,6 +69117,20 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!document.hidden && _hiddenSkippedAppend) {
       _hiddenSkippedAppend = false
       try {
+        // We only shed a reader who was NOT scrolled up, and nobody scrolls a
+        // hidden tab — so a paused flag now is the shed's own scroll shift
+        // (Firefox moves scrollTop when rows above are removed, and the pause
+        // detector reads any upward move as the reader leaving the bottom).
+        // Left set, the scroll-pause gate in renderMessages answers the
+        // rebuild with a "N new" counter and the pane stays at the 100 shed
+        // rows — half the chat gone until a reload.
+        if (_shedWhileHidden && isScrolledUp) {
+          isScrolledUp = false
+          newMessageCount = 0
+          const nb = document.getElementById('hs-mc-new-msgs')
+          if (nb) nb.style.display = 'none'
+        }
+        _shedWhileHidden = false
         renderMessages(currentTab)
       } catch (_) {}
     }

@@ -28,6 +28,7 @@ const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '')
  * but never author, so of course our code never applies them.
  */
 const HOST_PAGE = [
+  'animate-pulse', // kick's own skeleton class
   'tw-',
   'sunlight-',
   'channel-root',

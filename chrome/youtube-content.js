@@ -1167,6 +1167,15 @@
   // server feed to backfill it), so it asks for the list again — see youtube_history_request.
   const _ytPayloadByNode = new WeakMap()
 
+  // One observer, one target per row (it only fires for a row whose message text youtube rewrites).
+  // Re-running the swap on the new text is a no-op for any text without an emote word.
+  const messageRerender = new MutationObserver((mutations) => {
+    for (const target of new Set(mutations.map((m) => m.target))) {
+      if (emoteMap.size > 0) replaceEmotesInElement(target)
+    }
+  })
+  cleanup.trackObserver(messageRerender)
+
   function processNode(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return
     if (!SUPPORTED_RENDERERS.has(node.tagName)) return
@@ -1185,6 +1194,8 @@
     const messageEl = node.querySelector('#message')
     if (messageEl && emoteMap.size > 0) {
       replaceEmotesInElement(messageEl)
+      // your own message is rendered, then re-rendered once youtube confirms it, which wipes the images
+      messageRerender.observe(messageEl, { childList: true })
     }
 
     // HeatSync spec paint — yt_<UCid> id-space (same minting as the overlay's

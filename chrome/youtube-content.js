@@ -1508,7 +1508,7 @@
           e.preventDefault()
           e.stopPropagation()
           const selected = acItems[acSelectedIndex >= 0 ? acSelectedIndex : 0]
-          if (selected) completeEmote(input, selected)
+          if (selected) completeEmote(selected)
           hideAutocomplete()
         } else if (e.key === 'ArrowDown') {
           e.preventDefault()
@@ -1670,7 +1670,7 @@
 
       item.addEventListener('mousedown', (ev) => {
         ev.preventDefault()
-        completeEmote(input, emote)
+        completeEmote(emote)
         hideAutocomplete()
       })
 
@@ -1698,7 +1698,7 @@
   // Mentions restore the '@' stripped for matching; emoji insert the unicode
   // char, not the shortcode text. Only genuine emote picks feed the shared
   // recent-emotes MRU — chatter names and emoji shortcodes aren't emote usage.
-  function completeEmote(input, item) {
+  function completeEmote(item) {
     const sel = window.getSelection()
     if (!sel.rangeCount) return
     const range = sel.getRangeAt(0)
@@ -1712,17 +1712,13 @@
     let wordStart = offset
     while (wordStart > 0 && !/\s/.test(text[wordStart - 1])) wordStart--
 
-    const before = text.substring(0, wordStart)
-    const after = text.substring(offset)
-    node.textContent = `${before + insertValue} ${after}`
-
-    const newOffset = wordStart + insertValue.length + 1
-    range.setStart(node, newOffset)
-    range.setEnd(node, newOffset)
+    // an edit through the editor's own command: a space written straight into the text node is the
+    // trailing whitespace the box drops, so the next word glued onto the emote ("kanyeJAMw!")
+    range.setStart(node, wordStart)
+    range.setEnd(node, offset)
     sel.removeAllRanges()
     sel.addRange(range)
-
-    input.dispatchEvent(new Event('input', { bubbles: true }))
+    document.execCommand('insertText', false, `${insertValue} `)
     if (!item.isChatter && !item.isEmoji) recordRecentEmoteMru(item.name)
   }
 

@@ -276,8 +276,19 @@
 
       const frag = document.createDocumentFragment()
       let currentStack = null // active <span class="heatsync-emote-stack"> or null
+      let lastImg = null // the emote a modifier word (w! h! ffzX c!#hex …) attaches to
+      let gap = '' // whitespace since the last emote: kept between words, absorbed into a stack or modifier
+
+      const flushGap = () => {
+        if (gap) frag.appendChild(document.createTextNode(gap))
+        gap = ''
+      }
 
       for (const word of words) {
+        if (!word.trim()) {
+          gap += word
+          continue
+        }
         const emote = emoteMap.get(word)
         if (emote) {
           const img = document.createElement('img')
@@ -286,23 +297,36 @@
           img.title = emote.name
           img.className = 'heatsync-emote-yt'
           img.loading = 'lazy'
+          lastImg = img
 
           if (isZeroWidth(emote) && currentStack) {
-            // Stack onto the previous non-zero-width emote
+            // Stack onto the previous non-zero-width emote; the space between them is absorbed
+            gap = ''
             currentStack.appendChild(img)
           } else {
             // Non-zero-width emote: start a new potential stack anchor
+            flushGap()
             currentStack = document.createElement('span')
             currentStack.className = 'heatsync-emote-stack'
             currentStack.appendChild(img)
             frag.appendChild(currentStack)
           }
-        } else {
-          // Any non-emote token breaks the stacking chain
-          currentStack = null
-          frag.appendChild(document.createTextNode(word))
+          continue
         }
+        // a modifier word rides on the emote just before it, the way twitch and kick read it
+        const mod = lastImg ? hsModClassify(word) : null
+        if (mod?.kind === 'modifier') {
+          hsModApplyToImg(lastImg, mod.mods, mod.hue, mod.words)
+          gap = ''
+          continue
+        }
+        // Any other word breaks the stacking chain
+        flushGap()
+        currentStack = null
+        lastImg = null
+        frag.appendChild(document.createTextNode(word))
       }
+      flushGap()
       textNode.parentNode.replaceChild(frag, textNode)
     }
   }
@@ -809,6 +833,63 @@
     const style = document.createElement('style')
     style.id = 'heatsync-yt-styles'
     style.textContent = `
+      .heatsync-emote-stack {
+        display: inline-block !important;
+        position: relative !important;
+        vertical-align: middle !important;
+      }
+      .heatsync-emote-stack > img:not(:first-child) {
+        position: absolute !important;
+        inset: 0 !important;
+        margin: auto !important;
+        z-index: 2 !important;
+      }
+      @property --hs-fx-hue { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+      img.hs-fx-rainbow{ animation: hs-fx-rainbow 2s linear infinite; }
+      @keyframes hs-fx-rainbow { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
+      img.hs-fx-party{ animation: hs-fx-party 1.5s linear infinite; }
+      @keyframes hs-fx-party { from { --hs-fx-hue: 0deg; } to { --hs-fx-hue: 360deg; } }
+      img.hs-fx-spin{ animation: hs-fx-spin 1.5s linear infinite; }
+      @keyframes hs-fx-spin { from { rotate: 0deg; } to { rotate: 360deg; } }
+      img.hs-fx-shake{ animation: hs-fx-shake 500ms step-start infinite; }
+      @keyframes hs-fx-shake {
+        0%{translate:0 1px}10%{translate:2px 0}20%{translate:1px -2px}30%{translate:-2px 1px}
+        40%{translate:0 -1px}50%{translate:2px 2px}60%{translate:-1px -1px}70%{translate:-2px 2px}
+        80%{translate:2px 1px}90%{translate:-1px -2px}100%{translate:1px 0}
+      }
+      img.hs-fx-hyper{ animation: hs-fx-hyper 0.1s linear infinite; }
+      @keyframes hs-fx-hyper {
+        0%{translate:1px 1px}10%{translate:-1px -2px}20%{translate:-3px 0}30%{translate:3px 2px}
+        40%{translate:1px -1px}50%{translate:-1px 2px}60%{translate:-3px 1px}70%{translate:3px 1px}
+        80%{translate:-1px -1px}90%{translate:1px 2px}100%{translate:1px -2px}
+      }
+      img.hs-fx-bounce{ transform-origin: bottom center; animation: hs-fx-bounce 0.5s linear infinite; }
+      @keyframes hs-fx-bounce {
+        0%{scale:.8 1}10%{scale:.9 .8}20%{scale:1 .4}25%{scale:1.2 .3}30%{scale:1 .4}
+        40%{scale:.9 .8}50%{scale:.8 1}60%{scale:.9 .8}70%{scale:1 .4}75%{scale:1.2 .3}
+        80%{scale:1 .4}90%{scale:.9 .8}100%{scale:.8 1}
+      }
+      img.hs-fx-jam{ animation: hs-fx-jam 0.6s linear infinite; }
+      @keyframes hs-fx-jam {
+        0%{translate:-2px -2px;rotate:-6deg}10%{translate:-1.5px -2px;rotate:-8deg}
+        20%{translate:1px -1.5px;rotate:-8deg}30%{translate:3px 2.5px;rotate:-6deg}
+        40%{translate:3px 4px;rotate:-2deg}50%{translate:2px 4px;rotate:3deg}
+        60%{translate:1px 4px;rotate:3deg}70%{translate:-.5px 3px;rotate:2deg}
+        80%{translate:-1.25px 1px;rotate:0deg}90%{translate:-1.75px -.5px;rotate:-2deg}
+        100%{translate:-2px -2px;rotate:-5deg}
+      }
+      img.hs-fx-slide{ animation: hs-fx-slide 1.5s linear infinite; }
+      @keyframes hs-fx-slide { from{translate:-50% 0} to{translate:50% 0} }
+      img.hs-fx-arrive{ animation: hs-fx-arrive 3s linear infinite; }
+      @keyframes hs-fx-arrive {
+        0%{translate:-18px 0;scale:.1}20%{translate:-18px 0;scale:.1}
+        45%{translate:0 0;scale:1}100%{translate:0 0;scale:1}
+      }
+      img.hs-fx-leave{ animation: hs-fx-leave 3s linear infinite; }
+      @keyframes hs-fx-leave {
+        0%{translate:0 0;scale:1}55%{translate:0 0;scale:1}
+        80%{translate:18px 0;scale:.1}100%{translate:18px 0;scale:.1}
+      }
       .heatsync-emote-yt {
         height: var(--hs-emote-height, 28px) !important;
         width: auto !important;

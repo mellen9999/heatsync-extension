@@ -32,6 +32,7 @@ function makeGuard({
   pip = false,
   bodyClasses = [],
   selector = '.persistent-player',
+  rendered = true,
 }) {
   const rect = { width, height }
   const classes = new Set(bodyClasses)
@@ -41,6 +42,7 @@ function makeGuard({
   const player = {
     isConnected: true,
     getBoundingClientRect: () => rect,
+    getClientRects: () => (rendered ? [rect] : []),
     style: { removeProperty: (p) => removedProps.push(p) },
   }
 
@@ -225,5 +227,21 @@ describe('the CSS kill-switch actually gates the player rules', () => {
 
   test('the gate is actually present on player rules', () => {
     expect(CSS).toContain('body:not(.hs-player-safe).hs-platform')
+  })
+})
+
+describe('player-guard — a player that is not there', () => {
+  test('a zero-size player with no box (an offline kick channel keeps a hidden video) never trips it', () => {
+    const g = makeGuard({ width: 0, height: 0, rendered: false })
+    g.check()
+    g.fireConfirm()
+    expect(g.playerGuardDisengaged()).toBe(false)
+  })
+
+  test('a zero-size player that still has a box is the collapse it exists for', () => {
+    const g = makeGuard({ width: 0, height: 0 })
+    g.check()
+    g.fireConfirm()
+    expect(g.playerGuardDisengaged()).toBe(true)
   })
 })

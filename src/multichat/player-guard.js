@@ -61,6 +61,9 @@ function shouldIgnore(el) {
   if (document.fullscreenElement) return true
   if (document.pictureInPictureElement) return true
   if (!el || !el.isConnected) return true
+  // A player that is not rendered at all (an ancestor is display:none) is absent, not collapsed: kick keeps
+  // a hidden <video> on an offline channel. A collapsed player still has a box, just a tiny one.
+  if (typeof el.getClientRects === 'function' && el.getClientRects().length === 0) return true
   // Mini-player while browsing away — the platform owns its geometry and our
   // rules are already gated off it.
   //

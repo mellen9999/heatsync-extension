@@ -1162,11 +1162,11 @@
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
       position: fixed !important;
-      top: 0 !important;
+      top: var(--hs-yt-masthead-h, 56px) !important;
       left: 0 !important;
       right: var(--hs-chat-w, 340px) !important;
       width: auto !important;
-      height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) {
       --ytd-watch-flexy-side-menu-margin: 0 !important;
@@ -1201,11 +1201,11 @@
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
       position: fixed !important;
-      top: 0 !important;
+      top: var(--hs-yt-masthead-h, 56px) !important;
       left: var(--hs-chat-w, 340px) !important;
       right: 0 !important;
       width: auto !important;
-      height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
     }
     /* Kill the secondary's residual 16px (its own padding/margin still
        takes layout space even with width:0). Live-only. */
@@ -1237,13 +1237,13 @@
     /* primary clips to viewport height; primary-inner scrolls so video info
        below the player is reachable. Live-only. */
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
-      height: 100vh !important;
-      max-height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
+      max-height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
       overflow: hidden !important;
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-right ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
-      height: 100vh !important;
-      max-height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
+      max-height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
       overflow-y: auto !important;
     }
     /* Chat panel fills viewport height when on right — overrides the
@@ -1366,13 +1366,13 @@
       justify-content: flex-start !important;
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
-      height: 100vh !important;
-      max-height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
+      max-height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
       overflow: hidden !important;
     }
     body:not(.hs-player-safe).hs-platform-yt:not(.hs-offline).hs-chat-left ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
-      height: 100vh !important;
-      max-height: 100vh !important;
+      height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
+      max-height: calc(100vh - var(--hs-yt-masthead-h, 56px)) !important;
       overflow-y: auto !important;
       display: flex !important;
       flex-direction: column !important;

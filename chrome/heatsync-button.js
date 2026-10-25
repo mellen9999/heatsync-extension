@@ -310,6 +310,9 @@
         }
       })
     }
+    // Read it once up front: cachedAuthToken started null and only a storage change filled it, so a
+    // logged-in user opened the picker to "log in to use your emotes in every chat".
+    getAuthToken()
     // Keep the cached logged-in state fresh across login/logout
     try {
       const _onAuthChange = (ch, area) => {
@@ -2245,6 +2248,7 @@
       log(' Panel opened, detected channel:', channel, 'URL:', window.location.pathname)
 
       const iconUrl = getIconUrl()
+      await getAuthToken()
       const isLoggedIn = cachedAuthToken !== null
 
       panel.innerHTML = `

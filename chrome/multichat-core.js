@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '24a4560728f2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1ac41c827e80' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69068,6 +69068,8 @@ const STORAGE_KEY = 'heatsync_multichat'
   let _hiddenSkippedAppend = false
   // The hide handler trimmed the pane (so its own scroll shift is not the reader's)
   let _shedWhileHidden = false
+  let _shedTab = ''
+  let _shedRows = 0
   // Wedge flag: true when the BG oracle proved this tab is on screen while
   // document.hidden still reads true (lost occlusion flip — popout windows).
   // A real visibilitychange event proves the tracking is live again.
@@ -69105,6 +69107,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         const cardOpen = typeof activeProfileCard !== 'undefined' && activeProfileCard
         const msgsEl = document.getElementById('hs-mc-messages')
         if (msgsEl && msgsEl.childElementCount > 100 && !staticTabs.has(currentTab) && !cardOpen && !isScrolledUp) {
+          _shedRows = msgsEl.childElementCount
+          _shedTab = currentTab
           trimMessagesEl(msgsEl, 100)
           _hiddenSkippedAppend = true
           _shedWhileHidden = true
@@ -69116,23 +69120,51 @@ const STORAGE_KEY = 'heatsync_multichat'
     // settings tab and open profile cards, so no state checks needed here.
     if (!document.hidden && _hiddenSkippedAppend) {
       _hiddenSkippedAppend = false
-      try {
-        // We only shed a reader who was NOT scrolled up, and nobody scrolls a
-        // hidden tab — so a paused flag now is the shed's own scroll shift
-        // (Firefox moves scrollTop when rows above are removed, and the pause
-        // detector reads any upward move as the reader leaving the bottom).
-        // Left set, the scroll-pause gate in renderMessages answers the
-        // rebuild with a "N new" counter and the pane stays at the 100 shed
-        // rows — half the chat gone until a reload.
-        if (_shedWhileHidden && isScrolledUp) {
-          isScrolledUp = false
-          newMessageCount = 0
-          const nb = document.getElementById('hs-mc-new-msgs')
-          if (nb) nb.style.display = 'none'
+      const shed = _shedWhileHidden
+      const shedTab = _shedTab
+      const want = _shedRows
+      _shedWhileHidden = false
+      // The rebuild is VERIFIED, not assumed: it used to be fire-and-forget
+      // inside a swallowing try, with the flag already cleared, so any guard
+      // or throw that skipped it left the pane at the 100 rows the hide shed
+      // ("half the chat gone" until a reload). Now a short pane is re-asked
+      // for a few seconds, and what stopped it goes to the diag ring.
+      const rebuild = (attempt) => {
+        let err = null
+        try {
+          // Nobody scrolls a hidden tab, and we shed only a reader at the
+          // bottom — so a paused flag in the first seconds back is the shed's
+          // own scroll shift (Firefox moves scrollTop when rows above are
+          // removed; the pause detector reads any upward move as leaving the
+          // bottom). Left set, renderMessages answers with a "N new" counter.
+          if (shed && isScrolledUp && attempt < 3) {
+            isScrolledUp = false
+            newMessageCount = 0
+            const nb = document.getElementById('hs-mc-new-msgs')
+            if (nb) nb.style.display = 'none'
+          }
+          renderMessages(currentTab)
+        } catch (e) {
+          err = e
         }
-        _shedWhileHidden = false
-        renderMessages(currentTab)
-      } catch (_) {}
+        const el = document.getElementById('hs-mc-messages')
+        const sameTab = currentTab === shedTab
+        const rows = el ? el.childElementCount : 0
+        // Other surfaces (profile card, confirm panel, picture) repaint on
+        // close; only a plain chat pane that is still short needs another go.
+        const plain =
+          !(typeof activeProfileCard !== 'undefined' && activeProfileCard) &&
+          !hsPanePanelOpen() &&
+          !(typeof imgViewOpen === 'function' && imgViewOpen()) &&
+          !(typeof predViewOpen === 'function' && predViewOpen())
+        const short = shed && sameTab && plain && !editingChannel && rows < want * 0.9
+        if (err || (short && attempt > 0))
+          hsDiagLog('vis-heal', { attempt, rows, want, err: err ? String(err.message || err) : '' })
+        if ((err || short) && attempt < 3 && !document.hidden) {
+          cleanup.setTimeout(() => rebuild(attempt + 1), [300, 1500, 5000][attempt])
+        }
+      }
+      rebuild(0)
     }
   })
   // Escape hatches for the catch-up above: popout windows can miss the

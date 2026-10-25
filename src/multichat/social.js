@@ -1041,6 +1041,17 @@ function handleYoutubeChatMsg(msg) {
   // own messages then render instantly and the later server copy dies in
   // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
   // dropped BEFORE any credit/dedup state is touched.
+  // The page's own video IS the watching tab — a message tagged with its bare videoId (a premiere's
+  // frame relay, an own echo) belongs there, never on a stray tab named after the id.
+  if (
+    targetChannelId &&
+    targetChannelId !== '__live_yt_auto__' &&
+    hostPlatform === 'yt' &&
+    targetChannelId ===
+      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1]
+  ) {
+    targetChannelId = '__live_yt_auto__'
+  }
   if (
     targetChannelId &&
     targetChannelId !== '__live_yt_auto__' &&

@@ -14962,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '599728a2c281' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '11af1cbf3134' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -38306,6 +38306,17 @@ function handleYoutubeChatMsg(msg) {
   // own messages then render instantly and the later server copy dies in
   // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
   // dropped BEFORE any credit/dedup state is touched.
+  // The page's own video IS the watching tab — a message tagged with its bare videoId (a premiere's
+  // frame relay, an own echo) belongs there, never on a stray tab named after the id.
+  if (
+    targetChannelId &&
+    targetChannelId !== '__live_yt_auto__' &&
+    hostPlatform === 'yt' &&
+    targetChannelId ===
+      (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1]
+  ) {
+    targetChannelId = '__live_yt_auto__'
+  }
   if (
     targetChannelId &&
     targetChannelId !== '__live_yt_auto__' &&

@@ -164,3 +164,10 @@ test('a new row anchors on the lowest placed row, never on a shared cursor', () 
   expect(main).toMatch(/if \(prevNode\) after = prevNode\.nextSibling/)
   expect(main).not.toMatch(/domIdx/)
 })
+
+test('a live straggler never lands above a row that has settled on screen', () => {
+  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  expect(src).toMatch(/const SETTLE_MS = \d+/)
+  expect(src).toMatch(/div\._hsAt = performance\.now\(\)/)
+  expect(src).toMatch(/settledEnd &&\s*m\.ord != null/)
+})

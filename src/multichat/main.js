@@ -8316,6 +8316,7 @@
       // same value. Without it a row can be identified but not cited.
       if (m.time) div.dataset.msgTime = String(m.time)
       if (m.ord != null) div.dataset.hsOrd = String(m.ord) // diagnosis: what the row sorted by
+      div._hsAt = performance.now() // when it first reached the screen (see SETTLE_MS)
       // Mark self-messages so the mod hover toolbar can skip them without
       // re-deriving currentUsername (which may be null pre-auth). Inlined
       // compare — the `isOwn` const above is scoped to the !_renderedHtml
@@ -9422,6 +9423,8 @@
   // Reused render-pass buffers: renderMessages is synchronous and never
   // re-enters itself mid-body, so per-run collections are safe to pool.
   const _rmDesiredKeys = []
+  // a row on screen longer than this never has a later line slotted above it
+  const SETTLE_MS = 600
   const _rmDesiredSet = new Set()
   const _rmExistingByKey = new Map()
   const _rmInsertedKeys = new Set()
@@ -10690,6 +10693,23 @@
     // case this is exactly "after the previous desired row" (the O(1) path).
     let prevNode = null
     let zebraFrom = null // first row whose stripe may now be out of phase
+    // The lowest row that has been on screen longer than SETTLE_MS. A live
+    // straggler (a kick line a beat behind the twitch line it answers) may
+    // weave among the still-fresh rows, but never above a settled one:
+    // inserting there moved every row below it and flipped their stripes under
+    // the reader's eyes (~1 in 4 lines on a busy two-platform tab). It lands
+    // just under the settled block instead — the same "stale goes to the
+    // bottom" rule liveOrd applies, decided by what the reader has seen.
+    let settledEnd = null
+    {
+      const nowT = performance.now()
+      for (let el = msgsEl.lastElementChild; el; el = el.previousElementSibling) {
+        if (el._hsAt !== undefined && nowT - el._hsAt > SETTLE_MS) {
+          settledEnd = el
+          break
+        }
+      }
+    }
     for (let j = 0; j < toRender.length; j++) {
       const key = desiredKeys[j]
       if (insertedKeys.has(key)) continue
@@ -10759,6 +10779,15 @@
       else {
         after = msgsEl.firstElementChild
         if (after?.id === 'hs-mc-embed-player') after = after.nextElementSibling // the player is not a row
+      }
+      if (
+        settledEnd &&
+        m.ord != null &&
+        after &&
+        (after === settledEnd || after.compareDocumentPosition(settledEnd) & Node.DOCUMENT_POSITION_FOLLOWING)
+      ) {
+        prevNode = settledEnd
+        after = settledEnd.nextSibling
       }
       stampZebra(div, m, prevNode)
       if (after) zebraFrom = zebraFrom || div

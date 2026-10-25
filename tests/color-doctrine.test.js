@@ -429,7 +429,7 @@ describe('single-definition colours', () => {
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
 
-  test("dim gray is used for exactly three roles: reply-context, fully-read tabs, a log line's #channel tag", () => {
+  test("dim gray is used for exactly four roles: reply-context, fully-read tabs, a log line's #channel tag, a mod-cleared row's text", () => {
     const users = []
     for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
       const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
@@ -437,7 +437,12 @@ describe('single-definition colours', () => {
         users.push(m[1].trim().replace(/\s+/g, ' '))
     }
     // readdirSync order is filesystem-defined (tmpfs ≠ btrfs) — compare as a set
-    expect(users.sort()).toEqual(['.hs-cl-ch', '.hs-mc-reply-ctx', '.hs-mc-tab'])
+    expect(users.sort()).toEqual([
+      '.hs-cl-ch',
+      '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
+      '.hs-mc-reply-ctx',
+      '.hs-mc-tab',
+    ])
     expect(readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')).toMatch(
       /\.hs-mc-zebra \.hs-mc-reply-ctx[^{]*\{\s*color: var\(--hs-dim-stripe\)/,
     )

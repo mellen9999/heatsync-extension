@@ -517,7 +517,8 @@
        0.5, not 0.45: white text at half opacity over the panel's black lands
        on exactly #808080 — the ansi grey — instead of #737373, which is off
        the palette for no reason. Measured, not assumed. */
-    .hs-mc-msg.hs-mc-msg-cleared { }
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text,
+    .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text * { color: var(--hs-dim) !important; -webkit-text-fill-color: var(--hs-dim) !important; }
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote,
     .hs-mc-msg.hs-mc-msg-cleared .hs-mc-emote-wrapper > img,
     /* emoji too — without this an emoji kept full colour while every emote

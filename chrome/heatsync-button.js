@@ -5255,15 +5255,9 @@
       }
       document.head.append(style)
       document.body.append(bar)
-      // the column mounts late and moves with the window: place it once it exists, then follow its box
-      const wait = cleanup.setInterval(() => {
-        const el = column()
-        if (!el || !place()) return
-        clearInterval(wait)
-        const ro = new ResizeObserver(place)
-        ro.observe(el)
-        btnSignal?.addEventListener('abort', () => ro.disconnect(), { once: true })
-      }, 300)
+      // twitch mounts the column late, swaps it on navigation and folds it on its own: a watcher on one
+      // node goes stale, so the bar reads the live column's box on a slow tick instead
+      cleanup.setInterval(place, 400)
       window.addEventListener('resize', place, { signal: btnSignal })
     }
 

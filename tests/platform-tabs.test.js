@@ -71,3 +71,14 @@ describe('kick native chat hide', () => {
     expect(feed).toContain('body.hs-kick-native-hidden #channel-chatroom {')
   })
 })
+
+describe('twitch and kick with heatsync chat off', () => {
+  test('no picker button, just a back bar over the native chat column', () => {
+    const btn = readFileSync(join(import.meta.dir, '..', 'chrome', 'heatsync-button.js'), 'utf8')
+    const init = btn.slice(btn.indexOf('async function init()'))
+    expect(init.indexOf('mountNativeBackBar(gate)')).toBeGreaterThan(-1)
+    expect(init.indexOf('mountNativeBackBar(gate)')).toBeLessThan(init.indexOf('cleanupOrphanedElements()'))
+    expect(btn).toContain('back to heatsync chat')
+    expect(btn).toContain('window.HS.setSiteOverlay(gate, true)')
+  })
+})

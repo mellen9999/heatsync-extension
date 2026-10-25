@@ -5213,6 +5213,58 @@
       return _hsOverlayUp || (_hsOverlayUp = !!document.getElementById('hs-mc-container'))
     }
 
+    // "← back to heatsync chat" over the top of the site's own chat column, the twitch/kick twin of the
+    // youtube native-chat bar. It follows the column's box; it is square, black, white on hover.
+    function mountNativeBackBar(gate) {
+      if (document.getElementById('heatsync-native-back')) return
+      const style = document.createElement('style')
+      style.id = 'heatsync-native-back-style'
+      style.textContent =
+        '#heatsync-native-back{position:fixed;z-index:2147483000;box-sizing:border-box;height:28px;display:flex;align-items:center;' +
+        'background:#000;color:#fff;border:0;border-bottom:1px solid #fff;border-radius:0;font:13px monospace;padding:0 8px;cursor:pointer;text-align:left}' +
+        '#heatsync-native-back:hover,#heatsync-native-back:active{background:#fff;color:#000}' +
+        '#heatsync-native-back .hs-nb-arrow{font-size:24px;font-weight:700;line-height:1;margin-right:8px}'
+      const bar = document.createElement('button')
+      bar.id = 'heatsync-native-back'
+      bar.type = 'button'
+      const arrow = document.createElement('span')
+      arrow.className = 'hs-nb-arrow'
+      arrow.textContent = '←'
+      bar.append(arrow, 'back to heatsync chat')
+      bar.addEventListener('click', async () => {
+        await window.HS.setSiteOverlay(gate, true)
+        location.reload()
+      })
+      const column = () =>
+        document.querySelector(
+          location.hostname.endsWith('kick.com')
+            ? '#channel-chatroom'
+            : '.stream-chat, .chat-shell, [data-a-target="chat-room-component"]',
+        )
+      const place = () => {
+        const el = column()
+        if (!el) return false
+        const r = el.getBoundingClientRect()
+        if (!r.width) return false
+        bar.style.top = `${Math.round(r.top)}px`
+        bar.style.left = `${Math.round(r.left)}px`
+        bar.style.width = `${Math.round(r.width)}px`
+        return true
+      }
+      document.head.append(style)
+      document.body.append(bar)
+      // the column mounts late and moves with the window: place it once it exists, then follow its box
+      const wait = cleanup.setInterval(() => {
+        const el = column()
+        if (!el || !place()) return
+        clearInterval(wait)
+        const ro = new ResizeObserver(place)
+        ro.observe(el)
+        btnSignal?.addEventListener('abort', () => ro.disconnect(), { once: true })
+      }, 300)
+      window.addEventListener('resize', place, { signal: btnSignal })
+    }
+
     // Initialize
     async function init() {
       // picker-button subsystem gate — off = no button, no preload, no panel
@@ -5226,6 +5278,19 @@
       if (isOverlayActive()) {
         log(' overlay active — native picker button/panel not needed, skipping module')
         return
+      }
+      // heatsync chat switched off for this site: the page is fully native — no picker button, just the
+      // way back. (youtube's own native view lives in its frame and has its bar in the page.)
+      if (window.parent === window && !/youtube\.com$/.test(location.hostname)) {
+        const gate = SITE_GATES.find(([host]) => location.hostname.endsWith(host))?.[1]
+        let off = false
+        try {
+          off = !!gate && (await browser.storage.sync.get('ui_settings'))?.ui_settings?.subsystems?.[gate] === false
+        } catch (_) {}
+        if (off) {
+          mountNativeBackBar(gate)
+          return
+        }
       }
       log(' 🔥 Initializing button module on:', window.location.href)
       cleanupOrphanedElements()

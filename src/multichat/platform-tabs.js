@@ -138,12 +138,12 @@ function ytPeekNative() {
 const YT_PEEK_BAR = 28
 let _ytPeekRO = null
 
-// Below the tab bar (it stays usable), over the messages and composer; clamped to the window.
+// The whole pane, tabs and filter row included (none of it works on native chat); clamped to the window.
 function ytPeekFit() {
   const pane = document.getElementById('hs-mc-container')
   if (!pane) return
   const paneR = pane.getBoundingClientRect()
-  const top = document.getElementById('hs-mc-messages')?.getBoundingClientRect().top ?? paneR.top
+  const top = paneR.top
   const height = Math.min(paneR.bottom, innerHeight) - top
   const root = document.body.style
   root.setProperty('--hs-peek-top', `${Math.round(top + YT_PEEK_BAR)}px`)

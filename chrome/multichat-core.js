@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '36d6217954b2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1d9360cc2232' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35642,12 +35642,12 @@ function ytPeekNative() {
 const YT_PEEK_BAR = 28
 let _ytPeekRO = null
 
-// Below the tab bar (it stays usable), over the messages and composer; clamped to the window.
+// The whole pane, tabs and filter row included (none of it works on native chat); clamped to the window.
 function ytPeekFit() {
   const pane = document.getElementById('hs-mc-container')
   if (!pane) return
   const paneR = pane.getBoundingClientRect()
-  const top = document.getElementById('hs-mc-messages')?.getBoundingClientRect().top ?? paneR.top
+  const top = paneR.top
   const height = Math.min(paneR.bottom, innerHeight) - top
   const root = document.body.style
   root.setProperty('--hs-peek-top', `${Math.round(top + YT_PEEK_BAR)}px`)

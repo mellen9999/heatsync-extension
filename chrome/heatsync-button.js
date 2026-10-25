@@ -2188,6 +2188,18 @@
       } catch (_) {}
     }
 
+    // The frame itself resizes (the native chat pane is dragged, the window changes): an open
+    // picker re-fits to it instead of keeping the size it opened at.
+    window.addEventListener(
+      'resize',
+      () => {
+        const panel = document.getElementById(PANEL_ID)
+        const btn = document.getElementById(BUTTON_ID)
+        if (panelOpen && panel && btn) _sizePickerPanel(panel, btn)
+      },
+      { signal: btnSignal },
+    )
+
     async function openPanel() {
       const btn = document.getElementById(BUTTON_ID)
       if (!btn) return

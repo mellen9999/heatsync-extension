@@ -112,3 +112,11 @@ describe('emote format', () => {
     expect(e).not.toContain('HS_IS_FF')
   })
 })
+
+describe('kick idle animation', () => {
+  test("kick's forever-pulsing skeletons are stilled so hover is not a full repaint", () => {
+    expect(src('styles/17-platform-position.css')).toMatch(
+      /body\.hs-platform-kick \.animate-pulse \{\s*animation: none !important;/,
+    )
+  })
+})

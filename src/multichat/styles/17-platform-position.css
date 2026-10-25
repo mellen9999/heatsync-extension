@@ -1110,6 +1110,12 @@
       right: 0 !important;
       bottom: 0 !important;
     }
+    /* Kick leaves its loading skeletons pulsing forever on an offline channel. A running animation makes
+       every frame repaint, so each hover and unhover waited on a full repaint (frames ~33ms -> ~17ms with
+       it off, measured). The skeleton is a placeholder; it does not need to breathe. */
+    body.hs-platform-kick .animate-pulse {
+      animation: none !important;
+    }
     body.hs-platform-kick:has(:fullscreen) #hs-mc-container {
       display: none !important;
     }

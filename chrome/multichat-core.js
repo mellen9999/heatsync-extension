@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ec5a02577051' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1dd257430ce6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78195,6 +78195,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   }
   // Reused render-pass buffers: renderMessages is synchronous and never
   // re-enters itself mid-body, so per-run collections are safe to pool.
+  const _rmPlacedNodes = []
   const _rmDesiredKeys = []
   const _rmDesiredSet = new Set()
   const _rmExistingByKey = new Map()
@@ -79455,6 +79456,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     insertedKeys.clear()
     let domIdx = 0
     let zebraFrom = null // first row whose stripe may now be out of phase
+    const placedNodes = _rmPlacedNodes // desired order → the node that now represents it
+    placedNodes.length = 0
     for (let j = 0; j < toRender.length; j++) {
       const key = desiredKeys[j]
       if (insertedKeys.has(key)) continue
@@ -79466,6 +79469,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (existing) {
         existingByKey.delete(key)
         const _rm = toRender[j]
+        let placed = existing
         // Reused div skipped buildMessageDiv — re-queue its cosmetic so a prior
         // failed/absent lookup is retried (resolves on a later flush). Without
         // this, a frozen channel's restored buffer never re-attempts cosmetics.
@@ -79498,12 +79502,14 @@ const STORAGE_KEY = 'heatsync_multichat'
             _unindexMessageDiv(existing)
             msgsEl.replaceChild(nd, existing)
             _indexMessageDiv(nd, key)
+            placed = nd
           } else {
             // Message no longer renderable under new state — keep the old row
             // (dropping it would move neighbors) and stop re-attempting.
             existing.dataset.hsEpoch = String(_renderEpoch)
           }
         }
+        placedNodes.push(placed)
         if (cur === existing) domIdx++ // aligned — consume the DOM slot
         // else: deferred — node stays put, walk catches up to it later
         continue
@@ -79520,7 +79526,36 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (cur) zebraFrom = zebraFrom || div
       msgsEl.insertBefore(div, cur || null)
       _indexMessageDiv(div, key)
+      placedNodes.push(div)
       domIdx++
+    }
+
+    // Order audit. The walk above never moves a row, which is right for a
+    // one-off neighbour flip but wrong once a block of OLD rows sits below
+    // newer ones (a late batch appended out of order): the walk then stalls at
+    // the block's first row and inserts every new line above it, so the bottom
+    // stays frozen until the block ages out of the window (~2 min). Any row
+    // out of desired order is moved into place — one visible correction,
+    // instead of a pane that stays wrong.
+    {
+      let cursor = msgsEl.firstElementChild
+      if (cursor?.id === 'hs-mc-embed-player') cursor = cursor.nextElementSibling
+      let moved = 0
+      let firstMoved = null
+      for (let q = 0; q < placedNodes.length; q++) {
+        const node = placedNodes[q]
+        if (cursor?.id === 'hs-mc-embed-player') cursor = cursor.nextElementSibling
+        if (cursor === node) cursor = cursor.nextElementSibling
+        else {
+          msgsEl.insertBefore(node, cursor)
+          moved++
+          firstMoved = firstMoved || node
+        }
+      }
+      if (moved) {
+        zebraFrom = zebraFrom || firstMoved
+        hsDiagLog('dom_inversion', { tab: String(id).slice(0, 24), moved, n: placedNodes.length })
+      }
     }
 
     // Re-pin yt-status notices to the very end.

@@ -11,10 +11,11 @@
        #chat-container, which lies ON TOP of the player and eats every hover
        so the scrubber/volume/pause controls never appear. We body-mount our
        own panel (never inside #chat-container), so nuking native chat
-       wherever YT parks it is always safe. */
-    body:has(#hs-mc-container) ytd-live-chat-frame#chat,
-    body:has(#hs-mc-container) ytd-live-chat-frame,
-    body:has(#hs-mc-container) ytd-watch-flexy #chat-container {
+       wherever YT parks it is always safe — except on a premiere or scheduled stream
+       (body.hs-yt-upcoming), where YouTube's chat is the only chat there is. */
+    body:not(.hs-yt-upcoming):has(#hs-mc-container) ytd-live-chat-frame#chat,
+    body:not(.hs-yt-upcoming):has(#hs-mc-container) ytd-live-chat-frame,
+    body:not(.hs-yt-upcoming):has(#hs-mc-container) ytd-watch-flexy #chat-container {
       display: none !important;
     }
 

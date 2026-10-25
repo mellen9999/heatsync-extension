@@ -551,6 +551,13 @@
   // chat-on-all-pages on: the page IS a chat surface, the panel would dock
   // over the replay it exists to show.
   const isYtReplayPopout = hostPlatform === 'yt' && /^\/live_chat_replay/.test(location.pathname)
+  // A premiere or scheduled stream: the player shows YouTube's offline slate and the only
+  // chat that exists is YouTube's own (no channel feed to overlay). The one place this is
+  // decided — the panel, the frame hide and the css all follow it, so they cannot disagree.
+  const ytOwnsChat = () => {
+    const slate = document.querySelector('#movie_player .ytp-offline-slate')
+    return !!slate && slate.getClientRects().length > 0
+  }
 
   // Whether the user has chosen to show native platform chat alongside HS.
   // Persisted via settings registry (key: nativeVisible). Default false = same
@@ -6170,6 +6177,7 @@
       const hideYtFrame = () => {
         const f = document.querySelector('ytd-live-chat-frame#chat')
         if (!f) return false
+        if (ytOwnsChat()) return true
         if (f.style.display !== 'none') {
           const frameHeight = f.offsetHeight || 500
           f.dataset.hsPrevDisplay = f.style.display ?? ''
@@ -12922,12 +12930,19 @@
         // non-live opt-in.
         const liveChatFramePresent = !!frameEl && !isReplayChat
         const ytAutoLiveMsgs = _ytFlowing
+        const ownsChat = ytOwnsChat()
+        document.body.classList.toggle('hs-yt-upcoming', ownsChat)
+        // YouTube's chat is the only chat on this page: give back a frame we hid on an earlier page
+        if (ownsChat && frameEl?.dataset.hsHidden) {
+          frameEl.style.display = frameEl.dataset.hsPrevDisplay || ''
+          delete frameEl.dataset.hsHidden
+          delete frameEl.dataset.hsPrevDisplay
+        }
         const showYtChat =
           !isYtReplayPopout &&
           (isYtPopout ||
-            liveChatFramePresent ||
-            ytAutoLiveMsgs > 0 ||
-            document.body.classList.contains('hs-yt-nonlive-chat'))
+            (!ownsChat &&
+              (liveChatFramePresent || ytAutoLiveMsgs > 0 || document.body.classList.contains('hs-yt-nonlive-chat'))))
         // YT sizes its grids/columns from a width measured once per resize —
         // the panel's reserve appearing/vanishing without one strands a
         // squeezed layout (3-col home grid + dead column where the panel

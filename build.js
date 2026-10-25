@@ -798,6 +798,7 @@ const MULTICHAT_MODULES = [
   'tooltips.js',
   'tag-card.js',
   'twitch-api.js',
+  'platform-tabs.js',
   'feed-embed.js',
   'feed-engage.js',
   'social.js',

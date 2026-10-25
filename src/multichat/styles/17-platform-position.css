@@ -13,9 +13,9 @@
        own panel (never inside #chat-container), so nuking native chat
        wherever YT parks it is always safe — except on a premiere or scheduled stream
        (body.hs-yt-owns-chat), where YouTube owns the chat. */
-    body:not(.hs-yt-owns-chat):has(#hs-mc-container) ytd-live-chat-frame#chat,
-    body:not(.hs-yt-owns-chat):has(#hs-mc-container) ytd-live-chat-frame,
-    body:not(.hs-yt-owns-chat):has(#hs-mc-container) ytd-watch-flexy #chat-container {
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat,
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame,
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-watch-flexy #chat-container {
       display: none !important;
     }
 
@@ -1456,6 +1456,29 @@
       -webkit-text-fill-color: #fff !important;
     }
 
+    /* youtube's own chat, brought up over the pane from the youtube tab (platform-tabs.js) until "back" */
+    body.hs-yt-peek ytd-live-chat-frame#chat {
+      display: block !important;
+      position: fixed !important;
+      top: var(--hs-peek-top) !important;
+      left: var(--hs-peek-left) !important;
+      width: var(--hs-peek-w) !important;
+      height: var(--hs-peek-h) !important;
+      max-height: none !important;
+      margin: 0 !important;
+      z-index: 2147483000 !important;
+      background: #000000 !important;
+    }
+    body.hs-yt-peek ytd-live-chat-frame#chat iframe {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    #hs-yt-peek-bar { background: #000000; border-bottom: 1px solid #ffffff; box-sizing: border-box; display: flex; }
+    #hs-yt-peek-back {
+      flex: 1; background: #000000; color: #ffffff; border: 0; border-radius: 0; font: inherit; font-size: 13px;
+      text-align: left; padding: 0 8px; cursor: pointer;
+    }
+    #hs-yt-peek-back:hover, #hs-yt-peek-back:active { background: #ffffff; color: #000000; }
     /* the description box lights up on hover from a colour youtube bakes into the page when it renders
        (light in a light theme), under the white text above: hover is white with black text, like every
        other hovered control here */

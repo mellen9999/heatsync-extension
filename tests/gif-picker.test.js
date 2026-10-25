@@ -194,7 +194,7 @@ describe('the tab bar belongs to the picker, not to twitch', () => {
       EMOTES_SRC.indexOf('function mcVisiblePickerTabs'),
     )
     const ids = [...table.matchAll(/id: '([a-z]+)'/g)].map((m) => m[1])
-    expect(ids).toEqual(['emotes', 'gifs', 'twitch'])
+    expect(ids).toEqual(['emotes', 'gifs', 'twitch', 'kick', 'youtube'])
     for (const id of ids) {
       const emitted = id === 'gifs' ? readFileSync(join(ROOT, 'src', 'multichat', 'gifs.js'), 'utf8') : EMOTES_SRC
       expect(emitted).toContain(`id="hs-mc-tab-${id}"`)

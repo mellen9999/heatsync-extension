@@ -21,12 +21,15 @@ describe('youtube owns the chat', () => {
     expect(main).toContain('if (ytOwnsChat()) return true') // mount-time frame hide
     expect(main).toContain("document.body.classList.toggle('hs-yt-owns-chat', ownsChat)")
     expect(main).toContain('(!ownsChat &&') // panel visibility
-    expect(css).toContain('body:not(.hs-yt-owns-chat):has(#hs-mc-container) ytd-live-chat-frame#chat')
+    expect(css).toContain('body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat')
   })
 
   test('a premiere keeps its chat frame loaded: it is the only feed and the send path', () => {
     expect(main).toContain("'#movie_player .ytp-offline-slate'")
-    expect(main).toContain("!frameEl.hasAttribute('collapsed') && !ytFrameIsTheFeed()")
+    const at = main.indexOf("!frameEl.hasAttribute('collapsed')")
+    const cond = main.slice(at, main.indexOf(') {', at))
+    expect(cond).toContain('!ytFrameIsTheFeed()')
+    expect(cond).toContain('!ytPeeking()')
   })
 
   test("youtube's dark tokens are on while the panel is up, and its own choice returns after", () => {

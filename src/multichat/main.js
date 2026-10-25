@@ -13017,7 +13017,7 @@
         // Hide native YT chat once it mounts — but ONLY when we're showing our
         // panel in its place AND the page is confirmed live. On a replay VOD
         // (no opt-in) we leave YT's chat replay visible.
-        if (showYtChat && confirmedLive && frameEl && frameEl.style.display !== 'none') {
+        if (showYtChat && confirmedLive && frameEl && frameEl.style.display !== 'none' && !ytPeeking()) {
           frameEl.style.display = 'none'
           _hsHidNativeYt = true
         }
@@ -13027,7 +13027,14 @@
         // gap where yt still reserved its chat column (live-verified: click
         // yt's own collapse → collapsed attr → player snaps to full row).
         // Drive yt's real collapse; the attr guard makes this a one-shot.
-        if (showYtChat && confirmedLive && frameEl && !frameEl.hasAttribute('collapsed') && !ytFrameIsTheFeed()) {
+        if (
+          showYtChat &&
+          confirmedLive &&
+          frameEl &&
+          !frameEl.hasAttribute('collapsed') &&
+          !ytFrameIsTheFeed() &&
+          !ytPeeking()
+        ) {
           try {
             frameEl.querySelector('#show-hide-button button')?.click()
             _hsCollapsedNativeYt = true

@@ -1189,6 +1189,8 @@ const MC_PICKER_TABS = [
   { id: 'emotes', label: 'emotes' },
   { id: 'gifs', label: 'gifs' },
   { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
+  { id: 'kick', label: 'kick', when: () => hostPlatform === 'kick' },
+  { id: 'youtube', label: 'youtube', when: () => hostPlatform === 'yt' },
 ]
 
 function mcVisiblePickerTabs() {
@@ -1281,6 +1283,8 @@ function showEmotePicker(tab = null) {
     // never got to (first open in a hidden/occluded tab — IO doesn't fire there).
     renderVisibleChunks(picker)
     if (pickerTab === 'twitch') renderTwitchTab()
+    if (pickerTab === 'kick') renderKickTab()
+    if (pickerTab === 'youtube') renderYoutubeTab()
     if (pickerTab === 'gifs') hsOnGifTabShown()
     attachPickerCloseHandler(picker)
     return
@@ -1314,6 +1318,16 @@ function showEmotePicker(tab = null) {
           ? `<div class="hs-mc-tab-content" id="hs-mc-tab-twitch" style="display: ${pickerTab === 'twitch' ? 'flex' : 'none'}; flex-direction: column; padding: 8px 0;">
         <div class="hs-mc-pred-loading">${t('common_loading')}</div>
       </div>`
+          : ''
+      }
+      ${
+        hostPlatform === 'kick'
+          ? `<div class="hs-mc-tab-content" id="hs-mc-tab-kick" style="display: ${pickerTab === 'kick' ? 'flex' : 'none'}; flex-direction: column; padding: 8px 0;"></div>`
+          : ''
+      }
+      ${
+        hostPlatform === 'yt'
+          ? `<div class="hs-mc-tab-content" id="hs-mc-tab-youtube" style="display: ${pickerTab === 'youtube' ? 'flex' : 'none'}; flex-direction: column; padding: 8px 0;"></div>`
           : ''
       }
       <div class="hs-mc-picker-tabs">
@@ -1444,6 +1458,8 @@ function showEmotePicker(tab = null) {
       const el = document.getElementById(`hs-mc-tab-${newTab}`)
       if (el) el.style.display = 'flex'
       if (newTab === 'twitch') renderTwitchTab()
+      if (newTab === 'kick') renderKickTab()
+      if (newTab === 'youtube') renderYoutubeTab()
       if (newTab === 'gifs') hsOnGifTabShown()
       if (oldTab === 'twitch' && newTab !== 'twitch') stopPredictionPoll()
       // Leaving the gifs tab drops the in-flight request on the floor: its
@@ -1583,6 +1599,8 @@ function showEmotePicker(tab = null) {
   syncPickerTabDisplay(picker)
 
   if (pickerTab === 'twitch') renderTwitchTab()
+  if (pickerTab === 'kick') renderKickTab()
+  if (pickerTab === 'youtube') renderYoutubeTab()
   if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)

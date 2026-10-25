@@ -1,5 +1,11 @@
 # changelog
 
+## [1.7.106] — 2026-10-25
+
+### fixed
+- **tab switch** — switching to another tab and back no longer leaves half the chat gone: a hidden tab keeps all its rows instead of trimming to 100 and rebuilding on return.
+- **reply line** — the gray reply line drops the small caret; the leading arrow already says it opens the thread.
+
 ## [1.7.105] — 2026-10-24
 
 ### fixed

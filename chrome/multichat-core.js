@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2ba2635ee425' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bd864537be1f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -76091,6 +76091,20 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Kick selectors
       const chatroom = document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]')
       if (chatroom) chatroom.classList.toggle('hs-native-hidden', hidden)
+      hsDiag('kick_native_hide', {
+        hidden,
+        found: !!chatroom,
+        id: chatroom?.id || '',
+        on: chatroom?.isConnected,
+        t: Math.round(performance.now()),
+      })
+      if (chatroom && hidden && !chatroom._hsWatch) {
+        chatroom._hsWatch = new MutationObserver(() => {
+          if (!chatroom.classList.contains('hs-native-hidden'))
+            hsDiag('kick_native_class_lost', { connected: chatroom.isConnected, t: Math.round(performance.now()) })
+        })
+        chatroom._hsWatch.observe(chatroom, { attributes: true, attributeFilter: ['class'] })
+      }
       return
     }
 

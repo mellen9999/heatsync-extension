@@ -6931,6 +6931,20 @@
       // Kick selectors
       const chatroom = document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]')
       if (chatroom) chatroom.classList.toggle('hs-native-hidden', hidden)
+      hsDiag('kick_native_hide', {
+        hidden,
+        found: !!chatroom,
+        id: chatroom?.id || '',
+        on: chatroom?.isConnected,
+        t: Math.round(performance.now()),
+      })
+      if (chatroom && hidden && !chatroom._hsWatch) {
+        chatroom._hsWatch = new MutationObserver(() => {
+          if (!chatroom.classList.contains('hs-native-hidden'))
+            hsDiag('kick_native_class_lost', { connected: chatroom.isConnected, t: Math.round(performance.now()) })
+        })
+        chatroom._hsWatch.observe(chatroom, { attributes: true, attributeFilter: ['class'] })
+      }
       return
     }
 

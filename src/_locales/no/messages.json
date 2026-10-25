@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync på twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync på kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync på youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "av: siden beholder sin egen chat, og heatsync lastes ikke der — last inn på nytt for å bruke"
   }
 }

@@ -3580,5 +3580,33 @@
   },
   "mc_tagcard_not_following": {
     "message": "chưa theo dõi"
+  },
+  "mc_card_gift_copied": {
+    "message": "đã sao chép $NAME$ — dán vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "không sao chép được — gõ $NAME$ vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync trên twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync trên kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync trên youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "tắt: trang giữ chat riêng của nó và heatsync không tải ở đó — tải lại để áp dụng"
   }
 }

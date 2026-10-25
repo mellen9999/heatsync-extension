@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "twitch で heatsync"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "kick で heatsync"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "youtube で heatsync"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "オフ: サイト本来のチャットがそのまま使われ、そこでは heatsync が読み込まれません — 反映には再読み込み"
   }
 }

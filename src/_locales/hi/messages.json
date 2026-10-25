@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "twitch पर heatsync"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "kick पर heatsync"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "youtube पर heatsync"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "बंद: साइट अपनी चैट रखती है और वहाँ heatsync लोड नहीं होता — लागू करने के लिए रीलोड करें"
   }
 }

@@ -109,6 +109,12 @@
   else if (host.includes('twitch.tv')) platform = 'twitch'
   else return // not a host we inject into
 
+  // "hs chat on <site>" switched off (mirrored from the subsystems setting by main.js): this site keeps
+  // its own chat, so paint nothing and squeeze nothing.
+  try {
+    if (localStorage.getItem('hs_gate_overlay') === '0') return
+  } catch {}
+
   // Pull layout state from localStorage (mirrored by main.js saveUiSetting +
   // saveChatWidth + saveChatHeight). All keys optional; fall back to defaults.
   function readLS(key, def) {

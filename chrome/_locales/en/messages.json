@@ -2425,8 +2425,24 @@
   "mc_irc_notice_r9k": {
     "message": "unique-chat mode — message must be unique"
   },
+  "mc_card_gift_copied": {
+    "message": "copied $NAME$ — paste it into the gift box",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "couldn't copy — type $NAME$ into the gift box",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_irc_notice_rejected": {
-    "message": "AutoMod is checking your message"
+    "message": "your message is held for mod approval — it posts only if a mod allows it"
   },
   "mc_irc_notice_rejected_mandatory": {
     "message": "AutoMod blocked your message"
@@ -3583,5 +3599,17 @@
   },
   "mc_tagcard_not_following": {
     "message": "not following"
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync on twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync on kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync on youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "off: the site keeps its own chat and heatsync does not load there — reload to apply"
   }
 }

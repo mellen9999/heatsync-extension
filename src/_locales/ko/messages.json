@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "twitch에서 heatsync"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "kick에서 heatsync"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "youtube에서 heatsync"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "끔: 사이트의 자체 채팅이 그대로 유지되며 그곳에서 heatsync가 로드되지 않음 — 적용하려면 새로고침"
   }
 }

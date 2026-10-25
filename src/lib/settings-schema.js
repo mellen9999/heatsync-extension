@@ -1502,6 +1502,9 @@ const SETTINGS = [
     apply: 'subsystemToggle',
     control: 'pill',
     default: {
+      'overlay-twitch': true,
+      'overlay-kick': true,
+      'overlay-youtube': true,
       'irc-twitch': true,
       'chat-kick': true,
       'chat-youtube': true,
@@ -1512,6 +1515,32 @@ const SETTINGS = [
       'stream-stats': true,
     },
     options: [
+      // The whole overlay, per site: off = heatsync never mounts there and the page keeps its own chat
+      // untouched. Decided once at boot (before anything paints), so there is nothing to hide or give back.
+      {
+        value: 'overlay-twitch',
+        default: true,
+        color: HS_PLAT_COLORS.twitch,
+        applies: 'reload',
+        labelKey: 'mc_settings_sub_overlay_twitch',
+        tipKey: 'mc_settings_sub_overlay_desc',
+      },
+      {
+        value: 'overlay-kick',
+        default: true,
+        color: HS_PLAT_COLORS.kick,
+        applies: 'reload',
+        labelKey: 'mc_settings_sub_overlay_kick',
+        tipKey: 'mc_settings_sub_overlay_desc',
+      },
+      {
+        value: 'overlay-youtube',
+        default: true,
+        color: HS_PLAT_COLORS.youtube,
+        applies: 'reload',
+        labelKey: 'mc_settings_sub_overlay_youtube',
+        tipKey: 'mc_settings_sub_overlay_desc',
+      },
       {
         value: 'irc-twitch',
         default: true,
@@ -1709,6 +1738,9 @@ const SETTINGS_PRESETS = [
       linkPreviewsEnabled: false,
       hiddenTabs: ['feed', 'whispers', 'mentions', 'pinned'],
       subsystems: {
+        'overlay-twitch': true,
+        'overlay-kick': true,
+        'overlay-youtube': true,
         'irc-twitch': true,
         'chat-kick': true,
         'chat-youtube': true,
@@ -1753,6 +1785,9 @@ const SETTINGS_PRESETS = [
       avatars: false,
       linkPreviewsEnabled: false,
       subsystems: {
+        'overlay-twitch': true,
+        'overlay-kick': true,
+        'overlay-youtube': true,
         'irc-twitch': true,
         'chat-kick': true,
         'chat-youtube': true,

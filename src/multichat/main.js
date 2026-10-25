@@ -2882,6 +2882,12 @@
   // getSetting(): the settings registry is not hydrated this early and would
   // hand back the all-true schema default — the same silent yes by another
   // route. Merged OVER that default so an unknown/absent key still resolves.
+  // The per-site "hs off" (settings › subsystems › hs chat on <site>). Off means heatsync does not mount
+  // here at all and the page keeps its own chat — decided once, at boot, before anything paints.
+  function overlayEnabledHere(gates) {
+    const gate = { twitch: 'overlay-twitch', kick: 'overlay-kick', yt: 'overlay-youtube' }[hostPlatform]
+    return !gate || gates?.[gate] !== false
+  }
   async function snapshotGates() {
     let stored = null
     try {
@@ -2897,6 +2903,12 @@
     // setting itself already has).
     try {
       localStorage.setItem('hs_gate_profile-cards', _gatesAtBoot['profile-cards'] !== false ? '1' : '0')
+      // Same mirror for the per-site "hs off": early-layout.js must not prepaint the overlay's bar, and
+      // pcard-early.js must leave the page's own user card alone, on a site where heatsync is off.
+      // (pcard-early's own gate is the profile-cards one above, so off here switches that off too.)
+      const overlayOn = overlayEnabledHere(_gatesAtBoot)
+      localStorage.setItem('hs_gate_overlay', overlayOn ? '1' : '0')
+      if (!overlayOn) localStorage.setItem('hs_gate_profile-cards', '0')
     } catch (_) {}
     // A `false` left in storage would still switch that plumbing off for content.js
     // and the background, which read their gates from there — drop it.
@@ -13233,6 +13245,15 @@
       // videos, etc. all keep the panel mounted. getOrCreateHsContainer
       // body-mounts when no .chat-shell exists; CSS squeezes twitch content.
       isPopout = !!location.pathname.match(/^\/(popout|embed)\/[a-zA-Z0-9_-]+\/chat/)
+    }
+    // Per-site "hs off" — decided before a single watcher, listener or style exists, so an off site is
+    // left exactly as the page made it. (Re-snapshotted below, where the later gates need it.)
+    await snapshotGates()
+    if (!overlayEnabledHere(_gatesAtBoot)) {
+      // Switched off for this site: take down the prepaint if one got up before this ran, mount nothing.
+      document.getElementById('hs-early-layout')?.remove()
+      document.documentElement.classList.remove('hs-prepaint-active', 'hs-prepaint-fade')
+      return
     }
     if (mcInitialized) return
     mcInitialized = true

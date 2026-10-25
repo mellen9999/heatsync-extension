@@ -3580,5 +3580,33 @@
   },
   "mc_tagcard_not_following": {
     "message": "nesleduješ"
+  },
+  "mc_card_gift_copied": {
+    "message": "zkopírováno: $NAME$ — vlož to do pole pro darování",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "nepodařilo se zkopírovat — napiš $NAME$ do pole pro darování",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync na twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync na kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync na youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "vypnuto: web si ponechá vlastní chat a heatsync se tam nenačte — pro uplatnění obnov stránku"
   }
 }

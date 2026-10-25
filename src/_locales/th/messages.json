@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync บน twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync บน kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync บน youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "ปิด: เว็บไซต์ใช้แชทของตัวเองต่อไปและ heatsync จะไม่โหลดที่นั่น — รีโหลดเพื่อใช้งาน"
   }
 }

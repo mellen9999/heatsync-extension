@@ -28,9 +28,9 @@ const SCHEMA = join(ROOT, 'src', 'lib', 'settings-schema.js')
 
 function declaredSwitches() {
   const s = readFileSync(SCHEMA, 'utf8')
-  const at = s.indexOf("default: {\n      'irc-twitch'")
+  const at = s.indexOf("default: {\n      'overlay-twitch'")
   expect(at, 'the subsystem default block moved').toBeGreaterThan(-1)
-  const block = s.slice(at, at + 900)
+  const block = s.slice(at, at + 1100)
   const keys = [...block.matchAll(/'?([a-z][a-z-]+)'?\s*:\s*true,/g)].map((m) => m[1])
   return [...new Set(keys)].filter((k) => k !== 'default')
 }

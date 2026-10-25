@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync pe twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync pe kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync pe youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "oprit: site-ul își păstrează chatul propriu și heatsync nu se încarcă acolo — reîncarcă pentru a aplica"
   }
 }

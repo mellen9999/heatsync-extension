@@ -3580,5 +3580,33 @@
   },
   "mc_tagcard_not_following": {
     "message": "et seuraa"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopioitu $NAME$ — liitä se lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopiointi epäonnistui — kirjoita $NAME$ lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync sivustolla twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync sivustolla kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync sivustolla youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "pois: sivusto säilyttää oman chatinsa eikä heatsync lataudu sinne — ota käyttöön lataamalla uudelleen"
   }
 }

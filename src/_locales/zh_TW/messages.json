@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "twitch 上的 heatsync"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "kick 上的 heatsync"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "youtube 上的 heatsync"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "關閉：網站保留內建聊天，heatsync 不在那裡載入 — 重新載入後生效"
   }
 }

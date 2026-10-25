@@ -3596,5 +3596,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "twitch üzerinde heatsync"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "kick üzerinde heatsync"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "youtube üzerinde heatsync"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "kapalı: site kendi sohbetini korur ve heatsync orada yüklenmez — uygulamak için sayfayı yenile"
   }
 }

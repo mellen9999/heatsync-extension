@@ -3580,5 +3580,33 @@
   },
   "mc_tagcard_not_following": {
     "message": "folgst nicht"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ kopiert — füge es ins Geschenkfeld ein",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopieren fehlgeschlagen — tippe $NAME$ ins Geschenkfeld",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_settings_sub_overlay_twitch": {
+    "message": "heatsync auf twitch"
+  },
+  "mc_settings_sub_overlay_kick": {
+    "message": "heatsync auf kick"
+  },
+  "mc_settings_sub_overlay_youtube": {
+    "message": "heatsync auf youtube"
+  },
+  "mc_settings_sub_overlay_desc": {
+    "message": "aus: die Seite behält ihren eigenen Chat und heatsync lädt dort nicht — zum Anwenden neu laden"
   }
 }

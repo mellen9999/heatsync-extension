@@ -1530,7 +1530,7 @@
 
     window.HS?.mountEmoteStrip({
       inputOf: chatInputOf,
-      resolve: (word) => emoteMap.get(word) || null,
+      resolve: (word) => (hsModClassify(word).kind === 'modifier' ? null : emoteMap.get(word) || null),
       signal,
     })
 

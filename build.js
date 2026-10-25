@@ -728,6 +728,7 @@ const LIB_EXTRAS = {
   'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js', 'badge-index.js'],
   'youtube-content.js': ['config.js', 'modifiers.js'],
   'autocomplete-hook.js': ['modifiers.js'],
+  'kick-autocomplete-hook.js': ['modifiers.js'],
   'heatsync-button.js': ['reserved-paths.js', 'palette.js'],
   'chat-injector.js': [],
 }

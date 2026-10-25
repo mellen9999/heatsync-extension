@@ -818,7 +818,8 @@
 
   window.HS?.mountEmoteStrip({
     inputOf: (e) => (e.target instanceof Element ? e.target.closest('div.editor-input') : null),
-    resolve: (word) => hsEmoteByName.get(word) || null,
+    // a modifier word (BTTV lists `w!` as an emote) is not an emote of its own
+    resolve: (word) => (hsModClassify(word).kind === 'modifier' ? null : hsEmoteByName.get(word) || null),
     signal: sig,
   })
 

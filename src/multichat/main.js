@@ -8805,6 +8805,15 @@
   // 1Hz when not — and keep a probe rAF out so the first real frame ends
   // the episode.
   function rafOrTimeout(fn) {
+    // A popout is a window made to be read, often sitting unfocused beside a
+    // game or a stream. Chrome slows (or never runs) rAF there, and the
+    // starvation fallback is a 1s timer — chat then arrives as one lump a
+    // second and any stall stretches into a visible freeze. Layout work never
+    // needed a frame, so a popout just uses a short timer.
+    if (document.body?.classList.contains('hs-popout')) {
+      cleanup.setTimeout(fn, 16)
+      return true
+    }
     if (document.hidden) {
       if (document.hasFocus() || _visWedged) {
         cleanup.setTimeout(fn, 16)

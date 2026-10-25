@@ -14916,7 +14916,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f20df78d6b8f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2f276afa09c4' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -77570,6 +77570,15 @@ const STORAGE_KEY = 'heatsync_multichat'
   // 1Hz when not — and keep a probe rAF out so the first real frame ends
   // the episode.
   function rafOrTimeout(fn) {
+    // A popout is a window made to be read, often sitting unfocused beside a
+    // game or a stream. Chrome slows (or never runs) rAF there, and the
+    // starvation fallback is a 1s timer — chat then arrives as one lump a
+    // second and any stall stretches into a visible freeze. Layout work never
+    // needed a frame, so a popout just uses a short timer.
+    if (document.body?.classList.contains('hs-popout')) {
+      cleanup.setTimeout(fn, 16)
+      return true
+    }
     if (document.hidden) {
       if (document.hasFocus() || _visWedged) {
         cleanup.setTimeout(fn, 16)

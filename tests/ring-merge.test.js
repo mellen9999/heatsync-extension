@@ -153,3 +153,8 @@ test('alt+shift+d dumps the pane state to the diag ring', () => {
   expect(main).toMatch(/hsDiagLog\('manual_dump'/)
   expect(main).toMatch(/e\.code === 'KeyD'/)
 })
+
+test('a popout never waits on rAF or the 1s starved timer', () => {
+  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  expect(main).toMatch(/function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setTimeout\(fn, 16\)/)
+})

@@ -14962,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd20751c2cbe4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '90c2ab090106' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -37313,6 +37313,7 @@ function feedCachedCopies(id) {
 //
 // `emoteChannel` is the bucket the channel's 7TV/BTTV youtube emotes load
 // under. Omit it where the caller never fetched them.
+const _ytHistoryAsked = new Set()
 function ytSubscribe(channelId, url, emoteChannel) {
   if (gateAtBoot('chat-youtube') === false) return false
   const emit = (u) => {
@@ -37324,6 +37325,18 @@ function ytSubscribe(channelId, url, emoteChannel) {
   if (emoteChannel) {
     safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
   }
+  // Asking for a stream's chat IS joining it: the tab reads "connecting…" until this settles, and a
+  // youtube-only tab has no twitch/kick join to settle it.
+  trackJoin(channelId === '__live_yt_auto__' ? 'live' : channelId, Promise.resolve())
+  // A premiere has no server feed to backfill from: its rows live in YouTube's own chat frame, which
+  // may have read them before this overlay was listening. Ask it to play them again.
+  try {
+    const pageVid = new URLSearchParams(location.search).get('v')
+    if (pageVid && String(url).includes(pageVid) && !_ytHistoryAsked.has(pageVid)) {
+      _ytHistoryAsked.add(pageVid) // once per video: the watchdog re-subscribes on a timer
+      safeSendMessage({ type: 'youtube_history_request' })
+    }
+  } catch (_) {}
   // Channel-shaped URLs (/channel/UC…/live, /@handle/live) need a live
   // videoId lookup the SERVER can no longer do: youtube serves datacenter
   // IPs a stale non-live page (observed 2026-08-23), so its resolver
@@ -38306,12 +38319,13 @@ function handleYoutubeChatMsg(msg) {
   // own messages then render instantly and the later server copy dies in
   // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
   // dropped BEFORE any credit/dedup state is touched.
-  // The page's own video IS the watching tab — a message tagged with its bare videoId (a premiere's
-  // frame relay, an own echo) belongs there, never on a stray tab named after the id.
+  // The page's own video with no tab of its own IS the watching tab — a message tagged with its bare
+  // videoId (a premiere's frame relay, an own echo) belongs there.
   if (
     targetChannelId &&
     targetChannelId !== '__live_yt_auto__' &&
     hostPlatform === 'yt' &&
+    !config.channels.some((c) => c.id === targetChannelId) && // a tab of its own for it keeps it
     targetChannelId ===
       (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1]
   ) {
@@ -82859,10 +82873,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           // the channel-mirror case (autoYtUrl = ytUrl, no id yet) still defers to
           // the status echo. spa-nav resets it to null on navigation.
           if (onYtVideoPage && currentChannel) _autoYtVideoId = currentChannel
-          trackJoin('live', ytSubscribe('__live_yt_auto__', autoYtUrl))
-          // A premiere has no server feed to backfill from: its rows live in YouTube's own frame, which
-          // may have read them before this overlay was listening. Ask it to play them again.
-          if (onYtVideoPage) safeSendMessage({ type: 'youtube_history_request' })
+          ytSubscribe('__live_yt_auto__', autoYtUrl)
           // Emote join stays separate here (the block is already gated on gYt):
           // its channelId hint is the CHANNEL url, not the video url we just
           // subscribed with, so it can't ride ytSubscribe's third argument.

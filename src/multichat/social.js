@@ -48,6 +48,7 @@ function feedCachedCopies(id) {
 //
 // `emoteChannel` is the bucket the channel's 7TV/BTTV youtube emotes load
 // under. Omit it where the caller never fetched them.
+const _ytHistoryAsked = new Set()
 function ytSubscribe(channelId, url, emoteChannel) {
   if (gateAtBoot('chat-youtube') === false) return false
   const emit = (u) => {
@@ -59,6 +60,18 @@ function ytSubscribe(channelId, url, emoteChannel) {
   if (emoteChannel) {
     safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
   }
+  // Asking for a stream's chat IS joining it: the tab reads "connecting…" until this settles, and a
+  // youtube-only tab has no twitch/kick join to settle it.
+  trackJoin(channelId === '__live_yt_auto__' ? 'live' : channelId, Promise.resolve())
+  // A premiere has no server feed to backfill from: its rows live in YouTube's own chat frame, which
+  // may have read them before this overlay was listening. Ask it to play them again.
+  try {
+    const pageVid = new URLSearchParams(location.search).get('v')
+    if (pageVid && String(url).includes(pageVid) && !_ytHistoryAsked.has(pageVid)) {
+      _ytHistoryAsked.add(pageVid) // once per video: the watchdog re-subscribes on a timer
+      safeSendMessage({ type: 'youtube_history_request' })
+    }
+  } catch (_) {}
   // Channel-shaped URLs (/channel/UC…/live, /@handle/live) need a live
   // videoId lookup the SERVER can no longer do: youtube serves datacenter
   // IPs a stale non-live page (observed 2026-08-23), so its resolver
@@ -1041,12 +1054,13 @@ function handleYoutubeChatMsg(msg) {
   // own messages then render instantly and the later server copy dies in
   // isYtDuplicate (same bucket, same innertube id). Unowned videoIds are
   // dropped BEFORE any credit/dedup state is touched.
-  // The page's own video IS the watching tab — a message tagged with its bare videoId (a premiere's
-  // frame relay, an own echo) belongs there, never on a stray tab named after the id.
+  // The page's own video with no tab of its own IS the watching tab — a message tagged with its bare
+  // videoId (a premiere's frame relay, an own echo) belongs there.
   if (
     targetChannelId &&
     targetChannelId !== '__live_yt_auto__' &&
     hostPlatform === 'yt' &&
+    !config.channels.some((c) => c.id === targetChannelId) && // a tab of its own for it keeps it
     targetChannelId ===
       (location.href.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || location.href.match(/\/live\/([a-zA-Z0-9_-]{11})/))?.[1]
   ) {

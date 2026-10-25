@@ -3722,7 +3722,7 @@ cleanup.persistInterval(cleanup.setIntervalIfVisible(scanDomForEmotes, 10000))
 
 // Process text and replace emote codes with images.
 // Supports 7TV zero-width (overlay) emotes that stack on base emotes.
-// Resolution priority (perma sender model): channel > senderEmotes > extraCache (native twitch IRC) > emoteCache (globals) — see the lookup order below (~line 3440); channel is authoritative in its own room
+// Resolution priority: this message's server-verified refs (the emote the sender actually picked) > channel > senderEmotes > extraCache (native twitch IRC) > emoteCache (globals) — see _lookup below; the channel set is authoritative for every name the message carries no ref for
 // - extraCache: optional Map<name, emoteData> for per-message Twitch IRC tag emotes
 // - senderEmotes: optional Map<name, emoteData> — sender's personal set frozen at first sight.
 //   For viewer's own outgoing messages, caller passes viewerPersonalEmotes here.
@@ -4184,14 +4184,16 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     // the escaped name to match this token directly. escapeHtml is identity
     // for names without specials, so raw === name on the hot path (no `&`).
     const raw = name.indexOf('&') === -1 ? name : unescapeHtml(name)
-    let e = channel ? channelEmoteCaches[channel]?.get(raw) : null
-    if (e) return { e, inv: false }
     // Server-enriched per-message refs: the sender's inventory emote actually
-    // used in THIS message, resolved authoritatively server-side. Wins over the
-    // lazily-fetched sender set (which may be stale/unfetched) but yields to the
-    // channel's own set above. Ungated by _sGate — it's current by construction.
-    e = msgRefs?.get(name)
+    // used in THIS message, resolved authoritatively server-side. First of all:
+    // many emotes share one name across providers (a channel's AYAYA, the kick
+    // AYAYA, the 7tv variant someone collected), and the one the sender
+    // picked is the only one that is not a guess. Ungated by _sGate — it's
+    // current by construction.
+    let e = msgRefs?.get(name)
     if (e) return { e, inv: true }
+    e = channel ? channelEmoteCaches[channel]?.get(raw) : null
+    if (e) return { e, inv: false }
     e = _sGet(raw)
     if (e) return { e, inv: true }
     e = extraCache?.get(name) || emoteCache.get(raw)

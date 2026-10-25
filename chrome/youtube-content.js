@@ -1847,13 +1847,15 @@
 
     input.dispatchEvent(new InputEvent('input', { bubbles: true, data: msg.text, inputType: 'insertText' }))
 
-    // Brief delay so YouTube enables the send button after the input event.
-    // 200ms (was 120): on slower machines/connections YT hadn't enabled the
-    // button yet, producing a spurious send_disabled.
-    await new Promise((r) => setTimeout(r, 200))
-
-    const sendBtn =
+    // YouTube enables the send button a tick after the input event. Wait for exactly that, not a fixed
+    // delay: it clicks the instant the button is live and still gives a slow machine a full second.
+    const findSendBtn = () =>
       document.querySelector('#send-button button') || document.querySelector('yt-button-shape button[aria-label]')
+    const btnDeadline = Date.now() + 1500
+    while ((!findSendBtn() || findSendBtn().disabled) && Date.now() < btnDeadline) {
+      await new Promise((r) => setTimeout(r, 20))
+    }
+    const sendBtn = findSendBtn()
     if (!sendBtn || sendBtn.disabled) {
       observer?.disconnect()
       return { ok: false, error: 'send_disabled' }

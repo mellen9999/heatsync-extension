@@ -45,31 +45,41 @@
 
   let channelEmotesByOwner = {} // { ownerName: emote[] } — populated from background broadcasts
 
+  let variantsByName = new Map() // name → every version of it, best first
   let lastInventory = []
   let lastGlobals = []
 
   function rebuildEmoteMap(inventory, globals) {
     lastInventory = inventory || []
     lastGlobals = globals || []
-    const map = new Map()
-    const hidden = new Map()
-    // tier rides on each emote (0=channel/1=own/2=global) so findEmoteMatches ranks
-    // channel > own > global — a channel emote beats own/global on a closer name match.
-    // Written lowest tier first, so the map keeps the CHANNEL image for a name you also own.
-    // A blocked emote leaves the map (no autocomplete, no strip) but chat keeps a placeholder for it.
+    // Every source's version of a name, best first: channel > own > global, so the map keeps the CHANNEL
+    // image for a name you also own (a channel emote beats own/global on a closer name match too).
+    // The same emote carries a different hash per source, so a block is judged and applied name-wide:
+    // the name is blocked when every version is, and it leaves the map (no autocomplete, no strip) but
+    // chat keeps a placeholder for it.
+    const versions = new Map()
     const take = (list, tier) => {
       for (const e of list || []) {
         if (!e?.name) continue
         e._ytTier = tier
-        if (blockedEmotes.has(e.hash || e.name)) hidden.set(e.name, e)
-        else map.set(e.name, e)
+        const all = versions.get(e.name)
+        if (all) all.push(e)
+        else versions.set(e.name, [e])
       }
     }
-    take(globals, 2)
-    take(inventory, 1)
     for (const ownerEmotes of Object.values(channelEmotesByOwner)) {
       if (Array.isArray(ownerEmotes)) take(ownerEmotes, 0)
     }
+    take(inventory, 1)
+    take(globals, 2)
+    const map = new Map()
+    const hidden = new Map()
+    for (const [name, all] of versions) {
+      const shown = all.find((e) => !blockedEmotes.has(e.hash || e.name))
+      if (shown) map.set(name, shown)
+      else hidden.set(name, all[0])
+    }
+    variantsByName = versions
     blockedByName = hidden
     emoteMap = map
     log('emote map rebuilt:', map.size, 'emotes')
@@ -307,6 +317,7 @@
           img.src = emote.url
           img.alt = emote.name
           if (!emoteMap.has(word)) img.dataset.hsBlocked = '1'
+          if (emote.hash) img.dataset.emoteHash = emote.hash
           img.className = 'heatsync-emote-yt'
           img.loading = 'lazy'
           lastImg = img
@@ -1813,21 +1824,31 @@
       e.preventDefault()
       e.stopImmediatePropagation()
       const emote = emoteMap.get(img.alt) || blockedByName.get(img.alt)
-      if (!emote?.hash) return
-      const was = blockedEmotes.has(emote.hash)
-      if (was) blockedEmotes.delete(emote.hash)
-      else blockedEmotes.add(emote.hash)
-      rebuildEmoteMap(lastInventory, lastGlobals)
-      safeSendMessage({ type: was ? 'unblock_emote' : 'block_emote', hash: emote.hash }).then((result) => {
-        if (result?.success === false) {
-          if (was) blockedEmotes.add(emote.hash)
-          else blockedEmotes.delete(emote.hash)
-          rebuildEmoteMap(lastInventory, lastGlobals)
-          showYtToast(`${was ? 'unblock' : 'block'} failed`)
-        } else {
-          showYtToast(`${was ? 'unblocked' : 'blocked'}: ${escapeHtml(emote.name)}`)
+      if (!emote) return
+      const was = img.hasAttribute('data-hs-blocked')
+      // the name, wherever it comes from: twitch and kick key their blocks by the version they show
+      const hashes = [
+        ...new Set((variantsByName.get(emote.name) || [emote]).map((v) => v.hash).filter(Boolean)),
+      ].filter((h) => blockedEmotes.has(h) === was)
+      if (!hashes.length) return
+      const apply = (on) => {
+        for (const h of hashes) {
+          if (on) blockedEmotes.add(h)
+          else blockedEmotes.delete(h)
         }
-      })
+        rebuildEmoteMap(lastInventory, lastGlobals)
+      }
+      apply(!was)
+      Promise.all(hashes.map((hash) => safeSendMessage({ type: was ? 'unblock_emote' : 'block_emote', hash }))).then(
+        (results) => {
+          if (results.some((r) => r?.success === false)) {
+            apply(was)
+            showYtToast(`${was ? 'unblock' : 'block'} failed`)
+          } else {
+            showYtToast(`${was ? 'unblocked' : 'blocked'}: ${escapeHtml(emote.name)}`)
+          }
+        },
+      )
     },
     { capture: true, signal },
   )

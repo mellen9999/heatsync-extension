@@ -7,7 +7,9 @@ const src = readFileSync(new URL('../chrome/youtube-content.js', import.meta.url
 test('yt keeps blocked emotes as placeholders and toggles block on right-click', () => {
   expect(src).toMatch(/blockedByName\.get\(word\)/)
   expect(src).toMatch(/dataset\.hsBlocked/)
-  expect(src).toMatch(/type: was \? 'unblock_emote' : 'block_emote', hash:/)
+  expect(src).toMatch(/type: was \? 'unblock_emote' : 'block_emote', hash/)
+  // the same emote has a different hash per source: a block covers every version of the name
+  expect(src).toMatch(/variantsByName\.get\(emote\.name\)/)
   expect(src).not.toMatch(/emoteHash: emote\.hash/)
 })
 

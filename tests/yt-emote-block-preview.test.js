@@ -16,3 +16,10 @@ test('yt emotes carry no native title tooltip and show the hover preview', () =>
   expect(src).not.toMatch(/img\.title = emote\.name/)
   expect(src).toMatch(/function showEmotePreview/)
 })
+
+// rows that rendered before the emote data arrived (a reload) must get their emotes when it does
+test('yt re-sweeps existing rows whenever the emote map is rebuilt', () => {
+  expect(src).toMatch(/function syncRows\(\)/)
+  expect(src).toMatch(/emoteMap = map[\s\S]{0,80}syncRows\(\)/)
+  expect(src).not.toMatch(/if \(messageEl && emoteMap\.size > 0\)/)
+})

@@ -73,6 +73,17 @@
     blockedByName = hidden
     emoteMap = map
     log('emote map rebuilt:', map.size, 'emotes')
+    syncRows()
+  }
+
+  // Rows that went by before the emote data arrived (a reload, a slow storage read) get their emotes now,
+  // and every placeholder follows the block list — a block from another tab lands here too.
+  function syncRows() {
+    for (const el of document.querySelectorAll('yt-live-chat-text-message-renderer #message'))
+      replaceEmotesInElement(el)
+    for (const img of document.querySelectorAll('img.heatsync-emote-yt')) {
+      img.toggleAttribute('data-hs-blocked', blockedByName.has(img.alt) && !emoteMap.has(img.alt))
+    }
   }
 
   async function loadEmoteInventory() {
@@ -1265,7 +1276,7 @@
   // Re-running the swap on the new text is a no-op for any text without an emote word.
   const messageRerender = new MutationObserver((mutations) => {
     for (const target of new Set(mutations.map((m) => m.target))) {
-      if (emoteMap.size > 0) replaceEmotesInElement(target)
+      replaceEmotesInElement(target)
     }
   })
   cleanup.trackObserver(messageRerender)
@@ -1286,7 +1297,7 @@
 
     // Emote overlay — replace emote text with images in the message element
     const messageEl = node.querySelector('#message')
-    if (messageEl && emoteMap.size > 0) {
+    if (messageEl) {
       replaceEmotesInElement(messageEl)
       // your own message is rendered, then re-rendered once youtube confirms it, which wipes the images
       messageRerender.observe(messageEl, { childList: true })
@@ -1803,20 +1814,13 @@
       const emote = emoteMap.get(img.alt) || blockedByName.get(img.alt)
       if (!emote?.hash) return
       const was = blockedEmotes.has(emote.hash)
-      const paint = (blocked) => {
-        for (const el of document.querySelectorAll('img.heatsync-emote-yt')) {
-          if (el.alt === emote.name) el.toggleAttribute('data-hs-blocked', blocked)
-        }
-      }
       if (was) blockedEmotes.delete(emote.hash)
       else blockedEmotes.add(emote.hash)
-      paint(!was)
       rebuildEmoteMap(lastInventory, lastGlobals)
       safeSendMessage({ type: was ? 'unblock_emote' : 'block_emote', hash: emote.hash }).then((result) => {
         if (result?.success === false) {
           if (was) blockedEmotes.add(emote.hash)
           else blockedEmotes.delete(emote.hash)
-          paint(was)
           rebuildEmoteMap(lastInventory, lastGlobals)
           showYtToast(`${was ? 'unblock' : 'block'} failed`)
         } else {

@@ -1528,6 +1528,12 @@
     document.addEventListener('paste', (e) => chatInputOf(e) && handleMediaPaste(e), { signal, capture: true })
     document.addEventListener('drop', (e) => chatInputOf(e) && handleMediaDrop(e), { signal, capture: true })
 
+    window.HS?.mountEmoteStrip({
+      inputOf: chatInputOf,
+      resolve: (word) => emoteMap.get(word) || null,
+      signal,
+    })
+
     log('autocomplete ready')
   }
 

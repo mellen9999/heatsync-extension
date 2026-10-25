@@ -136,17 +136,6 @@
     },
     {
       "matches": [
-        "https://kick.com/*",
-        "https://*.kick.com/*"
-      ],
-      "js": [
-        "emoji-data.iso.js",
-        "kick-autocomplete-hook.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
         "https://*.twitch.tv/*",
         "https://kick.com/*",
         "https://*.kick.com/*",
@@ -164,6 +153,17 @@
       ],
       "css": [
         "injected-message.css"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://kick.com/*",
+        "https://*.kick.com/*"
+      ],
+      "js": [
+        "emoji-data.iso.js",
+        "kick-autocomplete-hook.js"
       ],
       "run_at": "document_end"
     },

@@ -325,6 +325,76 @@ const browser = globalThis.browser || chrome
     await browser.storage.sync.set({ ui_settings: { ...ui, subsystems } })
   }
 
+  // ── Emote preview strip ────────────────────────────────────────────
+  // Kick's and youtube's inputs hold plain text only (an injected image is stripped or ignored and
+  // blocks the send), so the emotes in what you typed show as images in a strip above the box, and the
+  // text stays exactly what gets sent. Twitch's input is a rich editor and shows them in the box itself.
+  const HS_STRIP_MAX = 12
+  const HS_STRIP_CSS =
+    'position:fixed;z-index:2147483000;display:none;flex-wrap:wrap;align-items:center;gap:4px;box-sizing:border-box;' +
+    'padding:2px 4px;background:#000;border:1px solid #fff;border-radius:0;pointer-events:none'
+
+  /**
+   * @param {{ inputOf: (e: Event) => Element | null, resolve: (word: string) => { name: string, url: string } | null, signal: AbortSignal }} cfg
+   */
+  function mountEmoteStrip({ inputOf, resolve, signal }) {
+    let strip = null
+    let lastInput = null
+    const hide = () => {
+      if (strip) strip.style.display = 'none'
+    }
+    const render = (input) => {
+      const seen = new Set()
+      const found = []
+      for (const word of (input.textContent || '').split(/\s+/)) {
+        if (!word || seen.has(word)) continue
+        seen.add(word)
+        const hit = resolve(word)
+        if (hit?.url) found.push(hit)
+        if (found.length >= HS_STRIP_MAX) break
+      }
+      if (!found.length) return hide()
+      if (!strip?.isConnected) {
+        strip = document.createElement('div')
+        strip.className = 'hs-emote-strip'
+        strip.style.cssText = HS_STRIP_CSS
+        document.body.appendChild(strip)
+      }
+      strip.textContent = ''
+      for (const emote of found) {
+        const img = document.createElement('img')
+        img.src = emote.url
+        img.alt = emote.name
+        img.title = emote.name
+        img.style.cssText = 'height:24px;width:auto;display:block'
+        strip.appendChild(img)
+      }
+      const r = input.getBoundingClientRect()
+      strip.style.left = `${Math.round(r.left)}px`
+      strip.style.width = `${Math.round(r.width)}px`
+      strip.style.bottom = `${Math.round(window.innerHeight - r.top)}px`
+      strip.style.display = 'flex'
+    }
+    const refresh = (e) => {
+      const input = inputOf(e)
+      if (!input) return
+      lastInput = input
+      render(input)
+    }
+    document.addEventListener('input', refresh, { capture: true, signal })
+    // a send clears the box without an input event
+    document.addEventListener(
+      'keyup',
+      (e) => {
+        if (e.key !== 'Enter' || !inputOf(e)) return
+        setTimeout(() => lastInput?.isConnected && render(lastInput), 120)
+      },
+      { capture: true, signal },
+    )
+    document.addEventListener('focusout', (e) => inputOf(e) && hide(), { capture: true, signal })
+    signal?.addEventListener('abort', () => strip?.remove(), { once: true })
+  }
+
   window.HS = {
     createLifecycle,
     setSiteOverlay,
@@ -334,6 +404,7 @@ const browser = globalThis.browser || chrome
     apiFetch,
     showToast,
     uploadMediaFiles,
+    mountEmoteStrip,
     initMainWorldNonce,
     getMainWorldNonce,
   }

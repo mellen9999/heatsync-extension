@@ -23,6 +23,7 @@
   let dropdown = null
   let emoteDropdown = null
   let hsEmoteList = []
+  let hsEmoteByName = new Map()
   let emoteDebounceTimer = null
 
   const lifecycle = new AbortController()
@@ -110,6 +111,7 @@
           if (chrome.runtime.lastError || !data) return
           hsEmotesLastFetch = now
           hsEmoteList = buildEmoteList(data)
+          hsEmoteByName = new Map(hsEmoteList.map((e) => [e.name, e]))
           log('emote list refreshed:', hsEmoteList.length)
         },
       )
@@ -813,6 +815,12 @@
   )
   document.addEventListener('paste', onEditor(handleMediaPaste), { signal: sig, capture: true })
   document.addEventListener('drop', onEditor(handleMediaDrop), { signal: sig, capture: true })
+
+  window.HS?.mountEmoteStrip({
+    inputOf: (e) => (e.target instanceof Element ? e.target.closest('div.editor-input') : null),
+    resolve: (word) => hsEmoteByName.get(word) || null,
+    signal: sig,
+  })
 
   injectStyles()
   refreshEmotes(getCurrentChannel())

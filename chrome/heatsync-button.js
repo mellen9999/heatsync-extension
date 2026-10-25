@@ -528,6 +528,12 @@
         color: #000;
       }
 
+      .heatsync-panel-back {
+        margin-left: auto;
+        margin-right: 8px;
+        font: 13px monospace;
+      }
+
       .heatsync-header-controls {
         display: flex;
         align-items: center;
@@ -2122,6 +2128,34 @@
       const sized = `${Math.max(220, avail)}px`
       panel.style.height = sized
       panel.style.maxHeight = sized
+      _clampPickerX(panel)
+      _syncPeekBack(panel)
+    }
+
+    // The panel is 420px and right-anchored to the button's row. In a narrow frame (the youtube
+    // native chat) that pushed its left edge off-screen: cap the width to the frame, then slide
+    // it back inside. No-op until the panel is in the document (a new panel is measured after append).
+    function _clampPickerX(panel) {
+      if (!panel.isConnected) return
+      const MARGIN = 6
+      panel.style.maxWidth = `${window.innerWidth - MARGIN * 2}px`
+      panel.style.right = '0px'
+      const r = panel.getBoundingClientRect()
+      if (r.left < MARGIN) panel.style.right = `${r.left - MARGIN}px`
+      else if (r.right > window.innerWidth - MARGIN) panel.style.right = `${r.right - (window.innerWidth - MARGIN)}px`
+    }
+
+    // Inside the youtube native chat view the heatsync overlay is parked under the page's
+    // "back to heatsync chat" bar. The frame is same-origin with the watch page, so the picker
+    // offers the same way back from in here, only while that bar exists.
+    function _syncPeekBack(panel) {
+      const back = panel.querySelector('.heatsync-panel-back')
+      if (!back) return
+      let bar = null
+      try {
+        bar = window.parent !== window ? window.parent.document.getElementById('hs-yt-peek-back') : null
+      } catch (_) {}
+      back.style.display = bar ? '' : 'none'
     }
 
     // Outer scope, and it looks the buttons up from the document rather than
@@ -2219,6 +2253,7 @@
           ${iconUrl ? `<img src="${iconUrl}" alt="heatsync">` : '🔥'}
           <span>heatsync</span>
         </div>
+        <button class="heatsync-panel-close heatsync-panel-back" style="display:none">← heatsync chat</button>
         <button class="heatsync-panel-close" aria-label="Close">✕</button>
       </div>
       ${
@@ -2290,6 +2325,7 @@
     `
 
       container.appendChild(panel)
+      _sizePickerPanel(panel, btn)
       panelOpen = true
 
       // Login link — generate a one-time state nonce before navigating so
@@ -2315,7 +2351,13 @@
       }
 
       // Close button handler
-      panel.querySelector('.heatsync-panel-close')?.addEventListener('click', closePanel)
+      panel.querySelector('.heatsync-panel-close:not(.heatsync-panel-back)')?.addEventListener('click', closePanel)
+      panel.querySelector('.heatsync-panel-back')?.addEventListener('click', () => {
+        closePanel()
+        try {
+          window.parent.document.getElementById('hs-yt-peek-back')?.click()
+        } catch (_) {}
+      })
 
       // Size buttons handler
       const grid = document.getElementById('heatsync-emote-grid')

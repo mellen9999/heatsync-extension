@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'acecf74c24a2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3d6bf4011db3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35608,10 +35608,12 @@ function ytPeekNative() {
   const pane = document.getElementById('hs-mc-container')
   if (!frame || !pane) return
   if (ytPeeking()) return
+  // close the picker first: it changes the pane's height, and the measure below must see the settled pane
+  document.getElementById('hs-mc-emote-picker')?.classList.remove('visible')
   // below the tab bar (it stays usable), over the messages and composer
   const paneR = pane.getBoundingClientRect()
   const top = document.getElementById('hs-mc-messages')?.getBoundingClientRect().top ?? paneR.top
-  const r = { top, left: paneR.left, width: paneR.width, height: paneR.bottom - top }
+  const r = { top, left: paneR.left, width: paneR.width, height: Math.min(paneR.bottom, innerHeight) - top }
   const BAR = 28
   const root = document.body.style
   root.setProperty('--hs-peek-top', `${Math.round(r.top + BAR)}px`)
@@ -35636,8 +35638,8 @@ function ytPeekNative() {
       frame.querySelector('#show-hide-button button')?.click()
     } catch (_) {}
   }
-  document.getElementById('hs-mc-emote-picker')?.classList.remove('visible')
   document.addEventListener('keydown', _ytPeekKey, true)
+  window.addEventListener('resize', ytPeekBack, { once: true }) // it is sized to the pane as it was
 }
 
 function _ytPeekKey(e) {
@@ -35646,6 +35648,7 @@ function _ytPeekKey(e) {
 
 function ytPeekBack() {
   document.removeEventListener('keydown', _ytPeekKey, true)
+  window.removeEventListener('resize', ytPeekBack)
   document.getElementById('hs-yt-peek-bar')?.remove()
   document.body.classList.remove('hs-yt-peek')
   for (const p of ['--hs-peek-top', '--hs-peek-left', '--hs-peek-w', '--hs-peek-h'])

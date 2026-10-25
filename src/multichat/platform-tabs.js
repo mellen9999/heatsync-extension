@@ -104,10 +104,12 @@ function ytPeekNative() {
   const pane = document.getElementById('hs-mc-container')
   if (!frame || !pane) return
   if (ytPeeking()) return
+  // close the picker first: it changes the pane's height, and the measure below must see the settled pane
+  document.getElementById('hs-mc-emote-picker')?.classList.remove('visible')
   // below the tab bar (it stays usable), over the messages and composer
   const paneR = pane.getBoundingClientRect()
   const top = document.getElementById('hs-mc-messages')?.getBoundingClientRect().top ?? paneR.top
-  const r = { top, left: paneR.left, width: paneR.width, height: paneR.bottom - top }
+  const r = { top, left: paneR.left, width: paneR.width, height: Math.min(paneR.bottom, innerHeight) - top }
   const BAR = 28
   const root = document.body.style
   root.setProperty('--hs-peek-top', `${Math.round(r.top + BAR)}px`)
@@ -132,8 +134,8 @@ function ytPeekNative() {
       frame.querySelector('#show-hide-button button')?.click()
     } catch (_) {}
   }
-  document.getElementById('hs-mc-emote-picker')?.classList.remove('visible')
   document.addEventListener('keydown', _ytPeekKey, true)
+  window.addEventListener('resize', ytPeekBack, { once: true }) // it is sized to the pane as it was
 }
 
 function _ytPeekKey(e) {
@@ -142,6 +144,7 @@ function _ytPeekKey(e) {
 
 function ytPeekBack() {
   document.removeEventListener('keydown', _ytPeekKey, true)
+  window.removeEventListener('resize', ytPeekBack)
   document.getElementById('hs-yt-peek-bar')?.remove()
   document.body.classList.remove('hs-yt-peek')
   for (const p of ['--hs-peek-top', '--hs-peek-left', '--hs-peek-w', '--hs-peek-h'])

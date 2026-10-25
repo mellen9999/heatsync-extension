@@ -40,44 +40,37 @@
 
   let emoteMap = new Map() // name → { name, url, hash, ... }
   let blockedEmotes = new Set()
+  let blockedByName = new Map() // name → emote, for the placeholder a blocked emote leaves in chat
   let inventoryLoaded = false
 
   let channelEmotesByOwner = {} // { ownerName: emote[] } — populated from background broadcasts
 
+  let lastInventory = []
+  let lastGlobals = []
+
   function rebuildEmoteMap(inventory, globals) {
+    lastInventory = inventory || []
+    lastGlobals = globals || []
     const map = new Map()
+    const hidden = new Map()
     // tier rides on each emote (0=channel/1=own/2=global) so findEmoteMatches ranks
     // channel > own > global — a channel emote beats own/global on a closer name match.
-    // Channel emotes are written LAST so the map keeps the CHANNEL image for a name
-    // you also own (the channel emote is what renders in this channel).
-    // Globals first (lowest priority) — tier 2
-    if (globals) {
-      for (const e of globals) {
-        if (e?.name && !blockedEmotes.has(e.hash || e.name)) {
-          e._ytTier = 2
-          map.set(e.name, e)
-        }
+    // Written lowest tier first, so the map keeps the CHANNEL image for a name you also own.
+    // A blocked emote leaves the map (no autocomplete, no strip) but chat keeps a placeholder for it.
+    const take = (list, tier) => {
+      for (const e of list || []) {
+        if (!e?.name) continue
+        e._ytTier = tier
+        if (blockedEmotes.has(e.hash || e.name)) hidden.set(e.name, e)
+        else map.set(e.name, e)
       }
     }
-    // Inventory — tier 1
-    if (inventory) {
-      for (const e of inventory) {
-        if (e?.name && !blockedEmotes.has(e.hash || e.name)) {
-          e._ytTier = 1
-          map.set(e.name, e)
-        }
-      }
-    }
-    // Channel emotes (BTTV/FFZ/7TV/Twitch sub) override — tier 0
+    take(globals, 2)
+    take(inventory, 1)
     for (const ownerEmotes of Object.values(channelEmotesByOwner)) {
-      if (!Array.isArray(ownerEmotes)) continue
-      for (const e of ownerEmotes) {
-        if (e?.name && !blockedEmotes.has(e.hash || e.name)) {
-          e._ytTier = 0
-          map.set(e.name, e)
-        }
-      }
+      if (Array.isArray(ownerEmotes)) take(ownerEmotes, 0)
     }
+    blockedByName = hidden
     emoteMap = map
     log('emote map rebuilt:', map.size, 'emotes')
   }
@@ -254,7 +247,7 @@
   }
 
   function replaceEmotesInElement(messageEl) {
-    if (!messageEl || emoteMap.size === 0) return
+    if (!messageEl || (emoteMap.size === 0 && blockedByName.size === 0)) return
 
     const walker = document.createTreeWalker(messageEl, NodeFilter.SHOW_TEXT)
     const textNodes = []
@@ -267,7 +260,7 @@
       const words = text.split(/(\s+)/)
       let hasEmote = false
       for (const w of words) {
-        if (emoteMap.has(w)) {
+        if (emoteMap.has(w) || blockedByName.has(w)) {
           hasEmote = true
           break
         }
@@ -297,12 +290,12 @@
           gap = ''
           continue
         }
-        const emote = emoteMap.get(word)
+        const emote = emoteMap.get(word) || blockedByName.get(word)
         if (emote) {
           const img = document.createElement('img')
           img.src = emote.url
           img.alt = emote.name
-          img.title = emote.name
+          if (!emoteMap.has(word)) img.dataset.hsBlocked = '1'
           img.className = 'heatsync-emote-yt'
           img.loading = 'lazy'
           lastImg = img
@@ -886,6 +879,29 @@
       @keyframes hs-fx-leave {
         0%{translate:0 0;scale:1}55%{translate:0 0;scale:1}
         80%{translate:18px 0;scale:.1}100%{translate:18px 0;scale:.1}
+      }
+      .heatsync-emote-yt[data-hs-blocked] {
+        opacity: 0 !important;
+        outline: calc(2px / var(--hs-mod-scale, 1)) dashed #ffffff !important;
+        outline-offset: calc(-2px / var(--hs-mod-scale, 1)) !important;
+        cursor: pointer !important;
+      }
+      .heatsync-emote-preview {
+        position: fixed !important;
+        z-index: 2147483647 !important;
+        pointer-events: none !important;
+        background: #000000 !important;
+        padding: 6px !important;
+        display: none !important;
+      }
+      .heatsync-emote-preview.active { display: block !important; }
+      .heatsync-emote-preview .row { display: flex !important; gap: 12px !important; align-items: flex-start !important; }
+      .heatsync-emote-preview .item { display: flex !important; flex-direction: column !important; align-items: center !important; }
+      .heatsync-emote-preview img { display: block !important; image-rendering: pixelated !important; }
+      .heatsync-emote-preview .name {
+        color: #ffffff !important;
+        font: 600 11px monospace !important;
+        margin-top: 4px !important;
       }
       .heatsync-emote-yt {
         height: var(--hs-emote-height, 28px) !important;
@@ -1784,23 +1800,91 @@
       if (img?.nodeName !== 'IMG' || !img.classList.contains('heatsync-emote-yt')) return
       e.preventDefault()
       e.stopImmediatePropagation()
-      const emoteName = img.alt || img.title || ''
-      if (!emoteName) return
-      const emote = emoteMap.get(emoteName)
+      const emote = emoteMap.get(img.alt) || blockedByName.get(img.alt)
       if (!emote?.hash) return
-      blockedEmotes.add(emote.hash)
-      img.style.opacity = '0.3'
-      safeSendMessage({ type: 'block_emote', emoteHash: emote.hash, emoteName: emote.name }).then((result) => {
+      const was = blockedEmotes.has(emote.hash)
+      const paint = (blocked) => {
+        for (const el of document.querySelectorAll('img.heatsync-emote-yt')) {
+          if (el.alt === emote.name) el.toggleAttribute('data-hs-blocked', blocked)
+        }
+      }
+      if (was) blockedEmotes.delete(emote.hash)
+      else blockedEmotes.add(emote.hash)
+      paint(!was)
+      rebuildEmoteMap(lastInventory, lastGlobals)
+      safeSendMessage({ type: was ? 'unblock_emote' : 'block_emote', hash: emote.hash }).then((result) => {
         if (result?.success === false) {
-          blockedEmotes.delete(emote.hash)
-          img.style.opacity = ''
-          showYtToast('block failed')
+          if (was) blockedEmotes.add(emote.hash)
+          else blockedEmotes.delete(emote.hash)
+          paint(was)
+          rebuildEmoteMap(lastInventory, lastGlobals)
+          showYtToast(`${was ? 'unblock' : 'block'} failed`)
         } else {
-          showYtToast(`blocked: ${escapeHtml(emote.name)}`)
+          showYtToast(`${was ? 'unblocked' : 'blocked'}: ${escapeHtml(emote.name)}`)
         }
       })
     },
     { capture: true, signal },
+  )
+
+  // ─── Hover preview on YT emotes (the only tooltip; the native title is gone) ────
+
+  const emotePreview = document.createElement('div')
+  emotePreview.className = 'heatsync-emote-preview'
+  document.body.appendChild(emotePreview)
+  signal.addEventListener('abort', () => emotePreview.remove(), { once: true })
+
+  const previewScale = (w, h) => Math.min(4, (innerWidth - 40) / w, (innerHeight - 100) / h)
+
+  function showEmotePreview(anchor) {
+    const stack = anchor.closest('.heatsync-emote-stack')
+    const imgs = [...(stack || anchor.parentNode).querySelectorAll('img.heatsync-emote-yt')].filter(
+      (i) => !i.hasAttribute('data-hs-blocked'),
+    )
+    if (!imgs.length) return
+    const row = document.createElement('div')
+    row.className = 'row'
+    for (const i of imgs) {
+      const w = i.offsetWidth || 28
+      const h = i.offsetHeight || 28
+      const k = previewScale(w, h)
+      const item = document.createElement('div')
+      item.className = 'item'
+      const big = document.createElement('img')
+      big.src = i.src
+      big.style.width = `${w * k}px`
+      big.style.height = `${h * k}px`
+      const name = document.createElement('div')
+      name.className = 'name'
+      name.textContent = i.alt
+      item.append(big, name)
+      row.appendChild(item)
+    }
+    emotePreview.replaceChildren(row)
+    emotePreview.classList.add('active')
+    const r = (stack || anchor).getBoundingClientRect()
+    const box = emotePreview.getBoundingClientRect()
+    const left = Math.max(8, Math.min(innerWidth - box.width - 8, r.left + r.width / 2 - box.width / 2))
+    const above = r.top - box.height - 8
+    emotePreview.style.left = `${left}px`
+    emotePreview.style.top = `${above < 8 ? r.bottom + 8 : above}px`
+  }
+
+  document.addEventListener(
+    'mouseover',
+    (e) => {
+      const img = e.target instanceof Element ? e.target.closest('img.heatsync-emote-yt') : null
+      if (img) showEmotePreview(img)
+      else emotePreview.classList.remove('active')
+    },
+    { passive: true, signal },
+  )
+  document.addEventListener(
+    'mouseout',
+    (e) => {
+      if (!e.relatedTarget) emotePreview.classList.remove('active')
+    },
+    { passive: true, signal },
   )
 
   // ─── Insert emote from picker ─────────────────────────────────────────────────

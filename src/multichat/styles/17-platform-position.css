@@ -1461,6 +1461,11 @@
     body.hs-yt-peek.hs-platform-yt:not(.hs-offline) ytd-watch-flexy #secondary-inner > #chat-container {
       display: block !important;
     }
+    /* #secondary carries a view-transition-name, which makes it a stacking context pinned under our pane
+       however high the frame inside it is raised */
+    body.hs-yt-peek ytd-watch-flexy #secondary {
+      view-transition-name: none !important;
+    }
     body.hs-yt-peek ytd-live-chat-frame#chat {
       display: block !important;
       position: fixed !important;

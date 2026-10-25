@@ -1,6 +1,6 @@
 // platform-tabs.js — the picker's kick and youtube tabs, the way the twitch tab holds twitch's own
 // actions. Kick's are links the page does not already carry; youtube's can't be reproduced (super chat,
-// stickers, polls, emoji are YouTube's own flows), so its first row brings YouTube's real chat up in
+// stickers, polls, emoji are YouTube's own flows), so its first row brings the native chat up in
 // place of ours until you go back.
 
 const _ptGlyph = { link: '↗', chat: '▤' }
@@ -75,7 +75,7 @@ function _ptYtOwnerPath() {
 function renderYoutubeTab() {
   const owner = _ptYtOwnerPath()
   const rows = [
-    { label: 'youtube chat (super chat, stickers, polls, emoji)', glyph: _ptGlyph.chat, onClick: ytPeekNative },
+    { label: 'native chat (super chat, stickers, polls, emoji)', glyph: _ptGlyph.chat, onClick: ytPeekNative },
   ]
   if (owner) {
     rows.push({

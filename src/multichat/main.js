@@ -6858,6 +6858,14 @@
       _markOverlayRenderOk(true)
     } catch (e) {
       console.warn('[heatsync-ext] overlay mount pass threw:', label, e?.message || e, e?.stack)
+      hsDiag('mount_fail', {
+        label,
+        msg: String(e?.message || e).slice(0, 160),
+        at: String(e?.stack || '')
+          .split('\n')[1]
+          ?.trim()
+          .slice(0, 160),
+      })
       _markOverlayRenderOk(false)
       try {
         setNativeChatHidden(false)

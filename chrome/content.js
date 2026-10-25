@@ -8172,7 +8172,7 @@
     const kept = nameEl.style.color
     if (nameEl.hasAttribute('style')) nameEl.removeAttribute('style')
     // The compiled rules address `.hsp-<hash>>.hs-name`: the box is not optional.
-    const boxed = nameEl.firstElementChild?.classList.contains(NAME_BOX_CLASS)
+    const boxed = nameEl.firstElementChild?.classList.contains(hsPaintKit().NAME_BOX_CLASS)
     if (!boxed && nameEl.textContent) {
       try {
         nameEl.innerHTML = hsPaintKit().paintNameHtmlFor(nameEl.textContent, hsPaintKit().paintMarkupMode(entry.spec))

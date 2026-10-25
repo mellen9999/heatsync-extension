@@ -14,3 +14,8 @@ test('content.js paints through the kit multichat-core publishes, not its own co
 test('the build no longer embeds the paint compiler into content.js', () => {
   expect(read('build.js')).not.toMatch(/file === 'youtube-content\.js' \|\| file === 'content\.js'/)
 })
+
+test('content.js reads every compiler name from the kit — a bare NAME_BOX_CLASS threw on each native row', () => {
+  expect(read('src/multichat/paints.js')).toMatch(/window\.__hsPaintKit\s*=\s*\{[^}]*NAME_BOX_CLASS/)
+  expect(read('chrome/content.js')).not.toMatch(/[^.\w]NAME_BOX_CLASS/)
+})

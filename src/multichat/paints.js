@@ -55,7 +55,14 @@
 // content.js (native twitch/kick rows) shares this isolated world and paints
 // with the same compiler instead of embedding its own ~90KB copy.
 try {
-  window.__hsPaintKit = { compilePaintCss, hashPaintSpec, paintNameHtmlFor, paintMarkupMode, paintPhaseNow }
+  window.__hsPaintKit = {
+    compilePaintCss,
+    hashPaintSpec,
+    paintNameHtmlFor,
+    paintMarkupMode,
+    paintPhaseNow,
+    NAME_BOX_CLASS,
+  }
 } catch (_) {}
 
 const HS_PAINT_CACHE_MAX = 500

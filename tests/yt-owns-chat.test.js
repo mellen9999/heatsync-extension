@@ -14,7 +14,7 @@ const css = src('multichat/styles/17-platform-position.css')
 describe('youtube owns the chat', () => {
   test('one decision: the user switched youtube chat off — a premiere is not a reason', () => {
     expect(main).toContain("const ytOwnsChat = () => gateAtBoot('chat-youtube') === false")
-    expect(main).not.toContain('ytp-offline-slate')
+    expect(main.match(/const ytOwnsChat = [^\n]*/)[0]).not.toContain('slate')
   })
 
   test('the panel, the frame hide and the css all follow it', () => {
@@ -22,5 +22,10 @@ describe('youtube owns the chat', () => {
     expect(main).toContain("document.body.classList.toggle('hs-yt-owns-chat', ownsChat)")
     expect(main).toContain('(!ownsChat &&') // panel visibility
     expect(css).toContain('body:not(.hs-yt-owns-chat):has(#hs-mc-container) ytd-live-chat-frame#chat')
+  })
+
+  test('a premiere keeps its chat frame loaded: it is the only feed and the send path', () => {
+    expect(main).toContain("'#movie_player .ytp-offline-slate'")
+    expect(main).toContain("!frameEl.hasAttribute('collapsed') && !ytFrameIsTheFeed()")
   })
 })

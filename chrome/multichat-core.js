@@ -14962,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f654402d00e2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f3e4eb559e0e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69481,6 +69481,13 @@ const STORAGE_KEY = 'heatsync_multichat'
   // live stream's (verified on a real premiere), so it gets the full multichat. The one place this is
   // decided — the panel, the frame hide and the css all follow it, so they cannot disagree.
   const ytOwnsChat = () => gateAtBoot('chat-youtube') === false
+  // A premiere or scheduled stream (the player shows YouTube's offline slate): nothing server-side feeds or
+  // sends its chat, so YouTube's own chat frame IS the feed and the send path. It stays loaded — hidden,
+  // never collapsed (collapsing makes YouTube unload the frame and the relay inside it goes with it).
+  const ytFrameIsTheFeed = () => {
+    const slate = document.querySelector('#movie_player .ytp-offline-slate')
+    return !!slate && slate.getClientRects().length > 0
+  }
 
   // Whether the user has chosen to show native platform chat alongside HS.
   // Persisted via settings registry (key: nativeVisible). Default false = same
@@ -81936,10 +81943,18 @@ const STORAGE_KEY = 'heatsync_multichat'
         // gap where yt still reserved its chat column (live-verified: click
         // yt's own collapse → collapsed attr → player snaps to full row).
         // Drive yt's real collapse; the attr guard makes this a one-shot.
-        if (showYtChat && confirmedLive && frameEl && !frameEl.hasAttribute('collapsed')) {
+        if (showYtChat && confirmedLive && frameEl && !frameEl.hasAttribute('collapsed') && !ytFrameIsTheFeed()) {
           try {
             frameEl.querySelector('#show-hide-button button')?.click()
             _hsCollapsedNativeYt = true
+          } catch (_) {}
+        }
+        // Arrived on a premiere with the frame still collapsed by us on the page before: reopen it, the
+        // relay inside it is this page's only feed.
+        if (ytFrameIsTheFeed() && frameEl && _hsCollapsedNativeYt && frameEl.hasAttribute('collapsed')) {
+          try {
+            frameEl.querySelector('#show-hide-button button')?.click()
+            _hsCollapsedNativeYt = false
           } catch (_) {}
         }
         // Symmetric restore — if the panel goes away (opt-out flip, stream

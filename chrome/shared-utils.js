@@ -316,8 +316,18 @@ const browser = globalThis.browser || chrome
     return _mainWorldNonce
   }
 
+  // The per-site "heatsync chat on" switch (the popup's, the settings page's): off hands the page its own
+  // chat back, decided at the next load. `on` false turns heatsync chat off for that site. Resolves once
+  // stored, so the caller may reload right after.
+  async function setSiteOverlay(gate, on) {
+    const ui = (await browser.storage.sync.get('ui_settings'))?.ui_settings || {}
+    const subsystems = { ...(ui.subsystems || {}), [gate]: !!on }
+    await browser.storage.sync.set({ ui_settings: { ...ui, subsystems } })
+  }
+
   window.HS = {
     createLifecycle,
+    setSiteOverlay,
     getFiber,
     findComponent,
     safeSend,

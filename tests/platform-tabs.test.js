@@ -50,4 +50,13 @@ describe('platform picker tabs', () => {
     expect(main).toContain('_savedYtNative = stored.ui_settings?.ytNative === true')
     expect(main).toContain('_savedYtNative && frameEl && !ytPeeking()')
   })
+
+  test('twitch and kick get a native chat row that is the per-site switch, with the way back on the hs button', () => {
+    const twitch = src('twitch-api.js')
+    const btn = readFileSync(join(import.meta.dir, '..', 'chrome', 'heatsync-button.js'), 'utf8')
+    expect(tabs).toContain('window.HS.setSiteOverlay(gate, false)')
+    expect(tabs).toContain('prepend(nativeChatRow())')
+    expect(twitch).toContain('nativeChatRow()')
+    expect(btn).toContain('window.HS.setSiteOverlay(siteGate, true)')
+  })
 })

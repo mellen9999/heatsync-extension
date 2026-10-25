@@ -51,6 +51,17 @@ function _ptFill(id, rows, emptyText) {
   container.appendChild(wrap)
 }
 
+// The page's own chat, for twitch and kick: heatsync chat goes off for this site and the page reloads
+// to its native chat. The way back is the hs button on that chat (heatsync-button.js). Stays off across
+// reloads, like the youtube native chat view. It is the popup's per-site switch, written from the page.
+function nativeChatRow() {
+  const gate = { twitch: 'overlay-twitch', kick: 'overlay-kick', yt: 'overlay-youtube' }[hostPlatform]
+  return _ptRow('native chat', _ptGlyph.chat, async () => {
+    await window.HS.setSiteOverlay(gate, false)
+    location.reload()
+  })
+}
+
 function renderKickTab() {
   const ch = String(getCurrentChannel() || '').toLowerCase()
   const rows = /^[a-z0-9_-]{1,40}$/.test(ch)
@@ -62,6 +73,7 @@ function renderKickTab() {
       ]
     : []
   _ptFill('hs-mc-tab-kick', rows, 'no channel detected')
+  document.querySelector('#hs-mc-tab-kick .hs-mc-pred-links')?.prepend(nativeChatRow())
 }
 
 // The channel that owns the video on screen, as a path ("/@handle") — read off the page's own link, never guessed.

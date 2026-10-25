@@ -47,6 +47,11 @@
     window.__heatsyncBtnLifecycle = { abort: _abortLifecycle }
 
     const BUTTON_ID = 'heatsync-chat-button'
+    const SITE_GATES = [
+      ['twitch.tv', 'overlay-twitch'],
+      ['kick.com', 'overlay-kick'],
+      ['youtube.com', 'overlay-youtube'],
+    ]
     const PANEL_ID = 'heatsync-panel'
     const _API_URL = 'https://heatsync.org'
 
@@ -531,6 +536,12 @@
       .heatsync-panel-close:hover {
         background: #fff;
         color: #000;
+      }
+
+      .heatsync-panel-back {
+        margin-left: auto;
+        margin-right: 8px;
+        font: 13px monospace;
       }
 
 
@@ -2258,6 +2269,14 @@
 
       const iconUrl = getIconUrl()
       await getAuthToken()
+      // Heatsync chat switched off for this site (the popup's switch, or "native chat" in the picker):
+      // the page is on its own chat, and this panel is the way back.
+      const siteGate = SITE_GATES.find(([host]) => location.hostname.endsWith(host))?.[1]
+      let overlayOff = false
+      try {
+        overlayOff =
+          !!siteGate && (await browser.storage.sync.get('ui_settings'))?.ui_settings?.subsystems?.[siteGate] === false
+      } catch (_) {}
       const isLoggedIn = cachedAuthToken !== null
 
       panel.innerHTML = `
@@ -2266,6 +2285,7 @@
           ${iconUrl ? `<img src="${iconUrl}" alt="heatsync">` : '🔥'}
           <span>heatsync</span>
         </div>
+        ${overlayOff ? '<button class="heatsync-panel-close heatsync-panel-back">← heatsync chat</button>' : ''}
         <button class="heatsync-panel-close" aria-label="Close">✕</button>
       </div>
       ${
@@ -2363,7 +2383,15 @@
       }
 
       // Close button handler
-      panel.querySelector('.heatsync-panel-close')?.addEventListener('click', closePanel)
+      panel.querySelector('.heatsync-panel-close:not(.heatsync-panel-back)')?.addEventListener('click', closePanel)
+      panel.querySelector('.heatsync-panel-back')?.addEventListener('click', async () => {
+        await window.HS.setSiteOverlay(siteGate, true)
+        try {
+          window.top.location.reload()
+        } catch (_) {
+          location.reload()
+        }
+      })
 
       // Size buttons handler
       const grid = document.getElementById('heatsync-emote-grid')

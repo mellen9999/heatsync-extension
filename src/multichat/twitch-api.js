@@ -1788,6 +1788,11 @@ async function renderTwitchTab() {
   const channel = getActiveTwitchChannel()
   container.textContent = ''
 
+  const native = document.createElement('div')
+  native.className = 'hs-mc-pred-links'
+  native.appendChild(nativeChatRow())
+  container.appendChild(native)
+
   // Sub-tab bar always at top
   container.appendChild(buildTwSubtabBar())
 

@@ -5237,21 +5237,22 @@
       })
       const column = () =>
         document.querySelector(
-          location.hostname.endsWith('kick.com')
-            ? '#channel-chatroom'
-            : '.stream-chat, .chat-shell, [data-a-target="chat-room-component"], [data-test-selector="chat-room-component-layout"], .chat-room',
+          location.hostname.endsWith('kick.com') ? '#channel-chatroom' : '.right-column, .chat-shell',
         ) ||
         // a popout is nothing but the chat: the whole page is the column
         (/^\/popout\//.test(location.pathname) ? document.body : null)
+      // twitch folds the column to nothing until the viewer opens chat: the bar shows only while it is open
       const place = () => {
         const el = column()
         if (!el) return false
         const r = el.getBoundingClientRect()
-        if (!r.width) return false
-        bar.style.top = `${Math.round(r.top)}px`
-        bar.style.left = `${Math.round(r.left)}px`
-        bar.style.width = `${Math.round(r.width)}px`
-        bar.style.visibility = 'visible'
+        const open = r.width > 40 && !el.matches('[class*="right-column--collapsed"]')
+        if (open) {
+          bar.style.top = `${Math.round(r.top)}px`
+          bar.style.left = `${Math.round(r.left)}px`
+          bar.style.width = `${Math.round(r.width)}px`
+        }
+        bar.style.visibility = open ? 'visible' : 'hidden'
         return true
       }
       document.head.append(style)

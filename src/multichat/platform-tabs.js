@@ -128,6 +128,8 @@ function ytPeekNative() {
       frame.querySelector('#show-hide-button button')?.click()
     } catch (_) {}
   }
+  _savedYtNative = true
+  saveUiSetting('ytNative', true)
   document.addEventListener('keydown', _ytPeekKey, true)
   // it follows the pane: a window resize or a drag of the chat's own edge re-fits it, it never drops out
   window.addEventListener('resize', ytPeekFit)
@@ -163,6 +165,8 @@ function _ytPeekKey(e) {
 }
 
 function ytPeekBack() {
+  _savedYtNative = false
+  saveUiSetting('ytNative', false)
   document.removeEventListener('keydown', _ytPeekKey, true)
   window.removeEventListener('resize', ytPeekFit)
   _ytPeekRO?.disconnect()

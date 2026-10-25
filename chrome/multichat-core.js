@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f93e4d6b1c4b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6b8376ab6c48' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -35632,6 +35632,8 @@ function ytPeekNative() {
       frame.querySelector('#show-hide-button button')?.click()
     } catch (_) {}
   }
+  _savedYtNative = true
+  saveUiSetting('ytNative', true)
   document.addEventListener('keydown', _ytPeekKey, true)
   // it follows the pane: a window resize or a drag of the chat's own edge re-fits it, it never drops out
   window.addEventListener('resize', ytPeekFit)
@@ -35667,6 +35669,8 @@ function _ytPeekKey(e) {
 }
 
 function ytPeekBack() {
+  _savedYtNative = false
+  saveUiSetting('ytNative', false)
   document.removeEventListener('keydown', _ytPeekKey, true)
   window.removeEventListener('resize', ytPeekFit)
   _ytPeekRO?.disconnect()
@@ -80887,6 +80891,8 @@ const STORAGE_KEY = 'heatsync_multichat'
   }
 
   let _savedActiveTab = null
+  // native chat stays up across reloads until the viewer goes back to heatsync chat by hand
+  let _savedYtNative = false
   // 'discover' is feed's second cell now, so it restores like any other tab.
   // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
   // silently bounced you to 'live' every reload if that's where you were.
@@ -80895,6 +80901,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     try {
       const stored = await cachedUiSettings()
       const saved = stored.ui_settings?.activeTab || 'live'
+      _savedYtNative = stored.ui_settings?.ytNative === true
       // Validate: must be a built-in tab or a configured channel (never restore 'add')
       const channelIds = config.channels.map((c) => c.id)
       _savedActiveTab = saved !== 'add' && (BUILTIN_TABS.includes(saved) || channelIds.includes(saved)) ? saved : 'live'
@@ -82153,6 +82160,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         // Hide native YT chat once it mounts — but ONLY when we're showing our
         // panel in its place AND the page is confirmed live. On a replay VOD
         // (no opt-in) we leave YT's chat replay visible.
+        // Went native last time and never came back: the frame is up, so take the pane again.
+        if (_savedYtNative && frameEl && !ytPeeking() && document.getElementById('hs-mc-container')) ytPeekNative()
         if (showYtChat && confirmedLive && frameEl && frameEl.style.display !== 'none' && !ytPeeking()) {
           frameEl.style.display = 'none'
           _hsHidNativeYt = true

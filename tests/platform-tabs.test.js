@@ -41,4 +41,13 @@ describe('platform picker tabs', () => {
     expect(css).toContain('body.hs-yt-peek ytd-watch-flexy #secondary {') // its view-transition-name pins a stacking context
     expect(css).toContain('#secondary-inner > #chat-container {') // the sidebar sweep hides its parent
   })
+
+  test('native chat stays up across reloads until the viewer goes back by hand', () => {
+    const main = src('main.js')
+    expect(tabs).toContain("saveUiSetting('ytNative', true)")
+    expect(tabs).toContain("saveUiSetting('ytNative', false)")
+    expect(tabs).not.toContain("addEventListener('resize', ytPeekBack") // a resize re-fits, it never exits
+    expect(main).toContain('_savedYtNative = stored.ui_settings?.ytNative === true')
+    expect(main).toContain('_savedYtNative && frameEl && !ytPeeking()')
+  })
 })

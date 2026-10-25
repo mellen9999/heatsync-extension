@@ -11751,6 +11751,8 @@
   }
 
   let _savedActiveTab = null
+  // native chat stays up across reloads until the viewer goes back to heatsync chat by hand
+  let _savedYtNative = false
   // 'discover' is feed's second cell now, so it restores like any other tab.
   // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
   // silently bounced you to 'live' every reload if that's where you were.
@@ -11759,6 +11761,7 @@
     try {
       const stored = await cachedUiSettings()
       const saved = stored.ui_settings?.activeTab || 'live'
+      _savedYtNative = stored.ui_settings?.ytNative === true
       // Validate: must be a built-in tab or a configured channel (never restore 'add')
       const channelIds = config.channels.map((c) => c.id)
       _savedActiveTab = saved !== 'add' && (BUILTIN_TABS.includes(saved) || channelIds.includes(saved)) ? saved : 'live'
@@ -13017,6 +13020,8 @@
         // Hide native YT chat once it mounts — but ONLY when we're showing our
         // panel in its place AND the page is confirmed live. On a replay VOD
         // (no opt-in) we leave YT's chat replay visible.
+        // Went native last time and never came back: the frame is up, so take the pane again.
+        if (_savedYtNative && frameEl && !ytPeeking() && document.getElementById('hs-mc-container')) ytPeekNative()
         if (showYtChat && confirmedLive && frameEl && frameEl.style.display !== 'none' && !ytPeeking()) {
           frameEl.style.display = 'none'
           _hsHidNativeYt = true

@@ -6001,6 +6001,8 @@
   // BTTV/FFZ modifier definitions live in src/lib/modifiers.js (bundled).
   // Aliases for backward-compat across this file:
   const HS_MODIFIER_CLASSES = HS_MOD_TOKENS
+  // The kick input hook is a plain copied file with no lib: it asks this to tell a modifier word from an emote
+  if (window.HS) window.HS.isModifierWord = (word) => hsModClassify(word).kind === 'modifier'
   const HS_C_HEX_RE = HS_MOD_C_HEX_RE
   // Static, sorted longest-first — used inside per-word hot path of applyModifiersAcrossMessage.
   // Hoisting saves ~167k allocations/min at 1000 msgs/min × 10 words/msg.

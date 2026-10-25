@@ -95,3 +95,12 @@ describe('cold list first paint', () => {
     expect(main).toContain('top0 + (el.scrollHeight - h0)')
   })
 })
+
+describe('style recalc cost', () => {
+  test("the banner strip is a class derived from the container's children, not a :has() on the container", () => {
+    const pos = src('styles/17-platform-position.css')
+    expect(pos).toContain('#hs-mc-container.hs-has-banner {')
+    expect(pos).not.toMatch(/#hs-mc-container:has\(> \.hs-mc-(auth|api)-banner/)
+    expect(src('main.js')).toContain("'hs-has-banner'")
+  })
+})

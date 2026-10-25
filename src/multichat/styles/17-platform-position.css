@@ -474,9 +474,7 @@
        border-top so abs-positioned children (tabbar/messages/inputbar) shift
        down and don't sit under the banner. The banner itself uses top:-28px
        to land in the border zone (= container's outer top edge). */
-    #hs-mc-container:has(> .hs-mc-auth-banner),
-    #hs-mc-container:has(> .hs-mc-api-banner),
-    #hs-mc-container:has(> [class*="hs-mc-api-banner-"]) {
+    #hs-mc-container.hs-has-banner {
       border-top: 28px solid transparent !important;
     }
     .hs-mc-auth-banner,

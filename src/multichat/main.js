@@ -6143,6 +6143,19 @@
     // the nav event fires the panel is detached and invisible to
     // getElementById. softTwitchNav re-adopts this node with its state intact.
     _hsMcContainerNode = container
+    // The panel reserves a 28px strip while a status banner is its child. That used to be a :has() rule on
+    // the container, which costs every style recalc in the page (~100ms with the list full): the class is
+    // derived from the container's own children here instead, one cheap childList observer.
+    const _syncBannerStrip = () =>
+      container.classList.toggle(
+        'hs-has-banner',
+        !!container.querySelector(
+          ':scope > .hs-mc-auth-banner, :scope > .hs-mc-api-banner, :scope > [class*="hs-mc-api-banner-"]',
+        ),
+      )
+    const _bannerObs = new MutationObserver(_syncBannerStrip)
+    _bannerObs.observe(container, { childList: true })
+    cleanup.trackObserver(_bannerObs)
     // On Kick: insert as SIBLING of #channel-chatroom (not child!) to avoid
     // breaking Kick's React virtual scroll. React's reconciliation errors
     // corrupt native chat when our container is inside its managed tree.

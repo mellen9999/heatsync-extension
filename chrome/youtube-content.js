@@ -2267,6 +2267,8 @@
         if (processExisting) {
           for (const child of el.children) queueProcess(child)
         }
+        // rows already in this list are not relayed again, but they still get their emotes
+        syncRows()
 
         // Watch for new messages. One shared queue + one drain per tick, NOT
         // one rAF per message: a hidden popout live_chat tab never gets a rAF,

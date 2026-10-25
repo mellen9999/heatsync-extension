@@ -23,3 +23,8 @@ test('yt re-sweeps existing rows whenever the emote map is rebuilt', () => {
   expect(src).toMatch(/emoteMap = map[\s\S]{0,80}syncRows\(\)/)
   expect(src).not.toMatch(/if \(messageEl && emoteMap\.size > 0\)/)
 })
+
+// a re-attach to a swapped chat list skips relaying its rows, which also skipped their emotes
+test('yt gives a freshly attached chat list its emotes', () => {
+  expect(src).toMatch(/not relayed again[\s\S]{0,80}syncRows\(\)/)
+})

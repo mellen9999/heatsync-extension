@@ -561,6 +561,7 @@ function checkReservedPathsParity() {
     ['chrome/background.js', join(__dirname, 'chrome', 'background.js')],
     ['chrome/popup.js', join(__dirname, 'chrome', 'popup.js')],
     ['chrome/early-layout.js', join(__dirname, 'chrome', 'early-layout.js')],
+    ['chrome/kick-css-fix.js', join(__dirname, 'chrome', 'kick-css-fix.js')],
   ]
   for (const [label, path] of files) {
     const copy = extractSet(readFileSync(path, 'utf8'), 'RESERVED_PATHS')
@@ -571,7 +572,9 @@ function checkReservedPathsParity() {
       )
     }
   }
-  console.log('  RESERVED_PATHS parity: reserved-paths.js ⇄ background.js ⇄ popup.js ⇄ early-layout.js match ✓')
+  console.log(
+    '  RESERVED_PATHS parity: reserved-paths.js ⇄ background.js ⇄ popup.js ⇄ early-layout.js ⇄ kick-css-fix.js match ✓',
+  )
 }
 
 // Guard 7: escapeHtml coverage parity.

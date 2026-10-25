@@ -551,10 +551,12 @@
   // chat-on-all-pages on: the page IS a chat surface, the panel would dock
   // over the replay it exists to show.
   const isYtReplayPopout = hostPlatform === 'yt' && /^\/live_chat_replay/.test(location.pathname)
-  // A premiere or scheduled stream: the player shows YouTube's offline slate and the only
-  // chat that exists is YouTube's own (no channel feed to overlay). The one place this is
-  // decided — the panel, the frame hide and the css all follow it, so they cannot disagree.
+  // YouTube's own chat is the one on screen: when the user switched hs chat off for youtube, or on a
+  // premiere or scheduled stream (the player shows YouTube's offline slate and the only chat that
+  // exists is YouTube's, with no channel feed to overlay). The one place this is decided — the
+  // panel, the frame hide and the css all follow it, so they cannot disagree.
   const ytOwnsChat = () => {
+    if (gateAtBoot('chat-youtube') === false) return true
     const slate = document.querySelector('#movie_player .ytp-offline-slate')
     return !!slate && slate.getClientRects().length > 0
   }
@@ -12932,7 +12934,7 @@
         const liveChatFramePresent = !!frameEl && !isReplayChat
         const ytAutoLiveMsgs = _ytFlowing
         const ownsChat = ytOwnsChat()
-        document.body.classList.toggle('hs-yt-upcoming', ownsChat)
+        document.body.classList.toggle('hs-yt-owns-chat', ownsChat)
         // YouTube's chat is the only chat on this page: give back a frame we hid on an earlier page
         if (ownsChat && frameEl?.dataset.hsHidden) {
           frameEl.style.display = frameEl.dataset.hsPrevDisplay || ''

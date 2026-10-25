@@ -159,8 +159,8 @@ test('a popout never waits on rAF or the 1s starved timer', () => {
   expect(main).toMatch(/function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setTimeout\(fn, 16\)/)
 })
 
-test('the diff renderer repairs rows left out of desired order instead of burying new lines above them', () => {
+test('a new row anchors on its desired predecessor, never on a shared cursor', () => {
   const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
-  expect(main).toMatch(/placedNodes\.push\(div\)/)
-  expect(main).toMatch(/hsDiagLog\('dom_inversion'/)
+  expect(main).toMatch(/if \(prevNode\) after = prevNode\.nextSibling/)
+  expect(main).not.toMatch(/domIdx/)
 })

@@ -16,3 +16,9 @@ test('a blocked native emote hides its picture, keeps its dashed outline', () =>
   expect(rule('img[data-hs-name-blocked] {')).toContain('dashed #ffffff')
   expect(src).not.toMatch(/blocked \? 'opacity: 0;'/)
 })
+
+// the row you just sent is twitch's own emote img in a fixed square box; a wide heatsync emote came out squeezed
+test('a sent heatsync emote in a twitch row keeps its full width', () => {
+  expect(src).toMatch(/\.chat-line__message img\.chat-line__message--emote:not\(\[src\*="jtvnw\.net"\]\)/)
+  expect(src).toMatch(/\.chat-image__container:has\(img\.chat-line__message--emote/)
+})

@@ -1590,10 +1590,13 @@
 
   /* Locally name-blocked emotes — fully hidden but kept in flow (not display:none)
      so the element stays right-clickable for unblock; a dim/grayscale image was
-     still legible for gore/NSFW content, which defeats the point of blocking. */
+     still legible for gore/NSFW content, which defeats the point of blocking. The picture is
+     cut away (object-view-box) so the dashed outline stays: opacity 0 would hide it too and
+     leave nothing to right-click. */
   img[data-hs-name-blocked] {
-    opacity: 0 !important;
-    filter: grayscale(1) !important;
+    object-view-box: inset(100%) !important;
+    outline: 2px dashed #ffffff !important;
+    outline-offset: -2px !important;
     cursor: pointer !important;
   }
 
@@ -1607,7 +1610,7 @@
      Outline width inverse-scales with modifier transform so visual stays 2px
      even when wrapper has scale(2,1) etc. */
   .heatsync-emote-wrapper.emote-overlay-blocked > img.heatsync-emote {
-    opacity: 0 !important;
+    object-view-box: inset(100%) !important; /* hides the picture only: opacity would hide the outline too */
     outline: calc(2px / var(--hs-mod-scale, 1)) dashed #ffffff !important;
     outline-offset: calc(-2px / var(--hs-mod-scale, 1)) !important;
   }
@@ -6619,7 +6622,7 @@
     if (modList?.includes('cursed')) modFilter += ' hue-rotate(0deg)' // anchor; CSS animation overrides
     if (modColorHue != null) modFilter += ` hue-rotate(${modColorHue}deg) saturate(1.6)`
     const filterStyle = modFilter.trim() ? `filter:${modFilter} !important;` : ''
-    img.style.cssText = `display: block !important; width: auto !important; height: ${isOverlay ? 'auto' : 'var(--hs-emote-height, 28px)'} !important; max-width: none !important; max-height: none !important; ${blocked ? 'opacity: 0;' : ''} cursor: pointer; ${filterStyle}`
+    img.style.cssText = `display: block !important; width: auto !important; height: ${isOverlay ? 'auto' : 'var(--hs-emote-height, 28px)'} !important; max-width: none !important; max-height: none !important; ${blocked ? 'object-view-box: inset(100%);' : ''} cursor: pointer; ${filterStyle}`
     // Overlay images need explicit natural dims so Twitch CSS can't constrain them.
     // Fire even when blocked so a later unblock has correct dims (img is opacity:0
     // while blocked, so this is layout-only — no visual flash).
@@ -7012,7 +7015,7 @@
         // Primary img rendered while blocked has inline opacity:0 — clear it so
         // unblock-via-variant-swap restores visibility. Blocked rendering re-applies
         // via the emote-overlay-blocked class CSS rule, not inline opacity.
-        img.style.removeProperty('opacity')
+        img.style.removeProperty('object-view-box')
         // Lazy-load src on first activation. Subsequent swaps are instant (cached).
         if (!img.src && img.dataset.emoteUrl) img.src = img.dataset.emoteUrl
       } else {
@@ -7155,17 +7158,17 @@
 
         case 'added':
           if (wrapper) wrapper.classList.add('emote-overlay-owned')
-          if (img.style.opacity) img.style.removeProperty('opacity')
+          img.style.removeProperty('object-view-box')
           img.classList.add('emote-in-set')
           break
 
         case 'global':
           if (wrapper) wrapper.classList.add('emote-overlay-global')
-          if (img.style.opacity) img.style.removeProperty('opacity')
+          img.style.removeProperty('object-view-box')
           break
         default:
           if (wrapper) wrapper.classList.add('emote-overlay-unadded')
-          if (img.style.opacity) img.style.removeProperty('opacity')
+          img.style.removeProperty('object-view-box')
           break
       }
     })
@@ -8639,7 +8642,7 @@
       wrapper.classList.add(targetClass)
 
       if (img) {
-        if (img.style.opacity) img.style.removeProperty('opacity')
+        img.style.removeProperty('object-view-box')
         img.classList.remove('emote-blocked')
         if (inInventory) img.classList.add('emote-in-set')
         else img.classList.remove('emote-in-set')

@@ -560,6 +560,16 @@ try {
   globalThis.__hsFindPendingByChannelFifo = findPendingByChannelFifo
 } catch (_) {}
 
+// The text of the send a channel is still waiting on — what a held-for-approval notice is about,
+// so the echo of that exact text can retire it later.
+function pendingTextByChannel(channel) {
+  const id = findPendingByChannelFifo(channel)
+  return id ? pendingSends.get(id)?.text || '' : ''
+}
+try {
+  globalThis.__hsPendingTextByChannel = pendingTextByChannel
+} catch (_) {}
+
 function markPendingFailed(synthId, reason) {
   const entry = pendingSends.get(synthId)
   if (!entry) return

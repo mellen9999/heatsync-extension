@@ -162,6 +162,12 @@ function handleAuthIrcMessage(event) {
             const parsed = parseIrcLine(line)
             if (parsed) {
               parsed.isSynthetic = true
+              if (msgId === 'msg_rejected') {
+                // held for a mod, not refused: say so in house copy, and remember WHICH send it is so
+                // that message's own echo can retire this row (irc.js)
+                parsed.text = parsed.systemMsg = t(TWITCH_SEND_REJECT_NOTICES.get(msgId))
+                parsed.heldText = globalThis.__hsPendingTextByChannel?.(parsed.channel) || ''
+              }
               irc._handleMsg?.(parsed)
             }
           }

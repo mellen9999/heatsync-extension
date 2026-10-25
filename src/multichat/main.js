@@ -8980,6 +8980,7 @@
     if (title) row.title = title
   }
   function isMsgFiltered(m, f) {
+    if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
     if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
     const u = m.user ? m.user.toLowerCase() : ''
     if (u && u === currentUsername) return false // never hide own messages
@@ -14083,6 +14084,13 @@
       // Buffer entries were already flagged with `cleared=true` inside the IRC client,
       // so future re-renders pick it up via the renderer; this just patches the visible DOM.
       _applyModNoticeDim(msg)
+      if (msg.resolvedHolds) {
+        const msgsEl = document.getElementById('hs-mc-messages')
+        for (const id of msg.resolvedHolds) {
+          const safe = CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"')
+          msgsEl?.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)?.remove()
+        }
+      }
       // Track sub tenure from IRC badge-info
       if (msg.subMonths && msg.channel) {
         trackSubTenure(msg.channel, msg.user, msg.subMonths)

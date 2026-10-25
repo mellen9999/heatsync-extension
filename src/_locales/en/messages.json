@@ -2426,7 +2426,7 @@
     "message": "unique-chat mode — message must be unique"
   },
   "mc_irc_notice_rejected": {
-    "message": "AutoMod is checking your message"
+    "message": "your message is held for mod approval — it posts only if a mod allows it"
   },
   "mc_irc_notice_rejected_mandatory": {
     "message": "AutoMod blocked your message"

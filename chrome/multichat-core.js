@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f34448f7c8f4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1ba9104a93dd' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -21052,6 +21052,13 @@ function flatStr(s) {
 // ============================================
 // CIRCULAR BUFFER FOR CHANNEL MESSAGES
 // ============================================
+// one comparison key for "the same text" across the typed send and its echo (NBSP, runs of space, case)
+const heldTextKey = (text) =>
+  String(text || '')
+    .replace(/[\s\u00a0]+/g, ' ')
+    .trim()
+    .toLowerCase()
+
 class CircularBuffer {
   constructor(cap = 1500) {
     this.buf = new Array(cap)
@@ -21456,6 +21463,32 @@ class IRC extends ChatClient {
             }
           }
         }
+      }
+      // A held send that posts: its "held for mod approval" row stops being true. Matched on the
+      // held text, so a different message of yours going out meanwhile retires nothing.
+      if (
+        !msg.type &&
+        !msg.isHistory &&
+        !msg.isSynthetic &&
+        msg.user &&
+        typeof currentUsername === 'string' &&
+        msg.user.toLowerCase() === currentUsername.toLowerCase()
+      ) {
+        const echoed = heldTextKey(msg.text)
+        const ids = []
+        for (const m of buf.getAll()) {
+          if (
+            m.type === 'notice' &&
+            m.noticeType === 'msg_rejected' &&
+            !m.resolved &&
+            m.heldText &&
+            heldTextKey(m.heldText) === echoed
+          ) {
+            m.resolved = true
+            ids.push(m.id)
+          }
+        }
+        if (ids.length) msg.resolvedHolds = ids
       }
       this.emit('message', msg)
     }
@@ -23022,6 +23055,12 @@ function handleAuthIrcMessage(event) {
             const parsed = parseIrcLine(line)
             if (parsed) {
               parsed.isSynthetic = true
+              if (msgId === 'msg_rejected') {
+                // held for a mod, not refused: say so in house copy, and remember WHICH send it is so
+                // that message's own echo can retire this row (irc.js)
+                parsed.text = parsed.systemMsg = t(TWITCH_SEND_REJECT_NOTICES.get(msgId))
+                parsed.heldText = globalThis.__hsPendingTextByChannel?.(parsed.channel) || ''
+              }
               irc._handleMsg?.(parsed)
             }
           }
@@ -43196,6 +43235,16 @@ function findPendingByChannelFifo(channel) {
 }
 try {
   globalThis.__hsFindPendingByChannelFifo = findPendingByChannelFifo
+} catch (_) {}
+
+// The text of the send a channel is still waiting on — what a held-for-approval notice is about,
+// so the echo of that exact text can retire it later.
+function pendingTextByChannel(channel) {
+  const id = findPendingByChannelFifo(channel)
+  return id ? pendingSends.get(id)?.text || '' : ''
+}
+try {
+  globalThis.__hsPendingTextByChannel = pendingTextByChannel
 } catch (_) {}
 
 function markPendingFailed(synthId, reason) {
@@ -77754,6 +77803,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (title) row.title = title
   }
   function isMsgFiltered(m, f) {
+    if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
     if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
     const u = m.user ? m.user.toLowerCase() : ''
     if (u && u === currentUsername) return false // never hide own messages
@@ -82857,6 +82907,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Buffer entries were already flagged with `cleared=true` inside the IRC client,
       // so future re-renders pick it up via the renderer; this just patches the visible DOM.
       _applyModNoticeDim(msg)
+      if (msg.resolvedHolds) {
+        const msgsEl = document.getElementById('hs-mc-messages')
+        for (const id of msg.resolvedHolds) {
+          const safe = CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"')
+          msgsEl?.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)?.remove()
+        }
+      }
       // Track sub tenure from IRC badge-info
       if (msg.subMonths && msg.channel) {
         trackSubTenure(msg.channel, msg.user, msg.subMonths)

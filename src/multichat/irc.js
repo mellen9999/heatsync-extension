@@ -409,6 +409,13 @@ function flatStr(s) {
 // ============================================
 // CIRCULAR BUFFER FOR CHANNEL MESSAGES
 // ============================================
+// one comparison key for "the same text" across the typed send and its echo (NBSP, runs of space, case)
+const heldTextKey = (text) =>
+  String(text || '')
+    .replace(/[\s\u00a0]+/g, ' ')
+    .trim()
+    .toLowerCase()
+
 class CircularBuffer {
   constructor(cap = 1500) {
     this.buf = new Array(cap)
@@ -813,6 +820,32 @@ class IRC extends ChatClient {
             }
           }
         }
+      }
+      // A held send that posts: its "held for mod approval" row stops being true. Matched on the
+      // held text, so a different message of yours going out meanwhile retires nothing.
+      if (
+        !msg.type &&
+        !msg.isHistory &&
+        !msg.isSynthetic &&
+        msg.user &&
+        typeof currentUsername === 'string' &&
+        msg.user.toLowerCase() === currentUsername.toLowerCase()
+      ) {
+        const echoed = heldTextKey(msg.text)
+        const ids = []
+        for (const m of buf.getAll()) {
+          if (
+            m.type === 'notice' &&
+            m.noticeType === 'msg_rejected' &&
+            !m.resolved &&
+            m.heldText &&
+            heldTextKey(m.heldText) === echoed
+          ) {
+            m.resolved = true
+            ids.push(m.id)
+          }
+        }
+        if (ids.length) msg.resolvedHolds = ids
       }
       this.emit('message', msg)
     }

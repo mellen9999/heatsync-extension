@@ -13237,29 +13237,12 @@
     ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
-  // The tab to activate on mount. When we're on an actual stream/channel watch
-  // page, the "live" tab (the stream you're looking at) is what you want — NOT
-  // a stale last-used channel tab. Restoring _savedActiveTab there is exactly
-  // why heatsync-on-youtube read as "no chat": it dropped you on a saved
-  // channel (nl_kripp) instead of the lofi stream on screen. Off a stream page
-  // (directory / home / search), restore the saved tab as before.
+  // The tab to activate on mount: the last one used; with none saved, the first channel tab; with no
+  // tabs at all, "live" (the stream on screen). A youtube popout is one stream — always "live".
   // MODULE scope — tryHookReact()'s mount passes call this too; defining it
   // inside init() made every twitch react-hook mount throw a ReferenceError
   // and strand fresh viewers on the empty saved tab.
   const bootActiveTab = () => {
-    const path = location.pathname + location.search
-    const onStreamPage =
-      isYtPopout ||
-      (hostPlatform === 'yt' && /\/watch|\/live\//.test(path)) ||
-      (hostPlatform !== 'yt' && !isKick && !!document.querySelector('.channel-root, [class*="channel-root"]')) ||
-      (isKick && !!(document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]')))
-    // Force "live" (the on-screen stream) on a watch page ONLY for viewers with
-    // no channel tabs of their own — that's the "youtube read as no-chat" fix
-    // (a fresh viewer shouldn't land on an empty saved tab). A user who HAS
-    // tabs keeps their last-active one instead of being yanked onto the current
-    // page's stream: being on lofigirl's page shouldn't override your nl_kripp
-    // tab and dump lofigirl's chat in. A popout is single-channel — always live.
-    const hasChannelTabs = !!config.channels?.length
     // A saved tab that is now HIDDEN (or whose subsystem was switched off) is
     // not restorable — you land on a tab that isn't in the bar, so nothing
     // looks selected ("I'm on no tab") while the composer quietly points at
@@ -13271,7 +13254,12 @@
       _savedActiveTab &&
       !hiddenTabs.has(mcRowOwner(_savedActiveTab)) &&
       !(_TAB_SUBSYSTEM[_savedActiveTab] && !isEnabled(_TAB_SUBSYSTEM[_savedActiveTab]))
-    return isYtPopout || (onStreamPage && !hasChannelTabs) ? 'live' : restorable ? _savedActiveTab : 'live'
+    if (isYtPopout) return 'live'
+    if (restorable) return _savedActiveTab
+    // Nothing saved but channel tabs exist: land on the first one. "watching" loads the page's own
+    // chat when you ask for it, it is not what a viewer with tabs of their own expects to open on.
+    const firstTab = config.channels?.find((c) => c?.id && !hiddenTabs.has(mcRowOwner(c.id)))
+    return firstTab ? firstTab.id : 'live'
   }
 
   // PHASE -1 kill-switch aborts init before any panel/HsNotifs infra exists,

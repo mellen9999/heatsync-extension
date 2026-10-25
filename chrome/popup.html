@@ -80,7 +80,9 @@
     }
     .plat:last-child { border-right: none; }
     .plat:hover { background: #fff; color: #000; }
-    .plat[aria-selected="true"] { background: #fff; color: #000; }
+    .plat[aria-selected="true"], .plat[aria-pressed="true"] { background: #fff; color: #000; }
+    .site-pane { padding: 12px 16px; border-top: 1px solid #ffffff; }
+    .site-label { margin-bottom: 6px; font-size: 13px; }
 
     .detected {
       margin-top: 12px;
@@ -168,6 +170,16 @@
     <div class="detected" id="detected"></div>
   </div>
 
+
+  <div class="site-pane">
+    <div class="site-label">heatsync chat on</div>
+    <div class="plat-pick" id="site-pick">
+      <button type="button" class="plat" data-gate="overlay-twitch" data-host="twitch.tv" aria-pressed="true">twitch</button>
+      <button type="button" class="plat" data-gate="overlay-kick" data-host="kick.com" aria-pressed="true">kick</button>
+      <button type="button" class="plat" data-gate="overlay-youtube" data-host="youtube.com" aria-pressed="true">youtube</button>
+    </div>
+    <div class="detected" id="site-note">off shows the site's own chat</div>
+  </div>
 
   <div class="fb-pane" id="fb-pane" hidden>
     <div class="plat-pick" id="fb-kind" role="tablist">

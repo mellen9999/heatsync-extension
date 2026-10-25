@@ -106,6 +106,39 @@ const browser = globalThis.browser || chrome
     const m = t(el.dataset.i18nTitle)
     if (m) el.title = m
   }
+  // Per-site on/off for the heatsync chat overlay: off hands the page its own chat back. The same
+  // subsystem switches the settings page lists, put where a person looks first. Read at page load,
+  // so the open tab of that site reloads to apply.
+  ;(async () => {
+    const pick = document.getElementById('site-pick')
+    const note = document.getElementById('site-note')
+    if (!pick || !note) return
+    const read = async () => (await browser.storage.sync.get('ui_settings'))?.ui_settings || {}
+    const paint = async () => {
+      const subs = (await read()).subsystems || {}
+      for (const b of pick.querySelectorAll('.plat')) {
+        b.setAttribute('aria-pressed', subs[b.dataset.gate] === false ? 'false' : 'true')
+      }
+    }
+    pick.addEventListener('click', async (e) => {
+      const b = e.target.closest('.plat')
+      if (!b) return
+      const ui = await read()
+      const subs = { ...(ui.subsystems || {}) }
+      const nowOff = subs[b.dataset.gate] !== false
+      subs[b.dataset.gate] = nowOff ? false : true
+      await browser.storage.sync.set({ ui_settings: { ...ui, subsystems: subs } })
+      await paint()
+      note.textContent = nowOff
+        ? `${b.textContent}: the site's own chat is back`
+        : `${b.textContent}: heatsync chat is back`
+      try {
+        const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
+        if (tab?.id != null && (tab.url || '').includes(b.dataset.host)) browser.tabs.reload(tab.id)
+      } catch {}
+    })
+    await paint()
+  })()
 
   const input = document.getElementById('popout-input')
   const btn = document.getElementById('popout-btn')

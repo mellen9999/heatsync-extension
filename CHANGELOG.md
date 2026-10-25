@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.104] — 2026-10-24
+
+### fixed
+- **chat freezing** — new lines always land at the bottom: one out-of-order row can no longer bury every later message above it, so the pane never stalls with only the stripes moving.
+- **popout chat** — an unfocused popout draws on a short timer instead of arriving in one lump a second later.
+- **chat order** — the message clock can run at most 1s past real time, so a stale flood can't sort every fresh line above it.
+
+### added
+- **diagnostics** — alt+shift+d writes the pane's whole state to the diagnostics log.
+
 ## [1.7.103] — 2026-10-24
 
 ### fixed

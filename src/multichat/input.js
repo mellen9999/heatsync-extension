@@ -2240,6 +2240,24 @@ function initInput() {
     )
   }
 
+  // The held-for-approval row's x: a mod can leave a hold open for good, so the sender decides when
+  // it goes. Retired on the buffered notice itself, so a re-render or a tab switch keeps it gone.
+  if (!_onceGuardsInput.heldDismissHandler) {
+    _onceGuardsInput.heldDismissHandler = true
+    document.addEventListener(
+      'click',
+      (e) => {
+        const x = e.target.closest('.hs-mc-held-x')
+        if (!x) return
+        const row = x.closest('.hs-mc-msg')
+        const held = irc?.getMessages(row?.dataset.msgChannel).find((m) => m.id === row.dataset.msgId)
+        if (held) held.resolved = true
+        row?.remove()
+      },
+      { signal: mcSignal },
+    )
+  }
+
   // Universal right-click → user/post action menu. Fires on ANY username
   // (.hs-mc-user), chat message (.hs-mc-msg), or feed post (.hs-feed-msg)
   // anywhere in the panel. follow=1, block=2 are always the top two items.

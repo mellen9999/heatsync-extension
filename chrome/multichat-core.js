@@ -14925,7 +14925,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1ba9104a93dd' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48102290b20d' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -44912,6 +44912,24 @@ function initInput() {
         const btn = e.target.closest('.hs-mc-thread-btn')
         if (!btn) return
         startQuoteFromRow(btn.closest('.hs-mc-msg'))
+      },
+      { signal: mcSignal },
+    )
+  }
+
+  // The held-for-approval row's x: a mod can leave a hold open for good, so the sender decides when
+  // it goes. Retired on the buffered notice itself, so a re-render or a tab switch keeps it gone.
+  if (!_onceGuardsInput.heldDismissHandler) {
+    _onceGuardsInput.heldDismissHandler = true
+    document.addEventListener(
+      'click',
+      (e) => {
+        const x = e.target.closest('.hs-mc-held-x')
+        if (!x) return
+        const row = x.closest('.hs-mc-msg')
+        const held = irc?.getMessages(row?.dataset.msgChannel).find((m) => m.id === row.dataset.msgId)
+        if (held) held.resolved = true
+        row?.remove()
       },
       { signal: mcSignal },
     )
@@ -77077,7 +77095,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       (m.type === 'usernotice' || m.type === 'notice') && !m.text
         ? `${tsHtml}${systemLine}`
         : m.type === 'notice'
-          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>`
+          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', 'dismiss', 'title="dismiss"') : ''}`
           : m.isAction
             ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
             : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`

@@ -13,6 +13,7 @@ const src = (f) => readFileSync(join(import.meta.dir, '..', 'src', f), 'utf8')
 const authIrc = src('multichat/auth-irc.js')
 const irc = src('multichat/irc.js')
 const main = src('multichat/main.js')
+const input = src('multichat/input.js')
 const en = JSON.parse(src('_locales/en/messages.json'))
 
 describe('held send row', () => {
@@ -30,5 +31,11 @@ describe('held send row', () => {
   test('a retired row leaves the screen now and on every re-render', () => {
     expect(main).toContain("m?.type === 'notice' && m.resolved")
     expect(main).toContain('msg.resolvedHolds')
+  })
+
+  test('the sender can close it — a mod may leave a hold open forever', () => {
+    expect(main).toContain("m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x'")
+    expect(input).toContain("closest('.hs-mc-held-x')")
+    expect(input).toContain('held.resolved = true')
   })
 })

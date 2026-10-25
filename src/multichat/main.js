@@ -8254,7 +8254,7 @@
       (m.type === 'usernotice' || m.type === 'notice') && !m.text
         ? `${tsHtml}${systemLine}`
         : m.type === 'notice'
-          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>`
+          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', 'dismiss', 'title="dismiss"') : ''}`
           : m.isAction
             ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
             : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`

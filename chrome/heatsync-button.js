@@ -2159,6 +2159,9 @@
         bar = window.parent !== window ? window.parent.document.getElementById('hs-yt-peek-back') : null
       } catch (_) {}
       back.style.display = bar ? '' : 'none'
+      // rotate tab bar / rotate chat panel move the heatsync chat, which is parked while native chat is up
+      for (const id of ['heatsync-rotate-btn', 'heatsync-rotate-chat-btn'])
+        panel.querySelector(`#${id}`)?.style.setProperty('display', bar ? 'none' : '')
     }
 
     // Outer scope, and it looks the buttons up from the document rather than

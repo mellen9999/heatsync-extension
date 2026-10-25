@@ -881,7 +881,7 @@
         80%{translate:18px 0;scale:.1}100%{translate:18px 0;scale:.1}
       }
       .heatsync-emote-yt[data-hs-blocked] {
-        opacity: 0 !important;
+        object-view-box: inset(100%) !important; /* hides the picture, keeps the box and its outline (opacity would hide both) */
         outline: calc(2px / var(--hs-mod-scale, 1)) dashed #ffffff !important;
         outline-offset: calc(-2px / var(--hs-mod-scale, 1)) !important;
         cursor: pointer !important;

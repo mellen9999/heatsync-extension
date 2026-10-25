@@ -112,7 +112,10 @@ function ytPeekNative() {
   const back = document.createElement('button')
   back.id = 'hs-yt-peek-back'
   back.type = 'button'
-  back.textContent = '← back to heatsync chat'
+  const arrow = document.createElement('span')
+  arrow.className = 'hs-yt-peek-arrow'
+  arrow.textContent = '←'
+  back.append(arrow, ' back to heatsync chat')
   back.addEventListener('click', ytPeekBack)
   bar.appendChild(back)
   document.body.appendChild(bar)

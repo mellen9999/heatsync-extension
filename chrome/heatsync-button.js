@@ -471,6 +471,8 @@
         object-fit: contain;
       }
 
+      html.hs-native-only #heatsync-chat-button, html.hs-native-only #heatsync-panel { display: none !important; }
+
       /* Panel - Full emote picker */
       .heatsync-panel {
         position: absolute;
@@ -531,11 +533,6 @@
         color: #000;
       }
 
-      .heatsync-panel-back {
-        margin-left: auto;
-        margin-right: 8px;
-        font: 13px monospace;
-      }
 
       .heatsync-header-controls {
         display: flex;
@@ -2132,7 +2129,6 @@
       panel.style.height = sized
       panel.style.maxHeight = sized
       _clampPickerX(panel)
-      _syncPeekBack(panel)
     }
 
     // The panel is 420px and right-anchored to the button's row. In a narrow frame (the youtube
@@ -2146,22 +2142,6 @@
       const r = panel.getBoundingClientRect()
       if (r.left < MARGIN) panel.style.right = `${r.left - MARGIN}px`
       else if (r.right > window.innerWidth - MARGIN) panel.style.right = `${r.right - (window.innerWidth - MARGIN)}px`
-    }
-
-    // Inside the youtube native chat view the heatsync overlay is parked under the page's
-    // "back to heatsync chat" bar. The frame is same-origin with the watch page, so the picker
-    // offers the same way back from in here, only while that bar exists.
-    function _syncPeekBack(panel) {
-      const back = panel.querySelector('.heatsync-panel-back')
-      if (!back) return
-      let bar = null
-      try {
-        bar = window.parent !== window ? window.parent.document.getElementById('hs-yt-peek-back') : null
-      } catch (_) {}
-      back.style.display = bar ? '' : 'none'
-      // rotate tab bar / rotate chat panel move the heatsync chat, which is parked while native chat is up
-      for (const id of ['heatsync-rotate-btn', 'heatsync-rotate-chat-btn'])
-        panel.querySelector(`#${id}`)?.style.setProperty('display', bar ? 'none' : '')
     }
 
     // Outer scope, and it looks the buttons up from the document rather than
@@ -2187,6 +2167,20 @@
         if (redo) redo.disabled = !data.canRedo
       } catch (_) {}
     }
+
+    // While the heatsync overlay shows youtube's native chat in place of its own, this frame is
+    // fully native: no picker button. The frame is same-origin with the watch page, so follow its flag.
+    try {
+      if (window.parent !== window) {
+        const pb = window.parent.document.body
+        const sync = () =>
+          document.documentElement.classList.toggle('hs-native-only', pb.classList.contains('hs-yt-peek'))
+        const mo = new MutationObserver(sync)
+        mo.observe(pb, { attributes: true, attributeFilter: ['class'] })
+        btnSignal?.addEventListener('abort', () => mo.disconnect(), { once: true })
+        sync()
+      }
+    } catch (_) {}
 
     // The frame itself resizes (the native chat pane is dragged, the window changes): an open
     // picker re-fits to it instead of keeping the size it opened at.
@@ -2272,7 +2266,6 @@
           ${iconUrl ? `<img src="${iconUrl}" alt="heatsync">` : '🔥'}
           <span>heatsync</span>
         </div>
-        <button class="heatsync-panel-close heatsync-panel-back" style="display:none">← heatsync chat</button>
         <button class="heatsync-panel-close" aria-label="Close">✕</button>
       </div>
       ${
@@ -2370,13 +2363,7 @@
       }
 
       // Close button handler
-      panel.querySelector('.heatsync-panel-close:not(.heatsync-panel-back)')?.addEventListener('click', closePanel)
-      panel.querySelector('.heatsync-panel-back')?.addEventListener('click', () => {
-        closePanel()
-        try {
-          window.parent.document.getElementById('hs-yt-peek-back')?.click()
-        } catch (_) {}
-      })
+      panel.querySelector('.heatsync-panel-close')?.addEventListener('click', closePanel)
 
       // Size buttons handler
       const grid = document.getElementById('heatsync-emote-grid')

@@ -477,10 +477,6 @@
         cleanup.clearTimeout(ytCosmeticsBatchTimer)
         ytCosmeticsBatchTimer = null
       }
-      if (_setupAutocompleteRetryTimer) {
-        cleanup.clearTimeout(_setupAutocompleteRetryTimer)
-        _setupAutocompleteRetryTimer = null
-      }
       // Clear cosmetics caches so cross-video bleed can't happen on next mount
       ytCosmeticsCache.clear()
       ytCosmeticsPending.clear()
@@ -1440,43 +1436,37 @@
     return [...exact, ...prefix, ...contains].slice(0, 8).map((e) => ({ name: e.name, emoji: e.emoji, isEmoji: true }))
   }
 
-  let _setupAutocompleteRetryTimer = null
+  // The chat input is re-rendered by youtube while the page settles, and every node it replaces takes its
+  // listeners and children with it. So the listeners sit on the document and find the live input per event,
+  // and the dropdown is built next to it when it is needed.
+  const chatInputOf = (e) =>
+    e.target instanceof Element
+      ? e.target.closest('yt-live-chat-text-input-field-renderer div#input[contenteditable]')
+      : null
+
+  function ensureDropdown(input) {
+    if (autocompleteEl?.isConnected) return autocompleteEl
+    const renderer = input.closest('yt-live-chat-text-input-field-renderer')
+    if (!renderer) return null
+    autocompleteEl = document.createElement('div')
+    autocompleteEl.className = 'hs-yt-autocomplete'
+    renderer.style.position = 'relative'
+    renderer.appendChild(autocompleteEl)
+    return autocompleteEl
+  }
+
   function setupAutocomplete() {
     if (signal.aborted) return
     if (!tabCompleteEnabled) {
       log('tab-complete subsystem off — skipping native autocomplete')
       return
     }
-    const inputRenderer = document.querySelector('yt-live-chat-text-input-field-renderer')
-    if (!inputRenderer) {
-      if (_setupAutocompleteRetryTimer) cleanup.clearTimeout(_setupAutocompleteRetryTimer)
-      if (signal.aborted) return
-      _setupAutocompleteRetryTimer = cleanup.setTimeout(setupAutocomplete, 1000)
-      return
-    }
 
-    const input = inputRenderer.querySelector('div#input[contenteditable]')
-    if (!input) {
-      if (_setupAutocompleteRetryTimer) cleanup.clearTimeout(_setupAutocompleteRetryTimer)
-      if (signal.aborted) return
-      _setupAutocompleteRetryTimer = cleanup.setTimeout(setupAutocomplete, 1000)
-      return
-    }
-    // Found — clear any pending retry
-    if (_setupAutocompleteRetryTimer) {
-      cleanup.clearTimeout(_setupAutocompleteRetryTimer)
-      _setupAutocompleteRetryTimer = null
-    }
-
-    // Create autocomplete dropdown
-    autocompleteEl = document.createElement('div')
-    autocompleteEl.className = 'hs-yt-autocomplete'
-    inputRenderer.style.position = 'relative'
-    inputRenderer.appendChild(autocompleteEl)
-
-    input.addEventListener(
+    document.addEventListener(
       'input',
-      () => {
+      (e) => {
+        const input = chatInputOf(e)
+        if (!input) return
         const word = getWordAtCaret(input)
         if (word && word.length >= 2) {
           // '@' and ':' are dedicated modes — neither can prefix an emote name,
@@ -1506,13 +1496,14 @@
         }
         hideAutocomplete()
       },
-      { signal },
+      { signal, capture: true },
     )
 
-    input.addEventListener(
+    document.addEventListener(
       'keydown',
       (e) => {
-        if (!acVisible) return
+        const input = chatInputOf(e)
+        if (!input || !acVisible) return
         if (e.key === 'Tab' || e.key === 'Enter') {
           e.preventDefault()
           e.stopPropagation()
@@ -1534,8 +1525,8 @@
       { capture: true, signal },
     )
 
-    input.addEventListener('paste', handleMediaPaste, { signal })
-    input.addEventListener('drop', handleMediaDrop, { signal })
+    document.addEventListener('paste', (e) => chatInputOf(e) && handleMediaPaste(e), { signal, capture: true })
+    document.addEventListener('drop', (e) => chatInputOf(e) && handleMediaDrop(e), { signal, capture: true })
 
     log('autocomplete ready')
   }
@@ -1642,6 +1633,7 @@
   }
 
   function showAutocomplete(matches, input) {
+    if (!ensureDropdown(input)) return
     acItems = matches
     acSelectedIndex = 0
     acVisible = true

@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "følger ikke"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopieret $NAME$ — indsæt det i gavefeltet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kunne ikke kopiere — skriv $NAME$ i gavefeltet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

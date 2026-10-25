@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "volgt niet"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ gekopieerd — plak het in het cadeauvak",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopiëren mislukt — typ $NAME$ in het cadeauvak",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

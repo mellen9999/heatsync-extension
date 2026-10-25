@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "non segui"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ copiato — incollalo nella casella regalo",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "copia non riuscita — scrivi $NAME$ nella casella regalo",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

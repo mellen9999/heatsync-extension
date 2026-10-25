@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "δεν ακολουθείς"
+  },
+  "mc_card_gift_copied": {
+    "message": "αντιγράφηκε το $NAME$ — επικόλλησέ το στο πεδίο δώρου",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "η αντιγραφή απέτυχε — πληκτρολόγησε $NAME$ στο πεδίο δώρου",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

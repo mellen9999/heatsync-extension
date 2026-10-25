@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "未关注"
+  },
+  "mc_card_gift_copied": {
+    "message": "已复制 $NAME$ — 粘贴到礼物输入框",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "复制失败 — 请在礼物输入框输入 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

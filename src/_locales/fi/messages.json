@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "et seuraa"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopioitu $NAME$ — liitä se lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopiointi epäonnistui — kirjoita $NAME$ lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

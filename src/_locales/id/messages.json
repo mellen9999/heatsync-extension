@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "tidak mengikuti"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ disalin — tempel di kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "gagal menyalin — ketik $NAME$ di kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

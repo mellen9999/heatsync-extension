@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "не следваш"
+  },
+  "mc_card_gift_copied": {
+    "message": "копирано: $NAME$ — постави го в полето за подарък",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "не успях да копирам — въведи $NAME$ в полето за подарък",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

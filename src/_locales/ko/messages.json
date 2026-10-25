@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "팔로우 안 함"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ 복사됨 — 선물 입력란에 붙여넣으세요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "복사하지 못했습니다 — 선물 입력란에 $NAME$ 을(를) 입력하세요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

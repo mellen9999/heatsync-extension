@@ -993,6 +993,24 @@ function renderProfileCardView() {
     }
   }
 
+  // Gift a sub — ext-only, twitch-only. Twitch has no API to gift and no link that prefills the
+  // recipient, so the honest version is: copy the name, open the channel's own sub page. Hotkey 'g'.
+  if (
+    platform === 'twitch' &&
+    pcGiftChannel() &&
+    (username || '').toLowerCase() !== (currentUsername || '').toLowerCase()
+  ) {
+    const actionsRow = card.querySelector('.hs-card-actions')
+    if (actionsRow) {
+      const giftBtn = document.createElement('button')
+      giftBtn.type = 'button'
+      giftBtn.className = 'hs-card-action'
+      giftBtn.dataset.hsCardAction = 'gift'
+      giftBtn.innerHTML = hk('gift sub', escapeHtml)
+      actionsRow.appendChild(giftBtn)
+    }
+  }
+
   // Notes — the ext's own local/chrome.storage system, now with server sync
   // (user-notes.js's hsNoteSyncOnOpen/hsNoteSave/hsNoteDelete): logged in +
   // a real heatsync profile id (kick/yt synth ids have no server row) →
@@ -1627,6 +1645,8 @@ function setupProfileCardHandlers() {
         btn = document.querySelector('.hs-card-action[data-hs-card-action="addchannel"]')
       } else if (target === 'c') {
         btn = document.querySelector('.hs-card-action[data-hs-card-action="clip"]')
+      } else if (target === 'g') {
+        btn = document.querySelector('.hs-card-action[data-hs-card-action="gift"]')
       } else {
         const action = { f: 'follow', w: 'whisper', d: 'dm', '@': 'mention', m: 'mute', b: 'block' }[target]
         btn = document.querySelector(`.hs-card-action[data-hs-card-action="${action}"]`)
@@ -1676,6 +1696,9 @@ function pcHandleCardAction(actionKey, btn) {
     case 'clip':
       pcDoClip(username, platform, btn)
       break
+    case 'gift':
+      pcDoGift(username)
+      break
   }
 }
 
@@ -1724,6 +1747,27 @@ function pcDoDm(username, platform) {
 // time rather than closing over a persistent var) opens the editor.
 // Channel = whatever the overlay is currently scoped to (same context
 // followage uses), falling back to the card subject's own login.
+// The twitch channel a gift would go to: the one you are chatting in. Empty when there is none (a kick
+// or youtube page, a channel tab with no twitch side), and then the button is not offered at all.
+function pcGiftChannel() {
+  if (currentTab === 'live')
+    return hostPlatform === 'twitch' && typeof getLiveChannel === 'function' ? getLiveChannel() || '' : ''
+  return config.channels.find((c) => c.id === currentTab)?.twitch || ''
+}
+
+// Twitch cannot be told who to gift, so hand over the name and open the page that does the gifting.
+async function pcDoGift(username) {
+  const ch = pcGiftChannel()
+  if (!ch || !username) return
+  try {
+    await navigator.clipboard.writeText(username)
+    showToast(t('mc_card_gift_copied', [username]), 'success')
+  } catch (e) {
+    showToast(t('mc_card_gift_copy_failed', [username]), 'error')
+  }
+  window.open(`https://www.twitch.tv/subs/${encodeURIComponent(ch)}`, '_blank', 'noopener')
+}
+
 async function pcDoClip(username, platform, btn) {
   if (platform !== 'twitch' || !btn) return
   if (btn.dataset.editUrl) {

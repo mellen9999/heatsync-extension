@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "未フォロー"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ をコピーしました — ギフト欄に貼り付けてください",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "コピーできませんでした — ギフト欄に $NAME$ を入力してください",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

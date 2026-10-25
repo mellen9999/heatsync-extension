@@ -2425,6 +2425,22 @@
   "mc_irc_notice_r9k": {
     "message": "unique-chat mode — message must be unique"
   },
+  "mc_card_gift_copied": {
+    "message": "copied $NAME$ — paste it into the gift box",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "couldn't copy — type $NAME$ into the gift box",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_irc_notice_rejected": {
     "message": "your message is held for mod approval — it posts only if a mod allows it"
   },

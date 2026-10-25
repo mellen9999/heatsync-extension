@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "chưa theo dõi"
+  },
+  "mc_card_gift_copied": {
+    "message": "đã sao chép $NAME$ — dán vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "không sao chép được — gõ $NAME$ vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "לא עוקב"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ הועתק — הדבק בתיבת המתנה",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "ההעתקה נכשלה — הקלד $NAME$ בתיבת המתנה",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

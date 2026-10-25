@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "फ़ॉलो नहीं कर रहे"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ कॉपी हो गया — इसे गिफ्ट बॉक्स में पेस्ट करें",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "कॉपी नहीं हो सका — गिफ्ट बॉक्स में $NAME$ टाइप करें",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

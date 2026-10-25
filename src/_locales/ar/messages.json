@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "لا تتابع"
+  },
+  "mc_card_gift_copied": {
+    "message": "تم نسخ $NAME$ — الصقه في مربع الإهداء",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "تعذّر النسخ — اكتب $NAME$ في مربع الإهداء",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

@@ -3580,5 +3580,21 @@
   },
   "mc_tagcard_not_following": {
     "message": "nu urmărești"
+  },
+  "mc_card_gift_copied": {
+    "message": "am copiat $NAME$ — lipește-l în câmpul de cadou",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "nu am putut copia — scrie $NAME$ în câmpul de cadou",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   }
 }

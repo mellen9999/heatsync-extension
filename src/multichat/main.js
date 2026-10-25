@@ -524,6 +524,40 @@
   const SCROLLBACK_STEP = 250
   const SCROLLBACK_MAX = 1500 // hard ceiling on rendered rows (3x the live cap)
 
+  // First paint of a cold list: the newest FIRST_PAINT_ROWS now, the older rows in chunks right after, so
+  // the chat is on screen and live in one short task instead of one 500-row build. _paintFor names the tab
+  // whose list is still filling; _paintCap is how many rows it may show so far.
+  const FIRST_PAINT_ROWS = 100
+  const FIRST_PAINT_STEP = 100
+  let _paintFor = null
+  let _paintCap = 0
+  function growFirstPaint(id) {
+    cleanup.setTimeout(() => {
+      if (_paintFor !== id) return
+      const el = document.getElementById('hs-mc-messages')
+      if (!el || currentTab !== id) {
+        _paintFor = null
+        return
+      }
+      const h0 = el.scrollHeight
+      const top0 = el.scrollTop
+      _paintCap += FIRST_PAINT_STEP
+      renderMessages(id)
+      // overflow-anchor is off on the list: older rows landing above a scrolled-up viewer would move it
+      if (isScrolledUp) el.scrollTop = top0 + (el.scrollHeight - h0)
+      if (_paintCap >= Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)) _paintFor = null
+      else growFirstPaint(id)
+    }, 0)
+  }
+  // Leaving a tab with its list half filled: finish now, so what is cached for it is the whole list in order.
+  function finishFirstPaint() {
+    if (_paintFor === null) return
+    const id = _paintFor
+    _paintCap = SCROLLBACK_MAX
+    if (currentTab === id) renderMessages(id)
+    _paintFor = null
+  }
+
   // n/N match cursor for the live-tab search filter — msgKey of the row
   // currently marked .hs-mc-search-current, or null when inactive. Keyed by
   // msgKey (not a DOM ref or array index) so it self-heals across renders:
@@ -6632,6 +6666,7 @@
     // Snapshot the outgoing tab's DOM into the cache so a future switch back
     // restores it instantly (no rebuild). Skipped for static tabs which manage
     // their own DOM. Must run BEFORE currentTab flips.
+    finishFirstPaint()
     snapshotTabState(currentTab)
     currentTab = id
     _scrollbackWindow = 0 // new tab starts at the live tail, not prior scrollback depth
@@ -10496,7 +10531,20 @@
     // when the user has scrolled to the top (loadOlderScrollback). Capped at
     // SCROLLBACK_MAX so the DOM stays bounded on low-RAM hardware.
     const _renderCap = Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)
-    toRender = toRender.slice(-_renderCap)
+    let _cap = _renderCap
+    if (_paintFor === id) _cap = Math.min(_cap, _paintCap)
+    else if (
+      _paintFor === null &&
+      !justRestored &&
+      toRender.length > FIRST_PAINT_ROWS &&
+      !msgsEl.querySelector('[data-msg-key]')
+    ) {
+      _paintFor = id
+      _paintCap = FIRST_PAINT_ROWS
+      _cap = FIRST_PAINT_ROWS
+      growFirstPaint(id)
+    }
+    toRender = toRender.slice(-_cap)
     isProgrammaticScroll = true
 
     // STABLE-ORDER RENDER:

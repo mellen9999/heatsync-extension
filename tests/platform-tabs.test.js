@@ -82,3 +82,16 @@ describe('twitch and kick with heatsync chat off', () => {
     expect(btn).toContain('window.HS.setSiteOverlay(gate, true)')
   })
 })
+
+describe('cold list first paint', () => {
+  test('paints the newest rows first, fills older rows in chunks, and finishes before a tab is cached', () => {
+    const main = src('main.js')
+    expect(main).toContain('const FIRST_PAINT_ROWS = 100')
+    expect(main).toContain('growFirstPaint(id)')
+    expect(main).toContain('toRender = toRender.slice(-_cap)')
+    // the half-filled list must be whole before snapshotTabState caches it (a restore only appends)
+    expect(main.indexOf('finishFirstPaint()\n    snapshotTabState(currentTab)')).toBeGreaterThan(-1)
+    // older rows land above the viewport: a scrolled-up viewer is carried by the height delta
+    expect(main).toContain('top0 + (el.scrollHeight - h0)')
+  })
+})

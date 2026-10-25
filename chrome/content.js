@@ -1688,6 +1688,14 @@
     display: inline-block !important;
   }
 
+  /* A heatsync emote in the twitch input is a bare 1x image (a 7tv emote can be 8px tall); chat gives
+     them the row height, so the input does too. Twitch's own emotes are already row-sized. */
+  [data-a-target="chat-input"] img.chat-line__message--emote:not([src*="jtvnw.net"]) {
+    height: var(--hs-emote-height, 28px) !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
   /* Emote overlay stacking (7TV zero-width emotes) */
   .heatsync-emote-stack {
     display: inline-flex !important;

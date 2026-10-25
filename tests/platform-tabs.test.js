@@ -134,3 +134,11 @@ describe('hover hold', () => {
     expect(main).toMatch(/if \(checkAtBottom\(\)\) \{\s*_hoverHeld = false/)
   })
 })
+
+describe('native title tooltip', () => {
+  test("a chat emote has no title: the browser's own tooltip came up after a second and duplicated the 4x preview", () => {
+    const e = src('emotes.js')
+    expect(e).not.toMatch(/<img [^>]*title="[^"]*"[^>]*class="hs-mc-emote /)
+    expect(e).toContain('class="hs-mc-emote hs-emote-${state}"')
+  })
+})

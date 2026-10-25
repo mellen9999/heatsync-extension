@@ -4412,7 +4412,6 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const safeProvider = escapeHtml(provider)
       const safeHash = cached?.hash ? escapeHtml(cached.hash) : ''
       const ownerAttr = cached?.ownerDisplay ? ` data-owner="${escapeHtml(cached.ownerDisplay)}"` : ''
-      const titleAttr = useCachedUrl ? safeName : `${safeName} (${safeProvider} via kick)`
       const nsfwClass = cached?.nsfw ? ' hs-state-nsfw' : ''
       const _boxW = _hsEmoteBoxW.get(chatUrl)
       // a kick-CDN emote with wide art crops to it (see _kickCrop); a 7TV copy has its own aspect
@@ -4434,7 +4433,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const kickCwCat = _kickCwRaw ? escapeHtml(_kickCwRaw) : ''
       const imgHtmlRaw = kickCwCat
         ? _hsCwBoxHtml(kickCwCat, safeName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" title="${titleAttr}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
       if (isOverlay && pendingStack) {
         const itemMods = pendingMods.slice()
         const itemHue = pendingHue
@@ -4654,7 +4653,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const cwCat = _cwRaw ? escapeHtml(_cwRaw) : ''
       const imgHtmlRaw = cwCat
         ? _hsCwBoxHtml(cwCat, displayName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}" title="${displayName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
 
       // Build the new item — inline-glued suffix mod attaches to THIS emote
       // (e.g. "RainTimew!" → wide RainTime, not wide whatever-was-base).
@@ -4752,7 +4751,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
         }
         const dn = escapeHtml(word)
         result.push(
-          `<span class="hs-mc-emote-wrapper hs-state-blocked" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"><img src="${HS_TRANSPARENT_PX}" alt="${dn}" title="${dn}" class="hs-mc-emote hs-emote-blocked" style="width:var(--hs-emote-size,32px);height:var(--hs-emote-size,32px)" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"></span>`,
+          `<span class="hs-mc-emote-wrapper hs-state-blocked" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"><img src="${HS_TRANSPARENT_PX}" alt="${dn}" class="hs-mc-emote hs-emote-blocked" style="width:var(--hs-emote-size,32px);height:var(--hs-emote-size,32px)" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"></span>`,
         )
         continue
       }

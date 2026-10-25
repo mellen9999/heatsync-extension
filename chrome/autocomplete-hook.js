@@ -1499,6 +1499,18 @@
 
   // Shared function to insert emote via Slate API (used by click and keydown handlers)
   // isCycling: if true, delete the last emote node instead of partial text
+  /** the text leaf at the end of the editor, up to the caret ('' when the end is not a text leaf) */
+  function slateTextBeforeEnd(editor) {
+    try {
+      const { path, offset } = editor.end([])
+      let node = editor
+      for (const i of path) node = node.children[i]
+      return typeof node.text === 'string' ? node.text.slice(0, offset) : ''
+    } catch (_) {
+      return ''
+    }
+  }
+
   function insertEmoteViaSlate(matchedEmote, inst, isCycling = false) {
     const slateEditor = inst?.chatInputRef?.state?.slateEditor
     if (!slateEditor) {
@@ -1674,7 +1686,9 @@
     } else {
       // Delete partial text (the search term like ":kap" or "kap")
       // Try multiple methods to get current input value
-      let currentValue = inst.hsGetValue?.() || inst.ffzGetValue?.() || ''
+      // The editor's own text before the caret is what deleteBackward removes, so it is the one source
+      // that cannot disagree with it; the component's cached value lags a keystroke on native chat.
+      let currentValue = slateTextBeforeEnd(slateEditor) || inst.hsGetValue?.() || inst.ffzGetValue?.() || ''
 
       // Fallback: get from DOM if inst methods don't work
       if (!currentValue) {

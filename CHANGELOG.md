@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.105] — 2026-10-24
+
+### fixed
+- **zebra stripes** — a shown line never moves or changes stripe: new lines only ever append, so stripes stop flipping when a kick line lands a beat behind a twitch one. lines can sit up to 2s out of timestamp order as a result.
+
 ## [1.7.104] — 2026-10-24
 
 ### fixed

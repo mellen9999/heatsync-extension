@@ -289,6 +289,14 @@
           gap += word
           continue
         }
+        // a modifier word rides on the emote just before it, the way twitch and kick read it. It wins over
+        // an emote of the same name: BTTV lists `w!` and friends as emotes, which are these modifiers
+        const mod = lastImg ? hsModClassify(word) : null
+        if (mod?.kind === 'modifier') {
+          hsModApplyToImg(lastImg, mod.mods, mod.hue, mod.words)
+          gap = ''
+          continue
+        }
         const emote = emoteMap.get(word)
         if (emote) {
           const img = document.createElement('img')
@@ -311,13 +319,6 @@
             currentStack.appendChild(img)
             frag.appendChild(currentStack)
           }
-          continue
-        }
-        // a modifier word rides on the emote just before it, the way twitch and kick read it
-        const mod = lastImg ? hsModClassify(word) : null
-        if (mod?.kind === 'modifier') {
-          hsModApplyToImg(lastImg, mod.mods, mod.hue, mod.words)
-          gap = ''
           continue
         }
         // Any other word breaks the stacking chain
@@ -2135,6 +2136,10 @@
 
     injectStyles()
 
+    // The input does not wait on emotes or on the message list (waitForContainer can take 15s): tab
+    // complete is live as soon as the box exists, and setupAutocomplete retries until it does
+    setupAutocomplete()
+
     // Load emotes first, then start processing
     await loadEmoteInventory()
 
@@ -2270,9 +2275,6 @@
       )
 
       log('observer active, videoId:', videoId)
-
-      // Setup autocomplete after a short delay (input may not be ready yet)
-      if (!signal.aborted) cleanup.setTimeout(setupAutocomplete, 500)
     } catch (err) {
       log('init failed:', err.message)
       // waitForContainer rejecting means YouTube's chat list never mounted —

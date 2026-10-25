@@ -13857,6 +13857,9 @@
           // the status echo. spa-nav resets it to null on navigation.
           if (onYtVideoPage && currentChannel) _autoYtVideoId = currentChannel
           trackJoin('live', ytSubscribe('__live_yt_auto__', autoYtUrl))
+          // A premiere has no server feed to backfill from: its rows live in YouTube's own frame, which
+          // may have read them before this overlay was listening. Ask it to play them again.
+          if (onYtVideoPage) safeSendMessage({ type: 'youtube_history_request' })
           // Emote join stays separate here (the block is already gated on gYt):
           // its channelId hint is the CHANNEL url, not the video url we just
           // subscribed with, so it can't ride ytSubscribe's third argument.

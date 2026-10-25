@@ -150,6 +150,13 @@
           rebuildEmoteMap(stored.emote_inventory || [], stored.global_emotes || [])
         })
         .catch((e) => log('storage read failed (channel_emotes_update):', e?.message))
+    } else if (msg.type === 'youtube_history_request') {
+      // Replay the list as it stands, oldest first. The overlay drops ids it already holds, so a row
+      // it did get live is not doubled.
+      for (const n of document.querySelectorAll('yt-live-chat-item-list-renderer #items > *')) {
+        const payload = _ytPayloadByNode.get(n)
+        if (payload) safeSendMessage(payload)
+      }
     } else if (msg.type === 'youtube_send_relay') {
       // When awaitConfirm is set (server-relay path), wait for the message to
       // appear in the chat list before acking. Either way, forward the real
@@ -1156,6 +1163,10 @@
     setTimeout(once, 300)
   }
 
+  // What each row was sent as. The overlay can mount after rows already went by (a premiere has no
+  // server feed to backfill it), so it asks for the list again — see youtube_history_request.
+  const _ytPayloadByNode = new WeakMap()
+
   function processNode(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return
     if (!SUPPORTED_RENDERERS.has(node.tagName)) return
@@ -1256,6 +1267,7 @@
     }
 
     log('yt msg:', msgType, msg.user, msg.text)
+    _ytPayloadByNode.set(node, payload)
     safeSendMessage(payload)
   }
 

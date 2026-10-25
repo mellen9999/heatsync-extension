@@ -10475,6 +10475,12 @@ async function handleMessage(message, sender, sendResponse) {
       }
     })()
     return true
+  } else if (message.type === 'youtube_history_request') {
+    // the overlay mounted: ask the chat frame in its own tab to play the list again
+    if (sender?.tab?.id != null)
+      browser.tabs.sendMessage(sender.tab.id, { type: 'youtube_history_request' }).catch(() => {})
+    sendResponse({ ok: true })
+    return true
   } else if (message.type === 'youtube_send_message') {
     ;(async () => {
       try {

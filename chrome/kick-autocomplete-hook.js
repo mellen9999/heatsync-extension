@@ -463,6 +463,32 @@
     return preRange.toString()
   }
 
+  // Kick's editor (lexical) learns the selection from `selectionchange`; an edit issued in the same
+  // tick as the selection still sees the caret and lands at the end, so "kappa"+Tab left "kappa" behind.
+  // Select the word, wait for the editor to take it, and only edit when it holds exactly that word.
+  function selectionTaken() {
+    return new Promise((resolve) => {
+      const done = () => {
+        document.removeEventListener('selectionchange', done)
+        clearTimeout(timer)
+        resolve()
+      }
+      const timer = setTimeout(done, 80)
+      document.addEventListener('selectionchange', done)
+    })
+  }
+
+  /** replace the `word` just before the caret with `text` */
+  async function replaceBefore(input, word, text) {
+    input.focus()
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return false
+    for (let i = 0; i < word.length; i++) sel.modify('extend', 'backward', 'character')
+    await selectionTaken()
+    if (sig.aborted || sel.toString() !== word) return false
+    return document.execCommand('insertText', false, text)
+  }
+
   // Replace :prefix back to opening colon and insert emoji
   function insertEmoji(input, match) {
     const text = getTextBeforeCursor(input)
@@ -472,16 +498,7 @@
       return
     }
 
-    const deleteCount = colonMatch[0].length // :prefix
-    input.focus()
-    const sel = window.getSelection()
-    if (!sel.rangeCount) return
-
-    // Select backwards to delete the :prefix
-    for (let i = 0; i < deleteCount; i++) {
-      sel.modify('extend', 'backward', 'character')
-    }
-    document.execCommand('insertText', false, `${match.emoji} `)
+    replaceBefore(input, colonMatch[0], `${match.emoji} `)
     hideDropdown()
     log('inserted', match.name, match.emoji)
   }
@@ -502,26 +519,18 @@
       return
     }
 
-    const deleteCount = wordMatch[0].length
-    input.focus()
-    const sel = window.getSelection()
-    if (!sel.rangeCount) return
-
-    for (let i = 0; i < deleteCount; i++) {
-      sel.modify('extend', 'backward', 'character')
-    }
     // @-mention rows carry isMention (see the '@' branch in handleInput) —
     // the query itself never keeps the '@' (stripped for the chatter lookup),
     // so restore it here on insert. Not an emote usage, so no MRU bump.
     if (match.isMention) {
       // textContent-safe: usernames are alphanumeric + underscore
-      document.execCommand('insertText', false, `@${match.name} `)
+      replaceBefore(input, wordMatch[0], `@${match.name} `)
       hideEmoteDropdown()
       log('inserted mention', match.name)
       return
     }
     // textContent-safe: emote names are alphanumeric + limited punctuation
-    document.execCommand('insertText', false, `${match.name} `)
+    replaceBefore(input, wordMatch[0], `${match.name} `)
     hideEmoteDropdown()
     // chatter rows aren't emote usage — keep usernames out of the shared signal
     if (!match.isChatter) recordRecentEmoteMru(match.name)
@@ -632,13 +641,9 @@
     if (closingMatch) {
       const emoji = EMOJI_MAP[closingMatch[1]]
       if (emoji) {
-        const deleteCount = closingMatch[0].length // :name:
         const sel = window.getSelection()
         if (sel.rangeCount) {
-          for (let i = 0; i < deleteCount; i++) {
-            sel.modify('extend', 'backward', 'character')
-          }
-          document.execCommand('insertText', false, `${emoji} `)
+          replaceBefore(input, closingMatch[0], `${emoji} `)
           log(`auto-converted :${closingMatch[1]}: →`, emoji)
           hideAll()
           return

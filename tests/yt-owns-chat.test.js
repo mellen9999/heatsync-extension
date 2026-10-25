@@ -28,4 +28,10 @@ describe('youtube owns the chat', () => {
     expect(main).toContain("'#movie_player .ytp-offline-slate'")
     expect(main).toContain("!frameEl.hasAttribute('collapsed') && !ytFrameIsTheFeed()")
   })
+
+  test("youtube's dark tokens are on while the panel is up, and its own choice returns after", () => {
+    expect(main).toContain("html.setAttribute('dark', '')")
+    expect(main).toContain('_hsForcedYtDark = true')
+    expect(main).toMatch(/else if \(!showYtChat && _hsForcedYtDark\) \{\n\s*html\.removeAttribute\('dark'\)/)
+  })
 })

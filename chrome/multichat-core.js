@@ -14962,7 +14962,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '90c2ab090106' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2c3503bc9690' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -81917,6 +81917,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // True while WE collapsed yt's native chat (vs the user having done it
       // themselves) — gates the symmetric restore in checkYtLive.
       let _hsCollapsedNativeYt = false
+      let _hsForcedYtDark = false // we set youtube's dark attribute, so we are the ones to take it off
       let _hsHidNativeYt = false
       let _hsYtFrameEmptySince = 0
       let _hsPrevShowYtChat = null
@@ -81999,6 +82000,22 @@ const STORAGE_KEY = 'heatsync_multichat'
           _hsPrevShowYtChat = !document.body.classList.contains('hs-offline')
         }
         document.body.classList.toggle('hs-offline', !showYtChat)
+        // The panel's column is dark by design, and youtube's own light theme leaves its buttons, search bar
+        // and menus dark-on-dark beside it. Flip youtube to its dark tokens while the panel is up (the
+        // same set it uses for a dark-theme user) and hand its own choice back when the panel goes.
+        {
+          const html = document.documentElement
+          const app = document.querySelector('ytd-app')
+          if (showYtChat && !html.hasAttribute('dark')) {
+            html.setAttribute('dark', '')
+            app?.setAttribute('dark', '')
+            _hsForcedYtDark = true
+          } else if (!showYtChat && _hsForcedYtDark) {
+            html.removeAttribute('dark')
+            app?.removeAttribute('dark')
+            _hsForcedYtDark = false
+          }
+        }
         if (_hsPrevShowYtChat !== showYtChat) {
           try {
             window.dispatchEvent(new Event('resize'))

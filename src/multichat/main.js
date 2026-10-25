@@ -12959,6 +12959,7 @@
       // True while WE collapsed yt's native chat (vs the user having done it
       // themselves) — gates the symmetric restore in checkYtLive.
       let _hsCollapsedNativeYt = false
+      let _hsForcedYtDark = false // we set youtube's dark attribute, so we are the ones to take it off
       let _hsHidNativeYt = false
       let _hsYtFrameEmptySince = 0
       let _hsPrevShowYtChat = null
@@ -13041,6 +13042,22 @@
           _hsPrevShowYtChat = !document.body.classList.contains('hs-offline')
         }
         document.body.classList.toggle('hs-offline', !showYtChat)
+        // The panel's column is dark by design, and youtube's own light theme leaves its buttons, search bar
+        // and menus dark-on-dark beside it. Flip youtube to its dark tokens while the panel is up (the
+        // same set it uses for a dark-theme user) and hand its own choice back when the panel goes.
+        {
+          const html = document.documentElement
+          const app = document.querySelector('ytd-app')
+          if (showYtChat && !html.hasAttribute('dark')) {
+            html.setAttribute('dark', '')
+            app?.setAttribute('dark', '')
+            _hsForcedYtDark = true
+          } else if (!showYtChat && _hsForcedYtDark) {
+            html.removeAttribute('dark')
+            app?.removeAttribute('dark')
+            _hsForcedYtDark = false
+          }
+        }
         if (_hsPrevShowYtChat !== showYtChat) {
           try {
             window.dispatchEvent(new Event('resize'))

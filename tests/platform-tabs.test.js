@@ -104,3 +104,11 @@ describe('style recalc cost', () => {
     expect(src('main.js')).toContain("'hs-has-banner'")
   })
 })
+
+describe('emote format', () => {
+  test('7tv avif is rewritten to webp on every browser, not only firefox', () => {
+    const e = src('emotes.js')
+    expect(e).toContain("if (out.includes('cdn.7tv.app')) out = out.replace(/\\.avif(\\?|$)/i, '.webp$1')")
+    expect(e).not.toContain('HS_IS_FF')
+  })
+})

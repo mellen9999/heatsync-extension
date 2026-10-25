@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c1c9897679d8' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a985e1286e9f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -24203,16 +24203,7 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 // Upgrade emote URL to match current emote size setting.
 // Memoized: input URLs are bounded by emote count (~few thousand). Cache
 // resets when emoteSize changes — same input → same output otherwise.
-// Firefox has no animated-AVIF decoder (Chrome-only). 7TV serves emotes as
-// avif by default, so animated 7TV emotes render as a frozen first frame on
-// Firefox. Detect once and rewrite 7TV avif → webp at the chat chokepoint
-// below (FF animates webp fine; static webp is correct too, just marginally
-// larger). Chrome keeps avif.
-// NB: `typeof browser` is NOT a usable FF signal in this bundle — background's
-// `const browser = globalThis.browser || chrome` alias makes it truthy on
-// Chrome too, which (verified live) wrongly stripped avif on Chrome. The UA is
-// the reliable discriminator: only Firefox's userAgent contains "Firefox".
-const HS_IS_FF = typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox')
+// 7TV serves emotes as avif by default; the chat chokepoint below rewrites them to webp (see the rung step).
 
 /** The emote url at one rung of its provider's ladder. `want` is a multiple of
  *  the emote's LOGICAL 1x size, not a pixel count — providers disagree about
@@ -24284,9 +24275,10 @@ function getChatResUrl(url) {
   const hit = _resCache.get(url)
   if (hit !== undefined) return hit
   let out = hsRungUrl(url, want)
-  // Firefox: 7TV avif → webp (animated avif freezes on FF; see HS_IS_FF above).
-  // Applied after the size rewrite so it isn't clobbered.
-  if (HS_IS_FF && out.includes('cdn.7tv.app')) out = out.replace(/\.avif(\?|$)/i, '.webp$1')
+  // 7TV avif → webp everywhere: Firefox cannot animate avif, and on chrome a full chat of animated avif
+  // is the heavier decode (frames ~17% longer measured on a 500-row kick chat). Applied after the size
+  // rewrite so it isn't clobbered.
+  if (out.includes('cdn.7tv.app')) out = out.replace(/\.avif(\?|$)/i, '.webp$1')
   _resCache.set(url, out)
   if (_resCache.size > 2000) _resCache.delete(_resCache.keys().next().value)
   return out

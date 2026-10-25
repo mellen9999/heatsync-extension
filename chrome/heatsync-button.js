@@ -5236,9 +5236,7 @@
         location.reload()
       })
       const column = () =>
-        document.querySelector(
-          location.hostname.endsWith('kick.com') ? '#channel-chatroom' : '.right-column, .chat-shell',
-        ) ||
+        document.querySelector(location.hostname.endsWith('kick.com') ? '#channel-chatroom' : '.chat-shell') ||
         // a popout is nothing but the chat: the whole page is the column
         (/^\/popout\//.test(location.pathname) ? document.body : null)
       // twitch folds the column to nothing until the viewer opens chat: the bar shows only while it is open
@@ -5246,7 +5244,7 @@
         const el = column()
         if (!el) return false
         const r = el.getBoundingClientRect()
-        const open = r.width > 40 && !el.matches('[class*="right-column--collapsed"]')
+        const open = r.width > 40 && !el.closest('[class*="right-column--collapsed"]')
         if (open) {
           bar.style.top = `${Math.round(r.top)}px`
           bar.style.left = `${Math.round(r.left)}px`

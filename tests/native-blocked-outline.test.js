@@ -10,7 +10,7 @@ test('a blocked native emote hides its picture, keeps its dashed outline', () =>
     'img[data-hs-name-blocked] {',
     '.heatsync-emote-wrapper.emote-overlay-blocked > img.heatsync-emote {',
   ]) {
-    expect(rule(sel)).toContain('object-view-box: inset(100%)')
+    expect(rule(sel)).toContain('object-position: 10000px 10000px')
     expect(rule(sel)).not.toContain('opacity: 0')
   }
   expect(rule('img[data-hs-name-blocked] {')).toContain('dashed #ffffff')

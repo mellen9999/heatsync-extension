@@ -505,7 +505,6 @@
   border-color: var(--hs-card-link) !important;
 }
 .hs-card-note-edit,
-.hs-card-emote,
 .hs-card-action {
   font: inherit;
   background: transparent;
@@ -522,34 +521,6 @@
   background: #ffffff;
   color: #000000;
   outline: none;
-}
-
-/* ── top emotes ───────────────────────────────────────────────────────── */
-.hs-card-emotes {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.hs-card-emote {
-  position: relative;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  cursor: default;
-}
-.hs-card-emote img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.hs-card-emote-n {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-size: 9px;
-  color: var(--hs-card-dim);
-  background: #000000;
-  padding: 0 2px;
 }
 
 /* ── recent logs ──────────────────────────────────────────────────────── */

@@ -203,12 +203,6 @@ function renderRecent(recent, esc) {
   return `<div class="hs-card-recent"><div class="hs-card-recent-head"><span>recent</span></div><div class="hs-card-recent-list">${rows}</div></div>`
 }
 
-function renderTopEmotes(emotes, esc) {
-  if (!emotes || !emotes.length) return ''
-  const tiles = emotes.map(e => `<span class="hs-card-emote" title="${esc(e.name)} · ${esc(String(e.uses))}×"><img src="${esc(e.url)}" alt="${esc(e.name)}" loading="lazy"><span class="hs-card-emote-n">${esc(String(e.uses))}</span></span>`).join('')
-  return `<div class="hs-card-emotes">${tiles}</div>`
-}
-
 function renderActions(actions, esc, userId) {
   if (!actions || !actions.length) return ''
   const uid = userId != null ? ` data-user-id="${esc(String(userId))}"` : ''
@@ -398,7 +392,6 @@ function renderProfile(
     <div class="hs-card-body">
       ${inline ? `<div class="hs-card-top">${heroHtml}${topHtml}</div>` : topHtml}
       ${renderNote(model.note, esc)}
-      ${renderTopEmotes(model.topEmotes, esc)}
       ${renderRecent(model.recent, esc)}
       ${renderMod(model.mod, esc)}
     </div>

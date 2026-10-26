@@ -95,7 +95,7 @@ export function hsCardErrorModel(hint = {}) {
     corpus: null,
     links: {},
     actions: [],
-    sheet: [], platforms: [], channel: null, note: null, recent: null, topEmotes: null,
+    sheet: [], platforms: [], channel: null, note: null, recent: null,
     socials: null, mod: null, accent: null,
   }
 }
@@ -180,7 +180,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
         corpus: buildCorpusRow(payload.corpus, ctx, fmt),
         links: { chatterUrl: `/chatter/${encodeURIComponent(hint.platform)}/${encodeURIComponent(hint.login)}` },
         actions: [],
-        sheet: [], platforms: [], channel: null, note: null, recent: null, topEmotes: null,
+        sheet: [], platforms: [], channel: null, note: null, recent: null,
         socials: null, mod: null, accent: ctx.accent || null,
       }
     }
@@ -327,9 +327,6 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
       }))
     : null
 
-  // ---- top emotes ------------------------------------------------------------
-  const topEmotes = Array.isArray(profile.top_emotes) && profile.top_emotes.length ? profile.top_emotes : null
-
   // ---- socials (host- or server-resolved external links) ---------------------
   const socials = Array.isArray(payload.socials) && payload.socials.length ? payload.socials : null
 
@@ -363,7 +360,6 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     corpus: corpusRow,
     note,
     recent,
-    topEmotes,
     socials,
     mod,
     accent: ctx.accent || null,
@@ -371,7 +367,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
       profileUrl: !isAnonymous && profile.username ? `/profile/${encodeURIComponent(profile.username)}` : null,
       chatterUrl: identity.platform && identity.login ? `/chatter/${encodeURIComponent(identity.platform)}/${encodeURIComponent(identity.login)}` : null,
       logsUrl: identity.platform && identity.login && identity.login.toLowerCase() !== 'anonymous'
-        ? `/${identity.platform}/${encodeURIComponent(identity.login.toLowerCase())}/logs` : null,
+        ? `/search/logs/user/${encodeURIComponent(identity.platform)}/${encodeURIComponent(identity.login.toLowerCase())}` : null,
     },
     actions,
   }

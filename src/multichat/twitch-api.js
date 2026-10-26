@@ -2593,6 +2593,20 @@ function gqlProxy(operation, variables, opts) {
   })
 }
 
+// content.js (native twitch rows, same isolated world) draws the badges of the chat history it backfills
+// from these: it asks for a url, and hears when more sets have landed.
+try {
+  window.__hsBadgeKit = {
+    urlFor: (channel, name, version) => resolveBadgeImageUrl(false, channel, name, version),
+    titleFor: resolveBadgeTitle,
+  }
+} catch (_) {}
+function announceBadges() {
+  try {
+    window.dispatchEvent(new Event('hs-badges-loaded'))
+  } catch (_) {}
+}
+
 async function fetchGlobalBadges() {
   if (globalBadgesFetched) return
   globalBadgesFetched = true
@@ -2616,6 +2630,7 @@ async function fetchGlobalBadges() {
     // updateNativeBadgesInPlace upgrades text-fallback spans to imgs without
     // tearing down any row, so avatars/emotes never reload = no flash.
     if (typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(null)
+    announceBadges()
   } catch (e) {
     globalBadgesFetched = false
     log('Failed to fetch global badges:', e.message)
@@ -3923,6 +3938,7 @@ async function fetchChannelBadges(channelLogin) {
       // no image-reload flash. Other tabs are invalidated via _dropAllTabCaches
       // inside updateNativeBadgesInPlace so they rebuild fresh on next switch.
       if (typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(channelLogin)
+      announceBadges()
     } else {
       // No data populated — schedule retry after backoff
       if (badgesFailedAt.size >= BADGES_FAILED_MAX) {

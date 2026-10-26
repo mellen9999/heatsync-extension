@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '87b01e1f4cd9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '11a1fb5d3de3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -33498,6 +33498,20 @@ function gqlProxy(operation, variables, opts) {
   })
 }
 
+// content.js (native twitch rows, same isolated world) draws the badges of the chat history it backfills
+// from these: it asks for a url, and hears when more sets have landed.
+try {
+  window.__hsBadgeKit = {
+    urlFor: (channel, name, version) => resolveBadgeImageUrl(false, channel, name, version),
+    titleFor: resolveBadgeTitle,
+  }
+} catch (_) {}
+function announceBadges() {
+  try {
+    window.dispatchEvent(new Event('hs-badges-loaded'))
+  } catch (_) {}
+}
+
 async function fetchGlobalBadges() {
   if (globalBadgesFetched) return
   globalBadgesFetched = true
@@ -33521,6 +33535,7 @@ async function fetchGlobalBadges() {
     // updateNativeBadgesInPlace upgrades text-fallback spans to imgs without
     // tearing down any row, so avatars/emotes never reload = no flash.
     if (typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(null)
+    announceBadges()
   } catch (e) {
     globalBadgesFetched = false
     log('Failed to fetch global badges:', e.message)
@@ -34828,6 +34843,7 @@ async function fetchChannelBadges(channelLogin) {
       // no image-reload flash. Other tabs are invalidated via _dropAllTabCaches
       // inside updateNativeBadgesInPlace so they rebuild fresh on next switch.
       if (typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(channelLogin)
+      announceBadges()
     } else {
       // No data populated — schedule retry after backoff
       if (badgesFailedAt.size >= BADGES_FAILED_MAX) {

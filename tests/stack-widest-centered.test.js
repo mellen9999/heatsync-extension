@@ -48,3 +48,10 @@ test('a word that is an emote in the row is not coloured as a chatter', () => {
   expect(css).toMatch(/knownChatters\.has\(cleanWord\) && !emotes\?\.has\(word\.trim\(\)\)/)
   expect(css).toMatch(/colorUsernameMentions\(messageElement, textElements, allEmotes\)/)
 })
+
+// backfilled history rows are built from the IRC line and carried no badges at all
+test('backfilled rows draw their badges from the badge sets', () => {
+  expect(css).toMatch(/div\.dataset\.hsBadges = tags\.badges/)
+  expect(css).toMatch(/function fillBackfillBadges\(\)/)
+  expect(css).toMatch(/addEventListener\('hs-badges-loaded', fillBackfillBadges\)/)
+})

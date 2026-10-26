@@ -4179,6 +4179,12 @@
         textSpan.setAttribute('data-a-target', 'chat-message-text')
         textSpan.textContent = msg.text
 
+        // the IRC badges tag ("moderator/1,subscriber/108"): drawn by fillBackfillBadges once the badge sets are known
+        if (/^[\w-]+\/\d+(,[\w-]+\/\d+)*$/.test(tags.badges || '')) {
+          div.dataset.hsBadges = tags.badges
+          div.dataset.hsBadgeChannel = channel
+        }
+
         div.appendChild(nameSpan)
         div.appendChild(colonSpan)
         div.appendChild(textSpan)
@@ -4252,6 +4258,38 @@
       } catch {}
     }
   }
+
+  // Badges on a backfilled row: it is built from the IRC line, which carries them only as a tag. The image
+  // urls come from multichat-core's badge sets (window.__hsBadgeKit); a row is filled once every badge of
+  // it resolves, so rows that came before the sets landed are completed on the 'hs-badges-loaded' event.
+  function fillBackfillBadges() {
+    const kit = window.__hsBadgeKit
+    if (!kit) return
+    for (const row of document.querySelectorAll('.heatsync-backfill[data-hs-badges]')) {
+      const name = row.querySelector('.chat-author__display-name')
+      if (!name) continue
+      const channel = row.dataset.hsBadgeChannel
+      const pairs = row.dataset.hsBadges.split(',')
+      const drawn = new Set((row.dataset.hsBadgesDrawn || '').split(',').filter(Boolean))
+      for (const pair of pairs) {
+        if (drawn.has(pair)) continue
+        const [setId, version] = pair.split('/')
+        const url = kit.urlFor(channel, setId, version)
+        // not known yet (the channel's sets may still be on their way), or not a twitch image: retried on the next event
+        if (!url || !url.startsWith('https://static-cdn.jtvnw.net/')) continue
+        const img = document.createElement('img')
+        img.className = 'chat-badge'
+        img.alt = `${kit.titleFor(channel, setId, version) || setId} badge`
+        img.src = url
+        img.style.cssText = 'width:18px;height:18px;vertical-align:middle;margin-right:4px;display:inline-block;'
+        name.before(img)
+        drawn.add(pair)
+      }
+      row.dataset.hsBadgesDrawn = [...drawn].join(',')
+      if (drawn.size === pairs.length) delete row.dataset.hsBadges
+    }
+  }
+  window.addEventListener('hs-badges-loaded', fillBackfillBadges)
 
   // Backfill chat history from robotty recent-messages API
   // Fires once per channel join, fetches ~500 recent messages, deduplicates against
@@ -4382,6 +4420,7 @@
           }
         }
         log(` 📜 Backfilled ${inserted} messages`)
+        fillBackfillBadges()
         // Process emotes in backfilled messages
         processExistingMessages()
         // Re-run cosmetic uid back-fill: robotty backfill adds new usernames

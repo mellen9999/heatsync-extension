@@ -5932,7 +5932,8 @@
   function wrapExistingHeatsyncEmotes(messageElement, allEmotes) {
     if (!messageElement.querySelector('img')) return
     // Find all images in the message that aren't already wrapped
-    const images = messageElement.querySelectorAll('img:not(.heatsync-emote)')
+    // (a cosmetic badge is hosted on the same 7tv/bttv/ffz cdns as emotes, but it is a badge: wrapped, it became a 36px block)
+    const images = messageElement.querySelectorAll('img:not(.heatsync-emote):not(.hs-cosmetic-badge)')
 
     for (const img of images) {
       if (img.closest('.heatsync-emote-wrapper')) continue

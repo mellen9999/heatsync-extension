@@ -1091,6 +1091,10 @@
         // Strip colon prefix if present for search - use actualInput (corrected for pollution)
         const search = actualInput.startsWith(':') ? actualInput.slice(1) : actualInput
         if (search.length < 2) return results
+        // Twitch asks on every keystroke, and its own list opens (and Enter accepts it) for whatever comes
+        // back. heatsync emotes are for a Tab press or a ':' word; plain typing gets Twitch's own answer,
+        // or the last word of a sentence turned into an emote on the first Enter and needed a second to send.
+        if (!pressedTab && !actualInput.startsWith(':')) return results
 
         // Get heatsync emotes
         const hsEmotes = getHeatsyncEmotes()

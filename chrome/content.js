@@ -4275,7 +4275,7 @@
   function fillBackfillBadges() {
     const kit = window.__hsBadgeKit
     if (!kit) return
-    for (const row of document.querySelectorAll('.heatsync-backfill[data-hs-badges]')) {
+    for (const row of document.querySelectorAll('[data-hs-badges]')) {
       const name = row.querySelector('.chat-author__display-name')
       if (!name) continue
       const channel = row.dataset.hsBadgeChannel
@@ -4304,6 +4304,7 @@
     }
   }
   const _badgeLoadAsked = new Set()
+  const BADGE_TAG_RE = /^[\w-]+\/[\w.-]+(,[\w-]+\/[\w.-]+)*$/
   window.addEventListener('hs-badges-loaded', fillBackfillBadges)
 
   // Backfill chat history from robotty recent-messages API
@@ -4347,8 +4348,13 @@
       // Collect existing message IDs from DOM for dedup
       const existingIds = new Set()
       const existingTexts = new Set()
+      // rows restored from the local cache before older builds kept badges: the history line has them
+      const cachedNoBadges = new Map()
       chatContainer.querySelectorAll('[data-msg-id]').forEach((el) => {
         existingIds.add(el.dataset.msgId)
+        if (el.classList.contains('heatsync-cached') && !el.querySelector('.chat-badge')) {
+          cachedNoBadges.set(el.dataset.msgId, el)
+        }
       })
       // Fallback dedup: collect username+text combos from visible messages
       chatContainer.querySelectorAll('.chat-line__message').forEach((el) => {
@@ -4377,7 +4383,14 @@
         const userId = tags['user-id'] || ''
 
         // Dedup: skip if message ID already in DOM
-        if (msgId && existingIds.has(msgId)) continue
+        if (msgId && existingIds.has(msgId)) {
+          const cached = cachedNoBadges.get(msgId)
+          if (cached && BADGE_TAG_RE.test(tags.badges || '')) {
+            cached.dataset.hsBadges = tags.badges
+            cached.dataset.hsBadgeChannel = channel
+          }
+          continue
+        }
         // Dedup: skip if username+text matches (fallback)
         const dedupKey = `${username.toLowerCase()}:${text.substring(0, 80)}`
         if (existingTexts.has(dedupKey)) continue
@@ -4410,7 +4423,7 @@
         textSpan.textContent = text // textContent is safe, no innerHTML
 
         // the IRC badges tag ("moderator/1,subscriber/108"): drawn by fillBackfillBadges once the badge sets are known
-        if (/^[\w-]+\/[\w.-]+(,[\w-]+\/[\w.-]+)*$/.test(tags.badges || '')) {
+        if (BADGE_TAG_RE.test(tags.badges || '')) {
           div.dataset.hsBadges = tags.badges
           div.dataset.hsBadgeChannel = channel
         }
@@ -4448,6 +4461,9 @@
         // (with uids) that may match older cached messages still missing uid.
         backfillCachedMessageUids(chatContainer)
       }
+
+      // cached rows that just got their badge tag
+      fillBackfillBadges()
 
       // Capture all native Twitch messages into cache (ones that were already in DOM)
       if (msgCacheChannel) {

@@ -68,3 +68,9 @@ test('history badges: the sets are requested and cached rows keep their badge im
   expect(css).toMatch(/const badges = \[\]/)
   expect(css).toMatch(/for \(const \[src, alt\] of msg\.badges\.slice\(0, 8\)\)/)
 })
+
+// rows restored from an older cache have no badges; the same message in the history line has them
+test('a cached row without badges takes them from the history line', () => {
+  expect(css).toMatch(/cachedNoBadges\.get\(msgId\)/)
+  expect(css).toMatch(/querySelectorAll\('\[data-hs-badges\]'\)/)
+})

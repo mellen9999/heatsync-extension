@@ -435,10 +435,13 @@
   // Same fix for a srcset value: Twitch sets BOTH src and srcset on the emote
   // <img>, and the browser renders from srcset — so fixing only src left the
   // broken __FFZ__/jtvnw srcset winning (currentSrc = 404). Rewrite every URL in
-  // the comma-separated srcset; descriptors (1x/2x/…) are preserved.
+  // the comma-separated srcset. Every size resolves to the same image, so a
+  // repeated url keeps only its first descriptor: left as 1x/2x/4x the browser
+  // picks the 4x entry and draws the 1x image at a quarter of its size.
   function fixHeatsyncSrcset(value) {
     if (!value || typeof value !== 'string' || !value.includes(HEATSYNC_PREFIX)) return null
     let changed = false
+    const seen = new Set()
     const out = value
       .split(',')
       .map((part) => {
@@ -450,10 +453,13 @@
         const f = fixHeatsyncUrl(url)
         if (f) {
           changed = true
+          if (seen.has(f)) return ''
+          seen.add(f)
           return f + desc
         }
         return t
       })
+      .filter(Boolean)
       .join(', ')
     return changed ? out : null
   }

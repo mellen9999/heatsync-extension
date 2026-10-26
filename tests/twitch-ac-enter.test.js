@@ -28,3 +28,10 @@ test('the provider hands twitch its own answer back when it adds nothing', () =>
   expect(src).toMatch(/const raw = origGetMatches\.call/)
   expect(src).toMatch(/if \(search\.length < 2\) return raw/)
 })
+
+// twitch sends 1x/2x/4x for an inserted emote; all three become one url, and the browser took the 4x entry
+// and drew the 1x image at a quarter size (Kappa at 6x7 in the input)
+test('a fixed srcset keeps one entry per url', () => {
+  expect(src).toMatch(/if \(seen\.has\(f\)\) return ''/)
+  expect(src).toMatch(/\.filter\(Boolean\)\s*\.join\(', '\)/)
+})

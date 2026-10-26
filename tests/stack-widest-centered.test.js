@@ -32,3 +32,8 @@ test("a mention is stamped for the tagged person's heatsync paint", () => {
 test('the overlay stacker skips chat badges', () => {
   expect(css).toMatch(/!_el\.classList\.contains\('chat-badge'\)/)
 })
+
+// a sent heatsync emote is drawn from a placeholder address for a moment; it must not show as a broken image
+test('an image still on the placeholder address is hidden', () => {
+  expect(css).toMatch(/img\[srcset\*="__FFZ__999999"\]\s*\{\s*visibility: hidden !important/)
+})

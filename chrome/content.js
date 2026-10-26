@@ -1702,6 +1702,13 @@
     max-width: none !important;
   }
 
+  /* twitch builds an emote it was handed under our placeholder id from a placeholder address; the real image
+     is swapped in a moment later. Until then the picture is not shown, so no broken image flashes. */
+  img[src*="__FFZ__999999"],
+  img[srcset*="__FFZ__999999"] {
+    visibility: hidden !important;
+  }
+
   /* the row you just sent: twitch draws it as its own emote (a heatsync one is a proxied 1x image) in a fixed
      square box, so a wide emote came out squeezed. The box takes the image's width. */
   .chat-line__message .chat-image__container:has(img.chat-line__message--emote:not([src*="jtvnw.net"])) {

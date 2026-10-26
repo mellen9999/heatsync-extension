@@ -1015,8 +1015,10 @@
 
       provider.getMatches = function (input, pressedTab, ...args) {
         // Get original Twitch results first
-        let results = origGetMatches.call(this, input, pressedTab, ...args)
-        if (!Array.isArray(results)) results = []
+        // what Twitch itself answered, handed back untouched when we add nothing: an empty array where it
+        // said "not mine" makes Twitch show an empty list for every word, and the first Enter closes that
+        const raw = origGetMatches.call(this, input, pressedTab, ...args)
+        let results = Array.isArray(raw) ? raw : []
 
         log(' getMatches:', input, 'twitch results:', results.length, 'recentlyInserted:', [...recentlyInserted])
 
@@ -1098,11 +1100,11 @@
 
         // Strip colon prefix if present for search - use actualInput (corrected for pollution)
         const search = actualInput.startsWith(':') ? actualInput.slice(1) : actualInput
-        if (search.length < 2) return results
+        if (search.length < 2) return raw
         // Twitch asks on every keystroke, and its own list opens (and Enter accepts it) for whatever comes
         // back. heatsync emotes are for a Tab press or a ':' word; plain typing gets Twitch's own answer,
         // or the last word of a sentence turned into an emote on the first Enter and needed a second to send.
-        if (!pressedTab && !actualInput.startsWith(':')) return results
+        if (!pressedTab && !actualInput.startsWith(':')) return raw
 
         // Get heatsync emotes
         const hsEmotes = getHeatsyncEmotes()

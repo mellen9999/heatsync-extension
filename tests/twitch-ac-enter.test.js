@@ -6,7 +6,7 @@ const src = readFileSync(new URL('../chrome/autocomplete-hook.js', import.meta.u
 // Twitch accepts its open list on Enter: heatsync matches offered for plain typing made the first Enter
 // swap the last word for an emote instead of sending
 test('heatsync emote matches are only offered for a Tab press or a colon word', () => {
-  expect(src).toMatch(/if \(!pressedTab && !actualInput\.startsWith\(':'\)\) return results/)
+  expect(src).toMatch(/if \(!pressedTab && !actualInput\.startsWith\(':'\)\) return raw/)
 })
 
 // Twitch arms its emote list for every typed word while the provider can be tab-triggered, and the first Enter
@@ -21,4 +21,10 @@ test('the emote provider is tab-triggerable only while Tab is down', () => {
 // with no list armed while typing, a word with a single match must complete on the first Tab
 test('a lone match is inserted by the first Tab', () => {
   expect(src).toMatch(/const shouldCycle = cycleState\.matches\.length > 0 &&/)
+})
+
+// an empty array where twitch said "not mine" makes twitch show an empty list for every word
+test('the provider hands twitch its own answer back when it adds nothing', () => {
+  expect(src).toMatch(/const raw = origGetMatches\.call/)
+  expect(src).toMatch(/if \(search\.length < 2\) return raw/)
 })

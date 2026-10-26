@@ -270,6 +270,9 @@ function checkScopeCollisions() {
     'gif-search-remote.js',
     // The site's emote_refs builder (verbatim copy) — feed posts vouch their emotes.
     'emote-refs.js',
+    // What a stream event says and which stored ones a reload brings back
+    // (client/utils/stream-event-text.js on the site) — one answer for both.
+    'stream-event-text.js',
     // The one user-card model/renderer/formatter (client/card/*.js on the
     // site) — multichat-only for now (tooltips.js/profile-card.js consume
     // hsCardModel/hsCardHtml), same embed point as gif-search-remote.js above.

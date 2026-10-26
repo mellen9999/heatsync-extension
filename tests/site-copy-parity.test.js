@@ -42,6 +42,7 @@ const SITE =
 const FILES = [
   ['client/utils/gif-search-remote.js', 'src/lib/gif-search-remote.js'],
   ['client/utils/emote-refs.js', 'src/lib/emote-refs.js'],
+  ['client/utils/stream-event-text.js', 'src/lib/stream-event-text.js'],
   ['client/card/card-time.js', 'src/lib/card-time.js'],
   ['client/card/card-model.js', 'src/lib/card-model.js'],
   ['client/card/card-render.js', 'src/lib/card-render.js'],

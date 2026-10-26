@@ -3193,7 +3193,7 @@
   function injectStreamEventsIntoBuffers(events, recentOnly = false) {
     const liveCh = getLiveChannel()
     const liveBuffer = liveCh ? irc?.channels?.get(liveCh) : null
-    const chatCutoff = recentOnly ? Date.now() - 900000 : 0 // 15min
+    const chatCutoff = recentOnly ? Date.now() - REPLAY_WINDOW_MS : 0
     let added = 0
 
     for (const evt of events) {
@@ -14498,11 +14498,9 @@
         // Build inline notification
         let text = '',
           eventClass = ''
-        if (msg.eventType === 'stream:update' && msg.game && msg.prevGame !== msg.game) {
+        if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
           if (!hermesToggles?.gameSwitch) return
-          text = msg.prevGame
-            ? `[${channel}] \u25C6 switched to ${msg.game}`
-            : `[${channel}] \u25C6 now playing ${msg.game}`
+          text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
           eventClass = 'event-update'
         } else if (msg.eventType === 'stream:online') {
           try {
@@ -14536,7 +14534,7 @@
           const _inGrace = Date.now() - mcStartedAt < 90000
           sessionWentLiveSeen.add(channel)
           if (_alreadyLive || _inGrace) return
-          text = msg.game ? `[${channel}] \u25C6 went live \u2014 ${msg.game}` : `[${channel}] \u25C6 went live`
+          text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
           eventClass = 'event-online'
         } else if (msg.eventType === 'stream:offline') {
           sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
@@ -14544,7 +14542,7 @@
             markStreamEnded(channel)
           } catch (_) {}
           if (!hermesToggles?.offline) return
-          text = `[${channel}] \u25C6 went offline`
+          text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
           eventClass = 'event-offline'
         } else if (msg.eventType === 'stream:redeem') {
           if (!hermesToggles?.redeem) return
@@ -14807,11 +14805,9 @@
         // Build inline notification
         let text = '',
           eventClass = ''
-        if (msg.eventType === 'stream:update' && msg.game && msg.prevGame !== msg.game) {
+        if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
           if (!hermesToggles?.gameSwitch) return
-          text = msg.prevGame
-            ? `[${channel}] \u25C6 switched to ${msg.game}`
-            : `[${channel}] \u25C6 now playing ${msg.game}`
+          text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
           eventClass = 'event-follow event-update'
         } else if (msg.eventType === 'stream:online') {
           if (!hermesToggles?.online) return
@@ -14843,12 +14839,12 @@
           const _inGrace = Date.now() - mcStartedAt < 90000
           sessionWentLiveSeen.add(channel)
           if (_alreadyLive || _inGrace) return
-          text = msg.game ? `[${channel}] \u25C6 went live \u2014 ${msg.game}` : `[${channel}] \u25C6 went live`
+          text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
           eventClass = 'event-follow event-online'
         } else if (msg.eventType === 'stream:offline') {
           sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
           if (!hermesToggles?.offline) return
-          text = `[${channel}] \u25C6 went offline`
+          text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
           eventClass = 'event-follow event-offline'
         }
         if (!text) return
@@ -14942,17 +14938,17 @@
 
         let text = '',
           eventClass = ''
-        if (e.type === 'follow:stream:update' && e.game) {
+        if (e.type === 'follow:stream:update' && streamEventBody('update', e)) {
           if (!hermesToggles?.gameSwitch) continue
-          text = e.prevGame ? `[${channel}] \u25C6 switched to ${e.game}` : `[${channel}] \u25C6 now playing ${e.game}`
+          text = `[${channel}] \u25C6 ${streamEventBody('update', e)}`
           eventClass = 'event-follow event-update'
         } else if (e.type === 'follow:stream:online') {
           if (!hermesToggles?.online) continue
-          text = e.game ? `[${channel}] \u25C6 went live \u2014 ${e.game}` : `[${channel}] \u25C6 went live`
+          text = `[${channel}] \u25C6 ${streamEventBody('online', e)}`
           eventClass = 'event-follow event-online'
         } else if (e.type === 'follow:stream:offline') {
           if (!hermesToggles?.offline) continue
-          text = `[${channel}] \u25C6 went offline`
+          text = `[${channel}] \u25C6 ${streamEventBody('offline', e)}`
           eventClass = 'event-follow event-offline'
         }
         if (!text) continue

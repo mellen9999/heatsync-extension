@@ -383,7 +383,7 @@
       box-sizing: border-box;
     }
     .hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before {
-      border-color: #fff;
+      border-color: var(--hs-dim);
     }
     .hs-mc-emote-wrapper.hs-state-blocked.hs-emote-highlight::before {
       background: var(--hs-danger);

@@ -429,7 +429,7 @@ describe('single-definition colours', () => {
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
 
-  test("dim gray is used for exactly four roles: reply-context, fully-read tabs, a log line's #channel tag, a mod-cleared row's text", () => {
+  test("dim gray is used for exactly five roles: reply-context, fully-read tabs, a log line's #channel tag, a mod-cleared row's text, a blocked emote's dashed box in an expanded stack", () => {
     const users = []
     for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
       const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
@@ -439,6 +439,7 @@ describe('single-definition colours', () => {
     // readdirSync order is filesystem-defined (tmpfs ≠ btrfs) — compare as a set
     expect(users.sort()).toEqual([
       '.hs-cl-ch',
+      '.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before',
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
       '.hs-mc-reply-ctx',
       '.hs-mc-tab',

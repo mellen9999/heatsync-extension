@@ -4044,7 +4044,12 @@
     // Twitch user-id (for cosmetic re-application on restore — without this,
     // restored cached messages get no 7TV badge / paint / BTTV / FFZ / Chatterino)
     const uid = el.getAttribute('data-user-id') || ''
-    return { id, user, text, color, uid, ts: Date.now() }
+    // twitch's own badge images ([src, alt]); drawn again on restore
+    const badges = []
+    for (const b of el.querySelectorAll('img.chat-badge')) {
+      if (b.src?.startsWith('https://static-cdn.jtvnw.net/') && badges.length < 8) badges.push([b.src, b.alt || ''])
+    }
+    return { id, user, text, color, uid, badges, ts: Date.now() }
   }
 
   // Capture a message into the cache buffer (called from MutationObserver)
@@ -4179,6 +4184,17 @@
         textSpan.setAttribute('data-a-target', 'chat-message-text')
         textSpan.textContent = msg.text
 
+        if (Array.isArray(msg.badges)) {
+          for (const [src, alt] of msg.badges.slice(0, 8)) {
+            if (typeof src !== 'string' || !src.startsWith('https://static-cdn.jtvnw.net/')) continue
+            const img = document.createElement('img')
+            img.className = 'chat-badge'
+            img.alt = String(alt || '').slice(0, 80)
+            img.src = src
+            img.style.cssText = 'width:18px;height:18px;vertical-align:middle;margin-right:4px;display:inline-block;'
+            div.appendChild(img)
+          }
+        }
         div.appendChild(nameSpan)
         div.appendChild(colonSpan)
         div.appendChild(textSpan)
@@ -4281,8 +4297,13 @@
       }
       row.dataset.hsBadgesDrawn = [...drawn].join(',')
       if (drawn.size === pairs.length) delete row.dataset.hsBadges
+      else if (!_badgeLoadAsked.has(channel)) {
+        _badgeLoadAsked.add(channel)
+        kit.load(channel)
+      }
     }
   }
+  const _badgeLoadAsked = new Set()
   window.addEventListener('hs-badges-loaded', fillBackfillBadges)
 
   // Backfill chat history from robotty recent-messages API

@@ -61,3 +61,10 @@ test('the badge stamp is in the backfill loop', () => {
   const at = css.indexOf('div.dataset.hsBadges = tags.badges')
   expect(at).toBeGreaterThan(css.indexOf('async function backfillChatHistory'))
 })
+
+// native chat never loaded the badge sets (only the overlay did), and cached rows kept no badges
+test('history badges: the sets are requested and cached rows keep their badge images', () => {
+  expect(css).toMatch(/kit\.load\(channel\)/)
+  expect(css).toMatch(/const badges = \[\]/)
+  expect(css).toMatch(/for \(const \[src, alt\] of msg\.badges\.slice\(0, 8\)\)/)
+})

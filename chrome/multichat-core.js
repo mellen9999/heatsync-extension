@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '11a1fb5d3de3' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '480ec10192db' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -33504,6 +33504,8 @@ try {
   window.__hsBadgeKit = {
     urlFor: (channel, name, version) => resolveBadgeImageUrl(false, channel, name, version),
     titleFor: resolveBadgeTitle,
+    // the sets are otherwise fetched only when the overlay mounts; native chat asks for them itself
+    load: (channel) => Promise.allSettled([fetchGlobalBadges(), fetchChannelBadges(channel)]),
   }
 } catch (_) {}
 function announceBadges() {

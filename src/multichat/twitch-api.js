@@ -2599,6 +2599,8 @@ try {
   window.__hsBadgeKit = {
     urlFor: (channel, name, version) => resolveBadgeImageUrl(false, channel, name, version),
     titleFor: resolveBadgeTitle,
+    // the sets are otherwise fetched only when the overlay mounts; native chat asks for them itself
+    load: (channel) => Promise.allSettled([fetchGlobalBadges(), fetchChannelBadges(channel)]),
   }
 } catch (_) {}
 function announceBadges() {

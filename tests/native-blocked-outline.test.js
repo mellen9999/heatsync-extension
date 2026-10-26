@@ -25,5 +25,5 @@ test('a sent heatsync emote in a twitch row keeps its full width', () => {
 
 // a cosmetic badge lives on the emote cdns; the emote wrapper must leave it alone or it blows up to a 36px block
 test('wrapping existing emotes skips cosmetic badges', () => {
-  expect(src).toMatch(/querySelectorAll\('img:not\(\.heatsync-emote\):not\(\.hs-cosmetic-badge\)'\)/)
+  expect(src).toMatch(/querySelectorAll\('img:not\(\.heatsync-emote\):not\(\.hs-cosmetic-badge\):not\(\.chat-badge\)'\)/)
 })

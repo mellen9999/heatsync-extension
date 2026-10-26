@@ -55,3 +55,9 @@ test('backfilled rows draw their badges from the badge sets', () => {
   expect(css).toMatch(/function fillBackfillBadges\(\)/)
   expect(css).toMatch(/addEventListener\('hs-badges-loaded', fillBackfillBadges\)/)
 })
+
+// the badge stamp must sit in the IRC backfill loop (where `tags` exists), not the cache restore
+test('the badge stamp is in the backfill loop', () => {
+  const at = css.indexOf('div.dataset.hsBadges = tags.badges')
+  expect(at).toBeGreaterThan(css.indexOf('async function backfillChatHistory'))
+})

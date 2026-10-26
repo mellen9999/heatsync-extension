@@ -4179,12 +4179,6 @@
         textSpan.setAttribute('data-a-target', 'chat-message-text')
         textSpan.textContent = msg.text
 
-        // the IRC badges tag ("moderator/1,subscriber/108"): drawn by fillBackfillBadges once the badge sets are known
-        if (/^[\w-]+\/[\w.-]+(,[\w-]+\/[\w.-]+)*$/.test(tags.badges || '')) {
-          div.dataset.hsBadges = tags.badges
-          div.dataset.hsBadgeChannel = channel
-        }
-
         div.appendChild(nameSpan)
         div.appendChild(colonSpan)
         div.appendChild(textSpan)
@@ -4393,6 +4387,12 @@
         textSpan.className = 'text-fragment'
         textSpan.setAttribute('data-a-target', 'chat-message-text')
         textSpan.textContent = text // textContent is safe, no innerHTML
+
+        // the IRC badges tag ("moderator/1,subscriber/108"): drawn by fillBackfillBadges once the badge sets are known
+        if (/^[\w-]+\/[\w.-]+(,[\w-]+\/[\w.-]+)*$/.test(tags.badges || '')) {
+          div.dataset.hsBadges = tags.badges
+          div.dataset.hsBadgeChannel = channel
+        }
 
         div.appendChild(nameSpan)
         div.appendChild(colonSpan)

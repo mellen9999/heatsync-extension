@@ -41,3 +41,8 @@ test('a twitch emote from the bridge keeps its real id and is left out of the fa
   expect(src).toMatch(/static-cdn\\\.jtvnw\\\.net\\\/emoticons\\\/v2/)
   expect(src).toMatch(/\.filter\(\(emote\) => !emote\.native\)/)
 })
+
+// an emote tab-completed from the remote 7tv search is not in the bridge: its SENT row showed a broken image for good
+test('an inserted emote is registered where the sent-row interceptors look it up', () => {
+  expect(src).toMatch(/window\.__heatsyncEmoteUrls\[innerId\] = emoteUrl/)
+})

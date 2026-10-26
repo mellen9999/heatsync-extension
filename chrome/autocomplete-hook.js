@@ -1573,6 +1573,15 @@
       // broken tab-complete images for remote-search / unsynced emotes too.
       if (emoteUrl) {
         _insertedUrls.set(innerId, emoteUrl)
+        // the row twitch draws for the SENT message is made outside the chat input: early-inject-main's
+        // interceptors resolve its fake id from this map, so an emote that was never in the bridge
+        // (remote 7tv search) no longer shows a broken image there
+        if (
+          /^https:\/\/(cdn\.(7tv\.app|betterttv\.net|frankerfacez\.com|heatsync\.org)|heatsync\.org)\//.test(emoteUrl)
+        ) {
+          window.__heatsyncEmoteUrls = window.__heatsyncEmoteUrls || {}
+          window.__heatsyncEmoteUrls[innerId] = emoteUrl
+        }
         if (_insertedUrls.size > 800) _insertedUrls.delete(_insertedUrls.keys().next().value)
       }
     }

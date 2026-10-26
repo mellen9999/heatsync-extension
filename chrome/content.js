@@ -5935,8 +5935,9 @@
   function wrapExistingHeatsyncEmotes(messageElement, allEmotes) {
     if (!messageElement.querySelector('img')) return
     // Find all images in the message that aren't already wrapped
-    // (a cosmetic badge is hosted on the same 7tv/bttv/ffz cdns as emotes, but it is a badge: wrapped, it became a 36px block)
-    const images = messageElement.querySelectorAll('img:not(.heatsync-emote):not(.hs-cosmetic-badge)')
+    // (a badge, ours or twitch's, can be hosted on the same 7tv/bttv/ffz cdns as emotes, but it is a badge: wrapped, it became a 36px block
+    // and the next emote stacked onto it)
+    const images = messageElement.querySelectorAll('img:not(.heatsync-emote):not(.hs-cosmetic-badge):not(.chat-badge)')
 
     for (const img of images) {
       if (img.closest('.heatsync-emote-wrapper')) continue
@@ -6051,6 +6052,7 @@
           n.tagName === 'IMG' &&
           !n.closest('.heatsync-emote-wrapper') &&
           !n.closest('.hs-cosmetic-badge') &&
+          !n.classList.contains('chat-badge') &&
           (n.alt || '').length > 0
         ) {
           const src = n.src || ''

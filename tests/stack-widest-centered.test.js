@@ -10,3 +10,9 @@ test('a collapsed stack is a one-cell grid sized by its widest emote', () => {
   expect(css).toMatch(/grid-area: 1 \/ 1 !important/)
   expect(css).not.toMatch(/\.heatsync-emote-stack > \.heatsync-overlay,[^}]*position: absolute/)
 })
+
+// a 7tv-hosted twitch badge (Pichu) was wrapped as an emote, and the next emote in the row stacked onto it
+test('a chat badge is never wrapped as an emote', () => {
+  expect(css).toMatch(/img:not\(\.heatsync-emote\):not\(\.hs-cosmetic-badge\):not\(\.chat-badge\)/)
+  expect(css).toMatch(/!n\.classList\.contains\('chat-badge'\)/)
+})

@@ -40,3 +40,58 @@ export function replayKeeps(kind, time, now = Date.now()) {
   if (kind === 'online') return false
   return Number.isFinite(time) && now - time <= REPLAY_WINDOW_MS
 }
+
+/** How long a first "now playing" waits for the "went live" that usually rides with it. */
+export const GO_LIVE_PAIR_MS = 2000
+/** A "now playing" for the game a channel just went live with, inside this, is the same news. */
+const GO_LIVE_ECHO_MS = 30000
+
+/**
+ * Twitch announces one go-live as two events: `channel.update` (the game, with
+ * no previous one — "now playing X") and `stream.online` ("went live — X").
+ * Shown raw that is two lines for one thing. This pairs them per channel: a
+ * "now playing" with no previous game waits a moment, and a "went live" for
+ * the same game replaces it; one that arrives AFTER a go-live for the same game
+ * is dropped. A real switch (a previous game) is never held.
+ *
+ * Pure: the clock and timers are injected so both clients and the tests drive
+ * it the same way. `emit(channel, kind, e, text)` is called at most once per line.
+ * @param {{ emit: (channel: string, kind: 'update'|'online', e: object, text: string) => void,
+ *           now?: () => number, setTimer?: Function, clearTimer?: Function, holdMs?: number }} io
+ */
+export function createGoLivePairing({ emit, now = Date.now, setTimer = setTimeout, clearTimer = clearTimeout, holdMs = GO_LIVE_PAIR_MS }) {
+  const pending = new Map() // channel -> { timer, game }
+  const lastOnline = new Map() // channel -> { game, at }
+  return {
+    update(channel, e) {
+      const text = streamEventBody('update', e)
+      if (!text) return
+      if (e.prevGame) return emit(channel, 'update', e, text)
+      const live = lastOnline.get(channel)
+      if (live && live.game === e.game && now() - live.at <= GO_LIVE_ECHO_MS) return
+      const held = pending.get(channel)
+      if (held) clearTimer(held.timer)
+      const timer = setTimer(() => {
+        pending.delete(channel)
+        emit(channel, 'update', e, text)
+      }, holdMs)
+      pending.set(channel, { timer, game: e.game })
+    },
+    online(channel, e) {
+      const held = pending.get(channel)
+      if (held && held.game === e.game) {
+        clearTimer(held.timer)
+        pending.delete(channel)
+      }
+      lastOnline.set(channel, { game: e.game, at: now() })
+      emit(channel, 'online', e, streamEventBody('online', e))
+    },
+    /** Going offline forgets the go-live, so the next one pairs fresh. */
+    offline(channel) {
+      const held = pending.get(channel)
+      if (held) clearTimer(held.timer)
+      pending.delete(channel)
+      lastOnline.delete(channel)
+    },
+  }
+}

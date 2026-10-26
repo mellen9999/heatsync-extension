@@ -13332,6 +13332,61 @@ function replayKeeps(kind, time, now = Date.now()) {
   return Number.isFinite(time) && now - time <= REPLAY_WINDOW_MS
 }
 
+/** How long a first "now playing" waits for the "went live" that usually rides with it. */
+const GO_LIVE_PAIR_MS = 2000
+/** A "now playing" for the game a channel just went live with, inside this, is the same news. */
+const GO_LIVE_ECHO_MS = 30000
+
+/**
+ * Twitch announces one go-live as two events: `channel.update` (the game, with
+ * no previous one — "now playing X") and `stream.online` ("went live — X").
+ * Shown raw that is two lines for one thing. This pairs them per channel: a
+ * "now playing" with no previous game waits a moment, and a "went live" for
+ * the same game replaces it; one that arrives AFTER a go-live for the same game
+ * is dropped. A real switch (a previous game) is never held.
+ *
+ * Pure: the clock and timers are injected so both clients and the tests drive
+ * it the same way. `emit(channel, kind, e, text)` is called at most once per line.
+ * @param {{ emit: (channel: string, kind: 'update'|'online', e: object, text: string) => void,
+ *           now?: () => number, setTimer?: Function, clearTimer?: Function, holdMs?: number }} io
+ */
+function createGoLivePairing({ emit, now = Date.now, setTimer = setTimeout, clearTimer = clearTimeout, holdMs = GO_LIVE_PAIR_MS }) {
+  const pending = new Map() // channel -> { timer, game }
+  const lastOnline = new Map() // channel -> { game, at }
+  return {
+    update(channel, e) {
+      const text = streamEventBody('update', e)
+      if (!text) return
+      if (e.prevGame) return emit(channel, 'update', e, text)
+      const live = lastOnline.get(channel)
+      if (live && live.game === e.game && now() - live.at <= GO_LIVE_ECHO_MS) return
+      const held = pending.get(channel)
+      if (held) clearTimer(held.timer)
+      const timer = setTimer(() => {
+        pending.delete(channel)
+        emit(channel, 'update', e, text)
+      }, holdMs)
+      pending.set(channel, { timer, game: e.game })
+    },
+    online(channel, e) {
+      const held = pending.get(channel)
+      if (held && held.game === e.game) {
+        clearTimer(held.timer)
+        pending.delete(channel)
+      }
+      lastOnline.set(channel, { game: e.game, at: now() })
+      emit(channel, 'online', e, streamEventBody('online', e))
+    },
+    /** Going offline forgets the go-live, so the next one pairs fresh. */
+    offline(channel) {
+      const held = pending.get(channel)
+      if (held) clearTimer(held.timer)
+      pending.delete(channel)
+      lastOnline.delete(channel)
+    },
+  }
+}
+
 
 // --- lib/card-time.js ---
 /**
@@ -14994,7 +15049,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd5eea7d5c810' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '749b72162f9e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -83751,183 +83806,207 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!window._hsStreamEventDedup) window._hsStreamEventDedup = new Map()
     const streamEventDedup = window._hsStreamEventDedup
 
+    // One go-live arrives as stream:update ("now playing X", no previous game)
+    // plus stream:online ("went live — X"). Pair them per channel (shared with
+    // the site, see createGoLivePairing): the go-live shows, its starting-game
+    // twin does not, and a real switch still passes straight through.
+    const withGoLivePairing = (type, handle) => {
+      const pairing = createGoLivePairing({
+        emit: (_channel, kind, e) => {
+          if (kind === 'update') handle(e)
+        },
+      })
+      return (msg) => {
+        const channel = msg.type === type ? msg.channel?.toLowerCase() : null
+        if (channel) {
+          if (msg.eventType === 'stream:update') return pairing.update(channel, msg)
+          if (msg.eventType === 'stream:online') pairing.online(channel, msg)
+          else if (msg.eventType === 'stream:offline') pairing.offline(channel)
+        }
+        return handle(msg)
+      }
+    }
+
     // Handle stream events (game switch, online/offline) from HeatSync WS
     if (!_onceGuardsMain.streamEventListener) {
       _onceGuardsMain.streamEventListener = true
-      cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
-        if (msg.type !== 'stream_event') return
-        const channel = msg.channel?.toLowerCase()
-        if (!channel) return
+      cleanup.addListener(
+        chrome.runtime?.onMessage,
+        withGoLivePairing('stream_event', (msg) => {
+          if (msg.type !== 'stream_event') return
+          const channel = msg.channel?.toLowerCase()
+          if (!channel) return
 
-        // Build inline notification
-        let text = '',
-          eventClass = ''
-        if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
-          if (!hermesToggles?.gameSwitch) return
-          text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
-          eventClass = 'event-update'
-        } else if (msg.eventType === 'stream:online') {
-          try {
-            streamStats.delete((channel || '').toLowerCase())
-          } catch (_) {}
-          if (!hermesToggles?.online) return
-          // Same gate as the follow_stream_event listener: if the authoritative
-          // poll snapshot already has this channel live, the WS "went live" is
-          // a connect-snapshot replay (the server pushes the whole live roster
-          // as realtime online events on every (re)connect), not a genuine
-          // off\u2192on transition. Drop it. A real transition pushes faster than
-          // the 60s poll refresh so it won't be in the set yet and still shows.
-          // Triple guard against the "went live" wall:
-          //  1. sessionWentLiveSeen — a channel emits at most one went-live
-          //     per session (offline clears the mark below). Kills every later
-          //     server re-broadcast: connect-snapshot replays, EventSub
-          //     re-subscribe, emote-add round-trips that fan out cached
-          //     stream.online events, etc.
-          //  2. Membership — if a poll snapshot already knows this channel
-          //     live, the FIRST emission we see is a snapshot, not a
-          //     transition. Drop.
-          //  3. Grace window — for the first 30s after content load, the WS
-          //     burst can arrive before either set has populated, so neither
-          //     #1 nor #2 catches it. Treat any first-emission within 30s as
-          //     snapshot.
-          // A genuine off→on transition beats the 60s poll and arrives outside
-          // the grace, so it still surfaces (and gets recorded so any later
-          // re-broadcast of the same channel is deduped).
-          if (sessionWentLiveSeen.has(channel)) return
-          const _alreadyLive = isChannelLive(channel)
-          const _inGrace = Date.now() - mcStartedAt < 90000
-          sessionWentLiveSeen.add(channel)
-          if (_alreadyLive || _inGrace) return
-          text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
-          eventClass = 'event-online'
-        } else if (msg.eventType === 'stream:offline') {
-          sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
-          try {
-            markStreamEnded(channel)
-          } catch (_) {}
-          if (!hermesToggles?.offline) return
-          text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
-          eventClass = 'event-offline'
-        } else if (msg.eventType === 'stream:redeem') {
-          if (!hermesToggles?.redeem) return
-          text = `\u25C6 redeemed "${String(msg.title ?? '')}"`
-          if (msg.cost) text += ` (${msg.cost})`
-          eventClass = 'event-redeem'
-        } else if (msg.eventType === 'stream:raid') {
-          if (!hermesToggles?.raid) return
-          text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
-          eventClass = 'event-raid'
-        } else if (msg.eventType === 'stream:hype-start') {
-          if (!hermesToggles?.hype) return
-          text = `[${channel}] \u25C6 hype train started`
-          eventClass = 'event-hype'
-        } else if (msg.eventType === 'stream:hype-end') {
-          if (!hermesToggles?.hype) return
-          text = `[${channel}] \u25C6 hype train ended at level ${msg.level || 0}`
-          eventClass = 'event-hype'
-        } else if (msg.eventType === 'stream:sub-gift') {
-          if (!hermesToggles?.sub) return
-          text = `[${channel}] \u25C6 ${String(msg.user ?? '')} gifted ${msg.count || 0} subs`
-          eventClass = 'event-sub'
-        }
-        if (!text) return
-
-        // Dedup: skip if same event was shown in last 60s. Key by channel too —
-        // redeem text carries no channel, so a global text key would drop an
-        // identical reward redeemed in a different channel as a false duplicate.
-        const now = Date.now()
-        const dedupKey = `${channel} ${text}`
-        if (streamEventDedup.has(dedupKey) && now - streamEventDedup.get(dedupKey) < 60000) return
-        streamEventDedup.set(dedupKey, now)
-        // Prune old entries
-        if (streamEventDedup.size > 100) {
-          for (const [k, t] of streamEventDedup) {
-            if (now - t > 60000) streamEventDedup.delete(k)
+          // Build inline notification
+          let text = '',
+            eventClass = ''
+          if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
+            if (!hermesToggles?.gameSwitch) return
+            text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
+            eventClass = 'event-update'
+          } else if (msg.eventType === 'stream:online') {
+            try {
+              streamStats.delete((channel || '').toLowerCase())
+            } catch (_) {}
+            if (!hermesToggles?.online) return
+            // Same gate as the follow_stream_event listener: if the authoritative
+            // poll snapshot already has this channel live, the WS "went live" is
+            // a connect-snapshot replay (the server pushes the whole live roster
+            // as realtime online events on every (re)connect), not a genuine
+            // off\u2192on transition. Drop it. A real transition pushes faster than
+            // the 60s poll refresh so it won't be in the set yet and still shows.
+            // Triple guard against the "went live" wall:
+            //  1. sessionWentLiveSeen — a channel emits at most one went-live
+            //     per session (offline clears the mark below). Kills every later
+            //     server re-broadcast: connect-snapshot replays, EventSub
+            //     re-subscribe, emote-add round-trips that fan out cached
+            //     stream.online events, etc.
+            //  2. Membership — if a poll snapshot already knows this channel
+            //     live, the FIRST emission we see is a snapshot, not a
+            //     transition. Drop.
+            //  3. Grace window — for the first 30s after content load, the WS
+            //     burst can arrive before either set has populated, so neither
+            //     #1 nor #2 catches it. Treat any first-emission within 30s as
+            //     snapshot.
+            // A genuine off→on transition beats the 60s poll and arrives outside
+            // the grace, so it still surfaces (and gets recorded so any later
+            // re-broadcast of the same channel is deduped).
+            if (sessionWentLiveSeen.has(channel)) return
+            const _alreadyLive = isChannelLive(channel)
+            const _inGrace = Date.now() - mcStartedAt < 90000
+            sessionWentLiveSeen.add(channel)
+            if (_alreadyLive || _inGrace) return
+            text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
+            eventClass = 'event-online'
+          } else if (msg.eventType === 'stream:offline') {
+            sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
+            try {
+              markStreamEnded(channel)
+            } catch (_) {}
+            if (!hermesToggles?.offline) return
+            text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
+            eventClass = 'event-offline'
+          } else if (msg.eventType === 'stream:redeem') {
+            if (!hermesToggles?.redeem) return
+            text = `\u25C6 redeemed "${String(msg.title ?? '')}"`
+            if (msg.cost) text += ` (${msg.cost})`
+            eventClass = 'event-redeem'
+          } else if (msg.eventType === 'stream:raid') {
+            if (!hermesToggles?.raid) return
+            text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
+            eventClass = 'event-raid'
+          } else if (msg.eventType === 'stream:hype-start') {
+            if (!hermesToggles?.hype) return
+            text = `[${channel}] \u25C6 hype train started`
+            eventClass = 'event-hype'
+          } else if (msg.eventType === 'stream:hype-end') {
+            if (!hermesToggles?.hype) return
+            text = `[${channel}] \u25C6 hype train ended at level ${msg.level || 0}`
+            eventClass = 'event-hype'
+          } else if (msg.eventType === 'stream:sub-gift') {
+            if (!hermesToggles?.sub) return
+            text = `[${channel}] \u25C6 ${String(msg.user ?? '')} gifted ${msg.count || 0} subs`
+            eventClass = 'event-sub'
           }
-        }
+          if (!text) return
 
-        log('[Stream]', channel, text)
-        notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
-        const actor = msg.eventType === 'stream:redeem' ? msg.user : null
-        const evt = { type: 'stream-event', eventClass, text, channel, actor, time: Date.now() }
-
-        // Push into the live channel buffer (dedup by text to prevent doubles on reload).
-        // Gate on isLiveChannelMessage: without it, a redeem/raid from ANY other
-        // subscribed channel lands in the live buffer — and since redeem text has no
-        // [channel] prefix, it reads like it happened on the channel you're watching.
-        const liveChannel = getLiveChannel()
-        const liveBuffer =
-          liveChannel && isLiveChannelMessage({ channel })
-            ? irc?.channels?.get(liveChannel) || kickChat?.channels?.get(liveChannel)
-            : null
-        if (liveBuffer) {
-          const existing = liveBuffer.getAll()
-          if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
-            liveBuffer.push(evt)
-            saveStreamEvent(evt)
+          // Dedup: skip if same event was shown in last 60s. Key by channel too —
+          // redeem text carries no channel, so a global text key would drop an
+          // identical reward redeemed in a different channel as a false duplicate.
+          const now = Date.now()
+          const dedupKey = `${channel} ${text}`
+          if (streamEventDedup.has(dedupKey) && now - streamEventDedup.get(dedupKey) < 60000) return
+          streamEventDedup.set(dedupKey, now)
+          // Prune old entries
+          if (streamEventDedup.size > 100) {
+            for (const [k, t] of streamEventDedup) {
+              if (now - t > 60000) streamEventDedup.delete(k)
+            }
           }
-        }
 
-        // Also push into the matching channel buffer if different from live
-        if (channel !== liveChannel) {
-          const chBuffer = irc?.channels?.get(channel) || kickChat?.channels?.get(channel)
-          if (chBuffer) {
-            const existing = chBuffer.getAll()
+          log('[Stream]', channel, text)
+          notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
+          const actor = msg.eventType === 'stream:redeem' ? msg.user : null
+          const evt = { type: 'stream-event', eventClass, text, channel, actor, time: Date.now() }
+
+          // Push into the live channel buffer (dedup by text to prevent doubles on reload).
+          // Gate on isLiveChannelMessage: without it, a redeem/raid from ANY other
+          // subscribed channel lands in the live buffer — and since redeem text has no
+          // [channel] prefix, it reads like it happened on the channel you're watching.
+          const liveChannel = getLiveChannel()
+          const liveBuffer =
+            liveChannel && isLiveChannelMessage({ channel })
+              ? irc?.channels?.get(liveChannel) || kickChat?.channels?.get(liveChannel)
+              : null
+          if (liveBuffer) {
+            const existing = liveBuffer.getAll()
             if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
-              chBuffer.push(evt)
-              if (!liveBuffer) saveStreamEvent(evt)
+              liveBuffer.push(evt)
+              saveStreamEvent(evt)
             }
           }
-        }
-        pushActivityEvent(evt)
 
-        // Yellow tab highlight only for game changes, and only when not viewing that channel
-        // (live tab and its matching channel tab are equivalent — viewing either counts)
-        if (msg.eventType === 'stream:update') {
-          const viewingChannel =
-            currentTab === 'live' ||
-            config.channels.some((ch) => {
-              const tw = ch.twitch?.toLowerCase()
-              const ki = ch.kick?.toLowerCase()
-              return currentTab === ch.id && (tw === channel || ki === channel)
-            })
-          if (!viewingChannel) {
-            // Only yellow the live tab if this event is for the live channel
-            const isLiveEvent = isLiveChannelMessage({ channel })
-            if (isLiveEvent) {
-              const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
-              if (liveTab) liveTab.classList.add('has-stream-event')
-            }
-            // Yellow the matching channel tab
-            for (const ch of config.channels) {
-              const twName = ch.twitch
-              const kickName = ch.kick
-              const tabId = ch.id
-              if ((twName === channel || kickName === channel) && currentTab !== tabId) {
-                const tab = tabBarElement?.querySelector(`[data-tab="${tabId}"]`)
-                if (tab) tab.classList.add('has-stream-event')
+          // Also push into the matching channel buffer if different from live
+          if (channel !== liveChannel) {
+            const chBuffer = irc?.channels?.get(channel) || kickChat?.channels?.get(channel)
+            if (chBuffer) {
+              const existing = chBuffer.getAll()
+              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+                chBuffer.push(evt)
+                if (!liveBuffer) saveStreamEvent(evt)
               }
             }
           }
-        }
+          pushActivityEvent(evt)
 
-        // Render only on tabs whose channel matches this event
-        const activeTab = currentTab
-        if (activeTab === 'live') {
-          if (isLiveChannelMessage({ channel })) {
-            if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
-          }
-        } else {
-          const tabCh = getChannelById(activeTab)
-          if (tabCh) {
-            const tw = tabCh.twitch?.toLowerCase()
-            const ki = tabCh.kick?.toLowerCase()
-            if (tw === channel || ki === channel) {
-              if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
+          // Yellow tab highlight only for game changes, and only when not viewing that channel
+          // (live tab and its matching channel tab are equivalent — viewing either counts)
+          if (msg.eventType === 'stream:update') {
+            const viewingChannel =
+              currentTab === 'live' ||
+              config.channels.some((ch) => {
+                const tw = ch.twitch?.toLowerCase()
+                const ki = ch.kick?.toLowerCase()
+                return currentTab === ch.id && (tw === channel || ki === channel)
+              })
+            if (!viewingChannel) {
+              // Only yellow the live tab if this event is for the live channel
+              const isLiveEvent = isLiveChannelMessage({ channel })
+              if (isLiveEvent) {
+                const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
+                if (liveTab) liveTab.classList.add('has-stream-event')
+              }
+              // Yellow the matching channel tab
+              for (const ch of config.channels) {
+                const twName = ch.twitch
+                const kickName = ch.kick
+                const tabId = ch.id
+                if ((twName === channel || kickName === channel) && currentTab !== tabId) {
+                  const tab = tabBarElement?.querySelector(`[data-tab="${tabId}"]`)
+                  if (tab) tab.classList.add('has-stream-event')
+                }
+              }
             }
           }
-        }
-      })
+
+          // Render only on tabs whose channel matches this event
+          const activeTab = currentTab
+          if (activeTab === 'live') {
+            if (isLiveChannelMessage({ channel })) {
+              if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
+            }
+          } else {
+            const tabCh = getChannelById(activeTab)
+            if (tabCh) {
+              const tw = tabCh.twitch?.toLowerCase()
+              const ki = tabCh.kick?.toLowerCase()
+              if (tw === channel || ki === channel) {
+                if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
+              }
+            }
+          }
+        }),
+      )
     }
 
     // Handle Hermes events (raids, hype trains, redeems, sub gifts) from MAIN world
@@ -84051,124 +84130,127 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Handle follow-driven stream events (from followed channels not currently viewed)
     if (!_onceGuardsMain.followStreamEventListener) {
       _onceGuardsMain.followStreamEventListener = true
-      cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
-        if (msg.type !== 'follow_stream_event') return
-        const channel = msg.channel?.toLowerCase()
-        if (!channel) return
+      cleanup.addListener(
+        chrome.runtime?.onMessage,
+        withGoLivePairing('follow_stream_event', (msg) => {
+          if (msg.type !== 'follow_stream_event') return
+          const channel = msg.channel?.toLowerCase()
+          if (!channel) return
 
-        // Skip channels already in config — they get stream_event, avoid duplicates
-        if (
-          config.channels.some((ch) => {
-            const id = ch.id?.toLowerCase()
-            const tw = ch.twitch?.toLowerCase()
-            return id === channel || tw === channel
-          })
-        )
-          return
+          // Skip channels already in config — they get stream_event, avoid duplicates
+          if (
+            config.channels.some((ch) => {
+              const id = ch.id?.toLowerCase()
+              const tw = ch.twitch?.toLowerCase()
+              return id === channel || tw === channel
+            })
+          )
+            return
 
-        // Build inline notification
-        let text = '',
-          eventClass = ''
-        if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
-          if (!hermesToggles?.gameSwitch) return
-          text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
-          eventClass = 'event-follow event-update'
-        } else if (msg.eventType === 'stream:online') {
-          if (!hermesToggles?.online) return
-          // Drop the "already live on (re)connect" wall: the server replays the
-          // whole live roster as realtime online events whenever the WS connects.
-          // _swLiveSet is the authoritative poll snapshot of who's *currently*
-          // live \u2014 if this channel is already in it, it didn't just go live, so
-          // this is snapshot noise. A genuine off\u2192on transition pushes faster
-          // than the 60s poll refreshes the set, so it won't be present yet and
-          // still surfaces.
-          // Triple guard against the "went live" wall:
-          //  1. sessionWentLiveSeen — a channel emits at most one went-live
-          //     per session (offline clears the mark below). Kills every later
-          //     server re-broadcast: connect-snapshot replays, EventSub
-          //     re-subscribe, emote-add round-trips that fan out cached
-          //     stream.online events, etc.
-          //  2. Membership — if a poll snapshot already knows this channel
-          //     live, the FIRST emission we see is a snapshot, not a
-          //     transition. Drop.
-          //  3. Grace window — for the first 30s after content load, the WS
-          //     burst can arrive before either set has populated, so neither
-          //     #1 nor #2 catches it. Treat any first-emission within 30s as
-          //     snapshot.
-          // A genuine off→on transition beats the 60s poll and arrives outside
-          // the grace, so it still surfaces (and gets recorded so any later
-          // re-broadcast of the same channel is deduped).
-          if (sessionWentLiveSeen.has(channel)) return
-          const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
-          const _inGrace = Date.now() - mcStartedAt < 90000
-          sessionWentLiveSeen.add(channel)
-          if (_alreadyLive || _inGrace) return
-          text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
-          eventClass = 'event-follow event-online'
-        } else if (msg.eventType === 'stream:offline') {
-          sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
-          if (!hermesToggles?.offline) return
-          text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
-          eventClass = 'event-follow event-offline'
-        }
-        if (!text) return
-
-        // Dedup: skip if same text was shown in last 60s (same dedup map as stream_event)
-        const now = Date.now()
-        if (streamEventDedup.has(text) && now - streamEventDedup.get(text) < 60000) return
-        streamEventDedup.set(text, now)
-
-        log('[FollowStream]', channel, text)
-        notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
-        const evt = { type: 'stream-event', eventClass, text, channel, time: Date.now(), color: msg.color || '' }
-
-        // Push into the live channel buffer (dedup by text)
-        const liveChannel = getLiveChannel()
-        const liveBuffer = liveChannel ? irc?.channels?.get(liveChannel) : null
-        if (liveBuffer) {
-          const existing = liveBuffer.getAll()
-          if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
-            liveBuffer.push(evt)
-            saveStreamEvent(evt)
+          // Build inline notification
+          let text = '',
+            eventClass = ''
+          if (msg.eventType === 'stream:update' && streamEventBody('update', msg)) {
+            if (!hermesToggles?.gameSwitch) return
+            text = `[${channel}] \u25C6 ${streamEventBody('update', msg)}`
+            eventClass = 'event-follow event-update'
+          } else if (msg.eventType === 'stream:online') {
+            if (!hermesToggles?.online) return
+            // Drop the "already live on (re)connect" wall: the server replays the
+            // whole live roster as realtime online events whenever the WS connects.
+            // _swLiveSet is the authoritative poll snapshot of who's *currently*
+            // live \u2014 if this channel is already in it, it didn't just go live, so
+            // this is snapshot noise. A genuine off\u2192on transition pushes faster
+            // than the 60s poll refreshes the set, so it won't be present yet and
+            // still surfaces.
+            // Triple guard against the "went live" wall:
+            //  1. sessionWentLiveSeen — a channel emits at most one went-live
+            //     per session (offline clears the mark below). Kills every later
+            //     server re-broadcast: connect-snapshot replays, EventSub
+            //     re-subscribe, emote-add round-trips that fan out cached
+            //     stream.online events, etc.
+            //  2. Membership — if a poll snapshot already knows this channel
+            //     live, the FIRST emission we see is a snapshot, not a
+            //     transition. Drop.
+            //  3. Grace window — for the first 30s after content load, the WS
+            //     burst can arrive before either set has populated, so neither
+            //     #1 nor #2 catches it. Treat any first-emission within 30s as
+            //     snapshot.
+            // A genuine off→on transition beats the 60s poll and arrives outside
+            // the grace, so it still surfaces (and gets recorded so any later
+            // re-broadcast of the same channel is deduped).
+            if (sessionWentLiveSeen.has(channel)) return
+            const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
+            const _inGrace = Date.now() - mcStartedAt < 90000
+            sessionWentLiveSeen.add(channel)
+            if (_alreadyLive || _inGrace) return
+            text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
+            eventClass = 'event-follow event-online'
+          } else if (msg.eventType === 'stream:offline') {
+            sessionWentLiveSeen.delete(channel) // genuine re-go-live can resurface
+            if (!hermesToggles?.offline) return
+            text = `[${channel}] \u25C6 ${streamEventBody('offline', msg)}`
+            eventClass = 'event-follow event-offline'
           }
-        }
+          if (!text) return
 
-        // Also push into matching channel buffer if different from live
-        if (channel !== liveChannel) {
-          const chBuffer = irc?.channels?.get(channel)
-          if (chBuffer) {
-            const existing = chBuffer.getAll()
+          // Dedup: skip if same text was shown in last 60s (same dedup map as stream_event)
+          const now = Date.now()
+          if (streamEventDedup.has(text) && now - streamEventDedup.get(text) < 60000) return
+          streamEventDedup.set(text, now)
+
+          log('[FollowStream]', channel, text)
+          notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
+          const evt = { type: 'stream-event', eventClass, text, channel, time: Date.now(), color: msg.color || '' }
+
+          // Push into the live channel buffer (dedup by text)
+          const liveChannel = getLiveChannel()
+          const liveBuffer = liveChannel ? irc?.channels?.get(liveChannel) : null
+          if (liveBuffer) {
+            const existing = liveBuffer.getAll()
             if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
-              chBuffer.push(evt)
-              if (!liveBuffer) saveStreamEvent(evt)
+              liveBuffer.push(evt)
+              saveStreamEvent(evt)
             }
           }
-        }
-        pushActivityEvent(evt)
 
-        // Yellow tab highlight only for game changes on the live channel, only when not viewing live
-        if (msg.eventType === 'stream:update' && currentTab !== 'live' && isLiveChannelMessage({ channel })) {
-          const tab = tabBarElement?.querySelector('[data-tab="live"]')
-          if (tab) tab.classList.add('has-stream-event')
-        }
-
-        // Render only on tabs whose channel matches this event
-        const activeTab = currentTab
-        if (activeTab === 'live') {
-          if (isLiveChannelMessage({ channel })) {
-            if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
+          // Also push into matching channel buffer if different from live
+          if (channel !== liveChannel) {
+            const chBuffer = irc?.channels?.get(channel)
+            if (chBuffer) {
+              const existing = chBuffer.getAll()
+              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+                chBuffer.push(evt)
+                if (!liveBuffer) saveStreamEvent(evt)
+              }
+            }
           }
-        } else {
-          const tabCh = getChannelById(activeTab)
-          if (tabCh) {
-            const tw = tabCh.twitch?.toLowerCase()
-            const ki = tabCh.kick?.toLowerCase()
-            if (tw === channel || ki === channel) {
+          pushActivityEvent(evt)
+
+          // Yellow tab highlight only for game changes on the live channel, only when not viewing live
+          if (msg.eventType === 'stream:update' && currentTab !== 'live' && isLiveChannelMessage({ channel })) {
+            const tab = tabBarElement?.querySelector('[data-tab="live"]')
+            if (tab) tab.classList.add('has-stream-event')
+          }
+
+          // Render only on tabs whose channel matches this event
+          const activeTab = currentTab
+          if (activeTab === 'live') {
+            if (isLiveChannelMessage({ channel })) {
               if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
             }
+          } else {
+            const tabCh = getChannelById(activeTab)
+            if (tabCh) {
+              const tw = tabCh.twitch?.toLowerCase()
+              const ki = tabCh.kick?.toLowerCase()
+              if (tw === channel || ki === channel) {
+                if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
+              }
+            }
           }
-        }
-      })
+        }),
+      )
     }
 
     // Handle color map from server (for persisted stream event history)

@@ -800,6 +800,13 @@
       // Pre-index lowercase names for O(1) lookups (avoids 50k toLowerCase() calls per search)
       for (const e of emotes) {
         e.nameLower = e.name.toLowerCase()
+        // A twitch emote in the bridge (Kappa) already has a real id and url: twitch renders it itself.
+        // Under our fake id its sent row drew a placeholder image first and was broken until it was swapped.
+        const real = /^https:\/\/static-cdn\.jtvnw\.net\/emoticons\/v2\/([\w-]+)\//.exec(e.url || '')
+        if (real) {
+          e.native = true
+          e.hash = real[1]
+        }
       }
       _cachedEmotes = emotes
 
@@ -883,21 +890,23 @@
 
     // Include ALL emotes with full structure including images
     // This prevents Twitch from having to look up images separately (which causes text flash)
-    const out = emotes.map((emote) => {
-      let url = emote.url
-      if (url && (url.startsWith('/uploads/') || url.startsWith('/emotes/'))) {
-        url = `https://heatsync.org${url}`
-      }
-      return {
-        __typename: 'Emote',
-        id: HEATSYNC_PREFIX + (emote.hash || emote.name) + HEATSYNC_SUFFIX,
-        modifiers: null,
-        setID: 'HeatSyncEmotes',
-        token: emote.name,
-        // Include srcSet to prevent image lookup delay
-        srcSet: url ? `${url} 1x` : undefined,
-      }
-    })
+    const out = emotes
+      .filter((emote) => !emote.native)
+      .map((emote) => {
+        let url = emote.url
+        if (url && (url.startsWith('/uploads/') || url.startsWith('/emotes/'))) {
+          url = `https://heatsync.org${url}`
+        }
+        return {
+          __typename: 'Emote',
+          id: HEATSYNC_PREFIX + (emote.hash || emote.name) + HEATSYNC_SUFFIX,
+          modifiers: null,
+          setID: 'HeatSyncEmotes',
+          token: emote.name,
+          // Include srcSet to prevent image lookup delay
+          srcSet: url ? `${url} 1x` : undefined,
+        }
+      })
 
     log(' Created fake emote set with', out.length, 'emotes')
 

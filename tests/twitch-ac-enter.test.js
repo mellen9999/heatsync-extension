@@ -35,3 +35,9 @@ test('a fixed srcset keeps one entry per url', () => {
   expect(src).toMatch(/if \(seen\.has\(f\)\) return ''/)
   expect(src).toMatch(/\.filter\(Boolean\)\s*\.join\(', '\)/)
 })
+
+// Kappa came out of the bridge under our fake id: its sent row drew the placeholder url (404) for ~700ms before a swap
+test('a twitch emote from the bridge keeps its real id and is left out of the fake set', () => {
+  expect(src).toMatch(/static-cdn\\\.jtvnw\\\.net\\\/emoticons\\\/v2/)
+  expect(src).toMatch(/\.filter\(\(emote\) => !emote\.native\)/)
+})

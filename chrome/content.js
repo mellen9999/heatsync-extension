@@ -5742,7 +5742,14 @@
     const allEmoteElements = []
     for (let _i = 0; _i < _emoteNl.length; _i++) {
       const _el = _emoteNl[_i]
-      if (!_el.closest('.heatsync-emote-stack')) allEmoteElements.push(_el)
+      // a badge is never the base an overlay stacks on (a 7tv-hosted one matched the emote selectors)
+      if (
+        !_el.closest('.heatsync-emote-stack') &&
+        !_el.classList.contains('chat-badge') &&
+        !_el.closest('.chat-badge')
+      ) {
+        allEmoteElements.push(_el)
+      }
     }
     if (allEmoteElements.length < 2) return
 

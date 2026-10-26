@@ -27,3 +27,8 @@ test('overlay wrappers carry no inline absolute offsets', () => {
 test("a mention is stamped for the tagged person's heatsync paint", () => {
   expect(css).toMatch(/el\.dataset\.hsCosmeticMention = uid\s*\/\/[^\n]*\n\s*stampHsNativePaint\(el, uid\)/)
 })
+
+// the overlay stacker collected the whole row, badges included, so a row whose first emote was an overlay stacked onto a badge
+test('the overlay stacker skips chat badges', () => {
+  expect(css).toMatch(/!_el\.classList\.contains\('chat-badge'\)/)
+})

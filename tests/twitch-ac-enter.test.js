@@ -8,3 +8,12 @@ const src = readFileSync(new URL('../chrome/autocomplete-hook.js', import.meta.u
 test('heatsync emote matches are only offered for a Tab press or a colon word', () => {
   expect(src).toMatch(/if \(!pressedTab && !actualInput\.startsWith\(':'\)\) return results/)
 })
+
+// Twitch arms its emote list for every typed word while the provider can be tab-triggered, and the first Enter
+// closes that empty list instead of sending: the flag is on only for the Tab press
+test('the emote provider is tab-triggerable only while Tab is down', () => {
+  expect(src).not.toMatch(/provider\.canBeTriggeredByTab = true/)
+  expect(src).toMatch(/function armTabTrigger\(on\)/)
+  expect(src).toMatch(/armTabTrigger\(true\)/)
+  expect(src).toMatch(/armTabTrigger\(false\)/)
+})

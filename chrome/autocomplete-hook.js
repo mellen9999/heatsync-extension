@@ -987,6 +987,14 @@
     }
   }
 
+  // Twitch only lets a provider answer a Tab press without a colon while this is on
+  function armTabTrigger(on) {
+    const inst = chatInputInstance || chatInputInst
+    for (const p of inst?.autocompleteInputRef?.providers || []) {
+      if (p.autocompleteType === 'emote') p.canBeTriggeredByTab = on
+    }
+  }
+
   // Override emote provider's getMatches to include heatsync emotes (FFZ-style)
   function overrideEmoteProvider(inst) {
     if (!inst?.autocompleteInputRef?.providers) {
@@ -998,9 +1006,9 @@
       if (provider.autocompleteType !== 'emote') continue
       if (provider._heatsync_hooked) continue
 
-      // Enable tab completion without colon prefix (FFZ-style)
-      provider.canBeTriggeredByTab = true
-      log(' Setting canBeTriggeredByTab on provider:', provider.autocompleteType, 'props:', Object.keys(provider))
+      // Tab completion without a colon (FFZ-style) needs this on, but only for the Tab press itself (see
+      // armTabTrigger): left on, Twitch arms its emote list for every word you type, and the first Enter
+      // closes that empty list instead of sending.
 
       const origGetMatches = provider.getMatches
       if (typeof origGetMatches !== 'function') continue
@@ -1798,6 +1806,7 @@
   function installAutocompleteKeyHandler() {
     if (documentKeyHandlerInstalled) return
     documentKeyHandlerInstalled = true
+    window.addEventListener('keyup', (e) => e.key === 'Tab' && armTabTrigger(false), true)
 
     // Use WINDOW-level handler (not document) to fire before any other listeners
     // Use CAPTURE phase to fire before Twitch's handlers
@@ -1846,6 +1855,7 @@
 
         // CRITICAL: Tab should NEVER exit the input box (but let event propagate for completion)
         if (e.key === 'Tab') {
+          armTabTrigger(true)
           e.preventDefault() // Stop focus from leaving input
           // Don't stopPropagation - Twitch needs the event for autocomplete
         }

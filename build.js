@@ -939,6 +939,17 @@ function readMultichatModules() {
     combined += `\n// --- lib/emote-refs.js ---\n${stripExports(readFileSync(emoteRefsPath, 'utf8'))}\n`
   }
 
+  // What a stream event says and which stored ones a reload brings back
+  // (scripts/sync-site-copies.sh mirror of client/utils/stream-event-text.js).
+  // main.js calls streamEventBody/REPLAY_WINDOW_MS from the realtime listeners
+  // and the replay path, so it must land before the modules loop. It was once
+  // only in checkScopeCollisions' lint list: the bundle shipped calling a
+  // function it never defined, and every stream event threw.
+  const streamEventTextPath = join(SRC_DIR, 'lib', 'stream-event-text.js')
+  if (existsSync(streamEventTextPath)) {
+    combined += `\n// --- lib/stream-event-text.js ---\n${stripExports(readFileSync(streamEventTextPath, 'utf8'))}\n`
+  }
+
   // The one user-card model/renderer/formatter (scripts/sync-site-copies.sh
   // mirror of client/card/*.js) — card-time before card-model before
   // card-render, matching card-render.js's own `import ... from './card-time.js'`

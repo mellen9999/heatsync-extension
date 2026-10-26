@@ -77,6 +77,19 @@ describe('compareAcMatches — never-used ordering (channel culture leads)', () 
     expect(rank([emote('ClapHands', 0), emote('Clap', 2)], 'clap', frec)).toEqual(['Clap', 'ClapHands'])
   })
 
+  test('kek / KEK: the channel emote beats a used global of the same name in another casing', () => {
+    // ennortix typed "kek" and wanted the channel's KEK — a habit on the
+    // lowercase lookalike must not lead.
+    const frec = new Map([['kek', 9]])
+    expect(rank([emote('kek', 2), emote('KEK', 0)], 'kek', frec)).toEqual(['KEK', 'kek'])
+    expect(rank([emote('kek', 2, 0, { remote: true }), emote('KEK', 0)], 'kek', frec)).toEqual(['KEK', 'kek'])
+  })
+
+  test('two same-name exacts that are both off-channel still go by habit', () => {
+    const frec = new Map([['kek', 9]])
+    expect(rank([emote('KEK', 2), emote('kek', 1)], 'kek', frec)).toEqual(['kek', 'KEK'])
+  })
+
   test('exact channel/own emote is strong without any usage', () => {
     expect(rank([emote('ClapHands', 0), emote('Clap', 1)], 'clap')).toEqual(['Clap', 'ClapHands'])
   })
@@ -288,6 +301,13 @@ describe('autocomplete-hook.js — stays in lockstep with the multichat', () => 
     // the user and ran the tooltip backwards (4/4 → 2/70). Guard the invariant.
     expect(HOOK_SRC).toContain('Append-only merge')
     expect(HOOK_SRC).not.toContain('const frecCycle = readEmoteFrecency()')
+  })
+
+  test('every sort that ranks exacts puts the channel emote first among same-name exacts', () => {
+    // two sorts in autocomplete-hook.js (dropdown + local cycle rebuild) and kick's
+    expect(HOOK_SRC.match(/\(a\.(_tier|tier) === 0\) !== \(b\.\1 === 0\)/g)?.length).toBe(2)
+    const KICK_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'kick-autocomplete-hook.js'), 'utf8')
+    expect(KICK_SRC).toContain('(a.tier === 0) !== (b.tier === 0)')
   })
 
   test('inserts keep feeding both stores (MRU list for the picker + frecency)', () => {

@@ -174,6 +174,9 @@
       const ax = a.lower === q ? 0 : 1,
         bx = b.lower === q ? 0 : 1
       if (ax !== bx) return ax - bx
+      // kek / KEK: the channel's own leads — a habit or a global lookalike of
+      // the same name must not outrank it (parity with input.js)
+      if (ax === 0 && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
       const af = frec.get(a.name) || 0,
         bf = frec.get(b.name) || 0
       if (af > 0 !== bf > 0) return af > 0 ? -1 : 1

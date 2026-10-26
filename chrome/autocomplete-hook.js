@@ -1308,6 +1308,11 @@
           // Full-name exact match beats everything.
           if (a._exact !== b._exact) return a._exact ? -1 : 1
 
+          // Both are the typed word in different casing (kek / KEK): the
+          // channel's own is what everyone here reads as that word, so it
+          // leads — a habit or a global lookalike must not outrank it.
+          if (a._exact && (a._tier === 0) !== (b._tier === 0)) return a._tier === 0 ? -1 : 1
+
           // Personal habit beats structure: an emote the user actually sends
           // wins over tier ("kko" → their KKona, never the channel's untouched
           // KKonaLand).
@@ -2057,6 +2062,8 @@
               const ae = a.nameLower === emoteSearch,
                 be = b.nameLower === emoteSearch
               if (ae !== be) return ae ? -1 : 1
+              // kek / KEK: the channel's own leads (see the getMatches sort)
+              if (ae && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
               const af = frecCyc.get(a.name || '') || 0,
                 bf = frecCyc.get(b.name || '') || 0
               if (af > 0 !== bf > 0) return af > 0 ? -1 : 1

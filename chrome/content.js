@@ -4180,7 +4180,7 @@
         textSpan.textContent = msg.text
 
         // the IRC badges tag ("moderator/1,subscriber/108"): drawn by fillBackfillBadges once the badge sets are known
-        if (/^[\w-]+\/\d+(,[\w-]+\/\d+)*$/.test(tags.badges || '')) {
+        if (/^[\w-]+\/[\w.-]+(,[\w-]+\/[\w.-]+)*$/.test(tags.badges || '')) {
           div.dataset.hsBadges = tags.badges
           div.dataset.hsBadgeChannel = channel
         }

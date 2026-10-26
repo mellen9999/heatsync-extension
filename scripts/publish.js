@@ -102,10 +102,11 @@ create/edit ${path} (chmod 600) with:
 
 2. chrome web store api
    a. Google Cloud Console -> project -> enable "Chrome Web Store API"
-   b. APIs & Services -> Credentials -> Create Credentials -> OAuth client ID -> type "Desktop app"
+   b. APIs & Services -> Credentials -> Create Credentials -> OAuth client ID -> type "Web application"
+      add http://127.0.0.1:8976 as an Authorized redirect URI
    c. paste Client ID / Client Secret into CWS_CLIENT_ID / CWS_CLIENT_SECRET
    d. bun scripts/publish.js --cws-auth
-      (prints a consent url, paste the code back — writes CWS_REFRESH_TOKEN for you, never printed)
+      (opens the consent flow, catches the redirect on 127.0.0.1:8976 — writes CWS_REFRESH_TOKEN for you, never printed)
 
 3. chmod 600 ${path}
 `)
@@ -206,7 +207,7 @@ async function cwsAuthFlow() {
   const map = parseEnvFile(path) || {}
   if (!map.CWS_CLIENT_ID || !map.CWS_CLIENT_SECRET) {
     console.error(`CWS_CLIENT_ID / CWS_CLIENT_SECRET not found in ${path}`)
-    console.error('create a Google Cloud OAuth client (type "Desktop app") and add both keys first')
+    console.error('create a Google Cloud OAuth client (type "Web application", redirect URI http://127.0.0.1:8976) and add both keys first')
     console.error('see README.md "releasing" for the exact steps')
     process.exit(1)
   }

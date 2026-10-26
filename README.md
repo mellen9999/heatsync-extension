@@ -11,6 +11,9 @@ twitch, kick and youtube live chat in one panel — read every stream you follow
 - **7TV / BTTV / FFZ** — emotes, paints, and badges render automatically, channel and global. heatsync sits next to those extensions — keep them, and add the cross-platform chat and portable emotes they don't do.
 - **keyboard-first input** — vim keybindings on the twitch, kick, and multichat inputs (normal/insert, motions, operators, `.` repeat), a wysiwyg emote composer, message history, reply threading, and an instant filter that narrows the live buffer by text or user.
 - **moderation + profiles** — a hover mod toolbar (`/ban` `/timeout` `/unban` `/delete`), client-side automod, and mute-or-block that carries a user across twitch and kick. profile cards with socials, badges, and a paginated chat-log archive a click away. one-click twitch clips.
+- **stream events + whispers** — inline banners for going live, offline, game switches, raids, hype trains, gift subs, redeems, predictions and polls, each one toggleable. twitch whispers, a desktop notification on a mention, and a seen-state that follows you across tabs and devices. a refresh brings back the last 15 minutes of game switches and go-offlines, worded the same as heatsync.org.
+- **native chat cleanup** — toggles that hide channel points, hype trains, bits, drops and upsells, and auto-claim for channel points.
+- **yours to tune** — settings presets (minimal, power-user, moderator, low-ram), and 34 languages including right-to-left.
 - **light on your machine** — vanilla js, zero runtime dependencies. a capped message buffer and dom render cap hold memory steady through long sessions. the render cap is adjustable down for weak or passively-cooled hardware.
 
 ## install
@@ -34,7 +37,15 @@ bun run build.js firefox   # → dist/firefox/
 bun run build.js --package # both + signed zips + source zip
 ```
 
-`--package` runs `node --check` on every output bundle, minifies, and emits `dist/heatsync-{chrome,firefox}-X.Y.Z.zip` plus `dist/heatsync-source-X.Y.Z.zip` for AMO review.
+every build runs the test suite first, then `node --check` on the output. add `--minify` for a release-sized bundle — the tracked `chrome/multichat-core.js` is always committed from a `--minify` build, and without it the diff is ~10k lines of unminified css. a build lands in `dist/<browser>.staging` and swaps into `dist/<browser>` only when it passes, so a failed build never leaves a half-built folder.
+
+`--package` minifies, and emits `dist/heatsync-{chrome,firefox}-X.Y.Z.zip` plus `dist/heatsync-source-X.Y.Z.zip` for AMO review.
+
+## contributing
+
+`bun test` runs the unit tests, `bun run lint` and `bun run typecheck` are the other two gates, and `git config core.hooksPath .githooks` turns on the pre-push check that runs all of them. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/](docs/) has the architecture and feature notes, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
+
+a few files are byte-for-byte copies of heatsync.org's own modules — the user card, the stream event wording, the gif search layer, the emote-refs builder, the name-paint compiler. edit them on the site, then run `scripts/sync-site-copies.sh` (paint compiler: `scripts/sync-paint-compiler.sh`). the build and a parity test on each side fail if a copy drifts.
 
 ## release process
 
@@ -52,6 +63,7 @@ bun scripts/publish.js --version 1.7.24 --publish      # bump + build + publish 
 bun scripts/publish.js --chrome-only --publish
 bun scripts/publish.js --firefox-only --publish
 bun scripts/publish.js --dry-run                       # force no-network even with --publish
+bun scripts/publish.js --sync-summaries --publish      # push the per-language amo listing summaries only
 ```
 
 ### one-time credential setup

@@ -13543,6 +13543,20 @@ const later = (a, b) => {
   return ta > tb ? a : b
 }
 
+// The start of a follow/sub is the EARLIEST date any source knows. heatsync's own
+// row says when the follow was recorded here (a platform import stamps every
+// follow with the import day — "4mo" for a ten-year follow); the platform's date
+// is the real one. Neither can be later than the true start, so the earliest wins.
+const earliest = (...dates) => {
+  let best = null
+  let bestT = Infinity
+  for (const d of dates) {
+    const t = d ? new Date(d).getTime() : NaN
+    if (Number.isFinite(t) && t < bestT) { best = d; bestT = t }
+  }
+  return best
+}
+
 const ACTION_DEFS = [
   { key: 'follow', hotkey: 'f' },
   { key: 'whisper', hotkey: 'w' },
@@ -13697,15 +13711,15 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
   const rel = profile.relationship
   if (rel) {
     const followsYou = rel.followsYou || rel.profileFollowsViewerOnTwitch
-    const followsYouSince = rel.followsYouSince || rel.profileFollowsViewerOnTwitchSince
+    const followsYouSince = earliest(rel.followsYouSince, rel.profileFollowsViewerOnTwitchSince)
     const subsToYou = rel.subscribesToYou || rel.profileSubbedToViewerOnTwitch
-    const subsToYouSince = rel.subscribesToYouSince || rel.profileTwitchSubSince
+    const subsToYouSince = earliest(rel.subscribesToYouSince, rel.profileTwitchSubSince)
     const subsToYouTier = rel.subscribesToYouTier || rel.profileTwitchSubTier
     const youFollow = rel.isFollowing || rel.followsOnTwitch || rel.followsOnKick
-    const youFollowSince = rel.followedAt || rel.followsOnTwitchSince || rel.followsOnKickSince
+    const youFollowSince = earliest(rel.followedAt, rel.followsOnTwitchSince, rel.followsOnKickSince)
     const youSub = rel.isSubscribed || rel.subscribedOnTwitch
     const youSubTier = rel.subTier || rel.twitchSubTier
-    const youSubSince = rel.subscribedAt || rel.twitchSubSince
+    const youSubSince = earliest(rel.subscribedAt, rel.twitchSubSince)
 
     if (followsYou && youFollow) row('rel-follow', 'rel', { text: 'mutual', since: later(followsYouSince, youFollowSince) }, 'mutual')
     else if (youFollow) row('rel-follow', 'you', { text: 'follow', since: youFollowSince }, 'you-follow')
@@ -14980,7 +14994,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '274d01d06ec4' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6023021d1bd7' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

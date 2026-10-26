@@ -5823,9 +5823,8 @@
         currentWrapper.classList.add('heatsync-overlay')
       }
 
-      // Force overlay positioning — use overflow: visible so wide overlays aren't clipped
-      currentWrapper.style.cssText =
-        'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; height: auto; display: flex; align-items: center; justify-content: center; z-index: 2; pointer-events: auto; overflow: visible;'
+      // The stack css centres an overlay in the stack's one grid cell; overflow: visible so wide overlays aren't clipped
+      currentWrapper.style.cssText = 'display: flex; align-items: center; justify-content: center; overflow: visible;'
       // Ensure overlay image renders at native resolution, centered
       const overlayImgEl = currentWrapper.querySelector('img')
       if (overlayImgEl) {
@@ -6588,12 +6587,10 @@
       return { sx, sy }
     }
     if (isOverlay) {
-      // Overlay wrapper: absolute positioned, centered on base emote.
-      // Modifier composes with translate to keep centering: translate(-50%,-50%) scale(...)
+      // Overlay wrapper: the stack css centres it over the widest emote; only a modifier scale is set here.
       const ov = _composeMods(modList)
-      const overlayTransform =
-        ov.sx !== 1 || ov.sy !== 1 ? `translate(-50%, -50%) scale(${ov.sx}, ${ov.sy})` : 'translate(-50%, -50%)'
-      wrapper.style.cssText = `position: absolute; top: 50%; left: 50%; transform: ${overlayTransform}; transform-origin: center; width: auto; height: auto; display: inline-block; z-index: 2; pointer-events: auto; overflow: visible; cursor: pointer;`
+      const overlayScale = ov.sx !== 1 || ov.sy !== 1 ? `transform: scale(${ov.sx}, ${ov.sy}); ` : ''
+      wrapper.style.cssText = `${overlayScale}transform-origin: center; display: inline-block; overflow: visible; cursor: pointer;`
     } else {
       // Base wrapper. Modifier scale goes here (not on img) so the green
       // ::before indicator and hit-box scale with the visual emote.

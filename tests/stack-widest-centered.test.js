@@ -16,3 +16,9 @@ test('a chat badge is never wrapped as an emote', () => {
   expect(css).toMatch(/img:not\(\.heatsync-emote\):not\(\.hs-cosmetic-badge\):not\(\.chat-badge\)/)
   expect(css).toMatch(/!n\.classList\.contains\('chat-badge'\)/)
 })
+
+// inline top/left/translate on an overlay beat the stack's grid centring and threw the overlay off the base
+test('overlay wrappers carry no inline absolute offsets', () => {
+  expect(css).not.toMatch(/top: 50%; left: 50%/)
+  expect(css).not.toMatch(/translate\(-50%, -50%\)/)
+})

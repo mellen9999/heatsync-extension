@@ -46,3 +46,10 @@ test('a twitch emote from the bridge keeps its real id and is left out of the fa
 test('an inserted emote is registered where the sent-row interceptors look it up', () => {
   expect(src).toMatch(/window\.__heatsyncEmoteUrls\[innerId\] = emoteUrl/)
 })
+
+// a word with no local match started the 7tv search and inserted nothing: the emote came on the second Tab
+test('a tab that found nothing local is replayed when the remote results land', () => {
+  expect(src).toMatch(/function replayWaitingTab\(search\)/)
+  expect(src).toMatch(/replayWaitingTab\(search\)\s*\}/)
+  expect(src).toMatch(/!cycleState\.replayingTab &&/)
+})

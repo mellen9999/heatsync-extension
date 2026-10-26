@@ -780,6 +780,27 @@
     cycleState.matches.push(...add)
     // Clear the "searching…" flag and refresh the N/M denominator + readout.
     _doneRemote()
+    replayWaitingTab(search)
+  }
+
+  // A Tab on a word with no local match starts the search and has nothing to insert yet. When the results
+  // land, that Tab is pressed again for the user (only if the word is still what they typed), so a remote
+  // emote completes on the first Tab, not the second.
+  function replayWaitingTab(search) {
+    if (cycleState.tabWhenReady !== search) return
+    cycleState.tabWhenReady = null
+    if (cycleState.searchTerm !== search || cycleState.lastCycledEmote !== null || !cycleState.matches.length) return
+    const editor = document.querySelector('[data-slate-editor="true"]')
+    if (!editor || document.activeElement !== editor) return
+    if (!(editor.innerText || '').replace(/\s+$/, '').toLowerCase().endsWith(search.toLowerCase())) return
+    // the matches just fetched are the ones to insert from: the handler must not rebuild them away
+    cycleState.replayingTab = true
+    try {
+      editor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true, cancelable: true }))
+      editor.dispatchEvent(new KeyboardEvent('keyup', { key: 'Tab', code: 'Tab', bubbles: true, cancelable: true }))
+    } finally {
+      cycleState.replayingTab = false
+    }
   }
 
   // Cached emotes to avoid repeated JSON parsing
@@ -1369,6 +1390,8 @@
     index: 0, // Current position in matches
     lastCycledEmote: null, // Name of emote we just cycled to (to detect suffix pollution)
     searchTerm: '', // Original search term (cleaned)
+    replayingTab: false,
+    tabWhenReady: null, // word whose Tab found no local match and is waiting on the 7tv search
   }
 
   // (lastEnterPressTime removed — Enter is never intercepted by this module;
@@ -1961,7 +1984,12 @@
           // Build or rebuild matches: either stale (new search term) or empty (first Tab)
           // Skip rebuild if actively cycling (lastCycledEmote set) — input contains the inserted emote, not search text
           const justCycledCheck = cycleState.lastCycledEmote !== null
-          if (!justCycledCheck && (!hasMultipleMatches || !searchMatches) && currentSearch.length >= 2) {
+          if (
+            !justCycledCheck &&
+            !cycleState.replayingTab &&
+            (!hasMultipleMatches || !searchMatches) &&
+            currentSearch.length >= 2
+          ) {
             log(
               ' 🔄 Current input "' +
                 currentSearch +
@@ -2081,7 +2109,9 @@
             // word with ≤1 local match still searches immediately: it's the only way
             // to complete a non-owned emote, and native cycling needs ≥2 entries to
             // even engage (so a lone local could otherwise never reach the catalog).
+            cycleState.tabWhenReady = null
             if (!emojiSearch && cycleFinal.length <= 1) {
+              if (cycleFinal.length === 0) cycleState.tabWhenReady = currentSearch
               fetch7tvCycleMatches(currentSearch)
             }
             log(' 🔄 Rebuilt', cycleState.matches.length, `matches for "${currentSearch}"`)

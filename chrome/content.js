@@ -1735,22 +1735,25 @@
     z-index: 1 !important;
   }
 
-  /* Overlay emotes - absolute positioned, centered on base */
-  .heatsync-emote-stack > .heatsync-overlay,
-  .heatsync-emote-stack > .heatsync-emote-wrapper.heatsync-overlay {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+  /* Collapsed stack: every emote shares one grid cell, so the stack is as wide as its widest
+     emote and the narrower ones centre over/under it. A wide overlay (a curtain) widens the
+     stack to the right instead of spilling left over the username. */
+  .heatsync-emote-stack:not(.expanded) {
+    display: inline-grid !important;
+    justify-items: center !important;
+    align-items: center !important;
+  }
+  .heatsync-emote-stack:not(.expanded) > .heatsync-emote-wrapper,
+  .heatsync-emote-stack:not(.expanded) > .heatsync-emoji {
+    grid-area: 1 / 1 !important;
+    position: relative !important;
     width: auto !important;
     height: auto !important;
-    z-index: 2 !important;
-    /* Cancel the adjacent-emote -3px gap-pull above: the overlay is a
-       .heatsync-emote-wrapper sibling of the base, so that rule matched it and
-       shifted it 3px left of centre (on an absolutely-positioned box the margin
-       applies as a full-px offset, not halved). Centring is done by left:50% +
-       translate, so any margin just de-centres it. */
     margin-left: 0 !important;
+  }
+  .heatsync-emote-stack > .heatsync-overlay,
+  .heatsync-emote-stack > .heatsync-emote-wrapper.heatsync-overlay {
+    z-index: 2 !important;
     /* pointer-events: auto so wide overlays can be hovered directly */
     pointer-events: auto !important;
   }

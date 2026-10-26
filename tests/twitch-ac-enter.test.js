@@ -17,3 +17,8 @@ test('the emote provider is tab-triggerable only while Tab is down', () => {
   expect(src).toMatch(/armTabTrigger\(true\)/)
   expect(src).toMatch(/armTabTrigger\(false\)/)
 })
+
+// with no list armed while typing, a word with a single match must complete on the first Tab
+test('a lone match is inserted by the first Tab', () => {
+  expect(src).toMatch(/const shouldCycle = cycleState\.matches\.length > 0 &&/)
+})

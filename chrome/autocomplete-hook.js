@@ -2066,7 +2066,9 @@
           // - Either: emote was already inserted (justCycled), OR no dropdown visible, OR matches include emojis
           const justCycled = cycleState.lastCycledEmote !== null
           const hasEmojiMatches = cycleState.matches.some((m) => m.isEmoji)
-          const shouldCycle = hasMultipleMatches && (justCycled || !dropdownVisible || hasEmojiMatches)
+          // A lone match is inserted here too: Twitch's own list no longer arms while you type (see
+          // armTabTrigger), so it would need a second Tab to take it.
+          const shouldCycle = cycleState.matches.length > 0 && (justCycled || !dropdownVisible || hasEmojiMatches)
 
           log(' 🔍 Tab pressed - cycling check:', {
             hasMultipleMatches,

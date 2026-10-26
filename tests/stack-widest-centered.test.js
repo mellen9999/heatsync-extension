@@ -42,3 +42,9 @@ test('an image still on the placeholder address is hidden', () => {
 test('keyword highlight tests the message without the sender name', () => {
   expect(css).toMatch(/\.chat-line__username-container, \.chat-author__display-name, button\.inline\.font-bold/)
 })
+
+// wollip's personal emote is named "wollip": the word was coloured as the chatter instead of drawn as the emote
+test('a word that is an emote in the row is not coloured as a chatter', () => {
+  expect(css).toMatch(/knownChatters\.has\(cleanWord\) && !emotes\?\.has\(word\.trim\(\)\)/)
+  expect(css).toMatch(/colorUsernameMentions\(messageElement, textElements, allEmotes\)/)
+})

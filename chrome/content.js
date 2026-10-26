@@ -4958,7 +4958,7 @@
 
   // Color @username mentions AND any username from known chatters (Chatterino-style)
   // Uses inline span injection - called repeatedly by MutationObserver
-  function colorUsernameMentions(messageElement, preQueriedFragments) {
+  function colorUsernameMentions(messageElement, preQueriedFragments, emotes) {
     if (!knownChatters.size) return
     // Use pre-queried fragments when available (avoids redundant DOM query from processMessage)
     const textFragments =
@@ -4992,7 +4992,9 @@
             .toLowerCase()
 
           // Check if this word is a known chatter
-          if (cleanWord && knownChatters.has(cleanWord)) {
+          // a word that is an emote in this row is the emote, not the chatter of the same name
+          // (wollip's personal emote "wollip")
+          if (cleanWord && knownChatters.has(cleanWord) && !emotes?.has(word.trim())) {
             const color = knownChatters.get(cleanWord)
             const span = document.createElement('span')
             span.className = 'hs-username-colored'
@@ -5704,7 +5706,7 @@
 
     // Color all @username mentions (Chatterino-style) - AFTER emote replacement
     // so replaceChildren() doesn't wipe out the colored spans
-    colorUsernameMentions(messageElement, textElements)
+    colorUsernameMentions(messageElement, textElements, allEmotes)
 
     // Apply local name-blocks to native Twitch/Kick emotes in this message
     if (localBlockedEmoteNames.size > 0) {

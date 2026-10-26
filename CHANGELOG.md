@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.107] — 2026-10-25
+
+### fixed
+- **native chat input** — a tab-completed emote draws at full size, and a twitch emote like Kappa no longer flashes a broken image after you send it.
+- **tab complete** — one Enter sends (a typed word is no longer swapped for an emote), one Tab completes, and a word that only the 7tv search knows completes on the first Tab.
+- **emote stacks** — a wide overlay (curtain0) is centered over its base emote and never stacks onto a badge; a word that is both an emote and a chatter's name draws as the emote.
+- **sent emotes** — an emote from 7tv search shows in the row you sent instead of a broken image.
+- **blocked emotes** — a blocked emote keeps its dashed outline in native chat and syncs across youtube, twitch, kick and heatsync.org.
+- **youtube chat** — emotes show on rows already in the list after a reload, with hover previews.
+- **history** — older rows show their badges, and the ones you sent are no longer outlined by a keyword that matches your own name.
+- **tagged names** — a tagged name wears that person's saved heatsync paint.
+- **badges** — bot and ffz badges are no longer drawn as huge emotes.
+
 ## [1.7.106] — 2026-10-25
 
 ### fixed

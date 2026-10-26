@@ -744,8 +744,14 @@
   }
   function highlightKeywords(messageElement) {
     if (!_keywordRegex) return
-    const txt = messageElement.textContent || ''
-    if (!_keywordRegex.test(txt)) return
+    // cheap test on the whole row first; a hit is re-tested without the sender's own name (a keyword
+    // equal to your username outlined every message you sent)
+    if (!_keywordRegex.test(messageElement.textContent || '')) return
+    const body = messageElement.cloneNode(true)
+    body
+      .querySelectorAll('.chat-line__username-container, .chat-author__display-name, button.inline.font-bold')
+      .forEach((n) => n.remove())
+    if (!_keywordRegex.test(body.textContent || '')) return
     let parent = messageElement
     while (parent && !parent.classList.contains('chat-line__message') && !parent.hasAttribute('data-index')) {
       parent = parent.parentElement

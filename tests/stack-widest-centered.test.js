@@ -37,3 +37,8 @@ test('the overlay stacker skips chat badges', () => {
 test('an image still on the placeholder address is hidden', () => {
   expect(css).toMatch(/img\[srcset\*="__FFZ__999999"\]\s*\{\s*visibility: hidden !important/)
 })
+
+// a keyword equal to your own name outlined every message you sent (the sender's name was part of the text tested)
+test('keyword highlight tests the message without the sender name', () => {
+  expect(css).toMatch(/\.chat-line__username-container, \.chat-author__display-name, button\.inline\.font-bold/)
+})

@@ -14994,7 +14994,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6023021d1bd7' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd5eea7d5c810' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27695,6 +27695,56 @@ function hsChannelNsfwHidden(emote) {
 // visible image still puts the image on screen. One answer for all of them.
 function hsEmoteHiddenForViewer(emote) {
   return hsOwnCwHiddenCat(emote) || (hsChannelNsfwHidden(emote) ? 'sexual' : '')
+}
+
+// "Why does this name not draw in THIS tab?" — console: __hsWhy('gg'). Reads
+// the same stores and gates processEmotes does and says which layer holds the
+// name and which gate (block, filter, setting) would stop it. Read-only.
+function whyEmote(name) {
+  const raw = String(name || '').trim()
+  const brief = (e) =>
+    e ? { source: e.source, state: e.state, hash: e.hash || null, nsfw: !!e.nsfw, plat: e._plat || null } : null
+  const here = typeof getCurrentChannel === 'function' ? getCurrentChannel() : null
+  const channels = {}
+  for (const k of Object.keys(channelEmoteCaches)) {
+    const hit = channelEmoteCaches[k]?.get(raw)
+    channels[k] = { size: channelEmoteCaches[k]?.size || 0, entry: brief(hit) }
+  }
+  const resolved = (here && channelEmoteCaches[here]?.get(raw)) || emoteCache.get(raw) || viewerPersonalEmotes.get(raw)
+  const gates = {
+    blockedByName: blockedEmoteNames.has(raw),
+    blockedByHash: !!(resolved?.hash && blockedEmoteHashes.has(String(resolved.hash))),
+    hiddenByOwnFilter: resolved ? hsOwnCwHiddenCat(resolved) || null : null,
+    hiddenByChannelNsfw: resolved ? hsChannelNsfwHidden(resolved) : false,
+    inventoryRenderOff: typeof getSetting === 'function' && getSetting('renderInventoryEmotes') === false,
+    staleGhost: !!window._hsStaleEmotes?.get((here || '').toLowerCase())?.has(raw),
+  }
+  const stopped = Object.entries(gates).find(([k, v]) => v && k !== 'inventoryRenderOff')
+  const verdict = !resolved
+    ? `"${raw}" is in no emote store for this tab (channel ${here || '?'} has ${channels[here]?.size || 0} emotes)`
+    : stopped
+      ? `found, but held back by ${stopped[0]}`
+      : 'found and would draw'
+  return {
+    name: raw,
+    channel: here,
+    verdict,
+    channels,
+    global: brief(emoteCache.get(raw)),
+    viewerPersonal: brief(viewerPersonalEmotes.get(raw)),
+    inInventory: inventoryEmotes.has(raw),
+    gates,
+  }
+}
+// The bundle runs in the extension's isolated world, so a page console cannot
+// call it directly. early-inject-main.js defines the console-side __hsWhy: it
+// fires this event and reads the answer back off <html> — synchronous both ways.
+if (typeof document !== 'undefined' && document?.addEventListener) {
+  document.addEventListener('hs-why-ask', (e) => {
+    try {
+      document.documentElement.setAttribute('data-hs-why', JSON.stringify(whyEmote(e.detail)))
+    } catch (_) {}
+  })
 }
 
 // cw stub markup shared by every render branch that can hit a filter-hidden

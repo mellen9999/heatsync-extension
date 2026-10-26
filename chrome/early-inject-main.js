@@ -23,6 +23,18 @@
   // Store for emote URL mappings (populated by content script)
   window.__heatsyncEmoteUrls = window.__heatsyncEmoteUrls || {}
 
+  // Console help: __hsWhy('gg') says why a name does or doesn't draw in this
+  // tab. The answer comes from the extension's isolated world (emotes.js) over
+  // a synchronous DOM event; read-only, nothing leaves the page.
+  window.__hsWhy = (name) => {
+    const root = document.documentElement
+    root.removeAttribute('data-hs-why')
+    document.dispatchEvent(new CustomEvent('hs-why-ask', { detail: String(name || '') }))
+    const out = root.getAttribute('data-hs-why')
+    root.removeAttribute('data-hs-why')
+    return out ? JSON.parse(out) : 'heatsync chat is not loaded in this tab yet'
+  }
+
   // ═══ Hermes Event Bus Interception ═══
   // Twitch's internal real-time event bus (replaced PubSub Apr 2025).
   // Passively read notifications from topics Twitch already subscribes to.

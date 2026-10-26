@@ -5873,6 +5873,7 @@ async function blockEmote(hash) {
       // Rollback optimistic add
       blockedEmotes.delete(hash)
       const error = await response.json().catch(() => ({ error: 'Unknown error' }))
+      console.warn('[heatsync] block refused by server:', response.status, hash, error.error)
       return { success: false, error: error.error || `HTTP ${response.status}` }
     }
 

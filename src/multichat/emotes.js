@@ -2693,6 +2693,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
   }
   if (resp && resp.success === false) {
     log('block sync rejected:', resp.error)
+    console.warn('[heatsync] emote block refused:', emoteName, ctx?.hash, resp.error)
     // Roll back the optimistic local change. This is a rollback of a rollback-
     // free op, so pass skipSync (don't re-hit the server) + silent (the error
     // toast below is the only message this failure gets).

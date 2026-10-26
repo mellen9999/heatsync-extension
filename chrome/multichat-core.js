@@ -14946,7 +14946,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '29af6d293f04' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4efac8ddcc65' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26242,6 +26242,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
   }
   if (resp && resp.success === false) {
     log('block sync rejected:', resp.error)
+    console.warn('[heatsync] emote block refused:', emoteName, ctx?.hash, resp.error)
     // Roll back the optimistic local change. This is a rollback of a rollback-
     // free op, so pass skipSync (don't re-hit the server) + silent (the error
     // toast below is the only message this failure gets).

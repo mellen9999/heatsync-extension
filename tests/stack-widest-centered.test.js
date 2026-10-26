@@ -22,3 +22,8 @@ test('overlay wrappers carry no inline absolute offsets', () => {
   expect(css).not.toMatch(/top: 50%; left: 50%/)
   expect(css).not.toMatch(/translate\(-50%, -50%\)/)
 })
+
+// a name tagged in chat carries the person's saved heatsync paint, like their own name does
+test("a mention is stamped for the tagged person's heatsync paint", () => {
+  expect(css).toMatch(/el\.dataset\.hsCosmeticMention = uid\s*\/\/[^\n]*\n\s*stampHsNativePaint\(el, uid\)/)
+})

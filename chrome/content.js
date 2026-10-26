@@ -5033,6 +5033,8 @@
     const uid = chatterTwitchIds.get(username)
     if (!uid) return
     el.dataset.hsCosmeticMention = uid
+    // their saved heatsync paint (outranks 7tv, same as on their own name)
+    stampHsNativePaint(el, uid)
     const c = cosmeticsCache.get(uid)
     if (c?.paint) {
       if (!el.dataset.hsPaintApplied) applyPaintToElement(el, c.paint)
@@ -8135,6 +8137,8 @@
   const HS_PAINT_HASH_MAX = 300
   const HS_PAINT_SHEET_BASE =
     'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *{animation-play-state:paused !important;}' +
+    // a painted name loses its inline style; a mention still needs to take the click/hover for the profile card
+    '.hs-username-colored[class*="hsp-"],.hs-mention-colored[class*="hsp-"]{cursor:pointer;pointer-events:auto;}' +
     '[class*="hsp-"]:hover,[class*="hsp-"]:hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;}'
   const HS_NAME_COLOUR_RE = /^(?:#[0-9a-f]{3,8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*[\d.]+\s*)?\))$/i
 

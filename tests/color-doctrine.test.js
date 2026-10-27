@@ -429,7 +429,7 @@ describe('single-definition colours', () => {
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
 
-  test("dim gray is used for exactly six roles: reply-context, fully-read tabs, the settings scrollbar, a log line's #channel tag, a mod-cleared row's text, a blocked emote's dashed box in an expanded stack", () => {
+  test("dim gray is used for exactly these roles: reply-context, fully-read tabs, the settings panel (inactive buttons, scrollbar track), a log line's #channel tag, a mod-cleared row's text, a blocked emote's dashed box in an expanded stack", () => {
     const users = []
     for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
       const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
@@ -437,15 +437,22 @@ describe('single-definition colours', () => {
         users.push(m[1].trim().replace(/\s+/g, ' '))
     }
     // readdirSync order is filesystem-defined (tmpfs ≠ btrfs) — compare as a set
-    expect(users.sort()).toEqual([
+    // settings panel: inactive buttons + scrollbar track, active/hover go white
+    const expected = [
       '.hs-cl-ch',
       '.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before',
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
+      '.hs-mc-set-scope-btn, .hs-mc-set-presets-btn, .hs-mc-pagedefaults-btn',
       '.hs-mc-reply-ctx',
+      '.hs-mc-set-subtab',
       '.hs-mc-set-subtab-body, .hs-mc-set-subtabs, .hs-mc-set-help-cmds',
       '.hs-mc-set-subtab-body::-webkit-scrollbar-track, .hs-mc-set-subtabs::-webkit-scrollbar-track, .hs-mc-set-help-cmds::-webkit-scrollbar-track',
+      '.hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn',
+      '.hs-mc-size-btn',
       '.hs-mc-tab',
-    ])
+      '.hs-mc-tab[data-tab="mentions"].has-new:not(.has-mentions):not(.active):not(:hover), .hs-mc-tab[data-tab="whispers"].has-new:not(.has-whispers):not(.active):not(:hover)',
+    ]
+    expect(users.sort()).toEqual(expected.sort())
     expect(readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')).toMatch(
       /\.hs-mc-zebra \.hs-mc-reply-ctx[^{]*\{\s*color: var\(--hs-dim-stripe\)/,
     )

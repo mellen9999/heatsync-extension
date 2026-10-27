@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6eec5e358f4a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f05d8a11c187' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70084,6 +70084,66 @@ const STORAGE_KEY = 'heatsync_multichat'
     _paintFor = null
   }
 
+  // A tab coming back from the cache used to mount all of its rows at once and pay the whole layout bill
+  // (500 rows, hundreds of ms on slow hardware) before it could be seen. Now only the newest
+  // FIRST_PAINT_ROWS mount; the older ones wait detached in _heldOlder, with their keys already indexed,
+  // and go back above them in chunks right after. Anything that reads or rewrites the whole list calls
+  // flushHeldOlder() first, so the DOM it sees is always the full ordered list.
+  let _heldOlder = null // { id, frag }
+  function holdOlderRows(tabId, frag) {
+    const kids = frag.children
+    if (kids.length <= FIRST_PAINT_ROWS + 20) return
+    const range = document.createRange()
+    range.setStartBefore(frag.firstChild)
+    range.setEndBefore(kids[kids.length - FIRST_PAINT_ROWS])
+    _heldOlder = { id: tabId, frag: range.extractContents() }
+    range.detach?.()
+  }
+  // Put the newest `count` held rows back above the mounted ones, keeping what the reader sees where it is.
+  function _mountHeldChunk(count) {
+    const held = _heldOlder
+    const el = document.getElementById('hs-mc-messages')
+    if (!held || !el) return false
+    const kids = held.frag.children
+    if (kids.length === 0) {
+      _heldOlder = null
+      return false
+    }
+    const h0 = el.scrollHeight
+    const top0 = el.scrollTop
+    let chunk = held.frag
+    if (count < kids.length) {
+      const range = document.createRange()
+      range.setStartBefore(kids[kids.length - count])
+      range.setEndAfter(held.frag.lastChild)
+      chunk = range.extractContents()
+      range.detach?.()
+    } else {
+      _heldOlder = null
+    }
+    el.insertBefore(chunk, el.firstChild)
+    // overflow-anchor is off on the list: rows landing above the viewport would move it
+    el.scrollTop = top0 + (el.scrollHeight - h0)
+    return _heldOlder !== null
+  }
+  function growHeldOlder(id) {
+    cleanup.setTimeout(() => {
+      if (!_heldOlder || _heldOlder.id !== id) return
+      if (currentTab !== id) return // switchTab flushes on the way out
+      if (_mountHeldChunk(FIRST_PAINT_STEP)) growHeldOlder(id)
+      else applyMcMutes()
+    }, 0)
+  }
+  function flushHeldOlder() {
+    if (!_heldOlder) return
+    const mounted = document.getElementById('hs-mc-messages')
+    if (mounted && currentTab === _heldOlder.id) {
+      _mountHeldChunk(Infinity)
+      applyMcMutes()
+    }
+    _heldOlder = null
+  }
+
   // n/N match cursor for the live-tab search filter — msgKey of the row
   // currently marked .hs-mc-search-current, or null when inactive. Keyed by
   // msgKey (not a DOM ref or array index) so it self-heals across renders:
@@ -70232,6 +70292,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   }
 
   function _clearMessageIndices() {
+    _heldOlder = null // held rows are indexed by the maps being cleared
     _msgKeyIndex.clear()
     _uidIndex.clear()
     _mentionIndex.clear()
@@ -70389,7 +70450,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl) return false
     _snapCompleteEmotes(cache.frag)
+    flushHeldOlder() // never carry another tab's held rows into this one
+    holdOlderRows(tabId, cache.frag)
     msgsEl.appendChild(cache.frag)
+    _heldOlder && growHeldOlder(tabId)
     _cacheJustRestored = true
     for (const k of cache.msgKeyIndex) _msgKeyIndex.add(k)
     for (const [k, v] of cache.uidIndex) _uidIndex.set(k, new Set(v))
@@ -76277,6 +76341,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // restores it instantly (no rebuild). Skipped for static tabs which manage
     // their own DOM. Must run BEFORE currentTab flips.
     finishFirstPaint()
+    flushHeldOlder()
     snapshotTabState(currentTab)
     currentTab = id
     _scrollbackWindow = 0 // new tab starts at the live tail, not prior scrollback depth
@@ -80333,6 +80398,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       return
     }
 
+    flushHeldOlder() // the diff below walks the whole list
     // PASS A: index existing DOM by msgKey, dedup pre-existing duplicates,
     // detach yt-status notices for re-pin at end, drop everything else not in
     // desiredSet. Pre-existing dupes can exist when a prior buggy diff (or

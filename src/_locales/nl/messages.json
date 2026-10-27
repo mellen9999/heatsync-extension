@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "uit: de site houdt zijn eigen chat en heatsync laadt daar niet — herlaad om toe te passen"
+  },
+  "mc_settings_channel_volume": {
+    "message": "volume per kanaal onthouden"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "elk kanaal houdt het volume dat je het laatst instelde. werkt op twitch, kick en youtube, en in embeds"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "beginvolume voor nieuwe kanalen"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "een kanaal dat je nog niet hebt ingesteld opent op dit volume. 0 laat de speler met rust"
   }
 }

@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "off: mananatili sa site ang sarili nitong chat at hindi magloload ang heatsync doon — i-reload para ilapat"
+  },
+  "mc_settings_channel_volume": {
+    "message": "tandaan ang volume bawat channel"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "bawat channel ay nagtatago ng huling volume na itinakda mo. gumagana sa twitch, kick at youtube, at sa mga embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "panimulang volume ng mga bagong channel"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ang channel na hindi mo pa naitatakda ay bubukas sa volume na ito. ang 0 ay hindi ginagalaw ang player"
   }
 }

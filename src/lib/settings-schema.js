@@ -1403,6 +1403,39 @@ const SETTINGS = [
     tipKey: 'mc_settings_scroll_wheel_volume_desc',
   },
 
+  {
+    // Read by chrome/player-volume.js, a content script that runs inside the
+    // player frames themselves and reads ui_settings straight from storage —
+    // so no runtimeVar/apply here, and it follows a change live via
+    // storage.onChanged.
+    key: 'channelVolumeMemory',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'player',
+    control: 'pill',
+    labelKey: 'mc_settings_channel_volume',
+    tipKey: 'mc_settings_channel_volume_desc',
+    alias: 'volume memory channel remember',
+  },
+  {
+    key: 'channelVolumeDefault',
+    type: 'range',
+    default: 0,
+    scope: 'sync',
+    category: 'display',
+    section: 'player',
+    control: 'range',
+    labelKey: 'mc_settings_channel_volume_default',
+    tipKey: 'mc_settings_channel_volume_default_desc',
+    alias: 'default volume new channel starting',
+    displayScale: 100,
+    syncSilent: true,
+    options: { min: 0, max: 1, step: 0.05 },
+  },
+
   // ── mod / native chat ─────────────────────────────────────────────────
 
   // ── system / tabs ─────────────────────────────────────────────────────

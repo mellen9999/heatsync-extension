@@ -671,6 +671,7 @@ const COPY_FILES = [
   'pcard-early.js',
   'early-layout.js',
   'kick-css-fix.js',
+  'player-volume.js',
 ]
 
 // Assets (images, etc)

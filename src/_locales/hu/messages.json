@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "ki: az oldal megtartja a saját chatjét, és a heatsync nem töltődik be ott — az érvényesítéshez töltsd újra"
+  },
+  "mc_settings_channel_volume": {
+    "message": "hangerő megjegyzése csatornánként"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "minden csatorna megtartja az utoljára beállított hangerőt. működik twitchen, kicken és youtube-on, valamint beágyazásokban"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "új csatornák kezdő hangereje"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "a még be nem állított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszót"
   }
 }

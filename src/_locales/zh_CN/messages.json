@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "关闭：网站保留自带聊天，heatsync 不在那里加载 — 重新加载后生效"
+  },
+  "mc_settings_channel_volume": {
+    "message": "按频道记住音量"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "每个频道保留你上次设置的音量。适用于 twitch、kick、youtube 以及嵌入播放器"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "新频道的初始音量"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "尚未设置的频道将以此音量打开。0 表示不干预播放器"
   }
 }

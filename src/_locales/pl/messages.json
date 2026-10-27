@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "wyłączone: strona zachowuje własny czat, a heatsync się tam nie ładuje — odśwież, aby zastosować"
+  },
+  "mc_settings_channel_volume": {
+    "message": "pamiętaj głośność dla każdego kanału"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "każdy kanał zachowuje ostatnio ustawioną głośność. działa na twitchu, kicku i youtube oraz w osadzeniach"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "początkowa głośność nowych kanałów"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanał, którego jeszcze nie ustawiłeś, otwiera się z tą głośnością. 0 zostawia odtwarzacz w spokoju"
   }
 }

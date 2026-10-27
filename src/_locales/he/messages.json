@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "כבוי: האתר שומר על הצ'אט שלו ו-heatsync לא נטען שם — טען מחדש להחלה"
+  },
+  "mc_settings_channel_volume": {
+    "message": "זכור עוצמת שמע לכל ערוץ"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "כל ערוץ שומר את עוצמת השמע שקבעת לאחרונה. עובד ב-twitch, ב-kick וב-youtube, ובהטמעות"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "עוצמת שמע התחלתית לערוצים חדשים"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ערוץ שעוד לא קבעת לו נפתח בעוצמה הזו. 0 משאיר את הנגן כמו שהוא"
   }
 }

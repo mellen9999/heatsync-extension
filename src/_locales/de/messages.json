@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "aus: die Seite behält ihren eigenen Chat und heatsync lädt dort nicht — zum Anwenden neu laden"
+  },
+  "mc_settings_channel_volume": {
+    "message": "lautstärke pro kanal merken"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "jeder kanal behält die zuletzt eingestellte lautstärke. funktioniert auf twitch, kick und youtube sowie in einbettungen"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "startlautstärke für neue kanäle"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ein kanal, den du noch nicht eingestellt hast, startet mit dieser lautstärke. 0 lässt den player in ruhe"
   }
 }

@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "av: sidan behåller sin egen chatt och heatsync laddas inte där — ladda om för att tillämpa"
+  },
+  "mc_settings_channel_volume": {
+    "message": "kom ihåg volym per kanal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "varje kanal behåller volymen du senast ställde in. fungerar på twitch, kick och youtube, och i inbäddningar"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "startvolym för nya kanaler"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "en kanal du inte ställt in ännu öppnas med den här volymen. 0 låter spelaren vara"
   }
 }

@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "關閉：網站保留內建聊天，heatsync 不在那裡載入 — 重新載入後生效"
+  },
+  "mc_settings_channel_volume": {
+    "message": "依頻道記住音量"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "每個頻道保留你上次設定的音量。適用於 twitch、kick、youtube 以及嵌入播放器"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "新頻道的起始音量"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "尚未設定的頻道會以此音量開啟。0 表示不干預播放器"
   }
 }

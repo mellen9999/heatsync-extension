@@ -1086,8 +1086,8 @@
       font-family: inherit;
       white-space: nowrap !important;
       padding: 4px 10px !important;
-      background: transparent !important;
-      color: var(--hs-dim) !important;
+      background: var(--hs-dim) !important;
+      color: #000 !important;
       border: none !important;
       border-radius: 0 !important;
       font-size: 13px !important;
@@ -1161,8 +1161,8 @@
     .hs-mc-set-scope-btn,
     .hs-mc-set-presets-btn,
     .hs-mc-pagedefaults-btn {
-      background: #000;
-      color: var(--hs-dim);
+      background: var(--hs-dim);
+      color: #000;
       border: 1px solid var(--hs-dim);
       font-family: inherit;
       font-size: 13px;
@@ -1191,7 +1191,7 @@
        chip white-with-black-text, instead of the row's forced black text
        vanishing into the strip. */
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn {
-      color: var(--hs-dim) !important;
+      color: #000 !important;
     }
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn.active,
     .hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn:hover {
@@ -1358,8 +1358,8 @@
       width: 34px;
       height: 34px;
       padding: 0;
-      background: #000;
-      color: var(--hs-dim);
+      background: var(--hs-dim);
+      color: #000;
       border: 1px solid var(--hs-dim);
       cursor: pointer;
       display: inline-flex;

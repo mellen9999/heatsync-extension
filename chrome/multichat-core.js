@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '10c048de0a54' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f63fdefa10ed' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -47655,7 +47655,7 @@ function handleInputChange(_e) {
                     stackInputEmote(prev, img)
                     node.textContent = afterText || ' '
                     const newRange = document.createRange()
-                    newRange.setStart(node, 0)
+                    newRange.setStart(node, afterText ? 0 : node.textContent.length)
                     newRange.collapse(true)
                     sel.removeAllRanges()
                     sel.addRange(newRange)
@@ -47680,7 +47680,7 @@ function handleInputChange(_e) {
                     stackInputEmote(emojiSpan, img)
                     node.textContent = afterText || ' '
                     const newRange = document.createRange()
-                    newRange.setStart(node, 0)
+                    newRange.setStart(node, afterText ? 0 : node.textContent.length)
                     newRange.collapse(true)
                     sel.removeAllRanges()
                     sel.addRange(newRange)
@@ -47697,7 +47697,9 @@ function handleInputChange(_e) {
                 parent.insertBefore(afterNode, node)
                 parent.removeChild(node)
                 const newRange = document.createRange()
-                newRange.setStart(afterNode, 0)
+                // Caret goes AFTER the space we synthesized (Tab parity) — at 0
+                // the next typed word sat flush against the emote.
+                newRange.setStart(afterNode, afterText ? 0 : afterNode.length)
                 newRange.collapse(true)
                 sel.removeAllRanges()
                 sel.addRange(newRange)

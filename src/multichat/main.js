@@ -3774,8 +3774,12 @@
       ) {
         e.preventDefault()
         tab.classList.remove('has-mentions', 'has-stream-event', 'has-whispers')
-        // mentions / whispers / feed ARE their count, so there it clears too
-        if (mcIsReservedTab(tabId)) markTabRead(tabId)
+        // mentions / whispers / feed ARE their count, so there it clears too —
+        // and the unread flag with it, or the tab sits white (idle is grey)
+        if (mcIsReservedTab(tabId)) {
+          markTabRead(tabId)
+          tab.classList.remove('has-new')
+        }
         // The red state is rebuilt on refresh from tabSeenAt (restore scan), so
         // acknowledging it must stamp that too or the next reload relights it.
         // Special tabs are server-backed via bumpSeen below.

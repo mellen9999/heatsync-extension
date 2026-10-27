@@ -22,6 +22,13 @@ describe('tab right-click', () => {
 
   test('the clear leaves has-new and a channel tab count alone', () => {
     expect(handler).toContain("classList.remove('has-mentions', 'has-stream-event', 'has-whispers')")
-    expect(handler).toContain('if (mcIsReservedTab(tabId)) markTabRead(tabId)')
+    expect(handler).toContain('if (mcIsReservedTab(tabId)) {\n          markTabRead(tabId)')
+  })
+
+  test('mentions / whispers drop the unread flag too, so they never sit white', () => {
+    expect(handler).toContain("tab.classList.remove('has-new')")
+    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '02-tab-bar.css'), 'utf8')
+    expect(css).toMatch(/\[data-tab="mentions"\]\.has-new:not\(\.has-mentions\)[\s\S]*?\{[^}]*color:\s*var\(--hs-dim\)/)
+    expect(css).toMatch(/\[data-tab="whispers"\]\.has-new:not\(\.has-whispers\)/)
   })
 })

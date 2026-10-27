@@ -125,6 +125,12 @@
       background: #fff !important;
       color: var(--hs-danger) !important;
     }
+    /* Mentions and whispers are never plain-unread white: their unread colour
+       is red / cyan (above), and with nothing unread they sit at the idle grey. */
+    .hs-mc-tab[data-tab="mentions"].has-new:not(.has-mentions):not(.active):not(:hover),
+    .hs-mc-tab[data-tab="whispers"].has-new:not(.has-whispers):not(.active):not(:hover) {
+      color: var(--hs-dim) !important;
+    }
     /* Whispers — cyan when unseen. A DM is personal: the generic has-new
        white state was easy to miss ("whispers should be more obvious"). */
     .hs-mc-tab.has-whispers {

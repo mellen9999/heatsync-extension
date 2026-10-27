@@ -3623,5 +3623,14 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "off: the site keeps its own chat and heatsync does not load there — reload to apply"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

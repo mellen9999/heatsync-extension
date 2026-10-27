@@ -3620,5 +3620,14 @@
   },
   "mc_settings_channel_volume_default_desc": {
     "message": "channel yang belum kamu atur dibuka dengan volume ini. 0 membiarkan pemutar apa adanya"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

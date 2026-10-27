@@ -3620,5 +3620,14 @@
   },
   "mc_settings_channel_volume_default_desc": {
     "message": "канал, который ты ещё не настраивал, открывается с этой громкостью. 0 не трогает плеер"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

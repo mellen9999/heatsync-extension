@@ -3620,5 +3620,14 @@
   },
   "mc_settings_channel_volume_default_desc": {
     "message": "ένα κανάλι που δεν έχεις ρυθμίσει ανοίγει με αυτή την ένταση. το 0 αφήνει τον player ως έχει"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

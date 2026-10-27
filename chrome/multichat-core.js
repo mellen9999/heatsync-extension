@@ -4188,6 +4188,42 @@ const SETTINGS = [
     alias: 'volume memory channel remember',
   },
   {
+    key: 'channelVolumeTwitch',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'player',
+    control: 'pill',
+    labelKey: 'mc_settings_channel_volume_twitch',
+    alias: 'volume memory channel twitch',
+  },
+  {
+    key: 'channelVolumeKick',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'player',
+    control: 'pill',
+    labelKey: 'mc_settings_channel_volume_kick',
+    alias: 'volume memory channel kick',
+  },
+  {
+    key: 'channelVolumeYouTube',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'player',
+    control: 'pill',
+    labelKey: 'mc_settings_channel_volume_youtube',
+    alias: 'volume memory channel youtube',
+  },
+  {
     key: 'channelVolumeDefault',
     type: 'range',
     default: 0,
@@ -15088,7 +15124,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0e412064216d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ed14bb2ec132' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

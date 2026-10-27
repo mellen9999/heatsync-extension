@@ -3620,5 +3620,14 @@
   },
   "mc_settings_channel_volume_default_desc": {
     "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou. 0 nechá prehrávač na pokoji"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

@@ -3620,5 +3620,14 @@
   },
   "mc_settings_channel_volume_default_desc": {
     "message": "kanał, którego jeszcze nie ustawiłeś, otwiera się z tą głośnością. 0 zostawia odtwarzacz w spokoju"
+  },
+  "mc_settings_channel_volume_twitch": {
+    "message": "twitch"
+  },
+  "mc_settings_channel_volume_kick": {
+    "message": "kick"
+  },
+  "mc_settings_channel_volume_youtube": {
+    "message": "youtube"
   }
 }

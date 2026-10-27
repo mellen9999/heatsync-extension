@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "off: ο ιστότοπος κρατά τη δική του συνομιλία και το heatsync δεν φορτώνει εκεί — φόρτωσε ξανά για εφαρμογή"
+  },
+  "mc_settings_channel_volume": {
+    "message": "θυμήσου την ένταση ανά κανάλι"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "κάθε κανάλι κρατά την ένταση που όρισες τελευταία. λειτουργεί σε twitch, kick και youtube, και σε ενσωματωμένους players"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "αρχική ένταση για νέα κανάλια"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ένα κανάλι που δεν έχεις ρυθμίσει ανοίγει με αυτή την ένταση. το 0 αφήνει τον player ως έχει"
   }
 }

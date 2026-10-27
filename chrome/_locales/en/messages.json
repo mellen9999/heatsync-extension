@@ -1511,6 +1511,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over the player to adjust volume"
   },
+  "mc_settings_channel_volume": {
+    "message": "remember volume per channel"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "each channel keeps the volume you last set. works on twitch, kick and youtube, and in embeds"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "starting volume for new channels"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "a channel you have not set yet opens at this volume. 0 leaves the player alone"
+  },
   "mc_settings_visible_tabs": {
     "message": "visible tabs"
   },

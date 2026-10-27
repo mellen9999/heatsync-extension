@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "tắt: trang giữ chat riêng của nó và heatsync không tải ở đó — tải lại để áp dụng"
+  },
+  "mc_settings_channel_volume": {
+    "message": "nhớ âm lượng theo kênh"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "mỗi kênh giữ âm lượng bạn đặt gần nhất. dùng được trên twitch, kick, youtube và trong embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "âm lượng ban đầu cho kênh mới"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kênh bạn chưa đặt sẽ mở ở âm lượng này. 0 để nguyên trình phát"
   }
 }

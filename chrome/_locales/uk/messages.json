@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "вимк.: сайт зберігає власний чат, а heatsync там не завантажується — перезавантажте сторінку"
+  },
+  "mc_settings_channel_volume": {
+    "message": "запам'ятовувати гучність для кожного каналу"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "кожен канал зберігає останню задану тобою гучність. працює на twitch, kick і youtube, та у вбудованих плеєрах"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "початкова гучність нових каналів"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "канал, який ти ще не налаштовував, відкривається з цією гучністю. 0 не чіпає плеєр"
   }
 }

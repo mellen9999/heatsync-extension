@@ -98,6 +98,23 @@
     },
     {
       "matches": [
+        "https://*.twitch.tv/*",
+        "https://kick.com/*",
+        "https://*.kick.com/*",
+        "https://www.youtube.com/*"
+      ],
+      "exclude_matches": [
+        "https://m.twitch.tv/*",
+        "https://www.youtube.com/live_chat*"
+      ],
+      "js": [
+        "player-volume.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
         "https://*.twitch.tv/*"
       ],
       "exclude_matches": [

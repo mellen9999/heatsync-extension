@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "끔: 사이트의 자체 채팅이 그대로 유지되며 그곳에서 heatsync가 로드되지 않음 — 적용하려면 새로고침"
+  },
+  "mc_settings_channel_volume": {
+    "message": "채널별 볼륨 기억"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "각 채널이 마지막으로 설정한 볼륨을 유지합니다. twitch, kick, youtube와 임베드에서 작동"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "새 채널의 시작 볼륨"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "아직 설정하지 않은 채널은 이 볼륨으로 열립니다. 0이면 플레이어를 건드리지 않음"
   }
 }

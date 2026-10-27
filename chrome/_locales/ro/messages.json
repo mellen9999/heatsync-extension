@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "oprit: site-ul își păstrează chatul propriu și heatsync nu se încarcă acolo — reîncarcă pentru a aplica"
+  },
+  "mc_settings_channel_volume": {
+    "message": "ține minte volumul pe canal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "fiecare canal păstrează ultimul volum setat de tine. merge pe twitch, kick și youtube, și în embeduri"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "volum inițial pentru canale noi"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "un canal pe care nu l-ai setat încă se deschide cu acest volum. 0 lasă playerul în pace"
   }
 }

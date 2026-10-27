@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "オフ: サイト本来のチャットがそのまま使われ、そこでは heatsync が読み込まれません — 反映には再読み込み"
+  },
+  "mc_settings_channel_volume": {
+    "message": "チャンネルごとに音量を記憶"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "各チャンネルが最後に設定した音量を保持します。twitch、kick、youtube、埋め込みで動作"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "新しいチャンネルの初期音量"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "未設定のチャンネルはこの音量で開きます。0 ならプレーヤーはそのまま"
   }
 }

@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "vypnuté: stránka si ponechá vlastný chat a heatsync sa tam nenačíta — na uplatnenie obnov stránku"
+  },
+  "mc_settings_channel_volume": {
+    "message": "pamätať si hlasitosť pre každý kanál"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "každý kanál si drží naposledy nastavenú hlasitosť. funguje na twitchi, kicku aj youtube a vo vložených prehrávačoch"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "počiatočná hlasitosť nových kanálov"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou. 0 nechá prehrávač na pokoji"
   }
 }

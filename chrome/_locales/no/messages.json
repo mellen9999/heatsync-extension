@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "av: siden beholder sin egen chat, og heatsync lastes ikke der — last inn på nytt for å bruke"
+  },
+  "mc_settings_channel_volume": {
+    "message": "husk lydstyrke per kanal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "hver kanal beholder lydstyrken du sist satte. fungerer på twitch, kick og youtube, og i innebygde spillere"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "startlydstyrke for nye kanaler"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "en kanal du ikke har stilt inn ennå, åpnes med denne lydstyrken. 0 lar spilleren være"
   }
 }

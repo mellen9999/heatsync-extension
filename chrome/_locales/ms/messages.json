@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "mati: tapak mengekalkan sembang asalnya dan heatsync tidak dimuatkan di sana — muat semula untuk guna"
+  },
+  "mc_settings_channel_volume": {
+    "message": "ingat kelantangan setiap saluran"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "setiap saluran mengekalkan kelantangan yang kamu tetapkan terakhir. berfungsi di twitch, kick, youtube dan dalam embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "kelantangan permulaan saluran baharu"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan ini. 0 membiarkan pemain seperti asal"
   }
 }

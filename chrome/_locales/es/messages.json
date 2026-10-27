@@ -3608,5 +3608,17 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "desactivado: el sitio conserva su propio chat y heatsync no se carga allí — recarga para aplicar"
+  },
+  "mc_settings_channel_volume": {
+    "message": "recordar volumen por canal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "cada canal mantiene el último volumen que pusiste. funciona en twitch, kick y youtube, y en embeds"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "volumen inicial de canales nuevos"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "un canal que aún no has ajustado se abre con este volumen. 0 deja el reproductor como está"
   }
 }

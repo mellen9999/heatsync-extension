@@ -14950,22 +14950,24 @@
             if (tab) tab.classList.add('has-stream-event')
           }
 
-          // Render only on tabs whose channel matches this event
+          // A followed streamer going live / switching game is for whichever chat
+          // you're reading, not just the streamer's own tab (you have none open —
+          // that's why it's a follow event). The live tab already holds it via
+          // liveBuffer; a channel tab needs it in its own buffer or the next
+          // repaint drops the row.
           const activeTab = currentTab
-          if (activeTab === 'live') {
-            if (isLiveChannelMessage({ channel })) {
-              if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
-            }
-          } else {
+          if (activeTab !== 'live') {
             const tabCh = getChannelById(activeTab)
-            if (tabCh) {
-              const tw = tabCh.twitch?.toLowerCase()
-              const ki = tabCh.kick?.toLowerCase()
-              if (tw === channel || ki === channel) {
-                if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
-              }
+            const tabBufs = [
+              irc?.channels?.get(tabCh?.twitch?.toLowerCase()),
+              kickChat?.channels?.get(tabCh?.kick?.toLowerCase()),
+            ]
+            for (const buf of tabBufs) {
+              if (!buf || buf === liveBuffer) continue
+              if (!buf.getAll().some((m) => m.type === 'stream-event' && m.text === evt.text)) buf.push(evt)
             }
           }
+          if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
         }),
       )
     }

@@ -4064,6 +4064,37 @@ function broadcastBadgeMaps() {
   broadcastToTabs({ type: 'cosmetics_update', ...badgeMapsPayload() })
 }
 
+// The channel's 7tv/bttv/ffz sets come straight from the providers, so they
+// carry none of what heatsync's own scan knows (weapons, drugs, gore, hate, and
+// its sexual verdicts beyond 7tv's flag). The site's public, edge-cached
+// /api/channel/:c/emotes answers exactly that per emote as `cw_cats`; stamp it
+// on by (provider, name) so the render gate can hide the category the viewer
+// turned off. Best effort by design: a failed lookup leaves the sets exactly as
+// the providers sent them — it never costs a channel its emotes.
+async function stampThirdPartyFlags(emotes, channelName, platform) {
+  if (platform !== 'twitch' && platform !== 'kick') return
+  try {
+    const q = platform === 'kick' ? '?platform=kick' : ''
+    const r = await fetchWithTimeout(`${API_URL}/api/channel/${encodeURIComponent(channelName)}/emotes${q}`, {
+      credentials: 'omit',
+      noBackoff: true,
+    })
+    if (!r.ok) return
+    const body = await r.json()
+    const flagged = new Map()
+    for (const e of body?.emotes || []) {
+      if (Array.isArray(e?.cw_cats) && e.cw_cats.length) flagged.set(`${e.provider}:${e.name}`, e.cw_cats)
+    }
+    if (!flagged.size) return
+    for (const e of emotes) {
+      const cats = e && flagged.get(`${e.source}:${e.name}`)
+      if (cats) e.cw_cats = cats
+    }
+  } catch (err) {
+    log(' ⚠️ third-party emote flags unavailable for', channelName, err?.message || err)
+  }
+}
+
 // Fetch channel owner's emotes (public API) + third-party channel emotes
 async function fetchChannelOwnerEmotes(channelName, channelId = null, platform = 'twitch') {
   const key = chKey(platform, channelName)
@@ -4307,6 +4338,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       ...kickChannelEmotes,
     ]
     const anyFailed = failed.bttv || failed.ffz || failed.sevenTV || failed.twitch || failed.kick
+    await stampThirdPartyFlags(emotes, channelName, platform)
     channelEmotesMap[key] = emotes
     // If any provider had a transient failure, backdate fetchedAt so the next
     // channel join refetches within ~60s (regardless of empty/non-empty TTL).

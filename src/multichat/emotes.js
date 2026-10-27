@@ -3413,6 +3413,10 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       os: e.os,
       _plat: platform,
       nsfw: !!(e.flags & 65536),
+      // heatsync's own scan (weapons/drugs/gore/hate/sexual), stamped on by the
+      // background from /api/channel/:c/emotes — the render gate hides the
+      // category the viewer turned off, same as an own-inventory annotation
+      cwCats: Array.isArray(e.cw_cats) && e.cw_cats.length ? e.cw_cats : null,
     }
     // Same-name collision between two third-party providers (7tv/bttv/ffz):
     // emoteProviderPriority decides the winner instead of plain array-order

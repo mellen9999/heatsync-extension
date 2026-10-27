@@ -84,7 +84,7 @@ describe('buildFeedInlineNotif media tag', () => {
 })
 
 describe('buildFeedInlineNotif', () => {
-  test('an OP builds an [OP] row and becomes the /opr target', () => {
+  test('an OP builds an [OP] row and becomes the /re target', () => {
     const { buildFeedInlineNotif, lastOp } = harness()
     const built = buildFeedInlineNotif(row())
     expect(built.notifType).toBe('op')
@@ -96,7 +96,7 @@ describe('buildFeedInlineNotif', () => {
     buildFeedInlineNotif(row())
     const built = buildFeedInlineNotif(row({ base36_id: '00002q', reply_to: '00002p' }))
     expect(built.notifType).toBe('re')
-    // still the thread root — consecutive /opr keeps replying to the thread
+    // still the thread root — consecutive /re keeps replying to the thread
     expect(lastOp()).toBe('00002p')
   })
 

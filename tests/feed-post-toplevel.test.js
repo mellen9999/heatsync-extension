@@ -161,7 +161,7 @@ describe('own post echoes into chat', () => {
   })
 })
 
-describe('replyTo — /opr targets the last [OP] seen in chat', () => {
+describe('replyTo — /re targets the last [OP] seen in chat', () => {
   test('replyTo wins over the open thread', async () => {
     const { postFeedMessage, calls } = harness({ activeThread: { id: 'openthread', replies: [] } })
     await postFeedMessage('nice one', { replyTo: '00002p' })

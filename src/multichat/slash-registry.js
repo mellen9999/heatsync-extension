@@ -45,12 +45,13 @@ export const SLASH_REGISTRY = [
     alias: ['post'],
   },
   {
-    cmd: 'opr',
+    cmd: 're',
     args: '<text>',
     desc: 'reply to the last [OP] shown in chat',
     on: 'both',
     needs: 'login',
     does: 'heatsync',
+    alias: ['reply', 'opr'],
   },
   {
     cmd: 'dm',
@@ -84,7 +85,6 @@ export const SLASH_REGISTRY = [
     on: 'both',
     needs: 'twitch',
     does: 'twitch',
-    alias: ['re', 'reply'],
   },
   {
     cmd: 'user',
@@ -419,7 +419,7 @@ export const SLASH_SECTIONS = [
     title: 'everyday',
     cmds: [
       'op',
-      'opr',
+      're',
       'dm',
       'w',
       'r',

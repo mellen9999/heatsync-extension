@@ -1662,7 +1662,7 @@ function isOpMsg(m) {
   return m.is_op != null ? !!m.is_op : !m.reply_to || m.reply_to === ''
 }
 
-// The last feed OP surfaced as an inline row in chat — what /opr replies to.
+// The last feed OP surfaced as an inline row in chat — what /re replies to.
 // Set from ONE place (buildFeedInlineNotif) so anything that can put an [OP]
 // in front of you is automatically a valid reply target, including your own.
 let lastInlineFeedOpId = null
@@ -2900,7 +2900,7 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
     body.media_url = mediaUrl
     body.media_type = mediaType
   }
-  // An explicit target wins over view state — /opr replies to the last [OP]
+  // An explicit target wins over view state — /re replies to the last [OP]
   // you saw in chat, which is usually NOT the thread you happen to have open.
   if (replyTo) {
     body.reply_to = replyTo

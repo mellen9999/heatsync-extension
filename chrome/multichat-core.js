@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6f9032e634ee' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '28847a431cc7' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15545,12 +15545,13 @@ const SLASH_REGISTRY = [
     alias: ['post'],
   },
   {
-    cmd: 'opr',
+    cmd: 're',
     args: '<text>',
     desc: 'reply to the last [OP] shown in chat',
     on: 'both',
     needs: 'login',
     does: 'heatsync',
+    alias: ['reply', 'opr'],
   },
   {
     cmd: 'dm',
@@ -15584,7 +15585,6 @@ const SLASH_REGISTRY = [
     on: 'both',
     needs: 'twitch',
     does: 'twitch',
-    alias: ['re', 'reply'],
   },
   {
     cmd: 'user',
@@ -15919,7 +15919,7 @@ const SLASH_SECTIONS = [
     title: 'everyday',
     cmds: [
       'op',
-      'opr',
+      're',
       'dm',
       'w',
       'r',
@@ -39404,7 +39404,7 @@ function isOpMsg(m) {
   return m.is_op != null ? !!m.is_op : !m.reply_to || m.reply_to === ''
 }
 
-// The last feed OP surfaced as an inline row in chat — what /opr replies to.
+// The last feed OP surfaced as an inline row in chat — what /re replies to.
 // Set from ONE place (buildFeedInlineNotif) so anything that can put an [OP]
 // in front of you is automatically a valid reply target, including your own.
 let lastInlineFeedOpId = null
@@ -40642,7 +40642,7 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
     body.media_url = mediaUrl
     body.media_type = mediaType
   }
-  // An explicit target wins over view state — /opr replies to the last [OP]
+  // An explicit target wins over view state — /re replies to the last [OP]
   // you saw in chat, which is usually NOT the thread you happen to have open.
   if (replyTo) {
     body.reply_to = replyTo
@@ -50071,7 +50071,7 @@ const COMMAND_RECEIPT_SCOPE = {
   unflip: 'none',
   // account-level — every chat tab
   op: 'global',
-  opr: 'global',
+  re: 'global',
   follow: 'global',
   unfollow: 'global',
   color: 'global', // your twitch chat color follows you into every tab
@@ -50192,10 +50192,6 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
-  // /opr <text> — reply to the last feed [OP] that appeared inline in chat.
-  // Deliberately NOT wired to /re: that is an alias of /r, which sends a
-  // WHISPER. Repointing it would turn a mistyped private reply into a public
-  // post, and that is not a direction this should ever fail in.
   // /color <name|#hex> — your twitch chat color, set through twitch itself and
   // confirmed by reading it back (setTwitchChatColor).
   if (cmd === 'color') {
@@ -50218,9 +50214,11 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
-  if (cmd === 'opr') {
+  // /re <text> — reply to the last feed [OP] that appeared inline in chat.
+  // (/r is the whisper reply; /opr and /reply are aliases of this.)
+  if (cmd === 're') {
     if (!rest.trim()) {
-      showToast('usage: /opr <text>', 'error')
+      showToast('usage: /re <text>', 'error')
       return true
     }
     if (!hsAuthToken) {

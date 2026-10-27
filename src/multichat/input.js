@@ -6801,7 +6801,7 @@ const COMMAND_RECEIPT_SCOPE = {
   unflip: 'none',
   // account-level — every chat tab
   op: 'global',
-  opr: 'global',
+  re: 'global',
   follow: 'global',
   unfollow: 'global',
   color: 'global', // your twitch chat color follows you into every tab
@@ -6922,10 +6922,6 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
-  // /opr <text> — reply to the last feed [OP] that appeared inline in chat.
-  // Deliberately NOT wired to /re: that is an alias of /r, which sends a
-  // WHISPER. Repointing it would turn a mistyped private reply into a public
-  // post, and that is not a direction this should ever fail in.
   // /color <name|#hex> — your twitch chat color, set through twitch itself and
   // confirmed by reading it back (setTwitchChatColor).
   if (cmd === 'color') {
@@ -6948,9 +6944,11 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
-  if (cmd === 'opr') {
+  // /re <text> — reply to the last feed [OP] that appeared inline in chat.
+  // (/r is the whisper reply; /opr and /reply are aliases of this.)
+  if (cmd === 're') {
     if (!rest.trim()) {
-      showToast('usage: /opr <text>', 'error')
+      showToast('usage: /re <text>', 'error')
       return true
     }
     if (!hsAuthToken) {

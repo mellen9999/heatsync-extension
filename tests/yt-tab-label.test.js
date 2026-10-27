@@ -47,6 +47,16 @@ describe('wiring', () => {
     expect(BG).toContain("message.type === 'yt_channel_handle'")
     expect(BG).toMatch(/\^\[\\w-\]\{11\}\$/)
   })
+  // The website syncs a youtube-only tab as { id: 'tab-<ts>-<rand>', youtube: 'lofigirl' }
+  // — a bare handle, and an id that is generated, not a name.
+  test('a bare synced handle labels the tab, and a tab-<ts> id never does', () => {
+    expect(MAIN).toContain('ch.youtube.match(/^([\\w.-]+)$/)')
+    expect(MAIN).toContain('(linked|yt|kick|twitch|tab)[-_]\\d+')
+    const handle = (y) => (y.match(/@([^/?]+)/) || y.match(/^([\w.-]+)$/))?.[1]
+    expect(handle('lofigirl')).toBe('lofigirl')
+    expect(handle('https://www.youtube.com/@lofigirl/live')).toBe('lofigirl')
+    expect(handle('https://www.youtube.com/watch?v=VGe-dpUmnos')).toBeUndefined()
+  })
   test('youtube now has a duplicate guard like twitch and kick', () => {
     expect(MGMT).toContain('c.youtube === ytVal')
   })

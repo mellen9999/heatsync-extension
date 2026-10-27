@@ -15049,7 +15049,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '749b72162f9e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bacc794f1df5' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -75289,8 +75289,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       else if (ch.kick) label = ch.kick
       else if (ch.youtube) {
         const linked = youtubeLinks.get(ch.id)
-        const m = ch.youtube.match(/@([^/?]+)/)
-        const looksAuto = !ch.id || /^(linked|yt|kick|twitch)[-_]\d+$/.test(ch.id)
+        // A bare handle ("lofigirl") is what the website syncs; a pasted url
+        // carries it after an @.
+        const m = ch.youtube.match(/@([^/?]+)/) || ch.youtube.match(/^([\w.-]+)$/)
+        const looksAuto = !ch.id || /^(linked|yt|kick|twitch|tab)[-_]\d+/.test(ch.id)
         if (linked?.channelName) label = linked.channelName
         else if (m) label = m[1]
         else if (!looksAuto) label = ch.id

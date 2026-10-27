@@ -48,6 +48,7 @@ function harness() {
     channelTabs: new Map(),
     chanLastSeen: new Map(),
     chanRejoinAttempts: new Map(),
+    deadChannels: new Set(),
     roomstates: new Map(),
     persistTimers: new Map(),
     releaseTimers: new Map(),

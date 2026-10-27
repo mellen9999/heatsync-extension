@@ -3622,12 +3622,21 @@
     "message": "un canale che non hai ancora impostato si apre a questo volume. 0 lascia stare il player"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "ricorda il volume su twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "ricorda il volume su kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "ricorda il volume su youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "ogni canale twitch conserva l'ultimo volume impostato, in stream, vod e incorporamenti. disattivato lascia in pace il player di twitch"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "ogni canale kick conserva l'ultimo volume impostato, in stream, vod e incorporamenti. disattivato lascia in pace il player di kick"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "ogni canale youtube conserva l'ultimo volume impostato, in video, stream e incorporamenti. disattivato lascia in pace il player di youtube"
   }
 }

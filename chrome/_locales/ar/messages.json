@@ -3622,12 +3622,21 @@
     "message": "القناة التي لم تضبطها بعد تفتح بهذا المستوى. 0 يترك المشغّل كما هو"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "تذكّر مستوى الصوت على twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "تذكّر مستوى الصوت على kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "تذكّر مستوى الصوت على youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "كل قناة على twitch تحتفظ بآخر مستوى صوت ضبطته، في البثوث والتسجيلات والمضمّنات. الإيقاف يترك مشغّل twitch كما هو"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "كل قناة على kick تحتفظ بآخر مستوى صوت ضبطته، في البثوث والتسجيلات والمضمّنات. الإيقاف يترك مشغّل kick كما هو"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "كل قناة على youtube تحتفظ بآخر مستوى صوت ضبطته، في الفيديوهات والبثوث والمضمّنات. الإيقاف يترك مشغّل youtube كما هو"
   }
 }

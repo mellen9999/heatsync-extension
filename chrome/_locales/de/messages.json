@@ -3622,12 +3622,21 @@
     "message": "ein kanal, den du noch nicht eingestellt hast, startet mit dieser lautstärke. 0 lässt den player in ruhe"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "lautstärke auf twitch merken"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "lautstärke auf kick merken"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "lautstärke auf youtube merken"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "jeder twitch-kanal behält die zuletzt eingestellte lautstärke, in streams, vods und einbettungen. aus lässt den player von twitch in ruhe"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "jeder kick-kanal behält die zuletzt eingestellte lautstärke, in streams, vods und einbettungen. aus lässt den player von kick in ruhe"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "jeder youtube-kanal behält die zuletzt eingestellte lautstärke, in videos, streams und einbettungen. aus lässt den player von youtube in ruhe"
   }
 }

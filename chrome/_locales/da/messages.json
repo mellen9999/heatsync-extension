@@ -3622,12 +3622,21 @@
     "message": "en kanal du ikke har indstillet endnu, åbner med denne lydstyrke. 0 lader afspilleren være"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "husk lydstyrke på twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "husk lydstyrke på kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "husk lydstyrke på youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "hver twitch-kanal husker den lydstyrke du sidst satte, i streams, vods og indlejringer. fra lader twitchs afspiller være"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "hver kick-kanal husker den lydstyrke du sidst satte, i streams, vods og indlejringer. fra lader kicks afspiller være"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "hver youtube-kanal husker den lydstyrke du sidst satte, i videoer, streams og indlejringer. fra lader youtubes afspiller være"
   }
 }

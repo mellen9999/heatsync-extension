@@ -3622,12 +3622,21 @@
     "message": "未設定のチャンネルはこの音量で開きます。0 ならプレーヤーはそのまま"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "twitchで音量を記憶"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "kickで音量を記憶"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "youtubeで音量を記憶"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "twitchの各チャンネルが最後に設定した音量を保持します(配信、vod、埋め込み)。オフならtwitchのプレイヤーには触れません"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "kickの各チャンネルが最後に設定した音量を保持します(配信、vod、埋め込み)。オフならkickのプレイヤーには触れません"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "youtubeの各チャンネルが最後に設定した音量を保持します(動画、配信、埋め込み)。オフならyoutubeのプレイヤーには触れません"
   }
 }

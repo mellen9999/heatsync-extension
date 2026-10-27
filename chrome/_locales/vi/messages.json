@@ -3622,12 +3622,21 @@
     "message": "kênh bạn chưa đặt sẽ mở ở âm lượng này. 0 để nguyên trình phát"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "nhớ âm lượng trên twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "nhớ âm lượng trên kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "nhớ âm lượng trên youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "mỗi kênh twitch giữ âm lượng bạn đặt lần cuối, trong stream, vod và embed. tắt thì không đụng đến trình phát của twitch"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "mỗi kênh kick giữ âm lượng bạn đặt lần cuối, trong stream, vod và embed. tắt thì không đụng đến trình phát của kick"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "mỗi kênh youtube giữ âm lượng bạn đặt lần cuối, trong video, stream và embed. tắt thì không đụng đến trình phát của youtube"
   }
 }

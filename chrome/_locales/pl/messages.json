@@ -3622,12 +3622,21 @@
     "message": "kanał, którego jeszcze nie ustawiłeś, otwiera się z tą głośnością. 0 zostawia odtwarzacz w spokoju"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "zapamiętuj głośność na twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "zapamiętuj głośność na kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "zapamiętuj głośność na youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "każdy kanał na twitch zachowuje ostatnio ustawioną głośność w streamach, vodach i osadzeniach. wyłączone zostawia odtwarzacz twitch w spokoju"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "każdy kanał na kick zachowuje ostatnio ustawioną głośność w streamach, vodach i osadzeniach. wyłączone zostawia odtwarzacz kick w spokoju"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "każdy kanał na youtube zachowuje ostatnio ustawioną głośność w filmach, streamach i osadzeniach. wyłączone zostawia odtwarzacz youtube w spokoju"
   }
 }

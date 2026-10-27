@@ -3622,12 +3622,21 @@
     "message": "ערוץ שעוד לא קבעת לו נפתח בעוצמה הזו. 0 משאיר את הנגן כמו שהוא"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "זכור עוצמת שמע ב-twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "זכור עוצמת שמע ב-kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "זכור עוצמת שמע ב-youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "כל ערוץ ב-twitch שומר את עוצמת השמע האחרונה שקבעת, בסטרימים, ב-vods ובהטמעות. כבוי משאיר את הנגן של twitch בשקט"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "כל ערוץ ב-kick שומר את עוצמת השמע האחרונה שקבעת, בסטרימים, ב-vods ובהטמעות. כבוי משאיר את הנגן של kick בשקט"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "כל ערוץ ב-youtube שומר את עוצמת השמע האחרונה שקבעת, בסרטונים, בסטרימים ובהטמעות. כבוי משאיר את הנגן של youtube בשקט"
   }
 }

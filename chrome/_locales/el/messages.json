@@ -3622,12 +3622,21 @@
     "message": "ένα κανάλι που δεν έχεις ρυθμίσει ανοίγει με αυτή την ένταση. το 0 αφήνει τον player ως έχει"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "απομνημόνευση έντασης στο twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "απομνημόνευση έντασης στο kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "απομνημόνευση έντασης στο youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "κάθε κανάλι του twitch κρατά την ένταση που όρισες τελευταία, σε streams, vods και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του twitch ανέγγιχτο"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "κάθε κανάλι του kick κρατά την ένταση που όρισες τελευταία, σε streams, vods και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του kick ανέγγιχτο"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "κάθε κανάλι του youtube κρατά την ένταση που όρισες τελευταία, σε βίντεο, streams και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του youtube ανέγγιχτο"
   }
 }

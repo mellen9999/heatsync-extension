@@ -3622,12 +3622,21 @@
     "message": "아직 설정하지 않은 채널은 이 볼륨으로 열립니다. 0이면 플레이어를 건드리지 않음"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "twitch 볼륨 기억"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "kick 볼륨 기억"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "youtube 볼륨 기억"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "twitch의 각 채널이 마지막으로 설정한 볼륨을 방송, vod, 임베드에서 유지합니다. 끄면 twitch 플레이어를 건드리지 않습니다"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "kick의 각 채널이 마지막으로 설정한 볼륨을 방송, vod, 임베드에서 유지합니다. 끄면 kick 플레이어를 건드리지 않습니다"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "youtube의 각 채널이 마지막으로 설정한 볼륨을 영상, 방송, 임베드에서 유지합니다. 끄면 youtube 플레이어를 건드리지 않습니다"
   }
 }

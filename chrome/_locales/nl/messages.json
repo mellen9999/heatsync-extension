@@ -3622,12 +3622,21 @@
     "message": "een kanaal dat je nog niet hebt ingesteld opent op dit volume. 0 laat de speler met rust"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "volume onthouden op twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "volume onthouden op kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "volume onthouden op youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "elk twitch-kanaal houdt het laatst ingestelde volume vast, in streams, vods en embeds. uit laat de speler van twitch met rust"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "elk kick-kanaal houdt het laatst ingestelde volume vast, in streams, vods en embeds. uit laat de speler van kick met rust"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "elk youtube-kanaal houdt het laatst ingestelde volume vast, in video's, streams en embeds. uit laat de speler van youtube met rust"
   }
 }

@@ -3622,12 +3622,21 @@
     "message": "henüz ayarlamadığın bir kanal bu ses seviyesiyle açılır. 0 oynatıcıya dokunmaz"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "twitch ses seviyesini hatırla"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "kick ses seviyesini hatırla"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "youtube ses seviyesini hatırla"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "her twitch kanalı en son ayarladığın ses seviyesini yayınlarda, vodlarda ve gömülü oynatıcılarda korur. kapalıyken twitch oynatıcısına dokunulmaz"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "her kick kanalı en son ayarladığın ses seviyesini yayınlarda, vodlarda ve gömülü oynatıcılarda korur. kapalıyken kick oynatıcısına dokunulmaz"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "her youtube kanalı en son ayarladığın ses seviyesini videolarda, yayınlarda ve gömülü oynatıcılarda korur. kapalıyken youtube oynatıcısına dokunulmaz"
   }
 }

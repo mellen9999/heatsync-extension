@@ -14906,7 +14906,11 @@
             const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
             const _inGrace = Date.now() - mcStartedAt < 90000
             sessionWentLiveSeen.add(channel)
-            if (_alreadyLive || _inGrace) return
+            // The service worker already vetted it as a real off->on transition
+            // (msg.fresh) — and its snapshot broadcast lands just before this
+            // event, so _alreadyLive is true for EVERY genuine go-live. Only an
+            // unvetted event (older worker) falls back on the guesses above.
+            if (!msg.fresh && (_alreadyLive || _inGrace)) return
             text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
             eventClass = 'event-follow event-online'
           } else if (msg.eventType === 'stream:offline') {

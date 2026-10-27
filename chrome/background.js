@@ -2568,6 +2568,11 @@ async function pollFollowedLive() {
     updateLiveBadgeTooltip()
     broadcastToTabs({ type: 'live_followed_updated', snapshot: _liveFollowedSnapshot })
 
+    // The poll is the only way a Kick or YouTube go-live is ever seen (the
+    // server pushes Twitch only), so it owes the same inline "went live" line
+    // the Twitch push gives — not just a desktop toast.
+    for (const t of transitions) announceWentLive(t.username, t.platform, t.stream)
+
     if (transitions.length >= 3) fireLiveCoalescedNotification(transitions)
     else for (const t of transitions) fireLiveNotificationFromStream(t.stream, t.username, t.platform)
   } catch (e) {
@@ -2575,6 +2580,39 @@ async function pollFollowedLive() {
   } finally {
     _livePollInflight = false
   }
+}
+
+// An inline chat line for a go-live the poll found, shaped like the Twitch
+// push's follow_stream_event so the page handles both the same way. `fresh`:
+// this is a vetted off->on transition (the cold-start and throttle gates ran).
+function announceWentLive(username, platform, stream) {
+  const game = String(stream?.game || stream?.gameName || stream?.game_name || stream?.category || '')
+  const title = String(stream?.title || '')
+  if (!cachedFollowHistory) cachedFollowHistory = []
+  cachedFollowHistory.push({
+    type: 'follow:stream:online',
+    platform,
+    channel: username,
+    game,
+    title,
+    prevGame: '',
+    prevTitle: '',
+    color: '',
+    time: Date.now(),
+  })
+  if (cachedFollowHistory.length > 200) cachedFollowHistory.splice(0, cachedFollowHistory.length - 200)
+  broadcastToTabs({
+    type: 'follow_stream_event',
+    eventType: 'stream:online',
+    platform,
+    channel: username,
+    game,
+    title,
+    prevGame: '',
+    prevTitle: '',
+    color: '',
+    fresh: true,
+  })
 }
 
 // Add or update one entry in the live-followed snapshot (badge count + popup
@@ -2686,6 +2724,11 @@ function handleFollowStreamEvent(msg) {
     prevGame: msg.prevGame || '',
     prevTitle: msg.prevTitle || '',
     color: msg.color || '',
+    // An online event only gets this far when lastSeenLive did not already
+    // know the channel (the early return above): a real off->on transition.
+    // The page cannot work that out itself — the snapshot broadcast just above
+    // already put the channel in its live set.
+    fresh: msg.type === 'follow:stream:online',
   })
 }
 

@@ -6980,13 +6980,16 @@
       log('No overlay element to show!')
     }
 
+    const _tl0 = performance.now()
     applySub(id, nextSub, subOpts)
+    const _tl1 = performance.now()
 
     // Update input placeholder for new tab
     updateInputPlaceholder()
 
     // Hide native chat when our overlay is active (unless user chose nativeVisible)
     if (!nativeVisible) setNativeChatHidden(true)
+    const _tl2 = performance.now()
 
     // Refresh HsNotifs channel scope so per-channel callouts (resub-share,
     // watchstreak) hide when leaving their channel's tab and reappear when
@@ -6994,6 +6997,11 @@
     try {
       _updateMcLayout?.()
     } catch (_) {}
+    _swPhase.tail = {
+      sub: Math.round(_tl1 - _tl0),
+      misc: Math.round(_tl2 - _tl1),
+      layout: Math.round(performance.now() - _tl2),
+    }
     // A switch that holds the page past a quarter second says where it went —
     // the ring is the only eye on a tab that was too busy to answer.
     const _swTotal = performance.now() - _swStart
@@ -7006,6 +7014,7 @@
         restoreMs: Math.round(_swPhase.restore || 0),
         renderMs: Math.round(_swPhase.render || 0),
         parts: _restoreParts,
+        tail: _swPhase.tail,
         rows: document.getElementById('hs-mc-messages')?.childElementCount || 0,
       })
     }

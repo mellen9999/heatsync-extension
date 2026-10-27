@@ -3764,16 +3764,18 @@
       const tab = e.target.closest('.hs-mc-tab')
       if (!tab) return
       const tabId = tab.dataset.tab
-      // Right-click any tab clears all unread indicators (mentions, new, stream-event, whispers)
+      // Right-click clears the attention states (mentions red, stream-event, whispers) —
+      // never the plain unread count: on a fast chat it refills at once, and a tab that
+      // always reads "unread" would swallow every right-click before the menu opens.
       if (
         tab.classList.contains('has-mentions') ||
-        tab.classList.contains('has-new') ||
         tab.classList.contains('has-stream-event') ||
         tab.classList.contains('has-whispers')
       ) {
         e.preventDefault()
-        tab.classList.remove('has-mentions', 'has-new', 'has-stream-event', 'has-whispers')
-        markTabRead(tabId)
+        tab.classList.remove('has-mentions', 'has-stream-event', 'has-whispers')
+        // mentions / whispers / feed ARE their count, so there it clears too
+        if (mcIsReservedTab(tabId)) markTabRead(tabId)
         // The red state is rebuilt on refresh from tabSeenAt (restore scan), so
         // acknowledging it must stamp that too or the next reload relights it.
         // Special tabs are server-backed via bumpSeen below.

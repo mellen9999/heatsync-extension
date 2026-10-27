@@ -1,5 +1,22 @@
 # changelog
 
+## [1.7.108] — 2026-10-26
+
+### new
+- **feed rows** — an `[OP]` row says when the post has media (`[img]`, `[gif]`, `[vid]` or a count); hover the tag to preview the picture, click to open it.
+- **console** — `__hsWhy('name')` says why an emote does or doesn't draw in this tab.
+
+### fixed
+- **followed streamers** — a went-live or game-switch from someone you follow shows as a row in the chat you are reading, not just the desktop popup; one go-live is one line.
+- **tabs** — right-click clears red, yellow and cyan states only and leaves the unread count alone, so the remove menu opens on a fast chat.
+- **your name** — keeps your twitch color; a kick or hashed color no longer stands in for it.
+- **suspended channels** — a twitch channel that answers suspended or blocked stops rejoining every 140s.
+- **feed** — a post you make or receive with the feed tab open still becomes its chat row.
+- **sync** — channels the website synced with a youtube handle are accepted and named by their handle.
+- **tab complete** — typing `kek` completes the channel's KEK, not a lowercase lookalike.
+- **cards** — a follow or sub is dated from its earliest source; logs link to the user archive.
+- **emotes** — a blocked emote's dashed box in an expanded stack stays visible on the white hover bar.
+
 ## [1.7.107] — 2026-10-25
 
 ### fixed

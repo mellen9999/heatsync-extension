@@ -4377,7 +4377,7 @@ function handleInputChange(_e) {
                     stackInputEmote(prev, img)
                     node.textContent = afterText || ' '
                     const newRange = document.createRange()
-                    newRange.setStart(node, 0)
+                    newRange.setStart(node, afterText ? 0 : node.textContent.length)
                     newRange.collapse(true)
                     sel.removeAllRanges()
                     sel.addRange(newRange)
@@ -4402,7 +4402,7 @@ function handleInputChange(_e) {
                     stackInputEmote(emojiSpan, img)
                     node.textContent = afterText || ' '
                     const newRange = document.createRange()
-                    newRange.setStart(node, 0)
+                    newRange.setStart(node, afterText ? 0 : node.textContent.length)
                     newRange.collapse(true)
                     sel.removeAllRanges()
                     sel.addRange(newRange)
@@ -4419,7 +4419,9 @@ function handleInputChange(_e) {
                 parent.insertBefore(afterNode, node)
                 parent.removeChild(node)
                 const newRange = document.createRange()
-                newRange.setStart(afterNode, 0)
+                // Caret goes AFTER the space we synthesized (Tab parity) — at 0
+                // the next typed word sat flush against the emote.
+                newRange.setStart(afterNode, afterText ? 0 : afterNode.length)
                 newRange.collapse(true)
                 sel.removeAllRanges()
                 sel.addRange(newRange)

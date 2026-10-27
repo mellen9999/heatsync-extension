@@ -1335,6 +1335,10 @@
   // A twitch line with no color tag arrives as white; that is "unset", not a pick.
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
+    // Your own name is your twitch color everywhere. A kick/pick/hash color for the
+    // same login (your kick account, say) must not stand in for it while twitch's
+    // is still unheard — it rendered your @mentions in the wrong color until you spoke.
+    if (!native && user && user === currentUsername) return
     if (native || !_nativeTwitchColor.has(user)) {
       const changed = native && knownColors.get(user) !== color
       knownColors.set(user, color)

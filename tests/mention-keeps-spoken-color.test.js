@@ -39,6 +39,15 @@ test('setKnownColor: a real twitch color is never overwritten by a non-native on
   run.set('bob', '#ffffff', null, 'twitch') // unset white is not native
   run.set('bob', '#d7ff00', null, 'twitch', false)
   expect(run.knownColors.get('bob')).toBe('#d7ff00')
+  // your own name never takes a kick/pick/hash color, even before twitch's is heard
+  const fresh = new Function(
+    `const knownColors = new Map(), knownUserIds = new Map(); let currentUsername = 'mellen'; const recolorOwnLines = () => {}; const persistOwnColor = () => {}; ${body}; return { set: setKnownColor, knownColors }`,
+  )()
+  fresh.set('mellen', '#d7ff00', null, 'twitch', false) // old heatsync pick
+  fresh.set('mellen', '#53fc18', null, 'kick') // kick account
+  expect(fresh.knownColors.has('mellen')).toBe(false)
+  fresh.set('mellen', '#ff8700', null, 'twitch')
+  expect(fresh.knownColors.get('mellen')).toBe('#ff8700')
   // learning YOUR real twitch color, or it changing, redraws your earlier lines
   expect(run.recolored).toEqual(['mellen'])
   run.set('mellen', '#ff8700', null, 'twitch') // same color again: nothing to redraw

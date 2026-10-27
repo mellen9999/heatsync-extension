@@ -15127,7 +15127,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ae4a3fe48d51' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4b3dc6ba4b51' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -84403,7 +84403,11 @@ const STORAGE_KEY = 'heatsync_multichat'
             const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
             const _inGrace = Date.now() - mcStartedAt < 90000
             sessionWentLiveSeen.add(channel)
-            if (_alreadyLive || _inGrace) return
+            // The service worker already vetted it as a real off->on transition
+            // (msg.fresh) — and its snapshot broadcast lands just before this
+            // event, so _alreadyLive is true for EVERY genuine go-live. Only an
+            // unvetted event (older worker) falls back on the guesses above.
+            if (!msg.fresh && (_alreadyLive || _inGrace)) return
             text = `[${channel}] \u25C6 ${streamEventBody('online', msg)}`
             eventClass = 'event-follow event-online'
           } else if (msg.eventType === 'stream:offline') {

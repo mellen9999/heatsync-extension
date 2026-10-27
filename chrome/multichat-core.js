@@ -15049,7 +15049,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3e2845fce10d' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9eea15fc7c0e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70750,6 +70750,10 @@ const STORAGE_KEY = 'heatsync_multichat'
   // A twitch line with no color tag arrives as white; that is "unset", not a pick.
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
+    // Your own name is your twitch color everywhere. A kick/pick/hash color for the
+    // same login (your kick account, say) must not stand in for it while twitch's
+    // is still unheard — it rendered your @mentions in the wrong color until you spoke.
+    if (!native && user && user === currentUsername) return
     if (native || !_nativeTwitchColor.has(user)) {
       const changed = native && knownColors.get(user) !== color
       knownColors.set(user, color)

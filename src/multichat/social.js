@@ -1367,10 +1367,14 @@ function listenForSocialEvents() {
         if (feedLoaded && !alreadyBuffered) renderFeed()
       } else {
         updateTabIndicator('feed')
-        // Inline notification in chat (routed through toggle system)
-        const row = buildFeedInlineNotif(msg.data)
-        if (row) injectInlineNotif(row.notifType, row.msg)
       }
+      // Inline notification in chat (routed through toggle system) — whichever
+      // tab is open. It used to be the else branch above, so a post that
+      // arrived while the feed tab was showing never became a chat row, and
+      // the chat tab read as if it had not happened until a reload rebuilt it.
+      // injectInlineNotif buffers for every channel and only paints a chat tab.
+      const row = buildFeedInlineNotif(msg.data)
+      if (row) injectInlineNotif(row.notifType, row.msg)
     }
     if (msg.type === 'dm_new' && msg.data) {
       // Server-pushed Twitch whispers must route through handleIncomingWhisper
@@ -2925,7 +2929,7 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
     // nothing — the post landed, chat just never said so. force: your own
     // action's receipt isn't a notification about someone else, so the
     // per-type inline-notif toggle doesn't gate it.
-    if (posted && currentTab !== 'feed') {
+    if (posted) {
       // created_at defended: the row is unusable without a timestamp, and a
       // post the server hasn't stamped yet must still show up.
       const row = buildFeedInlineNotif({

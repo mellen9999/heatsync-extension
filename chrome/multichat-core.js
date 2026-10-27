@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b2d6d78f3666' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '10c048de0a54' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -30747,7 +30747,15 @@ function setupUserTooltipHandlers() {
         if (name) {
           const overlay = document.getElementById('hs-mc-overlay')
           if (overlay) {
-            overlay.querySelectorAll(`.hs-mc-user[data-username="${CSS.escape(name)}"]`).forEach((el) => {
+            // Only the copies on screen: a chatter with a hundred rows in history
+            // paid ~2ms of restyle per copy on hover and again on unhover (~100ms
+            // each way), for names nobody could see. All rects are read before any
+            // class is written, so it is one layout, not one per copy.
+            const copies = [...overlay.querySelectorAll(`.hs-mc-user[data-username="${CSS.escape(name)}"]`)]
+            const rects = copies.map((el) => el.getBoundingClientRect())
+            const vh = window.innerHeight
+            copies.forEach((el, i) => {
+              if (rects[i].bottom < 0 || rects[i].top > vh) return
               el.classList.add('hs-user-highlight')
             })
           }

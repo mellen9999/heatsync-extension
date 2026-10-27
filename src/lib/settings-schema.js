@@ -1430,6 +1430,7 @@ const SETTINGS = [
     section: 'player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_twitch',
+    tipKey: 'mc_settings_channel_volume_twitch_desc',
     alias: 'volume memory channel twitch',
   },
   {
@@ -1442,6 +1443,7 @@ const SETTINGS = [
     section: 'player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_kick',
+    tipKey: 'mc_settings_channel_volume_kick_desc',
     alias: 'volume memory channel kick',
   },
   {
@@ -1454,6 +1456,7 @@ const SETTINGS = [
     section: 'player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_youtube',
+    tipKey: 'mc_settings_channel_volume_youtube_desc',
     alias: 'volume memory channel youtube',
   },
   {

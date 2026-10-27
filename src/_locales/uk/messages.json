@@ -3622,12 +3622,21 @@
     "message": "канал, який ти ще не налаштовував, відкривається з цією гучністю. 0 не чіпає плеєр"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "пам'ятати гучність на twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "пам'ятати гучність на kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "пам'ятати гучність на youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "кожен канал на twitch зберігає останню задану вами гучність — у стрімах, записах і вбудованих плеєрах. вимкнено — плеєр twitch не чіпаємо"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "кожен канал на kick зберігає останню задану вами гучність — у стрімах, записах і вбудованих плеєрах. вимкнено — плеєр kick не чіпаємо"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "кожен канал на youtube зберігає останню задану вами гучність — у відео, стрімах і вбудованих плеєрах. вимкнено — плеєр youtube не чіпаємо"
   }
 }

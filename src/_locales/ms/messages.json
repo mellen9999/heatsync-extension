@@ -3622,12 +3622,21 @@
     "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan ini. 0 membiarkan pemain seperti asal"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "ingat volum di twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "ingat volum di kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "ingat volum di youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "setiap saluran twitch mengekalkan volum yang terakhir anda tetapkan, dalam strim, vod dan benam. mati membiarkan pemain twitch begitu sahaja"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "setiap saluran kick mengekalkan volum yang terakhir anda tetapkan, dalam strim, vod dan benam. mati membiarkan pemain kick begitu sahaja"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "setiap saluran youtube mengekalkan volum yang terakhir anda tetapkan, dalam video, strim dan benam. mati membiarkan pemain youtube begitu sahaja"
   }
 }

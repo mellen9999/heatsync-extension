@@ -3625,12 +3625,21 @@
     "message": "off: the site keeps its own chat and heatsync does not load there — reload to apply"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "remember volume on twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "remember volume on kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "remember volume on youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "each twitch channel keeps the volume you last set, in streams, vods and embeds. off leaves twitch's player alone"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "each kick channel keeps the volume you last set, in streams, vods and embeds. off leaves kick's player alone"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "each youtube channel keeps the volume you last set, in videos, streams and embeds. off leaves youtube's player alone"
   }
 }

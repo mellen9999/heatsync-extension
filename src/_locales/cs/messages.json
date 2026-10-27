@@ -3622,12 +3622,21 @@
     "message": "kanál, který jsi ještě nenastavil, se otevře s touto hlasitostí. 0 nechá přehrávač být"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "pamatovat hlasitost na twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "pamatovat hlasitost na kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "pamatovat hlasitost na youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "každý kanál na twitch si pamatuje naposledy nastavenou hlasitost ve streamech, vodech i vložených přehrávačích. vypnuto nechá přehrávač twitch na pokoji"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "každý kanál na kick si pamatuje naposledy nastavenou hlasitost ve streamech, vodech i vložených přehrávačích. vypnuto nechá přehrávač kick na pokoji"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "každý kanál na youtube si pamatuje naposledy nastavenou hlasitost ve videích, streamech i vložených přehrávačích. vypnuto nechá přehrávač youtube na pokoji"
   }
 }

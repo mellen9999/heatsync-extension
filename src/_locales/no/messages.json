@@ -3622,12 +3622,21 @@
     "message": "en kanal du ikke har stilt inn ennå, åpnes med denne lydstyrken. 0 lar spilleren være"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "husk lydvolum på twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "husk lydvolum på kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "husk lydvolum på youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "hver twitch-kanal husker lydvolumet du sist satte, i strømmer, vods og innbygginger. av lar twitchs spiller være i fred"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "hver kick-kanal husker lydvolumet du sist satte, i strømmer, vods og innbygginger. av lar kicks spiller være i fred"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "hver youtube-kanal husker lydvolumet du sist satte, i videoer, strømmer og innbygginger. av lar youtubes spiller være i fred"
   }
 }

@@ -3622,12 +3622,21 @@
     "message": "une chaîne que tu n'as pas encore réglée s'ouvre à ce volume. 0 laisse le lecteur tranquille"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "mémoriser le volume sur twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "mémoriser le volume sur kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "mémoriser le volume sur youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "chaque chaîne twitch garde le dernier volume réglé, dans les streams, vods et intégrations. désactivé laisse le lecteur de twitch tranquille"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "chaque chaîne kick garde le dernier volume réglé, dans les streams, vods et intégrations. désactivé laisse le lecteur de kick tranquille"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "chaque chaîne youtube garde le dernier volume réglé, dans les vidéos, streams et intégrations. désactivé laisse le lecteur de youtube tranquille"
   }
 }

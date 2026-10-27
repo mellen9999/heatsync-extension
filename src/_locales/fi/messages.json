@@ -3622,12 +3622,21 @@
     "message": "kanava, jota et ole vielä säätänyt, avautuu tällä äänenvoimakkuudella. 0 jättää soittimen rauhaan"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "muista äänenvoimakkuus: twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "muista äänenvoimakkuus: kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "muista äänenvoimakkuus: youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "jokainen twitch-kanava muistaa viimeksi asettamasi äänenvoimakkuuden lähetyksissä, vodeissa ja upotuksissa. pois päältä jättää twitchin soittimen rauhaan"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "jokainen kick-kanava muistaa viimeksi asettamasi äänenvoimakkuuden lähetyksissä, vodeissa ja upotuksissa. pois päältä jättää kickin soittimen rauhaan"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "jokainen youtube-kanava muistaa viimeksi asettamasi äänenvoimakkuuden videoissa, lähetyksissä ja upotuksissa. pois päältä jättää youtubein soittimen rauhaan"
   }
 }

@@ -3622,12 +3622,21 @@
     "message": "ang channel na hindi mo pa naitatakda ay bubukas sa volume na ito. ang 0 ay hindi ginagalaw ang player"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "tandaan ang volume sa twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "tandaan ang volume sa kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "tandaan ang volume sa youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "bawat channel sa twitch ay nagtatago ng huling volume na itinakda mo, sa mga stream, vod at embed. kapag naka-off, hindi ginagalaw ang player ng twitch"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "bawat channel sa kick ay nagtatago ng huling volume na itinakda mo, sa mga stream, vod at embed. kapag naka-off, hindi ginagalaw ang player ng kick"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "bawat channel sa youtube ay nagtatago ng huling volume na itinakda mo, sa mga video, stream at embed. kapag naka-off, hindi ginagalaw ang player ng youtube"
   }
 }

@@ -3622,12 +3622,21 @@
     "message": "channel yang belum kamu atur dibuka dengan volume ini. 0 membiarkan pemutar apa adanya"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "ingat volume di twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "ingat volume di kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "ingat volume di youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "setiap kanal twitch mengingat volume terakhir yang kamu atur, di stream, vod, dan embed. mati membiarkan pemutar twitch apa adanya"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "setiap kanal kick mengingat volume terakhir yang kamu atur, di stream, vod, dan embed. mati membiarkan pemutar kick apa adanya"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "setiap kanal youtube mengingat volume terakhir yang kamu atur, di video, stream, dan embed. mati membiarkan pemutar youtube apa adanya"
   }
 }

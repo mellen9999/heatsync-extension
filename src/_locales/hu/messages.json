@@ -3622,12 +3622,21 @@
     "message": "a még be nem állított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszót"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "hangerő megjegyzése: twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "hangerő megjegyzése: kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "hangerő megjegyzése: youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "minden twitch-csatorna megtartja az utoljára beállított hangerőt streameken, vodokon és beágyazásokon. kikapcsolva békén hagyja a twitch lejátszóját"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "minden kick-csatorna megtartja az utoljára beállított hangerőt streameken, vodokon és beágyazásokon. kikapcsolva békén hagyja a kick lejátszóját"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "minden youtube-csatorna megtartja az utoljára beállított hangerőt videókon, streameken és beágyazásokon. kikapcsolva békén hagyja a youtube lejátszóját"
   }
 }

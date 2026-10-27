@@ -3622,12 +3622,21 @@
     "message": "канал, който още не си настройвал, се отваря с този звук. 0 оставя плейъра на мира"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "запомняй звука в twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "запомняй звука в kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "запомняй звука в youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "всеки канал в twitch пази последно зададената от теб сила на звука — в стриймове, записи и вградени плейъри. изключено оставя плейъра на twitch на мира"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "всеки канал в kick пази последно зададената от теб сила на звука — в стриймове, записи и вградени плейъри. изключено оставя плейъра на kick на мира"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "всеки канал в youtube пази последно зададената от теб сила на звука — във видеа, стриймове и вградени плейъри. изключено оставя плейъра на youtube на мира"
   }
 }

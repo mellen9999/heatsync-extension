@@ -3622,12 +3622,21 @@
     "message": "un canal pe care nu l-ai setat încă se deschide cu acest volum. 0 lasă playerul în pace"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "ține minte volumul pe twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "ține minte volumul pe kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "ține minte volumul pe youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "fiecare canal de pe twitch păstrează ultimul volum setat, în stream-uri, vod-uri și embeduri. oprit lasă playerul twitch în pace"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "fiecare canal de pe kick păstrează ultimul volum setat, în stream-uri, vod-uri și embeduri. oprit lasă playerul kick în pace"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "fiecare canal de pe youtube păstrează ultimul volum setat, în videoclipuri, stream-uri și embeduri. oprit lasă playerul youtube în pace"
   }
 }

@@ -3622,12 +3622,21 @@
     "message": "un canal que aún no has ajustado se abre con este volumen. 0 deja el reproductor como está"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "recordar volumen en twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "recordar volumen en kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "recordar volumen en youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "cada canal de twitch conserva el último volumen que fijaste, en directos, vods y embebidos. desactivado deja el reproductor de twitch en paz"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "cada canal de kick conserva el último volumen que fijaste, en directos, vods y embebidos. desactivado deja el reproductor de kick en paz"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "cada canal de youtube conserva el último volumen que fijaste, en vídeos, directos y embebidos. desactivado deja el reproductor de youtube en paz"
   }
 }

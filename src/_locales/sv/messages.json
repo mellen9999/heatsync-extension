@@ -3622,12 +3622,21 @@
     "message": "en kanal du inte ställt in ännu öppnas med den här volymen. 0 låter spelaren vara"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "kom ihåg volym på twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "kom ihåg volym på kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "kom ihåg volym på youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "varje twitch-kanal behåller den volym du senast ställde in, i strömmar, vods och inbäddningar. av lämnar twitchs spelare ifred"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "varje kick-kanal behåller den volym du senast ställde in, i strömmar, vods och inbäddningar. av lämnar kicks spelare ifred"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "varje youtube-kanal behåller den volym du senast ställde in, i videor, strömmar och inbäddningar. av lämnar youtubes spelare ifred"
   }
 }

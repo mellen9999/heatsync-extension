@@ -3622,12 +3622,21 @@
     "message": "ช่องที่ยังไม่ได้ตั้งจะเปิดด้วยระดับเสียงนี้ ค่า 0 คือไม่แตะเครื่องเล่น"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "จำระดับเสียงบน twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "จำระดับเสียงบน kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "จำระดับเสียงบน youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "แต่ละช่องบน twitch จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในสตรีม vod และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ twitch"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "แต่ละช่องบน kick จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในสตรีม vod และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ kick"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "แต่ละช่องบน youtube จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในวิดีโอ สตรีม และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ youtube"
   }
 }

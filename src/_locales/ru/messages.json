@@ -3622,12 +3622,21 @@
     "message": "канал, который ты ещё не настраивал, открывается с этой громкостью. 0 не трогает плеер"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "помнить громкость на twitch"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "помнить громкость на kick"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "помнить громкость на youtube"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "каждый канал на twitch хранит последнюю заданную вами громкость — в стримах, записях и встроенных плеерах. выключено — плеер twitch не трогаем"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "каждый канал на kick хранит последнюю заданную вами громкость — в стримах, записях и встроенных плеерах. выключено — плеер kick не трогаем"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "каждый канал на youtube хранит последнюю заданную вами громкость — в видео, стримах и встроенных плеерах. выключено — плеер youtube не трогаем"
   }
 }

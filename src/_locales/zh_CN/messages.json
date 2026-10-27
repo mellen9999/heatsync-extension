@@ -3622,12 +3622,21 @@
     "message": "尚未设置的频道将以此音量打开。0 表示不干预播放器"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "记住twitch音量"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "记住kick音量"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "记住youtube音量"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "twitch的每个频道都会记住你上次设置的音量,适用于直播、vod 和嵌入。关闭则不干预twitch的播放器"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "kick的每个频道都会记住你上次设置的音量,适用于直播、vod 和嵌入。关闭则不干预kick的播放器"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "youtube的每个频道都会记住你上次设置的音量,适用于视频、直播和嵌入。关闭则不干预youtube的播放器"
   }
 }

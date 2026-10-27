@@ -3622,12 +3622,21 @@
     "message": "जिस चैनल की आवाज़ आपने अभी सेट नहीं की, वह इसी आवाज़ पर खुलता है। 0 प्लेयर को वैसा ही छोड़ता है"
   },
   "mc_settings_channel_volume_twitch": {
-    "message": "twitch"
+    "message": "twitch पर वॉल्यूम याद रखें"
   },
   "mc_settings_channel_volume_kick": {
-    "message": "kick"
+    "message": "kick पर वॉल्यूम याद रखें"
   },
   "mc_settings_channel_volume_youtube": {
-    "message": "youtube"
+    "message": "youtube पर वॉल्यूम याद रखें"
+  },
+  "mc_settings_channel_volume_twitch_desc": {
+    "message": "twitch का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, स्ट्रीम, vod और एम्बेड में। बंद होने पर twitch का प्लेयर अछूता रहता है"
+  },
+  "mc_settings_channel_volume_kick_desc": {
+    "message": "kick का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, स्ट्रीम, vod और एम्बेड में। बंद होने पर kick का प्लेयर अछूता रहता है"
+  },
+  "mc_settings_channel_volume_youtube_desc": {
+    "message": "youtube का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, वीडियो, स्ट्रीम और एम्बेड में। बंद होने पर youtube का प्लेयर अछूता रहता है"
   }
 }

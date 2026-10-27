@@ -1374,7 +1374,13 @@
       min-height: 0; /* let the flex item shrink so overflow-y actually scrolls */
       overflow-y: auto;
       background: #000;
+      scrollbar-width: thin;
+      scrollbar-color: var(--hs-dim) transparent;
     }
+    /* the default track is black on this black body: dim gray so it can be found */
+    .hs-mc-set-subtab-body::-webkit-scrollbar { width: 6px; }
+    .hs-mc-set-subtab-body::-webkit-scrollbar-track { background: transparent; }
+    .hs-mc-set-subtab-body::-webkit-scrollbar-thumb { background: var(--hs-dim); border-radius: 0; }
     /* Settings text inputs (custom font name, etc.) */
     .hs-mc-set-text-input {
       background: #000;

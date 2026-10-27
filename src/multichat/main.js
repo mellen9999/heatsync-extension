@@ -10344,6 +10344,18 @@
 
   // Timing wrapper: a render that eats the main thread starves everything
   // (input, appends, scroll pins) and reads as a frozen, flashing pane.
+  // Boot timing: init() stamps the phases it waits on; the first render that paints rows closes the
+  // record into the diag ring, so "slow to load" says which phase it was.
+  let _initMarks = null
+  const _initMark = (name) => _initMarks?.push([name, Math.round(performance.now())])
+  function _closeInitMarks() {
+    if (!_initMarks) return
+    const el = document.getElementById('hs-mc-messages')
+    if (!el?.childElementCount) return
+    _initMark('rows')
+    hsDiag('init-timing', { marks: _initMarks })
+    _initMarks = null
+  }
   let _slowRenderLoggedAt = 0
   let _renderCalls = 0
   let _lastRenderAt = 0
@@ -10355,6 +10367,7 @@
       return _renderMessagesImpl(id, opts)
     } finally {
       const ms = performance.now() - t0
+      _closeInitMarks()
       if (ms > 100 && Date.now() - _slowRenderLoggedAt > 15000) {
         _slowRenderLoggedAt = Date.now()
         hsDiagLog('slow_render', { ms: Math.round(ms), tab: String(id).slice(0, 24), calls: _renderCalls })
@@ -13501,6 +13514,7 @@
     // chat — the tab BG activates for youtube sign-in showed no login UI.
     // youtube-content.js (the actual relay) runs regardless of this guard.
     if (hostPlatform === 'yt' && location.hash.includes('hs-bridge')) return
+    _initMarks = [['init', Math.round(performance.now())]]
     let isPopout = false
     if (hostPlatform === 'yt') {
       // YouTube: persistent overlay across every URL — home, watch, search,
@@ -13574,6 +13588,7 @@
       })
       _hsHealth = r?.health || null
     } catch {}
+    _initMark('health')
     window.__hsHealth = _hsHealth || {
       v: 1,
       kill: false,
@@ -13645,7 +13660,9 @@
     const _localPrime = chrome.storage.local.get([STORAGE_KEY, 'user_info', 'muted_users'])
     // Before loadConfig — it is the first thing that consults a subsystem gate.
     await snapshotGates()
+    _initMark('gates')
     await loadConfig()
+    _initMark('config')
     if (!config.enabled) return
     // Lite / emotes-only mode is fully removed — overlay always boots.
     log('Initializing...')
@@ -13748,6 +13765,7 @@
     // list — must also land before the tab bar's first paint.
     await unhideFeedOnce()
     await hideSecondaryTabsOnce()
+    _initMark('settings')
     // Init done — drop the cache so subsequent reads see fresh data.
     invalidateUiSettingsCache()
     // Freeze the subsystem gates for the rest of init — a mid-init storage
@@ -13915,6 +13933,7 @@
     // already shows everything from before the reload. Awaited because
     // mentions tab on reload would otherwise paint empty for a beat.
     await restorePersistedBuffers()
+    _initMark('buffers')
     const startNetwork = () => {
       // Subsystem gates — a disabled platform feed never opens its socket
       // or joins channels (gating at the registration call = no orphans).

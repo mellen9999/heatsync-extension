@@ -3610,16 +3610,16 @@
     "message": "vypnuté: stránka si ponechá vlastný chat a heatsync sa tam nenačíta — na uplatnenie obnov stránku"
   },
   "mc_settings_channel_volume": {
-    "message": "pamätať si hlasitosť pre každý kanál"
+    "message": "pamätať si hlasitosť zvuku pre každý kanál"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "každý kanál si drží naposledy nastavenú hlasitosť. funguje na twitchi, kicku aj youtube a vo vložených prehrávačoch"
+    "message": "každý kanál si pamätá hlasitosť zvuku, ktorú si nastavil naposledy. funguje na twitchi, kicku a youtube aj vo vložených prehrávačoch"
   },
   "mc_settings_channel_volume_default": {
-    "message": "počiatočná hlasitosť nových kanálov"
+    "message": "počiatočná hlasitosť zvuku pre nové kanály"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou. 0 nechá prehrávač na pokoji"
+    "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou zvuku. 0 necháva hlasitosť prehrávača na pokoji"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "pamätať hlasitosť na twitch"

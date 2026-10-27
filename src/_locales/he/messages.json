@@ -3613,13 +3613,13 @@
     "message": "זכור עוצמת שמע לכל ערוץ"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "כל ערוץ שומר את עוצמת השמע שקבעת לאחרונה. עובד ב-twitch, ב-kick וב-youtube, ובהטמעות"
+    "message": "כל ערוץ שומר את עוצמת השמע שהגדרת לאחרונה. עובד ב-twitch, kick ו-youtube, ובהטמעות"
   },
   "mc_settings_channel_volume_default": {
     "message": "עוצמת שמע התחלתית לערוצים חדשים"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "ערוץ שעוד לא קבעת לו נפתח בעוצמה הזו. 0 משאיר את הנגן כמו שהוא"
+    "message": "ערוץ שעוד לא הגדרת נפתח בעוצמת שמע זו. 0 משאיר את עוצמת השמע של הנגן כמו שהיא"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "זכור עוצמת שמע ב-twitch"

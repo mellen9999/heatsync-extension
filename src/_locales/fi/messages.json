@@ -3613,13 +3613,13 @@
     "message": "muista äänenvoimakkuus kanavittain"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "jokainen kanava pitää viimeksi asettamasi äänenvoimakkuuden. toimii twitchissä, kickissä ja youtubessa sekä upotuksissa"
+    "message": "jokainen kanava säilyttää viimeksi asettamasi äänenvoimakkuuden. toimii twitchissä, kickissä ja youtubessa sekä upotuksissa"
   },
   "mc_settings_channel_volume_default": {
     "message": "uusien kanavien aloitusäänenvoimakkuus"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "kanava, jota et ole vielä säätänyt, avautuu tällä äänenvoimakkuudella. 0 jättää soittimen rauhaan"
+    "message": "kanava, jota et ole vielä asettanut, avautuu tällä äänenvoimakkuudella. 0 jättää soittimen oman äänenvoimakkuuden rauhaan"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "muista äänenvoimakkuus: twitch"

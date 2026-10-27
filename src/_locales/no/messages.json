@@ -3613,13 +3613,13 @@
     "message": "husk lydstyrke per kanal"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "hver kanal beholder lydstyrken du sist satte. fungerer på twitch, kick og youtube, og i innebygde spillere"
+    "message": "hver kanal beholder lydstyrken du sist satte. fungerer på twitch, kick og youtube, og i innebygginger"
   },
   "mc_settings_channel_volume_default": {
     "message": "startlydstyrke for nye kanaler"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "en kanal du ikke har stilt inn ennå, åpnes med denne lydstyrken. 0 lar spilleren være"
+    "message": "en kanal du ikke har stilt inn ennå, åpner med denne lydstyrken. 0 lar spillerens egen lydstyrke være"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "husk lydvolum på twitch"

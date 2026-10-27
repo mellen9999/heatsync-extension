@@ -3613,13 +3613,13 @@
     "message": "تذكّر مستوى الصوت لكل قناة"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "تحتفظ كل قناة بآخر مستوى صوت ضبطته. يعمل على twitch وkick وyoutube وفي التضمينات"
+    "message": "تحتفظ كل قناة بمستوى الصوت الذي ضبطته آخر مرة. يعمل على twitch وkick وyoutube وفي المضمّنات"
   },
   "mc_settings_channel_volume_default": {
-    "message": "مستوى الصوت الأولي للقنوات الجديدة"
+    "message": "مستوى الصوت الابتدائي للقنوات الجديدة"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "القناة التي لم تضبطها بعد تفتح بهذا المستوى. 0 يترك المشغّل كما هو"
+    "message": "القناة التي لم تضبطها بعد تُفتح بمستوى الصوت هذا. 0 يترك مستوى صوت المشغّل كما هو"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "تذكّر مستوى الصوت على twitch"

@@ -3613,13 +3613,13 @@
     "message": "lautstärke pro kanal merken"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "jeder kanal behält die zuletzt eingestellte lautstärke. funktioniert auf twitch, kick und youtube sowie in einbettungen"
+    "message": "jeder kanal behält die zuletzt eingestellte lautstärke des tons. funktioniert auf twitch, kick und youtube sowie in einbettungen"
   },
   "mc_settings_channel_volume_default": {
-    "message": "startlautstärke für neue kanäle"
+    "message": "start-lautstärke des tons für neue kanäle"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "ein kanal, den du noch nicht eingestellt hast, startet mit dieser lautstärke. 0 lässt den player in ruhe"
+    "message": "ein kanal, den du noch nicht eingestellt hast, startet mit dieser tonlautstärke. 0 lässt die lautstärke des players in ruhe"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "lautstärke auf twitch merken"

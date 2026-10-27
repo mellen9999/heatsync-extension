@@ -3619,7 +3619,7 @@
     "message": "新しいチャンネルの初期音量"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "未設定のチャンネルはこの音量で開きます。0 ならプレーヤーはそのまま"
+    "message": "未設定のチャンネルはこの音量で開きます。0 ならプレーヤー自体の音量はそのまま"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "twitchで音量を記憶"

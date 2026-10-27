@@ -3613,13 +3613,13 @@
     "message": "kanal başına ses seviyesini hatırla"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "her kanal en son ayarladığın ses seviyesini korur. twitch, kick ve youtube'da ve gömülü oynatıcılarda çalışır"
+    "message": "her kanal en son ayarladığın ses seviyesini korur. twitch, kick ve youtube'da, ayrıca gömülü oynatıcılarda çalışır"
   },
   "mc_settings_channel_volume_default": {
     "message": "yeni kanallar için başlangıç ses seviyesi"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "henüz ayarlamadığın bir kanal bu ses seviyesiyle açılır. 0 oynatıcıya dokunmaz"
+    "message": "henüz ayarlamadığın bir kanal bu ses seviyesiyle açılır. 0 oynatıcının kendi ses seviyesine dokunmaz"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "twitch ses seviyesini hatırla"

@@ -442,8 +442,8 @@ describe('single-definition colours', () => {
       '.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before',
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
       '.hs-mc-reply-ctx',
-      '.hs-mc-set-subtab-body',
-      '.hs-mc-set-subtab-body::-webkit-scrollbar-thumb',
+      '.hs-mc-set-subtab-body, .hs-mc-set-subtabs, .hs-mc-set-help-cmds',
+      '.hs-mc-set-subtab-body::-webkit-scrollbar-track, .hs-mc-set-subtabs::-webkit-scrollbar-track, .hs-mc-set-help-cmds::-webkit-scrollbar-track',
       '.hs-mc-tab',
     ])
     expect(readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')).toMatch(

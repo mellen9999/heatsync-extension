@@ -3610,16 +3610,16 @@
     "message": "désactivé : le site garde son propre chat et heatsync ne s'y charge pas — recharge pour appliquer"
   },
   "mc_settings_channel_volume": {
-    "message": "mémoriser le volume par chaîne"
+    "message": "mémoriser le volume sonore par chaîne"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "chaque chaîne garde le dernier volume que tu as réglé. marche sur twitch, kick et youtube, et dans les embeds"
+    "message": "chaque chaîne garde le volume sonore que tu as réglé en dernier. fonctionne sur twitch, kick et youtube, et dans les intégrations"
   },
   "mc_settings_channel_volume_default": {
-    "message": "volume de départ des nouvelles chaînes"
+    "message": "volume sonore de départ pour les nouvelles chaînes"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "une chaîne que tu n'as pas encore réglée s'ouvre à ce volume. 0 laisse le lecteur tranquille"
+    "message": "une chaîne que tu n'as pas encore réglée s'ouvre à ce volume sonore. 0 laisse le volume du lecteur tel quel"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "mémoriser le volume sur twitch"

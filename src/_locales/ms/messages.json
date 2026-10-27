@@ -3610,16 +3610,16 @@
     "message": "mati: tapak mengekalkan sembang asalnya dan heatsync tidak dimuatkan di sana — muat semula untuk guna"
   },
   "mc_settings_channel_volume": {
-    "message": "ingat kelantangan setiap saluran"
+    "message": "ingat kelantangan bunyi bagi setiap saluran"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "setiap saluran mengekalkan kelantangan yang kamu tetapkan terakhir. berfungsi di twitch, kick, youtube dan dalam embed"
+    "message": "setiap saluran mengekalkan kelantangan bunyi yang kamu tetapkan kali terakhir. berfungsi di twitch, kick dan youtube, serta dalam embed"
   },
   "mc_settings_channel_volume_default": {
-    "message": "kelantangan permulaan saluran baharu"
+    "message": "kelantangan bunyi permulaan untuk saluran baharu"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan ini. 0 membiarkan pemain seperti asal"
+    "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan bunyi ini. 0 membiarkan kelantangan pemain itu sendiri"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "ingat volum di twitch"

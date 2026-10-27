@@ -12426,6 +12426,9 @@ const BG_IRC = {
   connectTimeout: null,
   chanLastSeen: new Map(),
   chanRejoinAttempts: new Map(),
+  // channels twitch answered "does not exist or has been suspended" / blocked: a
+  // refusal is not traffic, so they stay out of the silence watchdog and say so once
+  deadChannels: new Set(),
   roomstates: new Map(),
   historyInFlight: new Map(), // ch -> Promise<void> (awaitable in-flight robotty fetch)
   lastRobottyAt: new Map(), // ch -> ts (last successful/attempted robotty fetch)
@@ -12617,6 +12620,7 @@ function bgIrcReleaseChannel(ch) {
   BG_IRC.channels.delete(ch)
   BG_IRC.chanLastSeen.delete(ch)
   BG_IRC.chanRejoinAttempts.delete(ch)
+  BG_IRC.deadChannels.delete(ch)
   BG_IRC.roomstates.delete(ch)
   if (BG_IRC.ws?.readyState === WebSocket.OPEN) {
     try {
@@ -12781,7 +12785,7 @@ function bgIrcStartHeartbeat() {
       // Per-channel watchdog
       for (const ch of BG_IRC.channels.keys()) {
         const last = BG_IRC.chanLastSeen.get(ch) || 0
-        if (!last) continue
+        if (!last || BG_IRC.deadChannels.has(ch)) continue
         const chSilence = now - last
         if (chSilence < 120000) continue
         const attempts = BG_IRC.chanRejoinAttempts.get(ch) || 0
@@ -12874,7 +12878,19 @@ function bgIrcDupModNotice(buf, msg) {
 function bgIrcHandleLine(line) {
   const msg = bgIrcParseLine(line)
   if (!msg) return
-  if (msg.channel) {
+  // The refusal used to count as healthy traffic: it reset the strike count, the
+  // 120s silence watchdog then PART+JOINed, twitch refused again, and the chat
+  // got the same notice every ~140s forever.
+  if (
+    msg.type === 'notice' &&
+    msg.channel &&
+    (msg.noticeType === 'msg_channel_suspended' || msg.noticeType === 'msg_channel_blocked')
+  ) {
+    BG_IRC.chanLastSeen.delete(msg.channel)
+    BG_IRC.chanRejoinAttempts.delete(msg.channel)
+    if (BG_IRC.deadChannels.has(msg.channel)) return
+    BG_IRC.deadChannels.add(msg.channel)
+  } else if (msg.channel) {
     BG_IRC.chanLastSeen.set(msg.channel, Date.now())
     // Healthy traffic clears the rejoin strike count — without this, two
     // historical lulls escalate the next quiet spell straight to a full

@@ -1706,6 +1706,26 @@ function inlineMediaTag(f) {
   return items.length > 1 ? `${items.length} ${label}` : label
 }
 
+/**
+ * The picture the [img] tag shows on hover: the first item's url (a video's
+ * thumbnail), absolute. null for a post still being scanned or flagged by the
+ * scanner — the tag then stays plain text, never the raw image.
+ */
+function inlineMediaPreview(f) {
+  if (f.moderation_pending) return null
+  if (f.moderation_result?.flaggedCategories?.length) return null
+  const it =
+    Array.isArray(f.media) && f.media.length
+      ? f.media[0]
+      : f.media_url
+        ? { url: f.media_url, type: f.media_type }
+        : null
+  if (!it) return null
+  const url = it.type === 'video' ? it.thumbnail_url || f.thumbnail_url : it.url
+  if (typeof url !== 'string' || !url) return null
+  return url.startsWith('/') ? `https://heatsync.org${url}` : /^https:\/\//i.test(url) ? url : null
+}
+
 function buildFeedInlineNotif(f) {
   if (!f) return null
   const t = new Date(f.created_at).getTime()
@@ -1740,6 +1760,7 @@ function buildFeedInlineNotif(f) {
       is_op: f.is_op,
       is_thread_op: f.is_thread_op,
       mediaTag: inlineMediaTag(f),
+      mediaSrc: inlineMediaPreview(f),
     },
   }
 }

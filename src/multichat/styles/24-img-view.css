@@ -19,3 +19,19 @@
 #hs-mc-messages img.hs-feed-embed-rich-image {
   cursor: zoom-in;
 }
+/* hover peek of an [img] tag — fixed, never takes the pointer */
+#hs-img-peek {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: none;
+  background: #000000;
+  border: 1px solid #ffffff;
+}
+#hs-img-peek img {
+  display: block;
+  max-width: 320px;
+  max-height: 240px;
+}
+.hs-feed-media-tag[data-src] {
+  cursor: zoom-in;
+}

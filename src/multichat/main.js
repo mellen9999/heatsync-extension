@@ -3344,6 +3344,7 @@
     is_op: m.is_op,
     is_thread_op: m.is_thread_op,
     mediaTag: m.mediaTag,
+    mediaSrc: m.mediaSrc,
   })
 
   function saveInlineNotif(notifType, msg) {
@@ -7594,8 +7595,11 @@
       // mediaTag is one of gif/img/vid/media with an optional count — built from a
       // fixed set in social.js inlineMediaTag, never post text. Underlined: the
       // row click opens the thread, where the media is drawn.
+      // mediaSrc (https only, social.js inlineMediaPreview) makes it a link: hover
+      // peeks the picture, click opens it full size (img-view.js).
+      const mediaSrc = m.mediaSrc ? safeUrl(m.mediaSrc) : ''
       const mediaTagHtml = m.mediaTag
-        ? ` <span class="hs-feed-media-tag" style="text-decoration:underline">[${escapeHtml(m.mediaTag)}]</span>`
+        ? ` <span class="hs-feed-media-tag" style="text-decoration:underline"${mediaSrc ? ` data-src="${escapeHtml(hsProxyImg(mediaSrc))}"` : ''}>[${escapeHtml(m.mediaTag)}]</span>`
         : ''
       div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>${mediaTagHtml}`
       div.addEventListener('click', (e) => {

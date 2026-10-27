@@ -53,6 +53,29 @@ describe('buildFeedInlineNotif media tag', () => {
     expect(tag({ media: [m('/a.png', 'image'), m('/b.png', 'image')] })).toBe('2 img')
     expect(tag({ media: [m('/a.png', 'image'), m('/b.mp4', 'video')] })).toBe('2 media')
   })
+  describe('hover preview source', () => {
+    const src = (over) => harness().buildFeedInlineNotif(row(over)).msg.mediaSrc
+    test('an image post previews its own url, relative ones made absolute', () => {
+      expect(src({ media_url: '/uploads/a.webp', media_type: 'image' })).toBe('https://heatsync.org/uploads/a.webp')
+    })
+    test('a video previews its thumbnail', () => {
+      expect(src({ media: [{ url: '/v.mp4', type: 'video', thumbnail_url: '/t.jpg' }] })).toBe(
+        'https://heatsync.org/t.jpg',
+      )
+    })
+    test('a post still scanning or flagged never previews', () => {
+      expect(src({ media_url: '/a.png', media_type: 'image', moderation_pending: true })).toBeNull()
+      expect(
+        src({ media_url: '/a.png', media_type: 'image', moderation_result: { flaggedCategories: ['nsfw'] } }),
+      ).toBeNull()
+    })
+    test('text only has none; the main.js row wires data-src', () => {
+      expect(src()).toBeNull()
+      const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+      expect(main).toContain('mediaSrc: m.mediaSrc')
+      expect(main).toContain('data-src=')
+    })
+  })
   test('the main.js row carries it through the saved shape', () => {
     const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
     expect(main).toContain('mediaTag: m.mediaTag')

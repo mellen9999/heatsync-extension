@@ -177,12 +177,18 @@
   if (!api?.storage?.local) return
 
   let enabled = true
+  let sites = { twitch: true, kick: true, youtube: true }
   let defaultVolume = 0
   let map = {}
   let lastInputAt = 0
 
   const readSettings = (ui) => {
     enabled = ui?.channelVolumeMemory !== false
+    sites = {
+      twitch: ui?.channelVolumeTwitch !== false,
+      kick: ui?.channelVolumeKick !== false,
+      youtube: ui?.channelVolumeYouTube !== false,
+    }
     const d = Number(ui?.channelVolumeDefault)
     defaultVolume = Number.isFinite(d) && d > 0 ? clamp01(d) : 0
   }
@@ -238,7 +244,12 @@
     return null
   }
 
-  const keyNow = () => channelKey(location, ytChannelHref)
+  // a key reads "<platform>:<channel>"; one platform off leaves its players alone
+  const siteOn = (key) => sites[String(key).split(':')[0]] !== false
+  const keyNow = () => {
+    const k = channelKey(location, ytChannelHref)
+    return k && siteOn(k) ? k : null
+  }
 
   /** One state record per <video>; WeakMap so a torn-down player is simply collected. */
   const states = new WeakMap()

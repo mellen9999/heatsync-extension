@@ -242,6 +242,20 @@ describeDom('the glue — a player mounts, the page races us, the reader decides
     expect(store.local.hs_channel_volume.map['twitch:kripp'][0]).toBe(0.15)
   })
 
+  test('one platform off leaves its players alone, the others keep working', async () => {
+    const mem = { hs_channel_volume: { v: 1, map: { 'twitch:kripp': [0.15, 1] } } }
+    await boot({
+      url: 'https://www.twitch.tv/kripp',
+      local: mem,
+      sync: { ui_settings: { channelVolumeTwitch: false } },
+    })
+    const v = fakeVideo(win, 1)
+    win.document.body.appendChild(v)
+    await flush(5)
+    v.dispatchEvent(new win.Event('loadedmetadata'))
+    expect(v.volume).toBe(1)
+  })
+
   test('muting does not erase the level', async () => {
     await boot({ url: 'https://www.twitch.tv/kripp' })
     const v = fakeVideo(win, 0.4)

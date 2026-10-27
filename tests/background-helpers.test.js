@@ -1233,3 +1233,25 @@ describe('resolve7TVEmoteSet', () => {
     await expect(h.resolve7TVEmoteSet({ emote_set: null, emote_set_id: 'set-abc' })).rejects.toThrow()
   })
 })
+
+// ── isValidSyncedChannel (multichat:config from another device) ─────────────
+
+const { isValidSyncedChannel } = new Function(`${extractFn('isValidSyncedChannel')}\nreturn { isValidSyncedChannel }`)()
+
+describe('isValidSyncedChannel', () => {
+  test('accepts what the website syncs: a bare youtube handle beside twitch + kick', () => {
+    expect(isValidSyncedChannel({ id: 't', twitch: 'drdisrespect', kick: 'drdisrespect', youtube: 'drdisrespect' })).toBe(true)
+    expect(isValidSyncedChannel({ id: 't', youtube: 'lofigirl' })).toBe(true)
+    expect(isValidSyncedChannel({ id: 't', youtube: '@lofigirl' })).toBe(true)
+  })
+  test('still accepts a pasted youtube url', () => {
+    expect(isValidSyncedChannel({ id: 't', youtube: 'https://www.youtube.com/@lofigirl/live' })).toBe(true)
+  })
+  test('rejects line breaks and non-youtube urls', () => {
+    expect(isValidSyncedChannel({ id: 't', youtube: 'lofigirl\r\nJOIN #x' })).toBe(false)
+    expect(isValidSyncedChannel({ id: 't', youtube: 'https://evil.example/x' })).toBe(false)
+    expect(isValidSyncedChannel({ id: 't', twitch: 'bad name' })).toBe(false)
+    expect(isValidSyncedChannel({ id: 't', kick: 'x\ny' })).toBe(false)
+    expect(isValidSyncedChannel(null)).toBe(false)
+  })
+})

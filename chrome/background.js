@@ -1125,6 +1125,27 @@ browser.storage.onChanged.addListener((changes, area) => {
 let channelEmotesMap = {} // Per-channel emotes: { "platform/channel": emotes[] }
 let channelEmotesFetchedAt = {} // "platform/channel" → timestamp of last successful fetch
 
+/**
+ * A channel entry from another device's multichat config. twitch is sent to IRC
+ * so it must be username-shaped; kick allows hyphens. youtube is a bare handle
+ * or UC id (what the website syncs: "lofigirl") or a full https URL (what a
+ * pasted box stores) — both resolved later; anything else is rejected, and so
+ * is any line break. The URL-only check used to drop every channel with a
+ * youtube leg, so a stream opened on the website never reached the extension.
+ */
+function isValidSyncedChannel(ch) {
+  if (!ch || typeof ch !== 'object') return false
+  if (ch.twitch && (typeof ch.twitch !== 'string' || !/^[a-zA-Z0-9_]{1,25}$/.test(ch.twitch))) return false
+  if (ch.kick && (typeof ch.kick !== 'string' || !/^[a-zA-Z0-9_-]{1,25}$/.test(ch.kick))) return false
+  if (ch.youtube) {
+    if (typeof ch.youtube !== 'string' || /[\r\n]/.test(ch.youtube)) return false
+    const bare = /^@?[\w.-]{1,100}$/.test(ch.youtube)
+    const url = /^https:\/\/(www\.)?youtube\.com\//i.test(ch.youtube)
+    if (!bare && !url) return false
+  }
+  return true
+}
+
 // Composite key helpers — keep all channelEmotesMap access platform-scoped
 function chKey(platform, ch) {
   return `${platform || 'twitch'}/${String(ch || '').toLowerCase()}`
@@ -6900,22 +6921,8 @@ function handleWSMessage(msg) {
       case 'multichat:config':
         // Cross-device sync: server sent updated multichat config
         if (Array.isArray(msg.channels)) {
-          // Validate channel objects — reject malformed data to prevent CRLF injection in IRC.
-          // twitch is sent to IRC so it must be username-shaped. kick allows hyphens.
-          // youtube is a full https URL we resolve later; reject anything else.
-          const validChannels = msg.channels.filter((ch) => {
-            if (!ch || typeof ch !== 'object') return false
-            if (ch.twitch && (typeof ch.twitch !== 'string' || !/^[a-zA-Z0-9_]{1,25}$/.test(ch.twitch))) return false
-            if (ch.kick && (typeof ch.kick !== 'string' || !/^[a-zA-Z0-9_-]{1,25}$/.test(ch.kick))) return false
-            if (
-              ch.youtube &&
-              (typeof ch.youtube !== 'string' ||
-                !/^https:\/\/(www\.)?youtube\.com\//i.test(ch.youtube) ||
-                /[\r\n]/.test(ch.youtube))
-            )
-              return false
-            return true
-          })
+          // Reject malformed entries — CRLF injection in IRC (see isValidSyncedChannel).
+          const validChannels = msg.channels.filter(isValidSyncedChannel)
           log(' 📋 Multichat config sync received:', validChannels.length, 'channels')
           browser.storage.local
             .get(['heatsync_multichat'])

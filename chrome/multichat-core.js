@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '28847a431cc7' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b2d6d78f3666' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -30700,7 +30700,7 @@ function setupUserTooltipHandlers() {
   if (_onceGuardsTooltips.userTooltipSetup) return
   _onceGuardsTooltips.userTooltipSetup = true
 
-  // 120ms hover-intent debounce: scrolling chat passes the cursor across
+  // 50ms hover-intent debounce: scrolling chat passes the cursor across
   // 10+ usernames in a single scroll-tick. Without debounce every one
   // fires apiFetch immediately. Cache hits already render instantly so
   // those bypass the debounce; only cold lookups wait.
@@ -30739,7 +30739,7 @@ function setupUserTooltipHandlers() {
             _userHoverTimer = null
             if (_userHoverTarget !== target || !document.contains(target)) return
             showUserTooltip(target, username, color, platform)
-          }, 120)
+          }, 50)
         }
 
         // Highlight all matching usernames
@@ -83188,6 +83188,13 @@ const STORAGE_KEY = 'heatsync_multichat'
     await loadConfig()
     _initMark('config')
     if (!config.enabled) return
+    // Hover tooltips are document-level delegates that read their settings at event time, so they need only the
+    // config gate above — registering them here, not after settings hydration, makes names and emotes hoverable
+    // as soon as the first rows paint.
+    setupEmoteTooltipHandlers()
+    setupUserTooltipHandlers()
+    setupTagCardHandlers()
+    setupLinkTooltipHandlers()
     // The restored mentions/YT buffers need only the config just loaded, and are three storage round
     // trips in a row — start them now so they run under the settings hydration instead of after it.
     const _buffersP = restorePersistedBuffers()
@@ -83293,10 +83300,6 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Freeze the subsystem gates for the rest of init — a mid-init storage
     // write can't half-apply a subsystem. Live reads still use isEnabled().
 
-    setupEmoteTooltipHandlers()
-    setupUserTooltipHandlers()
-    setupTagCardHandlers()
-    setupLinkTooltipHandlers()
     if (gateAtBoot('profile-cards')) setupProfileCardHandlers()
     listenForSettingsChanges()
 

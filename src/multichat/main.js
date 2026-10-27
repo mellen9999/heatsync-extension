@@ -13664,6 +13664,13 @@
     await loadConfig()
     _initMark('config')
     if (!config.enabled) return
+    // Hover tooltips are document-level delegates that read their settings at event time, so they need only the
+    // config gate above — registering them here, not after settings hydration, makes names and emotes hoverable
+    // as soon as the first rows paint.
+    setupEmoteTooltipHandlers()
+    setupUserTooltipHandlers()
+    setupTagCardHandlers()
+    setupLinkTooltipHandlers()
     // The restored mentions/YT buffers need only the config just loaded, and are three storage round
     // trips in a row — start them now so they run under the settings hydration instead of after it.
     const _buffersP = restorePersistedBuffers()
@@ -13769,10 +13776,6 @@
     // Freeze the subsystem gates for the rest of init — a mid-init storage
     // write can't half-apply a subsystem. Live reads still use isEnabled().
 
-    setupEmoteTooltipHandlers()
-    setupUserTooltipHandlers()
-    setupTagCardHandlers()
-    setupLinkTooltipHandlers()
     if (gateAtBoot('profile-cards')) setupProfileCardHandlers()
     listenForSettingsChanges()
 

@@ -1632,7 +1632,7 @@ function setupUserTooltipHandlers() {
   if (_onceGuardsTooltips.userTooltipSetup) return
   _onceGuardsTooltips.userTooltipSetup = true
 
-  // 120ms hover-intent debounce: scrolling chat passes the cursor across
+  // 50ms hover-intent debounce: scrolling chat passes the cursor across
   // 10+ usernames in a single scroll-tick. Without debounce every one
   // fires apiFetch immediately. Cache hits already render instantly so
   // those bypass the debounce; only cold lookups wait.
@@ -1671,7 +1671,7 @@ function setupUserTooltipHandlers() {
             _userHoverTimer = null
             if (_userHoverTarget !== target || !document.contains(target)) return
             showUserTooltip(target, username, color, platform)
-          }, 120)
+          }, 50)
         }
 
         // Highlight all matching usernames

@@ -6664,6 +6664,8 @@
   // switchTab(tab, sub): a tab with a 2nd row opens at `sub`, else the cell
   // last used there, else its first. Same tab + new cell only swaps the cell.
   function switchTab(id, sub, subOpts) {
+    const _swStart = performance.now()
+    const _swPhase = {}
     log('switchTab called:', id, sub || '')
     if (!_autoSwitching) _bouncedFromLive = false
     ;({ id, sub } = mcCanonTab(id, sub))
@@ -6890,8 +6892,11 @@
       // Restore cached fragment for the incoming tab if we have one. The
       // existing renderMessages diff then operates against pre-painted DOM —
       // it re-adds whatever arrived while the tab was inactive.
-      restoreTabState(id)
+      _swPhase.pre = performance.now() - _swStart
+      _swPhase.restored = !!restoreTabState(id)
+      _swPhase.restore = performance.now() - _swStart - _swPhase.pre
       renderMessages(id)
+      _swPhase.render = performance.now() - _swStart - _swPhase.pre - _swPhase.restore
     } else {
       log('No overlay element to show!')
     }
@@ -6910,6 +6915,20 @@
     try {
       _updateMcLayout?.()
     } catch (_) {}
+    // A switch that holds the page past a quarter second says where it went —
+    // the ring is the only eye on a tab that was too busy to answer.
+    const _swTotal = performance.now() - _swStart
+    if (_swTotal > 250) {
+      hsDiag('tab-switch-slow', {
+        id: String(id).slice(0, 24),
+        totalMs: Math.round(_swTotal),
+        preMs: Math.round(_swPhase.pre || 0),
+        restored: !!_swPhase.restored,
+        restoreMs: Math.round(_swPhase.restore || 0),
+        renderMs: Math.round(_swPhase.render || 0),
+        rows: document.getElementById('hs-mc-messages')?.childElementCount || 0,
+      })
+    }
   }
 
   // Render-success gate for native-tap.js's suppression decision (point 1)

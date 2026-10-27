@@ -449,7 +449,6 @@ describe('single-definition colours', () => {
       '.hs-mc-set-subtab',
       '.hs-mc-set-subtab-body, .hs-mc-set-subtabs, .hs-mc-set-help-cmds',
       '.hs-mc-set-subtab-body::-webkit-scrollbar-track, .hs-mc-set-subtabs::-webkit-scrollbar-track, .hs-mc-set-help-cmds::-webkit-scrollbar-track',
-      '.hs-mc-setting-row.hs-mc-set-row-focus .hs-mc-size-btn',
       '.hs-mc-size-btn',
       '.hs-mc-tab',
       '.hs-mc-tab[data-tab="mentions"].has-new:not(.has-mentions):not(.active):not(:hover), .hs-mc-tab[data-tab="whispers"].has-new:not(.has-whispers):not(.active):not(:hover)',

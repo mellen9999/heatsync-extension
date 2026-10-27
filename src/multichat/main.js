@@ -849,6 +849,9 @@
   // Without this gate, a fair-merge proportion shift after new msgs
   // arrived during the user's absence triggers visible reshuffles.
   let _cacheJustRestored = false
+  // Where a cache-restore render spent its time; read by switchTab's slow-switch
+  // diag line so a laggy tab says which step it was, not just that it was slow.
+  let _restoreParts = null
 
   function restoreTabState(tabId) {
     _msgKeyIndex.clear()
@@ -6676,6 +6679,7 @@
   function switchTab(id, sub, subOpts) {
     const _swStart = performance.now()
     const _swPhase = {}
+    _restoreParts = null
     log('switchTab called:', id, sub || '')
     if (!_autoSwitching) _bouncedFromLive = false
     ;({ id, sub } = mcCanonTab(id, sub))
@@ -6936,6 +6940,7 @@
         restored: !!_swPhase.restored,
         restoreMs: Math.round(_swPhase.restore || 0),
         renderMs: Math.round(_swPhase.render || 0),
+        parts: _restoreParts,
         rows: document.getElementById('hs-mc-messages')?.childElementCount || 0,
       })
     }
@@ -10383,6 +10388,7 @@
     // true; the NEXT render — for a different, uncached tab — then wrongly takes
     // the append-only "trust mounted DOM" path and bleeds the prior channel's
     // messages into the new view. Capturing it now scopes it to this one render.
+    const _renderT0 = performance.now()
     const justRestored = _cacheJustRestored
     _cacheJustRestored = false
 
@@ -10705,6 +10711,7 @@
     // eliminates the brief "reorder shimmer" from fairMerge proportions
     // shifting after new msgs arrived during the user's absence.
     if (justRestored) {
+      const _rp0 = performance.now()
       const insertedKeys = _rmInsertedKeys
       insertedKeys.clear()
       for (let j = 0; j < toRender.length; j++) {
@@ -10724,7 +10731,9 @@
         _snapCompleteEmotes(div)
       }
       if (msgsEl.children.length > toRender.length) trimMessagesEl(msgsEl, toRender.length)
+      const _rp1 = performance.now()
       applyMcMutes()
+      const _rp2 = performance.now()
       // Re-apply cleared (ban/timeout/delete) state to cached nodes that were
       // in a DocumentFragment while the mod action fired — buildMessageDiv was
       // skipped for these, so patch the class directly now.
@@ -10769,9 +10778,23 @@
         if (since) _restoredPlusUids.push(m.userId)
         else if (since === undefined) queuePlusTenureLookup(m.userId)
       }
+      const _rp3 = performance.now()
       if (_restoredCosUids.length) updateCosmeticsInPlace([...new Set(_restoredCosUids)])
+      const _rp4 = performance.now()
       if (_restoredPaintUids.length) updateHsPaintsInPlace([...new Set(_restoredPaintUids)])
+      const _rp5 = performance.now()
       if (_restoredPlusUids.length) applyHsPlusTenureToVisible([...new Set(_restoredPlusUids)])
+      const _rp6 = performance.now()
+      _restoreParts = {
+        prep: Math.round(_rp0 - _renderT0),
+        append: Math.round(_rp1 - _rp0),
+        mutes: Math.round(_rp2 - _rp1),
+        scan: Math.round(_rp3 - _rp2),
+        cosmetics: Math.round(_rp4 - _rp3),
+        paints: Math.round(_rp5 - _rp4),
+        plus: Math.round(_rp6 - _rp5),
+        paintUids: _restoredPaintUids.length,
+      }
       cleanup.raf(() => {
         isProgrammaticScroll = false
       })

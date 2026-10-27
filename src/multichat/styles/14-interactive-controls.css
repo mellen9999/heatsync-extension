@@ -1309,10 +1309,19 @@
       -webkit-appearance: none;
       appearance: none;
       width: 120px;
-      height: 4px;
-      background: #000000;
+      height: 6px;
+      background: var(--hs-dim); /* was #000 on the #000 panel: the track was invisible */
       outline: none;
       flex-shrink: 0;
+    }
+    .hs-mc-set-range::-moz-range-track { height: 6px; background: var(--hs-dim); border: none; }
+    .hs-mc-set-range::-moz-range-thumb {
+      width: 10px;
+      height: 14px;
+      background: #fff;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
     }
     .hs-mc-set-range::-webkit-slider-thumb {
       -webkit-appearance: none;

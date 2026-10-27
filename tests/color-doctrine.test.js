@@ -444,6 +444,8 @@ describe('single-definition colours', () => {
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
       '.hs-mc-set-scope-btn, .hs-mc-set-presets-btn, .hs-mc-pagedefaults-btn',
       '.hs-mc-reply-ctx',
+      '.hs-mc-set-range',
+      '.hs-mc-set-range::-moz-range-track',
       '.hs-mc-set-subtab',
       '.hs-mc-set-subtab-body, .hs-mc-set-subtabs, .hs-mc-set-help-cmds',
       '.hs-mc-set-subtab-body::-webkit-scrollbar-track, .hs-mc-set-subtabs::-webkit-scrollbar-track, .hs-mc-set-help-cmds::-webkit-scrollbar-track',

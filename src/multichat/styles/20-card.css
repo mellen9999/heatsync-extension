@@ -55,12 +55,15 @@
 .hs-card[data-clickable="true"] {
   cursor: pointer;
 }
-.hs-card[data-clickable="true"]:hover,
-.hs-card[data-clickable="true"]:active,
-.hs-card[data-clickable="true"]:focus-visible {
+.hs-card[data-clickable="true"]:focus-visible { outline: none; }
+/* Only the clickable part turns white — the body (identity, stats, note,
+ * recent lines). The nav row and action buttons sit outside it, so they keep
+ * their own hover and never light up with it. */
+.hs-card[data-clickable="true"] .hs-card-body:hover,
+.hs-card[data-clickable="true"]:active .hs-card-body,
+.hs-card[data-clickable="true"]:focus-visible .hs-card-body {
   background: #ffffff;
   color: #000000;
-  outline: none;
 }
 
 /* Embedded variants — inline on a profile page / extension panel. No fixed
@@ -406,29 +409,13 @@
 .hs-card-nav-cell[data-tone="ttv"] { color: var(--hs-card-twitch); }
 .hs-card-nav-cell[data-tone="kick"] { color: #00ff00; }
 .hs-card-nav-cell[data-tone="yt"] { color: #ff0000; }
-/* A whole-card-clickable card turns white under the pointer, so its cells
- * (white / brand text, light borders) vanish into it. Black text on the white
- * plate; the cell under the pointer flips back to white-on-black so it still
- * reads as the one you are on. */
-.hs-card[data-clickable="true"]:hover .hs-card-nav-cell,
-.hs-card[data-clickable="true"]:active .hs-card-nav-cell,
-.hs-card[data-clickable="true"]:focus-visible .hs-card-nav-cell {
-  color: #000000;
-  box-shadow: inset 0 0 0 1px #000000;
-}
-.hs-card[data-clickable="true"] .hs-card-nav-cell:hover,
-.hs-card[data-clickable="true"] .hs-card-nav-cell:active,
-.hs-card[data-clickable="true"] .hs-card-nav-cell:focus-visible {
-  background: #000000;
-  color: #ffffff;
-}
-/* The same white plate swallows the body text of a card with no banner — name,
+/* The white plate swallows the body text of a card with no banner — name,
  * stat labels and values are white (or a tone colour) on nothing. A banner card
  * puts every one of those on its own black chip, so it is left alone. The ember
  * chip is a black chip on any card, so it keeps its gold. */
-.hs-card[data-clickable="true"]:hover .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember),
-.hs-card[data-clickable="true"]:active .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember),
-.hs-card[data-clickable="true"]:focus-visible .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember) {
+.hs-card[data-clickable="true"] .hs-card-body:hover .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember),
+.hs-card[data-clickable="true"]:active .hs-card-body .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember),
+.hs-card[data-clickable="true"]:focus-visible .hs-card-body .hs-card-top:not(.hs-card-has-hero) *:not(.hs-card-ember) {
   color: #000000 !important;
 }
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */

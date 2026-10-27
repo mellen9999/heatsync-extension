@@ -3613,13 +3613,13 @@
     "message": "依頻道記住音量"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "每個頻道保留你上次設定的音量。適用於 twitch、kick、youtube 以及嵌入播放器"
+    "message": "每個頻道保留你上次設定的音量。適用於 twitch、kick 和 youtube,以及嵌入播放器"
   },
   "mc_settings_channel_volume_default": {
-    "message": "新頻道的起始音量"
+    "message": "新頻道的初始音量"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "尚未設定的頻道會以此音量開啟。0 表示不干預播放器"
+    "message": "尚未設定的頻道會以此音量開啟。0 則不更動播放器本身的音量"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "記住twitch音量"

@@ -3613,13 +3613,13 @@
     "message": "hangerő megjegyzése csatornánként"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "minden csatorna megtartja az utoljára beállított hangerőt. működik twitchen, kicken és youtube-on, valamint beágyazásokban"
+    "message": "minden csatorna megtartja az utoljára beállított hangerőt. twitchen, kicken és youtube-on működik, beágyazásokban is"
   },
   "mc_settings_channel_volume_default": {
     "message": "új csatornák kezdő hangereje"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "a még be nem állított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszót"
+    "message": "egy még nem beállított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszó saját hangerejét"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "hangerő megjegyzése: twitch"

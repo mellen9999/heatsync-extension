@@ -3610,16 +3610,16 @@
     "message": "mati: situs tetap memakai chat bawaannya dan heatsync tidak dimuat di sana — muat ulang untuk menerapkan"
   },
   "mc_settings_channel_volume": {
-    "message": "ingat volume per channel"
+    "message": "ingat volume suara per kanal"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "tiap channel menyimpan volume yang terakhir kamu atur. berfungsi di twitch, kick, youtube, dan di embed"
+    "message": "setiap kanal menyimpan volume suara yang terakhir kamu atur. berfungsi di twitch, kick, dan youtube, serta di embed"
   },
   "mc_settings_channel_volume_default": {
-    "message": "volume awal channel baru"
+    "message": "volume suara awal untuk kanal baru"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "channel yang belum kamu atur dibuka dengan volume ini. 0 membiarkan pemutar apa adanya"
+    "message": "kanal yang belum kamu atur dibuka dengan volume suara ini. 0 membiarkan volume pemutar apa adanya"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "ingat volume di twitch"

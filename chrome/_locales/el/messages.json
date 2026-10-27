@@ -3610,16 +3610,16 @@
     "message": "off: ο ιστότοπος κρατά τη δική του συνομιλία και το heatsync δεν φορτώνει εκεί — φόρτωσε ξανά για εφαρμογή"
   },
   "mc_settings_channel_volume": {
-    "message": "θυμήσου την ένταση ανά κανάλι"
+    "message": "απομνημόνευση έντασης ήχου ανά κανάλι"
   },
   "mc_settings_channel_volume_desc": {
-    "message": "κάθε κανάλι κρατά την ένταση που όρισες τελευταία. λειτουργεί σε twitch, kick και youtube, και σε ενσωματωμένους players"
+    "message": "κάθε κανάλι κρατά την ένταση ήχου που όρισες τελευταία. λειτουργεί σε twitch, kick και youtube, και σε ενσωματώσεις"
   },
   "mc_settings_channel_volume_default": {
-    "message": "αρχική ένταση για νέα κανάλια"
+    "message": "αρχική ένταση ήχου για νέα κανάλια"
   },
   "mc_settings_channel_volume_default_desc": {
-    "message": "ένα κανάλι που δεν έχεις ρυθμίσει ανοίγει με αυτή την ένταση. το 0 αφήνει τον player ως έχει"
+    "message": "ένα κανάλι που δεν έχεις ορίσει ακόμα ανοίγει με αυτή την ένταση ήχου. το 0 αφήνει την ένταση του player ως έχει"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "απομνημόνευση έντασης στο twitch"

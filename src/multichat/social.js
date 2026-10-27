@@ -1681,6 +1681,27 @@ const INLINE_ROW_DEDUP_MS = 120_000
  * @returns {{notifType: string, msg: object}|null} null when the row carries
  *   no usable timestamp (the renderer needs one for its ts column)
  */
+/**
+ * What a post carries beyond its text, as the short tag the chat row shows:
+ * "gif" / "img" / "vid", with a count in front for more than one. A chat row
+ * is one line of text — a thumbnail would change its height under the scroll —
+ * so the row says THAT there is media and the click (>>id, the whole row)
+ * opens the thread where it is drawn. null when the post is text only.
+ */
+function inlineMediaTag(f) {
+  const items =
+    Array.isArray(f.media) && f.media.length ? f.media : f.media_url ? [{ url: f.media_url, type: f.media_type }] : []
+  if (!items.length) return null
+  const kind = (it) => {
+    if (it.type === 'video') return 'vid'
+    // .webp is not claimed as a gif: the url cannot say whether it moves.
+    return /\.(gif|apng)(\?|$)/i.test(String(it.url || '')) ? 'gif' : 'img'
+  }
+  const kinds = new Set(items.map(kind))
+  const label = kinds.size === 1 ? [...kinds][0] : 'media'
+  return items.length > 1 ? `${items.length} ${label}` : label
+}
+
 function buildFeedInlineNotif(f) {
   if (!f) return null
   const t = new Date(f.created_at).getTime()
@@ -1714,6 +1735,7 @@ function buildFeedInlineNotif(f) {
       emote_refs: f.emote_refs,
       is_op: f.is_op,
       is_thread_op: f.is_thread_op,
+      mediaTag: inlineMediaTag(f),
     },
   }
 }

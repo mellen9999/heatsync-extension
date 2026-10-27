@@ -40,6 +40,26 @@ const row = (over = {}) => ({
   ...over,
 })
 
+describe('buildFeedInlineNotif media tag', () => {
+  const tag = (over) => harness().buildFeedInlineNotif(row(over)).msg.mediaTag
+  test('a text-only post has none', () => expect(tag()).toBeNull())
+  test('an image post says img; a gif says gif; a video says vid', () => {
+    expect(tag({ media_url: 'https://heatsync.org/uploads/a.webp', media_type: 'image' })).toBe('img')
+    expect(tag({ media_url: 'https://heatsync.org/uploads/a.gif', media_type: 'image' })).toBe('gif')
+    expect(tag({ media_url: 'https://heatsync.org/uploads/a.mp4', media_type: 'video' })).toBe('vid')
+  })
+  test('several items carry a count, and mixed kinds read as media', () => {
+    const m = (url, type) => ({ url, type })
+    expect(tag({ media: [m('/a.png', 'image'), m('/b.png', 'image')] })).toBe('2 img')
+    expect(tag({ media: [m('/a.png', 'image'), m('/b.mp4', 'video')] })).toBe('2 media')
+  })
+  test('the main.js row carries it through the saved shape', () => {
+    const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+    expect(main).toContain('mediaTag: m.mediaTag')
+    expect(main).toContain('hs-feed-media-tag')
+  })
+})
+
 describe('buildFeedInlineNotif', () => {
   test('an OP builds an [OP] row and becomes the /opr target', () => {
     const { buildFeedInlineNotif, lastOp } = harness()

@@ -3343,6 +3343,7 @@
     emote_refs: m.emote_refs,
     is_op: m.is_op,
     is_thread_op: m.is_thread_op,
+    mediaTag: m.mediaTag,
   })
 
   function saveInlineNotif(notifType, msg) {
@@ -7590,7 +7591,13 @@
       // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
       const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
       // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)
-      div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>`
+      // mediaTag is one of gif/img/vid/media with an optional count — built from a
+      // fixed set in social.js inlineMediaTag, never post text. Underlined: the
+      // row click opens the thread, where the media is drawn.
+      const mediaTagHtml = m.mediaTag
+        ? ` <span class="hs-feed-media-tag" style="text-decoration:underline">[${escapeHtml(m.mediaTag)}]</span>`
+        : ''
+      div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>${mediaTagHtml}`
       div.addEventListener('click', (e) => {
         const spoiler = e.target.closest('.hs-spoiler')
         if (spoiler) {

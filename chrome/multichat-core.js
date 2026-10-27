@@ -15049,7 +15049,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bacc794f1df5' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '24923f986743' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39312,6 +39312,27 @@ const INLINE_ROW_DEDUP_MS = 120_000
  * @returns {{notifType: string, msg: object}|null} null when the row carries
  *   no usable timestamp (the renderer needs one for its ts column)
  */
+/**
+ * What a post carries beyond its text, as the short tag the chat row shows:
+ * "gif" / "img" / "vid", with a count in front for more than one. A chat row
+ * is one line of text — a thumbnail would change its height under the scroll —
+ * so the row says THAT there is media and the click (>>id, the whole row)
+ * opens the thread where it is drawn. null when the post is text only.
+ */
+function inlineMediaTag(f) {
+  const items =
+    Array.isArray(f.media) && f.media.length ? f.media : f.media_url ? [{ url: f.media_url, type: f.media_type }] : []
+  if (!items.length) return null
+  const kind = (it) => {
+    if (it.type === 'video') return 'vid'
+    // .webp is not claimed as a gif: the url cannot say whether it moves.
+    return /\.(gif|apng)(\?|$)/i.test(String(it.url || '')) ? 'gif' : 'img'
+  }
+  const kinds = new Set(items.map(kind))
+  const label = kinds.size === 1 ? [...kinds][0] : 'media'
+  return items.length > 1 ? `${items.length} ${label}` : label
+}
+
 function buildFeedInlineNotif(f) {
   if (!f) return null
   const t = new Date(f.created_at).getTime()
@@ -39345,6 +39366,7 @@ function buildFeedInlineNotif(f) {
       emote_refs: f.emote_refs,
       is_op: f.is_op,
       is_thread_op: f.is_thread_op,
+      mediaTag: inlineMediaTag(f),
     },
   }
 }
@@ -72662,6 +72684,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     emote_refs: m.emote_refs,
     is_op: m.is_op,
     is_thread_op: m.is_thread_op,
+    mediaTag: m.mediaTag,
   })
 
   function saveInlineNotif(notifType, msg) {
@@ -76909,7 +76932,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
       const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
       // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)
-      div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>`
+      // mediaTag is one of gif/img/vid/media with an optional count — built from a
+      // fixed set in social.js inlineMediaTag, never post text. Underlined: the
+      // row click opens the thread, where the media is drawn.
+      const mediaTagHtml = m.mediaTag
+        ? ` <span class="hs-feed-media-tag" style="text-decoration:underline">[${escapeHtml(m.mediaTag)}]</span>`
+        : ''
+      div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>${mediaTagHtml}`
       div.addEventListener('click', (e) => {
         const spoiler = e.target.closest('.hs-spoiler')
         if (spoiler) {

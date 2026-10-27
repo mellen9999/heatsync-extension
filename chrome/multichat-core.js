@@ -2890,6 +2890,7 @@ const SETTINGS = [
   // ── display / font ────────────────────────────────────────────────────
   {
     key: 'fontFamily',
+    basic: true,
     type: 'enum',
     default: 'monospace',
     coerce: (v) => (v === 'CozetteVector' || v === 'GohuFont' || v === 'DepartureMono' ? 'monospace' : undefined),
@@ -2971,6 +2972,7 @@ const SETTINGS = [
   },
   {
     key: 'hs_emoji_size',
+    basic: true,
     type: 'enum',
     default: 2,
     scope: 'local',
@@ -3006,6 +3008,7 @@ const SETTINGS = [
   },
   {
     key: 'timestampFormat',
+    basic: true,
     type: 'enum',
     default: '24h',
     scope: 'sync',
@@ -3038,6 +3041,7 @@ const SETTINGS = [
   },
   {
     key: 'zebra',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3052,6 +3056,7 @@ const SETTINGS = [
   },
   {
     key: 'hs_readable_names',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'local',
@@ -3094,6 +3099,7 @@ const SETTINGS = [
   },
   {
     key: 'showPlatformBadges',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3108,6 +3114,7 @@ const SETTINGS = [
   },
   {
     key: 'textBadges',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'sync',
@@ -3122,6 +3129,7 @@ const SETTINGS = [
   },
   {
     key: 'tabCounter',
+    basic: true,
     type: 'enum',
     default: 'unread',
     scope: 'sync',
@@ -3145,6 +3153,7 @@ const SETTINGS = [
   // stores it) so hydration never un-hides a deliberately hidden chat.
   {
     key: 'tabPosition',
+    basic: true,
     type: 'enum',
     default: 'top',
     scope: 'sync',
@@ -3287,6 +3296,7 @@ const SETTINGS = [
   // ── display / cosmetics (per-provider) ────────────────────────────────
   {
     key: 'showNamePaints',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3336,6 +3346,7 @@ const SETTINGS = [
   },
   {
     key: 'animateEmotes',
+    basic: true,
     type: 'enum',
     default: 'always',
     scope: 'sync',
@@ -3370,6 +3381,7 @@ const SETTINGS = [
     // means the opposite — hovering a painted name FREEZES it and flattens it
     // to a readable white chip (see ensureHsPaintSheet).
     key: 'animatePaints',
+    basic: true,
     type: 'enum',
     default: 'always',
     scope: 'sync',
@@ -3448,6 +3460,7 @@ const SETTINGS = [
   },
   {
     key: 'hs_show_pronouns',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3537,6 +3550,7 @@ const SETTINGS = [
   },
   {
     key: 'linkPreviewsEnabled',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3565,6 +3579,7 @@ const SETTINGS = [
   },
   {
     key: 'hs_auto_claim_points',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'local',
@@ -3594,6 +3609,7 @@ const SETTINGS = [
   },
   {
     key: 'keywordHighlights',
+    basic: true,
     type: 'text',
     default: '',
     scope: 'local-mirror',
@@ -3616,6 +3632,7 @@ const SETTINGS = [
   // ── chat / privacy ────────────────────────────────────────────────────
   {
     key: 'anonChat',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'sync',
@@ -3633,6 +3650,7 @@ const SETTINGS = [
   // ── notifs / inline notifications ─────────────────────────────────────
   {
     key: 'whisperToast',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -3645,6 +3663,7 @@ const SETTINGS = [
   },
   {
     key: 'inlineNotifs',
+    basic: true,
     type: 'boolmap',
     scope: 'sync',
     category: 'notifs',
@@ -3705,6 +3724,7 @@ const SETTINGS = [
   // ── notifs / stream events (twitch + youtube) ─────────────────────────
   {
     key: 'hermesEvents',
+    basic: true,
     type: 'boolmap',
     scope: 'sync',
     category: 'notifs',
@@ -3898,6 +3918,7 @@ const SETTINGS = [
   },
   {
     key: 'crossFollowTwitchNotify',
+    basic: true,
     type: 'bool',
     default: true,
     scope: 'sync',
@@ -4004,6 +4025,7 @@ const SETTINGS = [
   // default server-side, weapons/drugs/hate shown by default
   {
     key: 'viewer_show_sexual',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'local',
@@ -4019,6 +4041,7 @@ const SETTINGS = [
   },
   {
     key: 'viewer_show_gore',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'local',
@@ -4034,6 +4057,7 @@ const SETTINGS = [
   },
   {
     key: 'viewer_show_weapon',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'local',
@@ -4049,6 +4073,7 @@ const SETTINGS = [
   },
   {
     key: 'viewer_show_drug',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'local',
@@ -4064,6 +4089,7 @@ const SETTINGS = [
   },
   {
     key: 'viewer_show_hate',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'local',
@@ -4096,6 +4122,7 @@ const SETTINGS = [
   },
   {
     key: 'hideCommands',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'sync',
@@ -4120,6 +4147,7 @@ const SETTINGS = [
   },
   {
     key: 'hs_mute_keywords',
+    basic: true,
     type: 'text',
     default: '',
     scope: 'local',
@@ -4159,6 +4187,7 @@ const SETTINGS = [
     // BTTV-style scroll-wheel volume — not a CSS-hide flag (no `tweak: true`),
     // gated live by the wheel listener reading scrollWheelVolumeEnabled.
     key: 'scrollWheelVolume',
+    basic: true,
     type: 'bool',
     default: false,
     scope: 'sync',
@@ -15127,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'be797eb10b57' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6eec5e358f4a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

@@ -15156,7 +15156,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '75832b542128' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6f9032e634ee' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -83183,13 +83183,16 @@ const STORAGE_KEY = 'heatsync_multichat'
     migrateUiSettingsOnce()
     pruneChatHistoryOnce()
     const _uiPrime = cachedUiSettings()
-    const _localPrime = chrome.storage.local.get([STORAGE_KEY, 'user_info', 'muted_users'])
+    const _localPrime = chrome.storage.local.get([STORAGE_KEY, 'user_info', 'muted_users', 'blocked_users'])
     // Before loadConfig — it is the first thing that consults a subsystem gate.
     await snapshotGates()
     _initMark('gates')
     await loadConfig()
     _initMark('config')
     if (!config.enabled) return
+    // The restored mentions/YT buffers need only the config just loaded, and are three storage round
+    // trips in a row — start them now so they run under the settings hydration instead of after it.
+    const _buffersP = restorePersistedBuffers()
     // Lite / emotes-only mode is fully removed — overlay always boots.
     log('Initializing...')
     if (hostPlatform === 'twitch') seedOwnTwitchColor()
@@ -83209,15 +83212,10 @@ const STORAGE_KEY = 'heatsync_multichat'
         }
       }
     } catch {}
-    // Blocked users — shared with content.js via background's `blocked_users`.
+    // Blocked users — shared with content.js via background's `blocked_users`. Rides the same prefetch as
+    // the keys above: its own round trip here was a second storage wait in the boot path.
     try {
-      const bd = await new Promise((res) => {
-        try {
-          chrome.storage.local.get('blocked_users', (r) => res(r || {}))
-        } catch {
-          res({})
-        }
-      })
+      const bd = await _localPrime
       if (Array.isArray(bd.blocked_users))
         for (const u of bd.blocked_users) {
           if (u) blockedUsers.add(String(u).toLowerCase())
@@ -83458,7 +83456,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Restore persisted mentions/YT buffers + tab-seen state so first paint
     // already shows everything from before the reload. Awaited because
     // mentions tab on reload would otherwise paint empty for a beat.
-    await restorePersistedBuffers()
+    await _buffersP
     _initMark('buffers')
     const startNetwork = () => {
       // Subsystem gates — a disabled platform feed never opens its socket

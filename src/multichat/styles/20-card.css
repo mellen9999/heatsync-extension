@@ -422,6 +422,14 @@
   background: #000000;
   color: #ffffff;
 }
+/* The same white plate swallows the body text of a card with no banner — name,
+ * stat labels and values are white (or a tone colour) on nothing. A banner card
+ * puts every one of those on its own black chip, so it is left alone. */
+.hs-card[data-clickable="true"]:hover .hs-card-top:not(.hs-card-has-hero) *,
+.hs-card[data-clickable="true"]:active .hs-card-top:not(.hs-card-has-hero) *,
+.hs-card[data-clickable="true"]:focus-visible .hs-card-top:not(.hs-card-has-hero) * {
+  color: #000000 !important;
+}
 /* One flex item per label — see hk()/hkShort()'s own doc comment. */
 .hs-card-label { display: inline; }
 .hs-card-hk { text-decoration: underline; }

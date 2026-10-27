@@ -75,6 +75,12 @@ export function pinPickedEmote(emote) {
   // a synthesized "name0" overlay variant resolves through its base word
   if (emote.zeroWidth && emote.name.length > 1 && emote.name.endsWith('0')) return
   const key = emote.name.toLowerCase()
+  // The pin is the final word on this name. A Tab cycle registers every
+  // catalog step it passes through, so an earlier same-named step (an FFZ
+  // "LICK" on the way to the room's 7tv one) would otherwise survive in the
+  // registry and the send's commit step would add THAT one to the inventory
+  // in place of the pick.
+  if (remoteCompleted.get(key)?.url !== emote.url) remoteCompleted.delete(key)
   if (!pickedEmotes.has(key) && pickedEmotes.size >= REMOTE_COMPLETED_MAX) {
     pickedEmotes.delete(pickedEmotes.keys().next().value)
   }

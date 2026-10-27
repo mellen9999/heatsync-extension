@@ -1437,10 +1437,11 @@ let currentUsername = null // Logged-in user's username
 // appends include_sexual/gore/weapons/drugs/hate params via withNsfwParam().
 let viewerShowSexual = false
 let viewerShowGore = false
-// Per-category content filters. Default ON (show); server hides only when =false.
-let viewerShowWeapon = true
-let viewerShowDrug = true
-let viewerShowHate = true
+// Per-category content filters. Every category defaults hidden, same as the
+// server and the site; shown only after the viewer turns it on.
+let viewerShowWeapon = false
+let viewerShowDrug = false
+let viewerShowHate = false
 let socket = null
 let lastBroadcastWasEmpty = false // Track to prevent spamming 0-emote broadcasts
 // Tracks the last user-initiated block/unblock per hash so late-arriving WS
@@ -1627,9 +1628,9 @@ browser.cookies.onChanged.addListener((changeInfo) => {
       followedUsers = []
       viewerShowSexual = false
       viewerShowGore = false
-      viewerShowWeapon = true
-      viewerShowDrug = true
-      viewerShowHate = true
+      viewerShowWeapon = false
+      viewerShowDrug = false
+      viewerShowHate = false
       browser.storage.local
         .remove([
           'emote_inventory',

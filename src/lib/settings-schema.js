@@ -1268,7 +1268,7 @@ const SETTINGS = [
   {
     key: 'viewer_show_weapon',
     type: 'bool',
-    default: true,
+    default: false,
     scope: 'local',
     category: 'filters',
     section: 'content',
@@ -1283,7 +1283,7 @@ const SETTINGS = [
   {
     key: 'viewer_show_drug',
     type: 'bool',
-    default: true,
+    default: false,
     scope: 'local',
     category: 'filters',
     section: 'content',
@@ -1298,7 +1298,7 @@ const SETTINGS = [
   {
     key: 'viewer_show_hate',
     type: 'bool',
-    default: true,
+    default: false,
     scope: 'local',
     category: 'filters',
     section: 'content',

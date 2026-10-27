@@ -1458,19 +1458,19 @@
     "message": "show weapons emotes"
   },
   "mc_settings_show_weapon_desc": {
-    "message": "emotes flagged for weapons imagery. on by default."
+    "message": "emotes flagged for weapons imagery. off by default."
   },
   "mc_settings_show_drug": {
     "message": "show drugs emotes"
   },
   "mc_settings_show_drug_desc": {
-    "message": "emotes flagged for drug imagery. on by default."
+    "message": "emotes flagged for drug imagery. off by default."
   },
   "mc_settings_show_hate": {
     "message": "show hate emotes"
   },
   "mc_settings_show_hate_desc": {
-    "message": "emotes flagged for hate imagery. on by default."
+    "message": "emotes flagged for hate imagery. off by default."
   },
   "mc_settings_hide_bots": {
     "message": "hide bots"

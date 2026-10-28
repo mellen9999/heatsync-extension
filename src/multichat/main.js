@@ -1327,6 +1327,10 @@
       const scan = (arr) => {
         if (!arr) return
         for (const m of arr) {
+          // OP/RE rows, receipts and other inline notices are put into every
+          // channel's buffer; nobody said anything in this chat, so they never
+          // make a tab unread.
+          if (m.inlineNotifType) continue
           const t = m.time || 0
           if (t > maxTime) maxTime = t
           if (t > seen) {

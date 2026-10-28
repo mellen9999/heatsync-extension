@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '09259bfd4720' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48584ca07dbb' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70931,6 +70931,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       const scan = (arr) => {
         if (!arr) return
         for (const m of arr) {
+          // OP/RE rows, receipts and other inline notices are put into every
+          // channel's buffer; nobody said anything in this chat, so they never
+          // make a tab unread.
+          if (m.inlineNotifType) continue
           const t = m.time || 0
           if (t > maxTime) maxTime = t
           if (t > seen) {

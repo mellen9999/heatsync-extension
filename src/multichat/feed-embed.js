@@ -528,6 +528,18 @@ function chatEmbedForUrl(rawUrl) {
 // opted in = held). The real markup rides inside a <template>, so the browser
 // loads nothing until "show"; csam carries no markup and no button at all.
 function buildFeedMediaHtml(m) {
+  // The server already took the file out for this viewer (media_held): draw the
+  // box; "show" fetches the media from /api/messages/:id/media. Only the
+  // categories a viewer may open get a button (never csam, spam, a ban).
+  if (Array.isArray(m?.media_held) && m.media_held.length && m.has_media) {
+    const cat = m.media_held[0]
+    const label = HS_MEDIA_LABEL[cat] || cat
+    const open = HS_MEDIA_SETTING[cat] && m.base36_id
+    const reveal = open
+      ? ` <button type="button" class="hs-mc-held-post-show" data-mid="${attr(m.base36_id)}">show</button></span>`
+      : '</span>'
+    return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">[media hidden — ${attr(label)}]${reveal}</div>`
+  }
   const html = _feedMediaHtml(m)
   const cat = html ? hsHeldMediaCat(m.moderation_result?.flaggedCategories) : ''
   if (!cat) return html
@@ -623,16 +635,33 @@ document.addEventListener(
       return
     }
     const tpl = box.querySelector('template')
-    if (!tpl) return
-    const real = document.createElement('div')
-    real.className = 'hs-mc-held-real'
-    const hide = document.createElement('button')
-    hide.type = 'button'
-    hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
-    hide.textContent = 'hide'
-    real.append(hide, tpl.content.cloneNode(true))
-    box.append(real)
-    box.classList.add('hs-open')
+    const mid = btn.dataset.mid
+    if (!tpl && !mid) return
+    const open = (frag) => {
+      box.querySelector('.hs-mc-held-real')?.remove()
+      const real = document.createElement('div')
+      real.className = 'hs-mc-held-real'
+      const hide = document.createElement('button')
+      hide.type = 'button'
+      hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
+      hide.textContent = 'hide'
+      real.append(hide, frag)
+      box.append(real)
+      box.classList.add('hs-open')
+    }
+    if (tpl) return open(tpl.content.cloneNode(true))
+    // withheld by the server: ask for it (auth attached by the background proxy)
+    btn.disabled = true
+    apiFetch(`/api/messages/${encodeURIComponent(mid)}/media`, { auth: true }).then((resp) => {
+      const d = resp?.ok ? resp.data : null
+      const html = d ? _feedMediaHtml({ ...d, base36_id: mid, has_media: true, content: '' }) : ''
+      if (!html) {
+        btn.disabled = false
+        btn.textContent = resp?.status === 403 ? 'log in as an adult to view' : 'retry'
+        return
+      }
+      open(document.createRange().createContextualFragment(html))
+    })
   },
   { signal: mcSignal, capture: true },
 )

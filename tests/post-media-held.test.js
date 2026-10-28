@@ -73,6 +73,28 @@ describe('buildFeedMediaHtml held gate', () => {
   })
 })
 
+describe('a post the server withheld (media_held)', () => {
+  const withheld = (cat) => ({ has_media: true, base36_id: '00004a', media: [], media_url: null, media_held: [cat] })
+
+  test('draws the box with a show button that carries the post id, and no media markup', () => {
+    const html = buildFeedMediaHtml(withheld('nsfw'))
+    expect(html).toContain('[media hidden — nsfw]')
+    expect(html).toContain('data-mid="00004a"')
+    expect(html).not.toContain('<template>')
+    expect(html).not.toContain('<img')
+  })
+
+  test('a category nobody opts in to gets the box but no button', () => {
+    const html = buildFeedMediaHtml(withheld('csam'))
+    expect(html).toContain('[media hidden — csam]')
+    expect(html).not.toContain('show')
+  })
+
+  test('show fetches the media route through the authed proxy', () => {
+    expect(SRC).toContain('/api/messages/${encodeURIComponent(mid)}/media')
+  })
+})
+
 describe('show / hide wiring', () => {
   test('the click handler offers hide after show and removes the real markup again', () => {
     expect(SRC).toContain("'.hs-mc-held-post-show, .hs-mc-held-post-hide'")

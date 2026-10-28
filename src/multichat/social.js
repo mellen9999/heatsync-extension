@@ -1695,7 +1695,12 @@ const INLINE_ROW_DEDUP_MS = 120_000
 function inlineMediaTag(f) {
   const items =
     Array.isArray(f.media) && f.media.length ? f.media : f.media_url ? [{ url: f.media_url, type: f.media_type }] : []
-  if (!items.length) return null
+  // withheld by the server (media_held): no urls to read the kind from, still media
+  if (!items.length) {
+    if (!(f.has_media && Array.isArray(f.media_held) && f.media_held.length)) return null
+    const n = f.media_count > 1 ? `${f.media_count} ` : ''
+    return f.media_type === 'video' ? `${n}vid` : `${n}${f.media_count > 1 ? 'media' : 'img'}`
+  }
   const kind = (it) => {
     if (it.type === 'video') return 'vid'
     // .webp is not claimed as a gif: the url cannot say whether it moves.
@@ -1761,7 +1766,7 @@ function buildFeedInlineNotif(f) {
       is_thread_op: f.is_thread_op,
       mediaTag: inlineMediaTag(f),
       mediaSrc: inlineMediaPreview(f),
-      mediaCats: f.moderation_result?.flaggedCategories || null,
+      mediaCats: f.media_held || f.moderation_result?.flaggedCategories || null,
     },
   }
 }

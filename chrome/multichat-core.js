@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2bb4dc022a87' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a8135eff8dcd' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29522,6 +29522,18 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
     for (const w of stackEmotes.children) for (const m of hsTtModsOf(w)) stackMods.push(m)
     if (pieces.length) hsTtRenderComposition(nameEl, pieces, stackMods)
     else nameEl.textContent = emoteName
+  } else if (state === 'cw') {
+    // A censored emote has no image to enlarge — preview the same category box
+    // the chat line shows, never a broken <img> for the withheld url.
+    const cwCat = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || ''
+    const box = document.createElement('span')
+    box.className = 'hs-mc-emote-wrapper hs-mc-emote-cw'
+    box.dataset.cw = cwCat
+    box.textContent = cwCat
+    img.style.display = 'none'
+    stackBox.style.display = 'block'
+    stackBox.replaceChildren(box)
+    nameEl.textContent = emoteName
   } else {
     stackBox.style.display = 'none'
     stackBox.replaceChildren()
@@ -29585,6 +29597,8 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
     label = t('mc_emote_in_set')
   } else if (state === 'blocked') {
     label = t('mc_emote_blocked')
+  } else if (state === 'cw') {
+    label = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || 'hidden'
   } else if (fromInv) {
     label = 'Heatsync'
   } else {

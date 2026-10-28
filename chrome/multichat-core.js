@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'cfb1832ef267' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2bb4dc022a87' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26666,10 +26666,11 @@ const SENDER_EMOTE_SETS_VERSION = 2
 // could gate the sender's OWN first use off. Retro-flips this is meant to stop
 // are minutes-to-days old, so 2min of slack costs nothing.
 const EMOTE_ADDED_SKEW_MS = 120000
-// The viewer's own adds are stamped by this browser's clock, and the line is sent
-// seconds after, so the pad is tiny: a line sent right BEFORE you add an emote
-// (it was text then) must not flip to the image the moment you add it.
-const EMOTE_OWN_SKEW_MS = 5000
+// The viewer's own set: tight, so a line sent right BEFORE you add an emote (it was
+// text then) does not flip to the image. Not tighter than the send→commit gap: an
+// emote auto-added by the very line that first uses it gets the server's added_at
+// a second or two AFTER that line, and after a refresh that stamp is all there is.
+const EMOTE_OWN_SKEW_MS = 15000
 let _senderEmotePersistTimer = null
 let _senderEmoteDirty = false
 

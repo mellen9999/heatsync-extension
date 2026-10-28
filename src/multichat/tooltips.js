@@ -491,7 +491,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   const srcClass =
     fromInv && state !== 'owned' && state !== 'blocked'
       ? ' src-heatsync'
-      : (state === 'global' || state === 'channel' || state === 'sub') && source
+      : state !== 'owned' && state !== 'blocked' && source
         ? ` src-${source.toLowerCase().replace(/[^a-z0-9]/g, '')}`
         : ''
   stateEl.className = `tooltip-source ${state || 'global'}${srcClass}${isStale ? ' stale' : ''}${isNsfw ? ' nsfw' : ''}`

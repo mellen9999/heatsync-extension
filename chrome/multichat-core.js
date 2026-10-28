@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1939bbc0ba80' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '21f2974ef38e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29554,7 +29554,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   const srcClass =
     fromInv && state !== 'owned' && state !== 'blocked'
       ? ' src-heatsync'
-      : (state === 'global' || state === 'channel' || state === 'sub') && source
+      : state !== 'owned' && state !== 'blocked' && source
         ? ` src-${source.toLowerCase().replace(/[^a-z0-9]/g, '')}`
         : ''
   stateEl.className = `tooltip-source ${state || 'global'}${srcClass}${isStale ? ' stale' : ''}${isNsfw ? ' nsfw' : ''}`

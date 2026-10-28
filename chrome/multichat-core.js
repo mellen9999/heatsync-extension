@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48584ca07dbb' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '79b7894ba78c' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36510,6 +36510,18 @@ function chatEmbedForUrl(rawUrl) {
 // opted in = held). The real markup rides inside a <template>, so the browser
 // loads nothing until "show"; csam carries no markup and no button at all.
 function buildFeedMediaHtml(m) {
+  // The server already took the file out for this viewer (media_held): draw the
+  // box; "show" fetches the media from /api/messages/:id/media. Only the
+  // categories a viewer may open get a button (never csam, spam, a ban).
+  if (Array.isArray(m?.media_held) && m.media_held.length && m.has_media) {
+    const cat = m.media_held[0]
+    const label = HS_MEDIA_LABEL[cat] || cat
+    const open = HS_MEDIA_SETTING[cat] && m.base36_id
+    const reveal = open
+      ? ` <button type="button" class="hs-mc-held-post-show" data-mid="${attr(m.base36_id)}">show</button></span>`
+      : '</span>'
+    return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">[media hidden — ${attr(label)}]${reveal}</div>`
+  }
   const html = _feedMediaHtml(m)
   const cat = html ? hsHeldMediaCat(m.moderation_result?.flaggedCategories) : ''
   if (!cat) return html
@@ -36605,16 +36617,33 @@ document.addEventListener(
       return
     }
     const tpl = box.querySelector('template')
-    if (!tpl) return
-    const real = document.createElement('div')
-    real.className = 'hs-mc-held-real'
-    const hide = document.createElement('button')
-    hide.type = 'button'
-    hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
-    hide.textContent = 'hide'
-    real.append(hide, tpl.content.cloneNode(true))
-    box.append(real)
-    box.classList.add('hs-open')
+    const mid = btn.dataset.mid
+    if (!tpl && !mid) return
+    const open = (frag) => {
+      box.querySelector('.hs-mc-held-real')?.remove()
+      const real = document.createElement('div')
+      real.className = 'hs-mc-held-real'
+      const hide = document.createElement('button')
+      hide.type = 'button'
+      hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
+      hide.textContent = 'hide'
+      real.append(hide, frag)
+      box.append(real)
+      box.classList.add('hs-open')
+    }
+    if (tpl) return open(tpl.content.cloneNode(true))
+    // withheld by the server: ask for it (auth attached by the background proxy)
+    btn.disabled = true
+    apiFetch(`/api/messages/${encodeURIComponent(mid)}/media`, { auth: true }).then((resp) => {
+      const d = resp?.ok ? resp.data : null
+      const html = d ? _feedMediaHtml({ ...d, base36_id: mid, has_media: true, content: '' }) : ''
+      if (!html) {
+        btn.disabled = false
+        btn.textContent = resp?.status === 403 ? 'log in as an adult to view' : 'retry'
+        return
+      }
+      open(document.createRange().createContextualFragment(html))
+    })
   },
   { signal: mcSignal, capture: true },
 )
@@ -39519,7 +39548,12 @@ const INLINE_ROW_DEDUP_MS = 120_000
 function inlineMediaTag(f) {
   const items =
     Array.isArray(f.media) && f.media.length ? f.media : f.media_url ? [{ url: f.media_url, type: f.media_type }] : []
-  if (!items.length) return null
+  // withheld by the server (media_held): no urls to read the kind from, still media
+  if (!items.length) {
+    if (!(f.has_media && Array.isArray(f.media_held) && f.media_held.length)) return null
+    const n = f.media_count > 1 ? `${f.media_count} ` : ''
+    return f.media_type === 'video' ? `${n}vid` : `${n}${f.media_count > 1 ? 'media' : 'img'}`
+  }
   const kind = (it) => {
     if (it.type === 'video') return 'vid'
     // .webp is not claimed as a gif: the url cannot say whether it moves.
@@ -39585,7 +39619,7 @@ function buildFeedInlineNotif(f) {
       is_thread_op: f.is_thread_op,
       mediaTag: inlineMediaTag(f),
       mediaSrc: inlineMediaPreview(f),
-      mediaCats: f.moderation_result?.flaggedCategories || null,
+      mediaCats: f.media_held || f.moderation_result?.flaggedCategories || null,
     },
   }
 }

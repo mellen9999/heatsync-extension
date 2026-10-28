@@ -2802,7 +2802,7 @@ function pastOwnershipAt(name, msgTime) {
   if (!list) return null
   for (let i = list.length - 1; i >= 0; i--) {
     const iv = list[i]
-    if (msgTime >= iv.from - EMOTE_ADDED_SKEW_MS && msgTime < iv.to) {
+    if (msgTime >= iv.from - EMOTE_OWN_SKEW_MS && msgTime < iv.to) {
       return { url: iv.url, source: iv.source, zeroWidth: iv.zeroWidth, state: 'unadded' }
     }
   }
@@ -2912,6 +2912,10 @@ const SENDER_EMOTE_SETS_VERSION = 2
 // could gate the sender's OWN first use off. Retro-flips this is meant to stop
 // are minutes-to-days old, so 2min of slack costs nothing.
 const EMOTE_ADDED_SKEW_MS = 120000
+// The viewer's own adds are stamped by this browser's clock, and the line is sent
+// seconds after, so the pad is tiny: a line sent right BEFORE you add an emote
+// (it was text then) must not flip to the image the moment you add it.
+const EMOTE_OWN_SKEW_MS = 5000
 let _senderEmotePersistTimer = null
 let _senderEmoteDirty = false
 
@@ -4290,7 +4294,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
   // clock drift on the collect→send fast path.
   const _sGate = (entry) => {
     if (!entry || typeof msgTime !== 'number') return entry || null
-    if (entry.addedAt && msgTime < entry.addedAt - EMOTE_ADDED_SKEW_MS) return null
+    if (
+      entry.addedAt &&
+      msgTime < entry.addedAt - (senderEmotes === viewerPersonalEmotes ? EMOTE_OWN_SKEW_MS : EMOTE_ADDED_SKEW_MS)
+    )
+      return null
     if (entry.removedAt && msgTime >= entry.removedAt) return null
     return entry
   }

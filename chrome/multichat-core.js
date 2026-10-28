@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '43c9a66ff1b5' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '69555b31c692' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26026,7 +26026,10 @@ function applyLocalRemoval(emoteName, pt) {
   // remove path on inventoryEmotes.has(emoteName).
   const _re = viewerPersonalEmotes.get(emoteName)
   const _hash = inventoryHashes.get(emoteName)
-  if (_re?.url) rememberRemovedEmote(emoteName, _re.url, _re.source, _re.zeroWidth)
+  if (_re?.url) {
+    rememberRemovedEmote(emoteName, _re.url, _re.source, _re.zeroWidth)
+    rememberPastOwnership(emoteName, _re, Date.now())
+  }
   inventoryEmotes.delete(emoteName)
   inventoryHashes.delete(emoteName)
   viewerPersonalEmotes.delete(emoteName)
@@ -26511,6 +26514,54 @@ function isLocallyRemoved(name) {
   return false
 }
 const REMOVED_FALLBACK_CAP = 1000
+// Every stretch of time the viewer owned an emote and then gave it up:
+// name -> [{url, source, zeroWidth, from, to}]. A re-add (or an unblock that
+// puts it back) opens a NEW interval but never erases these, so a line posted
+// while the emote was in the inventory keeps its image for good, and a line
+// posted in a gap (not owned) stays text. Own messages only; persisted.
+const pastOwnership = new Map()
+const PAST_OWNERSHIP_CAP = 500
+const PAST_INTERVALS_PER_NAME = 8
+let _pastOwnershipPersistTimer = null
+function persistPastOwnership() {
+  if (_pastOwnershipPersistTimer) return
+  _pastOwnershipPersistTimer = cleanup.setTimeout(() => {
+    _pastOwnershipPersistTimer = null
+    const obj = {}
+    for (const [name, list] of pastOwnership) obj[name] = list
+    try {
+      chrome.storage.local.set({ hs_own_emote_past: obj })
+    } catch {}
+  }, 1000)
+}
+function rememberPastOwnership(name, entry, to) {
+  if (!name || !entry?.url) return
+  const list = pastOwnership.get(name) || []
+  pastOwnership.delete(name)
+  list.push({
+    url: entry.url,
+    source: entry.source || 'heatsync',
+    zeroWidth: !!entry.zeroWidth,
+    from: Number(entry.addedAt) || 0,
+    to,
+  })
+  while (list.length > PAST_INTERVALS_PER_NAME) list.shift()
+  pastOwnership.set(name, list)
+  while (pastOwnership.size > PAST_OWNERSHIP_CAP) pastOwnership.delete(pastOwnership.keys().next().value)
+  persistPastOwnership()
+}
+function pastOwnershipAt(name, msgTime) {
+  if (typeof msgTime !== 'number') return null
+  const list = pastOwnership.get(name)
+  if (!list) return null
+  for (let i = list.length - 1; i >= 0; i--) {
+    const iv = list[i]
+    if (msgTime >= iv.from - EMOTE_ADDED_SKEW_MS && msgTime < iv.to) {
+      return { url: iv.url, source: iv.source, zeroWidth: iv.zeroWidth, state: 'unadded' }
+    }
+  }
+  return null
+}
 let _removedFallbackPersistTimer = null
 function persistRemovedFallback() {
   if (_removedFallbackPersistTimer) return
@@ -27230,6 +27281,7 @@ async function loadEmotes() {
         'native_twitch_emotes',
         'hs_removed_emote_fallback',
         'hs_blocked_emote_fallback',
+        'hs_own_emote_past',
       ])
       // Restore removed-emote render fallback (persists across refresh).
       removedEmoteFallback.clear()
@@ -27244,6 +27296,15 @@ async function loadEmotes() {
               state: 'unadded',
               removedAt: Number(e.removedAt) || 0,
             })
+        }
+      }
+      pastOwnership.clear()
+      const po = stored.hs_own_emote_past
+      if (po && typeof po === 'object') {
+        for (const [name, list] of Object.entries(po)) {
+          if (!Array.isArray(list)) continue
+          const ok = list.filter((iv) => iv?.url && Number.isFinite(iv.to))
+          if (ok.length) pastOwnership.set(name, ok)
         }
       }
       // Restore block-state render fallback so the dashed box survives refresh
@@ -28017,7 +28078,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     if (e) return { e, inv: true }
     e = extraCache?.get(name) || emoteCache.get(raw)
     if (e) return { e, inv: false }
-    e = _rfGate(_rf?.get(raw))
+    e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
     return e ? { e, inv: true } : null
   }
 

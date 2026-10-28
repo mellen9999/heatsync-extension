@@ -32,6 +32,11 @@
   max-width: 320px;
   max-height: 240px;
 }
-.hs-feed-media-tag[data-src] {
-  cursor: pointer;
+/* a held post's peek: the same dashed-cyan box, no picture loaded */
+#hs-img-peek .hs-img-peek-held {
+  padding: 2px 6px;
+  border: 2px dashed #00ffff;
+  background: #000000;
+  color: #ffffff;
+  font-size: 13px;
 }

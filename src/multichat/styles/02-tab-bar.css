@@ -486,14 +486,18 @@
       border-bottom: 1px solid #000;
       color: #fff;
     }
-    /* the whole OP/RE row opens its thread, so it wears the pointer */
-    .hs-mc-feed-inline:not(.hs-mc-dm-inline) { cursor: pointer; }
     .hs-mc-feed-inline .hs-mc-ts { margin-right: 4px; }
     .hs-mc-feed-inline .hs-feed-body { color: #fff; }
     .hs-mc-feed-inline .hs-feed-thread-link {
       color: var(--hs-mention); text-decoration: none; font-size: 13px; margin-right: 4px;
     }
-    .hs-mc-feed-inline .hs-feed-thread-link:hover { text-decoration: underline; }
+    /* anything clickable in an OP/RE row inverts on hover: white bg, black text */
+    .hs-mc-feed-inline .hs-feed-thread-link:hover,
+    .hs-mc-feed-inline .hs-hashtag:hover,
+    .hs-mc-feed-inline .hs-mc-link:hover { background: #fff; color: #000; text-decoration: none; }
+    .hs-mc-feed-inline .hs-mc-user:hover {
+      background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important;
+    }
     .hs-mc-moment-perma { color: var(--hs-border); margin-left: 4px; text-decoration: none; }
     .hs-mc-moment-perma:hover { background: #fff; color: #000; }
     .hs-mc-dm-inline {

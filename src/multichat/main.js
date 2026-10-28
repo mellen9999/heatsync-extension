@@ -3416,6 +3416,7 @@
     is_thread_op: m.is_thread_op,
     mediaTag: m.mediaTag,
     mediaSrc: m.mediaSrc,
+    mediaCats: m.mediaCats,
   })
 
   function saveInlineNotif(notifType, msg) {
@@ -7701,13 +7702,15 @@
       const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
       // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)
       // mediaTag is one of gif/img/vid/media with an optional count — built from a
-      // fixed set in social.js inlineMediaTag, never post text. Underlined: the
-      // row click opens the thread, where the media is drawn.
-      // mediaSrc (https only, social.js inlineMediaPreview) makes it a link: hover
-      // peeks the picture, click opens it full size (img-view.js).
+      // fixed set in social.js inlineMediaTag, never post text.
+      // mediaSrc (https only, social.js inlineMediaPreview) makes it hoverable: the
+      // picture peeks beside it (img-view.js). Not a link — nothing happens on click.
       const mediaSrc = m.mediaSrc ? safeUrl(m.mediaSrc) : ''
+      // data-cats: the scanner's flags for the post; img-view.js holds the peek
+      // behind the viewer's toggles at hover time, so a changed toggle applies.
+      const mediaCats = (Array.isArray(m.mediaCats) ? m.mediaCats : []).filter((c) => /^[a-z_]+$/.test(c)).join(' ')
       const mediaTagHtml = m.mediaTag
-        ? ` <span class="hs-feed-media-tag" style="text-decoration:underline"${mediaSrc ? ` data-src="${escapeHtml(hsProxyImg(mediaSrc))}"` : ''}>[${escapeHtml(m.mediaTag)}]</span>`
+        ? ` <span class="hs-feed-media-tag"${mediaSrc ? ` data-src="${escapeHtml(hsProxyImg(mediaSrc))}" data-cats="${escapeHtml(mediaCats)}"` : ''}>[${escapeHtml(m.mediaTag)}]</span>`
         : ''
       div.innerHTML = `${tsSpan}${threadLink}${typeTag}${userLink}${feedPlusHtml}${heatHtml}: <span class="hs-feed-body">${content}</span>${mediaTagHtml}`
       div.addEventListener('click', (e) => {
@@ -7716,7 +7719,8 @@
           spoiler.classList.toggle('revealed')
           return
         }
-        if (e.target.closest('a, .hs-mc-emote, .hs-mc-link')) return
+        // Only the >>id opens the thread; the rest of the row is plain text.
+        if (!e.target.closest('.hs-feed-thread-link')) return
         // Remember where we came from so thread "back" returns here, not the feed.
         threadReturnTab = currentTab === 'feed' ? null : currentTab
         switchTab('feed')

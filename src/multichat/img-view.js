@@ -48,8 +48,9 @@ function imgViewOpen() {
   return !!activeImgView
 }
 
-// Hover an [img]/[gif] tag on an op/re row: the picture floats beside it. Fixed
-// and pointer-events:none, so the row never shifts under the scroll.
+// Hover an [img]/[gif] tag on an op/re row: the picture floats beside it (a box
+// instead when the post is held). Fixed and pointer-events:none, so the row never
+// shifts under the scroll. The tag itself is not clickable.
 let peekEl = null
 function hidePeek() {
   if (peekEl) peekEl.remove()
@@ -65,11 +66,20 @@ document.addEventListener(
     const box = document.createElement('div')
     box.id = 'hs-img-peek'
     box.dataset.for = tag.dataset.src
-    const im = document.createElement('img')
-    im.alt = ''
-    im.addEventListener('error', hidePeek, { once: true })
-    im.src = tag.dataset.src
-    box.appendChild(im)
+    const cat = hsHeldMediaCat((tag.dataset.cats || '').split(' ').filter(Boolean))
+    if (cat) {
+      // flagged and not opted in: the box, never the picture
+      const held = document.createElement('div')
+      held.className = 'hs-img-peek-held'
+      held.textContent = `[image hidden — ${HS_MEDIA_LABEL[cat] || cat}]`
+      box.appendChild(held)
+    } else {
+      const im = document.createElement('img')
+      im.alt = ''
+      im.addEventListener('error', hidePeek, { once: true })
+      im.src = tag.dataset.src
+      box.appendChild(im)
+    }
     document.body.appendChild(box)
     peekEl = box
     const r = tag.getBoundingClientRect()
@@ -81,21 +91,6 @@ document.addEventListener(
   { signal: mcSignal, passive: true },
 )
 document.addEventListener('scroll', hidePeek, { signal: mcSignal, capture: true, passive: true })
-
-// A tag click opens the picture; capture, so the row's own click (open thread) skips it.
-document.addEventListener(
-  'click',
-  (e) => {
-    if (e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-    const tag = e.target?.closest?.('#hs-mc-messages .hs-feed-media-tag[data-src]')
-    if (!tag) return
-    e.preventDefault()
-    e.stopPropagation()
-    hidePeek()
-    openImgView(tag.dataset.src)
-  },
-  { signal: mcSignal, capture: true },
-)
 
 // A feed/thread picture inside the chat pane opens here. Capture, so the row's
 // own click handlers (open thread, select) never see it.

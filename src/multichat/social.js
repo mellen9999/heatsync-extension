@@ -1708,12 +1708,12 @@ function inlineMediaTag(f) {
 
 /**
  * The picture the [img] tag shows on hover: the first item's url (a video's
- * thumbnail), absolute. null for a post still being scanned or flagged by the
- * scanner — the tag then stays plain text, never the raw image.
+ * thumbnail), absolute. null for a post still being scanned — the tag then
+ * stays plain text. A flagged post keeps its url: the peek is held at hover
+ * time behind the viewer's toggles (img-view.js), from the row's mediaCats.
  */
 function inlineMediaPreview(f) {
   if (f.moderation_pending) return null
-  if (f.moderation_result?.flaggedCategories?.length) return null
   const it =
     Array.isArray(f.media) && f.media.length
       ? f.media[0]
@@ -1761,6 +1761,7 @@ function buildFeedInlineNotif(f) {
       is_thread_op: f.is_thread_op,
       mediaTag: inlineMediaTag(f),
       mediaSrc: inlineMediaPreview(f),
+      mediaCats: f.moderation_result?.flaggedCategories || null,
     },
   }
 }

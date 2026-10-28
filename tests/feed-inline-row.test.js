@@ -63,11 +63,14 @@ describe('buildFeedInlineNotif media tag', () => {
         'https://heatsync.org/t.jpg',
       )
     })
-    test('a post still scanning or flagged never previews', () => {
+    test('a post still scanning never previews', () => {
       expect(src({ media_url: '/a.png', media_type: 'image', moderation_pending: true })).toBeNull()
-      expect(
-        src({ media_url: '/a.png', media_type: 'image', moderation_result: { flaggedCategories: ['nsfw'] } }),
-      ).toBeNull()
+    })
+    test('a flagged post keeps its preview url and carries its flags, so the peek can be held', () => {
+      const flagged = { media_url: '/a.png', media_type: 'image', moderation_result: { flaggedCategories: ['nsfw'] } }
+      const msg = harness().buildFeedInlineNotif(row(flagged)).msg
+      expect(msg.mediaSrc).toBe('https://heatsync.org/a.png')
+      expect(msg.mediaCats).toEqual(['nsfw'])
     })
     test('text only has none; the main.js row wires data-src', () => {
       expect(src()).toBeNull()

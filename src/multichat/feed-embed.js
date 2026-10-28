@@ -607,18 +607,32 @@ function _feedMediaHtml(m) {
   return ''
 }
 
-// "show" on a held post's media swaps the box for the real markup, in place.
-// Capture, so the row's own click (open thread) never sees it.
+// "show" on a held post's media opens it in place and offers "hide" to put the
+// box back. Capture, so the row's own click (open thread) never sees either.
 document.addEventListener(
   'click',
   (e) => {
-    const btn = e.target?.closest?.('.hs-mc-held-post-show')
+    const btn = e.target?.closest?.('.hs-mc-held-post-show, .hs-mc-held-post-hide')
     const box = btn?.closest('.hs-mc-held-post')
-    const tpl = box?.querySelector('template')
-    if (!tpl) return
+    if (!box) return
     e.preventDefault()
     e.stopPropagation()
-    box.replaceWith(tpl.content)
+    if (btn.classList.contains('hs-mc-held-post-hide')) {
+      box.querySelector('.hs-mc-held-real')?.remove()
+      box.classList.remove('hs-open')
+      return
+    }
+    const tpl = box.querySelector('template')
+    if (!tpl) return
+    const real = document.createElement('div')
+    real.className = 'hs-mc-held-real'
+    const hide = document.createElement('button')
+    hide.type = 'button'
+    hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
+    hide.textContent = 'hide'
+    real.append(hide, tpl.content.cloneNode(true))
+    box.append(real)
+    box.classList.add('hs-open')
   },
   { signal: mcSignal, capture: true },
 )

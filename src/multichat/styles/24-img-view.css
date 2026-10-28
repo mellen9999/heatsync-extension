@@ -33,5 +33,5 @@
   max-height: 240px;
 }
 .hs-feed-media-tag[data-src] {
-  cursor: zoom-in;
+  cursor: pointer;
 }

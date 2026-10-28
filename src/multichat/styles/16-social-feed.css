@@ -1282,5 +1282,8 @@
       cursor: pointer;
     }
     .hs-mc-held-show:hover, .hs-mc-held-show:focus-visible { background: #ffffff; color: #000000; }
+    /* a revealed post's media: the box is out of the way until "hide" puts it back */
+    .hs-mc-held-post.hs-open > .hs-mc-held { display: none; }
+    .hs-mc-held-real > .hs-mc-held-show { display: block; margin: 0 0 2px; }
     /* the one blink: top heat tier (5000+) */
     @keyframes hs-blink { 50% { opacity: 0; } }

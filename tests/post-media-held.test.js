@@ -72,3 +72,11 @@ describe('buildFeedMediaHtml held gate', () => {
     expect(html).not.toContain('<img')
   })
 })
+
+describe('show / hide wiring', () => {
+  test('the click handler offers hide after show and removes the real markup again', () => {
+    expect(SRC).toContain("'.hs-mc-held-post-show, .hs-mc-held-post-hide'")
+    expect(SRC).toContain("box.querySelector('.hs-mc-held-real')?.remove()")
+    expect(SRC).toContain("hide.textContent = 'hide'")
+  })
+})

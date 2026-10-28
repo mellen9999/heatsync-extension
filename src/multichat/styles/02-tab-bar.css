@@ -486,6 +486,8 @@
       border-bottom: 1px solid #000;
       color: #fff;
     }
+    /* the whole OP/RE row opens its thread, so it wears the pointer */
+    .hs-mc-feed-inline:not(.hs-mc-dm-inline) { cursor: pointer; }
     .hs-mc-feed-inline .hs-mc-ts { margin-right: 4px; }
     .hs-mc-feed-inline .hs-feed-body { color: #fff; }
     .hs-mc-feed-inline .hs-feed-thread-link {

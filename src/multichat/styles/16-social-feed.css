@@ -1263,5 +1263,24 @@
       width: auto;
       vertical-align: text-bottom;
     }
+    /* Embed media the viewer has not opted in to: one dashed-cyan line, the same
+       tell flagged emotes wear. Square, black, white-on-hover. */
+    .hs-mc-held {
+      display: inline-block;
+      padding: 2px 6px;
+      border: 2px dashed #00ffff;
+      background: #000000;
+      color: #ffffff;
+    }
+    .hs-mc-held-show {
+      margin-left: 4px;
+      padding: 0 6px;
+      border: 1px solid #ffffff;
+      background: none;
+      color: #ffffff;
+      font: inherit;
+      cursor: pointer;
+    }
+    .hs-mc-held-show:hover, .hs-mc-held-show:focus-visible { background: #ffffff; color: #000000; }
     /* the one blink: top heat tier (5000+) */
     @keyframes hs-blink { 50% { opacity: 0; } }

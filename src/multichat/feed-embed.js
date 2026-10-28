@@ -36,7 +36,6 @@ const HS_IMG_DIRECT_HOSTS = new Set([
   'files.kick.com',
   'heatsync.org',
   'cdn.heatsync.org',
-  'i.imgur.com',
   'd3aqoihi2n8ty8.cloudfront.net',
 ])
 function hsProxyImg(url) {
@@ -137,20 +136,26 @@ function soundcloudEmbed(url) {
   </div>`
 }
 
-function giphyEmbed(gifId) {
-  const id = sanitizeEmbedId(gifId)
-  if (!id) return ''
-  return `<div class="hs-feed-embed-container hs-feed-embed-giphy">
-    <iframe src="https://giphy.com/embed/${id}" sandbox="${EMBED_SANDBOX}" allow="fullscreen" loading="lazy"></iframe>
+// Giphy / Tenor / Imgur resolve through the server so the image is scanned and
+// held behind the viewer's own settings before it shows — a raw iframe or <img>
+// would show whatever the link points at, unlooked-at.
+function resolvedImageEmbed(platform, url, label) {
+  return `<div class="hs-feed-embed-pending hs-feed-embed-${platform}"
+    data-resolve-url="${attr(url)}" data-resolve-platform="${platform}">
+    <span class="hs-feed-embed-pending-label">loading ${label}…</span>
   </div>`
 }
 
-function tenorEmbed(gifId) {
+function giphyEmbed(gifId) {
   const id = sanitizeEmbedId(gifId)
   if (!id) return ''
-  return `<div class="hs-feed-embed-container hs-feed-embed-tenor">
-    <iframe src="https://tenor.com/embed/${id}" sandbox="${EMBED_SANDBOX}" allow="fullscreen" loading="lazy"></iframe>
-  </div>`
+  return resolvedImageEmbed('giphy', `https://giphy.com/gifs/${id}`, 'giphy gif')
+}
+
+function tenorEmbed(_gifId, url) {
+  const safe = safeUrl(url || '')
+  if (!safe) return ''
+  return resolvedImageEmbed('tenor', safe, 'tenor gif')
 }
 
 function twitterEmbed(tweetId, _url) {
@@ -169,16 +174,7 @@ function twitterEmbed(tweetId, _url) {
 function imgurEmbed(imgurId) {
   const id = sanitizeEmbedId(imgurId)
   if (!id) return ''
-  // Imgur embed needs script — fall back to direct image link approach.
-  // data-fb="hide" is the host-CSP-safe replacement for inline onerror;
-  // attachFeedFallbacks() wires the listener post-render.
-  return `<div class="hs-feed-embed-container hs-feed-embed-imgur" style="aspect-ratio:auto;max-width:480px">
-    <a href="https://imgur.com/${id}" target="_blank" rel="noopener">
-      <img src="https://i.imgur.com/${id}.jpg" alt="imgur"
-        style="max-width:100%;height:auto;display:block"
-        data-fb="hide">
-    </a>
-  </div>`
+  return resolvedImageEmbed('imgur', `https://imgur.com/${id}`, 'imgur')
 }
 
 function tiktokEmbed(videoId, _url) {
@@ -344,7 +340,7 @@ function parseFeedEmbed(url) {
   // Tenor
   if (cleanUrl.includes('tenor.com/view/')) {
     const m = cleanUrl.match(/view\/.*-(\d+)$/)
-    if (m) return tenorEmbed(m[1])
+    if (m) return tenorEmbed(m[1], cleanUrl)
   }
 
   // TikTok
@@ -634,7 +630,38 @@ function _fetchFeedResolve(url) {
   return promise
 }
 
-function _buildFeedResolvedHtml(ph, data) {
+// The server scans the media an embed shows and returns its moderation
+// categories as `flagged`. Held behind the same toggles the viewer already has for
+// emotes (the site writes the media + emote columns together, one row per
+// category), so nothing new to sync. Default is held; an unreadable setting holds.
+const HS_MEDIA_SETTING = {
+  nsfw: 'viewer_show_sexual',
+  violence: 'viewer_show_gore',
+  weapons: 'viewer_show_weapon',
+  drugs: 'viewer_show_drug',
+  hate: 'viewer_show_hate',
+}
+const HS_MEDIA_LABEL = { nsfw: 'nsfw', violence: 'violence', weapons: 'weapons', drugs: 'drugs', hate: 'hate speech' }
+
+function hsHeldMediaCat(flagged) {
+  if (!Array.isArray(flagged)) return ''
+  for (const cat of flagged) {
+    if (cat === 'csam') return 'csam'
+    const key = HS_MEDIA_SETTING[cat]
+    if (!key) continue
+    if (typeof getSetting !== 'function' || getSetting(key) !== true) return cat
+  }
+  return ''
+}
+
+function _buildHeldEmbedHtml(cat) {
+  const label = HS_MEDIA_LABEL[cat] || cat
+  return `<span class="hs-mc-held" data-cat="${attr(cat)}">[embed hidden — ${attr(label)}] <button type="button" class="hs-mc-held-show">show</button></span>`
+}
+
+function _buildFeedResolvedHtml(ph, data, revealed = false) {
+  const heldCat = revealed ? '' : hsHeldMediaCat(data.flagged)
+  if (heldCat) return _buildHeldEmbedHtml(heldCat)
   const url = ph.dataset.resolveUrl || ''
   const platform = ph.dataset.resolvePlatform || ''
   const safeUrlStr = attr(url)
@@ -764,6 +791,13 @@ function resolvePendingFeedEmbeds(root) {
         const html = _buildFeedResolvedHtml(ph, data)
         if (html) {
           _swapPlaceholder(ph, html, 'hs-feed-embed-resolved')
+          // "show" reveals this one embed in place; the post itself is untouched.
+          ph.querySelector('.hs-mc-held-show')?.addEventListener('click', () => {
+            const shown = _buildFeedResolvedHtml(ph, data, true)
+            if (!shown) return
+            _swapPlaceholder(ph, shown, 'hs-feed-embed-resolved')
+            attachFeedFallbacks(ph)
+          })
           // Quoted chat line: fill the body with the archive viewer's own
           // renderer rather than server markup (see the chatlog branch).
           if (data.type === 'chatlog') {

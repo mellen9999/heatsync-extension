@@ -33,6 +33,9 @@ describe('hsProxyImg', () => {
   test('bare-number query tail is preserved through the proxy', () => {
     expect(hsProxyImg('https://safebooru.org/x.jpg?4816592')).toContain(encodeURIComponent('?4816592'))
   })
+  test('imgur is proxied: hotlinking it showed images nobody had scanned', () => {
+    expect(hsProxyImg('https://i.imgur.com/abc.jpg')).toStartWith(PROXY)
+  })
   test('yt thumbnail host is proxied (not in ext img-src)', () => {
     expect(hsProxyImg('https://i.ytimg.com/vi/abc/mqdefault.jpg')).toStartWith(PROXY)
   })
@@ -41,7 +44,6 @@ describe('hsProxyImg', () => {
     'https://heatsync.org/uploads/x.webp',
     'https://static-cdn.jtvnw.net/emote/1/2.0',
     'https://cdn.7tv.app/emote/1/2x.webp',
-    'https://i.imgur.com/abc.jpg',
     'https://files.kick.com/emote/1',
     'https://d3aqoihi2n8ty8.cloudfront.net/x.png',
   ])('allowlisted host passes through untouched: %s', (u) => {

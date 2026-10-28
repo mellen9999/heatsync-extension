@@ -24,6 +24,8 @@ function openImgView(src) {
   im.src = src
   // A picture that will not load must not strand you on a blank pane.
   im.addEventListener('error', closeImgView, { once: true })
+  // The picture is its own way out: click it (or Escape) to shrink it back.
+  wrap.addEventListener('click', closeImgView)
   wrap.appendChild(im)
   msgsEl.appendChild(wrap)
   msgsEl.scrollTop = 0
@@ -37,6 +39,17 @@ function closeImgView() {
   showInputBar()
   if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
 }
+
+document.addEventListener(
+  'keydown',
+  (e) => {
+    if (e.key === 'Escape' && activeImgView) {
+      e.preventDefault()
+      closeImgView()
+    }
+  },
+  { signal: mcSignal },
+)
 
 // A tab switch tears the view down without touching the pane: the switch
 // repaints it for the new tab itself.

@@ -12,4 +12,11 @@ describe('img view takeover', () => {
     expect(v).toContain('hs-feed-media-img')
     expect(v).toContain('hsTakeoverSync()')
   })
+
+  test('the full-size picture is its own way out: click it or press Escape', () => {
+    const v = rd('src/multichat/img-view.js')
+    expect(v).toContain("wrap.addEventListener('click', closeImgView)")
+    expect(v).toContain("e.key === 'Escape' && activeImgView")
+    expect(rd('src/multichat/styles/24-img-view.css')).toContain('zoom-out')
+  })
 })

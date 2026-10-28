@@ -13,6 +13,9 @@
   height: auto;
   object-fit: contain;
 }
+.hs-iv-wrap {
+  cursor: zoom-out;
+}
 /* a feed picture invites the click */
 #hs-mc-messages img.hs-feed-media-img,
 #hs-mc-messages img.hs-feed-media-item,

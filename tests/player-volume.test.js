@@ -126,6 +126,8 @@ describeDom('the glue — a player mounts, the page races us, the reader decides
   let win
   let store
   let listeners
+  let realSetTimeout = null
+  let timers = new Set()
   const real = {}
 
   /** a <video> that behaves like the part of one we touch */
@@ -170,11 +172,28 @@ describeDom('the glue — a player mounts, the page races us, the reader decides
     globalThis.chrome = api
     delete globalThis.browser
     globalThis.__hsPlayerVolumeLoaded = false
+    // The glue's own retry timers (it looks again for a lagging channel name) run
+    // on the global setTimeout and outlive the test; they would then read a
+    // `location` the teardown below has already removed, and the error lands on
+    // whichever test happens to be running — an order-dependent failure in a
+    // different file. Track them here, clear them in afterEach.
+    realSetTimeout = globalThis.setTimeout
+    timers = new Set()
+    globalThis.setTimeout = (fn, ms, ...rest) => {
+      const h = realSetTimeout(fn, ms, ...rest)
+      timers.add(h)
+      return h
+    }
     new Function(SRC)()
     await flush(5)
   }
 
   afterEach(() => {
+    if (realSetTimeout) {
+      for (const h of timers) clearTimeout(h)
+      globalThis.setTimeout = realSetTimeout
+      realSetTimeout = null
+    }
     for (const k of Object.keys(real)) {
       if (real[k] === undefined) delete globalThis[k]
       else globalThis[k] = real[k]

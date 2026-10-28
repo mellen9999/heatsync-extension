@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '21f2974ef38e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '94f6854bbc81' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -36505,9 +36505,24 @@ function chatEmbedForUrl(rawUrl) {
   return ''
 }
 
-// Main entry: build full media HTML for a feed message.
-// Handles direct uploads (image/video), multi-image (media[]), and content-extracted embeds.
+// Main entry: the media of a feed/thread message, held behind the viewer's own
+// toggles when the scanner flagged the post (same default as the site: nothing
+// opted in = held). The real markup rides inside a <template>, so the browser
+// loads nothing until "show"; csam carries no markup and no button at all.
 function buildFeedMediaHtml(m) {
+  const html = _feedMediaHtml(m)
+  const cat = html ? hsHeldMediaCat(m.moderation_result?.flaggedCategories) : ''
+  if (!cat) return html
+  const label = HS_MEDIA_LABEL[cat] || cat
+  const reveal =
+    cat === 'csam'
+      ? ''
+      : ` <button type="button" class="hs-mc-held-post-show">show</button></span><template>${html}</template>`
+  return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">[media hidden — ${attr(label)}]${reveal || '</span>'}</div>`
+}
+
+// Handles direct uploads (image/video), multi-image (media[]), and content-extracted embeds.
+function _feedMediaHtml(m) {
   if (!m) return ''
   // Media URLs come back origin-relative (/uploads/...). The ext renders
   // cross-origin (twitch/kick/yt), so a relative src silently 404s AND safeUrl()
@@ -36573,6 +36588,22 @@ function buildFeedMediaHtml(m) {
 
   return ''
 }
+
+// "show" on a held post's media swaps the box for the real markup, in place.
+// Capture, so the row's own click (open thread) never sees it.
+document.addEventListener(
+  'click',
+  (e) => {
+    const btn = e.target?.closest?.('.hs-mc-held-post-show')
+    const box = btn?.closest('.hs-mc-held-post')
+    const tpl = box?.querySelector('template')
+    if (!tpl) return
+    e.preventDefault()
+    e.stopPropagation()
+    box.replaceWith(tpl.content)
+  },
+  { signal: mcSignal, capture: true },
+)
 
 // Resolve `.hs-feed-embed-pending[data-resolve-url]` placeholders via
 // heatsync.org/api/embed/resolve. All HTML built from server fields is escaped

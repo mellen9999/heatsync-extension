@@ -1254,8 +1254,8 @@ const SETTINGS = [
   },
 
   // ── filters / content — per-viewer content-warning emote filters ──────
-  // local bool + server PATCH with rollback; sexual + gore hidden by
-  // default server-side, weapons/drugs/hate shown by default
+  // local bool + server PATCH with rollback; every category is hidden
+  // by default, so `default` resets them (switching off needs no age check)
   {
     key: 'viewer_show_sexual',
     basic: true,
@@ -1269,7 +1269,6 @@ const SETTINGS = [
     control: 'pill',
     apply: 'cwServerPatch',
     syncSilent: true,
-    noReset: true,
     cw: { stateKey: 'sexual', serverBody: 'show_sexual_emotes', noun: 'sexual emotes setting' },
   },
   {
@@ -1285,7 +1284,6 @@ const SETTINGS = [
     control: 'pill',
     apply: 'cwServerPatch',
     syncSilent: true,
-    noReset: true,
     cw: { stateKey: 'gore', serverBody: 'show_gore_emotes', noun: 'gore emotes setting' },
   },
   {
@@ -1301,7 +1299,6 @@ const SETTINGS = [
     control: 'pill',
     apply: 'cwServerPatch',
     syncSilent: true,
-    noReset: true,
     cw: { stateKey: 'weapon', serverBody: 'show_weapon_emotes', noun: 'weapons setting' },
   },
   {
@@ -1317,7 +1314,6 @@ const SETTINGS = [
     control: 'pill',
     apply: 'cwServerPatch',
     syncSilent: true,
-    noReset: true,
     cw: { stateKey: 'drug', serverBody: 'show_drug_emotes', noun: 'drugs setting' },
   },
   {
@@ -1333,7 +1329,6 @@ const SETTINGS = [
     control: 'pill',
     apply: 'cwServerPatch',
     syncSilent: true,
-    noReset: true,
     cw: { stateKey: 'hate', serverBody: 'show_hate_emotes', noun: 'hate setting' },
   },
 

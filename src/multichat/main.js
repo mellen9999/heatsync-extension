@@ -634,8 +634,12 @@
       _heldOlder = null
     }
     el.insertBefore(chunk, el.firstChild)
-    // overflow-anchor is off on the list: rows landing above the viewport would move it
-    el.scrollTop = top0 + (el.scrollHeight - h0)
+    // overflow-anchor is off on the list: rows landing above the viewport would move it. Pinned to
+    // the bottom, go to the bottom: a tab restored from the cache pins a frame later than its
+    // first chunk lands, and following the growth from a not-yet-pinned offset made the list
+    // wander between the two for a moment.
+    if (isScrolledUp || hoverHeld) el.scrollTop = top0 + (el.scrollHeight - h0)
+    else scrollMsgsToBottom(el)
     return _heldOlder !== null
   }
   function growHeldOlder(id) {

@@ -4615,8 +4615,10 @@
           const target = img.src
           cleanup.setTimeout(() => {
             if (!img.isConnected || img.src !== target) return
-            img.removeAttribute('src')
-            img.src = target
+            // Straight to a cache-busted URL: stripping the src first collapses the image to its
+            // alt text, which is the line that jumped up and back on every retry.
+            const base = target.replace(/[?&]hsr=\d+$/, '')
+            img.src = `${base}${base.includes('?') ? '&' : '?'}hsr=${tries + 1}`
           }, delay)
         },
         { capture: true },

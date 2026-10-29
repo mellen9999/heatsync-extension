@@ -121,6 +121,16 @@ try {
   await seed.close()
 
   const p = await ctx.newPage()
+  // Layout shift while the overlay loads: what moved under the reader's eyes, and when.
+  await p.addInitScript(() => {
+    ;(window as any).__ls = []
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries() as any[]) {
+        if (e.hadRecentInput) continue
+        ;(window as any).__ls.push({ t: Math.round(e.startTime), v: +e.value.toFixed(4), src: (e.sources || []).slice(0, 3).map((s: any) => `${s.node?.nodeName?.toLowerCase()}.${String(s.node?.className || '').slice(0, 30)} ${Math.round(s.previousRect.y)}→${Math.round(s.currentRect.y)} h${Math.round(s.previousRect.height)}→${Math.round(s.currentRect.height)}`) })
+      }
+    }).observe({ type: 'layout-shift', buffered: true } as any)
+  })
   await p.goto('https://www.twitch.tv/probechan', { waitUntil: 'domcontentloaded' })
   await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
   await p.waitForFunction((n: number) => document.querySelectorAll('#hs-mc-messages .hs-mc-msg').length >= n, 150, { timeout: 30_000 })
@@ -135,6 +145,9 @@ try {
     } catch (e) { return { err: String(e) } }
   })
   console.log(`boot: ${JSON.stringify(boot)}`)
+  const ls = await p.evaluate(() => (window as any).__ls as { t: number; v: number; src: string[] }[])
+  console.log(`layout shift during load: ${ls.reduce((a, e) => a + e.v, 0).toFixed(4)} over ${ls.length} shifts`)
+  for (const e of ls.slice(0, 12)) console.log(`  ${String(e.t).padStart(5)}ms ${e.v}  ${e.src.join(' | ')}`)
   const cdp = await ctx.newCDPSession(p)
   if (CPU > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU })
   await p.evaluate(() => {

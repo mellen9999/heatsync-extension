@@ -22,6 +22,37 @@ function setMcCosmetic(uid, c) {
     mcUserCosmetics.delete(mcUserCosmetics.keys().next().value)
   }
 }
+// Saved across a refresh (newest 300, 7 days) and put back before the first row renders, so
+// badges and 7TV paints are in the first paint instead of landing row by row seconds later and
+// pushing every name sideways. A saved entry is `stale` until the server answers again.
+const MC_COSMETICS_PERSIST_KEY = 'hs_cosmetics_7tv_v1'
+const MC_COSMETICS_PERSIST_MAX = 300
+const MC_COSMETICS_PERSIST_TTL = 7 * 24 * 60 * 60 * 1000
+const mcCosmeticsStale = new Set()
+let mcCosmeticsSaveTimer = null
+/** Nothing known for this uid, or only a saved answer the server has not confirmed yet. */
+const mcCosmeticsNeedLookup = (uid) => !mcUserCosmetics.has(uid) || mcCosmeticsStale.has(uid)
+function scheduleMcCosmeticsSave() {
+  if (mcCosmeticsSaveTimer) return
+  mcCosmeticsSaveTimer = cleanup.setTimeout(() => {
+    mcCosmeticsSaveTimer = null
+    const items = [...mcUserCosmetics].filter(([, c]) => c && (c.badge || c.paint)).slice(-MC_COSMETICS_PERSIST_MAX)
+    try {
+      browser.storage.local.set({ [MC_COSMETICS_PERSIST_KEY]: { at: Date.now(), items } }).catch(() => {})
+    } catch (_) {}
+  }, 3000)
+}
+async function hydrateMcCosmetics() {
+  try {
+    const blob = (await browser.storage.local.get(MC_COSMETICS_PERSIST_KEY))?.[MC_COSMETICS_PERSIST_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > MC_COSMETICS_PERSIST_TTL) return
+    for (const [uid, c] of blob.items || []) {
+      if (mcUserCosmetics.has(uid) || !c || typeof c !== 'object') continue
+      setMcCosmetic(uid, c)
+      mcCosmeticsStale.add(uid)
+    }
+  } catch (_) {}
+}
 const MC_COSMETICS_PENDING_MAX = 3000
 const mcCosmeticsPending = new Set()
 let mcCosmeticsTimer = null
@@ -478,7 +509,7 @@ function queueMcCosmeticsLookup(userId) {
   // rendered row goes through — kept running and the switch never delivered
   // the ram it promises on a busy channel.
   if (gateAtBoot('cosmetics') === false) return
-  if (mcUserCosmetics.has(userId)) return
+  if (mcUserCosmetics.has(userId) && !mcCosmeticsStale.has(userId)) return
   if (mcCosmeticsPending.size >= MC_COSMETICS_PENDING_MAX) return
   mcCosmeticsPending.add(userId)
   if (!mcCosmeticsTimer) {
@@ -487,15 +518,23 @@ function queueMcCosmeticsLookup(userId) {
     // (see the 500ms continuation below). Cosmetics don't change mid-stream,
     // so batching a whole 2s worth of newly-seen chatters into one request
     // costs nothing but a slightly later first paint for the tail of the batch.
-    mcCosmeticsTimer = cleanup.setTimeout(() => {
-      mcCosmeticsTimer = null
-      flushMcCosmeticsBatch()
-    }, 2000)
+    // After a quiet spell the first batch leaves once ~60ms of the burst has queued (a refresh
+    // would otherwise sit unpainted for the whole window); the 2s only spaces batches apart.
+    mcCosmeticsTimer = cleanup.setTimeout(
+      () => {
+        mcCosmeticsTimer = null
+        flushMcCosmeticsBatch()
+      },
+      Math.max(60, 2000 - (Date.now() - mcCosmeticsLastFlushAt)),
+    )
   }
 }
 
+let mcCosmeticsLastFlushAt = 0
+
 function flushMcCosmeticsBatch() {
   if (!mcCosmeticsPending.size) return
+  mcCosmeticsLastFlushAt = Date.now()
   // Drain newest-queued first: messages queue oldest→newest, but the user is
   // looking at the bottom (newest) of the buffer, so the visible viewport
   // resolves in the first batch instead of last. Off-screen/scrolled-away
@@ -509,19 +548,23 @@ function flushMcCosmeticsBatch() {
       if (!resp?.cosmetics) return
       const changedIds = []
       for (const [uid, c] of Object.entries(resp.cosmetics)) {
+        mcCosmeticsStale.delete(uid)
         if (c) {
           setMcCosmetic(uid, c)
           changedIds.push(uid)
-        }
+        } else mcUserCosmetics.delete(uid) // answered "none": a saved entry that no longer holds stops being served
       }
       if (changedIds.length) updateCosmeticsInPlace(changedIds)
+      scheduleMcCosmeticsSave()
     })
     .catch(() => {})
+  // A backlog (a history burst names hundreds of chatters) drains at 25 per 200ms, the way paints
+  // drain: at 2s a refresh left the tail of the channel without badges for ~15s.
   if (mcCosmeticsPending.size > 0) {
     mcCosmeticsTimer = cleanup.setTimeout(() => {
       mcCosmeticsTimer = null
       flushMcCosmeticsBatch()
-    }, 2000)
+    }, 200)
   }
 }
 
@@ -969,6 +1012,6 @@ function getMcPaintStyle(userId, colour = '') {
 function userPaintStyle(uid, lower, platform) {
   if (!uid && lower) uid = knownUserIds.get(userKey(lower, platform)) || ''
   if (!uid) return ''
-  if (!mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+  if (mcCosmeticsNeedLookup(uid)) queueMcCosmeticsLookup(uid)
   return getMcPaintStyle(uid)
 }

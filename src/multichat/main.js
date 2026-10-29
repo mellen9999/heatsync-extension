@@ -7818,7 +7818,7 @@
       // as any other inline @mention — no bespoke registration needed).
       const feedUid = knownUserIds.get(userKey((m.feedUser || '').toLowerCase(), 'twitch')) || ''
       const feedHsPaint = feedUid ? hsPaintRender(feedUid, m.feedUser || 'anon') : null
-      if (feedUid && !feedHsPaint && !mcUserCosmetics.has(feedUid)) queueMcCosmeticsLookup(feedUid)
+      if (feedUid && !feedHsPaint && mcCosmeticsNeedLookup(feedUid)) queueMcCosmeticsLookup(feedUid)
       const feedPaintStyle = feedHsPaint ? '' : feedUid ? getMcPaintStyle(feedUid) : ''
       const userLink = buildFeedQuoteUserLink(m.feedUser, feedUid, feedHsPaint, feedPaintStyle, m.color)
       // Plus tenure — same uid this row's paint already resolved above.
@@ -8258,7 +8258,7 @@
     const uidTwitch = (m.platform === 'kick' ? m._uidTwitch : m.userId) || ''
     if (uidTwitch) {
       badges += renderThirdPartyBadges(uidTwitch)
-      if (!mcUserCosmetics.has(uidTwitch)) queueMcCosmeticsLookup(uidTwitch)
+      if (mcCosmeticsNeedLookup(uidTwitch)) queueMcCosmeticsLookup(uidTwitch)
     }
     const plat =
       m.platform === 'youtube'
@@ -8958,7 +8958,7 @@
         let inner = `${at}${safeName}`
         if (uid) {
           uidAttr = ` data-uid="${escapeHtml(uid)}"`
-          if (!mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+          if (mcCosmeticsNeedLookup(uid)) queueMcCosmeticsLookup(uid)
           // HeatSync paint wins over 7TV — same precedence rule as the
           // sender username / reply-context bar.
           const hsPaint = hsPaintRender(uid, `${at}${name}`)
@@ -11140,7 +11140,7 @@
         // Reused div skipped buildMessageDiv — re-queue its cosmetic so a prior
         // failed/absent lookup is retried (resolves on a later flush). Without
         // this, a frozen channel's restored buffer never re-attempts cosmetics.
-        if (_rm?.userId && !mcUserCosmetics.has(_rm.userId)) queueMcCosmeticsLookup(_rm.userId)
+        if (_rm?.userId && mcCosmeticsNeedLookup(_rm.userId)) queueMcCosmeticsLookup(_rm.userId)
         // Stale epoch → the row's rendered output is invalidated (emote
         // animation toggle, rerender setting, badge bulk-load). Rebuild the
         // div and swap it IN THE SAME SLOT — position, zebra stripe, and
@@ -13888,6 +13888,8 @@
         _emotesP,
         loadSenderEmoteSets(),
         loadStaleEmotes(),
+        hydrateHsCosmetics(),
+        hydrateMcCosmetics(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)

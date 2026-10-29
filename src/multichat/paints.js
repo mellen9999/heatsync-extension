@@ -76,6 +76,12 @@ const HS_PAINT_BATCH_SIZE = 50
 // with no visible latency cost — a name paints in within 2s of first render,
 // not 100ms.
 const HS_PAINT_BATCH_DELAY = 2000
+// The 2s is a spacing between requests, not a wait before the first: after a quiet spell
+// (a refresh, a tab switch) the first batch goes out once this much of the burst has queued,
+// so names paint at once instead of 2s late. Steady state keeps the 2s spacing.
+const HS_PAINT_FIRST_DELAY = 60
+let hsPaintLastFlushAt = 0
+const hsPaintFlushDelay = () => Math.max(HS_PAINT_FIRST_DELAY, HS_PAINT_BATCH_DELAY - (Date.now() - hsPaintLastFlushAt))
 // Mirrors MC_COSMETICS_PENDING_MAX (main.js) — a very busy/firehose channel
 // can queue unique uids faster than the batch drain rate; cap so the pending
 // Set can't grow unbounded between flushes.
@@ -628,6 +634,51 @@ function setHsPaintEntry(userId, spec) {
   hsPaintCache.set(userId, { spec: shown, hash })
 }
 
+// ── survive a refresh ────────────────────────────────────────────────────────
+// Everything above is in-memory, so a refresh redrew every name plain and then
+// painted them as the first batch answered. The answers are saved (newest 300 of
+// each kind, 7 days) and put back before the first row renders. They are NOT marked
+// fresh (hsResolvedAt stays empty), so each uid still re-resolves on first sight: the
+// saved paint is what shows until the server's answer lands, and a paint that went
+// away (cleared, Plus lapsed) comes off through the usual changed-hash path.
+const HS_PERSIST_KEY = 'hs_cosmetics_v1'
+const HS_PERSIST_MAX = 300
+const HS_PERSIST_TTL = 7 * 24 * 60 * 60 * 1000
+const hsRawSpecs = new Map() // uid -> the spec exactly as the server sent it (positives only)
+let hsPersistTimer = null
+
+function scheduleHsCosmeticSave() {
+  if (hsPersistTimer) return
+  hsPersistTimer = cleanup.setTimeout(() => {
+    hsPersistTimer = null
+    const newest = (m, keep) => [...m].filter(keep).slice(-HS_PERSIST_MAX)
+    const blob = {
+      at: Date.now(),
+      paints: newest(hsRawSpecs, ([, v]) => !!v),
+      colors: newest(hsColorCache, ([, v]) => !!v),
+      plus: newest(hsPlusCache, ([, v]) => !!v),
+    }
+    try {
+      browser.storage.local.set({ [HS_PERSIST_KEY]: blob }).catch(() => {})
+    } catch (_) {}
+  }, 3000)
+}
+
+async function hydrateHsCosmetics() {
+  try {
+    const blob = (await browser.storage.local.get(HS_PERSIST_KEY))?.[HS_PERSIST_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > HS_PERSIST_TTL) return
+    for (const [uid, color] of blob.colors || []) if (!hsColorCache.has(uid)) setHsColorEntry(uid, color)
+    for (const [uid, since] of blob.plus || []) if (!hsPlusCache.has(uid)) setHsPlusEntry(uid, since)
+    if (!hsPaintsEnabled()) return
+    for (const [uid, spec] of blob.paints || []) {
+      if (hsPaintCache.has(uid) || !spec || typeof spec !== 'object') continue
+      hsRawSpecs.set(uid, spec)
+      setHsPaintEntry(uid, spec)
+    }
+  } catch (_) {}
+}
+
 /**
  * Queue a resolved-twitch-space uid for a paint lookup. Debounced + batched.
  * See the ID-SPACE SAFETY note at the top of this file — never call this with
@@ -639,7 +690,7 @@ function queuePaintLookup(userId) {
   if (!hsPaintsEnabled()) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(userId)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -653,7 +704,7 @@ function queueNameColorLookup(uid) {
   if (hsColorCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -667,7 +718,7 @@ function queuePlusTenureLookup(uid) {
   if (hsPlusCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -692,12 +743,13 @@ function primeSelfHsCosmetics(ui) {
     hsPaintPriority.add(id)
   }
   if (hsPaintPriority.size && !hsPaintBatchTimer) {
-    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
   }
 }
 
 async function flushHsPaintBatch() {
   hsPaintBatchTimer = null
+  hsPaintLastFlushAt = Date.now()
   if (!hsPaintPending.size && !hsPaintPriority.size) return
   // Own identities drain first — see hsPaintPriority.
   const { batch, rest } = partitionPaintBatch([...hsPaintPriority, ...hsPaintPending], HS_PAINT_BATCH_SIZE)
@@ -762,6 +814,11 @@ async function flushHsPaintBatch() {
         // reports no change — every plain chatter resolves that way.
         const prevHash = hsPaintCache.get(id)?.hash ?? null
         setHsPaintEntry(id, paints[id])
+        if (paints[id]) {
+          hsRawSpecs.delete(id) // re-insert last: the newest-300 cut keeps what was seen most recently
+          hsRawSpecs.set(id, paints[id])
+          if (hsRawSpecs.size > HS_PERSIST_MAX * 2) hsRawSpecs.delete(hsRawSpecs.keys().next().value)
+        } else hsRawSpecs.delete(id)
         hsResolvedAt.set(id, Date.now())
         if ((hsPaintCache.get(id)?.hash ?? null) !== prevHash) changed.push(id)
       } else {
@@ -775,6 +832,7 @@ async function flushHsPaintBatch() {
     for (const id of batch) hsPaintPending.add(id)
   }
 
+  if (paints || colors || plus) scheduleHsCosmeticSave()
   if ((hsPaintPending.size > 0 || hsPaintPriority.size > 0) && !hsPaintBatchTimer) {
     hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BACKLOG_DELAY)
   }
@@ -1495,6 +1553,7 @@ export {
   hsPaintRender,
   hsPaintUidOfMsg,
   hsUsernameColor,
+  hydrateHsCosmetics,
   invalidateHsCosmetics,
   isHsCosmeticFreshForTests,
   isHsPaintHiddenForUser,

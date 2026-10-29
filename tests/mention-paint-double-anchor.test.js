@@ -110,6 +110,7 @@ globalThis.knownUserIds = new Map()
 globalThis.taggedName = (n) => n
 globalThis.userKey = userKey
 globalThis.mcUserCosmetics = new Map()
+globalThis.mcCosmeticsNeedLookup = (uid) => !globalThis.mcUserCosmetics.has(uid)
 globalThis.queueMcCosmeticsLookup = () => {}
 globalThis.getMcPaintStyle = () => null
 // Plus tenure ("+5mo"/"+3y") rides the same mention render site but is a

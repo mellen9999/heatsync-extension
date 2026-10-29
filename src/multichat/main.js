@@ -3927,6 +3927,44 @@
         menu.appendChild(item)
       }
 
+      // send to: which linked platforms a message typed in this tab goes out to.
+      // One green (on) / red (off) button per platform; stays open so several can
+      // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
+      const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
+      if (Object.values(linked).filter(Boolean).length > 1) {
+        const hdr = document.createElement('div')
+        hdr.textContent = 'send to'
+        hdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
+        menu.appendChild(hdr)
+        const labels = { twitch: 'T  twitch', kick: 'K  kick', youtube: 'Y  youtube' }
+        for (const key of ['twitch', 'kick', 'youtube']) {
+          if (!linked[key]) continue
+          const btn = document.createElement('div')
+          const paint = () => {
+            const on = resolveSendTargets(ch.sendTargets, linked)[key]
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+          }
+          paint()
+          btn.textContent = labels[key]
+          btn.addEventListener('mouseenter', () => (btn.style.cssText += 'background:#fff;color:#000;'), {
+            signal: mcSignal,
+          })
+          btn.addEventListener('mouseleave', paint, { signal: mcSignal })
+          btn.addEventListener('click', () => {
+            const on = resolveSendTargets(ch.sendTargets, linked)[key]
+            const next = nextSendTargets(ch.sendTargets, linked, key, !on)
+            if (!next) return // never leave a tab with nowhere to send
+            ch.sendTargets = next
+            saveConfig()
+            paint()
+          })
+          menu.appendChild(btn)
+        }
+        const sep = document.createElement('div')
+        sep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
+        menu.appendChild(sep)
+      }
+
       mkItem('edit', '#fff', () => showEditChannelForm(tabId))
       for (const l of channelSubLinks(ch)) {
         mkItem(l.label, '#ffffff', () => window.open(l.url, '_blank', 'noopener'))

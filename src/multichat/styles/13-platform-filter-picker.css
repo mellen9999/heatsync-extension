@@ -159,7 +159,9 @@
     .hs-mc-picker-section-header {
       position: sticky;
       top: 0;
-      z-index: 1;
+      /* above the emotes: their wrappers sit at z-index 1 and their imgs at 2
+         (10-emotes.css), so a lower header let them scroll OVER the label */
+      z-index: 5;
       display: flex;
       align-items: center;
       gap: 5px;

@@ -567,6 +567,9 @@
   // whose list is still filling; _paintCap is how many rows it may show so far.
   const FIRST_PAINT_ROWS = 100
   const FIRST_PAINT_STEP = 100
+  // Held rows go back in smaller bites than first paint grows: each bite is one task that
+  // forces layout twice, so its size is the longest the page can stall a click or a hover.
+  const HELD_MOUNT_STEP = 40
   let _paintFor = null
   let _paintCap = 0
   function growFirstPaint(id) {
@@ -642,7 +645,7 @@
     cleanup.setTimeout(() => {
       if (!_heldOlder || _heldOlder.id !== id) return
       if (currentTab !== id) return // switchTab flushes on the way out
-      if (_mountHeldChunk(FIRST_PAINT_STEP)) growHeldOlder(id)
+      if (_mountHeldChunk(HELD_MOUNT_STEP)) growHeldOlder(id)
       else applyMcMutes()
     }, 0)
   }
@@ -4074,6 +4077,11 @@
   // Pointer resting on an emote/name/badge: the feed is frozen (isScrolledUp) but this is
   // not a reader's scroll-up, so renders during it never raise the "N new" button.
   let hoverHeld = false
+  // A render asked for while the pointer held the feed. Release only repaints if
+  // one was: with nothing new the pane already shows everything, and the repaint
+  // (a 500-row diff, then a pin that forces layout) is what made every unhover
+  // cost ~16ms at cpu x4 (traced 2026-10-29).
+  let _holdMissedRender = false
   let emoteReloadTimer = null
   // Track scopes (channel:X / global / inventory) whose first emote payload
   // we've already received this session. After first load, subsequent emote
@@ -4829,6 +4837,9 @@
         newMessageCount = 0
         newBtn.style.display = 'none'
         if (isStaticTab()) return
+        const missed = _holdMissedRender
+        _holdMissedRender = false
+        if (!missed) return
         renderMessages(currentTab)
         scrollMsgsToBottom(msgsEl)
       }
@@ -4849,6 +4860,7 @@
           if (hoverHeld && !isScrolledUp) hoverHeld = false // resumed by other means
           if (hoverHeld || isScrolledUp || isStaticTab()) return
           hoverHeld = true
+          _holdMissedRender = false
           isScrolledUp = true
         },
         { passive: true, signal: mcSignal },
@@ -10613,7 +10625,10 @@
     // (it anchors scroll itself afterward).
     if (isScrolledUp && !opts?.bypassScrollPause) {
       // Held by hover: nothing new is promised, the release re-renders and shows it all.
-      if (hoverHeld) return
+      if (hoverHeld) {
+        _holdMissedRender = true
+        return
+      }
       newMessageCount++
       if (newBtn) {
         newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${newMessageCount} new`

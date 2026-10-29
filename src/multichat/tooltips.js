@@ -86,7 +86,7 @@ function upgradeBadgeImg(img, src) {
 
 function showBadgeTooltip(badgeImg, badgeName) {
   const tooltip = ensureBadgeTooltip()
-  document.body.appendChild(cleanup.trackNode(tooltip))
+  hsAppendLastIfNeeded(tooltip)
   const img = tooltip.querySelector('img')
   img.dataset.hsBadgeOrig = badgeImg.src
   img.src = badgeImg.src
@@ -536,7 +536,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
 
 function showEmojiTooltip(targetEl, emoji, name) {
   const tooltip = ensureEmoteTooltip()
-  document.body.appendChild(cleanup.trackNode(tooltip))
+  hsAppendLastIfNeeded(tooltip)
   const img = tooltip.querySelector('img')
   const nameEl = tooltip.querySelector('.tooltip-name')
   const stateEl = tooltip.querySelector('.tooltip-source')
@@ -591,7 +591,9 @@ function refreshEmoteTooltip(emoteName, newState) {
   // used to chase unadded→owned ladder transitions collapses to a single
   // blocked-vs-not check.
   const hl = newState === 'blocked' ? 'var(--hs-danger)' : '#fff'
-  document.body.style.setProperty('--hs-highlight-color', hl)
+  _hlColor = hl
+  for (const el of document.querySelectorAll('.hs-emote-highlight, .hs-stack-hl'))
+    el.style.setProperty('--hs-highlight-color', hl)
 }
 
 function hideEmoteTooltip() {
@@ -709,8 +711,8 @@ function setupEmoteTooltipHandlers() {
         effectiveState = stack.querySelector('.hs-mc-emote-wrapper.hs-state-blocked') ? 'blocked' : 'normal'
       }
       const sourceColor = effectiveState === 'blocked' ? 'var(--hs-danger)' : '#fff'
-      document.body.style.setProperty('--hs-highlight-color', sourceColor)
-      queryEmoteWrappers(emoteName).forEach((w) => hsSetEmoteHighlight(w, true))
+      _hlColor = sourceColor
+      hsOnScreen(queryEmoteWrappers(emoteName)).forEach((w) => hsSetEmoteHighlight(w, true))
     },
     'mc-emote-tooltip-mouseover',
   )
@@ -746,9 +748,7 @@ function setupEmoteTooltipHandlers() {
 
       // Remove cross-highlight from all wrappers
       const emoteName = wrapper?.dataset.emoteName || img?.alt || img?.dataset.emoteName
-      if (emoteName) {
-        queryEmoteWrappers(emoteName).forEach((w) => hsSetEmoteHighlight(w, false))
-      }
+      if (emoteName) hsClearEmoteHighlights()
     },
     'mc-emote-tooltip-mouseout',
   )
@@ -980,6 +980,9 @@ const TOOLTIP_BADGE_LEAFS = new Set([
 function roundTooltipBadgeWidths(tooltip) {
   if (!tooltip) return
   const els = tooltip.querySelectorAll('[class*="hs-pc-"], .hs-heat-num')
+  // Three passes, not write-then-read per badge: that was one forced layout for
+  // every badge on the card. Clear all, read all (one layout), write all.
+  const leafs = []
   for (const el of els) {
     let isBadge = false
     for (const c of el.classList)
@@ -990,10 +993,13 @@ function roundTooltipBadgeWidths(tooltip) {
     if (!isBadge) continue
     if (!el.textContent?.trim()) continue
     el.style.width = ''
-    const w = el.getBoundingClientRect().width
-    const rounded = Math.ceil(w)
-    if (Math.abs(w - rounded) > 0.01) el.style.width = `${rounded}px`
+    leafs.push(el)
   }
+  const widths = leafs.map((el) => el.getBoundingClientRect().width)
+  leafs.forEach((el, i) => {
+    const rounded = Math.ceil(widths[i])
+    if (Math.abs(widths[i] - rounded) > 0.01) el.style.width = `${rounded}px`
+  })
 }
 
 function ensureUserTooltip() {
@@ -1639,13 +1645,44 @@ function positionTooltipAtElement(tooltip, targetEl) {
 // used to key off `:has(.hs-emote-highlight)`, and a :has() rule makes the
 // browser re-check the whole page on every DOM insertion (~20ms with a busy
 // chat) — a plain class on the stack costs nothing.
+// The plate colour rides on the highlighted elements themselves. It used to be
+// written to <body>: a custom property is inherited, so changing it there
+// restyled the whole page on every emote hover and unhover (32ms of style+layout
+// per step at cpu x4, traced 2026-10-29). On the handful of matched wrappers it
+// restyles only them and their ::before.
+let _hlColor = '#fff'
+// Only the copies you can see get the plate. A popular emote is on a third of 500
+// rows, and lighting them all was ~130 class + style writes (and a subtree restyle
+// each) per hover AND per unhover; the rest are off screen. The feed is held while
+// the pointer rests here and a scroll dismisses the highlight, so a row cannot
+// scroll into view still unlit. Rects are read first, writes after: one layout.
+function hsOnScreen(list) {
+  const vh = innerHeight
+  const out = []
+  for (const w of list) {
+    const r = w.getBoundingClientRect()
+    if (r.bottom > 0 && r.top < vh) out.push(w)
+  }
+  return out
+}
 function hsSetEmoteHighlight(w, on) {
+  const stack = w.closest?.('.hs-mc-emote-stack')
   w.classList.toggle('hs-emote-highlight', on)
-  w.closest?.('.hs-mc-emote-stack')?.classList.toggle('hs-stack-hl', on)
+  stack?.classList.toggle('hs-stack-hl', on)
+  for (const el of stack ? [w, stack] : [w]) {
+    if (on) el.style.setProperty('--hs-highlight-color', _hlColor)
+    else el.style.removeProperty('--hs-highlight-color')
+  }
 }
 function hsClearEmoteHighlights() {
-  for (const w of document.querySelectorAll('.hs-emote-highlight')) w.classList.remove('hs-emote-highlight')
-  for (const s of document.querySelectorAll('.hs-stack-hl')) s.classList.remove('hs-stack-hl')
+  for (const w of document.querySelectorAll('.hs-emote-highlight')) {
+    w.classList.remove('hs-emote-highlight')
+    w.style.removeProperty('--hs-highlight-color')
+  }
+  for (const s of document.querySelectorAll('.hs-stack-hl')) {
+    s.classList.remove('hs-stack-hl')
+    s.style.removeProperty('--hs-highlight-color')
+  }
 }
 
 function hideUserTooltip() {
@@ -1752,7 +1789,7 @@ function setupUserTooltipHandlers() {
 // Uses textContent (no innerHTML) so the username string is never parsed as HTML.
 function showUserSkeleton(targetEl, username, color) {
   const tooltip = ensureUserTooltip()
-  document.body.appendChild(cleanup.trackNode(tooltip))
+  hsAppendLastIfNeeded(tooltip)
   _userTooltipTarget = targetEl
   while (tooltip.firstChild) tooltip.removeChild(tooltip.firstChild)
   const loading = document.createElement('div')
@@ -1786,7 +1823,7 @@ function showLinkTooltip(e, url) {
   _linkHoverUrl = url
   _linkTargetEl = e.target.closest('.hs-mc-link') || e.target
   const tip = ensureLinkTooltip()
-  document.body.appendChild(cleanup.trackNode(tip))
+  hsAppendLastIfNeeded(tip)
   let hostname = ''
   try {
     hostname = new URL(url).hostname

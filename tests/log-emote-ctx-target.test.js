@@ -84,7 +84,7 @@ test('event row click opens the channel on its live tab, not the last active tab
   const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
   expect(src).toMatch(/twitch\.tv\/\$\{encodeURIComponent\(ch\)\}#hs-live/)
   expect(src).toMatch(/location\.hash === '#hs-live'\) \{\s*_savedActiveTab = 'live'/)
-  expect(src).toMatch(/config\.channels\.push\([^]*?id: cur,[^]*?saveConfig\(\)[^]*?_savedActiveTab = cur/)
+  expect(src).toMatch(/config\.channels\.push\([\s\S]*?id: cur,[\s\S]*?saveConfig\(\)[\s\S]*?_savedActiveTab = cur/)
 })
 
 test('live tabs reserve room for the live dot so the unread count never sits under it', () => {
@@ -104,7 +104,7 @@ test('tabs re-assert channel interest so a restarted service worker cannot stran
   const bg = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
   expect(irc).toMatch(/type: 'bg_irc_interest', channels: \[\.\.\.this\.channels\.keys\(\)\]/)
   expect(irc).toMatch(/_interestTimer = cleanup\.setInterval\(\(\) => this\._reassertInterest\(\), 15000\)/)
-  expect(bg).toMatch(/message\.type === 'bg_irc_interest'[^]*?bgIrcRegisterTabInterest\(tabId, ch\)/)
+  expect(bg).toMatch(/message\.type === 'bg_irc_interest'[\s\S]*?bgIrcRegisterTabInterest\(tabId, ch\)/)
 })
 
 test('kick wide emotes crop to their art instead of drawing as a strip in a square', () => {

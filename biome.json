@@ -75,7 +75,8 @@
         "src/lib/emote-refs.js",
         "src/lib/card-time.js",
         "src/lib/card-model.js",
-        "src/lib/card-render.js"
+        "src/lib/card-render.js",
+        "src/lib/stream-event-text.js"
       ],
       "formatter": {
         "enabled": false

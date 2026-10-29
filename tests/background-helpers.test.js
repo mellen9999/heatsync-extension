@@ -1240,7 +1240,9 @@ const { isValidSyncedChannel } = new Function(`${extractFn('isValidSyncedChannel
 
 describe('isValidSyncedChannel', () => {
   test('accepts what the website syncs: a bare youtube handle beside twitch + kick', () => {
-    expect(isValidSyncedChannel({ id: 't', twitch: 'drdisrespect', kick: 'drdisrespect', youtube: 'drdisrespect' })).toBe(true)
+    expect(
+      isValidSyncedChannel({ id: 't', twitch: 'drdisrespect', kick: 'drdisrespect', youtube: 'drdisrespect' }),
+    ).toBe(true)
     expect(isValidSyncedChannel({ id: 't', youtube: 'lofigirl' })).toBe(true)
     expect(isValidSyncedChannel({ id: 't', youtube: '@lofigirl' })).toBe(true)
   })

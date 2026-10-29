@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4bbb9e84bb32' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'f387c4af2cc6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27646,6 +27646,36 @@ function _hsMcApplyMods(html, mods, hue) {
 
 const _hsEmoteBoxW = new Map() // chat url -> integer px (ceil of natural box width)
 
+// The widths are only learned once an image has decoded, so after a refresh every emote in
+// the first paint had none: each image loaded at width 0 and pushed the text after it
+// sideways, row after row, as they trickled in. They are saved (newest 1500, 30 days) and
+// read back before the first row renders, so a returning emote reserves its box from frame one.
+const HS_BOXW_KEY = 'hs_emote_boxw_v1'
+const HS_BOXW_SAVE_MAX = 1500
+const HS_BOXW_TTL = 30 * 24 * 60 * 60 * 1000
+let _hsBoxWSaveTimer = null
+function scheduleEmoteBoxWSave() {
+  if (_hsBoxWSaveTimer) return
+  _hsBoxWSaveTimer = cleanup.setTimeout(() => {
+    _hsBoxWSaveTimer = null
+    try {
+      browser.storage.local
+        .set({ [HS_BOXW_KEY]: { at: Date.now(), items: [..._hsEmoteBoxW].slice(-HS_BOXW_SAVE_MAX) } })
+        .catch(() => {})
+    } catch (_) {}
+  }, 5000)
+}
+async function hydrateEmoteBoxWidths() {
+  try {
+    const blob = (await browser.storage.local.get(HS_BOXW_KEY))?.[HS_BOXW_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > HS_BOXW_TTL) return
+    for (const [url, w] of blob.items || []) {
+      if (typeof url === 'string' && Number.isInteger(w) && w > 0 && w < 600 && !_hsEmoteBoxW.has(url))
+        _hsEmoteBoxW.set(url, w)
+    }
+  } catch (_) {}
+}
+
 // Kick serves every emote on a square canvas, so a wide one (…KEKWIDE) arrives
 // as a strip of art in the middle of transparent padding and drew at a third of
 // the size of any other wide emote. Measure where the art actually is (one
@@ -27822,6 +27852,7 @@ function hsSnapEmoteBox(img) {
           const surl = it.selfWrap.dataset?.emoteUrl || it.im.getAttribute('src')
           if (surl && !_hsEmoteBoxW.has(surl)) {
             _hsEmoteBoxW.set(surl, it.selfW)
+            scheduleEmoteBoxWSave()
             if (_hsEmoteBoxW.size > 2000) _hsEmoteBoxW.delete(_hsEmoteBoxW.keys().next().value)
           }
         }
@@ -27829,6 +27860,7 @@ function hsSnapEmoteBox(img) {
       }
       const url = it.im.closest('.hs-mc-emote-wrapper')?.dataset?.emoteUrl || it.im.getAttribute('src')
       if (url) {
+        if (_hsEmoteBoxW.get(url) !== it.w) scheduleEmoteBoxWSave()
         _hsEmoteBoxW.set(url, it.w)
         // FIFO cap — a long multi-channel session measures thousands of unique
         // emote URLs; without eviction this Map grows unbounded for the tab's life.
@@ -77394,8 +77426,9 @@ const STORAGE_KEY = 'heatsync_multichat'
   function reprocessEmoteTextInPlace() {
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl) return
-    // Snapshot rows ONCE — DOM may mutate across async chunks
-    const rows = [...msgsEl.querySelectorAll('.hs-mc-msg[data-msg-key]')]
+    // Snapshot rows ONCE — DOM may mutate across async chunks. Newest first: those are the
+    // rows on screen, and they swap in one task; every older chunk lands above the viewport.
+    const rows = [...msgsEl.querySelectorAll('.hs-mc-msg[data-msg-key]')].reverse()
     if (rows.length === 0) return
 
     const CHUNK = 50
@@ -77421,9 +77454,22 @@ const STORAGE_KEY = 'heatsync_multichat'
       _indexMessageDiv(div, div.dataset.msgKey)
     }
 
+    // A text row that becomes an emote row grows (20px line -> 36px emote box), so every swap
+    // moves what is below it. Pinned to the bottom the reader is put back on the bottom; reading
+    // up the list the scroll offset follows the growth. Either way nothing slides under them.
+    function _holdPlace(work) {
+      const h0 = msgsEl.scrollHeight
+      const top0 = msgsEl.scrollTop
+      work()
+      if (!isScrolledUp) scrollMsgsToBottom(msgsEl)
+      else msgsEl.scrollTop = top0 + (msgsEl.scrollHeight - h0)
+    }
+
     // Fast path: ≤50 rows — run synchronously, no rAF overhead
     if (rows.length <= CHUNK) {
-      for (const div of rows) _processRow(div)
+      _holdPlace(() => {
+        for (const div of rows) _processRow(div)
+      })
       return
     }
 
@@ -77437,7 +77483,9 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (currentTab !== snapTab || _renderEpoch !== snapEpoch || document.getElementById('hs-mc-messages') !== msgsEl)
         return
       const end = Math.min(offset + CHUNK, rows.length)
-      for (let i = offset; i < end; i++) _processRow(rows[i])
+      _holdPlace(() => {
+        for (let i = offset; i < end; i++) _processRow(rows[i])
+      })
       // Schedule next chunk via rafOrTimeout — tracked timers/rafs, cancelled
       // by destroyAll() on teardown so the loop never outlives the panel, and
       // starvation-proof: a bare rAF here would stall a rebuild mid-chunks in
@@ -83777,6 +83825,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         loadStaleEmotes(),
         hydrateHsCosmetics(),
         hydrateMcCosmetics(),
+        hydrateEmoteBoxWidths(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)

@@ -851,3 +851,20 @@ html.hs-card-scroll-lock body {
   overflow: hidden !important;
   height: 100%;
 }
+
+/* A clickable card: the whole plate goes white under the cursor, banner
+   included. the body hover alone left a banner image showing
+   behind black chips, so the hero image drops and the chips take the plate. */
+.hs-card[data-clickable="true"] .hs-card-body:hover .hs-card-hero-img,
+.hs-card[data-clickable="true"]:active .hs-card-body .hs-card-hero-img {
+    background-image: none !important;
+}
+.hs-card[data-clickable="true"] .hs-card-body:hover .hs-card-hero,
+.hs-card[data-clickable="true"] .hs-card-body:hover .hs-card-top.hs-card-has-hero :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-badges, .hs-card-bio),
+.hs-card[data-clickable="true"]:active .hs-card-body .hs-card-hero,
+.hs-card[data-clickable="true"]:active .hs-card-body .hs-card-top.hs-card-has-hero :is(.hs-card-name, .hs-card-pronouns, .hs-card-plus, .hs-card-sheet-row, .hs-card-badges, .hs-card-bio) {
+    background: #ffffff;
+}
+.hs-card[data-clickable="true"] .hs-card-body:hover .hs-card-top.hs-card-has-hero *:not(.hs-card-ember):not([class*="hsp-"]) {
+    color: #000000 !important;
+}

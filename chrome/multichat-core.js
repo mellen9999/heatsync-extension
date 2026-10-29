@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1dd5bb6b5171' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ce79c05dcc50' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -73714,7 +73714,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const btn = document.createElement('div')
           const paint = () => {
             const on = getPlatformFilter(tabId)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
           }
           paint()
           btn.textContent = pLabels[key]
@@ -73739,7 +73739,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       }
 
       // send to: which linked platforms a message typed in this tab goes out to.
-      // One green (on) / red (off) button per platform; stays open so several can
+      // One button per platform: its colour when on, grey when off; stays open so several can
       // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
       const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
       if (Object.values(linked).some(Boolean)) {
@@ -73753,7 +73753,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           const btn = document.createElement('div')
           const paint = () => {
             const on = resolveSendTargets(ch.sendTargets, linked)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
           }
           paint()
           btn.textContent = labels[key]

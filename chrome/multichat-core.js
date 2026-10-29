@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9f485eb260a3' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ae5cd426e2a8' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29305,7 +29305,7 @@ function fitPreviewScale(baseW, baseH) {
   const availH = window.innerHeight - PREVIEW_VIEWPORT_MARGIN * 2 - PREVIEW_RESERVE_V
   return Math.min(STACK_PREVIEW_SCALE, availW / baseW, availH / baseH)
 }
-function buildStackPreview(box, stackEmotes) {
+function buildStackPreview(box, stackEmotes, onResize) {
   const liveImgs = [...stackEmotes.querySelectorAll('img')]
   const clone = stackEmotes.cloneNode(true)
   const imgs = [...clone.querySelectorAll('img')]
@@ -29368,6 +29368,10 @@ function buildStackPreview(box, stackEmotes) {
     clone.style.transform = `scale(${scale})`
     box.style.width = `${baseW * scale}px`
     box.style.height = `${baseH * scale}px`
+    // The tooltip is placed from its size, and this box changes size when the
+    // hi-res images land: re-place it, or a first hover stays mis-anchored
+    // until the pointer leaves and returns (when the images are cached).
+    onResize?.()
   }
   requestAnimationFrame(sizeBox)
   imgs.forEach((im) => {
@@ -29513,7 +29517,9 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
     ?.querySelector(':scope > .hs-mc-emote-stack-emotes')
   if (stackEmotes && stackEmotes.children.length > 1) {
     img.style.display = 'none'
-    buildStackPreview(stackBox, stackEmotes)
+    buildStackPreview(stackBox, stackEmotes, () => {
+      if (tooltip.classList.contains('visible')) positionTooltipAtElement(tooltip, hoveredImg || e.target)
+    })
     // Name lists the emotes in the nest, base first. A deep nest (50 overlays)
     // would otherwise join into a 500-char label that blows the tooltip past the
     // viewport — the composite IMAGE already shows every overlay, so the label

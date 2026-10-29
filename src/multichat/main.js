@@ -567,9 +567,6 @@
   // whose list is still filling; _paintCap is how many rows it may show so far.
   const FIRST_PAINT_ROWS = 100
   const FIRST_PAINT_STEP = 100
-  // Held rows go back in smaller bites than first paint grows: each bite is one task that
-  // forces layout twice, so its size is the longest the page can stall a click or a hover.
-  const HELD_MOUNT_STEP = 40
   let _paintFor = null
   let _paintCap = 0
   function growFirstPaint(id) {
@@ -645,7 +642,7 @@
     cleanup.setTimeout(() => {
       if (!_heldOlder || _heldOlder.id !== id) return
       if (currentTab !== id) return // switchTab flushes on the way out
-      if (_mountHeldChunk(HELD_MOUNT_STEP)) growHeldOlder(id)
+      if (_mountHeldChunk(FIRST_PAINT_STEP)) growHeldOlder(id)
       else applyMcMutes()
     }, 0)
   }

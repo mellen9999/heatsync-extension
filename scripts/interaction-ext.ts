@@ -125,6 +125,16 @@ try {
   await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
   await p.waitForFunction((n: number) => document.querySelectorAll('#hs-mc-messages .hs-mc-msg').length >= n, 150, { timeout: 30_000 })
   await p.waitForTimeout(3000)
+  // Boot timeline, from the extension's own diag ring: which phase the first row waited on.
+  const boot = await p.evaluate(() => {
+    try {
+      const ring = JSON.parse(localStorage.getItem('hs_diag_ring') || '[]')
+      const t = ring.filter((x: any) => x.e === 'init-timing').slice(-1)[0]
+      const nav = performance.getEntriesByType('navigation')[0] as any
+      return { marks: t?.marks || t?.d?.marks || null, raw: t ? Object.keys(t) : [], domContentLoaded: Math.round(nav.domContentLoadedEventEnd) }
+    } catch (e) { return { err: String(e) } }
+  })
+  console.log(`boot: ${JSON.stringify(boot)}`)
   const cdp = await ctx.newCDPSession(p)
   if (CPU > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU })
   await p.evaluate(() => {
@@ -148,6 +158,11 @@ try {
         const b = e.getBoundingClientRect()
         return { t: (e.textContent || '').slice(0, 12), x: b.x + b.width / 2, y: b.y + b.height / 2, w: b.width }
       }).filter((t) => t.w > 0),
+      // channel tabs only: feed / whispers / settings draw their own panes and are a different cost
+      chanTabs: [...document.querySelectorAll('#hs-mc-tabbar .hs-mc-tab')].map((e) => {
+        const b = e.getBoundingClientRect()
+        return { t: (e.textContent || '').trim(), x: b.x + b.width / 2, y: b.y + b.height / 2, w: b.width }
+      }).filter((t) => t.w > 0 && /probe/i.test(t.t)),
     }
   })
   console.log(`ext overlay · twitch fixture · cpu x${CPU} · pane ${Math.round(geo.pane.w)}x${Math.round(geo.pane.h)} · rows ${geo.rows} · dom ${geo.dom} · tabs ${geo.tabs.length}`)
@@ -218,6 +233,22 @@ try {
       }
       console.log(`  ${name} inclusive time, top 14 (ms over ${steps} steps):`)
       for (const [k, us] of [...incl].sort((a, b) => (b[1] as number) - (a[1] as number)).filter(([k]) => !String(k).startsWith('(')).slice(0, 14)) console.log(`${((us as number) / 1000).toFixed(1).padStart(9)}  ${k}`)
+      // PROFILE_TREE=fn: where fn's own time goes, one level down (what it called, inclusive).
+      if (process.env.PROFILE_TREE) {
+        const sub = new Map<string, number>()
+        const totalOf = (id: number): number => (self.get(id) || 0) + (byId.get(id).children || []).reduce((a: number, c: number) => a + totalOf(c), 0)
+        for (const n of profile.nodes) {
+          if (n.callFrame.functionName !== process.env.PROFILE_TREE) continue
+          for (const c of n.children || []) {
+            const cf = byId.get(c).callFrame
+            const k = `${cf.functionName || '(anon)'} ${String(cf.url).split('/').pop()}:${cf.lineNumber + 1}`
+            sub.set(k, (sub.get(k) || 0) + totalOf(c))
+          }
+          sub.set('(self)', (sub.get('(self)') || 0) + (self.get(n.id) || 0))
+        }
+        console.log(`  ${name}: ${process.env.PROFILE_TREE} callees (inclusive ms over ${steps} steps):`)
+        for (const [k, us] of [...sub].sort((a, b) => b[1] - a[1]).slice(0, 14)) console.log(`${(us / 1000).toFixed(1).padStart(9)}  ${k}`)
+      }
       console.log(`  ${name} self time, top 18 (ms over ${steps} steps):`)
       for (const [k, us] of [...agg].sort((a, b) => b[1] - a[1]).slice(0, 18)) console.log(`${(us / 1000).toFixed(1).padStart(9)}  ${k}`)
     }
@@ -280,9 +311,9 @@ try {
   } else console.log('hover-emote   skipped — no emote element on screen')
   await p.mouse.move(cx, geo.pane.y + geo.pane.h / 2)
   await phase('wheel', 40, async () => { await p.mouse.wheel(0, -240); await p.waitForTimeout(16) })
-  if (geo.tabs.length > 1) {
-    await phase('tab-click', geo.tabs.length * 3, async (i) => {
-      const t = geo.tabs[i % geo.tabs.length]
+  if (geo.chanTabs.length > 1) {
+    await phase('tab-click', geo.chanTabs.length * 8, async (i) => {
+      const t = geo.chanTabs[i % geo.chanTabs.length]
       await p.mouse.click(t.x, t.y)
       // a person reads before the next click: let the deferred row mounts finish, or the
       // next click pays for the last one's leftovers and the number is the bench's, not theirs

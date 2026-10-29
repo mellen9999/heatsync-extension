@@ -3968,7 +3968,7 @@
       // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
       // red (off) buttons as send to below; a view filter, so nothing is deleted.
       const linkedView = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linkedView).filter(Boolean).length > 1) {
+      if (Object.values(linkedView).some(Boolean)) {
         const pHdr = document.createElement('div')
         pHdr.textContent = 'platforms'
         pHdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
@@ -4007,7 +4007,7 @@
       // One green (on) / red (off) button per platform; stays open so several can
       // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
       const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linked).filter(Boolean).length > 1) {
+      if (Object.values(linked).some(Boolean)) {
         const hdr = document.createElement('div')
         hdr.textContent = 'send to'
         hdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'

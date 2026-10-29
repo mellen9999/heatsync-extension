@@ -10,8 +10,8 @@ describe('channel tab right-click menu: send to', () => {
     expect(menu).toContain("on ? '#00ff00' : '#ff0000'")
   })
 
-  test('only shows with 2+ linked platforms and never empties the targets', () => {
-    expect(menu).toContain('.filter(Boolean).length > 1')
+  test('shows for any tab with a linked platform and never empties the targets', () => {
+    expect(menu).toContain('Object.values(linked).some(Boolean)')
     expect(menu).toContain('if (!next) return')
   })
 

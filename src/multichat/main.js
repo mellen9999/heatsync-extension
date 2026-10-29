@@ -484,6 +484,44 @@
     return userSetMatches(set, username, platform, getUserAliasKeys(username, platform))
   }
 
+  // Per-tab platform view filter: { [tabId]: { twitch, kick, youtube } }, a platform
+  // set to false is hidden on that tab. Device-local (chrome.storage.local
+  // 'platform_filters', never synced), flipped from the tab's right-click menu.
+  let platformFilters = {}
+  async function loadPlatformFilters() {
+    try {
+      const stored = (await cachedUiOverflow()).platform_filters
+      if (stored && typeof stored === 'object' && !Array.isArray(stored)) {
+        // drop entries for tabs that no longer exist — bounded growth
+        const knownIds = new Set((config.channels || []).map((c) => c.id))
+        const pruned = {}
+        for (const [id, val] of Object.entries(stored)) {
+          if ((!knownIds.size || knownIds.has(id)) && val && typeof val === 'object') pruned[id] = val
+        }
+        platformFilters = pruned
+      }
+    } catch {}
+  }
+  function getPlatformFilter(tabId) {
+    const f = platformFilters[tabId] || {}
+    return { twitch: f.twitch !== false, kick: f.kick !== false, youtube: f.youtube !== false }
+  }
+  function togglePlatformFilter(tabId, plat) {
+    const f = getPlatformFilter(tabId)
+    f[plat] = !f[plat]
+    platformFilters[tabId] = f
+    saveUiSetting('platformFilters', platformFilters)
+  }
+  // Hot path (every rendered row): one object lookup before anything else.
+  function isPlatformHiddenInTab(m, tabId) {
+    const f = platformFilters[tabId]
+    if (!f) return false
+    // twitch rows carry no platform (see buildMessageDiv's `!m.platform` convention); notices
+    // and system lines carry neither a platform nor a user, so they are never filtered
+    const p = m.platform || (m.user && !m.type ? 'twitch' : '')
+    return !!p && f[p] === false
+  }
+
   // Content-warning filters live entirely in the settings registry (schema
   // entries with a `cw` sub-shape); _mcStorageListener's generic local-key
   // loop keeps the cache + visible pills coherent cross-tab.
@@ -3925,6 +3963,44 @@
           fn()
         })
         menu.appendChild(item)
+      }
+
+      // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
+      // red (off) buttons as send to below; a view filter, so nothing is deleted.
+      const linkedView = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
+      if (Object.values(linkedView).filter(Boolean).length > 1) {
+        const pHdr = document.createElement('div')
+        pHdr.textContent = 'platforms'
+        pHdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
+        menu.appendChild(pHdr)
+        const pLabels = { twitch: 'T  twitch', kick: 'K  kick', youtube: 'Y  youtube' }
+        for (const key of ['twitch', 'kick', 'youtube']) {
+          if (!linkedView[key]) continue
+          const btn = document.createElement('div')
+          const paint = () => {
+            const on = getPlatformFilter(tabId)[key]
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+          }
+          paint()
+          btn.textContent = pLabels[key]
+          btn.addEventListener('mouseenter', () => (btn.style.cssText += 'background:#fff;color:#000;'), {
+            signal: mcSignal,
+          })
+          btn.addEventListener('mouseleave', paint, { signal: mcSignal })
+          btn.addEventListener('click', () => {
+            // never hide every platform: an empty tab reads as broken
+            const f = getPlatformFilter(tabId)
+            const stillOn = ['twitch', 'kick', 'youtube'].filter((p) => linkedView[p] && f[p] && p !== key)
+            if (f[key] && !stillOn.length) return
+            togglePlatformFilter(tabId, key)
+            paint()
+            renderMessages(tabId)
+          })
+          menu.appendChild(btn)
+        }
+        const pSep = document.createElement('div')
+        pSep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
+        menu.appendChild(pSep)
       }
 
       // send to: which linked platforms a message typed in this tab goes out to.
@@ -7563,6 +7639,8 @@
     // for the tab they were hidden in (tabId), never globally.
     if (m.user && isUserHiddenInTab(m.user, m.platform, tabId)) return null
     if (m.actor && isUserHiddenInTab(m.actor, m.platform, tabId)) return null
+    // Per-tab platform filter (right-click the tab) — hides every row from a muted platform.
+    if (isPlatformHiddenInTab(m, tabId)) return null
     // Stream event — render as magenta inline notification.
     // Render-time gate: skip if the corresponding hermes toggle is off
     // (buffer can hold events saved before a toggle flipped). Mirrors the
@@ -12948,6 +13026,13 @@
           if (currentTab === 'settings') renderSettingsTab()
         }
       }
+      if (changes.platform_filters) {
+        const v = changes.platform_filters.newValue
+        if (v && typeof v === 'object' && !Array.isArray(v)) {
+          platformFilters = v
+          renderMessages(currentTab)
+        }
+      }
       if (changes.chat_filter_rules) {
         const v = changes.chat_filter_rules.newValue
         if (typeof v === 'string') {
@@ -13782,6 +13867,7 @@
         loadChatPosition(),
         loadLivePlatformMap(),
         loadAllSettings(),
+        loadPlatformFilters(),
         _blockedEmotesP,
         _emotesP,
         loadSenderEmoteSets(),

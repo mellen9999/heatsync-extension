@@ -5256,23 +5256,30 @@ browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
 scheduleWsIdleCheck()
 
 function handle7TVEmoteSetUpdate(updateData) {
-  // updateData.id is the emote set ID — look up which channel it belongs to
+  // updateData.id is the emote set ID. Every channel mapped to it hears the
+  // change — a twitch channel and its kick pair can share one 7TV set.
   const setId = updateData.id
-  let key = null
-  for (const [k, id] of seventvEmoteSetIds) {
-    if (id === setId) {
-      key = k
-      break
-    }
-  }
-  if (!key) {
+  const keys = []
+  for (const [k, id] of seventvEmoteSetIds) if (id === setId) keys.push(k)
+  if (keys.length === 0) {
     log(' 7TV: Received update for unknown set:', setId)
     return
   }
+  for (const key of keys) apply7TVEmoteSetUpdate(key, updateData)
+}
 
+function apply7TVEmoteSetUpdate(key, updateData) {
   const { platform, channel: channelName } = splitChKey(key)
   log(' 7TV: Emote set update for', channelName, '(', platform, ')')
 
+  // The event says what changed on its own; the channel's list is only what we
+  // patch. That list can be missing (a failed fetch with nothing to fall back
+  // on) or mid-refetch ('loading'), and a patch onto nothing used to become
+  // the WHOLE list — one live add left the channel with that single emote and
+  // every other one unrendered, and a removal found nothing to remove and said
+  // nothing. Without a list: announce, leave the map alone, and refetch.
+  const loaded = Array.isArray(channelEmotesMap[key])
+  const chEmotes = loaded ? channelEmotesMap[key] : null
   let updated = false
   const actor = updateData.actor?.display_name || updateData.actor?.username || ''
 
@@ -5295,24 +5302,23 @@ function handle7TVEmoteSetUpdate(updateData) {
         zeroWidth: !!(emote.flags & 257 || emote.data?.flags & 257),
       }
 
-      const chEmotes = Array.isArray(channelEmotesMap[key]) ? channelEmotesMap[key] : []
-      if (!chEmotes.some((e) => e.hash === emote.id)) {
+      if (chEmotes?.some((e) => e.hash === emote.id)) continue
+      if (chEmotes) {
         chEmotes.push(newEmote)
-        channelEmotesMap[key] = chEmotes
         updated = true
+      }
 
-        if (!isBulkSync) {
-          log(' 7TV: Added emote:', emote.name, 'to', channelName)
-          const msg = actor ? `${actor} added 7TV emote ${emote.name}` : `${emote.name} added to channel`
-          broadcastToTabs({
-            type: 'channel_emote_added',
-            emote: newEmote,
-            channel: channelName,
-            platform,
-            actor: actor || null,
-            message: msg,
-          })
-        }
+      if (!isBulkSync) {
+        log(' 7TV: Added emote:', emote.name, 'to', channelName)
+        const msg = actor ? `${actor} added 7TV emote ${emote.name}` : `${emote.name} added to channel`
+        broadcastToTabs({
+          type: 'channel_emote_added',
+          emote: newEmote,
+          channel: channelName,
+          platform,
+          actor: actor || null,
+          message: msg,
+        })
       }
     }
     if (isBulkSync) {
@@ -5327,28 +5333,26 @@ function handle7TVEmoteSetUpdate(updateData) {
     for (const item of updateData.pulled) {
       const emote = item.old_value
       if (!emote || typeof emote.id !== 'string') continue
-      const chEmotes = channelEmotesMap[key] || []
-      const index = chEmotes.findIndex((e) => e.hash === emote.id)
-
-      if (index !== -1) {
+      if (chEmotes) {
+        const index = chEmotes.findIndex((e) => e.hash === emote.id)
+        if (index === -1) continue
         chEmotes.splice(index, 1)
-        channelEmotesMap[key] = chEmotes
         updated = true
-        removedCount++
+      }
+      removedCount++
 
-        if (!isBulkRemoval) {
-          log(' 7TV: Removed emote:', emote.name, 'from', channelName)
-          const msg = actor ? `${actor} removed 7TV emote ${emote.name}` : `${emote.name} removed from channel`
-          broadcastToTabs({
-            type: 'channel_emote_removed',
-            emoteName: emote.name,
-            emoteHash: emote.id,
-            channel: channelName,
-            platform,
-            actor: actor || null,
-            message: msg,
-          })
-        }
+      if (!isBulkRemoval) {
+        log(' 7TV: Removed emote:', emote.name, 'from', channelName)
+        const msg = actor ? `${actor} removed 7TV emote ${emote.name}` : `${emote.name} removed from channel`
+        broadcastToTabs({
+          type: 'channel_emote_removed',
+          emoteName: emote.name,
+          emoteHash: emote.id,
+          channel: channelName,
+          platform,
+          actor: actor || null,
+          message: msg,
+        })
       }
     }
     if (isBulkRemoval && removedCount > 0) {
@@ -5365,11 +5369,16 @@ function handle7TVEmoteSetUpdate(updateData) {
     }
   }
 
+  if (!loaded) {
+    // 'loading' lands on its own; a missing list is rebuilt from the source
+    if (channelEmotesMap[key] !== 'loading') fetchChannelOwnerEmotes(channelName, null, platform).catch(() => {})
+    return
+  }
+
   if (updated) {
-    const updatedEmotes = Array.isArray(channelEmotesMap[key]) ? channelEmotesMap[key] : []
     broadcastToTabs({
       type: 'channel_emotes_update',
-      emotes: updatedEmotes,
+      emotes: chEmotes,
       channelOwner: channelName,
       platform,
     })
@@ -5377,7 +5386,7 @@ function handle7TVEmoteSetUpdate(updateData) {
     browser.storage.local
       .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
       .catch(() => {})
-    log(' 7TV: Channel emotes updated for', channelName, '(now', updatedEmotes.length, 'total)')
+    log(' 7TV: Channel emotes updated for', channelName, '(now', chEmotes.length, 'total)')
   }
 }
 

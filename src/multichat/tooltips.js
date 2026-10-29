@@ -191,16 +191,24 @@ function buildStackPreview(box, stackEmotes) {
     // 16x (the giant tooltip). Pin each overlay to the size it renders at in
     // chat and switch to object-fit:contain so the hi-res asset scales DOWN
     // into that box (sharp, not huge); scale(4) supplies the 4x preview.
+    let pinned = true
     if (im.classList.contains('hs-mc-overlay-emote')) {
-      const lw = liveImgs[i]?.offsetWidth,
-        lh = liveImgs[i]?.offsetHeight
+      // Only a LOADED live img has a real box: a lazy one that never reached the
+      // viewport collapses to a few px, and pinning to that shrank the overlay to
+      // a sliver until the next hover (when it had loaded). Unloaded overlays keep
+      // their 1x asset instead, whose intrinsic size is what chat renders.
+      const live = liveImgs[i]
+      const lw = live?.naturalWidth ? live.offsetWidth : 0,
+        lh = live?.naturalWidth ? live.offsetHeight : 0
       if (lw && lh) {
         im.style.setProperty('width', `${lw}px`, 'important')
         im.style.setProperty('height', `${lh}px`, 'important')
         im.style.setProperty('object-fit', 'contain', 'important')
+      } else {
+        pinned = false
       }
     }
-    const hi = getHighResUrl(orig)
+    const hi = pinned ? getHighResUrl(orig) : null
     if (hi) im.src = hi
     im.removeAttribute('loading') // force eager — see sizeBox note below
     im.style.filter = ''

@@ -4071,6 +4071,9 @@
 
   // Track scroll state for "new messages" button
   let isScrolledUp = false
+  // Pointer resting on an emote/name/badge: the feed is frozen (isScrolledUp) but this is
+  // not a reader's scroll-up, so renders during it never raise the "N new" button.
+  let hoverHeld = false
   let emoteReloadTimer = null
   // Track scopes (channel:X / global / inventory) whose first emote payload
   // we've already received this session. After first load, subsequent emote
@@ -4627,12 +4630,11 @@
       const ATBOTTOM_PX = 2
       // Hover hold (below) rides the same pause. A real scroll-up while one is
       // active makes it a real pause: the button stays until the user resumes.
-      let _hoverHeld = false
       let _hoverRelease = null
       const setPaused = (paused) => {
         if (paused) {
-          if (_hoverHeld) {
-            _hoverHeld = false
+          if (hoverHeld) {
+            hoverHeld = false
             isScrolledUp = false
           }
           if (!isScrolledUp) {
@@ -4684,7 +4686,7 @@
         if (!_userInputScroll) return
         if (!isScrolledUp) return
         if (checkAtBottom()) {
-          _hoverHeld = false
+          hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -4793,7 +4795,7 @@
       newBtn.addEventListener(
         'click',
         () => {
-          _hoverHeld = false
+          hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -4821,8 +4823,8 @@
       const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')
       const releaseHold = () => {
         _hoverRelease = null
-        if (!_hoverHeld) return
-        _hoverHeld = false
+        if (!hoverHeld) return
+        hoverHeld = false
         isScrolledUp = false
         newMessageCount = 0
         newBtn.style.display = 'none'
@@ -4837,16 +4839,16 @@
           if (!holdTarget(e.target)) {
             // Pointer moved onto something else (or the held thing is gone):
             // let go after a beat so sweeping across emotes does not stutter.
-            if (_hoverHeld && !_hoverRelease) _hoverRelease = cleanup.setTimeout(releaseHold, 120)
+            if (hoverHeld && !_hoverRelease) _hoverRelease = cleanup.setTimeout(releaseHold, 120)
             return
           }
           if (_hoverRelease) {
             cleanup.clearTimeout(_hoverRelease)
             _hoverRelease = null
           }
-          if (_hoverHeld && !isScrolledUp) _hoverHeld = false // resumed by other means
-          if (_hoverHeld || isScrolledUp || isStaticTab()) return
-          _hoverHeld = true
+          if (hoverHeld && !isScrolledUp) hoverHeld = false // resumed by other means
+          if (hoverHeld || isScrolledUp || isStaticTab()) return
+          hoverHeld = true
           isScrolledUp = true
         },
         { passive: true, signal: mcSignal },
@@ -10610,6 +10612,8 @@
     // re-render while paused — to paint older rows — without yanking the view
     // (it anchors scroll itself afterward).
     if (isScrolledUp && !opts?.bypassScrollPause) {
+      // Held by hover: nothing new is promised, the release re-renders and shows it all.
+      if (hoverHeld) return
       newMessageCount++
       if (newBtn) {
         newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${newMessageCount} new`

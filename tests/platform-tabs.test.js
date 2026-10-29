@@ -135,9 +135,9 @@ describe('hover hold', () => {
     expect(main).toContain("msgsEl.addEventListener('mouseleave', releaseHold")
   })
   test('a real scroll-up, the resume button and a scroll back to the bottom all end the hold cleanly', () => {
-    expect(main).toMatch(/if \(_hoverHeld\) \{\s*_hoverHeld = false\s*isScrolledUp = false\s*\}/)
-    expect(main).toMatch(/'click',\s*\(\) => \{\s*_hoverHeld = false/)
-    expect(main).toMatch(/if \(checkAtBottom\(\)\) \{\s*_hoverHeld = false/)
+    expect(main).toMatch(/if \(hoverHeld\) \{\s*hoverHeld = false\s*isScrolledUp = false\s*\}/)
+    expect(main).toMatch(/'click',\s*\(\) => \{\s*hoverHeld = false/)
+    expect(main).toMatch(/if \(checkAtBottom\(\)\) \{\s*hoverHeld = false/)
   })
 })
 

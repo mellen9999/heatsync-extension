@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd490daea99c9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '9f485eb260a3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29324,16 +29324,24 @@ function buildStackPreview(box, stackEmotes) {
     // 16x (the giant tooltip). Pin each overlay to the size it renders at in
     // chat and switch to object-fit:contain so the hi-res asset scales DOWN
     // into that box (sharp, not huge); scale(4) supplies the 4x preview.
+    let pinned = true
     if (im.classList.contains('hs-mc-overlay-emote')) {
-      const lw = liveImgs[i]?.offsetWidth,
-        lh = liveImgs[i]?.offsetHeight
+      // Only a LOADED live img has a real box: a lazy one that never reached the
+      // viewport collapses to a few px, and pinning to that shrank the overlay to
+      // a sliver until the next hover (when it had loaded). Unloaded overlays keep
+      // their 1x asset instead, whose intrinsic size is what chat renders.
+      const live = liveImgs[i]
+      const lw = live?.naturalWidth ? live.offsetWidth : 0,
+        lh = live?.naturalWidth ? live.offsetHeight : 0
       if (lw && lh) {
         im.style.setProperty('width', `${lw}px`, 'important')
         im.style.setProperty('height', `${lh}px`, 'important')
         im.style.setProperty('object-fit', 'contain', 'important')
+      } else {
+        pinned = false
       }
     }
-    const hi = getHighResUrl(orig)
+    const hi = pinned ? getHighResUrl(orig) : null
     if (hi) im.src = hi
     im.removeAttribute('loading') // force eager — see sizeBox note below
     im.style.filter = ''
@@ -73806,6 +73814,9 @@ const STORAGE_KEY = 'heatsync_multichat'
 
   // Track scroll state for "new messages" button
   let isScrolledUp = false
+  // Pointer resting on an emote/name/badge: the feed is frozen (isScrolledUp) but this is
+  // not a reader's scroll-up, so renders during it never raise the "N new" button.
+  let hoverHeld = false
   let emoteReloadTimer = null
   // Track scopes (channel:X / global / inventory) whose first emote payload
   // we've already received this session. After first load, subsequent emote
@@ -74362,12 +74373,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       const ATBOTTOM_PX = 2
       // Hover hold (below) rides the same pause. A real scroll-up while one is
       // active makes it a real pause: the button stays until the user resumes.
-      let _hoverHeld = false
       let _hoverRelease = null
       const setPaused = (paused) => {
         if (paused) {
-          if (_hoverHeld) {
-            _hoverHeld = false
+          if (hoverHeld) {
+            hoverHeld = false
             isScrolledUp = false
           }
           if (!isScrolledUp) {
@@ -74419,7 +74429,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (!_userInputScroll) return
         if (!isScrolledUp) return
         if (checkAtBottom()) {
-          _hoverHeld = false
+          hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -74528,7 +74538,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       newBtn.addEventListener(
         'click',
         () => {
-          _hoverHeld = false
+          hoverHeld = false
           isScrolledUp = false
           newMessageCount = 0
           newBtn.style.display = 'none'
@@ -74556,8 +74566,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')
       const releaseHold = () => {
         _hoverRelease = null
-        if (!_hoverHeld) return
-        _hoverHeld = false
+        if (!hoverHeld) return
+        hoverHeld = false
         isScrolledUp = false
         newMessageCount = 0
         newBtn.style.display = 'none'
@@ -74572,16 +74582,16 @@ const STORAGE_KEY = 'heatsync_multichat'
           if (!holdTarget(e.target)) {
             // Pointer moved onto something else (or the held thing is gone):
             // let go after a beat so sweeping across emotes does not stutter.
-            if (_hoverHeld && !_hoverRelease) _hoverRelease = cleanup.setTimeout(releaseHold, 120)
+            if (hoverHeld && !_hoverRelease) _hoverRelease = cleanup.setTimeout(releaseHold, 120)
             return
           }
           if (_hoverRelease) {
             cleanup.clearTimeout(_hoverRelease)
             _hoverRelease = null
           }
-          if (_hoverHeld && !isScrolledUp) _hoverHeld = false // resumed by other means
-          if (_hoverHeld || isScrolledUp || isStaticTab()) return
-          _hoverHeld = true
+          if (hoverHeld && !isScrolledUp) hoverHeld = false // resumed by other means
+          if (hoverHeld || isScrolledUp || isStaticTab()) return
+          hoverHeld = true
           isScrolledUp = true
         },
         { passive: true, signal: mcSignal },
@@ -80345,6 +80355,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     // re-render while paused — to paint older rows — without yanking the view
     // (it anchors scroll itself afterward).
     if (isScrolledUp && !opts?.bypassScrollPause) {
+      // Held by hover: nothing new is promised, the release re-renders and shows it all.
+      if (hoverHeld) return
       newMessageCount++
       if (newBtn) {
         newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${newMessageCount} new`

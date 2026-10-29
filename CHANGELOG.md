@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.112] — 2026-10-29
+
+### fixed
+- **refresh** — names, colours, paints, badges and emote sizes are saved, so a reloaded chat paints them in the first frame instead of filling in over the next few seconds.
+- **sub and mod badges** — show as pictures right away instead of text chips that swap in later.
+- **steady rows** — emotes loading in, a late emote list, badge and paint updates and a restored tab no longer push the chat up a line or make it wobble.
+- **broken emote images** — a failed emote retries without collapsing its row to text and jumping back.
+- **hover** — hovering an emote lights only the copies on screen, and leaving it repaints far less, so hovers answer faster.
+
 ## [1.7.108] — 2026-10-26
 
 ### new

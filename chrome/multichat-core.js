@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'af9af6afb3f9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3fcd70085860' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -74581,8 +74581,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           const target = img.src
           cleanup.setTimeout(() => {
             if (!img.isConnected || img.src !== target) return
-            img.removeAttribute('src')
-            img.src = target
+            // Straight to a cache-busted URL: stripping the src first collapses the image to its
+            // alt text, which is the line that jumped up and back on every retry.
+            const base = target.replace(/[?&]hsr=\d+$/, '')
+            img.src = `${base}${base.includes('?') ? '&' : '?'}hsr=${tries + 1}`
           }, delay)
         },
         { capture: true },

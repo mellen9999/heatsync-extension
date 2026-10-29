@@ -7507,8 +7507,9 @@
   function reprocessEmoteTextInPlace() {
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl) return
-    // Snapshot rows ONCE — DOM may mutate across async chunks
-    const rows = [...msgsEl.querySelectorAll('.hs-mc-msg[data-msg-key]')]
+    // Snapshot rows ONCE — DOM may mutate across async chunks. Newest first: those are the
+    // rows on screen, and they swap in one task; every older chunk lands above the viewport.
+    const rows = [...msgsEl.querySelectorAll('.hs-mc-msg[data-msg-key]')].reverse()
     if (rows.length === 0) return
 
     const CHUNK = 50
@@ -7534,9 +7535,22 @@
       _indexMessageDiv(div, div.dataset.msgKey)
     }
 
+    // A text row that becomes an emote row grows (20px line -> 36px emote box), so every swap
+    // moves what is below it. Pinned to the bottom the reader is put back on the bottom; reading
+    // up the list the scroll offset follows the growth. Either way nothing slides under them.
+    function _holdPlace(work) {
+      const h0 = msgsEl.scrollHeight
+      const top0 = msgsEl.scrollTop
+      work()
+      if (!isScrolledUp) scrollMsgsToBottom(msgsEl)
+      else msgsEl.scrollTop = top0 + (msgsEl.scrollHeight - h0)
+    }
+
     // Fast path: ≤50 rows — run synchronously, no rAF overhead
     if (rows.length <= CHUNK) {
-      for (const div of rows) _processRow(div)
+      _holdPlace(() => {
+        for (const div of rows) _processRow(div)
+      })
       return
     }
 
@@ -7550,7 +7564,9 @@
       if (currentTab !== snapTab || _renderEpoch !== snapEpoch || document.getElementById('hs-mc-messages') !== msgsEl)
         return
       const end = Math.min(offset + CHUNK, rows.length)
-      for (let i = offset; i < end; i++) _processRow(rows[i])
+      _holdPlace(() => {
+        for (let i = offset; i < end; i++) _processRow(rows[i])
+      })
       // Schedule next chunk via rafOrTimeout — tracked timers/rafs, cancelled
       // by destroyAll() on teardown so the loop never outlives the panel, and
       // starvation-proof: a bare rAF here would stall a rebuild mid-chunks in
@@ -13890,6 +13906,7 @@
         loadStaleEmotes(),
         hydrateHsCosmetics(),
         hydrateMcCosmetics(),
+        hydrateEmoteBoxWidths(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)

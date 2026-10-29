@@ -3892,6 +3892,36 @@ function _hsMcApplyMods(html, mods, hue) {
 
 const _hsEmoteBoxW = new Map() // chat url -> integer px (ceil of natural box width)
 
+// The widths are only learned once an image has decoded, so after a refresh every emote in
+// the first paint had none: each image loaded at width 0 and pushed the text after it
+// sideways, row after row, as they trickled in. They are saved (newest 1500, 30 days) and
+// read back before the first row renders, so a returning emote reserves its box from frame one.
+const HS_BOXW_KEY = 'hs_emote_boxw_v1'
+const HS_BOXW_SAVE_MAX = 1500
+const HS_BOXW_TTL = 30 * 24 * 60 * 60 * 1000
+let _hsBoxWSaveTimer = null
+function scheduleEmoteBoxWSave() {
+  if (_hsBoxWSaveTimer) return
+  _hsBoxWSaveTimer = cleanup.setTimeout(() => {
+    _hsBoxWSaveTimer = null
+    try {
+      browser.storage.local
+        .set({ [HS_BOXW_KEY]: { at: Date.now(), items: [..._hsEmoteBoxW].slice(-HS_BOXW_SAVE_MAX) } })
+        .catch(() => {})
+    } catch (_) {}
+  }, 5000)
+}
+async function hydrateEmoteBoxWidths() {
+  try {
+    const blob = (await browser.storage.local.get(HS_BOXW_KEY))?.[HS_BOXW_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > HS_BOXW_TTL) return
+    for (const [url, w] of blob.items || []) {
+      if (typeof url === 'string' && Number.isInteger(w) && w > 0 && w < 600 && !_hsEmoteBoxW.has(url))
+        _hsEmoteBoxW.set(url, w)
+    }
+  } catch (_) {}
+}
+
 // Kick serves every emote on a square canvas, so a wide one (…KEKWIDE) arrives
 // as a strip of art in the middle of transparent padding and drew at a third of
 // the size of any other wide emote. Measure where the art actually is (one
@@ -4068,6 +4098,7 @@ function hsSnapEmoteBox(img) {
           const surl = it.selfWrap.dataset?.emoteUrl || it.im.getAttribute('src')
           if (surl && !_hsEmoteBoxW.has(surl)) {
             _hsEmoteBoxW.set(surl, it.selfW)
+            scheduleEmoteBoxWSave()
             if (_hsEmoteBoxW.size > 2000) _hsEmoteBoxW.delete(_hsEmoteBoxW.keys().next().value)
           }
         }
@@ -4075,6 +4106,7 @@ function hsSnapEmoteBox(img) {
       }
       const url = it.im.closest('.hs-mc-emote-wrapper')?.dataset?.emoteUrl || it.im.getAttribute('src')
       if (url) {
+        if (_hsEmoteBoxW.get(url) !== it.w) scheduleEmoteBoxWSave()
         _hsEmoteBoxW.set(url, it.w)
         // FIFO cap — a long multi-channel session measures thousands of unique
         // emote URLs; without eviction this Map grows unbounded for the tab's life.
@@ -4989,6 +5021,7 @@ export {
   getEmoteState,
   getSenderEmotes,
   hsSwapRowEmotesForIdle,
+  hydrateEmoteBoxWidths,
   inventoryEmotes,
   loadEmoteFrecency,
   loadSenderEmoteSets,

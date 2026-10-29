@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'a98f8798eb46' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '1dd5bb6b5171' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -73703,7 +73703,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
       // red (off) buttons as send to below; a view filter, so nothing is deleted.
       const linkedView = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linkedView).filter(Boolean).length > 1) {
+      if (Object.values(linkedView).some(Boolean)) {
         const pHdr = document.createElement('div')
         pHdr.textContent = 'platforms'
         pHdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
@@ -73742,7 +73742,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // One green (on) / red (off) button per platform; stays open so several can
       // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
       const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linked).filter(Boolean).length > 1) {
+      if (Object.values(linked).some(Boolean)) {
         const hdr = document.createElement('div')
         hdr.textContent = 'send to'
         hdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'

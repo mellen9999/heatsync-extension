@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'dacd34ee4afd' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2381ac263bba' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -70353,9 +70353,6 @@ const STORAGE_KEY = 'heatsync_multichat'
   // whose list is still filling; _paintCap is how many rows it may show so far.
   const FIRST_PAINT_ROWS = 100
   const FIRST_PAINT_STEP = 100
-  // Held rows go back in smaller bites than first paint grows: each bite is one task that
-  // forces layout twice, so its size is the longest the page can stall a click or a hover.
-  const HELD_MOUNT_STEP = 40
   let _paintFor = null
   let _paintCap = 0
   function growFirstPaint(id) {
@@ -70431,7 +70428,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     cleanup.setTimeout(() => {
       if (!_heldOlder || _heldOlder.id !== id) return
       if (currentTab !== id) return // switchTab flushes on the way out
-      if (_mountHeldChunk(HELD_MOUNT_STEP)) growHeldOlder(id)
+      if (_mountHeldChunk(FIRST_PAINT_STEP)) growHeldOlder(id)
       else applyMcMutes()
     }, 0)
   }

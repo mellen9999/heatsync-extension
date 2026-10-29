@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd490daea99c9' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c2a84cc9f987' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -84544,6 +84544,16 @@ const STORAGE_KEY = 'heatsync_multichat'
           if (msg.type !== 'stream_event') return
           const channel = msg.channel?.toLowerCase()
           if (!channel) return
+
+          // Room events reach every channel this browser's socket is joined to,
+          // not only the ones you chose: a channel you merely opened once would
+          // keep pinging "switched game" forever. Only your tabs and the live
+          // channel get lines and notifications; followed channels arrive as
+          // follow_stream_event below.
+          const isMine =
+            isLiveChannelMessage({ channel }) ||
+            config.channels.some((ch) => [ch.id, ch.twitch, ch.kick].some((n) => n?.toLowerCase() === channel))
+          if (!isMine) return
 
           // Build inline notification
           let text = '',

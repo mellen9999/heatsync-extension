@@ -3979,7 +3979,7 @@
           const btn = document.createElement('div')
           const paint = () => {
             const on = getPlatformFilter(tabId)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
           }
           paint()
           btn.textContent = pLabels[key]
@@ -4004,7 +4004,7 @@
       }
 
       // send to: which linked platforms a message typed in this tab goes out to.
-      // One green (on) / red (off) button per platform; stays open so several can
+      // One button per platform: its colour when on, grey when off; stays open so several can
       // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
       const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
       if (Object.values(linked).some(Boolean)) {
@@ -4018,7 +4018,7 @@
           const btn = document.createElement('div')
           const paint = () => {
             const on = resolveSendTargets(ch.sendTargets, linked)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? '#00ff00' : '#ff0000'};`
+            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
           }
           paint()
           btn.textContent = labels[key]

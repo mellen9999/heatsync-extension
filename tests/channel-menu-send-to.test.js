@@ -5,9 +5,9 @@ const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), '
 const menu = src.slice(src.indexOf('// Channel tabs get edit/remove context menu'))
 
 describe('channel tab right-click menu: send to', () => {
-  test('carries the send-to section as green / red buttons', () => {
+  test('carries the send-to section as platform-coloured / grey buttons', () => {
     expect(menu).toContain("hdr.textContent = 'send to'")
-    expect(menu).toContain("on ? '#00ff00' : '#ff0000'")
+    expect(menu).toContain("'var(--hs-dim)'")
   })
 
   test('shows for any tab with a linked platform and never empties the targets', () => {
@@ -22,7 +22,7 @@ describe('channel tab right-click menu: send to', () => {
 })
 
 describe('channel tab right-click menu: platforms', () => {
-  test('has a platforms view filter with the same green / red buttons', () => {
+  test('has a platforms view filter with the same platform-coloured / grey buttons', () => {
     expect(menu).toContain("pHdr.textContent = 'platforms'")
     expect(menu).toContain('togglePlatformFilter(tabId, key)')
     expect(menu).toContain('renderMessages(tabId)')

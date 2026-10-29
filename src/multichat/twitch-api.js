@@ -2387,6 +2387,50 @@ const channelBadgeVersions = new Map()
 // helix/GQL badge titles, same keys as twitchBadgeUrls ("set/version" or "channel:set/version")
 const twitchBadgeTitles = new Map()
 
+// The maps above fill from a network round trip, so after a refresh every row first drew its
+// badge as a text chip (SUB, MOD) and swapped to the picture seconds later — one big shift, and
+// no badges at all when the fetch lagged or failed. They are saved (7 days) and read back before
+// the first row renders. Not marked fetched: each channel still re-fetches, and the answer
+// overwrites what was saved.
+const HS_BADGE_ART_STORE = 'hs_badge_art_v1'
+const HS_BADGES_TTL = 7 * 24 * 60 * 60 * 1000
+const HS_BADGES_MAX = 2500
+let _badgeSaveTimer = null
+function scheduleBadgeSave() {
+  if (_badgeSaveTimer) return
+  _badgeSaveTimer = setTimeout(() => {
+    _badgeSaveTimer = null
+    try {
+      browser.storage.local
+        .set({
+          [HS_BADGE_ART_STORE]: {
+            at: Date.now(),
+            urls: [...twitchBadgeUrls].slice(-HS_BADGES_MAX),
+            titles: [...twitchBadgeTitles].slice(-HS_BADGES_MAX),
+          },
+        })
+        .catch(() => {})
+    } catch (_) {}
+  }, 3000)
+}
+async function hydrateTwitchBadges() {
+  try {
+    const blob = (await browser.storage.local.get(HS_BADGE_ART_STORE))?.[HS_BADGE_ART_STORE]
+    if (!blob || Date.now() - (blob.at || 0) > HS_BADGES_TTL) return
+    const channels = new Set()
+    for (const [k, url] of blob.urls || []) {
+      if (typeof k !== 'string' || typeof url !== 'string' || !/^https:\/\//.test(url) || twitchBadgeUrls.has(k))
+        continue
+      twitchBadgeUrls.set(k, url)
+      const colon = k.indexOf(':')
+      if (colon > 0) channels.add(k.slice(0, colon))
+    }
+    for (const [k, t] of blob.titles || [])
+      if (typeof t === 'string' && !twitchBadgeTitles.has(k)) twitchBadgeTitles.set(k, t)
+    for (const ch of channels) rebuildChannelBadgeVersions(ch)
+  } catch (_) {}
+}
+
 // Unknown badge versions: twitch adds badges (sub tiers, events, globals) faster
 // than a channel's cached set turns over. A row naming a set/version the set
 // lacks renders nothing (never another version's art), notes the miss, and the
@@ -2476,6 +2520,7 @@ async function refetchBadgeSet(channelLogin) {
   }
   if (glob.status === 'fulfilled' && mergeBadgeRows('', glob.value?.data?.badges)) changed = true
   // repaint just that channel's rows; the in-place patch also fills in titles
+  if (changed) scheduleBadgeSave()
   if (changed && typeof updateNativeBadgesInPlace === 'function') updateNativeBadgesInPlace(channelLogin)
 }
 
@@ -2628,6 +2673,7 @@ async function fetchGlobalBadges() {
       if (b.title) twitchBadgeTitles.set(`${b.setID}/${b.version}`, b.title)
     }
     log('Loaded global badges:', twitchBadgeUrls.size)
+    scheduleBadgeSave()
     // Patch live rows in-place instead of bumping epoch + full rebuild.
     // updateNativeBadgesInPlace upgrades text-fallback spans to imgs without
     // tearing down any row, so avatars/emotes never reload = no flash.
@@ -3936,6 +3982,7 @@ async function fetchChannelBadges(channelLogin) {
         }
       }
       log('Loaded channel badges for', channelLogin)
+      scheduleBadgeSave()
       // Patch rows for this channel in-place: no epoch bump, no full rebuild,
       // no image-reload flash. Other tabs are invalidated via _dropAllTabCaches
       // inside updateNativeBadgesInPlace so they rebuild fresh on next switch.

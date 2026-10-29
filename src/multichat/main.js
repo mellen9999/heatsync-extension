@@ -13907,6 +13907,7 @@
         hydrateHsCosmetics(),
         hydrateMcCosmetics(),
         hydrateEmoteBoxWidths(),
+        hydrateTwitchBadges(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)

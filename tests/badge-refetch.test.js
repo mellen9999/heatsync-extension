@@ -40,6 +40,7 @@ function make(gql = async () => ({ data: {} })) {
     'updateNativeBadgesInPlace',
     'globalBadgesFetched',
     'badgesFetchedChannels',
+    'scheduleBadgeSave',
     `${src}
      let _now = 0
      const calls = []
@@ -56,6 +57,7 @@ function make(gql = async () => ({ data: {} })) {
     (c) => patched.push(c),
     true,
     new Set(['chan']),
+    () => {},
   )
   return { f, twitchBadgeUrls, twitchBadgeTitles, patched }
 }

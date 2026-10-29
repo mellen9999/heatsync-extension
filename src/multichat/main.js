@@ -14810,16 +14810,6 @@
           const channel = msg.channel?.toLowerCase()
           if (!channel) return
 
-          // Room events reach every channel this browser's socket is joined to,
-          // not only the ones you chose: a channel you merely opened once would
-          // keep pinging "switched game" forever. Only your tabs and the live
-          // channel get lines and notifications; followed channels arrive as
-          // follow_stream_event below.
-          const isMine =
-            isLiveChannelMessage({ channel }) ||
-            config.channels.some((ch) => [ch.id, ch.twitch, ch.kick].some((n) => n?.toLowerCase() === channel))
-          if (!isMine) return
-
           // Build inline notification
           let text = '',
             eventClass = ''

@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2381ac263bba' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4bbb9e84bb32' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -56078,6 +56078,12 @@ const HS_PAINT_BATCH_SIZE = 50
 // with no visible latency cost — a name paints in within 2s of first render,
 // not 100ms.
 const HS_PAINT_BATCH_DELAY = 2000
+// The 2s is a spacing between requests, not a wait before the first: after a quiet spell
+// (a refresh, a tab switch) the first batch goes out once this much of the burst has queued,
+// so names paint at once instead of 2s late. Steady state keeps the 2s spacing.
+const HS_PAINT_FIRST_DELAY = 60
+let hsPaintLastFlushAt = 0
+const hsPaintFlushDelay = () => Math.max(HS_PAINT_FIRST_DELAY, HS_PAINT_BATCH_DELAY - (Date.now() - hsPaintLastFlushAt))
 // Mirrors MC_COSMETICS_PENDING_MAX (main.js) — a very busy/firehose channel
 // can queue unique uids faster than the batch drain rate; cap so the pending
 // Set can't grow unbounded between flushes.
@@ -56630,6 +56636,51 @@ function setHsPaintEntry(userId, spec) {
   hsPaintCache.set(userId, { spec: shown, hash })
 }
 
+// ── survive a refresh ────────────────────────────────────────────────────────
+// Everything above is in-memory, so a refresh redrew every name plain and then
+// painted them as the first batch answered. The answers are saved (newest 300 of
+// each kind, 7 days) and put back before the first row renders. They are NOT marked
+// fresh (hsResolvedAt stays empty), so each uid still re-resolves on first sight: the
+// saved paint is what shows until the server's answer lands, and a paint that went
+// away (cleared, Plus lapsed) comes off through the usual changed-hash path.
+const HS_PERSIST_KEY = 'hs_cosmetics_v1'
+const HS_PERSIST_MAX = 300
+const HS_PERSIST_TTL = 7 * 24 * 60 * 60 * 1000
+const hsRawSpecs = new Map() // uid -> the spec exactly as the server sent it (positives only)
+let hsPersistTimer = null
+
+function scheduleHsCosmeticSave() {
+  if (hsPersistTimer) return
+  hsPersistTimer = cleanup.setTimeout(() => {
+    hsPersistTimer = null
+    const newest = (m, keep) => [...m].filter(keep).slice(-HS_PERSIST_MAX)
+    const blob = {
+      at: Date.now(),
+      paints: newest(hsRawSpecs, ([, v]) => !!v),
+      colors: newest(hsColorCache, ([, v]) => !!v),
+      plus: newest(hsPlusCache, ([, v]) => !!v),
+    }
+    try {
+      browser.storage.local.set({ [HS_PERSIST_KEY]: blob }).catch(() => {})
+    } catch (_) {}
+  }, 3000)
+}
+
+async function hydrateHsCosmetics() {
+  try {
+    const blob = (await browser.storage.local.get(HS_PERSIST_KEY))?.[HS_PERSIST_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > HS_PERSIST_TTL) return
+    for (const [uid, color] of blob.colors || []) if (!hsColorCache.has(uid)) setHsColorEntry(uid, color)
+    for (const [uid, since] of blob.plus || []) if (!hsPlusCache.has(uid)) setHsPlusEntry(uid, since)
+    if (!hsPaintsEnabled()) return
+    for (const [uid, spec] of blob.paints || []) {
+      if (hsPaintCache.has(uid) || !spec || typeof spec !== 'object') continue
+      hsRawSpecs.set(uid, spec)
+      setHsPaintEntry(uid, spec)
+    }
+  } catch (_) {}
+}
+
 /**
  * Queue a resolved-twitch-space uid for a paint lookup. Debounced + batched.
  * See the ID-SPACE SAFETY note at the top of this file — never call this with
@@ -56641,7 +56692,7 @@ function queuePaintLookup(userId) {
   if (!hsPaintsEnabled()) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(userId)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -56655,7 +56706,7 @@ function queueNameColorLookup(uid) {
   if (hsColorCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -56669,7 +56720,7 @@ function queuePlusTenureLookup(uid) {
   if (hsPlusCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -56694,12 +56745,13 @@ function primeSelfHsCosmetics(ui) {
     hsPaintPriority.add(id)
   }
   if (hsPaintPriority.size && !hsPaintBatchTimer) {
-    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BATCH_DELAY)
+    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
   }
 }
 
 async function flushHsPaintBatch() {
   hsPaintBatchTimer = null
+  hsPaintLastFlushAt = Date.now()
   if (!hsPaintPending.size && !hsPaintPriority.size) return
   // Own identities drain first — see hsPaintPriority.
   const { batch, rest } = partitionPaintBatch([...hsPaintPriority, ...hsPaintPending], HS_PAINT_BATCH_SIZE)
@@ -56764,6 +56816,11 @@ async function flushHsPaintBatch() {
         // reports no change — every plain chatter resolves that way.
         const prevHash = hsPaintCache.get(id)?.hash ?? null
         setHsPaintEntry(id, paints[id])
+        if (paints[id]) {
+          hsRawSpecs.delete(id) // re-insert last: the newest-300 cut keeps what was seen most recently
+          hsRawSpecs.set(id, paints[id])
+          if (hsRawSpecs.size > HS_PERSIST_MAX * 2) hsRawSpecs.delete(hsRawSpecs.keys().next().value)
+        } else hsRawSpecs.delete(id)
         hsResolvedAt.set(id, Date.now())
         if ((hsPaintCache.get(id)?.hash ?? null) !== prevHash) changed.push(id)
       } else {
@@ -56777,6 +56834,7 @@ async function flushHsPaintBatch() {
     for (const id of batch) hsPaintPending.add(id)
   }
 
+  if (paints || colors || plus) scheduleHsCosmeticSave()
   if ((hsPaintPending.size > 0 || hsPaintPriority.size > 0) && !hsPaintBatchTimer) {
     hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BACKLOG_DELAY)
   }
@@ -57503,6 +57561,37 @@ function setMcCosmetic(uid, c) {
     mcUserCosmetics.delete(mcUserCosmetics.keys().next().value)
   }
 }
+// Saved across a refresh (newest 300, 7 days) and put back before the first row renders, so
+// badges and 7TV paints are in the first paint instead of landing row by row seconds later and
+// pushing every name sideways. A saved entry is `stale` until the server answers again.
+const MC_COSMETICS_PERSIST_KEY = 'hs_cosmetics_7tv_v1'
+const MC_COSMETICS_PERSIST_MAX = 300
+const MC_COSMETICS_PERSIST_TTL = 7 * 24 * 60 * 60 * 1000
+const mcCosmeticsStale = new Set()
+let mcCosmeticsSaveTimer = null
+/** Nothing known for this uid, or only a saved answer the server has not confirmed yet. */
+const mcCosmeticsNeedLookup = (uid) => !mcUserCosmetics.has(uid) || mcCosmeticsStale.has(uid)
+function scheduleMcCosmeticsSave() {
+  if (mcCosmeticsSaveTimer) return
+  mcCosmeticsSaveTimer = cleanup.setTimeout(() => {
+    mcCosmeticsSaveTimer = null
+    const items = [...mcUserCosmetics].filter(([, c]) => c && (c.badge || c.paint)).slice(-MC_COSMETICS_PERSIST_MAX)
+    try {
+      browser.storage.local.set({ [MC_COSMETICS_PERSIST_KEY]: { at: Date.now(), items } }).catch(() => {})
+    } catch (_) {}
+  }, 3000)
+}
+async function hydrateMcCosmetics() {
+  try {
+    const blob = (await browser.storage.local.get(MC_COSMETICS_PERSIST_KEY))?.[MC_COSMETICS_PERSIST_KEY]
+    if (!blob || Date.now() - (blob.at || 0) > MC_COSMETICS_PERSIST_TTL) return
+    for (const [uid, c] of blob.items || []) {
+      if (mcUserCosmetics.has(uid) || !c || typeof c !== 'object') continue
+      setMcCosmetic(uid, c)
+      mcCosmeticsStale.add(uid)
+    }
+  } catch (_) {}
+}
 const MC_COSMETICS_PENDING_MAX = 3000
 const mcCosmeticsPending = new Set()
 let mcCosmeticsTimer = null
@@ -57959,7 +58048,7 @@ function queueMcCosmeticsLookup(userId) {
   // rendered row goes through — kept running and the switch never delivered
   // the ram it promises on a busy channel.
   if (gateAtBoot('cosmetics') === false) return
-  if (mcUserCosmetics.has(userId)) return
+  if (mcUserCosmetics.has(userId) && !mcCosmeticsStale.has(userId)) return
   if (mcCosmeticsPending.size >= MC_COSMETICS_PENDING_MAX) return
   mcCosmeticsPending.add(userId)
   if (!mcCosmeticsTimer) {
@@ -57968,15 +58057,23 @@ function queueMcCosmeticsLookup(userId) {
     // (see the 500ms continuation below). Cosmetics don't change mid-stream,
     // so batching a whole 2s worth of newly-seen chatters into one request
     // costs nothing but a slightly later first paint for the tail of the batch.
-    mcCosmeticsTimer = cleanup.setTimeout(() => {
-      mcCosmeticsTimer = null
-      flushMcCosmeticsBatch()
-    }, 2000)
+    // After a quiet spell the first batch leaves once ~60ms of the burst has queued (a refresh
+    // would otherwise sit unpainted for the whole window); the 2s only spaces batches apart.
+    mcCosmeticsTimer = cleanup.setTimeout(
+      () => {
+        mcCosmeticsTimer = null
+        flushMcCosmeticsBatch()
+      },
+      Math.max(60, 2000 - (Date.now() - mcCosmeticsLastFlushAt)),
+    )
   }
 }
 
+let mcCosmeticsLastFlushAt = 0
+
 function flushMcCosmeticsBatch() {
   if (!mcCosmeticsPending.size) return
+  mcCosmeticsLastFlushAt = Date.now()
   // Drain newest-queued first: messages queue oldest→newest, but the user is
   // looking at the bottom (newest) of the buffer, so the visible viewport
   // resolves in the first batch instead of last. Off-screen/scrolled-away
@@ -57990,19 +58087,23 @@ function flushMcCosmeticsBatch() {
       if (!resp?.cosmetics) return
       const changedIds = []
       for (const [uid, c] of Object.entries(resp.cosmetics)) {
+        mcCosmeticsStale.delete(uid)
         if (c) {
           setMcCosmetic(uid, c)
           changedIds.push(uid)
-        }
+        } else mcUserCosmetics.delete(uid) // answered "none": a saved entry that no longer holds stops being served
       }
       if (changedIds.length) updateCosmeticsInPlace(changedIds)
+      scheduleMcCosmeticsSave()
     })
     .catch(() => {})
+  // A backlog (a history burst names hundreds of chatters) drains at 25 per 200ms, the way paints
+  // drain: at 2s a refresh left the tail of the channel without badges for ~15s.
   if (mcCosmeticsPending.size > 0) {
     mcCosmeticsTimer = cleanup.setTimeout(() => {
       mcCosmeticsTimer = null
       flushMcCosmeticsBatch()
-    }, 2000)
+    }, 200)
   }
 }
 
@@ -58450,7 +58551,7 @@ function getMcPaintStyle(userId, colour = '') {
 function userPaintStyle(uid, lower, platform) {
   if (!uid && lower) uid = knownUserIds.get(userKey(lower, platform)) || ''
   if (!uid) return ''
-  if (!mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+  if (mcCosmeticsNeedLookup(uid)) queueMcCosmeticsLookup(uid)
   return getMcPaintStyle(uid)
 }
 
@@ -77604,7 +77705,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // as any other inline @mention — no bespoke registration needed).
       const feedUid = knownUserIds.get(userKey((m.feedUser || '').toLowerCase(), 'twitch')) || ''
       const feedHsPaint = feedUid ? hsPaintRender(feedUid, m.feedUser || 'anon') : null
-      if (feedUid && !feedHsPaint && !mcUserCosmetics.has(feedUid)) queueMcCosmeticsLookup(feedUid)
+      if (feedUid && !feedHsPaint && mcCosmeticsNeedLookup(feedUid)) queueMcCosmeticsLookup(feedUid)
       const feedPaintStyle = feedHsPaint ? '' : feedUid ? getMcPaintStyle(feedUid) : ''
       const userLink = buildFeedQuoteUserLink(m.feedUser, feedUid, feedHsPaint, feedPaintStyle, m.color)
       // Plus tenure — same uid this row's paint already resolved above.
@@ -78044,7 +78145,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     const uidTwitch = (m.platform === 'kick' ? m._uidTwitch : m.userId) || ''
     if (uidTwitch) {
       badges += renderThirdPartyBadges(uidTwitch)
-      if (!mcUserCosmetics.has(uidTwitch)) queueMcCosmeticsLookup(uidTwitch)
+      if (mcCosmeticsNeedLookup(uidTwitch)) queueMcCosmeticsLookup(uidTwitch)
     }
     const plat =
       m.platform === 'youtube'
@@ -78744,7 +78845,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         let inner = `${at}${safeName}`
         if (uid) {
           uidAttr = ` data-uid="${escapeHtml(uid)}"`
-          if (!mcUserCosmetics.has(uid)) queueMcCosmeticsLookup(uid)
+          if (mcCosmeticsNeedLookup(uid)) queueMcCosmeticsLookup(uid)
           // HeatSync paint wins over 7TV — same precedence rule as the
           // sender username / reply-context bar.
           const hsPaint = hsPaintRender(uid, `${at}${name}`)
@@ -80926,7 +81027,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         // Reused div skipped buildMessageDiv — re-queue its cosmetic so a prior
         // failed/absent lookup is retried (resolves on a later flush). Without
         // this, a frozen channel's restored buffer never re-attempts cosmetics.
-        if (_rm?.userId && !mcUserCosmetics.has(_rm.userId)) queueMcCosmeticsLookup(_rm.userId)
+        if (_rm?.userId && mcCosmeticsNeedLookup(_rm.userId)) queueMcCosmeticsLookup(_rm.userId)
         // Stale epoch → the row's rendered output is invalidated (emote
         // animation toggle, rerender setting, badge bulk-load). Rebuild the
         // div and swap it IN THE SAME SLOT — position, zebra stripe, and
@@ -83674,6 +83775,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         _emotesP,
         loadSenderEmoteSets(),
         loadStaleEmotes(),
+        hydrateHsCosmetics(),
+        hydrateMcCosmetics(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)

@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.113] — 2026-10-29
+
+### fixed
+- **resize bar** — a twitch channel opened from the following or browse page has its chat resize bar; before, it only showed after a reload.
+- **resizing** — letting go of the resize bar on twitch, kick and youtube settles about twice as fast, and youtube no longer hitches again a second later.
+- **7tv** — an emote added or removed live shows up even when the channel's emote list hadn't loaded, and never replaces the whole list.
+
 ## [1.7.112] — 2026-10-29
 
 ### fixed

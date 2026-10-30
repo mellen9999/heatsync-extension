@@ -3767,6 +3767,18 @@
     return row
   }
 
+  // Which platform owns the channel name a pane was opened for. Live tab: the page's
+  // (when the name is the page's channel). A channel tab: whichever leg holds the
+  // name; a youtube-only tab is 'yt'. Unknown names stay twitch (the typed-arg default).
+  function _paneChannelPlatform(ctx) {
+    const ch = String(ctx.channel || '').toLowerCase()
+    if (ctx.tab === 'live') return ch === String(getLiveChannel() || '').toLowerCase() ? hostPlatform : 'twitch'
+    const e = getChannelById(ctx.tab)
+    if (e?.twitch?.toLowerCase() === ch) return 'twitch'
+    if (e?.kick?.toLowerCase() === ch) return 'kick'
+    return e && !e.twitch && !e.kick && e.youtube ? 'yt' : 'twitch'
+  }
+
   const MC_SUB_PANES = {
     summary: (pane, ctx) => {
       pane.classList.add('hs-mc-subpane-pad')
@@ -3779,21 +3791,7 @@
         _paneNote(pane, text)
         pane.prepend(hub)
       }
-      // Which platform is this name? Live: the page's. A channel tab: whichever leg owns
-      // the name — a kick slug is never looked up as a twitch login.
-      const entry = ctx.tab === 'live' ? null : getChannelById(ctx.tab)
-      const plat =
-        ctx.tab === 'live'
-          ? ch === String(getLiveChannel() || '').toLowerCase()
-            ? hostPlatform
-            : 'twitch'
-          : entry?.twitch?.toLowerCase() === ch
-            ? 'twitch'
-            : entry?.kick?.toLowerCase() === ch
-              ? 'kick'
-              : entry && !entry.twitch && !entry.kick && entry.youtube
-                ? 'yt'
-                : 'twitch'
+      const plat = _paneChannelPlatform(ctx)
       if (plat === 'yt') return note('status covers twitch and kick channels')
       note(`fetching #${ch}…`)
       let panel = null
@@ -3808,10 +3806,18 @@
     platforms: (pane) => renderLivePlatformsPane(pane),
     // Your own messages in this channel, or the user a right-click named.
     logs: (pane, ctx) => {
-      const ch = getChannelById(ctx.tab)
-      const platform = ctx.platform || (ch && !ch.twitch && ch.kick ? 'kick' : 'twitch')
-      const username = ctx.username || currentUsername
-      if (!username) return _paneNote(pane, 'sign in to see your logs here — right-click a chatter for theirs')
+      const paneP = _paneChannelPlatform(ctx)
+      const platform = ctx.platform || (paneP === 'yt' ? 'youtube' : paneP)
+      // currentUsername is the twitch login: it names you only on twitch. On kick/yt the
+      // viewer's own name isn't known here, so only a right-clicked chatter has logs.
+      const username = ctx.username || (platform === 'twitch' ? currentUsername : '')
+      if (!username)
+        return _paneNote(
+          pane,
+          platform === 'twitch'
+            ? 'sign in to see your logs here — right-click a chatter for theirs'
+            : `right-click a chatter to see their ${platform} logs`,
+        )
       openChatLogsView(username, { platform, channel: ctx.channel })
     },
   }

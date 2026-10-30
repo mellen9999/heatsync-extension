@@ -160,13 +160,15 @@ async function openChatLogsView(username, opts = {}) {
 // only names the room it is looking at (null leaves) and re-announces it so a
 // restarted service worker re-joins.
 const CL_ULOG_NAME_RE = /^[a-z0-9_]{1,40}$/
+// a youtube name arrives as "@handle"; the room is keyed by the bare handle
+const clRoomName = (u) => String(u || '').replace(/^@/, '')
 let _clRoom = null
 let _clRoomKeep = null
 function clLiveRoomSync() {
   const st = activeChatLogs
   const room =
-    st && CL_ULOG_NAME_RE.test(st.username) && ['twitch', 'kick', 'youtube'].includes(st.platform)
-      ? `ulog:${st.platform}:${st.username}`
+    st && CL_ULOG_NAME_RE.test(clRoomName(st.username)) && ['twitch', 'kick', 'youtube'].includes(st.platform)
+      ? `ulog:${st.platform}:${clRoomName(st.username)}`
       : null
   if (room === _clRoom && (room === null || _clRoomKeep)) return
   _clRoom = room

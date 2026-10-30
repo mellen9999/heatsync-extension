@@ -26,6 +26,7 @@ function load({ mode = 'unread', currentTab = 'other', now = 1_000_000 } = {}) {
     'currentTab',
     'cleanup',
     'Date',
+    'mcChromeTabIds',
     `${SRC}
     return { bumpTabActivity, clearTabUnread, markTabRead, dropTabActivity,
              tabUnreadCount, tabHeatCount, tabCounterMode, _tabCountText }`,
@@ -36,6 +37,7 @@ function load({ mode = 'unread', currentTab = 'other', now = 1_000_000 } = {}) {
     currentTab,
     { setIntervalIfVisible: () => 1, clearInterval: () => {} },
     { now: () => clock.now * 1000 },
+    () => ['feed', 'live', 'whispers', 'mentions', 'add'],
   )
   return { ...api, advance: (secs) => (clock.now += secs) }
 }
@@ -214,5 +216,17 @@ describe('wiring', () => {
     expect(SRC).toContain('cleanup.setIntervalIfVisible')
     expect(SRC).toContain("const want = mode === 'heat'")
     expect(SRC).toContain('cleanup.clearInterval(_tabCounterTimer)')
+  })
+})
+
+describe('built-in tabs never count', () => {
+  test('"watching" (live) and the other built-ins get no number; a channel tab does', () => {
+    const c = load()
+    c.bumpTabActivity('live', false)
+    c.bumpTabActivity('feed', false)
+    c.bumpTabActivity('xqc', false)
+    expect(c._tabCountText('live', 'unread', false)).toBe('')
+    expect(c._tabCountText('feed', 'heat', false)).toBe('')
+    expect(c._tabCountText('xqc', 'unread', false)).toBe('1')
   })
 })

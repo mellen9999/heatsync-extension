@@ -66,7 +66,7 @@ function _advance(e) {
  * @param {boolean} isActive whether this tab is the one on screen
  */
 function bumpTabActivity(tabId, isActive) {
-  if (!tabId) return
+  if (!tabId || !_countsTab(tabId)) return
   const e = _tabEntry(tabId)
   _advance(e)
   e.buckets[e.buckets.length - 1]++
@@ -115,7 +115,13 @@ function tabCounterMode() {
   return (typeof getSetting === 'function' && getSetting('tabCounter')) || 'unread'
 }
 
+/** Counts belong to channel tabs; "watching" and the other built-ins never get one. */
+function _countsTab(tabId) {
+  return typeof mcChromeTabIds !== 'function' || !mcChromeTabIds().includes(tabId)
+}
+
 function _tabCountText(tabId, mode, isActive) {
+  if (!_countsTab(tabId)) return ''
   const n = mode === 'heat' ? tabHeatCount(tabId) : mode === 'off' ? 0 : isActive ? 0 : tabUnreadCount(tabId)
   if (n <= 0) return ''
   return n > TAB_COUNT_MAX ? `${TAB_COUNT_MAX}+` : String(n)

@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'bun:test'
 import utils from '../src/lib/utils.js'
 
-const { linkifyPartialLinks, defangedToHost, firstPartialTweetUrl } = utils
+const { linkifyPartialLinks, defangedToHost, firstPartialTweetUrl, firstPartialRedditUrl } = utils
 
 const A = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mc-link">${text}</a>`
 
@@ -101,6 +101,17 @@ describe('linkifyPartialLinks — host-less tweets', () => {
     )
     expect(linkifyPartialLinks('my status/12345678 order')).toBe('my status/12345678 order')
     expect(linkifyPartialLinks('build/status/42')).toBe('build/status/42')
+  })
+
+  test('a host-less reddit post links to the post and embeds', () => {
+    const post = 'r/PlayTheBazaar/comments/1xj6sir/new_item_preview/'
+    const url = 'https://www.reddit.com/r/PlayTheBazaar/comments/1xj6sir/new_item_preview'
+    expect(linkifyPartialLinks(`look ${post} lol`)).toContain(`<a href="${url}"`)
+    expect(linkifyPartialLinks(post)).toContain(`>${post}</a>`)
+    expect(firstPartialRedditUrl(`r/place then ${post}`)).toBe(url)
+    expect(firstPartialRedditUrl('r/place')).toBe('')
+    expect(firstPartialRedditUrl('https://www.reddit.com/r/x/comments/abc123')).toBe('')
+    expect(linkifyPartialLinks('r/place/whatever')).toBe('r/place/whatever')
   })
 
   test('firstPartialTweetUrl reads the same fragment chat embeds from', () => {

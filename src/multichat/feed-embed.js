@@ -445,7 +445,10 @@ function extractChatEmbed(text, opts) {
   const ytHtml = yt ? chatEmbedForUrl(yt) : ''
   if (ytHtml) return ytHtml
   const tweet = typeof firstPartialTweetUrl === 'function' ? firstPartialTweetUrl(text) : ''
-  return tweet ? chatEmbedForUrl(tweet) : ''
+  const tweetHtml = tweet ? chatEmbedForUrl(tweet) : ''
+  if (tweetHtml) return tweetHtml
+  const reddit = typeof firstPartialRedditUrl === 'function' ? firstPartialRedditUrl(text) : ''
+  return reddit ? chatEmbedForUrl(reddit) : ''
 }
 
 function chatEmbedForUrl(rawUrl) {

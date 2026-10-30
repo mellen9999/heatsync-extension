@@ -858,7 +858,10 @@ const PARTIAL_YT_RE = new RegExp(
 const PARTIAL_YT_LIST_RE = /(?<![\w/.=-])\/?(playlist\?list=|channel\/UC)([A-Za-z0-9_-]{12,})(?![A-Za-z0-9_-])/g
 // reddit's own limits: 3-21 chars, letters/digits/underscore (leading dash never
 // valid), which is why "w/e" and "24/7" can't reach this.
-const PARTIAL_REDDIT_RE = /(?<![\w/.-])\/?(r|u|user)\/([A-Za-z0-9][A-Za-z0-9_]{2,20})(?![\w/-])/g
+// A post permalink rides along (`r/sub/comments/id/title/`, plus a comment id),
+// so a shared post links to the post and embeds, not just the subreddit.
+const PARTIAL_REDDIT_RE =
+  /(?<![\w/.-])\/?(r|u|user)\/([A-Za-z0-9][A-Za-z0-9_]{2,20})(\/comments\/[a-z0-9]{2,12}(?:\/[\w-]+){0,2})?\/?(?![\w/-])/g
 // A tweet with its host cut off — `name/status/2107279328723484841`. The
 // `status/` word plus a long numeric id is what makes it a tweet and not prose;
 // handles are x's own 1-15 word chars. A `?s=20` share query is dropped.
@@ -932,8 +935,8 @@ function linkifyPartialLinks(html) {
   out = outsideTagsIf(out, PARTIAL_YT_LIST_RE, (m0, kind, id) =>
     anchor(`https://www.youtube.com/${kind.startsWith('playlist') ? `playlist?list=${id}` : `channel/UC${id}`}`, m0),
   )
-  out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name) =>
-    anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}`, m0),
+  out = outsideTagsIf(out, PARTIAL_REDDIT_RE, (m0, kind, name, post) =>
+    anchor(`https://www.reddit.com/${kind === 'r' ? 'r' : 'user'}/${name}${post || ''}`, m0),
   )
   out = outsideTagsIf(out, PARTIAL_TWEET_RE, (m0, handle, id) => anchor(`https://x.com/${handle}/status/${id}`, m0))
   out = outsideTagsIf(out, DEFANG_RE, (m0, scheme, core, path) => {
@@ -966,6 +969,21 @@ function firstPartialYtUrl(text) {
   // query tail is dropped — it only carries playback params the builders
   // re-derive, and keeping it would widen the sanitize surface on the id.
   return `https://www.youtube.com/watch?v=${m[2]}`
+}
+
+/** First host-less reddit post (`r/sub/comments/id/…`) in RAW message text as
+ * its reddit.com url — a bare `r/sub` stays link-only, there is no post to embed.
+ */
+function firstPartialRedditUrl(text) {
+  if (!text || typeof text !== 'string') return ''
+  let url = ''
+  PARTIAL_REDDIT_RE.lastIndex = 0
+  for (const m of text.matchAll(PARTIAL_REDDIT_RE)) {
+    if (!m[3]) continue
+    url = `https://www.reddit.com/${m[1] === 'r' ? 'r' : 'user'}/${m[2]}${m[3]}`
+    break
+  }
+  return url
 }
 
 /** First host-less tweet (`name/status/id`) in RAW message text as its x.com
@@ -1134,6 +1152,7 @@ const utils = {
   linkifyPartialLinks,
   firstPartialYtUrl,
   firstPartialTweetUrl,
+  firstPartialRedditUrl,
   defangedToHost,
   outsideTags,
 
@@ -1223,6 +1242,7 @@ export {
   estimateSettingSize,
   findComponent,
   findOrdInsertIndex,
+  firstPartialRedditUrl,
   firstPartialTweetUrl,
   firstPartialYtUrl,
   getFiber,

@@ -413,6 +413,13 @@ function softTwitchNav(prevLiveCh) {
       try {
         updateTwitchNoChannelClass()
       } catch (_) {}
+      // A panel first mounted on a page with no right column (/directory)
+      // bailed out of setupResizeHandle, and soft nav never re-runs init —
+      // the channel landed on had no resize bar until a reload.
+      try {
+        setupResizeHandle()
+        if (chatPosition && chatPosition !== 'right') hidePlatformResizeHandles(true)
+      } catch (_) {}
       done = true
       finish()
       return true

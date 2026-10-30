@@ -125,12 +125,11 @@ function makeAddViewShell(msgsEl, titleText, descText) {
  * "import twitch follows" — pick from the channels you already follow on twitch,
  * instead of typing them in one at a time.
  *
- * Twitch only, and the copy says so rather than implying otherwise: kick's
- * public api has no follow-list endpoint and there is no youtube oauth at all,
- * so "import your follows" would be a promise we can only keep on one of the
- * three platforms in the tab bar. An imported channel is twitch-only; the
- * existing per-channel autofill is how it picks up a kick/youtube counterpart
- * afterwards.
+ * Twitch and kick. Twitch follows come from the server's linked grant; kick has
+ * no public follow-list api, so the service worker reads them with the browser's
+ * own kick session (needs kick.com signed in here). There is no youtube oauth,
+ * so youtube stays out. An imported channel is one platform; the per-channel
+ * autofill is how it picks up a counterpart afterwards.
  */
 async function renderFollowImportPicker(msgsEl) {
   const wrapper = makeAddViewShell(msgsEl, t('mc_fill_cockpit'), t('mc_fill_cockpit_desc'))
@@ -153,12 +152,18 @@ async function renderFollowImportPicker(msgsEl) {
   } catch {
     resp = { error: 'twitch_unavailable' }
   }
+  // Kick follows ride along; none (signed out of kick, or kick down) is just an empty list.
+  let kickFollows = []
+  try {
+    const kr = await browser.runtime.sendMessage({ type: 'get_kick_followed_channels' })
+    if (Array.isArray(kr?.channels)) kickFollows = kr.channels
+  } catch {}
 
   // Three failures, three sentences. "you follow nobody", "you're signed out"
   // and "your twitch link is dead" are different problems with different fixes,
   // and showing one message for all three is how someone ends up re-authorising
   // an account that was working fine.
-  if (!resp || resp.error) {
+  if ((!resp || resp.error) && !kickFollows.length) {
     const err = resp?.error || 'twitch_unavailable'
     status.style.color = '#ffffff'
     if (err === 'login_required') {
@@ -188,7 +193,11 @@ async function renderFollowImportPicker(msgsEl) {
     return
   }
 
-  const follows = Array.isArray(resp.channels) ? resp.channels : []
+  // one row per (platform, login): the same name on twitch and kick is two channels
+  const follows = [
+    ...(Array.isArray(resp?.channels) ? resp.channels : []).map((f) => ({ ...f, plat: 'twitch' })),
+    ...kickFollows.map((f) => ({ ...f, plat: 'kick' })),
+  ]
   if (!follows.length) {
     status.textContent = t('mc_no_twitch_follows')
     return
@@ -201,22 +210,29 @@ async function renderFollowImportPicker(msgsEl) {
   try {
     const live = await browser.runtime.sendMessage({
       type: 'fetch_live_status',
-      channels: follows.map((f) => f.login),
-      kickChannels: [],
+      channels: follows.filter((f) => f.plat === 'twitch').map((f) => f.login),
+      kickChannels: follows.filter((f) => f.plat === 'kick').map((f) => f.login),
     })
-    if (Array.isArray(live?.live)) liveSet = new Set(live.live.map((c) => c.toLowerCase()))
+    if (Array.isArray(live?.live)) for (const c of live.live) liveSet.add(`twitch:${c.toLowerCase()}`)
+    if (Array.isArray(live?.kickLive)) for (const c of live.kickLive) liveSet.add(`kick:${c.toLowerCase()}`)
   } catch {
     // A failed live check downgrades the sort, it does not fail the import.
   }
 
-  const already = new Set(config.channels.map((c) => c.twitch).filter(Boolean))
+  const already = new Set(
+    config.channels.flatMap((c) => [
+      c.twitch ? `twitch:${String(c.twitch).toLowerCase()}` : '',
+      c.kick ? `kick:${String(c.kick).toLowerCase()}` : '',
+    ]),
+  )
+  const keyOf = (f) => `${f.plat}:${String(f.login).toLowerCase()}`
   const rows = follows
-    .filter((f) => !already.has(f.login))
+    .filter((f) => !already.has(keyOf(f)))
     .sort((a, b) => {
-      const la = liveSet.has(a.login) ? 0 : 1
-      const lb = liveSet.has(b.login) ? 0 : 1
+      const la = liveSet.has(keyOf(a)) ? 0 : 1
+      const lb = liveSet.has(keyOf(b)) ? 0 : 1
       if (la !== lb) return la - lb
-      return a.login.localeCompare(b.login)
+      return a.login.localeCompare(b.login) || a.plat.localeCompare(b.plat)
     })
 
   if (!rows.length) {
@@ -234,7 +250,7 @@ async function renderFollowImportPicker(msgsEl) {
 
   const boxes = []
   for (const f of rows) {
-    const isLive = liveSet.has(f.login)
+    const isLive = liveSet.has(keyOf(f))
     const row = document.createElement('label')
     row.style.cssText =
       'display:flex;align-items:center;gap:8px;padding:3px 4px;cursor:pointer;font-size:13px;color:#ffffff;'
@@ -250,6 +266,7 @@ async function renderFollowImportPicker(msgsEl) {
     box.type = 'checkbox'
     box.checked = isLive
     box.dataset.login = f.login
+    box.dataset.plat = f.plat
     box.style.cssText = 'margin:0;accent-color:#ffffff;'
     box.setAttribute('aria-label', f.login)
     const dot = document.createElement('span')
@@ -258,8 +275,9 @@ async function renderFollowImportPicker(msgsEl) {
     // black fill was invisible on the black list and showed up only on hover.
     dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : 'transparent'};`
     const name = document.createElement('span')
-    name.textContent =
+    const shown =
       f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
+    name.textContent = f.plat === 'kick' ? `${shown} · kick` : shown
     name.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;'
     row.appendChild(box)
     row.appendChild(dot)
@@ -280,11 +298,11 @@ async function renderFollowImportPicker(msgsEl) {
   wrapper.insertBefore(btnRow, backRow)
 
   allLiveBtn.addEventListener('click', () => {
-    for (const b of boxes) b.checked = liveSet.has(b.dataset.login)
+    for (const b of boxes) b.checked = liveSet.has(`${b.dataset.plat}:${String(b.dataset.login).toLowerCase()}`)
   })
   cancelBtn.addEventListener('click', () => switchTab('live'))
   addBtn.addEventListener('click', () => {
-    const picked = boxes.filter((b) => b.checked).map((b) => ({ twitch: b.dataset.login }))
+    const picked = boxes.filter((b) => b.checked).map((b) => ({ [b.dataset.plat]: b.dataset.login }))
     if (!picked.length) {
       status.textContent = t('mc_select_at_least_one')
       return

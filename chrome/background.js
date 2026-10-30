@@ -9503,6 +9503,26 @@ async function handleMessage(message, sender, sendResponse) {
     return true // async sendResponse
   }
 
+  // Kick follows for the cockpit import: kick only answers a browser holding the
+  // session_token cookie, so this runs here (same read the follow mirror uses).
+  if (message.type === 'get_kick_followed_channels') {
+    ;(async () => {
+      try {
+        const session = await browser.cookies.get({ url: 'https://kick.com', name: 'session_token' })
+        const token = session?.value ? decodeURIComponent(session.value) : null
+        if (!token) {
+          sendResponse({ channels: [] })
+          return
+        }
+        const slugs = await kickFollowedSlugs(token)
+        sendResponse({ channels: slugs.map((login) => ({ login: login.toLowerCase() })) })
+      } catch {
+        sendResponse({ channels: [] })
+      }
+    })()
+    return true // async sendResponse
+  }
+
   if (message.type === 'fetch_live_status') {
     const channels = message.channels || []
     const kickChannels = message.kickChannels || []

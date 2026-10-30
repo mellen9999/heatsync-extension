@@ -1500,7 +1500,11 @@
         _nativeTwitchColor.delete(k)
       }
     }
-    if (userId) {
+    // Only a twitch line carries a twitch id. A kick line's userId is kick's own
+    // numeric id; filed here it painted replies/@mentions with a stranger's
+    // twitch cosmetics. Kick/yt names get their RESOLVED twitch id from the
+    // cosmetics lookups (flushKickNameLookups / flushYtNameLookups).
+    if (userId && platform === 'twitch') {
       const uidKey = typeof userKey === 'function' ? userKey(user, platform) : user
       knownUserIds.set(uidKey, userId)
       if (knownUserIds.size > 2000) {

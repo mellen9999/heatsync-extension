@@ -225,6 +225,7 @@ async function flushYtNameLookups() {
       ytNameToTwitchUsername.set(key, tuser ? String(tuser).toLowerCase() : null)
       if (tid) {
         const tidStr = String(tid)
+        knownUserIds.set(userKey(key, 'youtube'), tidStr) // reply/@mention paints read this
         // Backfill: stamp data-uid on all currently-rendered YT msgs by this
         // user so updateCosmeticsInPlace can find them once cosmetics resolve.
         const container = document.getElementById('hs-mc-messages')
@@ -411,6 +412,7 @@ async function flushKickNameLookups() {
     evictKickNameCache()
     const tid = c?.twitchId ? String(c.twitchId) : null
     kickNameResolved.set(key, tid)
+    if (tid) knownUserIds.set(userKey(key, 'kick'), tid) // reply/@mention paints read this
     kickNameToTwitchUsername.set(key, c?.twitchUsername || null)
     // Namespaced kick paint uid — independent of whether a twitch link
     // resolved. Queued directly (never via queueMcCosmeticsLookup, which is

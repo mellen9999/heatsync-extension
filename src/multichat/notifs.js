@@ -346,7 +346,9 @@ const HsNotifs = (() => {
   //        tabPosition, activeChannels }
   function updateLayout(ctx) {
     if (ctx && 'activeChannels' in ctx) setActiveChannels(ctx.activeChannels)
-    const root = document.documentElement
+    // Measure every layer, then write. Interleaved, each layer's rect read paid
+    // for the previous layer's root write with a whole-page restyle.
+    const writes = []
     for (const [name, l] of layers) {
       _ensureContainer(name, l)
       let geom = null
@@ -354,13 +356,11 @@ const HsNotifs = (() => {
         geom = l.def.geometry?.(ctx || {})
       } catch (_) {}
       if (geom) {
-        for (const [k, v] of Object.entries(geom)) {
-          const cssName = `--hs-layer-${name}-${k}`
-          if (v == null) root.style.removeProperty(cssName)
-          else root.style.setProperty(cssName, typeof v === 'number' ? `${v}px` : v)
-        }
+        for (const [k, v] of Object.entries(geom))
+          writes.push([`--hs-layer-${name}-${k}`, v == null ? null : typeof v === 'number' ? `${v}px` : v])
       }
     }
+    for (const [cssName, v] of writes) setRootVar(cssName, v)
   }
 
   // === STANDARD LAYERS ===

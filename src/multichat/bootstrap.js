@@ -1083,3 +1083,14 @@ const cleanup = {
     return node
   },
 }
+
+// A custom-property write on <html> restyles every element of the host page
+// (~9k on a twitch channel), and the next layout read pays for it on the spot.
+// Skip a write that changes nothing, so a layout pass that re-publishes the
+// same geometry costs no restyle at all. null removes.
+function setRootVar(name, value) {
+  const s = document.documentElement.style
+  if (value == null) {
+    if (s.getPropertyValue(name) !== '') s.removeProperty(name)
+  } else if (s.getPropertyValue(name) !== value) s.setProperty(name, value)
+}

@@ -298,12 +298,13 @@ async function loadChatPosition() {
 // YouTube: ytd-watch-flexy[theater]
 // Publish the container's MEASURED width (chat column + side tab strip)
 // for CSS that must reserve the full panel footprint (theatre player inset).
-function publishPanelWidth() {
+// `measured` lets a caller that already read the width pass it in, so the
+// write can land after its other <html> writes without a fresh read.
+function publishPanelWidth(measured) {
   const c = document.getElementById('hs-mc-container')
   if (!c) return
-  if (c.offsetWidth > 0) {
-    document.documentElement.style.setProperty('--hs-panel-w', `${c.offsetWidth}px`)
-  }
+  const w = measured ?? c.offsetWidth
+  if (w > 0) setRootVar('--hs-panel-w', `${w}px`)
   // Self-install a ResizeObserver on the container the first time we see it.
   // Call-site timing is unreliable on cold load (the panel is still 0-width
   // when applyChatPosition / the tab-bar observer fire, so the guard above
@@ -313,9 +314,7 @@ function publishPanelWidth() {
   if (!_panelWObs && typeof ResizeObserver !== 'undefined') {
     _panelWObs = new ResizeObserver(() => {
       const el = document.getElementById('hs-mc-container')
-      if (el && el.offsetWidth > 0) {
-        document.documentElement.style.setProperty('--hs-panel-w', `${el.offsetWidth}px`)
-      }
+      if (el && el.offsetWidth > 0) setRootVar('--hs-panel-w', `${el.offsetWidth}px`)
     })
     _panelWObs.observe(c)
     cleanup.trackObserver(_panelWObs)

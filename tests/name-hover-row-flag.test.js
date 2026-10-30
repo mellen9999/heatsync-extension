@@ -20,3 +20,10 @@ test('main.js sets and clears the flag', () => {
   expect(main).toContain("row.dataset.hsNameHover = ''")
   expect(main).toContain('delete row.dataset.hsNameHover')
 })
+
+test('the flag listener is not bound to the tab bar, which never sees a chat row', () => {
+  const tabBar = main.slice(main.indexOf('function createTabBar()'), main.indexOf('function createTabBar()') + 4000)
+  expect(tabBar).not.toContain('hsNameHover')
+  const i = main.indexOf("row.dataset.hsNameHover = ''")
+  expect(main.slice(Math.max(0, i - 300), i)).toContain("document.addEventListener(\n    'mouseover'")
+})

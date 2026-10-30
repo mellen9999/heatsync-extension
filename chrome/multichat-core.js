@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b4f74e2c963e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '34f201e63e77' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15489,6 +15489,17 @@ const cleanup = {
     _trackedNodes.push(node)
     return node
   },
+}
+
+// A custom-property write on <html> restyles every element of the host page
+// (~9k on a twitch channel), and the next layout read pays for it on the spot.
+// Skip a write that changes nothing, so a layout pass that re-publishes the
+// same geometry costs no restyle at all. null removes.
+function setRootVar(name, value) {
+  const s = document.documentElement.style
+  if (value == null) {
+    if (s.getPropertyValue(name) !== '') s.removeProperty(name)
+  } else if (s.getPropertyValue(name) !== value) s.setProperty(name, value)
 }
 
 
@@ -17295,7 +17306,9 @@ const HsNotifs = (() => {
   //        tabPosition, activeChannels }
   function updateLayout(ctx) {
     if (ctx && 'activeChannels' in ctx) setActiveChannels(ctx.activeChannels)
-    const root = document.documentElement
+    // Measure every layer, then write. Interleaved, each layer's rect read paid
+    // for the previous layer's root write with a whole-page restyle.
+    const writes = []
     for (const [name, l] of layers) {
       _ensureContainer(name, l)
       let geom = null
@@ -17303,13 +17316,11 @@ const HsNotifs = (() => {
         geom = l.def.geometry?.(ctx || {})
       } catch (_) {}
       if (geom) {
-        for (const [k, v] of Object.entries(geom)) {
-          const cssName = `--hs-layer-${name}-${k}`
-          if (v == null) root.style.removeProperty(cssName)
-          else root.style.setProperty(cssName, typeof v === 'number' ? `${v}px` : v)
-        }
+        for (const [k, v] of Object.entries(geom))
+          writes.push([`--hs-layer-${name}-${k}`, v == null ? null : typeof v === 'number' ? `${v}px` : v])
       }
     }
+    for (const [cssName, v] of writes) setRootVar(cssName, v)
   }
 
   // === STANDARD LAYERS ===
@@ -63882,12 +63893,13 @@ async function loadChatPosition() {
 // YouTube: ytd-watch-flexy[theater]
 // Publish the container's MEASURED width (chat column + side tab strip)
 // for CSS that must reserve the full panel footprint (theatre player inset).
-function publishPanelWidth() {
+// `measured` lets a caller that already read the width pass it in, so the
+// write can land after its other <html> writes without a fresh read.
+function publishPanelWidth(measured) {
   const c = document.getElementById('hs-mc-container')
   if (!c) return
-  if (c.offsetWidth > 0) {
-    document.documentElement.style.setProperty('--hs-panel-w', `${c.offsetWidth}px`)
-  }
+  const w = measured ?? c.offsetWidth
+  if (w > 0) setRootVar('--hs-panel-w', `${w}px`)
   // Self-install a ResizeObserver on the container the first time we see it.
   // Call-site timing is unreliable on cold load (the panel is still 0-width
   // when applyChatPosition / the tab-bar observer fire, so the guard above
@@ -63897,9 +63909,7 @@ function publishPanelWidth() {
   if (!_panelWObs && typeof ResizeObserver !== 'undefined') {
     _panelWObs = new ResizeObserver(() => {
       const el = document.getElementById('hs-mc-container')
-      if (el && el.offsetWidth > 0) {
-        document.documentElement.style.setProperty('--hs-panel-w', `${el.offsetWidth}px`)
-      }
+      if (el && el.offsetWidth > 0) setRootVar('--hs-panel-w', `${el.offsetWidth}px`)
     })
     _panelWObs.observe(c)
     cleanup.trackObserver(_panelWObs)
@@ -76360,14 +76370,18 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!inner && !outer) return
 
     columnObserver = cleanup.trackObserver(
-      new MutationObserver(() => {
+      new MutationObserver((records) => {
+        // A style-only change is our own width write (applyChatWidth, the
+        // resize drag's release) — rebuilding the panel and re-rendering every
+        // row for it froze the page ~150ms per drag. Only twitch flips the class.
+        const classChanged = records.some((r) => r.attributeName === 'class')
         // When class/style changes, fix both elements
         cleanup.raf(() => {
           fixChatTransform()
           applyChatWidth()
           // Re-render after expand — container was display:none while collapsed
           const rightCol = document.querySelector('.right-column')
-          if (rightCol && !rightCol.classList.contains('right-column--collapsed')) {
+          if (classChanged && rightCol && !rightCol.classList.contains('right-column--collapsed')) {
             ensureUIElements()
             renderMessages(currentTab)
           }
@@ -76700,11 +76714,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     let _lastMcLayoutSig = ''
     _updateMcLayout = () => {
       if (!tabBarElement || !overlayElement) return
-      // Panel width (chat + tab strip) drives the chat-left player inset via
-      // --hs-panel-w. Publish it here — this runs on cold-load layout and via
-      // the tab/input ResizeObserver — so the inset is correct before the
-      // first drag-resize (which was previously the only thing that set it).
-      publishPanelWidth()
+      // Every read comes before every <html> custom-property write (the layer
+      // vars, --hs-panel-w): a read after one restyles the whole host page on
+      // the spot — on twitch that froze the drag release.
       const tabRect = tabBarElement.getBoundingClientRect()
       const tw = tabRect.width
       const th = tabRect.height
@@ -76721,7 +76733,15 @@ const STORAGE_KEY = 'heatsync_multichat'
       // sets would skip the recompute and leave the toast strip misanchored.
       const _searchVis = document.getElementById('hs-mc-search-bar')?.classList.contains('visible') ? 1 : 0
       const _sig = `${tabPosition}|${tw}|${th}|${ih}|${_searchVis}|${_containerEl ? _containerEl.offsetHeight : 0}|${[...getActiveViewedChannels()].join(',')}`
-      if (_sig === _lastMcLayoutSig) return
+      // Panel width (chat + tab strip) drives the chat-left player inset via
+      // --hs-panel-w. Published on every pass — this runs on cold-load layout
+      // and via the tab/input ResizeObserver — so the inset is correct before
+      // the first drag-resize. Measured now, written last.
+      const panelW = _containerEl ? _containerEl.offsetWidth : 0
+      if (_sig === _lastMcLayoutSig) {
+        publishPanelWidth(panelW)
+        return
+      }
       _lastMcLayoutSig = _sig
 
       // Reset before re-applying to avoid stale rules between transitions
@@ -76757,6 +76777,11 @@ const STORAGE_KEY = 'heatsync_multichat'
         }
       }
 
+      // An open picker mirrors the message list's box exactly — re-measure it
+      // here, the one place that knows the chat body just moved (tab bar grew a
+      // row, composer shown/hidden, tab position rotated).
+      syncPickerBox()
+
       // Recompute geometry for ALL HsNotifs layers in one place. Each layer's
       // CSS vars (--hs-layer-*-{top|left|right|bottom}) drive its container's
       // CSS positioning. Adding a new layer = registerLayer + matching CSS.
@@ -76771,11 +76796,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           activeChannels: getActiveViewedChannels(),
         })
       } catch (_) {}
-
-      // An open picker mirrors the message list's box exactly — re-measure it
-      // here, the one place that knows the chat body just moved (tab bar grew a
-      // row, composer shown/hidden, tab position rotated).
-      syncPickerBox()
+      publishPanelWidth(panelW)
     }
 
     // Re-observe on every pass, not just the first. The bug this fixes: the tab

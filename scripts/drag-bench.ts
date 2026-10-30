@@ -67,6 +67,9 @@ async function dumpTrace(cdp: any) {
   for (const [k, [ms, n]] of Object.entries(agg).sort((a, b) => b[1][0] - a[1][0]).slice(0, 25)) console.log(`  ${ms.toFixed(1).padStart(8)}ms x${n}  ${k}`)
 }
 const CHANNEL = process.argv[2] || 'primevideo'
+// a full url benches kick / youtube; a bare name is a twitch channel
+const URL_ = CHANNEL.startsWith('http') ? CHANNEL : `https://www.twitch.tv/${CHANNEL}`
+const HANDLE = /kick\.com/.test(URL_) ? '#hs-kick-resize-handle' : /youtube\.com/.test(URL_) ? '#hs-c-resize-handle' : '#hs-mc-resize-handle'
 const CPU = Number(process.argv[3] || 1)
 const profile = mkdtempSync(join(tmpdir(), 'hs-drag-bench-'))
 const ctx = await launchWithExtension(profile, ['--window-size=1600,1000'])
@@ -74,8 +77,8 @@ try {
   const page = ctx.pages()[0] || (await ctx.newPage())
   await page.setViewportSize({ width: 1600, height: 1000 })
   const cdp = await ctx.newCDPSession(page)
-  await page.goto(`https://www.twitch.tv/${CHANNEL}`, { waitUntil: 'domcontentloaded' })
-  await withTimeout(page.waitForSelector('#hs-mc-resize-handle', { timeout: 60_000 }), 70_000, 'handle')
+  await page.goto(URL_, { waitUntil: 'domcontentloaded' })
+  await withTimeout(page.waitForSelector(HANDLE, { state: 'visible', timeout: 60_000 }), 70_000, 'handle')
   await page.waitForTimeout(8000)
   // the extension opens its welcome tab on install, which backgrounds this one
   // and throttles rAF to 1Hz
@@ -105,7 +108,7 @@ try {
     }).observe({ type: 'long-animation-frame' })
   })
   const phase = (p: string) => page.evaluate((x) => ((window as any).__ph = x), p)
-  const box = (await page.locator('#hs-mc-resize-handle').boundingBox())!
+  const box = (await page.locator(HANDLE).boundingBox())!
   const x0 = box.x + box.width / 2
   const y = box.y + 300
 

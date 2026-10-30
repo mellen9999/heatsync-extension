@@ -117,6 +117,7 @@ const NOT_FOR_EXTENSION = new Map([
     'emoji',
     'a youtube emote part inside a parsed message, not a frame (the scan reads "broadcaster" nearby as a send)',
   ],
+  ['kick-moderation', 'site chat pane ban greying; the ext reads kick bans off its own pusher tap'],
   ['stream:sub', 'twitch eventsub internal shape; reaches the ext as stream:sub-gift'],
   ['chat:send_kick_result', 'send-ack for the kick relay; the ext does not await it'],
   ['chat:send_youtube_result', 'send-ack for the yt relay; the ext does not await it'],

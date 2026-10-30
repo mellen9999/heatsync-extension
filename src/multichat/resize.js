@@ -553,9 +553,9 @@ function ensureChatResizeHandle() {
     // Final commit — single reflow for the player + React tree.
     if (axis === 'x') chatWidth = pendingW
     else chatHeight = pendingH
-    document.documentElement.style.setProperty('--hs-chat-w', `${chatWidth}px`)
-    document.documentElement.style.setProperty('--hs-chat-h', `${chatHeight}px`)
-    applyChatPosition()
+    setRootVar('--hs-chat-w', `${chatWidth}px`)
+    setRootVar('--hs-chat-h', `${chatHeight}px`)
+    applyChatPosition({ settled: true })
     requestAnimationFrame(() => {
       try {
         publishPanelWidth()

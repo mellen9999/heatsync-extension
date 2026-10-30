@@ -750,6 +750,20 @@ function parseYoutubeChannel(pathname, search) {
 }
 
 /**
+ * The live URL for a channel-handle live page (/@handle/live), '' for anything
+ * else. That page IS the stream (youtube plays the live video there), but its
+ * path ends in "/live" with no trailing slash, so the /watch|/live/ video-page
+ * test misses it and the page's chat never bound to "watching". ytSubscribe
+ * resolves the @handle live URL to the concrete videoId.
+ * @param {string} pathname
+ * @returns {string}
+ */
+function ytHandleLiveUrl(pathname) {
+  const m = String(pathname || '').match(/^\/@([^/]+)\/live\/?$/)
+  return m ? `https://www.youtube.com/@${m[1].toLowerCase()}/live` : ''
+}
+
+/**
  * What KIND of identifier parseYoutubeChannel(pathname, search) returned for
  * the same URL — 'handle' and 'channel' ARE a channel identity (safe to feed
  * straight to /api/profile or a 7TV/channel-emote lookup); 'video' is a
@@ -847,6 +861,24 @@ function hsLiveChannelEntry(hostPlatform, cur) {
     kick: hostPlatform === 'kick' ? cur : '',
     youtube: hostPlatform === 'yt' ? `https://www.youtube.com/@${cur}/live` : '',
   }
+}
+
+/**
+ * Fills the page platform's EMPTY slot on an existing channel entry (an event
+ * row opened a tab saved earlier as twitch-only). Never overwrites or drops a
+ * leg. Returns true when the entry changed.
+ * @param {{twitch?: string, kick?: string, youtube?: string}} entry mutated in place
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string} cur page channel (lowercased handle)
+ * @returns {boolean}
+ */
+function fillHsLiveLeg(entry, hostPlatform, cur) {
+  const slot = hostPlatform === 'yt' ? 'youtube' : hostPlatform
+  if (!entry || entry[slot]) return false
+  const fresh = hsLiveChannelEntry(hostPlatform, cur)
+  if (!fresh[slot]) return false
+  entry[slot] = fresh[slot]
+  return true
 }
 
 /**
@@ -1237,6 +1269,8 @@ const utils = {
   streamEventPlatform,
   streamEventUrl,
   hsLiveChannelEntry,
+  fillHsLiveLeg,
+  ytHandleLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
   parseYoutubeChannelType,
@@ -1295,6 +1329,8 @@ export {
   firstPartialYtUrl,
   getFiber,
   hsLiveChannelEntry,
+  fillHsLiveLeg,
+  ytHandleLiveUrl,
   identityYtLiveUrl,
   isLargeKeySyncEligible,
   LARGE_KEY_SYNC_MAX,

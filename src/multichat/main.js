@@ -12271,8 +12271,12 @@
         // (the /live redirect landed first) is not a channel, so it makes no tab.
         const plat = hostPlatform
         const chOk = plat !== 'yt' || parseYoutubeChannelType(location.pathname, location.search) === 'handle'
-        if (cur && chOk && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
+        const have = cur ? config.channels.find((c) => (c.id || '').toLowerCase() === cur) : null
+        if (cur && chOk && !have) {
           config.channels.push(hsLiveChannelEntry(plat, cur))
+          saveConfig()
+        } else if (have && chOk && fillHsLiveLeg(have, plat, cur)) {
+          // saved earlier as twitch-only: the row's platform fills its empty slot
           saveConfig()
         }
         if (cur && config.channels.some((c) => c.id === cur)) _savedActiveTab = cur
@@ -12293,6 +12297,28 @@
     } catch (_) {
       _savedActiveTab = 'live'
     }
+  }
+
+  // One-time repair for tabs saved twitch-only before went-live rows kept their
+  // platform: a youtube/kick page whose channel owns a lone twitch leg that the
+  // directory says doesn't exist (suspended/banned/never made) gains the page's
+  // leg. Conservative: only a verified identity, only an EMPTY slot, nothing dropped.
+  async function repairTwitchOnlyTab() {
+    try {
+      const plat = hostPlatform
+      if (plat !== 'yt' && plat !== 'kick') return
+      const cur = getCurrentChannel()
+      if (!cur || typeof resolveIdentity !== 'function') return
+      const slot = plat === 'yt' ? 'youtube' : 'kick'
+      const tab = config.channels.find(
+        (c) => (c.id || '').toLowerCase() === cur && (c.twitch || '').toLowerCase() === cur && !c.kick && !c.youtube,
+      )
+      if (!tab) return
+      const res = await resolveIdentity(cur, { platform: plat })
+      if (!res?.ok || !res.identity || res.identity.twitch || !res.identity[plat === 'yt' ? 'youtube' : 'kick']) return
+      if (tab[slot] || !config.channels.includes(tab)) return
+      if (fillHsLiveLeg(tab, plat, cur)) saveConfig()
+    } catch (_) {}
   }
 
   let _applyingPosition = false
@@ -13670,15 +13696,18 @@
     // (ytSubscribe's own channel-shaped-URL branch resolves it to a concrete
     // videoId via the BG, same as an @handle URL).
     const isChannelId = parseYoutubeChannelType(location.pathname, location.search) === 'channel'
-    if (!isChannelId && !/\/watch|\/live\//.test(location.pathname + location.search)) return
-    const autoYtUrl = isChannelId ? `https://www.youtube.com/channel/${vid}/live` : `https://youtube.com/watch?v=${vid}`
+    const handleLiveUrl = ytHandleLiveUrl(location.pathname)
+    if (!isChannelId && !handleLiveUrl && !/\/watch|\/live\//.test(location.pathname + location.search)) return
+    const autoYtUrl = isChannelId
+      ? `https://www.youtube.com/channel/${vid}/live`
+      : handleLiveUrl || `https://youtube.com/watch?v=${vid}`
     ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     // Concrete on-page videoId — open the render gate now (same rationale as
     // the init-time sibling: the poller's 'connected' echo is missed on
     // already-polled popular streams). No id yet for the channel-id case —
     // defers to ytSubscribe's own resolve echo, same as an @handle URL.
-    if (!isChannelId) _autoYtVideoId = vid
+    if (!isChannelId && !handleLiveUrl) _autoYtVideoId = vid
     ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
@@ -13967,6 +13996,7 @@
         hydrateTwitchBadges(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
+    repairTwitchOnlyTab() // not awaited: a network lookup must not hold boot
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)
     // — the imminent first render will paint with a stale/empty blocked set.
     // Attach a late repaint that fires whenever they actually land: invalidate
@@ -14341,10 +14371,15 @@
         // @handle URL (ytSubscribe's own channel-shaped-URL branch resolves
         // it to a concrete videoId via the BG).
         const isYtChannelId = hostPlatform === 'yt' && /^UC[\w-]{20,}$/.test(currentChannel || '')
-        const onYtVideoPage = hostPlatform === 'yt' && /\/watch|\/live\//.test(location.pathname + location.search)
+        // /@handle/live: the page is the stream, but there's no videoId in the URL yet
+        const handleLiveUrl = hostPlatform === 'yt' ? ytHandleLiveUrl(location.pathname) : ''
+        const onYtVideoPage =
+          hostPlatform === 'yt' && !handleLiveUrl && /\/watch|\/live\//.test(location.pathname + location.search)
         const autoYtUrl = isYtChannelId
           ? `https://www.youtube.com/channel/${currentChannel}/live`
-          : onYtVideoPage
+          : handleLiveUrl
+            ? handleLiveUrl
+            : onYtVideoPage
             ? `https://youtube.com/watch?v=${currentChannel}`
             : ytUrl
         if (gYt && autoYtUrl) {

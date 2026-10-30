@@ -15333,7 +15333,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7b344b6df4e6' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c41a94938bae' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -85644,6 +85644,10 @@ const STORAGE_KEY = 'heatsync_multichat'
             if (!hermesToggles?.raid) return
             text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
             eventClass = 'event-raid'
+          } else if (msg.eventType === 'stream:poll-start') {
+            if (!hermesToggles?.poll) return
+            text = `[${channel}] \u25C6 new poll up${msg.title ? ` \u2014 ${String(msg.title)}` : ''}`
+            eventClass = 'event-poll'
           } else if (msg.eventType === 'stream:hype-start') {
             if (!hermesToggles?.hype) return
             text = `[${channel}] \u25C6 hype train started`

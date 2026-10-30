@@ -71,8 +71,7 @@ function serverSentTypes(root) {
     const s = readFileSync(f, 'utf8')
     for (const m of s.matchAll(/type:\s*'([^']+)'/g)) {
       const ctx = s.slice(Math.max(0, m.index - 260), m.index + 80)
-      // broadcast as a call: the bare word also matches prose like "broadcaster"
-      if (/broadcast\w*\(|publishTo|wsSend|\.send\(|sendTo|emitTo|WSServerMessage/.test(ctx)) {
+      if (/broadcast|publishTo|wsSend|\.send\(|sendTo|emitTo|WSServerMessage/.test(ctx)) {
         if (!sent.has(m[1])) sent.set(m[1], f.split('/').pop())
       }
     }
@@ -114,6 +113,10 @@ const NOT_FOR_EXTENSION = new Map([
   ['clearchat', 'twitch eventsub internal shape'],
   ['clearmsg', 'twitch eventsub internal shape'],
   ['usernotice', 'twitch eventsub internal shape'],
+  [
+    'emoji',
+    'a youtube emote part inside a parsed message, not a frame (the scan reads "broadcaster" nearby as a send)',
+  ],
   ['stream:sub', 'twitch eventsub internal shape; reaches the ext as stream:sub-gift'],
   ['chat:send_kick_result', 'send-ack for the kick relay; the ext does not await it'],
   ['chat:send_youtube_result', 'send-ack for the yt relay; the ext does not await it'],

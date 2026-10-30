@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '34f201e63e77' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0d8232dba96b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -63315,9 +63315,9 @@ function ensureChatResizeHandle() {
     // Final commit — single reflow for the player + React tree.
     if (axis === 'x') chatWidth = pendingW
     else chatHeight = pendingH
-    document.documentElement.style.setProperty('--hs-chat-w', `${chatWidth}px`)
-    document.documentElement.style.setProperty('--hs-chat-h', `${chatHeight}px`)
-    applyChatPosition()
+    setRootVar('--hs-chat-w', `${chatWidth}px`)
+    setRootVar('--hs-chat-h', `${chatHeight}px`)
+    applyChatPosition({ settled: true })
     requestAnimationFrame(() => {
       try {
         publishPanelWidth()
@@ -64020,7 +64020,10 @@ function setupTheatreObserver() {
   cleanup.setIntervalIfVisible(() => detectTheatreMode(), 5000)
 }
 
-function applyChatPosition() {
+// `settled`: the page is already laid out and the caller fires its own resize
+// (the resize drag's release) — skip YT's load-time player nudges, which on a
+// release made youtube relayout five times over.
+function applyChatPosition({ settled = false } = {}) {
   // Native chat shown: don't re-position/override layout (races native chat).
   if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
   // Sanitize — 5 valid positions: 4 visible + 'hidden'.
@@ -64061,11 +64064,12 @@ function applyChatPosition() {
   // panel renders via the position:fixed CSS rule across home, search,
   // VOD, channel, and live — matching the Twitch persistent overlay.
   const isYtNonWatch = hostPlatform === 'yt' && !document.querySelector('ytd-watch-flexy:not([hidden])')
-  document.body.classList.remove('hs-chat-top', 'hs-chat-right', 'hs-chat-bottom', 'hs-chat-left')
+  // Forced toggles, not remove-all + add: a class that comes off and back on
+  // still invalidates style for the whole page, on every call.
+  for (const p of ['top', 'right', 'bottom', 'left']) document.body.classList.toggle(`hs-chat-${p}`, p === chatPosition)
   document.body.classList.toggle('hs-platform-yt', hostPlatform === 'yt')
   document.body.classList.toggle('hs-platform-twitch', hostPlatform !== 'yt' && !isKick)
   document.body.classList.toggle('hs-platform-kick', !!isKick)
-  document.body.classList.add(`hs-chat-${chatPosition}`)
   if (isYtNonWatch && location.pathname === '/watch') {
     // We're on a watch URL but flexy hasn't mounted yet (SPA cold-load,
     // /watch → /watch transition where React unmounted then remounts).
@@ -64079,8 +64083,8 @@ function applyChatPosition() {
   document.body.classList.toggle('hs-mode-normal', !theatreMode)
   // Push the chatWidth css var down so the per-position CSS can build offsets
   // off it (rather than chasing platform-specific selectors twice).
-  document.documentElement.style.setProperty('--hs-chat-w', `${chatWidth}px`)
-  document.documentElement.style.setProperty('--hs-chat-h', `${chatHeight}px`)
+  setRootVar('--hs-chat-w', `${chatWidth}px`)
+  setRootVar('--hs-chat-h', `${chatHeight}px`)
   // Refresh Twitch side-nav width — it can flip 50↔240 across a chat
   // toggle (user F11s, viewport crosses Twitch's expand breakpoint, etc).
   if (hostPlatform === 'twitch') updateTwitchSideNavWidth()
@@ -64102,7 +64106,7 @@ function applyChatPosition() {
   // resize events at multiple timing points. The player init is async and
   // can complete after our applyChatPosition runs on initial load — without
   // multiple nudges, YT's own resize observer doesn't fire until ~10s.
-  if (hostPlatform === 'yt') {
+  if (hostPlatform === 'yt' && !settled) {
     const fire = () => {
       try {
         window.dispatchEvent(new Event('resize'))

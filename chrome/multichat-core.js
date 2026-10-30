@@ -15151,7 +15151,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '2481b41fe67b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b4f74e2c963e' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69216,6 +69216,13 @@ function softTwitchNav(prevLiveCh) {
       chatShell.appendChild(c)
       try {
         updateTwitchNoChannelClass()
+      } catch (_) {}
+      // A panel first mounted on a page with no right column (/directory)
+      // bailed out of setupResizeHandle, and soft nav never re-runs init —
+      // the channel landed on had no resize bar until a reload.
+      try {
+        setupResizeHandle()
+        if (chatPosition && chatPosition !== 'right') hidePlatformResizeHandles(true)
       } catch (_) {}
       done = true
       finish()

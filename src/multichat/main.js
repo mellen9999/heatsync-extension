@@ -6351,14 +6351,18 @@
     if (!inner && !outer) return
 
     columnObserver = cleanup.trackObserver(
-      new MutationObserver(() => {
+      new MutationObserver((records) => {
+        // A style-only change is our own width write (applyChatWidth, the
+        // resize drag's release) — rebuilding the panel and re-rendering every
+        // row for it froze the page ~150ms per drag. Only twitch flips the class.
+        const classChanged = records.some((r) => r.attributeName === 'class')
         // When class/style changes, fix both elements
         cleanup.raf(() => {
           fixChatTransform()
           applyChatWidth()
           // Re-render after expand — container was display:none while collapsed
           const rightCol = document.querySelector('.right-column')
-          if (rightCol && !rightCol.classList.contains('right-column--collapsed')) {
+          if (classChanged && rightCol && !rightCol.classList.contains('right-column--collapsed')) {
             ensureUIElements()
             renderMessages(currentTab)
           }
@@ -6691,11 +6695,9 @@
     let _lastMcLayoutSig = ''
     _updateMcLayout = () => {
       if (!tabBarElement || !overlayElement) return
-      // Panel width (chat + tab strip) drives the chat-left player inset via
-      // --hs-panel-w. Publish it here — this runs on cold-load layout and via
-      // the tab/input ResizeObserver — so the inset is correct before the
-      // first drag-resize (which was previously the only thing that set it).
-      publishPanelWidth()
+      // Every read comes before every <html> custom-property write (the layer
+      // vars, --hs-panel-w): a read after one restyles the whole host page on
+      // the spot — on twitch that froze the drag release.
       const tabRect = tabBarElement.getBoundingClientRect()
       const tw = tabRect.width
       const th = tabRect.height
@@ -6712,7 +6714,15 @@
       // sets would skip the recompute and leave the toast strip misanchored.
       const _searchVis = document.getElementById('hs-mc-search-bar')?.classList.contains('visible') ? 1 : 0
       const _sig = `${tabPosition}|${tw}|${th}|${ih}|${_searchVis}|${_containerEl ? _containerEl.offsetHeight : 0}|${[...getActiveViewedChannels()].join(',')}`
-      if (_sig === _lastMcLayoutSig) return
+      // Panel width (chat + tab strip) drives the chat-left player inset via
+      // --hs-panel-w. Published on every pass — this runs on cold-load layout
+      // and via the tab/input ResizeObserver — so the inset is correct before
+      // the first drag-resize. Measured now, written last.
+      const panelW = _containerEl ? _containerEl.offsetWidth : 0
+      if (_sig === _lastMcLayoutSig) {
+        publishPanelWidth(panelW)
+        return
+      }
       _lastMcLayoutSig = _sig
 
       // Reset before re-applying to avoid stale rules between transitions
@@ -6748,6 +6758,11 @@
         }
       }
 
+      // An open picker mirrors the message list's box exactly — re-measure it
+      // here, the one place that knows the chat body just moved (tab bar grew a
+      // row, composer shown/hidden, tab position rotated).
+      syncPickerBox()
+
       // Recompute geometry for ALL HsNotifs layers in one place. Each layer's
       // CSS vars (--hs-layer-*-{top|left|right|bottom}) drive its container's
       // CSS positioning. Adding a new layer = registerLayer + matching CSS.
@@ -6762,11 +6777,7 @@
           activeChannels: getActiveViewedChannels(),
         })
       } catch (_) {}
-
-      // An open picker mirrors the message list's box exactly — re-measure it
-      // here, the one place that knows the chat body just moved (tab bar grew a
-      // row, composer shown/hidden, tab position rotated).
-      syncPickerBox()
+      publishPanelWidth(panelW)
     }
 
     // Re-observe on every pass, not just the first. The bug this fixes: the tab

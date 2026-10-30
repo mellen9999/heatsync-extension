@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "elk youtube-kanaal houdt het laatst ingestelde volume vast, in video's, streams en embeds. uit laat de speler van youtube met rust"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

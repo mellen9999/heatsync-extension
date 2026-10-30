@@ -3641,5 +3641,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "each youtube channel keeps the volume you last set, in videos, streams and embeds. off leaves youtube's player alone"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

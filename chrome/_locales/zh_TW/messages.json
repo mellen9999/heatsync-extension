@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "youtube的每個頻道都會記住你上次設定的音量,適用於影片、直播與嵌入。關閉則不干預youtube的播放器"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

@@ -14480,6 +14480,8 @@ function renderProfile(
 // Bootstrap - lifecycle controller, cleanup utilities, debug log
 
 const MC_DEBUG = false
+// sign-in goes to the 3-way chooser (twitch/kick/youtube), never straight to twitch oauth
+const HS_LOGIN_URL = 'https://heatsync.org/login'
 function log(...args) {
   if (MC_DEBUG) console.log(LOG_PREFIX, ...args)
 }
@@ -15223,7 +15225,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '82fe0a3478a5' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '554cda312cd2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16052,6 +16054,19 @@ function slashCommandsFor(surface) {
   return SLASH_REGISTRY.filter((c) => !c.hidden && (c.on === 'both' || c.on === surface))
 }
 
+/**
+ * Can this command do anything on a tab that reaches `platforms` (a Set of
+ * 'twitch' | 'kick', or null when the tab has no single destination)? Only the
+ * platform-bound commands are judged: `needs` twitch/mod/broadcaster plus a
+ * `does` naming twitch and/or kick. Heatsync-side and local commands always apply.
+ */
+function slashAvailableOn(c, platforms) {
+  if (!platforms) return true
+  if (c.needs !== 'twitch' && c.needs !== 'mod' && c.needs !== 'broadcaster') return true
+  const bound = String(c.does).split('+')
+  return bound.some((p) => platforms.has(p))
+}
+
 /** alias -> canonical, derived so the two can never disagree. */
 function slashAliasMap(surface) {
   const src = surface ? slashCommandsFor(surface) : SLASH_REGISTRY.filter((c) => !c.hidden)
@@ -16747,6 +16762,67 @@ function youtubeModErrorMessage(err) {
       // flattening every future yt error into one useless sentence.
       return err ? String(err) : t('mc_common_unknown')
   }
+}
+
+
+// --- multichat/self-identity.js ---
+// Self identity — who "me" is, per platform. One twitch string (currentUsername)
+// used to answer for every row, so a kick-only or youtube-only viewer was never
+// "me" anywhere: no filter exemption, mod toolbar on their own rows, no pin gate.
+//
+//   isSelf(msg, platform?)   true when msg.user is this viewer on that platform
+//
+// Sources per platform (all lowercase, any that exist):
+//   twitch   currentUsername, the auth-irc nick, heatsync twitch_username
+//   kick     the kick session's username (kick_session_status), heatsync kick_username
+//   youtube  heatsync youtube_username, the author chip in youtube's own chat frame
+
+let selfKickName = '' // set from kick_session_status; no heatsync login needed
+let selfHsNames = { twitch: '', kick: '', youtube: '' } // heatsync account's per-platform names
+let _ytChip = { at: 0, name: '' } // the chip read walks an iframe DOM — cache it
+
+function setSelfHsNames(ui) {
+  const low = (v) => (v ? String(v).toLowerCase() : '')
+  selfHsNames = { twitch: low(ui?.twitch_username), kick: low(ui?.kick_username), youtube: low(ui?.youtube_username) }
+}
+
+function setSelfKickName(name) {
+  selfKickName = name ? String(name).toLowerCase() : ''
+}
+
+function _selfYtChip() {
+  const now = Date.now()
+  if (now - _ytChip.at < 5000) return _ytChip.name
+  let name = ''
+  try {
+    name = ytSelfName().toLowerCase()
+  } catch (_) {} // not defined yet (pre-init): no chip to read
+  _ytChip = { at: now, name }
+  return _ytChip.name
+}
+
+function selfNamesFor(platform) {
+  const raw =
+    platform === 'kick'
+      ? [selfKickName, selfHsNames.kick]
+      : platform === 'youtube'
+        ? [selfHsNames.youtube, _selfYtChip()]
+        : [
+            typeof currentUsername === 'string' ? currentUsername : '',
+            typeof authState !== 'undefined' && authState?.nick ? authState.nick : '',
+            selfHsNames.twitch,
+          ]
+  return raw.map((n) => (n ? String(n).toLowerCase() : '')).filter(Boolean)
+}
+
+// platform: explicit when the caller knows the transport (an IRC handler); else
+// the row's own badgePlatform/platform (irc rows leave both unset = twitch)
+function isSelf(msg, platform) {
+  const u = msg?.user ? String(msg.user).toLowerCase() : ''
+  if (!u) return false
+  let p = platform || msg.badgePlatform || msg.platform || 'twitch'
+  if (p === 'yt') p = 'youtube'
+  return selfNamesFor(p).includes(u)
 }
 
 
@@ -17821,6 +17897,12 @@ const HsNotifs = (() => {
     actions: { dismiss: {} },
   })
 
+  // failure reasons that mean "not signed in over there" → where to sign in
+  const PENDING_LOGIN_LINKS = {
+    kick_not_logged_in: { label: 'open kick', url: 'https://kick.com/' },
+    chat_disabled: { label: 'open youtube', url: 'https://www.youtube.com/' },
+  }
+
   // Send-pending — fires when an outgoing chat message hasn't echoed back from
   // the platform within PENDING_ECHO_TIMEOUT_MS (input.js). Persistent: stays
   // until the user clicks retry/dismiss, or until confirmPending() arrives
@@ -17869,6 +17951,22 @@ const HsNotifs = (() => {
       }
       const snippet = String(data.text || '').slice(0, 60)
       el.textContent = `${why}: "${snippet}${data.text?.length > 60 ? '…' : ''}"`
+      // Login-shaped failures get a way in, like twitch-auth-required's "open twitch"
+      const login = PENDING_LOGIN_LINKS[data.reason]
+      if (login) {
+        const btn = document.createElement('button')
+        btn.type = 'button'
+        btn.className = 'hs-notif-action hs-notif-action-secondary'
+        btn.textContent = login.label
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          try {
+            window.open(login.url, '_blank', 'noopener')
+          } catch (_) {}
+        })
+        el.append(' ', btn)
+      }
       return el
     },
     actions: {
@@ -17957,7 +18055,7 @@ const HsNotifs = (() => {
         label: t('mc_signed_out_action'),
         onClick: () => {
           try {
-            window.open('https://heatsync.org/api/auth/login', '_blank', 'noopener')
+            window.open(HS_LOGIN_URL, '_blank', 'noopener')
           } catch (_) {}
           return true
         },
@@ -20524,9 +20622,22 @@ let mentionAliases = new Set()
 let _mentionReList = null
 let _mentionReKey = ''
 
+// user_info → alias set + the per-platform self names (self-identity.js)
+function setMentionAliases(ui) {
+  mentionAliases = new Set()
+  if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
+  if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
+  if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
+  if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+  setSelfHsNames(ui)
+}
+
 function getMentionTargets() {
   const out = []
   if (currentUsername) out.push(currentUsername)
+  // Signed into kick but not heatsync: no user_info aliases, so the kick
+  // session's own username is the only name that makes "@you" ping.
+  if (selfKickName && !out.includes(selfKickName)) out.push(selfKickName)
   // currentUsername is null on cross-origin tabs (youtube.com/kick.com popout
   // — twitch storage unreachable). authState.nick is the twitch nick from the
   // auth-irc handshake and works everywhere; without it, "@you" tags on the
@@ -30453,10 +30564,7 @@ function computeSubTenureRow(username, msgChannel) {
   const channelMap = subTenureMap.get(channelLogin)
   const months = channelMap?.get(username.toLowerCase())
   if (!months) return null
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   const tenure = hsCardTenureMonths(months) || `${months}mo`
   return isSelfChannel
     ? { k: 'sub-tenure', label: 'they', value: `sub to you ${tenure}`, tone: 'they-sub' }
@@ -30658,10 +30766,7 @@ function getTooltipChannelContext(userPlatform) {
 // can't live in here).
 function resolveFollowageRows(username, channelLogin, followage, onRows) {
   if (!channelLogin) return
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   if (followage && !followage.degraded) {
     Promise.resolve().then(() => onRows(computeFollowageRows(channelLogin, isSelfChannel, followage)))
     return
@@ -38600,11 +38705,7 @@ async function loadHsUsername() {
     // ui.username (heatsync core name) is always included so bare-name mentions
     // resolve even when getCurrentUsername() returns null (e.g. logged-out Kick
     // tab) and no platform aliases are configured.
-    mentionAliases = new Set()
-    if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
-    if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
-    if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
-    if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+    setMentionAliases(ui)
     // Your own paint/tenure/colour jump the cosmetics queue and your picked
     // colour seeds now — otherwise your name waits behind the whole channel.
     primeSelfHsCosmetics(ui)
@@ -38767,11 +38868,7 @@ async function loadHsAuth() {
         const ui = changes.user_info.newValue
         hsCurrentUsername = ui?.username?.toLowerCase() || null
         hsSenderKeys = Array.isArray(ui?.sender_keys) ? ui.sender_keys : null
-        mentionAliases = new Set()
-        if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
-        if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
-        if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
-        if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+        setMentionAliases(ui)
         primeSelfHsCosmetics(ui)
       }
       if (changes.auth_token_encrypted || changes.auth_token) {
@@ -39374,7 +39471,7 @@ function handleYoutubeChatMsg(msg) {
   // so a keyword alert fired on twitch and kick and was silently mute on
   // youtube. Lazy in the same order as the other two handlers (automod is
   // cheap, so it short-circuits before the rule eval).
-  const _frOwnYt = ytMsg.user?.toLowerCase() === currentUsername?.toLowerCase()
+  const _frOwnYt = isSelf(ytMsg, 'youtube')
   let _frYt = null
   if (!_frOwnYt) {
     if (shouldAutomod(ytMsg.text)) return
@@ -40066,7 +40163,7 @@ function _renderFeedEmptyCard() {
     const loginBtn = document.createElement('a')
     loginBtn.className = 'hs-mc-empty-btn primary'
     loginBtn.textContent = 'log in at heatsync.org'
-    loginBtn.href = 'https://heatsync.org/login'
+    loginBtn.href = HS_LOGIN_URL
     loginBtn.target = '_blank'
     loginBtn.rel = 'noopener noreferrer'
     actions.appendChild(loginBtn)
@@ -41281,7 +41378,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   row.target = '_blank'
   row.rel = 'noopener noreferrer'
 
-  const isLive = !!(profile.twitch_is_live || profile.kick_is_live)
+  const isLive = discoverIsLive(profile)
   if (isLive) row.classList.add('hs-discover-row-live')
 
   if (showRank) {
@@ -41294,7 +41391,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   const dot = document.createElement('span')
   dot.className = isLive ? 'hs-discover-live-dot' : 'hs-discover-live-spacer'
   if (isLive) {
-    const v = (profile.twitch_viewer_count || 0) + (profile.kick_viewer_count || 0)
+    const v = discoverViewers(profile)
     dot.title = v > 0 ? `live · ${v.toLocaleString()} viewer${v === 1 ? '' : 's'}` : 'live'
   }
   row.appendChild(dot)
@@ -41357,6 +41454,22 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
     if (profile.kick_is_live) k.classList.add('hs-plat-live')
     k.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(k)
+  }
+  if (profile.youtube_username || profile.youtube_channel_id) {
+    const y = document.createElement('a')
+    y.className = 'hs-plat hs-plat-yt'
+    y.textContent = 'Y'
+    const ytHandle = profile.youtube_username ? String(profile.youtube_username).replace(/^@/, '') : ''
+    // channel id first — immutable, can't be squatted like a handle
+    y.href = profile.youtube_channel_id
+      ? `https://www.youtube.com/channel/${encodeURIComponent(profile.youtube_channel_id)}`
+      : `https://www.youtube.com/@${encodeURIComponent(ytHandle)}`
+    y.target = '_blank'
+    y.rel = 'noopener noreferrer'
+    y.title = `youtube${ytHandle ? ` · @${ytHandle}` : ''}${profile.youtube_is_live ? ' · live' : ''}`
+    if (profile.youtube_is_live) y.classList.add('hs-plat-live')
+    y.addEventListener('click', (e) => e.stopPropagation())
+    plats.appendChild(y)
   }
   if (plats.childNodes.length) row.appendChild(plats)
 
@@ -41468,6 +41581,14 @@ function renderDiscoverChipsBar() {
     ),
   )
   return bar
+}
+
+// live on any linked platform / viewers summed across them — youtube counts like the other two
+function discoverIsLive(p) {
+  return !!(p.twitch_is_live || p.kick_is_live || p.youtube_is_live)
+}
+function discoverViewers(p) {
+  return (p.twitch_viewer_count || 0) + (p.kick_viewer_count || 0) + (p.youtube_viewer_count || 0)
 }
 
 function profileMatchesPlatformFilter(p) {
@@ -41629,15 +41750,13 @@ function renderDiscoverTab() {
   const filteredProfiles = discoverProfiles.filter(profileMatchesPlatformFilter)
   const filteredPosts = discoverPosts.filter(postMatchesPlatformFilter)
 
-  const liveProfiles = filteredProfiles
-    .filter((p) => p.twitch_is_live || p.kick_is_live)
-    .sort((a, b) => {
-      const av = (a.twitch_viewer_count || 0) + (a.kick_viewer_count || 0)
-      const bv = (b.twitch_viewer_count || 0) + (b.kick_viewer_count || 0)
-      if (av !== bv) return bv - av
-      return (b.stats?.total_heat || 0) - (a.stats?.total_heat || 0)
-    })
-  const restProfiles = filteredProfiles.filter((p) => !p.twitch_is_live && !p.kick_is_live).sort(sortProfilesByHeat)
+  const liveProfiles = filteredProfiles.filter(discoverIsLive).sort((a, b) => {
+    const av = discoverViewers(a)
+    const bv = discoverViewers(b)
+    if (av !== bv) return bv - av
+    return (b.stats?.total_heat || 0) - (a.stats?.total_heat || 0)
+  })
+  const restProfiles = filteredProfiles.filter((p) => !discoverIsLive(p)).sort(sortProfilesByHeat)
   const maxHeat = Math.max(...filteredProfiles.map((p) => p.stats?.total_heat ?? p.heat ?? 0), 1)
 
   // Filter chips
@@ -42333,6 +42452,14 @@ let armedReplyKey = null
 let whisperDmsLoaded = false
 let selfWhisperColor = null // current user's Twitch color
 
+// The whispers-tab usage line. /w is a twitch whisper, so a viewer with no twitch
+// identity (kick/youtube only) is told about heatsync DMs first, not a command
+// that can't work for them.
+function whisperHint() {
+  const hasTwitch = !!(currentUsername || (typeof authState !== 'undefined' && authState?.nick))
+  return t(hasTwitch ? 'mc_whisper_hint' : 'mc_whisper_hint_dm')
+}
+
 // Resolve own color from IRC buffers, chat DOM, or Twitch cookie color
 function resolveSelfColor() {
   if (selfWhisperColor) return
@@ -42898,7 +43025,7 @@ function renderWhispersTab() {
     if (whisperDmsLoaded && hsAuthToken) {
       emptyDiv.textContent = t('common_loading') || 'loading…'
     } else {
-      emptyDiv.textContent = t('mc_whisper_hint')
+      emptyDiv.textContent = whisperHint()
     }
     msgsEl.appendChild(emptyDiv)
     return
@@ -42981,7 +43108,7 @@ function renderWhispersTab() {
         const followIdSafe = escapeHtml(m.key?.startsWith('hs:') ? m.key.slice(3) : '')
         statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${errSafe} — click to follow ${escapeHtml(them)} and send" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
       } else if (m.errorKind === 'auth') {
-        statusHtml = ` <a href="https://heatsync.org/api/auth/login?return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
+        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
       } else {
         statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">⚠ ${errSafe} — retry</span>`
       }
@@ -43608,6 +43735,19 @@ async function _twitchFollow(targetID, follow, disableNotifications, _targetSlug
   return followTwitchUserById(targetID, follow, disableNotifications)
 }
 
+// Does the viewer have a session on this platform at all? A kick-only or
+// twitch-only user must not get "follow queued" toasts (or queue entries that
+// can never drain) for the platform they don't use. Both probes read the
+// platform's own cookies in the background; a failed probe reads as no session.
+async function _hasPlatformSession(platform) {
+  try {
+    if (platform === 'twitch') return !!(await getTwitchAuthTokenAsync()).token
+    return !!(await safeSendMessage({ type: 'kick_session_status' }))?.loggedIn
+  } catch (_) {
+    return false
+  }
+}
+
 // ─── Main entry: called from pcToggleFollow + pcToggleBlock ─────────────────
 //
 // target shape: { twitch_id, twitch_username, kick_username, youtube_channel_id, youtube_username }
@@ -43624,7 +43764,9 @@ async function propagateFollow(follow, target) {
     kick: { skipped: settings.kick ? 'no kick username' : 'disabled' },
   }
 
-  if (settings.twitch && target.twitch_id) {
+  if (settings.twitch && target.twitch_id && !(await _hasPlatformSession('twitch'))) {
+    out.twitch = { skipped: 'no twitch session' }
+  } else if (settings.twitch && target.twitch_id) {
     const verb = follow ? 'follow' : 'unfollow'
     const r = await _twitchFollow(target.twitch_id, follow, !settings.twitchNotifyTarget, target.twitch_username)
     if (r?.ok) {
@@ -43655,7 +43797,9 @@ async function propagateFollow(follow, target) {
     }
   }
 
-  if (settings.kick && target.kick_username) {
+  if (settings.kick && target.kick_username && !(await _hasPlatformSession('kick'))) {
+    out.kick = { skipped: 'no kick session' }
+  } else if (settings.kick && target.kick_username) {
     const verb = follow ? 'follow' : 'unfollow'
     const r = await _kickFollow(target.kick_username, follow)
     if (r?.ok) {
@@ -46208,10 +46352,10 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     // login otherwise. YT actions are message-scoped (msgId), so any truthy
     // channel just satisfies the gate — the dispatch uses msgId, not the channel.
     const modCh = isYt ? msgCh || 'yt' : isKick ? entry?.kick || msgCh : entry?.twitch || msgCh
-    // currentUsername is a display name; compare against BOTH the login and the
+    // the viewer's name is a display name; compare against BOTH the login and the
     // display name so a non-Latin-named mod can't be shown self-mod actions.
-    const _selfRef = typeof currentUsername !== 'undefined' && currentUsername ? currentUsername.toLowerCase() : null
-    const notSelf = !_selfRef || (msgLogin !== _selfRef && (msg.dataset?.msgUser || '').toLowerCase() !== _selfRef)
+    const notSelf =
+      !isSelf({ user: msgLogin, platform: msgPlat }) && !isSelf({ user: msg.dataset?.msgUser, platform: msgPlat })
     const amMod = isYt
       ? typeof isYtModForSync === 'function' && isYtModForSync()
       : isKick
@@ -47035,12 +47179,15 @@ function stripMcMutedMessage(msg) {
 }
 
 // logged-out first run: say so up front instead of "send to #x" (input stays enabled)
-// kick: null until background answers (never blocks render); youtube stays null
-// (no host-page session probe, unchanged behaviour)
+// kick: null until background answers (never blocks render); youtube sends via
+// the live_chat bridge with no heatsync login, so its host can always send
 let _kickHostSession = null
 function _refreshKickHostSession() {
-  if (hostPlatform !== 'kick') return
+  // the kick session also names you (mentions, self rows) on a twitch/youtube
+  // host — but only worth the lookup when kick is actually in play
+  if (hostPlatform !== 'kick' && !config?.channels?.some((c) => c.kick)) return
   safeSendMessage({ type: 'kick_session_status' }).then((resp) => {
+    setSelfKickName(resp?.loggedIn ? resp.username : '')
     const next = resp ? !!resp.loggedIn : null
     if (next === _kickHostSession) return
     _kickHostSession = next
@@ -47050,7 +47197,13 @@ function _refreshKickHostSession() {
 
 function _composerNeedsLogin() {
   const hostSession =
-    hostPlatform === 'twitch' ? !!getTwitchAuthToken() : hostPlatform === 'kick' ? _kickHostSession : null
+    hostPlatform === 'twitch'
+      ? !!getTwitchAuthToken()
+      : hostPlatform === 'kick'
+        ? _kickHostSession
+        : hostPlatform === 'yt'
+          ? true
+          : null
   return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
 }
 
@@ -47095,7 +47248,7 @@ function updateInputPlaceholder() {
     // whisper retargets lastWhisperKey out from under it
     const targetKey = (typeof armedReplyKey !== 'undefined' && armedReplyKey) || lastWhisperKey
     const lastUser = targetKey ? whisperUsers.get(targetKey) : null
-    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : t('mc_whisper_hint')
+    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : whisperHint()
   } else if (currentTab === 'add') {
     placeholder = ''
   } else {
@@ -50280,8 +50433,35 @@ function clearInput(input) {
 // to their canonical command (insertSlashCommand inserts the real name). Without
 // this, typing a documented alias + Tab silently did nothing (only cmd names
 // matched) — reported live for /hl. Canonical matches rank first, then aliases.
+// Which of twitch/kick the composer's current tab sends to — the same
+// resolution sendMessage uses — or null when the tab has no single channel
+// (feed, whispers, …) and so nothing to judge a command against. A youtube-only
+// tab yields an empty set: every twitch/kick-bound command is dead there.
+function currentTabPlatforms() {
+  let ch = null
+  let host = null
+  if (currentTab === 'live') {
+    const live = getLiveChannel()
+    const lower = live ? live.toLowerCase() : ''
+    ch = lower
+      ? config.channels.find((c) => c.twitch?.toLowerCase() === lower || c.kick?.toLowerCase() === lower)
+      : null
+    if (!ch) host = hostPlatform
+  } else {
+    ch = config.channels.find((c) => c.id === currentTab) || null
+    if (!ch) return null
+  }
+  const out = new Set()
+  if (ch?.twitch) out.add('twitch')
+  if (ch?.kick) out.add('kick')
+  if (host === 'twitch' || host === 'kick') out.add(host)
+  return out
+}
+
 function matchSlashCommands(q) {
-  const byCmd = SLASH_COMMANDS.filter((c) => c.cmd.startsWith(q))
+  const tabPlatforms = currentTabPlatforms()
+  const avail = (c) => slashAvailableOn(c, tabPlatforms)
+  const byCmd = SLASH_COMMANDS.filter((c) => c.cmd.startsWith(q) && avail(c))
   if (!q) return byCmd
   const seen = new Set(byCmd.map((c) => c.cmd))
   const viaAlias = []
@@ -50289,7 +50469,7 @@ function matchSlashCommands(q) {
     if (typeof target !== 'string') continue // null = explicit pass-through
     if (!alias.startsWith(q) || seen.has(target)) continue
     const c = SLASH_COMMANDS.find((x) => x.cmd === target)
-    if (c) {
+    if (c && avail(c)) {
       viaAlias.push(c)
       seen.add(target)
     }
@@ -52395,7 +52575,7 @@ async function sendMessage() {
     // mentions span channels so there's no single destination. The bare flash
     // never said which, so it read as "the send broke".
     flashInputError(input)
-    showToast(currentTab === 'mentions' ? t('mc_input_mentions_readonly') : t('mc_whisper_hint'), 'error')
+    showToast(currentTab === 'mentions' ? t('mc_input_mentions_readonly') : whisperHint(), 'error')
     return
   }
 
@@ -52472,6 +52652,15 @@ async function sendMessage() {
   // host page's chat (the "my message leaked into another tab's host chat"
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
+  // youtube was the ONLY wanted leg and it can't be targeted yet: bail before
+  // anything is registered or cleared. Falling through ran the twitch-only
+  // send — "log into twitch.tv" for a youtube-only user, or an IRC send to a
+  // ghost channel. Text stays in the box.
+  if (ytWanted && !sendToYoutube && !sendToKick && !sendToTwitch) {
+    flashInputError(input)
+    showToast(t('mc_yt_send_open_stream'), 'error')
+    return
+  }
   const isDualSend = sendToKick && sendToTwitch
 
   // /me action — give each platform the right wire form for an action message.
@@ -52771,20 +52960,35 @@ async function sendMessage() {
     return
   }
   // Twitch + YouTube (and no Kick) — fire YouTube as best-effort alongside Twitch send below
+  // The promise resolves to the yt result so a missing twitch session below can
+  // tell "youtube delivered" (success) from "nothing went out" (failure).
+  let ytLeg = null
   if (sendToYoutube && sendToTwitch && !sendToKick) {
-    sendYoutubeMessage(ytText, ytVideoId)
+    ytLeg = sendYoutubeMessage(ytText, ytVideoId)
       .then((result) => {
         if (result !== true && result !== 'no_youtube_tab') {
           showToast(youtubeSendErrorMessage(result), 'error')
         }
+        return result
       })
-      .catch(() => showToast(t('mc_yt_send_failed'), 'error'))
+      .catch(() => {
+        showToast(t('mc_yt_send_failed'), 'error')
+        return null
+      })
     // fall through to Twitch path
   }
 
   // --- Twitch-only send path (existing behavior) ---
   const { token, username: twitchNick } = await getTwitchAuthTokenAsync()
   if (!token) {
+    // Twitch+YouTube with no twitch session: a delivered youtube leg is a
+    // success, same as twitch+kick partial success — drain the twitch wait and
+    // leave a quiet note for the skipped leg instead of a failed send.
+    if (ytLeg && (await ytLeg) === true) {
+      confirmPending(_synthId, 'twitch')
+      showToast(t('mc_send_twitch_skipped'), 'info')
+      return
+    }
     markPendingFailed(_synthId, 'auth_failed')
     try {
       HsNotifs.emit('twitch-auth-required', { text: t('mc_input_not_logged_in') || 'log into twitch.tv to chat' })
@@ -59706,7 +59910,7 @@ function wireModToolbarHover(messagesEl) {
       // data-msg-self flag set at build time (currentUsername may be null at
       // hover time during pre-auth bootstrap); fall back to live compare.
       if (row.dataset.msgSelf === '1') return
-      if (currentUsername && user.toLowerCase() === currentUsername.toLowerCase()) return
+      if (isSelf({ user, platform: plat })) return
       // Sync gate per platform: twitch via GQL mod-state, kick via kick_mod_status.
       // Pre-fetch the right one so the next hover in this channel is instant.
       const isKick = plat === 'kick'
@@ -61302,7 +61506,11 @@ async function openModSuite(login, cell = 'shield') {
 // (sessionStorage — a NEW pin shows again); someone who can pin is asked first
 // (y / enter yes, esc backs out) and unpins for everyone.
 
-const PIN_RELINK_URL = 'https://heatsync.org/api/auth/login?scopes=mod&return_to=%2Fhome%2Fhot'
+// relink goes to the room's own platform; kick's route takes ?scopes=mod too
+const PIN_RELINK_URLS = {
+  twitch: 'https://heatsync.org/api/auth/login?scopes=mod&return_to=%2Fhome%2Fhot',
+  kick: 'https://heatsync.org/api/auth/kick/login?scopes=mod&return_to=%2Fhome%2Fhot',
+}
 const PIN_REFRESH_MS = 30000
 
 const pinState = { pins: new Map(), rooms: [], cur: null, sig: '', at: 0, gen: 0, node: null }
@@ -61366,9 +61574,9 @@ function pinRoomsFor(tabId) {
 function pinCanAct(platform, channel) {
   const c = String(channel || '').toLowerCase()
   if (!c) return false
-  const me = typeof currentUsername === 'string' ? currentUsername.toLowerCase() : ''
   const slug = (n) => (platform === 'kick' ? n.replace(/_/g, '-') : n)
-  if (me && slug(me) === slug(c)) return true
+  // your own channel: any of your names on that platform matches the room
+  if (selfNamesFor(platform).some((me) => slug(me) === slug(c))) return true
   if (platform === 'kick') return typeof isKickModForSync === 'function' && isKickModForSync(c)
   if (platform === 'twitch') return typeof isModForSync === 'function' && isModForSync(c)
   return false
@@ -61383,12 +61591,12 @@ function pinRoomOfRow(row) {
   return pinState.rooms.includes(room) ? { platform, channel, room } : null
 }
 
-function pinFail(res) {
+function pinFail(res, room) {
   const e = res?.error
   if (e === 'relink_required') {
     showToast(t('mc_cm_link'), 'error')
     try {
-      window.open(PIN_RELINK_URL, '_blank', 'noopener')
+      window.open(PIN_RELINK_URLS[String(room).split('/')[0]] || PIN_RELINK_URLS.twitch, '_blank', 'noopener')
     } catch (_) {}
   } else if (e === 'auth_required') showToast(t('mc_automod_signin'), 'error')
   else if (e === 'not_moderator') showToast(t('mc_pin_denied'), 'error')
@@ -61560,7 +61768,7 @@ function pinOnKey(e) {
 async function pinUnpin(room) {
   pinConfirm(false)
   const res = await pinCall('clear', room)
-  if (!res?.ok) return pinFail(res)
+  if (!res?.ok) return pinFail(res, room)
   pinApply(room, null)
   showToast(t('mc_pin_gone'), 'success')
 }
@@ -61575,7 +61783,7 @@ async function pinToggleRow(row) {
   }
   const res = await pinCall('set', target.room, id)
   if (!res?.ok) {
-    pinFail(res)
+    pinFail(res, target.room)
     return true
   }
   pinApply(target.room, res.pin)
@@ -65024,7 +65232,7 @@ function showEmoteLoginNudge() {
   const text = document.createElement('span')
   text.textContent = 'log in to heatsync so your emotes work for everyone'
   const link = document.createElement('a')
-  link.href = 'https://heatsync.org/login'
+  link.href = HS_LOGIN_URL
   link.target = '_blank'
   link.rel = 'noopener'
   link.textContent = 'log in'
@@ -67548,7 +67756,7 @@ async function renderFollowImportPicker(msgsEl) {
     if (err === 'login_required') {
       status.textContent = t('mc_fill_cockpit_login')
       const link = document.createElement('a')
-      link.href = 'https://heatsync.org/login'
+      link.href = HS_LOGIN_URL
       link.target = '_blank'
       link.rel = 'noopener noreferrer'
       link.textContent = t('mc_sign_in')
@@ -77490,7 +77698,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (m._renderedHtml != null) return m._renderedHtml
     // Pass Twitch native emotes (per-message IRC tags) into processEmotes so
     // they participate in the overlay-stack pipeline alongside 7TV emotes.
-    const isOwn = m.user && currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase()
+    const isOwn = isSelf(m)
     let twitchExtra = null
     if (m.twitchEmotes) {
       twitchExtra = new Map()
@@ -78792,10 +79000,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (m.ord != null) div.dataset.hsOrd = String(m.ord) // diagnosis: what the row sorted by
       div._hsAt = 1 // marks a row this build drew (see settledEnd in the diff renderer)
       // Mark self-messages so the mod hover toolbar can skip them without
-      // re-deriving currentUsername (which may be null pre-auth). Inlined
-      // compare — the `isOwn` const above is scoped to the !_renderedHtml
-      // branch, so it's undefined when the cached-html path is taken.
-      if (m.user && currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase()) {
+      // re-deriving the viewer's name (which may be null pre-auth). The `isOwn`
+      // const above is scoped to the !_renderedHtml branch, so it's undefined
+      // when the cached-html path is taken.
+      if (isSelf(m)) {
         div.dataset.msgSelf = '1'
       }
       const replyBtn = document.createElement('button')
@@ -79465,7 +79673,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
     if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
     const u = m.user ? m.user.toLowerCase() : ''
-    if (u && u === currentUsername) return false // never hide own messages
+    if (isSelf(m)) return false // never hide own messages
     if (u && f.bots && _BOT_NAMES.has(u)) return true
     // `dim timed-out messages` offers two treatments and only one of them was
     // implemented in the overlay: with it OFF, a moderated message was neither
@@ -84736,7 +84944,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Cache own badges for optimistic display. Per-channel + global mirror —
       // synthetic celebrations stamp the right sub badge tier when injected on
       // a channel where the user has previously sent at least once.
-      if (msg.user?.toLowerCase() === currentUsername?.toLowerCase() && msg.badges) {
+      if (isSelf(msg, 'twitch') && msg.badges) {
         _ownBadges = msg.badges
         if (msg.channel) _ownBadgesByChannel.set(String(msg.channel).toLowerCase(), msg.badges)
       }
@@ -84804,7 +85012,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         }
       }
       // Automod + filter rules: drop messages matching filter. Own msgs exempt.
-      const _frOwnTw = msg.user?.toLowerCase() === currentUsername?.toLowerCase()
+      const _frOwnTw = isSelf(msg, 'twitch')
       let _frTw = null
       if (!_frOwnTw) {
         // Lazy: automod first (cheap), then filter rules only if it survives —
@@ -84913,7 +85121,7 @@ const STORAGE_KEY = 'heatsync_multichat'
           if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
-      const _frOwnKi = msg.user?.toLowerCase() === currentUsername?.toLowerCase()
+      const _frOwnKi = isSelf(msg, 'kick')
       let _frKi = null
       if (!_frOwnKi) {
         if (shouldAutomod(msg.text)) return

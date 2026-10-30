@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "fiecare canal de pe youtube păstrează ultimul volum setat, în videoclipuri, stream-uri și embeduri. oprit lasă playerul youtube în pace"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

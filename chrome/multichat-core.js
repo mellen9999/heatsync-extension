@@ -1946,6 +1946,51 @@ function identityYtLiveUrl(res) {
 }
 
 /**
+ * The platform a stream event (went live, game switch...) really belongs to.
+ * The wire carries it; twitch is the default for anything missing or odd, so a
+ * twitch row stays exactly as it always was (twitch rows carry no platform).
+ * @param {unknown} p
+ * @returns {'twitch'|'kick'|'youtube'}
+ */
+function streamEventPlatform(p) {
+  const v = String(p || '').toLowerCase()
+  if (v === 'youtube' || v === 'yt') return 'youtube'
+  return v === 'kick' ? 'kick' : 'twitch'
+}
+
+/**
+ * Where a stream-event row opens: the channel's own page on the platform it
+ * went live on, tagged #hs-live so the page lands on that channel's live tab.
+ * YouTube goes to /live (the running stream, not the empty channel home).
+ * @param {string} platform raw event platform (normalised here)
+ * @param {string} ch channel handle
+ * @returns {string}
+ */
+function streamEventUrl(platform, ch) {
+  const c = encodeURIComponent(String(ch || '').replace(/^@/, ''))
+  const p = streamEventPlatform(platform)
+  if (p === 'youtube') return `https://www.youtube.com/@${c}/live#hs-live`
+  if (p === 'kick') return `https://kick.com/${c}#hs-live`
+  return `https://twitch.tv/${c}#hs-live`
+}
+
+/**
+ * The channel-tab config entry for a channel opened from an event row (#hs-live),
+ * enabling only the platform the page is on. youtube slots hold full live URLs.
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string} cur page channel (lowercased handle)
+ * @returns {{id: string, twitch: string, kick: string, youtube: string}}
+ */
+function hsLiveChannelEntry(hostPlatform, cur) {
+  return {
+    id: cur,
+    twitch: hostPlatform === 'twitch' ? cur : '',
+    kick: hostPlatform === 'kick' ? cur : '',
+    youtube: hostPlatform === 'yt' ? `https://www.youtube.com/@${cur}/live` : '',
+  }
+}
+
+/**
  * The OTHER platform's live handle for the page channel, read off a
  * resolveIdentity() result. Twitch↔kick only: a same-name guess is the
  * default the caller already joined, so only a VERIFIED handle that differs
@@ -2330,6 +2375,9 @@ const utils = {
   resolveYtLiveLabel,
   composerNeedsLogin,
   identityYtLiveUrl,
+  streamEventPlatform,
+  streamEventUrl,
+  hsLiveChannelEntry,
   liveIdentityCounterpart,
   parseYoutubeChannel,
   parseYoutubeChannelType,
@@ -15175,7 +15223,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7fe49bffde17' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '82fe0a3478a5' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -73338,6 +73386,12 @@ const STORAGE_KEY = 'heatsync_multichat'
   const EMOTE_EVENT_DUP_MS = 60000
   let streamEventsLoaded = false
   const isEmoteEvent = (e) => !!e?.eventClass?.includes('event-emote')
+  // A non-twitch event keeps its platform on the row (twitch rows carry none, see
+  // isPlatformHiddenInTab): the row's link, hover card and badge all key off it.
+  const eventPlatformField = (p) => {
+    const plat = streamEventPlatform(p)
+    return plat === 'twitch' ? {} : { platform: plat }
+  }
   // Same notice twice: identical text AND (for emote notices) within a minute.
   // Text alone made a second removal of the same emote, days later, vanish.
   const sameStreamEvent = (a, b) =>
@@ -77794,6 +77848,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       const tsVal = timestampsEnabled && m.time ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
+      const evtPlat = streamEventPlatform(m.platform)
       // [Y] platform badge — parity with regular YT chat rows.
       const platBadge =
         isYtEvent && (platformBadgesEnabled || hostPlatform !== 'yt')
@@ -77841,11 +77896,18 @@ const STORAGE_KEY = 'heatsync_multichat'
         login: isYtEvent ? '' : chLc,
       })
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
-      // YT has no reliable channel URL from a display name alone — render plain
-      // text instead of a (likely wrong) twitch.tv link.
-      const userLink = isYtEvent
-        ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</span>`
-        : `<a href="https://twitch.tv/${encodeURIComponent(ch)}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</a>`
+      // A row whose subject IS the channel (went live, game switch...) knows the
+      // channel's handle on the platform it came from, so it links there. A row
+      // with an actor (superchat, redeem) names a viewer: YT has no reliable URL
+      // from a display name alone, so it stays plain text.
+      // data-platform tells the hover card which platform to look the name up
+      // on — without it a youtube/kick name is searched as a twitch login (a
+      // banned twitch account has no user, so no avatar).
+      const platAttr = evtPlat === 'twitch' ? '' : ` data-platform="${evtPlat}"`
+      const userLink =
+        isYtEvent && m.actor
+          ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</span>`
+          : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</a>`
       const textAfterChannel = escapeHtml(m.text).replace(/^\[[^\]]+\]\s*/, '')
       const actionHtml = textAfterChannel.replace(
         /(switched to |now playing |went live \u2014 )(.+)$/,
@@ -77857,8 +77919,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       // profile-card / context-menu behaviour still wins there — only the empty
       // parts of the row open the stream. data-hs-clickable opts it into the
       // universal white-bg/black-text hover, same as the inline DM rows.
-      // YT events are skipped: a display name gives no reliable channel URL, so
-      // a guessed twitch.tv link would be worse than not being clickable.
+      // It opens the platform the event is from (a streamer banned on twitch who
+      // only streams on youtube goes live THERE): streamEventUrl picks the page.
+      // YT rows with an actor (superchat...) are skipped: a display name gives no
+      // reliable channel URL.
       //
       // Only rows whose subject IS the channel get it. `ch` above prefers
       // m.actor, which is set on exactly the rows where the name is NOT a
@@ -77868,13 +77932,13 @@ const STORAGE_KEY = 'heatsync_multichat'
       // advertises a destination on a line that is a notice, not a link. A row
       // announcing that someone redeemed something is not a shortcut to
       // anywhere; the redeemer's own name is still a link for whoever wants it.
-      if (!isYtEvent && ch && !m.actor) {
+      if (ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
-        div.title = `open ${ch} on twitch`
+        div.title = `open ${ch} on ${isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'}`
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
-          window.open(`https://twitch.tv/${encodeURIComponent(ch)}#hs-live`, '_blank', 'noopener,noreferrer')
+          window.open(streamEventUrl(evtPlat, ch), '_blank', 'noopener,noreferrer')
         })
       }
       // Async fetch color if not cached — Twitch profile lookup only; YT color
@@ -82300,14 +82364,13 @@ const STORAGE_KEY = 'heatsync_multichat'
         // ...and keep it: a saved tab, so every open surface (storage
         // onChanged) gets it and removing it anywhere removes it everywhere.
         const cur = getCurrentChannel()
-        const plat = location.hostname.includes('kick.com') ? 'kick' : 'twitch'
-        if (cur && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
-          config.channels.push({
-            id: cur,
-            twitch: plat === 'twitch' ? cur : '',
-            kick: plat === 'kick' ? cur : '',
-            youtube: '',
-          })
+        // Only the platform the row's page is on: a youtube-only streamer must not
+        // get a twitch slot (a banned/absent twitch account). A youtube video id
+        // (the /live redirect landed first) is not a channel, so it makes no tab.
+        const plat = hostPlatform
+        const chOk = plat !== 'yt' || parseYoutubeChannelType(location.pathname, location.search) === 'handle'
+        if (cur && chOk && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
+          config.channels.push(hsLiveChannelEntry(plat, cur))
           saveConfig()
         }
         if (cur && config.channels.some((c) => c.id === cur)) _savedActiveTab = cur
@@ -85028,7 +85091,15 @@ const STORAGE_KEY = 'heatsync_multichat'
           log('[Stream]', channel, text)
           notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
           const actor = msg.eventType === 'stream:redeem' ? msg.user : null
-          const evt = { type: 'stream-event', eventClass, text, channel, actor, time: Date.now() }
+          const evt = {
+            type: 'stream-event',
+            eventClass,
+            text,
+            channel,
+            actor,
+            time: Date.now(),
+            ...eventPlatformField(msg.platform),
+          }
 
           // Push into the live channel buffer (dedup by text to prevent doubles on reload).
           // Gate on isLiveChannelMessage: without it, a redeem/raid from ANY other
@@ -85306,7 +85377,15 @@ const STORAGE_KEY = 'heatsync_multichat'
 
           log('[FollowStream]', channel, text)
           notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
-          const evt = { type: 'stream-event', eventClass, text, channel, time: Date.now(), color: msg.color || '' }
+          const evt = {
+            type: 'stream-event',
+            eventClass,
+            text,
+            channel,
+            time: Date.now(),
+            color: msg.color || '',
+            ...eventPlatformField(msg.platform),
+          }
 
           // Push into the live channel buffer (dedup by text)
           const liveChannel = getLiveChannel()
@@ -85410,7 +85489,15 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (streamEventDedup.has(text) && now - streamEventDedup.get(text) < 60000) continue
         streamEventDedup.set(text, now)
 
-        const evt = { type: 'stream-event', eventClass, text, channel, time: e.time, color: e.color || '' }
+        const evt = {
+          type: 'stream-event',
+          eventClass,
+          text,
+          channel,
+          time: e.time,
+          color: e.color || '',
+          ...eventPlatformField(e.platform),
+        }
         builtEvents.push(evt)
       }
 

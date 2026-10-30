@@ -3288,6 +3288,12 @@
   const EMOTE_EVENT_DUP_MS = 60000
   let streamEventsLoaded = false
   const isEmoteEvent = (e) => !!e?.eventClass?.includes('event-emote')
+  // A non-twitch event keeps its platform on the row (twitch rows carry none, see
+  // isPlatformHiddenInTab): the row's link, hover card and badge all key off it.
+  const eventPlatformField = (p) => {
+    const plat = streamEventPlatform(p)
+    return plat === 'twitch' ? {} : { platform: plat }
+  }
   // Same notice twice: identical text AND (for emote notices) within a minute.
   // Text alone made a second removal of the same emote, days later, vanish.
   const sameStreamEvent = (a, b) =>
@@ -7744,6 +7750,7 @@
       const tsVal = timestampsEnabled && m.time ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
+      const evtPlat = streamEventPlatform(m.platform)
       // [Y] platform badge — parity with regular YT chat rows.
       const platBadge =
         isYtEvent && (platformBadgesEnabled || hostPlatform !== 'yt')
@@ -7791,11 +7798,18 @@
         login: isYtEvent ? '' : chLc,
       })
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
-      // YT has no reliable channel URL from a display name alone — render plain
-      // text instead of a (likely wrong) twitch.tv link.
-      const userLink = isYtEvent
-        ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</span>`
-        : `<a href="https://twitch.tv/${encodeURIComponent(ch)}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${evt.attrs} style="${evt.style}">${evt.inner}</a>`
+      // A row whose subject IS the channel (went live, game switch...) knows the
+      // channel's handle on the platform it came from, so it links there. A row
+      // with an actor (superchat, redeem) names a viewer: YT has no reliable URL
+      // from a display name alone, so it stays plain text.
+      // data-platform tells the hover card which platform to look the name up
+      // on — without it a youtube/kick name is searched as a twitch login (a
+      // banned twitch account has no user, so no avatar).
+      const platAttr = evtPlat === 'twitch' ? '' : ` data-platform="${evtPlat}"`
+      const userLink =
+        isYtEvent && m.actor
+          ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</span>`
+          : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</a>`
       const textAfterChannel = escapeHtml(m.text).replace(/^\[[^\]]+\]\s*/, '')
       const actionHtml = textAfterChannel.replace(
         /(switched to |now playing |went live \u2014 )(.+)$/,
@@ -7807,8 +7821,10 @@
       // profile-card / context-menu behaviour still wins there — only the empty
       // parts of the row open the stream. data-hs-clickable opts it into the
       // universal white-bg/black-text hover, same as the inline DM rows.
-      // YT events are skipped: a display name gives no reliable channel URL, so
-      // a guessed twitch.tv link would be worse than not being clickable.
+      // It opens the platform the event is from (a streamer banned on twitch who
+      // only streams on youtube goes live THERE): streamEventUrl picks the page.
+      // YT rows with an actor (superchat...) are skipped: a display name gives no
+      // reliable channel URL.
       //
       // Only rows whose subject IS the channel get it. `ch` above prefers
       // m.actor, which is set on exactly the rows where the name is NOT a
@@ -7818,13 +7834,13 @@
       // advertises a destination on a line that is a notice, not a link. A row
       // announcing that someone redeemed something is not a shortcut to
       // anywhere; the redeemer's own name is still a link for whoever wants it.
-      if (!isYtEvent && ch && !m.actor) {
+      if (ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
-        div.title = `open ${ch} on twitch`
+        div.title = `open ${ch} on ${isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'}`
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
-          window.open(`https://twitch.tv/${encodeURIComponent(ch)}#hs-live`, '_blank', 'noopener,noreferrer')
+          window.open(streamEventUrl(evtPlat, ch), '_blank', 'noopener,noreferrer')
         })
       }
       // Async fetch color if not cached — Twitch profile lookup only; YT color
@@ -12250,14 +12266,13 @@
         // ...and keep it: a saved tab, so every open surface (storage
         // onChanged) gets it and removing it anywhere removes it everywhere.
         const cur = getCurrentChannel()
-        const plat = location.hostname.includes('kick.com') ? 'kick' : 'twitch'
-        if (cur && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
-          config.channels.push({
-            id: cur,
-            twitch: plat === 'twitch' ? cur : '',
-            kick: plat === 'kick' ? cur : '',
-            youtube: '',
-          })
+        // Only the platform the row's page is on: a youtube-only streamer must not
+        // get a twitch slot (a banned/absent twitch account). A youtube video id
+        // (the /live redirect landed first) is not a channel, so it makes no tab.
+        const plat = hostPlatform
+        const chOk = plat !== 'yt' || parseYoutubeChannelType(location.pathname, location.search) === 'handle'
+        if (cur && chOk && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
+          config.channels.push(hsLiveChannelEntry(plat, cur))
           saveConfig()
         }
         if (cur && config.channels.some((c) => c.id === cur)) _savedActiveTab = cur
@@ -14978,7 +14993,15 @@
           log('[Stream]', channel, text)
           notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
           const actor = msg.eventType === 'stream:redeem' ? msg.user : null
-          const evt = { type: 'stream-event', eventClass, text, channel, actor, time: Date.now() }
+          const evt = {
+            type: 'stream-event',
+            eventClass,
+            text,
+            channel,
+            actor,
+            time: Date.now(),
+            ...eventPlatformField(msg.platform),
+          }
 
           // Push into the live channel buffer (dedup by text to prevent doubles on reload).
           // Gate on isLiveChannelMessage: without it, a redeem/raid from ANY other
@@ -15256,7 +15279,15 @@
 
           log('[FollowStream]', channel, text)
           notifyStreamEvent(channel, msg.eventType, msg.game, msg.platform)
-          const evt = { type: 'stream-event', eventClass, text, channel, time: Date.now(), color: msg.color || '' }
+          const evt = {
+            type: 'stream-event',
+            eventClass,
+            text,
+            channel,
+            time: Date.now(),
+            color: msg.color || '',
+            ...eventPlatformField(msg.platform),
+          }
 
           // Push into the live channel buffer (dedup by text)
           const liveChannel = getLiveChannel()
@@ -15360,7 +15391,15 @@
         if (streamEventDedup.has(text) && now - streamEventDedup.get(text) < 60000) continue
         streamEventDedup.set(text, now)
 
-        const evt = { type: 'stream-event', eventClass, text, channel, time: e.time, color: e.color || '' }
+        const evt = {
+          type: 'stream-event',
+          eventClass,
+          text,
+          channel,
+          time: e.time,
+          color: e.color || '',
+          ...eventPlatformField(e.platform),
+        }
         builtEvents.push(evt)
       }
 

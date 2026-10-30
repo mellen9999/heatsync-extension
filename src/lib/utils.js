@@ -805,6 +805,51 @@ function identityYtLiveUrl(res) {
 }
 
 /**
+ * The platform a stream event (went live, game switch...) really belongs to.
+ * The wire carries it; twitch is the default for anything missing or odd, so a
+ * twitch row stays exactly as it always was (twitch rows carry no platform).
+ * @param {unknown} p
+ * @returns {'twitch'|'kick'|'youtube'}
+ */
+function streamEventPlatform(p) {
+  const v = String(p || '').toLowerCase()
+  if (v === 'youtube' || v === 'yt') return 'youtube'
+  return v === 'kick' ? 'kick' : 'twitch'
+}
+
+/**
+ * Where a stream-event row opens: the channel's own page on the platform it
+ * went live on, tagged #hs-live so the page lands on that channel's live tab.
+ * YouTube goes to /live (the running stream, not the empty channel home).
+ * @param {string} platform raw event platform (normalised here)
+ * @param {string} ch channel handle
+ * @returns {string}
+ */
+function streamEventUrl(platform, ch) {
+  const c = encodeURIComponent(String(ch || '').replace(/^@/, ''))
+  const p = streamEventPlatform(platform)
+  if (p === 'youtube') return `https://www.youtube.com/@${c}/live#hs-live`
+  if (p === 'kick') return `https://kick.com/${c}#hs-live`
+  return `https://twitch.tv/${c}#hs-live`
+}
+
+/**
+ * The channel-tab config entry for a channel opened from an event row (#hs-live),
+ * enabling only the platform the page is on. youtube slots hold full live URLs.
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string} cur page channel (lowercased handle)
+ * @returns {{id: string, twitch: string, kick: string, youtube: string}}
+ */
+function hsLiveChannelEntry(hostPlatform, cur) {
+  return {
+    id: cur,
+    twitch: hostPlatform === 'twitch' ? cur : '',
+    kick: hostPlatform === 'kick' ? cur : '',
+    youtube: hostPlatform === 'yt' ? `https://www.youtube.com/@${cur}/live` : '',
+  }
+}
+
+/**
  * The OTHER platform's live handle for the page channel, read off a
  * resolveIdentity() result. Twitch↔kick only: a same-name guess is the
  * default the caller already joined, so only a VERIFIED handle that differs
@@ -1189,6 +1234,9 @@ const utils = {
   resolveYtLiveLabel,
   composerNeedsLogin,
   identityYtLiveUrl,
+  streamEventPlatform,
+  streamEventUrl,
+  hsLiveChannelEntry,
   liveIdentityCounterpart,
   parseYoutubeChannel,
   parseYoutubeChannelType,
@@ -1246,6 +1294,7 @@ export {
   firstPartialTweetUrl,
   firstPartialYtUrl,
   getFiber,
+  hsLiveChannelEntry,
   identityYtLiveUrl,
   isLargeKeySyncEligible,
   LARGE_KEY_SYNC_MAX,
@@ -1269,6 +1318,8 @@ export {
   sanitizeUiSettings,
   sortedInsert,
   stepVolume,
+  streamEventPlatform,
+  streamEventUrl,
   throttle,
   truncateSafe,
   UI_SYNC_BLOCKLIST,

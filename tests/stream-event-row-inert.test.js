@@ -32,7 +32,7 @@ const HOVER_CSS = readFileSync(
 describe('stream-event rows: only a channel-subject row is a shortcut', () => {
   test('the row-level click opt-in is gated on the row having no actor', () => {
     // The block that sets dataset.hsClickable / cursor / the twitch.tv click.
-    const gate = MAIN.match(/if \(!isYtEvent && ch && !m\.actor\) \{\s*\n\s*div\.dataset\.hsClickable = ''/)
+    const gate = MAIN.match(/if \(ch && !m\.actor\) \{\s*\n\s*div\.dataset\.hsClickable = ''/)
     expect(gate).not.toBeNull()
   })
 
@@ -48,7 +48,7 @@ describe('stream-event rows: only a channel-subject row is a shortcut', () => {
     expect(branch.length).toBeGreaterThan(0)
     const optIns = branch.match(/div\.dataset\.hsClickable = ''/g) || []
     expect(optIns.length).toBe(1)
-    expect(branch).toContain('!isYtEvent && ch && !m.actor')
+    expect(branch).toContain('if (ch && !m.actor) {')
   })
 
   test('ch still prefers the actor, which is what makes the gate necessary', () => {

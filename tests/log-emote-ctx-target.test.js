@@ -82,9 +82,11 @@ test('kick no-channel pages lift the top bar out of the squeezed body', () => {
 
 test('event row click opens the channel on its live tab, not the last active tab', () => {
   const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
-  expect(src).toMatch(/twitch\.tv\/\$\{encodeURIComponent\(ch\)\}#hs-live/)
+  expect(src).toMatch(/window\.open\(streamEventUrl\(evtPlat, ch\)/)
   expect(src).toMatch(/location\.hash === '#hs-live'\) \{\s*_savedActiveTab = 'live'/)
-  expect(src).toMatch(/config\.channels\.push\([\s\S]*?id: cur,[\s\S]*?saveConfig\(\)[\s\S]*?_savedActiveTab = cur/)
+  expect(src).toMatch(
+    /config\.channels\.push\(hsLiveChannelEntry\(plat, cur\)\)[\s\S]*?saveConfig\(\)[\s\S]*?_savedActiveTab = cur/,
+  )
 })
 
 test('live tabs reserve room for the live dot so the unread count never sits under it', () => {

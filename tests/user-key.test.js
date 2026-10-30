@@ -157,3 +157,14 @@ test("legacy stored 'yt:' keys (pre-canonicalization) still match youtube rows",
   expect(userSetMatches(set, 'alice', 'yt')).toBe(true)
   expect(userSetMatches(set, 'alice', 'kick')).toBe(false)
 })
+
+test('canonPlatform: row short form becomes the wire name', async () => {
+  const { canonPlatform } = await import('../src/lib/user-key.js')
+  expect(canonPlatform('yt')).toBe('youtube')
+  expect(canonPlatform('kick')).toBe('kick')
+})
+
+test('card fetch sends the canonical platform', async () => {
+  const src = await Bun.file(new URL('../src/multichat/tooltips.js', import.meta.url)).text()
+  expect(src).toContain("platform: canonPlatform(platform || 'twitch')")
+})

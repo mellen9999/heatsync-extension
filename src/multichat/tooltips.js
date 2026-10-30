@@ -927,7 +927,7 @@ async function resolveIdentity(name, opts = {}) {
   if (_profileInflight.has(cacheKey)) return _profileInflight.get(cacheKey)
   const p = (async () => {
     try {
-      const platParam = platform ? `?platform=${encodeURIComponent(platform)}` : ''
+      const platParam = platform ? `?platform=${encodeURIComponent(canonPlatform(platform))}` : ''
       const resp = await apiFetch(`/api/profile/${encodeURIComponent(name)}${platParam}`)
       if (!resp?.ok || !resp.data?.profile) {
         // On 429 / transient error, fall back to stale cache (any age) so
@@ -1124,7 +1124,8 @@ async function fetchCardPayload(platform, login, channel) {
   const flying = _cardInflight.get(key)
   if (flying) return flying
   const body = {
-    platform: platform || 'twitch',
+    // the card route's zod enum is strict: rows say 'yt', the wire says 'youtube'
+    platform: canonPlatform(platform || 'twitch'),
     login,
     channel: channel || undefined,
     openChannels: cardOpenChannels(),

@@ -21,7 +21,7 @@
 // matched enforcement checking `youtube:alice`, so yt mutes/blocks were
 // silent no-ops. One writer normalizes; the matcher also accepts the other
 // form for keys persisted before normalization.
-function canonPlatform(platform) {
+export function canonPlatform(platform) {
   return platform === 'yt' ? 'youtube' : platform
 }
 

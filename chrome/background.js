@@ -3453,7 +3453,12 @@ const YT_CHANNEL_ID_CACHE_MAX = 300
 // (e.g. a stored `.../channel/UC.../` or `/@handle` URL). Never falls back to
 // guessing a Twitch/Kick identity — an unresolved id means "skip, no emotes."
 async function resolveYtChannelId(channelName, hint = null) {
-  const key = String(channelName || '').toLowerCase()
+  // A bare 11-char [\w-] name with no @handle in the hint is a videoId: ids are
+  // case-sensitive, so it keys (and resolves) as-is, never lowercased.
+  const rawName = String(channelName || '')
+  const hintHandle = /@[\w.-]+/.test(String(hint || channelName || ''))
+  const isVideoId = !hintHandle && /^[\w-]{11}$/.test(rawName)
+  const key = isVideoId ? rawName : rawName.toLowerCase()
   if (!key) return null
   const cached = ytChannelIdCache.get(key)
   if (cached) return cached
@@ -3470,9 +3475,11 @@ async function resolveYtChannelId(channelName, hint = null) {
   // match either pattern — resolve its handle via the existing oEmbed lookup
   // first (getYtChannelHandle is already used for the WS-subscribe path).
   const handleMatch = String(hint || channelName || '').match(/@([\w.-]+)/)
-  let handle = handleMatch ? handleMatch[1] : /^[\w.-]{3,30}$/.test(key) ? key : null
-  if (!handle && /^[\w-]{11}$/.test(key)) {
+  let handle = handleMatch ? handleMatch[1] : !isVideoId && /^[\w.-]{3,30}$/.test(key) ? key : null
+  if (!handle && isVideoId) {
     handle = await getYtChannelHandle(key)
+    // lowercase-only 11-char names can be real handles; a wrong guess just 404s
+    if (!handle && /^[a-z0-9._]+$/.test(key)) handle = key
   }
   if (!handle) return null // nothing to resolve from — skip quietly, no cross-platform guessing
 

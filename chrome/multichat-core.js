@@ -1891,6 +1891,59 @@ function parseYoutubeChannel(pathname, search) {
 }
 
 /**
+ * The live URL for a channel-handle live page (/@handle/live), '' for anything
+ * else. That page IS the stream (youtube plays the live video there), but its
+ * path ends in "/live" with no trailing slash, so the /watch|/live/ video-page
+ * test misses it and the page's chat never bound to "watching". ytSubscribe
+ * resolves the @handle live URL to the concrete videoId.
+ * @param {string} pathname
+ * @returns {string}
+ */
+function ytHandleLiveUrl(pathname) {
+  const m = String(pathname || '').match(/^\/@([^/]+)\/live\/?$/)
+  return m ? `https://www.youtube.com/@${m[1].toLowerCase()}/live` : ''
+}
+
+/**
+ * Which channel a typed mod command (/ban /timeout /unban /delete /nuke
+ * /announce) acts on. A channel tab acts on its own entry. The live tab is not
+ * a channel ("live" would be dispatched as a twitch login): it acts on the
+ * page's channel on the platform the page is on, through that channel's saved
+ * tab when there is one so linked legs fan out too. Built-in tabs act on
+ * nothing. Ids may carry dashes (kick slugs).
+ * @param {string} tab currentTab
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string|null} pageCh the page's channel (getLiveChannel)
+ * @param {Array<{id: string, twitch?: string, kick?: string}>} channels
+ * @param {Iterable<string>} builtin ids of the built-in tabs
+ * @returns {{channel: string|null, entry: object|null, twitch: string|null, kick: string|null, platform: 'kick'|undefined}}
+ */
+function resolveTypedModChannel(tab, hostPlatform, pageCh, channels, builtin) {
+  const none = { channel: null, entry: null, twitch: null, kick: null, platform: undefined }
+  const ok = (v) => typeof v === 'string' && /^[a-z0-9_-]{2,40}$/i.test(v)
+  const list = channels || []
+  if (tab === 'live') {
+    const ch = String(pageCh || '').toLowerCase()
+    if (!ok(ch) || (hostPlatform !== 'twitch' && hostPlatform !== 'kick')) return none
+    const entry = list.find((c) => (hostPlatform === 'kick' ? c.kick : c.twitch)?.toLowerCase() === ch) || null
+    if (entry)
+      return { channel: entry.id, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
+    return {
+      channel: ch,
+      entry: null,
+      twitch: hostPlatform === 'twitch' ? ch : null,
+      kick: hostPlatform === 'kick' ? ch : null,
+      platform: hostPlatform === 'kick' ? 'kick' : undefined,
+    }
+  }
+  if (!ok(tab)) return none
+  const entry = list.find((c) => c.id === tab) || null
+  if (entry) return { channel: tab, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
+  if (new Set(builtin || []).has(tab)) return none
+  return { channel: tab, entry: null, twitch: tab, kick: null, platform: undefined }
+}
+
+/**
  * What KIND of identifier parseYoutubeChannel(pathname, search) returned for
  * the same URL — 'handle' and 'channel' ARE a channel identity (safe to feed
  * straight to /api/profile or a 7TV/channel-emote lookup); 'video' is a
@@ -1988,6 +2041,24 @@ function hsLiveChannelEntry(hostPlatform, cur) {
     kick: hostPlatform === 'kick' ? cur : '',
     youtube: hostPlatform === 'yt' ? `https://www.youtube.com/@${cur}/live` : '',
   }
+}
+
+/**
+ * Fills the page platform's EMPTY slot on an existing channel entry (an event
+ * row opened a tab saved earlier as twitch-only). Never overwrites or drops a
+ * leg. Returns true when the entry changed.
+ * @param {{twitch?: string, kick?: string, youtube?: string}} entry mutated in place
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string} cur page channel (lowercased handle)
+ * @returns {boolean}
+ */
+function fillHsLiveLeg(entry, hostPlatform, cur) {
+  const slot = hostPlatform === 'yt' ? 'youtube' : hostPlatform
+  if (!entry || entry[slot]) return false
+  const fresh = hsLiveChannelEntry(hostPlatform, cur)
+  if (!fresh[slot]) return false
+  entry[slot] = fresh[slot]
+  return true
 }
 
 /**
@@ -2378,6 +2449,9 @@ const utils = {
   streamEventPlatform,
   streamEventUrl,
   hsLiveChannelEntry,
+  fillHsLiveLeg,
+  resolveTypedModChannel,
+  ytHandleLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
   parseYoutubeChannelType,
@@ -15225,7 +15299,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '554cda312cd2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '57da6a6d7499' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16664,6 +16738,22 @@ function extractYoutubeVideoId(url) {
 // the send rejected outright rather than truncated, so we treat it as a hard
 // wall and skip the prepend rather than risk the send itself failing.
 const YT_CHAT_MAX_LEN = 200
+
+/** Per-platform chat message caps (chars). Twitch and Kick both allow 500. */
+const CHAT_MAX_LEN = { twitch: 500, kick: 500, youtube: YT_CHAT_MAX_LEN }
+
+/**
+ * The composer's length cap for what the next send reaches: the tightest cap
+ * among the active legs (a mirrored youtube leg is rejected past 200, not
+ * truncated). No leg known → the 500 default.
+ * @param {{twitch?: boolean, kick?: boolean, youtube?: boolean}|null|undefined} legs
+ * @returns {number}
+ */
+function composerCharLimit(legs) {
+  let lim = 500
+  for (const p of ['twitch', 'kick', 'youtube']) if (legs?.[p]) lim = Math.min(lim, CHAT_MAX_LEN[p])
+  return lim
+}
 
 /**
  * YouTube live chat has no reply-threading API — sending the bare text drops
@@ -19156,6 +19246,31 @@ function _frParseExpr(toks) {
   return ast
 }
 
+// Does the message carry badge `v` (lowercased)? twitch/kick rows hold a "set/ver,set/ver"
+// string; youtube rows hold a list of { type, label } (owner, moderator, member...), or
+// strings of the same shape. "mod" also matches a youtube moderator.
+function _frHasBadge(badges, v) {
+  if (!badges) return false
+  if (typeof badges === 'string') {
+    const list = badges.split(',')
+    for (let i = 0; i < list.length; i++) if (list[i].split('/')[0].toLowerCase() === v) return true
+    return false
+  }
+  if (!Array.isArray(badges)) return false
+  for (let i = 0; i < badges.length; i++) {
+    const b = badges[i]
+    const names = typeof b === 'string' ? [b.split('/')[0]] : b ? [b.type, b.label, b.name] : []
+    for (const n of names) {
+      const k = typeof n === 'string' ? n.toLowerCase() : ''
+      if (k === v || (v === 'mod' && k === 'moderator')) return true
+    }
+  }
+  return false
+}
+
+// a youtube author arrives as "@handle"; rules are written without the @
+const _frBareUser = (u) => String(u).toLowerCase().replace(/^@/, '')
+
 function _frEvalNode(node, m) {
   switch (node.op) {
     case 'or':
@@ -19171,13 +19286,9 @@ function _frEvalNode(node, m) {
       if (node.name === 'cheer') return !!(m.bits && Number(m.bits) > 0)
       return false
     case 'user':
-      return !!m.user && String(m.user).toLowerCase() === node.v
-    case 'badge': {
-      if (!m.badges || typeof m.badges !== 'string') return false
-      const badges = m.badges.split(',')
-      for (let i = 0; i < badges.length; i++) if (badges[i].split('/')[0].toLowerCase() === node.v) return true
-      return false
-    }
+      return !!m.user && _frBareUser(m.user) === node.v.replace(/^@/, '')
+    case 'badge':
+      return _frHasBadge(m.badges, node.v)
     case 'type':
       if (node.v === 'first-message' || node.v === 'first') return !!m.isFirstMsg
       if (node.v === 'action') return !!m.isAction
@@ -19355,17 +19466,12 @@ function _frTest(rule, m) {
       return rule.ast ? _frEvalNode(rule.ast, m) : false
     case 'user': {
       if (!m.user) return false
-      const u = rule.caseSensitive ? String(m.user) : String(m.user).toLowerCase()
-      return u === rule.value
+      const raw = String(m.user).replace(/^@/, '')
+      const u = rule.caseSensitive ? raw : raw.toLowerCase()
+      return u === rule.value.replace(/^@/, '')
     }
-    case 'badge': {
-      if (!m.badges || typeof m.badges !== 'string') return false
-      const badges = m.badges.split(',')
-      for (let i = 0; i < badges.length; i++) {
-        if (badges[i].split('/')[0].toLowerCase() === rule.value) return true
-      }
-      return false
-    }
+    case 'badge':
+      return _frHasBadge(m.badges, rule.value)
     case 'msgtype': {
       const mt = rule.value
       if (mt === 'first-message') return !!m.isFirstMsg
@@ -19416,27 +19522,34 @@ function _hsnHasStorage() {
   return typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local
 }
 
-// Resolve a chatter to their lowercased alias set. Sync path (getUserAliases) for
-// render/indicator; the async path (expandUserAliases, also pulls the server
+// Every key is `platform:name`, so a twitch "alice" and an unrelated kick "alice"
+// never share a note. Notes saved before this were keyed by the bare name; they
+// load as twitch (see _hsnKey) — never dropped, never re-guessed.
+const _hsnPlat = (p) => (p === 'yt' ? 'youtube' : p || 'twitch')
+const _hsnKey = (k) => (String(k).includes(':') ? String(k) : `twitch:${k}`)
+const _hsnSelfKey = (u, platform) => `${_hsnPlat(platform)}:${u.replace(/^@/, '')}`
+
+// Resolve a chatter to their lowercased alias-key set. Sync path (getUserAliasKeys)
+// for render/indicator; the async path (expandUserAliasKeys, also pulls the server
 // identity graph) is used on save so a note captures the fullest alias set known.
 function _hsnAliasesSync(username, platform) {
   const u = String(username || '').toLowerCase()
   if (!u) return []
-  if (typeof getUserAliases === 'function') {
+  if (typeof getUserAliasKeys === 'function') {
     try {
-      const a = getUserAliases(u, platform)
+      const a = getUserAliasKeys(u, _hsnPlat(platform))
       if (Array.isArray(a) && a.length) return [...new Set(a.map((x) => String(x).toLowerCase()))]
     } catch {}
   }
-  return [u]
+  return [_hsnSelfKey(u, platform)]
 }
 
 async function _hsnAliasesAsync(username, platform) {
   const u = String(username || '').toLowerCase()
   if (!u) return []
-  if (typeof expandUserAliases === 'function') {
+  if (typeof expandUserAliasKeys === 'function') {
     try {
-      const a = await expandUserAliases(u, platform)
+      const a = await expandUserAliasKeys(u, _hsnPlat(platform))
       if (Array.isArray(a) && a.length) return [...new Set(a.map((x) => String(x).toLowerCase()))]
     } catch {}
   }
@@ -19486,14 +19599,24 @@ function _hsnLoad() {
       chrome.storage.local.get([HS_NOTES_KEY, 'hs_user_notes'], (d) => {
         const raw = d?.[HS_NOTES_KEY]
         if (raw && typeof raw === 'object') {
+          // pre-namespace (bare) keys are adopted as twitch; flag a write-back so it happens once
+          let rekeyed = false
           if (raw.notes && typeof raw.notes === 'object') {
             for (const [k, v] of Object.entries(raw.notes)) {
-              if (v && typeof v.text === 'string') _hsnNotes.set(k, { text: v.text, updatedAt: v.updatedAt || 0 })
+              if (v && typeof v.text === 'string') {
+                if (!k.includes(':')) rekeyed = true
+                _hsnNotes.set(_hsnKey(k), { text: v.text, updatedAt: v.updatedAt || 0 })
+              }
             }
           }
           if (raw.index && typeof raw.index === 'object') {
-            for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(k, v)
+            for (const [k, v] of Object.entries(raw.index)) {
+              if (typeof v !== 'string') continue
+              if (!k.includes(':') || !v.includes(':')) rekeyed = true
+              _hsnIndex.set(_hsnKey(k), _hsnKey(v))
+            }
           }
+          if (rekeyed) _hsnPersist()
         }
         // One-time legacy migration. v1 wins on conflict (it's what the user
         // has been editing since the popover shipped); a legacy-only username
@@ -19503,7 +19626,7 @@ function _hsnLoad() {
         if (legacy && typeof legacy === 'object') {
           let migrated = 0
           for (const [k, v] of Object.entries(legacy)) {
-            const key = String(k).toLowerCase()
+            const key = _hsnKey(String(k).toLowerCase())
             if (!v || typeof v.text !== 'string' || !v.text.trim()) continue
             if (_hsnNotes.has(key) || _hsnNotes.has(_hsnIndex.get(key) || '')) continue
             _hsnNotes.set(key, { text: v.text.slice(0, 500), updatedAt: v.ts || Date.now() })
@@ -19556,8 +19679,9 @@ if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.n
     const raw = changes[HS_NOTES_KEY].newValue
     if (!raw || typeof raw !== 'object') return
     if (raw.notes && typeof raw.notes === 'object') {
-      for (const [k, v] of Object.entries(raw.notes)) {
+      for (const [k0, v] of Object.entries(raw.notes)) {
         if (!v || typeof v.text !== 'string') continue
+        const k = _hsnKey(k0)
         const local = _hsnNotes.get(k)
         if (!local || (v.updatedAt || 0) >= (local.updatedAt || 0)) {
           _hsnNotes.set(k, { text: v.text, updatedAt: v.updatedAt || 0 })
@@ -19565,7 +19689,7 @@ if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.n
       }
     }
     if (raw.index && typeof raw.index === 'object') {
-      for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(k, v)
+      for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(_hsnKey(k), _hsnKey(v))
     }
   })
 }
@@ -30286,7 +30410,7 @@ async function resolveIdentity(name, opts = {}) {
   if (_profileInflight.has(cacheKey)) return _profileInflight.get(cacheKey)
   const p = (async () => {
     try {
-      const platParam = platform ? `?platform=${encodeURIComponent(platform)}` : ''
+      const platParam = platform ? `?platform=${encodeURIComponent(canonPlatform(platform))}` : ''
       const resp = await apiFetch(`/api/profile/${encodeURIComponent(name)}${platParam}`)
       if (!resp?.ok || !resp.data?.profile) {
         // On 429 / transient error, fall back to stale cache (any age) so
@@ -30483,7 +30607,8 @@ async function fetchCardPayload(platform, login, channel) {
   const flying = _cardInflight.get(key)
   if (flying) return flying
   const body = {
-    platform: platform || 'twitch',
+    // the card route's zod enum is strict: rows say 'yt', the wire says 'youtube'
+    platform: canonPlatform(platform || 'twitch'),
     login,
     channel: channel || undefined,
     openChannels: cardOpenChannels(),
@@ -33801,6 +33926,77 @@ async function buildChatStatusPanel(channel) {
   modeStatus.hidden = true
   panel.appendChild(modeStatus)
   cmMountControls(grid, modeStatus, ch).catch(() => {})
+  return panel
+}
+
+// /status for a kick channel: kick's own public channel record (same endpoint the
+// profile card reads), never a twitch lookup of the kick slug. Kick exposes the
+// room's modes as on/off, so that is all the rows say. null when it can't be read.
+async function buildKickStatusPanel(slug) {
+  const ch = (slug || '').toString().toLowerCase()
+  if (!ch || !/^[a-z0-9_-]{2,40}$/.test(ch)) return null
+  let d = null
+  try {
+    const res = await fetch(`https://kick.com/api/v2/channels/${encodeURIComponent(ch)}`, { credentials: 'omit' })
+    d = res.ok ? await res.json().catch(() => null) : null
+  } catch (_) {}
+  if (!d?.slug && !d?.id) return null
+
+  const panel = document.createElement('div')
+  panel.className = 'hs-mc-status-panel'
+  const line = (cls, text) => {
+    const el = document.createElement('div')
+    el.className = cls
+    el.textContent = text
+    panel.appendChild(el)
+    return el
+  }
+  line('hs-mc-status-title', `#${d.user?.username || d.slug || ch}`)
+  const live = d.livestream
+  if (live) {
+    const mins = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(String(live.created_at).replace(' ', 'T') + 'Z').getTime()) / 60000),
+    )
+    const up = Number.isFinite(mins) ? (mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`) : ''
+    const viewers = (live.viewer_count || 0).toLocaleString('en-US')
+    line('hs-mc-status-sub live', `LIVE · ${up ? `${up} · ` : ''}${viewers} viewers`)
+    if (live.session_title) line('hs-mc-status-streamtitle', `"${live.session_title}"`)
+    const game = live.categories?.[0]?.name
+    if (game) line('hs-mc-status-meta', game)
+  } else {
+    line('hs-mc-status-sub off', 'OFFLINE')
+  }
+  line('hs-mc-status-section', t('mc_cm_title'))
+  const grid = document.createElement('div')
+  grid.className = 'hs-mc-status-modes'
+  const cr = d.chatroom
+  if (cr) {
+    const modes = [
+      [t('mc_cm_emote'), cr.emotes_mode?.enabled === true || cr.emotes_mode === true],
+      [t('mc_cm_follower'), cr.followers_mode?.enabled === true || cr.followers_mode === true],
+      [t('mc_cm_sub'), cr.subscribers_mode?.enabled === true || cr.subscribers_mode === true],
+      [t('mc_cm_slow'), cr.slow_mode?.enabled === true || cr.slow_mode === true],
+    ]
+    for (const [label, on] of modes) {
+      const row = document.createElement('div')
+      row.className = 'hs-mc-status-row'
+      const k = document.createElement('span')
+      k.className = 'hs-mc-status-key'
+      k.textContent = label
+      const v = document.createElement('span')
+      v.className = `hs-mc-status-val ${on ? 'on' : 'off'}`
+      v.textContent = on ? t('mc_cm_on') : t('mc_cm_off')
+      row.append(k, v)
+      grid.appendChild(row)
+    }
+  } else {
+    const empty = document.createElement('div')
+    empty.className = 'hs-mc-status-note'
+    empty.textContent = t('mc_cm_unknown')
+    grid.appendChild(empty)
+  }
+  panel.appendChild(grid)
   return panel
 }
 
@@ -46033,6 +46229,7 @@ function initInput() {
           msgId: msg.dataset.msgId,
           user: msg.dataset.msgUser,
           channel: msg.dataset.msgChannel,
+          platform: msg.dataset.msgPlatform || '',
         })
       },
       { signal: mcSignal },
@@ -46417,6 +46614,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           msgId: msg.dataset.msgId,
           user: msg.dataset.msgUser || username,
           channel: msg.dataset.msgChannel || '',
+          platform: msg.dataset.msgPlatform || '',
         }),
     })
   }
@@ -46500,12 +46698,12 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       },
     })
   }
-  // Chat-log viewer — twitch + kick (yt has no relay). One entry: opens
+  // Chat-log viewer — twitch + kick + youtube. One entry: opens
   // channel-scoped when we know the channel (the viewer has its own #channel↔all
   // scope toggle), else all-channels. Was two entries doing what one + the
   // in-view toggle already covers.
-  const logPlatform = platform || 'twitch'
-  if (logPlatform === 'twitch' || logPlatform === 'kick') {
+  const logPlatform = platform === 'yt' ? 'youtube' : platform || 'twitch'
+  if (logPlatform === 'twitch' || logPlatform === 'kick' || logPlatform === 'youtube') {
     const msgChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     items.push({
       label: 'chat logs',
@@ -48474,12 +48672,28 @@ function tryOverlayOnZero(_input) {
   return true
 }
 
+// Platforms the next send reaches from the current tab — the same picks sendMessage makes.
+function composerLegs() {
+  let ch = null
+  if (currentTab === 'live') {
+    const lower = String(getLiveChannel() || '').toLowerCase()
+    ch = config.channels.find((c) => c.twitch?.toLowerCase() === lower || c.kick?.toLowerCase() === lower) || null
+    if (!ch) return { twitch: hostPlatform === 'twitch', kick: hostPlatform === 'kick', youtube: hostPlatform === 'yt' }
+  } else {
+    ch = config.channels.find((c) => c.id === currentTab)
+  }
+  if (!ch) return null
+  const st = resolveSendTargets(ch.sendTargets, { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube })
+  return { twitch: !!ch.twitch && st.twitch, kick: !!ch.kick && st.kick, youtube: !!ch.youtube && st.youtube }
+}
+
 function updateCharCount(precomputedText) {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
   const text = typeof precomputedText === 'string' ? precomputedText : getInputText()
   const len = text.length
-  const over = len > 500
+  const limit = composerCharLimit(composerLegs())
+  const over = len > limit
   input.classList.toggle('over-limit', over)
 
   // Highlight overflow chars for plain <input> using overlay div
@@ -48504,7 +48718,7 @@ function updateCharCount(precomputedText) {
         hl.textContent = ''
         const safeSpan = document.createElement('span')
         safeSpan.className = 'hl-safe'
-        const safeText = truncateSafe(text, 500)
+        const safeText = truncateSafe(text, limit)
         safeSpan.textContent = safeText
         const overSpan = document.createElement('span')
         overSpan.className = 'hl-over'
@@ -51044,7 +51258,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'status' || cmd === 'modes') {
     const arg = rest.trim().toLowerCase().replace(/^#/, '')
     const own = String(mcSubCells(currentTab).length ? subChannelOf(currentTab) : '').toLowerCase()
-    const ch = arg && /^[a-z0-9_]{2,40}$/.test(arg) ? arg : /^[a-z0-9_]{2,40}$/.test(own) ? own : null
+    const ch = arg && /^[a-z0-9_-]{2,40}$/.test(arg) ? arg : /^[a-z0-9_-]{2,40}$/.test(own) ? own : null
     if (!ch) {
       showToast(t('mc_input_status_needs_channel'), 'error')
       return true
@@ -51059,10 +51273,18 @@ async function handleSlashCommand(text, input) {
   // so a mod can sanction a user everywhere with one command.
   // currentTab = channel login when on a per-channel tab; on aggregate tabs we
   // can't pick a single channel, so refuse with a useful toast.
-  const modChannel = typeof currentTab === 'string' && /^[a-z0-9_]{2,40}$/i.test(currentTab) ? currentTab : null
-  const _modCh = modChannel ? config.channels.find((c) => c.id === modChannel) : null
-  const _twitchModName = _modCh?.twitch || (modChannel && !_modCh ? modChannel : null)
-  const _kickModSlug = _modCh?.kick || null
+  const _mc = resolveTypedModChannel(
+    currentTab,
+    hostPlatform,
+    typeof getLiveChannel === 'function' ? getLiveChannel() : null,
+    config.channels,
+    MC_TABS.map((x) => x.id),
+  )
+  const modChannel = _mc.channel
+  const _modCh = _mc.entry
+  const _twitchModName = _mc.twitch
+  const _kickModSlug = _mc.kick
+  const _modPlat = _mc.platform // 'kick' for a kick page with no saved tab; else the entry decides
   // Dual-platform dispatch + per-platform notice injection + combined toast all
   // live in the shared backbone (main.js dispatchModAction / showModResultToast).
 
@@ -51164,7 +51386,14 @@ async function handleSlashCommand(text, input) {
       }
       const [, target, reason] = m
       const r = _hasTk
-        ? await dispatchModAction({ channel: modChannel, action: 'ban', target, reason, fanout: true })
+        ? await dispatchModAction({
+            channel: modChannel,
+            platform: _modPlat,
+            action: 'ban',
+            target,
+            reason,
+            fanout: true,
+          })
         : null
       if (r) showModResultToast(t('mc_mod_label_banned'), target, r)
       if (r?.cancelled) return _cancelled()
@@ -51183,6 +51412,7 @@ async function handleSlashCommand(text, input) {
       const r = _hasTk
         ? await dispatchModAction({
             channel: modChannel,
+            platform: _modPlat,
             action: 'timeout',
             target,
             durationSec: sec,
@@ -51201,7 +51431,9 @@ async function handleSlashCommand(text, input) {
         showToast(t('mc_input_usage_unban'), 'error')
         return true
       }
-      const r = _hasTk ? await dispatchModAction({ channel: modChannel, action: 'unban', target, fanout: true }) : null
+      const r = _hasTk
+        ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'unban', target, fanout: true })
+        : null
       if (r) showModResultToast(t('mc_mod_label_unbanned'), target, r)
       const y = await _ytModLeg('unban', target, t('mc_mod_label_unbanned'), !!r)
       if (r?.anyOk || y?.anyOk) clearInput(input)
@@ -51391,10 +51623,8 @@ async function handleSlashCommand(text, input) {
     // getActiveTwitchChannel wrapper, which itself calls getLiveChannel on
     // live/feed/aggregate tabs) throws a ReferenceError that silently kills
     // this async handler → "no toast, no send".
-    let twitchLogin = _modCh?.twitch || null
-    if (!twitchLogin && currentTab === 'live' && typeof getLiveChannel === 'function') twitchLogin = getLiveChannel()
-    // Twitch-only channel tab: the tab id itself is the twitch login.
-    if (!twitchLogin && modChannel && modChannel !== 'live' && !_modCh) twitchLogin = modChannel
+    // twitch-only command: the tab's twitch leg, or the page itself on twitch (never a kick/yt name)
+    const twitchLogin = _twitchModName
     if (!twitchLogin) {
       showToast(t('mc_input_highlight_needs_twitch') || '/highlight needs a twitch channel tab', 'error')
       return true
@@ -51418,7 +51648,7 @@ async function handleSlashCommand(text, input) {
       )
       return true
     }
-    const replyParentId = replyState?.msgId || null
+    const replyParentId = !replyState?.platform || replyState.platform === 'twitch' ? replyState?.msgId || null : null
     const r = await sendHighlightedTwitchMessage(channelId, message, null, replyParentId)
     if (r?.ok) {
       clearInput(input)
@@ -51457,10 +51687,7 @@ async function handleSlashCommand(text, input) {
   // twitch-only. modChannel/_modCh/currentTab are resolved above (see /highlight).
   if (['poll', 'prediction', 'vote', 'bet', 'endpoll', 'lockpred', 'cancelpred', 'resolvepred'].includes(cmd)) {
     const _ppLogin = () => {
-      let login = _modCh?.twitch || null
-      if (!login && currentTab === 'live' && typeof getLiveChannel === 'function') login = getLiveChannel()
-      if (!login && modChannel && modChannel !== 'live' && !_modCh) login = modChannel
-      return login
+      return _twitchModName
     }
     // Resolve the twitch channel + require login; toast + null on failure.
     const _ppGate = () => {
@@ -51843,9 +52070,7 @@ async function handleSlashCommand(text, input) {
       showToast(t(usageKey) || `/${cmd} <user>`, 'error')
       return true
     }
-    let twitchLogin = _modCh?.twitch || null
-    if (!twitchLogin && currentTab === 'live' && typeof getLiveChannel === 'function') twitchLogin = getLiveChannel()
-    if (!twitchLogin && modChannel && modChannel !== 'live' && !_modCh) twitchLogin = modChannel
+    const twitchLogin = _twitchModName // twitch-only: see /highlight
     if (!twitchLogin) {
       showToast(t('mc_input_pp_needs_twitch') || 'this needs a twitch channel tab', 'error')
       return true
@@ -51928,7 +52153,7 @@ async function handleSlashCommand(text, input) {
     }
     if (!(await _twitchModAuthOk())) return _notLoggedIn()
     // Raw id → platform unknown; dispatcher tries Twitch first, then Kick.
-    const r = await dispatchModAction({ channel: modChannel, action: 'delete', msgId: messageID })
+    const r = await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'delete', msgId: messageID })
     const err = (r?.tResp || r?.kResp)?.error || t('mc_common_unknown')
     showToast(r?.anyOk ? t('mc_mod_label_deleted') : t('mc_input_delete_failed', [err]), r?.anyOk ? 'success' : 'error')
     if (r?.anyOk) clearInput(input)
@@ -51994,7 +52219,7 @@ async function handleSlashCommand(text, input) {
     if (!ok) return _cancelled()
     const results = await Promise.allSettled(
       batch.map((t) =>
-        dispatchModAction({ channel: modChannel, platform: t.platform, action: 'delete', msgId: t.msgId }),
+        dispatchModAction({ channel: modChannel, platform: _modPlat || t.platform, action: 'delete', msgId: t.msgId }),
       ),
     )
     const okCount = results.filter((r) => r.status === 'fulfilled' && r.value?.anyOk).length
@@ -52028,25 +52253,9 @@ async function handleSlashCommand(text, input) {
   // the helix caller and the real mod check, this one only keeps the command
   // off a channel the user plainly doesn't mod. Resolves the twitch login, or a
   // failure result (already toasted) to return as is.
-  const _MS_NON_CHANNEL_TABS = new Set([
-    'live',
-    'watching',
-    'feed',
-    'whispers',
-    'mentions',
-    'add',
-    'settings',
-    'discover',
-    'pinned',
-    'modlog',
-  ])
   const _msGate = async () => {
-    // currentTab is a twitch login only on a per-channel tab; on live / watching
-    // / feed … it is the tab's own name ("watching" is not a channel), so those
-    // fall to the channel page the user is on — same as /highlight above.
-    const _msTab =
-      _modCh?.twitch || (modChannel && !_MS_NON_CHANNEL_TABS.has(modChannel) && !_modCh ? modChannel : null)
-    const _msChannel = _msTab || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
+    // twitch-only: the tab's twitch leg, or the page itself on twitch — same as /highlight above.
+    const _msChannel = _twitchModName
     if (!_msChannel) {
       showToast(t('mc_ms_no_channel'), 'error')
       return { ok: false, error: t('mc_ms_no_channel') }
@@ -52736,6 +52945,12 @@ async function sendMessage() {
   mcHistoryIndex = -1
 
   const replyParentId = replyState?.msgId || null
+  // A parent id belongs to the platform its row came from: twitch and kick each only
+  // thread a reply to their OWN message, so the other legs get a plain send ('' =
+  // an older caller that never named the platform: keep the old both-legs behaviour).
+  const _replyPlat = replyState?.platform || ''
+  const twitchReplyId = replyParentId && (!_replyPlat || _replyPlat === 'twitch') ? replyParentId : null
+  const kickReplyId = replyParentId && (!_replyPlat || _replyPlat === 'kick') ? replyParentId : null
   // YouTube has no reply-threading API — the @mention prepend is the only way
   // a reply's context survives on that leg. Capture the author BEFORE
   // clearReplyState() wipes replyState below; Twitch/Kick keep carrying the
@@ -52803,11 +53018,11 @@ async function sendMessage() {
     // (scrolled out of buffer) or sender id degrades to a flat send exactly as
     // before, never a failure.
     let kickReply = null
-    if (replyParentId && kickChat?.channels?.get(slug)) {
+    if (kickReplyId && kickChat?.channels?.get(slug)) {
       const parent = kickChat.channels
         .get(slug)
         .getAll()
-        .find((m) => m?.id === replyParentId)
+        .find((m) => m?.id === kickReplyId)
       if (parent?.id) {
         kickReply = {
           id: parent.id,
@@ -52823,7 +53038,7 @@ async function sendMessage() {
     const kickPromise = sendKickMessage(slug, kickifyEmoteText(restText), kickReply)
     const twitchPromise = sendToTwitch
       ? getTwitchAuthTokenAsync().then(({ token: tok, username: twitchNick }) =>
-          sendIrcMessage(twitchName, twitchText, tok, replyParentId, twitchNick),
+          sendIrcMessage(twitchName, twitchText, tok, twitchReplyId, twitchNick),
         )
       : Promise.resolve(null)
 
@@ -52998,7 +53213,7 @@ async function sendMessage() {
 
   const wsState = authState.ws ? ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][authState.ws.readyState] : 'null'
   log(`IRC SEND → #${targetChannel} ws=${wsState} ready=${authState.ready} queue=${authState.sendQueue.length}`)
-  sendIrcMessage(targetChannel, twitchText, token, replyParentId, twitchNick)
+  sendIrcMessage(targetChannel, twitchText, token, twitchReplyId, twitchNick)
     .then((result) => {
       if (result === true) {
         if (wsState !== 'OPEN') {
@@ -53794,8 +54009,11 @@ function closeProfileCard() {
   renderSubRow() // the 2nd row gets its own cells back
 }
 
-function getRecentMessagesFromUser(username) {
+// `platform` (optional) keeps a card on its own platform: twitch "alice" and kick
+// "alice" are different people, so their lines/mod targets must not mix.
+function getRecentMessagesFromUser(username, platform) {
   const lower = username.toLowerCase()
+  const want = platform === 'yt' ? 'youtube' : platform || ''
   const out = []
   try {
     if (typeof irc !== 'undefined' && irc?.channels) {
@@ -53820,7 +54038,8 @@ function getRecentMessagesFromUser(username) {
       }
     }
   } catch {}
-  return out.sort((a, b) => (b.time || 0) - (a.time || 0)).slice(0, 12)
+  const mine = want ? out.filter((m) => (m.platform || 'twitch') === want) : out
+  return mine.sort((a, b) => (b.time || 0) - (a.time || 0)).slice(0, 12)
 }
 
 // `/api/card`'s `recent` part (card-model.js's own {timestamp, channel,
@@ -53845,10 +54064,10 @@ function pcLocalLineHtml(m) {
   }
 }
 
-function pcMergeRecent(serverRecent, username) {
+function pcMergeRecent(serverRecent, username, platform) {
   const server = Array.isArray(serverRecent) ? serverRecent : []
   const seen = new Set(server.map((r) => `${(r.channel || '').toLowerCase()}:${r.message}`))
-  const local = (typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : [])
+  const local = (typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username, platform) : [])
     .filter((m) => m.text && m.time)
     .map((m) => ({
       timestamp: new Date(m.time).toISOString(),
@@ -53958,7 +54177,7 @@ function pcMakeSection(title) {
 // delegated click listener in setupProfileCardHandlers. Returns [] when not
 // applicable (own profile, no recent messages, no channel you mod) so
 // hsCardModel's `ctx.modGroups.length` check skips the section entirely.
-function pcBuildModGroups(username) {
+function pcBuildModGroups(username, platform) {
   if (typeof getRecentMessagesFromUser !== 'function' || !username) return []
   // Don't surface mod actions on your own profile — self-mod buttons are nonsense.
   if (
@@ -53967,7 +54186,7 @@ function pcBuildModGroups(username) {
     username.toLowerCase() === currentUsername.toLowerCase()
   )
     return []
-  const recent = getRecentMessagesFromUser(username)
+  const recent = getRecentMessagesFromUser(username, platform)
   if (!recent.length) return []
   // Group by channel+platform — most recent msgId per channel where I'm a mod.
   // Twitch gates on GQL mod-state, Kick on kick_mod_status; the key keeps the
@@ -54241,13 +54460,13 @@ function renderProfileCardView() {
       profile: normalizedProfile,
       socials: pcBuildSocials(data),
       corpus: activeProfileCard.corpus || null,
-      recent: pcMergeRecent(activeProfileCard.recentServer, username),
+      recent: pcMergeRecent(activeProfileCard.recentServer, username, platform),
     },
     {
       hint: { platform: platform || undefined, login: (username || '').toLowerCase() },
       capabilities: { follow: true, whisper: true, dm: true, mention: true, mute: true, block: true, isBlocked },
       extraSheet: [...pcBuildSessionSheetRows(username), ...(activeProfileCard.followageRows || [])],
-      modGroups: pcBuildModGroups(username),
+      modGroups: pcBuildModGroups(username, platform),
     },
     { formatCompactNumber: pcFmt },
   )
@@ -55380,13 +55599,15 @@ async function openChatLogsView(username, opts = {}) {
 // only names the room it is looking at (null leaves) and re-announces it so a
 // restarted service worker re-joins.
 const CL_ULOG_NAME_RE = /^[a-z0-9_]{1,40}$/
+// a youtube name arrives as "@handle"; the room is keyed by the bare handle
+const clRoomName = (u) => String(u || '').replace(/^@/, '')
 let _clRoom = null
 let _clRoomKeep = null
 function clLiveRoomSync() {
   const st = activeChatLogs
   const room =
-    st && CL_ULOG_NAME_RE.test(st.username) && ['twitch', 'kick', 'youtube'].includes(st.platform)
-      ? `ulog:${st.platform}:${st.username}`
+    st && CL_ULOG_NAME_RE.test(clRoomName(st.username)) && ['twitch', 'kick', 'youtube'].includes(st.platform)
+      ? `ulog:${st.platform}:${clRoomName(st.username)}`
       : null
   if (room === _clRoom && (room === null || _clRoomKeep)) return
   _clRoom = room
@@ -58126,13 +58347,16 @@ async function flushYtNameLookups() {
         path: `/api/profile/${encodeURIComponent(key)}`,
         method: 'GET',
       })
-      const tid = resp?.data?.twitch_id || resp?.twitch_id || null
-      const tuser = resp?.data?.twitch_username || resp?.twitch_username || null
+      // /api/profile answers { profile: { twitch_id, twitch_username, ... } }
+      const prof = resp?.data?.profile || resp?.data || resp || {}
+      const tid = prof.twitch_id || null
+      const tuser = prof.twitch_username || null
       evictYtNameCache()
       ytNameToTwitchId.set(key, tid ? String(tid) : null)
       ytNameToTwitchUsername.set(key, tuser ? String(tuser).toLowerCase() : null)
       if (tid) {
         const tidStr = String(tid)
+        knownUserIds.set(userKey(key, 'youtube'), tidStr) // reply/@mention paints read this
         // Backfill: stamp data-uid on all currently-rendered YT msgs by this
         // user so updateCosmeticsInPlace can find them once cosmetics resolve.
         const container = document.getElementById('hs-mc-messages')
@@ -58319,6 +58543,7 @@ async function flushKickNameLookups() {
     evictKickNameCache()
     const tid = c?.twitchId ? String(c.twitchId) : null
     kickNameResolved.set(key, tid)
+    if (tid) knownUserIds.set(userKey(key, 'kick'), tid) // reply/@mention paints read this
     kickNameToTwitchUsername.set(key, c?.twitchUsername || null)
     // Namespaced kick paint uid — independent of whether a twitch link
     // resolved. Queued directly (never via queueMcCosmeticsLookup, which is
@@ -58351,6 +58576,11 @@ async function flushKickNameLookups() {
       // existing updateCosmeticsInPlace pipeline paints by uid.
       setMcCosmetic(tid, { paint: c.paint || null, badge: c.badge || null })
       changedIds.push(tid)
+    } else if (paintUid && (c?.paint || c?.badge)) {
+      // A 7TV account linked to kick only (no twitch connection): keep its paint/badge
+      // under the namespaced kick uid (never the twitch-id space) like yt's google id.
+      setMcCosmetic(paintUid, { paint: c.paint || null, badge: c.badge || null })
+      changedIds.push(paintUid)
     }
     // Backfill data-uid (twitch) / data-hs-paint-uid (kick paint) on rendered
     // Kick msgs by lowercase username so updateCosmeticsInPlace / the HS-paint
@@ -58691,7 +58921,7 @@ function updateCosmeticsInPlace(userIds) {
       // in _uidIndex either. Find its rows via the parallel data-hs-paint-uid
       // attribute social.js already stamps, same technique updateHsPaintsInPlace
       // uses for kick_ ids.
-      const isNamespacedUid = uid.startsWith('yt_')
+      const isNamespacedUid = uid.startsWith('yt_') || uid.startsWith('kick_')
       const divSet = isNamespacedUid
         ? container.querySelectorAll(`[data-hs-paint-uid="${CSS.escape(uid)}"]`)
         : _uidIndex.get(uid)
@@ -59284,6 +59514,7 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
+    notKick: true, // kick's shortest timeout is a minute: a "purge" there would mute for 60s
   },
   ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
   unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
@@ -59467,6 +59698,7 @@ function gateModButtons(ctx) {
     let ok = !!def
     if (ok && def.needsMsgId && !ctx.msgId) ok = false
     if (ok && def.twitchOnly && ctx.platform && ctx.platform !== 'twitch') ok = false
+    if (ok && def.notKick && ctx.platform === 'kick') ok = false
     if (ok && !ctx.user) ok = false
     btn.style.display = ok ? '' : 'none'
     if (ok) anyVisible = true
@@ -59601,6 +59833,8 @@ function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
       platform: 'kick',
       id: `hs-synth-kick-mod-${f.noticeType}-${slug}-${tgtLc || msgId || ''}-${Date.now()}`,
       targetUser: tgtLc,
+      // a deleted message dims its row (same field the twitch notice carries)
+      targetMsgId: action === 'delete' ? msgId || '' : undefined,
       isSynthetic: true,
     }
     buf.push(m)
@@ -61554,15 +61788,17 @@ function pinRoomsFor(tabId) {
   }
   if (tabId === 'live') {
     const live = String(getLiveChannel() || '').toLowerCase()
-    if (!live) return out
+    // the live channel is a name on the PAGE's platform: a kick slug is not a twitch room
+    const hp = hostPlatform === 'kick' ? 'kick' : hostPlatform === 'twitch' ? 'twitch' : ''
+    if (!live || !hp) return out
     let paired = false
     for (const ch of config.channels || []) {
-      if (String(ch.twitch || '').toLowerCase() === live || String(ch.kick || '').toLowerCase() === live) {
+      if (String(ch[hp] || '').toLowerCase() === live) {
         addEntry(ch)
         paired = true
       }
     }
-    if (!paired) add('twitch', live)
+    if (!paired) add(hp, live)
     return out
   }
   addEntry(getChannelById(tabId))
@@ -67717,12 +67953,11 @@ function makeAddViewShell(msgsEl, titleText, descText) {
  * "import twitch follows" — pick from the channels you already follow on twitch,
  * instead of typing them in one at a time.
  *
- * Twitch only, and the copy says so rather than implying otherwise: kick's
- * public api has no follow-list endpoint and there is no youtube oauth at all,
- * so "import your follows" would be a promise we can only keep on one of the
- * three platforms in the tab bar. An imported channel is twitch-only; the
- * existing per-channel autofill is how it picks up a kick/youtube counterpart
- * afterwards.
+ * Twitch and kick. Twitch follows come from the server's linked grant; kick has
+ * no public follow-list api, so the service worker reads them with the browser's
+ * own kick session (needs kick.com signed in here). There is no youtube oauth,
+ * so youtube stays out. An imported channel is one platform; the per-channel
+ * autofill is how it picks up a counterpart afterwards.
  */
 async function renderFollowImportPicker(msgsEl) {
   const wrapper = makeAddViewShell(msgsEl, t('mc_fill_cockpit'), t('mc_fill_cockpit_desc'))
@@ -67745,12 +67980,18 @@ async function renderFollowImportPicker(msgsEl) {
   } catch {
     resp = { error: 'twitch_unavailable' }
   }
+  // Kick follows ride along; none (signed out of kick, or kick down) is just an empty list.
+  let kickFollows = []
+  try {
+    const kr = await browser.runtime.sendMessage({ type: 'get_kick_followed_channels' })
+    if (Array.isArray(kr?.channels)) kickFollows = kr.channels
+  } catch {}
 
   // Three failures, three sentences. "you follow nobody", "you're signed out"
   // and "your twitch link is dead" are different problems with different fixes,
   // and showing one message for all three is how someone ends up re-authorising
   // an account that was working fine.
-  if (!resp || resp.error) {
+  if ((!resp || resp.error) && !kickFollows.length) {
     const err = resp?.error || 'twitch_unavailable'
     status.style.color = '#ffffff'
     if (err === 'login_required') {
@@ -67780,7 +68021,11 @@ async function renderFollowImportPicker(msgsEl) {
     return
   }
 
-  const follows = Array.isArray(resp.channels) ? resp.channels : []
+  // one row per (platform, login): the same name on twitch and kick is two channels
+  const follows = [
+    ...(Array.isArray(resp?.channels) ? resp.channels : []).map((f) => ({ ...f, plat: 'twitch' })),
+    ...kickFollows.map((f) => ({ ...f, plat: 'kick' })),
+  ]
   if (!follows.length) {
     status.textContent = t('mc_no_twitch_follows')
     return
@@ -67793,22 +68038,29 @@ async function renderFollowImportPicker(msgsEl) {
   try {
     const live = await browser.runtime.sendMessage({
       type: 'fetch_live_status',
-      channels: follows.map((f) => f.login),
-      kickChannels: [],
+      channels: follows.filter((f) => f.plat === 'twitch').map((f) => f.login),
+      kickChannels: follows.filter((f) => f.plat === 'kick').map((f) => f.login),
     })
-    if (Array.isArray(live?.live)) liveSet = new Set(live.live.map((c) => c.toLowerCase()))
+    if (Array.isArray(live?.live)) for (const c of live.live) liveSet.add(`twitch:${c.toLowerCase()}`)
+    if (Array.isArray(live?.kickLive)) for (const c of live.kickLive) liveSet.add(`kick:${c.toLowerCase()}`)
   } catch {
     // A failed live check downgrades the sort, it does not fail the import.
   }
 
-  const already = new Set(config.channels.map((c) => c.twitch).filter(Boolean))
+  const already = new Set(
+    config.channels.flatMap((c) => [
+      c.twitch ? `twitch:${String(c.twitch).toLowerCase()}` : '',
+      c.kick ? `kick:${String(c.kick).toLowerCase()}` : '',
+    ]),
+  )
+  const keyOf = (f) => `${f.plat}:${String(f.login).toLowerCase()}`
   const rows = follows
-    .filter((f) => !already.has(f.login))
+    .filter((f) => !already.has(keyOf(f)))
     .sort((a, b) => {
-      const la = liveSet.has(a.login) ? 0 : 1
-      const lb = liveSet.has(b.login) ? 0 : 1
+      const la = liveSet.has(keyOf(a)) ? 0 : 1
+      const lb = liveSet.has(keyOf(b)) ? 0 : 1
       if (la !== lb) return la - lb
-      return a.login.localeCompare(b.login)
+      return a.login.localeCompare(b.login) || a.plat.localeCompare(b.plat)
     })
 
   if (!rows.length) {
@@ -67826,7 +68078,7 @@ async function renderFollowImportPicker(msgsEl) {
 
   const boxes = []
   for (const f of rows) {
-    const isLive = liveSet.has(f.login)
+    const isLive = liveSet.has(keyOf(f))
     const row = document.createElement('label')
     row.style.cssText =
       'display:flex;align-items:center;gap:8px;padding:3px 4px;cursor:pointer;font-size:13px;color:#ffffff;'
@@ -67842,6 +68094,7 @@ async function renderFollowImportPicker(msgsEl) {
     box.type = 'checkbox'
     box.checked = isLive
     box.dataset.login = f.login
+    box.dataset.plat = f.plat
     box.style.cssText = 'margin:0;accent-color:#ffffff;'
     box.setAttribute('aria-label', f.login)
     const dot = document.createElement('span')
@@ -67850,8 +68103,8 @@ async function renderFollowImportPicker(msgsEl) {
     // black fill was invisible on the black list and showed up only on hover.
     dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : 'transparent'};`
     const name = document.createElement('span')
-    name.textContent =
-      f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
+    const shown = f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
+    name.textContent = f.plat === 'kick' ? `${shown} · kick` : shown
     name.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;'
     row.appendChild(box)
     row.appendChild(dot)
@@ -67872,11 +68125,11 @@ async function renderFollowImportPicker(msgsEl) {
   wrapper.insertBefore(btnRow, backRow)
 
   allLiveBtn.addEventListener('click', () => {
-    for (const b of boxes) b.checked = liveSet.has(b.dataset.login)
+    for (const b of boxes) b.checked = liveSet.has(`${b.dataset.plat}:${String(b.dataset.login).toLowerCase()}`)
   })
   cancelBtn.addEventListener('click', () => switchTab('live'))
   addBtn.addEventListener('click', () => {
-    const picked = boxes.filter((b) => b.checked).map((b) => ({ twitch: b.dataset.login }))
+    const picked = boxes.filter((b) => b.checked).map((b) => ({ [b.dataset.plat]: b.dataset.login }))
     if (!picked.length) {
       status.textContent = t('mc_select_at_least_one')
       return
@@ -70511,9 +70764,37 @@ const STORAGE_KEY = 'heatsync_multichat'
    * snapshot (i.e. "nothing you follow is live", the normal case) skipped the
    * update entirely so the stale dot became permanent. Deriving membership at
    * read time means either source refreshing is enough to clear a dot. */
-  function isChannelLive(name) {
+  // Both sets hold `platform:name` keys (a twitch "xqc" being live says nothing about
+  // kick "xqc"). `plat` omitted = live on ANY platform (event rows that carry no platform).
+  const _LIVE_PLATS = ['twitch', 'kick', 'youtube']
+  const liveKey = (plat, name) => `${plat === 'yt' ? 'youtube' : plat}:${String(name || '').toLowerCase()}`
+  function liveSetHas(set, name, plat) {
+    if (!set || !name) return false
+    const n = String(name).toLowerCase()
+    return plat ? set.has(liveKey(plat, n)) : _LIVE_PLATS.some((p) => set.has(`${p}:${n}`))
+  }
+  /** bare names of one platform out of a keyed live set */
+  function liveNames(set, plat) {
+    const pre = `${plat}:`
+    return new Set([...(set || [])].filter((k) => k.startsWith(pre)).map((k) => k.slice(pre.length)))
+  }
+  function isChannelLive(name, plat) {
     if (!name) return false
-    return (_swLiveSet ? _swLiveSet.has(name) : false) || liveChannelSet.has(name)
+    return liveSetHas(_swLiveSet, name, plat) || liveSetHas(liveChannelSet, name, plat)
+  }
+  /** youtube @handle of a channel tab's youtube link ('' when it holds none) */
+  const tabYtHandle = (ch) => (String(ch?.youtube || '').match(/@([^/?#]+)/)?.[1] || '').toLowerCase()
+  /** is this saved tab live per the keyed sets — each leg judged on its own platform */
+  function tabIsLiveFromSets(ch) {
+    const tw = ch.twitch?.toLowerCase()
+    const ki = ch.kick?.toLowerCase()
+    const yt = tabYtHandle(ch)
+    return (
+      isChannelLive(tw, 'twitch') ||
+      isChannelLive(ki, 'kick') ||
+      isChannelLive(yt, 'youtube') ||
+      (!tw && !ki && !ch.youtube && isChannelLive(ch.id?.toLowerCase(), 'twitch'))
+    )
   }
   // Channels we've already surfaced as "went live" this session. A channel can
   // only legitimately go off→on once per session — every later stream:online
@@ -71778,7 +72059,11 @@ const STORAGE_KEY = 'heatsync_multichat'
         _nativeTwitchColor.delete(k)
       }
     }
-    if (userId) {
+    // Only a twitch line carries a twitch id. A kick line's userId is kick's own
+    // numeric id; filed here it painted replies/@mentions with a stranger's
+    // twitch cosmetics. Kick/yt names get their RESOLVED twitch id from the
+    // cosmetics lookups (flushKickNameLookups / flushYtNameLookups).
+    if (userId && platform === 'twitch') {
       const uidKey = typeof userKey === 'function' ? userKey(user, platform) : user
       knownUserIds.set(uidKey, userId)
       if (knownUserIds.size > 2000) {
@@ -74041,6 +74326,18 @@ const STORAGE_KEY = 'heatsync_multichat'
     return row
   }
 
+  // Which platform owns the channel name a pane was opened for. Live tab: the page's
+  // (when the name is the page's channel). A channel tab: whichever leg holds the
+  // name; a youtube-only tab is 'yt'. Unknown names stay twitch (the typed-arg default).
+  function _paneChannelPlatform(ctx) {
+    const ch = String(ctx.channel || '').toLowerCase()
+    if (ctx.tab === 'live') return ch === String(getLiveChannel() || '').toLowerCase() ? hostPlatform : 'twitch'
+    const e = getChannelById(ctx.tab)
+    if (e?.twitch?.toLowerCase() === ch) return 'twitch'
+    if (e?.kick?.toLowerCase() === ch) return 'kick'
+    return e && !e.twitch && !e.kick && e.youtube ? 'yt' : 'twitch'
+  }
+
   const MC_SUB_PANES = {
     summary: (pane, ctx) => {
       pane.classList.add('hs-mc-subpane-pad')
@@ -74053,23 +74350,33 @@ const STORAGE_KEY = 'heatsync_multichat'
         _paneNote(pane, text)
         pane.prepend(hub)
       }
+      const plat = _paneChannelPlatform(ctx)
+      if (plat === 'yt') return note('status covers twitch and kick channels')
       note(`fetching #${ch}…`)
       let panel = null
       try {
-        panel = await buildChatStatusPanel(ch)
+        panel = plat === 'kick' ? await buildKickStatusPanel(ch) : await buildChatStatusPanel(ch)
       } catch (_) {}
       if (!pane.isConnected) return
-      if (!panel) return note(`could not fetch #${ch} (offline or not on twitch?)`)
+      if (!panel) return note(`could not fetch #${ch} (offline or not on ${plat}?)`)
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(hub, panel)
     },
     platforms: (pane) => renderLivePlatformsPane(pane),
     // Your own messages in this channel, or the user a right-click named.
     logs: (pane, ctx) => {
-      const ch = getChannelById(ctx.tab)
-      const platform = ctx.platform || (ch && !ch.twitch && ch.kick ? 'kick' : 'twitch')
-      const username = ctx.username || currentUsername
-      if (!username) return _paneNote(pane, 'sign in to see your logs here — right-click a chatter for theirs')
+      const paneP = _paneChannelPlatform(ctx)
+      const platform = ctx.platform || (paneP === 'yt' ? 'youtube' : paneP)
+      // currentUsername is the twitch login: it names you only on twitch. On kick/yt the
+      // viewer's own name isn't known here, so only a right-clicked chatter has logs.
+      const username = ctx.username || (platform === 'twitch' ? currentUsername : '')
+      if (!username)
+        return _paneNote(
+          pane,
+          platform === 'twitch'
+            ? 'sign in to see your logs here — right-click a chatter for theirs'
+            : `right-click a chatter to see their ${platform} logs`,
+        )
       openChatLogsView(username, { platform, channel: ctx.channel })
     },
   }
@@ -76550,12 +76857,9 @@ const STORAGE_KEY = 'heatsync_multichat'
       // channel whose twitch handle differs from its kick slug would otherwise
       // miss the dot. SW followed snapshot already populates kick slugs into
       // liveChannelSet at line ~8908.
-      if (liveChannelSet.size > 0) {
-        const tw = ch.twitch?.toLowerCase()
-        const ki = ch.kick?.toLowerCase()
-        const idLower = ch.id?.toLowerCase()
-        const isLive = isChannelLive(tw) || isChannelLive(ki) || (!tw && !ki && isChannelLive(idLower))
-        tab.dataset.live = String(isLive)
+      if (liveChannelSet.size > 0 || _swLiveSet?.size > 0) {
+        if (tabIsLiveFromSets(ch)) tab.dataset.live = 'true'
+        else if (ch.twitch || ch.kick || !ch.youtube) tab.dataset.live = 'false'
       }
       // YT-only tabs aren't in liveChannelSet (which is Twitch-only), so
       // re-derive live state from the resolved YouTube subscription. This
@@ -78672,7 +78976,9 @@ const STORAGE_KEY = 'heatsync_multichat'
     const hsPaint =
       (uidTwitch ? hsPaintRender(uidTwitch, m.user) : null) ||
       (m.hsPaintUid ? hsPaintRender(m.hsPaintUid, m.user) : null)
-    const paintStyle = hsPaint ? '' : uidTwitch ? getMcPaintStyle(uidTwitch) : ''
+    // 7TV paint: twitch-space uid, else the kick_/yt_ namespaced uid (so a re-render
+    // keeps a paint that only resolved through the name lookups)
+    const paintStyle = hsPaint ? '' : uidTwitch || m.hsPaintUid ? getMcPaintStyle(uidTwitch || m.hsPaintUid) : ''
     // Plus tenure ("+5mo"/"+3y" beside an active Plus member's name) — an
     // identity signal, not a cosmetic, so it resolves regardless of the
     // showNamePaints setting. Same uid precedence as hsPaint above: resolved
@@ -81756,8 +82062,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!Array.isArray(snapshot)) return
     _swLiveSet = new Set(
       snapshot
-        .filter((s) => s.platform === 'twitch' || s.platform === 'kick')
-        .map((s) => String(s.username || '').toLowerCase())
+        .filter((s) => s.platform === 'twitch' || s.platform === 'kick' || s.platform === 'youtube')
+        .map((s) => (s.username ? liveKey(s.platform, s.username) : ''))
         .filter(Boolean),
     )
     // Re-stamp unconditionally. _swLiveSet has just been REPLACED (not merged),
@@ -81800,7 +82106,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       const u = urlCh.toLowerCase()
       if (hostPlatform === 'kick') {
         if (!kickAll.some((c) => c.toLowerCase() === u)) kickAll.push(urlCh)
-      } else if (!twitchAll.some((c) => c.toLowerCase() === u)) {
+      } else if (hostPlatform === 'twitch' && !twitchAll.some((c) => c.toLowerCase() === u)) {
+        // a youtube handle / videoId is not a twitch login
         twitchAll.push(urlCh)
       }
     }
@@ -81809,7 +82116,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Skip the twitch fetch for names the SW live snapshot already covers
     // (most followed channels at scale). The SW snapshot is twitch-only, so
     // kick slugs are always queried fresh.
-    const twitchNames = _swLiveSet ? twitchAll.filter((c) => !_swLiveSet.has(c.toLowerCase())) : twitchAll
+    const twitchNames = _swLiveSet ? twitchAll.filter((c) => !liveSetHas(_swLiveSet, c, 'twitch')) : twitchAll
 
     if (twitchNames.length === 0 && kickAll.length === 0) {
       applyLiveDotsFromCache()
@@ -81837,8 +82144,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Poll-owned set ONLY. Folding _swLiveSet in here is what made a stale
       // snapshot entry survive every subsequent poll; isChannelLive() reads both.
       const liveSet = new Set([
-        ...(Array.isArray(data?.live) ? data.live.map((c) => c.toLowerCase()) : []),
-        ...(Array.isArray(data?.kickLive) ? data.kickLive.map((c) => c.toLowerCase()) : []),
+        ...(Array.isArray(data?.live) ? data.live.map((c) => liveKey('twitch', c)) : []),
+        ...(Array.isArray(data?.kickLive) ? data.kickLive.map((c) => liveKey('kick', c)) : []),
       ])
       liveChannelSet = liveSet
       applyLiveDotsFromCache()
@@ -81850,11 +82157,11 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (hostPlatform !== 'yt') {
         const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
         const curLive = getLiveChannel()?.toLowerCase()
-        if (liveTab) liveTab.dataset.live = String(curLive && liveSet.has(curLive))
+        if (liveTab) liveTab.dataset.live = String(!!curLive && liveSetHas(liveSet, curLive, hostPlatform))
       }
 
       // If override channel went offline, fall back to URL channel or first live
-      if (liveChannel && !liveSet.has(liveChannel)) {
+      if (liveChannel && !liveSetHas(liveSet, liveChannel)) {
         liveChannel = null
         updateLiveTabLabel()
         _dropTabCache('live')
@@ -81862,7 +82169,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       }
 
       // Auto-select if no override and URL channel isn't live but others are
-      if (!liveChannel && urlCh && !liveSet.has(urlCh.toLowerCase()) && liveSet.size > 0) {
+      if (!liveChannel && urlCh && !liveSetHas(liveSet, urlCh) && liveSet.size > 0) {
         // Don't auto-override — user can pick via the menu
       }
     } catch (_) {
@@ -81883,14 +82190,15 @@ const STORAGE_KEY = 'heatsync_multichat'
       const id = ch.id
       const tab = tabBarElement.querySelector(`[data-tab="${id}"]`)
       if (!tab) return
-      const isYtOnly = !ch.twitch && !ch.kick && ch.youtube
-      if (isYtOnly) return
-      // Check both twitch + kick slugs so Kick-only channels (and pairs whose
-      // twitch handle differs from kick slug) get the live dot too.
-      const tw = ch.twitch?.toLowerCase()
-      const ki = ch.kick?.toLowerCase()
-      const idLower = id?.toLowerCase()
-      const isLive = isChannelLive(tw) || isChannelLive(ki) || (!tw && !ki && isChannelLive(idLower))
+      // Each leg is judged on its own platform's key, so kick-only and twitch+kick
+      // pairs with differing handles light up and a same-named twitch/kick pair
+      // can't light each other. A youtube-only tab can only turn ON from the
+      // followed-live snapshot: its off state is the chat-frame detection's call.
+      const isLive = tabIsLiveFromSets(ch)
+      if (!ch.twitch && !ch.kick && ch.youtube) {
+        if (isLive) tab.dataset.live = 'true'
+        return
+      }
       tab.dataset.live = String(isLive)
     })
   }
@@ -82206,7 +82514,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (urlCh && hostPlatform === 'twitch' && !twitchNames.includes(urlCh)) twitchNames.push(urlCh)
     if (urlCh && hostPlatform === 'kick' && !kickNames.includes(urlCh)) kickNames.push(urlCh)
 
-    let twitchLive = liveChannelSet
+    let twitchLive = liveNames(liveChannelSet, 'twitch')
     let kickLive = new Set()
     if (twitchNames.length > 0 || kickNames.length > 0) {
       try {
@@ -82577,8 +82885,12 @@ const STORAGE_KEY = 'heatsync_multichat'
         // (the /live redirect landed first) is not a channel, so it makes no tab.
         const plat = hostPlatform
         const chOk = plat !== 'yt' || parseYoutubeChannelType(location.pathname, location.search) === 'handle'
-        if (cur && chOk && !config.channels.some((c) => (c.id || '').toLowerCase() === cur)) {
+        const have = cur ? config.channels.find((c) => (c.id || '').toLowerCase() === cur) : null
+        if (cur && chOk && !have) {
           config.channels.push(hsLiveChannelEntry(plat, cur))
+          saveConfig()
+        } else if (have && chOk && fillHsLiveLeg(have, plat, cur)) {
+          // saved earlier as twitch-only: the row's platform fills its empty slot
           saveConfig()
         }
         if (cur && config.channels.some((c) => c.id === cur)) _savedActiveTab = cur
@@ -82599,6 +82911,28 @@ const STORAGE_KEY = 'heatsync_multichat'
     } catch (_) {
       _savedActiveTab = 'live'
     }
+  }
+
+  // One-time repair for tabs saved twitch-only before went-live rows kept their
+  // platform: a youtube/kick page whose channel owns a lone twitch leg that the
+  // directory says doesn't exist (suspended/banned/never made) gains the page's
+  // leg. Conservative: only a verified identity, only an EMPTY slot, nothing dropped.
+  async function repairTwitchOnlyTab() {
+    try {
+      const plat = hostPlatform
+      if (plat !== 'yt' && plat !== 'kick') return
+      const cur = getCurrentChannel()
+      if (!cur || typeof resolveIdentity !== 'function') return
+      const slot = plat === 'yt' ? 'youtube' : 'kick'
+      const tab = config.channels.find(
+        (c) => (c.id || '').toLowerCase() === cur && (c.twitch || '').toLowerCase() === cur && !c.kick && !c.youtube,
+      )
+      if (!tab) return
+      const res = await resolveIdentity(cur, { platform: plat })
+      if (!res?.ok || !res.identity || res.identity.twitch || !res.identity[plat === 'yt' ? 'youtube' : 'kick']) return
+      if (tab[slot] || !config.channels.includes(tab)) return
+      if (fillHsLiveLeg(tab, plat, cur)) saveConfig()
+    } catch (_) {}
   }
 
   let _applyingPosition = false
@@ -83659,7 +83993,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
         if (liveTab) liveTab.dataset.live = String(isLive)
         const curCh = getCurrentChannel()?.toLowerCase()
-        if (curCh && isLive) liveChannelSet.add(curCh)
+        if (curCh && isLive) liveChannelSet.add(liveKey('kick', curCh))
         if (isLive) kickLiveFound = true
       }
       checkKickLive()
@@ -83976,15 +84310,18 @@ const STORAGE_KEY = 'heatsync_multichat'
     // (ytSubscribe's own channel-shaped-URL branch resolves it to a concrete
     // videoId via the BG, same as an @handle URL).
     const isChannelId = parseYoutubeChannelType(location.pathname, location.search) === 'channel'
-    if (!isChannelId && !/\/watch|\/live\//.test(location.pathname + location.search)) return
-    const autoYtUrl = isChannelId ? `https://www.youtube.com/channel/${vid}/live` : `https://youtube.com/watch?v=${vid}`
+    const handleLiveUrl = ytHandleLiveUrl(location.pathname)
+    if (!isChannelId && !handleLiveUrl && !/\/watch|\/live\//.test(location.pathname + location.search)) return
+    const autoYtUrl = isChannelId
+      ? `https://www.youtube.com/channel/${vid}/live`
+      : handleLiveUrl || `https://youtube.com/watch?v=${vid}`
     ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
     ytChanLastSeen.set('__live_yt_auto__', Date.now())
     // Concrete on-page videoId — open the render gate now (same rationale as
     // the init-time sibling: the poller's 'connected' echo is missed on
     // already-polled popular streams). No id yet for the channel-id case —
     // defers to ytSubscribe's own resolve echo, same as an @handle URL.
-    if (!isChannelId) _autoYtVideoId = vid
+    if (!isChannelId && !handleLiveUrl) _autoYtVideoId = vid
     ytSubscribe('__live_yt_auto__', autoYtUrl, vid)
   }
 
@@ -84273,6 +84610,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         hydrateTwitchBadges(),
       ].map((p) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, 5000))])),
     )
+    repairTwitchOnlyTab() // not awaited: a network lookup must not hold boot
     // Boot race: loadBlockedEmotes/loadEmotes timed out above (still pending)
     // — the imminent first render will paint with a stale/empty blocked set.
     // Attach a late repaint that fires whenever they actually land: invalidate
@@ -84647,12 +84985,17 @@ const STORAGE_KEY = 'heatsync_multichat'
         // @handle URL (ytSubscribe's own channel-shaped-URL branch resolves
         // it to a concrete videoId via the BG).
         const isYtChannelId = hostPlatform === 'yt' && /^UC[\w-]{20,}$/.test(currentChannel || '')
-        const onYtVideoPage = hostPlatform === 'yt' && /\/watch|\/live\//.test(location.pathname + location.search)
+        // /@handle/live: the page is the stream, but there's no videoId in the URL yet
+        const handleLiveUrl = hostPlatform === 'yt' ? ytHandleLiveUrl(location.pathname) : ''
+        const onYtVideoPage =
+          hostPlatform === 'yt' && !handleLiveUrl && /\/watch|\/live\//.test(location.pathname + location.search)
         const autoYtUrl = isYtChannelId
           ? `https://www.youtube.com/channel/${currentChannel}/live`
-          : onYtVideoPage
-            ? `https://youtube.com/watch?v=${currentChannel}`
-            : ytUrl
+          : handleLiveUrl
+            ? handleLiveUrl
+            : onYtVideoPage
+              ? `https://youtube.com/watch?v=${currentChannel}`
+              : ytUrl
         if (gYt && autoYtUrl) {
           ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
           ytChanLastSeen.set('__live_yt_auto__', Date.now())
@@ -85560,7 +85903,7 @@ const STORAGE_KEY = 'heatsync_multichat'
             // the grace, so it still surfaces (and gets recorded so any later
             // re-broadcast of the same channel is deduped).
             if (sessionWentLiveSeen.has(channel)) return
-            const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
+            const _alreadyLive = isChannelLive(channel)
             const _inGrace = Date.now() - mcStartedAt < 90000
             sessionWentLiveSeen.add(channel)
             // The service worker already vetted it as a real off->on transition

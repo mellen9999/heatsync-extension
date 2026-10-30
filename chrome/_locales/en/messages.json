@@ -2893,10 +2893,10 @@
     "message": "thread posted · link copied"
   },
   "mc_fill_cockpit": {
-    "message": "import twitch follows"
+    "message": "import follows"
   },
   "mc_fill_cockpit_desc": {
-    "message": "add the channels you already follow on twitch"
+    "message": "add the channels you already follow on twitch and kick"
   },
   "mc_fill_cockpit_loading": {
     "message": "reading your twitch follows…"
@@ -2926,7 +2926,7 @@
     "message": "add one manually"
   },
   "mc_no_twitch_follows": {
-    "message": "you don't follow anyone on twitch yet"
+    "message": "you don't follow anyone on twitch or kick yet"
   },
   "mc_all_follows_added": {
     "message": "every channel you follow is already here"

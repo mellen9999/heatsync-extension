@@ -131,7 +131,11 @@ export function hsCardHtml(model, opts) {
 function renderChatter(model, { esc, variant, navInBar }) {
   const parts = []
   parts.push(closeButtonHtml(variant))
-  parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
+  const name = `<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`
+  // a chatter-only card has a face only when the archive has seen one (youtube)
+  parts.push(model.avatarUrl
+    ? `<div class="hs-card-identity"><img class="hs-card-avatar" src="${esc(model.avatarUrl)}" alt="${esc(model.displayName)}" data-imgerr-src="/anon.webp">${name}</div>`
+    : name)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
   if (!navInBar) parts.push(renderNavRow(model, esc, variant, false))
   return `<div class="hs-card hs-card-${esc(variant)} hs-card-chatter">${parts.join('')}</div>`
@@ -189,7 +193,7 @@ function renderRecent(recent, esc) {
   const rows = [...recent].reverse().map(r => {
     const ts = hsCardLogTime(r.timestamp)
     const tsEl = `<span class="hs-card-log-ts">${esc(ts)}</span>`
-    const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channel)}</span>` : ''
+    const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channelLabel || r.channel)}</span>` : ''
     let body = unlink(r.messageHtml) || esc(r.message)
     // partial links ("watch?v=…") read as links here too — defused again below so
     // the row stays inert, but they carry the link class/colour

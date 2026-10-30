@@ -542,6 +542,22 @@ export function isPaintLookupSafeId(id, platform) {
   return null
 }
 
+/**
+ * paint-space id for an id that is EITHER a raw platform id (live chat) OR a
+ * users.id (feed, threads, cards). users.id is already namespaced for kick and
+ * youtube accounts (kick_<n>, yt_<UC…>); mapped through isPaintLookupSafeId
+ * again it became kick_kick_<n> / failed ^UC, so those accounts' own paint and
+ * Plus mark never showed on their posts. The shapes can't collide with a raw
+ * id (raw kick is bare digits, raw youtube starts UC), so this is unambiguous.
+ * @param {unknown} id
+ * @param {unknown} platform
+ * @returns {string|null}
+ */
+export function paintIdFor(id, platform) {
+  if (typeof id === 'string' && /^(kick_\d+|yt_UC[A-Za-z0-9_-]{22})$/.test(id)) return id
+  return isPaintLookupSafeId(id, platform)
+}
+
 // ── compiler ─────────────────────────────────────────────────────────────
 
 function safeAngle(angle) {

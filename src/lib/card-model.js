@@ -122,6 +122,12 @@ const earliest = (...dates) => {
   return best
 }
 
+// A youtube chatter is archived AS `@handle` (the @ is part of the stored name),
+// so a card that adds its own prints "@@handle". Exactly one @, any input; every
+// other platform's login is already bare. (Inline: this file mirrors into the
+// extension, which has no import.)
+const loginText = (platform, login) => (platform === 'youtube' && typeof login === 'string' && login ? `@${login.replace(/^@+/, '')}` : login)
+
 const ACTION_DEFS = [
   { key: 'follow', hotkey: 'f' },
   { key: 'whisper', hotkey: 'w' },
@@ -189,7 +195,10 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
       return {
         kind: 'chatter',
         identity: { platform: hint.platform, login: hint.login, userId: null, isAnonymous: false },
-        displayName: hint.login,
+        displayName: loginText(hint.platform, hint.login),
+        // the face they wear in chat — youtube has no profile call, so the
+        // archive's last-seen photo is all a chatter-only card can show
+        avatarUrl: payload.chatter?.avatarUrl || null,
         isOwnProfile: false,
         corpus: buildCorpusRow(payload.corpus, ctx, fmt),
         links: { chatterUrl: `/chatter/${encodeURIComponent(hint.platform)}/${encodeURIComponent(hint.login)}` },
@@ -335,6 +344,8 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     ? payload.recent.map(r => ({
         timestamp: r.timestamp,
         channel: r.channel || null,
+        // youtube lines carry the channel's name next to its archive key
+        channelLabel: r.channel_label || null,
         message: r.message || '',
         messageHtml: r.message_html || null,
         permalink: r.permalink || null,
@@ -362,7 +373,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     isOwnProfile,
     displayName: profile.display_name || profile.displayName || 'Anonymous',
     color: profile.color || profile.userColor || '#ffffff',
-    avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || '/anon.webp',
+    avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || payload.chatter?.avatarUrl || '/anon.webp',
     pronouns: ctx.pronouns || profile.pronouns || null,
     plusSince: profile.plus_since || null,
     flair,
@@ -396,12 +407,15 @@ function buildCorpusRow(corpus, ctx, fmt) {
   // in #channel", never a bare channel name with no label (read as a typo)
   // and never "most in" (that would claim something about VOLUME this field
   // doesn't carry).
-  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} in #${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+  // youtube channels are keyed by a machine id; corpus.labels maps those keys to
+  // the channel's name (absent for twitch/kick, whose key IS the name)
+  const name = (c) => corpus.labels?.[c] || c
+  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} in #${name(corpus.firstChannel)}` : `since ${corpus.firstDay}`)
   const skip = ctx.channel ? String(ctx.channel).toLowerCase() : null
   const also = (corpus.also || []).filter(c => c.toLowerCase() !== skip)
   let alsoText = null
   if (also.length) {
-    const shown = also.slice(0, 3).map(c => `#${c}`).join(' ')
+    const shown = also.slice(0, 3).map(c => `#${name(c)}`).join(' ')
     alsoText = also.length > 3 ? `${shown} +${also.length - 3}` : shown
   }
   if (!parts.length && !alsoText) return null

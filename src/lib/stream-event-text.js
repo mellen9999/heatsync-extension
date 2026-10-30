@@ -2,10 +2,10 @@
 // answer for heatsync.org and the extension (synced verbatim into the
 // extension, tests on both sides pin it).
 //
-// The two clients each hand-wrote this and drifted: the extension said "now
-// playing" when the previous game was unknown and the site stayed silent; the
-// site brought stored events back as rows, the extension dropped some. Same
-// event, different chat.
+// The two clients each hand-wrote this and drifted: the extension and the site
+// worded a first-known-game update differently, and the site brought stored
+// events back as rows where the extension dropped some. Same event, different
+// chat. Users only ever see "went live — X", "switched to X", "went offline".
 
 /** A reload re-injects stored events only this young: older ones are news you already missed. */
 export const REPLAY_WINDOW_MS = 15 * 60 * 1000
@@ -20,7 +20,7 @@ export const REPLAY_WINDOW_MS = 15 * 60 * 1000
 export function streamEventBody(kind, e) {
   if (kind === 'update') {
     if (!e.game || e.prevGame === e.game) return null
-    return e.prevGame ? `switched to ${e.game}` : `now playing ${e.game}`
+    return `switched to ${e.game}`
   }
   if (kind === 'online') return e.game ? `went live — ${e.game}` : 'went live'
   if (kind === 'offline') return 'went offline'
@@ -41,16 +41,16 @@ export function replayKeeps(kind, time, now = Date.now()) {
   return Number.isFinite(time) && now - time <= REPLAY_WINDOW_MS
 }
 
-/** How long a first "now playing" waits for the "went live" that usually rides with it. */
+/** How long a first "switched to" waits for the "went live" that usually rides with it. */
 export const GO_LIVE_PAIR_MS = 2000
-/** A "now playing" for the game a channel just went live with, inside this, is the same news. */
+/** A "switched to" for the game a channel just went live with, inside this, is the same news. */
 const GO_LIVE_ECHO_MS = 30000
 
 /**
  * Twitch announces one go-live as two events: `channel.update` (the game, with
- * no previous one — "now playing X") and `stream.online` ("went live — X").
+ * no previous one — "switched to X") and `stream.online` ("went live — X").
  * Shown raw that is two lines for one thing. This pairs them per channel: a
- * "now playing" with no previous game waits a moment, and a "went live" for
+ * "switched to" with no previous game waits a moment, and a "went live" for
  * the same game replaces it; one that arrives AFTER a go-live for the same game
  * is dropped. A real switch (a previous game) is never held.
  *

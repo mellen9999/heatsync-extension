@@ -14857,7 +14857,7 @@
     if (!window._hsStreamEventDedup) window._hsStreamEventDedup = new Map()
     const streamEventDedup = window._hsStreamEventDedup
 
-    // One go-live arrives as stream:update ("now playing X", no previous game)
+    // One go-live arrives as stream:update (the game, no previous one)
     // plus stream:online ("went live — X"). Pair them per channel (shared with
     // the site, see createGoLivePairing): the go-live shows, its starting-game
     // twin does not, and a real switch still passes straight through.

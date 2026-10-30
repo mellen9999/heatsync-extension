@@ -2360,9 +2360,28 @@
       _sizePickerPanel(panel, btn)
       panelOpen = true
 
-      // Login link is a plain target=_blank anchor to the 3-way chooser. The
-      // chooser can't echo an ext_state nonce, so none is seeded (a pending
-      // nonce with no echo would make background reject the legit sign-in).
+      // Login link — generate a one-time state nonce before navigating so
+      // background.js can reject a forged set_auth_token that omits it. The
+      // twitch/kick/youtube chooser carries it to whichever provider is picked.
+      const loginLink = panel.querySelector('.heatsync-auth-banner a')
+      if (loginLink) {
+        loginLink.addEventListener('click', async (e) => {
+          e.preventDefault()
+          try {
+            const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            await browser.storage.local.set({ hs_login_state: nonce })
+            window.open(
+              `https://heatsync.org/login?return_to=%2F&ext_state=${encodeURIComponent(nonce)}`,
+              '_blank',
+              'noopener,noreferrer',
+            )
+          } catch {
+            window.open('https://heatsync.org/login', '_blank', 'noopener,noreferrer')
+          }
+        })
+      }
 
       // Close button handler
       panel.querySelector('.heatsync-panel-close:not(.heatsync-panel-back)')?.addEventListener('click', closePanel)

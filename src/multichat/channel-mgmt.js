@@ -164,7 +164,7 @@ async function renderFollowImportPicker(msgsEl) {
     if (err === 'login_required') {
       status.textContent = t('mc_fill_cockpit_login')
       const link = document.createElement('a')
-      link.href = 'https://heatsync.org/login'
+      link.href = HS_LOGIN_URL
       link.target = '_blank'
       link.rel = 'noopener noreferrer'
       link.textContent = t('mc_sign_in')

@@ -1,6 +1,8 @@
 // Bootstrap - lifecycle controller, cleanup utilities, debug log
 
 const MC_DEBUG = false
+// sign-in goes to the 3-way chooser (twitch/kick/youtube), never straight to twitch oauth
+const HS_LOGIN_URL = 'https://heatsync.org/login'
 function log(...args) {
   if (MC_DEBUG) console.log(LOG_PREFIX, ...args)
 }

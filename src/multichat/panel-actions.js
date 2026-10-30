@@ -318,7 +318,7 @@ function showEmoteLoginNudge() {
   const text = document.createElement('span')
   text.textContent = 'log in to heatsync so your emotes work for everyone'
   const link = document.createElement('a')
-  link.href = 'https://heatsync.org/login'
+  link.href = HS_LOGIN_URL
   link.target = '_blank'
   link.rel = 'noopener'
   link.textContent = 'log in'

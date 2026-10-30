@@ -48,7 +48,10 @@
   // Broadcasts and the stored map carry every channel the browser has open — twitch ones too — so
   // only this owner's set may reach the map, or another streamer's emotes land in this chat.
   let myOwnerKey = ''
-  const normOwner = (k) => String(k || '').replace(/^@/, '').toLowerCase()
+  const normOwner = (k) =>
+    String(k || '')
+      .replace(/^@/, '')
+      .toLowerCase()
   const ownedByMe = (owner) => !!myOwnerKey && normOwner(owner) === normOwner(myOwnerKey)
 
   let variantsByName = new Map() // name → every version of it, best first

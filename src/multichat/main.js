@@ -14435,8 +14435,8 @@
           : handleLiveUrl
             ? handleLiveUrl
             : onYtVideoPage
-            ? `https://youtube.com/watch?v=${currentChannel}`
-            : ytUrl
+              ? `https://youtube.com/watch?v=${currentChannel}`
+              : ytUrl
         if (gYt && autoYtUrl) {
           ytSubscribedUrls.set('__live_yt_auto__', autoYtUrl)
           ytChanLastSeen.set('__live_yt_auto__', Date.now())

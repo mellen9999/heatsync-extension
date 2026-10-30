@@ -7359,7 +7359,14 @@ async function handleSlashCommand(text, input) {
       }
       const [, target, reason] = m
       const r = _hasTk
-        ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'ban', target, reason, fanout: true })
+        ? await dispatchModAction({
+            channel: modChannel,
+            platform: _modPlat,
+            action: 'ban',
+            target,
+            reason,
+            fanout: true,
+          })
         : null
       if (r) showModResultToast(t('mc_mod_label_banned'), target, r)
       if (r?.cancelled) return _cancelled()
@@ -7397,7 +7404,9 @@ async function handleSlashCommand(text, input) {
         showToast(t('mc_input_usage_unban'), 'error')
         return true
       }
-      const r = _hasTk ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'unban', target, fanout: true }) : null
+      const r = _hasTk
+        ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'unban', target, fanout: true })
+        : null
       if (r) showModResultToast(t('mc_mod_label_unbanned'), target, r)
       const y = await _ytModLeg('unban', target, t('mc_mod_label_unbanned'), !!r)
       if (r?.anyOk || y?.anyOk) clearInput(input)

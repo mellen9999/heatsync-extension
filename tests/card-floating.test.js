@@ -176,7 +176,11 @@ const positionSrc = slice(
   '\n\nfunction hideUserTooltip()',
 )
 const resolveMountSrc = slice(CARD, 'function pcResolveMount() {', '\nfunction renderProfileCardView() {')
-const closeSrc = slice(CARD, 'function closeProfileCard() {', '\nfunction getRecentMessagesFromUser(username, platform) {')
+const closeSrc = slice(
+  CARD,
+  'function closeProfileCard() {',
+  '\nfunction getRecentMessagesFromUser(username, platform) {',
+)
 const followSrc = slice(CARD, 'let _pcAnchorFollowCleanup = null', '\n// Outside-click dismiss')
 const outsideAndPositionSrc = slice(CARD, 'function pcOutsideClickHandler(e) {', '\n// Async pronoun application')
 

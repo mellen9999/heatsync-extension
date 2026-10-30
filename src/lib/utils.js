@@ -785,7 +785,8 @@ function resolveTypedModChannel(tab, hostPlatform, pageCh, channels, builtin) {
     const ch = String(pageCh || '').toLowerCase()
     if (!ok(ch) || (hostPlatform !== 'twitch' && hostPlatform !== 'kick')) return none
     const entry = list.find((c) => (hostPlatform === 'kick' ? c.kick : c.twitch)?.toLowerCase() === ch) || null
-    if (entry) return { channel: entry.id, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
+    if (entry)
+      return { channel: entry.id, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
     return {
       channel: ch,
       entry: null,
@@ -1361,6 +1362,7 @@ export {
   error,
   escapeHtml,
   estimateSettingSize,
+  fillHsLiveLeg,
   findComponent,
   findOrdInsertIndex,
   firstPartialRedditUrl,
@@ -1368,9 +1370,6 @@ export {
   firstPartialYtUrl,
   getFiber,
   hsLiveChannelEntry,
-  fillHsLiveLeg,
-  resolveTypedModChannel,
-  ytHandleLiveUrl,
   identityYtLiveUrl,
   isLargeKeySyncEligible,
   LARGE_KEY_SYNC_MAX,
@@ -1388,6 +1387,7 @@ export {
   qsArray,
   qsaArray,
   resolveEmoteProviderWinner,
+  resolveTypedModChannel,
   resolveVolumeWheelStep,
   resolveYtLiveLabel,
   safeUrl,
@@ -1402,6 +1402,7 @@ export {
   unescapeHtml,
   visualNowOrd,
   warn,
+  ytHandleLiveUrl,
   ytHasModItems,
   ytItemModEndpoint,
   ytItemText,

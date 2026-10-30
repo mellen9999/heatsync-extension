@@ -19,7 +19,16 @@ function make() {
     'recolorOwnLines',
     'persistOwnColor',
     `${MAIN.slice(a, b)}; return setKnownColor`,
-  )(knownUserIds, new Map(), new Set(), () => false, 'me', userKey, () => {}, () => {})
+  )(
+    knownUserIds,
+    new Map(),
+    new Set(),
+    () => false,
+    'me',
+    userKey,
+    () => {},
+    () => {},
+  )
   return { fn, knownUserIds }
 }
 

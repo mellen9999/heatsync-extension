@@ -275,8 +275,7 @@ async function renderFollowImportPicker(msgsEl) {
     // black fill was invisible on the black list and showed up only on hover.
     dot.style.cssText = `width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:${isLive ? 'var(--hs-live, #00ff00)' : 'transparent'};`
     const name = document.createElement('span')
-    const shown =
-      f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
+    const shown = f.displayName && f.displayName.toLowerCase() !== f.login ? `${f.login} (${f.displayName})` : f.login
     name.textContent = f.plat === 'kick' ? `${shown} · kick` : shown
     name.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;'
     row.appendChild(box)

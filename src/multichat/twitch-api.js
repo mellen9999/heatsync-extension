@@ -2301,7 +2301,10 @@ async function buildKickStatusPanel(slug) {
   line('hs-mc-status-title', `#${d.user?.username || d.slug || ch}`)
   const live = d.livestream
   if (live) {
-    const mins = Math.max(0, Math.floor((Date.now() - new Date(String(live.created_at).replace(' ', 'T') + 'Z').getTime()) / 60000))
+    const mins = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(String(live.created_at).replace(' ', 'T') + 'Z').getTime()) / 60000),
+    )
     const up = Number.isFinite(mins) ? (mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`) : ''
     const viewers = (live.viewer_count || 0).toLocaleString('en-US')
     line('hs-mc-status-sub live', `LIVE · ${up ? `${up} · ` : ''}${viewers} viewers`)

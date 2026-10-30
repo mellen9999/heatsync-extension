@@ -48,8 +48,19 @@ describe('fetchCardPayload — one POST /api/card, 60s LRU + in-flight dedupe', 
   }
 
   function makeFn(apiFetch, config = { channels: [] }) {
-    return new Function('apiFetch', 'config', `${src}\nreturn fetchCardPayload`)(apiFetch, config)
+    const canonPlatform = (p) => (p === 'yt' ? 'youtube' : p)
+    return new Function('apiFetch', 'config', 'canonPlatform', `${src}\nreturn fetchCardPayload`)(
+      apiFetch,
+      config,
+      canonPlatform,
+    )
   }
+
+  test('a yt row is sent to the strict card route as youtube', () => {
+    const { calls, apiFetch } = makeFetch()
+    makeFn(apiFetch)('yt', 'someone', null)
+    expect(calls[0].opts.body.platform).toBe('youtube')
+  })
 
   test('fires exactly one request for a fresh identity, with the right body shape', async () => {
     const { calls, apiFetch, resolveNext } = makeFetch()

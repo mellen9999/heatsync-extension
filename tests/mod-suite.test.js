@@ -487,14 +487,11 @@ describe('mod suite wiring', () => {
     expect(INPUT).toContain("msCall(login, 'shield_set', { active: on })")
   })
 
-  test('a tab name is never read as a twitch login: live/watching/feed fall to the page channel', () => {
+  test('a tab name is never read as a twitch login: the gate uses the resolved twitch leg only', () => {
     const at = INPUT.indexOf('const _msGate = async () => {')
     const gate = INPUT.slice(at, INPUT.indexOf('\n  }\n', at))
-    expect(gate).toContain('_MS_NON_CHANNEL_TABS.has(modChannel)')
-    expect(gate).toContain('getLiveChannel()')
-    for (const tab of ['live', 'watching', 'feed', 'mentions']) expect(INPUT).toContain(`'${tab}'`)
-    const set = INPUT.match(/_MS_NON_CHANNEL_TABS = new Set\(\[([^\]]*)\]/)[1]
-    for (const tab of ['live', 'watching', 'feed', 'whispers', 'mentions']) expect(set).toContain(`'${tab}'`)
+    expect(gate).toContain('const _msChannel = _twitchModName')
+    expect(gate).not.toContain('getLiveChannel()')
   })
 
   test('the toolbar button exists, is twitch-only, and is off by default', () => {

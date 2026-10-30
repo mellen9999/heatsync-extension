@@ -7228,10 +7228,18 @@ async function handleSlashCommand(text, input) {
   // so a mod can sanction a user everywhere with one command.
   // currentTab = channel login when on a per-channel tab; on aggregate tabs we
   // can't pick a single channel, so refuse with a useful toast.
-  const modChannel = typeof currentTab === 'string' && /^[a-z0-9_]{2,40}$/i.test(currentTab) ? currentTab : null
-  const _modCh = modChannel ? config.channels.find((c) => c.id === modChannel) : null
-  const _twitchModName = _modCh?.twitch || (modChannel && !_modCh ? modChannel : null)
-  const _kickModSlug = _modCh?.kick || null
+  const _mc = resolveTypedModChannel(
+    currentTab,
+    hostPlatform,
+    typeof getLiveChannel === 'function' ? getLiveChannel() : null,
+    config.channels,
+    MC_TABS.map((x) => x.id),
+  )
+  const modChannel = _mc.channel
+  const _modCh = _mc.entry
+  const _twitchModName = _mc.twitch
+  const _kickModSlug = _mc.kick
+  const _modPlat = _mc.platform // 'kick' for a kick page with no saved tab; else the entry decides
   // Dual-platform dispatch + per-platform notice injection + combined toast all
   // live in the shared backbone (main.js dispatchModAction / showModResultToast).
 
@@ -7333,7 +7341,7 @@ async function handleSlashCommand(text, input) {
       }
       const [, target, reason] = m
       const r = _hasTk
-        ? await dispatchModAction({ channel: modChannel, action: 'ban', target, reason, fanout: true })
+        ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'ban', target, reason, fanout: true })
         : null
       if (r) showModResultToast(t('mc_mod_label_banned'), target, r)
       if (r?.cancelled) return _cancelled()
@@ -7352,6 +7360,7 @@ async function handleSlashCommand(text, input) {
       const r = _hasTk
         ? await dispatchModAction({
             channel: modChannel,
+            platform: _modPlat,
             action: 'timeout',
             target,
             durationSec: sec,
@@ -7370,7 +7379,7 @@ async function handleSlashCommand(text, input) {
         showToast(t('mc_input_usage_unban'), 'error')
         return true
       }
-      const r = _hasTk ? await dispatchModAction({ channel: modChannel, action: 'unban', target, fanout: true }) : null
+      const r = _hasTk ? await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'unban', target, fanout: true }) : null
       if (r) showModResultToast(t('mc_mod_label_unbanned'), target, r)
       const y = await _ytModLeg('unban', target, t('mc_mod_label_unbanned'), !!r)
       if (r?.anyOk || y?.anyOk) clearInput(input)
@@ -7560,10 +7569,8 @@ async function handleSlashCommand(text, input) {
     // getActiveTwitchChannel wrapper, which itself calls getLiveChannel on
     // live/feed/aggregate tabs) throws a ReferenceError that silently kills
     // this async handler → "no toast, no send".
-    let twitchLogin = _modCh?.twitch || null
-    if (!twitchLogin && currentTab === 'live' && typeof getLiveChannel === 'function') twitchLogin = getLiveChannel()
-    // Twitch-only channel tab: the tab id itself is the twitch login.
-    if (!twitchLogin && modChannel && modChannel !== 'live' && !_modCh) twitchLogin = modChannel
+    // twitch-only command: the tab's twitch leg, or the page itself on twitch (never a kick/yt name)
+    const twitchLogin = _twitchModName
     if (!twitchLogin) {
       showToast(t('mc_input_highlight_needs_twitch') || '/highlight needs a twitch channel tab', 'error')
       return true
@@ -7626,10 +7633,7 @@ async function handleSlashCommand(text, input) {
   // twitch-only. modChannel/_modCh/currentTab are resolved above (see /highlight).
   if (['poll', 'prediction', 'vote', 'bet', 'endpoll', 'lockpred', 'cancelpred', 'resolvepred'].includes(cmd)) {
     const _ppLogin = () => {
-      let login = _modCh?.twitch || null
-      if (!login && currentTab === 'live' && typeof getLiveChannel === 'function') login = getLiveChannel()
-      if (!login && modChannel && modChannel !== 'live' && !_modCh) login = modChannel
-      return login
+      return _twitchModName
     }
     // Resolve the twitch channel + require login; toast + null on failure.
     const _ppGate = () => {
@@ -8012,9 +8016,7 @@ async function handleSlashCommand(text, input) {
       showToast(t(usageKey) || `/${cmd} <user>`, 'error')
       return true
     }
-    let twitchLogin = _modCh?.twitch || null
-    if (!twitchLogin && currentTab === 'live' && typeof getLiveChannel === 'function') twitchLogin = getLiveChannel()
-    if (!twitchLogin && modChannel && modChannel !== 'live' && !_modCh) twitchLogin = modChannel
+    const twitchLogin = _twitchModName // twitch-only: see /highlight
     if (!twitchLogin) {
       showToast(t('mc_input_pp_needs_twitch') || 'this needs a twitch channel tab', 'error')
       return true
@@ -8097,7 +8099,7 @@ async function handleSlashCommand(text, input) {
     }
     if (!(await _twitchModAuthOk())) return _notLoggedIn()
     // Raw id → platform unknown; dispatcher tries Twitch first, then Kick.
-    const r = await dispatchModAction({ channel: modChannel, action: 'delete', msgId: messageID })
+    const r = await dispatchModAction({ channel: modChannel, platform: _modPlat, action: 'delete', msgId: messageID })
     const err = (r?.tResp || r?.kResp)?.error || t('mc_common_unknown')
     showToast(r?.anyOk ? t('mc_mod_label_deleted') : t('mc_input_delete_failed', [err]), r?.anyOk ? 'success' : 'error')
     if (r?.anyOk) clearInput(input)
@@ -8163,7 +8165,7 @@ async function handleSlashCommand(text, input) {
     if (!ok) return _cancelled()
     const results = await Promise.allSettled(
       batch.map((t) =>
-        dispatchModAction({ channel: modChannel, platform: t.platform, action: 'delete', msgId: t.msgId }),
+        dispatchModAction({ channel: modChannel, platform: _modPlat || t.platform, action: 'delete', msgId: t.msgId }),
       ),
     )
     const okCount = results.filter((r) => r.status === 'fulfilled' && r.value?.anyOk).length
@@ -8197,25 +8199,9 @@ async function handleSlashCommand(text, input) {
   // the helix caller and the real mod check, this one only keeps the command
   // off a channel the user plainly doesn't mod. Resolves the twitch login, or a
   // failure result (already toasted) to return as is.
-  const _MS_NON_CHANNEL_TABS = new Set([
-    'live',
-    'watching',
-    'feed',
-    'whispers',
-    'mentions',
-    'add',
-    'settings',
-    'discover',
-    'pinned',
-    'modlog',
-  ])
   const _msGate = async () => {
-    // currentTab is a twitch login only on a per-channel tab; on live / watching
-    // / feed … it is the tab's own name ("watching" is not a channel), so those
-    // fall to the channel page the user is on — same as /highlight above.
-    const _msTab =
-      _modCh?.twitch || (modChannel && !_MS_NON_CHANNEL_TABS.has(modChannel) && !_modCh ? modChannel : null)
-    const _msChannel = _msTab || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
+    // twitch-only: the tab's twitch leg, or the page itself on twitch — same as /highlight above.
+    const _msChannel = _twitchModName
     if (!_msChannel) {
       showToast(t('mc_ms_no_channel'), 'error')
       return { ok: false, error: t('mc_ms_no_channel') }

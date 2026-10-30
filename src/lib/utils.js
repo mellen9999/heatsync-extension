@@ -764,6 +764,44 @@ function ytHandleLiveUrl(pathname) {
 }
 
 /**
+ * Which channel a typed mod command (/ban /timeout /unban /delete /nuke
+ * /announce) acts on. A channel tab acts on its own entry. The live tab is not
+ * a channel ("live" would be dispatched as a twitch login): it acts on the
+ * page's channel on the platform the page is on, through that channel's saved
+ * tab when there is one so linked legs fan out too. Built-in tabs act on
+ * nothing. Ids may carry dashes (kick slugs).
+ * @param {string} tab currentTab
+ * @param {'twitch'|'kick'|'yt'} hostPlatform
+ * @param {string|null} pageCh the page's channel (getLiveChannel)
+ * @param {Array<{id: string, twitch?: string, kick?: string}>} channels
+ * @param {Iterable<string>} builtin ids of the built-in tabs
+ * @returns {{channel: string|null, entry: object|null, twitch: string|null, kick: string|null, platform: 'kick'|undefined}}
+ */
+function resolveTypedModChannel(tab, hostPlatform, pageCh, channels, builtin) {
+  const none = { channel: null, entry: null, twitch: null, kick: null, platform: undefined }
+  const ok = (v) => typeof v === 'string' && /^[a-z0-9_-]{2,40}$/i.test(v)
+  const list = channels || []
+  if (tab === 'live') {
+    const ch = String(pageCh || '').toLowerCase()
+    if (!ok(ch) || (hostPlatform !== 'twitch' && hostPlatform !== 'kick')) return none
+    const entry = list.find((c) => (hostPlatform === 'kick' ? c.kick : c.twitch)?.toLowerCase() === ch) || null
+    if (entry) return { channel: entry.id, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
+    return {
+      channel: ch,
+      entry: null,
+      twitch: hostPlatform === 'twitch' ? ch : null,
+      kick: hostPlatform === 'kick' ? ch : null,
+      platform: hostPlatform === 'kick' ? 'kick' : undefined,
+    }
+  }
+  if (!ok(tab)) return none
+  const entry = list.find((c) => c.id === tab) || null
+  if (entry) return { channel: tab, entry, twitch: entry.twitch || null, kick: entry.kick || null, platform: undefined }
+  if (new Set(builtin || []).has(tab)) return none
+  return { channel: tab, entry: null, twitch: tab, kick: null, platform: undefined }
+}
+
+/**
  * What KIND of identifier parseYoutubeChannel(pathname, search) returned for
  * the same URL — 'handle' and 'channel' ARE a channel identity (safe to feed
  * straight to /api/profile or a 7TV/channel-emote lookup); 'video' is a
@@ -1270,6 +1308,7 @@ const utils = {
   streamEventUrl,
   hsLiveChannelEntry,
   fillHsLiveLeg,
+  resolveTypedModChannel,
   ytHandleLiveUrl,
   liveIdentityCounterpart,
   parseYoutubeChannel,
@@ -1330,6 +1369,7 @@ export {
   getFiber,
   hsLiveChannelEntry,
   fillHsLiveLeg,
+  resolveTypedModChannel,
   ytHandleLiveUrl,
   identityYtLiveUrl,
   isLargeKeySyncEligible,

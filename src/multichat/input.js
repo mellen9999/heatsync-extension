@@ -2202,6 +2202,7 @@ function initInput() {
           msgId: msg.dataset.msgId,
           user: msg.dataset.msgUser,
           channel: msg.dataset.msgChannel,
+          platform: msg.dataset.msgPlatform || '',
         })
       },
       { signal: mcSignal },
@@ -2586,6 +2587,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
           msgId: msg.dataset.msgId,
           user: msg.dataset.msgUser || username,
           channel: msg.dataset.msgChannel || '',
+          platform: msg.dataset.msgPlatform || '',
         }),
     })
   }
@@ -7594,7 +7596,7 @@ async function handleSlashCommand(text, input) {
       )
       return true
     }
-    const replyParentId = replyState?.msgId || null
+    const replyParentId = !replyState?.platform || replyState.platform === 'twitch' ? replyState?.msgId || null : null
     const r = await sendHighlightedTwitchMessage(channelId, message, null, replyParentId)
     if (r?.ok) {
       clearInput(input)
@@ -8891,6 +8893,12 @@ async function sendMessage() {
   mcHistoryIndex = -1
 
   const replyParentId = replyState?.msgId || null
+  // A parent id belongs to the platform its row came from: twitch and kick each only
+  // thread a reply to their OWN message, so the other legs get a plain send ('' =
+  // an older caller that never named the platform: keep the old both-legs behaviour).
+  const _replyPlat = replyState?.platform || ''
+  const twitchReplyId = replyParentId && (!_replyPlat || _replyPlat === 'twitch') ? replyParentId : null
+  const kickReplyId = replyParentId && (!_replyPlat || _replyPlat === 'kick') ? replyParentId : null
   // YouTube has no reply-threading API — the @mention prepend is the only way
   // a reply's context survives on that leg. Capture the author BEFORE
   // clearReplyState() wipes replyState below; Twitch/Kick keep carrying the
@@ -8958,11 +8966,11 @@ async function sendMessage() {
     // (scrolled out of buffer) or sender id degrades to a flat send exactly as
     // before, never a failure.
     let kickReply = null
-    if (replyParentId && kickChat?.channels?.get(slug)) {
+    if (kickReplyId && kickChat?.channels?.get(slug)) {
       const parent = kickChat.channels
         .get(slug)
         .getAll()
-        .find((m) => m?.id === replyParentId)
+        .find((m) => m?.id === kickReplyId)
       if (parent?.id) {
         kickReply = {
           id: parent.id,
@@ -8978,7 +8986,7 @@ async function sendMessage() {
     const kickPromise = sendKickMessage(slug, kickifyEmoteText(restText), kickReply)
     const twitchPromise = sendToTwitch
       ? getTwitchAuthTokenAsync().then(({ token: tok, username: twitchNick }) =>
-          sendIrcMessage(twitchName, twitchText, tok, replyParentId, twitchNick),
+          sendIrcMessage(twitchName, twitchText, tok, twitchReplyId, twitchNick),
         )
       : Promise.resolve(null)
 
@@ -9153,7 +9161,7 @@ async function sendMessage() {
 
   const wsState = authState.ws ? ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][authState.ws.readyState] : 'null'
   log(`IRC SEND → #${targetChannel} ws=${wsState} ready=${authState.ready} queue=${authState.sendQueue.length}`)
-  sendIrcMessage(targetChannel, twitchText, token, replyParentId, twitchNick)
+  sendIrcMessage(targetChannel, twitchText, token, twitchReplyId, twitchNick)
     .then((result) => {
       if (result === true) {
         if (wsState !== 'OPEN') {

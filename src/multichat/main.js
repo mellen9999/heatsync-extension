@@ -12372,7 +12372,18 @@
       const res = await resolveIdentity(cur, { platform: plat })
       if (!res?.ok || !res.identity || res.identity.twitch || !res.identity[plat === 'yt' ? 'youtube' : 'kick']) return
       if (tab[slot] || !config.channels.includes(tab)) return
-      if (fillHsLiveLeg(tab, plat, cur)) saveConfig()
+      if (!fillHsLiveLeg(tab, plat, cur)) return
+      saveConfig()
+      // Join the new leg now, the way an edit in the channel dialog does —
+      // saving alone left the tab on its dead twitch leg until the next load.
+      if (slot === 'kick') kickChat?.join(tab.kick)
+      else {
+        youtubeLinks.set(tab.id, { url: tab.youtube, videoId: '', channelName: '' })
+        ytSubscribedUrls.set(tab.id, tab.youtube)
+        ytChanLastSeen.set(tab.id, Date.now())
+        ytSubscribe(tab.id, tab.youtube, tab.id)
+      }
+      updateTabBar()
     } catch (_) {}
   }
 

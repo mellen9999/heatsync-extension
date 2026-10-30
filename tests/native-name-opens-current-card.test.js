@@ -130,7 +130,7 @@ describe('profile-card.js: mod/unmod/vip/unvip ride along with the migration (pa
   // delegated click handler that actually calls modTwitchUser/vipTwitchUser),
   // wired via card-render.js's data-hs-card-mod-* attributes.
   test('role grants (mod/vip) are twitch-only', () => {
-    const fn = body(CARD, 'function pcBuildModGroups(username) {', 4000)
+    const fn = body(CARD, 'function pcBuildModGroups(username, platform) {', 4000)
     expect(fn).toContain("platform === 'twitch'")
     expect(fn).toContain("{ kind: 'mod'")
     expect(fn).toContain("{ kind: 'vip'")

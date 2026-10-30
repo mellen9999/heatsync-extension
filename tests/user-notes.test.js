@@ -14,26 +14,24 @@ import {
 // identity helpers. In tests we inject them on globalThis to simulate the
 // cross-platform identity graph, and clear them so files stay order-independent.
 function setIdentity(map) {
-  // map: primaryHandle -> full lowercased alias array
-  const lookup = (u) => {
-    const k = String(u).toLowerCase()
-    for (const [, aliases] of Object.entries(map)) {
-      if (aliases.includes(k)) return aliases
-    }
+  // map: person -> ['platform:handle', ...] full alias-key set (namespaced, like getUserAliasKeys)
+  const lookup = (u, platform) => {
+    const k = `${platform === 'yt' ? 'youtube' : platform}:${String(u).toLowerCase()}`
+    for (const aliases of Object.values(map)) if (aliases.includes(k)) return aliases
     return [k]
   }
-  globalThis.getUserAliases = (u) => lookup(u)
-  globalThis.expandUserAliases = async (u) => lookup(u)
+  globalThis.getUserAliasKeys = (u, p) => lookup(u, p)
+  globalThis.expandUserAliasKeys = async (u, p) => lookup(u, p)
 }
 
 beforeEach(() => {
   _hsNoteResetForTest()
-  globalThis.getUserAliases = undefined
-  globalThis.expandUserAliases = undefined
+  globalThis.getUserAliasKeys = undefined
+  globalThis.expandUserAliasKeys = undefined
 })
 afterEach(() => {
-  globalThis.getUserAliases = undefined
-  globalThis.expandUserAliases = undefined
+  globalThis.getUserAliasKeys = undefined
+  globalThis.expandUserAliasKeys = undefined
 })
 
 test('save + get roundtrip (single handle, no identity graph)', async () => {
@@ -49,7 +47,7 @@ test('no note → get null, has false', () => {
 })
 
 test('note follows a person across platforms via the alias graph', async () => {
-  setIdentity({ person: ['bob', 'bob_kick', 'bobtube'] })
+  setIdentity({ person: ['twitch:bob', 'kick:bob_kick', 'youtube:bobtube'] })
   await hsNoteSave('bob', 'twitch', 'same guy everywhere')
   // Looked up from a DIFFERENT platform handle → same note.
   expect(hsNoteGet('bob_kick', 'kick')?.text).toBe('same guy everywhere')
@@ -61,7 +59,7 @@ test('notes made from two platforms merge to one canonical record', async () => 
   // First noted before the graph linked them (only self-alias known).
   await hsNoteSave('bob', 'twitch', 'first')
   // Later the identity graph links the handles; a re-save from kick must not fork.
-  setIdentity({ person: ['bob', 'bob_kick'] })
+  setIdentity({ person: ['twitch:bob', 'kick:bob_kick'] })
   await hsNoteSave('bob_kick', 'kick', 'updated')
   expect(hsNoteGet('bob', 'twitch')?.text).toBe('updated')
   expect(hsNoteGet('bob_kick', 'kick')?.text).toBe('updated')
@@ -75,7 +73,7 @@ test('empty / whitespace text deletes the note', async () => {
 })
 
 test('delete removes across every alias', async () => {
-  setIdentity({ person: ['bob', 'bob_kick'] })
+  setIdentity({ person: ['twitch:bob', 'kick:bob_kick'] })
   await hsNoteSave('bob', 'twitch', 'gone soon')
   await hsNoteDelete('bob_kick', 'kick')
   expect(hsNoteGet('bob', 'twitch')).toBeNull()
@@ -147,7 +145,7 @@ test('legacy notes migrate into v1 on first load, old key removed after persist'
   expect(n?.updatedAt).toBe(42)
   expect(calls.removed).toContain('hs_user_notes')
   expect(store.hs_user_notes).toBeUndefined()
-  expect(store.hs_user_notes_v1.notes.bob.text).toBe('known evader')
+  expect(store.hs_user_notes_v1.notes['twitch:bob'].text).toBe('known evader')
 })
 
 test('migration never clobbers an existing v1 note (v1 wins)', async () => {
@@ -322,4 +320,26 @@ describe('server sync — logged in with a real profile id', () => {
     expect(del).toBeTruthy()
     expect(hsNoteGet('bob', 'twitch')).toBeNull()
   })
+})
+
+// ── platform-scoped keys ─────────────────────────────────────────────────────
+
+test('a twitch "alice" and an unrelated kick "alice" do not share a note', async () => {
+  await hsNoteSave('alice', 'twitch', 'twitch alice')
+  expect(hsNoteGet('alice', 'kick')).toBeNull()
+  await hsNoteSave('alice', 'kick', 'kick alice')
+  expect(hsNoteGet('alice', 'twitch')?.text).toBe('twitch alice')
+  expect(hsNoteGet('alice', 'kick')?.text).toBe('kick alice')
+})
+
+test('notes saved before namespacing (bare keys) load as twitch and are written back once', async () => {
+  const { store } = fakeStorage({
+    hs_user_notes_v1: { notes: { bob: { text: 'old note', updatedAt: 7 } }, index: { bob: 'bob' } },
+  })
+  _hsNoteResetForTest(true)
+  await hsNoteSave('zed', 'twitch', 'trigger load')
+  expect(hsNoteGet('bob', 'twitch')?.text).toBe('old note')
+  expect(hsNoteGet('bob', 'kick')).toBeNull()
+  expect(store.hs_user_notes_v1.notes.bob).toBeUndefined()
+  expect(store.hs_user_notes_v1.notes['twitch:bob'].text).toBe('old note')
 })

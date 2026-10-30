@@ -363,3 +363,9 @@ describe('pin bar wiring', () => {
     }
   })
 })
+
+test('the live tab pins on the page platform, never a kick slug as a twitch room', () => {
+  const src = readFileSync(new URL('../src/multichat/pin-bar.js', import.meta.url), 'utf8')
+  expect(src).toContain("if (String(ch[hp] || '').toLowerCase() === live)")
+  expect(src).not.toContain("add('twitch', live)")
+})

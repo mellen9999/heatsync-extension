@@ -63,15 +63,17 @@ function pinRoomsFor(tabId) {
   }
   if (tabId === 'live') {
     const live = String(getLiveChannel() || '').toLowerCase()
-    if (!live) return out
+    // the live channel is a name on the PAGE's platform: a kick slug is not a twitch room
+    const hp = hostPlatform === 'kick' ? 'kick' : hostPlatform === 'twitch' ? 'twitch' : ''
+    if (!live || !hp) return out
     let paired = false
     for (const ch of config.channels || []) {
-      if (String(ch.twitch || '').toLowerCase() === live || String(ch.kick || '').toLowerCase() === live) {
+      if (String(ch[hp] || '').toLowerCase() === live) {
         addEntry(ch)
         paired = true
       }
     }
-    if (!paired) add('twitch', live)
+    if (!paired) add(hp, live)
     return out
   }
   addEntry(getChannelById(tabId))

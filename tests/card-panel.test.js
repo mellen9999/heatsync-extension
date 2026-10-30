@@ -90,7 +90,7 @@ describe('pcBuildSessionSheetRows — local session stats as ctx.extraSheet', ()
 })
 
 describe('pcBuildModGroups — mod actions as ctx.modGroups (pure data)', () => {
-  const src = slice(CARD, 'function pcBuildModGroups(username) {', '\n\n// Fires a mod-action')
+  const src = slice(CARD, 'function pcBuildModGroups(username, platform) {', '\n\n// Fires a mod-action')
 
   function makeFn({ recent, isMod = true, isKickMod = true, selfUsername = 'viewer' } = {}) {
     return new Function(
@@ -160,7 +160,7 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     const view = slice(CARD, 'function renderProfileCardView() {', '\n\n// No-heatsync-profile view')
     expect(view).toContain('hsCardModel(')
     expect(view).toContain("variant: floating ? 'full' : 'panel'")
-    expect(view).toContain('modGroups: pcBuildModGroups(username)')
+    expect(view).toContain('modGroups: pcBuildModGroups(username, platform)')
     expect(view).toContain('pcBuildSessionSheetRows(username)')
     expect(view).toContain('socials: pcBuildSocials(data)')
     expect(view).toContain('renderBadges: () => pcRenderBadgesHtml(data, username)')

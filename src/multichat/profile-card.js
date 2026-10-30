@@ -441,8 +441,11 @@ function closeProfileCard() {
   renderSubRow() // the 2nd row gets its own cells back
 }
 
-function getRecentMessagesFromUser(username) {
+// `platform` (optional) keeps a card on its own platform: twitch "alice" and kick
+// "alice" are different people, so their lines/mod targets must not mix.
+function getRecentMessagesFromUser(username, platform) {
   const lower = username.toLowerCase()
+  const want = platform === 'yt' ? 'youtube' : platform || ''
   const out = []
   try {
     if (typeof irc !== 'undefined' && irc?.channels) {
@@ -467,7 +470,8 @@ function getRecentMessagesFromUser(username) {
       }
     }
   } catch {}
-  return out.sort((a, b) => (b.time || 0) - (a.time || 0)).slice(0, 12)
+  const mine = want ? out.filter((m) => (m.platform || 'twitch') === want) : out
+  return mine.sort((a, b) => (b.time || 0) - (a.time || 0)).slice(0, 12)
 }
 
 // `/api/card`'s `recent` part (card-model.js's own {timestamp, channel,
@@ -492,10 +496,10 @@ function pcLocalLineHtml(m) {
   }
 }
 
-function pcMergeRecent(serverRecent, username) {
+function pcMergeRecent(serverRecent, username, platform) {
   const server = Array.isArray(serverRecent) ? serverRecent : []
   const seen = new Set(server.map((r) => `${(r.channel || '').toLowerCase()}:${r.message}`))
-  const local = (typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username) : [])
+  const local = (typeof getRecentMessagesFromUser === 'function' ? getRecentMessagesFromUser(username, platform) : [])
     .filter((m) => m.text && m.time)
     .map((m) => ({
       timestamp: new Date(m.time).toISOString(),
@@ -605,7 +609,7 @@ function pcMakeSection(title) {
 // delegated click listener in setupProfileCardHandlers. Returns [] when not
 // applicable (own profile, no recent messages, no channel you mod) so
 // hsCardModel's `ctx.modGroups.length` check skips the section entirely.
-function pcBuildModGroups(username) {
+function pcBuildModGroups(username, platform) {
   if (typeof getRecentMessagesFromUser !== 'function' || !username) return []
   // Don't surface mod actions on your own profile — self-mod buttons are nonsense.
   if (
@@ -614,7 +618,7 @@ function pcBuildModGroups(username) {
     username.toLowerCase() === currentUsername.toLowerCase()
   )
     return []
-  const recent = getRecentMessagesFromUser(username)
+  const recent = getRecentMessagesFromUser(username, platform)
   if (!recent.length) return []
   // Group by channel+platform — most recent msgId per channel where I'm a mod.
   // Twitch gates on GQL mod-state, Kick on kick_mod_status; the key keeps the
@@ -888,13 +892,13 @@ function renderProfileCardView() {
       profile: normalizedProfile,
       socials: pcBuildSocials(data),
       corpus: activeProfileCard.corpus || null,
-      recent: pcMergeRecent(activeProfileCard.recentServer, username),
+      recent: pcMergeRecent(activeProfileCard.recentServer, username, platform),
     },
     {
       hint: { platform: platform || undefined, login: (username || '').toLowerCase() },
       capabilities: { follow: true, whisper: true, dm: true, mention: true, mute: true, block: true, isBlocked },
       extraSheet: [...pcBuildSessionSheetRows(username), ...(activeProfileCard.followageRows || [])],
-      modGroups: pcBuildModGroups(username),
+      modGroups: pcBuildModGroups(username, platform),
     },
     { formatCompactNumber: pcFmt },
   )

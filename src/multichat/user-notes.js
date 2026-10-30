@@ -32,27 +32,34 @@ function _hsnHasStorage() {
   return typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local
 }
 
-// Resolve a chatter to their lowercased alias set. Sync path (getUserAliases) for
-// render/indicator; the async path (expandUserAliases, also pulls the server
+// Every key is `platform:name`, so a twitch "alice" and an unrelated kick "alice"
+// never share a note. Notes saved before this were keyed by the bare name; they
+// load as twitch (see _hsnKey) — never dropped, never re-guessed.
+const _hsnPlat = (p) => (p === 'yt' ? 'youtube' : p || 'twitch')
+const _hsnKey = (k) => (String(k).includes(':') ? String(k) : `twitch:${k}`)
+const _hsnSelfKey = (u, platform) => `${_hsnPlat(platform)}:${u.replace(/^@/, '')}`
+
+// Resolve a chatter to their lowercased alias-key set. Sync path (getUserAliasKeys)
+// for render/indicator; the async path (expandUserAliasKeys, also pulls the server
 // identity graph) is used on save so a note captures the fullest alias set known.
 function _hsnAliasesSync(username, platform) {
   const u = String(username || '').toLowerCase()
   if (!u) return []
-  if (typeof getUserAliases === 'function') {
+  if (typeof getUserAliasKeys === 'function') {
     try {
-      const a = getUserAliases(u, platform)
+      const a = getUserAliasKeys(u, _hsnPlat(platform))
       if (Array.isArray(a) && a.length) return [...new Set(a.map((x) => String(x).toLowerCase()))]
     } catch {}
   }
-  return [u]
+  return [_hsnSelfKey(u, platform)]
 }
 
 async function _hsnAliasesAsync(username, platform) {
   const u = String(username || '').toLowerCase()
   if (!u) return []
-  if (typeof expandUserAliases === 'function') {
+  if (typeof expandUserAliasKeys === 'function') {
     try {
-      const a = await expandUserAliases(u, platform)
+      const a = await expandUserAliasKeys(u, _hsnPlat(platform))
       if (Array.isArray(a) && a.length) return [...new Set(a.map((x) => String(x).toLowerCase()))]
     } catch {}
   }
@@ -102,14 +109,24 @@ function _hsnLoad() {
       chrome.storage.local.get([HS_NOTES_KEY, 'hs_user_notes'], (d) => {
         const raw = d?.[HS_NOTES_KEY]
         if (raw && typeof raw === 'object') {
+          // pre-namespace (bare) keys are adopted as twitch; flag a write-back so it happens once
+          let rekeyed = false
           if (raw.notes && typeof raw.notes === 'object') {
             for (const [k, v] of Object.entries(raw.notes)) {
-              if (v && typeof v.text === 'string') _hsnNotes.set(k, { text: v.text, updatedAt: v.updatedAt || 0 })
+              if (v && typeof v.text === 'string') {
+                if (!k.includes(':')) rekeyed = true
+                _hsnNotes.set(_hsnKey(k), { text: v.text, updatedAt: v.updatedAt || 0 })
+              }
             }
           }
           if (raw.index && typeof raw.index === 'object') {
-            for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(k, v)
+            for (const [k, v] of Object.entries(raw.index)) {
+              if (typeof v !== 'string') continue
+              if (!k.includes(':') || !v.includes(':')) rekeyed = true
+              _hsnIndex.set(_hsnKey(k), _hsnKey(v))
+            }
           }
+          if (rekeyed) _hsnPersist()
         }
         // One-time legacy migration. v1 wins on conflict (it's what the user
         // has been editing since the popover shipped); a legacy-only username
@@ -119,7 +136,7 @@ function _hsnLoad() {
         if (legacy && typeof legacy === 'object') {
           let migrated = 0
           for (const [k, v] of Object.entries(legacy)) {
-            const key = String(k).toLowerCase()
+            const key = _hsnKey(String(k).toLowerCase())
             if (!v || typeof v.text !== 'string' || !v.text.trim()) continue
             if (_hsnNotes.has(key) || _hsnNotes.has(_hsnIndex.get(key) || '')) continue
             _hsnNotes.set(key, { text: v.text.slice(0, 500), updatedAt: v.ts || Date.now() })
@@ -172,8 +189,9 @@ if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.n
     const raw = changes[HS_NOTES_KEY].newValue
     if (!raw || typeof raw !== 'object') return
     if (raw.notes && typeof raw.notes === 'object') {
-      for (const [k, v] of Object.entries(raw.notes)) {
+      for (const [k0, v] of Object.entries(raw.notes)) {
         if (!v || typeof v.text !== 'string') continue
+        const k = _hsnKey(k0)
         const local = _hsnNotes.get(k)
         if (!local || (v.updatedAt || 0) >= (local.updatedAt || 0)) {
           _hsnNotes.set(k, { text: v.text, updatedAt: v.updatedAt || 0 })
@@ -181,7 +199,7 @@ if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.n
       }
     }
     if (raw.index && typeof raw.index === 'object') {
-      for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(k, v)
+      for (const [k, v] of Object.entries(raw.index)) if (typeof v === 'string') _hsnIndex.set(_hsnKey(k), _hsnKey(v))
     }
   })
 }

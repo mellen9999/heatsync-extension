@@ -269,7 +269,7 @@ describe('resolveFollowageRows — /api/card followage, gql fallback only when d
 describe('pcMergeRecent — server /api/card recent + local buffer, deduped', () => {
   const src = slice(
     CARD,
-    'function pcMergeRecent(serverRecent, username) {',
+    'function pcMergeRecent(serverRecent, username, platform) {',
     '\n\n// Scan the same buffers as getRecentMessagesFromUser',
   )
 

@@ -455,3 +455,23 @@ test('expr: highlight action returns color', () => {
   const res = evaluateFilterRules(makeMsg({ user: 'bob', isFirstMsg: true }), null)
   expect(res.highlight).toBe('#00ff00')
 })
+
+// ── youtube rows: @handle authors and list-shaped badges ──────────────────────
+
+test('user rule matches a youtube @handle author with or without the @', () => {
+  compileFilterRules([rule({ match: { type: 'user', value: 'drdisrespect' } })])
+  expect(evaluateFilterRules(makeMsg({ user: '@DrDisrespect', platform: 'youtube' }), null).highlight).toBe('#ff0000')
+  compileFilterRules([rule({ match: { type: 'user', value: '@drdisrespect' } })])
+  expect(evaluateFilterRules(makeMsg({ user: '@DrDisrespect', platform: 'youtube' }), null).highlight).toBe('#ff0000')
+})
+
+test('badge rule matches youtube list badges (owner / moderator / mod alias)', () => {
+  const yt = (badges) => makeMsg({ platform: 'youtube', badges })
+  compileFilterRules([rule({ match: { type: 'badge', value: 'moderator' } })])
+  expect(evaluateFilterRules(yt([{ type: 'moderator', label: 'Mod' }]), null).highlight).toBe('#ff0000')
+  compileFilterRules([rule({ match: { type: 'badge', value: 'mod' } })])
+  expect(evaluateFilterRules(yt([{ type: 'moderator', label: 'Mod' }]), null).highlight).toBe('#ff0000')
+  compileFilterRules([rule({ match: { type: 'badge', value: 'owner' } })])
+  expect(evaluateFilterRules(yt([{ type: 'moderator' }]), null).highlight).toBeNull()
+  expect(evaluateFilterRules(yt([{ type: 'owner' }]), null).highlight).toBe('#ff0000')
+})

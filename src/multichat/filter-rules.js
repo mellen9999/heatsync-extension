@@ -238,6 +238,31 @@ function _frParseExpr(toks) {
   return ast
 }
 
+// Does the message carry badge `v` (lowercased)? twitch/kick rows hold a "set/ver,set/ver"
+// string; youtube rows hold a list of { type, label } (owner, moderator, member...), or
+// strings of the same shape. "mod" also matches a youtube moderator.
+function _frHasBadge(badges, v) {
+  if (!badges) return false
+  if (typeof badges === 'string') {
+    const list = badges.split(',')
+    for (let i = 0; i < list.length; i++) if (list[i].split('/')[0].toLowerCase() === v) return true
+    return false
+  }
+  if (!Array.isArray(badges)) return false
+  for (let i = 0; i < badges.length; i++) {
+    const b = badges[i]
+    const names = typeof b === 'string' ? [b.split('/')[0]] : b ? [b.type, b.label, b.name] : []
+    for (const n of names) {
+      const k = typeof n === 'string' ? n.toLowerCase() : ''
+      if (k === v || (v === 'mod' && k === 'moderator')) return true
+    }
+  }
+  return false
+}
+
+// a youtube author arrives as "@handle"; rules are written without the @
+const _frBareUser = (u) => String(u).toLowerCase().replace(/^@/, '')
+
 function _frEvalNode(node, m) {
   switch (node.op) {
     case 'or':
@@ -253,13 +278,9 @@ function _frEvalNode(node, m) {
       if (node.name === 'cheer') return !!(m.bits && Number(m.bits) > 0)
       return false
     case 'user':
-      return !!m.user && String(m.user).toLowerCase() === node.v
-    case 'badge': {
-      if (!m.badges || typeof m.badges !== 'string') return false
-      const badges = m.badges.split(',')
-      for (let i = 0; i < badges.length; i++) if (badges[i].split('/')[0].toLowerCase() === node.v) return true
-      return false
-    }
+      return !!m.user && _frBareUser(m.user) === node.v.replace(/^@/, '')
+    case 'badge':
+      return _frHasBadge(m.badges, node.v)
     case 'type':
       if (node.v === 'first-message' || node.v === 'first') return !!m.isFirstMsg
       if (node.v === 'action') return !!m.isAction
@@ -437,17 +458,12 @@ function _frTest(rule, m) {
       return rule.ast ? _frEvalNode(rule.ast, m) : false
     case 'user': {
       if (!m.user) return false
-      const u = rule.caseSensitive ? String(m.user) : String(m.user).toLowerCase()
-      return u === rule.value
+      const raw = String(m.user).replace(/^@/, '')
+      const u = rule.caseSensitive ? raw : raw.toLowerCase()
+      return u === rule.value.replace(/^@/, '')
     }
-    case 'badge': {
-      if (!m.badges || typeof m.badges !== 'string') return false
-      const badges = m.badges.split(',')
-      for (let i = 0; i < badges.length; i++) {
-        if (badges[i].split('/')[0].toLowerCase() === rule.value) return true
-      }
-      return false
-    }
+    case 'badge':
+      return _frHasBadge(m.badges, rule.value)
     case 'msgtype': {
       const mt = rule.value
       if (mt === 'first-message') return !!m.isFirstMsg

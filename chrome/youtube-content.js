@@ -44,6 +44,12 @@
   let inventoryLoaded = false
 
   let channelEmotesByOwner = {} // { ownerName: emote[] } — populated from background broadcasts
+  // The one owner key THIS chat belongs to (the background answers yt_ensure_channel_emotes with it).
+  // Broadcasts and the stored map carry every channel the browser has open — twitch ones too — so
+  // only this owner's set may reach the map, or another streamer's emotes land in this chat.
+  let myOwnerKey = ''
+  const normOwner = (k) => String(k || '').replace(/^@/, '').toLowerCase()
+  const ownedByMe = (owner) => !!myOwnerKey && normOwner(owner) === normOwner(myOwnerKey)
 
   let variantsByName = new Map() // name → every version of it, best first
   let lastInventory = []
@@ -67,8 +73,8 @@
         else versions.set(e.name, [e])
       }
     }
-    for (const ownerEmotes of Object.values(channelEmotesByOwner)) {
-      if (Array.isArray(ownerEmotes)) take(ownerEmotes, 0)
+    for (const [owner, ownerEmotes] of Object.entries(channelEmotesByOwner)) {
+      if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(ownerEmotes, 0)
     }
     take(inventory, 1)
     take(globals, 2)
@@ -154,7 +160,7 @@
       channelEmotesByOwner[msg.channelOwner] = msg.emotes
       // Cap to most-recent 20 owners — long sessions with many channel switches
       // would otherwise grow this object forever.
-      const keys = Object.keys(channelEmotesByOwner)
+      const keys = Object.keys(channelEmotesByOwner).filter((k) => !ownedByMe(k))
       if (keys.length > 20) {
         for (let i = 0; i < keys.length - 20; i++) delete channelEmotesByOwner[keys[i]]
       }
@@ -2256,6 +2262,12 @@
     // and fetches; the channel_emotes_update broadcast lands in this file's
     // listener and rebuilds the map.
     safeSendMessage({ type: 'yt_ensure_channel_emotes', videoId })
+      .then((resp) => {
+        if (!resp?.channelKey || ownedByMe(resp.channelKey)) return
+        myOwnerKey = String(resp.channelKey)
+        rebuildEmoteMap(lastInventory, lastGlobals) // sets already held for this owner appear now
+      })
+      .catch(() => {})
 
     // Fire-and-forget: self-retrying, never throws, and the mode-switch's own
     // container swap is picked up by the reattach poll below — no need to

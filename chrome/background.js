@@ -10023,7 +10023,8 @@ async function handleMessage(message, sender, sendResponse) {
         if (initPromise) await initPromise
         fetchChannelOwnerEmotes(ytChanKey, null, 'youtube').catch(() => {})
       })()
-      sendResponse({ received: true })
+      // channelKey tells the iframe which broadcast owner is its own (see youtube-content.js)
+      sendResponse({ received: true, channelKey: ytChanKey })
     } else {
       sendResponse({ received: false, error: 'no channel identity' })
     }

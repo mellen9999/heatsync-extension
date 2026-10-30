@@ -52,3 +52,24 @@ test('a bare handle is used directly', async () => {
   await fn('drdisrespect')
   expect(calls.fetched[0]).toBe('https://www.youtube.com/@drdisrespect')
 })
+
+// ── native chat emotes stay on this chat's channel ──────────────────────────
+const yc = readFileSync(new URL('../chrome/youtube-content.js', import.meta.url), 'utf8')
+
+test('native yt chat merges only its own channel owner set', () => {
+  expect(yc).toContain('if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(ownerEmotes, 0)')
+  expect(yc).not.toContain('Object.values(channelEmotesByOwner)')
+})
+
+test('the background tells the iframe which owner is its own', () => {
+  expect(src).toContain('sendResponse({ received: true, channelKey: ytChanKey })')
+  expect(yc).toContain('myOwnerKey = String(resp.channelKey)')
+})
+
+test('owner matching ignores @ and case but never matches an empty key', () => {
+  const m = yc.match(/const normOwner = [^\n]+\n\s+const ownedByMe = [^\n]+/)
+  const f = new Function('myOwnerKey', `${m[0]}; return ownedByMe`)
+  expect(f('')('@abc')).toBe(false)
+  expect(f('@DrDisrespect')('drdisrespect')).toBe(true)
+  expect(f('AbCdEfGhIjK')('zzzzzzzzzzz')).toBe(false)
+})

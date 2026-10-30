@@ -85,6 +85,14 @@ let armedReplyKey = null
 let whisperDmsLoaded = false
 let selfWhisperColor = null // current user's Twitch color
 
+// The whispers-tab usage line. /w is a twitch whisper, so a viewer with no twitch
+// identity (kick/youtube only) is told about heatsync DMs first, not a command
+// that can't work for them.
+function whisperHint() {
+  const hasTwitch = !!(currentUsername || (typeof authState !== 'undefined' && authState?.nick))
+  return t(hasTwitch ? 'mc_whisper_hint' : 'mc_whisper_hint_dm')
+}
+
 // Resolve own color from IRC buffers, chat DOM, or Twitch cookie color
 function resolveSelfColor() {
   if (selfWhisperColor) return
@@ -650,7 +658,7 @@ function renderWhispersTab() {
     if (whisperDmsLoaded && hsAuthToken) {
       emptyDiv.textContent = t('common_loading') || 'loading…'
     } else {
-      emptyDiv.textContent = t('mc_whisper_hint')
+      emptyDiv.textContent = whisperHint()
     }
     msgsEl.appendChild(emptyDiv)
     return
@@ -733,7 +741,7 @@ function renderWhispersTab() {
         const followIdSafe = escapeHtml(m.key?.startsWith('hs:') ? m.key.slice(3) : '')
         statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${errSafe} — click to follow ${escapeHtml(them)} and send" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
       } else if (m.errorKind === 'auth') {
-        statusHtml = ` <a href="https://heatsync.org/api/auth/login?return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
+        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
       } else {
         statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">⚠ ${errSafe} — retry</span>`
       }

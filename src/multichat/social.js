@@ -447,11 +447,7 @@ async function loadHsUsername() {
     // ui.username (heatsync core name) is always included so bare-name mentions
     // resolve even when getCurrentUsername() returns null (e.g. logged-out Kick
     // tab) and no platform aliases are configured.
-    mentionAliases = new Set()
-    if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
-    if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
-    if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
-    if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+    setMentionAliases(ui)
     // Your own paint/tenure/colour jump the cosmetics queue and your picked
     // colour seeds now — otherwise your name waits behind the whole channel.
     primeSelfHsCosmetics(ui)
@@ -614,11 +610,7 @@ async function loadHsAuth() {
         const ui = changes.user_info.newValue
         hsCurrentUsername = ui?.username?.toLowerCase() || null
         hsSenderKeys = Array.isArray(ui?.sender_keys) ? ui.sender_keys : null
-        mentionAliases = new Set()
-        if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
-        if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
-        if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
-        if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+        setMentionAliases(ui)
         primeSelfHsCosmetics(ui)
       }
       if (changes.auth_token_encrypted || changes.auth_token) {
@@ -1221,7 +1213,7 @@ function handleYoutubeChatMsg(msg) {
   // so a keyword alert fired on twitch and kick and was silently mute on
   // youtube. Lazy in the same order as the other two handlers (automod is
   // cheap, so it short-circuits before the rule eval).
-  const _frOwnYt = ytMsg.user?.toLowerCase() === currentUsername?.toLowerCase()
+  const _frOwnYt = isSelf(ytMsg, 'youtube')
   let _frYt = null
   if (!_frOwnYt) {
     if (shouldAutomod(ytMsg.text)) return
@@ -1913,7 +1905,7 @@ function _renderFeedEmptyCard() {
     const loginBtn = document.createElement('a')
     loginBtn.className = 'hs-mc-empty-btn primary'
     loginBtn.textContent = 'log in at heatsync.org'
-    loginBtn.href = 'https://heatsync.org/login'
+    loginBtn.href = HS_LOGIN_URL
     loginBtn.target = '_blank'
     loginBtn.rel = 'noopener noreferrer'
     actions.appendChild(loginBtn)
@@ -3128,7 +3120,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   row.target = '_blank'
   row.rel = 'noopener noreferrer'
 
-  const isLive = !!(profile.twitch_is_live || profile.kick_is_live)
+  const isLive = discoverIsLive(profile)
   if (isLive) row.classList.add('hs-discover-row-live')
 
   if (showRank) {
@@ -3141,7 +3133,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   const dot = document.createElement('span')
   dot.className = isLive ? 'hs-discover-live-dot' : 'hs-discover-live-spacer'
   if (isLive) {
-    const v = (profile.twitch_viewer_count || 0) + (profile.kick_viewer_count || 0)
+    const v = discoverViewers(profile)
     dot.title = v > 0 ? `live · ${v.toLocaleString()} viewer${v === 1 ? '' : 's'}` : 'live'
   }
   row.appendChild(dot)
@@ -3204,6 +3196,22 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
     if (profile.kick_is_live) k.classList.add('hs-plat-live')
     k.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(k)
+  }
+  if (profile.youtube_username || profile.youtube_channel_id) {
+    const y = document.createElement('a')
+    y.className = 'hs-plat hs-plat-yt'
+    y.textContent = 'Y'
+    const ytHandle = profile.youtube_username ? String(profile.youtube_username).replace(/^@/, '') : ''
+    // channel id first — immutable, can't be squatted like a handle
+    y.href = profile.youtube_channel_id
+      ? `https://www.youtube.com/channel/${encodeURIComponent(profile.youtube_channel_id)}`
+      : `https://www.youtube.com/@${encodeURIComponent(ytHandle)}`
+    y.target = '_blank'
+    y.rel = 'noopener noreferrer'
+    y.title = `youtube${ytHandle ? ` · @${ytHandle}` : ''}${profile.youtube_is_live ? ' · live' : ''}`
+    if (profile.youtube_is_live) y.classList.add('hs-plat-live')
+    y.addEventListener('click', (e) => e.stopPropagation())
+    plats.appendChild(y)
   }
   if (plats.childNodes.length) row.appendChild(plats)
 
@@ -3315,6 +3323,14 @@ function renderDiscoverChipsBar() {
     ),
   )
   return bar
+}
+
+// live on any linked platform / viewers summed across them — youtube counts like the other two
+function discoverIsLive(p) {
+  return !!(p.twitch_is_live || p.kick_is_live || p.youtube_is_live)
+}
+function discoverViewers(p) {
+  return (p.twitch_viewer_count || 0) + (p.kick_viewer_count || 0) + (p.youtube_viewer_count || 0)
 }
 
 function profileMatchesPlatformFilter(p) {
@@ -3476,15 +3492,13 @@ function renderDiscoverTab() {
   const filteredProfiles = discoverProfiles.filter(profileMatchesPlatformFilter)
   const filteredPosts = discoverPosts.filter(postMatchesPlatformFilter)
 
-  const liveProfiles = filteredProfiles
-    .filter((p) => p.twitch_is_live || p.kick_is_live)
-    .sort((a, b) => {
-      const av = (a.twitch_viewer_count || 0) + (a.kick_viewer_count || 0)
-      const bv = (b.twitch_viewer_count || 0) + (b.kick_viewer_count || 0)
-      if (av !== bv) return bv - av
-      return (b.stats?.total_heat || 0) - (a.stats?.total_heat || 0)
-    })
-  const restProfiles = filteredProfiles.filter((p) => !p.twitch_is_live && !p.kick_is_live).sort(sortProfilesByHeat)
+  const liveProfiles = filteredProfiles.filter(discoverIsLive).sort((a, b) => {
+    const av = discoverViewers(a)
+    const bv = discoverViewers(b)
+    if (av !== bv) return bv - av
+    return (b.stats?.total_heat || 0) - (a.stats?.total_heat || 0)
+  })
+  const restProfiles = filteredProfiles.filter((p) => !discoverIsLive(p)).sort(sortProfilesByHeat)
   const maxHeat = Math.max(...filteredProfiles.map((p) => p.stats?.total_heat ?? p.heat ?? 0), 1)
 
   // Filter chips

@@ -474,6 +474,19 @@ export function slashCommandsFor(surface) {
   return SLASH_REGISTRY.filter((c) => !c.hidden && (c.on === 'both' || c.on === surface))
 }
 
+/**
+ * Can this command do anything on a tab that reaches `platforms` (a Set of
+ * 'twitch' | 'kick', or null when the tab has no single destination)? Only the
+ * platform-bound commands are judged: `needs` twitch/mod/broadcaster plus a
+ * `does` naming twitch and/or kick. Heatsync-side and local commands always apply.
+ */
+export function slashAvailableOn(c, platforms) {
+  if (!platforms) return true
+  if (c.needs !== 'twitch' && c.needs !== 'mod' && c.needs !== 'broadcaster') return true
+  const bound = String(c.does).split('+')
+  return bound.some((p) => platforms.has(p))
+}
+
 /** alias -> canonical, derived so the two can never disagree. */
 export function slashAliasMap(surface) {
   const src = surface ? slashCommandsFor(surface) : SLASH_REGISTRY.filter((c) => !c.hidden)

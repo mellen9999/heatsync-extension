@@ -2521,10 +2521,10 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     // login otherwise. YT actions are message-scoped (msgId), so any truthy
     // channel just satisfies the gate — the dispatch uses msgId, not the channel.
     const modCh = isYt ? msgCh || 'yt' : isKick ? entry?.kick || msgCh : entry?.twitch || msgCh
-    // currentUsername is a display name; compare against BOTH the login and the
+    // the viewer's name is a display name; compare against BOTH the login and the
     // display name so a non-Latin-named mod can't be shown self-mod actions.
-    const _selfRef = typeof currentUsername !== 'undefined' && currentUsername ? currentUsername.toLowerCase() : null
-    const notSelf = !_selfRef || (msgLogin !== _selfRef && (msg.dataset?.msgUser || '').toLowerCase() !== _selfRef)
+    const notSelf =
+      !isSelf({ user: msgLogin, platform: msgPlat }) && !isSelf({ user: msg.dataset?.msgUser, platform: msgPlat })
     const amMod = isYt
       ? typeof isYtModForSync === 'function' && isYtModForSync()
       : isKick
@@ -3348,12 +3348,15 @@ function stripMcMutedMessage(msg) {
 }
 
 // logged-out first run: say so up front instead of "send to #x" (input stays enabled)
-// kick: null until background answers (never blocks render); youtube stays null
-// (no host-page session probe, unchanged behaviour)
+// kick: null until background answers (never blocks render); youtube sends via
+// the live_chat bridge with no heatsync login, so its host can always send
 let _kickHostSession = null
 function _refreshKickHostSession() {
-  if (hostPlatform !== 'kick') return
+  // the kick session also names you (mentions, self rows) on a twitch/youtube
+  // host — but only worth the lookup when kick is actually in play
+  if (hostPlatform !== 'kick' && !config?.channels?.some((c) => c.kick)) return
   safeSendMessage({ type: 'kick_session_status' }).then((resp) => {
+    setSelfKickName(resp?.loggedIn ? resp.username : '')
     const next = resp ? !!resp.loggedIn : null
     if (next === _kickHostSession) return
     _kickHostSession = next
@@ -3363,7 +3366,13 @@ function _refreshKickHostSession() {
 
 function _composerNeedsLogin() {
   const hostSession =
-    hostPlatform === 'twitch' ? !!getTwitchAuthToken() : hostPlatform === 'kick' ? _kickHostSession : null
+    hostPlatform === 'twitch'
+      ? !!getTwitchAuthToken()
+      : hostPlatform === 'kick'
+        ? _kickHostSession
+        : hostPlatform === 'yt'
+          ? true
+          : null
   return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
 }
 
@@ -3408,7 +3417,7 @@ function updateInputPlaceholder() {
     // whisper retargets lastWhisperKey out from under it
     const targetKey = (typeof armedReplyKey !== 'undefined' && armedReplyKey) || lastWhisperKey
     const lastUser = targetKey ? whisperUsers.get(targetKey) : null
-    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : t('mc_whisper_hint')
+    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : whisperHint()
   } else if (currentTab === 'add') {
     placeholder = ''
   } else {
@@ -6593,8 +6602,35 @@ function clearInput(input) {
 // to their canonical command (insertSlashCommand inserts the real name). Without
 // this, typing a documented alias + Tab silently did nothing (only cmd names
 // matched) — reported live for /hl. Canonical matches rank first, then aliases.
+// Which of twitch/kick the composer's current tab sends to — the same
+// resolution sendMessage uses — or null when the tab has no single channel
+// (feed, whispers, …) and so nothing to judge a command against. A youtube-only
+// tab yields an empty set: every twitch/kick-bound command is dead there.
+function currentTabPlatforms() {
+  let ch = null
+  let host = null
+  if (currentTab === 'live') {
+    const live = getLiveChannel()
+    const lower = live ? live.toLowerCase() : ''
+    ch = lower
+      ? config.channels.find((c) => c.twitch?.toLowerCase() === lower || c.kick?.toLowerCase() === lower)
+      : null
+    if (!ch) host = hostPlatform
+  } else {
+    ch = config.channels.find((c) => c.id === currentTab) || null
+    if (!ch) return null
+  }
+  const out = new Set()
+  if (ch?.twitch) out.add('twitch')
+  if (ch?.kick) out.add('kick')
+  if (host === 'twitch' || host === 'kick') out.add(host)
+  return out
+}
+
 function matchSlashCommands(q) {
-  const byCmd = SLASH_COMMANDS.filter((c) => c.cmd.startsWith(q))
+  const tabPlatforms = currentTabPlatforms()
+  const avail = (c) => slashAvailableOn(c, tabPlatforms)
+  const byCmd = SLASH_COMMANDS.filter((c) => c.cmd.startsWith(q) && avail(c))
   if (!q) return byCmd
   const seen = new Set(byCmd.map((c) => c.cmd))
   const viaAlias = []
@@ -6602,7 +6638,7 @@ function matchSlashCommands(q) {
     if (typeof target !== 'string') continue // null = explicit pass-through
     if (!alias.startsWith(q) || seen.has(target)) continue
     const c = SLASH_COMMANDS.find((x) => x.cmd === target)
-    if (c) {
+    if (c && avail(c)) {
       viaAlias.push(c)
       seen.add(target)
     }
@@ -8708,7 +8744,7 @@ async function sendMessage() {
     // mentions span channels so there's no single destination. The bare flash
     // never said which, so it read as "the send broke".
     flashInputError(input)
-    showToast(currentTab === 'mentions' ? t('mc_input_mentions_readonly') : t('mc_whisper_hint'), 'error')
+    showToast(currentTab === 'mentions' ? t('mc_input_mentions_readonly') : whisperHint(), 'error')
     return
   }
 
@@ -8785,6 +8821,15 @@ async function sendMessage() {
   // host page's chat (the "my message leaked into another tab's host chat"
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
+  // youtube was the ONLY wanted leg and it can't be targeted yet: bail before
+  // anything is registered or cleared. Falling through ran the twitch-only
+  // send — "log into twitch.tv" for a youtube-only user, or an IRC send to a
+  // ghost channel. Text stays in the box.
+  if (ytWanted && !sendToYoutube && !sendToKick && !sendToTwitch) {
+    flashInputError(input)
+    showToast(t('mc_yt_send_open_stream'), 'error')
+    return
+  }
   const isDualSend = sendToKick && sendToTwitch
 
   // /me action — give each platform the right wire form for an action message.
@@ -9084,20 +9129,35 @@ async function sendMessage() {
     return
   }
   // Twitch + YouTube (and no Kick) — fire YouTube as best-effort alongside Twitch send below
+  // The promise resolves to the yt result so a missing twitch session below can
+  // tell "youtube delivered" (success) from "nothing went out" (failure).
+  let ytLeg = null
   if (sendToYoutube && sendToTwitch && !sendToKick) {
-    sendYoutubeMessage(ytText, ytVideoId)
+    ytLeg = sendYoutubeMessage(ytText, ytVideoId)
       .then((result) => {
         if (result !== true && result !== 'no_youtube_tab') {
           showToast(youtubeSendErrorMessage(result), 'error')
         }
+        return result
       })
-      .catch(() => showToast(t('mc_yt_send_failed'), 'error'))
+      .catch(() => {
+        showToast(t('mc_yt_send_failed'), 'error')
+        return null
+      })
     // fall through to Twitch path
   }
 
   // --- Twitch-only send path (existing behavior) ---
   const { token, username: twitchNick } = await getTwitchAuthTokenAsync()
   if (!token) {
+    // Twitch+YouTube with no twitch session: a delivered youtube leg is a
+    // success, same as twitch+kick partial success — drain the twitch wait and
+    // leave a quiet note for the skipped leg instead of a failed send.
+    if (ytLeg && (await ytLeg) === true) {
+      confirmPending(_synthId, 'twitch')
+      showToast(t('mc_send_twitch_skipped'), 'info')
+      return
+    }
     markPendingFailed(_synthId, 'auth_failed')
     try {
       HsNotifs.emit('twitch-auth-required', { text: t('mc_input_not_logged_in') || 'log into twitch.tv to chat' })

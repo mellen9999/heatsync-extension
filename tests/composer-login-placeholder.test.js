@@ -23,7 +23,8 @@ test('composerNeedsLogin: a host page that can send on its own keeps the placeho
 test('input.js derives hostSession per platform; kick asks background', () => {
   const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
   expect(src).toContain("type: 'kick_session_status'")
-  expect(src).toContain("hostPlatform === 'twitch' ? !!getTwitchAuthToken()")
+  expect(src).toMatch(/hostPlatform === 'twitch'\s*\?\s*!!getTwitchAuthToken\(\)/)
+  expect(src).toMatch(/hostPlatform === 'yt'\s*\?\s*true/)
 })
 
 test('input.js wires the hint into live + channel placeholders with the existing key', () => {

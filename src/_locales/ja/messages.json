@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "youtubeの各チャンネルが最後に設定した音量を保持します(動画、配信、埋め込み)。オフならyoutubeのプレイヤーには触れません"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

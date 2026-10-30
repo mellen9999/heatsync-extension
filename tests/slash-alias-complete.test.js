@@ -10,7 +10,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { slashAliasMap, slashCommandsFor } from '../src/multichat/slash-registry.js'
+import { slashAliasMap, slashAvailableOn, slashCommandsFor } from '../src/multichat/slash-registry.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 
@@ -30,8 +30,16 @@ const matchSlashCommands = new Function(
   't',
   'SLASH_COMMANDS',
   'SLASH_ALIASES',
+  'currentTabPlatforms',
+  'slashAvailableOn',
   `${matcherSrc}\nreturn matchSlashCommands`,
-)(() => '', slashCommandsFor('ext'), slashAliasMap('ext'))
+)(
+  () => '',
+  slashCommandsFor('ext'),
+  slashAliasMap('ext'),
+  () => null,
+  slashAvailableOn,
+)
 
 describe('matchSlashCommands resolves aliases', () => {
   test('/hl → highlight (the reported case)', () => {

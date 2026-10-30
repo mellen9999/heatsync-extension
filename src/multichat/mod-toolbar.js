@@ -683,7 +683,7 @@ function wireModToolbarHover(messagesEl) {
       // data-msg-self flag set at build time (currentUsername may be null at
       // hover time during pre-auth bootstrap); fall back to live compare.
       if (row.dataset.msgSelf === '1') return
-      if (currentUsername && user.toLowerCase() === currentUsername.toLowerCase()) return
+      if (isSelf({ user, platform: plat })) return
       // Sync gate per platform: twitch via GQL mod-state, kick via kick_mod_status.
       // Pre-fetch the right one so the next hover in this channel is instant.
       const isKick = plat === 'kick'

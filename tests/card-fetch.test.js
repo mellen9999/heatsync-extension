@@ -171,12 +171,14 @@ describe('resolveFollowageRows — /api/card followage, gql fallback only when d
       'hsCardRelativeTime',
       'gqlFollowageDirect',
       'currentUsername',
+      'isSelf',
       `${src}\nreturn resolveFollowageRows`,
     )(
       (n) => String(n),
       (iso) => `~${iso}`,
       gqlFollowageDirect,
       currentUsername,
+      (m) => !!currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase(),
     )
   }
 

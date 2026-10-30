@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "кожен канал на youtube зберігає останню задану вами гучність — у відео, стрімах і вбудованих плеєрах. вимкнено — плеєр youtube не чіпаємо"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

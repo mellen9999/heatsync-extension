@@ -100,7 +100,7 @@ function mount(opts = {}) {
     return { pinSync, pinToggleRow, pinRoomOfRow, pinCanAct, pinOnKeydown, pinApply, pinState, initPinBar,
       setTab: (v) => { currentTab = v }, setMe: (v) => { currentUsername = v } }`.replace(
       'return {',
-      'var currentTab = get().currentTab; var currentUsername = get().me; return {',
+      'var currentTab = get().currentTab; var currentUsername = get().me; var selfNamesFor = () => (currentUsername ? [currentUsername.toLowerCase()] : []); return {',
     ),
   )(d, win, win.sessionStorage, () => state, ...names.map((n) => stubs[n]))
   ctl = { ...api, state, d }

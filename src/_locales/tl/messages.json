@@ -3638,5 +3638,11 @@
   },
   "mc_settings_channel_volume_youtube_desc": {
     "message": "bawat channel sa youtube ay nagtatago ng huling volume na itinakda mo, sa mga video, stream at embed. kapag naka-off, hindi ginagalaw ang player ng youtube"
+  },
+  "mc_send_twitch_skipped": {
+    "message": "sent on youtube · twitch skipped, not logged in"
+  },
+  "mc_whisper_hint_dm": {
+    "message": "/dm user msg · /r msg"
   }
 }

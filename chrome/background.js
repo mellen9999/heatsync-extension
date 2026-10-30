@@ -2800,7 +2800,7 @@ async function fireLiveNotificationFromStream(stream, username, platform) {
       : platform === 'kick'
         ? stream.kick_username || username
         : stream.youtube_username || stream.youtube_channel_id || username
-  const url = channelPageUrl(platform, slug)
+  const url = channelPageUrl(platform, slug, true)
   if (!url) return
 
   const viewerStr = viewers > 0 ? ` · ${viewers.toLocaleString()} viewers` : ''
@@ -2818,6 +2818,7 @@ async function fireLiveNotificationFromStream(stream, username, platform) {
     stream.profileImageUrl ||
     stream.profile_image_url ||
     stream.heatsyncAvatar ||
+    stream.avatarUrl || // youtube rows of /api/live/following carry the channel avatar here
     stream.avatar_url ||
     stream.avatar ||
     ''
@@ -2882,17 +2883,20 @@ function _liveNotificationUrlFromId(id) {
   if (id.startsWith('hs-live-batch-')) return `${API_URL}/?tab=following`
   const m = /^hs-live-(twitch|kick|youtube)-(.+)-\d+$/.exec(id)
   if (!m) return null
-  return channelPageUrl(m[1], m[2])
+  return channelPageUrl(m[1], m[2], true)
 }
 
 // The streamer's own page — where their live + chat (and multichat) are.
 // Slugs come off the wire, so anything that isn't a plain handle is refused.
-function channelPageUrl(platform, slug) {
+// live=true (a went-live click) lands a youtube channel on its /live stream —
+// the channel home would leave the viewer hunting for the stream.
+function channelPageUrl(platform, slug, live = false) {
   const v = String(slug || '').trim()
   if (!/^[\w.-]{1,100}$/.test(v)) return null
   if (platform === 'twitch') return `https://www.twitch.tv/${v}`
   if (platform === 'kick') return `https://kick.com/${v}`
-  if (platform === 'youtube') return `https://www.youtube.com/${v.startsWith('UC') ? `channel/${v}` : `@${v}`}`
+  if (platform === 'youtube')
+    return `https://www.youtube.com/${v.startsWith('UC') ? `channel/${v}` : `@${v}`}${live ? '/live' : ''}`
   return null
 }
 
@@ -10118,7 +10122,7 @@ async function handleMessage(message, sender, sendResponse) {
     return true // Required for Firefox — sendResponse ignored without this
   } else if (message.type === 'focus_channel_tab') {
     // multichat's went-live toast was clicked: same landing as the system one
-    const url = channelPageUrl(message.platform, message.channel)
+    const url = channelPageUrl(message.platform, message.channel, true)
     if (url) focusOrOpenTab(url)
     sendResponse({ ok: !!url })
     return true
@@ -10263,11 +10267,30 @@ async function handleMessage(message, sender, sendResponse) {
     })()
     return true
   } else if (message.type === 'kick_session_status') {
-    // Composer placeholder probe: is the user signed in on kick? Answer only the
-    // boolean — never the cookie values.
+    // Composer placeholder probe: is the user signed in on kick? Answers the
+    // boolean plus the account's username (self rows, mentions for users with
+    // no heatsync login) — never the cookie values. Same Bearer + credentialed
+    // GET as kick_mod_status; the username is best-effort ('' when kick's
+    // /api/v1/user body has no string `username`, which only costs the self
+    // identity, never the login state).
     ;(async () => {
       try {
-        sendResponse({ loggedIn: !!(await readKickSession()).cookie?.value })
+        const { cookie, session } = await readKickSession()
+        if (!cookie?.value) {
+          sendResponse({ loggedIn: false })
+          return
+        }
+        let username = ''
+        try {
+          const headers = { Accept: 'application/json' }
+          if (session?.value) headers.Authorization = `Bearer ${decodeURIComponent(session.value)}`
+          const resp = await fetchWithTimeout('https://kick.com/api/v1/user', { credentials: 'include', headers }, 5000)
+          if (resp.ok) {
+            const data = await resp.json().catch(() => null)
+            if (typeof data?.username === 'string') username = data.username
+          } else resp.body?.cancel()
+        } catch {}
+        sendResponse({ loggedIn: true, username })
       } catch {
         sendResponse({ loggedIn: false })
       }

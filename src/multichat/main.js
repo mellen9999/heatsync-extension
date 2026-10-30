@@ -7392,7 +7392,7 @@
     if (m._renderedHtml != null) return m._renderedHtml
     // Pass Twitch native emotes (per-message IRC tags) into processEmotes so
     // they participate in the overlay-stack pipeline alongside 7TV emotes.
-    const isOwn = m.user && currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase()
+    const isOwn = isSelf(m)
     let twitchExtra = null
     if (m.twitchEmotes) {
       twitchExtra = new Map()
@@ -8694,10 +8694,10 @@
       if (m.ord != null) div.dataset.hsOrd = String(m.ord) // diagnosis: what the row sorted by
       div._hsAt = 1 // marks a row this build drew (see settledEnd in the diff renderer)
       // Mark self-messages so the mod hover toolbar can skip them without
-      // re-deriving currentUsername (which may be null pre-auth). Inlined
-      // compare — the `isOwn` const above is scoped to the !_renderedHtml
-      // branch, so it's undefined when the cached-html path is taken.
-      if (m.user && currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase()) {
+      // re-deriving the viewer's name (which may be null pre-auth). The `isOwn`
+      // const above is scoped to the !_renderedHtml branch, so it's undefined
+      // when the cached-html path is taken.
+      if (isSelf(m)) {
         div.dataset.msgSelf = '1'
       }
       const replyBtn = document.createElement('button')
@@ -9367,7 +9367,7 @@
     if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
     if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
     const u = m.user ? m.user.toLowerCase() : ''
-    if (u && u === currentUsername) return false // never hide own messages
+    if (isSelf(m)) return false // never hide own messages
     if (u && f.bots && _BOT_NAMES.has(u)) return true
     // `dim timed-out messages` offers two treatments and only one of them was
     // implemented in the overlay: with it OFF, a moderated message was neither
@@ -14638,7 +14638,7 @@
       // Cache own badges for optimistic display. Per-channel + global mirror —
       // synthetic celebrations stamp the right sub badge tier when injected on
       // a channel where the user has previously sent at least once.
-      if (msg.user?.toLowerCase() === currentUsername?.toLowerCase() && msg.badges) {
+      if (isSelf(msg, 'twitch') && msg.badges) {
         _ownBadges = msg.badges
         if (msg.channel) _ownBadgesByChannel.set(String(msg.channel).toLowerCase(), msg.badges)
       }
@@ -14706,7 +14706,7 @@
         }
       }
       // Automod + filter rules: drop messages matching filter. Own msgs exempt.
-      const _frOwnTw = msg.user?.toLowerCase() === currentUsername?.toLowerCase()
+      const _frOwnTw = isSelf(msg, 'twitch')
       let _frTw = null
       if (!_frOwnTw) {
         // Lazy: automod first (cheap), then filter rules only if it survives —
@@ -14815,7 +14815,7 @@
           if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
-      const _frOwnKi = msg.user?.toLowerCase() === currentUsername?.toLowerCase()
+      const _frOwnKi = isSelf(msg, 'kick')
       let _frKi = null
       if (!_frOwnKi) {
         if (shouldAutomod(msg.text)) return

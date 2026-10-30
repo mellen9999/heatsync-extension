@@ -41,6 +41,7 @@ function makeMatcher({ username, aliases = [], blocked = [], enabled = true }) {
     'isEnabled',
     'isUserBlocked',
     'authState',
+    'selfKickName',
     `${MATCHER_SRC}
      mentionAliases = new Set(_aliases)
      return isMention`,
@@ -50,6 +51,7 @@ function makeMatcher({ username, aliases = [], blocked = [], enabled = true }) {
     () => enabled,
     (name) => blocked.includes((name || '').toLowerCase()),
     { nick: null },
+    '',
   )
 }
 

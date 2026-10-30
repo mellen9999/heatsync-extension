@@ -1205,10 +1205,7 @@ function computeSubTenureRow(username, msgChannel) {
   const channelMap = subTenureMap.get(channelLogin)
   const months = channelMap?.get(username.toLowerCase())
   if (!months) return null
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   const tenure = hsCardTenureMonths(months) || `${months}mo`
   return isSelfChannel
     ? { k: 'sub-tenure', label: 'they', value: `sub to you ${tenure}`, tone: 'they-sub' }
@@ -1410,10 +1407,7 @@ function getTooltipChannelContext(userPlatform) {
 // can't live in here).
 function resolveFollowageRows(username, channelLogin, followage, onRows) {
   if (!channelLogin) return
-  const isSelfChannel =
-    typeof currentUsername === 'string' &&
-    currentUsername &&
-    channelLogin.toLowerCase() === currentUsername.toLowerCase()
+  const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   if (followage && !followage.degraded) {
     Promise.resolve().then(() => onRows(computeFollowageRows(channelLogin, isSelfChannel, followage)))
     return

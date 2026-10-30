@@ -15,7 +15,11 @@
 // (sessionStorage — a NEW pin shows again); someone who can pin is asked first
 // (y / enter yes, esc backs out) and unpins for everyone.
 
-const PIN_RELINK_URL = 'https://heatsync.org/api/auth/login?scopes=mod&return_to=%2Fhome%2Fhot'
+// relink goes to the room's own platform; kick's route takes ?scopes=mod too
+const PIN_RELINK_URLS = {
+  twitch: 'https://heatsync.org/api/auth/login?scopes=mod&return_to=%2Fhome%2Fhot',
+  kick: 'https://heatsync.org/api/auth/kick/login?scopes=mod&return_to=%2Fhome%2Fhot',
+}
 const PIN_REFRESH_MS = 30000
 
 const pinState = { pins: new Map(), rooms: [], cur: null, sig: '', at: 0, gen: 0, node: null }
@@ -79,9 +83,9 @@ function pinRoomsFor(tabId) {
 function pinCanAct(platform, channel) {
   const c = String(channel || '').toLowerCase()
   if (!c) return false
-  const me = typeof currentUsername === 'string' ? currentUsername.toLowerCase() : ''
   const slug = (n) => (platform === 'kick' ? n.replace(/_/g, '-') : n)
-  if (me && slug(me) === slug(c)) return true
+  // your own channel: any of your names on that platform matches the room
+  if (selfNamesFor(platform).some((me) => slug(me) === slug(c))) return true
   if (platform === 'kick') return typeof isKickModForSync === 'function' && isKickModForSync(c)
   if (platform === 'twitch') return typeof isModForSync === 'function' && isModForSync(c)
   return false
@@ -96,12 +100,12 @@ function pinRoomOfRow(row) {
   return pinState.rooms.includes(room) ? { platform, channel, room } : null
 }
 
-function pinFail(res) {
+function pinFail(res, room) {
   const e = res?.error
   if (e === 'relink_required') {
     showToast(t('mc_cm_link'), 'error')
     try {
-      window.open(PIN_RELINK_URL, '_blank', 'noopener')
+      window.open(PIN_RELINK_URLS[String(room).split('/')[0]] || PIN_RELINK_URLS.twitch, '_blank', 'noopener')
     } catch (_) {}
   } else if (e === 'auth_required') showToast(t('mc_automod_signin'), 'error')
   else if (e === 'not_moderator') showToast(t('mc_pin_denied'), 'error')
@@ -273,7 +277,7 @@ function pinOnKey(e) {
 async function pinUnpin(room) {
   pinConfirm(false)
   const res = await pinCall('clear', room)
-  if (!res?.ok) return pinFail(res)
+  if (!res?.ok) return pinFail(res, room)
   pinApply(room, null)
   showToast(t('mc_pin_gone'), 'success')
 }
@@ -288,7 +292,7 @@ async function pinToggleRow(row) {
   }
   const res = await pinCall('set', target.room, id)
   if (!res?.ok) {
-    pinFail(res)
+    pinFail(res, target.room)
     return true
   }
   pinApply(target.room, res.pin)

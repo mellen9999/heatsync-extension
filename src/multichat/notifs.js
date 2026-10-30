@@ -789,6 +789,12 @@ const HsNotifs = (() => {
     actions: { dismiss: {} },
   })
 
+  // failure reasons that mean "not signed in over there" → where to sign in
+  const PENDING_LOGIN_LINKS = {
+    kick_not_logged_in: { label: 'open kick', url: 'https://kick.com/' },
+    chat_disabled: { label: 'open youtube', url: 'https://www.youtube.com/' },
+  }
+
   // Send-pending — fires when an outgoing chat message hasn't echoed back from
   // the platform within PENDING_ECHO_TIMEOUT_MS (input.js). Persistent: stays
   // until the user clicks retry/dismiss, or until confirmPending() arrives
@@ -837,6 +843,22 @@ const HsNotifs = (() => {
       }
       const snippet = String(data.text || '').slice(0, 60)
       el.textContent = `${why}: "${snippet}${data.text?.length > 60 ? '…' : ''}"`
+      // Login-shaped failures get a way in, like twitch-auth-required's "open twitch"
+      const login = PENDING_LOGIN_LINKS[data.reason]
+      if (login) {
+        const btn = document.createElement('button')
+        btn.type = 'button'
+        btn.className = 'hs-notif-action hs-notif-action-secondary'
+        btn.textContent = login.label
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          try {
+            window.open(login.url, '_blank', 'noopener')
+          } catch (_) {}
+        })
+        el.append(' ', btn)
+      }
       return el
     },
     actions: {
@@ -925,7 +947,7 @@ const HsNotifs = (() => {
         label: t('mc_signed_out_action'),
         onClick: () => {
           try {
-            window.open('https://heatsync.org/api/auth/login', '_blank', 'noopener')
+            window.open(HS_LOGIN_URL, '_blank', 'noopener')
           } catch (_) {}
           return true
         },

@@ -15,9 +15,22 @@ let mentionAliases = new Set()
 let _mentionReList = null
 let _mentionReKey = ''
 
+// user_info → alias set + the per-platform self names (self-identity.js)
+function setMentionAliases(ui) {
+  mentionAliases = new Set()
+  if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
+  if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
+  if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
+  if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
+  setSelfHsNames(ui)
+}
+
 function getMentionTargets() {
   const out = []
   if (currentUsername) out.push(currentUsername)
+  // Signed into kick but not heatsync: no user_info aliases, so the kick
+  // session's own username is the only name that makes "@you" ping.
+  if (selfKickName && !out.includes(selfKickName)) out.push(selfKickName)
   // currentUsername is null on cross-origin tabs (youtube.com/kick.com popout
   // — twitch storage unreachable). authState.nick is the twitch nick from the
   // auth-irc handshake and works everywhere; without it, "@you" tags on the

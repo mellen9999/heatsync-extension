@@ -51,6 +51,7 @@ const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowage
   'getTooltipChannelContext',
   'subTenureMap',
   'currentUsername',
+  'isSelf',
   `${formatCompactSrc}\n${cardSrc}\nreturn { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowageRows }`,
 )(
   escapeHtml,
@@ -61,6 +62,7 @@ const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowage
   () => 'forsen',
   new Map([['forsen', new Map([['x', 14]])]]),
   'viewerlogin',
+  (m) => m.user.toLowerCase() === 'viewerlogin',
 )
 
 const upsertSrc = slice(

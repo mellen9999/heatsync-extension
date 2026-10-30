@@ -4645,12 +4645,28 @@ function tryOverlayOnZero(_input) {
   return true
 }
 
+// Platforms the next send reaches from the current tab — the same picks sendMessage makes.
+function composerLegs() {
+  let ch = null
+  if (currentTab === 'live') {
+    const lower = String(getLiveChannel() || '').toLowerCase()
+    ch = config.channels.find((c) => c.twitch?.toLowerCase() === lower || c.kick?.toLowerCase() === lower) || null
+    if (!ch) return { twitch: hostPlatform === 'twitch', kick: hostPlatform === 'kick', youtube: hostPlatform === 'yt' }
+  } else {
+    ch = config.channels.find((c) => c.id === currentTab)
+  }
+  if (!ch) return null
+  const st = resolveSendTargets(ch.sendTargets, { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube })
+  return { twitch: !!ch.twitch && st.twitch, kick: !!ch.kick && st.kick, youtube: !!ch.youtube && st.youtube }
+}
+
 function updateCharCount(precomputedText) {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
   const text = typeof precomputedText === 'string' ? precomputedText : getInputText()
   const len = text.length
-  const over = len > 500
+  const limit = composerCharLimit(composerLegs())
+  const over = len > limit
   input.classList.toggle('over-limit', over)
 
   // Highlight overflow chars for plain <input> using overlay div
@@ -4675,7 +4691,7 @@ function updateCharCount(precomputedText) {
         hl.textContent = ''
         const safeSpan = document.createElement('span')
         safeSpan.className = 'hl-safe'
-        const safeText = truncateSafe(text, 500)
+        const safeText = truncateSafe(text, limit)
         safeSpan.textContent = safeText
         const overSpan = document.createElement('span')
         overSpan.className = 'hl-over'

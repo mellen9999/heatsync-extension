@@ -18,13 +18,19 @@ import { join } from 'node:path'
 function loadSendTargets() {
   const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'send-targets.js'), 'utf8')
   const fn = new Function(
-    `${src}; return { resolveSendTargets, nextSendTargets, extractYoutubeVideoId, youtubeSendErrorMessage, ytReplyText }`,
+    `${src}; return { resolveSendTargets, nextSendTargets, extractYoutubeVideoId, youtubeSendErrorMessage, ytReplyText, composerCharLimit }`,
   )
   return fn()
 }
 
-const { resolveSendTargets, nextSendTargets, extractYoutubeVideoId, youtubeSendErrorMessage, ytReplyText } =
-  loadSendTargets()
+const {
+  resolveSendTargets,
+  nextSendTargets,
+  extractYoutubeVideoId,
+  youtubeSendErrorMessage,
+  ytReplyText,
+  composerCharLimit,
+} = loadSendTargets()
 
 const enMessages = JSON.parse(
   readFileSync(join(import.meta.dir, '..', 'src', '_locales', 'en', 'messages.json'), 'utf8'),
@@ -216,4 +222,11 @@ test('ytReplyText escapes regex-special characters in the author name', () => {
   expect(ytReplyText('hi there', 'a.b+c')).toBe('@a.b+c hi there')
   // Already-mentioned check must not let "." match any char
   expect(ytReplyText('@aXb+c hi there', 'a.b+c')).toBe('@a.b+c @aXb+c hi there')
+})
+
+test('composerCharLimit: youtube leg caps at 200, twitch/kick and unknown stay 500', () => {
+  expect(composerCharLimit({ youtube: true })).toBe(200)
+  expect(composerCharLimit({ twitch: true, youtube: true })).toBe(200)
+  expect(composerCharLimit({ twitch: true, kick: true })).toBe(500)
+  expect(composerCharLimit(null)).toBe(500)
 })

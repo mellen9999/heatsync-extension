@@ -75,6 +75,22 @@ function extractYoutubeVideoId(url) {
 // wall and skip the prepend rather than risk the send itself failing.
 const YT_CHAT_MAX_LEN = 200
 
+/** Per-platform chat message caps (chars). Twitch and Kick both allow 500. */
+const CHAT_MAX_LEN = { twitch: 500, kick: 500, youtube: YT_CHAT_MAX_LEN }
+
+/**
+ * The composer's length cap for what the next send reaches: the tightest cap
+ * among the active legs (a mirrored youtube leg is rejected past 200, not
+ * truncated). No leg known → the 500 default.
+ * @param {{twitch?: boolean, kick?: boolean, youtube?: boolean}|null|undefined} legs
+ * @returns {number}
+ */
+function composerCharLimit(legs) {
+  let lim = 500
+  for (const p of ['twitch', 'kick', 'youtube']) if (legs?.[p]) lim = Math.min(lim, CHAT_MAX_LEN[p])
+  return lim
+}
+
 /**
  * YouTube live chat has no reply-threading API — sending the bare text drops
  * the reply context entirely. Degrade gracefully with the standard YT-chat

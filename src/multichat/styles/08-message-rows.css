@@ -456,7 +456,7 @@
     .hs-mc-msg.hs-mc-notice-pin .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
     /* "new to chat" intro (msg-id=user-intro, + legacy ritual usernotice) =
        thread/event magenta with a chip — a person arriving is a community moment */
-    .hs-mc-msg.hs-mc-user-intro { border-left: 3px solid var(--hs-thread) !important; background: var(--hs-thread-tint); }
+    .hs-mc-msg.hs-mc-user-intro { background: var(--hs-thread-tint); }
     .hs-mc-msg.hs-mc-user-intro::before {
       content: 'new here';
       color: var(--hs-thread);
@@ -474,7 +474,6 @@
     }
     /* Power-up: message effect — static fx chip naming the effect. Zero motion
        by design: the paid effect is represented, never animated. */
-    .hs-mc-msg.hs-mc-animated { border-left: 3px solid var(--hs-thread-dim) !important; }
     .hs-mc-msg.hs-mc-animated::before {
       content: 'fx:' attr(data-hs-anim);
       color: var(--hs-thread);
@@ -502,8 +501,8 @@
     /* Errors / rejections = dim maroon */
     .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff0000; }
-    /* First-time chatter (Twitch first-msg=1) = Twitch magenta-purple */
-    .hs-mc-msg.hs-mc-first-msg { border-left: 3px solid #ff00ff; padding-left: 8px; background: #000000; }
+    /* First-time chatter (Twitch first-msg=1) — magenta ring, see the row-ring block */
+    .hs-mc-msg.hs-mc-first-msg { background: #000000; }
     /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */
@@ -573,16 +572,8 @@
     .hs-mc-automod-btn:active { background: #fff; color: #000; }
     .hs-mc-automod-status { font-size: 13px; color: var(--hs-gold); }
     .hs-mc-automod-status.hs-mc-automod-err { color: var(--hs-danger); }
-    .hs-mc-msg.hs-mc-redeemed {
-      background: #000000;
-      border-left: 3px solid var(--hs-plat-twitch);
-      padding-left: 8px;
-    }
-    .hs-mc-msg.hs-mc-highlighted {
-      background: var(--hs-gold-tint);
-      border-left: 3px solid var(--hs-gold);
-      padding-left: 8px;
-    }
+    .hs-mc-msg.hs-mc-redeemed { background: #000000; }
+    .hs-mc-msg.hs-mc-highlighted { background: var(--hs-gold-tint); }
     .hs-mc-redeem-label {
       color: var(--hs-plat-twitch);
       font-size: 13px;
@@ -590,7 +581,7 @@
       font-weight: 600;
     }
     /* First-message labels — same primitive as the redeem/highlight labels
-       above. Each one is the SAME colour as its row accent, so the bar and the
+       above. Each one is the SAME colour as its row ring, so the ring and the
        words are one signal instead of two: the colour stays for scanning a fast
        chat, the words are there the first time you meet it. */
     .hs-mc-first-label {
@@ -665,13 +656,10 @@
          earlier 0.30 alpha at -2px spread read as nothing on this background. */
       box-shadow: inset 2px 0 0 var(--hs-mention);
     }
-    .hs-mc-msg.hs-kw-match {
-      background: #000000;
-      box-shadow: inset 0 0 0 1px var(--hs-mention);
-    }
+    .hs-mc-msg.hs-kw-match { background: #000000; }
     /* Mention red wins over keyword-yellow when a row is both — "you got pinged"
        is the stronger signal. Higher specificity guarantees the override
-       regardless of source order; drops the keyword's yellow inset border too. */
+       regardless of source order; drops the keyword's yellow ring too. */
     .hs-mc-msg.mention.hs-kw-match,
     .hs-feed-msg.mention.hs-kw-match {
       background: var(--hs-mention-bg);
@@ -693,10 +681,29 @@
       box-shadow: inset 2px 0 0 #fff;
       background: #000000;
     }
+    /* Row ring — the rare rows that mean something (first message ever, highlight,
+       redeem, intro, fx, keyword, filter rule) outline the WHOLE row in their
+       colour. A left rail alone made the eye hunt the gutter for which line it
+       belonged to. Inset, so nothing moves.
+       The crowd-scale edges above (session-first, returning, raider) stay edges:
+       session-first alone marked ~60% of a big chat's rows, and boxing all of
+       them buried the rows that matter. Declared after them so a ring wins on a
+       row that is both.
+       One ring per row: later colour wins. Keyword and filter rule outrank the
+       events because those rows carry no label — the event's label still says
+       "first message" inside a yellow keyword ring. */
+    .hs-mc-msg.hs-mc-animated { --hs-row-ring: var(--hs-thread-dim); }
+    .hs-mc-msg.hs-mc-user-intro { --hs-row-ring: var(--hs-thread); }
+    .hs-mc-msg.hs-mc-first-msg { --hs-row-ring: #ff00ff; }
+    .hs-mc-msg.hs-mc-redeemed { --hs-row-ring: var(--hs-plat-twitch); }
+    .hs-mc-msg.hs-mc-highlighted { --hs-row-ring: var(--hs-gold); }
+    .hs-mc-msg.hs-kw-match { --hs-row-ring: var(--hs-mention); }
+    .hs-mc-msg.hs-mc-rule-highlight { --hs-row-ring: var(--hs-rule-hl, #fff); }
+    .hs-mc-msg:is(.hs-mc-animated, .hs-mc-user-intro, .hs-mc-first-msg, .hs-mc-redeemed, .hs-mc-highlighted, .hs-kw-match, .hs-mc-rule-highlight) {
+      box-shadow: inset 0 0 0 1px var(--hs-row-ring);
+    }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */
     .hs-mc-msg.hs-mc-rule-highlight {
-      border-left: 3px solid var(--hs-rule-hl, #fff);
-      padding-left: 4px;
       background: color-mix(in srgb, var(--hs-rule-hl, #fff) 12%, transparent);
     }
     .hs-mc-msg.tweet {

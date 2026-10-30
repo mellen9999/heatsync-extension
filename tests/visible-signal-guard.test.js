@@ -73,6 +73,25 @@ describe('a signal must differ from the surface it sits on', () => {
     )
   })
 
+  // 2026-10-29: the event rows moved off a left rail onto a whole-row ring —
+  // a rail alone made the eye hunt the gutter. Session-first stays an edge: it
+  // marks most rows of a big chat, and ringing those buries the rare ones.
+  test('event rows ring the whole row; session-first stays an edge', () => {
+    const flat = strip(rows)
+    const ring = flat.match(/\.hs-mc-msg:is\(([^)]*)\)\s*\{[^}]*box-shadow:\s*inset 0 0 0 1px var\(--hs-row-ring\)/)
+    expect(ring, 'nothing draws --hs-row-ring').toBeTruthy()
+    for (const cls of ['hs-mc-first-msg', 'hs-mc-highlighted', 'hs-mc-redeemed', 'hs-mc-user-intro']) {
+      expect(ring[1], `.${cls} is not in the ring list`).toContain(`.${cls}`)
+      expect(flat, `.${cls} declares no ring colour`).toMatch(
+        new RegExp(`\\.hs-mc-msg\\.${cls}\\s*\\{\\s*--hs-row-ring:`),
+      )
+      expect(flat, `.${cls} went back to a rail`).not.toMatch(
+        new RegExp(`\\.hs-mc-msg\\.${cls}\\s*\\{[^}]*border-left`),
+      )
+    }
+    expect(ring[1], 'session-first ringed — most rows of a big chat').not.toContain('.hs-first-msg')
+  })
+
   test('--hs-zebra is declared and is not the surface', () => {
     const zebra = palette.match(/--hs-zebra:\s*([^;]+);/)?.[1].trim()
     expect(zebra, '--hs-zebra is gone').toBeTruthy()

@@ -9255,6 +9255,22 @@ function isPaintLookupSafeId(id, platform) {
   return null
 }
 
+/**
+ * paint-space id for an id that is EITHER a raw platform id (live chat) OR a
+ * users.id (feed, threads, cards). users.id is already namespaced for kick and
+ * youtube accounts (kick_<n>, yt_<UC…>); mapped through isPaintLookupSafeId
+ * again it became kick_kick_<n> / failed ^UC, so those accounts' own paint and
+ * Plus mark never showed on their posts. The shapes can't collide with a raw
+ * id (raw kick is bare digits, raw youtube starts UC), so this is unambiguous.
+ * @param {unknown} id
+ * @param {unknown} platform
+ * @returns {string|null}
+ */
+function paintIdFor(id, platform) {
+  if (typeof id === 'string' && /^(kick_\d+|yt_UC[A-Za-z0-9_-]{22})$/.test(id)) return id
+  return isPaintLookupSafeId(id, platform)
+}
+
 // ── compiler ─────────────────────────────────────────────────────────────
 
 function safeAngle(angle) {
@@ -13860,6 +13876,12 @@ const earliest = (...dates) => {
   return best
 }
 
+// A youtube chatter is archived AS `@handle` (the @ is part of the stored name),
+// so a card that adds its own prints "@@handle". Exactly one @, any input; every
+// other platform's login is already bare. (Inline: this file mirrors into the
+// extension, which has no import.)
+const loginText = (platform, login) => (platform === 'youtube' && typeof login === 'string' && login ? `@${login.replace(/^@+/, '')}` : login)
+
 const ACTION_DEFS = [
   { key: 'follow', hotkey: 'f' },
   { key: 'whisper', hotkey: 'w' },
@@ -13927,7 +13949,10 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
       return {
         kind: 'chatter',
         identity: { platform: hint.platform, login: hint.login, userId: null, isAnonymous: false },
-        displayName: hint.login,
+        displayName: loginText(hint.platform, hint.login),
+        // the face they wear in chat — youtube has no profile call, so the
+        // archive's last-seen photo is all a chatter-only card can show
+        avatarUrl: payload.chatter?.avatarUrl || null,
         isOwnProfile: false,
         corpus: buildCorpusRow(payload.corpus, ctx, fmt),
         links: { chatterUrl: `/chatter/${encodeURIComponent(hint.platform)}/${encodeURIComponent(hint.login)}` },
@@ -14073,6 +14098,8 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
     ? payload.recent.map(r => ({
         timestamp: r.timestamp,
         channel: r.channel || null,
+        // youtube lines carry the channel's name next to its archive key
+        channelLabel: r.channel_label || null,
         message: r.message || '',
         messageHtml: r.message_html || null,
         permalink: r.permalink || null,
@@ -14100,7 +14127,7 @@ function hsCardModel(payload = {}, ctx = {}, deps) {
     isOwnProfile,
     displayName: profile.display_name || profile.displayName || 'Anonymous',
     color: profile.color || profile.userColor || '#ffffff',
-    avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || '/anon.webp',
+    avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || payload.chatter?.avatarUrl || '/anon.webp',
     pronouns: ctx.pronouns || profile.pronouns || null,
     plusSince: profile.plus_since || null,
     flair,
@@ -14134,12 +14161,15 @@ function buildCorpusRow(corpus, ctx, fmt) {
   // in #channel", never a bare channel name with no label (read as a typo)
   // and never "most in" (that would claim something about VOLUME this field
   // doesn't carry).
-  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} in #${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+  // youtube channels are keyed by a machine id; corpus.labels maps those keys to
+  // the channel's name (absent for twitch/kick, whose key IS the name)
+  const name = (c) => corpus.labels?.[c] || c
+  if (corpus.firstDay) parts.push(corpus.firstChannel ? `since ${corpus.firstDay} in #${name(corpus.firstChannel)}` : `since ${corpus.firstDay}`)
   const skip = ctx.channel ? String(ctx.channel).toLowerCase() : null
   const also = (corpus.also || []).filter(c => c.toLowerCase() !== skip)
   let alsoText = null
   if (also.length) {
-    const shown = also.slice(0, 3).map(c => `#${c}`).join(' ')
+    const shown = also.slice(0, 3).map(c => `#${name(c)}`).join(' ')
     alsoText = also.length > 3 ? `${shown} +${also.length - 3}` : shown
   }
   if (!parts.length && !alsoText) return null
@@ -14280,7 +14310,11 @@ function hsCardHtml(model, opts) {
 function renderChatter(model, { esc, variant, navInBar }) {
   const parts = []
   parts.push(closeButtonHtml(variant))
-  parts.push(`<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`)
+  const name = `<div class="hs-card-name">${esc(model.displayName)}<span class="hs-card-plat">${esc(model.identity.platform)}</span></div>`
+  // a chatter-only card has a face only when the archive has seen one (youtube)
+  parts.push(model.avatarUrl
+    ? `<div class="hs-card-identity"><img class="hs-card-avatar" src="${esc(model.avatarUrl)}" alt="${esc(model.displayName)}" data-imgerr-src="/anon.webp">${name}</div>`
+    : name)
   if (model.corpus) parts.push(renderCorpusRow(model.corpus, esc))
   if (!navInBar) parts.push(renderNavRow(model, esc, variant, false))
   return `<div class="hs-card hs-card-${esc(variant)} hs-card-chatter">${parts.join('')}</div>`
@@ -14338,7 +14372,7 @@ function renderRecent(recent, esc) {
   const rows = [...recent].reverse().map(r => {
     const ts = hsCardLogTime(r.timestamp)
     const tsEl = `<span class="hs-card-log-ts">${esc(ts)}</span>`
-    const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channel)}</span>` : ''
+    const ch = r.channel ? `<span class="hs-card-log-ch">#${esc(r.channelLabel || r.channel)}</span>` : ''
     let body = unlink(r.messageHtml) || esc(r.message)
     // partial links ("watch?v=…") read as links here too — defused again below so
     // the row stays inert, but they carry the link class/colour
@@ -15299,7 +15333,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '57da6a6d7499' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '7b344b6df4e6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

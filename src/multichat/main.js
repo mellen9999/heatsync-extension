@@ -3779,13 +3779,29 @@
         _paneNote(pane, text)
         pane.prepend(hub)
       }
+      // Which platform is this name? Live: the page's. A channel tab: whichever leg owns
+      // the name — a kick slug is never looked up as a twitch login.
+      const entry = ctx.tab === 'live' ? null : getChannelById(ctx.tab)
+      const plat =
+        ctx.tab === 'live'
+          ? ch === String(getLiveChannel() || '').toLowerCase()
+            ? hostPlatform
+            : 'twitch'
+          : entry?.twitch?.toLowerCase() === ch
+            ? 'twitch'
+            : entry?.kick?.toLowerCase() === ch
+              ? 'kick'
+              : entry && !entry.twitch && !entry.kick && entry.youtube
+                ? 'yt'
+                : 'twitch'
+      if (plat === 'yt') return note('status covers twitch and kick channels')
       note(`fetching #${ch}…`)
       let panel = null
       try {
-        panel = await buildChatStatusPanel(ch)
+        panel = plat === 'kick' ? await buildKickStatusPanel(ch) : await buildChatStatusPanel(ch)
       } catch (_) {}
       if (!pane.isConnected) return
-      if (!panel) return note(`could not fetch #${ch} (offline or not on twitch?)`)
+      if (!panel) return note(`could not fetch #${ch} (offline or not on ${plat}?)`)
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(hub, panel)
     },

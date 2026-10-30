@@ -7213,7 +7213,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'status' || cmd === 'modes') {
     const arg = rest.trim().toLowerCase().replace(/^#/, '')
     const own = String(mcSubCells(currentTab).length ? subChannelOf(currentTab) : '').toLowerCase()
-    const ch = arg && /^[a-z0-9_]{2,40}$/.test(arg) ? arg : /^[a-z0-9_]{2,40}$/.test(own) ? own : null
+    const ch = arg && /^[a-z0-9_-]{2,40}$/.test(arg) ? arg : /^[a-z0-9_-]{2,40}$/.test(own) ? own : null
     if (!ch) {
       showToast(t('mc_input_status_needs_channel'), 'error')
       return true

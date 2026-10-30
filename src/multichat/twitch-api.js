@@ -2276,6 +2276,74 @@ async function buildChatStatusPanel(channel) {
   return panel
 }
 
+// /status for a kick channel: kick's own public channel record (same endpoint the
+// profile card reads), never a twitch lookup of the kick slug. Kick exposes the
+// room's modes as on/off, so that is all the rows say. null when it can't be read.
+async function buildKickStatusPanel(slug) {
+  const ch = (slug || '').toString().toLowerCase()
+  if (!ch || !/^[a-z0-9_-]{2,40}$/.test(ch)) return null
+  let d = null
+  try {
+    const res = await fetch(`https://kick.com/api/v2/channels/${encodeURIComponent(ch)}`, { credentials: 'omit' })
+    d = res.ok ? await res.json().catch(() => null) : null
+  } catch (_) {}
+  if (!d?.slug && !d?.id) return null
+
+  const panel = document.createElement('div')
+  panel.className = 'hs-mc-status-panel'
+  const line = (cls, text) => {
+    const el = document.createElement('div')
+    el.className = cls
+    el.textContent = text
+    panel.appendChild(el)
+    return el
+  }
+  line('hs-mc-status-title', `#${d.user?.username || d.slug || ch}`)
+  const live = d.livestream
+  if (live) {
+    const mins = Math.max(0, Math.floor((Date.now() - new Date(String(live.created_at).replace(' ', 'T') + 'Z').getTime()) / 60000))
+    const up = Number.isFinite(mins) ? (mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`) : ''
+    const viewers = (live.viewer_count || 0).toLocaleString('en-US')
+    line('hs-mc-status-sub live', `LIVE · ${up ? `${up} · ` : ''}${viewers} viewers`)
+    if (live.session_title) line('hs-mc-status-streamtitle', `"${live.session_title}"`)
+    const game = live.categories?.[0]?.name
+    if (game) line('hs-mc-status-meta', game)
+  } else {
+    line('hs-mc-status-sub off', 'OFFLINE')
+  }
+  line('hs-mc-status-section', t('mc_cm_title'))
+  const grid = document.createElement('div')
+  grid.className = 'hs-mc-status-modes'
+  const cr = d.chatroom
+  if (cr) {
+    const modes = [
+      [t('mc_cm_emote'), cr.emotes_mode?.enabled === true || cr.emotes_mode === true],
+      [t('mc_cm_follower'), cr.followers_mode?.enabled === true || cr.followers_mode === true],
+      [t('mc_cm_sub'), cr.subscribers_mode?.enabled === true || cr.subscribers_mode === true],
+      [t('mc_cm_slow'), cr.slow_mode?.enabled === true || cr.slow_mode === true],
+    ]
+    for (const [label, on] of modes) {
+      const row = document.createElement('div')
+      row.className = 'hs-mc-status-row'
+      const k = document.createElement('span')
+      k.className = 'hs-mc-status-key'
+      k.textContent = label
+      const v = document.createElement('span')
+      v.className = `hs-mc-status-val ${on ? 'on' : 'off'}`
+      v.textContent = on ? t('mc_cm_on') : t('mc_cm_off')
+      row.append(k, v)
+      grid.appendChild(row)
+    }
+  } else {
+    const empty = document.createElement('div')
+    empty.className = 'hs-mc-status-note'
+    empty.textContent = t('mc_cm_unknown')
+    grid.appendChild(empty)
+  }
+  panel.appendChild(grid)
+  return panel
+}
+
 // Best-effort own twitch login — read Twitch's stored user blob if we're on
 // twitch.tv; otherwise null. Used by renderQuickLinks to gate broadcaster-only
 // dashboard deep-links (they only resolve for the channel owner).

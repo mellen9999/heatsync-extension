@@ -53,7 +53,7 @@ describe('live logs room + badge art', () => {
     expect(badgePath.test('https://evil.example/b/twitch/x')).toBe(false)
   })
   test('the view joins its ulog room and leaves on close', () => {
-    expect(SRC).toMatch(/`ulog:\$\{st\.platform\}:\$\{st\.username\}`/)
+    expect(SRC).toMatch(/`ulog:\$\{st\.platform\}:\$\{clRoomName\(st\.username\)\}`/)
     expect(SRC).toMatch(/function dropChatLogsState\(\) \{\s*activeChatLogs = null\s*clLiveRoomSync\(\)/)
   })
 })

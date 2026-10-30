@@ -133,7 +133,8 @@
   }
 
   globalThis.__hsKickCssFix = { rewrite, plan }
-  if (typeof document === 'undefined' || !/(^|\.)kick\.com$/.test(location.hostname)) return
+  // a test loads this for rewrite/plan alone; the page work needs both a page and its address
+  if (typeof document === 'undefined' || typeof location === 'undefined' || !/(^|\.)kick\.com$/.test(location.hostname)) return
 
   const api = typeof browser !== 'undefined' ? browser : chrome
   const KICK_CSS = /^https:\/\/assets\.kick\.com\/[\w./%-]+\.css(\?[\w=&.%-]*)?$/

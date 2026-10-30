@@ -263,47 +263,55 @@ const DEBUG =
 // READABLE NAME COLOR (luminance boost)
 // ============================================
 
+/** WCAG 2.x relative luminance of a #rrggbb string (sRGB-linearised). */
+function hexLuminance(h6) {
+  const lin = [0, 2, 4]
+    .map((i) => parseInt(h6.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+// The darkest ground a name sits on is the zebra stripe (--hs-zebra in
+// 00-palette.css), not the black row: a lift calibrated to black left #0000ff
+// at 1.1:1 and #8a2be2 at 1.6:1 on every other line. A name clears 3:1 on the
+// stripe — the same legibility floor painted names are held to (paint-core
+// PAINT_MIN_CONTRAST) — which is 6.5:1 on the black rows. Expressed as the
+// black-relative ratio so the lift below measures one ground.
+const NAME_STRIPE = '#444444'
+const NAME_MIN_RATIO = (3 * (hexLuminance(NAME_STRIPE.slice(1)) + 0.05)) / 0.05
+
 /**
- * Boost a hex color so it's readable on a dark/black bg.
- * Uses WCAG relative luminance — catches pure blue (#0000ff) which has
- * HSL L=0.5 but perceptual L≈0.07, invisible on black.
- * Raises HSL L (preserving hue + saturation) until relL clears threshold.
+ * Lift a name colour until it reads on the chat background, stripe included.
+ * Real relative luminance; hue and saturation kept, only HSL lightness rises,
+ * in small steps, so a dark purple stays purple. White always clears the bar.
+ * Same algorithm as the site's color-utils boostReadability.
  * @param {string} hex - "#rgb" or "#rrggbb"
- * @param {number} [minRelL=0.25] - minimum WCAG relative luminance (0..1)
- * @returns {string}
+ * @param {number} [minRatio=NAME_MIN_RATIO] - minimum contrast ratio against #000
+ * @returns {string} same colour if already readable / malformed, else lifted hex
  */
-function boostReadability(hex, minRelL = 0.25) {
+function boostReadability(hex, minRatio = NAME_MIN_RATIO) {
   if (typeof hex !== 'string') return hex
   const m = hex.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
   if (!m) return hex
   let h6 = m[1]
   if (h6.length === 3) h6 = h6[0] + h6[0] + h6[1] + h6[1] + h6[2] + h6[2]
+  // contrast vs black = (L + 0.05) / 0.05, so the bar is a luminance floor
+  const minL = minRatio * 0.05 - 0.05
+  if (hexLuminance(h6) >= minL) return hex
   const r = parseInt(h6.slice(0, 2), 16) / 255
   const g = parseInt(h6.slice(2, 4), 16) / 255
   const b = parseInt(h6.slice(4, 6), 16) / 255
-  const relL = 0.2126 * r + 0.7152 * g + 0.0722 * b
-  if (relL >= minRelL) return hex
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b)
-  let h,
-    s,
-    l = (max + min) / 2
-  if (max === min) {
-    h = 0
-    s = 0
-  } else {
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  let h = 0
+  let s = 0
+  if (max !== min) {
     const d = max - min
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0)
-        break
-      case g:
-        h = (b - r) / d + 2
-        break
-      default:
-        h = (r - g) / d + 4
-    }
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0)
+    else if (max === g) h = (b - r) / d + 2
+    else h = (r - g) / d + 4
     h /= 6
   }
   const hue2rgb = (p, q, t) => {
@@ -314,24 +322,21 @@ function boostReadability(hex, minRelL = 0.25) {
     if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
     return p
   }
-  const rgbAt = (ll) => {
-    const q = ll < 0.5 ? ll * (1 + s) : ll + s - ll * s
-    const p = 2 * ll - q
-    return [hue2rgb(p, q, h + 1 / 3), hue2rgb(p, q, h), hue2rgb(p, q, h - 1 / 3)]
-  }
-  let lT = Math.max(l, 0.5)
-  let rr, gg, bb
-  for (let i = 0; i < 9; i++) {
-    ;[rr, gg, bb] = rgbAt(lT)
-    if (0.2126 * rr + 0.7152 * gg + 0.0722 * bb >= minRelL) break
-    if (lT >= 0.85) break
-    lT = Math.min(0.85, lT + 0.05)
-  }
   const toByte = (x) =>
     Math.round(x * 255)
       .toString(16)
       .padStart(2, '0')
-  return `#${toByte(rr)}${toByte(gg)}${toByte(bb)}`
+  const hexAt = (ll) => {
+    const q = ll < 0.5 ? ll * (1 + s) : ll + s - ll * s
+    const p = 2 * ll - q
+    return toByte(hue2rgb(p, q, h + 1 / 3)) + toByte(hue2rgb(p, q, h)) + toByte(hue2rgb(p, q, h - 1 / 3))
+  }
+  // smallest lift that clears the bar — a dim green becomes a readable green
+  for (let lT = l + 0.02; lT < 1; lT += 0.02) {
+    const out = hexAt(lT)
+    if (hexLuminance(out) >= minL) return `#${out}`
+  }
+  return '#ffffff'
 }
 
 function log(...args) {
@@ -1228,6 +1233,7 @@ export {
   liveIdentityCounterpart,
   liveOrd,
   log,
+  NAME_STRIPE,
   OVERFLOW_MIRROR_KEYS,
   ordOf,
   outsideTags,

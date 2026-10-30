@@ -63,6 +63,8 @@ const EXEMPT_FILES = new Map([
 
 /** Per-file hexes that are platform DATA, not our chrome. */
 const EXEMPT_HEX = new Map([
+  // the name-contrast lift measures against the stripe; pinned to --hs-zebra by tests/utils-extra.test.js
+  ['src/lib/utils.js', new Set(['444444'])],
   [
     'chrome/background.js',
     new Set([

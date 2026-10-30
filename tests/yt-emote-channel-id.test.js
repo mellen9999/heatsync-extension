@@ -67,7 +67,7 @@ test('the background tells the iframe which owner is its own', () => {
 })
 
 test('owner matching ignores @ and case but never matches an empty key', () => {
-  const m = yc.match(/const normOwner = [^\n]+\n\s+const ownedByMe = [^\n]+/)
+  const m = yc.match(/const normOwner =[\s\S]*?const ownedByMe = [^\n]+/)
   const f = new Function('myOwnerKey', `${m[0]}; return ownedByMe`)
   expect(f('')('@abc')).toBe(false)
   expect(f('@DrDisrespect')('drdisrespect')).toBe(true)

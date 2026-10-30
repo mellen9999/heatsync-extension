@@ -57,6 +57,7 @@ const MOD_BUTTON_CATALOG = {
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
+    notKick: true, // kick's shortest timeout is a minute: a "purge" there would mute for 60s
   },
   ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
   unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
@@ -240,6 +241,7 @@ function gateModButtons(ctx) {
     let ok = !!def
     if (ok && def.needsMsgId && !ctx.msgId) ok = false
     if (ok && def.twitchOnly && ctx.platform && ctx.platform !== 'twitch') ok = false
+    if (ok && def.notKick && ctx.platform === 'kick') ok = false
     if (ok && !ctx.user) ok = false
     btn.style.display = ok ? '' : 'none'
     if (ok) anyVisible = true
@@ -374,6 +376,8 @@ function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
       platform: 'kick',
       id: `hs-synth-kick-mod-${f.noticeType}-${slug}-${tgtLc || msgId || ''}-${Date.now()}`,
       targetUser: tgtLc,
+      // a deleted message dims its row (same field the twitch notice carries)
+      targetMsgId: action === 'delete' ? msgId || '' : undefined,
       isSynthetic: true,
     }
     buf.push(m)

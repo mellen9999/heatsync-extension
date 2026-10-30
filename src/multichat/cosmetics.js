@@ -218,8 +218,10 @@ async function flushYtNameLookups() {
         path: `/api/profile/${encodeURIComponent(key)}`,
         method: 'GET',
       })
-      const tid = resp?.data?.twitch_id || resp?.twitch_id || null
-      const tuser = resp?.data?.twitch_username || resp?.twitch_username || null
+      // /api/profile answers { profile: { twitch_id, twitch_username, ... } }
+      const prof = resp?.data?.profile || resp?.data || resp || {}
+      const tid = prof.twitch_id || null
+      const tuser = prof.twitch_username || null
       evictYtNameCache()
       ytNameToTwitchId.set(key, tid ? String(tid) : null)
       ytNameToTwitchUsername.set(key, tuser ? String(tuser).toLowerCase() : null)
@@ -445,6 +447,11 @@ async function flushKickNameLookups() {
       // existing updateCosmeticsInPlace pipeline paints by uid.
       setMcCosmetic(tid, { paint: c.paint || null, badge: c.badge || null })
       changedIds.push(tid)
+    } else if (paintUid && (c?.paint || c?.badge)) {
+      // A 7TV account linked to kick only (no twitch connection): keep its paint/badge
+      // under the namespaced kick uid (never the twitch-id space) like yt's google id.
+      setMcCosmetic(paintUid, { paint: c.paint || null, badge: c.badge || null })
+      changedIds.push(paintUid)
     }
     // Backfill data-uid (twitch) / data-hs-paint-uid (kick paint) on rendered
     // Kick msgs by lowercase username so updateCosmeticsInPlace / the HS-paint
@@ -785,7 +792,7 @@ function updateCosmeticsInPlace(userIds) {
       // in _uidIndex either. Find its rows via the parallel data-hs-paint-uid
       // attribute social.js already stamps, same technique updateHsPaintsInPlace
       // uses for kick_ ids.
-      const isNamespacedUid = uid.startsWith('yt_')
+      const isNamespacedUid = uid.startsWith('yt_') || uid.startsWith('kick_')
       const divSet = isNamespacedUid
         ? container.querySelectorAll(`[data-hs-paint-uid="${CSS.escape(uid)}"]`)
         : _uidIndex.get(uid)

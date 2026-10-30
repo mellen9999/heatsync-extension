@@ -40,3 +40,11 @@ test('kick and yt name lookups file the RESOLVED twitch id', () => {
   expect(cos).toContain("knownUserIds.set(userKey(key, 'kick'), tid)")
   expect(cos).toContain("knownUserIds.set(userKey(key, 'youtube'), tidStr)")
 })
+
+test('7tv cosmetics: profile twitch_id read from data.profile; kick-only links keep their paint', () => {
+  const cos = readFileSync(new URL('../src/multichat/cosmetics.js', import.meta.url), 'utf8')
+  expect(cos).toContain('resp?.data?.profile')
+  expect(cos).toContain('setMcCosmetic(paintUid, { paint: c.paint || null, badge: c.badge || null })')
+  expect(cos).toContain("uid.startsWith('yt_') || uid.startsWith('kick_')")
+  expect(MAIN).toContain('getMcPaintStyle(uidTwitch || m.hsPaintUid)')
+})

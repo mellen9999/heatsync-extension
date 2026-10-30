@@ -8395,7 +8395,9 @@
     const hsPaint =
       (uidTwitch ? hsPaintRender(uidTwitch, m.user) : null) ||
       (m.hsPaintUid ? hsPaintRender(m.hsPaintUid, m.user) : null)
-    const paintStyle = hsPaint ? '' : uidTwitch ? getMcPaintStyle(uidTwitch) : ''
+    // 7TV paint: twitch-space uid, else the kick_/yt_ namespaced uid (so a re-render
+    // keeps a paint that only resolved through the name lookups)
+    const paintStyle = hsPaint ? '' : uidTwitch || m.hsPaintUid ? getMcPaintStyle(uidTwitch || m.hsPaintUid) : ''
     // Plus tenure ("+5mo"/"+3y" beside an active Plus member's name) — an
     // identity signal, not a cosmetic, so it resolves regardless of the
     // showNamePaints setting. Same uid precedence as hsPaint above: resolved

@@ -214,6 +214,19 @@ async function _twitchFollow(targetID, follow, disableNotifications, _targetSlug
   return followTwitchUserById(targetID, follow, disableNotifications)
 }
 
+// Does the viewer have a session on this platform at all? A kick-only or
+// twitch-only user must not get "follow queued" toasts (or queue entries that
+// can never drain) for the platform they don't use. Both probes read the
+// platform's own cookies in the background; a failed probe reads as no session.
+async function _hasPlatformSession(platform) {
+  try {
+    if (platform === 'twitch') return !!(await getTwitchAuthTokenAsync()).token
+    return !!(await safeSendMessage({ type: 'kick_session_status' }))?.loggedIn
+  } catch (_) {
+    return false
+  }
+}
+
 // ─── Main entry: called from pcToggleFollow + pcToggleBlock ─────────────────
 //
 // target shape: { twitch_id, twitch_username, kick_username, youtube_channel_id, youtube_username }
@@ -230,7 +243,9 @@ async function propagateFollow(follow, target) {
     kick: { skipped: settings.kick ? 'no kick username' : 'disabled' },
   }
 
-  if (settings.twitch && target.twitch_id) {
+  if (settings.twitch && target.twitch_id && !(await _hasPlatformSession('twitch'))) {
+    out.twitch = { skipped: 'no twitch session' }
+  } else if (settings.twitch && target.twitch_id) {
     const verb = follow ? 'follow' : 'unfollow'
     const r = await _twitchFollow(target.twitch_id, follow, !settings.twitchNotifyTarget, target.twitch_username)
     if (r?.ok) {
@@ -261,7 +276,9 @@ async function propagateFollow(follow, target) {
     }
   }
 
-  if (settings.kick && target.kick_username) {
+  if (settings.kick && target.kick_username && !(await _hasPlatformSession('kick'))) {
+    out.kick = { skipped: 'no kick session' }
+  } else if (settings.kick && target.kick_username) {
     const verb = follow ? 'follow' : 'unfollow'
     const r = await _kickFollow(target.kick_username, follow)
     if (r?.ok) {

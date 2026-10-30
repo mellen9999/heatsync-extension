@@ -15051,6 +15051,10 @@
             if (!hermesToggles?.raid) return
             text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
             eventClass = 'event-raid'
+          } else if (msg.eventType === 'stream:poll-start') {
+            if (!hermesToggles?.poll) return
+            text = `[${channel}] \u25C6 new poll up${msg.title ? ` \u2014 ${String(msg.title)}` : ''}`
+            eventClass = 'event-poll'
           } else if (msg.eventType === 'stream:hype-start') {
             if (!hermesToggles?.hype) return
             text = `[${channel}] \u25C6 hype train started`

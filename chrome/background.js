@@ -15060,6 +15060,10 @@ function _kpConnect() {
       _kpHandleModEvent(d, 'unban')
     } else if (d.event === 'KicksGifted') {
       _kpHandleKicksEvent(d)
+    } else if (typeof d.event === 'string' && d.event.includes('StreamHostEvent')) {
+      _kpHandleHostEvent(d)
+    } else if (typeof d.event === 'string' && d.event.includes('PollUpdateEvent')) {
+      _kpHandlePollEvent(d)
     } else if (typeof d.event === 'string' && d.event.includes('PinnedMessageCreatedEvent')) {
       _kpHandlePinEvent(d, true)
     } else if (typeof d.event === 'string' && d.event.includes('PinnedMessageDeletedEvent')) {
@@ -15356,7 +15360,7 @@ function _kpHandleModEvent(d, kind) {
 // match the relay's exactly (server kick-stream-webhooks handleSubscription*)
 // so the overlay has one render path, and irc.js dedups source-blind when a
 // channel happens to have both transports.
-const _kpEventStats = { subs: 0, gifts: 0, pins: 0, kicks: 0, dropped: 0 }
+const _kpEventStats = { subs: 0, gifts: 0, pins: 0, kicks: 0, raids: 0, polls: 0, dropped: 0 }
 function _kpEventParse(d) {
   try {
     return typeof d.data === 'string' ? JSON.parse(d.data) : d.data
@@ -15490,6 +15494,54 @@ function _kpHandleKicksEvent(d) {
     giftName: ev.gift?.name || '',
     message: typeof ev.message === 'string' ? ev.message : '',
   })
+}
+
+// Raids/hosts + polls. Both ride the chatroom channel. They go out as the same
+// stream_event the server's stream:* push uses, so the overlay renders them
+// with the twitch raid/poll row builders (main.js stream_event listener) and
+// its 60s text dedup collapses a channel that also gets them from the server.
+// StreamHostEvent: { chatroom_id, optional_message, number_viewers, host_username }
+function _kpHandleHostEvent(d) {
+  const ev = _kpEventParse(d)
+  const slug = ev && _kpEventSlug(d)
+  if (!slug) return
+  const target = String(ev.host_username || '').slice(0, 40)
+  if (!target) {
+    _kpEventStats.dropped++
+    return
+  }
+  _kpEventStats.raids++
+  broadcastToTabs({
+    type: 'stream_event',
+    eventType: 'stream:raid',
+    platform: 'kick',
+    channel: slug,
+    target,
+    viewers: Math.max(0, Number(ev.number_viewers) || 0),
+  })
+}
+
+// PollUpdateEvent fires on every vote tick, not just at creation. Announce a
+// poll once: key on slug+title, remembered for the poll's duration (+ slack).
+const _kpPollSeen = new Map()
+function _kpHandlePollEvent(d) {
+  const ev = _kpEventParse(d)
+  const slug = ev && _kpEventSlug(d)
+  const title = String(ev?.poll?.title || '')
+    .slice(0, 120)
+    .trim()
+  if (!slug || !title) {
+    if (slug) _kpEventStats.dropped++
+    return
+  }
+  const now = Date.now()
+  const key = `${slug}|${title}`
+  if ((_kpPollSeen.get(key) || 0) > now) return
+  const secs = Math.min(3600, Math.max(30, Number(ev.poll.duration) || 0))
+  _kpPollSeen.set(key, now + (secs + 30) * 1000)
+  if (_kpPollSeen.size > 50) for (const [k, until] of _kpPollSeen) if (until <= now) _kpPollSeen.delete(k)
+  _kpEventStats.polls++
+  broadcastToTabs({ type: 'stream_event', eventType: 'stream:poll-start', platform: 'kick', channel: slug, title })
 }
 
 async function kickPusherJoin(slug) {

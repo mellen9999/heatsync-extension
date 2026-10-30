@@ -15,7 +15,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const DIR = join(import.meta.dir, '..', 'src', 'multichat', 'styles')
-const MAX = 103
+const MAX = 99
 
 test(':has() rules in the extension styles only go down', () => {
   let n = 0

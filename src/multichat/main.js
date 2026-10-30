@@ -3833,6 +3833,31 @@
 
     // native-chat escape hatch removed (too fragile across chat positions/boot).
 
+    // A clickable notice row (stream event, inline DM, moment) holds a name that
+    // is its own link. On the name only the name inverts, so the row is flagged
+    // and the universal row hover stands down (17-platform-position.css). An
+    // attribute on one row, not :has(:hover) — that restyled ~28k elements on
+    // every hover (300ms vs 10ms, traced 2026-10-30).
+    const hoveredName = (el) => el?.closest?.('.hs-mc-user, a')
+    container.addEventListener(
+      'mouseover',
+      (e) => {
+        const row = hoveredName(e.target)?.closest('[data-hs-clickable]')
+        if (row && !('hsNameHover' in row.dataset)) row.dataset.hsNameHover = ''
+      },
+      { signal: mcSignal },
+    )
+    container.addEventListener(
+      'mouseout',
+      (e) => {
+        const name = hoveredName(e.target)
+        if (!name || name.contains(e.relatedTarget)) return
+        const row = name.closest('[data-hs-clickable]')
+        if (row) delete row.dataset.hsNameHover
+      },
+      { signal: mcSignal },
+    )
+
     // Event delegation for tab clicks
     container.addEventListener('click', (e) => {
       const tab = e.target.closest('.hs-mc-tab')

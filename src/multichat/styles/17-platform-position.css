@@ -37,14 +37,16 @@
        hover rule, which is exactly the per-class allowlist this was meant to
        replace, and is why it went unnoticed. Targets #hs-mc-container now.
        ============================================ */
-    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not(:has(:where(a, .hs-mc-user):hover)):hover,
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not([data-hs-name-hover]):hover,
     #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible {
       background: #fff !important;
       color: #000 !important;
     }
     /* A clickable row holding a name or a link (stream event, inline DM, moment):
        the name is its own destination, so on the name only the name inverts and
-       the row stays as it is. Anywhere else on the row, the whole row inverts. */
+       the row stays as it is. Anywhere else on the row, the whole row inverts.
+       main.js sets data-hs-name-hover on the row while the pointer is on the
+       name — never a has-hover selector here, it restyled the whole panel per hover. */
     #hs-mc-container [data-hs-clickable] :where(a, .hs-mc-user):hover {
       background: #fff !important;
       color: #000 !important;
@@ -55,7 +57,7 @@
       color: #000 !important;
       -webkit-text-fill-color: #000 !important;
     }
-    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not(:has(:where(a, .hs-mc-user):hover)):hover *,
+    #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not([data-hs-name-hover]):hover *,
     #hs-mc-container :where(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [onclick], [data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible * {
       color: #000 !important;
       fill: #000 !important;

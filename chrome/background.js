@@ -15511,12 +15511,14 @@ function _kpHandleHostEvent(d) {
     return
   }
   _kpEventStats.raids++
+  // The host event lands in the RECEIVING channel's chatroom: host_username is
+  // the raider coming in, not a channel this one raided (that is stream:raid).
   broadcastToTabs({
     type: 'stream_event',
-    eventType: 'stream:raid',
+    eventType: 'stream:raid-in',
     platform: 'kick',
     channel: slug,
-    target,
+    from: target,
     viewers: Math.max(0, Number(ev.number_viewers) || 0),
   })
 }

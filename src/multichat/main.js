@@ -205,9 +205,37 @@
    * snapshot (i.e. "nothing you follow is live", the normal case) skipped the
    * update entirely so the stale dot became permanent. Deriving membership at
    * read time means either source refreshing is enough to clear a dot. */
-  function isChannelLive(name) {
+  // Both sets hold `platform:name` keys (a twitch "xqc" being live says nothing about
+  // kick "xqc"). `plat` omitted = live on ANY platform (event rows that carry no platform).
+  const _LIVE_PLATS = ['twitch', 'kick', 'youtube']
+  const liveKey = (plat, name) => `${plat === 'yt' ? 'youtube' : plat}:${String(name || '').toLowerCase()}`
+  function liveSetHas(set, name, plat) {
+    if (!set || !name) return false
+    const n = String(name).toLowerCase()
+    return plat ? set.has(liveKey(plat, n)) : _LIVE_PLATS.some((p) => set.has(`${p}:${n}`))
+  }
+  /** bare names of one platform out of a keyed live set */
+  function liveNames(set, plat) {
+    const pre = `${plat}:`
+    return new Set([...(set || [])].filter((k) => k.startsWith(pre)).map((k) => k.slice(pre.length)))
+  }
+  function isChannelLive(name, plat) {
     if (!name) return false
-    return (_swLiveSet ? _swLiveSet.has(name) : false) || liveChannelSet.has(name)
+    return liveSetHas(_swLiveSet, name, plat) || liveSetHas(liveChannelSet, name, plat)
+  }
+  /** youtube @handle of a channel tab's youtube link ('' when it holds none) */
+  const tabYtHandle = (ch) => (String(ch?.youtube || '').match(/@([^/?#]+)/)?.[1] || '').toLowerCase()
+  /** is this saved tab live per the keyed sets — each leg judged on its own platform */
+  function tabIsLiveFromSets(ch) {
+    const tw = ch.twitch?.toLowerCase()
+    const ki = ch.kick?.toLowerCase()
+    const yt = tabYtHandle(ch)
+    return (
+      isChannelLive(tw, 'twitch') ||
+      isChannelLive(ki, 'kick') ||
+      isChannelLive(yt, 'youtube') ||
+      (!tw && !ki && !ch.youtube && isChannelLive(ch.id?.toLowerCase(), 'twitch'))
+    )
   }
   // Channels we've already surfaced as "went live" this session. A channel can
   // only legitimately go off→on once per session — every later stream:online
@@ -6244,12 +6272,9 @@
       // channel whose twitch handle differs from its kick slug would otherwise
       // miss the dot. SW followed snapshot already populates kick slugs into
       // liveChannelSet at line ~8908.
-      if (liveChannelSet.size > 0) {
-        const tw = ch.twitch?.toLowerCase()
-        const ki = ch.kick?.toLowerCase()
-        const idLower = ch.id?.toLowerCase()
-        const isLive = isChannelLive(tw) || isChannelLive(ki) || (!tw && !ki && isChannelLive(idLower))
-        tab.dataset.live = String(isLive)
+      if (liveChannelSet.size > 0 || _swLiveSet?.size > 0) {
+        if (tabIsLiveFromSets(ch)) tab.dataset.live = 'true'
+        else if (ch.twitch || ch.kick || !ch.youtube) tab.dataset.live = 'false'
       }
       // YT-only tabs aren't in liveChannelSet (which is Twitch-only), so
       // re-derive live state from the resolved YouTube subscription. This
@@ -11450,8 +11475,8 @@
     if (!Array.isArray(snapshot)) return
     _swLiveSet = new Set(
       snapshot
-        .filter((s) => s.platform === 'twitch' || s.platform === 'kick')
-        .map((s) => String(s.username || '').toLowerCase())
+        .filter((s) => s.platform === 'twitch' || s.platform === 'kick' || s.platform === 'youtube')
+        .map((s) => (s.username ? liveKey(s.platform, s.username) : ''))
         .filter(Boolean),
     )
     // Re-stamp unconditionally. _swLiveSet has just been REPLACED (not merged),
@@ -11494,7 +11519,8 @@
       const u = urlCh.toLowerCase()
       if (hostPlatform === 'kick') {
         if (!kickAll.some((c) => c.toLowerCase() === u)) kickAll.push(urlCh)
-      } else if (!twitchAll.some((c) => c.toLowerCase() === u)) {
+      } else if (hostPlatform === 'twitch' && !twitchAll.some((c) => c.toLowerCase() === u)) {
+        // a youtube handle / videoId is not a twitch login
         twitchAll.push(urlCh)
       }
     }
@@ -11503,7 +11529,7 @@
     // Skip the twitch fetch for names the SW live snapshot already covers
     // (most followed channels at scale). The SW snapshot is twitch-only, so
     // kick slugs are always queried fresh.
-    const twitchNames = _swLiveSet ? twitchAll.filter((c) => !_swLiveSet.has(c.toLowerCase())) : twitchAll
+    const twitchNames = _swLiveSet ? twitchAll.filter((c) => !liveSetHas(_swLiveSet, c, 'twitch')) : twitchAll
 
     if (twitchNames.length === 0 && kickAll.length === 0) {
       applyLiveDotsFromCache()
@@ -11531,8 +11557,8 @@
       // Poll-owned set ONLY. Folding _swLiveSet in here is what made a stale
       // snapshot entry survive every subsequent poll; isChannelLive() reads both.
       const liveSet = new Set([
-        ...(Array.isArray(data?.live) ? data.live.map((c) => c.toLowerCase()) : []),
-        ...(Array.isArray(data?.kickLive) ? data.kickLive.map((c) => c.toLowerCase()) : []),
+        ...(Array.isArray(data?.live) ? data.live.map((c) => liveKey('twitch', c)) : []),
+        ...(Array.isArray(data?.kickLive) ? data.kickLive.map((c) => liveKey('kick', c)) : []),
       ])
       liveChannelSet = liveSet
       applyLiveDotsFromCache()
@@ -11544,11 +11570,11 @@
       if (hostPlatform !== 'yt') {
         const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
         const curLive = getLiveChannel()?.toLowerCase()
-        if (liveTab) liveTab.dataset.live = String(curLive && liveSet.has(curLive))
+        if (liveTab) liveTab.dataset.live = String(!!curLive && liveSetHas(liveSet, curLive, hostPlatform))
       }
 
       // If override channel went offline, fall back to URL channel or first live
-      if (liveChannel && !liveSet.has(liveChannel)) {
+      if (liveChannel && !liveSetHas(liveSet, liveChannel)) {
         liveChannel = null
         updateLiveTabLabel()
         _dropTabCache('live')
@@ -11556,7 +11582,7 @@
       }
 
       // Auto-select if no override and URL channel isn't live but others are
-      if (!liveChannel && urlCh && !liveSet.has(urlCh.toLowerCase()) && liveSet.size > 0) {
+      if (!liveChannel && urlCh && !liveSetHas(liveSet, urlCh) && liveSet.size > 0) {
         // Don't auto-override — user can pick via the menu
       }
     } catch (_) {
@@ -11577,14 +11603,15 @@
       const id = ch.id
       const tab = tabBarElement.querySelector(`[data-tab="${id}"]`)
       if (!tab) return
-      const isYtOnly = !ch.twitch && !ch.kick && ch.youtube
-      if (isYtOnly) return
-      // Check both twitch + kick slugs so Kick-only channels (and pairs whose
-      // twitch handle differs from kick slug) get the live dot too.
-      const tw = ch.twitch?.toLowerCase()
-      const ki = ch.kick?.toLowerCase()
-      const idLower = id?.toLowerCase()
-      const isLive = isChannelLive(tw) || isChannelLive(ki) || (!tw && !ki && isChannelLive(idLower))
+      // Each leg is judged on its own platform's key, so kick-only and twitch+kick
+      // pairs with differing handles light up and a same-named twitch/kick pair
+      // can't light each other. A youtube-only tab can only turn ON from the
+      // followed-live snapshot: its off state is the chat-frame detection's call.
+      const isLive = tabIsLiveFromSets(ch)
+      if (!ch.twitch && !ch.kick && ch.youtube) {
+        if (isLive) tab.dataset.live = 'true'
+        return
+      }
       tab.dataset.live = String(isLive)
     })
   }
@@ -11900,7 +11927,7 @@
     if (urlCh && hostPlatform === 'twitch' && !twitchNames.includes(urlCh)) twitchNames.push(urlCh)
     if (urlCh && hostPlatform === 'kick' && !kickNames.includes(urlCh)) kickNames.push(urlCh)
 
-    let twitchLive = liveChannelSet
+    let twitchLive = liveNames(liveChannelSet, 'twitch')
     let kickLive = new Set()
     if (twitchNames.length > 0 || kickNames.length > 0) {
       try {
@@ -13379,7 +13406,7 @@
         const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
         if (liveTab) liveTab.dataset.live = String(isLive)
         const curCh = getCurrentChannel()?.toLowerCase()
-        if (curCh && isLive) liveChannelSet.add(curCh)
+        if (curCh && isLive) liveChannelSet.add(liveKey('kick', curCh))
         if (isLive) kickLiveFound = true
       }
       checkKickLive()
@@ -15289,7 +15316,7 @@
             // the grace, so it still surfaces (and gets recorded so any later
             // re-broadcast of the same channel is deduped).
             if (sessionWentLiveSeen.has(channel)) return
-            const _alreadyLive = liveChannelSet?.has(channel) || _swLiveSet?.has(channel)
+            const _alreadyLive = isChannelLive(channel)
             const _inGrace = Date.now() - mcStartedAt < 90000
             sessionWentLiveSeen.add(channel)
             // The service worker already vetted it as a real off->on transition

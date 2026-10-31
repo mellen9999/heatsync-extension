@@ -245,6 +245,13 @@ describe('bgIrcParseLine — reply-parent-user-id threading (background.js live 
     const msg = bgIrcParseLine(raw, 'chan')
     expect(msg.replyTo.userId).toBe('')
   })
+  test('own reply from another client, parent given by login only → still a reply', () => {
+    const raw =
+      '@display-name=mellen9999;user-id=1;id=own1;reply-parent-msg-id=85aef2f5-0000;reply-parent-user-login=wollip :mellen9999!mellen9999@mellen9999.tmi.twitch.tv PRIVMSG #nl_kripp :@wollip test sry'
+    const msg = bgIrcParseLine(raw, 'nl_kripp')
+    expect(msg.replyTo?.user).toBe('wollip')
+    expect(msg.replyTo.id).toBe('85aef2f5-0000')
+  })
   test('no reply tags at all → replyTo is null', () => {
     const raw = '@display-name=Bob :bob!bob@bob.tmi.twitch.tv PRIVMSG #chan :hi'
     expect(bgIrcParseLine(raw, 'chan').replyTo).toBeNull()

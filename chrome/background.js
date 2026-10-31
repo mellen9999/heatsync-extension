@@ -12339,19 +12339,22 @@ function bgIrcParseLine(raw, channelHint) {
         channel: channelHint || privmsg[1].toLowerCase(),
         time: parseInt(tags['tmi-sent-ts'], 10) || parseInt(tags['rm-received-ts'], 10) || Date.now(),
         id: tags.id || '',
-        replyTo: tags['reply-parent-display-name']
-          ? {
-              user: bgIrcTagUnescape(tags['reply-parent-display-name']),
-              text: tags['reply-parent-msg-body'] ? bgIrcTagUnescape(tags['reply-parent-msg-body']) : '',
-              id: tags['reply-parent-msg-id'] || '',
-              // Twitch-resolved id — lets the multichat renderer paint the reply
-              // target with their own cosmetic synchronously, without waiting on
-              // the async name→uid resolve (see src/multichat/irc.js's parseIrcLine,
-              // which already carries this; this copy had drifted from it).
-              userId: tags['reply-parent-user-id'] || '',
-              threadId: tags['reply-thread-parent-msg-id'] || tags['reply-parent-msg-id'] || '',
-            }
-          : null,
+        // display-name can be absent on replayed/relayed copies while the login
+        // is not — key the bar on either so the reply never degrades to plain.
+        replyTo:
+          tags['reply-parent-display-name'] || tags['reply-parent-user-login']
+            ? {
+                user: bgIrcTagUnescape(tags['reply-parent-display-name'] || tags['reply-parent-user-login']),
+                text: tags['reply-parent-msg-body'] ? bgIrcTagUnescape(tags['reply-parent-msg-body']) : '',
+                id: tags['reply-parent-msg-id'] || '',
+                // Twitch-resolved id — lets the multichat renderer paint the reply
+                // target with their own cosmetic synchronously, without waiting on
+                // the async name→uid resolve (see src/multichat/irc.js's parseIrcLine,
+                // which already carries this; this copy had drifted from it).
+                userId: tags['reply-parent-user-id'] || '',
+                threadId: tags['reply-thread-parent-msg-id'] || tags['reply-parent-msg-id'] || '',
+              }
+            : null,
       }
       const twitchEmotes = bgIrcParseEmotesTag(tags.emotes, text)
       if (twitchEmotes) msg.twitchEmotes = twitchEmotes

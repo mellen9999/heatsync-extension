@@ -207,6 +207,15 @@ test('parseIrcLine: reply-parent tags build replyTo object with \\s unescaped', 
   })
 })
 
+test('parseIrcLine: own reply from another client, parent given by login only → still a reply', () => {
+  const raw =
+    '@display-name=mellen9999;user-id=1;id=own1;reply-parent-msg-id=85aef2f5-0000;reply-parent-user-login=wollip :mellen9999!mellen9999@mellen9999.tmi.twitch.tv PRIVMSG #nl_kripp :@wollip test sry'
+  const msg = parseIrcLine(raw, 'nl_kripp')
+  expect(msg.replyTo?.user).toBe('wollip')
+  expect(msg.replyTo.id).toBe('85aef2f5-0000')
+  expect(msg.replyTo.threadId).toBe('85aef2f5-0000')
+})
+
 test('parseIrcLine: reply body containing % is preserved, not URI-decoded or dropped', () => {
   // Regression: decodeURIComponent threw URIError on bare '%' (dropping the
   // whole message) and silently decoded '%20' to a space. Tag values are

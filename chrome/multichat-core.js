@@ -15340,7 +15340,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5e496dd2bfa6' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '47743c230557' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -58082,18 +58082,59 @@ function anchorSoon(el) {
  * time — they can only be discovered by query. */
 function discoverHsPaintedNames(io) {
   hsLastDiscoverAt = Date.now()
-  for (const el of document.querySelectorAll('[class*="hsp-"]')) {
-    if (hsObservedNames.has(el)) continue
-    hsObservedNames.add(el)
-    anchorSoon(el)
-    // A renderer that had the paint cached baked the class straight into its
-    // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
-    // first sight here is the only place such a row can be given its
-    // composited fill.
-    const plan = hsPlanFor(el)
-    if (plan) applyHsGlyphMasks(el, plan)
-    io.observe(el)
-  }
+  for (const el of document.querySelectorAll('[class*="hsp-"]')) adoptHsPaintedName(el, io)
+}
+
+/** First sight of a painted name: put it on the clock, give it its composited
+ * fill and its viewport gate. A no-op for one already adopted. */
+function adoptHsPaintedName(el, io) {
+  if (hsObservedNames.has(el)) return
+  hsObservedNames.add(el)
+  anchorSoon(el)
+  // A renderer that had the paint cached baked the class straight into its
+  // HTML (hsPaintRender) and never went through applyHsPaintToElement, so
+  // first sight here is the only place such a row can be given its
+  // composited fill.
+  const plan = hsPlanFor(el)
+  if (plan) applyHsGlyphMasks(el, plan)
+  io.observe(el)
+}
+
+// ── a started animation is the moment a phase is decided ────────────────────
+//
+// Discovery above runs on scroll, and an HTML-built row is invisible to
+// everything else. A pane that is not scrolling — held still under the cursor,
+// or scrolled up reading — still takes new rows, and none of them were ever
+// anchored or gated: each kept the error of the frame that mounted it (117 to
+// 508ms measured live, every copy on its own phase) until the reader happened
+// to scroll. Any animation restart had the same hole — a re-inserted node, a
+// rebuilt mention — because a stamp only lands right on an animation that
+// starts the instant it was written.
+//
+// `animationstart` is that instant, for every one of these, whatever put the
+// name on the page. A painted name is adopted the first time one of its
+// animations starts, and re-anchored every time one restarts.
+//
+// Collected per frame: each event is its own callback with a microtask
+// checkpoint after it, and a name starts a dozen animations at once — handing
+// each to anchorSoon would flush style once per animation. Animation events are
+// sent before the frame's rAF callbacks, so the batch still lands this frame.
+const hsStartedHosts = new Set()
+function onHsAnimationStart(e) {
+  if (typeof e.animationName !== 'string' || !e.animationName.startsWith('hs')) return
+  const host = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
+  if (!host) return
+  hsStartedHosts.add(host)
+  if (hsStartedHosts.size > 1) return
+  requestAnimationFrame(() => {
+    const io = ensureHsVisibilityObserver()
+    for (const el of hsStartedHosts) {
+      if (!el.isConnected) continue
+      if (io && !hsObservedNames.has(el)) adoptHsPaintedName(el, io)
+      else anchorSoon(el)
+    }
+    hsStartedHosts.clear()
+  })
 }
 
 function sweepHsPaintedNames(force) {
@@ -58126,6 +58167,7 @@ function scheduleHsPaintSweep(force) {
 // Reaps every frame (cheap, no query); discovery is bounded above.
 if (typeof document !== 'undefined' && document.addEventListener) {
   document.addEventListener('scroll', () => scheduleHsPaintSweep(false), { capture: true, passive: true })
+  document.addEventListener('animationstart', onHsAnimationStart, { capture: true, passive: true })
 }
 
 

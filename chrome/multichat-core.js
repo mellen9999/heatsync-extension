@@ -9638,7 +9638,10 @@ function paintPhaseNow() {
   const frame = typeof document !== 'undefined' && document.timeline
     ? document.timeline.currentTime : null
   if (frame !== null && frame === phaseStampFrame) return phaseStamp
-  phaseStamp = `${(Date.now() / 1000).toFixed(3)}s`
+  // The frame's instant, not the first call's: in a long frame those differ by
+  // the frame's length, and the animations start at the frame's instant.
+  const ms = frame !== null ? performance.timeOrigin + frame : Date.now()
+  phaseStamp = `${(ms / 1000).toFixed(3)}s`
   phaseStampFrame = frame
   return phaseStamp
 }
@@ -12099,7 +12102,8 @@ let frameStamp = 0
 let frameStampAt = null
 
 /**
- * `Date.now()`, held constant for the whole animation frame.
+ * Wall-clock ms of the current animation frame's start (`Date.now()` outside a
+ * document), held constant for the whole frame.
  *
  * `document.timeline.currentTime` does not advance during a synchronous task,
  * so this is stable across a re-anchor loop however long the loop takes — which
@@ -12114,7 +12118,10 @@ function frameNow() {
     const frame = typeof document !== 'undefined' && document.timeline
         ? document.timeline.currentTime : null
     if (frame !== null && frame === frameStampAt) return frameStamp
-    frameStamp = Date.now()
+    // The frame's own instant, not the moment of the first call in it: the
+    // two differ by however long the frame has run (~200ms in a boot hydrate),
+    // and a seek computed from the late one lands every copy that far off.
+    frameStamp = frame !== null ? performance.timeOrigin + frame : Date.now()
     frameStampAt = frame
     return frameStamp
 }
@@ -15333,7 +15340,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b81e7ba2b7bd' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5e496dd2bfa6' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -57899,18 +57906,6 @@ let hsSweepScheduled = false
 
 function ensureHsVisibilityObserver() {
   if (hsVisibilityObserver || typeof IntersectionObserver !== 'function') return hsVisibilityObserver
-  // Backstop for every path that can leave a visible name off the shared clock
-  // (reanchorDrifted, lib/animation-phase.js): every few seconds, shown tab
-  // only, move the names that disagree with their stamp. A name already in step
-  // costs a read and no write.
-  if (typeof cleanup !== 'undefined' && typeof cleanup.setIntervalIfVisible === 'function') {
-    cleanup.setIntervalIfVisible(() => {
-      if (!hsVisiblePainted.size) return
-      const run = () => reanchorDrifted(hsVisiblePainted)
-      if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1000 })
-      else run()
-    }, 4000)
-  }
   // No root: the gate should hold for whichever pane is scrolling without this
   // module knowing which container a name lives in. The margin keeps a screen
   // of rows warm either side so a scroll never uncovers a frozen name.

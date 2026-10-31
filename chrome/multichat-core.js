@@ -15333,7 +15333,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '54fd1dfefaed' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'b81e7ba2b7bd' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -56945,6 +56945,67 @@ function hsPaintsEnabled() {
 
 // ── stylesheet management ────────────────────────────────────────────────────
 
+// ── hover chip ──────────────────────────────────────────────────────────────
+// The chip's overrides for names matched by `sel` (`:hover`, or the echo below).
+// background-clip goes back to border-box (was `text`, see compilePaintCss) so
+// `color` fills solid; `transform:none !important` beats animation-applied
+// transforms, so a letter wave or coin spin sits flat. Scene layers (pseudo
+// plates, the `> i` planes of lib/scene-spec.js planeRules) and composited fill
+// boxes (lib/fill-layers.js) are hidden, not removed, so their animations keep
+// their place on the clock.
+function hsChipRules(sel) {
+  const at = `[class*="hsp-"]${sel}`
+  return (
+    `${at},${at} span{background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;-webkit-text-fill-color:#000 !important;transform:none !important;opacity:1 !important;text-shadow:none !important;filter:none !important;}` +
+    `${at}::before,${at}::after,${at}>i,${at} .hs-name i{visibility:hidden !important;}` +
+    `${at} .hs-name,${at} .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}`
+  )
+}
+
+// Hovering one painted name chips every copy of it, by writing ONE rule that
+// matches its paint class (and its username where the copy carries one; a
+// mention chip has none). One style write, no per-copy work: the old echo
+// classed every visible copy and re-seeked their animations on release.
+let hsPaintEchoEl = null
+let hsPaintEchoKey = ''
+
+function hsPaintEchoFor(el) {
+  const cls = [...el.classList].find((c) => c.startsWith('hsp-'))
+  if (!cls || typeof CSS === 'undefined') return ''
+  const name = (el.dataset?.username || '').toLowerCase()
+  const same = `.${CSS.escape(cls)}`
+  return name ? `${same}:is([data-username="${CSS.escape(name)}" i],:not([data-username]))` : same
+}
+
+function setHsPaintEcho(key) {
+  if (key === hsPaintEchoKey) return
+  hsPaintEchoKey = key
+  if (!hsPaintEchoEl) {
+    if (!key) return
+    hsPaintEchoEl = document.createElement('style')
+    const tracked =
+      typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(hsPaintEchoEl) : hsPaintEchoEl
+    document.head.appendChild(tracked)
+  }
+  hsPaintEchoEl.textContent = key ? `@media (hover: hover){${hsChipRules(key)}}` : ''
+}
+
+function installHsPaintEcho() {
+  if (typeof document.addEventListener !== 'function') return
+  const on = (type, fn) => {
+    if (typeof cleanup !== 'undefined' && typeof cleanup.addEventListener === 'function') {
+      cleanup.addEventListener(document, type, fn, { passive: true })
+    } else document.addEventListener(type, fn, { passive: true })
+  }
+  on('mouseover', (e) => {
+    const t = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
+    setHsPaintEcho(t ? hsPaintEchoFor(t) : '')
+  })
+  on('mouseout', (e) => {
+    if (!(e.relatedTarget instanceof Element) || !e.relatedTarget.closest('[class*="hsp-"]')) setHsPaintEcho('')
+  })
+}
+
 function ensureHsPaintSheet() {
   if (hsPaintSheetEl?.isConnected) return hsPaintSheetEl
   hsPaintSheetEl = document.getElementById('hs-mc-paints')
@@ -56972,26 +57033,14 @@ function ensureHsPaintSheet() {
     // paused paint at frame 0.
     hsPaintSheetEl.textContent =
       'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *,html[data-hs-paint-anim="never"] [class*="hsp-"]::before,html[data-hs-paint-anim="never"] [class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}' +
-      // Hover: a plain white/black chip over the name, drawn by overrides
-      // alone. The paint's animations keep running underneath — nothing is
-      // paused, removed or recreated. Freezing used to pause every copy of the
-      // name, delete the scene plates (content:none) and hide the fill boxes
-      // (display:none), and the release then rebuilt and re-seeked all of it in
-      // the mouseout task: ~1s main-thread stall with a dozen copies of a scene
-      // paint on screen (traced 2026-10-31). Overridden animations cost what
-      // they cost idle, and with no pause there is no phase to resync.
-      // background-clip goes back to border-box (was `text`, see compilePaintCss)
-      // so `color` fills solid. `transform:none !important` beats
-      // animation-applied transforms, so a letter wave or coin spin sits flat.
+      // Hover: the plain white/black chip (hsChipRules), drawn by overrides
+      // alone — the paint's animations keep running underneath, nothing is
+      // paused, removed or recreated, so there is no phase to resync. Freezing
+      // used to pause, rebuild and re-seek every copy in the mouseout task:
+      // ~1s main-thread stall with a dozen scene paints on screen (2026-10-31).
       // (hover: hover): a real pointer only — a tap sticks :hover until the next
       // tap, which left a phone's tapped name as a plain chip (the site's rule).
-      '@media (hover: hover){[class*="hsp-"]:hover,[class*="hsp-"]:hover span{background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;-webkit-text-fill-color:#000 !important;transform:none !important;opacity:1 !important;text-shadow:none !important;filter:none !important;}' +
-      // Scene layers (pseudo plates, and the `> i` planes of
-      // lib/scene-spec.js planeRules) and composited fill boxes
-      // (lib/fill-layers.js) sit over or under the white: hidden, not removed,
-      // so their animations keep their place on the clock.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"]:hover>i,[class*="hsp-"]:hover .hs-name i{visibility:hidden !important;}' +
-      '[class*="hsp-"]:hover .hs-name,[class*="hsp-"]:hover .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}}' +
+      `@media (hover: hover){${hsChipRules(':hover')}}` +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -57006,6 +57055,7 @@ function ensureHsPaintSheet() {
     const tracked =
       typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(hsPaintSheetEl) : hsPaintSheetEl
     document.head.appendChild(tracked)
+    installHsPaintEcho()
   }
   return hsPaintSheetEl
 }

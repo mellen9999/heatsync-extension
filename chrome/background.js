@@ -11390,6 +11390,8 @@ async function handleMessage(message, sender, sendResponse) {
       // Keys whose providers errored this round — clients must NOT replace
       // their cached set with this partial/empty result (raw-text regression)
       const erroredKeys = []
+      // Per-key emote-inventory version from the batch reply (absent on old servers)
+      const versOut = {}
       // Cache hits inside this background instance (cross-tab dedupe). 6h TTL.
       // Per-name perma is enforced on the content side via mergeSenderEmotes.
       if (!globalThis.__senderEmoteCache) globalThis.__senderEmoteCache = new Map()
@@ -11425,6 +11427,7 @@ async function handleMessage(message, sender, sendResponse) {
       const SENDER_FETCH_ERR = (globalThis.__senderFetchErr ??= Symbol('sender-fetch-err'))
       let hsBatch = {}
       let _hsBatchErrored = false
+      let hsVers = {}
       if (_missKeys.length) {
         // Send platform-prefixed keys (e.g. twitch:12345, kick:username) so the server
         // can resolve all platforms. Response is keyed by the same prefixed strings.
@@ -11437,18 +11440,21 @@ async function handleMessage(message, sender, sendResponse) {
           ),
           { credentials: 'omit', noBackoff: true },
         )
-          .then((r) => (r.ok ? r.json() : null))
+          // non-OK (429/5xx) or non-JSON is an error, never an empty set
+          .then((r) => (r.ok ? r.json() : SENDER_FETCH_ERR))
           .catch(() => SENDER_FETCH_ERR)
         // Distinguish a transient failure (network/timeout → don't poison the
         // cache with an empty set) from a legit empty response.
         hsBatch = hb === SENDER_FETCH_ERR ? {} : hb?.sets || {}
-        if (hb === SENDER_FETCH_ERR) _hsBatchErrored = true
+        hsVers = hb === SENDER_FETCH_ERR ? {} : hb?.vers || {}
+        if (hb === SENDER_FETCH_ERR || !hb?.sets) _hsBatchErrored = true
       }
       await Promise.all(
         senderKeys.map(async (key) => {
           const hit = cache.get(key)
           if (cacheFresh(hit)) {
             result[key] = hit.emotes
+            if (hit.ver != null) versOut[key] = hit.ver
             return
           }
           const colon = key.indexOf(':')
@@ -11527,8 +11533,11 @@ async function handleMessage(message, sender, sendResponse) {
           // must NOT be cached — even the 90s negative TTL wrongly blanks this
           // sender after the network recovers. Error-free results (empty or
           // not) cache normally; cacheFresh picks the TTL by emptiness.
+          const ver = hsVers[key]
+          if (ver != null) versOut[key] = ver
           if (!_hsBatchErrored) {
-            cache.set(key, { emotes: collected, ts: Date.now() })
+            // A late stale reply must not overwrite a newer cached set
+            if (!(ver != null && cache.get(key)?.ver > ver)) cache.set(key, { emotes: collected, ts: Date.now(), ver })
             // LRU evict: keep most-recent 500.
             if (cache.size > 500) cache.delete(cache.keys().next().value)
           } else {
@@ -11537,7 +11546,7 @@ async function handleMessage(message, sender, sendResponse) {
           result[key] = collected
         }),
       )
-      sendResponse({ emotes: result, errored: erroredKeys })
+      sendResponse({ emotes: result, errored: erroredKeys, vers: versOut })
     })()
     return true
   } else if (message.type === 'get_bulk_badges') {

@@ -1922,6 +1922,7 @@
       .then((resp) => {
         const emotes = resp?.emotes || {}
         const errored = new Set(resp?.errored || [])
+        const vers = resp?.vers || {}
         const changedKeys = []
         let anyDropped = false
         // Stamp freshness for EVERY batch key (even empty ones) so we don't re-fetch
@@ -1937,6 +1938,14 @@
             markSenderEmoteFetched(key, erroredFetchStamp(key, now))
             continue
           }
+          // CDN-stale snapshot (older than a version already seen): keep the
+          // current set. The v-busted push refetch is the fresh path, so queue
+          // nothing; stamp so renders don't loop on it.
+          if (senderSetIsStale(key, vers[key])) {
+            markSenderEmoteFetched(key, now)
+            continue
+          }
+          noteSenderVer(key, vers[key])
           // resp arrived — treat the value as authoritative and replace the cached
           // set entirely. Use replace (not merge) so names removed on the server
           // also disappear here; merge was the bleed: removed emotes lingered
@@ -12839,7 +12848,10 @@
               if (typeof key !== 'string' || !key) continue
               senderEmoteFetchedAt.delete(key)
               senderEmoteVerified.delete(key)
-              if (msg.ver != null) setSenderEmoteBustVer(key, msg.ver)
+              if (msg.ver != null) {
+                setSenderEmoteBustVer(key, msg.ver)
+                noteSenderVer(key, msg.ver)
+              }
               // Only refetch senders we actually hold — a key never seen in
               // this panel has no rows to fix and would be pure fetch noise.
               if (typeof senderEmoteSets !== 'undefined' && senderEmoteSets.has(key)) {
@@ -12900,7 +12912,10 @@
           for (const key of msg.senderKeys.slice(0, 30)) {
             if (typeof key === 'string' && key) {
               senderEmoteFetchedAt.delete(key)
-              if (msg.ver != null) setSenderEmoteBustVer(key, msg.ver)
+              if (msg.ver != null) {
+                setSenderEmoteBustVer(key, msg.ver)
+                noteSenderVer(key, msg.ver)
+              }
             }
           }
         }

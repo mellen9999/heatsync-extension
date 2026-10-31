@@ -3056,6 +3056,31 @@ function dropEmoteFromSenders(senderKeys, emoteName) {
   return changed
 }
 
+// Highest emote-inventory version seen per sender key (push `ver` or batch
+// `vers`). Versions are a server counter, so a batch response older than one we
+// already saw is a CDN-stale snapshot — applying it would drop a just-added
+// emote until the cached entry expires. Counters only; a wall-clock fallback
+// ver (server's redis-down Date.now()) is ignored so it can't outrank the real
+// counter forever.
+const senderEmoteHighVer = new Map()
+const SENDER_VER_MAX = 1e12
+function noteSenderVer(senderKey, ver) {
+  const n = Number(ver)
+  if (!senderKey || !Number.isFinite(n) || n < 0 || n >= SENDER_VER_MAX) return
+  if (n <= (senderEmoteHighVer.get(senderKey) ?? -1)) return
+  senderEmoteHighVer.delete(senderKey)
+  senderEmoteHighVer.set(senderKey, n)
+  if (senderEmoteHighVer.size > SENDER_EMOTE_LRU_MAX) senderEmoteHighVer.delete(senderEmoteHighVer.keys().next().value)
+}
+// True → the batch reply for this key is older than a version already seen:
+// keep the current set. Absent/bad ver → false (old server, apply as before).
+function senderSetIsStale(senderKey, ver) {
+  const n = Number(ver)
+  if (ver == null || !Number.isFinite(n)) return false
+  const high = senderEmoteHighVer.get(senderKey)
+  return high != null && n < high
+}
+
 // Replace a sender's set with an AUTHORITATIVE fresh fetch — drops any
 // cached names absent from the new data. Use ONLY when the response is
 // known good (HTTP 200, not a transient error). mergeSenderEmotes is the

@@ -15333,7 +15333,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0d6fbd85434a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '519c1eb96605' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27166,6 +27166,31 @@ function dropEmoteFromSenders(senderKeys, emoteName) {
     _scheduleSenderEmotePersist()
   }
   return changed
+}
+
+// Highest emote-inventory version seen per sender key (push `ver` or batch
+// `vers`). Versions are a server counter, so a batch response older than one we
+// already saw is a CDN-stale snapshot — applying it would drop a just-added
+// emote until the cached entry expires. Counters only; a wall-clock fallback
+// ver (server's redis-down Date.now()) is ignored so it can't outrank the real
+// counter forever.
+const senderEmoteHighVer = new Map()
+const SENDER_VER_MAX = 1e12
+function noteSenderVer(senderKey, ver) {
+  const n = Number(ver)
+  if (!senderKey || !Number.isFinite(n) || n < 0 || n >= SENDER_VER_MAX) return
+  if (n <= (senderEmoteHighVer.get(senderKey) ?? -1)) return
+  senderEmoteHighVer.delete(senderKey)
+  senderEmoteHighVer.set(senderKey, n)
+  if (senderEmoteHighVer.size > SENDER_EMOTE_LRU_MAX) senderEmoteHighVer.delete(senderEmoteHighVer.keys().next().value)
+}
+// True → the batch reply for this key is older than a version already seen:
+// keep the current set. Absent/bad ver → false (old server, apply as before).
+function senderSetIsStale(senderKey, ver) {
+  const n = Number(ver)
+  if (ver == null || !Number.isFinite(n)) return false
+  const high = senderEmoteHighVer.get(senderKey)
+  return high != null && n < high
 }
 
 // Replace a sender's set with an AUTHORITATIVE fresh fetch — drops any
@@ -72521,6 +72546,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       .then((resp) => {
         const emotes = resp?.emotes || {}
         const errored = new Set(resp?.errored || [])
+        const vers = resp?.vers || {}
         const changedKeys = []
         let anyDropped = false
         // Stamp freshness for EVERY batch key (even empty ones) so we don't re-fetch
@@ -72536,6 +72562,14 @@ const STORAGE_KEY = 'heatsync_multichat'
             markSenderEmoteFetched(key, erroredFetchStamp(key, now))
             continue
           }
+          // CDN-stale snapshot (older than a version already seen): keep the
+          // current set. The v-busted push refetch is the fresh path, so queue
+          // nothing; stamp so renders don't loop on it.
+          if (senderSetIsStale(key, vers[key])) {
+            markSenderEmoteFetched(key, now)
+            continue
+          }
+          noteSenderVer(key, vers[key])
           // resp arrived — treat the value as authoritative and replace the cached
           // set entirely. Use replace (not merge) so names removed on the server
           // also disappear here; merge was the bleed: removed emotes lingered
@@ -83438,7 +83472,10 @@ const STORAGE_KEY = 'heatsync_multichat'
               if (typeof key !== 'string' || !key) continue
               senderEmoteFetchedAt.delete(key)
               senderEmoteVerified.delete(key)
-              if (msg.ver != null) setSenderEmoteBustVer(key, msg.ver)
+              if (msg.ver != null) {
+                setSenderEmoteBustVer(key, msg.ver)
+                noteSenderVer(key, msg.ver)
+              }
               // Only refetch senders we actually hold — a key never seen in
               // this panel has no rows to fix and would be pure fetch noise.
               if (typeof senderEmoteSets !== 'undefined' && senderEmoteSets.has(key)) {
@@ -83499,7 +83536,10 @@ const STORAGE_KEY = 'heatsync_multichat'
           for (const key of msg.senderKeys.slice(0, 30)) {
             if (typeof key === 'string' && key) {
               senderEmoteFetchedAt.delete(key)
-              if (msg.ver != null) setSenderEmoteBustVer(key, msg.ver)
+              if (msg.ver != null) {
+                setSenderEmoteBustVer(key, msg.ver)
+                noteSenderVer(key, msg.ver)
+              }
             }
           }
         }

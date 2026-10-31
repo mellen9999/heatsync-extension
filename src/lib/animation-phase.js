@@ -157,7 +157,8 @@ let frameStamp = 0
 let frameStampAt = null
 
 /**
- * `Date.now()`, held constant for the whole animation frame.
+ * Wall-clock ms of the current animation frame's start (`Date.now()` outside a
+ * document), held constant for the whole frame.
  *
  * `document.timeline.currentTime` does not advance during a synchronous task,
  * so this is stable across a re-anchor loop however long the loop takes — which
@@ -172,7 +173,10 @@ export function frameNow() {
     const frame = typeof document !== 'undefined' && document.timeline
         ? document.timeline.currentTime : null
     if (frame !== null && frame === frameStampAt) return frameStamp
-    frameStamp = Date.now()
+    // The frame's own instant, not the moment of the first call in it: the
+    // two differ by however long the frame has run (~200ms in a boot hydrate),
+    // and a seek computed from the late one lands every copy that far off.
+    frameStamp = frame !== null ? performance.timeOrigin + frame : Date.now()
     frameStampAt = frame
     return frameStamp
 }

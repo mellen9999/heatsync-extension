@@ -925,7 +925,10 @@ export function paintPhaseNow() {
   const frame = typeof document !== 'undefined' && document.timeline
     ? document.timeline.currentTime : null
   if (frame !== null && frame === phaseStampFrame) return phaseStamp
-  phaseStamp = `${(Date.now() / 1000).toFixed(3)}s`
+  // The frame's instant, not the first call's: in a long frame those differ by
+  // the frame's length, and the animations start at the frame's instant.
+  const ms = frame !== null ? performance.timeOrigin + frame : Date.now()
+  phaseStamp = `${(ms / 1000).toFixed(3)}s`
   phaseStampFrame = frame
   return phaseStamp
 }

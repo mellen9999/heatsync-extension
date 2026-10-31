@@ -1561,7 +1561,7 @@ function listenForSocialEvents() {
                   tabEl.textContent = link.channelName
                 }
               }
-            } else if (msg.status === 'ended' || msg.status === 'error') {
+            } else if (msg.status === 'ended' || msg.status === 'error' || msg.status === 'not-live') {
               if (isYtOnly) tabEl.dataset.live = 'false'
             }
           }

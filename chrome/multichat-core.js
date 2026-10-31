@@ -15333,7 +15333,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '519c1eb96605' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '54fd1dfefaed' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -56972,32 +56972,26 @@ function ensureHsPaintSheet() {
     // paused paint at frame 0.
     hsPaintSheetEl.textContent =
       'html[data-hs-paint-anim="never"] [class*="hsp-"],html[data-hs-paint-anim="never"] [class*="hsp-"] *,html[data-hs-paint-anim="never"] [class*="hsp-"]::before,html[data-hs-paint-anim="never"] [class*="hsp-"]::after{animation-play-state:paused !important;animation-delay:0s !important;}' +
-      // Hover freeze: pause the paint animation and swap to a plain white/black
-      // chip so the name stays fully readable while the pointer is over it.
+      // Hover: a plain white/black chip over the name, drawn by overrides
+      // alone. The paint's animations keep running underneath — nothing is
+      // paused, removed or recreated. Freezing used to pause every copy of the
+      // name, delete the scene plates (content:none) and hide the fill boxes
+      // (display:none), and the release then rebuilt and re-seeked all of it in
+      // the mouseout task: ~1s main-thread stall with a dozen copies of a scene
+      // paint on screen (traced 2026-10-31). Overridden animations cost what
+      // they cost idle, and with no pause there is no phase to resync.
       // background-clip goes back to border-box (was `text`, see compilePaintCss)
-      // so `color` renders as normal solid fill instead of clipping to nothing.
-      // Transform-driven effects (letter wave/tumble on spans, coin/heli/swing
-      // on the element itself — see lib/paint-spec.js) would freeze mid-rotation
-      // (edge-on at rotateX/Y 90deg = invisible), so `transform:none !important`
-      // — which beats animation-applied values in the cascade — snaps both the
-      // element and its spans flat.
-      // .hsp-hover is the JS-synced twin of :hover — installHsPaintHoverSync
-      // puts it on EVERY visible copy of the hovered user's name so they all
-      // freeze together, not just the pointer target.
-      '[class*="hsp-"]:hover,[class*="hsp-"]:hover span,[class*="hsp-"].hsp-hover,[class*="hsp-"].hsp-hover span{animation-play-state:paused !important;background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;transform:none !important;text-shadow:none !important;}' +
-      // Scene plates (v2 ::before/::after dioramas) must vanish entirely on
-      // hover — the element's white background paints UNDER a negative-z
-      // pseudo, so pausing alone would leave the plate covering the white.
-      // text-shadow:none above also drops the scene rim (black smears on
-      // white). Same trigger set as the flatten rule.
-      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"].hsp-hover::before,[class*="hsp-"].hsp-hover::after{content:none !important;}' +
-      // A composited `fill` paints in `<i>` boxes ABOVE the name's own
-      // background (see lib/fill-layers.js), so the white flatten rule above
-      // never showed — the fill kept moving over it, cut to the letterform.
-      // Hide the boxes and drop the mask so the name flattens like every
-      // other paint (mirrors the site's buildPaintHoverFreezeRule).
-      '[class*="hsp-"]:hover .hs-name i,[class*="hsp-"].hsp-hover .hs-name i{display:none !important;}' +
-      '[class*="hsp-"]:hover .hs-name,[class*="hsp-"]:hover .hs-name span,[class*="hsp-"].hsp-hover .hs-name,[class*="hsp-"].hsp-hover .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}' +
+      // so `color` fills solid. `transform:none !important` beats
+      // animation-applied transforms, so a letter wave or coin spin sits flat.
+      // (hover: hover): a real pointer only — a tap sticks :hover until the next
+      // tap, which left a phone's tapped name as a plain chip (the site's rule).
+      '@media (hover: hover){[class*="hsp-"]:hover,[class*="hsp-"]:hover span{background:#fff !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;color:#000 !important;-webkit-text-fill-color:#000 !important;transform:none !important;opacity:1 !important;text-shadow:none !important;filter:none !important;}' +
+      // Scene layers (pseudo plates, and the `> i` planes of
+      // lib/scene-spec.js planeRules) and composited fill boxes
+      // (lib/fill-layers.js) sit over or under the white: hidden, not removed,
+      // so their animations keep their place on the clock.
+      '[class*="hsp-"]:hover::before,[class*="hsp-"]:hover::after,[class*="hsp-"]:hover>i,[class*="hsp-"]:hover .hs-name i{visibility:hidden !important;}' +
+      '[class*="hsp-"]:hover .hs-name,[class*="hsp-"]:hover .hs-name span{-webkit-mask-image:none !important;mask-image:none !important;}}' +
       // Off-screen paints stop animating. Measured on the site with the same
       // compiler (scripts/paint-perf.mjs there): the cost of a scene is purely
       // how MANY names animate at once — a full pane of STATIC scene holds
@@ -57012,108 +57006,8 @@ function ensureHsPaintSheet() {
     const tracked =
       typeof cleanup !== 'undefined' && cleanup.trackNode ? cleanup.trackNode(hsPaintSheetEl) : hsPaintSheetEl
     document.head.appendChild(tracked)
-    installHsPaintHoverSync()
   }
   return hsPaintSheetEl
-}
-
-// ── hover-freeze sync ────────────────────────────────────────────────────────
-// Hovering a painted name freezes EVERY visible copy of that user's name (the
-// CSS :hover rule above only reaches the pointer target). Matches by
-// data-username when present (.hs-mc-user rows), falling back to text content
-// so mention chips without the attribute sync too. Installed once, alongside
-// the sheet.
-let _hsPaintHoverInstalled = false
-let _hsPaintHoverEls = null
-let _hsPaintHoverTarget = null
-
-function _hsPaintHoverKey(el) {
-  const raw = el.dataset?.username || el.textContent || ''
-  return raw.trim().toLowerCase().replace(/^@/, '')
-}
-
-// cleanup-tracked listener when the helper is available (live multichat),
-// plain listener otherwise (test harness stubs cleanup with trackNode only).
-function _hsPaintHoverOn(target, type, fn, opts) {
-  if (typeof cleanup !== 'undefined' && typeof cleanup.addEventListener === 'function') {
-    cleanup.addEventListener(target, type, fn, opts)
-  } else {
-    target.addEventListener(type, fn, opts)
-  }
-}
-
-function installHsPaintHoverSync() {
-  if (_hsPaintHoverInstalled) return
-  // test harness stubs `document` as a bare object — nothing to install on
-  if (typeof document.addEventListener !== 'function' || typeof document.querySelectorAll !== 'function') return
-  _hsPaintHoverInstalled = true
-  const clear = () => {
-    if (!_hsPaintHoverEls) return
-    for (const el of _hsPaintHoverEls) el.classList.remove('hsp-hover')
-    _hsPaintHoverEls = null
-  }
-  const clearAll = () => {
-    _hsPaintHoverTarget = null
-    clear()
-  }
-  _hsPaintHoverOn(
-    document,
-    'mouseover',
-    (e) => {
-      const t = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
-      if (!t) return
-      // letter-split names refire mouseover per span — same outer element,
-      // no work to do (the full-document scan below is the expensive part)
-      if (t === _hsPaintHoverTarget) return
-      _hsPaintHoverTarget = t
-      clear()
-      const key = _hsPaintHoverKey(t)
-      if (!key) return
-      const hit = []
-      // Only copies on screen: freezing one costs a style recalc (about 1.5ms a
-      // copy, measured), and a chatter with a hundred rows in history paid 200ms
-      // per hover for names nobody could see. Copies scrolled into view later
-      // were never frozen, so they are already on the shared clock.
-      const vh = window.innerHeight
-      const copies = []
-      for (const el of document.querySelectorAll('[class*="hsp-"]')) {
-        if (el !== t && _hsPaintHoverKey(el) === key) copies.push(el)
-      }
-      const rects = copies.map((el) => el.getBoundingClientRect())
-      copies.forEach((el, i) => {
-        if (rects[i].bottom < 0 || rects[i].top > vh) return
-        el.classList.add('hsp-hover')
-        hit.push(el)
-      })
-      if (hit.length) _hsPaintHoverEls = hit
-    },
-    { passive: true },
-  )
-  _hsPaintHoverOn(
-    document,
-    'mouseout',
-    (e) => {
-      const t = e.target instanceof Element ? e.target.closest('[class*="hsp-"]') : null
-      if (!t) return
-      // still inside the same painted element (moving across its letter
-      // spans) — keep the sync alive
-      if (e.relatedTarget instanceof Element && e.relatedTarget.closest('[class*="hsp-"]') === t) return
-      // The freeze PAUSES every copy and deletes its scene plates; release
-      // resumes them where they froze and restarts the plates, so a hovered
-      // name ran behind every row mounted after it. Back on the clock a frame
-      // later, once the freeze has dropped and the plates exist again.
-      const els = _hsPaintHoverEls ? [t, ..._hsPaintHoverEls] : [t]
-      if (_hsPaintHoverEls) clearAll()
-      // Seek NOW, in the same task as the unhover: getAnimations() flushes the
-      // style change, so the recreated plates exist and land on the wall clock
-      // before the next paint instead of a frame (rAF) plus a commit (ready)
-      // later. The anchor below stays as the correction for plates whose
-      // animations only get a start time at that first commit.
-      if (typeof resyncAnimationPhases === 'function') resyncAnimationPhases(els)
-      requestAnimationFrame(() => anchorWhenStarted(els))
-    },
-    { passive: true },
-  )
 }
 
 /**

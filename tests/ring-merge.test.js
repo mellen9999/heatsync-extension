@@ -170,3 +170,27 @@ test('a live line never lands above a row already on screen', () => {
   expect(src).toMatch(/div\._hsAt = 1/)
   expect(src).toMatch(/settledEnd &&\s*m\.ord != null/)
 })
+
+// Real shape: mellen's reply sent from another client. The live row that got
+// there first (native tap, or a copy that lost its tags) has no reply context;
+// the robotty/BG history copy of the same id carries it. Dropping the history
+// copy whole left the line plain forever.
+test('a history copy donates its reply context to a bare live copy of the same id', () => {
+  const buf = new Ring()
+  const live = row('e894ace2', 100, { ord: 100, replyTo: null, _renderedHtml: '<b>x</b>' })
+  buf.push(live)
+  const replyTo = { user: 'wollip', text: 'Just flip heads.', id: '85aef2f5', threadId: '85aef2f5' }
+  const grafted = mergeIntoRing(buf, [{ ...hist('e894ace2', 100), replyTo }])
+  expect(grafted).toBe(1)
+  expect(buf.items).toHaveLength(1)
+  expect(buf.items[0].replyTo).toEqual(replyTo)
+  expect(buf.items[0]._renderedHtml).toBeNull()
+})
+
+test('a live copy that already has reply context is never overwritten by history', () => {
+  const buf = new Ring()
+  buf.push(row('m', 100, { ord: 100, replyTo: { user: 'a', id: '1' } }))
+  const grafted = mergeIntoRing(buf, [{ ...hist('m', 100), replyTo: { user: 'b', id: '2' } }])
+  expect(grafted).toBe(0)
+  expect(buf.items[0].replyTo.user).toBe('a')
+})

@@ -504,11 +504,34 @@ function mergeIntoRing(buf, incoming, replaceHistory = false) {
   const keep = replaceHistory ? have.filter((m) => !m.isHistory) : have
   const liveIds = new Set()
   for (const m of keep) if (m?.id) liveIds.add(m.id)
-  const fresh = incoming.filter((m) => !(m?.id && liveIds.has(m.id)))
+  // A dropped history copy may still hold what the live copy lacks: the native
+  // tap / a tagless transport can win the id race with no reply-parent context,
+  // while the replayed IRC line carries it. Graft it across (never overwrite).
+  let grafted = 0
+  let liveById = null
+  const fresh = []
+  for (const m of incoming) {
+    if (!(m?.id && liveIds.has(m.id))) {
+      fresh.push(m)
+      continue
+    }
+    if (!m.replyTo?.user) continue
+    if (!liveById) {
+      liveById = new Map()
+      for (const k of keep) if (k?.id) liveById.set(k.id, k)
+    }
+    const live = liveById.get(m.id)
+    if (live && !live.replyTo?.user) {
+      live.replyTo = m.replyTo
+      live._renderedHtml = null
+      grafted++
+    }
+  }
   const all = fresh.concat(keep)
   all.sort((a, b) => ordOf(a) - ordOf(b))
   buf.clear()
   for (const m of all) buf.push(m)
+  return grafted
 }
 
 // ============================================
@@ -912,7 +935,7 @@ class IRC extends ChatClient {
       if (!buf) return // channel left during staging
       // Merge AFTER staging — anything that arrived while we yielded (or
       // during the sendMessage await) keeps its sorted place among the history.
-      mergeIntoRing(buf, staged, true)
+      const grafted = mergeIntoRing(buf, staged, true)
       try {
         _dropAllTabCaches()
       } catch {}
@@ -921,7 +944,7 @@ class IRC extends ChatClient {
       // hydrations always rebuild so the DOM matches the buffer.
       const isCurrent = currentTab === ch || (currentTab === 'live' && getLiveChannel() === ch)
       const delta = buf.size - wasSize
-      if (isCurrent && (isMsgsElEmpty() || delta >= 5)) {
+      if (isCurrent && (isMsgsElEmpty() || delta >= 5 || grafted > 0)) {
         scheduleRenderMessages()
       }
     } catch (e) {

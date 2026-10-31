@@ -15295,7 +15295,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6d0565d939eb' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ae2dc30e1116' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -21338,15 +21338,18 @@ function parseIrcLine(raw, channel) {
         channel: channel || flatStr(privmsg[1].toLowerCase()),
         time: parseInt(tags['tmi-sent-ts'], 10) || parseInt(tags['rm-received-ts'], 10) || Date.now(),
         id: tags.id || '',
-        replyTo: tags['reply-parent-display-name']
-          ? {
-              user: ircTagUnescape(tags['reply-parent-display-name']),
-              text: tags['reply-parent-msg-body'] ? ircTagUnescape(tags['reply-parent-msg-body']) : '',
-              id: tags['reply-parent-msg-id'] || '',
-              userId: tags['reply-parent-user-id'] || '',
-              threadId: tags['reply-thread-parent-msg-id'] || tags['reply-parent-msg-id'] || '',
-            }
-          : null,
+        // display-name can be absent on replayed/relayed copies while the login
+        // is not — key the bar on either so the reply never degrades to plain.
+        replyTo:
+          tags['reply-parent-display-name'] || tags['reply-parent-user-login']
+            ? {
+                user: ircTagUnescape(tags['reply-parent-display-name'] || tags['reply-parent-user-login']),
+                text: tags['reply-parent-msg-body'] ? ircTagUnescape(tags['reply-parent-msg-body']) : '',
+                id: tags['reply-parent-msg-id'] || '',
+                userId: tags['reply-parent-user-id'] || '',
+                threadId: tags['reply-thread-parent-msg-id'] || tags['reply-parent-msg-id'] || '',
+              }
+            : null,
       }
       const twitchEmotes = parseTwitchEmotesTag(tags.emotes, text)
       if (twitchEmotes) msg.twitchEmotes = twitchEmotes

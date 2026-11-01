@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ ditambah ke $ACCOUNT$ — tidak dipautkan ke $CHAT$, jadi di sana ia dipapar sebagai teks",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ ada pada $ACCOUNT$ — tidak dipautkan ke $CHAT$, jadi di sana ia dipapar sebagai teks",
     "placeholders": {
       "names": {
         "content": "$1"

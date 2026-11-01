@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "تمت إضافة $NAMES$ إلى $ACCOUNT$ — غير مرتبط بـ $CHAT$، لذا يظهر كنص هناك",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ موجود على $ACCOUNT$ — غير مرتبط بـ $CHAT$، لذا يظهر كنص هناك",
     "placeholders": {
       "names": {
         "content": "$1"

@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ を $ACCOUNT$ に追加 — $CHAT$ とは未連携なので、そこではテキスト表示",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ は $ACCOUNT$ にある — $CHAT$ とは未連携なので、そこではテキスト表示",
     "placeholders": {
       "names": {
         "content": "$1"

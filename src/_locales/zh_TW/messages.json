@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "已將 $NAMES$ 加到 $ACCOUNT$ — 未連結 $CHAT$，所以在那裡顯示為文字",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ 在 $ACCOUNT$ 上 — 未連結 $CHAT$，所以在那裡顯示為文字",
     "placeholders": {
       "names": {
         "content": "$1"

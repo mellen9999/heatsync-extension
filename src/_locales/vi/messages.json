@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "đã thêm $NAMES$ vào $ACCOUNT$ — chưa liên kết với $CHAT$, nên ở đó hiện dạng chữ",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ thuộc $ACCOUNT$ — chưa liên kết với $CHAT$, nên ở đó hiện dạng chữ",
     "placeholders": {
       "names": {
         "content": "$1"

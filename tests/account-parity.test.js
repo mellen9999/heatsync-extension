@@ -83,7 +83,16 @@ describe('emote auto-add says when the chat account is not the heatsync one', ()
   test('the send path warns after resolving its targets', () => {
     const src = mc('input.js')
     expect(src).toContain('const autoAdded = autoAddInputEmotes(text)')
-    expect(src).toMatch(/const sendToYoutube = [^\n]+\n\s+warnUnlinkedEmoteAdds\(autoAdded,/)
+    expect(src).toMatch(/const sendToYoutube = [^\n]+\n\s+warnUnlinkedOwnEmotes\(text, autoAdded,/)
+  })
+  test('an already-owned emote warns too, not only a fresh add', () => {
+    const src = mc('input.js')
+    const fn = src.slice(
+      src.indexOf('function warnUnlinkedOwnEmotes'),
+      src.indexOf('function warnUnlinkedOwnEmotes') + 900,
+    )
+    expect(fn).toContain('ownOnlyEmotesIn(text)')
+    expect(fn).toContain('_unlinkedWarned')
   })
 })
 

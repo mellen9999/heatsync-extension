@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ hozzáadva ehhez: $ACCOUNT$ — nincs összekapcsolva ezzel: $CHAT$, ezért ott szövegként jelenik meg",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ itt van: $ACCOUNT$ — nincs összekapcsolva ezzel: $CHAT$, ezért ott szövegként jelenik meg",
     "placeholders": {
       "names": {
         "content": "$1"

@@ -126,7 +126,7 @@ const browser = globalThis.browser || chrome
       const ui = await read()
       const subs = { ...(ui.subsystems || {}) }
       const nowOff = subs[b.dataset.gate] !== false
-      subs[b.dataset.gate] = nowOff ? false : true
+      subs[b.dataset.gate] = !nowOff
       await browser.storage.sync.set({ ui_settings: { ...ui, subsystems: subs } })
       await paint()
       note.textContent = nowOff

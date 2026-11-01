@@ -11,11 +11,13 @@
 
 let selfKickName = '' // set from kick_session_status; no heatsync login needed
 let selfHsNames = { twitch: '', kick: '', youtube: '' } // heatsync account's per-platform names
+let selfHsAccount = '' // the heatsync account's own name, for messages that name it
 let _ytChip = { at: 0, name: '' } // the chip read walks an iframe DOM — cache it
 
 function setSelfHsNames(ui) {
   const low = (v) => (v ? String(v).toLowerCase() : '')
   selfHsNames = { twitch: low(ui?.twitch_username), kick: low(ui?.kick_username), youtube: low(ui?.youtube_username) }
+  selfHsAccount = ui?.username ? String(ui.username) : ''
 }
 
 function setSelfKickName(name) {
@@ -55,4 +57,30 @@ function isSelf(msg, platform) {
   let p = platform || msg.badgePlatform || msg.platform || 'twitch'
   if (p === 'yt') p = 'youtube'
   return selfNamesFor(p).includes(u)
+}
+
+// The chat accounts a send goes out as that the signed-in heatsync account is
+// NOT linked to — [{ platform, name }]. Emotes live on the heatsync account,
+// but a chat row renders against its sender's account, so an emote added from
+// here shows as text on these. A platform whose live session name is unknown
+// counts only when heatsync has no account there at all — youtube always, since
+// its chip is a display name, not the handle heatsync stores. Signed out → [].
+function unlinkedSendAccounts(platforms) {
+  if (!selfHsAccount) return []
+  const bare = (n) => (n ? String(n).toLowerCase().replace(/^@/, '') : '')
+  const out = []
+  for (const p of platforms) {
+    const hs = bare(selfHsNames[p])
+    const live = bare(
+      p === 'kick'
+        ? selfKickName
+        : p === 'youtube'
+          ? _selfYtChip()
+          : (typeof currentUsername === 'string' && currentUsername) ||
+            (typeof authState !== 'undefined' && authState?.nick) ||
+            '',
+    )
+    if (!hs || (live && p !== 'youtube' && live !== hs)) out.push({ platform: p, name: live })
+  }
+  return out
 }

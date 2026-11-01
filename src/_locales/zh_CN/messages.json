@@ -1708,6 +1708,20 @@
       }
     }
   },
+  "mc_emote_add_unlinked": {
+    "message": "已将 $NAMES$ 添加到 $ACCOUNT$ — 未关联 $CHAT$，所以在那里显示为文字",
+    "placeholders": {
+      "names": {
+        "content": "$1"
+      },
+      "account": {
+        "content": "$2"
+      },
+      "chat": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_emote_added": {
     "message": "已添加：$NAME$",
     "placeholders": {

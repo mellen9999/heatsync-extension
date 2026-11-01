@@ -8502,8 +8502,10 @@ async function openWhisperConversation(platform, username, input) {
 // becomes yours and renders next time, instead of going out as bare text. Only
 // names tracked in recentRemoteCompletions qualify, so channel/global/owned
 // emotes (which already render) never burn slots. Fire-and-forget.
+// Resolves to the names actually added (null when nothing was attempted).
 function autoAddInputEmotes(text) {
-  if (!text || !recentRemoteCompletions.size) return
+  if (!text || !recentRemoteCompletions.size) return null
+  const adds = []
   const seen = new Set()
   for (const word of text.split(/\s+/)) {
     if (!word || seen.has(word)) continue
@@ -8551,13 +8553,34 @@ function autoAddInputEmotes(text) {
           viewerPersonalEmotes.delete(_rollbackWord)
         }
       }
-      Promise.resolve(addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true))
-        .then((ok) => {
-          if (!ok) _rollback()
-        })
-        .catch(_rollback)
+      adds.push(
+        Promise.resolve(addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true))
+          .then((ok) => {
+            if (!ok) _rollback()
+            return ok ? word : null
+          })
+          .catch(() => {
+            _rollback()
+            return null
+          }),
+      )
     }
   }
+  return adds.length ? Promise.all(adds).then((r) => r.filter(Boolean)) : null
+}
+
+// The auto-add lands on the signed-in heatsync account, but a chat row renders
+// against its SENDER's account. When the send goes out as a chat account that
+// heatsync account isn't linked to, the emote is yours yet shows as text there
+// — say so once it's added, instead of the send looking broken.
+function warnUnlinkedEmoteAdds(added, platforms) {
+  if (!added) return
+  const unlinked = unlinkedSendAccounts(platforms.filter(Boolean))
+  if (!unlinked.length) return
+  const chat = unlinked.map((u) => `${u.platform} ${u.name}`.trim()).join(', ')
+  added.then((names) => {
+    if (names.length) showToast(t('mc_emote_add_unlinked', [names.join(' '), selfHsAccount, chat]), 'info')
+  })
 }
 
 // Sticky-focus window after a send (ms). Inside it the composer reasserts focus
@@ -8678,7 +8701,7 @@ async function sendMessage() {
   if (!text) return
 
   // Remote-searched emotes in the outgoing message get added to the set on send.
-  autoAddInputEmotes(text)
+  const autoAdded = autoAddInputEmotes(text)
 
   // Resub-share mode — typed text becomes the celebration BODY via Twitch's
   // Chat_ShareResub_UseResubToken GQL mutation. consume() fires that mutation
@@ -8834,6 +8857,7 @@ async function sendMessage() {
   // host page's chat (the "my message leaked into another tab's host chat"
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
+  warnUnlinkedEmoteAdds(autoAdded, [sendToTwitch && 'twitch', sendToKick && 'kick', sendToYoutube && 'youtube'])
   // youtube was the ONLY wanted leg and it can't be targeted yet: bail before
   // anything is registered or cleared. Falling through ran the twitch-only
   // send — "log into twitch.tv" for a youtube-only user, or an IRC send to a

@@ -16,7 +16,7 @@ function loadSelf(globals = {}) {
   const names = Object.keys(globals)
   const fn = new Function(
     ...names,
-    `${mc('self-identity.js')}; return { isSelf, selfNamesFor, setSelfKickName, setSelfHsNames }`,
+    `${mc('self-identity.js')}; return { isSelf, selfNamesFor, setSelfKickName, setSelfHsNames, unlinkedSendAccounts }`,
   )
   return fn(...names.map((n) => globals[n]))
 }
@@ -50,6 +50,40 @@ describe('isSelf is keyed by platform', () => {
     }
     expect(mc('main.js')).toContain("isSelf(msg, 'kick')")
     expect(mc('social.js')).toContain("isSelf(ytMsg, 'youtube')")
+  })
+})
+
+describe('emote auto-add says when the chat account is not the heatsync one', () => {
+  test('twitch login with a youtube-only heatsync account is unlinked', () => {
+    const s = loadSelf({ currentUsername: 'mellen', authState: undefined })
+    s.setSelfHsNames({ username: 'mellenpvp', youtube_username: 'mellenpvp' })
+    expect(s.unlinkedSendAccounts(['twitch'])).toEqual([{ platform: 'twitch', name: 'mellen' }])
+  })
+  test('a linked account on the send platform is not', () => {
+    const s = loadSelf({ currentUsername: 'Mellen', authState: undefined })
+    s.setSelfHsNames({ username: 'mellen', twitch_username: 'mellen' })
+    expect(s.unlinkedSendAccounts(['twitch'])).toEqual([])
+  })
+  test('a different twitch login than the linked one is unlinked', () => {
+    const s = loadSelf({ currentUsername: 'alt', authState: undefined })
+    s.setSelfHsNames({ username: 'mellen', twitch_username: 'mellen' })
+    expect(s.unlinkedSendAccounts(['twitch'])).toEqual([{ platform: 'twitch', name: 'alt' }])
+  })
+  test('youtube only checks that heatsync has a youtube account — the chip is a display name', () => {
+    const s = loadSelf({ currentUsername: null, authState: undefined, ytSelfName: () => 'Mellen PvP' })
+    s.setSelfHsNames({ username: 'mellenpvp', youtube_username: 'mellenpvp' })
+    expect(s.unlinkedSendAccounts(['youtube'])).toEqual([])
+    s.setSelfHsNames({ username: 'mellen', twitch_username: 'mellen' })
+    expect(s.unlinkedSendAccounts(['youtube'])).toEqual([{ platform: 'youtube', name: 'mellen pvp' }])
+  })
+  test('signed out of heatsync never warns — the add itself says log in', () => {
+    const s = loadSelf({ currentUsername: 'mellen', authState: undefined })
+    expect(s.unlinkedSendAccounts(['twitch'])).toEqual([])
+  })
+  test('the send path warns after resolving its targets', () => {
+    const src = mc('input.js')
+    expect(src).toContain('const autoAdded = autoAddInputEmotes(text)')
+    expect(src).toMatch(/const sendToYoutube = [^\n]+\n\s+warnUnlinkedEmoteAdds\(autoAdded,/)
   })
 })
 

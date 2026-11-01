@@ -15295,7 +15295,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '654058308c19' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5980ebeeca41' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16865,11 +16865,13 @@ function youtubeModErrorMessage(err) {
 
 let selfKickName = '' // set from kick_session_status; no heatsync login needed
 let selfHsNames = { twitch: '', kick: '', youtube: '' } // heatsync account's per-platform names
+let selfHsAccount = '' // the heatsync account's own name, for messages that name it
 let _ytChip = { at: 0, name: '' } // the chip read walks an iframe DOM — cache it
 
 function setSelfHsNames(ui) {
   const low = (v) => (v ? String(v).toLowerCase() : '')
   selfHsNames = { twitch: low(ui?.twitch_username), kick: low(ui?.kick_username), youtube: low(ui?.youtube_username) }
+  selfHsAccount = ui?.username ? String(ui.username) : ''
 }
 
 function setSelfKickName(name) {
@@ -16909,6 +16911,32 @@ function isSelf(msg, platform) {
   let p = platform || msg.badgePlatform || msg.platform || 'twitch'
   if (p === 'yt') p = 'youtube'
   return selfNamesFor(p).includes(u)
+}
+
+// The chat accounts a send goes out as that the signed-in heatsync account is
+// NOT linked to — [{ platform, name }]. Emotes live on the heatsync account,
+// but a chat row renders against its sender's account, so an emote added from
+// here shows as text on these. A platform whose live session name is unknown
+// counts only when heatsync has no account there at all — youtube always, since
+// its chip is a display name, not the handle heatsync stores. Signed out → [].
+function unlinkedSendAccounts(platforms) {
+  if (!selfHsAccount) return []
+  const bare = (n) => (n ? String(n).toLowerCase().replace(/^@/, '') : '')
+  const out = []
+  for (const p of platforms) {
+    const hs = bare(selfHsNames[p])
+    const live = bare(
+      p === 'kick'
+        ? selfKickName
+        : p === 'youtube'
+          ? _selfYtChip()
+          : (typeof currentUsername === 'string' && currentUsername) ||
+            (typeof authState !== 'undefined' && authState?.nick) ||
+            '',
+    )
+    if (!hs || (live && p !== 'youtube' && live !== hs)) out.push({ platform: p, name: live })
+  }
+  return out
 }
 
 
@@ -52582,8 +52610,10 @@ async function openWhisperConversation(platform, username, input) {
 // becomes yours and renders next time, instead of going out as bare text. Only
 // names tracked in recentRemoteCompletions qualify, so channel/global/owned
 // emotes (which already render) never burn slots. Fire-and-forget.
+// Resolves to the names actually added (null when nothing was attempted).
 function autoAddInputEmotes(text) {
-  if (!text || !recentRemoteCompletions.size) return
+  if (!text || !recentRemoteCompletions.size) return null
+  const adds = []
   const seen = new Set()
   for (const word of text.split(/\s+/)) {
     if (!word || seen.has(word)) continue
@@ -52631,13 +52661,34 @@ function autoAddInputEmotes(text) {
           viewerPersonalEmotes.delete(_rollbackWord)
         }
       }
-      Promise.resolve(addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true))
-        .then((ok) => {
-          if (!ok) _rollback()
-        })
-        .catch(_rollback)
+      adds.push(
+        Promise.resolve(addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true))
+          .then((ok) => {
+            if (!ok) _rollback()
+            return ok ? word : null
+          })
+          .catch(() => {
+            _rollback()
+            return null
+          }),
+      )
     }
   }
+  return adds.length ? Promise.all(adds).then((r) => r.filter(Boolean)) : null
+}
+
+// The auto-add lands on the signed-in heatsync account, but a chat row renders
+// against its SENDER's account. When the send goes out as a chat account that
+// heatsync account isn't linked to, the emote is yours yet shows as text there
+// — say so once it's added, instead of the send looking broken.
+function warnUnlinkedEmoteAdds(added, platforms) {
+  if (!added) return
+  const unlinked = unlinkedSendAccounts(platforms.filter(Boolean))
+  if (!unlinked.length) return
+  const chat = unlinked.map((u) => `${u.platform} ${u.name}`.trim()).join(', ')
+  added.then((names) => {
+    if (names.length) showToast(t('mc_emote_add_unlinked', [names.join(' '), selfHsAccount, chat]), 'info')
+  })
 }
 
 // Sticky-focus window after a send (ms). Inside it the composer reasserts focus
@@ -52758,7 +52809,7 @@ async function sendMessage() {
   if (!text) return
 
   // Remote-searched emotes in the outgoing message get added to the set on send.
-  autoAddInputEmotes(text)
+  const autoAdded = autoAddInputEmotes(text)
 
   // Resub-share mode — typed text becomes the celebration BODY via Twitch's
   // Chat_ShareResub_UseResubToken GQL mutation. consume() fires that mutation
@@ -52914,6 +52965,7 @@ async function sendMessage() {
   // host page's chat (the "my message leaked into another tab's host chat"
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
+  warnUnlinkedEmoteAdds(autoAdded, [sendToTwitch && 'twitch', sendToKick && 'kick', sendToYoutube && 'youtube'])
   // youtube was the ONLY wanted leg and it can't be targeted yet: bail before
   // anything is registered or cleared. Falling through ran the twitch-only
   // send — "log into twitch.tv" for a youtube-only user, or an IRC send to a

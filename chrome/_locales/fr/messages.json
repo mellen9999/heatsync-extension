@@ -1708,6 +1708,20 @@
       }
     }
   },
+  "mc_emote_add_unlinked": {
+    "message": "$NAMES$ ajouté à $ACCOUNT$ — non lié à $CHAT$, donc il s'affiche en texte là-bas",
+    "placeholders": {
+      "names": {
+        "content": "$1"
+      },
+      "account": {
+        "content": "$2"
+      },
+      "chat": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_emote_added": {
     "message": "ajouté : $NAME$",
     "placeholders": {

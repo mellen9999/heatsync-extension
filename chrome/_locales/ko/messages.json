@@ -1708,6 +1708,20 @@
       }
     }
   },
+  "mc_emote_add_unlinked": {
+    "message": "$NAMES$ 을(를) $ACCOUNT$ 에 추가함 — $CHAT$ 와(과) 연결되지 않아 거기서는 텍스트로 보임",
+    "placeholders": {
+      "names": {
+        "content": "$1"
+      },
+      "account": {
+        "content": "$2"
+      },
+      "chat": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_emote_added": {
     "message": "추가됨: $NAME$",
     "placeholders": {

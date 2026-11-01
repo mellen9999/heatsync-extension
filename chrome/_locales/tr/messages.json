@@ -1708,6 +1708,20 @@
       }
     }
   },
+  "mc_emote_add_unlinked": {
+    "message": "$NAMES$, $ACCOUNT$ hesabına eklendi — $CHAT$ ile bağlı değil, orada metin olarak görünür",
+    "placeholders": {
+      "names": {
+        "content": "$1"
+      },
+      "account": {
+        "content": "$2"
+      },
+      "chat": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_emote_added": {
     "message": "eklendi: $NAME$",
     "placeholders": {

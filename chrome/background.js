@@ -2069,6 +2069,32 @@ async function storeToken(token) {
   }
 }
 
+// The browser's cookie store is the truth about being logged in; the token
+// this worker holds is a copy that goes stale. heatsync.org reissues the
+// session cookie when an account is unlinked (and rolls it near expiry), and
+// the old token is retired on the server the same moment. A request made with
+// the copy then fails — and that failure used to read as "logged out": the
+// socket pinned itself in authFailedBlock, the stored login was wiped, and
+// every panel on every platform said "log in at heatsync.org first" for a
+// browser that was logged in, until the next real login (gauntlet
+// youtube+kick row, 2026-11-01). Re-read the cookie first. Answers the live
+// cookie when it differs from the rejected token (memory + storage adopt it),
+// null when the browser agrees the session is gone — only then is it a logout.
+async function tokenAfterRejection(rejected) {
+  try {
+    const cookie = await browser.cookies.get({ url: 'https://heatsync.org', name: 'auth' })
+    const live = cookie?.value || null
+    if (!live || live === rejected) return null
+    log(' rejected token was retired — the cookie moved on, adopting it')
+    authToken = live
+    await storeToken(live)
+    return live
+  } catch (err) {
+    log(' cookie re-read after rejection failed:', err?.message)
+    return null
+  }
+}
+
 async function retrieveToken() {
   const data = await browser.storage.local.get(['auth_token_encrypted', 'auth_token'])
   // Try encrypted first
@@ -2092,8 +2118,8 @@ async function retrieveToken() {
 // single cross-browser mechanism.
 
 // Get auth token (read from memory, storage, or httpOnly cookie via cookies API)
-async function getAuthCookie() {
-  if (authToken) {
+async function getAuthCookie({ fresh = false } = {}) {
+  if (authToken && !fresh) {
     log(' Using auth token from memory')
     return authToken
   }
@@ -2107,8 +2133,11 @@ async function getAuthCookie() {
     const cookie = await browser.cookies.get({ url: 'https://heatsync.org', name: 'auth' })
     if (cookie?.value) {
       log(' ✓ Read auth cookie via cookies API')
-      authToken = cookie.value
-      await storeToken(cookie.value)
+      // unchanged on a fresh re-read: nothing to re-encrypt
+      if (cookie.value !== authToken) {
+        authToken = cookie.value
+        await storeToken(cookie.value)
+      }
       return cookie.value
     }
   } catch (err) {
@@ -2951,7 +2980,7 @@ if (browser.notifications?.onClicked) {
 }
 
 // Fetch user profile info for popup display
-async function fetchUserInfo() {
+async function fetchUserInfo(retried = false) {
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
@@ -2976,6 +3005,8 @@ async function fetchUserInfo() {
       // either way. Removing both makes the existing logged-out UI correct
       // again and lets the next cookie read re-authenticate cleanly.
       if (response.status === 401 || response.status === 403) {
+        // a retired copy, not a logout — see tokenAfterRejection
+        if (!retried && (await tokenAfterRejection(authToken))) return fetchUserInfo(true)
         await browser.storage.local.remove(['user_info', 'auth_token_encrypted', 'auth_token'])
         try {
           broadcastToTabs({ type: 'auth_changed', loggedIn: false, reason: 'session_expired' })
@@ -6520,11 +6551,9 @@ async function connectWebSocket() {
   connectionPromise = new Promise((resolve, reject) => {
     // Run async work inside the promise executor so the lock is held before any yield
     ;(async () => {
-      // Load auth token if needed (async — but lock is already held above)
-      if (!authToken) {
-        log(' Loading auth token before connecting...')
-        await getAuthCookie()
-      }
+      // The cookie is the truth and this worker's copy goes stale (an unlink
+      // reissues it) — read it fresh for every connect, not only when empty.
+      await getAuthCookie({ fresh: true })
 
       socketAuthToken = authToken
 
@@ -6831,19 +6860,28 @@ function handleWSMessage(msg) {
 
       case 'authentication_failed':
         isAuthenticated = false
-        authToken = null
-        authFailedBlock = true
-        _serverMutesFetched = false // reset so re-login triggers a fresh sync
-        // Drop the stored token so the next reconnect (after a fresh login)
-        // doesn't keep replaying the dead one and looping us back to here.
-        browser.storage.local.remove(['auth_token_encrypted', 'auth_token']).catch(() => {})
-        if (socket) {
-          socket.close()
-        }
-        // Tell content scripts so the multichat panel can prompt the user to
-        // log in — without this signal YT chat (which depends on the server
-        // scraping for us) silently produces zero messages.
-        broadcastToTabs({ type: 'auth_changed', loggedIn: false, reason: 'authentication_failed' })
+        // A retired token is not a logout — see tokenAfterRejection. With a
+        // live cookie the socket reconnects under it; only when the browser
+        // holds no other token is this the end of the session.
+        tokenAfterRejection(socketAuthToken)
+          .then((live) => {
+            if (live) {
+              authFailedBlock = false
+              return connectWebSocket()
+            }
+            authToken = null
+            authFailedBlock = true
+            _serverMutesFetched = false // reset so re-login triggers a fresh sync
+            // Drop the stored token so the next reconnect (after a fresh login)
+            // doesn't keep replaying the dead one and looping us back to here.
+            browser.storage.local.remove(['auth_token_encrypted', 'auth_token']).catch(() => {})
+            if (socket) socket.close()
+            // Tell content scripts so the multichat panel can prompt the user to
+            // log in — without this signal YT chat (which depends on the server
+            // scraping for us) silently produces zero messages.
+            broadcastToTabs({ type: 'auth_changed', loggedIn: false, reason: 'authentication_failed' })
+          })
+          .catch((err) => log(' authentication_failed handling failed:', err?.message))
         break
 
       case 'emote:broadcast':
@@ -10782,22 +10820,11 @@ async function handleMessage(message, sender, sendResponse) {
       try {
         const token = message.auth ? authToken || (await getAuthCookie()) : null
         let { resp, data } = await doFetch(token)
-        // Self-heal: on 401 with auth, the in-memory/encrypted token may be
-        // stale (e.g. JWT issued before user linked Twitch). Re-read directly
-        // from the heatsync auth cookie (which the website refreshes on every
-        // login), refresh storage, and retry once.
+        // Self-heal: a 401 with auth may be a retired copy of the token
+        // (see tokenAfterRejection) — retry once under the live cookie.
         if (message.auth && resp.status === 401) {
-          try {
-            const cookie = await browser.cookies.get({ url: 'https://heatsync.org', name: 'auth' })
-            if (cookie?.value && cookie.value !== token) {
-              log(' [api_fetch] 401 — refreshing token from cookie and retrying')
-              authToken = cookie.value
-              await storeToken(cookie.value)
-              ;({ resp, data } = await doFetch(cookie.value))
-            }
-          } catch (err) {
-            log(' [api_fetch] cookie refresh failed:', err?.message)
-          }
+          const live = await tokenAfterRejection(token)
+          if (live) ({ resp, data } = await doFetch(live))
         }
         if (!resp.ok) {
           sendResponse({ ok: false, status: resp.status, error: data?.error || `${resp.status}`, code: data?.code })
@@ -10848,19 +10875,10 @@ async function handleMessage(message, sender, sendResponse) {
         }
         const token = authToken || (await getAuthCookie())
         let { resp, data } = await doUpload(token)
-        // Same stale-token self-heal as api_fetch — a JWT issued before the
-        // user linked an account 401s until it's re-read from the cookie.
+        // Same self-heal as api_fetch — see tokenAfterRejection.
         if (resp.status === 401) {
-          try {
-            const cookie = await browser.cookies.get({ url: 'https://heatsync.org', name: 'auth' })
-            if (cookie?.value && cookie.value !== token) {
-              authToken = cookie.value
-              await storeToken(cookie.value)
-              ;({ resp, data } = await doUpload(cookie.value))
-            }
-          } catch (err) {
-            log(' [api_upload] cookie refresh failed:', err?.message)
-          }
+          const live = await tokenAfterRejection(token)
+          if (live) ({ resp, data } = await doUpload(live))
         }
         if (!resp.ok || !data?.url) {
           sendResponse({

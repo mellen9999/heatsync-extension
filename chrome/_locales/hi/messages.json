@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ को $ACCOUNT$ में जोड़ा — $CHAT$ से लिंक नहीं है, इसलिए वहाँ टेक्स्ट दिखेगा",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ $ACCOUNT$ पर है — $CHAT$ से लिंक नहीं है, इसलिए वहाँ टेक्स्ट दिखेगा",
     "placeholders": {
       "names": {
         "content": "$1"

@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ lagt til i $ACCOUNT$ — ikke koblet til $CHAT$, så det vises som tekst der",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ ligger på $ACCOUNT$ — ikke koblet til $CHAT$, så det vises som tekst der",
     "placeholders": {
       "names": {
         "content": "$1"

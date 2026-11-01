@@ -1721,8 +1721,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "added $NAMES$ to $ACCOUNT$ — not linked to $CHAT$, so it shows as text there",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ is on $ACCOUNT$ — not linked to $CHAT$, so it shows as text there",
     "placeholders": {
       "names": {
         "content": "$1"

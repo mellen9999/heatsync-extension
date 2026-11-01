@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ tillagd i $ACCOUNT$ — inte länkad till $CHAT$, så där visas den som text",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ finns på $ACCOUNT$ — inte länkad till $CHAT$, så där visas den som text",
     "placeholders": {
       "names": {
         "content": "$1"

@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ 을(를) $ACCOUNT$ 에 추가함 — $CHAT$ 와(과) 연결되지 않아 거기서는 텍스트로 보임",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ 은(는) $ACCOUNT$ 에 있음 — $CHAT$ 와(과) 연결되지 않아 거기서는 텍스트로 보임",
     "placeholders": {
       "names": {
         "content": "$1"

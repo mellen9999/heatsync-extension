@@ -15295,7 +15295,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5980ebeeca41' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '427ccbcc586c' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -52677,17 +52677,34 @@ function autoAddInputEmotes(text) {
   return adds.length ? Promise.all(adds).then((r) => r.filter(Boolean)) : null
 }
 
-// The auto-add lands on the signed-in heatsync account, but a chat row renders
+// Own-set emotes in the outgoing text that render only through the heatsync
+// account — not a channel or global emote that shows for everyone anyway.
+// Inventory is kept out of emoteCache, so emoteCache.has means global.
+function ownOnlyEmotesIn(text) {
+  const pools = typeof activeTabEmotePools === 'function' ? activeTabEmotePools() : []
+  const out = new Set()
+  for (const w of text.split(/\s+/)) {
+    if (!w || !inventoryEmotes.has(w) || emoteCache.has(w) || pools.some((p) => p?.has?.(w))) continue
+    out.add(w)
+  }
+  return [...out]
+}
+
+// Your emotes live on the signed-in heatsync account, but a chat row renders
 // against its SENDER's account. When the send goes out as a chat account that
-// heatsync account isn't linked to, the emote is yours yet shows as text there
-// — say so once it's added, instead of the send looking broken.
-function warnUnlinkedEmoteAdds(added, platforms) {
-  if (!added) return
+// heatsync account isn't linked to, they show as text there — say so (once per
+// emote and chat account per session) instead of the send looking broken.
+// Waits for the send's auto-add so a just-added emote counts too.
+const _unlinkedWarned = new Set()
+function warnUnlinkedOwnEmotes(text, autoAdded, platforms) {
   const unlinked = unlinkedSendAccounts(platforms.filter(Boolean))
   if (!unlinked.length) return
   const chat = unlinked.map((u) => `${u.platform} ${u.name}`.trim()).join(', ')
-  added.then((names) => {
-    if (names.length) showToast(t('mc_emote_add_unlinked', [names.join(' '), selfHsAccount, chat]), 'info')
+  Promise.resolve(autoAdded).then(() => {
+    const fresh = ownOnlyEmotesIn(text).filter((n) => !_unlinkedWarned.has(`${chat}|${n}`))
+    if (!fresh.length) return
+    for (const n of fresh) _unlinkedWarned.add(`${chat}|${n}`)
+    showToast(t('mc_emote_unlinked', [fresh.join(' '), selfHsAccount, chat]), 'info')
   })
 }
 
@@ -52965,7 +52982,7 @@ async function sendMessage() {
   // host page's chat (the "my message leaked into another tab's host chat"
   // bug). Drop the youtube leg entirely; twitch/kick still go through.
   const sendToYoutube = ytWanted && (isLiveYt || !!ytVideoId)
-  warnUnlinkedEmoteAdds(autoAdded, [sendToTwitch && 'twitch', sendToKick && 'kick', sendToYoutube && 'youtube'])
+  warnUnlinkedOwnEmotes(text, autoAdded, [sendToTwitch && 'twitch', sendToKick && 'kick', sendToYoutube && 'youtube'])
   // youtube was the ONLY wanted leg and it can't be targeted yet: bail before
   // anything is registered or cleared. Falling through ran the twitch-only
   // send — "log into twitch.tv" for a youtube-only user, or an IRC send to a

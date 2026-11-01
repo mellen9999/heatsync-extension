@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "το $NAMES$ προστέθηκε στο $ACCOUNT$ — δεν είναι συνδεδεμένο με $CHAT$, οπότε εκεί εμφανίζεται ως κείμενο",
+  "mc_emote_unlinked": {
+    "message": "το $NAMES$ είναι στο $ACCOUNT$ — δεν είναι συνδεδεμένο με $CHAT$, οπότε εκεί εμφανίζεται ως κείμενο",
     "placeholders": {
       "names": {
         "content": "$1"

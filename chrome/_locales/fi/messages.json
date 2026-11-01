@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ lisätty tilille $ACCOUNT$ — ei linkitetty tiliin $CHAT$, joten siellä se näkyy tekstinä",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ on tilillä $ACCOUNT$ — ei linkitetty tiliin $CHAT$, joten siellä se näkyy tekstinä",
     "placeholders": {
       "names": {
         "content": "$1"

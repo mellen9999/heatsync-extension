@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "$NAMES$ añadido a $ACCOUNT$ — no está vinculado a $CHAT$, así que ahí se ve como texto",
+  "mc_emote_unlinked": {
+    "message": "$NAMES$ está en $ACCOUNT$ — no está vinculado a $CHAT$, así que ahí se ve como texto",
     "placeholders": {
       "names": {
         "content": "$1"

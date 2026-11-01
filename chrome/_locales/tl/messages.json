@@ -1708,8 +1708,8 @@
       }
     }
   },
-  "mc_emote_add_unlinked": {
-    "message": "naidagdag ang $NAMES$ sa $ACCOUNT$ — hindi naka-link sa $CHAT$, kaya text ang lalabas doon",
+  "mc_emote_unlinked": {
+    "message": "nasa $ACCOUNT$ ang $NAMES$ — hindi naka-link sa $CHAT$, kaya text ang lalabas doon",
     "placeholders": {
       "names": {
         "content": "$1"

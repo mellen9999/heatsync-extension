@@ -7413,26 +7413,10 @@ function handleWSMessage(msg) {
             } else if (!text || typeof text !== 'string' || text.length === 0 || text.length > 200) {
               error = 'invalid_text'
             } else {
-              // MUST match this exact videoId — youtube send is DOM-injected
-              // into the targeted tab, so the wrong tab would post into a
-              // DIFFERENT stream's chat. No fallback to tabs[0] (unlike kick,
-              // whose send is channel-parameterized by session, tab-agnostic).
-              const tabs = await browser.tabs.query({ url: '*://*.youtube.com/*' }).catch(() => [])
-              const matching = tabs.find((t) => (t.url || '').includes(`v=${videoId}`))
-              if (!matching) {
-                error = 'no_youtube_tab'
-              } else {
-                const result = await browser.tabs
-                  .sendMessage(matching.id, {
-                    type: 'youtube_send_relay',
-                    text,
-                    awaitConfirm: true,
-                  })
-                  .catch((e) => ({ ok: false, error: e?.message || 'tab_send_failed' }))
-                ok = !!result?.ok
-                error = result?.error
-                ytUsername = result?.ytUsername
-              }
+              const result = await sendYoutubeChat({ videoId, text })
+              ok = !!result.ok
+              error = result.error
+              ytUsername = result.ytUsername
             }
           } catch (e) {
             error = e?.message || 'unknown'
@@ -8378,6 +8362,83 @@ async function _ensureYoutubeBridgeTab(videoId) {
     await new Promise((r) => setTimeout(r, 400))
   }
   return { tabId, error: sawInput ? 'chat_disabled' : 'bridge_timeout' }
+}
+
+const YT_VIDEO_ID = /^[a-zA-Z0-9_-]{11}$/
+
+// The one way a line reaches a youtube live chat, for the overlay's composer
+// and for a send relayed from heatsync.org alike. Resolves { ok, error?,
+// reason?, ytUsername? }; never throws.
+//
+// With a videoId, only ever drive a tab on THAT stream (a cached bridge tab →
+// a matching open tab → an auto-opened bridge tab), so a send can't land in
+// the wrong stream's chat. Without one, only the sender's own youtube tab —
+// the old active-tab / any-tab fallbacks leaked messages into unrelated
+// streams. Never guess a tab; fail loud instead.
+async function sendYoutubeChat({ videoId, text, senderTabId }) {
+  try {
+    const vidOk = YT_VIDEO_ID.test(videoId || '')
+    let targetTabId = null
+    if (vidOk) {
+      const bridged = ytBridgeTabs.get(videoId)
+      if (bridged != null && (await browser.tabs.get(bridged).catch(() => null))) {
+        targetTabId = bridged
+        ytBridgeLastUsed.set(videoId, Date.now())
+      }
+      if (!targetTabId) {
+        const ytTabs = await browser.tabs.query({ url: '*://www.youtube.com/*' }).catch(() => [])
+        const match = ytTabs.find((t) => (t.url || '').includes(videoId))
+        if (match) {
+          targetTabId = match.id
+          // Re-adopt a bridge tab the map forgot (SW restart) — without
+          // this the orphan sweep would close it mid-use.
+          if ((match.url || '').includes('#hs-bridge')) {
+            ytBridgeTabs.set(videoId, match.id)
+            ytBridgeLastUsed.set(videoId, Date.now())
+          }
+        }
+      }
+    } else if (senderTabId != null) {
+      const t = await browser.tabs.get(senderTabId).catch(() => null)
+      if (t && /youtube\.com/.test(t.url || '')) targetTabId = senderTabId
+    }
+    if (!targetTabId && !vidOk) return { ok: false, error: 'no_youtube_tab' }
+
+    // awaitConfirm makes youtube-content.js wait to see the line land, so a
+    // rate-limit / slow-mode / disabled button is reported, not called sent.
+    const payload = { type: 'youtube_send_relay', text, awaitConfirm: true }
+    if (targetTabId) {
+      try {
+        const result = await browser.tabs.sendMessage(targetTabId, payload)
+        // youtube-content.js always answers. Nothing back means no chat frame
+        // in that tab heard it: the overlay collapses native chat on a watch
+        // tab, which unloads the live_chat iframe, and the page's other
+        // scripts listen without answering — so it resolves empty, no error.
+        if (result) return result
+      } catch (e) {
+        // Bridge only when the relay provably never reached a chat frame. A
+        // "message port closed" means the frame got it and died mid-send — the
+        // post may already be out, and re-driving a bridge would double-post.
+        if (!/Receiving end does not exist|Could not establish connection/i.test(e?.message || '')) {
+          return { ok: false, error: e?.message || 'tab_send_failed' }
+        }
+      }
+      if (!vidOk || targetTabId === ytBridgeTabs.get(videoId)) return { ok: false, error: 'no_chat_frame' }
+    }
+    const bridge = await ensureYoutubeBridgeTab(videoId)
+    if (!bridge.tabId || bridge.error) {
+      // Provisioned but not sendable (usually logged-out) — surface the tab
+      // so the user can sign in, and report why.
+      if (bridge.tabId && bridge.error === 'chat_disabled') {
+        await browser.tabs.update(bridge.tabId, { active: true }).catch(() => {})
+      }
+      return { ok: false, error: bridge.error || 'no_youtube_tab', reason: bridge.reason }
+    }
+    return (await browser.tabs.sendMessage(bridge.tabId, payload)) || { ok: false, error: 'no_chat_frame' }
+  } catch (e) {
+    log('sendYoutubeChat error:', e?.message)
+    return { ok: false, error: e?.message || 'send_failed' }
+  }
 }
 
 // ========== COSMETICS ==========
@@ -10686,99 +10747,7 @@ async function handleMessage(message, sender, sendResponse) {
           sendResponse({ ok: false, error: 'missing params' })
           return
         }
-        let targetTabId = null
-
-        if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
-          // Path A — exact stream known. Only ever drive a tab on THIS videoId
-          // (a cached bridge tab → a matching open tab → an auto-opened bridge
-          // tab). Never falls back to an unrelated tab, so a send can't land in
-          // the wrong stream's chat.
-          const bridged = ytBridgeTabs.get(videoId)
-          if (bridged != null && (await browser.tabs.get(bridged).catch(() => null))) {
-            targetTabId = bridged
-            ytBridgeLastUsed.set(videoId, Date.now())
-          }
-          if (!targetTabId) {
-            const ytTabs = await browser.tabs.query({ url: '*://www.youtube.com/*' }).catch(() => [])
-            const match = ytTabs.find((t) => (t.url || '').includes(videoId))
-            if (match) {
-              targetTabId = match.id
-              // Re-adopt a bridge tab the map forgot (SW restart) — without
-              // this the orphan sweep would close it mid-use.
-              if ((match.url || '').includes('#hs-bridge')) {
-                ytBridgeTabs.set(videoId, match.id)
-                ytBridgeLastUsed.set(videoId, Date.now())
-              }
-            }
-          }
-          if (!targetTabId) {
-            const bridge = await ensureYoutubeBridgeTab(videoId)
-            if (bridge.tabId && !bridge.error) {
-              targetTabId = bridge.tabId
-            } else {
-              // Provisioned but not sendable (usually logged-out) — surface the
-              // tab so the user can sign in, and report why.
-              if (bridge.tabId && bridge.error === 'chat_disabled') {
-                await browser.tabs.update(bridge.tabId, { active: true }).catch(() => {})
-              }
-              sendResponse({ ok: false, error: bridge.error || 'no_youtube_tab', reason: bridge.reason })
-              return
-            }
-          }
-        } else {
-          // Path B — no concrete videoId. FORT KNOX: only ever drive the
-          // SENDER'S OWN YouTube tab (the page the user is actually typing on).
-          // The old active-tab / any-tab fallbacks routed a send into whatever
-          // YouTube tab happened to be open — so a message leaked into an
-          // unrelated stream's chat (e.g. a popped-out live_chat for a channel
-          // you're not even in). Never guess a tab; fail loud instead.
-          const senderTabId = sender?.tab?.id
-          if (senderTabId) {
-            const t = await browser.tabs.get(senderTabId).catch(() => null)
-            if (t && /youtube\.com/.test(t.url || '')) targetTabId = senderTabId
-          }
-          if (!targetTabId) {
-            sendResponse({ ok: false, error: 'no_youtube_tab' })
-            return
-          }
-        }
-
-        const relayPayload = {
-          type: 'youtube_send_relay',
-          text,
-          // awaitConfirm makes the relay run the 2.5s observer race in
-          // youtube-content.js (1024+) so we know whether YT actually
-          // accepted the send (rate-limit / slow-mode / disabled button
-          // would otherwise return ok:true after the click animation).
-          awaitConfirm: true,
-        }
-        let result = null
-        try {
-          result = await browser.tabs.sendMessage(targetTabId, relayPayload)
-        } catch (relayErr) {
-          // A URL-matched watch tab can have NO live_chat frame — the overlay
-          // collapses native chat, which unloads the iframe youtube-content.js
-          // lives in, so there is no receiver. With a concrete videoId, fall
-          // back to a bridge tab instead of failing the send.
-          //
-          // But ONLY when the first attempt provably never reached a content
-          // script ("receiving end does not exist"). A "message port closed"
-          // means the frame received the relay and died mid-send — the click
-          // (and the post) may already have happened, so re-driving a bridge tab
-          // through the same inject-and-click would double-post. Report that
-          // ambiguous case as a failure rather than silently sending twice.
-          const noReceiver = /Receiving end does not exist|Could not establish connection/i.test(relayErr.message || '')
-          const canBridge =
-            noReceiver && videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId) && targetTabId !== ytBridgeTabs.get(videoId)
-          if (!canBridge) throw relayErr
-          const bridge = await ensureYoutubeBridgeTab(videoId)
-          if (!bridge.tabId || bridge.error) {
-            sendResponse({ ok: false, error: bridge.error || relayErr.message, reason: bridge.reason })
-            return
-          }
-          result = await browser.tabs.sendMessage(bridge.tabId, relayPayload)
-        }
-        sendResponse(result || { ok: false, error: 'no response from tab' })
+        sendResponse(await sendYoutubeChat({ videoId, text, senderTabId: sender?.tab?.id }))
       } catch (e) {
         log('youtube_send_message error:', e.message)
         sendResponse({ ok: false, error: e.message })

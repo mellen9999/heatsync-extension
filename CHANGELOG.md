@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.115] — 2026-11-02
+
+### fixed
+- **youtube send** — a message sent from heatsync.org or the overlay reaches youtube chat while the overlay replaces native chat on the watch page; before, it failed without saying why.
+- **youtube mod actions** — delete, timeout and ban work from the overlay the same way.
+- **signed in** — unlinking an account no longer shows you as logged out.
+
 ## [1.7.113] — 2026-10-29
 
 ### fixed

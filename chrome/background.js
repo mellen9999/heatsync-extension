@@ -12718,6 +12718,20 @@ function bgIrcReleaseChannel(ch) {
   log('BG IRC released', ch)
 }
 
+// The command of a line twitch's server sent itself (`:tmi.twitch.tv <CMD> …`,
+// tags first or not), or null for anything a user said or a relayed message.
+function bgIrcServerCommand(line) {
+  let rest = line
+  if (rest.startsWith('@')) {
+    const sp = rest.indexOf(' ')
+    if (sp < 0) return null
+    rest = rest.slice(sp + 1)
+  }
+  if (!rest.startsWith(':tmi.twitch.tv ')) return null
+  const cmd = rest.slice(':tmi.twitch.tv '.length).split(' ', 1)[0]
+  return cmd || null
+}
+
 function bgIrcConnect() {
   if (BG_IRC.destroyed) return
   BG_IRC.idleClosed = false // any explicit connect un-parks the reader
@@ -12918,9 +12932,16 @@ function bgIrcOnData(data) {
       } catch {}
       continue
     }
+    // Server commands are read from the command position, never from anywhere
+    // in the line: a chatter typing "RECONNECT" (the whole chat does when a
+    // stream drops) used to tear the reader down and lose the rest of the frame.
+    const cmd = bgIrcServerCommand(line)
     // Authed-reader login rejected (expired/revoked token) — flag and fall
     // back to anonymous so the reader is never worse than the old default.
-    if (line.includes('Login authentication failed') || line.includes('Improperly formatted auth')) {
+    if (
+      cmd === 'NOTICE' &&
+      (line.includes('Login authentication failed') || line.includes('Improperly formatted auth'))
+    ) {
       log('BG IRC: auth login failed — falling back to anonymous reader')
       BG_IRC.authFailed = true
       BG_IRC.authFailedAt = Date.now()
@@ -12928,7 +12949,7 @@ function bgIrcOnData(data) {
       continue
     }
     if (line.startsWith(':tmi.twitch.tv PONG') || line.startsWith('PONG')) continue
-    if (line.includes('RECONNECT')) {
+    if (cmd === 'RECONNECT') {
       log('BG IRC: server requested RECONNECT')
       bgIrcForceReconnect()
       return
@@ -13698,6 +13719,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         bgIrcRegisterTabInterest(tabId, ch)
         if (!BG_IRC.channels.has(ch) && BG_IRC.storageRestored) bgIrcEnsureChannel(ch)
       }
+      // A tab still watching is live interest, every 15s. The reader can be
+      // parked (the idle check saw zero platform tabs mid-navigation) or dead
+      // with no retry armed, and only a join used to bring it back — joins go
+      // out once per channel, so the feed stayed stale until a page refresh.
+      if (list.length && !BG_IRC.ws && !BG_IRC.reconnectTimer) bgIrcConnect()
       BG_IRC.liveTabs.add(tabId)
     }
     sendResponse({ ok: true })

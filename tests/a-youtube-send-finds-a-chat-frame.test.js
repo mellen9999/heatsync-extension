@@ -56,8 +56,9 @@ function load({
       },
     },
   }
-  const fn = new Function('browser', 'log', `${CARVED}\nreturn sendYoutubeChat`)
-  return { send: fn(browser, () => {}), sent }
+  const fn = new Function('browser', 'log', `${CARVED}\nreturn { sendYoutubeChat, driveYoutubeChat }`)
+  const { sendYoutubeChat, driveYoutubeChat } = fn(browser, () => {})
+  return { send: sendYoutubeChat, drive: driveYoutubeChat, sent }
 }
 
 describe('a youtube send finds a chat frame', () => {
@@ -92,6 +93,13 @@ describe('a youtube send finds a chat frame', () => {
     const r = await send({ videoId: VID, text: 'hi' })
     expect(r.ok).toBe(false)
     expect(r.error).toBeTruthy()
+  })
+
+  test('a mod action on a watch tab with no chat frame reaches the bridge tab too', async () => {
+    const { drive, sent } = load({ bridgeAnswers: { ok: true } })
+    const r = await drive({ videoId: VID, payload: { type: 'youtube_mod_relay', action: 'delete', msgId: 'x' } })
+    expect(r).toEqual({ ok: true })
+    expect(sent.filter((s) => s.type === 'youtube_mod_relay').map((s) => s.id)).toEqual([1, 100])
   })
 
   test('no video id and no youtube sender tab is refused, never guessed', async () => {

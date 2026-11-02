@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.116] — 2026-11-02
+
+### fixed
+- **twitch chat** — the panel no longer stops showing new messages until a page refresh; a chat full of "reconnect" no longer knocks it offline.
+
 ## [1.7.115] — 2026-11-02
 
 ### fixed

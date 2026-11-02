@@ -9249,7 +9249,7 @@ function isPaintLookupSafeId(id, platform) {
   if (typeof id !== 'string' || id.length === 0) return null
   if (platform === 'twitch' || platform === 'heatsync') return id
   if (platform === 'kick') return `kick_${id}`
-  // youtube: id = the author's UC… channel id (innertube authorExternalChannelId);
+  // youtube: id = the author's UC… channel id (youtube's per-author channel id);
   // users.id for yt accounts is yt_<UCid> (google oauth mint, 4ecd0256)
   if (platform === 'youtube' && /^UC[A-Za-z0-9_-]{22}$/.test(id)) return `yt_${id}`
   return null

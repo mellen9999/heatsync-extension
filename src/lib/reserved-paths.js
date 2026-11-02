@@ -102,3 +102,15 @@ export const RESERVED_PATHS = new Set([
   'vods',
   'wallet',
 ])
+
+// Kick routes the overlay may mount on: a channel (/<slug>), its chatroom
+// (/<slug>/chatroom) or a popout/embed chat window (/popout|embed/<slug>/chat).
+// An allowlist, not "anything not reserved": oauth, settings, browse, the home
+// page and every future non-channel route fail closed.
+export function isKickChannelRoute(pathname) {
+  const p = String(pathname || '')
+  const pop = p.match(/^\/(?:popout|embed)\/([a-zA-Z0-9_-]+)\/chat\/?$/)
+  if (pop) return !RESERVED_PATHS.has(pop[1].toLowerCase())
+  const ch = p.match(/^\/([a-zA-Z0-9_-]+)(?:\/chatroom)?\/?$/)
+  return !!ch && !RESERVED_PATHS.has(ch[1].toLowerCase())
+}

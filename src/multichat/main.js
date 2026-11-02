@@ -15787,20 +15787,14 @@
         } catch {}
       })
     } else if (isKick) {
-      // Kick non-channel pages (/browse, /categories, /following, /search,
-      // /settings, …) never mount #channel-chatroom. Body-mount immediately
-      // so the persistent overlay appears without waiting on the 15s safety
-      // timeout. Single-segment paths likely become a channel page once
-      // chatroom mounts; waitForMount handles that — except for the reserved
-      // path names below, which look channel-shaped to the regex but never
-      // mount a chatroom, leaving the overlay invisible on /browse etc.
-      // Single source of truth is src/lib/reserved-paths.js.
-      const KICK_RESERVED_PATHS = RESERVED_PATHS
-      const isPopout = document.body.classList.contains('hs-popout')
-      const segMatch = location.pathname.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
-      const couldBeChannel = !!segMatch && !KICK_RESERVED_PATHS.has(segMatch[1].toLowerCase()) && !isPopout
-      if (!couldBeChannel) {
-        _runOverlayMountPass('kick non-channel body-mount', () => {
+      // Kick mounts only on a channel / chatroom / popout route (allowlist in
+      // src/lib/reserved-paths.js). Everything else — oauth, settings, browse,
+      // the home page — gets no overlay. A later SPA nav onto a channel finds
+      // no container and re-inits through fullSpaReinit.
+      if (!isKickChannelRoute(location.pathname)) {
+        log('Kick non-channel route, no overlay:', location.pathname)
+      } else if (document.body.classList.contains('hs-popout')) {
+        _runOverlayMountPass('kick popout body-mount', () => {
           ensureUIElements()
           switchTab(bootActiveTab())
           startLayoutWatcher()

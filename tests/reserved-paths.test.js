@@ -83,10 +83,9 @@ describe('no divergent reserved-path list grew back', () => {
     })
   }
 
-  test('src/multichat/main.js aliases NON_CHANNEL_PATHS / KICK_RESERVED_PATHS to the shared constant', () => {
+  test('src/multichat/main.js aliases NON_CHANNEL_PATHS to the shared constant', () => {
     const src = read('src/multichat/main.js')
     expect(src).toContain('const NON_CHANNEL_PATHS = RESERVED_PATHS')
-    expect(src).toContain('const KICK_RESERVED_PATHS = RESERVED_PATHS')
   })
 
   test('chrome/content.js aliases TWITCH_EXCLUDED_PATHS to the shared constant', () => {

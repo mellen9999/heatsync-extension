@@ -15307,7 +15307,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '4325300f0a83' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '33f23e687f0a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -78591,10 +78591,12 @@ const STORAGE_KEY = 'heatsync_multichat'
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
       const evtPlat = streamEventPlatform(m.platform)
-      // [Y] platform badge — parity with regular YT chat rows.
+      // [T]/[K]/[Y] platform badge on every went-live / switch / offline row — the same
+      // span and gate as regular chat rows (PLAT_COLORS token, platformBadgesEnabled).
+      const evtBadge = { twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]
       const platBadge =
-        isYtEvent && (platformBadgesEnabled || hostPlatform !== 'yt')
-          ? `<span class="hs-mc-platform-badge hs-mc-pb-yt" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS.yt}">[Y]</span>`
+        platformBadgesEnabled || evtBadge !== hostPlatform
+          ? `<span class="hs-mc-platform-badge hs-mc-pb-${evtBadge}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[evtBadge]}">[${evtBadge === 'yt' ? 'Y' : evtBadge === 'kick' ? 'K' : 'T'}]</span>`
           : ''
       // For redeems, the actor is the redeemer (m.actor). For other events the channel is the actor.
       const ch = m.actor || m.channel || ''

@@ -1286,6 +1286,6 @@ describe('isStaleConfigRev (M9: a late stale read never lays old tabs back)', ()
     expect(seen).toEqual({ user: 'b', rev: 1 })
   })
   test('the config handler gates on it', () => {
-    expect(BG_SRC).toContain("!isStaleConfigRev(mcConfigRevSeen, currentUsername, msg.rev)")
+    expect(BG_SRC).toContain('!isStaleConfigRev(mcConfigRevSeen, currentUsername, msg.rev)')
   })
 })

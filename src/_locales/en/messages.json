@@ -4058,6 +4058,9 @@
   "mc_input_copy_message": {
     "message": "copy message"
   },
+  "mc_input_copy_link": {
+    "message": "copy link"
+  },
   "mc_input_copy_to_input": {
     "message": "copy → input"
   },

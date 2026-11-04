@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "copiază mesajul"
   },
+  "mc_input_copy_link": {
+    "message": "copiază linkul"
+  },
   "mc_input_copy_to_input": {
     "message": "copiază → câmp"
   },

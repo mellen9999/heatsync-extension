@@ -2230,27 +2230,6 @@ function initInput() {
     )
   }
 
-  // Reply button click → set reply state and focus input
-  if (!_onceGuardsInput.replyHandler) {
-    _onceGuardsInput.replyHandler = true
-    document.addEventListener(
-      'click',
-      (e) => {
-        const btn = e.target.closest('.hs-mc-reply-btn')
-        if (!btn) return
-        const msg = btn.closest('.hs-mc-msg')
-        if (!msg?.dataset.msgId) return
-        setReplyState({
-          msgId: msg.dataset.msgId,
-          user: msg.dataset.msgUser,
-          channel: msg.dataset.msgChannel,
-          platform: msg.dataset.msgPlatform || '',
-        })
-      },
-      { signal: mcSignal },
-    )
-  }
-
   // Thread button click → quote mode, one click. A native twitch/kick message
   // has no heatsync id, so it can never be a reply_to target — quoting it into
   // a NEW top-level thread is the only honest on-ramp. The composer switches
@@ -2502,11 +2481,31 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       fn: () => _tabHide(username, platform, 'toggle'),
     },
     'sep',
-    {
-      label: t('content_card_copy_name'),
-      fn: () => mcCopyToClipboard(username, t('mc_input_name_copied')),
-    },
   ]
+  // Row actions in the rust app's order (reply, op to feed, copy name, copy
+  // message, copy link, copy → input). Reply and copy link live ONLY here: the
+  // rows carry no hover buttons for them.
+  if (msg?.dataset?.msgId) {
+    items.push({
+      label: t('mc_input_reply'),
+      fn: () =>
+        setReplyState({
+          msgId: msg.dataset.msgId,
+          user: msg.dataset.msgUser || username,
+          channel: msg.dataset.msgChannel || '',
+          platform: msg.dataset.msgPlatform || '',
+        }),
+    })
+  }
+  // Op this message to the heatsync feed — posting emerges from chat, where the
+  // moment actually happens, quoting the author with @attribution.
+  if (msg && gateAtBoot('feed') !== false) {
+    items.push({ label: t('mc_input_op_to_feed'), fn: () => _quickOpToFeed(username, msg) })
+  }
+  items.push({
+    label: t('content_card_copy_name'),
+    fn: () => mcCopyToClipboard(username, t('mc_input_name_copied')),
+  })
   // Copy/quote lead the menu (right after follow/block/mute) so they're never
   // buried under mod actions or the social-action wall below — this is the
   // #1 thing right-click gets used for, it shouldn't take scrolling to find.
@@ -2515,6 +2514,13 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       label: t('mc_input_copy_message'),
       fn: () => mcCopyToClipboard(_extractMcMsgText(msg), t('mc_input_message_copied')),
     })
+    const link = msg.dataset?.msgId ? buildRowPermalink(msg) : null
+    if (link) {
+      items.push({
+        label: t('mc_input_copy_link'),
+        fn: () => mcCopyToClipboard(link, t('mc_input_url_copied')),
+      })
+    }
     items.push({
       label: t('mc_input_copy_to_input'),
       fn: () => mcQuoteToInput(_extractMcMsgText(msg)),
@@ -2630,25 +2636,6 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         fn: () => pinToggleRow(msg),
       })
     }
-  }
-  // Reply — only when right-clicked on a real chat message with an id (Twitch
-  // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
-  if (msg?.dataset?.msgId) {
-    items.push({
-      label: t('mc_input_reply'),
-      fn: () =>
-        setReplyState({
-          msgId: msg.dataset.msgId,
-          user: msg.dataset.msgUser || username,
-          channel: msg.dataset.msgChannel || '',
-          platform: msg.dataset.msgPlatform || '',
-        }),
-    })
-  }
-  // Op this message to the heatsync feed — posting emerges from chat, where the
-  // moment actually happens, quoting the author with @attribution.
-  if (msg && gateAtBoot('feed') !== false) {
-    items.push({ label: t('mc_input_op_to_feed'), fn: () => _quickOpToFeed(username, msg) })
   }
   // Subsystem-owned rows are omitted when their switch is off — a disabled
   // feature must not keep a menu entry that turns it straight back on. That is
@@ -3073,7 +3060,6 @@ function _extractMcMsgText(msg) {
       cls?.contains('hs-mc-badge') ||
       cls?.contains('hs-mc-time') ||
       cls?.contains('hs-mc-reply-ctx') ||
-      cls?.contains('hs-mc-reply-btn') ||
       cls?.contains('hs-mod-toolbar') ||
       cls?.contains('hs-mc-stack-collapse') ||
       cls?.contains('hs-mc-stack-block-all')

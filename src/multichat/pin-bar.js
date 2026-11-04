@@ -198,7 +198,6 @@ function pinRowFor(pin, room) {
   row.removeAttribute('data-msg-id')
   row.removeAttribute('data-msg-key')
   row.removeAttribute('tabindex')
-  row.querySelector('.hs-mc-reply-btn')?.remove()
   return row
 }
 

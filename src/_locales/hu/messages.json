@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "üzenet másolása"
   },
+  "mc_input_copy_link": {
+    "message": "link másolása"
+  },
   "mc_input_copy_to_input": {
     "message": "másolás → beviteli mező"
   },

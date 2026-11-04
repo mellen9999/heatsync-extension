@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "העתק הודעה"
   },
+  "mc_input_copy_link": {
+    "message": "העתק קישור"
+  },
   "mc_input_copy_to_input": {
     "message": "העתק → שדה הקלט"
   },

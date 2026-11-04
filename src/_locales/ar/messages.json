@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "نسخ الرسالة"
   },
+  "mc_input_copy_link": {
+    "message": "نسخ الرابط"
+  },
   "mc_input_copy_to_input": {
     "message": "نسخ ← الإدخال"
   },

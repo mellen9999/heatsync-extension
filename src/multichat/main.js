@@ -8708,11 +8708,6 @@
       if (isSelf(m)) {
         div.dataset.msgSelf = '1'
       }
-      const replyBtn = document.createElement('button')
-      replyBtn.className = 'hs-mc-reply-btn'
-      replyBtn.textContent = '↩'
-      replyBtn.title = t('mc_main_reply')
-      div.appendChild(replyBtn)
       // Thread button — the discoverable way to mint a heatsync thread. The
       // capability already existed as `/op`, a slash command with no UI: 56
       // posts from 2 authors in 41 days, because nobody finds a command they

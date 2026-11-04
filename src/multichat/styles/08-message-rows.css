@@ -124,10 +124,6 @@
       -webkit-user-select: none;
       cursor: default;
     }
-    #hs-mc-reply-stack-down .hs-mc-reply-stack-row .hs-mc-reply-btn,
-    #hs-mc-reply-stack .hs-mc-reply-stack-row .hs-mc-reply-btn {
-      display: none !important;
-    }
     /* Zebra striping across the entire reply chain. Anchored to the active row
        (always #2e2e08): up-stack rows count from BOTTOM, down-stack rows count
        from TOP. Banded muted rows amplify the timeout/cleared opacity effect
@@ -257,14 +253,11 @@
       color: #000;
       background: #fff;
     }
-    .hs-mc-msg[data-msg-id]:hover .hs-mc-reply-btn {
-      display: block;
-    }
     .hs-mc-thread-btn {
       display: none;
       position: absolute;
       top: 1px;
-      right: 22px;
+      right: 2px;
       background: #000;
       border: 1px solid var(--hs-border);
       color: #fff;
@@ -293,9 +286,9 @@
       display: block;
     }
     /* Mod toolbar — singleton bar inserted into the hovered row as a sibling
-       of .hs-mc-reply-btn. Pure CSS positioning: absolute, flush against the
-       left edge of the reply button. Shared 1px #808080 dividers between
-       buttons; last button's right border drops out to merge with the reply
+       of the row. Pure CSS positioning: absolute, flush against the
+       left edge of the thread chip. Shared 1px #808080 dividers between
+       buttons; last button's right border drops out to merge with the thread
        button's left border. Matches heatsync.org spec exactly. */
     .hs-mc-msg[data-msg-id] {
       position: relative;
@@ -303,8 +296,8 @@
     .hs-mod-toolbar {
       position: absolute;
       top: 1px;
-      /* clears the reply chip (20px) + the thread chip (20px) to its left */
-      right: 42px;
+      /* clears the thread chip (20px) to its left */
+      right: 22px;
       z-index: 11;
       display: inline-flex;
       align-items: stretch;

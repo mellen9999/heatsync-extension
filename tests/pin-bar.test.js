@@ -72,7 +72,7 @@ function mount(opts = {}) {
       r.className = 'hs-mc-msg'
       r.dataset.msgId = m.id
       r.dataset.msgKey = 'k'
-      r.innerHTML = `<button class="hs-mc-reply-btn">r</button><span class="u"></span><span class="x"></span>`
+      r.innerHTML = `<span class="u"></span><span class="x"></span>`
       r.querySelector('.u').textContent = m.user
       r.querySelector('.x').textContent = m.text
       r.dataset.badges = m.badges
@@ -155,7 +155,6 @@ suite('pin bar', () => {
     expect(r.dataset.badges).toBe('moderator/1')
     // not a row of the pane: nothing for toolbar / reply / p to act on
     expect(r.dataset.msgId).toBeUndefined()
-    expect(r.querySelector('.hs-mc-reply-btn')).toBeNull()
   })
 
   test('no pin keeps the bar hidden', async () => {

@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "मैसेज कॉपी करो"
   },
+  "mc_input_copy_link": {
+    "message": "लिंक कॉपी करें"
+  },
   "mc_input_copy_to_input": {
     "message": "कॉपी → इनपुट"
   },

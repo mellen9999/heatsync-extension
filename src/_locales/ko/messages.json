@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "메시지 복사"
   },
+  "mc_input_copy_link": {
+    "message": "링크 복사"
+  },
   "mc_input_copy_to_input": {
     "message": "입력창에 복사"
   },

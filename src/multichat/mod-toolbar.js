@@ -251,9 +251,7 @@ function gateModButtons(ctx) {
 function attachToRow(row) {
   if (_modRow === row && _modToolbar?.parentElement === row) return
   const bar = buildModToolbarOnce()
-  const replyBtn = row.querySelector('.hs-mc-reply-btn')
-  if (replyBtn) row.insertBefore(bar, replyBtn)
-  else row.appendChild(bar)
+  row.appendChild(bar)
   _modRow = row
 }
 function detachModToolbar() {

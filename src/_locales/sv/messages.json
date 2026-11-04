@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "kopiera meddelande"
   },
+  "mc_input_copy_link": {
+    "message": "kopiera länk"
+  },
   "mc_input_copy_to_input": {
     "message": "kopiera → inmatning"
   },

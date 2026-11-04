@@ -53,6 +53,11 @@
         "https://kick.com/*",
         "https://*.kick.com/*"
       ],
+      "exclude_matches": [
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
+      ],
       "js": [
         "kick-nav-watcher.js",
         "kick-chat-intercept.js"
@@ -75,6 +80,11 @@
         "https://kick.com/*",
         "https://*.kick.com/*"
       ],
+      "exclude_matches": [
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
+      ],
       "js": [
         "kick-css-fix.js"
       ],
@@ -88,7 +98,10 @@
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://m.twitch.tv/*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "early-layout.js",
@@ -105,7 +118,10 @@
       ],
       "exclude_matches": [
         "https://m.twitch.tv/*",
-        "https://www.youtube.com/live_chat*"
+        "https://www.youtube.com/live_chat*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "player-volume.js"
@@ -137,7 +153,10 @@
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://m.twitch.tv/*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "vi-mode.js"
@@ -162,7 +181,10 @@
         "https://heatsync.org/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://m.twitch.tv/*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "emoji-data.iso.js",
@@ -181,6 +203,11 @@
         "https://kick.com/*",
         "https://*.kick.com/*"
       ],
+      "exclude_matches": [
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
+      ],
       "js": [
         "emoji-data.iso.js",
         "kick-autocomplete-hook.js"
@@ -194,7 +221,10 @@
         "https://*.kick.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://m.twitch.tv/*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "heatsync-button.js"
@@ -209,7 +239,10 @@
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://m.twitch.tv/*",
+        "https://id.kick.com/*",
+        "https://kick.com/oauth/*",
+        "https://kick.com/oauth2/*"
       ],
       "js": [
         "emoji-data.iso.js",

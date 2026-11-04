@@ -62,7 +62,9 @@ function serverSentTypes(root) {
         // api-catalog is the http api's docs: `type: 'string'` there is a param
         // table, and 'send a message' prose sits within the context window
         if (e.name !== 'node_modules' && e.name !== 'api-catalog') walk(join(d, e.name))
-      } else if (e.name.endsWith('.ts')) files.push(join(d, e.name))
+        // embed-resolve.ts answers http with oembed cards: its `type: 'rich'` is a
+        // card kind next to a res.send, not a socket frame
+      } else if (e.name.endsWith('.ts') && e.name !== 'embed-resolve.ts') files.push(join(d, e.name))
     }
   }
   walk(join(root, 'server'))

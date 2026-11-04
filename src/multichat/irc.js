@@ -123,7 +123,7 @@ function parseIrcLine(raw, channel) {
       privmsg[2] = privmsg[2] ?? privmsg[3]
       const displayName = tags['display-name'] || 'anonymous'
       // /me sends as \x01ACTION text\x01
-      let text = flatStr(privmsg[2])
+      let text = flatStr(stripDupBypass(privmsg[2]))
       let isAction = false
       if (text.charCodeAt(0) === 1 && text.startsWith('\x01ACTION ')) {
         text = text.slice(8, text.endsWith('\x01') ? -1 : undefined)
@@ -407,6 +407,23 @@ function parseIrcLine(raw, channel) {
 // source-carve of parseTags+parseIrcLine picks it up via hoisting.
 function flatStr(s) {
   return s && s.length > 12 ? (' ' + s).slice(1) : s
+}
+
+// Twitch refuses a message identical to your previous one in the channel
+// (NOTICE msg_duplicate). Like chatterino, a repeat goes out with an invisible
+// tag char (U+E0000) appended; the next identical send goes plain again.
+const DUP_BYPASS_CHAR = '\u{E0000}'
+const DUP_BYPASS_SUFFIX = ` ${DUP_BYPASS_CHAR}`
+function dupBypassWire(lastWire, text) {
+  return text === lastWire ? text + DUP_BYPASS_SUFFIX : text
+}
+// drops one trailing " <U+E0000>" (or a bare trailing <U+E0000>) so an echo
+// never shows a tofu glyph and still matches the text we typed
+function stripDupBypass(text) {
+  const s = String(text ?? '')
+  if (!s.endsWith(DUP_BYPASS_CHAR)) return s
+  const cut = s.slice(0, -DUP_BYPASS_CHAR.length)
+  return cut.endsWith(' ') ? cut.slice(0, -1) : cut
 }
 
 // ============================================

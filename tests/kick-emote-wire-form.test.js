@@ -10,6 +10,7 @@ import { join } from 'node:path'
 const ROOT = join(import.meta.dir, '..')
 const EMOTES = readFileSync(join(ROOT, 'src', 'multichat', 'emotes.js'), 'utf8')
 const INPUT = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
+const IRCSRC = readFileSync(join(ROOT, 'src', 'multichat', 'irc.js'), 'utf8')
 
 function extractFn(src, name) {
   const marker = `function ${name}(`
@@ -97,6 +98,8 @@ describe('wiring', () => {
 describe('echo matching survives the rewrite', () => {
   const mk = () =>
     new Function(`
+      const DUP_BYPASS_CHAR = '\\u{E0000}'
+      ${extractFn(IRCSRC, 'stripDupBypass')}
       ${extractFn(INPUT, '_unkickEmotes')}
       ${extractFn(INPUT, '_echoTextMatches')}
       return { _unkickEmotes, _echoTextMatches }

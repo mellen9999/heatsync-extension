@@ -84,8 +84,8 @@ function _unkickEmotes(s) {
 // eaten unless YOUR send was itself a reply within the dedup window.
 function _echoTextMatches(entry, msgText) {
   if (entry.text === msgText) return true
-  const a = _unkickEmotes(entry.text)
-  const b = _unkickEmotes(msgText)
+  const a = _unkickEmotes(stripDupBypass(entry.text))
+  const b = _unkickEmotes(stripDupBypass(msgText))
   if (a === b) return true
   return !!entry.reply && b.replace(/^@\S+\s+/, '') === a
 }

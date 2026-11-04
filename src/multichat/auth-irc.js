@@ -27,6 +27,12 @@ const TWITCH_SEND_REJECT_NOTICES = new Map([
   ['tos_ban', 'mc_irc_notice_tos_ban'],
 ])
 
+// last WIRE text this client sent per twitch channel (see dupBypassWire)
+const lastWireByChannel = new Map()
+function twitchWireText(channel, text) {
+  return dupBypassWire(lastWireByChannel.get(channel), String(text).replace(/[\r\n]/g, ' '))
+}
+
 function parseNoticeMsgId(line) {
   // Tags arrive before the colon: @msg-id=msg_followersonly;... :tmi.twitch.tv NOTICE ...
   if (!line.startsWith('@')) return null
@@ -358,7 +364,9 @@ async function drainSendQueue() {
       // Strip CR/LF: they terminate an IRC line, so a newline in text would let
       // it inject a second command onto the wire. The composer's serializer
       // currently never emits them, but guard structurally at the wire boundary.
-      authState.ws.send(`${qPrefix}PRIVMSG #${channel} :${String(text).replace(/[\r\n]/g, ' ')}\r\n`)
+      const wire = twitchWireText(channel, text)
+      authState.ws.send(`${qPrefix}PRIVMSG #${channel} :${wire}\r\n`)
+      lastWireByChannel.set(channel, wire)
       authState.sendQueue.shift()
       log(`Drained queued msg to #${channel}`)
     } catch {
@@ -411,7 +419,9 @@ async function sendIrcMessage(channel, text, token, replyParentId, overrideNick)
       }
       // Strip CR/LF at the wire boundary — a newline in text would inject a
       // second IRC command (see the queue-drain send above).
-      authState.ws.send(`${prefix}PRIVMSG #${channel} :${String(text).replace(/[\r\n]/g, ' ')}\r\n`)
+      const wire = twitchWireText(channel, text)
+      authState.ws.send(`${prefix}PRIVMSG #${channel} :${wire}\r\n`)
+      lastWireByChannel.set(channel, wire)
       if (MC_DEBUG)
         console.warn(
           '[HS] IRC SEND →',

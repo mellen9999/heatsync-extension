@@ -39,8 +39,12 @@ function carve(src, name) {
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 
+const IRC_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'irc.js'), 'utf8')
+
 function load() {
   const body = [
+    "const DUP_BYPASS_CHAR = '\\u{E0000}'",
+    carve(IRC_SRC, 'stripDupBypass'),
     carve(SRC, '_unkickEmotes'),
     carve(SRC, '_echoTextMatches'),
     carve(SRC, 'rememberOwnReply'),

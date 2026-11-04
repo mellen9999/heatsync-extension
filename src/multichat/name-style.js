@@ -133,6 +133,17 @@ function hsNameParts(o) {
 }
 
 /**
+ * The third-party badges (7TV/FFZ/BTTV/chatterino) a name's TWITCH id carries,
+ * as html — what a chat row puts before its name. Only when the parts resolved
+ * a twitch-space id: a kick/youtube name has no id these maps are keyed on.
+ * @param {{uid:string, data:{nplat?:string}}} p  hsNameParts' result
+ */
+function hsNameBadges(p) {
+  if (!p?.uid || p.data.nplat !== 'twitch' || typeof renderThirdPartyBadges !== 'function') return ''
+  return renderThirdPartyBadges(p.uid)
+}
+
+/**
  * hsNameParts, onto an element that already exists (cards, dropdown rows).
  * Replaces the element's children with the name; leaves other classes alone.
  */
@@ -260,6 +271,7 @@ function hsNameCardsIn(root) {
 
 export {
   hsNameApply,
+  hsNameBadges,
   hsNameCardsIn,
   hsNameColour,
   hsNameParts,

@@ -15391,7 +15391,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'e4183ba5c594' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'dfc2986407a2' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -59879,6 +59879,17 @@ function hsNameParts(o) {
 }
 
 /**
+ * The third-party badges (7TV/FFZ/BTTV/chatterino) a name's TWITCH id carries,
+ * as html — what a chat row puts before its name. Only when the parts resolved
+ * a twitch-space id: a kick/youtube name has no id these maps are keyed on.
+ * @param {{uid:string, data:{nplat?:string}}} p  hsNameParts' result
+ */
+function hsNameBadges(p) {
+  if (!p?.uid || p.data.nplat !== 'twitch' || typeof renderThirdPartyBadges !== 'function') return ''
+  return renderThirdPartyBadges(p.uid)
+}
+
+/**
  * hsNameParts, onto an element that already exists (cards, dropdown rows).
  * Replaces the element's children with the name; leaves other classes alone.
  */
@@ -79199,6 +79210,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         colour: userColor,
         login: isYtEvent ? '' : chLc,
       })
+      // the badges keyed to the streamer's twitch id, before the name like a chat row
+      const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
       // A row whose subject IS the channel (went live, game switch...) knows the
       // channel's handle on the platform it came from, so it links there. A row
@@ -79209,9 +79222,10 @@ const STORAGE_KEY = 'heatsync_multichat'
       // banned twitch account has no user, so no avatar).
       const platAttr = evtPlat === 'twitch' ? '' : ` data-platform="${evtPlat}"`
       const userLink =
-        isYtEvent && m.actor
+        evtBadges +
+        (isYtEvent && m.actor
           ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</span>`
-          : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</a>`
+          : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</a>`)
       const textAfterChannel = escapeHtml(m.text).replace(/^\[[^\]]+\]\s*/, '')
       const actionHtml = textAfterChannel.replace(
         /(switched to |now playing |went live \u2014 )(.+)$/,

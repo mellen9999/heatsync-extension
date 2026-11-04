@@ -3055,6 +3055,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'font',
+    sectionKey: 'lib_sec_font',
     labelKey: 'mc_settings_font_family',
     tipKey: 'mc_settings_font_family_desc',
     control: 'select',
@@ -3063,9 +3064,9 @@ const SETTINGS = [
     applyOnLoad: true,
     rerenderSettings: true,
     options: [
-      { value: 'monospace', label: 'system monospace' },
-      { value: 'twitch', label: 'platform default (Inter — twitch + kick)' },
-      { value: 'custom', label: 'custom...' },
+      { value: 'monospace', label: 'system monospace', labelKey: 'lib_opt_system_monospace' },
+      { value: 'twitch', label: 'platform default (Inter — twitch + kick)', labelKey: 'lib_opt_platform_default' },
+      { value: 'custom', label: 'custom...', labelKey: 'lib_opt_custom' },
     ],
   },
   {
@@ -3075,6 +3076,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'font',
+    sectionKey: 'lib_sec_font',
     labelKey: 'mc_settings_custom_font_name',
     control: 'text',
     alias: 'customfontname',
@@ -3096,6 +3098,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'font',
+    sectionKey: 'lib_sec_font',
     labelKey: 'mc_settings_font_size',
     tipKey: 'mc_settings_font_size_desc',
     alias: 'fontsize',
@@ -3115,6 +3118,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_emote_size',
     tipKey: 'mc_settings_emote_size_desc',
     control: 'sizebtns',
@@ -3136,6 +3140,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_emoji_size',
     tipKey: 'mc_settings_emoji_size_desc',
     control: 'sizebtns',
@@ -3157,6 +3162,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_timestamps',
     tipKey: 'mc_settings_timestamps_desc',
     control: 'pill',
@@ -3172,6 +3178,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_timestamp_format',
     tipKey: 'mc_settings_timestamp_format_desc',
     control: 'sizebtns',
@@ -3190,6 +3197,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_show_avatars',
     tipKey: 'mc_settings_avatars_desc',
     control: 'pill',
@@ -3205,6 +3213,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_zebra',
     tipKey: 'mc_settings_zebra_desc',
     control: 'pill',
@@ -3220,6 +3229,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_readable_names',
     tipKey: 'mc_settings_readable_names_desc',
     control: 'pill',
@@ -3234,6 +3244,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_first_chatter',
     tipKey: 'mc_settings_first_chatter_desc',
     control: 'pill',
@@ -3248,6 +3259,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_auto_hide',
     tipKey: 'mc_settings_auto_hide_desc',
     control: 'pill',
@@ -3263,6 +3275,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_platform_badges',
     tipKey: 'mc_settings_platform_badges_desc',
     control: 'pill',
@@ -3278,6 +3291,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_text_badges',
     tipKey: 'mc_settings_text_badges_desc',
     control: 'pill',
@@ -3293,14 +3307,15 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
     labelKey: 'mc_settings_tab_counter',
     tipKey: 'mc_settings_tab_counter_desc',
     control: 'sizebtns',
     alias: 'tabcounter unread heat',
     options: [
-      { value: 'off', label: 'off' },
-      { value: 'unread', label: 'unread' },
-      { value: 'heat', label: 'heat' },
+      { value: 'off', label: 'off', labelKey: 'mc_cm_off' },
+      { value: 'unread', label: 'unread', labelKey: 'lib_opt_unread' },
+      { value: 'heat', label: 'heat', labelKey: 'lib_opt_heat' },
     ],
     apply: 'tabCounter',
   },
@@ -3317,6 +3332,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'layout',
+    sectionKey: 'lib_sec_layout',
     labelKey: 'mc_settings_tab_position',
     tipKey: 'mc_settings_tab_position_desc',
     control: 'sizebtns',
@@ -3324,10 +3340,10 @@ const SETTINGS = [
     apply: 'tabPosition',
     rerender: true,
     options: [
-      { value: 'top', label: 'top' },
-      { value: 'right', label: 'right' },
-      { value: 'bottom', label: 'bottom' },
-      { value: 'left', label: 'left' },
+      { value: 'top', label: 'top', labelKey: 'lib_opt_top' },
+      { value: 'right', label: 'right', labelKey: 'lib_opt_right' },
+      { value: 'bottom', label: 'bottom', labelKey: 'lib_opt_bottom' },
+      { value: 'left', label: 'left', labelKey: 'lib_opt_left' },
     ],
   },
   {
@@ -3338,17 +3354,18 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'layout',
+    sectionKey: 'lib_sec_layout',
     labelKey: 'mc_settings_chat_position',
     tipKey: 'mc_settings_chat_position_desc',
     control: 'sizebtns',
     runtimeVar: 'chatPosition',
     apply: 'chatPosition',
     options: [
-      { value: 'right', label: 'right' },
-      { value: 'bottom', label: 'bottom' },
-      { value: 'left', label: 'left' },
-      { value: 'top', label: 'top' },
-      { value: 'hidden', label: 'hidden' },
+      { value: 'right', label: 'right', labelKey: 'lib_opt_right' },
+      { value: 'bottom', label: 'bottom', labelKey: 'lib_opt_bottom' },
+      { value: 'left', label: 'left', labelKey: 'lib_opt_left' },
+      { value: 'top', label: 'top', labelKey: 'lib_opt_top' },
+      { value: 'hidden', label: 'hidden', labelKey: 'lib_opt_hidden' },
     ],
   },
   {
@@ -3358,6 +3375,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'layout',
+    sectionKey: 'lib_sec_layout',
     labelKey: 'mc_settings_yt_suggestions',
     tipKey: 'mc_settings_yt_suggestions_desc',
     control: 'pill',
@@ -3377,6 +3395,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'layout',
+    sectionKey: 'lib_sec_layout',
     labelKey: 'mc_settings_yt_chat_non_live',
     tipKey: 'mc_settings_yt_chat_non_live_desc',
     control: 'pill',
@@ -3392,6 +3411,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'layout',
+    sectionKey: 'lib_sec_layout',
     labelKey: 'mc_settings_yt_feed_shelves',
     tipKey: 'mc_settings_yt_feed_shelves_desc',
     control: 'pill',
@@ -3408,14 +3428,15 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'density',
+    sectionKey: 'lib_sec_density',
     labelKey: 'mc_settings_message_density',
     tipKey: 'mc_settings_message_density_desc',
     control: 'sizebtns',
     apply: 'density',
     applyOnLoad: true,
     options: [
-      { value: 'compact', label: 'compact' },
-      { value: 'cozy', label: 'cozy' },
+      { value: 'compact', label: 'compact', labelKey: 'lib_opt_compact' },
+      { value: 'cozy', label: 'cozy', labelKey: 'lib_opt_cozy' },
     ],
   },
   {
@@ -3425,6 +3446,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'density',
+    sectionKey: 'lib_sec_density',
     labelKey: 'mc_settings_line_height',
     tipKey: 'mc_settings_line_height_desc',
     control: 'sizebtns',
@@ -3443,6 +3465,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'display',
     section: 'density',
+    sectionKey: 'lib_sec_density',
     labelKey: 'mc_settings_max_visible_messages',
     tipKey: 'mc_settings_max_visible_messages_desc',
     control: 'range',
@@ -3460,6 +3483,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_name_paints',
     tipKey: 'mc_settings_name_paints_desc',
     control: 'pill',
@@ -3473,6 +3497,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_seventv_paints',
     tipKey: 'mc_settings_seventv_paints_desc',
     control: 'pill',
@@ -3485,6 +3510,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_bttv_badges',
     tipKey: 'mc_settings_bttv_badges_desc',
     control: 'pill',
@@ -3497,6 +3523,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_ffz_badges',
     tipKey: 'mc_settings_ffz_badges_desc',
     control: 'pill',
@@ -3510,6 +3537,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_animate_emotes',
     tipKey: 'mc_settings_animate_emotes_desc',
     control: 'sizebtns',
@@ -3524,9 +3552,9 @@ const SETTINGS = [
     // pre-1.7.16 installs stored a bool under this key — map, never drop
     coerce: (v) => (typeof v === 'boolean' ? (v ? 'always' : 'never') : v),
     options: [
-      { value: 'always', label: 'always' },
-      { value: 'hover', label: 'hover' },
-      { value: 'never', label: 'never' },
+      { value: 'always', label: 'always', labelKey: 'lib_opt_always' },
+      { value: 'hover', label: 'hover', labelKey: 'lib_opt_hover' },
+      { value: 'never', label: 'never', labelKey: 'lib_opt_never' },
     ],
   },
   {
@@ -3545,6 +3573,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_animate_paints',
     tipKey: 'mc_settings_animate_paints_desc',
     control: 'sizebtns',
@@ -3555,8 +3584,8 @@ const SETTINGS = [
     // 'always' on every fresh load — the same trap animateEmotes hit.
     applyOnLoad: true,
     options: [
-      { value: 'always', label: 'always' },
-      { value: 'never', label: 'never' },
+      { value: 'always', label: 'always', labelKey: 'lib_opt_always' },
+      { value: 'never', label: 'never', labelKey: 'lib_opt_never' },
     ],
   },
   {
@@ -3566,6 +3595,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_chatterino_badges',
     tipKey: 'mc_settings_chatterino_badges_desc',
     control: 'pill',
@@ -3583,6 +3613,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_emote_provider_priority',
     tipKey: 'mc_settings_emote_provider_priority_desc',
     control: 'select',
@@ -3610,6 +3641,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_render_inventory_emotes',
     tipKey: 'mc_settings_render_inventory_emotes_desc',
     control: 'pill',
@@ -3624,6 +3656,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     labelKey: 'mc_settings_show_pronouns',
     tipKey: 'mc_settings_show_pronouns_desc',
     control: 'pill',
@@ -3641,6 +3674,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'input',
+    sectionKey: 'btn_settings_input',
     labelKey: 'mc_settings_suggest_inventory_emotes',
     tipKey: 'mc_settings_suggest_inventory_emotes_desc',
     control: 'pill',
@@ -3653,6 +3687,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'input',
+    sectionKey: 'btn_settings_input',
     labelKey: 'mc_settings_input_preview',
     tipKey: 'mc_settings_input_preview_desc',
     control: 'pill',
@@ -3668,6 +3703,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'input',
+    sectionKey: 'btn_settings_input',
     labelKey: 'mc_settings_vi_mode',
     tipKey: 'mc_settings_vi_mode_desc',
     control: 'pill',
@@ -3685,6 +3721,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_clickable_links',
     tipKey: 'mc_settings_clickable_links_desc',
     control: 'pill',
@@ -3699,6 +3736,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_partial_links',
     tipKey: 'mc_settings_partial_links_desc',
     control: 'pill',
@@ -3714,6 +3752,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_link_previews',
     tipKey: 'mc_settings_link_previews_desc',
     control: 'pill',
@@ -3728,6 +3767,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_media_embeds',
     tipKey: 'mc_settings_media_embeds_desc',
     control: 'pill',
@@ -3743,6 +3783,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_auto_claim',
     tipKey: 'mc_settings_auto_claim_desc',
     control: 'pill',
@@ -3759,6 +3800,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_dim_timeouts',
     tipKey: 'mc_settings_dim_timeouts_desc',
     control: 'pill',
@@ -3775,6 +3817,7 @@ const SETTINGS = [
     legacySyncFallback: true,
     category: 'chat',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_keyword_highlights',
     tipKey: 'mc_settings_keyword_highlights_desc',
     placeholderKey: 'mc_settings_keyword_highlights_placeholder',
@@ -3796,6 +3839,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'chat',
     section: 'privacy',
+    sectionKey: 'welcome_privacy',
     labelKey: 'mc_settings_anon_chat',
     tipKey: 'mc_settings_anon_chat_desc',
     control: 'pill',
@@ -3814,6 +3858,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'whispers',
+    sectionKey: 'mc_settings_sub_whispers',
     labelKey: 'mc_settings_whisper_toast',
     tipKey: 'mc_settings_whisper_toast_desc',
     control: 'pill',
@@ -4017,6 +4062,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'notifs',
     section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
     labelKey: 'mc_settings_browser_notification',
     tipKey: 'mc_settings_browser_notification_desc',
     control: 'pill',
@@ -4029,6 +4075,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
     labelKey: 'mc_settings_tab_title_flash',
     tipKey: 'mc_settings_tab_title_flash_desc',
     control: 'pill',
@@ -4041,6 +4088,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
     labelKey: 'mc_settings_mention_volume',
     tipKey: 'mc_settings_mention_volume_desc',
     control: 'range',
@@ -4059,6 +4107,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'cross-platform follow',
+    sectionKey: 'lib_sec_cross_follow',
     labelKey: 'mc_settings_cross_follow_kick',
     tipKey: 'mc_settings_cross_follow_kick_desc',
     control: 'pill',
@@ -4070,6 +4119,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'cross-platform follow',
+    sectionKey: 'lib_sec_cross_follow',
     labelKey: 'mc_settings_cross_follow_twitch',
     tipKey: 'mc_settings_cross_follow_twitch_desc',
     control: 'pill',
@@ -4082,6 +4132,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'notifs',
     section: 'cross-platform follow',
+    sectionKey: 'lib_sec_cross_follow',
     labelKey: 'mc_settings_cross_follow_twitch_notify',
     tipKey: 'mc_settings_cross_follow_twitch_notify_desc',
     control: 'pill',
@@ -4099,6 +4150,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'mod',
     section: 'mod toolbar',
+    sectionKey: 'lib_sec_mod_toolbar',
     labelKey: 'mc_settings_mod_toolbar_buttons',
     tipKey: 'mc_settings_mod_toolbar_buttons_desc',
     control: 'pill',
@@ -4127,6 +4179,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'mod',
     section: 'mod toolbar',
+    sectionKey: 'lib_sec_mod_toolbar',
     labelKey: 'mc_settings_confirm_ban',
     tipKey: 'mc_settings_confirm_ban_desc',
     control: 'pill',
@@ -4140,6 +4193,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'mod',
     section: 'mod toolbar',
+    sectionKey: 'lib_sec_mod_toolbar',
     labelKey: 'mc_settings_ban_reasons',
     tipKey: 'mc_settings_ban_reasons_desc',
     control: 'textarea',
@@ -4155,6 +4209,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'mod',
     section: 'automod',
+    sectionKey: 'mc_ms_cell_automod',
     labelKey: 'mc_settings_automod_caps',
     tipKey: 'mc_settings_automod_caps_desc',
     control: 'pill',
@@ -4168,6 +4223,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'mod',
     section: 'automod',
+    sectionKey: 'mc_ms_cell_automod',
     labelKey: 'mc_settings_automod_regex',
     tipKey: 'mc_settings_automod_regex_desc',
     placeholderKey: 'mc_settings_automod_regex_placeholder',
@@ -4189,6 +4245,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'content',
+    sectionKey: 'lib_sec_content',
     labelKey: 'mc_settings_show_sexual',
     tipKey: 'mc_settings_show_sexual_desc',
     control: 'pill',
@@ -4204,6 +4261,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'content',
+    sectionKey: 'lib_sec_content',
     labelKey: 'mc_settings_show_gore',
     tipKey: 'mc_settings_show_gore_desc',
     control: 'pill',
@@ -4219,6 +4277,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'content',
+    sectionKey: 'lib_sec_content',
     labelKey: 'mc_settings_show_weapon',
     tipKey: 'mc_settings_show_weapon_desc',
     control: 'pill',
@@ -4234,6 +4293,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'content',
+    sectionKey: 'lib_sec_content',
     labelKey: 'mc_settings_show_drug',
     tipKey: 'mc_settings_show_drug_desc',
     control: 'pill',
@@ -4249,6 +4309,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'content',
+    sectionKey: 'lib_sec_content',
     labelKey: 'mc_settings_show_hate',
     tipKey: 'mc_settings_show_hate_desc',
     control: 'pill',
@@ -4268,6 +4329,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'filters',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_hide_bots',
     tipKey: 'mc_settings_hide_bots_desc',
     control: 'pill',
@@ -4281,6 +4343,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'filters',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_hide_commands',
     tipKey: 'mc_settings_hide_commands_desc',
     control: 'pill',
@@ -4293,6 +4356,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'filters',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_hide_duplicates',
     tipKey: 'mc_settings_hide_duplicates_desc',
     control: 'pill',
@@ -4306,6 +4370,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'filters',
     section: 'messages',
+    sectionKey: 'lib_sec_messages',
     labelKey: 'mc_settings_mute_keywords',
     tipKey: 'mc_settings_mute_keywords_desc',
     placeholderKey: 'mc_settings_mute_keywords_placeholder',
@@ -4327,6 +4392,7 @@ const SETTINGS = [
     mirrorKey: 'chat_filter_rules',
     category: 'filters',
     section: 'rules',
+    sectionKey: 'lib_sec_rules',
     labelKey: 'mc_settings_filter_rules',
     tipKey: 'mc_settings_filter_rules_desc',
     control: 'custom',
@@ -4346,6 +4412,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'pill',
     runtimeVar: 'scrollWheelVolumeEnabled',
     labelKey: 'mc_settings_scroll_wheel_volume',
@@ -4364,6 +4431,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume',
     tipKey: 'mc_settings_channel_volume_desc',
@@ -4377,6 +4445,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_twitch',
     tipKey: 'mc_settings_channel_volume_twitch_desc',
@@ -4390,6 +4459,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_kick',
     tipKey: 'mc_settings_channel_volume_kick_desc',
@@ -4403,6 +4473,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'pill',
     labelKey: 'mc_settings_channel_volume_youtube',
     tipKey: 'mc_settings_channel_volume_youtube_desc',
@@ -4415,6 +4486,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'player',
+    sectionKey: 'lib_sec_player',
     control: 'range',
     labelKey: 'mc_settings_channel_volume_default',
     tipKey: 'mc_settings_channel_volume_default_desc',
@@ -4434,6 +4506,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'system',
     section: 'tabs',
+    sectionKey: 'lib_sec_tabs',
     labelKey: 'mc_settings_visible_tabs',
     control: 'pill',
     runtimeVar: 'hiddenTabs',
@@ -4461,6 +4534,7 @@ const SETTINGS = [
     scope: 'local',
     category: 'system',
     section: 'language',
+    sectionKey: 'lib_sec_language',
     labelKey: 'mc_settings_ui_locale',
     tipKey: 'mc_settings_ui_locale_desc',
     control: 'select',
@@ -4519,6 +4593,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'system',
     section: 'subsystems',
+    sectionKey: 'mc_settings_subsystems',
     labelKey: 'mc_settings_subsystems',
     apply: 'subsystemToggle',
     control: 'pill',
@@ -4637,6 +4712,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'system',
     section: 'advanced',
+    sectionKey: 'mc_ms_am_advanced',
     labelKey: 'mc_settings_diag_errors',
     tipKey: 'mc_settings_diag_errors_desc',
     control: 'pill',
@@ -4649,6 +4725,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'system',
     section: 'advanced',
+    sectionKey: 'mc_ms_am_advanced',
     labelKey: 'mc_settings_debug_logging',
     tipKey: 'mc_settings_debug_logging_desc',
     control: 'pill',
@@ -4721,6 +4798,7 @@ const SETTINGS = [
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
     label: 'hidden paint users',
     tip: 'users whose name paint you have hidden — toggle via right-click on their name',
     control: 'custom',
@@ -15313,7 +15391,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '28f3a3c3616f' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5a97b18e6c72' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16234,15 +16312,15 @@ function slashHelpText(surface) {
 // status are full surfaces reached by switchTab(tab, sub); no strip draws them
 // on live or channel tabs (mcShowsRow), /status is the hub that links to them.
 const MC_CHANNEL_SUB = [
-  { id: 'chat', label: 'chat' },
-  { id: 'summary', label: 'summary' },
-  { id: 'logs', label: 'logs' },
-  { id: 'status', label: 'status' },
+  { id: 'chat', labelKey: 'mc_tr_sub_chat' },
+  { id: 'summary', labelKey: 'mc_tr_sub_summary' },
+  { id: 'logs', labelKey: 'mc_tr_sub_logs' },
+  { id: 'status', labelKey: 'mc_tr_sub_status' },
 ]
 
 // live is a launcher for whichever channel is up, so it also owns the form that
 // says which platforms that channel means.
-const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
+const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', labelKey: 'mc_tr_sub_platforms' }]
 
 const MC_TABS = [
   { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
@@ -16259,7 +16337,15 @@ const MC_TABS = [
     // settings draws its own row inside the pane (settings-ui.js); the cells
     // are still addressable: switchTab('settings', 'help')
     ownRow: true,
-    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'system', 'help'].map((id) => ({ id, label: id })),
+    sub: [
+      ['display', 'mc_tr_set_display'],
+      ['chat', 'mc_tr_sub_chat'],
+      ['notifs', 'mc_tr_set_notifs'],
+      ['mod', 'mc_tr_set_mod'],
+      ['filters', 'mc_tr_set_filters'],
+      ['system', 'mc_tr_set_system'],
+      ['help', 'mc_tr_set_help'],
+    ].map(([id, labelKey]) => ({ id, labelKey })),
   },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },
@@ -16999,12 +17085,12 @@ const HS_X_SVG =
   '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="2.25" fill="none"/></svg>'
 
 // Markup form, for template strings. `cls` adds the spot-specific class(es).
-function hsXButtonHtml(cls = '', label = 'close', attrs = '') {
+function hsXButtonHtml(cls = '', label = t('mc_xg_close'), attrs = '') {
   return `<button type="button" class="hs-x${cls ? ` ${cls}` : ''}" aria-label="${label}"${attrs ? ` ${attrs}` : ''}>${HS_X_SVG}</button>`
 }
 
 // Element form. `onClick` is optional (a delegated handler may own the click).
-function hsXButton(cls = '', label = 'close', onClick) {
+function hsXButton(cls = '', label = t('mc_xg_close'), onClick) {
   const b = document.createElement('button')
   b.type = 'button'
   b.className = `hs-x${cls ? ` ${cls}` : ''}`
@@ -17015,7 +17101,7 @@ function hsXButton(cls = '', label = 'close', onClick) {
 }
 
 // Turn an existing node (one a mirrored/shared renderer produced) into the glyph.
-function hsXify(el, label = 'close') {
+function hsXify(el, label = t('mc_xg_close')) {
   if (!el) return el
   el.classList.add('hs-x')
   el.setAttribute('aria-label', label)
@@ -17041,7 +17127,7 @@ function hsPaneMountRow(items, onClose) {
   // the × leads: it is the one cell that is always there, so it stays at the
   // top where it can be found, and the destinations hang under it
   row.replaceChildren(
-    ...(onClose ? [hsXButton('hs-x-cell', 'close', onClose)] : []),
+    ...(onClose ? [hsXButton('hs-x-cell', t('mc_xg_close'), onClose)] : []),
     ...items.map((it) => {
       const a = document.createElement('a')
       a.className = 'hs-mc-dest'
@@ -17190,7 +17276,7 @@ function hsConfirm(message, confirmLabel = 'confirm', reasons = []) {
     const cancelBtn = document.createElement('button')
     cancelBtn.type = 'button'
     cancelBtn.className = 'hs-mc-confirm-cancel'
-    cancelBtn.textContent = 'cancel'
+    cancelBtn.textContent = t('mc_mr_cancel')
     const okBtn = document.createElement('button')
     okBtn.type = 'button'
     okBtn.className = 'hs-mc-confirm-ok'
@@ -17541,7 +17627,7 @@ const HsNotifs = (() => {
         btn.className = `hs-notif-action hs-notif-action-${kind}${kind === 'dismiss' ? ' hs-x hs-x-inline' : ''}`
         if (kind === 'dismiss') btn.innerHTML = HS_X_SVG
         else btn.textContent = def.label || kind
-        if (kind === 'dismiss') btn.setAttribute('aria-label', def.title || 'dismiss')
+        if (kind === 'dismiss') btn.setAttribute('aria-label', def.title || t('mc_notif_dismiss'))
         if (def.title) btn.title = def.title
         btn.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -17814,7 +17900,7 @@ const HsNotifs = (() => {
       if (data.color) who.style.color = data.color
       const count = data._count | 0
       const snippet = String(data.text || '').slice(0, 80)
-      el.append(who, ` whispered: ${snippet}${count > 1 ? ` ×${count}` : ''}`)
+      el.append(who, ` ${t('mc_notif_whispered', [snippet])}${count > 1 ? ` ×${count}` : ''}`)
       el.addEventListener('click', () => {
         try {
           if (typeof switchTab === 'function') switchTab('whispers')
@@ -17835,7 +17921,7 @@ const HsNotifs = (() => {
     render: ({ data }) => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-info'
-      el.textContent = (typeof data?.text === 'string' && data.text.trim()) || 'loading emotes…'
+      el.textContent = (typeof data?.text === 'string' && data.text.trim()) || t('mc_notif_emotes_loading')
       return el
     },
   })
@@ -17854,7 +17940,7 @@ const HsNotifs = (() => {
       el.className = 'hs-notif-toast-text hs-mc-tabmode-line'
       const tag = document.createElement('span')
       tag.className = 'hs-mc-tabmode-tag'
-      tag.textContent = '-- TABS --'
+      tag.textContent = t('mc_notif_tabs_tag')
       el.appendChild(tag)
       const rest = document.createElement('span')
       rest.className = 'hs-mc-tabmode-hint'
@@ -17902,16 +17988,16 @@ const HsNotifs = (() => {
       const text = document.createElement('span')
       text.className = 'hs-notif-resub-text'
       const parts = [
-        ['hs-rt-prefix', 'celebrating '],
+        ['hs-rt-prefix', `${t('mc_notif_rt_prefix')} `],
         ['hs-rt-num', String(months)],
-        ['hs-rt-mo', 'mo'],
-        ['hs-rt-months', ' months'],
-        ['hs-rt-suffix', ' as a subscriber'],
+        ['hs-rt-mo', t('mc_notif_rt_mo')],
+        ['hs-rt-months', ` ${t('mc_notif_rt_months')}`],
+        ['hs-rt-suffix', ` ${t('mc_notif_rt_suffix')}`],
       ]
-      for (const [cls, t] of parts) {
+      for (const [cls, txt] of parts) {
         const s = document.createElement('span')
         s.className = cls
-        s.textContent = t
+        s.textContent = txt
         text.appendChild(s)
       }
       el.appendChild(icon)
@@ -17920,7 +18006,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'share',
+        label: t('mc_notif_share'),
         onClick: (data, dismiss) => {
           // Bypass the native Twitch share button — its native onClick auto-
           // sends a default "<user> is celebrating Nmo as a subscriber!"
@@ -17994,15 +18080,15 @@ const HsNotifs = (() => {
       const text = document.createElement('span')
       text.className = 'hs-notif-watchstreak-text'
       const parts = [
-        ['hs-wt-prefix', 'on a '],
+        ['hs-wt-prefix', `${t('mc_notif_wt_prefix')} `],
         ['hs-wt-num', String(n)],
-        ['hs-wt-stream', ' stream'],
-        ['hs-wt-suffix', ' watch streak'],
+        ['hs-wt-stream', ` ${t('mc_notif_wt_stream')}`],
+        ['hs-wt-suffix', ` ${t('mc_notif_wt_suffix')}`],
       ]
-      for (const [cls, t] of parts) {
+      for (const [cls, txt] of parts) {
         const s = document.createElement('span')
         s.className = cls
-        s.textContent = t
+        s.textContent = txt
         text.appendChild(s)
       }
       el.appendChild(icon)
@@ -18011,7 +18097,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'share',
+        label: t('mc_notif_share'),
         onClick: (data) => {
           try {
             // Same click-time rescan as the resub prompt: the notif is emitted
@@ -18053,7 +18139,7 @@ const HsNotifs = (() => {
       el.className = 'hs-notif-toast-text hs-notif-toast-warn'
       const body = data.msg
         ? String(data.msg).slice(0, 200)
-        : `update available — running ${data.current}, latest is ${data.min}+`
+        : t('mc_notif_update_available', [String(data.current), String(data.min)])
       el.textContent = body
       return el
     },
@@ -18062,8 +18148,8 @@ const HsNotifs = (() => {
 
   // failure reasons that mean "not signed in over there" → where to sign in
   const PENDING_LOGIN_LINKS = {
-    kick_not_logged_in: { label: 'open kick', url: 'https://kick.com/' },
-    chat_disabled: { label: 'open youtube', url: 'https://www.youtube.com/' },
+    kick_not_logged_in: { label: t('mc_notif_open_kick'), url: 'https://kick.com/' },
+    chat_disabled: { label: t('mc_notif_open_youtube'), url: 'https://www.youtube.com/' },
   }
 
   // Send-pending — fires when an outgoing chat message hasn't echoed back from
@@ -18078,24 +18164,24 @@ const HsNotifs = (() => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-warn'
       const reasonMap = {
-        auth_failed: 'twitch auth failed',
-        no_user: 'no twitch username',
-        connect_failed: 'connection failed',
-        send_failed: 'send failed',
-        kick_not_logged_in: 'kick not logged in',
-        no_kick_tab: 'no kick tab open',
-        no_channel: 'kick channel not found',
+        auth_failed: t('mc_notif_r_auth_failed'),
+        no_user: t('mc_notif_r_no_user'),
+        connect_failed: t('mc_notif_r_connect_failed'),
+        send_failed: t('mc_notif_r_send_failed'),
+        kick_not_logged_in: t('mc_notif_r_kick_not_logged_in'),
+        no_kick_tab: t('mc_notif_r_no_kick_tab'),
+        no_channel: t('mc_notif_r_no_channel'),
         // Deliberately not worded as a failure: kick may well have posted it
         // (see kick-send.js KICK_SEND_TIMEOUT_MS). "retry" here is an informed
         // choice to send it a second time, not a repair.
-        kick_unconfirmed: 'kick did not confirm — it may have posted',
-        'missing params': 'kick send rejected',
-        no_youtube_tab: 'no youtube tab open',
-        no_input: 'youtube chat still loading',
-        chat_disabled: 'log into youtube first',
-        send_disabled: 'youtube blocked the send',
-        send_not_confirmed: 'youtube did not confirm the send',
-        bridge_timeout: 'youtube chat bridge timed out',
+        kick_unconfirmed: t('mc_notif_r_kick_unconfirmed'),
+        'missing params': t('mc_notif_r_missing_params'),
+        no_youtube_tab: t('mc_notif_r_no_youtube_tab'),
+        no_input: t('mc_notif_r_no_input'),
+        chat_disabled: t('mc_notif_r_chat_disabled'),
+        send_disabled: t('mc_notif_r_send_disabled'),
+        send_not_confirmed: t('mc_notif_r_send_not_confirmed'),
+        bridge_timeout: t('mc_notif_r_bridge_timeout'),
       }
       let why
       const _reasonStr = String(data.reason || '')
@@ -18103,17 +18189,17 @@ const HsNotifs = (() => {
         // Name the platform(s) that never confirmed (markPendingFailed sends
         // the awaiting set) — a kick or yt no-echo used to blame twitch.
         const plat = (data.platforms || []).map((p) => (p === 'yt' ? 'youtube' : p)).join('+')
-        why = `${plat || 'platform'} did not confirm — may not have posted`
+        why = t('mc_notif_r_no_echo', [plat || t('mc_notif_r_platform')])
       } else if (_reasonStr.startsWith('chat_restricted')) {
         // "chat_restricted:<yt's human reason>" — surface yt's own words
         // (subscribers-only mode, members-only, follower age gate).
         const detail = _reasonStr.includes(':') ? _reasonStr.slice(_reasonStr.indexOf(':') + 1).toLowerCase() : ''
-        why = detail ? `chat restricted — ${detail}` : 'chat restricted'
+        why = detail ? t('mc_notif_r_restricted_detail', [detail]) : t('mc_notif_r_restricted')
       } else {
-        why = reasonMap[data.reason] || data.reason || 'send may have failed'
+        why = reasonMap[data.reason] || data.reason || t('mc_notif_r_unknown')
       }
       const snippet = String(data.text || '').slice(0, 60)
-      el.textContent = `${why}: "${snippet}${data.text?.length > 60 ? '…' : ''}"`
+      el.textContent = t('mc_notif_pending_line', [why, `${snippet}${data.text?.length > 60 ? '…' : ''}`])
       // Login-shaped failures get a way in, like twitch-auth-required's "open twitch"
       const login = PENDING_LOGIN_LINKS[data.reason]
       if (login) {
@@ -18134,7 +18220,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'retry',
+        label: t('common_retry'),
         onClick: (data) => {
           try {
             globalThis.__hsRetryPendingSend?.(data.synthId)
@@ -18157,12 +18243,12 @@ const HsNotifs = (() => {
     render: ({ data }) => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-error'
-      el.textContent = data.text || 'log into twitch.tv to chat'
+      el.textContent = data.text || t('mc_notif_login_twitch')
       return el
     },
     actions: {
       primary: {
-        label: 'open twitch',
+        label: t('mc_notif_open_twitch'),
         onClick: () => {
           try {
             window.open('https://www.twitch.tv/', '_blank', 'noopener')
@@ -19947,14 +20033,14 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
 
   const head = document.createElement('div')
   head.className = 'hs-note-editor-head'
-  head.textContent = `note · ${String(username || '').toLowerCase()}`
+  head.textContent = t('mc_notes_head', [String(username || '').toLowerCase()])
   box.appendChild(head)
 
   const ta = document.createElement('textarea')
   ta.className = 'hs-note-editor-ta'
   ta.rows = 4
   ta.maxLength = HS_NOTE_MAX
-  ta.placeholder = 'private note — only you see this. follows them across platforms.'
+  ta.placeholder = t('mc_notes_placeholder')
   ta.value = existing?.text || ''
   ta.spellcheck = false
   box.appendChild(ta)
@@ -19963,10 +20049,10 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
   foot.className = 'hs-note-editor-foot'
   const status = document.createElement('span')
   status.className = 'hs-note-editor-status'
-  status.textContent = 'esc to close'
+  status.textContent = t('mc_notes_esc')
   const del = document.createElement('button')
   del.className = 'hs-note-editor-del'
-  del.textContent = 'delete'
+  del.textContent = t('mc_notes_delete')
   del.style.visibility = existing?.text ? '' : 'hidden'
   foot.appendChild(status)
   foot.appendChild(del)
@@ -19994,7 +20080,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
     dirty = false
     await hsNoteSave(username, platform, ta.value, undefined, profileId)
     del.style.visibility = ta.value.trim() ? '' : 'hidden'
-    status.textContent = 'saved · esc to close'
+    status.textContent = t('mc_notes_saved')
     if (typeof onSaved === 'function') {
       try {
         onSaved()
@@ -20003,7 +20089,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
   }
   ta.addEventListener('input', () => {
     dirty = true
-    status.textContent = 'saving…'
+    status.textContent = t('mc_notes_saving')
     if (saveTimer) clearTimeout(saveTimer)
     saveTimer = setTimeout(flush, 350)
   })
@@ -20056,7 +20142,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
 function hsNoteRenderCardSection(username, platform, mkSection, profileId, prefetchedNote) {
   if (typeof document === 'undefined') return null
   const make = typeof mkSection === 'function' ? mkSection : typeof pcMakeSection === 'function' ? pcMakeSection : null
-  const sec = make ? make('notes') : document.createElement('div')
+  const sec = make ? make(t('mc_notes_section')) : document.createElement('div')
   if (!make) sec.className = 'hs-pcard-section'
   sec.classList.add('hs-pcard-notes')
 
@@ -20067,9 +20153,9 @@ function hsNoteRenderCardSection(username, platform, mkSection, profileId, prefe
 
   const paint = () => {
     const n = hsNoteGet(username, platform)
-    body.textContent = n?.text || 'no note yet'
+    body.textContent = n?.text || t('mc_notes_empty')
     body.classList.toggle('hs-pcard-note-empty', !n?.text)
-    btn.textContent = n?.text ? 'edit' : 'add note'
+    btn.textContent = n?.text ? t('mc_notes_edit') : t('mc_notes_add')
   }
   btn.addEventListener('click', (e) => {
     const r = btn.getBoundingClientRect()
@@ -20552,14 +20638,14 @@ function buildStreamSummary(channel, ended, onClose) {
   const title = document.createElement('div')
   title.className = 'hs-mc-summary-title'
   const titleText = document.createElement('span')
-  titleText.textContent = ended || s?.endedAt ? `${key} stream ended` : `${key} stream summary`
+  titleText.textContent = ended || s?.endedAt ? t('mc_ss_ended', [key]) : t('mc_ss_summary', [key])
   title.append(titleText)
   if (onClose) {
-    const dismiss = hsXButton('hs-x-inline', 'back to chat', (e) => {
+    const dismiss = hsXButton('hs-x-inline', t('mc_main_back_to_chat'), (e) => {
       e.stopPropagation()
       onClose()
     })
-    dismiss.title = 'back to chat (Esc)'
+    dismiss.title = t('mc_main_back_to_chat_esc')
     title.append(dismiss)
   }
   card.append(title)
@@ -20571,20 +20657,17 @@ function buildStreamSummary(channel, ended, onClose) {
     card.append(el)
   }
   if (!isEnabled('stream-stats')) {
-    line('hs-mc-summary-dim', 'stream stats are off in settings')
+    line('hs-mc-summary-dim', t('mc_ss_off'))
     return card
   }
   if (!s || s.msgCount === 0) {
-    line('hs-mc-summary-dim', 'no chat counted yet — it fills in as messages arrive')
+    line('hs-mc-summary-dim', t('mc_ss_empty'))
     return card
   }
   const n = (v) => v.toLocaleString('en-US')
   const chatters = s.chattersFloor > s.chatters.size ? `${n(s.chattersFloor)}+` : n(s.chatters.size)
-  line(
-    'hs-mc-summary-stats',
-    `${n(s.msgCount)} msgs · ${chatters} chatters · ${n(s.mentionCount)} mentions · ${s.peakMps}/s peak`,
-  )
-  line('hs-mc-summary-dim', `since ${fmtClock(s.startedAt)} · ${fmtDuration(Date.now() - s.startedAt)}`)
+  line('hs-mc-summary-stats', t('mc_ss_stats', [n(s.msgCount), chatters, n(s.mentionCount), String(s.peakMps)]))
+  line('hs-mc-summary-dim', t('mc_ss_since', [fmtClock(s.startedAt), fmtDuration(Date.now() - s.startedAt)]))
   const top = (label, items) => {
     if (items.length === 0) return
     const row = document.createElement('div')
@@ -20597,8 +20680,8 @@ function buildStreamSummary(channel, ended, onClose) {
     row.append(lbl, list)
     card.append(row)
   }
-  top('top chatters', topN(s.chatters, STREAM_STATS_TOP_N))
-  top('top emotes', topN(s.emotes, STREAM_STATS_TOP_N))
+  top(t('mc_ss_top_chatters'), topN(s.chatters, STREAM_STATS_TOP_N))
+  top(t('mc_ss_top_emotes'), topN(s.emotes, STREAM_STATS_TOP_N))
   return card
 }
 
@@ -21181,10 +21264,10 @@ function notifyStreamEvent(channel, eventType, game, platform) {
   if (document.hasFocus()) return
   let title, body
   if (eventType === 'stream:online') {
-    title = `${channel} went live`
+    title = t('mc_mn_went_live', [channel])
     body = game || ''
   } else if (eventType === 'stream:update') {
-    title = `${channel} switched game`
+    title = t('mc_mn_switched_game', [channel])
     body = game || ''
   } else {
     return
@@ -22117,7 +22200,9 @@ class IRC extends ChatClient {
             for (const m of buf.getAll()) {
               if (m.user && m.user.toLowerCase() === targetLc && !m.cleared) {
                 m.cleared = true
-                m.clearedReason = msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned'
+                m.clearedReason = msg.banDuration
+                  ? t('mc_mod_label_timed_out', [String(msg.banDuration)])
+                  : t('mc_mod_label_banned')
               }
             }
           }
@@ -22595,7 +22680,9 @@ class KickChat extends ChatClient {
     const action = message.action
     const targetLc = (message.targetUser || '').toLowerCase()
     if ((action === 'ban' || action === 'timeout') && targetLc) {
-      const reason = message.banDuration ? `timed out (${message.banDuration}s)` : 'banned'
+      const reason = message.banDuration
+        ? t('mc_mod_label_timed_out', [String(message.banDuration)])
+        : t('mc_mod_label_banned')
       for (const m of buf.getAll()) {
         if (!m.cleared && (m.user || '').toLowerCase() === targetLc) {
           m.cleared = true
@@ -22635,12 +22722,12 @@ class KickChat extends ChatClient {
     if (this._consumeSelfMod(channel, noticeType, action === 'delete' ? message.targetMsgId : targetLc)) return
     const text =
       action === 'delete'
-        ? `a message was deleted`
+        ? t('mc_ircx_msg_deleted')
         : action === 'unban'
-          ? `${target} was unbanned`
+          ? t('mc_ircx_unbanned', [target])
           : action === 'timeout'
-            ? `${target} timed out for ${message.banDuration || 1}s`
-            : `${target} was banned`
+            ? t('mc_ircx_timed_out', [target, String(message.banDuration || 1)])
+            : t('mc_ircx_banned', [target])
     this.emit('message', {
       type: 'notice',
       noticeType,
@@ -22760,11 +22847,15 @@ class KickChat extends ChatClient {
       if (message.type === 'kick_pin_event' && message.channel) {
         const channel = message.channel.toLowerCase()
         if (!this.channels.has(channel)) return
-        const by = message.sender ? ` ${message.sender}:` : ':'
         const msg = {
           user: message.sender || 'system',
           text: '',
-          systemMsg: message.pinned ? `pinned${by} ${message.text}`.trim() : 'message unpinned',
+          systemMsg: message.pinned
+            ? (message.sender
+                ? t('mc_main_ev_pinned_by', [message.sender, message.text])
+                : t('mc_main_ev_pinned', [message.text])
+              ).trim()
+            : t('mc_main_ev_unpinned'),
           // feeds sanitizeColor()/COLOR_RE downstream (main.js) — literal hex only, no var().
           color: '#ffd700',
           badges: '',
@@ -22790,7 +22881,13 @@ class KickChat extends ChatClient {
         const msg = {
           user: message.username || 'anonymous',
           text: message.message || '',
-          systemMsg: `${message.username || 'Anonymous'} gifted ${message.amount} KICKs${message.giftName ? ` (${message.giftName})` : ''}!`,
+          systemMsg: message.giftName
+            ? t('mc_ircx_gift_kicks_named', [
+                message.username || t('mc_ircx_anonymous'),
+                String(message.amount),
+                message.giftName,
+              ])
+            : t('mc_ircx_gift_kicks', [message.username || t('mc_ircx_anonymous'), String(message.amount)]),
           // feeds sanitizeColor()/COLOR_RE downstream (main.js) — must stay literal hex, no var(). Canonical gold.
           color: '#ffd700',
           badges: '',
@@ -25114,7 +25211,7 @@ function buildRecentSection(allEmotes) {
     if (e) out.push([name, e])
     if (out.length >= RECENT_CAP) break
   }
-  return out.length ? { key: 'recent', label: 'recent', emotes: out } : null
+  return out.length ? { key: 'recent', label: t('btn_recent'), emotes: out } : null
 }
 
 function groupEmotes(allEmotes) {
@@ -25382,8 +25479,8 @@ function emoteImgHtml([name, emote]) {
  * entry here plus one renderer.
  */
 const MC_PICKER_TABS = [
-  { id: 'emotes', label: 'emotes' },
-  { id: 'gifs', label: 'gifs' },
+  { id: 'emotes', labelKey: 'mc_emo_tab_emotes' },
+  { id: 'gifs', labelKey: 'mc_emo_tab_gifs' },
   { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
   { id: 'kick', label: 'kick', when: () => hostPlatform === 'kick' },
   { id: 'youtube', label: 'youtube', when: () => hostPlatform === 'yt' },
@@ -25530,7 +25627,7 @@ function showEmotePicker(tab = null) {
         ${mcVisiblePickerTabs()
           .map(
             (tab) =>
-              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.label)}</button>`,
+              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.labelKey ? t(tab.labelKey) : tab.label)}</button>`,
           )
           .join('')}
       </div>
@@ -25544,7 +25641,7 @@ function showEmotePicker(tab = null) {
   if (searchWrap && !searchWrap.querySelector('.hs-mc-src-chips')) {
     const chipBar = document.createElement('div')
     chipBar.className = 'hs-mc-src-chips visible'
-    chipBar.title = 'toggle which providers to search'
+    chipBar.title = t('mc_emo_chips_title')
     for (const src of MC_REMOTE_SOURCES) {
       const btn = document.createElement('button')
       btn.className = `hs-mc-src-chip${mcPickerSources.has(src) ? ' active' : ''}`
@@ -25559,7 +25656,7 @@ function showEmotePicker(tab = null) {
     const exactBtn = document.createElement('button')
     exactBtn.className = `hs-mc-exact-chip${mcExactMatch ? ' active' : ''}`
     exactBtn.textContent = t('mc_emote_exact')
-    exactBtn.title = 'exact name match only'
+    exactBtn.title = t('mc_emo_exact_title')
     exactBtn.type = 'button'
     chipBar.appendChild(exactBtn)
     // Clicking a chip blurs the search input; preventDefault keeps focus.
@@ -26550,7 +26647,7 @@ function blockAllEmotesInStack(stack) {
   })
   if (count > 0) showToast(t('mc_emote_blocked_count', [String(count)]), 'success')
   stack.classList.remove('expanded')
-  stack.setAttribute('title', 'expand')
+  stack.setAttribute('title', t('mc_emo_stack_expand'))
 }
 
 // opts.skipSync: don't hit the API (used when this call IS the rollback of a
@@ -29284,7 +29381,7 @@ function renderEmoteStack(stack) {
     _urlRe.lastIndex = 0
   }
   const _resAttr = _reserve ? ` style="min-width:${_reserve}px"` : ''
-  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="expand"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span>${hsXButtonHtml('hs-mc-stack-collapse hs-x-inline', 'collapse', 'title="collapse"')}<span class="hs-mc-stack-block-all" title="block all">\u2298</span></span>`
+  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="${t('mc_emo_stack_expand')}"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span>${hsXButtonHtml('hs-mc-stack-collapse hs-x-inline', t('mc_emo_stack_collapse'), `title="${t('mc_emo_stack_collapse')}"`)}<span class="hs-mc-stack-block-all" title="${t('mc_emo_stack_block_all')}">\u2298</span></span>`
 }
 
 
@@ -30170,7 +30267,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   } else if (state === 'blocked') {
     label = t('mc_emote_blocked')
   } else if (state === 'cw') {
-    label = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || 'hidden'
+    label = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || t('mc_tip_hidden')
   } else if (fromInv) {
     label = 'Heatsync'
   } else {
@@ -30183,10 +30280,10 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
       kick: 'Kick',
       heatsync: 'Heatsync',
     }
-    const sourceName = sourceLabels[source] || source || 'unknown'
+    const sourceName = sourceLabels[source] || source || t('mc_common_unknown')
     if (state === 'sub') {
       // Twitch sub emote — show broadcaster as scope so it's specific
-      label = owner ? `${owner} sub (${sourceName})` : sourceName
+      label = owner ? t('mc_tip_owner_sub', [owner, sourceName]) : sourceName
     } else {
       label = sourceName
     }
@@ -30196,7 +30293,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   const staleActor = wrapper?.dataset.staleActor || ''
   const isStale = wrapper?.classList.contains('hs-state-stale')
   if (isStale) {
-    label = staleActor ? `${label} · removed by @${staleActor}` : `${label} · removed from channel`
+    label = staleActor ? t('mc_tip_removed_by', [label, staleActor]) : t('mc_tip_removed_from_channel', [label])
   }
   // v1.6 NSFW — flagged emotes get an explicit suffix so viewers who
   // opted in know which emotes are filtered for everyone else.
@@ -30205,7 +30302,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
     wrapper?.classList.contains('hs-state-nsfw') ||
     pickerWrap?.classList.contains('hs-state-nsfw') ||
     hoveredImg?.classList?.contains?.('hs-state-nsfw')
-  if (isNsfw) label = `${label} · NSFW`
+  if (isNsfw) label = t('mc_tip_nsfw', [label])
   stateEl.textContent = label
   const srcClass =
     fromInv && state !== 'owned' && state !== 'blocked'
@@ -30900,8 +30997,8 @@ function computeSubTenureRow(username, msgChannel) {
   const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   const tenure = hsCardTenureMonths(months) || `${months}mo`
   return isSelfChannel
-    ? { k: 'sub-tenure', label: 'they', value: `sub to you ${tenure}`, tone: 'they-sub' }
-    : { k: 'sub-tenure', label: 'ch sub', value: `${channelLogin} ${tenure}`, tone: 'ch' }
+    ? { k: 'sub-tenure', label: t('mc_tip_row_they'), value: t('mc_tip_sub_to_you', [tenure]), tone: 'they-sub' }
+    : { k: 'sub-tenure', label: t('mc_tip_row_ch_sub'), value: `${channelLogin} ${tenure}`, tone: 'ch' }
 }
 
 // Live Twitch followage rows from a resolved followage result (payload.followage
@@ -30919,23 +31016,34 @@ function computeFollowageRows(channelLogin, isSelfChannel, result) {
       result.followedAt
         ? {
             k: 'ch-follow',
-            label: 'ch follow',
+            label: t('mc_tip_row_ch_follow'),
             value: `${channelLogin} ${hsCardRelativeTime(result.followedAt)}`,
             tone: 'ch',
           }
-        : { k: 'ch-follow', label: 'ch follow', value: `not following ${channelLogin}`, tone: 'dim' },
+        : {
+            k: 'ch-follow',
+            label: t('mc_tip_row_ch_follow'),
+            value: t('mc_input_not_following', [channelLogin]),
+            tone: 'dim',
+          },
     )
-    if (result.channelFollowedAt) rows.push({ k: 'ch-follows', label: 'follower', value: channelLogin, tone: 'ch' })
+    if (result.channelFollowedAt)
+      rows.push({ k: 'ch-follows', label: t('mc_tip_row_follower'), value: channelLogin, tone: 'ch' })
   } else if (result.channelFollowedAt) {
     rows.push({
       k: 'you-follow',
-      label: 'you',
-      value: `follow ${hsCardRelativeTime(result.channelFollowedAt)}`,
+      label: t('mc_tip_row_you'),
+      value: t('mc_tip_follow_ago', [hsCardRelativeTime(result.channelFollowedAt)]),
       tone: 'you-follow',
     })
   }
   if (result.followerCount != null) {
-    rows.push({ k: 'followers', label: 'followers', value: formatCompact(result.followerCount), tone: 'followers' })
+    rows.push({
+      k: 'followers',
+      label: t('mc_tip_row_followers'),
+      value: formatCompact(result.followerCount),
+      tone: 'followers',
+    })
   }
   return rows
 }
@@ -30948,9 +31056,13 @@ function computeFollowageRows(channelLogin, isSelfChannel, result) {
 function cardCorpusSheetRow(corpus, skipChannel) {
   if (!corpus) return null
   const parts = []
-  if (corpus.messages > 0) parts.push(`${formatCompact(corpus.messages)} msgs`)
+  if (corpus.messages > 0) parts.push(t('mc_tip_corpus_msgs', [formatCompact(corpus.messages)]))
   if (corpus.firstDay)
-    parts.push(corpus.firstChannel ? `since ${corpus.firstDay} ${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+    parts.push(
+      corpus.firstChannel
+        ? t('mc_tip_corpus_since_ch', [corpus.firstDay, corpus.firstChannel])
+        : t('mc_tip_corpus_since', [corpus.firstDay]),
+    )
   const skip = skipChannel ? String(skipChannel).toLowerCase() : null
   const also = (corpus.also || []).filter((c) => c.toLowerCase() !== skip)
   if (also.length) {
@@ -30961,7 +31073,7 @@ function cardCorpusSheetRow(corpus, skipChannel) {
     parts.push(also.length > 3 ? `${shown} +${also.length - 3}` : shown)
   }
   if (!parts.length) return null
-  return { k: 'corpus', label: 'logs', value: parts.join(' · '), tone: '' }
+  return { k: 'corpus', label: t('mc_tip_row_logs'), value: parts.join(' · '), tone: '' }
 }
 
 // Ext-only sheet-row DOM patch — used ONLY by the no-heatsync-account
@@ -31935,118 +32047,133 @@ function renderQuickLinks() {
       label: null,
       show: true,
       items: [
-        { action: 'sub', accent: '#ff0000', icon: ICONS.sub, label: 'subscribe', direct: true },
-        { action: 'popout', accent: '#ffffff', icon: ICONS.popout, label: 'popout chat', direct: true },
+        { action: 'sub', accent: '#ff0000', icon: ICONS.sub, label: t('mc_twapi_ql_subscribe'), direct: true },
+        { action: 'popout', accent: '#ffffff', icon: ICONS.popout, label: t('popup_btn_popout'), direct: true },
       ],
     },
     {
-      label: 'mod tools',
+      label: t('content_card_mod_tools'),
       show: isMod,
       items: [
         {
           accent: '#00ffff',
           icon: ICONS.shield,
-          label: 'mod view (chat, automod, blocked terms)',
+          label: t('mc_twapi_ql_mod_view'),
           url: (c) => `https://www.twitch.tv/moderator/${c}`,
           opts: 'width=1200,height=800',
         },
       ],
     },
     {
-      label: 'broadcaster',
+      label: t('mc_twapi_ql_broadcaster'),
       show: isBroadcaster,
       items: [
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.dashboard,
-          label: 'creator dashboard',
+          label: t('mc_twapi_ql_creator'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/home`,
           opts: 'width=1200,height=800',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.video,
-          label: 'stream manager',
+          label: t('mc_twapi_ql_stream_mgr'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/stream-manager`,
           opts: 'width=1200,height=800',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.settings,
-          label: 'moderation settings (automod, blocked terms)',
+          label: t('mc_twapi_ql_mod_settings'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/settings/moderation`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.settings,
-          label: 'channel settings',
+          label: t('mc_twapi_ql_chan_settings'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/settings/channel`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.people,
-          label: 'community (mods, vips, follows)',
+          label: t('mc_twapi_ql_community'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/community`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.cash,
-          label: 'monetization',
+          label: t('mc_twapi_ql_monetization'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/monetization`,
           opts: 'width=1000,height=750',
         },
       ],
     },
     {
-      label: 'channel pages',
+      label: t('mc_twapi_ql_chan_pages'),
       show: !!ch,
       items: [
-        { accent: '#ffffff', icon: ICONS.info, label: 'about page', url: (c) => `https://www.twitch.tv/${c}/about` },
-        { accent: '#ffffff', icon: ICONS.video, label: 'videos', url: (c) => `https://www.twitch.tv/${c}/videos` },
-        { accent: '#ffffff', icon: ICONS.video, label: 'clips', url: (c) => `https://www.twitch.tv/${c}/clips` },
+        {
+          accent: '#ffffff',
+          icon: ICONS.info,
+          label: t('mc_twapi_ql_about'),
+          url: (c) => `https://www.twitch.tv/${c}/about`,
+        },
+        {
+          accent: '#ffffff',
+          icon: ICONS.video,
+          label: t('mc_twapi_ql_videos'),
+          url: (c) => `https://www.twitch.tv/${c}/videos`,
+        },
+        {
+          accent: '#ffffff',
+          icon: ICONS.video,
+          label: t('mc_twapi_ql_clips'),
+          url: (c) => `https://www.twitch.tv/${c}/clips`,
+        },
         {
           accent: '#ffffff',
           icon: ICONS.calendar,
-          label: 'schedule',
+          label: t('mc_twapi_ql_schedule'),
           url: (c) => `https://www.twitch.tv/${c}/schedule`,
         },
       ],
     },
     {
-      label: 'your account',
+      label: t('mc_twapi_ql_account'),
       show: true,
       items: [
         {
           accent: '#ffffff',
           icon: ICONS.gift,
-          label: 'drops / inventory',
+          label: t('mc_twapi_ql_drops'),
           url: () => 'https://www.twitch.tv/inventory',
         },
         {
           accent: '#ffffff',
           icon: ICONS.sub,
-          label: 'my subscriptions',
+          label: t('mc_twapi_ql_my_subs'),
           url: () => 'https://www.twitch.tv/subscriptions',
         },
         {
           accent: '#ffffff',
           icon: ICONS.user,
-          label: 'following directory',
+          label: t('mc_twapi_ql_following'),
           url: () => 'https://www.twitch.tv/directory/following',
         },
         {
           accent: '#ffffff',
           icon: ICONS.settings,
-          label: 'twitch settings',
+          label: t('mc_twapi_ql_tw_settings'),
           url: () => 'https://www.twitch.tv/settings',
         },
         {
           accent: '#ffffff',
           icon: ICONS.lock,
-          label: 'privacy + security',
+          label: t('mc_twapi_ql_privacy'),
           url: () => 'https://www.twitch.tv/settings/security',
         },
       ],
@@ -32422,7 +32549,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       banner.appendChild(amt)
       const label = document.createElement('span')
       label.className = 'hs-mc-pred-result-label'
-      label.textContent = ' won'
+      label.textContent = ` ${t('mc_twapi_won')}`
       banner.appendChild(label)
     } else {
       const amt = document.createElement('span')
@@ -32431,7 +32558,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       banner.appendChild(amt)
       const label = document.createElement('span')
       label.className = 'hs-mc-pred-result-label'
-      label.textContent = ' lost'
+      label.textContent = ` ${t('mc_twapi_lost')}`
       banner.appendChild(label)
     }
     wrapper.appendChild(banner)
@@ -32508,8 +32635,11 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
 
     const stats = document.createElement('div')
     stats.className = 'hs-mc-pred-outcome-stats'
-    let statsText = `${formatPoints(points)} pts \u00b7 ${userCount} bettor${userCount !== 1 ? 's' : ''}`
-    if (isBetOn) statsText += ` \u00b7 your bet: ${formatPoints(userBet.points)}`
+    let statsText = t(userCount === 1 ? 'mc_twapi_stats_one' : 'mc_twapi_stats_many', [
+      formatPoints(points),
+      String(userCount),
+    ])
+    if (isBetOn) statsText += ` \u00b7 ${t('mc_twapi_your_bet', [formatPoints(userBet.points)])}`
     stats.textContent = statsText
     card.appendChild(stats)
 
@@ -32534,14 +32664,14 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
         maxBtn.dataset.outcome = outcome.id
         maxBtn.dataset.points = balance
         maxBtn.style.setProperty('--oc', color)
-        maxBtn.textContent = 'max'
+        maxBtn.textContent = t('mc_twapi_max')
         betRow.appendChild(maxBtn)
       }
 
       const customInput = document.createElement('input')
       customInput.className = 'hs-mc-pred-bet-custom'
       customInput.type = 'text'
-      customInput.placeholder = 'amt'
+      customInput.placeholder = t('mc_twapi_amt')
       customInput.dataset.outcome = outcome.id
       if (balance != null && balance <= 0) customInput.disabled = true
       betRow.appendChild(customInput)
@@ -32550,7 +32680,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       goBtn.className = 'hs-mc-pred-bet-go'
       goBtn.dataset.outcome = outcome.id
       goBtn.style.setProperty('--oc', color)
-      goBtn.textContent = 'bet'
+      goBtn.textContent = t('mc_twapi_bet')
       if (balance != null && balance <= 0) goBtn.disabled = true
       betRow.appendChild(goBtn)
 
@@ -32582,7 +32712,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
     const notice = document.createElement('div')
     notice.className = 'hs-mc-pred-mod-notice'
     const betOutcome = pred.outcomes.find((o) => o.id === userBet.outcomeId)
-    notice.textContent = `you bet ${formatPoints(userBet.points)} on ${betOutcome?.title || '?'} \u2014 pick the actual winner`
+    notice.textContent = t('mc_twapi_mod_notice', [formatPoints(userBet.points), betOutcome?.title || '?'])
     wrapper.appendChild(notice)
   }
 
@@ -32781,7 +32911,10 @@ function renderRewards(rewards, balance, channelId) {
       else if (!reward.isInStock) reason.textContent = t('mc_reward_out_of_stock')
       else if (onCooldown) {
         const secs = Math.ceil((new Date(reward.cooldownExpiresAt).getTime() - now) / 1000)
-        reason.textContent = secs > 60 ? `${Math.ceil(secs / 60)}m cooldown` : `${secs}s cooldown`
+        reason.textContent =
+          secs > 60
+            ? t('mc_twapi_cooldown_m', [String(Math.ceil(secs / 60))])
+            : t('mc_twapi_cooldown_s', [String(secs)])
         reason.dataset.cooldownEnds = new Date(reward.cooldownExpiresAt).getTime()
       }
       info.appendChild(reason)
@@ -32892,7 +33025,8 @@ function attachRewardHandlers() {
         cleanup.clearInterval(iv)
         return
       }
-      el.textContent = secs > 60 ? `${Math.ceil(secs / 60)}m cooldown` : `${secs}s cooldown`
+      el.textContent =
+        secs > 60 ? t('mc_twapi_cooldown_m', [String(Math.ceil(secs / 60))]) : t('mc_twapi_cooldown_s', [String(secs)])
     }, 1000)
   })
 }
@@ -32973,15 +33107,15 @@ function attachPredictionHandlers() {
 
   // Human-readable prediction error messages
   const predErrorMsg = (code) => {
-    if (!code) return 'failed'
+    if (!code) return t('mc_twapi_failed')
     const c = code.toUpperCase()
-    if (c.includes('EVENT_MANAGER') || c.includes('OWNER')) return "can't bet on own"
-    if (c.includes('ACCEPT') || c.includes('TOS')) return 'try again'
-    if (c.includes('NOT_FOUND')) return 'prediction ended'
-    if (c.includes('LOCKED')) return 'betting locked'
-    if (c.includes('INSUFFICIENT') || c.includes('BALANCE')) return 'not enough points'
-    if (c.includes('ALREADY')) return 'already bet'
-    if (c.includes('FORBIDDEN')) return 'no permission'
+    if (c.includes('EVENT_MANAGER') || c.includes('OWNER')) return t('mc_twapi_err_own')
+    if (c.includes('ACCEPT') || c.includes('TOS')) return t('mc_twapi_err_retry')
+    if (c.includes('NOT_FOUND')) return t('mc_pred_ended')
+    if (c.includes('LOCKED')) return t('mc_twapi_err_locked')
+    if (c.includes('INSUFFICIENT') || c.includes('BALANCE')) return t('mc_twapi_err_points')
+    if (c.includes('ALREADY')) return t('mc_twapi_err_already')
+    if (c.includes('FORBIDDEN')) return t('mc_error_no_permission')
     return code.toLowerCase().slice(0, 15)
   }
 
@@ -33029,7 +33163,7 @@ function attachPredictionHandlers() {
         btn.textContent = predErrorMsg(result.error)
         btn.title = result.error
         setTimeout(() => {
-          btn.textContent = 'bet'
+          btn.textContent = t('mc_twapi_bet')
           btn.disabled = false
           btn.title = ''
         }, 3000)
@@ -33066,7 +33200,7 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       btn.disabled = true
@@ -33103,12 +33237,12 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       const outcomeId = btn.dataset.outcome
       if (!outcomeId) {
-        btn.textContent = 'no outcome'
+        btn.textContent = t('mc_twapi_no_outcome')
         return
       }
       btn.disabled = true
@@ -33149,7 +33283,7 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       btn.disabled = true
@@ -33232,7 +33366,7 @@ function attachPredictionHandlers() {
       e.stopPropagation()
       const channelId = container.querySelector('[data-channel-id]')?.dataset.channelId
       if (!channelId) {
-        btn.textContent = 'no channel'
+        btn.textContent = t('mc_twapi_no_channel')
         return
       }
       const form = btn.closest('.hs-mc-pred-create-form')
@@ -33294,7 +33428,7 @@ function attachPredictionHandlers() {
     const update = () => {
       const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
       if (remaining <= 0) {
-        el.textContent = 'closing...'
+        el.textContent = t('mc_twapi_closing_dots')
         el.classList.add('hs-mc-pred-locked')
         return
       }
@@ -33391,7 +33525,7 @@ function _startBannerTimer(el, endsAt) {
   const update = () => {
     const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
     if (remaining <= 0) {
-      el.textContent = 'closing'
+      el.textContent = t('mc_twapi_closing')
       return
     }
     const m = Math.floor(remaining / 60)
@@ -33489,7 +33623,7 @@ function updateChatBanners(predResult, pollData) {
     let text = `${pred.title} \u00b7 ${parts.join(' vs ')}`
     if (userBet) {
       const betOutcome = pred.outcomes.find((o) => o.id === userBet.outcomeId)
-      text += ` \u00b7 bet: ${formatPoints(userBet.points)}${betOutcome ? ` ${betOutcome.title}` : ''}`
+      text += ` \u00b7 ${t('mc_twapi_banner_bet', [formatPoints(userBet.points), betOutcome ? betOutcome.title : '']).trim()}`
     }
     info.textContent = text
     row.appendChild(info)
@@ -33614,9 +33748,9 @@ function buildTwSubtabBar() {
   const bar = document.createElement('div')
   bar.className = 'hs-mc-tw-subtabs'
   const items = [
-    { id: 'predictions', label: 'events', paths: HS_TW_ICON_PRED_PATHS },
-    { id: 'bits', label: 'bits', paths: HS_TW_ICON_BITS_PATHS },
-    { id: 'links', label: 'quick links', paths: HS_TW_ICON_LINKS_PATHS },
+    { id: 'predictions', label: t('mc_twapi_tab_events'), paths: HS_TW_ICON_PRED_PATHS },
+    { id: 'bits', label: t('mc_twapi_tab_bits'), paths: HS_TW_ICON_BITS_PATHS },
+    { id: 'links', label: t('mc_twapi_tab_links'), paths: HS_TW_ICON_LINKS_PATHS },
   ]
   for (const it of items) {
     const btn = document.createElement('button')
@@ -33666,7 +33800,7 @@ async function renderTwitchTab() {
     empty.className = 'hs-mc-pred-empty'
     const msg = document.createElement('div')
     msg.className = 'hs-mc-pred-empty-text'
-    msg.textContent = 'no channel detected'
+    msg.textContent = t('mc_twapi_no_channel_detected')
     empty.appendChild(msg)
     content.appendChild(empty)
     stopPredictionPoll()
@@ -33691,7 +33825,7 @@ async function renderTwitchTab() {
   const predSlot = document.createElement('div')
   predSlot.className = 'hs-mc-pred-loading'
   predSlot.dataset.predSlot = '1'
-  predSlot.textContent = 'loading...'
+  predSlot.textContent = t('common_loading')
   const pollSlot = document.createElement('div')
   pollSlot.dataset.pollSlot = '1'
   const rewardsSlot = document.createElement('div')
@@ -33772,17 +33906,17 @@ function renderBitsSubtab(parent, channel) {
   const panel = document.createElement('div')
   panel.className = 'hs-mc-cheer-panel hs-mc-cheer-inline'
   panel.setAttribute('role', 'region')
-  panel.setAttribute('aria-label', `Cheer bits to ${channel}`)
+  panel.setAttribute('aria-label', t('mc_twapi_cheer_to', [channel]))
 
   const header = document.createElement('div')
   header.className = 'hs-mc-cheer-header'
   const title = document.createElement('div')
   title.className = 'hs-mc-cheer-title'
-  title.textContent = `cheer bits to ${channel}`
+  title.textContent = t('mc_twapi_cheer_to', [channel])
   const balance = document.createElement('div')
   balance.className = 'hs-mc-cheer-balance'
   const bal = hsReadNativeBitsBalance()
-  balance.textContent = bal ? `balance: ${bal}` : 'balance: —'
+  balance.textContent = t('mc_twapi_balance', [bal || '\u2014'])
   header.appendChild(title)
   header.appendChild(balance)
   panel.appendChild(header)
@@ -33790,7 +33924,7 @@ function renderBitsSubtab(parent, channel) {
   const launchBtn = document.createElement('button')
   launchBtn.type = 'button'
   launchBtn.className = 'hs-mc-cheer-send hs-mc-cheer-launch'
-  launchBtn.textContent = 'open cheer modal'
+  launchBtn.textContent = t('mc_twapi_cheer_open')
   launchBtn.addEventListener('click', () => {
     // Open twitch's full chat popout in a separate window. The popout is a
     // complete twitch chat UI (chat-input + bits button + cheer modal + everything)
@@ -33969,11 +34103,11 @@ function renderCheermotesInText(html, totalBits) {
     parts[i] = seg.replace(/(?<![#@])\bcheer(\d+)\b/gi, (match, n) => {
       const amount = parseInt(n, 10)
       if (!amount || amount < 1) return match
-      const t = hsCheerTier(amount)
-      const url = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${t.tier}/2.gif`
+      const tier = hsCheerTier(amount)
+      const url = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${tier.tier}/2.gif`
       return (
-        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${amount} bits" loading="lazy" decoding="async">` +
-        `<span class="hs-mc-cheer-amt" style="color:${t.color}">${amount}</span>`
+        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${t('mc_twapi_bits_title', [String(amount)])}" loading="lazy" decoding="async">` +
+        `<span class="hs-mc-cheer-amt" style="color:${tier.color}">${amount}</span>`
       )
     })
   }
@@ -34062,10 +34196,10 @@ async function buildChatStatusPanel(channel) {
       m = mins % 60
     const uptime = h ? `${h}h ${m}m` : `${m}m`
     const viewers = (stream.viewersCount || 0).toLocaleString('en-US')
-    sub.textContent = `LIVE · ${uptime} · ${viewers} viewers`
+    sub.textContent = t('mc_twapi_live_status', [uptime, viewers])
     sub.classList.add('live')
   } else {
-    sub.textContent = 'OFFLINE'
+    sub.textContent = t('mc_twapi_offline')
     sub.classList.add('off')
   }
   panel.appendChild(sub)
@@ -34168,12 +34302,15 @@ async function buildKickStatusPanel(slug) {
     )
     const up = Number.isFinite(mins) ? (mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`) : ''
     const viewers = (live.viewer_count || 0).toLocaleString('en-US')
-    line('hs-mc-status-sub live', `LIVE · ${up ? `${up} · ` : ''}${viewers} viewers`)
+    line(
+      'hs-mc-status-sub live',
+      up ? t('mc_twapi_live_status', [up, viewers]) : t('mc_twapi_live_status_nouptime', [viewers]),
+    )
     if (live.session_title) line('hs-mc-status-streamtitle', `"${live.session_title}"`)
     const game = live.categories?.[0]?.name
     if (game) line('hs-mc-status-meta', game)
   } else {
-    line('hs-mc-status-sub off', 'OFFLINE')
+    line('hs-mc-status-sub off', t('mc_twapi_offline'))
   }
   line('hs-mc-status-section', t('mc_cm_title'))
   const grid = document.createElement('div')
@@ -35468,7 +35605,7 @@ function renderPoll(poll, channelId, isMod) {
   // Total votes
   const meta = document.createElement('div')
   meta.className = 'hs-mc-poll-meta'
-  meta.textContent = `${totalVotes} vote${totalVotes !== 1 ? 's' : ''}`
+  meta.textContent = t(totalVotes === 1 ? 'mc_twapi_votes_one' : 'mc_twapi_votes_many', [String(totalVotes)])
   section.appendChild(meta)
 
   // Choices
@@ -35524,7 +35661,7 @@ function renderPoll(poll, channelId, isMod) {
       voteBtn.className = 'hs-mc-poll-vote-btn'
       voteBtn.dataset.pollId = poll.id
       voteBtn.dataset.choiceId = choice.id
-      voteBtn.textContent = 'vote'
+      voteBtn.textContent = t('mc_twapi_vote')
       row.appendChild(voteBtn)
     }
 
@@ -35629,7 +35766,7 @@ function optimisticPollVoteUpdate(pollSection, choiceId) {
   }
 
   const total = entries.reduce((s, v) => s + v.votes, 0) || 1
-  if (metaEl) metaEl.textContent = `${total} vote${total !== 1 ? 's' : ''}`
+  if (metaEl) metaEl.textContent = t(total === 1 ? 'mc_twapi_votes_one' : 'mc_twapi_votes_many', [String(total)])
 
   for (const { choice, votes, pctEl, nameEl, voteBtn, isTarget } of entries) {
     const pct = Math.round((votes / total) * 100)
@@ -35664,7 +35801,7 @@ function attachPollHandlers() {
         btn.textContent = '!'
         btn.title = result.error
         setTimeout(() => {
-          btn.textContent = 'vote'
+          btn.textContent = t('mc_twapi_vote')
           btn.disabled = false
           btn.title = ''
         }, 2000)
@@ -35731,7 +35868,7 @@ function attachPollHandlers() {
       const createWrap = btn.closest('.hs-mc-poll-create')
       const channelId = createWrap?.dataset.channelId
       if (!channelId) {
-        btn.textContent = 'no channel'
+        btn.textContent = t('mc_twapi_no_channel')
         return
       }
       const form = btn.closest('.hs-mc-poll-create-form')
@@ -36651,7 +36788,7 @@ function _ptFill(id, rows, emptyText) {
 // reloads, like the youtube native chat view. It is the popup's per-site switch, written from the page.
 function nativeChatRow() {
   const gate = { twitch: 'overlay-twitch', kick: 'overlay-kick', yt: 'overlay-youtube' }[hostPlatform]
-  return _ptRow('native chat', _ptGlyph.chat, async () => {
+  return _ptRow(t('mc_pt_native_chat'), _ptGlyph.chat, async () => {
     await window.HS.setSiteOverlay(gate, false)
     location.reload()
   })
@@ -36661,13 +36798,17 @@ function renderKickTab() {
   const ch = String(getCurrentChannel() || '').toLowerCase()
   const rows = /^[a-z0-9_-]{1,40}$/.test(ch)
     ? [
-        { label: 'popout chat', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/popout/${ch}/chat`) },
-        { label: 'clips', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/clips`) },
-        { label: 'videos', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/videos`) },
-        { label: 'channel page', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}`) },
+        {
+          label: t('mc_pt_popout_chat'),
+          glyph: _ptGlyph.link,
+          onClick: () => _ptOpen(`https://kick.com/popout/${ch}/chat`),
+        },
+        { label: t('mc_pt_clips'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/clips`) },
+        { label: t('mc_pt_videos'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/videos`) },
+        { label: t('mc_pt_channel_page'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}`) },
       ]
     : []
-  _ptFill('hs-mc-tab-kick', rows, 'no channel detected')
+  _ptFill('hs-mc-tab-kick', rows, t('mc_pt_no_channel'))
   document.querySelector('#hs-mc-tab-kick .hs-mc-pred-links')?.prepend(nativeChatRow())
 }
 
@@ -36681,17 +36822,15 @@ function _ptYtOwnerPath() {
 
 function renderYoutubeTab() {
   const owner = _ptYtOwnerPath()
-  const rows = [
-    { label: 'native chat (super chat, stickers, polls, emoji)', glyph: _ptGlyph.chat, onClick: ytPeekNative },
-  ]
+  const rows = [{ label: t('mc_pt_yt_native_chat'), glyph: _ptGlyph.chat, onClick: ytPeekNative }]
   if (owner) {
     rows.push({
-      label: 'join channel',
+      label: t('mc_pt_join_channel'),
       glyph: _ptGlyph.link,
       onClick: () => _ptOpen(`https://www.youtube.com${owner}/join`),
     })
     rows.push({
-      label: 'channel page',
+      label: t('mc_pt_channel_page'),
       glyph: _ptGlyph.link,
       onClick: () => _ptOpen(`https://www.youtube.com${owner}`),
     })
@@ -36722,7 +36861,7 @@ function ytPeekNative() {
   const arrow = document.createElement('span')
   arrow.className = 'hs-yt-peek-arrow'
   arrow.textContent = '←'
-  back.append(arrow, ' back to heatsync chat')
+  back.append(arrow, ` ${t('mc_pt_back_to_chat')}`)
   back.addEventListener('click', ytPeekBack)
   bar.appendChild(back)
   document.body.appendChild(bar)
@@ -36880,7 +37019,7 @@ function kickClipEmbed(clipId, fullUrl) {
   const safe = safeUrl(fullUrl) || `https://kick.com/clips/${id}`
   return `<div class="hs-feed-embed-pending hs-feed-embed-kick"
     data-resolve-url="${attr(safe)}" data-resolve-platform="kick">
-    <span class="hs-feed-embed-pending-label">loading kick clip…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', ['kick clip']))}</span>
   </div>`
 }
 
@@ -36930,7 +37069,7 @@ function soundcloudEmbed(url) {
 function resolvedImageEmbed(platform, url, label) {
   return `<div class="hs-feed-embed-pending hs-feed-embed-${platform}"
     data-resolve-url="${attr(url)}" data-resolve-platform="${platform}">
-    <span class="hs-feed-embed-pending-label">loading ${label}…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', [label]))}</span>
   </div>`
 }
 
@@ -36989,7 +37128,7 @@ function redditEmbed(url) {
     return `<div class="hs-feed-embed-pending hs-feed-embed-reddit"
       data-resolve-url="${attr(safe)}" data-resolve-platform="reddit"
       data-fb-title="${attr(title)}" data-fb-author="r/${attr(sub)}">
-      <span class="hs-feed-embed-pending-label">loading reddit…</span>
+      <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', ['reddit']))}</span>
     </div>`
   }
   // Non-permalink (subreddit, user) → link card.
@@ -37048,7 +37187,7 @@ function logEmbed(url) {
   const safe = safeUrl(url)
   if (!safe) return ''
   return `<div class="hs-feed-embed-pending hs-feed-embed-log" data-resolve-url="${attr(safe)}" data-resolve-platform="log">
-    <span class="hs-feed-embed-pending-label">loading chat line…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_chat_line'))}</span>
   </div>`
 }
 
@@ -37309,7 +37448,7 @@ function chatEmbedForUrl(rawUrl) {
     )
   ) {
     const playable = chatUrlPlayable(cleanUrl) ? ' hs-mc-playable' : ''
-    return `<div class="hs-mc-media hs-feed-embed-pending${playable}" data-resolve-url="${attr(safe)}" data-resolve-platform="link"><span class="hs-feed-embed-pending-label">loading preview…</span></div>`
+    return `<div class="hs-mc-media hs-feed-embed-pending${playable}" data-resolve-url="${attr(safe)}" data-resolve-platform="link"><span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_preview'))}</span></div>`
   }
   return ''
 }
@@ -37448,7 +37587,7 @@ document.addEventListener(
       const html = d ? _feedMediaHtml({ ...d, base36_id: mid, has_media: true, content: '' }) : ''
       if (!html) {
         btn.disabled = false
-        btn.textContent = resp?.status === 403 ? 'log in as an adult to view' : 'retry'
+        btn.textContent = resp?.status === 403 ? t('mc_feed_adult_login') : t('common_retry')
         return
       }
       open(document.createRange().createContextualFragment(html))
@@ -37717,7 +37856,7 @@ function attachFeedFallbacks(root) {
           const tag = mode === 'deleted-span' ? 'span' : 'div'
           const replacement = document.createElement(tag)
           replacement.className = 'hs-feed-media-deleted'
-          replacement.textContent = 'image unavailable'
+          replacement.textContent = t('mc_feed_image_unavailable')
           img.replaceWith(replacement)
         }
       },
@@ -37930,7 +38069,7 @@ function _hsTransportEl(provider) {
     const out = document.createElement('a')
     out.className = 'hs-mc-transport-toggle hs-mc-transport-out'
     out.textContent = '↗'
-    out.title = 'open in a new tab'
+    out.title = t('mc_feed_open_new_tab')
     out.target = '_blank'
     out.rel = 'noopener'
     out.addEventListener('click', () => {
@@ -37948,7 +38087,7 @@ function _hsTransportEl(provider) {
     re.type = 'button'
     re.className = 'hs-mc-transport-toggle hs-mc-transport-reload'
     re.textContent = '↻'
-    re.title = 'reload the player (after signing in)'
+    re.title = t('mc_feed_reload_player')
     re.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -37960,7 +38099,7 @@ function _hsTransportEl(provider) {
   pause.type = 'button'
   pause.className = 'hs-mc-transport-toggle'
   pause.textContent = '||'
-  pause.title = 'pause'
+  pause.title = t('mc_feed_pause')
   bar.appendChild(pause)
   // No slider at all for a provider that can't take one. A greyed-out control
   // is still a control the eye has to read and dismiss; spotify's embed simply
@@ -37973,7 +38112,7 @@ function _hsTransportEl(provider) {
     vol.max = '100'
     vol.step = '1'
     vol.value = String(Math.round(embedVolume() * 100))
-    vol.title = 'volume'
+    vol.title = t('mc_feed_volume')
     vol.addEventListener('input', () => setEmbedVolume(Number(vol.value) / 100))
     bar.appendChild(vol)
   }
@@ -38039,8 +38178,8 @@ function _hsPlacePlayer() {
   a.host.classList.toggle('hs-fill', filled)
   const fillBtn = a.host.querySelector('.hs-mc-transport-fill')
   if (fillBtn) {
-    fillBtn.textContent = filled ? '← back' : '⤢'
-    fillBtn.title = filled ? 'back to chat (esc)' : 'fill chat'
+    fillBtn.textContent = filled ? t('mc_feed_back') : '⤢'
+    fillBtn.title = filled ? t('mc_feed_back_to_chat') : t('mc_feed_fill_chat')
   }
   scroller?.classList.toggle('hs-mc-filled', filled)
   hsTakeoverSync()
@@ -38280,9 +38419,13 @@ function _hsPlayerDockOpen(url, label) {
     `<div class="hs-mc-player-dock-bar">` +
       `<span class="hs-mc-player-dock-title">${escapeHtml(String(label || '').slice(0, 60))}</span>` +
       (safeu
-        ? `<a class="hs-mc-player-dock-out" href="${attr(safeu)}" target="_blank" rel="noopener" title="open in new tab">↗</a>`
+        ? `<a class="hs-mc-player-dock-out" href="${attr(safeu)}" target="_blank" rel="noopener" title="${escapeHtml(t('mc_feed_open_new_tab_short'))}">↗</a>`
         : '') +
-      hsXButtonHtml('hs-mc-player-close', 'close player', 'title="close player"') +
+      hsXButtonHtml(
+        'hs-mc-player-close',
+        escapeHtml(t('mc_feed_close_player')),
+        `title="${escapeHtml(t('mc_feed_close_player'))}"`,
+      ) +
       `</div>${html}`,
   )
   overlay.appendChild(dock)
@@ -39141,11 +39284,11 @@ function showFeedEditUI(div, msg) {
   ta.style.cssText =
     'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:4px;font-family:inherit;font-size:13px;resize:vertical;'
   const saveBtn = document.createElement('button')
-  saveBtn.textContent = 'save'
+  saveBtn.textContent = t('mc_mr_save')
   saveBtn.style.cssText =
     'background:#fff;color:#000;border:none;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
   const cancelBtn = document.createElement('button')
-  cancelBtn.textContent = 'cancel'
+  cancelBtn.textContent = t('mc_mr_cancel')
   cancelBtn.style.cssText =
     'background:#000;color:#fff;border:1px solid #ffffff;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
   const errEl = document.createElement('div')
@@ -39176,7 +39319,7 @@ function showFeedEditUI(div, msg) {
   saveBtn.addEventListener('click', async () => {
     const newContent = ta.value.trim()
     if (!newContent) {
-      errEl.textContent = 'content cannot be empty'
+      errEl.textContent = t('mc_social_edit_empty')
       return
     }
     if (newContent === original) {
@@ -39184,7 +39327,7 @@ function showFeedEditUI(div, msg) {
       return
     }
     saveBtn.disabled = true
-    saveBtn.textContent = 'saving...'
+    saveBtn.textContent = t('mc_social_saving')
     errEl.textContent = ''
     const resp = await apiFetch(`/api/messages/${encodeURIComponent(msg.base36_id)}`, {
       method: 'PATCH',
@@ -39198,15 +39341,15 @@ function showFeedEditUI(div, msg) {
       // Re-render entire feed to pick up sanitized content + emote refs
       if (typeof renderFeed === 'function') renderFeed()
     } else {
-      errEl.textContent = resp?.data?.error || resp?.error || 'edit failed'
+      errEl.textContent = resp?.data?.error || resp?.error || t('mc_social_edit_failed')
       saveBtn.disabled = false
-      saveBtn.textContent = 'save'
+      saveBtn.textContent = t('mc_mr_save')
     }
   })
 }
 
 async function deleteFeedPost(msg) {
-  if (!confirm('delete this post?')) return
+  if (!confirm(t('mc_social_confirm_delete'))) return
   const resp = await apiFetch(`/api/messages/${encodeURIComponent(msg.base36_id)}`, {
     method: 'DELETE',
   })
@@ -39440,26 +39583,26 @@ function dispatchYtStreamEvent(targetChannelId, msg) {
     toggleKey = 'ytSuperchat'
     eventClass = 'event-yt-superchat'
     const comment = (msg.text || '').trim()
-    text = `superchat ${msg.amount || ''}`.trim() + (comment ? `: ${comment}` : '')
+    text = t('mc_social_yt_superchat', [msg.amount || '']).trim() + (comment ? `: ${comment}` : '')
   } else if (msg.msgType === 'supersticker') {
     toggleKey = 'ytSupersticker'
     eventClass = 'event-yt-supersticker'
-    text = `super sticker ${msg.amount || ''}`.trim()
+    text = t('mc_social_yt_sticker', [msg.amount || '']).trim()
   } else if (msg.msgType === 'membership') {
     if (classifyYtMembership(systemMsg) === 'milestone') {
       toggleKey = 'ytMilestone'
       eventClass = 'event-yt-milestone'
-      text = systemMsg || 'membership milestone'
+      text = systemMsg || t('mc_social_yt_milestone')
     } else {
       toggleKey = 'ytMembership'
       eventClass = 'event-yt-membership'
-      text = 'became a member'
+      text = t('mc_social_yt_member')
     }
   } else if (msg.msgType === 'giftpurchase') {
     toggleKey = 'ytGiftMemberships'
     eventClass = 'event-yt-gift'
     const count = parseYtGiftCount(systemMsg)
-    text = `gifted ${count} membership${count === 1 ? '' : 's'}`
+    text = t(count === 1 ? 'mc_social_yt_gift_one' : 'mc_social_yt_gift_n', [String(count)])
   } else {
     return
   }
@@ -40282,7 +40425,7 @@ function listenForSocialEvents() {
               // Always prefix with "youtube:" — without it, error text looks
               // like it's about whatever stream the user is watching, not
               // the YouTube subscription that actually failed.
-              upsertNotice(`youtube: ${errText || 'connection error'}`, 'var(--hs-danger)')
+              upsertNotice(t('mc_social_yt_error', [errText || t('mc_social_yt_conn_error')]), 'var(--hs-danger)')
             }
           }
         }
@@ -40561,12 +40704,12 @@ function _renderFeedEmptyCard() {
   actions.className = 'hs-mc-empty-actions'
 
   if (!hsAuthToken) {
-    title.textContent = 'log in to see your home'
-    sub.textContent = 'follow people, post, share — alongside multichat'
+    title.textContent = t('mc_social_home_title')
+    sub.textContent = t('mc_social_home_sub')
 
     const loginBtn = document.createElement('a')
     loginBtn.className = 'hs-mc-empty-btn primary'
-    loginBtn.textContent = 'log in at heatsync.org'
+    loginBtn.textContent = t('mc_social_home_login')
     loginBtn.href = HS_LOGIN_URL
     loginBtn.target = '_blank'
     loginBtn.rel = 'noopener noreferrer'
@@ -40574,7 +40717,7 @@ function _renderFeedEmptyCard() {
 
     const note = document.createElement('div')
     note.className = 'hs-mc-empty-note'
-    note.textContent = 'no account needed for multichat — pick a channel tab above'
+    note.textContent = t('mc_social_home_note')
 
     card.appendChild(title)
     card.appendChild(sub)
@@ -40583,20 +40726,20 @@ function _renderFeedEmptyCard() {
     return card
   }
 
-  title.textContent = 'no posts'
-  sub.textContent = 'follow people or post something to populate this tab'
+  title.textContent = t('mc_social_no_posts')
+  sub.textContent = t('mc_social_no_posts_sub')
 
   const importBtn = document.createElement('button')
   importBtn.className = 'hs-mc-empty-btn primary'
-  importBtn.textContent = 'import follows from twitch'
+  importBtn.textContent = t('mc_social_import_follows')
   importBtn.addEventListener('click', async () => {
     if (importBtn.disabled) return
     importBtn.disabled = true
-    importBtn.textContent = 'syncing…'
+    importBtn.textContent = t('mc_social_syncing')
     try {
       const r = await apiFetch('/api/sync-twitch-follows', { method: 'POST', auth: true })
       if (r?.ok && r?.data?.success) {
-        importBtn.textContent = `synced ${r.data.synced || 0} ✓`
+        importBtn.textContent = t('mc_social_synced', [String(r.data.synced || 0)])
         try {
           chrome.runtime.sendMessage({ type: 'refresh_followed_users' })
         } catch {}
@@ -40606,18 +40749,18 @@ function _renderFeedEmptyCard() {
         }, 1200)
       } else {
         importBtn.disabled = false
-        importBtn.textContent = (r?.error || r?.data?.error || 'try again').slice(0, 40)
+        importBtn.textContent = (r?.error || r?.data?.error || t('mc_social_try_again')).slice(0, 40)
       }
     } catch (_) {
       importBtn.disabled = false
-      importBtn.textContent = 'try again'
+      importBtn.textContent = t('mc_social_try_again')
     }
   })
   actions.appendChild(importBtn)
 
   const discoverBtn = document.createElement('button')
   discoverBtn.className = 'hs-mc-empty-btn'
-  discoverBtn.textContent = 'discover people →'
+  discoverBtn.textContent = t('mc_social_discover_people')
   discoverBtn.addEventListener('click', () => {
     // discover is hidden by default; a tab you land on must be on the bar, so
     // asking for it brings it back first.
@@ -40633,7 +40776,7 @@ function _renderFeedEmptyCard() {
 
   const postBtn = document.createElement('button')
   postBtn.className = 'hs-mc-empty-btn'
-  postBtn.textContent = 'post something'
+  postBtn.textContent = t('mc_social_post_something')
   postBtn.addEventListener('click', () => {
     if (typeof showInputBar === 'function') showInputBar()
     const inp = document.getElementById('hs-mc-input')
@@ -40722,10 +40865,10 @@ function renderFeed() {
     banner.style.cssText =
       'padding:2px 10px;background:#ffffff;color:#000000;font-size:13px;margin-bottom:4px;line-height:18px'
     banner.textContent = !hsAuthToken
-      ? 'hot posts · log in at heatsync.org to follow people'
+      ? t('mc_social_banner_hot_login')
       : feedFallbackIsCold
-        ? 'newest posts · follow people to fill your feed'
-        : 'hot this month · follow people to fill your feed'
+        ? t('mc_social_banner_newest')
+        : t('mc_social_banner_hot_month')
     frag.appendChild(banner)
   }
   let zebraCount = 0
@@ -40897,7 +41040,9 @@ function buildFeedMessageDiv(m, opUsername) {
   // Not inside a thread: there the >>id is the way in, and a 💬N that
   // toggled the thread closed just dumped you back on the feed.
   const repliesSpan =
-    replies > 0 && !inThread ? `<span class="hs-feed-stat hs-feed-replies" title="replies">💬${replies}</span>` : ''
+    replies > 0 && !inThread
+      ? `<span class="hs-feed-stat hs-feed-replies" title="${escapeHtml(t('mc_social_replies_title'))}">💬${replies}</span>`
+      : ''
   const stats = [heatSpan, feedUpvoteHtml(m), repliesSpan].filter(Boolean).join(' ')
   const statsHtml = stats ? ` ${stats}` : ''
 
@@ -40963,7 +41108,7 @@ function buildFeedMessageDiv(m, opUsername) {
     if (body) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
-      badge.textContent = ' (edited)'
+      badge.textContent = ` ${t('mc_social_edited')}`
       badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
       body.appendChild(badge)
     }
@@ -41348,14 +41493,14 @@ function _renderFeedReplyChip(thread) {
   ref.className = 'hs-mc-feed-reply-ref'
   const rawId = thread.op?.base36_id || thread.id || ''
   const displayId = String(rawId).replace(/^0+/, '') || '0'
-  ref.textContent = ` replying to >>${displayId}`
+  ref.textContent = ` ${t('mc_social_replying_to', [displayId])}`
   chip.appendChild(ref)
 
-  const cancel = hsXButton('hs-mc-feed-reply-cancel hs-x-inline', 'leave thread', (e) => {
+  const cancel = hsXButton('hs-mc-feed-reply-cancel hs-x-inline', t('mc_social_leave_thread'), (e) => {
     e.preventDefault()
     closeThread()
   })
-  cancel.title = 'leave thread'
+  cancel.title = t('mc_social_leave_thread')
   chip.appendChild(cancel)
 
   bar.insertBefore(chip, bar.firstChild)
@@ -41396,7 +41541,7 @@ function renderThreadView(msgsEl) {
   if (at.loading) {
     const loading = document.createElement('div')
     loading.className = 'hs-mc-empty'
-    loading.textContent = 'loading...'
+    loading.textContent = t('common_loading')
     loading.style.fontSize = '11px'
     container.appendChild(loading)
   } else if (at.error) {
@@ -41668,7 +41813,7 @@ function _discoverSetLoading(msgsEl) {
   msgsEl.textContent = ''
   const el = document.createElement('div')
   el.className = 'hs-mc-empty'
-  el.textContent = 'loading...'
+  el.textContent = t('common_loading')
   msgsEl.appendChild(el)
 }
 
@@ -41796,7 +41941,10 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   dot.className = isLive ? 'hs-discover-live-dot' : 'hs-discover-live-spacer'
   if (isLive) {
     const v = discoverViewers(profile)
-    dot.title = v > 0 ? `live · ${v.toLocaleString()} viewer${v === 1 ? '' : 's'}` : 'live'
+    dot.title =
+      v > 0
+        ? t(v === 1 ? 'mc_social_live_viewer' : 'mc_social_live_viewers', [v.toLocaleString()])
+        : t('mc_social_live')
   }
   row.appendChild(dot)
 
@@ -41836,16 +41984,17 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   const plats = document.createElement('span')
   plats.className = 'hs-discover-platforms'
   if (profile.twitch_username) {
-    const t = document.createElement('a')
-    t.className = 'hs-plat hs-plat-t'
-    t.textContent = 'T'
-    t.href = `https://www.twitch.tv/${encodeURIComponent(profile.twitch_username)}`
-    t.target = '_blank'
-    t.rel = 'noopener noreferrer'
-    t.title = `twitch · @${profile.twitch_username}${profile.twitch_is_live ? ' · live' : ''}`
-    if (profile.twitch_is_live) t.classList.add('hs-plat-live')
-    t.addEventListener('click', (e) => e.stopPropagation())
-    plats.appendChild(t)
+    const tw = document.createElement('a')
+    tw.className = 'hs-plat hs-plat-t'
+    tw.textContent = 'T'
+    tw.href = `https://www.twitch.tv/${encodeURIComponent(profile.twitch_username)}`
+    tw.target = '_blank'
+    tw.rel = 'noopener noreferrer'
+    const twBase = t('mc_social_plat_at', ['twitch', profile.twitch_username])
+    tw.title = profile.twitch_is_live ? t('mc_social_plat_live', [twBase]) : twBase
+    if (profile.twitch_is_live) tw.classList.add('hs-plat-live')
+    tw.addEventListener('click', (e) => e.stopPropagation())
+    plats.appendChild(tw)
   }
   if (profile.kick_username) {
     const k = document.createElement('a')
@@ -41854,7 +42003,8 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
     k.href = `https://kick.com/${encodeURIComponent(profile.kick_username)}`
     k.target = '_blank'
     k.rel = 'noopener noreferrer'
-    k.title = `kick · @${profile.kick_username}${profile.kick_is_live ? ' · live' : ''}`
+    const kBase = t('mc_social_plat_at', ['kick', profile.kick_username])
+    k.title = profile.kick_is_live ? t('mc_social_plat_live', [kBase]) : kBase
     if (profile.kick_is_live) k.classList.add('hs-plat-live')
     k.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(k)
@@ -41870,7 +42020,8 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
       : `https://www.youtube.com/@${encodeURIComponent(ytHandle)}`
     y.target = '_blank'
     y.rel = 'noopener noreferrer'
-    y.title = `youtube${ytHandle ? ` · @${ytHandle}` : ''}${profile.youtube_is_live ? ' · live' : ''}`
+    const yBase = ytHandle ? t('mc_social_plat_at', ['youtube', ytHandle]) : 'youtube'
+    y.title = profile.youtube_is_live ? t('mc_social_plat_live', [yBase]) : yBase
     if (profile.youtube_is_live) y.classList.add('hs-plat-live')
     y.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(y)
@@ -41888,7 +42039,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
 
   const heatEl = document.createElement('span')
   heatEl.className = 'hs-discover-heat'
-  heatEl.title = `${heat.toLocaleString()} heat`
+  heatEl.title = t('mc_social_heat_title', [heat.toLocaleString()])
   heatEl.setAttribute('style', discoverHeatStyle(heat))
   const numSpan = document.createElement('span')
   numSpan.className = 'hs-heat-n'
@@ -41911,7 +42062,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
       const vEl = document.createElement('span')
       vEl.className = 'hs-discover-viewers'
       vEl.textContent = formatDiscoverCount(v)
-      vEl.title = `${v.toLocaleString()} viewers`
+      vEl.title = t('mc_social_viewers_title', [v.toLocaleString()])
       row.appendChild(vEl)
     }
   }
@@ -41945,9 +42096,9 @@ function renderDiscoverChipsBar() {
     return l
   }
 
-  bar.appendChild(makeLabel('platform'))
+  bar.appendChild(makeLabel(t('mc_social_platform')))
   bar.appendChild(
-    makeChip('all', 'all', discoverPlatformFilter, (v) => {
+    makeChip(t('mc_social_all'), 'all', discoverPlatformFilter, (v) => {
       discoverPlatformFilter = v
     }),
   )
@@ -42058,7 +42209,7 @@ function renderDiscoverPostRow(m) {
   const heat = Number(m.heat || 0)
   const heatEl = document.createElement('span')
   heatEl.className = 'hs-discover-heat hs-discover-post-heat'
-  heatEl.title = `${heat.toLocaleString()} heat`
+  heatEl.title = t('mc_social_heat_title', [heat.toLocaleString()])
   heatEl.setAttribute('style', discoverHeatStyle(heat))
   const numSpan = document.createElement('span')
   numSpan.className = 'hs-heat-n'
@@ -42075,7 +42226,7 @@ function renderDiscoverPostRow(m) {
   if ((m.reply_count || 0) > 0) {
     const rep = document.createElement('span')
     rep.className = 'hs-discover-post-replies'
-    rep.title = `${m.reply_count} repl${m.reply_count === 1 ? 'y' : 'ies'}`
+    rep.title = t(m.reply_count === 1 ? 'mc_social_reply_one' : 'mc_social_replies_n', [String(m.reply_count)])
     rep.textContent = `${m.reply_count}r`
     meta.appendChild(rep)
   }
@@ -42088,7 +42239,7 @@ function renderDiscoverPostRow(m) {
   const snippet = String(m.content || '')
     .replace(/\s+/g, ' ')
     .trim()
-  txt.textContent = snippet || '(no text)'
+  txt.textContent = snippet || t('mc_social_no_text')
   row.appendChild(txt)
 
   // Canonical row-level heat tier effects (border tier, bg, breathe at 500+)
@@ -42173,7 +42324,7 @@ function renderDiscoverTab() {
   // ● LIVE NOW
   {
     const { section, body } = makeDiscoverSection(
-      'live now',
+      t('mc_social_live_now'),
       null,
       liveProfiles.length > 0 ? `${liveProfiles.length}` : '0',
       'hs-discover-section-live',
@@ -42181,7 +42332,7 @@ function renderDiscoverTab() {
     if (liveProfiles.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no streams live right now'
+      empty.textContent = t('mc_social_no_streams')
       body.appendChild(empty)
       // Contextual nudge — if the user follows few/no people on heatsync, the
       // section will always look empty. Surface twitch import right at the
@@ -42196,25 +42347,25 @@ function renderDiscoverTab() {
             nudge.className = 'hs-discover-section-empty hs-discover-import-nudge'
             const a = document.createElement('a')
             a.href = '#'
-            a.textContent = 'import follows from twitch'
+            a.textContent = t('mc_social_import_follows')
             a.style.color = '#fff'
             a.style.textDecoration = 'none'
             a.addEventListener('click', async (e) => {
               e.preventDefault()
-              a.textContent = 'syncing…'
+              a.textContent = t('mc_social_syncing')
               try {
                 const r = await apiFetch('/api/sync-twitch-follows', { method: 'POST', auth: true })
                 if (r?.ok && r?.data?.success) {
-                  a.textContent = `synced ${r.data.synced} ✓`
+                  a.textContent = t('mc_social_synced', [String(r.data.synced)])
                   try {
                     chrome.runtime.sendMessage({ type: 'refresh_followed_users' })
                   } catch {}
                   cleanup.setTimeout(() => renderDiscoverTab(), 1500)
                 } else {
-                  a.textContent = (r?.error || r?.data?.error || 'failed').slice(0, 30)
+                  a.textContent = (r?.error || r?.data?.error || t('mc_social_failed')).slice(0, 30)
                 }
               } catch (_) {
-                a.textContent = 'failed'
+                a.textContent = t('mc_social_failed')
               }
             })
             nudge.appendChild(a)
@@ -42235,11 +42386,11 @@ function renderDiscoverTab() {
 
   // HOT POSTS
   {
-    const { section, body } = makeDiscoverSection('hot posts', null, null, 'hs-discover-section-posts')
+    const { section, body } = makeDiscoverSection(t('mc_social_hot_posts'), null, null, 'hs-discover-section-posts')
     if (filteredPosts.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no posts match filter'
+      empty.textContent = t('mc_social_no_posts_filter')
       body.appendChild(empty)
     } else {
       for (const m of filteredPosts) {
@@ -42254,11 +42405,11 @@ function renderDiscoverTab() {
 
   // TAGS — always render, above the long leaderboard
   {
-    const { section, body } = makeDiscoverSection('tags', null, null, 'hs-discover-section-tags')
+    const { section, body } = makeDiscoverSection(t('mc_social_tags'), null, null, 'hs-discover-section-tags')
     if (discoverTags.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'none right now'
+      empty.textContent = t('mc_social_none_now')
       body.appendChild(empty)
     } else {
       const chips = document.createElement('div')
@@ -42288,12 +42439,17 @@ function renderDiscoverTab() {
 
   // LEADERBOARD — non-live profiles, multi-column when wide
   {
-    const { section, body } = makeDiscoverSection('leaderboard', null, null, 'hs-discover-section-trending')
+    const { section, body } = makeDiscoverSection(
+      t('mc_social_leaderboard'),
+      null,
+      null,
+      'hs-discover-section-trending',
+    )
     body.classList.add('hs-discover-leaderboard-body')
     if (restProfiles.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no profiles match this filter'
+      empty.textContent = t('mc_social_no_profiles_filter')
       body.appendChild(empty)
     } else {
       let rank = 1
@@ -42332,7 +42488,7 @@ function _pinnedSetLoading(msgsEl) {
   msgsEl.textContent = ''
   const el = document.createElement('div')
   el.className = 'hs-mc-empty'
-  el.textContent = 'loading...'
+  el.textContent = t('common_loading')
   msgsEl.appendChild(el)
 }
 
@@ -42383,7 +42539,7 @@ function renderPinnedTab() {
   if (pinnedMessages.length === 0) {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-empty'
-    empty.textContent = 'no pinned messages'
+    empty.textContent = t('mc_social_no_pinned')
     frag.appendChild(empty)
     msgsEl.appendChild(frag)
     return
@@ -42463,7 +42619,7 @@ function renderModLogTab() {
   if (!log.length) {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-empty'
-    empty.textContent = 'no mod actions yet'
+    empty.textContent = t('mc_social_no_mod_actions')
     msgsEl.appendChild(empty)
     return
   }
@@ -43108,7 +43264,7 @@ async function sendTwitchWhisperDirect(toUserId, message) {
   const variables = { input: { recipientUserID: String(toUserId), message: String(message), nonce } }
   const result = await apolloMutate({ searchTerm: 'SendWhisper', variables, resultField: 'sendWhisper' })
   if (result?.ok) return { ok: true }
-  const errMsg = String(result?.error || 'whisper failed')
+  const errMsg = String(result?.error || t('mc_misc_whisper_failed'))
   return { ok: false, error: errMsg, integrity: /integrity/i.test(errMsg) }
 }
 
@@ -43166,14 +43322,14 @@ async function sendTwitchWhisper(toUserId, message) {
     }
     if (isAuthFail) {
       showToast(t('mc_whisper_login'), 'error')
-      return { ok: false, error: 'log in to heatsync.org to send whispers', errorKind: 'auth' }
+      return { ok: false, error: t('mc_whisper_login'), errorKind: 'auth' }
     }
     if (serverThrew || respStatus >= 500 || !serverResp) {
-      const msg = 'heatsync server unreachable'
+      const msg = t('mc_misc_hs_unreachable')
       showToast(t('mc_whisper_failed', [msg]), 'error')
       return { ok: false, error: msg, errorKind: 'server' }
     }
-    const errText = respError || `twitch error ${respStatus}`
+    const errText = respError || t('mc_misc_twitch_error', [String(respStatus)])
     showToast(t('mc_whisper_failed', [errText]), 'error')
     return { ok: false, error: errText }
   }
@@ -43184,7 +43340,7 @@ async function sendTwitchWhisper(toUserId, message) {
     if (direct.ok) return { ok: true }
     if (direct.noToken) {
       showToast(t('mc_whisper_login'), 'error')
-      return { ok: false, error: 'no twitch session', errorKind: 'auth' }
+      return { ok: false, error: t('mc_misc_no_twitch_session'), errorKind: 'auth' }
     }
     // The GQL fallback failed too — but if the PROXY already told us why
     // (twitch OAuth missing user:manage:whispers), that's the only error the
@@ -43198,7 +43354,7 @@ async function sendTwitchWhisper(toUserId, message) {
       return { ok: false, error: emsg, errorKind: 'relink' }
     }
     showToast(t('mc_whisper_failed', [direct.error || t('mc_common_unknown')]), 'error')
-    return { ok: false, error: direct.error || 'unknown' }
+    return { ok: false, error: direct.error || t('mc_common_unknown') }
   } catch (e) {
     if (needsRelink) {
       const emsg = respError || t('mc_whisper_not_enabled')
@@ -43274,7 +43430,7 @@ async function sendWhisperMessage(key, text) {
       const toUserId = key.slice(3)
       const resp = await apiFetch('/api/dm', { method: 'POST', body: { toUserId, content: text } })
       ok = !!resp.ok
-      errMsg = resp.error || (ok ? '' : 'unknown error')
+      errMsg = resp.error || (ok ? '' : t('mc_misc_unknown_error'))
       if (!ok && resp?.status === 401) errorKind = 'auth'
       // DMs need a follow in BOTH directions. Being told that with no way to
       // act on it is a dead end — the row grows a follow button that follows
@@ -43489,32 +43645,32 @@ function renderWhispersTab() {
     // orange/cyan border + arrow reinforce it. The OTHER party keeps their
     // painted, clickable link.
     const themUid = target?.userId || ''
-    const youTok = '<span class="hs-whisper-you">you</span>'
+    const youTok = `<span class="hs-whisper-you">${escapeHtml(t('mc_tagcard_you'))}</span>`
     const themLink = userLink(them, theirColor, theirUsername, themUid)
     const senderLink = m.self ? youTok : themLink
     const recipientLink = m.self ? themLink : youTok
 
     let statusHtml = ''
     if (m.status === 'pending') {
-      statusHtml = ` <span class="hs-whisper-status" title="sending">…</span>`
+      statusHtml = ` <span class="hs-whisper-status" title="${escapeHtml(t('mc_misc_sending'))}">…</span>`
     } else if (m.status === 'failed') {
-      const errSafe = escapeHtml(m.error || 'failed')
+      const errText = m.error || t('mc_logs_failed')
       const idSafe = escapeHtml(m.sendId || '')
       if (m.errorKind === 'relink') {
         // relink can't auto-retry (retryAuthFailedWhispers only fires on a
         // logged-out→logged-in transition; this happens while already
         // authed) — keep manual retry available alongside the re-link link
-        statusHtml = ` <a href="https://heatsync.org/api/auth/login?scopes=whispers&return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to grant the twitch whisper permission on heatsync">⚠ enable twitch whispers — re-link</a> <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">retry</span>`
+        statusHtml = ` <a href="https://heatsync.org/api/auth/login?scopes=whispers&return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${escapeHtml(t('mc_misc_relink_title', [errText]))}">⚠ ${escapeHtml(t('mc_misc_relink'))}</a> <span class="hs-whisper-status hs-whisper-retry" title="${escapeHtml(t('mc_misc_click_retry'))}" data-retry="${idSafe}">${escapeHtml(t('common_retry'))}</span>`
       } else if (m.errorKind === 'follow') {
         // hs: keys carry the recipient's heatsync id — the only thing the
         // follow call needs. Non-hs keys can never reach this branch (the
         // code only comes from /api/dm), so there's no id to miss.
         const followIdSafe = escapeHtml(m.key?.startsWith('hs:') ? m.key.slice(3) : '')
-        statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${errSafe} — click to follow ${escapeHtml(them)} and send" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
+        statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${escapeHtml(t('mc_misc_follow_title', [errText, them]))}" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
       } else if (m.errorKind === 'auth') {
-        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
+        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${escapeHtml(t('mc_misc_login_title', [errText]))}">⚠ ${escapeHtml(t('mc_misc_login_send'))}</a>`
       } else {
-        statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">⚠ ${errSafe} — retry</span>`
+        statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="${escapeHtml(t('mc_misc_click_retry'))}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_misc_err_retry', [errText]))}</span>`
       }
     }
 
@@ -43532,7 +43688,7 @@ function renderWhispersTab() {
     // Reply affordance — clicking arms /r at the input so nobody has to
     // remember the command ("I keep forgetting to type /r"). Keyed per row:
     // replying to an older conversation retargets lastWhisperKey to it.
-    const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="reply (${escapeHtml(them)})">↩</button>`
+    const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="${escapeHtml(t('mc_misc_reply_to', [them]))}">↩</button>`
     const dirColor = m.self ? 'var(--hs-brand)' : 'var(--hs-reply)'
     const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
     div.innerHTML = `${tsHtml}<span style="color:${platColor};font-size:13px;font-weight:700">[${platTag}]</span> ${senderLink}${arrow}${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`
@@ -46102,36 +46258,36 @@ function initInput() {
     // blocked emote, remove an inventory one, block anything else — so for an
     // inventory emote this menu is where 'block' (keeps the set) lives.
     if (state === 'blocked') {
-      items.push({ label: 'unblock', fn: () => unblockEmote(emoteName) })
+      items.push({ label: t('mc_input_unblock'), fn: () => unblockEmote(emoteName) })
     } else {
-      items.push({ label: 'block', fn: () => blockEmote(emoteName, emoteUrl, source) })
+      items.push({ label: t('content_card_block'), fn: () => blockEmote(emoteName, emoteUrl, source) })
       if (state === 'owned' && inventoryEmotes.has(emoteName)) {
-        items.push({ label: 'remove from set', fn: () => removeEmoteFromInventory(emoteName, targetEl) })
+        items.push({ label: t('mc_input_remove_from_set'), fn: () => removeEmoteFromInventory(emoteName, targetEl) })
       }
     }
     items.push('sep')
     let m
     if ((m = emoteUrl.match(/cdn\.7tv\.app\/emote\/([^/]+)/))) {
       items.push({
-        label: 'open on 7TV',
+        label: t('mc_input_open_on', ['7TV']),
         fn: () => window.open(`https://7tv.app/emotes/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     } else if ((m = emoteUrl.match(/cdn\.betterttv\.net\/emote\/([^/]+)/))) {
       items.push({
-        label: 'open on BTTV',
+        label: t('mc_input_open_on', ['BTTV']),
         fn: () => window.open(`https://betterttv.com/emotes/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     } else if ((m = emoteUrl.match(/cdn\.frankerfacez\.com\/emote\/(\d+)/))) {
       items.push({
-        label: 'open on FFZ',
+        label: t('mc_input_open_on', ['FFZ']),
         fn: () => window.open(`https://www.frankerfacez.com/emoticon/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     }
     items.push(
-      { label: 'view image', fn: () => window.open(hi, '_blank', 'noopener,noreferrer') },
+      { label: t('mc_input_view_image'), fn: () => window.open(hi, '_blank', 'noopener,noreferrer') },
       'sep',
       {
-        label: 'copy :name:',
+        label: t('mc_input_copy_emote_name'),
         fn: () => {
           try {
             navigator.clipboard
@@ -46142,7 +46298,7 @@ function initInput() {
         },
       },
       {
-        label: 'copy image url',
+        label: t('mc_input_copy_image_url'),
         fn: () => {
           try {
             navigator.clipboard
@@ -46169,7 +46325,7 @@ function initInput() {
     const items = []
     if (name)
       items.push({
-        label: 'copy :name:',
+        label: t('mc_input_copy_emote_name'),
         fn: () => {
           try {
             navigator.clipboard
@@ -46181,7 +46337,7 @@ function initInput() {
       })
     if (char)
       items.push({
-        label: 'copy emoji',
+        label: t('mc_input_copy_emoji'),
         fn: () => {
           try {
             navigator.clipboard
@@ -46271,7 +46427,7 @@ function initInput() {
           const stack = e.target.closest('.hs-mc-emote-stack')
           if (stack) {
             stack.classList.remove('expanded')
-            stack.setAttribute('title', 'expand')
+            stack.setAttribute('title', t('mc_input_expand'))
           }
           return
         }
@@ -46715,26 +46871,30 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   const items = [
     {
       key: 'follow',
-      label: youFollow ? 'unfollow' : 'follow',
+      label: youFollow ? t('content_card_unfollow') : t('content_card_follow'),
       fn: () => hsFollowFromMenu(username, platform, followIds),
     },
     {
       key: 'block',
-      label: youBlock ? 'unblock' : 'block',
+      label: youBlock ? t('mc_input_unblock') : t('content_card_block'),
       danger: !youBlock,
       fn: () => hsBlockFromMenu(username, platform),
     },
-    { label: isMuted ? 'unmute' : 'mute (24h)', danger: !isMuted, fn: () => _toggleMcMute(username, platform) },
+    {
+      label: isMuted ? t('mc_settings_unmute') : t('mc_input_mute_24h'),
+      danger: !isMuted,
+      fn: () => _toggleMcMute(username, platform),
+    },
     {
       label:
         typeof isUserHiddenInTab === 'function' && isUserHiddenInTab(username, platform, currentTab)
-          ? 'unhide in tab'
-          : 'hide in tab',
+          ? t('mc_input_unhide_in_tab')
+          : t('mc_input_hide_in_tab'),
       fn: () => _tabHide(username, platform, 'toggle'),
     },
     'sep',
     {
-      label: 'copy name',
+      label: t('content_card_copy_name'),
       fn: () => mcCopyToClipboard(username, t('mc_input_name_copied')),
     },
   ]
@@ -46743,11 +46903,11 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // #1 thing right-click gets used for, it shouldn't take scrolling to find.
   if (msg) {
     items.push({
-      label: 'copy message',
+      label: t('mc_input_copy_message'),
       fn: () => mcCopyToClipboard(_extractMcMsgText(msg), t('mc_input_message_copied')),
     })
     items.push({
-      label: 'copy → input',
+      label: t('mc_input_copy_to_input'),
       fn: () => mcQuoteToInput(_extractMcMsgText(msg)),
     })
     if (msg.dataset?.msgId) {
@@ -46761,7 +46921,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const threadTxt = getActiveThreadCopyText()
     if (threadTxt)
       items.push({
-        label: 'copy thread',
+        label: t('mc_input_copy_thread'),
         fn: () => mcCopyToClipboard(threadTxt, t('mc_input_thread_copied')),
       })
   }
@@ -46769,7 +46929,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const chainTxt = _extractMcChainText(msg)
     if (chainTxt)
       items.push({
-        label: 'copy thread',
+        label: t('mc_input_copy_thread'),
         fn: () => mcCopyToClipboard(chainTxt, t('mc_input_thread_copied')),
       })
   }
@@ -46813,23 +46973,31 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         const mod = []
         if (msgId)
           mod.push({
-            label: 'delete msg',
+            label: t('mc_input_delete_msg'),
             danger: true,
-            fn: () => _ctxMod('delete', msgCh, msgPlat, msgLogin, msgId, 0, 'deleted'),
+            fn: () => _ctxMod('delete', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_deleted')),
           })
         mod.push(
           {
             // YouTube's timeout is a fixed-duration hide (no 10m choice).
-            label: isYt ? 'timeout' : 'timeout 10m',
-            fn: () => _ctxMod('timeout', msgCh, msgPlat, msgLogin, msgId, 600, 'timed out'),
+            label: isYt ? t('mc_input_timeout') : t('mc_input_timeout_10m'),
+            fn: () => _ctxMod('timeout', msgCh, msgPlat, msgLogin, msgId, 600, t('mc_input_timed_out')),
           },
-          { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
-          { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
+          {
+            label: t('content_card_ban'),
+            danger: true,
+            fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_banned')),
+          },
+          {
+            label: t('content_card_unban'),
+            fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_unbanned')),
+          },
         )
-        if (!isKick && !isYt) mod.push({ label: 'blocked terms', fn: () => openBlockedTerms(modCh) })
+        if (!isKick && !isYt)
+          mod.push({ label: t('mc_settings_mod_btn_blocked_terms'), fn: () => openBlockedTerms(modCh) })
         if (!isKick && !isYt) {
-          mod.push({ label: 'mod tools', fn: () => openModSuite(modCh, 'shield') })
-          if (msgLogin) mod.push({ label: 'warn', fn: () => msWarnPrompt(modCh, msgLogin) })
+          mod.push({ label: t('content_card_mod_tools'), fn: () => openModSuite(modCh, 'shield') })
+          if (msgLogin) mod.push({ label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin) })
         }
         mod.push('sep')
         items.push(...mod)
@@ -46858,7 +47026,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {
     items.push({
-      label: 'reply',
+      label: t('mc_input_reply'),
       fn: () =>
         setReplyState({
           msgId: msg.dataset.msgId,
@@ -46871,7 +47039,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.
   if (msg && gateAtBoot('feed') !== false) {
-    items.push({ label: 'op to feed', fn: () => _quickOpToFeed(username, msg) })
+    items.push({ label: t('mc_input_op_to_feed'), fn: () => _quickOpToFeed(username, msg) })
   }
   // Subsystem-owned rows are omitted when their switch is off — a disabled
   // feature must not keep a menu entry that turns it straight back on. That is
@@ -46879,17 +47047,20 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // false` still opened a whisper composer. `dm` and `mention` are named by no
   // switch, so they always show.
   if (gateAtBoot('whispers') !== false) {
-    items.push({ label: 'whisper', fn: () => _openWhisperFor(username, platform) })
+    items.push({ label: t('mc_input_whisper'), fn: () => _openWhisperFor(username, platform) })
   }
   items.push(
-    { label: 'dm', fn: () => _openDmFor(username, platform) },
-    { label: 'mention', fn: () => _mentionInMcInput(username) },
+    { label: t('mc_input_dm'), fn: () => _openDmFor(username, platform) },
+    { label: t('content_card_mention'), fn: () => _mentionInMcInput(username) },
   )
   if (gateAtBoot('profile-cards') !== false) {
-    items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
+    items.push({ label: t('content_card_view_profile'), fn: () => openProfileCard(username, platform) })
   }
   items.push({
-    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    label:
+      typeof hsNoteHas === 'function' && hsNoteHas(username, platform)
+        ? t('mc_input_edit_note')
+        : t('mc_input_add_note'),
     fn: () => hsNoteOpenEditor(username, platform, x, y),
   })
   // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
@@ -46923,7 +47094,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const vcChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     if (vcChannel) {
       items.push({
-        label: 'report / gift sub',
+        label: t('mc_input_report_gift_sub'),
         fn: () => {
           const u = encodeURIComponent(String(username).toLowerCase())
           const c = encodeURIComponent(String(vcChannel).toLowerCase())
@@ -46938,7 +47109,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // Only on a live/channel tab (where local filtering applies) and a real row.
   if (msg && typeof isLiveSearchTab === 'function' && isLiveSearchTab(currentTab)) {
     items.push({
-      label: `filter to ${username}`,
+      label: t('mc_input_filter_to', [username]),
       fn: () => {
         const input = document.getElementById('hs-mc-search-input')
         if (!input) return
@@ -46956,7 +47127,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (logPlatform === 'twitch' || logPlatform === 'kick' || logPlatform === 'youtube') {
     const msgChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     items.push({
-      label: 'chat logs',
+      label: t('mc_input_chat_logs'),
       fn: () => mcOpenChannelCell('logs', msgChannel, { username, platform: logPlatform }),
     })
   }
@@ -46969,16 +47140,16 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       const mins = Math.floor(remaining / 60000),
         secs = Math.floor((remaining % 60000) / 1000)
       items.push({
-        label: `edit (${mins}:${String(secs).padStart(2, '0')})`,
+        label: t('mc_input_edit_timer', [`${mins}:${String(secs).padStart(2, '0')}`]),
         fn: () => {
           if (feedDiv && typeof showFeedEditUI === 'function') showFeedEditUI(feedDiv, feedMsg)
         },
       })
     } else {
-      items.push({ label: 'edit (expired)', disabled: true })
+      items.push({ label: t('mc_input_edit_expired'), disabled: true })
     }
     items.push({
-      label: 'delete',
+      label: t('mc_input_delete'),
       danger: true,
       fn: () => {
         if (typeof deleteFeedPost === 'function') deleteFeedPost(feedMsg)
@@ -47003,10 +47174,10 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
             ? isUserBlocked(username, platform)
             : blockedUsers.has(String(username).toLowerCase()))
         const followEl = menu.querySelector('[data-hs-key="follow"] .hs-mc-em-label')
-        if (followEl) followEl.textContent = yf ? 'unfollow' : 'follow'
+        if (followEl) followEl.textContent = yf ? t('content_card_unfollow') : t('content_card_follow')
         const blockEl = menu.querySelector('[data-hs-key="block"] .hs-mc-em-label')
         if (blockEl) {
-          blockEl.textContent = yb ? 'unblock' : 'block'
+          blockEl.textContent = yb ? t('mc_input_unblock') : t('content_card_block')
           blockEl.parentElement.classList.toggle('hs-mc-em-danger', !yb)
         }
       })
@@ -47696,7 +47867,7 @@ function updateInputPlaceholder() {
     // whisper retargets lastWhisperKey out from under it
     const targetKey = (typeof armedReplyKey !== 'undefined' && armedReplyKey) || lastWhisperKey
     const lastUser = targetKey ? whisperUsers.get(targetKey) : null
-    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : whisperHint()
+    placeholder = lastUser ? t('mc_input_reply_whisper_to', [lastUser.displayName]) : whisperHint()
   } else if (currentTab === 'add') {
     placeholder = ''
   } else {
@@ -50379,23 +50550,28 @@ function placeCaretAfter(node, offset = 0) {
 // (heatsync only), so you can feel how deep / how niche the current pick is.
 function emoteCycleMeta(m) {
   if (!m) return { cat: '', vis: null }
-  if (m.type === 'user' || m.type === 'user-bare') return { cat: 'chatter', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
-  if (m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
+  if (m.type === 'user' || m.type === 'user-bare')
+    return { cat: t('mc_input_chatter'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
+  if (m.type === 'emoji') return { cat: t('btn_tab_emoji'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
   // Name the provider: a catalog IDK sits right after the channel's IDK in the
   // cycle, and "which one is this" is the whole question.
   if (m.remote)
-    return { cat: t('mc_cycle_catalog', [m.source || '7tv']), vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+    return {
+      cat: t('mc_cycle_catalog', [m.source || '7tv']),
+      vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' },
+    }
   const tier = m.tier ?? 2
-  const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
-  if (m.source === 'twitch') return { cat, vis: { t: 'all twitch', c: 'var(--hs-ok)' } }
+  const cat = tier === 0 ? t('btn_tab_channel') : tier === 1 ? t('mc_input_your_inventory') : t('btn_tab_global')
+  if (m.source === 'twitch') return { cat, vis: { t: t('mc_input_all_twitch'), c: 'var(--hs-ok)' } }
   // Kick-native channel/sub emotes are platform-native too — every Kick viewer
   // sees them, no extension needed.
-  if (m.source === 'kick') return { cat, vis: { t: 'all kick', c: 'var(--hs-ok)' } }
+  if (m.source === 'kick') return { cat, vis: { t: t('mc_input_all_kick'), c: 'var(--hs-ok)' } }
   // Your personal set (tier 1) or a heatsync-hosted emote: others only see it via
   // heatsync's sender-set merge — non-heatsync viewers get plain text.
-  if (tier === 1 || m.source === 'heatsync') return { cat, vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+  if (tier === 1 || m.source === 'heatsync')
+    return { cat, vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' } }
   // Third-party emote active in the channel/global set — provider-ext users see it.
-  return { cat, vis: { t: `${m.source || 'ext'} users`, c: 'var(--hs-gold)' } }
+  return { cat, vis: { t: t('mc_input_ext_users', [m.source || 'ext']), c: 'var(--hs-gold)' } }
 }
 
 function showCycleTooltip() {
@@ -50412,7 +50588,7 @@ function showCycleTooltip() {
     // nothing to cycle yet: say so while the catalog search runs / after it comes back empty,
     // otherwise a slow 7tv looks like a dead Tab
     if (acState.active && (acState.remotePending || acState.remoteDone)) {
-      tt.textContent = acState.remotePending ? 'searching 7tv…' : 'no match'
+      tt.textContent = acState.remotePending ? t('mc_input_searching_7tv') : t('mc_ms_no_match')
       tt.style.display = 'block'
     } else tt.style.display = 'none'
     return
@@ -50439,7 +50615,7 @@ function showCycleTooltip() {
   // Surface the live catalog fetch so you know when a 7tv search is firing.
   if (acState.remotePending) {
     tt.appendChild(dot())
-    tt.appendChild(mkSpan('searching 7tv…', 'color:var(--hs-gold);'))
+    tt.appendChild(mkSpan(t('mc_input_searching_7tv'), 'color:var(--hs-gold);'))
   }
   tt.style.display = 'block'
 }
@@ -50987,7 +51163,7 @@ function showSlashDropdown(matches, idx) {
     args.textContent = c.args ? ` ${c.args}` : ''
     const desc = document.createElement('span')
     desc.className = 'hs-mc-slash-desc'
-    desc.textContent = c.desc
+    desc.textContent = slashDesc(c)
     row.appendChild(name)
     row.appendChild(args)
     row.appendChild(desc)
@@ -50998,6 +51174,13 @@ function showSlashDropdown(matches, idx) {
     dd.appendChild(row)
   })
   dd.style.display = 'block'
+}
+
+// localized /command description; falls back to the registry text (t returns the key when missing)
+function slashDesc(c) {
+  const k = `slash_desc_${c.cmd}`
+  const v = t(k)
+  return v && v !== k ? v : c.desc
 }
 
 function hideSlashDropdown() {
@@ -51049,11 +51232,40 @@ const SLASH_ALIASES = slashAliasMap('ext')
 // duration is MINUTES (0–129600), slow is SECONDS (3–120). Kick has no chat-mode
 // write API wired yet, so these are twitch-only (clear message below).
 const CHAT_MODES = {
-  followers: { field: 'follower_mode', dur: 'follower_mode_duration', unit: 'min', label: 'followers-only' },
-  slow: { field: 'slow_mode', dur: 'slow_mode_wait_time', unit: 'sec', label: 'slow mode' },
-  emoteonly: { field: 'emote_mode', label: 'emote-only' },
-  subscribers: { field: 'subscriber_mode', label: 'subscribers-only' },
-  unique: { field: 'unique_chat_mode', label: 'unique-chat' },
+  followers: {
+    field: 'follower_mode',
+    dur: 'follower_mode_duration',
+    unit: 'min',
+    get label() {
+      return t('mc_cm_follower')
+    },
+  },
+  slow: {
+    field: 'slow_mode',
+    dur: 'slow_mode_wait_time',
+    unit: 'sec',
+    get label() {
+      return t('mc_cm_slow')
+    },
+  },
+  emoteonly: {
+    field: 'emote_mode',
+    get label() {
+      return t('mc_cm_emote')
+    },
+  },
+  subscribers: {
+    field: 'subscriber_mode',
+    get label() {
+      return t('mc_input_mode_subscribers')
+    },
+  },
+  unique: {
+    field: 'unique_chat_mode',
+    get label() {
+      return t('mc_cm_unique')
+    },
+  },
 }
 
 // The retired `<mode>off` spellings, each the same command as `/<mode> off`.
@@ -51266,19 +51478,19 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'color') {
     const arg = rest.trim()
     if (!arg) {
-      showToast('usage: /color <name|#hex> — e.g. /color orangered', 'error')
+      showToast(t('mc_input_usage_color'), 'error')
       return true
     }
     const res = await setTwitchChatColor(arg, currentUsername)
     if (!res.ok) {
-      showToast(`/color: ${res.error}`, 'error')
+      showToast(t('mc_input_color_failed', [res.error]), 'error')
       return true
     }
     // the panel learns it right away instead of waiting for your next message
     try {
       setKnownColor(String(currentUsername).toLowerCase(), res.hex, undefined, 'twitch', true)
     } catch {}
-    showToast(`chat color set to ${res.hex.toLowerCase()}`, 'success')
+    showToast(t('mc_input_color_set', [res.hex.toLowerCase()]), 'success')
     clearInput(input)
     return true
   }
@@ -51287,7 +51499,7 @@ async function handleSlashCommand(text, input) {
   // (/r is the whisper reply; /opr and /reply are aliases of this.)
   if (cmd === 're') {
     if (!rest.trim()) {
-      showToast('usage: /re <text>', 'error')
+      showToast(t('mc_input_usage_re'), 'error')
       return true
     }
     if (!hsAuthToken) {
@@ -51295,7 +51507,7 @@ async function handleSlashCommand(text, input) {
       return true
     }
     if (!lastInlineFeedOpId) {
-      showToast('no post in chat to reply to yet', 'error')
+      showToast(t('mc_input_re_no_post'), 'error')
       return true
     }
     const ok = await postFeedMessage(rest.trim(), { replyTo: lastInlineFeedOpId })
@@ -51929,7 +52141,8 @@ async function handleSlashCommand(text, input) {
       settleComposerAfterSend(input)
     } else {
       showToast(
-        t('mc_input_highlight_failed', [r?.error || 'unknown']) || `highlight failed: ${r?.error || 'unknown'}`,
+        t('mc_input_highlight_failed', [r?.error || t('mc_common_unknown')]) ||
+          `highlight failed: ${r?.error || t('mc_common_unknown')}`,
         'error',
       )
     }
@@ -52030,10 +52243,19 @@ async function handleSlashCommand(text, input) {
         // MAIN-world allowlist) into what read as a permissions problem, and
         // sent the user looking at their own twitch role instead of the bug.
         // Only say it when twitch actually refused on authorization.
-        const _ppErr = String(r?.error || 'unknown')
+        const _ppErr = String(r?.error || t('mc_common_unknown'))
         const _ppDenied = /forbidden|unauthorized|permission|not.?allowed.*channel|broadcaster/i.test(_ppErr)
         showToast(
-          `${isPoll ? 'poll' : 'prediction'} failed: ${_ppErr}${_ppDenied ? ' (broadcaster only)' : ''}`,
+          t(
+            isPoll
+              ? _ppDenied
+                ? 'mc_input_poll_failed_bc'
+                : 'mc_input_poll_failed'
+              : _ppDenied
+                ? 'mc_input_prediction_failed_bc'
+                : 'mc_input_prediction_failed',
+            [_ppErr],
+          ),
           'error',
         )
       }
@@ -52052,7 +52274,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_poll_ended') || 'poll ended'
-          : `end poll failed: ${r?.error || 'unknown'} (broadcaster only)`,
+          : t('mc_input_endpoll_failed_bc', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -52078,7 +52300,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_voted', [choice.title]) || `voted: ${choice.title}`
-          : `vote failed: ${r?.error || 'unknown'}`,
+          : t('mc_input_vote_failed', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -52106,7 +52328,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_bet_placed', [String(points), outcome.title]) || `bet ${points} on ${outcome.title}`
-          : `bet failed: ${r?.error || 'unknown'}`,
+          : t('mc_input_bet_failed', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -52140,7 +52362,10 @@ async function handleSlashCommand(text, input) {
         r = await resolvePrediction(pred.id, outcome.id)
         okMsg = t('mc_input_pred_resolved', [outcome.title]) || `resolved: ${outcome.title}`
       }
-      showToast(r?.ok ? okMsg : `failed: ${r?.error || 'unknown'} (broadcaster only)`, r?.ok ? 'success' : 'error')
+      showToast(
+        r?.ok ? okMsg : t('mc_input_failed_bc', [r?.error || t('mc_common_unknown')]),
+        r?.ok ? 'success' : 'error',
+      )
       if (r?.ok) clearInput(input)
       return true
     }
@@ -52208,7 +52433,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'user') {
     const user = rest.trim().replace(/^@/, '')
     if (!user || /\s/.test(user)) {
-      showToast('/user <name> — opens their profile card', 'error')
+      showToast(t('mc_input_usage_user'), 'error')
       return true
     }
     await openProfileCard(user, hostPlatform || 'twitch', { anchorEl: input })
@@ -52220,7 +52445,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'hide' || cmd === 'unhide') {
     const user = rest.trim().replace(/^@/, '')
     if (!user || /\s/.test(user)) {
-      showToast(`/${cmd} <user> — ${cmd === 'hide' ? 'hides' : 'unhides'} in this tab`, 'error')
+      showToast(t(cmd === 'hide' ? 'mc_input_usage_hide' : 'mc_input_usage_unhide'), 'error')
       return true
     }
     await _tabHide(user, hostPlatform || 'twitch', cmd)
@@ -52384,7 +52609,7 @@ async function handleSlashCommand(text, input) {
       showToast(t(doneKey, [user]) || `${cmd}: ${user}`, 'success')
       clearInput(input)
     } else {
-      showToast(`${cmd} failed: ${r?.error || 'unknown'} (broadcaster only)`, 'error')
+      showToast(t('mc_input_cmd_failed_bc', [cmd, r?.error || t('mc_common_unknown')]), 'error')
     }
     return true
   }
@@ -52415,7 +52640,7 @@ async function handleSlashCommand(text, input) {
     if (r?.ok) {
       clearInput(input)
     } else {
-      showToast(`announce failed: ${r?.error || 'unknown error'}`, 'error')
+      showToast(t('mc_input_announce_failed', [r?.error || t('mc_common_unknown')]), 'error')
     }
     return true
   }
@@ -53703,19 +53928,19 @@ function showUploadStatus(msg, isError, clearAfterMs) {
 
 async function uploadMediaFile(file) {
   if (_mcUploading) {
-    showUploadStatus('upload in progress...', true)
+    showUploadStatus(t('mc_input_upload_busy'), true)
     return null
   }
   if (!file) return null
   const isImage = file.type.startsWith('image/')
   const isVideo = file.type.startsWith('video/')
   if (!isImage && !isVideo) {
-    showUploadStatus('only images/videos allowed', true, 2500)
+    showUploadStatus(t('mc_input_upload_media_only'), true, 2500)
     return null
   }
   const maxSize = isImage ? MC_UPLOAD_MAX_IMG : MC_UPLOAD_MAX_VID
   if (file.size > maxSize) {
-    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true, 2500)
+    showUploadStatus(t('mc_input_upload_too_large', [String(maxSize / 1048576)]), true, 2500)
     return null
   }
   _mcUploading = true
@@ -53734,7 +53959,7 @@ async function uploadMediaFile(file) {
   // host_permissions and carries the stored auth token. Messaging can't stream
   // progress back, and an honest "uploading..." beats a percentage on a
   // request that never left the page.
-  showUploadStatus('uploading...')
+  showUploadStatus(t('mc_input_uploading'))
   try {
     // FileReader, not btoa over a Uint8Array: building the binary string a
     // char at a time overflows the stack somewhere in the low megabytes, and
@@ -53751,12 +53976,12 @@ async function uploadMediaFile(file) {
       mime: file.type,
       dataUrl,
     })
-    if (!resp?.ok || !resp.url) throw new Error(resp?.error || 'upload failed')
+    if (!resp?.ok || !resp.url) throw new Error(resp?.error || t('mc_input_upload_failed'))
     const url = resp.url
-    showUploadStatus('upload done', false, 1500)
+    showUploadStatus(t('mc_input_upload_done'), false, 1500)
     return url
   } catch (e) {
-    showUploadStatus(`upload failed: ${e.message}`, true, 3500)
+    showUploadStatus(t('mc_input_upload_failed_why', [e.message]), true, 3500)
     return null
   } finally {
     _mcUploading = false
@@ -53785,11 +54010,11 @@ function clipboardImageSourceUrl(dt) {
 async function storeRemoteMedia(srcUrl) {
   if (_mcUploading) return ''
   _mcUploading = true
-  showUploadStatus('uploading...')
+  showUploadStatus(t('mc_input_uploading'))
   try {
     const resp = await safeSendMessage({ type: 'api_store_remote', url: srcUrl })
     if (!resp?.ok || !resp.url) return ''
-    showUploadStatus('upload done', false, 1500)
+    showUploadStatus(t('mc_input_upload_done'), false, 1500)
     return resp.url
   } catch {
     return ''
@@ -53846,7 +54071,7 @@ async function handleMediaUpload(fileOrFiles, sourceUrl) {
   // Say it out loud. The fallback posts a picture either way, so the failure is
   // invisible — you'd just be left wondering why your gif came out frozen.
   if (lostAnimation) {
-    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
+    showUploadStatus(t('mc_input_upload_still_frame'), true, 4000)
   }
   insertComposerText(urls.join(' '))
 }
@@ -53870,7 +54095,7 @@ function setupMediaDropHandlers() {
       dz.id = 'hs-mc-drop-zone'
       dz.style.cssText =
         'position:absolute;inset:0;background:#000000;border:2px dashed #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:99998;pointer-events:none;'
-      dz.textContent = 'drop image/video/link to upload'
+      dz.textContent = t('mc_input_drop_zone')
       overlay.appendChild(dz)
     }
   }
@@ -54594,14 +54819,14 @@ function pcBuildModGroups(username, platform) {
   for (const { channel, platform, msgId, login } of groups.values()) {
     const target = login || (username || '').toLowerCase()
     const actions = [
-      { action: 'delete', label: 'del msg', title: "delete this user's latest message", disabled: !msgId },
-      { action: 'timeout', label: '1m', title: 'timeout 1 minute', durationSec: 60 },
-      { action: 'timeout', label: '10m', title: 'timeout 10 minutes', durationSec: 600 },
-      { action: 'timeout', label: '1h', title: 'timeout 1 hour', durationSec: 3600 },
-      { action: 'timeout', label: '24h', title: 'timeout 24 hours', durationSec: 86400 },
-      { action: 'timeout', label: '7d', title: 'timeout 7 days', durationSec: 604800 },
-      { action: 'ban', label: 'ban', title: 'permanent ban', danger: true },
-      { action: 'unban', label: 'unban', title: 'unban user' },
+      { action: 'delete', label: t('mc_pcard_del_msg'), title: t('mc_pcard_del_title'), disabled: !msgId },
+      { action: 'timeout', label: '1m', title: t('mc_settings_mod_btn_timeout_1m'), durationSec: 60 },
+      { action: 'timeout', label: '10m', title: t('mc_settings_mod_btn_timeout_10m'), durationSec: 600 },
+      { action: 'timeout', label: '1h', title: t('mc_settings_mod_btn_timeout_1h'), durationSec: 3600 },
+      { action: 'timeout', label: '24h', title: t('mc_settings_mod_btn_timeout_24h'), durationSec: 86400 },
+      { action: 'timeout', label: '7d', title: t('mc_settings_mod_btn_timeout_7d'), durationSec: 604800 },
+      { action: 'ban', label: t('content_card_ban'), title: t('mc_settings_mod_btn_ban'), danger: true },
+      { action: 'unban', label: t('content_card_unban'), title: t('mc_settings_mod_btn_unban') },
     ]
     // Role grants — mod/unmod/vip/unvip. Separate mutation pair (VIPUser/
     // UnVIPUser, ModUser/UnmodUser in twitch-api.js) from the ban/timeout/
@@ -54615,10 +54840,10 @@ function pcBuildModGroups(username, platform) {
     const roleActions =
       platform === 'twitch'
         ? [
-            { kind: 'mod', add: true, label: 'mod', title: 'grant moderator (broadcaster only)' },
-            { kind: 'mod', add: false, label: 'unmod', title: 'remove moderator (broadcaster only)' },
-            { kind: 'vip', add: true, label: 'vip', title: 'grant VIP' },
-            { kind: 'vip', add: false, label: 'unvip', title: 'remove VIP' },
+            { kind: 'mod', add: true, label: t('content_card_mod'), title: t('mc_pcard_mod_grant') },
+            { kind: 'mod', add: false, label: t('content_card_unmod'), title: t('mc_pcard_mod_remove') },
+            { kind: 'vip', add: true, label: t('content_card_vip'), title: t('mc_pcard_vip_grant') },
+            { kind: 'vip', add: false, label: t('content_card_unvip'), title: t('mc_pcard_vip_remove') },
           ]
         : []
     out.push({ channel, platform, msgId, login: target, actions, roleActions })
@@ -54652,13 +54877,18 @@ async function pcHandleModAction(btn) {
     let r
     try {
       const { id: channelId } = await resolveTwitchChannelIdEx(channel)
-      if (!channelId) throw new Error('could not resolve channel')
+      if (!channelId) throw new Error(t('mc_pcard_no_channel'))
       r = kind === 'vip' ? await vipTwitchUser(channelId, login, add) : await modTwitchUser(channelId, login, add)
     } catch (err) {
-      r = { error: err?.message || 'error' }
+      r = { error: err?.message || t('mc_pcard_error') }
     }
     if (typeof showToast === 'function') {
-      showToast(r?.ok ? `${orig}: ${login}` : `${orig} failed: ${r?.error || 'unknown'}`, r?.ok ? 'success' : 'error')
+      showToast(
+        r?.ok
+          ? t('mc_pcard_role_ok', [orig, login])
+          : t('mc_pcard_role_failed', [orig, r?.error || t('mc_common_unknown')]),
+        r?.ok ? 'success' : 'error',
+      )
     }
     btn.textContent = orig
     btn.disabled = false
@@ -54675,7 +54905,7 @@ async function pcHandleModAction(btn) {
   try {
     r = await dispatchModAction({ channel, platform, action, target: login, durationSec, msgId, reason })
   } catch (err) {
-    r = { anyOk: false, tResp: { error: err?.message || 'error' } }
+    r = { anyOk: false, tResp: { error: err?.message || t('mc_pcard_error') } }
   }
   btn.textContent = orig
   if (action === 'delete') {
@@ -54705,15 +54935,15 @@ async function pcHandleModAction(btn) {
 function pcBuildSessionSheetRows(username) {
   const { count, firstTime, channels } = getUserSessionStats(username)
   if (!count) return []
-  const rows = [{ k: 'session-msgs', label: 'session', value: String(count) }]
+  const rows = [{ k: 'session-msgs', label: t('mc_pcard_session'), value: String(count) }]
   if (firstTime) {
     rows.push({
       k: 'session-first',
-      label: 'first',
+      label: t('mc_pcard_first'),
       value: new Date(firstTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     })
   }
-  if (channels.size) rows.push({ k: 'session-channels', label: 'channels', value: String(channels.size) })
+  if (channels.size) rows.push({ k: 'session-channels', label: t('mc_pcard_channels'), value: String(channels.size) })
   return rows
 }
 
@@ -55016,8 +55246,8 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
   wrap.setAttribute('aria-label', t('content_card_dialog_label', [username]))
   wrap.tabIndex = -1
   if (floating) {
-    const closeBtn = hsXButton('hs-pcard-close', 'close profile', closeProfileCard)
-    closeBtn.title = 'close (Esc)'
+    const closeBtn = hsXButton('hs-pcard-close', t('mc_pcard_close_profile'), closeProfileCard)
+    closeBtn.title = t('mc_pcard_close_esc')
     wrap.appendChild(closeBtn)
   } else {
     pcMountDestRow([]) // no ×: the ← back tab closes the panel
@@ -55030,7 +55260,7 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
     const retry = document.createElement('button')
     retry.type = 'button'
     retry.className = 'hs-card-action'
-    retry.textContent = 'couldn’t load — retry'
+    retry.textContent = t('mc_pcard_retry')
     retry.addEventListener('click', () => {
       if (!activeProfileCard) return
       openProfileCard(username, activeProfileCard.platform, { anchorEl: activeProfileCard.anchorEl })
@@ -55723,10 +55953,10 @@ async function pcDoClip(username, platform, btn) {
   const channelLogin =
     (typeof getTooltipChannelContext === 'function' ? getTooltipChannelContext(platform) : null) || username
   btn.disabled = true
-  btn.textContent = 'clipping…'
+  btn.textContent = t('content_card_clipping')
   try {
     const resp = await apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })
-    if (!resp?.ok) throw new Error(resp?.error || 'unknown')
+    if (!resp?.ok) throw new Error(resp?.error || t('mc_common_unknown'))
     const editUrl = resp.data?.edit_url || resp.data?.editUrl || null
     const clipUrl = resp.data?.clip_url || resp.data?.clipUrl || null
     if (editUrl) btn.dataset.editUrl = editUrl
@@ -55735,12 +55965,13 @@ async function pcDoClip(username, platform, btn) {
         await navigator.clipboard.writeText(clipUrl)
       } catch {}
     }
-    btn.textContent = clipUrl ? 'url copied' : editUrl ? 'clip created' : 'clip'
+    btn.textContent = clipUrl ? t('mc_pcard_url_copied') : editUrl ? t('mc_pcard_clip_created') : 'clip'
     btn.disabled = false
   } catch (err) {
     btn.innerHTML = hk('clip', escapeHtml)
     btn.disabled = false
-    if (typeof showToast === 'function') showToast(`clip failed: ${err?.message || 'error'}`, 'error')
+    if (typeof showToast === 'function')
+      showToast(t('mc_pcard_clip_failed', [err?.message || t('mc_pcard_error')]), 'error')
   }
 }
 
@@ -55935,7 +56166,7 @@ async function copyChatLogPermalink(btn, r) {
   }
   const time = btn.querySelector('time')
   const prev = time.textContent
-  time.textContent = ok ? 'copied' : 'failed'
+  time.textContent = ok ? t('mc_logs_copied') : t('mc_logs_failed')
   if (ok) btn.classList.add('hs-cl-time-copied')
   setTimeout(() => {
     time.textContent = prev
@@ -56241,7 +56472,7 @@ function renderChatLogsView() {
   tName.textContent = username
   const tSub = document.createElement('span')
   tSub.className = 'hs-cl-title-sub'
-  tSub.textContent = channel ? `#${channel}` : 'all channels'
+  tSub.textContent = channel ? `#${channel}` : t('mc_logs_all_channels')
   title.appendChild(tName)
   title.appendChild(tSub)
   hdr.appendChild(title)
@@ -56255,8 +56486,8 @@ function renderChatLogsView() {
   const search = document.createElement('input')
   search.type = 'text'
   search.className = 'hs-cl-search'
-  search.placeholder = 'search…'
-  search.title = `search ${username}'s messages`
+  search.placeholder = t('mc_logs_search')
+  search.title = t('mc_logs_search_title', [username])
   search.value = query || ''
   let searchTimer = null
   search.addEventListener('input', () => {
@@ -56270,11 +56501,8 @@ function renderChatLogsView() {
     const scopeBtn = document.createElement('button')
     scopeBtn.className = 'hs-cl-scope'
     scopeBtn.type = 'button'
-    scopeBtn.textContent = scope === 'channel' ? `#${channel}` : 'all'
-    scopeBtn.title =
-      scope === 'channel'
-        ? `currently scoped to #${channel} — click to see all channels`
-        : `currently showing all channels — click to scope to #${channel}`
+    scopeBtn.textContent = scope === 'channel' ? `#${channel}` : t('mc_logs_all')
+    scopeBtn.title = scope === 'channel' ? t('mc_logs_scope_channel', [channel]) : t('mc_logs_scope_all', [channel])
     scopeBtn.addEventListener('click', async () => {
       const newScope = scope === 'channel' ? 'all' : 'channel'
       activeChatLogs.scope = newScope
@@ -56292,7 +56520,7 @@ function renderChatLogsView() {
   refreshBtn.className = 'hs-cl-export'
   refreshBtn.type = 'button'
   refreshBtn.textContent = '↻'
-  refreshBtn.title = 'refresh'
+  refreshBtn.title = t('mc_logs_refresh')
   refreshBtn.addEventListener('click', () => refreshChatLogs())
   ctrls.appendChild(refreshBtn)
 
@@ -56300,7 +56528,7 @@ function renderChatLogsView() {
   exportTxt.className = 'hs-cl-export'
   exportTxt.type = 'button'
   exportTxt.textContent = '.txt'
-  exportTxt.title = 'export as .txt'
+  exportTxt.title = t('mc_logs_export_txt')
   exportTxt.addEventListener('click', () => exportChatLogs('txt'))
   ctrls.appendChild(exportTxt)
 
@@ -56308,7 +56536,7 @@ function renderChatLogsView() {
   exportJson.className = 'hs-cl-export'
   exportJson.type = 'button'
   exportJson.textContent = '.json'
-  exportJson.title = 'export as .json'
+  exportJson.title = t('mc_logs_export_json')
   exportJson.addEventListener('click', () => exportChatLogs('json'))
   ctrls.appendChild(exportJson)
 
@@ -56320,8 +56548,8 @@ function renderChatLogsView() {
     pub.href = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
     pub.target = '_blank'
     pub.rel = 'noopener noreferrer'
-    pub.textContent = 'public archive ↗'
-    pub.title = `open #${channel}'s public chat log on heatsync.org`
+    pub.textContent = t('mc_logs_public')
+    pub.title = t('mc_logs_public_title', [channel])
     ctrls.appendChild(pub)
   }
 
@@ -56337,14 +56565,16 @@ function renderChatLogsView() {
     if (activeChatLogs.loadError) {
       // A failed request is not an empty archive — saying "no matches" for a
       // request that never succeeded is the same lie as the rest of this sweep.
-      empty.textContent = "couldn't load the archive — search or scroll again to retry"
+      empty.textContent = t('mc_logs_load_failed')
     } else if (activeChatLogs.backfillPending) {
       const src = activeChatLogs.platform === 'kick' ? 'kick archive' : 'logs.ivr.fi'
-      empty.textContent = `fetching historical logs from ${src}… try refresh in ~30s`
+      empty.textContent = t('mc_logs_backfill', [src])
     } else {
       empty.textContent = query
-        ? `no matches for "${query}"`
-        : `no archived messages from ${username}${channel ? ` in #${channel}` : ''} yet`
+        ? t('mc_logs_no_matches', [query])
+        : channel
+          ? t('mc_logs_none_in_channel', [username, channel])
+          : t('mc_logs_none', [username])
     }
     list.appendChild(empty)
   } else {
@@ -56356,7 +56586,7 @@ function renderChatLogsView() {
   if (!exhausted) {
     const sentinel = document.createElement('div')
     sentinel.className = 'hs-cl-loader'
-    sentinel.textContent = loading ? 'loading…' : 'scroll for older'
+    sentinel.textContent = loading ? t('content_card_loading') : t('mc_logs_scroll_older')
     list.appendChild(sentinel)
     // IntersectionObserver auto-fires when sentinel scrolls into view
     if (!loading && 'IntersectionObserver' in window) {
@@ -56408,8 +56638,8 @@ function renderChatLogRow(r) {
       ts.href = url
       ts.target = '_blank'
       ts.rel = 'noopener'
-      ts.title = 'copy permalink'
-      ts.setAttribute('aria-label', `permalink ${hhmmss}`)
+      ts.title = t('mc_logs_copy_permalink')
+      ts.setAttribute('aria-label', t('mc_logs_permalink_aria', [hhmmss]))
       ts.addEventListener('click', (e) => {
         e.stopPropagation()
         if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return
@@ -59815,60 +60045,60 @@ function hsNameCardsIn(root) {
 const MOD_BUTTON_CATALOG = {
   delete_message: {
     label: 'x',
-    title: 'delete this message',
+    titleKey: 'mc_mtb_t_delete',
     action: 'delete',
     durationSec: null,
     needsMsgId: true,
   },
   timeout_1m: {
     label: '1m',
-    title: 'timeout 1 minute',
+    titleKey: 'mc_mtb_t_to_1m',
     action: 'timeout',
     durationSec: 60,
     needsMsgId: false,
   },
   timeout_10m: {
     label: '10m',
-    title: 'timeout 10 minutes',
+    titleKey: 'mc_mtb_t_to_10m',
     action: 'timeout',
     durationSec: 600,
     needsMsgId: false,
   },
   timeout_1h: {
     label: '1h',
-    title: 'timeout 1 hour',
+    titleKey: 'mc_mtb_t_to_1h',
     action: 'timeout',
     durationSec: 3600,
     needsMsgId: false,
   },
   timeout_24h: {
     label: '24h',
-    title: 'timeout 24 hours',
+    titleKey: 'mc_mtb_t_to_24h',
     action: 'timeout',
     durationSec: 86400,
     needsMsgId: false,
   },
   timeout_7d: {
     label: '7d',
-    title: 'timeout 7 days',
+    titleKey: 'mc_mtb_t_to_7d',
     action: 'timeout',
     durationSec: 604800,
     needsMsgId: false,
   },
   purge: {
     label: 'purge',
-    title: 'purge — clear this user’s messages (1s timeout)',
+    titleKey: 'mc_mtb_t_purge',
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
     notKick: true, // kick's shortest timeout is a minute: a "purge" there would mute for 60s
   },
-  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
-  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
+  ban: { label: '⛔', titleKey: 'mc_mtb_t_ban', action: 'ban', durationSec: null, needsMsgId: false },
+  unban: { label: '✓', titleKey: 'mc_mtb_t_unban', action: 'unban', durationSec: null, needsMsgId: false },
   // opens the channel's blocked-terms panel; twitch rows only (kick has no such list)
   blocked_terms: {
     label: 'bt',
-    title: 'blocked terms',
+    titleKey: 'mc_mtb_t_bt',
     action: 'blocked_terms',
     durationSec: null,
     needsMsgId: false,
@@ -59877,7 +60107,7 @@ const MOD_BUTTON_CATALOG = {
   // opens the channel's mod tools panel (shield, unban requests, automod, chatters)
   mod_tools: {
     label: 'mt',
-    title: 'mod tools',
+    titleKey: 'mc_mtb_t_mt',
     action: 'mod_tools',
     durationSec: null,
     needsMsgId: false,
@@ -60005,7 +60235,7 @@ function buildModToolbarOnce() {
   const bar = document.createElement('div')
   bar.className = 'hs-mod-toolbar'
   bar.setAttribute('role', 'toolbar')
-  bar.setAttribute('aria-label', 'message moderation actions')
+  bar.setAttribute('aria-label', t('mc_mtb_bar_aria'))
   bar.addEventListener('mousedown', (e) => e.stopPropagation())
   bar.addEventListener('click', (e) => e.stopPropagation())
   _modToolbar = bar
@@ -60022,7 +60252,7 @@ function rebuildModToolbarButtons() {
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
     b.textContent = def.label
-    b.title = def.title
+    b.title = t(def.titleKey)
     b.dataset.modBtn = id
     b.tabIndex = -1
     b.addEventListener('mousedown', (e) => {
@@ -60451,7 +60681,7 @@ async function runModAction(id) {
     msgId,
   }).catch((e) => ({ anyOk: false, tResp: { error: e?.message || 'error' } }))
   if (row) row.style.opacity = wasOp || ''
-  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, 'deleted')
+  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, t('mc_mod_label_deleted'))
   const label =
     def.action === 'timeout'
       ? t('mc_mod_label_timed_out', [String(def.durationSec)])
@@ -62740,7 +62970,7 @@ function _enterResubShareMode(claim, user, months) {
   if (input.dataset.hsOrigDataPlaceholder === undefined) {
     input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
   }
-  const placeholder = `resub message (${months}mo) — enter to share`
+  const placeholder = t('mc_misc_resub_placeholder', [String(months)])
   input.setAttribute('placeholder', placeholder)
   input.setAttribute('data-placeholder', placeholder)
   try {
@@ -63222,7 +63452,7 @@ function _enterWatchstreakShareMode(claim, user, streakCount) {
   if (input.dataset.hsOrigDataPlaceholder === undefined) {
     input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
   }
-  const placeholder = `watch streak (${streakCount}) — enter to share`
+  const placeholder = t('mc_misc_streak_placeholder', [String(streakCount)])
   input.setAttribute('placeholder', placeholder)
   input.setAttribute('data-placeholder', placeholder)
   try {
@@ -64632,7 +64862,7 @@ function _hsShowVolumeOsd(playerEl, video) {
     _hsVolOsdEl.id = 'hs-vol-osd'
     document.body.appendChild(cleanup.trackNode(_hsVolOsdEl))
   }
-  _hsVolOsdEl.textContent = `vol ${Math.round(video.volume * 100)}%`
+  _hsVolOsdEl.textContent = t('mc_cp_vol', [String(Math.round(video.volume * 100))])
   const r = playerEl.getBoundingClientRect()
   _hsVolOsdEl.style.left = `${Math.round(r.left + r.width / 2)}px`
   _hsVolOsdEl.style.top = `${Math.round(r.top + 16)}px`
@@ -65550,7 +65780,7 @@ function ensureChatRestorePill(show) {
   if (!pill) {
     pill = document.createElement('div')
     pill.id = 'hs-chat-restore-pill'
-    pill.title = 'show chat (\\)'
+    pill.title = t('mc_pa_show_chat')
     pill.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -65754,10 +65984,10 @@ function showApiStatusBanner(source, state) {
   banner.className = 'hs-mc-api-banner'
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
-  const label = source === 'heatsync' ? 'heatsync.org unreachable — reconnecting' : `${source} unreachable`
+  const label = source === 'heatsync' ? t('mc_pa_heatsync_unreachable') : t('mc_pa_source_unreachable', [source])
   const text = document.createElement('span')
   text.textContent = label
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   banner.append(text, dismiss)
   _insertPanelCallout(banner)
 }
@@ -65786,14 +66016,14 @@ function showAuthLoginBanner(loggedIn) {
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
   const text = document.createElement('span')
-  text.textContent = 'youtube chat needs heatsync login —'
+  text.textContent = t('mc_pa_yt_needs_login')
   const link = document.createElement('a')
   link.href = 'https://heatsync.org/settings/account'
   link.target = '_blank'
   link.rel = 'noopener'
-  link.textContent = 'sign in'
+  link.textContent = t('mc_sign_in')
   link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;'
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   dismiss.style.marginLeft = '4px'
   banner.append(text, link, dismiss)
   _insertPanelCallout(banner)
@@ -65816,15 +66046,15 @@ function showEmoteLoginNudge() {
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
   const text = document.createElement('span')
-  text.textContent = 'log in to heatsync so your emotes work for everyone'
+  text.textContent = t('mc_pa_emote_login')
   const link = document.createElement('a')
   link.href = HS_LOGIN_URL
   link.target = '_blank'
   link.rel = 'noopener'
-  link.textContent = 'log in'
+  link.textContent = t('btn_auth_login')
   // nowrap so the link never splits across lines when the panel is narrow
   link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;cursor:pointer;white-space:nowrap;'
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   dismiss.style.marginLeft = '4px'
   banner.append(text, link, dismiss)
   _insertPanelCallout(banner)
@@ -65879,6 +66109,11 @@ function _gotoSetSubtab(id) {
   else if (_setSettingsSubtab(id)) renderSettingsTab()
 }
 
+// display name of a settings category (the id stays the machine key)
+function _setCatLabel(id) {
+  const c = mcSubCells('settings').find((x) => x.id === id)
+  return c?.labelKey ? t(c.labelKey) : id
+}
 function _renderSetSubtabBar() {
   return (
     '<div class="hs-mc-set-subtabs">' +
@@ -65890,7 +66125,7 @@ function _renderSetSubtabBar() {
           '" data-set-subtab="' +
           id +
           '" title="' +
-          id +
+          escapeHtml(_setCatLabel(id)) +
           '">' +
           _SET_SUBTAB_ICONS[id] +
           '</button>',
@@ -66346,7 +66581,7 @@ function _renderSearchResults() {
         '<div class="hs-mc-set-search-hdr" data-set-jump="' +
         escapeHtml(`${g.cat}|${g.section}`) +
         '">' +
-        escapeHtml(`${g.cat} · ${g.section}`) +
+        escapeHtml(`${_setCatLabel(g.cat)} · ${g.section}`) +
         '</div>' +
         g.rows.map((r) => r.html).join('') +
         '</div>',
@@ -66359,11 +66594,15 @@ function _renderSearchResults() {
     count += actions.length
     html +=
       '<div class="hs-mc-settings-group">' +
-      '<div class="hs-mc-set-search-hdr" data-set-jump="system|backup / restore">system · backup / restore</div>' +
+      '<div class="hs-mc-set-search-hdr" data-set-jump="system|backup / restore">' +
+      escapeHtml(t('mc_set_system_backup')) +
+      '</div>' +
       actions.map((a) => a.html).join('') +
       '</div>'
   }
-  if (!count) html = '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">no matches</div>'
+  if (!count)
+    html =
+      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' + t('common_no_matches') + '</div>'
   return { html: html, count: count, total: total }
 }
 
@@ -66407,13 +66646,21 @@ function _renderCrashLogBlock() {
     (!crash ? ' style="display:none"' : '') +
     '>' +
     '<div style="display:flex;justify-content:space-between;align-items:center;width:100%">' +
-    '<span class="hs-mc-setting-label">recent errors</span>' +
+    '<span class="hs-mc-setting-label">' +
+    t('mc_set_recent_errors') +
+    '</span>' +
     '<div style="display:flex;gap:4px">' +
-    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">copy</button>' +
-    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">clear</button>' +
+    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_copy') +
+    '</button>' +
+    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_clear') +
+    '</button>' +
     '</div>' +
     '</div>' +
-    '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">(loading...)</pre>' +
+    '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">' +
+    t('mc_set_crash_loading') +
+    '</pre>' +
     '</div>'
   )
 }
@@ -66425,23 +66672,39 @@ const _SET_ACTION_ROWS = [
     hay: 'export settings backup download json save system',
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<span class="hs-mc-setting-label" data-tip="dump ui_settings + all hs_* keys to a JSON file. portable across devices and browsers.">export settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">download .json</button>' +
+      '<span class="hs-mc-setting-label" data-tip="' +
+      escapeHtml(t('mc_set_export_tip')) +
+      '">' +
+      t('mc_set_export') +
+      '</span>' +
+      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_export_btn') +
+      '</button>' +
       '</div>',
   },
   {
     hay: 'import settings restore load json system',
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<span class="hs-mc-setting-label" data-tip="restore from a previously-exported JSON file. merges into existing settings.">import settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">load .json</button>' +
+      '<span class="hs-mc-setting-label" data-tip="' +
+      escapeHtml(t('mc_set_import_tip')) +
+      '">' +
+      t('mc_set_import') +
+      '</span>' +
+      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_import_btn') +
+      '</button>' +
       '</div>',
   },
   {
     hay: 'default reset all settings factory system',
     html:
       '<div class="hs-mc-setting-row" style="justify-content:flex-end">' +
-      '<button class="hs-mc-defaults-btn" title="reset every setting on every page" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">all defaults</button>' +
+      '<button class="hs-mc-defaults-btn" title="' +
+      escapeHtml(t('mc_set_reset_all_title')) +
+      '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_all_defaults') +
+      '</button>' +
       '</div>',
   },
 ]
@@ -66449,7 +66712,9 @@ const _SET_ACTION_ROWS = [
 function _renderBackupGroup() {
   return (
     '<div class="hs-mc-settings-group">' +
-    '<div class="hs-mc-settings-group-title">backup / restore</div>' +
+    '<div class="hs-mc-settings-group-title">' +
+    t('mc_set_backup_restore') +
+    '</div>' +
     _SET_ACTION_ROWS[0].html +
     _SET_ACTION_ROWS[1].html +
     '</div>' +
@@ -66558,8 +66823,8 @@ function _renderFilterRuleRow(r) {
         ';border:1px solid #ffffff;flex-shrink:0"></span>'
       : '') +
     (r.action === 'highlight' && r.sound
-      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="sound: ' +
-        escapeHtml(String(r.sound)) +
+      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="' +
+        escapeHtml(t('mc_set_fr_sound', [String(r.sound)])) +
         '">♪</span>'
       : '') +
     '<span style="color:#ffffff;font-size:13px;flex-shrink:0">' +
@@ -66570,13 +66835,21 @@ function _renderFilterRuleRow(r) {
     id +
     '" style="' +
     FR_BTN +
-    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move up (higher priority — first match wins)">▲</button>' +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="' +
+    escapeHtml(t('mc_set_fr_up')) +
+    '">▲</button>' +
     '<button data-fr-action="down" data-fr-id="' +
     id +
     '" style="' +
     FR_BTN +
-    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move down">▼</button>' +
-    hsXButtonHtml('hs-x-inline', 'delete rule', 'data-fr-action="delete" data-fr-id="' + id + '" title="delete rule"') +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="' +
+    escapeHtml(t('mc_set_fr_down')) +
+    '">▼</button>' +
+    hsXButtonHtml(
+      'hs-x-inline',
+      t('mc_mr_delete'),
+      'data-fr-action="delete" data-fr-id="' + id + '" title="' + t('mc_mr_delete') + '"',
+    ) +
     '</div>'
   )
 }
@@ -66584,7 +66857,9 @@ function _renderFilterRuleRow(r) {
 function _renderFilterRuleAddForm() {
   var channels = typeof config !== 'undefined' && config && config.channels ? config.channels : []
   var chOptions =
-    '<option value="all">all channels</option>' +
+    '<option value="all">' +
+    t('mc_set_fr_all_channels') +
+    '</option>' +
     channels
       .map((ch) => {
         var label = ch.twitch || ch.kick || ch.id || ''
@@ -66593,38 +66868,68 @@ function _renderFilterRuleAddForm() {
       .join('')
   return (
     '<div class="hs-mc-setting-row hs-mc-setting-row-block hs-mc-fr-addform" style="padding:4px 4px 6px">' +
-    '<div style="font-size:13px;color:#ffffff;margin-bottom:4px">add rule</div>' +
+    '<div style="font-size:13px;color:#ffffff;margin-bottom:4px">' +
+    t('mc_mr_add') +
+    '</div>' +
     '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">' +
     '<select data-fr-field="type" style="' +
     FR_SEL +
     ';width:60px">' +
-    '<option value="keyword">keyword</option>' +
-    '<option value="regex">regex</option>' +
-    '<option value="user">user</option>' +
-    '<option value="badge">badge</option>' +
-    '<option value="msgtype">msgtype</option>' +
-    '<option value="expr" title="e.g. first &amp;&amp; !badge:subscriber — join with &amp;&amp; || ! ( ); fields user: badge: type: contains: regex:">expr</option>' +
+    '<option value="keyword">' +
+    t('mc_set_fr_t_keyword') +
+    '</option>' +
+    '<option value="regex">' +
+    t('mc_set_fr_t_regex') +
+    '</option>' +
+    '<option value="user">' +
+    t('mc_set_fr_t_user') +
+    '</option>' +
+    '<option value="badge">' +
+    t('mc_set_fr_t_badge') +
+    '</option>' +
+    '<option value="msgtype">' +
+    t('mc_set_fr_t_msgtype') +
+    '</option>' +
+    '<option value="expr" title="' +
+    escapeHtml(t('mc_set_fr_expr_tip')) +
+    '">' +
+    t('mc_set_fr_t_expr') +
+    '</option>' +
     '</select>' +
-    '<input type="text" data-fr-field="value" placeholder="value..." style="' +
+    '<input type="text" data-fr-field="value" placeholder="' +
+    escapeHtml(t('mc_set_fr_value_ph')) +
+    '" style="' +
     FR_INPUT +
     '">' +
     '<select data-fr-field="action" style="' +
     FR_SEL +
     ';width:68px">' +
-    '<option value="highlight">highlight</option>' +
-    '<option value="hide">hide</option>' +
+    '<option value="highlight">' +
+    t('mc_set_fr_a_highlight') +
+    '</option>' +
+    '<option value="hide">' +
+    t('mc_set_fr_a_hide') +
+    '</option>' +
     '</select>' +
-    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #ffffff;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="highlight color">' +
+    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #ffffff;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="' +
+    escapeHtml(t('mc_set_fr_color')) +
+    '">' +
     '<select data-fr-field="sound" style="' +
     FR_SEL +
-    ';width:62px" title="highlight sound (highlight action only)">' +
-    '<option value="none">silent</option>' +
+    ';width:62px" title="' +
+    escapeHtml(t('mc_set_fr_sound_tip')) +
+    '">' +
+    '<option value="none">' +
+    t('mc_set_fr_silent') +
+    '</option>' +
     '<option value="ping">ping</option>' +
     '<option value="blip">blip</option>' +
     '<option value="knock">knock</option>' +
     '<option value="chime">chime</option>' +
     '</select>' +
-    '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="case-sensitive match">' +
+    '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="' +
+    escapeHtml(t('mc_set_fr_case')) +
+    '">' +
     '<input type="checkbox" data-fr-field="cs" style="margin:0;cursor:pointer">Aa</label>' +
     '<select data-fr-field="scope" style="' +
     FR_SEL +
@@ -66633,7 +66938,9 @@ function _renderFilterRuleAddForm() {
     '</select>' +
     '<button data-fr-action="add" style="' +
     FR_BTN +
-    ';background:#000000">+ add</button>' +
+    ';background:#000000">' +
+    t('mc_set_fr_add_btn') +
+    '</button>' +
     '</div>' +
     '</div>'
   )
@@ -66644,13 +66951,15 @@ function _renderFilterRulesGroup() {
   var rules = _getRawFilterRules()
   var ruleRows =
     rules.length === 0
-      ? '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">no rules — add one below</div>'
+      ? '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">' +
+        t('mc_set_fr_none') +
+        '</div>'
       : rules.map(_renderFilterRuleRow).join('')
   return (
     '<div class="hs-mc-settings-group">' +
     '<div class="hs-mc-settings-group-title" data-set-fold="rules">' +
     (fold ? '▸ ' : '▾ ') +
-    'filter rules' +
+    t('mc_settings_filter_rules') +
     (rules.length ? ` <span class="hs-mc-set-cnt">(${rules.length})</span>` : '') +
     '</div>' +
     (fold ? '' : ruleRows + _renderFilterRuleAddForm()) +
@@ -66750,7 +67059,11 @@ function _renderPageDefaultsRow(cat) {
     '<div class="hs-mc-setting-row" style="justify-content:flex-end;padding-top:6px">' +
     '<button class="hs-mc-pagedefaults-btn" data-set-cat="' +
     escapeHtml(cat) +
-    '" title="reset this page to defaults" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">default</button>' +
+    '" title="' +
+    escapeHtml(t('mc_set_page_reset_title')) +
+    '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_default') +
+    '</button>' +
     '</div>'
   )
 }
@@ -66764,10 +67077,11 @@ function _basicHint(cat) {
   if (!hidden) return ''
   return (
     '<div class="hs-mc-set-keyhint" data-set-scope-hint="1">' +
-    hidden +
-    ' more setting' +
-    (hidden === 1 ? '' : 's') +
-    ' here — <button class="hs-mc-set-scope-btn hs-mc-set-scope-inline">show all</button></div>'
+    t(hidden === 1 ? 'mc_set_basic_hint_one' : 'mc_set_basic_hint_many', [
+      String(hidden),
+      '<button class="hs-mc-set-scope-btn hs-mc-set-scope-inline">' + t('mc_set_show_all') + '</button>',
+    ]) +
+    '</div>'
   )
 }
 
@@ -66937,7 +67251,7 @@ async function _loadCrashLog() {
     }
     var head = diag ? `--- diag ---\n${JSON.stringify(diag, null, 2)}\n\n` : ''
     if (log.length === 0) {
-      pre.textContent = `${head}(no errors recorded)`
+      pre.textContent = `${head}${t('mc_set_crash_none')}`
       return
     }
     pre.textContent =
@@ -66959,7 +67273,7 @@ async function _loadCrashLog() {
         )
         .join('\n')
   } catch (_) {
-    pre.textContent = '(unable to read log)'
+    pre.textContent = t('mc_set_crash_unreadable')
   }
 }
 
@@ -66987,12 +67301,12 @@ function _presetChanges(diff) {
   return out
 }
 function _fmtPresetVal(def, v) {
-  if (def.type === 'bool') return v ? 'on' : 'off'
+  if (def.type === 'bool') return v ? t('mc_cm_on') : t('mc_cm_off')
   if (def.type === 'boolmap') {
     const offs = Object.keys(v).filter((k) => v[k] === false)
-    return offs.length ? `off: ${offs.join(', ')}` : 'all on'
+    return offs.length ? t('mc_set_fmt_off_list', [offs.join(', ')]) : t('mc_set_fmt_all_on')
   }
-  if (def.type === 'multiselect') return v.length ? v.join(', ') : 'none'
+  if (def.type === 'multiselect') return v.length ? v.join(', ') : t('mc_set_fmt_none')
   return String(v)
 }
 function _applyPresetDiff(label, diff) {
@@ -67068,23 +67382,23 @@ function _openPresetMenu(anchorEl) {
       })
     }
     items.push({
-      label: 'delete a preset…',
+      label: t('mc_set_preset_delete_menu'),
       danger: true,
       fn: () => {
         const delItems = _customPresets.map((p) => ({
-          label: `delete ${p.name}`,
+          label: t('mc_set_preset_delete_one', [p.name]),
           danger: true,
           fn: () => {
             _deleteCustomPreset(p.id)
           },
         }))
-        showHsCtxMenu(r.left, r.bottom + 4, 'delete preset', delItems)
+        showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_preset_delete_title'), delItems)
       },
     })
   }
   items.push('sep')
   items.push({
-    label: 'save current as…',
+    label: t('mc_set_preset_save_as'),
     fn: () => {
       _presetPending = { savePrompt: true }
       renderSettingsTab()
@@ -67092,7 +67406,7 @@ function _openPresetMenu(anchorEl) {
   })
   if (_lastPresetUndo) {
     items.push({
-      label: `undo: ${_lastPresetUndo.label}`,
+      label: t('mc_set_preset_undo', [_lastPresetUndo.label]),
       fn: () => {
         const u = _lastPresetUndo
         _lastPresetUndo = null
@@ -67100,21 +67414,31 @@ function _openPresetMenu(anchorEl) {
       },
     })
   }
-  showHsCtxMenu(r.left, r.bottom + 4, 'presets', items)
+  showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_presets'), items)
 }
 function _renderPresetPanel() {
   if (_presetPending.savePrompt) {
     return (
       '<div class="hs-mc-settings-group">' +
-      '<div class="hs-mc-settings-group-title">save current as preset</div>' +
+      '<div class="hs-mc-settings-group-title">' +
+      t('mc_set_preset_save_title') +
+      '</div>' +
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="preset name" maxlength="24" style="flex:1">' +
+      '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="' +
+      escapeHtml(t('mc_set_preset_name_ph')) +
+      '" maxlength="24" style="flex:1">' +
       '<div style="display:flex;gap:4px">' +
-      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">save</button>' +
-      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_mr_save') +
+      '</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_mr_cancel') +
+      '</button>' +
       '</div>' +
       '</div>' +
-      '<div class="hs-mc-set-keyhint">snapshots every setting that differs from defaults — sharable via export settings</div>' +
+      '<div class="hs-mc-set-keyhint">' +
+      t('mc_set_preset_save_hint') +
+      '</div>' +
       '</div>'
     )
   }
@@ -67122,7 +67446,9 @@ function _renderPresetPanel() {
   let rows = ''
   if (!changes.length) {
     rows =
-      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">already matching — nothing to change</div>'
+      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' +
+      t('mc_set_preset_nochange') +
+      '</div>'
   }
   for (const c of changes) {
     rows +=
@@ -67140,15 +67466,19 @@ function _renderPresetPanel() {
   }
   return (
     '<div class="hs-mc-settings-group">' +
-    '<div class="hs-mc-settings-group-title">apply preset: ' +
-    escapeHtml(_presetPending.label) +
+    '<div class="hs-mc-settings-group-title">' +
+    escapeHtml(t('mc_set_preset_apply_title', [_presetPending.label])) +
     '</div>' +
     rows +
     '<div class="hs-mc-setting-row" style="justify-content:flex-end;gap:4px">' +
     (changes.length
-      ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">apply</button>'
+      ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">' +
+        t('mc_set_apply') +
+        '</button>'
       : '') +
-    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_mr_cancel') +
+    '</button>' +
     '</div>' +
     '</div>'
   )
@@ -67157,39 +67487,43 @@ function _renderPresetPanel() {
 // settings › help — the one help: keys for this pane, then the slash commands.
 // Esc (or ?) goes back to the cell it was opened from.
 const _SET_HELP_KEYS = [
-  ['/', 'search'],
-  ['1-7', 'category'],
-  ['↑ ↓', 'move'],
-  ['← →', 'adjust'],
-  ['enter', 'toggle'],
-  ['bksp', 'reset row'],
-  ['esc', 'close / clear'],
-  ['?', 'this help'],
+  ['/', 'mc_set_h_search'],
+  ['1-7', 'mc_set_h_category'],
+  ['↑ ↓', 'mc_set_h_move'],
+  ['← →', 'mc_set_h_adjust'],
+  ['enter', 'mc_set_h_toggle'],
+  ['bksp', 'mc_set_h_reset_row'],
+  ['esc', 'mc_set_h_close_clear'],
+  ['?', 'mc_set_h_this_help'],
 ]
 const _SET_HELP_VIM = [
-  ['j k', 'move'],
-  ['h l', 'adjust'],
-  ['gg G', 'first / last'],
-  ['za', 'fold section'],
-  ['d', 'reset row'],
-  ['p', 'presets'],
-  ['H L', 'prev / next category'],
+  ['j k', 'mc_set_h_move'],
+  ['h l', 'mc_set_h_adjust'],
+  ['gg G', 'mc_set_h_first_last'],
+  ['za', 'mc_set_h_fold'],
+  ['d', 'mc_set_h_reset_row'],
+  ['p', 'mc_set_presets'],
+  ['H L', 'mc_set_h_prev_next'],
 ]
 function _renderHelpPane() {
   function grid(pairs) {
     return pairs
-      .map((kv) => `<span class="hs-mc-set-help-key">${escapeHtml(kv[0])}</span><span>${escapeHtml(kv[1])}</span>`)
+      .map((kv) => `<span class="hs-mc-set-help-key">${escapeHtml(kv[0])}</span><span>${escapeHtml(t(kv[1]))}</span>`)
       .join('')
   }
   return (
     '<div class="hs-mc-set-help-pane">' +
-    '<div class="hs-mc-set-help-title">keys</div>' +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_keys') +
+    '</div>' +
     `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_KEYS)}</div>` +
     (viModeEnabled
       ? `<div class="hs-mc-set-help-title">vi</div><div class="hs-mc-set-help-grid">${grid(_SET_HELP_VIM)}</div>`
       : '') +
-    '<div class="hs-mc-set-help-title">commands</div>' +
-    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\nfull list -> heatsync.org/commands`)}</pre>` +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_commands') +
+    '</div>' +
+    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\n${t('mc_set_h_full_list')}`)}</pre>` +
     '</div>'
   )
 }
@@ -67469,20 +67803,22 @@ function renderSettingsTab() {
     '<div class="hs-mc-settings-panel">' +
     _renderSetSubtabBar() +
     '<div class="hs-mc-set-searchbar">' +
-    '<input class="hs-mc-set-search" type="search" placeholder="/ search settings..." value="' +
+    '<input class="hs-mc-set-search" type="search" placeholder="' +
+    escapeHtml(t('mc_set_search_ph')) +
+    '" value="' +
     escapeHtml(_setQuery) +
     '">' +
     '<span class="hs-mc-set-search-count">' +
     countLabel +
     '</span>' +
     '<button class="hs-mc-set-scope-btn" title="' +
-    (_setShowAll
-      ? 'showing every setting — click for the basics only'
-      : 'showing the basics — click for every setting') +
+    (_setShowAll ? t('mc_set_scope_all_tip') : t('mc_set_scope_basic_tip')) +
     '">' +
-    (_setShowAll ? 'all' : 'basic') +
+    (_setShowAll ? t('mc_set_scope_all') : t('mc_set_scope_basic')) +
     '</button>' +
-    '<button class="hs-mc-set-presets-btn">presets</button>' +
+    '<button class="hs-mc-set-presets-btn">' +
+    t('mc_set_presets') +
+    '</button>' +
     '</div>' +
     '<div class="hs-mc-set-subtab-body">' +
     bodyContent +
@@ -67631,14 +67967,14 @@ function renderSettingsTab() {
         var copyBtn = e.target
         navigator.clipboard.writeText(pre.textContent).then(
           () => {
-            copyBtn.textContent = 'copied'
+            copyBtn.textContent = t('btn_toast_copied')
           },
           () => {
-            copyBtn.textContent = 'copy failed'
+            copyBtn.textContent = t('popup_copy_failed')
           },
         )
         cleanup.setTimeout(() => {
-          copyBtn.textContent = 'copy'
+          copyBtn.textContent = t('mc_set_copy')
         }, 1500)
       }
       return
@@ -68918,13 +69254,13 @@ function renderAddChannelForm(msgsEl) {
       return
     }
     const gen = ++_autofillGen
-    linkStatus.textContent = 'checking heatsync…'
+    linkStatus.textContent = t('mc_cmg_checking')
     linkStatus.style.color = '#ffffff'
     const res =
       typeof resolveIdentity === 'function' ? await resolveIdentity(name, { platform: sourcePlatform }) : { ok: false }
     if (gen !== _autofillGen) return
     if (!res?.ok) {
-      linkStatus.textContent = res?.notFound ? 'no heatsync profile — fill manually' : "couldn't reach heatsync"
+      linkStatus.textContent = res?.notFound ? t('mc_cmg_no_profile') : t('mc_cmg_unreachable')
       linkStatus.style.color = '#ffffff'
       return
     }
@@ -68946,10 +69282,10 @@ function renderAddChannelForm(msgsEl) {
     if (id.kick) linkedLabels.push('k')
     if (id.youtube) linkedLabels.push('yt')
     const liveLabels = res.liveOn?.length
-      ? ` · live on ${res.liveOn.map((p) => (p === 'twitch' ? 't' : p === 'kick' ? 'k' : p)).join(',')}`
+      ? ` · ${t('mc_cmg_live_on', [res.liveOn.map((p) => (p === 'twitch' ? 't' : p === 'kick' ? 'k' : p)).join(',')])}`
       : ''
     linkStatus.style.color = 'var(--hs-plat-kick)'
-    linkStatus.textContent = `✓ matched ${id.heatsync || name} on heatsync — linked: ${linkedLabels.join(',') || 'none'}${liveLabels}${platforms.length ? ` · autofilled: ${platforms.join(',')}` : ''}`
+    linkStatus.textContent = `✓ ${t('mc_cmg_matched', [id.heatsync || name, linkedLabels.join(',') || t('mc_set_fmt_none')])}${liveLabels}${platforms.length ? ` · ${t('mc_cmg_autofilled', [platforms.join(',')])}` : ''}`
   }
 
   twitch.input.addEventListener('input', () => {
@@ -69069,7 +69405,7 @@ function renderLivePlatformsPane(pane) {
     'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
 
   const title = document.createElement('div')
-  title.textContent = `edit live — ${urlCh}`
+  title.textContent = t('mc_cmg_edit_live', [urlCh])
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
   wrapper.appendChild(title)
 
@@ -69092,9 +69428,9 @@ function renderLivePlatformsPane(pane) {
     return { row, input }
   }
 
-  const twitch = makeRow('twitch', 'username', names.twitch)
-  const kick = makeRow('kick', 'username', names.kick)
-  const yt = makeRow('youtube', 'url or @handle', names.youtube)
+  const twitch = makeRow('twitch', t('mc_username_placeholder'), names.twitch)
+  const kick = makeRow('kick', t('mc_username_placeholder'), names.kick)
+  const yt = makeRow('youtube', t('mc_username_url_placeholder'), names.youtube)
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
@@ -72980,7 +73316,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         el.id = 'hs-mc-idwarn'
         const acct = hsCurrentUsername || 'unknown'
         const ident = senderKey.replace(':', ' ')
-        el.innerHTML = `<span>your emotes won't render for others here — heatsync acct <b>${escapeHtml(acct)}</b>, chatting as <b>${escapeHtml(ident)}</b> — <a href="https://heatsync.org/settings" target="_blank" rel="noopener">link accounts</a></span>${hsXButtonHtml('hs-x-inline', 'dismiss', 'id="hs-mc-idwarn-x" title="dismiss"')}`
+        el.innerHTML = `<span>${t('mc_main_idwarn', [`<b>${escapeHtml(acct)}</b>`, `<b>${escapeHtml(ident)}</b>`, `<a href="https://heatsync.org/settings" target="_blank" rel="noopener">${t('mc_main_idwarn_link')}</a>`])}</span>${hsXButtonHtml('hs-x-inline', t('mc_main_dismiss'), `id="hs-mc-idwarn-x" title="${t('mc_main_dismiss')}"`)}`
         bar.parentNode.insertBefore(el, bar)
         el.querySelector('#hs-mc-idwarn-x')?.addEventListener('click', () => {
           el.remove()
@@ -74777,7 +75113,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         b.setAttribute('role', 'tab')
         b.setAttribute('aria-selected', String(c.id === currentSub))
         b.classList.toggle('active', c.id === currentSub)
-        b.textContent = c.label
+        b.textContent = c.labelKey ? t(c.labelKey) : c.label
         return b
       }),
     )
@@ -74857,8 +75193,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     link('summary', ctx.tab, 'summary')
     link('my logs', ctx.tab, 'logs')
     if (ctx.tab === 'live') link('platforms', 'live', 'platforms')
-    const x = hsXButton('hs-x-inline', 'back to chat', mcLeaveSubPane)
-    x.title = 'back to chat (Esc)'
+    const x = hsXButton('hs-x-inline', t('mc_main_back_to_chat'), mcLeaveSubPane)
+    x.title = t('mc_main_back_to_chat_esc')
     x.style.marginLeft = 'auto'
     row.appendChild(x)
     return row
@@ -74889,14 +75225,14 @@ const STORAGE_KEY = 'heatsync_multichat'
         pane.prepend(hub)
       }
       const plat = _paneChannelPlatform(ctx)
-      if (plat === 'yt') return note('status covers twitch and kick channels')
-      note(`fetching #${ch}…`)
+      if (plat === 'yt') return note(t('mc_main_status_no_yt'))
+      note(t('mc_main_status_fetching', [ch]))
       let panel = null
       try {
         panel = plat === 'kick' ? await buildKickStatusPanel(ch) : await buildChatStatusPanel(ch)
       } catch (_) {}
       if (!pane.isConnected) return
-      if (!panel) return note(`could not fetch #${ch} (offline or not on ${plat}?)`)
+      if (!panel) return note(t('mc_main_status_fetch_failed', [ch, plat]))
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(hub, panel)
     },
@@ -74909,12 +75245,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       // viewer's own name isn't known here, so only a right-clicked chatter has logs.
       const username = ctx.username || (platform === 'twitch' ? currentUsername : '')
       if (!username)
-        return _paneNote(
-          pane,
-          platform === 'twitch'
-            ? 'sign in to see your logs here — right-click a chatter for theirs'
-            : `right-click a chatter to see their ${platform} logs`,
-        )
+        return _paneNote(pane, platform === 'twitch' ? t('mc_main_logs_signin') : t('mc_main_logs_rclick', [platform]))
       openChatLogsView(username, { platform, channel: ctx.channel })
     },
   }
@@ -74999,7 +75330,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // Two sections: scrollable channel tabs + fixed utility buttons (always visible)
     // Static hardcoded buttons — all in one wrapping flow, no user input
     container.innerHTML = `
-      <div class="hs-mc-tabs-scroll" role="tablist" aria-label="chat tabs">
+      <div class="hs-mc-tabs-scroll" role="tablist" aria-label="${t('mc_main_tabs_aria')}">
         ${MC_TABS.filter((tab) => tab.bar === 'scroll')
           .map(mcTabButtonHtml)
           .join('')}
@@ -75007,12 +75338,12 @@ const STORAGE_KEY = 'heatsync_multichat'
       <div class="hs-mc-right-cluster">
         <div class="hs-mc-util-row">
           <button class="hs-mc-tab hs-mc-util-btn" data-tab="settings" title="${t('mc_btn_settings')}">\u2699</button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="hide chat (\\)" aria-label="hide chat"></button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="pop out chat to standalone window" style="display:none">\u26f6</button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="subscribe \u2014 support this channel" style="display:none">$</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="${t('mc_main_hide_chat_title')}" aria-label="${t('mc_main_hide_chat')}"></button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="${t('mc_main_popout_title')}" style="display:none">\u26f6</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="${t('mc_main_subscribe_title')}" style="display:none">$</button>
         </div>
       </div>
-      <div id="hs-mc-subrow" role="tablist" aria-label="views" hidden></div>
+      <div id="hs-mc-subrow" role="tablist" aria-label="${t('mc_main_views_aria')}" hidden></div>
     `
 
     // native-chat escape hatch removed (too fragile across chat positions/boot).
@@ -75099,7 +75430,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         menu.style.cssText =
           'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
         const item = document.createElement('div')
-        item.textContent = 'edit platforms'
+        item.textContent = t('mc_main_edit_platforms')
         item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#fff;'
         item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
           signal: mcSignal,
@@ -75703,7 +76034,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     overlay.id = 'hs-mc-overlay'
     overlay.dir = HS_DIR()
     // Static hardcoded layout — only static strings, no user input, safe innerHTML
-    const searchPlaceholder = 'search messages…'
+    const searchPlaceholder = t('mc_main_search_ph')
     overlay.innerHTML = `
       <div id="hs-mc-search-bar">
         <input id="hs-mc-search-input" type="text" placeholder="${searchPlaceholder}" autocomplete="off" spellcheck="false" />
@@ -75715,7 +76046,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
       <div id="hs-mc-pinbar" hidden></div>
-      <div id="hs-mc-messages" role="log" aria-label="chat messages">
+      <div id="hs-mc-messages" role="log" aria-label="${t('mc_main_messages_aria')}">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
              owns the swap: it prints "no messages yet" only once _tabJoining
@@ -76384,7 +76715,7 @@ const STORAGE_KEY = 'heatsync_multichat'
               if (remaining > 0) {
                 const chip = document.createElement('div')
                 chip.className = 'hs-mc-reply-stack-chip'
-                chip.textContent = `↑ ${remaining} more`
+                chip.textContent = t('mc_main_reply_stack_more', [String(remaining)])
                 chip.dataset.targetId = chain[chain.length - 1].id
                 overlay.insertBefore(chip, overlay.firstChild)
               }
@@ -76789,7 +77120,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (!results.length) {
       const empty = document.createElement('div')
       empty.className = 'hs-mc-search-empty'
-      empty.textContent = query ? `no results for "${query}"` : 'no results'
+      empty.textContent = query ? t('mc_main_search_none_for', [query]) : t('mc_main_search_none')
       msgsEl.appendChild(empty)
       return
     }
@@ -77043,7 +77374,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       momentId: d.id != null ? String(d.id) : null,
       momentChannel: d.channel,
       momentPlatform: d.platform || 'twitch',
-      text: `${d.channel} chat is exploding — ${d.rate} msgs/30s (usually ~${Math.max(1, Math.round(d.baseline))})`,
+      text: t('mc_main_moment', [d.channel, String(d.rate), String(Math.max(1, Math.round(d.baseline)))]),
       color: '#fff',
       time: now,
     })
@@ -78129,7 +78460,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     const _searchInputEl = document.getElementById('hs-mc-search-input')
     if (_searchInputEl) {
       _searchInputEl.value = ''
-      _searchInputEl.placeholder = isLiveSearchTab(id) ? 'filter — /regex/ or @user' : 'search messages…'
+      _searchInputEl.placeholder = isLiveSearchTab(id) ? t('mc_main_filter_ph') : t('mc_main_search_ph')
     }
     const _searchCountEl = document.getElementById('hs-mc-search-count')
     if (_searchCountEl) _searchCountEl.classList.remove('visible')
@@ -78447,7 +78778,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     refreshSeenBadges()
     if (!tabBarElement) return
     const mentionsTab = tabBarElement.querySelector('[data-tab="mentions"]')
-    if (mentionsTab && mentionsTab.textContent !== 'mentions') mentionsTab.textContent = 'mentions'
+    if (mentionsTab && mentionsTab.textContent !== t('mc_tab_mentions')) mentionsTab.textContent = t('mc_tab_mentions')
   }
 
   // Dedup helper: check against actual message buffers (survives WS reconnects)
@@ -78936,7 +79267,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
-        div.title = `open ${ch} on ${isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'}`
+        div.title = t('mc_main_open_on', [ch, isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'])
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
           window.open(streamEventUrl(evtPlat, ch), '_blank', 'noopener,noreferrer')
@@ -79146,7 +79477,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       div.style.cursor = 'pointer'
       const ch = m.momentChannel
       const plat = m.momentPlatform || 'twitch'
-      div.title = `open ${ch} chat`
+      div.title = t('mc_main_open_chat', [ch])
       div.addEventListener('click', (e) => {
         const permaEl = e.target.closest?.('a.hs-mc-moment-perma')
         if (permaEl && e.shiftKey) {
@@ -79700,10 +80031,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     if (m.redeemed && m.rewardId) {
       const reward = redeemTitleMap.get(m.rewardId)
       redeemLabel = reward
-        ? `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${Number(reward.cost).toLocaleString()} pts</span>`
-        : `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 channel point redeem</span>`
+        ? `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${t('mc_main_redeem_pts', [Number(reward.cost).toLocaleString()])}</span>`
+        : `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${t('mc_main_redeem_label')}</span>`
     } else if (m.isHighlighted) {
-      redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 highlighted message</span>`
+      redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 ${t('mc_main_highlighted')}</span>`
     }
     // First-message rows said what they were with COLOUR ALONE — a magenta bar
     // for a channel-first, a faint inset glow for a session-first. Nobody can
@@ -79722,7 +80053,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // the one that matters.
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
-      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 first message in this channel</span>`
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
     }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
@@ -79739,7 +80070,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       (m.type === 'usernotice' || m.type === 'notice') && !m.text
         ? `${tsHtml}${systemLine}`
         : m.type === 'notice'
-          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', 'dismiss', 'title="dismiss"') : ''}`
+          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
             ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
             : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
@@ -79804,7 +80135,7 @@ const STORAGE_KEY = 'heatsync_multichat'
       const replyBtn = document.createElement('button')
       replyBtn.className = 'hs-mc-reply-btn'
       replyBtn.textContent = '↩'
-      replyBtn.title = 'Reply'
+      replyBtn.title = t('mc_main_reply')
       div.appendChild(replyBtn)
       // Thread button — the discoverable way to mint a heatsync thread. The
       // capability already existed as `/op`, a slash command with no UI: 56
@@ -81114,10 +81445,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     el.hidden = false
     const text = document.createElement('span')
     text.className = 'hs-mc-multi-text'
-    text.textContent = `also live on ${otherPlatforms.join(' + ')}`
+    text.textContent = t('mc_main_also_live_on', [otherPlatforms.join(' + ')])
     const linkBtn = document.createElement('button')
     linkBtn.className = 'hs-mc-multi-link'
-    linkBtn.textContent = 'link channels'
+    linkBtn.textContent = t('mc_main_link_channels')
     linkBtn.addEventListener('click', (e) => {
       e.preventDefault()
       // Merge into the existing entry when there is one — pushing a fresh
@@ -81139,8 +81470,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       } catch {}
       hideMultistreamBanner()
     })
-    const dismissBtn = hsXButton('hs-x-inline', 'dismiss')
-    dismissBtn.title = 'dismiss (right-click also works)'
+    const dismissBtn = hsXButton('hs-x-inline', t('mc_main_dismiss'))
+    dismissBtn.title = t('mc_main_dismiss_rclick')
     const dismissNow = () => {
       _multistreamDismissed.add(key)
       persistMultistreamDismissed()
@@ -81911,14 +82242,14 @@ const STORAGE_KEY = 'heatsync_multichat'
       if (id === 'live' && !config.channels?.length) {
         const title = document.createElement('div')
         title.style.cssText = 'font-weight:600;margin-bottom:4px'
-        title.textContent = 'add your streams'
+        title.textContent = t('mc_main_add_streams_title')
         const sub = document.createElement('div')
         sub.style.cssText = 'opacity:.7;margin-bottom:10px'
-        sub.textContent = 'merge twitch, kick + youtube chat in one panel'
+        sub.textContent = t('mc_main_add_streams_sub')
         const btn = document.createElement('button')
         btn.style.cssText =
           'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
-        btn.textContent = '+ add a channel'
+        btn.textContent = t('mc_main_add_channel_btn')
         try {
           cleanup.addEventListener(btn, 'click', () => {
             try {
@@ -82033,7 +82364,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         msgsEl.textContent = ''
         const empty = document.createElement('div')
         empty.className = 'hs-mc-empty'
-        empty.textContent = 'no matches'
+        empty.textContent = t('common_no_matches')
         msgsEl.appendChild(empty)
         return
       }
@@ -83107,7 +83438,7 @@ const STORAGE_KEY = 'heatsync_multichat'
     // The live tab's own settings live in its dropdown (right-click stays a
     // shortcut to the same form).
     const edit = document.createElement('div')
-    edit.textContent = 'edit platforms'
+    edit.textContent = t('mc_main_edit_platforms')
     edit.style.cssText =
       'padding:6px 12px;cursor:pointer;color:#fff;white-space:nowrap;border-top:1px solid #ffffff;margin-top:4px;'
     edit.addEventListener('mouseenter', () => {
@@ -84968,18 +85299,18 @@ const STORAGE_KEY = 'heatsync_multichat'
     }
     if (_hsHealth?.kill) {
       log('kill-switch active, aborting init')
-      showKillSwitchBanner('disabled by heatsync (kill-switch active)', _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_active'), _hsHealth?.msg)
       return
     }
     if (Array.isArray(_hsHealth?.disabled) && _hsHealth.disabled.includes('multichat')) {
       log('multichat disabled by server health flag')
-      showKillSwitchBanner('multichat disabled by heatsync', _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_disabled'), _hsHealth?.msg)
       return
     }
     const _curVer = chrome.runtime.getManifest?.().version || '0.0.0'
     if (_hsHealth?.ext_hard_min && _hsSemverLt(_curVer, _hsHealth.ext_hard_min)) {
       log('extension below ext_hard_min', _curVer, '<', _hsHealth.ext_hard_min)
-      showKillSwitchBanner(`extension update required (v${_hsHealth.ext_hard_min}+)`, _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_update', [String(_hsHealth.ext_hard_min)]), _hsHealth?.msg)
       return
     }
     if (_hsHealth?.ext_min && _hsSemverLt(_curVer, _hsHealth.ext_min)) {
@@ -85657,13 +85988,16 @@ const STORAGE_KEY = 'heatsync_multichat'
         const targetLc = msg.targetUser.toLowerCase()
         for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
           if ((row.dataset.msgUser || '').toLowerCase() !== targetLc || !samePlat(row)) continue
-          markClearedRow(row, msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned')
+          markClearedRow(
+            row,
+            msg.banDuration ? t('mc_mod_label_timed_out', [String(msg.banDuration)]) : t('mc_mod_label_banned'),
+          )
         }
       } else if (msg.noticeType === 'delete_message_success' && msg.targetMsgId) {
         const safe = CSS.escape ? CSS.escape(msg.targetMsgId) : msg.targetMsgId.replace(/"/g, '\\"')
         const row = msgsEl.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)
         if (row) {
-          markClearedRow(row, 'deleted')
+          markClearedRow(row, t('mc_mod_label_deleted'))
         }
       } else if (msg.noticeType === 'unban_success' && msg.targetUser) {
         // Lift a prior ban/timeout dim (not a delete) when the user is unbanned.
@@ -86109,32 +86443,32 @@ const STORAGE_KEY = 'heatsync_multichat'
             eventClass = 'event-offline'
           } else if (msg.eventType === 'stream:redeem') {
             if (!hermesToggles?.redeem) return
-            text = `\u25C6 redeemed "${String(msg.title ?? '')}"`
+            text = `\u25C6 ${t('mc_main_ev_redeemed', [String(msg.title ?? '')])}`
             if (msg.cost) text += ` (${msg.cost})`
             eventClass = 'event-redeem'
           } else if (msg.eventType === 'stream:raid') {
             if (!hermesToggles?.raid) return
-            text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_out', [String(msg.target ?? ''), String(msg.viewers || 0)])}`
             eventClass = 'event-raid'
           } else if (msg.eventType === 'stream:raid-in') {
             if (!hermesToggles?.raid) return
-            text = `[${channel}] \u25C6 ${String(msg.from ?? '')} raided in with ${msg.viewers || 0} viewers`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_in', [String(msg.from ?? ''), String(msg.viewers || 0)])}`
             eventClass = 'event-raid'
           } else if (msg.eventType === 'stream:poll-start') {
             if (!hermesToggles?.poll) return
-            text = `[${channel}] \u25C6 new poll up${msg.title ? ` \u2014 ${String(msg.title)}` : ''}`
+            text = `[${channel}] \u25C6 ${msg.title ? t('mc_main_ev_poll_titled', [String(msg.title)]) : t('mc_main_ev_poll')}`
             eventClass = 'event-poll'
           } else if (msg.eventType === 'stream:hype-start') {
             if (!hermesToggles?.hype) return
-            text = `[${channel}] \u25C6 hype train started`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_start')}`
             eventClass = 'event-hype'
           } else if (msg.eventType === 'stream:hype-end') {
             if (!hermesToggles?.hype) return
-            text = `[${channel}] \u25C6 hype train ended at level ${msg.level || 0}`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_end', [String(msg.level || 0)])}`
             eventClass = 'event-hype'
           } else if (msg.eventType === 'stream:sub-gift') {
             if (!hermesToggles?.sub) return
-            text = `[${channel}] \u25C6 ${String(msg.user ?? '')} gifted ${msg.count || 0} subs`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_gifted_subs', [String(msg.user ?? ''), String(msg.count || 0)])}`
             eventClass = 'event-sub'
           }
           if (!text) return
@@ -86263,16 +86597,16 @@ const STORAGE_KEY = 'heatsync_multichat'
         if (eventType === 'raid') {
           toggleKey = 'raid'
           eventClass = 'event-raid'
-          text = `[${channel}] \u25C6 raided ${String(data.target ?? '')} with ${Number(data.viewers) || 0} viewers`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_out', [String(data.target ?? ''), String(Number(data.viewers) || 0)])}`
         } else if (eventType === 'hype-train-start') {
           toggleKey = 'hype'
           eventClass = 'event-hype'
-          text = `[${channel}] \u25C6 hype train started`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_start')}`
           if (typeof onHypeTrainStart === 'function') onHypeTrainStart(data.level)
         } else if (eventType === 'hype-train-end') {
           toggleKey = 'hype'
           eventClass = 'event-hype'
-          text = `[${channel}] \u25C6 hype train ended at level ${Number(data.level) || 0}`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_end', [String(Number(data.level) || 0)])}`
           if (typeof onHypeTrainEnd === 'function') onHypeTrainEnd()
         } else if (eventType === 'sub-gift') {
           toggleKey = 'sub'
@@ -86281,7 +86615,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         } else if (eventType === 'redeem') {
           toggleKey = 'redeem'
           eventClass = 'event-redeem'
-          text = `\u25C6 redeemed "${String(data.title ?? '')}"`
+          text = `\u25C6 ${t('mc_main_ev_redeemed', [String(data.title ?? '')])}`
           if (data.rewardId) {
             redeemTitleMap.set(data.rewardId, { title: data.title, cost: data.cost })
             if (redeemTitleMap.size > 200) redeemTitleMap.delete(redeemTitleMap.keys().next().value)
@@ -86297,7 +86631,9 @@ const STORAGE_KEY = 'heatsync_multichat'
               type: 'notice',
               noticeType: 'pin',
               systemMsg:
-                eventType === 'pin' ? `pinned${pinBy ? ` ${pinBy}:` : ':'} ${pinText}`.trim() : 'message unpinned',
+                eventType === 'pin'
+                  ? (pinBy ? t('mc_main_ev_pinned_by', [pinBy, pinText]) : t('mc_main_ev_pinned', [pinText])).trim()
+                  : t('mc_main_ev_unpinned'),
               channel,
               time: Date.now(),
               isSynthetic: true,
@@ -86308,13 +86644,11 @@ const STORAGE_KEY = 'heatsync_multichat'
         } else if (eventType === 'prediction-start') {
           toggleKey = 'pred'
           eventClass = 'event-pred'
-          const title = data?.title ? ` — ${String(data.title)}` : ''
-          text = `[${channel}] ◆ new prediction up${title}`
+          text = `[${channel}] ◆ ${data?.title ? t('mc_main_ev_pred_titled', [String(data.title)]) : t('mc_main_ev_pred')}`
         } else if (eventType === 'poll-start') {
           toggleKey = 'poll'
           eventClass = 'event-poll'
-          const title = data?.title ? ` — ${String(data.title)}` : ''
-          text = `[${channel}] ◆ new poll up${title}`
+          text = `[${channel}] ◆ ${data?.title ? t('mc_main_ev_poll_titled', [String(data.title)]) : t('mc_main_ev_poll')}`
         } else return
 
         if (!hermesToggles[toggleKey]) return

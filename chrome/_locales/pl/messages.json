@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "subskrybuj"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "widok moderatora (czat, automod, zablokowane frazy)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "nadawca"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "panel twórcy"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "stream manager"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "ustawienia moderacji (automod, zablokowane frazy)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "ustawienia kanału"
+  },
+  "mc_twapi_ql_community": {
+    "message": "społeczność (moderatorzy, vipy, obserwujący)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "monetyzacja"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "strony kanału"
+  },
+  "mc_twapi_ql_about": {
+    "message": "strona „o kanale”"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "filmy"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "klipy"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "harmonogram"
+  },
+  "mc_twapi_ql_account": {
+    "message": "twoje konto"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "dropy / inwentarz"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "moje subskrypcje"
+  },
+  "mc_twapi_ql_following": {
+    "message": "obserwowane"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "ustawienia twitcha"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "prywatność + bezpieczeństwo"
+  },
+  "mc_twapi_won": {
+    "message": "wygrana"
+  },
+  "mc_twapi_lost": {
+    "message": "przegrana"
+  },
+  "mc_twapi_max": {
+    "message": "maks"
+  },
+  "mc_twapi_amt": {
+    "message": "kwota"
+  },
+  "mc_twapi_bet": {
+    "message": "zakład"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ pkt · $COUNT$ gracz",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ pkt · $COUNT$ graczy",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "twój zakład: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "postawiono $POINTS$ na $OUTCOME$ — wybierz faktycznego zwycięzcę",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "odczekaj $N$m",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "odczekaj $N$s",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "nie udało się"
+  },
+  "mc_twapi_err_own": {
+    "message": "nie można obstawiać własnego"
+  },
+  "mc_twapi_err_retry": {
+    "message": "spróbuj ponownie"
+  },
+  "mc_twapi_err_locked": {
+    "message": "zakłady zablokowane"
+  },
+  "mc_twapi_err_points": {
+    "message": "za mało punktów"
+  },
+  "mc_twapi_err_already": {
+    "message": "już obstawiono"
+  },
+  "mc_twapi_no_event": {
+    "message": "brak wydarzenia"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "brak wyniku"
+  },
+  "mc_twapi_no_channel": {
+    "message": "brak kanału"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "zamykanie..."
+  },
+  "mc_twapi_closing": {
+    "message": "zamykanie"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "nie wykryto kanału"
+  },
+  "mc_twapi_tab_events": {
+    "message": "wydarzenia"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bity"
+  },
+  "mc_twapi_tab_links": {
+    "message": "skróty"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "wyślij bity do $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "saldo: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "otwórz okno cheer"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bitów",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ widzów",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ widzów",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "zakład: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ głos",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ głosów",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "głosuj"
+  },
+  "mc_input_unblock": {
+    "message": "odblokuj"
+  },
+  "mc_input_remove_from_set": {
+    "message": "usuń z zestawu"
+  },
+  "mc_input_open_on": {
+    "message": "otwórz na $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "pokaż obraz"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "kopiuj :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "kopiuj url obrazu"
+  },
+  "mc_input_copy_emoji": {
+    "message": "kopiuj emoji"
+  },
+  "mc_input_expand": {
+    "message": "rozwiń"
+  },
+  "mc_input_mute_24h": {
+    "message": "wycisz (24h)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "pokaż w karcie"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "ukryj w karcie"
+  },
+  "mc_input_copy_message": {
+    "message": "kopiuj wiadomość"
+  },
+  "mc_input_copy_to_input": {
+    "message": "kopiuj → input"
+  },
+  "mc_input_copy_thread": {
+    "message": "kopiuj wątek"
+  },
+  "mc_input_delete_msg": {
+    "message": "usuń wiad."
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10m"
+  },
+  "mc_input_timed_out": {
+    "message": "dostał timeout"
+  },
+  "mc_input_warn": {
+    "message": "ostrzeż"
+  },
+  "mc_input_reply": {
+    "message": "odpowiedz"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op na feed"
+  },
+  "mc_input_whisper": {
+    "message": "szept"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "edytuj notatkę"
+  },
+  "mc_input_add_note": {
+    "message": "dodaj notatkę"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "zgłoś / podaruj suba"
+  },
+  "mc_input_filter_to": {
+    "message": "filtruj do $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "logi czatu"
+  },
+  "mc_input_edit_timer": {
+    "message": "edytuj ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "edytuj (wygasło)"
+  },
+  "mc_input_delete": {
+    "message": "usuń"
+  },
+  "mc_input_chatter": {
+    "message": "czatujący"
+  },
+  "mc_input_everyone": {
+    "message": "wszyscy"
+  },
+  "mc_input_heatsync_only": {
+    "message": "tylko heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "twój inwentarz"
+  },
+  "mc_input_all_twitch": {
+    "message": "cały twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "cały kick"
+  },
+  "mc_input_ext_users": {
+    "message": "użytkownicy $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "szukam w 7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "tylko subskrybenci"
+  },
+  "mc_input_usage_color": {
+    "message": "użycie: /color <nazwa|#hex> — np. /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "kolor czatu ustawiony na $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "użycie: /re <tekst>"
+  },
+  "mc_input_re_no_post": {
+    "message": "na czacie nie ma jeszcze posta do odpowiedzi"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "ankieta nie powiodła się: $ERROR$ (tylko nadawca)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "ankieta nie powiodła się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "predykcja nie powiodła się: $ERROR$ (tylko nadawca)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "predykcja nie powiodła się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "zakończenie ankiety nie powiodło się: $ERROR$ (tylko nadawca)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "głosowanie nie powiodło się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "zakład nie powiódł się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "nie udało się: $ERROR$ (tylko nadawca)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ nie powiodło się: $ERROR$ (tylko nadawca)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "ogłoszenie nie powiodło się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <nazwa> — otwiera kartę profilu"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <user> — ukrywa w tej karcie"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <user> — pokazuje w tej karcie"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r, żeby odpowiedzieć $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "trwa wysyłanie..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "dozwolone tylko obrazy/filmy"
+  },
+  "mc_input_upload_too_large": {
+    "message": "plik za duży (maks $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "wysyłanie..."
+  },
+  "mc_input_upload_done": {
+    "message": "wysłano"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "wysyłanie nie powiodło się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "wysyłanie nie powiodło się"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "nie udało się dotrzeć do oryginału — wysłano klatkę"
+  },
+  "mc_input_drop_zone": {
+    "message": "upuść obraz/film/link, żeby wysłać"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <wiadomość>"
+  },
+  "mc_social_edit_empty": {
+    "message": "treść nie może być pusta"
+  },
+  "mc_social_saving": {
+    "message": "zapisywanie..."
+  },
+  "mc_social_edit_failed": {
+    "message": "edycja nie powiodła się"
+  },
+  "mc_social_confirm_delete": {
+    "message": "usunąć ten post?"
+  },
+  "mc_social_home_title": {
+    "message": "zaloguj się, żeby zobaczyć stronę główną"
+  },
+  "mc_social_home_sub": {
+    "message": "obserwuj ludzi, pisz, udostępniaj — obok multichatu"
+  },
+  "mc_social_home_login": {
+    "message": "zaloguj się na heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "multichat nie wymaga konta — wybierz kartę kanału powyżej"
+  },
+  "mc_social_no_posts": {
+    "message": "brak postów"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "obserwuj ludzi lub napisz coś, żeby wypełnić tę kartę"
+  },
+  "mc_social_import_follows": {
+    "message": "importuj obserwowanych z twitcha"
+  },
+  "mc_social_syncing": {
+    "message": "synchronizacja…"
+  },
+  "mc_social_synced": {
+    "message": "zsynchronizowano $COUNT$ ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "spróbuj ponownie"
+  },
+  "mc_social_failed": {
+    "message": "nie udało się"
+  },
+  "mc_social_discover_people": {
+    "message": "odkrywaj ludzi →"
+  },
+  "mc_social_post_something": {
+    "message": "napisz coś"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "gorące posty · zaloguj się na heatsync.org, żeby obserwować ludzi"
+  },
+  "mc_social_banner_newest": {
+    "message": "najnowsze posty · obserwuj ludzi, żeby wypełnić feed"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "gorące w tym miesiącu · obserwuj ludzi, żeby wypełnić feed"
+  },
+  "mc_social_edited": {
+    "message": "(edytowano)"
+  },
+  "mc_social_replying_to": {
+    "message": "odpowiedź na >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "opuść wątek"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ widz",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ widzów",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ widzów",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ odpowiedź",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ odpowiedzi",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(brak tekstu)"
+  },
+  "mc_social_live_now": {
+    "message": "na żywo"
+  },
+  "mc_social_no_streams": {
+    "message": "obecnie nikt nie streamuje"
+  },
+  "mc_social_hot_posts": {
+    "message": "gorące posty"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "brak postów pasujących do filtra"
+  },
+  "mc_social_tags": {
+    "message": "tagi"
+  },
+  "mc_social_none_now": {
+    "message": "na razie brak"
+  },
+  "mc_social_leaderboard": {
+    "message": "ranking"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "brak profili pasujących do filtra"
+  },
+  "mc_social_no_pinned": {
+    "message": "brak przypiętych wiadomości"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "brak akcji moderatorów"
+  },
+  "mc_social_platform": {
+    "message": "platforma"
+  },
+  "mc_social_all": {
+    "message": "wszystko"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "kamień milowy członkostwa"
+  },
+  "mc_social_yt_member": {
+    "message": "został członkiem"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "podarował $COUNT$ członkostwo",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "podarował $COUNT$ członkostw",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "błąd połączenia"
+  },
+  "mc_social_replies_title": {
+    "message": "odpowiedzi"
+  },
+  "mc_pcard_del_msg": {
+    "message": "usuń wiad."
+  },
+  "mc_pcard_del_title": {
+    "message": "usuń ostatnią wiadomość tego użytkownika"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "nadaj moderatora (tylko nadawca)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "odbierz moderatora (tylko nadawca)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "nadaj VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "odbierz VIP"
+  },
+  "mc_pcard_error": {
+    "message": "błąd"
+  },
+  "mc_pcard_no_channel": {
+    "message": "nie udało się ustalić kanału"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ nie powiodło się: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "sesja"
+  },
+  "mc_pcard_first": {
+    "message": "pierwsza"
+  },
+  "mc_pcard_channels": {
+    "message": "kanały"
+  },
+  "mc_pcard_close_profile": {
+    "message": "zamknij profil"
+  },
+  "mc_pcard_close_esc": {
+    "message": "zamknij (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "nie udało się wczytać — ponów"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url skopiowany"
+  },
+  "mc_pcard_clip_created": {
+    "message": "klip utworzony"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "klip nie powiódł się: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "skopiowano"
+  },
+  "mc_logs_failed": {
+    "message": "nie udało się"
+  },
+  "mc_logs_all_channels": {
+    "message": "wszystkie kanały"
+  },
+  "mc_logs_all": {
+    "message": "wszystko"
+  },
+  "mc_logs_scope_channel": {
+    "message": "zawężono do #$CHANNEL$ — kliknij, żeby zobaczyć wszystkie kanały",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "pokazano wszystkie kanały — kliknij, żeby zawęzić do #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "szukaj…"
+  },
+  "mc_logs_search_title": {
+    "message": "szukaj wiadomości użytkownika $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "odśwież"
+  },
+  "mc_logs_export_txt": {
+    "message": "eksportuj jako .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "eksportuj jako .json"
+  },
+  "mc_logs_public": {
+    "message": "archiwum publiczne ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "otwórz publiczny log czatu #$CHANNEL$ na heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "nie udało się wczytać archiwum — wyszukaj lub przewiń ponownie"
+  },
+  "mc_logs_backfill": {
+    "message": "pobieranie historycznych logów z $SOURCE$… odśwież za ~30s",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "brak wyników dla \"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "brak zarchiwizowanych wiadomości od $USER$ w #$CHANNEL$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "brak zarchiwizowanych wiadomości od $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "przewiń po starsze"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "kopiuj permalink"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "notatka · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "prywatna notatka — widzisz ją tylko ty. podąża za nimi między platformami."
+  },
+  "mc_notes_esc": {
+    "message": "esc, żeby zamknąć"
+  },
+  "mc_notes_delete": {
+    "message": "usuń"
+  },
+  "mc_notes_saved": {
+    "message": "zapisano · esc, żeby zamknąć"
+  },
+  "mc_notes_saving": {
+    "message": "zapisywanie…"
+  },
+  "mc_notes_section": {
+    "message": "notatki"
+  },
+  "mc_notes_empty": {
+    "message": "brak notatki"
+  },
+  "mc_notes_edit": {
+    "message": "edytuj"
+  },
+  "mc_notes_add": {
+    "message": "dodaj notatkę"
+  },
+  "mc_feed_loading_name": {
+    "message": "wczytywanie $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "wczytywanie wiersza czatu…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "wczytywanie podglądu…"
+  },
+  "mc_feed_adult_login": {
+    "message": "zaloguj się jako dorosły, żeby zobaczyć"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "obraz niedostępny"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "otwórz w nowej karcie"
+  },
+  "mc_feed_reload_player": {
+    "message": "przeładuj odtwarzacz (po zalogowaniu)"
+  },
+  "mc_feed_pause": {
+    "message": "pauza"
+  },
+  "mc_feed_volume": {
+    "message": "głośność"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "wróć do czatu (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "wypełnij czat"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "otwórz w nowej karcie"
+  },
+  "mc_feed_close_player": {
+    "message": "zamknij odtwarzacz"
+  },
+  "mc_feed_back": {
+    "message": "← wstecz"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "szept nie powiódł się"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "serwer heatsync niedostępny"
+  },
+  "mc_misc_twitch_error": {
+    "message": "błąd twitcha $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "brak sesji twitcha"
+  },
+  "mc_misc_unknown_error": {
+    "message": "nieznany błąd"
+  },
+  "mc_misc_sending": {
+    "message": "wysyłanie"
+  },
+  "mc_misc_click_retry": {
+    "message": "kliknij, żeby ponowić"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — kliknij, żeby nadać uprawnienie do szeptów twitcha w heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "włącz szepty twitcha — połącz ponownie"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — kliknij, żeby zaobserwować $USER$ i wysłać",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — kliknij, żeby zalogować się w heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "zaloguj się w heatsync, żeby wysłać"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — ponów",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "odpowiedź ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "wiadomość resub ($MONTHS$mies.) — enter, żeby udostępnić",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "seria oglądania ($COUNT$) — enter, żeby udostępnić",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "usuń tę wiadomość"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 minuta"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 minut"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 godzina"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 godziny"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 dni"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — wyczyść wiadomości tego użytkownika (timeout 1s)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "ban permanentny"
+  },
+  "mc_mtb_t_unban": {
+    "message": "unban użytkownika"
+  },
+  "mc_mtb_t_bt": {
+    "message": "zablokowane frazy"
+  },
+  "mc_mtb_t_mt": {
+    "message": "narzędzia moda"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "akcje moderacji wiadomości"
+  },
+  "mc_main_back_to_chat": {
+    "message": "wróć do czatu"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "wróć do czatu (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "edytuj platformy"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ jeszcze $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "otwórz $CH$ na $PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "otwórz czat $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "odpowiedz"
+  },
+  "mc_main_also_live_on": {
+    "message": "także na żywo na $PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "połącz kanały"
+  },
+  "mc_main_dismiss": {
+    "message": "zamknij"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "zamknij (działa też prawy klik)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "dodaj swoje streamy"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "połącz czat twitcha, kicka i youtube w jednym panelu"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ dodaj kanał"
+  },
+  "mc_main_idwarn": {
+    "message": "twoje emotki nie wyświetlą się tu innym — konto heatsync $ACCT$, czat jako $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "połącz konta"
+  },
+  "mc_main_status_no_yt": {
+    "message": "status obejmuje kanały twitcha i kicka"
+  },
+  "mc_main_status_fetching": {
+    "message": "pobieranie #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "nie udało się pobrać #$CH$ (offline albo nie ma go na $PLAT$?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "zaloguj się, żeby zobaczyć tu swoje logi — prawy klik na czatującym pokaże jego"
+  },
+  "mc_main_logs_rclick": {
+    "message": "prawy klik na czatującym pokaże jego logi z $PLAT$",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "karty czatu"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "ukryj czat (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "ukryj czat"
+  },
+  "mc_main_popout_title": {
+    "message": "wyodrębnij czat do osobnego okna"
+  },
+  "mc_main_subscribe_title": {
+    "message": "subskrybuj — wesprzyj ten kanał"
+  },
+  "mc_main_views_aria": {
+    "message": "widoki"
+  },
+  "mc_main_search_ph": {
+    "message": "szukaj wiadomości…"
+  },
+  "mc_main_messages_aria": {
+    "message": "wiadomości czatu"
+  },
+  "mc_main_search_none_for": {
+    "message": "brak wyników dla \"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "brak wyników"
+  },
+  "mc_main_moment": {
+    "message": "czat $CH$ wybucha — $RATE$ wiad./30s (zwykle ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "filtr — /regex/ lub @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ pkt",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "nagroda za punkty kanału"
+  },
+  "mc_main_highlighted": {
+    "message": "wyróżniona wiadomość"
+  },
+  "mc_main_first_msg": {
+    "message": "pierwsza wiadomość na tym kanale"
+  },
+  "mc_main_kill_active": {
+    "message": "wyłączone przez heatsync (kill-switch aktywny)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat wyłączony przez heatsync"
+  },
+  "mc_main_kill_update": {
+    "message": "wymagana aktualizacja rozszerzenia (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "odebrano \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "raid na $TARGET$ z $VIEWERS$ widzami",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ zrobił raid z $VIEWERS$ widzami",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "nowa ankieta"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "nowa ankieta — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "nowa predykcja"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "nowa predykcja — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train wystartował"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train zakończył się na poziomie $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ podarował $COUNT$ subów",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "przypięto $BY$: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "przypięto: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "wiadomość odpięta"
+  },
+  "mc_notif_dismiss": {
+    "message": "zamknij"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "wczytywanie emotek…"
+  },
+  "mc_notif_whispered": {
+    "message": "szept: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "świętuje"
+  },
+  "mc_notif_rt_mo": {
+    "message": "mies."
+  },
+  "mc_notif_rt_months": {
+    "message": "miesięcy"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "jako subskrybent"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "seria oglądania:"
+  },
+  "mc_notif_wt_stream": {
+    "message": "streamów"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "z rzędu"
+  },
+  "mc_notif_share": {
+    "message": "udostępnij"
+  },
+  "mc_notif_update_available": {
+    "message": "dostępna aktualizacja — działa $CUR$, najnowsza to $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "otwórz kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "otwórz youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "zaloguj się na twitch.tv, żeby czatować"
+  },
+  "mc_notif_open_twitch": {
+    "message": "otwórz twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- KARTY --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "autoryzacja twitcha nie powiodła się"
+  },
+  "mc_notif_r_no_user": {
+    "message": "brak nazwy użytkownika twitcha"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "połączenie nie powiodło się"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "wysyłanie nie powiodło się"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "niezalogowany na kicku"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "brak otwartej karty kicka"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "nie znaleziono kanału kicka"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick nie potwierdził — wiadomość mogła zostać wysłana"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick odrzucił wysyłkę"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "brak otwartej karty youtube"
+  },
+  "mc_notif_r_no_input": {
+    "message": "czat youtube jeszcze się wczytuje"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "najpierw zaloguj się na youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube zablokował wysyłkę"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube nie potwierdził wysyłki"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "most czatu youtube przekroczył limit czasu"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ nie potwierdził — wiadomość mogła nie dojść",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "platforma"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "czat ograniczony — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "czat ograniczony"
+  },
+  "mc_notif_r_unknown": {
+    "message": "wysyłka mogła się nie udać"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "ukryte"
+  },
+  "mc_tip_owner_sub": {
+    "message": "sub $OWNER$ ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · usunięte przez @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · usunięte z kanału",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "oni"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "sub u ciebie $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "sub kanału"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "obs. kanału"
+  },
+  "mc_tip_row_follower": {
+    "message": "obserwujący"
+  },
+  "mc_tip_row_you": {
+    "message": "ty"
+  },
+  "mc_tip_follow_ago": {
+    "message": "obserwuje od $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "obserwujących"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ wiad.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "od $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "od $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "logi"
+  },
+  "mc_set_system_backup": {
+    "message": "system · kopia / przywracanie"
+  },
+  "mc_set_recent_errors": {
+    "message": "ostatnie błędy"
+  },
+  "mc_set_copy": {
+    "message": "kopiuj"
+  },
+  "mc_set_clear": {
+    "message": "wyczyść"
+  },
+  "mc_set_crash_loading": {
+    "message": "(wczytywanie...)"
+  },
+  "mc_set_export_tip": {
+    "message": "zrzuca ui_settings + wszystkie klucze hs_* do pliku JSON. przenośny między urządzeniami i przeglądarkami."
+  },
+  "mc_set_export": {
+    "message": "eksportuj ustawienia"
+  },
+  "mc_set_export_btn": {
+    "message": "pobierz .json"
+  },
+  "mc_set_import_tip": {
+    "message": "przywróć z wcześniej wyeksportowanego pliku JSON. scala z istniejącymi ustawieniami."
+  },
+  "mc_set_import": {
+    "message": "importuj ustawienia"
+  },
+  "mc_set_import_btn": {
+    "message": "wczytaj .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "zresetuj wszystkie ustawienia na każdej stronie"
+  },
+  "mc_set_all_defaults": {
+    "message": "wszystko domyślnie"
+  },
+  "mc_set_backup_restore": {
+    "message": "kopia / przywracanie"
+  },
+  "mc_set_fr_sound": {
+    "message": "dźwięk: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "w górę (wyższy priorytet — wygrywa pierwsze dopasowanie)"
+  },
+  "mc_set_fr_down": {
+    "message": "w dół"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "wszystkie kanały"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "słowo kluczowe"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "użytkownik"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "odznaka"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "typ wiad."
+  },
+  "mc_set_fr_t_expr": {
+    "message": "wyrażenie"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "np. first && !badge:subscriber — łącz za pomocą && || ! ( ); pola user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "wartość..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "wyróżnij"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "ukryj"
+  },
+  "mc_set_fr_color": {
+    "message": "kolor wyróżnienia"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "dźwięk wyróżnienia (tylko dla akcji wyróżnij)"
+  },
+  "mc_set_fr_silent": {
+    "message": "cicho"
+  },
+  "mc_set_fr_case": {
+    "message": "uwzględnia wielkość liter"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ dodaj"
+  },
+  "mc_set_fr_none": {
+    "message": "brak reguł — dodaj poniżej"
+  },
+  "mc_set_page_reset_title": {
+    "message": "zresetuj tę stronę do domyślnych"
+  },
+  "mc_set_default": {
+    "message": "domyślne"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "jeszcze $N$ ustawienie tutaj — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "jeszcze $N$ ustawień tutaj — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "pokaż wszystkie"
+  },
+  "mc_set_crash_none": {
+    "message": "(brak zapisanych błędów)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(nie można odczytać logu)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "wył.: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "wszystko wł."
+  },
+  "mc_set_fmt_none": {
+    "message": "brak"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "usuń preset…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "usuń $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "usuń preset"
+  },
+  "mc_set_preset_save_as": {
+    "message": "zapisz bieżące jako…"
+  },
+  "mc_set_preset_undo": {
+    "message": "cofnij: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "presety"
+  },
+  "mc_set_preset_save_title": {
+    "message": "zapisz bieżące jako preset"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "nazwa presetu"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "zapisuje każde ustawienie różniące się od domyślnych — można udostępnić przez eksport ustawień"
+  },
+  "mc_set_preset_nochange": {
+    "message": "już pasuje — nic do zmiany"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "zastosuj preset: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "zastosuj"
+  },
+  "mc_set_h_search": {
+    "message": "szukaj"
+  },
+  "mc_set_h_category": {
+    "message": "kategoria"
+  },
+  "mc_set_h_move": {
+    "message": "przesuń"
+  },
+  "mc_set_h_adjust": {
+    "message": "dostosuj"
+  },
+  "mc_set_h_toggle": {
+    "message": "przełącz"
+  },
+  "mc_set_h_reset_row": {
+    "message": "resetuj wiersz"
+  },
+  "mc_set_h_close_clear": {
+    "message": "zamknij / wyczyść"
+  },
+  "mc_set_h_this_help": {
+    "message": "ta pomoc"
+  },
+  "mc_set_h_first_last": {
+    "message": "pierwszy / ostatni"
+  },
+  "mc_set_h_fold": {
+    "message": "zwiń sekcję"
+  },
+  "mc_set_h_prev_next": {
+    "message": "poprz. / nast. kategoria"
+  },
+  "mc_set_h_keys": {
+    "message": "klawisze"
+  },
+  "mc_set_h_commands": {
+    "message": "komendy"
+  },
+  "mc_set_h_full_list": {
+    "message": "pełna lista -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ szukaj ustawień..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "pokazano wszystkie ustawienia — kliknij, żeby zobaczyć tylko podstawowe"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "pokazano podstawowe — kliknij, żeby zobaczyć wszystkie ustawienia"
+  },
+  "mc_set_scope_all": {
+    "message": "wszystkie"
+  },
+  "mc_set_scope_basic": {
+    "message": "podstawowe"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emotki"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gify"
+  },
+  "mc_emo_chips_title": {
+    "message": "wybierz, których dostawców przeszukiwać"
+  },
+  "mc_emo_exact_title": {
+    "message": "tylko dokładna nazwa"
+  },
+  "mc_emo_stack_expand": {
+    "message": "rozwiń"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "zwiń"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "zablokuj wszystkie"
+  },
+  "mc_xg_close": {
+    "message": "zamknij"
+  },
+  "mc_tr_sub_chat": {
+    "message": "czat"
+  },
+  "mc_tr_sub_summary": {
+    "message": "podsumowanie"
+  },
+  "mc_tr_sub_logs": {
+    "message": "logi"
+  },
+  "mc_tr_sub_status": {
+    "message": "status"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "platformy"
+  },
+  "mc_tr_set_display": {
+    "message": "wyświetlanie"
+  },
+  "mc_tr_set_notifs": {
+    "message": "powiadomienia"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "filtry"
+  },
+  "mc_tr_set_system": {
+    "message": "system"
+  },
+  "mc_tr_set_help": {
+    "message": "pomoc"
+  },
+  "mc_pt_native_chat": {
+    "message": "czat natywny"
+  },
+  "mc_pt_popout_chat": {
+    "message": "czat w osobnym oknie"
+  },
+  "mc_pt_clips": {
+    "message": "klipy"
+  },
+  "mc_pt_videos": {
+    "message": "filmy"
+  },
+  "mc_pt_channel_page": {
+    "message": "strona kanału"
+  },
+  "mc_pt_no_channel": {
+    "message": "nie wykryto kanału"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "czat natywny (super chat, naklejki, ankiety, emoji)"
+  },
+  "mc_pt_join_channel": {
+    "message": "dołącz do kanału"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "wróć do czatu heatsync"
+  },
+  "mc_pa_show_chat": {
+    "message": "pokaż czat (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "czat youtube wymaga logowania do heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "zaloguj się do heatsync, żeby twoje emotki działały u wszystkich"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org niedostępny — łączę ponownie"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ niedostępny",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "stream $CHANNEL$ zakończony",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "podsumowanie streamu $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "statystyki streamu są wyłączone w ustawieniach"
+  },
+  "mc_ss_empty": {
+    "message": "czat jeszcze nie policzony — wypełni się wraz z wiadomościami"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ wiad. · $CHATTERS$ czatujących · $MENTIONS$ wzmianek · szczyt $PEAK$/s",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "od $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "top czatujący"
+  },
+  "mc_ss_top_emotes": {
+    "message": "top emotki"
+  },
+  "mc_cmg_checking": {
+    "message": "sprawdzam heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "brak profilu heatsync — uzupełnij ręcznie"
+  },
+  "mc_cmg_unreachable": {
+    "message": "nie udało się połączyć z heatsync"
+  },
+  "mc_cmg_live_on": {
+    "message": "na żywo na $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "dopasowano $NAME$ w heatsync — połączone: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "uzupełniono automatycznie: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "edytuj na żywo — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ wszedł na żywo",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ zmienił grę",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "wiadomość została usunięta"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ dostał unban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ dostał timeout na $SEC$s",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ dostał bana",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ podarował $AMOUNT$ KICKs!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ podarował $AMOUNT$ KICKs ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "anonim"
+  },
+  "mc_cp_vol": {
+    "message": "głośn. $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "nie udało się"
+  },
+  "hsbtn_imported": {
+    "message": "zaimportowano $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "twoje emotki, na każdym czacie"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "otwórz dowolny stream na twitchu, kicku lub youtube, potem zaimportuj jego emotki z karty kanału — jedno kliknięcie, działa na każdym czacie."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "dodaj do swojego zestawu wszystkie emotki 7tv, bttv i ffz z $CHANNEL$ — jedno kliknięcie, widoczne na każdym czacie.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "importuj wszystkie emotki z $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "importuj wszystkie emotki kanału"
+  },
+  "hsbtn_no_sets": {
+    "message": "brak zapisanych zestawów — utwórz na heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "zastosuj"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "zastąpić $COUNT$ emotek?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "stosowanie…"
+  },
+  "hsbtn_applied": {
+    "message": "zastosowano"
+  },
+  "hsbtn_login_removed": {
+    "message": "zaloguj się, żeby zobaczyć usunięte emotki"
+  },
+  "hsbtn_no_removed": {
+    "message": "brak usuniętych emotek"
+  },
+  "hsbtn_restore": {
+    "message": "przywróć"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "przywrócić?"
+  },
+  "hsbtn_restoring": {
+    "message": "przywracanie…"
+  },
+  "hsbtn_restored": {
+    "message": "przywrócono"
+  },
+  "hsbtn_removed_on": {
+    "message": "usunięto $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "nie udało się wczytać zestawów"
+  },
+  "hsbtn_err_history": {
+    "message": "nie udało się wczytać historii"
+  },
+  "hsbtn_err_mine": {
+    "message": "nie udało się wczytać twoich emotek"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "emotki kanału niedostępne"
+  },
+  "hsbtn_err_channel": {
+    "message": "nie udało się wczytać emotek kanału"
+  },
+  "hsbtn_err_global": {
+    "message": "nie udało się wczytać emotek globalnych"
+  },
+  "hsbtn_unnamed": {
+    "message": "(bez nazwy)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emotka",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emotek",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "od $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "posiadane: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "błąd"
+  },
+  "hsbtn_search_status": {
+    "message": "„$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "„$QUERY$” — szukam…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "brak emotek pasujących do „$QUERY$”",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "zaloguj się, żeby dodawać emotki"
+  },
+  "hsbtn_add_failed": {
+    "message": "nie udało się dodać"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "odblokowanie nie powiodło się"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ użyć w heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "w inwentarzu"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "nie ma w inwentarzu"
+  },
+  "hsbtn_open_on": {
+    "message": "otwórz na $PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "zmień nazwę"
+  },
+  "hsbtn_move": {
+    "message": "przenieś"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "przenieś do slotu…"
+  },
+  "hsbtn_slot_number": {
+    "message": "numer slotu"
+  },
+  "hsbtn_renamed_to": {
+    "message": "zmieniono nazwę na $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "zmiana nazwy nie powiodła się"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "przeniesiono do slotu $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "przenoszenie nie powiodło się"
+  },
+  "hsbtn_unshare_set": {
+    "message": "przestań udostępniać zestaw"
+  },
+  "hsbtn_share_set": {
+    "message": "udostępnij zestaw"
+  },
+  "hsbtn_set_unshared": {
+    "message": "zestaw nie jest już udostępniany"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "nie udało się przestać udostępniać"
+  },
+  "hsbtn_share_copied": {
+    "message": "skopiowano link do udostępnienia: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "udostępnianie nie powiodło się"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "kopiuj markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "wróć do czatu heatsync"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← czat heatsync"
+  },
+  "hsbtn_rcb_label": {
+    "message": "blokada prawym klikiem"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "natychmiast blokuje od razu · menu pokazuje zablokuj/anuluj · wył. wyłącza"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "natychmiast"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "wył"
+  },
+  "hsbtn_search_ph": {
+    "message": "szukaj emotek…"
+  },
+  "hsbtn_chips_title": {
+    "message": "wybierz, których dostawców przeszukiwać"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "uwzględnij wyniki z 7tv"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "uwzględnij wyniki z frankerfacez"
+  },
+  "hsbtn_undo": {
+    "message": "cofnij"
+  },
+  "hsbtn_redo": {
+    "message": "ponów"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "obróć panel czatu (C)"
+  },
+  "cs_color_for": {
+    "message": "kolor dla $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "ustaw"
+  },
+  "cs_clear": {
+    "message": "wyczyść"
+  },
+  "cs_poll": {
+    "message": "📊 ankieta · "
+  },
+  "cs_prediction": {
+    "message": "🎯 predykcja · "
+  },
+  "cs_active": {
+    "message": "(aktywna)"
+  },
+  "cs_badge_alt": {
+    "message": "odznaka $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "kopiuj nazwę użytkownika"
+  },
+  "cs_copy_message": {
+    "message": "kopiuj wiadomość"
+  },
+  "cs_mute_24h": {
+    "message": "wycisz (24h)"
+  },
+  "cs_profile": {
+    "message": "profil"
+  },
+  "cs_removed": {
+    "message": "usunięto $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "usunięto $NAME$ · teraz $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "zaloguj się na heatsync.org, żeby zarządzać emotkami"
+  },
+  "cs_remove_failed": {
+    "message": "nie udało się usunąć $NAME$: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "nieznany błąd"
+  },
+  "popup_site_label": {
+    "message": "czat heatsync na"
+  },
+  "popup_site_note_default": {
+    "message": "wył. pokazuje własny czat strony"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: własny czat strony wrócił",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: czat heatsync wrócił",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "opinia"
+  },
+  "popup_fb_bug": {
+    "message": "błąd"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "co heatsync powinien robić lepiej?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "co się zepsuło? czego oczekiwałeś?"
+  },
+  "popup_fb_send": {
+    "message": "wyślij"
+  },
+  "popup_fb_sending": {
+    "message": "wysyłanie..."
+  },
+  "popup_fb_short": {
+    "message": "napisz trochę więcej"
+  },
+  "popup_fb_sent": {
+    "message": "wysłano — dzięki"
+  },
+  "popup_fb_failed": {
+    "message": "nie udało się wysłać. spróbuj ponownie"
+  },
+  "popup_feedback_link": {
+    "message": "opinia"
+  },
+  "popup_feedback_title": {
+    "message": "opinia / zgłoszenie błędu"
+  },
+  "popup_inv_slots": {
+    "message": "5 000 slotów na emotki"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "zalogowano jako $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5 000 slotów"
+  },
+  "popup_inv_import_hint": {
+    "message": " · zaimportuj kanał, żeby go wypełnić"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ na żywo: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ więcej",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ jest na żywo",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ widzów",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ obserwowanych jest na żywo",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — zmiana konta"
+  },
+  "bg_acct_msg": {
+    "message": "przełączanie z $FROM$ na $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "wczytywanie emotek kanału..."
+  },
+  "bg_loading_third": {
+    "message": "pobieranie emotek zewnętrznych..."
+  },
+  "bg_loading_emotes": {
+    "message": "wczytywanie emotek..."
+  },
+  "cs_uploading": {
+    "message": "wysyłanie..."
+  },
+  "cs_file_too_large": {
+    "message": "plik za duży (maks $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "wysyłanie nie powiodło się"
+  },
+  "cs_yt_top_chat": {
+    "message": "tryb top chat — przełącz youtube na czat na żywo"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync nie mógł się podłączyć do tego czatu"
+  },
+  "cs_badge_owner": {
+    "message": "właściciel"
+  },
+  "cs_badge_member": {
+    "message": "członek"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl ruch  kj historia  wb/WBE słowo  0$$^ linia  gg/G końce\nfFtT+znak szukaj  ;, powtórz szukanie  [liczba]cmd powtórz\nx/X usuń znak  dw/db/de/dd usuń  D usuń→koniec\ncw/cb/ce/cc zmień  C zmień→koniec  s/S zastąp\nyw/yb/ye/yy kopiuj  p/P wklej  r zamień  ~ wielkość liter\ni/a/I/A wstaw  u cofnij  Ctrl+R ponów  . powtórz  ? pomoc\n\nSPC = leader — komendy czatu bez opuszczania pola\nSPC /    szukaj       SPC n/N  nast./poprz. wynik\nSPC 1-9  n-ta karta   SPC ]/[  nast./poprz. karta\nSPC t    wybór karty  SPC \\    ukryj/pokaż czat"
+  },
+  "lib_sec_font": {
+    "message": "czcionka"
+  },
+  "lib_sec_chat_messages": {
+    "message": "wiadomości czatu"
+  },
+  "lib_sec_layout": {
+    "message": "układ"
+  },
+  "lib_sec_density": {
+    "message": "gęstość"
+  },
+  "lib_sec_messages": {
+    "message": "wiadomości"
+  },
+  "lib_sec_mentioned": {
+    "message": "gdy ktoś cię @wspomni"
+  },
+  "lib_sec_cross_follow": {
+    "message": "obserwowanie między platformami"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "pasek moderatora"
+  },
+  "lib_sec_content": {
+    "message": "treść"
+  },
+  "lib_sec_rules": {
+    "message": "reguły"
+  },
+  "lib_sec_player": {
+    "message": "odtwarzacz"
+  },
+  "lib_sec_tabs": {
+    "message": "karty"
+  },
+  "lib_sec_language": {
+    "message": "język"
+  },
+  "lib_opt_system_monospace": {
+    "message": "systemowa monospace"
+  },
+  "lib_opt_platform_default": {
+    "message": "domyślna platformy (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "własna..."
+  },
+  "lib_opt_unread": {
+    "message": "nieprzeczytane"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "góra"
+  },
+  "lib_opt_right": {
+    "message": "prawo"
+  },
+  "lib_opt_bottom": {
+    "message": "dół"
+  },
+  "lib_opt_left": {
+    "message": "lewo"
+  },
+  "lib_opt_hidden": {
+    "message": "ukryte"
+  },
+  "lib_opt_compact": {
+    "message": "zwarty"
+  },
+  "lib_opt_cozy": {
+    "message": "luźny"
+  },
+  "lib_opt_always": {
+    "message": "zawsze"
+  },
+  "lib_opt_hover": {
+    "message": "po najechaniu"
+  },
+  "lib_opt_never": {
+    "message": "nigdy"
+  },
+  "slash_desc_op": {
+    "message": "opublikuj wątek na swoim feedzie heatsync"
+  },
+  "slash_desc_re": {
+    "message": "odpowiedz na ostatni [OP] widoczny na czacie"
+  },
+  "slash_desc_dm": {
+    "message": "wyślij dm w heatsync; bez wiadomości otwiera rozmowę"
+  },
+  "slash_desc_w": {
+    "message": "wyślij szept na twitchu"
+  },
+  "slash_desc_color": {
+    "message": "ustaw kolor czatu na twitchu (nazwa jak orangered albo #hex z turbo)"
+  },
+  "slash_desc_r": {
+    "message": "odpowiedz na ostatni otrzymany szept"
+  },
+  "slash_desc_user": {
+    "message": "otwórz kartę profilu z ostatnimi logami"
+  },
+  "slash_desc_follow": {
+    "message": "obserwuj w heatsync, odbite na twitch i kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "przestań obserwować w heatsync, odbite na twitch i kick"
+  },
+  "slash_desc_me": {
+    "message": "wyślij wiadomość akcji"
+  },
+  "slash_desc_shrug": {
+    "message": "dopisz ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "dopisz (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "dopisz ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "pokaż komendy"
+  },
+  "slash_desc_lclear": {
+    "message": "wyczyść bieżącą kartę tylko u siebie"
+  },
+  "slash_desc_mute": {
+    "message": "wycisz kogoś na 24h na wszystkich połączonych kontach"
+  },
+  "slash_desc_unmute": {
+    "message": "zdejmij wyciszenie"
+  },
+  "slash_desc_block": {
+    "message": "przełącz blokadę"
+  },
+  "slash_desc_hide": {
+    "message": "ukryj kogoś tylko w tej karcie, do przeładowania"
+  },
+  "slash_desc_unhide": {
+    "message": "cofnij ukrycie"
+  },
+  "slash_desc_note": {
+    "message": "zapisz prywatną notatkę o kimś"
+  },
+  "slash_desc_delnote": {
+    "message": "usuń swoją notatkę"
+  },
+  "slash_desc_set": {
+    "message": "zmień ustawienie, np. /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "przełącz kartę: kanał lub nazwana karta jak live czy mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "kopiuj link heatsync.org/m do układu twoich kart"
+  },
+  "slash_desc_layout": {
+    "message": "dodaj karty z linku heatsync.org/m"
+  },
+  "slash_desc_status": {
+    "message": "pokaż tryby czatu i info o streamie"
+  },
+  "slash_desc_ban": {
+    "message": "zbanuj kogoś na kanale na stałe"
+  },
+  "slash_desc_timeout": {
+    "message": "daj komuś timeout, domyślnie 10 minut"
+  },
+  "slash_desc_unban": {
+    "message": "zdejmij bana lub zakończ timeout"
+  },
+  "slash_desc_delete": {
+    "message": "usuń pojedynczą wiadomość"
+  },
+  "slash_desc_nuke": {
+    "message": "usuń hurtowo ostatnie wiadomości zawierające frazę"
+  },
+  "slash_desc_announce": {
+    "message": "opublikuj ogłoszenie, opcjonalnie kolorowe"
+  },
+  "slash_desc_vip": {
+    "message": "nadaj VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "odbierz VIP"
+  },
+  "slash_desc_mod": {
+    "message": "nadaj moderatora"
+  },
+  "slash_desc_unmod": {
+    "message": "odbierz moderatora"
+  },
+  "slash_desc_blocked": {
+    "message": "otwórz listę zablokowanych fraz dla tego kanału"
+  },
+  "slash_desc_modtools": {
+    "message": "otwórz panel narzędzi moda"
+  },
+  "slash_desc_shield": {
+    "message": "włącz lub wyłącz shield mode"
+  },
+  "slash_desc_warn": {
+    "message": "ostrzeż czatującego"
+  },
+  "slash_desc_shoutout": {
+    "message": "zrób kanałowi shoutout"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "otwórz prośby o unban"
+  },
+  "slash_desc_slow": {
+    "message": "tryb powolny, domyślnie 30s"
+  },
+  "slash_desc_followers": {
+    "message": "tryb tylko dla obserwujących"
+  },
+  "slash_desc_emoteonly": {
+    "message": "tryb tylko emotki"
+  },
+  "slash_desc_subscribers": {
+    "message": "tryb tylko dla subskrybentów"
+  },
+  "slash_desc_unique": {
+    "message": "tryb unikalnego czatu; tylko twitch, kick nie ma odpowiednika"
+  },
+  "slash_desc_poll": {
+    "message": "utwórz ankietę, 2-5 opcji"
+  },
+  "slash_desc_endpoll": {
+    "message": "zakończ aktywną ankietę"
+  },
+  "slash_desc_vote": {
+    "message": "zagłosuj na opcję n w aktywnej ankiecie"
+  },
+  "slash_desc_prediction": {
+    "message": "rozpocznij predykcję, 2-10 wyników"
+  },
+  "slash_desc_bet": {
+    "message": "obstaw punkty kanału na wynik n"
+  },
+  "slash_desc_lockpred": {
+    "message": "zablokuj aktywną predykcję"
+  },
+  "slash_desc_resolvepred": {
+    "message": "rozstrzygnij predykcję na wynik n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "anuluj aktywną predykcję"
+  },
+  "slash_desc_highlight": {
+    "message": "wyróżnij swoją wiadomość na czacie twitcha"
+  },
+  "slash_sec_everyday": {
+    "message": "na co dzień"
+  },
+  "slash_sec_local": {
+    "message": "tylko to okno"
+  },
+  "slash_sec_mod": {
+    "message": "moderacja"
+  },
+  "slash_sec_modes": {
+    "message": "tryby czatu"
+  },
+  "slash_sec_events": {
+    "message": "ankiety, predykcje, bity"
+  },
+  "slash_help_full_list": {
+    "message": "pełna lista -> /commands"
+  },
+  "slash_help_label": {
+    "message": "komendy slash"
   }
 }

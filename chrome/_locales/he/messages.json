@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "הרשמה"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "תצוגת mod (צ'אט, automod, מונחים חסומים)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "משדר"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "לוח יוצרים"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "stream manager"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "הגדרות פיקוח (automod, מונחים חסומים)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "הגדרות ערוץ"
+  },
+  "mc_twapi_ql_community": {
+    "message": "קהילה (mods, vips, עוקבים)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "מונטיזציה"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "עמודי ערוץ"
+  },
+  "mc_twapi_ql_about": {
+    "message": "עמוד אודות"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "סרטונים"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "קליפים"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "לוח שידורים"
+  },
+  "mc_twapi_ql_account": {
+    "message": "החשבון שלך"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "drops / מלאי"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "המנויים שלי"
+  },
+  "mc_twapi_ql_following": {
+    "message": "ערוצים במעקב"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "הגדרות twitch"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "פרטיות + אבטחה"
+  },
+  "mc_twapi_won": {
+    "message": "זכה"
+  },
+  "mc_twapi_lost": {
+    "message": "הפסיד"
+  },
+  "mc_twapi_max": {
+    "message": "מקס׳"
+  },
+  "mc_twapi_amt": {
+    "message": "סכום"
+  },
+  "mc_twapi_bet": {
+    "message": "הימור"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ נק׳ · מהמר $COUNT$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ נק׳ · $COUNT$ מהמרים",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "ההימור שלך: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "הימרת $POINTS$ על $OUTCOME$ — בחר את המנצח בפועל",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "המתנה $N$ דק׳",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "המתנה $N$ שנ׳",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "נכשל"
+  },
+  "mc_twapi_err_own": {
+    "message": "אי אפשר להמר על עצמך"
+  },
+  "mc_twapi_err_retry": {
+    "message": "נסה שוב"
+  },
+  "mc_twapi_err_locked": {
+    "message": "ההימורים נעולים"
+  },
+  "mc_twapi_err_points": {
+    "message": "אין מספיק נקודות"
+  },
+  "mc_twapi_err_already": {
+    "message": "כבר הימרת"
+  },
+  "mc_twapi_no_event": {
+    "message": "אין אירוע"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "אין תוצאה"
+  },
+  "mc_twapi_no_channel": {
+    "message": "אין ערוץ"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "סוגר..."
+  },
+  "mc_twapi_closing": {
+    "message": "סוגר"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "לא זוהה ערוץ"
+  },
+  "mc_twapi_tab_events": {
+    "message": "אירועים"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "קישורים מהירים"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "שלח bits אל $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "יתרה: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "פתח חלון cheer"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ צופים",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ צופים",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "הימור: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "הצבעה $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ הצבעות",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "הצבע"
+  },
+  "mc_input_unblock": {
+    "message": "בטל חסימה"
+  },
+  "mc_input_remove_from_set": {
+    "message": "הסר מהסט"
+  },
+  "mc_input_open_on": {
+    "message": "פתח ב-$SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "הצג תמונה"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "העתק :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "העתק url של תמונה"
+  },
+  "mc_input_copy_emoji": {
+    "message": "העתק אימוג'י"
+  },
+  "mc_input_expand": {
+    "message": "הרחב"
+  },
+  "mc_input_mute_24h": {
+    "message": "השתק (24 שע׳)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "הצג בלשונית"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "הסתר בלשונית"
+  },
+  "mc_input_copy_message": {
+    "message": "העתק הודעה"
+  },
+  "mc_input_copy_to_input": {
+    "message": "העתק → שדה הקלט"
+  },
+  "mc_input_copy_thread": {
+    "message": "העתק שרשור"
+  },
+  "mc_input_delete_msg": {
+    "message": "מחק הודעה"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10 דק׳"
+  },
+  "mc_input_timed_out": {
+    "message": "ב-timeout"
+  },
+  "mc_input_warn": {
+    "message": "אזהרה"
+  },
+  "mc_input_reply": {
+    "message": "השב"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op לפיד"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "ערוך הערה"
+  },
+  "mc_input_add_note": {
+    "message": "הוסף הערה"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "דווח / sub במתנה"
+  },
+  "mc_input_filter_to": {
+    "message": "סנן ל-$USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "לוגי צ'אט"
+  },
+  "mc_input_edit_timer": {
+    "message": "ערוך ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "ערוך (פג תוקף)"
+  },
+  "mc_input_delete": {
+    "message": "מחק"
+  },
+  "mc_input_chatter": {
+    "message": "צ'אטר"
+  },
+  "mc_input_everyone": {
+    "message": "כולם"
+  },
+  "mc_input_heatsync_only": {
+    "message": "heatsync בלבד"
+  },
+  "mc_input_your_inventory": {
+    "message": "המלאי שלך"
+  },
+  "mc_input_all_twitch": {
+    "message": "כל twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "כל kick"
+  },
+  "mc_input_ext_users": {
+    "message": "משתמשי $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "מחפש ב-7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "מנויים בלבד"
+  },
+  "mc_input_usage_color": {
+    "message": "שימוש: /color <שם|#hex> — למשל /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "צבע הצ'אט הוגדר ל-$HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "שימוש: /re <טקסט>"
+  },
+  "mc_input_re_no_post": {
+    "message": "אין עדיין פוסט בצ'אט להשיב עליו"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "הסקר נכשל: $ERROR$ (למשדר בלבד)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "הסקר נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "הניבוי נכשל: $ERROR$ (למשדר בלבד)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "הניבוי נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "סיום הסקר נכשל: $ERROR$ (למשדר בלבד)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "ההצבעה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "ההימור נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "נכשל: $ERROR$ (למשדר בלבד)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ נכשל: $ERROR$ (למשדר בלבד)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "ההכרזה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <שם> — פותח את כרטיס הפרופיל שלו"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <משתמש> — מסתיר בלשונית הזו"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <משתמש> — מציג בלשונית הזו"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r כדי להשיב ל-$USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "העלאה מתבצעת..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "מותרות רק תמונות/סרטונים"
+  },
+  "mc_input_upload_too_large": {
+    "message": "הקובץ גדול מדי (מקס׳ $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "מעלה..."
+  },
+  "mc_input_upload_done": {
+    "message": "ההעלאה הושלמה"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "ההעלאה נכשלה: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "ההעלאה נכשלה"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "לא הצלחנו להגיע למקור — פורסם פריים סטטי"
+  },
+  "mc_input_drop_zone": {
+    "message": "גרור לכאן תמונה/סרטון/קישור להעלאה"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <הודעה>"
+  },
+  "mc_social_edit_empty": {
+    "message": "התוכן לא יכול להיות ריק"
+  },
+  "mc_social_saving": {
+    "message": "שומר..."
+  },
+  "mc_social_edit_failed": {
+    "message": "העריכה נכשלה"
+  },
+  "mc_social_confirm_delete": {
+    "message": "למחוק את הפוסט?"
+  },
+  "mc_social_home_title": {
+    "message": "התחבר כדי לראות את הבית שלך"
+  },
+  "mc_social_home_sub": {
+    "message": "עקוב אחרי אנשים, פרסם, שתף — לצד multichat"
+  },
+  "mc_social_home_login": {
+    "message": "התחבר ב-heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "אין צורך בחשבון ל-multichat — בחר לשונית ערוץ למעלה"
+  },
+  "mc_social_no_posts": {
+    "message": "אין פוסטים"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "עקוב אחרי אנשים או פרסם משהו כדי למלא את הלשונית"
+  },
+  "mc_social_import_follows": {
+    "message": "ייבא עוקבים מ-twitch"
+  },
+  "mc_social_syncing": {
+    "message": "מסנכרן…"
+  },
+  "mc_social_synced": {
+    "message": "סונכרנו $COUNT$ ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "נסה שוב"
+  },
+  "mc_social_failed": {
+    "message": "נכשל"
+  },
+  "mc_social_discover_people": {
+    "message": "גלה אנשים →"
+  },
+  "mc_social_post_something": {
+    "message": "פרסם משהו"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "פוסטים חמים · התחבר ב-heatsync.org כדי לעקוב אחרי אנשים"
+  },
+  "mc_social_banner_newest": {
+    "message": "הפוסטים החדשים · עקוב אחרי אנשים כדי למלא את הפיד"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "חם החודש · עקוב אחרי אנשים כדי למלא את הפיד"
+  },
+  "mc_social_edited": {
+    "message": "(נערך)"
+  },
+  "mc_social_replying_to": {
+    "message": "משיב ל->>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "עזוב שרשור"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · צופה $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ צופים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ צופים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "תגובה $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ תגובות",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(אין טקסט)"
+  },
+  "mc_social_live_now": {
+    "message": "live עכשיו"
+  },
+  "mc_social_no_streams": {
+    "message": "אין סטרימים ב-live כרגע"
+  },
+  "mc_social_hot_posts": {
+    "message": "פוסטים חמים"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "אין פוסטים שמתאימים לסינון"
+  },
+  "mc_social_tags": {
+    "message": "תגיות"
+  },
+  "mc_social_none_now": {
+    "message": "אין כרגע"
+  },
+  "mc_social_leaderboard": {
+    "message": "טבלת מובילים"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "אין פרופילים שמתאימים לסינון"
+  },
+  "mc_social_no_pinned": {
+    "message": "אין הודעות מוצמדות"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "אין עדיין פעולות mod"
+  },
+  "mc_social_platform": {
+    "message": "פלטפורמה"
+  },
+  "mc_social_all": {
+    "message": "הכל"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "אבן דרך בחברות"
+  },
+  "mc_social_yt_member": {
+    "message": "הפך לחבר"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "העניק חברות $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "העניק $COUNT$ חברויות",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "שגיאת חיבור"
+  },
+  "mc_social_replies_title": {
+    "message": "תגובות"
+  },
+  "mc_pcard_del_msg": {
+    "message": "מחק הודעה"
+  },
+  "mc_pcard_del_title": {
+    "message": "מחק את ההודעה האחרונה של המשתמש"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "הענק הרשאת mod (למשדר בלבד)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "הסר הרשאת mod (למשדר בלבד)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "הענק VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "הסר VIP"
+  },
+  "mc_pcard_error": {
+    "message": "שגיאה"
+  },
+  "mc_pcard_no_channel": {
+    "message": "לא ניתן לאתר את הערוץ"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ נכשל: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "סשן"
+  },
+  "mc_pcard_first": {
+    "message": "ראשון"
+  },
+  "mc_pcard_channels": {
+    "message": "ערוצים"
+  },
+  "mc_pcard_close_profile": {
+    "message": "סגור פרופיל"
+  },
+  "mc_pcard_close_esc": {
+    "message": "סגור (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "הטעינה נכשלה — נסה שוב"
+  },
+  "mc_pcard_url_copied": {
+    "message": "ה-url הועתק"
+  },
+  "mc_pcard_clip_created": {
+    "message": "הקליפ נוצר"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "הקליפ נכשל: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "הועתק"
+  },
+  "mc_logs_failed": {
+    "message": "נכשל"
+  },
+  "mc_logs_all_channels": {
+    "message": "כל הערוצים"
+  },
+  "mc_logs_all": {
+    "message": "הכל"
+  },
+  "mc_logs_scope_channel": {
+    "message": "מוגבל כרגע ל-#$CHANNEL$ — לחץ כדי לראות את כל הערוצים",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "מוצגים כרגע כל הערוצים — לחץ כדי להגביל ל-#$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "חיפוש…"
+  },
+  "mc_logs_search_title": {
+    "message": "חפש בהודעות של $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "רענן"
+  },
+  "mc_logs_export_txt": {
+    "message": "ייצא כ-.txt"
+  },
+  "mc_logs_export_json": {
+    "message": "ייצא כ-.json"
+  },
+  "mc_logs_public": {
+    "message": "ארכיון ציבורי ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "פתח את לוג הצ'אט הציבורי של #$CHANNEL$ ב-heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "טעינת הארכיון נכשלה — חפש או גלול שוב כדי לנסות שוב"
+  },
+  "mc_logs_backfill": {
+    "message": "מביא לוגים היסטוריים מ-$SOURCE$… נסה לרענן בעוד ~30 שנ׳",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "אין תוצאות ל-\"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "אין עדיין הודעות בארכיון מ-$USER$ ב-#$CHANNEL$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "אין עדיין הודעות בארכיון מ-$USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "גלול להודעות ישנות"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "העתק permalink"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "הערה · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "הערה פרטית — רק אתה רואה אותה. עוקבת אחריהם בין פלטפורמות."
+  },
+  "mc_notes_esc": {
+    "message": "esc לסגירה"
+  },
+  "mc_notes_delete": {
+    "message": "מחק"
+  },
+  "mc_notes_saved": {
+    "message": "נשמר · esc לסגירה"
+  },
+  "mc_notes_saving": {
+    "message": "שומר…"
+  },
+  "mc_notes_section": {
+    "message": "הערות"
+  },
+  "mc_notes_empty": {
+    "message": "אין עדיין הערה"
+  },
+  "mc_notes_edit": {
+    "message": "ערוך"
+  },
+  "mc_notes_add": {
+    "message": "הוסף הערה"
+  },
+  "mc_feed_loading_name": {
+    "message": "טוען את $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "טוען שורת צ'אט…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "טוען תצוגה מקדימה…"
+  },
+  "mc_feed_adult_login": {
+    "message": "התחבר כבגיר כדי לצפות"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "התמונה לא זמינה"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "פתח בלשונית חדשה"
+  },
+  "mc_feed_reload_player": {
+    "message": "טען מחדש את הנגן (אחרי התחברות)"
+  },
+  "mc_feed_pause": {
+    "message": "השהה"
+  },
+  "mc_feed_volume": {
+    "message": "עוצמה"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "חזרה לצ'אט (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "מלא את הצ'אט"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "פתח בלשונית חדשה"
+  },
+  "mc_feed_close_player": {
+    "message": "סגור נגן"
+  },
+  "mc_feed_back": {
+    "message": "← חזרה"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "ה-whisper נכשל"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "שרת heatsync לא זמין"
+  },
+  "mc_misc_twitch_error": {
+    "message": "שגיאת twitch $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "אין סשן twitch"
+  },
+  "mc_misc_unknown_error": {
+    "message": "שגיאה לא ידועה"
+  },
+  "mc_misc_sending": {
+    "message": "שולח"
+  },
+  "mc_misc_click_retry": {
+    "message": "לחץ לניסיון חוזר"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — לחץ כדי לתת הרשאת whisper של twitch ב-heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "הפעל whispers של twitch — קשר מחדש"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — לחץ כדי לעקוב אחרי $USER$ ולשלוח",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — לחץ כדי להתחבר ל-heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "התחבר ל-heatsync כדי לשלוח"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — נסה שוב",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "השב ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "הודעת resub ($MONTHS$ חו׳) — enter לשיתוף",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "watch streak ($COUNT$) — enter לשיתוף",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "מחק הודעה זו"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout דקה"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 דקות"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout שעה"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 שעות"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 ימים"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — נקה את הודעות המשתמש (timeout של שנייה)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "ban לצמיתות"
+  },
+  "mc_mtb_t_unban": {
+    "message": "unban"
+  },
+  "mc_mtb_t_bt": {
+    "message": "מונחים חסומים"
+  },
+  "mc_mtb_t_mt": {
+    "message": "כלי mod"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "פעולות פיקוח על הודעות"
+  },
+  "mc_main_back_to_chat": {
+    "message": "חזרה לצ'אט"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "חזרה לצ'אט (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "ערוך פלטפורמות"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ עוד $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "פתח את $CH$ ב-$PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "פתח צ'אט של $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "השב"
+  },
+  "mc_main_also_live_on": {
+    "message": "גם ב-live ב-$PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "קשר ערוצים"
+  },
+  "mc_main_dismiss": {
+    "message": "סגור"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "סגור (גם קליק ימני עובד)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "הוסף את הסטרימים שלך"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "צ'אט של twitch, kick ו-youtube בפאנל אחד"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ הוסף ערוץ"
+  },
+  "mc_main_idwarn": {
+    "message": "האימוטים שלך לא יוצגו לאחרים כאן — חשבון heatsync $ACCT$, מצ'אט בשם $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "קשר חשבונות"
+  },
+  "mc_main_status_no_yt": {
+    "message": "הסטטוס מכסה ערוצי twitch ו-kick"
+  },
+  "mc_main_status_fetching": {
+    "message": "מביא את #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "לא ניתן להביא את #$CH$ (offline או לא ב-$PLAT$?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "התחבר כדי לראות כאן את הלוגים שלך — קליק ימני על צ'אטר להצגת הלוגים שלו"
+  },
+  "mc_main_logs_rclick": {
+    "message": "קליק ימני על צ'אטר להצגת לוגי $PLAT$ שלו",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "לשוניות צ'אט"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "הסתר צ'אט (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "הסתר צ'אט"
+  },
+  "mc_main_popout_title": {
+    "message": "הוצא את הצ'אט לחלון נפרד"
+  },
+  "mc_main_subscribe_title": {
+    "message": "הרשמה — תמוך בערוץ"
+  },
+  "mc_main_views_aria": {
+    "message": "תצוגות"
+  },
+  "mc_main_search_ph": {
+    "message": "חיפוש הודעות…"
+  },
+  "mc_main_messages_aria": {
+    "message": "הודעות צ'אט"
+  },
+  "mc_main_search_none_for": {
+    "message": "אין תוצאות ל-\"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "אין תוצאות"
+  },
+  "mc_main_moment": {
+    "message": "הצ'אט של $CH$ מתפוצץ — $RATE$ הודעות/30 שנ׳ (בדרך כלל ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "סינון — /regex/ או @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ נק׳",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "מימוש נקודות ערוץ"
+  },
+  "mc_main_highlighted": {
+    "message": "הודעה מודגשת"
+  },
+  "mc_main_first_msg": {
+    "message": "ההודעה הראשונה בערוץ הזה"
+  },
+  "mc_main_kill_active": {
+    "message": "הושבת על ידי heatsync (kill-switch פעיל)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat הושבת על ידי heatsync"
+  },
+  "mc_main_kill_update": {
+    "message": "נדרש עדכון לתוסף (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "מימש \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "עשה raid ל-$TARGET$ עם $VIEWERS$ צופים",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ הגיע ב-raid עם $VIEWERS$ צופים",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "סקר חדש נפתח"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "סקר חדש נפתח — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "ניבוי חדש נפתח"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "ניבוי חדש נפתח — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train התחיל"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train הסתיים ברמה $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ העניק $COUNT$ subs",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "$BY$ הצמיד: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "הוצמד: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "ההודעה בוטלה מהצמדה"
+  },
+  "mc_notif_dismiss": {
+    "message": "סגור"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "טוען אימוטים…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "חוגג"
+  },
+  "mc_notif_rt_mo": {
+    "message": "חו׳"
+  },
+  "mc_notif_rt_months": {
+    "message": "חודשים"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "כמנוי"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "ברצף של"
+  },
+  "mc_notif_wt_stream": {
+    "message": "סטרימים"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "watch streak"
+  },
+  "mc_notif_share": {
+    "message": "שתף"
+  },
+  "mc_notif_update_available": {
+    "message": "יש עדכון — פועל $CUR$, האחרון הוא $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "פתח kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "פתח youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "התחבר ל-twitch.tv כדי לצ'וטט"
+  },
+  "mc_notif_open_twitch": {
+    "message": "פתח twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- לשוניות --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "האימות ב-twitch נכשל"
+  },
+  "mc_notif_r_no_user": {
+    "message": "אין שם משתמש ב-twitch"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "החיבור נכשל"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "השליחה נכשלה"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "לא מחובר ל-kick"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "אין לשונית kick פתוחה"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "ערוץ kick לא נמצא"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick לא אישר — ייתכן שההודעה נשלחה"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick דחה את השליחה"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "אין לשונית youtube פתוחה"
+  },
+  "mc_notif_r_no_input": {
+    "message": "הצ'אט של youtube עדיין נטען"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "התחבר קודם ל-youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube חסם את השליחה"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube לא אישר את השליחה"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "הגשר לצ'אט של youtube חרג מהזמן"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ לא אישר — ייתכן שההודעה לא נשלחה",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "פלטפורמה"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "הצ'אט מוגבל — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "הצ'אט מוגבל"
+  },
+  "mc_notif_r_unknown": {
+    "message": "ייתכן שהשליחה נכשלה"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "מוסתר"
+  },
+  "mc_tip_owner_sub": {
+    "message": "sub של $OWNER$ ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · הוסר על ידי @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · הוסר מהערוץ",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "הם"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "sub אליך $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "sub בערוץ"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "מעקב אחרי הערוץ"
+  },
+  "mc_tip_row_follower": {
+    "message": "עוקב"
+  },
+  "mc_tip_row_you": {
+    "message": "אתה"
+  },
+  "mc_tip_follow_ago": {
+    "message": "עוקב $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "עוקבים"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ הודעות",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "מאז $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "מאז $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "לוגים"
+  },
+  "mc_set_system_backup": {
+    "message": "מערכת · גיבוי / שחזור"
+  },
+  "mc_set_recent_errors": {
+    "message": "שגיאות אחרונות"
+  },
+  "mc_set_copy": {
+    "message": "העתק"
+  },
+  "mc_set_clear": {
+    "message": "נקה"
+  },
+  "mc_set_crash_loading": {
+    "message": "(טוען...)"
+  },
+  "mc_set_export_tip": {
+    "message": "מייצא את ui_settings ואת כל מפתחות hs_* לקובץ JSON. נייד בין מכשירים ודפדפנים."
+  },
+  "mc_set_export": {
+    "message": "ייצוא הגדרות"
+  },
+  "mc_set_export_btn": {
+    "message": "הורד .json"
+  },
+  "mc_set_import_tip": {
+    "message": "שחזור מקובץ JSON שיוצא קודם. ממוזג להגדרות הקיימות."
+  },
+  "mc_set_import": {
+    "message": "ייבוא הגדרות"
+  },
+  "mc_set_import_btn": {
+    "message": "טען .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "אפס כל הגדרה בכל עמוד"
+  },
+  "mc_set_all_defaults": {
+    "message": "כל ברירות המחדל"
+  },
+  "mc_set_backup_restore": {
+    "message": "גיבוי / שחזור"
+  },
+  "mc_set_fr_sound": {
+    "message": "צליל: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "הזז למעלה (עדיפות גבוהה יותר — ההתאמה הראשונה קובעת)"
+  },
+  "mc_set_fr_down": {
+    "message": "הזז למטה"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "כל הערוצים"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "מילת מפתח"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "משתמש"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "תג"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "סוג הודעה"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "ביטוי"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "למשל first && !badge:subscriber — חיבור עם && || ! ( ); שדות user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "ערך..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "הדגשה"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "הסתרה"
+  },
+  "mc_set_fr_color": {
+    "message": "צבע הדגשה"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "צליל הדגשה (לפעולת הדגשה בלבד)"
+  },
+  "mc_set_fr_silent": {
+    "message": "שקט"
+  },
+  "mc_set_fr_case": {
+    "message": "התאמה לפי רישיות"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ הוסף"
+  },
+  "mc_set_fr_none": {
+    "message": "אין כללים — הוסף אחד למטה"
+  },
+  "mc_set_page_reset_title": {
+    "message": "אפס את העמוד לברירות מחדל"
+  },
+  "mc_set_default": {
+    "message": "ברירת מחדל"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "עוד הגדרה $N$ כאן — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "עוד $N$ הגדרות כאן — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "הצג הכל"
+  },
+  "mc_set_crash_none": {
+    "message": "(לא נרשמו שגיאות)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(לא ניתן לקרוא את הלוג)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "כבוי: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "הכל פעיל"
+  },
+  "mc_set_fmt_none": {
+    "message": "אין"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "מחק פריסט…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "מחק $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "מחק פריסט"
+  },
+  "mc_set_preset_save_as": {
+    "message": "שמור נוכחי בשם…"
+  },
+  "mc_set_preset_undo": {
+    "message": "בטל: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "פריסטים"
+  },
+  "mc_set_preset_save_title": {
+    "message": "שמור נוכחי כפריסט"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "שם הפריסט"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "שומר כל הגדרה ששונה מברירת המחדל — ניתן לשיתוף דרך ייצוא הגדרות"
+  },
+  "mc_set_preset_nochange": {
+    "message": "כבר תואם — אין מה לשנות"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "החל פריסט: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "החל"
+  },
+  "mc_set_h_search": {
+    "message": "חיפוש"
+  },
+  "mc_set_h_category": {
+    "message": "קטגוריה"
+  },
+  "mc_set_h_move": {
+    "message": "הזזה"
+  },
+  "mc_set_h_adjust": {
+    "message": "כוונון"
+  },
+  "mc_set_h_toggle": {
+    "message": "החלפה"
+  },
+  "mc_set_h_reset_row": {
+    "message": "אפס שורה"
+  },
+  "mc_set_h_close_clear": {
+    "message": "סגור / נקה"
+  },
+  "mc_set_h_this_help": {
+    "message": "העזרה הזו"
+  },
+  "mc_set_h_first_last": {
+    "message": "ראשון / אחרון"
+  },
+  "mc_set_h_fold": {
+    "message": "כווץ מקטע"
+  },
+  "mc_set_h_prev_next": {
+    "message": "קטגוריה קודמת / הבאה"
+  },
+  "mc_set_h_keys": {
+    "message": "מקשים"
+  },
+  "mc_set_h_commands": {
+    "message": "פקודות"
+  },
+  "mc_set_h_full_list": {
+    "message": "רשימה מלאה -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ חיפוש הגדרות..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "מוצגות כל ההגדרות — לחץ לבסיסיות בלבד"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "מוצגות הבסיסיות — לחץ לכל ההגדרות"
+  },
+  "mc_set_scope_all": {
+    "message": "הכל"
+  },
+  "mc_set_scope_basic": {
+    "message": "בסיסי"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "אימוטים"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gifs"
+  },
+  "mc_emo_chips_title": {
+    "message": "בחר באילו ספקים לחפש"
+  },
+  "mc_emo_exact_title": {
+    "message": "התאמת שם מדויקת בלבד"
+  },
+  "mc_emo_stack_expand": {
+    "message": "הרחב"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "כווץ"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "חסום הכל"
+  },
+  "mc_xg_close": {
+    "message": "סגור"
+  },
+  "mc_tr_sub_chat": {
+    "message": "צ'אט"
+  },
+  "mc_tr_sub_summary": {
+    "message": "סיכום"
+  },
+  "mc_tr_sub_logs": {
+    "message": "לוגים"
+  },
+  "mc_tr_sub_status": {
+    "message": "סטטוס"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "פלטפורמות"
+  },
+  "mc_tr_set_display": {
+    "message": "תצוגה"
+  },
+  "mc_tr_set_notifs": {
+    "message": "התראות"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "מסננים"
+  },
+  "mc_tr_set_system": {
+    "message": "מערכת"
+  },
+  "mc_tr_set_help": {
+    "message": "עזרה"
+  },
+  "mc_pt_native_chat": {
+    "message": "צ'אט מקורי"
+  },
+  "mc_pt_popout_chat": {
+    "message": "צ'אט בחלון נפרד"
+  },
+  "mc_pt_clips": {
+    "message": "קליפים"
+  },
+  "mc_pt_videos": {
+    "message": "סרטונים"
+  },
+  "mc_pt_channel_page": {
+    "message": "עמוד ערוץ"
+  },
+  "mc_pt_no_channel": {
+    "message": "לא זוהה ערוץ"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "צ'אט מקורי (super chat, סטיקרים, סקרים, אימוג'י)"
+  },
+  "mc_pt_join_channel": {
+    "message": "הצטרף לערוץ"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "חזרה לצ'אט של heatsync"
+  },
+  "mc_pa_show_chat": {
+    "message": "הצג צ'אט (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "הצ'אט של youtube דורש התחברות ל-heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "התחבר ל-heatsync כדי שהאימוטים שלך יעבדו אצל כולם"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org לא זמין — מתחבר מחדש"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ לא זמין",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "הסטרים של $CHANNEL$ הסתיים",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "סיכום הסטרים של $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "סטטיסטיקות הסטרים כבויות בהגדרות"
+  },
+  "mc_ss_empty": {
+    "message": "עוד לא נספר צ'אט — יתמלא תוך כדי הגעת הודעות"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ הודעות · $CHATTERS$ צ'אטרים · $MENTIONS$ אזכורים · שיא $PEAK$/שנ׳",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "מאז $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "צ'אטרים מובילים"
+  },
+  "mc_ss_top_emotes": {
+    "message": "אימוטים מובילים"
+  },
+  "mc_cmg_checking": {
+    "message": "בודק את heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "אין פרופיל heatsync — מלא ידנית"
+  },
+  "mc_cmg_unreachable": {
+    "message": "לא הצלחנו להגיע ל-heatsync"
+  },
+  "mc_cmg_live_on": {
+    "message": "ב-live ב-$LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "$NAME$ זוהה ב-heatsync — מקושר: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "מולא אוטומטית: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "עריכה חיה — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ עלה ל-live",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ החליף משחק",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "הודעה נמחקה"
+  },
+  "mc_ircx_unbanned": {
+    "message": "ה-ban של $TARGET$ בוטל",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ ב-timeout ל-$SEC$ שנ׳",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ קיבל ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ העניק $AMOUNT$ KICKs!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ העניק $AMOUNT$ KICKs ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "אנונימי"
+  },
+  "mc_cp_vol": {
+    "message": "עוצמה $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "נכשל"
+  },
+  "hsbtn_imported": {
+    "message": "יובאו $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "האימוטים שלך, בכל צ'אט"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "פתח כל סטרים ב-twitch, kick או youtube, ואז ייבא את האימוטים שלו מלשונית הערוץ — קליק אחד, עובד בכל צ'אט."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "משוך את כל אימוטי 7tv, bttv ו-ffz של $CHANNEL$ לסט שלך — קליק אחד, מוצג בכל צ'אט.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "ייבא את כל האימוטים של $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "ייבא את כל אימוטי הערוץ"
+  },
+  "hsbtn_no_sets": {
+    "message": "אין סטים שמורים — צור אחד ב-heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "החל"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "להחליף $COUNT$ אימוטים?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "מחיל…"
+  },
+  "hsbtn_applied": {
+    "message": "הוחל"
+  },
+  "hsbtn_login_removed": {
+    "message": "התחבר כדי לראות אימוטים שהוסרו"
+  },
+  "hsbtn_no_removed": {
+    "message": "אין אימוטים שהוסרו"
+  },
+  "hsbtn_restore": {
+    "message": "שחזר"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "לשחזר?"
+  },
+  "hsbtn_restoring": {
+    "message": "משחזר…"
+  },
+  "hsbtn_restored": {
+    "message": "שוחזר"
+  },
+  "hsbtn_removed_on": {
+    "message": "הוסר $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "טעינת הסטים נכשלה"
+  },
+  "hsbtn_err_history": {
+    "message": "טעינת ההיסטוריה נכשלה"
+  },
+  "hsbtn_err_mine": {
+    "message": "טעינת האימוטים שלך נכשלה"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "אימוטי הערוץ לא זמינים"
+  },
+  "hsbtn_err_channel": {
+    "message": "טעינת אימוטי הערוץ נכשלה"
+  },
+  "hsbtn_err_global": {
+    "message": "טעינת האימוטים הגלובליים נכשלה"
+  },
+  "hsbtn_unnamed": {
+    "message": "(ללא שם)"
+  },
+  "hsbtn_emote_one": {
+    "message": "אימוט $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ אימוטים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "מאת $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ בבעלותך",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "שגיאה"
+  },
+  "hsbtn_search_status": {
+    "message": "„$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "„$QUERY$” — מחפש…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "אין אימוטים שתואמים „$QUERY$”",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "התחבר כדי להוסיף אימוטים"
+  },
+  "hsbtn_add_failed": {
+    "message": "ההוספה נכשלה"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "ביטול החסימה נכשל"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ שימושים ב-heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "במלאי"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "לא במלאי"
+  },
+  "hsbtn_open_on": {
+    "message": "פתח ב-$PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "שנה שם"
+  },
+  "hsbtn_move": {
+    "message": "הזז"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "הזז לסלוט…"
+  },
+  "hsbtn_slot_number": {
+    "message": "מספר סלוט"
+  },
+  "hsbtn_renamed_to": {
+    "message": "השם שונה ל-$NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "שינוי השם נכשל"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "הוזז לסלוט $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "ההזזה נכשלה"
+  },
+  "hsbtn_unshare_set": {
+    "message": "בטל שיתוף סט"
+  },
+  "hsbtn_share_set": {
+    "message": "שתף סט"
+  },
+  "hsbtn_set_unshared": {
+    "message": "השיתוף בוטל"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "ביטול השיתוף נכשל"
+  },
+  "hsbtn_share_copied": {
+    "message": "קישור השיתוף הועתק: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "השיתוף נכשל"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "העתק markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "חזרה לצ'אט של heatsync"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← צ'אט heatsync"
+  },
+  "hsbtn_rcb_label": {
+    "message": "חסימה בקליק ימני"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "instant חוסם מיד · menu מציג חסום/בטל · off מכבה"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "instant"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "off"
+  },
+  "hsbtn_search_ph": {
+    "message": "חיפוש אימוטים…"
+  },
+  "hsbtn_chips_title": {
+    "message": "בחר באילו ספקים לחפש"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "כלול תוצאות 7tv"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "כלול תוצאות frankerfacez"
+  },
+  "hsbtn_undo": {
+    "message": "בטל"
+  },
+  "hsbtn_redo": {
+    "message": "בצע שוב"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "סובב את פאנל הצ'אט (C)"
+  },
+  "cs_color_for": {
+    "message": "צבע עבור $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "קבע"
+  },
+  "cs_clear": {
+    "message": "נקה"
+  },
+  "cs_poll": {
+    "message": "📊 סקר · "
+  },
+  "cs_prediction": {
+    "message": "🎯 ניבוי · "
+  },
+  "cs_active": {
+    "message": "(פעיל)"
+  },
+  "cs_badge_alt": {
+    "message": "תג $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "העתק שם משתמש"
+  },
+  "cs_copy_message": {
+    "message": "העתק הודעה"
+  },
+  "cs_mute_24h": {
+    "message": "השתק (24 שע׳)"
+  },
+  "cs_profile": {
+    "message": "פרופיל"
+  },
+  "cs_removed": {
+    "message": "$NAME$ הוסר",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "$NAME$ הוסר · עכשיו $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "התחבר ל-heatsync.org כדי לנהל אימוטים"
+  },
+  "cs_remove_failed": {
+    "message": "לא ניתן להסיר את $NAME$: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "שגיאה לא ידועה"
+  },
+  "popup_site_label": {
+    "message": "צ'אט heatsync ב-"
+  },
+  "popup_site_note_default": {
+    "message": "כבוי מציג את הצ'אט של האתר עצמו"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: הצ'אט של האתר חזר",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: הצ'אט של heatsync חזר",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "משוב"
+  },
+  "popup_fb_bug": {
+    "message": "באג"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "במה heatsync צריך להשתפר?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "מה נשבר? מה ציפית שיקרה?"
+  },
+  "popup_fb_send": {
+    "message": "שלח"
+  },
+  "popup_fb_sending": {
+    "message": "שולח..."
+  },
+  "popup_fb_short": {
+    "message": "כתוב קצת יותר"
+  },
+  "popup_fb_sent": {
+    "message": "נשלח — תודה"
+  },
+  "popup_fb_failed": {
+    "message": "השליחה נכשלה. נסה שוב"
+  },
+  "popup_feedback_link": {
+    "message": "משוב"
+  },
+  "popup_feedback_title": {
+    "message": "משוב / דיווח על באג"
+  },
+  "popup_inv_slots": {
+    "message": "5,000 סלוטים לאימוטים"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "מחובר בתור $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5,000 סלוטים"
+  },
+  "popup_inv_import_hint": {
+    "message": " · ייבא ערוץ כדי למלא"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ ב-live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +עוד $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ ב-live",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ צופים",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ מהנעקבים ב-live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — החלפת חשבון"
+  },
+  "bg_acct_msg": {
+    "message": "עובר מ-$FROM$ ל-$TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "טוען אימוטי ערוץ..."
+  },
+  "bg_loading_third": {
+    "message": "מביא אימוטים של צד שלישי..."
+  },
+  "bg_loading_emotes": {
+    "message": "טוען אימוטים..."
+  },
+  "cs_uploading": {
+    "message": "מעלה..."
+  },
+  "cs_file_too_large": {
+    "message": "הקובץ גדול מדי (מקס׳ $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "ההעלאה נכשלה"
+  },
+  "cs_yt_top_chat": {
+    "message": "מצב top chat — עבור ל-live chat ב-youtube"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync לא הצליח להתחבר לצ'אט הזה"
+  },
+  "cs_badge_owner": {
+    "message": "בעלים"
+  },
+  "cs_badge_member": {
+    "message": "חבר"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl תנועה  kj היסטוריה  wb/WBE מילה  0$$^ שורה  gg/G קצוות\nfFtT+תו חיפוש  ;, חזרה על חיפוש  [מספר]פקודה חזרה\nx/X מחיקת תו  dw/db/de/dd מחיקה  D מחיקה→סוף\ncw/cb/ce/cc שינוי  C שינוי→סוף  s/S החלפה\nyw/yb/ye/yy העתקה  p/P הדבקה  r החלפת תו  ~ רישיות\ni/a/I/A הוספה  u ביטול  Ctrl+R שחזור  . חזרה  ? עזרה\n\nSPC = leader — פקודות צ'אט בלי לצאת מהתיבה\nSPC /    חיפוש        SPC n/N  התאמה הבאה/קודמת\nSPC 1-9  לשונית n     SPC ]/[  לשונית הבאה/קודמת\nSPC t    בורר לשוניות SPC \\    הסתר/הצג צ'אט"
+  },
+  "lib_sec_font": {
+    "message": "גופן"
+  },
+  "lib_sec_chat_messages": {
+    "message": "הודעות צ'אט"
+  },
+  "lib_sec_layout": {
+    "message": "פריסה"
+  },
+  "lib_sec_density": {
+    "message": "צפיפות"
+  },
+  "lib_sec_messages": {
+    "message": "הודעות"
+  },
+  "lib_sec_mentioned": {
+    "message": "כשמתייגים אותך ב-@"
+  },
+  "lib_sec_cross_follow": {
+    "message": "מעקב בין פלטפורמות"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "סרגל mod"
+  },
+  "lib_sec_content": {
+    "message": "תוכן"
+  },
+  "lib_sec_rules": {
+    "message": "כללים"
+  },
+  "lib_sec_player": {
+    "message": "נגן"
+  },
+  "lib_sec_tabs": {
+    "message": "לשוניות"
+  },
+  "lib_sec_language": {
+    "message": "שפה"
+  },
+  "lib_opt_system_monospace": {
+    "message": "monospace של המערכת"
+  },
+  "lib_opt_platform_default": {
+    "message": "ברירת מחדל של הפלטפורמה (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "מותאם אישית..."
+  },
+  "lib_opt_unread": {
+    "message": "לא נקרא"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "למעלה"
+  },
+  "lib_opt_right": {
+    "message": "ימין"
+  },
+  "lib_opt_bottom": {
+    "message": "למטה"
+  },
+  "lib_opt_left": {
+    "message": "שמאל"
+  },
+  "lib_opt_hidden": {
+    "message": "מוסתר"
+  },
+  "lib_opt_compact": {
+    "message": "צפוף"
+  },
+  "lib_opt_cozy": {
+    "message": "נוח"
+  },
+  "lib_opt_always": {
+    "message": "always"
+  },
+  "lib_opt_hover": {
+    "message": "hover"
+  },
+  "lib_opt_never": {
+    "message": "never"
+  },
+  "slash_desc_op": {
+    "message": "פרסם שרשור בפיד heatsync שלך"
+  },
+  "slash_desc_re": {
+    "message": "השב על ה-[OP] האחרון שהוצג בצ'אט"
+  },
+  "slash_desc_dm": {
+    "message": "שלח DM ב-heatsync; בלי הודעה נפתחת השיחה"
+  },
+  "slash_desc_w": {
+    "message": "שלח whisper ב-twitch"
+  },
+  "slash_desc_color": {
+    "message": "קבע את צבע הצ'אט שלך ב-twitch (שם כמו orangered, או #hex עם turbo)"
+  },
+  "slash_desc_r": {
+    "message": "השב ל-whisper האחרון שקיבלת"
+  },
+  "slash_desc_user": {
+    "message": "פתח כרטיס פרופיל עם לוגים אחרונים"
+  },
+  "slash_desc_follow": {
+    "message": "עקוב ב-heatsync, משתקף ל-twitch ול-kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "הפסק לעקוב ב-heatsync, משתקף ל-twitch ול-kick"
+  },
+  "slash_desc_me": {
+    "message": "שלח הודעת פעולה"
+  },
+  "slash_desc_shrug": {
+    "message": "הוסף ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "הוסף (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "הוסף ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "רשימת פקודות"
+  },
+  "slash_desc_lclear": {
+    "message": "נקה את הלשונית הנוכחית רק אצלך"
+  },
+  "slash_desc_mute": {
+    "message": "השתק מישהו ל-24 שעות, בכל החשבונות המקושרים שלו"
+  },
+  "slash_desc_unmute": {
+    "message": "בטל השתקה"
+  },
+  "slash_desc_block": {
+    "message": "החלף חסימה"
+  },
+  "slash_desc_hide": {
+    "message": "הסתר מישהו בלשונית הזו בלבד, עד לטעינה מחדש"
+  },
+  "slash_desc_unhide": {
+    "message": "בטל הסתרה"
+  },
+  "slash_desc_note": {
+    "message": "שמור הערה פרטית על מישהו"
+  },
+  "slash_desc_delnote": {
+    "message": "מחק את ההערה שלך"
+  },
+  "slash_desc_set": {
+    "message": "שנה הגדרה, למשל /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "עבור ללשונית: ערוץ, או לשונית בשם כמו live או mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "העתק קישור heatsync.org/m לסידור הלשוניות שלך"
+  },
+  "slash_desc_layout": {
+    "message": "הוסף את הלשוניות מקישור heatsync.org/m"
+  },
+  "slash_desc_status": {
+    "message": "הצג מצבי צ'אט ומידע על הסטרים"
+  },
+  "slash_desc_ban": {
+    "message": "חסום מישהו מהערוץ לצמיתות"
+  },
+  "slash_desc_timeout": {
+    "message": "העבר מישהו ל-timeout, ברירת מחדל 10 דקות"
+  },
+  "slash_desc_unban": {
+    "message": "הסר ban או סיים timeout"
+  },
+  "slash_desc_delete": {
+    "message": "מחק הודעה בודדת"
+  },
+  "slash_desc_nuke": {
+    "message": "מחק בכמות גדולה הודעות אחרונות שמכילות מונח"
+  },
+  "slash_desc_announce": {
+    "message": "פרסם הכרזה, אפשר בצבע"
+  },
+  "slash_desc_vip": {
+    "message": "הענק VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "הסר VIP"
+  },
+  "slash_desc_mod": {
+    "message": "הענק הרשאת mod"
+  },
+  "slash_desc_unmod": {
+    "message": "הסר הרשאת mod"
+  },
+  "slash_desc_blocked": {
+    "message": "פתח את רשימת המונחים החסומים של הערוץ"
+  },
+  "slash_desc_modtools": {
+    "message": "פתח את פאנל כלי ה-mod"
+  },
+  "slash_desc_shield": {
+    "message": "הפעל או כבה shield mode"
+  },
+  "slash_desc_warn": {
+    "message": "הזהר צ'אטר"
+  },
+  "slash_desc_shoutout": {
+    "message": "עשה shoutout לערוץ"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "פתח בקשות unban"
+  },
+  "slash_desc_slow": {
+    "message": "מצב איטי, ברירת מחדל 30 שנ׳"
+  },
+  "slash_desc_followers": {
+    "message": "מצב עוקבים בלבד"
+  },
+  "slash_desc_emoteonly": {
+    "message": "מצב אימוטים בלבד"
+  },
+  "slash_desc_subscribers": {
+    "message": "מצב מנויים בלבד"
+  },
+  "slash_desc_unique": {
+    "message": "מצב צ'אט ייחודי; twitch בלבד, ל-kick אין מקבילה"
+  },
+  "slash_desc_poll": {
+    "message": "צור סקר, 2-5 אפשרויות"
+  },
+  "slash_desc_endpoll": {
+    "message": "סיים את הסקר הפעיל"
+  },
+  "slash_desc_vote": {
+    "message": "הצבע לאפשרות n בסקר הפעיל"
+  },
+  "slash_desc_prediction": {
+    "message": "התחל ניבוי, 2-10 תוצאות"
+  },
+  "slash_desc_bet": {
+    "message": "הימר נקודות ערוץ על תוצאה n"
+  },
+  "slash_desc_lockpred": {
+    "message": "נעל את הניבוי הפעיל"
+  },
+  "slash_desc_resolvepred": {
+    "message": "הכרע את הניבוי לתוצאה n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "בטל את הניבוי הפעיל"
+  },
+  "slash_desc_highlight": {
+    "message": "הדגש את ההודעה שלך בצ'אט של twitch"
+  },
+  "slash_sec_everyday": {
+    "message": "יומיומי"
+  },
+  "slash_sec_local": {
+    "message": "החלון הזה בלבד"
+  },
+  "slash_sec_mod": {
+    "message": "פיקוח"
+  },
+  "slash_sec_modes": {
+    "message": "מצבי צ'אט"
+  },
+  "slash_sec_events": {
+    "message": "סקרים, ניבויים, bits"
+  },
+  "slash_help_full_list": {
+    "message": "רשימה מלאה -> /commands"
+  },
+  "slash_help_label": {
+    "message": "פקודות slash"
   }
 }

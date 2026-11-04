@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "langgan"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "paparan mod (sembang, automod, terma disekat)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "penyiar"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "papan pemuka pencipta"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "pengurus strim"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "tetapan moderasi (automod, terma disekat)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "tetapan saluran"
+  },
+  "mc_twapi_ql_community": {
+    "message": "komuniti (mod, vip, ikutan)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "pendapatan"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "halaman saluran"
+  },
+  "mc_twapi_ql_about": {
+    "message": "halaman tentang"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "video"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "klip"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "jadual"
+  },
+  "mc_twapi_ql_account": {
+    "message": "akaun anda"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "drop / inventori"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "langganan saya"
+  },
+  "mc_twapi_ql_following": {
+    "message": "direktori ikutan"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "tetapan twitch"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "privasi + keselamatan"
+  },
+  "mc_twapi_won": {
+    "message": "menang"
+  },
+  "mc_twapi_lost": {
+    "message": "kalah"
+  },
+  "mc_twapi_max": {
+    "message": "maks"
+  },
+  "mc_twapi_amt": {
+    "message": "jumlah"
+  },
+  "mc_twapi_bet": {
+    "message": "pertaruhan"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ mata · $COUNT$ pemain",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ mata · $COUNT$ pemain",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "pertaruhan anda: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "anda bertaruh $POINTS$ pada $OUTCOME$ — pilih pemenang sebenar",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "cooldown $N$m",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "cooldown $N$s",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "gagal"
+  },
+  "mc_twapi_err_own": {
+    "message": "tak boleh bertaruh pada sendiri"
+  },
+  "mc_twapi_err_retry": {
+    "message": "cuba lagi"
+  },
+  "mc_twapi_err_locked": {
+    "message": "pertaruhan dikunci"
+  },
+  "mc_twapi_err_points": {
+    "message": "mata tak cukup"
+  },
+  "mc_twapi_err_already": {
+    "message": "sudah bertaruh"
+  },
+  "mc_twapi_no_event": {
+    "message": "tiada acara"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "tiada hasil"
+  },
+  "mc_twapi_no_channel": {
+    "message": "tiada saluran"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "menutup..."
+  },
+  "mc_twapi_closing": {
+    "message": "menutup"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "tiada saluran dikesan"
+  },
+  "mc_twapi_tab_events": {
+    "message": "acara"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "pautan pantas"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "cheer bits kepada $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "baki: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "buka modal cheer"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ penonton",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ penonton",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "taruhan: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ undi",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ undi",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "undi"
+  },
+  "mc_input_unblock": {
+    "message": "nyahsekat"
+  },
+  "mc_input_remove_from_set": {
+    "message": "buang dari set"
+  },
+  "mc_input_open_on": {
+    "message": "buka di $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "lihat imej"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "salin :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "salin url imej"
+  },
+  "mc_input_copy_emoji": {
+    "message": "salin emoji"
+  },
+  "mc_input_expand": {
+    "message": "kembang"
+  },
+  "mc_input_mute_24h": {
+    "message": "senyap (24j)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "nyahsorok dalam tab"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "sorok dalam tab"
+  },
+  "mc_input_copy_message": {
+    "message": "salin mesej"
+  },
+  "mc_input_copy_to_input": {
+    "message": "salin → input"
+  },
+  "mc_input_copy_thread": {
+    "message": "salin thread"
+  },
+  "mc_input_delete_msg": {
+    "message": "padam mesej"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10m"
+  },
+  "mc_input_timed_out": {
+    "message": "di-timeout"
+  },
+  "mc_input_warn": {
+    "message": "amaran"
+  },
+  "mc_input_reply": {
+    "message": "balas"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op ke suapan"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "edit nota"
+  },
+  "mc_input_add_note": {
+    "message": "tambah nota"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "lapor / hadiah sub"
+  },
+  "mc_input_filter_to": {
+    "message": "tapis ke $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "log sembang"
+  },
+  "mc_input_edit_timer": {
+    "message": "edit ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "edit (tamat)"
+  },
+  "mc_input_delete": {
+    "message": "padam"
+  },
+  "mc_input_chatter": {
+    "message": "pensembang"
+  },
+  "mc_input_everyone": {
+    "message": "semua orang"
+  },
+  "mc_input_heatsync_only": {
+    "message": "heatsync sahaja"
+  },
+  "mc_input_your_inventory": {
+    "message": "inventori anda"
+  },
+  "mc_input_all_twitch": {
+    "message": "semua twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "semua kick"
+  },
+  "mc_input_ext_users": {
+    "message": "pengguna $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "mencari 7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "pelanggan sahaja"
+  },
+  "mc_input_usage_color": {
+    "message": "guna: /color <nama|#hex> — cth /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "warna sembang ditetapkan kepada $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "guna: /re <teks>"
+  },
+  "mc_input_re_no_post": {
+    "message": "belum ada kiriman dalam sembang untuk dibalas"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "undian gagal: $ERROR$ (penyiar sahaja)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "undian gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "ramalan gagal: $ERROR$ (penyiar sahaja)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "ramalan gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "tamat undian gagal: $ERROR$ (penyiar sahaja)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "mengundi gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "pertaruhan gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "gagal: $ERROR$ (penyiar sahaja)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ gagal: $ERROR$ (penyiar sahaja)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "pengumuman gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <nama> — buka kad profil mereka"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <pengguna> — sorok dalam tab ini"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <pengguna> — nyahsorok dalam tab ini"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r untuk balas $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "muat naik sedang berjalan..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "imej/video sahaja dibenarkan"
+  },
+  "mc_input_upload_too_large": {
+    "message": "fail terlalu besar (maks $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "memuat naik..."
+  },
+  "mc_input_upload_done": {
+    "message": "muat naik selesai"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "muat naik gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "muat naik gagal"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "tak dapat capai asal — kiriman ialah bingkai pegun"
+  },
+  "mc_input_drop_zone": {
+    "message": "lepaskan imej/video/pautan untuk muat naik"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <mesej>"
+  },
+  "mc_social_edit_empty": {
+    "message": "kandungan tak boleh kosong"
+  },
+  "mc_social_saving": {
+    "message": "menyimpan..."
+  },
+  "mc_social_edit_failed": {
+    "message": "edit gagal"
+  },
+  "mc_social_confirm_delete": {
+    "message": "padam kiriman ini?"
+  },
+  "mc_social_home_title": {
+    "message": "log masuk untuk lihat laman utama"
+  },
+  "mc_social_home_sub": {
+    "message": "ikut orang, kirim, kongsi — bersama multichat"
+  },
+  "mc_social_home_login": {
+    "message": "log masuk di heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "multichat tak perlukan akaun — pilih tab saluran di atas"
+  },
+  "mc_social_no_posts": {
+    "message": "tiada kiriman"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "ikut orang atau kirim sesuatu untuk isi tab ini"
+  },
+  "mc_social_import_follows": {
+    "message": "import ikutan dari twitch"
+  },
+  "mc_social_syncing": {
+    "message": "menyegerak…"
+  },
+  "mc_social_synced": {
+    "message": "$COUNT$ disegerak ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "cuba lagi"
+  },
+  "mc_social_failed": {
+    "message": "gagal"
+  },
+  "mc_social_discover_people": {
+    "message": "temui orang →"
+  },
+  "mc_social_post_something": {
+    "message": "kirim sesuatu"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "kiriman hangat · log masuk di heatsync.org untuk ikut orang"
+  },
+  "mc_social_banner_newest": {
+    "message": "kiriman terbaru · ikut orang untuk isi suapan anda"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "hangat bulan ini · ikut orang untuk isi suapan anda"
+  },
+  "mc_social_edited": {
+    "message": "(diedit)"
+  },
+  "mc_social_replying_to": {
+    "message": "membalas >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "keluar thread"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ penonton",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ penonton",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ penonton",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ balasan",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ balasan",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(tiada teks)"
+  },
+  "mc_social_live_now": {
+    "message": "live sekarang"
+  },
+  "mc_social_no_streams": {
+    "message": "tiada strim live sekarang"
+  },
+  "mc_social_hot_posts": {
+    "message": "kiriman hangat"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "tiada kiriman sepadan dengan penapis"
+  },
+  "mc_social_tags": {
+    "message": "tag"
+  },
+  "mc_social_none_now": {
+    "message": "tiada buat masa ini"
+  },
+  "mc_social_leaderboard": {
+    "message": "papan pendahulu"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "tiada profil sepadan dengan penapis ini"
+  },
+  "mc_social_no_pinned": {
+    "message": "tiada mesej disemat"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "belum ada tindakan mod"
+  },
+  "mc_social_platform": {
+    "message": "platform"
+  },
+  "mc_social_all": {
+    "message": "semua"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "pencapaian keahlian"
+  },
+  "mc_social_yt_member": {
+    "message": "menjadi ahli"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "menghadiahkan $COUNT$ keahlian",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "menghadiahkan $COUNT$ keahlian",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "ralat sambungan"
+  },
+  "mc_social_replies_title": {
+    "message": "balasan"
+  },
+  "mc_pcard_del_msg": {
+    "message": "padam msj"
+  },
+  "mc_pcard_del_title": {
+    "message": "padam mesej terbaru pengguna ini"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "beri moderator (penyiar sahaja)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "tarik balik moderator (penyiar sahaja)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "beri VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "tarik balik VIP"
+  },
+  "mc_pcard_error": {
+    "message": "ralat"
+  },
+  "mc_pcard_no_channel": {
+    "message": "tak dapat kenal pasti saluran"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ gagal: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "sesi"
+  },
+  "mc_pcard_first": {
+    "message": "pertama"
+  },
+  "mc_pcard_channels": {
+    "message": "saluran"
+  },
+  "mc_pcard_close_profile": {
+    "message": "tutup profil"
+  },
+  "mc_pcard_close_esc": {
+    "message": "tutup (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "tak dapat dimuat — cuba lagi"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url disalin"
+  },
+  "mc_pcard_clip_created": {
+    "message": "klip dicipta"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "klip gagal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "disalin"
+  },
+  "mc_logs_failed": {
+    "message": "gagal"
+  },
+  "mc_logs_all_channels": {
+    "message": "semua saluran"
+  },
+  "mc_logs_all": {
+    "message": "semua"
+  },
+  "mc_logs_scope_channel": {
+    "message": "kini terhad kepada #$CHANNEL$ — klik untuk lihat semua saluran",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "kini papar semua saluran — klik untuk hadkan kepada #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "cari…"
+  },
+  "mc_logs_search_title": {
+    "message": "cari mesej $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "muat semula"
+  },
+  "mc_logs_export_txt": {
+    "message": "eksport sebagai .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "eksport sebagai .json"
+  },
+  "mc_logs_public": {
+    "message": "arkib awam ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "buka log sembang awam #$CHANNEL$ di heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "tak dapat muatkan arkib — cari atau skrol semula untuk cuba lagi"
+  },
+  "mc_logs_backfill": {
+    "message": "mengambil log lama dari $SOURCE$… cuba muat semula dalam ~30s",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "tiada padanan untuk \"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "belum ada mesej diarkib daripada $USER$ dalam #$CHANNEL$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "belum ada mesej diarkib daripada $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "skrol untuk lebih lama"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "salin permalink"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "nota · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "nota peribadi — hanya anda nampak. mengikut mereka merentas platform."
+  },
+  "mc_notes_esc": {
+    "message": "esc untuk tutup"
+  },
+  "mc_notes_delete": {
+    "message": "padam"
+  },
+  "mc_notes_saved": {
+    "message": "disimpan · esc untuk tutup"
+  },
+  "mc_notes_saving": {
+    "message": "menyimpan…"
+  },
+  "mc_notes_section": {
+    "message": "nota"
+  },
+  "mc_notes_empty": {
+    "message": "belum ada nota"
+  },
+  "mc_notes_edit": {
+    "message": "edit"
+  },
+  "mc_notes_add": {
+    "message": "tambah nota"
+  },
+  "mc_feed_loading_name": {
+    "message": "memuatkan $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "memuatkan baris sembang…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "memuatkan pratonton…"
+  },
+  "mc_feed_adult_login": {
+    "message": "log masuk sebagai dewasa untuk lihat"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "imej tak tersedia"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "buka dalam tab baharu"
+  },
+  "mc_feed_reload_player": {
+    "message": "muat semula pemain (selepas log masuk)"
+  },
+  "mc_feed_pause": {
+    "message": "jeda"
+  },
+  "mc_feed_volume": {
+    "message": "volum"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "kembali ke sembang (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "penuhkan sembang"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "buka dalam tab baharu"
+  },
+  "mc_feed_close_player": {
+    "message": "tutup pemain"
+  },
+  "mc_feed_back": {
+    "message": "← kembali"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "whisper gagal"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "pelayan heatsync tak dapat dicapai"
+  },
+  "mc_misc_twitch_error": {
+    "message": "ralat twitch $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "tiada sesi twitch"
+  },
+  "mc_misc_unknown_error": {
+    "message": "ralat tak diketahui"
+  },
+  "mc_misc_sending": {
+    "message": "menghantar"
+  },
+  "mc_misc_click_retry": {
+    "message": "klik untuk cuba lagi"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — klik untuk beri kebenaran whisper twitch di heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "aktifkan whisper twitch — pautkan semula"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — klik untuk ikut $USER$ dan hantar",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — klik untuk log masuk di heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "log masuk di heatsync untuk hantar"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — cuba lagi",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "balas ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "mesej resub ($MONTHS$bln) — enter untuk kongsi",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "streak tontonan ($COUNT$) — enter untuk kongsi",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "padam mesej ini"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 minit"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 minit"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 jam"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 jam"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 hari"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — kosongkan mesej pengguna ini (timeout 1s)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "ban kekal"
+  },
+  "mc_mtb_t_unban": {
+    "message": "unban pengguna"
+  },
+  "mc_mtb_t_bt": {
+    "message": "terma disekat"
+  },
+  "mc_mtb_t_mt": {
+    "message": "alat mod"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "tindakan moderasi mesej"
+  },
+  "mc_main_back_to_chat": {
+    "message": "kembali ke sembang"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "kembali ke sembang (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "edit platform"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ $N$ lagi",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "buka $CH$ di $PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "buka sembang $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "balas"
+  },
+  "mc_main_also_live_on": {
+    "message": "juga live di $PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "pautkan saluran"
+  },
+  "mc_main_dismiss": {
+    "message": "tutup"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "tutup (klik kanan pun boleh)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "tambah strim anda"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "gabung sembang twitch, kick + youtube dalam satu panel"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ tambah saluran"
+  },
+  "mc_main_idwarn": {
+    "message": "emote anda tak akan dipaparkan kepada orang lain di sini — akaun heatsync $ACCT$, bersembang sebagai $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "pautkan akaun"
+  },
+  "mc_main_status_no_yt": {
+    "message": "status meliputi saluran twitch dan kick"
+  },
+  "mc_main_status_fetching": {
+    "message": "mengambil #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "tak dapat ambil #$CH$ (luar talian atau tiada di $PLAT$?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "log masuk untuk lihat log anda di sini — klik kanan pensembang untuk log mereka"
+  },
+  "mc_main_logs_rclick": {
+    "message": "klik kanan pensembang untuk lihat log $PLAT$ mereka",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "tab sembang"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "sorok sembang (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "sorok sembang"
+  },
+  "mc_main_popout_title": {
+    "message": "keluarkan sembang ke tetingkap berasingan"
+  },
+  "mc_main_subscribe_title": {
+    "message": "langgan — sokong saluran ini"
+  },
+  "mc_main_views_aria": {
+    "message": "paparan"
+  },
+  "mc_main_search_ph": {
+    "message": "cari mesej…"
+  },
+  "mc_main_messages_aria": {
+    "message": "mesej sembang"
+  },
+  "mc_main_search_none_for": {
+    "message": "tiada hasil untuk \"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "tiada hasil"
+  },
+  "mc_main_moment": {
+    "message": "sembang $CH$ meletup — $RATE$ msj/30s (biasanya ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "tapis — /regex/ atau @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ mata",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "tebus mata saluran"
+  },
+  "mc_main_highlighted": {
+    "message": "mesej diserlahkan"
+  },
+  "mc_main_first_msg": {
+    "message": "mesej pertama dalam saluran ini"
+  },
+  "mc_main_kill_active": {
+    "message": "dimatikan oleh heatsync (kill-switch aktif)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat dimatikan oleh heatsync"
+  },
+  "mc_main_kill_update": {
+    "message": "kemas kini sambungan diperlukan (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "menebus \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "raid $TARGET$ dengan $VIEWERS$ penonton",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ raid masuk dengan $VIEWERS$ penonton",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "undian baharu bermula"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "undian baharu bermula — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "ramalan baharu bermula"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "ramalan baharu bermula — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train bermula"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train tamat pada tahap $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ menghadiahkan $COUNT$ sub",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "disemat $BY$: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "disemat: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "mesej dinyahsemat"
+  },
+  "mc_notif_dismiss": {
+    "message": "tutup"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "memuatkan emote…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "meraikan"
+  },
+  "mc_notif_rt_mo": {
+    "message": "bln"
+  },
+  "mc_notif_rt_months": {
+    "message": "bulan"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "sebagai pelanggan"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "dalam"
+  },
+  "mc_notif_wt_stream": {
+    "message": "strim"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "streak tontonan"
+  },
+  "mc_notif_share": {
+    "message": "kongsi"
+  },
+  "mc_notif_update_available": {
+    "message": "kemas kini tersedia — guna $CUR$, terkini $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "buka kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "buka youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "log masuk twitch.tv untuk bersembang"
+  },
+  "mc_notif_open_twitch": {
+    "message": "buka twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- TAB --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "pengesahan twitch gagal"
+  },
+  "mc_notif_r_no_user": {
+    "message": "tiada nama pengguna twitch"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "sambungan gagal"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "gagal hantar"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "kick belum log masuk"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "tiada tab kick dibuka"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "saluran kick tak ditemui"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick tak mengesahkan — mungkin sudah dikirim"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick menolak penghantaran"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "tiada tab youtube dibuka"
+  },
+  "mc_notif_r_no_input": {
+    "message": "sembang youtube masih dimuat"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "log masuk youtube dahulu"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube menyekat penghantaran"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube tak mengesahkan penghantaran"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "jambatan sembang youtube tamat masa"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ tak mengesahkan — mungkin tak dikirim",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "platform"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "sembang dihadkan — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "sembang dihadkan"
+  },
+  "mc_notif_r_unknown": {
+    "message": "penghantaran mungkin gagal"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "disorok"
+  },
+  "mc_tip_owner_sub": {
+    "message": "sub $OWNER$ ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · dibuang oleh @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · dibuang dari saluran",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "mereka"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "sub kepada anda $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "sub sal."
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "ikut sal."
+  },
+  "mc_tip_row_follower": {
+    "message": "pengikut"
+  },
+  "mc_tip_row_you": {
+    "message": "anda"
+  },
+  "mc_tip_follow_ago": {
+    "message": "ikut $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "pengikut"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ msj",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "sejak $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "sejak $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "log"
+  },
+  "mc_set_system_backup": {
+    "message": "sistem · sandaran / pulihkan"
+  },
+  "mc_set_recent_errors": {
+    "message": "ralat terkini"
+  },
+  "mc_set_copy": {
+    "message": "salin"
+  },
+  "mc_set_clear": {
+    "message": "kosongkan"
+  },
+  "mc_set_crash_loading": {
+    "message": "(memuatkan...)"
+  },
+  "mc_set_export_tip": {
+    "message": "buang ui_settings + semua kunci hs_* ke fail JSON. boleh dibawa antara peranti dan pelayar."
+  },
+  "mc_set_export": {
+    "message": "eksport tetapan"
+  },
+  "mc_set_export_btn": {
+    "message": "muat turun .json"
+  },
+  "mc_set_import_tip": {
+    "message": "pulihkan daripada fail JSON yang dieksport sebelum ini. digabung ke tetapan sedia ada."
+  },
+  "mc_set_import": {
+    "message": "import tetapan"
+  },
+  "mc_set_import_btn": {
+    "message": "muat .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "set semula setiap tetapan di setiap halaman"
+  },
+  "mc_set_all_defaults": {
+    "message": "semua lalai"
+  },
+  "mc_set_backup_restore": {
+    "message": "sandaran / pulihkan"
+  },
+  "mc_set_fr_sound": {
+    "message": "bunyi: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "naik (keutamaan lebih tinggi — padanan pertama menang)"
+  },
+  "mc_set_fr_down": {
+    "message": "turun"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "semua saluran"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "kata kunci"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "pengguna"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "lencana"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "msgtype"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "expr"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "cth first && !badge:subscriber — sambung dengan && || ! ( ); medan user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "nilai..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "serlah"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "sorok"
+  },
+  "mc_set_fr_color": {
+    "message": "warna serlahan"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "bunyi serlahan (tindakan serlah sahaja)"
+  },
+  "mc_set_fr_silent": {
+    "message": "senyap"
+  },
+  "mc_set_fr_case": {
+    "message": "padanan peka huruf besar"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ tambah"
+  },
+  "mc_set_fr_none": {
+    "message": "tiada peraturan — tambah satu di bawah"
+  },
+  "mc_set_page_reset_title": {
+    "message": "set semula halaman ini kepada lalai"
+  },
+  "mc_set_default": {
+    "message": "lalai"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "$N$ tetapan lagi di sini — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "$N$ tetapan lagi di sini — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "papar semua"
+  },
+  "mc_set_crash_none": {
+    "message": "(tiada ralat direkodkan)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(tak dapat baca log)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "mati: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "semua hidup"
+  },
+  "mc_set_fmt_none": {
+    "message": "tiada"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "padam pratetap…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "padam $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "padam pratetap"
+  },
+  "mc_set_preset_save_as": {
+    "message": "simpan semasa sebagai…"
+  },
+  "mc_set_preset_undo": {
+    "message": "buat asal: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "pratetap"
+  },
+  "mc_set_preset_save_title": {
+    "message": "simpan semasa sebagai pratetap"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "nama pratetap"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "simpan setiap tetapan yang berbeza daripada lalai — boleh dikongsi melalui eksport tetapan"
+  },
+  "mc_set_preset_nochange": {
+    "message": "sudah sepadan — tiada yang perlu diubah"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "guna pratetap: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "guna"
+  },
+  "mc_set_h_search": {
+    "message": "cari"
+  },
+  "mc_set_h_category": {
+    "message": "kategori"
+  },
+  "mc_set_h_move": {
+    "message": "gerak"
+  },
+  "mc_set_h_adjust": {
+    "message": "laras"
+  },
+  "mc_set_h_toggle": {
+    "message": "togol"
+  },
+  "mc_set_h_reset_row": {
+    "message": "set semula baris"
+  },
+  "mc_set_h_close_clear": {
+    "message": "tutup / kosongkan"
+  },
+  "mc_set_h_this_help": {
+    "message": "bantuan ini"
+  },
+  "mc_set_h_first_last": {
+    "message": "pertama / akhir"
+  },
+  "mc_set_h_fold": {
+    "message": "lipat seksyen"
+  },
+  "mc_set_h_prev_next": {
+    "message": "kategori sebelum / seterusnya"
+  },
+  "mc_set_h_keys": {
+    "message": "kekunci"
+  },
+  "mc_set_h_commands": {
+    "message": "arahan"
+  },
+  "mc_set_h_full_list": {
+    "message": "senarai penuh -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ cari tetapan..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "memaparkan semua tetapan — klik untuk asas sahaja"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "memaparkan asas — klik untuk semua tetapan"
+  },
+  "mc_set_scope_all": {
+    "message": "semua"
+  },
+  "mc_set_scope_basic": {
+    "message": "asas"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emote"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gif"
+  },
+  "mc_emo_chips_title": {
+    "message": "togol penyedia untuk dicari"
+  },
+  "mc_emo_exact_title": {
+    "message": "padanan nama tepat sahaja"
+  },
+  "mc_emo_stack_expand": {
+    "message": "kembang"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "kuncup"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "sekat semua"
+  },
+  "mc_xg_close": {
+    "message": "tutup"
+  },
+  "mc_tr_sub_chat": {
+    "message": "sembang"
+  },
+  "mc_tr_sub_summary": {
+    "message": "ringkasan"
+  },
+  "mc_tr_sub_logs": {
+    "message": "log"
+  },
+  "mc_tr_sub_status": {
+    "message": "status"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "platform"
+  },
+  "mc_tr_set_display": {
+    "message": "paparan"
+  },
+  "mc_tr_set_notifs": {
+    "message": "notif"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "penapis"
+  },
+  "mc_tr_set_system": {
+    "message": "sistem"
+  },
+  "mc_tr_set_help": {
+    "message": "bantuan"
+  },
+  "mc_pt_native_chat": {
+    "message": "sembang asal"
+  },
+  "mc_pt_popout_chat": {
+    "message": "sembang tetingkap berasingan"
+  },
+  "mc_pt_clips": {
+    "message": "klip"
+  },
+  "mc_pt_videos": {
+    "message": "video"
+  },
+  "mc_pt_channel_page": {
+    "message": "halaman saluran"
+  },
+  "mc_pt_no_channel": {
+    "message": "tiada saluran dikesan"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "sembang asal (super chat, sticker, undian, emoji)"
+  },
+  "mc_pt_join_channel": {
+    "message": "sertai saluran"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "kembali ke sembang heatsync"
+  },
+  "mc_pa_show_chat": {
+    "message": "papar sembang (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "sembang youtube perlukan log masuk heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "log masuk heatsync supaya emote anda berfungsi untuk semua orang"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org tak dapat dicapai — menyambung semula"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ tak dapat dicapai",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "strim $CHANNEL$ tamat",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "ringkasan strim $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "statistik strim dimatikan dalam tetapan"
+  },
+  "mc_ss_empty": {
+    "message": "belum ada sembang dikira — akan terisi bila mesej tiba"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ msj · $CHATTERS$ pensembang · $MENTIONS$ sebutan · puncak $PEAK$/s",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "sejak $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "pensembang teratas"
+  },
+  "mc_ss_top_emotes": {
+    "message": "emote teratas"
+  },
+  "mc_cmg_checking": {
+    "message": "menyemak heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "tiada profil heatsync — isi secara manual"
+  },
+  "mc_cmg_unreachable": {
+    "message": "tak dapat capai heatsync"
+  },
+  "mc_cmg_live_on": {
+    "message": "live di $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "$NAME$ dipadankan di heatsync — dipautkan: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "diisi automatik: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "edit live — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ mula live",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ tukar permainan",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "satu mesej dipadam"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ di-unban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ di-timeout selama $SEC$s",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ di-ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ menghadiahkan $AMOUNT$ KICK!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ menghadiahkan $AMOUNT$ KICK ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "tanpa nama"
+  },
+  "mc_cp_vol": {
+    "message": "vol $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "gagal"
+  },
+  "hsbtn_imported": {
+    "message": "$COUNT$ diimport",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "emote anda, dalam setiap sembang"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "buka mana-mana strim twitch, kick atau youtube, kemudian import emotenya dari tab saluran — satu klik, berfungsi dalam setiap sembang."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "tarik setiap emote 7tv, bttv & ffz dari $CHANNEL$ ke set anda — satu klik, dipaparkan dalam setiap sembang.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "import semua emote $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "import semua emote saluran"
+  },
+  "hsbtn_no_sets": {
+    "message": "tiada set disimpan — cipta satu di heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "guna"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "ganti $COUNT$ emote?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "menggunakan…"
+  },
+  "hsbtn_applied": {
+    "message": "digunakan"
+  },
+  "hsbtn_login_removed": {
+    "message": "log masuk untuk lihat emote dibuang"
+  },
+  "hsbtn_no_removed": {
+    "message": "tiada emote dibuang"
+  },
+  "hsbtn_restore": {
+    "message": "pulihkan"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "pulihkan?"
+  },
+  "hsbtn_restoring": {
+    "message": "memulihkan…"
+  },
+  "hsbtn_restored": {
+    "message": "dipulihkan"
+  },
+  "hsbtn_removed_on": {
+    "message": "dibuang $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "gagal memuatkan set"
+  },
+  "hsbtn_err_history": {
+    "message": "gagal memuatkan sejarah"
+  },
+  "hsbtn_err_mine": {
+    "message": "gagal memuatkan emote anda"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "emote saluran tak tersedia"
+  },
+  "hsbtn_err_channel": {
+    "message": "gagal memuatkan emote saluran"
+  },
+  "hsbtn_err_global": {
+    "message": "gagal memuatkan emote global"
+  },
+  "hsbtn_unnamed": {
+    "message": "(tanpa nama)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "daripada $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ dimiliki",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "ralat"
+  },
+  "hsbtn_search_status": {
+    "message": "“$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "“$QUERY$” — mencari…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "tiada emote sepadan “$QUERY$”",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "log masuk untuk tambah emote"
+  },
+  "hsbtn_add_failed": {
+    "message": "gagal menambah"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "nyahsekat gagal"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ penggunaan di heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "dalam inventori"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "tiada dalam inventori"
+  },
+  "hsbtn_open_on": {
+    "message": "buka di $PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "namakan semula"
+  },
+  "hsbtn_move": {
+    "message": "alih"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "alih ke slot…"
+  },
+  "hsbtn_slot_number": {
+    "message": "nombor slot"
+  },
+  "hsbtn_renamed_to": {
+    "message": "dinamakan semula kepada $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "penamaan semula gagal"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "dialih ke slot $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "pengalihan gagal"
+  },
+  "hsbtn_unshare_set": {
+    "message": "henti kongsi set"
+  },
+  "hsbtn_share_set": {
+    "message": "kongsi set"
+  },
+  "hsbtn_set_unshared": {
+    "message": "set tak lagi dikongsi"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "henti kongsi gagal"
+  },
+  "hsbtn_share_copied": {
+    "message": "pautan kongsi disalin: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "kongsi gagal"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "salin markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "kembali ke sembang heatsync"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← sembang heatsync"
+  },
+  "hsbtn_rcb_label": {
+    "message": "sekat klik kanan"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "segera menyekat terus · menu tunjuk sekat/batal · mati melumpuhkannya"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "segera"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "mati"
+  },
+  "hsbtn_search_ph": {
+    "message": "cari emote…"
+  },
+  "hsbtn_chips_title": {
+    "message": "togol penyedia untuk dicari"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "sertakan hasil 7tv"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "sertakan hasil frankerfacez"
+  },
+  "hsbtn_undo": {
+    "message": "buat asal"
+  },
+  "hsbtn_redo": {
+    "message": "buat semula"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "putar panel sembang (C)"
+  },
+  "cs_color_for": {
+    "message": "warna untuk $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "tetapkan"
+  },
+  "cs_clear": {
+    "message": "kosongkan"
+  },
+  "cs_poll": {
+    "message": "📊 undian · "
+  },
+  "cs_prediction": {
+    "message": "🎯 ramalan · "
+  },
+  "cs_active": {
+    "message": "(aktif)"
+  },
+  "cs_badge_alt": {
+    "message": "lencana $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "salin nama pengguna"
+  },
+  "cs_copy_message": {
+    "message": "salin mesej"
+  },
+  "cs_mute_24h": {
+    "message": "senyap (24j)"
+  },
+  "cs_profile": {
+    "message": "profil"
+  },
+  "cs_removed": {
+    "message": "$NAME$ dibuang",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "$NAME$ dibuang · kini $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "log masuk ke heatsync.org untuk urus emote"
+  },
+  "cs_remove_failed": {
+    "message": "tak dapat buang $NAME$: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "ralat tak diketahui"
+  },
+  "popup_site_label": {
+    "message": "sembang heatsync di"
+  },
+  "popup_site_note_default": {
+    "message": "mati memaparkan sembang asal laman"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: sembang asal laman kembali",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: sembang heatsync kembali",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "maklum balas"
+  },
+  "popup_fb_bug": {
+    "message": "pepijat"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "apa yang heatsync patut buat lebih baik?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "apa yang rosak? apa yang anda jangka?"
+  },
+  "popup_fb_send": {
+    "message": "hantar"
+  },
+  "popup_fb_sending": {
+    "message": "menghantar..."
+  },
+  "popup_fb_short": {
+    "message": "ceritakan sedikit lagi"
+  },
+  "popup_fb_sent": {
+    "message": "dihantar — terima kasih"
+  },
+  "popup_fb_failed": {
+    "message": "gagal dihantar. cuba lagi."
+  },
+  "popup_feedback_link": {
+    "message": "maklum balas"
+  },
+  "popup_feedback_title": {
+    "message": "maklum balas / laporan pepijat"
+  },
+  "popup_inv_slots": {
+    "message": "5,000 slot emote"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "log masuk sebagai $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5,000 slot"
+  },
+  "popup_inv_import_hint": {
+    "message": " · import satu saluran untuk mengisinya"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ lagi",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ sedang live",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ penonton",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ yang diikuti sedang live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — tukar akaun"
+  },
+  "bg_acct_msg": {
+    "message": "bertukar daripada $FROM$ kepada $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "memuatkan emote saluran..."
+  },
+  "bg_loading_third": {
+    "message": "mengambil emote pihak ketiga..."
+  },
+  "bg_loading_emotes": {
+    "message": "memuatkan emote..."
+  },
+  "cs_uploading": {
+    "message": "memuat naik..."
+  },
+  "cs_file_too_large": {
+    "message": "fail terlalu besar (maks $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "muat naik gagal"
+  },
+  "cs_yt_top_chat": {
+    "message": "mod sembang teratas — tukar youtube ke sembang langsung"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync tak dapat melekat pada sembang ini"
+  },
+  "cs_badge_owner": {
+    "message": "pemilik"
+  },
+  "cs_badge_member": {
+    "message": "ahli"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl gerak  kj sejarah  wb/WBE perkataan  0$$^ baris  gg/G hujung\nfFtT+aksara cari  ;, ulang cari  [nombor]arahan ulang\nx/X padam aksara  dw/db/de/dd padam  D padam→hujung\ncw/cb/ce/cc tukar  C tukar→hujung  s/S ganti\nyw/yb/ye/yy salin  p/P tampal  r ganti  ~ huruf besar/kecil\ni/a/I/A sisip  u buat asal  Ctrl+R buat semula  . ulang  ? bantuan\n\nSPC = leader — arahan sembang tanpa keluar dari kotak\nSPC /    cari         SPC n/N  padanan seterusnya/sebelum\nSPC 1-9  tab ke-n     SPC ]/[  tab seterusnya/sebelum\nSPC t    pemilih tab  SPC \\    sorok/papar sembang"
+  },
+  "lib_sec_font": {
+    "message": "fon"
+  },
+  "lib_sec_chat_messages": {
+    "message": "mesej sembang"
+  },
+  "lib_sec_layout": {
+    "message": "susun atur"
+  },
+  "lib_sec_density": {
+    "message": "kepadatan"
+  },
+  "lib_sec_messages": {
+    "message": "mesej"
+  },
+  "lib_sec_mentioned": {
+    "message": "bila anda di-@sebut"
+  },
+  "lib_sec_cross_follow": {
+    "message": "ikutan merentas platform"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "bar alat mod"
+  },
+  "lib_sec_content": {
+    "message": "kandungan"
+  },
+  "lib_sec_rules": {
+    "message": "peraturan"
+  },
+  "lib_sec_player": {
+    "message": "pemain"
+  },
+  "lib_sec_tabs": {
+    "message": "tab"
+  },
+  "lib_sec_language": {
+    "message": "bahasa"
+  },
+  "lib_opt_system_monospace": {
+    "message": "monospace sistem"
+  },
+  "lib_opt_platform_default": {
+    "message": "lalai platform (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "tersuai..."
+  },
+  "lib_opt_unread": {
+    "message": "belum dibaca"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "atas"
+  },
+  "lib_opt_right": {
+    "message": "kanan"
+  },
+  "lib_opt_bottom": {
+    "message": "bawah"
+  },
+  "lib_opt_left": {
+    "message": "kiri"
+  },
+  "lib_opt_hidden": {
+    "message": "disorok"
+  },
+  "lib_opt_compact": {
+    "message": "padat"
+  },
+  "lib_opt_cozy": {
+    "message": "selesa"
+  },
+  "lib_opt_always": {
+    "message": "sentiasa"
+  },
+  "lib_opt_hover": {
+    "message": "hover"
+  },
+  "lib_opt_never": {
+    "message": "tidak pernah"
+  },
+  "slash_desc_op": {
+    "message": "kirim thread ke suapan heatsync anda"
+  },
+  "slash_desc_re": {
+    "message": "balas [OP] terakhir yang dipaparkan dalam sembang"
+  },
+  "slash_desc_dm": {
+    "message": "hantar DM heatsync; tanpa mesej, perbualan dibuka"
+  },
+  "slash_desc_w": {
+    "message": "hantar whisper twitch"
+  },
+  "slash_desc_color": {
+    "message": "tetapkan warna sembang twitch anda (nama seperti orangered, atau #hex dengan turbo)"
+  },
+  "slash_desc_r": {
+    "message": "balas whisper terakhir yang anda terima"
+  },
+  "slash_desc_user": {
+    "message": "buka kad profil dengan log terkini"
+  },
+  "slash_desc_follow": {
+    "message": "ikut di heatsync, dicerminkan ke twitch dan kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "nyahikut di heatsync, dicerminkan ke twitch dan kick"
+  },
+  "slash_desc_me": {
+    "message": "hantar mesej tindakan"
+  },
+  "slash_desc_shrug": {
+    "message": "tambah ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "tambah (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "tambah ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "senarai arahan"
+  },
+  "slash_desc_lclear": {
+    "message": "kosongkan tab semasa untuk anda sahaja"
+  },
+  "slash_desc_mute": {
+    "message": "senyapkan seseorang 24j, merentas akaun terpautnya"
+  },
+  "slash_desc_unmute": {
+    "message": "buang senyap"
+  },
+  "slash_desc_block": {
+    "message": "togol sekat"
+  },
+  "slash_desc_hide": {
+    "message": "sorok seseorang dalam tab ini sahaja, sehingga muat semula"
+  },
+  "slash_desc_unhide": {
+    "message": "buat asal sorok"
+  },
+  "slash_desc_note": {
+    "message": "simpan nota peribadi tentang seseorang"
+  },
+  "slash_desc_delnote": {
+    "message": "buang nota anda"
+  },
+  "slash_desc_set": {
+    "message": "tukar tetapan, cth /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "tukar tab: saluran, atau tab bernama seperti live atau mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "salin pautan heatsync.org/m ke susunan tab anda"
+  },
+  "slash_desc_layout": {
+    "message": "tambah tab daripada pautan heatsync.org/m"
+  },
+  "slash_desc_status": {
+    "message": "papar mod sembang dan maklumat strim"
+  },
+  "slash_desc_ban": {
+    "message": "ban seseorang daripada saluran secara kekal"
+  },
+  "slash_desc_timeout": {
+    "message": "timeout seseorang, lalai 10 minit"
+  },
+  "slash_desc_unban": {
+    "message": "angkat ban atau tamatkan timeout"
+  },
+  "slash_desc_delete": {
+    "message": "padam satu mesej"
+  },
+  "slash_desc_nuke": {
+    "message": "padam beramai-ramai mesej terkini yang mengandungi satu terma"
+  },
+  "slash_desc_announce": {
+    "message": "kirim pengumuman, boleh berwarna"
+  },
+  "slash_desc_vip": {
+    "message": "beri VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "tarik balik VIP"
+  },
+  "slash_desc_mod": {
+    "message": "beri moderator"
+  },
+  "slash_desc_unmod": {
+    "message": "tarik balik moderator"
+  },
+  "slash_desc_blocked": {
+    "message": "buka senarai terma disekat untuk saluran ini"
+  },
+  "slash_desc_modtools": {
+    "message": "buka panel alat mod"
+  },
+  "slash_desc_shield": {
+    "message": "hidupkan atau matikan mod shield"
+  },
+  "slash_desc_warn": {
+    "message": "beri amaran kepada pensembang"
+  },
+  "slash_desc_shoutout": {
+    "message": "shoutout satu saluran"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "buka permintaan unban"
+  },
+  "slash_desc_slow": {
+    "message": "mod perlahan, lalai 30s"
+  },
+  "slash_desc_followers": {
+    "message": "mod pengikut sahaja"
+  },
+  "slash_desc_emoteonly": {
+    "message": "mod emote sahaja"
+  },
+  "slash_desc_subscribers": {
+    "message": "mod pelanggan sahaja"
+  },
+  "slash_desc_unique": {
+    "message": "mod sembang unik; twitch sahaja, kick tiada setara"
+  },
+  "slash_desc_poll": {
+    "message": "cipta undian, 2-5 pilihan"
+  },
+  "slash_desc_endpoll": {
+    "message": "tamatkan undian aktif"
+  },
+  "slash_desc_vote": {
+    "message": "undi pilihan n dalam undian aktif"
+  },
+  "slash_desc_prediction": {
+    "message": "mulakan ramalan, 2-10 hasil"
+  },
+  "slash_desc_bet": {
+    "message": "pertaruh mata saluran pada hasil n"
+  },
+  "slash_desc_lockpred": {
+    "message": "kunci ramalan aktif"
+  },
+  "slash_desc_resolvepred": {
+    "message": "putuskan ramalan kepada hasil n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "batalkan ramalan aktif"
+  },
+  "slash_desc_highlight": {
+    "message": "serlahkan mesej anda dalam sembang twitch"
+  },
+  "slash_sec_everyday": {
+    "message": "harian"
+  },
+  "slash_sec_local": {
+    "message": "tetingkap ini sahaja"
+  },
+  "slash_sec_mod": {
+    "message": "moderasi"
+  },
+  "slash_sec_modes": {
+    "message": "mod sembang"
+  },
+  "slash_sec_events": {
+    "message": "undian, ramalan, bits"
+  },
+  "slash_help_full_list": {
+    "message": "senarai penuh -> /commands"
+  },
+  "slash_help_label": {
+    "message": "slash command"
   }
 }

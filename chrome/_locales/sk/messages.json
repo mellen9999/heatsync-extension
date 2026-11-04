@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "odoberať"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "pohľad moderátora (chat, automod, blokované výrazy)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "vysielateľ"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "panel tvorcu"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "správca streamu"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "nastavenia moderovania (automod, blokované výrazy)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "nastavenia kanála"
+  },
+  "mc_twapi_ql_community": {
+    "message": "komunita (modovia, vip, sledovania)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "monetizácia"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "stránky kanála"
+  },
+  "mc_twapi_ql_about": {
+    "message": "o kanáli"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "videá"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "klipy"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "rozvrh"
+  },
+  "mc_twapi_ql_account": {
+    "message": "tvoj účet"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "dropy / inventár"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "moje odbery"
+  },
+  "mc_twapi_ql_following": {
+    "message": "sledované kanály"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "nastavenia twitchu"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "súkromie + zabezpečenie"
+  },
+  "mc_twapi_won": {
+    "message": "výhra"
+  },
+  "mc_twapi_lost": {
+    "message": "prehra"
+  },
+  "mc_twapi_max": {
+    "message": "max"
+  },
+  "mc_twapi_amt": {
+    "message": "suma"
+  },
+  "mc_twapi_bet": {
+    "message": "stávka"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ bodov · $COUNT$ stávkar",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ bodov · $COUNT$ stávkarov",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "tvoja stávka: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "staval si $POINTS$ na $OUTCOME$ — vyber skutočného víťaza",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "pauza $N$m",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "pauza $N$s",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "zlyhalo"
+  },
+  "mc_twapi_err_own": {
+    "message": "na seba staviť nemôžeš"
+  },
+  "mc_twapi_err_retry": {
+    "message": "skús znova"
+  },
+  "mc_twapi_err_locked": {
+    "message": "stávky sú zamknuté"
+  },
+  "mc_twapi_err_points": {
+    "message": "nedostatok bodov"
+  },
+  "mc_twapi_err_already": {
+    "message": "už si staval"
+  },
+  "mc_twapi_no_event": {
+    "message": "žiadna udalosť"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "žiadny výsledok"
+  },
+  "mc_twapi_no_channel": {
+    "message": "žiadny kanál"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "zatváram..."
+  },
+  "mc_twapi_closing": {
+    "message": "zatváram"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "kanál sa nenašiel"
+  },
+  "mc_twapi_tab_events": {
+    "message": "udalosti"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bity"
+  },
+  "mc_twapi_tab_links": {
+    "message": "rýchle odkazy"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "poslať bity kanálu $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "zostatok: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "otvoriť okno cheer"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bitov",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ divákov",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ divákov",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "stávka: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ hlas",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ hlasov",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "hlasovať"
+  },
+  "mc_input_unblock": {
+    "message": "odblokovať"
+  },
+  "mc_input_remove_from_set": {
+    "message": "odstrániť zo setu"
+  },
+  "mc_input_open_on": {
+    "message": "otvoriť na $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "zobraziť obrázok"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "skopírovať :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "skopírovať url obrázka"
+  },
+  "mc_input_copy_emoji": {
+    "message": "skopírovať emoji"
+  },
+  "mc_input_expand": {
+    "message": "rozbaliť"
+  },
+  "mc_input_mute_24h": {
+    "message": "stlmiť (24h)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "zobraziť v karte"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "skryť v karte"
+  },
+  "mc_input_copy_message": {
+    "message": "skopírovať správu"
+  },
+  "mc_input_copy_to_input": {
+    "message": "skopírovať → vstup"
+  },
+  "mc_input_copy_thread": {
+    "message": "skopírovať vlákno"
+  },
+  "mc_input_delete_msg": {
+    "message": "zmazať správu"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10m"
+  },
+  "mc_input_timed_out": {
+    "message": "v timeoute"
+  },
+  "mc_input_warn": {
+    "message": "varovať"
+  },
+  "mc_input_reply": {
+    "message": "odpovedať"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op do feedu"
+  },
+  "mc_input_whisper": {
+    "message": "šepot"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "upraviť poznámku"
+  },
+  "mc_input_add_note": {
+    "message": "pridať poznámku"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "nahlásiť / darovať odber"
+  },
+  "mc_input_filter_to": {
+    "message": "filtrovať na $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "logy chatu"
+  },
+  "mc_input_edit_timer": {
+    "message": "upraviť ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "upraviť (vypršalo)"
+  },
+  "mc_input_delete": {
+    "message": "zmazať"
+  },
+  "mc_input_chatter": {
+    "message": "chatter"
+  },
+  "mc_input_everyone": {
+    "message": "všetci"
+  },
+  "mc_input_heatsync_only": {
+    "message": "iba heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "tvoj inventár"
+  },
+  "mc_input_all_twitch": {
+    "message": "celý twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "celý kick"
+  },
+  "mc_input_ext_users": {
+    "message": "používatelia $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "hľadám na 7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "iba odberatelia"
+  },
+  "mc_input_usage_color": {
+    "message": "použitie: /color <name|#hex> — napr. /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "farba chatu nastavená na $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "použitie: /re <text>"
+  },
+  "mc_input_re_no_post": {
+    "message": "v chate zatiaľ nie je príspevok na odpoveď"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "anketa zlyhala: $ERROR$ (iba vysielateľ)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "anketa zlyhala: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "predikcia zlyhala: $ERROR$ (iba vysielateľ)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "predikcia zlyhala: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "ukončenie ankety zlyhalo: $ERROR$ (iba vysielateľ)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "hlasovanie zlyhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "stávka zlyhala: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "zlyhalo: $ERROR$ (iba vysielateľ)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ zlyhalo: $ERROR$ (iba vysielateľ)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "oznámenie zlyhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <name> — otvorí jeho profilovú kartu"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <user> — skryje v tejto karte"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <user> — zobrazí v tejto karte"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r na odpoveď pre $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "nahrávanie prebieha..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "povolené sú len obrázky/videá"
+  },
+  "mc_input_upload_too_large": {
+    "message": "súbor je príliš veľký (max $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "nahrávam..."
+  },
+  "mc_input_upload_done": {
+    "message": "nahrané"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "nahrávanie zlyhalo: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "nahrávanie zlyhalo"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "originál sa nepodarilo načítať — odoslal sa statický záber"
+  },
+  "mc_input_drop_zone": {
+    "message": "pusti sem obrázok/video/odkaz na nahranie"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <message>"
+  },
+  "mc_social_edit_empty": {
+    "message": "obsah nemôže byť prázdny"
+  },
+  "mc_social_saving": {
+    "message": "ukladám..."
+  },
+  "mc_social_edit_failed": {
+    "message": "úprava zlyhala"
+  },
+  "mc_social_confirm_delete": {
+    "message": "zmazať tento príspevok?"
+  },
+  "mc_social_home_title": {
+    "message": "prihlás sa a uvidíš svoju domovskú stránku"
+  },
+  "mc_social_home_sub": {
+    "message": "sleduj ľudí, pridávaj príspevky, zdieľaj — popri multichate"
+  },
+  "mc_social_home_login": {
+    "message": "prihlás sa na heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "na multichat účet nepotrebuješ — vyber kanál v kartách hore"
+  },
+  "mc_social_no_posts": {
+    "message": "žiadne príspevky"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "sleduj ľudí alebo niečo pridaj a karta sa naplní"
+  },
+  "mc_social_import_follows": {
+    "message": "importovať sledovania z twitchu"
+  },
+  "mc_social_syncing": {
+    "message": "synchronizujem…"
+  },
+  "mc_social_synced": {
+    "message": "synchronizované $COUNT$ ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "skús znova"
+  },
+  "mc_social_failed": {
+    "message": "zlyhalo"
+  },
+  "mc_social_discover_people": {
+    "message": "objav ľudí →"
+  },
+  "mc_social_post_something": {
+    "message": "pridaj príspevok"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "top príspevky · prihlás sa na heatsync.org a sleduj ľudí"
+  },
+  "mc_social_banner_newest": {
+    "message": "najnovšie príspevky · sleduj ľudí a naplň si feed"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "top tento mesiac · sleduj ľudí a naplň si feed"
+  },
+  "mc_social_edited": {
+    "message": "(upravené)"
+  },
+  "mc_social_replying_to": {
+    "message": "odpoveď na >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "opustiť vlákno"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ divák",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ divákov",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ divákov",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ odpoveď",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ odpovedí",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(bez textu)"
+  },
+  "mc_social_live_now": {
+    "message": "práve live"
+  },
+  "mc_social_no_streams": {
+    "message": "práve nikto nevysiela"
+  },
+  "mc_social_hot_posts": {
+    "message": "top príspevky"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "filtru nezodpovedá žiadny príspevok"
+  },
+  "mc_social_tags": {
+    "message": "tagy"
+  },
+  "mc_social_none_now": {
+    "message": "momentálne nič"
+  },
+  "mc_social_leaderboard": {
+    "message": "rebríček"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "filtru nezodpovedá žiadny profil"
+  },
+  "mc_social_no_pinned": {
+    "message": "žiadne pripnuté správy"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "zatiaľ žiadne akcie moderátorov"
+  },
+  "mc_social_platform": {
+    "message": "platforma"
+  },
+  "mc_social_all": {
+    "message": "všetko"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "míľnik členstva"
+  },
+  "mc_social_yt_member": {
+    "message": "sa stal členom"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "daroval $COUNT$ členstvo",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "daroval $COUNT$ členstiev",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "chyba pripojenia"
+  },
+  "mc_social_replies_title": {
+    "message": "odpovede"
+  },
+  "mc_pcard_del_msg": {
+    "message": "zmazať správu"
+  },
+  "mc_pcard_del_title": {
+    "message": "zmazať poslednú správu tohto používateľa"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "udeliť moderátora (iba vysielateľ)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "odobrať moderátora (iba vysielateľ)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "udeliť VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "odobrať VIP"
+  },
+  "mc_pcard_error": {
+    "message": "chyba"
+  },
+  "mc_pcard_no_channel": {
+    "message": "kanál sa nepodarilo nájsť"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ zlyhalo: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "relácia"
+  },
+  "mc_pcard_first": {
+    "message": "prvá"
+  },
+  "mc_pcard_channels": {
+    "message": "kanály"
+  },
+  "mc_pcard_close_profile": {
+    "message": "zavrieť profil"
+  },
+  "mc_pcard_close_esc": {
+    "message": "zavrieť (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "nepodarilo sa načítať — skús znova"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url skopírovaná"
+  },
+  "mc_pcard_clip_created": {
+    "message": "klip vytvorený"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "klip zlyhal: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "skopírované"
+  },
+  "mc_logs_failed": {
+    "message": "zlyhalo"
+  },
+  "mc_logs_all_channels": {
+    "message": "všetky kanály"
+  },
+  "mc_logs_all": {
+    "message": "všetko"
+  },
+  "mc_logs_scope_channel": {
+    "message": "zobrazený len #$CHANNEL$ — klikni pre všetky kanály",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "zobrazené všetky kanály — klikni pre #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "hľadať…"
+  },
+  "mc_logs_search_title": {
+    "message": "hľadať v správach používateľa $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "obnoviť"
+  },
+  "mc_logs_export_txt": {
+    "message": "exportovať ako .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "exportovať ako .json"
+  },
+  "mc_logs_public": {
+    "message": "verejný archív ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "otvoriť verejný chatlog kanála #$CHANNEL$ na heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "archív sa nepodarilo načítať — hľadaj alebo posuň znova"
+  },
+  "mc_logs_backfill": {
+    "message": "sťahujem historické logy zo $SOURCE$… skús obnoviť o ~30s",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "žiadne výsledky pre \"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "zatiaľ žiadne archivované správy od $USER$ v #$CHANNEL$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "zatiaľ žiadne archivované správy od $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "posuň pre staršie"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "skopírovať trvalý odkaz"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "trvalý odkaz $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "poznámka · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "súkromná poznámka — vidíš ju len ty. sleduje ho naprieč platformami."
+  },
+  "mc_notes_esc": {
+    "message": "esc zavrie"
+  },
+  "mc_notes_delete": {
+    "message": "zmazať"
+  },
+  "mc_notes_saved": {
+    "message": "uložené · esc zavrie"
+  },
+  "mc_notes_saving": {
+    "message": "ukladám…"
+  },
+  "mc_notes_section": {
+    "message": "poznámky"
+  },
+  "mc_notes_empty": {
+    "message": "zatiaľ bez poznámky"
+  },
+  "mc_notes_edit": {
+    "message": "upraviť"
+  },
+  "mc_notes_add": {
+    "message": "pridať poznámku"
+  },
+  "mc_feed_loading_name": {
+    "message": "načítavam $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "načítavam riadok chatu…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "načítavam náhľad…"
+  },
+  "mc_feed_adult_login": {
+    "message": "na zobrazenie sa prihlás ako dospelý"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "obrázok nie je dostupný"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "otvoriť v novej karte"
+  },
+  "mc_feed_reload_player": {
+    "message": "znova načítať prehrávač (po prihlásení)"
+  },
+  "mc_feed_pause": {
+    "message": "pauza"
+  },
+  "mc_feed_volume": {
+    "message": "hlasitosť"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "späť na chat (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "vyplniť chat"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "otvoriť v novej karte"
+  },
+  "mc_feed_close_player": {
+    "message": "zavrieť prehrávač"
+  },
+  "mc_feed_back": {
+    "message": "← späť"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "šepot zlyhal"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "server heatsync je nedostupný"
+  },
+  "mc_misc_twitch_error": {
+    "message": "chyba twitchu $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "žiadna relácia twitchu"
+  },
+  "mc_misc_unknown_error": {
+    "message": "neznáma chyba"
+  },
+  "mc_misc_sending": {
+    "message": "odosielam"
+  },
+  "mc_misc_click_retry": {
+    "message": "klikni a skús znova"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — klikni a povoľ na heatsync oprávnenie na twitch šepoty",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "povoliť twitch šepoty — prepojiť znova"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — klikni, sleduj $USER$ a odošli",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — klikni a prihlás sa na heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "na odoslanie sa prihlás na heatsync"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — skús znova",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "odpoveď ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "správa k obnoveniu odberu ($MONTHS$mes) — enter zdieľa",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "séria sledovania ($COUNT$) — enter zdieľa",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "zmazať túto správu"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 minúta"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 minút"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 hodina"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 hodín"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 dní"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — vymaže správy používateľa (timeout 1s)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "trvalý ban"
+  },
+  "mc_mtb_t_unban": {
+    "message": "zrušiť ban používateľa"
+  },
+  "mc_mtb_t_bt": {
+    "message": "blokované výrazy"
+  },
+  "mc_mtb_t_mt": {
+    "message": "nástroje moda"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "moderátorské akcie so správou"
+  },
+  "mc_main_back_to_chat": {
+    "message": "späť na chat"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "späť na chat (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "upraviť platformy"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ ďalšie $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "otvoriť $CH$ na $PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "otvoriť chat $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "odpovedať"
+  },
+  "mc_main_also_live_on": {
+    "message": "live aj na $PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "prepojiť kanály"
+  },
+  "mc_main_dismiss": {
+    "message": "zavrieť"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "zavrieť (funguje aj pravý klik)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "pridaj svoje streamy"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "twitch, kick + youtube chat v jednom paneli"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ pridať kanál"
+  },
+  "mc_main_idwarn": {
+    "message": "tvoje emotikony tu ostatní neuvidia — heatsync účet $ACCT$, chatuješ ako $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "prepojiť účty"
+  },
+  "mc_main_status_no_yt": {
+    "message": "stav funguje pre kanály twitch a kick"
+  },
+  "mc_main_status_fetching": {
+    "message": "načítavam #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "nepodarilo sa načítať #$CH$ (offline alebo nie je na $PLAT$?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "prihlás sa a uvidíš tu svoje logy — pravý klik na chattera zobrazí jeho"
+  },
+  "mc_main_logs_rclick": {
+    "message": "pravý klik na chattera zobrazí jeho logy z $PLAT$",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "karty chatu"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "skryť chat (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "skryť chat"
+  },
+  "mc_main_popout_title": {
+    "message": "otvoriť chat v samostatnom okne"
+  },
+  "mc_main_subscribe_title": {
+    "message": "odoberať — podporiť tento kanál"
+  },
+  "mc_main_views_aria": {
+    "message": "zobrazenia"
+  },
+  "mc_main_search_ph": {
+    "message": "hľadať správy…"
+  },
+  "mc_main_messages_aria": {
+    "message": "správy chatu"
+  },
+  "mc_main_search_none_for": {
+    "message": "žiadne výsledky pre \"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "žiadne výsledky"
+  },
+  "mc_main_moment": {
+    "message": "chat $CH$ exploduje — $RATE$ správ/30s (zvyčajne ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "filter — /regex/ alebo @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ bodov",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "odmena za body kanála"
+  },
+  "mc_main_highlighted": {
+    "message": "zvýraznená správa"
+  },
+  "mc_main_first_msg": {
+    "message": "prvá správa v tomto kanáli"
+  },
+  "mc_main_kill_active": {
+    "message": "vypnuté heatsyncom (kill-switch je aktívny)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat vypnutý heatsyncom"
+  },
+  "mc_main_kill_update": {
+    "message": "vyžaduje sa aktualizácia rozšírenia (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "uplatnil \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "raidol $TARGET$ s $VIEWERS$ divákmi",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ raidol s $VIEWERS$ divákmi",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "nová anketa"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "nová anketa — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "nová predikcia"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "nová predikcia — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train sa začal"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train skončil na úrovni $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ daroval $COUNT$ odberov",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "pripnuté $BY$: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "pripnuté: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "správa odpripnutá"
+  },
+  "mc_notif_dismiss": {
+    "message": "zavrieť"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "načítavam emotikony…"
+  },
+  "mc_notif_whispered": {
+    "message": "šepkal: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "oslavuje"
+  },
+  "mc_notif_rt_mo": {
+    "message": "mes"
+  },
+  "mc_notif_rt_months": {
+    "message": "mesiacov"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "ako odberateľ"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "v sérii"
+  },
+  "mc_notif_wt_stream": {
+    "message": "streamov"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "sledovania"
+  },
+  "mc_notif_share": {
+    "message": "zdieľať"
+  },
+  "mc_notif_update_available": {
+    "message": "dostupná aktualizácia — beží $CUR$, najnovšia je $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "otvoriť kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "otvoriť youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "na chatovanie sa prihlás na twitch.tv"
+  },
+  "mc_notif_open_twitch": {
+    "message": "otvoriť twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- KARTY --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "overenie twitchu zlyhalo"
+  },
+  "mc_notif_r_no_user": {
+    "message": "chýba meno na twitchi"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "pripojenie zlyhalo"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "odoslanie zlyhalo"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "neprihlásený na kicku"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "nie je otvorená karta kicku"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "kanál na kicku sa nenašiel"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick nepotvrdil — správa mohla odísť"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick odmietol odoslanie"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "nie je otvorená karta youtube"
+  },
+  "mc_notif_r_no_input": {
+    "message": "chat youtube sa ešte načítava"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "najprv sa prihlás na youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube zablokoval odoslanie"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube nepotvrdil odoslanie"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "most k chatu youtube vypršal"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ nepotvrdil — správa možno neodišla",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "platforma"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "chat je obmedzený — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "chat je obmedzený"
+  },
+  "mc_notif_r_unknown": {
+    "message": "odoslanie možno zlyhalo"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "skryté"
+  },
+  "mc_tip_owner_sub": {
+    "message": "odber $OWNER$ ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · odstránil @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · odstránené z kanála",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "on"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "odber u teba $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "odber kan."
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "sledov. kan."
+  },
+  "mc_tip_row_follower": {
+    "message": "sledovateľ"
+  },
+  "mc_tip_row_you": {
+    "message": "ty"
+  },
+  "mc_tip_follow_ago": {
+    "message": "sleduje $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "sledovatelia"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ správ",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "od $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "od $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "logy"
+  },
+  "mc_set_system_backup": {
+    "message": "systém · záloha / obnova"
+  },
+  "mc_set_recent_errors": {
+    "message": "posledné chyby"
+  },
+  "mc_set_copy": {
+    "message": "kopírovať"
+  },
+  "mc_set_clear": {
+    "message": "vymazať"
+  },
+  "mc_set_crash_loading": {
+    "message": "(načítavam...)"
+  },
+  "mc_set_export_tip": {
+    "message": "vyexportuje ui_settings + všetky kľúče hs_* do súboru JSON. prenosné medzi zariadeniami a prehliadačmi."
+  },
+  "mc_set_export": {
+    "message": "exportovať nastavenia"
+  },
+  "mc_set_export_btn": {
+    "message": "stiahnuť .json"
+  },
+  "mc_set_import_tip": {
+    "message": "obnoví z predtým exportovaného súboru JSON. zlúči sa do existujúcich nastavení."
+  },
+  "mc_set_import": {
+    "message": "importovať nastavenia"
+  },
+  "mc_set_import_btn": {
+    "message": "načítať .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "obnoviť všetky nastavenia na všetkých stránkach"
+  },
+  "mc_set_all_defaults": {
+    "message": "všetko na predvolené"
+  },
+  "mc_set_backup_restore": {
+    "message": "záloha / obnova"
+  },
+  "mc_set_fr_sound": {
+    "message": "zvuk: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "posunúť vyššie (vyššia priorita — vyhráva prvá zhoda)"
+  },
+  "mc_set_fr_down": {
+    "message": "posunúť nižšie"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "všetky kanály"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "kľúčové slovo"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "používateľ"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "odznak"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "typ správy"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "výraz"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "napr. first && !badge:subscriber — spájaj cez && || ! ( ); polia user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "hodnota..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "zvýrazniť"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "skryť"
+  },
+  "mc_set_fr_color": {
+    "message": "farba zvýraznenia"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "zvuk zvýraznenia (len pre akciu zvýrazniť)"
+  },
+  "mc_set_fr_silent": {
+    "message": "ticho"
+  },
+  "mc_set_fr_case": {
+    "message": "rozlišovať veľkosť písmen"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ pridať"
+  },
+  "mc_set_fr_none": {
+    "message": "žiadne pravidlá — pridaj ich nižšie"
+  },
+  "mc_set_page_reset_title": {
+    "message": "obnoviť túto stránku na predvolené"
+  },
+  "mc_set_default": {
+    "message": "predvolené"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "ešte $N$ nastavenie tu — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "ešte $N$ nastavení tu — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "zobraziť všetko"
+  },
+  "mc_set_crash_none": {
+    "message": "(žiadne zaznamenané chyby)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(log sa nepodarilo prečítať)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "vypnuté: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "všetko zapnuté"
+  },
+  "mc_set_fmt_none": {
+    "message": "nič"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "zmazať predvoľbu…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "zmazať $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "zmazať predvoľbu"
+  },
+  "mc_set_preset_save_as": {
+    "message": "uložiť aktuálne ako…"
+  },
+  "mc_set_preset_undo": {
+    "message": "späť: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "predvoľby"
+  },
+  "mc_set_preset_save_title": {
+    "message": "uložiť aktuálne ako predvoľbu"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "názov predvoľby"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "uloží každé nastavenie, ktoré sa líši od predvoleného — zdieľateľné cez exportovať nastavenia"
+  },
+  "mc_set_preset_nochange": {
+    "message": "už sa zhoduje — nič na zmenu"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "použiť predvoľbu: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "použiť"
+  },
+  "mc_set_h_search": {
+    "message": "hľadať"
+  },
+  "mc_set_h_category": {
+    "message": "kategória"
+  },
+  "mc_set_h_move": {
+    "message": "posun"
+  },
+  "mc_set_h_adjust": {
+    "message": "úprava"
+  },
+  "mc_set_h_toggle": {
+    "message": "prepnúť"
+  },
+  "mc_set_h_reset_row": {
+    "message": "obnoviť riadok"
+  },
+  "mc_set_h_close_clear": {
+    "message": "zavrieť / vymazať"
+  },
+  "mc_set_h_this_help": {
+    "message": "táto pomoc"
+  },
+  "mc_set_h_first_last": {
+    "message": "prvé / posledné"
+  },
+  "mc_set_h_fold": {
+    "message": "zbaliť sekciu"
+  },
+  "mc_set_h_prev_next": {
+    "message": "predch. / ďalšia kategória"
+  },
+  "mc_set_h_keys": {
+    "message": "klávesy"
+  },
+  "mc_set_h_commands": {
+    "message": "príkazy"
+  },
+  "mc_set_h_full_list": {
+    "message": "celý zoznam -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ hľadať nastavenia..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "zobrazené všetky nastavenia — klikni pre iba základné"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "zobrazené základné — klikni pre všetky nastavenia"
+  },
+  "mc_set_scope_all": {
+    "message": "všetko"
+  },
+  "mc_set_scope_basic": {
+    "message": "základné"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emotikony"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gify"
+  },
+  "mc_emo_chips_title": {
+    "message": "prepni, ktorých poskytovateľov hľadať"
+  },
+  "mc_emo_exact_title": {
+    "message": "iba presná zhoda názvu"
+  },
+  "mc_emo_stack_expand": {
+    "message": "rozbaliť"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "zbaliť"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "blokovať všetko"
+  },
+  "mc_xg_close": {
+    "message": "zavrieť"
+  },
+  "mc_tr_sub_chat": {
+    "message": "chat"
+  },
+  "mc_tr_sub_summary": {
+    "message": "súhrn"
+  },
+  "mc_tr_sub_logs": {
+    "message": "logy"
+  },
+  "mc_tr_sub_status": {
+    "message": "stav"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "platformy"
+  },
+  "mc_tr_set_display": {
+    "message": "zobrazenie"
+  },
+  "mc_tr_set_notifs": {
+    "message": "upozornenia"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "filtre"
+  },
+  "mc_tr_set_system": {
+    "message": "systém"
+  },
+  "mc_tr_set_help": {
+    "message": "pomoc"
+  },
+  "mc_pt_native_chat": {
+    "message": "natívny chat"
+  },
+  "mc_pt_popout_chat": {
+    "message": "chat v okne"
+  },
+  "mc_pt_clips": {
+    "message": "klipy"
+  },
+  "mc_pt_videos": {
+    "message": "videá"
+  },
+  "mc_pt_channel_page": {
+    "message": "stránka kanála"
+  },
+  "mc_pt_no_channel": {
+    "message": "kanál sa nenašiel"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "natívny chat (super chat, stickery, ankety, emoji)"
+  },
+  "mc_pt_join_channel": {
+    "message": "pripojiť sa ku kanálu"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "späť na chat heatsync"
+  },
+  "mc_pa_show_chat": {
+    "message": "zobraziť chat (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "chat youtube vyžaduje prihlásenie do heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "prihlás sa na heatsync, aby tvoje emotikony fungovali pre všetkých"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org je nedostupný — pripájam sa znova"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ je nedostupný",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "stream $CHANNEL$ skončil",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "súhrn streamu $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "štatistiky streamu sú v nastaveniach vypnuté"
+  },
+  "mc_ss_empty": {
+    "message": "chat sa ešte nepočíta — naplní sa s príchodom správ"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ správ · $CHATTERS$ chatterov · $MENTIONS$ zmienok · $PEAK$/s vrchol",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "od $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "top chatteri"
+  },
+  "mc_ss_top_emotes": {
+    "message": "top emotikony"
+  },
+  "mc_cmg_checking": {
+    "message": "kontrolujem heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "žiadny profil heatsync — vyplň ručne"
+  },
+  "mc_cmg_unreachable": {
+    "message": "heatsync sa nepodarilo kontaktovať"
+  },
+  "mc_cmg_live_on": {
+    "message": "live na $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "$NAME$ nájdený na heatsync — prepojené: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "predvyplnené: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "upraviť live — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ začal vysielať",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ zmenil hru",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "správa bola zmazaná"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ má zrušený ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ dostal timeout na $SEC$s",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ dostal ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ daroval $AMOUNT$ KICKov!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ daroval $AMOUNT$ KICKov ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "anonym"
+  },
+  "mc_cp_vol": {
+    "message": "hlas. $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "zlyhalo"
+  },
+  "hsbtn_imported": {
+    "message": "importované $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "tvoje emotikony v každom chate"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "otvor ľubovoľný stream na twitchi, kicku alebo youtube a importuj jeho emotikony z karty kanála — jeden klik, funguje v každom chate."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "pretiahni všetky emotikony 7tv, bttv a ffz z $CHANNEL$ do svojho setu — jeden klik, zobrazia sa v každom chate.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "importovať všetky emotikony z $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "importovať všetky emotikony kanála"
+  },
+  "hsbtn_no_sets": {
+    "message": "žiadne uložené sety — vytvor ich na heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "použiť"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "nahradiť $COUNT$ emotikon?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "používam…"
+  },
+  "hsbtn_applied": {
+    "message": "použité"
+  },
+  "hsbtn_login_removed": {
+    "message": "prihlás sa a uvidíš odstránené emotikony"
+  },
+  "hsbtn_no_removed": {
+    "message": "žiadne odstránené emotikony"
+  },
+  "hsbtn_restore": {
+    "message": "obnoviť"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "obnoviť?"
+  },
+  "hsbtn_restoring": {
+    "message": "obnovujem…"
+  },
+  "hsbtn_restored": {
+    "message": "obnovené"
+  },
+  "hsbtn_removed_on": {
+    "message": "odstránené $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "sety sa nepodarilo načítať"
+  },
+  "hsbtn_err_history": {
+    "message": "históriu sa nepodarilo načítať"
+  },
+  "hsbtn_err_mine": {
+    "message": "tvoje emotikony sa nepodarilo načítať"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "emotikony kanála nie sú dostupné"
+  },
+  "hsbtn_err_channel": {
+    "message": "emotikony kanála sa nepodarilo načítať"
+  },
+  "hsbtn_err_global": {
+    "message": "globálne emotikony sa nepodarilo načítať"
+  },
+  "hsbtn_unnamed": {
+    "message": "(bez názvu)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emotikona",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emotikon",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "od $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ vlastnených",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "chyba"
+  },
+  "hsbtn_search_status": {
+    "message": "„$QUERY$“ — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "„$QUERY$“ — hľadám…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "žiadne emotikony pre „$QUERY$“",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "prihlás sa a pridaj emotikony"
+  },
+  "hsbtn_add_failed": {
+    "message": "pridanie zlyhalo"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "odblokovanie zlyhalo"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ použití na heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "v inventári"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "nie je v inventári"
+  },
+  "hsbtn_open_on": {
+    "message": "otvoriť na $PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "premenovať"
+  },
+  "hsbtn_move": {
+    "message": "presunúť"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "presunúť do slotu…"
+  },
+  "hsbtn_slot_number": {
+    "message": "číslo slotu"
+  },
+  "hsbtn_renamed_to": {
+    "message": "premenované na $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "premenovanie zlyhalo"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "presunuté do slotu $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "presun zlyhal"
+  },
+  "hsbtn_unshare_set": {
+    "message": "zrušiť zdieľanie setu"
+  },
+  "hsbtn_share_set": {
+    "message": "zdieľať set"
+  },
+  "hsbtn_set_unshared": {
+    "message": "zdieľanie setu zrušené"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "zrušenie zdieľania zlyhalo"
+  },
+  "hsbtn_share_copied": {
+    "message": "odkaz na zdieľanie skopírovaný: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "zdieľanie zlyhalo"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "skopírovať markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "späť na chat heatsync"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← chat heatsync"
+  },
+  "hsbtn_rcb_label": {
+    "message": "blok pravým klikom"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "okamžité blokuje hneď · menu ponúkne blokovať/zrušiť · vypnuté to vypne"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "okamžité"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "vyp"
+  },
+  "hsbtn_search_ph": {
+    "message": "hľadať emotikony…"
+  },
+  "hsbtn_chips_title": {
+    "message": "prepni, ktorých poskytovateľov hľadať"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "zahrnúť výsledky 7tv"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "zahrnúť výsledky frankerfacez"
+  },
+  "hsbtn_undo": {
+    "message": "späť"
+  },
+  "hsbtn_redo": {
+    "message": "znova"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "otočiť panel chatu (C)"
+  },
+  "cs_color_for": {
+    "message": "farba pre $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "nastaviť"
+  },
+  "cs_clear": {
+    "message": "vymazať"
+  },
+  "cs_poll": {
+    "message": "📊 anketa · "
+  },
+  "cs_prediction": {
+    "message": "🎯 predikcia · "
+  },
+  "cs_active": {
+    "message": "(aktívna)"
+  },
+  "cs_badge_alt": {
+    "message": "odznak $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "skopírovať meno"
+  },
+  "cs_copy_message": {
+    "message": "skopírovať správu"
+  },
+  "cs_mute_24h": {
+    "message": "stlmiť (24h)"
+  },
+  "cs_profile": {
+    "message": "profil"
+  },
+  "cs_removed": {
+    "message": "odstránené $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "odstránené $NAME$ · teraz $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "prihlás sa na heatsync.org a spravuj emotikony"
+  },
+  "cs_remove_failed": {
+    "message": "$NAME$ sa nepodarilo odstrániť: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "neznáma chyba"
+  },
+  "popup_site_label": {
+    "message": "chat heatsync na"
+  },
+  "popup_site_note_default": {
+    "message": "vypnuté zobrazí vlastný chat stránky"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: vlastný chat stránky je späť",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: chat heatsync je späť",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "spätná väzba"
+  },
+  "popup_fb_bug": {
+    "message": "chyba"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "čo by mal heatsync robiť lepšie?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "čo sa pokazilo? čo si čakal?"
+  },
+  "popup_fb_send": {
+    "message": "odoslať"
+  },
+  "popup_fb_sending": {
+    "message": "odosielam..."
+  },
+  "popup_fb_short": {
+    "message": "napíš trochu viac"
+  },
+  "popup_fb_sent": {
+    "message": "odoslané — vďaka"
+  },
+  "popup_fb_failed": {
+    "message": "odoslanie zlyhalo. skús znova."
+  },
+  "popup_feedback_link": {
+    "message": "spätná väzba"
+  },
+  "popup_feedback_title": {
+    "message": "spätná väzba / hlásenie chyby"
+  },
+  "popup_inv_slots": {
+    "message": "5 000 slotov na emotikony"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "prihlásený ako $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5 000 slotov"
+  },
+  "popup_inv_import_hint": {
+    "message": " · importuj kanál a naplň ho"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ ďalších",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ vysiela live",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ divákov",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ sledovaných je live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — zmena účtu"
+  },
+  "bg_acct_msg": {
+    "message": "prepínam z $FROM$ na $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "načítavam emotikony kanála..."
+  },
+  "bg_loading_third": {
+    "message": "načítavam emotikony tretích strán..."
+  },
+  "bg_loading_emotes": {
+    "message": "načítavam emotikony..."
+  },
+  "cs_uploading": {
+    "message": "nahrávam..."
+  },
+  "cs_file_too_large": {
+    "message": "súbor je príliš veľký (max $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "nahrávanie zlyhalo"
+  },
+  "cs_yt_top_chat": {
+    "message": "režim top chat — prepni youtube na live chat"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync sa nepodarilo pripojiť k tomuto chatu"
+  },
+  "cs_badge_owner": {
+    "message": "majiteľ"
+  },
+  "cs_badge_member": {
+    "message": "člen"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl pohyb  kj história  wb/WBE slovo  0$$^ riadok  gg/G konce\nfFtT+znak hľadať  ;, opakovať hľadanie  [číslo]príkaz opakovať\nx/X zmazať znak  dw/db/de/dd zmazať  D zmazať→koniec\ncw/cb/ce/cc zmeniť  C zmeniť→koniec  s/S nahradiť\nyw/yb/ye/yy kopírovať  p/P vložiť  r prepísať  ~ veľkosť\ni/a/I/A vložiť  u späť  Ctrl+R znova  . opakovať  ? pomoc\n\nSPC = leader — príkazy chatu bez opustenia poľa\nSPC /    hľadať       SPC n/N  ďalšia/predch. zhoda\nSPC 1-9  n-tá karta   SPC ]/[  ďalšia/predch. karta\nSPC t    výber karty  SPC \\    skryť/zobraziť chat"
+  },
+  "lib_sec_font": {
+    "message": "písmo"
+  },
+  "lib_sec_chat_messages": {
+    "message": "správy chatu"
+  },
+  "lib_sec_layout": {
+    "message": "rozloženie"
+  },
+  "lib_sec_density": {
+    "message": "hustota"
+  },
+  "lib_sec_messages": {
+    "message": "správy"
+  },
+  "lib_sec_mentioned": {
+    "message": "keď ťa niekto @spomenie"
+  },
+  "lib_sec_cross_follow": {
+    "message": "sledovanie naprieč platformami"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "panel moda"
+  },
+  "lib_sec_content": {
+    "message": "obsah"
+  },
+  "lib_sec_rules": {
+    "message": "pravidlá"
+  },
+  "lib_sec_player": {
+    "message": "prehrávač"
+  },
+  "lib_sec_tabs": {
+    "message": "karty"
+  },
+  "lib_sec_language": {
+    "message": "jazyk"
+  },
+  "lib_opt_system_monospace": {
+    "message": "systémový monospace"
+  },
+  "lib_opt_platform_default": {
+    "message": "predvolené platformy (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "vlastné..."
+  },
+  "lib_opt_unread": {
+    "message": "neprečítané"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "hore"
+  },
+  "lib_opt_right": {
+    "message": "vpravo"
+  },
+  "lib_opt_bottom": {
+    "message": "dole"
+  },
+  "lib_opt_left": {
+    "message": "vľavo"
+  },
+  "lib_opt_hidden": {
+    "message": "skryté"
+  },
+  "lib_opt_compact": {
+    "message": "kompaktné"
+  },
+  "lib_opt_cozy": {
+    "message": "priestranné"
+  },
+  "lib_opt_always": {
+    "message": "vždy"
+  },
+  "lib_opt_hover": {
+    "message": "pri nabehnutí"
+  },
+  "lib_opt_never": {
+    "message": "nikdy"
+  },
+  "slash_desc_op": {
+    "message": "pridá vlákno do tvojho feedu heatsync"
+  },
+  "slash_desc_re": {
+    "message": "odpovie na posledné [OP] zobrazené v chate"
+  },
+  "slash_desc_dm": {
+    "message": "pošle dm na heatsync; bez správy otvorí konverzáciu"
+  },
+  "slash_desc_w": {
+    "message": "pošle twitch šepot"
+  },
+  "slash_desc_color": {
+    "message": "nastaví farbu tvojho twitch chatu (názov ako orangered, alebo #hex s turbom)"
+  },
+  "slash_desc_r": {
+    "message": "odpovie na posledný prijatý šepot"
+  },
+  "slash_desc_user": {
+    "message": "otvorí profilovú kartu s nedávnymi logmi"
+  },
+  "slash_desc_follow": {
+    "message": "sleduje na heatsync, zrkadlí na twitch a kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "prestane sledovať na heatsync, zrkadlí na twitch a kick"
+  },
+  "slash_desc_me": {
+    "message": "pošle akčnú správu"
+  },
+  "slash_desc_shrug": {
+    "message": "pripojí ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "pripojí (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "pripojí ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "zoznam príkazov"
+  },
+  "slash_desc_lclear": {
+    "message": "vymaže aktuálnu kartu iba tebe"
+  },
+  "slash_desc_mute": {
+    "message": "stlmí niekoho na 24h naprieč jeho prepojenými účtami"
+  },
+  "slash_desc_unmute": {
+    "message": "zruší stlmenie"
+  },
+  "slash_desc_block": {
+    "message": "prepne blok"
+  },
+  "slash_desc_hide": {
+    "message": "skryje niekoho iba v tejto karte, do obnovenia"
+  },
+  "slash_desc_unhide": {
+    "message": "zruší skrytie"
+  },
+  "slash_desc_note": {
+    "message": "uloží súkromnú poznámku o niekom"
+  },
+  "slash_desc_delnote": {
+    "message": "odstráni tvoju poznámku"
+  },
+  "slash_desc_set": {
+    "message": "zmení nastavenie, napr. /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "prepne kartu: kanál alebo pomenovanú kartu ako live či mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "skopíruje odkaz heatsync.org/m na tvoje rozloženie kariet"
+  },
+  "slash_desc_layout": {
+    "message": "pridá karty z odkazu heatsync.org/m"
+  },
+  "slash_desc_status": {
+    "message": "zobrazí režimy chatu a info o streame"
+  },
+  "slash_desc_ban": {
+    "message": "natrvalo zablokuje niekoho v kanáli"
+  },
+  "slash_desc_timeout": {
+    "message": "dá niekomu timeout, predvolene 10 minút"
+  },
+  "slash_desc_unban": {
+    "message": "zruší ban alebo ukončí timeout"
+  },
+  "slash_desc_delete": {
+    "message": "zmaže jednu správu"
+  },
+  "slash_desc_nuke": {
+    "message": "hromadne zmaže nedávne správy obsahujúce výraz"
+  },
+  "slash_desc_announce": {
+    "message": "pošle oznámenie, voliteľne farebné"
+  },
+  "slash_desc_vip": {
+    "message": "udelí VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "odoberie VIP"
+  },
+  "slash_desc_mod": {
+    "message": "udelí moderátora"
+  },
+  "slash_desc_unmod": {
+    "message": "odoberie moderátora"
+  },
+  "slash_desc_blocked": {
+    "message": "otvorí zoznam blokovaných výrazov kanála"
+  },
+  "slash_desc_modtools": {
+    "message": "otvorí panel nástrojov moda"
+  },
+  "slash_desc_shield": {
+    "message": "zapne alebo vypne shield mode"
+  },
+  "slash_desc_warn": {
+    "message": "varuje chattera"
+  },
+  "slash_desc_shoutout": {
+    "message": "dá kanálu shoutout"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "otvorí žiadosti o zrušenie banu"
+  },
+  "slash_desc_slow": {
+    "message": "pomalý režim, predvolene 30s"
+  },
+  "slash_desc_followers": {
+    "message": "režim iba pre sledovateľov"
+  },
+  "slash_desc_emoteonly": {
+    "message": "režim iba emotikony"
+  },
+  "slash_desc_subscribers": {
+    "message": "režim iba pre odberateľov"
+  },
+  "slash_desc_unique": {
+    "message": "režim unikátneho chatu; iba twitch, kick nemá ekvivalent"
+  },
+  "slash_desc_poll": {
+    "message": "vytvorí anketu, 2-5 možností"
+  },
+  "slash_desc_endpoll": {
+    "message": "ukončí aktívnu anketu"
+  },
+  "slash_desc_vote": {
+    "message": "hlasuje za možnosť n v aktívnej ankete"
+  },
+  "slash_desc_prediction": {
+    "message": "spustí predikciu, 2-10 výsledkov"
+  },
+  "slash_desc_bet": {
+    "message": "stavia body kanála na výsledok n"
+  },
+  "slash_desc_lockpred": {
+    "message": "zamkne aktívnu predikciu"
+  },
+  "slash_desc_resolvepred": {
+    "message": "vyhodnotí predikciu s výsledkom n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "zruší aktívnu predikciu"
+  },
+  "slash_desc_highlight": {
+    "message": "zvýrazní tvoju správu v twitch chate"
+  },
+  "slash_sec_everyday": {
+    "message": "každodenné"
+  },
+  "slash_sec_local": {
+    "message": "len toto okno"
+  },
+  "slash_sec_mod": {
+    "message": "moderovanie"
+  },
+  "slash_sec_modes": {
+    "message": "režimy chatu"
+  },
+  "slash_sec_events": {
+    "message": "ankety, predikcie, bity"
+  },
+  "slash_help_full_list": {
+    "message": "celý zoznam -> /commands"
+  },
+  "slash_help_label": {
+    "message": "slash príkazy"
   }
 }

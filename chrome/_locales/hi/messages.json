@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "सब्सक्राइब"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "मॉड व्यू (चैट, automod, ब्लॉक किए शब्द)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "ब्रॉडकास्टर"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "क्रिएटर डैशबोर्ड"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "stream manager"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "मॉडरेशन सेटिंग्स (automod, ब्लॉक किए शब्द)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "चैनल सेटिंग्स"
+  },
+  "mc_twapi_ql_community": {
+    "message": "कम्युनिटी (mods, vips, फ़ॉलो)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "कमाई"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "चैनल पेज"
+  },
+  "mc_twapi_ql_about": {
+    "message": "about पेज"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "वीडियो"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "क्लिप"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "शेड्यूल"
+  },
+  "mc_twapi_ql_account": {
+    "message": "तुम्हारा अकाउंट"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "drops / इन्वेंटरी"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "मेरे सब्सक्रिप्शन"
+  },
+  "mc_twapi_ql_following": {
+    "message": "फ़ॉलो किए चैनल"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "twitch सेटिंग्स"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "प्राइवेसी + सुरक्षा"
+  },
+  "mc_twapi_won": {
+    "message": "जीता"
+  },
+  "mc_twapi_lost": {
+    "message": "हारा"
+  },
+  "mc_twapi_max": {
+    "message": "अधिकतम"
+  },
+  "mc_twapi_amt": {
+    "message": "राशि"
+  },
+  "mc_twapi_bet": {
+    "message": "दांव"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ पॉइंट · $COUNT$ दांव लगाने वाला",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ पॉइंट · $COUNT$ दांव लगाने वाले",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "तुम्हारा दांव: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "तुमने $OUTCOME$ पर $POINTS$ लगाए — असली विजेता चुनो",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "$N$ मिन कूलडाउन",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "$N$ सेक कूलडाउन",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "नहीं हुआ"
+  },
+  "mc_twapi_err_own": {
+    "message": "अपने पर दांव नहीं लगा सकते"
+  },
+  "mc_twapi_err_retry": {
+    "message": "फिर कोशिश करो"
+  },
+  "mc_twapi_err_locked": {
+    "message": "दांव बंद हैं"
+  },
+  "mc_twapi_err_points": {
+    "message": "पॉइंट कम हैं"
+  },
+  "mc_twapi_err_already": {
+    "message": "दांव लग चुका है"
+  },
+  "mc_twapi_no_event": {
+    "message": "कोई इवेंट नहीं"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "कोई नतीजा नहीं"
+  },
+  "mc_twapi_no_channel": {
+    "message": "कोई चैनल नहीं"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "बंद हो रहा है..."
+  },
+  "mc_twapi_closing": {
+    "message": "बंद हो रहा है"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "चैनल नहीं मिला"
+  },
+  "mc_twapi_tab_events": {
+    "message": "इवेंट"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "क्विक लिंक"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "$CHANNEL$ को bits भेजो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "बैलेंस: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "cheer विंडो खोलो"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ दर्शक",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ दर्शक",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "दांव: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ वोट",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ वोट",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "वोट"
+  },
+  "mc_input_unblock": {
+    "message": "अनब्लॉक"
+  },
+  "mc_input_remove_from_set": {
+    "message": "सेट से हटाओ"
+  },
+  "mc_input_open_on": {
+    "message": "$SITE$ पर खोलो",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "इमेज देखो"
+  },
+  "mc_input_copy_emote_name": {
+    "message": ":name: कॉपी करो"
+  },
+  "mc_input_copy_image_url": {
+    "message": "इमेज url कॉपी करो"
+  },
+  "mc_input_copy_emoji": {
+    "message": "इमोजी कॉपी करो"
+  },
+  "mc_input_expand": {
+    "message": "फैलाओ"
+  },
+  "mc_input_mute_24h": {
+    "message": "म्यूट (24 घंटे)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "टैब में दिखाओ"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "टैब में छिपाओ"
+  },
+  "mc_input_copy_message": {
+    "message": "मैसेज कॉपी करो"
+  },
+  "mc_input_copy_to_input": {
+    "message": "कॉपी → इनपुट"
+  },
+  "mc_input_copy_thread": {
+    "message": "थ्रेड कॉपी करो"
+  },
+  "mc_input_delete_msg": {
+    "message": "मैसेज हटाओ"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10 मिन"
+  },
+  "mc_input_timed_out": {
+    "message": "timeout में"
+  },
+  "mc_input_warn": {
+    "message": "चेतावनी"
+  },
+  "mc_input_reply": {
+    "message": "जवाब"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op फ़ीड पर"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "नोट बदलो"
+  },
+  "mc_input_add_note": {
+    "message": "नोट जोड़ो"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "रिपोर्ट / गिफ़्ट sub"
+  },
+  "mc_input_filter_to": {
+    "message": "$USER$ तक फ़िल्टर",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "चैट लॉग"
+  },
+  "mc_input_edit_timer": {
+    "message": "बदलो ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "बदलो (समय खत्म)"
+  },
+  "mc_input_delete": {
+    "message": "हटाओ"
+  },
+  "mc_input_chatter": {
+    "message": "चैटर"
+  },
+  "mc_input_everyone": {
+    "message": "सब"
+  },
+  "mc_input_heatsync_only": {
+    "message": "सिर्फ़ heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "तुम्हारी इन्वेंटरी"
+  },
+  "mc_input_all_twitch": {
+    "message": "सारे twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "सारे kick"
+  },
+  "mc_input_ext_users": {
+    "message": "$SOURCE$ यूज़र",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "7tv पर खोज रहे हैं…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "सिर्फ़ सब्सक्राइबर"
+  },
+  "mc_input_usage_color": {
+    "message": "उपयोग: /color <नाम|#hex> — जैसे /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "चैट रंग $HEX$ सेट हुआ",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "उपयोग: /re <टेक्स्ट>"
+  },
+  "mc_input_re_no_post": {
+    "message": "चैट में अभी जवाब देने लायक कोई पोस्ट नहीं"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "पोल नहीं बना: $ERROR$ (सिर्फ़ ब्रॉडकास्टर)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "पोल नहीं बना: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "प्रेडिक्शन नहीं बना: $ERROR$ (सिर्फ़ ब्रॉडकास्टर)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "प्रेडिक्शन नहीं बना: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "पोल खत्म नहीं हुआ: $ERROR$ (सिर्फ़ ब्रॉडकास्टर)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "वोट नहीं गया: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "दांव नहीं लगा: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "नहीं हुआ: $ERROR$ (सिर्फ़ ब्रॉडकास्टर)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ नहीं हुआ: $ERROR$ (सिर्फ़ ब्रॉडकास्टर)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "अनाउंसमेंट नहीं गया: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <नाम> — उनका प्रोफ़ाइल कार्ड खोलता है"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <यूज़र> — इस टैब में छिपाता है"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <यूज़र> — इस टैब में दिखाता है"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "$USER$ को जवाब देने के लिए /r",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "अपलोड चल रहा है..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "सिर्फ़ इमेज/वीडियो चलेंगे"
+  },
+  "mc_input_upload_too_large": {
+    "message": "फ़ाइल बहुत बड़ी है (अधिकतम $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "अपलोड हो रहा है..."
+  },
+  "mc_input_upload_done": {
+    "message": "अपलोड हो गया"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "अपलोड नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "अपलोड नहीं हुआ"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "असली फ़ाइल तक नहीं पहुँचे — स्टिल फ़्रेम पोस्ट किया"
+  },
+  "mc_input_drop_zone": {
+    "message": "अपलोड के लिए इमेज/वीडियो/लिंक यहाँ डालो"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <मैसेज>"
+  },
+  "mc_social_edit_empty": {
+    "message": "कंटेंट खाली नहीं हो सकता"
+  },
+  "mc_social_saving": {
+    "message": "सेव हो रहा है..."
+  },
+  "mc_social_edit_failed": {
+    "message": "बदलाव नहीं हुआ"
+  },
+  "mc_social_confirm_delete": {
+    "message": "यह पोस्ट हटाएँ?"
+  },
+  "mc_social_home_title": {
+    "message": "अपना होम देखने के लिए लॉग इन करो"
+  },
+  "mc_social_home_sub": {
+    "message": "लोगों को फ़ॉलो करो, पोस्ट करो, शेयर करो — multichat के साथ"
+  },
+  "mc_social_home_login": {
+    "message": "heatsync.org पर लॉग इन करो"
+  },
+  "mc_social_home_note": {
+    "message": "multichat के लिए अकाउंट नहीं चाहिए — ऊपर से कोई चैनल टैब चुनो"
+  },
+  "mc_social_no_posts": {
+    "message": "कोई पोस्ट नहीं"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "इस टैब को भरने के लिए लोगों को फ़ॉलो करो या कुछ पोस्ट करो"
+  },
+  "mc_social_import_follows": {
+    "message": "twitch से फ़ॉलो इम्पोर्ट करो"
+  },
+  "mc_social_syncing": {
+    "message": "सिंक हो रहा है…"
+  },
+  "mc_social_synced": {
+    "message": "$COUNT$ सिंक हुए ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "फिर कोशिश करो"
+  },
+  "mc_social_failed": {
+    "message": "नहीं हुआ"
+  },
+  "mc_social_discover_people": {
+    "message": "लोगों को खोजो →"
+  },
+  "mc_social_post_something": {
+    "message": "कुछ पोस्ट करो"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "हॉट पोस्ट · लोगों को फ़ॉलो करने के लिए heatsync.org पर लॉग इन करो"
+  },
+  "mc_social_banner_newest": {
+    "message": "नई पोस्ट · फ़ीड भरने के लिए लोगों को फ़ॉलो करो"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "इस महीने हॉट · फ़ीड भरने के लिए लोगों को फ़ॉलो करो"
+  },
+  "mc_social_edited": {
+    "message": "(बदला गया)"
+  },
+  "mc_social_replying_to": {
+    "message": ">>$ID$ को जवाब",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "थ्रेड छोड़ो"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ दर्शक",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ दर्शक",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ दर्शक",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ जवाब",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ जवाब",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(कोई टेक्स्ट नहीं)"
+  },
+  "mc_social_live_now": {
+    "message": "अभी live"
+  },
+  "mc_social_no_streams": {
+    "message": "अभी कोई स्ट्रीम live नहीं"
+  },
+  "mc_social_hot_posts": {
+    "message": "हॉट पोस्ट"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "फ़िल्टर से कोई पोस्ट नहीं मिली"
+  },
+  "mc_social_tags": {
+    "message": "टैग"
+  },
+  "mc_social_none_now": {
+    "message": "अभी कुछ नहीं"
+  },
+  "mc_social_leaderboard": {
+    "message": "लीडरबोर्ड"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "इस फ़िल्टर से कोई प्रोफ़ाइल नहीं मिली"
+  },
+  "mc_social_no_pinned": {
+    "message": "कोई पिन किया मैसेज नहीं"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "अभी कोई मॉड एक्शन नहीं"
+  },
+  "mc_social_platform": {
+    "message": "प्लेटफ़ॉर्म"
+  },
+  "mc_social_all": {
+    "message": "सब"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "मेंबरशिप माइलस्टोन"
+  },
+  "mc_social_yt_member": {
+    "message": "मेंबर बने"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "$COUNT$ मेंबरशिप गिफ़्ट की",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "$COUNT$ मेंबरशिप गिफ़्ट कीं",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "कनेक्शन एरर"
+  },
+  "mc_social_replies_title": {
+    "message": "जवाब"
+  },
+  "mc_pcard_del_msg": {
+    "message": "मैसेज हटाओ"
+  },
+  "mc_pcard_del_title": {
+    "message": "इस यूज़र का आखिरी मैसेज हटाओ"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "मॉडरेटर बनाओ (सिर्फ़ ब्रॉडकास्टर)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "मॉडरेटर हटाओ (सिर्फ़ ब्रॉडकास्टर)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "VIP दो"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "VIP हटाओ"
+  },
+  "mc_pcard_error": {
+    "message": "एरर"
+  },
+  "mc_pcard_no_channel": {
+    "message": "चैनल नहीं मिला"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ नहीं हुआ: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "सेशन"
+  },
+  "mc_pcard_first": {
+    "message": "पहला"
+  },
+  "mc_pcard_channels": {
+    "message": "चैनल"
+  },
+  "mc_pcard_close_profile": {
+    "message": "प्रोफ़ाइल बंद करो"
+  },
+  "mc_pcard_close_esc": {
+    "message": "बंद करो (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "लोड नहीं हुआ — फिर कोशिश करो"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url कॉपी हुआ"
+  },
+  "mc_pcard_clip_created": {
+    "message": "क्लिप बन गई"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "क्लिप नहीं बनी: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "कॉपी हुआ"
+  },
+  "mc_logs_failed": {
+    "message": "नहीं हुआ"
+  },
+  "mc_logs_all_channels": {
+    "message": "सारे चैनल"
+  },
+  "mc_logs_all": {
+    "message": "सब"
+  },
+  "mc_logs_scope_channel": {
+    "message": "अभी सिर्फ़ #$CHANNEL$ — सारे चैनल देखने के लिए क्लिक करो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "अभी सारे चैनल दिख रहे हैं — सिर्फ़ #$CHANNEL$ के लिए क्लिक करो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "खोजो…"
+  },
+  "mc_logs_search_title": {
+    "message": "$USER$ के मैसेज खोजो",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "रिफ़्रेश"
+  },
+  "mc_logs_export_txt": {
+    "message": ".txt में एक्सपोर्ट"
+  },
+  "mc_logs_export_json": {
+    "message": ".json में एक्सपोर्ट"
+  },
+  "mc_logs_public": {
+    "message": "पब्लिक आर्काइव ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "heatsync.org पर #$CHANNEL$ का पब्लिक चैट लॉग खोलो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "आर्काइव लोड नहीं हुआ — फिर खोजो या स्क्रॉल करो"
+  },
+  "mc_logs_backfill": {
+    "message": "$SOURCE$ से पुराने लॉग ला रहे हैं… ~30 सेक में रिफ़्रेश करो",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "\"$QUERY$\" के लिए कुछ नहीं मिला",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "#$CHANNEL$ में $USER$ का कोई आर्काइव मैसेज अभी नहीं",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "$USER$ का कोई आर्काइव मैसेज अभी नहीं",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "पुराने के लिए स्क्रॉल करो"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "permalink कॉपी करो"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "नोट · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "प्राइवेट नोट — सिर्फ़ तुम देखते हो। प्लेटफ़ॉर्म बदलने पर भी साथ रहता है।"
+  },
+  "mc_notes_esc": {
+    "message": "बंद करने को esc"
+  },
+  "mc_notes_delete": {
+    "message": "हटाओ"
+  },
+  "mc_notes_saved": {
+    "message": "सेव हुआ · बंद करने को esc"
+  },
+  "mc_notes_saving": {
+    "message": "सेव हो रहा है…"
+  },
+  "mc_notes_section": {
+    "message": "नोट"
+  },
+  "mc_notes_empty": {
+    "message": "अभी कोई नोट नहीं"
+  },
+  "mc_notes_edit": {
+    "message": "बदलो"
+  },
+  "mc_notes_add": {
+    "message": "नोट जोड़ो"
+  },
+  "mc_feed_loading_name": {
+    "message": "$NAME$ लोड हो रहा है…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "चैट लाइन लोड हो रही है…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "प्रीव्यू लोड हो रहा है…"
+  },
+  "mc_feed_adult_login": {
+    "message": "देखने के लिए वयस्क के रूप में लॉग इन करो"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "इमेज उपलब्ध नहीं"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "नए टैब में खोलो"
+  },
+  "mc_feed_reload_player": {
+    "message": "प्लेयर फिर लोड करो (साइन इन के बाद)"
+  },
+  "mc_feed_pause": {
+    "message": "रोको"
+  },
+  "mc_feed_volume": {
+    "message": "आवाज़"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "चैट पर वापस (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "चैट भरो"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "नए टैब में खोलो"
+  },
+  "mc_feed_close_player": {
+    "message": "प्लेयर बंद करो"
+  },
+  "mc_feed_back": {
+    "message": "← वापस"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "whisper नहीं गया"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "heatsync सर्वर नहीं मिल रहा"
+  },
+  "mc_misc_twitch_error": {
+    "message": "twitch एरर $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "twitch सेशन नहीं"
+  },
+  "mc_misc_unknown_error": {
+    "message": "अनजान एरर"
+  },
+  "mc_misc_sending": {
+    "message": "भेज रहे हैं"
+  },
+  "mc_misc_click_retry": {
+    "message": "फिर कोशिश के लिए क्लिक करो"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — heatsync पर twitch whisper की अनुमति देने के लिए क्लिक करो",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "twitch whispers चालू करो — फिर से लिंक करो"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — $USER$ को फ़ॉलो करके भेजने के लिए क्लिक करो",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — heatsync पर लॉग इन के लिए क्लिक करो",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "भेजने के लिए heatsync पर लॉग इन करो"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — फिर कोशिश करो",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "जवाब ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "resub मैसेज ($MONTHS$ महीने) — शेयर करने को enter",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "watch streak ($COUNT$) — शेयर करने को enter",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "यह मैसेज हटाओ"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 मिनट"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 मिनट"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 घंटा"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 घंटे"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 दिन"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — इस यूज़र के मैसेज साफ़ करो (1 सेक timeout)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "हमेशा के लिए ban"
+  },
+  "mc_mtb_t_unban": {
+    "message": "unban"
+  },
+  "mc_mtb_t_bt": {
+    "message": "ब्लॉक किए शब्द"
+  },
+  "mc_mtb_t_mt": {
+    "message": "मॉड टूल"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "मैसेज मॉडरेशन एक्शन"
+  },
+  "mc_main_back_to_chat": {
+    "message": "चैट पर वापस"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "चैट पर वापस (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "प्लेटफ़ॉर्म बदलो"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ $N$ और",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "$CH$ को $PLAT$ पर खोलो",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "$CH$ की चैट खोलो",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "जवाब"
+  },
+  "mc_main_also_live_on": {
+    "message": "$PLATS$ पर भी live",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "चैनल लिंक करो"
+  },
+  "mc_main_dismiss": {
+    "message": "हटाओ"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "हटाओ (राइट-क्लिक भी चलता है)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "अपनी स्ट्रीम जोड़ो"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "twitch, kick + youtube चैट एक पैनल में"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ चैनल जोड़ो"
+  },
+  "mc_main_idwarn": {
+    "message": "तुम्हारे emotes यहाँ दूसरों को नहीं दिखेंगे — heatsync अकाउंट $ACCT$, चैट $IDENT$ से — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "अकाउंट लिंक करो"
+  },
+  "mc_main_status_no_yt": {
+    "message": "स्टेटस twitch और kick चैनल पर चलता है"
+  },
+  "mc_main_status_fetching": {
+    "message": "#$CH$ ला रहे हैं…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "#$CH$ नहीं मिला (ऑफ़लाइन है या $PLAT$ पर नहीं?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "अपने लॉग यहाँ देखने के लिए साइन इन करो — किसी चैटर पर राइट-क्लिक करके उनके देखो"
+  },
+  "mc_main_logs_rclick": {
+    "message": "किसी चैटर के $PLAT$ लॉग देखने के लिए उस पर राइट-क्लिक करो",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "चैट टैब"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "चैट छिपाओ (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "चैट छिपाओ"
+  },
+  "mc_main_popout_title": {
+    "message": "चैट को अलग विंडो में निकालो"
+  },
+  "mc_main_subscribe_title": {
+    "message": "सब्सक्राइब — इस चैनल को सपोर्ट करो"
+  },
+  "mc_main_views_aria": {
+    "message": "व्यू"
+  },
+  "mc_main_search_ph": {
+    "message": "मैसेज खोजो…"
+  },
+  "mc_main_messages_aria": {
+    "message": "चैट मैसेज"
+  },
+  "mc_main_search_none_for": {
+    "message": "\"$Q$\" के लिए कुछ नहीं मिला",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "कुछ नहीं मिला"
+  },
+  "mc_main_moment": {
+    "message": "$CH$ की चैट में धमाका — $RATE$ मैसेज/30 सेक (आम तौर पर ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "फ़िल्टर — /regex/ या @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ पॉइंट",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "चैनल पॉइंट रिडीम"
+  },
+  "mc_main_highlighted": {
+    "message": "हाइलाइट किया मैसेज"
+  },
+  "mc_main_first_msg": {
+    "message": "इस चैनल में पहला मैसेज"
+  },
+  "mc_main_kill_active": {
+    "message": "heatsync ने बंद किया (kill-switch चालू)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat को heatsync ने बंद किया"
+  },
+  "mc_main_kill_update": {
+    "message": "एक्सटेंशन अपडेट ज़रूरी (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "\"$TITLE$\" रिडीम किया",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "$VIEWERS$ दर्शकों के साथ $TARGET$ पर raid किया",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ ने $VIEWERS$ दर्शकों के साथ raid किया",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "नया पोल शुरू"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "नया पोल शुरू — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "नया प्रेडिक्शन शुरू"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "नया प्रेडिक्शन शुरू — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train शुरू हुई"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train लेवल $LEVEL$ पर खत्म हुई",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ ने $COUNT$ subs गिफ़्ट किए",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "$BY$ ने पिन किया: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "पिन किया: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "मैसेज अनपिन हुआ"
+  },
+  "mc_notif_dismiss": {
+    "message": "हटाओ"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "emotes लोड हो रहे हैं…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "मना रहे हैं"
+  },
+  "mc_notif_rt_mo": {
+    "message": "महीना"
+  },
+  "mc_notif_rt_months": {
+    "message": "महीने"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "सब्सक्राइबर के रूप में"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "चल रही"
+  },
+  "mc_notif_wt_stream": {
+    "message": "स्ट्रीम की"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "watch streak पर"
+  },
+  "mc_notif_share": {
+    "message": "शेयर"
+  },
+  "mc_notif_update_available": {
+    "message": "अपडेट मौजूद है — अभी $CUR$ चल रहा है, नया $MIN$+ है",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "kick खोलो"
+  },
+  "mc_notif_open_youtube": {
+    "message": "youtube खोलो"
+  },
+  "mc_notif_login_twitch": {
+    "message": "चैट के लिए twitch.tv पर लॉग इन करो"
+  },
+  "mc_notif_open_twitch": {
+    "message": "twitch खोलो"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- टैब --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "twitch ऑथ फ़ेल"
+  },
+  "mc_notif_r_no_user": {
+    "message": "twitch यूज़रनेम नहीं"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "कनेक्शन नहीं बना"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "भेजना फ़ेल"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "kick पर लॉग इन नहीं"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "kick टैब खुला नहीं है"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "kick चैनल नहीं मिला"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick ने पुष्टि नहीं की — शायद पोस्ट हो गया हो"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick ने भेजना ठुकराया"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "youtube टैब खुला नहीं है"
+  },
+  "mc_notif_r_no_input": {
+    "message": "youtube चैट अभी लोड हो रही है"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "पहले youtube पर लॉग इन करो"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube ने भेजना रोका"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube ने भेजने की पुष्टि नहीं की"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "youtube चैट ब्रिज का समय खत्म"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ ने पुष्टि नहीं की — शायद पोस्ट नहीं हुआ",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "प्लेटफ़ॉर्म"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "चैट पर पाबंदी — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "चैट पर पाबंदी"
+  },
+  "mc_notif_r_unknown": {
+    "message": "शायद भेजना फ़ेल हुआ"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "छिपा हुआ"
+  },
+  "mc_tip_owner_sub": {
+    "message": "$OWNER$ sub ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · @$ACTOR$ ने हटाया",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · चैनल से हटाया गया",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "वो"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "तुम्हारे sub $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "चैनल sub"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "चैनल फ़ॉलो"
+  },
+  "mc_tip_row_follower": {
+    "message": "फ़ॉलोअर"
+  },
+  "mc_tip_row_you": {
+    "message": "तुम"
+  },
+  "mc_tip_follow_ago": {
+    "message": "फ़ॉलो $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "फ़ॉलोअर"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ मैसेज",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "$DAY$ से $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "$DAY$ से",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "लॉग"
+  },
+  "mc_set_system_backup": {
+    "message": "सिस्टम · बैकअप / रीस्टोर"
+  },
+  "mc_set_recent_errors": {
+    "message": "हाल के एरर"
+  },
+  "mc_set_copy": {
+    "message": "कॉपी"
+  },
+  "mc_set_clear": {
+    "message": "साफ़ करो"
+  },
+  "mc_set_crash_loading": {
+    "message": "(लोड हो रहा है...)"
+  },
+  "mc_set_export_tip": {
+    "message": "ui_settings और सारी hs_* कुंजियाँ एक JSON फ़ाइल में डालता है। डिवाइस और ब्राउज़र बदलने पर भी चलती है।"
+  },
+  "mc_set_export": {
+    "message": "सेटिंग्स एक्सपोर्ट"
+  },
+  "mc_set_export_btn": {
+    "message": ".json डाउनलोड करो"
+  },
+  "mc_set_import_tip": {
+    "message": "पहले एक्सपोर्ट की JSON फ़ाइल से रीस्टोर करो। मौजूदा सेटिंग्स में मिल जाती है।"
+  },
+  "mc_set_import": {
+    "message": "सेटिंग्स इम्पोर्ट"
+  },
+  "mc_set_import_btn": {
+    "message": ".json लोड करो"
+  },
+  "mc_set_reset_all_title": {
+    "message": "हर पेज की हर सेटिंग रीसेट करो"
+  },
+  "mc_set_all_defaults": {
+    "message": "सब डिफ़ॉल्ट"
+  },
+  "mc_set_backup_restore": {
+    "message": "बैकअप / रीस्टोर"
+  },
+  "mc_set_fr_sound": {
+    "message": "आवाज़: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "ऊपर करो (ऊँची प्राथमिकता — पहला मैच जीतता है)"
+  },
+  "mc_set_fr_down": {
+    "message": "नीचे करो"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "सारे चैनल"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "कीवर्ड"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "यूज़र"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "बैज"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "मैसेज टाइप"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "एक्सप्रेशन"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "जैसे first && !badge:subscriber — && || ! ( ) से जोड़ो; फ़ील्ड user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "वैल्यू..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "हाइलाइट"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "छिपाओ"
+  },
+  "mc_set_fr_color": {
+    "message": "हाइलाइट रंग"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "हाइलाइट आवाज़ (सिर्फ़ हाइलाइट एक्शन के लिए)"
+  },
+  "mc_set_fr_silent": {
+    "message": "बिना आवाज़"
+  },
+  "mc_set_fr_case": {
+    "message": "बड़े-छोटे अक्षर का फ़र्क़"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ जोड़ो"
+  },
+  "mc_set_fr_none": {
+    "message": "कोई नियम नहीं — नीचे से जोड़ो"
+  },
+  "mc_set_page_reset_title": {
+    "message": "इस पेज को डिफ़ॉल्ट पर रीसेट करो"
+  },
+  "mc_set_default": {
+    "message": "डिफ़ॉल्ट"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "यहाँ $N$ सेटिंग और है — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "यहाँ $N$ सेटिंग्स और हैं — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "सब दिखाओ"
+  },
+  "mc_set_crash_none": {
+    "message": "(कोई एरर दर्ज नहीं)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(लॉग पढ़ नहीं पाए)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "बंद: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "सब चालू"
+  },
+  "mc_set_fmt_none": {
+    "message": "कोई नहीं"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "प्रीसेट हटाओ…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "$NAME$ हटाओ",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "प्रीसेट हटाओ"
+  },
+  "mc_set_preset_save_as": {
+    "message": "मौजूदा को ऐसे सेव करो…"
+  },
+  "mc_set_preset_undo": {
+    "message": "वापस करो: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "प्रीसेट"
+  },
+  "mc_set_preset_save_title": {
+    "message": "मौजूदा को प्रीसेट के रूप में सेव करो"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "प्रीसेट का नाम"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "डिफ़ॉल्ट से अलग हर सेटिंग का स्नैपशॉट — सेटिंग्स एक्सपोर्ट से शेयर हो सकता है"
+  },
+  "mc_set_preset_nochange": {
+    "message": "पहले से यही है — बदलने को कुछ नहीं"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "प्रीसेट लगाओ: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "लगाओ"
+  },
+  "mc_set_h_search": {
+    "message": "खोज"
+  },
+  "mc_set_h_category": {
+    "message": "श्रेणी"
+  },
+  "mc_set_h_move": {
+    "message": "हिलाओ"
+  },
+  "mc_set_h_adjust": {
+    "message": "घटाओ-बढ़ाओ"
+  },
+  "mc_set_h_toggle": {
+    "message": "चालू/बंद"
+  },
+  "mc_set_h_reset_row": {
+    "message": "पंक्ति रीसेट"
+  },
+  "mc_set_h_close_clear": {
+    "message": "बंद / साफ़"
+  },
+  "mc_set_h_this_help": {
+    "message": "यह मदद"
+  },
+  "mc_set_h_first_last": {
+    "message": "पहला / आखिरी"
+  },
+  "mc_set_h_fold": {
+    "message": "सेक्शन समेटो"
+  },
+  "mc_set_h_prev_next": {
+    "message": "पिछली / अगली श्रेणी"
+  },
+  "mc_set_h_keys": {
+    "message": "कीज़"
+  },
+  "mc_set_h_commands": {
+    "message": "कमांड"
+  },
+  "mc_set_h_full_list": {
+    "message": "पूरी लिस्ट -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ सेटिंग्स खोजो..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "हर सेटिंग दिख रही है — सिर्फ़ बेसिक के लिए क्लिक करो"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "बेसिक दिख रही हैं — हर सेटिंग के लिए क्लिक करो"
+  },
+  "mc_set_scope_all": {
+    "message": "सब"
+  },
+  "mc_set_scope_basic": {
+    "message": "बेसिक"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emotes"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gifs"
+  },
+  "mc_emo_chips_title": {
+    "message": "किन प्रोवाइडर में खोजना है चुनो"
+  },
+  "mc_emo_exact_title": {
+    "message": "सिर्फ़ ठीक वही नाम"
+  },
+  "mc_emo_stack_expand": {
+    "message": "फैलाओ"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "समेटो"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "सब ब्लॉक"
+  },
+  "mc_xg_close": {
+    "message": "बंद करो"
+  },
+  "mc_tr_sub_chat": {
+    "message": "चैट"
+  },
+  "mc_tr_sub_summary": {
+    "message": "सारांश"
+  },
+  "mc_tr_sub_logs": {
+    "message": "लॉग"
+  },
+  "mc_tr_sub_status": {
+    "message": "स्टेटस"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "प्लेटफ़ॉर्म"
+  },
+  "mc_tr_set_display": {
+    "message": "डिस्प्ले"
+  },
+  "mc_tr_set_notifs": {
+    "message": "नोटिफ़"
+  },
+  "mc_tr_set_mod": {
+    "message": "मॉड"
+  },
+  "mc_tr_set_filters": {
+    "message": "फ़िल्टर"
+  },
+  "mc_tr_set_system": {
+    "message": "सिस्टम"
+  },
+  "mc_tr_set_help": {
+    "message": "मदद"
+  },
+  "mc_pt_native_chat": {
+    "message": "नेटिव चैट"
+  },
+  "mc_pt_popout_chat": {
+    "message": "अलग विंडो चैट"
+  },
+  "mc_pt_clips": {
+    "message": "क्लिप"
+  },
+  "mc_pt_videos": {
+    "message": "वीडियो"
+  },
+  "mc_pt_channel_page": {
+    "message": "चैनल पेज"
+  },
+  "mc_pt_no_channel": {
+    "message": "चैनल नहीं मिला"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "नेटिव चैट (super chat, स्टिकर, पोल, इमोजी)"
+  },
+  "mc_pt_join_channel": {
+    "message": "चैनल से जुड़ो"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "heatsync चैट पर वापस"
+  },
+  "mc_pa_show_chat": {
+    "message": "चैट दिखाओ (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "youtube चैट के लिए heatsync लॉग इन चाहिए —"
+  },
+  "mc_pa_emote_login": {
+    "message": "heatsync में लॉग इन करो ताकि तुम्हारे emotes सबको दिखें"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org नहीं मिल रहा — फिर जुड़ रहे हैं"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ नहीं मिल रहा",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "$CHANNEL$ की स्ट्रीम खत्म",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "$CHANNEL$ स्ट्रीम का सारांश",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "सेटिंग्स में स्ट्रीम स्टैट्स बंद हैं"
+  },
+  "mc_ss_empty": {
+    "message": "अभी कोई चैट गिनी नहीं गई — मैसेज आते ही भरेगा"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ मैसेज · $CHATTERS$ चैटर · $MENTIONS$ मेंशन · पीक $PEAK$/सेक",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "$CLOCK$ से · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "टॉप चैटर"
+  },
+  "mc_ss_top_emotes": {
+    "message": "टॉप emotes"
+  },
+  "mc_cmg_checking": {
+    "message": "heatsync देख रहे हैं…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "heatsync प्रोफ़ाइल नहीं — खुद भरो"
+  },
+  "mc_cmg_unreachable": {
+    "message": "heatsync तक नहीं पहुँचे"
+  },
+  "mc_cmg_live_on": {
+    "message": "$LIST$ पर live",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "heatsync पर $NAME$ मिला — लिंक: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "अपने-आप भरा: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "live बदलो — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ live आया",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ ने गेम बदला",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "एक मैसेज हटाया गया"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ का ban हटा",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ को $SEC$ सेक के लिए timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ को ban किया गया",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ ने $AMOUNT$ KICKs गिफ़्ट किए!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ ने $AMOUNT$ KICKs ($GIFT$) गिफ़्ट किए!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "अनाम"
+  },
+  "mc_cp_vol": {
+    "message": "आवाज़ $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "नहीं हुआ"
+  },
+  "hsbtn_imported": {
+    "message": "$COUNT$ इम्पोर्ट हुए",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "तुम्हारे emotes, हर चैट में"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "कोई भी twitch, kick या youtube स्ट्रीम खोलो, फिर चैनल टैब से उसके emotes इम्पोर्ट करो — एक क्लिक, हर चैट में चलता है।"
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "$CHANNEL$ के सारे 7tv, bttv और ffz emotes अपने सेट में ले आओ — एक क्लिक, हर चैट में दिखेंगे।",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "$CHANNEL$ के सारे emotes इम्पोर्ट करो",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "चैनल के सारे emotes इम्पोर्ट करो"
+  },
+  "hsbtn_no_sets": {
+    "message": "कोई सेव किया सेट नहीं — heatsync.org पर बनाओ"
+  },
+  "hsbtn_apply": {
+    "message": "लगाओ"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "$COUNT$ emotes बदलें?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "लगा रहे हैं…"
+  },
+  "hsbtn_applied": {
+    "message": "लग गया"
+  },
+  "hsbtn_login_removed": {
+    "message": "हटाए गए emotes देखने के लिए लॉग इन करो"
+  },
+  "hsbtn_no_removed": {
+    "message": "कोई हटाया emote नहीं"
+  },
+  "hsbtn_restore": {
+    "message": "वापस लाओ"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "वापस लाएँ?"
+  },
+  "hsbtn_restoring": {
+    "message": "वापस ला रहे हैं…"
+  },
+  "hsbtn_restored": {
+    "message": "वापस आ गया"
+  },
+  "hsbtn_removed_on": {
+    "message": "$DATE$ को हटाया",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "सेट लोड नहीं हुए"
+  },
+  "hsbtn_err_history": {
+    "message": "हिस्ट्री लोड नहीं हुई"
+  },
+  "hsbtn_err_mine": {
+    "message": "तुम्हारे emotes लोड नहीं हुए"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "चैनल emotes उपलब्ध नहीं"
+  },
+  "hsbtn_err_channel": {
+    "message": "चैनल emotes लोड नहीं हुए"
+  },
+  "hsbtn_err_global": {
+    "message": "ग्लोबल emotes लोड नहीं हुए"
+  },
+  "hsbtn_unnamed": {
+    "message": "(बिना नाम)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "$USER$ से",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ तुम्हारे पास",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "एरर"
+  },
+  "hsbtn_search_status": {
+    "message": "“$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "“$QUERY$” — खोज रहे हैं…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "“$QUERY$” से कोई emote नहीं मिला",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "emotes जोड़ने के लिए लॉग इन करो"
+  },
+  "hsbtn_add_failed": {
+    "message": "जोड़ नहीं पाए"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "अनब्लॉक नहीं हुआ"
+  },
+  "hsbtn_uses_title": {
+    "message": "heatsync पर $COUNT$ बार इस्तेमाल",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "इन्वेंटरी में"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "इन्वेंटरी में नहीं"
+  },
+  "hsbtn_open_on": {
+    "message": "$PROVIDER$ पर खोलो →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "नाम बदलो"
+  },
+  "hsbtn_move": {
+    "message": "हिलाओ"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "स्लॉट में रखो…"
+  },
+  "hsbtn_slot_number": {
+    "message": "स्लॉट नंबर"
+  },
+  "hsbtn_renamed_to": {
+    "message": "नाम बदलकर $NAME$ हुआ",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "नाम नहीं बदला"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "स्लॉट $SLOT$ में रखा",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "जगह नहीं बदली"
+  },
+  "hsbtn_unshare_set": {
+    "message": "सेट शेयर बंद करो"
+  },
+  "hsbtn_share_set": {
+    "message": "सेट शेयर करो"
+  },
+  "hsbtn_set_unshared": {
+    "message": "सेट का शेयर बंद हुआ"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "शेयर बंद नहीं हुआ"
+  },
+  "hsbtn_share_copied": {
+    "message": "शेयर लिंक कॉपी हुआ: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "शेयर नहीं हुआ"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "markdown कॉपी करो"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "heatsync चैट पर वापस"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← heatsync चैट"
+  },
+  "hsbtn_rcb_label": {
+    "message": "राइट-क्लिक ब्लॉक"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "instant तुरंत ब्लॉक करता है · menu में ब्लॉक/रद्द दिखता है · off बंद करता है"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "instant"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "off"
+  },
+  "hsbtn_search_ph": {
+    "message": "emotes खोजो…"
+  },
+  "hsbtn_chips_title": {
+    "message": "किन प्रोवाइडर में खोजना है चुनो"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "7tv नतीजे शामिल करो"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "frankerfacez नतीजे शामिल करो"
+  },
+  "hsbtn_undo": {
+    "message": "वापस"
+  },
+  "hsbtn_redo": {
+    "message": "फिर करो"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "चैट पैनल घुमाओ (C)"
+  },
+  "cs_color_for": {
+    "message": "$USER$ का रंग",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "सेट"
+  },
+  "cs_clear": {
+    "message": "साफ़"
+  },
+  "cs_poll": {
+    "message": "📊 पोल · "
+  },
+  "cs_prediction": {
+    "message": "🎯 प्रेडिक्शन · "
+  },
+  "cs_active": {
+    "message": "(चालू)"
+  },
+  "cs_badge_alt": {
+    "message": "$TITLE$ बैज",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "यूज़रनेम कॉपी करो"
+  },
+  "cs_copy_message": {
+    "message": "मैसेज कॉपी करो"
+  },
+  "cs_mute_24h": {
+    "message": "म्यूट (24 घंटे)"
+  },
+  "cs_profile": {
+    "message": "प्रोफ़ाइल"
+  },
+  "cs_removed": {
+    "message": "$NAME$ हटाया",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "$NAME$ हटाया · अब $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "emotes संभालने के लिए heatsync.org पर लॉग इन करो"
+  },
+  "cs_remove_failed": {
+    "message": "$NAME$ नहीं हटा: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "अनजान एरर"
+  },
+  "popup_site_label": {
+    "message": "heatsync चैट यहाँ:"
+  },
+  "popup_site_note_default": {
+    "message": "बंद करने पर साइट की अपनी चैट दिखती है"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: साइट की अपनी चैट वापस",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: heatsync चैट वापस",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "फ़ीडबैक"
+  },
+  "popup_fb_bug": {
+    "message": "बग"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "heatsync में क्या बेहतर होना चाहिए?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "क्या टूटा? क्या उम्मीद थी?"
+  },
+  "popup_fb_send": {
+    "message": "भेजो"
+  },
+  "popup_fb_sending": {
+    "message": "भेज रहे हैं..."
+  },
+  "popup_fb_short": {
+    "message": "थोड़ा और लिखो"
+  },
+  "popup_fb_sent": {
+    "message": "भेज दिया — शुक्रिया"
+  },
+  "popup_fb_failed": {
+    "message": "भेजना फ़ेल। फिर कोशिश करो।"
+  },
+  "popup_feedback_link": {
+    "message": "फ़ीडबैक"
+  },
+  "popup_feedback_title": {
+    "message": "फ़ीडबैक / बग रिपोर्ट"
+  },
+  "popup_inv_slots": {
+    "message": "5,000 emote स्लॉट"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "$USER$ के रूप में साइन इन",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5,000 स्लॉट"
+  },
+  "popup_inv_import_hint": {
+    "message": " · भरने के लिए कोई चैनल इम्पोर्ट करो"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ और",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ live है",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ दर्शक",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "फ़ॉलो किए $COUNT$ live हैं",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — अकाउंट बदलाव"
+  },
+  "bg_acct_msg": {
+    "message": "$FROM$ से $TO$ पर जा रहे हैं",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "चैनल emotes लोड हो रहे हैं..."
+  },
+  "bg_loading_third": {
+    "message": "थर्ड-पार्टी emotes ला रहे हैं..."
+  },
+  "bg_loading_emotes": {
+    "message": "emotes लोड हो रहे हैं..."
+  },
+  "cs_uploading": {
+    "message": "अपलोड हो रहा है..."
+  },
+  "cs_file_too_large": {
+    "message": "फ़ाइल बहुत बड़ी है (अधिकतम $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "अपलोड नहीं हुआ"
+  },
+  "cs_yt_top_chat": {
+    "message": "top chat मोड — youtube को live chat पर करो"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync इस चैट से जुड़ नहीं पाया"
+  },
+  "cs_badge_owner": {
+    "message": "ओनर"
+  },
+  "cs_badge_member": {
+    "message": "मेंबर"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl चलना  kj हिस्ट्री  wb/WBE शब्द  0$$^ लाइन  gg/G छोर\nfFtT+अक्षर खोज  ;, खोज दोहराओ  [संख्या]cmd दोहराओ\nx/X अक्षर हटाओ  dw/db/de/dd हटाओ  D हटाओ→अंत\ncw/cb/ce/cc बदलो  C बदलो→अंत  s/S बदलो\nyw/yb/ye/yy कॉपी  p/P पेस्ट  r अक्षर बदलो  ~ केस\ni/a/I/A डालो  u वापस  Ctrl+R फिर करो  . दोहराओ  ? मदद\n\nSPC = leader — बॉक्स छोड़े बिना चैट कमांड\nSPC /    खोज          SPC n/N  अगला/पिछला मैच\nSPC 1-9  n-वाँ टैब    SPC ]/[  अगला/पिछला टैब\nSPC t    टैब पिकर     SPC \\    चैट छिपाओ/दिखाओ"
+  },
+  "lib_sec_font": {
+    "message": "फ़ॉन्ट"
+  },
+  "lib_sec_chat_messages": {
+    "message": "चैट मैसेज"
+  },
+  "lib_sec_layout": {
+    "message": "लेआउट"
+  },
+  "lib_sec_density": {
+    "message": "घनत्व"
+  },
+  "lib_sec_messages": {
+    "message": "मैसेज"
+  },
+  "lib_sec_mentioned": {
+    "message": "जब तुम्हें @मेंशन करें"
+  },
+  "lib_sec_cross_follow": {
+    "message": "क्रॉस-प्लेटफ़ॉर्म फ़ॉलो"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "मॉड टूलबार"
+  },
+  "lib_sec_content": {
+    "message": "कंटेंट"
+  },
+  "lib_sec_rules": {
+    "message": "नियम"
+  },
+  "lib_sec_player": {
+    "message": "प्लेयर"
+  },
+  "lib_sec_tabs": {
+    "message": "टैब"
+  },
+  "lib_sec_language": {
+    "message": "भाषा"
+  },
+  "lib_opt_system_monospace": {
+    "message": "सिस्टम monospace"
+  },
+  "lib_opt_platform_default": {
+    "message": "प्लेटफ़ॉर्म डिफ़ॉल्ट (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "कस्टम..."
+  },
+  "lib_opt_unread": {
+    "message": "अनपढ़े"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "ऊपर"
+  },
+  "lib_opt_right": {
+    "message": "दाएँ"
+  },
+  "lib_opt_bottom": {
+    "message": "नीचे"
+  },
+  "lib_opt_left": {
+    "message": "बाएँ"
+  },
+  "lib_opt_hidden": {
+    "message": "छिपा"
+  },
+  "lib_opt_compact": {
+    "message": "कॉम्पैक्ट"
+  },
+  "lib_opt_cozy": {
+    "message": "आरामदेह"
+  },
+  "lib_opt_always": {
+    "message": "always"
+  },
+  "lib_opt_hover": {
+    "message": "hover"
+  },
+  "lib_opt_never": {
+    "message": "never"
+  },
+  "slash_desc_op": {
+    "message": "अपने heatsync फ़ीड पर थ्रेड पोस्ट करो"
+  },
+  "slash_desc_re": {
+    "message": "चैट में दिखे आखिरी [OP] को जवाब दो"
+  },
+  "slash_desc_dm": {
+    "message": "heatsync DM भेजो; मैसेज के बिना बातचीत खुलती है"
+  },
+  "slash_desc_w": {
+    "message": "twitch whisper भेजो"
+  },
+  "slash_desc_color": {
+    "message": "अपना twitch चैट रंग सेट करो (orangered जैसा नाम, या turbo के साथ #hex)"
+  },
+  "slash_desc_r": {
+    "message": "आखिरी मिले whisper का जवाब दो"
+  },
+  "slash_desc_user": {
+    "message": "हाल के लॉग के साथ प्रोफ़ाइल कार्ड खोलो"
+  },
+  "slash_desc_follow": {
+    "message": "heatsync पर फ़ॉलो करो, twitch और kick पर भी लागू"
+  },
+  "slash_desc_unfollow": {
+    "message": "heatsync पर अनफ़ॉलो करो, twitch और kick पर भी लागू"
+  },
+  "slash_desc_me": {
+    "message": "एक्शन मैसेज भेजो"
+  },
+  "slash_desc_shrug": {
+    "message": "¯\\_(ツ)_/¯ जोड़ो"
+  },
+  "slash_desc_tableflip": {
+    "message": "(╯°□°)╯︵ ┻━┻ जोड़ो"
+  },
+  "slash_desc_unflip": {
+    "message": "┬─┬ノ( ゜-゜ノ) जोड़ो"
+  },
+  "slash_desc_help": {
+    "message": "कमांड की लिस्ट"
+  },
+  "slash_desc_lclear": {
+    "message": "मौजूदा टैब सिर्फ़ तुम्हारे लिए साफ़ करो"
+  },
+  "slash_desc_mute": {
+    "message": "किसी को 24 घंटे के लिए म्यूट करो, उनके सारे लिंक किए अकाउंट पर"
+  },
+  "slash_desc_unmute": {
+    "message": "म्यूट हटाओ"
+  },
+  "slash_desc_block": {
+    "message": "ब्लॉक टॉगल करो"
+  },
+  "slash_desc_hide": {
+    "message": "किसी को सिर्फ़ इस टैब में छिपाओ, रीलोड तक"
+  },
+  "slash_desc_unhide": {
+    "message": "छिपाना वापस लो"
+  },
+  "slash_desc_note": {
+    "message": "किसी पर प्राइवेट नोट सेव करो"
+  },
+  "slash_desc_delnote": {
+    "message": "अपना नोट हटाओ"
+  },
+  "slash_desc_set": {
+    "message": "सेटिंग बदलो, जैसे /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "टैब बदलो: कोई चैनल, या live / mentions जैसा नामी टैब"
+  },
+  "slash_desc_sharelayout": {
+    "message": "अपने टैब की कतार का heatsync.org/m लिंक कॉपी करो"
+  },
+  "slash_desc_layout": {
+    "message": "heatsync.org/m लिंक के टैब जोड़ो"
+  },
+  "slash_desc_status": {
+    "message": "चैट मोड और स्ट्रीम जानकारी दिखाओ"
+  },
+  "slash_desc_ban": {
+    "message": "किसी को चैनल से हमेशा के लिए ban करो"
+  },
+  "slash_desc_timeout": {
+    "message": "किसी को timeout दो, डिफ़ॉल्ट 10 मिनट"
+  },
+  "slash_desc_unban": {
+    "message": "ban हटाओ या timeout खत्म करो"
+  },
+  "slash_desc_delete": {
+    "message": "एक मैसेज हटाओ"
+  },
+  "slash_desc_nuke": {
+    "message": "किसी शब्द वाले हाल के मैसेज एक साथ हटाओ"
+  },
+  "slash_desc_announce": {
+    "message": "अनाउंसमेंट पोस्ट करो, चाहो तो रंगीन"
+  },
+  "slash_desc_vip": {
+    "message": "VIP दो"
+  },
+  "slash_desc_unvip": {
+    "message": "VIP हटाओ"
+  },
+  "slash_desc_mod": {
+    "message": "मॉडरेटर बनाओ"
+  },
+  "slash_desc_unmod": {
+    "message": "मॉडरेटर हटाओ"
+  },
+  "slash_desc_blocked": {
+    "message": "इस चैनल के ब्लॉक किए शब्दों की लिस्ट खोलो"
+  },
+  "slash_desc_modtools": {
+    "message": "मॉड टूल पैनल खोलो"
+  },
+  "slash_desc_shield": {
+    "message": "shield mode चालू या बंद करो"
+  },
+  "slash_desc_warn": {
+    "message": "किसी चैटर को चेतावनी दो"
+  },
+  "slash_desc_shoutout": {
+    "message": "किसी चैनल को shoutout दो"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "unban अनुरोध खोलो"
+  },
+  "slash_desc_slow": {
+    "message": "धीमा मोड, डिफ़ॉल्ट 30 सेक"
+  },
+  "slash_desc_followers": {
+    "message": "सिर्फ़ फ़ॉलोअर मोड"
+  },
+  "slash_desc_emoteonly": {
+    "message": "सिर्फ़ इमोट मोड"
+  },
+  "slash_desc_subscribers": {
+    "message": "सिर्फ़ सब्सक्राइबर मोड"
+  },
+  "slash_desc_unique": {
+    "message": "यूनिक चैट मोड; सिर्फ़ twitch, kick में इसका बराबर नहीं"
+  },
+  "slash_desc_poll": {
+    "message": "पोल बनाओ, 2-5 विकल्प"
+  },
+  "slash_desc_endpoll": {
+    "message": "चालू पोल खत्म करो"
+  },
+  "slash_desc_vote": {
+    "message": "चालू पोल में विकल्प n को वोट दो"
+  },
+  "slash_desc_prediction": {
+    "message": "प्रेडिक्शन शुरू करो, 2-10 नतीजे"
+  },
+  "slash_desc_bet": {
+    "message": "नतीजे n पर चैनल पॉइंट लगाओ"
+  },
+  "slash_desc_lockpred": {
+    "message": "चालू प्रेडिक्शन लॉक करो"
+  },
+  "slash_desc_resolvepred": {
+    "message": "प्रेडिक्शन का फ़ैसला नतीजे n पर करो"
+  },
+  "slash_desc_cancelpred": {
+    "message": "चालू प्रेडिक्शन रद्द करो"
+  },
+  "slash_desc_highlight": {
+    "message": "twitch चैट में अपना मैसेज हाइलाइट करो"
+  },
+  "slash_sec_everyday": {
+    "message": "रोज़ के"
+  },
+  "slash_sec_local": {
+    "message": "सिर्फ़ यह विंडो"
+  },
+  "slash_sec_mod": {
+    "message": "मॉडरेशन"
+  },
+  "slash_sec_modes": {
+    "message": "चैट मोड"
+  },
+  "slash_sec_events": {
+    "message": "पोल, प्रेडिक्शन, bits"
+  },
+  "slash_help_full_list": {
+    "message": "पूरी लिस्ट -> /commands"
+  },
+  "slash_help_label": {
+    "message": "slash कमांड"
   }
 }

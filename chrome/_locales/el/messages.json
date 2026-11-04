@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "συνδρομή"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "προβολή mod (chat, automod, αποκλεισμένοι όροι)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "streamer"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "creator dashboard"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "stream manager"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "ρυθμίσεις διαχείρισης (automod, αποκλεισμένοι όροι)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "ρυθμίσεις καναλιού"
+  },
+  "mc_twapi_ql_community": {
+    "message": "κοινότητα (mods, vips, ακόλουθοι)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "monetization"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "σελίδες καναλιού"
+  },
+  "mc_twapi_ql_about": {
+    "message": "σελίδα πληροφοριών"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "βίντεο"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "clips"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "πρόγραμμα"
+  },
+  "mc_twapi_ql_account": {
+    "message": "ο λογαριασμός σου"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "drops / αποθήκη"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "οι συνδρομές μου"
+  },
+  "mc_twapi_ql_following": {
+    "message": "κανάλια που ακολουθείς"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "ρυθμίσεις twitch"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "απόρρητο + ασφάλεια"
+  },
+  "mc_twapi_won": {
+    "message": "κέρδος"
+  },
+  "mc_twapi_lost": {
+    "message": "ήττα"
+  },
+  "mc_twapi_max": {
+    "message": "μέγ."
+  },
+  "mc_twapi_amt": {
+    "message": "ποσό"
+  },
+  "mc_twapi_bet": {
+    "message": "στοίχημα"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ πόντοι · $COUNT$ παίκτης",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ πόντοι · $COUNT$ παίκτες",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "το στοίχημά σου: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "έβαλες $POINTS$ στο $OUTCOME$ — διάλεξε τον πραγματικό νικητή",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "αναμονή $N$λ",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "αναμονή $N$δ",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "απέτυχε"
+  },
+  "mc_twapi_err_own": {
+    "message": "δεν γίνεται στοίχημα στο δικό σου"
+  },
+  "mc_twapi_err_retry": {
+    "message": "δοκίμασε ξανά"
+  },
+  "mc_twapi_err_locked": {
+    "message": "τα στοιχήματα έκλεισαν"
+  },
+  "mc_twapi_err_points": {
+    "message": "δεν έχεις αρκετούς πόντους"
+  },
+  "mc_twapi_err_already": {
+    "message": "έχεις ήδη στοιχηματίσει"
+  },
+  "mc_twapi_no_event": {
+    "message": "κανένα γεγονός"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "κανένα αποτέλεσμα"
+  },
+  "mc_twapi_no_channel": {
+    "message": "κανένα κανάλι"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "κλείνει..."
+  },
+  "mc_twapi_closing": {
+    "message": "κλείνει"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "δεν εντοπίστηκε κανάλι"
+  },
+  "mc_twapi_tab_events": {
+    "message": "γεγονότα"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "συντομεύσεις"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "cheer bits στο $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "υπόλοιπο: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "άνοιγμα cheer"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ θεατές",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ θεατές",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "στοίχημα: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ ψήφος",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ ψήφοι",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "ψήφισε"
+  },
+  "mc_input_unblock": {
+    "message": "άρση αποκλεισμού"
+  },
+  "mc_input_remove_from_set": {
+    "message": "αφαίρεση από το σετ"
+  },
+  "mc_input_open_on": {
+    "message": "άνοιγμα στο $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "προβολή εικόνας"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "αντιγραφή :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "αντιγραφή url εικόνας"
+  },
+  "mc_input_copy_emoji": {
+    "message": "αντιγραφή emoji"
+  },
+  "mc_input_expand": {
+    "message": "ανάπτυξη"
+  },
+  "mc_input_mute_24h": {
+    "message": "σίγαση (24ω)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "εμφάνιση στην καρτέλα"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "απόκρυψη στην καρτέλα"
+  },
+  "mc_input_copy_message": {
+    "message": "αντιγραφή μηνύματος"
+  },
+  "mc_input_copy_to_input": {
+    "message": "αντιγραφή → πεδίο"
+  },
+  "mc_input_copy_thread": {
+    "message": "αντιγραφή thread"
+  },
+  "mc_input_delete_msg": {
+    "message": "διαγραφή μηνύματος"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10λ"
+  },
+  "mc_input_timed_out": {
+    "message": "έγινε timeout"
+  },
+  "mc_input_warn": {
+    "message": "προειδοποίηση"
+  },
+  "mc_input_reply": {
+    "message": "απάντηση"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op στο feed"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "επεξεργασία σημείωσης"
+  },
+  "mc_input_add_note": {
+    "message": "προσθήκη σημείωσης"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "αναφορά / δωρεάν συνδρομή"
+  },
+  "mc_input_filter_to": {
+    "message": "φίλτρο στον $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "logs συνομιλίας"
+  },
+  "mc_input_edit_timer": {
+    "message": "επεξεργασία ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "επεξεργασία (έληξε)"
+  },
+  "mc_input_delete": {
+    "message": "διαγραφή"
+  },
+  "mc_input_chatter": {
+    "message": "chatter"
+  },
+  "mc_input_everyone": {
+    "message": "όλοι"
+  },
+  "mc_input_heatsync_only": {
+    "message": "μόνο heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "η αποθήκη σου"
+  },
+  "mc_input_all_twitch": {
+    "message": "όλο το twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "όλο το kick"
+  },
+  "mc_input_ext_users": {
+    "message": "χρήστες $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "αναζήτηση στο 7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "μόνο συνδρομητές"
+  },
+  "mc_input_usage_color": {
+    "message": "χρήση: /color <name|#hex> — π.χ. /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "το χρώμα συνομιλίας ορίστηκε σε $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "χρήση: /re <text>"
+  },
+  "mc_input_re_no_post": {
+    "message": "δεν υπάρχει ακόμα ανάρτηση στη συνομιλία για απάντηση"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "η δημοσκόπηση απέτυχε: $ERROR$ (μόνο streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "η δημοσκόπηση απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "η πρόβλεψη απέτυχε: $ERROR$ (μόνο streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "η πρόβλεψη απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "ο τερματισμός δημοσκόπησης απέτυχε: $ERROR$ (μόνο streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "η ψήφος απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "το στοίχημα απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "απέτυχε: $ERROR$ (μόνο streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "το $CMD$ απέτυχε: $ERROR$ (μόνο streamer)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "η ανακοίνωση απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <name> — ανοίγει την κάρτα προφίλ"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <user> — κρύβει σε αυτή την καρτέλα"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <user> — εμφανίζει ξανά σε αυτή την καρτέλα"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r για απάντηση στον $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "ανέβασμα σε εξέλιξη..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "επιτρέπονται μόνο εικόνες/βίντεο"
+  },
+  "mc_input_upload_too_large": {
+    "message": "το αρχείο είναι πολύ μεγάλο (μέγ. $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "ανεβάζει..."
+  },
+  "mc_input_upload_done": {
+    "message": "το ανέβασμα ολοκληρώθηκε"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "το ανέβασμα απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "το ανέβασμα απέτυχε"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "δεν βρέθηκε το πρωτότυπο — στάλθηκε στατικό καρέ"
+  },
+  "mc_input_drop_zone": {
+    "message": "άφησε εικόνα/βίντεο/σύνδεσμο για ανέβασμα"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <message>"
+  },
+  "mc_social_edit_empty": {
+    "message": "το περιεχόμενο δεν μπορεί να είναι κενό"
+  },
+  "mc_social_saving": {
+    "message": "αποθήκευση..."
+  },
+  "mc_social_edit_failed": {
+    "message": "η επεξεργασία απέτυχε"
+  },
+  "mc_social_confirm_delete": {
+    "message": "διαγραφή αυτής της ανάρτησης;"
+  },
+  "mc_social_home_title": {
+    "message": "συνδέσου για να δεις την αρχική σου"
+  },
+  "mc_social_home_sub": {
+    "message": "ακολούθησε άτομα, ανάρτησε, μοιράσου — δίπλα στο multichat"
+  },
+  "mc_social_home_login": {
+    "message": "σύνδεση στο heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "δεν χρειάζεται λογαριασμός για το multichat — διάλεξε καρτέλα καναλιού από πάνω"
+  },
+  "mc_social_no_posts": {
+    "message": "καμία ανάρτηση"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "ακολούθησε άτομα ή ανάρτησε κάτι για να γεμίσει η καρτέλα"
+  },
+  "mc_social_import_follows": {
+    "message": "εισαγωγή ακολούθων από το twitch"
+  },
+  "mc_social_syncing": {
+    "message": "συγχρονισμός…"
+  },
+  "mc_social_synced": {
+    "message": "συγχρονίστηκαν $COUNT$ ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "δοκίμασε ξανά"
+  },
+  "mc_social_failed": {
+    "message": "απέτυχε"
+  },
+  "mc_social_discover_people": {
+    "message": "ανακάλυψε άτομα →"
+  },
+  "mc_social_post_something": {
+    "message": "ανάρτησε κάτι"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "δημοφιλείς αναρτήσεις · συνδέσου στο heatsync.org για να ακολουθείς άτομα"
+  },
+  "mc_social_banner_newest": {
+    "message": "νεότερες αναρτήσεις · ακολούθησε άτομα για να γεμίσει το feed σου"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "δημοφιλή αυτόν τον μήνα · ακολούθησε άτομα για να γεμίσει το feed σου"
+  },
+  "mc_social_edited": {
+    "message": "(επεξεργασμένο)"
+  },
+  "mc_social_replying_to": {
+    "message": "απάντηση στο >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "έξοδος από το thread"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ θεατής",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ θεατές",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ θεατές",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ απάντηση",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ απαντήσεις",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(χωρίς κείμενο)"
+  },
+  "mc_social_live_now": {
+    "message": "live τώρα"
+  },
+  "mc_social_no_streams": {
+    "message": "κανένα stream live αυτή τη στιγμή"
+  },
+  "mc_social_hot_posts": {
+    "message": "δημοφιλείς αναρτήσεις"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "καμία ανάρτηση δεν ταιριάζει με το φίλτρο"
+  },
+  "mc_social_tags": {
+    "message": "tags"
+  },
+  "mc_social_none_now": {
+    "message": "κανένα αυτή τη στιγμή"
+  },
+  "mc_social_leaderboard": {
+    "message": "κατάταξη"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "κανένα προφίλ δεν ταιριάζει με αυτό το φίλτρο"
+  },
+  "mc_social_no_pinned": {
+    "message": "κανένα καρφιτσωμένο μήνυμα"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "καμία ενέργεια mod ακόμα"
+  },
+  "mc_social_platform": {
+    "message": "πλατφόρμα"
+  },
+  "mc_social_all": {
+    "message": "όλα"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "ορόσημο μέλους"
+  },
+  "mc_social_yt_member": {
+    "message": "έγινε μέλος"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "δώρισε $COUNT$ συνδρομή μέλους",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "δώρισε $COUNT$ συνδρομές μέλους",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "σφάλμα σύνδεσης"
+  },
+  "mc_social_replies_title": {
+    "message": "απαντήσεις"
+  },
+  "mc_pcard_del_msg": {
+    "message": "διαγρ. μηνύματος"
+  },
+  "mc_pcard_del_title": {
+    "message": "διαγραφή του τελευταίου μηνύματος του χρήστη"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "ανάθεση διαχειριστή (μόνο streamer)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "αφαίρεση διαχειριστή (μόνο streamer)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "ανάθεση VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "αφαίρεση VIP"
+  },
+  "mc_pcard_error": {
+    "message": "σφάλμα"
+  },
+  "mc_pcard_no_channel": {
+    "message": "δεν βρέθηκε το κανάλι"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "το $ACTION$ απέτυχε: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "συνεδρία"
+  },
+  "mc_pcard_first": {
+    "message": "πρώτο"
+  },
+  "mc_pcard_channels": {
+    "message": "κανάλια"
+  },
+  "mc_pcard_close_profile": {
+    "message": "κλείσιμο προφίλ"
+  },
+  "mc_pcard_close_esc": {
+    "message": "κλείσιμο (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "αποτυχία φόρτωσης — δοκίμασε ξανά"
+  },
+  "mc_pcard_url_copied": {
+    "message": "το url αντιγράφηκε"
+  },
+  "mc_pcard_clip_created": {
+    "message": "το clip δημιουργήθηκε"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "το clip απέτυχε: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "αντιγράφηκε"
+  },
+  "mc_logs_failed": {
+    "message": "απέτυχε"
+  },
+  "mc_logs_all_channels": {
+    "message": "όλα τα κανάλια"
+  },
+  "mc_logs_all": {
+    "message": "όλα"
+  },
+  "mc_logs_scope_channel": {
+    "message": "περιορισμένο στο #$CHANNEL$ — κλικ για όλα τα κανάλια",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "εμφανίζονται όλα τα κανάλια — κλικ για περιορισμό στο #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "αναζήτηση…"
+  },
+  "mc_logs_search_title": {
+    "message": "αναζήτηση στα μηνύματα του $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "ανανέωση"
+  },
+  "mc_logs_export_txt": {
+    "message": "εξαγωγή ως .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "εξαγωγή ως .json"
+  },
+  "mc_logs_public": {
+    "message": "δημόσιο αρχείο ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "άνοιγμα του δημόσιου chat log του #$CHANNEL$ στο heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "αποτυχία φόρτωσης αρχείου — ψάξε ή κάνε scroll ξανά για νέα προσπάθεια"
+  },
+  "mc_logs_backfill": {
+    "message": "λήψη ιστορικών logs από $SOURCE$… ανανέωσε σε ~30δ",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "κανένα αποτέλεσμα για \"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "κανένα αρχειοθετημένο μήνυμα από $USER$ στο #$CHANNEL$ ακόμα",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "κανένα αρχειοθετημένο μήνυμα από $USER$ ακόμα",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "scroll για παλαιότερα"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "αντιγραφή permalink"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "σημείωση · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "ιδιωτική σημείωση — τη βλέπεις μόνο εσύ. ακολουθεί το άτομο σε όλες τις πλατφόρμες."
+  },
+  "mc_notes_esc": {
+    "message": "esc για κλείσιμο"
+  },
+  "mc_notes_delete": {
+    "message": "διαγραφή"
+  },
+  "mc_notes_saved": {
+    "message": "αποθηκεύτηκε · esc για κλείσιμο"
+  },
+  "mc_notes_saving": {
+    "message": "αποθήκευση…"
+  },
+  "mc_notes_section": {
+    "message": "σημειώσεις"
+  },
+  "mc_notes_empty": {
+    "message": "καμία σημείωση ακόμα"
+  },
+  "mc_notes_edit": {
+    "message": "επεξεργασία"
+  },
+  "mc_notes_add": {
+    "message": "προσθήκη σημείωσης"
+  },
+  "mc_feed_loading_name": {
+    "message": "φόρτωση $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "φόρτωση γραμμής συνομιλίας…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "φόρτωση προεπισκόπησης…"
+  },
+  "mc_feed_adult_login": {
+    "message": "συνδέσου ως ενήλικας για προβολή"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "η εικόνα δεν είναι διαθέσιμη"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "άνοιγμα σε νέα καρτέλα"
+  },
+  "mc_feed_reload_player": {
+    "message": "επαναφόρτωση player (μετά τη σύνδεση)"
+  },
+  "mc_feed_pause": {
+    "message": "παύση"
+  },
+  "mc_feed_volume": {
+    "message": "ένταση"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "πίσω στη συνομιλία (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "γέμισμα συνομιλίας"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "άνοιγμα σε νέα καρτέλα"
+  },
+  "mc_feed_close_player": {
+    "message": "κλείσιμο player"
+  },
+  "mc_feed_back": {
+    "message": "← πίσω"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "το whisper απέτυχε"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "ο διακομιστής heatsync δεν είναι προσβάσιμος"
+  },
+  "mc_misc_twitch_error": {
+    "message": "σφάλμα twitch $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "δεν υπάρχει συνεδρία twitch"
+  },
+  "mc_misc_unknown_error": {
+    "message": "άγνωστο σφάλμα"
+  },
+  "mc_misc_sending": {
+    "message": "αποστολή"
+  },
+  "mc_misc_click_retry": {
+    "message": "κλικ για επανάληψη"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — κλικ για να δώσεις άδεια twitch whisper στο heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "ενεργοποίηση twitch whispers — νέα σύνδεση"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — κλικ για να ακολουθήσεις τον $USER$ και να στείλεις",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — κλικ για σύνδεση στο heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "συνδέσου στο heatsync για αποστολή"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — επανάληψη",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "απάντηση ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "μήνυμα resub ($MONTHS$μ) — enter για κοινοποίηση",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "watch streak ($COUNT$) — enter για κοινοποίηση",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "διαγραφή αυτού του μηνύματος"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 λεπτό"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 λεπτά"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 ώρα"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 ώρες"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 ημέρες"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — καθαρισμός μηνυμάτων του χρήστη (timeout 1δ)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "μόνιμο ban"
+  },
+  "mc_mtb_t_unban": {
+    "message": "unban χρήστη"
+  },
+  "mc_mtb_t_bt": {
+    "message": "αποκλεισμένοι όροι"
+  },
+  "mc_mtb_t_mt": {
+    "message": "εργαλεία mod"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "ενέργειες διαχείρισης μηνύματος"
+  },
+  "mc_main_back_to_chat": {
+    "message": "πίσω στη συνομιλία"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "πίσω στη συνομιλία (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "επεξεργασία πλατφορμών"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ $N$ ακόμα",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "άνοιγμα του $CH$ στο $PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "άνοιγμα συνομιλίας $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "απάντηση"
+  },
+  "mc_main_also_live_on": {
+    "message": "live και στο $PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "σύνδεση καναλιών"
+  },
+  "mc_main_dismiss": {
+    "message": "απόρριψη"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "απόρριψη (δουλεύει και το δεξί κλικ)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "πρόσθεσε τα streams σου"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "συνένωσε τη συνομιλία twitch, kick + youtube σε ένα πάνελ"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ προσθήκη καναλιού"
+  },
+  "mc_main_idwarn": {
+    "message": "τα emotes σου δεν θα εμφανίζονται στους άλλους εδώ — λογαριασμός heatsync $ACCT$, συνομιλείς ως $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "σύνδεση λογαριασμών"
+  },
+  "mc_main_status_no_yt": {
+    "message": "το status καλύπτει κανάλια twitch και kick"
+  },
+  "mc_main_status_fetching": {
+    "message": "λήψη #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "αποτυχία λήψης #$CH$ (εκτός σύνδεσης ή όχι στο $PLAT$;)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "συνδέσου για να δεις εδώ τα logs σου — δεξί κλικ σε έναν chatter για τα δικά του"
+  },
+  "mc_main_logs_rclick": {
+    "message": "δεξί κλικ σε έναν chatter για να δεις τα logs του στο $PLAT$",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "καρτέλες συνομιλίας"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "απόκρυψη συνομιλίας (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "απόκρυψη συνομιλίας"
+  },
+  "mc_main_popout_title": {
+    "message": "άνοιγμα συνομιλίας σε ξεχωριστό παράθυρο"
+  },
+  "mc_main_subscribe_title": {
+    "message": "συνδρομή — στήριξε αυτό το κανάλι"
+  },
+  "mc_main_views_aria": {
+    "message": "προβολές"
+  },
+  "mc_main_search_ph": {
+    "message": "αναζήτηση μηνυμάτων…"
+  },
+  "mc_main_messages_aria": {
+    "message": "μηνύματα συνομιλίας"
+  },
+  "mc_main_search_none_for": {
+    "message": "κανένα αποτέλεσμα για \"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "κανένα αποτέλεσμα"
+  },
+  "mc_main_moment": {
+    "message": "η συνομιλία του $CH$ τρελαίνεται — $RATE$ μηνύματα/30δ (συνήθως ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "φίλτρο — /regex/ ή @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ πόντοι",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "εξαργύρωση πόντων καναλιού"
+  },
+  "mc_main_highlighted": {
+    "message": "επισημασμένο μήνυμα"
+  },
+  "mc_main_first_msg": {
+    "message": "πρώτο μήνυμα σε αυτό το κανάλι"
+  },
+  "mc_main_kill_active": {
+    "message": "απενεργοποιήθηκε από το heatsync (kill-switch ενεργό)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "το multichat απενεργοποιήθηκε από το heatsync"
+  },
+  "mc_main_kill_update": {
+    "message": "απαιτείται ενημέρωση επέκτασης (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "εξαργύρωσε \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "έκανε raid στο $TARGET$ με $VIEWERS$ θεατές",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "ο/η $FROM$ έκανε raid με $VIEWERS$ θεατές",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "νέα δημοσκόπηση"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "νέα δημοσκόπηση — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "νέα πρόβλεψη"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "νέα πρόβλεψη — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "ξεκίνησε hype train"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "το hype train τελείωσε στο επίπεδο $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "ο/η $USER$ δώρισε $COUNT$ συνδρομές",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "καρφίτσωσε $BY$: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "καρφιτσώθηκε: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "το μήνυμα ξεκαρφιτσώθηκε"
+  },
+  "mc_notif_dismiss": {
+    "message": "απόρριψη"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "φόρτωση emotes…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "γιορτάζει"
+  },
+  "mc_notif_rt_mo": {
+    "message": "μ."
+  },
+  "mc_notif_rt_months": {
+    "message": "μήνες"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "ως συνδρομητής"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "με"
+  },
+  "mc_notif_wt_stream": {
+    "message": "stream"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "watch streak"
+  },
+  "mc_notif_share": {
+    "message": "κοινοποίηση"
+  },
+  "mc_notif_update_available": {
+    "message": "διαθέσιμη ενημέρωση — τρέχει η $CUR$, η τελευταία είναι $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "άνοιγμα kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "άνοιγμα youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "συνδέσου στο twitch.tv για συνομιλία"
+  },
+  "mc_notif_open_twitch": {
+    "message": "άνοιγμα twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- ΚΑΡΤΕΛΕΣ --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "αποτυχία ταυτοποίησης twitch"
+  },
+  "mc_notif_r_no_user": {
+    "message": "δεν υπάρχει όνομα χρήστη twitch"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "αποτυχία σύνδεσης"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "αποτυχία αποστολής"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "δεν έχεις συνδεθεί στο kick"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "δεν υπάρχει ανοιχτή καρτέλα kick"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "το κανάλι kick δεν βρέθηκε"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "το kick δεν επιβεβαίωσε — μπορεί να στάλθηκε"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "το kick απέρριψε την αποστολή"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "δεν υπάρχει ανοιχτή καρτέλα youtube"
+  },
+  "mc_notif_r_no_input": {
+    "message": "η συνομιλία youtube φορτώνει ακόμα"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "συνδέσου πρώτα στο youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "το youtube μπλόκαρε την αποστολή"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "το youtube δεν επιβεβαίωσε την αποστολή"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "λήξη χρόνου στη γέφυρα συνομιλίας youtube"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "το $PLAT$ δεν επιβεβαίωσε — μπορεί να μην στάλθηκε",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "πλατφόρμα"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "περιορισμένη συνομιλία — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "περιορισμένη συνομιλία"
+  },
+  "mc_notif_r_unknown": {
+    "message": "η αποστολή μάλλον απέτυχε"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "κρυμμένο"
+  },
+  "mc_tip_owner_sub": {
+    "message": "συνδρομή $OWNER$ ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · αφαιρέθηκε από @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · αφαιρέθηκε από το κανάλι",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "αυτός"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "συνδρομή σε εσένα $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "συνδρ. καν."
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "follow καν."
+  },
+  "mc_tip_row_follower": {
+    "message": "ακόλουθος"
+  },
+  "mc_tip_row_you": {
+    "message": "εσύ"
+  },
+  "mc_tip_follow_ago": {
+    "message": "follow $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "ακόλουθοι"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ μην.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "από $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "από $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "logs"
+  },
+  "mc_set_system_backup": {
+    "message": "σύστημα · αντίγραφο / επαναφορά"
+  },
+  "mc_set_recent_errors": {
+    "message": "πρόσφατα σφάλματα"
+  },
+  "mc_set_copy": {
+    "message": "αντιγραφή"
+  },
+  "mc_set_clear": {
+    "message": "εκκαθάριση"
+  },
+  "mc_set_crash_loading": {
+    "message": "(φόρτωση...)"
+  },
+  "mc_set_export_tip": {
+    "message": "εξαγωγή ui_settings + όλων των κλειδιών hs_* σε αρχείο JSON. μεταφέρσιμο μεταξύ συσκευών και browsers."
+  },
+  "mc_set_export": {
+    "message": "εξαγωγή ρυθμίσεων"
+  },
+  "mc_set_export_btn": {
+    "message": "λήψη .json"
+  },
+  "mc_set_import_tip": {
+    "message": "επαναφορά από αρχείο JSON που εξήχθη παλαιότερα. συγχωνεύεται με τις υπάρχουσες ρυθμίσεις."
+  },
+  "mc_set_import": {
+    "message": "εισαγωγή ρυθμίσεων"
+  },
+  "mc_set_import_btn": {
+    "message": "φόρτωση .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "επαναφορά όλων των ρυθμίσεων σε όλες τις σελίδες"
+  },
+  "mc_set_all_defaults": {
+    "message": "όλες οι προεπιλογές"
+  },
+  "mc_set_backup_restore": {
+    "message": "αντίγραφο / επαναφορά"
+  },
+  "mc_set_fr_sound": {
+    "message": "ήχος: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "μετακίνηση πάνω (υψηλότερη προτεραιότητα — κερδίζει η πρώτη αντιστοίχιση)"
+  },
+  "mc_set_fr_down": {
+    "message": "μετακίνηση κάτω"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "όλα τα κανάλια"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "λέξη-κλειδί"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "χρήστης"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "badge"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "τύπος μηνύματος"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "έκφραση"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "π.χ. first && !badge:subscriber — συνδυασμός με && || ! ( ); πεδία user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "τιμή..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "επισήμανση"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "απόκρυψη"
+  },
+  "mc_set_fr_color": {
+    "message": "χρώμα επισήμανσης"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "ήχος επισήμανσης (μόνο για ενέργεια επισήμανσης)"
+  },
+  "mc_set_fr_silent": {
+    "message": "σιωπηλό"
+  },
+  "mc_set_fr_case": {
+    "message": "διάκριση πεζών/κεφαλαίων"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ προσθήκη"
+  },
+  "mc_set_fr_none": {
+    "message": "κανένας κανόνας — πρόσθεσε έναν παρακάτω"
+  },
+  "mc_set_page_reset_title": {
+    "message": "επαναφορά αυτής της σελίδας στις προεπιλογές"
+  },
+  "mc_set_default": {
+    "message": "προεπιλογή"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "$N$ ακόμα ρύθμιση εδώ — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "$N$ ακόμα ρυθμίσεις εδώ — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "εμφάνιση όλων"
+  },
+  "mc_set_crash_none": {
+    "message": "(δεν καταγράφηκαν σφάλματα)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(αδυναμία ανάγνωσης log)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "ανενεργά: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "όλα ενεργά"
+  },
+  "mc_set_fmt_none": {
+    "message": "κανένα"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "διαγραφή preset…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "διαγραφή $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "διαγραφή preset"
+  },
+  "mc_set_preset_save_as": {
+    "message": "αποθήκευση τρέχοντος ως…"
+  },
+  "mc_set_preset_undo": {
+    "message": "αναίρεση: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "presets"
+  },
+  "mc_set_preset_save_title": {
+    "message": "αποθήκευση τρέχοντος ως preset"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "όνομα preset"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "αποθηκεύει κάθε ρύθμιση που διαφέρει από τις προεπιλογές — κοινοποιήσιμο μέσω εξαγωγής ρυθμίσεων"
+  },
+  "mc_set_preset_nochange": {
+    "message": "ήδη ταιριάζει — τίποτα προς αλλαγή"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "εφαρμογή preset: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "εφαρμογή"
+  },
+  "mc_set_h_search": {
+    "message": "αναζήτηση"
+  },
+  "mc_set_h_category": {
+    "message": "κατηγορία"
+  },
+  "mc_set_h_move": {
+    "message": "μετακίνηση"
+  },
+  "mc_set_h_adjust": {
+    "message": "ρύθμιση"
+  },
+  "mc_set_h_toggle": {
+    "message": "εναλλαγή"
+  },
+  "mc_set_h_reset_row": {
+    "message": "επαναφορά γραμμής"
+  },
+  "mc_set_h_close_clear": {
+    "message": "κλείσιμο / εκκαθάριση"
+  },
+  "mc_set_h_this_help": {
+    "message": "αυτή η βοήθεια"
+  },
+  "mc_set_h_first_last": {
+    "message": "πρώτο / τελευταίο"
+  },
+  "mc_set_h_fold": {
+    "message": "αναδίπλωση ενότητας"
+  },
+  "mc_set_h_prev_next": {
+    "message": "προηγούμενη / επόμενη κατηγορία"
+  },
+  "mc_set_h_keys": {
+    "message": "πλήκτρα"
+  },
+  "mc_set_h_commands": {
+    "message": "εντολές"
+  },
+  "mc_set_h_full_list": {
+    "message": "πλήρης λίστα -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ αναζήτηση ρυθμίσεων..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "εμφανίζονται όλες οι ρυθμίσεις — κλικ για μόνο τα βασικά"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "εμφανίζονται τα βασικά — κλικ για όλες τις ρυθμίσεις"
+  },
+  "mc_set_scope_all": {
+    "message": "όλες"
+  },
+  "mc_set_scope_basic": {
+    "message": "βασικές"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emotes"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gifs"
+  },
+  "mc_emo_chips_title": {
+    "message": "επιλογή παρόχων για αναζήτηση"
+  },
+  "mc_emo_exact_title": {
+    "message": "μόνο ακριβές όνομα"
+  },
+  "mc_emo_stack_expand": {
+    "message": "ανάπτυξη"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "σύμπτυξη"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "αποκλεισμός όλων"
+  },
+  "mc_xg_close": {
+    "message": "κλείσιμο"
+  },
+  "mc_tr_sub_chat": {
+    "message": "συνομιλία"
+  },
+  "mc_tr_sub_summary": {
+    "message": "σύνοψη"
+  },
+  "mc_tr_sub_logs": {
+    "message": "logs"
+  },
+  "mc_tr_sub_status": {
+    "message": "status"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "πλατφόρμες"
+  },
+  "mc_tr_set_display": {
+    "message": "εμφάνιση"
+  },
+  "mc_tr_set_notifs": {
+    "message": "ειδοπ."
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "φίλτρα"
+  },
+  "mc_tr_set_system": {
+    "message": "σύστημα"
+  },
+  "mc_tr_set_help": {
+    "message": "βοήθεια"
+  },
+  "mc_pt_native_chat": {
+    "message": "εγγενής συνομιλία"
+  },
+  "mc_pt_popout_chat": {
+    "message": "ξεχωριστή συνομιλία"
+  },
+  "mc_pt_clips": {
+    "message": "clips"
+  },
+  "mc_pt_videos": {
+    "message": "βίντεο"
+  },
+  "mc_pt_channel_page": {
+    "message": "σελίδα καναλιού"
+  },
+  "mc_pt_no_channel": {
+    "message": "δεν εντοπίστηκε κανάλι"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "εγγενής συνομιλία (super chat, stickers, δημοσκοπήσεις, emoji)"
+  },
+  "mc_pt_join_channel": {
+    "message": "είσοδος στο κανάλι"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "πίσω στη συνομιλία heatsync"
+  },
+  "mc_pa_show_chat": {
+    "message": "εμφάνιση συνομιλίας (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "η συνομιλία youtube θέλει σύνδεση heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "συνδέσου στο heatsync για να φαίνονται τα emotes σου σε όλους"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "το heatsync.org δεν είναι προσβάσιμο — επανασύνδεση"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "το $SOURCE$ δεν είναι προσβάσιμο",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "το stream του $CHANNEL$ τελείωσε",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "σύνοψη stream $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "τα στατιστικά stream είναι κλειστά στις ρυθμίσεις"
+  },
+  "mc_ss_empty": {
+    "message": "δεν έχει μετρηθεί συνομιλία ακόμα — γεμίζει καθώς έρχονται μηνύματα"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ μην. · $CHATTERS$ chatters · $MENTIONS$ αναφορές · $PEAK$/δ ρεκόρ",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "από $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "κορυφαίοι chatters"
+  },
+  "mc_ss_top_emotes": {
+    "message": "κορυφαία emotes"
+  },
+  "mc_cmg_checking": {
+    "message": "έλεγχος heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "δεν υπάρχει προφίλ heatsync — συμπλήρωσε χειροκίνητα"
+  },
+  "mc_cmg_unreachable": {
+    "message": "το heatsync δεν ήταν προσβάσιμο"
+  },
+  "mc_cmg_live_on": {
+    "message": "live σε $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "βρέθηκε ο/η $NAME$ στο heatsync — συνδεδεμένα: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "αυτόματη συμπλήρωση: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "επεξεργασία live — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "το $CHANNEL$ ξεκίνησε live",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "το $CHANNEL$ άλλαξε παιχνίδι",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "ένα μήνυμα διαγράφηκε"
+  },
+  "mc_ircx_unbanned": {
+    "message": "έγινε unban στον/στην $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "timeout για τον/την $TARGET$ για $SEC$δ",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "έγινε ban στον/στην $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "ο/η $USER$ δώρισε $AMOUNT$ KICKs!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "ο/η $USER$ δώρισε $AMOUNT$ KICKs ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "ανώνυμος"
+  },
+  "mc_cp_vol": {
+    "message": "ένταση $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "απέτυχε"
+  },
+  "hsbtn_imported": {
+    "message": "εισήχθησαν $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "τα emotes σου, σε κάθε συνομιλία"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "άνοιξε ένα stream twitch, kick ή youtube και εισήγαγε τα emotes του από την καρτέλα καναλιού — ένα κλικ, δουλεύει σε κάθε συνομιλία."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "φέρε όλα τα emotes 7tv, bttv & ffz του $CHANNEL$ στο σετ σου — ένα κλικ, εμφανίζονται σε κάθε συνομιλία.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "εισαγωγή όλων των emotes του $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "εισαγωγή όλων των emotes του καναλιού"
+  },
+  "hsbtn_no_sets": {
+    "message": "δεν υπάρχουν αποθηκευμένα σετ — φτιάξε ένα στο heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "εφαρμογή"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "αντικατάσταση $COUNT$ emotes;",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "εφαρμογή…"
+  },
+  "hsbtn_applied": {
+    "message": "εφαρμόστηκε"
+  },
+  "hsbtn_login_removed": {
+    "message": "συνδέσου για να δεις τα αφαιρεμένα emotes"
+  },
+  "hsbtn_no_removed": {
+    "message": "κανένα αφαιρεμένο emote"
+  },
+  "hsbtn_restore": {
+    "message": "επαναφορά"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "επαναφορά;"
+  },
+  "hsbtn_restoring": {
+    "message": "επαναφορά…"
+  },
+  "hsbtn_restored": {
+    "message": "έγινε επαναφορά"
+  },
+  "hsbtn_removed_on": {
+    "message": "αφαιρέθηκε $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "αποτυχία φόρτωσης σετ"
+  },
+  "hsbtn_err_history": {
+    "message": "αποτυχία φόρτωσης ιστορικού"
+  },
+  "hsbtn_err_mine": {
+    "message": "αποτυχία φόρτωσης των emotes σου"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "τα emotes του καναλιού δεν είναι διαθέσιμα"
+  },
+  "hsbtn_err_channel": {
+    "message": "αποτυχία φόρτωσης emotes καναλιού"
+  },
+  "hsbtn_err_global": {
+    "message": "αποτυχία φόρτωσης καθολικών emotes"
+  },
+  "hsbtn_unnamed": {
+    "message": "(χωρίς όνομα)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "από $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ δικά σου",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "σφάλμα"
+  },
+  "hsbtn_search_status": {
+    "message": "“$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "“$QUERY$” — αναζήτηση…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "κανένα emote δεν ταιριάζει με “$QUERY$”",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "συνδέσου για να προσθέσεις emotes"
+  },
+  "hsbtn_add_failed": {
+    "message": "αποτυχία προσθήκης"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "η άρση αποκλεισμού απέτυχε"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ χρήσεις στο heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "στην αποθήκη"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "όχι στην αποθήκη"
+  },
+  "hsbtn_open_on": {
+    "message": "άνοιγμα στο $PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "μετονομασία"
+  },
+  "hsbtn_move": {
+    "message": "μετακίνηση"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "μετακίνηση σε θέση…"
+  },
+  "hsbtn_slot_number": {
+    "message": "αριθμός θέσης"
+  },
+  "hsbtn_renamed_to": {
+    "message": "μετονομάστηκε σε $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "η μετονομασία απέτυχε"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "μετακινήθηκε στη θέση $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "η μετακίνηση απέτυχε"
+  },
+  "hsbtn_unshare_set": {
+    "message": "διακοπή κοινοποίησης σετ"
+  },
+  "hsbtn_share_set": {
+    "message": "κοινοποίηση σετ"
+  },
+  "hsbtn_set_unshared": {
+    "message": "η κοινοποίηση του σετ σταμάτησε"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "η διακοπή κοινοποίησης απέτυχε"
+  },
+  "hsbtn_share_copied": {
+    "message": "ο σύνδεσμος κοινοποίησης αντιγράφηκε: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "η κοινοποίηση απέτυχε"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "αντιγραφή markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "πίσω στη συνομιλία heatsync"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← συνομιλία heatsync"
+  },
+  "hsbtn_rcb_label": {
+    "message": "αποκλεισμός με δεξί κλικ"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "instant αποκλείει αμέσως · menu δείχνει αποκλεισμό/ακύρωση · off το απενεργοποιεί"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "instant"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "off"
+  },
+  "hsbtn_search_ph": {
+    "message": "αναζήτηση emotes…"
+  },
+  "hsbtn_chips_title": {
+    "message": "επιλογή παρόχων για αναζήτηση"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "συμπερίληψη αποτελεσμάτων 7tv"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "συμπερίληψη αποτελεσμάτων frankerfacez"
+  },
+  "hsbtn_undo": {
+    "message": "αναίρεση"
+  },
+  "hsbtn_redo": {
+    "message": "επανάληψη"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "περιστροφή πάνελ συνομιλίας (C)"
+  },
+  "cs_color_for": {
+    "message": "χρώμα για τον $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "ορισμός"
+  },
+  "cs_clear": {
+    "message": "εκκαθάριση"
+  },
+  "cs_poll": {
+    "message": "📊 δημοσκόπηση · "
+  },
+  "cs_prediction": {
+    "message": "🎯 πρόβλεψη · "
+  },
+  "cs_active": {
+    "message": "(ενεργό)"
+  },
+  "cs_badge_alt": {
+    "message": "badge $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "αντιγραφή ονόματος χρήστη"
+  },
+  "cs_copy_message": {
+    "message": "αντιγραφή μηνύματος"
+  },
+  "cs_mute_24h": {
+    "message": "σίγαση (24ω)"
+  },
+  "cs_profile": {
+    "message": "προφίλ"
+  },
+  "cs_removed": {
+    "message": "αφαιρέθηκε το $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "αφαιρέθηκε το $NAME$ · τώρα $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "συνδέσου στο heatsync.org για διαχείριση emotes"
+  },
+  "cs_remove_failed": {
+    "message": "δεν αφαιρέθηκε το $NAME$: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "άγνωστο σφάλμα"
+  },
+  "popup_site_label": {
+    "message": "συνομιλία heatsync στο"
+  },
+  "popup_site_note_default": {
+    "message": "το off δείχνει τη δική του συνομιλία του site"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: επέστρεψε η δική του συνομιλία του site",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: επέστρεψε η συνομιλία heatsync",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "feedback"
+  },
+  "popup_fb_bug": {
+    "message": "bug"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "τι να κάνει καλύτερα το heatsync;"
+  },
+  "popup_fb_ph_bug": {
+    "message": "τι χάλασε; τι περίμενες;"
+  },
+  "popup_fb_send": {
+    "message": "αποστολή"
+  },
+  "popup_fb_sending": {
+    "message": "αποστολή..."
+  },
+  "popup_fb_short": {
+    "message": "γράψε λίγο παραπάνω"
+  },
+  "popup_fb_sent": {
+    "message": "στάλθηκε — ευχαριστούμε"
+  },
+  "popup_fb_failed": {
+    "message": "η αποστολή απέτυχε. δοκίμασε ξανά."
+  },
+  "popup_feedback_link": {
+    "message": "feedback"
+  },
+  "popup_feedback_title": {
+    "message": "feedback / αναφορά bug"
+  },
+  "popup_inv_slots": {
+    "message": "5.000 θέσεις emote"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "συνδεδεμένος ως $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5.000 θέσεις"
+  },
+  "popup_inv_import_hint": {
+    "message": " · εισήγαγε ένα κανάλι για να γεμίσει"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ ακόμα",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "ο/η $NAME$ είναι live",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ θεατές",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ από όσους ακολουθείς είναι live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — αλλαγή λογαριασμού"
+  },
+  "bg_acct_msg": {
+    "message": "αλλαγή από $FROM$ σε $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "φόρτωση emotes καναλιού..."
+  },
+  "bg_loading_third": {
+    "message": "λήψη emotes τρίτων..."
+  },
+  "bg_loading_emotes": {
+    "message": "φόρτωση emotes..."
+  },
+  "cs_uploading": {
+    "message": "ανεβάζει..."
+  },
+  "cs_file_too_large": {
+    "message": "το αρχείο είναι πολύ μεγάλο (μέγ. $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "το ανέβασμα απέτυχε"
+  },
+  "cs_yt_top_chat": {
+    "message": "λειτουργία top chat — γύρνα το youtube σε live chat"
+  },
+  "cs_yt_attach_failed": {
+    "message": "το heatsync δεν μπόρεσε να συνδεθεί σε αυτή τη συνομιλία"
+  },
+  "cs_badge_owner": {
+    "message": "ιδιοκτήτης"
+  },
+  "cs_badge_member": {
+    "message": "μέλος"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl κίνηση  kj ιστορικό  wb/WBE λέξη  0$$^ γραμμή  gg/G άκρα\nfFtT+χαρακτήρας εύρεση  ;, επανάληψη εύρεσης  [αριθμός]cmd επανάληψη\nx/X διαγραφή χαρ.  dw/db/de/dd διαγραφή  D διαγραφή→τέλος\ncw/cb/ce/cc αλλαγή  C αλλαγή→τέλος  s/S αντικατάσταση\nyw/yb/ye/yy αντιγραφή  p/P επικόλληση  r αντικατάσταση  ~ πεζά/κεφαλαία\ni/a/I/A εισαγωγή  u αναίρεση  Ctrl+R επανάληψη  . επανάληψη  ? βοήθεια\n\nSPC = leader — εντολές συνομιλίας χωρίς έξοδο από το πεδίο\nSPC /    αναζήτηση    SPC n/N  επόμενο/προηγούμενο\nSPC 1-9  n-οστή καρτέλα   SPC ]/[  επόμενη/προηγούμενη καρτέλα\nSPC t    επιλογή καρτέλας SPC \\    απόκρυψη/εμφάνιση συνομιλίας"
+  },
+  "lib_sec_font": {
+    "message": "γραμματοσειρά"
+  },
+  "lib_sec_chat_messages": {
+    "message": "μηνύματα συνομιλίας"
+  },
+  "lib_sec_layout": {
+    "message": "διάταξη"
+  },
+  "lib_sec_density": {
+    "message": "πυκνότητα"
+  },
+  "lib_sec_messages": {
+    "message": "μηνύματα"
+  },
+  "lib_sec_mentioned": {
+    "message": "όταν σε κάνουν @mention"
+  },
+  "lib_sec_cross_follow": {
+    "message": "follow σε όλες τις πλατφόρμες"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "γραμμή εργαλείων mod"
+  },
+  "lib_sec_content": {
+    "message": "περιεχόμενο"
+  },
+  "lib_sec_rules": {
+    "message": "κανόνες"
+  },
+  "lib_sec_player": {
+    "message": "player"
+  },
+  "lib_sec_tabs": {
+    "message": "καρτέλες"
+  },
+  "lib_sec_language": {
+    "message": "γλώσσα"
+  },
+  "lib_opt_system_monospace": {
+    "message": "monospace συστήματος"
+  },
+  "lib_opt_platform_default": {
+    "message": "προεπιλογή πλατφόρμας (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "προσαρμοσμένο..."
+  },
+  "lib_opt_unread": {
+    "message": "αδιάβαστα"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "πάνω"
+  },
+  "lib_opt_right": {
+    "message": "δεξιά"
+  },
+  "lib_opt_bottom": {
+    "message": "κάτω"
+  },
+  "lib_opt_left": {
+    "message": "αριστερά"
+  },
+  "lib_opt_hidden": {
+    "message": "κρυφό"
+  },
+  "lib_opt_compact": {
+    "message": "συμπαγές"
+  },
+  "lib_opt_cozy": {
+    "message": "άνετο"
+  },
+  "lib_opt_always": {
+    "message": "πάντα"
+  },
+  "lib_opt_hover": {
+    "message": "στο hover"
+  },
+  "lib_opt_never": {
+    "message": "ποτέ"
+  },
+  "slash_desc_op": {
+    "message": "ανάρτηση thread στο feed σου στο heatsync"
+  },
+  "slash_desc_re": {
+    "message": "απάντηση στο τελευταίο [OP] που φαίνεται στη συνομιλία"
+  },
+  "slash_desc_dm": {
+    "message": "αποστολή DM heatsync· χωρίς μήνυμα ανοίγει η συνομιλία"
+  },
+  "slash_desc_w": {
+    "message": "αποστολή twitch whisper"
+  },
+  "slash_desc_color": {
+    "message": "ορισμός χρώματος συνομιλίας twitch (όνομα όπως orangered, ή #hex με turbo)"
+  },
+  "slash_desc_r": {
+    "message": "απάντηση στο τελευταίο whisper που έλαβες"
+  },
+  "slash_desc_user": {
+    "message": "άνοιγμα κάρτας προφίλ με πρόσφατα logs"
+  },
+  "slash_desc_follow": {
+    "message": "follow στο heatsync, με αντικατοπτρισμό σε twitch και kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "unfollow στο heatsync, με αντικατοπτρισμό σε twitch και kick"
+  },
+  "slash_desc_me": {
+    "message": "αποστολή μηνύματος ενέργειας"
+  },
+  "slash_desc_shrug": {
+    "message": "προσθήκη ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "προσθήκη (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "προσθήκη ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "λίστα εντολών"
+  },
+  "slash_desc_lclear": {
+    "message": "εκκαθάριση της τρέχουσας καρτέλας μόνο για εσένα"
+  },
+  "slash_desc_mute": {
+    "message": "σίγαση κάποιου για 24ω, σε όλους τους συνδεδεμένους λογαριασμούς του"
+  },
+  "slash_desc_unmute": {
+    "message": "άρση σίγασης"
+  },
+  "slash_desc_block": {
+    "message": "εναλλαγή αποκλεισμού"
+  },
+  "slash_desc_hide": {
+    "message": "απόκρυψη κάποιου μόνο σε αυτή την καρτέλα, μέχρι το reload"
+  },
+  "slash_desc_unhide": {
+    "message": "αναίρεση απόκρυψης"
+  },
+  "slash_desc_note": {
+    "message": "αποθήκευση ιδιωτικής σημείωσης για κάποιον"
+  },
+  "slash_desc_delnote": {
+    "message": "αφαίρεση της σημείωσής σου"
+  },
+  "slash_desc_set": {
+    "message": "αλλαγή ρύθμισης, π.χ. /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "αλλαγή καρτέλας: ένα κανάλι ή μια καρτέλα με όνομα όπως live ή mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "αντιγραφή συνδέσμου heatsync.org/m για τις καρτέλες σου"
+  },
+  "slash_desc_layout": {
+    "message": "προσθήκη των καρτελών από έναν σύνδεσμο heatsync.org/m"
+  },
+  "slash_desc_status": {
+    "message": "εμφάνιση λειτουργιών συνομιλίας και πληροφοριών stream"
+  },
+  "slash_desc_ban": {
+    "message": "μόνιμο ban κάποιου από το κανάλι"
+  },
+  "slash_desc_timeout": {
+    "message": "timeout σε κάποιον, προεπιλογή 10 λεπτά"
+  },
+  "slash_desc_unban": {
+    "message": "άρση ban ή τέλος timeout"
+  },
+  "slash_desc_delete": {
+    "message": "διαγραφή ενός μηνύματος"
+  },
+  "slash_desc_nuke": {
+    "message": "μαζική διαγραφή πρόσφατων μηνυμάτων που περιέχουν έναν όρο"
+  },
+  "slash_desc_announce": {
+    "message": "ανάρτηση ανακοίνωσης, προαιρετικά έγχρωμης"
+  },
+  "slash_desc_vip": {
+    "message": "ανάθεση VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "αφαίρεση VIP"
+  },
+  "slash_desc_mod": {
+    "message": "ανάθεση διαχειριστή"
+  },
+  "slash_desc_unmod": {
+    "message": "αφαίρεση διαχειριστή"
+  },
+  "slash_desc_blocked": {
+    "message": "άνοιγμα της λίστας αποκλεισμένων όρων του καναλιού"
+  },
+  "slash_desc_modtools": {
+    "message": "άνοιγμα του πάνελ εργαλείων mod"
+  },
+  "slash_desc_shield": {
+    "message": "ενεργοποίηση ή απενεργοποίηση shield mode"
+  },
+  "slash_desc_warn": {
+    "message": "προειδοποίηση σε έναν chatter"
+  },
+  "slash_desc_shoutout": {
+    "message": "shoutout σε ένα κανάλι"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "άνοιγμα αιτημάτων unban"
+  },
+  "slash_desc_slow": {
+    "message": "αργή λειτουργία, προεπιλογή 30δ"
+  },
+  "slash_desc_followers": {
+    "message": "λειτουργία μόνο ακόλουθοι"
+  },
+  "slash_desc_emoteonly": {
+    "message": "λειτουργία μόνο emotes"
+  },
+  "slash_desc_subscribers": {
+    "message": "λειτουργία μόνο συνδρομητές"
+  },
+  "slash_desc_unique": {
+    "message": "λειτουργία μοναδικής συνομιλίας· μόνο twitch, το kick δεν έχει αντίστοιχο"
+  },
+  "slash_desc_poll": {
+    "message": "δημιουργία δημοσκόπησης, 2-5 επιλογές"
+  },
+  "slash_desc_endpoll": {
+    "message": "τερματισμός της ενεργής δημοσκόπησης"
+  },
+  "slash_desc_vote": {
+    "message": "ψήφος στην επιλογή n της ενεργής δημοσκόπησης"
+  },
+  "slash_desc_prediction": {
+    "message": "έναρξη πρόβλεψης, 2-10 αποτελέσματα"
+  },
+  "slash_desc_bet": {
+    "message": "στοίχημα πόντων καναλιού στο αποτέλεσμα n"
+  },
+  "slash_desc_lockpred": {
+    "message": "κλείδωμα της ενεργής πρόβλεψης"
+  },
+  "slash_desc_resolvepred": {
+    "message": "επίλυση της πρόβλεψης στο αποτέλεσμα n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "ακύρωση της ενεργής πρόβλεψης"
+  },
+  "slash_desc_highlight": {
+    "message": "επισήμανση του μηνύματός σου στη συνομιλία twitch"
+  },
+  "slash_sec_everyday": {
+    "message": "καθημερινά"
+  },
+  "slash_sec_local": {
+    "message": "μόνο αυτό το παράθυρο"
+  },
+  "slash_sec_mod": {
+    "message": "διαχείριση"
+  },
+  "slash_sec_modes": {
+    "message": "λειτουργίες συνομιλίας"
+  },
+  "slash_sec_events": {
+    "message": "δημοσκοπήσεις, προβλέψεις, bits"
+  },
+  "slash_help_full_list": {
+    "message": "πλήρης λίστα -> /commands"
+  },
+  "slash_help_label": {
+    "message": "εντολές slash"
   }
 }

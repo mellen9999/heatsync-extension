@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "abonneren"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "modweergave (chat, automod, geblokkeerde termen)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "streamer"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "creator-dashboard"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "streammanager"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "moderatie-instellingen (automod, geblokkeerde termen)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "kanaalinstellingen"
+  },
+  "mc_twapi_ql_community": {
+    "message": "community (mods, vips, volgers)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "inkomsten"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "kanaalpagina's"
+  },
+  "mc_twapi_ql_about": {
+    "message": "over-pagina"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "video's"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "clips"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "schema"
+  },
+  "mc_twapi_ql_account": {
+    "message": "je account"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "drops / inventaris"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "mijn abonnementen"
+  },
+  "mc_twapi_ql_following": {
+    "message": "volglijst"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "twitch-instellingen"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "privacy + beveiliging"
+  },
+  "mc_twapi_won": {
+    "message": "gewonnen"
+  },
+  "mc_twapi_lost": {
+    "message": "verloren"
+  },
+  "mc_twapi_max": {
+    "message": "max"
+  },
+  "mc_twapi_amt": {
+    "message": "bedrag"
+  },
+  "mc_twapi_bet": {
+    "message": "inzet"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ pts · $COUNT$ gokker",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ pts · $COUNT$ gokkers",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "jouw inzet: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "je zette $POINTS$ op $OUTCOME$ — kies de echte winnaar",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "$N$m cooldown",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "$N$s cooldown",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "mislukt"
+  },
+  "mc_twapi_err_own": {
+    "message": "niet op jezelf wedden"
+  },
+  "mc_twapi_err_retry": {
+    "message": "probeer opnieuw"
+  },
+  "mc_twapi_err_locked": {
+    "message": "inzetten gesloten"
+  },
+  "mc_twapi_err_points": {
+    "message": "niet genoeg punten"
+  },
+  "mc_twapi_err_already": {
+    "message": "al ingezet"
+  },
+  "mc_twapi_no_event": {
+    "message": "geen event"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "geen uitkomst"
+  },
+  "mc_twapi_no_channel": {
+    "message": "geen kanaal"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "sluiten..."
+  },
+  "mc_twapi_closing": {
+    "message": "sluiten"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "geen kanaal gevonden"
+  },
+  "mc_twapi_tab_events": {
+    "message": "events"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "snelkoppelingen"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "cheer bits naar $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "saldo: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "cheer-venster openen"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ kijkers",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · $VIEWERS$ kijkers",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "inzet: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ stem",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ stemmen",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "stem"
+  },
+  "mc_input_unblock": {
+    "message": "deblokkeren"
+  },
+  "mc_input_remove_from_set": {
+    "message": "uit set verwijderen"
+  },
+  "mc_input_open_on": {
+    "message": "openen op $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "afbeelding bekijken"
+  },
+  "mc_input_copy_emote_name": {
+    "message": ":name: kopiëren"
+  },
+  "mc_input_copy_image_url": {
+    "message": "afbeeldings-url kopiëren"
+  },
+  "mc_input_copy_emoji": {
+    "message": "emoji kopiëren"
+  },
+  "mc_input_expand": {
+    "message": "uitklappen"
+  },
+  "mc_input_mute_24h": {
+    "message": "dempen (24u)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "tonen in tab"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "verbergen in tab"
+  },
+  "mc_input_copy_message": {
+    "message": "bericht kopiëren"
+  },
+  "mc_input_copy_to_input": {
+    "message": "kopiëren → invoer"
+  },
+  "mc_input_copy_thread": {
+    "message": "thread kopiëren"
+  },
+  "mc_input_delete_msg": {
+    "message": "bericht wissen"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10m"
+  },
+  "mc_input_timed_out": {
+    "message": "time-out gegeven"
+  },
+  "mc_input_warn": {
+    "message": "waarschuwen"
+  },
+  "mc_input_reply": {
+    "message": "reageren"
+  },
+  "mc_input_op_to_feed": {
+    "message": "op naar feed"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "notitie bewerken"
+  },
+  "mc_input_add_note": {
+    "message": "notitie toevoegen"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "melden / gift sub"
+  },
+  "mc_input_filter_to": {
+    "message": "filter op $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "chatlogs"
+  },
+  "mc_input_edit_timer": {
+    "message": "bewerken ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "bewerken (verlopen)"
+  },
+  "mc_input_delete": {
+    "message": "verwijderen"
+  },
+  "mc_input_chatter": {
+    "message": "chatter"
+  },
+  "mc_input_everyone": {
+    "message": "iedereen"
+  },
+  "mc_input_heatsync_only": {
+    "message": "alleen heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "je inventaris"
+  },
+  "mc_input_all_twitch": {
+    "message": "alle twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "alle kick"
+  },
+  "mc_input_ext_users": {
+    "message": "$SOURCE$-gebruikers",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "7tv doorzoeken…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "alleen abonnees"
+  },
+  "mc_input_usage_color": {
+    "message": "gebruik: /color <naam|#hex> — bv. /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "chatkleur ingesteld op $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "gebruik: /re <tekst>"
+  },
+  "mc_input_re_no_post": {
+    "message": "nog geen post in de chat om op te reageren"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "poll mislukt: $ERROR$ (alleen streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "poll mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "voorspelling mislukt: $ERROR$ (alleen streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "voorspelling mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "poll beëindigen mislukt: $ERROR$ (alleen streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "stemmen mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "inzet mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "mislukt: $ERROR$ (alleen streamer)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ mislukt: $ERROR$ (alleen streamer)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "aankondiging mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <naam> — opent hun profielkaart"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <gebruiker> — verbergt in deze tab"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <gebruiker> — toont weer in deze tab"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r om $USER$ te antwoorden",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "upload bezig..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "alleen afbeeldingen/video's toegestaan"
+  },
+  "mc_input_upload_too_large": {
+    "message": "bestand te groot (max $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "uploaden..."
+  },
+  "mc_input_upload_done": {
+    "message": "upload klaar"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "upload mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "upload mislukt"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "origineel niet bereikbaar — still geplaatst"
+  },
+  "mc_input_drop_zone": {
+    "message": "sleep afbeelding/video/link om te uploaden"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <bericht>"
+  },
+  "mc_social_edit_empty": {
+    "message": "inhoud mag niet leeg zijn"
+  },
+  "mc_social_saving": {
+    "message": "opslaan..."
+  },
+  "mc_social_edit_failed": {
+    "message": "bewerken mislukt"
+  },
+  "mc_social_confirm_delete": {
+    "message": "deze post verwijderen?"
+  },
+  "mc_social_home_title": {
+    "message": "log in om je home te zien"
+  },
+  "mc_social_home_sub": {
+    "message": "volg mensen, post, deel — naast multichat"
+  },
+  "mc_social_home_login": {
+    "message": "log in op heatsync.org"
+  },
+  "mc_social_home_note": {
+    "message": "voor multichat heb je geen account nodig — kies hierboven een kanaaltab"
+  },
+  "mc_social_no_posts": {
+    "message": "geen posts"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "volg mensen of post iets om deze tab te vullen"
+  },
+  "mc_social_import_follows": {
+    "message": "volgers importeren van twitch"
+  },
+  "mc_social_syncing": {
+    "message": "synchroniseren…"
+  },
+  "mc_social_synced": {
+    "message": "$COUNT$ gesynchroniseerd ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "probeer opnieuw"
+  },
+  "mc_social_failed": {
+    "message": "mislukt"
+  },
+  "mc_social_discover_people": {
+    "message": "ontdek mensen →"
+  },
+  "mc_social_post_something": {
+    "message": "post iets"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "hot posts · log in op heatsync.org om mensen te volgen"
+  },
+  "mc_social_banner_newest": {
+    "message": "nieuwste posts · volg mensen om je feed te vullen"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "hot deze maand · volg mensen om je feed te vullen"
+  },
+  "mc_social_edited": {
+    "message": "(bewerkt)"
+  },
+  "mc_social_replying_to": {
+    "message": "reactie op >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "thread verlaten"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · $COUNT$ kijker",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · $COUNT$ kijkers",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ heat",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ kijkers",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ reactie",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ reacties",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(geen tekst)"
+  },
+  "mc_social_live_now": {
+    "message": "nu live"
+  },
+  "mc_social_no_streams": {
+    "message": "geen streams live op dit moment"
+  },
+  "mc_social_hot_posts": {
+    "message": "hot posts"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "geen posts voor dit filter"
+  },
+  "mc_social_tags": {
+    "message": "tags"
+  },
+  "mc_social_none_now": {
+    "message": "nu niets"
+  },
+  "mc_social_leaderboard": {
+    "message": "ranglijst"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "geen profielen voor dit filter"
+  },
+  "mc_social_no_pinned": {
+    "message": "geen vastgezette berichten"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "nog geen modacties"
+  },
+  "mc_social_platform": {
+    "message": "platform"
+  },
+  "mc_social_all": {
+    "message": "alles"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "lidmaatschapsmijlpaal"
+  },
+  "mc_social_yt_member": {
+    "message": "werd lid"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "schonk $COUNT$ lidmaatschap",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "schonk $COUNT$ lidmaatschappen",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "verbindingsfout"
+  },
+  "mc_social_replies_title": {
+    "message": "reacties"
+  },
+  "mc_pcard_del_msg": {
+    "message": "bericht wissen"
+  },
+  "mc_pcard_del_title": {
+    "message": "laatste bericht van deze gebruiker wissen"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "moderator maken (alleen streamer)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "moderator weghalen (alleen streamer)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "VIP geven"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "VIP weghalen"
+  },
+  "mc_pcard_error": {
+    "message": "fout"
+  },
+  "mc_pcard_no_channel": {
+    "message": "kanaal niet gevonden"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ mislukt: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "sessie"
+  },
+  "mc_pcard_first": {
+    "message": "eerste"
+  },
+  "mc_pcard_channels": {
+    "message": "kanalen"
+  },
+  "mc_pcard_close_profile": {
+    "message": "profiel sluiten"
+  },
+  "mc_pcard_close_esc": {
+    "message": "sluiten (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "laden mislukt — opnieuw"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url gekopieerd"
+  },
+  "mc_pcard_clip_created": {
+    "message": "clip gemaakt"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "clip mislukt: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "gekopieerd"
+  },
+  "mc_logs_failed": {
+    "message": "mislukt"
+  },
+  "mc_logs_all_channels": {
+    "message": "alle kanalen"
+  },
+  "mc_logs_all": {
+    "message": "alles"
+  },
+  "mc_logs_scope_channel": {
+    "message": "nu beperkt tot #$CHANNEL$ — klik voor alle kanalen",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "toont nu alle kanalen — klik om te beperken tot #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "zoeken…"
+  },
+  "mc_logs_search_title": {
+    "message": "berichten van $USER$ doorzoeken",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "vernieuwen"
+  },
+  "mc_logs_export_txt": {
+    "message": "exporteren als .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "exporteren als .json"
+  },
+  "mc_logs_public": {
+    "message": "openbaar archief ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "open het openbare chatlog van #$CHANNEL$ op heatsync.org",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "archief laden mislukt — zoek of scroll opnieuw om het nog eens te proberen"
+  },
+  "mc_logs_backfill": {
+    "message": "oude logs ophalen van $SOURCE$… probeer vernieuwen over ~30s",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "geen resultaten voor \"$QUERY$\"",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "nog geen gearchiveerde berichten van $USER$ in #$CHANNEL$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "nog geen gearchiveerde berichten van $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "scroll voor ouder"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "permalink kopiëren"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "permalink $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "notitie · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "privénotitie — alleen jij ziet dit. volgt ze over platforms heen."
+  },
+  "mc_notes_esc": {
+    "message": "esc om te sluiten"
+  },
+  "mc_notes_delete": {
+    "message": "verwijderen"
+  },
+  "mc_notes_saved": {
+    "message": "opgeslagen · esc om te sluiten"
+  },
+  "mc_notes_saving": {
+    "message": "opslaan…"
+  },
+  "mc_notes_section": {
+    "message": "notities"
+  },
+  "mc_notes_empty": {
+    "message": "nog geen notitie"
+  },
+  "mc_notes_edit": {
+    "message": "bewerken"
+  },
+  "mc_notes_add": {
+    "message": "notitie toevoegen"
+  },
+  "mc_feed_loading_name": {
+    "message": "$NAME$ laden…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "chatregel laden…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "voorbeeld laden…"
+  },
+  "mc_feed_adult_login": {
+    "message": "log in als volwassene om te bekijken"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "afbeelding niet beschikbaar"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "openen in nieuw tabblad"
+  },
+  "mc_feed_reload_player": {
+    "message": "speler herladen (na inloggen)"
+  },
+  "mc_feed_pause": {
+    "message": "pauzeren"
+  },
+  "mc_feed_volume": {
+    "message": "volume"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "terug naar chat (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "chat vullen"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "openen in nieuw tabblad"
+  },
+  "mc_feed_close_player": {
+    "message": "speler sluiten"
+  },
+  "mc_feed_back": {
+    "message": "← terug"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "whisper mislukt"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "heatsync-server onbereikbaar"
+  },
+  "mc_misc_twitch_error": {
+    "message": "twitch-fout $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "geen twitch-sessie"
+  },
+  "mc_misc_unknown_error": {
+    "message": "onbekende fout"
+  },
+  "mc_misc_sending": {
+    "message": "versturen"
+  },
+  "mc_misc_click_retry": {
+    "message": "klik om opnieuw te proberen"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — klik om de twitch-whisperrechten op heatsync te geven",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "twitch-whispers aanzetten — opnieuw koppelen"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — klik om $USER$ te volgen en te sturen",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — klik om in te loggen op heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "log in op heatsync om te sturen"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — opnieuw",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "reageren ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "resub-bericht ($MONTHS$mnd) — enter om te delen",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "watch streak ($COUNT$) — enter om te delen",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "dit bericht wissen"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1 minuut"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10 minuten"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1 uur"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24 uur"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7 dagen"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — berichten van deze gebruiker wissen (1s timeout)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "permanente ban"
+  },
+  "mc_mtb_t_unban": {
+    "message": "gebruiker unbannen"
+  },
+  "mc_mtb_t_bt": {
+    "message": "geblokkeerde termen"
+  },
+  "mc_mtb_t_mt": {
+    "message": "modtools"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "moderatieacties voor bericht"
+  },
+  "mc_main_back_to_chat": {
+    "message": "terug naar chat"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "terug naar chat (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "platforms bewerken"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ nog $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "open $CH$ op $PLAT$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "open chat van $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "reageren"
+  },
+  "mc_main_also_live_on": {
+    "message": "ook live op $PLATS$",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "kanalen koppelen"
+  },
+  "mc_main_dismiss": {
+    "message": "sluiten"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "sluiten (rechtsklik werkt ook)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "voeg je streams toe"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "twitch-, kick- en youtube-chat samen in één paneel"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ kanaal toevoegen"
+  },
+  "mc_main_idwarn": {
+    "message": "je emotes worden hier niet voor anderen getoond — heatsync-account $ACCT$, chat als $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "accounts koppelen"
+  },
+  "mc_main_status_no_yt": {
+    "message": "status geldt voor twitch- en kick-kanalen"
+  },
+  "mc_main_status_fetching": {
+    "message": "#$CH$ ophalen…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "kon #$CH$ niet ophalen (offline of niet op $PLAT$?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "log in om je logs hier te zien — rechtsklik op een chatter voor die van hen"
+  },
+  "mc_main_logs_rclick": {
+    "message": "rechtsklik op een chatter voor hun $PLAT$-logs",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "chattabs"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "chat verbergen (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "chat verbergen"
+  },
+  "mc_main_popout_title": {
+    "message": "chat in los venster openen"
+  },
+  "mc_main_subscribe_title": {
+    "message": "abonneren — steun dit kanaal"
+  },
+  "mc_main_views_aria": {
+    "message": "weergaven"
+  },
+  "mc_main_search_ph": {
+    "message": "berichten zoeken…"
+  },
+  "mc_main_messages_aria": {
+    "message": "chatberichten"
+  },
+  "mc_main_search_none_for": {
+    "message": "geen resultaten voor \"$Q$\"",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "geen resultaten"
+  },
+  "mc_main_moment": {
+    "message": "chat van $CH$ ontploft — $RATE$ ber/30s (normaal ~$BASE$)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "filter — /regex/ of @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ pts",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "kanaalpunten-beloning"
+  },
+  "mc_main_highlighted": {
+    "message": "gemarkeerd bericht"
+  },
+  "mc_main_first_msg": {
+    "message": "eerste bericht in dit kanaal"
+  },
+  "mc_main_kill_active": {
+    "message": "uitgeschakeld door heatsync (kill-switch actief)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat uitgeschakeld door heatsync"
+  },
+  "mc_main_kill_update": {
+    "message": "extensie-update vereist (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "wisselde \"$TITLE$\" in",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "raidde $TARGET$ met $VIEWERS$ kijkers",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ raidde binnen met $VIEWERS$ kijkers",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "nieuwe poll gestart"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "nieuwe poll gestart — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "nieuwe voorspelling gestart"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "nieuwe voorspelling gestart — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train gestart"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train geëindigd op level $LEVEL$",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ gaf $COUNT$ subs cadeau",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "vastgezet $BY$: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "vastgezet: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "bericht losgemaakt"
+  },
+  "mc_notif_dismiss": {
+    "message": "sluiten"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "emotes laden…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "viert"
+  },
+  "mc_notif_rt_mo": {
+    "message": "mnd"
+  },
+  "mc_notif_rt_months": {
+    "message": "maanden"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "als abonnee"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "op een"
+  },
+  "mc_notif_wt_stream": {
+    "message": "streams"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "watch streak"
+  },
+  "mc_notif_share": {
+    "message": "delen"
+  },
+  "mc_notif_update_available": {
+    "message": "update beschikbaar — je draait $CUR$, nieuwste is $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "kick openen"
+  },
+  "mc_notif_open_youtube": {
+    "message": "youtube openen"
+  },
+  "mc_notif_login_twitch": {
+    "message": "log in op twitch.tv om te chatten"
+  },
+  "mc_notif_open_twitch": {
+    "message": "twitch openen"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- TABS --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "twitch-authenticatie mislukt"
+  },
+  "mc_notif_r_no_user": {
+    "message": "geen twitch-gebruikersnaam"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "verbinding mislukt"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "versturen mislukt"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "niet ingelogd op kick"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "geen kick-tab open"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "kick-kanaal niet gevonden"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick bevestigde niet — mogelijk wel geplaatst"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick weigerde het bericht"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "geen youtube-tab open"
+  },
+  "mc_notif_r_no_input": {
+    "message": "youtube-chat laadt nog"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "log eerst in op youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube blokkeerde het versturen"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube bevestigde het versturen niet"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "youtube-chatbrug time-out"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ bevestigde niet — mogelijk niet geplaatst",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "platform"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "chat beperkt — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "chat beperkt"
+  },
+  "mc_notif_r_unknown": {
+    "message": "versturen is mogelijk mislukt"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "verborgen"
+  },
+  "mc_tip_owner_sub": {
+    "message": "$OWNER$-sub ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · verwijderd door @$ACTOR$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · uit kanaal verwijderd",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "zij"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "sub op jou $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "kanaalsub"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "kanaal volgen"
+  },
+  "mc_tip_row_follower": {
+    "message": "volger"
+  },
+  "mc_tip_row_you": {
+    "message": "jij"
+  },
+  "mc_tip_follow_ago": {
+    "message": "volgt $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "volgers"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ ber.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "sinds $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "sinds $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "logs"
+  },
+  "mc_set_system_backup": {
+    "message": "systeem · back-up / herstel"
+  },
+  "mc_set_recent_errors": {
+    "message": "recente fouten"
+  },
+  "mc_set_copy": {
+    "message": "kopiëren"
+  },
+  "mc_set_clear": {
+    "message": "wissen"
+  },
+  "mc_set_crash_loading": {
+    "message": "(laden...)"
+  },
+  "mc_set_export_tip": {
+    "message": "schrijf ui_settings + alle hs_*-sleutels naar een JSON-bestand. werkt op alle apparaten en browsers."
+  },
+  "mc_set_export": {
+    "message": "instellingen exporteren"
+  },
+  "mc_set_export_btn": {
+    "message": ".json downloaden"
+  },
+  "mc_set_import_tip": {
+    "message": "herstel uit een eerder geëxporteerd JSON-bestand. wordt samengevoegd met bestaande instellingen."
+  },
+  "mc_set_import": {
+    "message": "instellingen importeren"
+  },
+  "mc_set_import_btn": {
+    "message": ".json laden"
+  },
+  "mc_set_reset_all_title": {
+    "message": "alle instellingen op alle pagina's resetten"
+  },
+  "mc_set_all_defaults": {
+    "message": "alles standaard"
+  },
+  "mc_set_backup_restore": {
+    "message": "back-up / herstel"
+  },
+  "mc_set_fr_sound": {
+    "message": "geluid: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "omhoog (hogere prioriteit — eerste match wint)"
+  },
+  "mc_set_fr_down": {
+    "message": "omlaag"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "alle kanalen"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "trefwoord"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "gebruiker"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "badge"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "msgtype"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "expr"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "bv. first && !badge:subscriber — combineer met && || ! ( ); velden user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "waarde..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "markeren"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "verbergen"
+  },
+  "mc_set_fr_color": {
+    "message": "markeerkleur"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "markeergeluid (alleen bij actie markeren)"
+  },
+  "mc_set_fr_silent": {
+    "message": "stil"
+  },
+  "mc_set_fr_case": {
+    "message": "hoofdlettergevoelig"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ toevoegen"
+  },
+  "mc_set_fr_none": {
+    "message": "geen regels — voeg er hieronder een toe"
+  },
+  "mc_set_page_reset_title": {
+    "message": "deze pagina terugzetten naar standaard"
+  },
+  "mc_set_default": {
+    "message": "standaard"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "nog $N$ instelling hier — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "nog $N$ instellingen hier — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "alles tonen"
+  },
+  "mc_set_crash_none": {
+    "message": "(geen fouten geregistreerd)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(log onleesbaar)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "uit: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "alles aan"
+  },
+  "mc_set_fmt_none": {
+    "message": "geen"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "preset verwijderen…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "$NAME$ verwijderen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "preset verwijderen"
+  },
+  "mc_set_preset_save_as": {
+    "message": "huidige opslaan als…"
+  },
+  "mc_set_preset_undo": {
+    "message": "ongedaan maken: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "presets"
+  },
+  "mc_set_preset_save_title": {
+    "message": "huidige opslaan als preset"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "presetnaam"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "bewaart elke instelling die afwijkt van de standaard — deelbaar via instellingen exporteren"
+  },
+  "mc_set_preset_nochange": {
+    "message": "komt al overeen — niets te wijzigen"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "preset toepassen: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "toepassen"
+  },
+  "mc_set_h_search": {
+    "message": "zoeken"
+  },
+  "mc_set_h_category": {
+    "message": "categorie"
+  },
+  "mc_set_h_move": {
+    "message": "verplaatsen"
+  },
+  "mc_set_h_adjust": {
+    "message": "aanpassen"
+  },
+  "mc_set_h_toggle": {
+    "message": "schakelen"
+  },
+  "mc_set_h_reset_row": {
+    "message": "rij resetten"
+  },
+  "mc_set_h_close_clear": {
+    "message": "sluiten / wissen"
+  },
+  "mc_set_h_this_help": {
+    "message": "deze hulp"
+  },
+  "mc_set_h_first_last": {
+    "message": "eerste / laatste"
+  },
+  "mc_set_h_fold": {
+    "message": "sectie inklappen"
+  },
+  "mc_set_h_prev_next": {
+    "message": "vorige / volgende categorie"
+  },
+  "mc_set_h_keys": {
+    "message": "toetsen"
+  },
+  "mc_set_h_commands": {
+    "message": "commando's"
+  },
+  "mc_set_h_full_list": {
+    "message": "volledige lijst -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ instellingen zoeken..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "toont alle instellingen — klik voor alleen de basis"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "toont de basis — klik voor alle instellingen"
+  },
+  "mc_set_scope_all": {
+    "message": "alles"
+  },
+  "mc_set_scope_basic": {
+    "message": "basis"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emotes"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gifs"
+  },
+  "mc_emo_chips_title": {
+    "message": "kies welke providers doorzocht worden"
+  },
+  "mc_emo_exact_title": {
+    "message": "alleen exacte naamsmatch"
+  },
+  "mc_emo_stack_expand": {
+    "message": "uitklappen"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "inklappen"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "alles blokkeren"
+  },
+  "mc_xg_close": {
+    "message": "sluiten"
+  },
+  "mc_tr_sub_chat": {
+    "message": "chat"
+  },
+  "mc_tr_sub_summary": {
+    "message": "samenvatting"
+  },
+  "mc_tr_sub_logs": {
+    "message": "logs"
+  },
+  "mc_tr_sub_status": {
+    "message": "status"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "platforms"
+  },
+  "mc_tr_set_display": {
+    "message": "weergave"
+  },
+  "mc_tr_set_notifs": {
+    "message": "meldingen"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "filters"
+  },
+  "mc_tr_set_system": {
+    "message": "systeem"
+  },
+  "mc_tr_set_help": {
+    "message": "hulp"
+  },
+  "mc_pt_native_chat": {
+    "message": "eigen chat"
+  },
+  "mc_pt_popout_chat": {
+    "message": "popout-chat"
+  },
+  "mc_pt_clips": {
+    "message": "clips"
+  },
+  "mc_pt_videos": {
+    "message": "video's"
+  },
+  "mc_pt_channel_page": {
+    "message": "kanaalpagina"
+  },
+  "mc_pt_no_channel": {
+    "message": "geen kanaal gevonden"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "eigen chat (super chat, stickers, polls, emoji)"
+  },
+  "mc_pt_join_channel": {
+    "message": "kanaal joinen"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "terug naar heatsync-chat"
+  },
+  "mc_pa_show_chat": {
+    "message": "chat tonen (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "youtube-chat vereist heatsync-login —"
+  },
+  "mc_pa_emote_login": {
+    "message": "log in op heatsync zodat je emotes voor iedereen werken"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org onbereikbaar — opnieuw verbinden"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ onbereikbaar",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "stream van $CHANNEL$ afgelopen",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "streamoverzicht van $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "streamstats staan uit in de instellingen"
+  },
+  "mc_ss_empty": {
+    "message": "nog geen chat geteld — vult zich zodra er berichten binnenkomen"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ ber. · $CHATTERS$ chatters · $MENTIONS$ vermeldingen · piek $PEAK$/s",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "sinds $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "top-chatters"
+  },
+  "mc_ss_top_emotes": {
+    "message": "top-emotes"
+  },
+  "mc_cmg_checking": {
+    "message": "heatsync controleren…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "geen heatsync-profiel — vul handmatig in"
+  },
+  "mc_cmg_unreachable": {
+    "message": "kon heatsync niet bereiken"
+  },
+  "mc_cmg_live_on": {
+    "message": "live op $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "$NAME$ gevonden op heatsync — gekoppeld: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "automatisch ingevuld: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "live bewerken — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ is live gegaan",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ wisselde van game",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "een bericht is gewist"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ is geunbanned",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ kreeg $SEC$s timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ is gebanned",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ gaf $AMOUNT$ KICKs cadeau!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ gaf $AMOUNT$ KICKs cadeau ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "anoniem"
+  },
+  "mc_cp_vol": {
+    "message": "vol $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "mislukt"
+  },
+  "hsbtn_imported": {
+    "message": "$COUNT$ geïmporteerd",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "je emotes, in elke chat"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "open een twitch-, kick- of youtube-stream en importeer de emotes via de kanaaltab — één klik, werkt in elke chat."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "haal alle 7tv-, bttv- en ffz-emotes van $CHANNEL$ in je set — één klik, zichtbaar in elke chat.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "importeer alle emotes van $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "importeer alle kanaalemotes"
+  },
+  "hsbtn_no_sets": {
+    "message": "geen opgeslagen sets — maak er een op heatsync.org"
+  },
+  "hsbtn_apply": {
+    "message": "toepassen"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "$COUNT$ emotes vervangen?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "toepassen…"
+  },
+  "hsbtn_applied": {
+    "message": "toegepast"
+  },
+  "hsbtn_login_removed": {
+    "message": "log in om verwijderde emotes te zien"
+  },
+  "hsbtn_no_removed": {
+    "message": "geen verwijderde emotes"
+  },
+  "hsbtn_restore": {
+    "message": "herstellen"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "herstellen?"
+  },
+  "hsbtn_restoring": {
+    "message": "herstellen…"
+  },
+  "hsbtn_restored": {
+    "message": "hersteld"
+  },
+  "hsbtn_removed_on": {
+    "message": "verwijderd $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "sets laden mislukt"
+  },
+  "hsbtn_err_history": {
+    "message": "geschiedenis laden mislukt"
+  },
+  "hsbtn_err_mine": {
+    "message": "je emotes laden mislukt"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "kanaalemotes niet beschikbaar"
+  },
+  "hsbtn_err_channel": {
+    "message": "kanaalemotes laden mislukt"
+  },
+  "hsbtn_err_global": {
+    "message": "globale emotes laden mislukt"
+  },
+  "hsbtn_unnamed": {
+    "message": "(naamloos)"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ emote",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ emotes",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "van $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$ in bezit",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "fout"
+  },
+  "hsbtn_search_status": {
+    "message": "“$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "“$QUERY$” — zoeken…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "geen emotes voor “$QUERY$”",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "log in om emotes toe te voegen"
+  },
+  "hsbtn_add_failed": {
+    "message": "toevoegen mislukt"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "deblokkeren mislukt"
+  },
+  "hsbtn_uses_title": {
+    "message": "$COUNT$ keer gebruikt op heatsync",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "in inventaris"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "niet in inventaris"
+  },
+  "hsbtn_open_on": {
+    "message": "openen op $PROVIDER$ →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "hernoemen"
+  },
+  "hsbtn_move": {
+    "message": "verplaatsen"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "naar slot verplaatsen…"
+  },
+  "hsbtn_slot_number": {
+    "message": "slotnummer"
+  },
+  "hsbtn_renamed_to": {
+    "message": "hernoemd naar $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "hernoemen mislukt"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "verplaatst naar slot $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "verplaatsen mislukt"
+  },
+  "hsbtn_unshare_set": {
+    "message": "set niet meer delen"
+  },
+  "hsbtn_share_set": {
+    "message": "set delen"
+  },
+  "hsbtn_set_unshared": {
+    "message": "set niet meer gedeeld"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "delen stoppen mislukt"
+  },
+  "hsbtn_share_copied": {
+    "message": "deellink gekopieerd: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "delen mislukt"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "markdown kopiëren"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "terug naar heatsync-chat"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← heatsync-chat"
+  },
+  "hsbtn_rcb_label": {
+    "message": "rechtsklik-blokkeren"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "direct blokkeert meteen · menu toont blokkeren/annuleren · uit schakelt het uit"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "direct"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "menu"
+  },
+  "hsbtn_rcb_off": {
+    "message": "uit"
+  },
+  "hsbtn_search_ph": {
+    "message": "emotes zoeken…"
+  },
+  "hsbtn_chips_title": {
+    "message": "kies welke providers doorzocht worden"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "7tv-resultaten meenemen"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "frankerfacez-resultaten meenemen"
+  },
+  "hsbtn_undo": {
+    "message": "ongedaan maken"
+  },
+  "hsbtn_redo": {
+    "message": "opnieuw"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "chatpaneel draaien (C)"
+  },
+  "cs_color_for": {
+    "message": "kleur voor $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "instellen"
+  },
+  "cs_clear": {
+    "message": "wissen"
+  },
+  "cs_poll": {
+    "message": "📊 poll · "
+  },
+  "cs_prediction": {
+    "message": "🎯 voorspelling · "
+  },
+  "cs_active": {
+    "message": "(actief)"
+  },
+  "cs_badge_alt": {
+    "message": "$TITLE$-badge",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "gebruikersnaam kopiëren"
+  },
+  "cs_copy_message": {
+    "message": "bericht kopiëren"
+  },
+  "cs_mute_24h": {
+    "message": "dempen (24u)"
+  },
+  "cs_profile": {
+    "message": "profiel"
+  },
+  "cs_removed": {
+    "message": "$NAME$ verwijderd",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "$NAME$ verwijderd · nu $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "log in op heatsync.org om emotes te beheren"
+  },
+  "cs_remove_failed": {
+    "message": "kon $NAME$ niet verwijderen: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "onbekende fout"
+  },
+  "popup_site_label": {
+    "message": "heatsync-chat op"
+  },
+  "popup_site_note_default": {
+    "message": "uit toont de eigen chat van de site"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: de eigen chat van de site is terug",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: heatsync-chat is terug",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "feedback"
+  },
+  "popup_fb_bug": {
+    "message": "bug"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "wat kan heatsync beter doen?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "wat ging er mis? wat verwachtte je?"
+  },
+  "popup_fb_send": {
+    "message": "versturen"
+  },
+  "popup_fb_sending": {
+    "message": "versturen..."
+  },
+  "popup_fb_short": {
+    "message": "vertel iets meer"
+  },
+  "popup_fb_sent": {
+    "message": "verstuurd — bedankt"
+  },
+  "popup_fb_failed": {
+    "message": "versturen mislukt. probeer opnieuw."
+  },
+  "popup_feedback_link": {
+    "message": "feedback"
+  },
+  "popup_feedback_title": {
+    "message": "feedback / bugmelding"
+  },
+  "popup_inv_slots": {
+    "message": "5.000 emote-slots"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "ingelogd als $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5.000 slots"
+  },
+  "popup_inv_import_hint": {
+    "message": " · importeer een kanaal om te vullen"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$ meer",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ is live",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ kijkers",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ gevolgden zijn live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — accountwissel"
+  },
+  "bg_acct_msg": {
+    "message": "wisselen van $FROM$ naar $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "kanaalemotes laden..."
+  },
+  "bg_loading_third": {
+    "message": "emotes van derden ophalen..."
+  },
+  "bg_loading_emotes": {
+    "message": "emotes laden..."
+  },
+  "cs_uploading": {
+    "message": "uploaden..."
+  },
+  "cs_file_too_large": {
+    "message": "bestand te groot (max $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "upload mislukt"
+  },
+  "cs_yt_top_chat": {
+    "message": "top-chatmodus — zet youtube op live chat"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync kon niet koppelen aan deze chat"
+  },
+  "cs_badge_owner": {
+    "message": "eigenaar"
+  },
+  "cs_badge_member": {
+    "message": "lid"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl bewegen  kj geschiedenis  wb/WBE woord  0$$^ regel  gg/G einden\nfFtT+teken zoeken  ;, zoeken herhalen  [getal]cmd herhalen\nx/X teken wissen  dw/db/de/dd wissen  D wissen→einde\ncw/cb/ce/cc wijzigen  C wijzigen→einde  s/S vervangen\nyw/yb/ye/yy kopiëren  p/P plakken  r vervangen  ~ hoofdletter\ni/a/I/A invoegen  u ongedaan  Ctrl+R opnieuw  . herhalen  ? hulp\n\nSPC = leader — chatcommando's zonder het vak te verlaten\nSPC /    zoeken       SPC n/N  volgende/vorige match\nSPC 1-9  n-de tab     SPC ]/[  volgende/vorige tab\nSPC t    tabkiezer    SPC \\    chat verbergen/tonen"
+  },
+  "lib_sec_font": {
+    "message": "lettertype"
+  },
+  "lib_sec_chat_messages": {
+    "message": "chatberichten"
+  },
+  "lib_sec_layout": {
+    "message": "indeling"
+  },
+  "lib_sec_density": {
+    "message": "dichtheid"
+  },
+  "lib_sec_messages": {
+    "message": "berichten"
+  },
+  "lib_sec_mentioned": {
+    "message": "als je @genoemd wordt"
+  },
+  "lib_sec_cross_follow": {
+    "message": "volgen over platforms heen"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "modbalk"
+  },
+  "lib_sec_content": {
+    "message": "inhoud"
+  },
+  "lib_sec_rules": {
+    "message": "regels"
+  },
+  "lib_sec_player": {
+    "message": "speler"
+  },
+  "lib_sec_tabs": {
+    "message": "tabs"
+  },
+  "lib_sec_language": {
+    "message": "taal"
+  },
+  "lib_opt_system_monospace": {
+    "message": "systeem-monospace"
+  },
+  "lib_opt_platform_default": {
+    "message": "platformstandaard (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "eigen..."
+  },
+  "lib_opt_unread": {
+    "message": "ongelezen"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "boven"
+  },
+  "lib_opt_right": {
+    "message": "rechts"
+  },
+  "lib_opt_bottom": {
+    "message": "onder"
+  },
+  "lib_opt_left": {
+    "message": "links"
+  },
+  "lib_opt_hidden": {
+    "message": "verborgen"
+  },
+  "lib_opt_compact": {
+    "message": "compact"
+  },
+  "lib_opt_cozy": {
+    "message": "ruim"
+  },
+  "lib_opt_always": {
+    "message": "altijd"
+  },
+  "lib_opt_hover": {
+    "message": "bij hover"
+  },
+  "lib_opt_never": {
+    "message": "nooit"
+  },
+  "slash_desc_op": {
+    "message": "plaats een thread in je heatsync-feed"
+  },
+  "slash_desc_re": {
+    "message": "reageer op de laatste [OP] in de chat"
+  },
+  "slash_desc_dm": {
+    "message": "stuur een heatsync-DM; zonder bericht opent het gesprek"
+  },
+  "slash_desc_w": {
+    "message": "stuur een twitch-whisper"
+  },
+  "slash_desc_color": {
+    "message": "stel je twitch-chatkleur in (een naam als orangered, of #hex met turbo)"
+  },
+  "slash_desc_r": {
+    "message": "antwoord op de laatste whisper die je kreeg"
+  },
+  "slash_desc_user": {
+    "message": "open een profielkaart met recente logs"
+  },
+  "slash_desc_follow": {
+    "message": "volg op heatsync, gespiegeld naar twitch en kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "ontvolg op heatsync, gespiegeld naar twitch en kick"
+  },
+  "slash_desc_me": {
+    "message": "stuur een actiebericht"
+  },
+  "slash_desc_shrug": {
+    "message": "voeg ¯\\_(ツ)_/¯ toe"
+  },
+  "slash_desc_tableflip": {
+    "message": "voeg (╯°□°)╯︵ ┻━┻ toe"
+  },
+  "slash_desc_unflip": {
+    "message": "voeg ┬─┬ノ( ゜-゜ノ) toe"
+  },
+  "slash_desc_help": {
+    "message": "commando's tonen"
+  },
+  "slash_desc_lclear": {
+    "message": "wis de huidige tab alleen voor jou"
+  },
+  "slash_desc_mute": {
+    "message": "demp iemand 24u, over gekoppelde accounts heen"
+  },
+  "slash_desc_unmute": {
+    "message": "demping opheffen"
+  },
+  "slash_desc_block": {
+    "message": "blokkade aan/uit"
+  },
+  "slash_desc_hide": {
+    "message": "verberg iemand alleen in deze tab, tot herladen"
+  },
+  "slash_desc_unhide": {
+    "message": "verbergen ongedaan maken"
+  },
+  "slash_desc_note": {
+    "message": "bewaar een privénotitie over iemand"
+  },
+  "slash_desc_delnote": {
+    "message": "verwijder je notitie"
+  },
+  "slash_desc_set": {
+    "message": "wijzig een instelling, bv. /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "wissel van tab: een kanaal, of een tab als live of mentions"
+  },
+  "slash_desc_sharelayout": {
+    "message": "kopieer een heatsync.org/m-link naar je tabindeling"
+  },
+  "slash_desc_layout": {
+    "message": "voeg de tabs van een heatsync.org/m-link toe"
+  },
+  "slash_desc_status": {
+    "message": "toon chatmodi en streaminfo"
+  },
+  "slash_desc_ban": {
+    "message": "iemand permanent uit het kanaal bannen"
+  },
+  "slash_desc_timeout": {
+    "message": "geef iemand een timeout, standaard 10 minuten"
+  },
+  "slash_desc_unban": {
+    "message": "ban opheffen of timeout beëindigen"
+  },
+  "slash_desc_delete": {
+    "message": "wis één bericht"
+  },
+  "slash_desc_nuke": {
+    "message": "wis in bulk recente berichten met een term"
+  },
+  "slash_desc_announce": {
+    "message": "plaats een aankondiging, eventueel gekleurd"
+  },
+  "slash_desc_vip": {
+    "message": "VIP geven"
+  },
+  "slash_desc_unvip": {
+    "message": "VIP weghalen"
+  },
+  "slash_desc_mod": {
+    "message": "moderator maken"
+  },
+  "slash_desc_unmod": {
+    "message": "moderator weghalen"
+  },
+  "slash_desc_blocked": {
+    "message": "open de lijst met geblokkeerde termen van dit kanaal"
+  },
+  "slash_desc_modtools": {
+    "message": "open het modtools-paneel"
+  },
+  "slash_desc_shield": {
+    "message": "shield mode aan- of uitzetten"
+  },
+  "slash_desc_warn": {
+    "message": "waarschuw een chatter"
+  },
+  "slash_desc_shoutout": {
+    "message": "geef een kanaal een shoutout"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "open unban-verzoeken"
+  },
+  "slash_desc_slow": {
+    "message": "slowmode, standaard 30s"
+  },
+  "slash_desc_followers": {
+    "message": "alleen volgers-modus"
+  },
+  "slash_desc_emoteonly": {
+    "message": "alleen emotes-modus"
+  },
+  "slash_desc_subscribers": {
+    "message": "alleen abonnees-modus"
+  },
+  "slash_desc_unique": {
+    "message": "uniek-chatmodus; alleen twitch, kick heeft geen equivalent"
+  },
+  "slash_desc_poll": {
+    "message": "maak een poll, 2-5 keuzes"
+  },
+  "slash_desc_endpoll": {
+    "message": "beëindig de actieve poll"
+  },
+  "slash_desc_vote": {
+    "message": "stem op keuze n in de actieve poll"
+  },
+  "slash_desc_prediction": {
+    "message": "start een voorspelling, 2-10 uitkomsten"
+  },
+  "slash_desc_bet": {
+    "message": "zet kanaalpunten in op uitkomst n"
+  },
+  "slash_desc_lockpred": {
+    "message": "sluit de actieve voorspelling"
+  },
+  "slash_desc_resolvepred": {
+    "message": "beslis de voorspelling op uitkomst n"
+  },
+  "slash_desc_cancelpred": {
+    "message": "annuleer de actieve voorspelling"
+  },
+  "slash_desc_highlight": {
+    "message": "markeer je bericht in de twitch-chat"
+  },
+  "slash_sec_everyday": {
+    "message": "dagelijks"
+  },
+  "slash_sec_local": {
+    "message": "alleen dit venster"
+  },
+  "slash_sec_mod": {
+    "message": "moderatie"
+  },
+  "slash_sec_modes": {
+    "message": "chatmodi"
+  },
+  "slash_sec_events": {
+    "message": "polls, voorspellingen, bits"
+  },
+  "slash_help_full_list": {
+    "message": "volledige lijst -> /commands"
+  },
+  "slash_help_label": {
+    "message": "slash-commando's"
   }
 }

@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "구독"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "mod 뷰 (채팅, automod, 차단 단어)"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "방송자"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "크리에이터 대시보드"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "스트림 매니저"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "관리 설정 (automod, 차단 단어)"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "채널 설정"
+  },
+  "mc_twapi_ql_community": {
+    "message": "커뮤니티 (mod, vip, 팔로우)"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "수익화"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "채널 페이지"
+  },
+  "mc_twapi_ql_about": {
+    "message": "소개 페이지"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "영상"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "클립"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "일정"
+  },
+  "mc_twapi_ql_account": {
+    "message": "내 계정"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "드롭 / 인벤토리"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "내 구독"
+  },
+  "mc_twapi_ql_following": {
+    "message": "팔로잉 목록"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "twitch 설정"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "개인정보 + 보안"
+  },
+  "mc_twapi_won": {
+    "message": "승리"
+  },
+  "mc_twapi_lost": {
+    "message": "패배"
+  },
+  "mc_twapi_max": {
+    "message": "최대"
+  },
+  "mc_twapi_amt": {
+    "message": "수량"
+  },
+  "mc_twapi_bet": {
+    "message": "베팅"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ pts · 베팅 $COUNT$명",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ pts · 베팅 $COUNT$명",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "내 베팅: $POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "$OUTCOME$에 $POINTS$ 베팅함 — 실제 승자를 골라",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "쿨다운 $N$분",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "쿨다운 $N$초",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "실패"
+  },
+  "mc_twapi_err_own": {
+    "message": "자기 채널엔 베팅 불가"
+  },
+  "mc_twapi_err_retry": {
+    "message": "다시 시도해"
+  },
+  "mc_twapi_err_locked": {
+    "message": "베팅 마감됨"
+  },
+  "mc_twapi_err_points": {
+    "message": "포인트 부족"
+  },
+  "mc_twapi_err_already": {
+    "message": "이미 베팅함"
+  },
+  "mc_twapi_no_event": {
+    "message": "이벤트 없음"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "결과 없음"
+  },
+  "mc_twapi_no_channel": {
+    "message": "채널 없음"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "닫는 중..."
+  },
+  "mc_twapi_closing": {
+    "message": "닫는 중"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "채널을 찾지 못함"
+  },
+  "mc_twapi_tab_events": {
+    "message": "이벤트"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "비트"
+  },
+  "mc_twapi_tab_links": {
+    "message": "바로가기"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "$CHANNEL$에 비트 치어",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "잔액: $BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "치어 창 열기"
+  },
+  "mc_twapi_bits_title": {
+    "message": "비트 $AMOUNT$개",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "LIVE · $UPTIME$ · 시청자 $VIEWERS$명",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "OFFLINE"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "LIVE · 시청자 $VIEWERS$명",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "베팅: $POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$표",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$표",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "투표"
+  },
+  "mc_input_unblock": {
+    "message": "차단 해제"
+  },
+  "mc_input_remove_from_set": {
+    "message": "세트에서 제거"
+  },
+  "mc_input_open_on": {
+    "message": "$SITE$에서 열기",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "이미지 보기"
+  },
+  "mc_input_copy_emote_name": {
+    "message": ":name: 복사"
+  },
+  "mc_input_copy_image_url": {
+    "message": "이미지 url 복사"
+  },
+  "mc_input_copy_emoji": {
+    "message": "이모지 복사"
+  },
+  "mc_input_expand": {
+    "message": "펼치기"
+  },
+  "mc_input_mute_24h": {
+    "message": "뮤트 (24시간)"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "탭에서 숨김 해제"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "탭에서 숨기기"
+  },
+  "mc_input_copy_message": {
+    "message": "메시지 복사"
+  },
+  "mc_input_copy_to_input": {
+    "message": "입력창에 복사"
+  },
+  "mc_input_copy_thread": {
+    "message": "스레드 복사"
+  },
+  "mc_input_delete_msg": {
+    "message": "메시지 삭제"
+  },
+  "mc_input_timeout": {
+    "message": "timeout"
+  },
+  "mc_input_timeout_10m": {
+    "message": "timeout 10분"
+  },
+  "mc_input_timed_out": {
+    "message": "timeout 됨"
+  },
+  "mc_input_warn": {
+    "message": "경고"
+  },
+  "mc_input_reply": {
+    "message": "답글"
+  },
+  "mc_input_op_to_feed": {
+    "message": "피드에 op"
+  },
+  "mc_input_whisper": {
+    "message": "whisper"
+  },
+  "mc_input_dm": {
+    "message": "dm"
+  },
+  "mc_input_edit_note": {
+    "message": "메모 수정"
+  },
+  "mc_input_add_note": {
+    "message": "메모 추가"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "신고 / 구독 선물"
+  },
+  "mc_input_filter_to": {
+    "message": "$USER$만 보기",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "채팅 로그"
+  },
+  "mc_input_edit_timer": {
+    "message": "수정 ($TIME$)",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "수정 (만료됨)"
+  },
+  "mc_input_delete": {
+    "message": "삭제"
+  },
+  "mc_input_chatter": {
+    "message": "채팅러"
+  },
+  "mc_input_everyone": {
+    "message": "모두"
+  },
+  "mc_input_heatsync_only": {
+    "message": "heatsync만"
+  },
+  "mc_input_your_inventory": {
+    "message": "내 인벤토리"
+  },
+  "mc_input_all_twitch": {
+    "message": "twitch 전체"
+  },
+  "mc_input_all_kick": {
+    "message": "kick 전체"
+  },
+  "mc_input_ext_users": {
+    "message": "$SOURCE$ 사용자",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "7tv 검색 중…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "구독자 전용"
+  },
+  "mc_input_usage_color": {
+    "message": "사용법: /color <이름|#hex> — 예: /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "채팅 색상을 $HEX$(으)로 설정함",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "사용법: /re <내용>"
+  },
+  "mc_input_re_no_post": {
+    "message": "아직 답글 달 채팅 게시글이 없어"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "투표 실패: $ERROR$ (방송자 전용)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "투표 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "예측 실패: $ERROR$ (방송자 전용)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "예측 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "투표 종료 실패: $ERROR$ (방송자 전용)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "투표 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "베팅 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "실패: $ERROR$ (방송자 전용)",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ 실패: $ERROR$ (방송자 전용)",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "공지 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <이름> — 프로필 카드 열기"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <유저> — 이 탭에서 숨김"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <유저> — 이 탭에서 숨김 해제"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r 로 $USER$에게 답장",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "업로드 진행 중..."
+  },
+  "mc_input_upload_media_only": {
+    "message": "이미지/영상만 가능"
+  },
+  "mc_input_upload_too_large": {
+    "message": "파일이 너무 커 (최대 $MB$MB)",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "업로드 중..."
+  },
+  "mc_input_upload_done": {
+    "message": "업로드 완료"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "업로드 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "업로드 실패"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "원본에 접근 못 함 — 정지 프레임으로 올림"
+  },
+  "mc_input_drop_zone": {
+    "message": "이미지/영상/링크를 놓아서 업로드"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <메시지>"
+  },
+  "mc_social_edit_empty": {
+    "message": "내용을 비울 수 없어"
+  },
+  "mc_social_saving": {
+    "message": "저장 중..."
+  },
+  "mc_social_edit_failed": {
+    "message": "수정 실패"
+  },
+  "mc_social_confirm_delete": {
+    "message": "이 게시글을 삭제할까?"
+  },
+  "mc_social_home_title": {
+    "message": "홈을 보려면 로그인"
+  },
+  "mc_social_home_sub": {
+    "message": "팔로우하고, 게시하고, 공유 — 멀티챗과 함께"
+  },
+  "mc_social_home_login": {
+    "message": "heatsync.org에서 로그인"
+  },
+  "mc_social_home_note": {
+    "message": "멀티챗은 계정 없이 가능 — 위에서 채널 탭을 골라"
+  },
+  "mc_social_no_posts": {
+    "message": "게시글 없음"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "사람을 팔로우하거나 글을 써서 이 탭을 채워봐"
+  },
+  "mc_social_import_follows": {
+    "message": "twitch 팔로우 가져오기"
+  },
+  "mc_social_syncing": {
+    "message": "동기화 중…"
+  },
+  "mc_social_synced": {
+    "message": "$COUNT$개 동기화됨 ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "다시 시도"
+  },
+  "mc_social_failed": {
+    "message": "실패"
+  },
+  "mc_social_discover_people": {
+    "message": "사람 찾기 →"
+  },
+  "mc_social_post_something": {
+    "message": "글 쓰기"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "인기 글 · heatsync.org에서 로그인해 팔로우"
+  },
+  "mc_social_banner_newest": {
+    "message": "최신 글 · 사람을 팔로우해 피드를 채워봐"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "이번 달 인기 · 사람을 팔로우해 피드를 채워봐"
+  },
+  "mc_social_edited": {
+    "message": "(수정됨)"
+  },
+  "mc_social_replying_to": {
+    "message": ">>$ID$에 답글",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "스레드 나가기"
+  },
+  "mc_social_live_viewer": {
+    "message": "live · 시청자 $COUNT$명",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "live · 시청자 $COUNT$명",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "live"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · live",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "heat $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "시청자 $COUNT$명",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "답글 $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "답글 $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "(내용 없음)"
+  },
+  "mc_social_live_now": {
+    "message": "지금 live"
+  },
+  "mc_social_no_streams": {
+    "message": "지금 live 중인 방송 없음"
+  },
+  "mc_social_hot_posts": {
+    "message": "인기 글"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "필터에 맞는 글 없음"
+  },
+  "mc_social_tags": {
+    "message": "태그"
+  },
+  "mc_social_none_now": {
+    "message": "지금은 없음"
+  },
+  "mc_social_leaderboard": {
+    "message": "순위표"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "이 필터에 맞는 프로필 없음"
+  },
+  "mc_social_no_pinned": {
+    "message": "고정된 메시지 없음"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "아직 mod 활동 없음"
+  },
+  "mc_social_platform": {
+    "message": "플랫폼"
+  },
+  "mc_social_all": {
+    "message": "전체"
+  },
+  "mc_social_yt_superchat": {
+    "message": "슈퍼챗 $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "슈퍼 스티커 $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "멤버십 기념"
+  },
+  "mc_social_yt_member": {
+    "message": "멤버가 됨"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "멤버십 $COUNT$개 선물",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "멤버십 $COUNT$개 선물",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "연결 오류"
+  },
+  "mc_social_replies_title": {
+    "message": "답글"
+  },
+  "mc_pcard_del_msg": {
+    "message": "메시지 삭제"
+  },
+  "mc_pcard_del_title": {
+    "message": "이 유저의 최근 메시지 삭제"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "mod 권한 부여 (방송자 전용)"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "mod 권한 해제 (방송자 전용)"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "VIP 부여"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "VIP 해제"
+  },
+  "mc_pcard_error": {
+    "message": "오류"
+  },
+  "mc_pcard_no_channel": {
+    "message": "채널을 확인할 수 없음"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$: $USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ 실패: $ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "세션"
+  },
+  "mc_pcard_first": {
+    "message": "첫 채팅"
+  },
+  "mc_pcard_channels": {
+    "message": "채널"
+  },
+  "mc_pcard_close_profile": {
+    "message": "프로필 닫기"
+  },
+  "mc_pcard_close_esc": {
+    "message": "닫기 (Esc)"
+  },
+  "mc_pcard_retry": {
+    "message": "불러오지 못함 — 다시 시도"
+  },
+  "mc_pcard_url_copied": {
+    "message": "url 복사됨"
+  },
+  "mc_pcard_clip_created": {
+    "message": "클립 생성됨"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "클립 실패: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "복사됨"
+  },
+  "mc_logs_failed": {
+    "message": "실패"
+  },
+  "mc_logs_all_channels": {
+    "message": "모든 채널"
+  },
+  "mc_logs_all": {
+    "message": "전체"
+  },
+  "mc_logs_scope_channel": {
+    "message": "현재 #$CHANNEL$만 표시 중 — 클릭하면 모든 채널 보기",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "현재 모든 채널 표시 중 — 클릭하면 #$CHANNEL$만 보기",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "검색…"
+  },
+  "mc_logs_search_title": {
+    "message": "$USER$의 메시지 검색",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "새로고침"
+  },
+  "mc_logs_export_txt": {
+    "message": ".txt로 내보내기"
+  },
+  "mc_logs_export_json": {
+    "message": ".json으로 내보내기"
+  },
+  "mc_logs_public": {
+    "message": "공개 아카이브 ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "heatsync.org에서 #$CHANNEL$의 공개 채팅 로그 열기",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "아카이브를 불러오지 못함 — 다시 검색하거나 스크롤해봐"
+  },
+  "mc_logs_backfill": {
+    "message": "$SOURCE$에서 지난 로그 가져오는 중… 30초쯤 뒤 새로고침해봐",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "\"$QUERY$\" 검색 결과 없음",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "#$CHANNEL$에 $USER$의 보관된 메시지가 아직 없음",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "$USER$의 보관된 메시지가 아직 없음",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "스크롤해서 이전 보기"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "고유 링크 복사"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "고유 링크 $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "메모 · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "비공개 메모 — 나만 볼 수 있어. 플랫폼을 넘어 따라가."
+  },
+  "mc_notes_esc": {
+    "message": "esc로 닫기"
+  },
+  "mc_notes_delete": {
+    "message": "삭제"
+  },
+  "mc_notes_saved": {
+    "message": "저장됨 · esc로 닫기"
+  },
+  "mc_notes_saving": {
+    "message": "저장 중…"
+  },
+  "mc_notes_section": {
+    "message": "메모"
+  },
+  "mc_notes_empty": {
+    "message": "메모 없음"
+  },
+  "mc_notes_edit": {
+    "message": "수정"
+  },
+  "mc_notes_add": {
+    "message": "메모 추가"
+  },
+  "mc_feed_loading_name": {
+    "message": "$NAME$ 불러오는 중…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "채팅 줄 불러오는 중…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "미리보기 불러오는 중…"
+  },
+  "mc_feed_adult_login": {
+    "message": "성인 계정으로 로그인해야 볼 수 있어"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "이미지 사용 불가"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "새 탭에서 열기"
+  },
+  "mc_feed_reload_player": {
+    "message": "플레이어 다시 불러오기 (로그인 후)"
+  },
+  "mc_feed_pause": {
+    "message": "일시정지"
+  },
+  "mc_feed_volume": {
+    "message": "볼륨"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "채팅으로 돌아가기 (esc)"
+  },
+  "mc_feed_fill_chat": {
+    "message": "채팅 채우기"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "새 탭에서 열기"
+  },
+  "mc_feed_close_player": {
+    "message": "플레이어 닫기"
+  },
+  "mc_feed_back": {
+    "message": "← 뒤로"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "whisper 실패"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "heatsync 서버에 연결 못 함"
+  },
+  "mc_misc_twitch_error": {
+    "message": "twitch 오류 $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "twitch 세션 없음"
+  },
+  "mc_misc_unknown_error": {
+    "message": "알 수 없는 오류"
+  },
+  "mc_misc_sending": {
+    "message": "보내는 중"
+  },
+  "mc_misc_click_retry": {
+    "message": "클릭해서 다시 시도"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — 클릭해서 heatsync에서 twitch whisper 권한 허용",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "twitch whisper 켜기 — 재연결"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — 클릭해서 $USER$ 팔로우 후 전송",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — 클릭해서 heatsync에 로그인",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "보내려면 heatsync에 로그인"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — 다시 시도",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "답글 ($USER$)",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "재구독 메시지 ($MONTHS$개월) — enter로 공유",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "시청 스트릭 ($COUNT$) — enter로 공유",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "이 메시지 삭제"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "timeout 1분"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "timeout 10분"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "timeout 1시간"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "timeout 24시간"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "timeout 7일"
+  },
+  "mc_mtb_t_purge": {
+    "message": "purge — 이 유저의 메시지 지우기 (1초 timeout)"
+  },
+  "mc_mtb_t_ban": {
+    "message": "영구 ban"
+  },
+  "mc_mtb_t_unban": {
+    "message": "사용자 unban"
+  },
+  "mc_mtb_t_bt": {
+    "message": "차단 단어"
+  },
+  "mc_mtb_t_mt": {
+    "message": "mod 도구"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "메시지 관리 동작"
+  },
+  "mc_main_back_to_chat": {
+    "message": "채팅으로 돌아가기"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "채팅으로 돌아가기 (esc)"
+  },
+  "mc_main_edit_platforms": {
+    "message": "플랫폼 수정"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ $N$개 더",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "$PLAT$에서 $CH$ 열기",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "$CH$ 채팅 열기",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "답글"
+  },
+  "mc_main_also_live_on": {
+    "message": "$PLATS$에서도 live",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "채널 연결"
+  },
+  "mc_main_dismiss": {
+    "message": "닫기"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "닫기 (우클릭도 돼)"
+  },
+  "mc_main_add_streams_title": {
+    "message": "내 방송 추가"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "twitch, kick, youtube 채팅을 한 패널에서"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ 채널 추가"
+  },
+  "mc_main_idwarn": {
+    "message": "여기선 내 emote가 다른 사람에게 안 보여 — heatsync 계정 $ACCT$, 채팅 계정 $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "계정 연결"
+  },
+  "mc_main_status_no_yt": {
+    "message": "상태는 twitch와 kick 채널만 지원"
+  },
+  "mc_main_status_fetching": {
+    "message": "#$CH$ 가져오는 중…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "#$CH$ 못 가져옴 (오프라인이거나 $PLAT$에 없나?)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "내 로그를 보려면 로그인 — 채팅러를 우클릭하면 그 사람 로그"
+  },
+  "mc_main_logs_rclick": {
+    "message": "채팅러를 우클릭하면 $PLAT$ 로그를 볼 수 있어",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "채팅 탭"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "채팅 숨기기 (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "채팅 숨기기"
+  },
+  "mc_main_popout_title": {
+    "message": "채팅을 별도 창으로 분리"
+  },
+  "mc_main_subscribe_title": {
+    "message": "구독 — 이 채널 후원"
+  },
+  "mc_main_views_aria": {
+    "message": "보기"
+  },
+  "mc_main_search_ph": {
+    "message": "메시지 검색…"
+  },
+  "mc_main_messages_aria": {
+    "message": "채팅 메시지"
+  },
+  "mc_main_search_none_for": {
+    "message": "\"$Q$\" 결과 없음",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "결과 없음"
+  },
+  "mc_main_moment": {
+    "message": "$CH$ 채팅 폭발 중 — 30초에 $RATE$개 (평소 ~$BASE$개)",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "필터 — /regex/ 또는 @user"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ pts",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "채널 포인트 교환"
+  },
+  "mc_main_highlighted": {
+    "message": "강조된 메시지"
+  },
+  "mc_main_first_msg": {
+    "message": "이 채널 첫 메시지"
+  },
+  "mc_main_kill_active": {
+    "message": "heatsync가 비활성화함 (kill-switch 작동 중)"
+  },
+  "mc_main_kill_disabled": {
+    "message": "heatsync가 멀티챗을 비활성화함"
+  },
+  "mc_main_kill_update": {
+    "message": "확장 업데이트 필요 (v$VER$+)",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "\"$TITLE$\" 교환함",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "$TARGET$에 시청자 $VIEWERS$명과 레이드",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$이(가) 시청자 $VIEWERS$명과 레이드 옴",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "새 투표 시작"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "새 투표 시작 — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "새 예측 시작"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "새 예측 시작 — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "하이프 트레인 시작"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "하이프 트레인 레벨 $LEVEL$에서 종료",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$이(가) 구독 $COUNT$개 선물",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "$BY$ 고정: $TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "고정: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "메시지 고정 해제됨"
+  },
+  "mc_notif_dismiss": {
+    "message": "닫기"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "emote 불러오는 중…"
+  },
+  "mc_notif_whispered": {
+    "message": "whisper: $SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "구독"
+  },
+  "mc_notif_rt_mo": {
+    "message": "개월"
+  },
+  "mc_notif_rt_months": {
+    "message": "개월"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "기념"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "현재"
+  },
+  "mc_notif_wt_stream": {
+    "message": "연속"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "시청 스트릭"
+  },
+  "mc_notif_share": {
+    "message": "공유"
+  },
+  "mc_notif_update_available": {
+    "message": "업데이트 있음 — 현재 $CUR$, 최신은 $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "kick 열기"
+  },
+  "mc_notif_open_youtube": {
+    "message": "youtube 열기"
+  },
+  "mc_notif_login_twitch": {
+    "message": "채팅하려면 twitch.tv에 로그인"
+  },
+  "mc_notif_open_twitch": {
+    "message": "twitch 열기"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- 탭 --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "twitch 인증 실패"
+  },
+  "mc_notif_r_no_user": {
+    "message": "twitch 사용자명 없음"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "연결 실패"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "전송 실패"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "kick 로그인 안 됨"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "열린 kick 탭 없음"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "kick 채널을 찾을 수 없음"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick 확인 안 됨 — 전송됐을 수도 있어"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick이 전송을 거부함"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "열린 youtube 탭 없음"
+  },
+  "mc_notif_r_no_input": {
+    "message": "youtube 채팅 아직 불러오는 중"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "먼저 youtube에 로그인"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube가 전송을 막음"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube가 전송을 확인하지 않음"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "youtube 채팅 브리지 시간 초과"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ 확인 안 됨 — 전송 안 됐을 수도 있어",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "플랫폼"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "채팅 제한됨 — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "채팅 제한됨"
+  },
+  "mc_notif_r_unknown": {
+    "message": "전송 실패했을 수도 있어"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$: \"$SNIPPET$\"",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "숨김"
+  },
+  "mc_tip_owner_sub": {
+    "message": "$OWNER$ 구독 ($SRC$)",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · @$ACTOR$이(가) 제거함",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · 채널에서 제거됨",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "상대"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "나를 구독 $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "채널 구독"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "채널 팔로우"
+  },
+  "mc_tip_row_follower": {
+    "message": "팔로워"
+  },
+  "mc_tip_row_you": {
+    "message": "나"
+  },
+  "mc_tip_follow_ago": {
+    "message": "팔로우 $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "팔로워"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "메시지 $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "$DAY$부터 $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "$DAY$부터",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "로그"
+  },
+  "mc_set_system_backup": {
+    "message": "시스템 · 백업 / 복원"
+  },
+  "mc_set_recent_errors": {
+    "message": "최근 오류"
+  },
+  "mc_set_copy": {
+    "message": "복사"
+  },
+  "mc_set_clear": {
+    "message": "지우기"
+  },
+  "mc_set_crash_loading": {
+    "message": "(불러오는 중...)"
+  },
+  "mc_set_export_tip": {
+    "message": "ui_settings와 모든 hs_* 키를 JSON 파일로 저장. 기기와 브라우저 간 이동 가능."
+  },
+  "mc_set_export": {
+    "message": "설정 내보내기"
+  },
+  "mc_set_export_btn": {
+    "message": ".json 다운로드"
+  },
+  "mc_set_import_tip": {
+    "message": "이전에 내보낸 JSON 파일에서 복원. 기존 설정에 병합돼."
+  },
+  "mc_set_import": {
+    "message": "설정 가져오기"
+  },
+  "mc_set_import_btn": {
+    "message": ".json 불러오기"
+  },
+  "mc_set_reset_all_title": {
+    "message": "모든 페이지의 모든 설정 초기화"
+  },
+  "mc_set_all_defaults": {
+    "message": "전부 기본값"
+  },
+  "mc_set_backup_restore": {
+    "message": "백업 / 복원"
+  },
+  "mc_set_fr_sound": {
+    "message": "소리: $SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "위로 이동 (우선순위 높음 — 먼저 맞는 규칙 적용)"
+  },
+  "mc_set_fr_down": {
+    "message": "아래로 이동"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "모든 채널"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "키워드"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "regex"
+  },
+  "mc_set_fr_t_user": {
+    "message": "유저"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "배지"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "msgtype"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "expr"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "예: first && !badge:subscriber — && || ! ( ) 로 연결; 필드 user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "값..."
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "강조"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "숨기기"
+  },
+  "mc_set_fr_color": {
+    "message": "강조 색상"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "강조 소리 (강조 동작에만 적용)"
+  },
+  "mc_set_fr_silent": {
+    "message": "무음"
+  },
+  "mc_set_fr_case": {
+    "message": "대소문자 구분"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ 추가"
+  },
+  "mc_set_fr_none": {
+    "message": "규칙 없음 — 아래에서 추가해"
+  },
+  "mc_set_page_reset_title": {
+    "message": "이 페이지를 기본값으로 초기화"
+  },
+  "mc_set_default": {
+    "message": "기본값"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "여기 설정 $N$개 더 있어 — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "여기 설정 $N$개 더 있어 — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "전체 보기"
+  },
+  "mc_set_crash_none": {
+    "message": "(기록된 오류 없음)"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "(로그를 읽을 수 없음)"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "꺼짐: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "전부 켜짐"
+  },
+  "mc_set_fmt_none": {
+    "message": "없음"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "프리셋 삭제…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "$NAME$ 삭제",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "프리셋 삭제"
+  },
+  "mc_set_preset_save_as": {
+    "message": "현재 설정 저장…"
+  },
+  "mc_set_preset_undo": {
+    "message": "실행 취소: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "프리셋"
+  },
+  "mc_set_preset_save_title": {
+    "message": "현재 설정을 프리셋으로 저장"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "프리셋 이름"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "기본값과 다른 모든 설정을 저장 — 설정 내보내기로 공유 가능"
+  },
+  "mc_set_preset_nochange": {
+    "message": "이미 같아 — 바꿀 것 없음"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "프리셋 적용: $LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "적용"
+  },
+  "mc_set_h_search": {
+    "message": "검색"
+  },
+  "mc_set_h_category": {
+    "message": "카테고리"
+  },
+  "mc_set_h_move": {
+    "message": "이동"
+  },
+  "mc_set_h_adjust": {
+    "message": "조절"
+  },
+  "mc_set_h_toggle": {
+    "message": "토글"
+  },
+  "mc_set_h_reset_row": {
+    "message": "항목 초기화"
+  },
+  "mc_set_h_close_clear": {
+    "message": "닫기 / 지우기"
+  },
+  "mc_set_h_this_help": {
+    "message": "이 도움말"
+  },
+  "mc_set_h_first_last": {
+    "message": "처음 / 끝"
+  },
+  "mc_set_h_fold": {
+    "message": "섹션 접기"
+  },
+  "mc_set_h_prev_next": {
+    "message": "이전 / 다음 카테고리"
+  },
+  "mc_set_h_keys": {
+    "message": "키"
+  },
+  "mc_set_h_commands": {
+    "message": "명령어"
+  },
+  "mc_set_h_full_list": {
+    "message": "전체 목록 -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ 설정 검색..."
+  },
+  "mc_set_scope_all_tip": {
+    "message": "모든 설정 표시 중 — 클릭하면 기본만"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "기본 설정만 표시 중 — 클릭하면 전체"
+  },
+  "mc_set_scope_all": {
+    "message": "전체"
+  },
+  "mc_set_scope_basic": {
+    "message": "기본"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "emote"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gif"
+  },
+  "mc_emo_chips_title": {
+    "message": "검색할 제공자 선택"
+  },
+  "mc_emo_exact_title": {
+    "message": "이름이 정확히 같은 것만"
+  },
+  "mc_emo_stack_expand": {
+    "message": "펼치기"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "접기"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "모두 차단"
+  },
+  "mc_xg_close": {
+    "message": "닫기"
+  },
+  "mc_tr_sub_chat": {
+    "message": "채팅"
+  },
+  "mc_tr_sub_summary": {
+    "message": "요약"
+  },
+  "mc_tr_sub_logs": {
+    "message": "로그"
+  },
+  "mc_tr_sub_status": {
+    "message": "상태"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "플랫폼"
+  },
+  "mc_tr_set_display": {
+    "message": "화면"
+  },
+  "mc_tr_set_notifs": {
+    "message": "알림"
+  },
+  "mc_tr_set_mod": {
+    "message": "mod"
+  },
+  "mc_tr_set_filters": {
+    "message": "필터"
+  },
+  "mc_tr_set_system": {
+    "message": "시스템"
+  },
+  "mc_tr_set_help": {
+    "message": "도움말"
+  },
+  "mc_pt_native_chat": {
+    "message": "기본 채팅"
+  },
+  "mc_pt_popout_chat": {
+    "message": "팝아웃 채팅"
+  },
+  "mc_pt_clips": {
+    "message": "클립"
+  },
+  "mc_pt_videos": {
+    "message": "영상"
+  },
+  "mc_pt_channel_page": {
+    "message": "채널 페이지"
+  },
+  "mc_pt_no_channel": {
+    "message": "채널을 찾지 못함"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "기본 채팅 (슈퍼챗, 스티커, 투표, 이모지)"
+  },
+  "mc_pt_join_channel": {
+    "message": "채널 입장"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "heatsync 채팅으로 돌아가기"
+  },
+  "mc_pa_show_chat": {
+    "message": "채팅 보기 (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "youtube 채팅은 heatsync 로그인이 필요해 —"
+  },
+  "mc_pa_emote_login": {
+    "message": "heatsync에 로그인하면 내 emote가 모두에게 보여"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "heatsync.org에 연결 못 함 — 다시 연결 중"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "$SOURCE$ 연결 못 함",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "$CHANNEL$ 방송 종료",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "$CHANNEL$ 방송 요약",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "설정에서 방송 통계가 꺼져 있어"
+  },
+  "mc_ss_empty": {
+    "message": "아직 집계된 채팅 없음 — 메시지가 오면 채워져"
+  },
+  "mc_ss_stats": {
+    "message": "메시지 $MSGS$ · 채팅러 $CHATTERS$ · 멘션 $MENTIONS$ · 최고 $PEAK$/s",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "$CLOCK$부터 · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "상위 채팅러"
+  },
+  "mc_ss_top_emotes": {
+    "message": "상위 emote"
+  },
+  "mc_cmg_checking": {
+    "message": "heatsync 확인 중…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "heatsync 프로필 없음 — 직접 입력"
+  },
+  "mc_cmg_unreachable": {
+    "message": "heatsync에 연결 못 함"
+  },
+  "mc_cmg_live_on": {
+    "message": "$LIST$에서 live",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "heatsync에서 $NAME$ 일치 — 연결됨: $LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "자동 입력됨: $LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "live 수정 — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ 방송 시작",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ 게임 변경",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "메시지가 삭제됨"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ unban 됨",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ $SEC$초 timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ ban 됨",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$이(가) KICK $AMOUNT$개 선물!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$이(가) KICK $AMOUNT$개 선물 ($GIFT$)!",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "익명"
+  },
+  "mc_cp_vol": {
+    "message": "볼륨 $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "실패"
+  },
+  "hsbtn_imported": {
+    "message": "$COUNT$개 가져옴",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "내 emote, 모든 채팅에서"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "twitch, kick, youtube 방송을 열고 채널 탭에서 emote를 가져와 — 클릭 한 번이면 모든 채팅에서 돼."
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "$CHANNEL$의 7tv, bttv, ffz emote를 전부 내 세트로 — 클릭 한 번이면 모든 채팅에 보여.",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "$CHANNEL$ emote 전부 가져오기",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "채널 emote 전부 가져오기"
+  },
+  "hsbtn_no_sets": {
+    "message": "저장된 세트 없음 — heatsync.org에서 만들어봐"
+  },
+  "hsbtn_apply": {
+    "message": "적용"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "emote $COUNT$개 교체할까?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "적용 중…"
+  },
+  "hsbtn_applied": {
+    "message": "적용됨"
+  },
+  "hsbtn_login_removed": {
+    "message": "삭제된 emote를 보려면 로그인"
+  },
+  "hsbtn_no_removed": {
+    "message": "삭제된 emote 없음"
+  },
+  "hsbtn_restore": {
+    "message": "복원"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "복원할까?"
+  },
+  "hsbtn_restoring": {
+    "message": "복원 중…"
+  },
+  "hsbtn_restored": {
+    "message": "복원됨"
+  },
+  "hsbtn_removed_on": {
+    "message": "$DATE$ 삭제됨",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "세트 불러오기 실패"
+  },
+  "hsbtn_err_history": {
+    "message": "기록 불러오기 실패"
+  },
+  "hsbtn_err_mine": {
+    "message": "내 emote 불러오기 실패"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "채널 emote 사용 불가"
+  },
+  "hsbtn_err_channel": {
+    "message": "채널 emote 불러오기 실패"
+  },
+  "hsbtn_err_global": {
+    "message": "글로벌 emote 불러오기 실패"
+  },
+  "hsbtn_unnamed": {
+    "message": "(이름 없음)"
+  },
+  "hsbtn_emote_one": {
+    "message": "emote $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "emote $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "$USER$의 세트",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "$COUNT$개 보유",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "오류"
+  },
+  "hsbtn_search_status": {
+    "message": "“$QUERY$” — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "“$QUERY$” — 검색 중…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "“$QUERY$”와 맞는 emote 없음",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "emote를 추가하려면 로그인"
+  },
+  "hsbtn_add_failed": {
+    "message": "추가 실패"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "차단 해제 실패"
+  },
+  "hsbtn_uses_title": {
+    "message": "heatsync에서 $COUNT$회 사용",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "인벤토리에 있음"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "인벤토리에 없음"
+  },
+  "hsbtn_open_on": {
+    "message": "$PROVIDER$에서 열기 →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "이름 변경"
+  },
+  "hsbtn_move": {
+    "message": "이동"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "슬롯으로 이동…"
+  },
+  "hsbtn_slot_number": {
+    "message": "슬롯 번호"
+  },
+  "hsbtn_renamed_to": {
+    "message": "$NAME$(으)로 이름 변경됨",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "이름 변경 실패"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "슬롯 $SLOT$(으)로 이동됨",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "이동 실패"
+  },
+  "hsbtn_unshare_set": {
+    "message": "세트 공유 해제"
+  },
+  "hsbtn_share_set": {
+    "message": "세트 공유"
+  },
+  "hsbtn_set_unshared": {
+    "message": "세트 공유 해제됨"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "공유 해제 실패"
+  },
+  "hsbtn_share_copied": {
+    "message": "공유 링크 복사됨: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "공유 실패"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "markdown 복사"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "heatsync 채팅으로 돌아가기"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← heatsync 채팅"
+  },
+  "hsbtn_rcb_label": {
+    "message": "우클릭 차단"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "즉시: 바로 차단 · 메뉴: 차단/취소 표시 · 끔: 사용 안 함"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "즉시"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "메뉴"
+  },
+  "hsbtn_rcb_off": {
+    "message": "끔"
+  },
+  "hsbtn_search_ph": {
+    "message": "emote 검색…"
+  },
+  "hsbtn_chips_title": {
+    "message": "검색할 제공자 선택"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "7tv 결과 포함"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "frankerfacez 결과 포함"
+  },
+  "hsbtn_undo": {
+    "message": "실행 취소"
+  },
+  "hsbtn_redo": {
+    "message": "다시 실행"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "채팅 패널 회전 (C)"
+  },
+  "cs_color_for": {
+    "message": "$USER$ 색상",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "설정"
+  },
+  "cs_clear": {
+    "message": "지우기"
+  },
+  "cs_poll": {
+    "message": "📊 투표 · "
+  },
+  "cs_prediction": {
+    "message": "🎯 예측 · "
+  },
+  "cs_active": {
+    "message": "(진행 중)"
+  },
+  "cs_badge_alt": {
+    "message": "$TITLE$ 배지",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "사용자명 복사"
+  },
+  "cs_copy_message": {
+    "message": "메시지 복사"
+  },
+  "cs_mute_24h": {
+    "message": "뮤트 (24시간)"
+  },
+  "cs_profile": {
+    "message": "프로필"
+  },
+  "cs_removed": {
+    "message": "$NAME$ 삭제됨",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "$NAME$ 삭제됨 · 이제 $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "emote를 관리하려면 heatsync.org에 로그인"
+  },
+  "cs_remove_failed": {
+    "message": "$NAME$ 삭제 못 함: $ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "알 수 없는 오류"
+  },
+  "popup_site_label": {
+    "message": "heatsync 채팅 사용 사이트"
+  },
+  "popup_site_note_default": {
+    "message": "끄면 사이트 자체 채팅이 보여"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$: 사이트 자체 채팅으로 돌아옴",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$: heatsync 채팅으로 돌아옴",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "피드백"
+  },
+  "popup_fb_bug": {
+    "message": "버그"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "heatsync가 뭘 더 잘해야 할까?"
+  },
+  "popup_fb_ph_bug": {
+    "message": "뭐가 고장났어? 어떻게 되길 기대했어?"
+  },
+  "popup_fb_send": {
+    "message": "보내기"
+  },
+  "popup_fb_sending": {
+    "message": "보내는 중..."
+  },
+  "popup_fb_short": {
+    "message": "조금만 더 써줘"
+  },
+  "popup_fb_sent": {
+    "message": "보냈어 — 고마워"
+  },
+  "popup_fb_failed": {
+    "message": "전송 실패. 다시 시도해봐."
+  },
+  "popup_feedback_link": {
+    "message": "피드백"
+  },
+  "popup_feedback_title": {
+    "message": "피드백 / 버그 신고"
+  },
+  "popup_inv_slots": {
+    "message": "emote 슬롯 5,000개"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "$USER$(으)로 로그인됨",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5,000 슬롯"
+  },
+  "popup_inv_import_hint": {
+    "message": " · 채널을 가져와서 채워봐"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · live $COUNT$명: $NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " +$COUNT$명 더",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ live 시작",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · 시청자 $COUNT$명",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "팔로우 중인 $COUNT$명이 live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — 계정 전환"
+  },
+  "bg_acct_msg": {
+    "message": "$FROM$에서 $TO$(으)로 전환 중",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "채널 emote 불러오는 중..."
+  },
+  "bg_loading_third": {
+    "message": "서드파티 emote 가져오는 중..."
+  },
+  "bg_loading_emotes": {
+    "message": "emote 불러오는 중..."
+  },
+  "cs_uploading": {
+    "message": "업로드 중..."
+  },
+  "cs_file_too_large": {
+    "message": "파일이 너무 커 (최대 $SIZE$)",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "업로드 실패"
+  },
+  "cs_yt_top_chat": {
+    "message": "인기 채팅 모드 — youtube를 실시간 채팅으로 바꿔"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync가 이 채팅에 연결하지 못함"
+  },
+  "cs_badge_owner": {
+    "message": "소유자"
+  },
+  "cs_badge_member": {
+    "message": "멤버"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl 이동  kj 기록  wb/WBE 단어  0$$^ 줄  gg/G 처음/끝\nfFtT+글자 찾기  ;, 찾기 반복  [숫자]명령 반복\nx/X 글자 삭제  dw/db/de/dd 삭제  D 끝까지 삭제\ncw/cb/ce/cc 변경  C 끝까지 변경  s/S 치환\nyw/yb/ye/yy 복사  p/P 붙여넣기  r 바꾸기  ~ 대소문자\ni/a/I/A 입력  u 실행 취소  Ctrl+R 다시 실행  . 반복  ? 도움말\n\nSPC = 리더 — 입력창을 벗어나지 않고 채팅 명령\nSPC /    검색         SPC n/N  다음/이전 결과\nSPC 1-9  n번째 탭    SPC ]/[  다음/이전 탭\nSPC t    탭 선택      SPC \\    채팅 숨기기/보기"
+  },
+  "lib_sec_font": {
+    "message": "글꼴"
+  },
+  "lib_sec_chat_messages": {
+    "message": "채팅 메시지"
+  },
+  "lib_sec_layout": {
+    "message": "레이아웃"
+  },
+  "lib_sec_density": {
+    "message": "밀도"
+  },
+  "lib_sec_messages": {
+    "message": "메시지"
+  },
+  "lib_sec_mentioned": {
+    "message": "@멘션 받았을 때"
+  },
+  "lib_sec_cross_follow": {
+    "message": "플랫폼 간 팔로우"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "mod 툴바"
+  },
+  "lib_sec_content": {
+    "message": "콘텐츠"
+  },
+  "lib_sec_rules": {
+    "message": "규칙"
+  },
+  "lib_sec_player": {
+    "message": "플레이어"
+  },
+  "lib_sec_tabs": {
+    "message": "탭"
+  },
+  "lib_sec_language": {
+    "message": "언어"
+  },
+  "lib_opt_system_monospace": {
+    "message": "시스템 고정폭"
+  },
+  "lib_opt_platform_default": {
+    "message": "플랫폼 기본 (Inter — twitch + kick)"
+  },
+  "lib_opt_custom": {
+    "message": "직접 지정..."
+  },
+  "lib_opt_unread": {
+    "message": "안 읽음"
+  },
+  "lib_opt_heat": {
+    "message": "heat"
+  },
+  "lib_opt_top": {
+    "message": "위"
+  },
+  "lib_opt_right": {
+    "message": "오른쪽"
+  },
+  "lib_opt_bottom": {
+    "message": "아래"
+  },
+  "lib_opt_left": {
+    "message": "왼쪽"
+  },
+  "lib_opt_hidden": {
+    "message": "숨김"
+  },
+  "lib_opt_compact": {
+    "message": "촘촘하게"
+  },
+  "lib_opt_cozy": {
+    "message": "여유롭게"
+  },
+  "lib_opt_always": {
+    "message": "항상"
+  },
+  "lib_opt_hover": {
+    "message": "호버 시"
+  },
+  "lib_opt_never": {
+    "message": "안 함"
+  },
+  "slash_desc_op": {
+    "message": "heatsync 피드에 스레드 올리기"
+  },
+  "slash_desc_re": {
+    "message": "채팅에 보이는 마지막 [OP]에 답글"
+  },
+  "slash_desc_dm": {
+    "message": "heatsync DM 보내기; 메시지 없으면 대화 열기"
+  },
+  "slash_desc_w": {
+    "message": "twitch whisper 보내기"
+  },
+  "slash_desc_color": {
+    "message": "twitch 채팅 색상 설정 (orangered 같은 이름, 또는 turbo면 #hex)"
+  },
+  "slash_desc_r": {
+    "message": "마지막으로 받은 whisper에 답장"
+  },
+  "slash_desc_user": {
+    "message": "최근 로그가 있는 프로필 카드 열기"
+  },
+  "slash_desc_follow": {
+    "message": "heatsync에서 팔로우, twitch와 kick에도 반영"
+  },
+  "slash_desc_unfollow": {
+    "message": "heatsync에서 언팔로우, twitch와 kick에도 반영"
+  },
+  "slash_desc_me": {
+    "message": "액션 메시지 보내기"
+  },
+  "slash_desc_shrug": {
+    "message": "¯\\_(ツ)_/¯ 붙이기"
+  },
+  "slash_desc_tableflip": {
+    "message": "(╯°□°)╯︵ ┻━┻ 붙이기"
+  },
+  "slash_desc_unflip": {
+    "message": "┬─┬ノ( ゜-゜ノ) 붙이기"
+  },
+  "slash_desc_help": {
+    "message": "명령어 목록"
+  },
+  "slash_desc_lclear": {
+    "message": "현재 탭을 나에게만 비우기"
+  },
+  "slash_desc_mute": {
+    "message": "연결된 계정 전체에서 24시간 뮤트"
+  },
+  "slash_desc_unmute": {
+    "message": "뮤트 해제"
+  },
+  "slash_desc_block": {
+    "message": "차단 토글"
+  },
+  "slash_desc_hide": {
+    "message": "새로고침 전까지 이 탭에서만 숨기기"
+  },
+  "slash_desc_unhide": {
+    "message": "숨김 해제"
+  },
+  "slash_desc_note": {
+    "message": "비공개 메모 저장"
+  },
+  "slash_desc_delnote": {
+    "message": "내 메모 삭제"
+  },
+  "slash_desc_set": {
+    "message": "설정 변경, 예: /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "탭 전환: 채널 또는 live, mentions 같은 이름 있는 탭"
+  },
+  "slash_desc_sharelayout": {
+    "message": "내 탭 구성의 heatsync.org/m 링크 복사"
+  },
+  "slash_desc_layout": {
+    "message": "heatsync.org/m 링크의 탭 추가"
+  },
+  "slash_desc_status": {
+    "message": "채팅 모드와 방송 정보 보기"
+  },
+  "slash_desc_ban": {
+    "message": "채널에서 영구 ban"
+  },
+  "slash_desc_timeout": {
+    "message": "timeout, 기본 10분"
+  },
+  "slash_desc_unban": {
+    "message": "ban 또는 timeout 해제"
+  },
+  "slash_desc_delete": {
+    "message": "메시지 하나 삭제"
+  },
+  "slash_desc_nuke": {
+    "message": "특정 단어가 든 최근 메시지 일괄 삭제"
+  },
+  "slash_desc_announce": {
+    "message": "공지 올리기, 색상 선택 가능"
+  },
+  "slash_desc_vip": {
+    "message": "VIP 부여"
+  },
+  "slash_desc_unvip": {
+    "message": "VIP 해제"
+  },
+  "slash_desc_mod": {
+    "message": "mod 권한 부여"
+  },
+  "slash_desc_unmod": {
+    "message": "mod 권한 해제"
+  },
+  "slash_desc_blocked": {
+    "message": "이 채널의 차단 단어 목록 열기"
+  },
+  "slash_desc_modtools": {
+    "message": "mod 도구 패널 열기"
+  },
+  "slash_desc_shield": {
+    "message": "쉴드 모드 켜기/끄기"
+  },
+  "slash_desc_warn": {
+    "message": "채팅러에게 경고"
+  },
+  "slash_desc_shoutout": {
+    "message": "채널 소개(샤라웃)"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "unban 요청 열기"
+  },
+  "slash_desc_slow": {
+    "message": "슬로우 모드, 기본 30초"
+  },
+  "slash_desc_followers": {
+    "message": "팔로워 전용 모드"
+  },
+  "slash_desc_emoteonly": {
+    "message": "emote 전용 모드"
+  },
+  "slash_desc_subscribers": {
+    "message": "구독자 전용 모드"
+  },
+  "slash_desc_unique": {
+    "message": "고유 채팅 모드; twitch만, kick엔 없음"
+  },
+  "slash_desc_poll": {
+    "message": "투표 만들기, 선택지 2-5개"
+  },
+  "slash_desc_endpoll": {
+    "message": "진행 중인 투표 종료"
+  },
+  "slash_desc_vote": {
+    "message": "진행 중인 투표의 n번에 투표"
+  },
+  "slash_desc_prediction": {
+    "message": "예측 시작, 결과 2-10개"
+  },
+  "slash_desc_bet": {
+    "message": "n번 결과에 채널 포인트 베팅"
+  },
+  "slash_desc_lockpred": {
+    "message": "진행 중인 예측 마감"
+  },
+  "slash_desc_resolvepred": {
+    "message": "예측을 n번 결과로 확정"
+  },
+  "slash_desc_cancelpred": {
+    "message": "진행 중인 예측 취소"
+  },
+  "slash_desc_highlight": {
+    "message": "twitch 채팅에서 내 메시지 강조"
+  },
+  "slash_sec_everyday": {
+    "message": "일상"
+  },
+  "slash_sec_local": {
+    "message": "이 창에서만"
+  },
+  "slash_sec_mod": {
+    "message": "관리"
+  },
+  "slash_sec_modes": {
+    "message": "채팅 모드"
+  },
+  "slash_sec_events": {
+    "message": "투표, 예측, 비트"
+  },
+  "slash_help_full_list": {
+    "message": "전체 목록 -> /commands"
+  },
+  "slash_help_label": {
+    "message": "슬래시 명령어"
   }
 }

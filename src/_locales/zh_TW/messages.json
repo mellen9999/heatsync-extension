@@ -3744,5 +3744,3120 @@
         "content": "$1"
       }
     }
+  },
+  "mc_twapi_ql_subscribe": {
+    "message": "訂閱"
+  },
+  "mc_twapi_ql_mod_view": {
+    "message": "管理檢視（聊天、automod、封鎖詞）"
+  },
+  "mc_twapi_ql_broadcaster": {
+    "message": "實況主"
+  },
+  "mc_twapi_ql_creator": {
+    "message": "創作者後台"
+  },
+  "mc_twapi_ql_stream_mgr": {
+    "message": "直播管理員"
+  },
+  "mc_twapi_ql_mod_settings": {
+    "message": "管理設定（automod、封鎖詞）"
+  },
+  "mc_twapi_ql_chan_settings": {
+    "message": "頻道設定"
+  },
+  "mc_twapi_ql_community": {
+    "message": "社群（管理員、vip、追隨）"
+  },
+  "mc_twapi_ql_monetization": {
+    "message": "營利"
+  },
+  "mc_twapi_ql_chan_pages": {
+    "message": "頻道頁面"
+  },
+  "mc_twapi_ql_about": {
+    "message": "簡介頁"
+  },
+  "mc_twapi_ql_videos": {
+    "message": "影片"
+  },
+  "mc_twapi_ql_clips": {
+    "message": "剪輯"
+  },
+  "mc_twapi_ql_schedule": {
+    "message": "時程"
+  },
+  "mc_twapi_ql_account": {
+    "message": "你的帳號"
+  },
+  "mc_twapi_ql_drops": {
+    "message": "掉寶 / 庫存"
+  },
+  "mc_twapi_ql_my_subs": {
+    "message": "我的訂閱"
+  },
+  "mc_twapi_ql_following": {
+    "message": "追隨清單"
+  },
+  "mc_twapi_ql_tw_settings": {
+    "message": "twitch 設定"
+  },
+  "mc_twapi_ql_privacy": {
+    "message": "隱私與安全"
+  },
+  "mc_twapi_won": {
+    "message": "贏"
+  },
+  "mc_twapi_lost": {
+    "message": "輸"
+  },
+  "mc_twapi_max": {
+    "message": "最大"
+  },
+  "mc_twapi_amt": {
+    "message": "數量"
+  },
+  "mc_twapi_bet": {
+    "message": "下注"
+  },
+  "mc_twapi_stats_one": {
+    "message": "$POINTS$ 點 · $COUNT$ 位下注者",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_stats_many": {
+    "message": "$POINTS$ 點 · $COUNT$ 位下注者",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_your_bet": {
+    "message": "你的下注：$POINTS$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_mod_notice": {
+    "message": "你在 $OUTCOME$ 下注了 $POINTS$ — 請選出真正的贏家",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_cooldown_m": {
+    "message": "冷卻 $N$ 分鐘",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cooldown_s": {
+    "message": "冷卻 $N$ 秒",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_failed": {
+    "message": "失敗"
+  },
+  "mc_twapi_err_own": {
+    "message": "不能對自己下注"
+  },
+  "mc_twapi_err_retry": {
+    "message": "請重試"
+  },
+  "mc_twapi_err_locked": {
+    "message": "下注已鎖定"
+  },
+  "mc_twapi_err_points": {
+    "message": "點數不足"
+  },
+  "mc_twapi_err_already": {
+    "message": "已下過注"
+  },
+  "mc_twapi_no_event": {
+    "message": "無活動"
+  },
+  "mc_twapi_no_outcome": {
+    "message": "無結果"
+  },
+  "mc_twapi_no_channel": {
+    "message": "無頻道"
+  },
+  "mc_twapi_closing_dots": {
+    "message": "關閉中…"
+  },
+  "mc_twapi_closing": {
+    "message": "關閉中"
+  },
+  "mc_twapi_no_channel_detected": {
+    "message": "未偵測到頻道"
+  },
+  "mc_twapi_tab_events": {
+    "message": "活動"
+  },
+  "mc_twapi_tab_bits": {
+    "message": "bits"
+  },
+  "mc_twapi_tab_links": {
+    "message": "快速連結"
+  },
+  "mc_twapi_cheer_to": {
+    "message": "向 $CHANNEL$ 送 bits",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_balance": {
+    "message": "餘額：$BAL$",
+    "placeholders": {
+      "bal": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_cheer_open": {
+    "message": "開啟送 bits 視窗"
+  },
+  "mc_twapi_bits_title": {
+    "message": "$AMOUNT$ bits",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_live_status": {
+    "message": "直播中 · $UPTIME$ · $VIEWERS$ 位觀眾",
+    "placeholders": {
+      "uptime": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_offline": {
+    "message": "離線"
+  },
+  "mc_twapi_live_status_nouptime": {
+    "message": "直播中 · $VIEWERS$ 位觀眾",
+    "placeholders": {
+      "viewers": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_banner_bet": {
+    "message": "下注：$POINTS$ $OUTCOME$",
+    "placeholders": {
+      "points": {
+        "content": "$1"
+      },
+      "outcome": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_twapi_votes_one": {
+    "message": "$COUNT$ 票",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_votes_many": {
+    "message": "$COUNT$ 票",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_twapi_vote": {
+    "message": "投票"
+  },
+  "mc_input_unblock": {
+    "message": "解除封鎖"
+  },
+  "mc_input_remove_from_set": {
+    "message": "從表情集移除"
+  },
+  "mc_input_open_on": {
+    "message": "在 $SITE$ 開啟",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_view_image": {
+    "message": "檢視圖片"
+  },
+  "mc_input_copy_emote_name": {
+    "message": "複製 :name:"
+  },
+  "mc_input_copy_image_url": {
+    "message": "複製圖片網址"
+  },
+  "mc_input_copy_emoji": {
+    "message": "複製 emoji"
+  },
+  "mc_input_expand": {
+    "message": "展開"
+  },
+  "mc_input_mute_24h": {
+    "message": "靜音（24 小時）"
+  },
+  "mc_input_unhide_in_tab": {
+    "message": "在此分頁取消隱藏"
+  },
+  "mc_input_hide_in_tab": {
+    "message": "在此分頁隱藏"
+  },
+  "mc_input_copy_message": {
+    "message": "複製訊息"
+  },
+  "mc_input_copy_to_input": {
+    "message": "複製 → 輸入框"
+  },
+  "mc_input_copy_thread": {
+    "message": "複製討論串"
+  },
+  "mc_input_delete_msg": {
+    "message": "刪除訊息"
+  },
+  "mc_input_timeout": {
+    "message": "禁言"
+  },
+  "mc_input_timeout_10m": {
+    "message": "禁言 10 分鐘"
+  },
+  "mc_input_timed_out": {
+    "message": "已禁言"
+  },
+  "mc_input_warn": {
+    "message": "警告"
+  },
+  "mc_input_reply": {
+    "message": "回覆"
+  },
+  "mc_input_op_to_feed": {
+    "message": "發到動態"
+  },
+  "mc_input_whisper": {
+    "message": "私語"
+  },
+  "mc_input_dm": {
+    "message": "私訊"
+  },
+  "mc_input_edit_note": {
+    "message": "編輯備註"
+  },
+  "mc_input_add_note": {
+    "message": "新增備註"
+  },
+  "mc_input_report_gift_sub": {
+    "message": "檢舉 / 贈送訂閱"
+  },
+  "mc_input_filter_to": {
+    "message": "只看 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_chat_logs": {
+    "message": "聊天紀錄"
+  },
+  "mc_input_edit_timer": {
+    "message": "編輯（$TIME$）",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_edit_expired": {
+    "message": "編輯（已過期）"
+  },
+  "mc_input_delete": {
+    "message": "刪除"
+  },
+  "mc_input_chatter": {
+    "message": "聊天者"
+  },
+  "mc_input_everyone": {
+    "message": "所有人"
+  },
+  "mc_input_heatsync_only": {
+    "message": "僅 heatsync"
+  },
+  "mc_input_your_inventory": {
+    "message": "你的庫存"
+  },
+  "mc_input_all_twitch": {
+    "message": "全部 twitch"
+  },
+  "mc_input_all_kick": {
+    "message": "全部 kick"
+  },
+  "mc_input_ext_users": {
+    "message": "$SOURCE$ 使用者",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_searching_7tv": {
+    "message": "正在搜尋 7tv…"
+  },
+  "mc_input_mode_subscribers": {
+    "message": "僅訂閱者"
+  },
+  "mc_input_usage_color": {
+    "message": "用法：/color <名稱|#hex> — 例如 /color orangered"
+  },
+  "mc_input_color_failed": {
+    "message": "/color：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_color_set": {
+    "message": "聊天顏色已設為 $HEX$",
+    "placeholders": {
+      "hex": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_re": {
+    "message": "用法：/re <文字>"
+  },
+  "mc_input_re_no_post": {
+    "message": "聊天中還沒有可回覆的貼文"
+  },
+  "mc_input_poll_failed_bc": {
+    "message": "投票失敗：$ERROR$（僅實況主）",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_poll_failed": {
+    "message": "投票失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed_bc": {
+    "message": "預測失敗：$ERROR$（僅實況主）",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_prediction_failed": {
+    "message": "預測失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_endpoll_failed_bc": {
+    "message": "結束投票失敗：$ERROR$（僅實況主）",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_vote_failed": {
+    "message": "投票失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_bet_failed": {
+    "message": "下注失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_failed_bc": {
+    "message": "失敗：$ERROR$（僅實況主）",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_cmd_failed_bc": {
+    "message": "$CMD$ 失敗：$ERROR$（僅實況主）",
+    "placeholders": {
+      "cmd": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_input_announce_failed": {
+    "message": "公告失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_usage_user": {
+    "message": "/user <名稱> — 開啟其個人資料卡"
+  },
+  "mc_input_usage_hide": {
+    "message": "/hide <使用者> — 在此分頁隱藏"
+  },
+  "mc_input_usage_unhide": {
+    "message": "/unhide <使用者> — 在此分頁取消隱藏"
+  },
+  "mc_input_reply_whisper_to": {
+    "message": "/r 回覆 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_busy": {
+    "message": "上傳進行中…"
+  },
+  "mc_input_upload_media_only": {
+    "message": "僅支援圖片/影片"
+  },
+  "mc_input_upload_too_large": {
+    "message": "檔案過大（上限 $MB$MB）",
+    "placeholders": {
+      "mb": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_uploading": {
+    "message": "上傳中…"
+  },
+  "mc_input_upload_done": {
+    "message": "上傳完成"
+  },
+  "mc_input_upload_failed_why": {
+    "message": "上傳失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_input_upload_failed": {
+    "message": "上傳失敗"
+  },
+  "mc_input_upload_still_frame": {
+    "message": "無法取得原始檔 — 已傳送靜態畫面"
+  },
+  "mc_input_drop_zone": {
+    "message": "拖入圖片/影片/連結即可上傳"
+  },
+  "mc_input_usage_announce": {
+    "message": "/announce <訊息>"
+  },
+  "mc_social_edit_empty": {
+    "message": "內容不能為空"
+  },
+  "mc_social_saving": {
+    "message": "儲存中…"
+  },
+  "mc_social_edit_failed": {
+    "message": "編輯失敗"
+  },
+  "mc_social_confirm_delete": {
+    "message": "刪除這則貼文？"
+  },
+  "mc_social_home_title": {
+    "message": "登入以檢視你的首頁"
+  },
+  "mc_social_home_sub": {
+    "message": "追隨、發文、分享 — 與 multichat 並排"
+  },
+  "mc_social_home_login": {
+    "message": "在 heatsync.org 登入"
+  },
+  "mc_social_home_note": {
+    "message": "multichat 不需要帳號 — 在上方選擇頻道分頁"
+  },
+  "mc_social_no_posts": {
+    "message": "沒有貼文"
+  },
+  "mc_social_no_posts_sub": {
+    "message": "追隨使用者或發點什麼來填滿此分頁"
+  },
+  "mc_social_import_follows": {
+    "message": "從 twitch 匯入追隨"
+  },
+  "mc_social_syncing": {
+    "message": "同步中…"
+  },
+  "mc_social_synced": {
+    "message": "已同步 $COUNT$ ✓",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_try_again": {
+    "message": "重試"
+  },
+  "mc_social_failed": {
+    "message": "失敗"
+  },
+  "mc_social_discover_people": {
+    "message": "探索使用者 →"
+  },
+  "mc_social_post_something": {
+    "message": "發點什麼"
+  },
+  "mc_social_banner_hot_login": {
+    "message": "熱門貼文 · 在 heatsync.org 登入以追隨使用者"
+  },
+  "mc_social_banner_newest": {
+    "message": "最新貼文 · 追隨使用者來充實你的動態"
+  },
+  "mc_social_banner_hot_month": {
+    "message": "本月熱門 · 追隨使用者來充實你的動態"
+  },
+  "mc_social_edited": {
+    "message": "（已編輯）"
+  },
+  "mc_social_replying_to": {
+    "message": "回覆 >>$ID$",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_leave_thread": {
+    "message": "離開討論串"
+  },
+  "mc_social_live_viewer": {
+    "message": "直播中 · $COUNT$ 位觀眾",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live_viewers": {
+    "message": "直播中 · $COUNT$ 位觀眾",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_live": {
+    "message": "直播中"
+  },
+  "mc_social_plat_at": {
+    "message": "$PLATFORM$ · @$USER$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_social_plat_live": {
+    "message": "$BASE$ · 直播中",
+    "placeholders": {
+      "base": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_heat_title": {
+    "message": "$COUNT$ 熱度",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_viewers_title": {
+    "message": "$COUNT$ 位觀眾",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_reply_one": {
+    "message": "$COUNT$ 則回覆",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_replies_n": {
+    "message": "$COUNT$ 則回覆",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_no_text": {
+    "message": "（無文字）"
+  },
+  "mc_social_live_now": {
+    "message": "正在直播"
+  },
+  "mc_social_no_streams": {
+    "message": "目前沒有直播"
+  },
+  "mc_social_hot_posts": {
+    "message": "熱門貼文"
+  },
+  "mc_social_no_posts_filter": {
+    "message": "沒有符合篩選的貼文"
+  },
+  "mc_social_tags": {
+    "message": "標籤"
+  },
+  "mc_social_none_now": {
+    "message": "目前沒有"
+  },
+  "mc_social_leaderboard": {
+    "message": "排行榜"
+  },
+  "mc_social_no_profiles_filter": {
+    "message": "沒有符合此篩選的個人資料"
+  },
+  "mc_social_no_pinned": {
+    "message": "沒有置頂訊息"
+  },
+  "mc_social_no_mod_actions": {
+    "message": "尚無管理操作"
+  },
+  "mc_social_platform": {
+    "message": "平台"
+  },
+  "mc_social_all": {
+    "message": "全部"
+  },
+  "mc_social_yt_superchat": {
+    "message": "superchat $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_sticker": {
+    "message": "super sticker $AMOUNT$",
+    "placeholders": {
+      "amount": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_milestone": {
+    "message": "會員里程碑"
+  },
+  "mc_social_yt_member": {
+    "message": "成為會員"
+  },
+  "mc_social_yt_gift_one": {
+    "message": "贈送了 $COUNT$ 個會員資格",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_gift_n": {
+    "message": "贈送了 $COUNT$ 個會員資格",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_error": {
+    "message": "youtube：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_social_yt_conn_error": {
+    "message": "連線錯誤"
+  },
+  "mc_social_replies_title": {
+    "message": "回覆"
+  },
+  "mc_pcard_del_msg": {
+    "message": "刪訊息"
+  },
+  "mc_pcard_del_title": {
+    "message": "刪除該使用者的最新訊息"
+  },
+  "mc_pcard_mod_grant": {
+    "message": "設為管理員（僅實況主）"
+  },
+  "mc_pcard_mod_remove": {
+    "message": "移除管理員（僅實況主）"
+  },
+  "mc_pcard_vip_grant": {
+    "message": "設為 VIP"
+  },
+  "mc_pcard_vip_remove": {
+    "message": "移除 VIP"
+  },
+  "mc_pcard_error": {
+    "message": "錯誤"
+  },
+  "mc_pcard_no_channel": {
+    "message": "無法解析頻道"
+  },
+  "mc_pcard_role_ok": {
+    "message": "$ACTION$：$USER$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_role_failed": {
+    "message": "$ACTION$ 失敗：$ERROR$",
+    "placeholders": {
+      "action": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_pcard_session": {
+    "message": "本次"
+  },
+  "mc_pcard_first": {
+    "message": "首次"
+  },
+  "mc_pcard_channels": {
+    "message": "頻道"
+  },
+  "mc_pcard_close_profile": {
+    "message": "關閉個人資料"
+  },
+  "mc_pcard_close_esc": {
+    "message": "關閉（Esc）"
+  },
+  "mc_pcard_retry": {
+    "message": "載入失敗 — 重試"
+  },
+  "mc_pcard_url_copied": {
+    "message": "網址已複製"
+  },
+  "mc_pcard_clip_created": {
+    "message": "剪輯已建立"
+  },
+  "mc_pcard_clip_failed": {
+    "message": "剪輯失敗：$ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_copied": {
+    "message": "已複製"
+  },
+  "mc_logs_failed": {
+    "message": "失敗"
+  },
+  "mc_logs_all_channels": {
+    "message": "所有頻道"
+  },
+  "mc_logs_all": {
+    "message": "全部"
+  },
+  "mc_logs_scope_channel": {
+    "message": "目前僅限 #$CHANNEL$ — 點擊檢視所有頻道",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scope_all": {
+    "message": "目前顯示所有頻道 — 點擊限定為 #$CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_search": {
+    "message": "搜尋…"
+  },
+  "mc_logs_search_title": {
+    "message": "搜尋 $USER$ 的訊息",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_refresh": {
+    "message": "重新整理"
+  },
+  "mc_logs_export_txt": {
+    "message": "匯出為 .txt"
+  },
+  "mc_logs_export_json": {
+    "message": "匯出為 .json"
+  },
+  "mc_logs_public": {
+    "message": "公開封存 ↗"
+  },
+  "mc_logs_public_title": {
+    "message": "在 heatsync.org 開啟 #$CHANNEL$ 的公開聊天紀錄",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_load_failed": {
+    "message": "無法載入封存 — 重新搜尋或捲動以重試"
+  },
+  "mc_logs_backfill": {
+    "message": "正在從 $SOURCE$ 取得歷史紀錄… 約 30 秒後請重新整理",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_no_matches": {
+    "message": "沒有符合「$QUERY$」的結果",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_none_in_channel": {
+    "message": "#$CHANNEL$ 中尚無 $USER$ 的封存訊息",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_logs_none": {
+    "message": "尚無 $USER$ 的封存訊息",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_logs_scroll_older": {
+    "message": "捲動檢視更早的訊息"
+  },
+  "mc_logs_copy_permalink": {
+    "message": "複製永久連結"
+  },
+  "mc_logs_permalink_aria": {
+    "message": "永久連結 $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_head": {
+    "message": "備註 · $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notes_placeholder": {
+    "message": "私人備註 — 僅你可見。會跨平台跟著對方。"
+  },
+  "mc_notes_esc": {
+    "message": "按 esc 關閉"
+  },
+  "mc_notes_delete": {
+    "message": "刪除"
+  },
+  "mc_notes_saved": {
+    "message": "已儲存 · 按 esc 關閉"
+  },
+  "mc_notes_saving": {
+    "message": "儲存中…"
+  },
+  "mc_notes_section": {
+    "message": "備註"
+  },
+  "mc_notes_empty": {
+    "message": "尚無備註"
+  },
+  "mc_notes_edit": {
+    "message": "編輯"
+  },
+  "mc_notes_add": {
+    "message": "新增備註"
+  },
+  "mc_feed_loading_name": {
+    "message": "正在載入 $NAME$…",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_feed_loading_chat_line": {
+    "message": "正在載入聊天行…"
+  },
+  "mc_feed_loading_preview": {
+    "message": "正在載入預覽…"
+  },
+  "mc_feed_adult_login": {
+    "message": "以成年人身分登入後檢視"
+  },
+  "mc_feed_image_unavailable": {
+    "message": "圖片無法使用"
+  },
+  "mc_feed_open_new_tab": {
+    "message": "在新分頁開啟"
+  },
+  "mc_feed_reload_player": {
+    "message": "重新載入播放器（登入後）"
+  },
+  "mc_feed_pause": {
+    "message": "暫停"
+  },
+  "mc_feed_volume": {
+    "message": "音量"
+  },
+  "mc_feed_back_to_chat": {
+    "message": "返回聊天（esc）"
+  },
+  "mc_feed_fill_chat": {
+    "message": "填滿聊天"
+  },
+  "mc_feed_open_new_tab_short": {
+    "message": "新分頁開啟"
+  },
+  "mc_feed_close_player": {
+    "message": "關閉播放器"
+  },
+  "mc_feed_back": {
+    "message": "← 返回"
+  },
+  "mc_misc_whisper_failed": {
+    "message": "私語傳送失敗"
+  },
+  "mc_misc_hs_unreachable": {
+    "message": "無法連線 heatsync 伺服器"
+  },
+  "mc_misc_twitch_error": {
+    "message": "twitch 錯誤 $STATUS$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_no_twitch_session": {
+    "message": "無 twitch 工作階段"
+  },
+  "mc_misc_unknown_error": {
+    "message": "未知錯誤"
+  },
+  "mc_misc_sending": {
+    "message": "傳送中"
+  },
+  "mc_misc_click_retry": {
+    "message": "點擊重試"
+  },
+  "mc_misc_relink_title": {
+    "message": "$ERROR$ — 點擊在 heatsync 授予 twitch 私語權限",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_relink": {
+    "message": "啟用 twitch 私語 — 重新連結"
+  },
+  "mc_misc_follow_title": {
+    "message": "$ERROR$ — 點擊追隨 $USER$ 並傳送",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      },
+      "user": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_misc_login_title": {
+    "message": "$ERROR$ — 點擊登入 heatsync",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_login_send": {
+    "message": "登入 heatsync 後傳送"
+  },
+  "mc_misc_err_retry": {
+    "message": "$ERROR$ — 重試",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_reply_to": {
+    "message": "回覆（$USER$）",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_resub_placeholder": {
+    "message": "續訂訊息（$MONTHS$ 個月）— 按 enter 分享",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_misc_streak_placeholder": {
+    "message": "觀看連續紀錄（$COUNT$）— 按 enter 分享",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mtb_t_delete": {
+    "message": "刪除此訊息"
+  },
+  "mc_mtb_t_to_1m": {
+    "message": "禁言 1 分鐘"
+  },
+  "mc_mtb_t_to_10m": {
+    "message": "禁言 10 分鐘"
+  },
+  "mc_mtb_t_to_1h": {
+    "message": "禁言 1 小時"
+  },
+  "mc_mtb_t_to_24h": {
+    "message": "禁言 24 小時"
+  },
+  "mc_mtb_t_to_7d": {
+    "message": "禁言 7 天"
+  },
+  "mc_mtb_t_purge": {
+    "message": "清除 — 清空該使用者的訊息（禁言 1 秒）"
+  },
+  "mc_mtb_t_ban": {
+    "message": "永久封禁"
+  },
+  "mc_mtb_t_unban": {
+    "message": "解除封禁"
+  },
+  "mc_mtb_t_bt": {
+    "message": "封鎖詞"
+  },
+  "mc_mtb_t_mt": {
+    "message": "管理工具"
+  },
+  "mc_mtb_bar_aria": {
+    "message": "訊息管理操作"
+  },
+  "mc_main_back_to_chat": {
+    "message": "返回聊天"
+  },
+  "mc_main_back_to_chat_esc": {
+    "message": "返回聊天（esc）"
+  },
+  "mc_main_edit_platforms": {
+    "message": "編輯平台"
+  },
+  "mc_main_reply_stack_more": {
+    "message": "↑ 還有 $N$ 則",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_open_on": {
+    "message": "在 $PLAT$ 開啟 $CH$",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_open_chat": {
+    "message": "開啟 $CH$ 聊天",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_reply": {
+    "message": "回覆"
+  },
+  "mc_main_also_live_on": {
+    "message": "同時在 $PLATS$ 直播",
+    "placeholders": {
+      "plats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_link_channels": {
+    "message": "連結頻道"
+  },
+  "mc_main_dismiss": {
+    "message": "關閉"
+  },
+  "mc_main_dismiss_rclick": {
+    "message": "關閉（右鍵也可以）"
+  },
+  "mc_main_add_streams_title": {
+    "message": "新增你的直播"
+  },
+  "mc_main_add_streams_sub": {
+    "message": "把 twitch、kick 和 youtube 聊天合併到同一個面板"
+  },
+  "mc_main_add_channel_btn": {
+    "message": "+ 新增頻道"
+  },
+  "mc_main_idwarn": {
+    "message": "你的表情在這裡不會對其他人顯示 — heatsync 帳號 $ACCT$，目前聊天身分 $IDENT$ — $LINK$",
+    "placeholders": {
+      "acct": {
+        "content": "$1"
+      },
+      "ident": {
+        "content": "$2"
+      },
+      "link": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_idwarn_link": {
+    "message": "連結帳號"
+  },
+  "mc_main_status_no_yt": {
+    "message": "狀態僅支援 twitch 和 kick 頻道"
+  },
+  "mc_main_status_fetching": {
+    "message": "正在取得 #$CH$…",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_status_fetch_failed": {
+    "message": "無法取得 #$CH$（已離線，或不在 $PLAT$？）",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "plat": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_logs_signin": {
+    "message": "登入後在此檢視你的紀錄 — 對聊天者按右鍵檢視其紀錄"
+  },
+  "mc_main_logs_rclick": {
+    "message": "對聊天者按右鍵檢視其 $PLAT$ 紀錄",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_tabs_aria": {
+    "message": "聊天分頁"
+  },
+  "mc_main_hide_chat_title": {
+    "message": "隱藏聊天 (\\)"
+  },
+  "mc_main_hide_chat": {
+    "message": "隱藏聊天"
+  },
+  "mc_main_popout_title": {
+    "message": "將聊天彈出為獨立視窗"
+  },
+  "mc_main_subscribe_title": {
+    "message": "訂閱 — 支持此頻道"
+  },
+  "mc_main_views_aria": {
+    "message": "檢視"
+  },
+  "mc_main_search_ph": {
+    "message": "搜尋訊息…"
+  },
+  "mc_main_messages_aria": {
+    "message": "聊天訊息"
+  },
+  "mc_main_search_none_for": {
+    "message": "沒有「$Q$」的結果",
+    "placeholders": {
+      "q": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_search_none": {
+    "message": "無結果"
+  },
+  "mc_main_moment": {
+    "message": "$CH$ 聊天爆了 — $RATE$ 則/30 秒（通常約 $BASE$）",
+    "placeholders": {
+      "ch": {
+        "content": "$1"
+      },
+      "rate": {
+        "content": "$2"
+      },
+      "base": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_main_filter_ph": {
+    "message": "篩選 — /正規式/ 或 @使用者"
+  },
+  "mc_main_redeem_pts": {
+    "message": "$COST$ 點",
+    "placeholders": {
+      "cost": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_redeem_label": {
+    "message": "頻道點數兌換"
+  },
+  "mc_main_highlighted": {
+    "message": "醒目訊息"
+  },
+  "mc_main_first_msg": {
+    "message": "在此頻道的首則訊息"
+  },
+  "mc_main_kill_active": {
+    "message": "已被 heatsync 停用（緊急開關已啟用）"
+  },
+  "mc_main_kill_disabled": {
+    "message": "multichat 已被 heatsync 停用"
+  },
+  "mc_main_kill_update": {
+    "message": "需要更新擴充功能（v$VER$+）",
+    "placeholders": {
+      "ver": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_redeemed": {
+    "message": "兌換了「$TITLE$」",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_raid_out": {
+    "message": "帶著 $VIEWERS$ 位觀眾突襲了 $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_raid_in": {
+    "message": "$FROM$ 帶著 $VIEWERS$ 位觀眾突襲而來",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "viewers": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_poll": {
+    "message": "新投票已開始"
+  },
+  "mc_main_ev_poll_titled": {
+    "message": "新投票已開始 — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_pred": {
+    "message": "新預測已開始"
+  },
+  "mc_main_ev_pred_titled": {
+    "message": "新預測已開始 — $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_hype_start": {
+    "message": "hype train 開始了"
+  },
+  "mc_main_ev_hype_end": {
+    "message": "hype train 結束於 $LEVEL$ 級",
+    "placeholders": {
+      "level": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_gifted_subs": {
+    "message": "$USER$ 贈送了 $COUNT$ 個訂閱",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned_by": {
+    "message": "$BY$ 置頂了：$TEXT$",
+    "placeholders": {
+      "by": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_main_ev_pinned": {
+    "message": "已置頂：$TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_main_ev_unpinned": {
+    "message": "訊息已取消置頂"
+  },
+  "mc_notif_dismiss": {
+    "message": "關閉"
+  },
+  "mc_notif_emotes_loading": {
+    "message": "正在載入表情…"
+  },
+  "mc_notif_whispered": {
+    "message": "私語：$SNIPPET$",
+    "placeholders": {
+      "snippet": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_rt_prefix": {
+    "message": "已訂閱"
+  },
+  "mc_notif_rt_mo": {
+    "message": "個月"
+  },
+  "mc_notif_rt_months": {
+    "message": "個月"
+  },
+  "mc_notif_rt_suffix": {
+    "message": "，感謝支持"
+  },
+  "mc_notif_wt_prefix": {
+    "message": "已連續觀看"
+  },
+  "mc_notif_wt_stream": {
+    "message": "場直播"
+  },
+  "mc_notif_wt_suffix": {
+    "message": "，繼續保持"
+  },
+  "mc_notif_share": {
+    "message": "分享"
+  },
+  "mc_notif_update_available": {
+    "message": "有可用更新 — 目前 $CUR$，最新為 $MIN$+",
+    "placeholders": {
+      "cur": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_notif_open_kick": {
+    "message": "開啟 kick"
+  },
+  "mc_notif_open_youtube": {
+    "message": "開啟 youtube"
+  },
+  "mc_notif_login_twitch": {
+    "message": "登入 twitch.tv 才能聊天"
+  },
+  "mc_notif_open_twitch": {
+    "message": "開啟 twitch"
+  },
+  "mc_notif_tabs_tag": {
+    "message": "-- 分頁 --"
+  },
+  "mc_notif_r_auth_failed": {
+    "message": "twitch 驗證失敗"
+  },
+  "mc_notif_r_no_user": {
+    "message": "無 twitch 使用者名稱"
+  },
+  "mc_notif_r_connect_failed": {
+    "message": "連線失敗"
+  },
+  "mc_notif_r_send_failed": {
+    "message": "傳送失敗"
+  },
+  "mc_notif_r_kick_not_logged_in": {
+    "message": "kick 未登入"
+  },
+  "mc_notif_r_no_kick_tab": {
+    "message": "沒有開啟的 kick 分頁"
+  },
+  "mc_notif_r_no_channel": {
+    "message": "找不到 kick 頻道"
+  },
+  "mc_notif_r_kick_unconfirmed": {
+    "message": "kick 未確認 — 可能已送出"
+  },
+  "mc_notif_r_missing_params": {
+    "message": "kick 拒絕了傳送"
+  },
+  "mc_notif_r_no_youtube_tab": {
+    "message": "沒有開啟的 youtube 分頁"
+  },
+  "mc_notif_r_no_input": {
+    "message": "youtube 聊天仍在載入"
+  },
+  "mc_notif_r_chat_disabled": {
+    "message": "請先登入 youtube"
+  },
+  "mc_notif_r_send_disabled": {
+    "message": "youtube 擋下了傳送"
+  },
+  "mc_notif_r_send_not_confirmed": {
+    "message": "youtube 未確認傳送"
+  },
+  "mc_notif_r_bridge_timeout": {
+    "message": "youtube 聊天橋接逾時"
+  },
+  "mc_notif_r_no_echo": {
+    "message": "$PLAT$ 未確認 — 可能未送出",
+    "placeholders": {
+      "plat": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_platform": {
+    "message": "平台"
+  },
+  "mc_notif_r_restricted_detail": {
+    "message": "聊天受限 — $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_notif_r_restricted": {
+    "message": "聊天受限"
+  },
+  "mc_notif_r_unknown": {
+    "message": "傳送可能失敗"
+  },
+  "mc_notif_pending_line": {
+    "message": "$WHY$：「$SNIPPET$」",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      },
+      "snippet": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_hidden": {
+    "message": "已隱藏"
+  },
+  "mc_tip_owner_sub": {
+    "message": "$OWNER$ 訂閱（$SRC$）",
+    "placeholders": {
+      "owner": {
+        "content": "$1"
+      },
+      "src": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_by": {
+    "message": "$LABEL$ · 被 @$ACTOR$ 移除",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      },
+      "actor": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_removed_from_channel": {
+    "message": "$LABEL$ · 已從頻道移除",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_nsfw": {
+    "message": "$LABEL$ · NSFW",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_they": {
+    "message": "對方"
+  },
+  "mc_tip_sub_to_you": {
+    "message": "訂閱了你 $TENURE$",
+    "placeholders": {
+      "tenure": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_ch_sub": {
+    "message": "頻道訂閱"
+  },
+  "mc_tip_row_ch_follow": {
+    "message": "頻道追隨"
+  },
+  "mc_tip_row_follower": {
+    "message": "追隨者"
+  },
+  "mc_tip_row_you": {
+    "message": "你"
+  },
+  "mc_tip_follow_ago": {
+    "message": "追隨於 $AGO$",
+    "placeholders": {
+      "ago": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_followers": {
+    "message": "追隨者"
+  },
+  "mc_tip_corpus_msgs": {
+    "message": "$COUNT$ 則訊息",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_corpus_since_ch": {
+    "message": "自 $DAY$ $CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_tip_corpus_since": {
+    "message": "自 $DAY$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_tip_row_logs": {
+    "message": "紀錄"
+  },
+  "mc_set_system_backup": {
+    "message": "系統 · 備份 / 還原"
+  },
+  "mc_set_recent_errors": {
+    "message": "最近的錯誤"
+  },
+  "mc_set_copy": {
+    "message": "複製"
+  },
+  "mc_set_clear": {
+    "message": "清除"
+  },
+  "mc_set_crash_loading": {
+    "message": "（載入中…）"
+  },
+  "mc_set_export_tip": {
+    "message": "將 ui_settings 和所有 hs_* 鍵匯出為 JSON 檔。可跨裝置、跨瀏覽器使用。"
+  },
+  "mc_set_export": {
+    "message": "匯出設定"
+  },
+  "mc_set_export_btn": {
+    "message": "下載 .json"
+  },
+  "mc_set_import_tip": {
+    "message": "從先前匯出的 JSON 檔還原。會合併到現有設定中。"
+  },
+  "mc_set_import": {
+    "message": "匯入設定"
+  },
+  "mc_set_import_btn": {
+    "message": "載入 .json"
+  },
+  "mc_set_reset_all_title": {
+    "message": "重設所有頁面的全部設定"
+  },
+  "mc_set_all_defaults": {
+    "message": "全部預設"
+  },
+  "mc_set_backup_restore": {
+    "message": "備份 / 還原"
+  },
+  "mc_set_fr_sound": {
+    "message": "聲音：$SOUND$",
+    "placeholders": {
+      "sound": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_up": {
+    "message": "上移（優先順序較高 — 先符合者生效）"
+  },
+  "mc_set_fr_down": {
+    "message": "下移"
+  },
+  "mc_set_fr_all_channels": {
+    "message": "所有頻道"
+  },
+  "mc_set_fr_t_keyword": {
+    "message": "關鍵字"
+  },
+  "mc_set_fr_t_regex": {
+    "message": "正規式"
+  },
+  "mc_set_fr_t_user": {
+    "message": "使用者"
+  },
+  "mc_set_fr_t_badge": {
+    "message": "徽章"
+  },
+  "mc_set_fr_t_msgtype": {
+    "message": "訊息類型"
+  },
+  "mc_set_fr_t_expr": {
+    "message": "運算式"
+  },
+  "mc_set_fr_expr_tip": {
+    "message": "例如 first && !badge:subscriber — 用 && || ! ( ) 連接；欄位 user: badge: type: contains: regex:"
+  },
+  "mc_set_fr_value_ph": {
+    "message": "值…"
+  },
+  "mc_set_fr_a_highlight": {
+    "message": "醒目標示"
+  },
+  "mc_set_fr_a_hide": {
+    "message": "隱藏"
+  },
+  "mc_set_fr_color": {
+    "message": "醒目顏色"
+  },
+  "mc_set_fr_sound_tip": {
+    "message": "醒目音效（僅醒目標示動作）"
+  },
+  "mc_set_fr_silent": {
+    "message": "靜音"
+  },
+  "mc_set_fr_case": {
+    "message": "區分大小寫"
+  },
+  "mc_set_fr_add_btn": {
+    "message": "+ 新增"
+  },
+  "mc_set_fr_none": {
+    "message": "尚無規則 — 在下方新增"
+  },
+  "mc_set_page_reset_title": {
+    "message": "將此頁重設為預設"
+  },
+  "mc_set_default": {
+    "message": "預設"
+  },
+  "mc_set_basic_hint_one": {
+    "message": "此處還有 $N$ 項設定 — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_basic_hint_many": {
+    "message": "此處還有 $N$ 項設定 — $BTN$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      },
+      "btn": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_show_all": {
+    "message": "顯示全部"
+  },
+  "mc_set_crash_none": {
+    "message": "（未記錄錯誤）"
+  },
+  "mc_set_crash_unreadable": {
+    "message": "（無法讀取日誌）"
+  },
+  "mc_set_fmt_off_list": {
+    "message": "關閉：$LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fmt_all_on": {
+    "message": "全部開啟"
+  },
+  "mc_set_fmt_none": {
+    "message": "無"
+  },
+  "mc_set_preset_delete_menu": {
+    "message": "刪除預設組…"
+  },
+  "mc_set_preset_delete_one": {
+    "message": "刪除 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_preset_delete_title": {
+    "message": "刪除預設組"
+  },
+  "mc_set_preset_save_as": {
+    "message": "將目前設定另存為…"
+  },
+  "mc_set_preset_undo": {
+    "message": "復原：$LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_presets": {
+    "message": "預設組"
+  },
+  "mc_set_preset_save_title": {
+    "message": "將目前設定另存為預設組"
+  },
+  "mc_set_preset_name_ph": {
+    "message": "預設組名稱"
+  },
+  "mc_set_preset_save_hint": {
+    "message": "快照所有與預設值不同的設定 — 可透過匯出設定分享"
+  },
+  "mc_set_preset_nochange": {
+    "message": "已一致 — 無需變更"
+  },
+  "mc_set_preset_apply_title": {
+    "message": "套用預設組：$LABEL$",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_apply": {
+    "message": "套用"
+  },
+  "mc_set_h_search": {
+    "message": "搜尋"
+  },
+  "mc_set_h_category": {
+    "message": "分類"
+  },
+  "mc_set_h_move": {
+    "message": "移動"
+  },
+  "mc_set_h_adjust": {
+    "message": "調整"
+  },
+  "mc_set_h_toggle": {
+    "message": "切換"
+  },
+  "mc_set_h_reset_row": {
+    "message": "重設此列"
+  },
+  "mc_set_h_close_clear": {
+    "message": "關閉 / 清除"
+  },
+  "mc_set_h_this_help": {
+    "message": "本說明"
+  },
+  "mc_set_h_first_last": {
+    "message": "第一個 / 最後一個"
+  },
+  "mc_set_h_fold": {
+    "message": "摺疊區段"
+  },
+  "mc_set_h_prev_next": {
+    "message": "上一個 / 下一個分類"
+  },
+  "mc_set_h_keys": {
+    "message": "按鍵"
+  },
+  "mc_set_h_commands": {
+    "message": "指令"
+  },
+  "mc_set_h_full_list": {
+    "message": "完整清單 -> heatsync.org/commands"
+  },
+  "mc_set_search_ph": {
+    "message": "/ 搜尋設定…"
+  },
+  "mc_set_scope_all_tip": {
+    "message": "正在顯示所有設定 — 點擊僅看基本項"
+  },
+  "mc_set_scope_basic_tip": {
+    "message": "正在顯示基本項 — 點擊檢視所有設定"
+  },
+  "mc_set_scope_all": {
+    "message": "全部"
+  },
+  "mc_set_scope_basic": {
+    "message": "基本"
+  },
+  "mc_emo_tab_emotes": {
+    "message": "表情"
+  },
+  "mc_emo_tab_gifs": {
+    "message": "gif"
+  },
+  "mc_emo_chips_title": {
+    "message": "切換要搜尋的來源"
+  },
+  "mc_emo_exact_title": {
+    "message": "僅完全符合名稱"
+  },
+  "mc_emo_stack_expand": {
+    "message": "展開"
+  },
+  "mc_emo_stack_collapse": {
+    "message": "收合"
+  },
+  "mc_emo_stack_block_all": {
+    "message": "全部封鎖"
+  },
+  "mc_xg_close": {
+    "message": "關閉"
+  },
+  "mc_tr_sub_chat": {
+    "message": "聊天"
+  },
+  "mc_tr_sub_summary": {
+    "message": "摘要"
+  },
+  "mc_tr_sub_logs": {
+    "message": "紀錄"
+  },
+  "mc_tr_sub_status": {
+    "message": "狀態"
+  },
+  "mc_tr_sub_platforms": {
+    "message": "平台"
+  },
+  "mc_tr_set_display": {
+    "message": "顯示"
+  },
+  "mc_tr_set_notifs": {
+    "message": "通知"
+  },
+  "mc_tr_set_mod": {
+    "message": "管理"
+  },
+  "mc_tr_set_filters": {
+    "message": "篩選"
+  },
+  "mc_tr_set_system": {
+    "message": "系統"
+  },
+  "mc_tr_set_help": {
+    "message": "說明"
+  },
+  "mc_pt_native_chat": {
+    "message": "原生聊天"
+  },
+  "mc_pt_popout_chat": {
+    "message": "彈出聊天"
+  },
+  "mc_pt_clips": {
+    "message": "剪輯"
+  },
+  "mc_pt_videos": {
+    "message": "影片"
+  },
+  "mc_pt_channel_page": {
+    "message": "頻道頁"
+  },
+  "mc_pt_no_channel": {
+    "message": "未偵測到頻道"
+  },
+  "mc_pt_yt_native_chat": {
+    "message": "原生聊天（super chat、貼圖、投票、emoji）"
+  },
+  "mc_pt_join_channel": {
+    "message": "加入頻道"
+  },
+  "mc_pt_back_to_chat": {
+    "message": "返回 heatsync 聊天"
+  },
+  "mc_pa_show_chat": {
+    "message": "顯示聊天 (\\)"
+  },
+  "mc_pa_yt_needs_login": {
+    "message": "youtube 聊天需要登入 heatsync —"
+  },
+  "mc_pa_emote_login": {
+    "message": "登入 heatsync，讓你的表情對所有人生效"
+  },
+  "mc_pa_heatsync_unreachable": {
+    "message": "無法連線 heatsync.org — 正在重新連線"
+  },
+  "mc_pa_source_unreachable": {
+    "message": "無法連線 $SOURCE$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_ended": {
+    "message": "$CHANNEL$ 直播已結束",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_summary": {
+    "message": "$CHANNEL$ 直播摘要",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ss_off": {
+    "message": "直播統計在設定中已關閉"
+  },
+  "mc_ss_empty": {
+    "message": "尚未統計聊天 — 訊息送達後會逐漸填入"
+  },
+  "mc_ss_stats": {
+    "message": "$MSGS$ 則訊息 · $CHATTERS$ 位聊天者 · $MENTIONS$ 次提及 · 峰值 $PEAK$/秒",
+    "placeholders": {
+      "msgs": {
+        "content": "$1"
+      },
+      "chatters": {
+        "content": "$2"
+      },
+      "mentions": {
+        "content": "$3"
+      },
+      "peak": {
+        "content": "$4"
+      }
+    }
+  },
+  "mc_ss_since": {
+    "message": "自 $CLOCK$ · $DURATION$",
+    "placeholders": {
+      "clock": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ss_top_chatters": {
+    "message": "話癆榜"
+  },
+  "mc_ss_top_emotes": {
+    "message": "熱門表情"
+  },
+  "mc_cmg_checking": {
+    "message": "正在檢查 heatsync…"
+  },
+  "mc_cmg_no_profile": {
+    "message": "沒有 heatsync 個人資料 — 請手動填寫"
+  },
+  "mc_cmg_unreachable": {
+    "message": "無法連線 heatsync"
+  },
+  "mc_cmg_live_on": {
+    "message": "正在 $LIST$ 直播",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_matched": {
+    "message": "在 heatsync 找到符合的 $NAME$ — 已連結：$LINKED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "linked": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cmg_autofilled": {
+    "message": "已自動填入：$LIST$",
+    "placeholders": {
+      "list": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_cmg_edit_live": {
+    "message": "編輯直播 — $CHANNEL$",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_went_live": {
+    "message": "$CHANNEL$ 開播了",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_mn_switched_game": {
+    "message": "$CHANNEL$ 換了遊戲",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_msg_deleted": {
+    "message": "一則訊息已被刪除"
+  },
+  "mc_ircx_unbanned": {
+    "message": "$TARGET$ 已被解除封禁",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_timed_out": {
+    "message": "$TARGET$ 被禁言 $SEC$ 秒",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_banned": {
+    "message": "$TARGET$ 已被封禁",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks": {
+    "message": "$USER$ 贈送了 $AMOUNT$ KICKs！",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_ircx_gift_kicks_named": {
+    "message": "$USER$ 贈送了 $AMOUNT$ KICKs（$GIFT$）！",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "amount": {
+        "content": "$2"
+      },
+      "gift": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_ircx_anonymous": {
+    "message": "匿名"
+  },
+  "mc_cp_vol": {
+    "message": "音量 $PCT$%",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_failed": {
+    "message": "失敗"
+  },
+  "hsbtn_imported": {
+    "message": "已匯入 $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_cold_title": {
+    "message": "你的表情，所有聊天通用"
+  },
+  "hsbtn_cold_sub_open": {
+    "message": "開啟任一 twitch、kick 或 youtube 直播，然後在頻道分頁匯入其表情 — 一鍵搞定，所有聊天通用。"
+  },
+  "hsbtn_cold_sub_chan": {
+    "message": "把 $CHANNEL$ 的所有 7tv、bttv 和 ffz 表情拉進你的表情集 — 一鍵搞定，所有聊天都能顯示。",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_of": {
+    "message": "匯入 $CHANNEL$ 的全部表情",
+    "placeholders": {
+      "channel": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_import_all_channel": {
+    "message": "匯入全部頻道表情"
+  },
+  "hsbtn_no_sets": {
+    "message": "沒有已儲存的表情集 — 到 heatsync.org 建立"
+  },
+  "hsbtn_apply": {
+    "message": "套用"
+  },
+  "hsbtn_apply_confirm": {
+    "message": "取代 $COUNT$ 個表情？",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_applying": {
+    "message": "套用中…"
+  },
+  "hsbtn_applied": {
+    "message": "已套用"
+  },
+  "hsbtn_login_removed": {
+    "message": "登入後檢視已移除的表情"
+  },
+  "hsbtn_no_removed": {
+    "message": "沒有已移除的表情"
+  },
+  "hsbtn_restore": {
+    "message": "還原"
+  },
+  "hsbtn_restore_confirm": {
+    "message": "還原？"
+  },
+  "hsbtn_restoring": {
+    "message": "還原中…"
+  },
+  "hsbtn_restored": {
+    "message": "已還原"
+  },
+  "hsbtn_removed_on": {
+    "message": "移除於 $DATE$",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_err_sets": {
+    "message": "無法載入表情集"
+  },
+  "hsbtn_err_history": {
+    "message": "無法載入歷史"
+  },
+  "hsbtn_err_mine": {
+    "message": "無法載入你的表情"
+  },
+  "hsbtn_err_channel_unavailable": {
+    "message": "頻道表情無法使用"
+  },
+  "hsbtn_err_channel": {
+    "message": "無法載入頻道表情"
+  },
+  "hsbtn_err_global": {
+    "message": "無法載入全域表情"
+  },
+  "hsbtn_unnamed": {
+    "message": "（未命名）"
+  },
+  "hsbtn_emote_one": {
+    "message": "$COUNT$ 個表情",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_emote_many": {
+    "message": "$COUNT$ 個表情",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_set_from": {
+    "message": "來自 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_owned": {
+    "message": "已擁有 $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_provider_err": {
+    "message": "錯誤"
+  },
+  "hsbtn_search_status": {
+    "message": "「$QUERY$」 — $STATUS$",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      },
+      "status": {
+        "content": "$2"
+      }
+    }
+  },
+  "hsbtn_searching": {
+    "message": "「$QUERY$」 — 搜尋中…",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_no_match": {
+    "message": "沒有符合「$QUERY$」的表情",
+    "placeholders": {
+      "query": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_login_add": {
+    "message": "登入後新增表情"
+  },
+  "hsbtn_add_failed": {
+    "message": "新增失敗"
+  },
+  "hsbtn_unblock_failed": {
+    "message": "解除封鎖失敗"
+  },
+  "hsbtn_uses_title": {
+    "message": "在 heatsync 使用 $COUNT$ 次",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_in_inventory": {
+    "message": "在庫存中"
+  },
+  "hsbtn_not_in_inventory": {
+    "message": "不在庫存中"
+  },
+  "hsbtn_open_on": {
+    "message": "在 $PROVIDER$ 開啟 →",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename": {
+    "message": "重新命名"
+  },
+  "hsbtn_move": {
+    "message": "移動"
+  },
+  "hsbtn_move_to_slot": {
+    "message": "移到欄位…"
+  },
+  "hsbtn_slot_number": {
+    "message": "欄位編號"
+  },
+  "hsbtn_renamed_to": {
+    "message": "已重新命名為 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_rename_failed": {
+    "message": "重新命名失敗"
+  },
+  "hsbtn_moved_to_slot": {
+    "message": "已移到欄位 $SLOT$",
+    "placeholders": {
+      "slot": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_move_failed": {
+    "message": "移動失敗"
+  },
+  "hsbtn_unshare_set": {
+    "message": "取消分享表情集"
+  },
+  "hsbtn_share_set": {
+    "message": "分享表情集"
+  },
+  "hsbtn_set_unshared": {
+    "message": "已取消分享"
+  },
+  "hsbtn_unshare_failed": {
+    "message": "取消分享失敗"
+  },
+  "hsbtn_share_copied": {
+    "message": "分享連結已複製：$URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "hsbtn_share_failed": {
+    "message": "分享失敗"
+  },
+  "hsbtn_copy_markdown": {
+    "message": "複製 markdown"
+  },
+  "hsbtn_back_to_chat": {
+    "message": "返回 heatsync 聊天"
+  },
+  "hsbtn_back_arrow_chat": {
+    "message": "← heatsync 聊天"
+  },
+  "hsbtn_rcb_label": {
+    "message": "右鍵封鎖"
+  },
+  "hsbtn_rcb_desc": {
+    "message": "立即：馬上封鎖 · 選單：顯示封鎖/取消 · 關：停用"
+  },
+  "hsbtn_rcb_instant": {
+    "message": "立即"
+  },
+  "hsbtn_rcb_menu": {
+    "message": "選單"
+  },
+  "hsbtn_rcb_off": {
+    "message": "關"
+  },
+  "hsbtn_search_ph": {
+    "message": "搜尋表情…"
+  },
+  "hsbtn_chips_title": {
+    "message": "切換要搜尋的來源"
+  },
+  "hsbtn_chip_7tv_title": {
+    "message": "包含 7tv 結果"
+  },
+  "hsbtn_chip_ffz_title": {
+    "message": "包含 frankerfacez 結果"
+  },
+  "hsbtn_undo": {
+    "message": "復原"
+  },
+  "hsbtn_redo": {
+    "message": "重做"
+  },
+  "hsbtn_rotate_chat_title": {
+    "message": "旋轉聊天面板 (C)"
+  },
+  "cs_color_for": {
+    "message": "$USER$ 的顏色",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_set": {
+    "message": "設定"
+  },
+  "cs_clear": {
+    "message": "清除"
+  },
+  "cs_poll": {
+    "message": "📊 投票 · "
+  },
+  "cs_prediction": {
+    "message": "🎯 預測 · "
+  },
+  "cs_active": {
+    "message": "（進行中）"
+  },
+  "cs_badge_alt": {
+    "message": "$TITLE$ 徽章",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_copy_username": {
+    "message": "複製使用者名稱"
+  },
+  "cs_copy_message": {
+    "message": "複製訊息"
+  },
+  "cs_mute_24h": {
+    "message": "靜音（24 小時）"
+  },
+  "cs_profile": {
+    "message": "個人資料"
+  },
+  "cs_removed": {
+    "message": "已移除 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_removed_now": {
+    "message": "已移除 $NAME$ · 現為 $VARIANT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "variant": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_login_manage": {
+    "message": "登入 heatsync.org 管理表情"
+  },
+  "cs_remove_failed": {
+    "message": "無法移除 $NAME$：$ERROR$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "cs_unknown_error": {
+    "message": "未知錯誤"
+  },
+  "popup_site_label": {
+    "message": "heatsync 聊天用於"
+  },
+  "popup_site_note_default": {
+    "message": "關閉則顯示網站自帶聊天"
+  },
+  "popup_site_note_off": {
+    "message": "$SITE$：已恢復網站自帶聊天",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_site_note_on": {
+    "message": "$SITE$：已恢復 heatsync 聊天",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_fb_feedback": {
+    "message": "意見回饋"
+  },
+  "popup_fb_bug": {
+    "message": "bug"
+  },
+  "popup_fb_ph_feedback": {
+    "message": "heatsync 哪裡可以做得更好？"
+  },
+  "popup_fb_ph_bug": {
+    "message": "什麼壞了？你期望的是什麼？"
+  },
+  "popup_fb_send": {
+    "message": "傳送"
+  },
+  "popup_fb_sending": {
+    "message": "傳送中…"
+  },
+  "popup_fb_short": {
+    "message": "再多說一點"
+  },
+  "popup_fb_sent": {
+    "message": "已傳送 — 謝謝"
+  },
+  "popup_fb_failed": {
+    "message": "傳送失敗，請重試"
+  },
+  "popup_feedback_link": {
+    "message": "意見回饋"
+  },
+  "popup_feedback_title": {
+    "message": "意見回饋 / bug 回報"
+  },
+  "popup_inv_slots": {
+    "message": "5,000 個表情欄位"
+  },
+  "popup_inv_signed_in_as": {
+    "message": "已登入為 $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
+  "popup_inv_slots_of": {
+    "message": " / 5,000 欄位"
+  },
+  "popup_inv_import_hint": {
+    "message": " · 匯入一個頻道來填滿"
+  },
+  "bg_badge_tip": {
+    "message": "heatsync · $COUNT$ 個直播中：$NAMES$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "names": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_more": {
+    "message": " 等 $COUNT$ 個",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_title": {
+    "message": "$NAME$ 開播了",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_live_viewers": {
+    "message": " · $COUNT$ 位觀眾",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_batch_title": {
+    "message": "$COUNT$ 位追隨的人正在直播",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_acct_title": {
+    "message": "heatsync — 帳號切換"
+  },
+  "bg_acct_msg": {
+    "message": "正在從 $FROM$ 切換到 $TO$",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "bg_loading_channel": {
+    "message": "正在載入頻道表情…"
+  },
+  "bg_loading_third": {
+    "message": "正在取得第三方表情…"
+  },
+  "bg_loading_emotes": {
+    "message": "正在載入表情…"
+  },
+  "cs_uploading": {
+    "message": "上傳中…"
+  },
+  "cs_file_too_large": {
+    "message": "檔案過大（上限 $SIZE$）",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "cs_upload_failed": {
+    "message": "上傳失敗"
+  },
+  "cs_yt_top_chat": {
+    "message": "熱門聊天模式 — 請將 youtube 切換到即時聊天"
+  },
+  "cs_yt_attach_failed": {
+    "message": "heatsync 無法接入此聊天"
+  },
+  "cs_badge_owner": {
+    "message": "擁有者"
+  },
+  "cs_badge_member": {
+    "message": "會員"
+  },
+  "cs_vi_cheatsheet": {
+    "message": "hl 移動  kj 歷史  wb/WBE 單字  0$$^ 行  gg/G 首尾\nfFtT+字元 尋找  ;, 重複尋找  [數字]指令 重複\nx/X 刪字元  dw/db/de/dd 刪除  D 刪到行尾\ncw/cb/ce/cc 修改  C 改到行尾  s/S 取代\nyw/yb/ye/yy 複製  p/P 貼上  r 取代  ~ 大小寫\ni/a/I/A 插入  u 復原  Ctrl+R 重做  . 重複  ? 說明\n\nSPC = 前導鍵 — 不離開輸入框也能用聊天指令\nSPC /    搜尋       SPC n/N  下一個/上一個符合項\nSPC 1-9  第 n 個分頁   SPC ]/[  下一個/上一個分頁\nSPC t    分頁選擇器   SPC \\    隱藏/顯示聊天"
+  },
+  "lib_sec_font": {
+    "message": "字型"
+  },
+  "lib_sec_chat_messages": {
+    "message": "聊天訊息"
+  },
+  "lib_sec_layout": {
+    "message": "版面"
+  },
+  "lib_sec_density": {
+    "message": "密度"
+  },
+  "lib_sec_messages": {
+    "message": "訊息"
+  },
+  "lib_sec_mentioned": {
+    "message": "被 @提及時"
+  },
+  "lib_sec_cross_follow": {
+    "message": "跨平台追隨"
+  },
+  "lib_sec_mod_toolbar": {
+    "message": "管理工具列"
+  },
+  "lib_sec_content": {
+    "message": "內容"
+  },
+  "lib_sec_rules": {
+    "message": "規則"
+  },
+  "lib_sec_player": {
+    "message": "播放器"
+  },
+  "lib_sec_tabs": {
+    "message": "分頁"
+  },
+  "lib_sec_language": {
+    "message": "語言"
+  },
+  "lib_opt_system_monospace": {
+    "message": "系統等寬字型"
+  },
+  "lib_opt_platform_default": {
+    "message": "平台預設（Inter — twitch + kick）"
+  },
+  "lib_opt_custom": {
+    "message": "自訂…"
+  },
+  "lib_opt_unread": {
+    "message": "未讀"
+  },
+  "lib_opt_heat": {
+    "message": "熱度"
+  },
+  "lib_opt_top": {
+    "message": "頂部"
+  },
+  "lib_opt_right": {
+    "message": "右側"
+  },
+  "lib_opt_bottom": {
+    "message": "底部"
+  },
+  "lib_opt_left": {
+    "message": "左側"
+  },
+  "lib_opt_hidden": {
+    "message": "隱藏"
+  },
+  "lib_opt_compact": {
+    "message": "緊湊"
+  },
+  "lib_opt_cozy": {
+    "message": "舒適"
+  },
+  "lib_opt_always": {
+    "message": "一律"
+  },
+  "lib_opt_hover": {
+    "message": "懸停"
+  },
+  "lib_opt_never": {
+    "message": "從不"
+  },
+  "slash_desc_op": {
+    "message": "向你的 heatsync 動態發佈討論串"
+  },
+  "slash_desc_re": {
+    "message": "回覆聊天中最近顯示的 [OP]"
+  },
+  "slash_desc_dm": {
+    "message": "傳送 heatsync 私訊；不帶訊息則開啟對話"
+  },
+  "slash_desc_w": {
+    "message": "傳送 twitch 私語"
+  },
+  "slash_desc_color": {
+    "message": "設定你的 twitch 聊天顏色（名稱如 orangered，turbo 可用 #hex）"
+  },
+  "slash_desc_r": {
+    "message": "回覆你收到的最近一則私語"
+  },
+  "slash_desc_user": {
+    "message": "開啟附近期紀錄的個人資料卡"
+  },
+  "slash_desc_follow": {
+    "message": "在 heatsync 追隨，並同步到 twitch 和 kick"
+  },
+  "slash_desc_unfollow": {
+    "message": "在 heatsync 取消追隨，並同步到 twitch 和 kick"
+  },
+  "slash_desc_me": {
+    "message": "傳送動作訊息"
+  },
+  "slash_desc_shrug": {
+    "message": "附加 ¯\\_(ツ)_/¯"
+  },
+  "slash_desc_tableflip": {
+    "message": "附加 (╯°□°)╯︵ ┻━┻"
+  },
+  "slash_desc_unflip": {
+    "message": "附加 ┬─┬ノ( ゜-゜ノ)"
+  },
+  "slash_desc_help": {
+    "message": "列出指令"
+  },
+  "slash_desc_lclear": {
+    "message": "僅為你清空目前分頁"
+  },
+  "slash_desc_mute": {
+    "message": "靜音某人 24 小時，涵蓋其連結帳號"
+  },
+  "slash_desc_unmute": {
+    "message": "解除靜音"
+  },
+  "slash_desc_block": {
+    "message": "切換封鎖"
+  },
+  "slash_desc_hide": {
+    "message": "僅在此分頁隱藏某人，重新整理前有效"
+  },
+  "slash_desc_unhide": {
+    "message": "復原隱藏"
+  },
+  "slash_desc_note": {
+    "message": "為某人儲存私人備註"
+  },
+  "slash_desc_delnote": {
+    "message": "刪除你的備註"
+  },
+  "slash_desc_set": {
+    "message": "變更設定，例如 /set zebra off"
+  },
+  "slash_desc_tab": {
+    "message": "切換分頁：某個頻道，或 live、mentions 之類的命名分頁"
+  },
+  "slash_desc_sharelayout": {
+    "message": "複製指向你分頁組合的 heatsync.org/m 連結"
+  },
+  "slash_desc_layout": {
+    "message": "新增 heatsync.org/m 連結中的分頁"
+  },
+  "slash_desc_status": {
+    "message": "顯示聊天模式和直播資訊"
+  },
+  "slash_desc_ban": {
+    "message": "永久封禁某人"
+  },
+  "slash_desc_timeout": {
+    "message": "禁言某人，預設 10 分鐘"
+  },
+  "slash_desc_unban": {
+    "message": "解除封禁或結束禁言"
+  },
+  "slash_desc_delete": {
+    "message": "刪除單則訊息"
+  },
+  "slash_desc_nuke": {
+    "message": "批次刪除含某詞的近期訊息"
+  },
+  "slash_desc_announce": {
+    "message": "發佈公告，可選顏色"
+  },
+  "slash_desc_vip": {
+    "message": "設為 VIP"
+  },
+  "slash_desc_unvip": {
+    "message": "移除 VIP"
+  },
+  "slash_desc_mod": {
+    "message": "設為管理員"
+  },
+  "slash_desc_unmod": {
+    "message": "移除管理員"
+  },
+  "slash_desc_blocked": {
+    "message": "開啟此頻道的封鎖詞清單"
+  },
+  "slash_desc_modtools": {
+    "message": "開啟管理工具面板"
+  },
+  "slash_desc_shield": {
+    "message": "開啟或關閉 shield 模式"
+  },
+  "slash_desc_warn": {
+    "message": "警告聊天者"
+  },
+  "slash_desc_shoutout": {
+    "message": "推薦一個頻道"
+  },
+  "slash_desc_unbanrequests": {
+    "message": "開啟解封申請"
+  },
+  "slash_desc_slow": {
+    "message": "慢速模式，預設 30 秒"
+  },
+  "slash_desc_followers": {
+    "message": "僅追隨者模式"
+  },
+  "slash_desc_emoteonly": {
+    "message": "僅表情模式"
+  },
+  "slash_desc_subscribers": {
+    "message": "僅訂閱者模式"
+  },
+  "slash_desc_unique": {
+    "message": "唯一聊天模式；僅 twitch 支援，kick 沒有對應功能"
+  },
+  "slash_desc_poll": {
+    "message": "建立投票，2-5 個選項"
+  },
+  "slash_desc_endpoll": {
+    "message": "結束目前投票"
+  },
+  "slash_desc_vote": {
+    "message": "為目前投票的第 n 個選項投票"
+  },
+  "slash_desc_prediction": {
+    "message": "開始預測，2-10 個結果"
+  },
+  "slash_desc_bet": {
+    "message": "用頻道點數押注第 n 個結果"
+  },
+  "slash_desc_lockpred": {
+    "message": "鎖定目前預測"
+  },
+  "slash_desc_resolvepred": {
+    "message": "將預測結算為第 n 個結果"
+  },
+  "slash_desc_cancelpred": {
+    "message": "取消目前預測"
+  },
+  "slash_desc_highlight": {
+    "message": "在 twitch 聊天中醒目標示你的訊息"
+  },
+  "slash_sec_everyday": {
+    "message": "日常"
+  },
+  "slash_sec_local": {
+    "message": "僅此視窗"
+  },
+  "slash_sec_mod": {
+    "message": "管理"
+  },
+  "slash_sec_modes": {
+    "message": "聊天模式"
+  },
+  "slash_sec_events": {
+    "message": "投票、預測、bits"
+  },
+  "slash_help_full_list": {
+    "message": "完整清單 -> /commands"
+  },
+  "slash_help_label": {
+    "message": "斜線指令"
   }
 }

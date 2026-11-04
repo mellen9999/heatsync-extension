@@ -9089,6 +9089,11 @@ async function sendMessage() {
   // cursor on the visible composer.
   settleComposerAfterSend(input)
 
+  // The composer is already clear and settled; only the platform legs wait for a
+  // pending emote add (bounded), so Enter again can't resend this line.
+  const addHold = emoteAddHold(autoAdded)
+  if (addHold) await addHold
+
   // --- Kick send path (single, dual, or triple including YT) ---
   if (sendToKick) {
     const slug = kickSlug || targetChannel
@@ -9325,6 +9330,30 @@ async function sendMessage() {
       }, 1500)
       markPendingFailed(_synthId, 'send_failed')
     })
+}
+
+// The server stamps each chat line with the sender's emotes as they stand when it
+// fans the line out, and that stamp beats everything, for every viewer, for good.
+// A line sent before its own add/swap lands carries the OLD emote of that name. So
+// the platform legs wait for the add, bounded: a slow or failed add still sends the
+// text. A later line queues behind the wait, so it neither overtakes the line
+// before it nor beats that same still-pending add out the door. No add in flight =
+// no wait.
+const EMOTE_ADD_SEND_WAIT_MS = 1500
+let _emoteAddHold = null
+function emoteAddHold(autoAdded) {
+  if (autoAdded) {
+    const own = Promise.race([
+      Promise.resolve(autoAdded).catch(() => null),
+      new Promise((r) => setTimeout(r, EMOTE_ADD_SEND_WAIT_MS)),
+    ])
+    const hold = Promise.all([_emoteAddHold, own])
+    _emoteAddHold = hold
+    hold.then(() => {
+      if (_emoteAddHold === hold) _emoteAddHold = null
+    })
+  }
+  return _emoteAddHold
 }
 
 // The exact live video id for the stream currently being composed to, from the

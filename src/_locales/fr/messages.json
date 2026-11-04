@@ -513,7 +513,7 @@
     "message": "flux"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "découvrir"
   },
   "mc_tab_whispers": {
     "message": "chuchotements"
@@ -649,7 +649,7 @@
     "message": "horodatage sur chaque message"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "photos de profil"
   },
   "mc_settings_avatars_desc": {
     "message": "avatars à côté des pseudos"
@@ -1217,10 +1217,10 @@
     "message": "affiche aussi le panneau multichat sur les vod, l'accueil et la recherche youtube — désactivé par défaut, le panneau n'apparaît que sur les directs (où il y a un chat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: afficher les étagères du flux"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "affiche shorts, playables et blocs promo entre les vidéos du flux d'accueil youtube — désactivé par défaut, le flux reste de simples miniatures bien alignées"
   },
   "mc_settings_message_density": {
     "message": "densité des messages"
@@ -1565,7 +1565,7 @@
     "message": "onglet feed social heatsync + son flux d'événements"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "chuchotements"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "socket eventsub des whispers twitch + onglet whispers"
@@ -1628,7 +1628,7 @@
     "message": "minimal"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "utilisateur avancé"
   },
   "mc_settings_preset_moderator": {
     "message": "modérateur"
@@ -3622,7 +3622,7 @@
     "message": "le délai doit être de 5–3600 secondes"
   },
   "mc_tagcard_posts": {
-    "message": "posts"
+    "message": "publications"
   },
   "mc_tagcard_followers": {
     "message": "abonnés"
@@ -3670,10 +3670,10 @@
     "message": "chaque chaîne youtube garde le dernier volume réglé, dans les vidéos, streams et intégrations. désactivé laisse le lecteur de youtube tranquille"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "envoyé sur youtube · twitch ignoré, non connecté"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm utilisateur msg · /r msg"
   },
   "mc_layout_copied": {
     "message": "lien de disposition copié"
@@ -3758,7 +3758,7 @@
     "message": "tableau de bord créateur"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "gestionnaire de stream"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "réglages de modération (automod, termes bloqués)"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "d'abonnement"
   },
-  "mc_notif_wt_prefix": {
-    "message": "sur une"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "série de visionnage"
+  "mc_notif_wt": {
+    "message": "en série de visionnage de $COUNT$ streams",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "partager"
@@ -5489,7 +5488,7 @@
     }
   },
   "mc_tip_row_logs": {
-    "message": "logs"
+    "message": "journaux"
   },
   "mc_set_system_backup": {
     "message": "système · sauvegarde / restauration"
@@ -5788,7 +5787,7 @@
     "message": "résumé"
   },
   "mc_tr_sub_logs": {
-    "message": "logs"
+    "message": "journaux"
   },
   "mc_tr_sub_status": {
     "message": "statut"

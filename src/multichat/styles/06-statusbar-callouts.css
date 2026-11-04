@@ -161,14 +161,7 @@
       color: var(--hs-brand);
       font-weight: 600;
     }
-    @container (max-width: 240px) {
-      .hs-wt-prefix { display: none; }
-    }
-    @container (max-width: 180px) {
-      .hs-wt-suffix { display: none; }
-    }
     @container (max-width: 140px) {
-      .hs-wt-stream { display: none; }
       .hs-notif-watchstreak-icon { display: none; }
     }
     /* Hide native Twitch resub-share callout queue — HsNotifs renders our own

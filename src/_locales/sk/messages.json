@@ -513,10 +513,10 @@
     "message": "kanál"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "objavovať"
   },
   "mc_tab_whispers": {
-    "message": "whispers"
+    "message": "šepoty"
   },
   "mc_tab_mentions": {
     "message": "zmienky"
@@ -528,7 +528,7 @@
     "message": "uložené"
   },
   "mc_tab_modlog": {
-    "message": "mod log"
+    "message": "záznam modov"
   },
   "mc_btn_settings": {
     "message": "nastavenia"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "úr. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "zobraz panel multichatu aj na VOD, domovskej stránke a vyhľadávaní youtube — predvolene vypnuté, takže panel je len pri livestreamoch (kde je živý chat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: zobraziť police vo feede"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "zobraziť shorts, playables a promo bloky medzi videami na domovskom feede youtube — predvolene vypnuté, takže feed tvoria len čisto zoradené miniatúry"
   },
   "mc_settings_message_density": {
     "message": "hustota správ"
@@ -3670,10 +3670,10 @@
     "message": "každý kanál na youtube si pamätá naposledy nastavenú hlasitosť vo videách, streamoch aj vložených prehrávačoch. vypnuté nechá prehrávač youtube na pokoji"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "odoslané na youtube · twitch preskočený, nie si prihlásený"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm používateľ správa · /r správa"
   },
   "mc_layout_copied": {
     "message": "odkaz na rozloženie skopírovaný"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "ako odberateľ"
   },
-  "mc_notif_wt_prefix": {
-    "message": "v sérii"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streamov"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "sledovania"
+  "mc_notif_wt": {
+    "message": "v sérii sledovania $COUNT$ streamov",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "zdieľať"

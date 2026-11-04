@@ -124,7 +124,7 @@
     "message": "mag-login sa heatsync.org para mag-save ng emotes"
   },
   "btn_cached": {
-    "message": "cached"
+    "message": "naka-cache"
   },
   "btn_ctx_block": {
     "message": "i-block ang emote"
@@ -187,19 +187,19 @@
     "message": "(palaging on sa hiwalay na window)"
   },
   "btn_settings_compact_input": {
-    "message": "compact input"
+    "message": "siksik na input"
   },
   "btn_settings_highlight_mentions": {
     "message": "i-highlight ang mentions"
   },
   "btn_settings_platform_badges": {
-    "message": "platform badges"
+    "message": "mga badge ng platform"
   },
   "btn_settings_platform_badges_desc": {
     "message": "[T] [K] [Y] sa mga messages"
   },
   "btn_settings_cosmetics": {
-    "message": "cosmetics"
+    "message": "mga cosmetic"
   },
   "btn_settings_cosmetics_desc": {
     "message": "paint + badges 7TV/BTTV/FFZ"
@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "tuklasin"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -589,7 +589,7 @@
     "message": "laki ng emote"
   },
   "mc_settings_input_preview": {
-    "message": "input preview"
+    "message": "preview ng input"
   },
   "mc_settings_clickable_links": {
     "message": "clickable na links"
@@ -622,10 +622,10 @@
     "message": "auto-hide ng input"
   },
   "mc_settings_timestamps": {
-    "message": "timestamps"
+    "message": "mga timestamp"
   },
   "mc_settings_avatars": {
-    "message": "avatars"
+    "message": "mga avatar"
   },
   "mc_settings_emote_size_desc": {
     "message": "1x default, 2x retina, 4x malaki"
@@ -655,7 +655,7 @@
     "message": "mga avatar sa tabi ng mga username"
   },
   "mc_settings_inline_notifs": {
-    "message": "inline notifications"
+    "message": "mga notification sa chat"
   },
   "mc_settings_notif_op": {
     "message": "[OP] orihinal posts"
@@ -697,37 +697,37 @@
     "message": "live na banner ng progreso ng hype train"
   },
   "mc_settings_gift_subs": {
-    "message": "gift subs"
+    "message": "mga gift sub"
   },
   "mc_settings_gift_subs_desc": {
     "message": "banner para sa gift subs kasama ang nagbibigay at antas"
   },
   "mc_settings_redeems": {
-    "message": "channel point redeems"
+    "message": "mga redeem ng channel point"
   },
   "mc_settings_redeems_desc": {
     "message": "banner para sa mga pagtubos ng channel points"
   },
   "mc_settings_prediction_banner": {
-    "message": "predictions"
+    "message": "mga prediction"
   },
   "mc_settings_prediction_banner_desc": {
     "message": "live na banner ng hula kasama ang odds at timer"
   },
   "mc_settings_poll_banner": {
-    "message": "polls"
+    "message": "mga poll"
   },
   "mc_settings_poll_banner_desc": {
     "message": "aktibong banner ng boto, bumoto nang direkta"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "mga super chat"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "banner para sa youtube super chats kasama ang halaga"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "mga super sticker"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "banner para sa youtube super stickers kasama ang halaga"
@@ -757,13 +757,13 @@
     "message": "50% opacity sa halip na itago"
   },
   "mc_settings_first_chatter": {
-    "message": "first-message glow"
+    "message": "glow sa unang mensahe"
   },
   "mc_settings_first_chatter_desc": {
     "message": "orange na gilid sa unang mensahe bawat session"
   },
   "mc_settings_keyword_highlights": {
-    "message": "keyword highlights"
+    "message": "mga naka-highlight na keyword"
   },
   "mc_settings_keyword_highlights_desc": {
     "message": "nagkulay ng orange sa mga mensaheng tumutugma. isa bawat linya, hindi case-sensitive, buong salita"
@@ -908,7 +908,7 @@
     "message": "mag-attach ng larawan o video"
   },
   "mc_input_emote_picker": {
-    "message": "emote picker"
+    "message": "pili ng emote"
   },
   "mc_input_tab_hidden": {
     "message": "nakatago sa tab na ito: $USER$",
@@ -1217,10 +1217,10 @@
     "message": "ipakita ang multichat panel sa youtube VOD, home at search din — off bilang default, kaya sa mga livestream lang lalabas ang panel (kung saan may live chat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: ipakita ang mga shelf sa feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "ipakita ang shorts, playables at promo block sa pagitan ng mga video sa home feed ng youtube — naka-off bilang default, kaya thumbnails lang ang feed na maayos ang pagkakaayos"
   },
   "mc_settings_message_density": {
     "message": "siksik ng mensahe"
@@ -1535,19 +1535,19 @@
     "message": "mga subsystem"
   },
   "mc_settings_sub_irc_twitch": {
-    "message": "twitch chat feed"
+    "message": "chat feed ng twitch"
   },
   "mc_settings_sub_irc_twitch_desc": {
     "message": "twitch irc connection + pagsali sa channel sa loob ng overlay"
   },
   "mc_settings_sub_chat_kick": {
-    "message": "kick chat feed"
+    "message": "chat feed ng kick"
   },
   "mc_settings_sub_chat_kick_desc": {
     "message": "kick websocket connection + pagsali sa channel sa loob ng overlay"
   },
   "mc_settings_sub_chat_youtube": {
-    "message": "youtube chat feed"
+    "message": "chat feed ng youtube"
   },
   "mc_settings_sub_chat_youtube_desc": {
     "message": "mga subscription sa youtube live chat sa loob ng overlay"
@@ -1619,7 +1619,7 @@
     "message": "lokal lang kinukuha ang mga error — hindi kailanman ina-upload. ipinapakita lang ng toggle na ito ang diagnostic panel sa ibaba."
   },
   "mc_settings_debug_logging": {
-    "message": "debug logging"
+    "message": "debug log"
   },
   "mc_settings_debug_logging_desc": {
     "message": "verbose na console logging mula sa lahat ng heatsync script — may bisa sa susunod na load ng page"
@@ -2338,7 +2338,7 @@
     }
   },
   "mc_input_mode_on": {
-    "message": "$LABEL$ on",
+    "message": "naka-on ang $LABEL$",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2346,7 +2346,7 @@
     }
   },
   "mc_input_mode_off": {
-    "message": "$LABEL$ off",
+    "message": "naka-off ang $LABEL$",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2354,7 +2354,7 @@
     }
   },
   "mc_input_mode_on_dur": {
-    "message": "$LABEL$ on ($DETAIL$)",
+    "message": "naka-on ang $LABEL$ ($DETAIL$)",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -3060,7 +3060,7 @@
     "message": "-- normal --  i/a hanap  esc isara"
   },
   "mc_gif_mode_insert": {
-    "message": "-- insert --  esc normal"
+    "message": "-- insert --  esc para sa normal"
   },
   "mc_bt_title": {
     "message": "mga naka-block na termino"
@@ -3190,10 +3190,10 @@
     "message": "unique chat"
   },
   "mc_cm_on": {
-    "message": "on"
+    "message": "naka-on"
   },
   "mc_cm_off": {
-    "message": "off"
+    "message": "naka-off"
   },
   "mc_cm_min": {
     "message": "min"
@@ -3214,7 +3214,7 @@
     "message": "mga mod tool"
   },
   "mc_ms_cell_shield": {
-    "message": "shield"
+    "message": "kalasag"
   },
   "mc_ms_cell_unban": {
     "message": "mga hiling na i-unban"
@@ -3580,7 +3580,7 @@
     "message": "mga channel, pinaghihiwalay ng kuwit (blangko = lahat)"
   },
   "mc_mr_cooldown_ph": {
-    "message": "cooldown s"
+    "message": "cooldown (s)"
   },
   "mc_mr_case": {
     "message": "case-sensitive"
@@ -3670,10 +3670,10 @@
     "message": "bawat channel sa youtube ay nagtatago ng huling volume na itinakda mo, sa mga video, stream at embed. kapag naka-off, hindi ginagalaw ang player ng youtube"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "naipadala sa youtube · nilaktawan ang twitch, hindi naka-login"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm user mensahe · /r mensahe"
   },
   "mc_layout_copied": {
     "message": "nakopya ang layout link"
@@ -3724,7 +3724,7 @@
     }
   },
   "mc_sub_link": {
-    "message": "sub — $PLATFORM$",
+    "message": "mag-sub — $PLATFORM$",
     "placeholders": {
       "platform": {
         "content": "$1"
@@ -3797,7 +3797,7 @@
     "message": "mga subscription ko"
   },
   "mc_twapi_ql_following": {
-    "message": "following directory"
+    "message": "direktoryo ng fina-follow"
   },
   "mc_twapi_ql_tw_settings": {
     "message": "mga setting ng twitch"
@@ -3862,7 +3862,7 @@
     }
   },
   "mc_twapi_cooldown_m": {
-    "message": "$N$m cooldown",
+    "message": "$N$m na cooldown",
     "placeholders": {
       "n": {
         "content": "$1"
@@ -3870,7 +3870,7 @@
     }
   },
   "mc_twapi_cooldown_s": {
-    "message": "$N$s cooldown",
+    "message": "$N$s na cooldown",
     "placeholders": {
       "n": {
         "content": "$1"
@@ -3914,7 +3914,7 @@
     "message": "walang nakitang channel"
   },
   "mc_twapi_tab_events": {
-    "message": "events"
+    "message": "mga event"
   },
   "mc_twapi_tab_bits": {
     "message": "bits"
@@ -3950,7 +3950,7 @@
     }
   },
   "mc_twapi_live_status": {
-    "message": "LIVE · $UPTIME$ · $VIEWERS$ viewers",
+    "message": "LIVE · $UPTIME$ · $VIEWERS$ manonood",
     "placeholders": {
       "uptime": {
         "content": "$1"
@@ -3964,7 +3964,7 @@
     "message": "OFFLINE"
   },
   "mc_twapi_live_status_nouptime": {
-    "message": "LIVE · $VIEWERS$ viewers",
+    "message": "LIVE · $VIEWERS$ manonood",
     "placeholders": {
       "viewers": {
         "content": "$1"
@@ -4389,7 +4389,7 @@
     "message": "umalis sa thread"
   },
   "mc_social_live_viewer": {
-    "message": "live · $COUNT$ viewer",
+    "message": "live · $COUNT$ manonood",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -4397,7 +4397,7 @@
     }
   },
   "mc_social_live_viewers": {
-    "message": "live · $COUNT$ viewers",
+    "message": "live · $COUNT$ manonood",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -4435,7 +4435,7 @@
     }
   },
   "mc_social_viewers_title": {
-    "message": "$COUNT$ viewers",
+    "message": "$COUNT$ manonood",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -4498,7 +4498,7 @@
     "message": "lahat"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4676,7 +4676,7 @@
     "message": "i-export bilang .json"
   },
   "mc_logs_public": {
-    "message": "public archive ↗"
+    "message": "pampublikong archive ↗"
   },
   "mc_logs_public_title": {
     "message": "buksan ang public chat log ng #$CHANNEL$ sa heatsync.org",
@@ -4739,7 +4739,7 @@
     }
   },
   "mc_notes_head": {
-    "message": "note · $USER$",
+    "message": "tala · $USER$",
     "placeholders": {
       "user": {
         "content": "$1"
@@ -4827,7 +4827,7 @@
     "message": "hindi maabot ang heatsync server"
   },
   "mc_misc_twitch_error": {
-    "message": "twitch error $STATUS$",
+    "message": "error ng twitch $STATUS$",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -4939,7 +4939,7 @@
     "message": "i-unban ang user"
   },
   "mc_mtb_t_bt": {
-    "message": "blocked terms"
+    "message": "mga blocked term"
   },
   "mc_mtb_t_mt": {
     "message": "mga mod tool"
@@ -5123,7 +5123,7 @@
     }
   },
   "mc_main_redeem_label": {
-    "message": "channel point redeem"
+    "message": "redeem ng channel point"
   },
   "mc_main_highlighted": {
     "message": "naka-highlight na mensahe"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "bilang subscriber"
   },
-  "mc_notif_wt_prefix": {
-    "message": "sa"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "nasa $COUNT$-stream na watch streak",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "i-share"
@@ -5439,10 +5438,10 @@
     }
   },
   "mc_tip_row_ch_sub": {
-    "message": "ch sub"
+    "message": "sub sa channel"
   },
   "mc_tip_row_ch_follow": {
-    "message": "ch follow"
+    "message": "follow sa channel"
   },
   "mc_tip_row_follower": {
     "message": "follower"
@@ -5459,10 +5458,10 @@
     }
   },
   "mc_tip_row_followers": {
-    "message": "followers"
+    "message": "mga follower"
   },
   "mc_tip_corpus_msgs": {
-    "message": "$COUNT$ msgs",
+    "message": "$COUNT$ mensahe",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -5563,7 +5562,7 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "uri ng mensahe"
   },
   "mc_set_fr_t_expr": {
     "message": "expr"
@@ -5572,10 +5571,10 @@
     "message": "hal. first && !badge:subscriber — pagsamahin gamit ang && || ! ( ); mga field user: badge: type: contains: regex:"
   },
   "mc_set_fr_value_ph": {
-    "message": "value..."
+    "message": "halaga..."
   },
   "mc_set_fr_a_highlight": {
-    "message": "highlight"
+    "message": "i-highlight"
   },
   "mc_set_fr_a_hide": {
     "message": "itago"
@@ -5636,7 +5635,7 @@
     "message": "(hindi mabasa ang log)"
   },
   "mc_set_fmt_off_list": {
-    "message": "off: $LIST$",
+    "message": "naka-off: $LIST$",
     "placeholders": {
       "list": {
         "content": "$1"
@@ -5884,7 +5883,7 @@
     "message": "wala pang nabibilang na chat — mapupunan ito habang dumarating ang mga mensahe"
   },
   "mc_ss_stats": {
-    "message": "$MSGS$ msgs · $CHATTERS$ chatters · $MENTIONS$ mentions · $PEAK$/s peak",
+    "message": "$MSGS$ mensahe · $CHATTERS$ chatter · $MENTIONS$ mention · $PEAK$/s peak",
     "placeholders": {
       "msgs": {
         "content": "$1"
@@ -6312,7 +6311,7 @@
     "message": "instant — nagba-block agad · menu — may block/cancel · off — naka-disable"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "agad"
   },
   "hsbtn_rcb_menu": {
     "message": "menu"
@@ -6473,7 +6472,7 @@
     "message": "feedback"
   },
   "popup_feedback_title": {
-    "message": "feedback / bug report"
+    "message": "feedback / ulat ng bug"
   },
   "popup_inv_slots": {
     "message": "5,000 emote slot"
@@ -6520,7 +6519,7 @@
     }
   },
   "bg_live_viewers": {
-    "message": " · $COUNT$ viewers",
+    "message": " · $COUNT$ manonood",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6861,6 +6860,6 @@
     "message": "buong listahan -> /commands"
   },
   "slash_help_label": {
-    "message": "slash commands"
+    "message": "mga slash command"
   }
 }

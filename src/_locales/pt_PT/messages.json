@@ -402,10 +402,10 @@
     }
   },
   "content_card_ban": {
-    "message": "ban"
+    "message": "banir"
   },
   "content_card_unban": {
-    "message": "unban"
+    "message": "desbanir"
   },
   "content_card_block": {
     "message": "bloquear"
@@ -414,13 +414,13 @@
     "message": "mod"
   },
   "content_card_unmod": {
-    "message": "unmod"
+    "message": "tirar mod"
   },
   "content_card_vip": {
     "message": "vip"
   },
   "content_card_unvip": {
-    "message": "unvip"
+    "message": "tirar vip"
   },
   "content_card_mod_tools": {
     "message": "ferramentas de mod"
@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "descobrir"
   },
   "mc_tab_whispers": {
     "message": "sussurros"
@@ -649,7 +649,7 @@
     "message": "carimbo de hora em cada mensagem"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "avatares"
   },
   "mc_settings_avatars_desc": {
     "message": "avatares ao lado dos nomes de utilizador"
@@ -1217,10 +1217,10 @@
     "message": "mostrar o painel multichat também em VODs do youtube, início e pesquisa — desligado por defeito, por isso o painel só aparece em diretos (onde há chat em direto)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: mostrar prateleiras do feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "mostra shorts, playables e blocos promocionais entre os vídeos do feed inicial do youtube — desligado por defeito, assim o feed fica só com miniaturas bem alinhadas"
   },
   "mc_settings_message_density": {
     "message": "densidade das mensagens"
@@ -1565,7 +1565,7 @@
     "message": "separador do feed social do heatsync + o seu fluxo de eventos"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "sussurros"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "socket eventsub de whispers da twitch + separador de whispers"
@@ -1628,7 +1628,7 @@
     "message": "mínimo"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "utilizador avançado"
   },
   "mc_settings_preset_moderator": {
     "message": "moderador"
@@ -3060,7 +3060,7 @@
     "message": "-- normal --  i/a pesquisar  esc fechar"
   },
   "mc_gif_mode_insert": {
-    "message": "-- insert --  esc normal"
+    "message": "-- inserir --  esc normal"
   },
   "mc_bt_title": {
     "message": "termos bloqueados"
@@ -3670,10 +3670,10 @@
     "message": "cada canal do youtube guarda o último volume que definiste, em vídeos, diretos e embeds. desligado deixa o leitor do youtube em paz"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "enviado no youtube · twitch ignorado, sem sessão iniciada"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm utilizador msg · /r msg"
   },
   "mc_layout_copied": {
     "message": "ligação do layout copiada"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "como subscritor"
   },
-  "mc_notif_wt_prefix": {
-    "message": "com uma sequência de"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streams"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "a ver"
+  "mc_notif_wt": {
+    "message": "numa sequência de $COUNT$ streams vistas",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "partilhar"
@@ -5800,7 +5799,7 @@
     "message": "ecrã"
   },
   "mc_tr_set_notifs": {
-    "message": "notifs"
+    "message": "avisos"
   },
   "mc_tr_set_mod": {
     "message": "mod"
@@ -6774,7 +6773,7 @@
     "message": "dá VIP"
   },
   "slash_desc_unvip": {
-    "message": "remove VIP"
+    "message": "remover VIP"
   },
   "slash_desc_mod": {
     "message": "dá moderador"

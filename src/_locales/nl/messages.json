@@ -402,10 +402,10 @@
     }
   },
   "content_card_ban": {
-    "message": "ban"
+    "message": "bannen"
   },
   "content_card_unban": {
-    "message": "unban"
+    "message": "unbannen"
   },
   "content_card_block": {
     "message": "blokkeren"
@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "ontdek"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -649,7 +649,7 @@
     "message": "tijdstempel op elk bericht"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "profielfoto's"
   },
   "mc_settings_avatars_desc": {
     "message": "avatars naast gebruikersnamen"
@@ -697,7 +697,7 @@
     "message": "live voortgangsbanner hype train"
   },
   "mc_settings_gift_subs": {
-    "message": "gift subs"
+    "message": "cadeausubs"
   },
   "mc_settings_gift_subs_desc": {
     "message": "banner voor cadeausubs met gever en tier"
@@ -1217,10 +1217,10 @@
     "message": "toon het multichat-paneel ook op youtube-VODs, home en zoeken — standaard uit, zodat het paneel alleen bij livestreams verschijnt (waar live chat is)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: feedrijen tonen"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "toon shorts, playables en promoblokken tussen de video's op de youtube-homefeed — standaard uit, zodat de feed alleen uit netjes tegelende thumbnails bestaat"
   },
   "mc_settings_message_density": {
     "message": "berichtdichtheid"
@@ -1583,7 +1583,7 @@
     "message": "berichtsnelheid per kanaal, voedt de heat-ranking"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "automod-wachtrij"
   },
   "mc_automod_allow": {
     "message": "toestaan"
@@ -1628,7 +1628,7 @@
     "message": "minimaal"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "gevorderd"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -2098,7 +2098,7 @@
     "message": "/highlight heeft een twitch-kanaaltab nodig"
   },
   "mc_input_usage_highlight": {
-    "message": "/highlight <message>"
+    "message": "/highlight <bericht>"
   },
   "mc_input_highlight_login": {
     "message": "log eerst in op twitch.tv"
@@ -2116,10 +2116,10 @@
     "message": "kanaal niet gevonden"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll vraag | keuze1 | keuze2 [| … tot 5] [| sec]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction titel | uitkomst1 | uitkomst2 [| … tot 10] [| sec]"
   },
   "mc_input_poll_created": {
     "message": "poll gemaakt"
@@ -2140,7 +2140,7 @@
     "message": "/vote <n>"
   },
   "mc_input_usage_bet": {
-    "message": "/bet <n> <points>"
+    "message": "/bet <n> <punten>"
   },
   "mc_input_usage_resolvepred": {
     "message": "/resolvepred <n>"
@@ -2179,10 +2179,10 @@
     }
   },
   "mc_input_usage_note": {
-    "message": "/note <user> <text>"
+    "message": "/note <gebruiker> <tekst>"
   },
   "mc_input_usage_delnote": {
-    "message": "/delnote <user>"
+    "message": "/delnote <gebruiker>"
   },
   "mc_input_usage_block": {
     "message": "/block <user> — wisselt blokkade"
@@ -2215,7 +2215,7 @@
     }
   },
   "mc_input_usage_set": {
-    "message": "/set <setting> <value>"
+    "message": "/set <instelling> <waarde>"
   },
   "mc_input_set_complex": {
     "message": "pas die aan in het instellingenpaneel"
@@ -2270,10 +2270,10 @@
     }
   },
   "mc_input_usage_vip": {
-    "message": "/vip <user>"
+    "message": "/vip <gebruiker>"
   },
   "mc_input_usage_unvip": {
-    "message": "/unvip <user>"
+    "message": "/unvip <gebruiker>"
   },
   "mc_input_vip_done": {
     "message": "$USER$ vip gemaakt",
@@ -2292,10 +2292,10 @@
     }
   },
   "mc_input_usage_mod": {
-    "message": "/mod <user>"
+    "message": "/mod <gebruiker>"
   },
   "mc_input_usage_unmod": {
-    "message": "/unmod <user>"
+    "message": "/unmod <gebruiker>"
   },
   "mc_input_mod_done": {
     "message": "$USER$ mod gemaakt",
@@ -2579,7 +2579,7 @@
     }
   },
   "mc_mod_label_unbanned": {
-    "message": "unbanned"
+    "message": "ban opgeheven"
   },
   "mc_modtoolbar_not_youtube_mod": {
     "message": "geen youtube-mod hier"
@@ -3592,7 +3592,7 @@
     "message": "testen"
   },
   "mc_mr_match": {
-    "message": "match"
+    "message": "treffer"
   },
   "mc_mr_nomatch": {
     "message": "geen match"
@@ -3670,10 +3670,10 @@
     "message": "elk youtube-kanaal houdt het laatst ingestelde volume vast, in video's, streams en embeds. uit laat de speler van youtube met rust"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "verstuurd op youtube · twitch overgeslagen, niet ingelogd"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm gebruiker bericht · /r bericht"
   },
   "mc_layout_copied": {
     "message": "layoutlink gekopieerd"
@@ -3724,7 +3724,7 @@
     }
   },
   "mc_sub_link": {
-    "message": "sub — $PLATFORM$",
+    "message": "abonneren — $PLATFORM$",
     "placeholders": {
       "platform": {
         "content": "$1"
@@ -3862,7 +3862,7 @@
     }
   },
   "mc_twapi_cooldown_m": {
-    "message": "$N$m cooldown",
+    "message": "$N$m wachttijd",
     "placeholders": {
       "n": {
         "content": "$1"
@@ -3870,7 +3870,7 @@
     }
   },
   "mc_twapi_cooldown_s": {
-    "message": "$N$s cooldown",
+    "message": "$N$s wachttijd",
     "placeholders": {
       "n": {
         "content": "$1"
@@ -4468,7 +4468,7 @@
     "message": "geen streams live op dit moment"
   },
   "mc_social_hot_posts": {
-    "message": "hot posts"
+    "message": "populaire posts"
   },
   "mc_social_no_posts_filter": {
     "message": "geen posts voor dit filter"
@@ -5115,7 +5115,7 @@
     "message": "filter — /regex/ of @user"
   },
   "mc_main_redeem_pts": {
-    "message": "$COST$ pts",
+    "message": "$COST$ ptn",
     "placeholders": {
       "cost": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "als abonnee"
   },
-  "mc_notif_wt_prefix": {
-    "message": "op een"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streams"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "$COUNT$ streams op rij gekeken",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "delen"
@@ -5563,7 +5562,7 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "berichttype"
   },
   "mc_set_fr_t_expr": {
     "message": "expr"

@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "descubrir"
   },
   "mc_tab_whispers": {
     "message": "susurros"
@@ -1217,10 +1217,10 @@
     "message": "muestra el panel de multichat también en vods, inicio y búsqueda de youtube — apagado por defecto, así el panel solo aparece en transmisiones en vivo (donde hay chat en vivo)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: mostrar estantes del feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "muestra shorts, playables y bloques promocionales entre los videos del feed de inicio de youtube — desactivado por defecto, así el feed son solo miniaturas que encajan limpias"
   },
   "mc_settings_message_density": {
     "message": "densidad de mensajes"
@@ -3060,7 +3060,7 @@
     "message": "-- normal --  i/a buscar  esc cerrar"
   },
   "mc_gif_mode_insert": {
-    "message": "-- insert --  esc normal"
+    "message": "-- insertar --  esc normal"
   },
   "mc_bt_title": {
     "message": "términos bloqueados"
@@ -3670,10 +3670,10 @@
     "message": "cada canal de youtube conserva el último volumen que fijaste, en vídeos, directos y embebidos. desactivado deja el reproductor de youtube en paz"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "enviado en youtube · twitch omitido, sin sesión iniciada"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm usuario msg · /r msg"
   },
   "mc_layout_copied": {
     "message": "enlace de diseño copiado"
@@ -3758,7 +3758,7 @@
     "message": "panel de creador"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "gestor de stream"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "ajustes de moderación (automod, términos bloqueados)"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "como suscriptor"
   },
-  "mc_notif_wt_prefix": {
-    "message": "con una"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "racha de visionado"
+  "mc_notif_wt": {
+    "message": "con una racha de $COUNT$ streams vistos",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "compartir"

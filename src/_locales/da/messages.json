@@ -464,7 +464,7 @@
     "message": "twitch-profil"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "klip"
   },
   "content_card_clipping": {
     "message": "clipper…"
@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "opdag"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -649,7 +649,7 @@
     "message": "tidsstempel på hver besked"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "profilbilleder"
   },
   "mc_settings_avatars_desc": {
     "message": "profilbilleder ved siden af brugernavne"
@@ -697,7 +697,7 @@
     "message": "live hype train fremgangsbanner"
   },
   "mc_settings_gift_subs": {
-    "message": "gift subs"
+    "message": "gaveabonnementer"
   },
   "mc_settings_gift_subs_desc": {
     "message": "banner for gave-abonnementer med giver og niveau"
@@ -715,7 +715,7 @@
     "message": "live forudsigelsebanner med odds og timer"
   },
   "mc_settings_poll_banner": {
-    "message": "polls"
+    "message": "afstemninger"
   },
   "mc_settings_poll_banner_desc": {
     "message": "aktivt afstemningsbanner, stem direkte"
@@ -772,7 +772,7 @@
     "message": "ét nøgleord per linje"
   },
   "mc_settings_auto_claim": {
-    "message": "auto-claim channel points"
+    "message": "auto-hent kanalpoint"
   },
   "mc_settings_auto_claim_desc": {
     "message": "klikker automatisk på kanalpoint-kisten"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "niv. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "vis multichat-panelet også på youtube-VODs, forsiden og søgning — slået fra som standard, så panelet kun vises ved livestreams (hvor der er livechat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: vis feed-hylder"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "vis shorts, playables og promo-blokke mellem videoerne på youtubes forside-feed — slået fra som standard, så feedet kun er miniaturer, der flugter pænt"
   },
   "mc_settings_message_density": {
     "message": "beskedtæthed"
@@ -1583,7 +1583,7 @@
     "message": "beskedhastighed pr. kanal, som driver heat-rangeringen"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "automod-tilbageholdt"
   },
   "mc_automod_allow": {
     "message": "tillad"
@@ -1628,7 +1628,7 @@
     "message": "minimal"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "superbruger"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -3214,7 +3214,7 @@
     "message": "mod-værktøj"
   },
   "mc_ms_cell_shield": {
-    "message": "shield"
+    "message": "skjold"
   },
   "mc_ms_cell_unban": {
     "message": "unban-anmodninger"
@@ -3670,10 +3670,10 @@
     "message": "hver youtube-kanal husker den lydstyrke du sidst satte, i videoer, streams og indlejringer. fra lader youtubes afspiller være"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "sendt på youtube · twitch sprunget over, ikke logget ind"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm bruger besked · /r besked"
   },
   "mc_layout_copied": {
     "message": "layout-link kopieret"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "som abonnent"
   },
-  "mc_notif_wt_prefix": {
-    "message": "på en"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "på en watch streak på $COUNT$ streams",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "del"
@@ -6312,7 +6311,7 @@
     "message": "instant blokerer med det samme · menu viser bloker/annullér · fra slår det fra"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "øjeblikkelig"
   },
   "hsbtn_rcb_menu": {
     "message": "menu"
@@ -6627,7 +6626,7 @@
     "message": "sprog"
   },
   "lib_opt_system_monospace": {
-    "message": "system monospace"
+    "message": "systemets monospace"
   },
   "lib_opt_platform_default": {
     "message": "platformsstandard (Inter — twitch + kick)"

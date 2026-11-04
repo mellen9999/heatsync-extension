@@ -106,7 +106,7 @@
     "message": "мої"
   },
   "btn_tab_emoji": {
-    "message": "emoji"
+    "message": "емодзі"
   },
   "btn_tab_sets": {
     "message": "набори"
@@ -411,7 +411,7 @@
     "message": "блок"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "модер"
   },
   "content_card_unmod": {
     "message": "зняти mod"
@@ -464,7 +464,7 @@
     "message": "профіль twitch"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "кліп"
   },
   "content_card_clipping": {
     "message": "створюю clip…"
@@ -513,7 +513,7 @@
     "message": "стрічка"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "огляд"
   },
   "mc_tab_whispers": {
     "message": "шепіт"
@@ -691,7 +691,7 @@
     "message": "банер при рейді з кількістю глядачів"
   },
   "mc_settings_hype_trains": {
-    "message": "hype trains"
+    "message": "хайп-трейни"
   },
   "mc_settings_hype_trains_desc": {
     "message": "живий банер прогресу хайп-трейну"
@@ -721,13 +721,13 @@
     "message": "банер активного голосування, голосуйте напряму"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "суперчати"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "банер для super chats youtube із сумою"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "суперстікери"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "банер для super stickers youtube із сумою"
@@ -891,7 +891,7 @@
     "message": "обміняти"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "хайп-трейн"
   },
   "mc_chat_hype_level": {
     "message": "рів $LEVEL$",
@@ -991,7 +991,7 @@
     "message": "не вдалося опублікувати"
   },
   "mc_tip_emoji": {
-    "message": "emoji"
+    "message": "емодзі"
   },
   "mc_whisper_hint": {
     "message": "/w користувач повідомлення · /dm користувач повідомлення · /r повідомлення"
@@ -1217,10 +1217,10 @@
     "message": "показує панель multichat також на vod, головній та пошуку youtube — вимкнено за замовчуванням, тож панель з’являється лише на трансляціях (де є живий чат)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: показувати полиці стрічки"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "показувати shorts, playables і промоблоки між відео на головній стрічці youtube — типово вимкнено, тож стрічка — це лише мініатюри, що рівно лягають у сітку"
   },
   "mc_settings_message_density": {
     "message": "щільність повідомлень"
@@ -2098,7 +2098,7 @@
     "message": "/highlight потребує вкладки каналу twitch"
   },
   "mc_input_usage_highlight": {
-    "message": "/highlight <message>"
+    "message": "/highlight <повідомлення>"
   },
   "mc_input_highlight_login": {
     "message": "спершу увійди на twitch.tv"
@@ -2116,10 +2116,10 @@
     "message": "не вдалося визначити канал"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll питання | варіант1 | варіант2 [| … до 5] [| сек]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction назва | результат1 | результат2 [| … до 10] [| сек]"
   },
   "mc_input_poll_created": {
     "message": "опитування створено"
@@ -2140,7 +2140,7 @@
     "message": "/vote <n>"
   },
   "mc_input_usage_bet": {
-    "message": "/bet <n> <points>"
+    "message": "/bet <n> <очки>"
   },
   "mc_input_usage_resolvepred": {
     "message": "/resolvepred <n>"
@@ -2179,7 +2179,7 @@
     }
   },
   "mc_input_usage_note": {
-    "message": "/note <user> <text>"
+    "message": "/note <user> <текст>"
   },
   "mc_input_usage_delnote": {
     "message": "/delnote <user>"
@@ -2215,7 +2215,7 @@
     }
   },
   "mc_input_usage_set": {
-    "message": "/set <setting> <value>"
+    "message": "/set <налаштування> <значення>"
   },
   "mc_input_set_complex": {
     "message": "змінюй це в панелі налаштувань"
@@ -3670,10 +3670,10 @@
     "message": "кожен канал на youtube зберігає останню задану вами гучність — у відео, стрімах і вбудованих плеєрах. вимкнено — плеєр youtube не чіпаємо"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "надіслано в youtube · twitch пропущено, немає входу"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm ім'я текст · /r текст"
   },
   "mc_layout_copied": {
     "message": "посилання на розкладку скопійовано"
@@ -3917,7 +3917,7 @@
     "message": "події"
   },
   "mc_twapi_tab_bits": {
-    "message": "bits"
+    "message": "бітси"
   },
   "mc_twapi_tab_links": {
     "message": "швидкі посилання"
@@ -3942,7 +3942,7 @@
     "message": "відкрити вікно cheer"
   },
   "mc_twapi_bits_title": {
-    "message": "$AMOUNT$ bits",
+    "message": "$AMOUNT$ бітсів",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "ОФЛАЙН"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · $VIEWERS$ глядачів",
@@ -4076,7 +4076,7 @@
     "message": "шепіт"
   },
   "mc_input_dm": {
-    "message": "dm"
+    "message": "пп"
   },
   "mc_input_edit_note": {
     "message": "змінити нотатку"
@@ -4307,7 +4307,7 @@
     "message": "перетягни зображення/відео/посилання для завантаження"
   },
   "mc_input_usage_announce": {
-    "message": "/announce <message>"
+    "message": "/announce <повідомлення>"
   },
   "mc_social_edit_empty": {
     "message": "вміст не може бути порожнім"
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "в ефірі"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · в ефірі",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -4498,7 +4498,7 @@
     "message": "усі"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "суперчат $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4506,7 +4506,7 @@
     }
   },
   "mc_social_yt_sticker": {
-    "message": "super sticker $AMOUNT$",
+    "message": "суперстікер $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "як підписник"
   },
-  "mc_notif_wt_prefix": {
-    "message": "на"
-  },
-  "mc_notif_wt_stream": {
-    "message": "стрімах"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "серії перегляду"
+  "mc_notif_wt": {
+    "message": "дивиться $COUNT$ стрімів поспіль",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "поділитися"
@@ -5303,7 +5302,7 @@
     "message": "відкрити twitch"
   },
   "mc_notif_tabs_tag": {
-    "message": "-- TABS --"
+    "message": "-- ВКЛАДКИ --"
   },
   "mc_notif_r_auth_failed": {
     "message": "авторизація twitch не вдалася"
@@ -5563,10 +5562,10 @@
     "message": "бейдж"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "тип пов."
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "вираз"
   },
   "mc_set_fr_expr_tip": {
     "message": "напр. first && !badge:subscriber — з'єднуй через && || ! ( ); поля user: badge: type: contains: regex:"
@@ -5803,7 +5802,7 @@
     "message": "сповіщ."
   },
   "mc_tr_set_mod": {
-    "message": "mod"
+    "message": "модер"
   },
   "mc_tr_set_filters": {
     "message": "фільтри"

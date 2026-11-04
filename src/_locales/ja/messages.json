@@ -513,7 +513,7 @@
     "message": "フィード"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "探す"
   },
   "mc_tab_whispers": {
     "message": "ウィスパー"
@@ -1217,10 +1217,10 @@
     "message": "youtube の VOD・ホーム・検索でも multichat パネルを表示 — 既定はオフで、パネルはライブ配信 (ライブチャットがある所) だけに出る"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: フィードの棚を表示"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "youtube のホームフィードの動画の間にショート、プレイアブル、プロモブロックを表示 — デフォルトはオフ、フィードはサムネイルだけがきれいに並ぶ"
   },
   "mc_settings_message_density": {
     "message": "メッセージ密度"
@@ -1496,7 +1496,7 @@
     "message": "1行に1語 — どれかを含むメッセージを隠す。キーワードハイライトとは別。"
   },
   "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
+    "message": "ネタバレ\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "フィルタルール"
@@ -3670,10 +3670,10 @@
     "message": "youtubeの各チャンネルが最後に設定した音量を保持します(動画、配信、埋め込み)。オフならyoutubeのプレイヤーには触れません"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "youtube に送信した · twitch はログインしていないのでスキップ"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm ユーザー メッセージ · /r メッセージ"
   },
   "mc_layout_copied": {
     "message": "レイアウトのリンクをコピーした"
@@ -3758,7 +3758,7 @@
     "message": "クリエイターダッシュボード"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "配信マネージャー"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "モデレーション設定 (automod、ブロック語)"
@@ -3917,7 +3917,7 @@
     "message": "イベント"
   },
   "mc_twapi_tab_bits": {
-    "message": "bits"
+    "message": "ビッツ"
   },
   "mc_twapi_tab_links": {
     "message": "クイックリンク"
@@ -3942,7 +3942,7 @@
     "message": "cheer ダイアログを開く"
   },
   "mc_twapi_bits_title": {
-    "message": "$AMOUNT$ bits",
+    "message": "$AMOUNT$ ビッツ",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "オフライン"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · 視聴者 $VIEWERS$ 人",
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "を祝福"
   },
-  "mc_notif_wt_prefix": {
-    "message": "視聴"
-  },
-  "mc_notif_wt_stream": {
-    "message": "配信"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "連続中"
+  "mc_notif_wt": {
+    "message": "$COUNT$ 配信連続の視聴ストリーク中",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "共有"
@@ -5563,10 +5562,10 @@
     "message": "バッジ"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "メッセージ種別"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "式"
   },
   "mc_set_fr_expr_tip": {
     "message": "例: first && !badge:subscriber — && || ! ( ) で結合。フィールド user: badge: type: contains: regex:"
@@ -6179,7 +6178,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "err"
+    "message": "エラー"
   },
   "hsbtn_search_status": {
     "message": "「$QUERY$」 — $STATUS$",

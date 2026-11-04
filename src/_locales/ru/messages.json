@@ -106,7 +106,7 @@
     "message": "мои"
   },
   "btn_tab_emoji": {
-    "message": "emoji"
+    "message": "эмодзи"
   },
   "btn_tab_sets": {
     "message": "наборы"
@@ -411,7 +411,7 @@
     "message": "блок"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "модер"
   },
   "content_card_unmod": {
     "message": "снять mod"
@@ -464,7 +464,7 @@
     "message": "профиль twitch"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "клип"
   },
   "content_card_clipping": {
     "message": "создаю clip…"
@@ -513,7 +513,7 @@
     "message": "лента"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "обзор"
   },
   "mc_tab_whispers": {
     "message": "шёпоты"
@@ -691,7 +691,7 @@
     "message": "баннер при рейде с количеством зрителей"
   },
   "mc_settings_hype_trains": {
-    "message": "hype trains"
+    "message": "хайп-трейны"
   },
   "mc_settings_hype_trains_desc": {
     "message": "живой баннер прогресса хайп-трейна"
@@ -721,13 +721,13 @@
     "message": "баннер активного голосования, голосуйте напрямую"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "суперчаты"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "баннер для super chats youtube с суммой"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "суперстикеры"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "баннер для super stickers youtube с суммой"
@@ -891,7 +891,7 @@
     "message": "обменять"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "хайп-трейн"
   },
   "mc_chat_hype_level": {
     "message": "ур $LEVEL$",
@@ -991,7 +991,7 @@
     "message": "не удалось запостить"
   },
   "mc_tip_emoji": {
-    "message": "emoji"
+    "message": "эмодзи"
   },
   "mc_whisper_hint": {
     "message": "/w ник сообщение · /dm ник сообщение · /r сообщение"
@@ -1217,10 +1217,10 @@
     "message": "показывать панель multichat и на VOD, главной и поиске youtube — по умолчанию выкл, так что панель только на прямых эфирах (где есть живой чат)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: показывать полки ленты"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "показывать shorts, playables и промоблоки между видео в домашней ленте youtube — по умолчанию выкл, поэтому лента состоит только из превью, которые ровно ложатся в сетку"
   },
   "mc_settings_message_density": {
     "message": "плотность сообщений"
@@ -1496,7 +1496,7 @@
     "message": "по одному слову на строку — сообщения с любым из них скрываются. не то же самое, что подсветка ключевых слов."
   },
   "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
+    "message": "спойлер\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "правила фильтров"
@@ -2098,7 +2098,7 @@
     "message": "/highlight работает на вкладке канала twitch"
   },
   "mc_input_usage_highlight": {
-    "message": "/highlight <message>"
+    "message": "/highlight <сообщение>"
   },
   "mc_input_highlight_login": {
     "message": "сначала войди на twitch.tv"
@@ -2140,7 +2140,7 @@
     "message": "/vote <n>"
   },
   "mc_input_usage_bet": {
-    "message": "/bet <n> <points>"
+    "message": "/bet <n> <очки>"
   },
   "mc_input_usage_resolvepred": {
     "message": "/resolvepred <n>"
@@ -2179,7 +2179,7 @@
     }
   },
   "mc_input_usage_note": {
-    "message": "/note <user> <text>"
+    "message": "/note <user> <текст>"
   },
   "mc_input_usage_delnote": {
     "message": "/delnote <user>"
@@ -2215,7 +2215,7 @@
     }
   },
   "mc_input_usage_set": {
-    "message": "/set <setting> <value>"
+    "message": "/set <настройка> <значение>"
   },
   "mc_input_set_complex": {
     "message": "эту меняй в панели настроек"
@@ -3670,10 +3670,10 @@
     "message": "каждый канал на youtube хранит последнюю заданную вами громкость — в видео, стримах и встроенных плеерах. выключено — плеер youtube не трогаем"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "отправлено в youtube · twitch пропущен, нет входа"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm имя текст · /r текст"
   },
   "mc_layout_copied": {
     "message": "ссылка на раскладку скопирована"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "подписки"
   },
-  "mc_notif_wt_prefix": {
-    "message": "серия просмотров:"
-  },
-  "mc_notif_wt_stream": {
-    "message": "трансляций"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "подряд"
+  "mc_notif_wt": {
+    "message": "смотрит $COUNT$ стримов подряд",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "поделиться"

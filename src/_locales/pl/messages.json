@@ -405,7 +405,7 @@
     "message": "ban"
   },
   "content_card_unban": {
-    "message": "unban"
+    "message": "odbanuj"
   },
   "content_card_block": {
     "message": "zablokuj"
@@ -414,13 +414,13 @@
     "message": "mod"
   },
   "content_card_unmod": {
-    "message": "unmod"
+    "message": "zabierz moda"
   },
   "content_card_vip": {
     "message": "vip"
   },
   "content_card_unvip": {
-    "message": "unvip"
+    "message": "zabierz vipa"
   },
   "content_card_mod_tools": {
     "message": "narzędzia moda"
@@ -464,7 +464,7 @@
     "message": "profil twitch"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "klip"
   },
   "content_card_clipping": {
     "message": "tworzę clip…"
@@ -513,7 +513,7 @@
     "message": "kanał"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "odkrywaj"
   },
   "mc_tab_whispers": {
     "message": "szepty"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "poz. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "pokaż panel multichatu także na youtube VOD-ach, stronie głównej i w wyszukiwarce — domyślnie wyłączone, więc panel pojawia się tylko na transmisjach na żywo (tam, gdzie jest czat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: pokazuj półki w feedzie"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "pokazuj shorts, playables i bloki promo między filmami w głównym feedzie youtube — domyślnie wyłączone, więc feed to same miniatury ułożone równo w siatkę"
   },
   "mc_settings_message_density": {
     "message": "gęstość wiadomości"
@@ -1628,7 +1628,7 @@
     "message": "minimalny"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "zaawansowany"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -2098,7 +2098,7 @@
     "message": "/highlight wymaga karty kanału twitch"
   },
   "mc_input_usage_highlight": {
-    "message": "/highlight <message>"
+    "message": "/highlight <wiadomość>"
   },
   "mc_input_highlight_login": {
     "message": "najpierw zaloguj się na twitch.tv"
@@ -2116,10 +2116,10 @@
     "message": "nie udało się ustalić kanału"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll pytanie | opcja1 | opcja2 [| … do 5] [| s]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction tytuł | wynik1 | wynik2 [| … do 10] [| s]"
   },
   "mc_input_poll_created": {
     "message": "ankieta utworzona"
@@ -2140,7 +2140,7 @@
     "message": "/vote <n>"
   },
   "mc_input_usage_bet": {
-    "message": "/bet <n> <points>"
+    "message": "/bet <n> <punkty>"
   },
   "mc_input_usage_resolvepred": {
     "message": "/resolvepred <n>"
@@ -2179,7 +2179,7 @@
     }
   },
   "mc_input_usage_note": {
-    "message": "/note <user> <text>"
+    "message": "/note <user> <tekst>"
   },
   "mc_input_usage_delnote": {
     "message": "/delnote <user>"
@@ -2215,7 +2215,7 @@
     }
   },
   "mc_input_usage_set": {
-    "message": "/set <setting> <value>"
+    "message": "/set <ustawienie> <wartość>"
   },
   "mc_input_set_complex": {
     "message": "zmień to w panelu ustawień"
@@ -3670,10 +3670,10 @@
     "message": "każdy kanał na youtube zachowuje ostatnio ustawioną głośność w filmach, streamach i osadzeniach. wyłączone zostawia odtwarzacz youtube w spokoju"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "wysłano na youtube · twitch pominięty, brak logowania"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm user wiad. · /r wiad."
   },
   "mc_layout_copied": {
     "message": "link do układu skopiowany"
@@ -3758,7 +3758,7 @@
     "message": "panel twórcy"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "menedżer transmisji"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "ustawienia moderacji (automod, zablokowane frazy)"
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "na żywo"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · na żywo",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -4731,7 +4731,7 @@
     "message": "kopiuj permalink"
   },
   "mc_logs_permalink_aria": {
-    "message": "permalink $TIME$",
+    "message": "stały link $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "jako subskrybent"
   },
-  "mc_notif_wt_prefix": {
-    "message": "seria oglądania:"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streamów"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "z rzędu"
+  "mc_notif_wt": {
+    "message": "seria $COUNT$ obejrzanych streamów z rzędu",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "udostępnij"

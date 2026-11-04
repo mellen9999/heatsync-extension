@@ -100,7 +100,7 @@
     "message": "kanal"
   },
   "btn_tab_global": {
-    "message": "global"
+    "message": "küresel"
   },
   "btn_tab_mine": {
     "message": "benimkiler"
@@ -490,7 +490,7 @@
     }
   },
   "content_card_affiliate": {
-    "message": "affiliate"
+    "message": "bağlı yayıncı"
   },
   "content_card_live": {
     "message": "CANLI $VIEWERS$",
@@ -513,7 +513,7 @@
     "message": "akış"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "keşfet"
   },
   "mc_tab_whispers": {
     "message": "fısıltılar"
@@ -1217,10 +1217,10 @@
     "message": "multichat panelini youtube VOD, ana sayfa ve aramada da göster — varsayılan kapalı, panel sadece canlı yayınlarda (canlı sohbet olan yerde) çıkar"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: akış raflarını göster"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "youtube ana akışında videoların arasında shorts, playables ve tanıtım bloklarını göster — varsayılan olarak kapalı, böylece akış düzgünce dizilen küçük resimlerden ibaret kalır"
   },
   "mc_settings_message_density": {
     "message": "mesaj yoğunluğu"
@@ -1241,7 +1241,7 @@
     "message": "canlı DOM'da tutulan en çok sohbet satırı (veri tamponu 1500 kalır). düşük = yoğun kanallarda daha az ram."
   },
   "mc_settings_name_paints": {
-    "message": "heatsync name paints"
+    "message": "heatsync isim boyaları"
   },
   "mc_settings_name_paints_desc": {
     "message": "heatsync'in animasyonlu name paints'i — sohbetçide ikisi de varsa 7tv paint'inin önüne geçer"
@@ -3670,10 +3670,10 @@
     "message": "her youtube kanalı en son ayarladığın ses seviyesini videolarda, yayınlarda ve gömülü oynatıcılarda korur. kapalıyken youtube oynatıcısına dokunulmaz"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "youtube'da gönderildi · twitch atlandı, giriş yapılmamış"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm kullanıcı mesaj · /r mesaj"
   },
   "mc_layout_copied": {
     "message": "düzen linki kopyalandı"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "kutluyor"
   },
-  "mc_notif_wt_prefix": {
-    "message": "şu anda"
-  },
-  "mc_notif_wt_stream": {
-    "message": "yayınlık"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "izleme serisinde"
+  "mc_notif_wt": {
+    "message": "$COUNT$ yayınlık izleme serisinde",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "paylaş"
@@ -5303,7 +5302,7 @@
     "message": "twitch'i aç"
   },
   "mc_notif_tabs_tag": {
-    "message": "-- TABS --"
+    "message": "-- SEKMELER --"
   },
   "mc_notif_r_auth_failed": {
     "message": "twitch yetkilendirmesi başarısız"
@@ -5390,7 +5389,7 @@
     "message": "gizli"
   },
   "mc_tip_owner_sub": {
-    "message": "$OWNER$ sub ($SRC$)",
+    "message": "$OWNER$ aboneliği ($SRC$)",
     "placeholders": {
       "owner": {
         "content": "$1"
@@ -5563,10 +5562,10 @@
     "message": "rozet"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "mesaj türü"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "ifade"
   },
   "mc_set_fr_expr_tip": {
     "message": "örn. first && !badge:subscriber — && || ! ( ) ile birleştir; alanlar user: badge: type: contains: regex:"

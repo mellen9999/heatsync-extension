@@ -106,7 +106,7 @@
     "message": "ของฉัน"
   },
   "btn_tab_emoji": {
-    "message": "emoji"
+    "message": "อีโมจิ"
   },
   "btn_tab_sets": {
     "message": "ชุด"
@@ -411,13 +411,13 @@
     "message": "บล็อก"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "ม็อด"
   },
   "content_card_unmod": {
     "message": "ถอด mod"
   },
   "content_card_vip": {
-    "message": "vip"
+    "message": "วีไอพี"
   },
   "content_card_unvip": {
     "message": "ถอด vip"
@@ -490,7 +490,7 @@
     }
   },
   "content_card_affiliate": {
-    "message": "affiliate"
+    "message": "แอฟฟิลิเอต"
   },
   "content_card_live": {
     "message": "ไลฟ์ $VIEWERS$",
@@ -513,7 +513,7 @@
     "message": "ฟีด"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "ค้นพบ"
   },
   "mc_tab_whispers": {
     "message": "วิสเปอร์"
@@ -721,13 +721,13 @@
     "message": "แบนเนอร์โหวตที่ใช้งานอยู่ โหวตได้เลย"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "ซูเปอร์แชต"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "แบนเนอร์ super chats ของ youtube พร้อมยอด"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "ซูเปอร์สติกเกอร์"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "แบนเนอร์ super stickers ของ youtube พร้อมยอด"
@@ -891,7 +891,7 @@
     "message": "แลก"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "ไฮป์เทรน"
   },
   "mc_chat_hype_level": {
     "message": "lv $LEVEL$",
@@ -991,7 +991,7 @@
     "message": "โพสต์ล้มเหลว"
   },
   "mc_tip_emoji": {
-    "message": "emoji"
+    "message": "อีโมจิ"
   },
   "mc_whisper_hint": {
     "message": "/w ผู้ใช้ ข้อความ · /dm ผู้ใช้ ข้อความ · /r ข้อความ"
@@ -1217,10 +1217,10 @@
     "message": "แสดงแผง multichat บน VOD หน้าแรก และหน้าค้นหาของ youtube ด้วย — ปิดเป็นค่าเริ่มต้น แผงจึงโผล่เฉพาะไลฟ์ (ที่มีแชทสด)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: แสดงชั้นวางในฟีด"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "แสดงชอร์ต เพลย์เอเบิล และบล็อกโปรโมตระหว่างวิดีโอในฟีดหน้าแรกของ youtube — ปิดไว้เป็นค่าเริ่มต้น ฟีดจึงเป็นแค่ภาพย่อที่เรียงเรียบร้อย"
   },
   "mc_settings_message_density": {
     "message": "ความหนาแน่นข้อความ"
@@ -1496,7 +1496,7 @@
     "message": "หนึ่งคำต่อบรรทัด — ข้อความที่มีคำใดคำหนึ่งจะถูกซ่อน แยกจากการไฮไลต์คำสำคัญ"
   },
   "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
+    "message": "สปอยล์\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "กฎตัวกรอง"
@@ -1628,10 +1628,10 @@
     "message": "น้อยสุด"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "ผู้ใช้ขั้นสูง"
   },
   "mc_settings_preset_moderator": {
-    "message": "moderator"
+    "message": "ม็อด"
   },
   "mc_settings_preset_low_ram": {
     "message": "ram ต่ำ"
@@ -3670,10 +3670,10 @@
     "message": "แต่ละช่องบน youtube จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในวิดีโอ สตรีม และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ youtube"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "ส่งบน youtube แล้ว · ข้าม twitch เพราะยังไม่ได้ล็อกอิน"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm ผู้ใช้ ข้อความ · /r ข้อความ"
   },
   "mc_layout_copied": {
     "message": "คัดลอกลิงก์เลย์เอาต์แล้ว"
@@ -3758,7 +3758,7 @@
     "message": "แดชบอร์ดครีเอเตอร์"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "ตัวจัดการสตรีม"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "ตั้งค่าการดูแล (automod, คำที่ถูกบล็อก)"
@@ -3917,7 +3917,7 @@
     "message": "อีเวนต์"
   },
   "mc_twapi_tab_bits": {
-    "message": "bits"
+    "message": "บิต"
   },
   "mc_twapi_tab_links": {
     "message": "ลิงก์ด่วน"
@@ -3942,7 +3942,7 @@
     "message": "เปิดหน้าต่างเชียร์"
   },
   "mc_twapi_bits_title": {
-    "message": "$AMOUNT$ bits",
+    "message": "$AMOUNT$ บิต",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "ออฟไลน์"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · ผู้ชม $VIEWERS$",
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "สด"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · สด",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -4498,7 +4498,7 @@
     "message": "ทั้งหมด"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "ซูเปอร์แชต $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4506,7 +4506,7 @@
     }
   },
   "mc_social_yt_sticker": {
-    "message": "super sticker $AMOUNT$",
+    "message": "ซูเปอร์สติกเกอร์ $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4568,7 +4568,7 @@
     "message": "ถอด VIP"
   },
   "mc_pcard_error": {
-    "message": "error"
+    "message": "ข้อผิดพลาด"
   },
   "mc_pcard_no_channel": {
     "message": "หาช่องไม่พบ"
@@ -4827,7 +4827,7 @@
     "message": "เชื่อมต่อเซิร์ฟเวอร์ heatsync ไม่ได้"
   },
   "mc_misc_twitch_error": {
-    "message": "twitch error $STATUS$",
+    "message": "twitch ผิดพลาด $STATUS$",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "ในฐานะผู้สมัคร"
   },
-  "mc_notif_wt_prefix": {
-    "message": "ดูต่อเนื่อง"
-  },
-  "mc_notif_wt_stream": {
-    "message": "สตรีม"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "(watch streak)"
+  "mc_notif_wt": {
+    "message": "ดูสตรีมติดต่อกัน $COUNT$ สตรีมแล้ว",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "แชร์"
@@ -6179,7 +6178,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "err"
+    "message": "ผิดพลาด"
   },
   "hsbtn_search_status": {
     "message": "“$QUERY$” — $STATUS$",

@@ -513,7 +513,7 @@
     "message": "피드"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "탐색"
   },
   "mc_tab_whispers": {
     "message": "귓속말"
@@ -1217,10 +1217,10 @@
     "message": "youtube VOD, 홈, 검색에서도 multichat 패널 표시 — 기본은 꺼짐이라 패널은 라이브 방송(라이브 채팅이 있는 곳)에만 나와"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: 피드 선반 표시"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "youtube 홈 피드의 영상 사이에 쇼츠, 플레이어블, 프로모션 블록 표시 — 기본값은 꺼짐, 그래서 피드가 썸네일만 깔끔하게 배열됨"
   },
   "mc_settings_message_density": {
     "message": "메시지 밀도"
@@ -1496,7 +1496,7 @@
     "message": "한 줄에 단어 하나 — 하나라도 포함된 메시지는 숨겨져. 키워드 하이라이트와는 별개."
   },
   "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
+    "message": "스포일러\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "필터 규칙"
@@ -3670,10 +3670,10 @@
     "message": "youtube의 각 채널이 마지막으로 설정한 볼륨을 영상, 방송, 임베드에서 유지합니다. 끄면 youtube 플레이어를 건드리지 않습니다"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "youtube로 전송함 · twitch는 로그인 안 돼서 건너뜀"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm 유저 메시지 · /r 메시지"
   },
   "mc_layout_copied": {
     "message": "레이아웃 링크 복사됨"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "오프라인"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · 시청자 $VIEWERS$명",
@@ -4073,7 +4073,7 @@
     "message": "피드에 op"
   },
   "mc_input_whisper": {
-    "message": "whisper"
+    "message": "귓속말"
   },
   "mc_input_dm": {
     "message": "dm"
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "라이브"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · 라이브",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -5115,7 +5115,7 @@
     "message": "필터 — /regex/ 또는 @user"
   },
   "mc_main_redeem_pts": {
-    "message": "$COST$ pts",
+    "message": "$COST$ 포인트",
     "placeholders": {
       "cost": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "기념"
   },
-  "mc_notif_wt_prefix": {
-    "message": "현재"
-  },
-  "mc_notif_wt_stream": {
-    "message": "연속"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "시청 스트릭"
+  "mc_notif_wt": {
+    "message": "방송 $COUNT$개 연속 시청 스트릭 중",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "공유"
@@ -5563,10 +5562,10 @@
     "message": "배지"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "메시지 유형"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "식"
   },
   "mc_set_fr_expr_tip": {
     "message": "예: first && !badge:subscriber — && || ! ( ) 로 연결; 필드 user: badge: type: contains: regex:"

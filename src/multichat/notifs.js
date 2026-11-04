@@ -722,18 +722,7 @@ const HsNotifs = (() => {
       icon.textContent = '▲'
       const text = document.createElement('span')
       text.className = 'hs-notif-watchstreak-text'
-      const parts = [
-        ['hs-wt-prefix', `${t('mc_notif_wt_prefix')} `],
-        ['hs-wt-num', String(n)],
-        ['hs-wt-stream', ` ${t('mc_notif_wt_stream')}`],
-        ['hs-wt-suffix', ` ${t('mc_notif_wt_suffix')}`],
-      ]
-      for (const [cls, txt] of parts) {
-        const s = document.createElement('span')
-        s.className = cls
-        s.textContent = txt
-        text.appendChild(s)
-      }
+      text.textContent = t('mc_notif_wt', [String(n)])
       el.appendChild(icon)
       el.appendChild(text)
       return el

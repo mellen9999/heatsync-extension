@@ -5283,14 +5283,14 @@
   "mc_notif_rt_suffix": {
     "message": "as a subscriber"
   },
-  "mc_notif_wt_prefix": {
-    "message": "on a"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "on a $COUNT$ stream watch streak",
+    "description": "watch-streak share callout, one phrase so word order can differ per language; $COUNT$ = streak length",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "share"

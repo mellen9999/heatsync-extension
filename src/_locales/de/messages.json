@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "entdecken"
   },
   "mc_tab_whispers": {
     "message": "flüstern"
@@ -649,7 +649,7 @@
     "message": "Zeitstempel auf jeder Nachricht"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "profilbilder"
   },
   "mc_settings_avatars_desc": {
     "message": "Profilbilder neben Benutzernamen"
@@ -1217,10 +1217,10 @@
     "message": "zeigt das multichat-Panel auch auf youtube-VODs, Startseite und Suche — standardmäßig aus, damit das Panel nur bei Livestreams erscheint (wo es Live-Chat gibt)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: feed-bereiche anzeigen"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "zeigt shorts, playables und promo-blöcke zwischen den videos im youtube-home-feed — standardmäßig aus, damit der feed nur aus sauber gekachelten thumbnails besteht"
   },
   "mc_settings_message_density": {
     "message": "nachrichtendichte"
@@ -1565,7 +1565,7 @@
     "message": "heatsync-Social-Feed-Tab + sein Event-Stream"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "flüstern"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "twitch-whisper-eventsub-Socket + Whisper-Tab"
@@ -1583,7 +1583,7 @@
     "message": "nachrichtenrate pro Kanal, Basis für das Heat-Ranking"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "automod-warteschlange"
   },
   "mc_automod_allow": {
     "message": "erlauben"
@@ -2179,10 +2179,10 @@
     }
   },
   "mc_input_usage_note": {
-    "message": "/note <user> <text>"
+    "message": "/note <nutzer> <text>"
   },
   "mc_input_usage_delnote": {
-    "message": "/delnote <user>"
+    "message": "/delnote <nutzer>"
   },
   "mc_input_usage_block": {
     "message": "/block <user> — schaltet Block um"
@@ -2270,10 +2270,10 @@
     }
   },
   "mc_input_usage_vip": {
-    "message": "/vip <user>"
+    "message": "/vip <nutzer>"
   },
   "mc_input_usage_unvip": {
-    "message": "/unvip <user>"
+    "message": "/unvip <nutzer>"
   },
   "mc_input_vip_done": {
     "message": "$USER$ zum vip gemacht",
@@ -2292,10 +2292,10 @@
     }
   },
   "mc_input_usage_mod": {
-    "message": "/mod <user>"
+    "message": "/mod <nutzer>"
   },
   "mc_input_usage_unmod": {
-    "message": "/unmod <user>"
+    "message": "/unmod <nutzer>"
   },
   "mc_input_mod_done": {
     "message": "$USER$ zum mod gemacht",
@@ -3513,7 +3513,7 @@
     "message": "noch nicht im archiv — gleich nochmal versuchen"
   },
   "mc_feed_upvote": {
-    "message": "upvote"
+    "message": "upvoten"
   },
   "mc_feed_upvote_remove": {
     "message": "upvote entfernen"
@@ -3670,10 +3670,10 @@
     "message": "jeder youtube-kanal behält die zuletzt eingestellte lautstärke, in videos, streams und einbettungen. aus lässt den player von youtube in ruhe"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "auf youtube gesendet · twitch übersprungen, nicht angemeldet"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm Nutzer Nachricht · /r Nachricht"
   },
   "mc_layout_copied": {
     "message": "layout-link kopiert"
@@ -3724,7 +3724,7 @@
     }
   },
   "mc_sub_link": {
-    "message": "sub — $PLATFORM$",
+    "message": "abo — $PLATFORM$",
     "placeholders": {
       "platform": {
         "content": "$1"
@@ -4307,7 +4307,7 @@
     "message": "bild/video/link zum hochladen ablegen"
   },
   "mc_input_usage_announce": {
-    "message": "/announce <message>"
+    "message": "/announce <nachricht>"
   },
   "mc_social_edit_empty": {
     "message": "inhalt darf nicht leer sein"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "als abonnent"
   },
-  "mc_notif_wt_prefix": {
-    "message": "mit einer"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "$COUNT$ streams in folge geschaut",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "teilen"
@@ -6036,7 +6035,7 @@
     "message": "anonym"
   },
   "mc_cp_vol": {
-    "message": "vol $PCT$%",
+    "message": "lautst. $PCT$%",
     "placeholders": {
       "pct": {
         "content": "$1"
@@ -6359,7 +6358,7 @@
     "message": "📊 umfrage · "
   },
   "cs_prediction": {
-    "message": "🎯 prediction · "
+    "message": "🎯 vorhersage · "
   },
   "cs_active": {
     "message": "(aktiv)"

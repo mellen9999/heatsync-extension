@@ -411,16 +411,16 @@
     "message": "ब्लॉक"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "मॉड"
   },
   "content_card_unmod": {
-    "message": "unmod"
+    "message": "मॉड हटाओ"
   },
   "content_card_vip": {
     "message": "vip"
   },
   "content_card_unvip": {
-    "message": "unvip"
+    "message": "vip हटाओ"
   },
   "content_card_mod_tools": {
     "message": "mod टूल"
@@ -464,7 +464,7 @@
     "message": "twitch प्रोफ़ाइल"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "क्लिप"
   },
   "content_card_clipping": {
     "message": "clip बन रहा है…"
@@ -490,7 +490,7 @@
     }
   },
   "content_card_affiliate": {
-    "message": "affiliate"
+    "message": "एफ़िलिएट"
   },
   "content_card_live": {
     "message": "लाइव $VIEWERS$",
@@ -513,10 +513,10 @@
     "message": "फ़ीड"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "खोजें"
   },
   "mc_tab_whispers": {
-    "message": "whispers"
+    "message": "व्हिस्पर"
   },
   "mc_tab_mentions": {
     "message": "मेन्शन"
@@ -649,7 +649,7 @@
     "message": "प्रत्येक संदेश पर टाइमस्टैम्प"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "प्रोफ़ाइल फ़ोटो"
   },
   "mc_settings_avatars_desc": {
     "message": "उपयोगकर्ता नामों के पास अवतार"
@@ -685,13 +685,13 @@
     "message": "Twitch इवेंट"
   },
   "mc_settings_raids": {
-    "message": "raids"
+    "message": "रेड"
   },
   "mc_settings_raids_desc": {
     "message": "रेड पर दर्शक संख्या के साथ बैनर"
   },
   "mc_settings_hype_trains": {
-    "message": "hype trains"
+    "message": "हाइप ट्रेन"
   },
   "mc_settings_hype_trains_desc": {
     "message": "लाइव हाइप ट्रेन प्रगति बैनर"
@@ -891,10 +891,10 @@
     "message": "रिडीम करें"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "हाइप ट्रेन"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "लेवल $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "multichat पैनल youtube के vod, होम और सर्च पर भी दिखाओ — डिफ़ॉल्ट बंद, तो पैनल सिर्फ़ लाइवस्ट्रीम पर दिखता है (जहाँ लाइव चैट होती है)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: फ़ीड शेल्फ़ दिखाओ"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "youtube होम फ़ीड में वीडियो के बीच shorts, playables और प्रमो ब्लॉक दिखाओ — डिफ़ॉल्ट रूप से बंद, ताकि फ़ीड सिर्फ़ साफ़ टाइल वाले थंबनेल रहे"
   },
   "mc_settings_message_density": {
     "message": "मैसेज डेंसिटी"
@@ -1241,7 +1241,7 @@
     "message": "लाइव DOM में रखी जाने वाली अधिकतम चैट पंक्तियाँ (डेटा बफ़र 1500 ही रहता है)। कम = व्यस्त चैनल पर कम ram।"
   },
   "mc_settings_name_paints": {
-    "message": "heatsync name paints"
+    "message": "heatsync नेम पेंट्स"
   },
   "mc_settings_name_paints_desc": {
     "message": "heatsync के एनिमेटेड name paints — चैटर के पास दोनों हों तो 7tv paint पर भारी पड़ते हैं"
@@ -1565,7 +1565,7 @@
     "message": "heatsync सोशल फ़ीड टैब + उसका इवेंट स्ट्रीम"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "व्हिस्पर"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "twitch whisper eventsub सॉकेट + whispers टैब"
@@ -1628,7 +1628,7 @@
     "message": "मिनिमल"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "पावर यूज़र"
   },
   "mc_settings_preset_moderator": {
     "message": "मॉडरेटर"
@@ -3670,10 +3670,10 @@
     "message": "youtube का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, वीडियो, स्ट्रीम और एम्बेड में। बंद होने पर youtube का प्लेयर अछूता रहता है"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "youtube पर भेजा · twitch छोड़ा गया, लॉग इन नहीं है"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm यूज़र मैसेज · /r मैसेज"
   },
   "mc_layout_copied": {
     "message": "लेआउट लिंक कॉपी हो गया"
@@ -3758,7 +3758,7 @@
     "message": "क्रिएटर डैशबोर्ड"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "स्ट्रीम मैनेजर"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "मॉडरेशन सेटिंग्स (automod, ब्लॉक किए शब्द)"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "ऑफ़लाइन"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · $VIEWERS$ दर्शक",
@@ -4073,7 +4073,7 @@
     "message": "op फ़ीड पर"
   },
   "mc_input_whisper": {
-    "message": "whisper"
+    "message": "व्हिस्पर"
   },
   "mc_input_dm": {
     "message": "dm"
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "लाइव"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · लाइव",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -4498,7 +4498,7 @@
     "message": "सब"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "सुपर चैट $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4506,7 +4506,7 @@
     }
   },
   "mc_social_yt_sticker": {
-    "message": "super sticker $AMOUNT$",
+    "message": "सुपर स्टिकर $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4731,7 +4731,7 @@
     "message": "permalink कॉपी करो"
   },
   "mc_logs_permalink_aria": {
-    "message": "permalink $TIME$",
+    "message": "परमालिंक $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "सब्सक्राइबर के रूप में"
   },
-  "mc_notif_wt_prefix": {
-    "message": "चल रही"
-  },
-  "mc_notif_wt_stream": {
-    "message": "स्ट्रीम की"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak पर"
+  "mc_notif_wt": {
+    "message": "$COUNT$ स्ट्रीम की वॉच स्ट्रीक पर",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "शेयर"
@@ -5390,7 +5389,7 @@
     "message": "छिपा हुआ"
   },
   "mc_tip_owner_sub": {
-    "message": "$OWNER$ sub ($SRC$)",
+    "message": "$OWNER$ का sub ($SRC$)",
     "placeholders": {
       "owner": {
         "content": "$1"
@@ -5758,10 +5757,10 @@
     "message": "बेसिक"
   },
   "mc_emo_tab_emotes": {
-    "message": "emotes"
+    "message": "इमोट"
   },
   "mc_emo_tab_gifs": {
-    "message": "gifs"
+    "message": "gif"
   },
   "mc_emo_chips_title": {
     "message": "किन प्रोवाइडर में खोजना है चुनो"
@@ -6147,7 +6146,7 @@
     "message": "(बिना नाम)"
   },
   "hsbtn_emote_one": {
-    "message": "$COUNT$ emote",
+    "message": "$COUNT$ इमोट",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6155,7 +6154,7 @@
     }
   },
   "hsbtn_emote_many": {
-    "message": "$COUNT$ emotes",
+    "message": "$COUNT$ इमोट",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6312,13 +6311,13 @@
     "message": "instant तुरंत ब्लॉक करता है · menu में ब्लॉक/रद्द दिखता है · off बंद करता है"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "तुरंत"
   },
   "hsbtn_rcb_menu": {
-    "message": "menu"
+    "message": "मेन्यू"
   },
   "hsbtn_rcb_off": {
-    "message": "off"
+    "message": "बंद"
   },
   "hsbtn_search_ph": {
     "message": "emotes खोजो…"
@@ -6493,7 +6492,7 @@
     "message": " · भरने के लिए कोई चैनल इम्पोर्ट करो"
   },
   "bg_badge_tip": {
-    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "message": "heatsync · $COUNT$ लाइव: $NAMES$",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6663,13 +6662,13 @@
     "message": "आरामदेह"
   },
   "lib_opt_always": {
-    "message": "always"
+    "message": "हमेशा"
   },
   "lib_opt_hover": {
-    "message": "hover"
+    "message": "होवर पर"
   },
   "lib_opt_never": {
-    "message": "never"
+    "message": "कभी नहीं"
   },
   "slash_desc_op": {
     "message": "अपने heatsync फ़ीड पर थ्रेड पोस्ट करो"

@@ -464,7 +464,7 @@
     "message": "ملف twitch"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "مقطع"
   },
   "content_card_clipping": {
     "message": "جارٍ إنشاء clip…"
@@ -513,7 +513,7 @@
     "message": "موجز"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "اكتشف"
   },
   "mc_tab_whispers": {
     "message": "همسات"
@@ -649,7 +649,7 @@
     "message": "طابع زمني على كل رسالة"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "الصور الرمزية"
   },
   "mc_settings_avatars_desc": {
     "message": "الصور الرمزية بجانب أسماء المستخدمين"
@@ -691,7 +691,7 @@
     "message": "لافتة عند الغزو مع عدد المشاهدين"
   },
   "mc_settings_hype_trains": {
-    "message": "hype trains"
+    "message": "قطارات الهايب"
   },
   "mc_settings_hype_trains_desc": {
     "message": "لافتة تقدم قطار الهايب الحي"
@@ -721,13 +721,13 @@
     "message": "لافتة استطلاع نشط، صوّت مباشرة"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "سوبر شات"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "شريط لـ youtube super chats مع المبلغ"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "سوبر ستيكر"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "شريط لـ youtube super stickers مع المبلغ"
@@ -891,7 +891,7 @@
     "message": "استبدل"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "قطار الهايب"
   },
   "mc_chat_hype_level": {
     "message": "مس $LEVEL$",
@@ -1217,10 +1217,10 @@
     "message": "عرض لوحة multichat أيضًا في youtube VODs والرئيسية والبحث — متوقف افتراضيًا، فتظهر اللوحة فقط في البث المباشر (حيث توجد دردشة مباشرة)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: إظهار أرفف الموجز"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "إظهار shorts وplayables وكتل الترويج بين الفيديوهات في الصفحة الرئيسية لـyoutube — متوقف افتراضيًا، فيبقى الموجز صورًا مصغّرة مرتبة فقط"
   },
   "mc_settings_message_density": {
     "message": "كثافة الرسائل"
@@ -1559,13 +1559,13 @@
     "message": "7tv paints + شارات bttv/ffz/chatterino. الإيقاف يوفّر ram في القنوات المزدحمة."
   },
   "mc_settings_sub_feed": {
-    "message": "feed"
+    "message": "موجز"
   },
   "mc_settings_sub_feed_desc": {
     "message": "تبويب feed الاجتماعي في heatsync + بث أحداثه"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "همسات"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "مقبس twitch whisper eventsub + تبويب whispers"
@@ -1583,7 +1583,7 @@
     "message": "إحصاءات معدل الرسائل لكل قناة التي تغذّي ترتيب heat"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "احتجاز automod"
   },
   "mc_automod_allow": {
     "message": "سماح"
@@ -1625,13 +1625,13 @@
     "message": "سجلات وحدة تحكم مفصّلة من كل نصوص heatsync — تسري عند تحميل الصفحة التالي"
   },
   "mc_settings_preset_minimal": {
-    "message": "minimal"
+    "message": "الحد الأدنى"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "مستخدم متقدم"
   },
   "mc_settings_preset_moderator": {
-    "message": "moderator"
+    "message": "مشرف"
   },
   "mc_settings_preset_low_ram": {
     "message": "ram منخفضة"
@@ -3670,10 +3670,10 @@
     "message": "كل قناة على youtube تحتفظ بآخر مستوى صوت ضبطته، في الفيديوهات والبثوث والمضمّنات. الإيقاف يترك مشغّل youtube كما هو"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "أُرسل على youtube · تم تخطي twitch، لم تسجّل الدخول"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm مستخدم رسالة · /r رسالة"
   },
   "mc_layout_copied": {
     "message": "تم نسخ رابط التخطيط"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "كمشترك"
   },
-  "mc_notif_wt_prefix": {
-    "message": "في"
-  },
-  "mc_notif_wt_stream": {
-    "message": "بث"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "سلسلة مشاهدة"
+  "mc_notif_wt": {
+    "message": "في سلسلة مشاهدة لـ$COUNT$ بث",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "مشاركة"
@@ -5554,7 +5553,7 @@
     "message": "كلمة"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "تعبير نمطي"
   },
   "mc_set_fr_t_user": {
     "message": "مستخدم"

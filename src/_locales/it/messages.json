@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "scopri"
   },
   "mc_tab_whispers": {
     "message": "sussurri"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "liv. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "mostra il pannello multichat anche su VOD, home e ricerca di youtube — off di default, così il pannello appare solo nelle dirette (dove c'è chat live)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: mostra le sezioni del feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "mostra shorts, playables e blocchi promo tra i video nel feed della home di youtube — disattivato di default, così il feed è solo miniature ben allineate"
   },
   "mc_settings_message_density": {
     "message": "densità messaggi"
@@ -1628,7 +1628,7 @@
     "message": "minimale"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "utente esperto"
   },
   "mc_settings_preset_moderator": {
     "message": "mod"
@@ -2338,7 +2338,7 @@
     }
   },
   "mc_input_mode_on": {
-    "message": "$LABEL$ on",
+    "message": "$LABEL$ attivo",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2346,7 +2346,7 @@
     }
   },
   "mc_input_mode_off": {
-    "message": "$LABEL$ off",
+    "message": "$LABEL$ disattivo",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2354,7 +2354,7 @@
     }
   },
   "mc_input_mode_on_dur": {
-    "message": "$LABEL$ on ($DETAIL$)",
+    "message": "$LABEL$ attivo ($DETAIL$)",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -3190,10 +3190,10 @@
     "message": "chat unica"
   },
   "mc_cm_on": {
-    "message": "on"
+    "message": "attivo"
   },
   "mc_cm_off": {
-    "message": "off"
+    "message": "disattivo"
   },
   "mc_cm_min": {
     "message": "min"
@@ -3670,10 +3670,10 @@
     "message": "ogni canale youtube conserva l'ultimo volume impostato, in video, stream e incorporamenti. disattivato lascia in pace il player di youtube"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "inviato su youtube · twitch saltato, accesso non effettuato"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm utente msg · /r msg"
   },
   "mc_layout_copied": {
     "message": "link del layout copiato"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "da iscritto"
   },
-  "mc_notif_wt_prefix": {
-    "message": "in una serie di"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "consecutivi"
+  "mc_notif_wt": {
+    "message": "in una serie di visione da $COUNT$ stream",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "condividi"
@@ -5563,7 +5562,7 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "tipo msg"
   },
   "mc_set_fr_t_expr": {
     "message": "expr"
@@ -5636,7 +5635,7 @@
     "message": "(impossibile leggere il log)"
   },
   "mc_set_fmt_off_list": {
-    "message": "off: $LIST$",
+    "message": "disattivi: $LIST$",
     "placeholders": {
       "list": {
         "content": "$1"
@@ -6318,7 +6317,7 @@
     "message": "menu"
   },
   "hsbtn_rcb_off": {
-    "message": "off"
+    "message": "disattivo"
   },
   "hsbtn_search_ph": {
     "message": "cerca emote…"

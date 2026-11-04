@@ -13409,7 +13409,13 @@ function buildEmoteRefs(content, emotesMap, channelMap) {
     // own just-added inventory copy for the rest of the session, which is a
     // worse bug (no hash, no natural-size box, on EVERY future send of that
     // word) than the narrow collision it was meant to fix.
-    if (ed?.hash) {
+    // Order a line draws in: your inventory, then the room's own emote, then
+    // the rest of your map (twitch globals/subs, shared globals). A non-inventory
+    // hit therefore yields to a room emote of the same name; a bare map entry
+    // never outranks the channel.
+    const roomHit = ed?.hash && ed.provider !== 'inventory'
+      && (channelMap?.get(clean)?.url || channelMap?.get(clean.toLowerCase())?.url)
+    if (ed?.hash && !roomHit) {
       emote_refs[clean] = {
         hash: ed.hash,
         url: ed.url,
@@ -15307,7 +15313,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '33f23e687f0a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '10853824c646' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27168,7 +27174,8 @@ function mergeSenderEmotes(senderKey, nameToEmote) {
         prev.state !== data.state ||
         prev.source !== data.source ||
         prev.addedAt !== data.addedAt ||
-        prev.removedAt !== data.removedAt
+        prev.removedAt !== data.removedAt ||
+        prev.untilAt !== data.untilAt
       ) {
         inner.set(name, _carryEmoteInterval(prev, data))
         changed = true
@@ -27327,7 +27334,8 @@ function replaceSenderEmotes(senderKey, nameToEmote) {
       prev.source !== data.source ||
       prev.cw !== data.cw ||
       prev.addedAt !== data.addedAt ||
-      prev.removedAt !== data.removedAt
+      prev.removedAt !== data.removedAt ||
+      prev.untilAt !== data.untilAt
     ) {
       inner.set(name, _carryEmoteInterval(prev, data))
       changed = true
@@ -28542,6 +28550,9 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     )
       return null
     if (entry.removedAt && msgTime >= entry.removedAt) return null
+    // A historical pairing's upper bound (untilAt, see the BG batch loop): past
+    // it the word means nothing again. Same skew pad as addedAt, server clock.
+    if (entry.untilAt && msgTime >= entry.untilAt + EMOTE_ADDED_SKEW_MS) return null
     return entry
   }
   const _sGet = (name) => (_invRender ? _sGate(senderEmotes?.get(name)) : null)
@@ -53255,6 +53266,11 @@ async function sendMessage() {
   // cursor on the visible composer.
   settleComposerAfterSend(input)
 
+  // The composer is already clear and settled; only the platform legs wait for a
+  // pending emote add (bounded), so Enter again can't resend this line.
+  const addHold = emoteAddHold(autoAdded)
+  if (addHold) await addHold
+
   // --- Kick send path (single, dual, or triple including YT) ---
   if (sendToKick) {
     const slug = kickSlug || targetChannel
@@ -53491,6 +53507,30 @@ async function sendMessage() {
       }, 1500)
       markPendingFailed(_synthId, 'send_failed')
     })
+}
+
+// The server stamps each chat line with the sender's emotes as they stand when it
+// fans the line out, and that stamp beats everything, for every viewer, for good.
+// A line sent before its own add/swap lands carries the OLD emote of that name. So
+// the platform legs wait for the add, bounded: a slow or failed add still sends the
+// text. A later line queues behind the wait, so it neither overtakes the line
+// before it nor beats that same still-pending add out the door. No add in flight =
+// no wait.
+const EMOTE_ADD_SEND_WAIT_MS = 1500
+let _emoteAddHold = null
+function emoteAddHold(autoAdded) {
+  if (autoAdded) {
+    const own = Promise.race([
+      Promise.resolve(autoAdded).catch(() => null),
+      new Promise((r) => setTimeout(r, EMOTE_ADD_SEND_WAIT_MS)),
+    ])
+    const hold = Promise.all([_emoteAddHold, own])
+    _emoteAddHold = hold
+    hold.then(() => {
+      if (_emoteAddHold === hold) _emoteAddHold = null
+    })
+  }
+  return _emoteAddHold
 }
 
 // The exact live video id for the stream currently being composed to, from the

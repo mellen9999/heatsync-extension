@@ -19,13 +19,13 @@ function extractFn(src, name) {
   return src.slice(start, end + 2)
 }
 
-// pool: name -> entry, standing in for lookupEmoteRenderOrder's resolution.
+// pool: name -> entry, standing in for lookupEmoteWireOrder's resolution.
 function make(pool) {
   return new Function(
     'pool',
     `const KICK_EMOTE_ID_RE = ${String(EMOTES.match(/const KICK_EMOTE_ID_RE = (.+)/)[1])}
      const KICK_MAX_MESSAGE = 500
-     const lookupEmoteRenderOrder = (n) => pool[n] || null
+     const lookupEmoteWireOrder = (n) => pool[n] || null
      ${extractFn(EMOTES, 'kickifyEmoteText')}
      return kickifyEmoteText`,
   )(pool)

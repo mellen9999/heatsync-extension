@@ -3310,7 +3310,7 @@ function kickifyEmoteText(text) {
   const out = text.replace(/\S+/g, (word) => {
     // Never touch a token the user (or kick's own composer) already wrote.
     if (word.startsWith('[emote:')) return word
-    const e = typeof lookupEmoteRenderOrder === 'function' ? lookupEmoteRenderOrder(word) : null
+    const e = typeof lookupEmoteWireOrder === 'function' ? lookupEmoteWireOrder(word) : null
     if (e?.source !== 'kick' || !e.url) return word
     const m = KICK_EMOTE_ID_RE.exec(e.url)
     return m ? `[emote:${m[1]}:${word}]` : word
@@ -3329,14 +3329,22 @@ function kickifyEmoteText(text) {
 function lookupOwnedEmote(name) {
   return viewerPersonalEmotes.get(name)
 }
-// Resolution for the INPUT PREVIEW: channel > inventory > global. NOTE this is no
-// longer processEmotes' order: a rendered line puts the sender's own set before the
-// channel (see _lookup), so a name you own that the channel also has previews as the
-// channel's here but draws as yours once sent. lookupEmote stays inventory-first —
-// it drives block/add/state/tooltip, which are viewer-centric. Removed/blocked
-// fallbacks stay last so a blocked emote still resolves its real url for the
-// dashed-box preview.
+// Composer preview order: inventory > channel > global, the order a sent line draws in
+// (see _lookup: your own emote beats the channel's of the same name). lookupEmote stays
+// inventory-first too — it drives block/add/state/tooltip. Removed/blocked fallbacks
+// stay last so a blocked emote still resolves its real url for the dashed-box preview.
 function lookupEmoteRenderOrder(name) {
+  return (
+    viewerPersonalEmotes.get(name) ||
+    activeTabChannelEmote(name) ||
+    emoteCache.get(name) ||
+    removedEmoteFallback.get(name) ||
+    blockedEmoteFallback.get(name)
+  )
+}
+// Wire order for kick: channel > inventory > global, so a kick channel emote that shares a name
+// with one you own still goes out as the kick-native token every kick viewer can see.
+function lookupEmoteWireOrder(name) {
   return (
     activeTabChannelEmote(name) ||
     viewerPersonalEmotes.get(name) ||
@@ -5090,6 +5098,7 @@ export {
   loadSenderEmoteSets,
   lookupEmote,
   lookupEmoteRenderOrder,
+  lookupEmoteWireOrder,
   lookupEmoteWithOverlay,
   lookupOwnedEmote,
   mergeSenderEmotes,

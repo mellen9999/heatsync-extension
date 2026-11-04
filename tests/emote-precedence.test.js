@@ -41,6 +41,7 @@ const {
   inventoryEmotes,
   lookupEmote,
   lookupEmoteRenderOrder,
+  lookupEmoteWireOrder,
   lookupEmoteWithOverlay,
   lookupOwnedEmote,
   removedEmoteFallback,
@@ -167,15 +168,19 @@ test('lookupOwnedEmote only ever returns from viewerPersonalEmotes', () => {
   expect(lookupOwnedEmote('Foo').url).toBe('owned-url')
 })
 
-// ── lookupEmoteRenderOrder precedence: channel > inventory > global (INVERTED vs lookupEmote) ──
+// ── lookupEmoteRenderOrder (composer preview) / lookupEmoteWireOrder (kick wire form) ──
 
-describe('lookupEmoteRenderOrder precedence (channel-first, diverges from lookupEmote)', () => {
-  test('channel cache wins over inventory — the key divergence from lookupEmote', () => {
+describe('lookupEmoteRenderOrder precedence (inventory-first, like a sent line)', () => {
+  test("inventory wins over the channel cache — your own emote over the room's of the same name", () => {
     viewerPersonalEmotes.set('Foo', { url: 'inventory-url' })
     channelEmoteCaches['chan-a'] = new Map([['Foo', { url: 'channel-url' }]])
+    expect(lookupEmoteRenderOrder('Foo').url).toBe('inventory-url')
+  })
+
+  test('channel wins over global when not owned', () => {
+    channelEmoteCaches['chan-a'] = new Map([['Foo', { url: 'channel-url' }]])
+    emoteCache.set('Foo', { url: 'global-url' })
     expect(lookupEmoteRenderOrder('Foo').url).toBe('channel-url')
-    // Sanity: lookupEmote (inventory-first) disagrees, proving the two really differ.
-    expect(lookupEmote('Foo').url).toBe('inventory-url')
   })
 
   test('inventory wins over global when no channel hit', () => {
@@ -192,6 +197,23 @@ describe('lookupEmoteRenderOrder precedence (channel-first, diverges from lookup
   test('removed/blocked fallbacks still apply last', () => {
     removedEmoteFallback.set('Foo', { url: 'removed-url' })
     expect(lookupEmoteRenderOrder('Foo').url).toBe('removed-url')
+  })
+})
+
+describe('lookupEmoteWireOrder precedence (channel-first: kick-native stays kick-native)', () => {
+  test('a kick channel emote beats an owned emote of the same name', () => {
+    viewerPersonalEmotes.set('Foo', { url: 'inventory-url', source: '7tv' })
+    channelEmoteCaches['chan-a'] = new Map([['Foo', { url: 'kick-url', source: 'kick' }]])
+    expect(lookupEmoteWireOrder('Foo').url).toBe('kick-url')
+    expect(lookupEmoteRenderOrder('Foo').url).toBe('inventory-url')
+  })
+
+  test('inventory beats global, fallbacks last', () => {
+    viewerPersonalEmotes.set('Foo', { url: 'inventory-url' })
+    emoteCache.set('Foo', { url: 'global-url' })
+    expect(lookupEmoteWireOrder('Foo').url).toBe('inventory-url')
+    removedEmoteFallback.set('Bar', { url: 'removed-url' })
+    expect(lookupEmoteWireOrder('Bar').url).toBe('removed-url')
   })
 })
 

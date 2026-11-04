@@ -3028,7 +3028,8 @@ function mergeSenderEmotes(senderKey, nameToEmote) {
         prev.state !== data.state ||
         prev.source !== data.source ||
         prev.addedAt !== data.addedAt ||
-        prev.removedAt !== data.removedAt
+        prev.removedAt !== data.removedAt ||
+        prev.untilAt !== data.untilAt
       ) {
         inner.set(name, _carryEmoteInterval(prev, data))
         changed = true
@@ -3187,7 +3188,8 @@ function replaceSenderEmotes(senderKey, nameToEmote) {
       prev.source !== data.source ||
       prev.cw !== data.cw ||
       prev.addedAt !== data.addedAt ||
-      prev.removedAt !== data.removedAt
+      prev.removedAt !== data.removedAt ||
+      prev.untilAt !== data.untilAt
     ) {
       inner.set(name, _carryEmoteInterval(prev, data))
       changed = true
@@ -4402,6 +4404,9 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     )
       return null
     if (entry.removedAt && msgTime >= entry.removedAt) return null
+    // A historical pairing's upper bound (untilAt, see the BG batch loop): past
+    // it the word means nothing again. Same skew pad as addedAt, server clock.
+    if (entry.untilAt && msgTime >= entry.untilAt + EMOTE_ADDED_SKEW_MS) return null
     return entry
   }
   const _sGet = (name) => (_invRender ? _sGate(senderEmotes?.get(name)) : null)

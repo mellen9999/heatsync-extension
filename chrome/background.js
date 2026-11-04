@@ -11480,6 +11480,13 @@ async function handleMessage(message, sender, sendResponse) {
               hash: e.hash || '',
               nsfw: !!e.nsfw, // v1.6 — cyan dashed border in chat + picker
             }
+            // The upper bound, from a historical pairing (a name they USED with an
+            // emote they no longer hold): the last time the archive saw them use
+            // it. _sGate withholds it from lines sent after that (+ skew pad), or
+            // a removed emote draws on the bare word forever. Live rows have no
+            // `until` and stay open-ended; set only when bounded.
+            const untilAt = emoteAddedAtMs(e.until)
+            if (untilAt) collected[name].untilAt = untilAt
           }
           // Only cache when the result is trustworthy: a transient fetch error
           // must NOT be cached — even the 90s negative TTL wrongly blanks this

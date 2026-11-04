@@ -6825,6 +6825,9 @@ function wsSend(msg) {
   return false
 }
 
+// Set on a worker's first ws auth; every later one is a reconnect.
+let wsAuthedOnce = false
+
 // Handle incoming WebSocket messages
 function handleWSMessage(msg) {
   try {
@@ -6846,6 +6849,18 @@ function handleWSMessage(msg) {
         // Every auth (not once-per-session): resync the badge counter the
         // idle-closed socket / evicted SW couldn't keep current.
         hydrateUnreadNotifCount().catch(() => {})
+        // A reconnect means any account:changed sent while we were away is lost,
+        // so re-read the account (linked platforms decide whose emotes are yours).
+        // The first auth of a worker is skipped: startup already fetched it.
+        if (wsAuthedOnce) fetchUserInfo().catch(() => {})
+        wsAuthedOnce = true
+        break
+
+      case 'account:changed':
+        // A platform was linked or unlinked on heatsync.org: without this the
+        // ext kept the old identity until a restart and told a linked user
+        // their emotes "won't render for others".
+        fetchUserInfo().catch(() => {})
         break
 
       case 'server:shutdown':

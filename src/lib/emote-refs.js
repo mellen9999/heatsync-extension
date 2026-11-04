@@ -180,7 +180,13 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
     // own just-added inventory copy for the rest of the session, which is a
     // worse bug (no hash, no natural-size box, on EVERY future send of that
     // word) than the narrow collision it was meant to fix.
-    if (ed?.hash) {
+    // Order a line draws in: your inventory, then the room's own emote, then
+    // the rest of your map (twitch globals/subs, shared globals). A non-inventory
+    // hit therefore yields to a room emote of the same name; a bare map entry
+    // never outranks the channel.
+    const roomHit = ed?.hash && ed.provider !== 'inventory'
+      && (channelMap?.get(clean)?.url || channelMap?.get(clean.toLowerCase())?.url)
+    if (ed?.hash && !roomHit) {
       emote_refs[clean] = {
         hash: ed.hash,
         url: ed.url,

@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "مرّر فوق المشغّل لضبط الصوت"
   },
+  "mc_settings_channel_volume": {
+    "message": "تذكّر مستوى الصوت لكل قناة"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "تحتفظ كل قناة بمستوى الصوت الذي ضبطته آخر مرة. يعمل على twitch وkick وyoutube وفي المضمّنات"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "مستوى الصوت الابتدائي للقنوات الجديدة"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "القناة التي لم تضبطها بعد تُفتح بمستوى الصوت هذا. 0 يترك مستوى صوت المشغّل كما هو"
+  },
   "mc_settings_visible_tabs": {
     "message": "التبويبات الظاهرة"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "رفعك الخاص يحتفظ بالاسم $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "وضع الدردشة الفريدة — يجب أن تكون الرسالة فريدة"
+  },
+  "mc_card_gift_copied": {
+    "message": "تم نسخ $NAME$ — الصقه في مربع الإهداء",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "تعذّر النسخ — اكتب $NAME$ في مربع الإهداء",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod يفحص رسالتك"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "لا تتابع"
   },
-  "mc_card_gift_copied": {
-    "message": "تم نسخ $NAME$ — الصقه في مربع الإهداء",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "تعذّر النسخ — اكتب $NAME$ في مربع الإهداء",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync على twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "إيقاف: يحتفظ الموقع بدردشته الأصلية ولا يعمل heatsync هناك — أعد التحميل للتطبيق"
-  },
-  "mc_settings_channel_volume": {
-    "message": "تذكّر مستوى الصوت لكل قناة"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "تحتفظ كل قناة بمستوى الصوت الذي ضبطته آخر مرة. يعمل على twitch وkick وyoutube وفي المضمّنات"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "مستوى الصوت الابتدائي للقنوات الجديدة"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "القناة التي لم تضبطها بعد تُفتح بمستوى الصوت هذا. 0 يترك مستوى صوت المشغّل كما هو"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "تذكّر مستوى الصوت على twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "تم نسخ رابط التخطيط"
+  },
+  "mc_layout_none": {
+    "message": "لا توجد تبويبات للمشاركة"
+  },
+  "mc_layout_usage": {
+    "message": "الاستخدام: /layout <رابط heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "تمت إضافة التبويبات: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "هذه التبويبات موجودة لديك بالفعل"
+  },
+  "mc_cfg_show": {
+    "message": "عرض"
+  },
+  "mc_cfg_show_title": {
+    "message": "عرض $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "إرسال إلى"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "إرسال إلى $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "اشتراك — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "تعديل"
+  },
+  "mc_ctx_remove": {
+    "message": "إزالة"
+  },
+  "mc_cycle_catalog": {
+    "message": "الكتالوج · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

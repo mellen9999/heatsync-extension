@@ -4090,8 +4090,8 @@
         menu.appendChild(item)
       }
 
-      mkItem('edit', '#fff', () => showEditChannelForm(tabId))
-      mkItem('remove', 'var(--hs-danger)', () => removeChannel(tabId))
+      mkItem(t('mc_ctx_edit'), '#fff', () => showEditChannelForm(tabId))
+      mkItem(t('mc_ctx_remove'), 'var(--hs-danger)', () => removeChannel(tabId))
 
       // Append then clamp to viewport so it doesn't overflow off-screen
       document.body.appendChild(menu)

@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "görgess a lejátszón a hangerő állításához"
   },
+  "mc_settings_channel_volume": {
+    "message": "hangerő megjegyzése csatornánként"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "minden csatorna megtartja az utoljára beállított hangerőt. twitchen, kicken és youtube-on működik, beágyazásokban is"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "új csatornák kezdő hangereje"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "egy még nem beállított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszó saját hangerejét"
+  },
   "mc_settings_visible_tabs": {
     "message": "látható lapok"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "a saját feltöltésed megtartja a nevet: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "egyedi chat mód — az üzenetnek egyedinek kell lennie"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ másolva — illeszd be az ajándék mezőbe",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "a másolás nem sikerült — írd be: $NAME$ az ajándék mezőbe",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod ellenőrzi az üzenetedet"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "nem követed"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ másolva — illeszd be az ajándék mezőbe",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "a másolás nem sikerült — írd be: $NAME$ az ajándék mezőbe",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync a(z) twitch oldalon"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "ki: az oldal megtartja a saját chatjét, és a heatsync nem töltődik be ott — az érvényesítéshez töltsd újra"
-  },
-  "mc_settings_channel_volume": {
-    "message": "hangerő megjegyzése csatornánként"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "minden csatorna megtartja az utoljára beállított hangerőt. twitchen, kicken és youtube-on működik, beágyazásokban is"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "új csatornák kezdő hangereje"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "egy még nem beállított csatorna ezzel a hangerővel nyílik meg. a 0 békén hagyja a lejátszó saját hangerejét"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "hangerő megjegyzése: twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "elrendezés-link másolva"
+  },
+  "mc_layout_none": {
+    "message": "nincs megosztható lap"
+  },
+  "mc_layout_usage": {
+    "message": "használat: /layout <heatsync.org/m/... link>"
+  },
+  "mc_layout_added": {
+    "message": "hozzáadott lapok: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "ezek a lapok már megvannak"
+  },
+  "mc_cfg_show": {
+    "message": "mutat"
+  },
+  "mc_cfg_show_title": {
+    "message": "$PLATFORM$ mutatása: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "küldés ide"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "küldés ide: $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "feliratkozás — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "szerkesztés"
+  },
+  "mc_ctx_remove": {
+    "message": "eltávolítás"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalógus · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

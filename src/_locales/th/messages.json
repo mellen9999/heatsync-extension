@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "เลื่อนเมาส์บนเพลเยอร์เพื่อปรับเสียง"
   },
+  "mc_settings_channel_volume": {
+    "message": "จำระดับเสียงแยกตามแต่ละช่อง"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "แต่ละช่องจะเก็บระดับเสียงที่คุณตั้งไว้ล่าสุด ใช้ได้บน twitch, kick และ youtube รวมถึงในแบบฝัง"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "ระดับเสียงเริ่มต้นสำหรับช่องใหม่"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ช่องที่คุณยังไม่ได้ตั้งจะเปิดด้วยระดับเสียงนี้ ถ้าเป็น 0 จะไม่แตะระดับเสียงของเครื่องเล่น"
+  },
   "mc_settings_visible_tabs": {
     "message": "แท็บที่แสดง"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "อัปโหลดของคุณเองยังใช้ชื่อ $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "โหมดข้อความไม่ซ้ำ — ข้อความต้องไม่ซ้ำ"
+  },
+  "mc_card_gift_copied": {
+    "message": "คัดลอก $NAME$ แล้ว — วางในช่องของขวัญ",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "คัดลอกไม่สำเร็จ — พิมพ์ $NAME$ ในช่องของขวัญ",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod กำลังตรวจข้อความคุณ"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "ไม่ได้ติดตาม"
   },
-  "mc_card_gift_copied": {
-    "message": "คัดลอก $NAME$ แล้ว — วางในช่องของขวัญ",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "คัดลอกไม่สำเร็จ — พิมพ์ $NAME$ ในช่องของขวัญ",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync บน twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "ปิด: เว็บไซต์ใช้แชทของตัวเองต่อไปและ heatsync จะไม่โหลดที่นั่น — รีโหลดเพื่อใช้งาน"
-  },
-  "mc_settings_channel_volume": {
-    "message": "จำระดับเสียงแยกตามแต่ละช่อง"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "แต่ละช่องจะเก็บระดับเสียงที่คุณตั้งไว้ล่าสุด ใช้ได้บน twitch, kick และ youtube รวมถึงในแบบฝัง"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "ระดับเสียงเริ่มต้นสำหรับช่องใหม่"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "ช่องที่คุณยังไม่ได้ตั้งจะเปิดด้วยระดับเสียงนี้ ถ้าเป็น 0 จะไม่แตะระดับเสียงของเครื่องเล่น"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "จำระดับเสียงบน twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "คัดลอกลิงก์เลย์เอาต์แล้ว"
+  },
+  "mc_layout_none": {
+    "message": "ไม่มีแท็บให้แชร์"
+  },
+  "mc_layout_usage": {
+    "message": "วิธีใช้: /layout <ลิงก์ heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "เพิ่มแท็บแล้ว: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "มีแท็บเหล่านี้อยู่แล้ว"
+  },
+  "mc_cfg_show": {
+    "message": "แสดง"
+  },
+  "mc_cfg_show_title": {
+    "message": "แสดง $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "ส่งไปที่"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "ส่งไป $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "สมัคร — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "แก้ไข"
+  },
+  "mc_ctx_remove": {
+    "message": "ลบ"
+  },
+  "mc_cycle_catalog": {
+    "message": "แคตตาล็อก · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

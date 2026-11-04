@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scrolla över spelaren för att ändra volymen"
   },
+  "mc_settings_channel_volume": {
+    "message": "kom ihåg ljudvolym per kanal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "varje kanal behåller den ljudvolym du senast ställde in. fungerar på twitch, kick och youtube, och i inbäddningar"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "startljudvolym för nya kanaler"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "en kanal du inte ställt in än öppnas med den här ljudvolymen. 0 låter spelarens egen volym vara"
+  },
   "mc_settings_visible_tabs": {
     "message": "synliga flikar"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "din egen uppladdning behåller namnet $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "unik-chatt-läge — meddelandet måste vara unikt"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopierade $NAME$ — klistra in det i presentfältet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kunde inte kopiera — skriv $NAME$ i presentfältet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod kollar ditt meddelande"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "följer inte"
   },
-  "mc_card_gift_copied": {
-    "message": "kopierade $NAME$ — klistra in det i presentfältet",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "kunde inte kopiera — skriv $NAME$ i presentfältet",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync på twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "av: sidan behåller sin egen chatt och heatsync laddas inte där — ladda om för att tillämpa"
-  },
-  "mc_settings_channel_volume": {
-    "message": "kom ihåg ljudvolym per kanal"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "varje kanal behåller den ljudvolym du senast ställde in. fungerar på twitch, kick och youtube, och i inbäddningar"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "startljudvolym för nya kanaler"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "en kanal du inte ställt in än öppnas med den här ljudvolymen. 0 låter spelarens egen volym vara"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "kom ihåg volym på twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "layoutlänk kopierad"
+  },
+  "mc_layout_none": {
+    "message": "inga flikar att dela"
+  },
+  "mc_layout_usage": {
+    "message": "användning: /layout <heatsync.org/m/...-länk>"
+  },
+  "mc_layout_added": {
+    "message": "flikar tillagda: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "du har redan de flikarna"
+  },
+  "mc_cfg_show": {
+    "message": "visa"
+  },
+  "mc_cfg_show_title": {
+    "message": "visa $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "skicka till"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "skicka till $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "redigera"
+  },
+  "mc_ctx_remove": {
+    "message": "ta bort"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

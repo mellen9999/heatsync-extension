@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "वॉल्यूम बदलने के लिए प्लेयर पर स्क्रॉल करो"
   },
+  "mc_settings_channel_volume": {
+    "message": "हर चैनल के लिए आवाज़ का वॉल्यूम याद रखें"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "हर चैनल वह आवाज़ का वॉल्यूम रखता है जो आपने आखिरी बार सेट किया। twitch, kick और youtube पर, और एम्बेड में काम करता है"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "नए चैनलों के लिए शुरुआती आवाज़ का वॉल्यूम"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "जो चैनल आपने अभी सेट नहीं किया, वह इसी आवाज़ के वॉल्यूम पर खुलता है। 0 रखने पर प्लेयर का अपना वॉल्यूम नहीं छूता"
+  },
   "mc_settings_visible_tabs": {
     "message": "दिखने वाले टैब"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "तुम्हारा अपना अपलोड $NAME$ नाम रखता है",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "यूनिक-चैट मोड — मैसेज यूनिक होना चाहिए"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ कॉपी हो गया — इसे गिफ्ट बॉक्स में पेस्ट करें",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "कॉपी नहीं हो सका — गिफ्ट बॉक्स में $NAME$ टाइप करें",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod तुम्हारा मैसेज जाँच रहा है"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "फ़ॉलो नहीं कर रहे"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ कॉपी हो गया — इसे गिफ्ट बॉक्स में पेस्ट करें",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "कॉपी नहीं हो सका — गिफ्ट बॉक्स में $NAME$ टाइप करें",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "twitch पर heatsync"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "बंद: साइट अपनी चैट रखती है और वहाँ heatsync लोड नहीं होता — लागू करने के लिए रीलोड करें"
-  },
-  "mc_settings_channel_volume": {
-    "message": "हर चैनल के लिए आवाज़ का वॉल्यूम याद रखें"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "हर चैनल वह आवाज़ का वॉल्यूम रखता है जो आपने आखिरी बार सेट किया। twitch, kick और youtube पर, और एम्बेड में काम करता है"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "नए चैनलों के लिए शुरुआती आवाज़ का वॉल्यूम"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "जो चैनल आपने अभी सेट नहीं किया, वह इसी आवाज़ के वॉल्यूम पर खुलता है। 0 रखने पर प्लेयर का अपना वॉल्यूम नहीं छूता"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "twitch पर वॉल्यूम याद रखें"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "लेआउट लिंक कॉपी हो गया"
+  },
+  "mc_layout_none": {
+    "message": "शेयर करने के लिए कोई टैब नहीं"
+  },
+  "mc_layout_usage": {
+    "message": "उपयोग: /layout <heatsync.org/m/... लिंक>"
+  },
+  "mc_layout_added": {
+    "message": "टैब जोड़े गए: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "ये टैब पहले से हैं"
+  },
+  "mc_cfg_show": {
+    "message": "दिखाओ"
+  },
+  "mc_cfg_show_title": {
+    "message": "$PLATFORM$ दिखाओ: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "यहाँ भेजो"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "$PLATFORM$ पर भेजो: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "सब — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "बदलो"
+  },
+  "mc_ctx_remove": {
+    "message": "हटाओ"
+  },
+  "mc_cycle_catalog": {
+    "message": "कैटलॉग · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

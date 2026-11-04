@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "molette sur le lecteur pour régler le volume"
   },
+  "mc_settings_channel_volume": {
+    "message": "mémoriser le volume sonore par chaîne"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "chaque chaîne garde le volume sonore que tu as réglé en dernier. fonctionne sur twitch, kick et youtube, et dans les intégrations"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "volume sonore de départ pour les nouvelles chaînes"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "une chaîne que tu n'as pas encore réglée s'ouvre à ce volume sonore. 0 laisse le volume du lecteur tel quel"
+  },
   "mc_settings_visible_tabs": {
     "message": "onglets visibles"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "ton propre upload garde le nom $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "mode chat unique — le message doit être unique"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ copié — colle-le dans la case du cadeau",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "copie impossible — saisis $NAME$ dans la case du cadeau",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod vérifie ton message"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "non suivi"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ copié — colle-le dans la case du cadeau",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "copie impossible — saisis $NAME$ dans la case du cadeau",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync sur twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "désactivé : le site garde son propre chat et heatsync ne s'y charge pas — recharge pour appliquer"
-  },
-  "mc_settings_channel_volume": {
-    "message": "mémoriser le volume sonore par chaîne"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "chaque chaîne garde le volume sonore que tu as réglé en dernier. fonctionne sur twitch, kick et youtube, et dans les intégrations"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "volume sonore de départ pour les nouvelles chaînes"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "une chaîne que tu n'as pas encore réglée s'ouvre à ce volume sonore. 0 laisse le volume du lecteur tel quel"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "mémoriser le volume sur twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "lien de disposition copié"
+  },
+  "mc_layout_none": {
+    "message": "aucun onglet à partager"
+  },
+  "mc_layout_usage": {
+    "message": "usage : /layout <lien heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "onglets ajoutés : $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "tu as déjà ces onglets"
+  },
+  "mc_cfg_show": {
+    "message": "afficher"
+  },
+  "mc_cfg_show_title": {
+    "message": "afficher $PLATFORM$ : $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "envoyer à"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "envoyer à $PLATFORM$ : $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "abonnement — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "modifier"
+  },
+  "mc_ctx_remove": {
+    "message": "retirer"
+  },
+  "mc_cycle_catalog": {
+    "message": "catalogue · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

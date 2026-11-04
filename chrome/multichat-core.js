@@ -15313,7 +15313,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ea4ed8c8f44a' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '28f3a3c3616f' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -50383,7 +50383,8 @@ function emoteCycleMeta(m) {
   if (m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
   // Name the provider: a catalog IDK sits right after the channel's IDK in the
   // cycle, and "which one is this" is the whole question.
-  if (m.remote) return { cat: `catalog · ${m.source || '7tv'}`, vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+  if (m.remote)
+    return { cat: t('mc_cycle_catalog', [m.source || '7tv']), vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
   const tier = m.tier ?? 2
   const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
   if (m.source === 'twitch') return { cat, vis: { t: 'all twitch', c: 'var(--hs-ok)' } }
@@ -52278,17 +52279,17 @@ async function handleSlashCommand(text, input) {
     const link = mcLayoutLink(config.channels)
     clearInput(input)
     if (!link) {
-      showToast('no tabs to share', 'error')
+      showToast(t('mc_layout_none'), 'error')
       return true
     }
-    mcCopyToClipboard(link, 'layout link copied')
+    mcCopyToClipboard(link, t('mc_layout_copied'))
     return true
   }
 
   if (cmd === 'layout') {
     const tabs = mcLayoutParse(rest)
     if (!tabs.length) {
-      showToast('usage: /layout <heatsync.org/m/... link>', 'error')
+      showToast(t('mc_layout_usage'), 'error')
       return true
     }
     const added = addChannelsBulk(
@@ -52296,10 +52297,7 @@ async function handleSlashCommand(text, input) {
     )
     clearInput(input)
     if (added) switchTab(config.channels[config.channels.length - 1].id)
-    showToast(
-      added ? `added ${added} tab${added === 1 ? '' : 's'}` : 'already have those tabs',
-      added ? 'success' : undefined,
-    )
+    showToast(added ? t('mc_layout_added', [String(added)]) : t('mc_layout_have_all'), added ? 'success' : undefined)
     return true
   }
 
@@ -65659,14 +65657,17 @@ function channelSubLinks(ch) {
   const links = []
   if (!ch) return links
   if (ch.twitch)
-    links.push({ label: 'sub — twitch', url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}` })
-  if (ch.kick) links.push({ label: 'sub — kick', url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
+    links.push({
+      label: t('mc_sub_link', ['twitch']),
+      url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}`,
+    })
+  if (ch.kick) links.push({ label: t('mc_sub_link', ['kick']), url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
   if (ch.youtube) {
     try {
       const u = new URL(ch.youtube)
       const m = u.pathname.match(/^\/(@[\w.-]+|channel\/[\w-]+|c\/[\w.-]+|user\/[\w.-]+)/)
       if (u.protocol === 'https:' && /(^|\.)(youtube\.com|youtube-nocookie\.com)$/.test(u.hostname) && m) {
-        links.push({ label: 'sub — youtube', url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
+        links.push({ label: t('mc_sub_link', ['youtube']), url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
       }
     } catch (_) {}
   }
@@ -69152,7 +69153,7 @@ function makeSendTargetsRow(ch) {
   const row = document.createElement('div')
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
-  lbl.textContent = 'send to'
+  lbl.textContent = t('mc_cfg_send_to')
   lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
@@ -69173,7 +69174,7 @@ function makeSendTargetsRow(ch) {
       btn.className = `hs-mc-st-btn hs-mc-st-${key}`
       btn.classList.toggle('off', !on)
       btn.textContent = label
-      btn.title = `send to ${key}: ${on ? 'on' : 'off'}`
+      btn.title = t('mc_cfg_send_to_title', [key, t(on ? 'mc_cm_on' : 'mc_cm_off')])
       btn.addEventListener('click', () => {
         const next = nextSendTargets(ch.sendTargets, linked, key, !on)
         if (!next) return // refuse to disable the last active target
@@ -69198,7 +69199,7 @@ function makePlatformFilterRow(ch) {
   const row = document.createElement('div')
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
-  lbl.textContent = 'show'
+  lbl.textContent = t('mc_cfg_show')
   lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
@@ -69218,7 +69219,7 @@ function makePlatformFilterRow(ch) {
       btn.className = `hs-mc-st-btn hs-mc-st-${key}`
       btn.classList.toggle('off', !f[key])
       btn.textContent = label
-      btn.title = `show ${key}: ${f[key] ? 'on' : 'off'}`
+      btn.title = t('mc_cfg_show_title', [key, t(f[key] ? 'mc_cm_on' : 'mc_cm_off')])
       btn.addEventListener('click', () => {
         const cur = getPlatformFilter(tabId)
         const stillOn = ['twitch', 'kick', 'youtube'].filter((p) => linked[p] && cur[p] && p !== key)
@@ -75177,8 +75178,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         menu.appendChild(item)
       }
 
-      mkItem('edit', '#fff', () => showEditChannelForm(tabId))
-      mkItem('remove', 'var(--hs-danger)', () => removeChannel(tabId))
+      mkItem(t('mc_ctx_edit'), '#fff', () => showEditChannelForm(tabId))
+      mkItem(t('mc_ctx_remove'), 'var(--hs-danger)', () => removeChannel(tabId))
 
       // Append then clamp to viewport so it doesn't overflow off-screen
       document.body.appendChild(menu)

@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "rolovanie nad prehrávačom mení hlasitosť"
   },
+  "mc_settings_channel_volume": {
+    "message": "pamätať si hlasitosť zvuku pre každý kanál"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "každý kanál si pamätá hlasitosť zvuku, ktorú si nastavil naposledy. funguje na twitchi, kicku a youtube aj vo vložených prehrávačoch"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "počiatočná hlasitosť zvuku pre nové kanály"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou zvuku. 0 necháva hlasitosť prehrávača na pokoji"
+  },
   "mc_settings_visible_tabs": {
     "message": "viditeľné karty"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "tvoj vlastný upload si drží meno $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "režim unikátnych správ — správa musí byť unikátna"
+  },
+  "mc_card_gift_copied": {
+    "message": "skopírované: $NAME$ — vlož to do poľa na darovanie",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "nepodarilo sa skopírovať — napíš $NAME$ do poľa na darovanie",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod kontroluje tvoju správu"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "nesleduješ"
   },
-  "mc_card_gift_copied": {
-    "message": "skopírované: $NAME$ — vlož to do poľa na darovanie",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "nepodarilo sa skopírovať — napíš $NAME$ do poľa na darovanie",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync na twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "vypnuté: stránka si ponechá vlastný chat a heatsync sa tam nenačíta — na uplatnenie obnov stránku"
-  },
-  "mc_settings_channel_volume": {
-    "message": "pamätať si hlasitosť zvuku pre každý kanál"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "každý kanál si pamätá hlasitosť zvuku, ktorú si nastavil naposledy. funguje na twitchi, kicku a youtube aj vo vložených prehrávačoch"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "počiatočná hlasitosť zvuku pre nové kanály"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "kanál, ktorý si ešte nenastavil, sa otvorí s touto hlasitosťou zvuku. 0 necháva hlasitosť prehrávača na pokoji"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "pamätať hlasitosť na twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "odkaz na rozloženie skopírovaný"
+  },
+  "mc_layout_none": {
+    "message": "žiadne karty na zdieľanie"
+  },
+  "mc_layout_usage": {
+    "message": "použitie: /layout <odkaz heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "pridané karty: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "tieto karty už máš"
+  },
+  "mc_cfg_show": {
+    "message": "zobraziť"
+  },
+  "mc_cfg_show_title": {
+    "message": "zobraziť $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "odoslať na"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "odoslať na $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "odber — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "upraviť"
+  },
+  "mc_ctx_remove": {
+    "message": "odstrániť"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalóg · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

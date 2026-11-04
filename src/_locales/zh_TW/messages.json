@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "在播放器上滾動以調整音量"
   },
+  "mc_settings_channel_volume": {
+    "message": "依頻道記住音量"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "每個頻道保留你上次設定的音量。適用於 twitch、kick 和 youtube,以及嵌入播放器"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "新頻道的初始音量"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "尚未設定的頻道會以此音量開啟。0 則不更動播放器本身的音量"
+  },
   "mc_settings_visible_tabs": {
     "message": "可見分頁"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "你自己上傳的保留名稱 $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "唯一聊天模式 — 訊息必須是唯一的"
+  },
+  "mc_card_gift_copied": {
+    "message": "已複製 $NAME$ — 貼到禮物輸入框",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "複製失敗 — 請在禮物輸入框輸入 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod 正在檢查你的訊息"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "未追蹤"
   },
-  "mc_card_gift_copied": {
-    "message": "已複製 $NAME$ — 貼到禮物輸入框",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "複製失敗 — 請在禮物輸入框輸入 $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "twitch 上的 heatsync"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "關閉：網站保留內建聊天，heatsync 不在那裡載入 — 重新載入後生效"
-  },
-  "mc_settings_channel_volume": {
-    "message": "依頻道記住音量"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "每個頻道保留你上次設定的音量。適用於 twitch、kick 和 youtube,以及嵌入播放器"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "新頻道的初始音量"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "尚未設定的頻道會以此音量開啟。0 則不更動播放器本身的音量"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "記住twitch音量"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "版面連結已複製"
+  },
+  "mc_layout_none": {
+    "message": "沒有可分享的分頁"
+  },
+  "mc_layout_usage": {
+    "message": "用法：/layout <heatsync.org/m/... 連結>"
+  },
+  "mc_layout_added": {
+    "message": "已新增分頁：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "這些分頁已經有了"
+  },
+  "mc_cfg_show": {
+    "message": "顯示"
+  },
+  "mc_cfg_show_title": {
+    "message": "顯示 $PLATFORM$：$STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "傳送到"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "傳送到 $PLATFORM$：$STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "訂閱 — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "編輯"
+  },
+  "mc_ctx_remove": {
+    "message": "移除"
+  },
+  "mc_cycle_catalog": {
+    "message": "目錄 · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

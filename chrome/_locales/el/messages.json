@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "κύλιση πάνω στον player για ρύθμιση έντασης"
   },
+  "mc_settings_channel_volume": {
+    "message": "απομνημόνευση έντασης ήχου ανά κανάλι"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "κάθε κανάλι κρατά την ένταση ήχου που όρισες τελευταία. λειτουργεί σε twitch, kick και youtube, και σε ενσωματώσεις"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "αρχική ένταση ήχου για νέα κανάλια"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ένα κανάλι που δεν έχεις ορίσει ακόμα ανοίγει με αυτή την ένταση ήχου. το 0 αφήνει την ένταση του player ως έχει"
+  },
   "mc_settings_visible_tabs": {
     "message": "ορατές καρτέλες"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "το δικό σου ανέβασμα κρατά το όνομα $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "λειτουργία μοναδικού chat — το μήνυμα πρέπει να είναι μοναδικό"
+  },
+  "mc_card_gift_copied": {
+    "message": "αντιγράφηκε το $NAME$ — επικόλλησέ το στο πεδίο δώρου",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "η αντιγραφή απέτυχε — πληκτρολόγησε $NAME$ στο πεδίο δώρου",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "το AutoMod ελέγχει το μήνυμά σου"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "δεν ακολουθείς"
   },
-  "mc_card_gift_copied": {
-    "message": "αντιγράφηκε το $NAME$ — επικόλλησέ το στο πεδίο δώρου",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "η αντιγραφή απέτυχε — πληκτρολόγησε $NAME$ στο πεδίο δώρου",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync στο twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "off: ο ιστότοπος κρατά τη δική του συνομιλία και το heatsync δεν φορτώνει εκεί — φόρτωσε ξανά για εφαρμογή"
-  },
-  "mc_settings_channel_volume": {
-    "message": "απομνημόνευση έντασης ήχου ανά κανάλι"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "κάθε κανάλι κρατά την ένταση ήχου που όρισες τελευταία. λειτουργεί σε twitch, kick και youtube, και σε ενσωματώσεις"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "αρχική ένταση ήχου για νέα κανάλια"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "ένα κανάλι που δεν έχεις ορίσει ακόμα ανοίγει με αυτή την ένταση ήχου. το 0 αφήνει την ένταση του player ως έχει"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "απομνημόνευση έντασης στο twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "ο σύνδεσμος διάταξης αντιγράφηκε"
+  },
+  "mc_layout_none": {
+    "message": "δεν υπάρχουν καρτέλες για κοινοποίηση"
+  },
+  "mc_layout_usage": {
+    "message": "χρήση: /layout <σύνδεσμος heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "προστέθηκαν καρτέλες: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "έχεις ήδη αυτές τις καρτέλες"
+  },
+  "mc_cfg_show": {
+    "message": "εμφάνιση"
+  },
+  "mc_cfg_show_title": {
+    "message": "εμφάνιση $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "αποστολή σε"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "αποστολή σε $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "συνδρομή — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "επεξεργασία"
+  },
+  "mc_ctx_remove": {
+    "message": "αφαίρεση"
+  },
+  "mc_cycle_catalog": {
+    "message": "κατάλογος · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

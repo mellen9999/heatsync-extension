@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "превърти над плейъра, за да смениш звука"
   },
+  "mc_settings_channel_volume": {
+    "message": "запомняй силата на звука за всеки канал"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "всеки канал пази силата на звука, която си задал последно. работи в twitch, kick и youtube, и във вградени плейъри"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "начална сила на звука за нови канали"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "канал, който още не си настроил, се отваря с тази сила на звука. 0 оставя силата на звука на плейъра непокътната"
+  },
   "mc_settings_visible_tabs": {
     "message": "видими табове"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "твоето качване запазва името $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "режим на уникален чат — съобщението трябва да е уникално"
+  },
+  "mc_card_gift_copied": {
+    "message": "копирано: $NAME$ — постави го в полето за подарък",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "не успях да копирам — въведи $NAME$ в полето за подарък",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod проверява съобщението ти"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "не следваш"
   },
-  "mc_card_gift_copied": {
-    "message": "копирано: $NAME$ — постави го в полето за подарък",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "не успях да копирам — въведи $NAME$ в полето за подарък",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync в twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "изкл.: сайтът запазва собствения си чат и heatsync не се зарежда там — презареди за прилагане"
-  },
-  "mc_settings_channel_volume": {
-    "message": "запомняй силата на звука за всеки канал"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "всеки канал пази силата на звука, която си задал последно. работи в twitch, kick и youtube, и във вградени плейъри"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "начална сила на звука за нови канали"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "канал, който още не си настроил, се отваря с тази сила на звука. 0 оставя силата на звука на плейъра непокътната"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "запомняй звука в twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "линкът към подредбата е копиран"
+  },
+  "mc_layout_none": {
+    "message": "няма табове за споделяне"
+  },
+  "mc_layout_usage": {
+    "message": "употреба: /layout <линк heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "добавени табове: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "вече имаш тези табове"
+  },
+  "mc_cfg_show": {
+    "message": "покажи"
+  },
+  "mc_cfg_show_title": {
+    "message": "покажи $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "изпрати до"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "изпрати до $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "абонамент — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "промени"
+  },
+  "mc_ctx_remove": {
+    "message": "премахни"
+  },
+  "mc_cycle_catalog": {
+    "message": "каталог · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

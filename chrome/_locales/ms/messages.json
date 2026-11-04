@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "tatal di atas pemain untuk laras kelantangan"
   },
+  "mc_settings_channel_volume": {
+    "message": "ingat kelantangan bunyi bagi setiap saluran"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "setiap saluran mengekalkan kelantangan bunyi yang kamu tetapkan kali terakhir. berfungsi di twitch, kick dan youtube, serta dalam embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "kelantangan bunyi permulaan untuk saluran baharu"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan bunyi ini. 0 membiarkan kelantangan pemain itu sendiri"
+  },
   "mc_settings_visible_tabs": {
     "message": "tab kelihatan"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "muat naik sendiri kekal guna nama $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "mod sembang unik — mesej mesti unik"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ disalin — tampal dalam kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "gagal menyalin — taip $NAME$ dalam kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod sedang menyemak mesej kau"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "tidak mengikuti"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ disalin — tampal dalam kotak hadiah",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "gagal menyalin — taip $NAME$ dalam kotak hadiah",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync di twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "mati: tapak mengekalkan sembang asalnya dan heatsync tidak dimuatkan di sana — muat semula untuk guna"
-  },
-  "mc_settings_channel_volume": {
-    "message": "ingat kelantangan bunyi bagi setiap saluran"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "setiap saluran mengekalkan kelantangan bunyi yang kamu tetapkan kali terakhir. berfungsi di twitch, kick dan youtube, serta dalam embed"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "kelantangan bunyi permulaan untuk saluran baharu"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "saluran yang belum kamu tetapkan dibuka pada kelantangan bunyi ini. 0 membiarkan kelantangan pemain itu sendiri"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "ingat volum di twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "pautan susun atur disalin"
+  },
+  "mc_layout_none": {
+    "message": "tiada tab untuk dikongsi"
+  },
+  "mc_layout_usage": {
+    "message": "guna: /layout <pautan heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "tab ditambah: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "tab itu sudah ada"
+  },
+  "mc_cfg_show": {
+    "message": "papar"
+  },
+  "mc_cfg_show_title": {
+    "message": "papar $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "hantar ke"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "hantar ke $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "edit"
+  },
+  "mc_ctx_remove": {
+    "message": "buang"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

@@ -6148,7 +6148,8 @@ function emoteCycleMeta(m) {
   if (m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
   // Name the provider: a catalog IDK sits right after the channel's IDK in the
   // cycle, and "which one is this" is the whole question.
-  if (m.remote) return { cat: `catalog · ${m.source || '7tv'}`, vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+  if (m.remote)
+    return { cat: t('mc_cycle_catalog', [m.source || '7tv']), vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
   const tier = m.tier ?? 2
   const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
   if (m.source === 'twitch') return { cat, vis: { t: 'all twitch', c: 'var(--hs-ok)' } }
@@ -8043,17 +8044,17 @@ async function handleSlashCommand(text, input) {
     const link = mcLayoutLink(config.channels)
     clearInput(input)
     if (!link) {
-      showToast('no tabs to share', 'error')
+      showToast(t('mc_layout_none'), 'error')
       return true
     }
-    mcCopyToClipboard(link, 'layout link copied')
+    mcCopyToClipboard(link, t('mc_layout_copied'))
     return true
   }
 
   if (cmd === 'layout') {
     const tabs = mcLayoutParse(rest)
     if (!tabs.length) {
-      showToast('usage: /layout <heatsync.org/m/... link>', 'error')
+      showToast(t('mc_layout_usage'), 'error')
       return true
     }
     const added = addChannelsBulk(
@@ -8061,10 +8062,7 @@ async function handleSlashCommand(text, input) {
     )
     clearInput(input)
     if (added) switchTab(config.channels[config.channels.length - 1].id)
-    showToast(
-      added ? `added ${added} tab${added === 1 ? '' : 's'}` : 'already have those tabs',
-      added ? 'success' : undefined,
-    )
+    showToast(added ? t('mc_layout_added', [String(added)]) : t('mc_layout_have_all'), added ? 'success' : undefined)
     return true
   }
 

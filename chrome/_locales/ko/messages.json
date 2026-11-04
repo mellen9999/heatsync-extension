@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "플레이어 위에서 스크롤해 볼륨 조절"
   },
+  "mc_settings_channel_volume": {
+    "message": "채널별 소리 크기 기억"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "각 채널은 마지막으로 설정한 소리 크기를 유지합니다. twitch, kick, youtube 및 임베드에서 작동"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "새 채널의 시작 소리 크기"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "아직 설정하지 않은 채널은 이 소리 크기로 열립니다. 0이면 플레이어 자체 소리 크기를 건드리지 않음"
+  },
   "mc_settings_visible_tabs": {
     "message": "표시할 탭"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "내가 올린 것이 $NAME$ 이름을 쓰고 있어",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "고유 채팅 모드 — 메시지는 고유해야 해"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ 복사됨 — 선물 입력란에 붙여넣으세요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "복사하지 못했습니다 — 선물 입력란에 $NAME$ 을(를) 입력하세요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod가 메시지를 검토 중"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "팔로우 안 함"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ 복사됨 — 선물 입력란에 붙여넣으세요",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "복사하지 못했습니다 — 선물 입력란에 $NAME$ 을(를) 입력하세요",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "twitch에서 heatsync"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "끔: 사이트의 자체 채팅이 그대로 유지되며 그곳에서 heatsync가 로드되지 않음 — 적용하려면 새로고침"
-  },
-  "mc_settings_channel_volume": {
-    "message": "채널별 소리 크기 기억"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "각 채널은 마지막으로 설정한 소리 크기를 유지합니다. twitch, kick, youtube 및 임베드에서 작동"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "새 채널의 시작 소리 크기"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "아직 설정하지 않은 채널은 이 소리 크기로 열립니다. 0이면 플레이어 자체 소리 크기를 건드리지 않음"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "twitch 볼륨 기억"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "레이아웃 링크 복사됨"
+  },
+  "mc_layout_none": {
+    "message": "공유할 탭 없음"
+  },
+  "mc_layout_usage": {
+    "message": "사용법: /layout <heatsync.org/m/... 링크>"
+  },
+  "mc_layout_added": {
+    "message": "추가된 탭: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "이미 있는 탭이야"
+  },
+  "mc_cfg_show": {
+    "message": "표시"
+  },
+  "mc_cfg_show_title": {
+    "message": "$PLATFORM$ 표시: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "보낼 곳"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "$PLATFORM$로 보내기: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "구독 — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "편집"
+  },
+  "mc_ctx_remove": {
+    "message": "삭제"
+  },
+  "mc_cycle_catalog": {
+    "message": "카탈로그 · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

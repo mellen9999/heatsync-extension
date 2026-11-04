@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "role sobre o player para ajustar o volume"
   },
+  "mc_settings_channel_volume": {
+    "message": "lembrar o volume do som por canal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "cada canal mantém o volume do som que você definiu por último. funciona na twitch, kick e youtube, e em embeds"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "volume do som inicial para canais novos"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "um canal que você ainda não definiu abre com este volume do som. 0 deixa o volume do player como está"
+  },
   "mc_settings_visible_tabs": {
     "message": "abas visíveis"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "seu próprio upload mantém o nome $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "modo chat único — a mensagem precisa ser única"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ copiado — cole na caixa de presente",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "não deu para copiar — digite $NAME$ na caixa de presente",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "o AutoMod está checando sua mensagem"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "não segue"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ copiado — cole na caixa de presente",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "não deu para copiar — digite $NAME$ na caixa de presente",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync no twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "desligado: o site mantém o chat dele e o heatsync não carrega lá — recarregue para aplicar"
-  },
-  "mc_settings_channel_volume": {
-    "message": "lembrar o volume do som por canal"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "cada canal mantém o volume do som que você definiu por último. funciona na twitch, kick e youtube, e em embeds"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "volume do som inicial para canais novos"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "um canal que você ainda não definiu abre com este volume do som. 0 deixa o volume do player como está"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "lembrar volume no twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "link do layout copiado"
+  },
+  "mc_layout_none": {
+    "message": "nenhuma aba para compartilhar"
+  },
+  "mc_layout_usage": {
+    "message": "uso: /layout <link heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "abas adicionadas: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "você já tem essas abas"
+  },
+  "mc_cfg_show": {
+    "message": "mostrar"
+  },
+  "mc_cfg_show_title": {
+    "message": "mostrar $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "enviar para"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "enviar para $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "editar"
+  },
+  "mc_ctx_remove": {
+    "message": "remover"
+  },
+  "mc_cycle_catalog": {
+    "message": "catálogo · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

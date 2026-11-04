@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll di atas player untuk mengatur volume"
   },
+  "mc_settings_channel_volume": {
+    "message": "ingat volume suara per kanal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "setiap kanal menyimpan volume suara yang terakhir kamu atur. berfungsi di twitch, kick, dan youtube, serta di embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "volume suara awal untuk kanal baru"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanal yang belum kamu atur dibuka dengan volume suara ini. 0 membiarkan volume pemutar apa adanya"
+  },
   "mc_settings_visible_tabs": {
     "message": "tab terlihat"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "unggahanmu sendiri tetap memakai nama $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "mode chat unik — pesan harus unik"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ disalin — tempel di kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "gagal menyalin — ketik $NAME$ di kotak hadiah",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod sedang memeriksa pesanmu"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "tidak mengikuti"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ disalin — tempel di kotak hadiah",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "gagal menyalin — ketik $NAME$ di kotak hadiah",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync di twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "mati: situs tetap memakai chat bawaannya dan heatsync tidak dimuat di sana — muat ulang untuk menerapkan"
-  },
-  "mc_settings_channel_volume": {
-    "message": "ingat volume suara per kanal"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "setiap kanal menyimpan volume suara yang terakhir kamu atur. berfungsi di twitch, kick, dan youtube, serta di embed"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "volume suara awal untuk kanal baru"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "kanal yang belum kamu atur dibuka dengan volume suara ini. 0 membiarkan volume pemutar apa adanya"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "ingat volume di twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "tautan tata letak disalin"
+  },
+  "mc_layout_none": {
+    "message": "tidak ada tab untuk dibagikan"
+  },
+  "mc_layout_usage": {
+    "message": "pakai: /layout <tautan heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "tab ditambahkan: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "tab itu sudah ada"
+  },
+  "mc_cfg_show": {
+    "message": "tampilkan"
+  },
+  "mc_cfg_show_title": {
+    "message": "tampilkan $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "kirim ke"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "kirim ke $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "ubah"
+  },
+  "mc_ctx_remove": {
+    "message": "hapus"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

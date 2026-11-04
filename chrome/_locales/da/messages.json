@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over afspilleren for at justere lydstyrken"
   },
+  "mc_settings_channel_volume": {
+    "message": "husk lydstyrke pr. kanal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "hver kanal beholder den lydstyrke, du sidst satte. virker på twitch, kick og youtube og i indlejringer"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "startlydstyrke for nye kanaler"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "en kanal, du ikke har sat endnu, åbner med denne lydstyrke. 0 lader afspillerens egen lydstyrke være"
+  },
   "mc_settings_visible_tabs": {
     "message": "synlige faner"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "din egen upload beholder navnet $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "unik-chat-tilstand — beskeden skal være unik"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopieret $NAME$ — indsæt det i gavefeltet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kunne ikke kopiere — skriv $NAME$ i gavefeltet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod tjekker din besked"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "følger ikke"
   },
-  "mc_card_gift_copied": {
-    "message": "kopieret $NAME$ — indsæt det i gavefeltet",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "kunne ikke kopiere — skriv $NAME$ i gavefeltet",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync på twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "fra: siden beholder sin egen chat, og heatsync indlæses ikke der — genindlæs for at anvende"
-  },
-  "mc_settings_channel_volume": {
-    "message": "husk lydstyrke pr. kanal"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "hver kanal beholder den lydstyrke, du sidst satte. virker på twitch, kick og youtube og i indlejringer"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "startlydstyrke for nye kanaler"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "en kanal, du ikke har sat endnu, åbner med denne lydstyrke. 0 lader afspillerens egen lydstyrke være"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "husk lydstyrke på twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "layout-link kopieret"
+  },
+  "mc_layout_none": {
+    "message": "ingen faner at dele"
+  },
+  "mc_layout_usage": {
+    "message": "brug: /layout <heatsync.org/m/...-link>"
+  },
+  "mc_layout_added": {
+    "message": "faner tilføjet: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "du har allerede de faner"
+  },
+  "mc_cfg_show": {
+    "message": "vis"
+  },
+  "mc_cfg_show_title": {
+    "message": "vis $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "send til"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "send til $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "rediger"
+  },
+  "mc_ctx_remove": {
+    "message": "fjern"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

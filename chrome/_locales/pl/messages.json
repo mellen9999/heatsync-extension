@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "przewijaj nad odtwarzaczem, żeby zmienić głośność"
   },
+  "mc_settings_channel_volume": {
+    "message": "zapamiętuj głośność dźwięku dla każdego kanału"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "każdy kanał zachowuje ostatnio ustawioną głośność dźwięku. działa na twitchu, kicku i youtube oraz w osadzeniach"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "początkowa głośność dźwięku dla nowych kanałów"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanał, którego jeszcze nie ustawiono, otwiera się z tą głośnością dźwięku. 0 zostawia głośność odtwarzacza w spokoju"
+  },
   "mc_settings_visible_tabs": {
     "message": "widoczne karty"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "twój własny upload zachowuje nazwę $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "tryb unikalnych wiadomości — wiadomość musi być unikalna"
+  },
+  "mc_card_gift_copied": {
+    "message": "skopiowano $NAME$ — wklej w pole prezentu",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "nie udało się skopiować — wpisz $NAME$ w pole prezentu",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod sprawdza twoją wiadomość"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "nie obserwujesz"
   },
-  "mc_card_gift_copied": {
-    "message": "skopiowano $NAME$ — wklej w pole prezentu",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "nie udało się skopiować — wpisz $NAME$ w pole prezentu",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync na twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "wyłączone: strona zachowuje własny czat, a heatsync się tam nie ładuje — odśwież, aby zastosować"
-  },
-  "mc_settings_channel_volume": {
-    "message": "zapamiętuj głośność dźwięku dla każdego kanału"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "każdy kanał zachowuje ostatnio ustawioną głośność dźwięku. działa na twitchu, kicku i youtube oraz w osadzeniach"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "początkowa głośność dźwięku dla nowych kanałów"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "kanał, którego jeszcze nie ustawiono, otwiera się z tą głośnością dźwięku. 0 zostawia głośność odtwarzacza w spokoju"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "zapamiętuj głośność na twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "link do układu skopiowany"
+  },
+  "mc_layout_none": {
+    "message": "brak kart do udostępnienia"
+  },
+  "mc_layout_usage": {
+    "message": "użycie: /layout <link heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "dodane karty: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "te karty już masz"
+  },
+  "mc_cfg_show": {
+    "message": "pokaż"
+  },
+  "mc_cfg_show_title": {
+    "message": "pokaż $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "wyślij do"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "wyślij do $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "edytuj"
+  },
+  "mc_ctx_remove": {
+    "message": "usuń"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

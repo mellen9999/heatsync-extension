@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "rullaa soittimen päällä säätääksesi äänenvoimakkuutta"
   },
+  "mc_settings_channel_volume": {
+    "message": "muista äänenvoimakkuus kanavittain"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "jokainen kanava säilyttää viimeksi asettamasi äänenvoimakkuuden. toimii twitchissä, kickissä ja youtubessa sekä upotuksissa"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "uusien kanavien aloitusäänenvoimakkuus"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kanava, jota et ole vielä asettanut, avautuu tällä äänenvoimakkuudella. 0 jättää soittimen oman äänenvoimakkuuden rauhaan"
+  },
   "mc_settings_visible_tabs": {
     "message": "näkyvät välilehdet"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "oma latauksesi säilyttää nimen $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "uniikki chat -tila — viestin on oltava uniikki"
+  },
+  "mc_card_gift_copied": {
+    "message": "kopioitu $NAME$ — liitä se lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopiointi epäonnistui — kirjoita $NAME$ lahjakenttään",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod tarkistaa viestisi"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "et seuraa"
   },
-  "mc_card_gift_copied": {
-    "message": "kopioitu $NAME$ — liitä se lahjakenttään",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "kopiointi epäonnistui — kirjoita $NAME$ lahjakenttään",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync sivustolla twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "pois: sivusto säilyttää oman chatinsa eikä heatsync lataudu sinne — ota käyttöön lataamalla uudelleen"
-  },
-  "mc_settings_channel_volume": {
-    "message": "muista äänenvoimakkuus kanavittain"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "jokainen kanava säilyttää viimeksi asettamasi äänenvoimakkuuden. toimii twitchissä, kickissä ja youtubessa sekä upotuksissa"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "uusien kanavien aloitusäänenvoimakkuus"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "kanava, jota et ole vielä asettanut, avautuu tällä äänenvoimakkuudella. 0 jättää soittimen oman äänenvoimakkuuden rauhaan"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "muista äänenvoimakkuus: twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "asettelulinkki kopioitu"
+  },
+  "mc_layout_none": {
+    "message": "ei jaettavia välilehtiä"
+  },
+  "mc_layout_usage": {
+    "message": "käyttö: /layout <heatsync.org/m/...-linkki>"
+  },
+  "mc_layout_added": {
+    "message": "välilehtiä lisätty: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "sinulla on jo nuo välilehdet"
+  },
+  "mc_cfg_show": {
+    "message": "näytä"
+  },
+  "mc_cfg_show_title": {
+    "message": "näytä $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "lähetä kohteeseen"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "lähetä kohteeseen $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "tilaa — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "muokkaa"
+  },
+  "mc_ctx_remove": {
+    "message": "poista"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalogi · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

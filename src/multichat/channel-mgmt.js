@@ -864,7 +864,7 @@ function makeSendTargetsRow(ch) {
   const row = document.createElement('div')
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
-  lbl.textContent = 'send to'
+  lbl.textContent = t('mc_cfg_send_to')
   lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
@@ -885,7 +885,7 @@ function makeSendTargetsRow(ch) {
       btn.className = `hs-mc-st-btn hs-mc-st-${key}`
       btn.classList.toggle('off', !on)
       btn.textContent = label
-      btn.title = `send to ${key}: ${on ? 'on' : 'off'}`
+      btn.title = t('mc_cfg_send_to_title', [key, t(on ? 'mc_cm_on' : 'mc_cm_off')])
       btn.addEventListener('click', () => {
         const next = nextSendTargets(ch.sendTargets, linked, key, !on)
         if (!next) return // refuse to disable the last active target
@@ -910,7 +910,7 @@ function makePlatformFilterRow(ch) {
   const row = document.createElement('div')
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
-  lbl.textContent = 'show'
+  lbl.textContent = t('mc_cfg_show')
   lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
@@ -930,7 +930,7 @@ function makePlatformFilterRow(ch) {
       btn.className = `hs-mc-st-btn hs-mc-st-${key}`
       btn.classList.toggle('off', !f[key])
       btn.textContent = label
-      btn.title = `show ${key}: ${f[key] ? 'on' : 'off'}`
+      btn.title = t('mc_cfg_show_title', [key, t(f[key] ? 'mc_cm_on' : 'mc_cm_off')])
       btn.addEventListener('click', () => {
         const cur = getPlatformFilter(tabId)
         const stillOn = ['twitch', 'kick', 'youtube'].filter((p) => linked[p] && cur[p] && p !== key)

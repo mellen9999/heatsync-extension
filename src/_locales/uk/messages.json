@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "прокручуй над плеєром, щоб змінити гучність"
   },
+  "mc_settings_channel_volume": {
+    "message": "запам'ятовувати гучність звуку для кожного каналу"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "кожен канал зберігає гучність звуку, яку ти встановив востаннє. працює на twitch, kick і youtube, а також у вбудовуваннях"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "початкова гучність звуку для нових каналів"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "канал, який ти ще не налаштував, відкривається з цією гучністю звуку. 0 не чіпає гучність самого плеєра"
+  },
   "mc_settings_visible_tabs": {
     "message": "видимі вкладки"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "твоє завантаження зберігає ім'я $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "режим унікального чату — повідомлення має бути унікальним"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ скопійовано — вставте в поле подарунка",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "не вдалося скопіювати — введіть $NAME$ у поле подарунка",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod перевіряє твоє повідомлення"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "не підписаний"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ скопійовано — вставте в поле подарунка",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "не вдалося скопіювати — введіть $NAME$ у поле подарунка",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync на twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "вимк.: сайт зберігає власний чат, а heatsync там не завантажується — перезавантажте сторінку"
-  },
-  "mc_settings_channel_volume": {
-    "message": "запам'ятовувати гучність звуку для кожного каналу"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "кожен канал зберігає гучність звуку, яку ти встановив востаннє. працює на twitch, kick і youtube, а також у вбудовуваннях"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "початкова гучність звуку для нових каналів"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "канал, який ти ще не налаштував, відкривається з цією гучністю звуку. 0 не чіпає гучність самого плеєра"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "пам'ятати гучність на twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "посилання на розкладку скопійовано"
+  },
+  "mc_layout_none": {
+    "message": "немає вкладок для поширення"
+  },
+  "mc_layout_usage": {
+    "message": "використання: /layout <посилання heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "додано вкладок: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "ці вкладки вже є"
+  },
+  "mc_cfg_show": {
+    "message": "показ"
+  },
+  "mc_cfg_show_title": {
+    "message": "показ $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "надсилання в"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "надсилання в $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "підписка — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "змінити"
+  },
+  "mc_ctx_remove": {
+    "message": "прибрати"
+  },
+  "mc_cycle_catalog": {
+    "message": "каталог · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

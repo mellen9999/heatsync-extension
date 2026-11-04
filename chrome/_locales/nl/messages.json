@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "scroll over de speler om het volume aan te passen"
   },
+  "mc_settings_channel_volume": {
+    "message": "onthoud geluidsvolume per kanaal"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "elk kanaal houdt het geluidsvolume vast dat je het laatst hebt ingesteld. werkt op twitch, kick en youtube, en in embeds"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "start-geluidsvolume voor nieuwe kanalen"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "een kanaal dat je nog niet hebt ingesteld opent op dit geluidsvolume. 0 laat het volume van de speler met rust"
+  },
   "mc_settings_visible_tabs": {
     "message": "zichtbare tabs"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "je eigen upload houdt de naam $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "unieke-chatmodus — bericht moet uniek zijn"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ gekopieerd — plak het in het cadeauvak",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "kopiëren mislukt — typ $NAME$ in het cadeauvak",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod checkt je bericht"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "volgt niet"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ gekopieerd — plak het in het cadeauvak",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "kopiëren mislukt — typ $NAME$ in het cadeauvak",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync op twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "uit: de site houdt zijn eigen chat en heatsync laadt daar niet — herlaad om toe te passen"
-  },
-  "mc_settings_channel_volume": {
-    "message": "onthoud geluidsvolume per kanaal"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "elk kanaal houdt het geluidsvolume vast dat je het laatst hebt ingesteld. werkt op twitch, kick en youtube, en in embeds"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "start-geluidsvolume voor nieuwe kanalen"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "een kanaal dat je nog niet hebt ingesteld opent op dit geluidsvolume. 0 laat het volume van de speler met rust"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "volume onthouden op twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "layoutlink gekopieerd"
+  },
+  "mc_layout_none": {
+    "message": "geen tabs om te delen"
+  },
+  "mc_layout_usage": {
+    "message": "gebruik: /layout <heatsync.org/m/...-link>"
+  },
+  "mc_layout_added": {
+    "message": "tabs toegevoegd: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "die tabs heb je al"
+  },
+  "mc_cfg_show": {
+    "message": "toon"
+  },
+  "mc_cfg_show_title": {
+    "message": "toon $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "stuur naar"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "stuur naar $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "bewerk"
+  },
+  "mc_ctx_remove": {
+    "message": "verwijder"
+  },
+  "mc_cycle_catalog": {
+    "message": "catalogus · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

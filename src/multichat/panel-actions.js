@@ -160,14 +160,17 @@ function channelSubLinks(ch) {
   const links = []
   if (!ch) return links
   if (ch.twitch)
-    links.push({ label: 'sub — twitch', url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}` })
-  if (ch.kick) links.push({ label: 'sub — kick', url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
+    links.push({
+      label: t('mc_sub_link', ['twitch']),
+      url: `https://www.twitch.tv/subs/${encodeURIComponent(ch.twitch)}`,
+    })
+  if (ch.kick) links.push({ label: t('mc_sub_link', ['kick']), url: `https://kick.com/${encodeURIComponent(ch.kick)}` })
   if (ch.youtube) {
     try {
       const u = new URL(ch.youtube)
       const m = u.pathname.match(/^\/(@[\w.-]+|channel\/[\w-]+|c\/[\w.-]+|user\/[\w.-]+)/)
       if (u.protocol === 'https:' && /(^|\.)(youtube\.com|youtube-nocookie\.com)$/.test(u.hostname) && m) {
-        links.push({ label: 'sub — youtube', url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
+        links.push({ label: t('mc_sub_link', ['youtube']), url: `https://www.youtube.com/${m[1]}?sub_confirmation=1` })
       }
     } catch (_) {}
   }

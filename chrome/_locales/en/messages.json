@@ -3677,5 +3677,88 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "layout link copied",
+    "description": "Toast after /sharelayout copies the tab-lineup link"
+  },
+  "mc_layout_none": {
+    "message": "no tabs to share",
+    "description": "Error toast when /sharelayout has no shareable tabs"
+  },
+  "mc_layout_usage": {
+    "message": "usage: /layout <heatsync.org/m/... link>",
+    "description": "Error toast when /layout gets no valid layout link; keep the command and link as written"
+  },
+  "mc_layout_added": {
+    "message": "tabs added: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    },
+    "description": "Toast after /layout adds tabs from a link; COUNT is a number"
+  },
+  "mc_layout_have_all": {
+    "message": "already have those tabs",
+    "description": "Toast when /layout finds every tab already open"
+  },
+  "mc_cfg_show": {
+    "message": "show",
+    "description": "Label of the per-platform visibility toggles in the edit-channel form"
+  },
+  "mc_cfg_show_title": {
+    "message": "show $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    },
+    "description": "Tooltip on a platform toggle in the edit-channel form; PLATFORM is twitch/kick/youtube, STATE is on/off"
+  },
+  "mc_cfg_send_to": {
+    "message": "send to",
+    "description": "Label of the send-target toggles in the edit-channel form"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "send to $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    },
+    "description": "Tooltip on a send-target toggle in the edit-channel form; PLATFORM is twitch/kick/youtube, STATE is on/off"
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    },
+    "description": "Subscribe link button in the edit-channel form and the sub picker; PLATFORM is twitch/kick/youtube"
+  },
+  "mc_ctx_edit": {
+    "message": "edit",
+    "description": "Item in the right-click menu of a channel tab"
+  },
+  "mc_ctx_remove": {
+    "message": "remove",
+    "description": "Item in the right-click menu of a channel tab"
+  },
+  "mc_cycle_catalog": {
+    "message": "catalog · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    },
+    "description": "Tab-completion tooltip category for an emote found in a provider catalog search; PROVIDER is 7tv/bttv/ffz/heatsync"
   }
 }

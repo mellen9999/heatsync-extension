@@ -233,7 +233,9 @@ describe('2. the box shows the pick; cycling back to the local one un-picks the 
   })
 
   test('the catalog label names the provider; a local one still says where it lives', () => {
-    const { emoteCycleMeta } = new Function(`${CYCLE_META}; return { emoteCycleMeta }`)()
+    const { emoteCycleMeta } = new Function('t', `${CYCLE_META}; return { emoteCycleMeta }`)((k, a) =>
+      k === 'mc_cycle_catalog' ? `catalog · ${a[0]}` : k,
+    )
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: '7tv' }).cat).toBe('catalog · 7tv')
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: 'ffz' }).cat).toBe('catalog · ffz')
     expect(emoteCycleMeta({ type: 'emote', source: '7tv', tier: 0 }).cat).toBe('channel')

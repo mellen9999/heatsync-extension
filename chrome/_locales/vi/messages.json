@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "cuộn trên trình phát để chỉnh âm lượng"
   },
+  "mc_settings_channel_volume": {
+    "message": "nhớ âm lượng theo từng kênh"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "mỗi kênh giữ âm lượng bạn đặt gần nhất. hoạt động trên twitch, kick và youtube, cũng như trong nhúng"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "âm lượng khởi đầu cho kênh mới"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "kênh bạn chưa đặt sẽ mở ở âm lượng này. 0 giữ nguyên âm lượng của trình phát"
+  },
   "mc_settings_visible_tabs": {
     "message": "tab hiển thị"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "bản tải lên của bạn giữ tên $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "chế độ chat độc nhất — tin nhắn phải không trùng"
+  },
+  "mc_card_gift_copied": {
+    "message": "đã sao chép $NAME$ — dán vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "không sao chép được — gõ $NAME$ vào ô tặng quà",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod đang kiểm tra tin nhắn của bạn"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "chưa theo dõi"
   },
-  "mc_card_gift_copied": {
-    "message": "đã sao chép $NAME$ — dán vào ô tặng quà",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "không sao chép được — gõ $NAME$ vào ô tặng quà",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync trên twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "tắt: trang giữ chat riêng của nó và heatsync không tải ở đó — tải lại để áp dụng"
-  },
-  "mc_settings_channel_volume": {
-    "message": "nhớ âm lượng theo từng kênh"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "mỗi kênh giữ âm lượng bạn đặt gần nhất. hoạt động trên twitch, kick và youtube, cũng như trong nhúng"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "âm lượng khởi đầu cho kênh mới"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "kênh bạn chưa đặt sẽ mở ở âm lượng này. 0 giữ nguyên âm lượng của trình phát"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "nhớ âm lượng trên twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "đã sao chép liên kết bố cục"
+  },
+  "mc_layout_none": {
+    "message": "không có tab nào để chia sẻ"
+  },
+  "mc_layout_usage": {
+    "message": "cách dùng: /layout <liên kết heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "đã thêm tab: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "bạn đã có các tab đó rồi"
+  },
+  "mc_cfg_show": {
+    "message": "hiện"
+  },
+  "mc_cfg_show_title": {
+    "message": "hiện $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "gửi tới"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "gửi tới $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "sửa"
+  },
+  "mc_ctx_remove": {
+    "message": "xóa"
+  },
+  "mc_cycle_catalog": {
+    "message": "danh mục · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

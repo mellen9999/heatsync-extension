@@ -12,9 +12,9 @@ const form = mgmt.slice(mgmt.indexOf('function showEditChannelForm('))
 
 describe('channel tab right-click menu: exactly edit + remove', () => {
   test('only two items', () => {
-    const items = [...menu.matchAll(/mkItem\('([^']+)'/g)].map((m) => m[1])
-    expect(items).toEqual(['edit', 'remove'])
-    expect(menu).toContain("mkItem('remove', 'var(--hs-danger)'")
+    const items = [...menu.matchAll(/mkItem\(t\('([^']+)'\)/g)].map((m) => m[1])
+    expect(items).toEqual(['mc_ctx_edit', 'mc_ctx_remove'])
+    expect(menu).toContain("mkItem(t('mc_ctx_remove'), 'var(--hs-danger)'")
   })
 
   test('the old controls are gone from the menu', () => {

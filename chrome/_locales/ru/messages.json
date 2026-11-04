@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "прокрутка над плеером меняет громкость"
   },
+  "mc_settings_channel_volume": {
+    "message": "запоминать громкость звука для каждого канала"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "каждый канал хранит последнюю заданную тобой громкость звука. работает на twitch, kick и youtube, а также во встраиваниях"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "начальная громкость звука для новых каналов"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "канал, который ты ещё не настраивал, открывается с этой громкостью звука. 0 не трогает громкость самого плеера"
+  },
   "mc_settings_visible_tabs": {
     "message": "видимые вкладки"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "твоя загрузка сохраняет имя $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "режим уникальных сообщений — сообщение должно быть уникальным"
+  },
+  "mc_card_gift_copied": {
+    "message": "$NAME$ скопирован — вставьте в поле подарка",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "не удалось скопировать — введите $NAME$ в поле подарка",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "AutoMod проверяет твоё сообщение"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "не подписан"
   },
-  "mc_card_gift_copied": {
-    "message": "$NAME$ скопирован — вставьте в поле подарка",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "не удалось скопировать — введите $NAME$ в поле подарка",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync на twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "выкл.: сайт сохраняет собственный чат, а heatsync там не загружается — перезагрузите страницу"
-  },
-  "mc_settings_channel_volume": {
-    "message": "запоминать громкость звука для каждого канала"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "каждый канал хранит последнюю заданную тобой громкость звука. работает на twitch, kick и youtube, а также во встраиваниях"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "начальная громкость звука для новых каналов"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "канал, который ты ещё не настраивал, открывается с этой громкостью звука. 0 не трогает громкость самого плеера"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "помнить громкость на twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "ссылка на раскладку скопирована"
+  },
+  "mc_layout_none": {
+    "message": "нет вкладок для отправки"
+  },
+  "mc_layout_usage": {
+    "message": "использование: /layout <ссылка heatsync.org/m/...>"
+  },
+  "mc_layout_added": {
+    "message": "добавлено вкладок: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "эти вкладки уже есть"
+  },
+  "mc_cfg_show": {
+    "message": "показ"
+  },
+  "mc_cfg_show_title": {
+    "message": "показ $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "отправка в"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "отправка в $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "подписка — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "изменить"
+  },
+  "mc_ctx_remove": {
+    "message": "убрать"
+  },
+  "mc_cycle_catalog": {
+    "message": "каталог · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

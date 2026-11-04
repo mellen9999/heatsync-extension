@@ -1510,6 +1510,18 @@
   "mc_settings_scroll_wheel_volume_desc": {
     "message": "mag-scroll sa ibabaw ng player para ayusin ang volume"
   },
+  "mc_settings_channel_volume": {
+    "message": "tandaan ang lakas ng tunog kada channel"
+  },
+  "mc_settings_channel_volume_desc": {
+    "message": "bawat channel ay nagtatago ng lakas ng tunog na huli mong itinakda. gumagana sa twitch, kick at youtube, at sa mga embed"
+  },
+  "mc_settings_channel_volume_default": {
+    "message": "panimulang lakas ng tunog para sa mga bagong channel"
+  },
+  "mc_settings_channel_volume_default_desc": {
+    "message": "ang channel na hindi mo pa naitatakda ay bubukas sa lakas ng tunog na ito. ang 0 ay hindi ginagalaw ang volume ng player"
+  },
   "mc_settings_visible_tabs": {
     "message": "mga nakikitang tab"
   },
@@ -1780,7 +1792,7 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "nananatili ang pangalang $NAME$ sa sarili mong upload",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2453,6 +2465,22 @@
   },
   "mc_irc_notice_r9k": {
     "message": "unique-chat mode — dapat kakaiba ang mensahe"
+  },
+  "mc_card_gift_copied": {
+    "message": "nakopya ang $NAME$ — i-paste sa kahon ng regalo",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_gift_copy_failed": {
+    "message": "hindi makopya — i-type ang $NAME$ sa kahon ng regalo",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "mc_irc_notice_rejected": {
     "message": "sinusuri ng AutoMod ang mensahe mo"
@@ -3611,22 +3639,6 @@
   "mc_tagcard_not_following": {
     "message": "hindi sinusundan"
   },
-  "mc_card_gift_copied": {
-    "message": "nakopya ang $NAME$ — i-paste sa kahon ng regalo",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_card_gift_copy_failed": {
-    "message": "hindi makopya — i-type ang $NAME$ sa kahon ng regalo",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_settings_sub_overlay_twitch": {
     "message": "heatsync sa twitch"
   },
@@ -3638,18 +3650,6 @@
   },
   "mc_settings_sub_overlay_desc": {
     "message": "off: mananatili sa site ang sarili nitong chat at hindi magloload ang heatsync doon — i-reload para ilapat"
-  },
-  "mc_settings_channel_volume": {
-    "message": "tandaan ang lakas ng tunog kada channel"
-  },
-  "mc_settings_channel_volume_desc": {
-    "message": "bawat channel ay nagtatago ng lakas ng tunog na huli mong itinakda. gumagana sa twitch, kick at youtube, at sa mga embed"
-  },
-  "mc_settings_channel_volume_default": {
-    "message": "panimulang lakas ng tunog para sa mga bagong channel"
-  },
-  "mc_settings_channel_volume_default_desc": {
-    "message": "ang channel na hindi mo pa naitatakda ay bubukas sa lakas ng tunog na ito. ang 0 ay hindi ginagalaw ang volume ng player"
   },
   "mc_settings_channel_volume_twitch": {
     "message": "tandaan ang volume sa twitch"
@@ -3674,5 +3674,75 @@
   },
   "mc_whisper_hint_dm": {
     "message": "/dm user msg · /r msg"
+  },
+  "mc_layout_copied": {
+    "message": "nakopya ang layout link"
+  },
+  "mc_layout_none": {
+    "message": "walang tab na ibabahagi"
+  },
+  "mc_layout_usage": {
+    "message": "gamit: /layout <heatsync.org/m/... link>"
+  },
+  "mc_layout_added": {
+    "message": "mga tab na naidagdag: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_layout_have_all": {
+    "message": "nasa iyo na ang mga tab na iyon"
+  },
+  "mc_cfg_show": {
+    "message": "ipakita"
+  },
+  "mc_cfg_show_title": {
+    "message": "ipakita ang $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_cfg_send_to": {
+    "message": "ipadala sa"
+  },
+  "mc_cfg_send_to_title": {
+    "message": "ipadala sa $PLATFORM$: $STATE$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "state": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_sub_link": {
+    "message": "sub — $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_ctx_edit": {
+    "message": "i-edit"
+  },
+  "mc_ctx_remove": {
+    "message": "alisin"
+  },
+  "mc_cycle_catalog": {
+    "message": "katalogo · $PROVIDER$",
+    "placeholders": {
+      "provider": {
+        "content": "$1"
+      }
+    }
   }
 }

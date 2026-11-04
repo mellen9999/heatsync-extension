@@ -4044,7 +4044,6 @@
       // Remove any existing context menu
       document.getElementById('hs-mc-ctx-menu')?.remove()
 
-      const ch = getChannelById(tabId)
       const menu = document.createElement('div')
       menu.id = 'hs-mc-ctx-menu'
       menu.style.cssText =
@@ -4053,107 +4052,45 @@
       const mkItem = (label, color, fn) => {
         const item = document.createElement('div')
         item.textContent = label
+        item.tabIndex = 0
+        item.setAttribute('role', 'menuitem')
         item.style.cssText = `padding:6px 12px;cursor:pointer;color:${color};`
-        item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
-          signal: mcSignal,
-        })
-        item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
-        item.addEventListener('click', () => {
+        const hot = () => {
+          item.style.background = '#ffffff'
+          item.style.color = '#000000'
+        }
+        const cold = () => {
+          item.style.background = ''
+          item.style.color = color
+        }
+        item.addEventListener('mouseenter', hot, { signal: mcSignal })
+        item.addEventListener('mouseleave', cold, { signal: mcSignal })
+        item.addEventListener('focus', hot, { signal: mcSignal })
+        item.addEventListener('blur', cold, { signal: mcSignal })
+        const run = () => {
           menu.remove()
           fn()
-        })
+        }
+        item.addEventListener('click', run)
+        item.addEventListener(
+          'keydown',
+          (ev) => {
+            ev.stopPropagation()
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault()
+              run()
+            } else if (ev.key === 'Escape') menu.remove()
+            else if (ev.key === 'ArrowDown' || ev.key === 'j')
+              (item.nextElementSibling || menu.firstElementChild).focus()
+            else if (ev.key === 'ArrowUp' || ev.key === 'k')
+              (item.previousElementSibling || menu.lastElementChild).focus()
+          },
+          { signal: mcSignal },
+        )
         menu.appendChild(item)
       }
 
-      mkItem('copy layout link', '#ffffff', () => {
-        const link = mcLayoutLink(config.channels)
-        if (link) mcCopyToClipboard(link, 'layout link copied')
-        else showToast('no tabs to share', 'error')
-      })
-      const lSep = document.createElement('div')
-      lSep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
-      menu.appendChild(lSep)
-
-      // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
-      // red (off) buttons as send to below; a view filter, so nothing is deleted.
-      const linkedView = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linkedView).some(Boolean)) {
-        const pHdr = document.createElement('div')
-        pHdr.textContent = 'platforms'
-        pHdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
-        menu.appendChild(pHdr)
-        const pLabels = { twitch: 'T  twitch', kick: 'K  kick', youtube: 'Y  youtube' }
-        for (const key of ['twitch', 'kick', 'youtube']) {
-          if (!linkedView[key]) continue
-          const btn = document.createElement('div')
-          const paint = () => {
-            const on = getPlatformFilter(tabId)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
-          }
-          paint()
-          btn.textContent = pLabels[key]
-          btn.addEventListener('mouseenter', () => (btn.style.cssText += 'background:#fff;color:#000;'), {
-            signal: mcSignal,
-          })
-          btn.addEventListener('mouseleave', paint, { signal: mcSignal })
-          btn.addEventListener('click', () => {
-            // never hide every platform: an empty tab reads as broken
-            const f = getPlatformFilter(tabId)
-            const stillOn = ['twitch', 'kick', 'youtube'].filter((p) => linkedView[p] && f[p] && p !== key)
-            if (f[key] && !stillOn.length) return
-            togglePlatformFilter(tabId, key)
-            paint()
-            renderMessages(tabId)
-          })
-          menu.appendChild(btn)
-        }
-        const pSep = document.createElement('div')
-        pSep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
-        menu.appendChild(pSep)
-      }
-
-      // send to: which linked platforms a message typed in this tab goes out to.
-      // One button per platform: its colour when on, grey when off; stays open so several can
-      // be flipped. Only with 2+ linked platforms — nothing to choose otherwise.
-      const linked = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }
-      if (Object.values(linked).some(Boolean)) {
-        const hdr = document.createElement('div')
-        hdr.textContent = 'send to'
-        hdr.style.cssText = 'padding:4px 12px 2px;color:#ffffff;'
-        menu.appendChild(hdr)
-        const labels = { twitch: 'T  twitch', kick: 'K  kick', youtube: 'Y  youtube' }
-        for (const key of ['twitch', 'kick', 'youtube']) {
-          if (!linked[key]) continue
-          const btn = document.createElement('div')
-          const paint = () => {
-            const on = resolveSendTargets(ch.sendTargets, linked)[key]
-            btn.style.cssText = `margin:2px 6px;padding:3px 8px;cursor:pointer;border:1px solid;color:${on ? `var(--hs-plat-${key})` : 'var(--hs-dim)'};`
-          }
-          paint()
-          btn.textContent = labels[key]
-          btn.addEventListener('mouseenter', () => (btn.style.cssText += 'background:#fff;color:#000;'), {
-            signal: mcSignal,
-          })
-          btn.addEventListener('mouseleave', paint, { signal: mcSignal })
-          btn.addEventListener('click', () => {
-            const on = resolveSendTargets(ch.sendTargets, linked)[key]
-            const next = nextSendTargets(ch.sendTargets, linked, key, !on)
-            if (!next) return // never leave a tab with nowhere to send
-            ch.sendTargets = next
-            saveConfig()
-            paint()
-          })
-          menu.appendChild(btn)
-        }
-        const sep = document.createElement('div')
-        sep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
-        menu.appendChild(sep)
-      }
-
       mkItem('edit', '#fff', () => showEditChannelForm(tabId))
-      for (const l of channelSubLinks(ch)) {
-        mkItem(l.label, '#ffffff', () => window.open(l.url, '_blank', 'noopener'))
-      }
       mkItem('remove', 'var(--hs-danger)', () => removeChannel(tabId))
 
       // Append then clamp to viewport so it doesn't overflow off-screen
@@ -4162,6 +4099,7 @@
         mh = menu.offsetHeight
       menu.style.left = `${Math.min(e.clientX, window.innerWidth - mw - 4)}px`
       menu.style.top = `${Math.min(e.clientY, window.innerHeight - mh - 4)}px`
+      menu.firstElementChild?.focus()
 
       const dismiss = (ev) => {
         if (!menu.contains(ev.target)) {

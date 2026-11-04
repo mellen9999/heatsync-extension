@@ -900,6 +900,70 @@ function makeSendTargetsRow(ch) {
   return row
 }
 
+// "show" row: which linked platforms' messages this tab displays. A view
+// filter, so nothing is deleted. Same T/K/Y squares as send to; refuses to
+// hide the last visible platform (an empty tab reads as broken).
+function makePlatformFilterRow(ch) {
+  const tabId = ch.id
+  const linked = { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube }
+  if (Object.values(linked).filter(Boolean).length < 2) return null
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
+  const lbl = document.createElement('span')
+  lbl.textContent = 'show'
+  lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  row.appendChild(lbl)
+  const group = document.createElement('span')
+  group.style.cssText = 'display:flex;gap:2px;'
+  row.appendChild(group)
+  const render = () => {
+    group.textContent = ''
+    const f = getPlatformFilter(tabId)
+    for (const [key, label] of [
+      ['twitch', 'T'],
+      ['kick', 'K'],
+      ['youtube', 'Y'],
+    ]) {
+      if (!linked[key]) continue
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = `hs-mc-st-btn hs-mc-st-${key}`
+      btn.classList.toggle('off', !f[key])
+      btn.textContent = label
+      btn.title = `show ${key}: ${f[key] ? 'on' : 'off'}`
+      btn.addEventListener('click', () => {
+        const cur = getPlatformFilter(tabId)
+        const stillOn = ['twitch', 'kick', 'youtube'].filter((p) => linked[p] && cur[p] && p !== key)
+        if (cur[key] && !stillOn.length) return // never hide every platform
+        togglePlatformFilter(tabId, key)
+        render()
+        renderMessages(tabId)
+      })
+      group.appendChild(btn)
+    }
+  }
+  render()
+  return row
+}
+
+// One button per sub link (twitch / kick / youtube sub pages) — they lived in
+// the tab menu; the menu is edit + remove now.
+function makeSubLinksRow(ch) {
+  const links = channelSubLinks(ch)
+  if (!links.length) return null
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;flex-wrap:wrap;justify-content:center;gap:6px;'
+  for (const l of links) {
+    const b = makeMcBtn(l.label, false)
+    b.style.padding = '4px 10px'
+    b.style.minWidth = '0'
+    b.style.fontSize = '13px'
+    b.addEventListener('click', () => window.open(l.url, '_blank', 'noopener'))
+    row.appendChild(b)
+  }
+  return row
+}
+
 function showEditChannelForm(tabId) {
   const ch = getChannelById(tabId)
   if (!ch) return
@@ -945,8 +1009,12 @@ function showEditChannelForm(tabId) {
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
+  const showRow = makePlatformFilterRow(ch)
+  if (showRow) wrapper.appendChild(showRow)
   const sendRow = makeSendTargetsRow(ch)
   if (sendRow) wrapper.appendChild(sendRow)
+  const subRow = makeSubLinksRow(ch)
+  if (subRow) wrapper.appendChild(subRow)
 
   const errEl = document.createElement('div')
   errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);display:none;'

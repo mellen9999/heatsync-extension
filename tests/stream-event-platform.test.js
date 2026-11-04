@@ -67,4 +67,15 @@ describe('the page keeps the event platform end to end', () => {
     expect(MAIN).toContain('hsLiveChannelEntry(plat, cur)')
     expect(MAIN).not.toContain("location.hostname.includes('kick.com') ? 'kick' : 'twitch'\n        if (cur")
   })
+  test('every go-live / switch / offline row wears its platform tag, not just youtube', () => {
+    const branch = MAIN.slice(
+      MAIN.indexOf("if (m.type === 'stream-event') {"),
+      MAIN.indexOf("if (m.type === 'feed-post') {"),
+    )
+    expect(branch).toContain("{ twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]")
+    expect(branch).toContain('hs-mc-pb-${evtBadge}')
+    expect(branch).toContain('color:${PLAT_COLORS[evtBadge]}')
+    expect(branch).toContain('${tsSpan}${platBadge}${userLink}')
+    expect(branch).not.toContain('isYtEvent && (platformBadgesEnabled')
+  })
 })

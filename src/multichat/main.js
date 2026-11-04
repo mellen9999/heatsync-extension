@@ -7813,10 +7813,12 @@
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
       const evtPlat = streamEventPlatform(m.platform)
-      // [Y] platform badge — parity with regular YT chat rows.
+      // [T]/[K]/[Y] platform badge on every went-live / switch / offline row — the same
+      // span and gate as regular chat rows (PLAT_COLORS token, platformBadgesEnabled).
+      const evtBadge = { twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]
       const platBadge =
-        isYtEvent && (platformBadgesEnabled || hostPlatform !== 'yt')
-          ? `<span class="hs-mc-platform-badge hs-mc-pb-yt" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS.yt}">[Y]</span>`
+        platformBadgesEnabled || evtBadge !== hostPlatform
+          ? `<span class="hs-mc-platform-badge hs-mc-pb-${evtBadge}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[evtBadge]}">[${evtBadge === 'yt' ? 'Y' : evtBadge === 'kick' ? 'K' : 'T'}]</span>`
           : ''
       // For redeems, the actor is the redeemer (m.actor). For other events the channel is the actor.
       const ch = m.actor || m.channel || ''

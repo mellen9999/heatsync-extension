@@ -15307,7 +15307,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '5a47edf102a2' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'bf378ed5cda4' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -27469,12 +27469,13 @@ function kickifyEmoteText(text) {
 function lookupOwnedEmote(name) {
   return viewerPersonalEmotes.get(name)
 }
-// Render-order resolution for the INPUT PREVIEW: channel > inventory > global,
-// mirroring processEmotes (channel emotes authoritative in their own channel).
-// lookupEmote stays inventory-first — it drives block/add/state/tooltip, which
-// are viewer-centric. The input chip must match what gets RENDERED on send, so
-// it resolves channel-first here. Removed/blocked fallbacks stay last so a
-// blocked emote still resolves its real url for the dashed-box preview.
+// Resolution for the INPUT PREVIEW: channel > inventory > global. NOTE this is no
+// longer processEmotes' order: a rendered line puts the sender's own set before the
+// channel (see _lookup), so a name you own that the channel also has previews as the
+// channel's here but draws as yours once sent. lookupEmote stays inventory-first —
+// it drives block/add/state/tooltip, which are viewer-centric. Removed/blocked
+// fallbacks stay last so a blocked emote still resolves its real url for the
+// dashed-box preview.
 function lookupEmoteRenderOrder(name) {
   return (
     activeTabChannelEmote(name) ||
@@ -28003,7 +28004,7 @@ cleanup.persistInterval(cleanup.setIntervalIfVisible(scanDomForEmotes, 10000))
 
 // Process text and replace emote codes with images.
 // Supports 7TV zero-width (overlay) emotes that stack on base emotes.
-// Resolution priority: this message's server-verified refs (the emote the sender actually picked) > channel > senderEmotes > extraCache (native twitch IRC) > emoteCache (globals) — see _lookup below; the channel set is authoritative for every name the message carries no ref for
+// Resolution priority: this message's server-verified refs > senderEmotes (the sender's own set, the emote they picked) > channel > extraCache (native twitch IRC) > emoteCache (globals) — see _lookup below
 // - extraCache: optional Map<name, emoteData> for per-message Twitch IRC tag emotes
 // - senderEmotes: optional Map<name, emoteData> — sender's personal set frozen at first sight.
 //   For viewer's own outgoing messages, caller passes viewerPersonalEmotes here.
@@ -28536,8 +28537,8 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     return entry
   }
   const _sGet = (name) => (_invRender ? _sGate(senderEmotes?.get(name)) : null)
-  // Provenance-aware resolve: channel > sender inventory > native > global >
-  // removed-inventory fallback. `inv` marks hits that render BECAUSE of a
+  // Provenance-aware resolve: message ref > sender inventory > channel > native >
+  // global > removed-inventory fallback. `inv` marks hits that render BECAUSE of a
   // heatsync inventory (the sender's, or the viewer's own) — the tooltip
   // attributes those to the inventory instead of the emote's original
   // provider, which the viewer may have no relationship with (same emote
@@ -28559,10 +28560,16 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     // current by construction.
     let e = msgRefs?.get(name)
     if (e) return { e, inv: true }
-    e = channel ? channelEmoteCaches[channel]?.get(raw) : null
-    if (e) return { e, inv: false }
+    // The SENDER's own set next, before the channel: the ref above is just a
+    // precomputed lookup of this same inventory, so a line with no ref (the first
+    // one after an add or swap, a cold server cache, history) must still resolve
+    // to the emote they picked and not the room's same-name one. Only the sender's
+    // set ever fills this — never another user's — and _sGate keeps it to the
+    // window they actually owned the emote.
     e = _sGet(raw)
     if (e) return { e, inv: true }
+    e = channel ? channelEmoteCaches[channel]?.get(raw) : null
+    if (e) return { e, inv: false }
     e = extraCache?.get(name) || emoteCache.get(raw)
     if (e) return { e, inv: false }
     e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
@@ -28817,14 +28824,10 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     // 7TV-style "name0" convention (strip the trailing 0 and overlay the
     // base). This MUST match lookupEmoteWithOverlay (input preview) so the
     // input chip and the rendered message agree.
-    // Priority: channel > senderEmotes > extraCache (twitch IRC native) > emoteCache (globals).
-    // Channel emotes are AUTHORITATIVE in their own channel for every sender
-    // (mirrors chrome/content.js cachedOwnEmotes): nl_kripp's channel "Cabge"
-    // must win over a sender's colliding personal 7TV "Cabge", so the viewer
-    // sees the same image whether they or someone else posts the name. The
-    // per-sender set (viewer inventory on own msgs, sender's personal 7TV on
-    // others') still fills every name the channel doesn't carry — sovereignty
-    // intact. Without this, others' messages diverged from the viewer's own.
+    // Priority: msg refs > senderEmotes > channel > extraCache (twitch IRC native) > emoteCache (globals).
+    // The per-sender set (viewer inventory on own msgs, the sender's set on
+    // others') is the sender's own pick, so it beats the channel's same-name
+    // emote; the channel still fills every name the sender doesn't carry.
     let emote = null
     let emoteFromInv = false
     let isOverlayEmote = false

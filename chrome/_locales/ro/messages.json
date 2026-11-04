@@ -1779,8 +1779,8 @@
       }
     }
   },
-  "mc_emote_swap_failed": {
-    "message": "nu s-a putut schimba $NAME$ — cel vechi a revenit",
+  "mc_emote_swap_upload": {
+    "message": "your own upload keeps the name $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"

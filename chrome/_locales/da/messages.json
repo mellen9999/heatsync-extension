@@ -1779,8 +1779,8 @@
       }
     }
   },
-  "mc_emote_swap_failed": {
-    "message": "kunne ikke skifte $NAME$ — din gamle er tilbage",
+  "mc_emote_swap_upload": {
+    "message": "your own upload keeps the name $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"

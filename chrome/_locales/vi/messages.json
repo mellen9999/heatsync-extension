@@ -1779,8 +1779,8 @@
       }
     }
   },
-  "mc_emote_swap_failed": {
-    "message": "không đổi được $NAME$ — bản cũ đã được khôi phục",
+  "mc_emote_swap_upload": {
+    "message": "your own upload keeps the name $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"

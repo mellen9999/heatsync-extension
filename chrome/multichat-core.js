@@ -15313,7 +15313,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '10853824c646' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '54a4f2844bc0' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -26705,7 +26705,9 @@ function unblockEmote(emoteName, opts) {
 // lookup across mcRemoteEmoteIndex + zeroWidthFromAnyCache so all callers
 // (picker, chat-row click, auto-add-on-send, chip-paste) inherit the flag
 // without each having to plumb it through their own state.
-async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, zeroWidth, silent) {
+// replace: re-point a name you already own to this emote in one server call (the
+// same-name swap); the server refuses it when the owned one is your own upload.
+async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, zeroWidth, silent, replace) {
   if (!emoteName) return false
   if (zeroWidth == null) {
     const remote = mcRemoteEmoteIndex.get(emoteName)
@@ -26734,6 +26736,7 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
           emoteHash: emoteHash,
           emoteUrl: emoteUrl,
           zeroWidth: !!zeroWidth,
+          ...(replace ? { replace: true } : {}),
         },
         (resp) => {
           // Read lastError so Chrome doesn't log an "unchecked runtime.lastError"
@@ -26803,6 +26806,8 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
       const addErr = String(response?.error || '')
       if (/not logged in/i.test(addErr)) {
         showToast(t('mc_emote_add_login'), 'info')
+      } else if (replace && /held by your upload/i.test(addErr)) {
+        showToast(t('mc_emote_swap_upload', [emoteName]), 'error')
       } else {
         showToast(addErr || t('mc_emote_add_failed', [emoteName]), 'error')
       }
@@ -26817,17 +26822,15 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
 }
 
 // Swap what you own under a name for a different emote — the same-name pick (the
-// channel's IDK vs another IDK). The server keeps ONE emote per name and refuses a
-// second add under it, so the old one goes first, then the new one; sequential, in
-// that order. A swap never leaves you with neither: if the new one is refused the
-// old one is put back. Resolves true when the new one is yours.
+// channel's IDK vs another IDK). ONE add carrying replace:true: the server re-points
+// the same slot atomically, so you are never left with neither. It refuses when the
+// emote you own under that name is your own upload (the add toasts why). The new one
+// is seeded locally first so the line being sent right now, whose echo is back in a
+// blink, still draws it; a refusal puts the old entry back. Resolves true when the
+// new one is yours.
 async function swapEmoteInInventory(emoteName, emoteUrl, emoteSource, zeroWidth) {
   const old = viewerPersonalEmotes.get(emoteName)
   if (!emoteName || !old?.url) return false
-  const removing = removeEmoteFromInventory(emoteName, null, { silent: true })
-  // The removal has already cleared the old one from the local sets (that part is
-  // synchronous). Seed the new one before the next tick so the line being sent
-  // right now, whose echo is back in a blink, still draws it.
   viewerPersonalEmotes.set(emoteName, {
     url: emoteUrl,
     source: emoteSource || 'heatsync',
@@ -26835,15 +26838,12 @@ async function swapEmoteInInventory(emoteName, emoteUrl, emoteSource, zeroWidth)
     zeroWidth: !!zeroWidth,
     addedAt: Date.now(),
   })
-  // refused: the removal already said why and put the old one back
-  if (!(await removing)) return false
-  if (await addEmoteToInventory(emoteName, emoteUrl, emoteSource, null, zeroWidth, true)) {
+  if (await addEmoteToInventory(emoteName, emoteUrl, emoteSource, null, zeroWidth, true, true)) {
+    if (old.hash && hashToName.get(old.hash) === emoteName) hashToName.delete(old.hash)
     showToast(t('mc_emote_swapped', [emoteName]), 'success')
     return true
   }
-  // the add said why; bring the old one back so you are not left with neither
-  const back = await addEmoteToInventory(emoteName, old.url, old.source, null, old.zeroWidth, true)
-  if (back) showToast(t('mc_emote_swap_failed', [emoteName]), 'error')
+  viewerPersonalEmotes.set(emoteName, old)
   return false
 }
 

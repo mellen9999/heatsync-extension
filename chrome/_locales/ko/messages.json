@@ -1779,8 +1779,8 @@
       }
     }
   },
-  "mc_emote_swap_failed": {
-    "message": "$NAME$ 교체 실패 — 기존 것을 복구했어요",
+  "mc_emote_swap_upload": {
+    "message": "your own upload keeps the name $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"

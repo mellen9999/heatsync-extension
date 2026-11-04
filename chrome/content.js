@@ -891,7 +891,7 @@
 
     const header = document.createElement('div')
     header.className = 'hs-ucp-header'
-    header.textContent = `color for ${username}`
+    header.textContent = t('cs_color_for', [username])
     el.appendChild(header)
 
     const swatches = document.createElement('div')
@@ -926,13 +926,13 @@
       if (/^#[0-9a-fA-F]{6}$/.test(hexInput.value)) colorInput.value = hexInput.value
     })
     const applyBtn = document.createElement('button')
-    applyBtn.textContent = 'set'
+    applyBtn.textContent = t('cs_set')
     applyBtn.addEventListener('click', () => {
       setUserColor(username, hexInput.value || colorInput.value)
       closeUserColorPicker()
     })
     const clearBtn = document.createElement('button')
-    clearBtn.textContent = 'clear'
+    clearBtn.textContent = t('cs_clear')
     clearBtn.addEventListener('click', () => {
       setUserColor(username, null)
       closeUserColorPicker()
@@ -984,10 +984,10 @@
     close.addEventListener('click', closeEventChip)
     el.appendChild(close)
 
-    const t = document.createElement('div')
-    t.className = 'hs-event-title'
-    t.textContent = (kind === 'poll' ? '📊 poll · ' : '🎯 prediction · ') + (title || '(active)')
-    el.appendChild(t)
+    const titleEl = document.createElement('div')
+    titleEl.className = 'hs-event-title'
+    titleEl.textContent = (kind === 'poll' ? t('cs_poll') : t('cs_prediction')) + (title || t('cs_active'))
+    el.appendChild(titleEl)
 
     for (const r of (rows || []).slice(0, 8)) {
       const row = document.createElement('div')
@@ -3481,7 +3481,7 @@
           // text to ×N). Real failures still surface the actual error.
           const addErr = String(message.error || '')
           if (/not logged in/i.test(addErr)) {
-            showToast('log in to heatsync.org to add emotes', 'info')
+            showToast(t('mc_emote_add_login'), 'info')
           } else {
             showToast(t('content_toast_failed_add', [message.emoteName, addErr]), 'error')
           }
@@ -4289,7 +4289,7 @@
         if (!url || !url.startsWith('https://static-cdn.jtvnw.net/')) continue
         const img = document.createElement('img')
         img.className = 'chat-badge'
-        img.alt = `${kit.titleFor(channel, setId, version) || setId} badge`
+        img.alt = t('cs_badge_alt', [kit.titleFor(channel, setId, version) || setId])
         img.src = url
         img.style.cssText = 'width:18px;height:18px;vertical-align:middle;margin-right:4px;display:inline-block;'
         name.before(img)
@@ -5365,7 +5365,7 @@
               if (addPromises.length) {
                 Promise.all(addPromises).then((names) => {
                   const added = names.filter(Boolean)
-                  if (added.length) showToast(`added: ${added.join(', ')}`, 'success')
+                  if (added.length) showToast(t('mc_emote_added', [added.join(', ')]), 'success')
                 })
               }
             } else {
@@ -7072,16 +7072,19 @@
       .then((result) => {
         if (result?.success) {
           const now = wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
-          const twin = now && now.dataset.emoteHash !== hash ? ` · now ${now.dataset.variantClass}` : ''
-          showToast(`removed ${emoteName}${twin}`, 'info')
+          const twin = !!now && now.dataset.emoteHash !== hash
+          showToast(
+            twin ? t('cs_removed_now', [emoteName, now.dataset.variantClass]) : t('cs_removed', [emoteName]),
+            'info',
+          )
         } else if (/not logged in/i.test(String(result?.error || ''))) {
-          showToast('log in to heatsync.org to manage emotes', 'info')
+          showToast(t('cs_login_manage'), 'info')
         } else {
-          showToast(`couldn't remove ${emoteName}: ${String(result?.error || 'unknown error')}`, 'error')
+          showToast(t('cs_remove_failed', [emoteName, String(result?.error || t('cs_unknown_error'))]), 'error')
         }
       })
       .catch((err) => {
-        if (extensionContextValid) showToast(`couldn't remove ${emoteName}: ${String(err.message)}`, 'error')
+        if (extensionContextValid) showToast(t('cs_remove_failed', [emoteName, String(err.message)]), 'error')
       })
       .finally(() => pendingOperations.delete(operationKey))
     return true
@@ -8674,15 +8677,15 @@
     }
 
     addHeader(username)
-    addItem('copy username', () => navigator.clipboard?.writeText(username))
-    addItem('copy message', () => navigator.clipboard?.writeText(_extractMessageText(msgEl)))
+    addItem(t('cs_copy_username'), () => navigator.clipboard?.writeText(username))
+    addItem(t('cs_copy_message'), () => navigator.clipboard?.writeText(_extractMessageText(msgEl)))
 
     addSep()
-    if (isMuted) addItem('unmute', () => _toggleUserMute(username), { good: true })
-    else addItem('mute (24h)', () => _toggleUserMute(username), { danger: true })
+    if (isMuted) addItem(t('mc_settings_unmute'), () => _toggleUserMute(username), { good: true })
+    else addItem(t('cs_mute_24h'), () => _toggleUserMute(username), { danger: true })
 
     addSep()
-    addItem('profile', () =>
+    addItem(t('cs_profile'), () =>
       window.open(`https://heatsync.org/user/${encodeURIComponent(username)}`, '_blank', 'noopener,noreferrer'),
     )
 

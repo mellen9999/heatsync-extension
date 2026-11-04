@@ -84,7 +84,7 @@ describe('one close glyph', () => {
     // chat-logs.js has no × of its own: the ← back tab closes the logs view
     expect(at('chat-logs.js')).not.toContain("hsXButton('hs-cl-close'")
     expect(at('pred-view.js')).toContain("hsXButton('hs-pv-close'")
-    expect(at('feed-embed.js')).toContain("hsXButtonHtml('hs-mc-player-close'")
+    expect(at('feed-embed.js')).toMatch(/hsXButtonHtml\(\s*'hs-mc-player-close'/)
     expect(at('profile-card.js')).toContain("hsXButton('hs-pcard-close'")
     expect(at('settings-ui.js')).toContain('hsXButtonHtml(')
     expect(at('notifs.js')).toContain('HS_X_SVG')

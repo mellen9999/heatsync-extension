@@ -56,7 +56,7 @@ function _ptFill(id, rows, emptyText) {
 // reloads, like the youtube native chat view. It is the popup's per-site switch, written from the page.
 function nativeChatRow() {
   const gate = { twitch: 'overlay-twitch', kick: 'overlay-kick', yt: 'overlay-youtube' }[hostPlatform]
-  return _ptRow('native chat', _ptGlyph.chat, async () => {
+  return _ptRow(t('mc_pt_native_chat'), _ptGlyph.chat, async () => {
     await window.HS.setSiteOverlay(gate, false)
     location.reload()
   })
@@ -66,13 +66,17 @@ function renderKickTab() {
   const ch = String(getCurrentChannel() || '').toLowerCase()
   const rows = /^[a-z0-9_-]{1,40}$/.test(ch)
     ? [
-        { label: 'popout chat', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/popout/${ch}/chat`) },
-        { label: 'clips', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/clips`) },
-        { label: 'videos', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/videos`) },
-        { label: 'channel page', glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}`) },
+        {
+          label: t('mc_pt_popout_chat'),
+          glyph: _ptGlyph.link,
+          onClick: () => _ptOpen(`https://kick.com/popout/${ch}/chat`),
+        },
+        { label: t('mc_pt_clips'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/clips`) },
+        { label: t('mc_pt_videos'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}/videos`) },
+        { label: t('mc_pt_channel_page'), glyph: _ptGlyph.link, onClick: () => _ptOpen(`https://kick.com/${ch}`) },
       ]
     : []
-  _ptFill('hs-mc-tab-kick', rows, 'no channel detected')
+  _ptFill('hs-mc-tab-kick', rows, t('mc_pt_no_channel'))
   document.querySelector('#hs-mc-tab-kick .hs-mc-pred-links')?.prepend(nativeChatRow())
 }
 
@@ -86,17 +90,15 @@ function _ptYtOwnerPath() {
 
 function renderYoutubeTab() {
   const owner = _ptYtOwnerPath()
-  const rows = [
-    { label: 'native chat (super chat, stickers, polls, emoji)', glyph: _ptGlyph.chat, onClick: ytPeekNative },
-  ]
+  const rows = [{ label: t('mc_pt_yt_native_chat'), glyph: _ptGlyph.chat, onClick: ytPeekNative }]
   if (owner) {
     rows.push({
-      label: 'join channel',
+      label: t('mc_pt_join_channel'),
       glyph: _ptGlyph.link,
       onClick: () => _ptOpen(`https://www.youtube.com${owner}/join`),
     })
     rows.push({
-      label: 'channel page',
+      label: t('mc_pt_channel_page'),
       glyph: _ptGlyph.link,
       onClick: () => _ptOpen(`https://www.youtube.com${owner}`),
     })
@@ -127,7 +129,7 @@ function ytPeekNative() {
   const arrow = document.createElement('span')
   arrow.className = 'hs-yt-peek-arrow'
   arrow.textContent = '←'
-  back.append(arrow, ' back to heatsync chat')
+  back.append(arrow, ` ${t('mc_pt_back_to_chat')}`)
   back.addEventListener('click', ytPeekBack)
   bar.appendChild(back)
   document.body.appendChild(bar)

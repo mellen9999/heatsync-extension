@@ -116,7 +116,7 @@ function _enterResubShareMode(claim, user, months) {
   if (input.dataset.hsOrigDataPlaceholder === undefined) {
     input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
   }
-  const placeholder = `resub message (${months}mo) — enter to share`
+  const placeholder = t('mc_misc_resub_placeholder', [String(months)])
   input.setAttribute('placeholder', placeholder)
   input.setAttribute('data-placeholder', placeholder)
   try {
@@ -598,7 +598,7 @@ function _enterWatchstreakShareMode(claim, user, streakCount) {
   if (input.dataset.hsOrigDataPlaceholder === undefined) {
     input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
   }
-  const placeholder = `watch streak (${streakCount}) — enter to share`
+  const placeholder = t('mc_misc_streak_placeholder', [String(streakCount)])
   input.setAttribute('placeholder', placeholder)
   input.setAttribute('data-placeholder', placeholder)
   try {

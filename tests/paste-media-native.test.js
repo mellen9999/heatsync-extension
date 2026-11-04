@@ -119,7 +119,7 @@ describe('window.HS.uploadMediaFiles is the single source of caps/filter/upload/
     const start = SHARED_SRC.indexOf('async function uploadMediaFiles')
     const fn = SHARED_SRC.slice(start, SHARED_SRC.indexOf('\n  }', start) + 4)
     // durationMs: 0 means "don't auto-dismiss" — see showToast's own contract.
-    expect(fn).toMatch(/showToast\('uploading\.\.\.', 'info', 0\)/)
+    expect(fn).toMatch(/showToast\(_hsT\('cs_uploading'\), 'info', 0\)/)
   })
 
   test('the uploading status only self-clears when every file succeeded', () => {

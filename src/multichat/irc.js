@@ -848,7 +848,9 @@ class IRC extends ChatClient {
             for (const m of buf.getAll()) {
               if (m.user && m.user.toLowerCase() === targetLc && !m.cleared) {
                 m.cleared = true
-                m.clearedReason = msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned'
+                m.clearedReason = msg.banDuration
+                  ? t('mc_mod_label_timed_out', [String(msg.banDuration)])
+                  : t('mc_mod_label_banned')
               }
             }
           }
@@ -1326,7 +1328,9 @@ class KickChat extends ChatClient {
     const action = message.action
     const targetLc = (message.targetUser || '').toLowerCase()
     if ((action === 'ban' || action === 'timeout') && targetLc) {
-      const reason = message.banDuration ? `timed out (${message.banDuration}s)` : 'banned'
+      const reason = message.banDuration
+        ? t('mc_mod_label_timed_out', [String(message.banDuration)])
+        : t('mc_mod_label_banned')
       for (const m of buf.getAll()) {
         if (!m.cleared && (m.user || '').toLowerCase() === targetLc) {
           m.cleared = true
@@ -1366,12 +1370,12 @@ class KickChat extends ChatClient {
     if (this._consumeSelfMod(channel, noticeType, action === 'delete' ? message.targetMsgId : targetLc)) return
     const text =
       action === 'delete'
-        ? `a message was deleted`
+        ? t('mc_ircx_msg_deleted')
         : action === 'unban'
-          ? `${target} was unbanned`
+          ? t('mc_ircx_unbanned', [target])
           : action === 'timeout'
-            ? `${target} timed out for ${message.banDuration || 1}s`
-            : `${target} was banned`
+            ? t('mc_ircx_timed_out', [target, String(message.banDuration || 1)])
+            : t('mc_ircx_banned', [target])
     this.emit('message', {
       type: 'notice',
       noticeType,
@@ -1491,11 +1495,15 @@ class KickChat extends ChatClient {
       if (message.type === 'kick_pin_event' && message.channel) {
         const channel = message.channel.toLowerCase()
         if (!this.channels.has(channel)) return
-        const by = message.sender ? ` ${message.sender}:` : ':'
         const msg = {
           user: message.sender || 'system',
           text: '',
-          systemMsg: message.pinned ? `pinned${by} ${message.text}`.trim() : 'message unpinned',
+          systemMsg: message.pinned
+            ? (message.sender
+                ? t('mc_main_ev_pinned_by', [message.sender, message.text])
+                : t('mc_main_ev_pinned', [message.text])
+              ).trim()
+            : t('mc_main_ev_unpinned'),
           // feeds sanitizeColor()/COLOR_RE downstream (main.js) — literal hex only, no var().
           color: '#ffd700',
           badges: '',
@@ -1521,7 +1529,13 @@ class KickChat extends ChatClient {
         const msg = {
           user: message.username || 'anonymous',
           text: message.message || '',
-          systemMsg: `${message.username || 'Anonymous'} gifted ${message.amount} KICKs${message.giftName ? ` (${message.giftName})` : ''}!`,
+          systemMsg: message.giftName
+            ? t('mc_ircx_gift_kicks_named', [
+                message.username || t('mc_ircx_anonymous'),
+                String(message.amount),
+                message.giftName,
+              ])
+            : t('mc_ircx_gift_kicks', [message.username || t('mc_ircx_anonymous'), String(message.amount)]),
           // feeds sanitizeColor()/COLOR_RE downstream (main.js) — must stay literal hex, no var(). Canonical gold.
           color: '#ffd700',
           badges: '',

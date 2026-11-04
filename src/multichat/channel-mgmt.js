@@ -629,13 +629,13 @@ function renderAddChannelForm(msgsEl) {
       return
     }
     const gen = ++_autofillGen
-    linkStatus.textContent = 'checking heatsync…'
+    linkStatus.textContent = t('mc_cmg_checking')
     linkStatus.style.color = '#ffffff'
     const res =
       typeof resolveIdentity === 'function' ? await resolveIdentity(name, { platform: sourcePlatform }) : { ok: false }
     if (gen !== _autofillGen) return
     if (!res?.ok) {
-      linkStatus.textContent = res?.notFound ? 'no heatsync profile — fill manually' : "couldn't reach heatsync"
+      linkStatus.textContent = res?.notFound ? t('mc_cmg_no_profile') : t('mc_cmg_unreachable')
       linkStatus.style.color = '#ffffff'
       return
     }
@@ -657,10 +657,10 @@ function renderAddChannelForm(msgsEl) {
     if (id.kick) linkedLabels.push('k')
     if (id.youtube) linkedLabels.push('yt')
     const liveLabels = res.liveOn?.length
-      ? ` · live on ${res.liveOn.map((p) => (p === 'twitch' ? 't' : p === 'kick' ? 'k' : p)).join(',')}`
+      ? ` · ${t('mc_cmg_live_on', [res.liveOn.map((p) => (p === 'twitch' ? 't' : p === 'kick' ? 'k' : p)).join(',')])}`
       : ''
     linkStatus.style.color = 'var(--hs-plat-kick)'
-    linkStatus.textContent = `✓ matched ${id.heatsync || name} on heatsync — linked: ${linkedLabels.join(',') || 'none'}${liveLabels}${platforms.length ? ` · autofilled: ${platforms.join(',')}` : ''}`
+    linkStatus.textContent = `✓ ${t('mc_cmg_matched', [id.heatsync || name, linkedLabels.join(',') || t('mc_set_fmt_none')])}${liveLabels}${platforms.length ? ` · ${t('mc_cmg_autofilled', [platforms.join(',')])}` : ''}`
   }
 
   twitch.input.addEventListener('input', () => {
@@ -780,7 +780,7 @@ function renderLivePlatformsPane(pane) {
     'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
 
   const title = document.createElement('div')
-  title.textContent = `edit live — ${urlCh}`
+  title.textContent = t('mc_cmg_edit_live', [urlCh])
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
   wrapper.appendChild(title)
 
@@ -803,9 +803,9 @@ function renderLivePlatformsPane(pane) {
     return { row, input }
   }
 
-  const twitch = makeRow('twitch', 'username', names.twitch)
-  const kick = makeRow('kick', 'username', names.kick)
-  const yt = makeRow('youtube', 'url or @handle', names.youtube)
+  const twitch = makeRow('twitch', t('mc_username_placeholder'), names.twitch)
+  const kick = makeRow('kick', t('mc_username_placeholder'), names.kick)
+  const yt = makeRow('youtube', t('mc_username_url_placeholder'), names.youtube)
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)

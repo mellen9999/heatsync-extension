@@ -74,118 +74,133 @@ function renderQuickLinks() {
       label: null,
       show: true,
       items: [
-        { action: 'sub', accent: '#ff0000', icon: ICONS.sub, label: 'subscribe', direct: true },
-        { action: 'popout', accent: '#ffffff', icon: ICONS.popout, label: 'popout chat', direct: true },
+        { action: 'sub', accent: '#ff0000', icon: ICONS.sub, label: t('mc_twapi_ql_subscribe'), direct: true },
+        { action: 'popout', accent: '#ffffff', icon: ICONS.popout, label: t('popup_btn_popout'), direct: true },
       ],
     },
     {
-      label: 'mod tools',
+      label: t('content_card_mod_tools'),
       show: isMod,
       items: [
         {
           accent: '#00ffff',
           icon: ICONS.shield,
-          label: 'mod view (chat, automod, blocked terms)',
+          label: t('mc_twapi_ql_mod_view'),
           url: (c) => `https://www.twitch.tv/moderator/${c}`,
           opts: 'width=1200,height=800',
         },
       ],
     },
     {
-      label: 'broadcaster',
+      label: t('mc_twapi_ql_broadcaster'),
       show: isBroadcaster,
       items: [
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.dashboard,
-          label: 'creator dashboard',
+          label: t('mc_twapi_ql_creator'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/home`,
           opts: 'width=1200,height=800',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.video,
-          label: 'stream manager',
+          label: t('mc_twapi_ql_stream_mgr'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/stream-manager`,
           opts: 'width=1200,height=800',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.settings,
-          label: 'moderation settings (automod, blocked terms)',
+          label: t('mc_twapi_ql_mod_settings'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/settings/moderation`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.settings,
-          label: 'channel settings',
+          label: t('mc_twapi_ql_chan_settings'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/settings/channel`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.people,
-          label: 'community (mods, vips, follows)',
+          label: t('mc_twapi_ql_community'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/community`,
           opts: 'width=1000,height=750',
         },
         {
           accent: HS_PLAT_COLORS.twitch,
           icon: ICONS.cash,
-          label: 'monetization',
+          label: t('mc_twapi_ql_monetization'),
           url: (c) => `https://dashboard.twitch.tv/u/${c}/monetization`,
           opts: 'width=1000,height=750',
         },
       ],
     },
     {
-      label: 'channel pages',
+      label: t('mc_twapi_ql_chan_pages'),
       show: !!ch,
       items: [
-        { accent: '#ffffff', icon: ICONS.info, label: 'about page', url: (c) => `https://www.twitch.tv/${c}/about` },
-        { accent: '#ffffff', icon: ICONS.video, label: 'videos', url: (c) => `https://www.twitch.tv/${c}/videos` },
-        { accent: '#ffffff', icon: ICONS.video, label: 'clips', url: (c) => `https://www.twitch.tv/${c}/clips` },
+        {
+          accent: '#ffffff',
+          icon: ICONS.info,
+          label: t('mc_twapi_ql_about'),
+          url: (c) => `https://www.twitch.tv/${c}/about`,
+        },
+        {
+          accent: '#ffffff',
+          icon: ICONS.video,
+          label: t('mc_twapi_ql_videos'),
+          url: (c) => `https://www.twitch.tv/${c}/videos`,
+        },
+        {
+          accent: '#ffffff',
+          icon: ICONS.video,
+          label: t('mc_twapi_ql_clips'),
+          url: (c) => `https://www.twitch.tv/${c}/clips`,
+        },
         {
           accent: '#ffffff',
           icon: ICONS.calendar,
-          label: 'schedule',
+          label: t('mc_twapi_ql_schedule'),
           url: (c) => `https://www.twitch.tv/${c}/schedule`,
         },
       ],
     },
     {
-      label: 'your account',
+      label: t('mc_twapi_ql_account'),
       show: true,
       items: [
         {
           accent: '#ffffff',
           icon: ICONS.gift,
-          label: 'drops / inventory',
+          label: t('mc_twapi_ql_drops'),
           url: () => 'https://www.twitch.tv/inventory',
         },
         {
           accent: '#ffffff',
           icon: ICONS.sub,
-          label: 'my subscriptions',
+          label: t('mc_twapi_ql_my_subs'),
           url: () => 'https://www.twitch.tv/subscriptions',
         },
         {
           accent: '#ffffff',
           icon: ICONS.user,
-          label: 'following directory',
+          label: t('mc_twapi_ql_following'),
           url: () => 'https://www.twitch.tv/directory/following',
         },
         {
           accent: '#ffffff',
           icon: ICONS.settings,
-          label: 'twitch settings',
+          label: t('mc_twapi_ql_tw_settings'),
           url: () => 'https://www.twitch.tv/settings',
         },
         {
           accent: '#ffffff',
           icon: ICONS.lock,
-          label: 'privacy + security',
+          label: t('mc_twapi_ql_privacy'),
           url: () => 'https://www.twitch.tv/settings/security',
         },
       ],
@@ -561,7 +576,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       banner.appendChild(amt)
       const label = document.createElement('span')
       label.className = 'hs-mc-pred-result-label'
-      label.textContent = ' won'
+      label.textContent = ` ${t('mc_twapi_won')}`
       banner.appendChild(label)
     } else {
       const amt = document.createElement('span')
@@ -570,7 +585,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       banner.appendChild(amt)
       const label = document.createElement('span')
       label.className = 'hs-mc-pred-result-label'
-      label.textContent = ' lost'
+      label.textContent = ` ${t('mc_twapi_lost')}`
       banner.appendChild(label)
     }
     wrapper.appendChild(banner)
@@ -647,8 +662,11 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
 
     const stats = document.createElement('div')
     stats.className = 'hs-mc-pred-outcome-stats'
-    let statsText = `${formatPoints(points)} pts \u00b7 ${userCount} bettor${userCount !== 1 ? 's' : ''}`
-    if (isBetOn) statsText += ` \u00b7 your bet: ${formatPoints(userBet.points)}`
+    let statsText = t(userCount === 1 ? 'mc_twapi_stats_one' : 'mc_twapi_stats_many', [
+      formatPoints(points),
+      String(userCount),
+    ])
+    if (isBetOn) statsText += ` \u00b7 ${t('mc_twapi_your_bet', [formatPoints(userBet.points)])}`
     stats.textContent = statsText
     card.appendChild(stats)
 
@@ -673,14 +691,14 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
         maxBtn.dataset.outcome = outcome.id
         maxBtn.dataset.points = balance
         maxBtn.style.setProperty('--oc', color)
-        maxBtn.textContent = 'max'
+        maxBtn.textContent = t('mc_twapi_max')
         betRow.appendChild(maxBtn)
       }
 
       const customInput = document.createElement('input')
       customInput.className = 'hs-mc-pred-bet-custom'
       customInput.type = 'text'
-      customInput.placeholder = 'amt'
+      customInput.placeholder = t('mc_twapi_amt')
       customInput.dataset.outcome = outcome.id
       if (balance != null && balance <= 0) customInput.disabled = true
       betRow.appendChild(customInput)
@@ -689,7 +707,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
       goBtn.className = 'hs-mc-pred-bet-go'
       goBtn.dataset.outcome = outcome.id
       goBtn.style.setProperty('--oc', color)
-      goBtn.textContent = 'bet'
+      goBtn.textContent = t('mc_twapi_bet')
       if (balance != null && balance <= 0) goBtn.disabled = true
       betRow.appendChild(goBtn)
 
@@ -721,7 +739,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
     const notice = document.createElement('div')
     notice.className = 'hs-mc-pred-mod-notice'
     const betOutcome = pred.outcomes.find((o) => o.id === userBet.outcomeId)
-    notice.textContent = `you bet ${formatPoints(userBet.points)} on ${betOutcome?.title || '?'} \u2014 pick the actual winner`
+    notice.textContent = t('mc_twapi_mod_notice', [formatPoints(userBet.points), betOutcome?.title || '?'])
     wrapper.appendChild(notice)
   }
 
@@ -920,7 +938,10 @@ function renderRewards(rewards, balance, channelId) {
       else if (!reward.isInStock) reason.textContent = t('mc_reward_out_of_stock')
       else if (onCooldown) {
         const secs = Math.ceil((new Date(reward.cooldownExpiresAt).getTime() - now) / 1000)
-        reason.textContent = secs > 60 ? `${Math.ceil(secs / 60)}m cooldown` : `${secs}s cooldown`
+        reason.textContent =
+          secs > 60
+            ? t('mc_twapi_cooldown_m', [String(Math.ceil(secs / 60))])
+            : t('mc_twapi_cooldown_s', [String(secs)])
         reason.dataset.cooldownEnds = new Date(reward.cooldownExpiresAt).getTime()
       }
       info.appendChild(reason)
@@ -1031,7 +1052,8 @@ function attachRewardHandlers() {
         cleanup.clearInterval(iv)
         return
       }
-      el.textContent = secs > 60 ? `${Math.ceil(secs / 60)}m cooldown` : `${secs}s cooldown`
+      el.textContent =
+        secs > 60 ? t('mc_twapi_cooldown_m', [String(Math.ceil(secs / 60))]) : t('mc_twapi_cooldown_s', [String(secs)])
     }, 1000)
   })
 }
@@ -1112,15 +1134,15 @@ function attachPredictionHandlers() {
 
   // Human-readable prediction error messages
   const predErrorMsg = (code) => {
-    if (!code) return 'failed'
+    if (!code) return t('mc_twapi_failed')
     const c = code.toUpperCase()
-    if (c.includes('EVENT_MANAGER') || c.includes('OWNER')) return "can't bet on own"
-    if (c.includes('ACCEPT') || c.includes('TOS')) return 'try again'
-    if (c.includes('NOT_FOUND')) return 'prediction ended'
-    if (c.includes('LOCKED')) return 'betting locked'
-    if (c.includes('INSUFFICIENT') || c.includes('BALANCE')) return 'not enough points'
-    if (c.includes('ALREADY')) return 'already bet'
-    if (c.includes('FORBIDDEN')) return 'no permission'
+    if (c.includes('EVENT_MANAGER') || c.includes('OWNER')) return t('mc_twapi_err_own')
+    if (c.includes('ACCEPT') || c.includes('TOS')) return t('mc_twapi_err_retry')
+    if (c.includes('NOT_FOUND')) return t('mc_pred_ended')
+    if (c.includes('LOCKED')) return t('mc_twapi_err_locked')
+    if (c.includes('INSUFFICIENT') || c.includes('BALANCE')) return t('mc_twapi_err_points')
+    if (c.includes('ALREADY')) return t('mc_twapi_err_already')
+    if (c.includes('FORBIDDEN')) return t('mc_error_no_permission')
     return code.toLowerCase().slice(0, 15)
   }
 
@@ -1168,7 +1190,7 @@ function attachPredictionHandlers() {
         btn.textContent = predErrorMsg(result.error)
         btn.title = result.error
         setTimeout(() => {
-          btn.textContent = 'bet'
+          btn.textContent = t('mc_twapi_bet')
           btn.disabled = false
           btn.title = ''
         }, 3000)
@@ -1205,7 +1227,7 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       btn.disabled = true
@@ -1242,12 +1264,12 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       const outcomeId = btn.dataset.outcome
       if (!outcomeId) {
-        btn.textContent = 'no outcome'
+        btn.textContent = t('mc_twapi_no_outcome')
         return
       }
       btn.disabled = true
@@ -1288,7 +1310,7 @@ function attachPredictionHandlers() {
         btn.closest('.hs-mc-prediction')?.dataset.eventId ||
         container.querySelector('.hs-mc-prediction')?.dataset.eventId
       if (!eventId) {
-        btn.textContent = 'no event'
+        btn.textContent = t('mc_twapi_no_event')
         return
       }
       btn.disabled = true
@@ -1371,7 +1393,7 @@ function attachPredictionHandlers() {
       e.stopPropagation()
       const channelId = container.querySelector('[data-channel-id]')?.dataset.channelId
       if (!channelId) {
-        btn.textContent = 'no channel'
+        btn.textContent = t('mc_twapi_no_channel')
         return
       }
       const form = btn.closest('.hs-mc-pred-create-form')
@@ -1433,7 +1455,7 @@ function attachPredictionHandlers() {
     const update = () => {
       const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
       if (remaining <= 0) {
-        el.textContent = 'closing...'
+        el.textContent = t('mc_twapi_closing_dots')
         el.classList.add('hs-mc-pred-locked')
         return
       }
@@ -1530,7 +1552,7 @@ function _startBannerTimer(el, endsAt) {
   const update = () => {
     const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
     if (remaining <= 0) {
-      el.textContent = 'closing'
+      el.textContent = t('mc_twapi_closing')
       return
     }
     const m = Math.floor(remaining / 60)
@@ -1628,7 +1650,7 @@ function updateChatBanners(predResult, pollData) {
     let text = `${pred.title} \u00b7 ${parts.join(' vs ')}`
     if (userBet) {
       const betOutcome = pred.outcomes.find((o) => o.id === userBet.outcomeId)
-      text += ` \u00b7 bet: ${formatPoints(userBet.points)}${betOutcome ? ` ${betOutcome.title}` : ''}`
+      text += ` \u00b7 ${t('mc_twapi_banner_bet', [formatPoints(userBet.points), betOutcome ? betOutcome.title : '']).trim()}`
     }
     info.textContent = text
     row.appendChild(info)
@@ -1753,9 +1775,9 @@ function buildTwSubtabBar() {
   const bar = document.createElement('div')
   bar.className = 'hs-mc-tw-subtabs'
   const items = [
-    { id: 'predictions', label: 'events', paths: HS_TW_ICON_PRED_PATHS },
-    { id: 'bits', label: 'bits', paths: HS_TW_ICON_BITS_PATHS },
-    { id: 'links', label: 'quick links', paths: HS_TW_ICON_LINKS_PATHS },
+    { id: 'predictions', label: t('mc_twapi_tab_events'), paths: HS_TW_ICON_PRED_PATHS },
+    { id: 'bits', label: t('mc_twapi_tab_bits'), paths: HS_TW_ICON_BITS_PATHS },
+    { id: 'links', label: t('mc_twapi_tab_links'), paths: HS_TW_ICON_LINKS_PATHS },
   ]
   for (const it of items) {
     const btn = document.createElement('button')
@@ -1805,7 +1827,7 @@ async function renderTwitchTab() {
     empty.className = 'hs-mc-pred-empty'
     const msg = document.createElement('div')
     msg.className = 'hs-mc-pred-empty-text'
-    msg.textContent = 'no channel detected'
+    msg.textContent = t('mc_twapi_no_channel_detected')
     empty.appendChild(msg)
     content.appendChild(empty)
     stopPredictionPoll()
@@ -1830,7 +1852,7 @@ async function renderTwitchTab() {
   const predSlot = document.createElement('div')
   predSlot.className = 'hs-mc-pred-loading'
   predSlot.dataset.predSlot = '1'
-  predSlot.textContent = 'loading...'
+  predSlot.textContent = t('common_loading')
   const pollSlot = document.createElement('div')
   pollSlot.dataset.pollSlot = '1'
   const rewardsSlot = document.createElement('div')
@@ -1911,17 +1933,17 @@ function renderBitsSubtab(parent, channel) {
   const panel = document.createElement('div')
   panel.className = 'hs-mc-cheer-panel hs-mc-cheer-inline'
   panel.setAttribute('role', 'region')
-  panel.setAttribute('aria-label', `Cheer bits to ${channel}`)
+  panel.setAttribute('aria-label', t('mc_twapi_cheer_to', [channel]))
 
   const header = document.createElement('div')
   header.className = 'hs-mc-cheer-header'
   const title = document.createElement('div')
   title.className = 'hs-mc-cheer-title'
-  title.textContent = `cheer bits to ${channel}`
+  title.textContent = t('mc_twapi_cheer_to', [channel])
   const balance = document.createElement('div')
   balance.className = 'hs-mc-cheer-balance'
   const bal = hsReadNativeBitsBalance()
-  balance.textContent = bal ? `balance: ${bal}` : 'balance: —'
+  balance.textContent = t('mc_twapi_balance', [bal || '\u2014'])
   header.appendChild(title)
   header.appendChild(balance)
   panel.appendChild(header)
@@ -1929,7 +1951,7 @@ function renderBitsSubtab(parent, channel) {
   const launchBtn = document.createElement('button')
   launchBtn.type = 'button'
   launchBtn.className = 'hs-mc-cheer-send hs-mc-cheer-launch'
-  launchBtn.textContent = 'open cheer modal'
+  launchBtn.textContent = t('mc_twapi_cheer_open')
   launchBtn.addEventListener('click', () => {
     // Open twitch's full chat popout in a separate window. The popout is a
     // complete twitch chat UI (chat-input + bits button + cheer modal + everything)
@@ -2108,11 +2130,11 @@ function renderCheermotesInText(html, totalBits) {
     parts[i] = seg.replace(/(?<![#@])\bcheer(\d+)\b/gi, (match, n) => {
       const amount = parseInt(n, 10)
       if (!amount || amount < 1) return match
-      const t = hsCheerTier(amount)
-      const url = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${t.tier}/2.gif`
+      const tier = hsCheerTier(amount)
+      const url = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${tier.tier}/2.gif`
       return (
-        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${amount} bits" loading="lazy" decoding="async">` +
-        `<span class="hs-mc-cheer-amt" style="color:${t.color}">${amount}</span>`
+        `<img class="hs-mc-cheermote" src="${url}" alt="cheer${amount}" title="${t('mc_twapi_bits_title', [String(amount)])}" loading="lazy" decoding="async">` +
+        `<span class="hs-mc-cheer-amt" style="color:${tier.color}">${amount}</span>`
       )
     })
   }
@@ -2201,10 +2223,10 @@ async function buildChatStatusPanel(channel) {
       m = mins % 60
     const uptime = h ? `${h}h ${m}m` : `${m}m`
     const viewers = (stream.viewersCount || 0).toLocaleString('en-US')
-    sub.textContent = `LIVE · ${uptime} · ${viewers} viewers`
+    sub.textContent = t('mc_twapi_live_status', [uptime, viewers])
     sub.classList.add('live')
   } else {
-    sub.textContent = 'OFFLINE'
+    sub.textContent = t('mc_twapi_offline')
     sub.classList.add('off')
   }
   panel.appendChild(sub)
@@ -2307,12 +2329,15 @@ async function buildKickStatusPanel(slug) {
     )
     const up = Number.isFinite(mins) ? (mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`) : ''
     const viewers = (live.viewer_count || 0).toLocaleString('en-US')
-    line('hs-mc-status-sub live', `LIVE · ${up ? `${up} · ` : ''}${viewers} viewers`)
+    line(
+      'hs-mc-status-sub live',
+      up ? t('mc_twapi_live_status', [up, viewers]) : t('mc_twapi_live_status_nouptime', [viewers]),
+    )
     if (live.session_title) line('hs-mc-status-streamtitle', `"${live.session_title}"`)
     const game = live.categories?.[0]?.name
     if (game) line('hs-mc-status-meta', game)
   } else {
-    line('hs-mc-status-sub off', 'OFFLINE')
+    line('hs-mc-status-sub off', t('mc_twapi_offline'))
   }
   line('hs-mc-status-section', t('mc_cm_title'))
   const grid = document.createElement('div')
@@ -3607,7 +3632,7 @@ function renderPoll(poll, channelId, isMod) {
   // Total votes
   const meta = document.createElement('div')
   meta.className = 'hs-mc-poll-meta'
-  meta.textContent = `${totalVotes} vote${totalVotes !== 1 ? 's' : ''}`
+  meta.textContent = t(totalVotes === 1 ? 'mc_twapi_votes_one' : 'mc_twapi_votes_many', [String(totalVotes)])
   section.appendChild(meta)
 
   // Choices
@@ -3663,7 +3688,7 @@ function renderPoll(poll, channelId, isMod) {
       voteBtn.className = 'hs-mc-poll-vote-btn'
       voteBtn.dataset.pollId = poll.id
       voteBtn.dataset.choiceId = choice.id
-      voteBtn.textContent = 'vote'
+      voteBtn.textContent = t('mc_twapi_vote')
       row.appendChild(voteBtn)
     }
 
@@ -3768,7 +3793,7 @@ function optimisticPollVoteUpdate(pollSection, choiceId) {
   }
 
   const total = entries.reduce((s, v) => s + v.votes, 0) || 1
-  if (metaEl) metaEl.textContent = `${total} vote${total !== 1 ? 's' : ''}`
+  if (metaEl) metaEl.textContent = t(total === 1 ? 'mc_twapi_votes_one' : 'mc_twapi_votes_many', [String(total)])
 
   for (const { choice, votes, pctEl, nameEl, voteBtn, isTarget } of entries) {
     const pct = Math.round((votes / total) * 100)
@@ -3803,7 +3828,7 @@ function attachPollHandlers() {
         btn.textContent = '!'
         btn.title = result.error
         setTimeout(() => {
-          btn.textContent = 'vote'
+          btn.textContent = t('mc_twapi_vote')
           btn.disabled = false
           btn.title = ''
         }, 2000)
@@ -3870,7 +3895,7 @@ function attachPollHandlers() {
       const createWrap = btn.closest('.hs-mc-poll-create')
       const channelId = createWrap?.dataset.channelId
       if (!channelId) {
-        btn.textContent = 'no channel'
+        btn.textContent = t('mc_twapi_no_channel')
         return
       }
       const form = btn.closest('.hs-mc-poll-create-form')

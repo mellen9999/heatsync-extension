@@ -8,6 +8,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './t-stub.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'stream-stats.js'), 'utf8')
 
@@ -40,6 +41,7 @@ function load({ enabled = true } = {}) {
     'emoteCache',
     'requestIdleCallback',
     'hsXButton',
+    't',
     `${SRC}; return { bumpStreamStats, buildStreamSummary, markStreamEnded, streamStats, _flushStatsScanQueue }`,
   )(
     document,
@@ -48,6 +50,7 @@ function load({ enabled = true } = {}) {
     new Set(['KEKW']),
     () => {},
     (cls) => Object.assign(el('button'), { className: `hs-x ${cls}`, setAttribute() {} }),
+    t,
   )
 }
 

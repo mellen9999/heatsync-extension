@@ -14,15 +14,15 @@
 // status are full surfaces reached by switchTab(tab, sub); no strip draws them
 // on live or channel tabs (mcShowsRow), /status is the hub that links to them.
 const MC_CHANNEL_SUB = [
-  { id: 'chat', label: 'chat' },
-  { id: 'summary', label: 'summary' },
-  { id: 'logs', label: 'logs' },
-  { id: 'status', label: 'status' },
+  { id: 'chat', labelKey: 'mc_tr_sub_chat' },
+  { id: 'summary', labelKey: 'mc_tr_sub_summary' },
+  { id: 'logs', labelKey: 'mc_tr_sub_logs' },
+  { id: 'status', labelKey: 'mc_tr_sub_status' },
 ]
 
 // live is a launcher for whichever channel is up, so it also owns the form that
 // says which platforms that channel means.
-const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', label: 'platforms' }]
+const MC_LIVE_SUB = [...MC_CHANNEL_SUB, { id: 'platforms', labelKey: 'mc_tr_sub_platforms' }]
 
 const MC_TABS = [
   { id: 'feed', labelKey: 'mc_tab_feed', bar: 'scroll', restorable: true },
@@ -39,7 +39,15 @@ const MC_TABS = [
     // settings draws its own row inside the pane (settings-ui.js); the cells
     // are still addressable: switchTab('settings', 'help')
     ownRow: true,
-    sub: ['display', 'chat', 'notifs', 'mod', 'filters', 'system', 'help'].map((id) => ({ id, label: id })),
+    sub: [
+      ['display', 'mc_tr_set_display'],
+      ['chat', 'mc_tr_sub_chat'],
+      ['notifs', 'mc_tr_set_notifs'],
+      ['mod', 'mc_tr_set_mod'],
+      ['filters', 'mc_tr_set_filters'],
+      ['system', 'mc_tr_set_system'],
+      ['help', 'mc_tr_set_help'],
+    ].map(([id, labelKey]) => ({ id, labelKey })),
   },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },

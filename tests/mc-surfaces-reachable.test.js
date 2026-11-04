@@ -76,7 +76,7 @@ describe('openers are shortcuts to a cell, never the door', () => {
   })
 
   test('the message right-click "chat logs" is a shortcut to the logs cell', () => {
-    expect(INPUT).toMatch(/label: 'chat logs',\s*fn: \(\) => mcOpenChannelCell\('logs'/)
+    expect(INPUT).toMatch(/label: t\('mc_input_chat_logs'\),\s*fn: \(\) => mcOpenChannelCell\('logs'/)
   })
 
   test('/tab resolves through the cell address, so /tab discover lands on the discover tab', () => {
@@ -171,7 +171,7 @@ describe('no sub-strip on channel tabs, /status is the hub', () => {
   test('the status pane has a x and links to summary, my logs and platforms', () => {
     const m = read('main.js')
     const hub = m.match(/function _paneHub\(ctx\) \{([\s\S]*?)\n {2}\}\n/)?.[1] || ''
-    expect(hub).toMatch(/hsXButton\([^)]*mcLeaveSubPane\)/)
+    expect(hub).toMatch(/hsXButton\([^\n]*mcLeaveSubPane\)/)
     expect(hub).toMatch(/link\('summary', ctx\.tab, 'summary'\)/)
     expect(hub).toMatch(/link\('my logs', ctx\.tab, 'logs'\)/)
     expect(hub).toMatch(/ctx\.tab === 'live'\) link\('platforms', 'live', 'platforms'\)/)

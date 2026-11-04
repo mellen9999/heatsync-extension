@@ -209,11 +209,11 @@ describe('wiring', () => {
     expect(input).toContain('feedBookmarkToggle(feedMsg.base36_id)')
     // the optional rows come after the core ones: the numbered menu caps at 9
     const at = (needle) => input.indexOf(needle)
-    expect(at("label: 'reply'")).toBeGreaterThan(0)
-    expect(at("label: 'view profile'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
-    expect(at("'edit note' : 'add note'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+    expect(at("label: t('mc_input_reply')")).toBeGreaterThan(0)
+    expect(at("label: t('content_card_view_profile')")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+    expect(at("t('mc_input_edit_note')")).toBeLessThan(at("'mc_feed_upvote_remove'"))
     expect(at("'mc_paint_hide'")).toBeGreaterThan(at("'mc_feed_bookmark_remove'"))
-    expect(at("label: 'reply'")).toBeLessThan(at("'mc_feed_upvote_remove'"))
+    expect(at("label: t('mc_input_reply')")).toBeLessThan(at("'mc_feed_upvote_remove'"))
   })
 })
 

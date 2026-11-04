@@ -123,7 +123,7 @@ async function copyChatLogPermalink(btn, r) {
   }
   const time = btn.querySelector('time')
   const prev = time.textContent
-  time.textContent = ok ? 'copied' : 'failed'
+  time.textContent = ok ? t('mc_logs_copied') : t('mc_logs_failed')
   if (ok) btn.classList.add('hs-cl-time-copied')
   setTimeout(() => {
     time.textContent = prev
@@ -429,7 +429,7 @@ function renderChatLogsView() {
   tName.textContent = username
   const tSub = document.createElement('span')
   tSub.className = 'hs-cl-title-sub'
-  tSub.textContent = channel ? `#${channel}` : 'all channels'
+  tSub.textContent = channel ? `#${channel}` : t('mc_logs_all_channels')
   title.appendChild(tName)
   title.appendChild(tSub)
   hdr.appendChild(title)
@@ -443,8 +443,8 @@ function renderChatLogsView() {
   const search = document.createElement('input')
   search.type = 'text'
   search.className = 'hs-cl-search'
-  search.placeholder = 'search…'
-  search.title = `search ${username}'s messages`
+  search.placeholder = t('mc_logs_search')
+  search.title = t('mc_logs_search_title', [username])
   search.value = query || ''
   let searchTimer = null
   search.addEventListener('input', () => {
@@ -458,11 +458,8 @@ function renderChatLogsView() {
     const scopeBtn = document.createElement('button')
     scopeBtn.className = 'hs-cl-scope'
     scopeBtn.type = 'button'
-    scopeBtn.textContent = scope === 'channel' ? `#${channel}` : 'all'
-    scopeBtn.title =
-      scope === 'channel'
-        ? `currently scoped to #${channel} — click to see all channels`
-        : `currently showing all channels — click to scope to #${channel}`
+    scopeBtn.textContent = scope === 'channel' ? `#${channel}` : t('mc_logs_all')
+    scopeBtn.title = scope === 'channel' ? t('mc_logs_scope_channel', [channel]) : t('mc_logs_scope_all', [channel])
     scopeBtn.addEventListener('click', async () => {
       const newScope = scope === 'channel' ? 'all' : 'channel'
       activeChatLogs.scope = newScope
@@ -480,7 +477,7 @@ function renderChatLogsView() {
   refreshBtn.className = 'hs-cl-export'
   refreshBtn.type = 'button'
   refreshBtn.textContent = '↻'
-  refreshBtn.title = 'refresh'
+  refreshBtn.title = t('mc_logs_refresh')
   refreshBtn.addEventListener('click', () => refreshChatLogs())
   ctrls.appendChild(refreshBtn)
 
@@ -488,7 +485,7 @@ function renderChatLogsView() {
   exportTxt.className = 'hs-cl-export'
   exportTxt.type = 'button'
   exportTxt.textContent = '.txt'
-  exportTxt.title = 'export as .txt'
+  exportTxt.title = t('mc_logs_export_txt')
   exportTxt.addEventListener('click', () => exportChatLogs('txt'))
   ctrls.appendChild(exportTxt)
 
@@ -496,7 +493,7 @@ function renderChatLogsView() {
   exportJson.className = 'hs-cl-export'
   exportJson.type = 'button'
   exportJson.textContent = '.json'
-  exportJson.title = 'export as .json'
+  exportJson.title = t('mc_logs_export_json')
   exportJson.addEventListener('click', () => exportChatLogs('json'))
   ctrls.appendChild(exportJson)
 
@@ -508,8 +505,8 @@ function renderChatLogsView() {
     pub.href = `${HS_CL_PUBLIC_ORIGIN}/search/logs/${encodeURIComponent(activeChatLogs.platform)}/${encodeURIComponent(channel)}`
     pub.target = '_blank'
     pub.rel = 'noopener noreferrer'
-    pub.textContent = 'public archive ↗'
-    pub.title = `open #${channel}'s public chat log on heatsync.org`
+    pub.textContent = t('mc_logs_public')
+    pub.title = t('mc_logs_public_title', [channel])
     ctrls.appendChild(pub)
   }
 
@@ -525,14 +522,16 @@ function renderChatLogsView() {
     if (activeChatLogs.loadError) {
       // A failed request is not an empty archive — saying "no matches" for a
       // request that never succeeded is the same lie as the rest of this sweep.
-      empty.textContent = "couldn't load the archive — search or scroll again to retry"
+      empty.textContent = t('mc_logs_load_failed')
     } else if (activeChatLogs.backfillPending) {
       const src = activeChatLogs.platform === 'kick' ? 'kick archive' : 'logs.ivr.fi'
-      empty.textContent = `fetching historical logs from ${src}… try refresh in ~30s`
+      empty.textContent = t('mc_logs_backfill', [src])
     } else {
       empty.textContent = query
-        ? `no matches for "${query}"`
-        : `no archived messages from ${username}${channel ? ` in #${channel}` : ''} yet`
+        ? t('mc_logs_no_matches', [query])
+        : channel
+          ? t('mc_logs_none_in_channel', [username, channel])
+          : t('mc_logs_none', [username])
     }
     list.appendChild(empty)
   } else {
@@ -544,7 +543,7 @@ function renderChatLogsView() {
   if (!exhausted) {
     const sentinel = document.createElement('div')
     sentinel.className = 'hs-cl-loader'
-    sentinel.textContent = loading ? 'loading…' : 'scroll for older'
+    sentinel.textContent = loading ? t('content_card_loading') : t('mc_logs_scroll_older')
     list.appendChild(sentinel)
     // IntersectionObserver auto-fires when sentinel scrolls into view
     if (!loading && 'IntersectionObserver' in window) {
@@ -596,8 +595,8 @@ function renderChatLogRow(r) {
       ts.href = url
       ts.target = '_blank'
       ts.rel = 'noopener'
-      ts.title = 'copy permalink'
-      ts.setAttribute('aria-label', `permalink ${hhmmss}`)
+      ts.title = t('mc_logs_copy_permalink')
+      ts.setAttribute('aria-label', t('mc_logs_permalink_aria', [hhmmss]))
       ts.addEventListener('click', (e) => {
         e.stopPropagation()
         if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return

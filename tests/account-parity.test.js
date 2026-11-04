@@ -148,8 +148,8 @@ describe('slash commands honour the tab', () => {
 describe('login prompts and relinks', () => {
   test('kick and youtube login failures get an open button', () => {
     const n = mc('notifs.js')
-    expect(n).toContain("kick_not_logged_in: { label: 'open kick'")
-    expect(n).toContain("chat_disabled: { label: 'open youtube'")
+    expect(n).toContain("kick_not_logged_in: { label: t('mc_notif_open_kick')")
+    expect(n).toContain("chat_disabled: { label: t('mc_notif_open_youtube')")
   })
   test('kick pins relink through the kick route', () => {
     expect(mc('pin-bar.js')).toContain('/api/auth/kick/login?scopes=mod')

@@ -1992,11 +1992,11 @@
 
           <div class="heatsync-setting-row">
             <div>
-              <div class="heatsync-setting-label">right-click block</div>
-              <div class="heatsync-setting-desc">instant blocks immediately · menu shows block/cancel · off disables it</div>
+              <div class="heatsync-setting-label">${t('hsbtn_rcb_label')}</div>
+              <div class="heatsync-setting-desc">${t('hsbtn_rcb_desc')}</div>
             </div>
             <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #ffffff;font-family:monospace;font-size:13px">
-              ${['instant', 'menu', 'off'].map((v) => `<button type="button" class="heatsync-rcb-opt" data-rcb="${v}" style="background:${(settings.rightClickBlockMode || 'menu') === v ? '#fff' : 'transparent'};color:${(settings.rightClickBlockMode || 'menu') === v ? '#000' : '#fff'};border:none;cursor:pointer;padding:4px 10px;font-family:inherit;font-size:13px">${v}</button>`).join('')}
+              ${['instant', 'menu', 'off'].map((v) => `<button type="button" class="heatsync-rcb-opt" data-rcb="${v}" style="background:${(settings.rightClickBlockMode || 'menu') === v ? '#fff' : 'transparent'};color:${(settings.rightClickBlockMode || 'menu') === v ? '#000' : '#fff'};border:none;cursor:pointer;padding:4px 10px;font-family:inherit;font-size:13px">${{ instant: t('hsbtn_rcb_instant'), menu: t('hsbtn_rcb_menu'), off: t('hsbtn_rcb_off') }[v]}</button>`).join('')}
             </div>
           </div>
         </div>
@@ -2285,8 +2285,8 @@
           ${iconUrl ? `<img src="${iconUrl}" alt="heatsync">` : '🔥'}
           <span>heatsync</span>
         </div>
-        ${overlayOff ? '<button class="heatsync-panel-close heatsync-panel-back">← heatsync chat</button>' : ''}
-        <button class="heatsync-panel-close" aria-label="Close">✕</button>
+        ${overlayOff ? `<button class="heatsync-panel-close heatsync-panel-back">${t('hsbtn_back_arrow_chat')}</button>` : ''}
+        <button class="heatsync-panel-close" aria-label="${t('welcome_close')}">✕</button>
       </div>
       ${
         !isLoggedIn
@@ -2299,10 +2299,10 @@
           : ''
       }
       <div class="hs-top-search">
-        <input type="text" id="heatsync-search" placeholder="search emotes…" autocomplete="off">
-        <div class="hs-src-chips" id="hs-src-chips" title="toggle which providers to search">
-          <button class="hs-src-chip ${pickerSources.has('7tv') ? 'active' : ''}" data-src="7tv" title="include 7TV results">7tv</button>
-          <button class="hs-src-chip ${pickerSources.has('ffz') ? 'active' : ''}" data-src="ffz" title="include FrankerFaceZ results">ffz</button>
+        <input type="text" id="heatsync-search" placeholder="${t('hsbtn_search_ph')}" autocomplete="off">
+        <div class="hs-src-chips" id="hs-src-chips" title="${t('hsbtn_chips_title')}">
+          <button class="hs-src-chip ${pickerSources.has('7tv') ? 'active' : ''}" data-src="7tv" title="${t('hsbtn_chip_7tv_title')}">7tv</button>
+          <button class="hs-src-chip ${pickerSources.has('ffz') ? 'active' : ''}" data-src="ffz" title="${t('hsbtn_chip_ffz_title')}">ffz</button>
         </div>
       </div>
       <div class="heatsync-panel-content">
@@ -2338,16 +2338,16 @@
             <button class="heatsync-size-btn active" data-size="4x">${t('btn_size_4x')}</button>
           </div>
           <div style="display:flex;gap:4px;align-items:center;">
-            <button class="heatsync-settings-cog" id="heatsync-undo-btn" title="Undo" disabled>
+            <button class="heatsync-settings-cog" id="heatsync-undo-btn" title="${t('hsbtn_undo')}" disabled>
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
             </button>
-            <button class="heatsync-settings-cog" id="heatsync-redo-btn" title="Redo" disabled>
+            <button class="heatsync-settings-cog" id="heatsync-redo-btn" title="${t('hsbtn_redo')}" disabled>
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
             </button>
             <button class="heatsync-settings-cog" id="heatsync-rotate-btn" title="${t('btn_rotate_title')}">
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.88-1.6-1.01-2.47zM7.1 18.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1l-4 4 4 4V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/></svg>
             </button>
-            <button class="heatsync-settings-cog" id="heatsync-rotate-chat-btn" title="rotate chat panel (C)" style="font-weight:700;font-size:13px;font-family:monospace;">C</button>
+            <button class="heatsync-settings-cog" id="heatsync-rotate-chat-btn" title="${t('hsbtn_rotate_chat_title')}" style="font-weight:700;font-size:13px;font-family:monospace;">C</button>
             <button class="heatsync-settings-cog" id="heatsync-settings-btn" title="${t('btn_settings_title')}">
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
             </button>
@@ -2701,7 +2701,7 @@
     // Shared by the channel-tab bar and the empty-inventory cold-start CTA.
     async function hsImportChannel(btn, channel, label, onSuccess) {
       btn.disabled = true
-      btn.textContent = 'importing…'
+      btn.textContent = t('mc_emote_cold_start_importing')
       const reset = () => {
         btn.textContent = label
         btn.style.borderColor = ''
@@ -2709,7 +2709,7 @@
         btn.disabled = false
       }
       const fail = (msg) => {
-        btn.textContent = msg || 'failed'
+        btn.textContent = msg || t('hsbtn_failed')
         btn.style.borderColor = '#ff0000'
         btn.style.color = '#ff0000'
         setTimeout(reset, 2000)
@@ -2725,7 +2725,7 @@
         })
         if (resp && resp.ok !== false) {
           const n = resp.data?.imported ?? resp.imported ?? resp.data?.count ?? '?'
-          btn.textContent = `imported ${n}`
+          btn.textContent = t('hsbtn_imported', [n])
           btn.style.borderColor = '#00ff00'
           btn.style.color = '#00ff00'
           await loadInventoryEmotes()
@@ -2747,20 +2747,19 @@
       grid.innerHTML = ''
       const wrap = document.createElement('div')
       wrap.className = 'hs-coldstart'
-      wrap.innerHTML = `<div class="hs-coldstart-title">your emotes, in every chat</div>`
+      wrap.innerHTML = `<div class="hs-coldstart-title">${t('hsbtn_cold_title')}</div>`
       const sub = document.createElement('div')
       sub.className = 'hs-coldstart-sub'
       if (!currentChannel) {
-        sub.textContent =
-          'open any twitch, kick or youtube stream, then import its emotes from the channel tab — one click, works in every chat.'
+        sub.textContent = t('hsbtn_cold_sub_open')
         wrap.appendChild(sub)
         grid.appendChild(wrap)
         return
       }
-      sub.textContent = `pull every 7tv, bttv & ffz emote from ${currentChannel} into your set — one click, renders in every chat.`
+      sub.textContent = t('hsbtn_cold_sub_chan', [currentChannel])
       const btn = document.createElement('button')
       btn.className = 'hs-import-channel-btn'
-      const label = `import all of ${currentChannel}'s emotes`
+      const label = t('hsbtn_import_all_of', [currentChannel])
       btn.textContent = label
       btn.addEventListener('click', () => hsImportChannel(btn, currentChannel, label, () => renderEmoteGrid()))
       wrap.appendChild(sub)
@@ -2921,9 +2920,9 @@
         bar.className = 'hs-import-channel-bar'
         const importBtn = document.createElement('button')
         importBtn.className = 'hs-import-channel-btn'
-        importBtn.textContent = 'import all channel emotes'
+        importBtn.textContent = t('hsbtn_import_all_channel')
         importBtn.addEventListener('click', () =>
-          hsImportChannel(importBtn, currentChannel, 'import all channel emotes'),
+          hsImportChannel(importBtn, currentChannel, t('hsbtn_import_all_channel')),
         )
         bar.appendChild(importBtn)
         grid.appendChild(bar)
@@ -3183,7 +3182,7 @@
                     renderEmoteGrid()
                     showPickerToast(t('btn_toast_unblocked'))
                   } else {
-                    showPickerToast(result?.error || 'unblock failed')
+                    showPickerToast(result?.error || t('hsbtn_unblock_failed'))
                   }
                 })
                 .catch((err) => log('Unblock failed:', err.message))
@@ -3377,7 +3376,7 @@
       if (!savedSetsCache.length) {
         const empty = document.createElement('div')
         empty.className = 'heatsync-empty'
-        empty.textContent = 'no saved sets — create one on heatsync.org'
+        empty.textContent = t('hsbtn_no_sets')
         grid.appendChild(empty)
         return
       }
@@ -3398,14 +3397,14 @@
         info.className = 'heatsync-set-info'
         const name = document.createElement('div')
         name.className = 'heatsync-set-name'
-        name.textContent = (s.starred ? '★ ' : '') + (s.name || '(unnamed)')
+        name.textContent = (s.starred ? '★ ' : '') + (s.name || t('hsbtn_unnamed'))
         info.appendChild(name)
 
         const meta = document.createElement('div')
         meta.className = 'heatsync-set-meta'
         const count = s.emote_count || 0
-        let metaText = `${count} ${count === 1 ? 'emote' : 'emotes'}`
-        if (s.source_username) metaText += ` · from ${s.source_username}`
+        let metaText = t(count === 1 ? 'hsbtn_emote_one' : 'hsbtn_emote_many', [count])
+        if (s.source_username) metaText += ` · ${t('hsbtn_set_from', [s.source_username])}`
         meta.textContent = metaText
         info.appendChild(meta)
 
@@ -3414,7 +3413,7 @@
         const applyBtn = document.createElement('button')
         applyBtn.className = 'heatsync-set-apply-btn'
         applyBtn.type = 'button'
-        applyBtn.textContent = 'apply'
+        applyBtn.textContent = t('hsbtn_apply')
         applyBtn.dataset.setId = String(s.id)
         applyBtn.dataset.setName = s.name || '(unnamed)'
         applyBtn.dataset.setCount = String(count)
@@ -3433,10 +3432,10 @@
 
       if (!btn.classList.contains('confirming')) {
         btn.classList.add('confirming')
-        btn.textContent = `replace ${btn.dataset.setCount} emotes?`
+        btn.textContent = t('hsbtn_apply_confirm', [btn.dataset.setCount])
         const timer = setTimeout(() => {
           btn.classList.remove('confirming')
-          btn.textContent = 'apply'
+          btn.textContent = t('hsbtn_apply')
         }, 4000)
         btn.dataset.confirmTimer = String(timer)
         return
@@ -3446,12 +3445,12 @@
       btn.classList.remove('confirming')
       btn.classList.add('applying')
       btn.disabled = true
-      btn.textContent = 'applying…'
+      btn.textContent = t('hsbtn_applying')
       const ok = await applySet(btn.dataset.setId)
       if (ok) {
         btn.classList.remove('applying')
         btn.classList.add('applied')
-        btn.textContent = 'applied'
+        btn.textContent = t('hsbtn_applied')
         // Show success state for ~1.5s, then refresh the list
         setTimeout(() => {
           if (currentTab === 'sets') renderEmoteGrid()
@@ -3459,11 +3458,11 @@
       } else {
         btn.classList.remove('applying')
         btn.classList.add('failed')
-        btn.textContent = 'failed'
+        btn.textContent = t('hsbtn_failed')
         setTimeout(() => {
           btn.classList.remove('failed')
           btn.disabled = false
-          btn.textContent = 'apply'
+          btn.textContent = t('hsbtn_apply')
         }, 2000)
       }
     }
@@ -3477,7 +3476,7 @@
           auth: true,
         })
         if (!resp || resp.ok === false) {
-          loadErrors.sets = resp?.error || 'failed to load sets'
+          loadErrors.sets = resp?.error || t('hsbtn_err_sets')
           savedSetsCache = []
           return
         }
@@ -3488,7 +3487,7 @@
         const countEl = document.getElementById('count-sets')
         if (countEl) countEl.textContent = String(savedSetsCache.length)
       } catch (_err) {
-        loadErrors.sets = 'failed to load sets'
+        loadErrors.sets = t('hsbtn_err_sets')
         savedSetsCache = []
       }
     }
@@ -3523,7 +3522,7 @@
       if (!isLoggedIn) {
         const msg = document.createElement('div')
         msg.className = 'heatsync-login-msg'
-        msg.textContent = 'log in to view removed emotes'
+        msg.textContent = t('hsbtn_login_removed')
         grid.appendChild(msg)
         return
       }
@@ -3552,7 +3551,7 @@
       if (!removedEmotesCache.length) {
         const empty = document.createElement('div')
         empty.className = 'heatsync-empty'
-        empty.textContent = 'no removed emotes'
+        empty.textContent = t('hsbtn_no_removed')
         grid.appendChild(empty)
         return
       }
@@ -3594,7 +3593,7 @@
         const meta = document.createElement('div')
         meta.className = 'heatsync-history-meta'
         const removedAt = e.removed_at ? new Date(e.removed_at).toLocaleDateString() : ''
-        meta.textContent = removedAt ? `removed ${removedAt}` : 'removed'
+        meta.textContent = removedAt ? t('hsbtn_removed_on', [removedAt]) : t('btn_toast_removed')
         info.appendChild(meta)
 
         item.appendChild(info)
@@ -3602,7 +3601,7 @@
         const restoreBtn = document.createElement('button')
         restoreBtn.className = 'heatsync-restore-btn'
         restoreBtn.type = 'button'
-        restoreBtn.textContent = 'restore'
+        restoreBtn.textContent = t('hsbtn_restore')
         restoreBtn.dataset.emoteId = String(e.id)
         restoreBtn.dataset.emoteName = displayName
         item.appendChild(restoreBtn)
@@ -3620,10 +3619,10 @@
 
       if (!btn.classList.contains('confirming')) {
         btn.classList.add('confirming')
-        btn.textContent = 'restore?'
+        btn.textContent = t('hsbtn_restore_confirm')
         const timer = setTimeout(() => {
           btn.classList.remove('confirming')
-          btn.textContent = 'restore'
+          btn.textContent = t('hsbtn_restore')
         }, 4000)
         btn.dataset.confirmTimer = String(timer)
         return
@@ -3633,12 +3632,12 @@
       btn.classList.remove('confirming')
       btn.classList.add('restoring')
       btn.disabled = true
-      btn.textContent = 'restoring…'
+      btn.textContent = t('hsbtn_restoring')
       const ok = await restoreEmote(btn.dataset.emoteId)
       if (ok) {
         btn.classList.remove('restoring')
         btn.classList.add('restored')
-        btn.textContent = 'restored'
+        btn.textContent = t('hsbtn_restored')
         // Remove from local cache so it disappears from list
         const id = parseInt(btn.dataset.emoteId, 10)
         removedEmotesCache = removedEmotesCache.filter((x) => x.id !== id)
@@ -3650,11 +3649,11 @@
       } else {
         btn.classList.remove('restoring')
         btn.classList.add('failed')
-        btn.textContent = 'failed'
+        btn.textContent = t('hsbtn_failed')
         setTimeout(() => {
           btn.classList.remove('failed')
           btn.disabled = false
-          btn.textContent = 'restore'
+          btn.textContent = t('hsbtn_restore')
         }, 2000)
       }
     }
@@ -3668,7 +3667,7 @@
           auth: true,
         })
         if (!resp || resp.ok === false) {
-          loadErrors.history = resp?.error || 'failed to load history'
+          loadErrors.history = resp?.error || t('hsbtn_err_history')
           removedEmotesCache = []
           return
         }
@@ -3679,7 +3678,7 @@
         const countEl = document.getElementById('count-history')
         if (countEl) countEl.textContent = String(removedEmotesCache.length)
       } catch (_err) {
-        loadErrors.history = 'failed to load history'
+        loadErrors.history = t('hsbtn_err_history')
         removedEmotesCache = []
       }
     }
@@ -3779,18 +3778,18 @@
       const meta = document.createElement('div')
       meta.className = 'hs-discover-hint'
       const status = []
-      if (localMatches.length) status.push(`${localMatches.length} owned`)
+      if (localMatches.length) status.push(t('hsbtn_owned', [localMatches.length]))
       for (const p of PROVIDER_NAMES) {
         if (!pickerSources.has(p)) continue
         if (providerInFlight[p]) status.push(`${p}: …`)
-        else if (providerErrors[p]) status.push(`${p}: err`)
+        else if (providerErrors[p]) status.push(`${p}: ${t('hsbtn_provider_err')}`)
         else if (providerLastQuery[p] === q) status.push(`${p}: ${providerResults[p].length}`)
       }
       if (hasExternalSource()) {
         if (hsIndexInFlight) status.push('hs: …')
         else if (hsIndexQuery === q && hsMatches.length) status.push(`hs: +${hsMatches.length}`)
       }
-      meta.textContent = status.length ? `“${q}” — ${status.join(' · ')}` : `“${q}” — searching…`
+      meta.textContent = status.length ? t('hsbtn_search_status', [q, status.join(' · ')]) : t('hsbtn_searching', [q])
       grid.appendChild(meta)
 
       if (combined.length === 0) {
@@ -3798,7 +3797,7 @@
         empty.className = 'heatsync-empty'
         const anyInFlight = PROVIDER_NAMES.some((p) => pickerSources.has(p) && providerInFlight[p])
         if (anyInFlight) empty.textContent = t('common_loading')
-        else empty.textContent = `no emotes match “${q}”`
+        else empty.textContent = t('hsbtn_no_match', [q])
         grid.appendChild(empty)
         return
       }
@@ -3812,13 +3811,13 @@
       const inInv = isInInventory(emote)
       if (!inInv) {
         if (!cachedAuthToken) {
-          showPickerToast('log in to add emotes')
+          showPickerToast(t('hsbtn_login_add'))
           return
         }
         try {
           await addEmoteToInventorySilent(emote)
         } catch (_) {
-          showPickerToast('failed to add')
+          showPickerToast(t('hsbtn_add_failed'))
           return
         }
       }
@@ -3862,7 +3861,7 @@
                 renderEmoteGrid()
                 showPickerToast(t('btn_toast_unblocked'))
               } else {
-                showPickerToast(result?.error || 'unblock failed')
+                showPickerToast(result?.error || t('hsbtn_unblock_failed'))
               }
             })
             .catch((err) => log('Unblock failed:', err.message))
@@ -3928,7 +3927,7 @@
           uses.className = 'hs-discover-uses'
           uses.textContent =
             usesCount >= 1000 ? `${(usesCount / 1000).toFixed(usesCount >= 10000 ? 0 : 1)}k` : String(usesCount)
-          uses.title = `${usesCount.toLocaleString()} uses on heatsync`
+          uses.title = t('hsbtn_uses_title', [usesCount.toLocaleString()])
           item.appendChild(uses)
         }
 
@@ -4325,7 +4324,11 @@
         subEl.appendChild(tag)
       }
       const stateTxt = document.createElement('span')
-      stateTxt.textContent = isBlocked ? 'blocked' : inInv ? 'in inventory' : 'not in inventory'
+      stateTxt.textContent = isBlocked
+        ? t('btn_toast_blocked')
+        : inInv
+          ? t('hsbtn_in_inventory')
+          : t('hsbtn_not_in_inventory')
       subEl.appendChild(stateTxt)
       meta.appendChild(nameEl)
       meta.appendChild(subEl)
@@ -4336,7 +4339,7 @@
       if (provider) {
         const openBtn = document.createElement('button')
         openBtn.className = 'hs-emote-ctx-item'
-        openBtn.textContent = `open on ${provider.label} →`
+        openBtn.textContent = t('hsbtn_open_on', [provider.label])
         openBtn.addEventListener('click', () => {
           dismissContextMenu()
           window.open(provider.url, '_blank', 'noopener,noreferrer')
@@ -4365,7 +4368,7 @@
                 renderEmoteGrid()
                 showPickerToast(t('btn_toast_unblocked'))
               } else {
-                showPickerToast(result?.error || 'unblock failed')
+                showPickerToast(result?.error || t('hsbtn_unblock_failed'))
               }
             } catch (err) {
               if (err.message?.includes('Extension context invalidated')) {
@@ -4460,7 +4463,7 @@
         // Rename
         const renameBtn = document.createElement('button')
         renameBtn.className = 'hs-emote-ctx-item'
-        renameBtn.textContent = 'rename'
+        renameBtn.textContent = t('hsbtn_rename')
         renameBtn.addEventListener('click', () => {
           // Swap button row with inline input
           renameBtn.style.display = 'none'
@@ -4471,7 +4474,7 @@
           input.setAttribute('autocomplete', 'off')
           const confirmBtn = document.createElement('button')
           confirmBtn.className = 'hs-emote-ctx-confirm'
-          confirmBtn.textContent = 'save'
+          confirmBtn.textContent = t('mc_mr_save')
           menu.insertBefore(input, renameBtn.nextSibling)
           menu.insertBefore(confirmBtn, input.nextSibling)
           input.focus()
@@ -4500,15 +4503,15 @@
                 body: { newName },
               })
               if (resp && resp.ok !== false) {
-                showPickerToast(`renamed to ${newName}`)
+                showPickerToast(t('hsbtn_renamed_to', [newName]))
                 await loadInventoryEmotes()
                 renderEmoteGrid()
                 fetchHistoryStatus()
               } else {
-                showPickerToast(resp?.error || 'rename failed')
+                showPickerToast(resp?.error || t('hsbtn_rename_failed'))
               }
             } catch (_) {
-              showPickerToast('rename failed')
+              showPickerToast(t('hsbtn_rename_failed'))
             }
           })
           input.addEventListener('keydown', (ev) => {
@@ -4522,17 +4525,17 @@
         // Move to slot
         const moveBtn = document.createElement('button')
         moveBtn.className = 'hs-emote-ctx-item'
-        moveBtn.textContent = 'move to slot…'
+        moveBtn.textContent = t('hsbtn_move_to_slot')
         moveBtn.addEventListener('click', () => {
           moveBtn.style.display = 'none'
           const input = document.createElement('input')
           input.type = 'number'
           input.min = '0'
           input.className = 'hs-emote-ctx-input'
-          input.placeholder = 'slot number'
+          input.placeholder = t('hsbtn_slot_number')
           const confirmBtn = document.createElement('button')
           confirmBtn.className = 'hs-emote-ctx-confirm'
-          confirmBtn.textContent = 'move'
+          confirmBtn.textContent = t('hsbtn_move')
           menu.insertBefore(input, moveBtn.nextSibling)
           menu.insertBefore(confirmBtn, input.nextSibling)
           input.focus()
@@ -4554,15 +4557,15 @@
                 body: { toSlot },
               })
               if (resp && resp.ok !== false) {
-                showPickerToast(`moved to slot ${toSlot}`)
+                showPickerToast(t('hsbtn_moved_to_slot', [toSlot]))
                 await loadInventoryEmotes()
                 renderEmoteGrid()
                 fetchHistoryStatus()
               } else {
-                showPickerToast(resp?.error || 'move failed')
+                showPickerToast(resp?.error || t('hsbtn_move_failed'))
               }
             } catch (_) {
-              showPickerToast('move failed')
+              showPickerToast(t('hsbtn_move_failed'))
             }
           })
           input.addEventListener('keydown', (ev) => {
@@ -4576,7 +4579,7 @@
         // Share set / unshare
         const shareBtn = document.createElement('button')
         shareBtn.className = 'hs-emote-ctx-item'
-        shareBtn.textContent = discoverShareUrl ? 'unshare set' : 'share set'
+        shareBtn.textContent = discoverShareUrl ? t('hsbtn_unshare_set') : t('hsbtn_share_set')
         shareBtn.addEventListener('click', async () => {
           dismissContextMenu()
           if (discoverShareUrl) {
@@ -4589,9 +4592,9 @@
                 auth: true,
               })
               discoverShareUrl = null
-              showPickerToast('set unshared')
+              showPickerToast(t('hsbtn_set_unshared'))
             } catch (_) {
-              showPickerToast('unshare failed')
+              showPickerToast(t('hsbtn_unshare_failed'))
             }
           } else {
             // Share
@@ -4608,15 +4611,15 @@
                 if (shortId) {
                   discoverShareUrl = `https://heatsync.org/s/${shortId}`
                   navigator.clipboard.writeText(discoverShareUrl).catch(() => {})
-                  showPickerToast(`share link copied: ${discoverShareUrl}`)
+                  showPickerToast(t('hsbtn_share_copied', [discoverShareUrl]))
                 } else {
-                  showPickerToast('share failed')
+                  showPickerToast(t('hsbtn_share_failed'))
                 }
               } else {
-                showPickerToast(resp?.error || 'share failed')
+                showPickerToast(resp?.error || t('hsbtn_share_failed'))
               }
             } catch (_) {
-              showPickerToast('share failed')
+              showPickerToast(t('hsbtn_share_failed'))
             }
           }
         })
@@ -4653,7 +4656,7 @@
       // Copy markdown
       const copyMd = document.createElement('button')
       copyMd.className = 'hs-emote-ctx-item'
-      copyMd.textContent = 'copy markdown'
+      copyMd.textContent = t('hsbtn_copy_markdown')
       copyMd.addEventListener('click', () => {
         dismissContextMenu()
         navigator.clipboard.writeText(`![${emote.name}](${emote.url || emote.pickerUrl || ''})`).catch(() => {})
@@ -4837,7 +4840,7 @@
         .catch((err) => {
           log(' inventory load failed:', err?.message)
           // Keep stale IDB data if we had it; only flag error on cold-empty
-          if (!inventoryEmotesCache.length) loadErrors.mine = 'failed to load your emotes'
+          if (!inventoryEmotesCache.length) loadErrors.mine = t('hsbtn_err_mine')
         })
         .finally(() => {
           isLoading.mine = false
@@ -4880,7 +4883,7 @@
             cleanup.setTimeout(() => {
               if (isLoading.channel) {
                 isLoading.channel = false
-                if (!channelEmotesCache.length) loadErrors.channel = 'channel emotes unavailable'
+                if (!channelEmotesCache.length) loadErrors.channel = t('hsbtn_err_channel_unavailable')
                 updateTabCounts()
                 if (currentTab === 'channel') renderEmoteGrid({ preserveScroll: true })
               }
@@ -4889,8 +4892,8 @@
         })
         .catch((err) => {
           log(' picker load failed:', err?.message)
-          if (!channelEmotesCache.length) loadErrors.channel = 'failed to load channel emotes'
-          if (!globalEmotesCache.length) loadErrors.global = 'failed to load global emotes'
+          if (!channelEmotesCache.length) loadErrors.channel = t('hsbtn_err_channel')
+          if (!globalEmotesCache.length) loadErrors.global = t('hsbtn_err_global')
           isLoading.channel = false
           isLoading.global = false
           updateTabCounts()
@@ -4916,7 +4919,7 @@
         // Don't wipe cached data on transient failure
         if (!inventoryEmotesCache.length) {
           rebuildInventoryIndex()
-          loadErrors.mine = 'failed to load your emotes'
+          loadErrors.mine = t('hsbtn_err_mine')
         }
         updateTabCounts()
       } finally {
@@ -4965,7 +4968,7 @@
       } catch (_err) {
         if (!stale) {
           channelEmotesCache = []
-          loadErrors.channel = 'failed to load channel emotes'
+          loadErrors.channel = t('hsbtn_err_channel')
           updateTabCounts()
         }
       } finally {
@@ -5005,7 +5008,7 @@
       } catch (_err) {
         if (!stale) {
           globalEmotesCache = []
-          loadErrors.global = 'failed to load global emotes'
+          loadErrors.global = t('hsbtn_err_global')
           updateTabCounts()
         }
       } finally {
@@ -5231,7 +5234,7 @@
       const arrow = document.createElement('span')
       arrow.className = 'hs-nb-arrow'
       arrow.textContent = '←'
-      bar.append(arrow, 'back to heatsync chat')
+      bar.append(arrow, t('hsbtn_back_to_chat'))
       bar.addEventListener('click', async () => {
         await window.HS.setSiteOverlay(gate, true)
         location.reload()

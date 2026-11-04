@@ -337,7 +337,7 @@ async function sendTwitchWhisperDirect(toUserId, message) {
   const variables = { input: { recipientUserID: String(toUserId), message: String(message), nonce } }
   const result = await apolloMutate({ searchTerm: 'SendWhisper', variables, resultField: 'sendWhisper' })
   if (result?.ok) return { ok: true }
-  const errMsg = String(result?.error || 'whisper failed')
+  const errMsg = String(result?.error || t('mc_misc_whisper_failed'))
   return { ok: false, error: errMsg, integrity: /integrity/i.test(errMsg) }
 }
 
@@ -395,14 +395,14 @@ async function sendTwitchWhisper(toUserId, message) {
     }
     if (isAuthFail) {
       showToast(t('mc_whisper_login'), 'error')
-      return { ok: false, error: 'log in to heatsync.org to send whispers', errorKind: 'auth' }
+      return { ok: false, error: t('mc_whisper_login'), errorKind: 'auth' }
     }
     if (serverThrew || respStatus >= 500 || !serverResp) {
-      const msg = 'heatsync server unreachable'
+      const msg = t('mc_misc_hs_unreachable')
       showToast(t('mc_whisper_failed', [msg]), 'error')
       return { ok: false, error: msg, errorKind: 'server' }
     }
-    const errText = respError || `twitch error ${respStatus}`
+    const errText = respError || t('mc_misc_twitch_error', [String(respStatus)])
     showToast(t('mc_whisper_failed', [errText]), 'error')
     return { ok: false, error: errText }
   }
@@ -413,7 +413,7 @@ async function sendTwitchWhisper(toUserId, message) {
     if (direct.ok) return { ok: true }
     if (direct.noToken) {
       showToast(t('mc_whisper_login'), 'error')
-      return { ok: false, error: 'no twitch session', errorKind: 'auth' }
+      return { ok: false, error: t('mc_misc_no_twitch_session'), errorKind: 'auth' }
     }
     // The GQL fallback failed too — but if the PROXY already told us why
     // (twitch OAuth missing user:manage:whispers), that's the only error the
@@ -427,7 +427,7 @@ async function sendTwitchWhisper(toUserId, message) {
       return { ok: false, error: emsg, errorKind: 'relink' }
     }
     showToast(t('mc_whisper_failed', [direct.error || t('mc_common_unknown')]), 'error')
-    return { ok: false, error: direct.error || 'unknown' }
+    return { ok: false, error: direct.error || t('mc_common_unknown') }
   } catch (e) {
     if (needsRelink) {
       const emsg = respError || t('mc_whisper_not_enabled')
@@ -503,7 +503,7 @@ async function sendWhisperMessage(key, text) {
       const toUserId = key.slice(3)
       const resp = await apiFetch('/api/dm', { method: 'POST', body: { toUserId, content: text } })
       ok = !!resp.ok
-      errMsg = resp.error || (ok ? '' : 'unknown error')
+      errMsg = resp.error || (ok ? '' : t('mc_misc_unknown_error'))
       if (!ok && resp?.status === 401) errorKind = 'auth'
       // DMs need a follow in BOTH directions. Being told that with no way to
       // act on it is a dead end — the row grows a follow button that follows
@@ -718,32 +718,32 @@ function renderWhispersTab() {
     // orange/cyan border + arrow reinforce it. The OTHER party keeps their
     // painted, clickable link.
     const themUid = target?.userId || ''
-    const youTok = '<span class="hs-whisper-you">you</span>'
+    const youTok = `<span class="hs-whisper-you">${escapeHtml(t('mc_tagcard_you'))}</span>`
     const themLink = userLink(them, theirColor, theirUsername, themUid)
     const senderLink = m.self ? youTok : themLink
     const recipientLink = m.self ? themLink : youTok
 
     let statusHtml = ''
     if (m.status === 'pending') {
-      statusHtml = ` <span class="hs-whisper-status" title="sending">…</span>`
+      statusHtml = ` <span class="hs-whisper-status" title="${escapeHtml(t('mc_misc_sending'))}">…</span>`
     } else if (m.status === 'failed') {
-      const errSafe = escapeHtml(m.error || 'failed')
+      const errText = m.error || t('mc_logs_failed')
       const idSafe = escapeHtml(m.sendId || '')
       if (m.errorKind === 'relink') {
         // relink can't auto-retry (retryAuthFailedWhispers only fires on a
         // logged-out→logged-in transition; this happens while already
         // authed) — keep manual retry available alongside the re-link link
-        statusHtml = ` <a href="https://heatsync.org/api/auth/login?scopes=whispers&return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to grant the twitch whisper permission on heatsync">⚠ enable twitch whispers — re-link</a> <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">retry</span>`
+        statusHtml = ` <a href="https://heatsync.org/api/auth/login?scopes=whispers&return_to=%2Fhome%2Fhot" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${escapeHtml(t('mc_misc_relink_title', [errText]))}">⚠ ${escapeHtml(t('mc_misc_relink'))}</a> <span class="hs-whisper-status hs-whisper-retry" title="${escapeHtml(t('mc_misc_click_retry'))}" data-retry="${idSafe}">${escapeHtml(t('common_retry'))}</span>`
       } else if (m.errorKind === 'follow') {
         // hs: keys carry the recipient's heatsync id — the only thing the
         // follow call needs. Non-hs keys can never reach this branch (the
         // code only comes from /api/dm), so there's no id to miss.
         const followIdSafe = escapeHtml(m.key?.startsWith('hs:') ? m.key.slice(3) : '')
-        statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${errSafe} — click to follow ${escapeHtml(them)} and send" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
+        statusHtml = ` <span class="hs-whisper-status hs-whisper-follow" title="${escapeHtml(t('mc_misc_follow_title', [errText, them]))}" data-follow="${followIdSafe}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_whisper_follow_to_dm', [them]))}</span>`
       } else if (m.errorKind === 'auth') {
-        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${errSafe} — click to log in on heatsync">⚠ log in on heatsync to send</a>`
+        statusHtml = ` <a href="${HS_LOGIN_URL}" target="_blank" rel="noopener noreferrer" class="hs-whisper-status hs-whisper-relogin" title="${escapeHtml(t('mc_misc_login_title', [errText]))}">⚠ ${escapeHtml(t('mc_misc_login_send'))}</a>`
       } else {
-        statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="click to retry" data-retry="${idSafe}">⚠ ${errSafe} — retry</span>`
+        statusHtml = ` <span class="hs-whisper-status hs-whisper-retry" title="${escapeHtml(t('mc_misc_click_retry'))}" data-retry="${idSafe}">⚠ ${escapeHtml(t('mc_misc_err_retry', [errText]))}</span>`
       }
     }
 
@@ -761,7 +761,7 @@ function renderWhispersTab() {
     // Reply affordance — clicking arms /r at the input so nobody has to
     // remember the command ("I keep forgetting to type /r"). Keyed per row:
     // replying to an older conversation retargets lastWhisperKey to it.
-    const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="reply (${escapeHtml(them)})">↩</button>`
+    const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="${escapeHtml(t('mc_misc_reply_to', [them]))}">↩</button>`
     const dirColor = m.self ? 'var(--hs-brand)' : 'var(--hs-reply)'
     const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
     div.innerHTML = `${tsHtml}<span style="color:${platColor};font-size:13px;font-weight:700">[${platTag}]</span> ${senderLink}${arrow}${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`

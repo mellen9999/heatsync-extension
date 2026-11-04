@@ -172,22 +172,22 @@
 
 
   <div class="site-pane">
-    <div class="site-label">heatsync chat on</div>
+    <div class="site-label" data-i18n="popup_site_label">heatsync chat on</div>
     <div class="plat-pick" id="site-pick">
       <button type="button" class="plat" data-gate="overlay-twitch" data-host="twitch.tv" aria-pressed="true">twitch</button>
       <button type="button" class="plat" data-gate="overlay-kick" data-host="kick.com" aria-pressed="true">kick</button>
       <button type="button" class="plat" data-gate="overlay-youtube" data-host="youtube.com" aria-pressed="true">youtube</button>
     </div>
-    <div class="detected" id="site-note">off shows the site's own chat</div>
+    <div class="detected" id="site-note" data-i18n="popup_site_note_default">off shows the site's own chat</div>
   </div>
 
   <div class="fb-pane" id="fb-pane" hidden>
     <div class="plat-pick" id="fb-kind" role="tablist">
-      <button type="button" class="plat" data-kind="feedback" role="tab" aria-selected="true">feedback</button>
-      <button type="button" class="plat" data-kind="bug" role="tab" aria-selected="false">bug</button>
+      <button type="button" class="plat" data-kind="feedback" role="tab" aria-selected="true" data-i18n="popup_fb_feedback">feedback</button>
+      <button type="button" class="plat" data-kind="bug" role="tab" aria-selected="false" data-i18n="popup_fb_bug">bug</button>
     </div>
-    <textarea class="input fb-text" id="fb-text" rows="4" maxlength="4000" placeholder="what should heatsync do better?" spellcheck="true"></textarea>
-    <button class="btn" id="fb-send">send</button>
+    <textarea class="input fb-text" id="fb-text" rows="4" maxlength="4000" placeholder="what should heatsync do better?" data-i18n-ph="popup_fb_ph_feedback" spellcheck="true"></textarea>
+    <button class="btn" id="fb-send" data-i18n="popup_fb_send">send</button>
     <div class="detected" id="fb-status"></div>
   </div>
 
@@ -195,7 +195,7 @@
     <a id="link-site" href="https://heatsync.org" target="_blank" rel="noopener noreferrer">heatsync.org</a>
     <a id="link-privacy" href="https://heatsync.org/legal/privacy" target="_blank" rel="noopener noreferrer" data-i18n="popup_privacy_link">no third-party tracking</a>
     <a id="link-errors" href="#" title="left-click: copy last 50 errors / right-click: clear" data-i18n-title="popup_errors_title">errors (0)</a>
-    <a id="link-feedback" href="#" title="feedback / bug report">feedback</a>
+    <a id="link-feedback" href="#" title="feedback / bug report" data-i18n-title="popup_feedback_title" data-i18n="popup_feedback_link">feedback</a>
   </div>
 
   <script src="popup.js"></script>

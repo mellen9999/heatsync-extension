@@ -43,7 +43,7 @@ test('zebra: zebraOfInsert walks past the embed player to the real previous row'
 })
 
 test('tab-complete: empty cycle still shows searching / no match', () => {
-  expect(src).toMatch(/acState\.remotePending \? 'searching 7tv…' : 'no match'/)
+  expect(src).toMatch(/acState\.remotePending \? t\('mc_input_searching_7tv'\) : t\('mc_ms_no_match'\)/)
 })
 
 test('feed >>id hover: bare ids never hover, an on-screen target highlights instead of popping up', () => {

@@ -371,10 +371,10 @@ function notifyStreamEvent(channel, eventType, game, platform) {
   if (document.hasFocus()) return
   let title, body
   if (eventType === 'stream:online') {
-    title = `${channel} went live`
+    title = t('mc_mn_went_live', [channel])
     body = game || ''
   } else if (eventType === 'stream:update') {
-    title = `${channel} switched game`
+    title = t('mc_mn_switched_game', [channel])
     body = game || ''
   } else {
     return

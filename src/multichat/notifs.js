@@ -270,7 +270,7 @@ const HsNotifs = (() => {
         btn.className = `hs-notif-action hs-notif-action-${kind}${kind === 'dismiss' ? ' hs-x hs-x-inline' : ''}`
         if (kind === 'dismiss') btn.innerHTML = HS_X_SVG
         else btn.textContent = def.label || kind
-        if (kind === 'dismiss') btn.setAttribute('aria-label', def.title || 'dismiss')
+        if (kind === 'dismiss') btn.setAttribute('aria-label', def.title || t('mc_notif_dismiss'))
         if (def.title) btn.title = def.title
         btn.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -543,7 +543,7 @@ const HsNotifs = (() => {
       if (data.color) who.style.color = data.color
       const count = data._count | 0
       const snippet = String(data.text || '').slice(0, 80)
-      el.append(who, ` whispered: ${snippet}${count > 1 ? ` ×${count}` : ''}`)
+      el.append(who, ` ${t('mc_notif_whispered', [snippet])}${count > 1 ? ` ×${count}` : ''}`)
       el.addEventListener('click', () => {
         try {
           if (typeof switchTab === 'function') switchTab('whispers')
@@ -564,7 +564,7 @@ const HsNotifs = (() => {
     render: ({ data }) => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-info'
-      el.textContent = (typeof data?.text === 'string' && data.text.trim()) || 'loading emotes…'
+      el.textContent = (typeof data?.text === 'string' && data.text.trim()) || t('mc_notif_emotes_loading')
       return el
     },
   })
@@ -583,7 +583,7 @@ const HsNotifs = (() => {
       el.className = 'hs-notif-toast-text hs-mc-tabmode-line'
       const tag = document.createElement('span')
       tag.className = 'hs-mc-tabmode-tag'
-      tag.textContent = '-- TABS --'
+      tag.textContent = t('mc_notif_tabs_tag')
       el.appendChild(tag)
       const rest = document.createElement('span')
       rest.className = 'hs-mc-tabmode-hint'
@@ -631,16 +631,16 @@ const HsNotifs = (() => {
       const text = document.createElement('span')
       text.className = 'hs-notif-resub-text'
       const parts = [
-        ['hs-rt-prefix', 'celebrating '],
+        ['hs-rt-prefix', `${t('mc_notif_rt_prefix')} `],
         ['hs-rt-num', String(months)],
-        ['hs-rt-mo', 'mo'],
-        ['hs-rt-months', ' months'],
-        ['hs-rt-suffix', ' as a subscriber'],
+        ['hs-rt-mo', t('mc_notif_rt_mo')],
+        ['hs-rt-months', ` ${t('mc_notif_rt_months')}`],
+        ['hs-rt-suffix', ` ${t('mc_notif_rt_suffix')}`],
       ]
-      for (const [cls, t] of parts) {
+      for (const [cls, txt] of parts) {
         const s = document.createElement('span')
         s.className = cls
-        s.textContent = t
+        s.textContent = txt
         text.appendChild(s)
       }
       el.appendChild(icon)
@@ -649,7 +649,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'share',
+        label: t('mc_notif_share'),
         onClick: (data, dismiss) => {
           // Bypass the native Twitch share button — its native onClick auto-
           // sends a default "<user> is celebrating Nmo as a subscriber!"
@@ -723,15 +723,15 @@ const HsNotifs = (() => {
       const text = document.createElement('span')
       text.className = 'hs-notif-watchstreak-text'
       const parts = [
-        ['hs-wt-prefix', 'on a '],
+        ['hs-wt-prefix', `${t('mc_notif_wt_prefix')} `],
         ['hs-wt-num', String(n)],
-        ['hs-wt-stream', ' stream'],
-        ['hs-wt-suffix', ' watch streak'],
+        ['hs-wt-stream', ` ${t('mc_notif_wt_stream')}`],
+        ['hs-wt-suffix', ` ${t('mc_notif_wt_suffix')}`],
       ]
-      for (const [cls, t] of parts) {
+      for (const [cls, txt] of parts) {
         const s = document.createElement('span')
         s.className = cls
-        s.textContent = t
+        s.textContent = txt
         text.appendChild(s)
       }
       el.appendChild(icon)
@@ -740,7 +740,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'share',
+        label: t('mc_notif_share'),
         onClick: (data) => {
           try {
             // Same click-time rescan as the resub prompt: the notif is emitted
@@ -782,7 +782,7 @@ const HsNotifs = (() => {
       el.className = 'hs-notif-toast-text hs-notif-toast-warn'
       const body = data.msg
         ? String(data.msg).slice(0, 200)
-        : `update available — running ${data.current}, latest is ${data.min}+`
+        : t('mc_notif_update_available', [String(data.current), String(data.min)])
       el.textContent = body
       return el
     },
@@ -791,8 +791,8 @@ const HsNotifs = (() => {
 
   // failure reasons that mean "not signed in over there" → where to sign in
   const PENDING_LOGIN_LINKS = {
-    kick_not_logged_in: { label: 'open kick', url: 'https://kick.com/' },
-    chat_disabled: { label: 'open youtube', url: 'https://www.youtube.com/' },
+    kick_not_logged_in: { label: t('mc_notif_open_kick'), url: 'https://kick.com/' },
+    chat_disabled: { label: t('mc_notif_open_youtube'), url: 'https://www.youtube.com/' },
   }
 
   // Send-pending — fires when an outgoing chat message hasn't echoed back from
@@ -807,24 +807,24 @@ const HsNotifs = (() => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-warn'
       const reasonMap = {
-        auth_failed: 'twitch auth failed',
-        no_user: 'no twitch username',
-        connect_failed: 'connection failed',
-        send_failed: 'send failed',
-        kick_not_logged_in: 'kick not logged in',
-        no_kick_tab: 'no kick tab open',
-        no_channel: 'kick channel not found',
+        auth_failed: t('mc_notif_r_auth_failed'),
+        no_user: t('mc_notif_r_no_user'),
+        connect_failed: t('mc_notif_r_connect_failed'),
+        send_failed: t('mc_notif_r_send_failed'),
+        kick_not_logged_in: t('mc_notif_r_kick_not_logged_in'),
+        no_kick_tab: t('mc_notif_r_no_kick_tab'),
+        no_channel: t('mc_notif_r_no_channel'),
         // Deliberately not worded as a failure: kick may well have posted it
         // (see kick-send.js KICK_SEND_TIMEOUT_MS). "retry" here is an informed
         // choice to send it a second time, not a repair.
-        kick_unconfirmed: 'kick did not confirm — it may have posted',
-        'missing params': 'kick send rejected',
-        no_youtube_tab: 'no youtube tab open',
-        no_input: 'youtube chat still loading',
-        chat_disabled: 'log into youtube first',
-        send_disabled: 'youtube blocked the send',
-        send_not_confirmed: 'youtube did not confirm the send',
-        bridge_timeout: 'youtube chat bridge timed out',
+        kick_unconfirmed: t('mc_notif_r_kick_unconfirmed'),
+        'missing params': t('mc_notif_r_missing_params'),
+        no_youtube_tab: t('mc_notif_r_no_youtube_tab'),
+        no_input: t('mc_notif_r_no_input'),
+        chat_disabled: t('mc_notif_r_chat_disabled'),
+        send_disabled: t('mc_notif_r_send_disabled'),
+        send_not_confirmed: t('mc_notif_r_send_not_confirmed'),
+        bridge_timeout: t('mc_notif_r_bridge_timeout'),
       }
       let why
       const _reasonStr = String(data.reason || '')
@@ -832,17 +832,17 @@ const HsNotifs = (() => {
         // Name the platform(s) that never confirmed (markPendingFailed sends
         // the awaiting set) — a kick or yt no-echo used to blame twitch.
         const plat = (data.platforms || []).map((p) => (p === 'yt' ? 'youtube' : p)).join('+')
-        why = `${plat || 'platform'} did not confirm — may not have posted`
+        why = t('mc_notif_r_no_echo', [plat || t('mc_notif_r_platform')])
       } else if (_reasonStr.startsWith('chat_restricted')) {
         // "chat_restricted:<yt's human reason>" — surface yt's own words
         // (subscribers-only mode, members-only, follower age gate).
         const detail = _reasonStr.includes(':') ? _reasonStr.slice(_reasonStr.indexOf(':') + 1).toLowerCase() : ''
-        why = detail ? `chat restricted — ${detail}` : 'chat restricted'
+        why = detail ? t('mc_notif_r_restricted_detail', [detail]) : t('mc_notif_r_restricted')
       } else {
-        why = reasonMap[data.reason] || data.reason || 'send may have failed'
+        why = reasonMap[data.reason] || data.reason || t('mc_notif_r_unknown')
       }
       const snippet = String(data.text || '').slice(0, 60)
-      el.textContent = `${why}: "${snippet}${data.text?.length > 60 ? '…' : ''}"`
+      el.textContent = t('mc_notif_pending_line', [why, `${snippet}${data.text?.length > 60 ? '…' : ''}`])
       // Login-shaped failures get a way in, like twitch-auth-required's "open twitch"
       const login = PENDING_LOGIN_LINKS[data.reason]
       if (login) {
@@ -863,7 +863,7 @@ const HsNotifs = (() => {
     },
     actions: {
       primary: {
-        label: 'retry',
+        label: t('common_retry'),
         onClick: (data) => {
           try {
             globalThis.__hsRetryPendingSend?.(data.synthId)
@@ -886,12 +886,12 @@ const HsNotifs = (() => {
     render: ({ data }) => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-error'
-      el.textContent = data.text || 'log into twitch.tv to chat'
+      el.textContent = data.text || t('mc_notif_login_twitch')
       return el
     },
     actions: {
       primary: {
-        label: 'open twitch',
+        label: t('mc_notif_open_twitch'),
         onClick: () => {
           try {
             window.open('https://www.twitch.tv/', '_blank', 'noopener')

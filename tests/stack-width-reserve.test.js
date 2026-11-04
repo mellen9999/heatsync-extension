@@ -17,6 +17,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './t-stub.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
 const start = SRC.indexOf('function renderEmoteStack(')
@@ -24,9 +25,10 @@ const end = SRC.indexOf('export {')
 if (start === -1 || end === -1 || end <= start) throw new Error('renderEmoteStack carve markers not found')
 
 const makeRender = (widths) =>
-  new Function('_hsEmoteBoxW', 'hsXButtonHtml', `${SRC.slice(start, end)}; return renderEmoteStack`)(
+  new Function('_hsEmoteBoxW', 'hsXButtonHtml', 't', `${SRC.slice(start, end)}; return renderEmoteStack`)(
     new Map(Object.entries(widths)),
     (cls) => `<button class="hs-x ${cls}"></button>`,
+    t,
   )
 
 const wrap = (url) =>

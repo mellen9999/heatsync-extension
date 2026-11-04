@@ -2,6 +2,20 @@
 
 // Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
 const browser = globalThis.browser || chrome
+// Service worker has no lib/browser-api.js; chrome.i18n works here directly.
+// Substitutions must be strings (a non-string makes getMessage return '').
+const bgT = (key, subs) => {
+  try {
+    return (
+      browser.i18n?.getMessage(
+        key,
+        subs?.map((s) => String(s ?? '')),
+      ) || key
+    )
+  } catch {
+    return key
+  }
+}
 // --- error reporter (service worker) ---
 // Inlined here because lib/ is bundled into content scripts only. Same shape
 // as src/lib/error-reporter.js: ring-buffer 50 in chrome.storage.local key
@@ -2829,8 +2843,8 @@ function updateLiveBadgeTooltip() {
     .slice(0, 5)
     .map((s) => s.displayName || s.username)
     .join(', ')
-  const more = live.length > 5 ? ` +${live.length - 5} more` : ''
-  const title = `heatsync · ${live.length} live: ${top}${more}`
+  const more = live.length > 5 ? bgT('bg_more', [live.length - 5]) : ''
+  const title = bgT('bg_badge_tip', [live.length, top + more])
   try {
     badgeApi.setTitle({ title })
   } catch {}
@@ -2851,7 +2865,7 @@ async function fireLiveNotificationFromStream(stream, username, platform) {
   const url = channelPageUrl(platform, slug, true)
   if (!url) return
 
-  const viewerStr = viewers > 0 ? ` · ${viewers.toLocaleString()} viewers` : ''
+  const viewerStr = viewers > 0 ? bgT('bg_live_viewers', [viewers.toLocaleString()]) : ''
   const id = `hs-live-${platform}-${username}-${Date.now()}`
   _liveNotificationUrls.set(id, url)
   if (_liveNotificationUrls.size > 50) {
@@ -2878,7 +2892,7 @@ async function fireLiveNotificationFromStream(stream, username, platform) {
     browser.notifications.create(id, {
       type: 'basic',
       iconUrl,
-      title: `${display} is live`,
+      title: bgT('bg_live_title', [display]),
       message: `${platName}${viewerStr}`,
       contextMessage: 'heatsync',
       priority: 1,
@@ -2896,7 +2910,7 @@ async function fireLiveCoalescedNotification(transitions) {
   })
   const uniqNames = [...new Set(names)]
   const head = uniqNames.slice(0, 3).join(', ')
-  const more = uniqNames.length > 3 ? ` +${uniqNames.length - 3} more` : ''
+  const more = uniqNames.length > 3 ? bgT('bg_more', [uniqNames.length - 3]) : ''
   const id = `hs-live-batch-${Date.now()}`
   _liveNotificationUrls.set(id, `${API_URL}/?tab=following`)
   if (_liveNotificationUrls.size > 50) {
@@ -2914,7 +2928,7 @@ async function fireLiveCoalescedNotification(transitions) {
     browser.notifications.create(id, {
       type: 'basic',
       iconUrl,
-      title: `${uniqNames.length} following are live`,
+      title: bgT('bg_batch_title', [uniqNames.length]),
       message: `${head}${more}`,
       contextMessage: 'heatsync',
       priority: 1,
@@ -4236,7 +4250,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     log(' 📺 Fetching channel emotes for:', channelName, 'id:', channelId, 'platform:', platform)
 
     // Show loading indicator
-    broadcastToTabs({ type: 'loading_status', text: 'loading channel emotes...' })
+    broadcastToTabs({ type: 'loading_status', text: bgT('bg_loading_channel') })
 
     // Fetch heatsync emotes + resolve the platform channel ID in PARALLEL (both
     // needed before third-party fetch). IMPORTANT: each platform resolves its
@@ -4281,7 +4295,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // Fetch third-party emotes in PARALLEL — broadcast progressively as each provider
     // returns so the user sees BTTV/FFZ instantly while 7TV resolves (avoids "no emotes
     // until everything's done"). Keep slots fixed so priority order is stable.
-    broadcastToTabs({ type: 'loading_status', text: 'fetching third-party emotes...' })
+    broadcastToTabs({ type: 'loading_status', text: bgT('bg_loading_third') })
     const slots = { bttv: [], ffz: [], sevenTV: [], twitch: [], kick: [] }
     const failed = { bttv: false, ffz: false, sevenTV: false, twitch: false, kick: false }
     let sevenTVResult = null
@@ -9946,8 +9960,8 @@ async function handleMessage(message, sender, sendResponse) {
             chrome.notifications.create(`hs-account-switch-${Date.now()}`, {
               type: 'basic',
               iconUrl: 'icon-48.png',
-              title: 'heatsync — account switch',
-              message: `switching from ${currentUsername} to ${newUsername}`,
+              title: bgT('bg_acct_title'),
+              message: bgT('bg_acct_msg', [currentUsername, newUsername]),
             })
           } catch {}
         }
@@ -11952,7 +11966,7 @@ async function initialize() {
   // Start WebSocket immediately (don't wait for API fetches)
   connectWebSocket().catch(() => {})
 
-  broadcastToTabs({ type: 'loading_status', text: 'loading emotes...' })
+  broadcastToTabs({ type: 'loading_status', text: bgT('bg_loading_emotes') })
 
   // Fetch fresh data in parallel (updates warm cache)
   Promise.all([

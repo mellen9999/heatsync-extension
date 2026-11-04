@@ -53,7 +53,7 @@ function ensureChatRestorePill(show) {
   if (!pill) {
     pill = document.createElement('div')
     pill.id = 'hs-chat-restore-pill'
-    pill.title = 'show chat (\\)'
+    pill.title = t('mc_pa_show_chat')
     pill.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -257,10 +257,10 @@ function showApiStatusBanner(source, state) {
   banner.className = 'hs-mc-api-banner'
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
-  const label = source === 'heatsync' ? 'heatsync.org unreachable — reconnecting' : `${source} unreachable`
+  const label = source === 'heatsync' ? t('mc_pa_heatsync_unreachable') : t('mc_pa_source_unreachable', [source])
   const text = document.createElement('span')
   text.textContent = label
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   banner.append(text, dismiss)
   _insertPanelCallout(banner)
 }
@@ -289,14 +289,14 @@ function showAuthLoginBanner(loggedIn) {
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
   const text = document.createElement('span')
-  text.textContent = 'youtube chat needs heatsync login —'
+  text.textContent = t('mc_pa_yt_needs_login')
   const link = document.createElement('a')
   link.href = 'https://heatsync.org/settings/account'
   link.target = '_blank'
   link.rel = 'noopener'
-  link.textContent = 'sign in'
+  link.textContent = t('mc_sign_in')
   link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;'
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   dismiss.style.marginLeft = '4px'
   banner.append(text, link, dismiss)
   _insertPanelCallout(banner)
@@ -319,15 +319,15 @@ function showEmoteLoginNudge() {
   banner.style.cssText =
     'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
   const text = document.createElement('span')
-  text.textContent = 'log in to heatsync so your emotes work for everyone'
+  text.textContent = t('mc_pa_emote_login')
   const link = document.createElement('a')
   link.href = HS_LOGIN_URL
   link.target = '_blank'
   link.rel = 'noopener'
-  link.textContent = 'log in'
+  link.textContent = t('btn_auth_login')
   // nowrap so the link never splits across lines when the panel is narrow
   link.style.cssText = 'color:#000;text-decoration:underline;font-weight:700;cursor:pointer;white-space:nowrap;'
-  const dismiss = hsXButton('hs-x-inline', 'dismiss', () => banner.remove())
+  const dismiss = hsXButton('hs-x-inline', t('mc_main_dismiss'), () => banner.remove())
   dismiss.style.marginLeft = '4px'
   banner.append(text, link, dismiss)
   _insertPanelCallout(banner)

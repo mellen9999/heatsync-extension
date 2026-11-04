@@ -288,7 +288,7 @@ describe('blocked terms wiring', () => {
 
   test('the right-click mod menu gets the entry for twitch rows only', () => {
     expect(INPUT).toMatch(
-      /if \(!isKick && !isYt\) mod\.push\(\{ label: 'blocked terms', fn: \(\) => openBlockedTerms\(modCh\) \}\)/,
+      /if \(!isKick && !isYt\)\s*mod\.push\(\{ label: t\('mc_settings_mod_btn_blocked_terms'\), fn: \(\) => openBlockedTerms\(modCh\) \}\)/,
     )
   })
 

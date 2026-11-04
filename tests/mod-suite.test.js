@@ -504,8 +504,8 @@ describe('mod suite wiring', () => {
   })
 
   test('the row menu gets mod tools + warn for twitch rows only', () => {
-    expect(INPUT).toMatch(/if \(!isKick && !isYt\) \{\s*mod\.push\(\{ label: 'mod tools'/)
-    expect(INPUT).toContain("label: 'warn', fn: () => msWarnPrompt(modCh, msgLogin)")
+    expect(INPUT).toMatch(/if \(!isKick && !isYt\) \{\s*mod\.push\(\{ label: t\('content_card_mod_tools'\)/)
+    expect(INPUT).toContain("label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin)")
   })
 
   test('the background maps each op to its route with the bearer, and each status to a code', () => {

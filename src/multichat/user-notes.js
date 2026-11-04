@@ -378,14 +378,14 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
 
   const head = document.createElement('div')
   head.className = 'hs-note-editor-head'
-  head.textContent = `note · ${String(username || '').toLowerCase()}`
+  head.textContent = t('mc_notes_head', [String(username || '').toLowerCase()])
   box.appendChild(head)
 
   const ta = document.createElement('textarea')
   ta.className = 'hs-note-editor-ta'
   ta.rows = 4
   ta.maxLength = HS_NOTE_MAX
-  ta.placeholder = 'private note — only you see this. follows them across platforms.'
+  ta.placeholder = t('mc_notes_placeholder')
   ta.value = existing?.text || ''
   ta.spellcheck = false
   box.appendChild(ta)
@@ -394,10 +394,10 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
   foot.className = 'hs-note-editor-foot'
   const status = document.createElement('span')
   status.className = 'hs-note-editor-status'
-  status.textContent = 'esc to close'
+  status.textContent = t('mc_notes_esc')
   const del = document.createElement('button')
   del.className = 'hs-note-editor-del'
-  del.textContent = 'delete'
+  del.textContent = t('mc_notes_delete')
   del.style.visibility = existing?.text ? '' : 'hidden'
   foot.appendChild(status)
   foot.appendChild(del)
@@ -425,7 +425,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
     dirty = false
     await hsNoteSave(username, platform, ta.value, undefined, profileId)
     del.style.visibility = ta.value.trim() ? '' : 'hidden'
-    status.textContent = 'saved · esc to close'
+    status.textContent = t('mc_notes_saved')
     if (typeof onSaved === 'function') {
       try {
         onSaved()
@@ -434,7 +434,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
   }
   ta.addEventListener('input', () => {
     dirty = true
-    status.textContent = 'saving…'
+    status.textContent = t('mc_notes_saving')
     if (saveTimer) clearTimeout(saveTimer)
     saveTimer = setTimeout(flush, 350)
   })
@@ -487,7 +487,7 @@ function hsNoteOpenEditor(username, platform, x, y, onSaved, profileId) {
 function hsNoteRenderCardSection(username, platform, mkSection, profileId, prefetchedNote) {
   if (typeof document === 'undefined') return null
   const make = typeof mkSection === 'function' ? mkSection : typeof pcMakeSection === 'function' ? pcMakeSection : null
-  const sec = make ? make('notes') : document.createElement('div')
+  const sec = make ? make(t('mc_notes_section')) : document.createElement('div')
   if (!make) sec.className = 'hs-pcard-section'
   sec.classList.add('hs-pcard-notes')
 
@@ -498,9 +498,9 @@ function hsNoteRenderCardSection(username, platform, mkSection, profileId, prefe
 
   const paint = () => {
     const n = hsNoteGet(username, platform)
-    body.textContent = n?.text || 'no note yet'
+    body.textContent = n?.text || t('mc_notes_empty')
     body.classList.toggle('hs-pcard-note-empty', !n?.text)
-    btn.textContent = n?.text ? 'edit' : 'add note'
+    btn.textContent = n?.text ? t('mc_notes_edit') : t('mc_notes_add')
   }
   btn.addEventListener('click', (e) => {
     const r = btn.getBoundingClientRect()

@@ -2,6 +2,16 @@
 // Loaded FIRST via manifest content_scripts — exposes window.HS
 // Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
 const browser = globalThis.browser || chrome
+// Lib's t() (locale override aware) lives in the sibling content script's scope;
+// resolved at call time, falling back to the raw runtime i18n.
+const _hsT = (key, subs) => {
+  if (typeof t === 'function') return t(key, subs)
+  try {
+    return browser.i18n?.getMessage(key, subs?.map(String)) || key
+  } catch {
+    return key
+  }
+}
 ;(() => {
   // Guard against double-load
   if (window.HS) return
@@ -259,23 +269,23 @@ const browser = globalThis.browser || chrome
     // Persists (durationMs: 0) until an error replaces it or the loop clears
     // it below — a pasted video is 10-60s of otherwise-total silence, long
     // enough that a user with no feedback re-pastes, thinking nothing happened.
-    showToast('uploading...', 'info', 0)
+    showToast(_hsT('cs_uploading'), 'info', 0)
     try {
       const urls = []
       for (const file of files) {
         const isImage = file.type.startsWith('image/')
         const max = isImage ? HS_UPLOAD_MAX_IMG : HS_UPLOAD_MAX_VID
         if (file.size > max) {
-          showToast(`file too large (max ${max / 1048576}MB)`, 'error')
+          showToast(_hsT('cs_file_too_large', [`${max / 1048576}MB`]), 'error')
           continue
         }
         try {
           const dataUrl = await readFileAsDataUrl(file)
           const resp = await safeSend({ type: 'api_upload', name: file.name || 'paste', mime: file.type, dataUrl })
           if (resp?.ok && resp.url) urls.push(resp.url)
-          else showToast(resp?.error || 'upload failed', 'error')
+          else showToast(resp?.error || _hsT('cs_upload_failed'), 'error')
         } catch (err) {
-          showToast(err.message || 'upload failed', 'error')
+          showToast(err.message || _hsT('cs_upload_failed'), 'error')
         }
       }
       // Only clear proactively when every file made it — the url appearing IS

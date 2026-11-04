@@ -25,6 +25,16 @@ import { hsCardRelativeTime, hsCardTenureMonths } from '../src/lib/card-time.js'
 import { escapeHtml } from '../src/lib/utils.js'
 
 const ROOT = join(import.meta.dir, '..')
+const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
+// stand-in for the bundle-scope t(): en message with $NAME$ placeholders filled positionally
+const t = (key, subs = []) => {
+  const e = EN[key]
+  if (!e) return key
+  return e.message.replace(
+    /\$([A-Z0-9_]+)\$/g,
+    (_, n) => subs[Number.parseInt(e.placeholders[n.toLowerCase()].content.slice(1), 10) - 1] ?? '',
+  )
+}
 const TIPS = readFileSync(join(ROOT, 'src', 'multichat', 'tooltips.js'), 'utf8')
 
 function slice(src, startMarker, endMarker) {
@@ -52,6 +62,7 @@ const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowage
   'subTenureMap',
   'currentUsername',
   'isSelf',
+  't',
   `${formatCompactSrc}\n${cardSrc}\nreturn { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowageRows }`,
 )(
   escapeHtml,
@@ -63,6 +74,7 @@ const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowage
   new Map([['forsen', new Map([['x', 14]])]]),
   'viewerlogin',
   (m) => m.user.toLowerCase() === 'viewerlogin',
+  t,
 )
 
 const upsertSrc = slice(

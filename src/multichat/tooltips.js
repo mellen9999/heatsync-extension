@@ -479,7 +479,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   } else if (state === 'blocked') {
     label = t('mc_emote_blocked')
   } else if (state === 'cw') {
-    label = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || 'hidden'
+    label = (hoveredImg || e.target)?.closest?.('.hs-mc-emote-cw')?.dataset.cw || t('mc_tip_hidden')
   } else if (fromInv) {
     label = 'Heatsync'
   } else {
@@ -492,10 +492,10 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
       kick: 'Kick',
       heatsync: 'Heatsync',
     }
-    const sourceName = sourceLabels[source] || source || 'unknown'
+    const sourceName = sourceLabels[source] || source || t('mc_common_unknown')
     if (state === 'sub') {
       // Twitch sub emote — show broadcaster as scope so it's specific
-      label = owner ? `${owner} sub (${sourceName})` : sourceName
+      label = owner ? t('mc_tip_owner_sub', [owner, sourceName]) : sourceName
     } else {
       label = sourceName
     }
@@ -505,7 +505,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
   const staleActor = wrapper?.dataset.staleActor || ''
   const isStale = wrapper?.classList.contains('hs-state-stale')
   if (isStale) {
-    label = staleActor ? `${label} · removed by @${staleActor}` : `${label} · removed from channel`
+    label = staleActor ? t('mc_tip_removed_by', [label, staleActor]) : t('mc_tip_removed_from_channel', [label])
   }
   // v1.6 NSFW — flagged emotes get an explicit suffix so viewers who
   // opted in know which emotes are filtered for everyone else.
@@ -514,7 +514,7 @@ function showEmoteTooltip(e, emoteName, emoteUrl, state, source, hoveredImg, own
     wrapper?.classList.contains('hs-state-nsfw') ||
     pickerWrap?.classList.contains('hs-state-nsfw') ||
     hoveredImg?.classList?.contains?.('hs-state-nsfw')
-  if (isNsfw) label = `${label} · NSFW`
+  if (isNsfw) label = t('mc_tip_nsfw', [label])
   stateEl.textContent = label
   const srcClass =
     fromInv && state !== 'owned' && state !== 'blocked'
@@ -1209,8 +1209,8 @@ function computeSubTenureRow(username, msgChannel) {
   const isSelfChannel = isSelf({ user: channelLogin, platform: 'twitch' })
   const tenure = hsCardTenureMonths(months) || `${months}mo`
   return isSelfChannel
-    ? { k: 'sub-tenure', label: 'they', value: `sub to you ${tenure}`, tone: 'they-sub' }
-    : { k: 'sub-tenure', label: 'ch sub', value: `${channelLogin} ${tenure}`, tone: 'ch' }
+    ? { k: 'sub-tenure', label: t('mc_tip_row_they'), value: t('mc_tip_sub_to_you', [tenure]), tone: 'they-sub' }
+    : { k: 'sub-tenure', label: t('mc_tip_row_ch_sub'), value: `${channelLogin} ${tenure}`, tone: 'ch' }
 }
 
 // Live Twitch followage rows from a resolved followage result (payload.followage
@@ -1228,23 +1228,34 @@ function computeFollowageRows(channelLogin, isSelfChannel, result) {
       result.followedAt
         ? {
             k: 'ch-follow',
-            label: 'ch follow',
+            label: t('mc_tip_row_ch_follow'),
             value: `${channelLogin} ${hsCardRelativeTime(result.followedAt)}`,
             tone: 'ch',
           }
-        : { k: 'ch-follow', label: 'ch follow', value: `not following ${channelLogin}`, tone: 'dim' },
+        : {
+            k: 'ch-follow',
+            label: t('mc_tip_row_ch_follow'),
+            value: t('mc_input_not_following', [channelLogin]),
+            tone: 'dim',
+          },
     )
-    if (result.channelFollowedAt) rows.push({ k: 'ch-follows', label: 'follower', value: channelLogin, tone: 'ch' })
+    if (result.channelFollowedAt)
+      rows.push({ k: 'ch-follows', label: t('mc_tip_row_follower'), value: channelLogin, tone: 'ch' })
   } else if (result.channelFollowedAt) {
     rows.push({
       k: 'you-follow',
-      label: 'you',
-      value: `follow ${hsCardRelativeTime(result.channelFollowedAt)}`,
+      label: t('mc_tip_row_you'),
+      value: t('mc_tip_follow_ago', [hsCardRelativeTime(result.channelFollowedAt)]),
       tone: 'you-follow',
     })
   }
   if (result.followerCount != null) {
-    rows.push({ k: 'followers', label: 'followers', value: formatCompact(result.followerCount), tone: 'followers' })
+    rows.push({
+      k: 'followers',
+      label: t('mc_tip_row_followers'),
+      value: formatCompact(result.followerCount),
+      tone: 'followers',
+    })
   }
   return rows
 }
@@ -1257,9 +1268,13 @@ function computeFollowageRows(channelLogin, isSelfChannel, result) {
 function cardCorpusSheetRow(corpus, skipChannel) {
   if (!corpus) return null
   const parts = []
-  if (corpus.messages > 0) parts.push(`${formatCompact(corpus.messages)} msgs`)
+  if (corpus.messages > 0) parts.push(t('mc_tip_corpus_msgs', [formatCompact(corpus.messages)]))
   if (corpus.firstDay)
-    parts.push(corpus.firstChannel ? `since ${corpus.firstDay} ${corpus.firstChannel}` : `since ${corpus.firstDay}`)
+    parts.push(
+      corpus.firstChannel
+        ? t('mc_tip_corpus_since_ch', [corpus.firstDay, corpus.firstChannel])
+        : t('mc_tip_corpus_since', [corpus.firstDay]),
+    )
   const skip = skipChannel ? String(skipChannel).toLowerCase() : null
   const also = (corpus.also || []).filter((c) => c.toLowerCase() !== skip)
   if (also.length) {
@@ -1270,7 +1285,7 @@ function cardCorpusSheetRow(corpus, skipChannel) {
     parts.push(also.length > 3 ? `${shown} +${also.length - 3}` : shown)
   }
   if (!parts.length) return null
-  return { k: 'corpus', label: 'logs', value: parts.join(' · '), tone: '' }
+  return { k: 'corpus', label: t('mc_tip_row_logs'), value: parts.join(' · '), tone: '' }
 }
 
 // Ext-only sheet-row DOM patch — used ONLY by the no-heatsync-account

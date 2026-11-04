@@ -42,6 +42,11 @@ function _gotoSetSubtab(id) {
   else if (_setSettingsSubtab(id)) renderSettingsTab()
 }
 
+// display name of a settings category (the id stays the machine key)
+function _setCatLabel(id) {
+  const c = mcSubCells('settings').find((x) => x.id === id)
+  return c?.labelKey ? t(c.labelKey) : id
+}
 function _renderSetSubtabBar() {
   return (
     '<div class="hs-mc-set-subtabs">' +
@@ -53,7 +58,7 @@ function _renderSetSubtabBar() {
           '" data-set-subtab="' +
           id +
           '" title="' +
-          id +
+          escapeHtml(_setCatLabel(id)) +
           '">' +
           _SET_SUBTAB_ICONS[id] +
           '</button>',
@@ -509,7 +514,7 @@ function _renderSearchResults() {
         '<div class="hs-mc-set-search-hdr" data-set-jump="' +
         escapeHtml(`${g.cat}|${g.section}`) +
         '">' +
-        escapeHtml(`${g.cat} · ${g.section}`) +
+        escapeHtml(`${_setCatLabel(g.cat)} · ${g.section}`) +
         '</div>' +
         g.rows.map((r) => r.html).join('') +
         '</div>',
@@ -522,11 +527,15 @@ function _renderSearchResults() {
     count += actions.length
     html +=
       '<div class="hs-mc-settings-group">' +
-      '<div class="hs-mc-set-search-hdr" data-set-jump="system|backup / restore">system · backup / restore</div>' +
+      '<div class="hs-mc-set-search-hdr" data-set-jump="system|backup / restore">' +
+      escapeHtml(t('mc_set_system_backup')) +
+      '</div>' +
       actions.map((a) => a.html).join('') +
       '</div>'
   }
-  if (!count) html = '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">no matches</div>'
+  if (!count)
+    html =
+      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' + t('common_no_matches') + '</div>'
   return { html: html, count: count, total: total }
 }
 
@@ -570,13 +579,21 @@ function _renderCrashLogBlock() {
     (!crash ? ' style="display:none"' : '') +
     '>' +
     '<div style="display:flex;justify-content:space-between;align-items:center;width:100%">' +
-    '<span class="hs-mc-setting-label">recent errors</span>' +
+    '<span class="hs-mc-setting-label">' +
+    t('mc_set_recent_errors') +
+    '</span>' +
     '<div style="display:flex;gap:4px">' +
-    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">copy</button>' +
-    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">clear</button>' +
+    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_copy') +
+    '</button>' +
+    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_clear') +
+    '</button>' +
     '</div>' +
     '</div>' +
-    '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">(loading...)</pre>' +
+    '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">' +
+    t('mc_set_crash_loading') +
+    '</pre>' +
     '</div>'
   )
 }
@@ -588,23 +605,39 @@ const _SET_ACTION_ROWS = [
     hay: 'export settings backup download json save system',
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<span class="hs-mc-setting-label" data-tip="dump ui_settings + all hs_* keys to a JSON file. portable across devices and browsers.">export settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">download .json</button>' +
+      '<span class="hs-mc-setting-label" data-tip="' +
+      escapeHtml(t('mc_set_export_tip')) +
+      '">' +
+      t('mc_set_export') +
+      '</span>' +
+      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_export_btn') +
+      '</button>' +
       '</div>',
   },
   {
     hay: 'import settings restore load json system',
     html:
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<span class="hs-mc-setting-label" data-tip="restore from a previously-exported JSON file. merges into existing settings.">import settings</span>' +
-      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">load .json</button>' +
+      '<span class="hs-mc-setting-label" data-tip="' +
+      escapeHtml(t('mc_set_import_tip')) +
+      '">' +
+      t('mc_set_import') +
+      '</span>' +
+      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_import_btn') +
+      '</button>' +
       '</div>',
   },
   {
     hay: 'default reset all settings factory system',
     html:
       '<div class="hs-mc-setting-row" style="justify-content:flex-end">' +
-      '<button class="hs-mc-defaults-btn" title="reset every setting on every page" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">all defaults</button>' +
+      '<button class="hs-mc-defaults-btn" title="' +
+      escapeHtml(t('mc_set_reset_all_title')) +
+      '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_all_defaults') +
+      '</button>' +
       '</div>',
   },
 ]
@@ -612,7 +645,9 @@ const _SET_ACTION_ROWS = [
 function _renderBackupGroup() {
   return (
     '<div class="hs-mc-settings-group">' +
-    '<div class="hs-mc-settings-group-title">backup / restore</div>' +
+    '<div class="hs-mc-settings-group-title">' +
+    t('mc_set_backup_restore') +
+    '</div>' +
     _SET_ACTION_ROWS[0].html +
     _SET_ACTION_ROWS[1].html +
     '</div>' +
@@ -721,8 +756,8 @@ function _renderFilterRuleRow(r) {
         ';border:1px solid #ffffff;flex-shrink:0"></span>'
       : '') +
     (r.action === 'highlight' && r.sound
-      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="sound: ' +
-        escapeHtml(String(r.sound)) +
+      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="' +
+        escapeHtml(t('mc_set_fr_sound', [String(r.sound)])) +
         '">♪</span>'
       : '') +
     '<span style="color:#ffffff;font-size:13px;flex-shrink:0">' +
@@ -733,13 +768,21 @@ function _renderFilterRuleRow(r) {
     id +
     '" style="' +
     FR_BTN +
-    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move up (higher priority — first match wins)">▲</button>' +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="' +
+    escapeHtml(t('mc_set_fr_up')) +
+    '">▲</button>' +
     '<button data-fr-action="down" data-fr-id="' +
     id +
     '" style="' +
     FR_BTN +
-    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="move down">▼</button>' +
-    hsXButtonHtml('hs-x-inline', 'delete rule', 'data-fr-action="delete" data-fr-id="' + id + '" title="delete rule"') +
+    ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="' +
+    escapeHtml(t('mc_set_fr_down')) +
+    '">▼</button>' +
+    hsXButtonHtml(
+      'hs-x-inline',
+      t('mc_mr_delete'),
+      'data-fr-action="delete" data-fr-id="' + id + '" title="' + t('mc_mr_delete') + '"',
+    ) +
     '</div>'
   )
 }
@@ -747,7 +790,9 @@ function _renderFilterRuleRow(r) {
 function _renderFilterRuleAddForm() {
   var channels = typeof config !== 'undefined' && config && config.channels ? config.channels : []
   var chOptions =
-    '<option value="all">all channels</option>' +
+    '<option value="all">' +
+    t('mc_set_fr_all_channels') +
+    '</option>' +
     channels
       .map((ch) => {
         var label = ch.twitch || ch.kick || ch.id || ''
@@ -756,38 +801,68 @@ function _renderFilterRuleAddForm() {
       .join('')
   return (
     '<div class="hs-mc-setting-row hs-mc-setting-row-block hs-mc-fr-addform" style="padding:4px 4px 6px">' +
-    '<div style="font-size:13px;color:#ffffff;margin-bottom:4px">add rule</div>' +
+    '<div style="font-size:13px;color:#ffffff;margin-bottom:4px">' +
+    t('mc_mr_add') +
+    '</div>' +
     '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">' +
     '<select data-fr-field="type" style="' +
     FR_SEL +
     ';width:60px">' +
-    '<option value="keyword">keyword</option>' +
-    '<option value="regex">regex</option>' +
-    '<option value="user">user</option>' +
-    '<option value="badge">badge</option>' +
-    '<option value="msgtype">msgtype</option>' +
-    '<option value="expr" title="e.g. first &amp;&amp; !badge:subscriber — join with &amp;&amp; || ! ( ); fields user: badge: type: contains: regex:">expr</option>' +
+    '<option value="keyword">' +
+    t('mc_set_fr_t_keyword') +
+    '</option>' +
+    '<option value="regex">' +
+    t('mc_set_fr_t_regex') +
+    '</option>' +
+    '<option value="user">' +
+    t('mc_set_fr_t_user') +
+    '</option>' +
+    '<option value="badge">' +
+    t('mc_set_fr_t_badge') +
+    '</option>' +
+    '<option value="msgtype">' +
+    t('mc_set_fr_t_msgtype') +
+    '</option>' +
+    '<option value="expr" title="' +
+    escapeHtml(t('mc_set_fr_expr_tip')) +
+    '">' +
+    t('mc_set_fr_t_expr') +
+    '</option>' +
     '</select>' +
-    '<input type="text" data-fr-field="value" placeholder="value..." style="' +
+    '<input type="text" data-fr-field="value" placeholder="' +
+    escapeHtml(t('mc_set_fr_value_ph')) +
+    '" style="' +
     FR_INPUT +
     '">' +
     '<select data-fr-field="action" style="' +
     FR_SEL +
     ';width:68px">' +
-    '<option value="highlight">highlight</option>' +
-    '<option value="hide">hide</option>' +
+    '<option value="highlight">' +
+    t('mc_set_fr_a_highlight') +
+    '</option>' +
+    '<option value="hide">' +
+    t('mc_set_fr_a_hide') +
+    '</option>' +
     '</select>' +
-    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #ffffff;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="highlight color">' +
+    '<input type="color" data-fr-field="color" value="#ffff00" style="width:28px;height:22px;border:1px solid #ffffff;background:#000;padding:1px;cursor:pointer;flex-shrink:0" title="' +
+    escapeHtml(t('mc_set_fr_color')) +
+    '">' +
     '<select data-fr-field="sound" style="' +
     FR_SEL +
-    ';width:62px" title="highlight sound (highlight action only)">' +
-    '<option value="none">silent</option>' +
+    ';width:62px" title="' +
+    escapeHtml(t('mc_set_fr_sound_tip')) +
+    '">' +
+    '<option value="none">' +
+    t('mc_set_fr_silent') +
+    '</option>' +
     '<option value="ping">ping</option>' +
     '<option value="blip">blip</option>' +
     '<option value="knock">knock</option>' +
     '<option value="chime">chime</option>' +
     '</select>' +
-    '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="case-sensitive match">' +
+    '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="' +
+    escapeHtml(t('mc_set_fr_case')) +
+    '">' +
     '<input type="checkbox" data-fr-field="cs" style="margin:0;cursor:pointer">Aa</label>' +
     '<select data-fr-field="scope" style="' +
     FR_SEL +
@@ -796,7 +871,9 @@ function _renderFilterRuleAddForm() {
     '</select>' +
     '<button data-fr-action="add" style="' +
     FR_BTN +
-    ';background:#000000">+ add</button>' +
+    ';background:#000000">' +
+    t('mc_set_fr_add_btn') +
+    '</button>' +
     '</div>' +
     '</div>'
   )
@@ -807,13 +884,15 @@ function _renderFilterRulesGroup() {
   var rules = _getRawFilterRules()
   var ruleRows =
     rules.length === 0
-      ? '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">no rules — add one below</div>'
+      ? '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff;font-size:13px">' +
+        t('mc_set_fr_none') +
+        '</div>'
       : rules.map(_renderFilterRuleRow).join('')
   return (
     '<div class="hs-mc-settings-group">' +
     '<div class="hs-mc-settings-group-title" data-set-fold="rules">' +
     (fold ? '▸ ' : '▾ ') +
-    'filter rules' +
+    t('mc_settings_filter_rules') +
     (rules.length ? ` <span class="hs-mc-set-cnt">(${rules.length})</span>` : '') +
     '</div>' +
     (fold ? '' : ruleRows + _renderFilterRuleAddForm()) +
@@ -913,7 +992,11 @@ function _renderPageDefaultsRow(cat) {
     '<div class="hs-mc-setting-row" style="justify-content:flex-end;padding-top:6px">' +
     '<button class="hs-mc-pagedefaults-btn" data-set-cat="' +
     escapeHtml(cat) +
-    '" title="reset this page to defaults" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">default</button>' +
+    '" title="' +
+    escapeHtml(t('mc_set_page_reset_title')) +
+    '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_set_default') +
+    '</button>' +
     '</div>'
   )
 }
@@ -927,10 +1010,11 @@ function _basicHint(cat) {
   if (!hidden) return ''
   return (
     '<div class="hs-mc-set-keyhint" data-set-scope-hint="1">' +
-    hidden +
-    ' more setting' +
-    (hidden === 1 ? '' : 's') +
-    ' here — <button class="hs-mc-set-scope-btn hs-mc-set-scope-inline">show all</button></div>'
+    t(hidden === 1 ? 'mc_set_basic_hint_one' : 'mc_set_basic_hint_many', [
+      String(hidden),
+      '<button class="hs-mc-set-scope-btn hs-mc-set-scope-inline">' + t('mc_set_show_all') + '</button>',
+    ]) +
+    '</div>'
   )
 }
 
@@ -1100,7 +1184,7 @@ async function _loadCrashLog() {
     }
     var head = diag ? `--- diag ---\n${JSON.stringify(diag, null, 2)}\n\n` : ''
     if (log.length === 0) {
-      pre.textContent = `${head}(no errors recorded)`
+      pre.textContent = `${head}${t('mc_set_crash_none')}`
       return
     }
     pre.textContent =
@@ -1122,7 +1206,7 @@ async function _loadCrashLog() {
         )
         .join('\n')
   } catch (_) {
-    pre.textContent = '(unable to read log)'
+    pre.textContent = t('mc_set_crash_unreadable')
   }
 }
 
@@ -1150,12 +1234,12 @@ function _presetChanges(diff) {
   return out
 }
 function _fmtPresetVal(def, v) {
-  if (def.type === 'bool') return v ? 'on' : 'off'
+  if (def.type === 'bool') return v ? t('mc_cm_on') : t('mc_cm_off')
   if (def.type === 'boolmap') {
     const offs = Object.keys(v).filter((k) => v[k] === false)
-    return offs.length ? `off: ${offs.join(', ')}` : 'all on'
+    return offs.length ? t('mc_set_fmt_off_list', [offs.join(', ')]) : t('mc_set_fmt_all_on')
   }
-  if (def.type === 'multiselect') return v.length ? v.join(', ') : 'none'
+  if (def.type === 'multiselect') return v.length ? v.join(', ') : t('mc_set_fmt_none')
   return String(v)
 }
 function _applyPresetDiff(label, diff) {
@@ -1231,23 +1315,23 @@ function _openPresetMenu(anchorEl) {
       })
     }
     items.push({
-      label: 'delete a preset…',
+      label: t('mc_set_preset_delete_menu'),
       danger: true,
       fn: () => {
         const delItems = _customPresets.map((p) => ({
-          label: `delete ${p.name}`,
+          label: t('mc_set_preset_delete_one', [p.name]),
           danger: true,
           fn: () => {
             _deleteCustomPreset(p.id)
           },
         }))
-        showHsCtxMenu(r.left, r.bottom + 4, 'delete preset', delItems)
+        showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_preset_delete_title'), delItems)
       },
     })
   }
   items.push('sep')
   items.push({
-    label: 'save current as…',
+    label: t('mc_set_preset_save_as'),
     fn: () => {
       _presetPending = { savePrompt: true }
       renderSettingsTab()
@@ -1255,7 +1339,7 @@ function _openPresetMenu(anchorEl) {
   })
   if (_lastPresetUndo) {
     items.push({
-      label: `undo: ${_lastPresetUndo.label}`,
+      label: t('mc_set_preset_undo', [_lastPresetUndo.label]),
       fn: () => {
         const u = _lastPresetUndo
         _lastPresetUndo = null
@@ -1263,21 +1347,31 @@ function _openPresetMenu(anchorEl) {
       },
     })
   }
-  showHsCtxMenu(r.left, r.bottom + 4, 'presets', items)
+  showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_presets'), items)
 }
 function _renderPresetPanel() {
   if (_presetPending.savePrompt) {
     return (
       '<div class="hs-mc-settings-group">' +
-      '<div class="hs-mc-settings-group-title">save current as preset</div>' +
+      '<div class="hs-mc-settings-group-title">' +
+      t('mc_set_preset_save_title') +
+      '</div>' +
       '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="preset name" maxlength="24" style="flex:1">' +
+      '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="' +
+      escapeHtml(t('mc_set_preset_name_ph')) +
+      '" maxlength="24" style="flex:1">' +
       '<div style="display:flex;gap:4px">' +
-      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">save</button>' +
-      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_mr_save') +
+      '</button>' +
+      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_mr_cancel') +
+      '</button>' +
       '</div>' +
       '</div>' +
-      '<div class="hs-mc-set-keyhint">snapshots every setting that differs from defaults — sharable via export settings</div>' +
+      '<div class="hs-mc-set-keyhint">' +
+      t('mc_set_preset_save_hint') +
+      '</div>' +
       '</div>'
     )
   }
@@ -1285,7 +1379,9 @@ function _renderPresetPanel() {
   let rows = ''
   if (!changes.length) {
     rows =
-      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">already matching — nothing to change</div>'
+      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' +
+      t('mc_set_preset_nochange') +
+      '</div>'
   }
   for (const c of changes) {
     rows +=
@@ -1303,15 +1399,19 @@ function _renderPresetPanel() {
   }
   return (
     '<div class="hs-mc-settings-group">' +
-    '<div class="hs-mc-settings-group-title">apply preset: ' +
-    escapeHtml(_presetPending.label) +
+    '<div class="hs-mc-settings-group-title">' +
+    escapeHtml(t('mc_set_preset_apply_title', [_presetPending.label])) +
     '</div>' +
     rows +
     '<div class="hs-mc-setting-row" style="justify-content:flex-end;gap:4px">' +
     (changes.length
-      ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">apply</button>'
+      ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">' +
+        t('mc_set_apply') +
+        '</button>'
       : '') +
-    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">cancel</button>' +
+    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    t('mc_mr_cancel') +
+    '</button>' +
     '</div>' +
     '</div>'
   )
@@ -1320,39 +1420,43 @@ function _renderPresetPanel() {
 // settings › help — the one help: keys for this pane, then the slash commands.
 // Esc (or ?) goes back to the cell it was opened from.
 const _SET_HELP_KEYS = [
-  ['/', 'search'],
-  ['1-7', 'category'],
-  ['↑ ↓', 'move'],
-  ['← →', 'adjust'],
-  ['enter', 'toggle'],
-  ['bksp', 'reset row'],
-  ['esc', 'close / clear'],
-  ['?', 'this help'],
+  ['/', 'mc_set_h_search'],
+  ['1-7', 'mc_set_h_category'],
+  ['↑ ↓', 'mc_set_h_move'],
+  ['← →', 'mc_set_h_adjust'],
+  ['enter', 'mc_set_h_toggle'],
+  ['bksp', 'mc_set_h_reset_row'],
+  ['esc', 'mc_set_h_close_clear'],
+  ['?', 'mc_set_h_this_help'],
 ]
 const _SET_HELP_VIM = [
-  ['j k', 'move'],
-  ['h l', 'adjust'],
-  ['gg G', 'first / last'],
-  ['za', 'fold section'],
-  ['d', 'reset row'],
-  ['p', 'presets'],
-  ['H L', 'prev / next category'],
+  ['j k', 'mc_set_h_move'],
+  ['h l', 'mc_set_h_adjust'],
+  ['gg G', 'mc_set_h_first_last'],
+  ['za', 'mc_set_h_fold'],
+  ['d', 'mc_set_h_reset_row'],
+  ['p', 'mc_set_presets'],
+  ['H L', 'mc_set_h_prev_next'],
 ]
 function _renderHelpPane() {
   function grid(pairs) {
     return pairs
-      .map((kv) => `<span class="hs-mc-set-help-key">${escapeHtml(kv[0])}</span><span>${escapeHtml(kv[1])}</span>`)
+      .map((kv) => `<span class="hs-mc-set-help-key">${escapeHtml(kv[0])}</span><span>${escapeHtml(t(kv[1]))}</span>`)
       .join('')
   }
   return (
     '<div class="hs-mc-set-help-pane">' +
-    '<div class="hs-mc-set-help-title">keys</div>' +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_keys') +
+    '</div>' +
     `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_KEYS)}</div>` +
     (viModeEnabled
       ? `<div class="hs-mc-set-help-title">vi</div><div class="hs-mc-set-help-grid">${grid(_SET_HELP_VIM)}</div>`
       : '') +
-    '<div class="hs-mc-set-help-title">commands</div>' +
-    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\nfull list -> heatsync.org/commands`)}</pre>` +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_commands') +
+    '</div>' +
+    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\n${t('mc_set_h_full_list')}`)}</pre>` +
     '</div>'
   )
 }
@@ -1632,20 +1736,22 @@ function renderSettingsTab() {
     '<div class="hs-mc-settings-panel">' +
     _renderSetSubtabBar() +
     '<div class="hs-mc-set-searchbar">' +
-    '<input class="hs-mc-set-search" type="search" placeholder="/ search settings..." value="' +
+    '<input class="hs-mc-set-search" type="search" placeholder="' +
+    escapeHtml(t('mc_set_search_ph')) +
+    '" value="' +
     escapeHtml(_setQuery) +
     '">' +
     '<span class="hs-mc-set-search-count">' +
     countLabel +
     '</span>' +
     '<button class="hs-mc-set-scope-btn" title="' +
-    (_setShowAll
-      ? 'showing every setting — click for the basics only'
-      : 'showing the basics — click for every setting') +
+    (_setShowAll ? t('mc_set_scope_all_tip') : t('mc_set_scope_basic_tip')) +
     '">' +
-    (_setShowAll ? 'all' : 'basic') +
+    (_setShowAll ? t('mc_set_scope_all') : t('mc_set_scope_basic')) +
     '</button>' +
-    '<button class="hs-mc-set-presets-btn">presets</button>' +
+    '<button class="hs-mc-set-presets-btn">' +
+    t('mc_set_presets') +
+    '</button>' +
     '</div>' +
     '<div class="hs-mc-set-subtab-body">' +
     bodyContent +
@@ -1794,14 +1900,14 @@ function renderSettingsTab() {
         var copyBtn = e.target
         navigator.clipboard.writeText(pre.textContent).then(
           () => {
-            copyBtn.textContent = 'copied'
+            copyBtn.textContent = t('btn_toast_copied')
           },
           () => {
-            copyBtn.textContent = 'copy failed'
+            copyBtn.textContent = t('popup_copy_failed')
           },
         )
         cleanup.setTimeout(() => {
-          copyBtn.textContent = 'copy'
+          copyBtn.textContent = t('mc_set_copy')
         }, 1500)
       }
       return

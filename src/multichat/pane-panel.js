@@ -14,7 +14,7 @@ function hsPaneMountRow(items, onClose) {
   // the × leads: it is the one cell that is always there, so it stays at the
   // top where it can be found, and the destinations hang under it
   row.replaceChildren(
-    ...(onClose ? [hsXButton('hs-x-cell', 'close', onClose)] : []),
+    ...(onClose ? [hsXButton('hs-x-cell', t('mc_xg_close'), onClose)] : []),
     ...items.map((it) => {
       const a = document.createElement('a')
       a.className = 'hs-mc-dest'
@@ -163,7 +163,7 @@ function hsConfirm(message, confirmLabel = 'confirm', reasons = []) {
     const cancelBtn = document.createElement('button')
     cancelBtn.type = 'button'
     cancelBtn.className = 'hs-mc-confirm-cancel'
-    cancelBtn.textContent = 'cancel'
+    cancelBtn.textContent = t('mc_mr_cancel')
     const okBtn = document.createElement('button')
     okBtn.type = 'button'
     okBtn.className = 'hs-mc-confirm-ok'

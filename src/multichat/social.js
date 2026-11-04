@@ -479,11 +479,11 @@ function showFeedEditUI(div, msg) {
   ta.style.cssText =
     'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:4px;font-family:inherit;font-size:13px;resize:vertical;'
   const saveBtn = document.createElement('button')
-  saveBtn.textContent = 'save'
+  saveBtn.textContent = t('mc_mr_save')
   saveBtn.style.cssText =
     'background:#fff;color:#000;border:none;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
   const cancelBtn = document.createElement('button')
-  cancelBtn.textContent = 'cancel'
+  cancelBtn.textContent = t('mc_mr_cancel')
   cancelBtn.style.cssText =
     'background:#000;color:#fff;border:1px solid #ffffff;padding:4px 8px;font-family:inherit;font-size:13px;cursor:pointer;'
   const errEl = document.createElement('div')
@@ -514,7 +514,7 @@ function showFeedEditUI(div, msg) {
   saveBtn.addEventListener('click', async () => {
     const newContent = ta.value.trim()
     if (!newContent) {
-      errEl.textContent = 'content cannot be empty'
+      errEl.textContent = t('mc_social_edit_empty')
       return
     }
     if (newContent === original) {
@@ -522,7 +522,7 @@ function showFeedEditUI(div, msg) {
       return
     }
     saveBtn.disabled = true
-    saveBtn.textContent = 'saving...'
+    saveBtn.textContent = t('mc_social_saving')
     errEl.textContent = ''
     const resp = await apiFetch(`/api/messages/${encodeURIComponent(msg.base36_id)}`, {
       method: 'PATCH',
@@ -536,15 +536,15 @@ function showFeedEditUI(div, msg) {
       // Re-render entire feed to pick up sanitized content + emote refs
       if (typeof renderFeed === 'function') renderFeed()
     } else {
-      errEl.textContent = resp?.data?.error || resp?.error || 'edit failed'
+      errEl.textContent = resp?.data?.error || resp?.error || t('mc_social_edit_failed')
       saveBtn.disabled = false
-      saveBtn.textContent = 'save'
+      saveBtn.textContent = t('mc_mr_save')
     }
   })
 }
 
 async function deleteFeedPost(msg) {
-  if (!confirm('delete this post?')) return
+  if (!confirm(t('mc_social_confirm_delete'))) return
   const resp = await apiFetch(`/api/messages/${encodeURIComponent(msg.base36_id)}`, {
     method: 'DELETE',
   })
@@ -778,26 +778,26 @@ function dispatchYtStreamEvent(targetChannelId, msg) {
     toggleKey = 'ytSuperchat'
     eventClass = 'event-yt-superchat'
     const comment = (msg.text || '').trim()
-    text = `superchat ${msg.amount || ''}`.trim() + (comment ? `: ${comment}` : '')
+    text = t('mc_social_yt_superchat', [msg.amount || '']).trim() + (comment ? `: ${comment}` : '')
   } else if (msg.msgType === 'supersticker') {
     toggleKey = 'ytSupersticker'
     eventClass = 'event-yt-supersticker'
-    text = `super sticker ${msg.amount || ''}`.trim()
+    text = t('mc_social_yt_sticker', [msg.amount || '']).trim()
   } else if (msg.msgType === 'membership') {
     if (classifyYtMembership(systemMsg) === 'milestone') {
       toggleKey = 'ytMilestone'
       eventClass = 'event-yt-milestone'
-      text = systemMsg || 'membership milestone'
+      text = systemMsg || t('mc_social_yt_milestone')
     } else {
       toggleKey = 'ytMembership'
       eventClass = 'event-yt-membership'
-      text = 'became a member'
+      text = t('mc_social_yt_member')
     }
   } else if (msg.msgType === 'giftpurchase') {
     toggleKey = 'ytGiftMemberships'
     eventClass = 'event-yt-gift'
     const count = parseYtGiftCount(systemMsg)
-    text = `gifted ${count} membership${count === 1 ? '' : 's'}`
+    text = t(count === 1 ? 'mc_social_yt_gift_one' : 'mc_social_yt_gift_n', [String(count)])
   } else {
     return
   }
@@ -1620,7 +1620,7 @@ function listenForSocialEvents() {
               // Always prefix with "youtube:" — without it, error text looks
               // like it's about whatever stream the user is watching, not
               // the YouTube subscription that actually failed.
-              upsertNotice(`youtube: ${errText || 'connection error'}`, 'var(--hs-danger)')
+              upsertNotice(t('mc_social_yt_error', [errText || t('mc_social_yt_conn_error')]), 'var(--hs-danger)')
             }
           }
         }
@@ -1899,12 +1899,12 @@ function _renderFeedEmptyCard() {
   actions.className = 'hs-mc-empty-actions'
 
   if (!hsAuthToken) {
-    title.textContent = 'log in to see your home'
-    sub.textContent = 'follow people, post, share — alongside multichat'
+    title.textContent = t('mc_social_home_title')
+    sub.textContent = t('mc_social_home_sub')
 
     const loginBtn = document.createElement('a')
     loginBtn.className = 'hs-mc-empty-btn primary'
-    loginBtn.textContent = 'log in at heatsync.org'
+    loginBtn.textContent = t('mc_social_home_login')
     loginBtn.href = HS_LOGIN_URL
     loginBtn.target = '_blank'
     loginBtn.rel = 'noopener noreferrer'
@@ -1912,7 +1912,7 @@ function _renderFeedEmptyCard() {
 
     const note = document.createElement('div')
     note.className = 'hs-mc-empty-note'
-    note.textContent = 'no account needed for multichat — pick a channel tab above'
+    note.textContent = t('mc_social_home_note')
 
     card.appendChild(title)
     card.appendChild(sub)
@@ -1921,20 +1921,20 @@ function _renderFeedEmptyCard() {
     return card
   }
 
-  title.textContent = 'no posts'
-  sub.textContent = 'follow people or post something to populate this tab'
+  title.textContent = t('mc_social_no_posts')
+  sub.textContent = t('mc_social_no_posts_sub')
 
   const importBtn = document.createElement('button')
   importBtn.className = 'hs-mc-empty-btn primary'
-  importBtn.textContent = 'import follows from twitch'
+  importBtn.textContent = t('mc_social_import_follows')
   importBtn.addEventListener('click', async () => {
     if (importBtn.disabled) return
     importBtn.disabled = true
-    importBtn.textContent = 'syncing…'
+    importBtn.textContent = t('mc_social_syncing')
     try {
       const r = await apiFetch('/api/sync-twitch-follows', { method: 'POST', auth: true })
       if (r?.ok && r?.data?.success) {
-        importBtn.textContent = `synced ${r.data.synced || 0} ✓`
+        importBtn.textContent = t('mc_social_synced', [String(r.data.synced || 0)])
         try {
           chrome.runtime.sendMessage({ type: 'refresh_followed_users' })
         } catch {}
@@ -1944,18 +1944,18 @@ function _renderFeedEmptyCard() {
         }, 1200)
       } else {
         importBtn.disabled = false
-        importBtn.textContent = (r?.error || r?.data?.error || 'try again').slice(0, 40)
+        importBtn.textContent = (r?.error || r?.data?.error || t('mc_social_try_again')).slice(0, 40)
       }
     } catch (_) {
       importBtn.disabled = false
-      importBtn.textContent = 'try again'
+      importBtn.textContent = t('mc_social_try_again')
     }
   })
   actions.appendChild(importBtn)
 
   const discoverBtn = document.createElement('button')
   discoverBtn.className = 'hs-mc-empty-btn'
-  discoverBtn.textContent = 'discover people →'
+  discoverBtn.textContent = t('mc_social_discover_people')
   discoverBtn.addEventListener('click', () => {
     // discover is hidden by default; a tab you land on must be on the bar, so
     // asking for it brings it back first.
@@ -1971,7 +1971,7 @@ function _renderFeedEmptyCard() {
 
   const postBtn = document.createElement('button')
   postBtn.className = 'hs-mc-empty-btn'
-  postBtn.textContent = 'post something'
+  postBtn.textContent = t('mc_social_post_something')
   postBtn.addEventListener('click', () => {
     if (typeof showInputBar === 'function') showInputBar()
     const inp = document.getElementById('hs-mc-input')
@@ -2060,10 +2060,10 @@ function renderFeed() {
     banner.style.cssText =
       'padding:2px 10px;background:#ffffff;color:#000000;font-size:13px;margin-bottom:4px;line-height:18px'
     banner.textContent = !hsAuthToken
-      ? 'hot posts · log in at heatsync.org to follow people'
+      ? t('mc_social_banner_hot_login')
       : feedFallbackIsCold
-        ? 'newest posts · follow people to fill your feed'
-        : 'hot this month · follow people to fill your feed'
+        ? t('mc_social_banner_newest')
+        : t('mc_social_banner_hot_month')
     frag.appendChild(banner)
   }
   let zebraCount = 0
@@ -2235,7 +2235,9 @@ function buildFeedMessageDiv(m, opUsername) {
   // Not inside a thread: there the >>id is the way in, and a 💬N that
   // toggled the thread closed just dumped you back on the feed.
   const repliesSpan =
-    replies > 0 && !inThread ? `<span class="hs-feed-stat hs-feed-replies" title="replies">💬${replies}</span>` : ''
+    replies > 0 && !inThread
+      ? `<span class="hs-feed-stat hs-feed-replies" title="${escapeHtml(t('mc_social_replies_title'))}">💬${replies}</span>`
+      : ''
   const stats = [heatSpan, feedUpvoteHtml(m), repliesSpan].filter(Boolean).join(' ')
   const statsHtml = stats ? ` ${stats}` : ''
 
@@ -2301,7 +2303,7 @@ function buildFeedMessageDiv(m, opUsername) {
     if (body) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
-      badge.textContent = ' (edited)'
+      badge.textContent = ` ${t('mc_social_edited')}`
       badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
       body.appendChild(badge)
     }
@@ -2686,14 +2688,14 @@ function _renderFeedReplyChip(thread) {
   ref.className = 'hs-mc-feed-reply-ref'
   const rawId = thread.op?.base36_id || thread.id || ''
   const displayId = String(rawId).replace(/^0+/, '') || '0'
-  ref.textContent = ` replying to >>${displayId}`
+  ref.textContent = ` ${t('mc_social_replying_to', [displayId])}`
   chip.appendChild(ref)
 
-  const cancel = hsXButton('hs-mc-feed-reply-cancel hs-x-inline', 'leave thread', (e) => {
+  const cancel = hsXButton('hs-mc-feed-reply-cancel hs-x-inline', t('mc_social_leave_thread'), (e) => {
     e.preventDefault()
     closeThread()
   })
-  cancel.title = 'leave thread'
+  cancel.title = t('mc_social_leave_thread')
   chip.appendChild(cancel)
 
   bar.insertBefore(chip, bar.firstChild)
@@ -2734,7 +2736,7 @@ function renderThreadView(msgsEl) {
   if (at.loading) {
     const loading = document.createElement('div')
     loading.className = 'hs-mc-empty'
-    loading.textContent = 'loading...'
+    loading.textContent = t('common_loading')
     loading.style.fontSize = '11px'
     container.appendChild(loading)
   } else if (at.error) {
@@ -3006,7 +3008,7 @@ function _discoverSetLoading(msgsEl) {
   msgsEl.textContent = ''
   const el = document.createElement('div')
   el.className = 'hs-mc-empty'
-  el.textContent = 'loading...'
+  el.textContent = t('common_loading')
   msgsEl.appendChild(el)
 }
 
@@ -3134,7 +3136,10 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   dot.className = isLive ? 'hs-discover-live-dot' : 'hs-discover-live-spacer'
   if (isLive) {
     const v = discoverViewers(profile)
-    dot.title = v > 0 ? `live · ${v.toLocaleString()} viewer${v === 1 ? '' : 's'}` : 'live'
+    dot.title =
+      v > 0
+        ? t(v === 1 ? 'mc_social_live_viewer' : 'mc_social_live_viewers', [v.toLocaleString()])
+        : t('mc_social_live')
   }
   row.appendChild(dot)
 
@@ -3174,16 +3179,17 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
   const plats = document.createElement('span')
   plats.className = 'hs-discover-platforms'
   if (profile.twitch_username) {
-    const t = document.createElement('a')
-    t.className = 'hs-plat hs-plat-t'
-    t.textContent = 'T'
-    t.href = `https://www.twitch.tv/${encodeURIComponent(profile.twitch_username)}`
-    t.target = '_blank'
-    t.rel = 'noopener noreferrer'
-    t.title = `twitch · @${profile.twitch_username}${profile.twitch_is_live ? ' · live' : ''}`
-    if (profile.twitch_is_live) t.classList.add('hs-plat-live')
-    t.addEventListener('click', (e) => e.stopPropagation())
-    plats.appendChild(t)
+    const tw = document.createElement('a')
+    tw.className = 'hs-plat hs-plat-t'
+    tw.textContent = 'T'
+    tw.href = `https://www.twitch.tv/${encodeURIComponent(profile.twitch_username)}`
+    tw.target = '_blank'
+    tw.rel = 'noopener noreferrer'
+    const twBase = t('mc_social_plat_at', ['twitch', profile.twitch_username])
+    tw.title = profile.twitch_is_live ? t('mc_social_plat_live', [twBase]) : twBase
+    if (profile.twitch_is_live) tw.classList.add('hs-plat-live')
+    tw.addEventListener('click', (e) => e.stopPropagation())
+    plats.appendChild(tw)
   }
   if (profile.kick_username) {
     const k = document.createElement('a')
@@ -3192,7 +3198,8 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
     k.href = `https://kick.com/${encodeURIComponent(profile.kick_username)}`
     k.target = '_blank'
     k.rel = 'noopener noreferrer'
-    k.title = `kick · @${profile.kick_username}${profile.kick_is_live ? ' · live' : ''}`
+    const kBase = t('mc_social_plat_at', ['kick', profile.kick_username])
+    k.title = profile.kick_is_live ? t('mc_social_plat_live', [kBase]) : kBase
     if (profile.kick_is_live) k.classList.add('hs-plat-live')
     k.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(k)
@@ -3208,7 +3215,8 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
       : `https://www.youtube.com/@${encodeURIComponent(ytHandle)}`
     y.target = '_blank'
     y.rel = 'noopener noreferrer'
-    y.title = `youtube${ytHandle ? ` · @${ytHandle}` : ''}${profile.youtube_is_live ? ' · live' : ''}`
+    const yBase = ytHandle ? t('mc_social_plat_at', ['youtube', ytHandle]) : 'youtube'
+    y.title = profile.youtube_is_live ? t('mc_social_plat_live', [yBase]) : yBase
     if (profile.youtube_is_live) y.classList.add('hs-plat-live')
     y.addEventListener('click', (e) => e.stopPropagation())
     plats.appendChild(y)
@@ -3226,7 +3234,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
 
   const heatEl = document.createElement('span')
   heatEl.className = 'hs-discover-heat'
-  heatEl.title = `${heat.toLocaleString()} heat`
+  heatEl.title = t('mc_social_heat_title', [heat.toLocaleString()])
   heatEl.setAttribute('style', discoverHeatStyle(heat))
   const numSpan = document.createElement('span')
   numSpan.className = 'hs-heat-n'
@@ -3249,7 +3257,7 @@ function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = t
       const vEl = document.createElement('span')
       vEl.className = 'hs-discover-viewers'
       vEl.textContent = formatDiscoverCount(v)
-      vEl.title = `${v.toLocaleString()} viewers`
+      vEl.title = t('mc_social_viewers_title', [v.toLocaleString()])
       row.appendChild(vEl)
     }
   }
@@ -3283,9 +3291,9 @@ function renderDiscoverChipsBar() {
     return l
   }
 
-  bar.appendChild(makeLabel('platform'))
+  bar.appendChild(makeLabel(t('mc_social_platform')))
   bar.appendChild(
-    makeChip('all', 'all', discoverPlatformFilter, (v) => {
+    makeChip(t('mc_social_all'), 'all', discoverPlatformFilter, (v) => {
       discoverPlatformFilter = v
     }),
   )
@@ -3396,7 +3404,7 @@ function renderDiscoverPostRow(m) {
   const heat = Number(m.heat || 0)
   const heatEl = document.createElement('span')
   heatEl.className = 'hs-discover-heat hs-discover-post-heat'
-  heatEl.title = `${heat.toLocaleString()} heat`
+  heatEl.title = t('mc_social_heat_title', [heat.toLocaleString()])
   heatEl.setAttribute('style', discoverHeatStyle(heat))
   const numSpan = document.createElement('span')
   numSpan.className = 'hs-heat-n'
@@ -3413,7 +3421,7 @@ function renderDiscoverPostRow(m) {
   if ((m.reply_count || 0) > 0) {
     const rep = document.createElement('span')
     rep.className = 'hs-discover-post-replies'
-    rep.title = `${m.reply_count} repl${m.reply_count === 1 ? 'y' : 'ies'}`
+    rep.title = t(m.reply_count === 1 ? 'mc_social_reply_one' : 'mc_social_replies_n', [String(m.reply_count)])
     rep.textContent = `${m.reply_count}r`
     meta.appendChild(rep)
   }
@@ -3426,7 +3434,7 @@ function renderDiscoverPostRow(m) {
   const snippet = String(m.content || '')
     .replace(/\s+/g, ' ')
     .trim()
-  txt.textContent = snippet || '(no text)'
+  txt.textContent = snippet || t('mc_social_no_text')
   row.appendChild(txt)
 
   // Canonical row-level heat tier effects (border tier, bg, breathe at 500+)
@@ -3511,7 +3519,7 @@ function renderDiscoverTab() {
   // ● LIVE NOW
   {
     const { section, body } = makeDiscoverSection(
-      'live now',
+      t('mc_social_live_now'),
       null,
       liveProfiles.length > 0 ? `${liveProfiles.length}` : '0',
       'hs-discover-section-live',
@@ -3519,7 +3527,7 @@ function renderDiscoverTab() {
     if (liveProfiles.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no streams live right now'
+      empty.textContent = t('mc_social_no_streams')
       body.appendChild(empty)
       // Contextual nudge — if the user follows few/no people on heatsync, the
       // section will always look empty. Surface twitch import right at the
@@ -3534,25 +3542,25 @@ function renderDiscoverTab() {
             nudge.className = 'hs-discover-section-empty hs-discover-import-nudge'
             const a = document.createElement('a')
             a.href = '#'
-            a.textContent = 'import follows from twitch'
+            a.textContent = t('mc_social_import_follows')
             a.style.color = '#fff'
             a.style.textDecoration = 'none'
             a.addEventListener('click', async (e) => {
               e.preventDefault()
-              a.textContent = 'syncing…'
+              a.textContent = t('mc_social_syncing')
               try {
                 const r = await apiFetch('/api/sync-twitch-follows', { method: 'POST', auth: true })
                 if (r?.ok && r?.data?.success) {
-                  a.textContent = `synced ${r.data.synced} ✓`
+                  a.textContent = t('mc_social_synced', [String(r.data.synced)])
                   try {
                     chrome.runtime.sendMessage({ type: 'refresh_followed_users' })
                   } catch {}
                   cleanup.setTimeout(() => renderDiscoverTab(), 1500)
                 } else {
-                  a.textContent = (r?.error || r?.data?.error || 'failed').slice(0, 30)
+                  a.textContent = (r?.error || r?.data?.error || t('mc_social_failed')).slice(0, 30)
                 }
               } catch (_) {
-                a.textContent = 'failed'
+                a.textContent = t('mc_social_failed')
               }
             })
             nudge.appendChild(a)
@@ -3573,11 +3581,11 @@ function renderDiscoverTab() {
 
   // HOT POSTS
   {
-    const { section, body } = makeDiscoverSection('hot posts', null, null, 'hs-discover-section-posts')
+    const { section, body } = makeDiscoverSection(t('mc_social_hot_posts'), null, null, 'hs-discover-section-posts')
     if (filteredPosts.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no posts match filter'
+      empty.textContent = t('mc_social_no_posts_filter')
       body.appendChild(empty)
     } else {
       for (const m of filteredPosts) {
@@ -3592,11 +3600,11 @@ function renderDiscoverTab() {
 
   // TAGS — always render, above the long leaderboard
   {
-    const { section, body } = makeDiscoverSection('tags', null, null, 'hs-discover-section-tags')
+    const { section, body } = makeDiscoverSection(t('mc_social_tags'), null, null, 'hs-discover-section-tags')
     if (discoverTags.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'none right now'
+      empty.textContent = t('mc_social_none_now')
       body.appendChild(empty)
     } else {
       const chips = document.createElement('div')
@@ -3626,12 +3634,17 @@ function renderDiscoverTab() {
 
   // LEADERBOARD — non-live profiles, multi-column when wide
   {
-    const { section, body } = makeDiscoverSection('leaderboard', null, null, 'hs-discover-section-trending')
+    const { section, body } = makeDiscoverSection(
+      t('mc_social_leaderboard'),
+      null,
+      null,
+      'hs-discover-section-trending',
+    )
     body.classList.add('hs-discover-leaderboard-body')
     if (restProfiles.length === 0) {
       const empty = document.createElement('div')
       empty.className = 'hs-discover-section-empty'
-      empty.textContent = 'no profiles match this filter'
+      empty.textContent = t('mc_social_no_profiles_filter')
       body.appendChild(empty)
     } else {
       let rank = 1
@@ -3670,7 +3683,7 @@ function _pinnedSetLoading(msgsEl) {
   msgsEl.textContent = ''
   const el = document.createElement('div')
   el.className = 'hs-mc-empty'
-  el.textContent = 'loading...'
+  el.textContent = t('common_loading')
   msgsEl.appendChild(el)
 }
 
@@ -3721,7 +3734,7 @@ function renderPinnedTab() {
   if (pinnedMessages.length === 0) {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-empty'
-    empty.textContent = 'no pinned messages'
+    empty.textContent = t('mc_social_no_pinned')
     frag.appendChild(empty)
     msgsEl.appendChild(frag)
     return
@@ -3801,7 +3814,7 @@ function renderModLogTab() {
   if (!log.length) {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-empty'
-    empty.textContent = 'no mod actions yet'
+    empty.textContent = t('mc_social_no_mod_actions')
     msgsEl.appendChild(empty)
     return
   }

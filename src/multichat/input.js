@@ -1867,36 +1867,36 @@ function initInput() {
     // blocked emote, remove an inventory one, block anything else — so for an
     // inventory emote this menu is where 'block' (keeps the set) lives.
     if (state === 'blocked') {
-      items.push({ label: 'unblock', fn: () => unblockEmote(emoteName) })
+      items.push({ label: t('mc_input_unblock'), fn: () => unblockEmote(emoteName) })
     } else {
-      items.push({ label: 'block', fn: () => blockEmote(emoteName, emoteUrl, source) })
+      items.push({ label: t('content_card_block'), fn: () => blockEmote(emoteName, emoteUrl, source) })
       if (state === 'owned' && inventoryEmotes.has(emoteName)) {
-        items.push({ label: 'remove from set', fn: () => removeEmoteFromInventory(emoteName, targetEl) })
+        items.push({ label: t('mc_input_remove_from_set'), fn: () => removeEmoteFromInventory(emoteName, targetEl) })
       }
     }
     items.push('sep')
     let m
     if ((m = emoteUrl.match(/cdn\.7tv\.app\/emote\/([^/]+)/))) {
       items.push({
-        label: 'open on 7TV',
+        label: t('mc_input_open_on', ['7TV']),
         fn: () => window.open(`https://7tv.app/emotes/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     } else if ((m = emoteUrl.match(/cdn\.betterttv\.net\/emote\/([^/]+)/))) {
       items.push({
-        label: 'open on BTTV',
+        label: t('mc_input_open_on', ['BTTV']),
         fn: () => window.open(`https://betterttv.com/emotes/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     } else if ((m = emoteUrl.match(/cdn\.frankerfacez\.com\/emote\/(\d+)/))) {
       items.push({
-        label: 'open on FFZ',
+        label: t('mc_input_open_on', ['FFZ']),
         fn: () => window.open(`https://www.frankerfacez.com/emoticon/${m[1]}`, '_blank', 'noopener,noreferrer'),
       })
     }
     items.push(
-      { label: 'view image', fn: () => window.open(hi, '_blank', 'noopener,noreferrer') },
+      { label: t('mc_input_view_image'), fn: () => window.open(hi, '_blank', 'noopener,noreferrer') },
       'sep',
       {
-        label: 'copy :name:',
+        label: t('mc_input_copy_emote_name'),
         fn: () => {
           try {
             navigator.clipboard
@@ -1907,7 +1907,7 @@ function initInput() {
         },
       },
       {
-        label: 'copy image url',
+        label: t('mc_input_copy_image_url'),
         fn: () => {
           try {
             navigator.clipboard
@@ -1934,7 +1934,7 @@ function initInput() {
     const items = []
     if (name)
       items.push({
-        label: 'copy :name:',
+        label: t('mc_input_copy_emote_name'),
         fn: () => {
           try {
             navigator.clipboard
@@ -1946,7 +1946,7 @@ function initInput() {
       })
     if (char)
       items.push({
-        label: 'copy emoji',
+        label: t('mc_input_copy_emoji'),
         fn: () => {
           try {
             navigator.clipboard
@@ -2036,7 +2036,7 @@ function initInput() {
           const stack = e.target.closest('.hs-mc-emote-stack')
           if (stack) {
             stack.classList.remove('expanded')
-            stack.setAttribute('title', 'expand')
+            stack.setAttribute('title', t('mc_input_expand'))
           }
           return
         }
@@ -2480,26 +2480,30 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   const items = [
     {
       key: 'follow',
-      label: youFollow ? 'unfollow' : 'follow',
+      label: youFollow ? t('content_card_unfollow') : t('content_card_follow'),
       fn: () => hsFollowFromMenu(username, platform, followIds),
     },
     {
       key: 'block',
-      label: youBlock ? 'unblock' : 'block',
+      label: youBlock ? t('mc_input_unblock') : t('content_card_block'),
       danger: !youBlock,
       fn: () => hsBlockFromMenu(username, platform),
     },
-    { label: isMuted ? 'unmute' : 'mute (24h)', danger: !isMuted, fn: () => _toggleMcMute(username, platform) },
+    {
+      label: isMuted ? t('mc_settings_unmute') : t('mc_input_mute_24h'),
+      danger: !isMuted,
+      fn: () => _toggleMcMute(username, platform),
+    },
     {
       label:
         typeof isUserHiddenInTab === 'function' && isUserHiddenInTab(username, platform, currentTab)
-          ? 'unhide in tab'
-          : 'hide in tab',
+          ? t('mc_input_unhide_in_tab')
+          : t('mc_input_hide_in_tab'),
       fn: () => _tabHide(username, platform, 'toggle'),
     },
     'sep',
     {
-      label: 'copy name',
+      label: t('content_card_copy_name'),
       fn: () => mcCopyToClipboard(username, t('mc_input_name_copied')),
     },
   ]
@@ -2508,11 +2512,11 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // #1 thing right-click gets used for, it shouldn't take scrolling to find.
   if (msg) {
     items.push({
-      label: 'copy message',
+      label: t('mc_input_copy_message'),
       fn: () => mcCopyToClipboard(_extractMcMsgText(msg), t('mc_input_message_copied')),
     })
     items.push({
-      label: 'copy → input',
+      label: t('mc_input_copy_to_input'),
       fn: () => mcQuoteToInput(_extractMcMsgText(msg)),
     })
     if (msg.dataset?.msgId) {
@@ -2526,7 +2530,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const threadTxt = getActiveThreadCopyText()
     if (threadTxt)
       items.push({
-        label: 'copy thread',
+        label: t('mc_input_copy_thread'),
         fn: () => mcCopyToClipboard(threadTxt, t('mc_input_thread_copied')),
       })
   }
@@ -2534,7 +2538,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const chainTxt = _extractMcChainText(msg)
     if (chainTxt)
       items.push({
-        label: 'copy thread',
+        label: t('mc_input_copy_thread'),
         fn: () => mcCopyToClipboard(chainTxt, t('mc_input_thread_copied')),
       })
   }
@@ -2578,23 +2582,31 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         const mod = []
         if (msgId)
           mod.push({
-            label: 'delete msg',
+            label: t('mc_input_delete_msg'),
             danger: true,
-            fn: () => _ctxMod('delete', msgCh, msgPlat, msgLogin, msgId, 0, 'deleted'),
+            fn: () => _ctxMod('delete', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_deleted')),
           })
         mod.push(
           {
             // YouTube's timeout is a fixed-duration hide (no 10m choice).
-            label: isYt ? 'timeout' : 'timeout 10m',
-            fn: () => _ctxMod('timeout', msgCh, msgPlat, msgLogin, msgId, 600, 'timed out'),
+            label: isYt ? t('mc_input_timeout') : t('mc_input_timeout_10m'),
+            fn: () => _ctxMod('timeout', msgCh, msgPlat, msgLogin, msgId, 600, t('mc_input_timed_out')),
           },
-          { label: 'ban', danger: true, fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, 'banned') },
-          { label: 'unban', fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, 'unbanned') },
+          {
+            label: t('content_card_ban'),
+            danger: true,
+            fn: () => _ctxMod('ban', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_banned')),
+          },
+          {
+            label: t('content_card_unban'),
+            fn: () => _ctxMod('unban', msgCh, msgPlat, msgLogin, msgId, 0, t('mc_mod_label_unbanned')),
+          },
         )
-        if (!isKick && !isYt) mod.push({ label: 'blocked terms', fn: () => openBlockedTerms(modCh) })
+        if (!isKick && !isYt)
+          mod.push({ label: t('mc_settings_mod_btn_blocked_terms'), fn: () => openBlockedTerms(modCh) })
         if (!isKick && !isYt) {
-          mod.push({ label: 'mod tools', fn: () => openModSuite(modCh, 'shield') })
-          if (msgLogin) mod.push({ label: 'warn', fn: () => msWarnPrompt(modCh, msgLogin) })
+          mod.push({ label: t('content_card_mod_tools'), fn: () => openModSuite(modCh, 'shield') })
+          if (msgLogin) mod.push({ label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin) })
         }
         mod.push('sep')
         items.push(...mod)
@@ -2623,7 +2635,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // IRC msg-id or Kick msg id). The same setReplyState the reply-button uses.
   if (msg?.dataset?.msgId) {
     items.push({
-      label: 'reply',
+      label: t('mc_input_reply'),
       fn: () =>
         setReplyState({
           msgId: msg.dataset.msgId,
@@ -2636,7 +2648,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.
   if (msg && gateAtBoot('feed') !== false) {
-    items.push({ label: 'op to feed', fn: () => _quickOpToFeed(username, msg) })
+    items.push({ label: t('mc_input_op_to_feed'), fn: () => _quickOpToFeed(username, msg) })
   }
   // Subsystem-owned rows are omitted when their switch is off — a disabled
   // feature must not keep a menu entry that turns it straight back on. That is
@@ -2644,17 +2656,20 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // false` still opened a whisper composer. `dm` and `mention` are named by no
   // switch, so they always show.
   if (gateAtBoot('whispers') !== false) {
-    items.push({ label: 'whisper', fn: () => _openWhisperFor(username, platform) })
+    items.push({ label: t('mc_input_whisper'), fn: () => _openWhisperFor(username, platform) })
   }
   items.push(
-    { label: 'dm', fn: () => _openDmFor(username, platform) },
-    { label: 'mention', fn: () => _mentionInMcInput(username) },
+    { label: t('mc_input_dm'), fn: () => _openDmFor(username, platform) },
+    { label: t('content_card_mention'), fn: () => _mentionInMcInput(username) },
   )
   if (gateAtBoot('profile-cards') !== false) {
-    items.push({ label: 'view profile', fn: () => openProfileCard(username, platform) })
+    items.push({ label: t('content_card_view_profile'), fn: () => openProfileCard(username, platform) })
   }
   items.push({
-    label: typeof hsNoteHas === 'function' && hsNoteHas(username, platform) ? 'edit note' : 'add note',
+    label:
+      typeof hsNoteHas === 'function' && hsNoteHas(username, platform)
+        ? t('mc_input_edit_note')
+        : t('mc_input_add_note'),
     fn: () => hsNoteOpenEditor(username, platform, x, y),
   })
   // Feed post: upvote (not your own) + bookmark, same rows as the site's menu.
@@ -2688,7 +2703,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
     const vcChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     if (vcChannel) {
       items.push({
-        label: 'report / gift sub',
+        label: t('mc_input_report_gift_sub'),
         fn: () => {
           const u = encodeURIComponent(String(username).toLowerCase())
           const c = encodeURIComponent(String(vcChannel).toLowerCase())
@@ -2703,7 +2718,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // Only on a live/channel tab (where local filtering applies) and a real row.
   if (msg && typeof isLiveSearchTab === 'function' && isLiveSearchTab(currentTab)) {
     items.push({
-      label: `filter to ${username}`,
+      label: t('mc_input_filter_to', [username]),
       fn: () => {
         const input = document.getElementById('hs-mc-search-input')
         if (!input) return
@@ -2721,7 +2736,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (logPlatform === 'twitch' || logPlatform === 'kick' || logPlatform === 'youtube') {
     const msgChannel = msg?.dataset?.msgChannel || (typeof getLiveChannel === 'function' ? getLiveChannel() : null)
     items.push({
-      label: 'chat logs',
+      label: t('mc_input_chat_logs'),
       fn: () => mcOpenChannelCell('logs', msgChannel, { username, platform: logPlatform }),
     })
   }
@@ -2734,16 +2749,16 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       const mins = Math.floor(remaining / 60000),
         secs = Math.floor((remaining % 60000) / 1000)
       items.push({
-        label: `edit (${mins}:${String(secs).padStart(2, '0')})`,
+        label: t('mc_input_edit_timer', [`${mins}:${String(secs).padStart(2, '0')}`]),
         fn: () => {
           if (feedDiv && typeof showFeedEditUI === 'function') showFeedEditUI(feedDiv, feedMsg)
         },
       })
     } else {
-      items.push({ label: 'edit (expired)', disabled: true })
+      items.push({ label: t('mc_input_edit_expired'), disabled: true })
     }
     items.push({
-      label: 'delete',
+      label: t('mc_input_delete'),
       danger: true,
       fn: () => {
         if (typeof deleteFeedPost === 'function') deleteFeedPost(feedMsg)
@@ -2768,10 +2783,10 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
             ? isUserBlocked(username, platform)
             : blockedUsers.has(String(username).toLowerCase()))
         const followEl = menu.querySelector('[data-hs-key="follow"] .hs-mc-em-label')
-        if (followEl) followEl.textContent = yf ? 'unfollow' : 'follow'
+        if (followEl) followEl.textContent = yf ? t('content_card_unfollow') : t('content_card_follow')
         const blockEl = menu.querySelector('[data-hs-key="block"] .hs-mc-em-label')
         if (blockEl) {
-          blockEl.textContent = yb ? 'unblock' : 'block'
+          blockEl.textContent = yb ? t('mc_input_unblock') : t('content_card_block')
           blockEl.parentElement.classList.toggle('hs-mc-em-danger', !yb)
         }
       })
@@ -3461,7 +3476,7 @@ function updateInputPlaceholder() {
     // whisper retargets lastWhisperKey out from under it
     const targetKey = (typeof armedReplyKey !== 'undefined' && armedReplyKey) || lastWhisperKey
     const lastUser = targetKey ? whisperUsers.get(targetKey) : null
-    placeholder = lastUser ? `/r to reply to ${lastUser.displayName}` : whisperHint()
+    placeholder = lastUser ? t('mc_input_reply_whisper_to', [lastUser.displayName]) : whisperHint()
   } else if (currentTab === 'add') {
     placeholder = ''
   } else {
@@ -6144,23 +6159,28 @@ function placeCaretAfter(node, offset = 0) {
 // (heatsync only), so you can feel how deep / how niche the current pick is.
 function emoteCycleMeta(m) {
   if (!m) return { cat: '', vis: null }
-  if (m.type === 'user' || m.type === 'user-bare') return { cat: 'chatter', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
-  if (m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
+  if (m.type === 'user' || m.type === 'user-bare')
+    return { cat: t('mc_input_chatter'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
+  if (m.type === 'emoji') return { cat: t('btn_tab_emoji'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
   // Name the provider: a catalog IDK sits right after the channel's IDK in the
   // cycle, and "which one is this" is the whole question.
   if (m.remote)
-    return { cat: t('mc_cycle_catalog', [m.source || '7tv']), vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+    return {
+      cat: t('mc_cycle_catalog', [m.source || '7tv']),
+      vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' },
+    }
   const tier = m.tier ?? 2
-  const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
-  if (m.source === 'twitch') return { cat, vis: { t: 'all twitch', c: 'var(--hs-ok)' } }
+  const cat = tier === 0 ? t('btn_tab_channel') : tier === 1 ? t('mc_input_your_inventory') : t('btn_tab_global')
+  if (m.source === 'twitch') return { cat, vis: { t: t('mc_input_all_twitch'), c: 'var(--hs-ok)' } }
   // Kick-native channel/sub emotes are platform-native too — every Kick viewer
   // sees them, no extension needed.
-  if (m.source === 'kick') return { cat, vis: { t: 'all kick', c: 'var(--hs-ok)' } }
+  if (m.source === 'kick') return { cat, vis: { t: t('mc_input_all_kick'), c: 'var(--hs-ok)' } }
   // Your personal set (tier 1) or a heatsync-hosted emote: others only see it via
   // heatsync's sender-set merge — non-heatsync viewers get plain text.
-  if (tier === 1 || m.source === 'heatsync') return { cat, vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+  if (tier === 1 || m.source === 'heatsync')
+    return { cat, vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' } }
   // Third-party emote active in the channel/global set — provider-ext users see it.
-  return { cat, vis: { t: `${m.source || 'ext'} users`, c: 'var(--hs-gold)' } }
+  return { cat, vis: { t: t('mc_input_ext_users', [m.source || 'ext']), c: 'var(--hs-gold)' } }
 }
 
 function showCycleTooltip() {
@@ -6177,7 +6197,7 @@ function showCycleTooltip() {
     // nothing to cycle yet: say so while the catalog search runs / after it comes back empty,
     // otherwise a slow 7tv looks like a dead Tab
     if (acState.active && (acState.remotePending || acState.remoteDone)) {
-      tt.textContent = acState.remotePending ? 'searching 7tv…' : 'no match'
+      tt.textContent = acState.remotePending ? t('mc_input_searching_7tv') : t('mc_ms_no_match')
       tt.style.display = 'block'
     } else tt.style.display = 'none'
     return
@@ -6204,7 +6224,7 @@ function showCycleTooltip() {
   // Surface the live catalog fetch so you know when a 7tv search is firing.
   if (acState.remotePending) {
     tt.appendChild(dot())
-    tt.appendChild(mkSpan('searching 7tv…', 'color:var(--hs-gold);'))
+    tt.appendChild(mkSpan(t('mc_input_searching_7tv'), 'color:var(--hs-gold);'))
   }
   tt.style.display = 'block'
 }
@@ -6752,7 +6772,7 @@ function showSlashDropdown(matches, idx) {
     args.textContent = c.args ? ` ${c.args}` : ''
     const desc = document.createElement('span')
     desc.className = 'hs-mc-slash-desc'
-    desc.textContent = c.desc
+    desc.textContent = slashDesc(c)
     row.appendChild(name)
     row.appendChild(args)
     row.appendChild(desc)
@@ -6763,6 +6783,13 @@ function showSlashDropdown(matches, idx) {
     dd.appendChild(row)
   })
   dd.style.display = 'block'
+}
+
+// localized /command description; falls back to the registry text (t returns the key when missing)
+function slashDesc(c) {
+  const k = `slash_desc_${c.cmd}`
+  const v = t(k)
+  return v && v !== k ? v : c.desc
 }
 
 function hideSlashDropdown() {
@@ -6814,11 +6841,40 @@ const SLASH_ALIASES = slashAliasMap('ext')
 // duration is MINUTES (0–129600), slow is SECONDS (3–120). Kick has no chat-mode
 // write API wired yet, so these are twitch-only (clear message below).
 const CHAT_MODES = {
-  followers: { field: 'follower_mode', dur: 'follower_mode_duration', unit: 'min', label: 'followers-only' },
-  slow: { field: 'slow_mode', dur: 'slow_mode_wait_time', unit: 'sec', label: 'slow mode' },
-  emoteonly: { field: 'emote_mode', label: 'emote-only' },
-  subscribers: { field: 'subscriber_mode', label: 'subscribers-only' },
-  unique: { field: 'unique_chat_mode', label: 'unique-chat' },
+  followers: {
+    field: 'follower_mode',
+    dur: 'follower_mode_duration',
+    unit: 'min',
+    get label() {
+      return t('mc_cm_follower')
+    },
+  },
+  slow: {
+    field: 'slow_mode',
+    dur: 'slow_mode_wait_time',
+    unit: 'sec',
+    get label() {
+      return t('mc_cm_slow')
+    },
+  },
+  emoteonly: {
+    field: 'emote_mode',
+    get label() {
+      return t('mc_cm_emote')
+    },
+  },
+  subscribers: {
+    field: 'subscriber_mode',
+    get label() {
+      return t('mc_input_mode_subscribers')
+    },
+  },
+  unique: {
+    field: 'unique_chat_mode',
+    get label() {
+      return t('mc_cm_unique')
+    },
+  },
 }
 
 // The retired `<mode>off` spellings, each the same command as `/<mode> off`.
@@ -7031,19 +7087,19 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'color') {
     const arg = rest.trim()
     if (!arg) {
-      showToast('usage: /color <name|#hex> — e.g. /color orangered', 'error')
+      showToast(t('mc_input_usage_color'), 'error')
       return true
     }
     const res = await setTwitchChatColor(arg, currentUsername)
     if (!res.ok) {
-      showToast(`/color: ${res.error}`, 'error')
+      showToast(t('mc_input_color_failed', [res.error]), 'error')
       return true
     }
     // the panel learns it right away instead of waiting for your next message
     try {
       setKnownColor(String(currentUsername).toLowerCase(), res.hex, undefined, 'twitch', true)
     } catch {}
-    showToast(`chat color set to ${res.hex.toLowerCase()}`, 'success')
+    showToast(t('mc_input_color_set', [res.hex.toLowerCase()]), 'success')
     clearInput(input)
     return true
   }
@@ -7052,7 +7108,7 @@ async function handleSlashCommand(text, input) {
   // (/r is the whisper reply; /opr and /reply are aliases of this.)
   if (cmd === 're') {
     if (!rest.trim()) {
-      showToast('usage: /re <text>', 'error')
+      showToast(t('mc_input_usage_re'), 'error')
       return true
     }
     if (!hsAuthToken) {
@@ -7060,7 +7116,7 @@ async function handleSlashCommand(text, input) {
       return true
     }
     if (!lastInlineFeedOpId) {
-      showToast('no post in chat to reply to yet', 'error')
+      showToast(t('mc_input_re_no_post'), 'error')
       return true
     }
     const ok = await postFeedMessage(rest.trim(), { replyTo: lastInlineFeedOpId })
@@ -7694,7 +7750,8 @@ async function handleSlashCommand(text, input) {
       settleComposerAfterSend(input)
     } else {
       showToast(
-        t('mc_input_highlight_failed', [r?.error || 'unknown']) || `highlight failed: ${r?.error || 'unknown'}`,
+        t('mc_input_highlight_failed', [r?.error || t('mc_common_unknown')]) ||
+          `highlight failed: ${r?.error || t('mc_common_unknown')}`,
         'error',
       )
     }
@@ -7795,10 +7852,19 @@ async function handleSlashCommand(text, input) {
         // MAIN-world allowlist) into what read as a permissions problem, and
         // sent the user looking at their own twitch role instead of the bug.
         // Only say it when twitch actually refused on authorization.
-        const _ppErr = String(r?.error || 'unknown')
+        const _ppErr = String(r?.error || t('mc_common_unknown'))
         const _ppDenied = /forbidden|unauthorized|permission|not.?allowed.*channel|broadcaster/i.test(_ppErr)
         showToast(
-          `${isPoll ? 'poll' : 'prediction'} failed: ${_ppErr}${_ppDenied ? ' (broadcaster only)' : ''}`,
+          t(
+            isPoll
+              ? _ppDenied
+                ? 'mc_input_poll_failed_bc'
+                : 'mc_input_poll_failed'
+              : _ppDenied
+                ? 'mc_input_prediction_failed_bc'
+                : 'mc_input_prediction_failed',
+            [_ppErr],
+          ),
           'error',
         )
       }
@@ -7817,7 +7883,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_poll_ended') || 'poll ended'
-          : `end poll failed: ${r?.error || 'unknown'} (broadcaster only)`,
+          : t('mc_input_endpoll_failed_bc', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -7843,7 +7909,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_voted', [choice.title]) || `voted: ${choice.title}`
-          : `vote failed: ${r?.error || 'unknown'}`,
+          : t('mc_input_vote_failed', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -7871,7 +7937,7 @@ async function handleSlashCommand(text, input) {
       showToast(
         r?.ok
           ? t('mc_input_bet_placed', [String(points), outcome.title]) || `bet ${points} on ${outcome.title}`
-          : `bet failed: ${r?.error || 'unknown'}`,
+          : t('mc_input_bet_failed', [r?.error || t('mc_common_unknown')]),
         r?.ok ? 'success' : 'error',
       )
       if (r?.ok) clearInput(input)
@@ -7905,7 +7971,10 @@ async function handleSlashCommand(text, input) {
         r = await resolvePrediction(pred.id, outcome.id)
         okMsg = t('mc_input_pred_resolved', [outcome.title]) || `resolved: ${outcome.title}`
       }
-      showToast(r?.ok ? okMsg : `failed: ${r?.error || 'unknown'} (broadcaster only)`, r?.ok ? 'success' : 'error')
+      showToast(
+        r?.ok ? okMsg : t('mc_input_failed_bc', [r?.error || t('mc_common_unknown')]),
+        r?.ok ? 'success' : 'error',
+      )
       if (r?.ok) clearInput(input)
       return true
     }
@@ -7973,7 +8042,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'user') {
     const user = rest.trim().replace(/^@/, '')
     if (!user || /\s/.test(user)) {
-      showToast('/user <name> — opens their profile card', 'error')
+      showToast(t('mc_input_usage_user'), 'error')
       return true
     }
     await openProfileCard(user, hostPlatform || 'twitch', { anchorEl: input })
@@ -7985,7 +8054,7 @@ async function handleSlashCommand(text, input) {
   if (cmd === 'hide' || cmd === 'unhide') {
     const user = rest.trim().replace(/^@/, '')
     if (!user || /\s/.test(user)) {
-      showToast(`/${cmd} <user> — ${cmd === 'hide' ? 'hides' : 'unhides'} in this tab`, 'error')
+      showToast(t(cmd === 'hide' ? 'mc_input_usage_hide' : 'mc_input_usage_unhide'), 'error')
       return true
     }
     await _tabHide(user, hostPlatform || 'twitch', cmd)
@@ -8149,7 +8218,7 @@ async function handleSlashCommand(text, input) {
       showToast(t(doneKey, [user]) || `${cmd}: ${user}`, 'success')
       clearInput(input)
     } else {
-      showToast(`${cmd} failed: ${r?.error || 'unknown'} (broadcaster only)`, 'error')
+      showToast(t('mc_input_cmd_failed_bc', [cmd, r?.error || t('mc_common_unknown')]), 'error')
     }
     return true
   }
@@ -8180,7 +8249,7 @@ async function handleSlashCommand(text, input) {
     if (r?.ok) {
       clearInput(input)
     } else {
-      showToast(`announce failed: ${r?.error || 'unknown error'}`, 'error')
+      showToast(t('mc_input_announce_failed', [r?.error || t('mc_common_unknown')]), 'error')
     }
     return true
   }
@@ -9468,19 +9537,19 @@ function showUploadStatus(msg, isError, clearAfterMs) {
 
 async function uploadMediaFile(file) {
   if (_mcUploading) {
-    showUploadStatus('upload in progress...', true)
+    showUploadStatus(t('mc_input_upload_busy'), true)
     return null
   }
   if (!file) return null
   const isImage = file.type.startsWith('image/')
   const isVideo = file.type.startsWith('video/')
   if (!isImage && !isVideo) {
-    showUploadStatus('only images/videos allowed', true, 2500)
+    showUploadStatus(t('mc_input_upload_media_only'), true, 2500)
     return null
   }
   const maxSize = isImage ? MC_UPLOAD_MAX_IMG : MC_UPLOAD_MAX_VID
   if (file.size > maxSize) {
-    showUploadStatus(`file too large (max ${maxSize / 1048576}MB)`, true, 2500)
+    showUploadStatus(t('mc_input_upload_too_large', [String(maxSize / 1048576)]), true, 2500)
     return null
   }
   _mcUploading = true
@@ -9499,7 +9568,7 @@ async function uploadMediaFile(file) {
   // host_permissions and carries the stored auth token. Messaging can't stream
   // progress back, and an honest "uploading..." beats a percentage on a
   // request that never left the page.
-  showUploadStatus('uploading...')
+  showUploadStatus(t('mc_input_uploading'))
   try {
     // FileReader, not btoa over a Uint8Array: building the binary string a
     // char at a time overflows the stack somewhere in the low megabytes, and
@@ -9516,12 +9585,12 @@ async function uploadMediaFile(file) {
       mime: file.type,
       dataUrl,
     })
-    if (!resp?.ok || !resp.url) throw new Error(resp?.error || 'upload failed')
+    if (!resp?.ok || !resp.url) throw new Error(resp?.error || t('mc_input_upload_failed'))
     const url = resp.url
-    showUploadStatus('upload done', false, 1500)
+    showUploadStatus(t('mc_input_upload_done'), false, 1500)
     return url
   } catch (e) {
-    showUploadStatus(`upload failed: ${e.message}`, true, 3500)
+    showUploadStatus(t('mc_input_upload_failed_why', [e.message]), true, 3500)
     return null
   } finally {
     _mcUploading = false
@@ -9550,11 +9619,11 @@ function clipboardImageSourceUrl(dt) {
 async function storeRemoteMedia(srcUrl) {
   if (_mcUploading) return ''
   _mcUploading = true
-  showUploadStatus('uploading...')
+  showUploadStatus(t('mc_input_uploading'))
   try {
     const resp = await safeSendMessage({ type: 'api_store_remote', url: srcUrl })
     if (!resp?.ok || !resp.url) return ''
-    showUploadStatus('upload done', false, 1500)
+    showUploadStatus(t('mc_input_upload_done'), false, 1500)
     return resp.url
   } catch {
     return ''
@@ -9611,7 +9680,7 @@ async function handleMediaUpload(fileOrFiles, sourceUrl) {
   // Say it out loud. The fallback posts a picture either way, so the failure is
   // invisible — you'd just be left wondering why your gif came out frozen.
   if (lostAnimation) {
-    showUploadStatus("couldn't reach the original — posted a still frame", true, 4000)
+    showUploadStatus(t('mc_input_upload_still_frame'), true, 4000)
   }
   insertComposerText(urls.join(' '))
 }
@@ -9635,7 +9704,7 @@ function setupMediaDropHandlers() {
       dz.id = 'hs-mc-drop-zone'
       dz.style.cssText =
         'position:absolute;inset:0;background:#000000;border:2px dashed #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;z-index:99998;pointer-events:none;'
-      dz.textContent = 'drop image/video/link to upload'
+      dz.textContent = t('mc_input_drop_zone')
       overlay.appendChild(dz)
     }
   }

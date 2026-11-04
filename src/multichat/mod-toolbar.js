@@ -11,60 +11,60 @@
 const MOD_BUTTON_CATALOG = {
   delete_message: {
     label: 'x',
-    title: 'delete this message',
+    titleKey: 'mc_mtb_t_delete',
     action: 'delete',
     durationSec: null,
     needsMsgId: true,
   },
   timeout_1m: {
     label: '1m',
-    title: 'timeout 1 minute',
+    titleKey: 'mc_mtb_t_to_1m',
     action: 'timeout',
     durationSec: 60,
     needsMsgId: false,
   },
   timeout_10m: {
     label: '10m',
-    title: 'timeout 10 minutes',
+    titleKey: 'mc_mtb_t_to_10m',
     action: 'timeout',
     durationSec: 600,
     needsMsgId: false,
   },
   timeout_1h: {
     label: '1h',
-    title: 'timeout 1 hour',
+    titleKey: 'mc_mtb_t_to_1h',
     action: 'timeout',
     durationSec: 3600,
     needsMsgId: false,
   },
   timeout_24h: {
     label: '24h',
-    title: 'timeout 24 hours',
+    titleKey: 'mc_mtb_t_to_24h',
     action: 'timeout',
     durationSec: 86400,
     needsMsgId: false,
   },
   timeout_7d: {
     label: '7d',
-    title: 'timeout 7 days',
+    titleKey: 'mc_mtb_t_to_7d',
     action: 'timeout',
     durationSec: 604800,
     needsMsgId: false,
   },
   purge: {
     label: 'purge',
-    title: 'purge — clear this user’s messages (1s timeout)',
+    titleKey: 'mc_mtb_t_purge',
     action: 'timeout',
     durationSec: 1,
     needsMsgId: false,
     notKick: true, // kick's shortest timeout is a minute: a "purge" there would mute for 60s
   },
-  ban: { label: '⛔', title: 'permanent ban', action: 'ban', durationSec: null, needsMsgId: false },
-  unban: { label: '✓', title: 'unban user', action: 'unban', durationSec: null, needsMsgId: false },
+  ban: { label: '⛔', titleKey: 'mc_mtb_t_ban', action: 'ban', durationSec: null, needsMsgId: false },
+  unban: { label: '✓', titleKey: 'mc_mtb_t_unban', action: 'unban', durationSec: null, needsMsgId: false },
   // opens the channel's blocked-terms panel; twitch rows only (kick has no such list)
   blocked_terms: {
     label: 'bt',
-    title: 'blocked terms',
+    titleKey: 'mc_mtb_t_bt',
     action: 'blocked_terms',
     durationSec: null,
     needsMsgId: false,
@@ -73,7 +73,7 @@ const MOD_BUTTON_CATALOG = {
   // opens the channel's mod tools panel (shield, unban requests, automod, chatters)
   mod_tools: {
     label: 'mt',
-    title: 'mod tools',
+    titleKey: 'mc_mtb_t_mt',
     action: 'mod_tools',
     durationSec: null,
     needsMsgId: false,
@@ -201,7 +201,7 @@ function buildModToolbarOnce() {
   const bar = document.createElement('div')
   bar.className = 'hs-mod-toolbar'
   bar.setAttribute('role', 'toolbar')
-  bar.setAttribute('aria-label', 'message moderation actions')
+  bar.setAttribute('aria-label', t('mc_mtb_bar_aria'))
   bar.addEventListener('mousedown', (e) => e.stopPropagation())
   bar.addEventListener('click', (e) => e.stopPropagation())
   _modToolbar = bar
@@ -218,7 +218,7 @@ function rebuildModToolbarButtons() {
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
     b.textContent = def.label
-    b.title = def.title
+    b.title = t(def.titleKey)
     b.dataset.modBtn = id
     b.tabIndex = -1
     b.addEventListener('mousedown', (e) => {
@@ -647,7 +647,7 @@ async function runModAction(id) {
     msgId,
   }).catch((e) => ({ anyOk: false, tResp: { error: e?.message || 'error' } }))
   if (row) row.style.opacity = wasOp || ''
-  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, 'deleted')
+  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, t('mc_mod_label_deleted'))
   const label =
     def.action === 'timeout'
       ? t('mc_mod_label_timed_out', [String(def.durationSec)])

@@ -129,14 +129,14 @@ function buildStreamSummary(channel, ended, onClose) {
   const title = document.createElement('div')
   title.className = 'hs-mc-summary-title'
   const titleText = document.createElement('span')
-  titleText.textContent = ended || s?.endedAt ? `${key} stream ended` : `${key} stream summary`
+  titleText.textContent = ended || s?.endedAt ? t('mc_ss_ended', [key]) : t('mc_ss_summary', [key])
   title.append(titleText)
   if (onClose) {
-    const dismiss = hsXButton('hs-x-inline', 'back to chat', (e) => {
+    const dismiss = hsXButton('hs-x-inline', t('mc_main_back_to_chat'), (e) => {
       e.stopPropagation()
       onClose()
     })
-    dismiss.title = 'back to chat (Esc)'
+    dismiss.title = t('mc_main_back_to_chat_esc')
     title.append(dismiss)
   }
   card.append(title)
@@ -148,20 +148,17 @@ function buildStreamSummary(channel, ended, onClose) {
     card.append(el)
   }
   if (!isEnabled('stream-stats')) {
-    line('hs-mc-summary-dim', 'stream stats are off in settings')
+    line('hs-mc-summary-dim', t('mc_ss_off'))
     return card
   }
   if (!s || s.msgCount === 0) {
-    line('hs-mc-summary-dim', 'no chat counted yet — it fills in as messages arrive')
+    line('hs-mc-summary-dim', t('mc_ss_empty'))
     return card
   }
   const n = (v) => v.toLocaleString('en-US')
   const chatters = s.chattersFloor > s.chatters.size ? `${n(s.chattersFloor)}+` : n(s.chatters.size)
-  line(
-    'hs-mc-summary-stats',
-    `${n(s.msgCount)} msgs · ${chatters} chatters · ${n(s.mentionCount)} mentions · ${s.peakMps}/s peak`,
-  )
-  line('hs-mc-summary-dim', `since ${fmtClock(s.startedAt)} · ${fmtDuration(Date.now() - s.startedAt)}`)
+  line('hs-mc-summary-stats', t('mc_ss_stats', [n(s.msgCount), chatters, n(s.mentionCount), String(s.peakMps)]))
+  line('hs-mc-summary-dim', t('mc_ss_since', [fmtClock(s.startedAt), fmtDuration(Date.now() - s.startedAt)]))
   const top = (label, items) => {
     if (items.length === 0) return
     const row = document.createElement('div')
@@ -174,8 +171,8 @@ function buildStreamSummary(channel, ended, onClose) {
     row.append(lbl, list)
     card.append(row)
   }
-  top('top chatters', topN(s.chatters, STREAM_STATS_TOP_N))
-  top('top emotes', topN(s.emotes, STREAM_STATS_TOP_N))
+  top(t('mc_ss_top_chatters'), topN(s.chatters, STREAM_STATS_TOP_N))
+  top(t('mc_ss_top_emotes'), topN(s.emotes, STREAM_STATS_TOP_N))
   return card
 }
 

@@ -1892,7 +1892,7 @@
         el.id = 'hs-mc-idwarn'
         const acct = hsCurrentUsername || 'unknown'
         const ident = senderKey.replace(':', ' ')
-        el.innerHTML = `<span>your emotes won't render for others here — heatsync acct <b>${escapeHtml(acct)}</b>, chatting as <b>${escapeHtml(ident)}</b> — <a href="https://heatsync.org/settings" target="_blank" rel="noopener">link accounts</a></span>${hsXButtonHtml('hs-x-inline', 'dismiss', 'id="hs-mc-idwarn-x" title="dismiss"')}`
+        el.innerHTML = `<span>${t('mc_main_idwarn', [`<b>${escapeHtml(acct)}</b>`, `<b>${escapeHtml(ident)}</b>`, `<a href="https://heatsync.org/settings" target="_blank" rel="noopener">${t('mc_main_idwarn_link')}</a>`])}</span>${hsXButtonHtml('hs-x-inline', t('mc_main_dismiss'), `id="hs-mc-idwarn-x" title="${t('mc_main_dismiss')}"`)}`
         bar.parentNode.insertBefore(el, bar)
         el.querySelector('#hs-mc-idwarn-x')?.addEventListener('click', () => {
           el.remove()
@@ -3689,7 +3689,7 @@
         b.setAttribute('role', 'tab')
         b.setAttribute('aria-selected', String(c.id === currentSub))
         b.classList.toggle('active', c.id === currentSub)
-        b.textContent = c.label
+        b.textContent = c.labelKey ? t(c.labelKey) : c.label
         return b
       }),
     )
@@ -3769,8 +3769,8 @@
     link('summary', ctx.tab, 'summary')
     link('my logs', ctx.tab, 'logs')
     if (ctx.tab === 'live') link('platforms', 'live', 'platforms')
-    const x = hsXButton('hs-x-inline', 'back to chat', mcLeaveSubPane)
-    x.title = 'back to chat (Esc)'
+    const x = hsXButton('hs-x-inline', t('mc_main_back_to_chat'), mcLeaveSubPane)
+    x.title = t('mc_main_back_to_chat_esc')
     x.style.marginLeft = 'auto'
     row.appendChild(x)
     return row
@@ -3801,14 +3801,14 @@
         pane.prepend(hub)
       }
       const plat = _paneChannelPlatform(ctx)
-      if (plat === 'yt') return note('status covers twitch and kick channels')
-      note(`fetching #${ch}…`)
+      if (plat === 'yt') return note(t('mc_main_status_no_yt'))
+      note(t('mc_main_status_fetching', [ch]))
       let panel = null
       try {
         panel = plat === 'kick' ? await buildKickStatusPanel(ch) : await buildChatStatusPanel(ch)
       } catch (_) {}
       if (!pane.isConnected) return
-      if (!panel) return note(`could not fetch #${ch} (offline or not on ${plat}?)`)
+      if (!panel) return note(t('mc_main_status_fetch_failed', [ch, plat]))
       panel.classList.add('hs-mc-subpane-pad')
       pane.replaceChildren(hub, panel)
     },
@@ -3821,12 +3821,7 @@
       // viewer's own name isn't known here, so only a right-clicked chatter has logs.
       const username = ctx.username || (platform === 'twitch' ? currentUsername : '')
       if (!username)
-        return _paneNote(
-          pane,
-          platform === 'twitch'
-            ? 'sign in to see your logs here — right-click a chatter for theirs'
-            : `right-click a chatter to see their ${platform} logs`,
-        )
+        return _paneNote(pane, platform === 'twitch' ? t('mc_main_logs_signin') : t('mc_main_logs_rclick', [platform]))
       openChatLogsView(username, { platform, channel: ctx.channel })
     },
   }
@@ -3911,7 +3906,7 @@
     // Two sections: scrollable channel tabs + fixed utility buttons (always visible)
     // Static hardcoded buttons — all in one wrapping flow, no user input
     container.innerHTML = `
-      <div class="hs-mc-tabs-scroll" role="tablist" aria-label="chat tabs">
+      <div class="hs-mc-tabs-scroll" role="tablist" aria-label="${t('mc_main_tabs_aria')}">
         ${MC_TABS.filter((tab) => tab.bar === 'scroll')
           .map(mcTabButtonHtml)
           .join('')}
@@ -3919,12 +3914,12 @@
       <div class="hs-mc-right-cluster">
         <div class="hs-mc-util-row">
           <button class="hs-mc-tab hs-mc-util-btn" data-tab="settings" title="${t('mc_btn_settings')}">\u2699</button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="hide chat (\\)" aria-label="hide chat"></button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="pop out chat to standalone window" style="display:none">\u26f6</button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="subscribe \u2014 support this channel" style="display:none">$</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="${t('mc_main_hide_chat_title')}" aria-label="${t('mc_main_hide_chat')}"></button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="${t('mc_main_popout_title')}" style="display:none">\u26f6</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="${t('mc_main_subscribe_title')}" style="display:none">$</button>
         </div>
       </div>
-      <div id="hs-mc-subrow" role="tablist" aria-label="views" hidden></div>
+      <div id="hs-mc-subrow" role="tablist" aria-label="${t('mc_main_views_aria')}" hidden></div>
     `
 
     // native-chat escape hatch removed (too fragile across chat positions/boot).
@@ -4011,7 +4006,7 @@
         menu.style.cssText =
           'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
         const item = document.createElement('div')
-        item.textContent = 'edit platforms'
+        item.textContent = t('mc_main_edit_platforms')
         item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#fff;'
         item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
           signal: mcSignal,
@@ -4615,7 +4610,7 @@
     overlay.id = 'hs-mc-overlay'
     overlay.dir = HS_DIR()
     // Static hardcoded layout — only static strings, no user input, safe innerHTML
-    const searchPlaceholder = 'search messages…'
+    const searchPlaceholder = t('mc_main_search_ph')
     overlay.innerHTML = `
       <div id="hs-mc-search-bar">
         <input id="hs-mc-search-input" type="text" placeholder="${searchPlaceholder}" autocomplete="off" spellcheck="false" />
@@ -4627,7 +4622,7 @@
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
       <div id="hs-mc-pinbar" hidden></div>
-      <div id="hs-mc-messages" role="log" aria-label="chat messages">
+      <div id="hs-mc-messages" role="log" aria-label="${t('mc_main_messages_aria')}">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
              owns the swap: it prints "no messages yet" only once _tabJoining
@@ -5296,7 +5291,7 @@
               if (remaining > 0) {
                 const chip = document.createElement('div')
                 chip.className = 'hs-mc-reply-stack-chip'
-                chip.textContent = `↑ ${remaining} more`
+                chip.textContent = t('mc_main_reply_stack_more', [String(remaining)])
                 chip.dataset.targetId = chain[chain.length - 1].id
                 overlay.insertBefore(chip, overlay.firstChild)
               }
@@ -5701,7 +5696,7 @@
     if (!results.length) {
       const empty = document.createElement('div')
       empty.className = 'hs-mc-search-empty'
-      empty.textContent = query ? `no results for "${query}"` : 'no results'
+      empty.textContent = query ? t('mc_main_search_none_for', [query]) : t('mc_main_search_none')
       msgsEl.appendChild(empty)
       return
     }
@@ -5955,7 +5950,7 @@
       momentId: d.id != null ? String(d.id) : null,
       momentChannel: d.channel,
       momentPlatform: d.platform || 'twitch',
-      text: `${d.channel} chat is exploding — ${d.rate} msgs/30s (usually ~${Math.max(1, Math.round(d.baseline))})`,
+      text: t('mc_main_moment', [d.channel, String(d.rate), String(Math.max(1, Math.round(d.baseline)))]),
       color: '#fff',
       time: now,
     })
@@ -7041,7 +7036,7 @@
     const _searchInputEl = document.getElementById('hs-mc-search-input')
     if (_searchInputEl) {
       _searchInputEl.value = ''
-      _searchInputEl.placeholder = isLiveSearchTab(id) ? 'filter — /regex/ or @user' : 'search messages…'
+      _searchInputEl.placeholder = isLiveSearchTab(id) ? t('mc_main_filter_ph') : t('mc_main_search_ph')
     }
     const _searchCountEl = document.getElementById('hs-mc-search-count')
     if (_searchCountEl) _searchCountEl.classList.remove('visible')
@@ -7359,7 +7354,7 @@
     refreshSeenBadges()
     if (!tabBarElement) return
     const mentionsTab = tabBarElement.querySelector('[data-tab="mentions"]')
-    if (mentionsTab && mentionsTab.textContent !== 'mentions') mentionsTab.textContent = 'mentions'
+    if (mentionsTab && mentionsTab.textContent !== t('mc_tab_mentions')) mentionsTab.textContent = t('mc_tab_mentions')
   }
 
   // Dedup helper: check against actual message buffers (survives WS reconnects)
@@ -7848,7 +7843,7 @@
       if (ch && !m.actor) {
         div.dataset.hsClickable = ''
         div.style.cursor = 'pointer'
-        div.title = `open ${ch} on ${isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'}`
+        div.title = t('mc_main_open_on', [ch, isYtEvent ? 'youtube' : evtPlat === 'kick' ? 'kick' : 'twitch'])
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
           window.open(streamEventUrl(evtPlat, ch), '_blank', 'noopener,noreferrer')
@@ -8058,7 +8053,7 @@
       div.style.cursor = 'pointer'
       const ch = m.momentChannel
       const plat = m.momentPlatform || 'twitch'
-      div.title = `open ${ch} chat`
+      div.title = t('mc_main_open_chat', [ch])
       div.addEventListener('click', (e) => {
         const permaEl = e.target.closest?.('a.hs-mc-moment-perma')
         if (permaEl && e.shiftKey) {
@@ -8612,10 +8607,10 @@
     if (m.redeemed && m.rewardId) {
       const reward = redeemTitleMap.get(m.rewardId)
       redeemLabel = reward
-        ? `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${Number(reward.cost).toLocaleString()} pts</span>`
-        : `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 channel point redeem</span>`
+        ? `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${t('mc_main_redeem_pts', [Number(reward.cost).toLocaleString()])}</span>`
+        : `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${t('mc_main_redeem_label')}</span>`
     } else if (m.isHighlighted) {
-      redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 highlighted message</span>`
+      redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 ${t('mc_main_highlighted')}</span>`
     }
     // First-message rows said what they were with COLOUR ALONE — a magenta bar
     // for a channel-first, a faint inset glow for a session-first. Nobody can
@@ -8634,7 +8629,7 @@
     // the one that matters.
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
-      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 first message in this channel</span>`
+      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
     }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
@@ -8651,7 +8646,7 @@
       (m.type === 'usernotice' || m.type === 'notice') && !m.text
         ? `${tsHtml}${systemLine}`
         : m.type === 'notice'
-          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', 'dismiss', 'title="dismiss"') : ''}`
+          ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
             ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
             : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
@@ -8716,7 +8711,7 @@
       const replyBtn = document.createElement('button')
       replyBtn.className = 'hs-mc-reply-btn'
       replyBtn.textContent = '↩'
-      replyBtn.title = 'Reply'
+      replyBtn.title = t('mc_main_reply')
       div.appendChild(replyBtn)
       // Thread button — the discoverable way to mint a heatsync thread. The
       // capability already existed as `/op`, a slash command with no UI: 56
@@ -10026,10 +10021,10 @@
     el.hidden = false
     const text = document.createElement('span')
     text.className = 'hs-mc-multi-text'
-    text.textContent = `also live on ${otherPlatforms.join(' + ')}`
+    text.textContent = t('mc_main_also_live_on', [otherPlatforms.join(' + ')])
     const linkBtn = document.createElement('button')
     linkBtn.className = 'hs-mc-multi-link'
-    linkBtn.textContent = 'link channels'
+    linkBtn.textContent = t('mc_main_link_channels')
     linkBtn.addEventListener('click', (e) => {
       e.preventDefault()
       // Merge into the existing entry when there is one — pushing a fresh
@@ -10051,8 +10046,8 @@
       } catch {}
       hideMultistreamBanner()
     })
-    const dismissBtn = hsXButton('hs-x-inline', 'dismiss')
-    dismissBtn.title = 'dismiss (right-click also works)'
+    const dismissBtn = hsXButton('hs-x-inline', t('mc_main_dismiss'))
+    dismissBtn.title = t('mc_main_dismiss_rclick')
     const dismissNow = () => {
       _multistreamDismissed.add(key)
       persistMultistreamDismissed()
@@ -10823,14 +10818,14 @@
       if (id === 'live' && !config.channels?.length) {
         const title = document.createElement('div')
         title.style.cssText = 'font-weight:600;margin-bottom:4px'
-        title.textContent = 'add your streams'
+        title.textContent = t('mc_main_add_streams_title')
         const sub = document.createElement('div')
         sub.style.cssText = 'opacity:.7;margin-bottom:10px'
-        sub.textContent = 'merge twitch, kick + youtube chat in one panel'
+        sub.textContent = t('mc_main_add_streams_sub')
         const btn = document.createElement('button')
         btn.style.cssText =
           'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
-        btn.textContent = '+ add a channel'
+        btn.textContent = t('mc_main_add_channel_btn')
         try {
           cleanup.addEventListener(btn, 'click', () => {
             try {
@@ -10945,7 +10940,7 @@
         msgsEl.textContent = ''
         const empty = document.createElement('div')
         empty.className = 'hs-mc-empty'
-        empty.textContent = 'no matches'
+        empty.textContent = t('common_no_matches')
         msgsEl.appendChild(empty)
         return
       }
@@ -12019,7 +12014,7 @@
     // The live tab's own settings live in its dropdown (right-click stays a
     // shortcut to the same form).
     const edit = document.createElement('div')
-    edit.textContent = 'edit platforms'
+    edit.textContent = t('mc_main_edit_platforms')
     edit.style.cssText =
       'padding:6px 12px;cursor:pointer;color:#fff;white-space:nowrap;border-top:1px solid #ffffff;margin-top:4px;'
     edit.addEventListener('mouseenter', () => {
@@ -13880,18 +13875,18 @@
     }
     if (_hsHealth?.kill) {
       log('kill-switch active, aborting init')
-      showKillSwitchBanner('disabled by heatsync (kill-switch active)', _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_active'), _hsHealth?.msg)
       return
     }
     if (Array.isArray(_hsHealth?.disabled) && _hsHealth.disabled.includes('multichat')) {
       log('multichat disabled by server health flag')
-      showKillSwitchBanner('multichat disabled by heatsync', _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_disabled'), _hsHealth?.msg)
       return
     }
     const _curVer = chrome.runtime.getManifest?.().version || '0.0.0'
     if (_hsHealth?.ext_hard_min && _hsSemverLt(_curVer, _hsHealth.ext_hard_min)) {
       log('extension below ext_hard_min', _curVer, '<', _hsHealth.ext_hard_min)
-      showKillSwitchBanner(`extension update required (v${_hsHealth.ext_hard_min}+)`, _hsHealth?.msg)
+      showKillSwitchBanner(t('mc_main_kill_update', [String(_hsHealth.ext_hard_min)]), _hsHealth?.msg)
       return
     }
     if (_hsHealth?.ext_min && _hsSemverLt(_curVer, _hsHealth.ext_min)) {
@@ -14569,13 +14564,16 @@
         const targetLc = msg.targetUser.toLowerCase()
         for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
           if ((row.dataset.msgUser || '').toLowerCase() !== targetLc || !samePlat(row)) continue
-          markClearedRow(row, msg.banDuration ? `timed out (${msg.banDuration}s)` : 'banned')
+          markClearedRow(
+            row,
+            msg.banDuration ? t('mc_mod_label_timed_out', [String(msg.banDuration)]) : t('mc_mod_label_banned'),
+          )
         }
       } else if (msg.noticeType === 'delete_message_success' && msg.targetMsgId) {
         const safe = CSS.escape ? CSS.escape(msg.targetMsgId) : msg.targetMsgId.replace(/"/g, '\\"')
         const row = msgsEl.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)
         if (row) {
-          markClearedRow(row, 'deleted')
+          markClearedRow(row, t('mc_mod_label_deleted'))
         }
       } else if (msg.noticeType === 'unban_success' && msg.targetUser) {
         // Lift a prior ban/timeout dim (not a delete) when the user is unbanned.
@@ -15021,32 +15019,32 @@
             eventClass = 'event-offline'
           } else if (msg.eventType === 'stream:redeem') {
             if (!hermesToggles?.redeem) return
-            text = `\u25C6 redeemed "${String(msg.title ?? '')}"`
+            text = `\u25C6 ${t('mc_main_ev_redeemed', [String(msg.title ?? '')])}`
             if (msg.cost) text += ` (${msg.cost})`
             eventClass = 'event-redeem'
           } else if (msg.eventType === 'stream:raid') {
             if (!hermesToggles?.raid) return
-            text = `[${channel}] \u25C6 raided ${String(msg.target ?? '')} with ${msg.viewers || 0} viewers`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_out', [String(msg.target ?? ''), String(msg.viewers || 0)])}`
             eventClass = 'event-raid'
           } else if (msg.eventType === 'stream:raid-in') {
             if (!hermesToggles?.raid) return
-            text = `[${channel}] \u25C6 ${String(msg.from ?? '')} raided in with ${msg.viewers || 0} viewers`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_in', [String(msg.from ?? ''), String(msg.viewers || 0)])}`
             eventClass = 'event-raid'
           } else if (msg.eventType === 'stream:poll-start') {
             if (!hermesToggles?.poll) return
-            text = `[${channel}] \u25C6 new poll up${msg.title ? ` \u2014 ${String(msg.title)}` : ''}`
+            text = `[${channel}] \u25C6 ${msg.title ? t('mc_main_ev_poll_titled', [String(msg.title)]) : t('mc_main_ev_poll')}`
             eventClass = 'event-poll'
           } else if (msg.eventType === 'stream:hype-start') {
             if (!hermesToggles?.hype) return
-            text = `[${channel}] \u25C6 hype train started`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_start')}`
             eventClass = 'event-hype'
           } else if (msg.eventType === 'stream:hype-end') {
             if (!hermesToggles?.hype) return
-            text = `[${channel}] \u25C6 hype train ended at level ${msg.level || 0}`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_end', [String(msg.level || 0)])}`
             eventClass = 'event-hype'
           } else if (msg.eventType === 'stream:sub-gift') {
             if (!hermesToggles?.sub) return
-            text = `[${channel}] \u25C6 ${String(msg.user ?? '')} gifted ${msg.count || 0} subs`
+            text = `[${channel}] \u25C6 ${t('mc_main_ev_gifted_subs', [String(msg.user ?? ''), String(msg.count || 0)])}`
             eventClass = 'event-sub'
           }
           if (!text) return
@@ -15175,16 +15173,16 @@
         if (eventType === 'raid') {
           toggleKey = 'raid'
           eventClass = 'event-raid'
-          text = `[${channel}] \u25C6 raided ${String(data.target ?? '')} with ${Number(data.viewers) || 0} viewers`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_raid_out', [String(data.target ?? ''), String(Number(data.viewers) || 0)])}`
         } else if (eventType === 'hype-train-start') {
           toggleKey = 'hype'
           eventClass = 'event-hype'
-          text = `[${channel}] \u25C6 hype train started`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_start')}`
           if (typeof onHypeTrainStart === 'function') onHypeTrainStart(data.level)
         } else if (eventType === 'hype-train-end') {
           toggleKey = 'hype'
           eventClass = 'event-hype'
-          text = `[${channel}] \u25C6 hype train ended at level ${Number(data.level) || 0}`
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_end', [String(Number(data.level) || 0)])}`
           if (typeof onHypeTrainEnd === 'function') onHypeTrainEnd()
         } else if (eventType === 'sub-gift') {
           toggleKey = 'sub'
@@ -15193,7 +15191,7 @@
         } else if (eventType === 'redeem') {
           toggleKey = 'redeem'
           eventClass = 'event-redeem'
-          text = `\u25C6 redeemed "${String(data.title ?? '')}"`
+          text = `\u25C6 ${t('mc_main_ev_redeemed', [String(data.title ?? '')])}`
           if (data.rewardId) {
             redeemTitleMap.set(data.rewardId, { title: data.title, cost: data.cost })
             if (redeemTitleMap.size > 200) redeemTitleMap.delete(redeemTitleMap.keys().next().value)
@@ -15209,7 +15207,9 @@
               type: 'notice',
               noticeType: 'pin',
               systemMsg:
-                eventType === 'pin' ? `pinned${pinBy ? ` ${pinBy}:` : ':'} ${pinText}`.trim() : 'message unpinned',
+                eventType === 'pin'
+                  ? (pinBy ? t('mc_main_ev_pinned_by', [pinBy, pinText]) : t('mc_main_ev_pinned', [pinText])).trim()
+                  : t('mc_main_ev_unpinned'),
               channel,
               time: Date.now(),
               isSynthetic: true,
@@ -15220,13 +15220,11 @@
         } else if (eventType === 'prediction-start') {
           toggleKey = 'pred'
           eventClass = 'event-pred'
-          const title = data?.title ? ` — ${String(data.title)}` : ''
-          text = `[${channel}] ◆ new prediction up${title}`
+          text = `[${channel}] ◆ ${data?.title ? t('mc_main_ev_pred_titled', [String(data.title)]) : t('mc_main_ev_pred')}`
         } else if (eventType === 'poll-start') {
           toggleKey = 'poll'
           eventClass = 'event-poll'
-          const title = data?.title ? ` — ${String(data.title)}` : ''
-          text = `[${channel}] ◆ new poll up${title}`
+          text = `[${channel}] ◆ ${data?.title ? t('mc_main_ev_poll_titled', [String(data.title)]) : t('mc_main_ev_poll')}`
         } else return
 
         if (!hermesToggles[toggleKey]) return

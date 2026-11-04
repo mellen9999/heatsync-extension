@@ -1056,7 +1056,7 @@
       liveChatItem.click()
     } catch (_) {
       try {
-        showYtToast('top chat mode — switch youtube to live chat')
+        showYtToast(t('cs_yt_top_chat'))
       } catch (_) {}
     }
   }
@@ -1099,8 +1099,8 @@
   function extractBadges(el) {
     const authorType = el.getAttribute('author-type') || ''
     const badges = []
-    if (authorType === 'owner') badges.push({ type: 'owner', label: 'Owner' })
-    else if (authorType === 'moderator') badges.push({ type: 'moderator', label: 'Mod' })
+    if (authorType === 'owner') badges.push({ type: 'owner', label: t('cs_badge_owner') })
+    else if (authorType === 'moderator') badges.push({ type: 'moderator', label: t('content_card_mod') })
 
     const badgeContainer = el.querySelector('#author-badges')
     if (badgeContainer) {
@@ -1112,7 +1112,7 @@
             br.getAttribute('shared-tooltip-text') ||
             img.alt ||
             img.getAttribute('shared-tooltip-text') ||
-            'Member'
+            t('cs_badge_member')
           badges.push({ type: 'member', label: tooltip, url: img.src })
         }
       }
@@ -1852,9 +1852,9 @@
         (results) => {
           if (results.some((r) => r?.success === false)) {
             apply(was)
-            showYtToast(`${was ? 'unblock' : 'block'} failed`)
+            showYtToast(t(was ? 'content_toast_unblock_failed' : 'content_toast_block_failed', [emote.name]))
           } else {
-            showYtToast(`${was ? 'unblocked' : 'blocked'}: ${escapeHtml(emote.name)}`)
+            showYtToast(t(was ? 'content_toast_unblocked' : 'content_toast_blocked', [emote.name]))
           }
         },
       )
@@ -2407,7 +2407,7 @@
       // 'aborted' is our own teardown on nav/pagehide, not a failure.
       if (!signal.aborted && err?.message !== 'aborted') {
         try {
-          showYtToast('heatsync could not attach to this chat')
+          showYtToast(t('cs_yt_attach_failed'))
         } catch (_) {}
       }
     }

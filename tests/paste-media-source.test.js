@@ -169,7 +169,7 @@ describe('paste prefers the source url, then falls back', () => {
     // wondering why the gif came out frozen.
     const fn = sliceFn(INPUT_SRC, 'handleMediaUpload')
     expect(fn).toMatch(/lostAnimation/)
-    expect(fn).toMatch(/showUploadStatus\([^)]*still frame/)
+    expect(fn).toMatch(/showUploadStatus\([^)]*still_frame/)
   })
 
   test('the status line owns its clear timer', () => {

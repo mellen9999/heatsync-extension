@@ -171,7 +171,7 @@ function _hsShowVolumeOsd(playerEl, video) {
     _hsVolOsdEl.id = 'hs-vol-osd'
     document.body.appendChild(cleanup.trackNode(_hsVolOsdEl))
   }
-  _hsVolOsdEl.textContent = `vol ${Math.round(video.volume * 100)}%`
+  _hsVolOsdEl.textContent = t('mc_cp_vol', [String(Math.round(video.volume * 100))])
   const r = playerEl.getBoundingClientRect()
   _hsVolOsdEl.style.left = `${Math.round(r.left + r.width / 2)}px`
   _hsVolOsdEl.style.top = `${Math.round(r.top + 16)}px`

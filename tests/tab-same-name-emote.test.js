@@ -23,6 +23,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './t-stub.js'
 
 const read = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 const INPUT = read('input.js')
@@ -233,9 +234,7 @@ describe('2. the box shows the pick; cycling back to the local one un-picks the 
   })
 
   test('the catalog label names the provider; a local one still says where it lives', () => {
-    const { emoteCycleMeta } = new Function('t', `${CYCLE_META}; return { emoteCycleMeta }`)((k, a) =>
-      k === 'mc_cycle_catalog' ? `catalog · ${a[0]}` : k,
-    )
+    const { emoteCycleMeta } = new Function('t', `${CYCLE_META}; return { emoteCycleMeta }`)(t)
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: '7tv' }).cat).toBe('catalog · 7tv')
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: 'ffz' }).cat).toBe('catalog · ffz')
     expect(emoteCycleMeta({ type: 'emote', source: '7tv', tier: 0 }).cat).toBe('channel')

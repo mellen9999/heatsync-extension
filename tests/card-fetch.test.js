@@ -17,6 +17,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './t-stub.js'
 
 const ROOT = join(import.meta.dir, '..')
 const TIPS = readFileSync(join(ROOT, 'src', 'multichat', 'tooltips.js'), 'utf8')
@@ -183,6 +184,7 @@ describe('resolveFollowageRows — /api/card followage, gql fallback only when d
       'gqlFollowageDirect',
       'currentUsername',
       'isSelf',
+      't',
       `${src}\nreturn resolveFollowageRows`,
     )(
       (n) => String(n),
@@ -190,6 +192,7 @@ describe('resolveFollowageRows — /api/card followage, gql fallback only when d
       gqlFollowageDirect,
       currentUsername,
       (m) => !!currentUsername && m.user.toLowerCase() === currentUsername.toLowerCase(),
+      t,
     )
   }
 

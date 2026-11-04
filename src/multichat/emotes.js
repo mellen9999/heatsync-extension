@@ -910,7 +910,7 @@ function buildRecentSection(allEmotes) {
     if (e) out.push([name, e])
     if (out.length >= RECENT_CAP) break
   }
-  return out.length ? { key: 'recent', label: 'recent', emotes: out } : null
+  return out.length ? { key: 'recent', label: t('btn_recent'), emotes: out } : null
 }
 
 function groupEmotes(allEmotes) {
@@ -1178,8 +1178,8 @@ function emoteImgHtml([name, emote]) {
  * entry here plus one renderer.
  */
 const MC_PICKER_TABS = [
-  { id: 'emotes', label: 'emotes' },
-  { id: 'gifs', label: 'gifs' },
+  { id: 'emotes', labelKey: 'mc_emo_tab_emotes' },
+  { id: 'gifs', labelKey: 'mc_emo_tab_gifs' },
   { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
   { id: 'kick', label: 'kick', when: () => hostPlatform === 'kick' },
   { id: 'youtube', label: 'youtube', when: () => hostPlatform === 'yt' },
@@ -1326,7 +1326,7 @@ function showEmotePicker(tab = null) {
         ${mcVisiblePickerTabs()
           .map(
             (tab) =>
-              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.label)}</button>`,
+              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.labelKey ? t(tab.labelKey) : tab.label)}</button>`,
           )
           .join('')}
       </div>
@@ -1340,7 +1340,7 @@ function showEmotePicker(tab = null) {
   if (searchWrap && !searchWrap.querySelector('.hs-mc-src-chips')) {
     const chipBar = document.createElement('div')
     chipBar.className = 'hs-mc-src-chips visible'
-    chipBar.title = 'toggle which providers to search'
+    chipBar.title = t('mc_emo_chips_title')
     for (const src of MC_REMOTE_SOURCES) {
       const btn = document.createElement('button')
       btn.className = `hs-mc-src-chip${mcPickerSources.has(src) ? ' active' : ''}`
@@ -1355,7 +1355,7 @@ function showEmotePicker(tab = null) {
     const exactBtn = document.createElement('button')
     exactBtn.className = `hs-mc-exact-chip${mcExactMatch ? ' active' : ''}`
     exactBtn.textContent = t('mc_emote_exact')
-    exactBtn.title = 'exact name match only'
+    exactBtn.title = t('mc_emo_exact_title')
     exactBtn.type = 'button'
     chipBar.appendChild(exactBtn)
     // Clicking a chip blurs the search input; preventDefault keeps focus.
@@ -2346,7 +2346,7 @@ function blockAllEmotesInStack(stack) {
   })
   if (count > 0) showToast(t('mc_emote_blocked_count', [String(count)]), 'success')
   stack.classList.remove('expanded')
-  stack.setAttribute('title', 'expand')
+  stack.setAttribute('title', t('mc_emo_stack_expand'))
 }
 
 // opts.skipSync: don't hit the API (used when this call IS the rollback of a
@@ -5080,7 +5080,7 @@ function renderEmoteStack(stack) {
     _urlRe.lastIndex = 0
   }
   const _resAttr = _reserve ? ` style="min-width:${_reserve}px"` : ''
-  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="expand"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span>${hsXButtonHtml('hs-mc-stack-collapse hs-x-inline', 'collapse', 'title="collapse"')}<span class="hs-mc-stack-block-all" title="block all">\u2298</span></span>`
+  return `<span class="hs-mc-emote-stack" data-stack-count="${count}" title="${t('mc_emo_stack_expand')}"${_resAttr}><span class="hs-mc-emote-stack-emotes">${stack.base}${overlayHtml}</span>${hsXButtonHtml('hs-mc-stack-collapse hs-x-inline', t('mc_emo_stack_collapse'), `title="${t('mc_emo_stack_collapse')}"`)}<span class="hs-mc-stack-block-all" title="${t('mc_emo_stack_block_all')}">\u2298</span></span>`
 }
 
 export {

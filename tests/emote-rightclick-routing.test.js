@@ -60,13 +60,13 @@ describe('plain right-click: unblock / remove from inventory / block', () => {
 describe('shift menu owns removal + block parity', () => {
   test('remove from set gated to genuine inventory emotes', () => {
     expect(MENU).toContain("state === 'owned' && inventoryEmotes.has(emoteName)")
-    expect(MENU).toContain("label: 'remove from set'")
+    expect(MENU).toContain("label: t('mc_input_remove_from_set')")
     expect(MENU).toContain('removeEmoteFromInventory(emoteName, targetEl)')
   })
 
   test('block/unblock reachable from the menu too', () => {
-    expect(MENU).toContain("label: 'block'")
-    expect(MENU).toContain("label: 'unblock'")
+    expect(MENU).toContain("label: t('content_card_block')")
+    expect(MENU).toContain("label: t('mc_input_unblock')")
   })
 
   test('handler passes the clicked element through for picker-tile cleanup', () => {

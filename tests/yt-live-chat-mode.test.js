@@ -19,6 +19,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './t-stub.js'
 
 const YTC = readFileSync(join(import.meta.dir, '..', 'chrome', 'youtube-content.js'), 'utf8')
 
@@ -108,8 +109,9 @@ function makeHarness({ menuButton = null, toasts = [] } = {}) {
     'cleanup',
     'signal',
     'showYtToast',
+    't',
     `${extractFn('ensureLiveChatMode')}\nreturn { ensureLiveChatMode }`,
-  )(documentStub, cleanup, signal, showYtToast)
+  )(documentStub, cleanup, signal, showYtToast, t)
   return { ensureLiveChatMode, timers, toasts, signal }
 }
 

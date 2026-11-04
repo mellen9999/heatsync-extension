@@ -7,6 +7,14 @@
  */
 ;(() => {
   const DEBUG = false
+  // No lib bundle in this script: raw runtime i18n (en copy is the fallback).
+  const hsViT = (key) => {
+    try {
+      return (typeof browser !== 'undefined' && browser.i18n ? browser.i18n : chrome.i18n).getMessage(key) || key
+    } catch {
+      return key
+    }
+  }
   const log = DEBUG ? console.log.bind(console, '[hs-vi]') : () => {}
 
   // Lifecycle controller — abort() tears down ALL listeners
@@ -594,18 +602,7 @@
       maxWidth: '460px',
       whiteSpace: 'pre',
     })
-    cheatsheetEl.textContent =
-      'hl move  kj history  wb/WBE word  0$^ line  gg/G ends\n' +
-      'fFtT+char find  ;, repeat find  [num]cmd repeat\n' +
-      'x/X del char  dw/db/de/dd del  D del→end\n' +
-      'cw/cb/ce/cc change  C change→end  s/S subst\n' +
-      'yw/yb/ye/yy yank  p/P paste  r replace  ~ case\n' +
-      'i/a/I/A insert  u undo  Ctrl+R redo  . repeat  ? help\n' +
-      '\n' +
-      'SPC = leader — chat commands without leaving the box\n' +
-      'SPC /    search       SPC n/N  next/prev match\n' +
-      'SPC 1-9  nth tab      SPC ]/[  next/prev tab\n' +
-      'SPC t    tab picker   SPC \\    hide/show chat'
+    cheatsheetEl.textContent = hsViT('cs_vi_cheatsheet')
     document.body.appendChild(cheatsheetEl)
     // Auto-dismiss on any key
     const dismiss = () => {

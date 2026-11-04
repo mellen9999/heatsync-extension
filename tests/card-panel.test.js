@@ -25,6 +25,10 @@ import { join } from 'node:path'
 const ROOT = join(import.meta.dir, '..')
 const CARD = readFileSync(join(ROOT, 'src', 'multichat', 'profile-card.js'), 'utf8')
 
+// the sliced builders call the bundle-global t(); resolve it from the en catalog
+const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
+globalThis.t = (key) => EN[key]?.message ?? key
+
 function slice(src, startMarker, endMarker) {
   const start = src.indexOf(startMarker)
   if (start === -1) throw new Error(`marker not found: ${startMarker}`)

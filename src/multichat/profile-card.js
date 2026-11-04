@@ -653,14 +653,14 @@ function pcBuildModGroups(username, platform) {
   for (const { channel, platform, msgId, login } of groups.values()) {
     const target = login || (username || '').toLowerCase()
     const actions = [
-      { action: 'delete', label: 'del msg', title: "delete this user's latest message", disabled: !msgId },
-      { action: 'timeout', label: '1m', title: 'timeout 1 minute', durationSec: 60 },
-      { action: 'timeout', label: '10m', title: 'timeout 10 minutes', durationSec: 600 },
-      { action: 'timeout', label: '1h', title: 'timeout 1 hour', durationSec: 3600 },
-      { action: 'timeout', label: '24h', title: 'timeout 24 hours', durationSec: 86400 },
-      { action: 'timeout', label: '7d', title: 'timeout 7 days', durationSec: 604800 },
-      { action: 'ban', label: 'ban', title: 'permanent ban', danger: true },
-      { action: 'unban', label: 'unban', title: 'unban user' },
+      { action: 'delete', label: t('mc_pcard_del_msg'), title: t('mc_pcard_del_title'), disabled: !msgId },
+      { action: 'timeout', label: '1m', title: t('mc_settings_mod_btn_timeout_1m'), durationSec: 60 },
+      { action: 'timeout', label: '10m', title: t('mc_settings_mod_btn_timeout_10m'), durationSec: 600 },
+      { action: 'timeout', label: '1h', title: t('mc_settings_mod_btn_timeout_1h'), durationSec: 3600 },
+      { action: 'timeout', label: '24h', title: t('mc_settings_mod_btn_timeout_24h'), durationSec: 86400 },
+      { action: 'timeout', label: '7d', title: t('mc_settings_mod_btn_timeout_7d'), durationSec: 604800 },
+      { action: 'ban', label: t('content_card_ban'), title: t('mc_settings_mod_btn_ban'), danger: true },
+      { action: 'unban', label: t('content_card_unban'), title: t('mc_settings_mod_btn_unban') },
     ]
     // Role grants — mod/unmod/vip/unvip. Separate mutation pair (VIPUser/
     // UnVIPUser, ModUser/UnmodUser in twitch-api.js) from the ban/timeout/
@@ -674,10 +674,10 @@ function pcBuildModGroups(username, platform) {
     const roleActions =
       platform === 'twitch'
         ? [
-            { kind: 'mod', add: true, label: 'mod', title: 'grant moderator (broadcaster only)' },
-            { kind: 'mod', add: false, label: 'unmod', title: 'remove moderator (broadcaster only)' },
-            { kind: 'vip', add: true, label: 'vip', title: 'grant VIP' },
-            { kind: 'vip', add: false, label: 'unvip', title: 'remove VIP' },
+            { kind: 'mod', add: true, label: t('content_card_mod'), title: t('mc_pcard_mod_grant') },
+            { kind: 'mod', add: false, label: t('content_card_unmod'), title: t('mc_pcard_mod_remove') },
+            { kind: 'vip', add: true, label: t('content_card_vip'), title: t('mc_pcard_vip_grant') },
+            { kind: 'vip', add: false, label: t('content_card_unvip'), title: t('mc_pcard_vip_remove') },
           ]
         : []
     out.push({ channel, platform, msgId, login: target, actions, roleActions })
@@ -711,13 +711,18 @@ async function pcHandleModAction(btn) {
     let r
     try {
       const { id: channelId } = await resolveTwitchChannelIdEx(channel)
-      if (!channelId) throw new Error('could not resolve channel')
+      if (!channelId) throw new Error(t('mc_pcard_no_channel'))
       r = kind === 'vip' ? await vipTwitchUser(channelId, login, add) : await modTwitchUser(channelId, login, add)
     } catch (err) {
-      r = { error: err?.message || 'error' }
+      r = { error: err?.message || t('mc_pcard_error') }
     }
     if (typeof showToast === 'function') {
-      showToast(r?.ok ? `${orig}: ${login}` : `${orig} failed: ${r?.error || 'unknown'}`, r?.ok ? 'success' : 'error')
+      showToast(
+        r?.ok
+          ? t('mc_pcard_role_ok', [orig, login])
+          : t('mc_pcard_role_failed', [orig, r?.error || t('mc_common_unknown')]),
+        r?.ok ? 'success' : 'error',
+      )
     }
     btn.textContent = orig
     btn.disabled = false
@@ -734,7 +739,7 @@ async function pcHandleModAction(btn) {
   try {
     r = await dispatchModAction({ channel, platform, action, target: login, durationSec, msgId, reason })
   } catch (err) {
-    r = { anyOk: false, tResp: { error: err?.message || 'error' } }
+    r = { anyOk: false, tResp: { error: err?.message || t('mc_pcard_error') } }
   }
   btn.textContent = orig
   if (action === 'delete') {
@@ -764,15 +769,15 @@ async function pcHandleModAction(btn) {
 function pcBuildSessionSheetRows(username) {
   const { count, firstTime, channels } = getUserSessionStats(username)
   if (!count) return []
-  const rows = [{ k: 'session-msgs', label: 'session', value: String(count) }]
+  const rows = [{ k: 'session-msgs', label: t('mc_pcard_session'), value: String(count) }]
   if (firstTime) {
     rows.push({
       k: 'session-first',
-      label: 'first',
+      label: t('mc_pcard_first'),
       value: new Date(firstTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     })
   }
-  if (channels.size) rows.push({ k: 'session-channels', label: 'channels', value: String(channels.size) })
+  if (channels.size) rows.push({ k: 'session-channels', label: t('mc_pcard_channels'), value: String(channels.size) })
   return rows
 }
 
@@ -1075,8 +1080,8 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
   wrap.setAttribute('aria-label', t('content_card_dialog_label', [username]))
   wrap.tabIndex = -1
   if (floating) {
-    const closeBtn = hsXButton('hs-pcard-close', 'close profile', closeProfileCard)
-    closeBtn.title = 'close (Esc)'
+    const closeBtn = hsXButton('hs-pcard-close', t('mc_pcard_close_profile'), closeProfileCard)
+    closeBtn.title = t('mc_pcard_close_esc')
     wrap.appendChild(closeBtn)
   } else {
     pcMountDestRow([]) // no ×: the ← back tab closes the panel
@@ -1089,7 +1094,7 @@ function renderProfileCardErrorView(msgsEl, username, data, floating) {
     const retry = document.createElement('button')
     retry.type = 'button'
     retry.className = 'hs-card-action'
-    retry.textContent = 'couldn’t load — retry'
+    retry.textContent = t('mc_pcard_retry')
     retry.addEventListener('click', () => {
       if (!activeProfileCard) return
       openProfileCard(username, activeProfileCard.platform, { anchorEl: activeProfileCard.anchorEl })
@@ -1782,10 +1787,10 @@ async function pcDoClip(username, platform, btn) {
   const channelLogin =
     (typeof getTooltipChannelContext === 'function' ? getTooltipChannelContext(platform) : null) || username
   btn.disabled = true
-  btn.textContent = 'clipping…'
+  btn.textContent = t('content_card_clipping')
   try {
     const resp = await apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })
-    if (!resp?.ok) throw new Error(resp?.error || 'unknown')
+    if (!resp?.ok) throw new Error(resp?.error || t('mc_common_unknown'))
     const editUrl = resp.data?.edit_url || resp.data?.editUrl || null
     const clipUrl = resp.data?.clip_url || resp.data?.clipUrl || null
     if (editUrl) btn.dataset.editUrl = editUrl
@@ -1794,12 +1799,13 @@ async function pcDoClip(username, platform, btn) {
         await navigator.clipboard.writeText(clipUrl)
       } catch {}
     }
-    btn.textContent = clipUrl ? 'url copied' : editUrl ? 'clip created' : 'clip'
+    btn.textContent = clipUrl ? t('mc_pcard_url_copied') : editUrl ? t('mc_pcard_clip_created') : 'clip'
     btn.disabled = false
   } catch (err) {
     btn.innerHTML = hk('clip', escapeHtml)
     btn.disabled = false
-    if (typeof showToast === 'function') showToast(`clip failed: ${err?.message || 'error'}`, 'error')
+    if (typeof showToast === 'function')
+      showToast(t('mc_pcard_clip_failed', [err?.message || t('mc_pcard_error')]), 'error')
   }
 }
 

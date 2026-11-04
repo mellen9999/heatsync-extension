@@ -158,8 +158,8 @@ describe('subsystem chokepoints', () => {
     expect(INPUT).toContain("if (gateAtBoot('profile-cards') !== false) {")
     expect(INPUT).toContain("if (msg && gateAtBoot('feed') !== false) {")
     // …and the rows no switch owns keep showing.
-    expect(INPUT).toContain("{ label: 'dm', fn: () => _openDmFor(username, platform) }")
-    expect(INPUT).toContain("{ label: 'mention', fn: () => _mentionInMcInput(username) }")
+    expect(INPUT).toContain("{ label: t('mc_input_dm'), fn: () => _openDmFor(username, platform) }")
+    expect(INPUT).toContain("{ label: t('content_card_mention'), fn: () => _mentionInMcInput(username) }")
   })
 })
 

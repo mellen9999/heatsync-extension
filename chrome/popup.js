@@ -130,8 +130,8 @@ const browser = globalThis.browser || chrome
       await browser.storage.sync.set({ ui_settings: { ...ui, subsystems: subs } })
       await paint()
       note.textContent = nowOff
-        ? `${b.textContent}: the site's own chat is back`
-        : `${b.textContent}: heatsync chat is back`
+        ? t('popup_site_note_off', [b.textContent]) || `${b.textContent}: the site's own chat is back`
+        : t('popup_site_note_on', [b.textContent]) || `${b.textContent}: heatsync chat is back`
       try {
         const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
         if (tab?.id != null && (tab.url || '').includes(b.dataset.host)) browser.tabs.reload(tab.id)
@@ -424,7 +424,7 @@ const browser = globalThis.browser || chrome
     el.addEventListener('click', () => {
       fbKind = el.dataset.kind
       for (const b of document.querySelectorAll('#fb-kind .plat')) b.setAttribute('aria-selected', String(b === el))
-      fbText.placeholder = fbKind === 'bug' ? 'what broke? what did you expect?' : 'what should heatsync do better?'
+      fbText.placeholder = fbKind === 'bug' ? t('popup_fb_ph_bug') : t('popup_fb_ph_feedback')
       fbText.focus()
     })
   }
@@ -436,11 +436,11 @@ const browser = globalThis.browser || chrome
   fbSend.addEventListener('click', async () => {
     const body = fbText.value.trim()
     if (body.length < 3) {
-      fbStatus.textContent = 'say a little more'
+      fbStatus.textContent = t('popup_fb_short')
       return
     }
     fbSend.disabled = true
-    fbSend.textContent = 'sending...'
+    fbSend.textContent = t('popup_fb_sending')
     fbStatus.textContent = ''
     let url = ''
     try {
@@ -464,17 +464,17 @@ const browser = globalThis.browser || chrome
     try {
       res = await browser.runtime.sendMessage({ type: 'bg_submit_feedback', kind: fbKind, body, context })
     } catch {}
-    fbSend.textContent = 'send'
+    fbSend.textContent = t('popup_fb_send')
     fbSend.disabled = false
     if (res?.ok) {
-      fbStatus.textContent = 'sent — thank you'
+      fbStatus.textContent = t('popup_fb_sent')
       fbText.value = ''
       setTimeout(() => {
         fbPane.hidden = true
         fbStatus.textContent = ''
       }, 1200)
     } else {
-      fbStatus.textContent = 'failed to send. try again.'
+      fbStatus.textContent = t('popup_fb_failed')
     }
   })
 
@@ -498,14 +498,14 @@ const browser = globalThis.browser || chrome
       if (!signedIn) {
         const s = document.createElement('span')
         s.className = 'inv-label'
-        s.textContent = '5,000 emote slots'
+        s.textContent = t('popup_inv_slots')
         invEl.appendChild(s)
         return
       }
       if (data.user_info?.username) {
         const who = document.createElement('div')
         who.className = 'inv-label'
-        who.textContent = `signed in as ${data.user_info.username}`
+        who.textContent = t('popup_inv_signed_in_as', [data.user_info.username])
         invEl.appendChild(who)
       }
       const c = document.createElement('span')
@@ -514,12 +514,12 @@ const browser = globalThis.browser || chrome
       invEl.appendChild(c)
       const l = document.createElement('span')
       l.className = 'inv-label'
-      l.textContent = ' / 5,000 slots'
+      l.textContent = t('popup_inv_slots_of')
       invEl.appendChild(l)
       if (personalCount === 0) {
         const h = document.createElement('span')
         h.className = 'inv-label'
-        h.textContent = ' · import a channel to fill it'
+        h.textContent = t('popup_inv_import_hint')
         invEl.appendChild(h)
       }
     } catch {}

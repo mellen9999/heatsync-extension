@@ -92,7 +92,7 @@ function kickClipEmbed(clipId, fullUrl) {
   const safe = safeUrl(fullUrl) || `https://kick.com/clips/${id}`
   return `<div class="hs-feed-embed-pending hs-feed-embed-kick"
     data-resolve-url="${attr(safe)}" data-resolve-platform="kick">
-    <span class="hs-feed-embed-pending-label">loading kick clip…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', ['kick clip']))}</span>
   </div>`
 }
 
@@ -142,7 +142,7 @@ function soundcloudEmbed(url) {
 function resolvedImageEmbed(platform, url, label) {
   return `<div class="hs-feed-embed-pending hs-feed-embed-${platform}"
     data-resolve-url="${attr(url)}" data-resolve-platform="${platform}">
-    <span class="hs-feed-embed-pending-label">loading ${label}…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', [label]))}</span>
   </div>`
 }
 
@@ -201,7 +201,7 @@ function redditEmbed(url) {
     return `<div class="hs-feed-embed-pending hs-feed-embed-reddit"
       data-resolve-url="${attr(safe)}" data-resolve-platform="reddit"
       data-fb-title="${attr(title)}" data-fb-author="r/${attr(sub)}">
-      <span class="hs-feed-embed-pending-label">loading reddit…</span>
+      <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_name', ['reddit']))}</span>
     </div>`
   }
   // Non-permalink (subreddit, user) → link card.
@@ -260,7 +260,7 @@ function logEmbed(url) {
   const safe = safeUrl(url)
   if (!safe) return ''
   return `<div class="hs-feed-embed-pending hs-feed-embed-log" data-resolve-url="${attr(safe)}" data-resolve-platform="log">
-    <span class="hs-feed-embed-pending-label">loading chat line…</span>
+    <span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_chat_line'))}</span>
   </div>`
 }
 
@@ -521,7 +521,7 @@ function chatEmbedForUrl(rawUrl) {
     )
   ) {
     const playable = chatUrlPlayable(cleanUrl) ? ' hs-mc-playable' : ''
-    return `<div class="hs-mc-media hs-feed-embed-pending${playable}" data-resolve-url="${attr(safe)}" data-resolve-platform="link"><span class="hs-feed-embed-pending-label">loading preview…</span></div>`
+    return `<div class="hs-mc-media hs-feed-embed-pending${playable}" data-resolve-url="${attr(safe)}" data-resolve-platform="link"><span class="hs-feed-embed-pending-label">${escapeHtml(t('mc_feed_loading_preview'))}</span></div>`
   }
   return ''
 }
@@ -660,7 +660,7 @@ document.addEventListener(
       const html = d ? _feedMediaHtml({ ...d, base36_id: mid, has_media: true, content: '' }) : ''
       if (!html) {
         btn.disabled = false
-        btn.textContent = resp?.status === 403 ? 'log in as an adult to view' : 'retry'
+        btn.textContent = resp?.status === 403 ? t('mc_feed_adult_login') : t('common_retry')
         return
       }
       open(document.createRange().createContextualFragment(html))
@@ -929,7 +929,7 @@ function attachFeedFallbacks(root) {
           const tag = mode === 'deleted-span' ? 'span' : 'div'
           const replacement = document.createElement(tag)
           replacement.className = 'hs-feed-media-deleted'
-          replacement.textContent = 'image unavailable'
+          replacement.textContent = t('mc_feed_image_unavailable')
           img.replaceWith(replacement)
         }
       },
@@ -1142,7 +1142,7 @@ function _hsTransportEl(provider) {
     const out = document.createElement('a')
     out.className = 'hs-mc-transport-toggle hs-mc-transport-out'
     out.textContent = '↗'
-    out.title = 'open in a new tab'
+    out.title = t('mc_feed_open_new_tab')
     out.target = '_blank'
     out.rel = 'noopener'
     out.addEventListener('click', () => {
@@ -1160,7 +1160,7 @@ function _hsTransportEl(provider) {
     re.type = 'button'
     re.className = 'hs-mc-transport-toggle hs-mc-transport-reload'
     re.textContent = '↻'
-    re.title = 'reload the player (after signing in)'
+    re.title = t('mc_feed_reload_player')
     re.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -1172,7 +1172,7 @@ function _hsTransportEl(provider) {
   pause.type = 'button'
   pause.className = 'hs-mc-transport-toggle'
   pause.textContent = '||'
-  pause.title = 'pause'
+  pause.title = t('mc_feed_pause')
   bar.appendChild(pause)
   // No slider at all for a provider that can't take one. A greyed-out control
   // is still a control the eye has to read and dismiss; spotify's embed simply
@@ -1185,7 +1185,7 @@ function _hsTransportEl(provider) {
     vol.max = '100'
     vol.step = '1'
     vol.value = String(Math.round(embedVolume() * 100))
-    vol.title = 'volume'
+    vol.title = t('mc_feed_volume')
     vol.addEventListener('input', () => setEmbedVolume(Number(vol.value) / 100))
     bar.appendChild(vol)
   }
@@ -1251,8 +1251,8 @@ function _hsPlacePlayer() {
   a.host.classList.toggle('hs-fill', filled)
   const fillBtn = a.host.querySelector('.hs-mc-transport-fill')
   if (fillBtn) {
-    fillBtn.textContent = filled ? '← back' : '⤢'
-    fillBtn.title = filled ? 'back to chat (esc)' : 'fill chat'
+    fillBtn.textContent = filled ? t('mc_feed_back') : '⤢'
+    fillBtn.title = filled ? t('mc_feed_back_to_chat') : t('mc_feed_fill_chat')
   }
   scroller?.classList.toggle('hs-mc-filled', filled)
   hsTakeoverSync()
@@ -1492,9 +1492,13 @@ function _hsPlayerDockOpen(url, label) {
     `<div class="hs-mc-player-dock-bar">` +
       `<span class="hs-mc-player-dock-title">${escapeHtml(String(label || '').slice(0, 60))}</span>` +
       (safeu
-        ? `<a class="hs-mc-player-dock-out" href="${attr(safeu)}" target="_blank" rel="noopener" title="open in new tab">↗</a>`
+        ? `<a class="hs-mc-player-dock-out" href="${attr(safeu)}" target="_blank" rel="noopener" title="${escapeHtml(t('mc_feed_open_new_tab_short'))}">↗</a>`
         : '') +
-      hsXButtonHtml('hs-mc-player-close', 'close player', 'title="close player"') +
+      hsXButtonHtml(
+        'hs-mc-player-close',
+        escapeHtml(t('mc_feed_close_player')),
+        `title="${escapeHtml(t('mc_feed_close_player'))}"`,
+      ) +
       `</div>${html}`,
   )
   overlay.appendChild(dock)

@@ -4065,6 +4065,15 @@
         menu.appendChild(item)
       }
 
+      mkItem('copy layout link', '#ffffff', () => {
+        const link = mcLayoutLink(config.channels)
+        if (link) mcCopyToClipboard(link, 'layout link copied')
+        else showToast('no tabs to share', 'error')
+      })
+      const lSep = document.createElement('div')
+      lSep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
+      menu.appendChild(lSep)
+
       // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
       // red (off) buttons as send to below; a view filter, so nothing is deleted.
       const linkedView = { twitch: !!ch?.twitch, kick: !!ch?.kick, youtube: !!ch?.youtube }

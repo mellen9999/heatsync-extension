@@ -835,6 +835,7 @@ const MULTICHAT_MODULES = [
   'panel-actions.js',
   'settings-ui.js',
   'mention-rules.js',
+  'layout-link.js',
   'channel-mgmt.js',
   'spa-nav.js',
   'type-to-focus.js',

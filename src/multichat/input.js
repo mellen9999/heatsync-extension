@@ -6889,6 +6889,8 @@ const COMMAND_RECEIPT_SCOPE = {
   status: 'none',
   modes: 'none',
   tab: 'none',
+  sharelayout: 'none', // toast is the confirmation
+  layout: 'none',
   testnotices: 'none',
   blocked: 'none', // opens a panel — the panel is the confirmation
   modtools: 'none', // opens a panel
@@ -8033,6 +8035,36 @@ async function handleSlashCommand(text, input) {
       else if (def.type === 'range' && def.options) hint = ` · ${def.options.min}-${def.options.max}`
       showToast(`${t('mc_input_set_invalid', [def.key]) || `invalid value for ${def.key}`}${hint}`, 'error')
     }
+    return true
+  }
+
+  // ── /sharelayout, /layout — heatsync.org/m/<layout> share links ──────────
+  if (cmd === 'sharelayout') {
+    const link = mcLayoutLink(config.channels)
+    clearInput(input)
+    if (!link) {
+      showToast('no tabs to share', 'error')
+      return true
+    }
+    mcCopyToClipboard(link, 'layout link copied')
+    return true
+  }
+
+  if (cmd === 'layout') {
+    const tabs = mcLayoutParse(rest)
+    if (!tabs.length) {
+      showToast('usage: /layout <heatsync.org/m/... link>', 'error')
+      return true
+    }
+    const added = addChannelsBulk(
+      tabs.map((x) => ({ twitch: x.twitch, kick: x.kick, youtube: x.youtube ? mcLayoutYtUrl(x.youtube) : '' })),
+    )
+    clearInput(input)
+    if (added) switchTab(config.channels[config.channels.length - 1].id)
+    showToast(
+      added ? `added ${added} tab${added === 1 ? '' : 's'}` : 'already have those tabs',
+      added ? 'success' : undefined,
+    )
     return true
   }
 

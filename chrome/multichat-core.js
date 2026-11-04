@@ -15313,7 +15313,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '59472bd536b7' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ad9382b236b4' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15840,6 +15840,23 @@ const SLASH_REGISTRY = [
     does: 'local',
   },
   {
+    cmd: 'sharelayout',
+    args: '',
+    desc: 'copy a heatsync.org/m link to your tab lineup',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+    alias: ['sl'],
+  },
+  {
+    cmd: 'layout',
+    args: '<link>',
+    desc: 'add the tabs from a heatsync.org/m link',
+    on: 'ext',
+    needs: 'none',
+    does: 'local',
+  },
+  {
     cmd: 'status',
     args: '[channel]',
     desc: 'show chat modes and stream info',
@@ -16105,7 +16122,21 @@ const SLASH_SECTIONS = [
   {
     key: 'local',
     title: 'this window only',
-    cmds: ['lclear', 'mute', 'unmute', 'block', 'hide', 'unhide', 'note', 'delnote', 'set', 'tab', 'status'],
+    cmds: [
+      'lclear',
+      'mute',
+      'unmute',
+      'block',
+      'hide',
+      'unhide',
+      'note',
+      'delnote',
+      'set',
+      'tab',
+      'sharelayout',
+      'layout',
+      'status',
+    ],
   },
   {
     key: 'mod',
@@ -51093,6 +51124,8 @@ const COMMAND_RECEIPT_SCOPE = {
   status: 'none',
   modes: 'none',
   tab: 'none',
+  sharelayout: 'none', // toast is the confirmation
+  layout: 'none',
   testnotices: 'none',
   blocked: 'none', // opens a panel — the panel is the confirmation
   modtools: 'none', // opens a panel
@@ -52237,6 +52270,36 @@ async function handleSlashCommand(text, input) {
       else if (def.type === 'range' && def.options) hint = ` · ${def.options.min}-${def.options.max}`
       showToast(`${t('mc_input_set_invalid', [def.key]) || `invalid value for ${def.key}`}${hint}`, 'error')
     }
+    return true
+  }
+
+  // ── /sharelayout, /layout — heatsync.org/m/<layout> share links ──────────
+  if (cmd === 'sharelayout') {
+    const link = mcLayoutLink(config.channels)
+    clearInput(input)
+    if (!link) {
+      showToast('no tabs to share', 'error')
+      return true
+    }
+    mcCopyToClipboard(link, 'layout link copied')
+    return true
+  }
+
+  if (cmd === 'layout') {
+    const tabs = mcLayoutParse(rest)
+    if (!tabs.length) {
+      showToast('usage: /layout <heatsync.org/m/... link>', 'error')
+      return true
+    }
+    const added = addChannelsBulk(
+      tabs.map((x) => ({ twitch: x.twitch, kick: x.kick, youtube: x.youtube ? mcLayoutYtUrl(x.youtube) : '' })),
+    )
+    clearInput(input)
+    if (added) switchTab(config.channels[config.channels.length - 1].id)
+    showToast(
+      added ? `added ${added} tab${added === 1 ? '' : 's'}` : 'already have those tabs',
+      added ? 'success' : undefined,
+    )
     return true
   }
 
@@ -68111,6 +68174,117 @@ async function mrHandleAction(el) {
 }
 
 
+// --- multichat/layout-link.js ---
+// layout-link.js — heatsync.org/m/<layout> share links, parse + build.
+//
+// Mirror of the site grammar (server/lib/multichat-layout.ts + the builder in
+// chat-tabs-manager.js). Pure: no DOM, no config, so it is unit-tested alone.
+//   layout := tab ('+' tab)*   tab := pc (',' pc)*   pc := ('t'|'k'|'y') ':' name
+// Parsing is total — junk segments drop, nothing throws. Caps: 8 tabs, 400 chars.
+
+const MC_LAYOUT_BASE = 'https://heatsync.org/m/'
+const MC_LAYOUT_MAX_TABS = 8
+const MC_LAYOUT_MAX_LEN = 400
+const MC_LAYOUT_NAME_RE = /^[a-z0-9_-]{1,30}$/
+const MC_LAYOUT_YT_RE = /^[a-z0-9_.-]{1,40}$/
+const MC_LAYOUT_UC_RE = /^UC[A-Za-z0-9_-]{22}$/
+
+/** A pasted link, a bare layout, or a path: strip down to the layout segment. */
+function mcLayoutSegment(input) {
+  let s = String(input ?? '').trim()
+  const m = s.match(/heatsync\.org\/m\/([^?#\s]*)/i)
+  if (m) s = m[1]
+  else s = s.replace(/^\/?m\//i, '')
+  try {
+    s = decodeURIComponent(s)
+  } catch {}
+  return s.trim()
+}
+
+/**
+ * Link or layout -> validated tabs [{twitch,kick,youtube}] (youtube = bare
+ * handle or UC id). Never throws; junk dropped; identical tabs deduped.
+ */
+function mcLayoutParse(input) {
+  const layout = mcLayoutSegment(input)
+  if (!layout || layout.length > MC_LAYOUT_MAX_LEN) return []
+  const tabs = []
+  const seen = new Set()
+  for (const tabStr of layout.split('+').slice(0, MC_LAYOUT_MAX_TABS)) {
+    const tab = { twitch: '', kick: '', youtube: '' }
+    for (const seg of tabStr.split(',').slice(0, 3)) {
+      const i = seg.indexOf(':')
+      if (i < 1) continue
+      const code = seg.slice(0, i).trim().toLowerCase()
+      // case kept for youtube: a UC id is case-sensitive, handles are not
+      const exact = seg
+        .slice(i + 1)
+        .trim()
+        .replace(/^@/, '')
+      const raw = exact.toLowerCase()
+      if (code === 't' && MC_LAYOUT_NAME_RE.test(raw)) tab.twitch = raw
+      else if (code === 'k' && MC_LAYOUT_NAME_RE.test(raw)) tab.kick = raw
+      else if (code === 'y') {
+        if (MC_LAYOUT_UC_RE.test(exact)) tab.youtube = exact
+        else if (MC_LAYOUT_YT_RE.test(raw)) tab.youtube = raw
+      }
+    }
+    if (!tab.twitch && !tab.kick && !tab.youtube) continue
+    const key = `${tab.twitch}|${tab.kick}|${tab.youtube}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    tabs.push(tab)
+  }
+  return tabs
+}
+
+/** Grammar token (handle or UC id) -> the youtube url a channel entry stores. */
+function mcLayoutYtUrl(token) {
+  if (MC_LAYOUT_UC_RE.test(token)) return `https://www.youtube.com/channel/${token}/live`
+  return `https://www.youtube.com/@${token}/live`
+}
+
+/** A stored youtube url -> grammar token, or '' when it has no usable handle/id. */
+function mcLayoutYtToken(url) {
+  const s = String(url || '')
+  const id = s.match(/\/channel\/(UC[A-Za-z0-9_-]{22})(?![A-Za-z0-9_-])/)
+  if (id) return id[1]
+  const h = s.match(/@([\w.-]+)/)
+  const handle = h ? h[1].toLowerCase() : ''
+  return MC_LAYOUT_YT_RE.test(handle) ? handle : ''
+}
+
+/**
+ * Channel entries [{twitch,kick,youtube(url)}] -> layout string. Tabs with no
+ * valid leg are skipped; capped at 8 tabs; tail tabs drop until it fits 400
+ * (an over-long layout would parse to nothing). '' when nothing is shareable.
+ */
+function mcLayoutBuild(channels) {
+  const parts = []
+  for (const c of channels || []) {
+    const segs = []
+    if (MC_LAYOUT_NAME_RE.test(c?.twitch || '')) segs.push(`t:${c.twitch}`)
+    if (MC_LAYOUT_NAME_RE.test(c?.kick || '')) segs.push(`k:${c.kick}`)
+    const yt = mcLayoutYtToken(c?.youtube)
+    if (yt) segs.push(`y:${yt}`)
+    if (segs.length) parts.push(segs.join(','))
+    if (parts.length >= MC_LAYOUT_MAX_TABS) break
+  }
+  let layout = parts.join('+')
+  while (layout.length > MC_LAYOUT_MAX_LEN && parts.length > 1) {
+    parts.pop()
+    layout = parts.join('+')
+  }
+  return layout.length > MC_LAYOUT_MAX_LEN ? '' : layout
+}
+
+/** Shareable link for the channel entries, or '' when there is nothing to share. */
+function mcLayoutLink(channels) {
+  const layout = mcLayoutBuild(channels)
+  return layout ? MC_LAYOUT_BASE + layout : ''
+}
+
+
 // --- multichat/channel-mgmt.js ---
 // channel add/edit/remove UI — split out of main.js (2026-07-04).
 // renderAddChannelForm/removeChannel/showEditChannelForm/showEditLivePlatforms +
@@ -74909,6 +75083,15 @@ const STORAGE_KEY = 'heatsync_multichat'
         })
         menu.appendChild(item)
       }
+
+      mkItem('copy layout link', '#ffffff', () => {
+        const link = mcLayoutLink(config.channels)
+        if (link) mcCopyToClipboard(link, 'layout link copied')
+        else showToast('no tabs to share', 'error')
+      })
+      const lSep = document.createElement('div')
+      lSep.style.cssText = 'height:1px;background:#ffffff;margin:3px 0;'
+      menu.appendChild(lSep)
 
       // platforms: which linked platforms' messages this tab SHOWS. Same green (on) /
       // red (off) buttons as send to below; a view filter, so nothing is deleted.

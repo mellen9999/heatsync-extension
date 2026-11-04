@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "salin pesan"
   },
+  "mc_input_copy_link": {
+    "message": "salin tautan"
+  },
   "mc_input_copy_to_input": {
     "message": "salin → input"
   },

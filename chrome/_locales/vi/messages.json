@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "sao chép tin nhắn"
   },
+  "mc_input_copy_link": {
+    "message": "sao chép liên kết"
+  },
   "mc_input_copy_to_input": {
     "message": "sao chép → ô nhập"
   },

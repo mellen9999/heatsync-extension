@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "копирай съобщението"
   },
+  "mc_input_copy_link": {
+    "message": "копирай линка"
+  },
   "mc_input_copy_to_input": {
     "message": "копирай → поле"
   },

@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "zkopírovat zprávu"
   },
+  "mc_input_copy_link": {
+    "message": "kopírovat odkaz"
+  },
   "mc_input_copy_to_input": {
     "message": "zkopírovat → pole"
   },

@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "kopyahin ang mensahe"
   },
+  "mc_input_copy_link": {
+    "message": "kopyahin ang link"
+  },
   "mc_input_copy_to_input": {
     "message": "kopyahin → input"
   },

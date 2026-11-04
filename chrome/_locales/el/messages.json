@@ -4042,6 +4042,9 @@
   "mc_input_copy_message": {
     "message": "αντιγραφή μηνύματος"
   },
+  "mc_input_copy_link": {
+    "message": "αντιγραφή συνδέσμου"
+  },
   "mc_input_copy_to_input": {
     "message": "αντιγραφή → πεδίο"
   },

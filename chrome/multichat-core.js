@@ -15313,7 +15313,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c05122163808' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '59472bd536b7' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -15742,7 +15742,7 @@ const SLASH_REGISTRY = [
     cmd: 'color',
     args: '<name|#hex>',
     desc: 'set your twitch chat color (a name like orangered, or #hex with turbo)',
-    on: 'ext',
+    on: 'both',
     needs: 'twitch',
     does: 'twitch',
   },
@@ -15899,15 +15899,15 @@ const SLASH_REGISTRY = [
     cmd: 'announce',
     args: '<msg>',
     desc: 'post an announcement, optionally coloured',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
     does: 'twitch',
     alias: ['announceblue', 'announcegreen', 'announceorange', 'announcepurple'],
   },
-  { cmd: 'vip', args: '<user>', desc: 'grant VIP', on: 'ext', needs: 'broadcaster', does: 'twitch' },
-  { cmd: 'unvip', args: '<user>', desc: 'remove VIP', on: 'ext', needs: 'broadcaster', does: 'twitch' },
-  { cmd: 'mod', args: '<user>', desc: 'grant moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
-  { cmd: 'unmod', args: '<user>', desc: 'remove moderator', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'vip', args: '<user>', desc: 'grant VIP', on: 'both', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'unvip', args: '<user>', desc: 'remove VIP', on: 'both', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'mod', args: '<user>', desc: 'grant moderator', on: 'both', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'unmod', args: '<user>', desc: 'remove moderator', on: 'both', needs: 'broadcaster', does: 'twitch' },
   {
     cmd: 'blocked',
     args: '',
@@ -16010,11 +16010,11 @@ const SLASH_REGISTRY = [
     cmd: 'poll',
     args: '<q> | <a> | <b> [| …] [| secs]',
     desc: 'create a poll, 2-5 choices',
-    on: 'ext',
+    on: 'both',
     needs: 'broadcaster',
     does: 'twitch',
   },
-  { cmd: 'endpoll', args: '', desc: 'end the active poll', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'endpoll', args: '', desc: 'end the active poll', on: 'both', needs: 'broadcaster', does: 'twitch' },
   {
     cmd: 'vote',
     args: '<n>',
@@ -16027,7 +16027,7 @@ const SLASH_REGISTRY = [
     cmd: 'prediction',
     args: '<title> | <a> | <b> [| …] [| secs]',
     desc: 'start a prediction, 2-10 outcomes',
-    on: 'ext',
+    on: 'both',
     needs: 'broadcaster',
     does: 'twitch',
     alias: ['pred', 'predict'],
@@ -16040,12 +16040,12 @@ const SLASH_REGISTRY = [
     needs: 'twitch',
     does: 'twitch',
   },
-  { cmd: 'lockpred', args: '', desc: 'lock the active prediction', on: 'ext', needs: 'broadcaster', does: 'twitch' },
+  { cmd: 'lockpred', args: '', desc: 'lock the active prediction', on: 'both', needs: 'broadcaster', does: 'twitch' },
   {
     cmd: 'resolvepred',
     args: '<n>',
     desc: 'resolve the prediction to outcome n',
-    on: 'ext',
+    on: 'both',
     needs: 'broadcaster',
     does: 'twitch',
   },
@@ -16053,7 +16053,7 @@ const SLASH_REGISTRY = [
     cmd: 'cancelpred',
     args: '',
     desc: 'cancel the active prediction',
-    on: 'ext',
+    on: 'both',
     needs: 'broadcaster',
     does: 'twitch',
   },

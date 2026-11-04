@@ -1146,6 +1146,25 @@ function isValidSyncedChannel(ch) {
   return true
 }
 
+/**
+ * Every config read on the server races the write of a push, so a frame read
+ * before a write can land after the echo of it and lay the old tab list back
+ * (M9). The server stamps each frame with the row's multichat_rev; one older
+ * than the newest already applied for the same account is stale. No stamp
+ * (older server) always applies. Marks the rev seen when it isn't stale.
+ */
+const mcConfigRevSeen = { user: null, rev: -1 }
+function isStaleConfigRev(seen, user, rev) {
+  if (!Number.isFinite(rev)) return false
+  if (seen.user !== user) {
+    seen.user = user
+    seen.rev = -1
+  }
+  if (rev < seen.rev) return true
+  seen.rev = rev
+  return false
+}
+
 // Composite key helpers — keep all channelEmotesMap access platform-scoped
 function chKey(platform, ch) {
   return `${platform || 'twitch'}/${String(ch || '').toLowerCase()}`
@@ -7069,7 +7088,7 @@ function handleWSMessage(msg) {
 
       case 'multichat:config':
         // Cross-device sync: server sent updated multichat config
-        if (Array.isArray(msg.channels)) {
+        if (Array.isArray(msg.channels) && !isStaleConfigRev(mcConfigRevSeen, currentUsername, msg.rev)) {
           // Reject malformed entries — CRLF injection in IRC (see isValidSyncedChannel).
           const validChannels = msg.channels.filter(isValidSyncedChannel)
           log(' 📋 Multichat config sync received:', validChannels.length, 'channels')

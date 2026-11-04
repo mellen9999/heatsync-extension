@@ -1264,3 +1264,28 @@ describe('isValidSyncedChannel', () => {
     expect(isValidSyncedChannel(null)).toBe(false)
   })
 })
+
+describe('isStaleConfigRev (M9: a late stale read never lays old tabs back)', () => {
+  const isStaleConfigRev = new Function(`${extractFn('isStaleConfigRev')}; return isStaleConfigRev`)()
+  test('an older rev than the one applied is dropped; equal or newer applies', () => {
+    const seen = { user: null, rev: -1 }
+    expect(isStaleConfigRev(seen, 'a', 5)).toBe(false)
+    expect(isStaleConfigRev(seen, 'a', 4)).toBe(true)
+    expect(isStaleConfigRev(seen, 'a', 5)).toBe(false)
+    expect(isStaleConfigRev(seen, 'a', 6)).toBe(false)
+    expect(isStaleConfigRev(seen, 'a', 5)).toBe(true)
+  })
+  test('no stamp always applies and leaves the mark alone', () => {
+    const seen = { user: 'a', rev: 9 }
+    expect(isStaleConfigRev(seen, 'a', undefined)).toBe(false)
+    expect(seen.rev).toBe(9)
+  })
+  test('another account starts fresh', () => {
+    const seen = { user: 'a', rev: 9 }
+    expect(isStaleConfigRev(seen, 'b', 1)).toBe(false)
+    expect(seen).toEqual({ user: 'b', rev: 1 })
+  })
+  test('the config handler gates on it', () => {
+    expect(BG_SRC).toContain("!isStaleConfigRev(mcConfigRevSeen, currentUsername, msg.rev)")
+  })
+})

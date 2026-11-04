@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "tvoj $NAME$ je teraz ten, ktorý si vybral",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ sa nepodarilo vymeniť — starý je späť",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "odblokovanie sa neuložilo do účtu — na iných zariadeniach bude iné"
   },

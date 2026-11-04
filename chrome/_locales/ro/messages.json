@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$ al tău este acum cel pe care l-ai ales",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "nu s-a putut schimba $NAME$ — cel vechi a revenit",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "deblocarea nu s-a salvat în contul tău — va diferi pe alte dispozitive"
   },

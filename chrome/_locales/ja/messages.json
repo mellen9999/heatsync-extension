@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$ を選んだものに入れ替えた",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ を入れ替えられなかった — 元のものに戻した",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "ブロック解除がアカウントに保存されなかった — 他のデバイスでは異なる"
   },

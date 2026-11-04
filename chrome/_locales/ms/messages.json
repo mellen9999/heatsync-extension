@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$ anda kini yang anda pilih",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "gagal menukar $NAME$ — yang lama telah dipulihkan",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "nyahsekat tak disimpan ke akaun kau — akan berbeza pada peranti lain"
   },

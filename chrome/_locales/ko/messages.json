@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$이(가) 선택한 것으로 바뀌었어요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ 교체 실패 — 기존 것을 복구했어요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "차단 해제가 계정에 저장되지 않음 — 다른 기기에서는 다를 수 있어"
   },

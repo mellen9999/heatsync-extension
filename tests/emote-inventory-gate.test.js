@@ -139,13 +139,26 @@ describe('inventory provenance stamp (data-inv)', () => {
     }
   })
 
-  test('channel hit wins over sender inventory and has no data-inv', async () => {
+  test('channel hit has no data-inv when the sender does not carry the name', async () => {
     const { channelEmoteCaches } = await import('../src/multichat/emotes.js')
     channelEmoteCaches['chan-x'] = new Map([['AKDJvibe', { url: URL, source: '7tv', state: 'channel' }]])
     try {
-      const out = processEmotes('AKDJvibe', 'chan-x', null, sender({ addedAt: T }), T + 5000)
+      const out = processEmotes('AKDJvibe', 'chan-x', null, null, T + 5000)
       expect(rendered(out)).toBe(true)
       expect(out).not.toContain('data-inv')
+    } finally {
+      delete channelEmoteCaches['chan-x']
+    }
+  })
+
+  test("the sender's own emote beats the channel's of the same name, and is stamped", async () => {
+    const { channelEmoteCaches } = await import('../src/multichat/emotes.js')
+    channelEmoteCaches['chan-x'] = new Map([['AKDJvibe', { url: `${URL}?channel`, source: '7tv', state: 'channel' }]])
+    try {
+      const out = processEmotes('AKDJvibe', 'chan-x', null, sender({ addedAt: T }), T + 5000)
+      expect(rendered(out)).toBe(true)
+      expect(out).not.toContain('?channel')
+      expect(out.match(/data-inv="1"/g)?.length).toBe(2)
     } finally {
       delete channelEmoteCaches['chan-x']
     }

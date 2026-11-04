@@ -2198,17 +2198,20 @@ function pasteEmojiSpanFromNestToInput(srcSpan, asOverlay) {
 // emotes (state==='owned' && inventoryEmotes.has) so subs / channel / bits are
 // never removable, and removal is reversible (30-day recovery on the backend) —
 // which is what made the old accidental-vanish concern safe to revisit.
-async function removeEmoteFromInventory(emoteName, targetEl) {
-  if (!emoteName) return
+// Resolves true when the server dropped it (or it was already gone), false when
+// it stayed (everything put back, the reason toasted). opts.silent: no
+// "removed" toast — a swap speaks once, at the end, in its own words.
+async function removeEmoteFromInventory(emoteName, targetEl, opts) {
+  if (!emoteName) return false
   pendingEmoteOps.add(emoteName)
   try {
-    await _removeEmoteFromInventory(emoteName, targetEl)
+    return await _removeEmoteFromInventory(emoteName, targetEl, opts)
   } finally {
     pendingEmoteOps.delete(emoteName)
   }
 }
 
-async function _removeEmoteFromInventory(emoteName, targetEl) {
+async function _removeEmoteFromInventory(emoteName, targetEl, opts) {
   const wrapper = targetEl?.closest?.('.hs-mc-emote-wrapper') || targetEl
   // Where the cursor sits, taken before the row re-renders: the hovered node is
   // replaced, and the open tooltip would keep the old "inventory" label until
@@ -2234,15 +2237,16 @@ async function _removeEmoteFromInventory(emoteName, targetEl) {
     // Server is authoritative: treat "not found in your set" as already-removed so a
     // stale 'owned' state can't trap the user looping on a failing remove.
     if (response?.success || (response?.error && /not found in your set/i.test(response.error))) {
-      showToast(t('mc_emote_removed', [emoteName]), 'success')
-    } else {
-      undo(pt)
-      showToast(response?.error || t('mc_emote_remove_failed', [emoteName]), 'error')
+      if (!opts?.silent) showToast(t('mc_emote_removed', [emoteName]), 'success')
+      return true
     }
+    undo(pt)
+    showToast(response?.error || t('mc_emote_remove_failed', [emoteName]), 'error')
   } catch (_) {
     undo(pt)
     showToast(t('mc_emote_remove_error', [emoteName]), 'error')
   }
+  return false
 }
 
 // Re-run the hover on whatever a re-render left under the cursor, so an open
@@ -2664,6 +2668,37 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
     pendingEmoteOps.delete(emoteName)
   }
   return _added
+}
+
+// Swap what you own under a name for a different emote — the same-name pick (the
+// channel's IDK vs another IDK). The server keeps ONE emote per name and refuses a
+// second add under it, so the old one goes first, then the new one; sequential, in
+// that order. A swap never leaves you with neither: if the new one is refused the
+// old one is put back. Resolves true when the new one is yours.
+async function swapEmoteInInventory(emoteName, emoteUrl, emoteSource, zeroWidth) {
+  const old = viewerPersonalEmotes.get(emoteName)
+  if (!emoteName || !old?.url) return false
+  const removing = removeEmoteFromInventory(emoteName, null, { silent: true })
+  // The removal has already cleared the old one from the local sets (that part is
+  // synchronous). Seed the new one before the next tick so the line being sent
+  // right now, whose echo is back in a blink, still draws it.
+  viewerPersonalEmotes.set(emoteName, {
+    url: emoteUrl,
+    source: emoteSource || 'heatsync',
+    state: 'owned',
+    zeroWidth: !!zeroWidth,
+    addedAt: Date.now(),
+  })
+  // refused: the removal already said why and put the old one back
+  if (!(await removing)) return false
+  if (await addEmoteToInventory(emoteName, emoteUrl, emoteSource, null, zeroWidth, true)) {
+    showToast(t('mc_emote_swapped', [emoteName]), 'success')
+    return true
+  }
+  // the add said why; bring the old one back so you are not left with neither
+  const back = await addEmoteToInventory(emoteName, old.url, old.source, null, old.zeroWidth, true)
+  if (back) showToast(t('mc_emote_swap_failed', [emoteName]), 'error')
+  return false
 }
 
 // Sync block/unblock to heatsync.org API via background script, then RECONCILE.

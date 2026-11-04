@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "ang $NAME$ mo ay yung pinili mo na ngayon",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "hindi napalitan ang $NAME$ — bumalik ang luma",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "hindi nai-save sa account mo ang unblock — iba ito sa ibang device"
   },

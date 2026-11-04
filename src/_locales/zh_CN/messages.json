@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "你的 $NAME$ 现在是你选的那个",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "无法替换 $NAME$ — 已恢复旧的",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "取消屏蔽未保存到你的账号 — 在其他设备上会不同"
   },

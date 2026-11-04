@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "ה-$NAME$ שלך הוא עכשיו זה שבחרת",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "החלפת $NAME$ נכשלה — הישן חזר",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "ביטול החסימה לא נשמר בחשבון שלך — יהיה שונה במכשירים אחרים"
   },

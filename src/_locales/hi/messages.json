@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "तुम्हारा $NAME$ अब वही है जो तुमने चुना",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ बदला नहीं जा सका — पुराना वापस आ गया",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "अनब्लॉक तुम्हारे अकाउंट में सेव नहीं हुआ — दूसरे डिवाइस पर अलग दिखेगा"
   },

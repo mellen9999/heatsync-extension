@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$ الخاص بك أصبح الآن الذي اخترته",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "تعذّر استبدال $NAME$ — عاد القديم",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "لم يُحفظ رفع الحظر في حسابك — سيختلف على الأجهزة الأخرى"
   },

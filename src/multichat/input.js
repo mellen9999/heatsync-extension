@@ -684,6 +684,9 @@ const acState = {
 // in the viewer's set get auto-added — so a remote emote you searched and sent
 // becomes yours and renders next time. Bounded; explicit tracking beats sniffing
 // chips so it works in plain-text mode too.
+// `variant: true` marks a catalog pick (a hit from the search itself, not a name
+// the channel/globals/inventory already answer to). Only a variant may replace a
+// different emote you own under the same name — see autoAddInputEmotes.
 const recentRemoteCompletions = new Map()
 const REMOTE_COMPLETION_CAP = 300
 
@@ -699,16 +702,25 @@ function trackCompletionForAutoAdd(match) {
   // persisted a bogus literal "name0" emote server-side, burning an inventory
   // slot. The base emote is tracked on its own; the "0" is a render convention.
   if (match._synthOverlay) return
+  // The latest pick for a name is the only one that counts: cycling from a
+  // catalog IDK back onto the channel's IDK (or onto a native twitch/kick one
+  // that never registers below) must un-pick the catalog one, or the send
+  // would add an emote the box no longer shows.
+  recentRemoteCompletions.delete(match.name)
   const src = match.source
   // 'heatsync' = another user's personal emote clicked out of a chat row. The
   // server dedups it onto the existing row; without it the paste rendered for
   // you only until the next reload, then fell back to raw text.
   if (src !== '7tv' && src !== 'bttv' && src !== 'ffz' && src !== 'heatsync') return
-  recentRemoteCompletions.delete(match.name)
   // Carry zeroWidth so optimistic viewerPersonalEmotes.set and the server add
   // both inherit the overlay flag — without it, a tab-completed 7TV overlay
   // emote (CarrotTime, wavE) renders as a standalone base after auto-add.
-  recentRemoteCompletions.set(match.name, { url: match.url, source: src, zeroWidth: !!match.zeroWidth })
+  recentRemoteCompletions.set(match.name, {
+    url: match.url,
+    source: src,
+    zeroWidth: !!match.zeroWidth,
+    ...(match.remote && { variant: true }),
+  })
   while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
     recentRemoteCompletions.delete(recentRemoteCompletions.keys().next().value)
   }
@@ -799,10 +811,15 @@ if (/(^|\.)twitch\.tv$/.test(location.hostname)) {
 // Prefix-only on purpose: catalog substring hits (NotSad, KekSadge) are noise.
 // Local substring matches still surface via findEmoteMatches.
 let _acRemoteAbort = null
-// 7TV emote id out of a cdn url (…/emote/<id>/1x.avif); null for other hosts.
-function _acEmoteId(url) {
-  const m = /\/emote\/([0-9A-Z]{26})\//i.exec(url || '')
-  return m ? m[1] : null
+// A picture's identity across size variants and formats: the provider + asset id
+// out of a cdn url (…/emote/<id>/1x.avif and …/emote/<id>/2x.webp are ONE emote),
+// the whole url for anything else ('' for none). Emotes that share a NAME are told
+// apart by this — a twin is the same picture, never merely the same name.
+const _AC_PIC_RE = /^https?:\/\/(cdn\.7tv\.app|cdn\.betterttv\.net|cdn\.frankerfacez\.com)\/emote\/([^/?#]+)/i
+function _acPicKey(url) {
+  if (!url) return ''
+  const m = _AC_PIC_RE.exec(url)
+  return m ? `${m[1].toLowerCase()}/${m[2]}` : String(url)
 }
 let _acRemoteToken = 0
 // Searches the remote catalog will never serve: @user, :emoji, modifier
@@ -911,21 +928,36 @@ async function fetchRemoteEmoteMatches(search) {
         ? emoteProviderOrder(emoteProviderPriority)
         : ['7tv', 'bttv', 'ffz']
     const items = order.flatMap((k) => byProvider[k] || [])
-    // Lowercase dedupe (collapses 10x "Sadge" uploads to one — emote names are
-    // case-insensitive in practice; first-seen wins so 7TV's top result holds).
-    // Also dedupes against existing locals (already lowercased below).
-    const have = new Set(acState.matches.map((m) => (m.name || '').toLowerCase()))
-    // Same-name uploads (7TV has nine "shrujj"): collapsing them to the most-used
-    // one hid the art you actually meant. Once the name is typed in full, every
-    // upload stays its own cycle entry, told apart by its 7TV id.
-    const haveIds = new Set(acState.matches.map((m) => m.id || _acEmoteId(m.url)).filter(Boolean))
+    // Twin check: the very same PICTURE under the same (case-insensitive) name,
+    // already in the cycle as a local or an earlier page. A different picture
+    // under a name something here already answers to is NOT a twin — that is the
+    // point: the 7tv IDK next to the channel's IDK, so you can pick the other one.
+    const picsByName = new Map()
+    // Names the CATALOG itself already put in the cycle. While the query is still
+    // partial, same-name uploads collapse to the first (10x "Sadge" is noise;
+    // first-seen wins so 7TV's top result holds). Typed in full, every upload
+    // stays its own entry (7TV has nine "shrujj": the art you meant may be any).
+    const catalogNames = new Set()
+    for (const m of acState.matches) {
+      if (m.type !== 'emote' || !m.name) continue
+      const l = m.name.toLowerCase()
+      if (!picsByName.has(l)) picsByName.set(l, new Set())
+      picsByName.get(l).add(_acPicKey(m.url))
+      if (m.remote) catalogNames.add(l)
+    }
+    // A local emote that answers to the name typed in full: sending that name
+    // means THAT one. A catalog variant is taken only by tabbing onto it.
+    const typedHasLocal = acState.matches.some(
+      (m) => m.type === 'emote' && !m.remote && (m.name || '').toLowerCase() === searchLower,
+    )
     let exactRegistered = false
     const add = []
     for (const it of items) {
       if (!it.name) continue
       const lower = it.name.toLowerCase()
-      const variant = lower === searchLower && !!it.id
-      if (variant ? haveIds.has(it.id) : have.has(lower)) continue
+      const pic = _acPicKey(it.url)
+      if (pic && picsByName.get(lower)?.has(pic)) continue
+      if (lower !== searchLower && catalogNames.has(lower)) continue
       // Substring is fine — the providers already relevance-matched the query;
       // requiring a literal prefix dropped the suffix-named families users
       // actually mean. Drop only fuzzy hits that don't contain the query.
@@ -933,8 +965,13 @@ async function fetchRemoteEmoteMatches(search) {
       // A blocked name must never surface from the remote catalog either —
       // same leak as the local pool, just a different source.
       if (typeof _hsAcEmoteBlocked === 'function' && _hsAcEmoteBlocked(it.name, null)) continue
-      have.add(lower)
-      if (it.id) haveIds.add(it.id)
+      // A name the globals already own can't take a second emote: the server
+      // refuses to add one (isGlobalTwin), so offering it would be a pick that
+      // can never be kept.
+      if (typeof emoteCache !== 'undefined' && emoteCache.get(it.name)?.state === 'global') continue
+      if (!picsByName.has(lower)) picsByName.set(lower, new Set())
+      picsByName.get(lower).add(pic)
+      catalogNames.add(lower)
       const src = it.provider || '7tv'
       add.push({
         name: it.name,
@@ -962,10 +999,15 @@ async function fetchRemoteEmoteMatches(search) {
       // while the fetch was lazy; not once it fires on the first Tab.
       if (lower === searchLower && !exactRegistered) {
         exactRegistered = true
-        recentRemoteCompletions.delete(it.name)
-        recentRemoteCompletions.set(it.name, { url: it.url, source: src, zeroWidth: !!it.zeroWidth })
-        while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
-          recentRemoteCompletions.delete(recentRemoteCompletions.keys().next().value)
+        // ...unless something local already answers to that name (the channel's
+        // IDK): the box shows that one, so registering the catalog's IDK would
+        // silently add an emote nobody picked.
+        if (!typedHasLocal) {
+          recentRemoteCompletions.delete(it.name)
+          recentRemoteCompletions.set(it.name, { url: it.url, source: src, zeroWidth: !!it.zeroWidth, variant: true })
+          while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
+            recentRemoteCompletions.delete(recentRemoteCompletions.keys().next().value)
+          }
         }
       }
     }
@@ -6090,20 +6132,23 @@ function placeCaretAfter(node, offset = 0) {
 }
 
 // Cycle-depth + visibility readout for the current Tab match. "cat" tells you
-// WHERE in the cycle you are (channel → your set → global → 7tv search, getting
+// WHERE in the cycle you are (channel → your set → global → catalog search, getting
 // rarer as you go); "vis" tells you WHO actually sees the image if you send it:
 //   everyone   — text/unicode or native Twitch emotes, no extension needed
 //   {prov} users — bttv/ffz/7tv emote active in this channel/globally: anyone
 //                  running that provider's extension sees it (heatsync too)
-//   heatsync only — your personal set + 7tv catalog-search hits: only viewers
-//                   running heatsync render these; everyone else sees plain text
+//   heatsync only — your personal set + catalog-search hits (labelled "catalog ·
+//                   <provider>"): only viewers running heatsync render these;
+//                   everyone else sees plain text
 // Colors form a breadth gradient: green (all) → yellow (needs an ext) → orange
 // (heatsync only), so you can feel how deep / how niche the current pick is.
 function emoteCycleMeta(m) {
   if (!m) return { cat: '', vis: null }
   if (m.type === 'user' || m.type === 'user-bare') return { cat: 'chatter', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
   if (m.type === 'emoji') return { cat: 'emoji', vis: { t: 'everyone', c: 'var(--hs-ok)' } }
-  if (m.remote) return { cat: '7tv search', vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
+  // Name the provider: a catalog IDK sits right after the channel's IDK in the
+  // cycle, and "which one is this" is the whole question.
+  if (m.remote) return { cat: `catalog · ${m.source || '7tv'}`, vis: { t: 'heatsync only', c: 'var(--hs-brand)' } }
   const tier = m.tier ?? 2
   const cat = tier === 0 ? 'channel' : tier === 1 ? 'your inventory' : 'global'
   if (m.source === 'twitch') return { cat, vis: { t: 'all twitch', c: 'var(--hs-ok)' } }
@@ -8503,6 +8548,14 @@ async function openWhisperConversation(platform, username, input) {
 // names tracked in recentRemoteCompletions qualify, so channel/global/owned
 // emotes (which already render) never burn slots. Fire-and-forget.
 // Resolves to the names actually added (null when nothing was attempted).
+//
+// Many emotes share a name (the channel's IDK, another IDK from the catalog). What
+// is skipped is decided by PICTURE, not name: the very emote you already own, a
+// blocked name, a global name (the server refuses a second emote under one). A
+// catalog variant of a name the channel has is simply added. A catalog variant of a
+// name you already own with a DIFFERENT emote swaps: the server keeps one emote per
+// name, so the old one is removed first (swapEmoteInInventory). Only a deliberate
+// catalog pick swaps — tabbing onto the channel's own IDK never replaces yours.
 function autoAddInputEmotes(text) {
   if (!text || !recentRemoteCompletions.size) return null
   const adds = []
@@ -8513,7 +8566,15 @@ function autoAddInputEmotes(text) {
     const rec = recentRemoteCompletions.get(word)
     if (!rec) continue
     if (typeof blockedEmoteNames !== 'undefined' && blockedEmoteNames.has(word)) continue
-    if (typeof inventoryEmotes !== 'undefined' && inventoryEmotes.has(word)) continue
+    let swap = false
+    if (typeof inventoryEmotes !== 'undefined' && inventoryEmotes.has(word)) {
+      const mine = typeof viewerPersonalEmotes !== 'undefined' ? viewerPersonalEmotes.get(word) : null
+      // not a deliberate catalog pick, the very emote you own, or yours can't be
+      // read (never swap blind): nothing to do
+      if (!rec.variant || !mine?.url || _acPicKey(mine.url) === _acPicKey(rec.url)) continue
+      if (typeof swapEmoteInInventory !== 'function') continue
+      swap = true
+    }
     if (pendingEmoteOps?.has(word)) continue
     // Skip heatsync curated globals — server rejects with "global emotes cannot
     // be added to personal inventory" and they already render for everyone, so
@@ -8527,7 +8588,7 @@ function autoAddInputEmotes(text) {
     // before the server add resolves) renders the emote image instead of raw
     // text — text has no wrapper, so a late add can't retro-fix it. Mirrors the
     // picker's optimistic add (emotes.js). addEmoteToInventory then persists it.
-    if (typeof viewerPersonalEmotes !== 'undefined' && !viewerPersonalEmotes.has(word)) {
+    if (typeof viewerPersonalEmotes !== 'undefined' && !swap && !viewerPersonalEmotes.has(word)) {
       viewerPersonalEmotes.set(word, {
         url: rec.url,
         source: rec.source,
@@ -8536,7 +8597,7 @@ function autoAddInputEmotes(text) {
         addedAt: Date.now(),
       })
     }
-    if (typeof addEmoteToInventory === 'function') {
+    if (swap || typeof addEmoteToInventory === 'function') {
       // Roll back the optimistic own-set entry if the server add fails (offline,
       // logged out, 4xx). Without this, a never-owned emote stays phantom-"owned"
       // for the whole tab session — picker, tab-complete and the own-echo all
@@ -8553,8 +8614,12 @@ function autoAddInputEmotes(text) {
           viewerPersonalEmotes.delete(_rollbackWord)
         }
       }
+      // swap seeds its own optimistic entry (the removal clears the old one first)
+      const done = swap
+        ? swapEmoteInInventory(word, rec.url, rec.source, !!rec.zeroWidth)
+        : addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true)
       adds.push(
-        Promise.resolve(addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true))
+        Promise.resolve(done)
           .then((ok) => {
             if (!ok) _rollback()
             return ok ? word : null

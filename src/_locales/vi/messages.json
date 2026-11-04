@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "$NAME$ của bạn giờ là cái bạn đã chọn",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "không đổi được $NAME$ — bản cũ đã được khôi phục",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "bỏ chặn chưa được lưu vào tài khoản — sẽ khác trên thiết bị khác"
   },

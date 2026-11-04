@@ -1784,6 +1784,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "your $NAME$ is now the one you picked",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "couldn’t swap $NAME$ — your old one is back",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "unblock not saved to your account — will differ on other devices"
   },

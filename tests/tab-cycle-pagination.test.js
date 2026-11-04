@@ -68,12 +68,15 @@ function build({ stv, ffz, bttv, matches = [], index = 0, search = 'kap' } = {})
 
 const stvEmote = (name) => ({ name, url: `https://cdn.7tv.app/${name}/1x.avif`, provider: '7tv' })
 const fullPage = (prefix, n = 60) => Array.from({ length: n }, (_, i) => stvEmote(`${prefix}${i}`))
-const local = (name) => ({ name, url: 'u', source: '7tv', type: 'emote' })
+// A local that IS the catalog's emote shares its picture (url): dedupe is by picture, not name,
+// so a mirror must carry the hit's url. Defaults to a picture no catalog hit has.
+const local = (name, url = 'u') => ({ name, url, source: '7tv', type: 'emote' })
+const mirror = (e) => local(e.name, e.url)
 
 describe('catalog pagination — the 20/20 dead-end', () => {
   test('all-duplicate page 1 chases to page 2 and appends its new hits', async () => {
-    // 60 locals that exactly mirror 7TV page 1 (the popular-prefix case).
-    const locals = fullPage('kap').map((e) => local(e.name))
+    // 60 locals that exactly mirror 7TV page 1 (the popular-prefix case): same name, same picture.
+    const locals = fullPage('kap').map(mirror)
     const pages = { 1: fullPage('kap'), 2: fullPage('kapNew') }
     const calls = []
     const { acState, fetch } = build({
@@ -105,7 +108,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
   test('chase gives up after its page budget but leaves the catalog resumable', async () => {
     let page = 0
     const { acState, fetch } = build({
-      matches: fullPage('kap').map((e) => local(e.name)),
+      matches: fullPage('kap').map(mirror),
       stv: async (q, s, opts) => {
         page = opts.page
         return fullPage('kap') // every page full duplicates
@@ -144,7 +147,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
   test('page-2 merge keeps the cycling user pinned on their current chip', async () => {
     // 60 locals mirroring page 1 (all dups, full page → chase continues);
     // page 2 brings new hits. The user is mid-cycle on locals[1].
-    const locals = fullPage('kap').map((e) => local(e.name))
+    const locals = fullPage('kap').map(mirror)
     const pages = { 1: fullPage('kap'), 2: [stvEmote('kapNew')] }
     const { acState, fetch } = build({
       matches: [...locals],

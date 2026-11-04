@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "twój $NAME$ to teraz ten, który wybrałeś",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "nie udało się podmienić $NAME$ — stary wrócił",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "odblokowanie nie zapisało się na twoim koncie — na innych urządzeniach będzie inaczej"
   },

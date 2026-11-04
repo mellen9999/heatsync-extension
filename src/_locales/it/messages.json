@@ -1771,6 +1771,22 @@
       }
     }
   },
+  "mc_emote_swapped": {
+    "message": "il tuo $NAME$ ora è quello che hai scelto",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_swap_failed": {
+    "message": "impossibile sostituire $NAME$ — il tuo vecchio è tornato",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_emote_unblock_sync_failed": {
     "message": "lo sblocco non è stato salvato nel tuo account — su altri dispositivi potrebbe differire"
   },

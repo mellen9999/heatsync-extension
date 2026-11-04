@@ -513,10 +513,10 @@
     "message": "flöde"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "upptäck"
   },
   "mc_tab_whispers": {
-    "message": "whispers"
+    "message": "viskningar"
   },
   "mc_tab_mentions": {
     "message": "omnämnanden"
@@ -697,7 +697,7 @@
     "message": "live framstegsvisare för hype train"
   },
   "mc_settings_gift_subs": {
-    "message": "gift subs"
+    "message": "skänkta subs"
   },
   "mc_settings_gift_subs_desc": {
     "message": "banner för presentprenumerationer med givare och nivå"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "nivå $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "visa multichat-panelen även på youtube VOD, startsida och sök — av som standard, så panelen syns bara på livesändningar (där det finns livechatt)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: visa flödeshyllor"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "visa shorts, playables och promoblock mellan videorna i youtubes hemflöde — av som standard, så flödet bara är miniatyrer som radar upp sig snyggt"
   },
   "mc_settings_message_density": {
     "message": "meddelandetäthet"
@@ -1241,7 +1241,7 @@
     "message": "max chattrader som hålls i live-DOM (databufferten förblir 1500). lägre = mindre ram på livliga kanaler."
   },
   "mc_settings_name_paints": {
-    "message": "heatsync name paints"
+    "message": "heatsync namnpaints"
   },
   "mc_settings_name_paints_desc": {
     "message": "animerade name paints från heatsync — går före en 7tv-paint när en chattare har båda"
@@ -1628,7 +1628,7 @@
     "message": "minimal"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "avancerad användare"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -3670,10 +3670,10 @@
     "message": "varje youtube-kanal behåller den volym du senast ställde in, i videor, strömmar och inbäddningar. av lämnar youtubes spelare ifred"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "skickat på youtube · twitch hoppades över, inte inloggad"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm användare meddelande · /r meddelande"
   },
   "mc_layout_copied": {
     "message": "layoutlänk kopierad"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "som prenumerant"
   },
-  "mc_notif_wt_prefix": {
-    "message": "på en"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streams"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "$COUNT$ streams i rad",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "dela"

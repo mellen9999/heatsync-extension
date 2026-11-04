@@ -411,13 +411,13 @@
     "message": "屏蔽"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "设为 mod"
   },
   "content_card_unmod": {
     "message": "取消 mod"
   },
   "content_card_vip": {
-    "message": "vip"
+    "message": "设为 vip"
   },
   "content_card_unvip": {
     "message": "取消 vip"
@@ -513,7 +513,7 @@
     "message": "动态"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "发现"
   },
   "mc_tab_whispers": {
     "message": "悄悄话"
@@ -1217,10 +1217,10 @@
     "message": "在 youtube 的 vod、首页和搜索页也显示 multichat 面板 — 默认关闭，面板只在直播（有实时聊天）时出现"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube：显示动态栏目"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "在 youtube 首页动态的视频之间显示短视频、小游戏和推广块 — 默认关闭，这样动态就只有整齐排列的缩略图"
   },
   "mc_settings_message_density": {
     "message": "消息密度"
@@ -2116,10 +2116,10 @@
     "message": "无法解析频道"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll 问题 | 选项1 | 选项2 [| … 最多 5 个] [| 秒]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction 标题 | 结果1 | 结果2 [| … 最多 10 个] [| 秒]"
   },
   "mc_input_poll_created": {
     "message": "投票已创建"
@@ -3670,10 +3670,10 @@
     "message": "youtube的每个频道都会记住你上次设置的音量,适用于视频、直播和嵌入。关闭则不干预youtube的播放器"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "已发送到 youtube · 跳过 twitch，未登录"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm 用户 消息 · /r 消息"
   },
   "mc_layout_copied": {
     "message": "布局链接已复制"
@@ -4498,7 +4498,7 @@
     "message": "全部"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "，感谢支持"
   },
-  "mc_notif_wt_prefix": {
-    "message": "已连续观看"
-  },
-  "mc_notif_wt_stream": {
-    "message": "场直播"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "，继续保持"
+  "mc_notif_wt": {
+    "message": "已连续观看 $COUNT$ 场直播",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "分享"

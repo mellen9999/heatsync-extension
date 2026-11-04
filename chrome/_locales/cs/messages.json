@@ -513,10 +513,10 @@
     "message": "kanál"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "objevit"
   },
   "mc_tab_whispers": {
-    "message": "whispers"
+    "message": "whispery"
   },
   "mc_tab_mentions": {
     "message": "zmínky"
@@ -528,7 +528,7 @@
     "message": "uložené"
   },
   "mc_tab_modlog": {
-    "message": "mod log"
+    "message": "mod záznamy"
   },
   "mc_btn_settings": {
     "message": "nastavení"
@@ -649,7 +649,7 @@
     "message": "časové razítko na každé zprávě"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "avatary"
   },
   "mc_settings_avatars_desc": {
     "message": "avatary vedle uživatelských jmen"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "úr. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "zobrazí panel multichatu i na youtube VOD, hlavní stránce a ve vyhledávání — ve výchozím stavu vypnuto, panel se tak objeví jen u livestreamů (kde je živý chat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: zobrazit police ve feedu"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "zobrazit shorts, playables a promo bloky mezi videi na domovském feedu youtube — ve výchozím stavu vypnuto, takže feed tvoří jen čistě uspořádané miniatury"
   },
   "mc_settings_message_density": {
     "message": "hustota zpráv"
@@ -1535,19 +1535,19 @@
     "message": "subsystémy"
   },
   "mc_settings_sub_irc_twitch": {
-    "message": "twitch chat feed"
+    "message": "feed chatu twitch"
   },
   "mc_settings_sub_irc_twitch_desc": {
     "message": "twitch irc připojení + vstupy do kanálů uvnitř overlaye"
   },
   "mc_settings_sub_chat_kick": {
-    "message": "kick chat feed"
+    "message": "feed chatu kick"
   },
   "mc_settings_sub_chat_kick_desc": {
     "message": "kick websocket připojení + vstupy do kanálů uvnitř overlaye"
   },
   "mc_settings_sub_chat_youtube": {
-    "message": "youtube chat feed"
+    "message": "feed chatu youtube"
   },
   "mc_settings_sub_chat_youtube_desc": {
     "message": "odběry youtube živého chatu uvnitř overlaye"
@@ -1583,7 +1583,7 @@
     "message": "statistiky rychlosti zpráv po kanálech pro heat žebříček"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "automod zadržel"
   },
   "mc_automod_allow": {
     "message": "povolit"
@@ -1625,10 +1625,10 @@
     "message": "podrobné logování do konzole ze všech skriptů heatsync — projeví se při dalším načtení stránky"
   },
   "mc_settings_preset_minimal": {
-    "message": "minimal"
+    "message": "minimální"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "pokročilý"
   },
   "mc_settings_preset_moderator": {
     "message": "moderátor"
@@ -3670,10 +3670,10 @@
     "message": "každý kanál na youtube si pamatuje naposledy nastavenou hlasitost ve videích, streamech i vložených přehrávačích. vypnuto nechá přehrávač youtube na pokoji"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "odesláno na youtube · twitch přeskočen, nejsi přihlášen"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm uživatel zpráva · /r zpráva"
   },
   "mc_layout_copied": {
     "message": "odkaz na rozložení zkopírován"
@@ -3758,7 +3758,7 @@
     "message": "panel tvůrce"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "správce streamu"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "nastavení moderace (automod, blokované výrazy)"
@@ -4498,7 +4498,7 @@
     "message": "vše"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "jako odběratel"
   },
-  "mc_notif_wt_prefix": {
-    "message": "na"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "v sérii sledování $COUNT$ streamů v řadě",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "sdílet"
@@ -5451,7 +5450,7 @@
     "message": "ty"
   },
   "mc_tip_follow_ago": {
-    "message": "follow $AGO$",
+    "message": "sleduje $AGO$",
     "placeholders": {
       "ago": {
         "content": "$1"
@@ -5818,7 +5817,7 @@
     "message": "nativní chat"
   },
   "mc_pt_popout_chat": {
-    "message": "popout chat"
+    "message": "samostatné okno"
   },
   "mc_pt_clips": {
     "message": "klipy"
@@ -6312,13 +6311,13 @@
     "message": "instant blokuje hned · menu nabídne blokovat/zrušit · off vypne"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "okamžitě"
   },
   "hsbtn_rcb_menu": {
     "message": "menu"
   },
   "hsbtn_rcb_off": {
-    "message": "off"
+    "message": "vypnuto"
   },
   "hsbtn_search_ph": {
     "message": "hledat emotky…"
@@ -6446,7 +6445,7 @@
     "message": "zpětná vazba"
   },
   "popup_fb_bug": {
-    "message": "bug"
+    "message": "chyba"
   },
   "popup_fb_ph_feedback": {
     "message": "co by měl heatsync dělat lépe?"

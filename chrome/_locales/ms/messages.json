@@ -464,7 +464,7 @@
     "message": "profil twitch"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "klip"
   },
   "content_card_clipping": {
     "message": "membuat clip…"
@@ -493,7 +493,7 @@
     "message": "affiliate"
   },
   "content_card_live": {
-    "message": "LIVE $VIEWERS$",
+    "message": "LANGSUNG $VIEWERS$",
     "placeholders": {
       "viewers": {
         "content": "$1"
@@ -513,7 +513,7 @@
     "message": "suapan"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "temui"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "tahap $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "tunjuk panel multichat di VOD youtube, laman utama dan carian juga — mati secara lalai, jadi panel hanya muncul pada siaran langsung (yang ada sembang langsung)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: tunjuk rak feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "tunjuk shorts, playables dan blok promosi di antara video pada feed laman utama youtube — mati secara lalai, jadi feed hanyalah gambar kecil yang tersusun kemas"
   },
   "mc_settings_message_density": {
     "message": "kepadatan mesej"
@@ -1628,7 +1628,7 @@
     "message": "minimum"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "pengguna mahir"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -2116,10 +2116,10 @@
     "message": "tak dapat kenal pasti saluran"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll soalan | pilihan1 | pilihan2 [| … sehingga 5] [| saat]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction tajuk | hasil1 | hasil2 [| … sehingga 10] [| saat]"
   },
   "mc_input_poll_created": {
     "message": "undian dibuat"
@@ -3670,10 +3670,10 @@
     "message": "setiap saluran youtube mengekalkan volum yang terakhir anda tetapkan, dalam video, strim dan benam. mati membiarkan pemain youtube begitu sahaja"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "dihantar di youtube · twitch dilangkau, belum log masuk"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm pengguna mesej · /r mesej"
   },
   "mc_layout_copied": {
     "message": "pautan susun atur disalin"
@@ -4405,7 +4405,7 @@
     }
   },
   "mc_social_live": {
-    "message": "live"
+    "message": "langsung"
   },
   "mc_social_plat_at": {
     "message": "$PLATFORM$ · @$USER$",
@@ -4419,7 +4419,7 @@
     }
   },
   "mc_social_plat_live": {
-    "message": "$BASE$ · live",
+    "message": "$BASE$ · langsung",
     "placeholders": {
       "base": {
         "content": "$1"
@@ -4498,7 +4498,7 @@
     "message": "semua"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "sebagai pelanggan"
   },
-  "mc_notif_wt_prefix": {
-    "message": "dalam"
-  },
-  "mc_notif_wt_stream": {
-    "message": "strim"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "streak tontonan"
+  "mc_notif_wt": {
+    "message": "sedang dalam streak tontonan $COUNT$ strim",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "kongsi"
@@ -5563,10 +5562,10 @@
     "message": "lencana"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "jenis mesej"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "ekspresi"
   },
   "mc_set_fr_expr_tip": {
     "message": "cth first && !badge:subscriber — sambung dengan && || ! ( ); medan user: badge: type: contains: regex:"
@@ -5954,7 +5953,7 @@
     }
   },
   "mc_cmg_edit_live": {
-    "message": "edit live — $CHANNEL$",
+    "message": "edit langsung — $CHANNEL$",
     "placeholders": {
       "channel": {
         "content": "$1"
@@ -6036,7 +6035,7 @@
     "message": "tanpa nama"
   },
   "mc_cp_vol": {
-    "message": "vol $PCT$%",
+    "message": "kelantangan $PCT$%",
     "placeholders": {
       "pct": {
         "content": "$1"
@@ -6493,7 +6492,7 @@
     "message": " · import satu saluran untuk mengisinya"
   },
   "bg_badge_tip": {
-    "message": "heatsync · $COUNT$ live: $NAMES$",
+    "message": "heatsync · $COUNT$ langsung: $NAMES$",
     "placeholders": {
       "count": {
         "content": "$1"

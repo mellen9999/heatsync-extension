@@ -106,7 +106,7 @@
     "message": "我的"
   },
   "btn_tab_emoji": {
-    "message": "emoji"
+    "message": "表情符號"
   },
   "btn_tab_sets": {
     "message": "合集"
@@ -411,13 +411,13 @@
     "message": "封鎖"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "設為 mod"
   },
   "content_card_unmod": {
     "message": "取消 mod"
   },
   "content_card_vip": {
-    "message": "vip"
+    "message": "設為 vip"
   },
   "content_card_unvip": {
     "message": "取消 vip"
@@ -513,7 +513,7 @@
     "message": "動態"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "探索"
   },
   "mc_tab_whispers": {
     "message": "私語"
@@ -891,7 +891,7 @@
     "message": "兌換"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "炒作列車"
   },
   "mc_chat_hype_level": {
     "message": "等 $LEVEL$",
@@ -991,7 +991,7 @@
     "message": "發布失敗"
   },
   "mc_tip_emoji": {
-    "message": "emoji"
+    "message": "表情符號"
   },
   "mc_whisper_hint": {
     "message": "/w 使用者 訊息 · /dm 使用者 訊息 · /r 訊息"
@@ -1217,10 +1217,10 @@
     "message": "在 youtube 的 vod、首頁和搜尋頁也顯示 multichat 面板 — 預設關閉，面板只在直播（有即時聊天）時出現"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube：顯示動態欄目"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "在 youtube 首頁動態的影片之間顯示短影音、小遊戲和推廣區塊 — 預設關閉，這樣動態就只有整齊排列的縮圖"
   },
   "mc_settings_message_density": {
     "message": "訊息密度"
@@ -2116,10 +2116,10 @@
     "message": "無法解析頻道"
   },
   "mc_input_usage_poll": {
-    "message": "/poll question | choice1 | choice2 [| … up to 5] [| secs]"
+    "message": "/poll 問題 | 選項1 | 選項2 [| … 最多 5 個] [| 秒]"
   },
   "mc_input_usage_prediction": {
-    "message": "/prediction title | outcome1 | outcome2 [| … up to 10] [| secs]"
+    "message": "/prediction 標題 | 結果1 | 結果2 [| … 最多 10 個] [| 秒]"
   },
   "mc_input_poll_created": {
     "message": "投票已建立"
@@ -3670,10 +3670,10 @@
     "message": "youtube的每個頻道都會記住你上次設定的音量,適用於影片、直播與嵌入。關閉則不干預youtube的播放器"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "已傳送到 youtube · 略過 twitch，未登入"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm 使用者 訊息 · /r 訊息"
   },
   "mc_layout_copied": {
     "message": "版面連結已複製"
@@ -4498,7 +4498,7 @@
     "message": "全部"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "，感謝支持"
   },
-  "mc_notif_wt_prefix": {
-    "message": "已連續觀看"
-  },
-  "mc_notif_wt_stream": {
-    "message": "場直播"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "，繼續保持"
+  "mc_notif_wt": {
+    "message": "已連續觀看 $COUNT$ 場直播",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "分享"

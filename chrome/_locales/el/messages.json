@@ -109,7 +109,7 @@
     "message": "emoji"
   },
   "btn_tab_sets": {
-    "message": "sets"
+    "message": "σετ"
   },
   "btn_rotate_title": {
     "message": "περιστροφή θέσης μπάρας καρτελών"
@@ -382,7 +382,7 @@
     }
   },
   "content_card_partner": {
-    "message": "partner"
+    "message": "συνεργάτης"
   },
   "content_card_mutual": {
     "message": "αμοιβαίο"
@@ -405,7 +405,7 @@
     "message": "ban"
   },
   "content_card_unban": {
-    "message": "unban"
+    "message": "άρση ban"
   },
   "content_card_block": {
     "message": "αποκλεισμός"
@@ -414,13 +414,13 @@
     "message": "mod"
   },
   "content_card_unmod": {
-    "message": "unmod"
+    "message": "άρση mod"
   },
   "content_card_vip": {
     "message": "vip"
   },
   "content_card_unvip": {
-    "message": "unvip"
+    "message": "άρση vip"
   },
   "content_card_mod_tools": {
     "message": "εργαλεία mod"
@@ -458,7 +458,7 @@
     "message": "follow"
   },
   "content_card_unfollow": {
-    "message": "unfollow"
+    "message": "άρση follow"
   },
   "content_card_twitch_profile": {
     "message": "προφίλ twitch"
@@ -513,7 +513,7 @@
     "message": "ροή"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "ανακάλυψη"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -625,7 +625,7 @@
     "message": "χρονοσημάνσεις"
   },
   "mc_settings_avatars": {
-    "message": "avatars"
+    "message": "άβαταρ"
   },
   "mc_settings_emote_size_desc": {
     "message": "1x προεπιλογή, 2x retina, 4x μεγάλο"
@@ -649,7 +649,7 @@
     "message": "χρονική σφραγίδα σε κάθε μήνυμα"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "εικόνες προφίλ"
   },
   "mc_settings_avatars_desc": {
     "message": "avatars δίπλα στα ονόματα χρηστών"
@@ -894,7 +894,7 @@
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "επ. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "δείξε το πάνελ multichat και σε vod, αρχική και αναζήτηση του youtube — off από προεπιλογή, ώστε το πάνελ να εμφανίζεται μόνο σε livestreams (όπου υπάρχει live chat)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: εμφάνιση ραφιών feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "εμφάνιση shorts, playables και promo μεταξύ των βίντεο στο αρχικό feed του youtube — ανενεργό από προεπιλογή, ώστε το feed να είναι μόνο μικρογραφίες που στοιχίζονται καθαρά"
   },
   "mc_settings_message_density": {
     "message": "πυκνότητα μηνυμάτων"
@@ -1559,7 +1559,7 @@
     "message": "paints 7tv + badges bttv/ffz/chatterino. off εξοικονομεί ram σε κινητικά κανάλια."
   },
   "mc_settings_sub_feed": {
-    "message": "feed"
+    "message": "ροή"
   },
   "mc_settings_sub_feed_desc": {
     "message": "καρτέλα social feed του heatsync + η ροή γεγονότων της"
@@ -1619,19 +1619,19 @@
     "message": "τα σφάλματα καταγράφονται μόνο τοπικά — δεν ανεβαίνουν ποτέ. αυτός ο διακόπτης απλώς δείχνει το πάνελ διάγνωσης παρακάτω."
   },
   "mc_settings_debug_logging": {
-    "message": "debug logging"
+    "message": "καταγραφή debug"
   },
   "mc_settings_debug_logging_desc": {
     "message": "αναλυτικό logging στην κονσόλα από όλα τα scripts του heatsync — ισχύει στην επόμενη φόρτωση σελίδας"
   },
   "mc_settings_preset_minimal": {
-    "message": "minimal"
+    "message": "ελάχιστο"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "προχωρημένος χρήστης"
   },
   "mc_settings_preset_moderator": {
-    "message": "moderator"
+    "message": "συντονιστής"
   },
   "mc_settings_preset_low_ram": {
     "message": "χαμηλή ram"
@@ -1866,13 +1866,13 @@
     }
   },
   "mc_input_followers_off": {
-    "message": "followers-only off"
+    "message": "μόνο ακόλουθοι ανενεργό"
   },
   "mc_input_followers_on": {
-    "message": "followers-only on"
+    "message": "μόνο ακόλουθοι ενεργό"
   },
   "mc_input_followers_on_mins": {
-    "message": "followers-only on ($MINS$m)",
+    "message": "μόνο ακόλουθοι ενεργό ($MINS$λ)",
     "placeholders": {
       "mins": {
         "content": "$1"
@@ -2338,7 +2338,7 @@
     }
   },
   "mc_input_mode_on": {
-    "message": "$LABEL$ on",
+    "message": "$LABEL$ ενεργό",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2346,7 +2346,7 @@
     }
   },
   "mc_input_mode_off": {
-    "message": "$LABEL$ off",
+    "message": "$LABEL$ ανενεργό",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -2354,7 +2354,7 @@
     }
   },
   "mc_input_mode_on_dur": {
-    "message": "$LABEL$ on ($DETAIL$)",
+    "message": "$LABEL$ ενεργό ($DETAIL$)",
     "placeholders": {
       "label": {
         "content": "$1"
@@ -3670,10 +3670,10 @@
     "message": "κάθε κανάλι του youtube κρατά την ένταση που όρισες τελευταία, σε βίντεο, streams και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του youtube ανέγγιχτο"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "στάλθηκε στο youtube · το twitch παραλείφθηκε, δεν έχεις συνδεθεί"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm χρήστης μήνυμα · /r μήνυμα"
   },
   "mc_layout_copied": {
     "message": "ο σύνδεσμος διάταξης αντιγράφηκε"
@@ -3755,10 +3755,10 @@
     "message": "streamer"
   },
   "mc_twapi_ql_creator": {
-    "message": "creator dashboard"
+    "message": "πίνακας δημιουργού"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "διαχείριση stream"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "ρυθμίσεις διαχείρισης (automod, αποκλεισμένοι όροι)"
@@ -3770,7 +3770,7 @@
     "message": "κοινότητα (mods, vips, ακόλουθοι)"
   },
   "mc_twapi_ql_monetization": {
-    "message": "monetization"
+    "message": "δημιουργία εσόδων"
   },
   "mc_twapi_ql_chan_pages": {
     "message": "σελίδες καναλιού"
@@ -3961,7 +3961,7 @@
     }
   },
   "mc_twapi_offline": {
-    "message": "OFFLINE"
+    "message": "ΕΚΤΟΣ ΣΥΝΔΕΣΗΣ"
   },
   "mc_twapi_live_status_nouptime": {
     "message": "LIVE · $VIEWERS$ θεατές",
@@ -4307,7 +4307,7 @@
     "message": "άφησε εικόνα/βίντεο/σύνδεσμο για ανέβασμα"
   },
   "mc_input_usage_announce": {
-    "message": "/announce <message>"
+    "message": "/announce <μήνυμα>"
   },
   "mc_social_edit_empty": {
     "message": "το περιεχόμενο δεν μπορεί να είναι κενό"
@@ -4474,7 +4474,7 @@
     "message": "καμία ανάρτηση δεν ταιριάζει με το φίλτρο"
   },
   "mc_social_tags": {
-    "message": "tags"
+    "message": "ετικέτες"
   },
   "mc_social_none_now": {
     "message": "κανένα αυτή τη στιγμή"
@@ -4498,7 +4498,7 @@
     "message": "όλα"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "super chat $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4731,7 +4731,7 @@
     "message": "αντιγραφή permalink"
   },
   "mc_logs_permalink_aria": {
-    "message": "permalink $TIME$",
+    "message": "μόνιμος σύνδεσμος $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "ως συνδρομητής"
   },
-  "mc_notif_wt_prefix": {
-    "message": "με"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "σε σερί παρακολούθησης $COUNT$ stream",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "κοινοποίηση"
@@ -5451,7 +5450,7 @@
     "message": "εσύ"
   },
   "mc_tip_follow_ago": {
-    "message": "follow $AGO$",
+    "message": "ακολουθεί $AGO$",
     "placeholders": {
       "ago": {
         "content": "$1"
@@ -5560,7 +5559,7 @@
     "message": "χρήστης"
   },
   "mc_set_fr_t_badge": {
-    "message": "badge"
+    "message": "σήμα"
   },
   "mc_set_fr_t_msgtype": {
     "message": "τύπος μηνύματος"
@@ -5791,7 +5790,7 @@
     "message": "logs"
   },
   "mc_tr_sub_status": {
-    "message": "status"
+    "message": "κατάσταση"
   },
   "mc_tr_sub_platforms": {
     "message": "πλατφόρμες"
@@ -6312,13 +6311,13 @@
     "message": "instant αποκλείει αμέσως · menu δείχνει αποκλεισμό/ακύρωση · off το απενεργοποιεί"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "άμεσα"
   },
   "hsbtn_rcb_menu": {
-    "message": "menu"
+    "message": "μενού"
   },
   "hsbtn_rcb_off": {
-    "message": "off"
+    "message": "ανενεργό"
   },
   "hsbtn_search_ph": {
     "message": "αναζήτηση emotes…"

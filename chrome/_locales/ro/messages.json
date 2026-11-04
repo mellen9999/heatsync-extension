@@ -490,7 +490,7 @@
     }
   },
   "content_card_affiliate": {
-    "message": "affiliate"
+    "message": "afiliat"
   },
   "content_card_live": {
     "message": "LIVE $VIEWERS$",
@@ -513,7 +513,7 @@
     "message": "flux"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "descoperă"
   },
   "mc_tab_whispers": {
     "message": "whispers"
@@ -772,7 +772,7 @@
     "message": "un cuvânt cheie pe linie"
   },
   "mc_settings_auto_claim": {
-    "message": "auto-claim channel points"
+    "message": "revendică automat punctele de canal"
   },
   "mc_settings_auto_claim_desc": {
     "message": "dă click automat pe cufărul cu puncte canal"
@@ -888,13 +888,13 @@
     "message": "introduce text..."
   },
   "mc_reward_redeem": {
-    "message": "redeem"
+    "message": "răscumpără"
   },
   "mc_chat_hype_train": {
     "message": "hype train"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "niv. $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -1217,10 +1217,10 @@
     "message": "arată panoul multichat și pe VOD-urile youtube, acasă și căutare — oprit implicit, deci panoul apare doar la livestream-uri (unde există chat live)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: arată rafturile din feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "arată shorts, playables și blocuri promo între videoclipurile din feedul de acasă youtube — oprit implicit, ca feedul să fie doar miniaturi aliniate frumos"
   },
   "mc_settings_message_density": {
     "message": "densitate mesaje"
@@ -1628,7 +1628,7 @@
     "message": "minimal"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "utilizator avansat"
   },
   "mc_settings_preset_moderator": {
     "message": "moderator"
@@ -3670,10 +3670,10 @@
     "message": "fiecare canal de pe youtube păstrează ultimul volum setat, în videoclipuri, stream-uri și embeduri. oprit lasă playerul youtube în pace"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "trimis pe youtube · twitch omis, neautentificat"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm utilizator mesaj · /r mesaj"
   },
   "mc_layout_copied": {
     "message": "linkul layoutului a fost copiat"
@@ -4031,7 +4031,7 @@
     "message": "extinde"
   },
   "mc_input_mute_24h": {
-    "message": "mute (24h)"
+    "message": "silențiere (24h)"
   },
   "mc_input_unhide_in_tab": {
     "message": "arată în tab"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "ca abonat"
   },
-  "mc_notif_wt_prefix": {
-    "message": "cu o serie de"
-  },
-  "mc_notif_wt_stream": {
-    "message": "stream-uri"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "vizionate"
+  "mc_notif_wt": {
+    "message": "pe o serie de vizionare de $COUNT$ streamuri",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "distribuie"
@@ -6379,7 +6378,7 @@
     "message": "copiază mesajul"
   },
   "cs_mute_24h": {
-    "message": "mute (24h)"
+    "message": "silențiere (24h)"
   },
   "cs_profile": {
     "message": "profil"

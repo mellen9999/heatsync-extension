@@ -513,7 +513,7 @@
     "message": "feed"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "descobrir"
   },
   "mc_tab_whispers": {
     "message": "sussurros"
@@ -1217,10 +1217,10 @@
     "message": "mostra o painel do multichat também em vods, início e busca do youtube — desligado por padrão, assim o painel só aparece em lives (onde há chat ao vivo)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: mostrar prateleiras do feed"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "mostra shorts, playables e blocos promocionais entre os vídeos do feed inicial do youtube — desligado por padrão, assim o feed fica só com miniaturas bem alinhadas"
   },
   "mc_settings_message_density": {
     "message": "densidade de mensagens"
@@ -3060,7 +3060,7 @@
     "message": "-- normal --  i/a buscar  esc fechar"
   },
   "mc_gif_mode_insert": {
-    "message": "-- insert --  esc normal"
+    "message": "-- inserir --  esc normal"
   },
   "mc_bt_title": {
     "message": "termos bloqueados"
@@ -3622,7 +3622,7 @@
     "message": "a espera deve ser de 5–3600 segundos"
   },
   "mc_tagcard_posts": {
-    "message": "posts"
+    "message": "publicações"
   },
   "mc_tagcard_followers": {
     "message": "seguidores"
@@ -3670,10 +3670,10 @@
     "message": "cada canal do youtube guarda o último volume que você definiu, em vídeos, lives e embeds. desligado deixa o player do youtube em paz"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "enviado no youtube · twitch ignorado, sem login"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm usuário msg · /r msg"
   },
   "mc_layout_copied": {
     "message": "link do layout copiado"
@@ -3758,7 +3758,7 @@
     "message": "painel do criador"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "gerenciador de stream"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "config. de moderação (automod, termos bloqueados)"
@@ -4731,7 +4731,7 @@
     "message": "copiar permalink"
   },
   "mc_logs_permalink_aria": {
-    "message": "permalink $TIME$",
+    "message": "link permanente $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "como inscrito"
   },
-  "mc_notif_wt_prefix": {
-    "message": "numa sequência de"
-  },
-  "mc_notif_wt_stream": {
-    "message": "streams"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "de watch"
+  "mc_notif_wt": {
+    "message": "em uma sequência de $COUNT$ streams assistidas",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "compartilhar"

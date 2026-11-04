@@ -106,7 +106,7 @@
     "message": "мои"
   },
   "btn_tab_emoji": {
-    "message": "emoji"
+    "message": "емоджи"
   },
   "btn_tab_sets": {
     "message": "сетове"
@@ -411,16 +411,16 @@
     "message": "блокирай"
   },
   "content_card_mod": {
-    "message": "mod"
+    "message": "мод"
   },
   "content_card_unmod": {
-    "message": "unmod"
+    "message": "махни мод"
   },
   "content_card_vip": {
     "message": "vip"
   },
   "content_card_unvip": {
-    "message": "unvip"
+    "message": "махни vip"
   },
   "content_card_mod_tools": {
     "message": "mod инструменти"
@@ -464,7 +464,7 @@
     "message": "twitch профил"
   },
   "content_card_clip": {
-    "message": "clip"
+    "message": "клип"
   },
   "content_card_clipping": {
     "message": "правя clip…"
@@ -490,7 +490,7 @@
     }
   },
   "content_card_affiliate": {
-    "message": "affiliate"
+    "message": "афилиейт"
   },
   "content_card_live": {
     "message": "ЖИВО $VIEWERS$",
@@ -513,10 +513,10 @@
     "message": "емисия"
   },
   "mc_tab_discover": {
-    "message": "discover"
+    "message": "открий"
   },
   "mc_tab_whispers": {
-    "message": "whispers"
+    "message": "шепоти"
   },
   "mc_tab_mentions": {
     "message": "споменавания"
@@ -649,7 +649,7 @@
     "message": "времеви печат на всяко съобщение"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "аватари"
   },
   "mc_settings_avatars_desc": {
     "message": "аватари до потребителските имена"
@@ -685,13 +685,13 @@
     "message": "Twitch събития"
   },
   "mc_settings_raids": {
-    "message": "raids"
+    "message": "рейдове"
   },
   "mc_settings_raids_desc": {
     "message": "банер при рейд с брой зрители"
   },
   "mc_settings_hype_trains": {
-    "message": "hype trains"
+    "message": "хайп трейнове"
   },
   "mc_settings_hype_trains_desc": {
     "message": "банер за прогреса на хайп трейна на живо"
@@ -721,13 +721,13 @@
     "message": "банер за активно гласуване, гласувай директно"
   },
   "mc_settings_yt_superchat": {
-    "message": "super chats"
+    "message": "суперчатове"
   },
   "mc_settings_yt_superchat_desc": {
     "message": "банер за youtube super chats със сума"
   },
   "mc_settings_yt_supersticker": {
-    "message": "super stickers"
+    "message": "суперстикери"
   },
   "mc_settings_yt_supersticker_desc": {
     "message": "банер за youtube super stickers със сума"
@@ -891,10 +891,10 @@
     "message": "осреби"
   },
   "mc_chat_hype_train": {
-    "message": "hype train"
+    "message": "хайп трейн"
   },
   "mc_chat_hype_level": {
-    "message": "lvl $LEVEL$",
+    "message": "ниво $LEVEL$",
     "placeholders": {
       "level": {
         "content": "$1"
@@ -991,7 +991,7 @@
     "message": "публикуването се провали"
   },
   "mc_tip_emoji": {
-    "message": "emoji"
+    "message": "емоджи"
   },
   "mc_whisper_hint": {
     "message": "/w потребител съобщение · /dm потребител съобщение · /r съобщение"
@@ -1217,10 +1217,10 @@
     "message": "показва панела на multichat и на youtube VOD, началната страница и търсенето — изключено по подразбиране, така че панелът се появява само при livestream (където има чат на живо)"
   },
   "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
+    "message": "youtube: показвай секциите на емисията"
   },
   "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
+    "message": "показвай shorts, playables и промо блокове между видеата в началната емисия на youtube — по подразбиране изкл., така емисията е само миниатюри, подредени чисто"
   },
   "mc_settings_message_density": {
     "message": "гъстота на съобщенията"
@@ -1496,7 +1496,7 @@
     "message": "по един израз на ред — съобщения, съдържащи някой от тях, се скриват. различно от подчертаването на ключови думи."
   },
   "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
+    "message": "спойлер\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "правила за филтри"
@@ -1559,13 +1559,13 @@
     "message": "7tv paints + bttv/ffz/chatterino значки. изключено спестява ram на натоварени канали."
   },
   "mc_settings_sub_feed": {
-    "message": "feed"
+    "message": "емисия"
   },
   "mc_settings_sub_feed_desc": {
     "message": "таб със социалния feed на heatsync + неговият поток от събития"
   },
   "mc_settings_sub_whispers": {
-    "message": "whispers"
+    "message": "шепоти"
   },
   "mc_settings_sub_whispers_desc": {
     "message": "twitch whisper eventsub сокет + таб whispers"
@@ -1583,7 +1583,7 @@
     "message": "скорост на съобщенията по канал, която захранва heat класацията"
   },
   "mc_automod_label": {
-    "message": "automod hold"
+    "message": "automod задържа"
   },
   "mc_automod_allow": {
     "message": "позволи"
@@ -1628,7 +1628,7 @@
     "message": "минимален"
   },
   "mc_settings_preset_power_user": {
-    "message": "power user"
+    "message": "напреднал"
   },
   "mc_settings_preset_moderator": {
     "message": "модератор"
@@ -3670,10 +3670,10 @@
     "message": "всеки канал в youtube пази последно зададената от теб сила на звука — във видеа, стриймове и вградени плейъри. изключено оставя плейъра на youtube на мира"
   },
   "mc_send_twitch_skipped": {
-    "message": "sent on youtube · twitch skipped, not logged in"
+    "message": "изпратено в youtube · twitch пропуснат, не си влязъл"
   },
   "mc_whisper_hint_dm": {
-    "message": "/dm user msg · /r msg"
+    "message": "/dm име текст · /r текст"
   },
   "mc_layout_copied": {
     "message": "линкът към подредбата е копиран"
@@ -3758,7 +3758,7 @@
     "message": "творчески панел"
   },
   "mc_twapi_ql_stream_mgr": {
-    "message": "stream manager"
+    "message": "мениджър на стрийма"
   },
   "mc_twapi_ql_mod_settings": {
     "message": "настройки за модерация (automod, блокирани термини)"
@@ -3917,7 +3917,7 @@
     "message": "събития"
   },
   "mc_twapi_tab_bits": {
-    "message": "bits"
+    "message": "битове"
   },
   "mc_twapi_tab_links": {
     "message": "бързи връзки"
@@ -3942,7 +3942,7 @@
     "message": "отвори прозореца за cheer"
   },
   "mc_twapi_bits_title": {
-    "message": "$AMOUNT$ bits",
+    "message": "$AMOUNT$ бита",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4055,7 +4055,7 @@
     "message": "изтрий съобщ."
   },
   "mc_input_timeout": {
-    "message": "timeout"
+    "message": "таймаут"
   },
   "mc_input_timeout_10m": {
     "message": "timeout 10м"
@@ -4073,10 +4073,10 @@
     "message": "op във feed"
   },
   "mc_input_whisper": {
-    "message": "whisper"
+    "message": "шепот"
   },
   "mc_input_dm": {
-    "message": "dm"
+    "message": "лс"
   },
   "mc_input_edit_note": {
     "message": "редактирай бележка"
@@ -4498,7 +4498,7 @@
     "message": "всички"
   },
   "mc_social_yt_superchat": {
-    "message": "superchat $AMOUNT$",
+    "message": "суперчат $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -4506,7 +4506,7 @@
     }
   },
   "mc_social_yt_sticker": {
-    "message": "super sticker $AMOUNT$",
+    "message": "суперстикер $AMOUNT$",
     "placeholders": {
       "amount": {
         "content": "$1"
@@ -5267,14 +5267,13 @@
   "mc_notif_rt_suffix": {
     "message": "като абонат"
   },
-  "mc_notif_wt_prefix": {
-    "message": "на"
-  },
-  "mc_notif_wt_stream": {
-    "message": "стрийм"
-  },
-  "mc_notif_wt_suffix": {
-    "message": "watch streak"
+  "mc_notif_wt": {
+    "message": "гледа $COUNT$ стрийма поредно",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "mc_notif_share": {
     "message": "сподели"
@@ -5451,7 +5450,7 @@
     "message": "ти"
   },
   "mc_tip_follow_ago": {
-    "message": "follow $AGO$",
+    "message": "следва от $AGO$",
     "placeholders": {
       "ago": {
         "content": "$1"
@@ -5761,7 +5760,7 @@
     "message": "emotes"
   },
   "mc_emo_tab_gifs": {
-    "message": "gifs"
+    "message": "гифове"
   },
   "mc_emo_chips_title": {
     "message": "избери в кои доставчици да се търси"
@@ -5803,7 +5802,7 @@
     "message": "известия"
   },
   "mc_tr_set_mod": {
-    "message": "mod"
+    "message": "мод"
   },
   "mc_tr_set_filters": {
     "message": "филтри"
@@ -6312,13 +6311,13 @@
     "message": "instant блокира веднага · menu показва блокирай/отказ · off го изключва"
   },
   "hsbtn_rcb_instant": {
-    "message": "instant"
+    "message": "веднага"
   },
   "hsbtn_rcb_menu": {
-    "message": "menu"
+    "message": "меню"
   },
   "hsbtn_rcb_off": {
-    "message": "off"
+    "message": "изкл."
   },
   "hsbtn_search_ph": {
     "message": "търсене на emotes…"
